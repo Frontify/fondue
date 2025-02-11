@@ -2,4 +2,4 @@
 "@frontify/fondue-components": minor
 ---
 
-refactor(Text): remove tag specific props since neither has necessary once
+refactor(Text): remove tag specific props since neither has necessary ones
