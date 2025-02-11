@@ -1,25 +1,25 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconArrowDown, IconArrowUp, IconArrowBidirectional } from '@frontify/fondue-icons';
+import { IconArrowBidirectional, IconArrowDown, IconArrowUp } from '@frontify/fondue-icons';
 import {
     forwardRef,
     useMemo,
     useRef,
-    type ReactNode,
-    type KeyboardEvent,
     type CSSProperties,
+    type KeyboardEvent,
     type ReactElement,
+    type ReactNode,
 } from 'react';
-
-import { useSyncRefs } from '#/hooks/useSyncRefs';
-import { useTextTruncation } from '#/hooks/useTextTruncation';
-import { type CommonAriaAttrs } from '#/utilities/types';
 
 import { Box } from '../Box/Box';
 import { LoadingCircle } from '../LoadingCircle/LoadingCircle';
 
 import styles from './styles/table.module.scss';
 import { handleKeyDown } from './utils';
+
+import { useSyncRefs } from '#/hooks/useSyncRefs';
+import { useTextTruncation } from '#/hooks/useTextTruncation';
+import { type CommonAriaAttrs } from '#/utilities/types';
 
 type TableRootProps = {
     /**
@@ -135,6 +135,10 @@ type TableHeaderCellProps = {
      */
     state?: 'idle' | 'loading';
     /**
+     * The aria-label to be applied when state='loading'
+     */
+    loadingStateAriaLabel?: string;
+    /**
      * Handler called when the sort direction changes
      * @param direction - The new sort direction
      */
@@ -154,6 +158,7 @@ export const TableHeaderCell = forwardRef<HTMLTableCellElement, TableHeaderCellP
             colSpan,
             width,
             state = 'idle',
+            loadingStateAriaLabel,
             onSortChange,
             children,
         },
@@ -200,7 +205,7 @@ export const TableHeaderCell = forwardRef<HTMLTableCellElement, TableHeaderCellP
                 aria-sort={onSortChange ? sortDirection || 'none' : undefined}
             >
                 {state === 'loading' ? (
-                    <div className={styles.cellContent}>
+                    <div className={styles.cellContent} aria-live="polite" aria-label={loadingStateAriaLabel}>
                         {typeof children === 'string' && truncate ? (
                             <span className={styles.buttonText}>{children}</span>
                         ) : (
