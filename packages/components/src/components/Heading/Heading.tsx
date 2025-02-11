@@ -1,13 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import {
-    type DetailedHTMLProps,
-    type ElementType,
-    type ForwardedRef,
-    forwardRef,
-    type HTMLAttributes,
-    type ReactNode,
-} from 'react';
+import { type ElementType, type ForwardedRef, forwardRef, type ReactNode } from 'react';
 
 import { type CommonAriaProps } from '#/helpers/aria';
 import { cn } from '#/utilities/styleUtilities';
@@ -20,16 +13,15 @@ type HeadingColor = 'default' | 'weak' | 'x-weak' | 'disabled' | 'negative' | 'p
 
 type TagType = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'span' | 'p';
 
-export type HeadingProps<TTag extends TagType = 'span'> = CommonAriaProps &
-    DetailedHTMLProps<HTMLAttributes<HeadingElementType<TTag>>, HeadingElementType<TTag>> & {
-        'data-test-id'?: string;
-        as?: TTag;
-        children?: ReactNode;
-        color?: HeadingColor;
-        size?: HeadingSize;
-        weight?: HeadingWeight;
-        className?: string;
-    };
+export type HeadingProps<TTag extends TagType = 'span'> = CommonAriaProps & {
+    'data-test-id'?: string;
+    as?: TTag;
+    children?: ReactNode;
+    color?: HeadingColor;
+    size?: HeadingSize;
+    weight?: HeadingWeight;
+    className?: string;
+};
 
 type HeadingElementType<TTag extends TagType> = TTag extends 'span'
     ? HTMLSpanElement

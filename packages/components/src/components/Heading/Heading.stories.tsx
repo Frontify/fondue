@@ -9,6 +9,11 @@ const meta: Meta<typeof Heading> = {
     title: 'Typography/Heading',
     component: Heading,
     tags: ['autodocs'],
+    parameters: {
+        status: {
+            type: 'beta',
+        },
+    },
     args: {},
     argTypes: {
         as: {
