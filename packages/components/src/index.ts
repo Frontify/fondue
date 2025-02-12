@@ -15,6 +15,7 @@ export { Grid } from './components/Grid/Grid';
 export { Heading } from './components/Heading/Heading';
 export { Label } from './components/Label/Label';
 export { LoadingBar } from './components/LoadingBar/LoadingBar';
+export { LoadingCircle } from './components/LoadingCircle/LoadingCircle';
 export { ScrollArea } from './components/ScrollArea/ScrollArea';
 export { Section } from './components/Section/Section';
 export { SegmentedControl } from './components/SegmentedControl/SegmentedControl';
@@ -25,5 +26,6 @@ export { Table } from './components/Table/Table';
 export { Tabs } from './components/Tabs/Tabs';
 export { Text } from './components/Text/Text';
 export { TextInput } from './components/TextInput/TextInput';
+export { ThemeContext, ThemeProvider, useFondueTheme } from './components/ThemeProvider/ThemeProvider';
 export { Tooltip } from './components/Tooltip/Tooltip';
-export { ThemeProvider, useFondueTheme, ThemeContext } from './components/ThemeProvider/ThemeProvider';
+
