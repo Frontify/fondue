@@ -28,4 +28,3 @@ export { Text } from './components/Text/Text';
 export { TextInput } from './components/TextInput/TextInput';
 export { ThemeContext, ThemeProvider, useFondueTheme } from './components/ThemeProvider/ThemeProvider';
 export { Tooltip } from './components/Tooltip/Tooltip';
-
