@@ -150,8 +150,8 @@ export const DropdownGroup = (
     return (
         <RadixDropdown.Group className={styles.group} data-test-id={dataTestId} ref={ref}>
             {heading ? (
-                <div aria-label={heading} className={styles.groupHeading}>
-                    <span>{heading}</span>
+                <div className={styles.groupHeading}>
+                    <span aria-label={heading}>{heading}</span>
                 </div>
             ) : null}
             {children}
