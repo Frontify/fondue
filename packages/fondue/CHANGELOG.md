@@ -1,5 +1,15 @@
 # @frontify/fondue
 
+## 12.5.2
+
+### Patch Changes
+
+- [#2197](https://github.com/Frontify/fondue/pull/2197) [`969523a`](https://github.com/Frontify/fondue/commit/969523acf6c0823556a160dd4795602de7f9e456) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: Add `LoadingCircle` component
+
+- Updated dependencies [[`6dbb300`](https://github.com/Frontify/fondue/commit/6dbb3009e2b1b0b274d19249714e4c5b3ac97fc8), [`cee4391`](https://github.com/Frontify/fondue/commit/cee439106a56089dda74b52e2fa7ef0f354f492a), [`752f03b`](https://github.com/Frontify/fondue/commit/752f03bc353aee969d56e6346fbd08372e831b53), [`969523a`](https://github.com/Frontify/fondue/commit/969523acf6c0823556a160dd4795602de7f9e456), [`7ea17ba`](https://github.com/Frontify/fondue/commit/7ea17ba1a0087a7e18e733e65509bb03d2d1079d), [`8825fcc`](https://github.com/Frontify/fondue/commit/8825fccb2a23bcdd95a426878fd0b924cb881542), [`200384e`](https://github.com/Frontify/fondue/commit/200384e1237e84d33da9fe15a7ab98ac4fe7f855), [`969523a`](https://github.com/Frontify/fondue/commit/969523acf6c0823556a160dd4795602de7f9e456), [`dec28ee`](https://github.com/Frontify/fondue/commit/dec28eeb5d2a0510bfd0dfa8a513e7e058213728)]:
+    - @frontify/fondue-components@13.0.0
+    - @frontify/fondue-icons@0.13.0
+
 ## 12.5.1
 
 ### Patch Changes
