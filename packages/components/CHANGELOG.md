@@ -1,5 +1,30 @@
 # @frontify/fondue-components
 
+## 13.0.0
+
+### Minor Changes
+
+- [#2202](https://github.com/Frontify/fondue/pull/2202) [`6dbb300`](https://github.com/Frontify/fondue/commit/6dbb3009e2b1b0b274d19249714e4c5b3ac97fc8) Thanks [@syeo66](https://github.com/syeo66)! - feat(Text): migrate text component
+
+- [#2204](https://github.com/Frontify/fondue/pull/2204) [`752f03b`](https://github.com/Frontify/fondue/commit/752f03bc353aee969d56e6346fbd08372e831b53) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add heading to Dropdown Group
+
+- [#2197](https://github.com/Frontify/fondue/pull/2197) [`969523a`](https://github.com/Frontify/fondue/commit/969523acf6c0823556a160dd4795602de7f9e456) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: Add `LoadingCircle` component
+
+- [#2194](https://github.com/Frontify/fondue/pull/2194) [`7ea17ba`](https://github.com/Frontify/fondue/commit/7ea17ba1a0087a7e18e733e65509bb03d2d1079d) Thanks [@syeo66](https://github.com/syeo66)! - feat(Heading): migrate heading component
+
+- [#2203](https://github.com/Frontify/fondue/pull/2203) [`200384e`](https://github.com/Frontify/fondue/commit/200384e1237e84d33da9fe15a7ab98ac4fe7f855) Thanks [@syeo66](https://github.com/syeo66)! - refactor(Text): remove tag specific props since neither has necessary ones
+
+### Patch Changes
+
+- [#2206](https://github.com/Frontify/fondue/pull/2206) [`cee4391`](https://github.com/Frontify/fondue/commit/cee439106a56089dda74b52e2fa7ef0f354f492a) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: define box-sizing for Table Header Cell to avoid overflow
+
+- [#2205](https://github.com/Frontify/fondue/pull/2205) [`8825fcc`](https://github.com/Frontify/fondue/commit/8825fccb2a23bcdd95a426878fd0b924cb881542) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: add missing export of `LoadingCircle` component
+
+- [#2197](https://github.com/Frontify/fondue/pull/2197) [`969523a`](https://github.com/Frontify/fondue/commit/969523acf6c0823556a160dd4795602de7f9e456) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: Add loading state for Table Header Cell
+
+- Updated dependencies [[`dec28ee`](https://github.com/Frontify/fondue/commit/dec28eeb5d2a0510bfd0dfa8a513e7e058213728)]:
+    - @frontify/fondue-icons@0.13.0
+
 ## 12.0.1
 
 ### Patch Changes
