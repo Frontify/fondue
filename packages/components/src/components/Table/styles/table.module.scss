@@ -93,6 +93,7 @@
 }
 
 .cellContent {
+    box-sizing: border-box;
     display: inline-flex;
     width: 100%;
     text-align: inherit;
