@@ -141,14 +141,19 @@ export const DropdownContent = (
 };
 DropdownContent.displayName = 'Dropdown.Content';
 
-export type DropdownGroupProps = { children: ReactNode; 'data-test-id'?: string };
+export type DropdownGroupProps = { children: ReactNode; heading?: string; 'data-test-id'?: string };
 
 export const DropdownGroup = (
-    { children, 'data-test-id': dataTestId = 'fondue-dropdown-group' }: DropdownGroupProps,
+    { children, heading, 'data-test-id': dataTestId = 'fondue-dropdown-group' }: DropdownGroupProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     return (
         <RadixDropdown.Group className={styles.group} data-test-id={dataTestId} ref={ref}>
+            {heading ? (
+                <div className={styles.groupHeading}>
+                    <span aria-label={heading}>{heading}</span>
+                </div>
+            ) : null}
             {children}
         </RadixDropdown.Group>
     );

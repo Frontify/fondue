@@ -114,6 +114,16 @@
     }
 }
 
+.groupHeading {
+    text-transform: uppercase;
+    line-height: sizeToken.get(8);
+    color: var(--text-color-x-weak);
+    font-size: var(--body-size-small);
+    font-weight: var(--body-weight-strong-number);
+    padding: sizeToken.get(2) sizeToken.get(5) 0;
+    letter-spacing: 1px;
+}
+
 .slot {
     display: flex;
     flex-shrink: 0;

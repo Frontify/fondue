@@ -149,7 +149,7 @@ export const ItemGroups: Story = {
                 <Dropdown.Group>
                     <Dropdown.Item onSelect={() => {}}>Item 5</Dropdown.Item>
                 </Dropdown.Group>
-                <Dropdown.Group>
+                <Dropdown.Group heading="hello world">
                     <Dropdown.Item onSelect={() => {}}>Item 6</Dropdown.Item>
                     <Dropdown.Item onSelect={() => {}}>Item 7</Dropdown.Item>
                     <Dropdown.Item onSelect={() => {}}>Item 8</Dropdown.Item>
