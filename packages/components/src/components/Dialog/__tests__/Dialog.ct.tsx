@@ -469,3 +469,31 @@ test('should have its content to expand to max width set by user', async ({ moun
     await expect(contentElement).toHaveCSS('max-width', '810px');
     await expect(contentElement).toHaveCSS('width', '810px');
 });
+
+test('should focus first input in body when dialog opens', async ({ mount, page }) => {
+    const component = await mount(
+        <Dialog.Root>
+            <Dialog.Trigger>
+                <Button>{DIALOG_TRIGGER_TEXT}</Button>
+            </Dialog.Trigger>
+            <Dialog.Content>
+                <Dialog.Header>{DIALOG_HEADER_TEXT}</Dialog.Header>
+                <Dialog.Body>
+                    <input data-test-id={TEXT_INPUT_TEST_ID_1} />
+                </Dialog.Body>
+            </Dialog.Content>
+        </Dialog.Root>,
+    );
+
+    const dialogTrigger = page.getByTestId(DIALOG_TRIGGER_TEST_ID);
+
+    await expect(component).toBeVisible();
+    await expect(dialogTrigger).toBeVisible();
+
+    await dialogTrigger.focus();
+    await page.keyboard.press('Enter');
+
+    const textInput1 = page.getByTestId(TEXT_INPUT_TEST_ID_1);
+
+    await expect(textInput1).toBeFocused();
+});
