@@ -4,6 +4,10 @@ import { expect, test } from '@playwright/experimental-ct-react';
 
 import { ScrollArea } from '../ScrollArea';
 
+const SCROLLAREA_VIEWPORT_TEST_ID = 'fondue-scroll-area-viewport';
+const SCROLLAREA_SCROLLBAR_VERTICAL_TEST_ID = 'fondue-scroll-area-vertical-scrollbar';
+const SCROLLAREA_SCROLLBAR_HORIZONTAL_TEST_ID = 'fondue-scroll-area-horizontal-scrollbar';
+
 test('renders with default props', async ({ mount }) => {
     const component = await mount(
         <ScrollArea>
@@ -14,7 +18,7 @@ test('renders with default props', async ({ mount }) => {
     await expect(component).toBeVisible();
     await expect(component).toHaveCSS('max-width', '100%');
 
-    const viewport = component.getByTestId('fondue-scroll-area-viewport');
+    const viewport = component.getByTestId(SCROLLAREA_VIEWPORT_TEST_ID);
 
     await expect(viewport).toBeVisible();
     await expect(viewport).toHaveCSS('max-height', '100%');
@@ -30,7 +34,7 @@ test('renders with custom maxHeight and maxWidth', async ({ mount }) => {
     await expect(component).toBeVisible();
     await expect(component).toHaveCSS('max-width', '800px');
 
-    const viewport = component.locator('data-test-id=fondue-scroll-area-viewport');
+    const viewport = component.locator(`data-test-id=${SCROLLAREA_VIEWPORT_TEST_ID}`);
 
     await expect(viewport).toBeVisible();
     await expect(viewport).toHaveCSS('max-height', '500px');
@@ -43,8 +47,8 @@ test('renders scrollbars on hover', async ({ mount }) => {
         </ScrollArea>,
     );
 
-    const verticalScrollbar = component.getByTestId('fondue-scroll-area-vertical-scrollbar');
-    const horizontalScrollbar = component.getByTestId('fondue-scroll-area-horizontal-scrollbar');
+    const verticalScrollbar = component.getByTestId(SCROLLAREA_SCROLLBAR_VERTICAL_TEST_ID);
+    const horizontalScrollbar = component.getByTestId(SCROLLAREA_SCROLLBAR_HORIZONTAL_TEST_ID);
 
     await expect(verticalScrollbar).not.toBeVisible();
     await expect(horizontalScrollbar).not.toBeVisible();
@@ -58,8 +62,8 @@ test('renders scrollbars on hover', async ({ mount }) => {
 test('renders scrollbars always', async ({ mount }) => {
     const component = await mount(<ScrollArea type="always">Scrollable content</ScrollArea>);
 
-    const verticalScrollbar = component.getByTestId('fondue-scroll-area-vertical-scrollbar');
-    const horizontalScrollbar = component.getByTestId('fondue-scroll-area-horizontal-scrollbar');
+    const verticalScrollbar = component.getByTestId(SCROLLAREA_SCROLLBAR_VERTICAL_TEST_ID);
+    const horizontalScrollbar = component.getByTestId(SCROLLAREA_SCROLLBAR_HORIZONTAL_TEST_ID);
 
     await expect(verticalScrollbar).toBeVisible();
     await expect(horizontalScrollbar).toBeVisible();
@@ -72,8 +76,8 @@ test('renders scrollbars only when content overflows (and it does not)', async (
         </ScrollArea>,
     );
 
-    const verticalScrollbar = component.getByTestId('fondue-scroll-area-vertical-scrollbar');
-    const horizontalScrollbar = component.getByTestId('fondue-scroll-area-horizontal-scrollbar');
+    const verticalScrollbar = component.getByTestId(SCROLLAREA_SCROLLBAR_VERTICAL_TEST_ID);
+    const horizontalScrollbar = component.getByTestId(SCROLLAREA_SCROLLBAR_HORIZONTAL_TEST_ID);
 
     await expect(verticalScrollbar).not.toBeVisible();
     await expect(horizontalScrollbar).not.toBeVisible();
@@ -86,8 +90,8 @@ test('renders scrollbars only when content overflows (and it does)', async ({ mo
         </ScrollArea>,
     );
 
-    const verticalScrollbar = component.getByTestId('fondue-scroll-area-vertical-scrollbar');
-    const horizontalScrollbar = component.getByTestId('fondue-scroll-area-horizontal-scrollbar');
+    const verticalScrollbar = component.getByTestId(SCROLLAREA_SCROLLBAR_VERTICAL_TEST_ID);
+    const horizontalScrollbar = component.getByTestId(SCROLLAREA_SCROLLBAR_HORIZONTAL_TEST_ID);
 
     await expect(verticalScrollbar).toBeVisible();
     await expect(horizontalScrollbar).toBeVisible();
@@ -100,8 +104,8 @@ test('renders scrollbars only when scrolling', async ({ mount }) => {
         </ScrollArea>,
     );
 
-    const verticalScrollbar = component.getByTestId('fondue-scroll-area-vertical-scrollbar');
-    const horizontalScrollbar = component.getByTestId('fondue-scroll-area-horizontal-scrollbar');
+    const verticalScrollbar = component.getByTestId(SCROLLAREA_SCROLLBAR_VERTICAL_TEST_ID);
+    const horizontalScrollbar = component.getByTestId(SCROLLAREA_SCROLLBAR_HORIZONTAL_TEST_ID);
 
     await expect(verticalScrollbar).not.toBeVisible();
     await expect(horizontalScrollbar).not.toBeVisible();
@@ -211,7 +215,7 @@ test('should render no padding', async ({ mount, page }) => {
         </ScrollArea>,
     );
 
-    await expect(page.getByTestId('fondue-scroll-area-viewport')).toHaveCSS('padding', '0px');
+    await expect(page.getByTestId(SCROLLAREA_VIEWPORT_TEST_ID)).toHaveCSS('padding', '0px');
 });
 
 test('should render tight padding', async ({ mount, page }) => {
@@ -221,7 +225,7 @@ test('should render tight padding', async ({ mount, page }) => {
         </ScrollArea>,
     );
 
-    await expect(page.getByTestId('fondue-scroll-area-viewport')).toHaveCSS('padding', '8px');
+    await expect(page.getByTestId(SCROLLAREA_VIEWPORT_TEST_ID)).toHaveCSS('padding', '8px');
 });
 
 test('should render compact padding', async ({ mount, page }) => {
@@ -230,7 +234,7 @@ test('should render compact padding', async ({ mount, page }) => {
             <div />
         </ScrollArea>,
     );
-    await expect(page.getByTestId('fondue-scroll-area-viewport')).toHaveCSS('padding', '16px');
+    await expect(page.getByTestId(SCROLLAREA_VIEWPORT_TEST_ID)).toHaveCSS('padding', '16px');
 });
 
 test('should render comfortable padding', async ({ mount, page }) => {
@@ -239,7 +243,7 @@ test('should render comfortable padding', async ({ mount, page }) => {
             <div />
         </ScrollArea>,
     );
-    await expect(page.getByTestId('fondue-scroll-area-viewport')).toHaveCSS('padding', '16px 24px');
+    await expect(page.getByTestId(SCROLLAREA_VIEWPORT_TEST_ID)).toHaveCSS('padding', '16px 24px');
 });
 
 test('should render spacious padding', async ({ mount, page }) => {
@@ -248,5 +252,5 @@ test('should render spacious padding', async ({ mount, page }) => {
             <div />
         </ScrollArea>,
     );
-    await expect(page.getByTestId('fondue-scroll-area-viewport')).toHaveCSS('padding', '24px 40p');
+    await expect(page.getByTestId(SCROLLAREA_VIEWPORT_TEST_ID)).toHaveCSS('padding', '24px 40p');
 });
