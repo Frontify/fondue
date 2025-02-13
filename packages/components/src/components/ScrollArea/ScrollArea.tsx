@@ -25,7 +25,7 @@ export type ScrollAreaProps = {
      */
     maxWidth?: string | number;
     /**
-     * Define the padding of the dialog
+     * Define the padding of the scroll area
      * @default "compact"
      */
     padding?: 'none' | 'tight' | 'compact' | 'comfortable' | 'spacious';
