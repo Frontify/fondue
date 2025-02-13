@@ -245,7 +245,12 @@ export const DialogHeader = (
         >
             <div>{children}</div>
             {showCloseButton && (
-                <RadixDialog.Close role="button" data-test-id={`${dataTestId}-close`} className="tw-cursor-pointer">
+                <RadixDialog.Close
+                    role="button"
+                    data-test-id={`${dataTestId}-close`}
+                    className="tw-cursor-pointer"
+                    tabIndex={-1}
+                >
                     <IconCross size={20} />
                 </RadixDialog.Close>
             )}
