@@ -25,6 +25,11 @@ export type ScrollAreaProps = {
      */
     maxWidth?: string | number;
     /**
+     * Define the padding of the scroll area
+     * @default "compact"
+     */
+    padding?: 'none' | 'tight' | 'compact' | 'comfortable' | 'spacious';
+    /**
      * Determines if a inset shadow should be shown the edge of the component
      */
     showShadow?: boolean;
@@ -38,6 +43,7 @@ const ScrollAreaComponent = (
         maxHeight = '100%',
         maxWidth = '100%',
         showShadow = false,
+        padding,
         children,
         'data-test-id': dataTestId = 'fondue-scroll-area',
     }: ScrollAreaProps,
@@ -54,8 +60,9 @@ const ScrollAreaComponent = (
             <RadixScrollArea.Viewport
                 className={styles.viewport}
                 style={{ maxHeight }}
-                data-test-id={`${dataTestId}-viewport`}
+                data-scroll-padding={padding}
                 data-show-shadow={showShadow}
+                data-test-id={`${dataTestId}-viewport`}
             >
                 {children}
             </RadixScrollArea.Viewport>
