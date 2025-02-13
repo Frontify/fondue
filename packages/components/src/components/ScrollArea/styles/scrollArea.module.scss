@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 @use '../../../utilities/transitions.module.scss';
+@use '../../../utilities/sizeToken.module.scss';
 
 .root {
     height: 100%;
@@ -13,6 +14,22 @@
     width: 100%;
     height: 100%;
     padding-right: var(--scrollbar-size);
+
+    &[data-scroll-padding='tight'] {
+        padding: sizeToken.get(2);
+    }
+
+    &[data-scroll-padding='compact'] {
+        padding: sizeToken.get(2) sizeToken.get(4);
+    }
+
+    &[data-scroll-padding='comfortable'] {
+        padding: sizeToken.get(4) sizeToken.get(6);
+    }
+
+    &[data-scroll-padding='spacious'] {
+        padding: sizeToken.get(6) sizeToken.get(10);
+    }
 
     &[data-show-shadow='true'] {
         box-shadow: inset 0 -15px 8px -10px var(--box-neutral-color);
