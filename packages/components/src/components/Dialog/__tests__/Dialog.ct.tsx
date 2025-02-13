@@ -479,19 +479,21 @@ test('should focus first input in body when dialog opens', async ({ mount, page 
             <Dialog.Content>
                 <Dialog.Header>{DIALOG_HEADER_TEXT}</Dialog.Header>
                 <Dialog.Body>
-                    <TextInput data-test-id={TEXT_INPUT_TEST_ID_1} />
+                    <input data-test-id={TEXT_INPUT_TEST_ID_1} />
                 </Dialog.Body>
             </Dialog.Content>
         </Dialog.Root>,
     );
 
     const dialogTrigger = page.getByTestId(DIALOG_TRIGGER_TEST_ID);
-    const textInput1 = page.getByTestId(TEXT_INPUT_TEST_ID_1);
 
     await expect(component).toBeVisible();
     await expect(dialogTrigger).toBeVisible();
 
-    await dialogTrigger.click();
+    await dialogTrigger.focus();
+    await page.keyboard.press('Enter');
+
+    const textInput1 = page.getByTestId(TEXT_INPUT_TEST_ID_1);
 
     await expect(textInput1).toBeFocused();
 });
