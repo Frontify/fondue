@@ -1,5 +1,13 @@
 # @frontify/fondue-components
 
+## 13.0.1
+
+### Patch Changes
+
+- [#2208](https://github.com/Frontify/fondue/pull/2208) [`4057513`](https://github.com/Frontify/fondue/commit/405751323ebb350ef5c7cc05e229ca926de803cb) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - feat(`ScrollArea`): add padding options
+
+- [#2207](https://github.com/Frontify/fondue/pull/2207) [`d9cae9c`](https://github.com/Frontify/fondue/commit/d9cae9c1d2540a0572d5fdd20320840a043e43fc) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - fix(`Dialog`): first input not focused when header contains close button
+
 ## 13.0.0
 
 ### Minor Changes
