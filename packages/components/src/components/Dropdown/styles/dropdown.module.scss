@@ -19,10 +19,6 @@
         @include shadow.shadow-lg;
     }
 
-    &:focus-within {
-        border-color: var(--line-color-x-strong);
-    }
-
     .item,
     .subTrigger {
         padding: sizeToken.get(2) sizeToken.get(3);
@@ -129,12 +125,13 @@
 
 .groupHeading {
     text-transform: uppercase;
-    line-height: sizeToken.get(8);
+    line-height: sizeToken.get(4);
     color: var(--text-color-x-weak);
-    font-size: var(--body-size-small);
+    font-size: var(--body-size-x-small);
     font-weight: var(--body-weight-strong-number);
     padding: sizeToken.get(2) sizeToken.get(5) 0;
-    letter-spacing: 1px;
+    margin-top: sizeToken.get(1);
+    letter-spacing: 0.8px;
 }
 
 .slot {
