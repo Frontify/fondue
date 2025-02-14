@@ -1,5 +1,15 @@
 # @frontify/fondue-components
 
+## 13.0.2
+
+### Patch Changes
+
+- [#2211](https://github.com/Frontify/fondue/pull/2211) [`eac1127`](https://github.com/Frontify/fondue/commit/eac1127f08a7de3350e4af39eb66e82ebc6a6c76) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: prevent `LoadingCircle`from being squished
+
+- [#2210](https://github.com/Frontify/fondue/pull/2210) [`cf9524e`](https://github.com/Frontify/fondue/commit/cf9524eb50c72c639d287b9f1efd77a1c927f56c) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - fix(`ScrollArea`): missing box-sizing definition
+
+- [#2211](https://github.com/Frontify/fondue/pull/2211) [`eac1127`](https://github.com/Frontify/fondue/commit/eac1127f08a7de3350e4af39eb66e82ebc6a6c76) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: adress issue with alignement of sorting icons in `Table.HeaderCell`
+
 ## 13.0.1
 
 ### Patch Changes
