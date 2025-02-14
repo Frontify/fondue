@@ -70,7 +70,7 @@ export const LinkItems: Story = {
                 <Button>Trigger</Button>
             </Dropdown.Trigger>
             <Dropdown.Content>
-                <Dropdown.Item onSelect={() => {}}>
+                <Dropdown.Item asChild onSelect={() => {}}>
                     <a href="https://frontify.com">
                         Link 1
                         {/* <Dropdown.Slot name="right">
@@ -78,7 +78,7 @@ export const LinkItems: Story = {
                         </Dropdown.Slot> */}
                     </a>
                 </Dropdown.Item>
-                <Dropdown.Item onSelect={() => {}}>
+                <Dropdown.Item asChild onSelect={() => {}}>
                     <a href="https://frontify.com">
                         Link 2
                         <Dropdown.Slot name="left">
