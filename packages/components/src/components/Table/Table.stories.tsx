@@ -282,6 +282,7 @@ export const Sortable: Story = {
                             Name
                         </Table.HeaderCell>
                         <Table.HeaderCell
+                            truncate
                             sortDirection={sortField === 'invited' ? sortDirection : undefined}
                             onSortChange={(direction) => {
                                 setSortField('invited');
@@ -315,7 +316,7 @@ export const Sortable: Story = {
                                     </div>
                                 </div>
                             </Table.RowCell>
-                            <Table.RowCell>{user.invited}</Table.RowCell>
+                            <Table.RowCell truncate>{user.invited}</Table.RowCell>
                             <Table.RowCell>{user.lastSeen}</Table.RowCell>
                         </Table.Row>
                     ))}

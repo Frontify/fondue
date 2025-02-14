@@ -191,6 +191,8 @@ export const TableHeaderCell = forwardRef<HTMLTableCellElement, TableHeaderCellP
             onSortChange(newDirection);
         };
 
+        console.log(typeof children);
+
         return (
             <th
                 ref={cellRef}

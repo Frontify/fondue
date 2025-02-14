@@ -113,10 +113,6 @@
         color: var(--text-color);
     }
 
-    .buttonText {
-        flex: 1;
-    }
-
     &:focus-visible {
         @include focusStyle.focus-outline;
     }
