@@ -1,9 +1,10 @@
 .accordionItem {
+    border-bottom: var(--line-width) solid var(--line-color);
+    color: var(--text-color-weak);
+
     &:first-child {
         border-top: var(--line-width) solid var(--line-color);
     }
-
-    border-bottom: var(--line-width) solid var(--line-color);
 }
 
 .accordionTrigger {
@@ -23,6 +24,7 @@
 
 .accordionContentText {
     padding: 0 var(--space-xl) var(--space-l);
+    color: var(--text-color);
 }
 
 
@@ -30,8 +32,17 @@
     transition: transform 500ms cubic-bezier(0.87, 0, 0.13, 1);
 }
 
-.accordionTrigger[data-state="open"]>.accordionCaret {
-    transform: rotate(180deg);
+.accordionTrigger {
+    &[data-state="open"],
+    &:hover {
+        color: var(--text-color);
+    }
+
+    &[data-state="open"] {
+        &>.accordionCaret {
+            transform: rotate(180deg);
+        }
+    }
 }
 
 
