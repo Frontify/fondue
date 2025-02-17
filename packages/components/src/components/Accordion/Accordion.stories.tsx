@@ -1,6 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { action } from '@storybook/addon-actions';
 import { type Meta, type StoryObj } from '@storybook/react';
+import { useState } from 'react';
+
+import { Button, ColorPicker, Dropdown, Flyout } from '#/index';
 
 import {
     Accordion,
@@ -37,9 +41,12 @@ export default meta;
 export const Default: Story = {
     args: {},
     render: () => {
+        const [isOpen, setIsOpen] = useState(true);
+        const [showContent, setShowContent] = useState(true);
+
         return (
             <Accordion.Root>
-                <Accordion.Item value="plain-text">
+                <Accordion.Item value="accordion-test-1">
                     <Accordion.Header>
                         <Accordion.Trigger>Item with plain text child</Accordion.Trigger>
                     </Accordion.Header>
@@ -51,35 +58,111 @@ export const Default: Story = {
                     </Accordion.Content>
                 </Accordion.Item>
 
-                <Accordion.Item value="plain-text-2">
+                <Accordion.Item value="accordion-test-2">
                     <Accordion.Header>
-                        <Accordion.Trigger>Item with plain text child</Accordion.Trigger>
+                        <Accordion.Trigger>Item with dropdown child</Accordion.Trigger>
                     </Accordion.Header>
                     <Accordion.Content>
-                        Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt
-                        ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo
-                        dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor
-                        sit amet.
+                        <Dropdown.Root>
+                            <Dropdown.Trigger>
+                                <Button>Trigger</Button>
+                            </Dropdown.Trigger>
+                            <Dropdown.Content>
+                                <Dropdown.Item onSelect={function Js() {}}>Item 1</Dropdown.Item>
+                                <Dropdown.Item onSelect={function Js() {}}>Item 2</Dropdown.Item>
+                                <Dropdown.Item onSelect={function Js() {}}>Item 3</Dropdown.Item>
+                            </Dropdown.Content>
+                        </Dropdown.Root>{' '}
                     </Accordion.Content>
                 </Accordion.Item>
 
-                <Accordion.Item value="plain-text-3">
+                <Accordion.Item value="accordion-test-3">
                     <Accordion.Header>
-                        <Accordion.Trigger>Item with plain text child</Accordion.Trigger>
+                        <Accordion.Trigger>Item with flyout child</Accordion.Trigger>
                     </Accordion.Header>
                     <Accordion.Content>
-                        Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt
-                        ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo
-                        dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor
-                        sit amet.
+                        <Flyout.Root>
+                            <Flyout.Trigger>
+                                <Button>Trigger</Button>
+                            </Flyout.Trigger>
+                            <Flyout.Content>
+                                <Flyout.Body>Hello!</Flyout.Body>
+                            </Flyout.Content>
+                        </Flyout.Root>
                     </Accordion.Content>
                 </Accordion.Item>
 
-                <Accordion.Item value="plain-text-4">
+                <Accordion.Item value="accordion-test-4">
                     <Accordion.Header>
-                        <Accordion.Trigger>Item with plain text child</Accordion.Trigger>
+                        <Accordion.Trigger>Item with color picker flyout</Accordion.Trigger>
                     </Accordion.Header>
                     <Accordion.Content>
+                        <Flyout.Root open={isOpen} onOpenChange={setIsOpen}>
+                            <Flyout.Trigger>
+                                <ColorPicker.Input
+                                    aria-label="Color Picker"
+                                    currentColor={{
+                                        alpha: 0.8,
+                                        blue: 50,
+                                        green: 100,
+                                        red: 230,
+                                    }}
+                                    onClear={function () {}}
+                                />
+                            </Flyout.Trigger>
+                            <Flyout.Content maxWidth="600px">
+                                <Flyout.Body>
+                                    <div className="tw-p-2 md:tw-w-[450px]">
+                                        <ColorPicker.Root
+                                            defaultFormat="RGBA"
+                                            currentColor={{
+                                                alpha: 0.8,
+                                                blue: 50,
+                                                green: 100,
+                                                red: 230,
+                                            }}
+                                            onColorChange={function () {}}
+                                        >
+                                            <ColorPicker.Values />
+                                            <ColorPicker.Gradient />
+                                        </ColorPicker.Root>
+                                    </div>
+                                </Flyout.Body>
+                                <Flyout.Footer>
+                                    <Button emphasis="default" onPress={function () {}}>
+                                        Cancel
+                                    </Button>
+                                    <Button onPress={function () {}}>Save</Button>
+                                </Flyout.Footer>
+                            </Flyout.Content>
+                        </Flyout.Root>
+                    </Accordion.Content>
+                </Accordion.Item>
+
+                <Accordion.Item value="accordion-test-5" onClick={() => action('click')}>
+                    <Accordion.Header>
+                        <Accordion.Trigger>Empty item with an onClick callback</Accordion.Trigger>
+                    </Accordion.Header>
+                    <Accordion.Content />
+                </Accordion.Item>
+
+                <Accordion.Item value="accordion-test-5">
+                    <Accordion.Header>
+                        <Accordion.Trigger>Item with resizable content</Accordion.Trigger>
+                    </Accordion.Header>
+                    <Accordion.Content>
+                        <div className={!showContent ? 'tw-hidden' : ''}>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                        </div>
+                        <Button onPress={() => setShowContent(!showContent)}>Toggle Content</Button>
+                    </Accordion.Content>
+                </Accordion.Item>
+
+                <Accordion.Item value="accordion-test-6">
+                    <Accordion.Header>
+                        <Accordion.Trigger>Item without padding</Accordion.Trigger>
+                    </Accordion.Header>
+                    <Accordion.Content padding={false}>
                         Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt
                         ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo
                         dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor

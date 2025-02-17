@@ -6,7 +6,7 @@
         border-top: var(--line-width) solid var(--line-color);
     }
 
-    &:focus-within:not([data-show-focus-ring='false']) {
+    &:has(.accordionTrigger:focus-visible):not([data-show-focus-ring='false']) {
         outline: 4px solid var(--focus-ring-color);
         border-radius: var(--radius);
     }
@@ -28,9 +28,13 @@
     overflow: hidden;
 }
 
+
 .accordionContentText {
     padding: 0 var(--space-xl) var(--space-l);
     color: var(--text-color);
+}
+.accordionContentTextNoPadding {
+    padding: 0;
 }
 
 

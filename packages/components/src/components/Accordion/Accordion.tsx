@@ -2,7 +2,7 @@
 
 import { IconCaretDown } from '@frontify/fondue-icons';
 import * as RadixAccordion from '@radix-ui/react-accordion';
-import { type ReactNode } from 'react';
+import { type MouseEventHandler, type ReactNode } from 'react';
 
 import { cn } from '#/utilities/styleUtilities';
 
@@ -19,9 +19,14 @@ export const AccordionRoot = ({ children, className }: AccordionProps) => {
 };
 AccordionRoot.displayName = 'Accordion.Root';
 
-export type AccordionItemProps = { children?: ReactNode; value: string; className?: string };
+export type AccordionItemProps = {
+    children?: ReactNode;
+    value: string;
+    className?: string;
+    onClick?: MouseEventHandler<HTMLDivElement>;
+};
 
-export const AccordionItem = ({ children, value, className }: AccordionItemProps) => {
+export const AccordionItem = ({ children, value, className, onClick }: AccordionItemProps) => {
     return (
         <RadixAccordion.Item
             className={cn([styles.accordionItem, className])}
@@ -32,6 +37,7 @@ export const AccordionItem = ({ children, value, className }: AccordionItemProps
             onBlur={(event) => {
                 event.currentTarget.dataset.showFocusRing = 'true';
             }}
+            onClick={onClick}
         >
             {children}
         </RadixAccordion.Item>
@@ -58,12 +64,19 @@ export const AccordionTrigger = ({ children, className }: AccordionTriggerProps)
 };
 AccordionTrigger.displayName = 'Accordion.Trigger';
 
-type AccordionContentProps = { children?: ReactNode; className?: string };
+type AccordionContentProps = {
+    children?: ReactNode;
+    className?: string;
+    onClick?: MouseEventHandler<HTMLDivElement>;
+    padding?: boolean;
+};
 
-export const AccordionContent = ({ children, className }: AccordionContentProps) => {
+export const AccordionContent = ({ children, className, onClick, padding = true }: AccordionContentProps) => {
     return (
-        <RadixAccordion.Content className={cn([styles.accordionContent, className])}>
-            <div className={styles.accordionContentText}>{children}</div>
+        <RadixAccordion.Content className={cn([styles.accordionContent, className])} onClick={onClick}>
+            <div className={cn([styles.accordionContentText, !padding && styles.accordionContentTextNoPadding])}>
+                {children}
+            </div>
         </RadixAccordion.Content>
     );
 };
