@@ -1,9 +1,13 @@
-.accordionItem {
+.rootBorder {
     border-bottom: var(--line-width) solid var(--line-color);
+    border-top: var(--line-width) solid var(--line-color);
+}
+
+.accordionItem {
     color: var(--text-color-weak);
 
-    &:first-child {
-        border-top: var(--line-width) solid var(--line-color);
+    &:not(:last-child) {
+        border-bottom: var(--line-width) solid var(--line-color);
     }
 
     &:has(.accordionTrigger:focus-visible):not([data-show-focus-ring='false']) {
@@ -33,8 +37,14 @@
     padding: 0 var(--space-xl) var(--space-l);
     color: var(--text-color);
 }
+
 .accordionContentTextNoPadding {
     padding: 0;
+}
+
+.accordionContentTextDivider {
+    border-top: var(--line-width) solid var(--line-color);
+    padding-top: var(--space-l);
 }
 
 
@@ -43,6 +53,7 @@
 }
 
 .accordionTrigger {
+
     &[data-state="open"],
     &:hover {
         color: var(--text-color);

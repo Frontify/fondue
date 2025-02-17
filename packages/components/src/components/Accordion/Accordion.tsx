@@ -8,11 +8,28 @@ import { cn } from '#/utilities/styleUtilities';
 
 import styles from './styles/accordion.module.scss';
 
-export type AccordionProps = { children?: ReactNode; className?: string };
+export type AccordionProps = {
+    'data-test-id'?: string;
+    border?: boolean;
+    children?: ReactNode;
+    className?: string;
+    disabled?: boolean;
+};
 
-export const AccordionRoot = ({ children, className }: AccordionProps) => {
+export const AccordionRoot = ({
+    'data-test-id': dataTestId = 'fondue-accordion',
+    border = true,
+    children,
+    className,
+    disabled,
+}: AccordionProps) => {
     return (
-        <RadixAccordion.Root className={cn([styles.root, className])} data-test-id="fondue-accordion" type="multiple">
+        <RadixAccordion.Root
+            className={cn([styles.root, border && styles.rootBorder, className])}
+            data-test-id={dataTestId}
+            type="multiple"
+            disabled={disabled}
+        >
             {children}
         </RadixAccordion.Root>
     );
@@ -21,12 +38,13 @@ AccordionRoot.displayName = 'Accordion.Root';
 
 export type AccordionItemProps = {
     children?: ReactNode;
-    value: string;
     className?: string;
+    disabled?: boolean;
     onClick?: MouseEventHandler<HTMLDivElement>;
+    value: string;
 };
 
-export const AccordionItem = ({ children, value, className, onClick }: AccordionItemProps) => {
+export const AccordionItem = ({ children, value, className, onClick, disabled }: AccordionItemProps) => {
     return (
         <RadixAccordion.Item
             className={cn([styles.accordionItem, className])}
@@ -38,6 +56,7 @@ export const AccordionItem = ({ children, value, className, onClick }: Accordion
                 event.currentTarget.dataset.showFocusRing = 'true';
             }}
             onClick={onClick}
+            disabled={disabled}
         >
             {children}
         </RadixAccordion.Item>
@@ -67,14 +86,21 @@ AccordionTrigger.displayName = 'Accordion.Trigger';
 type AccordionContentProps = {
     children?: ReactNode;
     className?: string;
+    divider?: boolean;
     onClick?: MouseEventHandler<HTMLDivElement>;
     padding?: boolean;
 };
 
-export const AccordionContent = ({ children, className, onClick, padding = true }: AccordionContentProps) => {
+export const AccordionContent = ({ children, className, onClick, padding = true, divider }: AccordionContentProps) => {
     return (
         <RadixAccordion.Content className={cn([styles.accordionContent, className])} onClick={onClick}>
-            <div className={cn([styles.accordionContentText, !padding && styles.accordionContentTextNoPadding])}>
+            <div
+                className={cn([
+                    styles.accordionContentText,
+                    !padding && styles.accordionContentTextNoPadding,
+                    divider && styles.accordionContentTextDivider,
+                ])}
+            >
                 {children}
             </div>
         </RadixAccordion.Content>

@@ -56,7 +56,7 @@ export const Default: Story = {
                             </div>
                         </Accordion.Trigger>
                     </Accordion.Header>
-                    <Accordion.Content>
+                    <Accordion.Content divider>
                         Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt
                         ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo
                         dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor
@@ -164,7 +164,7 @@ export const Default: Story = {
                     <Accordion.Content />
                 </Accordion.Item>
 
-                <Accordion.Item value="accordion-test-5">
+                <Accordion.Item value="accordion-test-6">
                     <Accordion.Header>
                         <Accordion.Trigger>Item with resizable content</Accordion.Trigger>
                     </Accordion.Header>
@@ -176,7 +176,7 @@ export const Default: Story = {
                     </Accordion.Content>
                 </Accordion.Item>
 
-                <Accordion.Item value="accordion-test-6">
+                <Accordion.Item value="accordion-test-7">
                     <Accordion.Header>
                         <Accordion.Trigger>Item without padding</Accordion.Trigger>
                     </Accordion.Header>
