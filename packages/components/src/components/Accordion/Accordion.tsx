@@ -3,50 +3,54 @@
 import * as RadixAccordion from '@radix-ui/react-accordion';
 import { type ReactNode } from 'react';
 
+import { cn } from '#/utilities/styleUtilities';
+
 import styles from './styles/accordion.module.scss';
 
-export type AccordionProps = { children?: ReactNode };
+export type AccordionProps = { children?: ReactNode; className?: string };
 
-export const AccordionRoot = ({ children }: AccordionProps) => {
+export const AccordionRoot = ({ children, className }: AccordionProps) => {
     return (
-        <RadixAccordion.Root className={styles.root} data-test-id="fondue-accordion" type="multiple">
+        <RadixAccordion.Root className={cn([styles.root, className])} data-test-id="fondue-accordion" type="multiple">
             {children}
         </RadixAccordion.Root>
     );
 };
 AccordionRoot.displayName = 'Accordion.Root';
 
-export type AccordionItemProps = { children?: ReactNode; value: string };
+export type AccordionItemProps = { children?: ReactNode; value: string; className?: string };
 
-export const AccordionItem = ({ children, value }: AccordionItemProps) => {
+export const AccordionItem = ({ children, value, className }: AccordionItemProps) => {
     return (
-        <RadixAccordion.Item className={styles.accordionItem} value={value}>
+        <RadixAccordion.Item className={cn([styles.accordionItem, className])} value={value}>
             {children}
         </RadixAccordion.Item>
     );
 };
 AccordionItem.displayName = 'Accordion.Item';
 
-export type AccordionHeaderProps = { children?: ReactNode };
+export type AccordionHeaderProps = { children?: ReactNode; className?: string };
 
-export const AccordionHeader = ({ children }: AccordionHeaderProps) => {
-    return <RadixAccordion.Header>{children}</RadixAccordion.Header>;
+export const AccordionHeader = ({ children, className }: AccordionHeaderProps) => {
+    return <RadixAccordion.Header className={cn([className])}>{children}</RadixAccordion.Header>;
 };
 AccordionHeader.displayName = 'Accordion.Header';
 
-export type AccordionTriggerProps = { children?: ReactNode };
+export type AccordionTriggerProps = { children?: ReactNode; className?: string };
 
-export const AccordionTrigger = ({ children }: AccordionTriggerProps) => {
-    console.log(styles);
-
-    return <RadixAccordion.Trigger className={styles.accordionTrigger}>{children}</RadixAccordion.Trigger>;
+export const AccordionTrigger = ({ children, className }: AccordionTriggerProps) => {
+    return (
+        <RadixAccordion.Trigger className={cn([styles.accordionTrigger, className])}>{children}</RadixAccordion.Trigger>
+    );
 };
 AccordionTrigger.displayName = 'Accordion.Trigger';
 
-type AccordionContentProps = { children?: ReactNode };
+type AccordionContentProps = { children?: ReactNode; className?: string };
 
-export const AccordionContent = ({ children }: AccordionContentProps) => {
-    return <RadixAccordion.Content>{children}</RadixAccordion.Content>;
+export const AccordionContent = ({ children, className }: AccordionContentProps) => {
+    return (
+        <RadixAccordion.Content className={cn([styles.accordionContent, className])}>{children}</RadixAccordion.Content>
+    );
 };
 AccordionContent.displayName = 'Accordion.Content';
 

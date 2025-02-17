@@ -6,9 +6,14 @@
     border-bottom: var(--line-width) solid var(--line-color);
 }
 
-
 .accordionTrigger {
     width: 100%;
     text-align: left;
-    padding: 1.5rem 2rem;
+    padding: var(--space-l) var(--space-xl);
+}
+
+.accordionContent {
+    width: 100%;
+    text-align: left;
+    padding: 0 var(--space-xl) var(--space-l);
 }
