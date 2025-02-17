@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconCaretDown } from '@frontify/fondue-icons';
 import * as RadixAccordion from '@radix-ui/react-accordion';
 import { type ReactNode } from 'react';
 
@@ -40,7 +41,10 @@ export type AccordionTriggerProps = { children?: ReactNode; className?: string }
 
 export const AccordionTrigger = ({ children, className }: AccordionTriggerProps) => {
     return (
-        <RadixAccordion.Trigger className={cn([styles.accordionTrigger, className])}>{children}</RadixAccordion.Trigger>
+        <RadixAccordion.Trigger className={cn([styles.accordionTrigger, className])}>
+            {children}
+            <IconCaretDown className={styles.accordionCaret} size="16" />
+        </RadixAccordion.Trigger>
     );
 };
 AccordionTrigger.displayName = 'Accordion.Trigger';
@@ -49,7 +53,9 @@ type AccordionContentProps = { children?: ReactNode; className?: string };
 
 export const AccordionContent = ({ children, className }: AccordionContentProps) => {
     return (
-        <RadixAccordion.Content className={cn([styles.accordionContent, className])}>{children}</RadixAccordion.Content>
+        <RadixAccordion.Content className={cn([styles.accordionContent, className])}>
+            <div className={styles.accordionContentText}>{children}</div>
+        </RadixAccordion.Content>
     );
 };
 AccordionContent.displayName = 'Accordion.Content';

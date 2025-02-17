@@ -10,10 +10,56 @@
     width: 100%;
     text-align: left;
     padding: var(--space-l) var(--space-xl);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .accordionContent {
     width: 100%;
     text-align: left;
+    overflow: hidden;
+}
+
+.accordionContentText {
     padding: 0 var(--space-xl) var(--space-l);
+}
+
+
+.accordionCaret {
+    transition: transform 500ms cubic-bezier(0.87, 0, 0.13, 1);
+}
+
+.accordionTrigger[data-state="open"]>.accordionCaret {
+    transform: rotate(180deg);
+}
+
+
+.accordionContent[data-state="open"] {
+    animation: slideDown 500ms cubic-bezier(0.87, 0, 0.13, 1);
+}
+
+.accordionContent[data-state="closed"] {
+    animation: slideUp 500ms cubic-bezier(0.87, 0, 0.13, 1);
+}
+
+
+@keyframes slideDown {
+    from {
+        height: 0;
+    }
+
+    to {
+        height: var(--radix-accordion-content-height);
+    }
+}
+
+@keyframes slideUp {
+    from {
+        height: var(--radix-accordion-content-height);
+    }
+
+    to {
+        height: 0;
+    }
 }
