@@ -194,11 +194,14 @@ export const DropdownSubContent = (
     { children, 'data-test-id': dataTestId = 'fondue-dropdown-subcontent' }: DropdownSubContentProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
+    const theme = useFondueTheme();
     return (
         <RadixDropdown.Portal>
-            <RadixDropdown.SubContent className={styles.subContent} data-test-id={dataTestId} ref={ref}>
-                {children}
-            </RadixDropdown.SubContent>
+            <ThemeProvider theme={theme}>
+                <RadixDropdown.SubContent className={styles.subContent} data-test-id={dataTestId} ref={ref}>
+                    {children}
+                </RadixDropdown.SubContent>
+            </ThemeProvider>
         </RadixDropdown.Portal>
     );
 };

@@ -192,7 +192,7 @@ export const OverflowingText: Story = {
             </Dropdown.Trigger>
             <Dropdown.Content>
                 <Dropdown.Item onSelect={() => {}}>Item 1</Dropdown.Item>
-                <Dropdown.Item onSelect={() => {}}>
+                <Dropdown.Item asChild onSelect={() => {}}>
                     <a href="https://frontify.com">
                         Link 2 - This is a very long text that overflows the element it is contained in
                         <Dropdown.Slot name="right">
