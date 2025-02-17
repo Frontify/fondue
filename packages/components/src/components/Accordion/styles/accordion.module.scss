@@ -1,0 +1,14 @@
+.accordionItem {
+    &:first-child {
+        border-top: var(--line-width) solid var(--line-color);
+    }
+
+    border-bottom: var(--line-width) solid var(--line-color);
+}
+
+
+.accordionTrigger {
+    width: 100%;
+    text-align: left;
+    padding: 1.5rem 2rem;
+}
