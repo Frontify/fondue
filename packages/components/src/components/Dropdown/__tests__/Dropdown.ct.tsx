@@ -355,7 +355,7 @@ test('should render <a> as the dropdown item', async ({ mount, page }) => {
                 <Button data-test-id={DROPDOWN_TRIGGER_TEST_ID}>Trigger</Button>
             </Dropdown.Trigger>
             <Dropdown.Content side="right" data-test-id={DROPDOWN_CONTENT_TEST_ID}>
-                <Dropdown.Item onSelect={() => {}}>
+                <Dropdown.Item asChild onSelect={() => {}}>
                     <a href="https://frontify.com">Item 1</a>
                 </Dropdown.Item>
             </Dropdown.Content>
