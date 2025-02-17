@@ -23,7 +23,16 @@ export type AccordionItemProps = { children?: ReactNode; value: string; classNam
 
 export const AccordionItem = ({ children, value, className }: AccordionItemProps) => {
     return (
-        <RadixAccordion.Item className={cn([styles.accordionItem, className])} value={value}>
+        <RadixAccordion.Item
+            className={cn([styles.accordionItem, className])}
+            value={value}
+            onPointerDown={(event) => {
+                event.currentTarget.dataset.showFocusRing = 'false';
+            }}
+            onBlur={(event) => {
+                event.currentTarget.dataset.showFocusRing = 'true';
+            }}
+        >
             {children}
         </RadixAccordion.Item>
     );

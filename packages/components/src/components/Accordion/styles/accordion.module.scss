@@ -5,6 +5,11 @@
     &:first-child {
         border-top: var(--line-width) solid var(--line-color);
     }
+
+    &:focus-within:not([data-show-focus-ring='false']) {
+        outline: 4px solid var(--focus-ring-color);
+        border-radius: var(--radius);
+    }
 }
 
 .accordionTrigger {
@@ -14,6 +19,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    outline: 0;
 }
 
 .accordionContent {
