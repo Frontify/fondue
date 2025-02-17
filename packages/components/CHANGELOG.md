@@ -1,5 +1,21 @@
 # @frontify/fondue-components
 
+## 13.0.2
+
+### Patch Changes
+
+- [#2217](https://github.com/Frontify/fondue/pull/2217) [`73cedc9`](https://github.com/Frontify/fondue/commit/73cedc97bb057bcdf12182f5ce7ab104d2992444) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: prevent button text from wrapping
+
+- [#2213](https://github.com/Frontify/fondue/pull/2213) [`a09e65d`](https://github.com/Frontify/fondue/commit/a09e65d7ad3437ea52cfefd3a9ee5902926b366a) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: align dropdown and select styles to fondue designs
+
+- [#2211](https://github.com/Frontify/fondue/pull/2211) [`eac1127`](https://github.com/Frontify/fondue/commit/eac1127f08a7de3350e4af39eb66e82ebc6a6c76) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: prevent `LoadingCircle`from being squished
+
+- [#2218](https://github.com/Frontify/fondue/pull/2218) [`42cadc6`](https://github.com/Frontify/fondue/commit/42cadc619b1671739da49e3ea97cda42a6f46f2f) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: fix broken flyout width on mobile
+
+- [#2210](https://github.com/Frontify/fondue/pull/2210) [`cf9524e`](https://github.com/Frontify/fondue/commit/cf9524eb50c72c639d287b9f1efd77a1c927f56c) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - fix(`ScrollArea`): missing box-sizing definition
+
+- [#2211](https://github.com/Frontify/fondue/pull/2211) [`eac1127`](https://github.com/Frontify/fondue/commit/eac1127f08a7de3350e4af39eb66e82ebc6a6c76) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: adress issue with alignement of sorting icons in `Table.HeaderCell`
+
 ## 13.0.1
 
 ### Patch Changes
