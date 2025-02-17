@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconIcon } from '@frontify/fondue-icons';
 import { action } from '@storybook/addon-actions';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { useState } from 'react';
@@ -46,6 +47,23 @@ export const Default: Story = {
 
         return (
             <Accordion.Root>
+                <Accordion.Item value="accordion-test-0">
+                    <Accordion.Header>
+                        <Accordion.Trigger>
+                            <div className="tw-flex tw-gap-2">
+                                <IconIcon />
+                                Item with icon
+                            </div>
+                        </Accordion.Trigger>
+                    </Accordion.Header>
+                    <Accordion.Content>
+                        Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt
+                        ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo
+                        dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor
+                        sit amet.
+                    </Accordion.Content>
+                </Accordion.Item>
+
                 <Accordion.Item value="accordion-test-1">
                     <Accordion.Header>
                         <Accordion.Trigger>Item with plain text child</Accordion.Trigger>
