@@ -67,26 +67,7 @@ This document describes the changes that you need to make to your code to migrat
 
 ## Components
 
-<details><summary>Thinking</summary>Okay, let me go through the process of creating the migration guide for the Accordion component based on the provided old and new code.
-
-First, I'll compare the old and new implementations. The old Accordion used React Aria and React Stately, with a custom implementation for state management and accessibility. The new version uses Radix UI's Accordion primitives, which likely handle a lot of the accessibility and state management internally.
-
-Looking at the structure, the old code had an Accordion component wrapping AccordionItem children. Each item included a header and content. The new code introduces subcomponents like Root, Item, Header, Trigger, and Content, similar to the Dialog example. This structural change means developers need to adjust their component hierarchy.
-
-Key changes I notice:
-1. **Subcomponents**: The new Accordion uses Root, Item, Header, Trigger, and Content subcomponents. This is a shift from the previous structure where Accordion and AccordionItem were separate.
-2. **State Management**: Previously, state was managed with useTreeState and expandedKeys. Now, it's controlled via Radix's Accordion.Root using defaultValue or value for controlled state, aligning with the Dialog's approach using open and onOpenChange.
-3. **Props**: Some props like ```divider``` and ```border``` are still present but might be applied differently. The ```padding``` prop is now on Accordion.Content. The ```headerComponent``` prop from the old code is replaced by the new Accordion.Trigger component.
-4. **Accessibility**: The old implementation used React Aria hooks for accessibility. The new Radix-based components handle this internally, but require structured subcomponents like Trigger and Content for proper ARIA roles.
-5. **Styling**: Class names have changed, moving from utility classes (tw-) to SCSS modules. Props like ```rounded``` or ```showUnderlay``` aren't present, indicating styling is now handled via CSS modules or Radix's built-in styles.
-
-I also need to address removed props like ```headerComponent``` and ```onKeyDown``` handlers, explaining alternatives in the new structure. The example code conversion shows how an old AccordionItem becomes a composition of Item, Header, Trigger, and Content.
-
-I should highlight required changes, like wrapping everything in Accordion.Root and using the new subcomponents. Also, note that state control is now via Root's props, and each Item must have a unique value.
-
-Finally, ensure the guide follows the same structure as the Dialog example: Changes list, old vs new code, and detailed explanations of subcomponents and props.</details>
-
-### Accordion Migration Guide
+### Accordion
 
 #### Changes:
 - **Component structure** now uses explicit subcomponents:
