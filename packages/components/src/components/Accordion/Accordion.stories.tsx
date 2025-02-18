@@ -39,11 +39,22 @@ const meta: Meta<typeof AccordionRoot> = {
 };
 export default meta;
 
+const useTestStates = () => {
+    const [isOpen, setIsOpen] = useState(true);
+    const [showContent, setShowContent] = useState(true);
+
+    return {
+        isOpen,
+        setIsOpen,
+        showContent,
+        setShowContent,
+    };
+};
+
 export const Default: Story = {
     args: {},
     render: () => {
-        const [isOpen, setIsOpen] = useState(true);
-        const [showContent, setShowContent] = useState(true);
+        const { isOpen, setIsOpen, showContent, setShowContent } = useTestStates();
 
         return (
             <Accordion.Root>
