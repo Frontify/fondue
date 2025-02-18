@@ -39,12 +39,68 @@ const meta: Meta<typeof AccordionRoot> = {
 };
 export default meta;
 
+const ColorFlyOut = () => {
+    const [isOpen, setIsOpen] = useState(true);
+
+    return (
+        <Flyout.Root open={isOpen} onOpenChange={setIsOpen}>
+            <Flyout.Trigger>
+                <ColorPicker.Input
+                    aria-label="Color Picker"
+                    currentColor={{
+                        alpha: 0.8,
+                        blue: 50,
+                        green: 100,
+                        red: 230,
+                    }}
+                    onClear={function () {}}
+                />
+            </Flyout.Trigger>
+            <Flyout.Content maxWidth="600px">
+                <Flyout.Body>
+                    <div className="tw-p-2 md:tw-w-[450px]">
+                        <ColorPicker.Root
+                            defaultFormat="RGBA"
+                            currentColor={{
+                                alpha: 0.8,
+                                blue: 50,
+                                green: 100,
+                                red: 230,
+                            }}
+                            onColorChange={function () {}}
+                        >
+                            <ColorPicker.Values />
+                            <ColorPicker.Gradient />
+                        </ColorPicker.Root>
+                    </div>
+                </Flyout.Body>
+                <Flyout.Footer>
+                    <Button emphasis="default" onPress={function () {}}>
+                        Cancel
+                    </Button>
+                    <Button onPress={function () {}}>Save</Button>
+                </Flyout.Footer>
+            </Flyout.Content>
+        </Flyout.Root>
+    );
+};
+
+const ResizableContent = () => {
+    const [showContent, setShowContent] = useState(true);
+
+    return (
+        <>
+            <div className={!showContent ? 'tw-hidden' : ''}>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+            </div>
+            <Button onPress={() => setShowContent(!showContent)}>Toggle Content</Button>
+        </>
+    );
+};
+
 export const Default: Story = {
     args: {},
     render: () => {
-        const [isOpen, setIsOpen] = useState(true);
-        const [showContent, setShowContent] = useState(true);
-
         return (
             <Accordion.Root>
                 <Accordion.Item value="accordion-test-0">
@@ -115,45 +171,7 @@ export const Default: Story = {
                         <Accordion.Trigger>Item with color picker flyout</Accordion.Trigger>
                     </Accordion.Header>
                     <Accordion.Content>
-                        <Flyout.Root open={isOpen} onOpenChange={setIsOpen}>
-                            <Flyout.Trigger>
-                                <ColorPicker.Input
-                                    aria-label="Color Picker"
-                                    currentColor={{
-                                        alpha: 0.8,
-                                        blue: 50,
-                                        green: 100,
-                                        red: 230,
-                                    }}
-                                    onClear={function () {}}
-                                />
-                            </Flyout.Trigger>
-                            <Flyout.Content maxWidth="600px">
-                                <Flyout.Body>
-                                    <div className="tw-p-2 md:tw-w-[450px]">
-                                        <ColorPicker.Root
-                                            defaultFormat="RGBA"
-                                            currentColor={{
-                                                alpha: 0.8,
-                                                blue: 50,
-                                                green: 100,
-                                                red: 230,
-                                            }}
-                                            onColorChange={function () {}}
-                                        >
-                                            <ColorPicker.Values />
-                                            <ColorPicker.Gradient />
-                                        </ColorPicker.Root>
-                                    </div>
-                                </Flyout.Body>
-                                <Flyout.Footer>
-                                    <Button emphasis="default" onPress={function () {}}>
-                                        Cancel
-                                    </Button>
-                                    <Button onPress={function () {}}>Save</Button>
-                                </Flyout.Footer>
-                            </Flyout.Content>
-                        </Flyout.Root>
+                        <ColorFlyOut />
                     </Accordion.Content>
                 </Accordion.Item>
 
@@ -169,10 +187,7 @@ export const Default: Story = {
                         <Accordion.Trigger>Item with resizable content</Accordion.Trigger>
                     </Accordion.Header>
                     <Accordion.Content>
-                        <div className={!showContent ? 'tw-hidden' : ''}>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        </div>
-                        <Button onPress={() => setShowContent(!showContent)}>Toggle Content</Button>
+                        <ResizableContent />
                     </Accordion.Content>
                 </Accordion.Item>
 
