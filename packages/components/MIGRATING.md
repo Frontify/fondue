@@ -7,6 +7,9 @@ This document describes the changes that you need to make to your code to migrat
 -   [Migration guide](#migration-guide)
     -   [Table of contents](#table-of-contents)
     -   [Components](#components)
+        -   [Accordion](#accordion)
+            -   [Old](#accordion-old)
+            -   [New](#accordion-new)
         -   [Button](#button)
             -   [Old](#button-old)
             -   [New](#button-new)
@@ -63,6 +66,99 @@ This document describes the changes that you need to make to your code to migrat
             -   [New](#tooltip-new)
 
 ## Components
+
+<details><summary>Thinking</summary>Okay, let me go through the process of creating the migration guide for the Accordion component based on the provided old and new code.
+
+First, I'll compare the old and new implementations. The old Accordion used React Aria and React Stately, with a custom implementation for state management and accessibility. The new version uses Radix UI's Accordion primitives, which likely handle a lot of the accessibility and state management internally.
+
+Looking at the structure, the old code had an Accordion component wrapping AccordionItem children. Each item included a header and content. The new code introduces subcomponents like Root, Item, Header, Trigger, and Content, similar to the Dialog example. This structural change means developers need to adjust their component hierarchy.
+
+Key changes I notice:
+1. **Subcomponents**: The new Accordion uses Root, Item, Header, Trigger, and Content subcomponents. This is a shift from the previous structure where Accordion and AccordionItem were separate.
+2. **State Management**: Previously, state was managed with useTreeState and expandedKeys. Now, it's controlled via Radix's Accordion.Root using defaultValue or value for controlled state, aligning with the Dialog's approach using open and onOpenChange.
+3. **Props**: Some props like ```divider``` and ```border``` are still present but might be applied differently. The ```padding``` prop is now on Accordion.Content. The ```headerComponent``` prop from the old code is replaced by the new Accordion.Trigger component.
+4. **Accessibility**: The old implementation used React Aria hooks for accessibility. The new Radix-based components handle this internally, but require structured subcomponents like Trigger and Content for proper ARIA roles.
+5. **Styling**: Class names have changed, moving from utility classes (tw-) to SCSS modules. Props like ```rounded``` or ```showUnderlay``` aren't present, indicating styling is now handled via CSS modules or Radix's built-in styles.
+
+I also need to address removed props like ```headerComponent``` and ```onKeyDown``` handlers, explaining alternatives in the new structure. The example code conversion shows how an old AccordionItem becomes a composition of Item, Header, Trigger, and Content.
+
+I should highlight required changes, like wrapping everything in Accordion.Root and using the new subcomponents. Also, note that state control is now via Root's props, and each Item must have a unique value.
+
+Finally, ensure the guide follows the same structure as the Dialog example: Changes list, old vs new code, and detailed explanations of subcomponents and props.</details>
+
+### Accordion Migration Guide
+
+#### Changes:
+- **Component structure** now uses explicit subcomponents:
+  - ```Accordion.Root``` wraps all accordion items and controls state
+  - ```Accordion.Item``` for each collapsible section (requires unique ```value```)
+  - ```Accordion.Trigger``` for clickable header elements
+  - ```Accordion.Header``` for semantic header container
+  - ```Accordion.Content``` for collapsible content section
+
+- **State management** changed:
+  - Use ```defaultValue```/```value``` on ```Accordion.Root``` for uncontrolled/controlled state
+
+- **Styling changes**:
+  - ```border``` prop now only on ```Accordion.Root```
+  - ```divider``` prop moved to ```Accordion.Content```
+  - ```padding``` prop now on ```Accordion.Content```
+  - Icon handling moved to ```Accordion.Trigger```
+
+- **Removed features**:
+  - ```headerComponent``` prop (use ```Accordion.Trigger``` composition instead)
+  - Custom focus management (handled by Radix)
+  - Automatic last-item activation logic
+
+#### Old
+```tsx
+<Accordion border divider>
+  <AccordionItem
+    header={{ children: 'Header 1', active: true }}
+    padding={false}
+  >
+    Content 1
+  </AccordionItem>
+  <AccordionItem
+    header={{ children: 'Header 2' }}
+  >
+    Content 2
+  </AccordionItem>
+</Accordion>
+```
+
+#### New
+```tsx
+<Accordion.Root border defaultValue={["item1"]}>
+  <Accordion.Item value="item1">
+    <Accordion.Header>
+      <Accordion.Trigger>
+        Header 1
+      </Accordion.Trigger>
+    </Accordion.Header>
+    <Accordion.Content padding={false} divider>
+      Content 1
+    </Accordion.Content>
+  </Accordion.Item>
+
+  <Accordion.Item value="item2">
+    <Accordion.Trigger>
+      Header 2
+    </Accordion.Trigger>
+    <Accordion.Content divider>
+      Content 2
+    </Accordion.Content>
+  </Accordion.Item>
+</Accordion.Root>
+```
+
+#### Upgrade Steps:
+1. Wrap entire accordion in ```Accordion.Root```
+2. Convert each item to ```Accordion.Item``` with unique ```value```
+3. Move header content to ```Accordion.Header```/```Accordion.Trigger```
+4. Convert body content to ```Accordion.Content```
+5. Migrate styling using new ```className```
+
 
 ### Button
 

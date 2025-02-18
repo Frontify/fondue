@@ -10,11 +10,25 @@ import styles from './styles/accordion.module.scss';
 
 export type AccordionProps = {
     'data-test-id'?: string;
+    /**
+     * show or hide the top and bottom border
+     * @default true
+     */
     border?: boolean;
     children?: ReactNode;
     className?: string;
+    /**
+     * The value of the items whose contents are expanded when the accordion is initially rendered. Use
+     * `defaultValue` if you do not need to control the state of an accordion.
+     */
     defaultValue?: string[];
+    /**
+     * Whether or not an accordion is disabled from user interaction.
+     */
     disabled?: boolean;
+    /**
+     * The controlled stateful value of the accordion items whose contents are expanded.
+     */
     value?: string[];
 };
 
@@ -55,8 +69,16 @@ export const AccordionItem = ({
     'data-test-id': dataTestId = 'fondue-accordion-item',
     children,
     className,
+    /**
+     * Whether or not an accordion item is disabled from user interaction.
+     *
+     * @default false
+     */
     disabled,
     onClick,
+    /**
+     * A string value for the accordion item. All items within an accordion should use a unique value.
+     */
     value,
 }: AccordionItemProps) => {
     return (
@@ -106,8 +128,15 @@ type AccordionContentProps = {
     'data-test-id'?: string;
     children?: ReactNode;
     className?: string;
+    /**
+     * adds a divider line between the header and the content
+     */
     divider?: boolean;
     onClick?: MouseEventHandler<HTMLDivElement>;
+    /**
+     * controls if we show paddings around the content
+     * @default treu
+     */
     padding?: boolean;
 };
 
