@@ -24,6 +24,17 @@
     justify-content: space-between;
     align-items: center;
     outline: 0;
+
+    &[data-state="open"],
+    &:hover {
+        color: var(--text-color);
+    }
+
+    &[data-state="open"] {
+        &>.accordionCaret {
+            transform: rotate(180deg);
+        }
+    }
 }
 
 .accordionContent {
@@ -51,21 +62,6 @@
 .accordionCaret {
     transition: transform 500ms cubic-bezier(0.87, 0, 0.13, 1);
 }
-
-.accordionTrigger {
-
-    &[data-state="open"],
-    &:hover {
-        color: var(--text-color);
-    }
-
-    &[data-state="open"] {
-        &>.accordionCaret {
-            transform: rotate(180deg);
-        }
-    }
-}
-
 
 .accordionContent[data-state="open"] {
     animation: slideDown 500ms cubic-bezier(0.87, 0, 0.13, 1);
