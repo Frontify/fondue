@@ -68,6 +68,7 @@
     width: sizeToken.get(4);
     height: sizeToken.get(4);
     border-radius: sizeToken.get(1);
+    border: 1px solid var(--line-color-x-strong);
 }
 
 .actions {
