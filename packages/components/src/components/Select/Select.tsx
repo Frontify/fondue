@@ -61,6 +61,10 @@ export type SelectComponentProps = {
      * The data test id of the select component.
      */
     'data-test-id'?: string;
+    /**
+     * id of the select component
+     */
+    id?: string;
 };
 
 export const SelectInput = (
@@ -74,6 +78,7 @@ export const SelectInput = (
         disabled,
         alignMenu = 'start',
         side = 'bottom',
+        id,
         'aria-label': ariaLabel,
         'data-test-id': dataTestId = 'fondue-select',
     }: SelectComponentProps,
@@ -129,6 +134,7 @@ export const SelectInput = (
                     data-disabled={disabled}
                     data-empty={!selectedItem}
                     data-test-id={dataTestId}
+                    id={id}
                     {...(disabled
                         ? {}
                         : getToggleButtonProps({
