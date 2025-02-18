@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
 import { Accordion } from '../Accordion';
@@ -10,10 +10,15 @@ const ACCORDION_TEXT = 'sample accordion';
 
 describe('Accordion Component', () => {
     it('should render foo text correctly', () => {
-        const { getByTestId } = render(
-            <Accordion.Root data-test-id={ACCORDION_TEST_ID}>{ACCORDION_TEXT}</Accordion.Root>,
+        render(
+            <Accordion.Root data-test-id={ACCORDION_TEST_ID}>
+                <Accordion.Item value="1">
+                    <Accordion.Header>
+                        <Accordion.Trigger>{ACCORDION_TEXT}</Accordion.Trigger>
+                    </Accordion.Header>
+                </Accordion.Item>
+            </Accordion.Root>,
         );
-        const component = getByTestId(ACCORDION_TEST_ID);
-        expect(component).toContain(ACCORDION_TEXT);
+        expect(screen.getByText(ACCORDION_TEXT)).toBeInTheDocument();
     });
 });
