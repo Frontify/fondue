@@ -13,7 +13,9 @@ export type AccordionProps = {
     border?: boolean;
     children?: ReactNode;
     className?: string;
+    defaultValue?: string[];
     disabled?: boolean;
+    value?: string[];
 };
 
 export const AccordionRoot = ({
@@ -21,14 +23,18 @@ export const AccordionRoot = ({
     border = true,
     children,
     className,
+    defaultValue,
     disabled,
+    value,
 }: AccordionProps) => {
     return (
         <RadixAccordion.Root
             className={cn([styles.root, border && styles.rootBorder, className])}
             data-test-id={dataTestId}
-            type="multiple"
+            defaultValue={defaultValue}
             disabled={disabled}
+            type="multiple"
+            value={value}
         >
             {children}
         </RadixAccordion.Root>
@@ -37,6 +43,7 @@ export const AccordionRoot = ({
 AccordionRoot.displayName = 'Accordion.Root';
 
 export type AccordionItemProps = {
+    'data-test-id'?: string;
     children?: ReactNode;
     className?: string;
     disabled?: boolean;
@@ -44,7 +51,14 @@ export type AccordionItemProps = {
     value: string;
 };
 
-export const AccordionItem = ({ children, value, className, onClick, disabled }: AccordionItemProps) => {
+export const AccordionItem = ({
+    'data-test-id': dataTestId = 'fondue-accordion-item',
+    children,
+    className,
+    disabled,
+    onClick,
+    value,
+}: AccordionItemProps) => {
     return (
         <RadixAccordion.Item
             className={cn([styles.accordionItem, className])}
@@ -57,6 +71,7 @@ export const AccordionItem = ({ children, value, className, onClick, disabled }:
             }}
             onClick={onClick}
             disabled={disabled}
+            data-test-id={dataTestId}
         >
             {children}
         </RadixAccordion.Item>
@@ -71,11 +86,15 @@ export const AccordionHeader = ({ children, className }: AccordionHeaderProps) =
 };
 AccordionHeader.displayName = 'Accordion.Header';
 
-export type AccordionTriggerProps = { children?: ReactNode; className?: string };
+export type AccordionTriggerProps = { children?: ReactNode; className?: string; 'data-test-id'?: string };
 
-export const AccordionTrigger = ({ children, className }: AccordionTriggerProps) => {
+export const AccordionTrigger = ({
+    'data-test-id': dataTestId = 'fondue-accordion-trigger',
+    children,
+    className,
+}: AccordionTriggerProps) => {
     return (
-        <RadixAccordion.Trigger className={cn([styles.accordionTrigger, className])}>
+        <RadixAccordion.Trigger className={cn([styles.accordionTrigger, className])} data-test-id={dataTestId}>
             {children}
             <IconCaretDown className={styles.accordionCaret} size="16" />
         </RadixAccordion.Trigger>
@@ -84,6 +103,7 @@ export const AccordionTrigger = ({ children, className }: AccordionTriggerProps)
 AccordionTrigger.displayName = 'Accordion.Trigger';
 
 type AccordionContentProps = {
+    'data-test-id'?: string;
     children?: ReactNode;
     className?: string;
     divider?: boolean;
@@ -91,15 +111,27 @@ type AccordionContentProps = {
     padding?: boolean;
 };
 
-export const AccordionContent = ({ children, className, onClick, padding = true, divider }: AccordionContentProps) => {
+export const AccordionContent = ({
+    'data-test-id': dataTestId = 'collapsible-wrap',
+    children,
+    className,
+    divider,
+    onClick,
+    padding = true,
+}: AccordionContentProps) => {
     return (
-        <RadixAccordion.Content className={cn([styles.accordionContent, className])} onClick={onClick}>
+        <RadixAccordion.Content
+            className={cn([styles.accordionContent, className])}
+            onClick={onClick}
+            data-test-id={dataTestId}
+        >
             <div
                 className={cn([
                     styles.accordionContentText,
                     !padding && styles.accordionContentTextNoPadding,
                     divider && styles.accordionContentTextDivider,
                 ])}
+                data-test-id={`inner-${dataTestId}`}
             >
                 {children}
             </div>

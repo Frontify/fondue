@@ -10,7 +10,9 @@ const ACCORDION_TEXT = 'sample accordion';
 
 describe('Accordion Component', () => {
     it('should render foo text correctly', () => {
-        const { getByTestId } = render(<Accordion data-test-id={ACCORDION_TEST_ID}>{ACCORDION_TEXT}</Accordion>);
+        const { getByTestId } = render(
+            <Accordion.Root data-test-id={ACCORDION_TEST_ID}>{ACCORDION_TEXT}</Accordion.Root>,
+        );
         const component = getByTestId(ACCORDION_TEST_ID);
         expect(component).toContain(ACCORDION_TEXT);
     });
