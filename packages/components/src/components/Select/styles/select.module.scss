@@ -4,6 +4,7 @@
 @use '../../../utilities/focusStyle.module.scss';
 @use '../../../utilities/transitions.module.scss';
 @use '../../../utilities/mediaQuery.module.scss';
+@use '../../../utilities/shadow.module.scss';
 
 .root {
     position: relative;
@@ -226,12 +227,11 @@
     display: none;
     border-radius: var(--radius);
     background-color: var(--base-color);
-    border: var(--line-width) solid var(--line-color-x-strong);
+    border: var(--line-width) solid var(--line-color);
     max-width: calc(100dvw - sizeToken.get(8));
     min-width: var(--radix-popover-trigger-width);
     overflow: auto;
     max-height: var(--radix-popover-content-available-height);
-    padding: sizeToken.get(2) 0;
     color: var(--text-color);
 
     &:has(li[role='option']) {
@@ -239,6 +239,7 @@
     }
 
     & {
+        @include shadow.shadow-lg;
         @include mediaQuery.sm {
             max-width: 500px;
         }
@@ -268,19 +269,38 @@
 .item {
     display: flex;
     justify-content: space-between;
-    padding: sizeToken.get(3) sizeToken.get(5);
+    align-items: center;
+    gap: sizeToken.get(2);
+    padding: sizeToken.get(2) sizeToken.get(3);
+    margin: sizeToken.get(0.5) sizeToken.get(2);
+    border-radius: sizeToken.get(1);
     cursor: pointer;
     text-align: start;
     font-size: var(--body-size-medium);
     line-height: var(--body-size-medium-line-height);
+    color: var(--text-color);
+    outline-style: none;
 
     & {
         @include transitions.transition-colors;
     }
 
+    &:first-child {
+        margin-top: sizeToken.get(2);
+    }
+
+    &:last-child {
+        margin-bottom: sizeToken.get(2);
+    }
+
     &[data-highlighted='true'] {
-        background-color: var(--box-neutral-strong-color);
-        color: var(--box-neutral-strong-inverse-color);
+        background-color: var(--box-neutral-color);
+        color: var(--box-neutral-inverse-color-hover);
+    }
+
+    &[data-highlighted]:active {
+        background-color: var(--box-neutral-color-hover);
+        transition: none;
     }
 
     &[data-selected='true'] {
@@ -291,8 +311,8 @@
 
     .menu[data-has-interacted='false'] &[data-selected='true']:not(:hover),
     &[data-selected='true'][data-highlighted='false'] {
-        background-color: var(--box-selected-color);
-        color: var(--box-selected-inverse-color);
+        background-color: var(--box-neutral-color-hover);
+        color: var(--box-neutral-inverse-color-hover);
     }
 
     .itemValue {

@@ -42,7 +42,7 @@
     }
 
     // Mobile view flyout -> dialog responsiveness
-    body > [data-radix-popper-content-wrapper]:has(&) {
+    body [data-radix-popper-content-wrapper]:has(&) {
         @include mediaQuery.max-sm {
             &:has([data-side='top']),
             &:has([data-side='bottom']) {

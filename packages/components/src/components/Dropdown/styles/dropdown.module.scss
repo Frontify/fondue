@@ -19,10 +19,6 @@
         @include shadow.shadow-lg;
     }
 
-    &:focus-within {
-        border-color: var(--line-color-x-strong);
-    }
-
     .item,
     .subTrigger {
         padding: sizeToken.get(2) sizeToken.get(3);
@@ -45,15 +41,19 @@
 .subTrigger {
     display: flex;
     align-items: center;
-    gap: sizeToken.get(1);
+    gap: sizeToken.get(2);
     margin: sizeToken.get(0.5) sizeToken.get(2);
     border-radius: sizeToken.get(1);
     cursor: pointer;
     text-align: start;
     font-size: var(--body-size-medium);
     line-height: var(--body-size-medium-line-height);
-    color: var(--text-color-weak);
+    color: var(--text-color);
     outline-style: none;
+
+    &:active {
+        transition: none;
+    }
 
     & {
         @include transitions.transition-colors;
@@ -81,9 +81,18 @@
         color: var(--box-neutral-inverse-color-hover);
     }
 
+    &[data-highlighted]:active {
+        background-color: var(--box-neutral-color-hover);
+        transition: none;
+    }
+
     &[data-emphasis='danger'][data-highlighted] {
         background-color: var(--text-color-negative);
         color: var(--box-neutral-strong-inverse-color);
+    }
+
+    &[data-emphasis='danger']:active {
+        background-color: var(--text-color-negative-hover);
     }
 
     &[data-disabled] {
@@ -116,12 +125,13 @@
 
 .groupHeading {
     text-transform: uppercase;
-    line-height: sizeToken.get(8);
+    line-height: sizeToken.get(4);
     color: var(--text-color-x-weak);
-    font-size: var(--body-size-small);
+    font-size: var(--body-size-x-small);
     font-weight: var(--body-weight-strong-number);
     padding: sizeToken.get(2) sizeToken.get(5) 0;
-    letter-spacing: 1px;
+    margin-top: sizeToken.get(1);
+    letter-spacing: 0.8px;
 }
 
 .slot {

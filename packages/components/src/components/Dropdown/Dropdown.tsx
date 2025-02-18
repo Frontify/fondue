@@ -2,7 +2,6 @@
 
 import { IconCaretRight } from '@frontify/fondue-icons';
 import * as RadixDropdown from '@radix-ui/react-dropdown-menu';
-import { Slot } from '@radix-ui/react-slot';
 import { forwardRef, type ForwardedRef, type ReactNode } from 'react';
 
 import { ThemeProvider, useFondueTheme } from '../ThemeProvider/ThemeProvider';
@@ -195,11 +194,14 @@ export const DropdownSubContent = (
     { children, 'data-test-id': dataTestId = 'fondue-dropdown-subcontent' }: DropdownSubContentProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
+    const theme = useFondueTheme();
     return (
         <RadixDropdown.Portal>
-            <RadixDropdown.SubContent className={styles.subContent} data-test-id={dataTestId} ref={ref}>
-                {children}
-            </RadixDropdown.SubContent>
+            <ThemeProvider theme={theme}>
+                <RadixDropdown.SubContent className={styles.subContent} data-test-id={dataTestId} ref={ref}>
+                    {children}
+                </RadixDropdown.SubContent>
+            </ThemeProvider>
         </RadixDropdown.Portal>
     );
 };
@@ -224,6 +226,11 @@ export type DropdownItemProps = {
      * Callback that is called when the item is selected.
      */
     onSelect?: (event: Event) => void;
+    /**
+     * If true, the item props will be passed to the child element.
+     * @default false
+     */
+    asChild?: boolean;
     'data-test-id'?: string;
 };
 
@@ -234,14 +241,13 @@ export const DropdownItem = (
         textValue,
         onSelect,
         emphasis = 'default',
+        asChild = false,
         'data-test-id': dataTestId = 'fondue-dropdown-subtrigger',
         ...props
     }: DropdownItemProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
-    const { content, isLink } = useProcessedChildren(children);
-
-    const Wrapper = isLink ? Slot : 'div';
+    const { content } = useProcessedChildren(children);
 
     return (
         <RadixDropdown.Item
@@ -252,10 +258,10 @@ export const DropdownItem = (
             data-emphasis={emphasis}
             ref={ref}
             disabled={disabled}
-            asChild
+            asChild={asChild}
             {...props}
         >
-            <Wrapper>{content}</Wrapper>
+            {content}
         </RadixDropdown.Item>
     );
 };
