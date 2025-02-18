@@ -32,7 +32,7 @@ const meta: Meta<typeof AccordionRoot> = {
     },
     parameters: {
         status: {
-            type: 'in_progress',
+            type: 'beta',
         },
     },
     args: {},
