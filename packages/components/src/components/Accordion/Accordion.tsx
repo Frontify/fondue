@@ -22,10 +22,6 @@ export type AccordionProps = {
      */
     children?: ReactNode;
     /**
-     * additional classed for custom styling
-     */
-    className?: string;
-    /**
      * The value of the items whose contents are expanded when the accordion is initially rendered. Use
      * `defaultValue` if you do not need to control the state of an accordion.
      */
@@ -44,14 +40,13 @@ export const AccordionRoot = ({
     'data-test-id': dataTestId = 'fondue-accordion',
     border = true,
     children,
-    className,
     defaultValue,
     disabled,
     value,
 }: AccordionProps) => {
     return (
         <RadixAccordion.Root
-            className={cn([styles.root, border && styles.rootBorder, className])}
+            className={cn([styles.root, border && styles.rootBorder])}
             data-test-id={dataTestId}
             defaultValue={defaultValue}
             disabled={disabled}
@@ -67,7 +62,6 @@ AccordionRoot.displayName = 'Accordion.Root';
 export type AccordionItemProps = {
     'data-test-id'?: string;
     children?: ReactNode;
-    className?: string;
     disabled?: boolean;
     onClick?: MouseEventHandler<HTMLDivElement>;
     value: string;
@@ -79,10 +73,6 @@ export const AccordionItem = ({
      * Children of the Accordion item. This should contain the `Accordion.Header` and `Accordion.Content` components
      */
     children,
-    /**
-     * additional classed for custom styling
-     */
-    className,
     /**
      * Whether or not an accordion item is disabled from user interaction.
      *
@@ -100,7 +90,7 @@ export const AccordionItem = ({
 }: AccordionItemProps) => {
     return (
         <RadixAccordion.Item
-            className={cn([styles.accordionItem, className])}
+            className={styles.accordionItem}
             value={value}
             onPointerDown={(event) => {
                 event.currentTarget.dataset.showFocusRing = 'false';
@@ -123,18 +113,14 @@ export type AccordionHeaderProps = {
      * Children of the Accordion header. This should contain `Accordion.Trigger`
      */
     children?: ReactNode;
-    /**
-     * additional classed for custom styling
-     */
-    className?: string;
 };
 
-export const AccordionHeader = ({ children, className }: AccordionHeaderProps) => {
-    return <RadixAccordion.Header className={cn([className])}>{children}</RadixAccordion.Header>;
+export const AccordionHeader = ({ children }: AccordionHeaderProps) => {
+    return <RadixAccordion.Header>{children}</RadixAccordion.Header>;
 };
 AccordionHeader.displayName = 'Accordion.Header';
 
-export type AccordionTriggerProps = { children?: ReactNode; className?: string; 'data-test-id'?: string };
+export type AccordionTriggerProps = { children?: ReactNode; 'data-test-id'?: string };
 
 export const AccordionTrigger = ({
     'data-test-id': dataTestId = 'fondue-accordion-trigger',
@@ -142,13 +128,9 @@ export const AccordionTrigger = ({
      * Children of the Accordion trigger. This contains the actually clickable and visible header content
      */
     children,
-    /**
-     * additional classed for custom styling
-     */
-    className,
 }: AccordionTriggerProps) => {
     return (
-        <RadixAccordion.Trigger className={cn([styles.accordionTrigger, className])} data-test-id={dataTestId}>
+        <RadixAccordion.Trigger className={styles.accordionTrigger} data-test-id={dataTestId}>
             {children}
             <IconCaretDown className={styles.accordionCaret} size="16" />
         </RadixAccordion.Trigger>
@@ -162,10 +144,6 @@ type AccordionContentProps = {
      * Children of the Accordion content. This contains the main content
      */
     children?: ReactNode;
-    /**
-     * additional classed for custom styling
-     */
-    className?: string;
     /**
      * adds a divider line between the header and the content
      */
@@ -184,17 +162,12 @@ type AccordionContentProps = {
 export const AccordionContent = ({
     'data-test-id': dataTestId = 'collapsible-wrap',
     children,
-    className,
     divider,
     onClick,
     padding = 'large',
 }: AccordionContentProps) => {
     return (
-        <RadixAccordion.Content
-            className={cn([styles.accordionContent, className])}
-            onClick={onClick}
-            data-test-id={dataTestId}
-        >
+        <RadixAccordion.Content className={styles.accordionContent} onClick={onClick} data-test-id={dataTestId}>
             <div
                 className={cn([
                     styles.accordionContentText,
