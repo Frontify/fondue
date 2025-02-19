@@ -10,7 +10,7 @@ import styles from './styles/accordion.module.scss';
 
 type AccordionPadding = 'none' | 'small' | 'medium' | 'large';
 
-export type AccordionProps = {
+export type AccordionRootProps = {
     'data-test-id'?: string;
     /**
      * Show or hide the top and bottom border
@@ -43,7 +43,7 @@ export const AccordionRoot = ({
     defaultValue,
     disabled,
     value,
-}: AccordionProps) => {
+}: AccordionRootProps) => {
     return (
         <RadixAccordion.Root
             className={cn([styles.root, border && styles.rootBorder])}
