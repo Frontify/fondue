@@ -54,18 +54,27 @@ export type SelectComponentProps = {
      */
     side?: 'left' | 'right' | 'bottom' | 'top';
     /**
-     * The aria label of the select component.
-     */
-    'aria-label'?: string;
-    /**
      * The data test id of the select component.
      */
     'data-test-id'?: string;
     /**
-     * id of the select component
+     * Id of the select component
      */
     id?: string;
-};
+} & (
+    | {
+          /**
+           * The ID of the label element.
+           */
+          'aria-labelledby': string;
+      }
+    | {
+          /**
+           * The aria label of the select component.
+           */
+          'aria-label': string;
+      }
+);
 
 export const SelectInput = (
     {
@@ -79,8 +88,8 @@ export const SelectInput = (
         alignMenu = 'start',
         side = 'bottom',
         id,
-        'aria-label': ariaLabel,
         'data-test-id': dataTestId = 'fondue-select',
+        ...props
     }: SelectComponentProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
@@ -98,6 +107,8 @@ export const SelectInput = (
             items,
             defaultSelectedItem: defaultItem,
             selectedItem: activeItem,
+            toggleButtonId: id,
+            labelId: 'aria-labelledby' in props ? props['aria-labelledby'] : undefined,
             onIsOpenChange: () => {
                 setHasInteractedSinceOpening(false);
             },
@@ -137,10 +148,9 @@ export const SelectInput = (
                     {...(disabled
                         ? {}
                         : getToggleButtonProps({
-                              'aria-label': ariaLabel,
-                              ...(forwardedRef ? { ref: forwardedRef } : {}),
+                              'aria-label': 'aria-label' in props ? props['aria-label'] : undefined,
+                              ref: forwardedRef,
                           }))}
-                    {...(id ? { id } : {})}
                 >
                     <span className={styles.selectedValue}>{selectedItem ? selectedItem.label : placeholder}</span>
                     {inputSlots}

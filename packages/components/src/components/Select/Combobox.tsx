@@ -45,23 +45,32 @@ export type ComboboxProps = {
      * @default "start"
      */
     alignMenu?: 'start' | 'center' | 'end' /**
-     * Defines the preferred side of the select. It will not be respected if there are collisions with the viewport.
+     * Defines the preferred side of the combobox. It will not be respected if there are collisions with the viewport.
      * @default "bottom"
      */;
     side?: 'left' | 'right' | 'bottom' | 'top';
     /**
-     * The aria label of the combobox component.
-     */
-    'aria-label'?: string;
-    /**
-     * The data test id of the select component.
-     */
-    'data-test-id'?: string;
-    /**
-     * id of the combobox component
+     * Id of the combobox component
      */
     id?: string;
-};
+    /**
+     * The data test id of the combobox component.
+     */
+    'data-test-id'?: string;
+} & (
+    | {
+          /**
+           * The ID of the label element.
+           */
+          'aria-labelledby': string;
+      }
+    | {
+          /**
+           * The aria label of the combobox component.
+           */
+          'aria-label': string;
+      }
+);
 
 export const SelectCombobox = (
     {
@@ -72,11 +81,11 @@ export const SelectCombobox = (
         placeholder = '',
         status = 'neutral',
         disabled,
-        id,
-        'aria-label': ariaLabel,
         'data-test-id': dataTestId = 'fondue-select-combobox',
         alignMenu = 'start',
         side = 'bottom',
+        id,
+        ...props
     }: ComboboxProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
@@ -100,6 +109,8 @@ export const SelectCombobox = (
         selectedItem: getItemByValue(value),
         defaultSelectedItem: getItemByValue(defaultValue),
         defaultHighlightedIndex: 0,
+        toggleButtonId: id,
+        labelId: 'aria-labelledby' in props ? props['aria-labelledby'] : undefined,
         onSelectedItemChange: ({ selectedItem }) => {
             onSelect?.(selectedItem?.value ?? null);
         },
@@ -146,7 +157,7 @@ export const SelectCombobox = (
                 <div ref={forwardedRef} className={styles.root} data-status={valueInvalid ? 'error' : status}>
                     <input
                         {...getInputProps({
-                            'aria-label': ariaLabel,
+                            'aria-label': 'aria-label' in props ? props['aria-label'] : undefined,
                         })}
                         data-test-id={dataTestId}
                         placeholder={placeholder}
@@ -179,9 +190,9 @@ export const SelectCombobox = (
                     )}
                     <div className={styles.icons}>
                         <button
+                            aria-label="toggle menu"
                             {...getToggleButtonProps()}
                             type="button"
-                            aria-label="toggle menu"
                             disabled={disabled}
                             onMouseDown={() => {
                                 wasClicked.current = true;
