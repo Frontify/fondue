@@ -191,7 +191,6 @@ export const SelectCombobox = (
                             }
                         }}
                         onBlur={onBlurHandler}
-                        {...(id ? { id } : {})}
                     />
                     {inputSlots}
                     {clearButton && (
