@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import * as LabelPrimitive from '@radix-ui/react-label';
-import { type ForwardedRef, forwardRef, type ReactNode } from 'react';
+import { type ForwardedRef, forwardRef, type MouseEventHandler, type ReactNode } from 'react';
 
 import { cn } from '#/utilities/styleUtilities';
 
@@ -18,6 +18,7 @@ export type LabelProps = {
      */
     required?: boolean;
     className?: string;
+    onClick?: MouseEventHandler<HTMLLabelElement>;
     'data-test-id'?: string;
 };
 

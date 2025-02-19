@@ -134,13 +134,13 @@ export const SelectInput = (
                     data-disabled={disabled}
                     data-empty={!selectedItem}
                     data-test-id={dataTestId}
-                    id={id}
                     {...(disabled
                         ? {}
                         : getToggleButtonProps({
                               'aria-label': ariaLabel,
                               ...(forwardedRef ? { ref: forwardedRef } : {}),
                           }))}
+                    id={id}
                 >
                     <span className={styles.selectedValue}>{selectedItem ? selectedItem.label : placeholder}</span>
                     {inputSlots}
