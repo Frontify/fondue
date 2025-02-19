@@ -88,8 +88,8 @@ export const WithSelect: Story = {
     render: (args) => {
         return (
             <div className="tw-flex tw-flex-col tw-gap-2">
-                <Label {...args} htmlFor="select" />
-                <Select id="select" placeholder="Select...">
+                <Label {...args} id="label-select" htmlFor="select" />
+                <Select id="select" aria-labelledby="label-select" placeholder="Select...">
                     <Select.Item value="1">Option 1</Select.Item>
                     <Select.Item value="2">Option 2</Select.Item>
                 </Select>
