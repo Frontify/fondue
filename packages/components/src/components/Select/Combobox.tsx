@@ -6,6 +6,8 @@ import { Slot as RadixSlot } from '@radix-ui/react-slot';
 import { useCombobox } from 'downshift';
 import { forwardRef, useMemo, useRef, useState, type FocusEvent, type ForwardedRef, type ReactNode } from 'react';
 
+import { type CommonAriaProps } from '#/helpers/aria';
+
 import { SelectMenu } from './SelectMenu';
 import styles from './styles/select.module.scss';
 import { useSelectData } from './useSelectData';
@@ -57,38 +59,7 @@ export type ComboboxProps = {
      * The data test id of the combobox component.
      */
     'data-test-id'?: string;
-} & (
-    | {
-          /**
-           * The ID of the label element.
-           */
-          'aria-labelledby': string;
-          /**
-           * The aria label of the combobox component.
-           */
-          'aria-label'?: never;
-      }
-    | {
-          /**
-           * The ID of the label element.
-           */
-          'aria-labelledby'?: never;
-          /**
-           * The aria label of the combobox component.
-           */
-          'aria-label': string;
-      }
-    | {
-          /**
-           * The ID of the label element.
-           */
-          'aria-labelledby'?: never;
-          /**
-           * The aria label of the combobox component.
-           */
-          'aria-label'?: never;
-      }
-);
+} & CommonAriaProps;
 
 export const SelectCombobox = (
     {

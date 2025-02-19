@@ -6,6 +6,8 @@ import { Slot as RadixSlot } from '@radix-ui/react-slot';
 import { useSelect } from 'downshift';
 import { forwardRef, useRef, useState, type ForwardedRef, type ReactNode } from 'react';
 
+import { type CommonAriaProps } from '#/helpers/aria';
+
 import { ForwardedRefCombobox } from './Combobox';
 import { ForwardedRefSelectItem, ForwardedRefSelectItemGroup } from './SelectItem';
 import { SelectMenu } from './SelectMenu';
@@ -61,38 +63,7 @@ export type SelectComponentProps = {
      * Id of the select component
      */
     id?: string;
-} & (
-    | {
-          /**
-           * The ID of the label element.
-           */
-          'aria-labelledby': string;
-          /**
-           * The aria label of the select component.
-           */
-          'aria-label'?: never;
-      }
-    | {
-          /**
-           * The ID of the label element.
-           */
-          'aria-labelledby'?: never;
-          /**
-           * The aria label of the select component.
-           */
-          'aria-label': string;
-      }
-    | {
-          /**
-           * The ID of the label element.
-           */
-          'aria-labelledby'?: never;
-          /**
-           * The aria label of the select component.
-           */
-          'aria-label'?: never;
-      }
-);
+} & CommonAriaProps;
 
 export const SelectInput = (
     {
