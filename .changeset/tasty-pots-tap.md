@@ -2,4 +2,4 @@
 "@frontify/fondue-components": minor
 ---
 
-feat(Accordion): migrate accordion form legacy implementation
+feat(Accordion): add new `Accordion` component
