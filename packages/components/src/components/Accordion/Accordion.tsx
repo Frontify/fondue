@@ -8,6 +8,8 @@ import { cn } from '#/utilities/styleUtilities';
 
 import styles from './styles/accordion.module.scss';
 
+type AccordionPadding = 'none' | 'small' | 'medium' | 'large';
+
 export type AccordionProps = {
     'data-test-id'?: string;
     /**
@@ -174,9 +176,9 @@ type AccordionContentProps = {
     onClick?: MouseEventHandler<HTMLDivElement>;
     /**
      * controls if we show paddings around the content
-     * @default treu
+     * @default 'large'
      */
-    padding?: boolean;
+    padding?: AccordionPadding;
 };
 
 export const AccordionContent = ({
@@ -185,7 +187,7 @@ export const AccordionContent = ({
     className,
     divider,
     onClick,
-    padding = true,
+    padding = 'large',
 }: AccordionContentProps) => {
     return (
         <RadixAccordion.Content
@@ -196,7 +198,7 @@ export const AccordionContent = ({
             <div
                 className={cn([
                     styles.accordionContentText,
-                    !padding && styles.accordionContentTextNoPadding,
+                    styles[`accordionContentTextPadding-${padding}`],
                     divider && styles.accordionContentTextDivider,
                 ])}
                 data-test-id={`inner-${dataTestId}`}

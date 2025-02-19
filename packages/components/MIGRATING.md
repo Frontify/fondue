@@ -117,7 +117,7 @@ This document describes the changes that you need to make to your code to migrat
         Header 1
       </Accordion.Trigger>
     </Accordion.Header>
-    <Accordion.Content padding={false} divider>
+    <Accordion.Content padding="none" divider>
       Content 1
     </Accordion.Content>
   </Accordion.Item>
@@ -138,7 +138,6 @@ This document describes the changes that you need to make to your code to migrat
 2. Convert each item to ```Accordion.Item``` with unique ```value```
 3. Move header content to ```Accordion.Header```/```Accordion.Trigger```
 4. Convert body content to ```Accordion.Content```
-5. Migrate styling using new ```className```
 
 
 ### Button

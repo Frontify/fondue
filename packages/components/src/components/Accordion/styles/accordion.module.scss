@@ -43,9 +43,23 @@
     overflow: hidden;
 }
 
+.accordionContentTextPadding-none {
+    padding: 0;
+}
+
+.accordionContentTextPadding-small {
+    padding: 0 var(--space-m) var(--space-s);
+}
+
+.accordionContentTextPadding-medium {
+    padding: 0 var(--space-l) var(--space-m);
+}
+
+.accordionContentTextPadding-large {
+    padding: 0 var(--space-xl) var(--space-l);
+}
 
 .accordionContentText {
-    padding: 0 var(--space-xl) var(--space-l);
     color: var(--text-color);
 }
 
