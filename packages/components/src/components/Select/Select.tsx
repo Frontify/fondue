@@ -140,7 +140,7 @@ export const SelectInput = (
                               'aria-label': ariaLabel,
                               ...(forwardedRef ? { ref: forwardedRef } : {}),
                           }))}
-                    id={id}
+                    {...(id ? { id } : {})}
                 >
                     <span className={styles.selectedValue}>{selectedItem ? selectedItem.label : placeholder}</span>
                     {inputSlots}
