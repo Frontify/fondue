@@ -11,7 +11,7 @@ import styles from './styles/accordion.module.scss';
 export type AccordionProps = {
     'data-test-id'?: string;
     /**
-     * show or hide the top and bottom border
+     * Show or hide the top and bottom border
      * @default true
      */
     border?: boolean;
