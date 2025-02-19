@@ -105,8 +105,8 @@ export const WithCombobox: Story = {
     render: (args) => {
         return (
             <div className="tw-flex tw-flex-col tw-gap-2">
-                <Label {...args} htmlFor="combobox" />
-                <Select.Combobox id="combobox" placeholder="Select...">
+                <Label {...args} id="label-combobox" htmlFor="combobox" />
+                <Select.Combobox id="combobox" aria-labelledby="label-combobox" placeholder="Select...">
                     <Select.Item value="1">Option 1</Select.Item>
                     <Select.Item value="2">Option 2</Select.Item>
                 </Select.Combobox>
