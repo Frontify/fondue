@@ -65,6 +65,9 @@ export type SelectComponentProps = {
      * id of the select component
      */
     id?: string;
+    /**
+     * id of a label which should trigger the select
+     */
     labelId?: string;
 };
 
