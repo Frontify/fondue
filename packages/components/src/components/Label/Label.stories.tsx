@@ -88,7 +88,6 @@ export const WithSelect: Story = {
     render: (args) => {
         return (
             <div className="tw-flex tw-flex-col tw-gap-2">
-                {/* The select is using a 'div' as a trigger, this means we have to trigger it manually. */}
                 <Label {...args} htmlFor="select" />
                 <Select id="select" placeholder="Select...">
                     <Select.Item value="1">Option 1</Select.Item>
@@ -106,7 +105,6 @@ export const WithCombobox: Story = {
     render: (args) => {
         return (
             <div className="tw-flex tw-flex-col tw-gap-2">
-                {/* The select is using a 'div' as a trigger, this means we have to trigger it manually. */}
                 <Label {...args} htmlFor="combobox" />
                 <Select.Combobox id="combobox" placeholder="Select...">
                     <Select.Item value="1">Option 1</Select.Item>
