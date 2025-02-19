@@ -67,12 +67,30 @@ export type SelectComponentProps = {
            * The ID of the label element.
            */
           'aria-labelledby': string;
+          /**
+           * The aria label of the select component.
+           */
+          'aria-label'?: never;
       }
     | {
+          /**
+           * The ID of the label element.
+           */
+          'aria-labelledby'?: never;
           /**
            * The aria label of the select component.
            */
           'aria-label': string;
+      }
+    | {
+          /**
+           * The ID of the label element.
+           */
+          'aria-labelledby'?: never;
+          /**
+           * The aria label of the select component.
+           */
+          'aria-label'?: never;
       }
 );
 

@@ -63,12 +63,30 @@ export type ComboboxProps = {
            * The ID of the label element.
            */
           'aria-labelledby': string;
+          /**
+           * The aria label of the combobox component.
+           */
+          'aria-label'?: never;
       }
     | {
+          /**
+           * The ID of the label element.
+           */
+          'aria-labelledby'?: never;
           /**
            * The aria label of the combobox component.
            */
           'aria-label': string;
+      }
+    | {
+          /**
+           * The ID of the label element.
+           */
+          'aria-labelledby'?: never;
+          /**
+           * The aria label of the combobox component.
+           */
+          'aria-label'?: never;
       }
 );
 
