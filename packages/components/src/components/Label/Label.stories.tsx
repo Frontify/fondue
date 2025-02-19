@@ -88,8 +88,9 @@ export const WithSelect: Story = {
     render: (args) => {
         return (
             <div className="tw-flex tw-flex-col tw-gap-2">
-                <Label {...args} id="select-label" />
-                <Select placeholder="Select..." labelId="select-label">
+                {/* The select is using a 'div' as a trigger, this means we have to trigger it manually. */}
+                <Label {...args} htmlFor="select" onClick={() => document.getElementById('select')?.click()} />
+                <Select id="select" placeholder="Select...">
                     <Select.Item value="1">Option 1</Select.Item>
                     <Select.Item value="2">Option 2</Select.Item>
                 </Select>

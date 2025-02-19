@@ -4,7 +4,7 @@ import { IconCaretDown, IconCheckMark, IconExclamationMarkTriangle } from '@fron
 import * as RadixPopover from '@radix-ui/react-popover';
 import { Slot as RadixSlot } from '@radix-ui/react-slot';
 import { useSelect } from 'downshift';
-import { forwardRef, useLayoutEffect, useMemo, useRef, useState, type ForwardedRef, type ReactNode } from 'react';
+import { forwardRef, useRef, useState, type ForwardedRef, type ReactNode } from 'react';
 
 import { ForwardedRefCombobox } from './Combobox';
 import { ForwardedRefSelectItem, ForwardedRefSelectItemGroup } from './SelectItem';
@@ -65,7 +65,6 @@ export type SelectComponentProps = {
      * id of the select component
      */
     id?: string;
-    labelId?: string;
 };
 
 export const SelectInput = (
@@ -80,7 +79,6 @@ export const SelectInput = (
         alignMenu = 'start',
         side = 'bottom',
         id,
-        labelId,
         'aria-label': ariaLabel,
         'data-test-id': dataTestId = 'fondue-select',
     }: SelectComponentProps,
@@ -97,8 +95,6 @@ export const SelectInput = (
 
     const { getToggleButtonProps, getMenuProps, getItemProps, reset, selectedItem, isOpen, highlightedIndex } =
         useSelect({
-            labelId,
-            id,
             items,
             defaultSelectedItem: defaultItem,
             selectedItem: activeItem,
@@ -113,29 +109,6 @@ export const SelectInput = (
             },
             itemToString: (item) => (item ? item.label : ''),
         });
-
-    const { id: toggleButtonId, ...toggleButtonProps } = useMemo(
-        () =>
-            getToggleButtonProps({
-                'aria-label': ariaLabel,
-                ...(forwardedRef ? { ref: forwardedRef } : {}),
-            }),
-        [ariaLabel, forwardedRef, getToggleButtonProps],
-    );
-
-    useLayoutEffect(() => {
-        const labelClickHandler = () => document.getElementById(toggleButtonId)?.click();
-
-        if (!labelId) {
-            return;
-        }
-
-        document.getElementById(labelId)?.addEventListener('click', labelClickHandler);
-
-        return () => {
-            document.getElementById(labelId)?.removeEventListener('click', labelClickHandler);
-        };
-    }, [labelId, toggleButtonId]);
 
     return (
         <RadixPopover.Root open={isOpen}>
@@ -161,8 +134,13 @@ export const SelectInput = (
                     data-disabled={disabled}
                     data-empty={!selectedItem}
                     data-test-id={dataTestId}
-                    {...(disabled ? {} : toggleButtonProps)}
-                    id={toggleButtonId}
+                    {...(disabled
+                        ? {}
+                        : getToggleButtonProps({
+                              'aria-label': ariaLabel,
+                              ...(forwardedRef ? { ref: forwardedRef } : {}),
+                          }))}
+                    {...(id ? { id } : {})}
                 >
                     <span className={styles.selectedValue}>{selectedItem ? selectedItem.label : placeholder}</span>
                     {inputSlots}
