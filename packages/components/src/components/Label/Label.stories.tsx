@@ -45,25 +45,38 @@ export const Mandatory: Story = {
     },
 };
 
-export const WithTextInput: Story = {
+export const WithCheckbox: Story = {
     args: {
         children: 'Hello World',
     },
     render: (args) => {
-        // Used to get the correct component name in the Storybook of the `TextInput` (instead of `TextInput.Root`)
-        const STextInput = (props: ComponentProps<typeof TextInput>) => <TextInput {...props} />;
-        STextInput.displayName = 'TextInput';
-
         return (
-            <div className="tw-flex tw-flex-col tw-gap-2">
-                <Label {...args} htmlFor="input-text" />
-                <STextInput id="input-text" placeholder="Enter your name" />
+            <div className="tw-flex tw-gap-1.5">
+                <Checkbox id="input-checkbox" aria-labelledby="label" />
+                <Label {...args} id="label" htmlFor="input-checkbox" />
             </div>
         );
     },
 };
 
-export const WithDisabledInput: Story = {
+export const WithCombobox: Story = {
+    args: {
+        children: 'Hello World',
+    },
+    render: (args) => {
+        return (
+            <div className="tw-flex tw-flex-col tw-gap-2">
+                <Label {...args} id="label" htmlFor="combobox" />
+                <Select.Combobox aria-labelledby="label" id="combobox" placeholder="Select...">
+                    <Select.Item value="1">Option 1</Select.Item>
+                    <Select.Item value="2">Option 2</Select.Item>
+                </Select.Combobox>
+            </div>
+        );
+    },
+};
+
+export const WithDisabledTextInput: Story = {
     args: {
         children: 'Hello World',
     },
@@ -88,9 +101,8 @@ export const WithSelect: Story = {
     render: (args) => {
         return (
             <div className="tw-flex tw-flex-col tw-gap-2">
-                {/* The select is using a 'div' as a trigger, this means we have to trigger it manually. */}
-                <Label {...args} htmlFor="select" onClick={() => document.getElementById('select')?.click()} />
-                <Select id="select" placeholder="Select...">
+                <Label {...args} id="label" htmlFor="select" />
+                <Select aria-labelledby="label" id="select" placeholder="Select...">
                     <Select.Item value="1">Option 1</Select.Item>
                     <Select.Item value="2">Option 2</Select.Item>
                 </Select>
@@ -99,7 +111,7 @@ export const WithSelect: Story = {
     },
 };
 
-export const WithCheckbox: Story = {
+export const WithTextInput: Story = {
     args: {
         children: 'Hello World',
     },
@@ -109,9 +121,9 @@ export const WithCheckbox: Story = {
         STextInput.displayName = 'TextInput';
 
         return (
-            <div className="tw-flex tw-gap-1.5">
-                <Checkbox id="input-checkbox" aria-labelledby="label" />
-                <Label {...args} id="label" htmlFor="input-checkbox" />
+            <div className="tw-flex tw-flex-col tw-gap-2">
+                <Label {...args} htmlFor="input-text" />
+                <STextInput id="input-text" placeholder="Enter your name" />
             </div>
         );
     },
