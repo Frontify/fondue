@@ -91,7 +91,11 @@ export const SelectMenu = ({
                 >
                     <ul
                         className={styles.menu}
-                        {...getMenuProps()}
+                        // TODO: fix this accessibility issue
+                        // We are mounting/unmounting the menu on open/close
+                        // We should instead toggle its visibility for accessibility reasons
+                        // https://github.com/downshift-js/downshift?tab=readme-ov-file#getmenuprops
+                        {...getMenuProps({}, { suppressRefError: true })}
                         data-has-interacted={hasInteractedSinceOpening ? 'true' : 'false'}
                         data-test-id="fondue-select-menu"
                     >

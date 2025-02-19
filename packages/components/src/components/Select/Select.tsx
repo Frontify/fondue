@@ -6,6 +6,8 @@ import { Slot as RadixSlot } from '@radix-ui/react-slot';
 import { useSelect } from 'downshift';
 import { forwardRef, useRef, useState, type ForwardedRef, type ReactNode } from 'react';
 
+import { type CommonAriaProps } from '#/helpers/aria';
+
 import { ForwardedRefCombobox } from './Combobox';
 import { ForwardedRefSelectItem, ForwardedRefSelectItemGroup } from './SelectItem';
 import { SelectMenu } from './SelectMenu';
@@ -54,14 +56,14 @@ export type SelectComponentProps = {
      */
     side?: 'left' | 'right' | 'bottom' | 'top';
     /**
-     * The aria label of the select component.
-     */
-    'aria-label'?: string;
-    /**
      * The data test id of the select component.
      */
     'data-test-id'?: string;
-};
+    /**
+     * Id of the select component
+     */
+    id?: string;
+} & CommonAriaProps;
 
 export const SelectInput = (
     {
@@ -74,8 +76,9 @@ export const SelectInput = (
         disabled,
         alignMenu = 'start',
         side = 'bottom',
-        'aria-label': ariaLabel,
+        id,
         'data-test-id': dataTestId = 'fondue-select',
+        ...props
     }: SelectComponentProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
@@ -93,6 +96,8 @@ export const SelectInput = (
             items,
             defaultSelectedItem: defaultItem,
             selectedItem: activeItem,
+            toggleButtonId: id,
+            labelId: 'aria-labelledby' in props ? props['aria-labelledby'] : undefined,
             onIsOpenChange: () => {
                 setHasInteractedSinceOpening(false);
             },
@@ -132,8 +137,8 @@ export const SelectInput = (
                     {...(disabled
                         ? {}
                         : getToggleButtonProps({
-                              'aria-label': ariaLabel,
-                              ...(forwardedRef ? { ref: forwardedRef } : {}),
+                              'aria-label': 'aria-label' in props ? props['aria-label'] : undefined,
+                              ref: forwardedRef,
                           }))}
                 >
                     <span className={styles.selectedValue}>{selectedItem ? selectedItem.label : placeholder}</span>

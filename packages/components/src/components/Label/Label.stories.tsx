@@ -5,6 +5,7 @@ import { type Meta, type StoryObj } from '@storybook/react';
 import { type ComponentProps } from 'react';
 
 import { Checkbox } from '../Checkbox/Checkbox';
+import { Select } from '../Select/Select';
 import { TextInput } from '../TextInput/TextInput';
 import { Tooltip } from '../Tooltip/Tooltip';
 
@@ -37,8 +38,8 @@ export const Mandatory: Story = {
 
         return (
             <div className="tw-flex tw-flex-col tw-gap-2">
-                <Label {...args} htmlFor="input" />
-                <STextInput id="input" placeholder="Enter your name" />
+                <Label {...args} htmlFor="input-mandatory" />
+                <STextInput id="input-mandatory" placeholder="Enter your name" />
             </div>
         );
     },
@@ -55,8 +56,8 @@ export const WithTextInput: Story = {
 
         return (
             <div className="tw-flex tw-flex-col tw-gap-2">
-                <Label {...args} htmlFor="input" />
-                <STextInput id="input" placeholder="Enter your name" />
+                <Label {...args} htmlFor="input-text" />
+                <STextInput id="input-text" placeholder="Enter your name" />
             </div>
         );
     },
@@ -73,8 +74,42 @@ export const WithDisabledInput: Story = {
 
         return (
             <div className="tw-flex tw-flex-col tw-gap-2">
-                <Label {...args} htmlFor="input" />
-                <STextInput id="input" placeholder="Enter your name" disabled />
+                <Label {...args} htmlFor="input-disabled" />
+                <STextInput id="input-disabled" placeholder="Enter your name" disabled />
+            </div>
+        );
+    },
+};
+
+export const WithSelect: Story = {
+    args: {
+        children: 'Hello World',
+    },
+    render: (args) => {
+        return (
+            <div className="tw-flex tw-flex-col tw-gap-2">
+                <Label {...args} id="label-select" htmlFor="select" />
+                <Select id="select" aria-labelledby="label-select" placeholder="Select...">
+                    <Select.Item value="1">Option 1</Select.Item>
+                    <Select.Item value="2">Option 2</Select.Item>
+                </Select>
+            </div>
+        );
+    },
+};
+
+export const WithCombobox: Story = {
+    args: {
+        children: 'Hello World',
+    },
+    render: (args) => {
+        return (
+            <div className="tw-flex tw-flex-col tw-gap-2">
+                <Label {...args} id="label-combobox" htmlFor="combobox" />
+                <Select.Combobox id="combobox" aria-labelledby="label-combobox" placeholder="Select...">
+                    <Select.Item value="1">Option 1</Select.Item>
+                    <Select.Item value="2">Option 2</Select.Item>
+                </Select.Combobox>
             </div>
         );
     },
@@ -91,8 +126,8 @@ export const WithCheckbox: Story = {
 
         return (
             <div className="tw-flex tw-gap-1.5">
-                <Checkbox id="input" aria-labelledby="label" />
-                <Label {...args} id="label" htmlFor="input" />
+                <Checkbox id="input-checkbox" aria-labelledby="label" />
+                <Label {...args} id="label" htmlFor="input-checkbox" />
             </div>
         );
     },
@@ -109,7 +144,7 @@ export const WithTooltip: Story = {
 
         return (
             <div className="tw-flex tw-flex-col tw-gap-1.5">
-                <Label {...args} htmlFor="input">
+                <Label {...args} htmlFor="input-tooltip">
                     Hello World
                     <Tooltip.Root>
                         <Tooltip.Trigger>
@@ -118,7 +153,7 @@ export const WithTooltip: Story = {
                         <Tooltip.Content>Tooltip</Tooltip.Content>
                     </Tooltip.Root>
                 </Label>
-                <STextInput id="input" placeholder="Enter your name" />
+                <STextInput id="input-tooltip" placeholder="Enter your name" />
             </div>
         );
     },
