@@ -22,8 +22,8 @@ export type AccordionProps = {
      */
     children?: ReactNode;
     /**
-     * The value of the items whose contents are expanded when the accordion is initially rendered. Use
-     * `defaultValue` if you do not need to control the state of an accordion.
+     * The value of the items whose contents are expanded when the accordion is initially rendered.
+     * Use `defaultValue` if you do not need to control the state of an accordion.
      */
     defaultValue?: string[];
     /**
