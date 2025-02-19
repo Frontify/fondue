@@ -89,11 +89,29 @@ export const WithSelect: Story = {
         return (
             <div className="tw-flex tw-flex-col tw-gap-2">
                 {/* The select is using a 'div' as a trigger, this means we have to trigger it manually. */}
-                <Label {...args} htmlFor="select" onClick={() => document.getElementById('select')?.click()} />
+                <Label {...args} htmlFor="select" />
                 <Select id="select" placeholder="Select...">
                     <Select.Item value="1">Option 1</Select.Item>
                     <Select.Item value="2">Option 2</Select.Item>
                 </Select>
+            </div>
+        );
+    },
+};
+
+export const WithCombobox: Story = {
+    args: {
+        children: 'Hello World',
+    },
+    render: (args) => {
+        return (
+            <div className="tw-flex tw-flex-col tw-gap-2">
+                {/* The select is using a 'div' as a trigger, this means we have to trigger it manually. */}
+                <Label {...args} htmlFor="combobox" />
+                <Select.Combobox id="combobox" placeholder="Select...">
+                    <Select.Item value="1">Option 1</Select.Item>
+                    <Select.Item value="2">Option 2</Select.Item>
+                </Select.Combobox>
             </div>
         );
     },

@@ -39,6 +39,19 @@ export const LabelComponent = (
                 className,
             )}
             data-test-id={dataTestId}
+            onClick={(event) => {
+                // Add support of Select component, Radix only allows native `select`
+                // but we use `div[role=combobox]` because of downshift
+                // https://github.com/radix-ui/primitives/blob/6e75e117977c9e6ffa939e6951a707f16ba0f95e/packages/react/label/src/label.tsx#L22
+                const targetId = (event.target as HTMLElement).getAttribute('for');
+                const target = targetId ? document.getElementById(targetId) : null;
+
+                if (target && target.getAttribute('role') === 'combobox') {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    target.click();
+                }
+            }}
             {...props}
         />
     );

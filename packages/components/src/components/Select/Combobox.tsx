@@ -57,6 +57,10 @@ export type ComboboxProps = {
      * The data test id of the select component.
      */
     'data-test-id'?: string;
+    /**
+     * id of the combobox component
+     */
+    id?: string;
 };
 
 export const SelectCombobox = (
@@ -68,6 +72,7 @@ export const SelectCombobox = (
         placeholder = '',
         status = 'neutral',
         disabled,
+        id,
         'aria-label': ariaLabel,
         'data-test-id': dataTestId = 'fondue-select-combobox',
         alignMenu = 'start',
@@ -157,6 +162,7 @@ export const SelectCombobox = (
                             }
                         }}
                         onBlur={onBlurHandler}
+                        {...(id ? { id } : {})}
                     />
                     {inputSlots}
                     {clearButton && (
