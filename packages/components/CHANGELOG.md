@@ -1,5 +1,54 @@
 # @frontify/fondue-components
 
+## 13.0.2
+
+### Patch Changes
+
+- [#2217](https://github.com/Frontify/fondue/pull/2217) [`73cedc9`](https://github.com/Frontify/fondue/commit/73cedc97bb057bcdf12182f5ce7ab104d2992444) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: prevent button text from wrapping
+
+- [#2213](https://github.com/Frontify/fondue/pull/2213) [`a09e65d`](https://github.com/Frontify/fondue/commit/a09e65d7ad3437ea52cfefd3a9ee5902926b366a) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: align dropdown and select styles to fondue designs
+
+- [#2211](https://github.com/Frontify/fondue/pull/2211) [`eac1127`](https://github.com/Frontify/fondue/commit/eac1127f08a7de3350e4af39eb66e82ebc6a6c76) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: prevent `LoadingCircle`from being squished
+
+- [#2218](https://github.com/Frontify/fondue/pull/2218) [`42cadc6`](https://github.com/Frontify/fondue/commit/42cadc619b1671739da49e3ea97cda42a6f46f2f) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: fix broken flyout width on mobile
+
+- [#2210](https://github.com/Frontify/fondue/pull/2210) [`cf9524e`](https://github.com/Frontify/fondue/commit/cf9524eb50c72c639d287b9f1efd77a1c927f56c) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - fix(`ScrollArea`): missing box-sizing definition
+
+- [#2211](https://github.com/Frontify/fondue/pull/2211) [`eac1127`](https://github.com/Frontify/fondue/commit/eac1127f08a7de3350e4af39eb66e82ebc6a6c76) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: adress issue with alignement of sorting icons in `Table.HeaderCell`
+
+## 13.0.1
+
+### Patch Changes
+
+- [#2208](https://github.com/Frontify/fondue/pull/2208) [`4057513`](https://github.com/Frontify/fondue/commit/405751323ebb350ef5c7cc05e229ca926de803cb) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - feat(`ScrollArea`): add padding options
+
+- [#2207](https://github.com/Frontify/fondue/pull/2207) [`d9cae9c`](https://github.com/Frontify/fondue/commit/d9cae9c1d2540a0572d5fdd20320840a043e43fc) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - fix(`Dialog`): first input not focused when header contains close button
+
+## 13.0.0
+
+### Minor Changes
+
+- [#2202](https://github.com/Frontify/fondue/pull/2202) [`6dbb300`](https://github.com/Frontify/fondue/commit/6dbb3009e2b1b0b274d19249714e4c5b3ac97fc8) Thanks [@syeo66](https://github.com/syeo66)! - feat(Text): migrate text component
+
+- [#2204](https://github.com/Frontify/fondue/pull/2204) [`752f03b`](https://github.com/Frontify/fondue/commit/752f03bc353aee969d56e6346fbd08372e831b53) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add heading to Dropdown Group
+
+- [#2197](https://github.com/Frontify/fondue/pull/2197) [`969523a`](https://github.com/Frontify/fondue/commit/969523acf6c0823556a160dd4795602de7f9e456) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: Add `LoadingCircle` component
+
+- [#2194](https://github.com/Frontify/fondue/pull/2194) [`7ea17ba`](https://github.com/Frontify/fondue/commit/7ea17ba1a0087a7e18e733e65509bb03d2d1079d) Thanks [@syeo66](https://github.com/syeo66)! - feat(Heading): migrate heading component
+
+- [#2203](https://github.com/Frontify/fondue/pull/2203) [`200384e`](https://github.com/Frontify/fondue/commit/200384e1237e84d33da9fe15a7ab98ac4fe7f855) Thanks [@syeo66](https://github.com/syeo66)! - refactor(Text): remove tag specific props since neither has necessary ones
+
+### Patch Changes
+
+- [#2206](https://github.com/Frontify/fondue/pull/2206) [`cee4391`](https://github.com/Frontify/fondue/commit/cee439106a56089dda74b52e2fa7ef0f354f492a) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: define box-sizing for Table Header Cell to avoid overflow
+
+- [#2205](https://github.com/Frontify/fondue/pull/2205) [`8825fcc`](https://github.com/Frontify/fondue/commit/8825fccb2a23bcdd95a426878fd0b924cb881542) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: add missing export of `LoadingCircle` component
+
+- [#2197](https://github.com/Frontify/fondue/pull/2197) [`969523a`](https://github.com/Frontify/fondue/commit/969523acf6c0823556a160dd4795602de7f9e456) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: Add loading state for Table Header Cell
+
+- Updated dependencies [[`dec28ee`](https://github.com/Frontify/fondue/commit/dec28eeb5d2a0510bfd0dfa8a513e7e058213728)]:
+    - @frontify/fondue-icons@0.13.0
+
 ## 12.0.1
 
 ### Patch Changes

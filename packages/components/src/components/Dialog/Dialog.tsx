@@ -2,8 +2,17 @@
 
 import { IconCross } from '@frontify/fondue-icons';
 import * as RadixDialog from '@radix-ui/react-dialog';
-import { createContext, forwardRef, useContext, type CSSProperties, type ForwardedRef, type ReactNode } from 'react';
+import {
+    createContext,
+    forwardRef,
+    useContext,
+    useRef,
+    type CSSProperties,
+    type ForwardedRef,
+    type ReactNode,
+} from 'react';
 
+import { useSyncRefs } from '#/hooks/useSyncRefs';
 import { addAutoFocusAttribute, addShowFocusRing } from '#/utilities/domUtilities';
 
 import { ThemeProvider, useFondueTheme } from '../ThemeProvider/ThemeProvider';
@@ -194,6 +203,24 @@ export const DialogContent = (
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     const theme = useFondueTheme();
+    const contentRef = useRef<HTMLDivElement>(null);
+
+    useSyncRefs<HTMLDivElement>(contentRef, ref);
+
+    const handleOpenAutoFocus = (event: Event) => {
+        event.preventDefault();
+
+        const dialogBody = contentRef.current?.querySelector('[data-dialog-layout-component="body"]');
+
+        const firstFocusable = dialogBody?.querySelector(
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+        );
+
+        if (firstFocusable instanceof HTMLElement) {
+            firstFocusable.focus();
+        }
+    };
+
     return (
         <RadixDialog.Portal>
             <ThemeProvider theme={theme}>
@@ -206,9 +233,10 @@ export const DialogContent = (
                                 '--dialog-min-height': minHeight,
                             } as CSSProperties
                         }
-                        ref={ref}
+                        ref={contentRef}
                         className={styles.content}
                         onFocus={addShowFocusRing}
+                        onOpenAutoFocus={handleOpenAutoFocus}
                         data-dialog-padding={padding}
                         data-dialog-rounded={rounded}
                         data-test-id={dataTestId}
@@ -241,7 +269,7 @@ export const DialogHeader = (
             className={styles.header}
             data-dialog-header-padding={padding}
             data-show-border={showBorder}
-            data-dialog-layout-component
+            data-dialog-layout-component="header"
         >
             <div>{children}</div>
             {showCloseButton && (
@@ -265,7 +293,7 @@ export const DialogFooter = (
             className={styles.footer}
             data-dialog-footer-padding={padding}
             data-show-border={showBorder}
-            data-dialog-layout-component
+            data-dialog-layout-component="footer"
         >
             {children}
         </div>
@@ -283,7 +311,7 @@ export const DialogBody = (
             ref={ref}
             className={styles.body}
             data-dialog-body-padding={padding}
-            data-dialog-layout-component
+            data-dialog-layout-component="body"
         >
             {children}
         </div>

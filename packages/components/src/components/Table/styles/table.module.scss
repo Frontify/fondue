@@ -92,7 +92,8 @@
     }
 }
 
-.sortButton {
+.cellContent {
+    box-sizing: border-box;
     display: inline-flex;
     width: 100%;
     text-align: inherit;
@@ -110,10 +111,6 @@
 
     &[data-active='true'] {
         color: var(--text-color);
-    }
-
-    .buttonText {
-        flex: 1;
     }
 
     &:focus-visible {
@@ -174,7 +171,7 @@
     &[data-align='left'] {
         text-align: left;
 
-        .sortButton {
+        .cellContent {
             justify-content: flex-start;
         }
     }
@@ -182,7 +179,7 @@
     &[data-align='center'] {
         text-align: center;
 
-        .sortButton {
+        .cellContent {
             justify-content: center;
         }
     }
@@ -190,7 +187,7 @@
     &[data-align='right'] {
         text-align: right;
 
-        .sortButton {
+        .cellContent {
             justify-content: flex-end;
         }
     }

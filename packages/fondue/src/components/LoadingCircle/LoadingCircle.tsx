@@ -36,6 +36,9 @@ export const sizeClasses: Record<LoadingCircleSize, string> = {
     [LoadingCircleSize.Large]: 'tw-w-16 tw-h-16',
 };
 
+/**
+ * @deprecated Please use updated LoadingCircle component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#loading-circle the migration guide}.
+ */
 export const LoadingCircle = ({
     style = LoadingCircleStyle.Progress,
     size = LoadingCircleSize.Medium,

@@ -70,7 +70,7 @@ export const LinkItems: Story = {
                 <Button>Trigger</Button>
             </Dropdown.Trigger>
             <Dropdown.Content>
-                <Dropdown.Item onSelect={() => {}}>
+                <Dropdown.Item asChild onSelect={() => {}}>
                     <a href="https://frontify.com">
                         Link 1
                         {/* <Dropdown.Slot name="right">
@@ -78,7 +78,7 @@ export const LinkItems: Story = {
                         </Dropdown.Slot> */}
                     </a>
                 </Dropdown.Item>
-                <Dropdown.Item onSelect={() => {}}>
+                <Dropdown.Item asChild onSelect={() => {}}>
                     <a href="https://frontify.com">
                         Link 2
                         <Dropdown.Slot name="left">
@@ -149,7 +149,7 @@ export const ItemGroups: Story = {
                 <Dropdown.Group>
                     <Dropdown.Item onSelect={() => {}}>Item 5</Dropdown.Item>
                 </Dropdown.Group>
-                <Dropdown.Group>
+                <Dropdown.Group heading="hello world">
                     <Dropdown.Item onSelect={() => {}}>Item 6</Dropdown.Item>
                     <Dropdown.Item onSelect={() => {}}>Item 7</Dropdown.Item>
                     <Dropdown.Item onSelect={() => {}}>Item 8</Dropdown.Item>
@@ -192,7 +192,7 @@ export const OverflowingText: Story = {
             </Dropdown.Trigger>
             <Dropdown.Content>
                 <Dropdown.Item onSelect={() => {}}>Item 1</Dropdown.Item>
-                <Dropdown.Item onSelect={() => {}}>
+                <Dropdown.Item asChild onSelect={() => {}}>
                     <a href="https://frontify.com">
                         Link 2 - This is a very long text that overflows the element it is contained in
                         <Dropdown.Slot name="right">

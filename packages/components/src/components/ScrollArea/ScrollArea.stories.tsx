@@ -185,3 +185,99 @@ export const WithShadow: Story = {
         );
     },
 };
+
+export const WithTightPadding: Story = {
+    render: () => {
+        return (
+            <ScrollArea type="scroll" maxHeight={200} maxWidth={300} padding="tight">
+                <p>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec dui in nunc ultricies ornare.
+                    Quisque auctor, nunc nec aliquam fermentum, odio turpis ultricies elit, in ultricies nunc justo
+                    vitae purus. Integer auctor, libero in ultricies tincidunt, odio libero posuere justo, vel ultricies
+                    nunc justo vitae purus. Integer auctor, libero in ultricies tincidunt, odio libero posuere justo,
+                    vel ultricies nunc justo vitae purus. Integer auctor, libero in ultricies tincidunt, odio libero
+                    posuere justo, vel ultricies nunc justo vitae purus. Integer auctor, libero in ultricies tincidunt,
+                    odio libero posuere justo, vel ultricies nunc justo vitae purus. Integer auctor, libero in ultricies
+                    tincidunt, odio libero posuere justo, vel ultricies nunc justo vitae purus. Integer auctor, libero
+                    in ultricies tincidunt, odio libero posuere justo, vel ultricies nunc justo vitae purus. Integer
+                    auctor, libero in ultricies tincidunt, odio libero posuere justo, vel ultricies nunc justo vitae
+                    purus. Integer auctor, libero in ultricies tincidunt, odio libero posuere justo, vel ultricies nunc
+                    justo vitae purus. Integer auctor, libero in ultricies tincidunt, odio libero posuere justo, vel
+                    ultricies nunc justo vitae purus.
+                </p>
+            </ScrollArea>
+        );
+    },
+};
+
+export const WithCompactPadding: Story = {
+    render: () => {
+        return (
+            <ScrollArea type="scroll" maxHeight={200} maxWidth={300} padding="compact">
+                <p>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec dui in nunc ultricies ornare.
+                    Quisque auctor, nunc nec aliquam fermentum, odio turpis ultricies elit, in ultricies nunc justo
+                    vitae purus. Integer auctor, libero in ultricies tincidunt, odio libero posuere justo, vel ultricies
+                    nunc justo vitae purus. Integer auctor, libero in ultricies tincidunt, odio libero posuere justo,
+                    vel ultricies nunc justo vitae purus. Integer auctor, libero in ultricies tincidunt, odio libero
+                    posuere justo, vel ultricies nunc justo vitae purus. Integer auctor, libero in ultricies tincidunt,
+                    odio libero posuere justo, vel ultricies nunc justo vitae purus. Integer auctor, libero in ultricies
+                    tincidunt, odio libero posuere justo, vel ultricies nunc justo vitae purus. Integer auctor, libero
+                    in ultricies tincidunt, odio libero posuere justo, vel ultricies nunc justo vitae purus. Integer
+                    auctor, libero in ultricies tincidunt, odio libero posuere justo, vel ultricies nunc justo vitae
+                    purus. Integer auctor, libero in ultricies tincidunt, odio libero posuere justo, vel ultricies nunc
+                    justo vitae purus. Integer auctor, libero in ultricies tincidunt, odio libero posuere justo, vel
+                    ultricies nunc justo vitae purus.
+                </p>
+            </ScrollArea>
+        );
+    },
+};
+
+export const WithComfortablePadding: Story = {
+    render: () => {
+        return (
+            <ScrollArea type="scroll" maxHeight={200} maxWidth={300} padding="comfortable">
+                <p>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec dui in nunc ultricies ornare.
+                    Quisque auctor, nunc nec aliquam fermentum, odio turpis ultricies elit, in ultricies nunc justo
+                    vitae purus. Integer auctor, libero in ultricies tincidunt, odio libero posuere justo, vel ultricies
+                    nunc justo vitae purus. Integer auctor, libero in ultricies tincidunt, odio libero posuere justo,
+                    vel ultricies nunc justo vitae purus. Integer auctor, libero in ultricies tincidunt, odio libero
+                    posuere justo, vel ultricies nunc justo vitae purus. Integer auctor, libero in ultricies tincidunt,
+                    odio libero posuere justo, vel ultricies nunc justo vitae purus. Integer auctor, libero in ultricies
+                    tincidunt, odio libero posuere justo, vel ultricies nunc justo vitae purus. Integer auctor, libero
+                    in ultricies tincidunt, odio libero posuere justo, vel ultricies nunc justo vitae purus. Integer
+                    auctor, libero in ultricies tincidunt, odio libero posuere justo, vel ultricies nunc justo vitae
+                    purus. Integer auctor, libero in ultricies tincidunt, odio libero posuere justo, vel ultricies nunc
+                    justo vitae purus. Integer auctor, libero in ultricies tincidunt, odio libero posuere justo, vel
+                    ultricies nunc justo vitae purus.
+                </p>
+            </ScrollArea>
+        );
+    },
+};
+
+export const WithSpaciousPadding: Story = {
+    render: () => {
+        return (
+            <ScrollArea type="scroll" maxHeight={200} maxWidth={300} padding="spacious">
+                <p>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec dui in nunc ultricies ornare.
+                    Quisque auctor, nunc nec aliquam fermentum, odio turpis ultricies elit, in ultricies nunc justo
+                    vitae purus. Integer auctor, libero in ultricies tincidunt, odio libero posuere justo, vel ultricies
+                    nunc justo vitae purus. Integer auctor, libero in ultricies tincidunt, odio libero posuere justo,
+                    vel ultricies nunc justo vitae purus. Integer auctor, libero in ultricies tincidunt, odio libero
+                    posuere justo, vel ultricies nunc justo vitae purus. Integer auctor, libero in ultricies tincidunt,
+                    odio libero posuere justo, vel ultricies nunc justo vitae purus. Integer auctor, libero in ultricies
+                    tincidunt, odio libero posuere justo, vel ultricies nunc justo vitae purus. Integer auctor, libero
+                    in ultricies tincidunt, odio libero posuere justo, vel ultricies nunc justo vitae purus. Integer
+                    auctor, libero in ultricies tincidunt, odio libero posuere justo, vel ultricies nunc justo vitae
+                    purus. Integer auctor, libero in ultricies tincidunt, odio libero posuere justo, vel ultricies nunc
+                    justo vitae purus. Integer auctor, libero in ultricies tincidunt, odio libero posuere justo, vel
+                    ultricies nunc justo vitae purus.
+                </p>
+            </ScrollArea>
+        );
+    },
+};

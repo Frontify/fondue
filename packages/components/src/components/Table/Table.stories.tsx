@@ -2,7 +2,7 @@
 
 import { IconFunnel, IconMagnifier, IconPen, IconTrashBin } from '@frontify/fondue-icons';
 import { type Meta, type StoryObj } from '@storybook/react';
-import { useState, useMemo, type FormEvent } from 'react';
+import { useMemo, useState, type FormEvent } from 'react';
 
 import { Button } from '../Button/Button';
 import { Checkbox } from '../Checkbox/Checkbox';
@@ -11,7 +11,7 @@ import { Flex } from '../Flex/Flex';
 import { Switch } from '../Switch/Switch';
 import { TextInput } from '../TextInput/TextInput';
 
-import { Table, TableHeader, TableRoot, TableHeaderCell, TableBody, TableRow, TableRowCell } from './Table';
+import { Table, TableBody, TableHeader, TableHeaderCell, TableRoot, TableRow, TableRowCell } from './Table';
 
 type Story = StoryObj<typeof meta>;
 const meta: Meta<typeof TableRoot> = {
@@ -282,11 +282,14 @@ export const Sortable: Story = {
                             Name
                         </Table.HeaderCell>
                         <Table.HeaderCell
+                            truncate
                             sortDirection={sortField === 'invited' ? sortDirection : undefined}
                             onSortChange={(direction) => {
                                 setSortField('invited');
                                 setSortDirection(direction);
                             }}
+                            state="loading"
+                            loadingStateAriaLabel="Loading Data"
                         >
                             Invited by
                         </Table.HeaderCell>
@@ -313,7 +316,7 @@ export const Sortable: Story = {
                                     </div>
                                 </div>
                             </Table.RowCell>
-                            <Table.RowCell>{user.invited}</Table.RowCell>
+                            <Table.RowCell truncate>{user.invited}</Table.RowCell>
                             <Table.RowCell>{user.lastSeen}</Table.RowCell>
                         </Table.Row>
                     ))}

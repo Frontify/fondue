@@ -10,6 +10,7 @@ import { Dropdown } from '../Dropdown';
 
 const DROPDOWN_TRIGGER_TEST_ID = 'fondue-dropdown-trigger';
 const DROPDOWN_CONTENT_TEST_ID = 'fondue-dropdown-content';
+const DROPDOWN_GROUP_TEST_ID = 'fondue-dropdown-group';
 const DROPDOWN_SUB_TRIGGER_TEST_ID = 'fondue-dropdown-sub-trigger';
 const DROPDOWN_SUB_CONTENT_TEST_ID = 'fondue-dropdown-sub-content';
 const DROPDOWN_ITEM_TEST_ID = 'fondue-dropdown-item';
@@ -354,7 +355,7 @@ test('should render <a> as the dropdown item', async ({ mount, page }) => {
                 <Button data-test-id={DROPDOWN_TRIGGER_TEST_ID}>Trigger</Button>
             </Dropdown.Trigger>
             <Dropdown.Content side="right" data-test-id={DROPDOWN_CONTENT_TEST_ID}>
-                <Dropdown.Item onSelect={() => {}}>
+                <Dropdown.Item asChild onSelect={() => {}}>
                     <a href="https://frontify.com">Item 1</a>
                 </Dropdown.Item>
             </Dropdown.Content>
@@ -394,4 +395,39 @@ test('should not focus trigger on close', async ({ mount, page }) => {
     await dropdownContentElement.getByRole('menuitem').first().focus();
     await page.mouse.click(0, 0);
     await expect(triggerElement).not.toBeFocused();
+});
+
+test('should render group with heading', async ({ mount, page }) => {
+    const component = await mount(
+        <Dropdown.Root>
+            <Dropdown.Trigger>
+                <Button data-test-id={DROPDOWN_TRIGGER_TEST_ID}>Trigger</Button>
+            </Dropdown.Trigger>
+            <Dropdown.Content data-test-id={DROPDOWN_CONTENT_TEST_ID}>
+                <Dropdown.Item onSelect={() => {}}>Item 1</Dropdown.Item>
+                <Dropdown.Item onSelect={() => {}}>Item 2</Dropdown.Item>
+                <Dropdown.Item onSelect={() => {}}>Item 3</Dropdown.Item>
+                <Dropdown.SubMenu>
+                    <Dropdown.SubTrigger>Item 4</Dropdown.SubTrigger>
+                    <Dropdown.SubContent>
+                        <Dropdown.Item onSelect={() => {}}>Item 4.1</Dropdown.Item>
+                        <Dropdown.Item onSelect={() => {}}>Item 4.2</Dropdown.Item>
+                        <Dropdown.Item onSelect={() => {}}>Item 4.3</Dropdown.Item>
+                    </Dropdown.SubContent>
+                </Dropdown.SubMenu>
+                <Dropdown.Group data-test-id={DROPDOWN_GROUP_TEST_ID} heading="hello world">
+                    <Dropdown.Item onSelect={() => {}}>Item 5</Dropdown.Item>
+                    <Dropdown.Item onSelect={() => {}}>Item 6</Dropdown.Item>
+                </Dropdown.Group>
+            </Dropdown.Content>
+        </Dropdown.Root>,
+    );
+    await expect(component).toBeVisible();
+    await expect(page.getByTestId(DROPDOWN_TRIGGER_TEST_ID)).toBeVisible();
+    await page.getByTestId(DROPDOWN_TRIGGER_TEST_ID).focus();
+    await page.keyboard.press('Enter');
+    await expect(page.getByTestId(DROPDOWN_CONTENT_TEST_ID)).toBeVisible();
+    const groupHeading = page.getByTestId(DROPDOWN_GROUP_TEST_ID).getByText('hello world');
+    await expect(groupHeading).toBeVisible();
+    await expect(groupHeading).toHaveAttribute('aria-label', 'hello world');
 });
