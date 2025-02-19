@@ -4,16 +4,7 @@ import { IconCaretDown, IconCheckMark, IconExclamationMarkTriangle } from '@fron
 import * as RadixPopover from '@radix-ui/react-popover';
 import { Slot as RadixSlot } from '@radix-ui/react-slot';
 import { useCombobox } from 'downshift';
-import {
-    forwardRef,
-    useLayoutEffect,
-    useMemo,
-    useRef,
-    useState,
-    type FocusEvent,
-    type ForwardedRef,
-    type ReactNode,
-} from 'react';
+import { forwardRef, useMemo, useRef, useState, type FocusEvent, type ForwardedRef, type ReactNode } from 'react';
 
 import { SelectMenu } from './SelectMenu';
 import styles from './styles/select.module.scss';
@@ -66,14 +57,6 @@ export type ComboboxProps = {
      * The data test id of the select component.
      */
     'data-test-id'?: string;
-    /**
-     * id of the select component
-     */
-    id?: string;
-    /**
-     * id of a label which should trigger the combobox
-     */
-    labelId?: string;
 };
 
 export const SelectCombobox = (
@@ -89,8 +72,6 @@ export const SelectCombobox = (
         'data-test-id': dataTestId = 'fondue-select-combobox',
         alignMenu = 'start',
         side = 'bottom',
-        id,
-        labelId,
     }: ComboboxProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
@@ -110,8 +91,6 @@ export const SelectCombobox = (
         highlightedIndex,
         inputValue,
     } = useCombobox({
-        labelId,
-        id,
         items,
         selectedItem: getItemByValue(value),
         defaultSelectedItem: getItemByValue(defaultValue),
@@ -156,22 +135,6 @@ export const SelectCombobox = (
         }
     };
 
-    const { id: toggleButtonId, ...toggleButtonProps } = useMemo(() => getToggleButtonProps(), [getToggleButtonProps]);
-
-    useLayoutEffect(() => {
-        const labelClickHandler = () => document.getElementById(toggleButtonId)?.click();
-
-        if (!labelId) {
-            return;
-        }
-
-        document.getElementById(labelId)?.addEventListener('click', labelClickHandler);
-
-        return () => {
-            document.getElementById(labelId)?.removeEventListener('click', labelClickHandler);
-        };
-    }, [labelId, toggleButtonId]);
-
     return (
         <RadixPopover.Root open={isOpen}>
             <RadixPopover.Anchor asChild>
@@ -210,8 +173,7 @@ export const SelectCombobox = (
                     )}
                     <div className={styles.icons}>
                         <button
-                            {...toggleButtonProps}
-                            id={toggleButtonId}
+                            {...getToggleButtonProps()}
                             type="button"
                             aria-label="toggle menu"
                             disabled={disabled}
