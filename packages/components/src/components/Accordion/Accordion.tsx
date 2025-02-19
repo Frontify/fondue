@@ -80,7 +80,7 @@ export const AccordionItem = ({
      */
     disabled,
     /**
-     * click callback for this item
+     * Click callback for this item.
      */
     onClick,
     /**
@@ -141,19 +141,19 @@ AccordionTrigger.displayName = 'Accordion.Trigger';
 type AccordionContentProps = {
     'data-test-id'?: string;
     /**
-     * Children of the Accordion content. This contains the main content
+     * Children of the Accordion content. This contains the main content.
      */
     children?: ReactNode;
     /**
-     * adds a divider line between the header and the content
+     * Adds a divider line between the header and the content.
      */
     divider?: boolean;
     /**
-     * click callback for the content
+     * Click callback for the content.
      */
     onClick?: MouseEventHandler<HTMLDivElement>;
     /**
-     * controls if we show paddings around the content
+     * Controls if we show paddings around the content.
      * @default 'large'
      */
     padding?: AccordionPadding;
