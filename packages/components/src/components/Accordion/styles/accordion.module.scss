@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-.rootBorder {
+.root[data-border="true"] {
     border-bottom: var(--line-width) solid var(--line-color);
     border-top: var(--line-width) solid var(--line-color);
 }

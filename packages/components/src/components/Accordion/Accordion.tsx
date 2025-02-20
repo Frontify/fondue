@@ -46,12 +46,13 @@ export const AccordionRoot = ({
 }: AccordionRootProps) => {
     return (
         <RadixAccordion.Root
-            className={cn([styles.root, border && styles.rootBorder])}
+            className={styles.root}
             data-test-id={dataTestId}
             defaultValue={defaultValue}
             disabled={disabled}
             type="multiple"
             value={value}
+            data-border={border}
         >
             {children}
         </RadixAccordion.Root>

@@ -100,9 +100,9 @@ const ResizableContent = () => {
 
 export const Default: Story = {
     args: {},
-    render: () => {
+    render: (args) => {
         return (
-            <Accordion.Root>
+            <Accordion.Root {...args}>
                 <Accordion.Item value="accordion-test-0">
                     <Accordion.Header>
                         <Accordion.Trigger>
