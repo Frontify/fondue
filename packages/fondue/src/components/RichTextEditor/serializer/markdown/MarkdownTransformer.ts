@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { InitPlateEditor } from '@components/RichTextEditor/utils';
 import { type PlateEditor } from '@udecode/plate-core';
+
+import { InitPlateEditor } from '@components/RichTextEditor/utils';
 
 import { type Transformer } from '../types';
 
