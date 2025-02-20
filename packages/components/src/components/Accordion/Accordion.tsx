@@ -61,31 +61,31 @@ AccordionRoot.displayName = 'Accordion.Root';
 
 export type AccordionItemProps = {
     'data-test-id'?: string;
-    children?: ReactNode;
-    disabled?: boolean;
-    onClick?: MouseEventHandler<HTMLDivElement>;
-    value: string;
-};
-
-export const AccordionItem = ({
-    'data-test-id': dataTestId = 'fondue-accordion-item',
     /**
      * Children of the Accordion item. This should contain the `Accordion.Header` and `Accordion.Content` components
      */
-    children,
+    children?: ReactNode;
     /**
      * Whether or not an accordion item is disabled from user interaction.
      *
      * @default false
      */
-    disabled,
+    disabled?: boolean;
     /**
      * Click callback for this item.
      */
-    onClick,
+    onClick?: MouseEventHandler<HTMLDivElement>;
     /**
      * A string value for the accordion item. All items within an accordion should use a unique value.
      */
+    value: string;
+};
+
+export const AccordionItem = ({
+    'data-test-id': dataTestId = 'fondue-accordion-item',
+    children,
+    disabled,
+    onClick,
     value,
 }: AccordionItemProps) => {
     return (
@@ -120,13 +120,16 @@ export const AccordionHeader = ({ children }: AccordionHeaderProps) => {
 };
 AccordionHeader.displayName = 'Accordion.Header';
 
-export type AccordionTriggerProps = { children?: ReactNode; 'data-test-id'?: string };
-
-export const AccordionTrigger = ({
-    'data-test-id': dataTestId = 'fondue-accordion-trigger',
+export type AccordionTriggerProps = {
+    'data-test-id'?: string;
     /**
      * Children of the Accordion trigger. This contains the actually clickable and visible header content
      */
+    children?: ReactNode;
+};
+
+export const AccordionTrigger = ({
+    'data-test-id': dataTestId = 'fondue-accordion-trigger',
     children,
 }: AccordionTriggerProps) => {
     return (
