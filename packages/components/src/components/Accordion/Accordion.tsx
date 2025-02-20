@@ -4,8 +4,6 @@ import { IconCaretDown } from '@frontify/fondue-icons';
 import * as RadixAccordion from '@radix-ui/react-accordion';
 import { type MouseEventHandler, type ReactNode } from 'react';
 
-import { cn } from '#/utilities/styleUtilities';
-
 import styles from './styles/accordion.module.scss';
 
 type AccordionPadding = 'none' | 'small' | 'medium' | 'large';
@@ -166,7 +164,7 @@ type AccordionContentProps = {
 export const AccordionContent = ({
     'data-test-id': dataTestId = 'collapsible-wrap',
     children,
-    divider,
+    divider = false,
     onClick,
     padding = 'large',
 }: AccordionContentProps) => {
@@ -176,15 +174,9 @@ export const AccordionContent = ({
             onClick={onClick}
             data-test-id={dataTestId}
             data-item-padding={padding}
+            data-item-divider={divider}
         >
-            <div
-                className={cn([
-                    styles.accordionContentText,
-                    styles[`accordionContentTextPadding-${padding}`],
-                    divider && styles.accordionContentTextDivider,
-                ])}
-                data-test-id={`inner-${dataTestId}`}
-            >
+            <div className={styles.accordionContentText} data-test-id={`inner-${dataTestId}`}>
                 {children}
             </div>
         </RadixAccordion.Content>

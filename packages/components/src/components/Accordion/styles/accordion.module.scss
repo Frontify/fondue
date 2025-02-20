@@ -61,19 +61,14 @@
     padding: 0 var(--space-xl) var(--space-l);
 }
 
-.accordionContentText {
-    color: var(--text-color);
-}
-
-.accordionContentTextNoPadding {
-    padding: 0;
-}
-
-.accordionContentTextDivider {
+[data-item-divider="true"] > div {
     border-top: var(--line-width) solid var(--line-color);
     padding-top: var(--space-l);
 }
 
+.accordionContentText {
+    color: var(--text-color);
+}
 
 .accordionCaret {
     transition: transform 500ms cubic-bezier(0.87, 0, 0.13, 1);
