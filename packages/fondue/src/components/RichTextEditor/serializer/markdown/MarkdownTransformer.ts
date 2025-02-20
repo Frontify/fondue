@@ -1,8 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type PlateEditor } from '@udecode/plate-core';
-
 import { InitPlateEditor } from '@components/RichTextEditor/utils';
+import { type PlateEditor } from '@udecode/plate-core';
 
 import { type Transformer } from '../types';
 
@@ -13,5 +12,6 @@ export abstract class MarkdownTransformer<T, R> implements Transformer<T, R> {
         this.editor = InitPlateEditor.init().getInstance();
     }
 
+    abstract escape(value?: boolean): this;
     abstract process(value: T): R;
 }

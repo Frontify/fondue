@@ -32,6 +32,7 @@ import {
     unorderedListMarkdown,
     unorderedListTree,
 } from './fixtures';
+import { markdownWithHtml, markdownWithHtmlTree } from './fixtures/htmlText';
 
 const testCases = {
     'Basic marks': [
@@ -100,6 +101,13 @@ const testCases = {
         { markdown: mentionsMarkdown[2], expectedTree: mentionsTree[2] },
         { markdown: mentionsMarkdown[3], expectedTree: mentionsTree[3] },
     ],
+
+    'HTML tags': [
+        {
+            markdown: markdownWithHtml,
+            expectedTree: markdownWithHtmlTree,
+        },
+    ],
 };
 
 describe('Slate To Markdown transformer', () => {
@@ -115,6 +123,7 @@ describe('Slate To Markdown transformer', () => {
 
                     return it(`should transform${information}`, () => {
                         const result = transformer.process(expectedTree);
+
                         expect(result).to.deep.equal(markdown);
                     });
                 },

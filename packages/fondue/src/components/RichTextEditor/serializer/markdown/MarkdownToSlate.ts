@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { escape } from 'lodash-es';
 import remarkGfm from 'remark-gfm';
 import parse from 'remark-parse';
 import { unified } from 'unified';
@@ -13,12 +14,20 @@ import { type NodeType } from './types';
 import { remarkFondue } from './remarkFondue';
 
 export class MarkdownToSlate extends MarkdownTransformer<string, NodeType[]> {
+    #escapeValue = false;
+
+    escape(escapeValue = true) {
+        this.#escapeValue = escapeValue;
+        return this;
+    }
+
     process(value: string): NodeType[] {
+        const parsedValue = this.#escapeValue ? escape(value) : value;
         return unified()
             .use(parse)
             .use(remarkGfm)
             .use(remarkFondue)
             .use(deserializer, options(this.editor))
-            .processSync(value).result as NodeType[];
+            .processSync(parsedValue).result as NodeType[];
     }
 }
