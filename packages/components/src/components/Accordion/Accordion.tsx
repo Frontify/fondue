@@ -171,7 +171,12 @@ export const AccordionContent = ({
     padding = 'large',
 }: AccordionContentProps) => {
     return (
-        <RadixAccordion.Content className={styles.accordionContent} onClick={onClick} data-test-id={dataTestId}>
+        <RadixAccordion.Content
+            className={styles.accordionContent}
+            onClick={onClick}
+            data-test-id={dataTestId}
+            data-item-padding={padding}
+        >
             <div
                 className={cn([
                     styles.accordionContentText,
