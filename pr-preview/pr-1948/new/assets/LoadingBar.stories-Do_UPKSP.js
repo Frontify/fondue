@@ -1,5 +1,0 @@
-import{L as i}from"./LoadingBar-DajCCYGq.js";import"./jsx-runtime-Blucd9Qg.js";import"./index-CcKhGcwW.js";import"./_commonjsHelpers-Cpj98o6Y.js";import"./index-wv0ygH-x.js";import"./index-CgtKoCjW.js";import"./index-BP1ZzxOr.js";import"./styleUtilities-Byf6Fdv2.js";const v={title:"Components/Loading Bar",component:i,tags:["autodocs"],parameters:{status:{type:"released"}},args:{value:42,max:100,rounded:!0,"aria-label":"Fondue Loading Bar"}},e={},r={args:{value:null}};var a,t,o;e.parameters={...e.parameters,docs:{...(a=e.parameters)==null?void 0:a.docs,source:{originalSource:"{}",...(o=(t=e.parameters)==null?void 0:t.docs)==null?void 0:o.source}}};var s,n,m;r.parameters={...r.parameters,docs:{...(s=r.parameters)==null?void 0:s.docs,source:{originalSource:`{
-  args: {
-    value: null
-  }
-}`,...(m=(n=r.parameters)==null?void 0:n.docs)==null?void 0:m.source}}};const x=["WithDefinedValue","Indeterminate"];export{r as Indeterminate,e as WithDefinedValue,x as __namedExportsOrder,v as default};
