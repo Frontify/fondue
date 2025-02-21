@@ -146,7 +146,7 @@ export const Default: Story = {
                                 <Dropdown.Item onSelect={function Js() {}}>Item 2</Dropdown.Item>
                                 <Dropdown.Item onSelect={function Js() {}}>Item 3</Dropdown.Item>
                             </Dropdown.Content>
-                        </Dropdown.Root>{' '}
+                        </Dropdown.Root>
                     </Accordion.Content>
                 </Accordion.Item>
 
