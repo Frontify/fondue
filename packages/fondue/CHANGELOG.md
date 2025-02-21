@@ -1,5 +1,16 @@
 # @frontify/fondue
 
+## 12.6.0
+
+### Minor Changes
+
+- [#2225](https://github.com/Frontify/fondue/pull/2225) [`3c6069c`](https://github.com/Frontify/fondue/commit/3c6069cc61ba841b7f7c97a9b03a74cc88939dec) Thanks [@bojangles-m](https://github.com/bojangles-m)! - feat(RTE): added an option to escape values before Markdown transformation
+
+### Patch Changes
+
+- Updated dependencies [[`68e5995`](https://github.com/Frontify/fondue/commit/68e5995f5e9c994ee0b043584a5fe3319a1d8f10), [`40637d8`](https://github.com/Frontify/fondue/commit/40637d85738684a35b8f42cc61f920dcf652974b), [`90b6551`](https://github.com/Frontify/fondue/commit/90b655175c2232fda5b87ae31b2bb17f582e99d1)]:
+    - @frontify/fondue-components@13.1.0
+
 ## 12.5.4
 
 ### Patch Changes

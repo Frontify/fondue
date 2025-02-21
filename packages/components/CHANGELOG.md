@@ -1,5 +1,17 @@
 # @frontify/fondue-components
 
+## 13.1.0
+
+### Minor Changes
+
+- [#2219](https://github.com/Frontify/fondue/pull/2219) [`90b6551`](https://github.com/Frontify/fondue/commit/90b655175c2232fda5b87ae31b2bb17f582e99d1) Thanks [@syeo66](https://github.com/syeo66)! - feat(Accordion): add new `Accordion` component
+
+### Patch Changes
+
+- [#2220](https://github.com/Frontify/fondue/pull/2220) [`68e5995`](https://github.com/Frontify/fondue/commit/68e5995f5e9c994ee0b043584a5fe3319a1d8f10) Thanks [@syeo66](https://github.com/syeo66)! - feat: add border around ColorPickers color swatch
+
+- [#2222](https://github.com/Frontify/fondue/pull/2222) [`40637d8`](https://github.com/Frontify/fondue/commit/40637d85738684a35b8f42cc61f920dcf652974b) Thanks [@syeo66](https://github.com/syeo66)! - feat(Select): add id prop to Select
+
 ## 13.0.2
 
 ### Patch Changes
