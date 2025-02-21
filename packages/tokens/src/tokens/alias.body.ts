@@ -3,7 +3,10 @@
 module.exports = {
     body: {
         // Family
-        family: { value: '{font.space-grotesk.value}', attributes: { category: 'font', type: 'family' } },
+        family: {
+            value: ['{font.diatype.value}', '{font.space-grotesk.value}'],
+            attributes: { category: 'font', type: 'family' },
+        },
         'family-stack': {
             value: [
                 '{body.family.value}',

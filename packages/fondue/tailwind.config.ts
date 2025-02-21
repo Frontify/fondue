@@ -95,6 +95,7 @@ export default {
             },
             fontFamily: {
                 sans: [
+                    'Diatype',
                     '"Space Grotesk Frontify"',
                     'Arial',
                     '-apple-system',
