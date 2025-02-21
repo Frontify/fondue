@@ -8,10 +8,6 @@ import { MarkdownTransformer } from './MarkdownTransformer';
 import { type NodeType } from './types';
 
 export class SlateToMarkdown extends MarkdownTransformer<NodeType[], string> {
-    escape() {
-        return this;
-    }
-
     process(value: NodeType[]) {
         return serialize(options(this.editor))(value);
     }

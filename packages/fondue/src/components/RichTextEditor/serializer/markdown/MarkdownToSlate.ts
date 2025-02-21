@@ -6,7 +6,7 @@ import parse from 'remark-parse';
 import { unified } from 'unified';
 
 import deserializer from './deserializer';
-import { options } from './options';
+import { options as plateEditorOptions } from './options';
 // eslint-disable-next-line import/order
 import { MarkdownTransformer } from './MarkdownTransformer';
 import { type NodeType } from './types';
@@ -14,20 +14,13 @@ import { type NodeType } from './types';
 import { remarkFondue } from './remarkFondue';
 
 export class MarkdownToSlate extends MarkdownTransformer<string, NodeType[]> {
-    #escapeValue = false;
-
-    escape(escapeValue = true) {
-        this.#escapeValue = escapeValue;
-        return this;
-    }
-
-    process(value: string): NodeType[] {
-        const parsedValue = this.#escapeValue ? escape(value) : value;
+    process(value: string, options?: { escapeValue?: boolean }): NodeType[] {
+        const parsedValue = options?.escapeValue ? escape(value) : value;
         return unified()
             .use(parse)
             .use(remarkGfm)
             .use(remarkFondue)
-            .use(deserializer, options(this.editor))
+            .use(deserializer, plateEditorOptions(this.editor))
             .processSync(parsedValue).result as NodeType[];
     }
 }

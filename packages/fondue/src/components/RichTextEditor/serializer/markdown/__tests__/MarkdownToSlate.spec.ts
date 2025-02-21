@@ -142,7 +142,7 @@ describe('Markdown to slate Transformer', () => {
                     const information = info ? `: ${info}` : '';
 
                     return it(`should transform${information}`, () => {
-                        const result = transformer.escape(escape).process(markdown);
+                        const result = transformer.process(markdown, { escapeValue: escape });
 
                         expect(result).to.deep.equal(expectedTree);
                     });
