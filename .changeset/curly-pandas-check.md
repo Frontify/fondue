@@ -1,5 +1,5 @@
 ---
-"@frontify/fondue": major
+"@frontify/fondue": minor
 ---
 
-Rich Text Editor: Added an option to escape values before Markdown transformation
+feat(RTE): added an option to escape values before Markdown transformation
