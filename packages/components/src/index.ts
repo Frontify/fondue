@@ -2,6 +2,7 @@
 
 import './styles.scss';
 
+export { Accordion } from './components/Accordion/Accordion';
 export { Box } from './components/Box/Box';
 export { Button } from './components/Button/Button';
 export { Checkbox } from './components/Checkbox/Checkbox';
