@@ -7,6 +7,9 @@ This document describes the changes that you need to make to your code to migrat
 -   [Migration guide](#migration-guide)
     -   [Table of contents](#table-of-contents)
     -   [Components](#components)
+        -   [Accordion](#accordion)
+            -   [Old](#accordion-old)
+            -   [New](#accordion-new)
         -   [Button](#button)
             -   [Old](#button-old)
             -   [New](#button-new)
@@ -63,6 +66,79 @@ This document describes the changes that you need to make to your code to migrat
             -   [New](#tooltip-new)
 
 ## Components
+
+### Accordion
+
+#### Changes:
+- **Component structure** now uses explicit subcomponents:
+  - ```Accordion.Root``` wraps all accordion items and controls state
+  - ```Accordion.Item``` for each collapsible section (requires unique ```value```)
+  - ```Accordion.Trigger``` for clickable header elements
+  - ```Accordion.Header``` for semantic header container
+  - ```Accordion.Content``` for collapsible content section
+
+- **State management** changed:
+  - Use ```defaultValue```/```value``` on ```Accordion.Root``` for uncontrolled/controlled state
+
+- **Styling changes**:
+  - ```border``` prop now only on ```Accordion.Root```
+  - ```divider``` prop moved to ```Accordion.Content```
+  - ```padding``` prop now on ```Accordion.Content```
+  - Icon handling moved to ```Accordion.Trigger```
+
+- **Removed features**:
+  - ```headerComponent``` prop (use ```Accordion.Trigger``` composition instead)
+  - Custom focus management (handled by Radix)
+  - Automatic last-item activation logic
+
+#### Old
+```tsx
+<Accordion border divider>
+  <AccordionItem
+    header={{ children: 'Header 1', active: true }}
+    padding={false}
+  >
+    Content 1
+  </AccordionItem>
+  <AccordionItem
+    header={{ children: 'Header 2' }}
+  >
+    Content 2
+  </AccordionItem>
+</Accordion>
+```
+
+#### New
+```tsx
+<Accordion.Root border defaultValue={["item1"]}>
+  <Accordion.Item value="item1">
+    <Accordion.Header>
+      <Accordion.Trigger>
+        Header 1
+      </Accordion.Trigger>
+    </Accordion.Header>
+    <Accordion.Content padding="none" divider>
+      Content 1
+    </Accordion.Content>
+  </Accordion.Item>
+
+  <Accordion.Item value="item2">
+    <Accordion.Trigger>
+      Header 2
+    </Accordion.Trigger>
+    <Accordion.Content divider>
+      Content 2
+    </Accordion.Content>
+  </Accordion.Item>
+</Accordion.Root>
+```
+
+#### Upgrade Steps:
+1. Wrap entire accordion in ```Accordion.Root```
+2. Convert each item to ```Accordion.Item``` with unique ```value```
+3. Move header content to ```Accordion.Header```/```Accordion.Trigger```
+4. Convert body content to ```Accordion.Content```
+
 
 ### Button
 
