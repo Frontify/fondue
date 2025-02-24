@@ -28,7 +28,7 @@ const meta: Meta<typeof SegmentedControlRoot> = {
         onValueChange: action('onValueChange'),
     },
     decorators: (Story) => (
-        <div className="tw-w-64">
+        <div className="tw-w-96">
             <Story />
         </div>
     ),
@@ -113,4 +113,14 @@ export const WithLabel: Story = {
             </div>
         );
     },
+};
+
+export const FullWidth: Story = {
+    render: (args) => (
+        <SegmentedControl.Root {...args} hugWidth={false}>
+            <SegmentedControl.Item value="first">First</SegmentedControl.Item>
+            <SegmentedControl.Item value="second">Second</SegmentedControl.Item>
+            <SegmentedControl.Item value="third">Third</SegmentedControl.Item>
+        </SegmentedControl.Root>
+    ),
 };
