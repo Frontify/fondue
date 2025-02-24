@@ -1,11 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { truncateTextLabel } from '@components/BarChart/helpers';
+import { useMargin } from '@components/common/hooks/useMargin';
 import { renderHook } from '@testing-library/react';
 import { type TextProps } from '@visx/text';
 import { type Mock, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-
-import { truncateTextLabel } from '@components/BarChart/helpers';
-import { useMargin } from '@components/common/hooks/useMargin';
 
 const TICK_LENGTH = 4;
 const VALUE_FORMATTER = (value: number | string) => `${value}°C`;
@@ -31,6 +30,8 @@ const BASE_MARGIN = {
     bottom: 24,
     left: 0,
 };
+
+const DEFAULT_MARGIN = { bottom: 24, left: 52.265625, right: 20, top: 10 };
 
 vi.mock('use-font-face-observer', () => ({
     default: vi.fn(),
@@ -139,7 +140,7 @@ describe('useMargin', () => {
         expect(useFontFaceObserverMock).toHaveBeenCalledTimes(2);
     });
 
-    it('returns null when font is not loaded', () => {
+    it('returns default margin when font is not loaded', () => {
         useFontFaceObserverMock.mockReturnValue(false);
         const { result, rerender } = renderHook(() =>
             useMargin({
@@ -149,7 +150,7 @@ describe('useMargin', () => {
                 tickLength: TICK_LENGTH,
             }),
         );
-        expect(result.current).toBeNull();
+        expect(result.current).toEqual(DEFAULT_MARGIN);
         expect(useFontFaceObserverMock).toHaveBeenCalledTimes(1);
 
         useFontFaceObserverMock.mockReturnValue(true);
