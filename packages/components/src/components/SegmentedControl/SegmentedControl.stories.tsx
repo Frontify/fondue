@@ -28,7 +28,7 @@ const meta: Meta<typeof SegmentedControlRoot> = {
         onValueChange: action('onValueChange'),
     },
     decorators: (Story) => (
-        <div className="tw-w-96">
+        <div className="tw-w-64">
             <Story />
         </div>
     ),
