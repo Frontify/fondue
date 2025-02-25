@@ -32,6 +32,8 @@ const BASE_MARGIN = {
     left: 0,
 };
 
+const DEFAULT_MARGIN = { bottom: 24, left: 52.265625, right: 20, top: 10 };
+
 vi.mock('use-font-face-observer', () => ({
     default: vi.fn(),
 }));
@@ -139,7 +141,7 @@ describe('useMargin', () => {
         expect(useFontFaceObserverMock).toHaveBeenCalledTimes(2);
     });
 
-    it('returns null when font is not loaded', () => {
+    it('returns default margin when font is not loaded', () => {
         useFontFaceObserverMock.mockReturnValue(false);
         const { result, rerender } = renderHook(() =>
             useMargin({
@@ -149,7 +151,7 @@ describe('useMargin', () => {
                 tickLength: TICK_LENGTH,
             }),
         );
-        expect(result.current).toBeNull();
+        expect(result.current).toEqual(DEFAULT_MARGIN);
         expect(useFontFaceObserverMock).toHaveBeenCalledTimes(1);
 
         useFontFaceObserverMock.mockReturnValue(true);
