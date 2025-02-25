@@ -31,6 +31,9 @@ import { Accordion as AccordionComponent, AccordionItem } from './Accordion';
 import { AccordionHeaderIcon } from './AccordionHeaderIcon';
 import { type AccordionHeaderProps, type AccordionProps } from './types';
 
+/**
+ ### This component is deprecated, please use the [new Accordion component](/docs/current_components-accordion--documentation) instead.
+ */
 export default {
     title: 'Components/Accordion',
     component: AccordionComponent,
@@ -42,9 +45,6 @@ export default {
     },
 } as Meta<AccordionProps>;
 
-/**
- ### This component is deprecated, please use the [new Accordion component](/docs/current_components-accordion--documentation) instead.
- */
 export const WithDifferentAccordionItems: StoryFn<AccordionProps> = () => {
     const [showContent, setShowContent] = useState(true);
     const [input, setInput] = useState('');
