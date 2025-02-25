@@ -63,6 +63,7 @@ export const FlyoutTrigger = (
 };
 FlyoutTrigger.displayName = 'Flyout.Trigger';
 
+type FlyoutSpacing = 'compact' | 'comfortable' | 'spacious';
 export type FlyoutContentProps = {
     /**
      * Add a shadow to the flyout
@@ -98,9 +99,20 @@ export type FlyoutContentProps = {
      * Define the maximum width of the flyout
      * @default "360px"
      */
+    /**
+     * Defines the spacing between the dropdown and its trigger.
+     * @default 'compact'
+     */
+    triggerOffset?: FlyoutSpacing;
     maxWidth?: string;
     children?: ReactNode;
     'data-test-id'?: string;
+};
+
+const SPACING_MAP: Record<FlyoutSpacing, number> = {
+    compact: 8,
+    comfortable: 12,
+    spacious: 16,
 };
 
 export const FlyoutContent = (
@@ -111,6 +123,7 @@ export const FlyoutContent = (
         rounded = 'medium',
         width = 'fit-content',
         shadow = 'medium',
+        triggerOffset = 'compact',
         'data-test-id': dataTestId = 'fondue-flyout-content',
         children,
         ...props
@@ -132,7 +145,7 @@ export const FlyoutContent = (
                     ref={ref}
                     align={align}
                     collisionPadding={8}
-                    sideOffset={8}
+                    sideOffset={SPACING_MAP[triggerOffset]}
                     className={styles.root}
                     data-flyout-spacing={padding}
                     data-rounded={rounded}
