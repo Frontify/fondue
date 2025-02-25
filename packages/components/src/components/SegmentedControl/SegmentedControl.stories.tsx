@@ -114,3 +114,13 @@ export const WithLabel: Story = {
         );
     },
 };
+
+export const FullWidth: Story = {
+    render: (args) => (
+        <SegmentedControl.Root {...args} hugWidth={false}>
+            <SegmentedControl.Item value="first">First</SegmentedControl.Item>
+            <SegmentedControl.Item value="second">Second</SegmentedControl.Item>
+            <SegmentedControl.Item value="third">Third</SegmentedControl.Item>
+        </SegmentedControl.Root>
+    ),
+};
