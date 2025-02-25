@@ -2,7 +2,7 @@
 
 import { type TextProps } from '@visx/text';
 import { type Margin } from '@visx/xychart';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 // @ts-expect-error Wrong export of types
 import useFontFaceObserver from 'use-font-face-observer';
 
@@ -20,6 +20,8 @@ type UseMarginProps = {
     maxLabelHeight?: number;
     firstLabelOverflowsBy?: number;
 };
+
+const DEFAULT_MARGIN = { bottom: 24, left: 52.265625, right: 20, top: 10 };
 
 const findLongestFormattedTickValue = ({ ticks, tickLabelStyle, valueFormatter }: UseMarginProps) => {
     return ticks.reduce((longestTickLength: number, tick) => {
@@ -39,7 +41,7 @@ const getTickLabelOffset = ({ tickLabelStyle, tickLength }: Pick<UseMarginProps,
 
 export const useMargin = (props: UseMarginProps) => {
     const { tickLabelStyle, ticks, valueFormatter, tickLength, maxLabelHeight = 6, firstLabelOverflowsBy = 0 } = props;
-    const [margin, setMargin] = useState<Margin | null>(null);
+    const [margin, setMargin] = useState<Margin>(DEFAULT_MARGIN);
     const isFontLoaded = useFontFaceObserver([
         {
             family: getComputedStyle(document.documentElement).getPropertyValue(BODY_FONT_FAMILY).trim(),
