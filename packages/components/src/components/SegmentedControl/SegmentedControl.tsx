@@ -28,10 +28,22 @@ export type SegmentedControlRootProps = {
      * @default false
      */
     disabled?: boolean;
+    /**
+     * Specify if the segmented control should only take the width of its content
+     * @default true
+     */
+    hugWidth?: boolean;
 };
 
 export const SegmentedControlRoot = (
-    { children, value: propsValue, defaultValue, onValueChange, ...rootProps }: SegmentedControlRootProps,
+    {
+        children,
+        value: propsValue,
+        defaultValue,
+        onValueChange,
+        hugWidth = true,
+        ...rootProps
+    }: SegmentedControlRootProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     const [value, setValue] = useControllableState({
@@ -53,6 +65,7 @@ export const SegmentedControlRoot = (
             value={value}
             type="single"
             asChild={false}
+            data-hug-width={hugWidth}
             aria-disabled={rootProps.disabled}
         >
             {children}

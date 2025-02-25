@@ -363,3 +363,22 @@ export const WithTooltip: Story = {
         </Flyout.Root>
     ),
 };
+
+export const SpaciousTriggerOffset: Story = {
+    args: {
+        children: 'Hello World',
+        triggerOffset: 'spacious',
+    },
+    render: ({ ...args }) => {
+        return (
+            <Flyout.Root>
+                <Flyout.Trigger>
+                    <Button>Open flyout</Button>
+                </Flyout.Trigger>
+                <Flyout.Content {...args}>
+                    <Flyout.Body {...args} />
+                </Flyout.Content>
+            </Flyout.Root>
+        );
+    },
+};

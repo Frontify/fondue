@@ -7,6 +7,7 @@
 $radius-without-border: calc(var(--radius) - var(--line-width));
 
 .root {
+    width: 100%;
     position: relative;
     display: inline-grid;
     grid-auto-flow: column;
@@ -26,6 +27,10 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
     border-radius: var(--radius);
 
     isolation: isolate;
+
+    &[data-hug-width='true'] {
+        width: fit-content;
+    }
 
     &:disabled {
         background-color: var(--base-color-alt);

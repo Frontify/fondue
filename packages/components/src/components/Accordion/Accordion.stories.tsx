@@ -9,10 +9,10 @@ import { Button, ColorPicker, Dropdown, Flyout } from '#/index';
 
 import {
     Accordion,
-    AccordionRoot,
+    AccordionContent,
     AccordionHeader,
     AccordionItem,
-    AccordionContent,
+    AccordionRoot,
     AccordionTrigger,
 } from './Accordion';
 
@@ -32,7 +32,7 @@ const meta: Meta<typeof AccordionRoot> = {
     },
     parameters: {
         status: {
-            type: 'beta',
+            type: 'released',
         },
     },
     args: {},

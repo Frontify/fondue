@@ -115,3 +115,18 @@ test('should navigate with keyboard', async ({ mount }) => {
     await component.getByRole('radio').locator('nth=0').press('End');
     await expect(component.getByRole('radio').locator('nth=2')).toBeFocused();
 });
+
+test('should render full width', async ({ mount }) => {
+    const component = await mount(
+        <div style={{ width: '550px' }}>
+            <SegmentedControl.Root data-test-id={SEGMENTED_CONTROL_TEST_ID} defaultValue="second" hugWidth={false}>
+                <SegmentedControl.Item value="first">First</SegmentedControl.Item>
+                <SegmentedControl.Item value="second">Second</SegmentedControl.Item>
+                <SegmentedControl.Item value="third">Third</SegmentedControl.Item>
+            </SegmentedControl.Root>
+        </div>,
+    );
+
+    const boundingBox = await component.getByTestId(SEGMENTED_CONTROL_TEST_ID).boundingBox();
+    expect(boundingBox?.width).toBe(550);
+});

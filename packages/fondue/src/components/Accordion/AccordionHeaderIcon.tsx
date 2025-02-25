@@ -8,6 +8,9 @@ import { merge } from '@utilities/merge';
 
 import { type AccordionHeaderIconProps, type AccordionHeaderIconSize } from './types';
 
+/**
+ * @deprecated Please use updated Accordion component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#accordion the migration guide}.
+ */
 export const ACCORDION_HEADER_ICON_ID = 'fondue-accordion-header-icon';
 
 const sizeMap: Record<AccordionHeaderIconSize, IconSize> = {
@@ -16,6 +19,9 @@ const sizeMap: Record<AccordionHeaderIconSize, IconSize> = {
     large: IconSize.Size20,
 };
 
+/**
+ * @deprecated Please use updated Accordion component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#accordion the migration guide}.
+ */
 export const AccordionHeaderIcon = ({
     size = 'medium',
     isOpen,
