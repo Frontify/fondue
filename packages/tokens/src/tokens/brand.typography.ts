@@ -26,6 +26,9 @@ module.exports = {
         'space-grotesk-bold-weight-number': { value: 700, attributes: { type: 'weight' } },
         'space-grotesk-bold-weight-name': { value: 'Bold', attributes: { type: 'name' } },
 
+        // DIATYPE FAMILY
+        diatype: { value: 'Diatype' },
+
         // MENLO FAMILY
         menlo: { value: 'Menlo' },
         // REGULAR FONT
