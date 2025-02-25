@@ -96,14 +96,14 @@ export type FlyoutContentProps = {
      */
     width?: string;
     /**
-     * Define the maximum width of the flyout
-     * @default "360px"
-     */
-    /**
      * Defines the spacing between the dropdown and its trigger.
      * @default 'compact'
      */
     triggerOffset?: FlyoutSpacing;
+    /**
+     * Define the maximum width of the flyout
+     * @default "360px"
+     */
     maxWidth?: string;
     children?: ReactNode;
     'data-test-id'?: string;
