@@ -16,6 +16,9 @@ const decorators = {
     IconIcons: <IconIcon />,
 };
 
+/**
+ ### This component is deprecated, please use the [new Accordion component](/docs/current_components-accordion--documentation) instead.
+ */
 export default {
     title: 'Components/Accordion/Accordion Header',
     component: AccordionHeaderComponent,

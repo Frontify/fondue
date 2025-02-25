@@ -5,6 +5,9 @@ import { type Meta, type StoryFn } from '@storybook/react';
 import { AccordionHeaderIcon as AccordionHeaderIconComponent } from './AccordionHeaderIcon';
 import { type AccordionHeaderIconProps } from './types';
 
+/**
+ ### This component is deprecated, please use the [new Accordion component](/docs/current_components-accordion--documentation) instead.
+ */
 export default {
     title: 'Components/Accordion/Accordion Header Icon',
     component: AccordionHeaderIconComponent,
