@@ -23,6 +23,11 @@ export default {
     title: 'Components/Accordion/Accordion Header',
     component: AccordionHeaderComponent,
     tags: ['autodocs'],
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
+    },
     argTypes: {
         decorator: {
             options: Object.keys(decorators),

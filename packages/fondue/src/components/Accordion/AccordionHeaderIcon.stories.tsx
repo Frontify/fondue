@@ -12,6 +12,11 @@ export default {
     title: 'Components/Accordion/Accordion Header Icon',
     component: AccordionHeaderIconComponent,
     tags: ['autodocs'],
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
+    },
     argTypes: {
         size: { control: 'select', options: ['small', 'medium', 'large'] },
     },
