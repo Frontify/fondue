@@ -126,6 +126,9 @@ const lastChildrenActive = (children: ReactNode | undefined): boolean | undefine
     return childrenArray[childrenArray.length - 1]?.props?.header?.active === true;
 };
 
+/**
+ * @deprecated Please use updated Accordion component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#accordion the migration guide}.
+ */
 export const Accordion = (props: AccordionProps): ReactElement => {
     const { divider = true, border = true, 'data-test-id': dataTestId = ACCORDION_ID } = props;
     const children = filterValidChildren(props);

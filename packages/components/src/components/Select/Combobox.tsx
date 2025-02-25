@@ -6,6 +6,8 @@ import { Slot as RadixSlot } from '@radix-ui/react-slot';
 import { useCombobox } from 'downshift';
 import { forwardRef, useMemo, useRef, useState, type FocusEvent, type ForwardedRef, type ReactNode } from 'react';
 
+import { type CommonAriaProps } from '#/helpers/aria';
+
 import { SelectMenu } from './SelectMenu';
 import styles from './styles/select.module.scss';
 import { useSelectData } from './useSelectData';
@@ -45,19 +47,19 @@ export type ComboboxProps = {
      * @default "start"
      */
     alignMenu?: 'start' | 'center' | 'end' /**
-     * Defines the preferred side of the select. It will not be respected if there are collisions with the viewport.
+     * Defines the preferred side of the combobox. It will not be respected if there are collisions with the viewport.
      * @default "bottom"
      */;
     side?: 'left' | 'right' | 'bottom' | 'top';
     /**
-     * The aria label of the combobox component.
+     * Id of the combobox component
      */
-    'aria-label'?: string;
+    id?: string;
     /**
-     * The data test id of the select component.
+     * The data test id of the combobox component.
      */
     'data-test-id'?: string;
-};
+} & CommonAriaProps;
 
 export const SelectCombobox = (
     {
@@ -68,10 +70,11 @@ export const SelectCombobox = (
         placeholder = '',
         status = 'neutral',
         disabled,
-        'aria-label': ariaLabel,
         'data-test-id': dataTestId = 'fondue-select-combobox',
         alignMenu = 'start',
         side = 'bottom',
+        id,
+        ...props
     }: ComboboxProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
@@ -95,6 +98,8 @@ export const SelectCombobox = (
         selectedItem: getItemByValue(value),
         defaultSelectedItem: getItemByValue(defaultValue),
         defaultHighlightedIndex: 0,
+        toggleButtonId: id,
+        labelId: 'aria-labelledby' in props ? props['aria-labelledby'] : undefined,
         onSelectedItemChange: ({ selectedItem }) => {
             onSelect?.(selectedItem?.value ?? null);
         },
@@ -141,7 +146,7 @@ export const SelectCombobox = (
                 <div ref={forwardedRef} className={styles.root} data-status={valueInvalid ? 'error' : status}>
                     <input
                         {...getInputProps({
-                            'aria-label': ariaLabel,
+                            'aria-label': 'aria-label' in props ? props['aria-label'] : undefined,
                         })}
                         data-test-id={dataTestId}
                         placeholder={placeholder}
@@ -173,9 +178,9 @@ export const SelectCombobox = (
                     )}
                     <div className={styles.icons}>
                         <button
+                            aria-label="toggle menu"
                             {...getToggleButtonProps()}
                             type="button"
-                            aria-label="toggle menu"
                             disabled={disabled}
                             onMouseDown={() => {
                                 wasClicked.current = true;

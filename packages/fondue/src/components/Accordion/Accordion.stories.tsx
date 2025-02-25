@@ -35,8 +35,16 @@ export default {
     title: 'Components/Accordion',
     component: AccordionComponent,
     tags: ['autodocs'],
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
+    },
 } as Meta<AccordionProps>;
 
+/**
+ ### This component is deprecated, please use the [new Accordion component](/docs/current_components-accordion--documentation) instead.
+ */
 export const WithDifferentAccordionItems: StoryFn<AccordionProps> = () => {
     const [showContent, setShowContent] = useState(true);
     const [input, setInput] = useState('');

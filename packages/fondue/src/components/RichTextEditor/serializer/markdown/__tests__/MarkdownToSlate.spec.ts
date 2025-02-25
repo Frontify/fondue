@@ -34,6 +34,7 @@ import {
     unsafeLinkMarkdown,
     unsafeLinkTree,
 } from './fixtures';
+import { markdownWithHtml, markdownWithHtmlTree, markdownWithHtmlWithoutEscapingTree } from './fixtures/htmlText';
 
 const testCases = {
     'Basic marks': [
@@ -102,6 +103,21 @@ const testCases = {
         { markdown: mentionsMarkdown[2], expectedTree: mentionsTree[2] },
         { markdown: mentionsMarkdown[3], expectedTree: mentionsTree[3] },
     ],
+
+    'HTML tags': [
+        {
+            info: 'with escaped HTML tags',
+            markdown: markdownWithHtml,
+            expectedTree: markdownWithHtmlTree,
+            escape: true,
+        },
+        {
+            info: 'without escaped HTML tags',
+            markdown: markdownWithHtml,
+            expectedTree: markdownWithHtmlWithoutEscapingTree,
+            escape: false,
+        },
+    ],
 };
 
 describe('Markdown to slate Transformer', () => {
@@ -112,11 +128,22 @@ describe('Markdown to slate Transformer', () => {
 
         return describe(key, () => {
             cases.map(
-                ({ info, markdown, expectedTree }: { info?: string; markdown: string; expectedTree: NodeType[] }) => {
+                ({
+                    info,
+                    markdown,
+                    expectedTree,
+                    escape = false,
+                }: {
+                    info?: string;
+                    markdown: string;
+                    expectedTree: NodeType[];
+                    escape?: boolean;
+                }) => {
                     const information = info ? `: ${info}` : '';
 
                     return it(`should transform${information}`, () => {
-                        const result = transformer.process(markdown);
+                        const result = transformer.process(markdown, { escapeValue: escape });
+
                         expect(result).to.deep.equal(expectedTree);
                     });
                 },
