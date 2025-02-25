@@ -1,5 +1,25 @@
 # @frontify/fondue
 
+## 12.6.0
+
+### Minor Changes
+
+- [#2225](https://github.com/Frontify/fondue/pull/2225) [`3c6069c`](https://github.com/Frontify/fondue/commit/3c6069cc61ba841b7f7c97a9b03a74cc88939dec) Thanks [@bojangles-m](https://github.com/bojangles-m)! - feat(RTE): added an option to escape values before Markdown transformation
+
+### Patch Changes
+
+- [#2232](https://github.com/Frontify/fondue/pull/2232) [`1882ad6`](https://github.com/Frontify/fondue/commit/1882ad6389e411a9de925309e749907d92bd92ca) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: use token value in tailwind config
+
+- [#2223](https://github.com/Frontify/fondue/pull/2223) [`f88df50`](https://github.com/Frontify/fondue/commit/f88df50506925b4efc7595112e22bb004d0be2b0) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - feat: use diatype as primary font
+
+- [#2230](https://github.com/Frontify/fondue/pull/2230) [`4b14436`](https://github.com/Frontify/fondue/commit/4b14436ce69f8ce1a2e9b124107a4940653fbb5d) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: improve accordion deprecation comments
+
+- Updated dependencies [[`d1b05bc`](https://github.com/Frontify/fondue/commit/d1b05bcae684ba18bfe0dad83e4f7427e5fcad47), [`f88df50`](https://github.com/Frontify/fondue/commit/f88df50506925b4efc7595112e22bb004d0be2b0), [`68e5995`](https://github.com/Frontify/fondue/commit/68e5995f5e9c994ee0b043584a5fe3319a1d8f10), [`aad54f2`](https://github.com/Frontify/fondue/commit/aad54f2e88893ed9413cee38edbf795e052b0cac), [`4b14436`](https://github.com/Frontify/fondue/commit/4b14436ce69f8ce1a2e9b124107a4940653fbb5d), [`52bc253`](https://github.com/Frontify/fondue/commit/52bc2533d226de278ee9dcbffd586841dffe9cff), [`40637d8`](https://github.com/Frontify/fondue/commit/40637d85738684a35b8f42cc61f920dcf652974b), [`4b14436`](https://github.com/Frontify/fondue/commit/4b14436ce69f8ce1a2e9b124107a4940653fbb5d), [`90b6551`](https://github.com/Frontify/fondue/commit/90b655175c2232fda5b87ae31b2bb17f582e99d1)]:
+    - @frontify/fondue-charts@4.0.0
+    - @frontify/fondue-tokens@4.0.0
+    - @frontify/fondue-components@14.0.0
+    - @frontify/fondue-icons@0.13.1
+
 ## 12.5.4
 
 ### Patch Changes
