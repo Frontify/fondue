@@ -16,7 +16,7 @@ import { ForwardedRefSelectItem, type SelectItemProps } from './SelectItem';
  * It prioritizes explicit `value` and `label` properties but will fall back to using `children` as the value or label if necessary.
  *
  * @param {SelectItemProps} props - The properties of a select item, which include potential children, value, and label.
- * @returns {{ value: string; label: string, children?: ReactNode }} An object containing `value` and `label` as strings.
+ * @returns {{ value: string; label: string }} An object containing `value` and `label` as strings.
  *
  * @example
  * // Returns { value: 'option1', label: 'Option 1' }
@@ -34,7 +34,6 @@ export const getSelectOptionValue = ({
 }: SelectItemProps): {
     value: string;
     label: string;
-    children?: ReactNode;
 } => {
     if (children && typeof children === 'string') {
         return {
@@ -46,7 +45,6 @@ export const getSelectOptionValue = ({
     return {
         value: value || '',
         label: label ? label : value || '',
-        ...(children ? { children } : null),
     };
 };
 /**

@@ -70,7 +70,7 @@
 .selectedValue {
     width: 100%;
     background-color: transparent;
-    padding-left: sizeToken.get(3);
+    text-indent: sizeToken.get(3);
     display: inline-block;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -78,11 +78,6 @@
     margin-top: auto;
     margin-bottom: auto;
     user-select: none;
-}
-
-.selectedValue:has(~ [data-name="left"]) {
-    text-indent: sizeToken.get(3);
-    padding-left: 0;
 }
 
 .input {

@@ -229,32 +229,6 @@ export const CustomItem: Story = {
     },
 };
 
-export const CustomItemIncludingSelectField: Story = {
-    render: (args) => {
-        return (
-            <Select {...args} showStringValue={false}>
-                <Select.Slot name="menu">
-                    <Select.Item value="ch" label="Switzerland">
-                        <div className="tw-flex tw-items-center tw-gap-4">
-                            <img src="https://flagsapi.com/CH/flat/16.png" alt="Switzerland" />
-                            <p>Switzerland</p>
-                        </div>
-                    </Select.Item>
-                    <Select.Item value="icon" label="Component">
-                        <div className="tw-flex tw-items-center tw-gap-4">
-                            <p>With a Component</p>
-                            <IconIcon size={16} />
-                        </div>
-                    </Select.Item>
-                    <Select.Item value="basic" label="Basic">
-                        Basic
-                    </Select.Item>
-                </Select.Slot>
-            </Select>
-        );
-    },
-};
-
 export const ExternallyControlled: Story = {
     decorators: [
         (Story) => {
