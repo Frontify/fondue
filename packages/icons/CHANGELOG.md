@@ -1,5 +1,11 @@
 # @frontify/fondue-icons
 
+## 0.13.1
+
+### Patch Changes
+
+- [#2223](https://github.com/Frontify/fondue/pull/2223) [`f88df50`](https://github.com/Frontify/fondue/commit/f88df50506925b4efc7595112e22bb004d0be2b0) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - feat: use diatype as primary font
+
 ## 0.13.0
 
 ### Minor Changes

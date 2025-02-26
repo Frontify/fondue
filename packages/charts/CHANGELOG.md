@@ -1,5 +1,16 @@
 # @frontify/fondue-charts
 
+## 4.0.0
+
+### Patch Changes
+
+- [#2229](https://github.com/Frontify/fondue/pull/2229) [`d1b05bc`](https://github.com/Frontify/fondue/commit/d1b05bcae684ba18bfe0dad83e4f7427e5fcad47) Thanks [@joseazevedo88](https://github.com/joseazevedo88)! - Add default fallback margin for charts
+
+- [#2223](https://github.com/Frontify/fondue/pull/2223) [`f88df50`](https://github.com/Frontify/fondue/commit/f88df50506925b4efc7595112e22bb004d0be2b0) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - feat: use diatype as primary font
+
+- Updated dependencies [[`f88df50`](https://github.com/Frontify/fondue/commit/f88df50506925b4efc7595112e22bb004d0be2b0)]:
+    - @frontify/fondue-tokens@4.0.0
+
 ## 3.0.0
 
 ### Minor Changes

@@ -1,5 +1,31 @@
 # @frontify/fondue-components
 
+## 14.0.0
+
+### Minor Changes
+
+- [#2228](https://github.com/Frontify/fondue/pull/2228) [`aad54f2`](https://github.com/Frontify/fondue/commit/aad54f2e88893ed9413cee38edbf795e052b0cac) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add hug-width prop to segmented control
+
+- [#2230](https://github.com/Frontify/fondue/pull/2230) [`4b14436`](https://github.com/Frontify/fondue/commit/4b14436ce69f8ce1a2e9b124107a4940653fbb5d) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add customizable triggerOffset to `Flyout`
+
+- [#2231](https://github.com/Frontify/fondue/pull/2231) [`52bc253`](https://github.com/Frontify/fondue/commit/52bc2533d226de278ee9dcbffd586841dffe9cff) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: allow asChild for ThemeProvider
+
+- [#2219](https://github.com/Frontify/fondue/pull/2219) [`90b6551`](https://github.com/Frontify/fondue/commit/90b655175c2232fda5b87ae31b2bb17f582e99d1) Thanks [@syeo66](https://github.com/syeo66)! - feat(Accordion): add new `Accordion` component
+
+### Patch Changes
+
+- [#2223](https://github.com/Frontify/fondue/pull/2223) [`f88df50`](https://github.com/Frontify/fondue/commit/f88df50506925b4efc7595112e22bb004d0be2b0) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - feat: use diatype as primary font
+
+- [#2220](https://github.com/Frontify/fondue/pull/2220) [`68e5995`](https://github.com/Frontify/fondue/commit/68e5995f5e9c994ee0b043584a5fe3319a1d8f10) Thanks [@syeo66](https://github.com/syeo66)! - feat: add border around ColorPickers color swatch
+
+- [#2222](https://github.com/Frontify/fondue/pull/2222) [`40637d8`](https://github.com/Frontify/fondue/commit/40637d85738684a35b8f42cc61f920dcf652974b) Thanks [@syeo66](https://github.com/syeo66)! - feat(Select): add id prop to Select
+
+- [#2230](https://github.com/Frontify/fondue/pull/2230) [`4b14436`](https://github.com/Frontify/fondue/commit/4b14436ce69f8ce1a2e9b124107a4940653fbb5d) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: improve accordion deprecation comments
+
+- Updated dependencies [[`f88df50`](https://github.com/Frontify/fondue/commit/f88df50506925b4efc7595112e22bb004d0be2b0)]:
+    - @frontify/fondue-tokens@4.0.0
+    - @frontify/fondue-icons@0.13.1
+
 ## 13.0.2
 
 ### Patch Changes
