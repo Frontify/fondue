@@ -27,7 +27,9 @@ export type SelectItemType = {
  * const values = getRecursiveOptionValues(options);
  * // Returns: [{ value: '1', label: 'Option 1' }, { value: '2', label: 'Option 2' }]
  */
-export const getRecursiveOptionValues = (children: ReactNode): { value: string; label: string }[] => {
+export const getRecursiveOptionValues = (
+    children: ReactNode,
+): { value: string; label: string; children?: ReactNode }[] => {
     const values: { value: string; label: string }[] = [];
     Children.forEach(children, (child) => {
         if (isValidElement<SelectItemProps>(child) && child.type === ForwardedRefSelectItem) {
