@@ -43,6 +43,7 @@ export const BreadcrumbItem = ({
     const ref = useRef(null);
 
     const Element = getItemElementType(link, onClick);
+    const isInteractive = Element !== 'span';
 
     const { itemProps } = useBreadcrumbItem(
         {
@@ -55,17 +56,26 @@ export const BreadcrumbItem = ({
 
     const { isFocusVisible, focusProps } = useFocusRing();
 
-    const elementTypeProps = { a: { href: link }, button: { onClick, type: 'button' as const }, span: {} };
-    const props = mergeProps(itemProps, focusProps, elementTypeProps[Element]);
+    const elementTypeProps = {
+        a: { href: link },
+        button: { onClick, type: 'button' as const },
+        span: { tabIndex: -1 },
+    };
+    const props = isInteractive
+        ? mergeProps(itemProps, focusProps, elementTypeProps[Element])
+        : elementTypeProps[Element];
 
     const classNames = merge([
         'tw-flex tw-gap-x-1 tw-items-center tw-leading-4 tw-h-6 tw-whitespace-pre-wrap tw-rounded',
-        isFocusVisible && FOCUS_STYLE_NO_OFFSET,
+        isInteractive && isFocusVisible && FOCUS_STYLE_NO_OFFSET,
     ]);
 
     return (
         <li
-            className="tw-flex tw-items-center tw-text-text-weak hover:tw-text-text tw-text-xs tw-transition-colors"
+            className={merge([
+                'tw-flex tw-items-center tw-text-text-weak tw-text-xs tw-transition-colors',
+                isInteractive && 'hover:tw-text-text',
+            ])}
             data-test-id={`${dataTestId}-item`}
         >
             {children ?? (

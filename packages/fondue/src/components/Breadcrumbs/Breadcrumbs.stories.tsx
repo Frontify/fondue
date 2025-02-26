@@ -68,6 +68,13 @@ WithDecoratorAndActionAndRootTruncation.args = {
     items: [...ITEMS, { onClick: action('click'), bold: true, decorator: <IconIcon />, label: 'Active' }],
 };
 
+export const WithoutAnyLinksOrActions = Template.bind({});
+
+WithoutAnyLinksOrActions.args = {
+    verticalGap: BreadcrumbGap.Medium,
+    items: ITEMS.map(({ label }) => ({ label })),
+};
+
 export const WithDecoratorAndLinkAndCurrentInline = Template.bind({});
 
 WithDecoratorAndLinkAndCurrentInline.args = {
