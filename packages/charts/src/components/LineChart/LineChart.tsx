@@ -44,46 +44,44 @@ export const LineChart = ({
             {!hideLegend && legendPosition === 'top' && (
                 <Legend names={series.map((series) => series.name)} style={'line'} />
             )}
-            {margin && (
-                <XYChart
-                    theme={theme}
-                    xScale={{ type: 'time' }}
-                    yScale={{ type: 'linear', domain: yDomain }}
-                    height={height}
-                    width={width}
-                    margin={margin}
-                >
-                    <Grid
-                        key={'grid'}
-                        rows={true}
-                        columns={false}
-                        numTicks={Y_TICKS_LENGTH}
-                        stroke={'var(--fc-grid-stroke-color)'}
-                    />
-                    <Axes
-                        linearScaleTicks={linearScaleTicks}
-                        valueFormatter={valueFormatter}
-                        locale={locale}
-                        series={series}
-                    />
-                    <Series
-                        series={series}
-                        backfilledSeries={backfilledSeries}
-                        hideGlyphs={hideGlyphs}
-                        hideArea={hideArea}
-                        highlightNegativeValues={highlightNegativeValues}
-                    />
-                    {markLine && <MarkLine {...markLine} />}
-                    <Tooltip
-                        crossHairStyle={'line'}
-                        hideGlyphs={false}
-                        colorAccessor={(key) => colorAccessorByKey(key, series)}
-                        missingValueLabel={missingValueLabel}
-                        valueFormatter={valueFormatter}
-                        locale={locale}
-                    />
-                </XYChart>
-            )}
+            <XYChart
+                theme={theme}
+                xScale={{ type: 'time' }}
+                yScale={{ type: 'linear', domain: yDomain }}
+                height={height}
+                width={width}
+                margin={margin}
+            >
+                <Grid
+                    key={'grid'}
+                    rows={true}
+                    columns={false}
+                    numTicks={Y_TICKS_LENGTH}
+                    stroke={'var(--fc-grid-stroke-color)'}
+                />
+                <Axes
+                    linearScaleTicks={linearScaleTicks}
+                    valueFormatter={valueFormatter}
+                    locale={locale}
+                    series={series}
+                />
+                <Series
+                    series={series}
+                    backfilledSeries={backfilledSeries}
+                    hideGlyphs={hideGlyphs}
+                    hideArea={hideArea}
+                    highlightNegativeValues={highlightNegativeValues}
+                />
+                {markLine && <MarkLine {...markLine} />}
+                <Tooltip
+                    crossHairStyle={'line'}
+                    hideGlyphs={false}
+                    colorAccessor={(key) => colorAccessorByKey(key, series)}
+                    missingValueLabel={missingValueLabel}
+                    valueFormatter={valueFormatter}
+                    locale={locale}
+                />
+            </XYChart>
             {!hideLegend && legendPosition === 'bottom' && (
                 <Legend names={series.map((series) => series.name)} style={'line'} />
             )}

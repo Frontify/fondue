@@ -1,0 +1,104 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+.root[data-border="true"] {
+    border-bottom: var(--line-width) solid var(--line-color);
+    border-top: var(--line-width) solid var(--line-color);
+}
+
+.accordionItem {
+    color: var(--text-color-weak);
+
+    &:not(:last-child) {
+        border-bottom: var(--line-width) solid var(--line-color);
+    }
+
+    &:has(.accordionTrigger:focus-visible):not([data-show-focus-ring='false']) {
+        outline: 4px solid var(--focus-ring-color);
+        border-radius: var(--radius);
+    }
+}
+
+.accordionTrigger {
+    width: 100%;
+    text-align: left;
+    padding: var(--space-l) var(--space-xl);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    outline: 0;
+
+    &[data-state="open"],
+    &:hover {
+        color: var(--text-color);
+    }
+
+    &[data-state="open"] {
+        &>.accordionCaret {
+            transform: rotate(180deg);
+        }
+    }
+}
+
+.accordionContent {
+    width: 100%;
+    text-align: left;
+    overflow: hidden;
+}
+
+[data-item-padding="none"] > div {
+    padding: 0;
+}
+
+[data-item-padding="medium"] > div {
+    padding: 0 var(--space-m) var(--space-s);
+}
+
+[data-item-padding="medium"] > div {
+    padding: 0 var(--space-l) var(--space-m);
+}
+
+[data-item-padding="large"] > div {
+    padding: 0 var(--space-xl) var(--space-l);
+}
+
+[data-item-divider="true"] > div {
+    border-top: var(--line-width) solid var(--line-color);
+    padding-top: var(--space-l);
+}
+
+.accordionContentText {
+    color: var(--text-color);
+}
+
+.accordionCaret {
+    transition: transform 500ms cubic-bezier(0.87, 0, 0.13, 1);
+}
+
+.accordionContent[data-state="open"] {
+    animation: slideDown 500ms cubic-bezier(0.87, 0, 0.13, 1);
+}
+
+.accordionContent[data-state="closed"] {
+    animation: slideUp 500ms cubic-bezier(0.87, 0, 0.13, 1);
+}
+
+
+@keyframes slideDown {
+    from {
+        height: 0;
+    }
+
+    to {
+        height: var(--radix-accordion-content-height);
+    }
+}
+
+@keyframes slideUp {
+    from {
+        height: var(--radix-accordion-content-height);
+    }
+
+    to {
+        height: 0;
+    }
+}

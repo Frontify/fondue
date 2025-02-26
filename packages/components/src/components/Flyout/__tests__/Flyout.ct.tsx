@@ -477,3 +477,29 @@ test('should not render focus visible input on click', async ({ mount, page }) =
     await expect(textInput3).toHaveCSS(...FOCUS_OUTLINE_CSS);
     await expect(textInput3).not.toHaveCSS(...FOCUS_BORDER_CSS);
 });
+
+test('should render with spacious trigger offset', async ({ mount, page }) => {
+    const component = await mount(
+        <Flyout.Root open>
+            <Flyout.Trigger>
+                <Button>{FLYOUT_TRIGGER_TEXT}</Button>
+            </Flyout.Trigger>
+            <Flyout.Content triggerOffset="spacious">
+                <Flyout.Header showCloseButton>{FLYOUT_HEADER_TEXT}</Flyout.Header>
+                <Flyout.Body>{FLYOUT_BODY_TEXT}</Flyout.Body>
+                <Flyout.Footer>
+                    <Button>{FLYOUT_FOOTER_TEXT}</Button>
+                </Flyout.Footer>
+            </Flyout.Content>
+        </Flyout.Root>,
+    );
+    await expect(component).toBeVisible();
+    await expect(page.getByTestId(FLYOUT_TRIGGER_TEST_ID)).toBeVisible();
+    await expect(page.getByTestId(FLYOUT_CONTENT_TEST_ID)).toBeVisible();
+    const triggerElementBoundingBox = await page.getByTestId(FLYOUT_TRIGGER_TEST_ID).boundingBox();
+    const contentElementBoundingBox = await page.getByTestId(FLYOUT_CONTENT_TEST_ID).boundingBox();
+    expect(triggerElementBoundingBox && contentElementBoundingBox).toBeTruthy();
+    if (triggerElementBoundingBox && contentElementBoundingBox) {
+        expect(contentElementBoundingBox.y).toBe(triggerElementBoundingBox.y + triggerElementBoundingBox.height + 16);
+    }
+});

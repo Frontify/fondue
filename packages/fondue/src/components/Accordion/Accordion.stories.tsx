@@ -31,10 +31,18 @@ import { Accordion as AccordionComponent, AccordionItem } from './Accordion';
 import { AccordionHeaderIcon } from './AccordionHeaderIcon';
 import { type AccordionHeaderProps, type AccordionProps } from './types';
 
+/**
+ ### This component is deprecated, please use the [new Accordion component](/docs/current_components-accordion--documentation) instead.
+ */
 export default {
     title: 'Components/Accordion',
     component: AccordionComponent,
     tags: ['autodocs'],
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
+    },
 } as Meta<AccordionProps>;
 
 export const WithDifferentAccordionItems: StoryFn<AccordionProps> = () => {

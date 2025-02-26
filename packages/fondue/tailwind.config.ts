@@ -94,19 +94,7 @@ export default {
                 },
             },
             fontFamily: {
-                sans: [
-                    '"Space Grotesk Frontify"',
-                    'Arial',
-                    '-apple-system',
-                    'BlinkMacSystemFont',
-                    'Segoe UI',
-                    'Roboto',
-                    'Helvetica',
-                    'sans-serif',
-                    '"Apple Color Emoji"',
-                    '"Segoe UI Emoji"',
-                    '"Segoe UI Symbol"',
-                ],
+                sans: ['var(--body-family-stack)'],
                 mono: ['Menlo', 'Courier', 'monospace'],
             },
             fontSize: {

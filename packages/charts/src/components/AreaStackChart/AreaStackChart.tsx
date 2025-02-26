@@ -54,36 +54,34 @@ export const AreaStackChart = ({
             {!hideLegend && legendPosition === LEGEND_POSITION_TOP && (
                 <Legend names={series.map((series) => series.name)} style="line" />
             )}
-            {margin && (
-                <XYChart
-                    theme={theme}
-                    xScale={{ type: 'time' }}
-                    yScale={{ type: 'linear', domain: transformedYDomain }}
-                    height={height}
-                    width={width}
-                    margin={margin}
-                >
-                    <GridRows tickValues={transformedLinearScaleTicks} />
-                    <AreaStack series={series} />
-                    <Axes
-                        linearScaleTicks={transformedLinearScaleTicks}
-                        valueFormatter={valueFormatter}
-                        locale={locale}
-                        series={series}
-                    />
-                    {markLine && <MarkLine {...markLine} />}
-                    <Tooltip
-                        crossHairStyle="line"
-                        hideGlyphs={false}
-                        colorAccessor={(key) => colorAccessorByKey(key, series)}
-                        missingValueLabel={missingValueLabel}
-                        childSumLabel={childSumLabel}
-                        valueFormatter={valueFormatter}
-                        locale={locale}
-                        stackingGlyphs={true}
-                    />
-                </XYChart>
-            )}
+            <XYChart
+                theme={theme}
+                xScale={{ type: 'time' }}
+                yScale={{ type: 'linear', domain: transformedYDomain }}
+                height={height}
+                width={width}
+                margin={margin}
+            >
+                <GridRows tickValues={transformedLinearScaleTicks} />
+                <AreaStack series={series} />
+                <Axes
+                    linearScaleTicks={transformedLinearScaleTicks}
+                    valueFormatter={valueFormatter}
+                    locale={locale}
+                    series={series}
+                />
+                {markLine && <MarkLine {...markLine} />}
+                <Tooltip
+                    crossHairStyle="line"
+                    hideGlyphs={false}
+                    colorAccessor={(key) => colorAccessorByKey(key, series)}
+                    missingValueLabel={missingValueLabel}
+                    childSumLabel={childSumLabel}
+                    valueFormatter={valueFormatter}
+                    locale={locale}
+                    stackingGlyphs={true}
+                />
+            </XYChart>
             {!hideLegend && legendPosition === 'bottom' && (
                 <Legend names={series.map((series) => series.name)} style={'line'} />
             )}
