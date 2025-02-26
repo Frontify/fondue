@@ -63,6 +63,11 @@ export type SelectComponentProps = {
      * Id of the select component
      */
     id?: string;
+    /**
+     * The value of the select is shown as plan text when set to true, items child components are used if set to true
+     * @default true
+     */
+    showStringValue?: boolean;
 } & CommonAriaProps;
 
 export const SelectInput = (
@@ -77,6 +82,7 @@ export const SelectInput = (
         alignMenu = 'start',
         side = 'bottom',
         id,
+        showStringValue = true,
         'data-test-id': dataTestId = 'fondue-select',
         ...props
     }: SelectComponentProps,
@@ -110,6 +116,10 @@ export const SelectInput = (
             itemToString: (item) => (item ? item.label : ''),
         });
 
+    const displayedValue = selectedItem
+        ? (!showStringValue && selectedItem.children) || selectedItem.label
+        : placeholder;
+
     return (
         <RadixPopover.Root open={isOpen}>
             <RadixPopover.Anchor
@@ -141,7 +151,7 @@ export const SelectInput = (
                               ref: forwardedRef,
                           }))}
                 >
-                    <span className={styles.selectedValue}>{selectedItem ? selectedItem.label : placeholder}</span>
+                    <span className={styles.selectedValue}>{displayedValue}</span>
                     {inputSlots}
                     {clearButton && (
                         <RadixSlot
