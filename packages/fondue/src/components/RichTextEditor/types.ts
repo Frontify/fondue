@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type TNode } from '@udecode/slate';
+import { type NodeType } from './serializer/markdown/types';
 
 export enum PaddingSizes {
     None = 'tw-p-0',
@@ -10,4 +10,4 @@ export enum PaddingSizes {
     XLarge = 'tw-p-8',
 }
 
-export type TreeOfNodes = TNode[];
+export type TreeOfNodes = NodeType[];
