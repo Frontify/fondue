@@ -216,7 +216,7 @@ test('should render no padding', async ({ mount, page }) => {
         </ScrollArea>,
     );
 
-    await expect(page.getByTestId(SCROLLAREA_VIEWPORT_TEST_ID)).toHaveCSS('padding', '0px 10px 0px 0px');
+    await expect(page.getByTestId(SCROLLAREA_VIEWPORT_TEST_ID)).toHaveCSS('padding', '0px');
 });
 
 test('should render tight padding', async ({ mount, page }) => {
