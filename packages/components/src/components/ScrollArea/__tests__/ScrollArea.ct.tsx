@@ -5,6 +5,7 @@ import { expect, test } from '@playwright/experimental-ct-react';
 import { ScrollArea } from '../ScrollArea';
 
 const SCROLLAREA_VIEWPORT_TEST_ID = 'fondue-scroll-area-viewport';
+const SCROLLAREA_CONTENT_TEST_ID = 'fondue-scroll-area-content';
 const SCROLLAREA_SCROLLBAR_VERTICAL_TEST_ID = 'fondue-scroll-area-vertical-scrollbar';
 const SCROLLAREA_SCROLLBAR_HORIZONTAL_TEST_ID = 'fondue-scroll-area-horizontal-scrollbar';
 
@@ -253,4 +254,52 @@ test('should render spacious padding', async ({ mount, page }) => {
         </ScrollArea>,
     );
     await expect(page.getByTestId(SCROLLAREA_VIEWPORT_TEST_ID)).toHaveCSS('padding', '24px 40px');
+});
+
+test('renders without gutter', async ({ mount }) => {
+    const component = await mount(
+        <ScrollArea maxHeight={500} maxWidth={600}>
+            <div data-test-id={SCROLLAREA_CONTENT_TEST_ID} style={{ height: '1000px', width: '100%' }}>
+                Scrollable content
+            </div>
+        </ScrollArea>,
+    );
+
+    await expect(component).toBeVisible();
+    const componentElement = await component.boundingBox();
+    const contentElement = await component.getByTestId(SCROLLAREA_CONTENT_TEST_ID).boundingBox();
+
+    expect(componentElement?.width).toBe(contentElement?.width);
+});
+
+test('renders with gutter', async ({ mount }) => {
+    const component = await mount(
+        <ScrollArea maxHeight={500} maxWidth={600} scrollbarGutter="stable">
+            <div data-test-id={SCROLLAREA_CONTENT_TEST_ID} style={{ height: '1000px', width: '100%' }}>
+                Scrollable content
+            </div>
+        </ScrollArea>,
+    );
+
+    await expect(component).toBeVisible();
+    const componentElement = await component.boundingBox();
+    const contentElement = await component.getByTestId(SCROLLAREA_CONTENT_TEST_ID).boundingBox();
+
+    expect(componentElement?.width).toBe((contentElement?.width || 0) + 10);
+});
+
+test('renders with gutter when type is always', async ({ mount }) => {
+    const component = await mount(
+        <ScrollArea maxHeight={500} maxWidth={600} type="always">
+            <div data-test-id={SCROLLAREA_CONTENT_TEST_ID} style={{ height: '1000px', width: '100%' }}>
+                Scrollable content
+            </div>
+        </ScrollArea>,
+    );
+
+    await expect(component).toBeVisible();
+    const componentElement = await component.boundingBox();
+    const contentElement = await component.getByTestId(SCROLLAREA_CONTENT_TEST_ID).boundingBox();
+
+    expect(componentElement?.width).toBe((contentElement?.width || 0) + 10);
 });

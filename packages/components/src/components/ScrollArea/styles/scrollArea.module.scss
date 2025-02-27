@@ -14,7 +14,7 @@
 .viewport {
     width: 100%;
     height: 100%;
-    padding-right: var(--scrollbar-size);
+    background-color: red;
     box-sizing: border-box;
 
     &[data-scroll-padding='tight'] {
@@ -35,6 +35,20 @@
 
     &[data-show-shadow='true'] {
         box-shadow: inset 0 -15px 8px -10px var(--box-neutral-color);
+    }
+
+    &[data-scrollbar-gutter='stable'],
+    &[data-scrollbar-type='always'] {
+        padding-right: var(--scrollbar-size);
+        padding-bottom: var(--scrollbar-size);
+    }
+
+    &[data-scrollbar-gutter='stable-horizontal'] {
+        padding-bottom: var(--scrollbar-size);
+    }
+
+    &[data-scrollbar-gutter='stable-vertical'] {
+        padding-right: var(--scrollbar-size);
     }
 }
 
