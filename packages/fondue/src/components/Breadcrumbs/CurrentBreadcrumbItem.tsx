@@ -26,6 +26,7 @@ export const CurrentBreadcrumbItem = ({
 }: CurrentBreadcrumbItemProps): ReactElement => {
     const ref = useRef(null);
     const Element = getItemElementType(link, onClick);
+    const isInteractive = Element !== 'span';
     const { itemProps } = useBreadcrumbItem(
         {
             isCurrent: true,
@@ -35,16 +36,22 @@ export const CurrentBreadcrumbItem = ({
         ref,
     );
 
-    const elementTypeProps = { a: { href: link }, button: { onClick, type: 'button' as const }, span: {} };
+    const elementTypeProps = {
+        a: { href: link },
+        button: { onClick, type: 'button' as const },
+        span: { tabIndex: -1 },
+    };
 
     const { isFocusVisible, focusProps } = useFocusRing();
-    const props = mergeProps(itemProps, focusProps, elementTypeProps[Element]);
+    const props = isInteractive
+        ? mergeProps(itemProps, focusProps, elementTypeProps[Element])
+        : elementTypeProps[Element];
 
     const classNames = merge([
         'tw-flex tw-gap-x-1 tw-items-center tw-leading-4 tw-h-6 tw-whitespace-pre-wrap tw-font-medium tw-rounded',
         bold && 'tw-font-bold',
         activeInline && 'tw-text-xs',
-        isFocusVisible && FOCUS_STYLE_NO_OFFSET,
+        isInteractive && isFocusVisible && FOCUS_STYLE_NO_OFFSET,
     ]);
 
     return (

@@ -13,5 +13,5 @@ export abstract class MarkdownTransformer<T, R> implements Transformer<T, R> {
         this.editor = InitPlateEditor.init().getInstance();
     }
 
-    abstract process(value: T): R;
+    abstract process(value: T, options?: { escapeValue?: boolean }): R;
 }
