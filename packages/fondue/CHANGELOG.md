@@ -1,5 +1,18 @@
 # @frontify/fondue
 
+## 12.7.0
+
+### Minor Changes
+
+- [#2233](https://github.com/Frontify/fondue/pull/2233) [`0b3c311`](https://github.com/Frontify/fondue/commit/0b3c311b1c866506a06bb2f126657030de8bf514) Thanks [@syeo66](https://github.com/syeo66)! - fix(Breadcrumbs): remove focus indicator on noninteractive items
+
+- [#2234](https://github.com/Frontify/fondue/pull/2234) [`42d4b0d`](https://github.com/Frontify/fondue/commit/42d4b0d06774b6d2b54a61cf6968fe7a4e594925) Thanks [@bojangles-m](https://github.com/bojangles-m)! - fix(RTE): added second parameter to the process method in class SlateToMarkdown
+
+### Patch Changes
+
+- Updated dependencies [[`a2370c3`](https://github.com/Frontify/fondue/commit/a2370c38f62a7e81ab9e16230768861a97c24f19), [`cb7e784`](https://github.com/Frontify/fondue/commit/cb7e784627cf29a3b395381ac6c8df0e409b0c66)]:
+    - @frontify/fondue-components@14.1.0
+
 ## 12.6.0
 
 ### Minor Changes

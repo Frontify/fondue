@@ -1,5 +1,13 @@
 # @frontify/fondue-components
 
+## 14.1.0
+
+### Minor Changes
+
+- [#2235](https://github.com/Frontify/fondue/pull/2235) [`a2370c3`](https://github.com/Frontify/fondue/commit/a2370c38f62a7e81ab9e16230768861a97c24f19) Thanks [@syeo66](https://github.com/syeo66)! - feat(Select): Allow Select to display custom items in selection field
+
+- [#2237](https://github.com/Frontify/fondue/pull/2237) [`cb7e784`](https://github.com/Frontify/fondue/commit/cb7e784627cf29a3b395381ac6c8df0e409b0c66) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: allow for specifying the scrollbarGutter in `ScrollArea`
+
 ## 14.0.0
 
 ### Minor Changes
