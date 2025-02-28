@@ -63,8 +63,12 @@
     }
 
     &[data-size='large'] {
-        padding: 1rem 2rem 1rem 1.25rem;
+        padding: sizeToken.get(4) sizeToken.get(5);
         height: auto;
+
+        .selectedValue {
+            padding-left: 0;
+        }
     }
 
     &:has(input:placeholder-shown) {
