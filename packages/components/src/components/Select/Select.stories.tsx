@@ -65,6 +65,21 @@ export const Combobox: Story = {
     },
 };
 
+export const LargeSelect: Story = {
+    args: {
+        size: 'large',
+    },
+    render: (args) => {
+        return (
+            <Select {...args}>
+                <Select.Item value="test1">Test1</Select.Item>
+                <Select.Item value="test2">Test2</Select.Item>
+                <Select.Item value="test3">Test3</Select.Item>
+            </Select>
+        );
+    },
+};
+
 export const Disabled: Story = {
     args: {
         disabled: true,

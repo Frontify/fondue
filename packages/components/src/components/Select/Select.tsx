@@ -56,6 +56,11 @@ export type SelectComponentProps = {
      */
     side?: 'left' | 'right' | 'bottom' | 'top';
     /**
+     * Defines the size of the field.
+     * @default "small"
+     */
+    size?: 'small' | 'large';
+    /**
      * The data test id of the select component.
      */
     'data-test-id'?: string;
@@ -81,6 +86,7 @@ export const SelectInput = (
         disabled,
         alignMenu = 'start',
         side = 'bottom',
+        size = 'small',
         id,
         showStringValue = true,
         'data-test-id': dataTestId = 'fondue-select',
@@ -144,6 +150,7 @@ export const SelectInput = (
                     data-disabled={disabled}
                     data-empty={!selectedItem}
                     data-test-id={dataTestId}
+                    data-size={size}
                     {...(disabled
                         ? {}
                         : getToggleButtonProps({
