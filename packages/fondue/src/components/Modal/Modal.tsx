@@ -72,7 +72,7 @@ const ModalComponent = memo((props: ModalProps): ReactElement => {
             exit="exit"
             style={{
                 background: 'rgba(0, 0, 0, .5)',
-                ...(zIndex ? { zIndex } : {}),
+                zIndex,
             }}
             onPointerDown={onPointerDown}
             data-is-underlay={true}
