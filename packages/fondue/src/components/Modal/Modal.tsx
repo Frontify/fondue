@@ -46,13 +46,11 @@ const widthMap: Record<ModalWidth, string> = {
     [ModalWidth.Large]: 'tw-max-w-[1200px]',
 };
 
-const DEFAULT_ZINDEX = 50;
-
 /**
  * @deprecated Use `Dialog` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#dialog the migration guide}.
  */
 const ModalComponent = memo((props: ModalProps): ReactElement => {
-    const { visual, children, width = ModalWidth.Default, zIndex = DEFAULT_ZINDEX, compact = false } = props;
+    const { visual, children, width = ModalWidth.Default, zIndex, compact = false } = props;
     const ref = useRef<HTMLDivElement>(null);
     const {
         overlayProps,
@@ -74,7 +72,7 @@ const ModalComponent = memo((props: ModalProps): ReactElement => {
             exit="exit"
             style={{
                 background: 'rgba(0, 0, 0, .5)',
-                zIndex,
+                ...(zIndex ? { zIndex } : {}),
             }}
             onPointerDown={onPointerDown}
             data-is-underlay={true}
