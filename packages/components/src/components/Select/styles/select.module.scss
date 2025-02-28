@@ -253,7 +253,7 @@
 }
 
 .portal {
-    z-index: 30;
+    z-index: 120000;
 
     &[data-side='bottom'] {
         margin-top: sizeToken.get(2);
