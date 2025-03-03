@@ -1,7 +1,7 @@
 {
     "name": "@frontify/fondue",
     "type": "module",
-    "version": "12.7.0",
+    "version": "12.8.0",
     "description": "Design system of Frontify",
     "author": "Frontify Developers <developers@frontify.com>",
     "homepage": "https://github.com/Frontify/fondue",

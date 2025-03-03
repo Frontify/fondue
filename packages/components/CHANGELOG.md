@@ -1,5 +1,13 @@
 # @frontify/fondue-components
 
+## 14.2.0
+
+### Minor Changes
+
+- [#2245](https://github.com/Frontify/fondue/pull/2245) [`27b23ee`](https://github.com/Frontify/fondue/commit/27b23ee6efd56eeb38aa38694976b0aa590b37fb) Thanks [@syeo66](https://github.com/syeo66)! - fix(Accordion): add box-sizing border-box
+
+- [#2238](https://github.com/Frontify/fondue/pull/2238) [`24648c8`](https://github.com/Frontify/fondue/commit/24648c8417ddb36f419bc540e01e857a79a091c9) Thanks [@syeo66](https://github.com/syeo66)! - fix(Dialog): dialog height grows too much on safari
+
 ## 14.1.0
 
 ### Minor Changes
