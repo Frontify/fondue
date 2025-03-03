@@ -121,6 +121,10 @@ AccordionHeader.displayName = 'Accordion.Header';
 
 export type AccordionTriggerProps = {
     'data-test-id'?: string;
+    /**
+     * Change the default rendered element for the one passed as a child, merging their props and behavior.
+     * @default false
+     */
     asChild?: boolean;
     /**
      * Children of the Accordion trigger. This contains the actually clickable and visible header content
