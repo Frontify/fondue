@@ -19,13 +19,14 @@
 }
 
 .accordionTrigger {
-    width: 100%;
-    text-align: left;
-    padding: var(--space-l) var(--space-xl);
+    align-items: center;
+    box-sizing: border-box;
     display: flex;
     justify-content: space-between;
-    align-items: center;
     outline: 0;
+    padding: var(--space-l) var(--space-xl);
+    text-align: left;
+    width: 100%;
 
     &[data-state="open"],
     &:hover {

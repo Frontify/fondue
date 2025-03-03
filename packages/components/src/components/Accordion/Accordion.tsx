@@ -121,6 +121,7 @@ AccordionHeader.displayName = 'Accordion.Header';
 
 export type AccordionTriggerProps = {
     'data-test-id'?: string;
+    asChild?: boolean;
     /**
      * Children of the Accordion trigger. This contains the actually clickable and visible header content
      */
@@ -129,10 +130,11 @@ export type AccordionTriggerProps = {
 
 export const AccordionTrigger = ({
     'data-test-id': dataTestId = 'fondue-accordion-trigger',
+    asChild,
     children,
 }: AccordionTriggerProps) => {
     return (
-        <RadixAccordion.Trigger className={styles.accordionTrigger} data-test-id={dataTestId}>
+        <RadixAccordion.Trigger asChild={asChild} className={styles.accordionTrigger} data-test-id={dataTestId}>
             {children}
             <IconCaretDown className={styles.accordionCaret} size="16" />
         </RadixAccordion.Trigger>
