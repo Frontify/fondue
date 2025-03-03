@@ -2,7 +2,9 @@
 
 import { type Meta, type StoryObj } from '@storybook/react';
 
+import { Box } from '../Box/Box';
 import { Button } from '../Button/Button';
+import { ScrollArea } from '../ScrollArea/ScrollArea';
 import { TextInput } from '../TextInput/TextInput';
 import { Tooltip } from '../Tooltip/Tooltip';
 
@@ -130,6 +132,46 @@ export const WithFocusableContent: Story = {
 };
 
 export const WithHeaderAndFooter: Story = {};
+
+export const WithHeaderAndFooterAndScrollableContent: Story = {
+    render: ({ ...args }) => {
+        return (
+            <Flyout.Root>
+                <Flyout.Trigger>
+                    <Button>Open flyout</Button>
+                </Flyout.Trigger>
+                <Flyout.Content {...args} padding="none">
+                    <Flyout.Header>
+                        <Box p={4}>Header</Box>
+                    </Flyout.Header>
+                    <Flyout.Body>
+                        <ScrollArea maxHeight="200px">
+                            <Box p={4}>
+                                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+                                incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+                                exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure
+                                dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+                                Excepteur voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
+                                occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est
+                                laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+                                incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+                                exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure
+                                dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+                                Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
+                                mollit anim id est laborum.
+                            </Box>
+                        </ScrollArea>
+                    </Flyout.Body>
+                    <Flyout.Footer>
+                        <Box p={4}>
+                            <Button>Submit</Button>
+                        </Box>
+                    </Flyout.Footer>
+                </Flyout.Content>
+            </Flyout.Root>
+        );
+    },
+};
 
 export const WithCloseButton: Story = {
     render: ({ ...args }) => {
