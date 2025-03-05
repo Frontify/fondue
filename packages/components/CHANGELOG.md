@@ -1,5 +1,11 @@
 # @frontify/fondue-components
 
+## 14.3.0
+
+### Minor Changes
+
+- [#2249](https://github.com/Frontify/fondue/pull/2249) [`492cade`](https://github.com/Frontify/fondue/commit/492cadec3ba144188e8065117235f7d1f20c287b) Thanks [@syeo66](https://github.com/syeo66)! - feat(SegmentedControl): add tooltip capability
+
 ## 14.2.0
 
 ### Minor Changes
