@@ -5,6 +5,8 @@ import { forwardRef, type ForwardedRef, type ReactNode } from 'react';
 
 import { useControllableState } from '#/hooks/useControllableState';
 
+import { Tooltip } from '../Tooltip/Tooltip';
+
 import styles from './styles/segmentedControl.module.scss';
 
 export type SegmentedControlRootProps = {
@@ -78,14 +80,49 @@ SegmentedControlRoot.displayName = 'SegmentedControl.Root';
 
 type SegmentedControlItemProps = {
     children: ReactNode;
+    tooltip?: string;
     value: string;
 };
 
+export const SegmentedControlTooltipItem = forwardRef(
+    ({ children, tooltip, ...itemProps }: SegmentedControlItemProps, ref: ForwardedRef<HTMLButtonElement>) => (
+        <Tooltip.Root>
+            <Tooltip.Trigger asChild>
+                <ToggleGroupPrimitive.Item ref={ref} {...itemProps} className={styles.item} asChild>
+                    <button tabIndex={-1} className={styles.item}>
+                        <SegmentedControlItemContent>{children}</SegmentedControlItemContent>
+                    </button>
+                </ToggleGroupPrimitive.Item>
+            </Tooltip.Trigger>
+
+            <Tooltip.Content>{tooltip}</Tooltip.Content>
+        </Tooltip.Root>
+    ),
+);
+SegmentedControlTooltipItem.displayName = 'SegmentedControlTooltipItem';
+
 export const SegmentedControlItem = (
-    { children, ...itemProps }: SegmentedControlItemProps,
+    { children, tooltip, ...itemProps }: SegmentedControlItemProps,
     ref: ForwardedRef<HTMLButtonElement>,
-) => (
-    <ToggleGroupPrimitive.Item ref={ref} {...itemProps} className={styles.item} asChild={false}>
+) => {
+    if (tooltip) {
+        return (
+            <SegmentedControlTooltipItem ref={ref} tooltip={tooltip} {...itemProps}>
+                {children}
+            </SegmentedControlTooltipItem>
+        );
+    }
+
+    return (
+        <ToggleGroupPrimitive.Item ref={ref} {...itemProps} className={styles.item}>
+            <SegmentedControlItemContent>{children}</SegmentedControlItemContent>
+        </ToggleGroupPrimitive.Item>
+    );
+};
+SegmentedControlItem.displayName = 'SegmentedControl.Item';
+
+const SegmentedControlItemContent = ({ children }: { children: ReactNode }) => (
+    <>
         {/* Separator */}
         <span className={styles.separator} />
         <span className={styles.itemLabel}>
@@ -95,9 +132,8 @@ export const SegmentedControlItem = (
             {/* Inactive children */}
             <span className={styles.itemLabelInactive}>{children}</span>
         </span>
-    </ToggleGroupPrimitive.Item>
+    </>
 );
-SegmentedControlItem.displayName = 'SegmentedControl.Item';
 
 export const SegmentedControl = {
     Root: forwardRef<HTMLDivElement, SegmentedControlRootProps>(SegmentedControlRoot),

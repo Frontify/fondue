@@ -45,6 +45,22 @@ export const TextOnly: Story = {
     ),
 };
 
+export const WithTooltip: Story = {
+    render: (args) => (
+        <SegmentedControl.Root {...args}>
+            <SegmentedControl.Item tooltip="First One" value="first">
+                First
+            </SegmentedControl.Item>
+            <SegmentedControl.Item tooltip="Second One" value="second">
+                Second
+            </SegmentedControl.Item>
+            <SegmentedControl.Item tooltip="Third One" value="third">
+                Third
+            </SegmentedControl.Item>
+        </SegmentedControl.Root>
+    ),
+};
+
 export const IconOnly: Story = {
     render: (args) => (
         <SegmentedControl.Root {...args}>
