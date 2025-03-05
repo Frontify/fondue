@@ -5,6 +5,7 @@ import { action } from '@storybook/addon-actions';
 import { type Meta, type StoryObj } from '@storybook/react';
 
 import { Label } from '../Label/Label';
+import { Tooltip } from '../Tooltip/Tooltip';
 
 import { SegmentedControl, SegmentedControlItem, SegmentedControlRoot } from './SegmentedControl';
 
@@ -41,6 +42,33 @@ export const TextOnly: Story = {
             <SegmentedControl.Item value="first">First</SegmentedControl.Item>
             <SegmentedControl.Item value="second">Second</SegmentedControl.Item>
             <SegmentedControl.Item value="third">Third</SegmentedControl.Item>
+        </SegmentedControl.Root>
+    ),
+};
+
+export const WithTooltip: Story = {
+    render: (args) => (
+        <SegmentedControl.Root {...args}>
+            <Tooltip.Root>
+                <Tooltip.Trigger asChild>
+                    <SegmentedControl.Item value="first">First</SegmentedControl.Item>
+                </Tooltip.Trigger>
+                <Tooltip.Content>First one</Tooltip.Content>
+            </Tooltip.Root>
+
+            <Tooltip.Root>
+                <Tooltip.Trigger asChild>
+                    <SegmentedControl.Item value="second">Second</SegmentedControl.Item>
+                </Tooltip.Trigger>
+                <Tooltip.Content>Second one</Tooltip.Content>
+            </Tooltip.Root>
+
+            <Tooltip.Root>
+                <Tooltip.Trigger asChild>
+                    <SegmentedControl.Item value="third">Third</SegmentedControl.Item>
+                </Tooltip.Trigger>
+                <Tooltip.Content>Third one</Tooltip.Content>
+            </Tooltip.Root>
         </SegmentedControl.Root>
     ),
 };
