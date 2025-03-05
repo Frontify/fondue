@@ -164,7 +164,8 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
     }
 
     // Show the active indicator when the state is on
-    .item[data-state='on'] ~ & {
+    .item[data-state='on'] ~ &,
+    .item[aria-checked='true'] ~ & {
         display: block;
     }
 
@@ -181,7 +182,8 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
         }
     }
     @for $index from 1 through 10 {
-        .item[data-state='on']:nth-child(#{$index}) ~ & {
+        .item[data-state='on']:nth-child(#{$index}) ~ &,
+        .item[aria-checked='true']:nth-child(#{$index}) ~ & {
             transform: translateX(calc(100% * calc(#{$index} - 1)));
         }
     }
