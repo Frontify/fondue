@@ -203,6 +203,26 @@ export const ItemGroups: Story = {
     },
 };
 
+export const OnlyItemGroups: Story = {
+    render: (args) => {
+        return (
+            <Select {...args}>
+                <Select.Slot name="menu">
+                    <Select.Group groupId="Group 1">
+                        <Select.Item value="test1">Test1</Select.Item>
+                        <Select.Item value="test2">Test2</Select.Item>
+                    </Select.Group>
+                    <Select.Group groupId="Group 2">
+                        <Select.Item value="test3">Test3</Select.Item>
+                        <Select.Item value="test4">Test4</Select.Item>
+                        <Select.Item value="test5">Test5</Select.Item>
+                    </Select.Group>
+                </Select.Slot>
+            </Select>
+        );
+    },
+};
+
 export const CustomItem: Story = {
     render: (args) => {
         return (

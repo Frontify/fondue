@@ -340,7 +340,7 @@
     .item ~ & {
         border-top: var(--line-width) solid var(--line-color-strong);
     }
-    &:has(+ .item) {
+    &:has(+ .item, + .group) {
         border-bottom: var(--line-width) solid var(--line-color-strong);
     }
 }
