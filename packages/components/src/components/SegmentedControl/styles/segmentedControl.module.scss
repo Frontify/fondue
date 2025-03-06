@@ -81,7 +81,7 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
     }
 
     // Hover on unselected items but not when disabled
-    .item[data-state='off']:enabled &:hover {
+    .item[aria-checked='false']:enabled &:hover {
         background-color: #00005506;
     }
 }
@@ -106,7 +106,7 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
     .item:disabled & {
         color: var(--box-disabled-color-inverse);
     }
-    .item[data-state='on'] & {
+    .item[aria-checked='true'] & {
         opacity: 1;
         transition-timing-function: ease-out;
     }
@@ -132,7 +132,7 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
     .item:disabled & {
         color: var(--box-disabled-color-inverse);
     }
-    .item[data-state='on'] & {
+    .item[aria-checked='true'] & {
         opacity: 0;
         transition-timing-function: ease-in;
     }
@@ -164,7 +164,7 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
     }
 
     // Show the active indicator when the state is on
-    .item[data-state='on'] ~ & {
+    .item[aria-checked='true'] ~ & {
         display: block;
     }
 
@@ -181,7 +181,7 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
         }
     }
     @for $index from 1 through 10 {
-        .item[data-state='on']:nth-child(#{$index}) ~ & {
+        .item[aria-checked='true']:nth-child(#{$index}) ~ & {
             transform: translateX(calc(100% * calc(#{$index} - 1)));
         }
     }
@@ -205,8 +205,8 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
     // Hide the separator when the state is on to rely on the active item's border
     .item:first-child &,
     .item:focus-visible &,
-    .item[data-state='on'] &,
-    .item[data-state='on'] + * & {
+    .item[aria-checked='true'] &,
+    .item[aria-checked='true'] + * & {
         opacity: 0;
         transition-timing-function: ease-in;
     }

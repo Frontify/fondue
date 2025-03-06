@@ -1,5 +1,16 @@
 # @frontify/fondue
 
+## 12.8.0
+
+### Minor Changes
+
+- [#2242](https://github.com/Frontify/fondue/pull/2242) [`6048b9f`](https://github.com/Frontify/fondue/commit/6048b9ffc264c075d05314403ecaf463d49f7315) Thanks [@syeo66](https://github.com/syeo66)! - refactor(Modal): remove default z-index from legacy modal
+
+### Patch Changes
+
+- Updated dependencies [[`27b23ee`](https://github.com/Frontify/fondue/commit/27b23ee6efd56eeb38aa38694976b0aa590b37fb), [`24648c8`](https://github.com/Frontify/fondue/commit/24648c8417ddb36f419bc540e01e857a79a091c9)]:
+    - @frontify/fondue-components@14.2.0
+
 ## 12.7.0
 
 ### Minor Changes
