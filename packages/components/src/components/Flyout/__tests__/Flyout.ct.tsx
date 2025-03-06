@@ -238,7 +238,7 @@ test('should render custom content', async ({ mount, page }) => {
     const flyoutContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
     await expect(flyoutContent).toContainText(FLYOUT_BODY_TEXT);
     await expect(flyoutContent.getByTestId('custom-content')).toBeVisible();
-    await expect(flyoutContent.getByTestId('custom-content')).toHaveCSS('background-color', 'rgb(255, 0, 0)');
+    await expect(flyoutContent.getByTestId('custom-content')).toHaveClass('tw-bg-[red]');
 });
 
 test('should render compact padding by default', async ({ mount, page }) => {

@@ -203,7 +203,15 @@ export const FlyoutFooter = (
 };
 FlyoutFooter.displayName = 'Flyout.Footer';
 
-export type FlyoutBodyProps = { children?: ReactNode; 'data-test-id'?: string; scrollable?: boolean };
+export type FlyoutBodyProps = {
+    children?: ReactNode;
+    'data-test-id'?: string;
+    /**
+     * Allow the body to scroll if the max height of the flyout is reached
+     * @default false
+     */
+    scrollable?: boolean;
+};
 
 export const FlyoutBody = (
     { children, 'data-test-id': dataTestId = 'fondue-flyout-body', scrollable = false }: FlyoutBodyProps,
