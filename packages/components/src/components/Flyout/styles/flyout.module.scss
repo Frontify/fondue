@@ -6,7 +6,8 @@
 @use '../../../utilities/focusStyle.module.scss';
 
 .root {
-    display: block;
+    display: flex;
+    flex-direction: column;
     background-color: var(--base-color);
     border: var(--line-width) solid var(--line-color);
     width: 100%;
@@ -75,6 +76,7 @@
 }
 
 .header {
+    flex-shrink: 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -102,6 +104,14 @@
     display: flex;
     flex-direction: column;
     gap: sizeToken.get(4);
+    overflow-y: hidden;
+    flex: 0 0 auto;
+
+    &[data-scrollable='true'] {
+        overflow-y: auto;
+        flex: 1 1 auto;
+        min-height: 0;
+    }
 
     .root[data-flyout-spacing='tight'] & {
         padding: sizeToken.get(2);
@@ -121,6 +131,7 @@
 }
 
 .footer {
+    flex-shrink: 0;
     display: flex;
     justify-content: flex-end;
     gap: sizeToken.get(2);
