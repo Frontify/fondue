@@ -203,14 +203,20 @@ export const FlyoutFooter = (
 };
 FlyoutFooter.displayName = 'Flyout.Footer';
 
-export type FlyoutBodyProps = { children?: ReactNode; 'data-test-id'?: string };
+export type FlyoutBodyProps = { children?: ReactNode; 'data-test-id'?: string; scrollable?: boolean };
 
 export const FlyoutBody = (
-    { children, 'data-test-id': dataTestId = 'fondue-flyout-body' }: FlyoutBodyProps,
+    { children, 'data-test-id': dataTestId = 'fondue-flyout-body', scrollable = false }: FlyoutBodyProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     return (
-        <div data-test-id={dataTestId} ref={ref} data-flyout-spacing="compact" className={styles.body}>
+        <div
+            data-test-id={dataTestId}
+            ref={ref}
+            data-flyout-spacing="compact"
+            data-scrollable={scrollable}
+            className={styles.body}
+        >
             {children}
         </div>
     );
