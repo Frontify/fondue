@@ -2,13 +2,15 @@
     "$schema": "http://docs.renovatebot.com/renovate-schema.json",
     "extends": ["config:base"],
     "labels": ["dependencies"],
+    "prConcurrentLimit": 6,
     "vulnerabilityAlerts": {
         "labels": ["security"],
         "reviewers": ["team:frontend-platform"]
     },
     "dependencyDashboard": false,
+    "rebaseWhen": "conflicted",
     "timezone": "Europe/Zurich",
-    "schedule": ["on the last Monday of the month"],
+    "schedule": ["on the first day of the month"],
     "packageRules": [
         {
             "updateTypes": ["major"],
