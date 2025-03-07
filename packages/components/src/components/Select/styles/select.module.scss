@@ -339,7 +339,13 @@
 .group {
     .item ~ & {
         border-top: var(--line-width) solid var(--line-color-strong);
+        margin-bottom: 0.5rem;
     }
+
+    &:has(+ .item) {
+        margin-top: 0.5rem;
+    }
+
     &:has(+ .item, + .group) {
         border-bottom: var(--line-width) solid var(--line-color-strong);
     }
