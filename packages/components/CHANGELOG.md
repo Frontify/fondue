@@ -1,5 +1,17 @@
 # @frontify/fondue-components
 
+## 14.3.0
+
+### Minor Changes
+
+- [#2252](https://github.com/Frontify/fondue/pull/2252) [`39c5d20`](https://github.com/Frontify/fondue/commit/39c5d208015ae980531696d3c8c9333fd07f0ee0) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: allow scrolling in `Flyout.Body`
+
+- [#2249](https://github.com/Frontify/fondue/pull/2249) [`492cade`](https://github.com/Frontify/fondue/commit/492cadec3ba144188e8065117235f7d1f20c287b) Thanks [@syeo66](https://github.com/syeo66)! - feat(SegmentedControl): add tooltip capability
+
+### Patch Changes
+
+- [#2251](https://github.com/Frontify/fondue/pull/2251) [`82fbed6`](https://github.com/Frontify/fondue/commit/82fbed6f90fd8a07870472276e7db119c8d78391) Thanks [@syeo66](https://github.com/syeo66)! - fix(Select): adjacent groups are missing a divider line
+
 ## 14.2.0
 
 ### Minor Changes
