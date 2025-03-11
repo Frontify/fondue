@@ -56,7 +56,7 @@ module.exports = {
         'size-small-line-height': { value: 1, attributes: { category: 'size', type: 'lineHeight' } },
         // Medium Size
         'size-medium': { value: 0.875, attributes: { category: 'size', type: 'font' } },
-        'size-medium-line-height': { value: 1, attributes: { category: 'size', type: 'lineHeight' } },
+        'size-medium-line-height': { value: 1.125, attributes: { category: 'size', type: 'lineHeight' } },
         // Large Size
         'size-large': { value: 1, attributes: { category: 'size', type: 'font' } },
         'size-large-line-height': { value: 1.25, attributes: { category: 'size', type: 'lineHeight' } },
