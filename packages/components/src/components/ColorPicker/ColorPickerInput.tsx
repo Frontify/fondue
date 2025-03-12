@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconCaretDown, IconDroplet, IconTrashBin } from '@frontify/fondue-icons';
+import { IconCaretDown, IconCross, IconDroplet } from '@frontify/fondue-icons';
 import { type ForwardedRef, forwardRef } from 'react';
 
 import { type CommonAriaAttrs } from '#/utilities/types';
@@ -66,7 +66,7 @@ export const ColorPickerInput = (
             <div className={styles.actions}>
                 {onClear && (
                     <button type="button" aria-label="Clear color" onClick={onClear} className={styles.clear}>
-                        <IconTrashBin size={16} />
+                        <IconCross size={16} />
                     </button>
                 )}
                 <div className={styles.caret} data-state={isOpen ? 'open' : 'closed'}>
