@@ -19,6 +19,7 @@ export default {
         '@storybook/addon-links',
         '@storybook/addon-interactions',
         '@storybook/addon-a11y',
+        '@storybook/addon-storysource',
         '@etchteam/storybook-addon-status',
     ],
     framework: {

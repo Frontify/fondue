@@ -51,6 +51,10 @@
     }
 }
 
+.colorName {
+    color: var(--text-color);
+}
+
 .button {
     display: flex;
     justify-content: start;
