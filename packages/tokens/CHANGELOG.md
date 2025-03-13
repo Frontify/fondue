@@ -1,5 +1,11 @@
 # @frontify/fondue-tokens
 
+## 4.1.0
+
+### Minor Changes
+
+- [#2255](https://github.com/Frontify/fondue/pull/2255) [`666e107`](https://github.com/Frontify/fondue/commit/666e107602211594e4e9c923ffd440e840eefeff) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: adjust body-medium line height
+
 ## 4.0.0
 
 ### Major Changes
