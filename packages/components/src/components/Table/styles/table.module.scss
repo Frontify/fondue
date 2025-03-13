@@ -132,7 +132,7 @@
 
     &:focus-visible {
         @include focusStyle.focus-outline;
-        z-index: 1;
+        z-index: 3;
     }
 
     &[data-selected='true'] {
