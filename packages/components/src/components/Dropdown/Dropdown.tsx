@@ -71,7 +71,7 @@ export const DropdownTrigger = (
 DropdownTrigger.displayName = 'Dropdown.Trigger';
 
 type DropdownSpacing = 'compact' | 'comfortable' | 'spacious';
-
+type DropdownViewportCollisionPadding = 'default' | 'large';
 export type DropdownContentProps = {
     children?: ReactNode;
     'data-test-id'?: string;
@@ -94,12 +94,22 @@ export type DropdownContentProps = {
      * Prevents the focus from being set on the trigger when the dropdown is closed.
      */
     preventTriggerFocusOnClose?: boolean;
+    /**
+     * Define the minimum distance between the dropdown and the viewport edge
+     * @default 8
+     */
+    viewportCollisionPadding?: DropdownViewportCollisionPadding;
 };
 
 const SPACING_MAP: Record<DropdownSpacing, number> = {
     compact: 8,
     comfortable: 12,
     spacious: 16,
+};
+
+const VIEWPORT_COLLISION_PADDING_MAP: Record<DropdownViewportCollisionPadding, number> = {
+    default: 8,
+    large: 24,
 };
 
 export const DropdownContent = (
@@ -109,6 +119,7 @@ export const DropdownContent = (
         triggerOffset = 'compact',
         children,
         preventTriggerFocusOnClose,
+        viewportCollisionPadding = 'default',
         'data-test-id': dataTestId = 'fondue-dropdown-content',
     }: DropdownContentProps,
     ref: ForwardedRef<HTMLDivElement>,
@@ -120,7 +131,7 @@ export const DropdownContent = (
             <ThemeProvider theme={theme}>
                 <RadixDropdown.Content
                     align={align}
-                    collisionPadding={8}
+                    collisionPadding={VIEWPORT_COLLISION_PADDING_MAP[viewportCollisionPadding]}
                     sideOffset={SPACING_MAP[triggerOffset]}
                     side={side}
                     className={styles.content}

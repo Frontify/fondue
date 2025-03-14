@@ -64,6 +64,7 @@ export const FlyoutTrigger = (
 FlyoutTrigger.displayName = 'Flyout.Trigger';
 
 type FlyoutSpacing = 'compact' | 'comfortable' | 'spacious';
+type FlyoutViewportCollisionPadding = 'default' | 'large';
 export type FlyoutContentProps = {
     /**
      * Add a shadow to the flyout
@@ -105,6 +106,11 @@ export type FlyoutContentProps = {
      * @default "360px"
      */
     maxWidth?: string;
+    /**
+     * Define the minimum distance between the flyout and the viewport edge
+     * @default 8
+     */
+    viewportCollisionPadding?: FlyoutViewportCollisionPadding;
     children?: ReactNode;
     'data-test-id'?: string;
 };
@@ -113,6 +119,11 @@ const SPACING_MAP: Record<FlyoutSpacing, number> = {
     compact: 8,
     comfortable: 12,
     spacious: 16,
+};
+
+const VIEWPORT_COLLISION_PADDING_MAP: Record<FlyoutViewportCollisionPadding, number> = {
+    default: 8,
+    large: 24,
 };
 
 export const FlyoutContent = (
@@ -124,6 +135,7 @@ export const FlyoutContent = (
         width = 'fit-content',
         shadow = 'medium',
         triggerOffset = 'compact',
+        viewportCollisionPadding = 'default',
         'data-test-id': dataTestId = 'fondue-flyout-content',
         children,
         ...props
@@ -144,7 +156,7 @@ export const FlyoutContent = (
                     }
                     ref={ref}
                     align={align}
-                    collisionPadding={8}
+                    collisionPadding={VIEWPORT_COLLISION_PADDING_MAP[viewportCollisionPadding]}
                     sideOffset={SPACING_MAP[triggerOffset]}
                     className={styles.root}
                     data-flyout-spacing={padding}
