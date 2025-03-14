@@ -64,7 +64,7 @@ export const FlyoutTrigger = (
 FlyoutTrigger.displayName = 'Flyout.Trigger';
 
 type FlyoutSpacing = 'compact' | 'comfortable' | 'spacious';
-type FlyoutViewportCollisionPadding = 'default' | 'large';
+type FlyoutViewportCollisionPadding = 'compact' | 'spacious';
 export type FlyoutContentProps = {
     /**
      * Add a shadow to the flyout
@@ -122,8 +122,8 @@ const SPACING_MAP: Record<FlyoutSpacing, number> = {
 };
 
 const VIEWPORT_COLLISION_PADDING_MAP: Record<FlyoutViewportCollisionPadding, number> = {
-    default: 8,
-    large: 24,
+    compact: 8,
+    spacious: 24,
 };
 
 export const FlyoutContent = (

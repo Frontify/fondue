@@ -71,7 +71,7 @@ export const DropdownTrigger = (
 DropdownTrigger.displayName = 'Dropdown.Trigger';
 
 type DropdownSpacing = 'compact' | 'comfortable' | 'spacious';
-type DropdownViewportCollisionPadding = 'default' | 'large';
+type DropdownViewportCollisionPadding = 'compact' | 'spacious';
 export type DropdownContentProps = {
     children?: ReactNode;
     'data-test-id'?: string;
@@ -108,8 +108,8 @@ const SPACING_MAP: Record<DropdownSpacing, number> = {
 };
 
 const VIEWPORT_COLLISION_PADDING_MAP: Record<DropdownViewportCollisionPadding, number> = {
-    default: 8,
-    large: 24,
+    compact: 8,
+    spacious: 24,
 };
 
 export const DropdownContent = (
@@ -119,7 +119,7 @@ export const DropdownContent = (
         triggerOffset = 'compact',
         children,
         preventTriggerFocusOnClose,
-        viewportCollisionPadding = 'default',
+        viewportCollisionPadding = 'compact',
         'data-test-id': dataTestId = 'fondue-dropdown-content',
     }: DropdownContentProps,
     ref: ForwardedRef<HTMLDivElement>,
