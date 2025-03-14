@@ -25,7 +25,7 @@ module.exports = {
         // Medium Size
         'size-medium': { value: '{body.size-medium.value}', attributes: { category: 'size', type: 'font' } },
         'size-medium-line-height': {
-            value: '{body.size-medium-line-height.value}',
+            value: '1',
             attributes: { category: 'size', type: 'lineHeight' },
         },
         // Large Size
