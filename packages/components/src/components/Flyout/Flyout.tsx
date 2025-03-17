@@ -108,7 +108,7 @@ export type FlyoutContentProps = {
     maxWidth?: string;
     /**
      * Define the minimum distance between the flyout and the viewport edge
-     * @default 8
+     * @default 'default'
      */
     viewportCollisionPadding?: FlyoutViewportCollisionPadding;
     children?: ReactNode;
