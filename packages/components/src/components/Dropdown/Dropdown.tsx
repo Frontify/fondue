@@ -2,7 +2,7 @@
 
 import { IconCaretRight } from '@frontify/fondue-icons';
 import * as RadixDropdown from '@radix-ui/react-dropdown-menu';
-import { forwardRef, type ForwardedRef, type ReactNode } from 'react';
+import { Children, forwardRef, useMemo, type ForwardedRef, type ReactNode } from 'react';
 
 import { ThemeProvider, useFondueTheme } from '../ThemeProvider/ThemeProvider';
 
@@ -146,6 +146,15 @@ export const DropdownGroup = (
     { children, heading, 'data-test-id': dataTestId = 'fondue-dropdown-group' }: DropdownGroupProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
+    const hasChildren = useMemo(
+        () => Children.toArray(children).filter((child) => child !== null).length > 0,
+        [children],
+    );
+
+    if (!hasChildren) {
+        return null;
+    }
+
     return (
         <RadixDropdown.Group className={styles.group} data-test-id={dataTestId} ref={ref}>
             {heading ? (
