@@ -1,5 +1,11 @@
 # @frontify/fondue-tokens
 
+## 4.1.1
+
+### Patch Changes
+
+- [#2262](https://github.com/Frontify/fondue/pull/2262) [`af436e4`](https://github.com/Frontify/fondue/commit/af436e4404d21ec60c0555addff3bbfc466d484f) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: revert unintended change of heading token
+
 ## 4.1.0
 
 ### Minor Changes

@@ -1,5 +1,17 @@
 # @frontify/fondue-components
 
+## 15.0.1
+
+### Patch Changes
+
+- [#2258](https://github.com/Frontify/fondue/pull/2258) [`56df2b9`](https://github.com/Frontify/fondue/commit/56df2b910ca27e7c895540d340b6e2b51821df1e) Thanks [@syeo66](https://github.com/syeo66)! - fix(Table): make sure focus ring on table is always on top
+
+- [#2260](https://github.com/Frontify/fondue/pull/2260) [`892622f`](https://github.com/Frontify/fondue/commit/892622f39a62523a288ca3d1106a110fed67bdf6) Thanks [@syeo66](https://github.com/syeo66)! - fix(Table): button focus is truncated in header with 'truncate'
+
+- Updated dependencies [[`af436e4`](https://github.com/Frontify/fondue/commit/af436e4404d21ec60c0555addff3bbfc466d484f)]:
+    - @frontify/fondue-tokens@4.1.1
+    - @frontify/fondue-icons@0.14.0
+
 ## 15.0.0
 
 ### Patch Changes
