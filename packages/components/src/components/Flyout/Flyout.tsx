@@ -108,7 +108,7 @@ export type FlyoutContentProps = {
     maxWidth?: string;
     /**
      * Define the minimum distance between the flyout and the viewport edge
-     * @default 'default'
+     * @default 'compact'
      */
     viewportCollisionPadding?: FlyoutViewportCollisionPadding;
     children?: ReactNode;
@@ -135,7 +135,7 @@ export const FlyoutContent = (
         width = 'fit-content',
         shadow = 'medium',
         triggerOffset = 'compact',
-        viewportCollisionPadding = 'default',
+        viewportCollisionPadding = 'compact',
         'data-test-id': dataTestId = 'fondue-flyout-content',
         children,
         ...props

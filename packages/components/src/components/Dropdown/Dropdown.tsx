@@ -96,7 +96,7 @@ export type DropdownContentProps = {
     preventTriggerFocusOnClose?: boolean;
     /**
      * Define the minimum distance between the dropdown and the viewport edge
-     * @default 'default'
+     * @default 'compact'
      */
     viewportCollisionPadding?: DropdownViewportCollisionPadding;
 };
