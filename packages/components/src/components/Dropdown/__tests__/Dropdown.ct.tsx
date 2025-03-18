@@ -431,3 +431,36 @@ test('should render group with heading', async ({ mount, page }) => {
     await expect(groupHeading).toBeVisible();
     await expect(groupHeading).toHaveAttribute('aria-label', 'hello world');
 });
+
+test('should not render group if it has no children', async ({ mount, page }) => {
+    const component = await mount(
+        <Dropdown.Root>
+            <Dropdown.Trigger>
+                <Button data-test-id={DROPDOWN_TRIGGER_TEST_ID}>Trigger</Button>
+            </Dropdown.Trigger>
+            <Dropdown.Content data-test-id={DROPDOWN_CONTENT_TEST_ID}>
+                <Dropdown.Item onSelect={() => {}}>Item 1</Dropdown.Item>
+                <Dropdown.Item onSelect={() => {}}>Item 2</Dropdown.Item>
+                <Dropdown.Item onSelect={() => {}}>Item 3</Dropdown.Item>
+                <Dropdown.SubMenu>
+                    <Dropdown.SubTrigger>Item 4</Dropdown.SubTrigger>
+                    <Dropdown.SubContent>
+                        <Dropdown.Item onSelect={() => {}}>Item 4.1</Dropdown.Item>
+                        <Dropdown.Item onSelect={() => {}}>Item 4.2</Dropdown.Item>
+                        <Dropdown.Item onSelect={() => {}}>Item 4.3</Dropdown.Item>
+                    </Dropdown.SubContent>
+                </Dropdown.SubMenu>
+                <Dropdown.Group data-test-id={DROPDOWN_GROUP_TEST_ID} heading="hello world">
+                    {null}
+                </Dropdown.Group>
+            </Dropdown.Content>
+        </Dropdown.Root>,
+    );
+    await expect(component).toBeVisible();
+    await expect(page.getByTestId(DROPDOWN_TRIGGER_TEST_ID)).toBeVisible();
+    await page.getByTestId(DROPDOWN_TRIGGER_TEST_ID).focus();
+    await page.keyboard.press('Enter');
+    await expect(page.getByTestId(DROPDOWN_CONTENT_TEST_ID)).toBeVisible();
+    const groupHeading = page.getByTestId(DROPDOWN_GROUP_TEST_ID).getByText('hello world');
+    await expect(groupHeading).not.toBeVisible();
+});
