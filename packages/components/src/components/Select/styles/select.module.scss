@@ -80,7 +80,7 @@
     user-select: none;
 }
 
-.selectedValue:has(~ [data-name="left"]) {
+.selectedValue:has(~ [data-name='left']) {
     text-indent: sizeToken.get(3);
     padding-left: 0;
 }
