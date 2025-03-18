@@ -413,3 +413,22 @@ export const SpaciousTriggerOffset: Story = {
         );
     },
 };
+
+export const SpaciousViewportCollisionPadding: Story = {
+    args: {
+        children: 'Hello World',
+        viewportCollisionPadding: 'spacious',
+    },
+    render: ({ ...args }) => {
+        return (
+            <Flyout.Root>
+                <Flyout.Trigger>
+                    <Button>Open flyout</Button>
+                </Flyout.Trigger>
+                <Flyout.Content {...args}>
+                    <Flyout.Body {...args} />
+                </Flyout.Content>
+            </Flyout.Root>
+        );
+    },
+};
