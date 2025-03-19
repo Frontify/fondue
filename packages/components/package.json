@@ -1,7 +1,7 @@
 {
     "name": "@frontify/fondue-components",
     "type": "module",
-    "version": "15.0.1",
+    "version": "16.0.0",
     "homepage": "https://github.com/Frontify/fondue",
     "repository": {
         "type": "git",

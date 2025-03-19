@@ -1,5 +1,16 @@
 # @frontify/fondue-components
 
+## 16.0.0
+
+### Patch Changes
+
+- [#2261](https://github.com/Frontify/fondue/pull/2261) [`b2c5ca7`](https://github.com/Frontify/fondue/commit/b2c5ca7cb78387d47a740675839c8f9b6145ab1e) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add customizable viewport collision padding for `Flyout`, `Dropdown`and `Select`
+
+- [#2265](https://github.com/Frontify/fondue/pull/2265) [`79f8e41`](https://github.com/Frontify/fondue/commit/79f8e41807b02d5ff8c4c9e4d3a88ab4a68a0967) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: hide empty dropdown groups
+
+- Updated dependencies [[`1508973`](https://github.com/Frontify/fondue/commit/1508973f3732c60d14b862c391bfdf3f05e71f36)]:
+    - @frontify/fondue-icons@0.15.0
+
 ## 15.0.1
 
 ### Patch Changes
