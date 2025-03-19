@@ -11,6 +11,8 @@ import { type SelectItemProps } from './SelectItem';
 import styles from './styles/select.module.scss';
 import { getSelectOptionValue, recursiveMap } from './utils';
 
+export type SelectMenuViewportCollisionPadding = 'compact' | 'spacious';
+
 export type SelectMenuProps = {
     /**
      * @internal
@@ -61,6 +63,11 @@ export type SelectMenuProps = {
      * This is used to determine the style of the selected/highlighted item.
      */
     hasInteractedSinceOpening?: boolean;
+    /**
+     * Define the minimum distance between the select menu and the viewport edge
+     * @default 'compact'
+     */
+    viewportCollisionPadding?: SelectMenuViewportCollisionPadding;
 };
 
 export const SelectMenu = ({
@@ -73,9 +80,15 @@ export const SelectMenu = ({
     side,
     selectedItem,
     hasInteractedSinceOpening,
+    viewportCollisionPadding = 'compact',
 }: SelectMenuProps) => {
     const handleOnOpenAutoFocus = (event: Event) => {
         event.preventDefault();
+    };
+
+    const VIEWPORT_COLLISION_PADDING_MAP: Record<SelectMenuViewportCollisionPadding, number> = {
+        compact: 8,
+        spacious: 24,
     };
 
     const theme = useFondueTheme();
@@ -85,7 +98,7 @@ export const SelectMenu = ({
                 <RadixPopover.Content
                     align={align}
                     side={side}
-                    collisionPadding={16}
+                    collisionPadding={VIEWPORT_COLLISION_PADDING_MAP[viewportCollisionPadding] + 8}
                     onOpenAutoFocus={handleOnOpenAutoFocus}
                     className={styles.portal}
                 >

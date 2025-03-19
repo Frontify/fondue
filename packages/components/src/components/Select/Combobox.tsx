@@ -8,7 +8,7 @@ import { forwardRef, useMemo, useRef, useState, type FocusEvent, type ForwardedR
 
 import { type CommonAriaProps } from '#/helpers/aria';
 
-import { SelectMenu } from './SelectMenu';
+import { SelectMenu, type SelectMenuViewportCollisionPadding } from './SelectMenu';
 import styles from './styles/select.module.scss';
 import { useSelectData } from './useSelectData';
 
@@ -59,6 +59,11 @@ export type ComboboxProps = {
      * The data test id of the combobox component.
      */
     'data-test-id'?: string;
+    /**
+     * Define the minimum distance between the select menu and the viewport edge
+     * @default 'compact'
+     */
+    viewportCollisionPadding?: SelectMenuViewportCollisionPadding;
 } & CommonAriaProps;
 
 export const SelectCombobox = (
@@ -74,6 +79,7 @@ export const SelectCombobox = (
         alignMenu = 'start',
         side = 'bottom',
         id,
+        viewportCollisionPadding = 'compact',
         ...props
     }: ComboboxProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
@@ -215,6 +221,7 @@ export const SelectCombobox = (
                 getItemProps={getItemProps}
                 selectedItem={selectedItem}
                 hasInteractedSinceOpening={hasInteractedSinceOpening}
+                viewportCollisionPadding={viewportCollisionPadding}
             >
                 {menuSlots}
             </SelectMenu>

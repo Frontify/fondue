@@ -10,7 +10,7 @@ import { type CommonAriaProps } from '#/helpers/aria';
 
 import { ForwardedRefCombobox } from './Combobox';
 import { ForwardedRefSelectItem, ForwardedRefSelectItemGroup } from './SelectItem';
-import { SelectMenu } from './SelectMenu';
+import { SelectMenu, type SelectMenuViewportCollisionPadding } from './SelectMenu';
 import { ForwardedRefSelectSlot } from './SelectSlot';
 import styles from './styles/select.module.scss';
 import { useSelectData } from './useSelectData';
@@ -68,6 +68,11 @@ export type SelectComponentProps = {
      * @default true
      */
     showStringValue?: boolean;
+    /**
+     * Define the minimum distance between the select menu and the viewport edge
+     * @default 'compact'
+     */
+    viewportCollisionPadding?: SelectMenuViewportCollisionPadding;
 } & CommonAriaProps;
 
 export const SelectInput = (
@@ -84,6 +89,7 @@ export const SelectInput = (
         id,
         showStringValue = true,
         'data-test-id': dataTestId = 'fondue-select',
+        viewportCollisionPadding = 'compact',
         ...props
     }: SelectComponentProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
@@ -192,6 +198,7 @@ export const SelectInput = (
                 getItemProps={getItemProps}
                 selectedItem={selectedItem}
                 hasInteractedSinceOpening={hasInteractedSinceOpening}
+                viewportCollisionPadding={viewportCollisionPadding}
             >
                 {menuSlots}
             </SelectMenu>
