@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { zIndexLayers } from '@components/RichTextEditor/helpers/zIndexLayers';
 import { omit } from 'lodash-es';
+
+import { zIndexLayers } from '@components/RichTextEditor/helpers/zIndexLayers';
 
 import { DEFAULT_TEXT_STYLE_VALUE } from '../types';
 
