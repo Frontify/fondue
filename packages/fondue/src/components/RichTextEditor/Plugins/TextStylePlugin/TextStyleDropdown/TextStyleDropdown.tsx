@@ -1,5 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { omit } from 'lodash-es';
+
 import { zIndexLayers } from '@components/RichTextEditor/helpers/zIndexLayers';
 
 import { DEFAULT_TEXT_STYLE_VALUE } from '../types';
@@ -36,7 +38,16 @@ export const TextStyleDropdown = ({ editorId, textStyles = [] }: TextStyleDropdo
                 >
                     {textStyles.map((stylePlugin) => (
                         <DropdownItem editor={editor} type={stylePlugin} key={stylePlugin.id}>
-                            <span style={stylePlugin.styles ?? {}}>{stylePlugin.props?.label}</span>
+                            <span
+                                style={omit(stylePlugin.styles ?? {}, [
+                                    'color',
+                                    'lineHeight',
+                                    'marginTop',
+                                    'marginBottom',
+                                ])}
+                            >
+                                {stylePlugin.props?.label}
+                            </span>
                         </DropdownItem>
                     ))}
                 </div>
