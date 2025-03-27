@@ -1,5 +1,11 @@
 # @frontify/fondue
 
+## 12.8.5
+
+### Patch Changes
+
+- [#2267](https://github.com/Frontify/fondue/pull/2267) [`e7a0760`](https://github.com/Frontify/fondue/commit/e7a076098744dcbd6a1b24f5fab2d4709c631a35) Thanks [@fulopdaniel](https://github.com/fulopdaniel)! - fix(RTE): omit unwanted styles in text style preview dropdown
+
 ## 12.8.4
 
 ### Patch Changes
