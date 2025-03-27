@@ -12,7 +12,7 @@ import { TextStyles } from '@components/RichTextEditor/Plugins';
 
 import { type PartialOptionType } from './types';
 
-export const options = (editor: PlateEditor): PartialOptionType => ({
+export const plateEditorOptions = (editor: PlateEditor): PartialOptionType => ({
     nodeTypes: {
         paragraph: getPluginType(editor, ELEMENT_PARAGRAPH),
         link: getPluginType(editor, ELEMENT_LINK),

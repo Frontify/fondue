@@ -51,9 +51,15 @@ const testCases = {
     ],
 
     Paragraph: [
-        { markdown: paragraphMarkdown[0], expectedTree: paragraphTree[0] },
-        { markdown: paragraphMarkdown[1], expectedTree: paragraphTree[1] },
-        { markdown: paragraphMarkdown[2], expectedTree: paragraphTree[2] },
+        { info: 'One paragraph', markdown: paragraphMarkdown[0], expectedTree: paragraphTree[0] },
+        { info: 'Multiple paragraphs', markdown: paragraphMarkdown[1], expectedTree: paragraphTree[1] },
+        { info: 'Multiple paragraphs', markdown: paragraphMarkdown[2], expectedTree: paragraphTree[2] },
+        {
+            info: 'Escaped multiple paragraphs',
+            markdown: paragraphMarkdown[2],
+            expectedTree: paragraphTree[2],
+            escape: true,
+        },
     ],
 
     'Unordered list': [{ markdown: unorderedListMarkdown[0], expectedTree: unorderedListTree[0] }],
@@ -141,7 +147,7 @@ describe('Markdown to slate Transformer', () => {
                 }) => {
                     const information = info ? `: ${info}` : '';
 
-                    return it(`should transform${information}`, () => {
+                    return it(`should transform: ${information}`, () => {
                         const result = transformer.process(markdown, { escapeValue: escape });
 
                         expect(result).to.deep.equal(expectedTree);

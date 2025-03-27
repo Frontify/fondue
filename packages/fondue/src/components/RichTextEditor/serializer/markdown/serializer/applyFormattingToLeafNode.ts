@@ -2,13 +2,15 @@
 
 import { type LeafType } from '../types';
 
-const reverseStr = (string: string) => string.split('').reverse().join('');
-
 // This function handles the case of a string like this: "   foo   "
 // Where it would be invalid markdown to generate this: "**   foo   **"
 // We instead, want to trim the whitespace out, apply formatting, and then
 // bring the whitespace back. So our returned string looks like this: "   **foo**   "
-const retainWhitespaceAndFormat = (string: string, format: string) => {
+export function retainWhitespaceAndFormat(string: string, format: string[] | string) {
+    const formats = Array.isArray(format) ? format : [format];
+    const start = formats[0];
+    const end = formats[1] ?? reverseStr(formats[0]);
+
     // we keep this for a comparison later
     const frozenString = string.trim();
 
@@ -17,7 +19,7 @@ const retainWhitespaceAndFormat = (string: string, format: string) => {
 
     // We reverse the right side formatting, to properly handle bold/italic and strikeThrough
     // formats, so we can create ~~***FooBar***~~
-    const fullFormat = `${format}${children}${reverseStr(format)}`;
+    const fullFormat = `${start}${children}${end}`;
 
     // This conditions accounts for no whitespace in our string
     // if we don't have any, we can return early.
@@ -28,20 +30,13 @@ const retainWhitespaceAndFormat = (string: string, format: string) => {
     // if we do have whitespace, let's add our formatting around our trimmed string
     // We reverse the right side formatting, to properly handle bold/italic and strikeThrough
     // formats, so we can create ~~***FooBar***~~
-    const formattedString = format + children + reverseStr(format);
+    const formattedString = start + children + end;
 
     // and replace the non-whitespace content of the string
     return string.replace(frozenString, formattedString);
-};
+}
 
-const replaceLineBreak = (children: string, chunk: LeafType) => {
-    const lineBreak = '\n';
-    if ((chunk.strikethrough || chunk.bold || chunk.italic) && new RegExp(lineBreak, 'g').test(children)) {
-        children = children.replaceAll(lineBreak, '\\\n');
-    }
-
-    return children;
-};
+const reverseStr = (string: string) => string.split('').reverse().join('');
 
 export const applyFormattingToLeafNode = (children: string, chunk: LeafType) => {
     // Never allow decorating break tags with rich text formatting,
@@ -74,6 +69,15 @@ export const applyFormattingToLeafNode = (children: string, chunk: LeafType) => 
     }
 
     children = replaceLineBreak(children, chunk);
+
+    return children;
+};
+
+const replaceLineBreak = (children: string, chunk: LeafType) => {
+    const lineBreak = '\n';
+    if ((chunk.strikethrough || chunk.bold || chunk.italic) && new RegExp(lineBreak, 'g').test(children)) {
+        children = children.replaceAll(lineBreak, '\\\n');
+    }
 
     return children;
 };
