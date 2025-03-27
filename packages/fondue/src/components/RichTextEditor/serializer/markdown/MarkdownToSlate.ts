@@ -8,9 +8,9 @@ import { type TreeOfNodes } from '@components/RichTextEditor/types';
 
 import { MarkdownTransformer } from './MarkdownTransformer';
 import deserializer from './deserializer';
-import { escapeHtmlPreserveEntities } from './escapeHtmlPreserveEntities';
 import { plateEditorOptions } from './options';
 import { remarkFondue } from './remarkFondue';
+import { escapeHtmlPreserveEntities } from './utils';
 
 export class MarkdownToSlate extends MarkdownTransformer<string, TreeOfNodes> {
     process(value: string, options?: { escapeValue?: boolean }) {

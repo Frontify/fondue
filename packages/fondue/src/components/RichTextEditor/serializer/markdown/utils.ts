@@ -35,3 +35,14 @@ export const getSelectedOptions = (options?: PartialOptionType): OptionType => (
 });
 
 export const isMaliciousLink = (link: string) => /^(javascript:|data:text\/).+/i.test(link);
+
+const replacements: Record<string, string> = {
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+    '&': '&amp;',
+};
+
+export const escapeHtmlPreserveEntities = (value: string) =>
+    value.replaceAll(/&(?!(#\d+|[A-Za-z]+);)|["'<>]/g, (match) => replacements[match] ?? match);
