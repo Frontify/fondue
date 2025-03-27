@@ -1,5 +1,11 @@
 # @frontify/fondue
 
+## 12.9.0
+
+### Minor Changes
+
+- [#2269](https://github.com/Frontify/fondue/pull/2269) [`0fb93f0`](https://github.com/Frontify/fondue/commit/0fb93f0fc7d596bc75017cfffcbb14c0683003db) Thanks [@bojangles-m](https://github.com/bojangles-m)! - fix(RTE): omit escaping entities
+
 ## 12.8.5
 
 ### Patch Changes
