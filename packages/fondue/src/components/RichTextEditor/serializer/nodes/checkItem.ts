@@ -21,6 +21,7 @@ export const checkItemNode = (
         <input
             class="tw-w-4 tw-h-4 tw-m-0"
             type="checkbox"
+            tabindex="-1"
             ${node.checked ? 'checked' : ''}
             onclick="return false;" />
     </div>
