@@ -16,7 +16,6 @@ const meta: Meta<typeof TextFieldRoot> = {
     title: 'Components/Text Input',
     component: TextFieldRoot,
     subcomponents: {
-        // @ts-expect-error Storybook types are incorrect
         'TextInput.Slot': TextFieldSlot,
     },
     tags: ['autodocs'],

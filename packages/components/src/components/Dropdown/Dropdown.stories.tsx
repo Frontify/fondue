@@ -23,19 +23,12 @@ type Story = StoryObj<typeof meta>;
 const meta: Meta<typeof DropdownRoot> = {
     component: DropdownRoot,
     subcomponents: {
-        // @ts-expect-error Storybook types are incorrect
         'Dropdown.Trigger': DropdownTrigger,
-        // @ts-expect-error Storybook types are incorrect
         'Dropdown.Content': DropdownContent,
-        // @ts-expect-error Storybook types are incorrect
         'Dropdown.Item': DropdownItem,
-        // @ts-expect-error Storybook types are incorrect
         'Dropdown.Group': DropdownGroup,
-        // @ts-expect-error Storybook types are incorrect
         'Dropdown.SubMenu': DropdownSubMenu,
-        // @ts-expect-error Storybook types are incorrect
         'Dropdown.SubTrigger': DropdownSubTrigger,
-        // @ts-expect-error Storybook types are incorrect
         'Dropdown.SubContent': DropdownSubContent,
     },
     tags: ['autodocs'],

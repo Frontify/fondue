@@ -9,12 +9,11 @@ import { Tooltip } from '../Tooltip/Tooltip';
 
 import { SegmentedControl, SegmentedControlItem, SegmentedControlRoot } from './SegmentedControl';
 
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<typeof SegmentedControlRoot>;
 const meta: Meta<typeof SegmentedControlRoot> = {
     title: 'Components/Segmented Control',
     component: SegmentedControlRoot,
     subcomponents: {
-        // @ts-expect-error Storybook types are incorrect
         'SegmentedControl.Item': SegmentedControlItem,
     },
     tags: ['autodocs'],
