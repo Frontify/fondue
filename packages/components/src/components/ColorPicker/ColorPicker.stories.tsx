@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type Meta, type StoryObj } from '@storybook/react';
@@ -11,7 +10,7 @@ import { ColorGradientInput } from './ColorGradientInput';
 import { ColorPicker, ColorPickerRoot } from './ColorPicker';
 import { ColorValueInput } from './ColorValueInput';
 
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<typeof ColorPickerRoot>;
 const meta: Meta<typeof ColorPickerRoot> = {
     component: ColorPickerRoot,
     subcomponents: {
