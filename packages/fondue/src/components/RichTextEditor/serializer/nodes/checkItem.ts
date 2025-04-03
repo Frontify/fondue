@@ -23,8 +23,7 @@ export const checkItemNode = (
             type="checkbox"
             tabindex="-1"
             aria-disabled="true"
-            ${node.checked ? 'checked' : ''}
-            onclick="return false;" />
+            ${node.checked ? 'checked' : ''} />
     </div>
     <span dir="auto" class="${merge([
         'tw-flex-1',
