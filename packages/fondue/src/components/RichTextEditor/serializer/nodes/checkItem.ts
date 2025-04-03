@@ -19,10 +19,11 @@ export const checkItemNode = (
     }px;">
     <div dir="auto" class="tw-flex tw-items-center tw-justify-center tw-select-none tw-mr-1.5">
         <input
-            class="tw-w-4 tw-h-4 tw-m-0"
+            class="tw-w-4 tw-h-4 tw-m-0 tw-pointer-events-none"
             type="checkbox"
-            ${node.checked ? 'checked' : ''}
-            onclick="return false;" />
+            tabindex="-1"
+            aria-disabled="true"
+            ${node.checked ? 'checked' : ''} />
     </div>
     <span dir="auto" class="${merge([
         'tw-flex-1',
