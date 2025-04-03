@@ -837,7 +837,7 @@ importers:
         specifier: ^4.32.0
         version: 4.39.0
       storybook:
-        specifier: ^8.5.2
+        specifier: ^8.6.12
         version: 8.6.12(prettier@3.5.3)
       storybook-dark-mode:
         specifier: ^4.0.2
