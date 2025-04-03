@@ -1,5 +1,15 @@
 # @frontify/fondue
 
+## 12.9.0
+
+### Minor Changes
+
+- [#2269](https://github.com/Frontify/fondue/pull/2269) [`0fb93f0`](https://github.com/Frontify/fondue/commit/0fb93f0fc7d596bc75017cfffcbb14c0683003db) Thanks [@bojangles-m](https://github.com/bojangles-m)! - fix(RTE): omit escaping entities
+
+### Patch Changes
+
+- [#2277](https://github.com/Frontify/fondue/pull/2277) [`85eac59`](https://github.com/Frontify/fondue/commit/85eac5902f9d21da388be59ce32386d66e2199a3) Thanks [@fulopdaniel](https://github.com/fulopdaniel)! - fix(RTE): make checklist not tabbable in serialized mode
+
 ## 12.8.5
 
 ### Patch Changes
