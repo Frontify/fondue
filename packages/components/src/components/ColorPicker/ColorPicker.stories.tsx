@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type Meta, type StoryObj } from '@storybook/react';
@@ -14,9 +15,7 @@ type Story = StoryObj<typeof meta>;
 const meta: Meta<typeof ColorPickerRoot> = {
     component: ColorPickerRoot,
     subcomponents: {
-        // @ts-expect-error Storybook has the wrong type for subcomponents
         'ColorPicker.Values': ColorValueInput,
-        // @ts-expect-error Storybook has the wrong type for subcomponents
         'ColorPicker.Gradient': ColorGradientInput,
     },
     tags: ['autodocs'],

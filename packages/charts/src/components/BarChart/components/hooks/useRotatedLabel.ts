@@ -2,7 +2,6 @@
 
 import { DataContext } from '@visx/xychart';
 import { useContext, useEffect, useState, type Dispatch, type SetStateAction } from 'react';
-// @ts-expect-error Wrong export of types
 import useFontFaceObserver from 'use-font-face-observer';
 
 import { getBandScaleColumnWidth } from '@components/BarChart/components/helpers';
