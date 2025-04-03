@@ -13,10 +13,19 @@ export const template = ({ theme, plugin }: TemplateOptions) => {
       prefix: "tw-",
       theme: ${JSON.stringify(theme)},
       plugins: [
-      plugin(function({ addComponents}) {
-        const components = ${JSON.stringify(plugin)};
-        addComponents(components);
-        })
+        plugin(function({ addComponents, addUtilities}) {
+            const components = ${JSON.stringify(plugin)};
+            addComponents(components);
+        }),
+        plugin(({ addUtilities }) => {
+            addUtilities({
+                '.italic, i, em': {
+                    fontStyle: 'var(--italic-style, normal)',
+                    fontFeatureSettings: '"ss01"',
+                    fontVariationSettings: '"slnt" -12',
+                },
+            });
+        }),
       ]
   }`;
 };
@@ -30,10 +39,19 @@ export const templateDebug = ({ theme, plugin }: TemplateOptions) => {
       safelist: [{ pattern: /.*/ }],
       theme: ${JSON.stringify(theme)},
       plugins: [
-      plugin(function({ addComponents}) {
-        const components = ${JSON.stringify(plugin)};
-        addComponents(components);
-        })
+        plugin(function({ addComponents, addUtilities}) {
+            const components = ${JSON.stringify(plugin)};
+            addComponents(components);
+        }),
+        plugin(({ addUtilities }) => {
+            addUtilities({
+                '.italic, i, em': {
+                    fontStyle: 'var(--italic-style, normal)',
+                    fontFeatureSettings: '"ss01"',
+                    fontVariationSettings: '"slnt" -12',
+                },
+            });
+        }),
       ]
   }`;
 };
