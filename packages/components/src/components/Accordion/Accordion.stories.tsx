@@ -21,13 +21,9 @@ const meta: Meta<typeof AccordionRoot> = {
     component: AccordionRoot,
     tags: ['autodocs'],
     subcomponents: {
-        // @ts-expect-error Storybook has the wrong type for subcomponents
         'Accordion.Item': AccordionItem,
-        // @ts-expect-error Storybook has the wrong type for subcomponents
         'Accordion.Header': AccordionHeader,
-        // @ts-expect-error Storybook has the wrong type for subcomponents
         'Accordion.Trigger': AccordionTrigger,
-        // @ts-expect-error Storybook has the wrong type for subcomponents
         'Accordion.Content': AccordionContent,
     },
     parameters: {
