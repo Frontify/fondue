@@ -225,10 +225,11 @@ ${n}
                 >${n}</a>`},Xde=(e,n,t,i)=>`<div dir="auto" disabled class="tw-flex tw-flex-row tw-pb-2 first-of-type:tw-ml-0 ${t}" style="margin-left:${(e.indent??0)*24}px;">
     <div dir="auto" class="tw-flex tw-items-center tw-justify-center tw-select-none tw-mr-1.5">
         <input
-            class="tw-w-4 tw-h-4 tw-m-0"
+            class="tw-w-4 tw-h-4 tw-m-0 tw-pointer-events-none"
             type="checkbox"
-            ${e.checked?"checked":""}
-            onclick="return false;" />
+            tabindex="-1"
+            aria-disabled="true"
+            ${e.checked?"checked":""} />
     </div>
     <span dir="auto" class="${Ve(["tw-flex-1",e.checked?"!tw-line-through":"",b3])}" style="${gi(i[e.children[0].textStyle])}">${n}</span>
 </div>`,Zde=(e,n,t,i)=>{var a;if(e.chosenLink){const{chosenLink:s}=e;return`<a dir="auto" class="${t}" style="${gi(i[da])}" target=${s!=null&&s.openInNewTab?"_blank":"_self"} href="${Qu((a=s==null?void 0:s.searchResult)==null?void 0:a.link)}">${n}</a>`}const r=(e==null?void 0:e.target)??"_self";return`<a dir="auto" class="${t}" style="${gi(i[da])}" target="${r}" href="${Qu(e.url)}">${n}</a>`},Jde=(e,{mentionable:n}={})=>{if(!n)return"";const t=document.createElement("div");return af.render(z4(n)({element:e}),t),t.innerHTML},Qde=e=>{let n=Qu(e.text);n===""&&(n="&#xFEFF;"),n=n.replaceAll(`
