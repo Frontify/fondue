@@ -11,10 +11,7 @@
     background-color: var(--box-neutral-color);
     border: 1px solid var(--line-color-x-strong);
 
-    & {
-        @include focusStyle.focus-outline;
-        @include transitions.transition-colors;
-    }
+
 
     &:enabled:hover {
         background-color: var(--box-neutral-color-hover);
@@ -35,9 +32,15 @@
         --switch-height: #{sizeToken.get(5)};
     }
 
-    width: var(--switch-width, 10px);
-    height: var(--switch-height, 10px);
-    border-radius: calc(var(--switch-height) / 2);
+    & {
+        width: var(--switch-width, 10px);
+        height: var(--switch-height, 10px);
+        border-radius: calc(var(--switch-height) / 2);
+        @include focusStyle.focus-outline;
+        @include transitions.transition-colors;
+    }
+
+
 
     &[data-state='checked'] {
         background-color: var(--text-color-weak);
