@@ -7,7 +7,7 @@ import { type CommonAriaAttrs } from '#/utilities/types';
 
 import styles from './styles/colorInput.module.scss';
 import { type RgbaColor } from './types';
-import { colorToCss } from './utils';
+import { colorToCss, getColorWithName } from './utils';
 
 type ColorPickerInputProps = {
     id?: string;
@@ -45,6 +45,7 @@ export const ColorPickerInput = (
     }: ColorPickerInputProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
+    const colorName = currentColor?.name ?? (currentColor ? getColorWithName(currentColor, 'RGBA').name : '');
     return (
         <div id={id} className={styles.root} ref={forwardedRef} data-test-id={dataTestId}>
             <button className={styles.button} {...props} onClick={onClick} type="button" data-color-input-select>
@@ -61,7 +62,7 @@ export const ColorPickerInput = (
                     </>
                 )}
 
-                <span className={styles.colorName}>{currentColor?.name}</span>
+                <span className={styles.colorName}>{colorName}</span>
             </button>
             <div className={styles.actions}>
                 {onClear && (
