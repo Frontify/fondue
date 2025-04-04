@@ -12,15 +12,14 @@ type Story = StoryObj<typeof meta>;
 const meta: Meta<typeof FlyoutContent> = {
     component: FlyoutContent,
     subcomponents: {
-        // @ts-expect-error - Storybook has the wrong type for subcomponents
         'Flyout.Root': FlyoutRoot,
-        // @ts-expect-error - Storybook has the wrong type for subcomponents
+
         'Flyout.Trigger': FlyoutTrigger,
-        // @ts-expect-error - Storybook has the wrong type for subcomponents
+
         'Flyout.Header': FlyoutHeader,
-        // @ts-expect-error - Storybook has the wrong type for subcomponents
+
         'Flyout.Body': FlyoutBody,
-        // @ts-expect-error - Storybook has the wrong type for subcomponents
+
         'Flyout.Footer': FlyoutFooter,
     },
     tags: ['autodocs'],

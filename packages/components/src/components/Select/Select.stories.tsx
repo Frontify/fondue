@@ -15,13 +15,9 @@ type Story = StoryObj<typeof meta>;
 const meta: Meta<typeof SelectInput> = {
     component: SelectInput,
     subcomponents: {
-        // @ts-expect-error Storybook types are incorrect
         'Select.Combobox': SelectCombobox,
-        // @ts-expect-error Storybook types are incorrect
         'Select.Slot': SelectSlot,
-        // @ts-expect-error Storybook types are incorrect
         'Select.Group': SelectItemGroup,
-        // @ts-expect-error Storybook types are incorrect
         'Select.Item': SelectItem,
     },
     tags: ['autodocs'],

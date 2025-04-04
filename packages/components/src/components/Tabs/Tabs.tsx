@@ -182,6 +182,7 @@ export const TabsTrigger = ({ children, ...props }: TabsTriggerProps, ref: Forwa
             props,
             element: children,
         });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return null;

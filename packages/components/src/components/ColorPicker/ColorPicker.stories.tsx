@@ -10,13 +10,11 @@ import { ColorGradientInput } from './ColorGradientInput';
 import { ColorPicker, ColorPickerRoot } from './ColorPicker';
 import { ColorValueInput } from './ColorValueInput';
 
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<typeof ColorPickerRoot>;
 const meta: Meta<typeof ColorPickerRoot> = {
     component: ColorPickerRoot,
     subcomponents: {
-        // @ts-expect-error Storybook has the wrong type for subcomponents
         'ColorPicker.Values': ColorValueInput,
-        // @ts-expect-error Storybook has the wrong type for subcomponents
         'ColorPicker.Gradient': ColorGradientInput,
     },
     tags: ['autodocs'],

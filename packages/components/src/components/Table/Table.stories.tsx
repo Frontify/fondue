@@ -13,19 +13,14 @@ import { TextInput } from '../TextInput/TextInput';
 
 import { Table, TableBody, TableHeader, TableHeaderCell, TableRoot, TableRow, TableRowCell } from './Table';
 
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<typeof TableRoot>;
 const meta: Meta<typeof TableRoot> = {
     component: TableRoot,
     subcomponents: {
-        // @ts-expect-error Storybook types are incorrect
         'Table.Header': TableHeader,
-        // @ts-expect-error Storybook types are incorrect
         'Table.HeaderCell': TableHeaderCell,
-        // @ts-expect-error Storybook types are incorrect
         'Table.Body': TableBody,
-        // @ts-expect-error Storybook types are incorrect
         'Table.Row': TableRow,
-        // @ts-expect-error Storybook types are incorrect
         'Table.RowCell': TableRowCell,
     },
     tags: ['autodocs'],

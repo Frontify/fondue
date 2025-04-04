@@ -10,8 +10,7 @@ import { useMargin } from '@components/common/hooks/useMargin';
 const TICK_LENGTH = 4;
 const VALUE_FORMATTER = (value: number | string) => `${value}°C`;
 const NUMERIC_TICKS = [-5, 0, 15, 745];
-// @ts-expect-error Wrong typing in the original code
-const NUMERIC_TICKS_LONGEST_FORMATTED = VALUE_FORMATTER(NUMERIC_TICKS[3]);
+const NUMERIC_TICKS_LONGEST_FORMATTED = VALUE_FORMATTER(NUMERIC_TICKS[3] as number);
 const NUMERIC_TICKS_LONGEST = NUMERIC_TICKS[3];
 const STRING_TICKS = ['Chrome', 'Firefox', 'Safari', 'Edge', 'IE'];
 const STRING_TICKS_LONGEST = STRING_TICKS[1];
@@ -47,7 +46,6 @@ vi.mock('@components/LineChart/helpers', () => ({
 describe('useMargin', () => {
     let useFontFaceObserverMock: Mock<() => boolean>;
     beforeEach(async () => {
-        // @ts-expect-error Wrong export of types
         const { default: useFontFaceObserver } = await import('use-font-face-observer');
         vi.mocked(useFontFaceObserver).mockReturnValue(true);
         useFontFaceObserverMock = vi.mocked(useFontFaceObserver);
