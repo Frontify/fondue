@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconCaretDown, IconCross, IconDroplet } from '@frontify/fondue-icons';
-import { type ForwardedRef, forwardRef } from 'react';
+import { type CSSProperties, type ForwardedRef, forwardRef } from 'react';
 
 import { type CommonAriaAttrs } from '#/utilities/types';
 
@@ -52,7 +52,7 @@ export const ColorPickerInput = (
                     <div
                         aria-hidden
                         className={styles.colorIndicator}
-                        style={{ backgroundColor: colorToCss(currentColor) }}
+                        style={{ '--active-color': colorToCss(currentColor) } as CSSProperties}
                     />
                 ) : (
                     <>

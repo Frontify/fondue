@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Slot as RadixSlot } from '@radix-ui/react-slot';
-import { Children, forwardRef, useState, type ForwardedRef, type ReactNode } from 'react';
+import { Children, forwardRef, useMemo, useState, type ForwardedRef, type ReactNode } from 'react';
 
 import { ForwardedRefColorGradientInput } from './ColorGradientInput';
 import { ForwardedRefColorPickerInput } from './ColorPickerInput';
@@ -24,7 +24,15 @@ type ColorPickerProps = {
      */
     onColorChange?: (color: RgbaColor) => void;
     /**
-     * The default format to use for the color input
+     * The active color format in the color picker
+     */
+    currentFormat?: ColorFormat;
+    /**
+     * Event handler called when the color format changes
+     */
+    onFormatChange?: (format: ColorFormat) => void;
+    /**
+     * The default format to use for the color input when not controlled externally
      * @default "HEX"
      */
     defaultFormat?: ColorFormat;
@@ -39,13 +47,16 @@ export const ColorPickerRoot = (
         children,
         currentColor = DEFAULT_COLOR,
         onColorChange = () => {},
+        currentFormat,
+        onFormatChange = () => {},
         defaultFormat = DEFAULT_FORMAT,
         'data-test-id': dataTestId = 'color-picker-input',
         ...props
     }: ColorPickerProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
-    const [currentFormat, setCurrentFormat] = useState<ColorFormat>(defaultFormat);
+    const [managedFormat, setManagedFormat] = useState<ColorFormat>(defaultFormat);
+    const activeFormat = useMemo(() => currentFormat ?? managedFormat, [currentFormat, managedFormat]);
 
     return (
         <div className={styles.root} data-picker-type="custom-color" data-test-id={dataTestId} ref={forwardedRef}>
@@ -53,12 +64,13 @@ export const ColorPickerRoot = (
                 <ColorPickerSlot
                     {...props}
                     onColorChange={(color: RgbaColor) => {
-                        onColorChange(getColorWithName(color, currentFormat));
+                        onColorChange(getColorWithName(color, activeFormat));
                     }}
                     currentColor={currentColor}
-                    currentFormat={currentFormat}
+                    currentFormat={activeFormat}
                     setCurrentFormat={(currentFormat: ColorFormat) => {
-                        setCurrentFormat(currentFormat);
+                        setManagedFormat(currentFormat);
+                        onFormatChange(currentFormat);
                         onColorChange(getColorWithName(currentColor, currentFormat));
                     }}
                 >
