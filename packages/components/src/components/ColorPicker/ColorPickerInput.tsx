@@ -1,13 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconCaretDown, IconCross, IconDroplet } from '@frontify/fondue-icons';
-import { type ForwardedRef, forwardRef } from 'react';
+import { type CSSProperties, type ForwardedRef, forwardRef } from 'react';
 
 import { type CommonAriaAttrs } from '#/utilities/types';
 
 import styles from './styles/colorInput.module.scss';
 import { type RgbaColor } from './types';
-import { colorToCss } from './utils';
+import { colorToCss, getColorWithName } from './utils';
 
 type ColorPickerInputProps = {
     id?: string;
@@ -45,14 +45,15 @@ export const ColorPickerInput = (
     }: ColorPickerInputProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
+    const colorName = currentColor?.name ?? (currentColor ? getColorWithName(currentColor, 'RGBA').name : '');
     return (
-        <div id={id} className={styles.root} {...props} ref={forwardedRef} data-test-id={dataTestId}>
-            <button className={styles.button} onClick={onClick} type="button" data-color-input-select>
+        <div id={id} className={styles.root} ref={forwardedRef} data-test-id={dataTestId}>
+            <button className={styles.button} {...props} onClick={onClick} type="button" data-color-input-select>
                 {currentColor?.red !== undefined ? (
                     <div
                         aria-hidden
                         className={styles.colorIndicator}
-                        style={{ backgroundColor: colorToCss(currentColor) }}
+                        style={{ '--active-color': colorToCss(currentColor) } as CSSProperties}
                     />
                 ) : (
                     <>
@@ -61,7 +62,7 @@ export const ColorPickerInput = (
                     </>
                 )}
 
-                <span className={styles.colorName}>{currentColor?.name}</span>
+                <span className={styles.colorName}>{colorName}</span>
             </button>
             <div className={styles.actions}>
                 {onClear && (
