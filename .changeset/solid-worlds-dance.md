@@ -2,4 +2,4 @@
 "@frontify/fondue": patch
 ---
 
-a11y fixes for RTE
+fix(RTE): improved a11y for the CheckboxListPlugin
