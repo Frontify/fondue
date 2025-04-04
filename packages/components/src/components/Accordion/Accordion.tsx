@@ -71,10 +71,6 @@ export type AccordionItemProps = {
      */
     disabled?: boolean;
     /**
-     * Click callback for this item.
-     */
-    onClick?: MouseEventHandler<HTMLDivElement>;
-    /**
      * A string value for the accordion item. All items within an accordion should use a unique value.
      */
     value: string;
@@ -84,7 +80,6 @@ export const AccordionItem = ({
     'data-test-id': dataTestId = 'fondue-accordion-item',
     children,
     disabled,
-    onClick,
     value,
 }: AccordionItemProps) => {
     return (
@@ -97,7 +92,6 @@ export const AccordionItem = ({
             onBlur={(event) => {
                 event.currentTarget.dataset.showFocusRing = 'true';
             }}
-            onClick={onClick}
             disabled={disabled}
             data-test-id={dataTestId}
         >
@@ -109,13 +103,17 @@ AccordionItem.displayName = 'Accordion.Item';
 
 export type AccordionHeaderProps = {
     /**
+     * Click callback for this item.
+     */
+    onClick?: MouseEventHandler<HTMLDivElement>;
+    /**
      * Children of the Accordion header. This should contain `Accordion.Trigger`
      */
     children?: ReactNode;
 };
 
-export const AccordionHeader = ({ children }: AccordionHeaderProps) => {
-    return <RadixAccordion.Header>{children}</RadixAccordion.Header>;
+export const AccordionHeader = ({ onClick, children }: AccordionHeaderProps) => {
+    return <RadixAccordion.Header onClick={onClick}>{children}</RadixAccordion.Header>;
 };
 AccordionHeader.displayName = 'Accordion.Header';
 
