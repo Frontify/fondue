@@ -46,8 +46,8 @@ export const ColorPickerInput = (
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
     return (
-        <div id={id} className={styles.root} {...props} ref={forwardedRef} data-test-id={dataTestId}>
-            <button className={styles.button} onClick={onClick} type="button" data-color-input-select>
+        <div id={id} className={styles.root} ref={forwardedRef} data-test-id={dataTestId}>
+            <button className={styles.button} {...props} onClick={onClick} type="button" data-color-input-select>
                 {currentColor?.red !== undefined ? (
                     <div
                         aria-hidden
