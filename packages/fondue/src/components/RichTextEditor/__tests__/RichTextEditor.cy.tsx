@@ -12,7 +12,7 @@ import {
     BOLD_CLASSES,
     BoldPlugin,
     BreakAfterPlugin,
-    CHECKBOX_DIV_CLASSES,
+    CHECKBOX_LABEL_CLASSES,
     CHECKBOX_SPAN_CLASSES,
     CODE_CLASSES,
     CheckboxListPlugin,
@@ -851,7 +851,7 @@ describe('RichTextEditor Component', () => {
         it('should autoformat [] to checkbox list', () => {
             cy.get('[contenteditable=true]').click().type('[] hello');
             cy.get('[contenteditable=true]').should('include.html', '<div');
-            cy.get('[contenteditable=true]').get('div').should('have.class', CHECKBOX_DIV_CLASSES);
+            cy.get('[contenteditable=true]').get('label').should('have.class', CHECKBOX_LABEL_CLASSES);
             cy.get('[contenteditable=true]').should('include.html', '<input');
             cy.get('[contenteditable=true]').get('span').should('have.class', CHECKBOX_SPAN_CLASSES);
         });

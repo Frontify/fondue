@@ -17,7 +17,7 @@ import { ELEMENT_CHECK_ITEM } from './id';
 const getCheckboxListStyles = (styles: Record<string, CSSProperties>, element: TElement): CSSProperties =>
     styles[element.children[0].textStyle as string];
 
-export const CHECKBOX_DIV_CLASSES = 'tw-flex tw-flex-row tw-pb-2 tw-gap-1.5 tw-items-center';
+export const CHECKBOX_LABEL_CLASSES = 'tw-flex tw-flex-row tw-pb-2 tw-gap-1.5 tw-items-center';
 export const CHECKBOX_SPAN_CLASSES = 'focus:tw-outline-none tw-w-auto tw-min-w-[10px]';
 
 export const CheckboxListElementNode = (props: PlateRenderElementProps & { style: CSSProperties }) => {
@@ -27,7 +27,7 @@ export const CheckboxListElementNode = (props: PlateRenderElementProps & { style
     const { styles } = useRichTextEditorContext();
 
     return (
-        <div {...attributes} style={style} className={merge([CHECKBOX_DIV_CLASSES, justifyClassNames[align]])}>
+        <label {...attributes} style={style} className={merge([CHECKBOX_LABEL_CLASSES, justifyClassNames[align]])}>
             <div contentEditable={false} className="tw-flex tw-items-center tw-justify-center tw-select-none">
                 <input
                     data-test-id="checkbox-input"
@@ -47,7 +47,7 @@ export const CheckboxListElementNode = (props: PlateRenderElementProps & { style
             >
                 {children}
             </span>
-        </div>
+        </label>
     );
 };
 
