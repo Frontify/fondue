@@ -1,5 +1,5 @@
 ---
-"@frontify/fondue": minor
+"@frontify/fondue": patch
 ---
 
 a11y fixes for RTE
