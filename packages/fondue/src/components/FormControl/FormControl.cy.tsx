@@ -2,7 +2,7 @@
 
 import { TextInput } from '../TextInput/TextInput';
 
-import { FormControl, FormControlDirection, HelperPosition } from './FormControl';
+import { FormControl, FormControlDirection, FormControlStyle, HelperPosition } from './FormControl';
 
 const FORM_CONTROL_ID = '[data-test-id=form-control]';
 const FORM_CONTROL_EXTRA_ID = '[data-test-id=form-control-extra]';
@@ -100,5 +100,21 @@ describe('FormControl Component', () => {
         );
         cy.get(LABEL_ID).should('have.class', 'hover:tw-cursor-pointer');
         cy.get(LABEL_ID).should('not.have.class', 'tw-pointer-events-none');
+    });
+
+    it('renders negative form control', () => {
+        cy.mount(<FormControl style={FormControlStyle.Danger}>{FORM_CONTROL_CONTENT}</FormControl>);
+        cy.get(FORM_CONTROL_HELPER_TEXT_ID).should('have.class', 'tw-text-text-negative');
+    });
+
+    it('renders positive form control', () => {
+        cy.mount(<FormControl style={FormControlStyle.Positive}>{FORM_CONTROL_CONTENT}</FormControl>);
+        cy.get(FORM_CONTROL_HELPER_TEXT_ID).should('have.class', 'tw-text-text-positive');
+    });
+
+    it('renders disabled form control', () => {
+        cy.mount(<FormControl disabled={true}>{FORM_CONTROL_CONTENT}</FormControl>);
+        cy.get(TEXT_INPUT_ID).should('have.attr', 'disabled');
+        cy.get(FORM_CONTROL_HELPER_TEXT_ID).should('have.class', 'tw-text-text-disabled');
     });
 });
