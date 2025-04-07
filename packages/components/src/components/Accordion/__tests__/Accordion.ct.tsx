@@ -86,8 +86,8 @@ test.describe('Accordion Component', () => {
                     <Accordion.Content>2</Accordion.Content>
                 </Accordion.Item>
 
-                <Accordion.Item value="3" onClick={onClick}>
-                    <Accordion.Header>
+                <Accordion.Item value="3">
+                    <Accordion.Header onClick={onClick}>
                         <Accordion.Trigger>3</Accordion.Trigger>
                     </Accordion.Header>
                     <Accordion.Content>3</Accordion.Content>

@@ -171,8 +171,8 @@ export const Default: Story = {
                     </Accordion.Content>
                 </Accordion.Item>
 
-                <Accordion.Item value="accordion-test-5" onClick={() => action('click')}>
-                    <Accordion.Header>
+                <Accordion.Item value="accordion-test-5">
+                    <Accordion.Header onClick={() => action('click')}>
                         <Accordion.Trigger>Empty item with an onClick callback</Accordion.Trigger>
                     </Accordion.Header>
                     <Accordion.Content />
