@@ -141,7 +141,7 @@ describe('FormControl Component', () => {
                     position: HelperPosition.Before,
                 }}
             >
-                {FORM_CONTROL_CONTENT}
+                <TextInput id={INPUT_ID} />
             </FormControl>,
         );
         cy.get(TEXT_INPUT_ID).should('have.attr', 'disabled');
