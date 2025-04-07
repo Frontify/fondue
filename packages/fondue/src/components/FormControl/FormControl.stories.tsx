@@ -64,6 +64,36 @@ export const WithTextInput: StoryFn<FormControlProps> = (args) => {
     );
 };
 
+export const WithStyleDanger: StoryFn<FormControlProps> = (args) => {
+    const [input, setInput] = useState('');
+
+    return (
+        <FormControl {...args} style={FormControlStyle.Danger}>
+            <TextInput value={input} onChange={setInput} />
+        </FormControl>
+    );
+};
+
+export const WithStylePositive: StoryFn<FormControlProps> = (args) => {
+    const [input, setInput] = useState('');
+
+    return (
+        <FormControl {...args} style={FormControlStyle.Positive}>
+            <TextInput value={input} onChange={setInput} />
+        </FormControl>
+    );
+};
+
+export const WithStyleDisabled: StoryFn<FormControlProps> = (args) => {
+    const [input, setInput] = useState('');
+
+    return (
+        <FormControl {...args} disabled={true}>
+            <TextInput value={input} onChange={setInput} />
+        </FormControl>
+    );
+};
+
 export const WithSegmentedControls: StoryFn<FormControlProps> = (args) => {
     const [activeItemId, setActiveItemId] = useState<string>('a');
     return (
