@@ -1,5 +1,19 @@
 # @frontify/fondue-components
 
+## 16.0.1
+
+### Patch Changes
+
+- [#2278](https://github.com/Frontify/fondue/pull/2278) [`a2d5f2f`](https://github.com/Frontify/fondue/commit/a2d5f2fb5488e82ea60d5d3a2aadc25401f60ab0) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - chore: update deps
+
+- [#2282](https://github.com/Frontify/fondue/pull/2282) [`651052c`](https://github.com/Frontify/fondue/commit/651052c1b3d98737c9d8604577641e511115f399) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - fix(`Accordion`): incorrect onclick handler element
+
+- [#2280](https://github.com/Frontify/fondue/pull/2280) [`e09266b`](https://github.com/Frontify/fondue/commit/e09266b6a7917372ce8d6e118a549402f0877bfa) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: adress a11y issues and improve handing of transparency in the ColorPicker Input
+
+- Updated dependencies [[`a2d5f2f`](https://github.com/Frontify/fondue/commit/a2d5f2fb5488e82ea60d5d3a2aadc25401f60ab0)]:
+    - @frontify/fondue-tokens@4.1.2
+    - @frontify/fondue-icons@0.15.1
+
 ## 16.0.0
 
 ### Patch Changes
