@@ -8,12 +8,13 @@ const PLACEHOLDER_STYLES: CSSProperties = {
     height: '0',
 };
 
-export const RenderPlaceholder = ({ children, attributes }: RenderPlaceholderProps) => {
+export const RenderPlaceholder = ({ children, attributes, opacity }: RenderPlaceholderProps & { opacity: number }) => {
     const mergedAttributes = {
         ...attributes,
         style: {
             ...attributes.style,
             ...PLACEHOLDER_STYLES,
+            opacity,
         },
     };
     return <span {...mergedAttributes}>{children}</span>;

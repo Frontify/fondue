@@ -33,6 +33,7 @@ export type RichTextEditorProps = {
     updateValueOnChange?: boolean; // Only set to true when you are sure that performance isn't an issue
     toolbarWidth?: number;
     hideExternalFloatingModals?: (editorId: string) => void;
+    placeholderOpacity?: number;
 };
 
 export const RichTextEditor = ({
@@ -50,6 +51,7 @@ export const RichTextEditor = ({
     border = true,
     toolbarWidth,
     hideExternalFloatingModals,
+    placeholderOpacity = 0.333,
 }: RichTextEditorProps) => {
     const editorId = useMemoizedId(id);
     const { localValue, onChange, memoizedValue, config } = useEditorState({
@@ -87,7 +89,7 @@ export const RichTextEditor = ({
 
     const editableProps: TEditableProps = {
         placeholder,
-        renderPlaceholder: RenderPlaceholder,
+        renderPlaceholder: (props) => <RenderPlaceholder {...props} opacity={placeholderOpacity} />,
         readOnly,
         onBlur: onBlurHandler,
         className: merge([padding, customClass]),
