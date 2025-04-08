@@ -199,7 +199,7 @@ describe('TextStylePlugin', () => {
         cy.get(TOOLBAR_GROUP_2).children().eq(5).click();
         cy.get(TEXTSTYLE_DROPDOWN_TRIGGER).click({ force: true });
         cy.get(TEXTSTYLE_OPTION).eq(1).click();
-        cy.get('[contenteditable=true] > label > span').should('have.attr', 'style', heading2Styles);
+        cy.get('[contenteditable=true] > div > span').should('have.attr', 'style', heading2Styles);
 
         // remove checklist again and textStyle stays
         cy.get('[contenteditable=true]').click({ force: true }).type('{selectall}');
@@ -215,7 +215,7 @@ describe('TextStylePlugin', () => {
         cy.get(TOOLBAR_GROUP_2).children().eq(5).click();
         cy.get(TEXTSTYLE_DROPDOWN_TRIGGER).click({ force: true });
         cy.get(TEXTSTYLE_OPTION).first().click();
-        cy.get('[contenteditable=true] > label ').should('include.html', heading1Styles);
+        cy.get('[contenteditable=true] > div ').should('include.html', heading1Styles);
 
         // remove checklist again and textStyle stays
         cy.get('[contenteditable=true]').click({ force: true }).type('{selectall}');
