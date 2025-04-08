@@ -1,5 +1,11 @@
 # @frontify/fondue-icons
 
+## 0.15.1
+
+### Patch Changes
+
+- [#2278](https://github.com/Frontify/fondue/pull/2278) [`a2d5f2f`](https://github.com/Frontify/fondue/commit/a2d5f2fb5488e82ea60d5d3a2aadc25401f60ab0) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - chore: update deps
+
 ## 0.15.0
 
 ### Minor Changes
