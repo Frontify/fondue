@@ -1,5 +1,11 @@
 # @frontify/fondue-components
 
+## 16.0.2
+
+### Patch Changes
+
+- [#2281](https://github.com/Frontify/fondue/pull/2281) [`3333a1d`](https://github.com/Frontify/fondue/commit/3333a1d78f5f70f285f4b717dc594b92c2a86eb1) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: fix glitch when loading a switch
+
 ## 16.0.1
 
 ### Patch Changes
