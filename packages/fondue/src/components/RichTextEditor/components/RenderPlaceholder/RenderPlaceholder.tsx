@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type PlaceholderOpacity } from '@components/RichTextEditor/types';
 import { type CSSProperties } from 'react';
 import { type RenderPlaceholderProps } from 'slate-react';
+
+import { type PlaceholderOpacity } from '@components/RichTextEditor/types';
 
 const PLACEHOLDER_STYLES: CSSProperties = {
     position: 'relative',
