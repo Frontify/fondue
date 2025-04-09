@@ -2,6 +2,8 @@
 
 import { type NodeType } from './serializer/markdown/types';
 
+export type PlaceholderOpacity = 'low' | 'high';
+
 export enum PaddingSizes {
     None = 'tw-p-0',
     Small = 'tw-py-2 tw-px-3',

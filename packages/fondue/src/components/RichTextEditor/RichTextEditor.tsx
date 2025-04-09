@@ -15,7 +15,7 @@ import { RenderPlaceholder } from './components/RenderPlaceholder';
 import { RichTextEditorProvider } from './context/RichTextEditorContext';
 import { forceToFocusNextElement } from './helpers';
 import { useEditorState } from './hooks';
-import { PaddingSizes, type TreeOfNodes } from './types';
+import { PaddingSizes, type PlaceholderOpacity, type TreeOfNodes } from './types';
 import { parseRawValue } from './utils';
 
 export type RichTextEditorProps = {
@@ -33,6 +33,7 @@ export type RichTextEditorProps = {
     updateValueOnChange?: boolean; // Only set to true when you are sure that performance isn't an issue
     toolbarWidth?: number;
     hideExternalFloatingModals?: (editorId: string) => void;
+    placeholderOpacity?: PlaceholderOpacity;
 };
 
 export const RichTextEditor = ({
@@ -50,6 +51,7 @@ export const RichTextEditor = ({
     border = true,
     toolbarWidth,
     hideExternalFloatingModals,
+    placeholderOpacity = 'low',
 }: RichTextEditorProps) => {
     const editorId = useMemoizedId(id);
     const { localValue, onChange, memoizedValue, config } = useEditorState({
@@ -87,7 +89,7 @@ export const RichTextEditor = ({
 
     const editableProps: TEditableProps = {
         placeholder,
-        renderPlaceholder: RenderPlaceholder,
+        renderPlaceholder: (props) => <RenderPlaceholder {...props} opacity={placeholderOpacity} />,
         readOnly,
         onBlur: onBlurHandler,
         className: merge([padding, customClass]),
