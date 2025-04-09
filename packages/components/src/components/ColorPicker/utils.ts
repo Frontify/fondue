@@ -20,7 +20,7 @@ export const colorToCss = (color?: RgbaColor) => {
     if (!color) {
         return undefined;
     }
-    return `rgba(${color.red}, ${color.green}, ${color.blue}, ${color.alpha || 1})`;
+    return `rgba(${color.red}, ${color.green}, ${color.blue}, ${color.alpha ?? 1})`;
 };
 
 /**
@@ -118,7 +118,7 @@ export const getColorWithName = (color: RgbaColor, currentFormat: ColorFormat) =
     }
     return {
         ...color,
-        name: `rgba(${color.red}, ${color.green}, ${color.blue}, ${color.alpha || 1})`,
+        name: `rgba(${color.red}, ${color.green}, ${color.blue}, ${color.alpha ?? 1})`,
     };
 };
 

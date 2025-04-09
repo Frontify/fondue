@@ -1,5 +1,25 @@
 # @frontify/fondue
 
+## 12.9.0
+
+### Minor Changes
+
+- [#2269](https://github.com/Frontify/fondue/pull/2269) [`0fb93f0`](https://github.com/Frontify/fondue/commit/0fb93f0fc7d596bc75017cfffcbb14c0683003db) Thanks [@bojangles-m](https://github.com/bojangles-m)! - fix(RTE): omit escaping entities
+
+### Patch Changes
+
+- [#2278](https://github.com/Frontify/fondue/pull/2278) [`a2d5f2f`](https://github.com/Frontify/fondue/commit/a2d5f2fb5488e82ea60d5d3a2aadc25401f60ab0) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - chore: update deps
+
+- [#2277](https://github.com/Frontify/fondue/pull/2277) [`85eac59`](https://github.com/Frontify/fondue/commit/85eac5902f9d21da388be59ce32386d66e2199a3) Thanks [@fulopdaniel](https://github.com/fulopdaniel)! - fix(RTE): make checklist not tabbable in serialized mode
+
+- [#2285](https://github.com/Frontify/fondue/pull/2285) [`e047763`](https://github.com/Frontify/fondue/commit/e047763cb7026d5a32d55704928ed921ec98f948) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - fix(`FormControl`): incorrect color tokens
+
+- Updated dependencies [[`a2d5f2f`](https://github.com/Frontify/fondue/commit/a2d5f2fb5488e82ea60d5d3a2aadc25401f60ab0), [`651052c`](https://github.com/Frontify/fondue/commit/651052c1b3d98737c9d8604577641e511115f399), [`e09266b`](https://github.com/Frontify/fondue/commit/e09266b6a7917372ce8d6e118a549402f0877bfa)]:
+    - @frontify/fondue-components@16.0.1
+    - @frontify/fondue-charts@5.0.2
+    - @frontify/fondue-tokens@4.1.2
+    - @frontify/fondue-icons@0.15.1
+
 ## 12.8.5
 
 ### Patch Changes

@@ -37,16 +37,16 @@ const HelperText = ({
 
     switch (true) {
         case disabled:
-            textColorClass = 'tw-text-black-40';
+            textColorClass = 'tw-text-text-disabled';
             break;
         case style === FormControlStyle.Danger:
-            textColorClass = 'tw-text-red-60';
+            textColorClass = 'tw-text-text-negative';
             break;
         case style === FormControlStyle.Positive:
-            textColorClass = 'tw-text-green-60';
+            textColorClass = 'tw-text-text-positive';
             break;
         default:
-            textColorClass = 'tw-text-black-80';
+            textColorClass = 'tw-text-text-weak';
             break;
     }
 

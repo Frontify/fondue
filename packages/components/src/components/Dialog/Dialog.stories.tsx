@@ -26,21 +26,13 @@ type Story = StoryObj<typeof meta>;
 const meta: Meta<typeof DialogContent> = {
     component: DialogContent,
     subcomponents: {
-        // @ts-expect-error - Storybook has the wrong type for subcomponents
         'Dialog.Root': DialogRoot,
-        // @ts-expect-error - Storybook has the wrong type for subcomponents
         'Dialog.Trigger': DialogTrigger,
-        // @ts-expect-error - Storybook has the wrong type for subcomponents
         'Dialog.SideContent': DialogSideContent,
-        // @ts-expect-error - Storybook has the wrong type for subcomponents
         'Dialog.Header': DialogHeader,
-        // @ts-expect-error - Storybook has the wrong type for subcomponents
         'Dialog.Body': DialogBody,
-        // @ts-expect-error - Storybook has the wrong type for subcomponents
         'Dialog.Title': DialogTitle,
-        // @ts-expect-error - Storybook has the wrong type for subcomponents
         'Dialog.Description': DialogDescription,
-        // @ts-expect-error - Storybook has the wrong type for subcomponents
         'Dialog.Close': DialogClose,
     },
     tags: ['autodocs'],

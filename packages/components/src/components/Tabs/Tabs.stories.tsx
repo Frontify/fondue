@@ -13,11 +13,8 @@ const meta: Meta<typeof TabsRoot> = {
     title: 'Components/Tabs',
     component: TabsRoot,
     subcomponents: {
-        // @ts-expect-error Storybook types are incorrect
         'Tabs.Tab': TabsTab,
-        // @ts-expect-error Storybook types are incorrect
         'Tabs.Trigger': TabsTrigger,
-        // @ts-expect-error Storybook types are incorrect
         'Tabs.Content': TabsContent,
     },
     tags: ['autodocs'],

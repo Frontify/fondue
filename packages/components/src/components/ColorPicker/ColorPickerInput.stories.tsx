@@ -5,7 +5,7 @@ import { type Meta, type StoryObj } from '@storybook/react';
 import { ColorPicker } from './ColorPicker';
 import { ColorPickerInput } from './ColorPickerInput';
 
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<typeof ColorPickerInput>;
 const meta: Meta<typeof ColorPickerInput> = {
     title: 'Components/ColorPicker/Input',
     component: ColorPickerInput,

@@ -2,7 +2,7 @@
 
 import { TextInput } from '../TextInput/TextInput';
 
-import { FormControl, FormControlDirection, HelperPosition } from './FormControl';
+import { FormControl, FormControlDirection, FormControlStyle, HelperPosition } from './FormControl';
 
 const FORM_CONTROL_ID = '[data-test-id=form-control]';
 const FORM_CONTROL_EXTRA_ID = '[data-test-id=form-control-extra]';
@@ -13,6 +13,9 @@ const LABEL_ID = '[data-test-id="input-label"]';
 
 const INPUT_ID = 'ID';
 const LABEL_TEXT = 'Label';
+
+const HELPER_TEXT = 'Helper text';
+const EXTRA_TEXT = 'Extra text';
 
 describe('FormControl Component', () => {
     it('should render a form control', () => {
@@ -28,7 +31,6 @@ describe('FormControl Component', () => {
     });
 
     it('should render a form control with an extra', () => {
-        const EXTRA_TEXT = 'Extra text';
         cy.mount(<FormControl extra={EXTRA_TEXT}>{FORM_CONTROL_CONTENT}</FormControl>);
 
         cy.get(FORM_CONTROL_EXTRA_ID).should('contain', EXTRA_TEXT);
@@ -41,7 +43,6 @@ describe('FormControl Component', () => {
     });
 
     it('should render a helper text before the control content', () => {
-        const HELPER_TEXT = 'Helper text';
         cy.mount(
             <FormControl
                 helper={{
@@ -100,5 +101,50 @@ describe('FormControl Component', () => {
         );
         cy.get(LABEL_ID).should('have.class', 'hover:tw-cursor-pointer');
         cy.get(LABEL_ID).should('not.have.class', 'tw-pointer-events-none');
+    });
+
+    it('renders negative form control', () => {
+        cy.mount(
+            <FormControl
+                style={FormControlStyle.Danger}
+                helper={{
+                    text: HELPER_TEXT,
+                    position: HelperPosition.Before,
+                }}
+            >
+                {FORM_CONTROL_CONTENT}
+            </FormControl>,
+        );
+        cy.get(FORM_CONTROL_HELPER_TEXT_ID).should('have.class', 'tw-text-text-negative');
+    });
+
+    it('renders positive form control', () => {
+        cy.mount(
+            <FormControl
+                style={FormControlStyle.Positive}
+                helper={{
+                    text: HELPER_TEXT,
+                    position: HelperPosition.Before,
+                }}
+            >
+                {FORM_CONTROL_CONTENT}
+            </FormControl>,
+        );
+        cy.get(FORM_CONTROL_HELPER_TEXT_ID).should('have.class', 'tw-text-text-positive');
+    });
+    it('renders disabled form control', () => {
+        cy.mount(
+            <FormControl
+                disabled={true}
+                helper={{
+                    text: HELPER_TEXT,
+                    position: HelperPosition.Before,
+                }}
+            >
+                <TextInput id={INPUT_ID} />
+            </FormControl>,
+        );
+        cy.get(TEXT_INPUT_ID).should('have.attr', 'disabled');
+        cy.get(FORM_CONTROL_HELPER_TEXT_ID).should('have.class', 'tw-text-text-disabled');
     });
 });

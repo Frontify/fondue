@@ -10,13 +10,11 @@ import { ColorGradientInput } from './ColorGradientInput';
 import { ColorPicker, ColorPickerRoot } from './ColorPicker';
 import { ColorValueInput } from './ColorValueInput';
 
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<typeof ColorPickerRoot>;
 const meta: Meta<typeof ColorPickerRoot> = {
     component: ColorPickerRoot,
     subcomponents: {
-        // @ts-expect-error Storybook has the wrong type for subcomponents
         'ColorPicker.Values': ColorValueInput,
-        // @ts-expect-error Storybook has the wrong type for subcomponents
         'ColorPicker.Gradient': ColorGradientInput,
     },
     tags: ['autodocs'],
@@ -92,6 +90,7 @@ export const InFlyout: Story = {
     render: (args) => {
         const [savedColor, setSavedColor] = useState(args.currentColor);
         const [currentColor, setCurrentColor] = useState(args.currentColor);
+        const [currentFormat, setCurrentFormat] = useState(args.currentFormat);
         const [isOpen, setIsOpen] = useState(true);
         return (
             <Flyout.Root open={isOpen} onOpenChange={setIsOpen}>
@@ -108,9 +107,10 @@ export const InFlyout: Story = {
                     <Flyout.Body>
                         <div className="tw-p-2 md:tw-w-[450px]">
                             <ColorPicker.Root
-                                defaultFormat="RGBA"
+                                currentFormat={currentFormat}
                                 currentColor={currentColor}
                                 onColorChange={setCurrentColor}
+                                onFormatChange={setCurrentFormat}
                             >
                                 <ColorPicker.Values />
                                 <ColorPicker.Gradient />

@@ -3,12 +3,11 @@
 import { renderHook } from '@testing-library/react';
 import { type AxisScale } from '@visx/axis';
 import { DataContext, type DataContextType } from '@visx/xychart';
-import { type ReactNode, type Dispatch, type SetStateAction } from 'react';
-import { type Mock, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { type Dispatch, type ReactNode, type SetStateAction } from 'react';
+import { type Mock, type MockedFunction, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useRotatedLabel } from '@components/BarChart/components/hooks/useRotatedLabel';
 
-// @ts-expect-error Wrong export of types
 import type useFontFaceObserver from 'use-font-face-observer';
 
 type DataProviderProps = {
@@ -43,10 +42,9 @@ const updateMaxLabelHeightMock: Mock<(prevState: number) => number> = vi.fn();
 const updateFirstLabelOverflowsByMock: Mock<(prevState: number) => number> = vi.fn();
 
 describe('useRotatedLabel', () => {
-    let useFontFaceObserverMock: typeof useFontFaceObserver;
+    let useFontFaceObserverMock: MockedFunction<typeof useFontFaceObserver>;
 
     beforeEach(async () => {
-        // @ts-expect-error Wrong export of types
         const { default: useFontFaceObserver } = await import('use-font-face-observer');
         const { getSVGTextDimensions } = await import('@components/common/helpers');
         vi.mocked(useFontFaceObserver).mockReturnValue(true);
