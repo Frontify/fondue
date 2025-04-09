@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { CHECKBOX_SPAN_CLASSES } from '@components/RichTextEditor/Plugins/CheckboxListPlugin/CheckboxListElement';
 import { type TElement } from '@udecode/slate';
+
+import { CHECKBOX_SPAN_CLASSES } from '@components/RichTextEditor/Plugins/CheckboxListPlugin/CheckboxListElement';
 import { merge } from '@utilities/merge';
 
 import { type CSSPropertiesHover } from '../types';
