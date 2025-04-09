@@ -1,13 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { useRichTextEditorContext } from '@components/RichTextEditor/context';
 import { type PlateRenderElementProps } from '@udecode/plate-core';
 import { type TTodoListItemElement } from '@udecode/plate-list';
 import { type TElement, setNodes } from '@udecode/slate';
 import { type TReactEditor, findNodePath } from '@udecode/slate-react';
-import { type CSSProperties } from 'react';
-
-import { useRichTextEditorContext } from '@components/RichTextEditor/context';
 import { merge } from '@utilities/merge';
+import { useId, type CSSProperties } from 'react';
 
 import { MarkupElement } from '../MarkupElement';
 import { justifyClassNames } from '../helper';
@@ -25,12 +24,13 @@ export const CheckboxListElementNode = (props: PlateRenderElementProps & { style
     const checked = element.checked as boolean;
     const align = (element.align as string) ?? 'left';
     const { styles } = useRichTextEditorContext();
+    const id = useId();
 
     return (
         <div {...attributes} style={style} className={merge([CHECKBOX_DIV_CLASSES, justifyClassNames[align]])}>
             <div contentEditable={false} className="tw-flex tw-items-center tw-justify-center tw-select-none">
                 <input
-                    aria-label="checkbox"
+                    aria-labelledby={id}
                     data-test-id="checkbox-input"
                     className="tw-w-4 tw-h-4 tw-m-0"
                     type="checkbox"
@@ -43,6 +43,7 @@ export const CheckboxListElementNode = (props: PlateRenderElementProps & { style
                 />
             </div>
             <span
+                id={id}
                 style={getCheckboxListStyles(styles, element)}
                 className={merge([CHECKBOX_SPAN_CLASSES, checked && '!tw-line-through'])}
             >

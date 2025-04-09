@@ -1,12 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type TElement } from '@udecode/slate';
-
 import { CHECKBOX_SPAN_CLASSES } from '@components/RichTextEditor/Plugins/CheckboxListPlugin/CheckboxListElement';
+import { type TElement } from '@udecode/slate';
 import { merge } from '@utilities/merge';
 
 import { type CSSPropertiesHover } from '../types';
+import { makeIdGenerator } from '../utils/makeIdGenerator';
 import { reactCssPropsToCss } from '../utils/reactCssPropsToCss';
+
+const generateCheckboxId = makeIdGenerator('checkbox-label');
 
 export const checkItemNode = (
     node: TElement,
@@ -14,11 +16,14 @@ export const checkItemNode = (
     defaultClassNames: string,
     styles: Record<string, CSSPropertiesHover>,
 ) => {
+    const id = generateCheckboxId();
+
     return `<div dir="auto" disabled class="tw-flex tw-flex-row tw-pb-2 first-of-type:tw-ml-0 ${defaultClassNames}" style="margin-left:${
         ((node.indent as number) ?? 0) * 24
     }px;">
     <div dir="auto" class="tw-flex tw-items-center tw-justify-center tw-select-none tw-mr-1.5">
         <input
+            aria-labelledby="${id}"
             aria-label="checkbox"
             class="tw-w-4 tw-h-4 tw-m-0 tw-pointer-events-none"
             type="checkbox"
@@ -26,7 +31,7 @@ export const checkItemNode = (
             aria-disabled="true"
             ${node.checked ? 'checked' : ''} />
     </div>
-    <span dir="auto" class="${merge([
+    <span id="${id}" dir="auto" class="${merge([
         'tw-flex-1',
         node.checked ? '!tw-line-through' : '',
         CHECKBOX_SPAN_CLASSES,
