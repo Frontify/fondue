@@ -1,5 +1,19 @@
 # @frontify/fondue
 
+## 12.9.2
+
+### Patch Changes
+
+- [#2289](https://github.com/Frontify/fondue/pull/2289) [`055ef67`](https://github.com/Frontify/fondue/commit/055ef676bd3a5d01f3243f732b4f80e18bd9085f) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies and revert `vite`
+
+- [#2284](https://github.com/Frontify/fondue/pull/2284) [`255d5c6`](https://github.com/Frontify/fondue/commit/255d5c61eab53fdf06d37d3abf4b9d227fd97929) Thanks [@fulopdaniel](https://github.com/fulopdaniel)! - feat(RTE): expose placeholder opacity
+
+- Updated dependencies [[`055ef67`](https://github.com/Frontify/fondue/commit/055ef676bd3a5d01f3243f732b4f80e18bd9085f)]:
+    - @frontify/fondue-components@16.0.3
+    - @frontify/fondue-charts@5.0.3
+    - @frontify/fondue-tokens@4.1.3
+    - @frontify/fondue-icons@0.15.2
+
 ## 12.9.1
 
 ### Patch Changes

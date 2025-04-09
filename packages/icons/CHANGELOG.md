@@ -1,5 +1,11 @@
 # @frontify/fondue-icons
 
+## 0.15.2
+
+### Patch Changes
+
+- [#2289](https://github.com/Frontify/fondue/pull/2289) [`055ef67`](https://github.com/Frontify/fondue/commit/055ef676bd3a5d01f3243f732b4f80e18bd9085f) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies and revert `vite`
+
 ## 0.15.1
 
 ### Patch Changes
