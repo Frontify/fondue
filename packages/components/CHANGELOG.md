@@ -1,5 +1,11 @@
 # @frontify/fondue-components
 
+## 16.0.4
+
+### Patch Changes
+
+- [#2291](https://github.com/Frontify/fondue/pull/2291) [`b21baa6`](https://github.com/Frontify/fondue/commit/b21baa6d88440cff88458aa3f5dfcbdf49a9827c) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix: adding missing border box on switch
+
 ## 16.0.3
 
 ### Patch Changes
