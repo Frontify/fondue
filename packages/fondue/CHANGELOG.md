@@ -1,5 +1,14 @@
 # @frontify/fondue
 
+## 12.9.3
+
+### Patch Changes
+
+- [#2283](https://github.com/Frontify/fondue/pull/2283) [`843111f`](https://github.com/Frontify/fondue/commit/843111fae52cf81bec8f73a5741363245df1f038) Thanks [@peter-tudosa](https://github.com/peter-tudosa)! - fix(RTE): improved a11y for the CheckboxListPlugin
+
+- Updated dependencies [[`b21baa6`](https://github.com/Frontify/fondue/commit/b21baa6d88440cff88458aa3f5dfcbdf49a9827c)]:
+    - @frontify/fondue-components@16.0.4
+
 ## 12.9.2
 
 ### Patch Changes
