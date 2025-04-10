@@ -6,10 +6,7 @@ import { CHECKBOX_SPAN_CLASSES } from '@components/RichTextEditor/Plugins/Checkb
 import { merge } from '@utilities/merge';
 
 import { type CSSPropertiesHover } from '../types';
-import { makeIdGenerator } from '../utils/makeIdGenerator';
 import { reactCssPropsToCss } from '../utils/reactCssPropsToCss';
-
-const generateCheckboxId = makeIdGenerator('checkbox-label');
 
 export const checkItemNode = (
     node: TElement,
@@ -17,7 +14,7 @@ export const checkItemNode = (
     defaultClassNames: string,
     styles: Record<string, CSSPropertiesHover>,
 ) => {
-    const id = generateCheckboxId();
+    const id = window.crypto.randomUUID();
 
     return `<div dir="auto" disabled class="tw-flex tw-flex-row tw-pb-2 first-of-type:tw-ml-0 ${defaultClassNames}" style="margin-left:${
         ((node.indent as number) ?? 0) * 24
