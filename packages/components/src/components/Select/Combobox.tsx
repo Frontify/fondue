@@ -114,6 +114,7 @@ export const SelectCombobox = (
         },
         onIsOpenChange: () => {
             setHasInteractedSinceOpening(false);
+            setFilterText('');
         },
         onHighlightedIndexChange: () => {
             setHasInteractedSinceOpening(true);
