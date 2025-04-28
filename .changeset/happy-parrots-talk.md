@@ -1,5 +1,5 @@
 ---
-"@frontify/fondue-components": major
+"@frontify/fondue-components": patch
 ---
 
 fix(`Select`): combobox considers search term when it should not
