@@ -372,3 +372,61 @@ test('should clear input when typed value is not selected', async ({ mount, page
     await expect(component.getByTestId(SELECT_TEST_ID)).toHaveValue('');
     await expect(page.getByPlaceholder(PLACEHOLDER_TEXT)).toBeVisible();
 });
+
+test('should show the other options when opening the menu meanwhile it has a value', async ({ mount, page }) => {
+    const onSelectChange = sinon.spy();
+    const component = await mount(
+        <Select.Combobox
+            onSelect={onSelectChange}
+            aria-label="test"
+            data-test-id={SELECT_TEST_ID}
+            placeholder={PLACEHOLDER_TEXT}
+            defaultValue={ITEM_LABEL1}
+        >
+            <Select.Item data-test-id={ITEM_TEST_ID1} value={ITEM_LABEL1}>
+                {ITEM_TEXT1}
+            </Select.Item>
+            <Select.Item data-test-id={ITEM_TEST_ID2} value={ITEM_LABEL2}>
+                {ITEM_TEXT2}
+            </Select.Item>
+        </Select.Combobox>,
+    );
+
+    await expect(component).toBeVisible();
+    await component.click();
+
+    await expect(page.getByTestId(ITEM_TEST_ID2)).toBeVisible();
+});
+
+test('should filter the items when typing', async ({ mount, page }) => {
+    const onSelectChange = sinon.spy();
+    const component = await mount(
+        <Select.Combobox
+            onSelect={onSelectChange}
+            aria-label="test"
+            data-test-id={SELECT_TEST_ID}
+            placeholder={PLACEHOLDER_TEXT}
+        >
+            <Select.Slot name="menu">
+                <Select.Item data-test-id={ITEM_TEST_ID1} value="test1">
+                    {ITEM_TEXT1}
+                </Select.Item>
+                <Select.Item data-test-id={ITEM_TEST_ID2} value="test2">
+                    {ITEM_TEXT2}
+                </Select.Item>
+            </Select.Slot>
+        </Select.Combobox>,
+    );
+
+    await expect(component).toBeVisible();
+    await component.click();
+
+    await page.keyboard.type(ITEM_TEXT1);
+
+    await expect(page.getByTestId(ITEM_TEST_ID1)).toBeVisible();
+    await expect(page.getByTestId(ITEM_TEST_ID2)).not.toBeVisible();
+
+    await page.keyboard.press('Backspace');
+    await expect(page.getByTestId(ITEM_TEST_ID1)).toBeVisible();
+    await expect(page.getByTestId(ITEM_TEST_ID2)).toBeVisible();
+});
