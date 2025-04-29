@@ -1,5 +1,11 @@
 # @frontify/fondue-components
 
+## 16.0.5
+
+### Patch Changes
+
+- [#2292](https://github.com/Frontify/fondue/pull/2292) [`9c6a25c`](https://github.com/Frontify/fondue/commit/9c6a25c0d9f4a4fd3eef60ebd7f044fbf6ad2907) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - fix(`Select`): combobox considers search term when it should not
+
 ## 16.0.4
 
 ### Patch Changes
