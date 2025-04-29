@@ -130,3 +130,39 @@ test('should render full width', async ({ mount }) => {
     const boundingBox = await component.getByTestId(SEGMENTED_CONTROL_TEST_ID).boundingBox();
     expect(boundingBox?.width).toBe(550);
 });
+
+test('should work with enum values', async ({ mount }) => {
+    // Define an enum for testing generic type functionality
+    const enum TabOptions {
+        First = 'first',
+        Second = 'second',
+        Third = 'third',
+    }
+
+    const onValueChange = sinon.spy();
+
+    const component = await mount(
+        <SegmentedControl.Root<TabOptions>
+            data-test-id={SEGMENTED_CONTROL_TEST_ID}
+            defaultValue={TabOptions.First}
+            onValueChange={onValueChange}
+        >
+            <SegmentedControl.Item value={TabOptions.First}>First</SegmentedControl.Item>
+            <SegmentedControl.Item value={TabOptions.Second}>Second</SegmentedControl.Item>
+            <SegmentedControl.Item value={TabOptions.Third}>Third</SegmentedControl.Item>
+        </SegmentedControl.Root>,
+    );
+
+    // Check initial state
+    await expect(component.getByRole('radio').locator('nth=0')).toHaveAttribute('aria-checked', 'true');
+
+    // Click second option
+    await component.getByRole('radio').locator('nth=1').click();
+
+    // Verify callback was called with the enum value
+    expect(onValueChange.calledOnce).toBe(true);
+    expect(onValueChange.firstCall.args[0]).toBe(TabOptions.Second);
+
+    // Check the UI updates correctly
+    await expect(component.getByRole('radio').locator('nth=1')).toHaveAttribute('aria-checked', 'true');
+});
