@@ -3,26 +3,26 @@
 import * as ToggleGroupPrimitive from '@radix-ui/react-toggle-group';
 import { forwardRef, type ForwardedRef, type ReactNode } from 'react';
 
-import { useControllableState } from '#/hooks/useControllableState';
-
 import styles from './styles/segmentedControl.module.scss';
 
-export type SegmentedControlRootProps = {
+import { useControllableState } from '#/hooks/useControllableState';
+
+export type SegmentedControlRootProps<TValue extends string = string> = {
     id?: string;
     children: ReactNode;
     /**
      * The default value of the segmented control
      * Used for uncontrolled components
      */
-    defaultValue: string;
+    defaultValue: TValue;
     /**
      * The controlled value of the segmented control
      */
-    value?: string;
+    value?: TValue;
     /**
      * Event handler called when the value changes
      */
-    onValueChange?: (value: string) => void;
+    onValueChange?: (value: TValue) => void;
     /**
      * Disable the segmented control
      * @default false
@@ -35,7 +35,7 @@ export type SegmentedControlRootProps = {
     hugWidth?: boolean;
 };
 
-export const SegmentedControlRoot = (
+export const SegmentedControlRoot = <TValue extends string = string>(
     {
         children,
         value: propsValue,
@@ -43,7 +43,7 @@ export const SegmentedControlRoot = (
         onValueChange,
         hugWidth = true,
         ...rootProps
-    }: SegmentedControlRootProps,
+    }: SegmentedControlRootProps<TValue>,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     const [value, setValue] = useControllableState({
@@ -59,7 +59,7 @@ export const SegmentedControlRoot = (
             className={styles.root}
             onValueChange={(value) => {
                 if (value) {
-                    setValue(value);
+                    setValue(value as TValue);
                 }
             }}
             value={value}
@@ -100,6 +100,8 @@ export const SegmentedControlItem = (
 SegmentedControlItem.displayName = 'SegmentedControl.Item';
 
 export const SegmentedControl = {
-    Root: forwardRef<HTMLDivElement, SegmentedControlRootProps>(SegmentedControlRoot),
-    Item: forwardRef<HTMLButtonElement, SegmentedControlItemProps>(SegmentedControlItem),
+    Root: forwardRef(SegmentedControlRoot) as <TValue extends string = string>(
+        props: SegmentedControlRootProps<TValue> & { ref?: ForwardedRef<HTMLDivElement> },
+    ) => JSX.Element,
+    Item: forwardRef(SegmentedControlItem),
 };
