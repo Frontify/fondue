@@ -3,9 +3,9 @@
 import * as ToggleGroupPrimitive from '@radix-ui/react-toggle-group';
 import { forwardRef, type ForwardedRef, type ReactNode } from 'react';
 
-import styles from './styles/segmentedControl.module.scss';
-
 import { useControllableState } from '#/hooks/useControllableState';
+
+import styles from './styles/segmentedControl.module.scss';
 
 export type SegmentedControlRootProps<TValue extends string = string> = {
     id?: string;
