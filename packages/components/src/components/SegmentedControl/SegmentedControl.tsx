@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import * as ToggleGroupPrimitive from '@radix-ui/react-toggle-group';
-import { forwardRef, type ForwardedRef, type ReactNode } from 'react';
+import { forwardRef, type ForwardedRef, type ReactElement, type ReactNode } from 'react';
 
 import { useControllableState } from '#/hooks/useControllableState';
 
@@ -102,6 +102,6 @@ SegmentedControlItem.displayName = 'SegmentedControl.Item';
 export const SegmentedControl = {
     Root: forwardRef(SegmentedControlRoot) as <TValue extends string = string>(
         props: SegmentedControlRootProps<TValue> & { ref?: ForwardedRef<HTMLDivElement> },
-    ) => JSX.Element,
+    ) => ReactElement,
     Item: forwardRef(SegmentedControlItem),
 };
