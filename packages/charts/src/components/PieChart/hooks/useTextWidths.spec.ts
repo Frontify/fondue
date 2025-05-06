@@ -19,7 +19,6 @@ describe('useTextWidths', () => {
     let getSVGTextDimensionsMock: Mock<typeof getSVGTextDimensions>;
 
     beforeEach(async () => {
-        // @ts-expect-error Wrong export of types
         const { default: useFontFaceObserver } = await import('use-font-face-observer');
         const { getSVGTextDimensions } = await import('@components/common/helpers');
         vi.mocked(useFontFaceObserver).mockReturnValue(true);

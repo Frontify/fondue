@@ -21,13 +21,9 @@ const meta: Meta<typeof AccordionRoot> = {
     component: AccordionRoot,
     tags: ['autodocs'],
     subcomponents: {
-        // @ts-expect-error Storybook has the wrong type for subcomponents
         'Accordion.Item': AccordionItem,
-        // @ts-expect-error Storybook has the wrong type for subcomponents
         'Accordion.Header': AccordionHeader,
-        // @ts-expect-error Storybook has the wrong type for subcomponents
         'Accordion.Trigger': AccordionTrigger,
-        // @ts-expect-error Storybook has the wrong type for subcomponents
         'Accordion.Content': AccordionContent,
     },
     parameters: {
@@ -175,8 +171,8 @@ export const Default: Story = {
                     </Accordion.Content>
                 </Accordion.Item>
 
-                <Accordion.Item value="accordion-test-5" onClick={() => action('click')}>
-                    <Accordion.Header>
+                <Accordion.Item value="accordion-test-5">
+                    <Accordion.Header onClick={() => action('click')}>
                         <Accordion.Trigger>Empty item with an onClick callback</Accordion.Trigger>
                     </Accordion.Header>
                     <Accordion.Content />

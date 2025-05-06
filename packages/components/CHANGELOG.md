@@ -1,5 +1,47 @@
 # @frontify/fondue-components
 
+## 16.0.5
+
+### Patch Changes
+
+- [#2292](https://github.com/Frontify/fondue/pull/2292) [`9c6a25c`](https://github.com/Frontify/fondue/commit/9c6a25c0d9f4a4fd3eef60ebd7f044fbf6ad2907) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - fix(`Select`): combobox considers search term when it should not
+
+## 16.0.4
+
+### Patch Changes
+
+- [#2291](https://github.com/Frontify/fondue/pull/2291) [`b21baa6`](https://github.com/Frontify/fondue/commit/b21baa6d88440cff88458aa3f5dfcbdf49a9827c) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix: adding missing border box on switch
+
+## 16.0.3
+
+### Patch Changes
+
+- [#2289](https://github.com/Frontify/fondue/pull/2289) [`055ef67`](https://github.com/Frontify/fondue/commit/055ef676bd3a5d01f3243f732b4f80e18bd9085f) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies and revert `vite`
+
+- Updated dependencies [[`055ef67`](https://github.com/Frontify/fondue/commit/055ef676bd3a5d01f3243f732b4f80e18bd9085f)]:
+    - @frontify/fondue-tokens@4.1.3
+    - @frontify/fondue-icons@0.15.2
+
+## 16.0.2
+
+### Patch Changes
+
+- [#2281](https://github.com/Frontify/fondue/pull/2281) [`3333a1d`](https://github.com/Frontify/fondue/commit/3333a1d78f5f70f285f4b717dc594b92c2a86eb1) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: fix glitch when loading a switch
+
+## 16.0.1
+
+### Patch Changes
+
+- [#2278](https://github.com/Frontify/fondue/pull/2278) [`a2d5f2f`](https://github.com/Frontify/fondue/commit/a2d5f2fb5488e82ea60d5d3a2aadc25401f60ab0) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - chore: update deps
+
+- [#2282](https://github.com/Frontify/fondue/pull/2282) [`651052c`](https://github.com/Frontify/fondue/commit/651052c1b3d98737c9d8604577641e511115f399) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - fix(`Accordion`): incorrect onclick handler element
+
+- [#2280](https://github.com/Frontify/fondue/pull/2280) [`e09266b`](https://github.com/Frontify/fondue/commit/e09266b6a7917372ce8d6e118a549402f0877bfa) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: adress a11y issues and improve handing of transparency in the ColorPicker Input
+
+- Updated dependencies [[`a2d5f2f`](https://github.com/Frontify/fondue/commit/a2d5f2fb5488e82ea60d5d3a2aadc25401f60ab0)]:
+    - @frontify/fondue-tokens@4.1.2
+    - @frontify/fondue-icons@0.15.1
+
 ## 16.0.0
 
 ### Patch Changes

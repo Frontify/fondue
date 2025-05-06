@@ -1,5 +1,23 @@
 # @frontify/fondue-charts
 
+## 5.0.3
+
+### Patch Changes
+
+- [#2289](https://github.com/Frontify/fondue/pull/2289) [`055ef67`](https://github.com/Frontify/fondue/commit/055ef676bd3a5d01f3243f732b4f80e18bd9085f) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies and revert `vite`
+
+- Updated dependencies [[`055ef67`](https://github.com/Frontify/fondue/commit/055ef676bd3a5d01f3243f732b4f80e18bd9085f)]:
+    - @frontify/fondue-tokens@4.1.3
+
+## 5.0.2
+
+### Patch Changes
+
+- [#2278](https://github.com/Frontify/fondue/pull/2278) [`a2d5f2f`](https://github.com/Frontify/fondue/commit/a2d5f2fb5488e82ea60d5d3a2aadc25401f60ab0) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - chore: update deps
+
+- Updated dependencies [[`a2d5f2f`](https://github.com/Frontify/fondue/commit/a2d5f2fb5488e82ea60d5d3a2aadc25401f60ab0)]:
+    - @frontify/fondue-tokens@4.1.2
+
 ## 5.0.1
 
 ### Patch Changes

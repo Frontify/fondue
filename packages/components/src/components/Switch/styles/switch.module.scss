@@ -6,34 +6,35 @@
 
 .root {
     position: relative;
-    container-type: size;
-    border-radius: 9999px;
-
     background-color: var(--box-neutral-color);
     border: 1px solid var(--line-color-x-strong);
-
-    & {
-        @include focusStyle.focus-outline;
-        @include transitions.transition-colors;
-    }
+    box-sizing: border-box;
 
     &:enabled:hover {
         background-color: var(--box-neutral-color-hover);
     }
 
     &.small {
-        width: sizeToken.get(6);
-        height: sizeToken.get(3);
+        --switch-width: #{sizeToken.get(6)};
+        --switch-height: #{sizeToken.get(3)};
     }
 
     &.medium {
-        width: sizeToken.get(7.5);
-        height: sizeToken.get(4);
+        --switch-width: #{sizeToken.get(7.5)};
+        --switch-height: #{sizeToken.get(4)};
     }
 
     &.large {
-        width: sizeToken.get(9);
-        height: sizeToken.get(5);
+        --switch-width: #{sizeToken.get(9)};
+        --switch-height: #{sizeToken.get(5)};
+    }
+
+    & {
+        width: var(--switch-width, 10px);
+        height: var(--switch-height, 10px);
+        border-radius: calc(var(--switch-height) / 2);
+        @include focusStyle.focus-outline;
+        @include transitions.transition-colors;
     }
 
     &[data-state='checked'] {
@@ -58,10 +59,9 @@
     display: block;
     transform: translate(-1px, -1px);
     will-change: transform;
-
     box-sizing: border-box;
-    width: calc(100cqh + 2px);
-    height: calc(100cqh + 2px);
+    width: calc(var(--switch-height));
+    height: calc(var(--switch-height));
 
     background-color: var(--base-color);
     border-radius: 9999px;
@@ -72,6 +72,6 @@
     }
 
     &[data-state='checked'] {
-        transform: translate(calc(100cqw - 100% + 1px), -1px);
+        transform: translate(calc(var(--switch-width) - 100% + 1px), -1px);
     }
 }

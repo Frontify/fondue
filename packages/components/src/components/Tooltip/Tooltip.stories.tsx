@@ -17,9 +17,7 @@ const meta: Meta<typeof TooltipRoot> = {
     component: TooltipRoot,
     title: 'Components/Tooltip',
     subcomponents: {
-        // @ts-expect-error - Storybook has the wrong type for TooltipContent
         'Tooltip.Content': TooltipContent,
-        // @ts-expect-error - Storybook has the wrong type for TooltipContent
         'Tooltip.Trigger': TooltipTrigger,
     },
     tags: ['autodocs'],

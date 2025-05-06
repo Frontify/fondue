@@ -3,7 +3,6 @@
 import { type TextProps } from '@visx/text';
 import { type Margin } from '@visx/xychart';
 import { useEffect, useState } from 'react';
-// @ts-expect-error Wrong export of types
 import useFontFaceObserver from 'use-font-face-observer';
 
 import { truncateTextLabel } from '@components/BarChart/helpers';

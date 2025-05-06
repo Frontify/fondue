@@ -1,5 +1,62 @@
 # @frontify/fondue
 
+## 12.9.4
+
+### Patch Changes
+
+- Updated dependencies [[`9c6a25c`](https://github.com/Frontify/fondue/commit/9c6a25c0d9f4a4fd3eef60ebd7f044fbf6ad2907)]:
+    - @frontify/fondue-components@16.0.5
+
+## 12.9.3
+
+### Patch Changes
+
+- [#2283](https://github.com/Frontify/fondue/pull/2283) [`843111f`](https://github.com/Frontify/fondue/commit/843111fae52cf81bec8f73a5741363245df1f038) Thanks [@peter-tudosa](https://github.com/peter-tudosa)! - fix(RTE): improved a11y for the CheckboxListPlugin
+
+- Updated dependencies [[`b21baa6`](https://github.com/Frontify/fondue/commit/b21baa6d88440cff88458aa3f5dfcbdf49a9827c)]:
+    - @frontify/fondue-components@16.0.4
+
+## 12.9.2
+
+### Patch Changes
+
+- [#2289](https://github.com/Frontify/fondue/pull/2289) [`055ef67`](https://github.com/Frontify/fondue/commit/055ef676bd3a5d01f3243f732b4f80e18bd9085f) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies and revert `vite`
+
+- [#2284](https://github.com/Frontify/fondue/pull/2284) [`255d5c6`](https://github.com/Frontify/fondue/commit/255d5c61eab53fdf06d37d3abf4b9d227fd97929) Thanks [@fulopdaniel](https://github.com/fulopdaniel)! - feat(RTE): expose placeholder opacity
+
+- Updated dependencies [[`055ef67`](https://github.com/Frontify/fondue/commit/055ef676bd3a5d01f3243f732b4f80e18bd9085f)]:
+    - @frontify/fondue-components@16.0.3
+    - @frontify/fondue-charts@5.0.3
+    - @frontify/fondue-tokens@4.1.3
+    - @frontify/fondue-icons@0.15.2
+
+## 12.9.1
+
+### Patch Changes
+
+- Updated dependencies [[`3333a1d`](https://github.com/Frontify/fondue/commit/3333a1d78f5f70f285f4b717dc594b92c2a86eb1)]:
+    - @frontify/fondue-components@16.0.2
+
+## 12.9.0
+
+### Minor Changes
+
+- [#2269](https://github.com/Frontify/fondue/pull/2269) [`0fb93f0`](https://github.com/Frontify/fondue/commit/0fb93f0fc7d596bc75017cfffcbb14c0683003db) Thanks [@bojangles-m](https://github.com/bojangles-m)! - fix(RTE): omit escaping entities
+
+### Patch Changes
+
+- [#2278](https://github.com/Frontify/fondue/pull/2278) [`a2d5f2f`](https://github.com/Frontify/fondue/commit/a2d5f2fb5488e82ea60d5d3a2aadc25401f60ab0) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - chore: update deps
+
+- [#2277](https://github.com/Frontify/fondue/pull/2277) [`85eac59`](https://github.com/Frontify/fondue/commit/85eac5902f9d21da388be59ce32386d66e2199a3) Thanks [@fulopdaniel](https://github.com/fulopdaniel)! - fix(RTE): make checklist not tabbable in serialized mode
+
+- [#2285](https://github.com/Frontify/fondue/pull/2285) [`e047763`](https://github.com/Frontify/fondue/commit/e047763cb7026d5a32d55704928ed921ec98f948) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - fix(`FormControl`): incorrect color tokens
+
+- Updated dependencies [[`a2d5f2f`](https://github.com/Frontify/fondue/commit/a2d5f2fb5488e82ea60d5d3a2aadc25401f60ab0), [`651052c`](https://github.com/Frontify/fondue/commit/651052c1b3d98737c9d8604577641e511115f399), [`e09266b`](https://github.com/Frontify/fondue/commit/e09266b6a7917372ce8d6e118a549402f0877bfa)]:
+    - @frontify/fondue-components@16.0.1
+    - @frontify/fondue-charts@5.0.2
+    - @frontify/fondue-tokens@4.1.2
+    - @frontify/fondue-icons@0.15.1
+
 ## 12.8.5
 
 ### Patch Changes
