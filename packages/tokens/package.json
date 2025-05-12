@@ -25,7 +25,8 @@
         "./themes": {
             "types": "./dist/themes/themes.module.css.d.ts",
             "import": "./dist/themes/themes.module.css"
-        }
+        },
+        "./temporaryTailwindTokenMapping": "./static/tailwindTokenMapping.ts"
     },
     "files": [
         "dist"
