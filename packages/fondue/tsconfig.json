@@ -39,6 +39,7 @@
         "charts.vite.config.ts",
         "icons.vite.config.ts",
         "tailwind.config.ts",
+        "legacyFondue.tailwind.config.ts",
         "tokens.vite.config.ts"
     ],
     "exclude": ["node_modules", "dist"]
