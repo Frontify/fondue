@@ -92,7 +92,7 @@ const getComputedVariables = (
     const assembledVariables = Object.entries(variables).reduce<AssembledVariable[]>((acc, [variableId, variable]) => {
         for (const modeId of Object.keys(variable.valuesByMode)) {
             for (const { collection, path, tokenType } of selectedCollections) {
-                if (collection == variable.variableCollectionId) {
+                if (collection === variable.variableCollectionId) {
                     const tokenPath = path ? variable.name.split('/') : [];
                     if (
                         !path ||

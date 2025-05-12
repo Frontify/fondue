@@ -10,17 +10,19 @@ StyleDictionary.registerTransform({
     type: 'value',
     transitive: true,
     name: 'figma/colorToScaledRgbaString',
-    filter: (token) => {
+    filter: (token: Token) => {
         return (
             token.type === 'color' &&
-            token.value.hasOwnProperty('r') &&
-            token.value.hasOwnProperty('g') &&
-            token.value.hasOwnProperty('b') &&
-            token.value.hasOwnProperty('a')
+            typeof token.value === 'object' &&
+            'r' in token.value &&
+            'g' in token.value &&
+            'b' in token.value &&
+            'a' in token.value
         );
     },
-    transform: (token) => {
-        return `rgba(${Math.round(token.value.r * 255)}, ${Math.round(token.value.g * 255)}, ${Math.round(token.value.b * 255)}, ${token.value.a})`;
+    transform: (token: Token) => {
+        const value = token.value as { r: number; g: number; b: number; a: number };
+        return `rgba(${Math.round(value.r * 255)}, ${Math.round(value.g * 255)}, ${Math.round(value.b * 255)}, ${value.a})`;
     },
 });
 
@@ -28,11 +30,12 @@ StyleDictionary.registerTransform({
     type: 'value',
     transitive: true,
     name: 'value/refToCSSVariable',
-    filter: (token) => {
+    filter: (token: Token) => {
         return typeof token.value === 'string' && token.value.startsWith('ref_');
     },
-    transform: (token) => {
-        return `var(--${token.value.replace('ref_', '').replaceAll('/', '-')})`;
+    transform: (token: Token) => {
+        const value = token.value as string;
+        return `var(--${value.replace('ref_', '').replaceAll('/', '-')})`;
     },
 });
 
@@ -49,6 +52,9 @@ StyleDictionary.registerTransform({
     type: 'value',
     transitive: true,
     name: 'tailwind/nameToCSSVariable',
+    filter: (token) => {
+        return token.attributes?.type !== 'utility';
+    },
     transform: (token) => {
         return `var(--${token.name.replaceAll('/', '-')})`;
     },
@@ -99,7 +105,7 @@ export const buildStyleDictionary = (config: Config) => {
                     },
                     ...config.themes.map((theme) => ({
                         filter: (token: Token) => {
-                            if (token.attributes?.type == 'theme') {
+                            if (token.attributes?.type === 'theme') {
                                 return token.attributes.theme === theme;
                             }
                             return token.attributes?.type !== 'primitive' && token.type !== 'color';
@@ -115,7 +121,7 @@ export const buildStyleDictionary = (config: Config) => {
 
             tailwind: {
                 buildPath: 'dist/tailwind/',
-                transforms: ['figma/colorToScaledRgbaString', 'tailwind/nameToCSSVariable'],
+                transforms: ['figma/colorToScaledRgbaString', 'tailwind/nameToCSSVariable', 'value/refToCSSVariable'],
                 files: [
                     {
                         destination: 'tailwind.config.js',
