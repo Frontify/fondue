@@ -12,7 +12,7 @@ export default defineConfig({
                     dest: '',
                 },
                 {
-                    src: 'node_modules/@frontify/fondue-tokens/dist/theme',
+                    src: 'node_modules/@frontify/fondue-tokens/dist/themes',
                     dest: '',
                 },
             ],
@@ -20,7 +20,7 @@ export default defineConfig({
     ],
     build: {
         lib: {
-            entry: 'src/subpackages/tokens.js',
+            entry: 'src/subpackages/tokens.ts',
             name: 'FondueTokens',
             fileName: 'fondue-tokens',
         },
