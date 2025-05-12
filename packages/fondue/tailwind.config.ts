@@ -4,10 +4,10 @@
 import frontifyTailwindConfig from '@frontify/fondue-tokens/tailwind';
 import temporaryTailwindTokenMapping from '@frontify/fondue-tokens/temporaryTailwindTokenMapping';
 import tailwindForm from '@tailwindcss/forms';
+import { type Config } from 'tailwindcss';
 
-/** @type {import('tailwindcss').Config} */
 export default {
-    presets: [frontifyTailwindConfig, temporaryTailwindTokenMapping],
+    presets: [frontifyTailwindConfig as Config, temporaryTailwindTokenMapping],
     content: ['./src/**/*.{js,ts,tsx}'],
     theme: {
         extend: {
@@ -90,19 +90,19 @@ export default {
                 },
             },
             fontFamily: {
-                sans: ['var(--body-family-stack)'],
+                sans: ['var(--typography-font-family-primary)'],
                 mono: ['Menlo', 'Courier', 'monospace'],
             },
-            fontSize: {
-                xxs: ['0.75rem', { letterSpacing: '0.02rem', lineHeight: '1rem' }],
-                xs: ['0.813rem', '1rem'],
-                s: ['0.875rem', '1rem'],
-                m: ['1rem', '1.25rem'],
-                l: ['1.125rem', '1.5rem'],
-                xl: ['1.5rem', '2rem'],
-                xxl: ['2rem', '2.5rem'],
-                xxxl: ['3rem', '3.5rem'],
-            },
+            // fontSize: {
+            //     xxs: ['0.75rem', { letterSpacing: '0.02rem', lineHeight: '1rem' }],
+            //     xs: ['0.813rem', '1rem'],
+            //     s: ['0.875rem', '1rem'],
+            //     m: ['1rem', '1.25rem'],
+            //     l: ['1.125rem', '1.5rem'],
+            //     xl: ['1.5rem', '2rem'],
+            //     xxl: ['2rem', '2.5rem'],
+            //     xxxl: ['3rem', '3.5rem'],
+            // },
             transitionProperty: {
                 height: 'height',
                 width: 'width',
@@ -122,4 +122,4 @@ export default {
             strategy: 'class',
         }),
     ],
-};
+} satisfies Config;

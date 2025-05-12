@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import styles from '@frontify/fondue-tokens/theme-tokens';
+import styles from '@frontify/fondue-tokens/themes';
 import { Slot } from '@radix-ui/react-slot';
 import { createContext, useContext, type ReactNode } from 'react';
 
