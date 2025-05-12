@@ -1,34 +1,42 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { type Dictionary, type TransformedToken } from 'style-dictionary';
 
-
-const getObject = ({ tokens, identifier, filter }: { tokens: TransformedToken[], identifier: string[], filter?: (token: TransformedToken) => boolean }) => {
-
-    const matchingTokens = tokens?.filter(
-        (token) =>
-            identifier.every((idSegment, index) => token.path[index + 1] === idSegment) &&
-            (filter ? filter(token) : true),
-    ) || [];
+const getObject = ({
+    tokens,
+    identifier,
+    filter,
+}: {
+    tokens: TransformedToken[];
+    identifier: string[];
+    filter?: (token: TransformedToken) => boolean;
+}) => {
+    const matchingTokens =
+        tokens?.filter(
+            (token) =>
+                identifier.every((idSegment, index) => token.path[index + 1] === idSegment) &&
+                (filter ? filter(token) : true),
+        ) || [];
 
     type NestedObject = {
         [key: string]: NestedObject | string;
-    }
+    };
 
     return matchingTokens.reduce<Record<string, unknown>>((acc, token) => {
         const path = token.path.slice(identifier.length + 1);
         let currentLevel = acc;
-        path.forEach((segment, index) => {
+        for (const [index, segment] of path.entries()) {
             if (index === path.length - 1) {
                 currentLevel[segment] = token.value;
             } else if (segment !== path[index + 1]) {
                 currentLevel[segment] = currentLevel[segment] || {};
                 currentLevel = currentLevel[segment] as NestedObject;
             }
-        });
+        }
 
         return acc;
     }, {});
 };
-
 
 const getTheme = (dictionary: Dictionary) => {
     const tokens = dictionary.allTokens;
@@ -38,57 +46,59 @@ const getTheme = (dictionary: Dictionary) => {
             tokens,
             identifier: ['color'],
             filter: (token) => {
-                return token.attributes?.type !== "primitive";
+                return token.attributes?.type !== 'primitive';
             },
         }),
         extend: {
             fontSize: getObject({
                 identifier: ['typography', 'font-size'],
-                tokens: tokens,
+                tokens,
             }),
 
             fontWeight: getObject({
                 identifier: ['typography', 'font-weight'],
-                tokens: tokens,
+                tokens,
             }),
 
             fontFamily: getObject({
                 identifier: ['typography', 'font-family'],
-                tokens: tokens,
+                tokens,
             }),
 
             letterSpacing: getObject({
                 identifier: ['typography', 'letter-spacing'],
-                tokens: tokens,
+                tokens,
             }),
 
             lineHeight: getObject({
                 identifier: ['typography', 'line-height'],
-                tokens: tokens,
+                tokens,
             }),
-
-            // boxShadow: getBoxShadow({
-            //     tokens,
-            //     dictionary,
-            // }),
-
-            // borderWidth: getObject({
-            //     identifier: ['line-width'],
-            //     tokens,
-            // }),
 
             borderRadius: getObject({
                 identifier: ['border-radius'],
                 tokens,
             }),
 
-            // ringColor: getObject({
-            //     identifier: ['border-radius'],
-            //     tokens,
-            //     // filter: (token) => token.attributes?.category === 'size' && token.attributes.type === 'borderRadius',
-            // }),
+            borderWidth: getObject({
+                identifier: ['line-width'],
+                tokens,
+            }),
 
-            // outline: getOutline({ dictionary }),
+            ringColor: getObject({
+                identifier: ['ring-color'],
+                tokens,
+            }),
+
+            outline: getObject({
+                identifier: ['outline'],
+                tokens,
+            }),
+
+            boxShadow: getObject({
+                identifier: ['box-shadow'],
+                tokens,
+            }),
 
             spacing: getObject({
                 identifier: ['spacing'],

@@ -1,17 +1,26 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { type Dictionary, type TransformedToken } from 'style-dictionary';
 
-const getObject = ({ tokens, identifier, filter }: { tokens: TransformedToken[], identifier: string[], filter?: (token: TransformedToken) => boolean }) => {
-
-    const matchingTokens = tokens?.filter(
-        (token) =>
-            identifier.every((idSegment, index) => token.path[index + 1] === idSegment) &&
-            (filter ? filter(token) : true),
-    ) || [];
+const getObject = ({
+    tokens,
+    identifier,
+    filter,
+}: {
+    tokens: TransformedToken[];
+    identifier: string[];
+    filter?: (token: TransformedToken) => boolean;
+}) => {
+    const matchingTokens =
+        tokens?.filter(
+            (token) =>
+                identifier.every((idSegment, index) => token.path[index + 1] === idSegment) &&
+                (filter ? filter(token) : true),
+        ) || [];
 
     type NestedObject = Record<string, Record<string, string>>;
 
     return matchingTokens.reduce<NestedObject>((acc, token) => {
-
         const path = token.path.slice(identifier.length + 1);
         const property = path[path.length - 1];
         const variant = `'.${path.slice(0, -1).join('-')}'`;
@@ -25,9 +34,8 @@ const getObject = ({ tokens, identifier, filter }: { tokens: TransformedToken[],
     }, {});
 };
 
-
 const getUtilClasses = (dictionary: Dictionary, identifier: string[]) => {
-    const tokens = dictionary.allTokens
+    const tokens = dictionary.allTokens;
 
     const textTokens = getObject({
         identifier,
@@ -35,14 +43,18 @@ const getUtilClasses = (dictionary: Dictionary, identifier: string[]) => {
     });
 
     const utils = Object.entries(textTokens).reduce((acc, [variantKey, variant]) => {
-        if (!variant) return acc;
+        if (!variant) {
+            return acc;
+        }
         const properties = Object.keys(variant).reduce((acc, propertyKey) => {
             const property = variant[propertyKey];
-            if (!property) return acc;
-            if (acc !== '') {
-                acc += `, `;
+            if (!property) {
+                return acc;
             }
-            acc += `${propertyKey.replace(/-./g, (match) => match.slice(-1).toUpperCase())}: ${property}`;
+            if (acc !== '') {
+                acc += ', ';
+            }
+            acc += `${propertyKey.replaceAll(/-./g, (match) => match.slice(-1).toUpperCase())}: ${property}`;
             return acc;
         }, '');
         acc += `${variantKey}: { ${properties} }, `;
@@ -57,5 +69,5 @@ export const buildTextUtil = ({ dictionary }: { dictionary: Dictionary }): strin
       addUtilities({
         ${getUtilClasses(dictionary, ['text'])}
       })
-    })`
+    })`;
 };
