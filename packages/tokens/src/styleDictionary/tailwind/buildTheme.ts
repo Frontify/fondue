@@ -27,7 +27,7 @@ const getObject = ({
         let currentLevel = acc;
         for (const [index, segment] of path.entries()) {
             if (index === path.length - 1) {
-                currentLevel[segment] = token.value;
+                currentLevel[segment === 'default' ? 'DEFAULT' : segment] = token.value;
             } else if (segment !== path[index + 1]) {
                 currentLevel[segment] = currentLevel[segment] || {};
                 currentLevel = currentLevel[segment] as NestedObject;
