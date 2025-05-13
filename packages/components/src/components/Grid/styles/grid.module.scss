@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-@use "sass:list";
+@use 'sass:list';
 @use '../../../helpers/layout.module.scss';
 
 $properties: (
@@ -18,6 +18,8 @@ $properties: (
 $allProperties: list.join($properties, layout.$layoutProperties);
 
 .root {
+    box-sizing: border-box;
+
     @include layout.responsive-properties($allProperties);
 
     // Default values
