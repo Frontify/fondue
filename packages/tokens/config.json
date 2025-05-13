@@ -1,23 +1,23 @@
 {
-  "figmaFileKey": "YusQBIqf7U9QnI8xmTLlqf",
-  "defaultTheme": "light",
-  "themes": ["dark", "light"],
-  "tokenTypes": {
-    "theme": [
-      {
-        "collection": "VariableCollectionId:80:1513"
-      }
-    ],
-    "primitive": [
-      {
-        "collection": "VariableCollectionId:80:1510"
-      }
-    ],
-    "utility": [
-      {
-        "collection": "VariableCollectionId:419:1502",
-        "path": ["text"]
-      }
-    ]
-  }
+    "figmaFileKey": "YusQBIqf7U9QnI8xmTLlqf",
+    "defaultTheme": "light",
+    "themes": ["dark", "light"],
+    "tokenTypes": {
+        "theme": [
+            {
+                "collection": "VariableCollectionId:80:1513"
+            }
+        ],
+        "primitive": [
+            {
+                "collection": "VariableCollectionId:80:1510"
+            }
+        ],
+        "utility": [
+            {
+                "collection": "VariableCollectionId:419:1502",
+                "path": ["text"]
+            }
+        ]
+    }
 }

@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import StyleDictionary, { type Token } from 'style-dictionary';
+import StyleDictionary, { type Token, type TransformedToken } from 'style-dictionary';
 
 import { type Config } from '../types';
 
@@ -22,7 +22,32 @@ StyleDictionary.registerTransform({
     },
     transform: (token: Token) => {
         const value = token.value as { r: number; g: number; b: number; a: number };
-        return `rgba(${Math.round(value.r * 255)}, ${Math.round(value.g * 255)}, ${Math.round(value.b * 255)}, ${value.a})`;
+        return `rgba(${Math.round(value.r * 255)}, ${Math.round(value.g * 255)}, ${Math.round(value.b * 255)}, ${Math.round(value.a * 100) / 100})`;
+    },
+});
+
+StyleDictionary.registerTransform({
+    type: 'value',
+    transitive: true,
+    name: 'number/roundToTwoDecimals',
+    filter: (token: Token) => {
+        return typeof token.value === 'number';
+    },
+    transform: (token: Token) => {
+        return Math.round(token.value * 100) / 100;
+    },
+});
+
+StyleDictionary.registerTransform({
+    type: 'value',
+    transitive: true,
+    name: 'value/convertPxToRem',
+    filter: (token: TransformedToken) => {
+        const remTokens = ['font-size', 'line-height'];
+        return typeof token.value === 'number' && remTokens.some((remToken) => token.path.includes(remToken));
+    },
+    transform: (token: Token) => {
+        return `${token.value / 16}rem`;
     },
 });
 
@@ -63,28 +88,21 @@ StyleDictionary.registerTransform({
 StyleDictionary.registerTransform({
     type: 'value',
     transitive: true,
-    name: 'fondue/transformFontFamilyName',
+    name: 'fondue/transformFontFamily',
     filter: (token) =>
         token.name.toLocaleLowerCase().includes('font-family') &&
-        typeof token.value === 'string' &&
-        token.value.toLocaleLowerCase().includes('abc diatype variable'),
-    transform: () => {
-        return 'Diatype';
-    },
-});
-
-StyleDictionary.registerTransform({
-    type: 'value',
-    transitive: true,
-    name: 'fondue/addFontFamilyStack',
-    filter: (token) => token.name.toLocaleLowerCase().includes('font-family'),
+        token.attributes?.type === 'primitive' &&
+        typeof token.value === 'string',
     transform: (token) => {
-        if (typeof token.value === 'string') {
-            if (token.name.includes('monospace')) {
-                return `${token.value}, Courier, monospace`;
-            }
-            return `${token.value},Space Grotesk Frontify,Arial,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol`;
+        const tokenValue =
+            typeof token.value === 'string' && token.value.toLocaleLowerCase().includes('abc diatype variable')
+                ? 'Diatype'
+                : (token.value as string);
+
+        if (token.name.includes('monospace')) {
+            return `${tokenValue}, Courier, monospace`;
         }
+        return `${tokenValue},Space Grotesk Frontify,Arial,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol`;
     },
 });
 
@@ -98,11 +116,12 @@ export const buildStyleDictionary = (config: Config) => {
             cssBase: {
                 buildPath: 'dist/',
                 transforms: [
-                    'fondue/transformFontFamilyName',
-                    'fondue/addFontFamilyStack',
+                    'number/roundToTwoDecimals',
+                    'fondue/transformFontFamily',
                     'figma/colorToScaledRgbaString',
                     'name/kebabWithoutThemeName',
                     'value/refToCSSVariable',
+                    'value/convertPxToRem',
                 ],
                 options: {
                     showFileHeader: false,
@@ -122,7 +141,14 @@ export const buildStyleDictionary = (config: Config) => {
             },
             cssThemes: {
                 buildPath: '.tmp/themes/',
-                transforms: ['figma/colorToScaledRgbaString', 'name/kebabWithoutThemeName', 'value/refToCSSVariable'],
+                transforms: [
+                    'number/roundToTwoDecimals',
+                    'fondue/transformFontFamily',
+                    'figma/colorToScaledRgbaString',
+                    'name/kebabWithoutThemeName',
+                    'value/refToCSSVariable',
+                    'value/convertPxToRem',
+                ],
                 options: {
                     showFileHeader: false,
                 },
@@ -155,7 +181,13 @@ export const buildStyleDictionary = (config: Config) => {
 
             tailwind: {
                 buildPath: 'dist/tailwind/',
-                transforms: ['figma/colorToScaledRgbaString', 'tailwind/nameToCSSVariable', 'value/refToCSSVariable'],
+                transforms: [
+                    'number/roundToTwoDecimals',
+                    'figma/colorToScaledRgbaString',
+                    'tailwind/nameToCSSVariable',
+                    'value/refToCSSVariable',
+                    'value/convertPxToRem',
+                ],
                 files: [
                     {
                         destination: 'tailwind.config.js',
