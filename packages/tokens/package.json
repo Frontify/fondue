@@ -26,7 +26,7 @@
             "types": "./dist/themes/themes.module.css.d.ts",
             "import": "./dist/themes/themes.module.css"
         },
-        "./temporaryTailwindTokenMapping": "./static/tailwindTokenMapping.ts"
+        "./static/*": "./static/*"
     },
     "files": [
         "dist"
@@ -41,12 +41,13 @@
         "access": "public"
     },
     "peerDependencies": {
-        "bun": "^1.2.12"
+        "tailwindcss": "^3.4.17"
     },
     "devDependencies": {
         "@frontify/eslint-config-basic": "^0.20.6",
         "@types/bun": "^1.2.13",
         "@types/node": "^22.13.1",
+        "bun": "^1.2.12",
         "eslint": "^8.57.1",
         "eslint-plugin-notice": "^1.0.0",
         "style-dictionary": "^4.4.0"

@@ -992,9 +992,9 @@ importers:
 
   packages/tokens:
     dependencies:
-      bun:
-        specifier: ^1.2.12
-        version: 1.2.13
+      tailwindcss:
+        specifier: ^3.4.17
+        version: 3.4.17(ts-node@10.9.2(@types/node@22.14.0)(typescript@5.8.3))
     devDependencies:
       '@frontify/eslint-config-basic':
         specifier: ^0.20.6
@@ -1005,6 +1005,9 @@ importers:
       '@types/node':
         specifier: ^22.13.1
         version: 22.14.0
+      bun:
+        specifier: ^1.2.12
+        version: 1.2.13
       eslint:
         specifier: ^8.57.1
         version: 8.57.1

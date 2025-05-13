@@ -56,7 +56,35 @@ StyleDictionary.registerTransform({
         return token.attributes?.type !== 'utility';
     },
     transform: (token) => {
-        return `var(--${token.name.replaceAll('/', '-')})`;
+        return `var(--${token.name.replaceAll('/', '-').replaceAll(' ', '-')})`;
+    },
+});
+
+StyleDictionary.registerTransform({
+    type: 'value',
+    transitive: true,
+    name: 'fondue/transformFontFamilyName',
+    filter: (token) =>
+        token.name.toLocaleLowerCase().includes('font-family') &&
+        typeof token.value === 'string' &&
+        token.value.toLocaleLowerCase().includes('abc diatype variable'),
+    transform: () => {
+        return 'Diatype';
+    },
+});
+
+StyleDictionary.registerTransform({
+    type: 'value',
+    transitive: true,
+    name: 'fondue/addFontFamilyStack',
+    filter: (token) => token.name.toLocaleLowerCase().includes('font-family'),
+    transform: (token) => {
+        if (typeof token.value === 'string') {
+            if (token.name.includes('monospace')) {
+                return `${token.value}, Courier, monospace`;
+            }
+            return `${token.value},Space Grotesk Frontify,Arial,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol`;
+        }
     },
 });
 
@@ -69,7 +97,13 @@ export const buildStyleDictionary = (config: Config) => {
         platforms: {
             cssBase: {
                 buildPath: 'dist/',
-                transforms: ['figma/colorToScaledRgbaString', 'name/kebabWithoutThemeName', 'value/refToCSSVariable'],
+                transforms: [
+                    'fondue/transformFontFamilyName',
+                    'fondue/addFontFamilyStack',
+                    'figma/colorToScaledRgbaString',
+                    'name/kebabWithoutThemeName',
+                    'value/refToCSSVariable',
+                ],
                 options: {
                     showFileHeader: false,
                 },
