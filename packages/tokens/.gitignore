@@ -110,6 +110,5 @@ typings/
 
 # Style-dictionary build directory
 output
-dist
 tmp
 **/generated
