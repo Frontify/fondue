@@ -1,5 +1,17 @@
 # @frontify/fondue-components
 
+## 17.0.0
+
+### Patch Changes
+
+- [#2303](https://github.com/Frontify/fondue/pull/2303) [`a930cbb`](https://github.com/Frontify/fondue/commit/a930cbb93e99a3acd8c97fc3f2a92718f9efee86) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix: enforce the `box-sizing: border-box`
+
+- [#2294](https://github.com/Frontify/fondue/pull/2294) [`96cbb78`](https://github.com/Frontify/fondue/commit/96cbb7802b85fde0f9edf054b542c4470bb954ae) Thanks [@danialdezfouli](https://github.com/danialdezfouli)! - feat: add generic type support to SegmentedControl component
+
+- Updated dependencies [[`ca6ce9c`](https://github.com/Frontify/fondue/commit/ca6ce9cc96d683816c8229c03cc8cd270b216d52)]:
+    - @frontify/fondue-tokens@4.2.0
+    - @frontify/fondue-icons@0.15.2
+
 ## 16.0.5
 
 ### Patch Changes

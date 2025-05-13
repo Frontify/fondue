@@ -1,5 +1,11 @@
 # @frontify/fondue-tokens
 
+## 4.2.0
+
+### Minor Changes
+
+- [#2279](https://github.com/Frontify/fondue/pull/2279) [`ca6ce9c`](https://github.com/Frontify/fondue/commit/ca6ce9cc96d683816c8229c03cc8cd270b216d52) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add utility to utilize variable font features for italic text
+
 ## 4.1.3
 
 ### Patch Changes
