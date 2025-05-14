@@ -11,6 +11,18 @@
         "primitive": [
             {
                 "collection": "VariableCollectionId:80:1510"
+            },
+            {
+                "collection": "VariableCollectionId:419:1502",
+                "path": ["border-radius"]
+            },
+            {
+                "collection": "VariableCollectionId:419:1502",
+                "path": ["border-width"]
+            },
+            {
+                "collection": "VariableCollectionId:419:1502",
+                "path": ["spacing"]
             }
         ],
         "utility": [

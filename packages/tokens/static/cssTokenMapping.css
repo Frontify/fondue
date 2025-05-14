@@ -9,14 +9,14 @@
     --body-weight-strong-number: /** @deprecated use updated token instead **/ var(--typography-font-weight-medium);
     --body-weight-x-strong-name: /** @deprecated use updated token instead **/ var(--typography-font-weight-bold);
     --body-weight-x-strong-number: /** @deprecated use updated token instead **/ var(--typography-font-weight-bold);
-    --body-size-x-small: 0.75rem;
-    --body-size-x-small-line-height: 1rem;
-    --body-size-small: 0.813rem;
-    --body-size-small-line-height: 1rem;
-    --body-size-medium: 0.875rem;
-    --body-size-medium-line-height: 1.125rem;
-    --body-size-large: 1rem;
-    --body-size-large-line-height: 1.25rem;
+    --body-size-x-small: /** @deprecated use updated token instead **/ var(--typography-font-size-x-small);
+    --body-size-x-small-line-height: /** @deprecated use updated token instead **/ var(--typography-line-height-tight);
+    --body-size-small: /** @deprecated use updated token instead **/ var(--typography-font-size-small);
+    --body-size-small-line-height: /** @deprecated use updated token instead **/ var(--typography-line-height-tight);
+    --body-size-medium: /** @deprecated use updated token instead **/ var(--typography-font-size-medium);
+    --body-size-medium-line-height: /** @deprecated use updated token instead **/ var(--typography-line-height-medium);
+    --body-size-large: /** @deprecated use updated token instead **/ var(--typography-font-size-large);
+    --body-size-large-line-height: /** @deprecated use updated token instead **/ var(--typography-line-height-wide)
     --box-neutral-color: /** @deprecated use updated token instead **/ var(--color-container-secondary-default);
     --box-neutral-color-hover: /** @deprecated use updated token instead **/ var(--color-container-secondary-hover);
     --box-neutral-color-pressed: /** @deprecated use updated token instead **/ var(--color-container-secondary-active);
@@ -147,7 +147,7 @@
     --box-warning-strong-inverse-color-pressed: /** @deprecated use updated token instead **/ var(
         --color-warning-on-warning
     );
-    --code-family: /** @deprecated use updated token instead **/ var(--typography-font-family-monospace);
+    --code-family: /** @deprecated use updated token instead **/ var(--typography-font-family-monoe);
     --code-family-stack: /** @deprecated use updated token instead **/ var(--typography-font-family-monospace);
     --code-weight-name: /** @deprecated use updated token instead **/ var(--typography-font-weight-regular);
     --code-weight-number: /** @deprecated use updated token instead **/ var(--typography-font-weight-regular);
@@ -159,7 +159,7 @@
     --code-size-medium-line-height: 1rem;
     --code-size-large: 1rem;
     --code-size-large-line-height: 1.25rem;
-    --focus-ring-color: #4196fb;
+    --focus-ring-color: /** @deprecated use updated token instead **/ var(--color-focus-default);
     --heading-family: /** @deprecated use updated token instead **/ var(--typography-font-family-primary);
     --heading-family-stack: /** @deprecated use updated token instead **/ var(--typography-font-family-primary);
     --heading-weight-name: /** @deprecated use updated token instead **/ var(--typography-font-weight-medium);
@@ -207,13 +207,13 @@
     --shadow-large-spread: 0rem;
     --shadow-large-blur: 5rem;
     --shadow-large-color: rgba(8, 8, 8, 0.2);
-    --space-xxs: 0.25rem;
-    --space-xs: 0.5rem;
-    --space-s: 0.75rem;
-    --space-m: 1rem;
-    --space-l: 1.5rem;
-    --space-xl: 2rem;
-    --space-xxl: 2.5rem;
+    --space-xxs: /** @deprecated use updated token instead **/ var(--spacing-xx-small);
+    --space-xs: /** @deprecated use updated token instead **/ var(--spacing-x-small);
+    --space-s: /** @deprecated use updated token instead **/ var(--spacing-small);
+    --space-m: /** @deprecated use updated token instead **/ var(--spacing-medium);
+    --space-l: /** @deprecated use updated token instead **/ var(--spacing-large);
+    --space-xl: /** @deprecated use updated token instead **/ var(--spacing-x-large);
+    --space-xxl: /** @deprecated use updated token instead **/ var(--spacing-xx-large);
     --text-color: /** @deprecated use updated token instead **/ var(--color-primary-default);
     --text-color-hover: /** @deprecated use updated token instead **/ var(--color-primary-hover);
     --text-color-pressed: /** @deprecated use updated token instead **/ var(--color-primary-active);

@@ -81,19 +81,15 @@ const getTheme = (dictionary: Dictionary) => {
             }),
 
             borderWidth: getObject({
-                identifier: ['line-width'],
+                identifier: ['border-width'],
                 tokens,
             }),
 
-            ringColor: getObject({
-                identifier: ['ring-color'],
-                tokens,
-            }),
+            ringColor: {
+                DEFAULT: 'var(--color-focus-default)',
+            },
 
-            outline: getObject({
-                identifier: ['outline'],
-                tokens,
-            }),
+            outline: { DEFAULT: '1px solid var(--color-focus-default)' },
 
             boxShadow: getObject({
                 identifier: ['box-shadow'],

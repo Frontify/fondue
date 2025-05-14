@@ -10,6 +10,8 @@ import { type Config } from './types';
 
 const buildTokens = async () => {
     const config = (await Bun.file('config.json').json()) as Config;
+
+    await rm(new URL('../dist', import.meta.url), { recursive: true, force: true });
     await loadFigmaVariables(config);
     await buildStyleDictionary(config);
 
@@ -27,9 +29,10 @@ const buildTokens = async () => {
                     themeStyles += `${content}\n`;
                 });
         }),
-    ])
-        .then(() => Bun.write(new URL('../dist/themes/themes.module.css', import.meta.url), themeStyles))
-        .then(() => rm(new URL('../.tmp', import.meta.url), { recursive: true, force: true }));
+    ]);
+
+    await Bun.write(new URL('../dist/themes/themes.module.css', import.meta.url), themeStyles);
+    await rm(new URL('../.tmp', import.meta.url), { recursive: true, force: true });
 
     const moduleTypesTemplate = `declare const styles: {primitives: string;${config.themes.map((theme) => `${theme}: string;`).join(' ')}};
 export default styles;`;
