@@ -88,7 +88,7 @@ export default {
                     'on-disabled-container': 'var(--color-container-disabled-on-disabled-container)',
                 },
             },
-            shadow: 'var(--color-shadow-shadow)',
+            shadow: { DEFAULT: 'var(--color-shadow-default)' },
             overlay: 'var(--color-overlay-overlay)',
             focus: { DEFAULT: 'var(--color-focus-default)', contrast: 'var(--color-focus-contrast)' },
             line: {
@@ -127,11 +127,16 @@ export default {
                 loose: 'var(--typography-line-height-loose)',
                 'extra-loose': 'var(--typography-line-height-extra-loose)',
             },
-            borderRadius: { small: 'var(--border-radius-small)' },
-            borderWidth: { DEFAULT: 'var(--border-width-default)' },
+            borderRadius: {
+                small: 'var(--border-radius-small)',
+                medium: 'var(--border-radius-medium)',
+                large: 'var(--border-radius-large)',
+                'x-large': 'var(--border-radius-x-large)',
+            },
+            borderWidth: { DEFAULT: 'var(--border-width-default)', large: 'var(--border-width-large)' },
             ringColor: { DEFAULT: 'var(--color-focus-default)' },
             outline: { DEFAULT: '1px solid var(--color-focus-default)' },
-            boxShadow: {},
+            boxShadow: { DEFAULT: 'var(--shadow-default)', mid: 'var(--shadow-mid)', big: 'var(--shadow-big)' },
             spacing: {
                 'xx-small': 'var(--spacing-xx-small)',
                 'x-small': 'var(--spacing-x-small)',

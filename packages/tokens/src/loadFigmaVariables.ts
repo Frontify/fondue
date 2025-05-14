@@ -4,6 +4,7 @@ import Bun from 'bun';
 
 import {
     type AssembledVariable,
+    type BoxShadowValue,
     type Config,
     type FigmaResponse,
     type FigmaVariableCollections,
@@ -58,10 +59,15 @@ const getComputedVariables = (
         const modeKeys: string[] = Object.keys(variable.valuesByMode);
         let variableValue: FigmaVariableValue | null;
         if (modeKeys.length > 1) {
-            variableValue = variable.valuesByMode[modeId] || null;
+            variableValue = variable.valuesByMode[modeId] ?? null;
         } else {
-            variableValue = Object.values(variable.valuesByMode)[0] || null;
+            variableValue = Object.values(variable.valuesByMode)[0] ?? null;
         }
+
+        if (variableValue === null && variable.name.toLowerCase().includes('shadow/mid')) {
+            console.log(variable);
+        }
+
         if (
             variableValue &&
             typeof variableValue === 'object' &&
@@ -136,7 +142,22 @@ const formatCollections = (variables: AssembledVariable[]) => {
 
         for (const [index, part] of nameParts.entries()) {
             const sanitizedPart = part.replaceAll(' ', '-');
-            if (index === nameParts.length - 1) {
+            if (nameParts[0] === 'shadow' && index >= nameParts.length - 2) {
+                if (index === nameParts.length - 2) {
+                    currentLevel[sanitizedPart] = currentLevel[sanitizedPart] || {
+                        ...variable,
+                        value: {},
+                        name: nameParts.slice(0, -1).join('/'),
+                        type: 'shadow',
+                    };
+                }
+                if (index === nameParts.length - 1) {
+                    const previousPart = nameParts[index - 1] as string;
+                    (currentLevel[previousPart]?.value as BoxShadowValue)[sanitizedPart] = variable.value as
+                        | string
+                        | number;
+                }
+            } else if (index === nameParts.length - 1) {
                 currentLevel[sanitizedPart] = variable;
             } else {
                 currentLevel[sanitizedPart] = currentLevel[sanitizedPart] || {};

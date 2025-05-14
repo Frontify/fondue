@@ -2,7 +2,7 @@
 
 import StyleDictionary, { type Token, type TransformedToken } from 'style-dictionary';
 
-import { type Config } from '../types';
+import { type BoxShadowValue, type Config } from '../types';
 
 import { tailwindFormat } from './tailwind/tailwindFormat';
 
@@ -23,6 +23,17 @@ StyleDictionary.registerTransform({
     transform: (token: Token) => {
         const value = token.value as { r: number; g: number; b: number; a: number };
         return `rgba(${Math.round(value.r * 255)}, ${Math.round(value.g * 255)}, ${Math.round(value.b * 255)}, ${Math.round(value.a * 100) / 100})`;
+    },
+});
+
+StyleDictionary.registerTransform({
+    type: 'value',
+    transitive: true,
+    name: 'figma/shadowToMatrix',
+    filter: (token: Token) => token.type === 'shadow',
+    transform: (token: Token) => {
+        const properties = token.value as BoxShadowValue;
+        return `${properties['position-x']}px, ${properties['position-y']}px, ${properties.blur}px, ${properties.spread}px${properties.color ? `, var(--${`${properties.color}`.replace('ref_', '').replaceAll('/', '-')})` : ''}`;
     },
 });
 
@@ -119,6 +130,7 @@ export const buildStyleDictionary = (config: Config) => {
                     'number/roundToTwoDecimals',
                     'fondue/transformFontFamily',
                     'figma/colorToScaledRgbaString',
+                    'figma/shadowToMatrix',
                     'name/kebabWithoutThemeName',
                     'value/refToCSSVariable',
                     'value/convertPxToRem',
@@ -145,6 +157,7 @@ export const buildStyleDictionary = (config: Config) => {
                     'number/roundToTwoDecimals',
                     'fondue/transformFontFamily',
                     'figma/colorToScaledRgbaString',
+                    'figma/shadowToMatrix',
                     'name/kebabWithoutThemeName',
                     'value/refToCSSVariable',
                     'value/convertPxToRem',
@@ -184,6 +197,7 @@ export const buildStyleDictionary = (config: Config) => {
                 transforms: [
                     'number/roundToTwoDecimals',
                     'figma/colorToScaledRgbaString',
+                    'figma/shadowToMatrix',
                     'tailwind/nameToCSSVariable',
                     'value/refToCSSVariable',
                     'value/convertPxToRem',

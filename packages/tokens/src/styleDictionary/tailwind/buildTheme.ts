@@ -92,7 +92,7 @@ const getTheme = (dictionary: Dictionary) => {
             outline: { DEFAULT: '1px solid var(--color-focus-default)' },
 
             boxShadow: getObject({
-                identifier: ['box-shadow'],
+                identifier: ['shadow'],
                 tokens,
             }),
 

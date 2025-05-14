@@ -92,7 +92,7 @@
   --typography-font-size-xx-large: 1.5rem;
   --typography-letter-casing-default: none;
   --typography-letter-casing-uppercase: uppercase;
-  --typography-letter-spacing-default: null;
+  --typography-letter-spacing-default: 0;
   --typography-letter-spacing-wide: 0.88;
   --typography-line-height-tight: 1rem;
   --typography-line-height-medium: 1.125rem;
@@ -106,8 +106,15 @@
   --spacing-large: 24;
   --spacing-x-large: 32;
   --spacing-xx-large: 40;
-  --border-radius-small: 5;
-  --border-width-default: 40;
+  --border-radius-small: 2;
+  --border-radius-medium: 4;
+  --border-radius-large: 8;
+  --border-radius-x-large: 12;
+  --border-width-default: 1;
+  --border-width-large: 2;
+  --shadow-default: 0px, 3px, 10px, 0px, var(--color-shadow-default);
+  --shadow-mid: 0px, 4px, 24px, 0px, var(--color-shadow-default);
+  --shadow-big: 0px, 25px, 80px, 0px, var(--color-shadow-default);
   --color-surface-default: var(--color-neutral-00);
   --color-surface-dim: var(--color-neutral-05);
   --color-surface-hover: var(--color-neutral-15);
@@ -164,7 +171,7 @@
   --color-container-warning-on-warning-container: var(--color-warning-90);
   --color-container-disabled-default: var(--color-neutral-10);
   --color-container-disabled-on-disabled-container: var(--color-neutral-50);
-  --color-shadow-shadow: rgba(17, 17, 16, 0.2);
+  --color-shadow-default: rgba(17, 17, 16, 0.2);
   --color-overlay-overlay: rgba(17, 17, 16, 0.5);
   --color-focus-default: rgba(65, 150, 251, 1);
   --color-focus-contrast: var(--color-neutral-00);

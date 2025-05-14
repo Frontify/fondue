@@ -70,10 +70,14 @@ type FigmaVariableCollection = {
 export type AssembledVariable = {
     name: string;
     type: string;
-    value: FigmaVariableValue | null;
+    value: FigmaVariableValue | BoxShadowValue | null;
     attributes: {
         collection: string;
         type: string;
         theme: string;
     };
+};
+
+export type BoxShadowValue = {
+    [key: string]: string | number;
 };
