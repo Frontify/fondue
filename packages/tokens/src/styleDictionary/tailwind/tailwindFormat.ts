@@ -18,7 +18,6 @@ const template = (theme: Record<string, unknown>, plugins: string) => {
     return `import plugin from 'tailwindcss/plugin';
 
 export default {
-    prefix: "tw-",
     theme: ${JSON.stringify(theme)},
     plugins: [${plugins}],
 };`;

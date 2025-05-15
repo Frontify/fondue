@@ -1,13 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-// @ts-expect-error Untyped
-import frontifyTailwindConfig from '@frontify/fondue-tokens/tailwind';
+import legacyFondueTailwindConfig from '@frontify/fondue-tokens/legacy/tailwind';
 import tailwindForm from '@tailwindcss/forms';
-import { type Config } from 'tailwindcss';
 
 export default {
-    presets: [frontifyTailwindConfig as Config],
-    content: ['./src/**/*.{js,ts,tsx}'],
+    presets: [legacyFondueTailwindConfig],
     prefix: 'tw-',
     theme: {
         extend: {
@@ -119,4 +116,4 @@ export default {
             strategy: 'class',
         }),
     ],
-} satisfies Config;
+};

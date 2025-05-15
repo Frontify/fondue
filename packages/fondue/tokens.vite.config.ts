@@ -8,11 +8,15 @@ export default defineConfig({
         viteStaticCopy({
             targets: [
                 {
-                    src: 'node_modules/@frontify/fondue-tokens/dist/tailwind/tailwind.config.js',
+                    src: 'node_modules/@frontify/fondue-tokens/dist/css/base.css',
                     dest: '',
                 },
                 {
-                    src: 'node_modules/@frontify/fondue-tokens/dist/themes',
+                    src: 'node_modules/@frontify/fondue-tokens/dist/legacy/deprecatedBaseTokens.css',
+                    dest: '',
+                },
+                {
+                    src: 'node_modules/@frontify/fondue-tokens/dist/tailwind/tailwind.config.js',
                     dest: '',
                 },
             ],
