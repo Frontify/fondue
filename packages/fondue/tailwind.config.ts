@@ -8,6 +8,7 @@ import { type Config } from 'tailwindcss';
 export default {
     presets: [frontifyTailwindConfig as Config],
     content: ['./src/**/*.{js,ts,tsx}'],
+    prefix: 'tw-',
     theme: {
         extend: {
             outline: {

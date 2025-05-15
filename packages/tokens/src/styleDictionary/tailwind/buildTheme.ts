@@ -49,53 +49,54 @@ const getTheme = (dictionary: Dictionary) => {
                 return token.attributes?.type !== 'primitive';
             },
         }),
+
+        fontSize: getObject({
+            identifier: ['typography', 'font-size'],
+            tokens,
+        }),
+
+        fontWeight: getObject({
+            identifier: ['typography', 'font-weight'],
+            tokens,
+        }),
+
+        fontFamily: getObject({
+            identifier: ['typography', 'font-family'],
+            tokens,
+        }),
+
+        letterSpacing: getObject({
+            identifier: ['typography', 'letter-spacing'],
+            tokens,
+        }),
+
+        lineHeight: getObject({
+            identifier: ['typography', 'line-height'],
+            tokens,
+        }),
+
+        borderRadius: getObject({
+            identifier: ['border-radius'],
+            tokens,
+        }),
+
+        borderWidth: getObject({
+            identifier: ['border-width'],
+            tokens,
+        }),
+
+        ringColor: {
+            DEFAULT: 'var(--color-focus-default)',
+        },
+
+        outline: { DEFAULT: '1px solid var(--color-focus-default)' },
+
+        boxShadow: getObject({
+            identifier: ['shadow'],
+            tokens,
+        }),
+
         extend: {
-            fontSize: getObject({
-                identifier: ['typography', 'font-size'],
-                tokens,
-            }),
-
-            fontWeight: getObject({
-                identifier: ['typography', 'font-weight'],
-                tokens,
-            }),
-
-            fontFamily: getObject({
-                identifier: ['typography', 'font-family'],
-                tokens,
-            }),
-
-            letterSpacing: getObject({
-                identifier: ['typography', 'letter-spacing'],
-                tokens,
-            }),
-
-            lineHeight: getObject({
-                identifier: ['typography', 'line-height'],
-                tokens,
-            }),
-
-            borderRadius: getObject({
-                identifier: ['border-radius'],
-                tokens,
-            }),
-
-            borderWidth: getObject({
-                identifier: ['border-width'],
-                tokens,
-            }),
-
-            ringColor: {
-                DEFAULT: 'var(--color-focus-default)',
-            },
-
-            outline: { DEFAULT: '1px solid var(--color-focus-default)' },
-
-            boxShadow: getObject({
-                identifier: ['shadow'],
-                tokens,
-            }),
-
             spacing: getObject({
                 identifier: ['spacing'],
                 tokens,

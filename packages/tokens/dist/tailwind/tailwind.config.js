@@ -1,8 +1,6 @@
-import temporaryTailwindTokenMapping from '@frontify/fondue-tokens/static/deprecatedTailwindTokens';
 import plugin from 'tailwindcss/plugin';
 
 export default {
-    prefix: 'tw-',
     theme: {
         colors: {
             surface: {
@@ -97,46 +95,46 @@ export default {
                 strong: 'var(--color-line-strong)',
             },
         },
+        fontSize: {
+            'xx-small': 'var(--typography-font-size-xx-small)',
+            'x-small': 'var(--typography-font-size-x-small)',
+            small: 'var(--typography-font-size-small)',
+            medium: 'var(--typography-font-size-medium)',
+            large: 'var(--typography-font-size-large)',
+            'x-large': 'var(--typography-font-size-x-large)',
+            'xx-large': 'var(--typography-font-size-xx-large)',
+        },
+        fontWeight: {
+            regular: 'var(--typography-font-weight-regular)',
+            medium: 'var(--typography-font-weight-medium)',
+            bold: 'var(--typography-font-weight-bold)',
+        },
+        fontFamily: {
+            primary: 'var(--typography-font-family-primary)',
+            monospace: 'var(--typography-font-family-monospace)',
+        },
+        letterSpacing: {
+            DEFAULT: 'var(--typography-letter-spacing-default)',
+            wide: 'var(--typography-letter-spacing-wide)',
+        },
+        lineHeight: {
+            tight: 'var(--typography-line-height-tight)',
+            medium: 'var(--typography-line-height-medium)',
+            wide: 'var(--typography-line-height-wide)',
+            loose: 'var(--typography-line-height-loose)',
+            'extra-loose': 'var(--typography-line-height-extra-loose)',
+        },
+        borderRadius: {
+            small: 'var(--border-radius-small)',
+            medium: 'var(--border-radius-medium)',
+            large: 'var(--border-radius-large)',
+            'x-large': 'var(--border-radius-x-large)',
+        },
+        borderWidth: { DEFAULT: 'var(--border-width-default)', large: 'var(--border-width-large)' },
+        ringColor: { DEFAULT: 'var(--color-focus-default)' },
+        outline: { DEFAULT: '1px solid var(--color-focus-default)' },
+        boxShadow: { DEFAULT: 'var(--shadow-default)', mid: 'var(--shadow-mid)', big: 'var(--shadow-big)' },
         extend: {
-            fontSize: {
-                'xx-small': 'var(--typography-font-size-xx-small)',
-                'x-small': 'var(--typography-font-size-x-small)',
-                small: 'var(--typography-font-size-small)',
-                medium: 'var(--typography-font-size-medium)',
-                large: 'var(--typography-font-size-large)',
-                'x-large': 'var(--typography-font-size-x-large)',
-                'xx-large': 'var(--typography-font-size-xx-large)',
-            },
-            fontWeight: {
-                regular: 'var(--typography-font-weight-regular)',
-                medium: 'var(--typography-font-weight-medium)',
-                bold: 'var(--typography-font-weight-bold)',
-            },
-            fontFamily: {
-                primary: 'var(--typography-font-family-primary)',
-                monospace: 'var(--typography-font-family-monospace)',
-            },
-            letterSpacing: {
-                DEFAULT: 'var(--typography-letter-spacing-default)',
-                wide: 'var(--typography-letter-spacing-wide)',
-            },
-            lineHeight: {
-                tight: 'var(--typography-line-height-tight)',
-                medium: 'var(--typography-line-height-medium)',
-                wide: 'var(--typography-line-height-wide)',
-                loose: 'var(--typography-line-height-loose)',
-                'extra-loose': 'var(--typography-line-height-extra-loose)',
-            },
-            borderRadius: {
-                small: 'var(--border-radius-small)',
-                medium: 'var(--border-radius-medium)',
-                large: 'var(--border-radius-large)',
-                'x-large': 'var(--border-radius-x-large)',
-            },
-            borderWidth: { DEFAULT: 'var(--border-width-default)', large: 'var(--border-width-large)' },
-            ringColor: { DEFAULT: 'var(--color-focus-default)' },
-            outline: { DEFAULT: '1px solid var(--color-focus-default)' },
-            boxShadow: { DEFAULT: 'var(--shadow-default)', mid: 'var(--shadow-mid)', big: 'var(--shadow-big)' },
             spacing: {
                 'xx-small': 'var(--spacing-xx-small)',
                 'x-small': 'var(--spacing-x-small)',
@@ -330,5 +328,4 @@ export default {
             });
         }),
     ],
-    presets: [temporaryTailwindTokenMapping],
 };

@@ -16,12 +16,10 @@ export const tailwindFormat = {
 
 const template = (theme: Record<string, unknown>, plugins: string) => {
     return `import plugin from 'tailwindcss/plugin';
-import temporaryTailwindTokenMapping from '@frontify/fondue-tokens/static/deprecatedTailwindTokens';
 
 export default {
     prefix: "tw-",
     theme: ${JSON.stringify(theme)},
     plugins: [${plugins}],
-    presets: [temporaryTailwindTokenMapping],
 };`;
 };
