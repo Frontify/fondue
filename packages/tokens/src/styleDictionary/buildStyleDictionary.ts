@@ -130,6 +130,18 @@ StyleDictionary.registerTransform({
     },
 });
 
+const frontifyFileHeader = {
+    name: 'frontify-file-header',
+    // async is optional
+    fileHeader: () => {
+        return [
+            '(c) Copyright Frontify Ltd., all rights reserved.',
+            'Do not edit please',
+            'This file is auto-generated',
+        ];
+    },
+};
+StyleDictionary.registerFileHeader(frontifyFileHeader);
 StyleDictionary.registerFormat(tailwindFormat);
 
 export const buildStyleDictionary = (config: Config) => {
@@ -149,9 +161,6 @@ export const buildStyleDictionary = (config: Config) => {
                     'value/convertPxToRem',
                     'value/convertValueToPx',
                 ],
-                options: {
-                    showFileHeader: false,
-                },
                 files: [
                     {
                         filter: (token) => {
@@ -162,6 +171,9 @@ export const buildStyleDictionary = (config: Config) => {
                         },
                         destination: 'css/base.css',
                         format: 'css/variables',
+                        options: {
+                            fileHeader: 'frontify-file-header',
+                        },
                     },
                 ],
             },
@@ -177,9 +189,6 @@ export const buildStyleDictionary = (config: Config) => {
                     'value/convertPxToRem',
                     'value/convertValueToPx',
                 ],
-                options: {
-                    showFileHeader: false,
-                },
                 files: [
                     {
                         filter: (token) => {
@@ -187,6 +196,7 @@ export const buildStyleDictionary = (config: Config) => {
                         },
                         destination: 'primitives.css',
                         options: {
+                            fileHeader: 'frontify-file-header',
                             selector: '.primitives',
                         },
                         format: 'css/variables',
@@ -200,6 +210,7 @@ export const buildStyleDictionary = (config: Config) => {
                         },
                         destination: `${theme}.css`,
                         options: {
+                            showFileHeader: false,
                             selector: `.${theme}`,
                         },
                         format: 'css/variables',
@@ -222,6 +233,10 @@ export const buildStyleDictionary = (config: Config) => {
                     {
                         destination: 'tailwind.config.js',
                         format: 'tailwind',
+                        options: {
+                            showFileHeader: true,
+                            fileHeader: 'frontify-file-header',
+                        },
                     },
                 ],
             },

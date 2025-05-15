@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 :root {
     --base-color: /** @deprecated use updated token instead **/ var(--color-surface-default);
     --base-color-alt: /** @deprecated use updated token instead **/ var(--color-surface-dim);
