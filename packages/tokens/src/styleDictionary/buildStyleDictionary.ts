@@ -54,11 +54,24 @@ StyleDictionary.registerTransform({
     transitive: true,
     name: 'value/convertPxToRem',
     filter: (token: TransformedToken) => {
-        const remTokens = ['font-size', 'line-height'];
+        const remTokens = ['font-size', 'line-height', 'border-radius', 'spacing'];
         return typeof token.value === 'number' && remTokens.some((remToken) => token.path.includes(remToken));
     },
     transform: (token: Token) => {
         return `${token.value / 16}rem`;
+    },
+});
+
+StyleDictionary.registerTransform({
+    type: 'value',
+    transitive: true,
+    name: 'value/convertValueToPx',
+    filter: (token: TransformedToken) => {
+        const remTokens = ['border-width'];
+        return typeof token.value === 'number' && remTokens.some((remToken) => token.path.includes(remToken));
+    },
+    transform: (token: Token) => {
+        return `${token.value}px`;
     },
 });
 
@@ -134,6 +147,7 @@ export const buildStyleDictionary = (config: Config) => {
                     'name/kebabWithoutThemeName',
                     'value/refToCSSVariable',
                     'value/convertPxToRem',
+                    'value/convertValueToPx',
                 ],
                 options: {
                     showFileHeader: false,
@@ -161,6 +175,7 @@ export const buildStyleDictionary = (config: Config) => {
                     'name/kebabWithoutThemeName',
                     'value/refToCSSVariable',
                     'value/convertPxToRem',
+                    'value/convertValueToPx',
                 ],
                 options: {
                     showFileHeader: false,
@@ -201,6 +216,7 @@ export const buildStyleDictionary = (config: Config) => {
                     'tailwind/nameToCSSVariable',
                     'value/refToCSSVariable',
                     'value/convertPxToRem',
+                    'value/convertValueToPx',
                 ],
                 files: [
                     {
