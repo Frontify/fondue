@@ -48,6 +48,11 @@ export type TabsRootProps = {
      * Event handler called when the active tab changes
      */
     onActiveTabChange?: (value: string) => void;
+    /**
+     * Select the used theme/style
+     * “default 'default'
+     */
+    theme?: 'default' | 'navigation';
 };
 
 const TabConfigContext = createContext<{
@@ -72,6 +77,7 @@ export const TabsRoot = (
         size = 'medium',
         onActiveTabChange,
         children,
+        theme = 'default',
         ...props
     }: TabsRootProps,
     ref: ForwardedRef<HTMLDivElement>,
@@ -101,6 +107,7 @@ export const TabsRoot = (
                 onValueChange={handleSetActiveTab}
                 value={activeTab ?? triggers[0]?.value}
                 data-tabs-content-padding={padding}
+                data-tabs-theme={theme}
                 {...props}
             >
                 <div className={styles.triggerListWrapper}>
