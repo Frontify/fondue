@@ -412,3 +412,44 @@ export const SpaciousViewportCollisionPadding: Story = {
         </Dropdown.Root>
     ),
 };
+
+const UploadButton = () => {
+    const [selectedFiles, setSelectedFiles] = useState<FileList | null>(null);
+
+    const onFileChange = (event: Event) => {
+        if (event.target) {
+            const { files } = event.target as HTMLInputElement;
+            setSelectedFiles(files);
+        }
+    };
+
+    const onFileUploadClick = () => {
+        const inputElement = document.createElement('input');
+        inputElement.type = 'file';
+        inputElement.multiple = true;
+        inputElement.addEventListener('change', onFileChange);
+        inputElement.dispatchEvent(new MouseEvent('click'));
+    };
+
+    console.log('Selected files:', selectedFiles);
+
+    return <Dropdown.Item onSelect={onFileUploadClick}>Upload</Dropdown.Item>;
+};
+
+export const WithFileUpload: Story = {
+    render: ({ ...args }) => {
+        return (
+            <Dropdown.Root {...args}>
+                <Dropdown.Trigger>
+                    <Button>Trigger</Button>
+                </Dropdown.Trigger>
+                <Dropdown.Content>
+                    <Dropdown.Item onSelect={() => {}}>Item 1</Dropdown.Item>
+                    <Dropdown.Item onSelect={() => {}}>Item 2</Dropdown.Item>
+                    <Dropdown.Item onSelect={() => {}}>Item 3</Dropdown.Item>
+                    <UploadButton />
+                </Dropdown.Content>
+            </Dropdown.Root>
+        );
+    },
+};
