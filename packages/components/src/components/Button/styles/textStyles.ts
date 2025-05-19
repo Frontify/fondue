@@ -17,7 +17,7 @@ export const textStyles = sv({
             loud: '',
         },
         disabled: {
-            true: 'tw-text-box-disabled-inverse',
+            true: 'tw-text-disabled-on-disabled',
         },
     },
     compoundVariants: [

@@ -39,7 +39,7 @@ module.exports = {
                 'tailwindcss/no-custom-classname': [
                     'warn',
                     {
-                        callees: ['className', 'sv'],
+                        callees: ['className', 'sv', 'class'],
                     },
                 ],
             },
