@@ -1,5 +1,11 @@
 # @frontify/fondue-components
 
+## 17.0.1
+
+### Patch Changes
+
+- [#2306](https://github.com/Frontify/fondue/pull/2306) [`cc96757`](https://github.com/Frontify/fondue/commit/cc9675712f08476ae70dbdb3db5d07e1029324b4) Thanks [@syeo66](https://github.com/syeo66)! - fix(ColorPicker): retain alpha value when changing hex value
+
 ## 17.0.0
 
 ### Patch Changes
