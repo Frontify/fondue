@@ -14,6 +14,7 @@ export const screens = {
 };
 
 export default {
+    prefix: 'tw-',
     presets: [frontifyTailwindConfig as Config],
     content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}', './.storybook/DocumentationTemplate.mdx'],
     theme: {

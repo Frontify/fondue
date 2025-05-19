@@ -2,7 +2,7 @@
 
 module.exports = {
     root: true,
-    extends: ['@frontify/eslint-config-react', 'plugin:storybook/recommended'],
+    extends: ['@frontify/eslint-config-react', 'plugin:storybook/recommended', 'plugin:tailwindcss/recommended'],
     plugins: ['notice'],
     settings: {
         react: {
@@ -25,6 +25,21 @@ module.exports = {
                         messages: {
                             whenFailedToMatch: 'No Frontify copyright header set.',
                         },
+                    },
+                ],
+            },
+        },
+        {
+            files: ['*.ts', '*.tsx', '*.js'],
+            parser: '@typescript-eslint/parser',
+            rules: {
+                'tailwindcss/enforces-shorthand': 'off',
+                'tailwindcss/classnames-order': 'off',
+                'tailwindcss/enforces-negative-arbitrary-values': 'off',
+                'tailwindcss/no-custom-classname': [
+                    'warn',
+                    {
+                        callees: ['className', 'sv'],
                     },
                 ],
             },
