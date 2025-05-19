@@ -85,7 +85,7 @@ export const ColorValueInput = (
                     status={isValidHexColor(hexColorValue) ? 'neutral' : 'error'}
                     onBlur={(event) => {
                         if (isValidHexColor(event.target.value)) {
-                            onColorChange(hexColorToRgba(event.target.value));
+                            onColorChange({ ...hexColorToRgba(event.target.value), alpha: currentColor.alpha });
                         }
                     }}
                     onChange={(event) => {
