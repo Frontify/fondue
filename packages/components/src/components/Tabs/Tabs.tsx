@@ -52,7 +52,7 @@ export type TabsRootProps = {
      * Select the used theme/style
      * “default 'default'
      */
-    theme?: 'default' | 'navigation';
+    theme?: 'default' | 'pill';
 };
 
 const TabConfigContext = createContext<{

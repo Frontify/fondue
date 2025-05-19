@@ -66,7 +66,7 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
     }
 }
 
-[data-tabs-theme="navigation"] {
+[data-tabs-theme="pill"] {
     .activeIndicator {
         display: none;
     }

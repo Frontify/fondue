@@ -388,9 +388,9 @@ export const WithSpaciousPadding: Story = {
     ),
 };
 
-export const WithNavigationTheme: Story = {
+export const WithPillTheme: Story = {
     render: (args) => (
-        <Tabs.Root theme="navigation" {...args}>
+        <Tabs.Root theme="pill" {...args}>
             <Tabs.Tab value="first">
                 <Tabs.Trigger>First Tab</Tabs.Trigger>
                 <Tabs.Content>
