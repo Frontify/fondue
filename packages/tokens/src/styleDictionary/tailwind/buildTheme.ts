@@ -75,10 +75,13 @@ const getTheme = (dictionary: Dictionary) => {
             tokens,
         }),
 
-        borderRadius: getObject({
-            identifier: ['border-radius'],
-            tokens,
-        }),
+        borderRadius: {
+            ...getObject({
+                identifier: ['border-radius'],
+                tokens,
+            }),
+            full: '100%',
+        },
 
         borderWidth: getObject({
             identifier: ['border-width'],

@@ -23,11 +23,15 @@ const getObject = ({
     return matchingTokens.reduce<NestedObject>((acc, token) => {
         const path = token.path.slice(identifier.length + 1);
         const property = path[path.length - 1];
-        const variant = `'.${path.slice(0, -1).join('-')}'`;
+        let partsToBeRemoved = 1;
+        if (path[path.length - 2] === 'default') {
+            partsToBeRemoved = 2;
+        }
+        const variant = `'.${path.slice(0, -partsToBeRemoved).join('-')}'`;
 
         if (property) {
             acc[variant] = acc[variant] || {};
-            acc[variant][property] = `"${token.value}"`;
+            acc[variant][property.replace('letter-casing', 'text-transform')] = `"${token.value}"`;
         }
 
         return acc;

@@ -4,6 +4,7 @@ import StyleDictionary, { type Token, type TransformedToken } from 'style-dictio
 
 import { type BoxShadowValue, type Config } from '../types';
 
+import { orderedVariables } from './cssFormat';
 import { tailwindFormat } from './tailwind/tailwindFormat';
 
 StyleDictionary.registerTransform({
@@ -143,6 +144,7 @@ const frontifyFileHeader = {
 };
 StyleDictionary.registerFileHeader(frontifyFileHeader);
 StyleDictionary.registerFormat(tailwindFormat);
+StyleDictionary.registerFormat(orderedVariables);
 
 export const buildStyleDictionary = (config: Config) => {
     const allTokensPath = new URL('../../.tmp/tokens/all-tokens.json', import.meta.url).pathname;
@@ -170,7 +172,7 @@ export const buildStyleDictionary = (config: Config) => {
                             );
                         },
                         destination: 'css/base.css',
-                        format: 'css/variables',
+                        format: 'css/orderedVariables',
                         options: {
                             fileHeader: 'frontify-file-header',
                         },
@@ -199,7 +201,7 @@ export const buildStyleDictionary = (config: Config) => {
                             fileHeader: 'frontify-file-header',
                             selector: '.primitives',
                         },
-                        format: 'css/variables',
+                        format: 'css/orderedVariables',
                     },
                     ...config.themes.map((theme) => ({
                         filter: (token: Token) => {
@@ -213,7 +215,7 @@ export const buildStyleDictionary = (config: Config) => {
                             showFileHeader: false,
                             selector: `.${theme}`,
                         },
-                        format: 'css/variables',
+                        format: 'css/orderedVariables',
                     })),
                 ],
             },
