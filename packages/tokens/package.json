@@ -33,7 +33,8 @@
         "dist"
     ],
     "scripts": {
-        "build": "bun run src/buildTokens.ts && mkdir -p ./dist/legacy && cp -r legacyTokens/* ./dist/legacy",
+        "build": "",
+        "generate": "bun run src/buildTokens.ts && mkdir -p ./dist/legacy && cp -r legacyTokens/* ./dist/legacy",
         "lint": "eslint .",
         "lint:fix": "eslint --fix .",
         "typecheck": "tsc --noEmit"
