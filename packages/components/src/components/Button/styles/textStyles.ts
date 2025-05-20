@@ -25,136 +25,130 @@ export const textStyles = sv({
             disabled: false,
             variant: 'default',
             emphasis: 'default',
-            class:
-                'tw-text-button-text ' +
-                'group-hover:tw-text-button-text-hover ' +
-                'group-active:tw-text-button-text-pressed',
+            class: 'tw-text-primary group-hover:tw-text-primary-hover group-active:tw-text-primary-pressed',
         },
         {
             disabled: false,
             variant: 'default',
             emphasis: 'weak',
-            class:
-                'tw-text-button-text ' +
-                'group-hover:tw-text-button-text-hover ' +
-                'group-active:tw-text-button-text-pressed',
+            class: 'tw-text-primary group-hover:tw-text-primary-hover group-active:tw-text-primary-pressed',
         },
         {
             disabled: false,
             variant: 'default',
             emphasis: 'strong',
             class:
-                'tw-text-button-strong-icon ' +
-                'group-hover:tw-text-button-strong-icon-hover ' +
-                'group-active:tw-text-button-strong-text-pressed',
+                'tw-text-primary-on-primary ' +
+                'group-hover:tw-text-primary-on-primary-hover ' +
+                'group-active:tw-text-primary-on-primary-pressed',
         },
         {
             disabled: false,
             variant: 'positive',
             emphasis: 'default',
             class:
-                'tw-text-button-positive-text ' +
-                'group-hover:tw-text-button-positive-text-hover ' +
-                'group-active:tw-text-button-positive-text-pressed',
+                'tw-text-container-success-on-success-container ' +
+                'group-hover:tw-text-container-success-on-success-container ' +
+                'group-active:tw-text-container-success-on-success-container-pressed',
         },
         {
             disabled: false,
             variant: 'positive',
             emphasis: 'weak',
             class:
-                'tw-text-button-positive-text ' +
-                'group-hover:tw-text-button-positive-text-hover ' +
-                'group-active:tw-text-button-positive-text-pressed',
+                'tw-text-container-success-on-success-container ' +
+                'group-hover:tw-text-container-success-on-success-container ' +
+                'group-active:tw-text-container-success-on-success-container',
         },
         {
             disabled: false,
             variant: 'positive',
             emphasis: 'strong',
             class:
-                'tw-text-button-strong-positive-text ' +
-                'group-hover:tw-text-button-strong-positive-text-hover ' +
-                'group-active:tw-text-button-strong-positive-text-pressed',
+                'tw-text-success-on-success ' +
+                'group-hover:tw-text-success-on-success ' +
+                'group-active:tw-text-success-on-success',
         },
         {
             disabled: false,
             variant: 'negative',
             emphasis: 'default',
             class:
-                'tw-text-button-negative-text ' +
-                'group-hover:tw-text-button-negative-text-hover' +
-                'group-active:tw-text-button-negative-text-pressed',
+                'tw-text-container-error-on-error-container ' +
+                'group-hover:tw-text-container-error-on-error-container ' +
+                'group-active:tw-text-container-error-on-error-container',
         },
         {
             disabled: false,
             variant: 'negative',
             emphasis: 'weak',
             class:
-                'tw-text-button-negative-text ' +
-                'group-hover:tw-text-button-negative-text-hover' +
-                'group-active:tw-text-button-negative-text-pressed',
+                'tw-text-container-error-on-error-container ' +
+                'group-hover:tw-text-container-error-on-error-container ' +
+                'group-active:tw-text-container-error-on-error-container',
         },
         {
             disabled: false,
             variant: 'negative',
             emphasis: 'strong',
             class:
-                'tw-text-button-strong-negative-text ' +
-                'group-hover:tw-text-button-strong-negative-text-hover' +
-                'group-active:tw-text-button-strong-negative-text-pressed',
+                'tw-text-error-on-error ' +
+                'group-hover:tw-text-error-on-error ' +
+                'group-active:tw-text-error-on-error',
         },
         {
             disabled: false,
             variant: 'danger',
             emphasis: 'default',
             class:
-                'tw-text-button-negative-icon ' +
-                'group-hover:tw-text-button-negative-icon-hover' +
-                'group-active:tw-text-button-negative-icon-pressed',
+                'tw-text-container-error-on-error-container ' +
+                'group-hover:tw-text-container-error-on-error-container ' +
+                'group-active:tw-text-container-error-on-error-container',
         },
         {
             disabled: false,
             variant: 'danger',
             emphasis: 'weak',
             class:
-                'tw-text-button-negative-icon ' +
-                'group-hover:tw-text-button-negative-icon-hover' +
-                'group-active:tw-text-button-negative-icon-pressed',
+                'tw-text-container-error-on-error-container ' +
+                'group-hover:tw-text-container-error-on-error-container ' +
+                'group-active:tw-text-container-error-on-error-container',
         },
         {
             disabled: false,
             variant: 'danger',
             emphasis: 'strong',
             class:
-                'tw-text-button-danger-text ' +
-                'group-hover:tw-text-button-danger-text-hover' +
-                'group-active:tw-text-button-danger-text-pressed',
+                'tw-text-error-on-error ' +
+                'group-hover:tw-text-error-on-error ' +
+                'group-active:tw-text-error-on-error',
         },
         {
             disabled: false,
             variant: 'loud',
             emphasis: 'default',
             class:
-                'tw-text-box-selected-inverse ' +
-                'group-hover:tw-text-box-selected-inverse-hover' +
-                'group-active:tw-text-box-selected-inverse-pressed',
+                'tw-text-container-highlight-on-highlight-container ' +
+                'group-hover:tw-text-container-highlight-on-highlight-container ' +
+                'group-active:tw-text-container-highlight-on-highlight-container',
         },
         {
             disabled: false,
             variant: 'loud',
             emphasis: 'weak',
             class:
-                'tw-text-box-selected-inverse ' +
-                'group-hover:tw-text-box-selected-inverse-hover' +
-                'group-active:tw-text-box-selected-inverse-pressed',
+                'tw-text-container-highlight-on-highlight-container ' +
+                'group-hover:tw-text-container-highlight-on-highlight-container ' +
+                'group-active:tw-text-container-highlight-on-highlight-container',
         },
         {
             disabled: false,
             variant: 'loud',
             emphasis: 'strong',
             class:
-                'tw-text-box-selected-strong-inverse ' +
-                'group-hover:tw-text-box-selected-strong-inverse' +
-                'group-active:tw-text-box-selected-strong-inverse',
+                'tw-text-highlight-on-highlight ' +
+                'group-hover:tw-text-highlight-on-highlight ' +
+                'group-active:tw-text-highlight-on-highlight',
         },
     ],
     defaultVariants: {
