@@ -1,9 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+// @ts-expect-error Untyped
+import frontifyTailwindConfig from '@frontify/fondue-tokens/tailwind';
+
 import legacyComponentsTailwindConfig from './legacyTokens.tailwind.config';
 
 export default {
-    presets: [legacyComponentsTailwindConfig],
+    presets: [legacyComponentsTailwindConfig, frontifyTailwindConfig],
     content: ['./src/**/*.{js,ts,tsx}'],
     prefix: 'tw-',
 };
