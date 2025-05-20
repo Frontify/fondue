@@ -42,8 +42,6 @@ jobs:
 
             - name: Build Fondue Tokens
               run: pnpm build:tokens
-              env:
-                  FIGMA_ACCESS_TOKEN: ${{ secrets.FIGMA_ACCESS_TOKEN }}
 
             - name: Lint code
               run: pnpm --stream --filter {packages/fondue} --filter {packages/components} --filter {packages/icons} lint
@@ -79,8 +77,6 @@ jobs:
 
             - name: Build Fondue Tokens
               run: pnpm build:tokens
-              env:
-                  FIGMA_ACCESS_TOKEN: ${{ secrets.FIGMA_ACCESS_TOKEN }}
 
             - name: Build Fondue Charts
               run: pnpm build:charts
@@ -136,8 +132,6 @@ jobs:
 
             - name: Build Fondue Tokens
               run: pnpm build:tokens
-              env:
-                  FIGMA_ACCESS_TOKEN: ${{ secrets.FIGMA_ACCESS_TOKEN }}
 
             - name: Component Tests
               run: pnpm run --stream --filter {packages/fondue} test --spec $(node ./.github/lib/cypress-matrix.mjs ${{ strategy.job-total }} ${{ matrix.containers }})
@@ -170,8 +164,6 @@ jobs:
 
             - name: Build Fondue Tokens
               run: pnpm build:tokens
-              env:
-                  FIGMA_ACCESS_TOKEN: ${{ secrets.FIGMA_ACCESS_TOKEN }}
 
             - name: Unit test
               run: pnpm --stream --filter {packages/components} test

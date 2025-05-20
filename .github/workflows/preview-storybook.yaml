@@ -35,8 +35,6 @@ jobs:
 
             - name: Build Fondue Tokens
               run: pnpm build:tokens
-              env:
-                  FIGMA_ACCESS_TOKEN: ${{ secrets.FIGMA_ACCESS_TOKEN }}
 
             - name: Build Storybook docs
               run: pnpm build:storybook:packages && pnpm build:storybook:main
