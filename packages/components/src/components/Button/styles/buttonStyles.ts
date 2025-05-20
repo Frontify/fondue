@@ -81,7 +81,7 @@ export const buttonStyles = sv({
             disabled: false,
             variant: 'positive',
             emphasis: 'strong',
-            class: 'tw-bg-container-success hover:tw-bg-container-success-hover active:tw-bg-container-success-active',
+            class: 'tw-bg-success hover:tw-bg-success-hover active:tw-bg-success-active',
         },
         {
             disabled: false,
@@ -99,7 +99,7 @@ export const buttonStyles = sv({
             disabled: false,
             variant: 'negative',
             emphasis: 'strong',
-            class: 'tw-bg-container-error hover:tw-bg-container-error-hover active:tw-bg-container-error-active',
+            class: 'tw-bg-error hover:tw-bg-error-hover active:tw-bg-error-active',
         },
         {
             disabled: false,
@@ -120,7 +120,7 @@ export const buttonStyles = sv({
             disabled: false,
             variant: 'danger',
             emphasis: 'strong',
-            class: 'tw-bg-container-error hover:tw-bg-container-error-hover active:tw-bg-container-error-active',
+            class: 'tw-bg-error hover:tw-bg-error-hover active:tw-bg-error-active',
         },
         {
             disabled: false,
@@ -138,10 +138,7 @@ export const buttonStyles = sv({
             disabled: false,
             variant: 'loud',
             emphasis: 'strong',
-            class:
-                'tw-bg-container-highlight ' +
-                'hover:tw-bg-container-highlight-hover ' +
-                'active:tw-bg-container-highlight-active ',
+            class: 'tw-bg-highlight hover:tw-bg-highlight-hover active:tw-bg-highlight-active',
         },
         {
             aspect: 'default',
