@@ -44,6 +44,8 @@ jobs:
             - name: Build Fondue Tokens
               if: github.event.action != 'closed'
               run: pnpm build:tokens
+              env:
+                  FIGMA_ACCESS_TOKEN: ${{ secrets.FIGMA_ACCESS_TOKEN }}
 
             - name: Build Storybook docs
               if: github.event.action != 'closed'
