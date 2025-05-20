@@ -6,7 +6,7 @@ import frontifyTailwindConfig from '@frontify/fondue-tokens/tailwind';
 import legacyComponentsTailwindConfig from './legacyTokens.tailwind.config';
 
 export default {
-    presets: [legacyComponentsTailwindConfig, frontifyTailwindConfig],
+    presets: [frontifyTailwindConfig, legacyComponentsTailwindConfig],
     content: ['./src/**/*.{js,ts,tsx}'],
     prefix: 'tw-',
 };
