@@ -431,3 +431,28 @@ export const SpaciousViewportCollisionPadding: Story = {
         );
     },
 };
+
+export const FlyoutInCard: Story = {
+    args: {
+        children: 'Hello World',
+        viewportCollisionPadding: 'spacious',
+    },
+    render: ({ ...args }) => {
+        return (
+            <div
+                className="tw-bg-box-neutral tw-h-[500px] tw-w-[500px]"
+                onClick={(e) => console.log('card', e)}
+                onKeyUp={(e) => console.log('card', e)}
+            >
+                <Flyout.Root>
+                    <Flyout.Trigger asChild>
+                        <Button>Open flyout</Button>
+                    </Flyout.Trigger>
+                    <Flyout.Content {...args}>
+                        <Flyout.Body {...args} />
+                    </Flyout.Content>
+                </Flyout.Root>
+            </div>
+        );
+    },
+};
