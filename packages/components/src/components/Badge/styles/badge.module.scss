@@ -9,6 +9,8 @@
     position: relative;
     display: inline-flex;
     transition: background-color 250ms, color 250ms;
+    align-items: center;
+    white-space: nowrap;
 }
 
 [data-style="default"]:not([data-disabled="true"]) {
