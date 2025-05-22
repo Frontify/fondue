@@ -1,0 +1,123 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+.root {
+    font-size: var(--body-size-small);
+    line-height: var(--body-size-small-line-height);
+    padding: var(--space-xxs) var(--space-xs);
+    gap: var(--space-xxs);
+    border-radius: 9999px;
+    position: relative;
+    display: inline-flex;
+    transition: background-color 250ms, color 250ms;
+}
+
+[data-style="default"]:not([data-disabled="true"]) {
+    background-color: var(--box-neutral-strong-color);
+    color: var(--box-neutral-strong-inverse-color);
+
+    &:hover {
+        background-color: var(--box-neutral-strong-color-hover);
+        color: var(--box-neutral-strong-inverse-color-hover);
+    }
+
+    &[data-emphasis="weak"] {
+        background-color: var(--box-neutral-color);
+        color: var(--box-neutral-inverse-color);
+
+        &:hover {
+            background-color: var(--box-neutral-color-hover);
+            color: var(--box-neutral-inverse-color-hover);
+        }
+    }
+}
+
+[data-style="positive"]:not([data-disabled="true"]) {
+    background-color: var(--box-positive-strong-color);
+    color: var(--box-positive-strong-inverse-color);
+
+    &:hover {
+        background-color: var(--box-positive-strong-color-hover);
+        color: var(--box-positive-strong-inverse-color-hover);
+    }
+
+    &[data-emphasis="weak"] {
+        background-color: var(--box-positive-color);
+        color: var(--box-positive-inverse-color);
+
+        &:hover {
+            background-color: var(--box-positive-color-hover);
+            color: var(--box-positive-inverse-color-hover);
+        }
+    }
+}
+
+[data-style="highlight"]:not([data-disabled="true"]) {
+    background-color: var(--box-selected-strong-color);
+    color: var(--box-selected-strong-inverse-color);
+
+    &:hover {
+        background-color: var(--box-selected-strong-color-hover);
+        color: var(--box-selected-strong-inverse-color-hover);
+    }
+
+    &[data-emphasis="weak"] {
+        background-color: var(--box-selected-color);
+        color: var(--box-selected-inverse-color);
+
+        &:hover {
+            background-color: var(--box-selected-color-hover);
+            color: var(--box-selected-inverse-color-hover);
+        }
+    }
+}
+
+[data-style="warning"]:not([data-disabled="true"]) {
+    background-color: var(--box-warning-strong-color);
+    color: var(--box-warning-strong-inverse-color);
+
+    &:hover {
+        background-color: var(--box-warning-strong-color-hover);
+        color: var(--box-warning-strong-inverse-color-hover);
+    }
+
+    &[data-emphasis="weak"] {
+        background-color: var(--box-warning-color);
+        color: var(--box-warning-inverse-color);
+
+        &:hover {
+            background-color: var(--box-warning-color-hover);
+            color: var(--box-warning-inverse-color-hover);
+        }
+    }
+}
+
+[data-style="negative"]:not([data-disabled="true"]) {
+    background-color: var(--box-negative-strong-color);
+    color: var(--box-negative-strong-inverse-color);
+
+    &:hover {
+        background-color: var(--box-negative-strong-color-hover);
+        color: var(--box-negative-strong-inverse-color-hover);
+    }
+
+    &[data-emphasis="weak"] {
+        background-color: var(--box-negative-color);
+        color: var(--box-negative-inverse-color);
+
+        &:hover {
+            background-color: var(--box-negative-color-hover);
+            color: var(--box-negative-inverse-color-hover);
+        }
+    }
+}
+
+[data-disabled="true"] {
+    background-color: var(--box-disabled-color);
+    color: var(--box-disabled-color-inverse);
+    cursor: default;
+
+    &:hover {
+        background-color: var(--box-disabled-color);
+        color: var(--box-disabled-color-inverse);
+    }
+}
