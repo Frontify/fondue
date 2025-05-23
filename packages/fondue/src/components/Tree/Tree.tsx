@@ -1,6 +1,19 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import {
+    type DragHandlerPosition,
+    type RegisterNodeChildrenPayload,
+    type SensorContext,
+    type TreeAnnouncements,
+    type TreeDragOverEvent,
+    type TreeDragStartEvent,
+    type TreeItemProps,
+    type TreeItemStyling,
+    type TreeProps,
+    type TreeState,
+    type TreeStateAction,
+} from '@components/Tree/types';
+import {
     DndContext,
     type DragEndEvent,
     type DragMoveEvent,
@@ -30,20 +43,6 @@ import {
     useTransition,
 } from 'react';
 import { createPortal } from 'react-dom';
-
-import {
-    type DragHandlerPosition,
-    type RegisterNodeChildrenPayload,
-    type SensorContext,
-    type TreeAnnouncements,
-    type TreeDragOverEvent,
-    type TreeDragStartEvent,
-    type TreeItemProps,
-    type TreeItemStyling,
-    type TreeProps,
-    type TreeState,
-    type TreeStateAction,
-} from '@components/Tree/types';
 
 import { TreeContext, type TreeContextProps } from './TreeContext';
 import { type InternalTreeItemProps, type Overlay, TreeItemOverlay } from './TreeItem';
@@ -204,7 +203,6 @@ export const Tree = memo(
         draggable = false,
         multiselect = false,
         dragHandlerPosition = 'left',
-        enableDragDelay = true,
         showDragHandlerOnHoverOnly = true,
         showContentWhileDragging = false,
         itemStyle,
@@ -385,10 +383,9 @@ export const Tree = memo(
         });
 
         const [coordinateGetter] = useState(() => sortableTreeKeyboardCoordinates(sensorContext));
-        const activationConstraint = sensorsActivationConstraint({ dragHandlerPosition, enableDragDelay });
 
         const sensors = useSensors(
-            useSensor(PointerSensor, { activationConstraint }),
+            useSensor(PointerSensor, { activationConstraint: { delay: 0, tolerance: 5 } }),
             useSensor(KeyboardSensor, { coordinateGetter }),
         );
 
