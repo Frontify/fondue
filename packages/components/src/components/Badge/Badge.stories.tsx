@@ -18,6 +18,7 @@ const meta: Meta<typeof Badge> = {
     args: {
         emphasis: 'strong',
         style: 'default',
+        dismissable: false,
         disabled: false,
     },
 };

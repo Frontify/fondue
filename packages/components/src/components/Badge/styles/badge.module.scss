@@ -1,5 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+@use '../../../utilities/focusStyle.module.scss';
+
 .root {
     font-size: var(--body-size-small);
     line-height: var(--body-size-small-line-height);
@@ -11,6 +13,7 @@
     transition: background-color 250ms, color 250ms;
     align-items: center;
     white-space: nowrap;
+
 }
 
 [data-style="default"]:not([data-disabled="true"]) {
@@ -121,5 +124,20 @@
     &:hover {
         background-color: var(--box-disabled-color);
         color: var(--box-disabled-color-inverse);
+    }
+}
+
+.dismiss {
+    padding: 0;
+    margin: 0;
+    height: 1rem;
+    width: 1rem;
+    border: none 0 transparent;
+    background: transparent;
+    color: inherit;
+    border-radius: 0.25rem;
+
+    & {
+        @include focusStyle.focus-outline;
     }
 }
