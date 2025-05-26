@@ -60,7 +60,6 @@ import {
     getTreeNodesWithoutElements,
     handleKeyDownEvent,
     removeReactNodesFromFlatArray,
-    sensorsActivationConstraint,
     shouldUpdateTreeState,
     updateNodeWithNewChildren,
 } from './helpers';
