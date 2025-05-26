@@ -10,6 +10,8 @@ type BadgeStyle = 'default' | 'positive' | 'highlight' | 'warning' | 'negative';
 
 type BadgeEmphasis = 'strong' | 'weak';
 
+type BadgeSize = 'default' | 'small';
+
 type BadgeProps = {
     /**
      * @default 'strong'
@@ -19,6 +21,10 @@ type BadgeProps = {
      * @default 'default'
      */
     variant?: BadgeStyle;
+    /**
+     * @default 'default'
+     */
+    size?: BadgeSize;
     /**
      * @default false
      */
@@ -54,18 +60,20 @@ export const Badge = ({
     emphasis = 'strong',
     onClick,
     onDismiss,
+    size = 'default',
     status,
     title,
     variant,
 }: BadgeProps) => {
     const commonProps = {
         'aria-label': ariaLabel || title,
-        className: styles.root,
         'data-disabled': disabled,
         'data-dismissable': dismissable,
         'data-emphasis': emphasis,
+        'data-size': size,
         'data-test-id': dataTestId,
         'data-variant': variant,
+        className: styles.root,
         title,
     };
 

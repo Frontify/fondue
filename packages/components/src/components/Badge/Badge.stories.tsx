@@ -19,6 +19,7 @@ const meta: Meta<typeof Badge> = {
     args: {
         emphasis: 'strong',
         variant: 'default',
+        size: 'default',
         dismissable: false,
         disabled: false,
         status: undefined,
