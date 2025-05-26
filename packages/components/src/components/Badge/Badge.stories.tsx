@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconColorFan } from '@frontify/fondue-icons';
+import { action } from '@storybook/addon-actions';
 import { type Meta, type StoryObj } from '@storybook/react';
 
 import { Badge } from './Badge';
@@ -17,7 +18,7 @@ const meta: Meta<typeof Badge> = {
     },
     args: {
         emphasis: 'strong',
-        style: 'default',
+        variant: 'default',
         dismissable: false,
         disabled: false,
         status: undefined,
@@ -25,13 +26,19 @@ const meta: Meta<typeof Badge> = {
 };
 export default meta;
 
-export const Default: Story = {
-    name: 'Badge',
+export const LabelOnly: Story = {
     render: (args) => <Badge {...args}>Text</Badge>,
 };
 
+export const WithOnClick: Story = {
+    render: (args) => (
+        <Badge {...args} onClick={action('onClick')}>
+            Text
+        </Badge>
+    ),
+};
+
 export const BadgeWithIcon: Story = {
-    name: 'Badge with Icon',
     render: (args) => (
         <Badge {...args}>
             <IconColorFan size="16" />
