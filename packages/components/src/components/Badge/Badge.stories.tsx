@@ -31,11 +31,13 @@ export const LabelOnly: Story = {
 };
 
 export const WithOnClick: Story = {
-    render: (args) => (
-        <Badge {...args} onClick={action('onClick')}>
-            Text
-        </Badge>
-    ),
+    args: { onClick: action('onClick') },
+    render: (args) => <Badge {...args}>Text</Badge>,
+};
+
+export const WithDismiss: Story = {
+    args: { dismissable: true, onDismiss: action('onDismiss') },
+    render: (args) => <Badge {...args}>Text</Badge>,
 };
 
 export const BadgeWithIcon: Story = {

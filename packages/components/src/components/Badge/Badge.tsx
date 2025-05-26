@@ -39,11 +39,14 @@ type BadgeProps = {
      * The color of the status dot
      */
     status?: BadgeStatusProps['status'];
+    title?: string;
+    'aria-label'?: string;
     'data-test-id'?: string;
     children: ReactNode;
 };
 
 export const Badge = ({
+    'aria-label': ariaLabel,
     'data-test-id': dataTestId = 'badge',
     children,
     disabled = false,
@@ -52,11 +55,13 @@ export const Badge = ({
     onClick,
     onDismiss,
     status,
+    title,
     variant,
 }: BadgeProps) => {
     if (onClick) {
         return (
             <button
+                aria-label={ariaLabel || title}
                 className={styles.root}
                 data-disabled={disabled}
                 data-dismissable={dismissable}
@@ -64,8 +69,15 @@ export const Badge = ({
                 data-test-id={dataTestId}
                 data-variant={variant}
                 onClick={onClick}
+                title={title}
             >
-                <BadgeContent disabled={disabled} dismissable={dismissable} onDismiss={onDismiss} status={status}>
+                <BadgeContent
+                    aria-label={ariaLabel || title}
+                    disabled={disabled}
+                    dismissable={dismissable}
+                    onDismiss={onDismiss}
+                    status={status}
+                >
                     {children}
                 </BadgeContent>
             </button>
@@ -74,27 +86,47 @@ export const Badge = ({
 
     return (
         <div
+            aria-label={ariaLabel || title}
             className={styles.root}
             data-disabled={disabled}
             data-dismissable={dismissable}
             data-emphasis={emphasis}
             data-variant={variant}
             data-test-id={dataTestId}
+            title={title}
         >
-            <BadgeContent disabled={disabled} dismissable={dismissable} onDismiss={onDismiss} status={status}>
+            <BadgeContent
+                aria-label={ariaLabel || title}
+                disabled={disabled}
+                dismissable={dismissable}
+                onDismiss={onDismiss}
+                status={status}
+            >
                 {children}
             </BadgeContent>
         </div>
     );
 };
 
-const BadgeContent = ({ children, disabled = false, dismissable = false, onDismiss, status }: BadgeProps) => {
+const BadgeContent = ({
+    'aria-label': ariaLabel,
+    children,
+    disabled = false,
+    dismissable = false,
+    onDismiss,
+    status,
+}: BadgeProps) => {
     return (
         <>
             {status && <BadgeStatus status={status} />}
             {children}
             {dismissable && (
-                <button className={styles.dismiss} disabled={disabled} onClick={onDismiss}>
+                <button
+                    aria-label={`Dismiss ${ariaLabel}`}
+                    className={styles.dismiss}
+                    disabled={disabled}
+                    onClick={onDismiss}
+                >
                     <IconCross size="16" />
                 </button>
             )}
