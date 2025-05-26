@@ -79,7 +79,7 @@ export const Badge = ({
 
     if (onClick) {
         return (
-            <button {...commonProps} onClick={onClick}>
+            <button disabled={disabled} {...commonProps} onClick={onClick}>
                 <BadgeContent {...contentProps}>{children}</BadgeContent>
             </button>
         );
