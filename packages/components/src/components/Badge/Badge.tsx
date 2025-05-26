@@ -3,8 +3,7 @@
 import { IconCross } from '@frontify/fondue-icons';
 import { type MouseEvent, useCallback, type ReactNode } from 'react';
 
-import { Button } from '../Button/Button';
-
+import { BadgeStatus, type BadgeStatusProps } from './BadgeStatus';
 import styles from './styles/badge.module.scss';
 
 type BadgeStyle = 'default' | 'positive' | 'highlight' | 'warning' | 'negative';
@@ -32,6 +31,10 @@ type BadgeProps = {
      * Click handler on dismiss
      */
     onDismiss?: (event?: MouseEvent<HTMLButtonElement>) => void;
+    /**
+     * The color of the status dot
+     */
+    status?: BadgeStatusProps['status'];
     'data-test-id'?: string;
     children: ReactNode;
 };
@@ -43,6 +46,7 @@ export const Badge = ({
     dismissable = false,
     emphasis = 'strong',
     onDismiss,
+    status,
     style = 'default',
 }: BadgeProps) => {
     const handleDismissPress = useCallback((event: MouseEvent<HTMLButtonElement>) => onDismiss?.(event), [onDismiss]);
@@ -56,6 +60,7 @@ export const Badge = ({
             data-style={style}
             data-test-id={dataTestId}
         >
+            {status && <BadgeStatus status={status} />}
             {children}
             {dismissable && (
                 <button className={styles.dismiss} disabled={disabled} onClick={handleDismissPress}>

@@ -20,6 +20,7 @@ const meta: Meta<typeof Badge> = {
         style: 'default',
         dismissable: false,
         disabled: false,
+        status: undefined,
     },
 };
 export default meta;
