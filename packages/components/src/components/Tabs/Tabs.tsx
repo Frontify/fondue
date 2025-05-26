@@ -49,10 +49,10 @@ export type TabsRootProps = {
      */
     onActiveTabChange?: (value: string) => void;
     /**
-     * Select the used theme/style
+     * Select the used variant
      * “default 'default'
      */
-    theme?: 'default' | 'pill';
+    variant?: 'default' | 'pill';
 };
 
 const TabConfigContext = createContext<{
@@ -77,7 +77,7 @@ export const TabsRoot = (
         size = 'medium',
         onActiveTabChange,
         children,
-        theme = 'default',
+        variant = 'default',
         ...props
     }: TabsRootProps,
     ref: ForwardedRef<HTMLDivElement>,
@@ -107,7 +107,7 @@ export const TabsRoot = (
                 onValueChange={handleSetActiveTab}
                 value={activeTab ?? triggers[0]?.value}
                 data-tabs-content-padding={padding}
-                data-tabs-theme={theme}
+                data-tabs-variant={variant}
                 {...props}
             >
                 <div className={styles.triggerListWrapper}>
