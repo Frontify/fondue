@@ -67,3 +67,60 @@ export const WithIcon: Story = {
         </Badge>
     ),
 };
+
+export const WithOnClickAndIcon: Story = {
+    args: { onClick: action('onClick') },
+    render: (args) => (
+        <Badge {...args}>
+            <IconColorFan size="16" /> Text
+        </Badge>
+    ),
+};
+
+export const WithStatusAndIcon: Story = {
+    args: { status: 'positive' },
+    render: (args) => (
+        <Badge {...args}>
+            <IconColorFan size="16" /> Text
+        </Badge>
+    ),
+};
+
+export const BetweenElements: Story = {
+    args: { status: 'positive' },
+    render: (args) => (
+        <>
+            before{' '}
+            <Badge {...args}>
+                <IconColorFan size="16" /> Text
+            </Badge>{' '}
+            after
+        </>
+    ),
+};
+
+export const MultipleBadgesInRow: Story = {
+    args: { status: 'positive' },
+    render: (args) => (
+        <div className="tw-flex tw-flex-nowrap tw-border tw-border-line tw-rounded tw-p-2 tw-gap-2">
+            <Badge {...args}>
+                <IconColorFan size="16" /> Text
+            </Badge>
+            <Badge {...args}>
+                <IconColorFan size="16" /> Text
+            </Badge>
+            <Badge {...args}>
+                <IconColorFan size="16" /> Text
+            </Badge>
+            <Badge {...args}>
+                <IconColorFan size="16" /> Text
+            </Badge>
+            <Badge {...args}>
+                <IconColorFan size="16" /> Text
+            </Badge>
+            <Badge {...args}>
+                <IconColorFan size="16" /> Text
+            </Badge>
+        </div>
+    ),
+};
