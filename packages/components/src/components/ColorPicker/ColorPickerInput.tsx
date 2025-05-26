@@ -3,11 +3,10 @@
 import { IconCaretDown, IconCross, IconDroplet } from '@frontify/fondue-icons';
 import { type CSSProperties, type ForwardedRef, forwardRef } from 'react';
 
+import { type CommonAriaAttrs } from '#/utilities/types';
 import styles from './styles/colorInput.module.scss';
 import { type RgbaColor } from './types';
 import { colorToCss, getColorWithName } from './utils';
-
-import { type CommonAriaAttrs } from '#/utilities/types';
 
 type ColorPickerInputProps = {
     id?: string;
