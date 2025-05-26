@@ -58,52 +58,36 @@ export const Badge = ({
     title,
     variant,
 }: BadgeProps) => {
+    const commonProps = {
+        'aria-label': ariaLabel || title,
+        className: styles.root,
+        'data-disabled': disabled,
+        'data-dismissable': dismissable,
+        'data-emphasis': emphasis,
+        'data-test-id': dataTestId,
+        'data-variant': variant,
+        title,
+    };
+
+    const contentProps = {
+        'aria-label': ariaLabel || title,
+        disabled,
+        dismissable,
+        onDismiss,
+        status,
+    };
+
     if (onClick) {
         return (
-            <button
-                aria-label={ariaLabel || title}
-                className={styles.root}
-                data-disabled={disabled}
-                data-dismissable={dismissable}
-                data-emphasis={emphasis}
-                data-test-id={dataTestId}
-                data-variant={variant}
-                onClick={onClick}
-                title={title}
-            >
-                <BadgeContent
-                    aria-label={ariaLabel || title}
-                    disabled={disabled}
-                    dismissable={dismissable}
-                    onDismiss={onDismiss}
-                    status={status}
-                >
-                    {children}
-                </BadgeContent>
+            <button {...commonProps} onClick={onClick}>
+                <BadgeContent {...contentProps}>{children}</BadgeContent>
             </button>
         );
     }
 
     return (
-        <div
-            aria-label={ariaLabel || title}
-            className={styles.root}
-            data-disabled={disabled}
-            data-dismissable={dismissable}
-            data-emphasis={emphasis}
-            data-variant={variant}
-            data-test-id={dataTestId}
-            title={title}
-        >
-            <BadgeContent
-                aria-label={ariaLabel || title}
-                disabled={disabled}
-                dismissable={dismissable}
-                onDismiss={onDismiss}
-                status={status}
-            >
-                {children}
-            </BadgeContent>
+        <div {...commonProps}>
+            <BadgeContent {...contentProps}>{children}</BadgeContent>
         </div>
     );
 };
@@ -127,7 +111,7 @@ const BadgeContent = ({
                     disabled={disabled}
                     onClick={onDismiss}
                 >
-                    <IconCross size="16" />
+                    <IconCross size="12" />
                 </button>
             )}
         </>

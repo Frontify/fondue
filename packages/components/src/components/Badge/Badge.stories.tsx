@@ -40,11 +40,30 @@ export const WithDismiss: Story = {
     render: (args) => <Badge {...args}>Text</Badge>,
 };
 
-export const BadgeWithIcon: Story = {
+export const WithOnClickAndDismiss: Story = {
+    args: { onClick: action('onClick'), dismissable: true, onDismiss: action('onDismiss') },
+    render: (args) => <Badge {...args}>Text</Badge>,
+};
+
+export const WithStatus: Story = {
+    args: { status: 'positive' },
+    render: (args) => <Badge {...args}>Text</Badge>,
+};
+
+export const WithCustomStatusColor: Story = {
+    args: { status: { red: 40, green: 200, blue: 100, alpha: 1 } },
+    render: (args) => <Badge {...args}>Text</Badge>,
+};
+
+export const WithCustomStatusString: Story = {
+    args: { status: '#f14394' },
+    render: (args) => <Badge {...args}>Text</Badge>,
+};
+
+export const WithIcon: Story = {
     render: (args) => (
         <Badge {...args}>
-            <IconColorFan size="16" />
-            Text
+            <IconColorFan size="16" /> Text
         </Badge>
     ),
 };

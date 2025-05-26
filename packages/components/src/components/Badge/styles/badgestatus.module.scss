@@ -2,7 +2,20 @@
     border-radius: 9999px;
     width: 0.5rem;
     height: 0.5rem;
-    background-color: white;
     flex-shrink: 0;
     flex-grow: 0;
+    background-color: var(--status-color);
 }
+
+@mixin variant($name, $color) {
+    [data-status=#{$name}] {
+        background-color: var(--box-#{$color}-strong-color-hover);
+    }
+}
+
+
+@include variant(default, neutral);
+@include variant(positive, positive);
+@include variant(highlight, selected);
+@include variant(warning, warning);
+@include variant(negative, negative);
