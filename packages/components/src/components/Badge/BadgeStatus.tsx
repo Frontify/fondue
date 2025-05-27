@@ -18,5 +18,5 @@ export const BadgeStatus = ({ status }: BadgeStatusProps) => {
         ? { 'data-status': status }
         : { style: { backgroundColor: typeof status === 'string' ? status : colorToCss(status) || 'transparent' } };
 
-    return <div className={styles.root} {...colorProps}></div>;
+    return <div data-test-id="badge-status" className={styles.root} {...colorProps}></div>;
 };
