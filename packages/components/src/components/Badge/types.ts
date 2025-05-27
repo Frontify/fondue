@@ -7,5 +7,3 @@ export type RgbaColor = {
     alpha?: number;
     name?: string;
 };
-
-export type ColorFormat = 'HEX' | 'RGBA';
