@@ -403,3 +403,22 @@ test('color picker input should render hex value without error', async ({ mount 
     await expect(component).toBeVisible();
     await expect(component).toHaveText('#ff0000');
 });
+
+test('color picker input should display a disabled button when disabled', async ({ mount }) => {
+    const component = await mount(
+        <ColorPicker.Input
+            aria-label="Color picker input"
+            currentColor={{
+                red: 255,
+                green: 0,
+                blue: 0,
+                alpha: 0.4,
+                name: '#ff0000',
+            }}
+            disabled={true}
+            onClear={() => {}}
+        />,
+    );
+    const button = component.locator('button').first();
+    await expect(button).toBeDisabled();
+});

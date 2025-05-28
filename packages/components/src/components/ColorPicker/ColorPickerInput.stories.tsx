@@ -34,3 +34,10 @@ export const Empty: Story = {
         return <ColorPicker.Input {...args} onClear={() => {}} />;
     },
 };
+
+export const Disabled: Story = {
+    args: {},
+    render: (args) => {
+        return <ColorPicker.Input {...args} disabled={true} onClear={() => {}} />;
+    },
+};
