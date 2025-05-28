@@ -6,6 +6,120 @@
 
 $radius-without-border: calc(var(--radius) - var(--line-width));
 
+[data-tabs-theme="default"] {
+    .triggerListWrapper {
+        position: relative;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        padding-left: sizeToken.get(3);
+        padding-right: sizeToken.get(3);
+        gap: sizeToken.get(2);
+        border-bottom: 1px solid var(--line-color);
+        box-sizing: border-box;
+    }
+
+    .trigger {
+        color: var(--text-color-weak);
+        font-size: var(--body-size-large);
+        white-space: nowrap;
+        margin: sizeToken.get(2);
+        display: flex;
+        align-items: center;
+        gap: sizeToken.get(1);
+
+        & {
+            @include focusStyle.focus-outline;
+            @include transitions.transition-colors;
+        }
+
+        &:hover,
+        &:focus {
+            color: var(--text-color);
+        }
+
+        &:disabled {
+            color: var(--text-color-disabled);
+        }
+
+        &[data-state='active'] {
+            color: var(--text-color);
+            font-weight: 500;
+        }
+    }
+
+
+    .activeIndicator {
+        position: absolute;
+        height: 3px;
+        border-top-left-radius: var(--radius-x-large);
+        border-top-right-radius: var(--radius-x-large);
+        background-color: var(--box-selected-strong-color);
+        bottom: 0;
+        left: 0;
+        width: 0;
+        margin-left: sizeToken.get(3);
+
+        & {
+            @include transitions.transition;
+        }
+    }
+}
+
+[data-tabs-theme="pill"] {
+    .activeIndicator {
+        display: none;
+    }
+
+    .triggerListWrapper {
+        position: relative;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        padding: 0;
+        gap: sizeToken.get(2);
+        box-sizing: border-box;
+    }
+
+    .triggerList {
+        height: auto;
+        padding: sizeToken.get(3);
+    }
+
+    .trigger {
+        color: var(--text-color);
+        font-size: var(--body-size-small);
+        font-weight: 500;
+        line-height: var(--body-size-small-line-height);
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
+        padding: sizeToken.get(1) sizeToken.get(2);
+
+        & {
+            @include focusStyle.focus-outline;
+            @include transitions.transition-colors;
+        }
+
+        &:hover,
+        &:focus {
+            color: var(--button-text-color-hover);
+            background-color: var(--button-background-color-hover);
+            border-radius: var(--radius);
+        }
+
+        &:disabled {
+            color: var(--text-color-disabled);
+        }
+
+        &[data-state='active'] {
+            color: var(--button-text-color);
+            background-color: var(--button-background-color);
+            border-radius: var(--radius);
+        }
+    }
+}
+
 .root {
     position: relative;
     display: flex;
@@ -30,46 +144,6 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
     }
 }
 
-.triggerListWrapper {
-    position: relative;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    padding-left: sizeToken.get(3);
-    padding-right: sizeToken.get(3);
-    gap: sizeToken.get(2);
-    border-bottom: 1px solid var(--line-color);
-    box-sizing: border-box;
-}
-
-.trigger {
-    color: var(--text-color-weak);
-    font-size: var(--body-size-large);
-    white-space: nowrap;
-    margin: sizeToken.get(2);
-    display: flex;
-    align-items: center;
-    gap: sizeToken.get(1);
-
-    & {
-        @include focusStyle.focus-outline;
-        @include transitions.transition-colors;
-    }
-
-    &:hover,
-    &:focus {
-        color: var(--text-color);
-    }
-
-    &:disabled {
-        color: var(--text-color-disabled);
-    }
-
-    &[data-state='active'] {
-        color: var(--text-color);
-        font-weight: 500;
-    }
-}
 
 .content {
     color: var(--text-color);
@@ -88,21 +162,5 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
 
     [data-tabs-content-padding='spacious'] & {
         padding: sizeToken.get(6);
-    }
-}
-
-.activeIndicator {
-    position: absolute;
-    height: 3px;
-    border-top-left-radius: var(--radius-x-large);
-    border-top-right-radius: var(--radius-x-large);
-    background-color: var(--box-selected-strong-color);
-    bottom: 0;
-    left: 0;
-    width: 0;
-    margin-left: sizeToken.get(3);
-
-    & {
-        @include transitions.transition;
     }
 }
