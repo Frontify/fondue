@@ -78,7 +78,13 @@ export const ColorPickerInput = (
             </button>
             <div className={styles.actions}>
                 {onClear && (
-                    <button type="button" aria-label="Clear color" onClick={onClear} className={styles.clear}>
+                    <button
+                        type="button"
+                        aria-label="Clear color"
+                        onClick={onClear}
+                        className={styles.clear}
+                        disabled={disabled}
+                    >
                         <IconCross size={16} />
                     </button>
                 )}

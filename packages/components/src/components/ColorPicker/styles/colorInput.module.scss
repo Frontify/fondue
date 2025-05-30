@@ -43,12 +43,16 @@
         @include focusStyle.focus-outline-styles;
     }
 
-    &:has(input:disabled),
+    &:has(:disabled),
     &[data-disabled='true'] {
         border-color: var(--line-color-weak);
         background-color: var(--box-disabled-color);
         color: var(--text-color-disabled);
         cursor: default;
+
+        .colorName {
+            color: var(--text-color-disabled);
+        }
     }
 }
 
@@ -98,6 +102,7 @@
     align-items: center;
     pointer-events: none;
 }
+
 .clear {
     outline: none;
     padding: sizeToken.get(1);
