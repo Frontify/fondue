@@ -67,6 +67,7 @@ export const Badge = ({
 }: BadgeProps) => {
     const commonProps = {
         'aria-label': ariaLabel || title,
+        'data-component': 'badge',
         'data-disabled': disabled,
         'data-dismissable': dismissable,
         'data-emphasis': emphasis,
