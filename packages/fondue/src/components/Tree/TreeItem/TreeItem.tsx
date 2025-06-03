@@ -21,7 +21,7 @@ import {
     type TreeItemStyling,
 } from '@components/Tree/types';
 import { useDebounce } from '@hooks/useDebounce';
-import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
+import { FOCUS_VISIBLE_STYLE, PARENT_FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 
 import { EXPAND_ONHOVER_DELAY, INDENTATION_WIDTH, type Projection } from '../helpers';
@@ -327,6 +327,7 @@ export const TreeItem = memo(
                             (!isSelected || itemStyleProps.activeColorStyle !== 'neutral') &&
                             styling.pressedBackgroundColor,
                         !isActive && isSelected ? styling.selectedBackgroundColor : styling.backgroundColor,
+                        isSelected && PARENT_FOCUS_VISIBLE_STYLE,
                     ]),
                 };
             }, [isActive, isSelected, itemStyleProps, styling]);
@@ -369,7 +370,7 @@ export const TreeItem = memo(
             const containerActiveHeight = itemStyleProps.contentHight === 'single-line' ? 'tw-h-12' : 'tw-h-fit';
 
             const containerClassName = merge([
-                'tw-relative tw-z-0 tw-transition-colors tw-flex tw-items-center tw-leading-5 tw-width-fit tw-justify-between',
+                'tw-relative tw-z-0 tw-transition-colors tw-flex tw-items-center tw-leading-5 tw-width-fit tw-justify-between tw-group',
                 TreeItemShadowClassMap[itemStyleProps.shadow ?? 'none'],
                 isActive ? 'tw-border-dashed tw-border-2 tw-pr-0' : containerBorder,
                 isActive && TreeItemBorderRadiusClassMap[itemStyleProps.borderRadius ?? 'small'],
@@ -441,7 +442,6 @@ export const TreeItem = memo(
                     <div ref={setDraggableNodeRef} className={containerClassName} style={style}>
                         <span className={backgroundClassName} style={backgroundStyle} aria-hidden={true} />
                         {dragHandlerPosition === 'left' && dragHandler}
-
                         {expandable && (
                             <ExpandButton
                                 active={transform?.y ? false : isSelected}
@@ -452,13 +452,10 @@ export const TreeItem = memo(
                                 className={showExpandButton ? 'tw-visible' : 'tw-invisible tw-pointer-events-none'}
                             />
                         )}
-
                         {showLabel && (
                             <span className="first:tw-ml-3.5 tw-w-full tw-h-full tw-flex tw-items-center">{label}</span>
                         )}
-
                         {showContent && <div className={wrapperContentClassName}>{contentComponent}</div>}
-
                         {dragHandlerPosition === 'right' && dragHandler}
                     </div>
                 </li>
