@@ -1,5 +1,13 @@
 # @frontify/fondue-components
 
+## 17.2.0
+
+### Minor Changes
+
+- [#2313](https://github.com/Frontify/fondue/pull/2313) [`640e418`](https://github.com/Frontify/fondue/commit/640e41856356faedb9084994a997055f4d3c9228) Thanks [@syeo66](https://github.com/syeo66)! - feat(Tabs): Add badges to tabs
+
+- [#2312](https://github.com/Frontify/fondue/pull/2312) [`c3734b4`](https://github.com/Frontify/fondue/commit/c3734b44f581f66cc2735a20aa8bb11f4f72f0a8) Thanks [@syeo66](https://github.com/syeo66)! - fix(ColorPickerInput): fix disabled style
+
 ## 17.1.0
 
 ### Minor Changes
