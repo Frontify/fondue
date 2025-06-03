@@ -1,5 +1,14 @@
 # @frontify/fondue
 
+## 12.9.7
+
+### Patch Changes
+
+- [#2317](https://github.com/Frontify/fondue/pull/2317) [`51187f1`](https://github.com/Frontify/fondue/commit/51187f107ce824bf518407ec39d6d633b4e29a4c) Thanks [@syeo66](https://github.com/syeo66)! - fix(Tree): add focus ring to selected tree item$
+
+- Updated dependencies [[`640e418`](https://github.com/Frontify/fondue/commit/640e41856356faedb9084994a997055f4d3c9228), [`c3734b4`](https://github.com/Frontify/fondue/commit/c3734b44f581f66cc2735a20aa8bb11f4f72f0a8)]:
+    - @frontify/fondue-components@17.2.0
+
 ## 12.9.6
 
 ### Patch Changes
