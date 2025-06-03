@@ -2,7 +2,7 @@
 
 import { IconCaretRight } from '@frontify/fondue-icons';
 import * as RadixDropdown from '@radix-ui/react-dropdown-menu';
-import { Children, forwardRef, useMemo, type ForwardedRef, type ReactNode } from 'react';
+import { Children, forwardRef, useCallback, useMemo, useState, type ForwardedRef, type ReactNode } from 'react';
 
 import { ThemeProvider, useFondueTheme } from '../ThemeProvider/ThemeProvider';
 
@@ -268,6 +268,10 @@ export const DropdownItem = (
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     const { content } = useProcessedChildren(children);
+    const [wasClicked, setWasClicked] = useState(true);
+
+    const handleKeyUp = useCallback(() => setWasClicked(false), []);
+    const handleBlur = useCallback(() => setWasClicked(true), []);
 
     return (
         <RadixDropdown.Item
@@ -279,6 +283,9 @@ export const DropdownItem = (
             ref={ref}
             disabled={disabled}
             asChild={asChild}
+            data-show-focus-ring={!wasClicked}
+            onKeyUp={handleKeyUp}
+            onBlur={handleBlur}
             {...props}
         >
             {content}
