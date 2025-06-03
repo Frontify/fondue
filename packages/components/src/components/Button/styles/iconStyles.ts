@@ -17,7 +17,7 @@ export const iconStyles = sv({
             loud: '',
         },
         disabled: {
-            true: 'tw-text-box-disabled-inverse',
+            true: 'tw-text-disabled-on-disabled',
         },
     },
     compoundVariants: [
@@ -26,54 +26,54 @@ export const iconStyles = sv({
             variant: 'default',
             emphasis: 'default',
             class:
-                '[&_svg]:tw-text-button-icon ' +
-                'group-hover:[&_svg]:tw-text-button-icon-hover ' +
-                'group-active:[&_svg]:tw-text-button-icon-pressed [&_svg]:tw-leading-none',
+                '[&_svg]:tw-text-primary ' +
+                'group-hover:[&_svg]:tw-text-primary' +
+                'group-active:[&_svg]:tw-text-primary [&_svg]:tw-leading-none',
         },
         {
             disabled: false,
             variant: 'default',
             emphasis: 'weak',
             class:
-                '[&_svg]:tw-text-button-icon ' +
-                'group-hover:[&_svg]:tw-text-button-icon-hover ' +
-                'group-active:[&_svg]:tw-text-button-icon-pressed [&_svg]:tw-leading-none',
+                '[&_svg]:tw-text-primary ' +
+                'group-hover:[&_svg]:tw-text-primary ' +
+                'group-active:[&_svg]:tw-text-primary [&_svg]:tw-leading-none',
         },
         {
             disabled: false,
             variant: 'default',
             emphasis: 'strong',
             class:
-                '[&_svg]:tw-text-button-strong-icon ' +
-                'group-hover:[&_svg]:tw-text-button-strong-icon-hover ' +
-                'group-active:[&_svg]:tw-text-button-strong-icon-pressed [&_svg]:tw-leading-none',
+                '[&_svg]:tw-text-primary-on-primary ' +
+                'group-hover:[&_svg]:tw-text-primary-on-primary ' +
+                'group-active:[&_svg]:tw-text-primary-on-primary [&_svg]:tw-leading-none',
         },
         {
             disabled: false,
             variant: 'positive',
             emphasis: 'default',
             class:
-                '[&_svg]:tw-text-button-positive-icon ' +
-                'group-hover:[&_svg]:tw-text-button-positive-icon-hover ' +
-                'group-active:[&_svg]:tw-text-button-positive-icon-pressed [&_svg]:tw-leading-none',
+                '[&_svg]:tw-text-container-success-on-success-container ' +
+                'group-hover:[&_svg]:tw-text-container-success-on-success-container ' +
+                'group-active:[&_svg]:tw-text-container-success-on-success-container [&_svg]:tw-leading-none',
         },
         {
             disabled: false,
             variant: 'positive',
             emphasis: 'weak',
             class:
-                '[&_svg]:tw-text-button-strong-positive-icon ' +
-                'group-hover:[&_svg]:tw-text-button-strong-positive-icon-hover' +
-                'group-active:[&_svg]:tw-text-button-strong-positive-icon-pressed [&_svg]:tw-leading-none',
+                '[&_svg]:tw-text-success-on-success ' +
+                'group-hover:[&_svg]:tw-text-success-on-success' +
+                'group-active:[&_svg]:tw-text-success-on-success [&_svg]:tw-leading-none',
         },
         {
             disabled: false,
             variant: 'positive',
             emphasis: 'strong',
             class:
-                '[&_svg]:tw-text-button-strong-positive-icon ' +
-                'group-hover:[&_svg]:tw-text-button-strong-positive-icon-hover ' +
-                'group-active:[&_svg]:tw-text-button-strong-positive-icon-pressed [&_svg]:tw-leading-none',
+                '[&_svg]:tw-text-success-on-success' +
+                'group-hover:[&_svg]:tw-text-success-on-success ' +
+                'group-active:[&_svg]:tw-text-success-on-success [&_svg]:tw-leading-none',
         },
         {
             disabled: false,
@@ -89,72 +89,72 @@ export const iconStyles = sv({
             variant: 'negative',
             emphasis: 'weak',
             class:
-                '[&_svg]:tw-text-button-negative-icon ' +
-                'group-hover:[&_svg]:tw-text-button-negative-icon-hover' +
-                'group-active:[&_svg]:tw-text-button-negative-icon-pressed [&_svg]:tw-leading-none',
+                '[&_svg]:tw-text-container-error-on-error-container ' +
+                'group-hover:[&_svg]:tw-text-container-error-on-error-container ' +
+                'group-active:[&_svg]:tw-text-container-error-on-error-container [&_svg]:tw-leading-none',
         },
         {
             disabled: false,
             variant: 'negative',
             emphasis: 'strong',
             class:
-                '[&_svg]:tw-text-button-strong-negative-icon ' +
-                'group-hover:[&_svg]:tw-text-button-strong-negative-icon-hover' +
-                'group-active:[&_svg]:tw-text-button-strong-negative-icon-pressed [&_svg]:tw-leading-none',
+                '[&_svg]:tw-text-error-on-error ' +
+                'group-hover:[&_svg]:tw-text-error-on-error' +
+                'group-active:[&_svg]:tw-text-error-on-error [&_svg]:tw-leading-none',
         },
         {
             disabled: false,
             variant: 'danger',
             emphasis: 'default',
             class:
-                '[&_svg]:tw-text-button-negative-icon ' +
-                'group-hover:[&_svg]:tw-text-button-negative-icon-hover' +
-                'group-active:[&_svg]:tw-text-button-negative-icon-pressed [&_svg]:tw-leading-none',
+                '[&_svg]:tw-text-container-error-on-error-container ' +
+                'group-hover:[&_svg]:tw-text-container-error-on-error-container ' +
+                'group-active:[&_svg]:tw-text-container-error-on-error-container [&_svg]:tw-leading-none',
         },
         {
             disabled: false,
             variant: 'danger',
             emphasis: 'weak',
             class:
-                '[&_svg]:tw-text-button-negative-icon ' +
-                'group-hover:[&_svg]:tw-text-button-negative-icon-hover' +
-                'group-active:[&_svg]:tw-text-button-negative-icon-pressed [&_svg]:tw-leading-none',
+                '[&_svg]:tw-text-container-error-on-error-container ' +
+                'group-hover:[&_svg]:tw-text-container-error-on-error-container ' +
+                'group-active:[&_svg]:tw-text-container-error-on-error-container [&_svg]:tw-leading-none',
         },
         {
             disabled: false,
             variant: 'danger',
             emphasis: 'strong',
             class:
-                '[&_svg]:tw-text-button-danger-icon ' +
-                'group-hover:[&_svg]:tw-text-button-danger-icon-hover' +
-                'group-active:[&_svg]:tw-text-button-danger-icon-pressed [&_svg]:tw-leading-none',
+                '[&_svg]:tw-text-error-on-error ' +
+                'group-hover:[&_svg]:tw-text-error-on-error' +
+                'group-active:[&_svg]:tw-text-error-on-error [&_svg]:tw-leading-none',
         },
         {
             disabled: false,
             variant: 'loud',
             emphasis: 'default',
             class:
-                '[&_svg]:tw-text-box-selected-inverse ' +
-                'group-hover:[&_svg]:tw-text-box-selected-inverse-hover' +
-                'group-active:[&_svg]:tw-text-box-selected-inverse-pressed [&_svg]:tw-leading-none',
+                '[&_svg]:tw-text-container-highlight-on-highlight-container ' +
+                'group-hover:[&_svg]:tw-text-container-highlight-on-highlight-container ' +
+                'group-active:[&_svg]:tw-text-container-highlight-on-highlight-container [&_svg]:tw-leading-none',
         },
         {
             disabled: false,
             variant: 'loud',
             emphasis: 'weak',
             class:
-                '[&_svg]:tw-text-box-selected-inverse ' +
-                'group-hover:[&_svg]:tw-text-box-selected-inverse-hover' +
-                'group-active:[&_svg]:tw-text-box-selected-inverse-pressed [&_svg]:tw-leading-none',
+                '[&_svg]:tw-text-container-highlight-on-highlight-container ' +
+                'group-hover:[&_svg]:tw-text-container-highlight-on-highlight-container ' +
+                'group-active:[&_svg]:tw-text-container-highlight-on-highlight-container [&_svg]:tw-leading-none',
         },
         {
             disabled: false,
             variant: 'loud',
             emphasis: 'strong',
             class:
-                '[&_svg]:tw-text-box-selected-strong-inverse ' +
-                'group-hover:[&_svg]:tw-text-box-selected-strong-inverse' +
-                'group-active:[&_svg]:tw-text-box-selected-strong-inverse [&_svg]:tw-leading-none',
+                '[&_svg]:tw-text-highlight-on-highlight ' +
+                'group-hover:[&_svg]:tw-text-highlight-on-highlight ' +
+                'group-active:[&_svg]:tw-text-highlight-on-highlight [&_svg]:tw-leading-none',
         },
     ],
     defaultVariants: {
