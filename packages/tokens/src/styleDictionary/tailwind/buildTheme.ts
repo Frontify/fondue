@@ -80,7 +80,7 @@ const getTheme = (dictionary: Dictionary) => {
                 identifier: ['border-radius'],
                 tokens,
             }),
-            full: '100%',
+            full: '9999px',
         },
 
         borderWidth: getObject({

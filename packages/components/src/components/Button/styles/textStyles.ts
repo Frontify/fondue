@@ -25,13 +25,13 @@ export const textStyles = sv({
             disabled: false,
             variant: 'default',
             emphasis: 'default',
-            class: 'tw-text-primary group-hover:tw-text-primary-hover group-active:tw-text-primary-pressed',
+            class: 'tw-text-primary hover:tw-text-primary-hover active:tw-text-primary-pressed',
         },
         {
             disabled: false,
             variant: 'default',
             emphasis: 'weak',
-            class: 'tw-text-primary group-hover:tw-text-primary-hover group-active:tw-text-primary-pressed',
+            class: 'tw-text-primary hover:tw-text-primary-hover active:tw-text-primary-pressed',
         },
         {
             disabled: false,
@@ -39,8 +39,8 @@ export const textStyles = sv({
             emphasis: 'strong',
             class:
                 'tw-text-primary-on-primary ' +
-                'group-hover:tw-text-primary-on-primary-hover ' +
-                'group-active:tw-text-primary-on-primary-pressed',
+                'hover:tw-text-primary-on-primary-hover ' +
+                'active:tw-text-primary-on-primary-pressed',
         },
         {
             disabled: false,
@@ -48,17 +48,17 @@ export const textStyles = sv({
             emphasis: 'default',
             class:
                 'tw-text-container-success-on-success-container ' +
-                'group-hover:tw-text-container-success-on-success-container ' +
-                'group-active:tw-text-container-success-on-success-container-pressed',
+                'hover:tw-text-container-success-on-success-container ' +
+                'active:tw-text-container-success-on-success-container-pressed',
         },
         {
             disabled: false,
             variant: 'positive',
             emphasis: 'weak',
             class:
-                'tw-text-container-success-on-success-container ' +
-                'group-hover:tw-text-container-success-on-success-container ' +
-                'group-active:tw-text-container-success-on-success-container',
+                'tw-text-success ' +
+                'hover:tw-text-container-success-on-success-container ' +
+                'active:tw-text-container-success-on-success-container',
         },
         {
             disabled: false,
@@ -66,8 +66,8 @@ export const textStyles = sv({
             emphasis: 'strong',
             class:
                 'tw-text-success-on-success ' +
-                'group-hover:tw-text-success-on-success ' +
-                'group-active:tw-text-success-on-success',
+                'hover:tw-text-success-on-success ' +
+                'active:tw-text-success-on-success',
         },
         {
             disabled: false,
@@ -75,53 +75,41 @@ export const textStyles = sv({
             emphasis: 'default',
             class:
                 'tw-text-container-error-on-error-container ' +
-                'group-hover:tw-text-container-error-on-error-container ' +
-                'group-active:tw-text-container-error-on-error-container',
+                'hover:tw-text-container-error-on-error-container ' +
+                'active:tw-text-container-error-on-error-container',
         },
         {
             disabled: false,
             variant: 'negative',
             emphasis: 'weak',
             class:
-                'tw-text-container-error-on-error-container ' +
-                'group-hover:tw-text-container-error-on-error-container ' +
-                'group-active:tw-text-container-error-on-error-container',
+                'tw-text-error ' +
+                'hover:tw-text-container-error-on-error-container ' +
+                'active:tw-text-container-error-on-error-container',
         },
         {
             disabled: false,
             variant: 'negative',
             emphasis: 'strong',
-            class:
-                'tw-text-error-on-error ' +
-                'group-hover:tw-text-error-on-error ' +
-                'group-active:tw-text-error-on-error',
+            class: 'tw-text-error-on-error hover:tw-text-error-on-error active:tw-text-error-on-error',
         },
         {
             disabled: false,
             variant: 'danger',
             emphasis: 'default',
-            class:
-                'tw-text-container-error-on-error-container ' +
-                'group-hover:tw-text-container-error-on-error-container ' +
-                'group-active:tw-text-container-error-on-error-container',
+            class: 'tw-text-error-on-error hover:tw-text-error-on-error active:tw-text-error-on-error',
         },
         {
             disabled: false,
             variant: 'danger',
             emphasis: 'weak',
-            class:
-                'tw-text-container-error-on-error-container ' +
-                'group-hover:tw-text-container-error-on-error-container ' +
-                'group-active:tw-text-container-error-on-error-container',
+            class: 'tw-text-error-on-error hover:tw-text-error-on-error active:tw-text-error-on-error',
         },
         {
             disabled: false,
             variant: 'danger',
             emphasis: 'strong',
-            class:
-                'tw-text-error-on-error ' +
-                'group-hover:tw-text-error-on-error ' +
-                'group-active:tw-text-error-on-error',
+            class: 'tw-text-error-on-error hover:tw-text-error-on-error active:tw-text-error-on-error',
         },
         {
             disabled: false,
@@ -129,17 +117,17 @@ export const textStyles = sv({
             emphasis: 'default',
             class:
                 'tw-text-container-highlight-on-highlight-container ' +
-                'group-hover:tw-text-container-highlight-on-highlight-container ' +
-                'group-active:tw-text-container-highlight-on-highlight-container',
+                'hover:tw-text-container-highlight-on-highlight-container ' +
+                'active:tw-text-container-highlight-on-highlight-container',
         },
         {
             disabled: false,
             variant: 'loud',
             emphasis: 'weak',
             class:
-                'tw-text-container-highlight-on-highlight-container ' +
-                'group-hover:tw-text-container-highlight-on-highlight-container ' +
-                'group-active:tw-text-container-highlight-on-highlight-container',
+                'tw-text-highlight ' +
+                'hover:tw-text-container-highlight-on-highlight-container ' +
+                'active:tw-text-container-highlight-on-highlight-container',
         },
         {
             disabled: false,
@@ -147,8 +135,8 @@ export const textStyles = sv({
             emphasis: 'strong',
             class:
                 'tw-text-highlight-on-highlight ' +
-                'group-hover:tw-text-highlight-on-highlight ' +
-                'group-active:tw-text-highlight-on-highlight',
+                'hover:tw-text-highlight-on-highlight ' +
+                'active:tw-text-highlight-on-highlight',
         },
     ],
     defaultVariants: {

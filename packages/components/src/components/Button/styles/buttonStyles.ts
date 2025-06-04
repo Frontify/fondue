@@ -5,7 +5,7 @@ import { sv } from '#/utilities/styleUtilities';
 
 export const buttonStyles = sv({
     base:
-        'tw-group tw-relative tw-flex tw-flex-row tw-gap-2 tw-items-center tw-justify-center tw-cursor-pointer tw-font-body tw-font-medium tw-box-border tw-whitespace-nowrap ' +
+        'tw-group tw-relative tw-flex tw-flex-row tw-items-center tw-justify-center tw-cursor-pointer tw-font-body tw-font-medium tw-box-border tw-whitespace-nowrap ' +
         `${FOCUS_OUTLINE}`,
     variants: {
         disabled: {
@@ -105,16 +105,13 @@ export const buttonStyles = sv({
             disabled: false,
             variant: 'danger',
             emphasis: 'default',
-            class:
-                'tw-bg-container-secondary ' +
-                'hover:tw-bg-container-secondary-hover ' +
-                'active:tw-bg-container-secondary-active',
+            class: 'tw-bg-error hover:tw-bg-error-hover active:tw-bg-error-active',
         },
         {
             disabled: false,
             variant: 'danger',
             emphasis: 'weak',
-            class: 'hover:tw-bg-container-secondary-hover active:tw-bg-container-secondary-active',
+            class: 'tw-bg-error hover:tw-bg-error-hover active:tw-bg-error-active',
         },
         {
             disabled: false,
@@ -143,17 +140,17 @@ export const buttonStyles = sv({
         {
             aspect: 'default',
             size: 'small',
-            class: 'tw-px-2',
+            class: 'tw-px-3 tw-gap-1.5',
         },
         {
             aspect: 'default',
             size: 'medium',
-            class: 'tw-px-4',
+            class: 'tw-px-4 tw-gap-1.5',
         },
         {
             aspect: 'default',
             size: 'large',
-            class: 'tw-px-6',
+            class: 'tw-px-6 tw-gap-2',
         },
     ],
     defaultVariants: {
