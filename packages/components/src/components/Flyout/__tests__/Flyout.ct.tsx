@@ -3,11 +3,11 @@
 import { expect, test } from '@playwright/experimental-ct-react';
 import sinon from 'sinon';
 
+import { Flyout } from '../Flyout';
+
 import { Button } from '#/components/Button/Button';
 import { TextInput } from '#/components/TextInput/TextInput';
 import { FOCUS_BORDER_CSS, FOCUS_OUTLINE_CSS } from '#/helpers/constants';
-
-import { Flyout } from '../Flyout';
 
 const FLYOUT_TRIGGER_TEST_ID = 'fondue-flyout-trigger';
 const FLYOUT_CONTENT_TEST_ID = 'fondue-flyout-content';
@@ -91,6 +91,37 @@ test('should close on click outside', async ({ mount, page }) => {
     await expect(flyoutContent).toBeVisible();
     await page.click('body');
     await expect(flyoutContent).not.toBeVisible();
+});
+
+test('click outside should not register when closing', async ({ mount, page }) => {
+    const clickfn = sinon.spy();
+    await mount(
+        <div>
+            <Flyout.Root>
+                <Flyout.Trigger>
+                    <Button>{FLYOUT_TRIGGER_TEXT}</Button>
+                </Flyout.Trigger>
+                <Flyout.Content>
+                    <Flyout.Header showCloseButton>{FLYOUT_HEADER_TEXT}</Flyout.Header>
+                    <Flyout.Body>{FLYOUT_BODY_TEXT}</Flyout.Body>
+                    <Flyout.Footer>
+                        <Button>{FLYOUT_FOOTER_TEXT}</Button>
+                    </Flyout.Footer>
+                </Flyout.Content>
+            </Flyout.Root>
+            <button data-test-id="outside" onClick={clickfn}>
+                outside
+            </button>
+        </div>,
+    );
+    const tooltipTrigger = page.getByTestId(FLYOUT_TRIGGER_TEST_ID);
+    const flyoutContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
+    const outsideButton = page.getByTestId('outside');
+    await tooltipTrigger.click();
+    await expect(flyoutContent).toBeVisible();
+    await outsideButton.click();
+    await expect(flyoutContent).not.toBeVisible();
+    expect(clickfn.called).toBe(false);
 });
 
 test('should close on cross button click', async ({ mount, page }) => {
