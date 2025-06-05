@@ -93,6 +93,37 @@ test('should close on click outside', async ({ mount, page }) => {
     await expect(flyoutContent).not.toBeVisible();
 });
 
+test('should close on click outside and not trigger anything else', async ({ mount, page }) => {
+    const clickfn = sinon.spy();
+    await mount(
+        <div>
+            <button data-test-id="outside" onClick={clickfn}>
+                outside
+            </button>
+            <Flyout.Root>
+                <Flyout.Trigger>
+                    <Button>{FLYOUT_TRIGGER_TEXT}</Button>
+                </Flyout.Trigger>
+                <Flyout.Content>
+                    <Flyout.Header showCloseButton>{FLYOUT_HEADER_TEXT}</Flyout.Header>
+                    <Flyout.Body>{FLYOUT_BODY_TEXT}</Flyout.Body>
+                    <Flyout.Footer>
+                        <Button>{FLYOUT_FOOTER_TEXT}</Button>
+                    </Flyout.Footer>
+                </Flyout.Content>
+            </Flyout.Root>
+        </div>,
+    );
+    const tooltipTrigger = page.getByTestId(FLYOUT_TRIGGER_TEST_ID);
+    const flyoutContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
+    const outsideButton = page.getByTestId('outside');
+    await tooltipTrigger.click();
+    await expect(flyoutContent).toBeVisible();
+    await outsideButton.click();
+    await expect(flyoutContent).not.toBeVisible();
+    expect(clickfn.called).toBe(false);
+});
+
 test('should close on cross button click', async ({ mount, page }) => {
     await mount(
         <Flyout.Root>
