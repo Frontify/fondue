@@ -66,7 +66,6 @@
     height: 100dvh;
     background-color: var(--box-positive-strong-inverse-color);
     opacity: 0.3;
-    pointer-events: none;
 
     & {
         @include mediaQuery.sm {
