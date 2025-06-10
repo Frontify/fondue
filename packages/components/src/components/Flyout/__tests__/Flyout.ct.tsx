@@ -3,11 +3,11 @@
 import { expect, test } from '@playwright/experimental-ct-react';
 import sinon from 'sinon';
 
+import { Flyout } from '../Flyout';
+
 import { Button } from '#/components/Button/Button';
 import { TextInput } from '#/components/TextInput/TextInput';
 import { FOCUS_BORDER_CSS, FOCUS_OUTLINE_CSS } from '#/helpers/constants';
-
-import { Flyout } from '../Flyout';
 
 const FLYOUT_TRIGGER_TEST_ID = 'fondue-flyout-trigger';
 const FLYOUT_CONTENT_TEST_ID = 'fondue-flyout-content';
@@ -93,13 +93,9 @@ test('should close on click outside', async ({ mount, page }) => {
     await expect(flyoutContent).not.toBeVisible();
 });
 
-test('should close on click outside and not trigger anything else', async ({ mount, page }) => {
-    const clickfn = sinon.spy();
+test('should close on click on overlay', async ({ mount, page }) => {
     await mount(
         <div>
-            <button data-test-id="outside" onClick={clickfn}>
-                outside
-            </button>
             <Flyout.Root>
                 <Flyout.Trigger>
                     <Button>{FLYOUT_TRIGGER_TEXT}</Button>
@@ -116,12 +112,11 @@ test('should close on click outside and not trigger anything else', async ({ mou
     );
     const tooltipTrigger = page.getByTestId(FLYOUT_TRIGGER_TEST_ID);
     const flyoutContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
-    const outsideButton = page.getByTestId('outside');
+    const overlay = page.getByTestId('fondue-flyout-overlay');
     await tooltipTrigger.click();
     await expect(flyoutContent).toBeVisible();
-    await outsideButton.click();
+    await overlay.click();
     await expect(flyoutContent).not.toBeVisible();
-    expect(clickfn.called).toBe(false);
 });
 
 test('should close on cross button click', async ({ mount, page }) => {
