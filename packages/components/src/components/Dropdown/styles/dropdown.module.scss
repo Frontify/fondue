@@ -4,6 +4,7 @@
 @use '../../../utilities/transitions.module.scss';
 @use '../../../utilities/mediaQuery.module.scss';
 @use '../../../utilities/shadow.module.scss';
+@use '../../../utilities/focusStyle.module.scss';
 
 .content,
 .subContent {
@@ -57,6 +58,10 @@
 
     & {
         @include transitions.transition-colors;
+    }
+
+    &:not([data-show-focus-ring="false"]) {
+        @include focusStyle.focus-outline;
     }
 
     &:first-child {
@@ -114,10 +119,12 @@
 }
 
 .group {
-    .item ~ &,
-    .group ~ & {
+
+    .item~&,
+    .group~& {
         border-top: var(--line-width) solid var(--line-color-strong);
     }
+
     &:has(+ .item) {
         border-bottom: var(--line-width) solid var(--line-color-strong);
     }
@@ -150,17 +157,17 @@
         order: 1;
         margin-left: auto;
 
-        & ~ .subMenuIndicator {
+        &~.subMenuIndicator {
             margin-left: sizeToken.get(1.5);
         }
     }
 
     // 2 slots without any name should be implicitly ordered
-    &:not([data-name='right']) ~ .slot:not([data-name='left']) {
+    &:not([data-name='right'])~.slot:not([data-name='left']) {
         order: 1;
         margin-left: auto;
 
-        & ~ .subMenuIndicator {
+        &~.subMenuIndicator {
             margin-left: 0;
         }
     }
