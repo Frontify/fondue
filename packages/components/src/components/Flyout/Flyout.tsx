@@ -4,11 +4,11 @@ import { IconCross } from '@frontify/fondue-icons';
 import * as RadixPopover from '@radix-ui/react-popover';
 import { forwardRef, type CSSProperties, type ForwardedRef, type ReactNode } from 'react';
 
+import { addAutoFocusAttribute, addShowFocusRing } from '#/utilities/domUtilities';
+
 import { ThemeProvider, useFondueTheme } from '../ThemeProvider/ThemeProvider';
 
 import styles from './styles/flyout.module.scss';
-
-import { addAutoFocusAttribute, addShowFocusRing } from '#/utilities/domUtilities';
 
 export type FlyoutRootProps = {
     /**

@@ -69,7 +69,7 @@
 
     & {
         @include mediaQuery.sm {
-            display: none;
+            opacity: 0;
         }
     }
 }

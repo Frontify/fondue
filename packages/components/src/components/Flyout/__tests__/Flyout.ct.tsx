@@ -3,14 +3,15 @@
 import { expect, test } from '@playwright/experimental-ct-react';
 import sinon from 'sinon';
 
-import { Flyout } from '../Flyout';
-
 import { Button } from '#/components/Button/Button';
 import { TextInput } from '#/components/TextInput/TextInput';
 import { FOCUS_BORDER_CSS, FOCUS_OUTLINE_CSS } from '#/helpers/constants';
 
+import { Flyout } from '../Flyout';
+
 const FLYOUT_TRIGGER_TEST_ID = 'fondue-flyout-trigger';
 const FLYOUT_CONTENT_TEST_ID = 'fondue-flyout-content';
+const FLY_OUT_OVERLAY_TEST_ID = 'fondue-flyout-overlay';
 const FLYOUT_TRIGGER_TEXT = 'Flyout Trigger';
 const FLYOUT_BODY_TEST_ID = 'fondue-flyout-body';
 const FLYOUT_BODY_TEXT = 'Flyout Body';
@@ -112,7 +113,7 @@ test('should close on click on overlay', async ({ mount, page }) => {
     );
     const tooltipTrigger = page.getByTestId(FLYOUT_TRIGGER_TEST_ID);
     const flyoutContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
-    const overlay = page.getByTestId('fondue-flyout-overlay');
+    const overlay = page.getByTestId(FLY_OUT_OVERLAY_TEST_ID);
     await tooltipTrigger.click();
     await expect(flyoutContent).toBeVisible();
     await overlay.click();
