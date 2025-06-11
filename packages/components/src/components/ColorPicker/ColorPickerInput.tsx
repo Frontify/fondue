@@ -16,9 +16,13 @@ type ColorPickerInputProps = {
      */
     currentColor?: RgbaColor;
     /**
-     * The open state of the color picker used to dermine arrow state
+     * The open state of the color picker used to determine arrow state
      */
     isOpen?: boolean;
+    /**
+     * Whether the color picker input is disabled
+     */
+    disabled?: boolean;
     /**
      * callback for clearing the color
      */
@@ -38,6 +42,7 @@ export const ColorPickerInput = (
         id,
         currentColor,
         isOpen,
+        disabled = false,
         onClear,
         onClick,
         'data-test-id': dataTestId = 'color-picker-input',
@@ -48,7 +53,14 @@ export const ColorPickerInput = (
     const colorName = currentColor?.name ?? (currentColor ? getColorWithName(currentColor, 'RGBA').name : '');
     return (
         <div id={id} className={styles.root} ref={forwardedRef} data-test-id={dataTestId}>
-            <button className={styles.button} {...props} onClick={onClick} type="button" data-color-input-select>
+            <button
+                className={styles.button}
+                {...props}
+                disabled={disabled}
+                onClick={onClick}
+                type="button"
+                data-color-input-select
+            >
                 {currentColor?.red !== undefined ? (
                     <div
                         aria-hidden
@@ -66,7 +78,13 @@ export const ColorPickerInput = (
             </button>
             <div className={styles.actions}>
                 {onClear && (
-                    <button type="button" aria-label="Clear color" onClick={onClear} className={styles.clear}>
+                    <button
+                        type="button"
+                        aria-label="Clear color"
+                        onClick={onClear}
+                        className={styles.clear}
+                        disabled={disabled}
+                    >
                         <IconCross size={16} />
                     </button>
                 )}

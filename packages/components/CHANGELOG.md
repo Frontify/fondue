@@ -1,5 +1,23 @@
 # @frontify/fondue-components
 
+## 17.1.0
+
+### Minor Changes
+
+- [#2310](https://github.com/Frontify/fondue/pull/2310) [`5a51c2b`](https://github.com/Frontify/fondue/commit/5a51c2b9cdc3ba89fde1e1e1d6ddd0237e105fa2) Thanks [@syeo66](https://github.com/syeo66)! - feat(Badge): implement new component
+
+- [#2304](https://github.com/Frontify/fondue/pull/2304) [`6508be9`](https://github.com/Frontify/fondue/commit/6508be914ee3d6ef737a17f9fc216572374fc06d) Thanks [@syeo66](https://github.com/syeo66)! - feat(Tabs): add 'navigation' variant
+
+- [#2309](https://github.com/Frontify/fondue/pull/2309) [`bd15f73`](https://github.com/Frontify/fondue/commit/bd15f73181b9e10e669244f30de7e8af77bffb10) Thanks [@jprats89](https://github.com/jprats89)! - Add `disabled` property to `ColorPicker.Input`
+
+### Patch Changes
+
+- [#2311](https://github.com/Frontify/fondue/pull/2311) [`070c711`](https://github.com/Frontify/fondue/commit/070c7116c3015b43a0579f4214dba38e73a069e1) Thanks [@syeo66](https://github.com/syeo66)! - fix(Tabs): styles not showing
+
+- [#2306](https://github.com/Frontify/fondue/pull/2306) [`cc96757`](https://github.com/Frontify/fondue/commit/cc9675712f08476ae70dbdb3db5d07e1029324b4) Thanks [@syeo66](https://github.com/syeo66)! - fix(ColorPicker): retain alpha value when changing hex value
+
+- [#2305](https://github.com/Frontify/fondue/pull/2305) [`d5e69a3`](https://github.com/Frontify/fondue/commit/d5e69a36561e79fe516f3ebcd02e4dede930f965) Thanks [@jcosta33](https://github.com/jcosta33)! - feat(Button): add animations
+
 ## 17.0.0
 
 ### Patch Changes
