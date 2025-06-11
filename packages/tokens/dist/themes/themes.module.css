@@ -147,6 +147,7 @@
   --color-error-default: var(--color-error-40);
   --color-error-hover: var(--color-error-30);
   --color-error-on-error: var(--color-error-100);
+  --color-figma-deep-selection-hack: rgba(255, 255, 255, 0);
   --color-focus-contrast: var(--color-neutral-100);
   --color-focus-default: rgba(65, 150, 251, 1);
   --color-highlight-active: var(--color-marker-20);
@@ -347,6 +348,7 @@
   --color-error-default: var(--color-error-60);
   --color-error-hover: var(--color-error-70);
   --color-error-on-error: var(--color-error-00);
+  --color-figma-deep-selection-hack: rgba(255, 255, 255, 0);
   --color-focus-contrast: var(--color-neutral-00);
   --color-focus-default: rgba(65, 150, 251, 1);
   --color-highlight-active: var(--color-marker-80);
