@@ -11,6 +11,7 @@ import { Flyout } from '../Flyout';
 
 const FLYOUT_TRIGGER_TEST_ID = 'fondue-flyout-trigger';
 const FLYOUT_CONTENT_TEST_ID = 'fondue-flyout-content';
+const FLY_OUT_OVERLAY_TEST_ID = 'fondue-flyout-overlay';
 const FLYOUT_TRIGGER_TEXT = 'Flyout Trigger';
 const FLYOUT_BODY_TEST_ID = 'fondue-flyout-body';
 const FLYOUT_BODY_TEXT = 'Flyout Body';
@@ -90,6 +91,32 @@ test('should close on click outside', async ({ mount, page }) => {
     await tooltipTrigger.click();
     await expect(flyoutContent).toBeVisible();
     await page.click('body');
+    await expect(flyoutContent).not.toBeVisible();
+});
+
+test('should close on click on overlay', async ({ mount, page }) => {
+    await mount(
+        <div>
+            <Flyout.Root>
+                <Flyout.Trigger>
+                    <Button>{FLYOUT_TRIGGER_TEXT}</Button>
+                </Flyout.Trigger>
+                <Flyout.Content>
+                    <Flyout.Header showCloseButton>{FLYOUT_HEADER_TEXT}</Flyout.Header>
+                    <Flyout.Body>{FLYOUT_BODY_TEXT}</Flyout.Body>
+                    <Flyout.Footer>
+                        <Button>{FLYOUT_FOOTER_TEXT}</Button>
+                    </Flyout.Footer>
+                </Flyout.Content>
+            </Flyout.Root>
+        </div>,
+    );
+    const tooltipTrigger = page.getByTestId(FLYOUT_TRIGGER_TEST_ID);
+    const flyoutContent = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
+    const overlay = page.getByTestId(FLY_OUT_OVERLAY_TEST_ID);
+    await tooltipTrigger.click();
+    await expect(flyoutContent).toBeVisible();
+    await overlay.click();
     await expect(flyoutContent).not.toBeVisible();
 });
 
