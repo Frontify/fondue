@@ -2,9 +2,13 @@
 
 import { type ComponentType } from 'react';
 
+import '@frontify/fondue-tokens/legacy/tokens';
+import '@frontify/fondue-tokens/styles';
 import '../src/styles.scss';
-import { type Preview, type Decorator, type StoryContext } from '@storybook/react';
+
+import { type Decorator, type Preview, type StoryContext } from '@storybook/react';
 import { Flex } from '../src/components/Flex/Flex';
+
 
 import DocumentationTemplate from './DocumentationTemplate.mdx';
 import { withTheme } from './components/StoryWithTeme';
