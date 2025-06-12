@@ -139,6 +139,7 @@ export type TreeProps = {
     selectedIds?: string[];
     expandedIds?: string[];
     dragHandlerPosition?: DragHandlerPosition;
+    /** @deprecated unused, property was used to at 150 ms delay when dragHandlerPosition is 'none'. but could stop registering trags. */
     enableDragDelay?: boolean;
     showDragHandlerOnHoverOnly?: boolean;
     showContentWhileDragging?: boolean;
