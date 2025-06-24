@@ -1,5 +1,22 @@
 # @frontify/fondue-components
 
+## 18.0.0
+
+### Minor Changes
+
+- [#2313](https://github.com/Frontify/fondue/pull/2313) [`640e418`](https://github.com/Frontify/fondue/commit/640e41856356faedb9084994a997055f4d3c9228) Thanks [@syeo66](https://github.com/syeo66)! - feat(Tabs): Add badges to tabs
+
+- [#2318](https://github.com/Frontify/fondue/pull/2318) [`84a71fc`](https://github.com/Frontify/fondue/commit/84a71fc3af996178167ad7850da8afc1307eee6a) Thanks [@joelharkes](https://github.com/joelharkes)! - fix(color picker): click Outside Flyout no longer propogated when closing Flyout
+
+- [#2312](https://github.com/Frontify/fondue/pull/2312) [`c3734b4`](https://github.com/Frontify/fondue/commit/c3734b44f581f66cc2735a20aa8bb11f4f72f0a8) Thanks [@syeo66](https://github.com/syeo66)! - fix(ColorPickerInput): fix disabled style
+
+### Patch Changes
+
+- [#2316](https://github.com/Frontify/fondue/pull/2316) [`966346e`](https://github.com/Frontify/fondue/commit/966346e60c12238475b677b3c04e3452c8b7161f) Thanks [@syeo66](https://github.com/syeo66)! - fix(Dropdown): add focus ring on keyboard navigation
+
+- Updated dependencies [[`5e7ec6c`](https://github.com/Frontify/fondue/commit/5e7ec6c997fe023ee425b51e6d1a4011bedb40af)]:
+    - @frontify/fondue-icons@0.16.0
+
 ## 17.1.0
 
 ### Minor Changes
