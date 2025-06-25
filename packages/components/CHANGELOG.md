@@ -1,5 +1,19 @@
 # @frontify/fondue-components
 
+## 18.1.0
+
+### Minor Changes
+
+- [#2323](https://github.com/Frontify/fondue/pull/2323) [`d2f4b3e`](https://github.com/Frontify/fondue/commit/d2f4b3eb66d5ca1230b2eb4cdfca343e48d36595) Thanks [@syeo66](https://github.com/syeo66)! - fix(Tabs): changing trigger content did not rerender
+
+### Patch Changes
+
+- [#2320](https://github.com/Frontify/fondue/pull/2320) [`5bff71b`](https://github.com/Frontify/fondue/commit/5bff71b1950c80c981f7ec4c9a84f469d634a3f5) Thanks [@syeo66](https://github.com/syeo66)! - fix(Tabs): update trigger click indicator background
+
+- [#2322](https://github.com/Frontify/fondue/pull/2322) [`d3bf086`](https://github.com/Frontify/fondue/commit/d3bf086336b976a6c623d6058f75d5ce91eda0a7) Thanks [@syeo66](https://github.com/syeo66)! - chore(Tabs): change active tab indicators color
+
+- [#2324](https://github.com/Frontify/fondue/pull/2324) [`fab2547`](https://github.com/Frontify/fondue/commit/fab25476652ce84a756a120577e298baebf8d033) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: export Badge as it was forgotten
+
 ## 18.0.0
 
 ### Minor Changes
