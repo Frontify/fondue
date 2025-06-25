@@ -2,4 +2,4 @@
 "@frontify/fondue-components": patch
 ---
 
-chore(Tabs): add trigger click indicator aligned with [...]
+fix(Tabs): update trigger click indicator background
