@@ -39,6 +39,38 @@ test('should render with first tab active', async ({ mount }) => {
     await expect(component.getByTestId(ACTIVE_TAB_INDICATOR_TEST_ID)).toBeVisible();
 });
 
+test('should rerender when the trigger content changes', async ({ mount }) => {
+    const component = await mount(
+        <Tabs.Root data-test-id={TABS_ROOT_TEST_ID}>
+            <Tabs.Tab value="first">
+                <Tabs.Trigger data-test-id={FIRST_TAB_TRIGGER_TEST_ID}>First Tab</Tabs.Trigger>
+                <Tabs.Content data-test-id={FIRST_TAB_CONTENT_TEST_ID}>First Content</Tabs.Content>
+            </Tabs.Tab>
+            <Tabs.Tab value="second">
+                <Tabs.Trigger data-test-id={SECOND_TAB_TRIGGER_TEST_ID}>Second Tab</Tabs.Trigger>
+                <Tabs.Content data-test-id={SECOND_TAB_CONTENT_TEST_ID}>Second Content</Tabs.Content>
+            </Tabs.Tab>
+        </Tabs.Root>,
+    );
+    await expect(component.getByText('First Tab')).toBeVisible();
+    await expect(component.getByText('Swapped Tab')).not.toBeVisible();
+
+    await component.update(
+        <Tabs.Root data-test-id={TABS_ROOT_TEST_ID}>
+            <Tabs.Tab value="first">
+                <Tabs.Trigger data-test-id={FIRST_TAB_TRIGGER_TEST_ID}>Swapped Tab</Tabs.Trigger>
+                <Tabs.Content data-test-id={FIRST_TAB_CONTENT_TEST_ID}>First Content</Tabs.Content>
+            </Tabs.Tab>
+            <Tabs.Tab value="second">
+                <Tabs.Trigger data-test-id={SECOND_TAB_TRIGGER_TEST_ID}>Second Tab</Tabs.Trigger>
+                <Tabs.Content data-test-id={SECOND_TAB_CONTENT_TEST_ID}>Second Content</Tabs.Content>
+            </Tabs.Tab>
+        </Tabs.Root>,
+    );
+    await expect(component.getByText('First Tab')).not.toBeVisible();
+    await expect(component.getByText('Swapped Tab')).toBeVisible();
+});
+
 test('should render with default tab active', async ({ mount }) => {
     const component = await mount(
         <Tabs.Root data-test-id={TABS_ROOT_TEST_ID} defaultActiveTab="second">

@@ -180,6 +180,7 @@ export const TabsTrigger = ({ children, ...props }: TabsTriggerProps, ref: Forwa
     const { addTrigger } = useContext(TabTriggerContext);
 
     const localRef = useRef<HTMLButtonElement>(null);
+    const previousElement = useRef<ReactNode>();
 
     useEffect(() => {
         addTrigger({
@@ -188,9 +189,11 @@ export const TabsTrigger = ({ children, ...props }: TabsTriggerProps, ref: Forwa
             disabled,
             props,
             element: children,
+            previousElement: previousElement.current,
         });
+        previousElement.current = children;
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [children]);
 
     return null;
 };
