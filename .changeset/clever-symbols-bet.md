@@ -2,4 +2,4 @@
 "@frontify/fondue-components": patch
 ---
 
-refactor(Tabs): update trigger click indicator background
+fix(Tabs): update trigger click indicator background
