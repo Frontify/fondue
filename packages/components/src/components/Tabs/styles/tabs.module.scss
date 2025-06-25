@@ -54,7 +54,7 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
         height: 3px;
         border-top-left-radius: var(--radius-x-large);
         border-top-right-radius: var(--radius-x-large);
-        background-color: var(--box-selected-strong-color);
+        background-color: var(--box-neutral-strong-color);
         bottom: 0;
         left: 0;
         width: 0;
