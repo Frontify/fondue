@@ -16,6 +16,7 @@ export enum DividerHeight {
 }
 
 export type DividerProps = {
+    as?: 'div' | 'li';
     style?: DividerStyle;
     height?: DividerHeight | string;
     color?: string;
@@ -36,6 +37,7 @@ const DIVIDER_TEST_ID = 'fondue-divider';
  * @deprecated Please use updated Divider component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#divider the migration guide}.
  */
 export const Divider = ({
+    as = 'div',
     vertical = false,
     style = DividerStyle.Solid,
     height = DividerHeight.Small,
@@ -43,10 +45,12 @@ export const Divider = ({
     color = '#CCC',
 }: DividerProps): ReactElement => {
     const verticalClassNames = `tw-w-px tw-h-full tw-border-r tw-m-0 ${styleMap[style]}`;
+    const Component = as;
+
     return (
         <>
             {vertical && (
-                <div
+                <Component
                     aria-hidden="true"
                     className="tw-flex tw-self-stretch tw-mt-0 tw-mb-0 tw-items-center tw-justify-center"
                     data-test-id={dataTestId}
@@ -60,10 +64,10 @@ export const Divider = ({
                         style={{ borderRightColor: color }}
                         data-test-id="fondue-divider-line"
                     ></div>
-                </div>
+                </Component>
             )}
             {!vertical && (
-                <div
+                <Component
                     aria-hidden="true"
                     className="tw-flex tw-items-center tw-w-full"
                     style={{ height }}
@@ -74,7 +78,7 @@ export const Divider = ({
                         style={{ borderTopColor: color }}
                         data-test-id="fondue-divider-line"
                     />
-                </div>
+                </Component>
             )}
         </>
     );
