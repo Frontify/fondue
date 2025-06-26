@@ -1,5 +1,11 @@
 # @frontify/fondue-components
 
+## 18.2.0
+
+### Minor Changes
+
+- [#2327](https://github.com/Frontify/fondue/pull/2327) [`2ddca7c`](https://github.com/Frontify/fondue/commit/2ddca7cd1bfc23ef3e2d66c134ee3de8bd1a1fa1) Thanks [@joelharkes](https://github.com/joelharkes)! - fix(Flyout): revert making overlay clickable
+
 ## 18.1.0
 
 ### Minor Changes
