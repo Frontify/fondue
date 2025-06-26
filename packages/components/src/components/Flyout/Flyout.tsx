@@ -146,7 +146,7 @@ export const FlyoutContent = (
     return (
         <RadixPopover.Portal>
             <ThemeProvider theme={theme}>
-                <div className={styles.overlay} />
+                <div data-test-id="fondue-flyout-overlay" className={styles.overlay} />
                 <RadixPopover.Content
                     style={
                         {
