@@ -11,10 +11,10 @@ export const lineStyles = sv({
             noline: 'tw-border-none',
         },
         color: {
-            weak: 'tw-border-line-weak',
-            default: 'tw-border-line',
+            weak: 'tw-border-line-subtle',
+            default: 'tw-border-line-mid',
             strong: 'tw-border-line-strong',
-            'x-strong': 'tw-border-line-x-strong',
+            'x-strong': 'tw-border-line-strong',
         },
         direction: {
             horizontal: 'tw-border-t tw-w-full',
