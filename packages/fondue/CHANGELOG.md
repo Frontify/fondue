@@ -1,5 +1,16 @@
 # @frontify/fondue
 
+## 12.10.0
+
+### Minor Changes
+
+- [#2325](https://github.com/Frontify/fondue/pull/2325) [`0daf49f`](https://github.com/Frontify/fondue/commit/0daf49f362db53089f7be3debbc9bfbc946f0181) Thanks [@syeo66](https://github.com/syeo66)! - feat(Divider): add as prop to define the element type to be used
+
+### Patch Changes
+
+- Updated dependencies [[`2ddca7c`](https://github.com/Frontify/fondue/commit/2ddca7cd1bfc23ef3e2d66c134ee3de8bd1a1fa1)]:
+    - @frontify/fondue-components@18.2.0
+
 ## 12.9.8
 
 ### Patch Changes
