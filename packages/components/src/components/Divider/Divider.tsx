@@ -33,6 +33,11 @@ export type DividerProps = {
      * @default "horizontal"
      */
     direction?: DividerDirection;
+    /**
+     * The html element to be used
+     * @default "div"
+     */
+    as?: 'div' | 'li';
     'data-test-id'?: string;
     className?: string;
 };
@@ -44,10 +49,13 @@ export const Divider = forwardRef<HTMLDivElement, DividerProps>(
             direction = 'horizontal',
             className,
             variant,
+            as = 'div',
             ...props
         }: DividerProps,
         ref: ForwardedRef<HTMLDivElement | null>,
     ): ReactElement => {
+        const Component = as;
+
         return (
             <Separator.Root
                 ref={ref}
@@ -60,7 +68,10 @@ export const Divider = forwardRef<HTMLDivElement, DividerProps>(
                     className,
                 )}
                 data-test-id={dataTestId}
-            />
+                asChild
+            >
+                <Component />
+            </Separator.Root>
         );
     },
 );
