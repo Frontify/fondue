@@ -73,7 +73,7 @@ export const SelectItemGroup = (
         <div data-test-id={dataTestId} className={styles.group} ref={forwardedRef} key={groupId}>
             {heading ? (
                 <div className={styles.groupHeading}>
-                    <span aria-label={heading}>{heading}</span>
+                    <span>{heading}</span>
                 </div>
             ) : null}
             {children}
