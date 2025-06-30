@@ -199,6 +199,30 @@ export const ItemGroups: Story = {
     },
 };
 
+export const ItemGroupsWithHeaders: Story = {
+    render: (args) => {
+        return (
+            <Select {...args}>
+                <Select.Slot name="menu">
+                    <Select.Item value="test1">Test1</Select.Item>
+                    <Select.Item value="test2">Test2</Select.Item>
+                    <Select.Group groupId="Group 1" heading="Group 1">
+                        <Select.Item value="test3">Test3</Select.Item>
+                        <Select.Item value="test4">Test4</Select.Item>
+                        <Select.Item value="test5">Test5</Select.Item>
+                    </Select.Group>
+                    <Select.Group groupId="Group 2" heading="Group 2">
+                        <Select.Item value="test6">Test6</Select.Item>
+                        <Select.Item value="test7">Test7</Select.Item>
+                        <Select.Item value="test8">Test8</Select.Item>
+                    </Select.Group>
+                    <Select.Item value="test9">Test9</Select.Item>
+                </Select.Slot>
+            </Select>
+        );
+    },
+};
+
 export const OnlyItemGroups: Story = {
     render: (args) => {
         return (
