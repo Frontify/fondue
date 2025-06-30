@@ -12,15 +12,15 @@ import {
     type ReactNode,
 } from 'react';
 
+import { useSyncRefs } from '#/hooks/useSyncRefs';
+import { useTextTruncation } from '#/hooks/useTextTruncation';
+import { type CommonAriaAttrs } from '#/utilities/types';
+
 import { Box } from '../Box/Box';
 import { LoadingCircle } from '../LoadingCircle/LoadingCircle';
 
 import styles from './styles/table.module.scss';
 import { handleKeyDown } from './utils';
-
-import { useSyncRefs } from '#/hooks/useSyncRefs';
-import { useTextTruncation } from '#/hooks/useTextTruncation';
-import { type CommonAriaAttrs } from '#/utilities/types';
 
 type TableRootProps = {
     /**
@@ -328,7 +328,7 @@ export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(
             }
 
             const closestTd = event?.target instanceof Element && event.target.closest('td');
-            if (closestTd && closestTd.querySelector('button, a, [role="button"], [role="link"]')) {
+            if (closestTd?.querySelector('button, a, [role="button"], [role="link"]')) {
                 return;
             }
 
