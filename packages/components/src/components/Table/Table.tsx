@@ -7,19 +7,20 @@ import {
     useRef,
     type CSSProperties,
     type KeyboardEvent,
+    type MouseEvent,
     type ReactElement,
     type ReactNode,
 } from 'react';
-
-import { useSyncRefs } from '#/hooks/useSyncRefs';
-import { useTextTruncation } from '#/hooks/useTextTruncation';
-import { type CommonAriaAttrs } from '#/utilities/types';
 
 import { Box } from '../Box/Box';
 import { LoadingCircle } from '../LoadingCircle/LoadingCircle';
 
 import styles from './styles/table.module.scss';
 import { handleKeyDown } from './utils';
+
+import { useSyncRefs } from '#/hooks/useSyncRefs';
+import { useTextTruncation } from '#/hooks/useTextTruncation';
+import { type CommonAriaAttrs } from '#/utilities/types';
 
 type TableRootProps = {
     /**
@@ -321,8 +322,13 @@ export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(
     ) => {
         const isInteractive = onClick !== undefined && !disabled;
 
-        const handleClick = () => {
+        const handleClick = (event?: MouseEvent<HTMLTableRowElement>) => {
             if (disabled) {
+                return;
+            }
+
+            const closestTd = event?.target instanceof Element && event.target.closest('td');
+            if (closestTd && closestTd.querySelector('button, a, [role="button"], [role="link"]')) {
                 return;
             }
 
