@@ -56,17 +56,26 @@ export type SelectItemGroupProps = {
      */
     groupId: string;
     /**
+     * The groups heading
+     */
+    heading?: string;
+    /**
      * The data test id of the select item group.
      */
     'data-test-id'?: string;
 };
 
 export const SelectItemGroup = (
-    { children, groupId, 'data-test-id': dataTestId = 'fondue-select-item-group' }: SelectItemGroupProps,
+    { children, groupId, heading, 'data-test-id': dataTestId = 'fondue-select-item-group' }: SelectItemGroupProps,
     forwardedRef?: ForwardedRef<HTMLDivElement>,
 ) => {
     return (
         <div data-test-id={dataTestId} className={styles.group} ref={forwardedRef} key={groupId}>
+            {heading ? (
+                <div className={styles.groupHeading}>
+                    <span>{heading}</span>
+                </div>
+            ) : null}
             {children}
         </div>
     );

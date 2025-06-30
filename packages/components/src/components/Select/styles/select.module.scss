@@ -28,6 +28,7 @@
     border-radius: var(--radius);
     border: var(--line-width) solid var(--line-color-strong);
     cursor: pointer;
+
     & {
         @include focusStyle.focus-outline;
         @include transitions.transition-colors;
@@ -124,7 +125,8 @@
     &:disabled {
         color: var(--text-color-disabled);
     }
-    &:disabled ~ .slot {
+
+    &:disabled~.slot {
         color: var(--text-color-disabled);
     }
 }
@@ -246,6 +248,7 @@
 
     & {
         @include shadow.shadow-lg;
+
         @include mediaQuery.sm {
             max-width: 500px;
         }
@@ -337,7 +340,7 @@
 }
 
 .group {
-    .item ~ & {
+    .item+& {
         border-top: var(--line-width) solid var(--line-color-strong);
         margin-bottom: 0.5rem;
     }
@@ -349,4 +352,15 @@
     &:has(+ .item, + .group) {
         border-bottom: var(--line-width) solid var(--line-color-strong);
     }
+}
+
+.groupHeading {
+    text-transform: uppercase;
+    line-height: sizeToken.get(4);
+    color: var(--text-color-x-weak);
+    font-size: var(--body-size-x-small);
+    font-weight: var(--body-weight-strong-number);
+    padding: sizeToken.get(2) sizeToken.get(5) 0;
+    margin-top: sizeToken.get(1);
+    letter-spacing: 0.8px;
 }
