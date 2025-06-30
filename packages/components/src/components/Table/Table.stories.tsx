@@ -467,6 +467,7 @@ export const Interactive: Story = {
                     <Table.HeaderCell>Name</Table.HeaderCell>
                     <Table.HeaderCell>Invited by</Table.HeaderCell>
                     <Table.HeaderCell>Last seen</Table.HeaderCell>
+                    <Table.HeaderCell>Action</Table.HeaderCell>
                 </Table.Row>
             </Table.Header>
             <Table.Body>
@@ -482,6 +483,11 @@ export const Interactive: Story = {
                         </Table.RowCell>
                         <Table.RowCell>{user.invited}</Table.RowCell>
                         <Table.RowCell>{user.lastSeen}</Table.RowCell>
+                        <Table.RowCell>
+                            <Button onPress={() => alert('Button pressed — this does NOT trigger row click')}>
+                                Press me
+                            </Button>
+                        </Table.RowCell>
                     </Table.Row>
                 ))}
             </Table.Body>
