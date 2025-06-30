@@ -255,10 +255,6 @@ export const WithBadge: Story = {
 };
 
 export const WithNoPadding: Story = {
-    args: {
-        padding: 'comfortable',
-    },
-
     render: (args) => (
         <Tabs.Root padding="none" {...args}>
             <Tabs.Tab value="first">
