@@ -327,8 +327,8 @@ export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(
                 return;
             }
 
-            const closestTd = event?.target instanceof Element && event.target.closest('td');
-            if (closestTd?.querySelector('button, a, [role="button"], [role="link"]')) {
+            const clickedCell = event?.target instanceof Element ? event.target.closest('td') : null;
+            if (clickedCell?.querySelector('button, a, [role="button"], [role="link"]')) {
                 return;
             }
 
