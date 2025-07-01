@@ -485,7 +485,7 @@ export const Interactive: Story = {
                         <Table.RowCell>{user.lastSeen}</Table.RowCell>
                         <Table.RowCell>
                             <Button onPress={() => alert('Button pressed — this does NOT trigger row click')}>
-                                Press me
+                                <span>Press me</span>
                             </Button>
                         </Table.RowCell>
                     </Table.Row>
