@@ -38,6 +38,12 @@ export type DividerProps = {
      * @default "div"
      */
     as?: 'div' | 'li';
+    /**
+     * When `true`, signifies that it is purely visual, carries no semantic
+     * meaning, and ensures it is not present in the accessibility tree.
+     * @default false
+     */
+    decorative?: boolean;
     'data-test-id'?: string;
     className?: string;
 };
@@ -50,6 +56,7 @@ export const Divider = forwardRef<HTMLDivElement, DividerProps>(
             className,
             variant,
             as = 'div',
+            decorative,
             ...props
         }: DividerProps,
         ref: ForwardedRef<HTMLDivElement | null>,
@@ -68,6 +75,7 @@ export const Divider = forwardRef<HTMLDivElement, DividerProps>(
                     className,
                 )}
                 data-test-id={dataTestId}
+                decorative={decorative}
                 asChild
             >
                 <Component />
