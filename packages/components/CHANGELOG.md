@@ -1,5 +1,18 @@
 # @frontify/fondue-components
 
+## 19.0.0
+
+### Minor Changes
+
+- [#2328](https://github.com/Frontify/fondue/pull/2328) [`d25cfdb`](https://github.com/Frontify/fondue/commit/d25cfdb88260aaf4a6a7ae606825a4181fadcb24) Thanks [@syeo66](https://github.com/syeo66)! - feat(Divider): add as prop to new Divider (as it is in the legacy one now)
+
+- [#2331](https://github.com/Frontify/fondue/pull/2331) [`9f096bd`](https://github.com/Frontify/fondue/commit/9f096bd05fef48de5577547a31b4a5980bd1d2cd) Thanks [@syeo66](https://github.com/syeo66)! - feat(Select): add heading to select groups
+
+### Patch Changes
+
+- Updated dependencies [[`4d45cf0`](https://github.com/Frontify/fondue/commit/4d45cf0656a9409cf3adb69be71427748d88dbdb)]:
+    - @frontify/fondue-icons@0.17.0
+
 ## 18.2.0
 
 ### Minor Changes

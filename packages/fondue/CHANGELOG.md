@@ -1,5 +1,15 @@
 # @frontify/fondue
 
+## 12.10.1
+
+### Patch Changes
+
+- [#2332](https://github.com/Frontify/fondue/pull/2332) [`443e405`](https://github.com/Frontify/fondue/commit/443e405288ca5499c29843118561700af2e0e4c5) Thanks [@fulopdaniel](https://github.com/fulopdaniel)! - fix(RTE): adjust checkbox position to top
+
+- Updated dependencies [[`d25cfdb`](https://github.com/Frontify/fondue/commit/d25cfdb88260aaf4a6a7ae606825a4181fadcb24), [`9f096bd`](https://github.com/Frontify/fondue/commit/9f096bd05fef48de5577547a31b4a5980bd1d2cd), [`4d45cf0`](https://github.com/Frontify/fondue/commit/4d45cf0656a9409cf3adb69be71427748d88dbdb)]:
+    - @frontify/fondue-components@19.0.0
+    - @frontify/fondue-icons@0.17.0
+
 ## 12.10.0
 
 ### Minor Changes
