@@ -7,6 +7,7 @@ import {
     useRef,
     type CSSProperties,
     type KeyboardEvent,
+    type MouseEvent,
     type ReactElement,
     type ReactNode,
 } from 'react';
@@ -19,7 +20,7 @@ import { Box } from '../Box/Box';
 import { LoadingCircle } from '../LoadingCircle/LoadingCircle';
 
 import styles from './styles/table.module.scss';
-import { handleKeyDown } from './utils';
+import { handleKeyDown, isEventFromInteractiveElement } from './utils';
 
 type TableRootProps = {
     /**
@@ -321,12 +322,12 @@ export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(
     ) => {
         const isInteractive = onClick !== undefined && !disabled;
 
-        const handleClick = () => {
+        const handleClick = (event?: MouseEvent) => {
             if (disabled) {
                 return;
             }
 
-            if (onClick) {
+            if (onClick && !isEventFromInteractiveElement(event)) {
                 onClick(selected);
             }
         };

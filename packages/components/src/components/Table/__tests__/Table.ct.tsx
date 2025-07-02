@@ -185,14 +185,29 @@ test('should handle all HeaderCell configurations', async ({ mount }) => {
 
 test('should handle all row states and interactions', async ({ mount }) => {
     const onClick = sinon.spy();
+    const onButtonClick = sinon.spy();
     const component = await mount(
         <Table.Root aria-label="Table">
             <Table.Body>
                 <Table.Row onClick={onClick} disabled={true} aria-label="Test Row">
                     <Table.RowCell>Test</Table.RowCell>
+                    <Table.RowCell>Test</Table.RowCell>
                 </Table.Row>
                 <Table.Row onClick={onClick} selected={true}>
                     <Table.RowCell>Test</Table.RowCell>
+                    <Table.RowCell>Test</Table.RowCell>
+                </Table.Row>
+                <Table.Row onClick={onClick}>
+                    <Table.RowCell>Test</Table.RowCell>
+                    <Table.RowCell>
+                        <button onClick={onButtonClick}>Test</button>
+                    </Table.RowCell>
+                </Table.Row>
+                <Table.Row onClick={onClick} disabled={true}>
+                    <Table.RowCell>Test</Table.RowCell>
+                    <Table.RowCell>
+                        <button onClick={onButtonClick}>Test</button>
+                    </Table.RowCell>
                 </Table.Row>
             </Table.Body>
         </Table.Root>,
@@ -207,6 +222,22 @@ test('should handle all row states and interactions', async ({ mount }) => {
     await expect(secondRow).toHaveAttribute('role', 'button');
     await secondRow.click();
     sinon.assert.calledOnce(onClick);
+
+    const thirdRow = component.locator('tr').nth(2);
+    const firstCellOfThirdRow = thirdRow.locator('td').nth(0);
+    const button = thirdRow.locator('button');
+
+    // Clicking the first cell of the third row should trigger the row's onClick again,
+    // but should NOT trigger the button's onClick
+    await firstCellOfThirdRow.click();
+    sinon.assert.calledTwice(onClick);
+    sinon.assert.notCalled(onButtonClick);
+
+    // Clicking the button inside the third row should trigger the button's onClick,
+    // but should NOT trigger the row's onClick again
+    await button.click();
+    sinon.assert.calledOnce(onButtonClick);
+    sinon.assert.calledTwice(onClick);
 });
 
 test('should handle all cell configurations', async ({ mount }) => {
