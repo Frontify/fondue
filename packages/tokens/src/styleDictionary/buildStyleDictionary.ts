@@ -219,6 +219,67 @@ export const buildStyleDictionary = (config: Config) => {
                     })),
                 ],
             },
+            objects: {
+                buildPath: '.tmp/objects/',
+                transforms: [
+                    'number/roundToTwoDecimals',
+                    'fondue/transformFontFamily',
+                    'figma/colorToScaledRgbaString',
+                    'figma/shadowToMatrix',
+                    'name/kebabWithoutThemeName',
+                    'tailwind/nameToCSSVariable',
+                    'value/convertPxToRem',
+                    'value/convertValueToPx',
+                ],
+                files: [
+                    ...config.themes.map((theme) => ({
+                        filter: (token: Token) => {
+                            if (token.attributes?.type === 'theme') {
+                                return token.attributes.theme === theme;
+                            }
+                            return false;
+                        },
+                        destination: `${theme}.json`,
+                        options: {
+                            showFileHeader: false,
+                            stripMeta: {
+                                strip: ['attributes', 'filePath', 'isSource', 'original', 'path'],
+                            },
+                        },
+                        format: 'json',
+                    })),
+                    {
+                        filter: (token: Token) => {
+                            return (
+                                token.attributes?.type !== 'theme' &&
+                                token.attributes?.type !== 'utility' &&
+                                token.type !== 'color'
+                            );
+                        },
+                        destination: 'shared.json',
+                        options: {
+                            showFileHeader: false,
+                            stripMeta: {
+                                strip: ['attributes', 'filePath', 'isSource', 'original', 'path'],
+                            },
+                        },
+                        format: 'json',
+                    },
+                    {
+                        filter: (token: Token) => {
+                            return token.attributes?.type === 'utility' && token.type !== 'color';
+                        },
+                        destination: 'utilities.json',
+                        options: {
+                            showFileHeader: false,
+                            stripMeta: {
+                                strip: ['attributes', 'filePath', 'isSource', 'original', 'path'],
+                            },
+                        },
+                        format: 'json',
+                    },
+                ],
+            },
 
             tailwind: {
                 buildPath: 'dist/tailwind/',

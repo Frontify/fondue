@@ -31,6 +31,7 @@ type FigmaVariable = {
     description: string;
     hiddenFromPublishing: boolean;
     valuesByMode: { [key: string]: FigmaVariableValue };
+    deletedButReferenced?: boolean;
 };
 
 export type FigmaVariableAliasValue = {

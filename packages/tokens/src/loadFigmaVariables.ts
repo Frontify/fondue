@@ -95,15 +95,20 @@ const getComputedVariables = (
         return acc;
     }, {});
 
+    Bun.write(new URL('../.tmp/tokens/variables.json', import.meta.url), JSON.stringify(variables, null, 2));
+
     const assembledVariables = Object.entries(variables).reduce<AssembledVariable[]>((acc, [variableId, variable]) => {
         for (const modeId of Object.keys(variable.valuesByMode)) {
             for (const { collection, path, tokenType } of selectedCollections) {
                 if (collection === variable.variableCollectionId) {
                     const tokenPath = path ? variable.name.split('/') : [];
                     if (
-                        !path ||
-                        (path &&
-                            path.every((segment, index) => tokenPath[index]?.toLowerCase() === segment.toLowerCase()))
+                        !variable.deletedButReferenced &&
+                        (!path ||
+                            (path &&
+                                path.every(
+                                    (segment, index) => tokenPath[index]?.toLowerCase() === segment.toLowerCase(),
+                                )))
                     ) {
                         acc.push({
                             name: variable.name.toLowerCase(),
@@ -173,6 +178,7 @@ const formatCollections = (variables: AssembledVariable[]) => {
 export const loadFigmaVariables = (config: Config) => {
     return fetchFigmaVariables(config.figmaFileKey).then((figmaData) => {
         const computedVariables = getComputedVariables(figmaData, config.tokenTypes);
+
         const data = formatCollections(computedVariables);
         Bun.write(new URL('../.tmp/tokens/all-tokens.json', import.meta.url), JSON.stringify(data, null, 2))
             .then(() => {

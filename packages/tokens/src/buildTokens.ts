@@ -8,6 +8,10 @@ import { loadFigmaVariables } from './loadFigmaVariables';
 import { buildStyleDictionary } from './styleDictionary/buildStyleDictionary';
 import { type Config } from './types';
 
+type ThemeObject = {
+    [key: string]: ThemeObject;
+};
+
 const buildTokens = async () => {
     const config = (await Bun.file('config.json').json()) as Config;
 
@@ -31,6 +35,38 @@ const buildTokens = async () => {
         }),
     ]);
 
+    const combinedThemes: Promise<ThemeObject> = config.themes.reduce(async (accPromise, themeName) => {
+        const acc = await accPromise;
+        const themeObject = (await Bun.file(
+            new URL(`../.tmp/objects/${themeName}.json`, import.meta.url),
+        ).json()) as Record<string, ThemeObject>;
+        const theme = themeObject[themeName];
+        if (!theme) {
+            return acc;
+        }
+        return mergeObjects(acc, theme, themeName);
+    }, Promise.resolve({}));
+
+    const utilities: Promise<ThemeObject> = Bun.file(new URL('../.tmp/objects/utilities.json', import.meta.url))
+        .json()
+        .then((utilitiesObject: Record<string, ThemeObject>) => {
+            return utilitiesObject.default || {};
+        });
+
+    const shared: Promise<ThemeObject> = Bun.file(new URL('../.tmp/objects/shared.json', import.meta.url))
+        .json()
+        .then((sharedObject: Record<string, ThemeObject>) => {
+            return sharedObject.default || {};
+        });
+
+    const availableTokens: ThemeObject = {
+        ...(await combinedThemes),
+        shared: await shared,
+        utilities: await utilities,
+    };
+
+    await Bun.write(new URL('../dist/json/tokens.json', import.meta.url), JSON.stringify(availableTokens, null, 2));
+
     await Bun.write(new URL('../dist/themes/themes.module.css', import.meta.url), themeStyles);
     await rm(new URL('../.tmp', import.meta.url), { recursive: true, force: true });
 
@@ -43,3 +79,22 @@ export default styles;`;
 buildTokens().catch((error) => {
     console.error(error);
 });
+
+const mergeObjects = (acc: ThemeObject, theme: ThemeObject, themeName: string): ThemeObject => {
+    for (const [key, value] of Object.entries(theme)) {
+        if (typeof value === 'object') {
+            if (acc[key] && typeof acc[key] === 'object') {
+                acc[key] = mergeObjects(acc[key], value, themeName);
+            } else {
+                acc[key] = mergeObjects({}, value, themeName);
+            }
+        } else {
+            if (acc[key]) {
+                acc[key] = value;
+            } else {
+                acc[key] = value;
+            }
+        }
+    }
+    return acc;
+};

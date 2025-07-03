@@ -148,8 +148,6 @@
   --color-warning-default: var(--color-warning-60);
   --color-warning-hover: var(--color-warning-70);
   --color-warning-on-warning: var(--color-warning-00);
-  --line-line-mid: var(--color-neutral-40);
-  --line-line-subtle: var(--color-neutral-25);
   --shadow-big: 0px, 25px, 80px, 0px, var(--color-shadow-default);
   --shadow-default: 0px, 3px, 10px, 0px, var(--color-shadow-default);
   --shadow-mid: 0px, 4px, 24px, 0px, var(--color-shadow-default);
@@ -171,7 +169,7 @@
   --typography-font-size-xx-small: 0.6875rem;
   --typography-font-weight-bold: 700;
   --typography-font-weight-medium: 500;
-  --typography-font-weight-regular: Regular;
+  --typography-font-weight-regular: 400;
   --typography-letter-spacing-default: 0px;
   --typography-letter-spacing-wide: 0.88px;
   --typography-line-height-extra-loose: 1.75rem;
