@@ -1,5 +1,13 @@
 # @frontify/fondue-components
 
+## 19.1.0
+
+### Minor Changes
+
+- [#2334](https://github.com/Frontify/fondue/pull/2334) [`657b90b`](https://github.com/Frontify/fondue/commit/657b90b7e95d3df663d09408a75711bf5359a4ca) Thanks [@mbgspcii](https://github.com/mbgspcii)! - fix: prevent button and link clicks inside <Table.Row> from triggering row click
+
+- [#2335](https://github.com/Frontify/fondue/pull/2335) [`f74b79d`](https://github.com/Frontify/fondue/commit/f74b79d07e0c53acba000c72f050c6bf23486680) Thanks [@syeo66](https://github.com/syeo66)! - chore(Divider): Add decorative flag
+
 ## 19.0.0
 
 ### Minor Changes
