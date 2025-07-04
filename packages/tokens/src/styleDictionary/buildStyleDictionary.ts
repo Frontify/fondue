@@ -34,7 +34,7 @@ StyleDictionary.registerTransform({
     filter: (token: Token) => token.type === 'shadow',
     transform: (token: Token) => {
         const properties = token.value as BoxShadowValue;
-        return `${properties['position-x']}px, ${properties['position-y']}px, ${properties.blur}px, ${properties.spread}px${properties.color ? `, var(--${`${properties.color}`.replace('ref_', '').replaceAll('/', '-')})` : ''}`;
+        return `${properties['position-x']}px ${properties['position-y']}px ${properties.blur}px ${properties.spread}px${properties.color ? ` var(--${`${properties.color}`.replace('ref_', '').replaceAll('/', '-')})` : ''}`;
     },
 });
 
@@ -243,7 +243,7 @@ export const buildStyleDictionary = (config: Config) => {
                         options: {
                             showFileHeader: false,
                             stripMeta: {
-                                strip: ['attributes', 'filePath', 'isSource', 'original', 'path'],
+                                strip: ['attributes', 'filePath', 'isSource', 'original'],
                             },
                         },
                         format: 'json',
@@ -260,7 +260,7 @@ export const buildStyleDictionary = (config: Config) => {
                         options: {
                             showFileHeader: false,
                             stripMeta: {
-                                strip: ['attributes', 'filePath', 'isSource', 'original', 'path'],
+                                strip: ['attributes', 'filePath', 'isSource', 'original'],
                             },
                         },
                         format: 'json',

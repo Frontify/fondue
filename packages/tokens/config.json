@@ -2,6 +2,7 @@
     "figmaFileKey": "YusQBIqf7U9QnI8xmTLlqf",
     "defaultTheme": "light",
     "themes": ["dark", "light"],
+    "excludeTokens": [".*Figma Deep Selection Hack"],
     "tokenTypes": {
         "theme": [
             {

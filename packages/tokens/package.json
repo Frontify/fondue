@@ -26,6 +26,10 @@
             "types": "./dist/themes/themes.module.css.d.ts",
             "import": "./dist/themes/themes.module.css"
         },
+        "./json": "./dist/json/tokens.json",
+        "./json/colors": "./dist/json/colors.json",
+        "./json/semantic": "./dist/json/semantic.json",
+        "./json/utilities": "./dist/json/utilities.json",
         "./legacy/tokens": "./dist/legacy/deprecatedBaseTokens.css",
         "./legacy/tailwind": "./dist/legacy/deprecatedTailwindConfig.ts"
     },

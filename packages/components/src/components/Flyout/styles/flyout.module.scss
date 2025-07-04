@@ -8,7 +8,7 @@
 .root {
     display: flex;
     flex-direction: column;
-    background-color: var(--base-color);
+    background-color: var(--color-surface-default);
     border: var(--line-width) solid var(--line-color);
     width: 100%;
     overflow: auto;
@@ -38,7 +38,7 @@
             width: var(--flyout-width);
             max-width: var(--flyout-max-width);
             margin-top: 0;
-            background-color: var(--base-color);
+            background-color: var(--color-surface-default);
         }
     }
 

@@ -35,37 +35,39 @@ const buildTokens = async () => {
         }),
     ]);
 
-    const combinedThemes: Promise<ThemeObject> = config.themes.reduce(async (accPromise, themeName) => {
+    const colors: ThemeObject = await config.themes.reduce(async (accPromise, themeName) => {
         const acc = await accPromise;
-        const themeObject = (await Bun.file(
-            new URL(`../.tmp/objects/${themeName}.json`, import.meta.url),
-        ).json()) as Record<string, ThemeObject>;
-        const theme = themeObject[themeName];
+        const theme = (await Bun.file(new URL(`../.tmp/objects/${themeName}.json`, import.meta.url))
+            .json()
+            .then((sharedObject: Record<string, ThemeObject>) => {
+                return sharedObject[themeName]?.color || {};
+            })) as Record<string, ThemeObject>;
+
         if (!theme) {
             return acc;
         }
+
         return mergeObjects(acc, theme, themeName);
     }, Promise.resolve({}));
 
-    const utilities: Promise<ThemeObject> = Bun.file(new URL('../.tmp/objects/utilities.json', import.meta.url))
+    const utilities: ThemeObject = await Bun.file(new URL('../.tmp/objects/utilities.json', import.meta.url))
         .json()
-        .then((utilitiesObject: Record<string, ThemeObject>) => {
-            return utilitiesObject.default || {};
-        });
+        .then((utilitiesObject: Record<string, ThemeObject>) => utilitiesObject.default || {});
 
-    const shared: Promise<ThemeObject> = Bun.file(new URL('../.tmp/objects/shared.json', import.meta.url))
+    const shared: ThemeObject = await Bun.file(new URL('../.tmp/objects/shared.json', import.meta.url))
         .json()
-        .then((sharedObject: Record<string, ThemeObject>) => {
-            return sharedObject.default || {};
-        });
+        .then((sharedObject: Record<string, ThemeObject>) => sharedObject.default || {});
 
     const availableTokens: ThemeObject = {
-        ...(await combinedThemes),
-        shared: await shared,
-        utilities: await utilities,
+        colors,
+        shared,
+        utilities,
     };
 
     await Bun.write(new URL('../dist/json/tokens.json', import.meta.url), JSON.stringify(availableTokens, null, 2));
+    await Bun.write(new URL('../dist/json/colors.json', import.meta.url), JSON.stringify(colors, null, 2));
+    await Bun.write(new URL('../dist/json/semantic.json', import.meta.url), JSON.stringify(shared, null, 2));
+    await Bun.write(new URL('../dist/json/utilities.json', import.meta.url), JSON.stringify(utilities, null, 2));
 
     await Bun.write(new URL('../dist/themes/themes.module.css', import.meta.url), themeStyles);
     await rm(new URL('../.tmp', import.meta.url), { recursive: true, force: true });
@@ -82,7 +84,7 @@ buildTokens().catch((error) => {
 
 const mergeObjects = (acc: ThemeObject, theme: ThemeObject, themeName: string): ThemeObject => {
     for (const [key, value] of Object.entries(theme)) {
-        if (typeof value === 'object') {
+        if (typeof value === 'object' && key !== 'path') {
             if (acc[key] && typeof acc[key] === 'object') {
                 acc[key] = mergeObjects(acc[key], value, themeName);
             } else {

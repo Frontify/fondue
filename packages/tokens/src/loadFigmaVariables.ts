@@ -31,6 +31,7 @@ const fetchFigmaVariables = async (fileKey: Config['figmaFileKey']) => {
 const getComputedVariables = (
     { collections, variables }: { collections: FigmaVariableCollections; variables: FigmaVariables },
     config: Config['tokenTypes'],
+    excludeTokens: Config['excludeTokens'],
 ) => {
     const selectedCollections = Object.entries(config).reduce<
         { collection: string; path?: string[]; tokenType: string }[]
@@ -95,15 +96,15 @@ const getComputedVariables = (
         return acc;
     }, {});
 
-    Bun.write(new URL('../.tmp/tokens/variables.json', import.meta.url), JSON.stringify(variables, null, 2));
-
     const assembledVariables = Object.entries(variables).reduce<AssembledVariable[]>((acc, [variableId, variable]) => {
         for (const modeId of Object.keys(variable.valuesByMode)) {
             for (const { collection, path, tokenType } of selectedCollections) {
                 if (collection === variable.variableCollectionId) {
                     const tokenPath = path ? variable.name.split('/') : [];
+
                     if (
                         !variable.deletedButReferenced &&
+                        !excludeTokens.some((excludeToken) => variable.name.match(new RegExp(excludeToken, 'gm'))) &&
                         (!path ||
                             (path &&
                                 path.every(
@@ -177,7 +178,7 @@ const formatCollections = (variables: AssembledVariable[]) => {
 
 export const loadFigmaVariables = (config: Config) => {
     return fetchFigmaVariables(config.figmaFileKey).then((figmaData) => {
-        const computedVariables = getComputedVariables(figmaData, config.tokenTypes);
+        const computedVariables = getComputedVariables(figmaData, config.tokenTypes, config.excludeTokens);
 
         const data = formatCollections(computedVariables);
         Bun.write(new URL('../.tmp/tokens/all-tokens.json', import.meta.url), JSON.stringify(data, null, 2))

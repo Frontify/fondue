@@ -19,7 +19,7 @@
     box-sizing: border-box;
 
     color: var(--text-color);
-    background-color: var(--base-color);
+    background-color: var(--color-surface-default);
     border-radius: var(--radius);
     border: var(--line-width) solid var(--line-color-strong);
 
@@ -176,7 +176,7 @@
     pointer-events: none;
     align-items: center;
     justify-content: center;
-    background-color: var(--base-color);
+    background-color: var(--color-surface-default);
     border: var(--line-width) solid var(--line-color-strong);
     border-radius: 9999px;
 

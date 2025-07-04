@@ -23,7 +23,7 @@
     box-sizing: border-box;
 
     color: var(--text-color);
-    background-color: var(--base-color);
+    background-color: var(--color-surface-default);
 
     border-radius: var(--radius);
     border: var(--line-width) solid var(--line-color-strong);
@@ -232,7 +232,7 @@
 .menu {
     display: none;
     border-radius: var(--radius);
-    background-color: var(--base-color);
+    background-color: var(--color-surface-default);
     border: var(--line-width) solid var(--line-color);
     max-width: calc(100dvw - sizeToken.get(8));
     min-width: var(--radix-popover-trigger-width);

@@ -22,7 +22,7 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
     height: sizeToken.get(9);
     box-sizing: border-box;
 
-    background-color: var(--base-color-alt);
+    background-color: var(--color-surface-dim);
     border: var(--line-width) solid var(--line-color-strong);
     border-radius: var(--radius);
 
@@ -33,7 +33,7 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
     }
 
     &:disabled {
-        background-color: var(--base-color-alt);
+        background-color: var(--color-surface-dim);
     }
 }
 
@@ -158,7 +158,7 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
         position: absolute;
         inset: 0;
         border-radius: $radius-without-border;
-        background-color: var(--base-color);
+        background-color: var(--color-surface-default);
 
         box-shadow: 0 0 0 var(--line-width) var(--line-color-xx-strong);
     }
