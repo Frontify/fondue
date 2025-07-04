@@ -30,7 +30,7 @@ export const ThemeProvider = ({ children, theme = 'light', asChild = false }: Th
     const Comp = asChild ? Slot : 'div';
     return (
         <ThemeContext.Provider value={theme}>
-            <Comp className={styles[theme]}>{children}</Comp>
+            <Comp className={`${styles[theme]} fondue-theme-provider`}>{children}</Comp>
         </ThemeContext.Provider>
     );
 };

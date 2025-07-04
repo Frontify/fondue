@@ -11,7 +11,7 @@ export default {
     title: 'Tokens/Semantic Tokens',
 } as Meta;
 
-const getTokenPreview = ({ identifier, value, name, path }: Token) => {
+const getTokenPreview = ({ value, path }: Token) => {
     if (path.includes('font-family')) {
         return (
             <div

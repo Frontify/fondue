@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconClipboard, IconCode } from '@frontify/fondue-icons';
-import { type ReactNode } from 'react';
+import { useCallback, useState, type ReactNode } from 'react';
 
 import { Button } from '../Button/Button';
 import { Flex } from '../Flex/Flex';
@@ -35,20 +35,29 @@ const GroupLabel = ({ label, parentKeys }: { label: string; parentKeys: string[]
 };
 
 const PreviewCard = ({ identifier, value, name, path, getTokenPreview }: TokenPreview) => {
+    const [variableValue, setVariableValue] = useState<string | null>(null);
+    const cardRef = useCallback((node: HTMLDivElement | null) => {
+        if (node) {
+            const themeProvider = node.closest('.fondue-theme-provider') as HTMLElement;
+            const value = window.getComputedStyle(themeProvider).getPropertyValue(`--${name}`);
+            setVariableValue(value);
+        }
+    }, []);
     const codeIdentifier = `tw-*-${name.replace('color-', '').replace('-default', '')}`;
     return (
         <div
             className="tw-w-full tw-min-h-32 tw-p-2 tw-rounded-large tw-border-line-mid tw-border tw-border-solid tw-bg-surface tw-shadow tw-flex tw-flex-col tw-justify-between tw-gap-2"
             key={identifier}
+            ref={cardRef}
         >
-            <div className="tw-w-full tw-min-h-16 tw-rounded-medium tw-border-line-subtle tw-border tw-p-2">
+            <div className="tw-w-full tw-min-h-16 tw-rounded-medium tw-border-line-subtle tw-border">
                 {getTokenPreview({ identifier, value, name, path })}
             </div>
             <Flex direction="row" justify="space-between" align="flex-end" gap={1}>
-                <Flex direction="column">
+                <Flex direction="column" gap={1}>
                     <span className="tw-body-medium-x-strong tw-text-surface-on-surface">{identifier}</span>
-                    <span className="tw-body-x-small tw-text-surface-on-surface-variant">
-                        {name.replace('color-', '')}
+                    <span className="tw-body-x-small tw-text-surface-on-surface-variant tw-line-clamp-1">
+                        {variableValue}
                     </span>
                 </Flex>
                 <Flyout.Root>

@@ -11,8 +11,8 @@ export default {
     title: 'Tokens/Colors',
 } as Meta;
 
-const getTokenPreview = ({ identifier, value, name }: Token) => {
-    return <div style={{ backgroundColor: value }}></div>;
+const getTokenPreview = ({ value }: Token) => {
+    return <div style={{ backgroundColor: value }} className=" tw-w-full tw-h-full"></div>;
 };
 
 export const Default: StoryFn = () => {
