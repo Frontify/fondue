@@ -13,7 +13,7 @@
     $sticky-base: (
         position: sticky,
         z-index: 1,
-        background-color: var(--base-color),
+        background-color: var(--color-surface-default),
     );
 
     &[data-sticky='head'],
@@ -150,7 +150,7 @@
 
         &:not([data-disabled='true']) {
             &:not([data-selected='true']):hover {
-                background-color: var(--base-color-alt);
+                background-color: var(--color-surface-dim);
             }
         }
     }

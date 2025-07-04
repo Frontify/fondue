@@ -47,7 +47,7 @@ export const WithIcon: Story = {
     name: 'Icon Only',
     args: {
         aspect: 'square',
-        children: <IconIcon size={20} />,
+        children: <IconIcon size={16} />,
     },
 };
 
@@ -56,7 +56,7 @@ export const WithRoundedIcon: Story = {
     args: {
         rounding: 'full',
         title: 'Icon Only Rounded',
-        children: <IconIcon size={20} />,
+        children: <IconIcon size={16} />,
         aspect: 'square',
     },
 };
