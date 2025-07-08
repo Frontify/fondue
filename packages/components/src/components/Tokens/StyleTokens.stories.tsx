@@ -6,59 +6,65 @@ import { type Meta, type StoryFn } from '@storybook/react';
 import { Flex } from '../Flex/Flex';
 
 import { TokenList, type Token } from './TokenList';
+import { PreviewWrapper, useTokenPreview } from './components/PreviewWrapper';
 
 export default {
     title: 'Tokens/Semantic Tokens',
 } as Meta;
 
-const getTailwindIdentifier = ({ name, path }: Token) => {
+const getClassName = ({ name, path }: Token) => {
     if (path.includes('font-family')) {
-        return `tw-font-${name.replace('typography-font-family-', '')}`;
+        return `font-${name.replace('typography-font-family-', '')}`;
     }
 
     if (path.includes('font-weight')) {
-        return `tw-font-${name.replace('typography-font-weight-', '')}`;
+        return `font-${name.replace('typography-font-weight-', '')}`;
     }
 
     if (path.includes('font-size')) {
-        return `tw-text-${name.replace('typography-font-size-', '')}`;
+        return `text-${name.replace('typography-font-size-', '')}`;
     }
 
     if (path.includes('letter-spacing')) {
-        return `tw-tracking-${name.replace('typography-letter-spacing-', '')}`;
+        return `ttracking-${name.replace('typography-letter-spacing-', '')}`;
     }
 
     if (path.includes('line-height')) {
-        return `tw-leading-${name.replace('typography-line-height-', '')}`;
+        return `leading-${name.replace('typography-line-height-', '')}`;
+    }
+
+    if (path.includes('text-transform')) {
+        return `uppercase-${name.replace('typography-text-transform-', '')}`;
     }
 
     if (path.includes('spacing')) {
-        return `tw-*-${name.replace('spacing-', '')}`;
+        return `*-${name.replace('spacing-', '')}`;
     }
 
     if (path.includes('border-radius')) {
-        return `tw-rounded-${name.replace('border-radius-', '')}`;
+        return `rounded-${name.replace('border-radius-', '')}`;
     }
 
     if (path.includes('border-width')) {
-        return `tw-border-${name.replace('border-width-', '')}`;
+        return `border-${name.replace('border-width-', '')}`;
     }
 
     if (path.includes('shadow')) {
-        return `tw-shadow-${name.replace('shadow-', '')}`;
+        return `shadow-${name.replace('shadow-', '')}`;
     }
 
     return '';
 };
 
 const getTokenPreview = ({ value, path }: Token) => {
+    const { textContent } = useTokenPreview();
     if (path.includes('font-family')) {
         return (
             <div
                 style={{ fontFamily: value }}
-                className="tw-text-small tw-flex tw-items-center tw-justify-center tw-h-full"
+                className="tw-text-small tw-flex tw-items-center tw-justify-center tw-h-full tw-w-full"
             >
-                Hello World!
+                {textContent}
             </div>
         );
     }
@@ -67,41 +73,58 @@ const getTokenPreview = ({ value, path }: Token) => {
         return (
             <div
                 style={{ fontWeight: value }}
-                className="tw-text-small tw-flex tw-items-center tw-justify-center tw-h-full"
+                className="tw-text-small tw-flex tw-items-center tw-justify-center tw-h-full tw-w-full"
             >
-                Hello World!
+                {textContent}
             </div>
         );
     }
 
     if (path.includes('font-size')) {
         return (
-            <div style={{ fontSize: value }} className="tw-flex tw-items-center tw-justify-center tw-h-full">
-                Hello World!
+            <div style={{ fontSize: value }} className="tw-flex tw-items-center tw-justify-center tw-h-full tw-w-full">
+                {textContent}
             </div>
         );
     }
 
     if (path.includes('letter-spacing')) {
         return (
-            <div style={{ letterSpacing: value }} className="tw-flex tw-items-center tw-justify-center tw-h-full">
-                Hello World!
+            <div
+                style={{ letterSpacing: value }}
+                className="tw-flex tw-items-center tw-justify-center tw-h-full tw-w-full"
+            >
+                {textContent}
             </div>
         );
     }
 
     if (path.includes('line-height')) {
         return (
-            <div style={{ lineHeight: value }} className="tw-flex tw-items-center tw-justify-center tw-h-full">
-                Hello World! <br />
-                Hello World!
+            <div
+                style={{ lineHeight: value }}
+                className="tw-flex tw-items-center tw-justify-center tw-h-full tw-w-full"
+            >
+                {textContent} <br />
+                {textContent}
+            </div>
+        );
+    }
+
+    if (path.includes('text-transform')) {
+        return (
+            <div
+                style={{ textTransform: value as 'uppercase' | 'lowercase' | 'capitalize' }}
+                className="tw-flex tw-items-center tw-justify-center tw-h-full tw-w-full"
+            >
+                {textContent}
             </div>
         );
     }
 
     if (path.includes('spacing')) {
         return (
-            <div className="tw-flex tw-items-center tw-justify-center tw-h-full">
+            <div className="tw-flex tw-items-center tw-justify-center tw-h-full tw-w-full">
                 <div style={{ marginRight: value }} className="tw-h-10 tw-w-10 tw-bg-highlight "></div>
                 <div className="tw-h-10 tw-w-10 tw-bg-highlight "></div>
             </div>
@@ -110,7 +133,7 @@ const getTokenPreview = ({ value, path }: Token) => {
 
     if (path.includes('border-radius')) {
         return (
-            <div className="tw-flex tw-items-center tw-justify-center tw-h-full">
+            <div className="tw-flex tw-items-center tw-justify-center tw-h-full tw-w-full">
                 <div style={{ borderRadius: value }} className="tw-h-10 tw-w-10 tw-bg-highlight"></div>
             </div>
         );
@@ -118,7 +141,7 @@ const getTokenPreview = ({ value, path }: Token) => {
 
     if (path.includes('border-width')) {
         return (
-            <div className="tw-flex tw-items-center tw-justify-center tw-h-full">
+            <div className="tw-flex tw-items-center tw-justify-center tw-h-full tw-w-full">
                 <div style={{ borderWidth: value }} className="tw-h-10 tw-w-10 tw-border-highlight"></div>
             </div>
         );
@@ -126,7 +149,7 @@ const getTokenPreview = ({ value, path }: Token) => {
 
     if (path.includes('shadow')) {
         return (
-            <div className="tw-flex tw-items-center tw-justify-center tw-h-full">
+            <div className="tw-flex tw-items-center tw-justify-center tw-h-full tw-w-full">
                 <div className="tw-shadow-mid tw-shadow-highlight tw-h-10 tw-w-10 "></div>
             </div>
         );
@@ -137,15 +160,10 @@ const getTokenPreview = ({ value, path }: Token) => {
 
 export const Default: StoryFn = () => {
     return (
-        <Flex direction="column" gap={8}>
-            <h1 className="tw-heading-xx-large tw-text-surface-on-surface">Semantic Tokens</h1>
+        <PreviewWrapper header="Semantic Tokens">
             <Flex direction="column" gap={8}>
-                <TokenList
-                    tokens={semantic}
-                    getTokenPreview={getTokenPreview}
-                    getTailwindIdentifier={getTailwindIdentifier}
-                />
+                <TokenList tokens={semantic} getTokenPreview={getTokenPreview} getClassName={getClassName} />
             </Flex>
-        </Flex>
+        </PreviewWrapper>
     );
 };

@@ -6,30 +6,46 @@ import { type Meta, type StoryFn } from '@storybook/react';
 import { Flex } from '../Flex/Flex';
 
 import { UtilityList, type Utility } from './UtilityList';
+import { PreviewWrapper, useTokenPreview } from './components/PreviewWrapper';
 
 export default {
     title: 'Tokens/Utilities',
 } as Meta;
 
-const getUtilityPreview = ({ value }: Utility) => {
-    return <div style={{ backgroundColor: value }} className=" tw-w-full tw-h-full"></div>;
+const getUtilityPreview = ({ properties }: Utility) => {
+    const { textContent } = useTokenPreview();
+
+    const style = Object.entries(properties).reduce(
+        (acc, [key, value]) => {
+            acc[key.replaceAll(/-./g, (match) => match.slice(-1).toUpperCase())] = `var(--${value.name})`;
+            return acc;
+        },
+        {} as Record<string, string>,
+    );
+    return (
+        <div style={style} className="tw-text-surface-on-surface tw-flex tw-items-center tw-justify-center tw-h-full">
+            {textContent}
+        </div>
+    );
 };
 
-const getTailwindIdentifier = ({ name }: Utility) => {
-    return `tw-*-${name.replace('utility-', '').replace('-default', '')}`;
+const getClassName = ({ path }: Utility) => {
+    return `${path.join('-')}`;
 };
 
 export const Default: StoryFn = () => {
     return (
-        <Flex direction="column" gap={8}>
-            <h1 className="tw-heading-xx-large tw-text-surface-on-surface">Colors</h1>
+        <PreviewWrapper header="Utilities">
             <Flex direction="column" gap={8}>
-                <UtilityList
-                    utilities={utilities}
-                    getUtilityPreview={getUtilityPreview}
-                    getTailwindIdentifier={getTailwindIdentifier}
-                />
+                <h2 className="tw-heading-x-large tw-text-surface-on-surface">Text</h2>
+                <Flex direction="column" gap={8}>
+                    <UtilityList
+                        utilities={utilities.text}
+                        getUtilityPreview={getUtilityPreview}
+                        getClassName={getClassName}
+                    />
+                </Flex>
             </Flex>
-        </Flex>
+        </PreviewWrapper>
     );
 };

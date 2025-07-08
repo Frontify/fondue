@@ -6,6 +6,7 @@ import { type Meta, type StoryFn } from '@storybook/react';
 import { Flex } from '../Flex/Flex';
 
 import { TokenList, type Token } from './TokenList';
+import { PreviewWrapper } from './components/PreviewWrapper';
 
 export default {
     title: 'Tokens/Colors',
@@ -15,21 +16,16 @@ const getTokenPreview = ({ value }: Token) => {
     return <div style={{ backgroundColor: value }} className=" tw-w-full tw-h-full"></div>;
 };
 
-const getTailwindIdentifier = ({ name }: Token) => {
-    return `tw-*-${name.replace('color-', '').replace('-default', '')}`;
+const getClassName = ({ name }: Token) => {
+    return `*-${name.replace('color-', '').replace('-default', '')}`;
 };
 
 export const Default: StoryFn = () => {
     return (
-        <Flex direction="column" gap={8}>
-            <h1 className="tw-heading-xx-large tw-text-surface-on-surface">Colors</h1>
+        <PreviewWrapper header="Colors">
             <Flex direction="column" gap={8}>
-                <TokenList
-                    tokens={colors}
-                    getTokenPreview={getTokenPreview}
-                    getTailwindIdentifier={getTailwindIdentifier}
-                />
+                <TokenList tokens={colors} getTokenPreview={getTokenPreview} getClassName={getClassName} />
             </Flex>
-        </Flex>
+        </PreviewWrapper>
     );
 };
