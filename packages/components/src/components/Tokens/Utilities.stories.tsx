@@ -1,22 +1,22 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import colors from '@frontify/fondue-tokens/json/colors';
+import utilities from '@frontify/fondue-tokens/json/utilities';
 import { type Meta, type StoryFn } from '@storybook/react';
 
 import { Flex } from '../Flex/Flex';
 
-import { TokenList, type Token } from './TokenList';
+import { UtilityList, type Utility } from './UtilityList';
 
 export default {
-    title: 'Tokens/Colors',
+    title: 'Tokens/Utilities',
 } as Meta;
 
-const getTokenPreview = ({ value }: Token) => {
+const getUtilityPreview = ({ value }: Utility) => {
     return <div style={{ backgroundColor: value }} className=" tw-w-full tw-h-full"></div>;
 };
 
-const getTailwindIdentifier = ({ name }: Token) => {
-    return `tw-*-${name.replace('color-', '').replace('-default', '')}`;
+const getTailwindIdentifier = ({ name }: Utility) => {
+    return `tw-*-${name.replace('utility-', '').replace('-default', '')}`;
 };
 
 export const Default: StoryFn = () => {
@@ -24,9 +24,9 @@ export const Default: StoryFn = () => {
         <Flex direction="column" gap={8}>
             <h1 className="tw-heading-xx-large tw-text-surface-on-surface">Colors</h1>
             <Flex direction="column" gap={8}>
-                <TokenList
-                    tokens={colors}
-                    getTokenPreview={getTokenPreview}
+                <UtilityList
+                    utilities={utilities}
+                    getUtilityPreview={getUtilityPreview}
                     getTailwindIdentifier={getTailwindIdentifier}
                 />
             </Flex>

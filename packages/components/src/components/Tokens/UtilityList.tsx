@@ -9,20 +9,26 @@ import { Flyout } from '../Flyout/Flyout';
 import { Grid } from '../Grid/Grid';
 import { useFondueTheme } from '../ThemeProvider/ThemeProvider';
 
-export type Tokens = {
-    [key: string]: Token | Tokens;
+export type Utilities = {
+    [key: string]: Utilities | Utility;
 };
 
-export type Token = {
-    value: string;
-    name: string;
+export type Utility = {
+    properties: {
+        [key: string]: UtilityProperty;
+    };
     path: string[];
-    identifier: string;
 };
 
-type TokenPreview = Token & {
-    getTokenPreview: (props: Token) => ReactNode;
-    getTailwindIdentifier: (props: Token) => string;
+type UtilityProperty = {
+    name: string;
+    value: string;
+    type: string;
+};
+
+type UtilityPreview = Utility & {
+    getUtilityPreview: (props: Utility) => ReactNode;
+    getTailwindIdentifier: (props: Utility) => string;
 };
 
 const GroupLabel = ({ label, parentKeys }: { label: string; parentKeys: string[] }) => {
@@ -36,20 +42,23 @@ const GroupLabel = ({ label, parentKeys }: { label: string; parentKeys: string[]
     );
 };
 
-const PreviewCard = ({ identifier, value, name, path, getTokenPreview, getTailwindIdentifier }: TokenPreview) => {
+const PreviewCard = ({ properties, path, getUtilityPreview, getTailwindIdentifier }: UtilityPreview) => {
+    console.log(properties, path);
+    const identifier = path.join('/');
     const theme = useFondueTheme();
     const [variableValue, setVariableValue] = useState<string | null>(null);
     const cardRef = useCallback(
         (node: HTMLDivElement | null) => {
             if (node) {
                 const themeProvider = node.closest('.fondue-theme-provider') as HTMLElement;
-                const value = window.getComputedStyle(themeProvider).getPropertyValue(`--${name}`);
+                const value = window.getComputedStyle(themeProvider).getPropertyValue(`--${identifier}`);
                 setVariableValue(value);
             }
         },
-        [name, theme],
+        [identifier, theme],
     );
-    const tailwindIdentifier = getTailwindIdentifier?.({ identifier, value, name, path });
+
+    const tailwindIdentifier = 'test';
     return (
         <div
             className="tw-min-w-full tw-max-w-full tw-min-h-32 tw-p-2 tw-rounded-large tw-border-line-mid tw-border tw-border-solid tw-bg-surface tw-shadow tw-flex tw-flex-col tw-justify-between tw-gap-2"
@@ -57,7 +66,7 @@ const PreviewCard = ({ identifier, value, name, path, getTokenPreview, getTailwi
             ref={cardRef}
         >
             <div className="tw-w-full tw-min-h-16 tw-rounded-medium tw-border-line-subtle tw-border tw-overflow-hidden tw-text-surface-on-surface">
-                {getTokenPreview({ identifier, value, name, path })}
+                {getUtilityPreview({ properties, path })}
             </div>
             <Flex direction="row" justify="space-between" align="flex-end" gap={1} maxWidth="100%">
                 <Flex direction="column" gap={1} minWidth="0">
@@ -95,13 +104,13 @@ const PreviewCard = ({ identifier, value, name, path, getTokenPreview, getTailwi
                                     <span className="tw-body-small-x-strong tw-text-surface-on-surface">CSS</span>
                                     <div className="tw-flex tw-items-center tw-justify-between tw-gap-2 tw-bg-container-secondary tw-p-2 tw-rounded-medium">
                                         <span className="tw-text-xx-small tw-font-monospace tw-text-surface-on-surface">
-                                            {value}
+                                            {identifier}
                                         </span>
                                         <Button
                                             emphasis="default"
                                             size="small"
                                             aspect="square"
-                                            onPress={() => navigator.clipboard.writeText(value)}
+                                            onPress={() => navigator.clipboard.writeText(identifier)}
                                         >
                                             <IconClipboard size={16} />
                                         </Button>
@@ -116,62 +125,54 @@ const PreviewCard = ({ identifier, value, name, path, getTokenPreview, getTailwi
     );
 };
 
-export const TokenList = ({
-    tokens,
+export const UtilityList = ({
+    utilities,
     parentKeys = [],
-    getTokenPreview,
+    getUtilityPreview,
     getTailwindIdentifier,
 }: {
-    tokens: unknown;
+    utilities: unknown;
     parentKeys?: string[];
-    getTokenPreview: (props: Token) => ReactNode;
-    getTailwindIdentifier: (props: Token) => string;
+    getUtilityPreview: (props: Utility) => ReactNode;
+    getTailwindIdentifier: (props: Utility) => string;
 }) => {
-    const tokenObject = tokens as Tokens;
-    return Object.entries(tokenObject).map(([key, value]) => {
-        if (typeof value === 'object') {
-            if (typeof value.value === 'string' && typeof value.name === 'string' && Array.isArray(value.path)) {
-                return (
-                    <PreviewCard
-                        key={key}
-                        identifier={key}
-                        value={value.value}
-                        name={value.name}
-                        path={value.path}
-                        getTokenPreview={getTokenPreview}
-                        getTailwindIdentifier={getTailwindIdentifier}
-                    />
-                );
-            } else {
-                const hasDirectTokens = Object.values(value).some((v) => typeof v === 'object' && 'value' in v);
+    const utilitiesObject = utilities as Utilities;
 
-                return (
-                    <Flex direction="column" gap={4} key={key}>
-                        <GroupLabel label={key} parentKeys={parentKeys} />
-                        <div className="tw-border-l-line-mid tw-border-l-large tw-pl-4">
-                            {hasDirectTokens ? (
-                                <Grid columns={4} gap={4}>
-                                    <TokenList
-                                        tokens={value}
-                                        parentKeys={[...parentKeys, key]}
-                                        getTokenPreview={getTokenPreview}
-                                        getTailwindIdentifier={getTailwindIdentifier}
-                                    />
-                                </Grid>
-                            ) : (
-                                <Flex direction="column" gap={8}>
-                                    <TokenList
-                                        tokens={value as Tokens}
-                                        parentKeys={[...parentKeys, key]}
-                                        getTokenPreview={getTokenPreview}
-                                        getTailwindIdentifier={getTailwindIdentifier}
-                                    />
-                                </Flex>
-                            )}
-                        </div>
-                    </Flex>
-                );
-            }
+    return Object.entries(utilitiesObject).map(([key, value]) => {
+        if (typeof value === 'object') {
+            const firstEntry = Object.values(value)[0] as Utilities;
+            const hasDirectTokens = Object.values(firstEntry).some((v) => typeof v === 'object' && 'value' in v);
+            // if (hasDirectTokens) {
+            //     console.log(key, value);
+            // }
+
+            return (
+                <Flex direction="column" gap={4} key={key}>
+                    <GroupLabel label={key} parentKeys={parentKeys} />
+                    <div className="tw-border-l-line-mid tw-border-l-large tw-pl-4">
+                        {hasDirectTokens ? (
+                            <Grid columns={4} gap={4} key={key}>
+                                <PreviewCard
+                                    key={key}
+                                    properties={value}
+                                    path={[...parentKeys, key]}
+                                    getUtilityPreview={getUtilityPreview}
+                                    getTailwindIdentifier={getTailwindIdentifier}
+                                />
+                            </Grid>
+                        ) : (
+                            <Flex direction="column" gap={8} key={key}>
+                                <UtilityList
+                                    utilities={value}
+                                    parentKeys={[...parentKeys, key]}
+                                    getUtilityPreview={getUtilityPreview}
+                                    getTailwindIdentifier={getTailwindIdentifier}
+                                />
+                            </Flex>
+                        )}
+                    </div>
+                </Flex>
+            );
         }
         return false;
     });

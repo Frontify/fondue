@@ -11,6 +11,46 @@ export default {
     title: 'Tokens/Semantic Tokens',
 } as Meta;
 
+const getTailwindIdentifier = ({ name, path }: Token) => {
+    if (path.includes('font-family')) {
+        return `tw-font-${name.replace('typography-font-family-', '')}`;
+    }
+
+    if (path.includes('font-weight')) {
+        return `tw-font-${name.replace('typography-font-weight-', '')}`;
+    }
+
+    if (path.includes('font-size')) {
+        return `tw-text-${name.replace('typography-font-size-', '')}`;
+    }
+
+    if (path.includes('letter-spacing')) {
+        return `tw-tracking-${name.replace('typography-letter-spacing-', '')}`;
+    }
+
+    if (path.includes('line-height')) {
+        return `tw-leading-${name.replace('typography-line-height-', '')}`;
+    }
+
+    if (path.includes('spacing')) {
+        return `tw-*-${name.replace('spacing-', '')}`;
+    }
+
+    if (path.includes('border-radius')) {
+        return `tw-rounded-${name.replace('border-radius-', '')}`;
+    }
+
+    if (path.includes('border-width')) {
+        return `tw-border-${name.replace('border-width-', '')}`;
+    }
+
+    if (path.includes('shadow')) {
+        return `tw-shadow-${name.replace('shadow-', '')}`;
+    }
+
+    return '';
+};
+
 const getTokenPreview = ({ value, path }: Token) => {
     if (path.includes('font-family')) {
         return (
@@ -87,7 +127,7 @@ const getTokenPreview = ({ value, path }: Token) => {
     if (path.includes('shadow')) {
         return (
             <div className="tw-flex tw-items-center tw-justify-center tw-h-full">
-                <div style={{ boxShadow: value }} className="tw-h-10 tw-w-10 "></div>
+                <div className="tw-shadow-mid tw-shadow-highlight tw-h-10 tw-w-10 "></div>
             </div>
         );
     }
@@ -100,7 +140,11 @@ export const Default: StoryFn = () => {
         <Flex direction="column" gap={8}>
             <h1 className="tw-heading-xx-large tw-text-surface-on-surface">Semantic Tokens</h1>
             <Flex direction="column" gap={8}>
-                <TokenList tokens={semantic} getTokenPreview={getTokenPreview} />
+                <TokenList
+                    tokens={semantic}
+                    getTokenPreview={getTokenPreview}
+                    getTailwindIdentifier={getTailwindIdentifier}
+                />
             </Flex>
         </Flex>
     );
