@@ -21,7 +21,7 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
 
     .trigger {
         color: var(--text-color-weak);
-        font-size: var(--body-size-large);
+        font-size: var(--typography-font-size-large);
         white-space: nowrap;
         margin: sizeToken.get(2);
         display: flex;
@@ -88,9 +88,9 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
 
     .trigger {
         color: var(--text-color);
-        font-size: var(--body-size-small);
+        font-size: var(--typography-font-size-small);
         font-weight: 500;
-        line-height: var(--body-size-small-line-height);
+        line-height: var(--typography-line-height-tight);
         white-space: nowrap;
         display: flex;
         gap: sizeToken.get(1);

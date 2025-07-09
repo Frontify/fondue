@@ -40,11 +40,11 @@
     }
 
     &[data-font-size='small'] {
-        font-size: var(--body-size-x-small);
+        font-size: var(--typography-font-size-x-small);
     }
 
     &[data-font-size='medium'] {
-        font-size: var(--body-size-small);
+        font-size: var(--typography-font-size-small);
     }
 
     &[data-full-width='false'] {
@@ -70,7 +70,7 @@
 }
 
 .headerCell {
-    font-size: var(--body-size-small);
+    font-size: var(--typography-font-size-small);
     font-weight: 400;
     line-height: sizeToken.get(4);
     color: var(--text-color-weak);

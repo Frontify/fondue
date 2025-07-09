@@ -3,8 +3,8 @@
 @use '../../../utilities/focusStyle.module.scss';
 
 .root {
-    font-size: var(--body-size-small);
-    line-height: var(--body-size-small-line-height);
+    font-size: var(--typography-font-size-small);
+    line-height: var(--typography-line-height-tight);
     padding: var(--space-xxs) var(--space-xs);
     gap: var(--space-xxs);
     border-radius: 9999px;

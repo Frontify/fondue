@@ -27,7 +27,7 @@
 }
 
 .track {
-    background-color: var(--box-neutral-color);
+    background-color: var(--color-container-secondary-default);
     position: relative;
     flex-grow: 1;
     border-radius: 4px;
@@ -40,7 +40,7 @@
         height: 100%;
 
         &[data-disabled] {
-            background-color: var(--box-neutral-color);
+            background-color: var(--color-container-secondary-default);
         }
     }
 }
@@ -48,11 +48,11 @@
 .thumb {
     --slider-thumb-hover-box-shadow-color: color-mix(
         in srgb,
-        var(--box-neutral-inverse-color-pressed) 15%,
+        var(--color-container-secondary-on-secondary-container) 15%,
         transparent
     );
-    --slider-thumb-active-outline-color: color-mix(in srgb, var(--box-neutral-inverse-color-hover) 20%, transparent);
-    --slider-thumb-disabled-border-color: color-mix(in srgb, var(--box-neutral-inverse-color-pressed) 10%, transparent);
+    --slider-thumb-active-outline-color: color-mix(in srgb, var(--color-container-secondary-on-secondary-container) 20%, transparent);
+    --slider-thumb-disabled-border-color: color-mix(in srgb, var(--color-container-secondary-on-secondary-container) 10%, transparent);
 
     display: block;
 
@@ -92,7 +92,7 @@
     }
 
     &[data-disabled] {
-        background-color: var(--box-neutral-color);
+        background-color: var(--color-container-secondary-default);
         border-color: var(--slider-thumb-disabled-border-color);
     }
 }

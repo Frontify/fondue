@@ -12,10 +12,10 @@
     gap: sizeToken.get(2);
     overflow: hidden;
 
-    font-family: var(--body-family-stack);
+    font-family: var(--body-family);
     font-weight: 400;
-    font-size: var(--body-size-medium);
-    line-height: var(--body-size-medium-line-height);
+    font-size: var(--typography-font-size-medium);
+    line-height: var(--typography-line-height-medium);
     box-sizing: border-box;
 
     text-align: start;

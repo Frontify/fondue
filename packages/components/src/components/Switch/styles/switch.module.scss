@@ -6,12 +6,12 @@
 
 .root {
     position: relative;
-    background-color: var(--box-neutral-color);
+    background-color: var(--color-container-secondary-default);
     border: 1px solid var(--line-color-x-strong);
     box-sizing: border-box;
 
     &:enabled:hover {
-        background-color: var(--box-neutral-color-hover);
+        background-color: var(--color-container-secondary-hover);
     }
 
     &.small {
@@ -47,7 +47,7 @@
 
     &:disabled {
         border-color: var(--line-color);
-        background-color: var(--box-neutral-color);
+        background-color: var(--color-container-secondary-default);
 
         .thumb {
             border-color: var(--line-color-strong);
@@ -65,7 +65,7 @@
 
     background-color: var(--color-surface-default);
     border-radius: 9999px;
-    border: 1px solid var(--box-neutral-inverse-color);
+    border: 1px solid var(--color-container-secondary-on-secondary-container);
 
     & {
         @include transitions.transition-transform;

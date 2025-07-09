@@ -152,11 +152,11 @@
   --shadow-mid: 0px 4px 24px 0px var(--color-shadow-default);
   --spacing-large: 1.5rem;
   --spacing-medium: 1rem;
-  --spacing-small: 0.5rem;
+  --spacing-small: 0.75rem;
   --spacing-x-large: 2rem;
-  --spacing-x-small: 0.25rem;
+  --spacing-x-small: 0.5rem;
   --spacing-xx-large: 2.5rem;
-  --spacing-xx-small: 0.125rem;
+  --spacing-xx-small: 0.25rem;
   --text-body-large-default-font-family: var(--typography-font-family-primary);
   --text-body-large-default-font-size: var(--typography-font-size-large);
   --text-body-large-default-font-weight: var(--typography-font-weight-regular);

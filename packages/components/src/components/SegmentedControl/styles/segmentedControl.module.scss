@@ -14,7 +14,7 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
     grid-auto-columns: 1fr;
     align-items: stretch;
 
-    font-family: var(--body-family-stack);
+    font-family: var(--body-family);
     font-weight: 400;
     text-align: center;
 
@@ -72,8 +72,8 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
     gap: sizeToken.get(2);
     color: var(--text-color-weak);
 
-    font-size: var(--body-size-medium);
-    line-height: var(--body-size-medium-line-height);
+    font-size: var(--typography-font-size-medium);
+    line-height: var(--typography-line-height-medium);
 
     // Prevent shrinking of icons
     & svg {
