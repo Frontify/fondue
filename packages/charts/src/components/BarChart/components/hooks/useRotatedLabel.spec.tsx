@@ -1,11 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useRotatedLabel } from '@components/BarChart/components/hooks/useRotatedLabel';
 import { renderHook } from '@testing-library/react';
 import { type AxisScale } from '@visx/axis';
 import { DataContext, type DataContextType } from '@visx/xychart';
 import { type Dispatch, type ReactNode, type SetStateAction } from 'react';
 import { type Mock, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { useRotatedLabel } from '@components/BarChart/components/hooks/useRotatedLabel';
 
 type DataProviderProps = {
     children: ReactNode;

@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { useEffect, useState } from 'react';
+
 import { LABEL_PERCENTAGE_STYLE, LABEL_TITLE_STYLE, LABEL_VALUE_STYLE } from '@components/PieChart/components/consts';
 import { getSVGTextDimensions } from '@components/common/helpers';
-import { useEffect, useState } from 'react';
 
 type Widths = {
     labelWidth: number;

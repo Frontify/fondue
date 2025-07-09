@@ -1,10 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { truncateTextLabel } from '@components/BarChart/helpers';
-import { useMargin } from '@components/common/hooks/useMargin';
 import { renderHook } from '@testing-library/react';
 import { type TextProps } from '@visx/text';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+
+import { truncateTextLabel } from '@components/BarChart/helpers';
+import { useMargin } from '@components/common/hooks/useMargin';
 
 const TICK_LENGTH = 4;
 const VALUE_FORMATTER = (value: number | string) => `${value}°C`;

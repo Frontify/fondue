@@ -1,9 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useTextWidths } from '@components/PieChart/hooks/useTextWidths';
-import { type getSVGTextDimensions } from '@components/common/helpers';
 import { renderHook } from '@testing-library/react';
 import { type Mock, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { useTextWidths } from '@components/PieChart/hooks/useTextWidths';
+import { type getSVGTextDimensions } from '@components/common/helpers';
 
 vi.mock('@components/common/helpers', () => ({
     getSVGTextDimensions: vi.fn(),

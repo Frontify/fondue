@@ -1,11 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { truncateTextLabel } from '@components/BarChart/helpers';
-import { getSVGTextDimensions } from '@components/LineChart/helpers';
-import { type ValueFormatter } from '@components/common/types';
 import { type TextProps } from '@visx/text';
 import { type Margin } from '@visx/xychart';
 import { useEffect, useState } from 'react';
+
+import { truncateTextLabel } from '@components/BarChart/helpers';
+import { getSVGTextDimensions } from '@components/LineChart/helpers';
+import { type ValueFormatter } from '@components/common/types';
 
 type TickType<T> = T extends undefined ? string | number : number;
 type UseMarginProps = {

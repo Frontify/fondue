@@ -1,11 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { DataContext } from '@visx/xychart';
+import { useContext, useEffect, useState, type Dispatch, type SetStateAction } from 'react';
+
 import { getBandScaleColumnWidth } from '@components/BarChart/components/helpers';
 import { getSVGTextDimensions } from '@components/common/helpers';
 import { type LabelFormatter } from '@components/common/types';
 import { TICK_LABEL_STYLE } from '@theme/createTheme';
-import { DataContext } from '@visx/xychart';
-import { useContext, useEffect, useState, type Dispatch, type SetStateAction } from 'react';
 
 const getRotationAngleAndMaxHeight = (ticks: string[], columnWidth: number) => {
     const style = TICK_LABEL_STYLE;
