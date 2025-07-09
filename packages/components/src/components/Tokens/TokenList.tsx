@@ -33,7 +33,7 @@ const PreviewCard = ({ identifier, value, name, path, getTokenPreview, getClassN
     const tailwindIdentifier = getClassName?.({ identifier, value, name, path });
     return (
         <div
-            className="tw-w-[250px] tw-min-h-32 tw-p-2 tw-rounded-large tw-border-line-mid tw-border tw-border-solid tw-bg-surface tw-shadow tw-flex tw-flex-col tw-justify-between tw-gap-2"
+            className="tw-min-w-full tw-max-w-[300px] tw-min-h-32 tw-p-2 tw-rounded-large tw-border-line-mid tw-border tw-border-solid tw-bg-surface tw-shadow tw-flex tw-flex-col tw-justify-between tw-gap-2"
             key={identifier}
         >
             <div className="tw-w-full tw-min-h-16 tw-rounded-medium tw-border-line-subtle tw-border tw-overflow-hidden tw-text-surface-on-surface">

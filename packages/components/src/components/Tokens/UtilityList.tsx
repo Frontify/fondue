@@ -53,7 +53,7 @@ const PreviewCard = ({ properties, path, getUtilityPreview, getClassName }: Util
     const { tailwindPrefix } = useTokenPreview();
 
     return (
-        <div className="tw-min-w-full tw-max-w-full tw-min-h-32 tw-p-2 tw-rounded-large tw-border-line-mid tw-border tw-border-solid tw-bg-surface tw-shadow tw-flex tw-flex-col tw-justify-between tw-gap-2">
+        <div className="tw-min-w-full tw-max-w-[300px] tw-min-h-32 tw-p-2 tw-rounded-large tw-border-line-mid tw-border tw-border-solid tw-bg-surface tw-shadow tw-flex tw-flex-col tw-justify-between tw-gap-2">
             <div className="tw-w-full tw-min-h-16 tw-rounded-medium tw-border-line-subtle tw-border tw-overflow-hidden tw-text-surface-on-surface">
                 {getUtilityPreview({ properties, path })}
             </div>
@@ -126,7 +126,6 @@ export const UtilityList = ({
                                         xs: 1,
                                         sm: 2,
                                         md: 3,
-                                        lg: 4,
                                     }}
                                     gap={4}
                                     key={key}
