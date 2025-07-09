@@ -21,11 +21,12 @@ const buildTokens = async () => {
 
     let themeStyles = '';
     await Promise.all([
-        Bun.file(new URL('../.tmp/themes/primitives.css', import.meta.url))
+        Bun.file(new URL('../.tmp/themes/base.css', import.meta.url))
             .text()
             .then((content) => {
                 themeStyles += `${content}\n`;
             }),
+
         ...config.themes.map(async (theme) => {
             return Bun.file(new URL(`../.tmp/themes/${theme}.css`, import.meta.url))
                 .text()
@@ -50,23 +51,23 @@ const buildTokens = async () => {
         return mergeObjects(acc, theme, themeName);
     }, Promise.resolve({}));
 
+    const semantic: ThemeObject = await Bun.file(new URL('../.tmp/objects/semantic.json', import.meta.url))
+        .json()
+        .then((sharedObject: Record<string, ThemeObject>) => sharedObject.default || {});
+
     const utilities: ThemeObject = await Bun.file(new URL('../.tmp/objects/utilities.json', import.meta.url))
         .json()
         .then((utilitiesObject: Record<string, ThemeObject>) => utilitiesObject.default || {});
 
-    const shared: ThemeObject = await Bun.file(new URL('../.tmp/objects/shared.json', import.meta.url))
-        .json()
-        .then((sharedObject: Record<string, ThemeObject>) => sharedObject.default || {});
-
     const availableTokens: ThemeObject = {
         colors,
-        shared,
+        semantic,
         utilities,
     };
 
     await Bun.write(new URL('../dist/json/tokens.json', import.meta.url), JSON.stringify(availableTokens, null, 2));
     await Bun.write(new URL('../dist/json/colors.json', import.meta.url), JSON.stringify(colors, null, 2));
-    await Bun.write(new URL('../dist/json/semantic.json', import.meta.url), JSON.stringify(shared, null, 2));
+    await Bun.write(new URL('../dist/json/semantic.json', import.meta.url), JSON.stringify(semantic, null, 2));
     await Bun.write(new URL('../dist/json/utilities.json', import.meta.url), JSON.stringify(utilities, null, 2));
 
     await Bun.write(new URL('../dist/themes/themes.module.css', import.meta.url), themeStyles);

@@ -1,18 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import semantic from '@frontify/fondue-tokens/json/semantic';
-import { type Meta, type StoryFn } from '@storybook/react';
+import { usePreviewConfig } from '../components/PreviewConfigContext';
+import { type Token } from '../components/Tokens/types';
 
-import { Flex } from '../Flex/Flex';
-
-import { TokenList, type Token } from './TokenList';
-import { PreviewWrapper, useTokenPreview } from './components/PreviewWrapper';
-
-export default {
-    title: 'Tokens/Semantic Tokens',
-} as Meta;
-
-const getClassName = ({ name, path }: Token) => {
+export const getSemanticTokenClassName = ({ name, path }: Token) => {
     if (path.includes('font-family')) {
         return `font-${name.replace('typography-font-family-', '')}`;
     }
@@ -56,8 +47,9 @@ const getClassName = ({ name, path }: Token) => {
     return '';
 };
 
-const getTokenPreview = ({ value, path }: Token) => {
-    const { textContent } = useTokenPreview();
+export const SemanticTokenPreview = ({ value, path }: Token) => {
+    const { textContent } = usePreviewConfig();
+
     if (path.includes('font-family')) {
         return (
             <div
@@ -150,20 +142,10 @@ const getTokenPreview = ({ value, path }: Token) => {
     if (path.includes('shadow')) {
         return (
             <div className="tw-flex tw-items-center tw-justify-center tw-h-full tw-w-full">
-                <div className="tw-shadow-mid tw-shadow-highlight tw-h-10 tw-w-10 "></div>
+                <div className="tw-shadow-mid tw-h-10 tw-w-10 "></div>
             </div>
         );
     }
 
     return <div style={{ backgroundColor: value }}></div>;
-};
-
-export const Default: StoryFn = () => {
-    return (
-        <PreviewWrapper header="Semantic Tokens">
-            <Flex direction="column" gap={8}>
-                <TokenList tokens={semantic} getTokenPreview={getTokenPreview} getClassName={getClassName} />
-            </Flex>
-        </PreviewWrapper>
-    );
 };

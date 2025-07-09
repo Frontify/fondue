@@ -4,7 +4,7 @@ import { useCallback, useState } from 'react';
 
 import { useFondueTheme } from '#/components/ThemeProvider/ThemeProvider';
 
-export const VariableValue = ({ variableName, className }: { variableName: string; className?: string }) => {
+export const VariableValue = ({ variableName, className, ...props }: { variableName: string; className?: string }) => {
     const theme = useFondueTheme();
     const [variableValue, setVariableValue] = useState<string | null>(null);
     const ref = useCallback(
@@ -18,7 +18,7 @@ export const VariableValue = ({ variableName, className }: { variableName: strin
         [variableName, theme],
     );
     return (
-        <span ref={ref} className={className}>
+        <span ref={ref} className={className} {...props}>
             {variableValue}
         </span>
     );

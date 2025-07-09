@@ -5,47 +5,50 @@ import { type Meta, type StoryFn } from '@storybook/react';
 
 import { Flex } from '../Flex/Flex';
 
-import { UtilityList, type Utility } from './UtilityList';
-import { PreviewWrapper, useTokenPreview } from './components/PreviewWrapper';
+import { PreviewConfigWrapper } from './components/PreviewConfigContext';
+import { UsageInfo } from './components/UsageInfo';
+import { UtilityCollectionOverview } from './components/Utilities/UtilityCollectionOverview';
+import { UtilityPreview, getUtilityClassName } from './previews/Utility';
 
 export default {
-    title: 'Tokens/Utilities',
+    title: 'Utilities',
+    args: {
+        textContent: 'Hello World!',
+        removeTailwindPrefix: false,
+    },
+    argTypes: {
+        textContent: {
+            control: { type: 'text' },
+        },
+        removeTailwindPrefix: {
+            description: 'Remove the frontify tailwind prefix (tw-) from the twailwind class name',
+            control: { type: 'boolean' },
+        },
+    },
 } as Meta;
 
-const getUtilityPreview = ({ properties }: Utility) => {
-    const { textContent } = useTokenPreview();
-
-    const style = Object.entries(properties).reduce(
-        (acc, [key, value]) => {
-            acc[key.replaceAll(/-./g, (match) => match.slice(-1).toUpperCase())] = `var(--${value.name})`;
-            return acc;
-        },
-        {} as Record<string, string>,
-    );
+export const Typography: StoryFn = ({ textContent, removeTailwindPrefix }) => {
     return (
-        <div style={style} className="tw-text-surface-on-surface tw-flex tw-items-center tw-justify-center tw-h-full">
-            {textContent}
-        </div>
-    );
-};
+        <PreviewConfigWrapper
+            textContent={textContent as string}
+            removeTailwindPrefix={removeTailwindPrefix as boolean}
+        >
+            <Flex direction="column" gap={4}>
+                <UsageInfo>
+                    Easily apply common, token-based styles with a single class. Our utilities bundle text styles for
+                    each typography variant.
+                    <br />
+                    <br />
+                    <b>Only available when using Fondue with Tailwind CSS.</b>
+                </UsageInfo>
+                <h2 className="tw-heading-x-large tw-text-surface-on-surface">Typography</h2>
 
-const getClassName = ({ path }: Utility) => {
-    return `${path.join('-')}`;
-};
-
-export const Default: StoryFn = () => {
-    return (
-        <PreviewWrapper header="Utilities">
-            <Flex direction="column" gap={8}>
-                <h2 className="tw-heading-x-large tw-text-surface-on-surface">Text</h2>
-                <Flex direction="column" gap={8}>
-                    <UtilityList
-                        utilities={utilities.text}
-                        getUtilityPreview={getUtilityPreview}
-                        getClassName={getClassName}
-                    />
-                </Flex>
+                <UtilityCollectionOverview
+                    utilities={utilities.text}
+                    getUtilityPreview={UtilityPreview}
+                    getClassName={getUtilityClassName}
+                />
             </Flex>
-        </PreviewWrapper>
+        </PreviewConfigWrapper>
     );
 };

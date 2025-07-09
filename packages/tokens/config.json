@@ -9,7 +9,13 @@
                 "collection": "VariableCollectionId:80:1513"
             }
         ],
-        "primitive": [
+        "semantic": [
+            {
+                "collection": "VariableCollectionId:419:1502",
+                "path": ["shadow"]
+            }
+        ],
+        "base": [
             {
                 "collection": "VariableCollectionId:80:1510"
             },
@@ -24,10 +30,6 @@
             {
                 "collection": "VariableCollectionId:419:1502",
                 "path": ["spacing"]
-            },
-            {
-                "collection": "VariableCollectionId:419:1502",
-                "path": ["shadow"]
             }
         ],
         "utility": [

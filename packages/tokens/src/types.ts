@@ -8,7 +8,7 @@ export type Config = {
     tokenTypes: {
         theme: { collection: string; path?: string[] }[];
         primitive: { collection: string; path?: string[] }[];
-        utility: { collection: string; path?: string[] }[];
+        semantic: { collection: string; path?: string[] }[];
     };
 };
 

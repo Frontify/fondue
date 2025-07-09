@@ -85,7 +85,7 @@ StyleDictionary.registerTransform({
     },
     transform: (token: Token) => {
         const value = token.value as string;
-        return `var(--${value.replace('ref_', '').replaceAll('/', '-')})`;
+        return `var(--${value.replace('ref_', '').replaceAll('/', '-').replaceAll(' ', '-')})`;
     },
 });
 
@@ -116,7 +116,7 @@ StyleDictionary.registerTransform({
     name: 'fondue/transformFontFamily',
     filter: (token) =>
         token.name.toLocaleLowerCase().includes('font-family') &&
-        token.attributes?.type === 'primitive' &&
+        token.attributes?.type === 'base' &&
         typeof token.value === 'string',
     transform: (token) => {
         const tokenValue =
@@ -167,8 +167,8 @@ export const buildStyleDictionary = (config: Config) => {
                     {
                         filter: (token) => {
                             return (
-                                token.attributes?.type === 'primitive' ||
-                                token.attributes?.theme === config.defaultTheme
+                                token.attributes?.type !== 'theme' ||
+                                (token.attributes?.type === 'theme' && token.attributes?.theme === config.defaultTheme)
                             );
                         },
                         destination: 'css/base.css',
@@ -194,21 +194,21 @@ export const buildStyleDictionary = (config: Config) => {
                 files: [
                     {
                         filter: (token) => {
-                            return token.attributes?.type === 'primitive';
+                            return token.attributes?.type === 'base' || token.attributes?.type === 'utility';
                         },
-                        destination: 'primitives.css',
+                        destination: 'base.css',
                         options: {
                             fileHeader: 'frontify-file-header',
-                            selector: '.primitives',
+                            selector: '.base',
                         },
                         format: 'css/orderedVariables',
                     },
                     ...config.themes.map((theme) => ({
                         filter: (token: Token) => {
-                            if (token.attributes?.type === 'theme') {
-                                return token.attributes.theme === theme;
-                            }
-                            return token.attributes?.type !== 'primitive' && token.type !== 'color';
+                            return (
+                                (token.attributes?.theme === theme && token.attributes?.type === 'theme') ||
+                                token.attributes?.type === 'semantic'
+                            );
                         },
                         destination: `${theme}.css`,
                         options: {
@@ -234,10 +234,7 @@ export const buildStyleDictionary = (config: Config) => {
                 files: [
                     ...config.themes.map((theme) => ({
                         filter: (token: Token) => {
-                            if (token.attributes?.type === 'theme') {
-                                return token.attributes.theme === theme;
-                            }
-                            return false;
+                            return token.attributes?.type === 'theme' && token.attributes.theme === theme;
                         },
                         destination: `${theme}.json`,
                         options: {
@@ -251,12 +248,11 @@ export const buildStyleDictionary = (config: Config) => {
                     {
                         filter: (token: Token) => {
                             return (
-                                token.attributes?.type !== 'theme' &&
-                                token.attributes?.type !== 'utility' &&
-                                token.type !== 'color'
+                                (token.attributes?.type === 'base' && token.type !== 'color') ||
+                                token.attributes?.type === 'semantic'
                             );
                         },
-                        destination: 'shared.json',
+                        destination: 'semantic.json',
                         options: {
                             showFileHeader: false,
                             stripMeta: {
@@ -267,7 +263,7 @@ export const buildStyleDictionary = (config: Config) => {
                     },
                     {
                         filter: (token: Token) => {
-                            return token.attributes?.type === 'utility' && token.type !== 'color';
+                            return token.attributes?.type === 'utility';
                         },
                         destination: 'utilities.json',
                         options: {
