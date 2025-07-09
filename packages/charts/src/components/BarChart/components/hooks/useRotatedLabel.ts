@@ -1,14 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { DataContext } from '@visx/xychart';
-import { useContext, useEffect, useState, type Dispatch, type SetStateAction } from 'react';
-import useFontFaceObserver from 'use-font-face-observer';
-
 import { getBandScaleColumnWidth } from '@components/BarChart/components/helpers';
 import { getSVGTextDimensions } from '@components/common/helpers';
 import { type LabelFormatter } from '@components/common/types';
-import { BODY_FONT_FAMILY, TICK_LABEL_WEIGHT } from '@theme/consts';
 import { TICK_LABEL_STYLE } from '@theme/createTheme';
+import { DataContext } from '@visx/xychart';
+import { useContext, useEffect, useState, type Dispatch, type SetStateAction } from 'react';
 
 const getRotationAngleAndMaxHeight = (ticks: string[], columnWidth: number) => {
     const style = TICK_LABEL_STYLE;
@@ -44,19 +41,13 @@ export const useRotatedLabel = (
     const [angle, setAngle] = useState(0);
     const dataContext = useContext(DataContext);
     const { xScale } = dataContext;
-    const isFontLoaded = useFontFaceObserver([
-        {
-            family: getComputedStyle(document.documentElement).getPropertyValue(BODY_FONT_FAMILY).trim(),
-            weight: TICK_LABEL_WEIGHT,
-        },
-    ]);
     const scale = horizontal ? undefined : xScale;
     const formattedTicks = scale ? scale.domain().map((tick) => labelFormatter(tick)) : null;
     const ticksJSON = scale ? JSON.stringify(formattedTicks) : null;
     const columnWidth = Math.round(getBandScaleColumnWidth(scale));
 
     useEffect(() => {
-        if (isFontLoaded && columnWidth > 0 && ticksJSON) {
+        if (columnWidth > 0 && ticksJSON) {
             const ticks: string[] = JSON.parse(ticksJSON);
 
             const { rotationAngle, maxHeight, firstItemWidth } = getRotationAngleAndMaxHeight(ticks, columnWidth);
@@ -67,7 +58,7 @@ export const useRotatedLabel = (
         } else {
             setAngle(0);
         }
-    }, [isFontLoaded, columnWidth, ticksJSON, updateMaxLabelHeight, updateFirstLabelOverflowsBy]);
+    }, [columnWidth, ticksJSON, updateMaxLabelHeight, updateFirstLabelOverflowsBy]);
 
     return angle;
 };
