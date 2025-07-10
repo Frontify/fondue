@@ -1,6 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import Bun from 'bun';
+import { promises as fs } from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import {
     type AssembledVariable,
@@ -177,11 +179,15 @@ const formatCollections = (variables: AssembledVariable[]) => {
 };
 
 export const loadFigmaVariables = (config: Config) => {
+    const CWD = path.dirname(fileURLToPath(import.meta.url));
     return fetchFigmaVariables(config.figmaFileKey).then((figmaData) => {
         const computedVariables = getComputedVariables(figmaData, config.tokenTypes, config.excludeTokens);
 
         const data = formatCollections(computedVariables);
-        Bun.write(new URL('../.tmp/tokens/all-tokens.json', import.meta.url), JSON.stringify(data, null, 2))
+        const filePath = path.resolve(CWD, '../.tmp/tokens/all-tokens.json');
+
+        fs.mkdir(path.dirname(filePath), { recursive: true })
+            .then(() => fs.writeFile(filePath, JSON.stringify(data, null, 2)))
             .then(() => {
                 console.log('Tokens written to .tmp/tokens/all-tokens.json');
             })

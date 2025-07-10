@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { rm } from 'node:fs/promises';
-
-import Bun from 'bun';
+import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import { loadFigmaVariables } from './loadFigmaVariables';
 import { buildStyleDictionary } from './styleDictionary/buildStyleDictionary';
@@ -13,36 +13,34 @@ type ThemeObject = {
 };
 
 const buildTokens = async () => {
-    const config = (await Bun.file('config.json').json()) as Config;
+    const CWD = path.dirname(fileURLToPath(import.meta.url));
+    const config = JSON.parse(await readFile('config.json', 'utf-8')) as Config;
 
-    await rm(new URL('../dist', import.meta.url), { recursive: true, force: true });
+    await rm(path.resolve(CWD, '../dist'), { recursive: true, force: true });
     await loadFigmaVariables(config);
     await buildStyleDictionary(config);
 
     let themeStyles = '';
     await Promise.all([
-        Bun.file(new URL('../.tmp/themes/base.css', import.meta.url))
-            .text()
-            .then((content) => {
-                themeStyles += `${content}\n`;
-            }),
+        readFile(path.resolve(CWD, '../.tmp/themes/base.css'), 'utf-8').then((content) => {
+            themeStyles += `${content}\n`;
+        }),
 
         ...config.themes.map(async (theme) => {
-            return Bun.file(new URL(`../.tmp/themes/${theme}.css`, import.meta.url))
-                .text()
-                .then((content) => {
-                    themeStyles += `${content}\n`;
-                });
+            return readFile(path.resolve(CWD, `../.tmp/themes/${theme}.css`), 'utf-8').then((content) => {
+                themeStyles += `${content}\n`;
+            });
         }),
     ]);
 
     const colors: ThemeObject = await config.themes.reduce(async (accPromise, themeName) => {
         const acc = await accPromise;
-        const theme = (await Bun.file(new URL(`../.tmp/objects/${themeName}.json`, import.meta.url))
-            .json()
-            .then((sharedObject: Record<string, ThemeObject>) => {
+        const theme = await readFile(path.resolve(CWD, `../.tmp/objects/${themeName}.json`), 'utf-8')
+            .then((content): Record<string, ThemeObject> => {
+                const sharedObject = JSON.parse(content) as Record<string, ThemeObject>;
                 return sharedObject[themeName]?.color || {};
-            })) as Record<string, ThemeObject>;
+            })
+            .then((theme) => theme);
 
         if (!theme) {
             return acc;
@@ -51,12 +49,12 @@ const buildTokens = async () => {
         return mergeObjects(acc, theme, themeName);
     }, Promise.resolve({}));
 
-    const semantic: ThemeObject = await Bun.file(new URL('../.tmp/objects/semantic.json', import.meta.url))
-        .json()
+    const semantic: ThemeObject = await readFile(path.resolve(CWD, '../.tmp/objects/semantic.json'), 'utf-8')
+        .then((content) => JSON.parse(content) as Record<string, ThemeObject>)
         .then((sharedObject: Record<string, ThemeObject>) => sharedObject.default || {});
 
-    const utilities: ThemeObject = await Bun.file(new URL('../.tmp/objects/utilities.json', import.meta.url))
-        .json()
+    const utilities: ThemeObject = await readFile(path.resolve(CWD, '../.tmp/objects/utilities.json'), 'utf-8')
+        .then((content) => JSON.parse(content) as Record<string, ThemeObject>)
         .then((utilitiesObject: Record<string, ThemeObject>) => utilitiesObject.default || {});
 
     const availableTokens: ThemeObject = {
@@ -65,18 +63,22 @@ const buildTokens = async () => {
         utilities,
     };
 
-    await Bun.write(new URL('../dist/json/all-tokens.json', import.meta.url), JSON.stringify(availableTokens, null, 2));
-    await Bun.write(new URL('../dist/json/colors.json', import.meta.url), JSON.stringify(colors, null, 2));
-    await Bun.write(new URL('../dist/json/semantic.json', import.meta.url), JSON.stringify(semantic, null, 2));
-    await Bun.write(new URL('../dist/json/utilities.json', import.meta.url), JSON.stringify(utilities, null, 2));
+    await mkdir(path.resolve(CWD, '../dist/json'), { recursive: true });
+    await writeFile(path.resolve(CWD, '../dist/json/all-tokens.json'), JSON.stringify(availableTokens, null, 2));
+    await writeFile(path.resolve(CWD, '../dist/json/colors.json'), JSON.stringify(colors, null, 2));
+    await writeFile(path.resolve(CWD, '../dist/json/semantic.json'), JSON.stringify(semantic, null, 2));
+    await writeFile(path.resolve(CWD, '../dist/json/utilities.json'), JSON.stringify(utilities, null, 2));
 
-    await Bun.write(new URL('../dist/themes/themes.module.css', import.meta.url), themeStyles);
-    await rm(new URL('../.tmp', import.meta.url), { recursive: true, force: true });
+    await mkdir(path.resolve(CWD, '../dist/themes'), { recursive: true });
+    await writeFile(path.resolve(CWD, '../dist/themes/themes.module.css'), themeStyles);
+    await rm(path.resolve(CWD, '../.tmp'), { recursive: true, force: true });
 
-    const moduleTypesTemplate = `declare const styles: {primitives: string;${config.themes.map((theme) => `${theme}: string;`).join(' ')}};
+    const moduleTypesTemplate = `declare const styles: {primitives: string;${config.themes
+        .map((theme) => `${theme}: string;`)
+        .join(' ')}};
 export default styles;`;
 
-    await Bun.write(new URL('../dist/themes/themes.module.css.d.ts', import.meta.url), moduleTypesTemplate);
+    await writeFile(path.resolve(CWD, '../dist/themes/themes.module.css.d.ts'), moduleTypesTemplate);
 };
 
 buildTokens().catch((error) => {

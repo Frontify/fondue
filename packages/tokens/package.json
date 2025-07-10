@@ -32,13 +32,13 @@
         "./json/utilities": "./dist/json/utilities.json",
         "./legacy/tokens": "./dist/legacy/deprecatedBaseTokens.css",
         "./legacy/tailwind": "./dist/legacy/deprecatedTailwindConfig.ts",
-        "./legacy/tools/cssTokenReplacements": "./tools/replaceCssVariables.js"
+        "./legacy/tools/cssTokenReplacements": "./dist/legacy/tools/replaceCssVariables.js"
     },
     "files": [
         "dist"
     ],
     "scripts": {
-        "build": "bun run src/buildTokens.ts && mkdir -p ./dist/legacy && cp -r legacyTokens/* ./dist/legacy",
+        "build": "tsx src/buildTokens.ts && mkdir -p ./dist/legacy && cp -r legacyTokens/* ./dist/legacy && mkdir -p ./dist/legacy/tools && cp -r tools/* ./dist/legacy/tools",
         "lint": "eslint .",
         "lint:fix": "eslint --fix .",
         "typecheck": "tsc --noEmit"
@@ -51,12 +51,11 @@
     },
     "devDependencies": {
         "@frontify/eslint-config-basic": "^0.20.6",
-        "@types/bun": "^1.2.13",
         "@types/node": "^22.13.1",
-        "bun": "^1.2.12",
         "eslint": "^8.57.1",
         "eslint-plugin-notice": "^1.0.0",
         "style-dictionary": "^4.4.0",
-        "tailwindcss": "^3.4.17"
+        "tailwindcss": "^3.4.17",
+        "tsx": "^4.19.3"
     }
 }
