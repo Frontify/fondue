@@ -13,17 +13,17 @@
     border-radius: 100%;
     border-width: 2px;
     border-style: solid;
-    border-color: var(--text-color-interactive);
+    border-color: var(--color-interactive-default);
     border-top-color: transparent;
     aspect-ratio: 1 / 1;
 
     &[data-variant='success'] {
-        border-color: var(--text-color-positive);
+        border-color: var(--color-success-default);
         border-top-color: transparent;
     }
 
     &[data-variant='danger'] {
-        border-color: var(--text-color-negative);
+        border-color: var(--color-error-default);
         border-top-color: transparent;
     }
 

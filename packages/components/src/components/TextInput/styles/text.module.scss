@@ -9,7 +9,7 @@
     display: flex;
     align-items: stretch;
 
-    font-family: var(--body-family);
+    font-family: var(--typography-font-family-primary);
     font-weight: 400;
     font-size: var(--typography-font-size-medium);
 
@@ -18,10 +18,10 @@
     height: sizeToken.get(9);
     box-sizing: border-box;
 
-    color: var(--text-color);
+    color: var(--color-primary-default);
     background-color: var(--color-surface-default);
-    border-radius: var(--radius);
-    border: var(--line-width) solid var(--line-color-strong);
+    border-radius: var(--border-radius-medium);
+    border: var(--border-width-default) solid var(--color-line-strong);
 
     & {
         @include focusStyle.focus-outline;
@@ -29,11 +29,11 @@
     }
 
     &:hover {
-        border-color: var(--line-color-x-strong);
+        border-color: var(--color-line-strong);
     }
 
     &:has([data-show-focus-ring='false']:focus) {
-        border-color: var(--line-color-xx-strong);
+        border-color: var(--color-line-strong);
     }
 
     &:has(input[readonly]) {
@@ -41,16 +41,16 @@
     }
 
     &:has(input:disabled) {
-        border-color: var(--line-color-weak);
-        background-color: var(--box-disabled-color);
+        border-color: var(--color-line-subtle);
+        background-color: var(--color-container-disabled-default);
     }
 
     &[data-status='success'] {
-        border-color: var(--text-color-positive);
+        border-color: var(--color-success-default);
     }
 
     &[data-status='error'] {
-        border-color: var(--text-color-negative);
+        border-color: var(--color-error-default);
     }
 }
 
@@ -63,10 +63,10 @@
     text-indent: sizeToken.get(3);
     outline: 2px solid transparent;
     outline-offset: 2px;
-    border-radius: calc(var(--radius) - var(--line-width));
+    border-radius: calc(var(--border-radius-medium) - var(--border-width-default));
 
     &::placeholder {
-        color: var(--text-color-x-weak);
+        color: var(--color-secondary-default);
     }
 
     &:-moz-focusring {
@@ -91,11 +91,11 @@
     // Readonly styles
     &[readonly] {
         cursor: text;
-        color: var(--text-color-weak);
+        color: var(--color-secondary-default);
         text-indent: 0px;
     }
     &[readonly] ~ .slot {
-        color: var(--text-color-weak);
+        color: var(--color-secondary-default);
     }
     &[readonly] ~ .slot:not([data-name='right']) {
         padding-left: 0px;
@@ -103,10 +103,10 @@
 
     &:disabled {
         cursor: text;
-        color: var(--text-color-disabled);
+        color: var(--color-disabled-default);
     }
     &:disabled ~ .slot {
-        color: var(--text-color-disabled);
+        color: var(--color-disabled-default);
     }
 }
 
@@ -148,7 +148,7 @@
     height: 100%;
     margin-left: sizeToken.get(3);
     margin-right: sizeToken.get(3);
-    color: var(--text-color-positive);
+    color: var(--color-success-default);
 }
 
 .iconError {
@@ -157,7 +157,7 @@
     height: 100%;
     margin-left: sizeToken.get(3);
     margin-right: sizeToken.get(3);
-    color: var(--text-color-negative);
+    color: var(--color-error-default);
 }
 
 // Icon with a right slot shouldn't have a margin right
@@ -177,7 +177,7 @@
     align-items: center;
     justify-content: center;
     background-color: var(--color-surface-default);
-    border: var(--line-width) solid var(--line-color-strong);
+    border: var(--border-width-default) solid var(--color-line-strong);
     border-radius: 9999px;
 
     &::before {
@@ -187,7 +187,7 @@
         justify-content: center;
         width: sizeToken.get(4);
         height: sizeToken.get(4);
-        border: var(--line-width) solid var(--text-color-interactive);
+        border: var(--border-width-default) solid var(--color-interactive-default);
         border-top-color: transparent;
         border-radius: 9999px;
         animation: spin 1s linear infinite;

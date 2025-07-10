@@ -4,7 +4,7 @@
 @use '../../../utilities/transitions.module.scss';
 @use '../../../utilities/focusStyle.module.scss';
 
-$radius-without-border: calc(var(--radius) - var(--line-width));
+$radius-without-border: calc(var(--border-radius-medium) - var(--border-width-default));
 
 [data-tabs-variant="default"] {
     .triggerListWrapper {
@@ -15,12 +15,12 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
         padding-left: sizeToken.get(3);
         padding-right: sizeToken.get(3);
         gap: sizeToken.get(2);
-        border-bottom: 1px solid var(--line-color);
+        border-bottom: 1px solid var(--color-line-mid);
         box-sizing: border-box;
     }
 
     .trigger {
-        color: var(--text-color-weak);
+        color: var(--color-secondary-default);
         font-size: var(--typography-font-size-large);
         white-space: nowrap;
         margin: sizeToken.get(2);
@@ -35,15 +35,15 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
 
         &:hover,
         &:focus {
-            color: var(--text-color);
+            color: var(--color-primary-default);
         }
 
         &:disabled {
-            color: var(--text-color-disabled);
+            color: var(--color-disabled-default);
         }
 
         &[data-state='active'] {
-            color: var(--text-color);
+            color: var(--color-primary-default);
             font-weight: 500;
         }
     }
@@ -52,9 +52,9 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
     .activeIndicator {
         position: absolute;
         height: 3px;
-        border-top-left-radius: var(--radius-x-large);
-        border-top-right-radius: var(--radius-x-large);
-        background-color: var(--box-selected-strong-color);
+        border-top-left-radius: var(--border-radius-x-large);
+        border-top-right-radius: var(--border-radius-x-large);
+        background-color: var(--color-highlight-default);
         bottom: 0;
         left: 0;
         width: 0;
@@ -87,7 +87,7 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
     }
 
     .trigger {
-        color: var(--text-color);
+        color: var(--color-primary-default);
         font-size: var(--typography-font-size-small);
         font-weight: 500;
         line-height: var(--typography-line-height-tight);
@@ -105,18 +105,18 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
         &:hover,
         &:focus {
             color: var(--button-text-color-hover);
-            background-color: var(--button-background-color-hover);
-            border-radius: var(--radius);
+            background-color: var(--color-container-secondary-hover);
+            border-radius: var(--border-radius-medium);
         }
 
         &:disabled {
-            color: var(--text-color-disabled);
+            color: var(--color-disabled-default);
         }
 
         &[data-state='active'] {
-            color: var(--button-text-color);
-            background-color: var(--button-background-color);
-            border-radius: var(--radius);
+            color: var(--color-primary-default);
+            background-color: var(--color-container-secondary-default);
+            border-radius: var(--border-radius-medium);
         }
 
         [data-component="badge"] {
@@ -152,7 +152,7 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
 
 
 .content {
-    color: var(--text-color);
+    color: var(--color-primary-default);
 
     [data-tabs-content-padding='tight'] & {
         padding: sizeToken.get(2);

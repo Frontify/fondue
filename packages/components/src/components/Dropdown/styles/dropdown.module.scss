@@ -9,9 +9,9 @@
 .content,
 .subContent {
     display: block;
-    border-radius: var(--radius);
+    border-radius: var(--border-radius-medium);
     background-color: var(--color-surface-default);
-    border: var(--line-width) solid var(--line-color);
+    border: var(--border-width-default) solid var(--color-line-mid);
     width: 250px;
     overflow: auto;
     max-height: var(--radix-dropdown-menu-content-available-height);
@@ -49,7 +49,7 @@
     text-align: start;
     font-size: var(--typography-font-size-medium);
     line-height: var(--typography-line-height-medium);
-    color: var(--text-color);
+    color: var(--color-primary-default);
     outline-style: none;
 
     &:active {
@@ -74,11 +74,11 @@
 
     &[data-state='open'] {
         background-color: var(--color-container-secondary-default);
-        color: var(--text-color);
+        color: var(--color-primary-default);
     }
 
     &[data-emphasis='danger'] {
-        color: var(--text-color-negative);
+        color: var(--color-error-default);
     }
 
     &[data-highlighted] {
@@ -92,17 +92,17 @@
     }
 
     &[data-emphasis='danger'][data-highlighted] {
-        background-color: var(--text-color-negative);
-        color: var(--box-neutral-strong-inverse-color);
+        background-color: var(--color-error-default);
+        color: var(--color-primary-on-primary);
     }
 
     &[data-emphasis='danger']:active {
-        background-color: var(--text-color-negative-hover);
+        background-color: var(--color-error-hover);
     }
 
     &[data-disabled] {
         cursor: not-allowed;
-        color: var(--text-color-disabled);
+        color: var(--color-disabled-default);
     }
 
     span {
@@ -122,18 +122,18 @@
 
     .item~&,
     .group~& {
-        border-top: var(--line-width) solid var(--line-color-strong);
+        border-top: var(--border-width-default) solid var(--color-line-strong);
     }
 
     &:has(+ .item) {
-        border-bottom: var(--line-width) solid var(--line-color-strong);
+        border-bottom: var(--border-width-default) solid var(--color-line-strong);
     }
 }
 
 .groupHeading {
     text-transform: uppercase;
     line-height: sizeToken.get(4);
-    color: var(--text-color-x-weak);
+    color: var(--color-secondary-default);
     font-size: var(--typography-font-size-x-small);
     font-weight: var(--typography-font-weight-medium);
     padding: sizeToken.get(2) sizeToken.get(5) 0;

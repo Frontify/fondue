@@ -5,8 +5,8 @@
 .root {
     font-size: var(--typography-font-size-small);
     line-height: var(--typography-line-height-tight);
-    padding: var(--space-xxs) var(--space-xs);
-    gap: var(--space-xxs);
+    padding: var(--spacing-xx-small) var(--spacing-x-small);
+    gap: var(--spacing-xx-small);
     border-radius: 9999px;
     position: relative;
     display: inline-flex;
@@ -53,17 +53,17 @@
 @include variant(negative, negative);
 
 [data-size="small"] {
-    padding: 2px var(--space-xs);
+    padding: 2px var(--spacing-x-small);
 }
 
 [data-disabled="true"] {
-    background-color: var(--box-disabled-color);
-    color: var(--box-disabled-color-inverse);
+    background-color: var(--color-container-disabled-default);
+    color: var(--color-container-disabled-on-disabled);
     cursor: default;
 
     &:hover {
-        background-color: var(--box-disabled-color);
-        color: var(--box-disabled-color-inverse);
+        background-color: var(--color-container-disabled-default);
+        color: var(--color-container-disabled-on-disabled);
     }
 }
 

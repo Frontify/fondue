@@ -31,7 +31,8 @@
         "./json/semantic": "./dist/json/semantic.json",
         "./json/utilities": "./dist/json/utilities.json",
         "./legacy/tokens": "./dist/legacy/deprecatedBaseTokens.css",
-        "./legacy/tailwind": "./dist/legacy/deprecatedTailwindConfig.ts"
+        "./legacy/tailwind": "./dist/legacy/deprecatedTailwindConfig.ts",
+        "./legacy/tools/cssTokenReplacements": "./tools/replaceCssVariables.js"
     },
     "files": [
         "dist"

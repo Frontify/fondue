@@ -4,7 +4,7 @@
 @use '../../../utilities/transitions.module.scss';
 @use '../../../utilities/focusStyle.module.scss';
 
-$radius-without-border: calc(var(--radius) - var(--line-width));
+$radius-without-border: calc(var(--border-radius-medium) - var(--border-width-default));
 
 .root {
     width: 100%;
@@ -14,7 +14,7 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
     grid-auto-columns: 1fr;
     align-items: stretch;
 
-    font-family: var(--body-family);
+    font-family: var(--typography-font-family-primary);
     font-weight: 400;
     text-align: center;
 
@@ -23,8 +23,8 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
     box-sizing: border-box;
 
     background-color: var(--color-surface-dim);
-    border: var(--line-width) solid var(--line-color-strong);
-    border-radius: var(--radius);
+    border: var(--border-width-default) solid var(--color-line-strong);
+    border-radius: var(--border-radius-medium);
 
     isolation: isolate;
 
@@ -56,7 +56,7 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
     // Focus styles for keyboard navigation, custom rounding applied to match the active indicator
     &:focus-visible {
         border-radius: $radius-without-border;
-        outline: 2px solid var(--focus-ring-color);
+        outline: 2px solid var(--color-focus-default);
         outline-offset: 2px;
     }
 }
@@ -70,7 +70,7 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
     padding-left: sizeToken.get(4);
     padding-right: sizeToken.get(4);
     gap: sizeToken.get(2);
-    color: var(--text-color-weak);
+    color: var(--color-secondary-default);
 
     font-size: var(--typography-font-size-medium);
     line-height: var(--typography-line-height-medium);
@@ -94,7 +94,7 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
     align-items: center;
     justify-content: center;
     opacity: 0;
-    color: var(--text-color);
+    color: var(--color-primary-default);
 
     font-weight: 500;
 
@@ -104,7 +104,7 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
 
     // Color the label based on the disabled state
     .item:disabled & {
-        color: var(--box-disabled-color-inverse);
+        color: var(--color-container-disabled-on-disabled);
     }
     .item[aria-checked='true'] & {
         opacity: 1;
@@ -130,7 +130,7 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
 
     // Color the label based on the disabled state
     .item:disabled & {
-        color: var(--box-disabled-color-inverse);
+        color: var(--color-container-disabled-on-disabled);
     }
     .item[aria-checked='true'] & {
         opacity: 0;
@@ -160,7 +160,7 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
         border-radius: $radius-without-border;
         background-color: var(--color-surface-default);
 
-        box-shadow: 0 0 0 var(--line-width) var(--line-color-xx-strong);
+        box-shadow: 0 0 0 var(--border-width-default) var(--color-line-strong);
     }
 
     // Show the active indicator when the state is on
@@ -170,8 +170,8 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
 
     // Active indicator style when segmented control/item is disabled
     .item:disabled ~ &::before {
-        background-color: var(--box-disabled-color);
-        box-shadow: 0 0 0 var(--line-width) var(--line-color-x-strong);
+        background-color: var(--color-container-disabled-default);
+        box-shadow: 0 0 0 var(--border-width-default) var(--color-line-strong);
     }
 
     // Used to animate the active indicator horizontally
@@ -196,7 +196,7 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
     width: 1px;
     margin-left: -0.5px;
     margin-right: -0.5px;
-    background-color: var(--line-color-strong);
+    background-color: var(--color-line-strong);
 
     & {
         @include transitions.transition-opacity;

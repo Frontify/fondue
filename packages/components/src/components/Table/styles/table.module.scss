@@ -35,7 +35,7 @@
                 #{$prop}: $value;
             }
             left: 0;
-            border-right: 1px solid var(--line-color);
+            border-right: 1px solid var(--color-line-mid);
         }
     }
 
@@ -66,20 +66,20 @@
 .caption {
     padding: sizeToken.get(3) sizeToken.get(2);
     text-align: left;
-    color: var(--text-color);
+    color: var(--color-primary-default);
 }
 
 .headerCell {
     font-size: var(--typography-font-size-small);
     font-weight: 400;
     line-height: sizeToken.get(4);
-    color: var(--text-color-weak);
+    color: var(--color-secondary-default);
 
-    border-top: 1px solid var(--line-color);
-    border-bottom: 1px solid var(--line-color);
+    border-top: 1px solid var(--color-line-mid);
+    border-bottom: 1px solid var(--color-line-mid);
 
     &:hover {
-        color: var(--text-color-hover);
+        color: var(--color-primary-hover);
     }
 
     &[data-sortable='false'] {
@@ -110,7 +110,7 @@
     cursor: pointer;
 
     &[data-active='true'] {
-        color: var(--text-color);
+        color: var(--color-primary-default);
     }
 
     &:focus-visible {
@@ -118,7 +118,7 @@
     }
 
     .sortIndicator {
-        color: var(--text-color-disabled);
+        color: var(--color-disabled-default);
     }
 }
 
@@ -136,7 +136,7 @@
     }
 
     &[data-selected='true'] {
-        background-color: var(--box-selected-color);
+        background-color: var(--color-container-highlight-default);
     }
 
     &[data-disabled='true'] {
@@ -157,13 +157,13 @@
 }
 
 .rowCell {
-    color: var(--text-color);
+    color: var(--color-primary-default);
 
     font-weight: 400;
     line-height: sizeToken.get(4);
     padding: sizeToken.get(2);
 
-    border-bottom: 1px solid var(--line-color);
+    border-bottom: 1px solid var(--color-line-mid);
 }
 
 .headerCell,
