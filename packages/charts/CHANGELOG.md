@@ -1,5 +1,11 @@
 # @frontify/fondue-charts
 
+## 6.0.1
+
+### Patch Changes
+
+- [#2337](https://github.com/Frontify/fondue/pull/2337) [`6cea6e7`](https://github.com/Frontify/fondue/commit/6cea6e78659f9158360b5bf539d2bf7c7bc7be2b) Thanks [@joseazevedo88](https://github.com/joseazevedo88)! - fix chart labels overlap
+
 ## 6.0.0
 
 ### Patch Changes
