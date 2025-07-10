@@ -4,7 +4,7 @@ import { usePreviewConfig } from '../components/PreviewConfigContext';
 import { type Utility } from '../components/Utilities/types';
 
 export const getUtilityClassName = ({ path }: Utility) => {
-    return `${path.join('-')}`;
+    return `${path.join('-').replace('-default', '')}`;
 };
 
 export const UtilityPreview = ({ properties }: Utility) => {

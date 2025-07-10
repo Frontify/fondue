@@ -5,43 +5,43 @@ import { type Token } from '../components/Tokens/types';
 
 export const getSemanticTokenClassName = ({ name, path }: Token) => {
     if (path.includes('font-family')) {
-        return `font-${name.replace('typography-font-family-', '')}`;
+        return `${name.replace('typography-font-family-', 'font-').replace('-default', '')}`;
     }
 
     if (path.includes('font-weight')) {
-        return `font-${name.replace('typography-font-weight-', '')}`;
+        return `${name.replace('typography-font-weight-', 'font-').replace('-default', '')}`;
     }
 
     if (path.includes('font-size')) {
-        return `text-${name.replace('typography-font-size-', '')}`;
+        return `${name.replace('typography-font-size-', 'text-').replace('-default', '')}`;
     }
 
     if (path.includes('letter-spacing')) {
-        return `ttracking-${name.replace('typography-letter-spacing-', '')}`;
+        return `${name.replace('typography-letter-spacing-', 'tracking-').replace('-default', '')}`;
     }
 
     if (path.includes('line-height')) {
-        return `leading-${name.replace('typography-line-height-', '')}`;
+        return `${name.replace('typography-line-height-', 'leading-').replace('-default', '')}`;
     }
 
     if (path.includes('text-transform')) {
-        return `uppercase-${name.replace('typography-text-transform-', '')}`;
+        return `${name.replace('typography-text-transform-', '').replace('default', 'normal-case')}`;
     }
 
     if (path.includes('spacing')) {
-        return `*-${name.replace('spacing-', '')}`;
+        return `${name.replace('spacing-', '*-').replace('-default', '')}`;
     }
 
     if (path.includes('border-radius')) {
-        return `rounded-${name.replace('border-radius-', '')}`;
+        return `${name.replace('border-radius-', 'rounded-').replace('-default', '')}`;
     }
 
     if (path.includes('border-width')) {
-        return `border-${name.replace('border-width-', '')}`;
+        return `${name.replace('border-width-', 'border-').replace('-default', '')}`;
     }
 
     if (path.includes('shadow')) {
-        return `shadow-${name.replace('shadow-', '')}`;
+        return `${name.replace('-default', '')}`;
     }
 
     return '';
