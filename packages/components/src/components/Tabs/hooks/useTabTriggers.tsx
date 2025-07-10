@@ -120,13 +120,23 @@ export const useTabTriggers = ({
         }
     }, [triggers, triggerListRef, activeIndicatorRef]);
 
+    const addTrigger = (trigger: TabTrigger) => {
+        if (!trigger.previousElement) {
+            setTriggers((prev) => [...prev, trigger]);
+        }
+
+        setTriggers((prev) => {
+            const index = prev.findIndex((element) => element.element === trigger.previousElement);
+            prev[index] = trigger;
+            return [...prev];
+        });
+    };
+
     return {
         triggerListRef,
         activeIndicatorRef,
         triggersOutOfView,
         triggers,
-        addTrigger: (trigger) => {
-            setTriggers((prev) => [...prev, trigger]);
-        },
+        addTrigger,
     };
 };

@@ -1,7 +1,7 @@
 {
     "name": "@frontify/fondue-charts",
     "type": "module",
-    "version": "6.0.0",
+    "version": "6.0.1",
     "description": "Frontify's data viz library",
     "author": "Frontify Developers <developers@frontify.com>",
     "repository": {
@@ -62,8 +62,7 @@
         "@visx/text": "^3.12.0",
         "@visx/tooltip": "^3.12.0",
         "@visx/xychart": "^3.12.0",
-        "lodash-es": "^4.17.21",
-        "use-font-face-observer": "^1.3.0"
+        "lodash-es": "^4.17.21"
     },
     "devDependencies": {
         "@babel/core": "^7.26.10",

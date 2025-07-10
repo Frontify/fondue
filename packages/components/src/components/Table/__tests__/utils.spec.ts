@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type KeyboardEvent } from 'react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { type KeyboardEvent, type MouseEvent } from 'react';
+import { describe, it, expect, vi, beforeEach, test } from 'vitest';
 
-import { handleKeyDown } from '../utils';
+import { handleKeyDown, isEventFromInteractiveElement } from '../utils';
 
 describe('handleKeyDown', () => {
     beforeEach(() => {
@@ -152,4 +152,106 @@ describe('handleKeyDown', () => {
 
         expect(preventDefaultSpy).not.toHaveBeenCalled();
     });
+});
+
+describe('isEventFromInteractiveElement', () => {
+    beforeEach(() => {
+        document.body.innerHTML = `
+            <table>
+                <tbody>
+                    <tr>
+                        <td>
+                            <button id="button">A button</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <a id="link" href="#">A link</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div id="role-button" role="button">Role Button</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div id="role-link" role="link">Role Link</div>
+                        </td>
+                    </tr> 
+                    <tr>
+                        <td id="non-interactive-cell">Non interactive cell</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span id="non-interactive-span">A non-interactive-span</span>
+                            <button><span id="interactive-span">An interactive span</span></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        `;
+    });
+
+    const clickOnElement = async (target: HTMLElement): Promise<boolean> => {
+        const clickPromise = new Promise<boolean>((resolve) => {
+            target.addEventListener(
+                'click',
+                (event) => {
+                    const result = isEventFromInteractiveElement(event as unknown as MouseEvent);
+                    resolve(result);
+                },
+                { once: true },
+            );
+        });
+
+        target.click();
+
+        return clickPromise;
+    };
+
+    const cases = [
+        {
+            elementDescription: 'button',
+            elementId: 'button',
+            expected: true,
+        },
+        {
+            elementDescription: 'element with role[button]',
+            elementId: 'role-button',
+            expected: true,
+        },
+        {
+            elementDescription: 'link',
+            elementId: 'link',
+            expected: true,
+        },
+        {
+            elementDescription: 'element with role[link]',
+            elementId: 'role-link',
+            expected: true,
+        },
+        {
+            elementDescription: 'cell without any interactive element',
+            elementId: 'non-interactive-cell',
+            expected: false,
+        },
+        {
+            elementDescription: 'a span outside a button',
+            elementId: 'non-interactive-span',
+            expected: false,
+        },
+        {
+            elementDescription: 'a span within a button',
+            elementId: 'interactive-span',
+            expected: true,
+        },
+    ];
+
+    test.each(cases)(
+        'should return $expected when clicking on $elementDescription',
+        async ({ elementId, expected }) => {
+            expect(await clickOnElement(document.getElementById(elementId)!)).toBe(expected);
+        },
+    );
 });

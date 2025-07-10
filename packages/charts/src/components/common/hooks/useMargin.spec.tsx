@@ -2,7 +2,7 @@
 
 import { renderHook } from '@testing-library/react';
 import { type TextProps } from '@visx/text';
-import { type Mock, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { truncateTextLabel } from '@components/BarChart/helpers';
 import { useMargin } from '@components/common/hooks/useMargin';
@@ -31,12 +31,6 @@ const BASE_MARGIN = {
     left: 0,
 };
 
-const DEFAULT_MARGIN = { bottom: 24, left: 52.265625, right: 20, top: 10 };
-
-vi.mock('use-font-face-observer', () => ({
-    default: vi.fn(),
-}));
-
 vi.mock('@components/LineChart/helpers', () => ({
     getSVGTextDimensions: vi.fn((text: string) => ({
         width: text.length,
@@ -44,13 +38,6 @@ vi.mock('@components/LineChart/helpers', () => ({
 }));
 
 describe('useMargin', () => {
-    let useFontFaceObserverMock: Mock<() => boolean>;
-    beforeEach(async () => {
-        const { default: useFontFaceObserver } = await import('use-font-face-observer');
-        vi.mocked(useFontFaceObserver).mockReturnValue(true);
-        useFontFaceObserverMock = vi.mocked(useFontFaceObserver);
-    });
-
     afterEach(() => {
         vi.restoreAllMocks();
     });
@@ -72,7 +59,6 @@ describe('useMargin', () => {
                 TICK_LENGTH +
                 Math.abs(TICK_LABEL_STYLE.dx as number),
         });
-        expect(useFontFaceObserverMock).toHaveBeenCalledTimes(2);
     });
 
     it('returns correct margin for unformatted numeric ticks', () => {
@@ -87,7 +73,6 @@ describe('useMargin', () => {
                 TICK_LENGTH +
                 Math.abs(TICK_LABEL_STYLE.dx as number),
         });
-        expect(useFontFaceObserverMock).toHaveBeenCalledTimes(2);
     });
 
     it('returns correct margin for string ticks', () => {
@@ -100,7 +85,6 @@ describe('useMargin', () => {
                 // @ts-expect-error Wrong typing in the original code
                 BASE_MARGIN.left + STRING_TICKS_LONGEST.length + TICK_LENGTH + Math.abs(TICK_LABEL_STYLE.dx as number),
         });
-        expect(useFontFaceObserverMock).toHaveBeenCalledTimes(2);
     });
 
     it('returns correct margin for with maxLabelHeight and firstLabelOverflowsBy', () => {
@@ -118,7 +102,6 @@ describe('useMargin', () => {
             bottom: 63,
             left: 30,
         });
-        expect(useFontFaceObserverMock).toHaveBeenCalledTimes(2);
     });
 
     it('returns correct margin for with maxLabelHeight and firstLabelOverflowsBy < tickLabelOffset', () => {
@@ -136,34 +119,6 @@ describe('useMargin', () => {
             bottom: 63,
             left: 15,
         });
-        expect(useFontFaceObserverMock).toHaveBeenCalledTimes(2);
-    });
-
-    it('returns default margin when font is not loaded', () => {
-        useFontFaceObserverMock.mockReturnValue(false);
-        const { result, rerender } = renderHook(() =>
-            useMargin({
-                ticks: NUMERIC_TICKS,
-                tickLabelStyle: TICK_LABEL_STYLE,
-                valueFormatter: VALUE_FORMATTER,
-                tickLength: TICK_LENGTH,
-            }),
-        );
-        expect(result.current).toEqual(DEFAULT_MARGIN);
-        expect(useFontFaceObserverMock).toHaveBeenCalledTimes(1);
-
-        useFontFaceObserverMock.mockReturnValue(true);
-        rerender();
-
-        expect(result.current).toEqual({
-            ...BASE_MARGIN,
-            left:
-                BASE_MARGIN.left +
-                NUMERIC_TICKS_LONGEST_FORMATTED.length +
-                TICK_LENGTH +
-                Math.abs(TICK_LABEL_STYLE.dx as number),
-        });
-        expect(useFontFaceObserverMock).toHaveBeenCalledTimes(3);
     });
 
     it('updated value formatter updates results', () => {
@@ -184,7 +139,6 @@ describe('useMargin', () => {
                 TICK_LENGTH +
                 Math.abs(TICK_LABEL_STYLE.dx as number),
         });
-        expect(useFontFaceObserverMock).toHaveBeenCalledTimes(2);
 
         valueFormatter = (value: number | string) => `${value}°F`;
         rerender();
@@ -198,7 +152,6 @@ describe('useMargin', () => {
                 TICK_LENGTH +
                 Math.abs(TICK_LABEL_STYLE.dx as number),
         });
-        expect(useFontFaceObserverMock).toHaveBeenCalledTimes(4);
     });
 
     it('long tick labels are truncated and truncation reflected in calculated margin', () => {
@@ -220,6 +173,5 @@ describe('useMargin', () => {
                 TICK_LENGTH +
                 Math.abs(TICK_LABEL_STYLE.dx as number),
         });
-        expect(useFontFaceObserverMock).toHaveBeenCalledTimes(2);
     });
 });

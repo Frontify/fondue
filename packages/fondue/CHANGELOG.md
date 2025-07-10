@@ -1,5 +1,57 @@
 # @frontify/fondue
 
+## 12.10.3
+
+### Patch Changes
+
+- Updated dependencies [[`6cea6e7`](https://github.com/Frontify/fondue/commit/6cea6e78659f9158360b5bf539d2bf7c7bc7be2b)]:
+    - @frontify/fondue-charts@6.0.1
+
+## 12.10.2
+
+### Patch Changes
+
+- Updated dependencies [[`657b90b`](https://github.com/Frontify/fondue/commit/657b90b7e95d3df663d09408a75711bf5359a4ca), [`f74b79d`](https://github.com/Frontify/fondue/commit/f74b79d07e0c53acba000c72f050c6bf23486680)]:
+    - @frontify/fondue-components@19.1.0
+
+## 12.10.1
+
+### Patch Changes
+
+- [#2332](https://github.com/Frontify/fondue/pull/2332) [`443e405`](https://github.com/Frontify/fondue/commit/443e405288ca5499c29843118561700af2e0e4c5) Thanks [@fulopdaniel](https://github.com/fulopdaniel)! - fix(RTE): adjust checkbox position to top
+
+- Updated dependencies [[`d25cfdb`](https://github.com/Frontify/fondue/commit/d25cfdb88260aaf4a6a7ae606825a4181fadcb24), [`9f096bd`](https://github.com/Frontify/fondue/commit/9f096bd05fef48de5577547a31b4a5980bd1d2cd), [`4d45cf0`](https://github.com/Frontify/fondue/commit/4d45cf0656a9409cf3adb69be71427748d88dbdb)]:
+    - @frontify/fondue-components@19.0.0
+    - @frontify/fondue-icons@0.17.0
+
+## 12.10.0
+
+### Minor Changes
+
+- [#2325](https://github.com/Frontify/fondue/pull/2325) [`0daf49f`](https://github.com/Frontify/fondue/commit/0daf49f362db53089f7be3debbc9bfbc946f0181) Thanks [@syeo66](https://github.com/syeo66)! - feat(Divider): add as prop to define the element type to be used
+
+### Patch Changes
+
+- Updated dependencies [[`2ddca7c`](https://github.com/Frontify/fondue/commit/2ddca7cd1bfc23ef3e2d66c134ee3de8bd1a1fa1)]:
+    - @frontify/fondue-components@18.2.0
+
+## 12.9.8
+
+### Patch Changes
+
+- Updated dependencies [[`d2f4b3e`](https://github.com/Frontify/fondue/commit/d2f4b3eb66d5ca1230b2eb4cdfca343e48d36595), [`5bff71b`](https://github.com/Frontify/fondue/commit/5bff71b1950c80c981f7ec4c9a84f469d634a3f5), [`d3bf086`](https://github.com/Frontify/fondue/commit/d3bf086336b976a6c623d6058f75d5ce91eda0a7), [`fab2547`](https://github.com/Frontify/fondue/commit/fab25476652ce84a756a120577e298baebf8d033)]:
+    - @frontify/fondue-components@18.1.0
+
+## 12.9.7
+
+### Patch Changes
+
+- [#2317](https://github.com/Frontify/fondue/pull/2317) [`51187f1`](https://github.com/Frontify/fondue/commit/51187f107ce824bf518407ec39d6d633b4e29a4c) Thanks [@syeo66](https://github.com/syeo66)! - fix(Tree): add focus ring to selected tree item$
+
+- Updated dependencies [[`640e418`](https://github.com/Frontify/fondue/commit/640e41856356faedb9084994a997055f4d3c9228), [`966346e`](https://github.com/Frontify/fondue/commit/966346e60c12238475b677b3c04e3452c8b7161f), [`5e7ec6c`](https://github.com/Frontify/fondue/commit/5e7ec6c997fe023ee425b51e6d1a4011bedb40af), [`84a71fc`](https://github.com/Frontify/fondue/commit/84a71fc3af996178167ad7850da8afc1307eee6a), [`c3734b4`](https://github.com/Frontify/fondue/commit/c3734b44f581f66cc2735a20aa8bb11f4f72f0a8)]:
+    - @frontify/fondue-components@18.0.0
+    - @frontify/fondue-icons@0.16.0
+
 ## 12.9.6
 
 ### Patch Changes

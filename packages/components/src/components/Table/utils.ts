@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type KeyboardEvent } from 'react';
+import { type KeyboardEvent, type MouseEvent } from 'react';
 
 function getAdjacentRow(currentRow: HTMLElement, key: 'ArrowUp' | 'ArrowDown'): HTMLElement | null {
     const selector = 'tr[tabindex="0"]';
@@ -29,4 +29,26 @@ export function handleKeyDown(event: KeyboardEvent<HTMLTableElement>) {
         event.preventDefault();
         nextRow.focus();
     }
+}
+
+const INTERACTIVE_ELEMENTS_LIST = [HTMLButtonElement, HTMLAnchorElement];
+const INTERACTIVE_ROLES_LIST = ['button', 'link'];
+
+export function isEventFromInteractiveElement(event?: MouseEvent): boolean {
+    let node = event?.target instanceof Element ? event.target : null;
+
+    while (node && !(node instanceof HTMLTableRowElement)) {
+        if (INTERACTIVE_ELEMENTS_LIST.some((interactiveElement) => node instanceof interactiveElement)) {
+            return true;
+        }
+
+        const role = node.getAttribute('role');
+        if (role && INTERACTIVE_ROLES_LIST.includes(role)) {
+            return true;
+        }
+
+        node = node.parentElement;
+    }
+
+    return false;
 }

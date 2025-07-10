@@ -5,6 +5,7 @@ import { type HTMLAttributes, type ReactNode, type RefObject } from 'react';
 export type TabTrigger = {
     ref?: RefObject<HTMLButtonElement>;
     element: ReactNode;
+    previousElement?: ReactNode;
     props: HTMLAttributes<HTMLButtonElement>;
     disabled?: boolean;
     value: string;

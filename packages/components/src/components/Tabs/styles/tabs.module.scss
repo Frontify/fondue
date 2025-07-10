@@ -52,9 +52,9 @@ $radius-without-border: calc(var(--border-radius-medium) - var(--border-width-de
     .activeIndicator {
         position: absolute;
         height: 3px;
-        border-top-left-radius: var(--border-radius-x-large);
-        border-top-right-radius: var(--border-radius-x-large);
-        background-color: var(--color-highlight-default);
+        border-top-left-radius: var(--radius-x-large);
+        border-top-right-radius: var(--radius-x-large);
+        background-color: var(--box-neutral-strong-color);
         bottom: 0;
         left: 0;
         width: 0;
@@ -122,6 +122,10 @@ $radius-without-border: calc(var(--border-radius-medium) - var(--border-width-de
         [data-component="badge"] {
             padding-top: 2px;
             padding-bottom: 2px;
+        }
+
+        &:active {
+            background-color: var(--button-background-color-pressed);
         }
     }
 }

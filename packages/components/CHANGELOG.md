@@ -1,5 +1,63 @@
 # @frontify/fondue-components
 
+## 19.1.0
+
+### Minor Changes
+
+- [#2334](https://github.com/Frontify/fondue/pull/2334) [`657b90b`](https://github.com/Frontify/fondue/commit/657b90b7e95d3df663d09408a75711bf5359a4ca) Thanks [@mbgspcii](https://github.com/mbgspcii)! - fix: prevent button and link clicks inside <Table.Row> from triggering row click
+
+- [#2335](https://github.com/Frontify/fondue/pull/2335) [`f74b79d`](https://github.com/Frontify/fondue/commit/f74b79d07e0c53acba000c72f050c6bf23486680) Thanks [@syeo66](https://github.com/syeo66)! - chore(Divider): Add decorative flag
+
+## 19.0.0
+
+### Minor Changes
+
+- [#2328](https://github.com/Frontify/fondue/pull/2328) [`d25cfdb`](https://github.com/Frontify/fondue/commit/d25cfdb88260aaf4a6a7ae606825a4181fadcb24) Thanks [@syeo66](https://github.com/syeo66)! - feat(Divider): add as prop to new Divider (as it is in the legacy one now)
+
+- [#2331](https://github.com/Frontify/fondue/pull/2331) [`9f096bd`](https://github.com/Frontify/fondue/commit/9f096bd05fef48de5577547a31b4a5980bd1d2cd) Thanks [@syeo66](https://github.com/syeo66)! - feat(Select): add heading to select groups
+
+### Patch Changes
+
+- Updated dependencies [[`4d45cf0`](https://github.com/Frontify/fondue/commit/4d45cf0656a9409cf3adb69be71427748d88dbdb)]:
+    - @frontify/fondue-icons@0.17.0
+
+## 18.2.0
+
+### Minor Changes
+
+- [#2327](https://github.com/Frontify/fondue/pull/2327) [`2ddca7c`](https://github.com/Frontify/fondue/commit/2ddca7cd1bfc23ef3e2d66c134ee3de8bd1a1fa1) Thanks [@joelharkes](https://github.com/joelharkes)! - fix(Flyout): revert making overlay clickable
+
+## 18.1.0
+
+### Minor Changes
+
+- [#2323](https://github.com/Frontify/fondue/pull/2323) [`d2f4b3e`](https://github.com/Frontify/fondue/commit/d2f4b3eb66d5ca1230b2eb4cdfca343e48d36595) Thanks [@syeo66](https://github.com/syeo66)! - fix(Tabs): changing trigger content did not rerender
+
+### Patch Changes
+
+- [#2320](https://github.com/Frontify/fondue/pull/2320) [`5bff71b`](https://github.com/Frontify/fondue/commit/5bff71b1950c80c981f7ec4c9a84f469d634a3f5) Thanks [@syeo66](https://github.com/syeo66)! - fix(Tabs): update trigger click indicator background
+
+- [#2322](https://github.com/Frontify/fondue/pull/2322) [`d3bf086`](https://github.com/Frontify/fondue/commit/d3bf086336b976a6c623d6058f75d5ce91eda0a7) Thanks [@syeo66](https://github.com/syeo66)! - chore(Tabs): change active tab indicators color
+
+- [#2324](https://github.com/Frontify/fondue/pull/2324) [`fab2547`](https://github.com/Frontify/fondue/commit/fab25476652ce84a756a120577e298baebf8d033) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: export Badge as it was forgotten
+
+## 18.0.0
+
+### Minor Changes
+
+- [#2313](https://github.com/Frontify/fondue/pull/2313) [`640e418`](https://github.com/Frontify/fondue/commit/640e41856356faedb9084994a997055f4d3c9228) Thanks [@syeo66](https://github.com/syeo66)! - feat(Tabs): Add badges to tabs
+
+- [#2318](https://github.com/Frontify/fondue/pull/2318) [`84a71fc`](https://github.com/Frontify/fondue/commit/84a71fc3af996178167ad7850da8afc1307eee6a) Thanks [@joelharkes](https://github.com/joelharkes)! - fix(color picker): click Outside Flyout no longer propogated when closing Flyout
+
+- [#2312](https://github.com/Frontify/fondue/pull/2312) [`c3734b4`](https://github.com/Frontify/fondue/commit/c3734b44f581f66cc2735a20aa8bb11f4f72f0a8) Thanks [@syeo66](https://github.com/syeo66)! - fix(ColorPickerInput): fix disabled style
+
+### Patch Changes
+
+- [#2316](https://github.com/Frontify/fondue/pull/2316) [`966346e`](https://github.com/Frontify/fondue/commit/966346e60c12238475b677b3c04e3452c8b7161f) Thanks [@syeo66](https://github.com/syeo66)! - fix(Dropdown): add focus ring on keyboard navigation
+
+- Updated dependencies [[`5e7ec6c`](https://github.com/Frontify/fondue/commit/5e7ec6c997fe023ee425b51e6d1a4011bedb40af)]:
+    - @frontify/fondue-icons@0.16.0
+
 ## 17.1.0
 
 ### Minor Changes

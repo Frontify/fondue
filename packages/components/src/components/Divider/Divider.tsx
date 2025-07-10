@@ -33,6 +33,17 @@ export type DividerProps = {
      * @default "horizontal"
      */
     direction?: DividerDirection;
+    /**
+     * The html element to be used
+     * @default "div"
+     */
+    as?: 'div' | 'li';
+    /**
+     * When `true`, signifies that it is purely visual, carries no semantic
+     * meaning, and ensures it is not present in the accessibility tree.
+     * @default false
+     */
+    decorative?: boolean;
     'data-test-id'?: string;
     className?: string;
 };
@@ -44,10 +55,14 @@ export const Divider = forwardRef<HTMLDivElement, DividerProps>(
             direction = 'horizontal',
             className,
             variant,
+            as = 'div',
+            decorative,
             ...props
         }: DividerProps,
         ref: ForwardedRef<HTMLDivElement | null>,
     ): ReactElement => {
+        const Component = as;
+
         return (
             <Separator.Root
                 ref={ref}
@@ -60,7 +75,11 @@ export const Divider = forwardRef<HTMLDivElement, DividerProps>(
                     className,
                 )}
                 data-test-id={dataTestId}
-            />
+                decorative={decorative}
+                asChild
+            >
+                <Component />
+            </Separator.Root>
         );
     },
 );
