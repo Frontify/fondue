@@ -65,7 +65,7 @@ const buildTokens = async () => {
         utilities,
     };
 
-    await Bun.write(new URL('../dist/json/tokens.json', import.meta.url), JSON.stringify(availableTokens, null, 2));
+    await Bun.write(new URL('../dist/json/all-tokens.json', import.meta.url), JSON.stringify(availableTokens, null, 2));
     await Bun.write(new URL('../dist/json/colors.json', import.meta.url), JSON.stringify(colors, null, 2));
     await Bun.write(new URL('../dist/json/semantic.json', import.meta.url), JSON.stringify(semantic, null, 2));
     await Bun.write(new URL('../dist/json/utilities.json', import.meta.url), JSON.stringify(utilities, null, 2));
