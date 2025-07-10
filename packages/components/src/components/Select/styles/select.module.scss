@@ -356,9 +356,9 @@
 .groupHeading {
     text-transform: uppercase;
     line-height: sizeToken.get(4);
-    color: var(--text-color-x-weak);
-    font-size: var(--body-size-x-small);
-    font-weight: var(--body-weight-strong-number);
+    color: var(--color-secondary-default);
+    font-size: var(--typography-font-size-x-small);
+    font-weight: var(--typography-font-weight-medium);
     padding: sizeToken.get(2) sizeToken.get(5) 0;
     margin-top: sizeToken.get(1);
     letter-spacing: 0.8px;
