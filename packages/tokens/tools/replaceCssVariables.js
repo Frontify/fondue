@@ -196,8 +196,6 @@ const replacements = {
     'var(--button-danger-icon-color)': 'var(--color-error-on-error)',
 };
 
-const deprecatedOccurrences = [];
-
 const deprecatedReplacements = {
     'var(--code-size-small)': '0.813rem',
     'var(--code-size-small-line-height)': '1rem',
@@ -228,6 +226,8 @@ const deprecatedReplacements = {
     'var(--shadow-color)': '/** @deprecated use updated token instead **/',
 };
 
+const deprecatedOccurrences = [];
+
 const logDeprecatedInFile = (filePath, deprecatedMap) => {
     try {
         const stats = fs.statSync(filePath);
@@ -255,7 +255,51 @@ const logDeprecatedInFile = (filePath, deprecatedMap) => {
     }
 };
 
-const traverseDir = (dir, replacementMap) => {
+const replaceInFile = (filePath, replacementMap, dryRun) => {
+    try {
+        const stats = fs.statSync(filePath);
+        if (!stats.isFile()) {
+            return;
+        }
+
+        const content = fs.readFileSync(filePath, 'utf8');
+
+        const replacementsToApply = [];
+        for (const [oldVar, newVar] of Object.entries(replacementMap)) {
+            if (content.includes(oldVar)) {
+                replacementsToApply.push({ oldVar, newVar });
+            }
+        }
+
+        if (replacementsToApply.length === 0) {
+            return;
+        }
+
+        if (dryRun) {
+            console.log(`[DRY RUN] Potential changes for: ${filePath}`);
+            for (const { oldVar, newVar } of replacementsToApply) {
+                console.log(`  '${oldVar}' would be replaced with '${newVar}'`);
+            }
+            console.log('');
+            return;
+        }
+
+        let modifiedContent = content;
+        for (const { oldVar, newVar } of replacementsToApply) {
+            modifiedContent = modifiedContent.replace(
+                new RegExp(oldVar.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g'),
+                newVar,
+            );
+        }
+
+        fs.writeFileSync(filePath, modifiedContent, 'utf8');
+        console.log(`Updated: ${filePath}`);
+    } catch (error) {
+        console.error(`Could not process file ${filePath}: ${error.message}`);
+    }
+};
+
+const traverseDir = (dir, replacementMap, dryRun) => {
     try {
         const files = fs.readdirSync(dir);
 
@@ -264,9 +308,9 @@ const traverseDir = (dir, replacementMap) => {
 
             const stat = fs.statSync(fullPath);
             if (stat.isDirectory()) {
-                traverseDir(fullPath, replacementMap);
+                traverseDir(fullPath, replacementMap, dryRun);
             } else {
-                replaceInFile(fullPath, replacementMap);
+                replaceInFile(fullPath, replacementMap, dryRun);
                 logDeprecatedInFile(fullPath, deprecatedReplacements);
             }
         }
@@ -275,34 +319,13 @@ const traverseDir = (dir, replacementMap) => {
     }
 };
 
-const replaceInFile = (filePath, replacementMap) => {
-    try {
-        const stats = fs.statSync(filePath);
-        if (!stats.isFile()) {
-            return;
-        }
-
-        let content = fs.readFileSync(filePath, 'utf8');
-        let modified = false;
-
-        for (const [oldVar, newVar] of Object.entries(replacementMap)) {
-            if (content.includes(oldVar)) {
-                content = content.replace(new RegExp(oldVar.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g'), newVar);
-                modified = true;
-            }
-        }
-
-        if (modified) {
-            fs.writeFileSync(filePath, content, 'utf8');
-            console.log(`Updated: ${filePath}`);
-        }
-    } catch (error) {
-        console.error(`Could not process file ${filePath}: ${error.message}`);
+export default (directory, { dryRun = false } = {}) => {
+    if (dryRun) {
+        console.log('\n\n==================================================');
+        console.log('DRY RUN MODE ENABLED. NO FILES WILL BE MODIFIED.');
+        console.log('==================================================\n');
     }
-};
-
-export default (directory) => {
-    traverseDir(directory, replacements);
+    traverseDir(directory, replacements, dryRun);
 
     if (deprecatedOccurrences.length > 0) {
         console.log('\n\n==================================================');
