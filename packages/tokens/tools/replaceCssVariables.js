@@ -196,6 +196,8 @@ const replacements = {
     'var(--button-danger-icon-color)': 'var(--color-error-on-error)',
 };
 
+const deprecatedOccurrences = [];
+
 const deprecatedReplacements = {
     'var(--code-size-small)': '0.813rem',
     'var(--code-size-small-line-height)': '1rem',
@@ -226,10 +228,36 @@ const deprecatedReplacements = {
     'var(--shadow-color)': '/** @deprecated use updated token instead **/',
 };
 
+const logDeprecatedInFile = (filePath, deprecatedMap) => {
+    try {
+        const stats = fs.statSync(filePath);
+        if (!stats.isFile()) {
+            return;
+        }
+
+        const content = fs.readFileSync(filePath, 'utf8');
+        const lines = content.split('\n');
+
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i];
+            for (const deprecatedVar of Object.keys(deprecatedMap)) {
+                if (line.includes(deprecatedVar)) {
+                    deprecatedOccurrences.push({
+                        filePath,
+                        line: i + 1,
+                        variable: deprecatedVar,
+                    });
+                }
+            }
+        }
+    } catch (error) {
+        console.error(`Could not check for deprecated variables in file ${filePath}: ${error.message}`);
+    }
+};
+
 const traverseDir = (dir, replacementMap) => {
     try {
         const files = fs.readdirSync(dir);
-        console.log(files);
 
         for (const file of files) {
             const fullPath = path.join(dir, file);
@@ -239,6 +267,7 @@ const traverseDir = (dir, replacementMap) => {
                 traverseDir(fullPath, replacementMap);
             } else {
                 replaceInFile(fullPath, replacementMap);
+                logDeprecatedInFile(fullPath, deprecatedReplacements);
             }
         }
     } catch (error) {
@@ -274,4 +303,31 @@ const replaceInFile = (filePath, replacementMap) => {
 
 export default (directory) => {
     traverseDir(directory, replacements);
+
+    if (deprecatedOccurrences.length > 0) {
+        console.log('\n\n==================================================');
+        console.log('🚨 DEPRECATED CSS VARIABLES WITHOUT REPLACEMENT FOUND 🚨');
+        console.log('==================================================\n');
+
+        const groupedByFile = deprecatedOccurrences.reduce((acc, { filePath, line, variable }) => {
+            if (!acc[filePath]) {
+                acc[filePath] = [];
+            }
+            acc[filePath].push(`  - Line ${line}: ${variable}`);
+            return acc;
+        }, {});
+
+        for (const [file, occurrences] of Object.entries(groupedByFile)) {
+            console.log(`File: ${file}`);
+            occurrences.forEach((occurrence) => console.log(occurrence));
+            console.log('');
+        }
+
+        console.log(
+            'Please replace the variables listed above with their new counterparts from the design system tokens.',
+        );
+        console.log('==================================================\n');
+
+        process.exit(1);
+    }
 };
