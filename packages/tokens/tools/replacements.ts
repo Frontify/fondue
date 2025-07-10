@@ -223,7 +223,7 @@ export const deprecatedCssVariables = {
     'var(--shadow-color)': '/** @deprecated use updated token instead **/',
 };
 
-export const tailwindColorReplacements = {
+const tailwindColorReplacements = {
     'tw-([^-]+)-base(?![a-zA-Z0-9-])': 'tw-$1-surface',
     'tw-([^-]+)-base-alt(?![a-zA-Z0-9-])': 'tw-$1-surface-dim',
     'tw-([^-]+)-box-neutral(?![a-zA-Z0-9-])': 'tw-$1-container-secondary',
@@ -363,7 +363,7 @@ export const tailwindColorReplacements = {
     'tw-([^-]+)-button-danger-icon(?![a-zA-Z0-9-])': 'tw-$1-error-on-error',
 };
 
-export const tailwindTokenReplacements = {
+const tailwindTokenReplacements = {
     // fontSize
     'tw-text-body-x-small(?![a-zA-Z0-9-])': 'tw-text-x-small',
     'tw-text-body-small(?![a-zA-Z0-9-])': 'tw-text-small',
@@ -414,4 +414,9 @@ export const tailwindTokenReplacements = {
     'tw-([^-]+)-l(?![a-zA-Z0-9-])': 'tw-$1-large',
     'tw-([^-]+)-xl(?![a-zA-Z0-9-])': 'tw-$1-x-large',
     'tw-([^-]+)-xxl(?![a-zA-Z0-9-])': 'tw-$1-xx-large',
+};
+
+export const tailwindClassReplacements = {
+    ...tailwindColorReplacements,
+    ...tailwindTokenReplacements,
 };

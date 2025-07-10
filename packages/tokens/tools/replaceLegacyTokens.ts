@@ -2,9 +2,11 @@
 
 import fs from 'fs';
 import path from 'path';
-import { cssVariableReplacements, deprecatedCssVariables } from './replacements';
+import { cssVariableReplacements, deprecatedCssVariables, tailwindClassReplacements } from './replacements';
 
-const logDeprecatedInFile = (filePath, deprecatedMap) => {
+const deprecatedOccurrences: { filePath: string; line: number; variable: string }[] = [];
+
+const logDeprecatedInFile = (filePath: string, deprecatedMap: Record<string, string>) => {
     try {
         const stats = fs.statSync(filePath);
         if (!stats.isFile()) {
@@ -31,7 +33,7 @@ const logDeprecatedInFile = (filePath, deprecatedMap) => {
     }
 };
 
-const replaceInFile = (filePath, replacementMap, dryRun) => {
+const replaceInFile = (filePath: string, replacementMap: Record<string, string>, dryRun: boolean) => {
     try {
         const stats = fs.statSync(filePath);
         if (!stats.isFile()) {
@@ -40,10 +42,20 @@ const replaceInFile = (filePath, replacementMap, dryRun) => {
 
         const content = fs.readFileSync(filePath, 'utf8');
 
-        const replacementsToApply = [];
-        for (const [oldVar, newVar] of Object.entries(replacementMap)) {
-            if (content.includes(oldVar)) {
-                replacementsToApply.push({ oldVar, newVar });
+        const replacementsToApply: { selector: string; replacement: string; oldValue: string; newValue: string }[] = [];
+        for (const [selector, value] of Object.entries(replacementMap)) {
+            const regexMatch = content.match(new RegExp(selector, 'g'));
+
+            for (const match of regexMatch ?? []) {
+                const newValue = match.replace(new RegExp(selector, 'g'), value);
+                if (newValue !== match) {
+                    replacementsToApply.push({
+                        selector,
+                        replacement: value,
+                        oldValue: match,
+                        newValue,
+                    });
+                }
             }
         }
 
@@ -52,20 +64,17 @@ const replaceInFile = (filePath, replacementMap, dryRun) => {
         }
 
         if (dryRun) {
-            console.log(`[DRY RUN] Potential changes for: ${filePath}`);
-            for (const { oldVar, newVar } of replacementsToApply) {
-                console.log(`  '${oldVar}' => '${newVar}'`);
+            console.log(`Potential changes for: ${filePath}`);
+            for (const { oldValue, newValue } of replacementsToApply) {
+                console.log(`  '${oldValue}' => '${newValue}'`);
             }
             console.log('');
             return;
         }
 
         let modifiedContent = content;
-        for (const { oldVar, newVar } of replacementsToApply) {
-            modifiedContent = modifiedContent.replace(
-                new RegExp(oldVar.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g'),
-                newVar,
-            );
+        for (const { selector, newValue } of replacementsToApply) {
+            modifiedContent = modifiedContent.replace(new RegExp(selector, 'g'), newValue);
         }
 
         fs.writeFileSync(filePath, modifiedContent, 'utf8');
@@ -75,7 +84,12 @@ const replaceInFile = (filePath, replacementMap, dryRun) => {
     }
 };
 
-const traverseDir = (dir, replacementMap, deprecatedMap, dryRun) => {
+const traverseDir = (
+    dir: string,
+    replacementMap: Record<string, string>,
+    deprecatedMap: Record<string, string>,
+    dryRun: boolean,
+) => {
     try {
         const files = fs.readdirSync(dir);
 
@@ -84,7 +98,7 @@ const traverseDir = (dir, replacementMap, deprecatedMap, dryRun) => {
 
             const stat = fs.statSync(fullPath);
             if (stat.isDirectory()) {
-                traverseDir(fullPath, replacementMap, dryRun);
+                traverseDir(fullPath, replacementMap, deprecatedMap, dryRun);
             } else {
                 replaceInFile(fullPath, replacementMap, dryRun);
                 logDeprecatedInFile(fullPath, deprecatedMap);
@@ -95,26 +109,35 @@ const traverseDir = (dir, replacementMap, deprecatedMap, dryRun) => {
     }
 };
 
-export default (directory, { dryRun = false } = {}) => {
+const replaceTokens = (
+    directory: string,
+    replacementMap: Record<string, string>,
+    deprecatedMap: Record<string, string>,
+    { dryRun = false }: { dryRun?: boolean } = {},
+) => {
     if (dryRun) {
         console.log('\n\n==================================================');
         console.log('DRY RUN MODE ENABLED. NO FILES WILL BE MODIFIED.');
         console.log('==================================================\n');
     }
-    traverseDir(directory, cssVariableReplacements, deprecatedCssVariables, dryRun);
+
+    traverseDir(directory, replacementMap, deprecatedMap, dryRun);
 
     if (deprecatedOccurrences.length > 0) {
         console.log('\n\n==================================================');
         console.log('🚨 DEPRECATED CSS VARIABLES WITHOUT REPLACEMENT FOUND 🚨');
         console.log('==================================================\n');
 
-        const groupedByFile = deprecatedOccurrences.reduce((acc, { filePath, line, variable }) => {
-            if (!acc[filePath]) {
-                acc[filePath] = [];
-            }
-            acc[filePath].push(`  - Line ${line}: ${variable}`);
-            return acc;
-        }, {});
+        const groupedByFile = deprecatedOccurrences.reduce(
+            (acc, { filePath, line, variable }) => {
+                if (!acc[filePath]) {
+                    acc[filePath] = [];
+                }
+                acc[filePath].push(`  - Line ${line}: ${variable}`);
+                return acc;
+            },
+            {} as Record<string, string[]>,
+        );
 
         for (const [file, occurrences] of Object.entries(groupedByFile)) {
             console.log(`File: ${file}`);
@@ -129,4 +152,18 @@ export default (directory, { dryRun = false } = {}) => {
 
         process.exit(1);
     }
+};
+
+export const replaceCssVariables = (directory: string, { dryRun = false }: { dryRun?: boolean } = {}) => {
+    const escapedCssVariableReplacements = Object.fromEntries(
+        Object.entries(cssVariableReplacements).map(([key, value]) => [
+            key.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'),
+            value,
+        ]),
+    );
+    replaceTokens(directory, escapedCssVariableReplacements, deprecatedCssVariables, { dryRun });
+};
+
+export const replaceTailwindClasses = (directory: string, { dryRun = false }: { dryRun?: boolean } = {}) => {
+    replaceTokens(directory, tailwindClassReplacements, {}, { dryRun });
 };

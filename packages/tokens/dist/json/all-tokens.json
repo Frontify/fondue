@@ -756,6 +756,174 @@
     }
   },
   "semantic": {
+    "spacing": {
+      "xx-small": {
+        "name": "spacing-xx-small",
+        "type": "float",
+        "value": "var(--spacing-xx-small)",
+        "path": [
+          "default",
+          "spacing",
+          "xx-small"
+        ]
+      },
+      "x-small": {
+        "name": "spacing-x-small",
+        "type": "float",
+        "value": "var(--spacing-x-small)",
+        "path": [
+          "default",
+          "spacing",
+          "x-small"
+        ]
+      },
+      "small": {
+        "name": "spacing-small",
+        "type": "float",
+        "value": "var(--spacing-small)",
+        "path": [
+          "default",
+          "spacing",
+          "small"
+        ]
+      },
+      "medium": {
+        "name": "spacing-medium",
+        "type": "float",
+        "value": "var(--spacing-medium)",
+        "path": [
+          "default",
+          "spacing",
+          "medium"
+        ]
+      },
+      "large": {
+        "name": "spacing-large",
+        "type": "float",
+        "value": "var(--spacing-large)",
+        "path": [
+          "default",
+          "spacing",
+          "large"
+        ]
+      },
+      "x-large": {
+        "name": "spacing-x-large",
+        "type": "float",
+        "value": "var(--spacing-x-large)",
+        "path": [
+          "default",
+          "spacing",
+          "x-large"
+        ]
+      },
+      "xx-large": {
+        "name": "spacing-xx-large",
+        "type": "float",
+        "value": "var(--spacing-xx-large)",
+        "path": [
+          "default",
+          "spacing",
+          "xx-large"
+        ]
+      }
+    },
+    "border-radius": {
+      "small": {
+        "name": "border-radius-small",
+        "type": "float",
+        "value": "var(--border-radius-small)",
+        "path": [
+          "default",
+          "border-radius",
+          "small"
+        ]
+      },
+      "medium": {
+        "name": "border-radius-medium",
+        "type": "float",
+        "value": "var(--border-radius-medium)",
+        "path": [
+          "default",
+          "border-radius",
+          "medium"
+        ]
+      },
+      "large": {
+        "name": "border-radius-large",
+        "type": "float",
+        "value": "var(--border-radius-large)",
+        "path": [
+          "default",
+          "border-radius",
+          "large"
+        ]
+      },
+      "x-large": {
+        "name": "border-radius-x-large",
+        "type": "float",
+        "value": "var(--border-radius-x-large)",
+        "path": [
+          "default",
+          "border-radius",
+          "x-large"
+        ]
+      }
+    },
+    "border-width": {
+      "default": {
+        "name": "border-width-default",
+        "type": "float",
+        "value": "var(--border-width-default)",
+        "path": [
+          "default",
+          "border-width",
+          "default"
+        ]
+      },
+      "large": {
+        "name": "border-width-large",
+        "type": "float",
+        "value": "var(--border-width-large)",
+        "path": [
+          "default",
+          "border-width",
+          "large"
+        ]
+      }
+    },
+    "shadow": {
+      "default": {
+        "name": "shadow-default",
+        "type": "shadow",
+        "value": "var(--shadow-default)",
+        "path": [
+          "default",
+          "shadow",
+          "default"
+        ]
+      },
+      "mid": {
+        "name": "shadow-mid",
+        "type": "shadow",
+        "value": "var(--shadow-mid)",
+        "path": [
+          "default",
+          "shadow",
+          "mid"
+        ]
+      },
+      "big": {
+        "name": "shadow-big",
+        "type": "shadow",
+        "value": "var(--shadow-big)",
+        "path": [
+          "default",
+          "shadow",
+          "big"
+        ]
+      }
+    },
     "typography": {
       "font-family": {
         "primary": {
@@ -999,174 +1167,6 @@
             "extra-loose"
           ]
         }
-      }
-    },
-    "spacing": {
-      "xx-small": {
-        "name": "spacing-xx-small",
-        "type": "float",
-        "value": "var(--spacing-xx-small)",
-        "path": [
-          "default",
-          "spacing",
-          "xx-small"
-        ]
-      },
-      "x-small": {
-        "name": "spacing-x-small",
-        "type": "float",
-        "value": "var(--spacing-x-small)",
-        "path": [
-          "default",
-          "spacing",
-          "x-small"
-        ]
-      },
-      "small": {
-        "name": "spacing-small",
-        "type": "float",
-        "value": "var(--spacing-small)",
-        "path": [
-          "default",
-          "spacing",
-          "small"
-        ]
-      },
-      "medium": {
-        "name": "spacing-medium",
-        "type": "float",
-        "value": "var(--spacing-medium)",
-        "path": [
-          "default",
-          "spacing",
-          "medium"
-        ]
-      },
-      "large": {
-        "name": "spacing-large",
-        "type": "float",
-        "value": "var(--spacing-large)",
-        "path": [
-          "default",
-          "spacing",
-          "large"
-        ]
-      },
-      "x-large": {
-        "name": "spacing-x-large",
-        "type": "float",
-        "value": "var(--spacing-x-large)",
-        "path": [
-          "default",
-          "spacing",
-          "x-large"
-        ]
-      },
-      "xx-large": {
-        "name": "spacing-xx-large",
-        "type": "float",
-        "value": "var(--spacing-xx-large)",
-        "path": [
-          "default",
-          "spacing",
-          "xx-large"
-        ]
-      }
-    },
-    "border-radius": {
-      "small": {
-        "name": "border-radius-small",
-        "type": "float",
-        "value": "var(--border-radius-small)",
-        "path": [
-          "default",
-          "border-radius",
-          "small"
-        ]
-      },
-      "medium": {
-        "name": "border-radius-medium",
-        "type": "float",
-        "value": "var(--border-radius-medium)",
-        "path": [
-          "default",
-          "border-radius",
-          "medium"
-        ]
-      },
-      "large": {
-        "name": "border-radius-large",
-        "type": "float",
-        "value": "var(--border-radius-large)",
-        "path": [
-          "default",
-          "border-radius",
-          "large"
-        ]
-      },
-      "x-large": {
-        "name": "border-radius-x-large",
-        "type": "float",
-        "value": "var(--border-radius-x-large)",
-        "path": [
-          "default",
-          "border-radius",
-          "x-large"
-        ]
-      }
-    },
-    "border-width": {
-      "default": {
-        "name": "border-width-default",
-        "type": "float",
-        "value": "var(--border-width-default)",
-        "path": [
-          "default",
-          "border-width",
-          "default"
-        ]
-      },
-      "large": {
-        "name": "border-width-large",
-        "type": "float",
-        "value": "var(--border-width-large)",
-        "path": [
-          "default",
-          "border-width",
-          "large"
-        ]
-      }
-    },
-    "shadow": {
-      "default": {
-        "name": "shadow-default",
-        "type": "shadow",
-        "value": "var(--shadow-default)",
-        "path": [
-          "default",
-          "shadow",
-          "default"
-        ]
-      },
-      "mid": {
-        "name": "shadow-mid",
-        "type": "shadow",
-        "value": "var(--shadow-mid)",
-        "path": [
-          "default",
-          "shadow",
-          "mid"
-        ]
-      },
-      "big": {
-        "name": "shadow-big",
-        "type": "shadow",
-        "value": "var(--shadow-big)",
-        "path": [
-          "default",
-          "shadow",
-          "big"
-        ]
       }
     }
   },

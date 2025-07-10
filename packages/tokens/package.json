@@ -32,7 +32,7 @@
         "./json/utilities": "./dist/json/utilities.json",
         "./legacy/tokens": "./dist/legacy/deprecatedBaseTokens.css",
         "./legacy/tailwind": "./dist/legacy/deprecatedTailwindConfig.ts",
-        "./legacy/tools/cssTokenReplacements": "./tools/replaceCssVariables.js"
+        "./tools/replaceLegacyTokens": "./tools/replaceLegacyTokens.ts"
     },
     "files": [
         "dist"
