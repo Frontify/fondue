@@ -6,7 +6,7 @@ export const loadingBarContainerStyles = sv({
     base: 'tw-relative tw-w-full tw-overflow-hidden',
     variants: {
         rounded: {
-            true: 'tw-rounded',
+            true: 'tw-rounded-medium',
         },
         size: {
             small: 'tw-h-1',

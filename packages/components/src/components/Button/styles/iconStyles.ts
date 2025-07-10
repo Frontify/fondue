@@ -80,7 +80,7 @@ export const iconStyles = sv({
             variant: 'negative',
             emphasis: 'default',
             class:
-                '[&_svg]:tw-text-button-negative-icon ' +
+                '[&_svg]:tw-text-container-error-on-error-container ' +
                 '[&_svg]:hover:tw-text-button-negative-icon-hover' +
                 '[&_svg]:active:tw-text-button-negative-icon-pressed [&_svg]:tw-leading-none',
         },
