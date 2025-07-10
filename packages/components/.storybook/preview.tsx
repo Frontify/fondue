@@ -59,7 +59,8 @@ const preview: Preview = {
         layout: 'fullscreen',
         options: {
             storySort: {
-                order: ['Tokens', 'Utilities'],
+                order: ['Tokens', 'Utilities', 'Typography', 'Layout', 'Components'],
+                method: 'alphabetical',
             },
         },
         docs: {
