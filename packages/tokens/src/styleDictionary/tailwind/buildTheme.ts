@@ -46,7 +46,7 @@ const getTheme = (dictionary: Dictionary) => {
             tokens,
             identifier: ['color'],
             filter: (token) => {
-                return token.attributes?.type !== 'primitive';
+                return token.attributes?.type !== 'base';
             },
         }),
 

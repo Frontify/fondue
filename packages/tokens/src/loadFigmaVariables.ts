@@ -186,7 +186,8 @@ export const loadFigmaVariables = (config: Config) => {
         const data = formatCollections(computedVariables);
         const filePath = path.resolve(CWD, '../.tmp/tokens/all-tokens.json');
 
-        fs.mkdir(path.dirname(filePath), { recursive: true })
+        return fs
+            .mkdir(path.dirname(filePath), { recursive: true })
             .then(() => fs.writeFile(filePath, JSON.stringify(data, null, 2)))
             .then(() => {
                 console.log('Tokens written to .tmp/tokens/all-tokens.json');
