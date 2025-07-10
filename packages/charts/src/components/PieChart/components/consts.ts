@@ -22,4 +22,4 @@ export const LABEL_PERCENTAGE_STYLE = {
     ...LABEL_VALUE_STYLE,
     fill: 'var(--fc-font-color-x-weak)',
 };
-export const LABEL_PADDING_X = 5;
+export const LABEL_PADDING_X = 10;

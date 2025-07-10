@@ -3,12 +3,10 @@
 import { type TextProps } from '@visx/text';
 import { type Margin } from '@visx/xychart';
 import { useEffect, useState } from 'react';
-import useFontFaceObserver from 'use-font-face-observer';
 
 import { truncateTextLabel } from '@components/BarChart/helpers';
 import { getSVGTextDimensions } from '@components/LineChart/helpers';
 import { type ValueFormatter } from '@components/common/types';
-import { BODY_FONT_FAMILY, TICK_LABEL_WEIGHT } from '@theme/consts';
 
 type TickType<T> = T extends undefined ? string | number : number;
 type UseMarginProps = {
@@ -41,12 +39,6 @@ const getTickLabelOffset = ({ tickLabelStyle, tickLength }: Pick<UseMarginProps,
 export const useMargin = (props: UseMarginProps) => {
     const { tickLabelStyle, ticks, valueFormatter, tickLength, maxLabelHeight = 6, firstLabelOverflowsBy = 0 } = props;
     const [margin, setMargin] = useState<Margin>(DEFAULT_MARGIN);
-    const isFontLoaded = useFontFaceObserver([
-        {
-            family: getComputedStyle(document.documentElement).getPropertyValue(BODY_FONT_FAMILY).trim(),
-            weight: TICK_LABEL_WEIGHT,
-        },
-    ]);
 
     const tickLabelOffset = getTickLabelOffset({ tickLabelStyle, tickLength });
     const ticksJSON = JSON.stringify(ticks);
@@ -55,25 +47,24 @@ export const useMargin = (props: UseMarginProps) => {
     useEffect(() => {
         const ticks = JSON.parse(ticksJSON);
         const style = JSON.parse(styleJSON);
-        if (isFontLoaded) {
-            const longestFormattedValue = findLongestFormattedTickValue({
-                ticks,
-                tickLabelStyle: style as TextProps,
-                tickLength: ticks.length,
-                valueFormatter,
-            });
-            let marginLeft = longestFormattedValue + tickLabelOffset;
-            if (firstLabelOverflowsBy > marginLeft) {
-                marginLeft = firstLabelOverflowsBy;
-            }
-            setMargin({
-                top: 10,
-                right: 20,
-                bottom: maxLabelHeight + 18,
-                left: marginLeft,
-            });
+
+        const longestFormattedValue = findLongestFormattedTickValue({
+            ticks,
+            tickLabelStyle: style as TextProps,
+            tickLength: ticks.length,
+            valueFormatter,
+        });
+        let marginLeft = longestFormattedValue + tickLabelOffset;
+        if (firstLabelOverflowsBy > marginLeft) {
+            marginLeft = firstLabelOverflowsBy;
         }
-    }, [ticksJSON, isFontLoaded, styleJSON, valueFormatter, maxLabelHeight, firstLabelOverflowsBy, tickLabelOffset]);
+        setMargin({
+            top: 10,
+            right: 20,
+            bottom: maxLabelHeight + 18,
+            left: marginLeft,
+        });
+    }, [ticksJSON, styleJSON, valueFormatter, maxLabelHeight, firstLabelOverflowsBy, tickLabelOffset]);
 
     return margin;
 };

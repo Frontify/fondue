@@ -89,6 +89,39 @@ export default {
     },
 } as Meta<BarChartProps>;
 
+const brandData = {
+    name: 'Top Global Brands',
+    dataPoints: [
+        { label: 'Apple', value: 200 },
+        { label: 'Microsoft', value: 180 },
+        { label: 'Amazon', value: 170 },
+        { label: 'Google', value: 165 },
+        { label: 'Samsung', value: 150 },
+        { label: 'Toyota', value: 130 },
+        { label: 'Coca-Cola', value: 125 },
+        { label: 'Nike', value: 120 },
+        { label: 'Mercedes-Benz', value: 115 },
+        { label: 'Disney', value: 110 },
+        { label: 'BMW', value: 105 },
+        { label: 'Intel', value: 100 },
+        { label: 'Facebook', value: 95 },
+        { label: 'Tesla', value: 90 },
+        { label: 'Visa', value: 85 },
+        { label: 'Mastercard', value: 80 },
+        { label: 'Pepsi', value: 75 },
+        { label: 'Netflix', value: 70 },
+        { label: 'Adobe', value: 65 },
+        { label: 'Honda', value: 60 },
+        { label: 'McDonald’s', value: 58 },
+        { label: 'Starbucks', value: 55 },
+        { label: 'YouTube', value: 53 },
+        { label: 'Sony', value: 50 },
+        { label: 'eBay', value: 45 },
+        { label: 'LG', value: 43 },
+        { label: 'Nvidia', value: 40 },
+    ],
+};
+
 const planetsRadiusData = (() => {
     const formattedData = planets.map((item) => {
         return {
@@ -210,6 +243,13 @@ const Template: StoryFn<BarChartProps> = (args) => <BarChart {...args} />;
 export const SingleDataSet = Template.bind({});
 SingleDataSet.args = {
     series: planetsRadiusData,
+    width: 1000,
+    height: 500,
+};
+
+export const SingleDataSetWithRotatedLabels = Template.bind({});
+SingleDataSetWithRotatedLabels.args = {
+    series: [brandData],
     width: 1000,
     height: 500,
 };
