@@ -25,6 +25,11 @@ export default {
             control: { type: 'boolean' },
         },
     },
+    parameters: {
+        status: {
+            type: 'released',
+        },
+    },
 } as Meta;
 
 export const Typography: StoryFn = ({ textContent, removeTailwindPrefix }) => {

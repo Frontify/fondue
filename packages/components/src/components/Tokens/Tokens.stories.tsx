@@ -26,6 +26,11 @@ export default {
             control: { type: 'boolean' },
         },
     },
+    parameters: {
+        status: {
+            type: 'released',
+        },
+    },
 } as Meta;
 
 export const Colors: StoryFn = ({ textContent, removeTailwindPrefix }) => {
