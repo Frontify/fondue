@@ -278,7 +278,7 @@ const replaceInFile = (filePath, replacementMap, dryRun) => {
         if (dryRun) {
             console.log(`[DRY RUN] Potential changes for: ${filePath}`);
             for (const { oldVar, newVar } of replacementsToApply) {
-                console.log(`  '${oldVar}' would be replaced with '${newVar}'`);
+                console.log(`  '${oldVar}' => '${newVar}'`);
             }
             console.log('');
             return;
