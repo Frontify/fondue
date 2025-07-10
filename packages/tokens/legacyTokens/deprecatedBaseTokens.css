@@ -19,7 +19,7 @@
     --body-size-medium-line-height: /** @deprecated use updated token instead **/ var(--typography-line-height-medium);
     --body-size-large: /** @deprecated use updated token instead **/ var(--typography-font-size-large);
     --body-size-large-line-height: /** @deprecated use updated token instead **/ var(--typography-line-height-wide)
-    --box-neutral-color: /** @deprecated use updated token instead **/ var(--color-container-secondary-default);
+        --box-neutral-color: /** @deprecated use updated token instead **/ var(--color-container-secondary-default);
     --box-neutral-color-hover: /** @deprecated use updated token instead **/ var(--color-container-secondary-hover);
     --box-neutral-color-pressed: /** @deprecated use updated token instead **/ var(--color-container-secondary-active);
     --box-neutral-inverse-color: /** @deprecated use updated token instead **/ var(
@@ -155,12 +155,12 @@
     --code-weight-number: /** @deprecated use updated token instead **/ var(--typography-font-weight-regular);
     --code-weight-strong-name: /** @deprecated use updated token instead **/ var(--typography-font-weight-bold);
     --code-weight-strong-number: /** @deprecated use updated token instead **/ var(--typography-font-weight-bold);
-    --code-size-small: 0.813rem;
-    --code-size-small-line-height: 1rem;
-    --code-size-medium: 0.875rem;
-    --code-size-medium-line-height: 1rem;
-    --code-size-large: 1rem;
-    --code-size-large-line-height: 1.25rem;
+    --code-size-small:  /** @deprecated use updated token instead **/ var(--typography-font-size-small);
+    --code-size-small-line-height:  /** @deprecated use updated token instead **/ var(--typography-line-height-tight);
+    --code-size-medium:  /** @deprecated use updated token instead **/ var(--typography-font-size-medium);
+    --code-size-medium-line-height:  /** @deprecated use updated token instead **/ var(--typography-line-height-tight);
+    --code-size-large:  /** @deprecated use updated token instead **/ var(--typography-font-size-large);
+    --code-size-large-line-height:  /** @deprecated use updated token instead **/ var(--typography-line-height-wide);
     --focus-ring-color: /** @deprecated use updated token instead **/ var(--color-focus-default);
     --heading-family: /** @deprecated use updated token instead **/ var(--typography-font-family-primary);
     --heading-family-stack: /** @deprecated use updated token instead **/ var(--typography-font-family-primary);
@@ -169,13 +169,19 @@
     --heading-weight-strong-name: /** @deprecated use updated token instead **/ var(--typography-font-weight-bold);
     --heading-weight-strong-number: /** @deprecated use updated token instead **/ var(--typography-font-weight-bold);
     --heading-size-medium: /** @deprecated use updated token instead **/ var(--typography-font-size-medium);
-    --heading-size-medium-line-height: /** @deprecated use updated token instead **/ var(--typography-line-height-tight);
+    --heading-size-medium-line-height: /** @deprecated use updated token instead **/ var(
+        --typography-line-height-tight
+    );
     --heading-size-large: /** @deprecated use updated token instead **/ var(--typography-font-size-large);
     --heading-size-large-line-height: /** @deprecated use updated token instead **/ var(--typography-line-height-wide);
     --heading-size-x-large: /** @deprecated use updated token instead **/ var(--typography-font-size-x-large);
-    --heading-size-x-large-line-height: /** @deprecated use updated token instead **/ var(--typography-line-height-loose);
+    --heading-size-x-large-line-height: /** @deprecated use updated token instead **/ var(
+        --typography-line-height-loose
+    );
     --heading-size-xx-large: /** @deprecated use updated token instead **/ var(--typography-font-size-xx-large);
-    --heading-size-xx-large-line-height: /** @deprecated use updated token instead **/ var(--typography-line-height-extra-loose);
+    --heading-size-xx-large-line-height: /** @deprecated use updated token instead **/ var(
+        --typography-line-height-extra-loose
+    );
     --line-color: /** @deprecated use updated token instead **/ var(--color-line-mid);
     --line-color-weak: /** @deprecated use updated token instead **/ var(--color-line-subtle);
     --line-color-strong: /** @deprecated use updated token instead **/ var(--color-line-strong);
@@ -233,9 +239,9 @@
     --text-color-warning: /** @deprecated use updated token instead **/ var(--color-warning-default);
     --text-color-warning-hover: /** @deprecated use updated token instead **/ var(--color-warning-hover);
     --text-color-warning-pressed: /** @deprecated use updated token instead **/ var(--color-warning-active);
-    --text-color-interactive: /** @deprecated use updated token instead **/ var(--color-interactive-default);
-    --text-color-interactive-hover: /** @deprecated use updated token instead **/ var(--color-interactive-hover);
-    --text-color-interactive-pressed: /** @deprecated use updated token instead **/ var(--color-interactive-active);
+    --text-color-interactive: /** @deprecated use updated token instead **/ var(--color-highlight-default);
+    --text-color-interactive-hover: /** @deprecated use updated token instead **/ var(--color-highlight-hover);
+    --text-color-interactive-pressed: /** @deprecated use updated token instead **/ var(--color-highlight-active);
     --button-background-color: /** @deprecated use updated token instead **/ var(--color-container-secondary-default);
     --button-background-color-hover: /** @deprecated use updated token instead **/ var(
         --color-container-secondary-hover
