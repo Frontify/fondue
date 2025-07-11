@@ -13,7 +13,7 @@
     $sticky-base: (
         position: sticky,
         z-index: 1,
-        background-color: var(--base-color),
+        background-color: var(--color-surface-default),
     );
 
     &[data-sticky='head'],
@@ -35,16 +35,16 @@
                 #{$prop}: $value;
             }
             left: 0;
-            border-right: 1px solid var(--line-color);
+            border-right: 1px solid var(--color-line-mid);
         }
     }
 
     &[data-font-size='small'] {
-        font-size: var(--body-size-x-small);
+        font-size: var(--typography-font-size-x-small);
     }
 
     &[data-font-size='medium'] {
-        font-size: var(--body-size-small);
+        font-size: var(--typography-font-size-small);
     }
 
     &[data-full-width='false'] {
@@ -66,20 +66,20 @@
 .caption {
     padding: sizeToken.get(3) sizeToken.get(2);
     text-align: left;
-    color: var(--text-color);
+    color: var(--color-primary-default);
 }
 
 .headerCell {
-    font-size: var(--body-size-small);
+    font-size: var(--typography-font-size-small);
     font-weight: 400;
     line-height: sizeToken.get(4);
-    color: var(--text-color-weak);
+    color: var(--color-secondary-default);
 
-    border-top: 1px solid var(--line-color);
-    border-bottom: 1px solid var(--line-color);
+    border-top: 1px solid var(--color-line-mid);
+    border-bottom: 1px solid var(--color-line-mid);
 
     &:hover {
-        color: var(--text-color-hover);
+        color: var(--color-primary-hover);
     }
 
     &[data-sortable='false'] {
@@ -110,7 +110,7 @@
     cursor: pointer;
 
     &[data-active='true'] {
-        color: var(--text-color);
+        color: var(--color-primary-default);
     }
 
     &:focus-visible {
@@ -118,7 +118,7 @@
     }
 
     .sortIndicator {
-        color: var(--text-color-disabled);
+        color: var(--color-disabled-default);
     }
 }
 
@@ -136,7 +136,7 @@
     }
 
     &[data-selected='true'] {
-        background-color: var(--box-selected-color);
+        background-color: var(--color-container-highlight-default);
     }
 
     &[data-disabled='true'] {
@@ -150,20 +150,20 @@
 
         &:not([data-disabled='true']) {
             &:not([data-selected='true']):hover {
-                background-color: var(--base-color-alt);
+                background-color: var(--color-surface-dim);
             }
         }
     }
 }
 
 .rowCell {
-    color: var(--text-color);
+    color: var(--color-primary-default);
 
     font-weight: 400;
     line-height: sizeToken.get(4);
     padding: sizeToken.get(2);
 
-    border-bottom: 1px solid var(--line-color);
+    border-bottom: 1px solid var(--color-line-mid);
 }
 
 .headerCell,

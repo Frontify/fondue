@@ -1,20 +1,20 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 .root[data-border="true"] {
-    border-bottom: var(--line-width) solid var(--line-color);
-    border-top: var(--line-width) solid var(--line-color);
+    border-bottom: var(--border-width-default) solid var(--color-line-mid);
+    border-top: var(--border-width-default) solid var(--color-line-mid);
 }
 
 .accordionItem {
-    color: var(--text-color-weak);
+    color: var(--color-secondary-default);
 
     &:not(:last-child) {
-        border-bottom: var(--line-width) solid var(--line-color);
+        border-bottom: var(--border-width-default) solid var(--color-line-mid);
     }
 
     &:has(.accordionTrigger:focus-visible):not([data-show-focus-ring='false']) {
-        outline: 4px solid var(--focus-ring-color);
-        border-radius: var(--radius);
+        outline: 4px solid var(--color-focus-default);
+        border-radius: var(--border-radius-medium);
     }
 }
 
@@ -24,13 +24,13 @@
     display: flex;
     justify-content: space-between;
     outline: 0;
-    padding: var(--space-l) var(--space-xl);
+    padding: var(--spacing-large) var(--spacing-x-large);
     text-align: left;
     width: 100%;
 
     &[data-state="open"],
     &:hover {
-        color: var(--text-color);
+        color: var(--color-primary-default);
     }
 
     &[data-state="open"] {
@@ -51,24 +51,24 @@
 }
 
 [data-item-padding="medium"] > div {
-    padding: 0 var(--space-m) var(--space-s);
+    padding: 0 var(--spacing-medium) var(--spacing-small);
 }
 
 [data-item-padding="medium"] > div {
-    padding: 0 var(--space-l) var(--space-m);
+    padding: 0 var(--spacing-large) var(--spacing-medium);
 }
 
 [data-item-padding="large"] > div {
-    padding: 0 var(--space-xl) var(--space-l);
+    padding: 0 var(--spacing-x-large) var(--spacing-large);
 }
 
 [data-item-divider="true"] > div {
-    border-top: var(--line-width) solid var(--line-color);
-    padding-top: var(--space-l);
+    border-top: var(--border-width-default) solid var(--color-line-mid);
+    padding-top: var(--spacing-large);
 }
 
 .accordionContentText {
-    color: var(--text-color);
+    color: var(--color-primary-default);
 }
 
 .accordionCaret {
