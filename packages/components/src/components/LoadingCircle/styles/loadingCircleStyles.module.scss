@@ -16,6 +16,7 @@
     border-color: var(--text-color-interactive);
     border-top-color: transparent;
     aspect-ratio: 1 / 1;
+    padding: 0;
 
     &[data-variant='success'] {
         border-color: var(--text-color-positive);
