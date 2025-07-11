@@ -16,10 +16,10 @@
     min-height: 1rem;
 }
 
-@mixin variant($name, $color) {
+@mixin variant($name, $color, $weakColor: $color) {
     [data-variant=#{$name}]:not([data-disabled="true"]) {
-        background-color: var(--box-#{$color}-strong-color);
-        color: var(--box-#{$color}-strong-inverse-color);
+        background-color: var(--color-#{$color}-default);
+        color: var(--color-#{$color}-on-#{$color});
 
         &:is(button) {
             cursor: pointer;
@@ -30,27 +30,27 @@
         }
 
         &:is(button):hover {
-            background-color: var(--box-#{$color}-strong-color-hover);
-            color: var(--box-#{$color}-strong-inverse-color-hover);
+            background-color: var(--color-#{$color}-hover);
+            color: var(--color-#{$color}-on-#{$color});
         }
 
         &[data-emphasis="weak"] {
-            background-color: var(--box-#{$color}-color);
-            color: var(--box-#{$color}-inverse-color);
+            background-color: var(--color-container-#{$weakColor}-default);
+            color: var(--color-container-#{$weakColor}-on-#{$weakColor}-container);
 
             &:is(button):hover {
-                background-color: var(--box-#{$color}-color-hover);
-                color: var(--box-#{$color}-inverse-color-hover);
+                background-color: var(--color-container-#{$weakColor}-hover);
+                color: var(--color-container-#{$weakColor}-on-#{$weakColor}-container);
             }
         }
     }
 }
 
-@include variant(default, neutral);
-@include variant(positive, positive);
-@include variant(highlight, selected);
+@include variant(default, primary, secondary);
+@include variant(positive, success);
+@include variant(highlight, highlight);
 @include variant(warning, warning);
-@include variant(negative, negative);
+@include variant(negative, error);
 
 [data-size="small"] {
     padding: 2px var(--spacing-x-small);

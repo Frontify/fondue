@@ -2,7 +2,6 @@
 
 import { type ComponentType } from 'react';
 
-import '@frontify/fondue-tokens/legacy/tokens';
 import '@frontify/fondue-tokens/styles';
 import '../src/styles.scss';
 
