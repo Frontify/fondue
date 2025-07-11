@@ -20,18 +20,18 @@ const buildTokens = async () => {
     await loadFigmaVariables(config);
     await buildStyleDictionary(config);
 
-    let themeStyles = '';
-    await Promise.all([
+    const themeStyles = await Promise.all([
         readFile(path.resolve(CWD, '../.tmp/themes/base.css'), 'utf-8').then((content) => {
-            themeStyles += `${content}\n`;
+            return content;
         }),
-
         ...config.themes.map(async (theme) => {
             return readFile(path.resolve(CWD, `../.tmp/themes/${theme}.css`), 'utf-8').then((content) => {
-                themeStyles += `${content}\n`;
+                return content;
             });
         }),
-    ]);
+    ]).then((results) => {
+        return results.join('\n');
+    });
 
     const colors: ThemeObject = await config.themes.reduce(async (accPromise, themeName) => {
         const acc = await accPromise;
