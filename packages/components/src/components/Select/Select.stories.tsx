@@ -456,3 +456,55 @@ export const Errored: Story = {
         );
     },
 };
+
+export const WithAsyncOptions: Story = {
+    args: {
+        getAsyncOptions: async (filterText: string) => {
+            if (filterText === '') {
+                return [];
+            }
+
+            const options = [
+                {
+                    value: 'u',
+                    label: 'UUUUU',
+                    children: <Select.Item value="u">UUUUU</Select.Item>,
+                },
+                {
+                    value: 'v',
+                    label: 'VVVV',
+                    children: <Select.Item value="v">VVVV</Select.Item>,
+                },
+                {
+                    value: 'w',
+                    label: 'WWWW',
+                    children: <Select.Item value="w">WWWW</Select.Item>,
+                },
+                {
+                    value: 'x',
+                    label: 'XXXX',
+                    children: <Select.Item value="x">XXXX</Select.Item>,
+                },
+                {
+                    value: 'y',
+                    label: 'YYYY',
+                    children: <Select.Item value="y">YYYY</Select.Item>,
+                },
+                {
+                    value: 'z',
+                    label: 'ZZZZ',
+                    children: <Select.Item value="z">ZZZZ</Select.Item>,
+                },
+            ];
+
+            const filteredOptions = options.filter((option) =>
+                option.label.toLowerCase().includes(filterText.toLowerCase()),
+            );
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            return filteredOptions;
+        },
+    },
+    render: (args) => {
+        return <Select.Combobox {...args} />;
+    },
+};

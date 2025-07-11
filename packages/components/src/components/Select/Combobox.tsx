@@ -8,9 +8,12 @@ import { forwardRef, useMemo, useRef, useState, type FocusEvent, type ForwardedR
 
 import { type CommonAriaProps } from '#/helpers/aria';
 
+import { LoadingCircle } from '../LoadingCircle/LoadingCircle';
+
 import { SelectMenu, type SelectMenuViewportCollisionPadding } from './SelectMenu';
+import { ForwardedRefSelectSlot } from './SelectSlot';
 import styles from './styles/select.module.scss';
-import { useSelectData } from './useSelectData';
+import { useSelectData, type AsyncOptionFetchFunction } from './useSelectData';
 
 export type ComboboxProps = {
     /**
@@ -64,6 +67,10 @@ export type ComboboxProps = {
      * @default 'compact'
      */
     viewportCollisionPadding?: SelectMenuViewportCollisionPadding;
+    /**
+     * The function to fetch async options.
+     */
+    getAsyncOptions?: AsyncOptionFetchFunction;
 } & CommonAriaProps;
 
 export const SelectCombobox = (
@@ -80,12 +87,21 @@ export const SelectCombobox = (
         side = 'bottom',
         id,
         viewportCollisionPadding = 'compact',
+        getAsyncOptions,
         ...props
     }: ComboboxProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
-    const { inputSlots, menuSlots, items, filterText, clearButton, getItemByValue, setFilterText } =
-        useSelectData(children);
+    const {
+        inputSlots,
+        menuSlots,
+        items,
+        filterText,
+        clearButton,
+        getItemByValue,
+        setFilterText,
+        isLoadingAsyncOptions,
+    } = useSelectData(children, getAsyncOptions);
 
     const [hasInteractedSinceOpening, setHasInteractedSinceOpening] = useState(false);
 
@@ -125,8 +141,11 @@ export const SelectCombobox = (
     const wasClicked = useRef(false);
 
     const valueInvalid = useMemo(
-        () => !items.find((item) => item.label.toLowerCase().includes(inputValue.toLowerCase())),
-        [inputValue, items],
+        () =>
+            filterText !== '' &&
+            !isLoadingAsyncOptions &&
+            !items.find((item) => item.label.toLowerCase().includes(inputValue.toLowerCase())),
+        [inputValue, items, filterText, isLoadingAsyncOptions],
     );
 
     const onBlurHandler = (blurEvent: FocusEvent<HTMLInputElement, Element>) => {
@@ -171,6 +190,11 @@ export const SelectCombobox = (
                         onBlur={onBlurHandler}
                     />
                     {inputSlots}
+                    {isLoadingAsyncOptions && (
+                        <ForwardedRefSelectSlot name="right" data-test-id={`${dataTestId}-loading-icon`}>
+                            <LoadingCircle size="x-small" />
+                        </ForwardedRefSelectSlot>
+                    )}
                     {clearButton && (
                         <RadixSlot
                             onClick={(event) => {
