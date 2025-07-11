@@ -1,5 +1,11 @@
 # @frontify/fondue-components
 
+## 19.1.1
+
+### Patch Changes
+
+- [#2340](https://github.com/Frontify/fondue/pull/2340) [`d64d03b`](https://github.com/Frontify/fondue/commit/d64d03b0c8428502a7098418ba2ab1e3c7edccfd) Thanks [@syeo66](https://github.com/syeo66)! - fix: the loading circle is skewed in some contexts
+
 ## 19.1.0
 
 ### Minor Changes
