@@ -178,17 +178,29 @@ const formatCollections = (variables: AssembledVariable[]) => {
     return formattedCollections;
 };
 
+const sortObject = (obj: NestedAssembledVariable): NestedAssembledVariable => {
+    if (typeof obj !== 'object' || obj === null || Array.isArray(obj)) {
+        return obj;
+    }
+
+    const sortedKeys = Object.keys(obj).sort((a, b) => a.localeCompare(b));
+    return sortedKeys.reduce((acc, key) => {
+        acc[key] = sortObject(obj[key] as NestedAssembledVariable);
+        return acc;
+    }, {} as NestedAssembledVariable);
+};
+
 export const loadFigmaVariables = (config: Config) => {
     const CWD = path.dirname(fileURLToPath(import.meta.url));
+
     return fetchFigmaVariables(config.figmaFileKey).then((figmaData) => {
         const computedVariables = getComputedVariables(figmaData, config.tokenTypes, config.excludeTokens);
 
         const data = formatCollections(computedVariables);
         const filePath = path.resolve(CWD, '../.tmp/tokens/all-tokens.json');
-
         return fs
             .mkdir(path.dirname(filePath), { recursive: true })
-            .then(() => fs.writeFile(filePath, JSON.stringify(data, null, 2)))
+            .then(() => fs.writeFile(filePath, JSON.stringify(sortObject(data), null, 2)))
             .then(() => {
                 console.log('Tokens written to .tmp/tokens/all-tokens.json');
             })

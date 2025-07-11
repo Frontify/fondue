@@ -1,85 +1,13 @@
 {
-  "spacing": {
-    "xx-small": {
-      "name": "spacing-xx-small",
-      "type": "float",
-      "value": "var(--spacing-xx-small)",
-      "path": [
-        "default",
-        "spacing",
-        "xx-small"
-      ]
-    },
-    "x-small": {
-      "name": "spacing-x-small",
-      "type": "float",
-      "value": "var(--spacing-x-small)",
-      "path": [
-        "default",
-        "spacing",
-        "x-small"
-      ]
-    },
-    "small": {
-      "name": "spacing-small",
-      "type": "float",
-      "value": "var(--spacing-small)",
-      "path": [
-        "default",
-        "spacing",
-        "small"
-      ]
-    },
-    "medium": {
-      "name": "spacing-medium",
-      "type": "float",
-      "value": "var(--spacing-medium)",
-      "path": [
-        "default",
-        "spacing",
-        "medium"
-      ]
-    },
-    "large": {
-      "name": "spacing-large",
-      "type": "float",
-      "value": "var(--spacing-large)",
-      "path": [
-        "default",
-        "spacing",
-        "large"
-      ]
-    },
-    "x-large": {
-      "name": "spacing-x-large",
-      "type": "float",
-      "value": "var(--spacing-x-large)",
-      "path": [
-        "default",
-        "spacing",
-        "x-large"
-      ]
-    },
-    "xx-large": {
-      "name": "spacing-xx-large",
-      "type": "float",
-      "value": "var(--spacing-xx-large)",
-      "path": [
-        "default",
-        "spacing",
-        "xx-large"
-      ]
-    }
-  },
   "border-radius": {
-    "small": {
-      "name": "border-radius-small",
+    "large": {
+      "name": "border-radius-large",
       "type": "float",
-      "value": "var(--border-radius-small)",
+      "value": "var(--border-radius-large)",
       "path": [
         "default",
         "border-radius",
-        "small"
+        "large"
       ]
     },
     "medium": {
@@ -92,14 +20,14 @@
         "medium"
       ]
     },
-    "large": {
-      "name": "border-radius-large",
+    "small": {
+      "name": "border-radius-small",
       "type": "float",
-      "value": "var(--border-radius-large)",
+      "value": "var(--border-radius-small)",
       "path": [
         "default",
         "border-radius",
-        "large"
+        "small"
       ]
     },
     "x-large": {
@@ -136,6 +64,16 @@
     }
   },
   "shadow": {
+    "big": {
+      "name": "shadow-big",
+      "type": "shadow",
+      "value": "var(--shadow-big)",
+      "path": [
+        "default",
+        "shadow",
+        "big"
+      ]
+    },
     "default": {
       "name": "shadow-default",
       "type": "shadow",
@@ -155,31 +93,82 @@
         "shadow",
         "mid"
       ]
-    },
-    "big": {
-      "name": "shadow-big",
-      "type": "shadow",
-      "value": "var(--shadow-big)",
+    }
+  },
+  "spacing": {
+    "large": {
+      "name": "spacing-large",
+      "type": "float",
+      "value": "var(--spacing-large)",
       "path": [
         "default",
-        "shadow",
-        "big"
+        "spacing",
+        "large"
+      ]
+    },
+    "medium": {
+      "name": "spacing-medium",
+      "type": "float",
+      "value": "var(--spacing-medium)",
+      "path": [
+        "default",
+        "spacing",
+        "medium"
+      ]
+    },
+    "small": {
+      "name": "spacing-small",
+      "type": "float",
+      "value": "var(--spacing-small)",
+      "path": [
+        "default",
+        "spacing",
+        "small"
+      ]
+    },
+    "x-large": {
+      "name": "spacing-x-large",
+      "type": "float",
+      "value": "var(--spacing-x-large)",
+      "path": [
+        "default",
+        "spacing",
+        "x-large"
+      ]
+    },
+    "x-small": {
+      "name": "spacing-x-small",
+      "type": "float",
+      "value": "var(--spacing-x-small)",
+      "path": [
+        "default",
+        "spacing",
+        "x-small"
+      ]
+    },
+    "xx-large": {
+      "name": "spacing-xx-large",
+      "type": "float",
+      "value": "var(--spacing-xx-large)",
+      "path": [
+        "default",
+        "spacing",
+        "xx-large"
+      ]
+    },
+    "xx-small": {
+      "name": "spacing-xx-small",
+      "type": "float",
+      "value": "var(--spacing-xx-small)",
+      "path": [
+        "default",
+        "spacing",
+        "xx-small"
       ]
     }
   },
   "typography": {
     "font-family": {
-      "primary": {
-        "name": "typography-font-family-primary",
-        "type": "string",
-        "value": "var(--typography-font-family-primary)",
-        "path": [
-          "default",
-          "typography",
-          "font-family",
-          "primary"
-        ]
-      },
       "monospace": {
         "name": "typography-font-family-monospace",
         "type": "string",
@@ -190,75 +179,29 @@
           "font-family",
           "monospace"
         ]
-      }
-    },
-    "font-weight": {
-      "regular": {
-        "name": "typography-font-weight-regular",
-        "type": "float",
-        "value": "var(--typography-font-weight-regular)",
-        "path": [
-          "default",
-          "typography",
-          "font-weight",
-          "regular"
-        ]
       },
-      "medium": {
-        "name": "typography-font-weight-medium",
-        "type": "float",
-        "value": "var(--typography-font-weight-medium)",
+      "primary": {
+        "name": "typography-font-family-primary",
+        "type": "string",
+        "value": "var(--typography-font-family-primary)",
         "path": [
           "default",
           "typography",
-          "font-weight",
-          "medium"
-        ]
-      },
-      "bold": {
-        "name": "typography-font-weight-bold",
-        "type": "float",
-        "value": "var(--typography-font-weight-bold)",
-        "path": [
-          "default",
-          "typography",
-          "font-weight",
-          "bold"
+          "font-family",
+          "primary"
         ]
       }
     },
     "font-size": {
-      "xx-small": {
-        "name": "typography-font-size-xx-small",
+      "large": {
+        "name": "typography-font-size-large",
         "type": "float",
-        "value": "var(--typography-font-size-xx-small)",
+        "value": "var(--typography-font-size-large)",
         "path": [
           "default",
           "typography",
           "font-size",
-          "xx-small"
-        ]
-      },
-      "x-small": {
-        "name": "typography-font-size-x-small",
-        "type": "float",
-        "value": "var(--typography-font-size-x-small)",
-        "path": [
-          "default",
-          "typography",
-          "font-size",
-          "x-small"
-        ]
-      },
-      "small": {
-        "name": "typography-font-size-small",
-        "type": "float",
-        "value": "var(--typography-font-size-small)",
-        "path": [
-          "default",
-          "typography",
-          "font-size",
-          "small"
+          "large"
         ]
       },
       "medium": {
@@ -272,15 +215,15 @@
           "medium"
         ]
       },
-      "large": {
-        "name": "typography-font-size-large",
+      "small": {
+        "name": "typography-font-size-small",
         "type": "float",
-        "value": "var(--typography-font-size-large)",
+        "value": "var(--typography-font-size-small)",
         "path": [
           "default",
           "typography",
           "font-size",
-          "large"
+          "small"
         ]
       },
       "x-large": {
@@ -294,6 +237,17 @@
           "x-large"
         ]
       },
+      "x-small": {
+        "name": "typography-font-size-x-small",
+        "type": "float",
+        "value": "var(--typography-font-size-x-small)",
+        "path": [
+          "default",
+          "typography",
+          "font-size",
+          "x-small"
+        ]
+      },
       "xx-large": {
         "name": "typography-font-size-xx-large",
         "type": "float",
@@ -304,29 +258,51 @@
           "font-size",
           "xx-large"
         ]
+      },
+      "xx-small": {
+        "name": "typography-font-size-xx-small",
+        "type": "float",
+        "value": "var(--typography-font-size-xx-small)",
+        "path": [
+          "default",
+          "typography",
+          "font-size",
+          "xx-small"
+        ]
       }
     },
-    "text-transform": {
-      "default": {
-        "name": "typography-text-transform-default",
-        "type": "string",
-        "value": "var(--typography-text-transform-default)",
+    "font-weight": {
+      "bold": {
+        "name": "typography-font-weight-bold",
+        "type": "float",
+        "value": "var(--typography-font-weight-bold)",
         "path": [
           "default",
           "typography",
-          "text-transform",
-          "default"
+          "font-weight",
+          "bold"
         ]
       },
-      "uppercase": {
-        "name": "typography-text-transform-uppercase",
-        "type": "string",
-        "value": "var(--typography-text-transform-uppercase)",
+      "medium": {
+        "name": "typography-font-weight-medium",
+        "type": "float",
+        "value": "var(--typography-font-weight-medium)",
         "path": [
           "default",
           "typography",
-          "text-transform",
-          "uppercase"
+          "font-weight",
+          "medium"
+        ]
+      },
+      "regular": {
+        "name": "typography-font-weight-regular",
+        "type": "float",
+        "value": "var(--typography-font-weight-regular)",
+        "path": [
+          "default",
+          "typography",
+          "font-weight",
+          "regular"
         ]
       }
     },
@@ -355,37 +331,15 @@
       }
     },
     "line-height": {
-      "tight": {
-        "name": "typography-line-height-tight",
+      "extra-loose": {
+        "name": "typography-line-height-extra-loose",
         "type": "float",
-        "value": "var(--typography-line-height-tight)",
+        "value": "var(--typography-line-height-extra-loose)",
         "path": [
           "default",
           "typography",
           "line-height",
-          "tight"
-        ]
-      },
-      "medium": {
-        "name": "typography-line-height-medium",
-        "type": "float",
-        "value": "var(--typography-line-height-medium)",
-        "path": [
-          "default",
-          "typography",
-          "line-height",
-          "medium"
-        ]
-      },
-      "wide": {
-        "name": "typography-line-height-wide",
-        "type": "float",
-        "value": "var(--typography-line-height-wide)",
-        "path": [
-          "default",
-          "typography",
-          "line-height",
-          "wide"
+          "extra-loose"
         ]
       },
       "loose": {
@@ -399,15 +353,61 @@
           "loose"
         ]
       },
-      "extra-loose": {
-        "name": "typography-line-height-extra-loose",
+      "medium": {
+        "name": "typography-line-height-medium",
         "type": "float",
-        "value": "var(--typography-line-height-extra-loose)",
+        "value": "var(--typography-line-height-medium)",
         "path": [
           "default",
           "typography",
           "line-height",
-          "extra-loose"
+          "medium"
+        ]
+      },
+      "tight": {
+        "name": "typography-line-height-tight",
+        "type": "float",
+        "value": "var(--typography-line-height-tight)",
+        "path": [
+          "default",
+          "typography",
+          "line-height",
+          "tight"
+        ]
+      },
+      "wide": {
+        "name": "typography-line-height-wide",
+        "type": "float",
+        "value": "var(--typography-line-height-wide)",
+        "path": [
+          "default",
+          "typography",
+          "line-height",
+          "wide"
+        ]
+      }
+    },
+    "text-transform": {
+      "default": {
+        "name": "typography-text-transform-default",
+        "type": "string",
+        "value": "var(--typography-text-transform-default)",
+        "path": [
+          "default",
+          "typography",
+          "text-transform",
+          "default"
+        ]
+      },
+      "uppercase": {
+        "name": "typography-text-transform-uppercase",
+        "type": "string",
+        "value": "var(--typography-text-transform-uppercase)",
+        "path": [
+          "default",
+          "typography",
+          "text-transform",
+          "uppercase"
         ]
       }
     }
