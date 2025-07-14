@@ -1,5 +1,19 @@
 # @frontify/fondue
 
+## 13.0.0-beta.0
+
+### Major Changes
+
+- [#2302](https://github.com/Frontify/fondue/pull/2302) [`d010cb5`](https://github.com/Frontify/fondue/commit/d010cb53242c9d9e9112bb369a9af975189ba36a) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: overhauled token generation and switched to new token set
+
+### Patch Changes
+
+- Updated dependencies [[`d64d03b`](https://github.com/Frontify/fondue/commit/d64d03b0c8428502a7098418ba2ab1e3c7edccfd), [`d010cb5`](https://github.com/Frontify/fondue/commit/d010cb53242c9d9e9112bb369a9af975189ba36a)]:
+    - @frontify/fondue-components@20.0.0-beta.0
+    - @frontify/fondue-charts@7.0.0-beta.0
+    - @frontify/fondue-tokens@5.0.0-beta.0
+    - @frontify/fondue-icons@0.18.0-beta.0
+
 ## 12.10.3
 
 ### Patch Changes
