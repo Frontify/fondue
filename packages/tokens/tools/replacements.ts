@@ -374,10 +374,10 @@ const tailwindTokenReplacements = {
     'tw-text-code-large(?![a-zA-Z0-9-])': 'tw-text-large',
 
     // new named token key in the new `fontSize` config using the variable lookup method.
-    'tw-text-heading-medium(?![a-zA-Z0-9-])': 'tw-$1-medium', // Note: new 'medium' fontSize is used for old 'heading-medium'
-    'tw-text-heading-large(?![a-zA-Z0-9-])': 'tw-$1-large', // Note: new 'large' fontSize is used for old 'heading-large'
-    'tw-text-heading-x-large(?![a-zA-Z0-9-])': 'tw-$1-x-large',
-    'tw-text-heading-xx-large(?![a-zA-Z0-9-])': 'tw-$1-xx-large',
+    'tw-text-heading-medium(?![a-zA-Z0-9-])': 'tw-text-medium', // Note: new 'medium' fontSize is used for old 'heading-medium'
+    'tw-text-heading-large(?![a-zA-Z0-9-])': 'tw-text-large', // Note: new 'large' fontSize is used for old 'heading-large'
+    'tw-text-heading-x-large(?![a-zA-Z0-9-])': 'tw-text-x-large',
+    'tw-text-heading-xx-large(?![a-zA-Z0-9-])': 'tw-text-xx-large',
 
     // fontFamily
     'tw-font-body(?![a-zA-Z0-9-])': 'tw-font-primary',
