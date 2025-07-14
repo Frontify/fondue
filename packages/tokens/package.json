@@ -41,6 +41,7 @@
         "build": "tsx src/buildTokens.ts && mkdir -p ./dist/legacy && cp -r legacyTokens/* ./dist/legacy && mkdir -p ./dist/legacy/tools && cp -r tools/* ./dist/legacy/tools",
         "lint": "eslint .",
         "lint:fix": "eslint --fix .",
+        "migrate": "tsx tools/migrate.js",
         "typecheck": "tsc --noEmit"
     },
     "publishConfig": {
