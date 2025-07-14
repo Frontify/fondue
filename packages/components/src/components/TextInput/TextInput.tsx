@@ -2,10 +2,10 @@
 
 import { IconCheckMark, IconExclamationMarkTriangle } from '@frontify/fondue-icons';
 import {
-    type FocusEvent,
     forwardRef,
     useRef,
     type ChangeEvent,
+    type FocusEvent,
     type ForwardedRef,
     type KeyboardEvent,
     type ReactNode,
@@ -131,6 +131,7 @@ export const TextFieldRoot = (
                 type="text"
                 {...inputProps}
                 onFocus={(focusEvent) => {
+                    console.log('focusEvent', focusEvent);
                     if (!wasClicked.current) {
                         focusEvent.target.dataset.showFocusRing = 'true';
                     }

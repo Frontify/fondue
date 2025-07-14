@@ -37,7 +37,7 @@ test('render the loading status', async ({ mount }) => {
     const component = await mount(<TextInput status="loading" />);
 
     await expect(component).toHaveAttribute('data-status', 'loading');
-    await expect(component).toHaveCSS('border', '1px solid rgb(17, 17, 16)');
+    await expect(component).toHaveCSS('border', '1px solid rgba(135, 135, 129, 0.5)');
     await expect(component.getByTestId(TEXT_INPUT_LOADER_TEST_ID)).toBeVisible();
 });
 
