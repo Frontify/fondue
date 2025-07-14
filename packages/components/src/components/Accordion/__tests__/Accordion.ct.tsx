@@ -177,7 +177,7 @@ test.describe('Accordion Component', () => {
 
         await expect(component.locator(ACCORDION_ITEM_CONTENT_ID)).toHaveCSS(
             'border-top',
-            '1px solid rgba(8, 8, 8, 0.1)',
+            '1px solid rgba(135, 135, 129, 0.5)',
         );
     });
 
@@ -195,7 +195,7 @@ test.describe('Accordion Component', () => {
 
         await expect(component.locator(ACCORDION_ITEM_CONTENT_ID)).not.toHaveCSS(
             'border-top',
-            '1px solid rgba(8, 8, 8, 0.1)',
+            '1px solid rgba(135, 135, 129, 0.5)',
         );
     });
 
@@ -211,8 +211,8 @@ test.describe('Accordion Component', () => {
             </Accordion.Root>,
         );
 
-        await expect(component).toHaveCSS('border-top', '1px solid rgba(8, 8, 8, 0.1)');
-        await expect(component).toHaveCSS('border-bottom', '1px solid rgba(8, 8, 8, 0.1)');
+        await expect(component).toHaveCSS('border-top', '1px solid rgba(135, 135, 129, 0.5)');
+        await expect(component).toHaveCSS('border-bottom', '1px solid rgba(135, 135, 129, 0.5)');
     });
 
     test('does not show borders when border prop is set to false', async ({ mount }) => {
@@ -227,8 +227,8 @@ test.describe('Accordion Component', () => {
             </Accordion.Root>,
         );
 
-        await expect(component).toHaveCSS('border-top', '1px solid rgba(8, 8, 8, 0.1)');
-        await expect(component).toHaveCSS('border-bottom', '1px solid rgba(8, 8, 8, 0.1)');
+        await expect(component).toHaveCSS('border-top', '1px solid rgba(135, 135, 129, 0.5)');
+        await expect(component).toHaveCSS('border-bottom', '1px solid rgba(135, 135, 129, 0.5)');
     });
 
     test('should correctly navigate with keyboard', async ({ mount, page }) => {
