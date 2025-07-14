@@ -18,8 +18,8 @@
     --body-size-medium: /** @deprecated use updated token instead **/ var(--typography-font-size-medium);
     --body-size-medium-line-height: /** @deprecated use updated token instead **/ var(--typography-line-height-medium);
     --body-size-large: /** @deprecated use updated token instead **/ var(--typography-font-size-large);
-    --body-size-large-line-height: /** @deprecated use updated token instead **/ var(--typography-line-height-wide)
-        --box-neutral-color: /** @deprecated use updated token instead **/ var(--color-container-secondary-default);
+    --body-size-large-line-height: /** @deprecated use updated token instead **/ var(--typography-line-height-wide);
+    --box-neutral-color: /** @deprecated use updated token instead **/ var(--color-container-secondary-default);
     --box-neutral-color-hover: /** @deprecated use updated token instead **/ var(--color-container-secondary-hover);
     --box-neutral-color-pressed: /** @deprecated use updated token instead **/ var(--color-container-secondary-active);
     --box-neutral-inverse-color: /** @deprecated use updated token instead **/ var(

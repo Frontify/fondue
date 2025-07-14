@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
+
 import { cssVariableReplacements, deprecatedCssVariables, tailwindClassReplacements } from './replacements';
 
 const deprecatedOccurrences: { filePath: string; line: number; variable: string }[] = [];
@@ -19,7 +20,7 @@ const logDeprecatedInFile = (filePath: string, deprecatedMap: Record<string, str
         for (let i = 0; i < lines.length; i++) {
             const line = lines[i];
             for (const deprecatedVar of Object.keys(deprecatedMap)) {
-                if (line.includes(deprecatedVar)) {
+                if (line?.includes(deprecatedVar)) {
                     deprecatedOccurrences.push({
                         filePath,
                         line: i + 1,
@@ -29,7 +30,9 @@ const logDeprecatedInFile = (filePath: string, deprecatedMap: Record<string, str
             }
         }
     } catch (error) {
-        console.error(`Could not check for deprecated variables in file ${filePath}: ${error.message}`);
+        console.error(
+            `Could not check for deprecated variables in file ${filePath}: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        );
     }
 };
 
@@ -47,7 +50,7 @@ const replaceInFile = (filePath: string, replacementMap: Record<string, string>,
             const regexMatch = content.match(new RegExp(selector, 'g'));
 
             for (const match of regexMatch ?? []) {
-                const newValue = match.replace(new RegExp(selector, 'g'), value);
+                const newValue = match.replaceAll(new RegExp(selector, 'g'), value);
                 if (newValue !== match) {
                     replacementsToApply.push({
                         selector,
@@ -74,13 +77,15 @@ const replaceInFile = (filePath: string, replacementMap: Record<string, string>,
 
         let modifiedContent = content;
         for (const { selector, newValue } of replacementsToApply) {
-            modifiedContent = modifiedContent.replace(new RegExp(selector, 'g'), newValue);
+            modifiedContent = modifiedContent.replaceAll(new RegExp(selector, 'g'), newValue);
         }
 
         fs.writeFileSync(filePath, modifiedContent, 'utf8');
         console.log(`Updated: ${filePath}`);
     } catch (error) {
-        console.error(`Could not process file ${filePath}: ${error.message}`);
+        console.error(
+            `Could not process file ${filePath}: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        );
     }
 };
 
@@ -105,7 +110,7 @@ const traverseDir = (
             }
         }
     } catch (error) {
-        console.error(`Could not read directory ${dir}: ${error.message}`);
+        console.error(`Could not read directory ${dir}: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
 };
 
@@ -141,7 +146,9 @@ const replaceTokens = (
 
         for (const [file, occurrences] of Object.entries(groupedByFile)) {
             console.log(`File: ${file}`);
-            occurrences.forEach((occurrence) => console.log(occurrence));
+            for (const occurrence of occurrences) {
+                console.log(occurrence);
+            }
             console.log('');
         }
 
@@ -157,7 +164,7 @@ const replaceTokens = (
 export const replaceCssVariables = (directory: string, { dryRun = false }: { dryRun?: boolean } = {}) => {
     const escapedCssVariableReplacements = Object.fromEntries(
         Object.entries(cssVariableReplacements).map(([key, value]) => [
-            key.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'),
+            key.replaceAll(/[$()*+./?[\\\]^{|}-]/g, '\\$&'),
             value,
         ]),
     );
