@@ -35,6 +35,8 @@ jobs:
 
             - name: Build Storybook docs
               run: pnpm build:storybook:packages && pnpm build:storybook:main
+              env:
+                  STORYBOOK_PATH_PREFIX: "/pr-preview/beta/"
 
             - name: Deploy Storybook to GitHub Pages
               uses: JamesIves/github-pages-deploy-action@v4
