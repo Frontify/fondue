@@ -9,5 +9,8 @@
     "@frontify/fondue-tokens": "4.2.0",
     "@frontify/fondue-storybook-docs": "0.0.1"
   },
-  "changesets": []
+  "changesets": [
+    "solid-keys-carry",
+    "thin-buckets-open"
+  ]
 }
