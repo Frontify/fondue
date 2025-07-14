@@ -49,7 +49,7 @@
         "./styles": "./dist/style.css",
         "./tokens/base": "./dist/packages/tokens/base.css",
         "./tokens/tailwind": "./dist/packages/tokens/tailwind.config.js",
-        "./legacyTokens/tailwind": "./legacyTokens.tailwind.config.ts",
+        "./legacyTokens/tailwind": "./dist/legacyTokens.tailwind.config.ts",
         "./legacyTokens/base": "./dist/packages/tokens/deprecatedBaseTokens.css",
         "./legacyTokens/tools/replaceLegacyTokens": "./dist/packages/tokens/tools/replaceLegacyTokens.ts",
         "./dist/*": "./dist/*"
