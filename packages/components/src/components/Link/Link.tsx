@@ -2,9 +2,9 @@
 
 import { forwardRef, type ReactNode, type MouseEvent, useCallback } from 'react';
 
-import { useFondueRouter } from '../RouterProvider/RouterProvider';
-
 import { cn } from '#/utilities/styleUtilities';
+
+import { useFondueRouter } from '../RouterProvider/RouterProvider';
 
 import styles from './styles/link.module.scss';
 
