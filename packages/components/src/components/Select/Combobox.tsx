@@ -6,11 +6,13 @@ import { Slot as RadixSlot } from '@radix-ui/react-slot';
 import { useCombobox } from 'downshift';
 import { forwardRef, useMemo, useRef, useState, type FocusEvent, type ForwardedRef, type ReactNode } from 'react';
 
+import { LoadingCircle } from '#/components/LoadingCircle/LoadingCircle.tsx';
+import { ForwardedRefSelectSlot } from '#/components/Select/SelectSlot.tsx';
 import { type CommonAriaProps } from '#/helpers/aria';
 
 import { SelectMenu, type SelectMenuViewportCollisionPadding } from './SelectMenu';
 import styles from './styles/select.module.scss';
-import { useSelectData } from './useSelectData';
+import { type AsyncItemsFetcher, useSelectData } from './useSelectData';
 
 export type ComboboxProps = {
     /**
@@ -64,6 +66,10 @@ export type ComboboxProps = {
      * @default 'compact'
      */
     viewportCollisionPadding?: SelectMenuViewportCollisionPadding;
+    /**
+     * Function to fetch items asynchronously.
+     */
+    getAsyncItems?: AsyncItemsFetcher;
 } & CommonAriaProps;
 
 export const SelectCombobox = (
@@ -80,12 +86,13 @@ export const SelectCombobox = (
         side = 'bottom',
         id,
         viewportCollisionPadding = 'compact',
+        getAsyncItems,
         ...props
     }: ComboboxProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
-    const { inputSlots, menuSlots, items, filterText, clearButton, getItemByValue, setFilterText } =
-        useSelectData(children);
+    const { inputSlots, menuSlots, items, filterText, clearButton, getItemByValue, setFilterText, asyncItemStatus } =
+        useSelectData(children, getAsyncItems);
 
     const [hasInteractedSinceOpening, setHasInteractedSinceOpening] = useState(false);
 
@@ -125,8 +132,8 @@ export const SelectCombobox = (
     const wasClicked = useRef(false);
 
     const valueInvalid = useMemo(
-        () => !items.find((item) => item.label.toLowerCase().includes(inputValue.toLowerCase())),
-        [inputValue, items],
+        () => !getAsyncItems && !items.find((item) => item.label.toLowerCase().includes(inputValue.toLowerCase())),
+        [inputValue, items, getAsyncItems],
     );
 
     const onBlurHandler = (blurEvent: FocusEvent<HTMLInputElement, Element>) => {
@@ -146,11 +153,12 @@ export const SelectCombobox = (
             getInputProps().onBlur?.(blurEvent);
         }
     };
+    const hasError = valueInvalid || !!asyncItemStatus.error || status === 'error';
 
     return (
         <RadixPopover.Root open={isOpen}>
             <RadixPopover.Anchor asChild>
-                <div ref={forwardedRef} className={styles.root} data-status={valueInvalid ? 'error' : status}>
+                <div ref={forwardedRef} className={styles.root} data-status={hasError ? 'error' : status}>
                     <input
                         {...getInputProps({
                             'aria-label': 'aria-label' in props ? props['aria-label'] : undefined,
@@ -183,6 +191,11 @@ export const SelectCombobox = (
                             {clearButton}
                         </RadixSlot>
                     )}
+                    {asyncItemStatus.isLoading ? (
+                        <ForwardedRefSelectSlot name="right" data-test-id={`${dataTestId}-right-slot`}>
+                            <LoadingCircle size="x-small" data-test-id={`${dataTestId}-loading-circle`} />
+                        </ForwardedRefSelectSlot>
+                    ) : null}
                     <div className={styles.icons}>
                         <button
                             aria-label="toggle menu"
@@ -202,7 +215,7 @@ export const SelectCombobox = (
                                 data-test-id={`${dataTestId}-success-icon`}
                             />
                         ) : null}
-                        {valueInvalid || status === 'error' ? (
+                        {hasError ? (
                             <IconExclamationMarkTriangle
                                 size={16}
                                 className={styles.iconError}

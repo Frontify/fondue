@@ -4,6 +4,8 @@ import { IconIcon } from '@frontify/fondue-icons';
 import { expect, test } from '@playwright/experimental-ct-react';
 import * as sinon from 'sinon';
 
+import { MockComboboxWithAsyncFetcher } from '#/components/Select/__tests__/MockComboboxWithAsyncFetcher.tsx';
+
 import { Select } from '../Select';
 
 const SELECT_TEST_ID = 'test-combobox';
@@ -429,4 +431,71 @@ test('should filter the items when typing', async ({ mount, page }) => {
     await page.keyboard.press('Backspace');
     await expect(page.getByTestId(ITEM_TEST_ID1)).toBeVisible();
     await expect(page.getByTestId(ITEM_TEST_ID2)).toBeVisible();
+});
+
+test('should display loading circle when typing and hide loading circle after loading is finished', async ({
+    mount,
+    page,
+}) => {
+    const items = [
+        { value: 'test1', label: 'test1', content: <span data-test-id={'test1'}>{'TEST1'}</span> },
+        { value: 'test2', label: 'test2', content: <span data-test-id={'test2'}>{'TEST2'}</span> },
+    ];
+    const component = await mount(
+        <MockComboboxWithAsyncFetcher
+            aria-label="test"
+            data-test-id={SELECT_TEST_ID}
+            placeholder={PLACEHOLDER_TEXT}
+            asyncItems={items}
+        />,
+    );
+
+    await expect(component).toBeVisible();
+    await component.click();
+
+    await page.keyboard.type(ITEM_TEXT1);
+
+    await expect(page.getByTestId(`${SELECT_TEST_ID}-loading-circle`)).toBeVisible();
+    await expect(page.getByTestId(`${SELECT_TEST_ID}-loading-circle`)).not.toBeVisible();
+});
+
+test('should display error when getAsyncItems fails', async ({ mount, page }) => {
+    const items = [
+        { value: 'test1', label: 'test1', content: <span data-test-id={'test1'}>{'TEST1'}</span> },
+        { value: 'test2', label: 'test2', content: <span data-test-id={'test2'}>{'TEST2'}</span> },
+    ];
+    const component = await mount(
+        <MockComboboxWithAsyncFetcher
+            aria-label="test"
+            data-test-id={SELECT_TEST_ID}
+            placeholder={PLACEHOLDER_TEXT}
+            asyncItems={items}
+            shouldReject
+        />,
+    );
+
+    await expect(component).toBeVisible();
+    await component.click();
+
+    await expect(page.getByTestId(`${SELECT_TEST_ID}-error-icon`)).toBeVisible();
+});
+
+test('should not display error when async items is empty', async ({ mount, page }) => {
+    const component = await mount(
+        <MockComboboxWithAsyncFetcher
+            aria-label="test"
+            data-test-id={SELECT_TEST_ID}
+            placeholder={PLACEHOLDER_TEXT}
+            asyncItems={[]}
+        />,
+    );
+
+    await expect(component).toBeVisible();
+    await component.click();
+
+    await expect(component.getByTestId(`${SELECT_TEST_ID}-error-icon`)).not.toBeVisible();
+
+    await page.keyboard.type(ITEM_TEXT1);
+
+    await expect(component.getByTestId(`${SELECT_TEST_ID}-error-icon`)).not.toBeVisible();
 });
