@@ -289,7 +289,7 @@
     --button-strong-background-color-pressed: /** @deprecated use updated token instead **/ var(--color-primary-active);
     --button-strong-text-color: /** @deprecated use updated token instead **/ var(--color-primary-on-primary);
     --button-strong-icon-color: /** @deprecated use updated token instead **/ var(--color-primary-on-primary);
-    --button-strong-border-color: /** @deprecated use updated token instead **/;
+    --button-strong-border-color: /** @deprecated use updated token instead **/ var(--color-line-mid);
     --button-strong-negative-background-color: /** @deprecated use updated token instead **/ var(--color-error-default);
     --button-strong-negative-background-color-hover: /** @deprecated use updated token instead **/ var(
         --color-error-hover
