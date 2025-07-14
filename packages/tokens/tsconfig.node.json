@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "composite": true,
+        "module": "ESNext",
+        "moduleResolution": "Node",
+        "allowSyntheticDefaultImports": true,
+        "resolveJsonModule": true,
+        "baseUrl": ".",
+        "lib": ["ESNext"]
+    },
+    "include": [".eslintrc.cjs", "config.ts", "package.json", "src", "legacyTokens", "tools"]
+}
