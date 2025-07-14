@@ -9,7 +9,7 @@ import { type Decorator, type Preview, type StoryContext } from '@storybook/reac
 import { Flex } from '../src/components/Flex/Flex';
 
 import DocumentationTemplate from './DocumentationTemplate.mdx';
-import { withTheme } from './components/StoryWithTeme';
+import { withTheme } from './components/StoryWithTheme';
 
 const ThemeProviderWrapper: Decorator = (Story: ComponentType, context: StoryContext) => {
     if (context.globals.theme === 'both') {
