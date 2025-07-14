@@ -167,7 +167,10 @@ export default {
                 'heading-medium': ['var(--typography-font-size-medium)', 'var(--typography-line-height-tight)'],
                 'heading-large': ['var(--typography-font-size-large)', 'var(--typography-line-height-wide)'],
                 'heading-x-large': ['var(--typography-font-size-x-large)', 'var(--typography-line-height-loose)'],
-                'heading-xx-large': ['var(--typography-font-size-xx-large)', 'var(--typography-line-height-extra-loose)'],
+                'heading-xx-large': [
+                    'var(--typography-font-size-xx-large)',
+                    'var(--typography-line-height-extra-loose)',
+                ],
             },
             fontFamily: {
                 body: 'var(--typography-font-family-primary)',
