@@ -1,0 +1,119 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+.root {
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.size-x-small {
+    font-size: var(--body-size-x-small);
+    line-height: var(--body-size-x-small-line-height);
+}
+.size-small {
+    font-size: var(--body-size-small);
+    line-height: var(--body-size-small-line-height);
+}
+.size-medium {
+    font-size: var(--body-size-medium);
+    line-height: var(--body-size-medium-line-height);
+}
+.size-large {
+    font-size: var(--body-size-large);
+    line-height: var(--body-size-large-line-height);
+}
+
+.weight-light {
+    font-weight: 300;
+}
+.weight-regular {
+    font-weight: 400;
+}
+.weight-medium {
+    font-weight: 500;
+}
+.weight-bold {
+    font-weight: 700;
+}
+.weight-default {
+    font-weight: var(--body-weight-number);
+}
+.weight-strong {
+    font-weight: var(--body-weight-strong-number);
+}
+.weight-x-strong {
+    font-weight: var(--body-weight-x-strong-number);
+}
+
+.wrap-wrap {
+    white-space: normal;
+}
+.wrap-nowrap {
+    white-space: nowrap;
+}
+
+.underline-auto {
+    text-decoration: auto;
+}
+.underline-always {
+    text-decoration: underline;
+}
+.underline-hover {
+    text-decoration: none;
+}
+.underline-hover:hover {
+    text-decoration: underline;
+}
+.underline-none {
+    text-decoration: none;
+}
+
+.color-default {
+    color: var(--text-color);
+}
+.color-weak {
+    color: var(--text-color-weak);
+}
+.color-x-weak {
+    color: var(--text-color-x-weak);
+}
+.color-disabled {
+    color: var(--text-color-disabled);
+}
+.color-negative {
+    color: var(--text-color-negative);
+}
+.color-positive {
+    color: var(--text-color-positive);
+}
+.color-warning {
+    color: var(--text-color-warning);
+}
+.color-interactive {
+    color: var(--text-color-interactive);
+}
+
+.color-box-neutral {
+    color: var(--box-neutral-inverse-color);
+}
+.color-box-selected {
+    color: var(--box-selected-inverse-color);
+}
+.color-box-disabled {
+    color: var(--box-disabled-color-inverse);
+}
+.color-box-positive {
+    color: var(--box-positive-inverse-color);
+}
+.color-box-negative {
+    color: var(--box-negative-inverse-color);
+}
+.color-box-warning {
+    color: var(--box-warning-inverse-color);
+}
+
+.truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
