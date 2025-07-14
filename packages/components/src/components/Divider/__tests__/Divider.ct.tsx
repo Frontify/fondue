@@ -36,12 +36,12 @@ test('should render with style noline', async ({ mount }) => {
 
 test('should render with color weak', async ({ mount }) => {
     const component = await mount(<Divider color="weak" />);
-    await expect(component).toHaveClass(/tw-border-line-weak/);
+    await expect(component).toHaveClass(/tw-border-line-mid/);
 });
 
 test('should render with color default', async ({ mount }) => {
     const component = await mount(<Divider color="default" />);
-    await expect(component).toHaveClass(/tw-border-line /);
+    await expect(component).toHaveClass(/tw-border-line-mid /);
 });
 
 test('should render with color strong', async ({ mount }) => {

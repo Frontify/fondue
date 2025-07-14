@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import styles from '@frontify/fondue-tokens/theme-tokens';
+import styles from '@frontify/fondue-tokens/themes';
 import { Slot } from '@radix-ui/react-slot';
 import { createContext, useContext, type ReactNode } from 'react';
 
@@ -30,7 +30,7 @@ export const ThemeProvider = ({ children, theme = 'light', asChild = false }: Th
     const Comp = asChild ? Slot : 'div';
     return (
         <ThemeContext.Provider value={theme}>
-            <Comp className={styles[theme]}>{children}</Comp>
+            <Comp className={`${styles[theme]} fondue-theme-provider`}>{children}</Comp>
         </ThemeContext.Provider>
     );
 };

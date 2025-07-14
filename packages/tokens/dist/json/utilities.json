@@ -1,0 +1,730 @@
+{
+  "text": {
+    "body": {
+      "large": {
+        "default": {
+          "font-family": {
+            "name": "text-body-large-default-font-family",
+            "type": "string",
+            "value": "ref_typography/font-family/primary"
+          },
+          "font-size": {
+            "name": "text-body-large-default-font-size",
+            "type": "float",
+            "value": "ref_typography/font-size/large"
+          },
+          "font-weight": {
+            "name": "text-body-large-default-font-weight",
+            "type": "float",
+            "value": "ref_typography/font-weight/regular"
+          },
+          "letter-casing": {
+            "name": "text-body-large-default-letter-casing",
+            "type": "string",
+            "value": "ref_typography/text-transform/default"
+          },
+          "letter-spacing": {
+            "name": "text-body-large-default-letter-spacing",
+            "type": "float",
+            "value": "ref_typography/letter-spacing/default"
+          },
+          "line-height": {
+            "name": "text-body-large-default-line-height",
+            "type": "float",
+            "value": "ref_typography/line-height/wide"
+          }
+        },
+        "strong": {
+          "font-family": {
+            "name": "text-body-large-strong-font-family",
+            "type": "string",
+            "value": "ref_typography/font-family/primary"
+          },
+          "font-size": {
+            "name": "text-body-large-strong-font-size",
+            "type": "float",
+            "value": "ref_typography/font-size/large"
+          },
+          "font-weight": {
+            "name": "text-body-large-strong-font-weight",
+            "type": "float",
+            "value": "ref_typography/font-weight/medium"
+          },
+          "letter-casing": {
+            "name": "text-body-large-strong-letter-casing",
+            "type": "string",
+            "value": "ref_typography/text-transform/default"
+          },
+          "letter-spacing": {
+            "name": "text-body-large-strong-letter-spacing",
+            "type": "float",
+            "value": "ref_typography/letter-spacing/default"
+          },
+          "line-height": {
+            "name": "text-body-large-strong-line-height",
+            "type": "float",
+            "value": "ref_typography/line-height/wide"
+          }
+        },
+        "x-strong": {
+          "font-family": {
+            "name": "text-body-large-x-strong-font-family",
+            "type": "string",
+            "value": "ref_typography/font-family/primary"
+          },
+          "font-size": {
+            "name": "text-body-large-x-strong-font-size",
+            "type": "float",
+            "value": "ref_typography/font-size/large"
+          },
+          "font-weight": {
+            "name": "text-body-large-x-strong-font-weight",
+            "type": "float",
+            "value": "ref_typography/font-weight/bold"
+          },
+          "letter-casing": {
+            "name": "text-body-large-x-strong-letter-casing",
+            "type": "string",
+            "value": "ref_typography/text-transform/default"
+          },
+          "letter-spacing": {
+            "name": "text-body-large-x-strong-letter-spacing",
+            "type": "float",
+            "value": "ref_typography/letter-spacing/default"
+          },
+          "line-height": {
+            "name": "text-body-large-x-strong-line-height",
+            "type": "float",
+            "value": "ref_typography/line-height/wide"
+          }
+        }
+      },
+      "medium": {
+        "default": {
+          "font-family": {
+            "name": "text-body-medium-default-font-family",
+            "type": "string",
+            "value": "ref_typography/font-family/primary"
+          },
+          "font-size": {
+            "name": "text-body-medium-default-font-size",
+            "type": "float",
+            "value": "ref_typography/font-size/medium"
+          },
+          "font-weight": {
+            "name": "text-body-medium-default-font-weight",
+            "type": "float",
+            "value": "ref_typography/font-weight/regular"
+          },
+          "letter-casing": {
+            "name": "text-body-medium-default-letter-casing",
+            "type": "string",
+            "value": "ref_typography/text-transform/default"
+          },
+          "letter-spacing": {
+            "name": "text-body-medium-default-letter-spacing",
+            "type": "float",
+            "value": "ref_typography/letter-spacing/default"
+          },
+          "line-height": {
+            "name": "text-body-medium-default-line-height",
+            "type": "float",
+            "value": "ref_typography/line-height/medium"
+          }
+        },
+        "strong": {
+          "font-family": {
+            "name": "text-body-medium-strong-font-family",
+            "type": "string",
+            "value": "ref_typography/font-family/primary"
+          },
+          "font-size": {
+            "name": "text-body-medium-strong-font-size",
+            "type": "float",
+            "value": "ref_typography/font-size/medium"
+          },
+          "font-weight": {
+            "name": "text-body-medium-strong-font-weight",
+            "type": "float",
+            "value": "ref_typography/font-weight/medium"
+          },
+          "letter-casing": {
+            "name": "text-body-medium-strong-letter-casing",
+            "type": "string",
+            "value": "ref_typography/text-transform/default"
+          },
+          "letter-spacing": {
+            "name": "text-body-medium-strong-letter-spacing",
+            "type": "float",
+            "value": "ref_typography/letter-spacing/default"
+          },
+          "line-height": {
+            "name": "text-body-medium-strong-line-height",
+            "type": "float",
+            "value": "ref_typography/line-height/medium"
+          }
+        },
+        "x-strong": {
+          "font-family": {
+            "name": "text-body-medium-x-strong-font-family",
+            "type": "string",
+            "value": "ref_typography/font-family/primary"
+          },
+          "font-size": {
+            "name": "text-body-medium-x-strong-font-size",
+            "type": "float",
+            "value": "ref_typography/font-size/medium"
+          },
+          "font-weight": {
+            "name": "text-body-medium-x-strong-font-weight",
+            "type": "float",
+            "value": "ref_typography/font-weight/bold"
+          },
+          "letter-casing": {
+            "name": "text-body-medium-x-strong-letter-casing",
+            "type": "string",
+            "value": "ref_typography/text-transform/default"
+          },
+          "letter-spacing": {
+            "name": "text-body-medium-x-strong-letter-spacing",
+            "type": "float",
+            "value": "ref_typography/letter-spacing/default"
+          },
+          "line-height": {
+            "name": "text-body-medium-x-strong-line-height",
+            "type": "float",
+            "value": "ref_typography/line-height/medium"
+          }
+        }
+      },
+      "small": {
+        "default": {
+          "font-family": {
+            "name": "text-body-small-default-font-family",
+            "type": "string",
+            "value": "ref_typography/font-family/primary"
+          },
+          "font-size": {
+            "name": "text-body-small-default-font-size",
+            "type": "float",
+            "value": "ref_typography/font-size/small"
+          },
+          "font-weight": {
+            "name": "text-body-small-default-font-weight",
+            "type": "float",
+            "value": "ref_typography/font-weight/regular"
+          },
+          "letter-casing": {
+            "name": "text-body-small-default-letter-casing",
+            "type": "string",
+            "value": "ref_typography/text-transform/default"
+          },
+          "letter-spacing": {
+            "name": "text-body-small-default-letter-spacing",
+            "type": "float",
+            "value": "ref_typography/letter-spacing/default"
+          },
+          "line-height": {
+            "name": "text-body-small-default-line-height",
+            "type": "float",
+            "value": "ref_typography/line-height/tight"
+          }
+        },
+        "strong": {
+          "font-family": {
+            "name": "text-body-small-strong-font-family",
+            "type": "string",
+            "value": "ref_typography/font-family/primary"
+          },
+          "font-size": {
+            "name": "text-body-small-strong-font-size",
+            "type": "float",
+            "value": "ref_typography/font-size/small"
+          },
+          "font-weight": {
+            "name": "text-body-small-strong-font-weight",
+            "type": "float",
+            "value": "ref_typography/font-weight/medium"
+          },
+          "letter-casing": {
+            "name": "text-body-small-strong-letter-casing",
+            "type": "string",
+            "value": "ref_typography/text-transform/default"
+          },
+          "letter-spacing": {
+            "name": "text-body-small-strong-letter-spacing",
+            "type": "float",
+            "value": "ref_typography/letter-spacing/default"
+          },
+          "line-height": {
+            "name": "text-body-small-strong-line-height",
+            "type": "float",
+            "value": "ref_typography/line-height/tight"
+          }
+        },
+        "x-strong": {
+          "font-family": {
+            "name": "text-body-small-x-strong-font-family",
+            "type": "string",
+            "value": "ref_typography/font-family/primary"
+          },
+          "font-size": {
+            "name": "text-body-small-x-strong-font-size",
+            "type": "float",
+            "value": "ref_typography/font-size/small"
+          },
+          "font-weight": {
+            "name": "text-body-small-x-strong-font-weight",
+            "type": "float",
+            "value": "ref_typography/font-weight/bold"
+          },
+          "letter-casing": {
+            "name": "text-body-small-x-strong-letter-casing",
+            "type": "string",
+            "value": "ref_typography/text-transform/default"
+          },
+          "letter-spacing": {
+            "name": "text-body-small-x-strong-letter-spacing",
+            "type": "float",
+            "value": "ref_typography/letter-spacing/default"
+          },
+          "line-height": {
+            "name": "text-body-small-x-strong-line-height",
+            "type": "float",
+            "value": "ref_typography/line-height/tight"
+          }
+        }
+      },
+      "x-small": {
+        "default": {
+          "font-family": {
+            "name": "text-body-x-small-default-font-family",
+            "type": "string",
+            "value": "ref_typography/font-family/primary"
+          },
+          "font-size": {
+            "name": "text-body-x-small-default-font-size",
+            "type": "float",
+            "value": "ref_typography/font-size/x-small"
+          },
+          "font-weight": {
+            "name": "text-body-x-small-default-font-weight",
+            "type": "float",
+            "value": "ref_typography/font-weight/regular"
+          },
+          "letter-casing": {
+            "name": "text-body-x-small-default-letter-casing",
+            "type": "string",
+            "value": "ref_typography/text-transform/default"
+          },
+          "letter-spacing": {
+            "name": "text-body-x-small-default-letter-spacing",
+            "type": "float",
+            "value": "ref_typography/letter-spacing/default"
+          },
+          "line-height": {
+            "name": "text-body-x-small-default-line-height",
+            "type": "float",
+            "value": "ref_typography/line-height/tight"
+          }
+        },
+        "strong": {
+          "font-family": {
+            "name": "text-body-x-small-strong-font-family",
+            "type": "string",
+            "value": "ref_typography/font-family/primary"
+          },
+          "font-size": {
+            "name": "text-body-x-small-strong-font-size",
+            "type": "float",
+            "value": "ref_typography/font-size/x-small"
+          },
+          "font-weight": {
+            "name": "text-body-x-small-strong-font-weight",
+            "type": "float",
+            "value": "ref_typography/font-weight/medium"
+          },
+          "letter-casing": {
+            "name": "text-body-x-small-strong-letter-casing",
+            "type": "string",
+            "value": "ref_typography/text-transform/default"
+          },
+          "letter-spacing": {
+            "name": "text-body-x-small-strong-letter-spacing",
+            "type": "float",
+            "value": "ref_typography/letter-spacing/default"
+          },
+          "line-height": {
+            "name": "text-body-x-small-strong-line-height",
+            "type": "float",
+            "value": "ref_typography/line-height/tight"
+          }
+        },
+        "x-strong": {
+          "font-family": {
+            "name": "text-body-x-small-x-strong-font-family",
+            "type": "string",
+            "value": "ref_typography/font-family/primary"
+          },
+          "font-size": {
+            "name": "text-body-x-small-x-strong-font-size",
+            "type": "float",
+            "value": "ref_typography/font-size/x-small"
+          },
+          "font-weight": {
+            "name": "text-body-x-small-x-strong-font-weight",
+            "type": "float",
+            "value": "ref_typography/font-weight/bold"
+          },
+          "letter-casing": {
+            "name": "text-body-x-small-x-strong-letter-casing",
+            "type": "string",
+            "value": "ref_typography/text-transform/default"
+          },
+          "letter-spacing": {
+            "name": "text-body-x-small-x-strong-letter-spacing",
+            "type": "float",
+            "value": "ref_typography/letter-spacing/default"
+          },
+          "line-height": {
+            "name": "text-body-x-small-x-strong-line-height",
+            "type": "float",
+            "value": "ref_typography/line-height/tight"
+          }
+        }
+      }
+    },
+    "heading": {
+      "category": {
+        "default": {
+          "font-family": {
+            "name": "text-heading-category-default-font-family",
+            "type": "string",
+            "value": "ref_typography/font-family/primary"
+          },
+          "font-size": {
+            "name": "text-heading-category-default-font-size",
+            "type": "float",
+            "value": "ref_typography/font-size/xx-small"
+          },
+          "font-weight": {
+            "name": "text-heading-category-default-font-weight",
+            "type": "float",
+            "value": "ref_typography/font-weight/medium"
+          },
+          "letter-casing": {
+            "name": "text-heading-category-default-letter-casing",
+            "type": "string",
+            "value": "ref_typography/text-transform/uppercase"
+          },
+          "letter-spacing": {
+            "name": "text-heading-category-default-letter-spacing",
+            "type": "float",
+            "value": "ref_typography/letter-spacing/wide"
+          },
+          "line-height": {
+            "name": "text-heading-category-default-line-height",
+            "type": "float",
+            "value": "ref_typography/line-height/tight"
+          }
+        },
+        "strong": {
+          "font-family": {
+            "name": "text-heading-category-strong-font-family",
+            "type": "string",
+            "value": "ref_typography/font-family/primary"
+          },
+          "font-size": {
+            "name": "text-heading-category-strong-font-size",
+            "type": "float",
+            "value": "ref_typography/font-size/xx-small"
+          },
+          "font-weight": {
+            "name": "text-heading-category-strong-font-weight",
+            "type": "float",
+            "value": "ref_typography/font-weight/bold"
+          },
+          "letter-casing": {
+            "name": "text-heading-category-strong-letter-casing",
+            "type": "string",
+            "value": "ref_typography/text-transform/uppercase"
+          },
+          "letter-spacing": {
+            "name": "text-heading-category-strong-letter-spacing",
+            "type": "float",
+            "value": "ref_typography/letter-spacing/wide"
+          },
+          "line-height": {
+            "name": "text-heading-category-strong-line-height",
+            "type": "float",
+            "value": "ref_typography/line-height/tight"
+          }
+        }
+      },
+      "large": {
+        "default": {
+          "font-family": {
+            "name": "text-heading-large-default-font-family",
+            "type": "string",
+            "value": "ref_typography/font-family/primary"
+          },
+          "font-size": {
+            "name": "text-heading-large-default-font-size",
+            "type": "float",
+            "value": "ref_typography/font-size/large"
+          },
+          "font-weight": {
+            "name": "text-heading-large-default-font-weight",
+            "type": "float",
+            "value": "ref_typography/font-weight/medium"
+          },
+          "letter-casing": {
+            "name": "text-heading-large-default-letter-casing",
+            "type": "string",
+            "value": "ref_typography/text-transform/default"
+          },
+          "letter-spacing": {
+            "name": "text-heading-large-default-letter-spacing",
+            "type": "float",
+            "value": "ref_typography/letter-spacing/default"
+          },
+          "line-height": {
+            "name": "text-heading-large-default-line-height",
+            "type": "float",
+            "value": "ref_typography/line-height/wide"
+          }
+        },
+        "strong": {
+          "font-family": {
+            "name": "text-heading-large-strong-font-family",
+            "type": "string",
+            "value": "ref_typography/font-family/primary"
+          },
+          "font-size": {
+            "name": "text-heading-large-strong-font-size",
+            "type": "float",
+            "value": "ref_typography/font-size/large"
+          },
+          "font-weight": {
+            "name": "text-heading-large-strong-font-weight",
+            "type": "float",
+            "value": "ref_typography/font-weight/bold"
+          },
+          "letter-casing": {
+            "name": "text-heading-large-strong-letter-casing",
+            "type": "string",
+            "value": "ref_typography/text-transform/default"
+          },
+          "letter-spacing": {
+            "name": "text-heading-large-strong-letter-spacing",
+            "type": "float",
+            "value": "ref_typography/letter-spacing/default"
+          },
+          "line-height": {
+            "name": "text-heading-large-strong-line-height",
+            "type": "float",
+            "value": "ref_typography/line-height/wide"
+          }
+        }
+      },
+      "medium": {
+        "default": {
+          "font-family": {
+            "name": "text-heading-medium-default-font-family",
+            "type": "string",
+            "value": "ref_typography/font-family/primary"
+          },
+          "font-size": {
+            "name": "text-heading-medium-default-font-size",
+            "type": "float",
+            "value": "ref_typography/font-size/medium"
+          },
+          "font-weight": {
+            "name": "text-heading-medium-default-font-weight",
+            "type": "float",
+            "value": "ref_typography/font-weight/medium"
+          },
+          "letter-casing": {
+            "name": "text-heading-medium-default-letter-casing",
+            "type": "string",
+            "value": "ref_typography/text-transform/default"
+          },
+          "letter-spacing": {
+            "name": "text-heading-medium-default-letter-spacing",
+            "type": "float",
+            "value": "ref_typography/letter-spacing/default"
+          },
+          "line-height": {
+            "name": "text-heading-medium-default-line-height",
+            "type": "float",
+            "value": "ref_typography/line-height/tight"
+          }
+        },
+        "strong": {
+          "font-family": {
+            "name": "text-heading-medium-strong-font-family",
+            "type": "string",
+            "value": "ref_typography/font-family/primary"
+          },
+          "font-size": {
+            "name": "text-heading-medium-strong-font-size",
+            "type": "float",
+            "value": "ref_typography/font-size/medium"
+          },
+          "font-weight": {
+            "name": "text-heading-medium-strong-font-weight",
+            "type": "float",
+            "value": "ref_typography/font-weight/bold"
+          },
+          "letter-casing": {
+            "name": "text-heading-medium-strong-letter-casing",
+            "type": "string",
+            "value": "ref_typography/text-transform/default"
+          },
+          "letter-spacing": {
+            "name": "text-heading-medium-strong-letter-spacing",
+            "type": "float",
+            "value": "ref_typography/letter-spacing/default"
+          },
+          "line-height": {
+            "name": "text-heading-medium-strong-line-height",
+            "type": "float",
+            "value": "ref_typography/line-height/tight"
+          }
+        }
+      },
+      "x-large": {
+        "default": {
+          "font-family": {
+            "name": "text-heading-x-large-default-font-family",
+            "type": "string",
+            "value": "ref_typography/font-family/primary"
+          },
+          "font-size": {
+            "name": "text-heading-x-large-default-font-size",
+            "type": "float",
+            "value": "ref_typography/font-size/x-large"
+          },
+          "font-weight": {
+            "name": "text-heading-x-large-default-font-weight",
+            "type": "float",
+            "value": "ref_typography/font-weight/medium"
+          },
+          "letter-casing": {
+            "name": "text-heading-x-large-default-letter-casing",
+            "type": "string",
+            "value": "ref_typography/text-transform/default"
+          },
+          "letter-spacing": {
+            "name": "text-heading-x-large-default-letter-spacing",
+            "type": "float",
+            "value": "ref_typography/letter-spacing/default"
+          },
+          "line-height": {
+            "name": "text-heading-x-large-default-line-height",
+            "type": "float",
+            "value": "ref_typography/line-height/loose"
+          }
+        },
+        "strong": {
+          "font-family": {
+            "name": "text-heading-x-large-strong-font-family",
+            "type": "string",
+            "value": "ref_typography/font-family/primary"
+          },
+          "font-size": {
+            "name": "text-heading-x-large-strong-font-size",
+            "type": "float",
+            "value": "ref_typography/font-size/x-large"
+          },
+          "font-weight": {
+            "name": "text-heading-x-large-strong-font-weight",
+            "type": "float",
+            "value": "ref_typography/font-weight/bold"
+          },
+          "letter-casing": {
+            "name": "text-heading-x-large-strong-letter-casing",
+            "type": "string",
+            "value": "ref_typography/text-transform/default"
+          },
+          "letter-spacing": {
+            "name": "text-heading-x-large-strong-letter-spacing",
+            "type": "float",
+            "value": "ref_typography/letter-spacing/default"
+          },
+          "line-height": {
+            "name": "text-heading-x-large-strong-line-height",
+            "type": "float",
+            "value": "ref_typography/line-height/loose"
+          }
+        }
+      },
+      "xx-large": {
+        "default": {
+          "font-family": {
+            "name": "text-heading-xx-large-default-font-family",
+            "type": "string",
+            "value": "ref_typography/font-family/primary"
+          },
+          "font-size": {
+            "name": "text-heading-xx-large-default-font-size",
+            "type": "float",
+            "value": "ref_typography/font-size/xx-large"
+          },
+          "font-weight": {
+            "name": "text-heading-xx-large-default-font-weight",
+            "type": "float",
+            "value": "ref_typography/font-weight/medium"
+          },
+          "letter-casing": {
+            "name": "text-heading-xx-large-default-letter-casing",
+            "type": "string",
+            "value": "ref_typography/text-transform/default"
+          },
+          "letter-spacing": {
+            "name": "text-heading-xx-large-default-letter-spacing",
+            "type": "float",
+            "value": "ref_typography/letter-spacing/default"
+          },
+          "line-height": {
+            "name": "text-heading-xx-large-default-line-height",
+            "type": "float",
+            "value": "ref_typography/line-height/extra loose"
+          }
+        },
+        "strong": {
+          "font-family": {
+            "name": "text-heading-xx-large-strong-font-family",
+            "type": "string",
+            "value": "ref_typography/font-family/primary"
+          },
+          "font-size": {
+            "name": "text-heading-xx-large-strong-font-size",
+            "type": "float",
+            "value": "ref_typography/font-size/xx-large"
+          },
+          "font-weight": {
+            "name": "text-heading-xx-large-strong-font-weight",
+            "type": "float",
+            "value": "ref_typography/font-weight/bold"
+          },
+          "letter-casing": {
+            "name": "text-heading-xx-large-strong-letter-casing",
+            "type": "string",
+            "value": "ref_typography/text-transform/default"
+          },
+          "letter-spacing": {
+            "name": "text-heading-xx-large-strong-letter-spacing",
+            "type": "float",
+            "value": "ref_typography/letter-spacing/default"
+          },
+          "line-height": {
+            "name": "text-heading-xx-large-strong-line-height",
+            "type": "float",
+            "value": "ref_typography/line-height/extra loose"
+          }
+        }
+      }
+    }
+  }
+}

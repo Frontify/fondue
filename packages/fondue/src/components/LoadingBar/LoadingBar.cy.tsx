@@ -41,8 +41,8 @@ describe('LoadingCircle Component', () => {
     });
 
     it('should not be rounded', () => {
-        cy.mount(<LoadingBar rounded />);
-        cy.get(LOADING_BAR_OUTER_ID).should('have.css', 'border-radius', '4px');
+        cy.mount(<LoadingBar />);
+        cy.get(LOADING_BAR_OUTER_ID).should('have.css', 'border-radius', '0px');
     });
 
     it('should render with percentage width', () => {

@@ -2,13 +2,14 @@
 
 import { type ComponentType } from 'react';
 
+import '@frontify/fondue-tokens/styles';
 import '../src/styles.scss';
-import { type Preview, type Decorator, type StoryContext } from '@storybook/react';
+
+import { type Decorator, type Preview, type StoryContext } from '@storybook/react';
 import { Flex } from '../src/components/Flex/Flex';
 
 import DocumentationTemplate from './DocumentationTemplate.mdx';
-import { withTheme } from './components/StoryWithTeme';
-
+import { withTheme } from './components/StoryWithTheme';
 
 const ThemeProviderWrapper: Decorator = (Story: ComponentType, context: StoryContext) => {
     if (context.globals.theme === 'both') {
@@ -27,34 +28,40 @@ const preview: Preview = {
         theme: {
             description: 'Global theme for components',
             toolbar: {
-              title: 'Theme',
-              icon: 'paintbrush',
-              items: [
-                {
-                    value: 'light',
-                    title: 'Light theme',
-                    icon: "sun",
-                },
-                {
-                    value: 'dark',
-                    title: 'Dark theme',
-                    icon: "moon",
-                },
-                {
-                    value: 'both',
-                    title: 'Both themes',
-                    icon: "contrast"
-                }
-              ],
-              dynamicTitle: true,
+                title: 'Theme',
+                icon: 'paintbrush',
+                items: [
+                    {
+                        value: 'light',
+                        title: 'Light theme',
+                        icon: 'sun',
+                    },
+                    {
+                        value: 'dark',
+                        title: 'Dark theme',
+                        icon: 'moon',
+                    },
+                    {
+                        value: 'both',
+                        title: 'Both themes',
+                        icon: 'contrast',
+                    },
+                ],
+                dynamicTitle: true,
             },
-          },
+        },
     },
     initialGlobals: {
         theme: 'light',
     },
     parameters: {
-        layout: "fullscreen",
+        layout: 'fullscreen',
+        options: {
+            storySort: {
+                order: ['Tokens', 'Utilities', 'Typography', 'Layout', 'Components'],
+                method: 'alphabetical',
+            },
+        },
         docs: {
             page: DocumentationTemplate,
             toc: {

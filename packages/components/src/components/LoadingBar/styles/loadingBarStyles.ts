@@ -6,7 +6,7 @@ export const loadingBarContainerStyles = sv({
     base: 'tw-relative tw-w-full tw-overflow-hidden',
     variants: {
         rounded: {
-            true: 'tw-rounded',
+            true: 'tw-rounded-medium',
         },
         size: {
             small: 'tw-h-1',
@@ -15,9 +15,9 @@ export const loadingBarContainerStyles = sv({
             'x-large': 'tw-h-4',
         },
         variant: {
-            default: 'tw-bg-box-selected',
-            positive: 'tw-bg-box-positive',
-            negative: 'tw-bg-box-negative',
+            default: 'tw-bg-container-highlight',
+            positive: 'tw-bg-container-success',
+            negative: 'tw-bg-container-error',
         },
     },
 });
@@ -26,9 +26,9 @@ export const loadingBarStyles = sv({
     base: 'tw-h-full tw-w-full',
     variants: {
         variant: {
-            default: 'tw-bg-text-interactive',
-            positive: 'tw-bg-text-positive',
-            negative: 'tw-bg-text-negative',
+            default: 'tw-bg-highlight',
+            positive: 'tw-bg-success',
+            negative: 'tw-bg-error',
         },
         indeterminateState: {
             true: 'tw-animate-loading-bar-infinite tw-origin-left-right',
