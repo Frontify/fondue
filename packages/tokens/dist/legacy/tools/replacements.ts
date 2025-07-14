@@ -197,15 +197,15 @@ export const cssVariableReplacements = {
     'var(--code-size-medium-line-height)': 'var(--typography-line-height-medium)',
     'var(--code-size-large)': 'var(--typography-font-size-large)',
     'var(--code-size-large-line-height)': 'var(--typography-line-height-wide)',
+    'var(--button-danger-border-color)': 'var(--color-line-mid)',
+    'var(--button-strong-positive-border-color)': 'var(--color-line-mid)',
+    'var(--button-strong-negative-border-color)': 'var(--color-line-mid)',
+    'var(--button-strong-border-color)': 'var(--color-line-mid)',
+    'var(--button-positive-border-color)': 'var(--color-line-mid)',
+    'var(--button-negative-border-color)': 'var(--color-line-mid)',
 };
 
 export const deprecatedCssVariables = {
-    'var(--button-danger-border-color)': '/** @deprecated use updated token instead **/',
-    'var(--button-strong-positive-border-color)': '/** @deprecated use updated token instead **/',
-    'var(--button-strong-negative-border-color)': '/** @deprecated use updated token instead **/',
-    'var(--button-strong-border-color)': '/** @deprecated use updated token instead **/',
-    'var(--button-positive-border-color)': '/** @deprecated use updated token instead **/',
-    'var(--button-negative-border-color)': '/** @deprecated use updated token instead **/',
     'var(--shadow-large-offset-x)': '/** @deprecated use updated token instead **/',
     'var(--shadow-large-offset-y)': '/** @deprecated use updated token instead **/',
     'var(--shadow-large-spread)': '/** @deprecated use updated token instead **/',
