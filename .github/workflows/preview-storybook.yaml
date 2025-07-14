@@ -40,4 +40,6 @@ jobs:
               uses: JamesIves/github-pages-deploy-action@v4
               with:
                   folder: ./storybook-docs/storybook-static
-                  clean-exclude: pr-preview
+                  clean-exclude: |
+                      pr-preview
+                      beta
