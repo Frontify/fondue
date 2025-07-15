@@ -79,6 +79,13 @@ const buildTokens = async () => {
 export default styles;`;
 
     await writeFile(path.resolve(CWD, '../dist/themes/themes.module.css.d.ts'), moduleTypesTemplate);
+
+    const tailwindTypesTemplate = `declare module '*';
+export {};`;
+
+    await writeFile(path.resolve(CWD, '../dist/tailwind/tailwind.config.d.ts'), tailwindTypesTemplate);
+    await mkdir(path.resolve(CWD, '../dist/legacy'), { recursive: true });
+    await writeFile(path.resolve(CWD, '../dist/legacy/deprecatedTailwindConfig.d.ts'), tailwindTypesTemplate);
 };
 
 buildTokens().catch((error) => {

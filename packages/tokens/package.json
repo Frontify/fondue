@@ -20,8 +20,8 @@
         "variables"
     ],
     "exports": {
-        "./tailwind": "./dist/tailwind/tailwind.config.js",
         "./styles": "./dist/css/base.css",
+        "./tailwind": "./dist/tailwind/tailwind.config.js",
         "./themes": {
             "types": "./dist/themes/themes.module.css.d.ts",
             "import": "./dist/themes/themes.module.css"
@@ -38,7 +38,7 @@
         "dist"
     ],
     "scripts": {
-        "build": "tsx src/buildTokens.ts && mkdir -p ./dist/legacy && cp -r legacyTokens/* ./dist/legacy && mkdir -p ./dist/legacy/tools && cp -r tools/* ./dist/legacy/tools",
+        "build": "tsx src/buildTokens.ts && cp -r legacyTokens/* ./dist/legacy && mkdir -p ./dist/legacy/tools && cp -r tools/* ./dist/legacy/tools",
         "lint": "eslint .",
         "lint:fix": "eslint --fix .",
         "migrate": "tsx tools/migrate.js",

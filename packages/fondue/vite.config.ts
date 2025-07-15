@@ -31,7 +31,7 @@ export default defineConfig({
         viteStaticCopy({
             targets: [
                 {
-                    src: 'legacyTokens.tailwind.config.js',
+                    src: 'legacyTokens/*',
                     dest: '',
                 },
             ],

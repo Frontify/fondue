@@ -47,10 +47,10 @@
             "import": "./dist/index.es.js"
         },
         "./styles": "./dist/style.css",
-        "./tokens/base": "./dist/packages/tokens/base.css",
-        "./tokens/tailwind": "./dist/packages/tokens/tailwind.config.js",
+        "./tokens/base": "./dist/packages/tokens/css/base.css",
+        "./tokens/tailwind": "./dist/packages/tokens/tailwind/tailwind.config.js",
         "./legacyTokens/tailwind": "./dist/legacyTokens.tailwind.config.js",
-        "./legacyTokens/base": "./dist/packages/tokens/deprecatedBaseTokens.css",
+        "./legacyTokens/base": "./dist/packages/tokens/css/deprecatedBaseTokens.css",
         "./legacyTokens/tools/replaceLegacyTokens": "./dist/packages/tokens/tools/replaceLegacyTokens.ts",
         "./dist/*": "./dist/*"
     },
