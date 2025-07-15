@@ -683,28 +683,6 @@
         "surface",
         "hover"
       ]
-    },
-    "on-surface": {
-      "name": "color-surface-on-surface",
-      "type": "color",
-      "value": "var(--color-surface-on-surface)",
-      "path": [
-        "light",
-        "color",
-        "surface",
-        "on-surface"
-      ]
-    },
-    "on-surface-variant": {
-      "name": "color-surface-on-surface-variant",
-      "type": "color",
-      "value": "var(--color-surface-on-surface-variant)",
-      "path": [
-        "light",
-        "color",
-        "surface",
-        "on-surface-variant"
-      ]
     }
   },
   "warning": {

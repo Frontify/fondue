@@ -1,2 +1,2 @@
 declare module '*';
-export {};
+export default {};

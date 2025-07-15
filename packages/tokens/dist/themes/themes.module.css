@@ -304,8 +304,6 @@
   --color-surface-default: var(--color-neutral-95);
   --color-surface-dim: var(--color-neutral-100);
   --color-surface-hover: var(--color-neutral-85);
-  --color-surface-on-surface: var(--color-neutral-05);
-  --color-surface-on-surface-variant: var(--color-neutral-25);
   --color-warning-active: var(--color-warning-20);
   --color-warning-default: var(--color-warning-40);
   --color-warning-hover: var(--color-warning-30);
@@ -373,8 +371,6 @@
   --color-surface-default: var(--color-neutral-00);
   --color-surface-dim: var(--color-neutral-05);
   --color-surface-hover: var(--color-neutral-15);
-  --color-surface-on-surface: var(--color-neutral-95);
-  --color-surface-on-surface-variant: var(--color-neutral-75);
   --color-warning-active: var(--color-warning-80);
   --color-warning-default: var(--color-warning-60);
   --color-warning-hover: var(--color-warning-70);
