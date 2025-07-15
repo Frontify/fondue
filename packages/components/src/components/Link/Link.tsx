@@ -116,7 +116,6 @@ export const Link = forwardRef<HTMLAnchorElement, LinkProps>(
         const { navigate, useHref } = useFondueRouter();
         const resolvedHref = useHref(href);
 
-        console.log(resolvedHref, 'resolvedHref'); // Debugging line to check resolved href
         const handleClick = useCallback(
             (event: MouseEvent<HTMLAnchorElement>) => {
                 onPress?.(event);
