@@ -81,7 +81,7 @@ export default styles;`;
     await writeFile(path.resolve(CWD, '../dist/themes/themes.module.css.d.ts'), moduleTypesTemplate);
 
     const tailwindTypesTemplate = `declare module '*';
-export {};`;
+export default {};`;
 
     await writeFile(path.resolve(CWD, '../dist/tailwind/tailwind.config.d.ts'), tailwindTypesTemplate);
     await mkdir(path.resolve(CWD, '../dist/legacy'), { recursive: true });
