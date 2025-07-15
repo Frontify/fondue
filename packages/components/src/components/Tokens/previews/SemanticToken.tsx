@@ -142,7 +142,7 @@ export const SemanticTokenPreview = ({ value, path }: Token) => {
     if (path.includes('shadow')) {
         return (
             <div className="tw-flex tw-items-center tw-justify-center tw-h-full tw-w-full">
-                <div className="tw-shadow-mid tw-h-10 tw-w-10 "></div>
+                <div style={{ boxShadow: value }} className="tw-h-10 tw-w-10 "></div>
             </div>
         );
     }
