@@ -16,6 +16,31 @@ type TokenCollectionOverviewProps = {
     getClassName: (props: Token) => string;
 };
 
+const order = [
+    'default',
+    'hover',
+    'active',
+    'dim',
+    'on-',
+    'xx-small',
+    'x-small',
+    'small',
+    'mid',
+    'regular',
+    'tight',
+    'medium',
+    'large',
+    'x-large',
+    'xx-large',
+    'primary',
+    'monospace',
+    'medium',
+    'bold',
+    'wide',
+    'loose',
+    'extra-loose',
+];
+
 export const TokenCollectionOverview = ({
     tokens,
     parentKeys = [],
@@ -24,7 +49,26 @@ export const TokenCollectionOverview = ({
 }: TokenCollectionOverviewProps) => {
     const tokenObject = tokens as Tokens;
     return Object.entries(tokenObject)
-        .sort((a, b) => a[0].localeCompare(b[0]))
+        .sort((a, b) => {
+            const keyA = a[0];
+            const keyB = b[0];
+
+            let indexA = order.findIndex((orderKey) => keyA.includes(orderKey));
+            if (indexA === -1) {
+                indexA = Infinity;
+            }
+
+            let indexB = order.findIndex((orderKey) => keyB.includes(orderKey));
+            if (indexB === -1) {
+                indexB = Infinity;
+            }
+
+            if (indexA !== indexB) {
+                return indexA - indexB;
+            }
+
+            return keyA.localeCompare(keyB);
+        })
         .map(([key, value]) => {
             if (typeof value === 'object') {
                 if (typeof value.value === 'string' && typeof value.name === 'string' && Array.isArray(value.path)) {
