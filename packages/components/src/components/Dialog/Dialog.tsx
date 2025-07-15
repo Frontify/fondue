@@ -12,6 +12,7 @@ import {
     type ReactNode,
 } from 'react';
 
+import { type CommonAriaProps } from '#/helpers/aria';
 import { useSyncRefs } from '#/hooks/useSyncRefs';
 import { addAutoFocusAttribute, addShowFocusRing } from '#/utilities/domUtilities';
 
@@ -103,6 +104,7 @@ export type DialogHeaderProps = {
      * @default true
      */
     showCloseButton?: boolean;
+    closeProps?: CommonAriaProps;
     children?: ReactNode;
     'data-test-id'?: string;
 };
@@ -257,6 +259,7 @@ export const DialogHeader = (
         padding,
         showBorder = true,
         showCloseButton = true,
+        closeProps,
         children,
         'data-test-id': dataTestId = 'fondue-dialog-header',
     }: DialogHeaderProps,
@@ -273,7 +276,13 @@ export const DialogHeader = (
         >
             <div>{children}</div>
             {showCloseButton && (
-                <RadixDialog.Close role="button" data-test-id={`${dataTestId}-close`} className="tw-cursor-pointer">
+                <RadixDialog.Close
+                    role="button"
+                    data-test-id={`${dataTestId}-close`}
+                    className="tw-cursor-pointer"
+                    aria-label="Close"
+                    {...closeProps}
+                >
                     <IconCross size={20} />
                 </RadixDialog.Close>
             )}
