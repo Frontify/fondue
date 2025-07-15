@@ -40,6 +40,7 @@ module.exports = {
                     'warn',
                     {
                         callees: ['className', 'sv', 'class'],
+                        whitelist: ['fondue-theme-provider'],
                     },
                 ],
             },
