@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 export default {
-    safelist: [{ pattern: /./ }],
     theme: {
         extend: {
             colors: {
