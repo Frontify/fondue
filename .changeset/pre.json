@@ -10,6 +10,7 @@
     "@frontify/fondue-storybook-docs": "0.0.1"
   },
   "changesets": [
+    "modern-doors-give",
     "silly-animals-relax",
     "solid-keys-carry",
     "thin-buckets-open"

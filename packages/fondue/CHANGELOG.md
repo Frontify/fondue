@@ -1,5 +1,19 @@
 # @frontify/fondue
 
+## 13.0.0-beta.2
+
+### Major Changes
+
+- [#2349](https://github.com/Frontify/fondue/pull/2349) [`4dbed1d`](https://github.com/Frontify/fondue/commit/4dbed1d68a1fbd19a368cc81713ecf893ec635a3) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: improved story preview and typing
+
+### Patch Changes
+
+- Updated dependencies [[`4dbed1d`](https://github.com/Frontify/fondue/commit/4dbed1d68a1fbd19a368cc81713ecf893ec635a3)]:
+    - @frontify/fondue-components@20.0.0-beta.2
+    - @frontify/fondue-tokens@5.0.0-beta.2
+    - @frontify/fondue-charts@7.0.0-beta.2
+    - @frontify/fondue-icons@0.18.0-beta.0
+
 ## 13.0.0-beta.1
 
 ### Patch Changes
