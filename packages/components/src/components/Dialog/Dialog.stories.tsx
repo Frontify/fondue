@@ -24,6 +24,7 @@ import {
 
 type Story = StoryObj<typeof meta>;
 const meta: Meta<typeof DialogContent> = {
+    title: 'Components/Dialog',
     component: DialogContent,
     subcomponents: {
         'Dialog.Root': DialogRoot,
