@@ -10,6 +10,7 @@ import { Flyout, FlyoutBody, FlyoutContent, FlyoutFooter, FlyoutHeader, FlyoutRo
 
 type Story = StoryObj<typeof meta>;
 const meta: Meta<typeof FlyoutContent> = {
+    title: 'Components/Flyout',
     component: FlyoutContent,
     subcomponents: {
         'Flyout.Root': FlyoutRoot,

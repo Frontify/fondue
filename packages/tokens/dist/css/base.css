@@ -128,8 +128,6 @@
   --color-surface-default: var(--color-neutral-00);
   --color-surface-dim: var(--color-neutral-05);
   --color-surface-hover: var(--color-neutral-15);
-  --color-surface-on-surface: var(--color-neutral-95);
-  --color-surface-on-surface-variant: var(--color-neutral-75);
   --color-warning-00: rgba(255, 255, 255, 1);
   --color-warning-05: rgba(255, 245, 209, 1);
   --color-warning-10: rgba(255, 239, 188, 1);

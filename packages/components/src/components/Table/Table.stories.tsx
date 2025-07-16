@@ -15,6 +15,7 @@ import { Table, TableBody, TableHeader, TableHeaderCell, TableRoot, TableRow, Ta
 
 type Story = StoryObj<typeof TableRoot>;
 const meta: Meta<typeof TableRoot> = {
+    title: 'Components/Table',
     component: TableRoot,
     subcomponents: {
         'Table.Header': TableHeader,

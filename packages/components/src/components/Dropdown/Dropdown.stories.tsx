@@ -21,6 +21,7 @@ import {
 
 type Story = StoryObj<typeof meta>;
 const meta: Meta<typeof DropdownRoot> = {
+    title: 'Components/Dropdown',
     component: DropdownRoot,
     subcomponents: {
         'Dropdown.Trigger': DropdownTrigger,
