@@ -5,6 +5,7 @@ import { forwardRef, type ForwardedRef, type ReactElement } from 'react';
 
 import { cn } from '#/utilities/styleUtilities';
 
+import borderStyles from './styles/borderStyles.module.scss';
 import { dividerStyles } from './styles/dividerStyles';
 
 type DividerStyle = 'noline' | 'dashed' | 'solid';
@@ -72,10 +73,13 @@ export const Divider = forwardRef<HTMLDivElement, DividerProps>(
                         variant,
                         ...props,
                     }),
+                    borderStyles.root,
                     className,
                 )}
+                data-variant={variant}
                 data-test-id={dataTestId}
                 decorative={decorative}
+                data-orientation={direction}
                 asChild
             >
                 <Component />
