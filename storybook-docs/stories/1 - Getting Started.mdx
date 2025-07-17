@@ -19,7 +19,7 @@ yarn add @frontify/fondue
 You can browse all available components in the Storybook instance of the [Fondue design system](https://fondue-components.frontify.com).
 This Storybook contains all components from all subpackages in the Fondue monorepo. Each component will have a badge in the top bar indicating its current lifecycle state.
 
-For the designers, the documentation is available in the [Fondue design system documentation](https://weare.frontify.com/document/1266?#/using-fondue) on weare.
+For the designers, the documentation is available in the [Fondue design system documentation](https://weare.frontify.com/document/1266?#/using-fondue) on Weare.
 
 ## Setup
 
@@ -69,7 +69,7 @@ The primary font used is `Diatype`. To use it in your application, you need to d
 /* If you work for Frontify and need access to Diatype, reach out to the frontend platform team */
 ```
 
-For cases where developers do not have access to Diatype, the tokens specifiy a fallbaclk font `Geist`.
+For cases where developers do not have access to Diatype, the tokens specify a fallback font `Geist`.
 You can download the font from the Geist [GitHub repository](https://github.com/vercel/geist-font/releases).
 
 ```css
@@ -127,7 +127,7 @@ The `ThemeProvider` supports nesting to specify a theme for a specific set of co
 
 ### Components
 
-If you want to use a component, you can import them through the `@frontify/fondue/components` subexport in the fondue package.
+If you want to use a component, you can import them through the `@frontify/fondue/components` subpackage from Fondue.
 
 ```tsx
 import { Button } from '@frontify/fondue/components';
@@ -175,7 +175,7 @@ All style tokens are available as css variables. When using the `ThemeProvider`,
 Explore the available utilities in [Storybook](/story/current_utilities)
 
 **When using tailwind**, we provide a set of utilities to help style your components.
-Currently, we provide utilities for typography styles. Each utility combines definitions for font-size, line-height, font-weight, letter-spacing and letter-casing.
+Currently, we provide utilities for typography styles. Each utility combines definitions for `font-size`, `line-height`, `font-weight`, `letter-spacing` and `letter-casing`.
 
 Use with caution, as these utilities are purely for styling purposes and do not affect the semantic meaning of the text.
 
@@ -198,4 +198,4 @@ See [Contribution guidelines](CONTRIBUTING.md) for contributing and local develo
 
 -   [Storybook](https://fondue-components.frontify.com) – Storybook for previewing Fondue components
 -   [Fondue documentation](https://weare.frontify.com/document/1266?#/using-fondue) – Documentation for the Fondue design system
--   [Tailwind](https://tailwindcss.com/docs) – Utility-first CSS framework used in fondue
+-   [Tailwind](https://tailwindcss.com/docs) – Utility-first CSS framework used in Fondue
