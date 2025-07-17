@@ -13,7 +13,7 @@ import { type UtilityPreview, type UtilityProperty } from './types';
 
 const UtilityPropertyList = ({ properties }: { properties: [string, UtilityProperty][] }) => {
     return (
-        <div className="tw-grid tw-grid-cols-[fit-content(1px)_1fr] tw-gap-1 tw-text-surface-on-surface-variant">
+        <div className="tw-grid tw-grid-cols-[fit-content(1px)_1fr] tw-gap-1 tw-text-primary">
             {properties.map(([key, value]) => (
                 <Fragment key={key}>
                     <span className="tw-whitespace-nowrap tw-body-x-small-x-strong ">{key}:</span>
@@ -30,7 +30,7 @@ export const UtilityPreviewCard = ({ properties, path, getUtilityPreview, getCla
 
     return (
         <div className="tw-min-w-full tw-max-w-[300px] tw-min-h-32 tw-p-2 tw-rounded-large tw-border-line-mid tw-border tw-border-solid tw-bg-surface tw-shadow tw-flex tw-flex-col tw-justify-between tw-gap-2">
-            <div className="tw-w-full tw-min-h-16 tw-rounded-medium tw-border-line-subtle tw-border tw-overflow-hidden tw-text-surface-on-surface">
+            <div className="tw-w-full tw-min-h-16 tw-rounded-medium tw-border-line-subtle tw-border tw-overflow-hidden tw-text-primary">
                 {getUtilityPreview({ properties, path })}
             </div>
             <Flex direction="row" justify="space-between" align="flex-end" gap={1} maxWidth="100%">
@@ -41,7 +41,7 @@ export const UtilityPreviewCard = ({ properties, path, getUtilityPreview, getCla
                                 {tailwindPrefix}
                             </span>
                         )}
-                        <span className="tw-body-medium-x-strong tw-text-surface-on-surface">{className}</span>
+                        <span className="tw-body-medium-x-strong tw-text-primary">{className}</span>
                     </Flex>
                     <UtilityPropertyList properties={Object.entries(properties)} />
                 </Flex>

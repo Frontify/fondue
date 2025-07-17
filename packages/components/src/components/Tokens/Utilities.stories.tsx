@@ -46,7 +46,7 @@ export const Typography: StoryFn = ({ textContent, removeTailwindPrefix }) => {
                     <br />
                     <b>Only available when using Fondue with Tailwind CSS.</b>
                 </UsageInfo>
-                <h2 className="tw-heading-x-large tw-text-surface-on-surface">Typography</h2>
+                <h2 className="tw-heading-x-large tw-text-primary">Typography</h2>
 
                 <UtilityCollectionOverview
                     utilities={utilities.text}

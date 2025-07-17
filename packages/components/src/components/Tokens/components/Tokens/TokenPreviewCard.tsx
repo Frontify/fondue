@@ -20,16 +20,13 @@ export const TokenPreviewCard = ({ identifier, value, name, path, tokenPreview, 
             className="tw-min-w-full tw-max-w-[300px] tw-min-h-32 tw-p-2 tw-rounded-large tw-border-line-mid tw-border tw-border-solid tw-bg-surface tw-shadow tw-flex tw-flex-col tw-justify-between tw-gap-2"
             key={identifier}
         >
-            <div className="tw-w-full tw-min-h-16 tw-rounded-medium tw-border-line-subtle tw-border tw-overflow-hidden tw-text-surface-on-surface">
+            <div className="tw-w-full tw-min-h-16 tw-rounded-medium tw-border-line-subtle tw-border tw-overflow-hidden tw-text-primary">
                 {tokenPreview({ identifier, value, name, path })}
             </div>
             <Flex direction="row" justify="space-between" align="flex-end" gap={1} maxWidth="100%">
                 <Flex direction="column" gap={1} minWidth="0">
-                    <span className="tw-body-medium-x-strong tw-text-surface-on-surface">{identifier}</span>
-                    <VariableValue
-                        variableName={name}
-                        className="tw-body-x-small tw-text-surface-on-surface-variant tw-line-clamp-1"
-                    />
+                    <span className="tw-body-medium-x-strong tw-text-primary">{identifier}</span>
+                    <VariableValue variableName={name} className="tw-body-x-small tw-text-primary tw-line-clamp-1" />
                 </Flex>
                 <Flyout.Root>
                     <Flyout.Trigger>
@@ -41,9 +38,9 @@ export const TokenPreviewCard = ({ identifier, value, name, path, tokenPreview, 
                         <Flyout.Body>
                             <Flex direction="column" gap={4} my={2}>
                                 <Flex direction="column" gap={2}>
-                                    <span className="tw-body-small-x-strong tw-text-surface-on-surface">Tailwind</span>
+                                    <span className="tw-body-small-x-strong tw-text-primary">Tailwind</span>
                                     <div className="tw-flex tw-items-center tw-justify-between tw-gap-2 tw-bg-container-secondary tw-p-2 tw-rounded-medium">
-                                        <span className="tw-text-xx-small tw-font-monospace tw-text-surface-on-surface">
+                                        <span className="tw-text-xx-small tw-font-monospace tw-text-primary">
                                             {tailwindPrefix}
                                             {tailwindIdentifier}
                                         </span>
@@ -60,9 +57,9 @@ export const TokenPreviewCard = ({ identifier, value, name, path, tokenPreview, 
                                     </div>
                                 </Flex>
                                 <Flex direction="column" gap={2}>
-                                    <span className="tw-body-small-x-strong tw-text-surface-on-surface">CSS</span>
+                                    <span className="tw-body-small-x-strong tw-text-primary">CSS</span>
                                     <div className="tw-flex tw-items-center tw-justify-between tw-gap-2 tw-bg-container-secondary tw-p-2 tw-rounded-medium">
-                                        <span className="tw-text-xx-small tw-font-monospace tw-text-surface-on-surface">
+                                        <span className="tw-text-xx-small tw-font-monospace tw-text-primary">
                                             {value}
                                         </span>
                                         <Button

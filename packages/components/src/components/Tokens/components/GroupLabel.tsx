@@ -8,7 +8,7 @@ export const GroupLabel = ({ label, parentKeys }: { label: string; parentKeys: s
             <span className="tw-heading-large tw-text-container-disabled-on-disabled-container">
                 {parentKeys?.length ? `${parentKeys.join('/')}/` : ''}
             </span>
-            <span className="tw-heading-large-strong tw-text-surface-on-surface">{label}</span>
+            <span className="tw-heading-large-strong tw-text-primary">{label}</span>
         </Flex>
     );
 };
