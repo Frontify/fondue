@@ -30,7 +30,7 @@ const useAsyncItems = (filterText: string, getAsyncItems?: AsyncItemsFetcher) =>
     const [error, setError] = useState<Error | null>(null);
     const [asyncResult, setAsyncResult] = useState<{
         menuComponents: ReactNode[];
-        items: { value: string; label: string }[];
+        items: { value: string; label: string; children?: ReactNode }[];
     }>({
         menuComponents: [],
         items: [],
@@ -55,7 +55,7 @@ const useAsyncItems = (filterText: string, getAsyncItems?: AsyncItemsFetcher) =>
                                 {item.content ? item.content : item.label}
                             </ForwardedRefSelectItem>
                         )),
-                        items: items.map((item) => ({ value: item.value, label: item.label })),
+                        items: items.map((item) => ({ value: item.value, label: item.label, children: item.content })),
                     });
                     setIsLoading(false);
                 })
