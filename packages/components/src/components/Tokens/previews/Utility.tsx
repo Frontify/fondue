@@ -16,7 +16,7 @@ export const UtilityPreview = ({ properties }: Utility) => {
     }, {});
 
     return (
-        <div style={style} className="tw-text-surface-on-surface tw-flex tw-items-center tw-justify-center tw-h-full">
+        <div style={style} className="tw-text-primary tw-flex tw-items-center tw-justify-center tw-h-full">
             {textContent}
         </div>
     );

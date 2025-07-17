@@ -73,7 +73,7 @@ const buildTokens = async () => {
     await writeFile(path.resolve(CWD, '../dist/themes/themes.module.css'), themeStyles);
     await rm(path.resolve(CWD, '../.tmp'), { recursive: true, force: true });
 
-    const moduleTypesTemplate = `declare const styles: {primitives: string;${config.themes
+    const moduleTypesTemplate = `declare const styles: {base: string;${config.themes
         .map((theme) => `${theme}: string;`)
         .join(' ')}};
 export default styles;`;

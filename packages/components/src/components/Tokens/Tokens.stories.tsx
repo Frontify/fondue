@@ -40,7 +40,7 @@ export const Colors: StoryFn = ({ textContent, removeTailwindPrefix }) => {
             removeTailwindPrefix={removeTailwindPrefix as boolean}
         >
             <Flex direction="column" gap={8}>
-                <h1 className="tw-heading-xx-large tw-text-surface-on-surface">Colors</h1>
+                <h1 className="tw-heading-xx-large tw-text-primary">Colors</h1>
                 <TokenCollectionOverview
                     tokens={colors}
                     tokenPreview={ColorTokenPreview}
@@ -58,7 +58,7 @@ export const SemanticTokens: StoryFn = ({ textContent, removeTailwindPrefix }) =
             removeTailwindPrefix={removeTailwindPrefix as boolean}
         >
             <Flex direction="column" gap={4}>
-                <h1 className="tw-heading-xx-large tw-text-surface-on-surface">Semantic Tokens</h1>
+                <h1 className="tw-heading-xx-large tw-text-primary">Semantic Tokens</h1>
                 <TokenCollectionOverview
                     tokens={semantic}
                     tokenPreview={SemanticTokenPreview}
