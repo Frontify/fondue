@@ -53,6 +53,34 @@ import '@frontify/fondue/components/styles';
 import '@frontify/fondue/styles';
 ```
 
+#### Font Family
+
+Due to licensing restrictions, we cannot provide the fonts in the package. You therefore need to define the font faces in your application.
+
+The primary font used is `Diatype`. To use it in your application, you need to define the font face in your application.
+
+```css
+@font-face {
+    font-family: Diatype;
+    font-weight: 1 999;
+    src: url(YOUR_FONT_URL) format('woff');
+}
+
+/* If you work for Frontify and need access to Diatype, reach out to the Frontend Platform Team */
+```
+
+For cases where developers do not have access to Diatype, the tokens specifiy a fallbaclk font `Geist`.
+You can download the font from the Geist [GitHub repository](https://github.com/vercel/geist-font/releases).
+
+```css
+@font-face {
+    font-family: Geist;
+    src: url(YOUR_FONT_URL) format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+```
+
 #### Configuring Tailwind (optional)
 
 If you are using Tailwind, you can use the Fondue configuration preset for Tailwind.

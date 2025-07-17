@@ -127,7 +127,7 @@ StyleDictionary.registerTransform({
         if (token.name.includes('monospace')) {
             return `${tokenValue}, Courier, monospace`;
         }
-        return `${tokenValue},Space Grotesk Frontify,Arial,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol`;
+        return `${tokenValue},Geist,Arial,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol`;
     },
 });
 

@@ -224,7 +224,7 @@
   --text-heading-xx-large-strong-letter-spacing: var(--typography-letter-spacing-default);
   --text-heading-xx-large-strong-line-height: var(--typography-line-height-extra-loose);
   --typography-font-family-monospace: Menlo, Courier, monospace;
-  --typography-font-family-primary: Diatype,Space Grotesk Frontify,Arial,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;
+  --typography-font-family-primary: Diatype,Geist,Arial,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;
   --typography-font-size-large: 1rem;
   --typography-font-size-medium: 0.875rem;
   --typography-font-size-small: 0.8125rem;
