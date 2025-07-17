@@ -20,7 +20,7 @@ import { Box } from '../Box/Box';
 import { LoadingCircle } from '../LoadingCircle/LoadingCircle';
 
 import styles from './styles/table.module.scss';
-import { handleKeyDown, isEventFromInteractiveElement } from './utils';
+import { handleKeyDown, shouldIgnoreRowClick } from './utils';
 
 type TableRootProps = {
     /**
@@ -327,7 +327,11 @@ export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(
                 return;
             }
 
-            if (onClick && !isEventFromInteractiveElement(event)) {
+            if (shouldIgnoreRowClick(event)) {
+                return;
+            }
+
+            if (onClick) {
                 onClick(selected);
             }
         };

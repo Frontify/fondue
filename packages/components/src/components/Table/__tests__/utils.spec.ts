@@ -3,7 +3,7 @@
 import { type KeyboardEvent, type MouseEvent } from 'react';
 import { describe, it, expect, vi, beforeEach, test } from 'vitest';
 
-import { handleKeyDown, isEventFromInteractiveElement } from '../utils';
+import { handleKeyDown, shouldIgnoreRowClick } from '../utils';
 
 describe('handleKeyDown', () => {
     beforeEach(() => {
@@ -154,7 +154,7 @@ describe('handleKeyDown', () => {
     });
 });
 
-describe('isEventFromInteractiveElement', () => {
+describe('shouldIgnoreRowClick', () => {
     beforeEach(() => {
         document.body.innerHTML = `
             <table>
@@ -190,6 +190,7 @@ describe('isEventFromInteractiveElement', () => {
                     </tr>
                 </tbody>
             </table>
+            <div id="dialog">Modal dialog content</div>
         `;
     });
 
@@ -198,7 +199,7 @@ describe('isEventFromInteractiveElement', () => {
             target.addEventListener(
                 'click',
                 (event) => {
-                    const result = isEventFromInteractiveElement(event as unknown as MouseEvent);
+                    const result = shouldIgnoreRowClick(event as unknown as MouseEvent);
                     resolve(result);
                 },
                 { once: true },
@@ -254,4 +255,19 @@ describe('isEventFromInteractiveElement', () => {
             expect(await clickOnElement(document.getElementById(elementId)!)).toBe(expected);
         },
     );
+
+    test('should return true when clicking outside the row element', () => {
+        const row = document.querySelector('tr')!;
+        const dialog = document.getElementById('dialog')!;
+
+        // simulates a click event inside a dialog that was opened using a dialog trigger button located within the row
+        const fakeEvent = {
+            target: dialog,
+            currentTarget: row,
+        } as unknown as MouseEvent;
+
+        const result = shouldIgnoreRowClick(fakeEvent);
+
+        expect(result).toBe(true);
+    });
 });
