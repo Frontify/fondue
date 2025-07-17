@@ -1,5 +1,19 @@
 # @frontify/fondue-components
 
+## 19.2.0
+
+### Minor Changes
+
+- [#2343](https://github.com/Frontify/fondue/pull/2343) [`b75273d`](https://github.com/Frontify/fondue/commit/b75273d33ea945ad2662f02d71118d94a5d26a78) Thanks [@syeo66](https://github.com/syeo66)! - chore(Switch): add flex-shrink 0
+
+- [#2345](https://github.com/Frontify/fondue/pull/2345) [`1d8b80c`](https://github.com/Frontify/fondue/commit/1d8b80ca85143a5303f6fb8cff7cc193252c9cb5) Thanks [@syeo66](https://github.com/syeo66)! - feat(Flyout): add close props to Dialog and Flyout
+
+### Patch Changes
+
+- [#2348](https://github.com/Frontify/fondue/pull/2348) [`9d05d85`](https://github.com/Frontify/fondue/commit/9d05d8512a0023fc8516839d43facdd3b61986ed) Thanks [@syeo66](https://github.com/syeo66)! - chore(Divider): update dashed line style
+
+- [#2340](https://github.com/Frontify/fondue/pull/2340) [`d64d03b`](https://github.com/Frontify/fondue/commit/d64d03b0c8428502a7098418ba2ab1e3c7edccfd) Thanks [@syeo66](https://github.com/syeo66)! - fix: the loading circle is skewed in some contexts
+
 ## 19.1.0
 
 ### Minor Changes
