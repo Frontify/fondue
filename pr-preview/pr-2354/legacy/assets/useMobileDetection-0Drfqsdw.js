@@ -1,1 +1,0 @@
-import{r as t}from"./index-ClcD9ViR.js";const r=()=>{const[n,o]=t.useState(!1);return t.useEffect(()=>{const e=()=>{const s=window.matchMedia("only screen and (max-width: 640px)").matches;o(s)};return e(),window.addEventListener("resize",e),window.addEventListener("load",e),()=>{window.removeEventListener("resize",e),window.removeEventListener("load",e)}},[]),n};export{r as u};
