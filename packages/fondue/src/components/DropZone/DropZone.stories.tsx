@@ -12,7 +12,7 @@ import { type LegacyOrderableListItem } from '@components/LegacyOrderableList/ty
 import { type StoryListItem, renderContent, storyItems } from '@components/LegacyOrderableList/utils';
 
 export default {
-    title: 'Components/Drop Zone',
+    title: 'Legacy Components/Drop Zone',
     component: DropZoneComponent,
     tags: ['autodocs'],
     args: {

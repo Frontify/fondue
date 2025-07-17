@@ -119,7 +119,7 @@ const data: TabItemProps[] = [
 ];
 
 export default {
-    title: 'Components/Tabs',
+    title: 'Legacy Components/Tabs',
     component: Tabs,
     tags: ['autodocs'],
     argTypes: {

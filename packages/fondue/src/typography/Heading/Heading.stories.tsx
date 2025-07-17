@@ -7,7 +7,7 @@ import { sharedTypographyArgTypes, sharedTypographyArgs } from '../shared/Shared
 import { Heading as HeadingComponent, type HeadingProps } from './Heading';
 
 export default {
-    title: 'Typography/Heading',
+    title: 'Legacy Components/Heading',
     component: HeadingComponent,
     argTypes: {
         size: {

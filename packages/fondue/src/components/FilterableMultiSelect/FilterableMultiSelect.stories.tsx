@@ -15,7 +15,7 @@ import {
 } from './FilterableMultiSelect';
 
 export default {
-    title: 'Components/Filterable Multi Select',
+    title: 'Legacy Components/Filterable Multi Select',
     component: FilterableMultiSelectComponent,
     tags: ['autodocs'],
     args: {

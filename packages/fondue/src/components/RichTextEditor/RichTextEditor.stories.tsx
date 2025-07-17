@@ -66,7 +66,7 @@ import {
 import { PaddingSizes } from './types';
 
 export default {
-    title: 'Components/Rich Text Editor',
+    title: 'Legacy Components/Rich Text Editor',
     component: RichTextEditorComponent,
     tags: ['autodocs'],
     args: {

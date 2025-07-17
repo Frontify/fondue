@@ -31,7 +31,7 @@ const ExtraActions: ExtraAction[] = [
 
 // @ts-expect-error - type changed?
 export default {
-    title: 'Components/Textarea',
+    title: 'Legacy Components/Textarea',
     component: Textarea,
     tags: ['autodocs'],
     argTypes: {

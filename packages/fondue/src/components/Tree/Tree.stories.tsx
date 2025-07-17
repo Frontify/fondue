@@ -31,7 +31,7 @@ import IconDocument from '@foundation/Icon/Generated/IconDocument';
 import { Modality } from '../../types';
 
 export default {
-    title: 'Components/Tree',
+    title: 'Legacy Components/Tree',
     component: TreeView,
     tags: ['autodocs'],
     args: {

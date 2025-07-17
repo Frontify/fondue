@@ -5,7 +5,7 @@ import { type Meta, type StoryFn } from '@storybook/react';
 import { Code as CodeComponent, type CodeProps } from './Code';
 
 export default {
-    title: 'Typography/Code',
+    title: 'Legacy Components/Code',
     component: CodeComponent,
     argTypes: {
         size: {

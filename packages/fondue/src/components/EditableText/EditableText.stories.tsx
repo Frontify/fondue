@@ -8,7 +8,7 @@ import IconPen from '@foundation/Icon/Generated/IconPen';
 import { IconSize } from '@foundation/Icon/IconSize';
 
 export default {
-    title: 'Components/Editable Text',
+    title: 'Legacy Components/Editable Text',
     component: EditableText,
     tags: ['autodocs'],
     parameters: { actions: { argTypesRegex: '^on.*' } },

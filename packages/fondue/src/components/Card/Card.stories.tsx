@@ -12,7 +12,7 @@ import { Text } from '@typography/Text';
 import { Card, type CardProps } from './Card';
 
 export default {
-    title: 'Components/Card',
+    title: 'Legacy Components/Card',
     component: Card,
     tags: ['autodocs'],
     args: {

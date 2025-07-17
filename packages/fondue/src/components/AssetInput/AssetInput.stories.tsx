@@ -7,7 +7,7 @@ import { assetInputActions } from './asset-input-actions';
 import { EXAMPLE_IMAGES, MIXED_ASSETS } from './example-assets';
 
 export default {
-    title: 'Components/Asset Input',
+    title: 'Legacy Components/Asset Input',
     component: AssetInput,
     tags: ['autodocs'],
     argTypes: {

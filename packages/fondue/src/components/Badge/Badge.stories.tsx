@@ -8,7 +8,7 @@ import { Badge } from './Badge';
 import { BadgeEmphasis, type BadgeProps, BadgeStatus, BadgeStyle } from './types';
 
 export default {
-    title: 'Components/Badge',
+    title: 'Legacy Components/Badge',
     component: Badge,
     tags: ['autodocs'],
     argTypes: {

@@ -8,7 +8,7 @@ import { Validation } from '@utilities/validation';
 import { type LegacyTextareaProps, LegacyTextarea as TextareaComponent } from './LegacyTextarea';
 
 export default {
-    title: 'Deprecated/LegacyTextarea',
+    title: 'Legacy Components/LegacyTextarea',
     component: TextareaComponent,
     tags: ['autodocs'],
     args: {

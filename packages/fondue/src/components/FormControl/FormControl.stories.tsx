@@ -19,7 +19,7 @@ import {
 } from './FormControl';
 
 export default {
-    title: 'Components/Form Control',
+    title: 'Legacy Components/Form Control',
     component: FormControl,
     tags: ['autodocs'],
     args: {

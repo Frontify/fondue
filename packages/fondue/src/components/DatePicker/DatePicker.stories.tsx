@@ -13,7 +13,7 @@ import { Validation } from '@utilities/validation';
 import { DatePicker, type DatePickerProps, type ReactDatePickerRef } from './DatePicker';
 
 export default {
-    title: 'Components/DatePicker',
+    title: 'Legacy Components/DatePicker',
     component: DatePicker,
     tags: ['autodocs'],
     args: {

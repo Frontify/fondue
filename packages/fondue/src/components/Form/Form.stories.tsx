@@ -11,7 +11,7 @@ import { TextInput } from '@components/TextInput';
 import { Form, type FormProps } from './Form';
 
 export default {
-    title: 'Components/Form',
+    title: 'Legacy Components/Form',
     component: Form,
     tags: ['autodocs'],
 } as Meta<FormProps>;

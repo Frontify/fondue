@@ -14,7 +14,7 @@ import { IconSize } from '@foundation/Icon/IconSize';
 import { type Column, type Row, SelectionMode, SortDirection, Table, type TableProps } from './Table';
 
 export default {
-    title: 'Components/Table',
+    title: 'Legacy Components/Table',
     component: Table,
     tags: ['autodocs'],
     args: {

@@ -7,7 +7,7 @@ import { RadioButton, RadioButtonEmphasis } from './RadioButton';
 import { RadioList, RadioListDirection, type RadioListProps } from './RadioList';
 
 export default {
-    title: 'Components/RadioList',
+    title: 'Legacy Components/RadioList',
     component: RadioList,
     tags: ['autodocs'],
     argTypes: {

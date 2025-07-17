@@ -7,7 +7,7 @@ import { PatternDesign, PatternScale, PatternTheme } from '@foundation/Pattern';
 import { FrontifyPattern, type FrontifyPatternProps } from './FrontifyPattern';
 
 export default {
-    title: 'Components/FrontifyPattern',
+    title: 'Legacy Components/FrontifyPattern',
     component: FrontifyPattern,
     tags: ['autodocs'],
     argTypes: {

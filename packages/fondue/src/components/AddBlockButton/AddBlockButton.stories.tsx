@@ -5,7 +5,7 @@ import { type Meta, type StoryFn } from '@storybook/react';
 import { AddBlockButton as AddBlockButtonComponent, type AddBlockButtonProps, ButtonDirection } from './AddBlockButton';
 
 export default {
-    title: 'Components/Add Block Button',
+    title: 'Legacy Components/Add Block Button',
     component: AddBlockButtonComponent,
     tags: ['autodocs'],
     args: {

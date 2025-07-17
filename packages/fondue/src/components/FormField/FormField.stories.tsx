@@ -14,7 +14,7 @@ import { NumberInput } from '../NumberInput';
 import { FormField, type FormFieldProps } from './FormField';
 
 export default {
-    title: 'Components/FormField',
+    title: 'Legacy Components/FormField',
     component: FormField,
     tags: ['autodocs'],
     argTypes: {

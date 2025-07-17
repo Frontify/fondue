@@ -10,7 +10,7 @@ import { CollapsibleWrap as CollapsibleWrapComponent } from './CollapsibleWrap';
 import { type CollapsibleWrapProps } from './types';
 
 export default {
-    title: 'Components/Collapsible Wrap',
+    title: 'Legacy Components/Collapsible Wrap',
     component: CollapsibleWrapComponent,
     tags: ['autodocs'],
     args: { isOpen: true, animateOpacity: true },

@@ -15,7 +15,7 @@ import {
 } from './MultiSelect';
 
 export default {
-    title: 'Components/Multi Select',
+    title: 'Legacy Components/Multi Select',
     component: MultiSelectComponent,
     tags: ['autodocs'],
     args: {

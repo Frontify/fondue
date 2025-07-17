@@ -10,7 +10,7 @@ import { sharedTypographyArgTypes, sharedTypographyArgs } from '../shared/Shared
 import { Text as TextComponent, type TextProps } from './Text';
 
 export default {
-    title: 'Typography/Text',
+    title: 'Legacy Components/Text',
     component: TextComponent,
     argTypes: {
         size: {

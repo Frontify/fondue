@@ -14,7 +14,7 @@ import { Toast as ToastComponent } from './Toast';
 import { ToastAnimationDirection, type ToastProps, ToastStyle } from './types';
 
 export default {
-    title: 'Components/Toast',
+    title: 'Legacy Components/Toast',
     component: ToastComponent,
     tags: ['autodocs'],
     argTypes: {

@@ -21,7 +21,7 @@ import { TreeItemMultiselect } from './TreeItem/TreeItemMultiselect';
 import { getNewSelectedItems } from './helpers';
 
 export default {
-    title: 'Components/Tree/Multiselect',
+    title: 'Legacy Components/Tree/Multiselect',
     component: TreeView,
     tags: ['autodocs'],
     parameters: {

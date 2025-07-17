@@ -6,7 +6,7 @@ import { type Meta, type StoryFn } from '@storybook/react';
 import { Tag, type TagProps, TagSize, TagType } from './Tag';
 
 export default {
-    title: 'Components/Tag',
+    title: 'Legacy Components/Tag',
     component: Tag,
     tags: ['autodocs'],
     args: {
