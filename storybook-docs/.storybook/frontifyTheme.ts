@@ -6,7 +6,7 @@ export const dark = create({
     base: 'dark',
 
     fontBase:
-        'Diatype, "Space Grotesk Frontify", Arial, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
+        'Diatype, Geist, Arial, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
     fontCode: 'Menlo, Courier, monospace',
 
     brandTitle: 'Fondue Design System - Frontify',

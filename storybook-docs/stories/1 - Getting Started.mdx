@@ -23,7 +23,7 @@ For the designers, the documentation is available in the [Fondue design system d
 
 ## Setup
 
-#### Importing Style Tokens
+#### Importing style tokens
 
 Import the base tokens and the default theme styles at the root of your application.
 
@@ -39,7 +39,7 @@ export const App = () => {
 };
 ```
 
-#### Importing Component Styles
+#### Importing component styles
 The component styles are imported separately from the component itself. This allows you to import the styles only once in your application, instead of importing them with every usage.
 
 ```tsx
@@ -66,7 +66,7 @@ The primary font used is `Diatype`. To use it in your application, you need to d
     src: url(YOUR_FONT_URL) format('woff');
 }
 
-/* If you work for Frontify and need access to Diatype, reach out to the Frontend Platform Team */
+/* If you work for Frontify and need access to Diatype, reach out to the frontend platform team */
 ```
 
 For cases where developers do not have access to Diatype, the tokens specifiy a fallbaclk font `Geist`.
@@ -81,10 +81,10 @@ You can download the font from the Geist [GitHub repository](https://github.com/
 }
 ```
 
-#### Configuring Tailwind (optional)
+#### Configuring tailwind (optional)
 
-If you are using Tailwind, you can use the Fondue configuration preset for Tailwind.
-The Configuration preset will configure Tailwind to provide custom classes for every token in the Fondue design system.
+If you are using Tailwind, you can use the Fondue configuration preset for tailwind.
+The configuration preset will configure Tailwind to provide custom classes for every token in the Fondue design system.
 
 ```tsx
 import frontifyTailwindConfig from '@frontify/fondue/tokens/tailwind';
@@ -98,8 +98,8 @@ export default {
 
 ```
 
-#### Using Themes (optional)
-We utilize a Provider Component to allow for theming and providing the correct tokens to the components.
+#### Using themes (optional)
+We utilize a provider component to allow for theming and providing the correct tokens to the components.
 
 To use the provider, in addition to the base tokens, you need to wrap your application in the `ThemeProvider` component.
 The `ThemeProvider` will provide the correct tokens to the components based on the theme you provide. The currently available themes are `light` and `dark`.
@@ -146,11 +146,11 @@ const App = () => <Button>Click Me</Button>;
 ```
 
 
-### Style Tokens
+### Style tokens
 
 Explore the available tokens in [Storybook](/story/current_tokens)
 
-#### Using Tailwind Classes
+#### Using tailwind classes
 
 When using tailwind, all tokens are available as classes.
 
@@ -160,7 +160,7 @@ When using tailwind, all tokens are available as classes.
 </div>
 ```
 
-#### Using CSS Variables
+#### Using CSS variables
 All style tokens are available as css variables. When using the `ThemeProvider`, the tokens will be provided to the components based on the theme you provide.
 
 ```css
