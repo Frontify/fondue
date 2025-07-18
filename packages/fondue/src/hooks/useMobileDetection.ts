@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
+/* @deprecated Please use useMediaQuery() in web-app or a custom function instead. */
 export const useMobileDetection = () => {
     const [isMobile, setIsMobile] = useState(false);
 
