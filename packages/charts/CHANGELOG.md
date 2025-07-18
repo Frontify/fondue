@@ -1,5 +1,12 @@
 # @frontify/fondue-charts
 
+## 7.0.0-beta.3
+
+### Patch Changes
+
+- Updated dependencies [[`52b9562`](https://github.com/Frontify/fondue/commit/52b956216715ba7a78c7c434f7e7344a314d2e0c)]:
+    - @frontify/fondue-tokens@5.0.0-beta.3
+
 ## 7.0.0-beta.2
 
 ### Patch Changes

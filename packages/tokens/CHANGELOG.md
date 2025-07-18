@@ -1,5 +1,11 @@
 # @frontify/fondue-tokens
 
+## 5.0.0-beta.3
+
+### Major Changes
+
+- [#2351](https://github.com/Frontify/fondue/pull/2351) [`52b9562`](https://github.com/Frontify/fondue/commit/52b956216715ba7a78c7c434f7e7344a314d2e0c) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: improve token preview in storybook
+
 ## 5.0.0-beta.2
 
 ### Major Changes
