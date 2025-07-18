@@ -11,7 +11,7 @@ const meta: Meta<typeof Heading> = {
     tags: ['autodocs'],
     parameters: {
         status: {
-            type: 'beta',
+            type: 'released',
         },
     },
     args: {},
