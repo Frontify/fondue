@@ -9,8 +9,12 @@ import { Text } from '@typography/Text';
 import { CollapsibleWrap as CollapsibleWrapComponent } from './CollapsibleWrap';
 import { type CollapsibleWrapProps } from './types';
 
+/**
+ ### *Legacy component warning*
+ #### This is a unmaintained legacy component. It will be deprecated and replaced with a new component in an upcoming release.
+ */
 export default {
-    title: 'Components/Collapsible Wrap',
+    title: 'Legacy Components/Collapsible Wrap',
     component: CollapsibleWrapComponent,
     tags: ['autodocs'],
     args: { isOpen: true, animateOpacity: true },

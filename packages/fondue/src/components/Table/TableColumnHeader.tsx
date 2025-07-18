@@ -12,11 +12,17 @@ import { merge } from '@utilities/merge';
 
 import { type ColumnAlign, SelectionMode, SortDirection } from './Table';
 
+/**
+ * @deprecated Please use updated table component from `@frontify/fondue/components` instead.
+ */
 export enum TableColumnHeaderType {
     Default = 'Default',
     SelectAll = 'SelectAll',
 }
 
+/**
+ * @deprecated Please use updated table component from `@frontify/fondue/components` instead.
+ */
 export type TableColumnHeaderProps = {
     column: any;
     type?: TableColumnHeaderType;
@@ -29,6 +35,9 @@ export type TableColumnHeaderProps = {
     align?: ColumnAlign;
 };
 
+/**
+ * @deprecated Please use updated table component from `@frontify/fondue/components` instead.
+ */
 export const TableColumnHeader = ({
     column,
     type = TableColumnHeaderType.Default,

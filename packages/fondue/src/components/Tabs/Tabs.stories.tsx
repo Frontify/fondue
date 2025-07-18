@@ -118,8 +118,11 @@ const data: TabItemProps[] = [
     },
 ];
 
+/**
+ ### This component is deprecated, please use the [new Tabs component](/docs/current_components-tabs--documentation) instead.
+ */
 export default {
-    title: 'Components/Tabs',
+    title: 'Legacy Components/Deprecated/Tabs',
     component: Tabs,
     tags: ['autodocs'],
     argTypes: {
@@ -136,6 +139,11 @@ export default {
         minHeight: {
             type: 'string',
             defaultValue: '50px',
+        },
+    },
+    parameters: {
+        status: {
+            type: 'deprecated',
         },
     },
 } as Meta<TabsProps>;

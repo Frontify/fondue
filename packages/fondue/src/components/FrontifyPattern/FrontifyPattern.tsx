@@ -13,6 +13,9 @@ import {
 } from '@foundation/Pattern';
 import { merge } from '@utilities/merge';
 
+/**
+ * @deprecated Please use a custom component instead.
+ */
 export type FrontifyPatternProps = {
     pattern: PatternDesign;
     scale?: PatternScale;
@@ -21,6 +24,9 @@ export type FrontifyPatternProps = {
     'data-test-id'?: string;
 };
 
+/**
+ * @deprecated Please use a custom component instead.
+ */
 export const FrontifyPattern = ({
     pattern = PatternDesign.DigitalAssets,
     scale = PatternScale.SM,

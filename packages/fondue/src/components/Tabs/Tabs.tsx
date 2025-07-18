@@ -23,6 +23,9 @@ import { type DimensionUnity } from '@utilities/dimensions';
 import { FOCUS_STYLE, FOCUS_VISIBLE_STYLE, FOCUS_VISIBLE_STYLE_INSET } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 
+/**
+ * @deprecated Please use updated tabs component from `@frontify/fondue/components` instead.
+ */
 export enum TabsPaddingX {
     None = 'None',
     XSmall = 'XSmall',
@@ -31,11 +34,17 @@ export enum TabsPaddingX {
     Large = 'Large',
 }
 
+/**
+ * @deprecated Please use updated tabs component from `@frontify/fondue/components` instead.
+ */
 export enum TabSize {
     Small = 'Small',
     Large = 'Large',
 }
 
+/**
+ * @deprecated Please use updated tabs component from `@frontify/fondue/components` instead.
+ */
 export type TabsProps = {
     paddingX?: TabsPaddingX;
     size?: TabSize;
@@ -66,6 +75,9 @@ const getTabButtonTextStyle = (tab: TabItemProps, activeItemId: string) => {
     return 'tw-text-text-weak hover:tw-text-text';
 };
 
+/**
+ * @deprecated Please use updated tabs component from `@frontify/fondue/components` instead.
+ */
 export const Tabs = ({
     paddingX,
     size,

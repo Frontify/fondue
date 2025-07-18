@@ -7,8 +7,11 @@ import { Validation } from '@utilities/validation';
 
 import { type LegacyTextareaProps, LegacyTextarea as TextareaComponent } from './LegacyTextarea';
 
+/**
+ ### This component is deprecated. Please use a updated component instead.
+ */
 export default {
-    title: 'Deprecated/LegacyTextarea',
+    title: 'Legacy Components/Deprecated/LegacyTextarea',
     component: TextareaComponent,
     tags: ['autodocs'],
     args: {
@@ -36,6 +39,11 @@ export default {
         maxRows: { type: 'number' },
         onEnterPressed: { action: 'onEnterPressed', table: { disable: true } },
         focusOnMount: { type: 'boolean' },
+    },
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
     },
 } as Meta<LegacyTextareaProps>;
 

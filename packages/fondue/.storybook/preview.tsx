@@ -54,7 +54,7 @@ export const globalTypes = {
 export const parameters = {
     options: {
         storySort: {
-            order: ['Tokens', 'Foundation', 'Layout', 'Typography', 'Components'],
+            order: ['Legacy Components', ['*', 'Deprecated']],
         },
     },
     darkMode: {

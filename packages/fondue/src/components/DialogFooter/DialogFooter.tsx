@@ -9,7 +9,7 @@ import IconArrowLeft from '@foundation/Icon/Generated/IconArrowLeft';
 import { useMobileDetection } from '@hooks/useMobileDetection';
 import { merge } from '@utilities/merge';
 
-import { type DialogFooterProps, dialogPaddingMap } from '../../types';
+import { type DialogFooterProps, dialogPaddingMap } from '../../types/dialog';
 
 /**
  * @deprecated Use `Dialog` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#dialog the migration guide}.

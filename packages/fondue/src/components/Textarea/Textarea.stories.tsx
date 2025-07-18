@@ -29,9 +29,13 @@ const ExtraActions: ExtraAction[] = [
     },
 ];
 
+/**
+ ### *Legacy component warning*
+ #### This is a unmaintained legacy component. It will be deprecated and replaced with a new component in an upcoming release.
+ */
 // @ts-expect-error - type changed?
 export default {
-    title: 'Components/Textarea',
+    title: 'Legacy Components/Textarea',
     component: Textarea,
     tags: ['autodocs'],
     argTypes: {

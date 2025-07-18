@@ -6,8 +6,12 @@ import { AssetInput, type AssetInputProps, AssetInputSize } from './AssetInput';
 import { assetInputActions } from './asset-input-actions';
 import { EXAMPLE_IMAGES, MIXED_ASSETS } from './example-assets';
 
+/**
+ ### *Legacy component warning*
+ #### This is a unmaintained legacy component. It will be deprecated and replaced with a new component in an upcoming release.
+ */
 export default {
-    title: 'Components/Asset Input',
+    title: 'Legacy Components/Asset Input',
     component: AssetInput,
     tags: ['autodocs'],
     argTypes: {

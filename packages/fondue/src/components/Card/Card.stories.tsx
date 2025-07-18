@@ -11,8 +11,12 @@ import { Text } from '@typography/Text';
 
 import { Card, type CardProps } from './Card';
 
+/**
+ ### *Legacy component warning*
+ #### This is a unmaintained legacy component. It will be deprecated and replaced with a new component in an upcoming release.
+ */
 export default {
-    title: 'Components/Card',
+    title: 'Legacy Components/Card',
     component: Card,
     tags: ['autodocs'],
     args: {

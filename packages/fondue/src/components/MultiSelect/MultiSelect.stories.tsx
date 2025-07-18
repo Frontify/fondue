@@ -14,8 +14,12 @@ import {
     MultiSelectType,
 } from './MultiSelect';
 
+/**
+ ### *Legacy component warning*
+ #### This is a unmaintained legacy component. It will be deprecated and replaced with a new component in an upcoming release.
+ */
 export default {
-    title: 'Components/Multi Select',
+    title: 'Legacy Components/Multi Select',
     component: MultiSelectComponent,
     tags: ['autodocs'],
     args: {

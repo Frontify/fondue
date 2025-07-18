@@ -13,8 +13,11 @@ import { IconSize } from '@foundation/Icon/IconSize';
 
 import { type Column, type Row, SelectionMode, SortDirection, Table, type TableProps } from './Table';
 
+/**
+ ### This component is deprecated, please use the [new Table component](/docs/current_components-table--documentation) instead.
+ */
 export default {
-    title: 'Components/Table',
+    title: 'Legacy Components/Deprecated/Table',
     component: Table,
     tags: ['autodocs'],
     args: {
@@ -24,6 +27,11 @@ export default {
         type: {
             options: Object.keys(SelectionMode),
             control: { type: 'select' },
+        },
+    },
+    parameters: {
+        status: {
+            type: 'deprecated',
         },
     },
 } as Meta<TableProps>;

@@ -7,11 +7,17 @@ import { merge } from '@utilities/merge';
 
 import { type ColumnAlign, SelectionMode } from './Table';
 
+/**
+ * @deprecated Please use updated table component from `@frontify/fondue/components` instead.
+ */
 export enum TableCellType {
     Default = 'Default',
     Checkbox = 'Checkbox',
 }
 
+/**
+ * @deprecated Please use updated table component from `@frontify/fondue/components` instead.
+ */
 export type TableCellProps = {
     cell: any;
     selectionMode: string;
@@ -22,6 +28,9 @@ export type TableCellProps = {
     align?: ColumnAlign;
 };
 
+/**
+ * @deprecated Please use updated table component from `@frontify/fondue/components` instead.
+ */
 export const TableCell = ({
     cell,
     selectionMode,
