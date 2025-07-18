@@ -19,7 +19,7 @@ import {
 } from './FormControl';
 
 export default {
-    title: 'Legacy Components/Form Control',
+    title: 'Legacy Components/Deprecated/Form Control',
     component: FormControl,
     tags: ['autodocs'],
     args: {
@@ -50,6 +50,11 @@ export default {
         style: {
             options: Object.values(FormControlStyle),
             control: 'radio',
+        },
+    },
+    parameters: {
+        status: {
+            type: 'deprecated',
         },
     },
 } as Meta<FormControlProps>;

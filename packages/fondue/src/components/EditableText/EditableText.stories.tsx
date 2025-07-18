@@ -8,10 +8,15 @@ import IconPen from '@foundation/Icon/Generated/IconPen';
 import { IconSize } from '@foundation/Icon/IconSize';
 
 export default {
-    title: 'Legacy Components/Editable Text',
+    title: 'Legacy Components/Deprecated/Editable Text',
     component: EditableText,
     tags: ['autodocs'],
-    parameters: { actions: { argTypesRegex: '^on.*' } },
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
+        actions: { argTypesRegex: '^on.*' },
+    },
     argTypes: {
         children: {
             table: {

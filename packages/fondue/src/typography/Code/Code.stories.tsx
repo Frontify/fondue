@@ -5,7 +5,7 @@ import { type Meta, type StoryFn } from '@storybook/react';
 import { Code as CodeComponent, type CodeProps } from './Code';
 
 export default {
-    title: 'Legacy Components/Code',
+    title: 'Legacy Components/Deprecated/Code',
     component: CodeComponent,
     argTypes: {
         size: {
@@ -31,6 +31,11 @@ export default {
         weight: 'default',
         as: 'span',
         color: 'default',
+    },
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
     },
 } as Meta<CodeProps>;
 

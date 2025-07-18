@@ -7,7 +7,7 @@ import { PatternDesign, PatternScale, PatternTheme } from '@foundation/Pattern';
 import { FrontifyPattern, type FrontifyPatternProps } from './FrontifyPattern';
 
 export default {
-    title: 'Legacy Components/FrontifyPattern',
+    title: 'Legacy Components/Deprecated/FrontifyPattern',
     component: FrontifyPattern,
     tags: ['autodocs'],
     argTypes: {
@@ -25,6 +25,11 @@ export default {
             options: Object.keys(PatternTheme),
             defaultValue: PatternTheme.Black,
             control: { type: 'select' },
+        },
+    },
+    parameters: {
+        status: {
+            type: 'deprecated',
         },
     },
     decorators: [

@@ -14,7 +14,7 @@ import { NumberInput } from '../NumberInput';
 import { FormField, type FormFieldProps } from './FormField';
 
 export default {
-    title: 'Legacy Components/FormField',
+    title: 'Legacy Components/Deprecated/FormField',
     component: FormField,
     tags: ['autodocs'],
     argTypes: {
@@ -74,6 +74,11 @@ export default {
             name: 'readOnly',
             defaultValue: false,
             control: { type: 'boolean' },
+        },
+    },
+    parameters: {
+        status: {
+            type: 'deprecated',
         },
     },
     args: {

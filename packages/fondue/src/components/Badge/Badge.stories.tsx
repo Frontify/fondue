@@ -8,7 +8,7 @@ import { Badge } from './Badge';
 import { BadgeEmphasis, type BadgeProps, BadgeStatus, BadgeStyle } from './types';
 
 export default {
-    title: 'Legacy Components/Badge',
+    title: 'Legacy Components/Deprecated/Badge',
     component: Badge,
     tags: ['autodocs'],
     argTypes: {
@@ -35,6 +35,11 @@ export default {
         emphasis: BadgeEmphasis.Strong,
         disabled: false,
         withTitleAttribute: true,
+    },
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
     },
 } as Meta<BadgeProps>;
 

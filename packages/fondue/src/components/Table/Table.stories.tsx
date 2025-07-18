@@ -14,7 +14,7 @@ import { IconSize } from '@foundation/Icon/IconSize';
 import { type Column, type Row, SelectionMode, SortDirection, Table, type TableProps } from './Table';
 
 export default {
-    title: 'Legacy Components/Table',
+    title: 'Legacy Components/Deprecated/Table',
     component: Table,
     tags: ['autodocs'],
     args: {
@@ -24,6 +24,11 @@ export default {
         type: {
             options: Object.keys(SelectionMode),
             control: { type: 'select' },
+        },
+    },
+    parameters: {
+        status: {
+            type: 'deprecated',
         },
     },
 } as Meta<TableProps>;

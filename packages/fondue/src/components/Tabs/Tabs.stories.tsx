@@ -119,7 +119,7 @@ const data: TabItemProps[] = [
 ];
 
 export default {
-    title: 'Legacy Components/Tabs',
+    title: 'Legacy Components/Deprecated/Tabs',
     component: Tabs,
     tags: ['autodocs'],
     argTypes: {
@@ -136,6 +136,11 @@ export default {
         minHeight: {
             type: 'string',
             defaultValue: '50px',
+        },
+    },
+    parameters: {
+        status: {
+            type: 'deprecated',
         },
     },
 } as Meta<TabsProps>;

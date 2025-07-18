@@ -10,7 +10,7 @@ import { sharedTypographyArgTypes, sharedTypographyArgs } from '../shared/Shared
 import { Text as TextComponent, type TextProps } from './Text';
 
 export default {
-    title: 'Legacy Components/Text',
+    title: 'Legacy Components/Deprecated/Text',
     component: TextComponent,
     argTypes: {
         size: {
@@ -43,6 +43,11 @@ export default {
         as: 'span',
         color: 'default',
         ...sharedTypographyArgs,
+    },
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
     },
 } as Meta<TextProps>;
 

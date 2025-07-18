@@ -18,7 +18,7 @@ const ITEMS = [
 ];
 
 export default {
-    title: 'Legacy Components/Breadcrumbs',
+    title: 'Legacy Components/Deprecated/Breadcrumbs',
     component: Breadcrumbs,
     tags: ['autodocs'],
     args: {
@@ -45,6 +45,11 @@ export default {
             control: { type: 'boolean' },
         },
         onBlur: { action: 'onBlur' },
+    },
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
     },
 } as Meta<BreadcrumbsProps>;
 

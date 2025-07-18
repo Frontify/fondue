@@ -11,9 +11,14 @@ import { TextInput } from '@components/TextInput';
 import { Form, type FormProps } from './Form';
 
 export default {
-    title: 'Legacy Components/Form',
+    title: 'Legacy Components/Deprecated/Form',
     component: Form,
     tags: ['autodocs'],
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
+    },
 } as Meta<FormProps>;
 
 export const Default: StoryFn<FormProps> = (args: FormProps) => (
