@@ -11,7 +11,7 @@ import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { ARROW_DARK_THEME } from '@utilities/overlayStyle';
 
-import { Modality } from '../../types';
+import { Modality } from '../../types/dialog';
 
 export type TooltipProps = {
     id?: string;

@@ -4,7 +4,7 @@ import { Overlay } from '@utilities/dialogs/Overlay';
 import { Z_INDEX_MODAL } from '@utilities/dialogs/constants';
 import { type WithRequired } from 'src/types/withRequired';
 
-import { Modality, type BaseDialogProps, type OverlayProps } from '../../types';
+import { Modality, type BaseDialogProps, type OverlayProps } from '../../types/dialog';
 
 export type InlineDialogProps = Omit<
     OverlayProps,

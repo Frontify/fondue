@@ -28,7 +28,7 @@ import {
 } from '@components/Tree/utils';
 import IconDocument from '@foundation/Icon/Generated/IconDocument';
 
-import { Modality } from '../../types';
+import { Modality } from '../../types/dialog';
 
 export default {
     title: 'Legacy Components/Tree',

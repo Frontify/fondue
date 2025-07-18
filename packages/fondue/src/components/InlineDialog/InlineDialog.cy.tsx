@@ -8,7 +8,7 @@ import { DialogBody } from '@components/DialogBody';
 import { Dropdown } from '@components/Dropdown';
 import IconDotsVertical16 from '@foundation/Icon/Generated/IconDotsVertical16';
 
-import { Modality } from '../../types';
+import { Modality } from '../../types/dialog';
 
 import { InlineDialog, type InlineDialogProps } from './InlineDialog';
 
