@@ -1,12 +1,32 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconIcon } from '@frontify/fondue-icons';
-import { act, renderHook } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import { Children, isValidElement } from 'react';
 import { describe, expect, it } from 'vitest';
 
 import { Select } from '../Select';
-import { getRecursiveOptionValues, useSelectData } from '../useSelectData';
+import { type AsyncItem, getRecursiveOptionValues, useSelectData } from '../useSelectData';
+
+const getMockedGetAsyncItems =
+    (shouldError: boolean = false) =>
+    (filterText: string) => {
+        return new Promise<AsyncItem[]>((resolve, reject) => {
+            if (shouldError) {
+                reject(new Error('Async fetch failed'));
+            }
+            const items = [
+                { label: 'asynctest1', value: 'Async Test1' },
+                { label: 'asynctest2', value: 'Async Test2' },
+                { label: 'asynctest3', value: 'Async Test3' },
+                { label: 'asynctest4', value: 'Async Test4' },
+                { label: 'asynctest5', value: 'Async Test5' },
+                { label: 'asynctest6', value: 'Async Test6' },
+            ].filter((item) => item.label.toLowerCase().includes(filterText.toLowerCase()));
+
+            resolve(items);
+        });
+    };
 
 describe('useSelectData', () => {
     const menuSlot = (
@@ -99,6 +119,103 @@ describe('useSelectData', () => {
 
         expect(result.current.filterText).toBe('test1');
         expect(result.current.items.length).toBe(1);
+    });
+
+    it('returns async items when filterText is empty', async () => {
+        const getAsyncItems = getMockedGetAsyncItems(false);
+        const { result } = renderHook(() => useSelectData([], getAsyncItems));
+
+        expect(
+            Children.toArray(result.current.menuSlots).every((item) => {
+                return isValidElement(item) && (item.type === Select.Item || item.type === Select.Group);
+            }),
+        ).toBe(true);
+
+        expect(result.current.asyncItemStatus.isLoading).toBe(true);
+        expect(result.current.asyncItemStatus.error).toBe(null);
+
+        await waitFor(() => {
+            expect(result.current.asyncItemStatus.isLoading).toBe(false);
+        });
+
+        expect(Children.toArray(result.current.menuSlots).length).toBe(6);
+        expect(result.current.items.length).toBe(6);
+    });
+
+    it('returns async items when filter text is set', async () => {
+        const getAsyncItems = getMockedGetAsyncItems();
+        const { result } = renderHook(() => useSelectData([], getAsyncItems));
+
+        act(() => {
+            result.current.setFilterText('2');
+        });
+
+        expect(result.current.asyncItemStatus.isLoading).toBe(true);
+        expect(result.current.asyncItemStatus.error).toBe(null);
+
+        await waitFor(() => {
+            expect(result.current.asyncItemStatus.isLoading).toBe(false);
+        });
+
+        expect(result.current.items.length).toBe(1);
+    });
+
+    it('returns error status when getAsyncItems fails', async () => {
+        const getAsyncItems = getMockedGetAsyncItems(true);
+        const { result } = renderHook(() => useSelectData([], getAsyncItems));
+
+        expect(result.current.asyncItemStatus.isLoading).toBe(true);
+        expect(result.current.asyncItemStatus.error).toBe(null);
+
+        await waitFor(() => {
+            expect(result.current.asyncItemStatus.isLoading).toBe(false);
+            expect(result.current.asyncItemStatus.error).not.toBe(null);
+            expect(result.current.asyncItemStatus.error?.message).toBe('Async fetch failed');
+        });
+
+        expect(result.current.items.length).toBe(0);
+    });
+
+    it('returns async items mixed with sync items when no filterText is set', async () => {
+        const getAsyncItems = getMockedGetAsyncItems();
+        const { result } = renderHook(() => useSelectData([menuSlot], getAsyncItems));
+
+        expect(result.current.asyncItemStatus.isLoading).toBe(true);
+        expect(result.current.asyncItemStatus.error).toBe(null);
+
+        expect(Children.toArray(result.current.menuSlots).length).toBe(4); // 6 sync menu slots
+        expect(result.current.items.length).toBe(6); // 6 sync items
+
+        await waitFor(() => {
+            expect(result.current.asyncItemStatus.isLoading).toBe(false);
+        });
+
+        expect(Children.toArray(result.current.menuSlots).length).toBe(10); // 6 async items + 4 sync menu slots
+        expect(result.current.items.length).toBe(12); // 6 async items + 6 sync items
+    });
+
+    it('returns async items mixed with sync items when filterText is set', async () => {
+        const getAsyncItems = getMockedGetAsyncItems();
+        const { result } = renderHook(() => useSelectData([menuSlot], getAsyncItems));
+
+        await waitFor(() => {
+            expect(result.current.asyncItemStatus.isLoading).toBe(false);
+        });
+
+        act(() => {
+            result.current.setFilterText('test1');
+        });
+
+        expect(result.current.asyncItemStatus.isLoading).toBe(true);
+        expect(result.current.asyncItemStatus.error).toBe(null);
+
+        expect(result.current.items.length).toBe(7); // 1 sync item + 6 async items before async filtering is finished
+
+        await waitFor(() => {
+            expect(result.current.asyncItemStatus.isLoading).toBe(false);
+        });
+
+        expect(result.current.items.length).toBe(2); // 1 async item + 1 sync item matching filter
     });
 });
 

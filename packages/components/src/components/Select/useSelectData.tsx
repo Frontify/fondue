@@ -1,7 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconCross } from '@frontify/fondue-icons';
-import { Children, cloneElement, isValidElement, useCallback, useMemo, useState, type ReactNode } from 'react';
+import {
+    Children,
+    cloneElement,
+    isValidElement,
+    useCallback,
+    useMemo,
+    useState,
+    type ReactNode,
+    useEffect,
+} from 'react';
 
 import { ForwardedRefSelectItem, type SelectItemProps } from './SelectItem';
 import { ForwardedRefSelectSlot, type SelectSlotProps } from './SelectSlot';
@@ -10,6 +19,54 @@ import { getSelectOptionValue } from './utils';
 export type SelectItemType = {
     value: string;
     label: string;
+};
+
+export type AsyncItem = { label: string; value: string; content?: ReactNode };
+
+export type AsyncItemsFetcher = (filterText: string) => Promise<AsyncItem[]>;
+
+const useAsyncItems = (filterText: string, getAsyncItems?: AsyncItemsFetcher) => {
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<Error | null>(null);
+    const [asyncResult, setAsyncResult] = useState<{
+        menuComponents: ReactNode[];
+        items: { value: string; label: string; children?: ReactNode }[];
+    }>({
+        menuComponents: [],
+        items: [],
+    });
+
+    useEffect(() => {
+        setError(null);
+        if (!getAsyncItems) {
+            setAsyncResult({
+                menuComponents: [],
+                items: [],
+            });
+        }
+
+        if (getAsyncItems) {
+            setIsLoading(true);
+            getAsyncItems(filterText)
+                .then((items) => {
+                    setAsyncResult({
+                        menuComponents: items.map((item) => (
+                            <ForwardedRefSelectItem key={item.value} label={item.label} value={item.value}>
+                                {item.content ? item.content : item.label}
+                            </ForwardedRefSelectItem>
+                        )),
+                        items: items.map((item) => ({ value: item.value, label: item.label, children: item.content })),
+                    });
+                    setIsLoading(false);
+                })
+                .catch((error: Error) => {
+                    setError(error);
+                    setIsLoading(false);
+                });
+        }
+    }, [filterText, getAsyncItems]);
+
+    return { isLoading, error, menuComponents: asyncResult.menuComponents, items: asyncResult.items };
 };
 
 /**
@@ -48,9 +105,10 @@ export const getRecursiveOptionValues = (
  * Custom hook for managing select data and filtering.
  *
  * @param {ReactNode} children - The React children to process, typically SelectItem components.
+ * @param {AsyncItemsFetcher} [getAsyncItems] - Optional function to fetch items asynchronously based on filter text.
  * @returns {Object} An object containing the processed data.
  */
-export const useSelectData = (children: ReactNode) => {
+export const useSelectData = (children: ReactNode, getAsyncItems?: AsyncItemsFetcher) => {
     const [filterText, setFilterText] = useState('');
     const { inputSlots, menuSlots, itemValues, clearButton } = useMemo(() => {
         const inputSlots: ReactNode[] = [];
@@ -99,13 +157,19 @@ export const useSelectData = (children: ReactNode) => {
         [itemValues],
     );
 
+    const asyncItems = useAsyncItems(filterText, getAsyncItems);
+
     return {
-        items,
-        menuSlots,
+        items: [...items, ...asyncItems.items],
+        menuSlots: [...menuSlots, ...asyncItems.menuComponents],
         filterText,
         inputSlots,
         clearButton,
         setFilterText,
         getItemByValue,
+        asyncItemStatus: {
+            isLoading: asyncItems.isLoading,
+            error: asyncItems.error,
+        },
     };
 };
