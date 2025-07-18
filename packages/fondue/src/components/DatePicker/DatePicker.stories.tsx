@@ -12,6 +12,10 @@ import { Validation } from '@utilities/validation';
 
 import { DatePicker, type DatePickerProps, type ReactDatePickerRef } from './DatePicker';
 
+/**
+ ### *Legacy component warning*
+ #### This is a unmaintained legacy component. It will be deprecated and replaced with a new component in an upcoming release.
+ */
 export default {
     title: 'Legacy Components/DatePicker',
     component: DatePicker,

@@ -14,6 +14,10 @@ import {
     FilterableMultiSelectType,
 } from './FilterableMultiSelect';
 
+/**
+ ### *Legacy component warning*
+ #### This is a unmaintained legacy component. It will be deprecated and replaced with a new component in an upcoming release.
+ */
 export default {
     title: 'Legacy Components/Filterable Multi Select',
     component: FilterableMultiSelectComponent,

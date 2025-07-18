@@ -30,6 +30,10 @@ import IconDocument from '@foundation/Icon/Generated/IconDocument';
 
 import { Modality } from '../../types/dialog';
 
+/**
+ ### *Legacy component warning*
+ #### This is a unmaintained legacy component. It will be deprecated and replaced with a new component in an upcoming release.
+ */
 export default {
     title: 'Legacy Components/Tree',
     component: TreeView,

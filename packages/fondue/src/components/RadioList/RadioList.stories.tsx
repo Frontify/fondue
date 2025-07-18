@@ -6,6 +6,10 @@ import { type Meta, type StoryFn } from '@storybook/react';
 import { RadioButton, RadioButtonEmphasis } from './RadioButton';
 import { RadioList, RadioListDirection, type RadioListProps } from './RadioList';
 
+/**
+ ### *Legacy component warning*
+ #### This is a unmaintained legacy component. It will be deprecated and replaced with a new component in an upcoming release.
+ */
 export default {
     title: 'Legacy Components/RadioList',
     component: RadioList,

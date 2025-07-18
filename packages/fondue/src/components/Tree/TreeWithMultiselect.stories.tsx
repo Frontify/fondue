@@ -20,6 +20,10 @@ import IconDocument from '@foundation/Icon/Generated/IconDocument';
 import { TreeItemMultiselect } from './TreeItem/TreeItemMultiselect';
 import { getNewSelectedItems } from './helpers';
 
+/**
+ ### *Legacy component warning*
+ #### This is a unmaintained legacy component. It will be deprecated and replaced with a new component in an upcoming release.
+ */
 export default {
     title: 'Legacy Components/Tree/Multiselect',
     component: TreeView,

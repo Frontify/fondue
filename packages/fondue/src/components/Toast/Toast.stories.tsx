@@ -13,6 +13,10 @@ import { ButtonSize, ButtonStyle } from '../Button/ButtonTypes';
 import { Toast as ToastComponent } from './Toast';
 import { ToastAnimationDirection, type ToastProps, ToastStyle } from './types';
 
+/**
+ ### *Legacy component warning*
+ #### This is a unmaintained legacy component. It will be deprecated and replaced with a new component in an upcoming release.
+ */
 export default {
     title: 'Legacy Components/Toast',
     component: ToastComponent,
