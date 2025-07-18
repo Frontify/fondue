@@ -191,7 +191,7 @@ export const SelectCombobox = (
                             {clearButton}
                         </RadixSlot>
                     )}
-                    {asyncItemStatus.isLoading ? (
+                    {asyncItemStatus.isLoading && isOpen ? (
                         <ForwardedRefSelectSlot name="right" data-test-id={`${dataTestId}-right-slot`}>
                             <LoadingCircle size="x-small" data-test-id={`${dataTestId}-loading-circle`} />
                         </ForwardedRefSelectSlot>
