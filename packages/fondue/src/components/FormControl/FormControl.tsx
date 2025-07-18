@@ -5,7 +5,9 @@ import { type ReactElement, type ReactNode, cloneElement, isValidElement } from 
 import { InputLabel, type InputLabelProps } from '@components/InputLabel/InputLabel';
 import { merge } from '@utilities/merge';
 import { Validation } from '@utilities/validation';
-
+/**
+ * @deprecated Please use a custom component instead.
+ */
 export enum FormControlStyle {
     Primary = 'Primary',
     Positive = 'Positive',
@@ -60,17 +62,23 @@ const HelperText = ({
     );
 };
 HelperText.displayName = 'FondueHelperText';
-
+/**
+ * @deprecated Please use a custom component instead.
+ */
 export enum HelperPosition {
     Before = 'Before',
     After = 'After',
 }
-
+/**
+ * @deprecated Please use a custom component instead.
+ */
 export enum FormControlDirection {
     Horizontal = 'Horizontal',
     Vertical = 'Vertical',
 }
-
+/**
+ * @deprecated Please use a custom component instead.
+ */
 export type FormControlProps = {
     direction?: FormControlDirection;
     disabled?: boolean;
@@ -83,7 +91,9 @@ export type FormControlProps = {
     children?: ReactNode;
     'data-test-id'?: string;
 };
-
+/**
+ * @deprecated Please use a custom component instead.
+ */
 export const FormControl = ({
     label,
     children,

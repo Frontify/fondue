@@ -118,6 +118,9 @@ const data: TabItemProps[] = [
     },
 ];
 
+/**
+ ### This component is deprecated, please use the [new Tabs component](/docs/current_components-tabs--documentation) instead.
+ */
 export default {
     title: 'Legacy Components/Deprecated/Tabs',
     component: Tabs,

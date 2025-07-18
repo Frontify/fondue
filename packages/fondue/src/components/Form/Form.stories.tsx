@@ -10,6 +10,10 @@ import { TextInput } from '@components/TextInput';
 
 import { Form, type FormProps } from './Form';
 
+/**
+ ### This component is deprecated, please use the your own form component instead.
+ For use in frontify `web-app`, you can use the common `Form` component.
+ */
 export default {
     title: 'Legacy Components/Deprecated/Form',
     component: Form,

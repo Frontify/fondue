@@ -18,7 +18,7 @@ const ITEMS = [
 ];
 
 export default {
-    title: 'Legacy Components/Deprecated/Breadcrumbs',
+    title: 'Legacy Components/Breadcrumbs',
     component: Breadcrumbs,
     tags: ['autodocs'],
     args: {

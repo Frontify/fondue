@@ -2,11 +2,17 @@
 
 import { type ReactNode, useRef } from 'react';
 
+/**
+ * @deprecated Please use updated table component from `@frontify/fondue/components` instead.
+ */
 export type TableRowProps = {
     isSelected?: boolean;
     children: ReactNode;
 };
 
+/**
+ * @deprecated Please use updated table component from `@frontify/fondue/components` instead.
+ */
 export const TableRow = ({ isSelected = false, children }: TableRowProps) => {
     const ref = useRef<HTMLTableRowElement | null>(null);
 

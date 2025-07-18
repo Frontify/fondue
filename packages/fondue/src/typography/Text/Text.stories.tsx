@@ -9,6 +9,9 @@ import { sharedTypographyArgTypes, sharedTypographyArgs } from '../shared/Shared
 
 import { Text as TextComponent, type TextProps } from './Text';
 
+/**
+ ### This component is deprecated, please use the [new Text component](/docs/current_typography-text--documentation) instead.
+ */
 export default {
     title: 'Legacy Components/Deprecated/Text',
     component: TextComponent,

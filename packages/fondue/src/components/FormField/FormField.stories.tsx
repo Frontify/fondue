@@ -13,6 +13,10 @@ import { NumberInput } from '../NumberInput';
 
 import { FormField, type FormFieldProps } from './FormField';
 
+/**
+ ### This component is deprecated, please use the your own form component instead.
+ For use in frontify `web-app`, you can use the common `Form` components.
+ */
 export default {
     title: 'Legacy Components/Deprecated/FormField',
     component: FormField,

@@ -7,6 +7,9 @@ import { Validation } from '@utilities/validation';
 
 import { type LegacyTextareaProps, LegacyTextarea as TextareaComponent } from './LegacyTextarea';
 
+/**
+ ### This component is deprecated. Please use a updated component instead.
+ */
 export default {
     title: 'Legacy Components/Deprecated/LegacyTextarea',
     component: TextareaComponent,
