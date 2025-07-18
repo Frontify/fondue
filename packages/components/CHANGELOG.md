@@ -1,5 +1,19 @@
 # @frontify/fondue-components
 
+## 20.0.0-beta.3
+
+### Major Changes
+
+- [#2351](https://github.com/Frontify/fondue/pull/2351) [`52b9562`](https://github.com/Frontify/fondue/commit/52b956216715ba7a78c7c434f7e7344a314d2e0c) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: improve token preview in storybook
+
+- [#2355](https://github.com/Frontify/fondue/pull/2355) [`dc1dbff`](https://github.com/Frontify/fondue/commit/dc1dbffd7e38672935d996565500db2770f63a40) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add deprecation notices to legacy components
+
+### Patch Changes
+
+- Updated dependencies [[`52b9562`](https://github.com/Frontify/fondue/commit/52b956216715ba7a78c7c434f7e7344a314d2e0c)]:
+    - @frontify/fondue-tokens@5.0.0-beta.3
+    - @frontify/fondue-icons@0.18.0-beta.0
+
 ## 20.0.0-beta.2
 
 ### Major Changes

@@ -10,7 +10,9 @@
     "@frontify/fondue-storybook-docs": "0.0.1"
   },
   "changesets": [
+    "cool-apples-poke",
     "modern-doors-give",
+    "nine-weeks-juggle",
     "silly-animals-relax",
     "solid-keys-carry",
     "thin-buckets-open"
