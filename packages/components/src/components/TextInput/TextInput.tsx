@@ -104,6 +104,7 @@ export type TextInputProps = {
     'aria-label'?: string;
     'aria-labelledby'?: string;
     'aria-describedby'?: string;
+    'aria-errormessage'?: string;
 };
 
 export const TextFieldRoot = (
@@ -112,6 +113,7 @@ export const TextFieldRoot = (
         className,
         status = 'neutral',
         'data-test-id': dataTestId = 'fondue-text-input',
+        'aria-errormessage': ariaErrormessage,
         ...inputProps
     }: TextInputProps,
     ref: ForwardedRef<HTMLInputElement>,
@@ -144,6 +146,7 @@ export const TextFieldRoot = (
                 ref={ref}
                 className={styles.input}
                 aria-invalid={status === 'error'}
+                aria-errormessage={status === 'error' ? ariaErrormessage : undefined}
             />
 
             {status === 'success' ? (
