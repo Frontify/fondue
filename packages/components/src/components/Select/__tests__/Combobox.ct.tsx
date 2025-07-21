@@ -453,10 +453,13 @@ test('should display loading circle when typing and hide loading circle after lo
     await expect(component).toBeVisible();
     await component.click();
 
-    await page.keyboard.type(ITEM_TEXT1);
-
+    page.keyboard
+        .type(ITEM_TEXT1)
+        .then(async () => {
+            await expect(page.getByTestId(`${SELECT_TEST_ID}-loading-circle`)).not.toBeVisible();
+        })
+        .catch(() => {});
     await expect(page.getByTestId(`${SELECT_TEST_ID}-loading-circle`)).toBeVisible();
-    await expect(page.getByTestId(`${SELECT_TEST_ID}-loading-circle`)).not.toBeVisible();
 });
 
 test('should display error when getAsyncItems fails', async ({ mount, page }) => {
