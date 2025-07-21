@@ -42,7 +42,7 @@ export type LegacyTooltipProps = {
     brightHeader?: BrightHeaderStyle;
     buttons?: [TooltipButton, TooltipButton] | [TooltipButton];
     children?: ReactNode;
-    position?: TooltipPosition;
+    position?: TooltipPosition | 'top' | 'bottom' | 'left' | 'right';
     alignment?: TooltipAlignment;
     flip?: boolean;
     withArrow?: boolean;
@@ -68,10 +68,10 @@ const paddingsBottom = {
 };
 
 export enum TooltipPosition {
-    Top = 'Top',
-    Right = 'Right',
-    Bottom = 'Bottom',
-    Left = 'Left',
+    Top = 'top',
+    Right = 'right',
+    Bottom = 'bottom',
+    Left = 'left',
 }
 
 export enum TooltipAlignment {
@@ -80,20 +80,21 @@ export enum TooltipAlignment {
     End = 'End',
 }
 
-const placementMap: Record<`${TooltipPosition}-${TooltipAlignment}`, Placement> = {
-    'Top-Start': 'top-start',
-    'Top-End': 'top-end',
-    'Bottom-Start': 'bottom-start',
-    'Bottom-End': 'bottom-end',
-    'Left-Start': 'left-start',
-    'Left-End': 'left-end',
-    'Right-Start': 'right-start',
-    'Right-End': 'right-end',
-    'Top-Middle': 'top',
-    'Right-Middle': 'right',
-    'Bottom-Middle': 'bottom',
-    'Left-Middle': 'left',
-};
+const placementMap: Record<`${TooltipPosition | 'top' | 'bottom' | 'left' | 'right'}-${TooltipAlignment}`, Placement> =
+    {
+        'top-Start': 'top-start',
+        'top-End': 'top-end',
+        'bottom-Start': 'bottom-start',
+        'bottom-End': 'bottom-end',
+        'left-Start': 'left-start',
+        'left-End': 'left-end',
+        'right-Start': 'right-start',
+        'right-End': 'right-end',
+        'top-Middle': 'top',
+        'right-Middle': 'right',
+        'bottom-Middle': 'bottom',
+        'left-Middle': 'left',
+    };
 
 const getArrowClasses = (currentPlacement: string, brightHeader: BrightHeaderStyle | undefined, alignment: string) => {
     switch (true) {
