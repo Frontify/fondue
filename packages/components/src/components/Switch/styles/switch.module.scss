@@ -9,6 +9,8 @@
     background-color: var(--box-neutral-color);
     border: 1px solid var(--line-color-x-strong);
     box-sizing: border-box;
+    flex-grow: 0;
+    flex-shrink: 0;
 
     &:enabled:hover {
         background-color: var(--box-neutral-color-hover);

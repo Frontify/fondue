@@ -4,6 +4,7 @@ import { IconCross } from '@frontify/fondue-icons';
 import * as RadixPopover from '@radix-ui/react-popover';
 import { forwardRef, type CSSProperties, type ForwardedRef, type ReactNode } from 'react';
 
+import { type CommonAriaProps } from '#/helpers/aria';
 import { addAutoFocusAttribute, addShowFocusRing } from '#/utilities/domUtilities';
 
 import { ThemeProvider, useFondueTheme } from '../ThemeProvider/ThemeProvider';
@@ -182,17 +183,24 @@ export type FlyoutHeaderProps = {
     showCloseButton?: boolean;
     children?: ReactNode;
     'data-test-id'?: string;
+    closeProps?: CommonAriaProps;
 };
 
 export const FlyoutHeader = (
-    { showCloseButton, children, 'data-test-id': dataTestId = 'fondue-flyout-header' }: FlyoutHeaderProps,
+    { showCloseButton, children, 'data-test-id': dataTestId = 'fondue-flyout-header', closeProps }: FlyoutHeaderProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     return (
         <div data-test-id={dataTestId} ref={ref} className={styles.header}>
             <div>{children}</div>
             {showCloseButton && (
-                <RadixPopover.Close role="button" data-test-id={`${dataTestId}-close`} className={styles.close}>
+                <RadixPopover.Close
+                    role="button"
+                    data-test-id={`${dataTestId}-close`}
+                    className={styles.close}
+                    aria-label="Close"
+                    {...closeProps}
+                >
                     <IconCross size={20} />
                 </RadixPopover.Close>
             )}
