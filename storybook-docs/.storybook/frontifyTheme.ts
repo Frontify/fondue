@@ -11,5 +11,5 @@ export const dark = create({
 
     brandTitle: 'Fondue Design System - Frontify',
     brandUrl: 'https://fondue-components.frontify.com',
-    brandImage: '/img/fondue-logo.svg',
+    brandImage: '/img/fondue-logo.png',
 });
