@@ -11,7 +11,6 @@ export enum AssetInputMenuItemContentSize {
 export type AssetInputMenuItemContentProps = {
     title?: ReactNode;
     decorator?: ReactElement;
-    switchComponent?: ReactElement;
     subtitle?: string;
     size?: AssetInputMenuItemContentSize;
     ariaProps?: HTMLAttributes<HTMLElement>;
@@ -47,9 +46,9 @@ export type AssetInputMenuItemProps = {
     onMouseLeave?: <T extends HTMLButtonElement | HTMLAnchorElement>(event: MouseEvent<T>) => void;
     children?: ReactNode;
     'data-test-id'?: string;
-} & Omit<AssetInputMenuItemContentProps, 'iconSize'>;
+} & AssetInputMenuItemContentProps;
 
-export type AssetInputMenuItemType = Omit<AssetInputMenuItemProps, 'switchComponent'> & {
+export type AssetInputMenuItemType = AssetInputMenuItemProps & {
     id: string | number;
     link?: string;
 };
