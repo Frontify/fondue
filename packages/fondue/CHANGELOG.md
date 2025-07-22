@@ -1,5 +1,16 @@
 # @frontify/fondue
 
+## 12.11.0
+
+### Minor Changes
+
+- [#2359](https://github.com/Frontify/fondue/pull/2359) [`fb1cbb3`](https://github.com/Frontify/fondue/commit/fb1cbb35ebea81bf551c35bb2ba0444c36b8160c) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: split up `AssetInput` types from ActionMenu
+
+### Patch Changes
+
+- Updated dependencies [[`b75273d`](https://github.com/Frontify/fondue/commit/b75273d33ea945ad2662f02d71118d94a5d26a78), [`a799319`](https://github.com/Frontify/fondue/commit/a799319c827b7591391874af22afa186cb10dd0a), [`1118f2a`](https://github.com/Frontify/fondue/commit/1118f2a0939a8617d06d85e8588ac084cafc90be), [`1d8b80c`](https://github.com/Frontify/fondue/commit/1d8b80ca85143a5303f6fb8cff7cc193252c9cb5), [`9d05d85`](https://github.com/Frontify/fondue/commit/9d05d8512a0023fc8516839d43facdd3b61986ed), [`d64d03b`](https://github.com/Frontify/fondue/commit/d64d03b0c8428502a7098418ba2ab1e3c7edccfd)]:
+    - @frontify/fondue-components@19.2.0
+
 ## 12.10.3
 
 ### Patch Changes
