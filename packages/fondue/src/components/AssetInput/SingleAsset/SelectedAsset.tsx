@@ -9,7 +9,7 @@ import { useMenuTriggerState } from '@react-stately/menu';
 import { AnimatePresence, motion } from 'framer-motion';
 import { type ReactElement, useEffect, useRef, useState } from 'react';
 
-import { ActionMenu } from '@components/ActionMenu/ActionMenu/ActionMenu';
+import { ActionMenu, type ActionMenuBlock } from '@components/ActionMenu/ActionMenu/ActionMenu';
 import IconCaretDown from '@foundation/Icon/Generated/IconCaretDown';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { useMemoizedId } from '@hooks/useMemoizedId';
@@ -156,7 +156,7 @@ export const SelectedAsset = ({
                             <div {...overlayProps} ref={overlayRef}>
                                 <DismissButton onDismiss={() => menuState.close()} />
                                 <ActionMenu
-                                    menuBlocks={actions}
+                                    menuBlocks={actions as ActionMenuBlock[]}
                                     focus={focusStrategy ?? undefined}
                                     onClick={() => menuState.close()}
                                 />

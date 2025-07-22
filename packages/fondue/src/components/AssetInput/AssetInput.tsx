@@ -2,7 +2,7 @@
 
 import { type ChangeEvent, type ReactElement, useRef } from 'react';
 
-import { type ActionMenuProps } from '@components/ActionMenu/ActionMenu/ActionMenu';
+import { type ActionMenuProps } from '@components/ActionMenu/ActionMenu';
 import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';
 import IconArrowCircleUp from '@foundation/Icon/Generated/IconArrowCircleUp';
 import IconImageStack from '@foundation/Icon/Generated/IconImageStack';
@@ -12,6 +12,7 @@ import { merge } from '@utilities/merge';
 
 import { MultiAssetPreview } from './MultiAssetPreview';
 import { SelectedAsset } from './SingleAsset/SelectedAsset';
+import { type AssetInputMenuBlock } from './types';
 
 type BaseAsset = {
     name: string;
@@ -65,7 +66,7 @@ export type AssetInputProps = {
     assets?: AssetType[];
     size: AssetInputSize;
     numberOfLocations?: number;
-    actions?: ActionMenuProps['menuBlocks'];
+    actions?: ActionMenuProps['menuBlocks'] | AssetInputMenuBlock[];
     isLoading?: boolean;
     hideSize?: boolean;
     hideExtension?: boolean;

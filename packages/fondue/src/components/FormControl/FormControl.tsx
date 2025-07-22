@@ -12,6 +12,8 @@ export enum FormControlStyle {
     Danger = 'Danger',
 }
 
+export type FormControlTooltipPosition = 'top' | 'bottom' | 'left' | 'right';
+
 type HelperTextProps = {
     text: string;
     style: FormControlStyle;
