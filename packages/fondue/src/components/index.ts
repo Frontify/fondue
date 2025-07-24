@@ -1,18 +1,29 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+export * from './Accordion';
+export * from './ActionMenu';
 export * from './AssetInput';
 export * from './Badge';
 export * from './Breadcrumbs';
 export * from './Card';
+export * from './Checkbox';
+export * from './Checklist';
 export * from './CollapsibleWrap';
+export * from './ColorInputFlyout';
+export * from './ColorPicker';
 export * from './ComponentEnum';
 export * from './DatePicker';
+export * from './Dropdown/SelectMenu';
 export * from './EditableText';
 export * from './FilterableMultiSelect';
+export * from './Flyout';
 export * from './FormControl';
 export * from './FormField';
 export * from './FrontifyPattern';
+export * from './InputLabel';
 export * from './LegacyTextarea';
+export * from './Menu';
+export * from './MenuItem';
 export * from './MultiSelect';
 export * from './OrderableList';
 export * from './RadioList';
@@ -21,6 +32,7 @@ export * from './RichTextEditor';
 export * from './Table';
 export * from './Tabs';
 export * from './Textarea';
+export * from './TextInput';
 export * from './Toast';
 export * from './Tree';
 export * from './Trigger';
