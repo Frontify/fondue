@@ -4,6 +4,8 @@ import { IconIcon } from '@frontify/fondue-icons';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { useState } from 'react';
 
+import { Flex } from '#/components/Flex/Flex.tsx';
+
 import { Button } from '../Button/Button';
 
 import { SelectCombobox } from './Combobox';
@@ -59,6 +61,57 @@ export const Combobox: Story = {
                 <Select.Item value="test3">Test3</Select.Item>
             </Select.Combobox>
         );
+    },
+};
+
+export const ComboboxWithAsyncItems: Story = {
+    args: {
+        placeholder: 'Select an item',
+        getAsyncItems: async (filterText: string) => {
+            const items = [
+                {
+                    value: 'test1',
+                    label: 'Test 1 - Custom Content',
+                    content: (
+                        <Flex gap={4} align="center">
+                            <img src="https://flagsapi.com/CH/flat/16.png" alt="Switzerland" />
+                            <p>Switzerland</p>
+                        </Flex>
+                    ),
+                },
+                {
+                    value: 'test2',
+                    label: 'Test 2',
+                    content: (
+                        <Flex gap={4} align="center">
+                            <p>With a Component</p>
+                            <IconIcon size={16} />
+                        </Flex>
+                    ),
+                },
+                {
+                    value: 'test3',
+                    label: 'Test 3',
+                    content: (
+                        <Flex gap={4} align="center">
+                            Test 3<IconIcon />
+                        </Flex>
+                    ),
+                },
+                { value: 'aaaa', label: 'AAAA' },
+                { value: 'bbbb', label: 'BBBB' },
+                { value: 'cccc', label: 'CCCC' },
+            ];
+
+            const filteredItems = items.filter((item) => item.label.toLowerCase().includes(filterText.toLowerCase()));
+
+            await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate network delay
+
+            return filteredItems;
+        },
+    },
+    render: (args) => {
+        return <Select.Combobox {...args}></Select.Combobox>;
     },
 };
 
