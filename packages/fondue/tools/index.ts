@@ -2,14 +2,14 @@
 
 import { Command } from 'commander';
 
-import { findDeprecatedImports, findUnusedExports } from './findDeprecatedImports/findDeprecatedImports';
+import { findDeprecatedImports, findUnusedExports } from './findDeprecatedImports/findDeprecatedImports.js';
 
 const program = new Command();
 
 program.name('fondue-analyzer').description('Analyze fondue usage');
 
 program
-    .command('deprecated-imports')
+    .command('find-deprecated-imports')
     .description('Find imports of deprecated fondue functions and components')
     .argument('<path>', 'Path to be analyzed')
     .option('-o, --output <path>', 'Output path')
@@ -18,7 +18,7 @@ program
     });
 
 program
-    .command('unused-exports')
+    .command('find-unused-exports')
     .description('Find unused fondue exports')
     .argument('<path>', 'Path to be analyzed')
     .option('--only-deprecated', 'Only find unused deprecated exports')

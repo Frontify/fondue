@@ -41,6 +41,7 @@
         "tailwind.config.js",
         "legacyComponents.tailwind.config.ts",
         "tokens.vite.config.ts",
+        "tools.vite.config.ts",
         "legacyTokens",
         "tools"
     ],

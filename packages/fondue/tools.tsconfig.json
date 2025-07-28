@@ -1,0 +1,11 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "esModuleInterop": true,
+        "target": "ES2022",
+        "downlevelIteration": true
+    },
+    "outDir": "dist/tools",
+    "include": ["tools/**/*.ts", "tools/index.ts"],
+    "exclude": ["node_modules"]
+}
