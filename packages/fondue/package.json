@@ -67,7 +67,7 @@
         "node": ">=18"
     },
     "scripts": {
-        "build": "pnpm clean && pnpm generate:icons && pnpm generate:componentsEnum && pnpm build:library && pnpm build:styles-with-tw && pnpm build:package:components && pnpm build:package:icons && pnpm build:package:charts && pnpm build:package:tokens",
+        "build": "pnpm clean && pnpm scripts:detect-deprecated-exports && pnpm generate:icons && pnpm generate:componentsEnum && pnpm build:library && pnpm build:styles-with-tw && pnpm build:package:components && pnpm build:package:icons && pnpm build:package:charts && pnpm build:package:tokens",
         "build:library": "vite build",
         "build:styles-with-tw": "postcss ./src/components/**/*.css --config src/components/postcss.config.cjs -o dist/styles-without-tailwind.css",
         "build:storybook": "pnpm generate:icons && pnpm generate:componentsEnum && storybook build",
@@ -75,7 +75,6 @@
         "build:package:icons": "vite build -c icons.vite.config.ts",
         "build:package:charts": "vite build -c charts.vite.config.ts",
         "build:package:tokens": "vite build -c tokens.vite.config.ts",
-        "tools:find-deprecated-exports": "tsx tools/findDeprecatedExports/findDeprecatedExports.ts",
         "dev": "cross-env NODE_ENV=development pnpm dev:library",
         "dev:library": "vite build --emptyOutDir false --watch",
         "clean": "rimraf dist",
@@ -86,6 +85,8 @@
         "generate:reactIcons": "tsx ./scripts/generateReactIcons.ts",
         "lint": "eslint .",
         "lint:fix": "eslint --fix .",
+        "scripts:detect-deprecated-exports": "tsx scripts/detectDeprecatedExports/detectDeprecatedExports.ts tools/constants/exports.json",
+        "tools:analyze": "tsx tools/analyzer/analyze.ts",
         "test": "cypress run --component",
         "test:browser": "cypress open --component",
         "test:file": "cypress run --component --spec",
@@ -223,6 +224,7 @@
         "@vitejs/plugin-react": "^4.3.4",
         "autoprefixer": "^10.4.21",
         "chalk": "^5.4.1",
+        "commander": "^14.0.0",
         "concat": "^1.0.3",
         "cross-env": "^7.0.3",
         "cypress": "^14.3.0",

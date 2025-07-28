@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -8,6 +8,7 @@ import { run as jscodeshift } from 'jscodeshift/src/Runner';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const transformPath = path.resolve(__dirname, 'transform.ts');
+const outputPath = process.argv[2];
 const paths = ['src'];
 const options = {
     dry: true,
@@ -17,6 +18,10 @@ const options = {
     basePath: __dirname,
     extensions: 'ts,tsx,js,jsx',
 };
+
+if (!outputPath) {
+    throw new Error('Output path is required');
+}
 
 const parseTempFile = (filePath: string) => {
     return readFileSync(filePath, 'utf8')
@@ -28,6 +33,10 @@ const parseTempFile = (filePath: string) => {
         });
 };
 
+if (existsSync(path.join(__dirname, 'temp'))) {
+    rmSync(path.join(__dirname, 'temp'), { recursive: true });
+}
+
 jscodeshift(transformPath, paths, options)
     .then((_res) => {
         const deprecatedExports = parseTempFile(path.join(__dirname, 'temp/deprecated-exports.txt'));
@@ -37,7 +46,7 @@ jscodeshift(transformPath, paths, options)
             deprecated: deprecatedExports,
             active: activeExports,
         };
-        writeFileSync(path.join(__dirname, 'detected-exports.json'), JSON.stringify(detectedExports, null, 2));
+        writeFileSync(outputPath, JSON.stringify(detectedExports, null, 2));
         rmSync(path.join(__dirname, 'temp'), { recursive: true });
     })
     .catch((error) => {
