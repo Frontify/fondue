@@ -1,11 +1,13 @@
 {
     "compilerOptions": {
-        "module": "commonjs",
+        "module": "NodeNext",
+        "moduleResolution": "bundler",
         "esModuleInterop": true,
         "target": "ES2022",
-        "downlevelIteration": true
+        "downlevelIteration": true,
+        "resolveJsonModule": true,
+        "outDir": "dist/tools"
     },
-    "outDir": "dist/tools",
-    "include": ["tools/**/*.ts", "tools/index.ts"],
-    "exclude": ["node_modules"]
+    "include": ["tools/**/*"],
+    "exclude": ["node_modules", "tools/transforms"]
 }

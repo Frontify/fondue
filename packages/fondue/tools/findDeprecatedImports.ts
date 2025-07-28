@@ -1,15 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { existsSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import path, { join } from 'node:path';
 
-import { run as jscodeshift } from 'jscodeshift/src/Runner';
+import { run as jscodeshift } from 'jscodeshift/src/Runner.js';
 
-import detectedExports from '../../constants/exports.json' with { type: 'json' };
+import detectedExports from './constants/exports.json' with { type: 'json' };
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const transformPath = path.resolve(__dirname, 'transform.ts');
+const __dirname = new URL('.', import.meta.url).pathname;
+const transformPath = join(__dirname, './transforms/find-imports.ts');
 const options = {
     dry: true,
     print: true,

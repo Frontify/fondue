@@ -2,7 +2,7 @@
 
 import { Command } from 'commander';
 
-import { findDeprecatedImports, findUnusedExports } from './findDeprecatedImports/findDeprecatedImports.js';
+import { findDeprecatedImports, findUnusedExports } from './findDeprecatedImports';
 
 const program = new Command();
 

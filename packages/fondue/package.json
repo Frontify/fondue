@@ -59,7 +59,7 @@
     "unpkg": "dist/index.umd.js",
     "jsdelivr": "dist/index.umd.js",
     "types": "dist/index.d.ts",
-    "bin": "./dist/tools/fondue-tools.cjs",
+    "bin": "./dist/tools/index.cjs",
     "files": [
         "dist",
         "tailwind.config.ts"
@@ -76,8 +76,8 @@
         "build:package:icons": "vite build -c icons.vite.config.ts",
         "build:package:charts": "vite build -c charts.vite.config.ts",
         "build:package:tokens": "vite build -c tokens.vite.config.ts",
+        "build:tools": "tsc -p tools.tsconfig.json && mkdir -p dist/tools/transforms && cp -r tools/transforms/* dist/tools/transforms",
         "build:tools:vite": "vite build -c tools.vite.config.ts",
-        "build:tools": "pnpm tsc -d -p tools.tsconfig.json",
         "dev": "cross-env NODE_ENV=development pnpm dev:library",
         "dev:library": "vite build --emptyOutDir false --watch",
         "clean": "rimraf dist",
