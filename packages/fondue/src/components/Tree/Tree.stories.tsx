@@ -6,8 +6,8 @@ import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Button } from '@components/Button/Button';
 import { ButtonEmphasis, ButtonStyle } from '@components/Button/ButtonTypes';
-import { Container } from '@components/Container';
-import { DialogBody } from '@components/DialogBody';
+import { Container } from '@components/Container/Container';
+import { DialogBody } from '@components/DialogBody/DialogBody';
 import { InlineDialog } from '@components/InlineDialog/InlineDialog';
 import {
     TreeItem,

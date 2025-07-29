@@ -3,8 +3,8 @@
 import { useRef, useState } from 'react';
 
 import { Button } from '@components/Button/Button';
-import { DialogBody } from '@components/DialogBody';
-import { DialogHeader } from '@components/DialogHeader';
+import { DialogBody } from '@components/DialogBody/DialogBody';
+import { DialogHeader } from '@components/DialogHeader/DialogHeader';
 
 import { Dialog, type DialogProps } from './Dialog';
 

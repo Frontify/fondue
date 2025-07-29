@@ -12,6 +12,9 @@ type Props = {
     format: ColorFormat;
 };
 
+/**
+ * @deprecated Use the `Flyout` together with the new `Color Picker` component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#color-picker the migration guide}.
+ */
 export const ColorInputTitle = ({ currentColor, format }: Props): ReactElement => {
     const { name, alpha } = currentColor;
     const parsedColor = new TinyColor(toShortRgb(currentColor));

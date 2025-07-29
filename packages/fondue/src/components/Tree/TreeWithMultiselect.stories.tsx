@@ -3,7 +3,7 @@
 import { type Meta } from '@storybook/react';
 import { useEffect, useState } from 'react';
 
-import { Container } from '@components/Container';
+import { Container } from '@components/Container/Container';
 import {
     TreeItemBorderClassMap,
     TreeItemBorderRadiusClassMap,

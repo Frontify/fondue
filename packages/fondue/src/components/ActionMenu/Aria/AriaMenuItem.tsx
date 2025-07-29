@@ -7,7 +7,7 @@ import { type TreeState } from '@react-stately/tree';
 import { type Node } from '@react-types/shared';
 import { type ReactElement, useEffect, useRef, useState } from 'react';
 
-import { type ActionMenuItemType, type ActionMenuSwitchItemType } from '@components/ActionMenu';
+import { type ActionMenuItemType, type ActionMenuSwitchItemType } from '@components/ActionMenu/ActionMenu';
 import { type MenuItemType } from '@components/Dropdown';
 import { MenuItem } from '@components/MenuItem/MenuItem';
 import { Switch } from '@components/Switch/Switch';

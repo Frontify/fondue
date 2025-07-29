@@ -3,13 +3,12 @@
 import { type Meta, type StoryFn } from '@storybook/react';
 import { useState } from 'react';
 
+import { NumberInput } from '@components/NumberInput/NumberInput';
 import { TextInput, TextInputType } from '@components/TextInput/TextInput';
 import IconInfo from '@foundation/Icon/Generated/IconInfo';
 import IconNook16 from '@foundation/Icon/Generated/IconNook16';
 import IconQuestionMark from '@foundation/Icon/Generated/IconQuestionMark';
 import { Validation } from '@utilities/validation';
-
-import { NumberInput } from '../NumberInput';
 
 import { FormField, type FormFieldProps } from './FormField';
 

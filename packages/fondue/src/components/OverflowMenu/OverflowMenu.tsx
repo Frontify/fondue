@@ -3,12 +3,15 @@
 import { useFocusRing } from '@react-aria/focus';
 import { type MouseEvent, useRef, useState } from 'react';
 
-import { Menu } from '@components/Menu';
+import { Menu } from '@components/Menu/Menu';
 import { MenuItem } from '@components/MenuItem';
 import IconDotsHorizontal from '@foundation/Icon/Generated/IconDotsHorizontal';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 
+/**
+ * @deprecated Use `Dropdown` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#dropdown the migration guide}.
+ */
 export interface OverflowMenuItemProps {
     id?: string;
     label: string;
@@ -17,6 +20,9 @@ export interface OverflowMenuItemProps {
     disabled?: boolean;
 }
 
+/**
+ * @deprecated Use `Dropdown` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#dropdown the migration guide}.
+ */
 export interface OverflowMenuProps {
     items: OverflowMenuItemProps[];
     'data-test-id'?: string;
