@@ -61,7 +61,7 @@ export const DialogFooter = ({
                     <Box className="tw-flex tw-gap-x-3" data-test-id={`${dataTestId}-action-buttons`}>
                         {actionButtons.map((button) => (
                             <Button
-                                key={`${dataTestId}-button-${button.children}`}
+                                key={`${dataTestId}-button-${button.children?.toString()}`}
                                 {...button}
                                 size={ButtonSize.Medium}
                             />
