@@ -5,6 +5,8 @@ import path from 'node:path';
 
 import jscodeshift from 'jscodeshift';
 
+const EXCLUDED_DIRECTORIES = ['/src/components/RichTextEditor/', '/src/foundation/Icon/Generated/'];
+
 // Configure parser for JSX/TSX support
 const j = jscodeshift.withParser('tsx');
 
@@ -78,6 +80,14 @@ const buildPublicExportMap = (indexPath: string): Set<string> => {
 
     // Main recursive function to process exports
     const processReExports = (currentPath: string, visited = new Set<string>()): void => {
+        if (EXCLUDED_DIRECTORIES.some((excluded) => currentPath.includes(excluded))) {
+            return;
+        }
+
+        if (!currentPath.startsWith('/') && !currentPath.startsWith('.')) {
+            return;
+        }
+
         // Prevent infinite recursion (circular dependencies)
         if (visited.has(currentPath)) {
             console.warn(`Circular dependency detected: ${currentPath}`);
@@ -126,20 +136,12 @@ const buildPublicExportMap = (indexPath: string): Set<string> => {
 
                             // This export comes from the current file
                             addExportToMap(exportedName);
-
-                            console.log(`📦 Local export: ${exportedName} from ${currentPath}`);
                         }
                     }
                 }
 
                 // Case 3: export const/function/class/type/interface
                 else if (node.declaration) {
-                    if (
-                        currentPath ===
-                        '/Users/noah.waldner/dev/frontify/fondue/packages/fondue/src/components/Accordion/Accordion.tsx'
-                    ) {
-                        console.log('declaration', node.declaration);
-                    }
                     const exportedName = getDeclarationName(node.declaration);
 
                     if (exportedName) {
@@ -165,8 +167,6 @@ const buildPublicExportMap = (indexPath: string): Set<string> => {
         }
     };
 
-    // Start the process from the index file
-    console.log(`🚀 Building public export map starting from: ${indexPath}`);
     processReExports(indexPath);
 
     return publicExports;

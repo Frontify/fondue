@@ -8,6 +8,9 @@ type SelectMenuSectionProps = {
     children?: ReactNode;
 };
 
+/**
+ * @deprecated Use `Select` from `@frontify/fondue/components` instead.
+ */
 export const SelectMenuSection = ({ ariaLabel, children }: SelectMenuSectionProps): ReactElement => {
     const { itemProps, groupProps } = useListBoxSection({ 'aria-label': ariaLabel });
 

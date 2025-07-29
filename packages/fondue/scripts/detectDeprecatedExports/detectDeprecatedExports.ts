@@ -39,8 +39,6 @@ if (existsSync(path.join(__dirname, 'temp'))) {
 
 const publicExports = buildPublicExportMap('./src/index.ts');
 
-console.log('Public exports:', Array.from(publicExports));
-
 jscodeshift(transformPath, paths, {
     ...options,
     publicExports: Array.from(publicExports).join(','),

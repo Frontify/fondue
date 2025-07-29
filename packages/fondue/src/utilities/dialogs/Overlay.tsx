@@ -22,6 +22,9 @@ import {
     overlayShadowMap,
 } from '../../types/dialog';
 
+/**
+ * @deprecated Use `Dialog` from `@frontify/fondue/components` instead.
+ */
 export const Overlay = ({
     id: customId,
     open,

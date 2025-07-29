@@ -9,6 +9,9 @@ import { type ReactElement, type ReactNode, useRef, useState } from 'react';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 
+/**
+ * @deprecated Use Box from `@frontify/fondue/components` instead.
+ */
 export type CardProps = {
     children: ReactNode | ReactNode[];
     hoverable?: boolean;
@@ -16,6 +19,9 @@ export type CardProps = {
     'data-test-id'?: string;
 };
 
+/**
+ * @deprecated Use Box from `@frontify/fondue/components` instead.
+ */
 export const Card = ({
     hoverable = false,
     children,

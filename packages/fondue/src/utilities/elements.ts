@@ -2,8 +2,14 @@
 
 import { type MouseEvent } from 'react';
 
+/**
+ * @deprecated Use a custom function instead.
+ */
 export type ItemElementType = 'a' | 'button' | 'span';
-/* @deprecated Please use a custom function instead. */
+
+/**
+ * @deprecated Please use a custom function instead.
+ */
 export const TABBABLE_ELEMENTS = [
     'input:not([disabled]):not([type=hidden])',
     'select:not([disabled])',
@@ -21,7 +27,9 @@ export const TABBABLE_ELEMENTS = [
     '[tabindex]:not([tabindex="-1"]):not([disabled])',
 ].join(':not([hidden]):not([tabindex="-1"]),');
 
-/* @deprecated Please use a custom function instead. */
+/**
+ * @deprecated Use a custom function instead.
+ */
 export const getItemElementType = (link?: string, onClick?: (event: MouseEvent<HTMLButtonElement>) => void) => {
     if (link) {
         return 'a';
@@ -32,7 +40,9 @@ export const getItemElementType = (link?: string, onClick?: (event: MouseEvent<H
     return 'span';
 };
 
-/* @deprecated Please use a custom function instead. */
+/**
+ * @deprecated Use a custom function instead.
+ */
 export const checkIfContainInteractiveElements = (node: HTMLElement | null) => {
     if (node) {
         const focusableChildren = node.querySelectorAll(TABBABLE_ELEMENTS) ?? [];

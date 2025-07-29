@@ -14,6 +14,9 @@ export enum FormControlStyle {
     Danger = 'Danger',
 }
 
+/**
+ * @deprecated Please use a custom component instead.
+ */
 export type FormControlTooltipPosition = 'top' | 'bottom' | 'left' | 'right';
 
 type HelperTextProps = {

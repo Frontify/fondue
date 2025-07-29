@@ -14,6 +14,9 @@ import { Switch } from '@components/Switch/Switch';
 import { FOCUS_STYLE_INSET } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 
+/**
+ * @deprecated Please use a custom component instead.
+ */
 export type AriaOptionProps = {
     menuItem: MenuItemType | ActionMenuItemType | ActionMenuSwitchItemType;
     node: Node<object>;
@@ -64,6 +67,9 @@ const useSwitch = (isSwitch: boolean, initialValue: boolean) => {
     return switchObject;
 };
 
+/**
+ * @deprecated Please use a custom component instead.
+ */
 export const AriaMenuItem = ({ menuItem, node, state, isSelected, onClick }: AriaOptionProps): ReactElement => {
     const ref = useRef<HTMLLIElement | null>(null);
     const initialValue = isActionMenuSwitchItem(menuItem) ? menuItem.initialValue : false;
