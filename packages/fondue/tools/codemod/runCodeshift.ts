@@ -13,7 +13,7 @@ export const runCodeshift = async (
     options: { [key: string]: string },
 ): Promise<void> => {
     const transformPath = join(transformsDirectory, `${transformName}.ts`);
-    const { stdout, stderr } = await execa(
+    await execa(
         jscodeshiftExecutable,
         ['--parser', 'tsx', '--extensions', 'ts,tsx,js,jsx', '--transform', transformPath, pathToAnalyze],
         {
@@ -22,6 +22,5 @@ export const runCodeshift = async (
             },
         },
     );
-    console.log(stdout, stderr);
     return;
 };

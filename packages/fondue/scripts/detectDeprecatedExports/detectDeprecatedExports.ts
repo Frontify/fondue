@@ -11,9 +11,6 @@ const transformPath = path.resolve(__dirname, 'transform.ts');
 const outputPath = process.argv[2];
 const paths = ['src'];
 const options = {
-    dry: true,
-    print: true,
-    verbose: 1,
     parser: 'tsx',
     basePath: __dirname,
     extensions: 'ts,tsx,js,jsx',
@@ -46,7 +43,7 @@ jscodeshift(transformPath, paths, options)
             deprecated: deprecatedExports,
             active: activeExports,
         };
-        writeFileSync(outputPath, JSON.stringify(detectedExports, null, 2));
+        writeFileSync(outputPath, JSON.stringify(detectedExports, null, 0));
         rmSync(path.join(__dirname, 'temp'), { recursive: true });
     })
     .catch((error) => {

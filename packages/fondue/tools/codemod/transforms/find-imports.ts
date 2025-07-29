@@ -21,7 +21,7 @@ export default function transformer(file: FileInfo, api: API) {
 
     for (const path of root.find(j.ImportDeclaration).paths()) {
         const isImportFromFondue = path.node.source.value === '@frontify/fondue';
-        if (isImportFromFondue || true) {
+        if (isImportFromFondue) {
             for (const specifier of path.node.specifiers || []) {
                 if (j.ImportSpecifier.check(specifier)) {
                     const importedName = specifier.imported.name;

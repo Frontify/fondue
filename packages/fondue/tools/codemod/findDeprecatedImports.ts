@@ -3,7 +3,7 @@
 import { existsSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import path, { join } from 'node:path';
 
-import detectedExports from '../constants/exports.json' with { type: 'json' };
+import detectedExports from '../constants/fondueExports.json' with { type: 'json' };
 
 import { runCodeshift } from './runCodeshift';
 
