@@ -4,7 +4,7 @@ import { Item, Section } from '@react-stately/collections';
 import { type ReactNode } from 'react';
 
 import { type MenuBlock, type MenuItemType } from '../../Dropdown/SelectMenu/SelectMenu';
-import { type ActionMenuBlock, type ActionMenuItemType } from '../ActionMenu/ActionMenu';
+import { type ActionMenuBlock, type ActionMenuItemType } from '../ActionMenu';
 
 export type MenuStateType = {
     'aria-label': string;

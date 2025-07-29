@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 export * from './dnd';
-export { ItemElementType, TABBABLE_ELEMENTS } from './elements';
+export { TABBABLE_ELEMENTS, type ItemElementType } from './elements';
 export * from './focusStyle';
 export { InputStyles } from './input';
 export * from './merge';

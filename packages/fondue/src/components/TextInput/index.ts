@@ -1,3 +1,3 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export { TextInputBaseProps, TextInputExtraAction, TextInputProps, TextInputType } from './TextInput';
+export { TextInputType, type TextInputBaseProps, type TextInputExtraAction, type TextInputProps } from './TextInput';
