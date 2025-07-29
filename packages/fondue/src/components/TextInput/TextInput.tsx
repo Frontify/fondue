@@ -15,7 +15,7 @@ import {
     type ReactNode,
 } from 'react';
 
-import { LoadingCircle, LoadingCircleSize } from '@components/LoadingCircle';
+import { LoadingCircle, LoadingCircleSize } from '@components/LoadingCircle/LoadingCircle';
 import IconCheckMark from '@foundation/Icon/Generated/IconCheckMark';
 import IconClipboard from '@foundation/Icon/Generated/IconClipboard';
 import IconCross from '@foundation/Icon/Generated/IconCross';

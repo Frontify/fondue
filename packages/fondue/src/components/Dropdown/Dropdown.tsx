@@ -12,7 +12,7 @@ import { usePopper } from 'react-popper';
 
 import { getDisabledItemIds, getMenuItems, mapToAriaProps } from '@components/ActionMenu/Aria/helper';
 import { type MenuBlock, type MenuItemType, SelectMenu } from '@components/Dropdown/SelectMenu/SelectMenu';
-import { LoadingCircle, LoadingCircleSize } from '@components/LoadingCircle';
+import { LoadingCircle, LoadingCircleSize } from '@components/LoadingCircle/LoadingCircle';
 import {
     MenuItemContent,
     MenuItemContentSize,

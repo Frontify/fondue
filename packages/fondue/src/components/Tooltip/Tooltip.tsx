@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState, type PointerEvent, type ReactElement } from 'react';
 
-import { type PopperPlacement } from '@components/Popper';
+import { type PopperPlacement } from '@components/Popper/types';
 import { useClickOutside } from '@hooks/useClickOutside';
 import { Overlay } from '@utilities/dialogs/Overlay';
 import { Z_INDEX_TOOLTIP } from '@utilities/dialogs/constants';

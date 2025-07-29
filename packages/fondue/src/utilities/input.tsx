@@ -4,7 +4,7 @@ import { type ReactElement } from 'react';
 
 import { Button } from '@components/Button/Button';
 import { ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button/ButtonTypes';
-import { LoadingCircle, LoadingCircleSize } from '@components/LoadingCircle';
+import { LoadingCircle, LoadingCircleSize } from '@components/LoadingCircle/LoadingCircle';
 import IconCheckMark16 from '@foundation/Icon/Generated/IconCheckMark16';
 import IconCross16 from '@foundation/Icon/Generated/IconCross16';
 import IconExclamationMarkTriangle16 from '@foundation/Icon/Generated/IconExclamationMarkTriangle16';
