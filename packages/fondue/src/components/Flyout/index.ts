@@ -1,5 +1,4 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export * from './Flyout';
-export * from './FlyoutFooter';
+export { Flyout, FlyoutPlacement } from './Flyout';
 export * from './helpers/getVerticalPositioning';

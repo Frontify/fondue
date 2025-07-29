@@ -2,15 +2,10 @@
 
 import { type ReactElement, cloneElement } from 'react';
 
-import {
-    PatternDesign,
-    PatternScale,
-    type PatternScaleOrigin,
-    PatternTheme,
-    patternDesigns,
-    patternScales,
-    patternThemes,
-} from '@foundation/Pattern';
+import { PatternDesign, PatternScale, type PatternScaleOrigin, PatternTheme } from '@foundation/Pattern';
+import { patternDesigns } from '@foundation/Pattern/PatternDesigns';
+import { patternScales } from '@foundation/Pattern/PatternScale';
+import { patternThemes } from '@foundation/Pattern/PatternTheme';
 import { merge } from '@utilities/merge';
 
 /**

@@ -1,5 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export * from './MenuItem';
-export * from './MenuItemContent';
+export { MenuItem, menuItemTextColorRecord, MenuItemTextColorState, type MenuItemProps } from './MenuItem';
+export { MenuItemContent } from './MenuItemContent';
 export * from './types';

@@ -1,3 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export * from './FormControl';
+export {
+    FormControl,
+    FormControlDirection,
+    FormControlStyle,
+    HelperPosition,
+    type FormControlProps,
+} from './FormControl';

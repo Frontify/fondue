@@ -113,8 +113,6 @@ const buildPublicExportMap = (indexPath: string): Set<string> => {
 
                 // Case 1: export { name1, name2 } from './module'
                 if (node.source && node.specifiers) {
-                    const sourcePath = resolveImportPath(currentPath, node.source.value as string);
-
                     for (const specifier of node.specifiers) {
                         if (j.ExportSpecifier.check(specifier) && j.Identifier.check(specifier.exported)) {
                             const exportedName = specifier.exported.name;
@@ -123,9 +121,6 @@ const buildPublicExportMap = (indexPath: string): Set<string> => {
                             addExportToMap(exportedName);
                         }
                     }
-
-                    // Recursively process the source file
-                    processReExports(sourcePath, new Set(visited));
                 }
 
                 // Case 2: export { name1, name2 } (local exports)

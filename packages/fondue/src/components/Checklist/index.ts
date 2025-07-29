@@ -1,3 +1,3 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export * from './Checklist';
+export { Checklist, ChecklistDirection, type CheckboxValue, type ChecklistProps } from './Checklist';
