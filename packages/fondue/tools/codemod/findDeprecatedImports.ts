@@ -3,35 +3,26 @@
 import { existsSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import path, { join } from 'node:path';
 
-import { run as jscodeshift } from 'jscodeshift/src/Runner.js';
-
-import detectedExports from './constants/exports.json' with { type: 'json' };
+import detectedExports from '../constants/exports.json' with { type: 'json' };
+import { runCodeshift } from '../helpers/runCodeshift';
 
 const __dirname = new URL('.', import.meta.url).pathname;
-const transformPath = join(__dirname, './transforms/find-imports.ts');
-const options = {
-    dry: true,
-    print: true,
-    verbose: 1,
-    parser: 'tsx',
-    basePath: __dirname,
-    extensions: 'ts,tsx,js,jsx',
-};
+const tempDir = path.resolve(__dirname, './temp');
 
-const getImports = (pathToAnalyze: string, selectedImports: string[]) => {
-    if (existsSync(path.resolve(__dirname, './temp'))) {
-        rmSync(path.resolve(__dirname, './temp'), { recursive: true });
+const getImports = (pathToAnalyze: string) => {
+    if (existsSync(tempDir)) {
+        rmSync(tempDir, { recursive: true });
     }
-    return jscodeshift(transformPath, [pathToAnalyze], {
-        ...options,
-        selectedImports,
-    }).then((_res) => {
-        if (existsSync(path.resolve(__dirname, './temp/detected-imports.txt'))) {
-            const detectedImports = readFileSync(path.resolve(__dirname, './temp/detected-imports.txt'), 'utf8')
+    return runCodeshift(pathToAnalyze, 'find-imports', {
+        fondueExportsConstantsPath: path.resolve(__dirname, '../constants/exports.json'),
+        tempDir,
+    }).then(() => {
+        if (existsSync(join(tempDir, 'detected-imports.txt'))) {
+            const detectedImports = readFileSync(join(tempDir, 'detected-imports.txt'), 'utf8')
                 .split('\n')
                 .filter((line) => line.trim() !== '')
                 .map((line) => JSON.parse(line) as { path: string; imports: string[] });
-            rmSync(path.resolve(__dirname, './temp'), { recursive: true });
+            rmSync(join(tempDir), { recursive: true });
             return detectedImports;
         } else {
             return [];
@@ -40,7 +31,7 @@ const getImports = (pathToAnalyze: string, selectedImports: string[]) => {
 };
 
 export const findDeprecatedImports = (pathToAnalyze: string, outputPath?: string) => {
-    getImports(pathToAnalyze, detectedExports.deprecated)
+    getImports(pathToAnalyze)
         .then((detectedImports) => {
             if (outputPath) {
                 writeFileSync(outputPath, JSON.stringify(detectedImports, null, 2), 'utf8');
@@ -57,14 +48,13 @@ export const findDeprecatedImports = (pathToAnalyze: string, outputPath?: string
 };
 
 export const findUnusedExports = (pathToAnalyze: string, outputPath?: string, onlyDeprecated?: boolean) => {
-    const selectedExports = [...detectedExports.deprecated, ...(onlyDeprecated ? [] : detectedExports.active)];
-    getImports(pathToAnalyze, selectedExports)
+    const fondueExports = [...detectedExports.deprecated, ...(onlyDeprecated ? [] : detectedExports.active)];
+    getImports(pathToAnalyze)
         .then((detectedImports) => {
-            const unusedExports = selectedExports.filter(
+            const unusedExports = fondueExports.filter(
                 (selectedExport) =>
                     !detectedImports.some((detectedImport) => detectedImport.imports.includes(selectedExport)),
             );
-
             if (outputPath) {
                 writeFileSync(outputPath, JSON.stringify(unusedExports, null, 2), 'utf8');
             } else {

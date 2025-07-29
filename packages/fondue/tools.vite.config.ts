@@ -9,7 +9,7 @@ export default defineConfig({
         viteStaticCopy({
             targets: [
                 {
-                    src: 'tools/transforms', // Copies all transform.js files
+                    src: 'tools/codemod/transforms', // Copies all transform.js files
                     dest: '.',
                 },
             ],
@@ -19,8 +19,8 @@ export default defineConfig({
         lib: {
             entry: resolve(__dirname, 'tools/index.ts'),
             name: 'fondue-tools',
-            formats: ['cjs'],
-            fileName: () => 'index.cjs',
+            formats: ['es'],
+            fileName: () => 'index.js',
         },
         outDir: 'dist/tools',
         rollupOptions: {
@@ -41,12 +41,12 @@ export default defineConfig({
                 'worker_threads',
                 // External dependencies
                 'jscodeshift',
-                'commander', // If you're using commander
-                'chalk', // If you're using chalk
+                'execa',
+                'commander',
             ],
             output: {
-                format: 'cjs',
-                entryFileNames: 'index.cjs',
+                format: 'module',
+                entryFileNames: 'index.js',
             },
         },
         target: 'es2022',

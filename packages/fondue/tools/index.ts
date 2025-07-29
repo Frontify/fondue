@@ -2,7 +2,7 @@
 
 import { Command } from 'commander';
 
-import { findDeprecatedImports, findUnusedExports } from './findDeprecatedImports';
+import { findDeprecatedImports, findUnusedExports } from './codemod/findDeprecatedImports';
 
 const program = new Command();
 

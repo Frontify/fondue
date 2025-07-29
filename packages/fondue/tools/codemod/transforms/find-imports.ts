@@ -1,19 +1,27 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { appendFileSync, existsSync, mkdirSync } from 'node:fs';
-import path from 'node:path';
+import { appendFileSync, existsSync, mkdirSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
 
 import { type API, type FileInfo } from 'jscodeshift';
 
-export default function transformer(
-    file: FileInfo,
-    api: API,
-    options: { basePath: string; selectedImports: string[] },
-) {
+export default function transformer(file: FileInfo, api: API) {
+    if (!process.env.fondueExportsConstantsPath) {
+        throw new Error('fondueExportsConstantsPath is not set');
+    }
+    if (!process.env.tempDir) {
+        throw new Error('tempDir is not set');
+    }
+
+    const fondueExports = JSON.parse(readFileSync(process.env.fondueExportsConstantsPath, 'utf8')) as {
+        active: string[];
+        deprecated: string[];
+    };
+
+    const selectedImports = new Set([...fondueExports.active, ...fondueExports.deprecated]);
     const j = api.jscodeshift;
     const root = j(file.source);
-    const outputPath = path.join(options.basePath, '/temp/detected-imports.txt');
-    const selectedImports = new Set(options.selectedImports);
+    const outputPath = join(process.env.tempDir, 'detected-imports.txt');
     const detectedImports = new Set<string>();
 
     for (const path of root.find(j.ImportDeclaration).paths()) {
