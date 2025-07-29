@@ -59,7 +59,7 @@
     "unpkg": "dist/index.umd.js",
     "jsdelivr": "dist/index.umd.js",
     "types": "dist/index.d.ts",
-    "bin": "./dist/tools/index.cjs",
+    "bin": "./dist/tools/index.js",
     "files": [
         "dist",
         "tailwind.config.ts"
