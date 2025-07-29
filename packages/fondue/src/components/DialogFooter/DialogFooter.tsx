@@ -2,9 +2,10 @@
 
 import { type ReactElement } from 'react';
 
-import { Box } from '@components/Box';
-import { Button, ButtonEmphasis, ButtonSize } from '@components/Button';
-import { Flex } from '@components/Flex';
+import { Box } from '@components/Box/Box';
+import { Button } from '@components/Button/Button';
+import { ButtonEmphasis, ButtonSize } from '@components/Button/ButtonTypes';
+import { Flex } from '@components/Flex/Flex';
 import IconArrowLeft from '@foundation/Icon/Generated/IconArrowLeft';
 import { useMobileDetection } from '@hooks/useMobileDetection';
 import { merge } from '@utilities/merge';
@@ -60,8 +61,7 @@ export const DialogFooter = ({
                     <Box className="tw-flex tw-gap-x-3" data-test-id={`${dataTestId}-action-buttons`}>
                         {actionButtons.map((button) => (
                             <Button
-                                // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-                                key={`${dataTestId}-button-${button.children}`}
+                                key={`${dataTestId}-button-${button.children?.toString()}`}
                                 {...button}
                                 size={ButtonSize.Medium}
                             />

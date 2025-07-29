@@ -3,8 +3,8 @@
 import { type Meta, type StoryFn } from '@storybook/react';
 import { useCallback, useEffect, useState } from 'react';
 
-import { Box } from '@components/Box';
-import { FormField } from '@components/FormField';
+import { Box } from '@components/Box/Box';
+import { FormField } from '@components/FormField/FormField';
 import IconClipboard16 from '@foundation/Icon/Generated/IconClipboard16';
 import IconNook16 from '@foundation/Icon/Generated/IconNook16';
 import IconQuestionMark16 from '@foundation/Icon/Generated/IconQuestionMark16';

@@ -5,6 +5,9 @@ import { type ReactElement } from 'react';
 
 import { type CollapsibleWrapProps } from './types';
 
+/**
+ * @deprecated Use `Accordion` from `@frontify/fondue/components` instead.
+ */
 export const CollapsibleWrap = ({
     children,
     isOpen = false,

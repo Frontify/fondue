@@ -2,7 +2,7 @@
 
 import { type Meta, type StoryFn } from '@storybook/react';
 
-import { Container } from '@components/Container';
+import { Container } from '@components/Container/Container';
 import { SPACING_VALUES } from '@utilities/dimensions';
 
 import { sharedTypographyArgTypes, sharedTypographyArgs } from '../shared/Shared';

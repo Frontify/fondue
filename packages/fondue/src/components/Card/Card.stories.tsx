@@ -3,10 +3,11 @@
 import { type Meta, type StoryFn } from '@storybook/react';
 import { useState } from 'react';
 
-import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';
+import { Button } from '@components/Button/Button';
+import { ButtonEmphasis, ButtonStyle } from '@components/Button/ButtonTypes';
 import { Divider } from '@components/Divider/Divider';
 import { SegmentedControls } from '@components/SegmentedControls/SegmentedControls';
-import { LegacyStack } from '@layout/LegacyStack';
+import { LegacyStack } from '@layout/LegacyStack/LegacyStack';
 import { Text } from '@typography/Text';
 
 import { Card, type CardProps } from './Card';

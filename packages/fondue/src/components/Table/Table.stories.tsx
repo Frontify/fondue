@@ -5,7 +5,8 @@ import { type Meta, type StoryFn } from '@storybook/react';
 import { type ReactElement, useEffect, useState } from 'react';
 
 import { Badge } from '@components/Badge/Badge';
-import { Button, ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button';
+import { Button } from '@components/Button/Button';
+import { ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button/ButtonTypes';
 import { TextInput } from '@components/TextInput/TextInput';
 import IconDotsVertical from '@foundation/Icon/Generated/IconDotsVertical';
 import IconFaceHappy from '@foundation/Icon/Generated/IconFaceHappy';

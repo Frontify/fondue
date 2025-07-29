@@ -7,6 +7,9 @@ import PatternImagery from '@foundation/Pattern/PatternImagery';
 import PatternSound from '@foundation/Pattern/PatternSound';
 import PatternTypography from '@foundation/Pattern/PatternTypography';
 
+/**
+ * @deprecated
+ */
 export enum PatternDesign {
     DigitalAssets = 'DigitalAssets',
     Imagery = 'Imagery',
@@ -14,6 +17,9 @@ export enum PatternDesign {
     Typography = 'Typography',
 }
 
+/**
+ * @deprecated
+ */
 export const patternDesigns: Record<PatternDesign, ReactElement> = {
     [PatternDesign.DigitalAssets]: <PatternDigitalAssets />,
     [PatternDesign.Imagery]: <PatternImagery />,

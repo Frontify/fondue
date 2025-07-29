@@ -13,6 +13,9 @@ import { merge } from '@utilities/merge';
 
 import { MenuItemContentSize, MenuItemStyle, SelectionIndicatorIcon } from './types';
 
+/**
+ * @deprecated Use `Dropdown` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#dropdown the migration guide}.
+ */
 export type MenuItemProps = {
     style?: MenuItemStyle;
     disabled?: boolean;
@@ -33,18 +36,27 @@ export type MenuItemProps = {
     'data-test-id'?: string;
 } & Omit<MenuItemContentProps, 'iconSize'>;
 
+/**
+ * @deprecated Use `Dropdown` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#dropdown the migration guide}.
+ */
 export const menuItemSizeClassMap: Record<MenuItemContentSize, string> = {
     [MenuItemContentSize.XSmall]: 'tw-px-5 tw-py-2 tw-min-h-[36px]',
     [MenuItemContentSize.Small]: 'tw-px-5 tw-py-2.5 tw-min-h-[36px]',
     [MenuItemContentSize.Large]: 'tw-px-5 tw-py-3 tw-min-h-[60px]',
 };
 
+/**
+ * @deprecated Use `Dropdown` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#dropdown the migration guide}.
+ */
 export enum MenuItemTextColorState {
     Default = 'Default',
     Active = 'Active',
     Disabled = 'Disabled',
 }
 
+/**
+ * @deprecated Use `Dropdown` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#dropdown the migration guide}.
+ */
 export const menuItemTextColorRecord: Record<MenuItemStyle, Record<MenuItemTextColorState, string>> = {
     [MenuItemStyle.Primary]: {
         [MenuItemTextColorState.Default]: 'tw-text-text-x-weak',
@@ -63,6 +75,9 @@ export const menuItemTextColorRecord: Record<MenuItemStyle, Record<MenuItemTextC
     },
 };
 
+/**
+ * @deprecated Use `Dropdown` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#dropdown the migration guide}.
+ */
 const menuItemHoverColorRecord: Record<MenuItemStyle, string> = {
     [MenuItemStyle.Primary]: 'hover:tw-text-text',
     [MenuItemStyle.Danger]: 'hover:tw-text-text-negative',

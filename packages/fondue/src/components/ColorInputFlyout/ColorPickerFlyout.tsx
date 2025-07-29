@@ -2,14 +2,17 @@
 
 import { type ReactElement, useState } from 'react';
 
-import { ColorPreview } from '@components/ColorPicker';
 import { ColorPicker, type ColorPickerProps } from '@components/ColorPicker/ColorPicker';
+import { ColorPreview } from '@components/ColorPicker/ColorPreview';
 import { Flyout } from '@components/Flyout/Flyout';
 
 import { type Color, ColorFormat } from '../../types/colors';
 
 import { ColorInputTrigger } from './ColorPickerTrigger';
 
+/**
+ * @deprecated Use the `Flyout` together with the new `Color Picker` component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#color-picker the migration guide}.
+ */
 export type ColorPickerFlyoutProps = Pick<ColorPickerProps, 'palettes' | 'onSelect'> & {
     id?: string;
     disabled?: boolean;

@@ -2,8 +2,8 @@
 
 import { useCallback, useEffect, useState } from 'react';
 
-import { Popper } from '@components/Popper';
-import { Portal } from '@components/Portal';
+import { Popper } from '@components/Popper/Popper';
+import { Portal } from '@components/Portal/Portal';
 import { useClickOutside } from '@hooks/useClickOutside';
 import { useDropdownAutoHeight } from '@hooks/useDropdownAutoHeight';
 import { useFocusTrap } from '@hooks/useFocusTrap';
@@ -22,6 +22,9 @@ import {
     overlayShadowMap,
 } from '../../types/dialog';
 
+/**
+ * @deprecated Use `Dialog` from `@frontify/fondue/components` instead.
+ */
 export const Overlay = ({
     id: customId,
     open,

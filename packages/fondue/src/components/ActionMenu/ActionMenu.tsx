@@ -11,19 +11,32 @@ import { AriaSection } from '@components/ActionMenu/Aria/AriaSection';
 import { getDisabledItemIds, getKeyItemRecord, getMenuItems, mapToAriaProps } from '@components/ActionMenu/Aria/helper';
 import { type MenuItemType } from '@components/Dropdown/SelectMenu/SelectMenu';
 
+/**
+ * @deprecated Use `Dropdown` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#dropdown the migration guide}.
+ */
 export type ActionMenuItemType = MenuItemType & { onClick: () => void };
+
+/**
+ * @deprecated Use `Dropdown` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#dropdown the migration guide}.
+ */
 export type ActionMenuSwitchItemType = MenuItemType & {
     onClick: (switchValue: boolean) => void;
     type: 'switch';
     initialValue: boolean;
 };
 
+/**
+ * @deprecated Use `Dropdown` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#dropdown the migration guide}.
+ */
 export type ActionMenuBlock = {
     id: string;
     menuItems: (ActionMenuItemType | ActionMenuSwitchItemType)[];
     ariaLabel?: string;
 };
 
+/**
+ * @deprecated Use `Dropdown` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#dropdown the migration guide}.
+ */
 export type ActionMenuProps = {
     ariaLabel?: string;
     menuBlocks: ActionMenuBlock[];

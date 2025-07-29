@@ -25,9 +25,18 @@ import { Overlay } from './Overlay';
 import { useContainScroll } from './hooks/useContainScroll';
 import { useOverlayPositionWithBottomMargin } from './hooks/useOverlayPositionWithBottomMargin';
 
+/**
+ * @deprecated Use `Flyout` from `@frontify/fondue/components` instead.
+ */
 export const FLYOUT_DIVIDER_COLOR = '#eaebeb';
+/**
+ * @deprecated Use `Flyout` from `@frontify/fondue/components` instead.
+ */
 export const FLYOUT_DIVIDER_HEIGHT = '10px';
 
+/**
+ * @deprecated Use `Flyout` from `@frontify/fondue/components` instead.
+ */
 export enum FlyoutPlacement {
     Top = 'top',
     Bottom = 'bottom',
@@ -39,6 +48,9 @@ export enum FlyoutPlacement {
     Left = 'left',
 }
 
+/**
+ * @deprecated Use `Flyout` from `@frontify/fondue/components` instead.
+ */
 export type FlyoutProps = {
     trigger:
         | ReactNode

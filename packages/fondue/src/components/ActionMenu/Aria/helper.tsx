@@ -4,8 +4,11 @@ import { Item, Section } from '@react-stately/collections';
 import { type ReactNode } from 'react';
 
 import { type MenuBlock, type MenuItemType } from '../../Dropdown/SelectMenu/SelectMenu';
-import { type ActionMenuBlock, type ActionMenuItemType } from '../ActionMenu/ActionMenu';
+import { type ActionMenuBlock, type ActionMenuItemType } from '../ActionMenu';
 
+/**
+ * @deprecated Please use a custom component instead.
+ */
 export type MenuStateType = {
     'aria-label': string;
     children: ReactNode;
@@ -13,6 +16,9 @@ export type MenuStateType = {
 
 // Method return type is unclear because React Aria hook props are inexplicitly typed
 
+/**
+ * @deprecated Please use a custom component instead.
+ */
 export const mapToAriaProps = (ariaLabel: string, menuBlocks: MenuBlock[] | ActionMenuBlock[]) => ({
     'aria-label': ariaLabel,
     children: menuBlocks.map(({ id, menuItems, ariaLabel: sectionAriaLabel }) => (
@@ -24,6 +30,9 @@ export const mapToAriaProps = (ariaLabel: string, menuBlocks: MenuBlock[] | Acti
     )),
 });
 
+/**
+ * @deprecated Please use a custom component instead.
+ */
 export const getMenuItems = <T extends MenuBlock | ActionMenuBlock = MenuBlock>(menuBlocks: T[]): T['menuItems'] =>
     menuBlocks.flatMap(({ menuItems }) => menuItems);
 

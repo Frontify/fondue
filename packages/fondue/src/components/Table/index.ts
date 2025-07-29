@@ -1,7 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export * from './Table';
-export * from './TableCell';
-export * from './TableColumnHeader';
-export * from './TableHeaderRow';
-export * from './TableRow';
+export { SelectionMode, SortDirection, Table, type Cell, type Column, type Row } from './Table';
+export { TableCellType } from './TableCell';
+export { TableColumnHeader } from './TableColumnHeader';

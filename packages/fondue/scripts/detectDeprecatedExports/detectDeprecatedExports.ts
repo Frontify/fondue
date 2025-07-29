@@ -6,11 +6,14 @@ import { fileURLToPath } from 'node:url';
 
 import { run as jscodeshift } from 'jscodeshift/src/Runner';
 
+import { buildPublicExportMap } from './parsePublicExports';
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const transformPath = path.resolve(__dirname, 'transform.ts');
 const outputPath = process.argv[2];
 const paths = ['src'];
 const options = {
+    dry: true,
     parser: 'tsx',
     basePath: __dirname,
     extensions: 'ts,tsx,js,jsx',
@@ -34,7 +37,12 @@ if (existsSync(path.join(__dirname, 'temp'))) {
     rmSync(path.join(__dirname, 'temp'), { recursive: true });
 }
 
-jscodeshift(transformPath, paths, options)
+const publicExports = buildPublicExportMap('./src/index.ts');
+
+jscodeshift(transformPath, paths, {
+    ...options,
+    publicExports: Array.from(publicExports).join(','),
+})
     .then((_res) => {
         const deprecatedExports = parseTempFile(path.join(__dirname, 'temp/deprecated-exports.txt'));
         const activeExports = parseTempFile(path.join(__dirname, 'temp/active-exports.txt'));
@@ -43,6 +51,7 @@ jscodeshift(transformPath, paths, options)
             deprecated: deprecatedExports,
             active: activeExports,
         };
+
         writeFileSync(outputPath, `${JSON.stringify(detectedExports, null, 4)}\n`);
         rmSync(path.join(__dirname, 'temp'), { recursive: true });
     })

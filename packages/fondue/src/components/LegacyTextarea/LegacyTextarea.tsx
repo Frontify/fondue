@@ -13,7 +13,7 @@ import {
 } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 
-import { LoadingCircle, LoadingCircleSize } from '@components/LoadingCircle';
+import { LoadingCircle, LoadingCircleSize } from '@components/LoadingCircle/LoadingCircle';
 import IconExclamationMarkTriangle from '@foundation/Icon/Generated/IconExclamationMarkTriangle';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { FOCUS_STYLE } from '@utilities/focusStyle';

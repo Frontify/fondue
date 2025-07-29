@@ -3,7 +3,8 @@
 import { type ChangeEvent, type ReactElement, useRef } from 'react';
 
 import { type ActionMenuProps } from '@components/ActionMenu/ActionMenu';
-import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';
+import { Button } from '@components/Button/Button';
+import { ButtonEmphasis, ButtonStyle } from '@components/Button/ButtonTypes';
 import IconArrowCircleUp from '@foundation/Icon/Generated/IconArrowCircleUp';
 import IconImageStack from '@foundation/Icon/Generated/IconImageStack';
 import { type IconProps } from '@foundation/Icon/IconProps';

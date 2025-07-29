@@ -2,16 +2,23 @@
 
 import { type ReactElement, type ReactNode } from 'react';
 
-import { Button, ButtonEmphasis, type ButtonProps, ButtonSize, ButtonStyle } from '@components/Button';
+import { Button, type ButtonProps } from '@components/Button/Button';
+import { ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button/ButtonTypes';
 import IconCheckMark from '@foundation/Icon/Generated/IconCheckMark';
 import { merge } from '@utilities/merge';
 
+/**
+ * @deprecated Use `Flyout` from `@frontify/fondue/components` instead.
+ */
 export type FlyoutFooterProps = {
     buttons: [ButtonProps, ButtonProps] | [ButtonProps];
     border?: boolean;
     children?: ReactNode;
 };
 
+/**
+ * @deprecated Use `Flyout` from `@frontify/fondue/components` instead.
+ */
 export const FlyoutFooter = ({ buttons, border = true }: FlyoutFooterProps): ReactElement => {
     return (
         <div
@@ -32,6 +39,9 @@ export const FlyoutFooter = ({ buttons, border = true }: FlyoutFooterProps): Rea
 };
 FlyoutFooter.displayName = 'FondueFlyoutFooter';
 
+/**
+ * @deprecated Use `Flyout` from `@frontify/fondue/components` instead.
+ */
 export const LegacyFlyoutFooter = ({
     onConfirm,
     onCancel,

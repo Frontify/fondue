@@ -6,6 +6,9 @@ import { type WithRequired } from 'src/types/withRequired';
 
 import { Modality, type BaseDialogProps, type OverlayProps } from '../../types/dialog';
 
+/**
+ * @deprecated Use `Dialog` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#dialog the migration guide}.
+ */
 export type DialogProps = Omit<
     OverlayProps,
     'placement' | 'flip' | 'offset' | 'theme' | 'withArrow' | 'arrowCustomColors' | 'shadow' | 'isDialog'
