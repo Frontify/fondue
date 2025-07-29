@@ -93,7 +93,8 @@
         "test:file": "cypress run --component --spec",
         "typecheck": "tsc --noEmit",
         "storybook": "storybook dev -p 6009",
-        "ci": "pnpm install --frozen-lockfile"
+        "ci": "pnpm install --frozen-lockfile",
+        "script:detect-deprecated-exports": "tsx scripts/detectDeprecatedExports/detectDeprecatedExports.ts tools/constants/fondueExports.json"
     },
     "peerDependencies": {
         "react": "^18",

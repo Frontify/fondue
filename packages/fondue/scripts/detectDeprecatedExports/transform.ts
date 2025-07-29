@@ -20,7 +20,12 @@ const appendToFile = (filePath: string, content: Set<Export>) => {
     }
 };
 
-export default function transformer(file: FileInfo, api: API, options: { basePath: string }) {
+let publicExports: null | Set<string> = null;
+
+export default function transformer(file: FileInfo, api: API, options: { basePath: string; publicExports: string }) {
+    if (!publicExports) {
+        publicExports = new Set(options.publicExports.split(','));
+    }
     const j = api.jscodeshift;
     const root = j(file.source);
 
@@ -69,6 +74,10 @@ export default function transformer(file: FileInfo, api: API, options: { basePat
             () => root.find(j.TSInterfaceDeclaration, { id: { name } }).at(0).paths(),
         ];
 
+        if (!publicExports?.has(name)) {
+            return;
+        }
+
         for (const searchFn of searchFunctions) {
             const paths = searchFn();
             if (paths.length > 0) {
@@ -93,7 +102,8 @@ export default function transformer(file: FileInfo, api: API, options: { basePat
                 j.TSInterfaceDeclaration.check(decl)
             ) {
                 const name = decl.id && j.Identifier.check(decl.id) ? decl.id.name : undefined;
-                if (name) {
+
+                if (name && publicExports?.has(name)) {
                     if (isDeprecated(path)) {
                         deprecatedExports.add({ name, path: file.path });
                     } else {
@@ -106,7 +116,7 @@ export default function transformer(file: FileInfo, api: API, options: { basePat
                 for (const declarator of decl.declarations) {
                     if (j.VariableDeclarator.check(declarator)) {
                         const name = j.Identifier.check(declarator.id) ? declarator.id.name : undefined;
-                        if (name) {
+                        if (name && publicExports?.has(name)) {
                             if (isDeprecated(path)) {
                                 deprecatedExports.add({ name, path: file.path });
                             } else {
