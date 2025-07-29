@@ -5,7 +5,7 @@ import { type ReactElement } from 'react';
 import { Box } from '@components/Box/Box';
 import { Button } from '@components/Button/Button';
 import { ButtonEmphasis, ButtonSize } from '@components/Button/ButtonTypes';
-import { Flex } from '@components/Flex';
+import { Flex } from '@components/Flex/Flex';
 import IconArrowLeft from '@foundation/Icon/Generated/IconArrowLeft';
 import { useMobileDetection } from '@hooks/useMobileDetection';
 import { merge } from '@utilities/merge';

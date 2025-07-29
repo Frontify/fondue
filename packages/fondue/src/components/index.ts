@@ -18,7 +18,6 @@ export * from './EditableText';
 export * from './FilterableMultiSelect';
 export * from './Flyout';
 export * from './FormControl';
-export * from './FormField';
 export * from './FrontifyPattern';
 export * from './InputLabel';
 export * from './LegacyTextarea';

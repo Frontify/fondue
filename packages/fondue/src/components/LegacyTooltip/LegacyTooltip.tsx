@@ -19,7 +19,7 @@ import { usePopper } from 'react-popper';
 
 import { Button } from '@components/Button/Button';
 import { ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button/ButtonTypes';
-import { Portal } from '@components/Portal';
+import { Portal } from '@components/Portal/Portal';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
@@ -27,11 +27,17 @@ import { merge } from '@utilities/merge';
 
 import { BrightHeader, brightHeaderArrowBackgroundColors, type BrightHeaderStyle } from './BrightHeader';
 
+/**
+ * @deprecated Please use updated `Tooltip` component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tooltip the migration guide}.
+ */
 export type TooltipButton = {
     label: string;
     action: () => void;
 };
 
+/**
+ * @deprecated Please use updated `Tooltip` component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tooltip the migration guide}.
+ */
 export type LegacyTooltipProps = {
     triggerElement?: ReactElement;
     content: ReactNode;
@@ -68,6 +74,9 @@ const paddingsBottom = {
     large: 'tw-pb-3',
 };
 
+/**
+ * @deprecated Please use updated `Tooltip` component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tooltip the migration guide}.
+ */
 export enum TooltipPosition {
     Top = 'top',
     Right = 'right',
@@ -75,6 +84,9 @@ export enum TooltipPosition {
     Left = 'left',
 }
 
+/**
+ * @deprecated Please use updated `Tooltip` component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tooltip the migration guide}.
+ */
 export enum TooltipAlignment {
     Start = 'Start',
     Middle = 'Middle',

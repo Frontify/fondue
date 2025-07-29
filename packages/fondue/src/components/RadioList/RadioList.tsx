@@ -2,7 +2,7 @@
 
 import { Children, type ReactNode, isValidElement, useEffect, useRef, useState } from 'react';
 
-import { LegacyTooltip, TooltipAlignment, TooltipPosition } from '@components/LegacyTooltip';
+import { LegacyTooltip, TooltipAlignment, TooltipPosition } from '@components/LegacyTooltip/LegacyTooltip';
 import IconQuestionMarkCircle from '@foundation/Icon/Generated/IconQuestionMarkCircle';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { generateRandomId } from '@utilities/generateRandomId';

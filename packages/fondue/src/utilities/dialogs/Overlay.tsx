@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import { Popper } from '@components/Popper';
-import { Portal } from '@components/Portal';
+import { Portal } from '@components/Portal/Portal';
 import { useClickOutside } from '@hooks/useClickOutside';
 import { useDropdownAutoHeight } from '@hooks/useDropdownAutoHeight';
 import { useFocusTrap } from '@hooks/useFocusTrap';

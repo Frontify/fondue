@@ -29,7 +29,7 @@ import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { Validation, validationClassMap } from '@utilities/validation';
 
-import { LegacyTooltip, type LegacyTooltipProps } from '../LegacyTooltip';
+import { LegacyTooltip, type LegacyTooltipProps } from '../LegacyTooltip/LegacyTooltip';
 
 /**
  * @deprecated Use `TextInput` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md} the migration guide}.

@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ReactPortal, type ReactNode } from 'react';
+import { type ReactNode, type ReactPortal } from 'react';
 import { createPortal } from 'react-dom';
 
-export type PortalProps = { children?: ReactNode; container?: HTMLElement };
+type PortalProps = { children?: ReactNode; container?: HTMLElement };
 
 /**
  * @deprecated This component was deprecated, as it is not used anywhere.

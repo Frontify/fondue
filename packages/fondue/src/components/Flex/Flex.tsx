@@ -8,10 +8,29 @@ import { merge } from '@utilities/merge';
 
 import { type ContainerHTMLElement } from '../../types/elements';
 
+/**
+ * @deprecated Use `Flex` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#layout-components the migration guide}.
+ */
 export type FlexDirection = 'row' | 'column' | 'row-reverse' | 'column-reverse';
+
+/**
+ * @deprecated Use `Flex` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#layout-components the migration guide}.
+ */
 export type FlexWrap = 'nowrap' | 'wrap' | 'wrap-reverse';
+
+/**
+ * @deprecated Use `Flex` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#layout-components the migration guide}.
+ */
 export type FlexJustify = 'start' | 'end' | 'center' | 'between' | 'around' | 'evenly';
+
+/**
+ * @deprecated Use `Flex` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#layout-components the migration guide}.
+ */
 export type FlexAlignItems = 'start' | 'end' | 'center' | 'baseline' | 'stretch';
+
+/**
+ * @deprecated Use `Flex` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#layout-components the migration guide}.
+ */
 export type FlexAlignContent =
     | 'start'
     | 'end'
@@ -23,6 +42,9 @@ export type FlexAlignContent =
     | 'stretch'
     | 'normal';
 
+/**
+ * @deprecated Use `Flex` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#layout-components the migration guide}.
+ */
 export type FlexProps = {
     direction?: FlexDirection;
     wrap?: FlexWrap;

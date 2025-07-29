@@ -8,7 +8,7 @@ import { Button } from '@components/Button/Button';
 import { ButtonEmphasis, ButtonStyle } from '@components/Button/ButtonTypes';
 import { Container } from '@components/Container';
 import { DialogBody } from '@components/DialogBody';
-import { InlineDialog } from '@components/InlineDialog';
+import { InlineDialog } from '@components/InlineDialog/InlineDialog';
 import {
     TreeItem,
     TreeItemBorderClassMap,

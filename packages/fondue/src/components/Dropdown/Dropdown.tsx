@@ -27,23 +27,38 @@ import { EnablePortalWrapper } from '@utilities/dialogs/EnablePortalWrapper';
 import { merge } from '@utilities/merge';
 import { Validation } from '@utilities/validation';
 
+/**
+ * @deprecated Use `Dropdown` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#dropdown the migration guide}.
+ */
 export const DEFAULT_DROPDOWN_MIN_ANIMATION_HEIGHT = 36; // Small Input height as default
 
+/**
+ * @deprecated Use `Dropdown` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#dropdown the migration guide}.
+ */
 export enum DropdownSize {
     Small = 'Small',
     Large = 'Large',
 }
 
+/**
+ * @deprecated Use `Dropdown` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#dropdown the migration guide}.
+ */
 export enum DropdownAlignment {
     Start = 'Start',
     End = 'End',
 }
 
+/**
+ * @deprecated Use `Dropdown` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#dropdown the migration guide}.
+ */
 export enum DropdownPosition {
     Top = 'Top',
     Bottom = 'Bottom',
 }
 
+/**
+ * @deprecated Use `Dropdown` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#dropdown the migration guide}.
+ */
 export type DropdownProps = {
     id?: string;
     menuBlocks: MenuBlock[];

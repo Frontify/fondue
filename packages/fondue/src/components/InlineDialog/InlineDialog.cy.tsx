@@ -6,7 +6,7 @@ import { Box } from '@components/Box/Box';
 import { Button } from '@components/Button/Button';
 import { ButtonEmphasis } from '@components/Button/ButtonTypes';
 import { DialogBody } from '@components/DialogBody';
-import { Dropdown } from '@components/Dropdown';
+import { Dropdown } from '@components/Dropdown/Dropdown';
 import IconDotsVertical16 from '@foundation/Icon/Generated/IconDotsVertical16';
 
 import { Modality } from '../../types/dialog';
