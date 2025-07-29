@@ -43,7 +43,7 @@ jscodeshift(transformPath, paths, options)
             deprecated: deprecatedExports,
             active: activeExports,
         };
-        writeFileSync(outputPath, JSON.stringify(detectedExports, null, 0));
+        writeFileSync(outputPath, `${JSON.stringify(detectedExports, null, 4)}\n`);
         rmSync(path.join(__dirname, 'temp'), { recursive: true });
     })
     .catch((error) => {
