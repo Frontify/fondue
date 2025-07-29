@@ -10,7 +10,7 @@ import { type ReactElement, useEffect, useRef, useState } from 'react';
 import { type ActionMenuItemType, type ActionMenuSwitchItemType } from '@components/ActionMenu';
 import { type MenuItemType } from '@components/Dropdown';
 import { MenuItem } from '@components/MenuItem/MenuItem';
-import { Switch } from '@components/Switch';
+import { Switch } from '@components/Switch/Switch';
 import { FOCUS_STYLE_INSET } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 

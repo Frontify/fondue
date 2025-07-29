@@ -3,7 +3,7 @@
 import { Button } from '@components/Button/Button';
 import { ButtonType } from '@components/Button/ButtonTypes';
 import { Form } from '@components/Form/Form';
-import { TextInput } from '@components/TextInput';
+import { TextInput } from '@components/TextInput/TextInput';
 
 const FORM_ID = '[data-test-id=fondue-form]';
 const BUTTON_ID = '[data-test-id=button]';

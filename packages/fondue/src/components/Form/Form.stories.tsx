@@ -6,7 +6,7 @@ import { type Meta, type StoryFn } from '@storybook/react';
 import { Box } from '@components/Box/Box';
 import { Button } from '@components/Button/Button';
 import { FormControl } from '@components/FormControl';
-import { TextInput } from '@components/TextInput';
+import { TextInput } from '@components/TextInput/TextInput';
 
 import { Form, type FormProps } from './Form';
 

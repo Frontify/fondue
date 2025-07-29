@@ -31,6 +31,9 @@ import { Validation, validationClassMap } from '@utilities/validation';
 
 import { LegacyTooltip, type LegacyTooltipProps } from '../LegacyTooltip';
 
+/**
+ * @deprecated Use `TextInput` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md} the migration guide}.
+ */
 export enum TextInputType {
     Text = 'text',
     Password = 'password',
@@ -38,6 +41,9 @@ export enum TextInputType {
     Search = 'search',
 }
 
+/**
+ * @deprecated Use `TextInput` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md} the migration guide}.
+ */
 export type TextInputExtraAction = {
     onClick: () => void;
     icon: ReactElement;
@@ -46,6 +52,9 @@ export type TextInputExtraAction = {
     disabled?: boolean;
 };
 
+/**
+ * @deprecated Use `TextInput` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md} the migration guide}.
+ */
 export type TextInputBaseProps = {
     id?: string;
     type?: TextInputType;
@@ -109,6 +118,10 @@ type TextInputPasswordProps = TextInputBaseProps & {
     type: TextInputType.Password;
     obfuscated?: boolean;
 };
+
+/**
+ * @deprecated Use `TextInput` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md} the migration guide}.
+ */
 export type TextInputProps = TextInputTextProps | TextInputNumberProps | TextInputPasswordProps | TextInputSearchProps;
 
 type ExtraActionButtonProps = {
