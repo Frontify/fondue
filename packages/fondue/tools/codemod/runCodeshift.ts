@@ -4,7 +4,7 @@ import { join } from 'node:path';
 
 import { execa } from 'execa';
 
-const transformsDirectory = join(new URL('.', import.meta.url).pathname, '../codemod', 'transforms');
+const transformsDirectory = join(new URL('.', import.meta.url).pathname, 'transforms');
 const jscodeshiftExecutable = join(new URL('.', import.meta.url).pathname, '../../', 'node_modules/.bin/jscodeshift');
 
 export const runCodeshift = async (
@@ -13,7 +13,7 @@ export const runCodeshift = async (
     options: { [key: string]: string },
 ): Promise<void> => {
     const transformPath = join(transformsDirectory, `${transformName}.ts`);
-    await execa(
+    const { stdout, stderr } = await execa(
         jscodeshiftExecutable,
         ['--parser', 'tsx', '--extensions', 'ts,tsx,js,jsx', '--transform', transformPath, pathToAnalyze],
         {
@@ -22,5 +22,6 @@ export const runCodeshift = async (
             },
         },
     );
+    console.log(stdout, stderr);
     return;
 };

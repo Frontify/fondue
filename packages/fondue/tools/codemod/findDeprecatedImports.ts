@@ -4,17 +4,18 @@ import { existsSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import path, { join } from 'node:path';
 
 import detectedExports from '../constants/exports.json' with { type: 'json' };
-import { runCodeshift } from '../helpers/runCodeshift';
+
+import { runCodeshift } from './runCodeshift';
 
 const __dirname = new URL('.', import.meta.url).pathname;
 const tempDir = path.resolve(__dirname, './temp');
 
-const getImports = (pathToAnalyze: string) => {
+const getImports = (pathToAnalyze: string, selectedImports: string[] = []) => {
     if (existsSync(tempDir)) {
         rmSync(tempDir, { recursive: true });
     }
     return runCodeshift(pathToAnalyze, 'find-imports', {
-        fondueExportsConstantsPath: path.resolve(__dirname, '../constants/exports.json'),
+        selectedImports: selectedImports.join(','),
         tempDir,
     }).then(() => {
         if (existsSync(join(tempDir, 'detected-imports.txt'))) {
@@ -31,7 +32,7 @@ const getImports = (pathToAnalyze: string) => {
 };
 
 export const findDeprecatedImports = (pathToAnalyze: string, outputPath?: string) => {
-    getImports(pathToAnalyze)
+    getImports(pathToAnalyze, detectedExports.deprecated)
         .then((detectedImports) => {
             if (outputPath) {
                 writeFileSync(outputPath, JSON.stringify(detectedImports, null, 2), 'utf8');
@@ -49,7 +50,7 @@ export const findDeprecatedImports = (pathToAnalyze: string, outputPath?: string
 
 export const findUnusedExports = (pathToAnalyze: string, outputPath?: string, onlyDeprecated?: boolean) => {
     const fondueExports = [...detectedExports.deprecated, ...(onlyDeprecated ? [] : detectedExports.active)];
-    getImports(pathToAnalyze)
+    getImports(pathToAnalyze, fondueExports)
         .then((detectedImports) => {
             const unusedExports = fondueExports.filter(
                 (selectedExport) =>
