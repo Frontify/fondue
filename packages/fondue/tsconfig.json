@@ -41,7 +41,9 @@
         "tailwind.config.js",
         "legacyComponents.tailwind.config.ts",
         "tokens.vite.config.ts",
-        "legacyTokens"
+        "tools.vite.config.ts",
+        "legacyTokens",
+        "tools"
     ],
     "exclude": ["node_modules", "dist"]
 }
