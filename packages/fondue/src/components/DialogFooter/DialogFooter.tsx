@@ -2,7 +2,7 @@
 
 import { type ReactElement } from 'react';
 
-import { Box } from '@components/Box';
+import { Box } from '@components/Box/Box';
 import { Button, ButtonEmphasis, ButtonSize } from '@components/Button';
 import { Flex } from '@components/Flex';
 import IconArrowLeft from '@foundation/Icon/Generated/IconArrowLeft';

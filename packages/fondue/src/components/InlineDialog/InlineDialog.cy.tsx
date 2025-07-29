@@ -2,7 +2,7 @@
 
 import { useRef, useState } from 'react';
 
-import { Box } from '@components/Box';
+import { Box } from '@components/Box/Box';
 import { Button, ButtonEmphasis } from '@components/Button';
 import { DialogBody } from '@components/DialogBody';
 import { Dropdown } from '@components/Dropdown';

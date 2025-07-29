@@ -2,7 +2,7 @@
 
 import { Children, type ReactElement, type ReactNode } from 'react';
 
-import { Box } from '@components/Box';
+import { Box } from '@components/Box/Box';
 import { GAP_DIRECTIONS, GetGapClassName, type SpacingValue } from '@utilities/dimensions';
 import { merge } from '@utilities/merge';
 

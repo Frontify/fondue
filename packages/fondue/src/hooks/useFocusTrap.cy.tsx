@@ -2,7 +2,7 @@
 
 import { type ReactNode, useRef, useState } from 'react';
 
-import { Box } from '@components/Box';
+import { Box } from '@components/Box/Box';
 import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';
 import { TextInput } from '@components/TextInput';
 import { useFocusTrap } from '@hooks/useFocusTrap';

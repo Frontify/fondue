@@ -2,7 +2,7 @@
 
 import { type ReactElement } from 'react';
 
-import { Box } from '@components/Box';
+import { Box } from '@components/Box/Box';
 
 import { Grid, type GridProps } from './Grid';
 

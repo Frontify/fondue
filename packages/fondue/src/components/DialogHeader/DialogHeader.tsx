@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Box } from '@components/Box';
+import { Box } from '@components/Box/Box';
 import { Flex } from '@components/Flex';
 import IconCross from '@foundation/Icon/Generated/IconCross';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
