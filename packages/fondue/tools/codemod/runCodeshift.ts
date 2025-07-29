@@ -15,7 +15,25 @@ export const runCodeshift = async (
     const transformPath = join(transformsDirectory, `${transformName}.ts`);
     await execa(
         jscodeshiftExecutable,
-        ['--parser', 'tsx', '--extensions', 'ts,tsx,js,jsx', '--transform', transformPath, pathToAnalyze],
+        [
+            '--parser',
+            'tsx',
+            '--extensions',
+            'ts,tsx,js,jsx',
+            '--ignore-pattern',
+            '**/node_modules/**',
+            '--ignore-pattern',
+            '**/dist/**',
+            '--ignore-pattern',
+            '**/build/**',
+            '--ignore-pattern',
+            '**/.git/**',
+            '--ignore-pattern',
+            '**/public/**',
+            '--transform',
+            transformPath,
+            pathToAnalyze,
+        ],
         {
             env: {
                 ...options,
