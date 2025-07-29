@@ -35,7 +35,7 @@ export const findDeprecatedImports = (pathToAnalyze: string, outputPath?: string
     getImports(pathToAnalyze, detectedExports.deprecated)
         .then((detectedImports) => {
             if (outputPath) {
-                writeFileSync(outputPath, JSON.stringify(detectedImports, null, 2), 'utf8');
+                writeFileSync(outputPath, JSON.stringify(detectedImports, null, 4), 'utf8');
             } else {
                 console.log(detectedImports);
             }
@@ -57,7 +57,7 @@ export const findUnusedExports = (pathToAnalyze: string, outputPath?: string, on
                     !detectedImports.some((detectedImport) => detectedImport.imports.includes(selectedExport)),
             );
             if (outputPath) {
-                writeFileSync(outputPath, JSON.stringify(unusedExports, null, 2), 'utf8');
+                writeFileSync(outputPath, JSON.stringify(unusedExports, null, 4), 'utf8');
             } else {
                 console.log(unusedExports);
             }
