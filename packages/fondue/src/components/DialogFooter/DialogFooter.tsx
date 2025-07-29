@@ -3,7 +3,8 @@
 import { type ReactElement } from 'react';
 
 import { Box } from '@components/Box/Box';
-import { Button, ButtonEmphasis, ButtonSize } from '@components/Button';
+import { Button } from '@components/Button/Button';
+import { ButtonEmphasis, ButtonSize } from '@components/Button/ButtonTypes';
 import { Flex } from '@components/Flex';
 import IconArrowLeft from '@foundation/Icon/Generated/IconArrowLeft';
 import { useMobileDetection } from '@hooks/useMobileDetection';
@@ -60,7 +61,6 @@ export const DialogFooter = ({
                     <Box className="tw-flex tw-gap-x-3" data-test-id={`${dataTestId}-action-buttons`}>
                         {actionButtons.map((button) => (
                             <Button
-                                // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
                                 key={`${dataTestId}-button-${button.children}`}
                                 {...button}
                                 size={ButtonSize.Medium}

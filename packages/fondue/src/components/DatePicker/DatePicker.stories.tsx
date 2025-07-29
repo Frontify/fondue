@@ -4,8 +4,9 @@ import { type Meta, type StoryFn } from '@storybook/react';
 import { addDays, subDays } from 'date-fns';
 import { useRef, useState } from 'react';
 
-import { Badge, BadgeEmphasis, BadgeStyle } from '@components/Badge';
-import { Button } from '@components/Button';
+import { Badge } from '@components/Badge/Badge';
+import { BadgeEmphasis, BadgeStyle } from '@components/Badge/types';
+import { Button } from '@components/Button/Button';
 import { FormControl } from '@components/FormControl';
 import IconCalendar16 from '@foundation/Icon/Generated/IconCalendar16';
 import { Validation } from '@utilities/validation';

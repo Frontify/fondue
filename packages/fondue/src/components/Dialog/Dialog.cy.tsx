@@ -2,7 +2,7 @@
 
 import { useRef, useState } from 'react';
 
-import { Button } from '@components/Button';
+import { Button } from '@components/Button/Button';
 import { DialogBody } from '@components/DialogBody';
 import { DialogHeader } from '@components/DialogHeader';
 

@@ -2,7 +2,7 @@
 
 import { type ReactElement, useState } from 'react';
 
-import { Button } from '@components/Button';
+import { Button } from '@components/Button/Button';
 
 import { CollapsibleWrap as CollapsibleWrapComponent } from './CollapsibleWrap';
 import { type CollapsibleWrapProps } from './types';

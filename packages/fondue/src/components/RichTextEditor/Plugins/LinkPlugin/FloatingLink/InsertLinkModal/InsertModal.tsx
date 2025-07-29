@@ -2,8 +2,8 @@
 
 import { type MouseEvent, type ReactElement, type ReactNode } from 'react';
 
-import { ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button';
 import { Button } from '@components/Button/Button';
+import { ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button/ButtonTypes';
 import { Checkbox } from '@components/Checkbox';
 import { FormControl } from '@components/FormControl';
 import { FloatingModalWrapper } from '@components/RichTextEditor/components';

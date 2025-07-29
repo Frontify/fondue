@@ -17,7 +17,8 @@ import {
 } from 'react';
 import { usePopper } from 'react-popper';
 
-import { Button, ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button';
+import { Button } from '@components/Button/Button';
+import { ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button/ButtonTypes';
 import { Portal } from '@components/Portal';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { useMemoizedId } from '@hooks/useMemoizedId';

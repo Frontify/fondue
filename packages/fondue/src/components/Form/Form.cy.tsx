@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Button, ButtonType } from '@components/Button';
+import { Button } from '@components/Button/Button';
+import { ButtonType } from '@components/Button/ButtonTypes';
 import { Form } from '@components/Form/Form';
 import { TextInput } from '@components/TextInput';
 

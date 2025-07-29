@@ -2,7 +2,7 @@
 
 import { type ReactElement } from 'react';
 
-import { Button } from '@components/Button';
+import { Button } from '@components/Button/Button';
 import { ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button/ButtonTypes';
 import { LoadingCircle, LoadingCircleSize } from '@components/LoadingCircle';
 import IconCheckMark16 from '@foundation/Icon/Generated/IconCheckMark16';

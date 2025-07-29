@@ -2,7 +2,8 @@
 
 import { type ReactElement, type ReactNode } from 'react';
 
-import { Button, ButtonEmphasis, type ButtonProps, ButtonSize, ButtonStyle } from '@components/Button';
+import { Button, type ButtonProps } from '@components/Button/Button';
+import { ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button/ButtonTypes';
 import IconCheckMark from '@foundation/Icon/Generated/IconCheckMark';
 import { merge } from '@utilities/merge';
 

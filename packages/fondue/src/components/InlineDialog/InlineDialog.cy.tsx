@@ -3,7 +3,8 @@
 import { useRef, useState } from 'react';
 
 import { Box } from '@components/Box/Box';
-import { Button, ButtonEmphasis } from '@components/Button';
+import { Button } from '@components/Button/Button';
+import { ButtonEmphasis } from '@components/Button/ButtonTypes';
 import { DialogBody } from '@components/DialogBody';
 import { Dropdown } from '@components/Dropdown';
 import IconDotsVertical16 from '@foundation/Icon/Generated/IconDotsVertical16';

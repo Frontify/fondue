@@ -2,7 +2,7 @@
 
 import { useRef, useState } from 'react';
 
-import { Button } from '@components/Button';
+import { Button } from '@components/Button/Button';
 import { Popover } from '@components/Popover/Popover';
 
 import { type OverlayProps } from '../../types/dialog';

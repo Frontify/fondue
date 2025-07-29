@@ -4,7 +4,7 @@ import { action } from '@storybook/addon-actions';
 import { type Meta, type StoryFn } from '@storybook/react';
 
 import { Box } from '@components/Box/Box';
-import { Button } from '@components/Button';
+import { Button } from '@components/Button/Button';
 import { FormControl } from '@components/FormControl';
 import { TextInput } from '@components/TextInput';
 
