@@ -634,6 +634,9 @@ importers:
       '@udecode/zustood':
         specifier: 2.0.0
         version: 2.0.0(react-dom@18.3.1(react@18.3.1))(react-native@0.74.0(@babel/core@7.26.10)(@babel/preset-env@7.24.4(@babel/core@7.26.10))(@types/react@18.3.23)(react@18.3.1))(react@18.3.1)(scheduler@0.24.0-canary-efb381bbf-20230505)(zustand@4.5.2(@types/react@18.3.23)(immer@10.1.1)(react@18.3.1))
+      commander:
+        specifier: ^14.0.0
+        version: 14.0.0
       date-fns:
         specifier: ^3.6.0
         version: 3.6.0
@@ -791,9 +794,6 @@ importers:
       chalk:
         specifier: ^5.4.1
         version: 5.4.1
-      commander:
-        specifier: ^14.0.0
-        version: 14.0.0
       concat:
         specifier: ^1.0.3
         version: 1.0.3
