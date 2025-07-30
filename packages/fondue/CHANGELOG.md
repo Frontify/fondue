@@ -1,5 +1,13 @@
 # @frontify/fondue
 
+## 13.0.0-beta.4
+
+### Major Changes
+
+- [#2363](https://github.com/Frontify/fondue/pull/2363) [`76af920`](https://github.com/Frontify/fondue/commit/76af9208b9a80d9d09031dab4eb1e4d8edc6586e) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: added codemod tools
+
+- [#2363](https://github.com/Frontify/fondue/pull/2363) [`2d95eea`](https://github.com/Frontify/fondue/commit/2d95eeab1d1b83334eebf5f663065ce012702a02) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: adjusted codemod to only check for public exports
+
 ## 13.0.0-beta.3
 
 ### Major Changes
