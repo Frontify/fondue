@@ -35,7 +35,9 @@ type InputStyleGroup =
     | 'disabled'
     | 'readOnly';
 
-/* @deprecated Please use a fondue component instead. */
+/**
+ * @deprecated Please use a fondue component instead.
+ **/
 export const InputStyles: Record<InputStyleGroup, string> = {
     base: 'tw-flex tw-items-center tw-justify-between tw-gap-2 tw-px-3 tw-transition tw-text-sm tw-font-sans tw-relative tw-bg-base tw-border tw-rounded tw-line-strong',
     width: 'tw-w-full',
@@ -50,7 +52,9 @@ export const InputStyles: Record<InputStyleGroup, string> = {
         'read-only:tw-bg-box-disabled read-only:tw-border-none read-only:tw-text-text-weak read-only:hover:tw-cursor-not-allowed read-only:hover:tw-border-line-weak',
 };
 
-/* @deprecated Please use a fondue component or a custom function instead. */
+/**
+ * @deprecated Please use a fondue component or a custom function instead.
+ **/
 export const HelperText = ({
     text,
     disabled = false,
@@ -71,7 +75,9 @@ export const HelperText = ({
 };
 HelperText.displayName = 'FondueHelperText';
 
-/* @deprecated Please use a fondue component or a custom function instead. */
+/**
+ * @deprecated Please use a fondue component or a custom function instead.
+ **/
 export const GetStatusIcon = (status: Validation, dataTestId: string): ReactElement | null => {
     let statusIcon: ReactElement | null;
     switch (status) {
@@ -100,7 +106,9 @@ export const GetStatusIcon = (status: Validation, dataTestId: string): ReactElem
 
 GetStatusIcon.displayName = 'FondueGetStatusIcon';
 
-/* @deprecated Please use a fondue component or a custom function instead. */
+/**
+ * @deprecated Please use a fondue component or a custom function instead.
+ **/
 export const InputActions = ({
     clearable,
     disabled,
@@ -143,7 +151,9 @@ export const InputActions = ({
 
 InputActions.displayName = 'FondueInputActionButtons';
 
-/* @deprecated Please use a fondue component or a custom function instead. */
+/**
+ * @deprecated Please use a fondue component or a custom function instead.
+ **/
 export const InputExtraActions = ({ actions, disabled, dataTestId }: InputExtraActionsProps) => {
     return actions.map((action) => {
         const id = generateRandomId();

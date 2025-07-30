@@ -1,6 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-/* @deprecated Please use a custom type instead. */
+/**
+ * @deprecated Please use a custom type instead.
+ **/
 export enum Validation {
     Default = 'Default',
     Loading = 'Loading',
@@ -8,7 +10,9 @@ export enum Validation {
     Error = 'Error',
     Warning = 'Warning',
 }
-/* @deprecated Please use a custom function instead. */
+/**
+ * @deprecated Please use a custom function instead.
+ **/
 export const validationClassMap: Record<Validation, string> = {
     [Validation.Default]: 'tw-border-line-strong dark:tw-border-line-strong',
     [Validation.Loading]: 'tw-border-line dark:tw-border-line',
@@ -16,7 +20,9 @@ export const validationClassMap: Record<Validation, string> = {
     [Validation.Error]: 'tw-border-text-negative dark:tw-border-text-negative',
     [Validation.Warning]: 'tw-border-text-warning dark:tw-border-text-warning',
 };
-/* @deprecated Please use a custom function instead. */
+/**
+ * @deprecated Please use a custom function instead.
+ **/
 export const validationTextClassMap: Record<Validation, string> = {
     [Validation.Default]: 'tw-text-text dark:tw-text-text',
     [Validation.Loading]: 'tw-text-text-disabled dark:tw-text-text-disabled',

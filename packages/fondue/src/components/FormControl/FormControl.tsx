@@ -96,9 +96,7 @@ export type FormControlProps = {
     children?: ReactNode;
     'data-test-id'?: string;
 };
-/**
- * @deprecated Please use a custom component instead.
- */
+
 export const FormControl = ({
     label,
     children,

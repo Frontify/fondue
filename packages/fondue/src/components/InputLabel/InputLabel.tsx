@@ -15,7 +15,7 @@ export type InputLabelTooltipProps =
     | (LegacyTooltipProps & Pick<TooltipIconProps, 'triggerStyle' | 'triggerIcon'>)[];
 
 /**
- * @deprecated Use `Label` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#label-old-inputlabel the migration guide}.
+ * @legacy Use `Label` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#label-old-inputlabel the migration guide}.
  */
 export type InputLabelProps = {
     id?: string;
