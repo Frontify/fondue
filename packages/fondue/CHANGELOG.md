@@ -1,5 +1,11 @@
 # @frontify/fondue
 
+## 13.0.0-beta.5
+
+### Major Changes
+
+- [`10feaa0`](https://github.com/Frontify/fondue/commit/10feaa0d999ad01843da6395bc128cb80320e500) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: move commander out of dev dependencies
+
 ## 13.0.0-beta.4
 
 ### Major Changes
