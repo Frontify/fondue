@@ -48,8 +48,8 @@ jscodeshift(transformPath, paths, {
         const activeExports = parseTempFile(path.join(__dirname, 'temp/active-exports.txt'));
 
         const detectedExports = {
-            deprecated: deprecatedExports,
-            active: activeExports,
+            deprecated: deprecatedExports.sort(),
+            active: activeExports.sort(),
         };
 
         writeFileSync(outputPath, `${JSON.stringify(detectedExports, null, 4)}\n`);

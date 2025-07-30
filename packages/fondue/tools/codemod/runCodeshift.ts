@@ -1,11 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { join } from 'node:path';
+import { createRequire } from 'node:module';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import { execa } from 'execa';
 
-const transformsDirectory = join(new URL('.', import.meta.url).pathname, 'transforms');
-const jscodeshiftExecutable = join(new URL('.', import.meta.url).pathname, '../../', 'node_modules/.bin/jscodeshift');
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const require = createRequire(import.meta.url);
+const transformsDirectory = join(__dirname, 'transforms');
+const jscodeshiftExecutable = require.resolve('.bin/jscodeshift');
 
 export const runCodeshift = async (
     pathToAnalyze: string,

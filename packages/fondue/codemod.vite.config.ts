@@ -29,6 +29,8 @@ export default defineConfig({
                 'node:events',
                 'node:fs',
                 'node:path',
+                'node:url',
+                'node:module',
                 'node:process',
                 'node:child_process',
                 'util',

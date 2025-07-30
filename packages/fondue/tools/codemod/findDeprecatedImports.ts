@@ -1,13 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { existsSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
-import path, { join } from 'node:path';
+import path, { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import detectedExports from '../constants/fondueExports.json' with { type: 'json' };
 
 import { runCodeshift } from './runCodeshift';
 
-const __dirname = new URL('.', import.meta.url).pathname;
+const __dirname = dirname(fileURLToPath(import.meta.url));
 const tempDir = path.resolve(__dirname, './temp');
 
 const getImports = (pathToAnalyze: string, selectedImports: string[] = []) => {
