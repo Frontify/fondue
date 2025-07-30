@@ -36,10 +36,16 @@ export const mapToAriaProps = (ariaLabel: string, menuBlocks: MenuBlock[] | Acti
 export const getMenuItems = <T extends MenuBlock | ActionMenuBlock = MenuBlock>(menuBlocks: T[]): T['menuItems'] =>
     menuBlocks.flatMap(({ menuItems }) => menuItems);
 
+/**
+ * @deprecated Please use a custom component instead.
+ */
 export const getKeyItemRecord = <T extends MenuItemType | ActionMenuItemType = MenuItemType>(
     items: T[],
 ): Record<string, T> => items.reduce<Record<string, T>>((previous, item) => ({ ...previous, [item.id]: item }), {});
 
+/**
+ * @deprecated Use `Dropdown` from `@frontify/fondue/components` instead.
+ */
 export const getDisabledItemIds = <T extends MenuItemType | ActionMenuItemType = MenuItemType>(
     items: T[],
 ): Set<T['id']> =>

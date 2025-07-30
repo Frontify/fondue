@@ -18,12 +18,12 @@ export default defineConfig({
     ],
     build: {
         lib: {
-            entry: resolve(__dirname, 'tools/index.ts'),
+            entry: resolve(__dirname, 'tools/internal.ts'),
             name: 'fondue-tools',
             formats: ['es'],
             fileName: () => 'index.js',
         },
-        outDir: 'dist/tools',
+        outDir: 'dist/tools/internal',
         rollupOptions: {
             external: [
                 'node:events',

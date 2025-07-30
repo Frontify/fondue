@@ -2,20 +2,11 @@
 
 import { Command } from 'commander';
 
-import { findDeprecatedImports, findUnusedExports } from './codemod/findDeprecatedImports';
+import { findUnusedExports } from './codemod/findDeprecatedImports';
 
 const program = new Command();
 
 program.name('fondue-analyzer').description('Analyze fondue usage');
-
-program
-    .command('find-deprecated-imports')
-    .description('Find imports of deprecated fondue functions and components')
-    .argument('<path>', 'Path to be analyzed')
-    .option('-o, --output <path>', 'Output path')
-    .action((path: string, options: { output?: string }) => {
-        findDeprecatedImports(path, options.output);
-    });
 
 program
     .command('find-unused-exports')

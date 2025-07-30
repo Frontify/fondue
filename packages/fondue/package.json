@@ -59,7 +59,10 @@
     "unpkg": "dist/index.umd.js",
     "jsdelivr": "dist/index.umd.js",
     "types": "dist/index.d.ts",
-    "bin": "./dist/tools/index.js",
+    "bin": {
+        "codemod": "./dist/tools/codemod/index.js",
+        "internal": "./dist/tools/internal/index.js"
+    },
     "files": [
         "dist",
         "tailwind.config.ts"
@@ -76,7 +79,7 @@
         "build:package:icons": "vite build -c icons.vite.config.ts",
         "build:package:charts": "vite build -c charts.vite.config.ts",
         "build:package:tokens": "vite build -c tokens.vite.config.ts",
-        "build:tools": "tsx scripts/detectDeprecatedExports/detectDeprecatedExports.ts tools/constants/fondueExports.json && vite build -c tools.vite.config.ts",
+        "build:tools": "tsx scripts/detectDeprecatedExports/detectDeprecatedExports.ts tools/constants/fondueExports.json && vite build -c codemod.vite.config.ts && vite build -c internal-tools.vite.config.ts",
         "dev": "cross-env NODE_ENV=development pnpm dev:library",
         "dev:library": "vite build --emptyOutDir false --watch",
         "clean": "rimraf dist",
@@ -94,7 +97,7 @@
         "typecheck": "tsc --noEmit",
         "storybook": "storybook dev -p 6009",
         "ci": "pnpm install --frozen-lockfile",
-        "script:detect-deprecated-exports": "tsx scripts/detectDeprecatedExports/detectDeprecatedExports.ts tools/constants/fondueExports.json"
+        "run:tools": "tsx tools/index.ts"
     },
     "peerDependencies": {
         "react": "^18",

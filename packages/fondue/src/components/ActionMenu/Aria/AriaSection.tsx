@@ -3,11 +3,17 @@
 import { useMenuSection } from '@react-aria/menu';
 import { type ReactElement, type ReactNode } from 'react';
 
+/**
+ * @deprecated Use `Dropdown` from `@frontify/fondue/components` instead.
+ */
 export type AriaSectionProps = {
     ariaLabel?: string;
     children: ReactNode;
 };
 
+/**
+ * @deprecated Use `Dropdown` from `@frontify/fondue/components` instead.
+ */
 export const AriaSection = ({ ariaLabel, children }: AriaSectionProps): ReactElement => {
     const { itemProps, groupProps } = useMenuSection({ 'aria-label': ariaLabel });
 
