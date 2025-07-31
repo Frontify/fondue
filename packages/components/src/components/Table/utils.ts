@@ -34,20 +34,30 @@ export function handleKeyDown(event: KeyboardEvent<HTMLTableElement>) {
 const INTERACTIVE_ELEMENTS_LIST = [HTMLButtonElement, HTMLAnchorElement];
 const INTERACTIVE_ROLES_LIST = ['button', 'link'];
 
-export function isEventFromInteractiveElement(event?: MouseEvent): boolean {
-    let node = event?.target instanceof Element ? event.target : null;
+export function shouldIgnoreRowClick(event?: MouseEvent): boolean {
+    if (!event) {
+        return false;
+    }
 
-    while (node && !(node instanceof HTMLTableRowElement)) {
-        if (INTERACTIVE_ELEMENTS_LIST.some((interactiveElement) => node instanceof interactiveElement)) {
+    const { target, currentTarget } = event;
+
+    let element = target instanceof Element ? target : null;
+
+    if (!currentTarget.contains(element)) {
+        return true;
+    }
+
+    while (element && !(element instanceof HTMLTableRowElement)) {
+        if (INTERACTIVE_ELEMENTS_LIST.some((interactiveElement) => element instanceof interactiveElement)) {
             return true;
         }
 
-        const role = node.getAttribute('role');
+        const role = element.getAttribute('role');
         if (role && INTERACTIVE_ROLES_LIST.includes(role)) {
             return true;
         }
 
-        node = node.parentElement;
+        element = element.parentElement;
     }
 
     return false;
