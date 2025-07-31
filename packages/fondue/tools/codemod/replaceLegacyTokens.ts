@@ -3,7 +3,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-import { cssVariableReplacements, deprecatedCssVariables, tailwindClassReplacements } from './replacements';
+import { cssVariableReplacements, deprecatedCssVariables, tailwindClassReplacements } from '../constants/replacements';
 
 const deprecatedOccurrences: { filePath: string; line: number; variable: string }[] = [];
 
