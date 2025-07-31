@@ -10,7 +10,9 @@
     "@frontify/fondue-storybook-docs": "0.0.1"
   },
   "changesets": [
+    "brown-sloths-cross",
     "cool-apples-poke",
+    "fast-waves-enjoy",
     "free-hoops-try",
     "huge-breads-sniff",
     "mean-gifts-live",
