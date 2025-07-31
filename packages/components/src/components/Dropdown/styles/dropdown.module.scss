@@ -122,11 +122,11 @@
 
     .item~&,
     .group~& {
-        border-top: var(--border-width-default) solid var(--color-line-strong);
+        border-top: var(--border-width-default) solid var(--color-line-mid);
     }
 
     &:has(+ .item) {
-        border-bottom: var(--border-width-default) solid var(--color-line-strong);
+        border-bottom: var(--border-width-default) solid var(--color-line-mid);
     }
 }
 

@@ -46,7 +46,7 @@ const dotSizeClasses: Record<SwitchSize, Record<'dimensions' | 'activeWidth' | '
     },
 };
 
-const indeterminateLineClasses = 'tw-w-2 tw-h-[1px]';
+const indeterminateLineClasses = 'tw-w-2 tw-h-px';
 
 /**
  * @deprecated Use `Switch` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#switch the migration guide}.
