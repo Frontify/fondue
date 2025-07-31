@@ -5,7 +5,7 @@ import path from 'node:path';
 
 import jscodeshift from 'jscodeshift';
 
-const EXCLUDED_DIRECTORIES = ['/src/components/RichTextEditor/', '/src/foundation/Icon/Generated/'];
+const EXCLUDED_DIRECTORIES = ['/src/components/RichTextEditor/'];
 
 // Configure parser for JSX/TSX support
 const j = jscodeshift.withParser('tsx');
@@ -54,7 +54,8 @@ const buildPublicExportMap = (indexPath: string): Set<string> => {
             j.FunctionDeclaration.check(declaration) ||
             j.ClassDeclaration.check(declaration) ||
             j.TSTypeAliasDeclaration.check(declaration) ||
-            j.TSInterfaceDeclaration.check(declaration)
+            j.TSInterfaceDeclaration.check(declaration) ||
+            j.TSEnumDeclaration.check(declaration)
         ) {
             return declaration.id && j.Identifier.check(declaration.id) ? declaration.id.name : undefined;
         }
@@ -73,7 +74,7 @@ const buildPublicExportMap = (indexPath: string): Set<string> => {
 
     // Helper to add export to map
     const addExportToMap = (exportName: string) => {
-        if (!publicExports.has(exportName) && !exportName.includes('Icon')) {
+        if (!publicExports.has(exportName)) {
             publicExports.add(exportName);
         }
     };
@@ -138,7 +139,6 @@ const buildPublicExportMap = (indexPath: string): Set<string> => {
                 // Case 3: export const/function/class/type/interface
                 else if (node.declaration) {
                     const exportedName = getDeclarationName(node.declaration);
-
                     if (exportedName) {
                         addExportToMap(exportedName);
                     }

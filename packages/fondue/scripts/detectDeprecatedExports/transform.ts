@@ -99,7 +99,8 @@ export default function transformer(file: FileInfo, api: API, options: { basePat
                 j.FunctionDeclaration.check(decl) ||
                 j.ClassDeclaration.check(decl) ||
                 j.TSTypeAliasDeclaration.check(decl) ||
-                j.TSInterfaceDeclaration.check(decl)
+                j.TSInterfaceDeclaration.check(decl) ||
+                j.TSEnumDeclaration.check(decl)
             ) {
                 const name = decl.id && j.Identifier.check(decl.id) ? decl.id.name : undefined;
 
@@ -134,6 +135,22 @@ export default function transformer(file: FileInfo, api: API, options: { basePat
                 const exportedName = specifier.exported.name;
                 if (typeof exportedName === 'string') {
                     checkDeclaration(exportedName);
+                }
+            }
+        }
+
+        // Case 3: `default re-exports with deprecation comment`
+        if (path.node.specifiers && path.node.specifiers.length > 0 && path.node.source) {
+            for (const specifier of path.node.specifiers) {
+                if (specifier.local?.name === 'default') {
+                    const exportedName = specifier.exported.name;
+                    if (typeof exportedName === 'string') {
+                        if (isDeprecated(path)) {
+                            deprecatedExports.add({ name: exportedName, path: file.path });
+                        } else {
+                            activeExports.add({ name: exportedName, path: file.path });
+                        }
+                    }
                 }
             }
         }

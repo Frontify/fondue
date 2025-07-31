@@ -121,7 +121,10 @@ const generateIndex = async () => {
         })
         .filter((filePath) => !filePath.name.includes('.'))
         .filter((component) => component.name !== 'Icon');
-    const iconComponentNameToExport = (name: string) => `export { default as ${name} } from "./${name}";`;
+    const iconComponentNameToExport = (name: string) => `/**
+ * @deprecated Use icons from \`@frontify/fondue/icons\` instead.
+ */
+export { default as ${name} } from "./${name}";`;
     const fileContent = `${iconComponents.map((c) => iconComponentNameToExport(c.name)).join('\n')}\n`;
 
     await writeFile(join(GENERATED_ICONS_INDEX_PATH), fileContent, { encoding: 'utf8' });
