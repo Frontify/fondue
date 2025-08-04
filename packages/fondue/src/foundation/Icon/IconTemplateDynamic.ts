@@ -48,6 +48,9 @@ const ${props.name} = (props: GeneratedIconProps): ReactElement<GeneratedIconPro
 };
 ${props.name}.displayName = 'Fondue${props.name}';
 
+/**
+ * @deprecated Use icons from \`@frontify/fondue/icons\` instead.
+ */
 export default memo(${props.name});
 `;
 };
