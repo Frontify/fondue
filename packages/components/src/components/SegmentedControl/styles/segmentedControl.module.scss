@@ -23,7 +23,7 @@ $radius-without-border: calc(var(--border-radius-medium) - var(--border-width-de
     box-sizing: border-box;
 
     background-color: var(--color-surface-dim);
-    border: var(--border-width-default) solid var(--color-line-strong);
+    border: var(--border-width-default) solid var(--color-line-mid);
     border-radius: var(--border-radius-medium);
 
     isolation: isolate;
@@ -196,7 +196,7 @@ $radius-without-border: calc(var(--border-radius-medium) - var(--border-width-de
     width: 1px;
     margin-left: -0.5px;
     margin-right: -0.5px;
-    background-color: var(--color-line-strong);
+    background-color: var(--color-line-mid);
 
     & {
         @include transitions.transition-opacity;
