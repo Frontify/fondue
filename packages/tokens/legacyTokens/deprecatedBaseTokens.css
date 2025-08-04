@@ -149,7 +149,7 @@
     --box-warning-strong-inverse-color-pressed: /** @deprecated use updated token instead **/ var(
         --color-warning-on-warning
     );
-    --code-family: /** @deprecated use updated token instead **/ var(--typography-font-family-monoe);
+    --code-family: /** @deprecated use updated token instead **/ var(--typography-font-family-monospace);
     --code-family-stack: /** @deprecated use updated token instead **/ var(--typography-font-family-monospace);
     --code-weight-name: /** @deprecated use updated token instead **/ var(--typography-font-weight-regular);
     --code-weight-number: /** @deprecated use updated token instead **/ var(--typography-font-weight-regular);
