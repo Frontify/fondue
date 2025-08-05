@@ -22,7 +22,7 @@
     color: var(--color-secondary-default);
     background-color: var(--color-surface-default);
     border-radius: var(--border-radius-medium);
-    border: var(--border-width-default) solid var(--color-line-strong);
+    border: var(--border-width-default) solid var(--color-line-mid);
 
     & {
         @include transitions.transition-colors;
@@ -34,7 +34,7 @@
     }
 
     &:has(:focus-visible),
-    &[data-state='open'] {
+    &:has([data-state='open']) {
         border-color: var(--color-line-strong);
         color: var(--color-line-strong);
     }
