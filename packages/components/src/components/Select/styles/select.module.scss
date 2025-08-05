@@ -340,7 +340,7 @@
 
 .group {
     .item + & {
-        border-top: var(--border-width-default) solid var(--color-line-strong);
+        border-top: var(--border-width-default) solid var(--color-line-mid);
         margin-bottom: 0.5rem;
     }
 
@@ -349,7 +349,7 @@
     }
 
     &:has(+ .item, + .group) {
-        border-bottom: var(--border-width-default) solid var(--color-line-strong);
+        border-bottom: var(--border-width-default) solid var(--color-line-mid);
     }
 }
 
