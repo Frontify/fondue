@@ -35,7 +35,7 @@
                 #{$prop}: $value;
             }
             left: 0;
-            border-right: 1px solid var(--color-line-mid);
+            border-right: 1px solid var(--color-line-subtle);
         }
     }
 
@@ -75,8 +75,8 @@
     line-height: sizeToken.get(4);
     color: var(--color-secondary-default);
 
-    border-top: 1px solid var(--color-line-mid);
-    border-bottom: 1px solid var(--color-line-mid);
+    border-top: 1px solid var(--color-line-subtle);
+    border-bottom: 1px solid var(--color-line-subtle);
 
     &:hover {
         color: var(--color-primary-hover);
@@ -163,7 +163,7 @@
     line-height: sizeToken.get(4);
     padding: sizeToken.get(2);
 
-    border-bottom: 1px solid var(--color-line-mid);
+    border-bottom: 1px solid var(--color-line-subtle);
 }
 
 .headerCell,

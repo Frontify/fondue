@@ -103,7 +103,7 @@
         grid-column: 1;
 
         &[data-show-border='true'] {
-            border-bottom: var(--border-width-default) solid var(--color-line-mid);
+            border-bottom: var(--border-width-default) solid var(--color-line-subtle);
         }
 
         &[data-dialog-header-padding='none'] {
@@ -205,7 +205,7 @@
         }
 
         &[data-show-border='true'] {
-            border-top: var(--border-width-default) solid var(--color-line-mid);
+            border-top: var(--border-width-default) solid var(--color-line-subtle);
         }
 
         & {
