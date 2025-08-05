@@ -1,5 +1,17 @@
 # @frontify/fondue
 
+## 13.0.0-beta.6
+
+### Major Changes
+
+- [#2366](https://github.com/Frontify/fondue/pull/2366) [`e59be31`](https://github.com/Frontify/fondue/commit/e59be310c344c1e84aef228a57dcb079932c9587) Thanks [@github-actions](https://github.com/apps/github-actions)! - fix: improve export detection
+
+### Patch Changes
+
+- Updated dependencies [[`bea74b3`](https://github.com/Frontify/fondue/commit/bea74b38a57ce8db3468e17babfc3b66280a5d75)]:
+    - @frontify/fondue-components@20.0.0-beta.4
+    - @frontify/fondue-tokens@5.0.0-beta.3
+
 ## 13.0.0-beta.5
 
 ### Major Changes
