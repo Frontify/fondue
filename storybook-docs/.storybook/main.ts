@@ -44,7 +44,7 @@ const config: StorybookConfig = {
                     expanded: true,
                 },
                 current: {
-                    title: 'Current',
+                    title: 'Components',
                     url: 'http://localhost:6006',
                     type: 'auto-inject',
                     expanded: true,
@@ -76,7 +76,7 @@ const config: StorybookConfig = {
                 expanded: true,
             },
             current: {
-                title: 'Current',
+                title: 'Components',
                 url: `${pathPrefix}new`,
                 expanded: true,
             },
