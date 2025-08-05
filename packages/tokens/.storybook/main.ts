@@ -2,7 +2,7 @@
 
 import { type StorybookConfig } from '@storybook/react-vite';
 
-const productionPathPrefix = process.env.STORYBOOK_PATH_PREFIX ? `${process.env.STORYBOOK_PATH_PREFIX}new/` : '/';
+const productionPathPrefix = process.env.STORYBOOK_PATH_PREFIX ? `${process.env.STORYBOOK_PATH_PREFIX}tokens/` : '/';
 
 export default {
     stories: ['../stories/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
