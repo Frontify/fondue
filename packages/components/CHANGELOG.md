@@ -1,5 +1,14 @@
 # @frontify/fondue-components
 
+## 20.0.0-beta.4
+
+### Patch Changes
+
+- [#2356](https://github.com/Frontify/fondue/pull/2356) [`bea74b3`](https://github.com/Frontify/fondue/commit/bea74b38a57ce8db3468e17babfc3b66280a5d75) Thanks [@mbgspcii](https://github.com/mbgspcii)! - fix: prevent clicks inside a <Dialog> opened from a <Table.Row> from triggering the row click event.
+
+- Updated dependencies []:
+    - @frontify/fondue-tokens@5.0.0-beta.3
+
 ## 20.0.0-beta.3
 
 ### Major Changes
