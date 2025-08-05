@@ -31,15 +31,21 @@ const config: StorybookConfig = {
     refs: (_config, { configType }) => {
         if (configType === 'DEVELOPMENT') {
             return {
-                current: {
-                    title: 'Current',
-                    url: 'http://localhost:6006',
+                tokens: {
+                    title: 'Tokens',
+                    url: 'http://localhost:6005',
                     type: 'auto-inject',
                     expanded: true,
                 },
                 icons: {
                     title: 'Icons',
                     url: 'http://localhost:6007',
+                    type: 'auto-inject',
+                    expanded: true,
+                },
+                current: {
+                    title: 'Current',
+                    url: 'http://localhost:6006',
                     type: 'auto-inject',
                     expanded: true,
                 },
@@ -58,16 +64,20 @@ const config: StorybookConfig = {
             };
         }
 
-
         return {
-            current: {
-                title: 'Current',
-                url: `${pathPrefix}new`,
+            tokens: {
+                title: 'Tokens',
+                url: `${pathPrefix}tokens/`,
                 expanded: true,
             },
             icons: {
                 title: 'Icons',
                 url: `${pathPrefix}icons`,
+                expanded: true,
+            },
+            current: {
+                title: 'Current',
+                url: `${pathPrefix}new`,
                 expanded: true,
             },
             charts: {
