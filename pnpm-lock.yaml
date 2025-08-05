@@ -74,7 +74,7 @@ importers:
         version: 5.0.0
       '@frontify/eslint-config-react':
         specifier: ^0.17.7
-        version: 0.17.7(eslint@8.57.1)(prettier@3.5.3)(react@18.3.1)(typescript@5.8.3)
+        version: 0.17.7(@types/eslint@8.56.9)(eslint@8.57.1)(prettier@3.5.3)(react@18.3.1)(typescript@5.8.3)
       '@frontify/fondue-tokens':
         specifier: workspace:^
         version: link:../tokens
@@ -267,7 +267,7 @@ importers:
         version: 5.0.0
       '@frontify/eslint-config-react':
         specifier: ^0.17.7
-        version: 0.17.7(eslint@8.57.1)(prettier@3.5.3)(react@18.3.1)(typescript@5.8.3)
+        version: 0.17.7(@types/eslint@8.56.9)(eslint@8.57.1)(prettier@3.5.3)(react@18.3.1)(typescript@5.8.3)
       '@frontify/fondue-icons':
         specifier: workspace:^
         version: link:../icons
@@ -715,7 +715,7 @@ importers:
         version: 5.0.0
       '@frontify/eslint-config-react':
         specifier: ^0.17.7
-        version: 0.17.7(eslint@8.57.1)(prettier@3.5.3)(react@18.3.1)(typescript@5.8.3)
+        version: 0.17.7(@types/eslint@8.56.9)(eslint@8.57.1)(prettier@3.5.3)(react@18.3.1)(typescript@5.8.3)
       '@storybook/addon-a11y':
         specifier: ^8.6.12
         version: 8.6.12(storybook@8.6.12(prettier@3.5.3))
@@ -892,7 +892,7 @@ importers:
         version: 5.0.0
       '@frontify/eslint-config-react':
         specifier: ^0.17.7
-        version: 0.17.7(eslint@8.57.1)(prettier@3.5.3)(react@18.3.1)(typescript@5.8.3)
+        version: 0.17.7(@types/eslint@8.56.9)(eslint@8.57.1)(prettier@3.5.3)(react@18.3.1)(typescript@5.8.3)
       '@frontify/fondue-tokens':
         specifier: workspace:^
         version: link:../tokens
@@ -1006,10 +1006,56 @@ importers:
         version: 5.1.4(typescript@5.8.3)(vite@5.4.17(@types/node@22.14.0)(sass@1.86.3)(terser@5.31.1))
 
   packages/tokens:
+    dependencies:
+      '@types/react':
+        specifier: ^18.3.20
+        version: 18.3.23
+      react:
+        specifier: ^18.3.1
+        version: 18.3.1
     devDependencies:
-      '@frontify/eslint-config-basic':
-        specifier: ^0.20.6
-        version: 0.20.6(@types/eslint@8.56.9)(eslint@8.57.1)(prettier@3.5.3)(typescript@5.8.3)
+      '@frontify/eslint-config-react':
+        specifier: ^0.17.7
+        version: 0.17.7(@types/eslint@8.56.9)(eslint@8.57.1)(prettier@3.5.3)(react@18.3.1)(typescript@5.8.3)
+      '@frontify/fondue-components':
+        specifier: workspace:*
+        version: link:../components
+      '@frontify/fondue-icons':
+        specifier: workspace:*
+        version: link:../icons
+      '@storybook/addon-a11y':
+        specifier: ^8.6.12
+        version: 8.6.12(storybook@8.6.12(prettier@3.5.3))
+      '@storybook/addon-actions':
+        specifier: ^8.6.12
+        version: 8.6.12(storybook@8.6.12(prettier@3.5.3))
+      '@storybook/addon-essentials':
+        specifier: ^8.6.12
+        version: 8.6.12(@types/react@18.3.23)(storybook@8.6.12(prettier@3.5.3))
+      '@storybook/addon-interactions':
+        specifier: ^8.6.12
+        version: 8.6.12(storybook@8.6.12(prettier@3.5.3))
+      '@storybook/addon-links':
+        specifier: ^8.6.12
+        version: 8.6.12(react@18.3.1)(storybook@8.6.12(prettier@3.5.3))
+      '@storybook/addon-storysource':
+        specifier: ^8.6.12
+        version: 8.6.12(storybook@8.6.12(prettier@3.5.3))
+      '@storybook/blocks':
+        specifier: ^8.6.12
+        version: 8.6.12(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.6.12(prettier@3.5.3))
+      '@storybook/manager-api':
+        specifier: ^8.6.12
+        version: 8.6.12(storybook@8.6.12(prettier@3.5.3))
+      '@storybook/react':
+        specifier: ^8.6.12
+        version: 8.6.12(@storybook/test@8.6.12(storybook@8.6.12(prettier@3.5.3)))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.6.12(prettier@3.5.3))(typescript@5.8.3)
+      '@storybook/react-vite':
+        specifier: ^8.6.12
+        version: 8.6.12(@storybook/test@8.6.12(storybook@8.6.12(prettier@3.5.3)))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.44.2)(storybook@8.6.12(prettier@3.5.3))(typescript@5.8.3)(vite@5.4.17(@types/node@22.16.2)(sass@1.86.3)(terser@5.31.1))
+      '@storybook/theming':
+        specifier: ^8.6.12
+        version: 8.6.12(storybook@8.6.12(prettier@3.5.3))
       '@types/node':
         specifier: ^22.13.1
         version: 22.16.2
@@ -1019,6 +1065,9 @@ importers:
       eslint-plugin-notice:
         specifier: ^1.0.0
         version: 1.0.0(eslint@8.57.1)
+      storybook:
+        specifier: ^8.6.12
+        version: 8.6.12(prettier@3.5.3)
       style-dictionary:
         specifier: ^4.4.0
         version: 4.4.0
@@ -1049,7 +1098,7 @@ importers:
         version: 5.0.0
       '@frontify/eslint-config-react':
         specifier: ^0.17.7
-        version: 0.17.7(eslint@8.57.1)(prettier@3.5.3)(react@18.3.1)(typescript@5.8.3)
+        version: 0.17.7(@types/eslint@8.56.9)(eslint@8.57.1)(prettier@3.5.3)(react@18.3.1)(typescript@5.8.3)
       '@storybook/addon-a11y':
         specifier: ^8.6.12
         version: 8.6.12(storybook@8.6.12(prettier@3.5.3))
@@ -12277,7 +12326,7 @@ snapshots:
       - supports-color
       - typescript
 
-  '@frontify/eslint-config-react@0.17.7(eslint@8.57.1)(prettier@3.5.3)(react@18.3.1)(typescript@5.8.3)':
+  '@frontify/eslint-config-react@0.17.7(@types/eslint@8.56.9)(eslint@8.57.1)(prettier@3.5.3)(react@18.3.1)(typescript@5.8.3)':
     dependencies:
       '@frontify/eslint-config-basic': 0.20.6(@types/eslint@8.56.9)(eslint@8.57.1)(prettier@3.5.3)(typescript@5.8.3)
       eslint: 8.57.1
@@ -15922,7 +15971,7 @@ snapshots:
       std-env: 3.8.1
       test-exclude: 7.0.1
       tinyrainbow: 2.0.0
-      vitest: 3.1.1(@types/debug@4.1.12)(@types/node@22.16.2)(@vitest/ui@3.1.1)(happy-dom@14.12.3)(sass@1.86.3)(terser@5.31.1)
+      vitest: 3.1.1(@types/debug@4.1.12)(@types/node@22.14.0)(@vitest/ui@3.1.1)(happy-dom@15.11.7)(sass@1.86.3)(terser@5.31.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -15996,7 +16045,7 @@ snapshots:
       sirv: 3.0.1
       tinyglobby: 0.2.12
       tinyrainbow: 2.0.0
-      vitest: 3.1.1(@types/debug@4.1.12)(@types/node@22.16.2)(@vitest/ui@3.1.1)(happy-dom@14.12.3)(sass@1.86.3)(terser@5.31.1)
+      vitest: 3.1.1(@types/debug@4.1.12)(@types/node@22.14.0)(@vitest/ui@3.1.1)(happy-dom@15.11.7)(sass@1.86.3)(terser@5.31.1)
 
   '@vitest/utils@2.0.5':
     dependencies:

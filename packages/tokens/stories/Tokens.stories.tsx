@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import colors from '@frontify/fondue-tokens/json/colors';
-import semantic from '@frontify/fondue-tokens/json/semantic';
+import { Flex } from '@frontify/fondue-components';
 import { type Meta, type StoryFn } from '@storybook/react';
 
-import { Flex } from '../Flex/Flex';
+import colors from '@frontify/fondue-tokens/json/colors';
+import semantic from '@frontify/fondue-tokens/json/semantic';
 
 import { PreviewConfigWrapper } from './components/PreviewConfigContext';
 import { TokenCollectionOverview } from './components/Tokens/TokenCollectionOverview';

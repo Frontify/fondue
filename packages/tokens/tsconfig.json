@@ -1,16 +1,17 @@
 {
     "compilerOptions": {
-        "target": "ESNext",
+        "target": "ES2021",
         "useDefineForClassFields": true,
-        "lib": ["ESNext"],
+        "lib": ["ES2021", "DOM", "DOM.Iterable"],
         "module": "ESNext",
         "skipLibCheck": true,
-        "moduleResolution": "Bundler",
+        "moduleResolution": "bundler",
         "allowImportingTsExtensions": true,
         "resolveJsonModule": true,
         "isolatedModules": true,
         "noEmit": true,
         "jsx": "react-jsx",
+        "jsxImportSource": "react",
         "strict": true,
         "noUncheckedIndexedAccess": true,
         "noUnusedLocals": true,
@@ -18,5 +19,5 @@
         "noFallthroughCasesInSwitch": true,
         "baseUrl": "."
     },
-    "include": ["src", "legacyTokens", "tools"]
+    "include": ["src", "legacyTokens", "tools", "stories", ".storybook/*"]
 }

@@ -1,9 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { Flex, Grid } from '@frontify/fondue-components';
 import { type ReactNode } from 'react';
 
-import { Flex } from '../../../Flex/Flex';
-import { Grid } from '../../../Grid/Grid';
 import { GroupLabel } from '../GroupLabel';
 
 import { UtilityPreviewCard } from './UtilityPreviewCard';

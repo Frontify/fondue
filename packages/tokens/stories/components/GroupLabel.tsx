@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Flex } from '../../Flex/Flex';
+import { Flex } from '@frontify/fondue-components';
 
 export const GroupLabel = ({ label, parentKeys }: { label: string; parentKeys: string[] }) => {
     return (

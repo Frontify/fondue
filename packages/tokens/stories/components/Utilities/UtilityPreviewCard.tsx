@@ -1,10 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { Button, Flex } from '@frontify/fondue-components';
 import { IconClipboard } from '@frontify/fondue-icons';
 import { Fragment } from 'react/jsx-runtime';
-
-import { Button } from '#/components/Button/Button';
-import { Flex } from '#/components/Flex/Flex';
 
 import { usePreviewConfig } from '../PreviewConfigContext';
 import { VariableValue } from '../VariableValue';

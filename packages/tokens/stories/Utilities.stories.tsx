@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import utilities from '@frontify/fondue-tokens/json/utilities';
+import { Flex } from '@frontify/fondue-components';
 import { type Meta, type StoryFn } from '@storybook/react';
 
-import { Flex } from '../Flex/Flex';
+import utilities from '@frontify/fondue-tokens/json/utilities';
 
 import { PreviewConfigWrapper } from './components/PreviewConfigContext';
 import { UsageInfo } from './components/UsageInfo';

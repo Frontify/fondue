@@ -1,10 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { Button, Flex, Flyout } from '@frontify/fondue-components';
 import { IconClipboard, IconCode } from '@frontify/fondue-icons';
-
-import { Button } from '#/components/Button/Button';
-import { Flex } from '#/components/Flex/Flex';
-import { Flyout } from '#/components/Flyout/Flyout';
 
 import { usePreviewConfig } from '../PreviewConfigContext';
 import { VariableValue } from '../VariableValue';
