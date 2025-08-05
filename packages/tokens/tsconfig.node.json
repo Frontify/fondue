@@ -8,5 +8,5 @@
         "baseUrl": ".",
         "lib": ["ESNext"]
     },
-    "include": [".eslintrc.cjs", "config.ts", "package.json", "src", "legacyTokens", "tools"]
+    "include": [".eslintrc.cjs", "config.ts", "package.json", "src", "legacyTokens", "tools", "tailwind.config.ts"]
 }

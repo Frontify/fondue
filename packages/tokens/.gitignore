@@ -112,3 +112,4 @@ typings/
 output
 tmp
 **/generated
+storybook-static
