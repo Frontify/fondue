@@ -9,7 +9,6 @@ import './styles.css';
 
 import { type Decorator, type Preview, type StoryContext } from '@storybook/react';
 
-import DocumentationTemplate from './DocumentationTemplate.mdx';
 import { withTheme } from './components/StoryWithTheme';
 
 const ThemeProviderWrapper: Decorator = (Story: ComponentType, context: StoryContext) => {
@@ -61,13 +60,6 @@ const preview: Preview = {
             storySort: {
                 order: ['Tokens', 'Utilities', 'Typography', 'Layout', 'Components'],
                 method: 'alphabetical',
-            },
-        },
-        docs: {
-            page: DocumentationTemplate,
-            toc: {
-                title: 'Table of contents',
-                headingSelector: 'h2, h3',
             },
         },
         controls: {
