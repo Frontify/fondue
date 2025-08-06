@@ -110,19 +110,19 @@ test('should navigate though menu with arrow', async ({ mount, page }) => {
 
     await expect(page.getByTestId(ITEM_TEST_ID1)).toHaveAttribute('data-highlighted', 'true');
     await expect(page.getByTestId(ITEM_TEST_ID2)).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
-    await expect(page.getByTestId(ITEM_TEST_ID1)).toHaveCSS('background-color', 'rgb(225, 225, 219)');
+    await expect(page.getByTestId(ITEM_TEST_ID1)).toHaveCSS('background-color', 'rgb(240, 240, 235)');
 
     await page.keyboard.press('ArrowDown');
 
     await expect(page.getByTestId(ITEM_TEST_ID2)).toHaveAttribute('data-highlighted', 'true');
     await expect(page.getByTestId(ITEM_TEST_ID1)).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
-    await expect(page.getByTestId(ITEM_TEST_ID2)).toHaveCSS('background-color', 'rgb(225, 225, 219)');
+    await expect(page.getByTestId(ITEM_TEST_ID2)).toHaveCSS('background-color', 'rgb(240, 240, 235)');
 
     await page.keyboard.press('ArrowUp');
 
     await expect(page.getByTestId(ITEM_TEST_ID1)).toHaveAttribute('data-highlighted', 'true');
     await expect(page.getByTestId(ITEM_TEST_ID2)).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
-    await expect(page.getByTestId(ITEM_TEST_ID1)).toHaveCSS('background-color', 'rgb(225, 225, 219)');
+    await expect(page.getByTestId(ITEM_TEST_ID1)).toHaveCSS('background-color', 'rgb(240, 240, 235)');
 });
 
 test('should select item in list', async ({ mount, page }) => {
@@ -472,11 +472,11 @@ test('render indicator on selected item', async ({ mount, page }) => {
     await component.click();
 
     await expect(firstItem).toHaveAttribute('data-selected', 'true');
-    await expect(firstItem).toHaveCSS('background-color', 'rgb(215, 215, 208)');
+    await expect(firstItem).toHaveCSS('background-color', 'rgb(234, 234, 228)');
     await expect(chekmarkIcon).toBeVisible();
 
     await page.keyboard.press('ArrowDown');
 
-    await expect(firstItem).toHaveCSS('background-color', 'rgb(215, 215, 208)');
+    await expect(firstItem).toHaveCSS('background-color', 'rgb(234, 234, 228)');
     await expect(chekmarkIcon).toBeVisible();
 });

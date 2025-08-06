@@ -195,7 +195,7 @@ export const FlyoutHeader = (
         <div data-test-id={dataTestId} ref={ref} className={styles.header}>
             <div>{children}</div>
             {showCloseButton && (
-                <RadixPopover.Close asChild>
+                <RadixPopover.Close asChild {...closeProps}>
                     <Button
                         size="small"
                         aspect="square"
