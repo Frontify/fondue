@@ -7,8 +7,9 @@ import { RgbaColorPicker } from 'react-colorful';
 import { Dropdown } from '@components/Dropdown/Dropdown';
 import { TextInputType } from '@components/TextInput/TextInput';
 import { toLongRgb, toShortRgb } from '@utilities/colors';
+import { ColorFormat } from 'src/types/colors';
 
-import { type Color, ColorFormat } from '../../types';
+import { type Color } from '../../types';
 
 import { ColorInput, DecoratorPosition } from './ColorInput';
 import { type ColorPickerProps } from './ColorPicker';

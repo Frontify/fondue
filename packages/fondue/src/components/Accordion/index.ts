@@ -2,4 +2,4 @@
 
 export * from './Accordion';
 export { AccordionHeaderIcon } from './AccordionHeaderIcon';
-export * from './types';
+export { AccordionHeaderProps } from './types';
