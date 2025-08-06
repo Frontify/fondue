@@ -1,5 +1,13 @@
 # @frontify/fondue
 
+## 13.0.0-beta.7
+
+### Patch Changes
+
+- Updated dependencies [[`efbfe58`](https://github.com/Frontify/fondue/commit/efbfe581fb15512c827b766beea0cb8f8f989b5b)]:
+    - @frontify/fondue-components@20.0.0-beta.5
+    - @frontify/fondue-tokens@5.0.0-beta.3
+
 ## 13.0.0-beta.6
 
 ### Major Changes
