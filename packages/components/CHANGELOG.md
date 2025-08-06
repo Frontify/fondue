@@ -1,5 +1,16 @@
 # @frontify/fondue-components
 
+## 20.0.0-beta.5
+
+### Major Changes
+
+- [`efbfe58`](https://github.com/Frontify/fondue/commit/efbfe581fb15512c827b766beea0cb8f8f989b5b) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: update components with new tokens
+
+### Patch Changes
+
+- Updated dependencies []:
+    - @frontify/fondue-tokens@5.0.0-beta.3
+
 ## 20.0.0-beta.4
 
 ### Patch Changes
