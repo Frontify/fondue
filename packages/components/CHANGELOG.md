@@ -1,5 +1,16 @@
 # @frontify/fondue-components
 
+## 20.0.0-beta.6
+
+### Major Changes
+
+- [`c386194`](https://github.com/Frontify/fondue/commit/c38619436f41dd9f66182748ac6269a6e62d2378) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: adjust components with the new token styles
+
+### Patch Changes
+
+- Updated dependencies []:
+    - @frontify/fondue-tokens@5.0.0-beta.3
+
 ## 20.0.0-beta.5
 
 ### Major Changes
