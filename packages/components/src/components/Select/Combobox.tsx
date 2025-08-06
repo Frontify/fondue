@@ -12,7 +12,7 @@ import { type CommonAriaProps } from '#/helpers/aria';
 
 import { SelectMenu, type SelectMenuViewportCollisionPadding } from './SelectMenu';
 import styles from './styles/select.module.scss';
-import { type AsyncItemsFetcher, useSelectData } from './useSelectData';
+import { useSelectData, type AsyncItemsFetcher } from './useSelectData';
 
 export type ComboboxProps = {
     /**

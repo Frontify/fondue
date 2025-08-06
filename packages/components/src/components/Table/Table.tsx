@@ -228,9 +228,9 @@ export const TableHeaderCell = forwardRef<HTMLTableCellElement, TableHeaderCellP
                         )}
                         <Box width={3}>
                             {sortDirection === 'ascending' ? (
-                                <IconArrowUp size="12" />
+                                <IconArrowUp className={styles.sortIndicator} size="12" />
                             ) : sortDirection === 'descending' ? (
-                                <IconArrowDown size="12" />
+                                <IconArrowDown className={styles.sortIndicator} size="12" />
                             ) : (
                                 <IconArrowBidirectional className={styles.sortIndicator} size="12" />
                             )}

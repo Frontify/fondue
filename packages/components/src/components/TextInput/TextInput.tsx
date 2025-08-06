@@ -14,6 +14,8 @@ import {
 
 import { cn } from '#/utilities/styleUtilities';
 
+import { LoadingCircle } from '../LoadingCircle/LoadingCircle';
+
 import styles from './styles/text.module.scss';
 
 export type TextInputProps = {
@@ -123,7 +125,9 @@ export const TextFieldRoot = (
     return (
         <div className={cn(styles.root, className)} data-status={status} data-test-id={dataTestId}>
             {status === 'loading' ? (
-                <div className={styles.loadingStatus} data-test-id={`${dataTestId}-loader`} />
+                <div className={styles.loadingStatus} data-test-id={`${dataTestId}-loader`}>
+                    <LoadingCircle size="xx-small" />
+                </div>
             ) : null}
             <input
                 onMouseDown={(mouseEvent) => {

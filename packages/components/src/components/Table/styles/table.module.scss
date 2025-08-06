@@ -72,14 +72,14 @@
 .headerCell {
     font-size: var(--typography-font-size-small);
     font-weight: 400;
-    line-height: sizeToken.get(4);
+    line-height: var(--typography-line-height-tight);
     color: var(--color-secondary-default);
 
     border-top: 1px solid var(--color-line-subtle);
     border-bottom: 1px solid var(--color-line-subtle);
 
     &:hover {
-        color: var(--color-primary-hover);
+        color: var(--color-secondary-hover);
     }
 
     &[data-sortable='false'] {
@@ -106,20 +106,27 @@
     border: none;
     margin: 0;
     font: inherit;
-    color: inherit;
+    color: var(--color-primary-default);
     cursor: pointer;
+
+    .sortIndicator {
+        color: var(--color-secondary-default);
+    }
+
 
     &[data-active='true'] {
         color: var(--color-primary-default);
+
+        .sortIndicator {
+            color: var(--color-secondary-active);
+        }
     }
 
     &:focus-visible {
         @include focusStyle.focus-outline;
     }
 
-    .sortIndicator {
-        color: var(--color-disabled-default);
-    }
+
 }
 
 .body {

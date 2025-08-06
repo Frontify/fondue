@@ -9,7 +9,7 @@
     display: flex;
     flex-direction: column;
     background-color: var(--color-surface-default);
-    border: var(--border-width-default) solid var(--color-line-mid);
+    border: var(--border-width-default) solid var(--color-line-subtle);
     width: 100%;
     overflow: auto;
     max-height: var(--radix-popover-content-available-height);
@@ -81,7 +81,7 @@
     justify-content: space-between;
     align-items: center;
     font-weight: 500;
-    border-bottom: var(--border-width-default) solid var(--color-line-mid);
+    border-bottom: var(--border-width-default) solid var(--color-line-subtle);
 
     .root[data-flyout-spacing='tight'] & {
         padding: sizeToken.get(2);
@@ -136,7 +136,7 @@
     justify-content: flex-end;
     gap: sizeToken.get(2);
     font-weight: 400;
-    border-top: var(--border-width-default) solid var(--color-line-mid);
+    border-top: var(--border-width-default) solid var(--color-line-subtle);
 
     .root[data-flyout-spacing='tight'] & {
         padding: sizeToken.get(2);

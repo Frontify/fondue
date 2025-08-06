@@ -234,7 +234,7 @@
     display: none;
     border-radius: var(--border-radius-medium);
     background-color: var(--color-surface-default);
-    border: var(--border-width-default) solid var(--color-line-mid);
+    border: var(--border-width-default) solid var(--color-line-subtle);
     max-width: calc(100dvw - sizeToken.get(8));
     min-width: var(--radix-popover-trigger-width);
     overflow: auto;
@@ -302,12 +302,11 @@
     }
 
     &[data-highlighted='true'] {
-        background-color: var(--color-container-secondary-default);
-        color: var(--color-container-secondary-on-secondary-container);
+        background-color: var(--color-surface-hover);
     }
 
     &[data-highlighted]:active {
-        background-color: var(--color-container-secondary-hover);
+        background-color: var(--color-surface-active);
         transition: none;
     }
 
@@ -319,8 +318,7 @@
 
     .menu[data-has-interacted='false'] &[data-selected='true']:not(:hover),
     &[data-selected='true'][data-highlighted='false'] {
-        background-color: var(--color-container-secondary-hover);
-        color: var(--color-container-secondary-on-secondary-container);
+        background-color: var(--color-surface-active);
     }
 
     .itemValue {

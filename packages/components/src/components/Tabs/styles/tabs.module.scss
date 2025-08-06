@@ -15,7 +15,7 @@ $radius-without-border: calc(var(--border-radius-medium) - var(--border-width-de
         padding-left: sizeToken.get(3);
         padding-right: sizeToken.get(3);
         gap: sizeToken.get(2);
-        border-bottom: 1px solid var(--color-line-mid);
+        border-bottom: 1px solid var(--color-line-subtle);
         box-sizing: border-box;
     }
 
@@ -35,7 +35,7 @@ $radius-without-border: calc(var(--border-radius-medium) - var(--border-width-de
 
         &:hover,
         &:focus {
-            color: var(--color-primary-default);
+            color: var(--color-secondary-hover);
         }
 
         &:disabled {
@@ -89,7 +89,7 @@ $radius-without-border: calc(var(--border-radius-medium) - var(--border-width-de
     .trigger {
         color: var(--color-primary-default);
         font-size: var(--typography-font-size-small);
-        font-weight: 500;
+        font-weight: var(--typography-font-weight-medium);
         line-height: var(--typography-line-height-tight);
         white-space: nowrap;
         display: flex;
@@ -104,7 +104,7 @@ $radius-without-border: calc(var(--border-radius-medium) - var(--border-width-de
 
         &:hover,
         &:focus {
-            color: var(--button-text-color-hover);
+            color: var(--color-container-secondary-on-secondary-container);
             background-color: var(--color-container-secondary-hover);
             border-radius: var(--border-radius-medium);
         }
@@ -114,7 +114,7 @@ $radius-without-border: calc(var(--border-radius-medium) - var(--border-width-de
         }
 
         &[data-state='active'] {
-            color: var(--color-primary-default);
+            color: var(--color-container-secondary-on-secondary-container);
             background-color: var(--color-container-secondary-default);
             border-radius: var(--border-radius-medium);
         }

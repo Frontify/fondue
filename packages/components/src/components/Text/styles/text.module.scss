@@ -29,16 +29,15 @@
 
 .color-default { color: var(--color-primary-default); }
 .color-weak { color: var(--color-secondary-default); }
-.color-x-weak { color: var(--color-secondary-default); }
 .color-disabled { color: var(--color-disabled-default); }
 .color-negative { color: var(--color-error-default); }
 .color-positive { color: var(--color-success-default); }
 .color-warning { color: var(--color-warning-default); }
-.color-interactive { color: var(--color-interactive-default); }
+.color-interactive { color: var(--color-highlight-default); }
 
 .color-box-neutral { color: var(--color-container-secondary-on-secondary-container); }
 .color-box-selected { color: var(--color-container-highlight-on-highlight-container); }
-.color-box-disabled { color: var(--color-container-disabled-on-disabled); }
+.color-box-disabled { color: var(--color-container-disabled-on-disabled-container); }
 .color-box-positive { color: var(--color-container-success-on-success-container); }
 .color-box-negative { color: var(--color-container-error-on-error-container); }
 .color-box-warning { color: var(--color-container-warning-on-warning-container); }

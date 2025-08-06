@@ -32,7 +32,7 @@
         border-color: var(--color-line-strong);
     }
 
-    &:has([data-show-focus-ring='false']:focus) {
+    &:has([data-show-focus-ring='false']:focus):not(:has(input[readonly])) {
         border-color: var(--color-line-strong);
     }
 
@@ -91,11 +91,11 @@
     // Readonly styles
     &[readonly] {
         cursor: text;
-        color: var(--color-secondary-default);
+        color: var(--color-primary-default);
         text-indent: 0px;
     }
     &[readonly] ~ .slot {
-        color: var(--color-secondary-default);
+        color: var(--color-primary-default);
     }
     &[readonly] ~ .slot:not([data-name='right']) {
         padding-left: 0px;
@@ -177,21 +177,8 @@
     align-items: center;
     justify-content: center;
     background-color: var(--color-surface-default);
-    border: var(--border-width-default) solid var(--color-line-strong);
+    border: var(--border-width-default) solid var(--color-line-mid);
     border-radius: 9999px;
-
-    &::before {
-        content: '';
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: sizeToken.get(4);
-        height: sizeToken.get(4);
-        border: var(--border-width-default) solid var(--color-interactive-default);
-        border-top-color: transparent;
-        border-radius: 9999px;
-        animation: spin 1s linear infinite;
-    }
 }
 
 @keyframes spin {

@@ -1,15 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 .root[data-border="true"] {
-    border-bottom: var(--border-width-default) solid var(--color-line-mid);
-    border-top: var(--border-width-default) solid var(--color-line-mid);
+    border-bottom: var(--border-width-default) solid var(--color-line-subtle);
+    border-top: var(--border-width-default) solid var(--color-line-subtle);
 }
 
 .accordionItem {
     color: var(--color-secondary-default);
 
     &:not(:last-child) {
-        border-bottom: var(--border-width-default) solid var(--color-line-mid);
+        border-bottom: var(--border-width-default) solid var(--color-line-subtle);
     }
 
     &:has(.accordionTrigger:focus-visible):not([data-show-focus-ring='false']) {
@@ -27,6 +27,7 @@
     padding: var(--spacing-large) var(--spacing-x-large);
     text-align: left;
     width: 100%;
+    color: var(--color-secondary-default);
 
     &[data-state="open"],
     &:hover {

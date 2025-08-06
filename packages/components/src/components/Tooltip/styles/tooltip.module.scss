@@ -11,7 +11,7 @@
     overflow: hidden;
     word-wrap: break-word;
     transform-origin: var(--radix-tooltip-content-transform-origin);
-    border: 1px solid var(--color-primary-hover);
+    border: 1px solid var(--color-line-strong);
 
     @include text.text-sm;
 
@@ -26,6 +26,6 @@
 
 .arrow {
     fill: var(--color-primary-default);
-    filter: drop-shadow(0 1px 0px var(--color-primary-hover));
+    filter: drop-shadow(0 1px 0px var(--color-line-strong));
     transform: translateY(-1px);
 }

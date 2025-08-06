@@ -7,6 +7,7 @@ import { forwardRef, type CSSProperties, type ForwardedRef, type ReactNode } fro
 import { type CommonAriaProps } from '#/helpers/aria';
 import { addAutoFocusAttribute, addShowFocusRing } from '#/utilities/domUtilities';
 
+import { Button } from '../Button/Button';
 import { ThemeProvider, useFondueTheme } from '../ThemeProvider/ThemeProvider';
 
 import styles from './styles/flyout.module.scss';
@@ -194,14 +195,16 @@ export const FlyoutHeader = (
         <div data-test-id={dataTestId} ref={ref} className={styles.header}>
             <div>{children}</div>
             {showCloseButton && (
-                <RadixPopover.Close
-                    role="button"
-                    data-test-id={`${dataTestId}-close`}
-                    className={styles.close}
-                    aria-label="Close"
-                    {...closeProps}
-                >
-                    <IconCross size={20} />
+                <RadixPopover.Close asChild>
+                    <Button
+                        size="small"
+                        aspect="square"
+                        emphasis="weak"
+                        aria-label="Close"
+                        data-test-id={`${dataTestId}-close`}
+                    >
+                        <IconCross size={20} />
+                    </Button>
                 </RadixPopover.Close>
             )}
         </div>
