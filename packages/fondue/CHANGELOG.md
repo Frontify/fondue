@@ -1,5 +1,17 @@
 # @frontify/fondue
 
+## 13.0.0-beta.8
+
+### Major Changes
+
+- [`b944142`](https://github.com/Frontify/fondue/commit/b94414215a500956ea372d85ea37d10fb4336cd0) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: remove unused exports
+
+### Patch Changes
+
+- Updated dependencies [[`c386194`](https://github.com/Frontify/fondue/commit/c38619436f41dd9f66182748ac6269a6e62d2378)]:
+    - @frontify/fondue-components@20.0.0-beta.6
+    - @frontify/fondue-tokens@5.0.0-beta.3
+
 ## 13.0.0-beta.7
 
 ### Patch Changes
