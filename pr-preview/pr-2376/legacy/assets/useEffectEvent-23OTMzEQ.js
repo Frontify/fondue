@@ -1,0 +1,1 @@
+import{R as o,r as a}from"./index-ClcD9ViR.js";const n=typeof document<"u"?o.useLayoutEffect:()=>{};function f(t){const c=a.useRef(null);return n(()=>{c.current=t},[t]),a.useCallback((...r)=>{const e=c.current;return e==null?void 0:e(...r)},[])}export{n as $,f as a};
