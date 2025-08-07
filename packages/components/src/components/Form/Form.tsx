@@ -33,7 +33,7 @@ const Form = <T extends FieldValues>({
     className,
     ...otherProps
 }: FormProps<T>) => {
-    const form = useForm<T>({
+    const formData = useForm<T>({
         resolver: yupResolver(schema),
         mode: 'onSubmit',
         defaultValues: initialValues,
@@ -53,7 +53,7 @@ const Form = <T extends FieldValues>({
         setValue,
         trigger,
         watch,
-    } = form;
+    } = formData;
 
     const debounceCatalogue = useRef<DebouceCatalogue<T>>({} as DebouceCatalogue<T>);
 
@@ -130,7 +130,7 @@ const Form = <T extends FieldValues>({
     );
 
     return (
-        <FormProvider {...form}>
+        <FormProvider {...formData}>
             <FormContext.Provider value={contextualFormControls as FormContextType}>
                 <form id={id} onSubmit={submitForm} className={className} {...otherProps}>
                     {typeof children === 'function' ? children(contextualFormControls) : children}
