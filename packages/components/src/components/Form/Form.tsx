@@ -3,20 +3,20 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import debounce from 'lodash/debounce';
 import get from 'lodash/get';
-import { type ReactElement, useCallback, useEffect, useMemo, useRef } from 'react';
+import { type ReactElement, useCallback, useEffect, useMemo, useRef, useContext } from 'react';
 import {
-    Controller,
     type ControllerRenderProps,
     useForm,
     type FieldValues,
     type Path,
     type ControllerFieldState,
     type UseFormStateReturn,
-    FormProvider,
+    type UseControllerProps,
+    useController,
 } from 'react-hook-form';
 import { object } from 'yup';
 
-import { FormContext, useFormContext } from './Context/FormContext';
+import { FormContext } from './Context/FormContext';
 import { type FormContextType } from './Context/types';
 import { type DebouceCatalogue, type FormProps } from './types';
 
@@ -130,13 +130,11 @@ const Form = <T extends FieldValues>({
     );
 
     return (
-        <FormProvider {...formData}>
-            <FormContext.Provider value={contextualFormControls as FormContextType}>
-                <form id={id} onSubmit={submitForm} className={className} {...otherProps}>
-                    {typeof children === 'function' ? children(contextualFormControls) : children}
-                </form>
-            </FormContext.Provider>
-        </FormProvider>
+        <FormContext.Provider value={contextualFormControls as FormContextType}>
+            <form id={id} onSubmit={submitForm} className={className} {...otherProps}>
+                {typeof children === 'function' ? children(contextualFormControls) : children}
+            </form>
+        </FormContext.Provider>
     );
 };
 
@@ -153,11 +151,12 @@ type FormControlProps<TFieldValues extends FieldValues = FieldValues> = {
 
 const FormControl = <TFieldValues extends FieldValues = FieldValues>({
     children,
-    name,
-}: FormControlProps<TFieldValues>) => {
-    const { control } = useFormContext<TFieldValues>();
+    ...props
+}: FormControlProps<TFieldValues> & UseControllerProps<TFieldValues>) => {
+    const { control } = useContext(FormContext) ?? {};
+    const state = useController({ control: control as UseControllerProps<TFieldValues>['control'], ...props });
 
-    return <Controller control={control} name={name} render={(state) => children(state)} />;
+    return children(state);
 };
 
 Form.Control = FormControl;
