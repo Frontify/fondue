@@ -368,8 +368,8 @@ test('should clear input when typed value is not selected', async ({ mount, page
     await component.click();
 
     const nonExistentValue = 'test1';
-    await page.keyboard.type(nonExistentValue);
-    await page.keyboard.press('Tab');
+    await component.getByRole('combobox').fill(nonExistentValue);
+    await component.press('Tab');
 
     await expect(component.getByTestId(SELECT_TEST_ID)).toHaveValue('');
     await expect(page.getByPlaceholder(PLACEHOLDER_TEXT)).toBeVisible();
