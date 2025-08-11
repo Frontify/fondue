@@ -4,6 +4,11 @@ on:
     pull_request:
         paths:
             - packages/**
+            - .npmrc
+            - .nvmrc
+            - package.json
+            - pnpm-lock.yaml
+            - pnpm-workspace.yaml
 
 # Ensures that only one workflow per branch will run at a time.
 concurrency:
