@@ -369,7 +369,7 @@ test('should render spacious padding', async ({ mount, page }) => {
 
 test('should render open', async ({ mount, page }) => {
     await mount(
-        <Flyout.Root open={true}>
+        <Flyout.Root open>
             <Flyout.Trigger>
                 <Button>{FLYOUT_TRIGGER_TEXT}</Button>
             </Flyout.Trigger>

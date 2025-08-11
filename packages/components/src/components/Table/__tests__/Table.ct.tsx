@@ -92,7 +92,7 @@ test('should handle ARIA attributes', async ({ mount }) => {
 test('should handle sticky header and ARIA attributes', async ({ mount }) => {
     const component = await mount(
         <Table.Root sticky="head" aria-label="Table">
-            <Table.Header aria-label="Header Section" aria-busy={true}>
+            <Table.Header aria-label="Header Section" aria-busy>
                 <Table.Row>
                     <Table.HeaderCell>Name</Table.HeaderCell>
                 </Table.Row>
@@ -123,7 +123,7 @@ test('should handle header with loading state', async ({ mount }) => {
 test('should handle sticky first column', async ({ mount }) => {
     const component = await mount(
         <Table.Root sticky="col" aria-label="Table">
-            <Table.Body aria-busy={true}>
+            <Table.Body aria-busy>
                 <Table.Row>
                     <Table.RowCell>Test</Table.RowCell>
                 </Table.Row>
@@ -189,11 +189,11 @@ test('should handle all row states and interactions', async ({ mount }) => {
     const component = await mount(
         <Table.Root aria-label="Table">
             <Table.Body>
-                <Table.Row onClick={onClick} disabled={true} aria-label="Test Row">
+                <Table.Row onClick={onClick} disabled aria-label="Test Row">
                     <Table.RowCell>Test</Table.RowCell>
                     <Table.RowCell>Test</Table.RowCell>
                 </Table.Row>
-                <Table.Row onClick={onClick} selected={true}>
+                <Table.Row onClick={onClick} selected>
                     <Table.RowCell>Test</Table.RowCell>
                     <Table.RowCell>Test</Table.RowCell>
                 </Table.Row>
@@ -203,7 +203,7 @@ test('should handle all row states and interactions', async ({ mount }) => {
                         <button onClick={onButtonClick}>Test</button>
                     </Table.RowCell>
                 </Table.Row>
-                <Table.Row onClick={onClick} disabled={true}>
+                <Table.Row onClick={onClick} disabled>
                     <Table.RowCell>Test</Table.RowCell>
                     <Table.RowCell>
                         <button onClick={onButtonClick}>Test</button>

@@ -32,7 +32,7 @@ async function dragSlider(
     await slider.hover();
     await page.mouse.down();
     await page.mouse.move(endingXPos, startingYPos);
-    onBeforeMouseUp && onBeforeMouseUp();
+    onBeforeMouseUp?.();
     await page.mouse.up();
 }
 
@@ -152,7 +152,7 @@ test('should set and enforce min and max values', async ({ mount, page }) => {
 });
 
 test('should not interact with slider when disabled', async ({ mount }) => {
-    const component = await mount(<Slider aria-label="disabled-slider" disabled={true} defaultValue={[50]} />);
+    const component = await mount(<Slider aria-label="disabled-slider" disabled defaultValue={[50]} />);
 
     expect(await component.getAttribute('aria-disabled')).toBe('true');
     expect(await component.getAttribute('data-disabled')).toBeDefined();

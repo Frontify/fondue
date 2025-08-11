@@ -179,7 +179,7 @@ export const SelectCombobox = (
                         onBlur={onBlurHandler}
                     />
                     {inputSlots}
-                    {clearButton && (
+                    {clearButton ? (
                         <RadixSlot
                             onClick={(event) => {
                                 event.stopPropagation();
@@ -190,7 +190,7 @@ export const SelectCombobox = (
                         >
                             {clearButton}
                         </RadixSlot>
-                    )}
+                    ) : null}
                     {asyncItemStatus.isLoading && isOpen ? (
                         <ForwardedRefSelectSlot name="right" data-test-id={`${dataTestId}-right-slot`}>
                             <LoadingCircle size="x-small" data-test-id={`${dataTestId}-loading-circle`} />

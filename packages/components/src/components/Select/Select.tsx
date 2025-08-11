@@ -159,7 +159,7 @@ export const SelectInput = (
                 >
                     <span className={styles.selectedValue}>{displayedValue}</span>
                     {inputSlots}
-                    {clearButton && (
+                    {clearButton ? (
                         <RadixSlot
                             onClick={(event) => {
                                 event.stopPropagation();
@@ -169,7 +169,7 @@ export const SelectInput = (
                         >
                             {clearButton}
                         </RadixSlot>
-                    )}
+                    ) : null}
                     <div className={styles.icons}>
                         <IconCaretDown size={16} className={styles.caret} />
                         {status === 'success' ? (

@@ -191,7 +191,11 @@ test('should call open and close callbacks', async ({ mount, page }) => {
     const component = await mount(
         <Dropdown.Root
             onOpenChange={(isOpen) => {
-                isOpen ? onOpen() : onClose();
+                if (isOpen) {
+                    onOpen();
+                } else {
+                    onClose();
+                }
             }}
         >
             <Dropdown.Trigger>
