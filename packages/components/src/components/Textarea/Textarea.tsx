@@ -3,7 +3,11 @@
 import { IconCross } from '@frontify/fondue-icons';
 import { useEffect, useRef, useState } from 'react';
 
+import { LoadingCircle } from '../LoadingCircle/LoadingCircle';
+
 import styles from './styles/textarea.module.scss';
+
+type Status = 'default' | 'loading' | 'success' | 'error' | 'warning';
 
 type TextareaProps = {
     /**
@@ -35,6 +39,11 @@ type TextareaProps = {
     readOnly?: boolean;
     resizable?: boolean;
     selectable?: boolean;
+    /**
+     * The current status of the input. It will trigger the corresponding icon to be appended to the Textarea.
+     * @default 'default'
+     */
+    status?: Status;
 };
 
 export const Textarea = ({
@@ -48,10 +57,13 @@ export const Textarea = ({
     readOnly,
     resizable,
     selectable = true,
+    status = 'default',
 }: TextareaProps) => {
     const ref = useRef<HTMLTextAreaElement>(null);
 
     const [value, setValue] = useState(defaultValue ?? '');
+
+    const hasTools = clearable || status === 'loading';
 
     const clear = () => {
         setValue('');
@@ -75,6 +87,7 @@ export const Textarea = ({
             data-disabled={disabled || readOnly}
             data-replicated-value={value}
             data-resizable={resizable}
+            data-status={status}
         >
             <textarea
                 autoComplete={autocomplete ? 'on' : 'off'}
@@ -91,11 +104,14 @@ export const Textarea = ({
                 rows={rows}
                 value={value}
             ></textarea>
-            {clearable && (
+            {hasTools && (
                 <div className={styles.tools}>
-                    <button className={styles.toolsButton} onClick={clear} disabled={disabled || readOnly}>
-                        <IconCross size={20} fill="currentColor" />
-                    </button>
+                    {status === 'loading' && <LoadingCircle size="small" />}
+                    {clearable && (
+                        <button className={styles.toolsButton} onClick={clear} disabled={disabled || readOnly}>
+                            <IconCross size={20} fill="currentColor" />
+                        </button>
+                    )}
                 </div>
             )}
         </div>

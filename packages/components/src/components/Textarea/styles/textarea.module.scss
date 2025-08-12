@@ -153,6 +153,8 @@
     position: absolute;
     right: sizeToken.get(2);
     top: sizeToken.get(2);
+    display: flex;
+    gap: sizeToken.get(1);
 }
 
 .toolsButton {
