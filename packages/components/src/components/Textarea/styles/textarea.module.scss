@@ -92,7 +92,11 @@
     resize: none;
     grid-area: stack;
 
-    [data-clearable] & {
+    [data-resizable='true'] & {
+        resize: vertical;
+    }
+
+    [data-clearable='true'] & {
         padding-right: sizeToken.get(9);
     }
 

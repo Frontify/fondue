@@ -33,6 +33,7 @@ type TextareaProps = {
      */
     minRows?: number;
     readOnly?: boolean;
+    resizable?: boolean;
 };
 
 export const Textarea = ({
@@ -44,6 +45,7 @@ export const Textarea = ({
     focusOnMount,
     minRows: rows = 1,
     readOnly,
+    resizable,
 }: TextareaProps) => {
     const ref = useRef<HTMLTextAreaElement>(null);
 
@@ -70,6 +72,7 @@ export const Textarea = ({
             data-clearable={clearable}
             data-disabled={disabled || readOnly}
             data-replicated-value={value}
+            data-resizable={resizable}
         >
             <textarea
                 autoComplete={autocomplete ? 'on' : 'off'}
