@@ -30,6 +30,7 @@ const meta: Meta<typeof Textarea> = {
         placeholder: 'Placeholder',
         readOnly: false,
         resizable: false,
+        selectable: true,
     },
 };
 

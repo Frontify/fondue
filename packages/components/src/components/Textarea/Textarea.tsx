@@ -34,6 +34,7 @@ type TextareaProps = {
     minRows?: number;
     readOnly?: boolean;
     resizable?: boolean;
+    selectable?: boolean;
 };
 
 export const Textarea = ({
@@ -46,6 +47,7 @@ export const Textarea = ({
     minRows: rows = 1,
     readOnly,
     resizable,
+    selectable = true,
 }: TextareaProps) => {
     const ref = useRef<HTMLTextAreaElement>(null);
 
@@ -79,6 +81,11 @@ export const Textarea = ({
                 className={styles.textarea}
                 disabled={disabled}
                 onInput={(event) => setValue(event.currentTarget.value)}
+                onSelect={(event) => {
+                    if (!selectable) {
+                        event.currentTarget.selectionStart = event.currentTarget.selectionEnd;
+                    }
+                }}
                 readOnly={readOnly}
                 ref={ref}
                 rows={rows}
