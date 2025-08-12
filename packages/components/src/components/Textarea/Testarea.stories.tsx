@@ -17,15 +17,16 @@ const meta: Meta<typeof Textarea> = {
         },
     },
     args: {
-        autosize: false,
         autocomplete: false,
+        autosize: false,
         clearable: false,
-        placeholder: 'Placeholder',
         defaultValue: 'Hello from Frontify',
+        disabled: false,
         minRows: 1,
-        onChange: action('onChange'),
         onBlur: action('onBlur'),
+        onChange: action('onChange'),
         onFocus: action('onFocus'),
+        placeholder: 'Placeholder',
     },
 };
 
