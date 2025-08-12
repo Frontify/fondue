@@ -1,13 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconCross } from '@frontify/fondue-icons';
+import { IconCheckMark, IconCross, IconExclamationMarkTriangle } from '@frontify/fondue-icons';
 import { useEffect, useRef, useState } from 'react';
 
 import { LoadingCircle } from '../LoadingCircle/LoadingCircle';
 
 import styles from './styles/textarea.module.scss';
 
-type Status = 'default' | 'loading' | 'success' | 'error' | 'warning';
+type Status = 'default' | 'loading' | 'success' | 'error';
 
 type TextareaProps = {
     /**
@@ -63,7 +63,7 @@ export const Textarea = ({
 
     const [value, setValue] = useState(defaultValue ?? '');
 
-    const hasTools = clearable || status === 'loading';
+    const hasTools = clearable || ['loading', 'success', 'error'].includes(status);
 
     const clear = () => {
         setValue('');
@@ -107,6 +107,16 @@ export const Textarea = ({
             {hasTools && (
                 <div className={styles.tools}>
                     {status === 'loading' && <LoadingCircle size="small" />}
+                    {status === 'success' && (
+                        <div className={styles.success}>
+                            <IconCheckMark size={20} />
+                        </div>
+                    )}
+                    {status === 'error' && (
+                        <div className={styles[status]}>
+                            <IconExclamationMarkTriangle size={20} />
+                        </div>
+                    )}
                     {clearable && (
                         <button className={styles.toolsButton} onClick={clear} disabled={disabled || readOnly}>
                             <IconCross size={20} fill="currentColor" />

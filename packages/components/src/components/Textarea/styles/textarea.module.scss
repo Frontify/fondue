@@ -177,3 +177,11 @@
         color: var(--text-color-weak);
     }
 }
+
+.success {
+    color: var(--button-positive-icon-color);
+}
+
+.error {
+    color: var(--button-negative-icon-color);
+}
