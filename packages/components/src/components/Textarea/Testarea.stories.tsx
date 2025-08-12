@@ -22,6 +22,7 @@ const meta: Meta<typeof Textarea> = {
         clearable: false,
         defaultValue: 'Hello from Frontify',
         disabled: false,
+        focusOnMount: false,
         minRows: 1,
         onBlur: action('onBlur'),
         onChange: action('onChange'),

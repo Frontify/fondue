@@ -1,17 +1,38 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconCross } from '@frontify/fondue-icons';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import styles from './styles/textarea.module.scss';
 
 type TextareaProps = {
+    /**
+     * If `true`, Textarea will have `autoComplete` functionality
+     */
     autocomplete?: boolean;
+    /**
+     * If `true`, component rendered is a auto sizing Textarea
+     */
     autosize?: boolean;
+    /**
+     * Render `clear` button to clear input on click
+     */
     clearable?: boolean;
+    /**
+     * Initial value
+     */
     defaultValue?: string;
     disabled?: boolean;
+    /**
+     * If `true`, Textarea will be focused on mount
+     */
+    focusOnMount?: boolean;
+    /**
+     * If autosize is false, this is used as rows property for default textarea
+     * @default 1
+     */
     minRows?: number;
+    readOnly?: boolean;
 };
 
 export const Textarea = ({
@@ -20,8 +41,12 @@ export const Textarea = ({
     clearable,
     defaultValue,
     disabled,
+    focusOnMount,
     minRows: rows = 1,
+    readOnly,
 }: TextareaProps) => {
+    const ref = useRef<HTMLTextAreaElement>(null);
+
     const [value, setValue] = useState(defaultValue ?? '');
 
     const clear = () => {
@@ -32,13 +57,26 @@ export const Textarea = ({
         setValue(defaultValue ?? '');
     }, [defaultValue]);
 
+    useEffect(() => {
+        if (focusOnMount) {
+            ref.current?.focus();
+        }
+    }, [focusOnMount]);
+
     return (
-        <div className={styles.root} data-autosize={autosize} data-clearable={clearable} data-replicated-value={value}>
+        <div
+            className={styles.root}
+            data-autosize={autosize}
+            data-clearable={clearable}
+            data-disabled={disabled || readOnly}
+            data-replicated-value={value}
+        >
             <textarea
                 autoComplete={autocomplete ? 'on' : 'off'}
                 className={styles.textarea}
-                disabled={disabled}
+                disabled={disabled || readOnly}
                 onInput={(event) => setValue(event.currentTarget.value)}
+                ref={ref}
                 rows={rows}
                 value={value}
             ></textarea>
