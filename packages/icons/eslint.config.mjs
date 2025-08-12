@@ -12,15 +12,10 @@ export default tseslint.config(
     {
         ignores: [
             'dist/',
-            'coverage/',
+            'icons/',
+            'src/icons',
             'storybook-static/',
-            'playwright-report/',
-            'test-results/',
-            'playwright/',
             'node_modules/',
-            'debug-storybook.log',
-            '.storybook/**',
-            'MIGRATING.md',
             'postcss.config.cjs',
             'eslint.config.mjs',
         ],

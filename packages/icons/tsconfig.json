@@ -18,6 +18,6 @@
         "noFallthroughCasesInSwitch": true,
         "baseUrl": "."
     },
-    "include": ["src"],
+    "include": ["src", "tailwind.config.ts", "eslint.config.mjs", "postcss.config.cjs"],
     "references": [{ "path": "./tsconfig.node.json" }]
 }

@@ -102,10 +102,10 @@ export const TabsRoot = (
         activeTab,
     });
 
-    const value = useMemo(() => ({ addTrigger }), [addTrigger]);
+    const contextValue = useMemo(() => ({ addTrigger }), [addTrigger]);
 
     return (
-        <TabTriggerContext.Provider value={value}>
+        <TabTriggerContext.Provider value={contextValue}>
             <RadixTabs.Root
                 ref={ref}
                 className={styles.root}
@@ -171,14 +171,9 @@ type TabsTabProps = {
 };
 
 export const TabsTab = ({ children, value, disabled }: TabsTabProps) => {
-    const tabConfigValue = useMemo(() => ({ value, disabled }), [value, disabled]);
-    const tabTriggerValue = useMemo(() => ({ value, disabled }), [value, disabled]);
+    const contextValue = useMemo(() => ({ value, disabled }), [value, disabled]);
 
-    return (
-        <TabConfigContext.Provider value={tabConfigValue}>
-            <TabTriggerContext.Provider value={tabTriggerValue}>{children}</TabTriggerContext.Provider>
-        </TabConfigContext.Provider>
-    );
+    return <TabConfigContext.Provider value={contextValue}>{children}</TabConfigContext.Provider>;
 };
 TabsTab.displayName = 'Tabs.Tab';
 

@@ -22,6 +22,6 @@
             "@theme/*": ["./src/theme/*"]
         }
     },
-    "include": [".storybook", "src"],
+    "include": [".storybook", "src", "tailwind.config.ts", "eslint.config.mjs", "postcss.config.cjs"],
     "references": [{ "path": "./tsconfig.node.json" }]
 }

@@ -289,7 +289,7 @@ type TableRowProps = BaseTableRowProps & {
      * Handler called when the row is clicked or activated via keyboard
      * If provided, the row will be hoverable and interactive
      */
-    onClick: (selected: boolean) => void;
+    onClick?: (selected: boolean) => void;
 };
 
 export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(
