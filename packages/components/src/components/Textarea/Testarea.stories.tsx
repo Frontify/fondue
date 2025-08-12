@@ -28,6 +28,7 @@ const meta: Meta<typeof Textarea> = {
         onChange: action('onChange'),
         onFocus: action('onFocus'),
         placeholder: 'Placeholder',
+        readOnly: false,
     },
 };
 

@@ -164,4 +164,10 @@
     &:focus-visible {
         background-color: var(--button-background-color);
     }
+
+    &:disabled {
+        background-color: transparent;
+        cursor: not-allowed;
+        color: var(--text-color-weak);
+    }
 }

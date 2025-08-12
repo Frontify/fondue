@@ -74,16 +74,17 @@ export const Textarea = ({
             <textarea
                 autoComplete={autocomplete ? 'on' : 'off'}
                 className={styles.textarea}
-                disabled={disabled || readOnly}
+                disabled={disabled}
                 onInput={(event) => setValue(event.currentTarget.value)}
+                readOnly={readOnly}
                 ref={ref}
                 rows={rows}
                 value={value}
             ></textarea>
             {clearable && (
                 <div className={styles.tools}>
-                    <button className={styles.toolsButton} onClick={clear}>
-                        <IconCross size={20} />
+                    <button className={styles.toolsButton} onClick={clear} disabled={disabled || readOnly}>
+                        <IconCross size={20} fill="currentColor" />
                     </button>
                 </div>
             )}
