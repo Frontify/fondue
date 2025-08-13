@@ -14,7 +14,7 @@ export default tseslint.config(
             'dist/',
             'icons/',
             'src/icons',
-            'storybook-static/',
+            '.storybook/**',
             'node_modules/',
             'postcss.config.cjs',
             'eslint.config.mjs',
@@ -82,6 +82,7 @@ export default tseslint.config(
         files: ['**/*.stories.tsx'],
         rules: {
             '@eslint-community/eslint-comments/disable-enable-pair': 'off',
+            'react-hooks/rules-of-hooks': 'off',
         },
     },
 );
