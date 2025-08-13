@@ -91,6 +91,7 @@ type TextareaProps = {
      * Event handler called when the text inside of text input is selected
      */
     onSelect?: (event: SyntheticEvent<HTMLTextAreaElement>) => void;
+    placeholder?: string;
     readOnly?: boolean;
     resizable?: boolean;
     selectable?: boolean;
