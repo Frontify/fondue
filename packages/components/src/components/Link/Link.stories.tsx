@@ -33,32 +33,22 @@ const meta: Meta<LinkProps> = {
         weight: {
             type: 'string',
             control: 'select',
-            options: [undefined, 'light', 'regular', 'medium', 'bold', 'default', 'strong', 'x-strong'],
+            options: [undefined, 'regular', 'medium', 'bold'],
         },
         size: {
             type: 'string',
             control: 'select',
-            options: [undefined, 'x-small', 'small', 'medium', 'large'],
+            options: [undefined, 'xx-small', 'x-small', 'small', 'medium', 'large', 'x-large', 'xx-large'],
         },
         color: {
             type: 'string',
             control: 'select',
-            options: [
-                undefined,
-                'default',
-                'weak',
-                'x-weak',
-                'disabled',
-                'negative',
-                'positive',
-                'warning',
-                'interactive',
-            ],
+            options: [undefined, 'primary', 'secondary', 'error', 'success', 'warning', 'highlight'],
         },
-        boxColor: {
+        onContainer: {
             type: 'string',
             control: 'select',
-            options: [undefined, 'neutral', 'selected', 'disabled', 'positive', 'negative', 'warning'],
+            options: [undefined, 'secondary', 'disabled', 'error', 'success', 'warning', 'highlight'],
         },
         wrap: {
             type: 'string',
@@ -104,9 +94,9 @@ export const AllVariants: Story = {
         children: 'All Variants Link',
         href: '/variants',
         size: 'large',
-        weight: 'strong',
-        color: 'positive',
-        boxColor: 'neutral',
+        weight: 'bold',
+        color: 'success',
+        onContainer: 'secondary',
         wrap: 'wrap',
         underline: 'always',
         truncate: false,
@@ -121,8 +111,8 @@ export const Truncated: Story = {
         href: '/truncate',
         truncate: true,
         size: 'medium',
-        weight: 'default',
-        color: 'default',
+        weight: 'regular',
+        color: 'primary',
     },
     render: (args) => (
         <div style={{ display: 'flex', width: 180, border: '1px dashed #ccc', padding: 8 }}>

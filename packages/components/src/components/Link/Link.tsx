@@ -8,10 +8,10 @@ import { useFondueRouter } from '../RouterProvider/RouterProvider';
 
 import styles from './styles/link.module.scss';
 
-type LinkSize = 'x-small' | 'small' | 'medium' | 'large';
-type LinkWeight = 'light' | 'regular' | 'medium' | 'bold' | 'default' | 'strong' | 'x-strong';
-type LinkColor = 'default' | 'weak' | 'x-weak' | 'disabled' | 'negative' | 'positive' | 'warning' | 'interactive';
-type BoxColor = 'neutral' | 'selected' | 'disabled' | 'positive' | 'negative' | 'warning';
+type LinkSize = 'xx-small' | 'x-small' | 'small' | 'medium' | 'large' | 'x-large' | 'xx-large';
+type LinkWeight = 'regular' | 'medium' | 'bold';
+type LinkColor = 'primary' | 'secondary' | 'error' | 'success' | 'warning' | 'highlight';
+type LinkOnContainerColor = 'secondary' | 'disabled' | 'error' | 'success' | 'warning' | 'highlight';
 type LinkWrap = 'wrap' | 'nowrap';
 type LinkUnderline = 'auto' | 'always' | 'hover' | 'none';
 
@@ -34,21 +34,21 @@ export type LinkProps = {
     /**
      * Weight of the font
      *
-     * @default 'default'
+     * @default 'regular'
      */
     weight?: LinkWeight;
     /**
      * Color of the text
      *
-     * @default 'default'
+     * @default 'primary'
      */
     color?: LinkColor;
     /**
-     * The texts color when used within a box
+     * The texts color when used within a container
      *
-     * @description optional color prop that uses the inverse box color when accessibility contrast is needed
+     * @description optional color prop that uses the inverse container color when accessibility contrast is needed
      **/
-    boxColor?: BoxColor;
+    onContainer?: LinkOnContainerColor;
     /**
      * Truncate the text if it overflows
      */
@@ -92,6 +92,12 @@ export type LinkProps = {
      * Aria details for extend description of the component.
      */
     'aria-details'?: string;
+    /**
+     * Disable the link
+     *
+     * @default false
+     */
+    disabled?: boolean;
 };
 
 export const Link = forwardRef<HTMLAnchorElement, LinkProps>(
@@ -101,14 +107,15 @@ export const Link = forwardRef<HTMLAnchorElement, LinkProps>(
             className,
             children,
             size = 'medium',
-            weight = 'default',
+            weight = 'regular',
             truncate = false,
             wrap = 'nowrap',
             underline = 'auto',
-            color = 'default',
+            color = 'primary',
             href,
-            boxColor,
+            onContainer,
             onPress,
+            disabled = false,
             ...props
         },
         ref,
@@ -118,6 +125,10 @@ export const Link = forwardRef<HTMLAnchorElement, LinkProps>(
 
         const handleClick = useCallback(
             (event: MouseEvent<HTMLAnchorElement>) => {
+                if (disabled) {
+                    event.preventDefault();
+                    return;
+                }
                 onPress?.(event);
 
                 if (href) {
@@ -125,8 +136,12 @@ export const Link = forwardRef<HTMLAnchorElement, LinkProps>(
                     navigate(href);
                 }
             },
-            [href, navigate, onPress],
+            [href, navigate, onPress, disabled],
         );
+
+        const computedColor = disabled
+            ? styles.disabled
+            : styles[onContainer ? `color-on-container-${onContainer}` : `color-${color}`];
 
         return (
             <a
@@ -135,15 +150,16 @@ export const Link = forwardRef<HTMLAnchorElement, LinkProps>(
                     styles.root,
                     styles[`size-${size}`],
                     styles[`weight-${weight}`],
-                    styles[boxColor ? `color-box-${boxColor}` : `color-${color}`],
-                    styles[`wrap-${wrap}`],
                     styles[`underline-${underline}`],
                     truncate && styles.truncate,
+                    computedColor,
                     className,
                 ])}
                 ref={ref}
-                href={resolvedHref}
+                href={disabled ? undefined : resolvedHref}
                 onClick={handleClick}
+                aria-disabled={disabled || undefined}
+                tabIndex={disabled ? -1 : undefined}
                 {...props}
             >
                 {children}
