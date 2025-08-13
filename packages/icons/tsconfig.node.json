@@ -9,10 +9,5 @@
         "resolveJsonModule": true,
         "target": "ESNext"
     },
-    "include": [
-        "scripts",
-        "postcss.config.cjs",
-        "vite.config.ts",
-        "eslint.config.mjs"
-    ]
+    "include": ["scripts", "postcss.config.cjs", "vite.config.ts", "eslint.config.mjs", "tailwind.config.ts"]
 }
