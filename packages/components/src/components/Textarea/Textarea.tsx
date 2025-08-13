@@ -3,13 +3,12 @@
 import { IconCheckMark, IconCross, IconExclamationMarkTriangle } from '@frontify/fondue-icons';
 import { useEffect, useRef, useState } from 'react';
 
-import { LoadingCircle } from '../LoadingCircle/LoadingCircle';
-
 import styles from './styles/textarea.module.scss';
 
 type Status = 'default' | 'loading' | 'success' | 'error';
 
 type TextareaProps = {
+    'data-test-id'?: string;
     /**
      * If `true`, Textarea will have `autoComplete` functionality
      */
@@ -48,6 +47,7 @@ type TextareaProps = {
 };
 
 export const Textarea = ({
+    'data-test-id': dataTestId = 'fondue-textarea',
     autocomplete,
     autosize,
     clearable,
@@ -108,7 +108,9 @@ export const Textarea = ({
             ></textarea>
             {hasTools && (
                 <div className={styles.tools}>
-                    {status === 'loading' && <LoadingCircle size="small" />}
+                    {status === 'loading' && (
+                        <div className={styles.loadingStatus} data-test-id={`${dataTestId}-loader`} />
+                    )}
                     {status === 'success' && (
                         <div className={styles.success}>
                             <IconCheckMark size={20} />

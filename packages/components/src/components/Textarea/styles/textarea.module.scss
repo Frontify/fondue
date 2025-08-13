@@ -185,3 +185,37 @@
 .error {
     color: var(--button-negative-icon-color);
 }
+
+.loadingStatus {
+    display: flex;
+    position: absolute;
+    width: sizeToken.get(6);
+    height: sizeToken.get(6);
+    top: sizeToken.get(-5);
+    right: sizeToken.get(-5);
+    pointer-events: none;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--base-color);
+    border: var(--line-width) solid var(--line-color-strong);
+    border-radius: 9999px;
+
+    &::before {
+        content: '';
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: sizeToken.get(4);
+        height: sizeToken.get(4);
+        border: var(--line-width) solid var(--text-color-interactive);
+        border-top-color: transparent;
+        border-radius: 9999px;
+        animation: spin 1s linear infinite;
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
