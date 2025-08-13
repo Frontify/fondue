@@ -12,7 +12,7 @@ vi.mock('react', async (importOriginal) => ({
     useContext: vi.fn(),
 }));
 
-vi.mock('./hooks/usePositions', async () => ({
+vi.mock('./hooks/usePositions', () => ({
     usePositions: vi.fn(),
 }));
 
