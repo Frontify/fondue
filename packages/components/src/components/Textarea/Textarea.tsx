@@ -60,6 +60,10 @@ type TextareaProps = {
      */
     onKeyDown?: KeyboardEventHandler<HTMLTextAreaElement>;
     /**
+     * Event handler called when Enter is pressed
+     */
+    onEnterPressed?: KeyboardEventHandler<HTMLTextAreaElement>;
+    /**
      * Event handler called when a key is released
      */
     onKeyUp?: KeyboardEventHandler<HTMLTextAreaElement>;
@@ -87,6 +91,7 @@ export const Textarea = ({
     disabled,
     focusOnMount,
     minRows: rows = 1,
+    onEnterPressed,
     readOnly,
     resizable,
     selectable = true,
@@ -102,6 +107,13 @@ export const Textarea = ({
 
     const clear = () => {
         setValue('');
+    };
+
+    const handleKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = (event) => {
+        if (event.key === 'Enter') {
+            onEnterPressed?.(event);
+        }
+        props.onKeyDown?.(event);
     };
 
     useEffect(() => {
@@ -129,6 +141,7 @@ export const Textarea = ({
                 autoComplete={autocomplete ? 'on' : 'off'}
                 className={styles.textarea}
                 disabled={disabled}
+                onKeyDown={handleKeyDown}
                 onInput={(event) => setValue(event.currentTarget.value)}
                 onSelect={(event) => {
                     if (!selectable) {

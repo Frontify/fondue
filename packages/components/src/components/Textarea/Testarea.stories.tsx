@@ -26,6 +26,7 @@ const meta: Meta<typeof Textarea> = {
         minRows: 1,
         onBlur: action('onBlur'),
         onChange: action('onChange'),
+        onEnterPressed: action('onEnterPressed'),
         onFocus: action('onFocus'),
         placeholder: 'Placeholder',
         readOnly: false,
