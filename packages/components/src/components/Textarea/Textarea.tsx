@@ -128,7 +128,7 @@ export const Textarea = ({
 
     const [value, setValue] = useState(inputValue ?? defaultValue ?? '');
 
-    const hasTools = clearable || ['success', 'error'].includes(status);
+    const hasTools = extraActions?.length !== undefined || clearable || ['success', 'error'].includes(status);
 
     const clear = () => {
         setValue('');
@@ -158,7 +158,7 @@ export const Textarea = ({
             data-clearable={clearable}
             data-disabled={disabled || readOnly}
             data-has-decorator={decorator ? true : false}
-            data-has-tools={clearable || extraActions?.length ? true : false}
+            data-has-tools={hasTools}
             data-replicated-value={value}
             data-resizable={resizable}
             data-status={status}
