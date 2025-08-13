@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconClipboard, IconQuestionMark } from '@frontify/fondue-icons';
+import { IconClipboard, IconNook, IconQuestionMark } from '@frontify/fondue-icons';
 import { action } from '@storybook/addon-actions';
 import { type Meta, type StoryObj } from '@storybook/react';
 
@@ -55,6 +55,15 @@ const meta: Meta<typeof Textarea> = {
 export default meta;
 
 export const Default: Story = {
+    render: (args) => <Textarea {...args} />,
+};
+
+export const WithDecoratorAndAutosize: Story = {
+    args: {
+        autosize: true,
+        decorator: <IconNook />,
+        placeholder: 'Enter some long form text here',
+    },
     render: (args) => <Textarea {...args} />,
 };
 

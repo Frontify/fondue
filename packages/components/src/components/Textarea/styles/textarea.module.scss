@@ -7,8 +7,8 @@
 .root {
     position: relative;
     display: grid;
-    grid-template-areas: "stack";
-    align-items: stretch;
+    grid-template-areas: "decorator textarea tools";
+    grid-template-columns: max-content 1fr max-content;
 
     font-family: var(--body-family-stack);
     font-weight: 400;
@@ -61,7 +61,7 @@
         content: attr(data-replicated-value) " ";
         white-space: pre-wrap;
         visibility: hidden;
-        grid-area: stack;
+        grid-area: textarea;
         padding-left: sizeToken.get(3);
         padding-right: sizeToken.get(3);
         padding-top: sizeToken.get(2);
@@ -79,7 +79,6 @@
 }
 
 .textarea {
-    width: 100%;
     background-color: transparent;
     display: flex;
     align-items: center;
@@ -90,7 +89,7 @@
     padding-bottom: sizeToken.get(2);
     border-radius: calc(var(--radius) - var(--line-width));
     resize: none;
-    grid-area: stack;
+    grid-area: textarea;
 
     [data-resizable='true'] & {
         resize: vertical;
@@ -110,14 +109,14 @@
     }
 
     // Remove border-radius and text-indent/padding on the left if there’s a left-side slot
-    &:has(~ div:not([data-name='right'])) {
-        text-indent: 0px;
+    [data-has-decorator="true"] & {
+        padding-left: 0;
         border-top-left-radius: 0px;
         border-bottom-left-radius: 0px;
     }
 
     // Remove border-radius and padding on the right if there’s a right-side slot
-    &:has(~ .slot[data-side='right'], ~ .slot:not([data-side='right']) ~ .slot:not([data-side='left'])) {
+    [data-has-tools="true"] & {
         padding-right: 0;
         border-top-right-radius: 0;
         border-bottom-right-radius: 0;
@@ -149,13 +148,31 @@
     }
 }
 
-.tools {
-    position: absolute;
-    right: sizeToken.get(2);
-    top: sizeToken.get(2);
+.decorator:not(:empty) {
+    grid-area: decorator;
+    display: flex;
+    padding-left: sizeToken.get(2);
+    padding: sizeToken.get(2);
+    align-items: top;
+
+    >* {
+        flex-shrink: 0;
+    }
+}
+
+.tools:not(:empty) {
+    padding-right: sizeToken.get(2);
+    padding-left: sizeToken.get(2);
     display: flex;
     gap: sizeToken.get(1);
+    grid-area: tools;
+    align-items: center;
+
+    >* {
+        flex-shrink: 0;
+    }
 }
+
 
 .toolsButton {
     background-color: var(--base-color);
@@ -169,6 +186,7 @@
     &:hover,
     &:focus-visible {
         background-color: var(--button-background-color);
+        z-index: 1;
     }
 
     &:disabled {

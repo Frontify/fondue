@@ -37,6 +37,10 @@ type TextareaProps = {
      */
     clearable?: boolean;
     /**
+     * A `ReactElement` that will be rendered at the start of the `Textarea`
+     */
+    decorator?: ReactElement;
+    /**
      * Initial value
      */
     defaultValue?: string;
@@ -98,6 +102,7 @@ export const Textarea = ({
     autocomplete,
     autosize,
     clearable,
+    decorator,
     defaultValue,
     disabled,
     extraActions,
@@ -144,10 +149,13 @@ export const Textarea = ({
             data-autosize={autosize}
             data-clearable={clearable}
             data-disabled={disabled || readOnly}
+            data-has-decorator={decorator ? true : false}
+            data-has-tools={clearable || extraActions?.length ? true : false}
             data-replicated-value={value}
             data-resizable={resizable}
             data-status={status}
         >
+            <div className={styles.decorator}>{decorator ? decorator : null}</div>
             <textarea
                 {...props}
                 autoComplete={autocomplete ? 'on' : 'off'}
