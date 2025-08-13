@@ -124,6 +124,7 @@ export const Textarea = ({
     ...props
 }: TextareaProps) => {
     const ref = useRef<HTMLTextAreaElement>(null);
+    const wasClicked = useRef(false);
 
     const [value, setValue] = useState(inputValue ?? defaultValue ?? '');
 
@@ -167,6 +168,21 @@ export const Textarea = ({
             {decorator ? <div className={styles.decorator}>{decorator}</div> : null}
             <textarea
                 {...props}
+                onMouseDown={(mouseEvent) => {
+                    wasClicked.current = true;
+                    mouseEvent.currentTarget.dataset.showFocusRing = 'false';
+                }}
+                onFocus={(focusEvent) => {
+                    if (!wasClicked.current) {
+                        focusEvent.target.dataset.showFocusRing = 'true';
+                    }
+                    props.onFocus?.(focusEvent);
+                }}
+                onBlur={(blurEvent) => {
+                    blurEvent.target.dataset.showFocusRing = 'false';
+                    wasClicked.current = false;
+                    props.onBlur?.(blurEvent);
+                }}
                 autoComplete={autocomplete ? 'on' : 'off'}
                 className={styles.textarea}
                 disabled={disabled}
