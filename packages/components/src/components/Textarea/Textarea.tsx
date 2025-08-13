@@ -1,7 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconCheckMark, IconCross, IconExclamationMarkTriangle } from '@frontify/fondue-icons';
-import { useEffect, useRef, useState } from 'react';
+import {
+    type ChangeEventHandler,
+    useEffect,
+    useRef,
+    useState,
+    type FocusEventHandler,
+    type KeyboardEventHandler,
+    type SyntheticEvent,
+} from 'react';
 
 import styles from './styles/textarea.module.scss';
 
@@ -35,6 +43,30 @@ type TextareaProps = {
      * @default 1
      */
     minRows?: number;
+    /**
+     * Event handler called when the textarea value changes
+     */
+    onChange?: ChangeEventHandler<HTMLTextAreaElement>;
+    /**
+     * Event handler called when the text input is blurred
+     */
+    onBlur?: FocusEventHandler<HTMLTextAreaElement>;
+    /**
+     * Event handler called when the text input is focused
+     */
+    onFocus?: FocusEventHandler<HTMLTextAreaElement>;
+    /**
+     * Event handler called when a key is pressed
+     */
+    onKeyDown?: KeyboardEventHandler<HTMLTextAreaElement>;
+    /**
+     * Event handler called when a key is released
+     */
+    onKeyUp?: KeyboardEventHandler<HTMLTextAreaElement>;
+    /**
+     * Event handler called when the text inside of text input is selected
+     */
+    onSelect?: (event: SyntheticEvent<HTMLTextAreaElement>) => void;
     readOnly?: boolean;
     resizable?: boolean;
     selectable?: boolean;
@@ -60,6 +92,7 @@ export const Textarea = ({
     selectable = true,
     status = 'default',
     value: inputValue,
+    ...props
 }: TextareaProps) => {
     const ref = useRef<HTMLTextAreaElement>(null);
 
@@ -92,6 +125,7 @@ export const Textarea = ({
             data-status={status}
         >
             <textarea
+                {...props}
                 autoComplete={autocomplete ? 'on' : 'off'}
                 className={styles.textarea}
                 disabled={disabled}
