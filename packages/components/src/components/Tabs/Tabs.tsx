@@ -208,6 +208,7 @@ TabsTrigger.displayName = 'Tabs.Trigger';
 
 type TabsContentProps = {
     children: ReactNode;
+    asChild?: boolean;
 };
 
 export const TabsContent = ({ children, ...itemProps }: TabsContentProps, ref: ForwardedRef<HTMLDivElement>) => {
