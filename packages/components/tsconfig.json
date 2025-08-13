@@ -22,6 +22,6 @@
         "target": "ES2021",
         "useDefineForClassFields": true
     },
-    "include": [".storybook", "src", "tailwind.config.ts", "eslint.config.mjs", "postcss.config.cjs"],
+    "include": [".storybook", "src", "tailwind.config.ts"],
     "references": [{ "path": "./tsconfig.node.json" }]
 }

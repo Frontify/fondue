@@ -18,6 +18,6 @@
         "noUnusedParameters": true,
         "strict": true
     },
-    "include": ["src", "eslint.config.mjs", "postcss.config.cjs"],
+    "include": ["src"],
     "references": [{ "path": "./tsconfig.node.json" }]
 }
