@@ -454,7 +454,9 @@ test('should display loading circle when typing and hide loading circle after lo
     await component.click();
 
     component
-        .pressSequentially(ITEM_TEXT1)
+        .pressSequentially(ITEM_TEXT1, {
+            delay: 100,
+        })
         .then(async () => {
             await expect(page.getByTestId(`${SELECT_TEST_ID}-loading-circle`)).not.toBeVisible();
         })
