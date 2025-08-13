@@ -1,12 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ReactElement, useState } from 'react';
-
 import { type MenuBlock } from '@components/Dropdown/SelectMenu/SelectMenu';
 import { MenuItemContentSize } from '@components/MenuItem';
 import IconIcon from '@foundation/Icon/Generated/IconIcon';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { Validation } from '@utilities/validation';
+import { type ReactElement, useState } from 'react';
 
 import { Dropdown } from './Dropdown';
 

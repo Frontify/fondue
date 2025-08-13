@@ -13,7 +13,6 @@
         "scripts",
         ".eslintrc.cjs",
         "postcss.config.cjs",
-        "tailwind.config.ts",
         "vite.config.ts",
         "eslint.config.mjs"
     ]
