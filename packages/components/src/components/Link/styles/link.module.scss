@@ -7,42 +7,49 @@
 }
 
 .size-xx-small {
-    font-size: var(--body-size-xx-small);
-    line-height: var(--body-size-xx-small-line-height);
+    font-size: var(--typography-font-size-xx-small);
+    line-height: var(--typography-line-height-tight);
+    letter-spacing: var(--typography-letter-spacing-default);
 }
 .size-x-small {
-    font-size: var(--body-size-x-small);
-    line-height: var(--body-size-x-small-line-height);
+    font-size: var(--typography-font-size-x-small);
+    line-height: var(--typography-line-height-tight);
+    letter-spacing: var(--typography-letter-spacing-default);
 }
 .size-small {
-    font-size: var(--body-size-small);
-    line-height: var(--body-size-small-line-height);
+    font-size: var(--typography-font-size-small);
+    line-height: var(--typography-line-height-tight);
+    letter-spacing: var(--typography-letter-spacing-default);
 }
 .size-medium {
-    font-size: var(--body-size-medium);
-    line-height: var(--body-size-medium-line-height);
+    font-size: var(--typography-font-size-medium);
+    line-height: var(--typography-line-height-medium);
+    letter-spacing: var(--typography-letter-spacing-default);
 }
 .size-large {
-    font-size: var(--body-size-large);
-    line-height: var(--body-size-large-line-height);
+    font-size: var(--typography-font-size-large);
+    line-height: var(--typography-line-height-wide);
+    letter-spacing: var(--typography-letter-spacing-default);
 }
 .size-x-large {
-    font-size: var(--body-size-x-large);
-    line-height: var(--body-size-x-large-line-height);
+    font-size: var(--typography-font-size-x-large);
+    line-height: var(--typography-line-height-loose);
+    letter-spacing: var(--typography-letter-spacing-default);
 }
 .size-xx-large {
-    font-size: var(--body-size-xx-large);
-    line-height: var(--body-size-xx-large-line-height);
+    font-size: var(--typography-font-size-xx-large);
+    line-height: var(--typography-line-height-extra-loose);
+    letter-spacing: var(--typography-letter-spacing-default);
 }
 
 .weight-regular {
-    font-weight: 400;
+    font-weight: var(--typography-font-weight-regular);
 }
 .weight-medium {
-    font-weight: 500;
+    font-weight: var(--typography-font-weight-medium);
 }
 .weight-bold {
-    font-weight: 700;
+    font-weight: var(--typography-font-weight-bold);
 }
 
 .wrap-wrap {
