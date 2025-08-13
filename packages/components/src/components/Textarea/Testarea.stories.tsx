@@ -31,6 +31,7 @@ const meta: Meta<typeof Textarea> = {
         readOnly: false,
         resizable: false,
         selectable: true,
+        value: undefined,
     },
 };
 

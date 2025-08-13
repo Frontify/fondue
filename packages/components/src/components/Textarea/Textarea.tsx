@@ -44,6 +44,7 @@ type TextareaProps = {
      * @default 'default'
      */
     status?: Status;
+    value?: string;
 };
 
 export const Textarea = ({
@@ -58,10 +59,11 @@ export const Textarea = ({
     resizable,
     selectable = true,
     status = 'default',
+    value: inputValue,
 }: TextareaProps) => {
     const ref = useRef<HTMLTextAreaElement>(null);
 
-    const [value, setValue] = useState(defaultValue ?? '');
+    const [value, setValue] = useState(inputValue ?? defaultValue ?? '');
 
     const hasTools = clearable || ['loading', 'success', 'error'].includes(status);
 
@@ -70,8 +72,8 @@ export const Textarea = ({
     };
 
     useEffect(() => {
-        setValue(defaultValue ?? '');
-    }, [defaultValue]);
+        setValue(inputValue ?? defaultValue ?? '');
+    }, [defaultValue, inputValue]);
 
     useEffect(() => {
         if (focusOnMount) {
