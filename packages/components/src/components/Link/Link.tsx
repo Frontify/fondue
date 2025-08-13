@@ -150,6 +150,7 @@ export const Link = forwardRef<HTMLAnchorElement, LinkProps>(
                     styles.root,
                     styles[`size-${size}`],
                     styles[`weight-${weight}`],
+                    styles[`wrap-${wrap}`],
                     styles[`underline-${underline}`],
                     truncate && styles.truncate,
                     computedColor,
