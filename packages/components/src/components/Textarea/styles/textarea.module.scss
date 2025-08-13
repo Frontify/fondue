@@ -142,7 +142,6 @@
     }
 
     &:disabled {
-        cursor: text;
         color: var(--text-color-disabled);
         cursor: not-allowed;
     }
