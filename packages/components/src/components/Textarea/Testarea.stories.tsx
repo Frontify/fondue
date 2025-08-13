@@ -1,9 +1,25 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconClipboard, IconQuestionMark } from '@frontify/fondue-icons';
 import { action } from '@storybook/addon-actions';
 import { type Meta, type StoryObj } from '@storybook/react';
 
-import { Textarea } from './Textarea';
+import { type ExtraAction, Textarea } from './Textarea';
+
+const ExtraActions: ExtraAction[] = [
+    {
+        icon: <IconClipboard size={16} />,
+        title: 'Save to Clipboard',
+        callback: () => {
+            alert('Mock Copied to Clipboard');
+        },
+    },
+    {
+        icon: <IconQuestionMark size={16} />,
+        title: 'Help Desk',
+        callback: () => alert('Here to Help'),
+    },
+];
 
 type Story = StoryObj<typeof meta>;
 
@@ -39,5 +55,14 @@ const meta: Meta<typeof Textarea> = {
 export default meta;
 
 export const Default: Story = {
+    render: (args) => <Textarea {...args} />,
+};
+
+export const WithExtraActions: Story = {
+    args: {
+        extraActions: ExtraActions,
+        placeholder: 'Enter some long form text here',
+        clearable: true,
+    },
     render: (args) => <Textarea {...args} />,
 };

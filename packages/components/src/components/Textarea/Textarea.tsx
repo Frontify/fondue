@@ -9,9 +9,16 @@ import {
     type FocusEventHandler,
     type KeyboardEventHandler,
     type SyntheticEvent,
+    type ReactElement,
 } from 'react';
 
 import styles from './styles/textarea.module.scss';
+
+export type ExtraAction = {
+    icon: ReactElement;
+    title: string;
+    callback: () => void;
+};
 
 type Status = 'default' | 'loading' | 'success' | 'error';
 
@@ -34,6 +41,10 @@ type TextareaProps = {
      */
     defaultValue?: string;
     disabled?: boolean;
+    /**
+     * Collection of extra actions the input can preform
+     */
+    extraActions?: ExtraAction[];
     /**
      * If `true`, Textarea will be focused on mount
      */
@@ -89,6 +100,7 @@ export const Textarea = ({
     clearable,
     defaultValue,
     disabled,
+    extraActions,
     focusOnMount,
     minRows: rows = 1,
     onEnterPressed,
@@ -103,7 +115,7 @@ export const Textarea = ({
 
     const [value, setValue] = useState(inputValue ?? defaultValue ?? '');
 
-    const hasTools = clearable || ['loading', 'success', 'error'].includes(status);
+    const hasTools = clearable || ['success', 'error'].includes(status);
 
     const clear = () => {
         setValue('');
@@ -153,11 +165,9 @@ export const Textarea = ({
                 rows={rows}
                 value={value}
             ></textarea>
+            {status === 'loading' && <div className={styles.loadingStatus} data-test-id={`${dataTestId}-loader`} />}
             {hasTools && (
                 <div className={styles.tools}>
-                    {status === 'loading' && (
-                        <div className={styles.loadingStatus} data-test-id={`${dataTestId}-loader`} />
-                    )}
                     {status === 'success' && (
                         <div className={styles.success}>
                             <IconCheckMark size={20} />
@@ -168,6 +178,17 @@ export const Textarea = ({
                             <IconExclamationMarkTriangle size={20} />
                         </div>
                     )}
+                    {extraActions?.map(({ icon, title, callback }) => (
+                        <button
+                            className={styles.toolsButton}
+                            disabled={disabled || readOnly}
+                            key={title}
+                            onClick={callback}
+                            title={title}
+                        >
+                            {icon}
+                        </button>
+                    ))}
                     {clearable && (
                         <button className={styles.toolsButton} onClick={clear} disabled={disabled || readOnly}>
                             <IconCross size={20} fill="currentColor" />
