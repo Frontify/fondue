@@ -6,6 +6,10 @@ import frontifyConfig from '@frontify/eslint-config-react';
 import noticePlugin from 'eslint-plugin-notice';
 import tailwindcssPlugin from 'eslint-plugin-tailwindcss';
 import tseslint from 'typescript-eslint';
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
+
+const __dirname = path.dirname(fileURLToPath(new URL('.', import.meta.url)));
 import storybookPlugin from 'eslint-plugin-storybook';
 
 export default tseslint.config(
@@ -32,6 +36,7 @@ export default tseslint.config(
         languageOptions: {
             parserOptions: {
                 project: ['./tsconfig.json'],
+                tsconfigRootDir: __dirname,
             },
         },
         plugins: {

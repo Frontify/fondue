@@ -4,15 +4,11 @@
         "baseUrl": ".",
         "isolatedModules": true,
         "jsx": "react-jsx",
-        "lib": ["ES2021", "DOM", "DOM.Iterable"],
+        "lib": ["ES2022", "DOM", "DOM.Iterable"],
         "module": "ESNext",
         "moduleResolution": "bundler",
         "noEmit": true,
         "noFallthroughCasesInSwitch": true,
-        "resolveJsonModule": true,
-        "target": "ES2021",
-        "useDefineForClassFields": true,
-        "skipLibCheck": true,
         "noUncheckedIndexedAccess": true,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
@@ -20,8 +16,12 @@
             "@components/*": ["./src/components/*"],
             "@theme/*": ["./src/theme/*"]
         },
-        "strict": true
+        "resolveJsonModule": true,
+        "skipLibCheck": true,
+        "strict": true,
+        "target": "ES2022",
+        "useDefineForClassFields": true
     },
-    "include": [".storybook", "src", "tailwind.config.ts", "eslint.config.mjs", "postcss.config.cjs"],
+    "include": [".storybook", "src", "eslint.config.mjs", "postcss.config.cjs"],
     "references": [{ "path": "./tsconfig.node.json" }]
 }

@@ -3,6 +3,10 @@
 // @ts-check
 
 import frontifyConfig from '@frontify/eslint-config-basic';
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
+
+const __dirname = path.dirname(fileURLToPath(new URL('.', import.meta.url)));
 import noticePlugin from 'eslint-plugin-notice';
 import tailwindcssPlugin from 'eslint-plugin-tailwindcss';
 import tseslint from 'typescript-eslint';
@@ -27,6 +31,7 @@ export default tseslint.config(
         languageOptions: {
             parserOptions: {
                 project: ['./tsconfig.json'],
+                tsconfigRootDir: __dirname,
             },
         },
         plugins: {
