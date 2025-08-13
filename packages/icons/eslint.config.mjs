@@ -2,7 +2,7 @@
 
 // @ts-check
 
-import frontifyConfig from '@frontify/eslint-config-react';
+import frontifyConfig from '@frontify/eslint-config-basic';
 import noticePlugin from 'eslint-plugin-notice';
 import tailwindcssPlugin from 'eslint-plugin-tailwindcss';
 import tseslint from 'typescript-eslint';
@@ -64,9 +64,6 @@ export default tseslint.config(
             // JavaScript DOM rules
             'unicorn/prefer-dom-node-text-content': 'warn',
 
-            // React rules
-            '@eslint-react/dom/no-missing-button-type': 'warn',
-
             // Typescript rules
             '@typescript-eslint/no-explicit-any': 'warn',
             '@typescript-eslint/no-floating-promises': 'warn',
@@ -84,8 +81,6 @@ export default tseslint.config(
     {
         files: ['**/*.stories.tsx'],
         rules: {
-            'react-hooks/rules-of-hooks': 'off',
-            '@eslint-react/hooks-extra/prefer-use-state-lazy-initialization': 'off',
             '@eslint-community/eslint-comments/disable-enable-pair': 'off',
         },
     },
