@@ -13,6 +13,9 @@ import { Validation, validationClassMap } from '@utilities/validation';
 
 import { type InputSharedBaseProps } from '../../types/input';
 
+/**
+ * @deprecated
+ */
 export type TextareaProps = {
     autosize?: boolean;
     focusOnMount?: boolean;
@@ -27,6 +30,9 @@ export type TextareaProps = {
     Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'onChange'> &
     Omit<TextareaAutosizeProps, 'onChange' | 'defaultValue' | 'value'>;
 
+/**
+ * @deprecated
+ */
 export const Textarea = ({
     autocomplete,
     autosize = false,
