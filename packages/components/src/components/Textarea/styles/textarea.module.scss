@@ -151,9 +151,11 @@
 .decorator:not(:empty) {
     grid-area: decorator;
     display: flex;
-    padding-left: sizeToken.get(2);
     padding: sizeToken.get(2);
-    align-items: top;
+    align-items: flex-start;
+    justify-items: flex-start;
+    min-width: sizeToken.get(9);
+    box-sizing: border-box;
 
     >* {
         flex-shrink: 0;

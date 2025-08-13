@@ -61,7 +61,7 @@ export const Default: Story = {
 export const WithDecoratorAndAutosize: Story = {
     args: {
         autosize: true,
-        decorator: <IconNook />,
+        decorator: <IconNook size={16} />,
         placeholder: 'Enter some long form text here',
     },
     render: (args) => <Textarea {...args} />,

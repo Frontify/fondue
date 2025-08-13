@@ -155,7 +155,7 @@ export const Textarea = ({
             data-resizable={resizable}
             data-status={status}
         >
-            <div className={styles.decorator}>{decorator ? decorator : null}</div>
+            {decorator ? <div className={styles.decorator}>{decorator}</div> : null}
             <textarea
                 {...props}
                 autoComplete={autocomplete ? 'on' : 'off'}
