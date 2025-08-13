@@ -40,6 +40,7 @@ const meta: Meta<typeof Textarea> = {
         disabled: false,
         focusOnMount: false,
         minRows: 1,
+        maxRows: undefined,
         onBlur: action('onBlur'),
         onChange: action('onChange'),
         onEnterPressed: action('onEnterPressed'),

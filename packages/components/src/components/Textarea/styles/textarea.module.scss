@@ -57,6 +57,10 @@
         border-color: var(--text-color-negative);
     }
 
+    &[data-max-rows='true'][data-autosize='true']::after {
+        max-height: calc(var(--max-rows) * 1lh + 1rem);
+    }
+
     &[data-autosize='true']::after {
         content: attr(data-replicated-value) " ";
         white-space: pre-wrap;

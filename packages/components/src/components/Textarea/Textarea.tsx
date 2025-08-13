@@ -10,6 +10,7 @@ import {
     type KeyboardEventHandler,
     type SyntheticEvent,
     type ReactElement,
+    type CSSProperties,
 } from 'react';
 
 import styles from './styles/textarea.module.scss';
@@ -58,6 +59,10 @@ type TextareaProps = {
      * @default 1
      */
     minRows?: number;
+    /**
+     * If `autosize` is `false`, this property is ignored
+     */
+    maxRows?: number;
     /**
      * Event handler called when the textarea value changes
      */
@@ -108,6 +113,7 @@ export const Textarea = ({
     extraActions,
     focusOnMount,
     minRows: rows = 1,
+    maxRows,
     onEnterPressed,
     readOnly,
     resizable,
@@ -154,6 +160,8 @@ export const Textarea = ({
             data-replicated-value={value}
             data-resizable={resizable}
             data-status={status}
+            data-max-rows={!!maxRows}
+            style={{ '--max-rows': `${maxRows}` } as CSSProperties}
         >
             {decorator ? <div className={styles.decorator}>{decorator}</div> : null}
             <textarea
