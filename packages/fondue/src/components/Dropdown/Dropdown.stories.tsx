@@ -1,14 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type Meta, type StoryFn } from '@storybook/react';
-import { useEffect, useState } from 'react';
-
 import { FormControl } from '@components/FormControl';
 import { MenuItemContentSize, MenuItemStyle } from '@components/MenuItem';
 import { TriggerEmphasis } from '@components/Trigger';
 import IconMusicNote from '@foundation/Icon/Generated/IconMusicNote';
 import { useMemoizedId } from '@hooks/useMemoizedId';
+import { type Meta, type StoryFn } from '@storybook/react';
 import { Validation } from '@utilities/validation';
+import { useEffect, useState } from 'react';
 
 import { Dropdown, DropdownAlignment, DropdownPosition, type DropdownProps, DropdownSize } from './Dropdown';
 

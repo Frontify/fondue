@@ -9,5 +9,5 @@
         "resolveJsonModule": true,
         "target": "ESNext"
     },
-    "include": ["eslint.config.mjs"]
+    "include": ["vite.config.ts", "eslint.config.mjs"]
 }

@@ -1,15 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type VariationPlacement } from '@popperjs/core';
-import { useButton } from '@react-aria/button';
-import { FocusScope, useFocusRing } from '@react-aria/focus';
-import { DismissButton, useOverlay } from '@react-aria/overlays';
-import { HiddenSelect, useSelect } from '@react-aria/select';
-import { mergeProps } from '@react-aria/utils';
-import { useSelectState } from '@react-stately/select';
-import { type ReactElement, useEffect, useRef } from 'react';
-import { usePopper } from 'react-popper';
-
 import { getDisabledItemIds, getMenuItems, mapToAriaProps } from '@components/ActionMenu/Aria/helper';
 import { type MenuBlock, type MenuItemType, SelectMenu } from '@components/Dropdown/SelectMenu/SelectMenu';
 import { LoadingCircle, LoadingCircleSize } from '@components/LoadingCircle';
@@ -23,9 +13,18 @@ import {
 import { Trigger, TriggerEmphasis, TriggerSize } from '@components/Trigger/Trigger';
 import { DEFAULT_DROPDOWN_MAX_HEIGHT, useDropdownAutoHeight } from '@hooks/useDropdownAutoHeight';
 import { useMemoizedId } from '@hooks/useMemoizedId';
+import { type VariationPlacement } from '@popperjs/core';
+import { useButton } from '@react-aria/button';
+import { FocusScope, useFocusRing } from '@react-aria/focus';
+import { DismissButton, useOverlay } from '@react-aria/overlays';
+import { HiddenSelect, useSelect } from '@react-aria/select';
+import { mergeProps } from '@react-aria/utils';
+import { useSelectState } from '@react-stately/select';
 import { EnablePortalWrapper } from '@utilities/dialogs/EnablePortalWrapper';
 import { merge } from '@utilities/merge';
 import { Validation } from '@utilities/validation';
+import { type ReactElement, useEffect, useRef } from 'react';
+import { usePopper } from 'react-popper';
 
 export const DEFAULT_DROPDOWN_MIN_ANIMATION_HEIGHT = 36; // Small Input height as default
 
