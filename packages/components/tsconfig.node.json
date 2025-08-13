@@ -15,6 +15,7 @@
         "package.json",
         "playwright.config.ts",
         "playwright",
-        "scripts"
+        "scripts",
+        "eslint.config.mjs"
     ]
 }
