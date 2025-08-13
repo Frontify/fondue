@@ -453,8 +453,8 @@ test('should display loading circle when typing and hide loading circle after lo
     await expect(component).toBeVisible();
     await component.click();
 
-    page.keyboard
-        .type(ITEM_TEXT1)
+    component
+        .pressSequentially(ITEM_TEXT1)
         .then(async () => {
             await expect(page.getByTestId(`${SELECT_TEST_ID}-loading-circle`)).not.toBeVisible();
         })

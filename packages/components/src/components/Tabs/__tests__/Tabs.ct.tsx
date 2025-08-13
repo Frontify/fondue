@@ -471,7 +471,7 @@ test.describe('small viewports', () => {
         await expect(component.getByTestId(THIRD_TAB_CONTENT_TEST_ID)).toBeVisible();
     });
 
-    test('should render overflowing tabs in dropdown', async ({ mount }) => {
+    test('should render overflowing tabs in dropdown', async ({ mount, page }) => {
         const FIRST_TAB_TRIGGER_TEXT = 'First Tab with long test after';
         const SECOND_TAB_TRIGGER_TEXT = 'Second Tab with long test after';
         const THIRD_TAB_TRIGGER_TEXT = 'Third Tab with long test after';
@@ -503,7 +503,7 @@ test.describe('small viewports', () => {
         await expect(component.getByTestId(THIRD_TAB_CONTENT_TEST_ID)).not.toBeVisible();
 
         await component.getByTestId(DROPDOWN_TRIGGER_TEST_ID).click();
-        const dropdownContent = component.getByTestId(DROPDOWN_CONTENT_TEST_ID);
+        const dropdownContent = page.getByTestId(DROPDOWN_CONTENT_TEST_ID);
         await expect(dropdownContent).toBeVisible();
         await expect(dropdownContent.getByText(SECOND_TAB_TRIGGER_TEXT)).toBeVisible();
         await expect(dropdownContent.getByText(SECOND_TAB_TRIGGER_TEXT).locator('..')).toBeDisabled();
