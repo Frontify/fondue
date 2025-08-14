@@ -36,7 +36,7 @@ const meta: Meta<typeof CheckboxComponent> = {
         };
 
         return (
-            <div className="tw-flex tw-gap-1.5 tw-items-center">
+            <div className="tw-flex tw-gap-2 tw-items-center">
                 <Checkbox {...args} id="checkbox" aria-labelledby="label" value={value} onChange={handleToggle} />
                 <Label id="label" htmlFor="checkbox" required={args.required}>
                     Checkbox
