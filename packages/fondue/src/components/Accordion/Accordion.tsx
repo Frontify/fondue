@@ -120,7 +120,6 @@ const filterValidChildren = ({ children }: AccordionProps): ReactElement<Accordi
 /**
  * @deprecated Please use updated Accordion component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#accordion the migration guide}.
  */
-// eslint-disable-next-line react/jsx-no-useless-fragment
 export const AccordionItem = ({ children }: AccordionItemProps): ReactElement => <>{children}</>;
 AccordionItem.displayName = 'FondueAccordionItem';
 

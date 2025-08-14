@@ -24,7 +24,7 @@ import { useDebounce } from '@hooks/useDebounce';
 import { FOCUS_VISIBLE_STYLE, PARENT_FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 
-import { EXPAND_ONHOVER_DELAY, INDENTATION_WIDTH, type Projection } from '../helpers';
+import { EXPAND_ONHOVER_DELAY, INDENTATION_WIDTH } from '../helpers';
 import { removeFragmentsAndEnrichChildren, useDeepCompareEffect } from '../utils';
 
 import { DragHandle } from './DragHandle';
@@ -40,15 +40,12 @@ type TreeItemPrivateProps = {
     level?: number;
     levelConstraint?: Nullable<number>;
     parentId?: string;
-    isSelected?: boolean;
-    isExpanded?: boolean;
     /** onSelect is passed by the Tree component when cloning the TreeItem */
     onSelect?: (id: string) => void;
     /** onClick is the user defined callback to run after the onSelect */
     onClick?: (id: string) => void;
     onExpand?: (id: string) => void;
     onShrink?: (id: string) => void;
-    projection?: Nullable<Projection>;
     registerOverlay?: (overlay: Overlay) => void;
     unregisterNodeChildren?: (payload: string) => void;
     registerNodeChildren?: (payload: RegisterNodeChildrenPayload) => void;
@@ -107,7 +104,7 @@ export const TreeItem = memo(
 
             const isWithin =
                 projection?.previousNode?.depth !== undefined && projection?.depth > projection?.previousNode?.depth;
-            const isWithinOneLevel = isWithin && projection.depth - 1 === projection?.previousNode?.depth;
+            const isWithinOneLevel = isWithin && projection && projection.depth - 1 === projection?.previousNode?.depth;
 
             const canDropWithinAndDeeper =
                 isWithin &&
@@ -227,7 +224,15 @@ export const TreeItem = memo(
             const toggleExpand = useCallback(
                 (event?: MouseEvent<HTMLButtonElement>) => {
                     event?.stopPropagation();
-                    isExpanded ? onShrink?.(id) : onExpand?.(id);
+                    if (isExpanded) {
+                        if (onShrink) {
+                            onShrink(id);
+                        }
+                    } else {
+                        if (onExpand) {
+                            onExpand(id);
+                        }
+                    }
                 },
                 [id, isExpanded, onExpand, onShrink],
             );
@@ -249,7 +254,7 @@ export const TreeItem = memo(
                 ignoreItemDoubleClick ? 300 : 0,
             );
 
-            const isParentActive = parentId && active?.id === parentId;
+            const isParentActive = parentId ? active?.id === parentId : false;
 
             const hasChildren = Children.count(children) > 0;
 

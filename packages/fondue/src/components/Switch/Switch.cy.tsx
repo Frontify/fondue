@@ -13,7 +13,9 @@ const Component = ({ mode = 'off', ...props }: SwitchProps): ReactElement => {
             mode={active}
             onChange={(event) => {
                 setActive(active === 'off' ? 'on' : 'off');
-                props.onChange && props.onChange(event);
+                if (props.onChange) {
+                    props.onChange(event);
+                }
             }}
         />
     );
@@ -50,7 +52,8 @@ describe('Switch Component', () => {
         const onChangeStub = cy.stub().as('onChangeStub');
 
         cy.mount(<Component name="switch-test-change" onChange={onChangeStub} />);
-        cy.get('@onChangeStub').should('not.be.called');
+        const onChangeCallCount = '@onChangeStub';
+        cy.get(onChangeCallCount).should('not.be.called');
 
         cy.get(SWITCH_ID).as('Switch');
         cy.get('@Switch').click();

@@ -67,7 +67,9 @@ export const SelectedAsset = ({
         }
 
         return () => {
-            timer && clearTimeout(timer);
+            if (timer) {
+                clearTimeout(timer);
+            }
             resizeObserver.disconnect();
         };
     }, []);
@@ -79,6 +81,7 @@ export const SelectedAsset = ({
             data-test-id="asset-single-input"
         >
             <button
+                type="button"
                 {...mergeProps(buttonProps, focusProps)}
                 ref={buttonRef}
                 aria-labelledby={labelId}

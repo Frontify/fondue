@@ -199,7 +199,9 @@ export const FilterableMultiSelect = ({
     );
 
     useEffect(() => {
-        !open && handleFilterChange('');
+        if (!open) {
+            handleFilterChange('');
+        }
     }, [open, handleFilterChange]);
 
     const popperInstance = usePopper(triggerRef, multiSelectMenuRef, {

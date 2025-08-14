@@ -384,7 +384,7 @@ export const Tree = memo(
             offset: offset ?? 0,
         });
 
-        const [coordinateGetter] = useState(() => sortableTreeKeyboardCoordinates(sensorContext));
+        const coordinateGetter = useMemo(() => sortableTreeKeyboardCoordinates(sensorContext), [sensorContext]);
         const activationConstraint = sensorsActivationConstraint({ dragHandlerPosition, enableDragDelay });
 
         const sensors = useSensors(

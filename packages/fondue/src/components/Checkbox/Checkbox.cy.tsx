@@ -27,7 +27,9 @@ const CheckboxComponent = (props: CheckboxProps): ReactElement => {
             state={checked}
             onChange={(isChecked: boolean) => {
                 setChecked(isChecked ? CheckboxState.Checked : CheckboxState.Unchecked);
-                props.onChange && props.onChange(isChecked);
+                if (props.onChange) {
+                    props.onChange(isChecked);
+                }
             }}
         />
     );

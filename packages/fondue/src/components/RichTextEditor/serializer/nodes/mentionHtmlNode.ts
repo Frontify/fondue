@@ -17,7 +17,8 @@ export const mentionHtmlNode = (node: TElement, { mentionable }: MentionHtmlNode
     }
 
     const div = document.createElement('div');
-    // eslint-disable-next-line react/no-deprecated, @eslint-react/dom/no-render
+    // @eslint-react/dom/no-render
+    // eslint-disable-next-line @eslint-react/dom/no-render
     ReactDOM.render(MentionMarkupElementNode(mentionable)({ element: node } as MarkupElementProps), div);
     return div.innerHTML;
 };

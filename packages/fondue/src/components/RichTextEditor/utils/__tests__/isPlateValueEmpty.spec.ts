@@ -6,15 +6,15 @@ const emptyValue = [{ type: 'something', children: [{ text: '' }] }];
 
 describe('Plate value is Empty', () => {
     it('should be empty on null value', () => {
-        expect(isPlateValueEmpty(null)).to.be.true;
+        expect(isPlateValueEmpty(null)).to.equal(true);
     });
 
     it('should be empty on empty array', () => {
-        expect(isPlateValueEmpty([])).to.be.true;
+        expect(isPlateValueEmpty([])).to.equal(true);
     });
 
     it('should be empty', () => {
-        expect(isPlateValueEmpty(emptyValue)).to.be.true;
+        expect(isPlateValueEmpty(emptyValue)).to.equal(true);
     });
 });
 
@@ -28,18 +28,18 @@ const notEmptyValue_4 = [{ type: 'something', children: [{ text: 'full of text' 
 
 describe('Plate value is Not Empty', () => {
     it('should exist multiple children', () => {
-        expect(isPlateValueEmpty(notEmptyValue_1)).to.be.false;
+        expect(isPlateValueEmpty(notEmptyValue_1)).to.equal(false);
     });
 
     it('should be missing type', () => {
-        expect(isPlateValueEmpty(notEmptyValue_2)).to.be.false;
+        expect(isPlateValueEmpty(notEmptyValue_2)).to.equal(false);
     });
 
     it('should be missing children', () => {
-        expect(isPlateValueEmpty(notEmptyValue_3)).to.be.false;
+        expect(isPlateValueEmpty(notEmptyValue_3)).to.equal(false);
     });
 
     it('should be text in children', () => {
-        expect(isPlateValueEmpty(notEmptyValue_4)).to.be.false;
+        expect(isPlateValueEmpty(notEmptyValue_4)).to.equal(false);
     });
 });

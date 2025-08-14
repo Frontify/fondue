@@ -40,7 +40,9 @@ const renderWithFocusableItems = (
         className="tw-flex tw-justify-around"
         data-focus-visible={isFocusVisible}
     >
-        <button type="button" data-test-id="focusable-item">Button</button>
+        <button type="button" data-test-id="focusable-item">
+            Button
+        </button>
         <input data-test-id="focusable-item" value="Input"></input>
         <textarea data-test-id="focusable-item">Textarea</textarea>
     </div>

@@ -57,7 +57,11 @@ export const Badge = ({
             data-test-id={dataTestId}
         >
             <Container
-                onClick={() => onClick && onClick()}
+                onClick={() => {
+                    if (onClick) {
+                        onClick();
+                    }
+                }}
                 className={merge([
                     'tw-inline-flex tw-items-center tw-justify-center tw-rounded-full tw-select-none tw-flex-initial tw-min-w-0',
                     onClick && !disabled ? 'hover:tw-cursor-pointer' : 'tw-cursor-default',
@@ -69,22 +73,22 @@ export const Badge = ({
                 data-test-id={`${dataTestId}-button`}
                 title={withTitleAttribute ? badgeTitle : undefined}
             >
-                {status && <BadgeStatusIcon status={status} disabled={disabled} data-test-id={dataTestId} />}
-                {icon && (
+                {status ? <BadgeStatusIcon status={status} disabled={disabled} data-test-id={dataTestId} /> : null}
+                {icon ? (
                     <span
                         data-test-id={`${dataTestId}-icon`}
                         className={merge(['tw-flex-none tw-leading-none', disabled && 'tw-opacity-30'])}
                     >
                         {cloneElement(icon, { size: IconSize.Size16 })}
                     </span>
-                )}
-                {children && (
+                ) : null}
+                {children ? (
                     <span className="tw-text-center tw-text-xxs tw-font-sans tw-font-normal tw-truncate">
                         {children}
                     </span>
-                )}
+                ) : null}
             </Container>
-            {onDismiss && (
+            {onDismiss ? (
                 <button
                     type="button"
                     data-test-id={`${dataTestId}-dismiss`}
@@ -98,7 +102,7 @@ export const Badge = ({
                 >
                     <IconCross size={IconSize.Size16} />
                 </button>
-            )}
+            ) : null}
         </div>
     );
 };
