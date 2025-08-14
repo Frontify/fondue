@@ -51,7 +51,7 @@
         "tailwindcss": "^3.0.0"
     },
     "devDependencies": {
-        "@frontify/eslint-config-basic": "^1.0.2",
+        "@frontify/eslint-config-basic": "^1.0.4",
         "@types/chroma-js": "^3.1.1",
         "@types/node": "^24.2.1",
         "@types/react": "^18.3.20",

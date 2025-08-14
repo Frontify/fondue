@@ -67,7 +67,7 @@
     "devDependencies": {
         "@babel/core": "^7.28.0",
         "@etchteam/storybook-addon-status": "^5.0.0",
-        "@frontify/eslint-config-react": "^1.0.2",
+        "@frontify/eslint-config-react": "^1.0.3",
         "@frontify/fondue-tokens": "workspace:^",
         "@storybook/addon-a11y": "^8.6.14",
         "@storybook/addon-actions": "^8.6.14",
