@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type TElement } from '@udecode/slate';
-import { createRoot } from 'react-dom/client';
+import ReactDOM from 'react-dom';
 
 import {
     type MappedMentionableItems,
@@ -17,6 +17,7 @@ export const mentionHtmlNode = (node: TElement, { mentionable }: MentionHtmlNode
     }
 
     const div = document.createElement('div');
-    createRoot(div).render(MentionMarkupElementNode(mentionable)({ element: node } as MarkupElementProps));
+    // eslint-disable-next-line react/no-deprecated
+    ReactDOM.render(MentionMarkupElementNode(mentionable)({ element: node } as MarkupElementProps), div);
     return div.innerHTML;
 };
