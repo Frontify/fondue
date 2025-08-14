@@ -200,13 +200,17 @@ test('should handle all row states and interactions', async ({ mount }) => {
                 <Table.Row onClick={onClick}>
                     <Table.RowCell>Test</Table.RowCell>
                     <Table.RowCell>
-                        <button onClick={onButtonClick}>Test</button>
+                        <button type="button" onClick={onButtonClick}>
+                            Test
+                        </button>
                     </Table.RowCell>
                 </Table.Row>
                 <Table.Row onClick={onClick} disabled>
                     <Table.RowCell>Test</Table.RowCell>
                     <Table.RowCell>
-                        <button onClick={onButtonClick}>Test</button>
+                        <button type="button" onClick={onButtonClick}>
+                            Test
+                        </button>
                     </Table.RowCell>
                 </Table.Row>
             </Table.Body>
@@ -328,14 +332,20 @@ test('should handle keyboard navigation', async ({ mount, page }) => {
                 <Table.Row>
                     <Table.RowCell>Test 1</Table.RowCell>
                     <Table.RowCell>
-                        <button data-test-id="action-btn-1">Action</button>
+                        <button type="button" data-test-id="action-btn-1">
+                            Action
+                        </button>
                     </Table.RowCell>
                 </Table.Row>
                 <Table.Row data-test-id="action-row">
                     <Table.RowCell>Test 2</Table.RowCell>
                     <Table.RowCell>
-                        <button data-test-id="action-btn-2">Action</button>
-                        <button data-test-id="action-btn-3">Action</button>
+                        <button type="button" data-test-id="action-btn-2">
+                            Action
+                        </button>
+                        <button type="button" data-test-id="action-btn-3">
+                            Action
+                        </button>
                     </Table.RowCell>
                 </Table.Row>
             </Table.Body>

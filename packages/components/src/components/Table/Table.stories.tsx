@@ -660,7 +660,7 @@ export const WithSearchAndFilters: Story = {
 
 export const WithSelection: Story = {
     render: ({ ...args }) => {
-        const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set());
+        const [selectedRows, setSelectedRows] = useState<Set<number>>(() => new Set());
 
         const handleSelectAll = () => {
             if (selectedRows.size === TABLE_DATA.length) {
