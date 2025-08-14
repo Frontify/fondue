@@ -20,7 +20,6 @@ export type MenuItemProps = {
     checked?: boolean;
     selectionIndicator?: SelectionIndicatorIcon;
     /** @deprecated this prop is not being used anymore */
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     type?: string;
     link?: string;
     onBlur?: <T extends HTMLButtonElement | HTMLAnchorElement>(event: FocusEvent<T>) => void;
@@ -100,6 +99,7 @@ export const MenuItem = ({
     onMouseOver,
     onMouseLeave,
     'data-test-id': dataTestId = 'menu-item',
+    type,
 }: MenuItemProps) => {
     const currentIconSize = size === MenuItemContentSize.XSmall ? IconSize.Size16 : IconSize.Size20;
 
@@ -131,6 +131,7 @@ export const MenuItem = ({
             {children ? (
                 <li
                     data-test-id={dataTestId}
+                    data-type={type}
                     role="menuitem"
                     className={merge([
                         'tw-text-sm tw-leading-4 tw-text-text-weak',

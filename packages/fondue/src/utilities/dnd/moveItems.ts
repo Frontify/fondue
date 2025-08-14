@@ -61,7 +61,9 @@ export const moveItems = <T extends object>(
     const itemsClone = [...items];
     const sourceIndex = itemsClone.findIndex((item) => item.id === sourceItem.id);
 
-    sourceIndex !== -1 && itemsClone.splice(sourceIndex, 1);
+    if (sourceIndex !== -1) {
+        itemsClone.splice(sourceIndex, 1);
+    }
 
     let targetIndex = itemsClone.findIndex((item) => item.id === targetItem?.id);
     targetIndex = position === 'after' ? targetIndex + 1 : targetIndex;
