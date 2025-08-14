@@ -27,5 +27,5 @@ export const toUpperSnakeCase = (name: string): string => name.replaceAll(/([a-z
  */
 export const toCamelCase = (name: string): string => {
     const kebabCase = toKebabCase(name);
-    return kebabCase.replaceAll(/-([a-z])/g, (_match, letter: string) => letter.toUpperCase());
+    return kebabCase.replaceAll(/-([a-z])/g, (g) => g[1].toUpperCase());
 };

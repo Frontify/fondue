@@ -36,7 +36,7 @@ export const colorToCss = (color?: RgbaColor) => {
  * isValidHexColor('XYZ'); // false
  */
 export const isValidHexColor = (color: string): boolean => {
-    const hexRegex = /^(?:[\dA-F]{3}){1,2}$/i;
+    const hexRegex = /^([\dA-Fa-f]{3}){1,2}$/;
     return color.length > 2 && hexRegex.test(color);
 };
 
@@ -53,7 +53,7 @@ export const isValidHexColor = (color: string): boolean => {
  * hexColorToRgba('XYZ'); // { red: 0, green: 0, blue: 0, alpha: 0 }
  */
 export const hexColorToRgba = (hex: string): RgbaColor => {
-    const hexRegex = /^(?:[\dA-F]{3}){1,2}$/i;
+    const hexRegex = /^([\dA-Fa-f]{3}){1,2}$/;
     const matches = hex.match(hexRegex);
     if (!matches) {
         return {

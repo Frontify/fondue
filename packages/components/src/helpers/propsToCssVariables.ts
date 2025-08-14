@@ -62,7 +62,6 @@ export const propsToCssVariables = (
                   ? abbreviationToCssProperty[key]
                   : key;
         // The lookahead is necessary to split camelCase boundaries; disabling false-positive lint warning
-        // eslint-disable-next-line regexp/no-useless-assertions
         const cssPropertyKebabCase = cssProperty?.replaceAll(/([\da-z]|(?=[A-Z]))([A-Z])/g, '$1-$2').toLowerCase();
 
         if (typeof value === 'object') {
