@@ -90,7 +90,7 @@ export function EmojiPickerContent({
         [visibleCategories],
     );
 
-    const EmojiList = useCallback(() => {
+    const renderEmojiList = useCallback(() => {
         return emojiLibrary
             .getGrid()
             .sections()
@@ -126,7 +126,7 @@ export function EmojiPickerContent({
             });
     }, [emojiLibrary, rowWidth, i18n.categories, isCategoryVisible, onSelectEmoji, onMouseOver, settings]);
 
-    const SearchList = useCallback(() => {
+    const renderSearchList = useCallback(() => {
         return (
             <div data-id="search" style={{ width: rowWidth }}>
                 <div className="tw-sticky tw--top-px tw-z-[1] tw-bg-white/90 tw-p-1 tw-backdrop-blur-sm">
@@ -156,7 +156,7 @@ export function EmojiPickerContent({
             ref={refs.current.contentRoot}
         >
             <div ref={refs.current.content} className="tw-h-full">
-                {isSearching ? SearchList() : EmojiList()}
+                {isSearching ? renderSearchList() : renderEmojiList()}
             </div>
         </div>
     );

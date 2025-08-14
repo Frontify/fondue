@@ -7,9 +7,9 @@ import { type BreakAfterPluginProps } from '@components/RichTextEditor/Plugins/C
 
 import { Plugin } from '../Plugin';
 
-import { columnBreakHandler } from './columnBreakHandler';
 import { ColumnBreakButton } from './ColumnBreakButton';
 import { onKeyDownColumnBreak } from './onKeyDownColumnBreak';
+import { columnBreakHandler } from './columnBreakHandler';
 
 export const KEY_ELEMENT_BREAK_AFTER_COLUMN = 'breakAfterColumn';
 export const GAP_DEFAULT = 'normal';

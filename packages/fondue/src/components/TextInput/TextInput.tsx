@@ -254,7 +254,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
                 ])}
                 data-test-id="fondue-text-input-component"
             >
-                {decorator && (
+                {decorator ? (
                     <div
                         className={merge([
                             'tw-flex tw-items-center tw-justify-center tw-pl-1',
@@ -264,7 +264,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
                     >
                         {decorator}
                     </div>
-                )}
+                ) : null}
                 <input
                     {...inputFocusProps}
                     id={useMemoizedId(propId)}

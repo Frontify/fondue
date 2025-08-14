@@ -42,7 +42,7 @@ export const ModalHeader = ({
                     {title}
                 </h3>
             </div>
-            {leadText && <p className="tw-text-text-weak tw-mt-4">{leadText}</p>}
+            {leadText ? <p className="tw-text-text-weak tw-mt-4">{leadText}</p> : null}
         </div>
     );
 };
