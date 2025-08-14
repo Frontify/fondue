@@ -481,7 +481,7 @@ export const InsideInlineDialog = ({ ...args }: TreeProps) => {
                 anchor={dialogTriggerRef}
                 open={isOpen}
                 modality={Modality.NonModal}
-                enablePortal={true}
+                enablePortal
                 handleClose={() => setIsOpen(false)}
             >
                 <DialogBody>

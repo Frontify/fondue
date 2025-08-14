@@ -290,7 +290,7 @@ export const FilterableMultiSelect = ({
                     <div
                         id={multiSelectContentId}
                         ref={setMultiSelectMenuRef}
-                        className="tw-absolute tw-left-0 tw-w-full tw-overflow-hidden tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-[120000] tw-bg-base tw-min-w-[18rem]"
+                        className="tw-absolute tw-left-0 tw-w-full tw-overflow-hidden tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-[120000] tw-bg-base tw-min-w-72"
                         key="content"
                         style={{
                             ...popperInstance.styles.popper,
@@ -303,9 +303,9 @@ export const FilterableMultiSelect = ({
                                 <TextInput
                                     value={searchTerm}
                                     placeholder={filterLabel}
-                                    clearable={true}
+                                    clearable
                                     onChange={handleFilterChange}
-                                    focusOnMount={true}
+                                    focusOnMount
                                 />
                             </div>
                             <div

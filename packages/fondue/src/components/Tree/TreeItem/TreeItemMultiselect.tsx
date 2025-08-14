@@ -173,7 +173,7 @@ export const TreeItemMultiselect = memo(
                 aria-owns={childrenIds.join(' ')}
             >
                 <div className={containerClassName}>
-                    <span className={backgroundClassName} style={backgroundStyle} aria-hidden={true} />
+                    <span className={backgroundClassName} style={backgroundStyle} aria-hidden />
                     {checkBoxPosition === 'left' && checkBox}
 
                     {expandable && (

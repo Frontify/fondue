@@ -265,7 +265,7 @@ const WithInlineDialog: StoryFn<DialogProps> = (args) => {
                             <div>
                                 <div className="tw-w-[486px] tw-px-4 tw-py-2">
                                     <TextInput
-                                        focusOnMount={true}
+                                        focusOnMount
                                         decorator={<IconMagnifier size={IconSize.Size16} />}
                                         id="name"
                                         placeholder="Search"

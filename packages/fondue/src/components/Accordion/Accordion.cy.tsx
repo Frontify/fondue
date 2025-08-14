@@ -177,7 +177,7 @@ describe('Accordion Component', () => {
     it('shows divider on AccordionItem', () => {
         cy.mount(
             <Accordion>
-                <AccordionItem header={{ children: '1' }} divider={true}>
+                <AccordionItem header={{ children: '1' }} divider>
                     1
                 </AccordionItem>
             </Accordion>,

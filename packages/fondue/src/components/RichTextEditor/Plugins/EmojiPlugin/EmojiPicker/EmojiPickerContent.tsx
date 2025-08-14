@@ -100,7 +100,7 @@ export function EmojiPickerContent({
 
                 return (
                     <div key={categoryId} data-id={categoryId} ref={section.root} style={{ width: rowWidth }}>
-                        <div className="tw-sticky tw--top-px tw-z-[1] tw-bg-white/90 tw-p-1 tw-backdrop-blur-[4px]">
+                        <div className="tw-sticky tw--top-px tw-z-[1] tw-bg-white/90 tw-p-1 tw-backdrop-blur-sm">
                             {i18n.categories[categoryId]}
                         </div>
                         <div
@@ -128,7 +128,7 @@ export function EmojiPickerContent({
     const SearchList = useCallback(() => {
         return (
             <div data-id="search" style={{ width: rowWidth }}>
-                <div className="tw-sticky tw--top-px tw-z-[1] tw-bg-white/90 tw-p-1 tw-backdrop-blur-[4px]">
+                <div className="tw-sticky tw--top-px tw-z-[1] tw-bg-white/90 tw-p-1 tw-backdrop-blur-sm">
                     {i18n.searchResult}
                 </div>
                 <div className="tw-relative tw-flex tw-flex-wrap">

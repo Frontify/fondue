@@ -75,7 +75,7 @@ describe('Textarea Unit tests', () => {
     });
 
     it('has the required attribute', () => {
-        cy.mount(<Textarea required={true} />);
+        cy.mount(<Textarea required />);
         cy.get(TEXTAREA_ID).should('have.attr', 'required');
     });
 
@@ -85,7 +85,7 @@ describe('Textarea Unit tests', () => {
     });
 
     it('has the disabled attribute', () => {
-        cy.mount(<Textarea disabled={true} />);
+        cy.mount(<Textarea disabled />);
         cy.get(TEXTAREA_ID).should('have.attr', 'disabled');
     });
 
@@ -95,7 +95,7 @@ describe('Textarea Unit tests', () => {
     });
 
     it('has the readOnly attribute', () => {
-        cy.mount(<Textarea readOnly={true} />);
+        cy.mount(<Textarea readOnly />);
         cy.get(TEXTAREA_ID).should('have.attr', 'readOnly');
     });
 

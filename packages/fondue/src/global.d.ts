@@ -26,7 +26,7 @@ type TokensType = {
     };
 };
 
-declare module "@frontify/fondue-tokens" {
+declare module '@frontify/fondue-tokens' {
     const tokens: TokensType;
     export = tokens;
 }

@@ -43,7 +43,7 @@ export const SelectedAssetsThumbnail = ({ assets }: Pick<MultiAssetPreviewProps,
                     />
                 ) : (
                     <div className="tw-h-11 tw-w-11" key={asset.src}>
-                        <AssetThumbnail asset={asset} size={AssetInputSize.Small} isMultiAsset={true} />
+                        <AssetThumbnail asset={asset} size={AssetInputSize.Small} isMultiAsset />
                     </div>
                 ),
             )}

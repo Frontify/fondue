@@ -87,7 +87,7 @@ describe('Switch Component', () => {
     });
 
     it('should hug the switch and label', () => {
-        cy.mount(<Component label={SWITCH_LABEL} hug={true} />);
+        cy.mount(<Component label={SWITCH_LABEL} hug />);
 
         cy.get(SWITCH_CONTAINER_ID).should('have.css', 'display', 'inline-flex');
     });

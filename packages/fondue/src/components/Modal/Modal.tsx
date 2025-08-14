@@ -75,7 +75,7 @@ const ModalComponent = memo((props: ModalProps): ReactElement => {
                 zIndex,
             }}
             onPointerDown={onPointerDown}
-            data-is-underlay={true}
+            data-is-underlay
             className={
                 'tw-fixed tw-top-0 tw-left-0 tw-bottom-0 tw-right-0 tw-flex tw-justify-center tw-items-center tw-p-4'
             }

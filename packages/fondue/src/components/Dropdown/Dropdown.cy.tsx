@@ -144,7 +144,7 @@ describe('Dropdown Component', () => {
     });
 
     it('should not focus the dropdown when disabled', () => {
-        cy.mount(<Component menuBlocks={ITEMS} disabled={true} />);
+        cy.mount(<Component menuBlocks={ITEMS} disabled />);
 
         cy.window().focus();
         cy.get('body').realPress('Tab');

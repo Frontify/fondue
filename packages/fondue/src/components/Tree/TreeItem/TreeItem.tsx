@@ -440,7 +440,7 @@ export const TreeItem = memo(
                     aria-owns={childrenIds.join(' ')}
                 >
                     <div ref={setDraggableNodeRef} className={containerClassName} style={style}>
-                        <span className={backgroundClassName} style={backgroundStyle} aria-hidden={true} />
+                        <span className={backgroundClassName} style={backgroundStyle} aria-hidden />
                         {dragHandlerPosition === 'left' && dragHandler}
                         {expandable && (
                             <ExpandButton

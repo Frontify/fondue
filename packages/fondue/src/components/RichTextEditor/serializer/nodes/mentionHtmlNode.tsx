@@ -2,6 +2,7 @@
 
 import { type TElement } from '@udecode/slate';
 import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 
 import {
     type MappedMentionableItems,
@@ -18,6 +19,6 @@ export const mentionHtmlNode = (node: TElement, { mentionable }: MentionHtmlNode
 
     const div = document.createElement('div');
     // eslint-disable-next-line react/no-deprecated
-    ReactDOM.render(MentionMarkupElementNode(mentionable)({ element: node } as MarkupElementProps), div);
+    createRoot(div).render(MentionMarkupElementNode(mentionable)({ element: node } as MarkupElementProps));
     return div.innerHTML;
 };

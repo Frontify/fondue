@@ -3,3 +3,4 @@
 import { type HTMLAttributes, createContext } from 'react';
 
 export const ModalTitle = createContext<HTMLAttributes<HTMLElement>>({ id: undefined });
+ModalTitle.displayName = 'ModalTitle';

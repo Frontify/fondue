@@ -135,7 +135,7 @@ describe('OrderableList Component', () => {
     });
 
     it('Should disable drag events if dragDisabled prop is true, but maintain focus for navigation', () => {
-        cy.mount(<OrderableListWithDefaultProps dragDisabled={true} renderContent={renderWithFocusableItems} />);
+        cy.mount(<OrderableListWithDefaultProps dragDisabled renderContent={renderWithFocusableItems} />);
         cy.get(DRAGGABLE_ITEM).each(($el) => {
             const disabled = $el.attr('aria-disabled');
             expect(disabled).to.equal('true');

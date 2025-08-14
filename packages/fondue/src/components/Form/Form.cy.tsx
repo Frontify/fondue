@@ -20,14 +20,7 @@ describe('Form', () => {
 
     it('should render correct attributes', () => {
         cy.mount(
-            <Form
-                method="post"
-                target="_blank"
-                name="some-name"
-                autoComplete="on"
-                encType="text/plain"
-                noValidate={true}
-            >
+            <Form method="post" target="_blank" name="some-name" autoComplete="on" encType="text/plain" noValidate>
                 <TextInput id="label" value="some value" />
             </Form>,
         );
