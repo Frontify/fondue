@@ -155,6 +155,7 @@
         "@udecode/plate-core": "^31.3.2",
         "@udecode/plate-emoji": "^31.4.0",
         "@udecode/plate-floating": "^31.0.0",
+        "@udecode/plate-font": "^31.0.0",
         "@udecode/plate-indent": "^31.1.0",
         "@udecode/plate-link": "^31.0.0",
         "@udecode/plate-list": "^31.1.3",
