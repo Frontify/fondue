@@ -10,16 +10,18 @@ export const renderLabel = (mentionable: MappedMentionableItems, key: string, id
 
 export const MentionMarkupElementNode =
     (mentionable: MappedMentionableItems): MarkupElementNodeType =>
-    // eslint-disable-next-line react/display-name
-    (props) => {
-        const { element, children } = props;
+    {
+        const MentionMarkupElementNodeComponent: MarkupElementNodeType = (props) => {
+            const { element, children } = props;
 
-        const key = combineMentionableKeyWith(element?.category as MentionableCategory, String(element?.id));
+            const key = combineMentionableKeyWith(element?.category as MentionableCategory, String(element?.id));
 
-        return (
-            <MarkupElementNodeComponent category={element?.category as MentionableCategory} {...props}>
-                {renderMentionLabel(mentionable, key, String(element?.id))}
-                {children}
-            </MarkupElementNodeComponent>
-        );
+            return (
+                <MarkupElementNodeComponent category={element?.category as MentionableCategory} {...props}>
+                    {renderMentionLabel(mentionable, key, String(element?.id))}
+                    {children}
+                </MarkupElementNodeComponent>
+            );
+        };
+        return MentionMarkupElementNodeComponent;
     };

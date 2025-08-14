@@ -19,6 +19,8 @@ export default tseslint.config(
             'src/foundation/Icon/Generated/index.ts',
             'src/foundation/Icon/IconEnum.ts',
             'src/components/ComponentEnum.ts',
+            'src/components/postcss.config.cjs',
+            'src/subpackages/tokens.js',
             'postcss.config.cjs',
             'cypress.config.ts',
             'vite.config.ts',

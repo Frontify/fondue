@@ -20,7 +20,7 @@ const getTextStyle = (node: ENode<Value>): string => {
 
 const excludeStyles = [ELEMENT_LI, ELEMENT_UL, ELEMENT_OL];
 
-export const useSelectedTextStyles = (editor: PlateEditor): string[] => {
+export const selectedTextStyles = (editor: PlateEditor): string[] => {
     if (!editor || !editor.selection) {
         return [];
     }

@@ -6,7 +6,7 @@ import { usePopper } from 'react-popper';
 
 import { DEFAULT_TEXT_STYLE_VALUE } from '../types';
 
-import { useSelectedTextStyles } from './useSelectedTextStyles';
+import { selectedTextStyles } from './selectedTextStyles';
 import { verticalPositionModifier } from './verticalPositionModifier';
 
 type UseTextStyleDropdownReturn<T, P> = {
@@ -24,12 +24,12 @@ export const useTextStyleDropdown = <T extends HTMLElement, P extends HTMLElemen
     const [triggerElement, setTriggerElement] = useState<T | null>(null);
     const [popperElement, setPopperElement] = useState<P | null>(null);
     const editor = useEditorState(editorId);
-    const selectedTextStyles = useSelectedTextStyles(editor);
+    const _selectedTextStyles = selectedTextStyles(editor);
 
     let key = DEFAULT_TEXT_STYLE_VALUE;
-    if (selectedTextStyles.length === 1) {
-        key = selectedTextStyles[0];
-    } else if (selectedTextStyles.length === 0) {
+    if (_selectedTextStyles.length === 1) {
+        key = _selectedTextStyles[0];
+    } else if (_selectedTextStyles.length === 0) {
         key = 'p';
     }
 

@@ -12,8 +12,8 @@ import { ModalBody } from './ModalBody';
 import { ModalFooter } from './ModalFooter';
 import { ModalHeader } from './ModalHeader';
 import { ModalVisual } from './ModalVisual';
-import { MODAL_PADDING, ModalLayout } from './context/ModalLayout';
-import { ModalTitle } from './context/ModalTitle';
+import { MODAL_PADDING, ModalLayoutContext } from './context/ModalLayout';
+import { ModalTitleContext } from './context/ModalTitle';
 import { ModalWidth, type ModalProps } from './types';
 
 const UNDERLAY_VARIANTS = {
@@ -100,9 +100,9 @@ const ModalComponent = memo((props: ModalProps): ReactElement => {
                             </div>
                         )}
                         <div className="tw-flex tw-flex-col tw-flex-1 tw-space-y-6 tw-overflow-hidden">
-                            <ModalLayout.Provider value={{ compact, padding }}>
-                                <ModalTitle.Provider value={titleProps}>{children}</ModalTitle.Provider>
-                            </ModalLayout.Provider>
+                            <ModalLayoutContext.Provider value={{ compact, padding }}>
+                                <ModalTitleContext.Provider value={titleProps}>{children}</ModalTitleContext.Provider>
+                            </ModalLayoutContext.Provider>
                         </div>
                     </div>
                 </motion.div>

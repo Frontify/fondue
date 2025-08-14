@@ -9,7 +9,7 @@ import { Plugin } from '../Plugin';
 
 import { ColumnBreakButton } from './ColumnBreakButton';
 import { onKeyDownColumnBreak } from './onKeyDownColumnBreak';
-import { useColumnBreakHandler } from './useColumnBreakHandler';
+import { columnBreakHandler } from './columnBreakHandler';
 
 export const KEY_ELEMENT_BREAK_AFTER_COLUMN = 'breakAfterColumn';
 export const GAP_DEFAULT = 'normal';
@@ -43,7 +43,7 @@ export const createColumnBreakPlugin = (
         handlers: {
             onKeyDown: onKeyDownColumnBreak,
         },
-        useHooks: useColumnBreakHandler,
+        useHooks: columnBreakHandler,
         options: {
             columns,
             gap,
