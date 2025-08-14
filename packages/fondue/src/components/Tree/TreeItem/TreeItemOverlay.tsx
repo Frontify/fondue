@@ -43,7 +43,6 @@ export const TreeItemOverlay = ({
 
     return (
         <li
-            // eslint-disable-next-line jsx-a11y/no-noninteractive-element-to-interactive-role
             role="treeitem"
             style={liStyle}
             id={id.toString()}

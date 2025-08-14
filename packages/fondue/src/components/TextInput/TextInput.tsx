@@ -203,9 +203,14 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
         );
 
         useEffect(() => {
-            setTimeout(() => {
-                focusOnMount && inputElement.current?.focus();
+            const timeoutId = window.setTimeout(() => {
+                if (focusOnMount && inputElement.current) {
+                    inputElement.current.focus();
+                }
             }, 0);
+            return () => {
+                window.clearTimeout(timeoutId);
+            };
         }, [focusOnMount]);
 
         useEffect(() => {

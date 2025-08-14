@@ -417,7 +417,6 @@ export const TreeItem = memo(
                     id={id}
                     key={id}
                     tabIndex={0}
-                    // eslint-disable-next-line jsx-a11y/no-noninteractive-element-to-interactive-role
                     role="treeitem"
                     style={liStyle}
                     onKeyDown={noop}

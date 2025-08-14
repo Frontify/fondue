@@ -20,6 +20,7 @@ export type MenuItemProps = {
     checked?: boolean;
     selectionIndicator?: SelectionIndicatorIcon;
     /** @deprecated this prop is not being used anymore */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     type?: string;
     link?: string;
     onBlur?: <T extends HTMLButtonElement | HTMLAnchorElement>(event: FocusEvent<T>) => void;
@@ -127,10 +128,9 @@ export const MenuItem = ({
 
     return (
         <>
-            {children && (
+            {children ? (
                 <li
                     data-test-id={dataTestId}
-                    // eslint-disable-next-line jsx-a11y/no-noninteractive-element-to-interactive-role
                     role="menuitem"
                     className={merge([
                         'tw-text-sm tw-leading-4 tw-text-text-weak',
@@ -173,7 +173,7 @@ export const MenuItem = ({
                     )}
                     {mainElementType === 'span' && <span className={ITEM_BASE_CLASSES}>{children}</span>}
                 </li>
-            )}
+            ) : null}
             {/* The implementation without children is the first behavior of the MenuItem component.
                 This way we can introduce the new changes without breaking the current usage of it.
                 In the future, this implementation should be replaced by the new one and the projects updated properly

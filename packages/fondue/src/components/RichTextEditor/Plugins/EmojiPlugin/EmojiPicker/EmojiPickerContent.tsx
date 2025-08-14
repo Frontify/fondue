@@ -107,18 +107,19 @@ export function EmojiPickerContent({
                             className="tw-relative tw-flex tw-flex-wrap"
                             style={{ height: section.getRows().length * buttonSize.value }}
                         >
-                            {isCategoryVisible(categoryId) &&
-                                section
-                                    .getRows()
-                                    .map((row: GridRow, index) => (
-                                        <RowOfButtons
-                                            key={index}
-                                            emojiLibrary={emojiLibrary}
-                                            row={row}
-                                            onSelectEmoji={onSelectEmoji}
-                                            onMouseOver={onMouseOver}
-                                        />
-                                    ))}
+                            {isCategoryVisible(categoryId)
+                                ? section
+                                      .getRows()
+                                      .map((row: GridRow, index) => (
+                                          <RowOfButtons
+                                              key={index}
+                                              emojiLibrary={emojiLibrary}
+                                              row={row}
+                                              onSelectEmoji={onSelectEmoji}
+                                              onMouseOver={onMouseOver}
+                                          />
+                                      ))
+                                : null}
                         </div>
                     </div>
                 );
