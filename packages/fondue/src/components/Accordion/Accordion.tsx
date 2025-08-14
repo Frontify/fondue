@@ -50,6 +50,7 @@ const AriaAccordionItem = ({
             ])}
         >
             <button
+                type="button"
                 {...mergeProps(buttonProps, focusProps)}
                 data-test-id={dataTestId}
                 ref={triggerRef}

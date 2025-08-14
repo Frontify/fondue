@@ -210,6 +210,7 @@ export const EditableText = ({
                 </div>
             ) : null}
             <button
+                type="button"
                 style={{ display: editableState === EditableMode.INPUT ? 'none' : 'flex' }}
                 className={merge([isOverflowing && 'tw-w-full', 'tw-h-full tw-items-center', FOCUS_VISIBLE_STYLE])}
                 {...clickBehaviour}

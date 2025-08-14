@@ -35,7 +35,7 @@ export default {
         content: 'Cupcake ipsum dolor sit amet ice cream. (https://Cupcakeipsumdolorsitameticecream.com)',
         heading: '',
         triggerElement: (
-            <button className="tw-flex tw-justify-center tw-items-center">
+            <button type="button" className="tw-flex tw-justify-center tw-items-center">
                 <span className="tw-flex tw-leading-3">
                     <IconExclamationMarkCircle16Filled />
                 </span>
@@ -407,7 +407,7 @@ const WithModalWithTooltipAndDropdown: StoryFn<LegacyTooltipProps> = (args: Lega
                     <LegacyTooltip
                         {...args}
                         triggerElement={
-                            <button aria-label="Exclamation mark circle icon" className="tw-mr-1">
+                            <button type="button" aria-label="Exclamation mark circle icon" className="tw-mr-1">
                                 <IconExclamationMarkCircle16Filled />
                             </button>
                         }

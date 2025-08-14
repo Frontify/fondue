@@ -294,6 +294,7 @@ const TestAccordion = (): ReactElement => {
         <>
             <Accordion>{[...accordionData]}</Accordion>
             <button
+                type="button"
                 onClick={() => {
                     setAccordionData([...accordionItems, ...additionalAccordionItem]);
                 }}

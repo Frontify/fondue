@@ -143,7 +143,10 @@ const TemplateDateRange: StoryFn<DatePickerProps> = () => {
             }}
             preventOpenOnFocus
             customTrigger={
-                <button className="tw-flex tw-items-center hover:tw-bg-box-neutral-hover tw-py-2 tw-px-4 tw-rounded tw-gap-2">
+                <button
+                    type="button"
+                    className="tw-flex tw-items-center hover:tw-bg-box-neutral-hover tw-py-2 tw-px-4 tw-rounded tw-gap-2"
+                >
                     <IconCalendar16 />
                     Date:
                     <Badge style={BadgeStyle.Progress} emphasis={BadgeEmphasis.Strong} size="small">
@@ -159,6 +162,7 @@ const TemplateDateRange: StoryFn<DatePickerProps> = () => {
                     <div className="tw-border-t tw-w-full tw-border-solid tw-border-line" />
                     <div className="tw-p-2">
                         <button
+                            type="button"
                             className="tw-bg-button-background tw-border-button-border tw-w-full
                                    hover:tw-bg-button-background-hover tw-rounded
                                    active:tw-bg-button-background-pressed tw-px-4 tw-h-9 tw-text-body-medium"
