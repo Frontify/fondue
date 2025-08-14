@@ -80,6 +80,7 @@ const ModalComponent = memo((props: ModalProps): ReactElement => {
                 'tw-fixed tw-top-0 tw-left-0 tw-bottom-0 tw-right-0 tw-flex tw-justify-center tw-items-center tw-p-4'
             }
         >
+            {/* eslint-disable-next-line jsx-a11y-x/no-autofocus */}
             <FocusScope contain restoreFocus autoFocus>
                 <motion.div
                     variants={MODAL_VARIANTS}

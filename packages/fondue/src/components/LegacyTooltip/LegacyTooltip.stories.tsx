@@ -144,7 +144,7 @@ export const MultipleTooltipsComponent: StoryFn<LegacyTooltipProps> = (args: Leg
             <LegacyTooltip
                 {...args}
                 triggerElement={
-                    <button aria-label="Exclamation mark circle icon" className="tw-mr-1">
+                    <button type="button" aria-label="Exclamation mark circle icon" className="tw-mr-1">
                         <IconExclamationMarkCircle16Filled />
                     </button>
                 }
@@ -153,7 +153,7 @@ export const MultipleTooltipsComponent: StoryFn<LegacyTooltipProps> = (args: Leg
                 {...args}
                 content="Second tooltip"
                 triggerElement={
-                    <button aria-label="Exclamation mark triangle icon">
+                    <button type="button" aria-label="Exclamation mark triangle icon">
                         <IconExclamationMarkTriangle16 />
                     </button>
                 }
@@ -305,7 +305,7 @@ const TooltipWithinOverflownContainer: StoryFn<LegacyTooltipProps> = (args: Lega
                 <LegacyTooltip
                     {...args}
                     triggerElement={
-                        <button aria-label="Exclamation mark circle icon" className="tw-mr-1">
+                        <button type="button" aria-label="Exclamation mark circle icon" className="tw-mr-1">
                             <IconExclamationMarkCircle16Filled />
                         </button>
                     }
