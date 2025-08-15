@@ -1,10 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { CollapsibleWrap } from '@components/CollapsibleWrap';
 import { useAccordion, useAccordionItem } from '@react-aria/accordion';
 import { useFocusRing } from '@react-aria/focus';
 import { mergeProps } from '@react-aria/utils';
 import { Item as StatelyItem } from '@react-stately/collections';
 import { type TreeProps, useTreeState } from '@react-stately/tree';
+import { FOCUS_STYLE_NO_OFFSET } from '@utilities/focusStyle';
+import { merge } from '@utilities/merge';
 import {
     Children,
     type Key,
@@ -15,10 +18,6 @@ import {
     useEffect,
     useRef,
 } from 'react';
-
-import { CollapsibleWrap } from '@components/CollapsibleWrap';
-import { FOCUS_STYLE_NO_OFFSET } from '@utilities/focusStyle';
-import { merge } from '@utilities/merge';
 
 import { AccordionHeader } from './AccordionHeader';
 import { type AccordionItemProps, type AccordionProps, type AriaAccordionItemProps } from './types';

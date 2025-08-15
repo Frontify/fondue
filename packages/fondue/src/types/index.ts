@@ -1,3 +1,3 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export { Color, ColorRgb, Palette } from './colors';
+export { type Color, type ColorRgb, type Palette } from './colors';

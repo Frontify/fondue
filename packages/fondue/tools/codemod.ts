@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { replaceCssVariables, replaceTailwindClasses } from '@frontify/fondue-tokens/legacy/tools/replaceLegacyTokens';
 import { Command } from 'commander';
 
 import { findDeprecatedImports } from './codemod/findDeprecatedImports';
-import { replaceCssVariables, replaceTailwindClasses } from './codemod/replaceLegacyTokens';
 
 const program = new Command();
 
