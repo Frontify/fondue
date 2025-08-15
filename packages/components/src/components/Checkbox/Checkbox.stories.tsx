@@ -20,6 +20,9 @@ const meta: Meta<typeof CheckboxComponent> = {
         },
     },
     args: {
+        disabled: false,
+        required: false,
+        readOnly: false,
         onChange: action('onChange'),
         onBlur: action('onBlur'),
         onFocus: action('onFocus'),
