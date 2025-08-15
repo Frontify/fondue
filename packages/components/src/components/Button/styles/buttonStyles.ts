@@ -9,7 +9,7 @@ export const buttonStyles = sv({
         `${FOCUS_OUTLINE}`,
     variants: {
         disabled: {
-            true: 'tw-pointer-events-none tw-text-box-disabled-inverse tw-bg-box-disabled',
+            true: 'tw-cursor-not-allowed tw-pointer-events-none tw-text-box-disabled-inverse tw-bg-box-disabled',
         },
         rounding: {
             medium: 'tw-rounded',
