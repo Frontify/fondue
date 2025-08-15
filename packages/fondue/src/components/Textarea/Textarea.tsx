@@ -1,20 +1,19 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useFocusRing } from '@react-aria/focus';
-import { type KeyboardEvent, type ReactElement, type TextareaHTMLAttributes, useEffect } from 'react';
-import TextareaAutosize, { type TextareaAutosizeProps } from 'react-textarea-autosize';
-
 import { useMemoizedId } from '@hooks/useMemoizedId';
+import { useFocusRing } from '@react-aria/focus';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { GetStatusIcon, InputActions, InputExtraActions, InputStyles } from '@utilities/input';
 import { merge } from '@utilities/merge';
 import { useForwardedRef } from '@utilities/useForwardedRef';
 import { Validation, validationClassMap } from '@utilities/validation';
+import { type KeyboardEvent, type ReactElement, type TextareaHTMLAttributes, useEffect } from 'react';
+import TextareaAutosize, { type TextareaAutosizeProps } from 'react-textarea-autosize';
 
 import { type InputSharedBaseProps } from '../../types/input';
 
 /**
- * @deprecated
+ * @deprecated Please use updated Textarea component from `@frontify/fondue/components` instead.
  */
 export type TextareaProps = {
     autosize?: boolean;
@@ -31,7 +30,7 @@ export type TextareaProps = {
     Omit<TextareaAutosizeProps, 'onChange' | 'defaultValue' | 'value'>;
 
 /**
- * @deprecated
+ * @deprecated Please use updated Textarea component from `@frontify/fondue/components` instead.
  */
 export const Textarea = ({
     autocomplete,
