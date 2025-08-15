@@ -36,9 +36,9 @@ const meta: Meta<typeof CheckboxComponent> = {
         };
 
         return (
-            <div className="tw-flex tw-gap-1.5 tw-items-center">
+            <div className="tw-flex tw-gap-2 tw-items-center">
                 <Checkbox {...args} id="checkbox" aria-labelledby="label" value={value} onChange={handleToggle} />
-                <Label id="label" htmlFor="checkbox">
+                <Label id="label" htmlFor="checkbox" required={args.required}>
                     Checkbox
                 </Label>
             </div>
@@ -58,6 +58,12 @@ export const Indeterminate: Story = {
 export const Disabled: Story = {
     args: {
         disabled: true,
+    },
+};
+
+export const Required: Story = {
+    args: {
+        required: true,
     },
 };
 
