@@ -24,9 +24,6 @@
     border-radius: var(--radius);
     border: var(--line-width) solid var(--line-color-strong);
 
-    outline: 2px solid transparent;
-    outline-offset: 2px;
-
     & {
         @include focusStyle.focus-outline;
         @include transitions.transition-colors;
@@ -94,6 +91,8 @@
     border-radius: calc(var(--radius) - var(--line-width));
     resize: none;
     grid-area: textarea;
+    outline: 2px solid transparent;
+    outline-offset: 2px;
 
     [data-resizable='true'] & {
         resize: vertical;
