@@ -1,12 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type Meta, type StoryFn } from '@storybook/react';
-import { useEffect, useState } from 'react';
-
 import { Validation } from '@utilities/validation';
+import { useEffect, useState } from 'react';
 
 import { type LegacyTextareaProps, LegacyTextarea as TextareaComponent } from './LegacyTextarea';
 
+/**
+ ### This component is deprecated, please use the [new Textarea component](/docs/current_components-textarea--documentation) instead.
+ */
 export default {
     title: 'Deprecated/LegacyTextarea',
     component: TextareaComponent,
@@ -36,6 +38,11 @@ export default {
         maxRows: { type: 'number' },
         onEnterPressed: { action: 'onEnterPressed', table: { disable: true } },
         focusOnMount: { type: 'boolean' },
+    },
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
     },
 } as Meta<LegacyTextareaProps>;
 

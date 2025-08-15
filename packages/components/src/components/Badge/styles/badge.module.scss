@@ -17,7 +17,7 @@
 }
 
 @mixin variant($name, $color) {
-    [data-variant=#{$name}]:not([data-disabled="true"]) {
+    .root[data-variant=#{$name}]:not([data-disabled="true"]) {
         background-color: var(--box-#{$color}-strong-color);
         color: var(--box-#{$color}-strong-inverse-color);
 
