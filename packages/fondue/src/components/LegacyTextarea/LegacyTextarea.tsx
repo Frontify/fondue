@@ -68,10 +68,10 @@ export const LegacyTextarea = ({
 
     useEffect(() => {
         if (focusOnMount) {
-            const timeoutId = window.setTimeout(() => {
+            const timeoutId = setTimeout(() => {
                 textareaElement.current?.focus();
             }, 0);
-            return () => window.clearTimeout(timeoutId);
+            return () => clearTimeout(timeoutId);
         }
     }, [focusOnMount]);
 

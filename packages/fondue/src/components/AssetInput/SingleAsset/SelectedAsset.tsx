@@ -56,10 +56,10 @@ export const SelectedAsset = ({
     const [flyoutWidth, setFlyoutWidth] = useState(0);
 
     useEffect(() => {
-        let timer: number | null = null;
+        let timer: ReturnType<typeof setTimeout> | null = null;
         const calculateFlyoutWidth = () => {
             const calculatedWidth = buttonRef.current?.getBoundingClientRect().width ?? 0;
-            timer = window.setTimeout(() => setFlyoutWidth(calculatedWidth), 0);
+            timer = setTimeout(() => setFlyoutWidth(calculatedWidth), 0);
         };
         const resizeObserver = new ResizeObserver(calculateFlyoutWidth);
         if (buttonRef.current) {

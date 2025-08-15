@@ -42,11 +42,11 @@ const handleTimeout = (callback: () => void, delay: number, timeoutId: number | 
     let newTimeoutId = timeoutId;
 
     if (newTimeoutId) {
-        window.clearTimeout(newTimeoutId);
+        clearTimeout(newTimeoutId);
     }
 
     if (delay > 0) {
-        newTimeoutId = window.setTimeout(callback, delay);
+        newTimeoutId = setTimeout(callback, delay);
     } else {
         callback();
     }
