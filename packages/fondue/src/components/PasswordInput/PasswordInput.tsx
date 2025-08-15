@@ -1,18 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useFocusRing } from '@react-aria/focus';
-import { useCallback, useRef, useState } from 'react';
-
 import { Button } from '@components/Button/Button';
 import { ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button/ButtonTypes';
 import IconCross16 from '@foundation/Icon/Generated/IconCross16';
 import IconEye16 from '@foundation/Icon/Generated/IconEye16';
 import IconEyeOff16 from '@foundation/Icon/Generated/IconEyeOff16';
 import { useMemoizedId } from '@hooks/useMemoizedId';
+import { useFocusRing } from '@react-aria/focus';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { GetStatusIcon } from '@utilities/input';
 import { merge } from '@utilities/merge';
 import { Validation, validationClassMap } from '@utilities/validation';
+import { useCallback, useRef, useState } from 'react';
 
 import { type InputBaseProps, InputTypes } from '../../types/input';
 

@@ -1,5 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { TextInput, TextInputType } from '@components/TextInput';
+import { useMemoizedId } from '@hooks/useMemoizedId';
+import { debounce } from '@utilities/debounce';
+import { merge } from '@utilities/merge';
+import { clamp } from '@utilities/number';
+import { Validation } from '@utilities/validation';
 import {
     type AriaAttributes,
     type KeyboardEvent,
@@ -10,13 +16,6 @@ import {
     useMemo,
     useState,
 } from 'react';
-
-import { TextInput, TextInputType } from '@components/TextInput';
-import { useMemoizedId } from '@hooks/useMemoizedId';
-import { debounce } from '@utilities/debounce';
-import { merge } from '@utilities/merge';
-import { clamp } from '@utilities/number';
-import { Validation } from '@utilities/validation';
 
 type BaseSliderProps = {
     id?: string;

@@ -2,7 +2,6 @@
 
 import { action } from '@storybook/addon-actions';
 import { type Meta, type StoryFn } from '@storybook/react';
-
 import { Validation } from '@utilities/validation';
 
 import { PasswordInput, type PasswordInputProps } from './PasswordInput';

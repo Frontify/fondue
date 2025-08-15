@@ -1,9 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import IconIcon from '@foundation/Icon/Generated/IconIcon';
 import { action } from '@storybook/addon-actions';
 import { type Meta, type StoryFn } from '@storybook/react';
-
-import IconIcon from '@foundation/Icon/Generated/IconIcon';
 
 import { RadioPill as RadioPillComponent, type RadioPillProps } from './RadioPill';
 

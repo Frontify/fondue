@@ -1,14 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import IconCross from '@foundation/Icon/Generated/IconCross';
+import { IconSize } from '@foundation/Icon/IconSize';
 import { useButton } from '@react-aria/button';
 import { useFocusRing } from '@react-aria/focus';
 import { mergeProps } from '@react-aria/utils';
-import { type MouseEvent, useRef } from 'react';
-
-import IconCross from '@foundation/Icon/Generated/IconCross';
-import { IconSize } from '@foundation/Icon/IconSize';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
+import { type MouseEvent, useRef } from 'react';
 
 export enum TagType {
     Suggested = 'Suggested',
