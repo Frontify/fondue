@@ -1,8 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ReactElement } from 'react';
-
 import { merge } from '@utilities/merge';
+import { type ReactElement } from 'react';
 
 import { AssetInputSize, type AssetType, type ImageAsset, type LibrarySource } from '../AssetInput';
 import { AssetThumbnail } from '../AssetThumbnail';

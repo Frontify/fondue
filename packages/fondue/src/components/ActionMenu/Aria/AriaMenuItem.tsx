@@ -1,18 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type ActionMenuItemType, type ActionMenuSwitchItemType } from '@components/ActionMenu';
+import { type MenuItemType } from '@components/Dropdown';
+import { MenuItem } from '@components/MenuItem/MenuItem';
+import { Switch } from '@components/Switch';
 import { useFocusRing } from '@react-aria/focus';
 import { useMenuItem } from '@react-aria/menu';
 import { mergeProps } from '@react-aria/utils';
 import { type TreeState } from '@react-stately/tree';
 import { type Node } from '@react-types/shared';
-import { type ReactElement, useEffect, useRef, useState } from 'react';
-
-import { type ActionMenuItemType, type ActionMenuSwitchItemType } from '@components/ActionMenu';
-import { type MenuItemType } from '@components/Dropdown';
-import { MenuItem } from '@components/MenuItem/MenuItem';
-import { Switch } from '@components/Switch';
 import { FOCUS_STYLE_INSET } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
+import { type ReactElement, useEffect, useRef, useState } from 'react';
 
 export type AriaOptionProps = {
     menuItem: MenuItemType | ActionMenuItemType | ActionMenuSwitchItemType;

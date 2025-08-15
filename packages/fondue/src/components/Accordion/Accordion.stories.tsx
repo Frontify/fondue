@@ -1,9 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { action } from '@storybook/addon-actions';
-import { type Meta, type StoryFn } from '@storybook/react';
-import { type ReactElement, type ReactNode, useState } from 'react';
-
 import { AssetInput, AssetInputSize } from '@components/AssetInput/AssetInput';
 import { assetInputActions } from '@components/AssetInput/asset-input-actions';
 import { Button } from '@components/Button/Button';
@@ -22,7 +18,10 @@ import IconTextAlignmentLeft from '@foundation/Icon/Generated/IconTextAlignmentL
 import IconTextAlignmentRight from '@foundation/Icon/Generated/IconTextAlignmentRight';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { LegacyStack } from '@layout/LegacyStack';
+import { action } from '@storybook/addon-actions';
+import { type Meta, type StoryFn } from '@storybook/react';
 import { merge } from '@utilities/merge';
+import { type ReactElement, type ReactNode, useState } from 'react';
 
 import { type Color } from '../../types';
 import { EXAMPLE_IMAGES } from '../AssetInput/example-assets';

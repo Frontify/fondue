@@ -1,8 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ReactElement, useState } from 'react';
-
 import { MenuItemContentSize } from '@components/MenuItem';
+import { type ReactElement, useState } from 'react';
 
 import { ActionMenu } from './ActionMenu';
 

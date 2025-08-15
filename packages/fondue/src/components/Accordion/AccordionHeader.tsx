@@ -1,10 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ReactElement, cloneElement, isValidElement, useState } from 'react';
-
 import { type IconProps } from '@foundation/Icon/IconProps';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { merge } from '@utilities/merge';
+import { type ReactElement, cloneElement, isValidElement, useState } from 'react';
 
 import { AccordionHeaderIcon } from './AccordionHeaderIcon';
 import { type AccordionHeaderProps } from './types';

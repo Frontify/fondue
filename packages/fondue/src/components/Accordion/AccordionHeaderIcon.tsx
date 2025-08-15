@@ -1,10 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ReactElement } from 'react';
-
 import IconCaretDown from '@foundation/Icon/Generated/IconCaretDown';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { merge } from '@utilities/merge';
+import { type ReactElement } from 'react';
 
 import { type AccordionHeaderIconProps, type AccordionHeaderIconSize } from './types';
 
