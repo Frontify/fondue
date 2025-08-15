@@ -54,6 +54,7 @@ export type DatePickerProps = {
     preventOpenOnFocus?: boolean;
     inline?: boolean;
     filterDate?: (date: Date) => boolean;
+    fixedHeight?: boolean;
     onOpen?: () => void;
     onClose?: () => void;
     onBlur?: () => void;
@@ -91,6 +92,7 @@ export const DatePicker = forwardRef<ReactDatePickerRef, DatePickerProps>(
             customTrigger,
             customHeader,
             children,
+            fixedHeight = true,
             hasPopperArrow = true,
             preventOpenOnFocus = false,
             inline = false,
@@ -133,6 +135,7 @@ export const DatePicker = forwardRef<ReactDatePickerRef, DatePickerProps>(
                     showPopperArrow={hasPopperArrow}
                     preventOpenOnFocus={preventOpenOnFocus}
                     filterDate={filterDate}
+                    fixedHeight={fixedHeight}
                     customInput={
                         customTrigger ?? (
                             <DatePickerTrigger
