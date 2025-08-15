@@ -334,7 +334,7 @@ export const LegacyTooltip = ({
                     {...popperInstance.attributes.popper}
                     {...openingEvents}
                 >
-                    {brightHeader && <BrightHeader headerStyle={brightHeader} />}
+                    {brightHeader ? <BrightHeader headerStyle={brightHeader} /> : null}
                     <div
                         className={merge([
                             'tw-px-3 tw-dark tw-bg-base tw-rounded-md tw-relative tw-z-[120000]',
@@ -342,7 +342,7 @@ export const LegacyTooltip = ({
                             linkUrl ? paddingsBottom.large : paddingsBottom.small,
                         ])}
                     >
-                        {heading && (
+                        {heading ? (
                             <h4 className="tw-flex tw-text-m tw-font-bold tw-mb-1">
                                 {headingIcon && (
                                     <span className="tw-mr-1.5">
@@ -351,16 +351,16 @@ export const LegacyTooltip = ({
                                 )}
                                 {heading}
                             </h4>
-                        )}
+                        ) : null}
                         <div className="tw-flex">
-                            {tooltipIcon && (
+                            {tooltipIcon ? (
                                 <span className="tw-shrink-0 tw-mr-1 tw-leading-4">
                                     {cloneElement(tooltipIcon, { size: IconSize.Size16 })}
                                 </span>
-                            )}
+                            ) : null}
                             <span className="tw-text-s tw-min-w-0 tw-break-words">{content}</span>
                         </div>
-                        {linkUrl && (
+                        {linkUrl ? (
                             <a
                                 {...linkProps}
                                 data-test-id={`${dataTestId}-link`}
@@ -375,8 +375,8 @@ export const LegacyTooltip = ({
                             >
                                 {linkLabel ?? 'Click here to learn more.'}
                             </a>
-                        )}
-                        {buttons && (
+                        ) : null}
+                        {buttons ? (
                             <div className="tw-flex tw-flex-row-reverse tw-gap-x-1 tw-mt-4">
                                 {buttons.length > 0 && (
                                     <Button
@@ -401,7 +401,7 @@ export const LegacyTooltip = ({
                                     </Button>
                                 )}
                             </div>
-                        )}
+                        ) : null}
                     </div>
                     {/**
                      * This container is needed for the arrow element to not be styled by popperJS

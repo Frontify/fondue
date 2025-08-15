@@ -36,7 +36,7 @@ describe('Multi Input Component', () => {
 
     it('should render the Multi Input with the last child spanning two columns', () => {
         cy.mount(
-            <MultiInput layout={MultiInputLayout.Columns} spanLastItem={true}>
+            <MultiInput layout={MultiInputLayout.Columns} spanLastItem>
                 <TextInput />
                 <TextInput />
                 <TextInput />

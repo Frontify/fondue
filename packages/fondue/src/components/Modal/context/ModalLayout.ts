@@ -15,4 +15,5 @@ export const MODAL_PADDING = {
     },
 };
 
-export const ModalLayout = createContext({ compact: false, padding: MODAL_PADDING.default });
+export const ModalLayoutContext = createContext({ compact: false, padding: MODAL_PADDING.default });
+ModalLayoutContext.displayName = 'ModalLayoutContext';

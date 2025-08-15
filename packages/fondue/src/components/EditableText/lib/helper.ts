@@ -15,7 +15,11 @@ export const EditableTextHelper = {
                 if (typeof child === 'string') {
                     label += child;
                 } else {
-                    !!(child as ReactElement)?.props && iteratorStep((child as ReactElement)?.props.children);
+                    const element = child as ReactElement | undefined;
+                    if (element?.props) {
+                        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
+                        iteratorStep(element.props.children);
+                    }
                 }
             });
         };

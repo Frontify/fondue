@@ -1,20 +1,19 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { ActionMenu, type ActionMenuBlock } from '@components/ActionMenu/ActionMenu/ActionMenu';
+import IconCaretDown from '@foundation/Icon/Generated/IconCaretDown';
+import { IconSize } from '@foundation/Icon/IconSize';
+import { useMemoizedId } from '@hooks/useMemoizedId';
 import { useButton } from '@react-aria/button';
 import { FocusScope, useFocusRing } from '@react-aria/focus';
 import { useMenuTrigger } from '@react-aria/menu';
 import { DismissButton, useOverlay } from '@react-aria/overlays';
 import { mergeProps } from '@react-aria/utils';
 import { useMenuTriggerState } from '@react-stately/menu';
-import { AnimatePresence, motion } from 'framer-motion';
-import { type ReactElement, useEffect, useRef, useState } from 'react';
-
-import { ActionMenu, type ActionMenuBlock } from '@components/ActionMenu/ActionMenu/ActionMenu';
-import IconCaretDown from '@foundation/Icon/Generated/IconCaretDown';
-import { IconSize } from '@foundation/Icon/IconSize';
-import { useMemoizedId } from '@hooks/useMemoizedId';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
+import { AnimatePresence, motion } from 'framer-motion';
+import { type ReactElement, useEffect, useRef, useState } from 'react';
 
 import { type AssetInputProps, AssetInputSize, type AssetType } from '../AssetInput';
 import { AssetThumbnail } from '../AssetThumbnail';
@@ -56,10 +55,10 @@ export const SelectedAsset = ({
     const [flyoutWidth, setFlyoutWidth] = useState(0);
 
     useEffect(() => {
-        let timer: number | null = null;
+        let timer: ReturnType<typeof setTimeout> | null = null;
         const calculateFlyoutWidth = () => {
             const calculatedWidth = buttonRef.current?.getBoundingClientRect().width ?? 0;
-            timer = window.setTimeout(() => setFlyoutWidth(calculatedWidth), 0);
+            timer = setTimeout(() => setFlyoutWidth(calculatedWidth), 0);
         };
         const resizeObserver = new ResizeObserver(calculateFlyoutWidth);
         if (buttonRef.current) {
@@ -67,7 +66,9 @@ export const SelectedAsset = ({
         }
 
         return () => {
-            timer && clearTimeout(timer);
+            if (timer) {
+                clearTimeout(timer);
+            }
             resizeObserver.disconnect();
         };
     }, []);
@@ -79,6 +80,7 @@ export const SelectedAsset = ({
             data-test-id="asset-single-input"
         >
             <button
+                type="button"
                 {...mergeProps(buttonProps, focusProps)}
                 ref={buttonRef}
                 aria-labelledby={labelId}

@@ -1,9 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ReactElement, useState } from 'react';
-
 import { TextInput } from '@components/TextInput/TextInput';
 import IconIcon from '@foundation/Icon/Generated/IconIcon';
+import { type ReactElement, useState } from 'react';
 
 import { Accordion, AccordionItem } from './Accordion';
 import { type AccordionHeaderProps } from './types';
@@ -177,7 +176,7 @@ describe('Accordion Component', () => {
     it('shows divider on AccordionItem', () => {
         cy.mount(
             <Accordion>
-                <AccordionItem header={{ children: '1' }} divider={true}>
+                <AccordionItem header={{ children: '1' }} divider>
                     1
                 </AccordionItem>
             </Accordion>,
@@ -294,6 +293,7 @@ const TestAccordion = (): ReactElement => {
         <>
             <Accordion>{[...accordionData]}</Accordion>
             <button
+                type="button"
                 onClick={() => {
                     setAccordionData([...accordionItems, ...additionalAccordionItem]);
                 }}

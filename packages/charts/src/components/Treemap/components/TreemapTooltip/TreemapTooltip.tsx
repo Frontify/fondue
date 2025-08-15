@@ -54,9 +54,9 @@ export const TreemapTooltip = ({
             top={y}
             offsetLeft={TOOLTIP_OFFSET}
             offsetTop={TOOLTIP_OFFSET}
-            applyPositionStyle={true}
-            detectBounds={true}
-            unstyled={true}
+            applyPositionStyle
+            detectBounds
+            unstyled
         >
             <TooltipContent
                 title={hasGrouping ? groupformatter?.(parentGroupLength) : topLevelNode.label}

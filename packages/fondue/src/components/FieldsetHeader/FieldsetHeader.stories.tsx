@@ -47,7 +47,7 @@ export const FieldsetHeader: StoryFn<FieldsetHeaderProps> = (args: FieldsetHeade
     return (
         <FieldsetHeaderComponent
             {...args}
-            decorator={args.decorator && <IconIcon />}
+            decorator={args.decorator ? <IconIcon /> : null}
             active={active}
             onClick={() => setActive(!active)}
         />

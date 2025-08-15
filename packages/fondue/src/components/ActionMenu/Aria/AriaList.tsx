@@ -1,8 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type HTMLAttributes, type ReactNode, forwardRef } from 'react';
-
 import { merge } from '@utilities/merge';
+import { type HTMLAttributes, type ReactNode, forwardRef } from 'react';
 
 export type AriaListProps = {
     ariaProps: HTMLAttributes<HTMLElement>;

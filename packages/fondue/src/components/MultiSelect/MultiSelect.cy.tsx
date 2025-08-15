@@ -114,7 +114,7 @@ describe('MultiSelect Component', () => {
     });
 
     it('when disabled, should hide close buttons from tags', () => {
-        cy.mount(<Component disabled={true} />);
+        cy.mount(<Component disabled />);
         cy.get(TAG_CLOSE_BUTTON).should('not.exist');
     });
 });

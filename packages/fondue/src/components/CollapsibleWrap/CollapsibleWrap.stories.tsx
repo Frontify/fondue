@@ -38,7 +38,7 @@ export const CollapsibleWrapNoStartingAnimation: StoryFn<CollapsibleWrapProps> =
             <div className="tw-p-3">
                 <Heading>Collapsible Wrap Without First Animation</Heading>
             </div>
-            <CollapsibleWrapComponent {...args} preventInitialAnimation={true}>
+            <CollapsibleWrapComponent {...args} preventInitialAnimation>
                 <div className="tw-h-[200px] tw-p-5 tw-bg-black-5 tw-flex tw-justify-center tw-items-center tw-flex-col">
                     <Text>I am the child content of the Collapsible Wrap Component.</Text>
                     <Text>Toggle the open state to hide me.</Text>

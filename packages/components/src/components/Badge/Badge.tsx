@@ -88,7 +88,7 @@ export const Badge = ({
 
     if (onClick) {
         return (
-            <button disabled={disabled} {...commonProps} onClick={onClick}>
+            <button type="button" disabled={disabled} {...commonProps} onClick={onClick}>
                 <BadgeContent {...contentProps}>{children}</BadgeContent>
             </button>
         );
@@ -115,6 +115,7 @@ const BadgeContent = ({
             {children}
             {dismissable && (
                 <button
+                    type="button"
                     aria-label={`Dismiss ${ariaLabel}`}
                     className={styles.dismiss}
                     disabled={disabled}

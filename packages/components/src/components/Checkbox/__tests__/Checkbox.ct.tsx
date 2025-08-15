@@ -9,7 +9,7 @@ const CHECKBOX_ICON_CHECKED_TEST_ID = 'icon-checked';
 const CHECKBOX_ICON_INDETERMINATE_TEST_ID = 'icon-indeterminate';
 
 test('render with the checked icon', async ({ mount }) => {
-    const component = await mount(<Checkbox defaultValue={true} />);
+    const component = await mount(<Checkbox defaultValue />);
 
     await expect(component).toBeVisible();
     await expect(component.getByTestId(CHECKBOX_ICON_CHECKED_TEST_ID)).toBeVisible();

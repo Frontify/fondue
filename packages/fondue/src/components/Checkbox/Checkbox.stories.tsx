@@ -76,7 +76,9 @@ export const Checkbox: StoryFn<CheckboxProps & { wrapperClasses: string }> = ({
                 state={checked}
                 onChange={(isChecked) => {
                     setChecked(isChecked ? CheckboxState.Checked : CheckboxState.Unchecked);
-                    args.onChange && args.onChange(isChecked);
+                    if (args.onChange) {
+                        args.onChange(isChecked);
+                    }
                 }}
             />
         </div>

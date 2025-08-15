@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type Meta, type StoryFn } from '@storybook/react';
-import { useCallback, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 import { Box } from '@components/Box';
 import { Button, ButtonEmphasis } from '@components/Button';
@@ -169,11 +169,6 @@ const WithInlineDialog: StoryFn<DialogProps> = (args) => {
     const dialogTriggerRef = useRef<HTMLButtonElement | null>(null);
     const inlineDialogTriggerRef = useRef<HTMLButtonElement | null>(null);
 
-    const RenderButtonIcon = useCallback(
-        () => (isOptionListOpen ? <IconCaretUp /> : <IconCaretDown />),
-        [isOptionListOpen],
-    );
-
     const handleClose = () => {
         setIsOpen(false);
         setInputPhrase('');
@@ -198,15 +193,6 @@ const WithInlineDialog: StoryFn<DialogProps> = (args) => {
             ),
         );
     };
-
-    const SelectField = useCallback(
-        ({ label }: { label?: string }) => (
-            <div className="tw-flex tw-flex-row tw-w-full">
-                <Text color="x-weak">{label}</Text>
-            </div>
-        ),
-        [],
-    );
 
     return (
         <div className="tw-inline-flex">
@@ -234,18 +220,21 @@ const WithInlineDialog: StoryFn<DialogProps> = (args) => {
                             <p>Information</p>
                         </Flex>
                         <button
+                            type="button"
                             onClick={() => setIsOptionListOpen(true)}
                             ref={inlineDialogTriggerRef}
                             className="tw-text-ellipsis tw-flex tw-items-center tw-h-9 tw-px-3 tw-border tw-transition tw-rounded tw-text-s tw-font-sans tw-bg-white dark:tw-bg-transparent tw-border-solid focus-within:tw-border-black-90 hover:tw-border-black-90 tw-border-black-20 tw-justify-between tw-gap-x-3 tw-w-full"
                         >
                             {optionItemChosen ? (
-                                <SelectField label={optionItemChosen.label} />
+                                <div className="tw-flex tw-flex-row tw-w-full">
+                                    <Text color="x-weak">{optionItemChosen.label}</Text>
+                                </div>
                             ) : (
                                 <span>
                                     <span>Select option</span>
                                 </span>
                             )}
-                            <RenderButtonIcon />
+                            {isOptionListOpen ? <IconCaretUp /> : <IconCaretDown />}
                         </button>
                         <InlineDialog
                             anchor={inlineDialogTriggerRef}
@@ -265,7 +254,7 @@ const WithInlineDialog: StoryFn<DialogProps> = (args) => {
                             <div>
                                 <div className="tw-w-[486px] tw-px-4 tw-py-2">
                                     <TextInput
-                                        focusOnMount={true}
+                                        focusOnMount
                                         decorator={<IconMagnifier size={IconSize.Size16} />}
                                         id="name"
                                         placeholder="Search"
@@ -277,7 +266,9 @@ const WithInlineDialog: StoryFn<DialogProps> = (args) => {
                                 {isOptionListOpen &&
                                     filteredOptionList.map((option) => (
                                         <MenuItem key={option.code} onClick={() => chooseOption(option.code)}>
-                                            <SelectField label={option.label} />
+                                            <div className="tw-flex tw-flex-row tw-w-full">
+                                                <Text color="x-weak">{option.label}</Text>
+                                            </div>
                                         </MenuItem>
                                     ))}
                             </div>

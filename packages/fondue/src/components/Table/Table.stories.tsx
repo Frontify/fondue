@@ -269,20 +269,20 @@ const Template: StoryFn<TableProps> = (args) => {
 };
 
 const TemplateWithSearch: StoryFn<TableProps> = (args) => {
-    const [filteredRows, setfilteredRows] = useState<Row[]>(rows);
+    const [filteredRows, setFilteredRows] = useState<Row[]>(rows);
     const [selectedRows, setSelectedRows] = useState<(string | number)[]>([]);
 
-    const [filter, setfilter] = useState('');
+    const [filter, setFilter] = useState('');
 
     useEffect(() => {
         if (filter === '') {
-            setfilteredRows(rows);
+            setFilteredRows(rows);
         }
         const newFilteredRowsValue = rows.filter((row) => {
             const cells = Object.values(row.cells);
             return cells.some((cell) => String(cell.sortId).includes(filter));
         });
-        setfilteredRows(newFilteredRowsValue);
+        setFilteredRows(newFilteredRowsValue);
     }, [filter]);
 
     const onSortChange = (key: string, direction?: SortDirection) => {
@@ -299,7 +299,7 @@ const TemplateWithSearch: StoryFn<TableProps> = (args) => {
                     return keyA < keyB ? 1 : -1;
                 }
             });
-            setfilteredRows(clonedRows);
+            setFilteredRows(clonedRows);
         };
         sortRows();
     };
@@ -308,7 +308,7 @@ const TemplateWithSearch: StoryFn<TableProps> = (args) => {
         <>
             <TextInput
                 value={filter}
-                onChange={(val) => setfilter(val)}
+                onChange={(val) => setFilter(val)}
                 placeholder={'Filter rows by "sortId" value'}
             />
             <Table

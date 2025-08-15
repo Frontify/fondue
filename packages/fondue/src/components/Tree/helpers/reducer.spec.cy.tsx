@@ -13,12 +13,13 @@ import {
 const Component = ({
     id,
     parentId,
+    ...props
 }: {
     id?: string;
     parentId?: string;
     props1?: unknown;
     contentComponent?: ReactNode;
-}) => <div id={id} data-parent-id={parentId}></div>;
+}) => <div id={id} data-parent-id={parentId} {...props}></div>;
 
 const ContentComponent = ({
     id,
@@ -187,7 +188,7 @@ describe('reducer', () => {
                 <Component key="4" id="4" contentComponent={contentComponent} />,
             ];
 
-            expect(currentNodesChanged(['1', '3', '4'], currentNodes, newNodes)).to.be.true;
+            expect(currentNodesChanged(['1', '3', '4'], currentNodes, newNodes)).to.equal(true);
         });
 
         it('should return false if new nodes contentComponent props do not changed', () => {
@@ -206,7 +207,7 @@ describe('reducer', () => {
                 <Component key="4" id="4" contentComponent={contentComponent} />,
             ];
 
-            expect(currentNodesChanged(['1', '3', '4'], currentNodes, newNodes)).to.be.false;
+            expect(currentNodesChanged(['1', '3', '4'], currentNodes, newNodes)).to.equal(false);
         });
 
         it('should return true if new nodes with no contentComponent but props changed', () => {
@@ -222,7 +223,7 @@ describe('reducer', () => {
                 <Component key="4" id="4" />,
             ];
 
-            expect(currentNodesChanged(['1', '3', '4'], currentNodes, newNodes)).to.be.true;
+            expect(currentNodesChanged(['1', '3', '4'], currentNodes, newNodes)).to.equal(true);
         });
 
         it('should return false if new nodes with no contentComponent but no props changed, excluding functions', () => {
@@ -238,7 +239,7 @@ describe('reducer', () => {
                 <Component key="4" id="4" />,
             ];
 
-            expect(currentNodesChanged(['1', '3', '4'], currentNodes, newNodes)).to.be.false;
+            expect(currentNodesChanged(['1', '3', '4'], currentNodes, newNodes)).to.equal(false);
         });
     });
 });

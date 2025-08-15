@@ -33,8 +33,8 @@ describe('SelectedAsset Component', () => {
                 asset={EXAMPLE_IMAGES[0]}
                 size={AssetInputSize.Small}
                 actions={assetInputActions}
-                hideSize={true}
-                hideExtension={true}
+                hideSize
+                hideExtension
             />,
         );
         cy.get(SELECTED_ASSET_ID).should('exist');

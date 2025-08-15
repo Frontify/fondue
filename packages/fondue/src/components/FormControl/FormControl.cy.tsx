@@ -95,7 +95,7 @@ describe('FormControl Component', () => {
 
     it('renders clickable label', () => {
         cy.mount(
-            <FormControl clickable={true} label={{ htmlFor: 'foo', children: LABEL_TEXT }}>
+            <FormControl clickable label={{ htmlFor: 'foo', children: LABEL_TEXT }}>
                 {FORM_CONTROL_CONTENT}
             </FormControl>,
         );
@@ -135,7 +135,7 @@ describe('FormControl Component', () => {
     it('renders disabled form control', () => {
         cy.mount(
             <FormControl
-                disabled={true}
+                disabled
                 helper={{
                     text: HELPER_TEXT,
                     position: HelperPosition.Before,

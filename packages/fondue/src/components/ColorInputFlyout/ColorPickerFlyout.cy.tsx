@@ -67,7 +67,7 @@ describe('ColorInputFlyout Component', () => {
     });
 
     it('should reset color when clearing', () => {
-        cy.mount(<Component currentColor={TEST_COLOR} clearable={true} />);
+        cy.mount(<Component currentColor={TEST_COLOR} clearable />);
 
         cy.get(CLEAR_BUTTON_ID).click();
         cy.get(TRIGGER_ID).should('contain', 'Select color');

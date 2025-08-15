@@ -48,6 +48,7 @@ export const DialogHeader = ({
             </Flex>
             {onClose && (
                 <button
+                    type="button"
                     data-test-id={`${dataTestId}-close`}
                     aria-label={`${dataTestId}-close`}
                     onClick={onClose}

@@ -18,9 +18,10 @@ export const renderContent = ({
     };
 
     return (
-        // eslint-disable-next-line jsx-a11y/no-static-element-interactions
         <div
-            className="tw-break-word tw-border tw-border-black-40 tw-border-solid tw-rounded-md tw-p-3 tw-outline-none tw-border-line"
+            role="button"
+            tabIndex={0}
+            className="tw-break-words tw-border tw-border-line tw-border-solid tw-rounded-md tw-p-3 tw-outline-none"
             onClick={() => onSelect(id)}
             onKeyDown={handleKeyDown}
         >

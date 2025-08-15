@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ReactElement, type ReactNode } from 'react';
+import { type ReactElement } from 'react';
 
 import { Button, ButtonEmphasis, type ButtonProps, ButtonSize, ButtonStyle } from '@components/Button';
 import IconCheckMark from '@foundation/Icon/Generated/IconCheckMark';
@@ -9,7 +9,6 @@ import { merge } from '@utilities/merge';
 export type FlyoutFooterProps = {
     buttons: [ButtonProps, ButtonProps] | [ButtonProps];
     border?: boolean;
-    children?: ReactNode;
 };
 
 export const FlyoutFooter = ({ buttons, border = true }: FlyoutFooterProps): ReactElement => {

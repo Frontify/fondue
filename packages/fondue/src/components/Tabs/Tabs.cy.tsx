@@ -1,12 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useState } from 'react';
-
 import { BadgeStyle } from '@components/Badge';
 import { TabItem, type TabItemProps } from '@components/Tabs/TabItem';
 import { TabSize, Tabs, TabsPaddingX } from '@components/Tabs/Tabs';
 import IconIcon from '@foundation/Icon/Generated/IconIcon';
 import { IconSize } from '@foundation/Icon/IconSize';
+import { useState } from 'react';
 
 const data: TabItemProps[] = [
     {
@@ -43,14 +42,14 @@ const data: TabItemProps[] = [
         decorator: <IconIcon size={IconSize.Size12} />,
         badge: { style: BadgeStyle.Danger, children: 'Badge 2' },
         disabled: true,
-        children: <button>This is content for label 5</button>,
+        children: <button type="button">This is content for label 5</button>,
     },
     {
         id: 'tab-6',
         label: 'Last tab',
         decorator: <IconIcon size={IconSize.Size12} />,
         badge: { style: BadgeStyle.Danger, children: 'Badge 2' },
-        children: <button>This is content for label 6</button>,
+        children: <button type="button">This is content for label 6</button>,
     },
 ];
 

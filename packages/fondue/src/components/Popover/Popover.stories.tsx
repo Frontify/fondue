@@ -71,6 +71,7 @@ const TriggeredOnHoverTemplate: StoryFn<OverlayProps> = (args) => {
     return (
         <div className="tw-h-32 tw-flex tw-justify-center tw-items-center">
             <button
+                type="button"
                 ref={triggerRef}
                 className="tw-flex tw-items-center"
                 onMouseEnter={() => setIsOpen(true)}

@@ -1,10 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type Meta, type StoryFn } from '@storybook/react';
-import { type MouseEvent, useEffect, useState } from 'react';
-
 import { TooltipIconTriggerStyle } from '@components/TooltipIcon';
 import IconExclamationMarkCircle from '@foundation/Icon/Generated/IconExclamationMarkCircle';
+import { type Meta, type StoryFn } from '@storybook/react';
+import { type MouseEvent, useEffect, useState } from 'react';
 
 import { Switch, type SwitchLabelStyle, type SwitchMode, type SwitchProps, type SwitchSize } from './Switch';
 
@@ -66,12 +65,16 @@ type Props = SwitchProps & { hug?: boolean };
 const Default: StoryFn<Props> = (args: Props) => {
     const [mode, setMode] = useState<SwitchMode>(args.mode || 'off');
     useEffect(() => {
-        args.mode && setMode(args.mode);
+        if (args.mode) {
+            setMode(args.mode);
+        }
     }, [args.mode]);
 
     const toggle = (event: MouseEvent) => {
         setMode(mode === 'on' ? 'off' : 'on');
-        args.onChange && args.onChange(event);
+        if (args.onChange) {
+            args.onChange(event);
+        }
     };
 
     return <Switch {...args} onChange={toggle} mode={mode} />;

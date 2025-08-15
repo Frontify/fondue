@@ -28,14 +28,14 @@ export const TooltipContent = ({ title, description, imageUrl, entries }: Toolti
                 </div>
             )}
             <div className={title ? 'tw-pb-3' : ''}>
-                <div className="tw-text-body-small tw-text-base tw-font-bold">{title}</div>
+                <div className="tw-text-body-small tw-font-bold">{title}</div>
                 {dataPoint?.type && (
-                    <div className="tw-text-body-small tw-text-base tw-pb-2">
+                    <div className="tw-text-body-small tw-pb-2">
                         {dataPoint.type}: {dataPoint.title}
                     </div>
                 )}
                 {descriptionLines.length > 0 && (
-                    <div className="tw-text-base tw-text-xs">
+                    <div className="tw-text-xs">
                         {descriptionLines.map((line) => (
                             <div key={line} className="tw-truncate">
                                 {line}
@@ -68,7 +68,7 @@ export type TooltipItemProps = {
 
 const TooltipItem = ({ title, value, color, type, valueContext }: TooltipItemProps) => {
     return (
-        <div key={`${title}-value`} className="tw-text-body-small tw-text-base">
+        <div key={`${title}-value`} className="tw-text-body-small">
             {color && (
                 <span
                     className="tw-inline-block tw-w-2 tw-h-2 tw-rounded-full tw-mr-1"

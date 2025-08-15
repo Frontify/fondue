@@ -71,13 +71,17 @@ export const ColorPickerFlyout = ({
                     clearable={clearable}
                     onClear={() => {
                         setOpen(false);
-                        onClear && onClear();
+                        if (onClear) {
+                            onClear();
+                        }
                     }}
                     onDelete={
                         onDelete
                             ? () => {
                                   setOpen(false);
-                                  onDelete && onDelete();
+                                  if (onDelete) {
+                                      onDelete();
+                                  }
                               }
                             : undefined
                     }

@@ -13,6 +13,7 @@ const EditorResizeContext = createContext<EditorResizeContextProps>({
     editorWidth: 0,
     editorRef: null,
 });
+EditorResizeContext.displayName = 'EditorResizeContext';
 export const useEditorResizeContext = () => useContext(EditorResizeContext);
 
 type EditorResizeContextProviderProps = {

@@ -13,7 +13,7 @@ export const CollapsibleWrap = ({
     'data-test-id': dataTestId = 'collapsible-wrap',
 }: CollapsibleWrapProps): ReactElement => (
     <AnimatePresence initial={preventInitialAnimation ? false : undefined}>
-        {isOpen && children && (
+        {isOpen && children ? (
             <motion.div
                 initial={'collapsed'}
                 animate={'open'}
@@ -34,7 +34,7 @@ export const CollapsibleWrap = ({
             >
                 {children}
             </motion.div>
-        )}
+        ) : null}
     </AnimatePresence>
 );
 CollapsibleWrap.displayName = 'FondueCollapsibleWrap';

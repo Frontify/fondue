@@ -22,7 +22,7 @@ describe('Modal Component', () => {
     it('should render an empty modal', () => {
         cy.mount(
             <OverlayProvider>
-                <Modal isOpen={true}>{}</Modal>
+                <Modal isOpen>{}</Modal>
             </OverlayProvider>,
         );
 
@@ -37,7 +37,7 @@ describe('Modal Component', () => {
         cy.mount(
             <OverlayProvider>
                 <Modal
-                    isOpen={true}
+                    isOpen
                     visual={{
                         pattern: PatternDesign.DigitalAssets,
                         foregroundColor: PatternTheme.Violet,
@@ -58,7 +58,7 @@ describe('Modal Component', () => {
 
         cy.mount(
             <OverlayProvider>
-                <Modal isOpen={true}>
+                <Modal isOpen>
                     <ModalHeader
                         title={title}
                         leadText={leadText}
@@ -79,7 +79,7 @@ describe('Modal Component', () => {
     it('should render the modal with a body and implement the ScrollWrapper component', () => {
         cy.mount(
             <OverlayProvider>
-                <Modal isOpen={true}>
+                <Modal isOpen>
                     <Modal.Body>
                         <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit.</p>
                     </Modal.Body>

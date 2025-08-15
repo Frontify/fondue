@@ -1,12 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Children, type ReactNode, isValidElement, useEffect, useRef, useState } from 'react';
-
 import { LegacyTooltip, TooltipAlignment, TooltipPosition } from '@components/LegacyTooltip';
 import IconQuestionMarkCircle from '@foundation/Icon/Generated/IconQuestionMarkCircle';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { generateRandomId } from '@utilities/generateRandomId';
 import { merge } from '@utilities/merge';
+import { Children, type ReactNode, isValidElement, useEffect, useRef, useState } from 'react';
 
 import { RadioButtonEmphasis, type RadioButtonProps } from './RadioButton';
 
@@ -118,7 +117,7 @@ export const RadioList = ({
                                 hoverDelay={75}
                                 position={TooltipPosition.Top}
                                 triggerElement={
-                                    <button className="tw-flex tw-text-black-80 tw-mx-2 tw-self-center">
+                                    <button type="button" className="tw-flex tw-text-black-80 tw-mx-2 tw-self-center">
                                         <IconQuestionMarkCircle size={IconSize.Size16} />
                                     </button>
                                 }

@@ -36,14 +36,13 @@ export const TreeItemOverlay = ({
     const liStyle = { marginLeft: indentation };
 
     const dragHandler = (
-        <button tabIndex={-1} className="tw-p-1 tw-touch-none">
+        <button type="button" tabIndex={-1} className="tw-p-1 tw-touch-none">
             <IconGrabHandle12 />
         </button>
     );
 
     return (
         <li
-            // eslint-disable-next-line jsx-a11y/no-noninteractive-element-to-interactive-role
             role="treeitem"
             style={liStyle}
             id={id.toString()}
@@ -59,7 +58,7 @@ export const TreeItemOverlay = ({
             {dragHandlerPosition === 'left' && dragHandler}
 
             {hasChildren && (
-                <button tabIndex={-1} data-test-id="tree-item-toggle" className="tw-p-1">
+                <button type="button" tabIndex={-1} data-test-id="tree-item-toggle" className="tw-p-1">
                     <div
                         className={merge([
                             'tw-transition-transform tw-w-0 tw-h-0 tw-text-black-100 tw-text-opacity-40 tw-font-normal tw-border-t-4 tw-border-t-transparent tw-border-b-4 tw-border-b-transparent tw-border-l-4 tw-border-l-x-strong',

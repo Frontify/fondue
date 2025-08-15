@@ -41,7 +41,6 @@ export type STACK_PROPS = {
     'data-test-id'?: string;
     justify?: STACK_JUSTIFY;
     alignItems?: STACK_ALIGN_ITEMS;
-    alignContent?: STACK_ALIGN_CONTENT;
     as?: ContainerHTMLElement;
 };
 

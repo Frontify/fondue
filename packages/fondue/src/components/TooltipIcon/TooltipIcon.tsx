@@ -71,7 +71,7 @@ export const TooltipIcon = ({
                                 {cloneElement(triggerIcon, { size: iconSize })}
                             </button>
                         }
-                        withArrow={true}
+                        withArrow
                         {...tooltip}
                     />
                 </div>

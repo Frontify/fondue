@@ -4,14 +4,14 @@ import { useContext, type ReactElement } from 'react';
 
 import { ScrollWrapper } from '@components/ScrollWrapper/ScrollWrapper';
 
-import { ModalLayout } from './context/ModalLayout';
+import { ModalLayoutContext } from './context/ModalLayout';
 import { type ModalBodyProps } from './types';
 
 /**
  * @deprecated Use `Dialog.Body` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#dialog the migration guide}.
  */
 export const ModalBody = ({ direction, children, horizontalPadding = true }: ModalBodyProps): ReactElement => {
-    const { padding } = useContext(ModalLayout);
+    const { padding } = useContext(ModalLayoutContext);
 
     return (
         <div

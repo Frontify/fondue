@@ -1,14 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import IconCaretRight from '@foundation/Icon/Generated/IconCaretRight';
+import { IconSize } from '@foundation/Icon/IconSize';
 import { useButton } from '@react-aria/button';
 import { useFocusRing } from '@react-aria/focus';
 import { mergeProps } from '@react-aria/utils';
-import { type ReactElement, useRef } from 'react';
-
-import IconCaretRight from '@foundation/Icon/Generated/IconCaretRight';
-import { IconSize } from '@foundation/Icon/IconSize';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
+import { type ReactElement, useRef } from 'react';
 
 import { type AssetType } from '../AssetInput';
 
@@ -31,6 +30,7 @@ export const MultiAssetPreview = ({ numberOfLocations, assets, onClick }: MultiA
     return (
         <div data-test-id="multi-asset-preview">
             <button
+                type="button"
                 title="multi-asset-preview"
                 {...mergeProps(buttonProps, focusProps)}
                 ref={buttonRef}

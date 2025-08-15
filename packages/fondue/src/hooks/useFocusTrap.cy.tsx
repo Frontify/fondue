@@ -80,7 +80,7 @@ describe('Focus Trap', () => {
 
     it('should ignore focus trap', () => {
         cy.mount(
-            <FocusableComponent ignoreFocusTrap={true}>
+            <FocusableComponent ignoreFocusTrap>
                 <Button emphasis={ButtonEmphasis.Default} data-test-id="first-focus-button">
                     1st button
                 </Button>

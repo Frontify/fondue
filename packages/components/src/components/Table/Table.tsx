@@ -220,6 +220,7 @@ export const TableHeaderCell = forwardRef<HTMLTableCellElement, TableHeaderCellP
                         aria-label={sortLabel}
                         data-active={!!sortDirection}
                         onClick={handleSortChange}
+                        type="button"
                     >
                         {typeof children === 'string' && truncate ? (
                             <span className={styles.buttonText}>{children}</span>
@@ -283,37 +284,13 @@ type BaseTableRowProps = {
     'data-test-id'?: string;
 };
 
-type ClickableTableRowProps = BaseTableRowProps & {
+type TableRowProps = BaseTableRowProps & {
     /**
      * Handler called when the row is clicked or activated via keyboard
      * If provided, the row will be hoverable and interactive
      */
-    onClick: (selected: boolean) => void;
-    onNavigate?: never;
-    href?: never;
+    onClick?: (selected: boolean) => void;
 };
-
-type NavigableTableRowProps = BaseTableRowProps & {
-    onClick?: never;
-    /**
-     * Handler called when the row is clicked or activated via keyboard for navigation
-     * Must be provided together with href
-     */
-    onNavigate: (href: string) => void;
-    /**
-     * URL associated with this row for navigation
-     * Must be provided together with onNavigate
-     */
-    href: string;
-};
-
-type NonInteractiveTableRowProps = BaseTableRowProps & {
-    onClick?: never;
-    onNavigate?: never;
-    href?: never;
-};
-
-type TableRowProps = ClickableTableRowProps | NavigableTableRowProps | NonInteractiveTableRowProps;
 
 export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(
     (

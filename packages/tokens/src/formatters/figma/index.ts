@@ -37,7 +37,7 @@ const styles = (tokens: TransformedToken[]) => {
 
         // Shadow
         if (token.attributes?.category === 'shadow' && token.attributes?.type === 'style') {
-            for (const key in value) {
+            for (const key of Object.keys(value)) {
                 // @ts-expect-error - We know that the value is a string
                 value[key] = value[key]?.replace('px', '');
             }

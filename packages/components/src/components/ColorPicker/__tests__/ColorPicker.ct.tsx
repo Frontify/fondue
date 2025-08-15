@@ -415,7 +415,7 @@ test('color picker input should display a disabled button when disabled', async 
                 alpha: 0.4,
                 name: '#ff0000',
             }}
-            disabled={true}
+            disabled
             onClear={() => {}}
         />,
     );

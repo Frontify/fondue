@@ -38,7 +38,9 @@ export const ColorInput = ({
     const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
         const { key, shiftKey } = event;
         if (key === 'Enter' && !shiftKey) {
-            onEnterPressed && onEnterPressed(event);
+            if (onEnterPressed) {
+                onEnterPressed(event);
+            }
         }
     };
 
@@ -57,9 +59,9 @@ export const ColorInput = ({
                     decoratorPosition === DecoratorPosition.Right && 'tw-flex-row-reverse',
                 ])}
             >
-                {decorator && (
+                {decorator ? (
                     <div className="tw-flex tw-items-center tw-justify-center tw-text-black-80">{decorator}</div>
-                )}
+                ) : null}
                 <input
                     id={useMemoizedId()}
                     ref={inputElement}
@@ -69,7 +71,11 @@ export const ColorInput = ({
                     ])}
                     onClick={() => inputElement.current?.focus()}
                     onKeyDown={handleKeyDown}
-                    onChange={(event) => onChange && onChange(event.currentTarget.value)}
+                    onChange={(event) => {
+                        if (onChange) {
+                            onChange(event.currentTarget.value);
+                        }
+                    }}
                     onBlur={onBlur}
                     value={value}
                     type={type}

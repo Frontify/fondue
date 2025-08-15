@@ -1,8 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ReactElement } from 'react';
-
 import { merge } from '@utilities/merge';
+import { type ReactElement } from 'react';
 
 import { AssetInputSize, type AssetType, type ImageAsset, type LibrarySource } from '../AssetInput';
 import { AssetThumbnail } from '../AssetThumbnail';
@@ -43,7 +42,7 @@ export const SelectedAssetsThumbnail = ({ assets }: Pick<MultiAssetPreviewProps,
                     />
                 ) : (
                     <div className="tw-h-11 tw-w-11" key={asset.src}>
-                        <AssetThumbnail asset={asset} size={AssetInputSize.Small} isMultiAsset={true} />
+                        <AssetThumbnail asset={asset} size={AssetInputSize.Small} isMultiAsset />
                     </div>
                 ),
             )}

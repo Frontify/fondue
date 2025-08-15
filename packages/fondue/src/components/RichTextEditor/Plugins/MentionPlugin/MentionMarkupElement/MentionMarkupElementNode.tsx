@@ -10,7 +10,6 @@ export const renderLabel = (mentionable: MappedMentionableItems, key: string, id
 
 export const MentionMarkupElementNode =
     (mentionable: MappedMentionableItems): MarkupElementNodeType =>
-    // eslint-disable-next-line react/display-name
     (props) => {
         const { element, children } = props;
 

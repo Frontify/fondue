@@ -58,7 +58,7 @@ export const WithTextInput: StoryFn<FormControlProps> = (args) => {
     const [input, setInput] = useState('');
 
     return (
-        <FormControl clickable={true} {...args}>
+        <FormControl clickable {...args}>
             <TextInput value={input} onChange={setInput} />
         </FormControl>
     );
@@ -88,7 +88,7 @@ export const WithStyleDisabled: StoryFn<FormControlProps> = (args) => {
     const [input, setInput] = useState('');
 
     return (
-        <FormControl {...args} disabled={true}>
+        <FormControl {...args} disabled>
             <TextInput value={input} onChange={setInput} />
         </FormControl>
     );

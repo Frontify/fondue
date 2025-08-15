@@ -45,7 +45,7 @@ export const TreeItemMultiselect = memo(
         children,
         level = 0,
         contentComponent,
-        parentId,
+        parentId: _parentId,
         onSelect,
         onExpand,
         onShrink,
@@ -63,7 +63,15 @@ export const TreeItemMultiselect = memo(
         const toggleExpand = useCallback(
             (event?: MouseEvent<HTMLButtonElement>) => {
                 event?.stopPropagation();
-                isExpanded ? onShrink?.(id) : onExpand?.(id);
+                if (isExpanded) {
+                    if (onShrink) {
+                        onShrink(id);
+                    }
+                } else {
+                    if (onExpand) {
+                        onExpand(id);
+                    }
+                }
             },
             [id, isExpanded, onExpand, onShrink],
         );
@@ -72,7 +80,7 @@ export const TreeItemMultiselect = memo(
             if (isParentSelected && !isSelected && onSelect) {
                 onSelect(id, true);
             }
-        }, [id, onSelect, isParentSelected, isSelected, parentId]);
+        }, [id, onSelect, isParentSelected, isSelected]);
 
         const hasChildren = Children.count(children) > 0;
 
@@ -128,7 +136,11 @@ export const TreeItemMultiselect = memo(
         const liStyle = { paddingLeft: levelPadding };
         const backgroundStyle = itemStyleProps.borderWidth !== 'none' ? {} : { marginLeft: -1 * levelPadding };
 
-        const checkBoxOnSelect = isDisabled ? () => {} : () => onSelect?.(id, false);
+        const checkBoxOnSelect = () => {
+            if (!isDisabled && onSelect) {
+                onSelect(id, false);
+            }
+        };
         const checkBox =
             checkBoxPosition !== 'none' ? (
                 <Container maxWidth="16px" maxHeight="16px">
@@ -159,7 +171,6 @@ export const TreeItemMultiselect = memo(
                 id={id}
                 key={id}
                 tabIndex={0}
-                // eslint-disable-next-line jsx-a11y/no-noninteractive-element-to-interactive-role
                 role="treeitem"
                 style={liStyle}
                 onKeyDown={noop}
@@ -173,7 +184,7 @@ export const TreeItemMultiselect = memo(
                 aria-owns={childrenIds.join(' ')}
             >
                 <div className={containerClassName}>
-                    <span className={backgroundClassName} style={backgroundStyle} aria-hidden={true} />
+                    <span className={backgroundClassName} style={backgroundStyle} aria-hidden />
                     {checkBoxPosition === 'left' && checkBox}
 
                     {expandable && (

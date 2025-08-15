@@ -38,7 +38,7 @@ describe('AccordionHeader Component', () => {
 
     it('should have text disabled color when disabled', () => {
         cy.mount(
-            <AccordionHeader isOpen disabled={true}>
+            <AccordionHeader isOpen disabled>
                 Title
             </AccordionHeader>,
         );

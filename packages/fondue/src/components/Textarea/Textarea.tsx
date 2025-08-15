@@ -88,7 +88,12 @@ export const Textarea = ({
     };
 
     useEffect(() => {
-        focusOnMount && textareaRef.current?.focus();
+        if (focusOnMount) {
+            const timeoutId = setTimeout(() => {
+                textareaRef.current?.focus();
+            }, 0);
+            return () => clearTimeout(timeoutId);
+        }
     }, [focusOnMount, textareaRef]);
 
     useEffect(() => {

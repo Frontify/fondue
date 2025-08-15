@@ -1,9 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useRef, useState } from 'react';
-
 import { Button } from '@components/Button';
 import { Popover } from '@components/Popover/Popover';
+import { useRef, useState } from 'react';
 
 import { type OverlayProps } from '../../types';
 
@@ -104,7 +103,7 @@ describe('Popover Component', () => {
     });
 
     it('should render the popover with arrow', () => {
-        cy.mount(<PopoverComponent withArrow={true} />);
+        cy.mount(<PopoverComponent withArrow />);
         cy.get(POPOVER_TRIGGER).click();
         cy.get(POPOVER_ARROW).should('exist');
     });

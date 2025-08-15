@@ -13,6 +13,7 @@ export type ExpandButtonProps = DetailedHTMLProps<ButtonHTMLAttributes<HTMLButto
 export const ExpandButton = ({ active, onClick, expanded, disabled, className, ...otherProps }: ExpandButtonProps) => {
     return (
         <button
+            type="button"
             onClick={onClick}
             disabled={disabled}
             aria-label="expand item"

@@ -27,7 +27,9 @@ const CheckboxComponent = (props: CheckboxProps): ReactElement => {
             state={checked}
             onChange={(isChecked: boolean) => {
                 setChecked(isChecked ? CheckboxState.Checked : CheckboxState.Unchecked);
-                props.onChange && props.onChange(isChecked);
+                if (props.onChange) {
+                    props.onChange(isChecked);
+                }
             }}
         />
     );
@@ -66,13 +68,13 @@ describe('Checkbox component', () => {
     });
 
     it('renders with a red asterisk if required', () => {
-        cy.mount(<CheckboxComponent required={true} label={CHECKBOX_LABEL} />);
+        cy.mount(<CheckboxComponent required label={CHECKBOX_LABEL} />);
 
         cy.get(INPUT_LABEL_REQUIRED_ID).should('exist');
     });
 
     it('renders with required attribute', () => {
-        cy.mount(<CheckboxComponent required={true} label={CHECKBOX_LABEL} />);
+        cy.mount(<CheckboxComponent required label={CHECKBOX_LABEL} />);
 
         cy.get(CHECKBOX_INPUT_ID).should('have.attr', 'required');
         cy.get(CHECKBOX_INPUT_ID).should('have.attr', 'aria-required');
@@ -121,7 +123,7 @@ describe('Checkbox component', () => {
     });
 
     it('renders without a label when hideLabel is true', () => {
-        cy.mount(<CheckboxComponent label={CHECKBOX_LABEL} hideLabel={true} />);
+        cy.mount(<CheckboxComponent label={CHECKBOX_LABEL} hideLabel />);
 
         cy.get(CHECKBOX_LABEL_ID).should('not.exist');
     });

@@ -119,7 +119,7 @@ BetweenBreadcrumbItems.decorators = [
     (StoryElement) => (
         <div>
             <ol className="tw-flex">
-                <BreadcrumbItem label="Breadcrumb item 1" showSeparator={true} />
+                <BreadcrumbItem label="Breadcrumb item 1" showSeparator />
                 <li className="tw-flex tw-items-center">
                     <StoryElement />
                     <Separator />

@@ -92,7 +92,7 @@ describe('Tooltip Component', () => {
     });
 
     it('should render only the content if no triggerElement and tootlipt is open', () => {
-        cy.mount(<TooltipComponentWithoutTrigger content={TOOLTIP_TEXT} open={true} />);
+        cy.mount(<TooltipComponentWithoutTrigger content={TOOLTIP_TEXT} open />);
         cy.get('[data-test-id=tooltip-trigger]').should('not.exist');
         cy.get(TOOLTIP_ID).should('contain', TOOLTIP_TEXT);
     });

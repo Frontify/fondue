@@ -83,7 +83,7 @@ export const OrderableList = <T extends object>({
             itemStyle={treeItemStyle}
             showDragHandlerOnHoverOnly={!isDraggable}
             dragHandlerPosition={!isDraggable ? 'none' : dragHandlerPosition}
-            showContentWhileDragging={true}
+            showContentWhileDragging
             enableDragDelay={enableDragDelay}
         >
             {itemsState.map((item) => {

@@ -46,7 +46,7 @@ test('should render without error', async ({ mount }) => {
 
 test('should render no padding', async ({ mount, page }) => {
     await mount(
-        <Dialog.Root open={true}>
+        <Dialog.Root open>
             <Dialog.Trigger data-test-id={DIALOG_TRIGGER_TEST_ID}>
                 <Button>{DIALOG_TRIGGER_TEXT}</Button>
             </Dialog.Trigger>
@@ -71,7 +71,7 @@ test('should render no padding', async ({ mount, page }) => {
 
 test('should render tight padding', async ({ mount, page }) => {
     await mount(
-        <Dialog.Root open={true}>
+        <Dialog.Root open>
             <Dialog.Trigger data-test-id={DIALOG_TRIGGER_TEST_ID}>
                 <Button>{DIALOG_TRIGGER_TEXT}</Button>
             </Dialog.Trigger>
@@ -96,7 +96,7 @@ test('should render tight padding', async ({ mount, page }) => {
 
 test('should render compact padding', async ({ mount, page }) => {
     await mount(
-        <Dialog.Root open={true}>
+        <Dialog.Root open>
             <Dialog.Trigger data-test-id={DIALOG_TRIGGER_TEST_ID}>
                 <Button>{DIALOG_TRIGGER_TEXT}</Button>
             </Dialog.Trigger>
@@ -121,7 +121,7 @@ test('should render compact padding', async ({ mount, page }) => {
 
 test('should render comfortable padding', async ({ mount, page }) => {
     await mount(
-        <Dialog.Root open={true}>
+        <Dialog.Root open>
             <Dialog.Trigger data-test-id={DIALOG_TRIGGER_TEST_ID}>
                 <Button>{DIALOG_TRIGGER_TEXT}</Button>
             </Dialog.Trigger>
@@ -146,7 +146,7 @@ test('should render comfortable padding', async ({ mount, page }) => {
 
 test('should render spacious padding', async ({ mount, page }) => {
     await mount(
-        <Dialog.Root open={true}>
+        <Dialog.Root open>
             <Dialog.Trigger data-test-id={DIALOG_TRIGGER_TEST_ID}>
                 <Button>{DIALOG_TRIGGER_TEXT}</Button>
             </Dialog.Trigger>
@@ -255,7 +255,7 @@ test('should close on close button click', async ({ mount, page }) => {
 
 test('should open show open from prop', async ({ mount, page }) => {
     await mount(
-        <Dialog.Root open={true}>
+        <Dialog.Root open>
             <Dialog.Trigger data-test-id={DIALOG_TRIGGER_TEST_ID}>
                 <Button>{DIALOG_TRIGGER_TEXT}</Button>
             </Dialog.Trigger>
