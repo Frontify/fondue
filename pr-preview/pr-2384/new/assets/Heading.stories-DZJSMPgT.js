@@ -1,5 +1,0 @@
-import{H as a}from"./Heading-BHfE3k_o.js";import"./jsx-runtime-BYYWji4R.js";import"./index-ClcD9ViR.js";import"./_commonjsHelpers-Cpj98o6Y.js";import"./styleUtilities-Byf6Fdv2.js";const c={title:"Typography/Heading",component:a,tags:["autodocs"],parameters:{status:{type:"beta"}},args:{},argTypes:{as:{type:"string",control:"select",options:[void 0,"span","p","h1","h2","h3","h4","h5","h6"]},color:{type:"string",control:"select",options:[void 0,"default","weak","x-weak","disabled","negative","positive","warning","interactive"]},size:{type:"string",control:"select",options:[void 0,"medium","large","x-large","xx-large"]},weight:{type:"string",control:"select",options:[void 0,"default","strong"]},"data-test-id":{type:"string",control:"text"}}},t={args:{children:"Hello World"}};var e,o,r;t.parameters={...t.parameters,docs:{...(e=t.parameters)==null?void 0:e.docs,source:{originalSource:`{
-  args: {
-    children: 'Hello World'
-  }
-}`,...(r=(o=t.parameters)==null?void 0:o.docs)==null?void 0:r.source}}};const d=["Default"];export{t as Default,d as __namedExportsOrder,c as default};
