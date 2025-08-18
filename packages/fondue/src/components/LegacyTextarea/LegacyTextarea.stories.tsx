@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type Meta, type StoryFn } from '@storybook/react';
-import { Validation } from '@utilities/validation';
 import { useEffect, useState } from 'react';
+
+import { Validation } from '@utilities/validation';
 
 import { type LegacyTextareaProps, LegacyTextarea as TextareaComponent } from './LegacyTextarea';
 
