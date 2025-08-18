@@ -163,8 +163,8 @@ const PropsTable = ({ rows }: { rows: [ReactNode, ReactNode, ReactNode][] }): Re
             </tr>
         </thead>
         <tbody>
-            {rows.map(([property, type, description]) => (
-                <tr className="tw-p-3 tw-border-b tw-border-b-black-10" key={property?.toString()}>
+            {rows.map(([property, type, description], index) => (
+                <tr className="tw-p-3 tw-border-b tw-border-b-black-10" key={`row-${index}`}>
                     <td className="tw-p-3 tw-font-bold">{property}</td>
                     <td className="tw-p-3">
                         <Code>{type}</Code>
@@ -204,36 +204,36 @@ export const WithCustomAccordionHeaderComponent: StoryFn<AccordionProps> = () =>
                         [
                             'isOpen',
                             'boolean',
-                            <>
+                            <span key="row-isopen-desc">
                                 The state of the <Code>AccordionItem</Code> this <Code>headerComponent</Code>
                                 belongs to.
-                            </>,
+                            </span>,
                         ],
                         [
                             'children',
                             'string',
-                            <>
+                            <span key="row-children-desc">
                                 The children property that is passed in via the <Code>header</Code> prop to the&nbsp;
                                 <Code>AccordionItem</Code>.
-                            </>,
+                            </span>,
                         ],
 
                         [
                             'disabled',
                             'boolean',
-                            <>
+                            <span key="row-disabled-desc">
                                 The disabled property that is passed in via the <Code>header</Code> prop to the&nbsp;
                                 <Code>AccordionItem</Code>.
-                            </>,
+                            </span>,
                         ],
                         [
                             'decorator',
                             'ReactNode',
-                            <>
+                            <span key="row-decorator-desc">
                                 The decorator icon property that is passed in via the <Code>header</Code> prop to
                                 the&nbsp;
                                 <Code>AccordionItem</Code>.
-                            </>,
+                            </span>,
                         ],
                     ]}
                 />
@@ -264,11 +264,11 @@ export const WithCustomAccordionHeaderComponent: StoryFn<AccordionProps> = () =>
                         [
                             'isOpen',
                             'boolean',
-                            <>
+                            <span key="icon-isopen-desc">
                                 Modifies/Animates the component based on the state of the <Code>AccordionItem</Code>
                                 &nbsp; this <Code>headerComponent</Code>
                                 belongs to.
-                            </>,
+                            </span>,
                         ],
                         ['disabled', 'boolean', 'Displays the component with disabled styles.'],
                         [
@@ -360,7 +360,7 @@ export const WithAccordionItemAddition: StoryFn<
     const [accordionItem, setAccordionItem] = useState(AccordtionItemsStart);
     const [accordionKey, setAccordionKey] = useState(5);
     return (
-        <>
+        <span>
             <AccordionComponent divider={args['Accordion Divider']} border={args['Accordion Border']}>
                 {accordionItem.map((item) => item)}
             </AccordionComponent>
@@ -381,7 +381,7 @@ export const WithAccordionItemAddition: StoryFn<
                     Remove an Element from the Accordion
                 </Button>
             </LegacyStack>
-        </>
+        </span>
     );
 };
 
@@ -427,7 +427,7 @@ WithDividers.args = {
 export const WithAdvancedFormControls: StoryFn<AccordionProps> = () => {
     const [spacing, setSpacing] = useState('1');
     const [showAdvancedSpacing, setShowAdvancedSpacing] = useState(false);
-    const [alignment, setAlignmnent] = useState('l');
+    const [alignment, setAlignment] = useState('l');
 
     return (
         <AccordionComponent>
@@ -467,7 +467,7 @@ export const WithAdvancedFormControls: StoryFn<AccordionProps> = () => {
             <AccordionItem header={{ children: 'Alignment' }}>
                 <FormControl label={{ children: 'Text', htmlFor: 'text-alignment' }}>
                     <SegmentedControls
-                        onChange={setAlignmnent}
+                        onChange={setAlignment}
                         activeItemId={alignment}
                         items={[
                             {

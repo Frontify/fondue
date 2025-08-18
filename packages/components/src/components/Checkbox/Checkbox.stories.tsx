@@ -72,7 +72,7 @@ export const Checklist: Story = {
         return (
             <Flex gap="1rem" direction="column">
                 <Flex gap="4px" direction="row">
-                    <Checkbox {...args} id="checkbox" aria-labelledby="label" value={true} onChange={() => {}} />
+                    <Checkbox {...args} id="checkbox" aria-labelledby="label" value onChange={() => {}} />
                     <Label id="label" htmlFor="checkbox">
                         Checkbox 1
                     </Label>

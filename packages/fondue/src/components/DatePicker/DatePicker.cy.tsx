@@ -28,7 +28,7 @@ describe('DatePicker Component', () => {
 
     it('should render cancel icon if isClearable prop is true', () => {
         const onChangeStub = cy.stub().as('onChangeStub');
-        cy.mount(<DatePicker onChange={onChangeStub} isClearable={true} value={new Date()} />);
+        cy.mount(<DatePicker onChange={onChangeStub} isClearable value={new Date()} />);
 
         cy.get(OPEN_CLOSE_CLICK_AREA_ID).click();
         cy.get('.react-datepicker__day').first().click();
@@ -37,7 +37,7 @@ describe('DatePicker Component', () => {
 
     it('should clear the input if cancel icon is clicked', () => {
         const onChangeStub = cy.stub().as('onChangeStub');
-        cy.mount(<DatePicker isClearable={true} value={new Date()} onChange={onChangeStub} />);
+        cy.mount(<DatePicker isClearable value={new Date()} onChange={onChangeStub} />);
 
         cy.get(OPEN_CLOSE_CLICK_AREA_ID).click();
         cy.get('.react-datepicker__close-icon').click();
@@ -46,7 +46,7 @@ describe('DatePicker Component', () => {
 
     it('should close calendar if shouldCloseOnSelect is true, and date is selected', () => {
         const onChangeStub = cy.stub().as('onChangeStub');
-        cy.mount(<DatePicker onChange={onChangeStub} shouldCloseOnSelect={true} />);
+        cy.mount(<DatePicker onChange={onChangeStub} shouldCloseOnSelect />);
 
         cy.get(OPEN_CLOSE_CLICK_AREA_ID).click();
         cy.get('.react-datepicker__day').first().click();
@@ -55,7 +55,7 @@ describe('DatePicker Component', () => {
 
     it('should close call onChange prop function, if date is selected', () => {
         const onChangeStub = cy.stub().as('onChangeStub');
-        cy.mount(<DatePicker shouldCloseOnSelect={true} onChange={onChangeStub} />);
+        cy.mount(<DatePicker shouldCloseOnSelect onChange={onChangeStub} />);
 
         cy.get(OPEN_CLOSE_CLICK_AREA_ID).click();
         cy.get('.react-datepicker__day').first().click();

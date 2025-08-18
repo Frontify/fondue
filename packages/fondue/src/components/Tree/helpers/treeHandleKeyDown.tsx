@@ -77,7 +77,11 @@ export const handleKeyDownEvent = (
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
         case KeyboardCode.Space:
-            hasChildren ? expandItem() : toggleSelect();
+            if (hasChildren) {
+                expandItem();
+            } else {
+                toggleSelect();
+            }
 
             break;
 
@@ -87,7 +91,11 @@ export const handleKeyDownEvent = (
                 break;
             }
 
-            isExpanded ? focusNext() : expandItem();
+            if (isExpanded) {
+                focusNext();
+            } else {
+                expandItem();
+            }
 
             break;
 

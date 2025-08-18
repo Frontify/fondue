@@ -85,7 +85,7 @@ describe('Tree and TreeItem components', () => {
                     id="tree-item"
                     contentComponent={
                         <div>
-                            <button>Hello</button>
+                            <button type="button">Hello</button>
                         </div>
                     }
                 />

@@ -41,10 +41,10 @@ export const MultiInput = ({
             )}
             {layout === MultiInputLayout.Spider && (
                 <div data-test-id={`${dataTestId}-grid-spider`} className="tw-grid tw-grid-cols-4 tw-gap-2">
-                    {childrenArray[0] && <div className="tw-col-start-2 tw-col-span-2">{childrenArray[0]}</div>}
-                    {childrenArray[1] && <div className="tw-col-start-1 tw-col-span-2">{childrenArray[1]}</div>}
-                    {childrenArray[2] && <div className="tw-col-start-3 tw-col-span-2">{childrenArray[2]}</div>}
-                    {childrenArray[3] && <div className="tw-col-start-2 tw-col-span-2">{childrenArray[3]}</div>}
+                    {childrenArray[0] ? <div className="tw-col-start-2 tw-col-span-2">{childrenArray[0]}</div> : null}
+                    {childrenArray[1] ? <div className="tw-col-start-1 tw-col-span-2">{childrenArray[1]}</div> : null}
+                    {childrenArray[2] ? <div className="tw-col-start-3 tw-col-span-2">{childrenArray[2]}</div> : null}
+                    {childrenArray[3] ? <div className="tw-col-start-2 tw-col-span-2">{childrenArray[3]}</div> : null}
                 </div>
             )}
         </div>

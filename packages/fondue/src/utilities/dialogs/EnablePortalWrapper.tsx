@@ -9,6 +9,5 @@ export const EnablePortalWrapper = ({
 }: {
     enablePortal?: boolean;
     children?: ReactNode;
-    // eslint-disable-next-line react/jsx-no-useless-fragment
 }): ReactElement => (enablePortal ? <Portal>{children}</Portal> : <>{children}</>);
 EnablePortalWrapper.displayName = 'FondueEnablePortalWrapper';

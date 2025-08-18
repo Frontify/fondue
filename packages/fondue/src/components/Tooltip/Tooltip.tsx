@@ -38,15 +38,15 @@ const formatTooltipText = (text: string) => {
     return text.split(lineBreakRegex).join('\n');
 };
 
-const handleTimeout = (callback: () => void, delay: number, timeoutId: number | null) => {
+const handleTimeout = (callback: () => void, delay: number, timeoutId: ReturnType<typeof setTimeout> | null) => {
     let newTimeoutId = timeoutId;
 
     if (newTimeoutId) {
-        window.clearTimeout(newTimeoutId);
+        clearTimeout(newTimeoutId);
     }
 
     if (delay > 0) {
-        newTimeoutId = window.setTimeout(callback, delay);
+        newTimeoutId = setTimeout(callback, delay);
     } else {
         callback();
     }
@@ -78,7 +78,7 @@ export const Tooltip = ({
     zIndex = Z_INDEX_TOOLTIP,
     'data-test-id': dataTestId = 'fondue-tooltip',
 }: TooltipProps) => {
-    const timeoutRef = useRef<number | null>(null);
+    const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const [open, setOpen] = useState(openOnMount);
     const [hasInteractiveElements, setHasInteractiveElements] = useState(false);
 

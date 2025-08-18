@@ -62,8 +62,10 @@ const ChecklistItem = ({ checkbox, state, forwardedRef }: ChecklistItemProps) =>
     }, [checkState, isSelected]);
 
     useEffect(() => {
-        forwardedRef && ref.current && forwardedRef(ref.current);
-    }, [isSelected]);
+        if (forwardedRef && ref.current) {
+            forwardedRef(ref.current);
+        }
+    }, [forwardedRef, isSelected]);
 
     return <Checkbox {...checkbox} state={checkState} groupInputProps={inputProps} ref={ref} />;
 };

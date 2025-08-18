@@ -39,6 +39,7 @@ const ChangingBreadcrumbs = ({ items }: BreadcrumbsProps): ReactElement => {
         <div>
             <Breadcrumbs items={breadcrumbItems} />
             <button
+                type="button"
                 data-test-id="add-item-button"
                 onClick={() => {
                     setBreadcrumbItems(() => [
