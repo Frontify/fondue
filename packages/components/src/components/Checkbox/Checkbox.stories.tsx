@@ -67,6 +67,23 @@ export const Required: Story = {
     },
 };
 
+export const WithoutLabel: Story = {
+    render: (args) => {
+        const [value, setValue] = useState(args.value);
+
+        const handleToggle = (event: FormEvent) => {
+            action('onChange')(event);
+            setValue((prevIsChecked) => (prevIsChecked === 'indeterminate' ? true : !prevIsChecked));
+        };
+
+        return (
+            <div className="tw-flex tw-gap-2 tw-items-center">
+                <Checkbox {...args} id="checkbox" aria-labelledby="label" value={value} onChange={handleToggle} />
+            </div>
+        );
+    },
+};
+
 export const Checklist: Story = {
     render: (args) => {
         return (
