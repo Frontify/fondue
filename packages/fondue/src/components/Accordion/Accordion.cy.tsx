@@ -177,7 +177,7 @@ describe('Accordion Component', () => {
     it('shows divider on AccordionItem', () => {
         cy.mount(
             <Accordion>
-                <AccordionItem header={{ children: '1' }} divider={true}>
+                <AccordionItem header={{ children: '1' }} divider>
                     1
                 </AccordionItem>
             </Accordion>,
@@ -294,6 +294,7 @@ const TestAccordion = (): ReactElement => {
         <>
             <Accordion>{[...accordionData]}</Accordion>
             <button
+                type="button"
                 onClick={() => {
                     setAccordionData([...accordionItems, ...additionalAccordionItem]);
                 }}

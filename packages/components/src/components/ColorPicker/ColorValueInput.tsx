@@ -55,7 +55,7 @@ export const ColorValueInput = (
     }: ColorValueInputProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
-    const [hexColorValue, setHexColorValue] = useState<string>(rgbColorToHex(currentColor));
+    const [hexColorValue, setHexColorValue] = useState<string>(() => rgbColorToHex(currentColor));
 
     useEffect(() => {
         setHexColorValue(rgbColorToHex(currentColor));

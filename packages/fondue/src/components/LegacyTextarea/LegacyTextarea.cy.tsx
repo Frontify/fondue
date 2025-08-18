@@ -30,7 +30,7 @@ describe('LegacyTextarea component', () => {
     });
 
     it('has the required attribute', () => {
-        cy.mount(<LegacyTextarea required={true}></LegacyTextarea>);
+        cy.mount(<LegacyTextarea required></LegacyTextarea>);
         cy.get(TEXTAREA_ID).should('have.attr', 'required');
     });
 
@@ -40,7 +40,7 @@ describe('LegacyTextarea component', () => {
     });
 
     it('has the disabled attribute', () => {
-        cy.mount(<LegacyTextarea disabled={true}></LegacyTextarea>);
+        cy.mount(<LegacyTextarea disabled></LegacyTextarea>);
         cy.get(TEXTAREA_ID).should('have.attr', 'disabled');
     });
 

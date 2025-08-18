@@ -5,8 +5,8 @@ import { cloneElement, useContext, type ReactElement } from 'react';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { merge } from '@utilities/merge';
 
-import { ModalLayout } from './context/ModalLayout';
-import { ModalTitle } from './context/ModalTitle';
+import { ModalLayoutContext } from './context/ModalLayout';
+import { ModalTitleContext } from './context/ModalTitle';
 import { ModalHeaderVariant, modalHeaderVariants, type ModalHeaderProps } from './types';
 
 /**
@@ -18,8 +18,8 @@ export const ModalHeader = ({
     decorator,
     variant = ModalHeaderVariant.Default,
 }: ModalHeaderProps): ReactElement => {
-    const ariaTitleProps = useContext(ModalTitle);
-    const { padding, compact } = useContext(ModalLayout);
+    const ariaTitleProps = useContext(ModalTitleContext);
+    const { padding, compact } = useContext(ModalLayoutContext);
 
     return (
         <div data-test-id="modal-header" className={`${padding.top} ${padding.horizontal}`}>
@@ -42,7 +42,7 @@ export const ModalHeader = ({
                     {title}
                 </h3>
             </div>
-            {leadText && <p className="tw-text-text-weak tw-mt-4">{leadText}</p>}
+            {leadText ? <p className="tw-text-text-weak tw-mt-4">{leadText}</p> : null}
         </div>
     );
 };

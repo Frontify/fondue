@@ -99,6 +99,7 @@ export const MenuItem = ({
     onMouseOver,
     onMouseLeave,
     'data-test-id': dataTestId = 'menu-item',
+    type,
 }: MenuItemProps) => {
     const currentIconSize = size === MenuItemContentSize.XSmall ? IconSize.Size16 : IconSize.Size20;
 
@@ -127,10 +128,10 @@ export const MenuItem = ({
 
     return (
         <>
-            {children && (
+            {children ? (
                 <li
                     data-test-id={dataTestId}
-                    // eslint-disable-next-line jsx-a11y/no-noninteractive-element-to-interactive-role
+                    data-type={type}
                     role="menuitem"
                     className={merge([
                         'tw-text-sm tw-leading-4 tw-text-text-weak',
@@ -173,7 +174,7 @@ export const MenuItem = ({
                     )}
                     {mainElementType === 'span' && <span className={ITEM_BASE_CLASSES}>{children}</span>}
                 </li>
-            )}
+            ) : null}
             {/* The implementation without children is the first behavior of the MenuItem component.
                 This way we can introduce the new changes without breaking the current usage of it.
                 In the future, this implementation should be replaced by the new one and the projects updated properly

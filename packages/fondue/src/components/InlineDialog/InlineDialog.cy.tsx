@@ -248,7 +248,7 @@ describe('InlineDialog Component', () => {
         });
 
         it('renders with autoHeight and overwrites maxHeight', () => {
-            cy.mount(<InlineDialogComponent autoHeight={true} maxHeight={100} />);
+            cy.mount(<InlineDialogComponent autoHeight maxHeight={100} />);
             cy.get(INLINE_DIALOG_TRIGGER_SELECTOR).children().eq(0).click();
             cy.viewport(550, 150);
             cy.get(INLINE_DIALOG_SELECTOR).should('have.css', 'height', '130px');

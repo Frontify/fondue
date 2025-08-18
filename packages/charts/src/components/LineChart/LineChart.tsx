@@ -54,7 +54,7 @@ export const LineChart = ({
             >
                 <Grid
                     key={'grid'}
-                    rows={true}
+                    rows
                     columns={false}
                     numTicks={Y_TICKS_LENGTH}
                     stroke={'var(--fc-grid-stroke-color)'}

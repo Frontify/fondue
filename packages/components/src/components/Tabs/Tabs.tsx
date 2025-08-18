@@ -8,6 +8,7 @@ import {
     useCallback,
     useContext,
     useEffect,
+    useMemo,
     useRef,
     type ForwardedRef,
     type ReactNode,
@@ -62,12 +63,14 @@ const TabConfigContext = createContext<{
     value: '',
     disabled: false,
 });
+TabConfigContext.displayName = 'TabConfigContext';
 
 const TabTriggerContext = createContext<{
     addTrigger: (trigger: TabTrigger) => void;
 }>({
     addTrigger: () => {},
 });
+TabTriggerContext.displayName = 'TabTriggerContext';
 
 export const TabsRoot = (
     {
@@ -99,8 +102,10 @@ export const TabsRoot = (
         activeTab,
     });
 
+    const contextValue = useMemo(() => ({ addTrigger }), [addTrigger]);
+
     return (
-        <TabTriggerContext.Provider value={{ addTrigger }}>
+        <TabTriggerContext.Provider value={contextValue}>
             <RadixTabs.Root
                 ref={ref}
                 className={styles.root}
@@ -165,9 +170,11 @@ type TabsTabProps = {
     disabled?: boolean;
 };
 
-export const TabsTab = ({ children, value, disabled }: TabsTabProps) => (
-    <TabConfigContext.Provider value={{ value, disabled }}>{children}</TabConfigContext.Provider>
-);
+export const TabsTab = ({ children, value, disabled }: TabsTabProps) => {
+    const contextValue = useMemo(() => ({ value, disabled }), [value, disabled]);
+
+    return <TabConfigContext.Provider value={contextValue}>{children}</TabConfigContext.Provider>;
+};
 TabsTab.displayName = 'Tabs.Tab';
 
 type TabsTriggerProps = {

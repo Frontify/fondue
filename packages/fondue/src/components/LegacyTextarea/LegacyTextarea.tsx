@@ -72,7 +72,12 @@ export const LegacyTextarea = ({
     const textareaElement = useRef<HTMLTextAreaElement | null>(null);
 
     useEffect(() => {
-        focusOnMount && textareaElement.current?.focus();
+        if (focusOnMount) {
+            const timeoutId = setTimeout(() => {
+                textareaElement.current?.focus();
+            }, 0);
+            return () => clearTimeout(timeoutId);
+        }
     }, [focusOnMount]);
 
     const onKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -98,14 +103,14 @@ export const LegacyTextarea = ({
 
     return (
         <div className="tw-relative" {...focusProps}>
-            {decorator && (
+            {decorator ? (
                 <div
                     className="tw-absolute tw-top-2 tw-left-2 tw-inline-flex tw-items-end tw-text-black-80"
                     data-test-id="decorator"
                 >
                     {decorator}
                 </div>
-            )}
+            ) : null}
             <Component
                 {...(autosize ? autosizeProps : { rows: minRows })}
                 onClick={() => textareaElement.current?.focus()}

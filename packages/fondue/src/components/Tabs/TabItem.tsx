@@ -8,10 +8,14 @@ import { merge } from '@utilities/merge';
 
 export type TabItemProps = {
     id: string;
+    // eslint-disable-next-line @eslint-react/no-unused-props
     label: string;
+    // eslint-disable-next-line @eslint-react/no-unused-props
     onClick?: () => void;
     disabled?: boolean;
+    // eslint-disable-next-line @eslint-react/no-unused-props
     decorator?: ReactElement;
+    // eslint-disable-next-line @eslint-react/no-unused-props
     badge?: BadgeProps;
     children: ReactNode;
     active?: boolean;
