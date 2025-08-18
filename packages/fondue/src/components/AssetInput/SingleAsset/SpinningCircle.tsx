@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { merge } from '@utilities/merge';
 import { type ReactElement } from 'react';
+
+import { merge } from '@utilities/merge';
 
 import { type AssetInputProps, AssetInputSize } from '../AssetInput';
 

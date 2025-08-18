@@ -1,13 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Badge } from '@components/Badge';
-import { type TabItemProps } from '@components/Tabs/TabItem';
-import IconDotsHorizontal from '@foundation/Icon/Generated/IconDotsHorizontal';
-import { useMemoizedId } from '@hooks/useMemoizedId';
 import { useFocusRing } from '@react-aria/focus';
-import { type DimensionUnity } from '@utilities/dimensions';
-import { FOCUS_STYLE, FOCUS_VISIBLE_STYLE, FOCUS_VISIBLE_STYLE_INSET } from '@utilities/focusStyle';
-import { merge } from '@utilities/merge';
 import { motion } from 'framer-motion';
 import {
     Children,
@@ -21,6 +14,14 @@ import {
     useRef,
     useState,
 } from 'react';
+
+import { Badge } from '@components/Badge';
+import { type TabItemProps } from '@components/Tabs/TabItem';
+import IconDotsHorizontal from '@foundation/Icon/Generated/IconDotsHorizontal';
+import { useMemoizedId } from '@hooks/useMemoizedId';
+import { type DimensionUnity } from '@utilities/dimensions';
+import { FOCUS_STYLE, FOCUS_VISIBLE_STYLE, FOCUS_VISIBLE_STYLE_INSET } from '@utilities/focusStyle';
+import { merge } from '@utilities/merge';
 
 export enum TabsPaddingX {
     None = 'None',

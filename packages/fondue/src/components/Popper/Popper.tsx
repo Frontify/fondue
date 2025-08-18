@@ -1,10 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
+import { usePopper } from 'react-popper';
+
 import { type PopperDimension, type PopperProps, type PrepareElementStyleProps } from '@components/Popper/types';
 import { EnablePortalWrapper } from '@utilities/dialogs/EnablePortalWrapper';
 import { merge } from '@utilities/merge';
-import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
-import { usePopper } from 'react-popper';
 
 const DEFAULT_POPPER_WIDTH = 200;
 const DEFAULT_POPPER_HEIGHT = 400;

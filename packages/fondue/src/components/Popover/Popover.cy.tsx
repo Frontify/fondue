@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { useRef, useState } from 'react';
+
 import { Button } from '@components/Button';
 import { Popover } from '@components/Popover/Popover';
-import { useRef, useState } from 'react';
 
 import { type OverlayProps } from '../../types';
 

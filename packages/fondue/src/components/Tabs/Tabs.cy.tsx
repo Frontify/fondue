@@ -1,11 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { useState } from 'react';
+
 import { BadgeStyle } from '@components/Badge';
 import { TabItem, type TabItemProps } from '@components/Tabs/TabItem';
 import { TabSize, Tabs, TabsPaddingX } from '@components/Tabs/Tabs';
 import IconIcon from '@foundation/Icon/Generated/IconIcon';
 import { IconSize } from '@foundation/Icon/IconSize';
-import { useState } from 'react';
 
 const data: TabItemProps[] = [
     {

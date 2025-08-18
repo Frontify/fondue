@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type ReactElement, useState } from 'react';
+
 import { TextInput } from '@components/TextInput/TextInput';
 import IconIcon from '@foundation/Icon/Generated/IconIcon';
-import { type ReactElement, useState } from 'react';
 
 import { Accordion, AccordionItem } from './Accordion';
 import { type AccordionHeaderProps } from './types';
