@@ -47,7 +47,6 @@ const transformValueBasedOnKey = (key: string, value: string | number): string |
 };
 
 export const propsToCssVariables = (
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     props: Record<string, string | number | boolean | { [key in Breakpoint]?: string | number | boolean }>,
     extraAbbreviationToCssProperty: Record<string, string> = {},
 ): CSSProperties => {

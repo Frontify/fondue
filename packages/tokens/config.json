@@ -1,20 +1,9 @@
 {
-    "figmaFileKey": "YusQBIqf7U9QnI8xmTLlqf",
     "defaultTheme": "light",
-    "themes": ["dark", "light"],
     "excludeTokens": [".*Figma Deep Selection Hack"],
+    "figmaFileKey": "YusQBIqf7U9QnI8xmTLlqf",
+    "themes": ["dark", "light"],
     "tokenTypes": {
-        "theme": [
-            {
-                "collection": "VariableCollectionId:80:1513"
-            }
-        ],
-        "semantic": [
-            {
-                "collection": "VariableCollectionId:419:1502",
-                "path": ["shadow"]
-            }
-        ],
         "base": [
             {
                 "collection": "VariableCollectionId:80:1510"
@@ -30,6 +19,17 @@
             {
                 "collection": "VariableCollectionId:419:1502",
                 "path": ["spacing"]
+            }
+        ],
+        "semantic": [
+            {
+                "collection": "VariableCollectionId:419:1502",
+                "path": ["shadow"]
+            }
+        ],
+        "theme": [
+            {
+                "collection": "VariableCollectionId:80:1513"
             }
         ],
         "utility": [
