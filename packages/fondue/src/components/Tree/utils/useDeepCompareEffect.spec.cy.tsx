@@ -22,6 +22,7 @@ const Component = ({ effect, deps }: Props) => {
     return (
         <>
             <button
+                type="button"
                 data-test-id="button-1"
                 onClick={() =>
                     setState((previousState) => ({
@@ -30,7 +31,7 @@ const Component = ({ effect, deps }: Props) => {
                 }
             />
 
-            <button data-test-id="button-2" onClick={() => setTmp((previousState) => previousState + 1)}>
+            <button type="button" data-test-id="button-2" onClick={() => setTmp((previousState) => previousState + 1)}>
                 {tmp}
             </button>
         </>

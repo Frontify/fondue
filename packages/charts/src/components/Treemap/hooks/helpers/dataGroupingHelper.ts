@@ -18,11 +18,17 @@ export const getDataPointsToBeGrouped = (data: TreemapDataPoint[], sizeThreshold
                     return sum + (child.value ?? 0);
                 }, 0) ?? 0;
 
-            value > (sizeThreshold || 0) ? unchanged.push(dataPoint) : toBeGroupedFirstLevel.push(dataPoint);
+            if (value > (sizeThreshold || 0)) {
+                unchanged.push(dataPoint);
+            } else {
+                toBeGroupedFirstLevel.push(dataPoint);
+            }
         } else {
-            value > (sizeThreshold || 0) || dataPoint.parentId === null
-                ? unchanged.push(dataPoint)
-                : toBeGroupedSecondLevel.push(dataPoint);
+            if (value > (sizeThreshold || 0) || dataPoint.parentId === null) {
+                unchanged.push(dataPoint);
+            } else {
+                toBeGroupedSecondLevel.push(dataPoint);
+            }
         }
     }
 

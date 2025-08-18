@@ -41,7 +41,9 @@ export const removeFragmentsAndEnrichChildren = (children?: ReactNode, enrichedP
         if (isFragment(child)) {
             result.push(...removeFragmentsAndEnrichChildren(child.props.children, enrichedProps));
         } else {
-            isValidElement(child) && result.push(cloneElement(child, { ...(child.props ?? {}), ...enrichedProps }));
+            if (isValidElement(child)) {
+                result.push(cloneElement(child, { ...(child.props ?? {}), ...enrichedProps }));
+            }
         }
     });
 

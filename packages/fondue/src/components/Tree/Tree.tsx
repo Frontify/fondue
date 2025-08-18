@@ -385,7 +385,7 @@ export const Tree = memo(
             offset: offset ?? 0,
         });
 
-        const [coordinateGetter] = useState(() => sortableTreeKeyboardCoordinates(sensorContext));
+        const coordinateGetter = useMemo(() => sortableTreeKeyboardCoordinates(sensorContext), [sensorContext]);
         const activationConstraint = sensorsActivationConstraint({ dragHandlerPosition, enableDragDelay });
 
         const sensors = useSensors(
@@ -548,7 +548,6 @@ export const Tree = memo(
             <TreeContext.Provider value={contextValue}>
                 <ul
                     id={id}
-                    // eslint-disable-next-line jsx-a11y/no-noninteractive-element-to-interactive-role
                     role="tree"
                     data-test-id={dataTestId}
                     onKeyDown={handleKeyDown}

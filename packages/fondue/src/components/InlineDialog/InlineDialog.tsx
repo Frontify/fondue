@@ -64,7 +64,7 @@ export const InlineDialog = ({
             borderRadius="small"
             shadow="medium"
             width={width}
-            isDialog={true}
+            isDialog
             zIndex={unsafe_zIndex}
         >
             {children}

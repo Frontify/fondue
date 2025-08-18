@@ -27,7 +27,7 @@
     },
     "include": [
         ".storybook",
-        ".eslintrc.cjs",
+        "eslint.config.mjs",
         "postcss.config.cjs",
         "cypress.config.ts",
         "src",

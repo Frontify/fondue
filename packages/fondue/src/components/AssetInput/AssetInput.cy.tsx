@@ -56,8 +56,8 @@ describe('MultiAssetPreview Component', () => {
                 size={AssetInputSize.Small}
                 assets={[EXAMPLE_IMAGES[0]]}
                 actions={assetInputActions}
-                hideSize={true}
-                hideExtension={true}
+                hideSize
+                hideExtension
             />,
         );
 
@@ -117,7 +117,7 @@ describe('MultiAssetPreview Component', () => {
     });
 
     it('displays loading animation', () => {
-        cy.mount(<AssetInput size={AssetInputSize.Small} isLoading={true} />);
+        cy.mount(<AssetInput size={AssetInputSize.Small} isLoading />);
 
         cy.get(ASSET_SINGLE_INPUT_ID).should('contain', 'Uploading').and('contain', 'Your Asset');
         cy.get(SPINNING_CIRCLE_ID).should('exist');

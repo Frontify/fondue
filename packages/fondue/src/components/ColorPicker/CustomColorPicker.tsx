@@ -32,7 +32,7 @@ export const CustomColorPicker = ({
         },
     ];
     const { red, green, blue, alpha = 1 } = currentColor;
-    const [hexInput, setHexInput] = useState(convertToHex(currentColor));
+    const [hexInput, setHexInput] = useState(() => convertToHex(currentColor));
     const [alphaValue, setAlphaValue] = useState(alpha);
 
     const handleHexChange = () => {

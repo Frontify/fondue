@@ -59,7 +59,7 @@ test('should update value when user focuses and presses enter', async ({ mount }
 });
 
 test('should respect the disabled state', async ({ mount }) => {
-    const component = await mount(<Switch aria-label={ARIA_LABEL} disabled={true} />);
+    const component = await mount(<Switch aria-label={ARIA_LABEL} disabled />);
     await expect(component).toHaveAttribute('disabled');
 });
 

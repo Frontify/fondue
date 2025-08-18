@@ -3,7 +3,7 @@
 import { type ComponentFileBuilderResponse } from '../types';
 
 // We aren't really in a story
-// eslint-disable-next-line storybook/default-exports
+
 export const Setup = (componentName: string): ComponentFileBuilderResponse => ({
     content: `/* (c) Copyright Frontify Ltd., all rights reserved. */
 

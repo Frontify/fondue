@@ -141,7 +141,7 @@ const TreeItemContentComponent = ({ title }: { title: string }) => {
 const CustomTreeItem = ({ label, contentComponent, nodes, ...otherProps }: TreeItemMock) => {
     const customLabel = `${label} CUSTOM`;
 
-    const onDrop = useCallback(() => action('onDrop'), []);
+    const onDrop = () => action('onDrop');
 
     return (
         <TreeItem label={customLabel} {...otherProps} onDrop={onDrop}>
@@ -216,7 +216,7 @@ const cleanProps = ({ ...args }) => {
 };
 
 export const WithLabel = ({ ...args }) => {
-    const onDrop = useCallback(() => action('onDrop'), []);
+    const onDrop = () => action('onDrop');
 
     return (
         <Container maxWidth="400px">
@@ -228,7 +228,7 @@ export const WithLabel = ({ ...args }) => {
 };
 
 export const WithCustomTreeItem = ({ ...args }: TreeProps) => {
-    const onDrop = useCallback(() => action('onDrop'), []);
+    const onDrop = () => action('onDrop');
 
     return (
         <Container maxWidth="400px">
@@ -242,13 +242,13 @@ export const WithCustomTreeItem = ({ ...args }: TreeProps) => {
 export const ScrollableWithLabel = ({ ...args }: TreeProps) => {
     const [expandedIds, setExpandedIds] = useState<string[]>([]);
 
-    const handleItemExpand = useCallback((id: string) => {
+    const handleItemExpand = (id: string) => {
         setExpandedIds((ids) => [...ids, id]);
-    }, []);
+    };
 
-    const handleItemShrink = useCallback((id: string) => {
+    const handleItemShrink = (id: string) => {
         setExpandedIds((ids) => ids.filter((itemId: string) => itemId !== id));
-    }, []);
+    };
 
     return (
         <div style={{ position: 'fixed', height: '800px', width: '800px', backgroundColor: 'white' }}>
@@ -366,7 +366,7 @@ const LazyLoadingTreeItem = memo(({ label, numChildNodes, onDrop, ...otherProps 
         return nodes.map((n) => n);
     }, [nodes]);
 
-    const handleDrop = useCallback(() => action('onDrop'), []);
+    const handleDrop = () => action('onDrop');
 
     return (
         <TreeItem
@@ -390,21 +390,15 @@ const LazyLoadingTreeRoot = memo(({ ...args }: TreeProps) => {
 
     const { nodes: rootNodesData } = useNavigationWithLazyLoadedItemsMock(undefined, true, true);
 
-    const handleItemExpand = useCallback(
-        (id: string) => {
-            setExpandedIds([...expandedIds, id]);
-        },
-        [expandedIds],
-    );
+    const handleItemExpand = (id: string) => {
+        setExpandedIds([...expandedIds, id]);
+    };
 
-    const handleItemShrink = useCallback(
-        (id: string) => {
-            setExpandedIds(expandedIds.filter((itemId) => itemId !== id));
-        },
-        [expandedIds],
-    );
+    const handleItemShrink = (id: string) => {
+        setExpandedIds(expandedIds.filter((itemId) => itemId !== id));
+    };
 
-    const onRootDrop = useCallback(() => action('onDrop'), []);
+    const onRootDrop = () => action('onDrop');
 
     return (
         <TreeView {...args} draggable expandedIds={expandedIds} onExpand={handleItemExpand} onShrink={handleItemShrink}>
@@ -435,7 +429,7 @@ export const CustomItemsWithLazyLoadedChildren = ({ ...args }: TreeProps) => {
 };
 
 export const WithCancelSelectionOnDoubleClick = ({ ...args }: TreeProps) => {
-    const onDrop = useCallback(() => action('onDrop'), []);
+    const onDrop = () => action('onDrop');
 
     return (
         <Container maxWidth="400px">
@@ -447,7 +441,7 @@ export const WithCancelSelectionOnDoubleClick = ({ ...args }: TreeProps) => {
 };
 
 export const WithExpandOnSelect = ({ ...args }: TreeProps) => {
-    const onDrop = useCallback(() => action('onDrop'), []);
+    const onDrop = () => action('onDrop');
 
     return (
         <Container maxWidth="400px">
@@ -486,7 +480,7 @@ export const InsideInlineDialog = ({ ...args }: TreeProps) => {
                 anchor={dialogTriggerRef}
                 open={isOpen}
                 modality={Modality.NonModal}
-                enablePortal={true}
+                enablePortal
                 handleClose={() => setIsOpen(false)}
             >
                 <DialogBody>

@@ -18,7 +18,7 @@ test('should render without error', async ({ mount }) => {
     const component = await mount(
         <Tooltip.Root>
             <Tooltip.Trigger data-test-id={TOOLTIP_TRIGGER_TEST_ID}>
-                <button>Hover over me!</button>
+                <Button>Hover over me!</Button>
             </Tooltip.Trigger>
             <Tooltip.Content>{TOOLTIP_TEXT}</Tooltip.Content>
         </Tooltip.Root>,
@@ -30,7 +30,7 @@ test('should appear on hover', async ({ mount, page }) => {
     const component = await mount(
         <Tooltip.Root>
             <Tooltip.Trigger data-test-id={TOOLTIP_TRIGGER_TEST_ID}>
-                <button>Hover over me!</button>
+                <Button>Hover over me!</Button>
             </Tooltip.Trigger>
             <Tooltip.Content data-test-id={TOOLTIP_CONTENT_TEST_ID}>{TOOLTIP_TEXT}</Tooltip.Content>
         </Tooltip.Root>,
@@ -45,7 +45,7 @@ test('should have correct padding spacious', async ({ mount, page }) => {
     const component = await mount(
         <Tooltip.Root>
             <Tooltip.Trigger data-test-id={TOOLTIP_TRIGGER_TEST_ID}>
-                <button>Hover over me!</button>
+                <Button>Hover over me!</Button>
             </Tooltip.Trigger>
             <Tooltip.Content data-test-id={TOOLTIP_CONTENT_TEST_ID} padding="spacious">
                 {TOOLTIP_TEXT}
@@ -63,7 +63,7 @@ test('should have correct padding compact', async ({ mount, page }) => {
     const component = await mount(
         <Tooltip.Root>
             <Tooltip.Trigger data-test-id={TOOLTIP_TRIGGER_TEST_ID}>
-                <button>Hover over me!</button>
+                <Button>Hover over me!</Button>
             </Tooltip.Trigger>
             <Tooltip.Content data-test-id={TOOLTIP_CONTENT_TEST_ID} padding="compact">
                 {TOOLTIP_TEXT}
@@ -81,7 +81,7 @@ test('should have correct max width', async ({ mount, page }) => {
     const component = await mount(
         <Tooltip.Root>
             <Tooltip.Trigger data-test-id={TOOLTIP_TRIGGER_TEST_ID}>
-                <button>Hover over me!</button>
+                <Button>Hover over me!</Button>
             </Tooltip.Trigger>
             <Tooltip.Content data-test-id={TOOLTIP_CONTENT_TEST_ID}>{TOOLTIP_TEXT}</Tooltip.Content>
         </Tooltip.Root>,
@@ -97,7 +97,7 @@ test('should have custom max width', async ({ mount, page }) => {
     const component = await mount(
         <Tooltip.Root>
             <Tooltip.Trigger data-test-id={TOOLTIP_TRIGGER_TEST_ID}>
-                <button>Hover over me!</button>
+                <Button>Hover over me!</Button>
             </Tooltip.Trigger>
             <Tooltip.Content data-test-id={TOOLTIP_CONTENT_TEST_ID} maxWidth="400px">
                 {TOOLTIP_TEXT}
@@ -116,7 +116,7 @@ test('should show on correct default side top', async ({ mount, page }) => {
         <div style={{ margin: 250 }}>
             <Tooltip.Root>
                 <Tooltip.Trigger data-test-id={TOOLTIP_TRIGGER_TEST_ID}>
-                    <button>Hover over me!</button>
+                    <Button>Hover over me!</Button>
                 </Tooltip.Trigger>
                 <Tooltip.Content data-test-id={TOOLTIP_CONTENT_TEST_ID}>{TOOLTIP_TEXT}</Tooltip.Content>
             </Tooltip.Root>
@@ -142,7 +142,7 @@ test('should show on custom side top', async ({ mount, page }) => {
         <div style={{ margin: 250 }}>
             <Tooltip.Root>
                 <Tooltip.Trigger data-test-id={TOOLTIP_TRIGGER_TEST_ID}>
-                    <button>Hover over me!</button>
+                    <Button>Hover over me!</Button>
                 </Tooltip.Trigger>
                 <Tooltip.Content side="top" data-test-id={TOOLTIP_CONTENT_TEST_ID}>
                     {TOOLTIP_TEXT}
@@ -170,7 +170,7 @@ test('should show on custom side bottom', async ({ mount, page }) => {
         <div style={{ margin: 250 }}>
             <Tooltip.Root>
                 <Tooltip.Trigger data-test-id={TOOLTIP_TRIGGER_TEST_ID}>
-                    <button>Hover over me!</button>
+                    <Button>Hover over me!</Button>
                 </Tooltip.Trigger>
                 <Tooltip.Content side="bottom" data-test-id={TOOLTIP_CONTENT_TEST_ID}>
                     {TOOLTIP_TEXT}
@@ -198,7 +198,7 @@ test('should show on custom side left', async ({ mount, page }) => {
         <div style={{ margin: 250 }}>
             <Tooltip.Root>
                 <Tooltip.Trigger data-test-id={TOOLTIP_TRIGGER_TEST_ID}>
-                    <button>Hover over me!</button>
+                    <Button>Hover over me!</Button>
                 </Tooltip.Trigger>
                 <Tooltip.Content side="left" data-test-id={TOOLTIP_CONTENT_TEST_ID}>
                     {TOOLTIP_TEXT}
@@ -226,7 +226,7 @@ test('should show on custom side right', async ({ mount, page }) => {
         <div style={{ margin: 250 }}>
             <Tooltip.Root>
                 <Tooltip.Trigger data-test-id={TOOLTIP_TRIGGER_TEST_ID}>
-                    <button>Hover over me!</button>
+                    <Button>Hover over me!</Button>
                 </Tooltip.Trigger>
                 <Tooltip.Content side="right" data-test-id={TOOLTIP_CONTENT_TEST_ID}>
                     {TOOLTIP_TEXT}
@@ -253,7 +253,7 @@ test('should detect left collision and show on the right', async ({ mount, page 
     const component = await mount(
         <Tooltip.Root>
             <Tooltip.Trigger data-test-id={TOOLTIP_TRIGGER_TEST_ID}>
-                <button>Hover over me!</button>
+                <Button>Hover over me!</Button>
             </Tooltip.Trigger>
             <Tooltip.Content side="left" data-test-id={TOOLTIP_CONTENT_TEST_ID}>
                 {TOOLTIP_TEXT}
@@ -277,7 +277,7 @@ test('should detect top collision and show on the bottom', async ({ mount, page 
     const component = await mount(
         <Tooltip.Root>
             <Tooltip.Trigger data-test-id={TOOLTIP_TRIGGER_TEST_ID}>
-                <button>Hover over me!</button>
+                <Button>Hover over me!</Button>
             </Tooltip.Trigger>
             <Tooltip.Content side="top" data-test-id={TOOLTIP_CONTENT_TEST_ID}>
                 {TOOLTIP_TEXT}
@@ -299,9 +299,9 @@ test('should detect top collision and show on the bottom', async ({ mount, page 
 
 test('should allow for external control of open state', async ({ mount, page }) => {
     const component = await mount(
-        <Tooltip.Root open={true}>
+        <Tooltip.Root open>
             <Tooltip.Trigger data-test-id={TOOLTIP_TRIGGER_TEST_ID}>
-                <button>Hover over me!</button>
+                <Button>Hover over me!</Button>
             </Tooltip.Trigger>
             <Tooltip.Content side="top" data-test-id={TOOLTIP_CONTENT_TEST_ID}>
                 {TOOLTIP_TEXT}
@@ -318,7 +318,7 @@ test('should trigger callback on open state change', async ({ mount }) => {
     const component = await mount(
         <Tooltip.Root onOpenChange={onOpenChange} enterDelay={0}>
             <Tooltip.Trigger data-test-id={TOOLTIP_TRIGGER_TEST_ID}>
-                <button>Hover over me!</button>
+                <Button>Hover over me!</Button>
             </Tooltip.Trigger>
             <Tooltip.Content side="top" data-test-id={TOOLTIP_CONTENT_TEST_ID}>
                 {TOOLTIP_TEXT}

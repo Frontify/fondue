@@ -21,6 +21,7 @@ type ThemeProviderProps = {
 };
 
 export const ThemeContext = createContext<AvailableTheme>('light');
+ThemeContext.displayName = 'ThemeContext';
 
 export const useFondueTheme = () => {
     return useContext(ThemeContext);
