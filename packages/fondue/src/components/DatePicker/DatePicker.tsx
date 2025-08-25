@@ -160,7 +160,11 @@ export const DatePicker = forwardRef<ReactDatePickerRef, DatePickerProps>(
                     popperContainer={({ children }) => createPortal(children, document.body)}
                     popperModifiers={[shift({ padding: 8 }), offset(8)]}
                     renderCustomHeader={({ date, decreaseMonth, increaseMonth, increaseYear, decreaseYear }) => (
-                        <div className="tw-flex tw-flex-col tw-gap-3" ref={calendarCustomHeaderRef}>
+                        <div
+                            className="tw-flex tw-flex-col tw-gap-3"
+                            ref={calendarCustomHeaderRef}
+                            data-test-id="date-picker-header"
+                        >
                             {customHeader}
                             <div className="tw-flex tw-justify-between tw-pb-4 tw-px-0">
                                 <Button
