@@ -9,6 +9,7 @@ const OPEN_CLOSE_CLICK_AREA_ID = '[data-test-id=open-close-click-zone]';
 export const DATE_PICKER_ID = '[data-test-id=date-picker]';
 const EXCLAMATION_MARK_ICON_ID = '[data-test-id=error-state-exclamation-mark-icon]';
 const CLEAR_ICON_ID = '[data-test-id=clear-icon]';
+const DATEPICKER_HEADER_DATA_TEST_ID = '[data-test-id=date-picker-header]';
 
 describe('DatePicker Component', () => {
     it('renders text input as part of Datepicker component', () => {
@@ -73,5 +74,14 @@ describe('DatePicker Component', () => {
             cy.mount(<DatePicker onChange={onChangeStub} validation={validationState} />);
             cy.get(TEXT_INPUT_ID).find(EXCLAMATION_MARK_ICON_ID).should('have.length', 0);
         }
+    });
+
+    it('should focus to the first header button when the calendar opens', () => {
+        const onChangeStub = cy.stub().as('onChangeStub');
+        cy.mount(<DatePicker isClearable value={new Date()} onChange={onChangeStub} />);
+
+        cy.get(OPEN_CLOSE_CLICK_AREA_ID).click();
+
+        cy.get(DATEPICKER_HEADER_DATA_TEST_ID).find('button').first().should('have.focus');
     });
 });

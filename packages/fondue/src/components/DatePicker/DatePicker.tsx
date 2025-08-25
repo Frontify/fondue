@@ -4,7 +4,7 @@ import './styles.css';
 
 import { offset, shift } from '@floating-ui/dom';
 import { format, getYear } from 'date-fns';
-import { forwardRef, useState, type KeyboardEvent, type ReactNode } from 'react';
+import { forwardRef, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
 import ReactDatePicker from 'react-datepicker';
 import { createPortal } from 'react-dom';
 
@@ -102,11 +102,18 @@ export const DatePicker = forwardRef<ReactDatePickerRef, DatePickerProps>(
         },
         ref,
     ) => {
+        const calendarCustomHeaderRef = useRef<HTMLDivElement>(null);
         const [isCalendarOpen, setIsCalendarOpen] = useState<boolean>(false);
 
         const handleOpen = () => {
             setIsCalendarOpen(true);
             onOpen?.();
+
+            queueMicrotask(handleFocus);
+        };
+
+        const handleFocus = () => {
+            calendarCustomHeaderRef.current?.querySelector<HTMLElement>('button')?.focus();
         };
 
         const handleClose = () => {
@@ -144,6 +151,8 @@ export const DatePicker = forwardRef<ReactDatePickerRef, DatePickerProps>(
                                 placeHolder={placeHolder}
                                 validation={validation}
                                 onDateChanged={onChange}
+                                aria-haspopup="dialog"
+                                aria-expanded={isCalendarOpen}
                             />
                         )
                     }
@@ -161,7 +170,11 @@ export const DatePicker = forwardRef<ReactDatePickerRef, DatePickerProps>(
                     popperContainer={({ children }) => createPortal(children, document.body)}
                     popperModifiers={[shift({ padding: 8 }), offset(8)]}
                     renderCustomHeader={({ date, decreaseMonth, increaseMonth, increaseYear, decreaseYear }) => (
-                        <div className="tw-flex tw-flex-col tw-gap-3">
+                        <div
+                            className="tw-flex tw-flex-col tw-gap-3"
+                            ref={calendarCustomHeaderRef}
+                            data-test-id="date-picker-header"
+                        >
                             {customHeader}
                             <div className="tw-flex tw-justify-between tw-pb-4 tw-px-0">
                                 <Button
