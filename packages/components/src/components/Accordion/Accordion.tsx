@@ -42,6 +42,11 @@ export type AccordionRootProps = {
      * The controlled stateful value of the accordion items whose contents are expanded.
      */
     value?: string[];
+    /**
+     * Controls if we show paddings around the header.
+     * @default 'large'
+     */
+    padding?: AccordionPadding;
 };
 
 export const AccordionRoot = ({
@@ -51,6 +56,7 @@ export const AccordionRoot = ({
     defaultValue,
     disabled,
     value,
+    padding = 'large',
 }: AccordionRootProps) => {
     return (
         <RadixAccordion.Root
@@ -61,6 +67,7 @@ export const AccordionRoot = ({
             type="multiple"
             value={value}
             data-border={border}
+            data-accordion-padding={padding}
         >
             {children}
         </RadixAccordion.Root>
@@ -120,18 +127,13 @@ export type AccordionHeaderProps = {
      * Children of the Accordion header. This should contain `Accordion.Trigger`
      */
     children?: ReactNode;
-    /**
-     * Controls if we show paddings around the header.
-     * @default 'large'
-     */
-    padding?: AccordionPadding;
 };
 
 const isAccordionTrigger = (child: unknown): child is ReactElement<AccordionTriggerProps> => {
     return isValidElement<AccordionTriggerProps>(child) && child.type === AccordionTrigger;
 };
 
-export const AccordionHeader = ({ onClick, children, padding = 'large' }: AccordionHeaderProps) => {
+export const AccordionHeader = ({ onClick, children }: AccordionHeaderProps) => {
     const childrenArray = Children.toArray(children);
     const slots = childrenArray.find((child) => {
         return isValidElement<AccordionSlotProps>(child) && child.type === ForwardedRefAccordionSlot;
@@ -154,7 +156,7 @@ export const AccordionHeader = ({ onClick, children, padding = 'large' }: Accord
     });
 
     return (
-        <RadixAccordion.Header className={styles.accordionHeader} onClick={onClick} data-header-padding={padding}>
+        <RadixAccordion.Header className={styles.accordionHeader} onClick={onClick}>
             {triggerWithSlots}
             {slots}
         </RadixAccordion.Header>
