@@ -81,11 +81,11 @@ export const RichTextEditor = ({
         }
     }, [onBlur, localValue]);
 
-    const onKeyDownHandler = useCallback((event: KeyboardEvent<HTMLDivElement>) => {
+    const onKeyDownHandler = (event: KeyboardEvent<HTMLDivElement>) => {
         if (event.code === 'Tab') {
             forceToFocusNextElement(event, !event.shiftKey);
         }
-    }, []);
+    };
 
     const editableProps: TEditableProps = {
         placeholder,

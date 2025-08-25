@@ -108,9 +108,9 @@ export const Default: StoryFn<FormFieldProps> = (args) => {
             status={isNaN(Number(currentValue)) ? Validation.Default : currentValidation}
         >
             <NumberInput
-                controls={true}
+                controls
                 stepInterval={20}
-                clearable={true}
+                clearable
                 onChange={handleChange}
                 suffix="px"
                 decorator={<IconNook16 />}

@@ -97,7 +97,15 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
 
     const ref = useForwardedRef<HTMLButtonElement | null>(externalRef);
     const { buttonProps } = useButton(
-        { onPress: () => onClick && onClick(), isDisabled: disabled, type: buttonTypeMap[type] },
+        {
+            onPress: () => {
+                if (onClick) {
+                    onClick();
+                }
+            },
+            isDisabled: disabled,
+            type: buttonTypeMap[type],
+        },
         ref,
     );
     const { isFocusVisible, focusProps } = useFocusRing();
@@ -129,22 +137,22 @@ const ButtonComponent: ForwardRefRenderFunction<HTMLButtonElement | null, Button
             {...buttonProps}
             {...focusProps}
         >
-            {icon && (
+            {icon ? (
                 <span
                     data-test-id={`${dataTestId}-icon`}
                     className={merge([children && !hideLabel ? IconSpacingClasses[size] : '', getStyles('icon')])}
                 >
                     {cloneElement(icon, { size: buttonIconSizeMap[size] })}
                 </span>
-            )}
-            {children && (
+            ) : null}
+            {children ? (
                 <span
                     data-test-id={`${dataTestId}-text`}
                     className={merge([getStyles('text'), hideLabel && 'tw-sr-only'])}
                 >
                     {children}
                 </span>
-            )}
+            ) : null}
         </button>
     );
 };

@@ -20,6 +20,7 @@ export const RichTextEditorContext = createContext<RichTextEditorContextProps>({
     wrapperClassNames: '',
     editorId: '',
 });
+RichTextEditorContext.displayName = 'RichTextEditorContext';
 export const useRichTextEditorContext = () => useContext(RichTextEditorContext);
 
 type RichTextEditorProviderProps = {

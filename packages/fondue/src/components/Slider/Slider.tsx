@@ -347,6 +347,7 @@ export const Slider = ({
                         </div>
                     )}
                     <button
+                        type="button"
                         ref={setSliderRef}
                         data-test-id={`${dataTestId}-interactive`}
                         className="tw-flex-1 tw-relative tw-h-full tw-cursor-pointer disabled:tw-cursor-default tw-outline-none"

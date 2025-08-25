@@ -103,17 +103,23 @@ export const EditableText = ({
     const handleSwitchToLabel = (event: KeyboardEvent | FocusEvent) => {
         setEditableState(EditableMode.LABEL);
 
-        onModeChange && onModeChange(EditableMode.LABEL);
-        options?.additionalValues &&
-            onAdditionalValueSave &&
+        if (onModeChange) {
+            onModeChange(EditableMode.LABEL);
+        }
+        if (options?.additionalValues && onAdditionalValueSave) {
             onAdditionalValueSave(options.additionalValues, (event.target as HTMLTextAreaElement).value);
-        onEditableSave && onEditableSave((event.target as HTMLTextAreaElement).value);
+        }
+        if (onEditableSave) {
+            onEditableSave((event.target as HTMLTextAreaElement).value);
+        }
     };
 
     const handleSwitchToInput = (childrenText: string) => () => {
         setInputValue(childrenText);
         setEditableState(EditableMode.INPUT);
-        onModeChange && onModeChange(EditableMode.INPUT);
+        if (onModeChange) {
+            onModeChange(EditableMode.INPUT);
+        }
     };
 
     const handleKeyDown: KeyboardEventHandler = (event: KeyboardEvent<HTMLInputElement>) => {
@@ -204,6 +210,7 @@ export const EditableText = ({
                 </div>
             ) : null}
             <button
+                type="button"
                 style={{ display: editableState === EditableMode.INPUT ? 'none' : 'flex' }}
                 className={merge([isOverflowing && 'tw-w-full', 'tw-h-full tw-items-center', FOCUS_VISIBLE_STYLE])}
                 {...clickBehaviour}

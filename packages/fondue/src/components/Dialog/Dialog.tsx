@@ -53,7 +53,7 @@ export const Dialog = ({
             darkUnderlay={darkUnderlay}
             autoHeight={autoHeight}
             zIndex={Z_INDEX_MODAL}
-            isDetached={true}
+            isDetached
             verticalAlignment={verticalAlignment}
             strategy={modality === Modality.NonModal ? 'absolute' : 'fixed'}
             roundedCorners={roundedCorners}

@@ -175,7 +175,7 @@ EmptyEditor.args = {
 
 export const Flex: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) => (
     <div className="tw-flex tw-gap-x-7 tw-justify-start">
-        <div className="tw-min-w-[1rem]">
+        <div className="tw-min-w-4">
             <div className="tw-text-left">
                 <RichTextEditorComponent {...args} value={undefined} />
             </div>

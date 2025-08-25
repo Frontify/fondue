@@ -124,7 +124,7 @@ export const WithTextInput: Story = {
 export const WithButton: Story = {
     render: () => (
         <Tooltip.Root>
-            <Tooltip.Trigger asChild={true}>
+            <Tooltip.Trigger asChild>
                 <Button>Hover me!</Button>
             </Tooltip.Trigger>
             <Tooltip.Content>I am a tooltip!</Tooltip.Content>

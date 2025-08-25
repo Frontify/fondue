@@ -128,7 +128,7 @@ export const Tooltip = ({
                                 </svg>
                             </TooltipInPortal>
                         ))}
-                    <TooltipInPortal left={tooltipLeft} top={tooltipTop} applyPositionStyle={true} unstyled={true}>
+                    <TooltipInPortal left={tooltipLeft} top={tooltipTop} applyPositionStyle unstyled>
                         <TooltipContent
                             title={getHeadingFromDatum(
                                 tooltipContext.tooltipData.nearestDatum?.datum,

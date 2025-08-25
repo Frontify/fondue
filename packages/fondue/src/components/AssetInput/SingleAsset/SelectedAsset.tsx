@@ -56,10 +56,10 @@ export const SelectedAsset = ({
     const [flyoutWidth, setFlyoutWidth] = useState(0);
 
     useEffect(() => {
-        let timer: number | null = null;
+        let timer: ReturnType<typeof setTimeout> | null = null;
         const calculateFlyoutWidth = () => {
             const calculatedWidth = buttonRef.current?.getBoundingClientRect().width ?? 0;
-            timer = window.setTimeout(() => setFlyoutWidth(calculatedWidth), 0);
+            timer = setTimeout(() => setFlyoutWidth(calculatedWidth), 0);
         };
         const resizeObserver = new ResizeObserver(calculateFlyoutWidth);
         if (buttonRef.current) {
@@ -67,7 +67,9 @@ export const SelectedAsset = ({
         }
 
         return () => {
-            timer && clearTimeout(timer);
+            if (timer) {
+                clearTimeout(timer);
+            }
             resizeObserver.disconnect();
         };
     }, []);
@@ -79,6 +81,7 @@ export const SelectedAsset = ({
             data-test-id="asset-single-input"
         >
             <button
+                type="button"
                 {...mergeProps(buttonProps, focusProps)}
                 ref={buttonRef}
                 aria-labelledby={labelId}

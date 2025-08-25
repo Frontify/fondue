@@ -59,12 +59,8 @@ export const DialogFooter = ({
 
                 {actionButtons.length > 0 ? (
                     <Box className="tw-flex tw-gap-x-3" data-test-id={`${dataTestId}-action-buttons`}>
-                        {actionButtons.map((button) => (
-                            <Button
-                                key={`${dataTestId}-button-${button.children?.toString()}`}
-                                {...button}
-                                size={ButtonSize.Medium}
-                            />
+                        {actionButtons.map((button, index) => (
+                            <Button key={`${dataTestId}-button-${index}`} {...button} size={ButtonSize.Medium} />
                         ))}
                     </Box>
                 ) : null}

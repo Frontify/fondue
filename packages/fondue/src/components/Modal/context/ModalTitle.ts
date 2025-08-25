@@ -2,4 +2,5 @@
 
 import { type HTMLAttributes, createContext } from 'react';
 
-export const ModalTitle = createContext<HTMLAttributes<HTMLElement>>({ id: undefined });
+export const ModalTitleContext = createContext<HTMLAttributes<HTMLElement>>({ id: undefined });
+ModalTitleContext.displayName = 'ModalTitleContext';

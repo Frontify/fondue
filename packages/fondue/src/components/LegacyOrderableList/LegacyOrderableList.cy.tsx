@@ -40,7 +40,9 @@ const renderWithFocusableItems = (
         className="tw-flex tw-justify-around"
         data-focus-visible={isFocusVisible}
     >
-        <button data-test-id="focusable-item">Button</button>
+        <button type="button" data-test-id="focusable-item">
+            Button
+        </button>
         <input data-test-id="focusable-item" value="Input"></input>
         <textarea data-test-id="focusable-item">Textarea</textarea>
     </div>
@@ -135,7 +137,7 @@ describe('OrderableList Component', () => {
     });
 
     it('Should disable drag events if dragDisabled prop is true, but maintain focus for navigation', () => {
-        cy.mount(<OrderableListWithDefaultProps dragDisabled={true} renderContent={renderWithFocusableItems} />);
+        cy.mount(<OrderableListWithDefaultProps dragDisabled renderContent={renderWithFocusableItems} />);
         cy.get(DRAGGABLE_ITEM).each(($el) => {
             const disabled = $el.attr('aria-disabled');
             expect(disabled).to.equal('true');

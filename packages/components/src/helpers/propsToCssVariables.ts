@@ -47,7 +47,6 @@ const transformValueBasedOnKey = (key: string, value: string | number): string |
 };
 
 export const propsToCssVariables = (
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     props: Record<string, string | number | boolean | { [key in Breakpoint]?: string | number | boolean }>,
     extraAbbreviationToCssProperty: Record<string, string> = {},
 ): CSSProperties => {
@@ -62,6 +61,7 @@ export const propsToCssVariables = (
                 : key in abbreviationToCssProperty
                   ? abbreviationToCssProperty[key]
                   : key;
+        // The lookahead is necessary to split camelCase boundaries; disabling false-positive lint warning
         const cssPropertyKebabCase = cssProperty?.replaceAll(/([\da-z]|(?=[A-Z]))([A-Z])/g, '$1-$2').toLowerCase();
 
         if (typeof value === 'object') {

@@ -1,13 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { CollapsibleWrap } from '@components/CollapsibleWrap';
 import { useAccordion, useAccordionItem } from '@react-aria/accordion';
 import { useFocusRing } from '@react-aria/focus';
 import { mergeProps } from '@react-aria/utils';
 import { Item as StatelyItem } from '@react-stately/collections';
 import { type TreeProps, useTreeState } from '@react-stately/tree';
-import { FOCUS_STYLE_NO_OFFSET } from '@utilities/focusStyle';
-import { merge } from '@utilities/merge';
 import {
     Children,
     type Key,
@@ -18,6 +15,10 @@ import {
     useEffect,
     useRef,
 } from 'react';
+
+import { CollapsibleWrap } from '@components/CollapsibleWrap';
+import { FOCUS_STYLE_NO_OFFSET } from '@utilities/focusStyle';
+import { merge } from '@utilities/merge';
 
 import { AccordionHeader } from './AccordionHeader';
 import { type AccordionItemProps, type AccordionProps, type AriaAccordionItemProps } from './types';
@@ -49,6 +50,7 @@ const AriaAccordionItem = ({
             ])}
         >
             <button
+                type="button"
                 {...mergeProps(buttonProps, focusProps)}
                 data-test-id={dataTestId}
                 ref={triggerRef}
@@ -122,7 +124,6 @@ const filterValidChildren = ({ children }: AccordionProps): ReactElement<Accordi
 /**
  * @deprecated Please use updated Accordion component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#accordion the migration guide}.
  */
-// eslint-disable-next-line react/jsx-no-useless-fragment
 export const AccordionItem = ({ children }: AccordionItemProps): ReactElement => <>{children}</>;
 AccordionItem.displayName = 'FondueAccordionItem';
 

@@ -496,40 +496,6 @@ export const Interactive: Story = {
     ),
 };
 
-export const WithLinks: Story = {
-    render: ({ ...args }) => (
-        <Table.Root {...args}>
-            <Table.Header>
-                <Table.Row>
-                    <Table.HeaderCell>Name</Table.HeaderCell>
-                    <Table.HeaderCell>Invited by</Table.HeaderCell>
-                    <Table.HeaderCell>Last seen</Table.HeaderCell>
-                </Table.Row>
-            </Table.Header>
-            <Table.Body>
-                {TABLE_DATA.map((user) => (
-                    <Table.Row
-                        key={user.email}
-                        href={`/users/${user.email}`}
-                        onNavigate={(href) => alert(`Navigating to ${href}`)}
-                    >
-                        <Table.RowCell>
-                            <div className="tw-flex tw-items-center tw-gap-2">
-                                <div>
-                                    <div className="tw-font-medium">{user.name}</div>
-                                    <div className="tw-body-small tw-text-secondary">{user.email}</div>
-                                </div>
-                            </div>
-                        </Table.RowCell>
-                        <Table.RowCell>{user.invited}</Table.RowCell>
-                        <Table.RowCell>{user.lastSeen}</Table.RowCell>
-                    </Table.Row>
-                ))}
-            </Table.Body>
-        </Table.Root>
-    ),
-};
-
 export const Disabled: Story = {
     render: ({ ...args }) => (
         <Table.Root {...args}>
@@ -695,7 +661,7 @@ export const WithSearchAndFilters: Story = {
 
 export const WithSelection: Story = {
     render: ({ ...args }) => {
-        const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set());
+        const [selectedRows, setSelectedRows] = useState<Set<number>>(() => new Set());
 
         const handleSelectAll = () => {
             if (selectedRows.size === TABLE_DATA.length) {

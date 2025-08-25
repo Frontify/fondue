@@ -87,10 +87,14 @@ test('render both slots side', async ({ mount }) => {
     const component = await mount(
         <TextInput.Root>
             <TextInput.Slot name="left">
-                <button data-test-id="left-button-slot">left</button>
+                <button type="button" data-test-id="left-button-slot">
+                    left
+                </button>
             </TextInput.Slot>
             <TextInput.Slot name="right">
-                <button data-test-id="right-button-slot">right</button>
+                <button type="button" data-test-id="right-button-slot">
+                    right
+                </button>
             </TextInput.Slot>
         </TextInput.Root>,
     );
@@ -103,7 +107,9 @@ test('render slot on the right side and apply correct focus order', async ({ mou
     const component = await mount(
         <TextInput.Root>
             <TextInput.Slot name="right">
-                <button data-test-id="right-button-slot">Focus</button>
+                <button type="button" data-test-id="right-button-slot">
+                    Focus
+                </button>
             </TextInput.Slot>
         </TextInput.Root>,
     );

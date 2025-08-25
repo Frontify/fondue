@@ -27,7 +27,9 @@ export const useEditorState = ({
 
     const _onChange = useCallback(
         (value: TreeOfNodes) => {
-            onTextChange && onTextChange(JSON.stringify(value));
+            if (onTextChange) {
+                onTextChange(JSON.stringify(value));
+            }
         },
         [onTextChange],
     );
@@ -38,7 +40,9 @@ export const useEditorState = ({
         (value: TreeOfNodes) => {
             debouncedOnChange(value);
             localValue.current = value;
-            onValueChanged && onValueChanged(value);
+            if (onValueChanged) {
+                onValueChanged(value);
+            }
         },
         [debouncedOnChange, localValue, onValueChanged],
     );

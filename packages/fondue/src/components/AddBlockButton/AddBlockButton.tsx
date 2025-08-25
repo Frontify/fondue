@@ -56,6 +56,7 @@ export const AddBlockButton = ({
 
     return (
         <button
+            type="button"
             {...mergeProps(buttonProps, focusProps)}
             title={title}
             data-test-id={dataTestId}

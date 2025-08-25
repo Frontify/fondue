@@ -31,6 +31,7 @@ export const MultiAssetPreview = ({ numberOfLocations, assets, onClick }: MultiA
     return (
         <div data-test-id="multi-asset-preview">
             <button
+                type="button"
                 title="multi-asset-preview"
                 {...mergeProps(buttonProps, focusProps)}
                 ref={buttonRef}

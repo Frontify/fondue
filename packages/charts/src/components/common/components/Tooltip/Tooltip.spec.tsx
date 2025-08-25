@@ -12,7 +12,7 @@ vi.mock('react', async (importOriginal) => ({
     useContext: vi.fn(),
 }));
 
-vi.mock('./hooks/usePositions', async () => ({
+vi.mock('./hooks/usePositions', () => ({
     usePositions: vi.fn(),
 }));
 
@@ -65,8 +65,8 @@ describe('Tooltip', () => {
         });
         const { getByText, getByRole } = render(<Tooltip crossHairStyle="line" />);
 
-        expect(getByText(/5%/i)).toBeDefined();
-        expect(getByText(/10%/i)).toBeDefined();
+        expect(getByText(/5%/)).toBeDefined();
+        expect(getByText(/10%/)).toBeDefined();
         expect(getByText(/ctr 20%/i)).toBeDefined();
         expect(getByRole('img')).toBeDefined();
     });

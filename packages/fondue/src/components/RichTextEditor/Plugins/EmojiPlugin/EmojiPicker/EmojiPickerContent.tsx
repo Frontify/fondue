@@ -90,7 +90,7 @@ export function EmojiPickerContent({
         [visibleCategories],
     );
 
-    const EmojiList = useCallback(() => {
+    const renderEmojiList = useCallback(() => {
         return emojiLibrary
             .getGrid()
             .sections()
@@ -100,35 +100,36 @@ export function EmojiPickerContent({
 
                 return (
                     <div key={categoryId} data-id={categoryId} ref={section.root} style={{ width: rowWidth }}>
-                        <div className="tw-sticky tw--top-px tw-z-[1] tw-bg-white/90 tw-p-1 tw-backdrop-blur-[4px]">
+                        <div className="tw-sticky tw--top-px tw-z-[1] tw-bg-white/90 tw-p-1 tw-backdrop-blur-sm">
                             {i18n.categories[categoryId]}
                         </div>
                         <div
                             className="tw-relative tw-flex tw-flex-wrap"
                             style={{ height: section.getRows().length * buttonSize.value }}
                         >
-                            {isCategoryVisible(categoryId) &&
-                                section
-                                    .getRows()
-                                    .map((row: GridRow, index) => (
-                                        <RowOfButtons
-                                            key={index}
-                                            emojiLibrary={emojiLibrary}
-                                            row={row}
-                                            onSelectEmoji={onSelectEmoji}
-                                            onMouseOver={onMouseOver}
-                                        />
-                                    ))}
+                            {isCategoryVisible(categoryId)
+                                ? section
+                                      .getRows()
+                                      .map((row: GridRow, index) => (
+                                          <RowOfButtons
+                                              key={index}
+                                              emojiLibrary={emojiLibrary}
+                                              row={row}
+                                              onSelectEmoji={onSelectEmoji}
+                                              onMouseOver={onMouseOver}
+                                          />
+                                      ))
+                                : null}
                         </div>
                     </div>
                 );
             });
     }, [emojiLibrary, rowWidth, i18n.categories, isCategoryVisible, onSelectEmoji, onMouseOver, settings]);
 
-    const SearchList = useCallback(() => {
+    const renderSearchList = useCallback(() => {
         return (
             <div data-id="search" style={{ width: rowWidth }}>
-                <div className="tw-sticky tw--top-px tw-z-[1] tw-bg-white/90 tw-p-1 tw-backdrop-blur-[4px]">
+                <div className="tw-sticky tw--top-px tw-z-[1] tw-bg-white/90 tw-p-1 tw-backdrop-blur-sm">
                     {i18n.searchResult}
                 </div>
                 <div className="tw-relative tw-flex tw-flex-wrap">
@@ -155,7 +156,7 @@ export function EmojiPickerContent({
             ref={refs.current.contentRoot}
         >
             <div ref={refs.current.content} className="tw-h-full">
-                {isSearching ? SearchList() : EmojiList()}
+                {isSearching ? renderSearchList() : renderEmojiList()}
             </div>
         </div>
     );

@@ -118,7 +118,7 @@ export const RadioList = ({
                                 hoverDelay={75}
                                 position={TooltipPosition.Top}
                                 triggerElement={
-                                    <button className="tw-flex tw-text-black-80 tw-mx-2 tw-self-center">
+                                    <button type="button" className="tw-flex tw-text-black-80 tw-mx-2 tw-self-center">
                                         <IconQuestionMarkCircle size={IconSize.Size16} />
                                     </button>
                                 }

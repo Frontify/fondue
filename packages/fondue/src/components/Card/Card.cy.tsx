@@ -14,7 +14,7 @@ describe('Card Component', () => {
     });
 
     it('should render with correct tokens if hovered and hoverable is true', () => {
-        cy.mount(<Card hoverable={true}>{CARD_CHILDREN}</Card>);
+        cy.mount(<Card hoverable>{CARD_CHILDREN}</Card>);
 
         cy.get(CARD_ID).realHover();
 
@@ -67,7 +67,7 @@ describe('Card Component', () => {
     });
 
     it('should not appear focused if hoverable is true but onClick is not defined', () => {
-        cy.mount(<Card hoverable={true}>{CARD_CHILDREN}</Card>);
+        cy.mount(<Card hoverable>{CARD_CHILDREN}</Card>);
 
         cy.window().focus();
         cy.get(CARD_ID).realPress('Tab');

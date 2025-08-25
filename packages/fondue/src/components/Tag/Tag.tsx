@@ -62,6 +62,7 @@ export const Tag = ({ type, label, onClick, size = TagSize.Medium, 'data-test-id
 
     return (
         <button
+            type="button"
             data-test-id={dataTestId}
             className={merge([
                 'tw-inline-flex tw-items-center tw-rounded-full tw-text-xs tw-transition-colors tw-group tw-outline-none tw-break-word',

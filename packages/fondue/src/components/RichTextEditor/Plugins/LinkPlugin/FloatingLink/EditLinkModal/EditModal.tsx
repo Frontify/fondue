@@ -34,6 +34,7 @@ export const EditModal = ({ editButtonProps, unlinkButtonProps }: EditModalProps
                 </span>
                 <span className="tw-flex tw-gap-2">
                     <button
+                        type="button"
                         tabIndex={0}
                         data-test-id={'edit-link-button'}
                         className="tw-transition tw-cursor-pointer tw-rounded hover:tw-bg-black-10 tw-p-1"
@@ -43,6 +44,7 @@ export const EditModal = ({ editButtonProps, unlinkButtonProps }: EditModalProps
                     </button>
 
                     <button
+                        type="button"
                         tabIndex={0}
                         data-test-id={'remove-link-button'}
                         className="tw-transition tw-cursor-pointer tw-rounded hover:tw-bg-black-10 tw-p-1"

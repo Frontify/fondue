@@ -191,7 +191,11 @@ test('should call open and close callbacks', async ({ mount, page }) => {
     const component = await mount(
         <Dropdown.Root
             onOpenChange={(isOpen) => {
-                isOpen ? onOpen() : onClose();
+                if (isOpen) {
+                    onOpen();
+                } else {
+                    onClose();
+                }
             }}
         >
             <Dropdown.Trigger>
@@ -242,15 +246,19 @@ test('should open submenu by keyboard', async ({ mount, page }) => {
     await page.getByTestId(DROPDOWN_TRIGGER_TEST_ID).focus();
     await page.keyboard.press('Enter');
     await expect(page.getByTestId(DROPDOWN_CONTENT_TEST_ID)).toBeVisible();
-    await page.keyboard.press('ArrowDown');
-    await page.keyboard.press('ArrowDown');
-    await page.keyboard.press('ArrowDown');
-    await expect(page.getByTestId(DROPDOWN_SUB_TRIGGER_TEST_ID)).toHaveCSS('background-color', 'rgb(240, 240, 235)');
-    await page.keyboard.press('ArrowRight');
+    const menu = page.getByTestId(DROPDOWN_CONTENT_TEST_ID);
+    const items = menu.getByRole('menuitem');
+    await expect(menu.locator('[data-highlighted]')).toHaveCount(1);
+    await page.locator(':focus').press('ArrowDown');
+    await expect(items.nth(1)).toHaveAttribute('data-highlighted', '');
+    await page.locator(':focus').press('ArrowDown');
+    await expect(items.nth(2)).toHaveAttribute('data-highlighted', '');
+    await page.locator(':focus').press('ArrowDown');
+    await expect(page.getByTestId(DROPDOWN_SUB_TRIGGER_TEST_ID)).toHaveAttribute('data-highlighted', '');
+    await page.locator(':focus').press('ArrowRight');
     await expect(page.getByTestId(DROPDOWN_SUB_CONTENT_TEST_ID)).toBeVisible();
-    await page.keyboard.press('ArrowDown');
-    await expect(page.getByTestId(DROPDOWN_SUB_TRIGGER_TEST_ID)).toHaveCSS('background-color', 'rgb(240, 240, 235)');
-    await expect(page.getByTestId(DROPDOWN_ITEM_TEST_ID)).toHaveCSS('background-color', 'rgb(240, 240, 235)');
+    await page.locator(':focus').press('ArrowDown');
+    await expect(page.getByTestId(DROPDOWN_ITEM_TEST_ID)).toHaveAttribute('data-highlighted', '');
     await page.keyboard.press('Enter');
     expect(onSelect.calledOnce).toBe(true);
 });

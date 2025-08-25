@@ -162,7 +162,7 @@ test('should allow switching tabs with mouse', async ({ mount }) => {
     await expect(component.getByTestId(SECOND_TAB_CONTENT_TEST_ID)).toBeVisible();
 });
 
-test('should allow switching tabs with keyboard', async ({ mount, page }) => {
+test('should allow switching tabs with keyboard', async ({ mount }) => {
     const component = await mount(
         <Tabs.Root data-test-id={TABS_ROOT_TEST_ID}>
             <Tabs.Tab value="first">
@@ -184,7 +184,7 @@ test('should allow switching tabs with keyboard', async ({ mount, page }) => {
     await expect(component.getByTestId(SECOND_TAB_CONTENT_TEST_ID)).not.toBeVisible();
 
     await component.getByTestId(FIRST_TAB_TRIGGER_TEST_ID).focus();
-    await page.keyboard.press('ArrowRight');
+    await component.press('ArrowRight');
 
     await expect(component.getByTestId(FIRST_TAB_TRIGGER_TEST_ID)).not.toHaveAttribute('data-state', 'active');
     await expect(component.getByTestId(SECOND_TAB_TRIGGER_TEST_ID)).toHaveAttribute('data-state', 'active');
@@ -192,7 +192,7 @@ test('should allow switching tabs with keyboard', async ({ mount, page }) => {
     await expect(component.getByTestId(SECOND_TAB_CONTENT_TEST_ID)).toBeVisible();
 });
 
-test('should not allow disabled tab to be selected', async ({ mount, page }) => {
+test('should not allow disabled tab to be selected', async ({ mount }) => {
     const component = await mount(
         <Tabs.Root data-test-id={TABS_ROOT_TEST_ID}>
             <Tabs.Tab value="first">
@@ -221,7 +221,7 @@ test('should not allow disabled tab to be selected', async ({ mount, page }) => 
     await expect(component.getByTestId(THIRD_TAB_CONTENT_TEST_ID)).not.toBeVisible();
 
     await component.getByTestId(FIRST_TAB_TRIGGER_TEST_ID).focus();
-    await page.keyboard.press('ArrowRight');
+    await component.press('ArrowRight');
 
     await expect(component.getByTestId(FIRST_TAB_TRIGGER_TEST_ID)).not.toHaveAttribute('data-state', 'active');
     await expect(component.getByTestId(SECOND_TAB_TRIGGER_TEST_ID)).not.toHaveAttribute('data-state', 'active');
@@ -254,7 +254,7 @@ test('should allow looping when switching tabs with keyboard', async ({ mount, p
     await expect(component.getByTestId(ACTIVE_TAB_INDICATOR_TEST_ID)).toBeVisible();
 
     await component.getByTestId(FIRST_TAB_TRIGGER_TEST_ID).focus();
-    await page.keyboard.press('ArrowRight');
+    await component.press('ArrowRight');
 
     await expect(component.getByTestId(FIRST_TAB_TRIGGER_TEST_ID)).not.toHaveAttribute('data-state', 'active');
     await expect(component.getByTestId(SECOND_TAB_TRIGGER_TEST_ID)).toHaveAttribute('data-state', 'active');
@@ -318,7 +318,7 @@ test('should move indicator on tab change', async ({ mount, page }) => {
     expect(Math.abs(firstTriggerCenter - indicatorCenter)).toBeLessThanOrEqual(tolerance);
 
     await component.getByTestId(FIRST_TAB_TRIGGER_TEST_ID).focus();
-    await page.keyboard.press('ArrowRight');
+    await component.press('ArrowRight');
 
     indicatorBox = await component.getByTestId(ACTIVE_TAB_INDICATOR_TEST_ID).boundingBox();
 
@@ -455,9 +455,9 @@ test.describe('small viewports', () => {
         await expect(component.getByTestId(THIRD_TAB_CONTENT_TEST_ID)).not.toBeVisible();
 
         await component.getByTestId(FIRST_TAB_TRIGGER_TEST_ID).focus();
-        await page.keyboard.press('ArrowRight');
-        await page.keyboard.press('ArrowRight');
-
+        await component.press('ArrowRight');
+        await page.waitForTimeout(500);
+        await component.press('ArrowRight');
         await page.waitForTimeout(500);
 
         await expect(component.getByTestId(FIRST_TAB_TRIGGER_TEST_ID)).not.toBeInViewport();
@@ -506,7 +506,7 @@ test.describe('small viewports', () => {
         const dropdownContent = page.getByTestId(DROPDOWN_CONTENT_TEST_ID);
         await expect(dropdownContent).toBeVisible();
         await expect(dropdownContent.getByText(SECOND_TAB_TRIGGER_TEXT)).toBeVisible();
-        await expect(dropdownContent.getByText(SECOND_TAB_TRIGGER_TEXT)).toBeDisabled();
+        await expect(dropdownContent.getByText(SECOND_TAB_TRIGGER_TEXT).locator('..')).toBeDisabled();
         await expect(dropdownContent.getByText(THIRD_TAB_TRIGGER_TEXT)).toBeVisible();
     });
 
@@ -542,14 +542,16 @@ test.describe('small viewports', () => {
         await expect(component.getByTestId(THIRD_TAB_CONTENT_TEST_ID)).not.toBeVisible();
 
         await component.getByTestId(FIRST_TAB_TRIGGER_TEST_ID).focus();
-        await page.keyboard.press('ArrowRight');
-        await page.keyboard.press('ArrowRight');
+        await component.press('ArrowRight');
+        await page.waitForTimeout(500);
+        await component.press('ArrowRight');
+        await page.waitForTimeout(500);
 
         await component.getByTestId(DROPDOWN_TRIGGER_TEST_ID).click();
         const dropdownContent = page.getByTestId(DROPDOWN_CONTENT_TEST_ID);
         await expect(page.getByTestId(DROPDOWN_CONTENT_TEST_ID)).toBeVisible();
         await expect(dropdownContent.getByText(SECOND_TAB_TRIGGER_TEXT)).toBeVisible();
-        await expect(dropdownContent.getByText(SECOND_TAB_TRIGGER_TEXT)).toBeDisabled();
+        await expect(dropdownContent.getByText(SECOND_TAB_TRIGGER_TEXT).locator('..')).toBeDisabled();
         await expect(dropdownContent.getByText(THIRD_TAB_TRIGGER_TEXT)).toBeVisible();
     });
 
@@ -588,7 +590,7 @@ test.describe('small viewports', () => {
         const dropdownContent = page.getByTestId(DROPDOWN_CONTENT_TEST_ID);
         await expect(dropdownContent).toBeVisible();
         await expect(dropdownContent.getByText(SECOND_TAB_TRIGGER_TEXT)).toBeVisible();
-        await expect(dropdownContent.getByText(SECOND_TAB_TRIGGER_TEXT)).toBeDisabled();
+        await expect(dropdownContent.getByText(SECOND_TAB_TRIGGER_TEXT).locator('..')).toBeDisabled();
         await expect(dropdownContent.getByText(THIRD_TAB_TRIGGER_TEXT)).toBeVisible();
 
         await dropdownContent.getByText(THIRD_TAB_TRIGGER_TEXT).click();

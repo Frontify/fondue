@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ReactNode, forwardRef } from 'react';
+import { forwardRef } from 'react';
 
 import { TextInput } from '@components/TextInput/TextInput';
 import IconCalendar from '@foundation/Icon/Generated/IconCalendar';
@@ -18,7 +18,6 @@ type DatePickerTriggerProps = {
     onClick?: () => void;
     validation?: Validation;
     onDateChanged?: ((date: [Date | null, Date | null] | null) => void) | ((date: Date | null) => void);
-    children?: ReactNode;
 };
 
 export const DatePickerTrigger = forwardRef<HTMLDivElement, DatePickerTriggerProps>(
@@ -51,7 +50,6 @@ export const DatePickerTrigger = forwardRef<HTMLDivElement, DatePickerTriggerPro
             carrotOffsetForClearButton + carrotOffsetForValidationErrorIcon,
         );
 
-        /* eslint-disable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
         return (
             <div ref={ref}>
                 <div
@@ -68,6 +66,13 @@ export const DatePickerTrigger = forwardRef<HTMLDivElement, DatePickerTriggerPro
                         carrotRightSideTWPositionClass,
                     ])}
                     onClick={onClick}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(event) => {
+                        if (event.key === 'Enter' || event.key === ' ') {
+                            onClick?.();
+                        }
+                    }}
                     data-test-id="open-close-click-zone"
                 ></div>
                 <TextInput
@@ -77,13 +82,14 @@ export const DatePickerTrigger = forwardRef<HTMLDivElement, DatePickerTriggerPro
                     clearable={isClearable}
                     onEnterPressed={onClick}
                     onClear={() => {
-                        onDateChanged && onDateChanged(null);
+                        if (onDateChanged) {
+                            onDateChanged(null);
+                        }
                     }}
                     validation={validation}
                 />
             </div>
         );
-        /* eslint-enable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
     },
 );
 

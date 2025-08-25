@@ -79,7 +79,7 @@ export const AreaStackChart = ({
                     childSumLabel={childSumLabel}
                     valueFormatter={valueFormatter}
                     locale={locale}
-                    stackingGlyphs={true}
+                    stackingGlyphs
                 />
             </XYChart>
             {!hideLegend && legendPosition === 'bottom' && (

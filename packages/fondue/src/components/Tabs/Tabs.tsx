@@ -195,7 +195,7 @@ export const Tabs = ({
             }
             buttonElement.focus();
         } catch (error) {
-            throw (error as Error).message;
+            throw new Error((error as Error).message);
         }
     };
 

@@ -85,7 +85,11 @@ export const useInsertModal = () => {
     };
 
     const onToggleTab = (checked: boolean) => {
-        checked ? dispatch({ type: 'NEW_TAB' }) : dispatch({ type: 'SAME_TAB' });
+        if (checked) {
+            dispatch({ type: 'NEW_TAB' });
+        } else {
+            dispatch({ type: 'SAME_TAB' });
+        }
     };
 
     const onCancel = () => {

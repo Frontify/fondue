@@ -210,6 +210,7 @@ export const Dropdown = ({
             >
                 <HiddenSelect state={state} triggerRef={triggerRef} />
                 <button
+                    type="button"
                     {...mergeProps(buttonProps, focusProps)}
                     id={useMemoizedId(propId)}
                     ref={triggerRef}

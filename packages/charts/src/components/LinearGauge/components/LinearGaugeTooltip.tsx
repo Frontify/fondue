@@ -20,8 +20,8 @@ export const LinearGaugeTooltip = ({ TooltipInPortal, x, y, entries }: LinearGau
             top={y}
             offsetLeft={TOOLTIP_OFFSET}
             offsetTop={TOOLTIP_OFFSET}
-            applyPositionStyle={true}
-            unstyled={true}
+            applyPositionStyle
+            unstyled
         >
             <TooltipContent entries={entries} />
         </TooltipInPortal>
