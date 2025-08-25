@@ -1,5 +1,17 @@
 # @frontify/fondue-components
 
+## 19.3.0
+
+### Minor Changes
+
+- [#2379](https://github.com/Frontify/fondue/pull/2379) [`3de6d1c`](https://github.com/Frontify/fondue/commit/3de6d1ca95d0cf34ee455427e51db34c6b7d6a47) Thanks [@syeo66](https://github.com/syeo66)! - feat(Tabs): expose asChild in Tabs.Content
+
+### Patch Changes
+
+- [#2356](https://github.com/Frontify/fondue/pull/2356) [`bea74b3`](https://github.com/Frontify/fondue/commit/bea74b38a57ce8db3468e17babfc3b66280a5d75) Thanks [@mbgspcii](https://github.com/mbgspcii)! - fix: prevent clicks inside a <Dialog> opened from a <Table.Row> from triggering the row click event.
+
+- [#2383](https://github.com/Frontify/fondue/pull/2383) [`f75e618`](https://github.com/Frontify/fondue/commit/f75e61872e14490f95c8f80aa164c1590d3d88b6) Thanks [@syeo66](https://github.com/syeo66)! - feat(Checkbox): enable readOnly flag
+
 ## 19.2.0
 
 ### Minor Changes

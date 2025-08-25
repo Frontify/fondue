@@ -1,5 +1,14 @@
 # @frontify/fondue
 
+## 12.11.1
+
+### Patch Changes
+
+- [#2382](https://github.com/Frontify/fondue/pull/2382) [`cacdb28`](https://github.com/Frontify/fondue/commit/cacdb28c0e80aee6b1013f7e1b7c059a65693117) Thanks [@syeo66](https://github.com/syeo66)! - feat(DatePicker): add fixed height to prevent header from moving around
+
+- Updated dependencies [[`bea74b3`](https://github.com/Frontify/fondue/commit/bea74b38a57ce8db3468e17babfc3b66280a5d75), [`f75e618`](https://github.com/Frontify/fondue/commit/f75e61872e14490f95c8f80aa164c1590d3d88b6), [`3de6d1c`](https://github.com/Frontify/fondue/commit/3de6d1ca95d0cf34ee455427e51db34c6b7d6a47)]:
+    - @frontify/fondue-components@19.3.0
+
 ## 12.11.0
 
 ### Minor Changes
