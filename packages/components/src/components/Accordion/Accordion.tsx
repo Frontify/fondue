@@ -128,15 +128,26 @@ export type AccordionTriggerProps = {
      * Children of the Accordion trigger. This contains the actually clickable and visible header content
      */
     children?: ReactNode;
+    /**
+     * Controls if we show paddings around the trigger.
+     * @default 'large'
+     */
+    padding?: AccordionPadding;
 };
 
 export const AccordionTrigger = ({
     'data-test-id': dataTestId = 'fondue-accordion-trigger',
     asChild,
     children,
+    padding = 'large',
 }: AccordionTriggerProps) => {
     return (
-        <RadixAccordion.Trigger asChild={asChild} className={styles.accordionTrigger} data-test-id={dataTestId}>
+        <RadixAccordion.Trigger
+            asChild={asChild}
+            className={styles.accordionTrigger}
+            data-test-id={dataTestId}
+            data-trigger-padding={padding}
+        >
             {children}
             <IconCaretDown className={styles.accordionCaret} size="16" />
         </RadixAccordion.Trigger>
