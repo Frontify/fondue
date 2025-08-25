@@ -14,15 +14,7 @@ import storybookPlugin from 'eslint-plugin-storybook';
 
 export default tseslint.config(
     {
-        ignores: [
-            'tmp/',
-            'dist/',
-            '.storybook/',
-            'node_modules/',
-            'postcss.config.cjs',
-            'eslint.config.mjs',
-            'tailwind.config.ts',
-        ],
+        ignores: ['tmp/', 'dist/', 'node_modules/', 'postcss.config.cjs', 'eslint.config.mjs'],
     },
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     frontifyConfig,

@@ -6,16 +6,8 @@
         "lib": ["ESNext"],
         "module": "ESNext",
         "moduleResolution": "Node",
-        "resolveJsonModule": true
+        "resolveJsonModule": true,
+        "target": "ESNext"
     },
-    "include": [
-        "vite.config.ts",
-        "eslint.config.mjs",
-        "config.ts",
-        "package.json",
-        "src",
-        "legacyTokens",
-        "tools",
-        "tailwind.config.ts"
-    ]
+    "include": ["vite.config.ts", "eslint.config.mjs"]
 }
