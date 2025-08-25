@@ -7,6 +7,7 @@ export * from './AutoformatPlugin';
 export * from './ColumnBreakPlugin';
 export * from './CheckboxListPlugin';
 export * from './EmojiPlugin';
+export * from './FontColorPlugin';
 export * from './GeneratePlugins';
 export * from './SoftBreakPlugin';
 export * from './MarkPlugin';
