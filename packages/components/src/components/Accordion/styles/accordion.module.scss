@@ -5,6 +5,7 @@
     border-top: var(--line-width) solid var(--line-color);
 }
 
+
 .accordionItem {
     color: var(--text-color-weak);
 
@@ -18,10 +19,57 @@
     }
 }
 
+.accordionHeader {
+    position: relative;
+    min-width: fit-content;
+    padding: var(--header-vertical-padding) var(--header-horizontal-padding);
+
+    &[data-header-padding="none"] {
+        --header-vertical-padding: 0;
+        --header-horizontal-padding: 0;
+    }
+
+    &[data-header-padding="small"] {
+        --header-vertical-padding: var(--space-s);
+        --header-horizontal-padding: var(--space-m);
+    }
+
+    &[data-header-padding="medium"] {
+        --header-vertical-padding: var(--space-m);
+        --header-horizontal-padding: var(--space-l);
+    }
+
+    &[data-header-padding="large"] {
+        --header-vertical-padding: var(--space-l);
+        --header-horizontal-padding: var(--space-xl);
+    }
+
+    & > .accordionSlot {
+        position: absolute;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+
+        &[data-name="left"] {
+            left: var(--header-horizontal-padding);
+            top: var(--header-vertical-padding);
+            bottom: var(--header-vertical-padding);
+        }
+
+        &[data-name="right"] {
+            right: calc(var(--header-horizontal-padding) + 1.5rem);
+            top: var(--header-vertical-padding);
+            bottom: var(--header-vertical-padding);
+        }
+    }
+}
+
 .accordionTrigger {
     align-items: center;
     box-sizing: border-box;
     display: flex;
+    gap: 0.5rem;
     justify-content: space-between;
     outline: 0;
     text-align: left;
@@ -30,6 +78,10 @@
     &[data-state="open"],
     &:hover {
         color: var(--text-color);
+
+        & ~ .accordionSlot {
+            color: var(--text-color);
+        }
     }
 
     &[data-state="open"] {
@@ -38,21 +90,29 @@
         }
     }
 
-    &[data-trigger-padding="none"] {
-        padding: 0;
+    & .accordionSlot {
+        visibility: hidden;
+        min-width: fit-content;
+
+        &[data-name="left"] {
+            order: 1;
+        }
+
+        &[data-name="right"] {
+            order: 3;
+        }
     }
 
-    &[data-trigger-padding="small"] {
-        padding: var(--space-s) var(--space-m);
+    & .accordionCaret {
+        order: 4;
+        min-width: 1rem;
     }
 
-    &[data-trigger-padding="medium"] {
-        padding: var(--space-m) var(--space-l);
+    & .accordionTriggerContent {
+        order: 2;
+        flex-grow: 1;
     }
 
-    &[data-trigger-padding="large"] {
-        padding: var(--space-l) var(--space-xl);
-    }
 }
 
 .accordionContent {
@@ -81,6 +141,7 @@
         padding-top: var(--space-l);
     }
 }
+
 
 
 

@@ -2,7 +2,17 @@
 
 import { IconCaretDown } from '@frontify/fondue-icons';
 import * as RadixAccordion from '@radix-ui/react-accordion';
-import { type MouseEventHandler, type ReactNode } from 'react';
+import {
+    Children,
+    cloneElement,
+    createElement,
+    ForwardedRef,
+    forwardRef,
+    isValidElement,
+    type MouseEventHandler,
+    type ReactElement,
+    type ReactNode,
+} from 'react';
 
 import styles from './styles/accordion.module.scss';
 
@@ -110,10 +120,45 @@ export type AccordionHeaderProps = {
      * Children of the Accordion header. This should contain `Accordion.Trigger`
      */
     children?: ReactNode;
+    /**
+     * Controls if we show paddings around the header.
+     * @default 'large'
+     */
+    padding?: AccordionPadding;
 };
 
-export const AccordionHeader = ({ onClick, children }: AccordionHeaderProps) => {
-    return <RadixAccordion.Header onClick={onClick}>{children}</RadixAccordion.Header>;
+const isAccordionTrigger = (child: unknown): child is ReactElement<AccordionTriggerProps> => {
+    return isValidElement<AccordionTriggerProps>(child) && child.type === AccordionTrigger;
+};
+
+export const AccordionHeader = ({ onClick, children, padding = 'large' }: AccordionHeaderProps) => {
+    const childrenArray = Children.toArray(children);
+    const slots = childrenArray.find((child) => {
+        return isValidElement<AccordionSlotProps>(child) && child.type === ForwardedRefAccordionSlot;
+    });
+
+    const trigger = childrenArray.find(isAccordionTrigger);
+
+    if (!trigger) {
+        throw new Error('Accordion.Header must contain an Accordion.Trigger');
+    }
+
+    const triggerContent = createElement('div', {
+        className: styles.accordionTriggerContent,
+        children: trigger.props.children,
+        key: 'accordion-trigger-content',
+    });
+
+    const triggerWithSlots = cloneElement(trigger, {
+        children: [slots, triggerContent],
+    });
+
+    return (
+        <RadixAccordion.Header className={styles.accordionHeader} onClick={onClick} data-header-padding={padding}>
+            {triggerWithSlots}
+            {slots}
+        </RadixAccordion.Header>
+    );
 };
 AccordionHeader.displayName = 'Accordion.Header';
 
@@ -128,26 +173,15 @@ export type AccordionTriggerProps = {
      * Children of the Accordion trigger. This contains the actually clickable and visible header content
      */
     children?: ReactNode;
-    /**
-     * Controls if we show paddings around the trigger.
-     * @default 'large'
-     */
-    padding?: AccordionPadding;
 };
 
 export const AccordionTrigger = ({
     'data-test-id': dataTestId = 'fondue-accordion-trigger',
     asChild,
     children,
-    padding = 'large',
 }: AccordionTriggerProps) => {
     return (
-        <RadixAccordion.Trigger
-            asChild={asChild}
-            className={styles.accordionTrigger}
-            data-test-id={dataTestId}
-            data-trigger-padding={padding}
-        >
+        <RadixAccordion.Trigger asChild={asChild} className={styles.accordionTrigger} data-test-id={dataTestId}>
             {children}
             <IconCaretDown className={styles.accordionCaret} size="16" />
         </RadixAccordion.Trigger>
@@ -199,10 +233,27 @@ export const AccordionContent = ({
 };
 AccordionContent.displayName = 'Accordion.Content';
 
+export type AccordionSlotProps = { children: ReactNode; name?: 'left' | 'right'; 'data-test-id'?: string };
+
+export const AccordionSlot = (
+    { children, name, 'data-test-id': dataTestId = 'fondue-accordion-slot' }: AccordionSlotProps,
+    ref: ForwardedRef<HTMLDivElement>,
+) => {
+    return (
+        <div data-name={name} className={styles.accordionSlot} data-test-id={dataTestId} ref={ref}>
+            {children}
+        </div>
+    );
+};
+AccordionSlot.displayName = 'Accordion.Slot';
+
+const ForwardedRefAccordionSlot = forwardRef<HTMLDivElement, AccordionSlotProps>(AccordionSlot);
+
 export const Accordion = {
     Root: AccordionRoot,
     Item: AccordionItem,
     Header: AccordionHeader,
     Trigger: AccordionTrigger,
     Content: AccordionContent,
+    Slot: ForwardedRefAccordionSlot,
 };

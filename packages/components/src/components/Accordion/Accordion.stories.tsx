@@ -101,6 +101,7 @@ export const Default: Story = {
             <Accordion.Root {...args}>
                 <Accordion.Item value="accordion-test-0">
                     <Accordion.Header>
+                        <Accordion.Slot name="left">Left slot</Accordion.Slot>
                         <Accordion.Trigger>
                             <div className="tw-flex tw-gap-2">
                                 <IconIcon />
@@ -119,6 +120,9 @@ export const Default: Story = {
                 <Accordion.Item value="accordion-test-1">
                     <Accordion.Header>
                         <Accordion.Trigger>Item with plain text child</Accordion.Trigger>
+                        <Accordion.Slot name="right">
+                            <button>Right slot</button>
+                        </Accordion.Slot>
                     </Accordion.Header>
                     <Accordion.Content>
                         Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt
