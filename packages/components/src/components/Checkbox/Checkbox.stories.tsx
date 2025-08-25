@@ -2,7 +2,7 @@
 
 import { action } from '@storybook/addon-actions';
 import { type Meta, type StoryObj } from '@storybook/react';
-import { type FormEvent, useState } from 'react';
+import { type FormEvent, useState, useId } from 'react';
 
 import { Flex } from '../Flex/Flex';
 import { Label } from '../Label/Label';
@@ -29,6 +29,9 @@ const meta: Meta<typeof CheckboxComponent> = {
     },
     render: (args) => {
         const [value, setValue] = useState(args.value);
+        const id = useId();
+        const checkboxId = `checkbox-${id}`;
+        const labelId = `label-${id}`;
 
         const handleToggle = (event: FormEvent) => {
             action('onChange')(event);
@@ -37,8 +40,8 @@ const meta: Meta<typeof CheckboxComponent> = {
 
         return (
             <div className="tw-flex tw-gap-2 tw-items-center">
-                <Checkbox {...args} id="checkbox" aria-labelledby="label" value={value} onChange={handleToggle} />
-                <Label id="label" htmlFor="checkbox" required={args.required}>
+                <Checkbox {...args} id={checkboxId} aria-labelledby={labelId} value={value} onChange={handleToggle} />
+                <Label id={labelId} htmlFor={checkboxId} required={args.required}>
                     Checkbox
                 </Label>
             </div>
@@ -89,26 +92,32 @@ export const Checklist: Story = {
         return (
             <Flex gap="1rem" direction="column">
                 <Flex gap="4px" direction="row">
-                    <Checkbox {...args} id="checkbox" aria-labelledby="label" value onChange={() => {}} />
-                    <Label id="label" htmlFor="checkbox">
+                    <Checkbox {...args} id="checkbox-1" aria-labelledby="label-1" value onChange={() => undefined} />
+                    <Label id="label-1" htmlFor="checkbox-1">
                         Checkbox 1
                     </Label>
                 </Flex>
                 <Flex gap="4px" direction="row">
-                    <Checkbox {...args} id="checkbox" aria-labelledby="label" value={false} onChange={() => {}} />
-                    <Label id="label" htmlFor="checkbox">
+                    <Checkbox
+                        {...args}
+                        id="checkbox-2"
+                        aria-labelledby="label-2"
+                        value={false}
+                        onChange={() => undefined}
+                    />
+                    <Label id="label-2" htmlFor="checkbox-2">
                         Checkbox 2
                     </Label>
                 </Flex>
                 <Flex gap="4px" direction="row">
                     <Checkbox
                         {...args}
-                        id="checkbox"
-                        aria-labelledby="label"
+                        id="checkbox-3"
+                        aria-labelledby="label-3"
                         value="indeterminate"
-                        onChange={() => {}}
+                        onChange={() => undefined}
                     />
-                    <Label id="label" htmlFor="checkbox">
+                    <Label id="label-3" htmlFor="checkbox-3">
                         Checkbox 3
                     </Label>
                 </Flex>
