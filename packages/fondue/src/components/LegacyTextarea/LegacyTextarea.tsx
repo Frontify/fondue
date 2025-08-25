@@ -20,6 +20,9 @@ import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { Validation, validationClassMap } from '@utilities/validation';
 
+/**
+ * @deprecated Please use updated Textarea component from `@frontify/fondue/components` instead.
+ */
 export type LegacyTextareaProps = {
     id?: string;
     value?: string;
@@ -42,6 +45,9 @@ export type LegacyTextareaProps = {
     onEnterPressed?: (event: KeyboardEvent<HTMLTextAreaElement>) => void;
 } & AriaAttributes;
 
+/**
+ * @deprecated Please use updated Textarea component from `@frontify/fondue/components` instead.
+ */
 export const LegacyTextarea = ({
     id: propId,
     value,
