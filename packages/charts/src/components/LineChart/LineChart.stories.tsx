@@ -131,6 +131,20 @@ const TemplateWithHeading: StoryFn<LineChartProps> = (args) => (
         <LineChart {...args} />
     </>
 );
+const TemplateWithContentOnTop: StoryFn<LineChartProps> = (args) => (
+    <div className="tw-h-[1000px] tw-overflow-auto tw-relative">
+        <ChartHeading
+            title="US City Temperature"
+            description="The temperature of US cities over time"
+            icon={<IconRocket />}
+        />
+        <div className="tw-h-[200px] tw-w-[200px] tw-sticky tw-top-0 tw-p-5 tw-bg-[#cd2828] tw-z-[1]">
+            Content on top of chart
+        </div>
+        <LineChart {...args} />
+        <div className="tw-h-[600px] tw-w-[200px]">asdasdas </div>
+    </div>
+);
 
 const valueFormatter = (value: number) => `${value.toFixed(2)}°F`;
 
@@ -414,5 +428,14 @@ LegendBelowChart.args = {
     width: 1000,
     height: 500,
     legendPosition: 'bottom',
+    valueFormatter,
+};
+
+export const ContentOnTopOfChart = TemplateWithContentOnTop.bind({});
+ContentOnTopOfChart.args = {
+    series: makeMissingData(filterOnePointPerWeek(addFourthSeries(formattedTemperatureData))),
+    width: 1000,
+    height: 500,
+    missingValueLabel: 'Missing data',
     valueFormatter,
 };
