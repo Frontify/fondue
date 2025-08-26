@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { createContext, useContext, type ReactNode } from 'react';
+import { createContext, useContext, useMemo, type ReactNode } from 'react';
 
 export type RouterProviderProps = {
     children: ReactNode;
@@ -14,22 +14,26 @@ export type RouterProviderProps = {
     useHref: (path: string) => string;
 };
 
-const Context = createContext<{
+const RouterContext = createContext<{
     navigate: (path: string) => void;
     useHref: (path: string) => string;
 }>({
     navigate: () => {
         throw new Error('RouterProvider: `navigate` function is not implemented');
     },
+    // eslint-disable-next-line @eslint-react/no-unnecessary-use-prefix
     useHref: () => {
         throw new Error('RouterProvider: `useHref` function is not implemented');
     },
 });
+RouterContext.displayName = 'RouterContext';
 
 export const useFondueRouter = () => {
-    return useContext(Context);
+    return useContext(RouterContext);
 };
 
 export const RouterProvider = ({ children, navigate, useHref }: RouterProviderProps) => {
-    return <Context.Provider value={{ navigate, useHref }}>{children}</Context.Provider>;
+    const contextValue = useMemo(() => ({ navigate, useHref }), [navigate, useHref]);
+
+    return <RouterContext.Provider value={contextValue}>{children}</RouterContext.Provider>;
 };
