@@ -2,7 +2,7 @@
 
 import { type ComponentProps, type ComponentType } from 'react';
 
-import { ThemeProvider } from '@frontify/fondue-components';
+import { ThemeProvider } from '../../src/components/ThemeProvider/ThemeProvider';
 
 type withThemeOptions = {
     label?: string;
