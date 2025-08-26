@@ -2,7 +2,15 @@
 
 import { IconCaretDown } from '@frontify/fondue-icons';
 import * as RadixAccordion from '@radix-ui/react-accordion';
-import { type MouseEventHandler, type ReactNode } from 'react';
+import {
+    Children,
+    forwardRef,
+    isValidElement,
+    useMemo,
+    type ForwardedRef,
+    type MouseEventHandler,
+    type ReactNode,
+} from 'react';
 
 import styles from './styles/accordion.module.scss';
 
@@ -32,6 +40,11 @@ export type AccordionRootProps = {
      * The controlled stateful value of the accordion items whose contents are expanded.
      */
     value?: string[];
+    /**
+     * Controls if we show paddings around the header.
+     * @default 'large'
+     */
+    padding?: AccordionPadding;
 };
 
 export const AccordionRoot = ({
@@ -41,6 +54,7 @@ export const AccordionRoot = ({
     defaultValue,
     disabled,
     value,
+    padding = 'large',
 }: AccordionRootProps) => {
     return (
         <RadixAccordion.Root
@@ -51,6 +65,7 @@ export const AccordionRoot = ({
             type="multiple"
             value={value}
             data-border={border}
+            data-accordion-padding={padding}
         >
             {children}
         </RadixAccordion.Root>
@@ -102,22 +117,6 @@ export const AccordionItem = ({
 AccordionItem.displayName = 'Accordion.Item';
 
 export type AccordionHeaderProps = {
-    /**
-     * Click callback for this item.
-     */
-    onClick?: MouseEventHandler<HTMLDivElement>;
-    /**
-     * Children of the Accordion header. This should contain `Accordion.Trigger`
-     */
-    children?: ReactNode;
-};
-
-export const AccordionHeader = ({ onClick, children }: AccordionHeaderProps) => {
-    return <RadixAccordion.Header onClick={onClick}>{children}</RadixAccordion.Header>;
-};
-AccordionHeader.displayName = 'Accordion.Header';
-
-export type AccordionTriggerProps = {
     'data-test-id'?: string;
     /**
      * Change the default rendered element for the one passed as a child, merging their props and behavior.
@@ -125,24 +124,48 @@ export type AccordionTriggerProps = {
      */
     asChild?: boolean;
     /**
-     * Children of the Accordion trigger. This contains the actually clickable and visible header content
+     * Click callback for this item.
+     */
+    onClick?: MouseEventHandler<HTMLDivElement>;
+    /**
+     * Children of the Accordion header.
      */
     children?: ReactNode;
 };
 
-export const AccordionTrigger = ({
-    'data-test-id': dataTestId = 'fondue-accordion-trigger',
+export const AccordionHeader = ({
+    'data-test-id': dataTestId = 'fondue-accordion-header',
     asChild,
+    onClick,
     children,
-}: AccordionTriggerProps) => {
+}: AccordionHeaderProps) => {
+    const { slots, triggerContent } = useMemo(
+        () =>
+            Children.toArray(children).reduce<{ slots: ReactNode[]; triggerContent: ReactNode[] }>(
+                (acc, child) => {
+                    if (isValidElement<AccordionSlotProps>(child) && child.type === ForwardedRefAccordionSlot) {
+                        acc.slots.push(child);
+                    } else {
+                        acc.triggerContent.push(child);
+                    }
+                    return acc;
+                },
+                { slots: [], triggerContent: [] },
+            ),
+        [children],
+    );
+
     return (
-        <RadixAccordion.Trigger asChild={asChild} className={styles.accordionTrigger} data-test-id={dataTestId}>
-            {children}
-            <IconCaretDown className={styles.accordionCaret} size="16" />
-        </RadixAccordion.Trigger>
+        <RadixAccordion.Header asChild={asChild} className={styles.accordionHeader} onClick={onClick}>
+            <RadixAccordion.Trigger className={styles.accordionTrigger} data-test-id={dataTestId}>
+                <div className={styles.accordionTriggerContent}>{triggerContent}</div>
+                <IconCaretDown className={styles.accordionCaret} size="16" />
+            </RadixAccordion.Trigger>
+            {slots}
+        </RadixAccordion.Header>
     );
 };
-AccordionTrigger.displayName = 'Accordion.Trigger';
+AccordionHeader.displayName = 'Accordion.Header';
 
 type AccordionContentProps = {
     'data-test-id'?: string;
@@ -188,10 +211,39 @@ export const AccordionContent = ({
 };
 AccordionContent.displayName = 'Accordion.Content';
 
+export type AccordionSlotProps = {
+    children: ReactNode;
+    name?: 'action';
+    'data-test-id'?: string;
+};
+
+export const AccordionSlot = (
+    { children, name, 'data-test-id': dataTestId = 'fondue-accordion-slot' }: AccordionSlotProps,
+    ref: ForwardedRef<HTMLDivElement>,
+) => {
+    return (
+        <div data-name={name} className={styles.accordionSlot} data-test-id={dataTestId} ref={ref}>
+            {children}
+        </div>
+    );
+};
+AccordionSlot.displayName = 'Accordion.Slot';
+
+const ForwardedRefAccordionSlot = forwardRef<HTMLDivElement, AccordionSlotProps>(AccordionSlot);
+
+/**
+ * @deprecated Use `Accordion.Header` instead.
+ */
+const DeprecatedAccordionTrigger = ({ children }: { children: ReactNode }) => children;
+
 export const Accordion = {
     Root: AccordionRoot,
     Item: AccordionItem,
     Header: AccordionHeader,
-    Trigger: AccordionTrigger,
+    /**
+     * @deprecated Use `Accordion.Header` instead.
+     */
+    Trigger: DeprecatedAccordionTrigger,
     Content: AccordionContent,
+    Slot: ForwardedRefAccordionSlot,
 };

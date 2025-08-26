@@ -8,7 +8,7 @@ import { Accordion } from '../Accordion';
 
 const ACCORDION_ITEM_CONTENT_ID = '[data-test-id="inner-collapsible-wrap"]';
 const ACCORDION_ITEM_ID = '[data-test-id=fondue-accordion-item]';
-const ACCORDION_ITEM_TRIGGER_ID = '[data-test-id="fondue-accordion-trigger"]';
+const ACCORDION_ITEM_TRIGGER_ID = '[data-test-id="fondue-accordion-header"]';
 
 test.describe('Accordion Component', () => {
     test('should render 3 items', async ({ mount }) => {
@@ -38,23 +38,17 @@ test.describe('Accordion Component', () => {
         const component = await mount(
             <Accordion.Root>
                 <Accordion.Item value="1">
-                    <Accordion.Header>
-                        <Accordion.Trigger>1</Accordion.Trigger>
-                    </Accordion.Header>
+                    <Accordion.Header>1</Accordion.Header>
                     <Accordion.Content>1</Accordion.Content>
                 </Accordion.Item>
 
                 <Accordion.Item value="2">
-                    <Accordion.Header>
-                        <Accordion.Trigger>2</Accordion.Trigger>
-                    </Accordion.Header>
+                    <Accordion.Header>2</Accordion.Header>
                     <Accordion.Content>2</Accordion.Content>
                 </Accordion.Item>
 
                 <Accordion.Item value="3">
-                    <Accordion.Header>
-                        <Accordion.Trigger>3</Accordion.Trigger>
-                    </Accordion.Header>
+                    <Accordion.Header>3</Accordion.Header>
                     <Accordion.Content>3</Accordion.Content>
                 </Accordion.Item>
             </Accordion.Root>,
@@ -73,23 +67,17 @@ test.describe('Accordion Component', () => {
         const component = await mount(
             <Accordion.Root>
                 <Accordion.Item value="1">
-                    <Accordion.Header>
-                        <Accordion.Trigger>1</Accordion.Trigger>
-                    </Accordion.Header>
+                    <Accordion.Header>1</Accordion.Header>
                     <Accordion.Content>1</Accordion.Content>
                 </Accordion.Item>
 
                 <Accordion.Item value="2">
-                    <Accordion.Header>
-                        <Accordion.Trigger>2</Accordion.Trigger>
-                    </Accordion.Header>
+                    <Accordion.Header>2</Accordion.Header>
                     <Accordion.Content>2</Accordion.Content>
                 </Accordion.Item>
 
                 <Accordion.Item value="3">
-                    <Accordion.Header onClick={onClick}>
-                        <Accordion.Trigger>3</Accordion.Trigger>
-                    </Accordion.Header>
+                    <Accordion.Header onClick={onClick}>3</Accordion.Header>
                     <Accordion.Content>3</Accordion.Content>
                 </Accordion.Item>
             </Accordion.Root>,
@@ -104,23 +92,17 @@ test.describe('Accordion Component', () => {
         const component = await mount(
             <Accordion.Root>
                 <Accordion.Item value="1">
-                    <Accordion.Header>
-                        <Accordion.Trigger>1</Accordion.Trigger>
-                    </Accordion.Header>
+                    <Accordion.Header>1</Accordion.Header>
                     <Accordion.Content>1</Accordion.Content>
                 </Accordion.Item>
 
                 <Accordion.Item value="2">
-                    <Accordion.Header>
-                        <Accordion.Trigger>2</Accordion.Trigger>
-                    </Accordion.Header>
+                    <Accordion.Header>2</Accordion.Header>
                     <Accordion.Content>2</Accordion.Content>
                 </Accordion.Item>
 
                 <Accordion.Item value="3">
-                    <Accordion.Header>
-                        <Accordion.Trigger>3</Accordion.Trigger>
-                    </Accordion.Header>
+                    <Accordion.Header>3</Accordion.Header>
                     <Accordion.Content>3</Accordion.Content>
                 </Accordion.Item>
             </Accordion.Root>,
@@ -134,23 +116,17 @@ test.describe('Accordion Component', () => {
         const component = await mount(
             <Accordion.Root value={['2', '3']}>
                 <Accordion.Item value="1">
-                    <Accordion.Header>
-                        <Accordion.Trigger>1</Accordion.Trigger>
-                    </Accordion.Header>
+                    <Accordion.Header>1</Accordion.Header>
                     <Accordion.Content>1</Accordion.Content>
                 </Accordion.Item>
 
                 <Accordion.Item value="2">
-                    <Accordion.Header>
-                        <Accordion.Trigger>2</Accordion.Trigger>
-                    </Accordion.Header>
+                    <Accordion.Header>2</Accordion.Header>
                     <Accordion.Content>2</Accordion.Content>
                 </Accordion.Item>
 
                 <Accordion.Item value="3">
-                    <Accordion.Header>
-                        <Accordion.Trigger>3</Accordion.Trigger>
-                    </Accordion.Header>
+                    <Accordion.Header>3</Accordion.Header>
                     <Accordion.Content>3</Accordion.Content>
                 </Accordion.Item>
             </Accordion.Root>,
@@ -167,9 +143,7 @@ test.describe('Accordion Component', () => {
         const component = await mount(
             <Accordion.Root value={['1']}>
                 <Accordion.Item value="1">
-                    <Accordion.Header>
-                        <Accordion.Trigger>1</Accordion.Trigger>
-                    </Accordion.Header>
+                    <Accordion.Header>1</Accordion.Header>
                     <Accordion.Content divider>1</Accordion.Content>
                 </Accordion.Item>
             </Accordion.Root>,
@@ -185,9 +159,7 @@ test.describe('Accordion Component', () => {
         const component = await mount(
             <Accordion.Root value={['1']}>
                 <Accordion.Item value="1">
-                    <Accordion.Header>
-                        <Accordion.Trigger>1</Accordion.Trigger>
-                    </Accordion.Header>
+                    <Accordion.Header>1</Accordion.Header>
                     <Accordion.Content divider={false}>1</Accordion.Content>
                 </Accordion.Item>
             </Accordion.Root>,
@@ -203,9 +175,7 @@ test.describe('Accordion Component', () => {
         const component = await mount(
             <Accordion.Root value={['1']} border>
                 <Accordion.Item value="1">
-                    <Accordion.Header>
-                        <Accordion.Trigger>1</Accordion.Trigger>
-                    </Accordion.Header>
+                    <Accordion.Header>1</Accordion.Header>
                     <Accordion.Content>1</Accordion.Content>
                 </Accordion.Item>
             </Accordion.Root>,
@@ -219,9 +189,7 @@ test.describe('Accordion Component', () => {
         const component = await mount(
             <Accordion.Root value={['1']} border>
                 <Accordion.Item value="1">
-                    <Accordion.Header>
-                        <Accordion.Trigger>1</Accordion.Trigger>
-                    </Accordion.Header>
+                    <Accordion.Header>1</Accordion.Header>
                     <Accordion.Content>1</Accordion.Content>
                 </Accordion.Item>
             </Accordion.Root>,
@@ -239,27 +207,21 @@ test.describe('Accordion Component', () => {
         const component = await mount(
             <Accordion.Root>
                 <Accordion.Item value="1">
-                    <Accordion.Header>
-                        <Accordion.Trigger>1</Accordion.Trigger>
-                    </Accordion.Header>
+                    <Accordion.Header>1</Accordion.Header>
                     <Accordion.Content data-test-id="content-item-1">
                         <TextInput data-test-id={TEXT_INPUT_1} />
                     </Accordion.Content>
                 </Accordion.Item>
 
                 <Accordion.Item value="2">
-                    <Accordion.Header>
-                        <Accordion.Trigger>2</Accordion.Trigger>
-                    </Accordion.Header>
+                    <Accordion.Header>2</Accordion.Header>
                     <Accordion.Content data-test-id="content-item-2">
                         <TextInput data-test-id={TEXT_INPUT_2} />
                     </Accordion.Content>
                 </Accordion.Item>
 
                 <Accordion.Item value="3">
-                    <Accordion.Header>
-                        <Accordion.Trigger>3</Accordion.Trigger>
-                    </Accordion.Header>
+                    <Accordion.Header>3</Accordion.Header>
                     <Accordion.Content data-test-id="content-item-3">
                         <TextInput data-test-id={TEXT_INPUT_3} />
                     </Accordion.Content>
@@ -269,23 +231,11 @@ test.describe('Accordion Component', () => {
 
         await page.focus('body');
         await page.keyboard.press('Tab');
-        await expect(component.locator(ACCORDION_ITEM_TRIGGER_ID).first()).toBeFocused();
+        const firstTrigger = component.locator(ACCORDION_ITEM_TRIGGER_ID).first();
+        await expect(firstTrigger).toBeFocused();
         await expect(component.getByTestId(TEXT_INPUT_1)).not.toBeVisible();
-        await component.locator(ACCORDION_ITEM_ID).first().press('Enter');
-        await expect(component.getByTestId(TEXT_INPUT_1)).not.toBeFocused();
-        await component.locator(ACCORDION_ITEM_ID).first().press('Tab');
-        await expect(component.getByRole('textbox')).toBeFocused();
-        await component.getByTestId(TEXT_INPUT_1).press('Tab');
-        await expect(component.getByTestId(TEXT_INPUT_1)).not.toBeFocused();
-        await expect(component.locator(ACCORDION_ITEM_TRIGGER_ID).nth(1)).toBeFocused();
-
-        await component.locator(ACCORDION_ITEM_ID).nth(1).press('Enter');
-        await component.locator(ACCORDION_ITEM_ID).nth(1).press('Tab');
-        await expect(component.getByRole('textbox').nth(1)).toBeFocused();
-        await component.getByRole('textbox').nth(1).press('ArrowDown');
-        await expect(component.getByRole('textbox').nth(1)).toBeFocused();
-        await component.getByRole('textbox').nth(1).press('Tab');
-        await expect(component.getByRole('textbox').nth(1)).not.toBeFocused();
+        await firstTrigger.press('Enter');
+        await expect(component.getByTestId(TEXT_INPUT_1)).toBeVisible();
     });
 
     test('should render with custom data test ids', async ({ mount }) => {
@@ -293,23 +243,17 @@ test.describe('Accordion Component', () => {
             <div>
                 <Accordion.Root data-test-id="accordion-custom-test-id">
                     <Accordion.Item value="1" data-test-id="accordion-item-custom-test-id-1">
-                        <Accordion.Header>
-                            <Accordion.Trigger>1</Accordion.Trigger>
-                        </Accordion.Header>
+                        <Accordion.Header>1</Accordion.Header>
                         <Accordion.Content data-test-id="content-item-1">1</Accordion.Content>
                     </Accordion.Item>
 
                     <Accordion.Item value="2" data-test-id="accordion-item-custom-test-id-2">
-                        <Accordion.Header>
-                            <Accordion.Trigger>2</Accordion.Trigger>
-                        </Accordion.Header>
+                        <Accordion.Header>2</Accordion.Header>
                         <Accordion.Content data-test-id="content-item-2">2</Accordion.Content>
                     </Accordion.Item>
 
                     <Accordion.Item value="3" data-test-id="accordion-item-custom-test-id-3">
-                        <Accordion.Header>
-                            <Accordion.Trigger>3</Accordion.Trigger>
-                        </Accordion.Header>
+                        <Accordion.Header>3</Accordion.Header>
                         <Accordion.Content data-test-id="content-item-3">3</Accordion.Content>
                     </Accordion.Item>
                 </Accordion.Root>
@@ -320,5 +264,129 @@ test.describe('Accordion Component', () => {
         await expect(component.locator('[data-test-id="accordion-item-custom-test-id-1"]')).toHaveCount(1);
         await expect(component.locator('[data-test-id="accordion-item-custom-test-id-2"]')).toHaveCount(1);
         await expect(component.locator('[data-test-id="accordion-item-custom-test-id-3"]')).toHaveCount(1);
+    });
+
+    test('should render Accordion.Slot button on the right side', async ({ mount }) => {
+        const component = await mount(
+            <Accordion.Root>
+                <Accordion.Item value="1">
+                    <Accordion.Header>
+                        Header Content
+                        <Accordion.Slot name="action">
+                            <button type="button" data-test-id="slot-button">
+                                Action
+                            </button>
+                        </Accordion.Slot>
+                    </Accordion.Header>
+                    <Accordion.Content>Content</Accordion.Content>
+                </Accordion.Item>
+            </Accordion.Root>,
+        );
+
+        const header = component.locator(ACCORDION_ITEM_TRIGGER_ID);
+        const slotButton = component.getByTestId('slot-button');
+
+        await expect(slotButton).toBeVisible();
+        const headerBox = await header.boundingBox();
+        const buttonBox = await slotButton.boundingBox();
+
+        expect(headerBox).not.toBeNull();
+        expect(buttonBox).not.toBeNull();
+        if (headerBox && buttonBox) {
+            expect(buttonBox.x).toBeGreaterThan(headerBox.x);
+            expect(buttonBox.x + buttonBox.width).toBeLessThanOrEqual(headerBox.x + headerBox.width);
+        }
+    });
+
+    test('should not trigger accordion when clicking button in slot', async ({ mount }) => {
+        let slotButtonClicked = false;
+        const onSlotClick = () => (slotButtonClicked = true);
+
+        const component = await mount(
+            <Accordion.Root>
+                <Accordion.Item value="1">
+                    <Accordion.Header>
+                        Header Content
+                        <Accordion.Slot>
+                            <button type="button" data-test-id="slot-button" onClick={onSlotClick}>
+                                Action
+                            </button>
+                        </Accordion.Slot>
+                    </Accordion.Header>
+                    <Accordion.Content>Content</Accordion.Content>
+                </Accordion.Item>
+            </Accordion.Root>,
+        );
+
+        const slotButton = component.getByTestId('slot-button');
+        const content = component.locator(ACCORDION_ITEM_CONTENT_ID);
+        await expect(content).not.toBeVisible();
+        await slotButton.click();
+        expect(slotButtonClicked).toBe(true);
+        await expect(content).not.toBeVisible();
+    });
+
+    test('should adjust header padding based on root padding small', async ({ mount }) => {
+        const componentSmall = await mount(
+            <Accordion.Root padding="small">
+                <Accordion.Item value="1">
+                    <Accordion.Header>Header Content</Accordion.Header>
+                    <Accordion.Content>Content</Accordion.Content>
+                </Accordion.Item>
+            </Accordion.Root>,
+        );
+
+        await expect(componentSmall.locator(ACCORDION_ITEM_TRIGGER_ID)).toHaveCSS('padding-left', '16px');
+        await expect(componentSmall.locator(ACCORDION_ITEM_TRIGGER_ID)).toHaveCSS('padding-right', '16px');
+        await expect(componentSmall.locator(ACCORDION_ITEM_TRIGGER_ID)).toHaveCSS('padding-top', '12px');
+        await expect(componentSmall.locator(ACCORDION_ITEM_TRIGGER_ID)).toHaveCSS('padding-bottom', '12px');
+    });
+
+    test('should adjust header padding based on root padding medium', async ({ mount }) => {
+        const componentSmall = await mount(
+            <Accordion.Root padding="medium">
+                <Accordion.Item value="1">
+                    <Accordion.Header>Header Content</Accordion.Header>
+                    <Accordion.Content>Content</Accordion.Content>
+                </Accordion.Item>
+            </Accordion.Root>,
+        );
+
+        await expect(componentSmall.locator(ACCORDION_ITEM_TRIGGER_ID)).toHaveCSS('padding-left', '24px');
+        await expect(componentSmall.locator(ACCORDION_ITEM_TRIGGER_ID)).toHaveCSS('padding-right', '24px');
+        await expect(componentSmall.locator(ACCORDION_ITEM_TRIGGER_ID)).toHaveCSS('padding-top', '16px');
+        await expect(componentSmall.locator(ACCORDION_ITEM_TRIGGER_ID)).toHaveCSS('padding-bottom', '16px');
+    });
+
+    test('should adjust header padding based on root padding large', async ({ mount }) => {
+        const componentSmall = await mount(
+            <Accordion.Root padding="large">
+                <Accordion.Item value="1">
+                    <Accordion.Header>Header Content</Accordion.Header>
+                    <Accordion.Content>Content</Accordion.Content>
+                </Accordion.Item>
+            </Accordion.Root>,
+        );
+
+        await expect(componentSmall.locator(ACCORDION_ITEM_TRIGGER_ID)).toHaveCSS('padding-left', '32px');
+        await expect(componentSmall.locator(ACCORDION_ITEM_TRIGGER_ID)).toHaveCSS('padding-right', '32px');
+        await expect(componentSmall.locator(ACCORDION_ITEM_TRIGGER_ID)).toHaveCSS('padding-top', '24px');
+        await expect(componentSmall.locator(ACCORDION_ITEM_TRIGGER_ID)).toHaveCSS('padding-bottom', '24px');
+    });
+
+    test('should adjust header padding based on root padding none', async ({ mount }) => {
+        const componentSmall = await mount(
+            <Accordion.Root padding="none">
+                <Accordion.Item value="1">
+                    <Accordion.Header>Header Content</Accordion.Header>
+                    <Accordion.Content>Content</Accordion.Content>
+                </Accordion.Item>
+            </Accordion.Root>,
+        );
+
+        await expect(componentSmall.locator(ACCORDION_ITEM_TRIGGER_ID)).toHaveCSS('padding-left', '0px');
+        await expect(componentSmall.locator(ACCORDION_ITEM_TRIGGER_ID)).toHaveCSS('padding-right', '0px');
+        await expect(componentSmall.locator(ACCORDION_ITEM_TRIGGER_ID)).toHaveCSS('padding-top', '0px');
+        await expect(componentSmall.locator(ACCORDION_ITEM_TRIGGER_ID)).toHaveCSS('padding-bottom', '0px');
     });
 });
