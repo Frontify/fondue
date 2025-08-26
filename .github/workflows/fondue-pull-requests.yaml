@@ -138,6 +138,12 @@ jobs:
             - name: Build Fondue Tokens
               run: pnpm build:tokens
 
+            - name: Build Fondue Icons
+              run: pnpm build:icons
+
+            - name: Build Fondue Components
+              run: pnpm build:components
+
             - name: Component Tests
               run: pnpm run --stream --filter {packages/fondue} test --spec $(node ./.github/lib/cypress-matrix.mjs ${{ strategy.job-total }} ${{ matrix.containers }})
 

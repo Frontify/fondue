@@ -29,6 +29,9 @@ const ExtraActions: ExtraAction[] = [
     },
 ];
 
+/**
+ ### This component is deprecated, please use the [new Textarea component](/docs/current_components-textarea--documentation) instead.
+ */
 // @ts-expect-error - type changed?
 export default {
     title: 'Components/Textarea',
@@ -217,6 +220,11 @@ export default {
         resizable: false,
         selectable: false,
         status: Validation.Default,
+    },
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
     },
 } as Meta<TextareaProps>;
 
