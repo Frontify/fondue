@@ -325,4 +325,68 @@ test.describe('Accordion Component', () => {
         expect(slotButtonClicked).toBe(true);
         await expect(content).not.toBeVisible();
     });
+
+    test('should adjust header padding based on root padding small', async ({ mount }) => {
+        const componentSmall = await mount(
+            <Accordion.Root padding="small">
+                <Accordion.Item value="1">
+                    <Accordion.Header>Header Content</Accordion.Header>
+                    <Accordion.Content>Content</Accordion.Content>
+                </Accordion.Item>
+            </Accordion.Root>,
+        );
+
+        await expect(componentSmall.locator(ACCORDION_ITEM_TRIGGER_ID)).toHaveCSS('padding-left', '16px');
+        await expect(componentSmall.locator(ACCORDION_ITEM_TRIGGER_ID)).toHaveCSS('padding-right', '16px');
+        await expect(componentSmall.locator(ACCORDION_ITEM_TRIGGER_ID)).toHaveCSS('padding-top', '12px');
+        await expect(componentSmall.locator(ACCORDION_ITEM_TRIGGER_ID)).toHaveCSS('padding-bottom', '12px');
+    });
+
+    test('should adjust header padding based on root padding medium', async ({ mount }) => {
+        const componentSmall = await mount(
+            <Accordion.Root padding="medium">
+                <Accordion.Item value="1">
+                    <Accordion.Header>Header Content</Accordion.Header>
+                    <Accordion.Content>Content</Accordion.Content>
+                </Accordion.Item>
+            </Accordion.Root>,
+        );
+
+        await expect(componentSmall.locator(ACCORDION_ITEM_TRIGGER_ID)).toHaveCSS('padding-left', '24px');
+        await expect(componentSmall.locator(ACCORDION_ITEM_TRIGGER_ID)).toHaveCSS('padding-right', '24px');
+        await expect(componentSmall.locator(ACCORDION_ITEM_TRIGGER_ID)).toHaveCSS('padding-top', '16px');
+        await expect(componentSmall.locator(ACCORDION_ITEM_TRIGGER_ID)).toHaveCSS('padding-bottom', '16px');
+    });
+
+    test('should adjust header padding based on root padding large', async ({ mount }) => {
+        const componentSmall = await mount(
+            <Accordion.Root padding="large">
+                <Accordion.Item value="1">
+                    <Accordion.Header>Header Content</Accordion.Header>
+                    <Accordion.Content>Content</Accordion.Content>
+                </Accordion.Item>
+            </Accordion.Root>,
+        );
+
+        await expect(componentSmall.locator(ACCORDION_ITEM_TRIGGER_ID)).toHaveCSS('padding-left', '32px');
+        await expect(componentSmall.locator(ACCORDION_ITEM_TRIGGER_ID)).toHaveCSS('padding-right', '32px');
+        await expect(componentSmall.locator(ACCORDION_ITEM_TRIGGER_ID)).toHaveCSS('padding-top', '24px');
+        await expect(componentSmall.locator(ACCORDION_ITEM_TRIGGER_ID)).toHaveCSS('padding-bottom', '24px');
+    });
+
+    test('should adjust header padding based on root padding none', async ({ mount }) => {
+        const componentSmall = await mount(
+            <Accordion.Root padding="none">
+                <Accordion.Item value="1">
+                    <Accordion.Header>Header Content</Accordion.Header>
+                    <Accordion.Content>Content</Accordion.Content>
+                </Accordion.Item>
+            </Accordion.Root>,
+        );
+
+        await expect(componentSmall.locator(ACCORDION_ITEM_TRIGGER_ID)).toHaveCSS('padding-left', '0px');
+        await expect(componentSmall.locator(ACCORDION_ITEM_TRIGGER_ID)).toHaveCSS('padding-right', '0px');
+        await expect(componentSmall.locator(ACCORDION_ITEM_TRIGGER_ID)).toHaveCSS('padding-top', '0px');
+        await expect(componentSmall.locator(ACCORDION_ITEM_TRIGGER_ID)).toHaveCSS('padding-bottom', '0px');
+    });
 });
