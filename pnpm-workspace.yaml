@@ -1,4 +1,10 @@
-prefer-workspace-packages: true
 packages:
-    - "packages/*"
-    - "storybook-docs"
+  - packages/*
+  - storybook-docs
+
+onlyBuiltDependencies:
+  - cypress
+  - esbuild
+  - unrs-resolver
+
+prefer-workspace-packages: true

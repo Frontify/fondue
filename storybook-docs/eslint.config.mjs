@@ -21,7 +21,6 @@ export default tseslint.config(
     frontifyConfig,
     {
         files: ['**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx', '**/*.mts', '**/*.cts', '**/*.cjs'],
-        ignores: ['**/*.mdx/**.ts', '**/*.mdx/**.tsx', '**/*.md/**.ts', '**/*.md/**.tsx'],
         languageOptions: {
             parserOptions: {
                 projectService: true,

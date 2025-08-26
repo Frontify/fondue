@@ -1,12 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-// @ts-expect-error Untyped
 import frontifyTailwindConfig from '@frontify/fondue-tokens/tailwind';
 import tailwindForm from '@tailwindcss/forms';
 import { type Config } from 'tailwindcss';
 
 export default {
-    presets: [frontifyTailwindConfig as Config],
+    presets: [frontifyTailwindConfig as unknown as Config],
     content: ['./src/**/*.{js,ts,tsx}'],
     plugins: [
         tailwindForm({

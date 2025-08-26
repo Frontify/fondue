@@ -2,8 +2,11 @@
 
 // @ts-check
 
+// @ts-expect-error No types available
 import frontifyConfig from '@frontify/eslint-config-react';
+// @ts-expect-error No types available
 import noticePlugin from 'eslint-plugin-notice';
+// @ts-expect-error No types available
 import tailwindcssPlugin from 'eslint-plugin-tailwindcss';
 import tseslint from 'typescript-eslint';
 

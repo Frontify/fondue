@@ -1,20 +1,14 @@
 {
-    "ts-node": {
-        "files": true
-    },
     "compilerOptions": {
+        "allowJs": true,
         "baseUrl": ".",
         "esModuleInterop": true,
+        "jsx": "react-jsx",
         "lib": ["dom", "dom.iterable", "esnext"],
         "module": "ESNext",
         "moduleResolution": "Bundler",
-        "noUnusedLocals": true,
         "noEmit": true,
-        "strict": true,
-        "target": "esnext",
-        "jsx": "react-jsx",
-        "skipLibCheck": true,
-        "resolveJsonModule": true,
+        "noUnusedLocals": true,
         "paths": {
             "@components/*": ["./src/components/*"],
             "@foundation/*": ["./src/foundation/*"],
@@ -23,9 +17,13 @@
             "@typography/*": ["./src/typography/*"],
             "@utilities/*": ["./src/utilities/*"]
         },
-        "types": ["cypress", "cypress-real-events", "vite/client", "node"],
-        "allowJs": true
+        "resolveJsonModule": true,
+        "skipLibCheck": true,
+        "strict": true,
+        "target": "esnext",
+        "types": ["cypress", "cypress-real-events", "vite/client", "node"]
     },
+    "exclude": ["node_modules", "dist"],
     "include": [
         ".storybook",
         "eslint.config.mjs",
@@ -42,5 +40,7 @@
         "tailwind.config.ts",
         "tokens.vite.config.ts"
     ],
-    "exclude": ["node_modules", "dist"]
+    "ts-node": {
+        "files": true
+    }
 }
