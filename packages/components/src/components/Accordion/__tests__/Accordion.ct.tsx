@@ -265,4 +265,64 @@ test.describe('Accordion Component', () => {
         await expect(component.locator('[data-test-id="accordion-item-custom-test-id-2"]')).toHaveCount(1);
         await expect(component.locator('[data-test-id="accordion-item-custom-test-id-3"]')).toHaveCount(1);
     });
+
+    test('should render Accordion.Slot button on the right side', async ({ mount }) => {
+        const component = await mount(
+            <Accordion.Root>
+                <Accordion.Item value="1">
+                    <Accordion.Header>
+                        Header Content
+                        <Accordion.Slot name="action">
+                            <button type="button" data-test-id="slot-button">
+                                Action
+                            </button>
+                        </Accordion.Slot>
+                    </Accordion.Header>
+                    <Accordion.Content>Content</Accordion.Content>
+                </Accordion.Item>
+            </Accordion.Root>,
+        );
+
+        const header = component.locator(ACCORDION_ITEM_TRIGGER_ID);
+        const slotButton = component.getByTestId('slot-button');
+
+        await expect(slotButton).toBeVisible();
+        const headerBox = await header.boundingBox();
+        const buttonBox = await slotButton.boundingBox();
+
+        expect(headerBox).not.toBeNull();
+        expect(buttonBox).not.toBeNull();
+        if (headerBox && buttonBox) {
+            expect(buttonBox.x).toBeGreaterThan(headerBox.x);
+            expect(buttonBox.x + buttonBox.width).toBeLessThanOrEqual(headerBox.x + headerBox.width);
+        }
+    });
+
+    test('should not trigger accordion when clicking button in slot', async ({ mount }) => {
+        let slotButtonClicked = false;
+        const onSlotClick = () => (slotButtonClicked = true);
+
+        const component = await mount(
+            <Accordion.Root>
+                <Accordion.Item value="1">
+                    <Accordion.Header>
+                        Header Content
+                        <Accordion.Slot>
+                            <button type="button" data-test-id="slot-button" onClick={onSlotClick}>
+                                Action
+                            </button>
+                        </Accordion.Slot>
+                    </Accordion.Header>
+                    <Accordion.Content>Content</Accordion.Content>
+                </Accordion.Item>
+            </Accordion.Root>,
+        );
+
+        const slotButton = component.getByTestId('slot-button');
+        const content = component.locator(ACCORDION_ITEM_CONTENT_ID);
+        await expect(content).not.toBeVisible();
+        await slotButton.click();
+        expect(slotButtonClicked).toBe(true);
+        await expect(content).not.toBeVisible();
+    });
 });
