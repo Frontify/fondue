@@ -13,6 +13,9 @@ import { Validation, validationClassMap } from '@utilities/validation';
 
 import { type InputSharedBaseProps } from '../../types/input';
 
+/**
+ * @deprecated Please use updated Textarea component from `@frontify/fondue/components` instead.
+ */
 export type TextareaProps = {
     autosize?: boolean;
     focusOnMount?: boolean;
@@ -27,6 +30,9 @@ export type TextareaProps = {
     Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'onChange'> &
     Omit<TextareaAutosizeProps, 'onChange' | 'defaultValue' | 'value'>;
 
+/**
+ * @deprecated Please use updated Textarea component from `@frontify/fondue/components` instead.
+ */
 export const Textarea = ({
     autocomplete,
     autosize = false,
@@ -88,7 +94,12 @@ export const Textarea = ({
     };
 
     useEffect(() => {
-        focusOnMount && textareaRef.current?.focus();
+        if (focusOnMount) {
+            const timeoutId = setTimeout(() => {
+                textareaRef.current?.focus();
+            }, 0);
+            return () => clearTimeout(timeoutId);
+        }
     }, [focusOnMount, textareaRef]);
 
     useEffect(() => {

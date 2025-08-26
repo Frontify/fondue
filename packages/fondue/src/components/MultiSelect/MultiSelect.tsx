@@ -17,7 +17,7 @@ import { usePopper } from 'react-popper';
 import { CheckboxState } from '@components/Checkbox/Checkbox';
 import { Checklist, ChecklistDirection } from '@components/Checklist/Checklist';
 import { Tag, TagSize, TagType } from '@components/Tag';
-import { Trigger, TriggerEmphasis } from '@components/Trigger';
+import { Trigger, TriggerEmphasis } from '@components/Trigger/Trigger';
 import { DEFAULT_DROPDOWN_MAX_HEIGHT, useDropdownAutoHeight } from '@hooks/useDropdownAutoHeight';
 import { Text } from '@typography/Text';
 import { EnablePortalWrapper } from '@utilities/dialogs/EnablePortalWrapper';
@@ -273,7 +273,7 @@ export const MultiSelect = ({
                     <div
                         id={muliSelectContentId}
                         ref={setMultiSelectMenuRef}
-                        className="tw-absolute tw-left-0 tw-w-full tw-overflow-hidden tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-[120000] tw-bg-base tw-min-w-[18rem]"
+                        className="tw-absolute tw-left-0 tw-w-full tw-overflow-hidden tw-p-0 tw-shadow-mid tw-list-none tw-m-0 tw-mt-2 tw-z-[120000] tw-bg-base tw-min-w-72"
                         key="content"
                         style={{
                             ...popperInstance.styles.popper,

@@ -35,7 +35,7 @@ export const BarChart = <DataPointDetails extends Record<string, any> | void = v
 }: BarChartProps<DataPointDetails>) => {
     const [maxLabelHeight, setMaxLabelHeight] = useState<number>(0);
     const [firstLabelOverflowsBy, setFirstLabelOverflowsBy] = useState<number>(0);
-    const [bandScaleTicks, setBandScaleTicks] = useState<string[]>(getInitialBandTicks(series));
+    const [bandScaleTicks, setBandScaleTicks] = useState<string[]>(() => getInitialBandTicks(series));
     const scalePadding = displayStyle === 'overlapped' ? 0.2 : 0;
     const theme = createTheme(BASE_COLORS);
 
@@ -52,7 +52,7 @@ export const BarChart = <DataPointDetails extends Record<string, any> | void = v
     });
 
     return (
-        <div className="tw-flex tw-flex-col tw-gap-6">
+        <div className="tw-flex tw-flex-col tw-gap-6 tw-z-[1]">
             {!hideLegend && legendPosition === 'top' && (
                 <Legend style="rectangle" names={series.map((series) => series.name)} />
             )}

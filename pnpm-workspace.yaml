@@ -1,4 +1,12 @@
-prefer-workspace-packages: true
 packages:
-    - "packages/*"
-    - "storybook-docs"
+  - packages/*
+  - storybook-docs
+
+onlyBuiltDependencies:
+  - '@bundled-es-modules/glob'
+  - cypress
+  - esbuild
+  - style-dictionary
+  - unrs-resolver
+
+prefer-workspace-packages: true

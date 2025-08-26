@@ -57,7 +57,7 @@
         "react": "^18.3.1"
     },
     "devDependencies": {
-        "@frontify/eslint-config-react": "^0.17.7",
+        "@frontify/eslint-config-react": "^1.0.4",
         "@frontify/fondue-components": "workspace:*",
         "@frontify/fondue-icons": "workspace:*",
         "@storybook/addon-a11y": "^8.6.12",
@@ -71,13 +71,25 @@
         "@storybook/react": "^8.6.12",
         "@storybook/react-vite": "^8.6.12",
         "@storybook/theming": "^8.6.12",
-        "@types/node": "^22.13.1",
-        "eslint": "^8.57.1",
+        "@types/chroma-js": "^3.1.1",
+        "@types/node": "^22.18.0",
+        "@types/react": "^18.3.24",
+        "@types/react-dom": "^18.3.7",
+        "@vitejs/plugin-react": "^4.7.0",
+        "chalk": "^5.6.0",
+        "chroma-js": "^3.1.2",
+        "eslint": "^9.34.0",
         "eslint-plugin-notice": "^1.0.0",
+        "nodemon": "^3.1.10",
+        "prettier": "^3.6.2",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "rimraf": "^6.0.1",
         "storybook": "^8.6.12",
         "style-dictionary": "^4.4.0",
         "tailwindcss": "^3.4.17",
-        "tsx": "^4.19.3",
-        "typescript": "^5.8.3"
+        "tsx": "^4.20.5",
+        "typescript": "^5.9.2",
+        "typescript-eslint": "^8.41.0"
     }
 }

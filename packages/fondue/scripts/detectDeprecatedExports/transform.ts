@@ -144,7 +144,11 @@ export default function transformer(file: FileInfo, api: API, options: { basePat
             for (const specifier of path.node.specifiers) {
                 if (specifier.local?.name === 'default') {
                     const exportedName = specifier.exported.name;
-                    if (typeof exportedName === 'string') {
+                    if (
+                        typeof exportedName === 'string' &&
+                        !['IconSize', 'IconSizeMap', 'IconEnum'].includes(exportedName) &&
+                        !exportedName.includes('Icon')
+                    ) {
                         if (isDeprecated(path)) {
                             deprecatedExports.add({ name: exportedName, path: file.path });
                         } else {

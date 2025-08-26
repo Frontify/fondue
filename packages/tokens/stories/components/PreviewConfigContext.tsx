@@ -10,6 +10,8 @@ const PreviewConfigContext = createContext<{
     textContent: '',
 });
 
+PreviewConfigContext.displayName = 'PreviewConfigContext';
+
 type PreviewConfigWrapperProps = {
     children: React.ReactNode;
     textContent: string;
@@ -19,6 +21,7 @@ type PreviewConfigWrapperProps = {
 export const PreviewConfigWrapper = ({ children, textContent, removeTailwindPrefix }: PreviewConfigWrapperProps) => {
     const tailwindPrefix = useMemo(() => (removeTailwindPrefix ? '' : 'tw-'), [removeTailwindPrefix]);
     return (
+        // eslint-disable-next-line @eslint-react/no-unstable-context-value
         <PreviewConfigContext.Provider value={{ tailwindPrefix, textContent }}>
             <div className="tw-flex tw-items-center tw-justify-center tw-h-full">{children}</div>
         </PreviewConfigContext.Provider>

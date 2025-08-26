@@ -134,7 +134,7 @@ export const Trigger = ({
                     type="button"
                     tabIndex={-1}
                     disabled={disabled}
-                    aria-hidden={true}
+                    aria-hidden
                     className={merge([
                         'tw-rounded',
                         disabled
@@ -167,4 +167,8 @@ export const Trigger = ({
         </div>
     );
 };
+
+/**
+ * @deprecated Please use a custom component instead.
+ */
 Trigger.displayName = 'FondueTrigger';

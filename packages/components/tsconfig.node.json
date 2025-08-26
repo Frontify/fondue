@@ -1,20 +1,22 @@
 {
     "compilerOptions": {
+        "allowJs": true,
+        "allowSyntheticDefaultImports": true,
+        "baseUrl": ".",
         "composite": true,
+        "lib": ["ESNext"],
         "module": "ESNext",
         "moduleResolution": "Node",
-        "allowSyntheticDefaultImports": true,
         "resolveJsonModule": true,
-        "baseUrl": ".",
-        "lib": ["ESNext"]
+        "target": "ESNext"
     },
     "include": [
-        ".eslintrc.cjs",
         "vite.config.ts",
         "postcss.config.cjs",
         "package.json",
         "playwright.config.ts",
         "playwright",
-        "scripts"
+        "scripts",
+        "eslint.config.mjs"
     ]
 }

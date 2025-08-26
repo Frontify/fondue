@@ -19,7 +19,7 @@ export const ColorPreview = ({ color }: ColorPreviewProps): ReactElement => {
     const backgroundColor = parsedColor.toRgbString();
 
     return (
-        <div className="tw-sticky tw-ml-[-1px] tw-mt-[-1px] tw-border tw-border-transparent tw-w-full tw-box-content tw-shrink-0 tw-h-2 tw-top-0 tw-rounded-t tw-overflow-hidden">
+        <div className="tw-sticky -tw-ml-px -tw-mt-px tw-border tw-border-transparent tw-w-full tw-box-content tw-shrink-0 tw-h-2 tw-top-0 tw-rounded-t tw-overflow-hidden">
             <div
                 className="tw-h-full tw-w-full tw-bg-white tw-z-20 dark:tw-bg-black-95"
                 style={{ backgroundColor }}

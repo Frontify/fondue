@@ -87,7 +87,7 @@ const CHECKBOX_ID = '[data-test-id=checkbox]';
 const CHECKBOX_INPUT_ID = '[data-test-id=checkbox-input]';
 
 const SortableTable = () => {
-    const [sortedRows, setfilteredRows] = useState<Row[]>(TABLE_ROWS);
+    const [sortedRows, setSortedRows] = useState<Row[]>(TABLE_ROWS);
     const onSortChange = (key: string, direction?: SortDirection) => {
         const sortRows = () => {
             const clonedRows = [...sortedRows];
@@ -102,7 +102,7 @@ const SortableTable = () => {
                     return keyA < keyB ? 1 : -1;
                 }
             });
-            setfilteredRows(clonedRows);
+            setSortedRows(clonedRows);
         };
         sortRows();
     };
@@ -179,25 +179,25 @@ describe('Table Component', () => {
 
     it('should rerender if rows change', () => {
         const WrappingFilterComponent = () => {
-            const [filteredRows, setfilteredRows] = useState<Row[]>(TABLE_ROWS);
+            const [filteredRows, setFilteredRows] = useState<Row[]>(TABLE_ROWS);
             const [selectedRows, setSelectedRows] = useState<(string | number)[]>([]);
 
-            const [filter, setfilter] = useState('');
+            const [filter, setFilter] = useState('');
 
             useEffect(() => {
                 if (filter === '') {
-                    setfilteredRows(TABLE_ROWS);
+                    setFilteredRows(TABLE_ROWS);
                 }
                 const newFilteredRowsValue = TABLE_ROWS.filter((row) => {
                     const cells = Object.values(row.cells);
                     return cells.some((cell) => String(cell.sortId).includes(filter));
                 });
-                setfilteredRows(newFilteredRowsValue);
+                setFilteredRows(newFilteredRowsValue);
             }, [filter]);
 
             return (
                 <>
-                    <TextInput id="searchInput" onChange={(val) => setfilter(val)} value={filter} />
+                    <TextInput id="searchInput" onChange={(val) => setFilter(val)} value={filter} />
                     <Table
                         columns={TABLE_COLUMNS}
                         rows={filteredRows}
@@ -241,7 +241,7 @@ describe('Table Component', () => {
 
         cy.get(TABLE_COLUMN_ID).should('have.length', 3);
         for (const { titleNode } of TABLE_COLUMNS_WITH_TITLE_NODE) {
-            expect(titleNode).to.exist;
+            expect(Boolean(titleNode)).to.equal(true);
         }
     });
 });

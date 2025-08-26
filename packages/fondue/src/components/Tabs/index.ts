@@ -1,4 +1,4 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 export * from './TabItem';
-export { Tabs, TabSize, type TabsProps } from './Tabs';
+export { Tabs, TabSize } from './Tabs';

@@ -173,7 +173,7 @@ describe('Text Input component', () => {
     });
 
     it('has the required attribute', () => {
-        cy.mount(<StatefulInput required={true} />);
+        cy.mount(<StatefulInput required />);
         cy.get(TEXT_INPUT_ID).should('have.attr', 'required');
     });
 
@@ -183,7 +183,7 @@ describe('Text Input component', () => {
     });
 
     it('has the disabled attribute', () => {
-        cy.mount(<StatefulInput disabled={true} />);
+        cy.mount(<StatefulInput disabled />);
         cy.get(TEXT_INPUT_ID).should('have.attr', 'disabled');
     });
 
@@ -193,7 +193,7 @@ describe('Text Input component', () => {
     });
 
     it('has the autoComplete turned on', () => {
-        cy.mount(<StatefulInput autocomplete={true} />);
+        cy.mount(<StatefulInput autocomplete />);
         cy.get(TEXT_INPUT_ID).should('have.attr', 'autoComplete', 'on');
     });
 
@@ -228,7 +228,7 @@ describe('Text Input component', () => {
     });
 
     it('calls the copy event', () => {
-        cy.mount(<StatefulInput copyable={true} value={INPUT_TEXT} />);
+        cy.mount(<StatefulInput copyable value={INPUT_TEXT} />);
         cy.window().then((win) => {
             cy.stub(win.navigator.clipboard, 'writeText')
                 .as('copy')
@@ -246,13 +246,13 @@ describe('Text Input component', () => {
     });
 
     it('copyable should have a type definition', () => {
-        cy.mount(<StatefulInput copyable={true} />);
+        cy.mount(<StatefulInput copyable />);
 
         cy.get(COPY_ICON_ID).should('have.attr', 'type', 'button');
     });
 
     it('clearable should have a type definition', () => {
-        cy.mount(<StatefulInput clearable={true} />);
+        cy.mount(<StatefulInput clearable />);
 
         cy.get(TEXT_INPUT_ID).type(INPUT_TEXT).should('have.value', INPUT_TEXT);
         cy.get(CLEAR_ICON_ID).should('have.attr', 'type', 'button');
@@ -271,14 +271,14 @@ describe('Text Input component', () => {
     });
 
     it('clearable should have a type definition', () => {
-        cy.mount(<StatefulInput clearable={true} />);
+        cy.mount(<StatefulInput clearable />);
 
         cy.get(TEXT_INPUT_ID).type(INPUT_TEXT).should('have.value', INPUT_TEXT);
         cy.get(CLEAR_ICON_ID).should('have.attr', 'type', 'button');
     });
 
     it('shows an outline around the input field on first tab', () => {
-        cy.mount(<StatefulInput clearable={true} />);
+        cy.mount(<StatefulInput clearable />);
 
         cy.get('body').realPress('Tab');
 
@@ -286,7 +286,7 @@ describe('Text Input component', () => {
     });
 
     it('shows an outline around the clear button after the user has typed text and pressed the tab key', () => {
-        cy.mount(<StatefulInput clearable={true} />);
+        cy.mount(<StatefulInput clearable />);
 
         cy.get(TEXT_INPUT_ID).type(INPUT_TEXT).focus().realPress('Tab');
 
@@ -296,7 +296,7 @@ describe('Text Input component', () => {
     });
 
     it('shows an outline around the copy button after the user has typed text and pressed the tab key', () => {
-        cy.mount(<StatefulInput copyable={true} />);
+        cy.mount(<StatefulInput copyable />);
 
         cy.get(TEXT_INPUT_ID).type(INPUT_TEXT).focus().realPress('Tab');
 

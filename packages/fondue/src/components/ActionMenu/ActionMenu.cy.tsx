@@ -75,7 +75,7 @@ const TestComponent = (): ReactElement => {
     return (
         <div>
             <ActionMenu menuBlocks={menuBlocks} />
-            <button data-test-id="add-block-button" onClick={addBlock}>
+            <button type="button" data-test-id="add-block-button" onClick={addBlock}>
                 Add Block
             </button>
         </div>

@@ -6,7 +6,7 @@ import styles from './styles/select.module.scss';
 
 export const SelectClear = () => {
     return (
-        <button aria-label="clear input" className={styles.clear}>
+        <button aria-label="clear input" className={styles.clear} type="button">
             <IconCross size={16} />
         </button>
     );

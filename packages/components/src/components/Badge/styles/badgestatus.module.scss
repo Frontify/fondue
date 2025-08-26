@@ -10,7 +10,7 @@
 }
 
 @mixin variant($name, $color) {
-    [data-status=#{$name}] {
+    .root[data-status=#{$name}] {
         background-color: var(--box-#{$color}-strong-color-hover);
     }
 }

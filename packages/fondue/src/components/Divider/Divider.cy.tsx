@@ -71,7 +71,7 @@ describe('Divider component', () => {
     });
 
     it('allows the divider to be vertical', () => {
-        cy.mount(<Divider vertical={true} />);
+        cy.mount(<Divider vertical />);
 
         cy.get(`div${DIVIDER_SELECTOR}`).should('exist');
         cy.get(DIVIDER_LINE_SELECTOR).should('exist').and('have.class', 'tw-border-r');

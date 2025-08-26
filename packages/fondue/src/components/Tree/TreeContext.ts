@@ -12,6 +12,7 @@ export type TreeContextProps = {
 };
 
 export const TreeContext = createContext<TreeContextProps>({} as TreeContextProps);
+TreeContext.displayName = 'TreeContext';
 
 export const useTreeContext = (): TreeContextProps => {
     return useContext(TreeContext);

@@ -1,13 +1,21 @@
 {
     "compilerOptions": {
+        "allowJs": true,
+        "allowSyntheticDefaultImports": true,
+        "baseUrl": ".",
         "composite": true,
+        "lib": ["ESNext"],
         "module": "ESNext",
         "moduleResolution": "Node",
-        "allowSyntheticDefaultImports": true,
         "resolveJsonModule": true,
-        "lib": ["ESNext"],
-        "target": "ESNext",
-        "baseUrl": "."
+        "target": "ESNext"
     },
-    "include": ["scripts", ".eslintrc.cjs", "postcss.config.cjs", "tailwind.config.ts", "vite.config.ts"]
+    "include": [
+        "scripts",
+        "postcss.config.cjs",
+        "vite.config.ts",
+        "eslint.config.mjs",
+        "tailwind.config.ts",
+        "package.json"
+    ]
 }

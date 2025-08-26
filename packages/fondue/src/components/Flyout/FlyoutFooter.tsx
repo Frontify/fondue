@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ReactElement, type ReactNode } from 'react';
+import { type ReactElement } from 'react';
 
 import { Button, type ButtonProps } from '@components/Button/Button';
 import { ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button/ButtonTypes';
@@ -13,7 +13,6 @@ import { merge } from '@utilities/merge';
 export type FlyoutFooterProps = {
     buttons: [ButtonProps, ButtonProps] | [ButtonProps];
     border?: boolean;
-    children?: ReactNode;
 };
 
 /**

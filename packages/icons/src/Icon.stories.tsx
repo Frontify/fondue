@@ -28,7 +28,6 @@ const tooltipStyle =
 export const Default: Story = {
     name: 'Icons',
     render: () => {
-        // eslint-disable-next-line react-hooks/rules-of-hooks
         const [{ iconName }, updateArgs] = useArgs<{ iconName: string }>();
 
         const handleSearchInput = (event: FormEvent) => {
@@ -61,6 +60,7 @@ export const Default: Story = {
 
                         return (
                             <button
+                                type="button"
                                 key={icon}
                                 data-tooltip-text={iconPath}
                                 onClick={() => updateArgs({ iconName: icon })}

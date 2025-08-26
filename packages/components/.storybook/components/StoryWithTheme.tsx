@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type ComponentProps, type ComponentType } from 'react';
-import { ThemeProvider } from '../../src/components/ThemeProvider/ThemeProvider';
+
+import { ThemeProvider } from '@frontify/fondue-components';
 
 type withThemeOptions = {
     label?: string;

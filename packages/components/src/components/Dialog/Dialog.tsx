@@ -6,6 +6,7 @@ import {
     createContext,
     forwardRef,
     useContext,
+    useMemo,
     useRef,
     type CSSProperties,
     type ForwardedRef,
@@ -143,10 +144,12 @@ type DialogContextType = {
 };
 
 const DialogContext = createContext<DialogContextType>({ isModal: false });
+DialogContext.displayName = 'DialogContext';
 
 export const DialogRoot = ({ children, ...props }: DialogRootProps) => {
+    const value = useMemo(() => ({ isModal: props.modal ?? false }), [props.modal]);
     return (
-        <DialogContext.Provider value={{ isModal: props.modal ?? false }}>
+        <DialogContext.Provider value={value}>
             <RadixDialog.Root {...props}>{children}</RadixDialog.Root>
         </DialogContext.Provider>
     );
