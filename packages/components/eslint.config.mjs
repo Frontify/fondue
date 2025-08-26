@@ -2,15 +2,13 @@
 
 // @ts-check
 
+// @ts-expect-error No types available
 import frontifyConfig from '@frontify/eslint-config-react';
+// @ts-expect-error No types available
 import noticePlugin from 'eslint-plugin-notice';
+// @ts-expect-error No types available
 import tailwindcssPlugin from 'eslint-plugin-tailwindcss';
 import tseslint from 'typescript-eslint';
-import { fileURLToPath } from 'node:url';
-import path from 'node:path';
-
-const __dirname = path.dirname(fileURLToPath(new URL('.', import.meta.url)));
-import storybookPlugin from 'eslint-plugin-storybook';
 
 export default tseslint.config(
     {
@@ -23,20 +21,20 @@ export default tseslint.config(
             'playwright/',
             'node_modules/',
             'debug-storybook.log',
-            '.storybook/**',
-            'MIGRATING.md',
-            'postcss.config.cjs',
-            'eslint.config.mjs',
+            '**/*.mdx/**.ts',
+            '**/*.mdx/**.tsx',
+            '**/*.md/**.ts',
+            '**/*.md/**.tsx',
         ],
     },
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     frontifyConfig,
     {
-        files: ['**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx', '**/*.mts', '**/*.cts'],
+        files: ['**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx', '**/*.mts', '**/*.cts', '**/*.cjs'],
         languageOptions: {
             parserOptions: {
-                project: ['./tsconfig.json'],
-                tsconfigRootDir: __dirname,
+                projectService: true,
+                tsconfigRootDir: import.meta.dirname,
             },
         },
         plugins: {
@@ -44,11 +42,9 @@ export default tseslint.config(
             notice: noticePlugin,
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             tailwindcss: tailwindcssPlugin,
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            storybook: storybookPlugin,
         },
         rules: {
-            // Copyright header rules=
+            // Copyright header rules
             'notice/notice': [
                 'error',
                 {

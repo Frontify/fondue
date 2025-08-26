@@ -36,6 +36,9 @@ jobs:
             - name: Build Fondue Tokens
               run: pnpm build:tokens
 
+            - name: Build Fondue Components
+              run: pnpm build:components
+
             - name: Build Storybook docs
               run: pnpm build:storybook:packages && pnpm build:storybook:main
 

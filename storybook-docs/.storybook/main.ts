@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 import { type StorybookConfig } from '@storybook/react-vite';
 
 const pathPrefix = process.env.STORYBOOK_PATH_PREFIX || '/';
@@ -57,7 +59,6 @@ const config: StorybookConfig = {
                 },
             };
         }
-
 
         return {
             current: {
