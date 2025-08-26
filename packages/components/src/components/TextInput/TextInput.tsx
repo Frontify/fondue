@@ -182,15 +182,7 @@ export const TextFieldSlot = (
     { name, className, ...slotProps }: TextFieldSlotProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
-    return (
-        <div
-            data-slot={true}
-            data-name={name}
-            {...slotProps}
-            ref={forwardedRef}
-            className={cn(styles.slot, className)}
-        />
-    );
+    return <div data-slot data-name={name} {...slotProps} ref={forwardedRef} className={cn(styles.slot, className)} />;
 };
 
 TextFieldSlot.displayName = 'TextField.Slot';

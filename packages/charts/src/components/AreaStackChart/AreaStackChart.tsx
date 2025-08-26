@@ -50,7 +50,7 @@ export const AreaStackChart = ({
     });
 
     return (
-        <div className="tw-flex tw-flex-col tw-gap-6">
+        <div className="tw-flex tw-flex-col tw-gap-6 tw-z-[1]">
             {!hideLegend && legendPosition === LEGEND_POSITION_TOP && (
                 <Legend names={series.map((series) => series.name)} style="line" />
             )}
@@ -79,7 +79,7 @@ export const AreaStackChart = ({
                     childSumLabel={childSumLabel}
                     valueFormatter={valueFormatter}
                     locale={locale}
-                    stackingGlyphs={true}
+                    stackingGlyphs
                 />
             </XYChart>
             {!hideLegend && legendPosition === 'bottom' && (

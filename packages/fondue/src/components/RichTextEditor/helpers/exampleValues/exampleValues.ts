@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { MARK_BOLD, MARK_CODE, MARK_ITALIC, MARK_STRIKETHROUGH, MARK_UNDERLINE } from '@udecode/plate-basic-marks';
+import { MARK_COLOR } from '@udecode/plate-font';
 import { ELEMENT_LINK } from '@udecode/plate-link';
 import { ELEMENT_LI, ELEMENT_LIC, ELEMENT_OL, ELEMENT_UL } from '@udecode/plate-list';
 import { ELEMENT_MENTION } from '@udecode/plate-mention';
@@ -216,6 +217,14 @@ export const defaultValue = [
     createElement({ text: 'This text has an underline.', mark: MARK_UNDERLINE }),
     createElement({ text: 'This text has a strikethrough.', mark: MARK_STRIKETHROUGH }),
     createElement({ text: 'This text is a code line.', mark: MARK_CODE }),
+    {
+        type: ELEMENT_PARAGRAPH,
+        children: [{ text: 'This text is blue.', [MARK_COLOR]: 'rgb(0 0 255)' }],
+    },
+    {
+        type: ELEMENT_PARAGRAPH,
+        children: [{ text: 'This text is almost red.', [MARK_COLOR]: 'rgba(255, 20, 73, 0.5)' }],
+    },
     {
         type: ELEMENT_PARAGRAPH,
         children: [{ text: 'An example of subscript is N' }, { text: '2', subscript: true }],

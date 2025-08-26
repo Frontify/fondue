@@ -1,12 +1,14 @@
 {
     "compilerOptions": {
+        "allowJs": true,
+        "allowSyntheticDefaultImports": true,
+        "baseUrl": ".",
         "composite": true,
+        "lib": ["ESNext"],
         "module": "ESNext",
         "moduleResolution": "Node",
-        "allowSyntheticDefaultImports": true,
         "resolveJsonModule": true,
-        "baseUrl": ".",
-        "lib": ["ESNext"]
+        "target": "ESNext"
     },
-    "include": [".eslintrc.cjs", "package.json"]
+    "include": ["eslint.config.mjs", "package.json"]
 }

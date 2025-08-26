@@ -140,7 +140,6 @@ export const FieldsetHeader = ({
     }
 
     return (
-        // eslint-disable-next-line jsx-a11y/no-static-element-interactions
         <header
             data-test-id={dataTestId}
             role={onClick ? 'button' : undefined}

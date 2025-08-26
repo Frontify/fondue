@@ -19,6 +19,7 @@ import {
     Custom2Plugin,
     Custom3Plugin,
     EmojiPlugin,
+    FontColorPlugin,
     Heading1Plugin,
     Heading2Plugin,
     Heading3Plugin,
@@ -139,6 +140,7 @@ allPlugins
             new BreakAfterPlugin(),
             new SubscriptPlugin(),
             new SuperscriptPlugin(),
+            new FontColorPlugin(),
         ],
         [
             new AlignLeftPlugin({
@@ -175,7 +177,7 @@ EmptyEditor.args = {
 
 export const Flex: StoryFn<RichTextEditorProps> = (args: RichTextEditorProps) => (
     <div className="tw-flex tw-gap-x-7 tw-justify-start">
-        <div className="tw-min-w-[1rem]">
+        <div className="tw-min-w-4">
             <div className="tw-text-left">
                 <RichTextEditorComponent {...args} value={undefined} />
             </div>

@@ -30,8 +30,7 @@ const ExtraActions: ExtraAction[] = [
 ];
 
 /**
- ### *Legacy component warning*
- #### This is a unmaintained legacy component. It will be deprecated and replaced with a new component in an upcoming release.
+ ### This component is deprecated, please use the [new Textarea component](/docs/current_components-textarea--documentation) instead.
  */
 // @ts-expect-error - type changed?
 export default {
@@ -222,6 +221,11 @@ export default {
         selectable: false,
         status: Validation.Default,
     },
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
+    },
 } as Meta<TextareaProps>;
 
 const TextareaTemplate: StoryFn<TextareaProps> = (args) => {
@@ -234,7 +238,7 @@ const TextareaTemplate: StoryFn<TextareaProps> = (args) => {
     }, [value, setInput]);
 
     return (
-        <Box className="tw-w-[80%] tw-ml-auto tw-mr-auto">
+        <Box className="tw-w-4/5 tw-ml-auto tw-mr-auto">
             <Textarea {...args} onChange={setInput} value={input} />
         </Box>
     );
@@ -298,7 +302,7 @@ export const WithFormFieldCombination: StoryFn<TextareaProps> = (args) => {
     }, [input, handleValidation]);
 
     return (
-        <Box className="tw-w-[80%] tw-ml-auto tw-mr-auto">
+        <Box className="tw-w-4/5 tw-ml-auto tw-mr-auto">
             <FormField
                 label={{
                     text: 'Label from the FormField',

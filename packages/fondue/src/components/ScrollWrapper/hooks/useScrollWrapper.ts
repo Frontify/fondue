@@ -24,11 +24,12 @@ export const useScrollWrapper = (scrollingContainer: RefObject<HTMLElement>) => 
                 const dimensions = getScrollDimensions(scrollingContainer.current);
                 /* setTimeout is required to prevent error "ResizeObserver loop limit exceeded"
                 from being thrown during cypress component tests */
-                setTimeout(() => setScrollDimensions(dimensions), 0);
+                const timeoutId = setTimeout(() => setScrollDimensions(dimensions), 0);
+                return () => clearTimeout(timeoutId);
             }
         };
 
-        updateDimensionsFromRef();
+        const cleanup = updateDimensionsFromRef();
 
         const resizeObserver = new ResizeObserver(updateDimensionsFromRef);
         if (scrollingContainer.current) {
@@ -37,6 +38,9 @@ export const useScrollWrapper = (scrollingContainer: RefObject<HTMLElement>) => 
         window.addEventListener('resize', updateDimensionsFromRef);
 
         return () => {
+            if (cleanup) {
+                cleanup();
+            }
             resizeObserver.disconnect();
             window.removeEventListener('resize', updateDimensionsFromRef);
         };

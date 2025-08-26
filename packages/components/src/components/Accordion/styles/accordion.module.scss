@@ -3,7 +3,28 @@
 .root[data-border="true"] {
     border-bottom: var(--border-width-default) solid var(--color-line-subtle);
     border-top: var(--border-width-default) solid var(--color-line-subtle);
+
+    &[data-accordion-padding="none"] {
+        --accordion-vertical-padding: 0px;
+        --accordion-horizontal-padding: 0px;
+    }
+
+    &[data-accordion-padding="small"] {
+        --accordion-vertical-padding: var(--spacing-small);
+        --accordion-horizontal-padding: var(--spacing-medium);
+    }
+
+    &[data-accordion-padding="medium"] {
+        --accordion-vertical-padding: var(--spacing-medium);
+        --accordion-horizontal-padding: var(--spacing-large);
+    }
+
+    &[data-accordion-padding="large"] {
+        --accordion-vertical-padding: var(--spacing-large);
+        --accordion-horizontal-padding: var(--spacing-x-large);
+    }
 }
+
 
 .accordionItem {
     color: var(--color-secondary-default);
@@ -18,16 +39,37 @@
     }
 }
 
+.accordionHeader {
+    position: relative;
+    min-width: fit-content;
+    display: grid;
+    grid-template-columns: 1fr min-content 60px;
+    gap: 1rem;
+
+    & > .accordionSlot {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        grid-row: 1;
+
+        &[data-name="action"] {
+            grid-column: 2;
+        }
+    }
+}
+
 .accordionTrigger {
-    align-items: center;
     box-sizing: border-box;
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: subgrid;
+    grid-column: 1 / 4;
+    grid-row: 1;
+    align-items: center;
     outline: 0;
-    padding: var(--spacing-large) var(--spacing-x-large);
+    color: var(--color-secondary-default);
     text-align: left;
     width: 100%;
-    color: var(--color-secondary-default);
+    padding: var(--accordion-vertical-padding) var(--accordion-horizontal-padding);
 
     &[data-state="open"],
     &:hover {
@@ -39,34 +81,56 @@
             transform: rotate(180deg);
         }
     }
+
+    & .accordionCaret {
+        grid-column: 3;
+        grid-row: 1;
+        min-width: 1rem;
+    }
+
+    & .accordionTriggerContent {
+        grid-column: 1;
+        grid-row: 1;
+    }
+
 }
 
 .accordionContent {
     width: 100%;
     text-align: left;
     overflow: hidden;
+
+    &[data-item-padding="none"] {
+        --accordion-vertical-padding: 0px;
+        --accordion-horizontal-padding: 0px;
+    }
+
+    &[data-item-padding="small"] {
+        --accordion-vertical-padding: var(--spacing-small);
+        --accordion-horizontal-padding: var(--spacing-medium);
+    }
+
+    &[data-item-padding="medium"] {
+        --accordion-vertical-padding: var(--spacing-medium);
+        --accordion-horizontal-padding: var(--spacing-large);
+    }
+
+    &[data-item-padding="large"] {
+        --accordion-vertical-padding: var(--spacing-large);
+        --accordion-horizontal-padding: var(--spacing-x-large);
+    }
+
+    & > div {
+        padding: 0 var(--accordion-horizontal-padding) var(--accordion-vertical-padding);
+    }
+
+    &[data-item-divider="true"] > div {
+        border-top: var(--border-width-default) solid var(--color-line-subtle);
+        padding-top: var(--accordion-vertical-padding);
+    }
 }
 
-[data-item-padding="none"] > div {
-    padding: 0;
-}
 
-[data-item-padding="medium"] > div {
-    padding: 0 var(--spacing-medium) var(--spacing-small);
-}
-
-[data-item-padding="medium"] > div {
-    padding: 0 var(--spacing-large) var(--spacing-medium);
-}
-
-[data-item-padding="large"] > div {
-    padding: 0 var(--spacing-x-large) var(--spacing-large);
-}
-
-[data-item-divider="true"] > div {
-    border-top: var(--border-width-default) solid var(--color-line-mid);
-    padding-top: var(--spacing-large);
-}
 
 .accordionContentText {
     color: var(--color-primary-default);

@@ -120,24 +120,24 @@ export const FormControl = ({
                 direction === FormControlDirection.Horizontal ? 'tw-flex-row' : 'tw-w-full tw-flex-col',
             ])}
         >
-            {(label?.children || extra) && (
+            {label?.children || extra ? (
                 <div
                     className={merge([
                         'tw-flex tw-flew-row tw-items-center tw-justify-between',
                         direction === FormControlDirection.Vertical && 'tw-w-full',
                     ])}
                 >
-                    {label?.children && <InputLabel {...label} disabled={disabled} clickable={clickable} />}
-                    {extra && (
+                    {label?.children ? <InputLabel {...label} disabled={disabled} clickable={clickable} /> : null}
+                    {extra ? (
                         <span
                             data-test-id={`${dataTestId}-extra`}
                             className="tw-pl-2 tw-text-black-80 tw-font-sans tw-text-s tw-whitespace-nowrap"
                         >
                             {extra}
                         </span>
-                    )}
+                    ) : null}
                 </div>
-            )}
+            ) : null}
             {helper?.text && isHelperBefore && (
                 <HelperText
                     style={style}
@@ -147,7 +147,7 @@ export const FormControl = ({
                     data-test-id={dataTestId}
                 />
             )}
-            {children && (
+            {children ? (
                 <div
                     className={
                         direction === FormControlDirection.Vertical ? 'tw-w-full tw-grid tw-grid-cols-1 tw-gap-5' : ''
@@ -161,7 +161,7 @@ export const FormControl = ({
                           })
                         : children}
                 </div>
-            )}
+            ) : null}
             {helper?.text && !isHelperBefore && (
                 <HelperText
                     fullWidth={direction === FormControlDirection.Vertical}
