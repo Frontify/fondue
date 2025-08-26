@@ -19,6 +19,7 @@ import {
     Custom2Plugin,
     Custom3Plugin,
     EmojiPlugin,
+    FontColorPlugin,
     Heading1Plugin,
     Heading2Plugin,
     Heading3Plugin,
@@ -139,6 +140,7 @@ allPlugins
             new BreakAfterPlugin(),
             new SubscriptPlugin(),
             new SuperscriptPlugin(),
+            new FontColorPlugin(),
         ],
         [
             new AlignLeftPlugin({

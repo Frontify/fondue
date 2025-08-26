@@ -38,7 +38,7 @@ export const BlurObserver = ({
         const handleInteractWithOutside = (event: FocusEvent | MouseEvent) => {
             const richTextEditorSelector = `[data-editor-id='${editorRef.id}']`;
             const toolbarSelector = "[role='toolbar']";
-            const modalSelector = '[data-is-underlay]';
+            const modalSelector = '[data-is-underlay], [data-radix-popper-content-wrapper]';
 
             const targetElement = event.target as HTMLElement;
 
