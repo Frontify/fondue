@@ -2,6 +2,7 @@
 
 import '@frontify/fondue-tokens/styles';
 import '@frontify/fondue-tokens/themes/theme.dark.css';
+import '@frontify/fondue-components/styles';
 
 import { Decorator } from '@storybook/react';
 import '../src/styles.css';
