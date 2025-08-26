@@ -102,7 +102,12 @@ const traverseDir = (
             const fullPath = path.join(dir, file);
 
             const stat = fs.statSync(fullPath);
-            if (stat.isDirectory()) {
+            if (
+                stat.isDirectory() &&
+                !fullPath.includes('node_modules') &&
+                !fullPath.includes('dist') &&
+                !fullPath.includes('cli/tools')
+            ) {
                 traverseDir(fullPath, replacementMap, deprecatedMap, dryRun);
             } else {
                 replaceInFile(fullPath, replacementMap, dryRun);
@@ -115,20 +120,32 @@ const traverseDir = (
 };
 
 const replaceTokens = (
-    directory: string,
+    targetPath: string,
     replacementMap: Record<string, string>,
     deprecatedMap: Record<string, string>,
-    { dryRun = false }: { dryRun?: boolean } = {},
+    { dryRun = false, cli = false }: { dryRun?: boolean; cli?: boolean } = {},
 ) => {
-    if (dryRun) {
+    if (dryRun && !cli) {
         console.log('\n\n==================================================');
         console.log('DRY RUN MODE ENABLED. NO FILES WILL BE MODIFIED.');
         console.log('==================================================\n');
     }
 
-    traverseDir(directory, replacementMap, deprecatedMap, dryRun);
+    try {
+        const stats = fs.statSync(targetPath);
+        if (stats.isDirectory()) {
+            traverseDir(targetPath, replacementMap, deprecatedMap, dryRun);
+        } else if (stats.isFile()) {
+            replaceInFile(targetPath, replacementMap, dryRun);
+            logDeprecatedInFile(targetPath, deprecatedMap);
+        }
+    } catch (error) {
+        console.error(
+            `Could not process path ${targetPath}: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        );
+    }
 
-    if (deprecatedOccurrences.length > 0) {
+    if (deprecatedOccurrences.length > 0 && !cli) {
         console.log('\n\n==================================================');
         console.log('🚨 DEPRECATED CSS VARIABLES WITHOUT REPLACEMENT FOUND 🚨');
         console.log('==================================================\n');
@@ -161,16 +178,22 @@ const replaceTokens = (
     }
 };
 
-export const replaceCssVariables = (directory: string, { dryRun = false }: { dryRun?: boolean } = {}) => {
+export const replaceCssVariables = (
+    targetPath: string,
+    { dryRun = false, cli = false }: { dryRun?: boolean; cli?: boolean } = {},
+) => {
     const escapedCssVariableReplacements = Object.fromEntries(
         Object.entries(cssVariableReplacements).map(([key, value]) => [
             key.replaceAll(/[$()*+./?[\\\]^{|}-]/g, '\\$&'),
             value,
         ]),
     );
-    replaceTokens(directory, escapedCssVariableReplacements, deprecatedCssVariables, { dryRun });
+    replaceTokens(targetPath, escapedCssVariableReplacements, deprecatedCssVariables, { dryRun, cli });
 };
 
-export const replaceTailwindClasses = (directory: string, { dryRun = false }: { dryRun?: boolean } = {}) => {
-    replaceTokens(directory, tailwindClassReplacements, {}, { dryRun });
+export const replaceTailwindClasses = (
+    targetPath: string,
+    { dryRun = false, cli = false }: { dryRun?: boolean; cli?: boolean } = {},
+) => {
+    replaceTokens(targetPath, tailwindClassReplacements, {}, { dryRun, cli });
 };
