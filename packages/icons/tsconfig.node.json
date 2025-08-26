@@ -7,7 +7,15 @@
         "module": "ESNext",
         "moduleResolution": "Node",
         "resolveJsonModule": true,
-        "target": "ESNext"
+        "target": "ESNext",
+        "allowJs": true
     },
-    "include": ["scripts", "postcss.config.cjs", "vite.config.ts", "eslint.config.mjs", "tailwind.config.ts"]
+    "include": [
+        "scripts",
+        "postcss.config.cjs",
+        "vite.config.ts",
+        "eslint.config.mjs",
+        "tailwind.config.ts",
+        "package.json"
+    ]
 }

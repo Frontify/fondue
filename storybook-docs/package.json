@@ -15,9 +15,9 @@
         "typecheck": "tsc --noEmit"
     },
     "devDependencies": {
-        "@babel/core": "^7.28.0",
+        "@babel/core": "^7.28.3",
         "@etchteam/storybook-addon-status": "^5.0.0",
-        "@frontify/eslint-config-react": "^0.17.7",
+        "@frontify/eslint-config-react": "^1.0.3",
         "@storybook/addon-a11y": "^8.6.14",
         "@storybook/addon-essentials": "^8.6.14",
         "@storybook/addon-interactions": "^8.6.14",
@@ -26,18 +26,18 @@
         "@storybook/blocks": "^8.6.14",
         "@storybook/react": "^8.6.14",
         "@storybook/react-vite": "^8.6.14",
-        "@types/node": "^22.17.1",
-        "@types/react": "^18.3.20",
-        "@types/react-dom": "^18.3.6",
-        "eslint": "^8.57.1",
+        "@types/node": "^22.18.0",
+        "@types/react": "^18.3.24",
+        "@types/react-dom": "^18.3.7",
+        "eslint": "^9.34.0",
         "eslint-plugin-notice": "^1.0.0",
-        "eslint-plugin-storybook": "^0.12.0",
         "prettier": "^3.6.2",
         "react": "^18.3.1",
         "react-dom": "^18.3.1",
         "storybook": "^8.6.14",
         "storybook-dark-mode": "^4.0.2",
         "typescript": "^5.9.2",
+        "typescript-eslint": "^8.41.0",
         "vite": "^5.4.19"
     }
 }

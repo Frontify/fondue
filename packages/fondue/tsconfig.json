@@ -23,7 +23,8 @@
             "@typography/*": ["./src/typography/*"],
             "@utilities/*": ["./src/utilities/*"]
         },
-        "types": ["cypress", "cypress-real-events", "vite/client", "node"]
+        "types": ["cypress", "cypress-real-events", "vite/client", "node"],
+        "allowJs": true
     },
     "include": [
         ".storybook",
