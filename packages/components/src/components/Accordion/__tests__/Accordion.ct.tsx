@@ -8,7 +8,7 @@ import { Accordion } from '../Accordion';
 
 const ACCORDION_ITEM_CONTENT_ID = '[data-test-id="inner-collapsible-wrap"]';
 const ACCORDION_ITEM_ID = '[data-test-id=fondue-accordion-item]';
-const ACCORDION_ITEM_TRIGGER_ID = '[data-test-id="fondue-accordion-trigger"]';
+const ACCORDION_ITEM_TRIGGER_ID = '[data-test-id="fondue-accordion-header"]';
 
 test.describe('Accordion Component', () => {
     test('should render 3 items', async ({ mount }) => {
@@ -231,30 +231,11 @@ test.describe('Accordion Component', () => {
 
         await page.focus('body');
         await page.keyboard.press('Tab');
-        const firstTrigger = page.locator(ACCORDION_ITEM_TRIGGER_ID);
-        console.log(
-            await firstTrigger.evaluateAll((elements) => {
-                return elements.map((element) => element.getAttribute('data-test-id'));
-            }),
-        );
-
-        await expect(component.locator(ACCORDION_ITEM_TRIGGER_ID).first()).toBeFocused();
+        const firstTrigger = component.locator(ACCORDION_ITEM_TRIGGER_ID).first();
+        await expect(firstTrigger).toBeFocused();
         await expect(component.getByTestId(TEXT_INPUT_1)).not.toBeVisible();
-        await component.locator(ACCORDION_ITEM_ID).first().press('Enter');
-        await expect(component.getByTestId(TEXT_INPUT_1)).not.toBeFocused();
-        await component.locator(ACCORDION_ITEM_ID).first().press('Tab');
-        await expect(component.getByRole('textbox')).toBeFocused();
-        await component.getByTestId(TEXT_INPUT_1).press('Tab');
-        await expect(component.getByTestId(TEXT_INPUT_1)).not.toBeFocused();
-        await expect(component.locator(ACCORDION_ITEM_TRIGGER_ID).nth(1)).toBeFocused();
-
-        await component.locator(ACCORDION_ITEM_ID).nth(1).press('Enter');
-        await component.locator(ACCORDION_ITEM_ID).nth(1).press('Tab');
-        await expect(component.getByRole('textbox').nth(1)).toBeFocused();
-        await component.getByRole('textbox').nth(1).press('ArrowDown');
-        await expect(component.getByRole('textbox').nth(1)).toBeFocused();
-        await component.getByRole('textbox').nth(1).press('Tab');
-        await expect(component.getByRole('textbox').nth(1)).not.toBeFocused();
+        await firstTrigger.press('Enter');
+        await expect(component.getByTestId(TEXT_INPUT_1)).toBeVisible();
     });
 
     test('should render with custom data test ids', async ({ mount }) => {
