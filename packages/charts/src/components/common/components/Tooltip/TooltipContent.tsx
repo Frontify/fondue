@@ -21,21 +21,21 @@ export const TooltipContent = ({ title, description, imageUrl, entries }: Toolti
     const dataPoint = entries[1];
 
     return (
-        <div className="tw-bg-[var(--text-color)] tw-p-3 tw-rounded tw-border tw-border-button-border tw-max-w-[260px] tw-break-all">
+        <div className="tw-bg-primary tw-p-3 tw-rounded tw-border tw-border-button-border tw-max-w-[260px] tw-break-all">
             {imageUrl && (
                 <div className="tw--m-1">
                     <img src={imageUrl} alt={description} className="tw-h-28 tw-object-cover tw-mb-5 tw-w-full" />
                 </div>
             )}
             <div className={title ? 'tw-pb-3' : ''}>
-                <div className="tw-text-body-small tw-text-base tw-font-bold">{title}</div>
+                <div className="tw-text-body-small tw-text-primary-on-primary tw-font-bold">{title}</div>
                 {dataPoint?.type && (
-                    <div className="tw-text-body-small tw-text-base tw-pb-2">
+                    <div className="tw-text-body-small tw-text-primary-on-primary tw-pb-2">
                         {dataPoint.type}: {dataPoint.title}
                     </div>
                 )}
                 {descriptionLines.length > 0 && (
-                    <div className="tw-text-base tw-text-xs">
+                    <div className="tw-text-primary-on-primary tw-text-xs">
                         {descriptionLines.map((line) => (
                             <div key={line} className="tw-truncate">
                                 {line}
@@ -68,7 +68,7 @@ export type TooltipItemProps = {
 
 const TooltipItem = ({ title, value, color, type, valueContext }: TooltipItemProps) => {
     return (
-        <div key={`${title}-value`} className="tw-text-body-small tw-text-base">
+        <div key={`${title}-value`} className="tw-text-body-small tw-text-primary-on-primary">
             {color && (
                 <span
                     className="tw-inline-block tw-w-2 tw-h-2 tw-rounded-full tw-mr-1"
