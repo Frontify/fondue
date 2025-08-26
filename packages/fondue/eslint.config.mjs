@@ -2,15 +2,13 @@
 
 // @ts-check
 
+// @ts-expect-error No types available
 import frontifyConfig from '@frontify/eslint-config-react';
+// @ts-expect-error No types available
 import noticePlugin from 'eslint-plugin-notice';
-import storybookPlugin from 'eslint-plugin-storybook';
+// @ts-expect-error No types available
 import tailwindcssPlugin from 'eslint-plugin-tailwindcss';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import tseslint from 'typescript-eslint';
-
-const __dirname = path.dirname(fileURLToPath(new URL('.', import.meta.url)));
 
 export default tseslint.config(
     {
@@ -19,34 +17,23 @@ export default tseslint.config(
             'src/foundation/Icon/Generated/index.ts',
             'src/foundation/Icon/IconEnum.ts',
             'src/components/ComponentEnum.ts',
-            'src/components/postcss.config.cjs',
             'src/subpackages/tokens.js',
-            'postcss.config.cjs',
-            'cypress.config.ts',
-            'vite.config.ts',
-            'tailwind.config.js',
-            'tokens.vite.config.ts',
-            'components.vite.config.ts',
-            'charts.vite.config.ts',
-            'icons.vite.config.ts',
-            'eslint.config.mjs',
             'README.md',
             'dist',
             'legacyTokens',
             '.storybook',
             'storybook-static',
             'node_modules',
-            '**/*.json',
         ],
     },
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     frontifyConfig,
     {
-        files: ['**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx', '**/*.mts', '**/*.cts'],
+        files: ['**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx', '**/*.mts', '**/*.cts', '**/*.cjs'],
         languageOptions: {
             parserOptions: {
-                project: ['./tsconfig.json'],
-                tsconfigRootDir: __dirname,
+                projectService: true,
+                tsconfigRootDir: import.meta.dirname,
             },
         },
         plugins: {
@@ -54,11 +41,9 @@ export default tseslint.config(
             notice: noticePlugin,
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             tailwindcss: tailwindcssPlugin,
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            storybook: storybookPlugin,
         },
         rules: {
-            // Copyright header rules=
+            // Copyright header rules
             'notice/notice': [
                 'error',
                 {
