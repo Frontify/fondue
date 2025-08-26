@@ -1,1 +1,0 @@
-import{e as t,c as s}from"./index-EJIvojdF.js";const o=t({prefix:"tw-",extend:{classGroups:{"font-size":["text-body-x-small","text-body-small","text-body-medium","text-body-large"]}}}),n=(...e)=>o(...e),a=e=>s(e);export{n as c,a as s};
