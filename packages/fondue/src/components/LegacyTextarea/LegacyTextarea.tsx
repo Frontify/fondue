@@ -1,6 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { LoadingCircle, LoadingCircleSize } from '@components/LoadingCircle/LoadingCircle';
+import IconExclamationMarkTriangle from '@foundation/Icon/Generated/IconExclamationMarkTriangle';
+import { useMemoizedId } from '@hooks/useMemoizedId';
 import { useFocusRing } from '@react-aria/focus';
+import { FOCUS_STYLE } from '@utilities/focusStyle';
+import { merge } from '@utilities/merge';
+import { Validation, validationClassMap } from '@utilities/validation';
 import {
     type AriaAttributes,
     type FocusEvent,
@@ -13,15 +19,8 @@ import {
 } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 
-import { LoadingCircle, LoadingCircleSize } from '@components/LoadingCircle/LoadingCircle';
-import IconExclamationMarkTriangle from '@foundation/Icon/Generated/IconExclamationMarkTriangle';
-import { useMemoizedId } from '@hooks/useMemoizedId';
-import { FOCUS_STYLE } from '@utilities/focusStyle';
-import { merge } from '@utilities/merge';
-import { Validation, validationClassMap } from '@utilities/validation';
-
 /**
- * @deprecated Please use a updated component instead.
+ * @deprecated Please use updated Textarea component from `@frontify/fondue/components` instead.
  */
 export type LegacyTextareaProps = {
     id?: string;
@@ -46,7 +45,7 @@ export type LegacyTextareaProps = {
 } & AriaAttributes;
 
 /**
- * @deprecated Please use a updated component instead.
+ * @deprecated Please use updated Textarea component from `@frontify/fondue/components` instead.
  */
 export const LegacyTextarea = ({
     id: propId,

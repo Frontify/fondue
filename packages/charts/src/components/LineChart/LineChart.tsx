@@ -40,7 +40,7 @@ export const LineChart = ({
     });
 
     return (
-        <div className="tw-flex tw-flex-col tw-gap-6">
+        <div className="tw-flex tw-flex-col tw-gap-6 tw-z-[1]">
             {!hideLegend && legendPosition === 'top' && (
                 <Legend names={series.map((series) => series.name)} style={'line'} />
             )}

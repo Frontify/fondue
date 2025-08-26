@@ -4,13 +4,13 @@
 
 import frontifyConfig from '@frontify/eslint-config-react';
 import noticePlugin from 'eslint-plugin-notice';
+import storybookPlugin from 'eslint-plugin-storybook';
 import tailwindcssPlugin from 'eslint-plugin-tailwindcss';
-import tseslint from 'typescript-eslint';
-import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import tseslint from 'typescript-eslint';
 
 const __dirname = path.dirname(fileURLToPath(new URL('.', import.meta.url)));
-import storybookPlugin from 'eslint-plugin-storybook';
 
 export default tseslint.config(
     {

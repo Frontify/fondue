@@ -1,14 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type Meta, type StoryFn } from '@storybook/react';
-import { useCallback, useEffect, useState } from 'react';
-
 import { Box } from '@components/Box/Box';
 import { FormField } from '@components/FormField/FormField';
 import IconClipboard16 from '@foundation/Icon/Generated/IconClipboard16';
 import IconNook16 from '@foundation/Icon/Generated/IconNook16';
 import IconQuestionMark16 from '@foundation/Icon/Generated/IconQuestionMark16';
+import { type Meta, type StoryFn } from '@storybook/react';
 import { Validation } from '@utilities/validation';
+import { useCallback, useEffect, useState } from 'react';
 
 import { type ExtraAction } from '../../types/input';
 
@@ -30,8 +29,7 @@ const ExtraActions: ExtraAction[] = [
 ];
 
 /**
- ### *Legacy component warning*
- #### This is a unmaintained legacy component. It will be deprecated and replaced with a new component in an upcoming release.
+ ### This component is deprecated, please use the [new Textarea component](/docs/current_components-textarea--documentation) instead.
  */
 // @ts-expect-error - type changed?
 export default {
@@ -221,6 +219,11 @@ export default {
         resizable: false,
         selectable: false,
         status: Validation.Default,
+    },
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
     },
 } as Meta<TextareaProps>;
 

@@ -48,7 +48,7 @@
         "react": "^18"
     },
     "devDependencies": {
-        "@babel/core": "^7.28.0",
+        "@babel/core": "^7.28.3",
         "@etchteam/storybook-addon-status": "^5.0.0",
         "@frontify/eslint-config-react": "^1.0.3",
         "@frontify/fondue-tokens": "workspace:^",

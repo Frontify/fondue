@@ -1,14 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type Meta, type StoryFn } from '@storybook/react';
-import { useEffect, useState } from 'react';
-
 import { Validation } from '@utilities/validation';
+import { useEffect, useState } from 'react';
 
 import { type LegacyTextareaProps, LegacyTextarea as TextareaComponent } from './LegacyTextarea';
 
 /**
- ### This component is deprecated. Please use a updated component instead.
+ ### This component is deprecated, please use the [new Textarea component](/docs/current_components-textarea--documentation) instead.
  */
 export default {
     title: 'Legacy Components/Deprecated/LegacyTextarea',

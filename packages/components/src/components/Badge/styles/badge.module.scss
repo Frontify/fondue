@@ -17,7 +17,7 @@
 }
 
 @mixin variant($name, $color, $weakColor: $color) {
-    [data-variant=#{$name}]:not([data-disabled="true"]) {
+    .root[data-variant=#{$name}]:not([data-disabled="true"]) {
         background-color: var(--color-#{$color}-default);
         color: var(--color-#{$color}-on-#{$color});
 
