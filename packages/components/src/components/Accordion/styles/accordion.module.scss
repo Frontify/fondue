@@ -64,13 +64,10 @@
     grid-template-columns: subgrid;
     grid-column: 1 / 4;
     grid-row: 1;
+    align-items: center;
     outline: 0;
     text-align: left;
     width: 100%;
-    grid-column: 1 / 4;
-    grid-row: 1;
-    grid-template-columns: subgrid;
-    align-items: center;
     padding: var(--accordion-vertical-padding) var(--accordion-horizontal-padding);
 
     &[data-state="open"],
