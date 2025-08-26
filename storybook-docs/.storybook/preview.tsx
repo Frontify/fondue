@@ -44,28 +44,28 @@ export const globalTypes = {
     theme: {
         description: 'Global theme for components',
         toolbar: {
-          title: 'Theme',
-          icon: 'paintbrush',
-          items: [
-            {
-                value: 'light',
-                title: 'Light Theme',
-                icon: "sun",
-            },
-            {
-                value: 'dark',
-                title: 'Dark Theme',
-                icon: "moon",
-            },
-            {
-                value: 'both',
-                title: 'Both Themes',
-                icon: "contrast"
-            }
-          ],
-          dynamicTitle: true,
+            title: 'Theme',
+            icon: 'paintbrush',
+            items: [
+                {
+                    value: 'light',
+                    title: 'Light Theme',
+                    icon: 'sun',
+                },
+                {
+                    value: 'dark',
+                    title: 'Dark Theme',
+                    icon: 'moon',
+                },
+                {
+                    value: 'both',
+                    title: 'Both Themes',
+                    icon: 'contrast',
+                },
+            ],
+            dynamicTitle: true,
         },
-      },
+    },
 };
 
 export const initialGlobals = {

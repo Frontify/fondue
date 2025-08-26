@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ComponentType } from 'react';
-
 import '@frontify/fondue-tokens/styles';
 import '../src/styles.scss';
 
 import { type Decorator, type Preview, type StoryContext } from '@storybook/react';
+import { type ComponentType } from 'react';
+
 import { Flex } from '../src/components/Flex/Flex';
 
 import DocumentationTemplate from './DocumentationTemplate.mdx';

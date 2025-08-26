@@ -60,6 +60,7 @@ export const Default: Story = {
 
                         return (
                             <button
+                                type="button"
                                 key={icon}
                                 data-tooltip-text={iconPath}
                                 onClick={() => updateArgs({ iconName: icon })}

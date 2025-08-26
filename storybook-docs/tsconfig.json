@@ -18,6 +18,6 @@
         "target": "ES2021",
         "useDefineForClassFields": true
     },
-    "include": [".storybook"],
+    "include": [".storybook/**/*", "stories"],
     "references": [{ "path": "./tsconfig.node.json" }]
 }
