@@ -4,151 +4,137 @@ This document describes the changes that you need to make to your code to migrat
 
 ## Table of contents
 
--   [Migration guide](#migration-guide)
-    -   [Table of contents](#table-of-contents)
-    -   [Components](#components)
-        -   [Accordion](#accordion)
-            -   [Old](#accordion-old)
-            -   [New](#accordion-new)
-        -   [Button](#button)
-            -   [Old](#button-old)
-            -   [New](#button-new)
-        -   [Checkbox (replaces `Checkbox` and `Checklist`)](#checkbox)
-            -   [Old](#checkbox-old)
-            -   [New](#checkbox-new)
-        -   [Color Picker](#color-picker)
-            -   [Old](#color-picker-old)
-            -   [New](#color-picker-new)
-        -   [Dialog](#dialog)
-            -   [Old](#dialog-old)
-            -   [New](#dialog-new)
-        -   [Dropdown (replaces `Dropdown`, `Menu` and `ActionMenu`)](#dropdown-replaces-dropdown-menu-and-actionmenu)
-            -   [Old](#dropdown-old)
-            -   [New](#dropdown-new)
-        -   [Flyout (old `InlineDialog`)](#flyout-old-inlinedialog)
-            -   [Old](#flyout-old)
-            -   [New](#flyout-new)
-        -   [Label (old `InputLabel`)](#label-old-inputlabel)
-            -   [Old](#label-old)
-            -   [New](#label-new)
-        -   [Layout Components](#layout-components)
-            -   [Old](#layout-old)
-            -   [New](#layout-new)
-        -   [Loading Bar](#loading-bar)
-            -   [Old](#loading-bar-old)
-            -   [New](#loading-bar-new)
-        -   [Loading Circle](#loading-circle)
-            -   [Old](#loading-circle-old)
-            -   [New](#loading-circle-new)
-        -   [Scroll Wrapper](#scroll-wrapper)
-            -   [Old](#scroll-wrapper-old)
-            -   [New](#scroll-wrapper-new)
-        -   [Segmented Control](#segmented-control)
-            -   [Old](#segmented-control-old)
-            -   [New](#segmented-control-new)
-        -   [Select](#select)
-            -   [Old](#select-old)
-            -   [New](#select-new)
-        -   [Slider](#slider)
-            -   [Old](#slider-old)
-            -   [New](#slider-new)
-        -   [Switch](#switch)
-            -   [Old](#switch-old)
-            -   [New](#switch-new)
-        -   [Table](#table)
-            -   [Old](#table-old)
-            -   [New](#table-new)
-        -   [Text Input](#text-input)
-            -   [Old](#text-input-old)
-            -   [New](#text-input-new)
-        -   [Tooltip](#tooltip)
-            -   [Old](#tooltip-old)
-            -   [New](#tooltip-new)
+- [Migration guide](#migration-guide)
+    - [Table of contents](#table-of-contents)
+    - [Components](#components)
+        - [Accordion](#accordion)
+            - [Old](#accordion-old)
+            - [New](#accordion-new)
+        - [Button](#button)
+            - [Old](#button-old)
+            - [New](#button-new)
+        - [Checkbox (replaces `Checkbox` and `Checklist`)](#checkbox)
+            - [Old](#checkbox-old)
+            - [New](#checkbox-new)
+        - [Color Picker](#color-picker)
+            - [Old](#color-picker-old)
+            - [New](#color-picker-new)
+        - [Dialog](#dialog)
+            - [Old](#dialog-old)
+            - [New](#dialog-new)
+        - [Dropdown (replaces `Dropdown`, `Menu` and `ActionMenu`)](#dropdown-replaces-dropdown-menu-and-actionmenu)
+            - [Old](#dropdown-old)
+            - [New](#dropdown-new)
+        - [Flyout (old `InlineDialog`)](#flyout-old-inlinedialog)
+            - [Old](#flyout-old)
+            - [New](#flyout-new)
+        - [Label (old `InputLabel`)](#label-old-inputlabel)
+            - [Old](#label-old)
+            - [New](#label-new)
+        - [Layout Components](#layout-components)
+            - [Old](#layout-old)
+            - [New](#layout-new)
+        - [Loading Bar](#loading-bar)
+            - [Old](#loading-bar-old)
+            - [New](#loading-bar-new)
+        - [Loading Circle](#loading-circle)
+            - [Old](#loading-circle-old)
+            - [New](#loading-circle-new)
+        - [Scroll Wrapper](#scroll-wrapper)
+            - [Old](#scroll-wrapper-old)
+            - [New](#scroll-wrapper-new)
+        - [Segmented Control](#segmented-control)
+            - [Old](#segmented-control-old)
+            - [New](#segmented-control-new)
+        - [Select](#select)
+            - [Old](#select-old)
+            - [New](#select-new)
+        - [Slider](#slider)
+            - [Old](#slider-old)
+            - [New](#slider-new)
+        - [Switch](#switch)
+            - [Old](#switch-old)
+            - [New](#switch-new)
+        - [Table](#table)
+            - [Old](#table-old)
+            - [New](#table-new)
+        - [Text Input](#text-input)
+            - [Old](#text-input-old)
+            - [New](#text-input-new)
+        - [Tooltip](#tooltip)
+            - [Old](#tooltip-old)
+            - [New](#tooltip-new)
 
 ## Components
 
 ### Accordion
 
 #### Changes:
+
 - **Component structure** now uses explicit subcomponents:
-  - ```Accordion.Root``` wraps all accordion items and controls state
-  - ```Accordion.Item``` for each collapsible section (requires unique ```value```)
-  - ```Accordion.Trigger``` for clickable header elements
-  - ```Accordion.Header``` for semantic header container
-  - ```Accordion.Content``` for collapsible content section
+    - `Accordion.Root` wraps all accordion items and controls state
+    - `Accordion.Item` for each collapsible section (requires unique `value`)
+    - `Accordion.Header` for header container
+    - `Accordion.Content` for collapsible content section
 
 - **State management** changed:
-  - Use ```defaultValue```/```value``` on ```Accordion.Root``` for uncontrolled/controlled state
+    - Use `defaultValue`/`value` on `Accordion.Root` for uncontrolled/controlled state
 
 - **Styling changes**:
-  - ```border``` prop now only on ```Accordion.Root```
-  - ```divider``` prop moved to ```Accordion.Content```
-  - ```padding``` prop now on ```Accordion.Content```
-  - Icon handling moved to ```Accordion.Trigger```
+    - `border` prop now only on `Accordion.Root`
+    - `divider` prop moved to `Accordion.Content`
+    - `padding` prop now on `Accordion.Content`
+    - Icon handling moved to `Accordion.Header`
 
 - **Removed features**:
-  - ```headerComponent``` prop (use ```Accordion.Trigger``` composition instead)
-  - Custom focus management (handled by Radix)
-  - Automatic last-item activation logic
+    - `headerComponent` prop (use `Accordion.Header` composition instead)
+    - Custom focus management (handled by Radix)
+    - Automatic last-item activation logic
 
 #### Old
+
 ```tsx
 <Accordion border divider>
-  <AccordionItem
-    header={{ children: 'Header 1', active: true }}
-    padding={false}
-  >
-    Content 1
-  </AccordionItem>
-  <AccordionItem
-    header={{ children: 'Header 2' }}
-  >
-    Content 2
-  </AccordionItem>
+    <AccordionItem header={{ children: 'Header 1', active: true }} padding={false}>
+        Content 1
+    </AccordionItem>
+    <AccordionItem header={{ children: 'Header 2' }}>Content 2</AccordionItem>
 </Accordion>
 ```
 
 #### New
-```tsx
-<Accordion.Root border defaultValue={["item1"]}>
-  <Accordion.Item value="item1">
-    <Accordion.Header>
-      <Accordion.Trigger>
-        Header 1
-      </Accordion.Trigger>
-    </Accordion.Header>
-    <Accordion.Content padding="none" divider>
-      Content 1
-    </Accordion.Content>
-  </Accordion.Item>
 
-  <Accordion.Item value="item2">
-    <Accordion.Trigger>
-      Header 2
-    </Accordion.Trigger>
-    <Accordion.Content divider>
-      Content 2
-    </Accordion.Content>
-  </Accordion.Item>
+```tsx
+<Accordion.Root border defaultValue={['item1']}>
+    <Accordion.Item value="item1">
+        <Accordion.Header>Header 1</Accordion.Header>
+        <Accordion.Content padding="none" divider>
+            Content 1
+        </Accordion.Content>
+    </Accordion.Item>
+
+    <Accordion.Item value="item2">
+        Header 2<Accordion.Content divider>Content 2</Accordion.Content>
+    </Accordion.Item>
 </Accordion.Root>
 ```
 
 #### Upgrade Steps:
-1. Wrap entire accordion in ```Accordion.Root```
-2. Convert each item to ```Accordion.Item``` with unique ```value```
-3. Move header content to ```Accordion.Header```/```Accordion.Trigger```
-4. Convert body content to ```Accordion.Content```
 
+1. Wrap entire accordion in `Accordion.Root`
+2. Convert each item to `Accordion.Item` with unique `value`
+3. Move header content to `Accordion.Header`
+4. Convert body content to `Accordion.Content`
 
 ### Button
 
 Changes:
 
--   The props `size`, `style`, `type`, `rounding` now use a union type instead of an enum.
--   The `icon` prop was removed and the Icon is now passed in as a child of the button.
--   The `onClick` prop was renamed to `onPress`.
--   The `hideLabel` prop was removed and the label should now be passed in conditionally as a child of the button.
--   The `aspect` prop was added to be able to make the button square, when only an icon is shown.
+- The props `size`, `style`, `type`, `rounding` now use a union type instead of an enum.
+- The `icon` prop was removed and the Icon is now passed in as a child of the button.
+- The `onClick` prop was renamed to `onPress`.
+- The `hideLabel` prop was removed and the label should now be passed in conditionally as a child of the button.
+- The `aspect` prop was added to be able to make the button square, when only an icon is shown.
 
 #### Old
 
@@ -188,13 +174,13 @@ Changes:
 
 Changes:
 
--   The `state` property has been removed and replaced by `value` (`boolean | 'indeterminate'`).
--   The `label` property has been replaced by the `Label` component as a sibling of the `Checkbox`.
-    -   `hideLabel` have been removed as Label is now a sibling component.
--   The `onChange` function signature has changed to expose the full event instead of the value.
--   The properties `value` and `groupInputProps` have been removed without replacement.
--   The property `ariaLabel` has been renamed to `aria-label`.
--   The size `CheckboxSize.XLarge` has been removed without replacement.
+- The `state` property has been removed and replaced by `value` (`boolean | 'indeterminate'`).
+- The `label` property has been replaced by the `Label` component as a sibling of the `Checkbox`.
+    - `hideLabel` have been removed as Label is now a sibling component.
+- The `onChange` function signature has changed to expose the full event instead of the value.
+- The properties `value` and `groupInputProps` have been removed without replacement.
+- The property `ariaLabel` has been renamed to `aria-label`.
+- The size `CheckboxSize.XLarge` has been removed without replacement.
 
 #### Old
 
@@ -256,13 +242,13 @@ Changes:
 
 Changes:
 
--   The Color Picker does not Provide a Flyout, please use the `Flyout` component instead with composition.
--   The Color Picker Input is now available as a separate component `ColorPicker.Input`.
--   The Color Picker now uses Composition to display the Value Input and the Color Gradient.
-    -   You can pass `ColorPicker.Values` as a child to show the value input fields.
-    -   You can pass `ColorPicker.Gradient` as a child to show the color gradient input.
--   The format is now handled internally. You can pass in the initial format with the prop `defaultFormat`.
--   The brand color picker has been removed without replacement.
+- The Color Picker does not Provide a Flyout, please use the `Flyout` component instead with composition.
+- The Color Picker Input is now available as a separate component `ColorPicker.Input`.
+- The Color Picker now uses Composition to display the Value Input and the Color Gradient.
+    - You can pass `ColorPicker.Values` as a child to show the value input fields.
+    - You can pass `ColorPicker.Gradient` as a child to show the color gradient input.
+- The format is now handled internally. You can pass in the initial format with the prop `defaultFormat`.
+- The brand color picker has been removed without replacement.
 
 #### Old
 
@@ -304,64 +290,55 @@ const [currentColor, setCurrentColor] = useState({ red: 85, green: 102, blue: 25
 
 Changes:
 
--   The `Dialog` should not be rendered conditionally anymore. It should always be rendered and the open state should be controlled by the `open` prop.
+- The `Dialog` should not be rendered conditionally anymore. It should always be rendered and the open state should be controlled by the `open` prop.
 
--   The `Dialog` component now controls its open state internally by default.
+- The `Dialog` component now controls its open state internally by default.
+    - You can pass in a trigger component as a child of `Dialog.Trigger` to open the dialog.
 
-    -   You can pass in a trigger component as a child of `Dialog.Trigger` to open the dialog.
+    - You can wrap an element inside `Dialog.Close` for it to close the dialog.
 
-    -   You can wrap an element inside `Dialog.Close` for it to close the dialog.
+    - The `handleClose` prop was replaced by `onOpenChange`. Together with the `open` prop it can be used to control the open state externally if needed.
 
-    -   The `handleClose` prop was replaced by `onOpenChange`. Together with the `open` prop it can be used to control the open state externally if needed.
+- The `Dialog` now provides multiple subcomponents.
+    - _required_ - The `Dialog.Root` wraps all other subcomponents and handles the dialog state and modality.
+        - The `modality` prop was replaced by `modal` and is now a boolean.
 
--   The `Dialog` now provides multiple subcomponents.
+    - _optional_ - The `Dialog.Trigger` is used to pass in a component to trigger the dialog.
 
-    -   _required_ - The `Dialog.Root` wraps all other subcomponents and handles the dialog state and modality.
+    - _required_ - The `Dialog.Content` is the container appearing when the dialog is Visible. All dialog content needs to be wrapped inside of this element.
+        - _optional_ - The `Dialog.Header` can be passed in as a child of `Dialog.Content` to add a styled header to the dialog
+            - _optional_ The prop `showCloseButton` can be passed to add a close button to the header.
 
-        -   The `modality` prop was replaced by `modal` and is now a boolean.
+        - _optional_ - The `Dialog.Body` can be passed in as a child of `Dialog.Content` to add a styled body to the dialog.
 
-    -   _optional_ - The `Dialog.Trigger` is used to pass in a component to trigger the dialog.
+        - _optional_ - The `Dialog.Footer` can be passed in as a child of `Dialog.Content` to add a styled footer to the dialog.
 
-    -   _required_ - The `Dialog.Content` is the container appearing when the dialog is Visible. All dialog content needs to be wrapped inside of this element.
+        - _optional_ - The `Dialog.SideContent` can be passed in as a child of `Dialog.Content` to add a space on the left side of the dialog. Custom components can then be passed in as as children of `Dialog.SideContent`
 
-        -   _optional_ - The `Dialog.Header` can be passed in as a child of `Dialog.Content` to add a styled header to the dialog
+- Accessibility
+    - _required_ - The `Dialog.Title` component is used to wrap the title of the dialog, it will be read by the screen reader. It can be placed anywhere inside of `Dialog.Content`.
+        - The prop `asChild` can be passed to `Dialog.Title` to avoid wrapping the content in a `h2` tag, but directly use the child.
 
-            -   _optional_ The prop `showCloseButton` can be passed to add a close button to the header.
+    - _optional_ - The `Dialog.Description` component is used to wrap the description of the dialog and will be read by the screen readers alongside the title. It can be placed anywhere inside of `Dialog.Content`.
+        - The prop `asChild` can be passed to `Dialog.Description` to avoid wrapping the content in a `h2` tag, but directly use the child.
 
-        -   _optional_ - The `Dialog.Body` can be passed in as a child of `Dialog.Content` to add a styled body to the dialog.
+- The styling / layout is now controlled on the subcomponent `Dialog.Content`
 
-        -   _optional_ - The `Dialog.Footer` can be passed in as a child of `Dialog.Content` to add a styled footer to the dialog.
+- The `anchor` prop was removed and the subcomponents now accept refs
 
-        -   _optional_ - The `Dialog.SideContent` can be passed in as a child of `Dialog.Content` to add a space on the left side of the dialog. Custom components can then be passed in as as children of `Dialog.SideContent`
+- The subcomponent `Dialog.Content` is used to display the dialog container.
+  It provides no styling by default and can be used to wrap a custom content.
+    - `roundedCorners` is now called `rounded` and is a boolean.
 
--   Accessibility
+    - The `width`, `maxHeight` and `autoHeight` props were removed. The Dialog container adjusts to the content inside. You can use a custom component inside if necessary. you can use `minWidth`, `maxWidth` and `minHeight` to override the default values.
 
-    -   _required_ - The `Dialog.Title` component is used to wrap the title of the dialog, it will be read by the screen reader. It can be placed anywhere inside of `Dialog.Content`.
+    - The `strategy` and `role` props were removed to simplify the API.
 
-        -   The prop `asChild` can be passed to `Dialog.Title` to avoid wrapping the content in a `h2` tag, but directly use the child.
-
-    -   _optional_ - The `Dialog.Description` component is used to wrap the description of the dialog and will be read by the screen readers alongside the title. It can be placed anywhere inside of `Dialog.Content`.
-
-        -   The prop `asChild` can be passed to `Dialog.Description` to avoid wrapping the content in a `h2` tag, but directly use the child.
-
--   The styling / layout is now controlled on the subcomponent `Dialog.Content`
-
--   The `anchor` prop was removed and the subcomponents now accept refs
-
--   The subcomponent `Dialog.Content` is used to display the dialog container.
-    It provides no styling by default and can be used to wrap a custom content.
-
-    -   `roundedCorners` is now called `rounded` and is a boolean.
-
-    -   The `width`, `maxHeight` and `autoHeight` props were removed. The Dialog container adjusts to the content inside. You can use a custom component inside if necessary. you can use `minWidth`, `maxWidth` and `minHeight` to override the default values.
-
-    -   The `strategy` and `role` props were removed to simplify the API.
-
-    -   The `enablePortal` and `verticalAlignment` props were removed to standardize the dialog.
+    - The `enablePortal` and `verticalAlignment` props were removed to standardize the dialog.
 
         The dialog now uses a portal by default and is placed centered
 
-    -   The prop `darkUnderlay` was replaced by `showUnderlay`.
+    - The prop `darkUnderlay` was replaced by `showUnderlay`.
 
 #### Old
 
@@ -427,12 +404,12 @@ Changes:
 
 The `Dropdown` is no longer meant to be used a `Select` component so many features have been deprecated. See the [Select](#select) migration guide if you need a select box.
 
--   Position is now set automatically wherever there is space.
--   `Controlled` behavior supported (use `open` prop).
--   `Dropdown.Trigger` requires a component with a `forwardRef` so that it can consume the node as an anchor for the position of the `Dropdown.Content`. Any new `Fondue` component will work.
--   The `menuBlocks` prop has been replaced by a composable component structure, allowing for full control of the content of the `Dropdown.Content`.
--   Rather than an `onChange` on the parent, we can now assign callbacks to each individual element on the `Dropdown`.
--   Rather than adding `decorators`, we can fully control the look of each `Dropdown.Item` by using whatever component we like within.
+- Position is now set automatically wherever there is space.
+- `Controlled` behavior supported (use `open` prop).
+- `Dropdown.Trigger` requires a component with a `forwardRef` so that it can consume the node as an anchor for the position of the `Dropdown.Content`. Any new `Fondue` component will work.
+- The `menuBlocks` prop has been replaced by a composable component structure, allowing for full control of the content of the `Dropdown.Content`.
+- Rather than an `onChange` on the parent, we can now assign callbacks to each individual element on the `Dropdown`.
+- Rather than adding `decorators`, we can fully control the look of each `Dropdown.Item` by using whatever component we like within.
 
 #### Old
 
@@ -539,50 +516,45 @@ The `Dropdown` is no longer meant to be used a `Select` component so many featur
 
 Changes:
 
--   The `Flyout` component now controls its open state internally by default.
+- The `Flyout` component now controls its open state internally by default.
+    - You can pass in a trigger component as a child of `Flyout.Trigger` to control the open state.
 
-    -   You can pass in a trigger component as a child of `Flyout.Trigger` to control the open state.
+    - The `open` and `onOpenChange` props can still be used to control the open state externally if needed.
 
-    -   The `open` and `onOpenChange` props can still be used to control the open state externally if needed.
+- The `Flyout` now provides multiple subcomponents.
+    - _required_ - The `Flyout.Root` wraps all other subcomponents and handles the flyout state and modality.
 
--   The `Flyout` now provides multiple subcomponents.
+    - _required_ - The `Flyout.Trigger` is used to pass in a component to trigger the flyout.
 
-    -   _required_ - The `Flyout.Root` wraps all other subcomponents and handles the flyout state and modality.
+    - _required_ - The `Flyout.Content` is the container appearing when the flyout is Visible
+        - _optional_ - The `Flyout.Header` can be passed in as a child of `Flyout.Content` to add a styled header to the flyout.
 
-    -   _required_ - The `Flyout.Trigger` is used to pass in a component to trigger the flyout.
+        - _optional_ - The `Flyout.Body` can be passed in as a child of `Flyout.Content` to add a styled body to the flyout.
 
-    -   _required_ - The `Flyout.Content` is the container appearing when the flyout is Visible
+        - _optional_ - The `Flyout.Footer` can be passed in as a child of `Flyout.Footer` to add a styled footer to the flyout.
 
-        -   _optional_ - The `Flyout.Header` can be passed in as a child of `Flyout.Content` to add a styled header to the flyout.
+- The styling / layout is now controlled on the subcomponent `Flyout.Content`
 
-        -   _optional_ - The `Flyout.Body` can be passed in as a child of `Flyout.Content` to add a styled body to the flyout.
+- The subcomponent `Flyout.Content` is used to display the flyout container.
+  It provides no styling by default and can be used to wrap a custom content.
+    - `roundedCorners` is now called `rounded` and is a boolean.
 
-        -   _optional_ - The `Flyout.Footer` can be passed in as a child of `Flyout.Footer` to add a styled footer to the flyout.
+    - The `width`, `minWidth`, `minHeight` and `maxHeight` props were removed. The Flyout container adjusts to the content inside. Use a custom component inside if necessary.
 
--   The styling / layout is now controlled on the subcomponent `Flyout.Content`
+    - The `strategy`, `unsafe_Zindex` and `role` props were removed to simplify the API.
 
--   The subcomponent `Flyout.Content` is used to display the flyout container.
-    It provides no styling by default and can be used to wrap a custom content.
-
-    -   `roundedCorners` is now called `rounded` and is a boolean.
-
-    -   The `width`, `minWidth`, `minHeight` and `maxHeight` props were removed. The Flyout container adjusts to the content inside. Use a custom component inside if necessary.
-
-    -   The `strategy`, `unsafe_Zindex` and `role` props were removed to simplify the API.
-
-    -   The `enablePortal` and `anchor` props were removed to standardize the flyout.
+    - The `enablePortal` and `anchor` props were removed to standardize the flyout.
 
         The flyout now uses a portal by default and the anchor is the parent of the `Flyout.Trigger`.
 
-    -   The `placement` and `flip` props were removed and replaced by `side` and `alignment`.
+    - The `placement` and `flip` props were removed and replaced by `side` and `alignment`.
 
         When the flyout content collides with the viewport, it is automatically flipped to the other side and / or slightly shifted to fit into the viewport.
 
-    -   The `padding` prop can be passed to define the padding used by all the layout components (`Flyout.Header`, `Flyout.Body` and `Flyout.Footer`) inside. It has no effect on the `Flyout.Content` or custom components passed as children.
+    - The `padding` prop can be passed to define the padding used by all the layout components (`Flyout.Header`, `Flyout.Body` and `Flyout.Footer`) inside. It has no effect on the `Flyout.Content` or custom components passed as children.
 
--   The subcomponents `Flyout.Header`, `Flyout.Body`, and `Flyout.Footer` can be used to add default styling to the content inside of `Flyout.Content`.
-
-    -   The prop `showCloseButton` was added to the `Flyout.Header` to add a close button to the header.
+- The subcomponents `Flyout.Header`, `Flyout.Body`, and `Flyout.Footer` can be used to add default styling to the content inside of `Flyout.Content`.
+    - The prop `showCloseButton` was added to the `Flyout.Header` to add a close button to the header.
 
 #### Old
 
@@ -633,9 +605,9 @@ return (
 
 Changes:
 
--   The component has been renamed from `InputLabel` to `Label`.
--   The `clickable` and `bold` properties have been removed without replacement.
--   The `tooltip` property has been removed and replaced by the `Tooltip` component which can be used as a `children`.
+- The component has been renamed from `InputLabel` to `Label`.
+- The `clickable` and `bold` properties have been removed without replacement.
+- The `tooltip` property has been removed and replaced by the `Tooltip` component which can be used as a `children`.
 
 #### Old
 
@@ -663,10 +635,10 @@ Changes:
 
 Changes:
 
--   All proprietaary properties were removed, the new Layout Components now accept CSSProperties as props
--   The Style properties allow for responsive styling by passing an object with breakpoints as keys and CSSProperties as values
--   `Stack` has been combined with `Flex`
--   `Container` has been combined with `Box`
+- All proprietaary properties were removed, the new Layout Components now accept CSSProperties as props
+- The Style properties allow for responsive styling by passing an object with breakpoints as keys and CSSProperties as values
+- `Stack` has been combined with `Flex`
+- `Container` has been combined with `Box`
 
 #### Old
 
@@ -710,10 +682,10 @@ Changes:
 
 Changes:
 
--   The property `percentage` has been renamed to `value`.
-    -   If the `value` is `null`, the loading bar will be in an indeterminate state.
-    -   A new property `max` has been introduced so the inner loading bar percentage can be calculated based on the `max` value.
--   The property `state` has been renamed to `style`
+- The property `percentage` has been renamed to `value`.
+    - If the `value` is `null`, the loading bar will be in an indeterminate state.
+    - A new property `max` has been introduced so the inner loading bar percentage can be calculated based on the `max` value.
+- The property `state` has been renamed to `style`
 
 #### Old
 
@@ -731,8 +703,8 @@ Changes:
 
 Changes:
 
--   The property `style` has been renamed to `variant`.
--   App props now use a union type instead of an enum.
+- The property `style` has been renamed to `variant`.
+- App props now use a union type instead of an enum.
 
 #### Old
 
@@ -750,10 +722,10 @@ Changes:
 
 Changes:
 
--   The properties `direction` and `tabIndex` have been removed
--   The property `scrollShadow`has been renamed to `showShadow` and is now `false` by default
--   The properties `maxHeight`and `maxWidth`have been added
--   The property `type` has been added.
+- The properties `direction` and `tabIndex` have been removed
+- The property `scrollShadow`has been renamed to `showShadow` and is now `false` by default
+- The properties `maxHeight`and `maxWidth`have been added
+- The property `type` has been added.
 
 #### Old
 
@@ -781,14 +753,14 @@ Changes:
 
 Changes:
 
--   The component has been renamed from `SegmentedControls` to its singular form `SegmentedControl`.
--   The `SegmentedControl` component now has a `Root` and `Item` component to separate the control from its items.
--   `items` array has been removed and replaced by `children` to follow the composition pattern.
-    -   `children` can have any kind of content (icons, text, etc.) and will be rendered as the content of the item.
--   `activeItemId` has been replaced by `value`.
--   `onChange` has been replaced by `onValueChange`.
--   `disabled` has been removed from individual items and moved to the `Root` component.
-    -   If you need to disable per item, you will need to conditionally render the item.
+- The component has been renamed from `SegmentedControls` to its singular form `SegmentedControl`.
+- The `SegmentedControl` component now has a `Root` and `Item` component to separate the control from its items.
+- `items` array has been removed and replaced by `children` to follow the composition pattern.
+    - `children` can have any kind of content (icons, text, etc.) and will be rendered as the content of the item.
+- `activeItemId` has been replaced by `value`.
+- `onChange` has been replaced by `onValueChange`.
+- `disabled` has been removed from individual items and moved to the `Root` component.
+    - If you need to disable per item, you will need to conditionally render the item.
 
 #### Old
 
@@ -827,13 +799,13 @@ Changes:
 
 Changes:
 
--   This component replaces the old `Dropdown` component.
--   `menuItems` array has been removed and replaced by `children` to follow the composition pattern.
-    -   `children` can have any kind of content (icons, text, etc.) and will be rendered as the content of the item.
--   `activeItemId` has been replaced by `value`.
--   `onChange` has been replaced by `onSelect`.
--   `disabled` has been removed from individual items and moved to the `Root` component.
-    -   If you need to disable per item, you will need to conditionally render the item.
+- This component replaces the old `Dropdown` component.
+- `menuItems` array has been removed and replaced by `children` to follow the composition pattern.
+    - `children` can have any kind of content (icons, text, etc.) and will be rendered as the content of the item.
+- `activeItemId` has been replaced by `value`.
+- `onChange` has been replaced by `onSelect`.
+- `disabled` has been removed from individual items and moved to the `Root` component.
+    - If you need to disable per item, you will need to conditionally render the item.
 
 #### Old
 
@@ -915,23 +887,20 @@ return(
 
 Changes:
 
--   **Controlled and Uncontrolled States**:
+- **Controlled and Uncontrolled States**:
+    - `value` (controlled) and `defaultValue` (uncontrolled) props are now arrays reflecting support for range sliders in the new component.
+    - The `onChange` event now returns an array of numbers reflecting the new multi-thumb capabilities.
 
-    -   `value` (controlled) and `defaultValue` (uncontrolled) props are now arrays reflecting support for range sliders in the new component.
-    -   The `onChange` event now returns an array of numbers reflecting the new multi-thumb capabilities.
+- **Event Handling**:
+    - The new `onCommit` event is introduced for actions when user interaction ends, similar to an `onBlur`.
+    - Error handling via `onError` as this component can no longer be in an error state. Use controlled mode to limit and alert the user.
 
--   **Event Handling**:
-
-    -   The new `onCommit` event is introduced for actions when user interaction ends, similar to an `onBlur`.
-    -   Error handling via `onError` as this component can no longer be in an error state. Use controlled mode to limit and alert the user.
-
--   **Removed Properties**:
-
-    -   `stepMultiplier` is no longer needed.
-    -   `showMinMax` is no longer supported.
-    -   `showMinMax` is no longer supported.
-    -   Input no longer included by default.
-    -   Additional UI flourishes should be added outside the component as needed.
+- **Removed Properties**:
+    - `stepMultiplier` is no longer needed.
+    - `showMinMax` is no longer supported.
+    - `showMinMax` is no longer supported.
+    - Input no longer included by default.
+    - Additional UI flourishes should be added outside the component as needed.
 
         ```tsx
         <Slider />
@@ -1006,27 +975,23 @@ return (
 
 Changes:
 
--   **States**:
+- **States**:
+    - `value` (controlled) and `defaultValue` (uncontrolled) replaces `mode`.
+    - `indeterminate` state support has been dropped.
+    - `required` is now available.
+    - `name` is now available.
 
-    -   `value` (controlled) and `defaultValue` (uncontrolled) replaces `mode`.
-    -   `indeterminate` state support has been dropped.
-    -   `required` is now available.
-    -   `name` is now available.
+- **Accessibility**:
+    - `aria-label` and `aria-labelledby` are both optional but one must be used.
+    - `aria-describedby` has been added.
 
--   **Accessibility**:
+- **Event Handling**:
+    - The `onChange` event now returns the latest state of the value rather than a `MouseEvent`.
+    - `onBlur` and `onFocus` callbacks have been added.
 
-    -   `aria-label` and `aria-labelledby` are both optional but one must be used.
-    -   `aria-describedby` has been added.
-
--   **Event Handling**:
-
-    -   The `onChange` event now returns the latest state of the value rather than a `MouseEvent`.
-    -   `onBlur` and `onFocus` callbacks have been added.
-
--   **Removed Properties**:
-
-    -   `label`, `labelStyle` and `tooltip` have been removed in favor of composition.
-    -   `hug` have been removed without replacement
+- **Removed Properties**:
+    - `label`, `labelStyle` and `tooltip` have been removed in favor of composition.
+    - `hug` have been removed without replacement
 
 #### Old
 
@@ -1077,25 +1042,25 @@ Changes:
 
 Changes:
 
--   The Table component now uses a composable API with subcomponents instead of configuration objects and props
--   Props like `columns` and `rows` have been removed in favor of direct JSX composition
--   The `Table` component now provides multiple subcomponents:
-    -   `Table.Root`: The main wrapper component for the table
-    -   `Table.Header`: Container for the header section
-    -   `Table.HeaderCell`: Individual header cells with built-in callbacks for sorting
-    -   `Table.Body`: Container for the table body
-    -   `Table.Row`: Individual table rows with interactive capabilities
-    -   `Table.RowCell`: Individual table cells
--   Sorting is now handled at the cell level rather than the table level
--   Selection is now implemented through composition rather than through props
--   Layout properties are now controlled via props on `Table.Root`
--   Sorting, searching and filtering functionality removed in favor of external control
--   New features:
-    -   Sticky header support via `sticky` prop on `Table.Header`
-    -   Sticky first column support via `stickyFirstColumn` prop on `Table.Body`
-    -   Direct support for interactive rows (clickable/links) via `onClick`/`href` props
-    -   Better control over cell alignment, dimentions and truncation
-    -   Keyboard navigation with arrow keys
+- The Table component now uses a composable API with subcomponents instead of configuration objects and props
+- Props like `columns` and `rows` have been removed in favor of direct JSX composition
+- The `Table` component now provides multiple subcomponents:
+    - `Table.Root`: The main wrapper component for the table
+    - `Table.Header`: Container for the header section
+    - `Table.HeaderCell`: Individual header cells with built-in callbacks for sorting
+    - `Table.Body`: Container for the table body
+    - `Table.Row`: Individual table rows with interactive capabilities
+    - `Table.RowCell`: Individual table cells
+- Sorting is now handled at the cell level rather than the table level
+- Selection is now implemented through composition rather than through props
+- Layout properties are now controlled via props on `Table.Root`
+- Sorting, searching and filtering functionality removed in favor of external control
+- New features:
+    - Sticky header support via `sticky` prop on `Table.Header`
+    - Sticky first column support via `stickyFirstColumn` prop on `Table.Body`
+    - Direct support for interactive rows (clickable/links) via `onClick`/`href` props
+    - Better control over cell alignment, dimentions and truncation
+    - Keyboard navigation with arrow keys
 
 #### Old
 
@@ -1127,13 +1092,11 @@ useEffect(() => {
     }
 
     const filtered = rows.filter((row) => {
-        const matchesSearch = filter === '' ||
-            Object.values(row.cells).some((cell) =>
-                String(cell.sortId).toLowerCase().includes(filter.toLowerCase())
-            );
+        const matchesSearch =
+            filter === '' ||
+            Object.values(row.cells).some((cell) => String(cell.sortId).toLowerCase().includes(filter.toLowerCase()));
 
-        const matchesRole = roleFilter === 'all' ||
-            row.cells.role.sortId === roleFilter;
+        const matchesRole = roleFilter === 'all' || row.cells.role.sortId === roleFilter;
 
         return matchesSearch && matchesRole;
     });
@@ -1147,7 +1110,7 @@ const columns: Column[] = [
         name: 'Active Sessions',
         key: 'activeSessions',
         sortable: true,
-        align: 'right'
+        align: 'right',
     },
     { name: 'Last Active', key: 'lastActive' },
 ];
@@ -1162,9 +1125,7 @@ const rows: Row[] = [
                     <div className="tw-flex tw-items-center tw-gap-2">
                         <div>
                             <div className="tw-font-medium">Anna Smith</div>
-                            <div className="tw-text-sm tw-text-gray-500">
-                                anna.smith@example.com
-                            </div>
+                            <div className="tw-text-sm tw-text-gray-500">anna.smith@example.com</div>
                         </div>
                     </div>
                 ),
@@ -1205,9 +1166,7 @@ return (
                     },
                 ]}
             >
-                <Button icon={<IconFunnel />}>
-                    Filter by role
-                </Button>
+                <Button icon={<IconFunnel />}>Filter by role</Button>
             </Dropdown>
         </Flex>
 
@@ -1391,19 +1350,18 @@ return (
 
 Changes:
 
--   The `TextInput` component can be used in 2 fashions:
-    -   Simple input: `TextInput`
+- The `TextInput` component can be used in 2 fashions:
+    - Simple input: `TextInput`
         ```tsx
         <TextInput value={value} onChange={setValue} />
         ```
-    -   Input with decorators / actions / ...: `TextInput.Root` and `TextInput.Slot` (see examples below)
--   The properties `size` and `selectable` have been removed without replacement.
--   The property `dotted` have been removed, `className` can be used to add custom border styles.
--   The event `onEnterPressed` has been removed, use `onKeyDown` with a `event.key === 'Enter'` condition instead.
--   The properties `decorator`, `clearable` / `onClear`, `copyable` and `extraActions` have been removed with the introduction of the `TextInput.Slot` component.
--   The `type` property has been added to specify the type of the input. This replaces the `NumberInput` and `PasswordInput` component.
-
-    -   `TextInput.Slot` can be used to add decorators, actions, etc. to the input.
+    - Input with decorators / actions / ...: `TextInput.Root` and `TextInput.Slot` (see examples below)
+- The properties `size` and `selectable` have been removed without replacement.
+- The property `dotted` have been removed, `className` can be used to add custom border styles.
+- The event `onEnterPressed` has been removed, use `onKeyDown` with a `event.key === 'Enter'` condition instead.
+- The properties `decorator`, `clearable` / `onClear`, `copyable` and `extraActions` have been removed with the introduction of the `TextInput.Slot` component.
+- The `type` property has been added to specify the type of the input. This replaces the `NumberInput` and `PasswordInput` component.
+    - `TextInput.Slot` can be used to add decorators, actions, etc. to the input.
 
         ```tsx
         <TextInput.Root>
@@ -1425,11 +1383,11 @@ Changes:
         </TextInput.Root>
         ```
 
--   Few properties have been renamed/type changed to match the React default props:
-    -   `autocomplete` (boolean) -> `autoComplete` (string like `current-password`, `new-password`, `one-time-code`, etc.)
-    -   `ariaLabel` -> `aria-label`
-    -   `readonly` -> `readOnly`
-    -   `spellcheck` -> `spellCheck`
+- Few properties have been renamed/type changed to match the React default props:
+    - `autocomplete` (boolean) -> `autoComplete` (string like `current-password`, `new-password`, `one-time-code`, etc.)
+    - `ariaLabel` -> `aria-label`
+    - `readonly` -> `readOnly`
+    - `spellcheck` -> `spellCheck`
 
 #### Old
 
@@ -1488,18 +1446,18 @@ Changes:
 
 Changes:
 
--   The props now use a union type instead of an enum.
--   The `Tooltip` component now provides multiple subcomponents.
-    -   The `trigger` prop has been removed and the trigger is now passed in as a child of `Tooltip.Trigger`.
-    -   The `content` prop has been removed and the content is now passed in as a child of `Tooltip.Content`.
--   The `placement` and `flip` props have been removed and replaced by `side`.
+- The props now use a union type instead of an enum.
+- The `Tooltip` component now provides multiple subcomponents.
+    - The `trigger` prop has been removed and the trigger is now passed in as a child of `Tooltip.Trigger`.
+    - The `content` prop has been removed and the content is now passed in as a child of `Tooltip.Content`.
+- The `placement` and `flip` props have been removed and replaced by `side`.
 
-        When the tooltip content collides with the viewport, it is automatically flipped to the other side and / or slightly shifted to fit into the viewport.
+              When the tooltip content collides with the viewport, it is automatically flipped to the other side and / or slightly shifted to fit into the viewport.
 
--   The `openOnMount` prop has been removed, the open state can be externally controlled with the `open` prop.
--   The `enablePortal` prop has been removed, the tooltip now uses a portal by default.
--   The `withArrow` prop has been removed, the arrow is now always shown.
--   The `offset`, `zIndex`, `strategy`, `leaveDelay` and `maxHeight` props have been removed to simplify the API
+- The `openOnMount` prop has been removed, the open state can be externally controlled with the `open` prop.
+- The `enablePortal` prop has been removed, the tooltip now uses a portal by default.
+- The `withArrow` prop has been removed, the arrow is now always shown.
+- The `offset`, `zIndex`, `strategy`, `leaveDelay` and `maxHeight` props have been removed to simplify the API
 
 #### Old
 

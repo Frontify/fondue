@@ -38,23 +38,17 @@ test.describe('Accordion Component', () => {
         const component = await mount(
             <Accordion.Root>
                 <Accordion.Item value="1">
-                    <Accordion.Header>
-                        <Accordion.Trigger>1</Accordion.Trigger>
-                    </Accordion.Header>
+                    <Accordion.Header>1</Accordion.Header>
                     <Accordion.Content>1</Accordion.Content>
                 </Accordion.Item>
 
                 <Accordion.Item value="2">
-                    <Accordion.Header>
-                        <Accordion.Trigger>2</Accordion.Trigger>
-                    </Accordion.Header>
+                    <Accordion.Header>2</Accordion.Header>
                     <Accordion.Content>2</Accordion.Content>
                 </Accordion.Item>
 
                 <Accordion.Item value="3">
-                    <Accordion.Header>
-                        <Accordion.Trigger>3</Accordion.Trigger>
-                    </Accordion.Header>
+                    <Accordion.Header>3</Accordion.Header>
                     <Accordion.Content>3</Accordion.Content>
                 </Accordion.Item>
             </Accordion.Root>,
@@ -73,23 +67,17 @@ test.describe('Accordion Component', () => {
         const component = await mount(
             <Accordion.Root>
                 <Accordion.Item value="1">
-                    <Accordion.Header>
-                        <Accordion.Trigger>1</Accordion.Trigger>
-                    </Accordion.Header>
+                    <Accordion.Header>1</Accordion.Header>
                     <Accordion.Content>1</Accordion.Content>
                 </Accordion.Item>
 
                 <Accordion.Item value="2">
-                    <Accordion.Header>
-                        <Accordion.Trigger>2</Accordion.Trigger>
-                    </Accordion.Header>
+                    <Accordion.Header>2</Accordion.Header>
                     <Accordion.Content>2</Accordion.Content>
                 </Accordion.Item>
 
                 <Accordion.Item value="3">
-                    <Accordion.Header onClick={onClick}>
-                        <Accordion.Trigger>3</Accordion.Trigger>
-                    </Accordion.Header>
+                    <Accordion.Header onClick={onClick}>3</Accordion.Header>
                     <Accordion.Content>3</Accordion.Content>
                 </Accordion.Item>
             </Accordion.Root>,
@@ -104,23 +92,17 @@ test.describe('Accordion Component', () => {
         const component = await mount(
             <Accordion.Root>
                 <Accordion.Item value="1">
-                    <Accordion.Header>
-                        <Accordion.Trigger>1</Accordion.Trigger>
-                    </Accordion.Header>
+                    <Accordion.Header>1</Accordion.Header>
                     <Accordion.Content>1</Accordion.Content>
                 </Accordion.Item>
 
                 <Accordion.Item value="2">
-                    <Accordion.Header>
-                        <Accordion.Trigger>2</Accordion.Trigger>
-                    </Accordion.Header>
+                    <Accordion.Header>2</Accordion.Header>
                     <Accordion.Content>2</Accordion.Content>
                 </Accordion.Item>
 
                 <Accordion.Item value="3">
-                    <Accordion.Header>
-                        <Accordion.Trigger>3</Accordion.Trigger>
-                    </Accordion.Header>
+                    <Accordion.Header>3</Accordion.Header>
                     <Accordion.Content>3</Accordion.Content>
                 </Accordion.Item>
             </Accordion.Root>,
@@ -134,23 +116,17 @@ test.describe('Accordion Component', () => {
         const component = await mount(
             <Accordion.Root value={['2', '3']}>
                 <Accordion.Item value="1">
-                    <Accordion.Header>
-                        <Accordion.Trigger>1</Accordion.Trigger>
-                    </Accordion.Header>
+                    <Accordion.Header>1</Accordion.Header>
                     <Accordion.Content>1</Accordion.Content>
                 </Accordion.Item>
 
                 <Accordion.Item value="2">
-                    <Accordion.Header>
-                        <Accordion.Trigger>2</Accordion.Trigger>
-                    </Accordion.Header>
+                    <Accordion.Header>2</Accordion.Header>
                     <Accordion.Content>2</Accordion.Content>
                 </Accordion.Item>
 
                 <Accordion.Item value="3">
-                    <Accordion.Header>
-                        <Accordion.Trigger>3</Accordion.Trigger>
-                    </Accordion.Header>
+                    <Accordion.Header>3</Accordion.Header>
                     <Accordion.Content>3</Accordion.Content>
                 </Accordion.Item>
             </Accordion.Root>,
@@ -167,9 +143,7 @@ test.describe('Accordion Component', () => {
         const component = await mount(
             <Accordion.Root value={['1']}>
                 <Accordion.Item value="1">
-                    <Accordion.Header>
-                        <Accordion.Trigger>1</Accordion.Trigger>
-                    </Accordion.Header>
+                    <Accordion.Header>1</Accordion.Header>
                     <Accordion.Content divider>1</Accordion.Content>
                 </Accordion.Item>
             </Accordion.Root>,
@@ -185,9 +159,7 @@ test.describe('Accordion Component', () => {
         const component = await mount(
             <Accordion.Root value={['1']}>
                 <Accordion.Item value="1">
-                    <Accordion.Header>
-                        <Accordion.Trigger>1</Accordion.Trigger>
-                    </Accordion.Header>
+                    <Accordion.Header>1</Accordion.Header>
                     <Accordion.Content divider={false}>1</Accordion.Content>
                 </Accordion.Item>
             </Accordion.Root>,
@@ -203,9 +175,7 @@ test.describe('Accordion Component', () => {
         const component = await mount(
             <Accordion.Root value={['1']} border>
                 <Accordion.Item value="1">
-                    <Accordion.Header>
-                        <Accordion.Trigger>1</Accordion.Trigger>
-                    </Accordion.Header>
+                    <Accordion.Header>1</Accordion.Header>
                     <Accordion.Content>1</Accordion.Content>
                 </Accordion.Item>
             </Accordion.Root>,
@@ -219,9 +189,7 @@ test.describe('Accordion Component', () => {
         const component = await mount(
             <Accordion.Root value={['1']} border>
                 <Accordion.Item value="1">
-                    <Accordion.Header>
-                        <Accordion.Trigger>1</Accordion.Trigger>
-                    </Accordion.Header>
+                    <Accordion.Header>1</Accordion.Header>
                     <Accordion.Content>1</Accordion.Content>
                 </Accordion.Item>
             </Accordion.Root>,
@@ -239,27 +207,21 @@ test.describe('Accordion Component', () => {
         const component = await mount(
             <Accordion.Root>
                 <Accordion.Item value="1">
-                    <Accordion.Header>
-                        <Accordion.Trigger>1</Accordion.Trigger>
-                    </Accordion.Header>
+                    <Accordion.Header>1</Accordion.Header>
                     <Accordion.Content data-test-id="content-item-1">
                         <TextInput data-test-id={TEXT_INPUT_1} />
                     </Accordion.Content>
                 </Accordion.Item>
 
                 <Accordion.Item value="2">
-                    <Accordion.Header>
-                        <Accordion.Trigger>2</Accordion.Trigger>
-                    </Accordion.Header>
+                    <Accordion.Header>2</Accordion.Header>
                     <Accordion.Content data-test-id="content-item-2">
                         <TextInput data-test-id={TEXT_INPUT_2} />
                     </Accordion.Content>
                 </Accordion.Item>
 
                 <Accordion.Item value="3">
-                    <Accordion.Header>
-                        <Accordion.Trigger>3</Accordion.Trigger>
-                    </Accordion.Header>
+                    <Accordion.Header>3</Accordion.Header>
                     <Accordion.Content data-test-id="content-item-3">
                         <TextInput data-test-id={TEXT_INPUT_3} />
                     </Accordion.Content>
@@ -269,6 +231,13 @@ test.describe('Accordion Component', () => {
 
         await page.focus('body');
         await page.keyboard.press('Tab');
+        const firstTrigger = page.locator(ACCORDION_ITEM_TRIGGER_ID);
+        console.log(
+            await firstTrigger.evaluateAll((elements) => {
+                return elements.map((element) => element.getAttribute('data-test-id'));
+            }),
+        );
+
         await expect(component.locator(ACCORDION_ITEM_TRIGGER_ID).first()).toBeFocused();
         await expect(component.getByTestId(TEXT_INPUT_1)).not.toBeVisible();
         await component.locator(ACCORDION_ITEM_ID).first().press('Enter');
@@ -293,23 +262,17 @@ test.describe('Accordion Component', () => {
             <div>
                 <Accordion.Root data-test-id="accordion-custom-test-id">
                     <Accordion.Item value="1" data-test-id="accordion-item-custom-test-id-1">
-                        <Accordion.Header>
-                            <Accordion.Trigger>1</Accordion.Trigger>
-                        </Accordion.Header>
+                        <Accordion.Header>1</Accordion.Header>
                         <Accordion.Content data-test-id="content-item-1">1</Accordion.Content>
                     </Accordion.Item>
 
                     <Accordion.Item value="2" data-test-id="accordion-item-custom-test-id-2">
-                        <Accordion.Header>
-                            <Accordion.Trigger>2</Accordion.Trigger>
-                        </Accordion.Header>
+                        <Accordion.Header>2</Accordion.Header>
                         <Accordion.Content data-test-id="content-item-2">2</Accordion.Content>
                     </Accordion.Item>
 
                     <Accordion.Item value="3" data-test-id="accordion-item-custom-test-id-3">
-                        <Accordion.Header>
-                            <Accordion.Trigger>3</Accordion.Trigger>
-                        </Accordion.Header>
+                        <Accordion.Header>3</Accordion.Header>
                         <Accordion.Content data-test-id="content-item-3">3</Accordion.Content>
                     </Accordion.Item>
                 </Accordion.Root>

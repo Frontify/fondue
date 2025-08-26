@@ -1,20 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconIcon } from '@frontify/fondue-icons';
 import { action } from '@storybook/addon-actions';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { useState } from 'react';
 
-import { Button, ColorPicker, Dropdown, Flyout } from '#/index';
+import { Button, ColorPicker, Dropdown, Flex, Flyout } from '#/index';
 
-import { IconIcon } from '@frontify/fondue-icons';
-import {
-    Accordion,
-    AccordionContent,
-    AccordionHeader,
-    AccordionItem,
-    AccordionRoot,
-    AccordionTrigger,
-} from './Accordion';
+import { Accordion, AccordionContent, AccordionHeader, AccordionItem, AccordionRoot } from './Accordion';
 
 type Story = StoryObj<typeof AccordionRoot>;
 const meta: Meta<typeof AccordionRoot> = {
@@ -23,7 +16,6 @@ const meta: Meta<typeof AccordionRoot> = {
     subcomponents: {
         'Accordion.Item': AccordionItem,
         'Accordion.Header': AccordionHeader,
-        'Accordion.Trigger': AccordionTrigger,
         'Accordion.Content': AccordionContent,
     },
     parameters: {
@@ -101,7 +93,10 @@ export const Default: Story = {
             <Accordion.Root {...args}>
                 <Accordion.Item value="accordion-test-0">
                     <Accordion.Header>
-                        <Accordion.Trigger>Item with icon</Accordion.Trigger>
+                        <Flex gap={2} align="center">
+                            <IconIcon />
+                            Item with icon
+                        </Flex>
                     </Accordion.Header>
                     <Accordion.Content divider>
                         Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt
@@ -113,38 +108,8 @@ export const Default: Story = {
 
                 <Accordion.Item value="accordion-test-1">
                     <Accordion.Header>
-                        <Accordion.Trigger>With icon on the left</Accordion.Trigger>
-                        <Accordion.Slot name="left">
-                            <IconIcon />
-                        </Accordion.Slot>
-                    </Accordion.Header>
-                    <Accordion.Content>
-                        Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt
-                        ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo
-                        dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor
-                        sit amet.
-                    </Accordion.Content>
-                </Accordion.Item>
-
-                <Accordion.Item value="accordion-test-1-right">
-                    <Accordion.Header>
-                        <Accordion.Trigger>With icon on the right</Accordion.Trigger>
-                        <Accordion.Slot name="right">
-                            <IconIcon />
-                        </Accordion.Slot>
-                    </Accordion.Header>
-                    <Accordion.Content>
-                        Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt
-                        ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo
-                        dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor
-                        sit amet.
-                    </Accordion.Content>
-                </Accordion.Item>
-
-                <Accordion.Item value="accordion-test-1-right-button">
-                    <Accordion.Header>
-                        <Accordion.Trigger>With button on the right</Accordion.Trigger>
-                        <Accordion.Slot name="right">
+                        With action slot
+                        <Accordion.Slot name="action">
                             <Button size="small" emphasis="default">
                                 Click Me
                             </Button>
@@ -159,9 +124,7 @@ export const Default: Story = {
                 </Accordion.Item>
 
                 <Accordion.Item value="accordion-test-2">
-                    <Accordion.Header>
-                        <Accordion.Trigger>Item with dropdown child</Accordion.Trigger>
-                    </Accordion.Header>
+                    <Accordion.Header>Item with dropdown child</Accordion.Header>
                     <Accordion.Content>
                         <Dropdown.Root>
                             <Dropdown.Trigger>
@@ -177,9 +140,7 @@ export const Default: Story = {
                 </Accordion.Item>
 
                 <Accordion.Item value="accordion-test-3">
-                    <Accordion.Header>
-                        <Accordion.Trigger>Item with flyout child</Accordion.Trigger>
-                    </Accordion.Header>
+                    <Accordion.Header>Item with flyout child</Accordion.Header>
                     <Accordion.Content>
                         <Flyout.Root>
                             <Flyout.Trigger>
@@ -193,9 +154,7 @@ export const Default: Story = {
                 </Accordion.Item>
 
                 <Accordion.Item value="accordion-test-4">
-                    <Accordion.Header>
-                        <Accordion.Trigger>Item with color picker flyout</Accordion.Trigger>
-                    </Accordion.Header>
+                    <Accordion.Header>Item with color picker flyout</Accordion.Header>
                     <Accordion.Content>
                         <ColorFlyOut />
                     </Accordion.Content>
@@ -203,24 +162,20 @@ export const Default: Story = {
 
                 <Accordion.Item value="accordion-test-5">
                     <Accordion.Header onClick={() => action('click')}>
-                        <Accordion.Trigger>Empty item with an onClick callback</Accordion.Trigger>
+                        Empty item with an onClick callback
                     </Accordion.Header>
                     <Accordion.Content />
                 </Accordion.Item>
 
                 <Accordion.Item value="accordion-test-6">
-                    <Accordion.Header>
-                        <Accordion.Trigger>Item with resizable content</Accordion.Trigger>
-                    </Accordion.Header>
+                    <Accordion.Header>Item with resizable content</Accordion.Header>
                     <Accordion.Content>
                         <ResizableContent />
                     </Accordion.Content>
                 </Accordion.Item>
 
                 <Accordion.Item value="accordion-test-7">
-                    <Accordion.Header>
-                        <Accordion.Trigger>Item without padding</Accordion.Trigger>
-                    </Accordion.Header>
+                    <Accordion.Header>Item without padding</Accordion.Header>
                     <Accordion.Content padding="none">
                         Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt
                         ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo
@@ -242,7 +197,10 @@ export const WithSmallPadding: Story = {
             <Accordion.Root {...args}>
                 <Accordion.Item value="accordion-test-0">
                     <Accordion.Header>
-                        <Accordion.Trigger>Item with icon</Accordion.Trigger>
+                        <Flex gap={2} align="center">
+                            <IconIcon />
+                            Item with icon
+                        </Flex>
                     </Accordion.Header>
                     <Accordion.Content divider>
                         Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt
@@ -254,38 +212,8 @@ export const WithSmallPadding: Story = {
 
                 <Accordion.Item value="accordion-test-1">
                     <Accordion.Header>
-                        <Accordion.Trigger>With icon on the left</Accordion.Trigger>
-                        <Accordion.Slot name="left">
-                            <IconIcon />
-                        </Accordion.Slot>
-                    </Accordion.Header>
-                    <Accordion.Content>
-                        Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt
-                        ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo
-                        dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor
-                        sit amet.
-                    </Accordion.Content>
-                </Accordion.Item>
-
-                <Accordion.Item value="accordion-test-1-right">
-                    <Accordion.Header>
-                        <Accordion.Trigger>With icon on the right</Accordion.Trigger>
-                        <Accordion.Slot name="right">
-                            <IconIcon />
-                        </Accordion.Slot>
-                    </Accordion.Header>
-                    <Accordion.Content>
-                        Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt
-                        ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo
-                        dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor
-                        sit amet.
-                    </Accordion.Content>
-                </Accordion.Item>
-
-                <Accordion.Item value="accordion-test-1-right-button">
-                    <Accordion.Header>
-                        <Accordion.Trigger>With button on the right</Accordion.Trigger>
-                        <Accordion.Slot name="right">
+                        With action slot
+                        <Accordion.Slot name="action">
                             <Button size="small" emphasis="default">
                                 Click Me
                             </Button>
@@ -300,9 +228,7 @@ export const WithSmallPadding: Story = {
                 </Accordion.Item>
 
                 <Accordion.Item value="accordion-test-2">
-                    <Accordion.Header>
-                        <Accordion.Trigger>Item with dropdown child</Accordion.Trigger>
-                    </Accordion.Header>
+                    <Accordion.Header>Item with dropdown child</Accordion.Header>
                     <Accordion.Content>
                         <Dropdown.Root>
                             <Dropdown.Trigger>
@@ -318,9 +244,7 @@ export const WithSmallPadding: Story = {
                 </Accordion.Item>
 
                 <Accordion.Item value="accordion-test-3">
-                    <Accordion.Header>
-                        <Accordion.Trigger>Item with flyout child</Accordion.Trigger>
-                    </Accordion.Header>
+                    <Accordion.Header>Item with flyout child</Accordion.Header>
                     <Accordion.Content>
                         <Flyout.Root>
                             <Flyout.Trigger>
@@ -334,9 +258,7 @@ export const WithSmallPadding: Story = {
                 </Accordion.Item>
 
                 <Accordion.Item value="accordion-test-4">
-                    <Accordion.Header>
-                        <Accordion.Trigger>Item with color picker flyout</Accordion.Trigger>
-                    </Accordion.Header>
+                    <Accordion.Header>Item with color picker flyout</Accordion.Header>
                     <Accordion.Content>
                         <ColorFlyOut />
                     </Accordion.Content>
@@ -344,24 +266,20 @@ export const WithSmallPadding: Story = {
 
                 <Accordion.Item value="accordion-test-5">
                     <Accordion.Header onClick={() => action('click')}>
-                        <Accordion.Trigger>Empty item with an onClick callback</Accordion.Trigger>
+                        Empty item with an onClick callback
                     </Accordion.Header>
                     <Accordion.Content />
                 </Accordion.Item>
 
                 <Accordion.Item value="accordion-test-6">
-                    <Accordion.Header>
-                        <Accordion.Trigger>Item with resizable content</Accordion.Trigger>
-                    </Accordion.Header>
+                    <Accordion.Header>Item with resizable content</Accordion.Header>
                     <Accordion.Content>
                         <ResizableContent />
                     </Accordion.Content>
                 </Accordion.Item>
 
                 <Accordion.Item value="accordion-test-7">
-                    <Accordion.Header>
-                        <Accordion.Trigger>Item without padding</Accordion.Trigger>
-                    </Accordion.Header>
+                    <Accordion.Header>Item without padding</Accordion.Header>
                     <Accordion.Content padding="none">
                         Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt
                         ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo

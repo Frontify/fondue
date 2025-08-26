@@ -5,27 +5,23 @@
     border-top: var(--line-width) solid var(--line-color);
 
     &[data-accordion-padding="none"] {
-        --accordion-header-vertical-padding: 0px;
-        --accordion-header-horizontal-padding: 0px;
-        --accordion-content-padding: 0px;
+        --accordion-vertical-padding: 0px;
+        --accordion-horizontal-padding: 0px;
     }
 
     &[data-accordion-padding="small"] {
-        --accordion-header-vertical-padding: var(--space-s);
-        --accordion-header-horizontal-padding: var(--space-m);
-        --accordion-content-padding: 0 var(--space-m) var(--space-s);;
+        --accordion-vertical-padding: var(--space-s);
+        --accordion-horizontal-padding: var(--space-m);
     }
 
     &[data-accordion-padding="medium"] {
-        --accordion-header-vertical-padding: var(--space-m);
-        --accordion-header-horizontal-padding: var(--space-l);
-        --accordion-content-padding: 0 var(--space-l) var(--space-m);
+        --accordion-vertical-padding: var(--space-m);
+        --accordion-horizontal-padding: var(--space-l);
     }
 
     &[data-accordion-padding="large"] {
-        --accordion-header-vertical-padding: var(--space-l);
-        --accordion-header-horizontal-padding: var(--space-xl);
-        --accordion-content-padding: 0 var(--space-xl) var(--space-l);
+        --accordion-vertical-padding: var(--space-l);
+        --accordion-horizontal-padding: var(--space-xl);
     }
 }
 
@@ -46,46 +42,40 @@
 .accordionHeader {
     position: relative;
     min-width: fit-content;
-    padding: var(--accordion-header-vertical-padding) var(--accordion-header-horizontal-padding);
-
+    display: grid;
+    grid-template-columns: 1fr min-content 60px;
+    gap: 1rem;
 
     & > .accordionSlot {
-        position: absolute;
         display: flex;
         align-items: center;
         justify-content: center;
+        grid-row: 1;
 
-
-        &[data-name="left"] {
-            left: var(--accordion-header-horizontal-padding);
-            top: var(--accordion-header-vertical-padding);
-            bottom: var(--accordion-header-vertical-padding);
-        }
-
-        &[data-name="right"] {
-            right: calc(var(--accordion-header-horizontal-padding, 1px) + 2rem);
-            top: var(--accordion-header-vertical-padding);
-            bottom: var(--accordion-header-vertical-padding);
+        &[data-name="action"] {
+            grid-column: 2;
         }
     }
 }
 
 .accordionTrigger {
-    align-items: center;
     box-sizing: border-box;
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: subgrid;
+    grid-column: 1 / 4;
+    grid-row: 1;
     outline: 0;
     text-align: left;
     width: 100%;
+    grid-column: 1 / 4;
+    grid-row: 1;
+    grid-template-columns: subgrid;
+    align-items: center;
+    padding: var(--accordion-vertical-padding) var(--accordion-horizontal-padding);
 
     &[data-state="open"],
     &:hover {
         color: var(--text-color);
-
-        & ~ .accordionSlot {
-            color: var(--text-color);
-        }
     }
 
     &[data-state="open"] {
@@ -94,29 +84,15 @@
         }
     }
 
-    & .accordionSlot {
-        visibility: hidden;
-        min-width: fit-content;
-
-        &[data-name="left"] {
-            margin-right: 0.5rem;
-            order: 1;
-        }
-
-        &[data-name="right"] {
-            margin-left: 1rem;
-            order: 3;
-        }
-    }
-
     & .accordionCaret {
-        order: 4;
+        grid-column: 3;
+        grid-row: 1;
         min-width: 1rem;
     }
 
     & .accordionTriggerContent {
-        order: 2;
-        flex-grow: 1;
+        grid-column: 1;
+        grid-row: 1;
     }
 
 }
@@ -127,12 +103,12 @@
     overflow: hidden;
 
     & > div {
-        padding: var(--accordion-content-padding);
+        padding: 0 var(--accordion-horizontal-padding) var(--accordion-vertical-padding);
     }
 
     &[data-item-divider="true"] > div {
         border-top: var(--line-width) solid var(--line-color);
-        padding-top: var(--space-l);
+        padding-top: var(--accordion-vertical-padding);
     }
 }
 
