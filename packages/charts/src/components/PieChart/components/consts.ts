@@ -20,6 +20,6 @@ export const LABEL_VALUE_STYLE = {
 
 export const LABEL_PERCENTAGE_STYLE = {
     ...LABEL_VALUE_STYLE,
-    fill: 'var(--fc-font-color-x-weak)',
+    fill: 'var(--fc-font-color-weak)',
 };
 export const LABEL_PADDING_X = 10;
