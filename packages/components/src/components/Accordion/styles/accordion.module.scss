@@ -99,6 +99,26 @@
     text-align: left;
     overflow: hidden;
 
+    &[data-item-padding="none"] {
+        --accordion-vertical-padding: 0px;
+        --accordion-horizontal-padding: 0px;
+    }
+
+    &[data-item-padding="small"] {
+        --accordion-vertical-padding: var(--space-s);
+        --accordion-horizontal-padding: var(--space-m);
+    }
+
+    &[data-item-padding="medium"] {
+        --accordion-vertical-padding: var(--space-m);
+        --accordion-horizontal-padding: var(--space-l);
+    }
+
+    &[data-item-padding="large"] {
+        --accordion-vertical-padding: var(--space-l);
+        --accordion-horizontal-padding: var(--space-xl);
+    }
+
     & > div {
         padding: 0 var(--accordion-horizontal-padding) var(--accordion-vertical-padding);
     }
