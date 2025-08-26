@@ -151,7 +151,7 @@ test.describe('Accordion Component', () => {
 
         await expect(component.locator(ACCORDION_ITEM_CONTENT_ID)).toHaveCSS(
             'border-top',
-            '1px solid rgba(135, 135, 129, 0.5)',
+            '1px solid rgba(135, 135, 129, 0.2)',
         );
     });
 
@@ -167,7 +167,7 @@ test.describe('Accordion Component', () => {
 
         await expect(component.locator(ACCORDION_ITEM_CONTENT_ID)).not.toHaveCSS(
             'border-top',
-            '1px solid rgba(135, 135, 129, 0.5)',
+            '1px solid rgba(135, 135, 129, 0.2)',
         );
     });
 

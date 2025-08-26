@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 .root[data-border="true"] {
-    border-bottom: var(--line-width) solid var(--line-color);
-    border-top: var(--line-width) solid var(--line-color);
+    border-bottom: var(--border-width-default) solid var(--color-line-subtle);
+    border-top: var(--border-width-default) solid var(--color-line-subtle);
 
     &[data-accordion-padding="none"] {
         --accordion-vertical-padding: 0px;
@@ -10,18 +10,18 @@
     }
 
     &[data-accordion-padding="small"] {
-        --accordion-vertical-padding: var(--space-s);
-        --accordion-horizontal-padding: var(--space-m);
+        --accordion-vertical-padding: var(--spacing-small);
+        --accordion-horizontal-padding: var(--spacing-medium);
     }
 
     &[data-accordion-padding="medium"] {
-        --accordion-vertical-padding: var(--space-m);
-        --accordion-horizontal-padding: var(--space-l);
+        --accordion-vertical-padding: var(--spacing-medium);
+        --accordion-horizontal-padding: var(--spacing-large);
     }
 
     &[data-accordion-padding="large"] {
-        --accordion-vertical-padding: var(--space-l);
-        --accordion-horizontal-padding: var(--space-xl);
+        --accordion-vertical-padding: var(--spacing-large);
+        --accordion-horizontal-padding: var(--spacing-x-large);
     }
 }
 
@@ -106,18 +106,18 @@
     }
 
     &[data-item-padding="small"] {
-        --accordion-vertical-padding: var(--space-s);
-        --accordion-horizontal-padding: var(--space-m);
+        --accordion-vertical-padding: var(--spacing-small);
+        --accordion-horizontal-padding: var(--spacing-medium);
     }
 
     &[data-item-padding="medium"] {
-        --accordion-vertical-padding: var(--space-m);
-        --accordion-horizontal-padding: var(--space-l);
+        --accordion-vertical-padding: var(--spacing-medium);
+        --accordion-horizontal-padding: var(--spacing-large);
     }
 
     &[data-item-padding="large"] {
-        --accordion-vertical-padding: var(--space-l);
-        --accordion-horizontal-padding: var(--space-xl);
+        --accordion-vertical-padding: var(--spacing-large);
+        --accordion-horizontal-padding: var(--spacing-x-large);
     }
 
     & > div {
@@ -125,7 +125,7 @@
     }
 
     &[data-item-divider="true"] > div {
-        border-top: var(--line-width) solid var(--line-color);
+        border-top: var(--border-width-default) solid var(--color-line-subtle);
         padding-top: var(--accordion-vertical-padding);
     }
 }
