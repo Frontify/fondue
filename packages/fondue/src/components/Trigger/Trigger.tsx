@@ -167,4 +167,8 @@ export const Trigger = ({
         </div>
     );
 };
+
+/**
+ * @deprecated Please use a custom component instead.
+ */
 Trigger.displayName = 'FondueTrigger';
