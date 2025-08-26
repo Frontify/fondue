@@ -23,9 +23,9 @@ export const ColorInputTitle = ({ currentColor, format }: Props): ReactElement =
     return (
         <div className="tw-text-black-100">
             {name || colorValue}
-            {format === ColorFormat.Hex && alpha && alpha < 1 && (
+            {format === ColorFormat.Hex && alpha && alpha < 1 ? (
                 <span className="tw-text-black-60">{` ${Math.trunc(parsedColor.getAlpha() * 100)} %`}</span>
-            )}
+            ) : null}
         </div>
     );
 };

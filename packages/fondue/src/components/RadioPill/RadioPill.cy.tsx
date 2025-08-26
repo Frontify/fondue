@@ -21,7 +21,7 @@ describe('RadioPill Component', () => {
     });
 
     it('should render active radio pill without icon', () => {
-        cy.mount(<RadioPill label={RADIOPILL_LABEL} active={true} />);
+        cy.mount(<RadioPill label={RADIOPILL_LABEL} active />);
 
         cy.get(RADIOPILL_TEST_ID).contains(RADIOPILL_LABEL);
         cy.get(RADIOPILL_TEST_ID).should('have.class', 'tw-bg-black-100');
@@ -30,7 +30,7 @@ describe('RadioPill Component', () => {
     });
 
     it('should render active radio pill with icon', () => {
-        cy.mount(<RadioPill label={RADIOPILL_LABEL} active={true} icon={RADIOPILL_ICON} />);
+        cy.mount(<RadioPill label={RADIOPILL_LABEL} active icon={RADIOPILL_ICON} />);
 
         cy.get(RADIOPILL_TEST_ID).contains(RADIOPILL_LABEL);
         cy.get(RADIOPILL_TEST_ID).get(RADIOPILL_ICON_CODE).should('exist');

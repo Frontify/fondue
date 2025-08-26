@@ -1,12 +1,13 @@
 {
     "compilerOptions": {
+        "allowSyntheticDefaultImports": true,
+        "baseUrl": ".",
         "composite": true,
+        "lib": ["ESNext"],
         "module": "ESNext",
         "moduleResolution": "Node",
-        "allowSyntheticDefaultImports": true,
         "resolveJsonModule": true,
-        "baseUrl": ".",
-        "lib": ["ESNext"]
+        "target": "ESNext"
     },
-    "include": [".eslintrc.cjs", "config.ts", "package.json", "src", "legacyTokens", "tools", "tailwind.config.ts"]
+    "include": ["vite.config.ts", "eslint.config.mjs"]
 }

@@ -29,7 +29,7 @@ export const Axes = ({ linearScaleTicks, valueFormatter, locale, series }: AxesP
     return (
         <>
             <VisxAxis
-                hideAxisLine={true}
+                hideAxisLine
                 numTicks={5}
                 orientation={'left'}
                 tickValues={linearScaleTicks}

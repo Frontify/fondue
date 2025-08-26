@@ -115,7 +115,7 @@ describe('RichTextEditor Component', () => {
                 .click()
                 .wait(ON_SAVE_DELAY_IN_MS)
                 .then(() => {
-                    expect(onTextChange).to.be.called;
+                    expect(onTextChange.called).to.equal(true);
                 });
         });
 
@@ -131,7 +131,7 @@ describe('RichTextEditor Component', () => {
                 .click()
                 .wait(ON_SAVE_DELAY_IN_MS)
                 .then(() => {
-                    expect(onTextChange).to.be.called;
+                    expect(onTextChange.called).to.equal(true);
                 });
         });
 

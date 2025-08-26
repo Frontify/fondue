@@ -21,6 +21,7 @@ export const DragHandle = forwardRef<HTMLButtonElement, DragHandleProps>(
 
         return (
             <button
+                type="button"
                 aria-label="Draggable item"
                 {...props}
                 ref={ref}

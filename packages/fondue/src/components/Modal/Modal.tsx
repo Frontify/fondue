@@ -4,7 +4,7 @@ import { useDialog } from '@react-aria/dialog';
 import { FocusScope } from '@react-aria/focus';
 import { OverlayContainer, useModal, useOverlay, usePreventScroll } from '@react-aria/overlays';
 import { AnimatePresence, motion } from 'framer-motion';
-import { memo, useRef, type ReactElement } from 'react';
+import { memo, useMemo, useRef, type ReactElement } from 'react';
 
 import { merge } from '@utilities/merge';
 
@@ -12,8 +12,8 @@ import { ModalBody } from './ModalBody';
 import { ModalFooter } from './ModalFooter';
 import { ModalHeader } from './ModalHeader';
 import { ModalVisual } from './ModalVisual';
-import { MODAL_PADDING, ModalLayout } from './context/ModalLayout';
-import { ModalTitle } from './context/ModalTitle';
+import { MODAL_PADDING, ModalLayoutContext } from './context/ModalLayout';
+import { ModalTitleContext } from './context/ModalTitle';
 import { ModalWidth, type ModalProps } from './types';
 
 const UNDERLAY_VARIANTS = {
@@ -75,12 +75,12 @@ const ModalComponent = memo((props: ModalProps): ReactElement => {
                 zIndex,
             }}
             onPointerDown={onPointerDown}
-            data-is-underlay={true}
+            data-is-underlay
             className={
                 'tw-fixed tw-top-0 tw-left-0 tw-bottom-0 tw-right-0 tw-flex tw-justify-center tw-items-center tw-p-4'
             }
         >
-            {/* eslint-disable-next-line jsx-a11y/no-autofocus */}
+            {/* eslint-disable-next-line jsx-a11y-x/no-autofocus */}
             <FocusScope contain restoreFocus autoFocus>
                 <motion.div
                     variants={MODAL_VARIANTS}
@@ -94,15 +94,17 @@ const ModalComponent = memo((props: ModalProps): ReactElement => {
                         data-test-id="modal-container"
                         className="tw-flex-initial tw-min-h-0 tw-w-full tw-flex tw-bg-white tw-overflow-hidden tw-border tw-border-solid tw-border-line-strong tw-rounded tw-shadow-2xl"
                     >
-                        {visual?.pattern && (
+                        {visual?.pattern ? (
                             <div className="tw-w-[260px] tw-relative tw-flex-shrink-0 tw-overflow-hidden">
                                 <ModalVisual {...visual} />
                             </div>
-                        )}
+                        ) : null}
                         <div className="tw-flex tw-flex-col tw-flex-1 tw-space-y-6 tw-overflow-hidden">
-                            <ModalLayout.Provider value={{ compact, padding }}>
-                                <ModalTitle.Provider value={titleProps}>{children}</ModalTitle.Provider>
-                            </ModalLayout.Provider>
+                            <ModalLayoutContext.Provider
+                                value={useMemo(() => ({ compact, padding }), [compact, padding])}
+                            >
+                                <ModalTitleContext.Provider value={titleProps}>{children}</ModalTitleContext.Provider>
+                            </ModalLayoutContext.Provider>
                         </div>
                     </div>
                 </motion.div>

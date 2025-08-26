@@ -73,6 +73,7 @@ export const CheckboxComponent = (
         onChange,
         defaultValue,
         'data-test-id': dataTestId = 'fondue-checkbox',
+        readOnly,
         ...props
     }: CheckboxProps,
     ref: ForwardedRef<HTMLButtonElement>,
@@ -83,8 +84,15 @@ export const CheckboxComponent = (
             checked={value}
             defaultChecked={defaultValue}
             className={cn(checkboxStyles(props), className)}
-            onClick={onChange}
+            onClick={(event) => {
+                if (readOnly) {
+                    event.preventDefault();
+                    return false;
+                }
+                onChange?.(event);
+            }}
             data-test-id={dataTestId}
+            aria-readonly={readOnly}
             {...props}
         >
             <CheckboxPrimitive.Indicator className={checkboxIndicatorStyles}>

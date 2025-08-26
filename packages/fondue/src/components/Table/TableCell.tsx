@@ -63,7 +63,6 @@ export const TableCell = ({
 
         return (
             <td
-                role="cell"
                 ref={ref}
                 className={merge([
                     'tw-pl-8 tw-py-4 tw-pr-4 tw-relative after:tw-absolute after:tw-left-0 after:tw-top-[-1px] after:tw-bottom-[-1px] after:tw-w-1',
@@ -83,7 +82,6 @@ export const TableCell = ({
 
     return (
         <td
-            role="cell"
             ref={ref}
             className={merge([
                 'tw-p-4 tw-font-normal tw-text-xs focus:tw-outline-none',

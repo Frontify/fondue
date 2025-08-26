@@ -35,7 +35,7 @@ const CollapsibleWrap = ({
 
 describe('CollapsibleWrap', () => {
     it('renders without crashing', () => {
-        cy.mount(<CollapsibleWrap isOpen={true} />);
+        cy.mount(<CollapsibleWrap isOpen />);
         cy.get(CONTENT_ID).should('exist');
     });
 
@@ -51,12 +51,12 @@ describe('CollapsibleWrap', () => {
     });
 
     it('renders with no opacity transition', () => {
-        cy.mount(<CollapsibleWrap isOpen={true} animateOpacity={false} />);
+        cy.mount(<CollapsibleWrap isOpen animateOpacity={false} />);
         cy.get(WRAP_ID).should('have.css', 'opacity', '1');
     });
 
     it('renders with content visible and no animation', () => {
-        cy.mount(<CollapsibleWrap preventInitialAnimation={true} isOpen={true} />);
+        cy.mount(<CollapsibleWrap preventInitialAnimation isOpen />);
         cy.get(CONTENT_ID).should('be.visible');
         cy.get(BUTTON_ID).click();
         cy.get(CONTENT_ID).should('not.exist');

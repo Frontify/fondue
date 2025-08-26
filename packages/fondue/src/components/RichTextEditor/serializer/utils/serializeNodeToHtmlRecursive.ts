@@ -92,7 +92,7 @@ export const serializeNodeToHtmlRecursive = (
                 styles,
             }) ?? children
         );
-    } catch (error) {
+    } catch {
         console.warn(`The htmlMapper for node type: '${node.type}' does not exist.`);
         return children;
     }
