@@ -4,7 +4,7 @@ import legacyFondueTailwindConfig from '@frontify/fondue-tokens/legacy/tailwind'
 import tailwindForm from '@tailwindcss/forms';
 
 export default {
-    presets: [legacyFondueTailwindConfig as unknown as Config],
+    presets: [legacyFondueTailwindConfig],
     content: ['./src/**/*.{js,ts,tsx}'],
     plugins: [
         tailwindForm({
