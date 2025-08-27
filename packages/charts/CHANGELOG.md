@@ -1,5 +1,16 @@
 # @frontify/fondue-charts
 
+## 7.0.0-beta.4
+
+### Patch Changes
+
+- [#2395](https://github.com/Frontify/fondue/pull/2395) [`432b29b`](https://github.com/Frontify/fondue/commit/432b29b1ae4eb874cdd51b9f6b3b562970b04c62) Thanks [@joseazevedo88](https://github.com/joseazevedo88)! - Update charts with new tokens
+
+- [#2394](https://github.com/Frontify/fondue/pull/2394) [`6e7dd18`](https://github.com/Frontify/fondue/commit/6e7dd18ce96b8680409f9099e7dc57e1dea9ae8e) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
+
+- Updated dependencies [[`6e7dd18`](https://github.com/Frontify/fondue/commit/6e7dd18ce96b8680409f9099e7dc57e1dea9ae8e)]:
+    - @frontify/fondue-tokens@5.0.0-beta.4
+
 ## 7.0.0-beta.3
 
 ### Patch Changes

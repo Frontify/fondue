@@ -1,5 +1,21 @@
 # @frontify/fondue-components
 
+## 20.0.0-beta.6
+
+### Major Changes
+
+- [#2375](https://github.com/Frontify/fondue/pull/2375) [`c386194`](https://github.com/Frontify/fondue/commit/c38619436f41dd9f66182748ac6269a6e62d2378) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: adjust components with the new token styles
+
+### Patch Changes
+
+- [#2344](https://github.com/Frontify/fondue/pull/2344) [`2a57092`](https://github.com/Frontify/fondue/commit/2a5709213b22e54917feaee8de4a4092ee672617) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - feat: add basic `RouterProvider` and `Link`
+
+- [#2394](https://github.com/Frontify/fondue/pull/2394) [`6e7dd18`](https://github.com/Frontify/fondue/commit/6e7dd18ce96b8680409f9099e7dc57e1dea9ae8e) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
+
+- Updated dependencies [[`6e7dd18`](https://github.com/Frontify/fondue/commit/6e7dd18ce96b8680409f9099e7dc57e1dea9ae8e)]:
+    - @frontify/fondue-tokens@5.0.0-beta.4
+    - @frontify/fondue-icons@0.18.0-beta.1
+
 ## 20.0.0-beta.5
 
 ### Major Changes
