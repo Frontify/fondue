@@ -3,6 +3,8 @@
 import * as RadioGroupPrimitve from '@radix-ui/react-radio-group';
 import { type ReactNode } from 'react';
 
+import { cn } from '#/utilities/styleUtilities';
+
 import styles from './styles/radiolist.module.scss';
 
 type RadioListRootProps = {
@@ -12,6 +14,7 @@ type RadioListRootProps = {
     disabled?: boolean;
     emphasis?: 'default' | 'highlight';
     onValueChange?: (value: string) => void;
+    orientation?: 'vertical' | 'horizontal';
     required?: boolean;
     value?: string;
 };
@@ -22,16 +25,18 @@ const RadioListRoot = ({
     disabled,
     emphasis = 'default',
     onValueChange,
+    orientation,
     required,
     value,
 }: RadioListRootProps) => {
     return (
         <RadioGroupPrimitve.Root
             asChild={asChild}
-            className={className}
+            className={cn([className, asChild ? undefined : styles.root])}
             data-emphasis={emphasis}
             disabled={disabled}
             onValueChange={onValueChange}
+            orientation={orientation}
             required={required}
             value={value}
         >

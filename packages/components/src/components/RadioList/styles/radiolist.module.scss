@@ -2,10 +2,28 @@
 
 @use '../../../utilities/focusStyle.module.scss';
 
+.root {
+    display: flex;
+    gap: var(--space-xs);
+
+        & button:not(:first-child) {
+            margin-left: var(--space-xs);
+        }
+
+    &[data-orientation="vertical"] {
+        display: grid;
+        grid-template-columns: 1rem auto;
+
+        & button {
+            margin-left:0;
+        }
+    }
+}
+
 .item {
     all: unset;
-    width: 16px;
-    height: 16px;
+    width: 1rem;
+    height: 1rem;
     border-radius: 100%;
     border: 1px solid var(--line-color-x-strong);
     cursor: pointer;
