@@ -1,5 +1,16 @@
 # @frontify/fondue
 
+## 12.12.1
+
+### Patch Changes
+
+- [#2389](https://github.com/Frontify/fondue/pull/2389) [`708cbae`](https://github.com/Frontify/fondue/commit/708cbae190d9e8343d203a809faf76044422bdf4) Thanks [@selimovicz](https://github.com/selimovicz)! - Making Datepicker accessible by keyboard
+
+- [#2396](https://github.com/Frontify/fondue/pull/2396) [`7def15f`](https://github.com/Frontify/fondue/commit/7def15fb79246b04474cd10d0d03e13a63585366) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: adress issues with typing and color tokens in v12.12.0
+
+- Updated dependencies [[`7def15f`](https://github.com/Frontify/fondue/commit/7def15fb79246b04474cd10d0d03e13a63585366)]:
+    - @frontify/fondue-charts@6.0.3
+
 ## 12.12.0
 
 ### Minor Changes

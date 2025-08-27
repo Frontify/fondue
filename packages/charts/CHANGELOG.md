@@ -1,5 +1,11 @@
 # @frontify/fondue-charts
 
+## 6.0.3
+
+### Patch Changes
+
+- [#2396](https://github.com/Frontify/fondue/pull/2396) [`7def15f`](https://github.com/Frontify/fondue/commit/7def15fb79246b04474cd10d0d03e13a63585366) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: adress issues with typing and color tokens in v12.12.0
+
 ## 6.0.2
 
 ### Patch Changes
