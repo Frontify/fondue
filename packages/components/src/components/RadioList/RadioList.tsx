@@ -11,6 +11,7 @@ type RadioListRootProps = {
     className?: string;
     disabled?: boolean;
     emphasis?: 'default' | 'highlight';
+    onValueChange?: (value: string) => void;
     required?: boolean;
     value?: string;
 };
@@ -20,6 +21,7 @@ const RadioListRoot = ({
     className,
     disabled,
     emphasis = 'default',
+    onValueChange,
     required,
     value,
 }: RadioListRootProps) => {
@@ -29,6 +31,7 @@ const RadioListRoot = ({
             className={className}
             data-emphasis={emphasis}
             disabled={disabled}
+            onValueChange={onValueChange}
             required={required}
             value={value}
         >
@@ -39,12 +42,13 @@ const RadioListRoot = ({
 RadioListRoot.displayName = 'RadioList.Root';
 
 type RadioListRadioButtonProps = {
+    disabled?: boolean;
     id: string;
     value: string;
 };
-const RadioListRadioButton = ({ value, id }: RadioListRadioButtonProps) => {
+const RadioListRadioButton = ({ disabled, value, id }: RadioListRadioButtonProps) => {
     return (
-        <RadioGroupPrimitve.Item id={id} className={`tw-peer ${styles.item}`} value={value}>
+        <RadioGroupPrimitve.Item id={id} className={`tw-peer ${styles.item}`} value={value} disabled={disabled}>
             <RadioGroupPrimitve.Indicator className={styles.indicator} />
         </RadioGroupPrimitve.Item>
     );

@@ -20,7 +20,6 @@ const meta: Meta<typeof RadioList.Root> = {
     },
     args: {
         disabled: false,
-        readOnly: false,
         required: false,
         value: undefined,
     },
