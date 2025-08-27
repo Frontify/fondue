@@ -5,7 +5,6 @@ export * from './ActionMenu';
 export * from './AssetInput';
 export * from './Badge';
 export * from './Breadcrumbs';
-export * from './Card';
 export * from './Checkbox';
 export * from './Checklist';
 export * from './CollapsibleWrap';

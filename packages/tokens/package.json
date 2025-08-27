@@ -57,7 +57,7 @@
         "react": "^18.3.1"
     },
     "devDependencies": {
-         "@frontify/eslint-config-react": "^1.0.4",
+        "@frontify/eslint-config-react": "^1.0.4",
         "@frontify/fondue-components": "workspace:*",
         "@frontify/fondue-icons": "workspace:*",
         "@storybook/addon-a11y": "^8.6.12",
@@ -89,6 +89,7 @@
         "style-dictionary": "^4.4.0",
         "tailwindcss": "^3.4.17",
         "tsx": "^4.20.5",
-        "typescript": "^5.9.2"
+        "typescript": "^5.9.2",
+        "typescript-eslint": "^8.41.0"
     }
 }

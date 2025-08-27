@@ -1,13 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type Decorator, type Preview, type StoryContext } from '@storybook/react';
 import { type ComponentType } from 'react';
 
 import '@frontify/fondue-components/styles';
 import '@frontify/fondue-tokens/styles';
 import styles from '../dist/themes/themes.module.css';
 import './styles.css';
-
-import { type Decorator, type Preview, type StoryContext } from '@storybook/react';
 
 import { withTheme } from './components/StoryWithTheme';
 
@@ -20,7 +19,7 @@ const ThemeProviderWrapper: Decorator = (Story: ComponentType, context: StoryCon
             </div>
         );
     }
-    return withTheme(Story, context.globals.theme);
+    return withTheme(Story, context.globals.theme as 'light' | 'dark');
 };
 
 const preview: Preview = {
