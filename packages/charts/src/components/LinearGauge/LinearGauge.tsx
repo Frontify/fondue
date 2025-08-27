@@ -60,7 +60,7 @@ export const LinearGauge = ({ sections, totalLabel, totalValue }: LinearGaugePro
                 <div
                     onPointerMove={(event) => handlePointerMove(event)}
                     onPointerLeave={handlePointerLeave}
-                    className="tw-overflow-hidden tw-rounded-[6px] tw-w-full tw-relative tw-flex tw-h-3 tw-bg-box-neutral-hover"
+                    className="tw-overflow-hidden tw-rounded-[6px] tw-w-full tw-relative tw-flex tw-h-3 tw-bg-container-secondary-hover"
                 >
                     {sections.map((section, index) => (
                         <Section key={section.name} index={index} percentage={section.percentage} />

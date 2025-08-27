@@ -57,7 +57,7 @@ export const Nodes = ({
                                 y={3}
                                 stroke={
                                     hoveredGroup === node.data.id
-                                        ? 'var(--line-color-xx-strong)'
+                                        ? 'var(--color-line-strong)'
                                         : 'var(--fc-axis-y-color)'
                                 }
                                 strokeWidth={1.5}

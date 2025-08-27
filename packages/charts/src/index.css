@@ -5,7 +5,7 @@
 @tailwind utilities;
 
 :root {
-    --fc-base-color: var(--base-color);
+    --fc-base-color: var(--color-surface-default);
 
     --fc-primary-base-color: var(--color-container-success-default);
     --fc-secondary-base-color: var(--color-container-highlight-default);
@@ -31,7 +31,7 @@
     --fc-tooltip-crosshair-stroke-color: var(--color-line-strong);
     --fc-tooltip-crosshair-stroke-color-weak: rgba(8, 8, 8, 0.05);
 
-    --fc-font-family: var(--body-family);
+    --fc-font-family: var(--typography-font-family-primary);
 
     --fc-font-color-default: var(--color-primary-default);
     --fc-font-color-weak: var(--color-secondary-default);
