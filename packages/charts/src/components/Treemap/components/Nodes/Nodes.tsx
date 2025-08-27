@@ -5,7 +5,7 @@ import { type HierarchyNode, type HierarchyRectangularNode } from 'd3-hierarchy'
 import { useState } from 'react';
 
 import { useSetSizeThreshold } from '@components/Treemap/components/Nodes/hooks';
-import { weakColorAccessor } from '@components/Treemap/helpers';
+import { colorAccessor } from '@components/Treemap/helpers';
 import {
     type SizeThresholds,
     type TreemapDataPoint,
@@ -57,11 +57,11 @@ export const Nodes = ({
                                 y={3}
                                 stroke={
                                     hoveredGroup === node.data.id
-                                        ? 'var(--line-color-xx-strong)'
+                                        ? 'var(--color-line-strong)'
                                         : 'var(--fc-axis-y-color)'
                                 }
                                 strokeWidth={1.5}
-                                fill={weakColorAccessor(node.data.data.color)}
+                                fill={colorAccessor(node.data.data.color)}
                             />
 
                             {node.children && node.children.length > 0 && (

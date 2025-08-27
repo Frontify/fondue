@@ -16,7 +16,7 @@ export const Legend = ({ names, style, colorAccessor = colorAccessorByIndex }: L
             {names.map((title, index) => (
                 <span className="tw-flex" key={`${title}-legend-${index}`}>
                     <ColorBox color={colorAccessor(index)} style={style} />
-                    <span className="tw-font-body tw-text-body-small tw-text-text">{title}</span>
+                    <span className="tw-font-primary tw-text-small tw-text-primary">{title}</span>
                 </span>
             ))}
         </div>

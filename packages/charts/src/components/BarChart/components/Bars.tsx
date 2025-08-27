@@ -3,7 +3,7 @@
 import { BarGroup, BarSeries, type EventHandlerParams } from '@visx/xychart';
 import { useState } from 'react';
 
-import { colorAccessorByIndex, hoverColorWeakAccessorByIndex } from '@components/common/helpers';
+import { colorAccessorByIndex, hoverColorAccessorByIndex } from '@components/common/helpers';
 
 import { type BarChartDataPoint, type BarChartSeries, type DisplayStyle } from '../types';
 
@@ -32,7 +32,7 @@ export const Bars = ({ series, horizontal, displayStyle }: BarGroupProps) => {
             barPadding={20}
             colorAccessor={(datum: BarChartDataPoint) => {
                 if (focusedItemLabel === datum.label) {
-                    return hoverColorWeakAccessorByIndex(seriesIndex);
+                    return hoverColorAccessorByIndex(seriesIndex);
                 } else {
                     return colorAccessorByIndex(seriesIndex);
                 }

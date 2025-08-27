@@ -7,8 +7,6 @@ export type PieChartDatum = {
     label: string;
 };
 
-export type ColorScale = 'discrete' | 'continuous';
-
 export type PieChartProps = {
     size: number;
     data: PieChartDatum[];
@@ -17,7 +15,6 @@ export type PieChartProps = {
     showLabelValue?: boolean;
     showLabelPercentage?: boolean;
     shouldSortData?: boolean;
-    colorScale?: ColorScale;
 };
 
 export type Padding = {

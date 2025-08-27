@@ -7,6 +7,7 @@ import frontifyTailwindConfig from '@frontify/fondue-tokens/tailwind';
 import { type Config } from 'tailwindcss';
 
 export default {
+    prefix: 'tw-',
     presets: [legacyTailwindConfig as Config, frontifyTailwindConfig as Config],
     content: ['./src/**/*.{ts,tsx}'],
 } satisfies Config;
