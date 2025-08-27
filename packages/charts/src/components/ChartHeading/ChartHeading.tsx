@@ -11,9 +11,7 @@ export const ChartHeading = ({ title, description, icon }: ChartHeadingProps) =>
     return (
         <div className="tw-mb-5 tw-mt-2">
             <div className="tw-flex tw-items-center">
-                <span className="tw-mr-1.5 tw-font-primary tw-text-large tw-text-primary tw-font-medium">
-                    {title}
-                </span>
+                <span className="tw-mr-1.5 tw-font-primary tw-text-large tw-text-primary tw-font-medium">{title}</span>
                 {icon}
             </div>
             {description && (
