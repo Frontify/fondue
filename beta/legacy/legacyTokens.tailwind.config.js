@@ -5,7 +5,12 @@ import tailwindForm from '@tailwindcss/forms';
 
 export default {
     presets: [legacyFondueTailwindConfig],
-    prefix: 'tw-',
+    content: ['./src/**/*.{js,ts,tsx}'],
+    plugins: [
+        tailwindForm({
+            strategy: 'class',
+        }),
+    ],
     theme: {
         extend: {
             outline: {
