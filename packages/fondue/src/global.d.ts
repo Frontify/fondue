@@ -30,3 +30,5 @@ declare module '@frontify/fondue-tokens' {
     const tokens: TokensType;
     export = tokens;
 }
+
+declare module '@frontify/fondue-tokens/tailwind';
