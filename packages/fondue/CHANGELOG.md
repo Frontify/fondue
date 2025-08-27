@@ -1,5 +1,21 @@
 # @frontify/fondue
 
+## 13.0.0-beta.8
+
+### Major Changes
+
+- [#2375](https://github.com/Frontify/fondue/pull/2375) [`b944142`](https://github.com/Frontify/fondue/commit/b94414215a500956ea372d85ea37d10fb4336cd0) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: remove unused exports
+
+### Patch Changes
+
+- [#2394](https://github.com/Frontify/fondue/pull/2394) [`6e7dd18`](https://github.com/Frontify/fondue/commit/6e7dd18ce96b8680409f9099e7dc57e1dea9ae8e) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
+
+- Updated dependencies [[`c386194`](https://github.com/Frontify/fondue/commit/c38619436f41dd9f66182748ac6269a6e62d2378), [`432b29b`](https://github.com/Frontify/fondue/commit/432b29b1ae4eb874cdd51b9f6b3b562970b04c62), [`2a57092`](https://github.com/Frontify/fondue/commit/2a5709213b22e54917feaee8de4a4092ee672617), [`6e7dd18`](https://github.com/Frontify/fondue/commit/6e7dd18ce96b8680409f9099e7dc57e1dea9ae8e)]:
+    - @frontify/fondue-components@20.0.0-beta.6
+    - @frontify/fondue-charts@7.0.0-beta.4
+    - @frontify/fondue-tokens@5.0.0-beta.4
+    - @frontify/fondue-icons@0.18.0-beta.1
+
 ## 13.0.0-beta.7
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @frontify/fondue-icons
 
+## 0.18.0-beta.1
+
+### Patch Changes
+
+- [#2394](https://github.com/Frontify/fondue/pull/2394) [`6e7dd18`](https://github.com/Frontify/fondue/commit/6e7dd18ce96b8680409f9099e7dc57e1dea9ae8e) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
+
 ## 0.18.0-beta.0
 
 ### Minor Changes

@@ -10,16 +10,20 @@
     "@frontify/fondue-storybook-docs": "0.0.1"
   },
   "changesets": [
+    "brown-cows-appear",
     "brown-sloths-cross",
     "cool-apples-poke",
-    "fast-waves-enjoy",
     "free-hoops-try",
     "huge-breads-sniff",
+    "lemon-cycles-lead",
     "mean-gifts-live",
     "modern-doors-give",
+    "neat-geese-call",
     "nine-weeks-juggle",
+    "quiet-weeks-eat",
     "sad-carpets-appear",
     "silly-animals-relax",
-    "thin-buckets-open"
+    "thin-buckets-open",
+    "wild-islands-turn"
   ]
 }
