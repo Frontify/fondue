@@ -8,7 +8,7 @@ import { type Config } from 'tailwindcss';
 
 export default {
     presets: [frontifyTailwindConfig as Config, legacyTailwindConfig as Config],
-    content: ['./src/**/*.{js,ts,jsx,tsx}', './.storybook/DocumentationTemplate.mdx'],
+    content: ['./src/**/*.{ts,tsx}', './.storybook/DocumentationTemplate.mdx'],
     prefix: 'tw-',
     theme: {
         extend: {

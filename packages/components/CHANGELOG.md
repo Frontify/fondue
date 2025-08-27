@@ -67,6 +67,27 @@
 - Updated dependencies [[`d010cb5`](https://github.com/Frontify/fondue/commit/d010cb53242c9d9e9112bb369a9af975189ba36a)]:
     - @frontify/fondue-tokens@5.0.0-beta.0
     - @frontify/fondue-icons@0.18.0-beta.0
+- [#2383](https://github.com/Frontify/fondue/pull/2383) [`f75e618`](https://github.com/Frontify/fondue/commit/f75e61872e14490f95c8f80aa164c1590d3d88b6) Thanks [@syeo66](https://github.com/syeo66)! - feat(Checkbox): enable readOnly flag
+
+- [#2377](https://github.com/Frontify/fondue/pull/2377) [`b8331f6`](https://github.com/Frontify/fondue/commit/b8331f6c0ef3bedd7e2d4ac0575ca069d75734d0) Thanks [@jcosta33](https://github.com/jcosta33)! - chore: dep updates and linting
+
+- [#2393](https://github.com/Frontify/fondue/pull/2393) [`ac3f322`](https://github.com/Frontify/fondue/commit/ac3f322dc5490b98c4785720e879a5bef434467f) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
+
+- Updated dependencies [[`b8331f6`](https://github.com/Frontify/fondue/commit/b8331f6c0ef3bedd7e2d4ac0575ca069d75734d0), [`ac3f322`](https://github.com/Frontify/fondue/commit/ac3f322dc5490b98c4785720e879a5bef434467f)]:
+    - @frontify/fondue-tokens@4.2.1
+    - @frontify/fondue-icons@0.17.1
+
+## 19.3.0
+
+### Minor Changes
+
+- [#2391](https://github.com/Frontify/fondue/pull/2391) [`26f3d8b`](https://github.com/Frontify/fondue/commit/26f3d8bd3757f9ef057b89c3048d490571d63b65) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: allow global padding customization for `Accordion`
+
+- [#2381](https://github.com/Frontify/fondue/pull/2381) [`6817eaa`](https://github.com/Frontify/fondue/commit/6817eaa98471194128c29bd80d7c42a509055ee6) Thanks [@syeo66](https://github.com/syeo66)! - feat(Textarea): Implement 'new' Textarea component
+
+- [#2379](https://github.com/Frontify/fondue/pull/2379) [`3de6d1c`](https://github.com/Frontify/fondue/commit/3de6d1ca95d0cf34ee455427e51db34c6b7d6a47) Thanks [@syeo66](https://github.com/syeo66)! - feat(Tabs): expose asChild in Tabs.Content
+
+- [#2391](https://github.com/Frontify/fondue/pull/2391) [`26f3d8b`](https://github.com/Frontify/fondue/commit/26f3d8bd3757f9ef057b89c3048d490571d63b65) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: allow passing a action into `Accordion.Header` with `Accordion.Slot`
 
 ## 19.2.0
 

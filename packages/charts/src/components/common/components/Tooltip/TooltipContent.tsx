@@ -21,7 +21,7 @@ export const TooltipContent = ({ title, description, imageUrl, entries }: Toolti
     const dataPoint = entries[1];
 
     return (
-        <div className="tw-bg-primary tw-p-3 tw-rounded-medium tw-border tw-border-primary tw-max-w-[260px] tw-break-all">
+        <div className="tw-bg-primary tw-text-primary-on-primary tw-p-3 tw-rounded-medium tw-border tw-border-primary tw-max-w-[260px] tw-break-all">
             {imageUrl && (
                 <div className="tw--m-1">
                     <img src={imageUrl} alt={description} className="tw-h-28 tw-object-cover tw-mb-5 tw-w-full" />

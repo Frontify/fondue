@@ -32,6 +32,25 @@
 - Updated dependencies [[`d010cb5`](https://github.com/Frontify/fondue/commit/d010cb53242c9d9e9112bb369a9af975189ba36a)]:
     - @frontify/fondue-tokens@5.0.0-beta.0
 
+## 6.0.3
+
+### Patch Changes
+
+- [#2396](https://github.com/Frontify/fondue/pull/2396) [`7def15f`](https://github.com/Frontify/fondue/commit/7def15fb79246b04474cd10d0d03e13a63585366) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: adress issues with typing and color tokens in v12.12.0
+
+## 6.0.2
+
+### Patch Changes
+
+- [#2390](https://github.com/Frontify/fondue/pull/2390) [`f0fb18c`](https://github.com/Frontify/fondue/commit/f0fb18c10b63df0962c860f12da249799ea37dfe) Thanks [@joseazevedo88](https://github.com/joseazevedo88)! - add base z-index to chart containers
+
+- [#2377](https://github.com/Frontify/fondue/pull/2377) [`b8331f6`](https://github.com/Frontify/fondue/commit/b8331f6c0ef3bedd7e2d4ac0575ca069d75734d0) Thanks [@jcosta33](https://github.com/jcosta33)! - chore: dep updates and linting
+
+- [#2393](https://github.com/Frontify/fondue/pull/2393) [`ac3f322`](https://github.com/Frontify/fondue/commit/ac3f322dc5490b98c4785720e879a5bef434467f) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
+
+- Updated dependencies [[`b8331f6`](https://github.com/Frontify/fondue/commit/b8331f6c0ef3bedd7e2d4ac0575ca069d75734d0), [`ac3f322`](https://github.com/Frontify/fondue/commit/ac3f322dc5490b98c4785720e879a5bef434467f)]:
+    - @frontify/fondue-tokens@4.2.1
+
 ## 6.0.1
 
 ### Patch Changes

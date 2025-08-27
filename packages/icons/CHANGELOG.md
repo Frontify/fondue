@@ -6,6 +6,14 @@
 
 - [#2302](https://github.com/Frontify/fondue/pull/2302) [`d010cb5`](https://github.com/Frontify/fondue/commit/d010cb53242c9d9e9112bb369a9af975189ba36a) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: overhauled token generation and switched to new token set
 
+## 0.17.1
+
+### Patch Changes
+
+- [#2377](https://github.com/Frontify/fondue/pull/2377) [`b8331f6`](https://github.com/Frontify/fondue/commit/b8331f6c0ef3bedd7e2d4ac0575ca069d75734d0) Thanks [@jcosta33](https://github.com/jcosta33)! - chore: dep updates and linting
+
+- [#2393](https://github.com/Frontify/fondue/pull/2393) [`ac3f322`](https://github.com/Frontify/fondue/commit/ac3f322dc5490b98c4785720e879a5bef434467f) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
+
 ## 0.17.0
 
 ### Minor Changes

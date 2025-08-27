@@ -4,8 +4,13 @@ import legacyFondueTailwindConfig from '@frontify/fondue-tokens/legacy/tailwind'
 import tailwindForm from '@tailwindcss/forms';
 
 export default {
-    presets: [legacyFondueTailwindConfig],
-    prefix: 'tw-',
+    presets: [legacyFondueTailwindConfig as unknown as Config],
+    content: ['./src/**/*.{js,ts,tsx}'],
+    plugins: [
+        tailwindForm({
+            strategy: 'class',
+        }),
+    ],
     theme: {
         extend: {
             outline: {
