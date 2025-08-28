@@ -20,9 +20,11 @@ const meta: Meta<typeof RadioList.Root> = {
     },
     args: {
         disabled: false,
+        readOnly: false,
         required: false,
         value: undefined,
         orientation: undefined,
+        emphasis: undefined,
     },
     argTypes: {
         value: {
@@ -31,6 +33,11 @@ const meta: Meta<typeof RadioList.Root> = {
         orientation: {
             type: 'string',
             options: [undefined, 'horizontal', 'vertical'],
+            control: { type: 'select' },
+        },
+        emphasis: {
+            type: 'string',
+            options: [undefined, 'default', 'highlight'],
             control: { type: 'select' },
         },
     },
@@ -42,12 +49,7 @@ const meta: Meta<typeof RadioList.Root> = {
         const idOption3 = `${id}-option-3`;
 
         return (
-            <RadioList.Root
-                disabled={args.disabled}
-                orientation={args.orientation}
-                required={args.required}
-                value={args.value}
-            >
+            <RadioList.Root {...args}>
                 <RadioList.RadioButton id={idOption1} value="1" />
                 <Label htmlFor={idOption1} required={args.required}>
                     Option 1
@@ -69,6 +71,36 @@ const meta: Meta<typeof RadioList.Root> = {
 export default meta;
 
 export const Default: Story = {};
+
+export const Disabled: Story = {
+    args: {
+        disabled: true,
+    },
+};
+
+export const ReadOnly: Story = {
+    args: {
+        readOnly: true,
+    },
+};
+
+export const Required: Story = {
+    args: {
+        required: true,
+    },
+};
+
+export const Vertical: Story = {
+    args: {
+        orientation: 'vertical',
+    },
+};
+
+export const WithEmphasisHighlight: Story = {
+    args: {
+        emphasis: 'highlight',
+    },
+};
 
 export const WithCustomLayout: Story = {
     render: (args) => {

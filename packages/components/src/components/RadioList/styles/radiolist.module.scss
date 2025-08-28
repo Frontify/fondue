@@ -6,18 +6,23 @@
     display: flex;
     gap: var(--space-xs);
 
-        & button:not(:first-child) {
-            margin-left: var(--space-xs);
-        }
+    & button:not(:first-child) {
+        margin-left: var(--space-xs);
+    }
+
+    &[data-readonly="true"] {
+       pointer-events: none;
+    }
 
     &[data-orientation="vertical"] {
         display: grid;
         grid-template-columns: 1rem auto;
 
         & button {
-            margin-left:0;
+            margin-left: 0;
         }
     }
+
 }
 
 .item {
@@ -30,15 +35,25 @@
 
     transition: border cubic-bezier(0.4, 0, 0.2, 1) 150ms;
 
+    &[data-readonly="true"] {
+       pointer-events: none;
+    }
+
     &:hover {
         border: 1px solid var(--line-color-xx-strong);
 
         [data-state="checked"]::after {
-            outline: 6px solid var(--box-neutral-mighty-color);
+            outline: 6px solid var(--box-neutral-strong-color-hover);
         }
     }
 
-    &:disabled {
+    .root[data-emphasis="highlight"] &:hover {
+        [data-state="checked"]::after {
+            outline: 6px solid var(--box-selected-strong-color-hover);
+        }
+    }
+
+    &:disabled, .root[data-emphasis="highlight"] &:disabled {
         border: 1px solid var(--line-color-strong);
 
         [data-state="checked"]::after {
@@ -49,7 +64,6 @@
     & {
         @include focusStyle.focus-outline;
     }
-
 }
 
 .indicator {
@@ -69,5 +83,11 @@
         box-sizing: border-box;
         outline: 6px solid var(--box-neutral-strong-color);
         transition: outline cubic-bezier(0.4, 0, 0.2, 1) 150ms;
+    }
+
+    .root[data-emphasis="highlight"] & {
+        &::after {
+            outline: 6px solid var(--box-selected-strong-color);
+        }
     }
 }

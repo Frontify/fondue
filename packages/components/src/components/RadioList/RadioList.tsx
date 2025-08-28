@@ -1,9 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import * as RadioGroupPrimitve from '@radix-ui/react-radio-group';
-import { type ReactNode } from 'react';
+import React, { type FocusEvent, useCallback, type ReactNode, type FormEvent } from 'react';
 
 import { cn } from '#/utilities/styleUtilities';
+
+import { handleKeyDown } from '../Table/utils';
 
 import styles from './styles/radiolist.module.scss';
 
@@ -15,8 +17,10 @@ type RadioListRootProps = {
     emphasis?: 'default' | 'highlight';
     onValueChange?: (value: string) => void;
     orientation?: 'vertical' | 'horizontal';
+    readOnly?: boolean;
     required?: boolean;
     value?: string;
+    'data-test-id'?: string;
 };
 const RadioListRoot = ({
     asChild,
@@ -26,19 +30,31 @@ const RadioListRoot = ({
     emphasis = 'default',
     onValueChange,
     orientation,
+    readOnly,
     required,
     value,
+    'data-test-id': dataTestId,
 }: RadioListRootProps) => {
     return (
         <RadioGroupPrimitve.Root
+            aria-readonly={readOnly}
             asChild={asChild}
             className={cn([className, asChild ? undefined : styles.root])}
             data-emphasis={emphasis}
+            data-readonly={readOnly}
+            data-test-id={dataTestId}
             disabled={disabled}
             onValueChange={onValueChange}
             orientation={orientation}
             required={required}
             value={value}
+            onFocus={(event) => {
+                if (readOnly) {
+                    event.preventDefault();
+                    event.target.blur();
+                    return false;
+                }
+            }}
         >
             {children}
         </RadioGroupPrimitve.Root>
@@ -50,10 +66,29 @@ type RadioListRadioButtonProps = {
     disabled?: boolean;
     id: string;
     value: string;
-};
-const RadioListRadioButton = ({ disabled, value, id }: RadioListRadioButtonProps) => {
+    readOnly?: boolean;
+    'data-test-id'?: string;
+} & React.ComponentProps<typeof RadioGroupPrimitve.Item>;
+
+const RadioListRadioButton = ({ readOnly, disabled, value, id, 'data-test-id': dataTestId, ...restProps }: RadioListRadioButtonProps) => {
     return (
-        <RadioGroupPrimitve.Item id={id} className={`tw-peer ${styles.item}`} value={value} disabled={disabled}>
+        <RadioGroupPrimitve.Item
+            onFocus={(event) => {
+                if (readOnly) {
+                    event.preventDefault();
+                    event.target.blur();
+                    return false;
+                }
+            }}
+            aria-readonly={readOnly}
+            className={`tw-peer ${styles.item}`}
+            data-readonly={readOnly}
+            data-test-id={dataTestId}
+            disabled={disabled}
+            id={id}
+            value={value}
+            {...restProps}
+        >
             <RadioGroupPrimitve.Indicator className={styles.indicator} />
         </RadioGroupPrimitve.Item>
     );
