@@ -43,18 +43,18 @@ type TableRootProps = {
 export const TableRoot = forwardRef<HTMLTableElement, TableRootProps>(
     ({ layout = 'auto', fontSize = 'medium', sticky, children, ...props }, ref) => {
         return (
-            <div onKeyDown={handleKeyDown} role="grid" tabIndex={-1}>
-                <table
-                    ref={ref}
-                    className={styles.table}
-                    data-layout={layout}
-                    data-font-size={fontSize}
-                    data-sticky={sticky}
-                    {...props}
-                >
-                    {children}
-                </table>
-            </div>
+            <table
+                ref={ref}
+                role="grid"
+                className={styles.table}
+                data-layout={layout}
+                data-font-size={fontSize}
+                data-sticky={sticky}
+                onKeyDown={handleKeyDown}
+                {...props}
+            >
+                {children}
+            </table>
         );
     },
 );
