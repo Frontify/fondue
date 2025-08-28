@@ -2,6 +2,7 @@
 
 import { IconArrowBidirectional, IconArrowDown, IconArrowUp } from '@frontify/fondue-icons';
 import {
+    type AriaAttributes,
     forwardRef,
     useMemo,
     useRef,
@@ -38,7 +39,7 @@ type TableRootProps = {
      */
     sticky?: 'head' | 'col' | 'both';
     children: ReactNode;
-    'aria-multiselectable': boolean;
+    'aria-multiselectable': AriaAttributes['aria-multiselectable'];
 } & CommonAriaAttrs;
 
 export const TableRoot = forwardRef<HTMLTableElement, TableRootProps>(
