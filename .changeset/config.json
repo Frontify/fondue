@@ -8,6 +8,7 @@
     "access": "public",
     "baseBranch": "main",
     "updateInternalDependencies": "patch",
+    "updateInternalDependents": "always",
     "ignore": ["@frontify/fondue-storybook-docs"],
     "linked": [],
     "fixed": []
