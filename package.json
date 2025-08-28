@@ -2,7 +2,7 @@
     "name": "root",
     "private": true,
     "type": "module",
-    "packageManager": "pnpm@9.15.4+sha512.b2dc20e2fc72b3e18848459b37359a32064663e5627a51e4c74b2c29dd8e8e0491483c3abb40789cfd578bf362fb6ba8261b05f0387d76792ed6e23ea3b1b6a0",
+    "packageManager": "pnpm@10.15.0+sha512.486ebc259d3e999a4e8691ce03b5cac4a71cbeca39372a9b762cb500cfdf0873e2cb16abe3d951b1ee2cf012503f027b98b6584e4df22524e0c7450d9ec7aa7b",
     "engines": {
         "node": "^22",
         "npm": "<=0"
@@ -25,14 +25,16 @@
         "storybook:packages": "pnpm --parallel --filter {packages/*} storybook --no-open",
         "typecheck": "pnpm --stream --filter {packages/*} --filter {storybook-docs} typecheck",
         "changeset": "changeset",
+        "update": "taze -r -I major",
         "create:component": "pnpm --stream --filter {packages/components} create:component"
     },
     "devDependencies": {
         "@changesets/changelog-github": "^0.5.1",
-        "@changesets/cli": "^2.29.5",
+        "@changesets/cli": "^2.29.6",
         "chokidar-cli": "^3.0.0",
-        "concurrently": "^9.2.0",
-        "glob": "^11.0.1",
+        "concurrently": "^9.2.1",
+        "glob": "^11.0.3",
+        "taze": "^19.3.0",
         "wait-on": "^8.0.4"
     }
 }

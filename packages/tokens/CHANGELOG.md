@@ -1,5 +1,13 @@
 # @frontify/fondue-tokens
 
+## 4.2.1
+
+### Patch Changes
+
+- [#2377](https://github.com/Frontify/fondue/pull/2377) [`b8331f6`](https://github.com/Frontify/fondue/commit/b8331f6c0ef3bedd7e2d4ac0575ca069d75734d0) Thanks [@jcosta33](https://github.com/jcosta33)! - chore: dep updates and linting
+
+- [#2393](https://github.com/Frontify/fondue/pull/2393) [`ac3f322`](https://github.com/Frontify/fondue/commit/ac3f322dc5490b98c4785720e879a5bef434467f) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
+
 ## 4.2.0
 
 ### Minor Changes

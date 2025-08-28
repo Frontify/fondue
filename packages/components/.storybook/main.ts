@@ -51,7 +51,7 @@ export default {
         config.plugins = (config.plugins ?? []).filter((plugin) => plugin?.name !== 'vite:dts');
 
         if (config.optimizeDeps) {
-            config.optimizeDeps.exclude = ["./node_modules/.cache/storybook"];
+            config.optimizeDeps.exclude = ['./node_modules/.cache/storybook'];
         }
 
         return config;

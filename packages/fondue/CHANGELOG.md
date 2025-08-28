@@ -1,5 +1,36 @@
 # @frontify/fondue
 
+## 12.12.1
+
+### Patch Changes
+
+- [#2389](https://github.com/Frontify/fondue/pull/2389) [`708cbae`](https://github.com/Frontify/fondue/commit/708cbae190d9e8343d203a809faf76044422bdf4) Thanks [@selimovicz](https://github.com/selimovicz)! - Making Datepicker accessible by keyboard
+
+- [#2396](https://github.com/Frontify/fondue/pull/2396) [`7def15f`](https://github.com/Frontify/fondue/commit/7def15fb79246b04474cd10d0d03e13a63585366) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: adress issues with typing and color tokens in v12.12.0
+
+- Updated dependencies [[`7def15f`](https://github.com/Frontify/fondue/commit/7def15fb79246b04474cd10d0d03e13a63585366)]:
+    - @frontify/fondue-charts@6.0.3
+
+## 12.12.0
+
+### Minor Changes
+
+- [#2380](https://github.com/Frontify/fondue/pull/2380) [`852d78b`](https://github.com/Frontify/fondue/commit/852d78b08cd300771cb821d397554ecb3851de18) Thanks [@maciej-baruch](https://github.com/maciej-baruch)! - feat: add Color Picker plugin to the Rich Text Editor
+
+### Patch Changes
+
+- [#2382](https://github.com/Frontify/fondue/pull/2382) [`cacdb28`](https://github.com/Frontify/fondue/commit/cacdb28c0e80aee6b1013f7e1b7c059a65693117) Thanks [@syeo66](https://github.com/syeo66)! - feat(DatePicker): add fixed height to prevent header from moving around
+
+- [#2377](https://github.com/Frontify/fondue/pull/2377) [`b8331f6`](https://github.com/Frontify/fondue/commit/b8331f6c0ef3bedd7e2d4ac0575ca069d75734d0) Thanks [@jcosta33](https://github.com/jcosta33)! - chore: dep updates and linting
+
+- [#2393](https://github.com/Frontify/fondue/pull/2393) [`ac3f322`](https://github.com/Frontify/fondue/commit/ac3f322dc5490b98c4785720e879a5bef434467f) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
+
+- Updated dependencies [[`bea74b3`](https://github.com/Frontify/fondue/commit/bea74b38a57ce8db3468e17babfc3b66280a5d75), [`f0fb18c`](https://github.com/Frontify/fondue/commit/f0fb18c10b63df0962c860f12da249799ea37dfe), [`f75e618`](https://github.com/Frontify/fondue/commit/f75e61872e14490f95c8f80aa164c1590d3d88b6), [`26f3d8b`](https://github.com/Frontify/fondue/commit/26f3d8bd3757f9ef057b89c3048d490571d63b65), [`6817eaa`](https://github.com/Frontify/fondue/commit/6817eaa98471194128c29bd80d7c42a509055ee6), [`3de6d1c`](https://github.com/Frontify/fondue/commit/3de6d1ca95d0cf34ee455427e51db34c6b7d6a47), [`b8331f6`](https://github.com/Frontify/fondue/commit/b8331f6c0ef3bedd7e2d4ac0575ca069d75734d0), [`26f3d8b`](https://github.com/Frontify/fondue/commit/26f3d8bd3757f9ef057b89c3048d490571d63b65), [`ac3f322`](https://github.com/Frontify/fondue/commit/ac3f322dc5490b98c4785720e879a5bef434467f)]:
+    - @frontify/fondue-components@19.3.0
+    - @frontify/fondue-charts@6.0.2
+    - @frontify/fondue-tokens@4.2.1
+    - @frontify/fondue-icons@0.17.1
+
 ## 12.11.0
 
 ### Minor Changes
