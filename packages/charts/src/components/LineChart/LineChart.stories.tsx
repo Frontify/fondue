@@ -138,7 +138,7 @@ const TemplateWithContentOnTop: StoryFn<LineChartProps> = (args) => (
             description="The temperature of US cities over time"
             icon={<IconRocket />}
         />
-        <div className="tw-h-[200px] tw-w-[200px] tw-sticky tw-top-0 tw-p-5 tw-bg-[#cd2828] tw-z-[1]">
+        <div className="tw-h-[200px] tw-w-[200px] tw-sticky tw-top-0 tw-p-5 tw-bg-[#cd2828]">
             Content on top of chart
         </div>
         <LineChart {...args} />
