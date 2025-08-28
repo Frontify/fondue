@@ -1,11 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import * as RadioGroupPrimitve from '@radix-ui/react-radio-group';
-import React, { type FocusEvent, useCallback, type ReactNode, type FormEvent } from 'react';
+import { type ReactNode } from 'react';
 
 import { cn } from '#/utilities/styleUtilities';
-
-import { handleKeyDown } from '../Table/utils';
 
 import styles from './styles/radiolist.module.scss';
 
@@ -70,7 +68,14 @@ type RadioListRadioButtonProps = {
     'data-test-id'?: string;
 } & React.ComponentProps<typeof RadioGroupPrimitve.Item>;
 
-const RadioListRadioButton = ({ readOnly, disabled, value, id, 'data-test-id': dataTestId, ...restProps }: RadioListRadioButtonProps) => {
+const RadioListRadioButton = ({
+    readOnly,
+    disabled,
+    value,
+    id,
+    'data-test-id': dataTestId,
+    ...restProps
+}: RadioListRadioButtonProps) => {
     return (
         <RadioGroupPrimitve.Item
             onFocus={(event) => {
