@@ -39,8 +39,8 @@ type TableRootProps = {
      */
     sticky?: 'head' | 'col' | 'both';
     children: ReactNode;
-    'aria-multiselectable': AriaAttributes['aria-multiselectable'];
-} & CommonAriaAttrs;
+} & CommonAriaAttrs &
+    Pick<AriaAttributes, 'aria-multiselectable'>;
 
 export const TableRoot = forwardRef<HTMLTableElement, TableRootProps>(
     ({ layout = 'auto', fontSize = 'medium', sticky, children, ...props }, ref) => {
