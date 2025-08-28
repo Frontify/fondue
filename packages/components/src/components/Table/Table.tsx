@@ -53,6 +53,7 @@ export const TableRoot = forwardRef<HTMLTableElement, TableRootProps>(
                 data-font-size={fontSize}
                 data-sticky={sticky}
                 onKeyDown={handleKeyDown}
+                tabIndex={0}
                 {...props}
             >
                 {children}
