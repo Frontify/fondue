@@ -1,30 +1,20 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type TooltipInPortalProps } from '@visx/tooltip/lib/hooks/useTooltipInPortal';
 import { DataContext } from '@visx/xychart';
-import { type CSSProperties, type FC, useContext } from 'react';
+import { useContext } from 'react';
 
 import { getCrosshairBarWidth } from '@components/common/components/Tooltip/helpers';
 
 import { type TooltipCrossHairStyle } from './Tooltip';
 
-/** fontSize + lineHeight from default styles break precise location of crosshair, etc. */
-const TOOLTIP_NO_STYLE: CSSProperties = {
-    position: 'absolute',
-    pointerEvents: 'none',
-    fontSize: 0,
-    lineHeight: 0,
-};
-
 type CrosshairProps = {
     style: TooltipCrossHairStyle;
     horizontal: boolean;
     scalePadding: number;
-    TooltipInPortal: FC<TooltipInPortalProps>;
     tooltipPosition: { tooltipLeft?: number; tooltipTop?: number };
 };
-export const Crosshair = ({ horizontal, TooltipInPortal, style, scalePadding, tooltipPosition }: CrosshairProps) => {
-    const { innerHeight, innerWidth, margin, xScale, yScale } = useContext(DataContext) || {};
+export const Crosshair = ({ horizontal, style, scalePadding, tooltipPosition }: CrosshairProps) => {
+    const { innerHeight, innerWidth, xScale, yScale } = useContext(DataContext) || {};
 
     const lineStyle = {
         strokeWidth: style === 'bar' ? getCrosshairBarWidth(horizontal, scalePadding, xScale, yScale) : 1,
@@ -39,46 +29,24 @@ export const Crosshair = ({ horizontal, TooltipInPortal, style, scalePadding, to
     return (
         <>
             {!horizontal && (
-                <TooltipInPortal
-                    left={style === 'bar' && tooltipLeft ? tooltipLeft - lineStyle.strokeWidth / 2 : tooltipLeft}
-                    top={margin?.top}
-                    offsetLeft={0}
-                    offsetTop={0}
-                    detectBounds={false}
-                    style={TOOLTIP_NO_STYLE}
-                >
-                    <svg width={lineStyle.strokeWidth} height={innerHeight} overflow="hidden">
-                        <line
-                            x1={style === 'bar' ? lineStyle.strokeWidth / 2 : 0}
-                            x2={style === 'bar' ? lineStyle.strokeWidth / 2 : 0}
-                            y1={0}
-                            y2={innerHeight}
-                            strokeWidth={lineStyle.strokeWidth}
-                            stroke={lineStyle.stroke}
-                        />
-                    </svg>
-                </TooltipInPortal>
+                <line
+                    x1={tooltipLeft}
+                    x2={tooltipLeft}
+                    y1={0}
+                    y2={Number(yScale?.range()[0] ?? innerHeight)}
+                    strokeWidth={lineStyle.strokeWidth}
+                    stroke={lineStyle.stroke}
+                />
             )}
             {horizontal && (
-                <TooltipInPortal
-                    left={margin?.left}
-                    top={style === 'bar' && tooltipTop ? tooltipTop - lineStyle.strokeWidth / 2 : tooltipTop}
-                    offsetLeft={0}
-                    offsetTop={0}
-                    detectBounds={false}
-                    style={TOOLTIP_NO_STYLE}
-                >
-                    <svg width={innerWidth} height={lineStyle.strokeWidth} overflow="hidden">
-                        <line
-                            x1={0}
-                            x2={innerWidth}
-                            y1={style === 'bar' ? lineStyle.strokeWidth / 2 : 0}
-                            y2={style === 'bar' ? lineStyle.strokeWidth / 2 : 0}
-                            strokeWidth={lineStyle.strokeWidth}
-                            stroke={lineStyle.stroke}
-                        />
-                    </svg>
-                </TooltipInPortal>
+                <line
+                    x1={0}
+                    x2={Number(xScale?.range()[1] || innerWidth)}
+                    y1={tooltipTop}
+                    y2={tooltipTop}
+                    strokeWidth={lineStyle.strokeWidth}
+                    stroke={lineStyle.stroke}
+                />
             )}
         </>
     );
