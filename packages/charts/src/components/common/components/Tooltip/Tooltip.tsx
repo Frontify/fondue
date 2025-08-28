@@ -25,6 +25,8 @@ const INVISIBLE_STYLES: CSSProperties = {
     pointerEvents: 'none',
 };
 
+const GLYPH_RADIUS = 3;
+
 export type TooltipCrossHairStyle = 'line' | 'bar';
 
 type TooltipPropsBase = {
@@ -102,10 +104,11 @@ export const Tooltip = ({
                     <defs>
                         <clipPath id="chart-clip">
                             <rect
-                                x={margin?.left ?? 0}
-                                y={margin?.top ?? 0}
-                                width={innerWidth ?? '100%'}
-                                height={innerHeight ?? '100%'}
+                                // adjust the clip to glyphs on the edges
+                                x={margin?.left ? margin.left - GLYPH_RADIUS : 0}
+                                y={margin?.top ? margin?.top - GLYPH_RADIUS : 0}
+                                width={innerWidth ? innerWidth + GLYPH_RADIUS * 2 : '100%'}
+                                height={innerHeight ? innerHeight + GLYPH_RADIUS * 2 : '100%'}
                             />
                         </clipPath>
                     </defs>
@@ -123,7 +126,7 @@ export const Tooltip = ({
                                     key={glyph.key}
                                     cx={glyph.x}
                                     cy={glyph.y}
-                                    r={3}
+                                    r={GLYPH_RADIUS}
                                     fill={colorAccessor(glyph.key)}
                                     stroke={colorAccessor(glyph.key)}
                                 />

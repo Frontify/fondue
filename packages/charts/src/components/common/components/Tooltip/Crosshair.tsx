@@ -13,6 +13,9 @@ type CrosshairProps = {
     scalePadding: number;
     tooltipPosition: { tooltipLeft?: number; tooltipTop?: number };
 };
+
+const GLYPH_RADIUS = 3;
+
 export const Crosshair = ({ horizontal, style, scalePadding, tooltipPosition }: CrosshairProps) => {
     const { innerHeight, innerWidth, xScale, yScale } = useContext(DataContext) || {};
 
@@ -32,8 +35,9 @@ export const Crosshair = ({ horizontal, style, scalePadding, tooltipPosition }: 
                 <line
                     x1={tooltipLeft}
                     x2={tooltipLeft}
-                    y1={0}
-                    y2={Number(yScale?.range()[0] ?? innerHeight)}
+                    // *3 to account for the shift in the tooltip component, +1 to account for stroke width
+                    y1={GLYPH_RADIUS * 3 + 1}
+                    y2={Number(yScale?.range()[0] || innerHeight)}
                     strokeWidth={lineStyle.strokeWidth}
                     stroke={lineStyle.stroke}
                 />
