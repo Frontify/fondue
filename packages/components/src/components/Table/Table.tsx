@@ -38,6 +38,7 @@ type TableRootProps = {
      */
     sticky?: 'head' | 'col' | 'both';
     children: ReactNode;
+    'aria-multiselectable': boolean;
 } & CommonAriaAttrs;
 
 export const TableRoot = forwardRef<HTMLTableElement, TableRootProps>(
@@ -332,10 +333,10 @@ export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(
                 role={isInteractive ? 'button' : 'row'}
                 data-disabled={disabled}
                 data-interactive={isInteractive}
-                data-selected={selected}
+                data-selected={!isInteractive ? selected : undefined}
                 aria-disabled={disabled}
                 aria-label={ariaLabel}
-                aria-selected={selected}
+                aria-selected={!isInteractive ? selected : undefined}
                 onClick={isInteractive ? handleClick : undefined}
                 onKeyDown={isInteractive ? handleKeyDown : undefined}
                 data-test-id={dataTestId}
