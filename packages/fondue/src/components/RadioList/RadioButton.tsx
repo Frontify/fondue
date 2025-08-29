@@ -19,6 +19,9 @@ export type RadioButtonProps = {
     tooltip?: string;
 };
 
+/**
+ * @deprecated Use `RadioList` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#radiolist the migration guide}.
+ */
 export const RadioButton = ({ ...props }: RadioButtonProps) => {
     const id = useMemoizedId();
     const ref = useRef<HTMLDivElement | null>(null);
