@@ -11,12 +11,18 @@ describe('RadioList component', () => {
     const createRadioList = (props = {}) => {
         return (
             <RadioList.Root {...props}>
-                <RadioList.RadioButton id="option-1" value="1" />
-                <Label htmlFor="option-1">Option 1</Label>
-                <RadioList.RadioButton id="option-2" value="2" />
-                <Label htmlFor="option-2">Option 2</Label>
-                <RadioList.RadioButton id="option-3" value="3" />
-                <Label htmlFor="option-3">Option 3</Label>
+                <RadioList.RadioButton id="option-1" data-test-id="option-1" value="1" />
+                <Label htmlFor="option-1" data-test-id="label-option-1">
+                    Option 1
+                </Label>
+                <RadioList.RadioButton id="option-2" data-test-id="option-2" value="2" />
+                <Label htmlFor="option-2" data-test-id="label-option-2">
+                    Option 2
+                </Label>
+                <RadioList.RadioButton id="option-3" data-test-id="option-3" value="3" />
+                <Label htmlFor="option-3" data-test-id="label-option-3">
+                    Option 3
+                </Label>
             </RadioList.Root>
         );
     };
@@ -24,16 +30,16 @@ describe('RadioList component', () => {
     it('should render all radio buttons', () => {
         render(createRadioList());
 
-        expect(screen.getByLabelText('Option 1')).toBeInTheDocument();
-        expect(screen.getByLabelText('Option 2')).toBeInTheDocument();
-        expect(screen.getByLabelText('Option 3')).toBeInTheDocument();
+        expect(screen.getByTestId('option-1')).toBeInTheDocument();
+        expect(screen.getByTestId('option-2')).toBeInTheDocument();
+        expect(screen.getByTestId('option-3')).toBeInTheDocument();
     });
 
     it('should handle value changes', async () => {
         const onValueChange = vi.fn();
         render(createRadioList({ onValueChange }));
 
-        await userEvent.click(screen.getByLabelText('Option 2'));
+        await userEvent.click(screen.getByTestId('option-2'));
 
         expect(onValueChange).toHaveBeenCalledWith('2');
     });
@@ -41,15 +47,15 @@ describe('RadioList component', () => {
     it('should render with default value selected', () => {
         render(createRadioList({ value: '2' }));
 
-        const option2 = screen.getByLabelText('Option 2');
+        const option2 = screen.getByTestId('option-2');
         expect(option2).toBeChecked();
     });
 
     it('should allow only one selection at a time', async () => {
         render(createRadioList());
 
-        const option1 = screen.getByLabelText('Option 1');
-        const option2 = screen.getByLabelText('Option 2');
+        const option1 = screen.getByTestId('option-1');
+        const option2 = screen.getByTestId('option-2');
 
         await userEvent.click(option1);
         expect(option1).toBeChecked();
@@ -64,7 +70,7 @@ describe('RadioList component', () => {
         const onValueChange = vi.fn();
         render(createRadioList({ disabled: true, onValueChange }));
 
-        const option1 = screen.getByLabelText('Option 1');
+        const option1 = screen.getByTestId('option-1');
         expect(option1).toBeDisabled();
 
         await userEvent.click(option1);
@@ -128,15 +134,15 @@ describe('RadioList component', () => {
         const onValueChange = vi.fn();
         render(
             <RadioList.Root onValueChange={onValueChange}>
-                <RadioList.RadioButton id="option-1" value="1" disabled />
+                <RadioList.RadioButton id="option-1" value="1" data-test-id="option-1" disabled />
                 <Label htmlFor="option-1">Option 1</Label>
-                <RadioList.RadioButton id="option-2" value="2" />
+                <RadioList.RadioButton id="option-2" value="2" data-test-id="option-2" />
                 <Label htmlFor="option-2">Option 2</Label>
             </RadioList.Root>,
         );
 
-        const option1 = screen.getByLabelText('Option 1');
-        const option2 = screen.getByLabelText('Option 2');
+        const option1 = screen.getByTestId('option-1');
+        const option2 = screen.getByTestId('option-2');
 
         expect(option1).toBeDisabled();
         expect(option2).not.toBeDisabled();
@@ -152,9 +158,9 @@ describe('RadioList component', () => {
         const onValueChange = vi.fn();
         const { container } = render(
             <RadioList.Root onValueChange={onValueChange}>
-                <RadioList.RadioButton id="option-1" value="1" readOnly />
+                <RadioList.RadioButton id="option-1" value="1" data-test-id="option-1" readOnly />
                 <Label htmlFor="option-1">Option 1</Label>
-                <RadioList.RadioButton id="option-2" value="2" />
+                <RadioList.RadioButton id="option-2" value="2" data-test-id="option-2" />
                 <Label htmlFor="option-2">Option 2</Label>
             </RadioList.Root>,
         );
@@ -162,7 +168,7 @@ describe('RadioList component', () => {
         const readOnlyButton = container.querySelector('[aria-readonly="true"]');
         expect(readOnlyButton).toBeInTheDocument();
 
-        const option2 = screen.getByLabelText('Option 2');
+        const option2 = screen.getByTestId('option-2');
         await userEvent.click(option2);
         expect(onValueChange).toHaveBeenCalledWith('2');
     });
