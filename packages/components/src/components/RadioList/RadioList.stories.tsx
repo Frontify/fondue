@@ -102,6 +102,24 @@ export const WithEmphasisHighlight: Story = {
     },
 };
 
+export const WithoutLabels: Story = {
+    render: (args) => {
+        const id = useId();
+
+        const idOption1 = `${id}-option-1`;
+        const idOption2 = `${id}-option-2`;
+        const idOption3 = `${id}-option-3`;
+
+        return (
+            <RadioList.Root {...args}>
+                <RadioList.RadioButton id={idOption1} value="1" />
+                <RadioList.RadioButton id={idOption2} value="2" />
+                <RadioList.RadioButton id={idOption3} value="3" />
+            </RadioList.Root>
+        );
+    },
+};
+
 export const WithCustomLayout: Story = {
     render: (args) => {
         const id = useId();
