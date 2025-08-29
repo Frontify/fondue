@@ -1,5 +1,11 @@
 # @frontify/fondue-tokens
 
+## 4.2.2
+
+### Patch Changes
+
+- [#2400](https://github.com/Frontify/fondue/pull/2400) [`8264bdf`](https://github.com/Frontify/fondue/commit/8264bdf1a3321bb941e4704155600905347c36a5) Thanks [@syeo66](https://github.com/syeo66)! - fix(tailwind-token): add tailwind token types
+
 ## 4.2.1
 
 ### Patch Changes

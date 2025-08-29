@@ -1,5 +1,11 @@
 # @frontify/fondue
 
+## 12.12.2
+
+### Patch Changes
+
+- [`57b5d1f`](https://github.com/Frontify/fondue/commit/57b5d1ffc9a4e9e6d8082426f5d4fd451d89e829) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: bump `@frontify/fondue`
+
 ## 12.12.1
 
 ### Patch Changes
