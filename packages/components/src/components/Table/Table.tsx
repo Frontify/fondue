@@ -2,6 +2,7 @@
 
 import { IconArrowBidirectional, IconArrowDown, IconArrowUp } from '@frontify/fondue-icons';
 import {
+    type AriaAttributes,
     forwardRef,
     useMemo,
     useRef,
@@ -38,23 +39,24 @@ type TableRootProps = {
      */
     sticky?: 'head' | 'col' | 'both';
     children: ReactNode;
-} & CommonAriaAttrs;
+} & CommonAriaAttrs &
+    Pick<AriaAttributes, 'aria-multiselectable'>;
 
 export const TableRoot = forwardRef<HTMLTableElement, TableRootProps>(
     ({ layout = 'auto', fontSize = 'medium', sticky, children, ...props }, ref) => {
         return (
-            <div onKeyDown={handleKeyDown} role="grid" tabIndex={-1}>
-                <table
-                    ref={ref}
-                    className={styles.table}
-                    data-layout={layout}
-                    data-font-size={fontSize}
-                    data-sticky={sticky}
-                    {...props}
-                >
-                    {children}
-                </table>
-            </div>
+            <table
+                ref={ref}
+                role="grid"
+                className={styles.table}
+                data-layout={layout}
+                data-font-size={fontSize}
+                data-sticky={sticky}
+                onKeyDown={handleKeyDown}
+                {...props}
+            >
+                {children}
+            </table>
         );
     },
 );
@@ -332,10 +334,10 @@ export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(
                 role={isInteractive ? 'button' : 'row'}
                 data-disabled={disabled}
                 data-interactive={isInteractive}
-                data-selected={selected}
+                data-selected={!isInteractive ? selected : undefined}
                 aria-disabled={disabled}
                 aria-label={ariaLabel}
-                aria-selected={selected}
+                aria-selected={!isInteractive ? selected : undefined}
                 onClick={isInteractive ? handleClick : undefined}
                 onKeyDown={isInteractive ? handleKeyDown : undefined}
                 data-test-id={dataTestId}

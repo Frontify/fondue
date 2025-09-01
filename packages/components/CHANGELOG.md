@@ -1,5 +1,16 @@
 # @frontify/fondue-components
 
+## 19.4.0
+
+### Minor Changes
+
+- [#2401](https://github.com/Frontify/fondue/pull/2401) [`1e6f9f1`](https://github.com/Frontify/fondue/commit/1e6f9f186e2adf7cb50f3dd36ee639e3085b5975) Thanks [@syeo66](https://github.com/syeo66)! - fix(Checkbox): adjust readOnly prop handling
+
+### Patch Changes
+
+- Updated dependencies [[`8264bdf`](https://github.com/Frontify/fondue/commit/8264bdf1a3321bb941e4704155600905347c36a5)]:
+    - @frontify/fondue-tokens@4.2.2
+
 ## 19.3.0
 
 ### Minor Changes

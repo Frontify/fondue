@@ -8,6 +8,7 @@ export const checkboxStyles = sv({
         'tw-peer tw-relative tw-inline-flex tw-bg-base tw-text-white tw-shrink-0 tw-rounded tw-border tw-border-line-x-strong group-hover:tw-border-line-xx-strong hover:tw-border-line-xx-strong tw-transition-colors ' +
         'data-[state="checked"]:tw-border-transparent data-[state="indeterminate"]:tw-border-transparent ' +
         'disabled:tw-border-line-strong disabled:tw-bg-base disabled:tw-cursor-not-allowed data-[state="checked"]:disabled:tw-bg-box-disabled-strong ' +
+        'data-[readonly="true"]:tw-pointer-events-none ' +
         `${FOCUS_OUTLINE}`,
     variants: {
         size: {

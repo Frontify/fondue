@@ -99,6 +99,15 @@ StyleDictionary.registerFormat({
 });
 
 StyleDictionary.registerFormat({
+    name: 'tailwind/types',
+    formatter: ({ file }) => {
+        const { fileHeader } = StyleDictionary.formatHelpers;
+        return `${fileHeader({ file })}declare module '*';
+export default {};`;
+    },
+});
+
+StyleDictionary.registerFormat({
     name: 'figma',
     formatter: figmaFormatter,
 });
@@ -189,6 +198,10 @@ StyleDictionary.extend({
                 {
                     destination: 'tailwind.config.js',
                     format: 'tailwind',
+                },
+                {
+                    destination: 'tailwind.config.d.ts',
+                    format: 'tailwind/types',
                 },
             ],
         },
