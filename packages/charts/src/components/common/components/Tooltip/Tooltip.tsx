@@ -2,15 +2,15 @@
 
 import { GlyphDot } from '@visx/glyph';
 import { useTooltipInPortal } from '@visx/tooltip';
-import { TooltipContext, type TooltipContextType } from '@visx/xychart';
+import { DataContext, TooltipContext, type TooltipContextType } from '@visx/xychart';
 import { type CSSProperties, useContext } from 'react';
 
 import { type BarChartDataPoint } from '@components/BarChart';
 import { type LineChartDataPoint } from '@components/LineChart';
-import { Crosshair } from '@components/common/components/Tooltip/Crosshair';
 import { MISSING_VALUE_LABEL } from '@components/common/components/consts';
 import { type LabelFormatter, type ValueFormatter } from '@components/common/types';
 
+import { Crosshair } from './Crosshair';
 import { TooltipContent } from './TooltipContent';
 import { getHeadingFromDatum, getTooltipEntries, isNoDataKey } from './helpers';
 import { useKeyToForceRepaint, usePositions } from './hooks/';
@@ -25,13 +25,7 @@ const INVISIBLE_STYLES: CSSProperties = {
     pointerEvents: 'none',
 };
 
-/** fontSize + lineHeight from default styles break precise location of crosshair, etc. */
-const TOOLTIP_NO_STYLE: CSSProperties = {
-    position: 'absolute',
-    pointerEvents: 'none',
-    fontSize: 0,
-    lineHeight: 0,
-};
+const GLYPH_RADIUS = 3;
 
 export type TooltipCrossHairStyle = 'line' | 'bar';
 
@@ -95,53 +89,67 @@ export const Tooltip = ({
     const sortedEntries = shouldReverseEntries ? [...entries].reverse() : entries;
     const imageUrl = (tooltipContext.tooltipData?.nearestDatum?.datum as BarChartDataPoint)?.imageUrl;
 
+    const { innerHeight, innerWidth, margin } = useContext(DataContext) || {};
+
     return (
-        <svg ref={containerRef} style={INVISIBLE_STYLES} key={wrapperKey}>
+        <>
+            <svg ref={containerRef} style={INVISIBLE_STYLES} key={wrapperKey} />
+
             {tooltipContext?.tooltipOpen && tooltipContext?.tooltipData && (
-                <>
-                    <Crosshair
-                        horizontal={horizontal}
-                        TooltipInPortal={TooltipInPortal}
-                        style={crossHairStyle}
-                        scalePadding={scalePadding}
-                        tooltipPosition={tooltipPosition}
-                    />
-                    {glyphProps.length > 0 &&
-                        glyphProps.map((glyphProps) => (
-                            <TooltipInPortal
-                                key={`${glyphProps.key}-tooltip-glyph`}
-                                left={glyphProps.x}
-                                top={glyphProps.y}
-                                offsetLeft={0}
-                                offsetTop={0}
-                                detectBounds={false}
-                                style={TOOLTIP_NO_STYLE}
-                            >
-                                <svg overflow="visible">
-                                    {!isNoDataKey(glyphProps.key) && (
-                                        <GlyphDot
-                                            stroke={colorAccessor(glyphProps.key)}
-                                            fill={colorAccessor(glyphProps.key)}
-                                            r={3}
-                                        />
-                                    )}
-                                </svg>
-                            </TooltipInPortal>
-                        ))}
-                    <TooltipInPortal left={tooltipLeft} top={tooltipTop} applyPositionStyle unstyled>
-                        <TooltipContent
-                            title={getHeadingFromDatum(
-                                tooltipContext.tooltipData.nearestDatum?.datum,
-                                locale,
-                                labelFormatter,
-                            )}
-                            description={tooltipContext.tooltipData.nearestDatum?.datum?.description}
-                            imageUrl={imageUrl}
-                            entries={sortedEntries}
+                <svg
+                    width="100%"
+                    height="100%"
+                    style={{ position: 'absolute', top: 0, left: 0, pointerEvents: 'none' }}
+                >
+                    <defs>
+                        <clipPath id="chart-clip">
+                            <rect
+                                // adjust the clip to glyphs on the edges
+                                x={margin?.left ? margin.left - GLYPH_RADIUS : 0}
+                                y={margin?.top ? margin?.top - GLYPH_RADIUS : 0}
+                                width={innerWidth ? innerWidth + GLYPH_RADIUS * 2 : '100%'}
+                                height={innerHeight ? innerHeight + GLYPH_RADIUS * 2 : '100%'}
+                            />
+                        </clipPath>
+                    </defs>
+
+                    <g clipPath="url(#chart-clip)">
+                        <Crosshair
+                            horizontal={horizontal}
+                            style={crossHairStyle}
+                            scalePadding={scalePadding}
+                            tooltipPosition={tooltipPosition}
                         />
-                    </TooltipInPortal>
-                </>
+                        {glyphProps.map((glyph) =>
+                            !isNoDataKey(glyph.key) ? (
+                                <GlyphDot
+                                    key={glyph.key}
+                                    cx={glyph.x}
+                                    cy={glyph.y}
+                                    r={GLYPH_RADIUS}
+                                    fill={colorAccessor(glyph.key)}
+                                    stroke={colorAccessor(glyph.key)}
+                                />
+                            ) : null,
+                        )}
+                    </g>
+                </svg>
             )}
-        </svg>
+
+            {tooltipContext?.tooltipOpen && tooltipContext?.tooltipData && (
+                <TooltipInPortal left={tooltipLeft} top={tooltipTop} applyPositionStyle unstyled>
+                    <TooltipContent
+                        title={getHeadingFromDatum(
+                            tooltipContext.tooltipData.nearestDatum?.datum,
+                            locale,
+                            labelFormatter,
+                        )}
+                        description={tooltipContext.tooltipData.nearestDatum?.datum?.description}
+                        imageUrl={imageUrl}
+                        entries={sortedEntries}
+                    />
+                </TooltipInPortal>
+            )}
+        </>
     );
 };
