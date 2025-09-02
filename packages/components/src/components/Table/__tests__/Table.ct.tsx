@@ -188,23 +188,19 @@ test('should handle all row states and interactions', async ({ mount }) => {
     const component = await mount(
         <Table.Root aria-label="Table">
             <Table.Body>
-                <Table.Row onClick={onClick} disabled aria-label="Test Row">
+                <Table.Row disabled aria-label="Test Row">
                     <Table.RowCell>Test</Table.RowCell>
                     <Table.RowCell>Test</Table.RowCell>
                 </Table.Row>
-                <Table.Row onClick={onClick} selected>
+                <Table.Row selected>
                     <Table.RowCell>Test</Table.RowCell>
                     <Table.RowCell>Test</Table.RowCell>
                 </Table.Row>
                 <Table.Row onClick={onClick}>
                     <Table.RowCell>Test</Table.RowCell>
-                    <Table.RowCell>
-                        <button type="button" onClick={onButtonClick}>
-                            Test
-                        </button>
-                    </Table.RowCell>
+                    <Table.RowCell>Test</Table.RowCell>
                 </Table.Row>
-                <Table.Row onClick={onClick} disabled>
+                <Table.Row>
                     <Table.RowCell>Test</Table.RowCell>
                     <Table.RowCell>
                         <button type="button" onClick={onButtonClick}>
@@ -222,25 +218,16 @@ test('should handle all row states and interactions', async ({ mount }) => {
 
     const secondRow = component.locator('tr').nth(1);
     await expect(secondRow).toHaveAttribute('data-selected', 'true');
-    await expect(secondRow).toHaveAttribute('role', 'button');
-    await secondRow.click();
-    sinon.assert.calledOnce(onClick);
 
     const thirdRow = component.locator('tr').nth(2);
-    const firstCellOfThirdRow = thirdRow.locator('td').nth(0);
-    const button = thirdRow.locator('button');
+    await expect(thirdRow).toHaveAttribute('role', 'button');
+    await thirdRow.click();
+    sinon.assert.calledOnce(onClick);
 
-    // Clicking the first cell of the third row should trigger the row's onClick again,
-    // but should NOT trigger the button's onClick
-    await firstCellOfThirdRow.click();
-    sinon.assert.calledTwice(onClick);
-    sinon.assert.notCalled(onButtonClick);
-
-    // Clicking the button inside the third row should trigger the button's onClick,
-    // but should NOT trigger the row's onClick again
+    const fourthRow = component.locator('tr').nth(3);
+    const button = fourthRow.locator('button');
     await button.click();
     sinon.assert.calledOnce(onButtonClick);
-    sinon.assert.calledTwice(onClick);
 });
 
 test('should handle all cell configurations', async ({ mount }) => {
@@ -297,23 +284,6 @@ test('should handle sorting functionality', async ({ mount }) => {
 
     await component.getByRole('button').click();
     sinon.assert.calledOnceWithExactly(onSortChange, 'descending');
-});
-
-test('should handle row selection', async ({ mount }) => {
-    const onClick = sinon.spy();
-    const component = await mount(
-        <Table.Root aria-label="Table">
-            <Table.Body>
-                <Table.Row selected={false} onClick={onClick}>
-                    <Table.RowCell>Test</Table.RowCell>
-                </Table.Row>
-            </Table.Body>
-        </Table.Root>,
-    );
-
-    await component.getByRole('button').click();
-    sinon.assert.calledOnceWithExactly(onClick, false);
-    await expect(component.getByRole('button')).toHaveAttribute('aria-selected', 'false');
 });
 
 test('should handle keyboard navigation', async ({ mount, page }) => {

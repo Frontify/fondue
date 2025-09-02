@@ -264,7 +264,7 @@ export const TableBody = forwardRef<HTMLTableSectionElement, TableBodyProps>(
 );
 TableBody.displayName = 'Table.Body';
 
-type BaseTableRowProps = {
+type TableRowProps = {
     /**
      * Whether the row is in a selected state
      * @default false
@@ -276,6 +276,11 @@ type BaseTableRowProps = {
      */
     disabled?: boolean;
     /**
+     * Handler called when the row is clicked or activated via keyboard
+     * If provided, the row will be hoverable and interactive
+     */
+    onClick?: (selected: boolean) => void;
+    /**
      * Content to be rendered within the row
      */
     children: ReactNode;
@@ -284,14 +289,6 @@ type BaseTableRowProps = {
      */
     'aria-label'?: string;
     'data-test-id'?: string;
-};
-
-type TableRowProps = BaseTableRowProps & {
-    /**
-     * Handler called when the row is clicked or activated via keyboard
-     * If provided, the row will be hoverable and interactive
-     */
-    onClick?: (selected: boolean) => void;
 };
 
 export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(
