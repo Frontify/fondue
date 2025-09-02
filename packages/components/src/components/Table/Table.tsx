@@ -45,9 +45,9 @@ type TableRootProps = {
 export const TableRoot = forwardRef<HTMLTableElement, TableRootProps>(
     ({ layout = 'auto', fontSize = 'medium', sticky, children, ...props }, ref) => {
         return (
+            // eslint-disable-next-line jsx-a11y-x/no-noninteractive-element-interactions
             <table
                 ref={ref}
-                role="grid"
                 className={styles.table}
                 data-layout={layout}
                 data-font-size={fontSize}

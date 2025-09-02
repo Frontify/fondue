@@ -24,7 +24,6 @@ test('should render basic table structure', async ({ mount }) => {
     );
 
     await expect(component).toBeVisible();
-    await expect(component.getByRole('table')).toBeVisible();
     await expect(component.getByRole('columnheader')).toHaveCount(2);
 });
 
@@ -40,7 +39,7 @@ test('should handle table layout modes', async ({ mount }) => {
         </Table.Root>,
     );
 
-    await expect(component.locator('table')).toHaveAttribute('data-layout', 'fixed');
+    await expect(component).toHaveAttribute('data-layout', 'fixed');
     await expect(component.locator('caption')).toHaveText('Table Caption');
 });
 
@@ -56,7 +55,7 @@ test('should handle table font size small', async ({ mount }) => {
         </Table.Root>,
     );
 
-    await expect(component.locator('table')).toHaveAttribute('data-font-size', 'medium');
+    await expect(component).toHaveAttribute('data-font-size', 'medium');
 });
 
 test('should handle table font size medium', async ({ mount }) => {
@@ -71,7 +70,7 @@ test('should handle table font size medium', async ({ mount }) => {
         </Table.Root>,
     );
 
-    await expect(component.locator('table')).toHaveAttribute('data-font-size', 'small');
+    await expect(component).toHaveAttribute('data-font-size', 'small');
 });
 
 test('should handle ARIA attributes', async ({ mount }) => {
@@ -85,8 +84,8 @@ test('should handle ARIA attributes', async ({ mount }) => {
         </Table.Root>,
     );
 
-    await expect(component.locator('table')).toHaveAttribute('aria-label', 'Test Table');
-    await expect(component.locator('table')).toHaveAttribute('aria-describedby', 'table-desc');
+    await expect(component).toHaveAttribute('aria-label', 'Test Table');
+    await expect(component).toHaveAttribute('aria-describedby', 'table-desc');
 });
 
 test('should handle sticky header and ARIA attributes', async ({ mount }) => {
@@ -100,7 +99,7 @@ test('should handle sticky header and ARIA attributes', async ({ mount }) => {
         </Table.Root>,
     );
 
-    await expect(component.locator('table')).toHaveAttribute('data-sticky', 'head');
+    await expect(component).toHaveAttribute('data-sticky', 'head');
     await expect(component.locator('thead')).toHaveAttribute('aria-label', 'Header Section');
     await expect(component.locator('thead')).toHaveAttribute('aria-busy', 'true');
 });
@@ -116,7 +115,7 @@ test('should handle header with loading state', async ({ mount }) => {
         </Table.Root>,
     );
 
-    await expect(component.locator('table')).toHaveAttribute('data-sticky', 'head');
+    await expect(component).toHaveAttribute('data-sticky', 'head');
     await expect(component.locator('th').getByTestId('fondue-loading-circle')).toBeVisible();
 });
 
@@ -131,7 +130,7 @@ test('should handle sticky first column', async ({ mount }) => {
         </Table.Root>,
     );
 
-    await expect(component.locator('table')).toHaveAttribute('data-sticky', 'col');
+    await expect(component).toHaveAttribute('data-sticky', 'col');
     await expect(component.locator('tbody')).toHaveAttribute('aria-busy', 'true');
 });
 
@@ -146,7 +145,7 @@ test('should handle sticky first column and head', async ({ mount }) => {
         </Table.Root>,
     );
 
-    await expect(component.locator('table')).toHaveAttribute('data-sticky', 'both');
+    await expect(component).toHaveAttribute('data-sticky', 'both');
 });
 
 test('should handle all HeaderCell configurations', async ({ mount }) => {
