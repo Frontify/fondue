@@ -463,6 +463,7 @@ test('render indicator on selected item', async ({ mount, page }) => {
     const firstItem = page.getByTestId(ITEM_TEST_ID1);
     const chekmarkIcon = firstItem.getByTestId('fondue-icons-check-mark');
     await expect(firstItem).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+    await expect(firstItem).toHaveAttribute('aria-selected', 'false');
     await expect(chekmarkIcon).not.toBeVisible();
 
     await page.keyboard.press('ArrowDown');
@@ -472,6 +473,7 @@ test('render indicator on selected item', async ({ mount, page }) => {
     await component.click();
 
     await expect(firstItem).toHaveAttribute('data-selected', 'true');
+    await expect(firstItem).toHaveAttribute('aria-selected', 'true');
     await expect(firstItem).toHaveCSS('background-color', 'rgb(234, 235, 235)');
     await expect(chekmarkIcon).toBeVisible();
 
