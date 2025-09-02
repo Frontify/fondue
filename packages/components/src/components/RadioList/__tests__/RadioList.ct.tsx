@@ -345,7 +345,7 @@ test('should not cause layout shift on hover', async ({ mount }) => {
 
     // Test hover effects don't cause layout shifts
     await button1.hover();
-    
+
     const hoverButton1Box = await button1.boundingBox();
     const hoverButton2Box = await button2.boundingBox();
     const hoverComponentBox = await component.boundingBox();
@@ -379,7 +379,7 @@ test('should not cause layout shift on selection', async ({ mount }) => {
 
     // Test selection doesn't cause layout shifts
     await button2.click();
-    
+
     const selectedButton1Box = await button1.boundingBox();
     const selectedButton2Box = await button2.boundingBox();
     const selectedComponentBox = await component.boundingBox();
@@ -413,7 +413,7 @@ test('should not cause layout shift when hovering selected item', async ({ mount
 
     // Test hover on selected item doesn't cause layout shifts
     await button1.hover();
-    
+
     const selectedHoverButton1Box = await button1.boundingBox();
     const selectedHoverButton2Box = await button2.boundingBox();
     const selectedHoverComponentBox = await component.boundingBox();
