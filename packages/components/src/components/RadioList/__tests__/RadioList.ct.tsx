@@ -298,8 +298,8 @@ test('should render with emphasis styling', async ({ mount }) => {
     const radioButton = component.getByTestId(RADIO_BUTTON_1_TEST_ID);
     await expect(radioButton).toBeVisible();
 
-    // Verify the label is also present
-    const label = component.getByText('Option 1');
+    // Verify the label is also present - use first() to handle multiple matching elements
+    const label = component.getByText('Option 1').first();
     await expect(label).toBeVisible();
 });
 
@@ -316,7 +316,109 @@ test('should render with required attribute', async ({ mount }) => {
     const radioButton = component.getByTestId(RADIO_BUTTON_1_TEST_ID);
     await expect(radioButton).toBeVisible();
 
-    // Verify the label is also present
-    const label = component.getByText('Option 1');
+    // Verify the label is also present - use first() to handle multiple matching elements
+    const label = component.getByText('Option 1').first();
     await expect(label).toBeVisible();
+});
+
+test('should not cause layout shift on hover', async ({ mount }) => {
+    const component = await mount(
+        <RadioList.Root>
+            <RadioList.RadioButton id="option-1" value="1" data-test-id={RADIO_BUTTON_1_TEST_ID} />
+            <Label htmlFor="option-1">Option 1</Label>
+            <RadioList.RadioButton id="option-2" value="2" data-test-id={RADIO_BUTTON_2_TEST_ID} />
+            <Label htmlFor="option-2">Option 2</Label>
+        </RadioList.Root>,
+    );
+
+    const button1 = component.getByTestId(RADIO_BUTTON_1_TEST_ID);
+    const button2 = component.getByTestId(RADIO_BUTTON_2_TEST_ID);
+
+    // Capture initial layout measurements
+    const initialButton1Box = await button1.boundingBox();
+    const initialButton2Box = await button2.boundingBox();
+    const initialComponentBox = await component.boundingBox();
+
+    expect(initialButton1Box).toBeTruthy();
+    expect(initialButton2Box).toBeTruthy();
+    expect(initialComponentBox).toBeTruthy();
+
+    // Test hover effects don't cause layout shifts
+    await button1.hover();
+    
+    const hoverButton1Box = await button1.boundingBox();
+    const hoverButton2Box = await button2.boundingBox();
+    const hoverComponentBox = await component.boundingBox();
+
+    expect(hoverButton1Box).toEqual(initialButton1Box);
+    expect(hoverButton2Box).toEqual(initialButton2Box);
+    expect(hoverComponentBox).toEqual(initialComponentBox);
+});
+
+test('should not cause layout shift on selection', async ({ mount }) => {
+    const component = await mount(
+        <RadioList.Root>
+            <RadioList.RadioButton id="option-1" value="1" data-test-id={RADIO_BUTTON_1_TEST_ID} />
+            <Label htmlFor="option-1">Option 1</Label>
+            <RadioList.RadioButton id="option-2" value="2" data-test-id={RADIO_BUTTON_2_TEST_ID} />
+            <Label htmlFor="option-2">Option 2</Label>
+        </RadioList.Root>,
+    );
+
+    const button1 = component.getByTestId(RADIO_BUTTON_1_TEST_ID);
+    const button2 = component.getByTestId(RADIO_BUTTON_2_TEST_ID);
+
+    // Capture initial layout measurements
+    const initialButton1Box = await button1.boundingBox();
+    const initialButton2Box = await button2.boundingBox();
+    const initialComponentBox = await component.boundingBox();
+
+    expect(initialButton1Box).toBeTruthy();
+    expect(initialButton2Box).toBeTruthy();
+    expect(initialComponentBox).toBeTruthy();
+
+    // Test selection doesn't cause layout shifts
+    await button2.click();
+    
+    const selectedButton1Box = await button1.boundingBox();
+    const selectedButton2Box = await button2.boundingBox();
+    const selectedComponentBox = await component.boundingBox();
+
+    expect(selectedButton1Box).toEqual(initialButton1Box);
+    expect(selectedButton2Box).toEqual(initialButton2Box);
+    expect(selectedComponentBox).toEqual(initialComponentBox);
+});
+
+test('should not cause layout shift when hovering selected item', async ({ mount }) => {
+    const component = await mount(
+        <RadioList.Root value="1">
+            <RadioList.RadioButton id="option-1" value="1" data-test-id={RADIO_BUTTON_1_TEST_ID} />
+            <Label htmlFor="option-1">Option 1</Label>
+            <RadioList.RadioButton id="option-2" value="2" data-test-id={RADIO_BUTTON_2_TEST_ID} />
+            <Label htmlFor="option-2">Option 2</Label>
+        </RadioList.Root>,
+    );
+
+    const button1 = component.getByTestId(RADIO_BUTTON_1_TEST_ID);
+    const button2 = component.getByTestId(RADIO_BUTTON_2_TEST_ID);
+
+    // Capture initial layout measurements (button1 is already selected)
+    const initialButton1Box = await button1.boundingBox();
+    const initialButton2Box = await button2.boundingBox();
+    const initialComponentBox = await component.boundingBox();
+
+    expect(initialButton1Box).toBeTruthy();
+    expect(initialButton2Box).toBeTruthy();
+    expect(initialComponentBox).toBeTruthy();
+
+    // Test hover on selected item doesn't cause layout shifts
+    await button1.hover();
+    
+    const selectedHoverButton1Box = await button1.boundingBox();
+    const selectedHoverButton2Box = await button2.boundingBox();
+    const selectedHoverComponentBox = await component.boundingBox();
+
+    expect(selectedHoverButton1Box).toEqual(initialButton1Box);
+    expect(selectedHoverButton2Box).toEqual(initialButton2Box);
+    expect(selectedHoverComponentBox).toEqual(initialComponentBox);
 });
