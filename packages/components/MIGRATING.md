@@ -40,6 +40,9 @@ This document describes the changes that you need to make to your code to migrat
         - [Loading Circle](#loading-circle)
             - [Old](#loading-circle-old)
             - [New](#loading-circle-new)
+        - [RadioList](#radiolist)
+            - [Old](#radiolist-old)
+            - [New](#radiolist-new)
         - [Scroll Wrapper](#scroll-wrapper)
             - [Old](#scroll-wrapper-old)
             - [New](#scroll-wrapper-new)
@@ -716,6 +719,42 @@ Changes:
 
 ```tsx
 <LoadingCircle variant="success" size="large" />
+```
+
+### RadioList
+
+Changes:
+
+- The `RadioList` component now uses a composable structure with `RadioList.Root` and `RadioList.RadioButton`.
+- The `direction` prop has been renamed to `orientation` and now takes `'horizontal'` or `'vertical'` instead of enum values.
+- Radio buttons are now created individually using `RadioList.RadioButton` instead of being passed as children.
+- Labels are now separate `Label` components that must be associated with each radio button via `htmlFor` prop.
+- The `defaultValue` prop is now called `value` for controlled usage, or `defaultValue` for uncontrolled.
+- Individual radio button styling is now handled through component composition.
+
+#### Old {#radiolist-old}
+
+```tsx
+<RadioList direction={RadioListDirection.Vertical} defaultValue="option1" onChange={handleChange}>
+    <RadioButton value="option1" />
+    <RadioButton value="option2" />
+    <RadioButton value="option3" />
+</RadioList>
+```
+
+#### New {#radiolist-new}
+
+```tsx
+<RadioList.Root orientation="vertical" defaultValue="option1" onValueChange={handleChange}>
+    <RadioList.RadioButton id="option1" value="option1" />
+    <Label htmlFor="option1">Option 1</Label>
+    
+    <RadioList.RadioButton id="option2" value="option2" />
+    <Label htmlFor="option2">Option 2</Label>
+    
+    <RadioList.RadioButton id="option3" value="option3" />
+    <Label htmlFor="option3">Option 3</Label>
+</RadioList.Root>
 ```
 
 ### Scroll Area
