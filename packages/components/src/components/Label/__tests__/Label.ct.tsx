@@ -10,7 +10,7 @@ const LABEL_TEXT = 'sample label';
 test('render with the correct text', async ({ mount }) => {
     const component = await mount(<Label htmlFor="random-id">{LABEL_TEXT}</Label>);
 
-    await expect(component.getByText(LABEL_TEXT)).toBeVisible();
+    await expect(component.getByText(LABEL_TEXT).last()).toBeVisible();
 });
 
 test('focus the input linked to the label on click', async ({ mount }) => {
