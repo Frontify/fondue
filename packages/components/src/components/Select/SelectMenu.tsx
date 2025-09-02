@@ -131,7 +131,7 @@ export const SelectMenu = ({
                                         });
 
                                         const isSelected = selectedItem?.value === optionData.value;
-                                        
+
                                         return (
                                             <RadixSlot
                                                 className={styles.item}
