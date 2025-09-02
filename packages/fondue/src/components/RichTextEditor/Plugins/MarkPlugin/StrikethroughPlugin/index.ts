@@ -6,7 +6,7 @@ import { type PlatePlugin } from '@udecode/plate-core';
 import { Plugin, type PluginProps } from '../../Plugin';
 
 import { StrikethroughButton } from './StrikethroughButton';
-import { StrikethroughMarkupElement } from './StrikethroughMarkupElement';
+import { STRIKETHROUGH_CLASSES, StrikethroughMarkupElement } from './StrikethroughMarkupElement';
 import { STRIKETHROUGH_PLUGIN } from './id';
 
 export class StrikethroughPlugin extends Plugin {
@@ -19,7 +19,26 @@ export class StrikethroughPlugin extends Plugin {
     }
 
     plugins(): PlatePlugin[] {
-        return [createStrikethroughPlugin()];
+        return [
+            createStrikethroughPlugin({
+                deserializeHtml: {
+                    rules: [
+                        {
+                            validNodeName: ['S', 'DEL', 'STRIKE'],
+                        },
+                        {
+                            validStyle: {
+                                textDecoration: ['line-through'],
+                            },
+                        },
+                        {
+                            validNodeName: ['SPAN'],
+                            validClassName: STRIKETHROUGH_CLASSES,
+                        },
+                    ],
+                },
+            }),
+        ];
     }
 }
 
