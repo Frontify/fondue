@@ -59,11 +59,11 @@ export const LabelComponent = (
             {...props}
         >
             {/* Hidden version with medium font weight to reserve space */}
-            <span className="tw-font-medium tw-opacity-0 tw-pointer-events-none" aria-hidden="true">
+            <span className="tw-font-medium tw-opacity-0 tw-pointer-events-none " aria-hidden="true">
                 {children}
             </span>
             {/* Visible version (inherits all styling from parent) */}
-            <span className="tw-absolute tw-inset-0">{children}</span>
+            <span className="tw-absolute tw-inset-0 ">{children}</span>
         </LabelPrimitive.Root>
     );
 };

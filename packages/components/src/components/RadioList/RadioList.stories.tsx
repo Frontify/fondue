@@ -1,10 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconQuestionMarkCircle } from '@frontify/fondue-icons';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { useId } from 'react';
 
 import { Flex } from '../Flex/Flex';
 import { Label } from '../Label/Label';
+import { Tooltip } from '../Tooltip/Tooltip';
 
 import { RadioList } from './RadioList';
 
@@ -62,7 +64,16 @@ const meta: Meta<typeof RadioList.Root> = {
 
                 <RadioList.RadioButton id={idOption3} value="3" />
                 <Label htmlFor={idOption3} required={args.required}>
-                    Option 3
+                    <Flex gap={2} align="center">
+                        Option 3
+                        <Tooltip.Root>
+                            <Tooltip.Trigger>
+                                <IconQuestionMarkCircle size="16" />
+                            </Tooltip.Trigger>
+
+                            <Tooltip.Content>I'm a tooltip!</Tooltip.Content>
+                        </Tooltip.Root>
+                    </Flex>
                 </Label>
             </RadioList.Root>
         );
