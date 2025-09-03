@@ -1,5 +1,11 @@
 # @frontify/fondue-components
 
+## 19.6.0
+
+### Minor Changes
+
+- [#2407](https://github.com/Frontify/fondue/pull/2407) [`b484cd3`](https://github.com/Frontify/fondue/commit/b484cd3b6d853b83585183793906b8313b205aa4) Thanks [@syeo66](https://github.com/syeo66)! - feat(ColorPicker): output alpha percentage in ColorPickerInput
+
 ## 19.5.0
 
 ### Minor Changes
