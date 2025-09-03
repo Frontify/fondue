@@ -1,11 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconQuestionMarkCircle } from '@frontify/fondue-icons';
 import { action } from '@storybook/addon-actions';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { type FormEvent, useState, useId } from 'react';
 
 import { Flex } from '../Flex/Flex';
 import { Label } from '../Label/Label';
+import { Tooltip } from '../Tooltip/Tooltip';
 
 import { Checkbox, CheckboxComponent } from './Checkbox';
 
@@ -39,12 +41,12 @@ const meta: Meta<typeof CheckboxComponent> = {
         };
 
         return (
-            <div className="tw-flex tw-gap-2 tw-items-center">
+            <Flex gap={2} align="center">
                 <Checkbox {...args} id={checkboxId} aria-labelledby={labelId} value={value} onChange={handleToggle} />
                 <Label id={labelId} htmlFor={checkboxId} required={args.required}>
                     Checkbox
                 </Label>
-            </div>
+            </Flex>
         );
     },
 };
@@ -74,6 +76,38 @@ export const ReadOnly: Story = {
     args: {
         readOnly: true,
         value: true,
+    },
+};
+
+export const WithTooltip: Story = {
+    render: (args) => {
+        const [value, setValue] = useState(args.value);
+        const id = useId();
+        const checkboxId = `checkbox-${id}`;
+        const labelId = `label-${id}`;
+
+        const handleToggle = (event: FormEvent) => {
+            action('onChange')(event);
+            setValue((prevIsChecked) => (prevIsChecked === 'indeterminate' ? true : !prevIsChecked));
+        };
+
+        return (
+            <Flex gap={2}>
+                <Checkbox {...args} id={checkboxId} aria-labelledby={labelId} value={value} onChange={handleToggle} />
+                <Label id={labelId} htmlFor={checkboxId} required={args.required}>
+                    <Flex gap={2} align="center">
+                        Checkbox
+                        <Tooltip.Root>
+                            <Tooltip.Trigger>
+                                <IconQuestionMarkCircle size="16" />
+                            </Tooltip.Trigger>
+
+                            <Tooltip.Content>I am a tooltip!</Tooltip.Content>
+                        </Tooltip.Root>
+                    </Flex>
+                </Label>
+            </Flex>
+        );
     },
 };
 
