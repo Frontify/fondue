@@ -1,5 +1,17 @@
 # @frontify/fondue
 
+## 12.12.3
+
+### Patch Changes
+
+- [#2412](https://github.com/Frontify/fondue/pull/2412) [`dfc0fb1`](https://github.com/Frontify/fondue/commit/dfc0fb1b338b2995df85b1038298d549875fadc9) Thanks [@maciej-baruch](https://github.com/maciej-baruch)! - fix(Rich Text Editor): support font color serialization
+
+    support strikethrough classes deserialization
+
+- Updated dependencies [[`d21c257`](https://github.com/Frontify/fondue/commit/d21c257ea04643f288745a239b5c0591f20af588), [`5d00d5d`](https://github.com/Frontify/fondue/commit/5d00d5dfcd8e24644453e548ef61026d31de37a9), [`cea1188`](https://github.com/Frontify/fondue/commit/cea1188b46464ca58aa665fba25a6f78559eb3b1), [`093ab9c`](https://github.com/Frontify/fondue/commit/093ab9ce244c98a6b8dcf6309f57ec6ba06db26b), [`5bf25c5`](https://github.com/Frontify/fondue/commit/5bf25c52afd36caea220c4776e54016dbcb9ded8), [`90d8c14`](https://github.com/Frontify/fondue/commit/90d8c1406205cd47097a7a205ed0869542a2d4fc)]:
+    - @frontify/fondue-components@19.5.0
+    - @frontify/fondue-charts@6.0.4
+
 ## 12.12.2
 
 ### Patch Changes

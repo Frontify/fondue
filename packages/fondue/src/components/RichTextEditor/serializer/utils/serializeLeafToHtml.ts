@@ -15,7 +15,7 @@ export const serializeLeafToHtml = (node: TText): string => {
         string = '&#xFEFF;';
     }
     string = string.replaceAll('\n', '<br />&#xFEFF;');
-    const { bold, italic, underline, strikethrough, code, subscript, superscript } = node;
+    const { bold, italic, underline, strikethrough, code, subscript, superscript, color } = node;
     if (bold) {
         string = `<span class="${BOLD_CLASSES}">${string}</span>`;
     }
@@ -30,6 +30,9 @@ export const serializeLeafToHtml = (node: TText): string => {
     }
     if (code) {
         string = `<span class="${CODE_CLASSES}">${string}</span>`;
+    }
+    if (color) {
+        string = `<span style="color: ${color as string}">${string}</span>`;
     }
     if (subscript) {
         string = `<sub>${string}</sub>`;

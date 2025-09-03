@@ -1,0 +1,93 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+@use '../../../utilities/focusStyle.module.scss';
+
+.root {
+    display: flex;
+    gap: var(--space-xs);
+
+    & button:not(:first-child) {
+        margin-left: var(--space-xs);
+    }
+
+    &[data-readonly="true"] {
+       pointer-events: none;
+    }
+
+    &[data-orientation="vertical"] {
+        display: grid;
+        grid-template-columns: 1rem auto;
+
+        & button {
+            margin-left: 0;
+        }
+    }
+
+}
+
+.item {
+    all: unset;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 100%;
+    border: 1px solid var(--line-color-x-strong);
+    cursor: pointer;
+
+    transition: border cubic-bezier(0.4, 0, 0.2, 1) 150ms;
+
+    &[data-readonly="true"] {
+       pointer-events: none;
+    }
+
+    &:hover {
+        border: 1px solid var(--line-color-xx-strong);
+
+        [data-state="checked"]::after {
+            outline: 6px solid var(--box-neutral-strong-color-hover);
+        }
+    }
+
+    .root[data-emphasis="highlight"] &:hover {
+        [data-state="checked"]::after {
+            outline: 6px solid var(--box-selected-strong-color-hover);
+        }
+    }
+
+    &:disabled, .root[data-emphasis="highlight"] &:disabled {
+        border: 1px solid var(--line-color-strong);
+
+        [data-state="checked"]::after {
+            outline: 6px solid var(--box-neutral-color);
+        }
+    }
+
+    & {
+        @include focusStyle.focus-outline;
+    }
+}
+
+.indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    position: relative;
+
+    &::after {
+        content: "";
+        display: block;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        box-sizing: border-box;
+        outline: 6px solid var(--box-neutral-strong-color);
+        transition: outline cubic-bezier(0.4, 0, 0.2, 1) 150ms;
+    }
+
+    .root[data-emphasis="highlight"] & {
+        &::after {
+            outline: 6px solid var(--box-selected-strong-color);
+        }
+    }
+}
