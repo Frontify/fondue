@@ -131,18 +131,23 @@ const TemplateWithHeading: StoryFn<LineChartProps> = (args) => (
         <LineChart {...args} />
     </>
 );
+
 const TemplateWithContentOnTop: StoryFn<LineChartProps> = (args) => (
-    <div className="tw-h-[1000px] tw-overflow-auto tw-relative">
+    <div className="tw-h-screen tw-overflow-auto tw-relative">
         <ChartHeading
             title="US City Temperature"
             description="The temperature of US cities over time"
             icon={<IconRocket />}
         />
-        <div className="tw-h-[200px] tw-w-[200px] tw-sticky tw-top-0 tw-p-5 tw-bg-[#cd2828] tw-z-[1]">
+        <div className="tw-h-48 tw-w-screen tw-sticky tw-top-0 tw-p-5 tw-bg-box-neutral tw-flex tw-justify-center tw-items-center">
             Content on top of chart
         </div>
-        <LineChart {...args} />
-        <div className="tw-h-[600px] tw-w-[200px]">asdasdas </div>
+        <div className="tw-flex tw-justify-center">
+            <LineChart {...args} />
+        </div>
+        <div className="tw-h-96 tw-w-screen tw-border tw-border-line tw-flex tw-justify-center tw-items-center">
+            White space content
+        </div>
     </div>
 );
 

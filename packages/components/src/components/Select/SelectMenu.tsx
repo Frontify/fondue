@@ -130,11 +130,13 @@ export const SelectMenu = ({
                                             ...(child.ref ? { ref: child.ref } : {}),
                                         });
 
+                                        const isSelected = selectedItem?.value === optionData.value;
+
                                         return (
                                             <RadixSlot
                                                 className={styles.item}
                                                 data-highlighted={highlightedIndex === index}
-                                                data-selected={selectedItem?.value === optionData.value}
+                                                data-selected={isSelected}
                                                 key={child.props.value}
                                                 // Workaround for the issue where the onClick event is not fired on touch devices because of portal usage
                                                 onTouchStart={(event) => {
@@ -143,6 +145,7 @@ export const SelectMenu = ({
                                                     }
                                                 }}
                                                 {...itemProps}
+                                                aria-selected={isSelected}
                                             >
                                                 {child}
                                             </RadixSlot>

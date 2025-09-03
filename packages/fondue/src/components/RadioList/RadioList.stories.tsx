@@ -10,6 +10,11 @@ export default {
     title: 'Components/RadioList',
     component: RadioList,
     tags: ['autodocs'],
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
+    },
     argTypes: {
         direction: {
             options: [RadioListDirection.Horizontal, RadioListDirection.Vertical],
