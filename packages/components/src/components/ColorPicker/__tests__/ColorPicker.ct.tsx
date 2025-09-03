@@ -113,7 +113,7 @@ test('should trigger color change event from long HEX input', async ({ mount }) 
     await component.getByTestId(COLOR_PICKER_VALUE_INPUT_HEX_TEST_ID).locator('input').fill('aa00cc');
     await component.getByTestId(COLOR_PICKER_VALUE_INPUT_HEX_TEST_ID).locator('input').blur();
     expect(onChange.callCount).toBe(1);
-    expect(onChange.getCall(0).args[0]).toEqual({ red: 170, green: 0, blue: 204, alpha: 0.8, name: '#aa00cc' });
+    expect(onChange.getCall(0).args[0]).toEqual({ red: 170, green: 0, blue: 204, alpha: 0.8, name: '#aa00cc 80%' });
 });
 
 test('should trigger color change event from short HEX input', async ({ mount }) => {
@@ -132,7 +132,7 @@ test('should trigger color change event from short HEX input', async ({ mount })
     await component.getByTestId(COLOR_PICKER_VALUE_INPUT_HEX_TEST_ID).locator('input').fill('a0c');
     await component.getByTestId(COLOR_PICKER_VALUE_INPUT_HEX_TEST_ID).locator('input').blur();
     expect(onChange.callCount).toBe(1);
-    expect(onChange.getCall(0).args[0]).toEqual({ red: 170, green: 0, blue: 204, alpha: 0.8, name: '#aa00cc' });
+    expect(onChange.getCall(0).args[0]).toEqual({ red: 170, green: 0, blue: 204, alpha: 0.8, name: '#aa00cc 80%' });
 });
 
 test('should trigger color change event from RGB input', async ({ mount }) => {
