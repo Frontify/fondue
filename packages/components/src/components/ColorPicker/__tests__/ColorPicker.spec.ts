@@ -5,6 +5,7 @@ import { describe, expect, it } from 'vitest';
 import {
     colorToCss,
     getColorWithName,
+    getHexDisplayName,
     getLimitedColorChannelValue,
     hexColorToRgba,
     isValidHexColor,
@@ -77,10 +78,41 @@ describe('rgbColorToHex', () => {
     });
 });
 
+describe('getHexDisplayName', () => {
+    it('should return hex without alpha for full opacity', () => {
+        const name = getHexDisplayName({ red: 255, green: 255, blue: 255, alpha: 1 });
+        expect(name).toEqual('#ffffff');
+    });
+    it('should return hex without alpha when alpha is undefined', () => {
+        const name = getHexDisplayName({ red: 255, green: 87, blue: 51 });
+        expect(name).toEqual('#ff5733');
+    });
+    it('should return hex with percentage for alpha < 1', () => {
+        const name = getHexDisplayName({ red: 255, green: 255, blue: 255, alpha: 0.9 });
+        expect(name).toEqual('#ffffff 90%');
+    });
+    it('should return hex with percentage for low alpha', () => {
+        const name = getHexDisplayName({ red: 255, green: 87, blue: 51, alpha: 0.84 });
+        expect(name).toEqual('#ff5733 84%');
+    });
+    it('should return hex with 0% for zero alpha', () => {
+        const name = getHexDisplayName({ red: 0, green: 0, blue: 0, alpha: 0 });
+        expect(name).toEqual('#000000 0%');
+    });
+    it('should handle rounding for alpha values', () => {
+        const name = getHexDisplayName({ red: 255, green: 255, blue: 255, alpha: 0.846 });
+        expect(name).toEqual('#ffffff 85%');
+    });
+});
+
 describe('getColorWithName', () => {
-    it('should return the color with hex name', () => {
+    it('should return the color with hex name for full opacity', () => {
         const color = getColorWithName({ red: 255, green: 0, blue: 0, alpha: 1 }, 'HEX');
         expect(color).toEqual({ red: 255, green: 0, blue: 0, alpha: 1, name: '#ff0000' });
+    });
+    it('should return the color with hex name and alpha percentage', () => {
+        const color = getColorWithName({ red: 255, green: 0, blue: 0, alpha: 0.9 }, 'HEX');
+        expect(color).toEqual({ red: 255, green: 0, blue: 0, alpha: 0.9, name: '#ff0000 90%' });
     });
     it('should return the color with rgba name', () => {
         const color = getColorWithName({ red: 255, green: 0, blue: 0, alpha: 1 }, 'RGBA');
