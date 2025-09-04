@@ -31,7 +31,7 @@ export const LabelComponent = (
             ref={ref}
             data-required={props.required}
             className={cn(
-                'tw-group tw-relative tw-flex tw-gap-1 tw-font-primary tw-text-medium tw-text-secondary tw-transition-colors',
+                'tw-group tw-relative tw-flex tw-gap-1 tw-font-primary !tw-text-medium tw-text-secondary tw-transition-colors',
                 // Peer-based color changes (apply to parent, inherit to spans)
                 'peer-hover:tw-text-primary has-[+_*_input:hover:not(:disabled)]:tw-text-primary has-[~_button:hover:not(:disabled)]:tw-text-primary',
                 // Use adjacent sibling selector when checkbox is checked
