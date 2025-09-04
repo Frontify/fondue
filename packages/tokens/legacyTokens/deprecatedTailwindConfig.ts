@@ -1,9 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import defaultColors from 'tailwindcss/colors';
+import defaultTheme from 'tailwindcss/defaultTheme';
+
 export default {
+    presets: [],
     theme: {
         extend: {
             colors: {
+                ...defaultColors,
                 base: { DEFAULT: 'var(--color-surface-default)', alt: 'var(--color-surface-dim)' },
                 box: {
                     neutral: 'var(--color-container-secondary-default)',
@@ -156,6 +161,7 @@ export default {
                 },
             },
             fontSize: {
+                ...defaultTheme.fontSize,
                 'body-x-small': ['var(--typography-font-size-x-small)', 'var(--typography-line-height-tight)'],
                 'body-small': ['var(--typography-font-size-small)', 'var(--typography-line-height-tight)'],
                 'body-medium': ['var(--typography-font-size-medium)', 'var(--typography-line-height-medium)'],
@@ -172,6 +178,7 @@ export default {
                 ],
             },
             fontFamily: {
+                ...defaultTheme.fontFamily,
                 body: 'var(--typography-font-family-primary)',
                 'body--stack': 'var(--body-family)',
                 code: 'var(--typography-font-family-monoe)',
@@ -179,7 +186,9 @@ export default {
                 heading: 'var(--typography-font-family-primary)',
                 'heading--stack': 'var(--typography-font-family-primary)',
             },
+            fontWeight: defaultTheme.fontWeight,
             boxShadow: {
+                ...defaultTheme.boxShadow,
                 matrix: 'var(--shadow-default)',
                 'top-matrix': 'var(--shadow-default)',
                 'bottom-matrix': 'var(--shadow-default)',
@@ -189,16 +198,24 @@ export default {
                 'inner-line-x-strong': 'inset 0 0 0 var(--border-width-default) var(--color-line-strong)',
                 'inner-line-xx-strong': 'inset 0 0 0 var(--border-width-default) var(--color-line-strong)',
             },
-            borderWidth: { DEFAULT: 'var(--border-width-default)', large: 'var(--border-width-large)' },
+            letterSpacing: defaultTheme.letterSpacing,
+            lineHeight: defaultTheme.lineHeight,
+            borderWidth: {
+                ...defaultTheme.borderWidth,
+                DEFAULT: 'var(--border-width-default)',
+                large: 'var(--border-width-large)',
+            },
             borderRadius: {
+                ...defaultTheme.borderRadius,
                 DEFAULT: 'var(--border-radius-medium)',
                 small: 'var(--border-radius-small)',
                 large: 'var(--border-radius-large)',
                 'x-large': 'var(--border-radius-x-large)',
             },
-            ringColor: { DEFAULT: 'var(--color-focus-default)' },
-            outline: { violet: '1px solid var(--color-focus-default)' },
+            ringColor: { ...defaultTheme.ringColor, DEFAULT: 'var(--color-focus-default)' },
+            outline: { ...defaultTheme.outline, violet: '1px solid var(--color-focus-default)' },
             spacing: {
+                ...defaultTheme.spacing,
                 xxs: 'var(--spacing-xx-small)',
                 xs: 'var(--spacing-x-small)',
                 s: 'var(--spacing-small)',

@@ -1,5 +1,187 @@
 {
   "colors": {
+    "charts": {
+      "dim": {
+        "default": {
+          "name": "color-charts-dim-default",
+          "type": "color",
+          "value": "var(--color-charts-dim-default)",
+          "path": [
+            "light",
+            "color",
+            "charts",
+            "dim",
+            "default"
+          ]
+        }
+      },
+      "missing": {
+        "default": {
+          "name": "color-charts-missing-default",
+          "type": "color",
+          "value": "var(--color-charts-missing-default)",
+          "path": [
+            "light",
+            "color",
+            "charts",
+            "missing",
+            "default"
+          ]
+        }
+      },
+      "negative": {
+        "default": {
+          "name": "color-charts-negative-default",
+          "type": "color",
+          "value": "var(--color-charts-negative-default)",
+          "path": [
+            "light",
+            "color",
+            "charts",
+            "negative",
+            "default"
+          ]
+        },
+        "hover": {
+          "name": "color-charts-negative-hover",
+          "type": "color",
+          "value": "var(--color-charts-negative-hover)",
+          "path": [
+            "light",
+            "color",
+            "charts",
+            "negative",
+            "hover"
+          ]
+        },
+        "subtle": {
+          "name": "color-charts-negative-subtle",
+          "type": "color",
+          "value": "var(--color-charts-negative-subtle)",
+          "path": [
+            "light",
+            "color",
+            "charts",
+            "negative",
+            "subtle"
+          ]
+        }
+      },
+      "primary": {
+        "default": {
+          "name": "color-charts-primary-default",
+          "type": "color",
+          "value": "var(--color-charts-primary-default)",
+          "path": [
+            "light",
+            "color",
+            "charts",
+            "primary",
+            "default"
+          ]
+        },
+        "hover": {
+          "name": "color-charts-primary-hover",
+          "type": "color",
+          "value": "var(--color-charts-primary-hover)",
+          "path": [
+            "light",
+            "color",
+            "charts",
+            "primary",
+            "hover"
+          ]
+        },
+        "subtle": {
+          "name": "color-charts-primary-subtle",
+          "type": "color",
+          "value": "var(--color-charts-primary-subtle)",
+          "path": [
+            "light",
+            "color",
+            "charts",
+            "primary",
+            "subtle"
+          ]
+        }
+      },
+      "secondary": {
+        "default": {
+          "name": "color-charts-secondary-default",
+          "type": "color",
+          "value": "var(--color-charts-secondary-default)",
+          "path": [
+            "light",
+            "color",
+            "charts",
+            "secondary",
+            "default"
+          ]
+        },
+        "hover": {
+          "name": "color-charts-secondary-hover",
+          "type": "color",
+          "value": "var(--color-charts-secondary-hover)",
+          "path": [
+            "light",
+            "color",
+            "charts",
+            "secondary",
+            "hover"
+          ]
+        },
+        "subtle": {
+          "name": "color-charts-secondary-subtle",
+          "type": "color",
+          "value": "var(--color-charts-secondary-subtle)",
+          "path": [
+            "light",
+            "color",
+            "charts",
+            "secondary",
+            "subtle"
+          ]
+        }
+      },
+      "tertiary": {
+        "default": {
+          "name": "color-charts-tertiary-default",
+          "type": "color",
+          "value": "var(--color-charts-tertiary-default)",
+          "path": [
+            "light",
+            "color",
+            "charts",
+            "tertiary",
+            "default"
+          ]
+        },
+        "hover": {
+          "name": "color-charts-tertiary-hover",
+          "type": "color",
+          "value": "var(--color-charts-tertiary-hover)",
+          "path": [
+            "light",
+            "color",
+            "charts",
+            "tertiary",
+            "hover"
+          ]
+        },
+        "subtle": {
+          "name": "color-charts-tertiary-subtle",
+          "type": "color",
+          "value": "var(--color-charts-tertiary-subtle)",
+          "path": [
+            "light",
+            "color",
+            "charts",
+            "tertiary",
+            "subtle"
+          ]
+        }
+      }
+    },
     "container": {
       "disabled": {
         "default": {
