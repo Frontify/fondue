@@ -23,7 +23,7 @@ export type LabelProps = {
 };
 
 export const LabelComponent = (
-    { className, 'data-test-id': dataTestId = 'fondue-label', ...props }: LabelProps,
+    { className, 'data-test-id': dataTestId = 'fondue-label', children, ...props }: LabelProps,
     ref: ForwardedRef<HTMLLabelElement>,
 ) => {
     return (
@@ -31,7 +31,11 @@ export const LabelComponent = (
             ref={ref}
             data-required={props.required}
             className={cn(
-                'tw-group tw-flex tw-gap-1 tw-font-primary tw-font-normal peer-data-[state="checked"]:tw-font-medium peer-data-[state="indeterminate"]:tw-font-medium tw-body-small tw-text-secondary peer-hover:tw-text-primary has-[+_*_input:hover:not(:disabled)]:tw-text-primary tw-transition-colors',
+                'tw-group tw-relative tw-flex tw-gap-1 tw-font-primary tw-text-medium tw-text-secondary tw-transition-colors',
+                // Peer-based color changes (apply to parent, inherit to spans)
+                'peer-hover:tw-text-primary has-[+_*_input:hover:not(:disabled)]:tw-text-primary has-[~_button:hover:not(:disabled)]:tw-text-primary',
+                // Use adjacent sibling selector when checkbox is checked
+                '[*[data-state="checked"]+&]:tw-font-medium [*[data-state="indeterminate"]+&]:tw-font-medium',
                 // Disabled state if siblings has disabled state
                 'has-[+_*_:disabled]:tw-text-disabled has-[~_:disabled]:tw-cursor-not-allowed peer-disabled:tw-text-disabled peer-disabled:tw-cursor-not-allowed',
                 // Required asterisk
@@ -53,7 +57,14 @@ export const LabelComponent = (
                 }
             }}
             {...props}
-        />
+        >
+            {/* Hidden version with medium font weight to reserve space */}
+            <span className="tw-font-medium tw-opacity-0 tw-pointer-events-none" aria-hidden="true">
+                {children}
+            </span>
+            {/* Visible version (inherits all styling from parent) */}
+            <span className="tw-absolute tw-inset-0">{children}</span>
+        </LabelPrimitive.Root>
     );
 };
 

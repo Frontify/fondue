@@ -98,12 +98,37 @@ export const rgbColorToHex = (rgb: Omit<RgbaColor, 'alpha'>): string => {
 };
 
 /**
+ * Returns a hex color display name with alpha percentage if alpha < 100%.
+ * @param {RgbaColor} color - The RGBA color object.
+ * @returns {string}
+ * @example
+ * getHexDisplayName({ red: 255, green: 255, blue: 255, alpha: 1 }); // '#FFFFFF'
+ * @example
+ * getHexDisplayName({ red: 255, green: 255, blue: 255, alpha: 0.9 }); // '#FFFFFF 90%'
+ * @example
+ * getHexDisplayName({ red: 255, green: 87, blue: 51, alpha: 0.84 }); // '#FF5733 84%'
+ */
+export const getHexDisplayName = (color: RgbaColor): string => {
+    const hexValue = rgbColorToHex(color);
+    const alpha = color.alpha ?? 1;
+
+    if (alpha < 1) {
+        const alphaPercentage = Math.round(alpha * 100);
+        return `#${hexValue} ${alphaPercentage}%`;
+    }
+
+    return `#${hexValue}`;
+};
+
+/**
  * Returns a color object with a name property based on the provided color and format.
  * @param {RgbaColor} color - The RGBA color object.
  * @param {ColorFormat} currentFormat - The current format of the color.
  * @returns {RgbaColor}
  * @example
  * getColorWithName({ red: 255, green: 255, blue: 255, alpha: 1 }, 'HEX'); // { red: 255, green: 255, blue: 255, alpha: 1, name: '#FFFFFF' }
+ * @example
+ * getColorWithName({ red: 255, green: 255, blue: 255, alpha: 0.9 }, 'HEX'); // { red: 255, green: 255, blue: 255, alpha: 0.9, name: '#FFFFFF 90%' }
  * @example
  * getColorWithName({ red: 255, green: 255, blue: 255, alpha: 1 }, 'RGBA'); // { red: 255, green: 255, blue: 255, alpha: 1, name: 'rgba(255, 255, 255, 1)' }
  * @example
@@ -113,7 +138,7 @@ export const getColorWithName = (color: RgbaColor, currentFormat: ColorFormat) =
     if (currentFormat === 'HEX') {
         return {
             ...color,
-            name: `#${rgbColorToHex(color)}`,
+            name: getHexDisplayName(color),
         };
     }
     return {

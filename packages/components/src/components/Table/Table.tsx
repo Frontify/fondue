@@ -2,6 +2,7 @@
 
 import { IconArrowBidirectional, IconArrowDown, IconArrowUp } from '@frontify/fondue-icons';
 import {
+    type AriaAttributes,
     forwardRef,
     useMemo,
     useRef,
@@ -38,23 +39,24 @@ type TableRootProps = {
      */
     sticky?: 'head' | 'col' | 'both';
     children: ReactNode;
-} & CommonAriaAttrs;
+} & CommonAriaAttrs &
+    Pick<AriaAttributes, 'aria-multiselectable'>;
 
 export const TableRoot = forwardRef<HTMLTableElement, TableRootProps>(
     ({ layout = 'auto', fontSize = 'medium', sticky, children, ...props }, ref) => {
         return (
-            <div onKeyDown={handleKeyDown} role="grid" tabIndex={-1}>
-                <table
-                    ref={ref}
-                    className={styles.table}
-                    data-layout={layout}
-                    data-font-size={fontSize}
-                    data-sticky={sticky}
-                    {...props}
-                >
-                    {children}
-                </table>
-            </div>
+            // eslint-disable-next-line jsx-a11y-x/no-noninteractive-element-interactions
+            <table
+                ref={ref}
+                className={styles.table}
+                data-layout={layout}
+                data-font-size={fontSize}
+                data-sticky={sticky}
+                onKeyDown={handleKeyDown}
+                {...props}
+            >
+                {children}
+            </table>
         );
     },
 );
@@ -262,7 +264,7 @@ export const TableBody = forwardRef<HTMLTableSectionElement, TableBodyProps>(
 );
 TableBody.displayName = 'Table.Body';
 
-type BaseTableRowProps = {
+type TableRowProps = {
     /**
      * Whether the row is in a selected state
      * @default false
@@ -274,6 +276,11 @@ type BaseTableRowProps = {
      */
     disabled?: boolean;
     /**
+     * Handler called when the row is clicked or activated via keyboard
+     * If provided, the row will be hoverable and interactive
+     */
+    onClick?: (selected: boolean) => void;
+    /**
      * Content to be rendered within the row
      */
     children: ReactNode;
@@ -282,14 +289,6 @@ type BaseTableRowProps = {
      */
     'aria-label'?: string;
     'data-test-id'?: string;
-};
-
-type TableRowProps = BaseTableRowProps & {
-    /**
-     * Handler called when the row is clicked or activated via keyboard
-     * If provided, the row will be hoverable and interactive
-     */
-    onClick?: (selected: boolean) => void;
 };
 
 export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(
@@ -332,10 +331,10 @@ export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(
                 role={isInteractive ? 'button' : 'row'}
                 data-disabled={disabled}
                 data-interactive={isInteractive}
-                data-selected={selected}
+                data-selected={!isInteractive ? selected : undefined}
                 aria-disabled={disabled}
                 aria-label={ariaLabel}
-                aria-selected={selected}
+                aria-selected={!isInteractive ? selected : undefined}
                 onClick={isInteractive ? handleClick : undefined}
                 onKeyDown={isInteractive ? handleKeyDown : undefined}
                 data-test-id={dataTestId}

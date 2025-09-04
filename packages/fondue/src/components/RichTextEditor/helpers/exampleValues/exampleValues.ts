@@ -392,6 +392,19 @@ export const alignedValues = [
 
 /* eslint-disable no-irregular-whitespace */
 export const htmlValue = `
+        <p dir="auto" class="tw-break-words" style="font-size: 14px; font-style: normal; font-weight: normal;">
+            <span style="color: rgba(255, 20, 73, 0.5)">
+               <span class="tw-font-bold">
+                    <span class="tw-underline">
+                        <span class="tw-italic">
+                            <span class="!tw-line-through">
+                                    This text is bold, italic, underlined, strikethrough and is almost red. It also has <sup>superscript</sup> and <sub>subscript</sub>. Oh, and there is a link to <a href="https://frontify.com" target="_blank" rel="noopener noreferrer">Frontify</a>.
+                            </span>
+                        </span>
+                    </span>
+                </span>
+            </span>
+        </p>
         <p><strong>This text is bold.</strong></p>
         <p><i>This text is italic.</i></p>
         <p><u>This text has an underline.</u></p>

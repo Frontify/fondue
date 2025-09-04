@@ -43,6 +43,12 @@
 - Updated dependencies [[`d010cb5`](https://github.com/Frontify/fondue/commit/d010cb53242c9d9e9112bb369a9af975189ba36a)]:
     - @frontify/fondue-tokens@5.0.0-beta.0
 
+## 6.0.4
+
+### Patch Changes
+
+- [#2404](https://github.com/Frontify/fondue/pull/2404) [`5d00d5d`](https://github.com/Frontify/fondue/commit/5d00d5dfcd8e24644453e548ef61026d31de37a9) Thanks [@joseazevedo88](https://github.com/joseazevedo88)! - Fix crosshair/glyphs overlapping
+
 ## 6.0.3
 
 ### Patch Changes

@@ -91,7 +91,16 @@ export const CheckboxComponent = (
                 }
                 onChange?.(event);
             }}
+            onFocus={(event) => {
+                if (readOnly) {
+                    event.preventDefault();
+                    event.target.blur();
+                    return false;
+                }
+                props.onFocus?.(event);
+            }}
             data-test-id={dataTestId}
+            data-readonly={readOnly}
             aria-readonly={readOnly}
             {...props}
         >

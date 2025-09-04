@@ -70,6 +70,13 @@ export const Required: Story = {
     },
 };
 
+export const ReadOnly: Story = {
+    args: {
+        readOnly: true,
+        value: true,
+    },
+};
+
 export const WithoutLabel: Story = {
     render: (args) => {
         const [value, setValue] = useState(args.value);

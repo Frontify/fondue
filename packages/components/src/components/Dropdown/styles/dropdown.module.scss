@@ -56,9 +56,6 @@
         transition: none;
     }
 
-    & {
-        @include transitions.transition-colors;
-    }
 
     &:not([data-show-focus-ring="false"]) {
         @include focusStyle.focus-outline;

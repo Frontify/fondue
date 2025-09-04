@@ -686,7 +686,7 @@ export const WithSelection: Story = {
         const isPartiallySelected = selectedRows.size > 0 && selectedRows.size < TABLE_DATA.length;
 
         return (
-            <Table.Root {...args}>
+            <Table.Root {...args} aria-multiselectable>
                 <Table.Header>
                     <Table.Row>
                         <Table.HeaderCell>

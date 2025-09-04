@@ -93,6 +93,33 @@
     - @frontify/fondue-tokens@4.2.1
     - @frontify/fondue-icons@0.17.1
 
+## 19.5.0
+
+### Minor Changes
+
+- [#2398](https://github.com/Frontify/fondue/pull/2398) [`5bf25c5`](https://github.com/Frontify/fondue/commit/5bf25c52afd36caea220c4776e54016dbcb9ded8) Thanks [@syeo66](https://github.com/syeo66)! - feat: implement new RadioList component
+
+### Patch Changes
+
+- [#2417](https://github.com/Frontify/fondue/pull/2417) [`d21c257`](https://github.com/Frontify/fondue/commit/d21c257ea04643f288745a239b5c0591f20af588) Thanks [@syeo66](https://github.com/syeo66)! - fix(Select): add aria-selected correctly
+
+- [#2415](https://github.com/Frontify/fondue/pull/2415) [`cea1188`](https://github.com/Frontify/fondue/commit/cea1188b46464ca58aa665fba25a6f78559eb3b1) Thanks [@jcosta33](https://github.com/jcosta33)! - refactor(`Table`): remove grid role
+
+- [#2399](https://github.com/Frontify/fondue/pull/2399) [`093ab9c`](https://github.com/Frontify/fondue/commit/093ab9ce244c98a6b8dcf6309f57ec6ba06db26b) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(`Table`): a11y error `role="grid"` wrapping invalid element `table` & `aria-selected` on `tr` and `role="button"` invalid
+
+- [#2406](https://github.com/Frontify/fondue/pull/2406) [`90d8c14`](https://github.com/Frontify/fondue/commit/90d8c1406205cd47097a7a205ed0869542a2d4fc) Thanks [@syeo66](https://github.com/syeo66)! - feat(Dropdown): remove hover transition in Select and Dropdown
+
+## 19.4.0
+
+### Minor Changes
+
+- [#2401](https://github.com/Frontify/fondue/pull/2401) [`1e6f9f1`](https://github.com/Frontify/fondue/commit/1e6f9f186e2adf7cb50f3dd36ee639e3085b5975) Thanks [@syeo66](https://github.com/syeo66)! - fix(Checkbox): adjust readOnly prop handling
+
+### Patch Changes
+
+- Updated dependencies [[`8264bdf`](https://github.com/Frontify/fondue/commit/8264bdf1a3321bb941e4704155600905347c36a5)]:
+    - @frontify/fondue-tokens@4.2.2
+
 ## 19.3.0
 
 ### Minor Changes

@@ -31,7 +31,6 @@
 
     & {
         @include focusStyle.focus-outline;
-        @include transitions.transition-colors;
     }
 
     &:hover {
@@ -289,9 +288,6 @@
     color: var(--color-primary-default);
     outline-style: none;
 
-    & {
-        @include transitions.transition-colors;
-    }
 
     &:first-child {
         margin-top: sizeToken.get(2);
