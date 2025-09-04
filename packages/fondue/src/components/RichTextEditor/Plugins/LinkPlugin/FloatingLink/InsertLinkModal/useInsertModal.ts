@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { CheckboxState } from '@components/Checkbox/Checkbox';
 import { getPluginOptions, useEditorRef, useHotkeys } from '@udecode/plate-core';
 import {
     ELEMENT_LINK,
@@ -9,8 +10,6 @@ import {
     submitFloatingLink,
 } from '@udecode/plate-link';
 import { type Dispatch, type MouseEvent, type Reducer, useEffect, useReducer } from 'react';
-
-import { CheckboxState } from '@components/Checkbox';
 
 import { getLegacyUrl, getUrl } from '../../utils';
 
