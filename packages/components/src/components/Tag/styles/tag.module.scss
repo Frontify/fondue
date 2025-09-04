@@ -6,8 +6,8 @@
     font-size: var(--body-size-small);
     line-height: var(--body-size-small-line-height);
     padding: var(--space-xxs) var(--space-xs);
-    gap: var(--space-xxs);
-    border-radius: 9999px;
+    gap: 0.375rem; // 6px according to Figma
+    border-radius: var(--radius);
     position: relative;
     display: inline-flex;
     transition: background-color 250ms, color 250ms;

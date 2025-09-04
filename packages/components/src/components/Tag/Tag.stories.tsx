@@ -48,7 +48,18 @@ export const WithOnClickAndDismiss: Story = {
 export const WithIcon: Story = {
     render: (args) => (
         <Tag {...args}>
-            <IconColorFan size="16" /> Text
+            <IconColorFan size="16" />
+            Text
+        </Tag>
+    ),
+};
+
+export const WithIconOnBothSides: Story = {
+    render: (args) => (
+        <Tag {...args}>
+            <IconColorFan size="16" />
+            Text
+            <IconColorFan size="16" />
         </Tag>
     ),
 };
