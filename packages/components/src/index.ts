@@ -25,6 +25,7 @@ export { Select } from './components/Select/Select';
 export { Slider } from './components/Slider/Slider';
 export { Switch } from './components/Switch/Switch';
 export { Table } from './components/Table/Table';
+export { Tag } from './components/Tag/Tag';
 export { Tabs } from './components/Tabs/Tabs';
 export { Text } from './components/Text/Text';
 export { TextInput } from './components/TextInput/TextInput';
