@@ -1,0 +1,83 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+@use '../../../utilities/focusStyle.module.scss';
+
+.root {
+    font-size: var(--body-size-small);
+    line-height: var(--body-size-small-line-height);
+    padding: var(--space-xxs) var(--space-xs);
+    gap: var(--space-xxs);
+    border-radius: 9999px;
+    position: relative;
+    display: inline-flex;
+    transition: background-color 250ms, color 250ms;
+    align-items: center;
+    white-space: nowrap;
+    min-height: 1rem;
+}
+
+@mixin variant($name, $color) {
+    .root[data-variant=#{$name}]:not([data-disabled="true"]) {
+        background-color: var(--box-#{$color}-strong-color);
+        color: var(--box-#{$color}-strong-inverse-color);
+
+        &:is(button) {
+            cursor: pointer;
+
+            & {
+                @include focusStyle.focus-outline;
+            }
+        }
+
+        &:is(button):hover {
+            background-color: var(--box-#{$color}-strong-color-hover);
+            color: var(--box-#{$color}-strong-inverse-color-hover);
+        }
+
+        &[data-emphasis="weak"] {
+            background-color: var(--box-#{$color}-color);
+            color: var(--box-#{$color}-inverse-color);
+
+            &:is(button):hover {
+                background-color: var(--box-#{$color}-color-hover);
+                color: var(--box-#{$color}-inverse-color-hover);
+            }
+        }
+    }
+}
+
+@include variant(default, neutral);
+@include variant(positive, positive);
+@include variant(highlight, selected);
+@include variant(warning, warning);
+@include variant(negative, negative);
+
+[data-size="small"] {
+    padding: 2px var(--space-xs);
+}
+
+[data-disabled="true"] {
+    background-color: var(--box-disabled-color);
+    color: var(--box-disabled-color-inverse);
+    cursor: default;
+
+    &:hover {
+        background-color: var(--box-disabled-color);
+        color: var(--box-disabled-color-inverse);
+    }
+}
+
+.dismiss {
+    padding: 0;
+    margin: 0;
+    height: 0.75rem;
+    width: 0.75rem;
+    border: none 0 transparent;
+    background: transparent;
+    color: inherit;
+    border-radius: 0.25rem;
+
+    & {
+        @include focusStyle.focus-outline;
+    }
+}
