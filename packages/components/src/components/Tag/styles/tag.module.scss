@@ -14,6 +14,36 @@
     align-items: center;
     white-space: nowrap;
     min-height: 1rem;
+
+    &[data-size="small"] {
+        padding: 2px var(--space-xs);
+    }
+
+    &[data-disabled="true"] {
+        background-color: var(--box-disabled-color);
+        color: var(--box-disabled-color-inverse);
+        cursor: default;
+
+        &:hover {
+            background-color: var(--box-disabled-color);
+            color: var(--box-disabled-color-inverse);
+        }
+    }
+
+    .dismiss {
+        padding: 0;
+        margin: 0;
+        height: 0.75rem;
+        width: 0.75rem;
+        border: none 0 transparent;
+        background: transparent;
+        color: inherit;
+        border-radius: 0.25rem;
+
+        & {
+            @include focusStyle.focus-outline;
+        }
+    }
 }
 
 @mixin variant($name, $color) {
@@ -58,7 +88,6 @@
             }
         }
     }
-
 }
 
 @include variant(default, neutral);
@@ -66,33 +95,3 @@
 @include variant(highlight, selected);
 @include variant(warning, warning);
 @include variant(negative, negative);
-
-[data-size="small"] {
-    padding: 2px var(--space-xs);
-}
-
-[data-disabled="true"] {
-    background-color: var(--box-disabled-color);
-    color: var(--box-disabled-color-inverse);
-    cursor: default;
-
-    &:hover {
-        background-color: var(--box-disabled-color);
-        color: var(--box-disabled-color-inverse);
-    }
-}
-
-.dismiss {
-    padding: 0;
-    margin: 0;
-    height: 0.75rem;
-    width: 0.75rem;
-    border: none 0 transparent;
-    background: transparent;
-    color: inherit;
-    border-radius: 0.25rem;
-
-    & {
-        @include focusStyle.focus-outline;
-    }
-}
