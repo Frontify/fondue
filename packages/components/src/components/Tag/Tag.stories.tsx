@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconColorFan } from '@frontify/fondue-icons';
+import { IconColorFan, IconDotsHorizontal } from '@frontify/fondue-icons';
 import { action } from '@storybook/addon-actions';
 import { type Meta, type StoryObj } from '@storybook/react';
 
@@ -89,6 +89,20 @@ export const BetweenElements: Story = {
             after
         </>
     ),
+};
+
+export const WithHoverContent: Story = {
+    args: {
+        onClick: action('onClick'),
+        hoverContent: (
+            <div className="tw-flex tw-w-full tw-justify-center">
+                <IconDotsHorizontal />
+            </div>
+        ),
+    },
+    render: (args) => {
+        return <Tag {...args}>This is a tag!</Tag>;
+    },
 };
 
 export const MultipleTagsInRow: Story = {

@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconCross, IconPlus } from '@frontify/fondue-icons';
-import { type MouseEvent, type ReactNode } from 'react';
+import { useState, type FocusEventHandler, type MouseEvent, type ReactNode } from 'react';
 
 import styles from './styles/tag.module.scss';
 
@@ -45,10 +45,15 @@ type TagProps = {
      */
     addable?: boolean;
     /**
-     * Click handler on dismiss
+     * Click handler on add click
      */
     onAddClick?: (event?: MouseEvent<HTMLButtonElement>) => void;
     title?: string;
+    /**
+     * The content show on hover
+     * @default undefined
+     */
+    hoverContent?: ReactNode;
     'aria-label'?: string;
     'data-test-id'?: string;
     children: ReactNode;
@@ -62,6 +67,7 @@ export const Tag = ({
     disabled = false,
     dismissable = false,
     emphasis = 'strong',
+    hoverContent,
     onAddClick,
     onClick,
     onDismiss,
@@ -69,6 +75,8 @@ export const Tag = ({
     title,
     variant,
 }: TagProps) => {
+    const [isHover, setIsHover] = useState(false);
+
     const commonProps = {
         'aria-label': ariaLabel || title,
         'data-addable': addable,
@@ -88,13 +96,22 @@ export const Tag = ({
         addable,
         disabled,
         dismissable,
+        hoverContent,
+        isHover,
         onAddClick,
         onDismiss,
     };
 
     if (onClick) {
         return (
-            <button type="button" disabled={disabled} {...commonProps} onClick={onClick}>
+            <button
+                type="button"
+                disabled={disabled}
+                {...commonProps}
+                onClick={onClick}
+                onMouseEnter={() => setIsHover(true)}
+                onMouseLeave={() => setIsHover(false)}
+            >
                 <TagContent {...contentProps}>{children}</TagContent>
             </button>
         );
@@ -113,12 +130,43 @@ const TagContent = ({
     children,
     disabled = false,
     dismissable = false,
+    hoverContent,
+    isHover = false,
     onAddClick,
     onDismiss,
-}: TagProps) => {
+}: TagProps & { isHover?: boolean }) => {
     return (
         <>
-            {children}
+            {hoverContent ? (
+                <div data-hover={isHover}>
+                    <div>{hoverContent}</div>
+                    <div>{children}</div>
+                </div>
+            ) : (
+                children
+            )}
+            <TagActionButtons
+                addable={addable}
+                aria-label={ariaLabel}
+                disabled={disabled}
+                dismissable={dismissable}
+                onAddClick={onAddClick}
+                onDismiss={onDismiss}
+            />
+        </>
+    );
+};
+
+const TagActionButtons = ({
+    'aria-label': ariaLabel,
+    addable,
+    disabled,
+    dismissable,
+    onAddClick,
+    onDismiss,
+}: Omit<TagProps, 'children'>) => {
+    return (
+        <>
             {addable && (
                 <button
                     type="button"
