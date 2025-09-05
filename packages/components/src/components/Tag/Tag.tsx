@@ -157,6 +157,30 @@ const TagContent = ({
     );
 };
 
+type TagActionButtonsProps = {
+    /**
+     * @default false
+     */
+    disabled?: boolean;
+    /**
+     * @default false
+     */
+    dismissable?: boolean;
+    /**
+     * Click handler on dismiss
+     */
+    onDismiss?: (event?: MouseEvent<HTMLButtonElement>) => void;
+    /**
+     * @default false
+     */
+    addable?: boolean;
+    /**
+     * Click handler on add click
+     */
+    onAddClick?: (event?: MouseEvent<HTMLButtonElement>) => void;
+    'aria-label'?: string;
+};
+
 const TagActionButtons = ({
     'aria-label': ariaLabel,
     addable,
@@ -164,7 +188,7 @@ const TagActionButtons = ({
     dismissable,
     onAddClick,
     onDismiss,
-}: Omit<TagProps, 'children'>) => {
+}: TagActionButtonsProps) => {
     return (
         <>
             {addable && (
