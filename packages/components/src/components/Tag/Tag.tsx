@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconCross } from '@frontify/fondue-icons';
+import { IconCross, IconPlus } from '@frontify/fondue-icons';
 import { type MouseEvent, type ReactNode } from 'react';
 
 import styles from './styles/tag.module.scss';
@@ -40,6 +40,14 @@ type TagProps = {
      * Click handler on dismiss
      */
     onDismiss?: (event?: MouseEvent<HTMLButtonElement>) => void;
+    /**
+     * @default false
+     */
+    addable?: boolean;
+    /**
+     * Click handler on dismiss
+     */
+    onAddClick?: (event?: MouseEvent<HTMLButtonElement>) => void;
     title?: string;
     'aria-label'?: string;
     'data-test-id'?: string;
@@ -49,10 +57,12 @@ type TagProps = {
 export const Tag = ({
     'aria-label': ariaLabel,
     'data-test-id': dataTestId = 'tag',
+    addable = false,
     children,
     disabled = false,
     dismissable = false,
     emphasis = 'strong',
+    onAddClick,
     onClick,
     onDismiss,
     size = 'default',
@@ -61,6 +71,7 @@ export const Tag = ({
 }: TagProps) => {
     const commonProps = {
         'aria-label': ariaLabel || title,
+        'data-addable': addable,
         'data-component': 'tag',
         'data-disabled': disabled,
         'data-dismissable': dismissable,
@@ -74,8 +85,10 @@ export const Tag = ({
 
     const contentProps = {
         'aria-label': ariaLabel || title,
+        addable,
         disabled,
         dismissable,
+        onAddClick,
         onDismiss,
     };
 
@@ -96,14 +109,27 @@ export const Tag = ({
 
 const TagContent = ({
     'aria-label': ariaLabel,
+    addable = false,
     children,
     disabled = false,
     dismissable = false,
+    onAddClick,
     onDismiss,
 }: TagProps) => {
     return (
         <>
             {children}
+            {addable && (
+                <button
+                    type="button"
+                    aria-label={`Dismiss ${ariaLabel}`}
+                    className={styles.dismiss}
+                    disabled={disabled}
+                    onClick={onAddClick}
+                >
+                    <IconPlus size="12" />
+                </button>
+            )}
             {dismissable && (
                 <button
                     type="button"

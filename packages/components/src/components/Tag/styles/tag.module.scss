@@ -34,6 +34,13 @@
             color: var(--box-#{$color}-strong-inverse-color-hover);
         }
 
+        .dismiss {
+            &:hover {
+                background-color: var(--box-#{$color}-strong-color-hover);
+                color: var(--box-#{$color}-strong-inverse-color-hover);
+            }
+        }
+
         &[data-emphasis="weak"] {
             background-color: var(--box-#{$color}-color);
             color: var(--box-#{$color}-inverse-color);
@@ -42,8 +49,16 @@
                 background-color: var(--box-#{$color}-color-hover);
                 color: var(--box-#{$color}-inverse-color-hover);
             }
+
+            .dismiss {
+                &:hover {
+                    background-color: var(--box-#{$color}-color-hover);
+                    color: var(--box-#{$color}-inverse-color-hover);
+                }
+            }
         }
     }
+
 }
 
 @include variant(default, neutral);

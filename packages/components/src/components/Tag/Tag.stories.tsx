@@ -21,6 +21,7 @@ const meta: Meta<typeof Tag> = {
         variant: 'default',
         size: 'default',
         dismissable: false,
+        addable: false,
         disabled: false,
     },
 };
@@ -37,6 +38,11 @@ export const WithOnClick: Story = {
 
 export const WithDismiss: Story = {
     args: { dismissable: true, onDismiss: action('onDismiss') },
+    render: (args) => <Tag {...args}>Text</Tag>,
+};
+
+export const WithAddable: Story = {
+    args: { addable: true, onAddClick: action('onAddClick') },
     render: (args) => <Tag {...args}>Text</Tag>,
 };
 
