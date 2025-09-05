@@ -77,12 +77,17 @@
             opacity: 0;
         }
     }
+
 }
 
 @mixin variant($name, $color) {
     .root[data-variant=#{$name}]:not([data-disabled="true"]) {
         background-color: var(--box-#{$color}-strong-color);
         color: var(--box-#{$color}-strong-inverse-color);
+
+            .secondaryContent {
+                color: var(--box-#{$color}-strong-inverse-color);
+            }
 
         &:is(button) {
             cursor: pointer;
@@ -107,6 +112,10 @@
         &[data-emphasis="weak"] {
             background-color: var(--box-#{$color}-color);
             color: var(--box-#{$color}-inverse-color);
+
+            .secondaryContent {
+                color: var(--text-color-weak);
+            }
 
             &:is(button):hover {
                 background-color: var(--box-#{$color}-color-hover);

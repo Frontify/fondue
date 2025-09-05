@@ -54,6 +54,10 @@ type TagProps = {
      * @default undefined
      */
     hoverContent?: ReactNode;
+    /**
+     * Secondary string (or React content)
+     */
+    secondaryContent?: ReactNode;
     'aria-label'?: string;
     'data-test-id'?: string;
     children: ReactNode;
@@ -71,6 +75,7 @@ export const Tag = ({
     onAddClick,
     onClick,
     onDismiss,
+    secondaryContent,
     size = 'default',
     title,
     variant,
@@ -100,6 +105,7 @@ export const Tag = ({
         isHover,
         onAddClick,
         onDismiss,
+        secondaryContent,
     };
 
     if (onClick) {
@@ -134,6 +140,7 @@ const TagContent = ({
     isHover = false,
     onAddClick,
     onDismiss,
+    secondaryContent,
 }: TagProps & { isHover?: boolean }) => {
     return (
         <>
@@ -145,6 +152,7 @@ const TagContent = ({
             ) : (
                 children
             )}
+            {secondaryContent ? <div className={styles.secondaryContent}>{secondaryContent}</div> : null}
             <TagActionButtons
                 addable={addable}
                 aria-label={ariaLabel}

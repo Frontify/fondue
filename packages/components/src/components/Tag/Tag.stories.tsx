@@ -31,6 +31,13 @@ export const LabelOnly: Story = {
     render: (args) => <Tag {...args}>Text</Tag>,
 };
 
+export const WithSecondaryContent: Story = {
+    args: {
+        secondaryContent: 'Secondary',
+    },
+    render: (args) => <Tag {...args}>Text</Tag>,
+};
+
 export const WithOnClick: Story = {
     args: { onClick: action('onClick') },
     render: (args) => <Tag {...args}>Text</Tag>,
