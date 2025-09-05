@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconCross, IconPlus } from '@frontify/fondue-icons';
-import { useState, type FocusEventHandler, type MouseEvent, type ReactNode } from 'react';
+import { useState, type MouseEvent, type ReactNode } from 'react';
 
 import styles from './styles/tag.module.scss';
 
