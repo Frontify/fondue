@@ -53,6 +53,10 @@
         .colorName {
             color: var(--color-disabled-default);
         }
+
+        .colorIndicator {
+            border-color: var(--color-line-subtle);
+        }
     }
 }
 
@@ -79,9 +83,9 @@
     width: sizeToken.get(4);
     height: sizeToken.get(4);
     border-radius: sizeToken.get(1);
-    border: 1px solid var(--color-line-strong);
+    border: 1px solid var(--color-line-mid);
     background-clip: padding-box;
-    background-image: repeating-conic-gradient(white 0% 25%, var(--color-line-strong) 0% 50%);
+    background-image: repeating-conic-gradient(white 0% 25%, var(--color-line-mid) 0% 50%);
     background-size: 6px 6px;
     background-position: -0.5px -0.5px;
 
