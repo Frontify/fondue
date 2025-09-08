@@ -92,11 +92,7 @@ const TagRoot = ({
     };
 
     return (
-        <div
-            {...commonProps}
-            role={onClick ? 'group' : undefined}
-            aria-label={onClick ? ariaLabel || title : undefined}
-        >
+        <div {...commonProps}>
             <TagMainContent
                 aria-label={ariaLabel || title}
                 disabled={disabled}
