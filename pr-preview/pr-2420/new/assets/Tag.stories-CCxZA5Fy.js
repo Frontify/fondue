@@ -1,31 +1,28 @@
-import{j as e}from"./jsx-runtime-BYYWji4R.js";import"./index-ClcD9ViR.js";import{o as a,e as $}from"./fondue-icons351-BwRByKtE.js";import{a as n}from"./index-B-lxVbXh.js";import{T as s}from"./Tag-n607bbv1.js";import"./_commonjsHelpers-Cpj98o6Y.js";import"./v4-CtRu48qb.js";const ie={title:"Components/Tag",component:s,tags:["autodocs"],parameters:{status:{type:"released"}},args:{emphasis:"strong",variant:"default",size:"default",dismissable:!1,addable:!1,disabled:!1}},o={render:r=>e.jsx(s,{...r,children:"Text"})},t={args:{secondaryContent:"Secondary"},render:r=>e.jsx(s,{...r,children:"Text"})},i={args:{onClick:n("onClick")},render:r=>e.jsx(s,{...r,children:"Text"})},c={args:{dismissable:!0,onDismiss:n("onDismiss")},render:r=>e.jsx(s,{...r,children:"Text"})},d={args:{addable:!0,onAddClick:n("onAddClick")},render:r=>e.jsx(s,{...r,children:"Text"})},l={args:{onClick:n("onClick"),dismissable:!0,onDismiss:n("onDismiss")},render:r=>e.jsx(s,{...r,children:"Text"})},g={render:r=>e.jsxs(s,{...r,children:[e.jsx(a,{size:"16"}),"Text"]})},m={render:r=>e.jsxs(s,{...r,children:[e.jsx(a,{size:"16"}),"Text",e.jsx(a,{size:"16"})]})},x={args:{onClick:n("onClick")},render:r=>e.jsxs(s,{...r,children:[e.jsx(a,{size:"16"})," Text"]})},T={render:r=>e.jsxs(e.Fragment,{children:["before"," ",e.jsxs(s,{...r,children:[e.jsx(a,{size:"16"})," Text"]})," ","after"]})},p={args:{onClick:n("onClick"),hoverContent:e.jsx("div",{className:"tw-flex tw-w-full tw-justify-center",children:e.jsx($,{})})},render:r=>e.jsx(s,{...r,children:"This is a tag!"})},u={render:r=>e.jsxs("div",{className:"tw-flex tw-flex-nowrap tw-border tw-border-line tw-rounded tw-p-2 tw-gap-2",children:[e.jsxs(s,{...r,children:[e.jsx(a,{size:"16"})," Text"]}),e.jsxs(s,{...r,children:[e.jsx(a,{size:"16"})," Text"]}),e.jsxs(s,{...r,children:[e.jsx(a,{size:"16"})," Text"]}),e.jsxs(s,{...r,children:[e.jsx(a,{size:"16"})," Text"]}),e.jsxs(s,{...r,children:[e.jsx(a,{size:"16"})," Text"]}),e.jsxs(s,{...r,children:[e.jsx(a,{size:"16"})," Text"]})]})};var C,h,j;o.parameters={...o.parameters,docs:{...(C=o.parameters)==null?void 0:C.docs,source:{originalSource:`{
+import{j as e}from"./jsx-runtime-BYYWji4R.js";import"./index-ClcD9ViR.js";import{o as n,e as $}from"./fondue-icons351-BwRByKtE.js";import{a}from"./index-B-lxVbXh.js";import{T as s}from"./Tag-BPUrpwwm.js";import"./_commonjsHelpers-Cpj98o6Y.js";import"./v4-CtRu48qb.js";const ie={title:"Components/Tag",component:s,tags:["autodocs"],parameters:{status:{type:"released"}},args:{emphasis:"strong",variant:"default",size:"default",disabled:!1}},o={render:r=>e.jsx(s,{...r,children:"Text"})},t={args:{secondaryContent:"Secondary"},render:r=>e.jsx(s,{...r,children:"Text"})},i={args:{onClick:a("onClick")},render:r=>e.jsx(s,{...r,children:"Text"})},c={args:{onDismiss:a("onDismiss")},render:r=>e.jsx(s,{...r,children:"Text"})},d={args:{onAddClick:a("onAddClick")},render:r=>e.jsx(s,{...r,children:"Text"})},l={args:{onClick:a("onClick"),onDismiss:a("onDismiss")},render:r=>e.jsx(s,{...r,children:"Text"})},g={render:r=>e.jsxs(s,{...r,children:[e.jsx(n,{size:"16"}),"Text"]})},m={render:r=>e.jsxs(s,{...r,children:[e.jsx(n,{size:"16"}),"Text",e.jsx(n,{size:"16"})]})},x={args:{onClick:a("onClick")},render:r=>e.jsxs(s,{...r,children:[e.jsx(n,{size:"16"})," Text"]})},T={render:r=>e.jsxs(e.Fragment,{children:["before"," ",e.jsxs(s,{...r,children:[e.jsx(n,{size:"16"})," Text"]})," ","after"]})},p={args:{onClick:a("onClick"),hoverContent:e.jsx("div",{className:"tw-flex tw-w-full tw-justify-center",children:e.jsx($,{})})},render:r=>e.jsx(s,{...r,children:"This is a tag!"})},u={render:r=>e.jsxs("div",{className:"tw-flex tw-flex-nowrap tw-border tw-border-line tw-rounded tw-p-2 tw-gap-2",children:[e.jsxs(s,{...r,children:[e.jsx(n,{size:"16"})," Text"]}),e.jsxs(s,{...r,children:[e.jsx(n,{size:"16"})," Text"]}),e.jsxs(s,{...r,children:[e.jsx(n,{size:"16"})," Text"]}),e.jsxs(s,{...r,children:[e.jsx(n,{size:"16"})," Text"]}),e.jsxs(s,{...r,children:[e.jsx(n,{size:"16"})," Text"]}),e.jsxs(s,{...r,children:[e.jsx(n,{size:"16"})," Text"]})]})};var C,h,j;o.parameters={...o.parameters,docs:{...(C=o.parameters)==null?void 0:C.docs,source:{originalSource:`{
   render: args => <Tag {...args}>Text</Tag>
-}`,...(j=(h=o.parameters)==null?void 0:h.docs)==null?void 0:j.source}}};var w,k,f;t.parameters={...t.parameters,docs:{...(w=t.parameters)==null?void 0:w.docs,source:{originalSource:`{
+}`,...(j=(h=o.parameters)==null?void 0:h.docs)==null?void 0:j.source}}};var w,k,z;t.parameters={...t.parameters,docs:{...(w=t.parameters)==null?void 0:w.docs,source:{originalSource:`{
   args: {
     secondaryContent: 'Secondary'
   },
   render: args => <Tag {...args}>Text</Tag>
-}`,...(f=(k=t.parameters)==null?void 0:k.docs)==null?void 0:f.source}}};var z,I,b;i.parameters={...i.parameters,docs:{...(z=i.parameters)==null?void 0:z.docs,source:{originalSource:`{
+}`,...(z=(k=t.parameters)==null?void 0:k.docs)==null?void 0:z.source}}};var f,I,S;i.parameters={...i.parameters,docs:{...(f=i.parameters)==null?void 0:f.docs,source:{originalSource:`{
   args: {
     onClick: action('onClick')
   },
   render: args => <Tag {...args}>Text</Tag>
-}`,...(b=(I=i.parameters)==null?void 0:I.docs)==null?void 0:b.source}}};var S,W,D;c.parameters={...c.parameters,docs:{...(S=c.parameters)==null?void 0:S.docs,source:{originalSource:`{
+}`,...(S=(I=i.parameters)==null?void 0:I.docs)==null?void 0:S.source}}};var W,D,F;c.parameters={...c.parameters,docs:{...(W=c.parameters)==null?void 0:W.docs,source:{originalSource:`{
   args: {
-    dismissable: true,
     onDismiss: action('onDismiss')
   },
   render: args => <Tag {...args}>Text</Tag>
-}`,...(D=(W=c.parameters)==null?void 0:W.docs)==null?void 0:D.source}}};var F,v,y;d.parameters={...d.parameters,docs:{...(F=d.parameters)==null?void 0:F.docs,source:{originalSource:`{
+}`,...(F=(D=c.parameters)==null?void 0:D.docs)==null?void 0:F.source}}};var b,v,y;d.parameters={...d.parameters,docs:{...(b=d.parameters)==null?void 0:b.docs,source:{originalSource:`{
   args: {
-    addable: true,
     onAddClick: action('onAddClick')
   },
   render: args => <Tag {...args}>Text</Tag>
 }`,...(y=(v=d.parameters)==null?void 0:v.docs)==null?void 0:y.source}}};var O,A,B;l.parameters={...l.parameters,docs:{...(O=l.parameters)==null?void 0:O.docs,source:{originalSource:`{
   args: {
     onClick: action('onClick'),
-    dismissable: true,
     onDismiss: action('onDismiss')
   },
   render: args => <Tag {...args}>Text</Tag>
