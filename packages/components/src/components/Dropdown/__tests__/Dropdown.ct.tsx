@@ -297,7 +297,7 @@ test('should open submenu by mouse', async ({ mount, page }) => {
     await expect(page.getByTestId(DROPDOWN_SUB_TRIGGER_TEST_ID)).toHaveCSS('background-color', 'rgb(240, 240, 235)');
     await expect(page.getByTestId(DROPDOWN_SUB_CONTENT_TEST_ID)).toBeVisible();
     await page.getByTestId(DROPDOWN_ITEM_TEST_ID).hover();
-    await expect(page.getByTestId(DROPDOWN_SUB_TRIGGER_TEST_ID)).toHaveCSS('background-color', 'rgb(240, 240, 235)');
+    await expect(page.getByTestId(DROPDOWN_SUB_TRIGGER_TEST_ID)).toHaveCSS('background-color', 'rgb(225, 225, 219)');
     await expect(page.getByTestId(DROPDOWN_ITEM_TEST_ID)).toHaveCSS('background-color', 'rgb(240, 240, 235)');
     await page.getByTestId(DROPDOWN_ITEM_TEST_ID).click();
     expect(onSelect.calledOnce).toBe(true);
