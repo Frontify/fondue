@@ -7,4 +7,7 @@ onlyBuiltDependencies:
   - esbuild
   - unrs-resolver
 
+patchedDependencies:
+  '@udecode/plate-core': patches/@udecode__plate-core.patch
+
 prefer-workspace-packages: true

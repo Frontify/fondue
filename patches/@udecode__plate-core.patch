@@ -1,0 +1,28 @@
+diff --git a/dist/index.js b/dist/index.js
+index eccd1a57ec867edb40faf76cafbe728190e26202..01ab7c02874dec1301f22a3b53c7cc3c2de8b665 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -2135,9 +2135,6 @@ var getRenderNodeProps = ({
+   if (props) {
+     newProps = (_a = typeof props === "function" ? props(nodeProps) : props) != null ? _a : {};
+   }
+-  if (!newProps.nodeProps && attributes) {
+-    newProps.nodeProps = attributes;
+-  }
+   nodeProps = __spreadValues(__spreadValues({}, nodeProps), newProps);
+   if (nodeProps.nodeProps) {
+     Object.keys(nodeProps.nodeProps).forEach((key) => {
+diff --git a/dist/index.mjs b/dist/index.mjs
+index a2ab4a10085cec7a6faa87c1b18cc7870d4a6680..989e28dd3a9795a63cb81693e0c5cbc26e44b883 100644
+--- a/dist/index.mjs
++++ b/dist/index.mjs
+@@ -1925,9 +1925,6 @@ var getRenderNodeProps = ({
+   if (props) {
+     newProps = (_a = typeof props === "function" ? props(nodeProps) : props) != null ? _a : {};
+   }
+-  if (!newProps.nodeProps && attributes) {
+-    newProps.nodeProps = attributes;
+-  }
+   nodeProps = __spreadValues(__spreadValues({}, nodeProps), newProps);
+   if (nodeProps.nodeProps) {
+     Object.keys(nodeProps.nodeProps).forEach((key) => {
