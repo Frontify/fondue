@@ -4,10 +4,10 @@ import { IconIcon } from '@frontify/fondue-icons';
 import { expect, test } from '@playwright/experimental-ct-react';
 import * as sinon from 'sinon';
 
-import { Select } from '../Select';
-
 import { FOCUS_BORDER_CSS, FOCUS_OUTLINE_CSS } from '#/helpers/constants';
 import { MAX_HEIGHT_MARGIN } from '#/utilities/domUtilities';
+
+import { Select } from '../Select';
 
 const SELECT_TEST_ID = 'test-select';
 const SELECT_MENU_TEST_ID = 'fondue-select-menu';
