@@ -20,8 +20,6 @@ const meta: Meta<typeof Tag> = {
         emphasis: 'strong',
         variant: 'default',
         size: 'default',
-        dismissable: false,
-        addable: false,
         disabled: false,
     },
 };
@@ -44,17 +42,17 @@ export const WithOnClick: Story = {
 };
 
 export const WithDismiss: Story = {
-    args: { dismissable: true, onDismiss: action('onDismiss') },
+    args: { onDismiss: action('onDismiss') },
     render: (args) => <Tag {...args}>Text</Tag>,
 };
 
 export const WithAddable: Story = {
-    args: { addable: true, onAddClick: action('onAddClick') },
+    args: { onAddClick: action('onAddClick') },
     render: (args) => <Tag {...args}>Text</Tag>,
 };
 
 export const WithOnClickAndDismiss: Story = {
-    args: { onClick: action('onClick'), dismissable: true, onDismiss: action('onDismiss') },
+    args: { onClick: action('onClick'), onDismiss: action('onDismiss') },
     render: (args) => <Tag {...args}>Text</Tag>,
 };
 

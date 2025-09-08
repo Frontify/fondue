@@ -33,19 +33,11 @@ type TagProps = {
      */
     onClick?: (event?: MouseEvent<HTMLButtonElement>) => void;
     /**
-     * @default false
-     */
-    dismissable?: boolean;
-    /**
-     * Click handler on dismiss
+     * Click handler on dismiss - providing this will show the dismiss button
      */
     onDismiss?: (event?: MouseEvent<HTMLButtonElement>) => void;
     /**
-     * @default false
-     */
-    addable?: boolean;
-    /**
-     * Click handler on add click
+     * Click handler on add click - providing this will show the add button
      */
     onAddClick?: (event?: MouseEvent<HTMLButtonElement>) => void;
     title?: string;
@@ -66,10 +58,8 @@ type TagProps = {
 export const Tag = ({
     'aria-label': ariaLabel,
     'data-test-id': dataTestId = 'tag',
-    addable = false,
     children,
     disabled = false,
-    dismissable = false,
     emphasis = 'strong',
     hoverContent,
     onAddClick,
@@ -84,10 +74,10 @@ export const Tag = ({
 
     const commonProps = {
         'aria-label': ariaLabel || title,
-        'data-addable': addable,
+        'data-addable': !!onAddClick,
         'data-component': 'tag',
         'data-disabled': disabled,
-        'data-dismissable': dismissable,
+        'data-dismissable': !!onDismiss,
         'data-emphasis': emphasis,
         'data-size': size,
         'data-test-id': dataTestId,
@@ -98,9 +88,7 @@ export const Tag = ({
 
     const contentProps = {
         'aria-label': ariaLabel || title,
-        addable,
         disabled,
-        dismissable,
         hoverContent,
         isHover,
         onAddClick,
@@ -132,10 +120,8 @@ export const Tag = ({
 
 const TagContent = ({
     'aria-label': ariaLabel,
-    addable = false,
     children,
     disabled = false,
-    dismissable = false,
     hoverContent,
     isHover = false,
     onAddClick,
@@ -154,10 +140,8 @@ const TagContent = ({
             )}
             {secondaryContent ? <div className={styles.secondaryContent}>{secondaryContent}</div> : null}
             <TagActionButtons
-                addable={addable}
                 aria-label={ariaLabel}
                 disabled={disabled}
-                dismissable={dismissable}
                 onAddClick={onAddClick}
                 onDismiss={onDismiss}
             />
@@ -171,17 +155,9 @@ type TagActionButtonsProps = {
      */
     disabled?: boolean;
     /**
-     * @default false
-     */
-    dismissable?: boolean;
-    /**
      * Click handler on dismiss
      */
     onDismiss?: (event?: MouseEvent<HTMLButtonElement>) => void;
-    /**
-     * @default false
-     */
-    addable?: boolean;
     /**
      * Click handler on add click
      */
@@ -189,20 +165,13 @@ type TagActionButtonsProps = {
     'aria-label'?: string;
 };
 
-const TagActionButtons = ({
-    'aria-label': ariaLabel,
-    addable,
-    disabled,
-    dismissable,
-    onAddClick,
-    onDismiss,
-}: TagActionButtonsProps) => {
+const TagActionButtons = ({ 'aria-label': ariaLabel, disabled, onAddClick, onDismiss }: TagActionButtonsProps) => {
     return (
         <>
-            {addable && (
+            {onAddClick && (
                 <button
                     type="button"
-                    aria-label={`Dismiss ${ariaLabel}`}
+                    aria-label={`Add ${ariaLabel}`}
                     className={styles.dismiss}
                     disabled={disabled}
                     onClick={onAddClick}
@@ -210,7 +179,7 @@ const TagActionButtons = ({
                     <IconPlus size="12" />
                 </button>
             )}
-            {dismissable && (
+            {onDismiss && (
                 <button
                     type="button"
                     aria-label={`Dismiss ${ariaLabel}`}

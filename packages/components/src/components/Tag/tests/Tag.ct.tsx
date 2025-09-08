@@ -18,7 +18,7 @@ test('should render as button when clickable', async ({ mount }) => {
 });
 
 test('should render dismiss button when dismissable', async ({ mount }) => {
-    const component = await mount(<Tag dismissable>{TAG_TEXT}</Tag>);
+    const component = await mount(<Tag onDismiss={() => {}}>{TAG_TEXT}</Tag>);
     await expect(component.locator('button[aria-label^="Dismiss"]')).toBeVisible();
 });
 
@@ -57,7 +57,6 @@ test('should trigger onDismiss when close clicked', async ({ mount }) => {
     let dismissed = false;
     const component = await mount(
         <Tag
-            dismissable
             onDismiss={() => {
                 dismissed = true;
             }}
@@ -70,7 +69,7 @@ test('should trigger onDismiss when close clicked', async ({ mount }) => {
 });
 
 test('should render correct cross icon size', async ({ mount }) => {
-    const component = await mount(<Tag dismissable>{TAG_TEXT}</Tag>);
+    const component = await mount(<Tag onDismiss={() => {}}>{TAG_TEXT}</Tag>);
     const icon = await component.locator('svg').getAttribute('width');
     expect(icon).toBe('12');
 });

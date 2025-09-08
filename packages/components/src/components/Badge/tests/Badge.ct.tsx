@@ -23,7 +23,7 @@ test('should render status indicator when provided', async ({ mount }) => {
 });
 
 test('should render dismiss button when dismissable', async ({ mount }) => {
-    const component = await mount(<Badge dismissable>{BADGE_TEXT}</Badge>);
+    const component = await mount(<Badge onDismiss={() => {}}>{BADGE_TEXT}</Badge>);
     await expect(component.locator('button[aria-label^="Dismiss"]')).toBeVisible();
 });
 
@@ -62,7 +62,6 @@ test('should trigger onDismiss when close clicked', async ({ mount }) => {
     let dismissed = false;
     const component = await mount(
         <Badge
-            dismissable
             onDismiss={() => {
                 dismissed = true;
             }}
@@ -75,7 +74,7 @@ test('should trigger onDismiss when close clicked', async ({ mount }) => {
 });
 
 test('should render correct cross icon size', async ({ mount }) => {
-    const component = await mount(<Badge dismissable>{BADGE_TEXT}</Badge>);
+    const component = await mount(<Badge onDismiss={() => {}}>{BADGE_TEXT}</Badge>);
     const icon = await component.locator('svg').getAttribute('width');
     expect(icon).toBe('12');
 });
