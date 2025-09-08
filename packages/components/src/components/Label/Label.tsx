@@ -5,6 +5,8 @@ import { type ForwardedRef, forwardRef, type MouseEventHandler, type ReactNode }
 
 import { cn } from '#/utilities/styleUtilities';
 
+import styles from './styles/label.module.scss';
+
 export type LabelProps = {
     id?: string;
     children: ReactNode;
@@ -30,18 +32,7 @@ export const LabelComponent = (
         <LabelPrimitive.Root
             ref={ref}
             data-required={props.required}
-            className={cn(
-                'tw-group tw-relative tw-flex tw-gap-1 tw-font-body--stack tw-text-body-medium tw-text-text-weak tw-transition-colors',
-                // Peer-based color changes (apply to parent, inherit to spans)
-                'peer-hover:tw-text-text has-[+_*_input:hover:not(:disabled)]:tw-text-text has-[~_button:hover:not(:disabled)]:tw-text-text',
-                // Use adjacent sibling selector when checkbox is checked
-                '[*[data-state="checked"]+&]:tw-font-medium [*[data-state="indeterminate"]+&]:tw-font-medium',
-                // Disabled state styling and cursor
-                'has-[+_*_:disabled]:tw-text-text-disabled has-[~_:disabled]:tw-cursor-not-allowed peer-disabled:tw-text-text-disabled peer-disabled:tw-cursor-not-allowed',
-                // Required asterisk
-                'after:tw-hidden data-[required="true"]:after:tw-flex after:tw-content-["*"] after:-tw-ml-1 after:tw-font-body--stack after:tw-text-body-small after:tw-font-medium after:tw-text-text-negative group-hover:tw-text-text-negative-hover',
-                className,
-            )}
+            className={cn(styles.root, className)}
             data-test-id={dataTestId}
             onClick={(event) => {
                 // Add support of Select component, Radix only allows native `select`
@@ -59,11 +50,11 @@ export const LabelComponent = (
             {...props}
         >
             {/* Hidden version with medium font weight to reserve space */}
-            <span className="tw-font-medium tw-opacity-0 tw-pointer-events-none" aria-hidden="true">
+            <span className={styles.hiddenText} aria-hidden="true">
                 {children}
             </span>
             {/* Visible version (inherits all styling from parent) */}
-            <span className="tw-absolute tw-inset-0">{children}</span>
+            <span className={styles.visibleText}>{children}</span>
         </LabelPrimitive.Root>
     );
 };

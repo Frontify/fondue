@@ -1,0 +1,80 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+@use '../../../utilities/transitions.module.scss';
+
+.root {
+    position: relative;
+    display: flex;
+    gap: var(--space-xs);
+    font-family: var(--body-family-stack);
+    font-size: var(--body-size-medium);
+    line-height: var(--body-size-medium-line-height);
+    color: var(--text-color-weak);
+
+    & {
+        @include transitions.transition-colors;
+    }
+
+    // Hover states for various input types
+    &:has(+ * input:hover:not(:disabled)),
+    &:has(~ button:hover:not(:disabled)) {
+        color: var(--text-color);
+    }
+
+    // Peer hover (when this label is a peer)
+    :has(&) input:hover:not(:disabled) ~ &,
+    :has(&) button:hover:not(:disabled) ~ & {
+        color: var(--text-color);
+    }
+
+    // Checked/indeterminate states
+    [data-state="checked"] + &,
+    [data-state="indeterminate"] + & {
+        font-weight: 500;
+    }
+
+    // Disabled states
+    &:has(+ * :disabled),
+    &:has(~ :disabled) {
+        color: var(--text-color-disabled);
+        cursor: not-allowed;
+    }
+
+    // Peer disabled
+    input:disabled ~ &,
+    button:disabled ~ & {
+        color: var(--text-color-disabled);
+        cursor: not-allowed;
+    }
+
+    // Required asterisk
+    &[data-required="true"]::after {
+        content: "*";
+        display: flex;
+        margin-left: calc(-1 * var(--space-xs));
+        margin-top: -1px;
+        font-family: var(--body-family-stack);
+        font-size: var(--body-size-small);
+        font-weight: 500;
+        color: var(--text-color-negative);
+    }
+
+    &[data-required="true"]:hover::after {
+        color: var(--text-color-negative-hover);
+    }
+
+    &::after {
+        display: none;
+    }
+}
+
+.hiddenText {
+    font-weight: 500;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.visibleText {
+    position: absolute;
+    inset: 0;
+}
