@@ -101,7 +101,7 @@ export const TreeItemColorsClassMap: Record<TreeItemColors, TreeItemColorStyles>
         dragHanlderTextColor: '',
         selectedDragHanlderTextColor: '',
     },
-    neutral: {
+    soft: {
         textColor: 'tw-text-primary',
         selectedTextColor: 'tw-font-medium tw-text-primary',
         backgroundColor: 'group-hover:tw-bg-surface-hover',
@@ -110,12 +110,12 @@ export const TreeItemColorsClassMap: Record<TreeItemColors, TreeItemColorStyles>
         dragHanlderTextColor: 'tw-text-primary',
         selectedDragHanlderTextColor: 'tw-text-primary',
     },
-    soft: {
+    neutral: {
         textColor: 'tw-text-primary',
         selectedTextColor: 'tw-font-medium tw-text-primary',
-        backgroundColor: 'group-hover:tw-bg-surface-hover',
-        selectedBackgroundColor: 'tw-bg-surface-active group-hover:tw-bg-surface-hover',
-        pressedBackgroundColor: 'group-active:tw-bg-surface-active',
+        backgroundColor: 'group-hover:tw-bg-container-secondary-hover',
+        selectedBackgroundColor: 'tw-bg-container-secondary-active group-hover:tw-bg-container-secondary-hover',
+        pressedBackgroundColor: 'group-active:tw-bg-container-secondary-active',
         dragHanlderTextColor: 'tw-text-primary',
         selectedDragHanlderTextColor: 'tw-text-primary',
     },
