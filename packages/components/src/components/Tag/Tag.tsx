@@ -81,7 +81,6 @@ const TagRoot = ({
     });
 
     const commonProps = {
-        'aria-label': ariaLabel || title,
         'data-addable': !!onAddClick,
         'data-component': 'tag',
         'data-disabled': disabled,
@@ -91,50 +90,58 @@ const TagRoot = ({
         'data-test-id': dataTestId,
         'data-variant': variant,
         className: styles.root,
-        title,
     };
 
-    const contentProps = {
-        'aria-label': ariaLabel || title,
-        disabled,
-        hoverContent: extractedHoverContent,
-        isHover,
-        onAddClick,
-        onDismiss,
-    };
-
-    if (onClick) {
-        return (
-            <button
-                type="button"
+    return (
+        <div
+            {...commonProps}
+            role={onClick ? 'group' : undefined}
+            aria-label={onClick ? ariaLabel || title : undefined}
+        >
+            <TagMainContent
+                aria-label={ariaLabel || title}
                 disabled={disabled}
-                {...commonProps}
+                hoverContent={extractedHoverContent}
+                isHover={isHover}
                 onClick={onClick}
                 onMouseEnter={() => setIsHover(true)}
                 onMouseLeave={() => setIsHover(false)}
+                title={title}
             >
-                <TagContent {...contentProps}>{processedChildren}</TagContent>
-            </button>
-        );
-    }
-
-    return (
-        <div {...commonProps}>
-            <TagContent {...contentProps}>{processedChildren}</TagContent>
+                {processedChildren}
+            </TagMainContent>
+            <TagActionButtons
+                aria-label={ariaLabel || title}
+                disabled={disabled}
+                onAddClick={onAddClick}
+                onDismiss={onDismiss}
+            />
         </div>
     );
 };
 TagRoot.displayName = 'Tag';
 
-const TagContent = ({
+const TagMainContent = ({
     'aria-label': ariaLabel,
     children,
     disabled = false,
     hoverContent,
     isHover = false,
-    onAddClick,
-    onDismiss,
-}: TagProps & { hoverContent?: ReactNode; isHover?: boolean }) => {
+    onClick,
+    onMouseEnter,
+    onMouseLeave,
+    title,
+}: {
+    'aria-label'?: string;
+    children: ReactNode;
+    disabled?: boolean;
+    hoverContent?: ReactNode;
+    isHover?: boolean;
+    onClick?: (event?: MouseEvent<HTMLButtonElement>) => void;
+    onMouseEnter?: () => void;
+    onMouseLeave?: () => void;
+    title?: string;
+}) => {
     // Process children to handle secondary content slots in their natural position
     let secondaryIndex = 0;
     const processedChildren = Children.map(children, (child) => {
@@ -150,23 +157,36 @@ const TagContent = ({
         return child;
     });
 
-    return (
-        <>
-            {hoverContent ? (
-                <div data-hover={isHover}>
-                    <div>{hoverContent}</div>
-                    <div>{processedChildren}</div>
-                </div>
-            ) : (
-                processedChildren
-            )}
-            <TagActionButtons
+    const content = hoverContent ? (
+        <div data-hover={isHover}>
+            <div>{hoverContent}</div>
+            <div>{processedChildren}</div>
+        </div>
+    ) : (
+        processedChildren
+    );
+
+    if (onClick && !disabled) {
+        return (
+            <button
+                type="button"
                 aria-label={ariaLabel}
+                title={title}
+                className={styles.mainContent}
+                onClick={onClick}
+                onMouseEnter={onMouseEnter}
+                onMouseLeave={onMouseLeave}
                 disabled={disabled}
-                onAddClick={onAddClick}
-                onDismiss={onDismiss}
-            />
-        </>
+            >
+                {content}
+            </button>
+        );
+    }
+
+    return (
+        <div className={styles.mainContent} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+            {content}
+        </div>
     );
 };
 
@@ -192,23 +212,23 @@ const TagActionButtons = ({ 'aria-label': ariaLabel, disabled, onAddClick, onDis
             {onAddClick && (
                 <button
                     type="button"
-                    aria-label={`Add ${ariaLabel}`}
-                    className={styles.dismiss}
+                    aria-label={`Add ${ariaLabel || ''}`}
+                    className={styles.actionButton}
                     disabled={disabled}
                     onClick={onAddClick}
                 >
-                    <IconPlus size="12" />
+                    <IconPlus size="16" />
                 </button>
             )}
             {onDismiss && (
                 <button
                     type="button"
-                    aria-label={`Dismiss ${ariaLabel}`}
-                    className={styles.dismiss}
+                    aria-label={`Dismiss ${ariaLabel || ''}`}
+                    className={styles.actionButton}
                     disabled={disabled}
                     onClick={onDismiss}
                 >
-                    <IconCross size="12" />
+                    <IconCross size="16" />
                 </button>
             )}
         </>

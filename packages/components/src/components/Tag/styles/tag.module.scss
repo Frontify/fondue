@@ -7,18 +7,19 @@
 
     font-size: var(--body-size-small);
     line-height: var(--body-size-small-line-height);
-    padding: var(--space-xxs) var(--space-xs);
-    gap: var(--gap);
     border-radius: var(--radius);
     position: relative;
     display: inline-flex;
     transition: background-color 250ms, color 250ms;
-    align-items: center;
+    align-items: stretch;
     white-space: nowrap;
     min-height: 1rem;
+    overflow: hidden;
 
     &[data-size="small"] {
-        padding: 2px var(--space-xs);
+        .mainContent {
+            padding: 2px var(--space-xs);
+        }
     }
 
     &[data-disabled="true"] {
@@ -30,20 +31,67 @@
             background-color: var(--box-disabled-color);
             color: var(--box-disabled-color-inverse);
         }
+
+        .mainContent:is(button),
+        .actionButton {
+            cursor: default;
+            opacity: 0.5;
+
+            &:hover {
+                background-color: transparent;
+            }
+        }
     }
 
-    .dismiss {
+    .mainContent {
+        padding: var(--space-xxs) var(--space-xs);
+        gap: var(--gap);
+        display: flex;
+        align-items: center;
+        flex: 1;
+        cursor: default;
+        border: none;
+        background: transparent;
+        color: inherit;
+        font: inherit;
+
+        &:has(~.actionButton) {
+            margin-right: -0.3rem;
+        }
+
+        &:is(button) {
+            cursor: pointer;
+
+            & {
+                @include focusStyle.focus-outline;
+            }
+        }
+    }
+
+    .actionButton {
         padding: 0;
         margin: 0;
-        height: 0.75rem;
-        width: 0.75rem;
+        height: 100%;
+        min-height: inherit;
+        width: 1.5rem;
         border: none 0 transparent;
         background: transparent;
         color: inherit;
-        border-radius: 0.25rem;
+        border-radius: 0;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 250ms, color 250ms;
+        flex-shrink: 0;
+        aspect-ratio: 1;
 
         & {
             @include focusStyle.focus-outline;
+        }
+
+        &:hover {
+            background-color: rgba(0, 0, 0, 0.1);
         }
     }
 
@@ -85,24 +133,18 @@
         background-color: var(--box-#{$color}-strong-color);
         color: var(--box-#{$color}-strong-inverse-color);
 
-            .secondaryContent {
-                color: var(--box-#{$color}-strong-inverse-color);
-            }
+        .secondaryContent {
+            color: var(--box-#{$color}-strong-inverse-color);
+        }
 
-        &:is(button) {
-            cursor: pointer;
-
-            & {
-                @include focusStyle.focus-outline;
+        .mainContent:is(button) {
+            &:hover {
+                background-color: var(--box-#{$color}-strong-color-hover);
+                color: var(--box-#{$color}-strong-inverse-color-hover);
             }
         }
 
-        &:is(button):hover {
-            background-color: var(--box-#{$color}-strong-color-hover);
-            color: var(--box-#{$color}-strong-inverse-color-hover);
-        }
-
-        .dismiss {
+        .actionButton {
             &:hover {
                 background-color: var(--box-#{$color}-strong-color-hover);
                 color: var(--box-#{$color}-strong-inverse-color-hover);
@@ -117,12 +159,14 @@
                 color: var(--text-color-weak);
             }
 
-            &:is(button):hover {
-                background-color: var(--box-#{$color}-color-hover);
-                color: var(--box-#{$color}-inverse-color-hover);
+            .mainContent:is(button) {
+                &:hover {
+                    background-color: var(--box-#{$color}-color-hover);
+                    color: var(--box-#{$color}-inverse-color-hover);
+                }
             }
 
-            .dismiss {
+            .actionButton {
                 &:hover {
                     background-color: var(--box-#{$color}-color-hover);
                     color: var(--box-#{$color}-inverse-color-hover);
