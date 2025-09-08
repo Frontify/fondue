@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconCross, IconPlus } from '@frontify/fondue-icons';
-import { useState, type MouseEvent, type ReactNode } from 'react';
+import { Children, isValidElement, useState, type MouseEvent, type ReactNode } from 'react';
 
 import styles from './styles/tag.module.scss';
 
@@ -41,36 +41,44 @@ type TagProps = {
      */
     onAddClick?: (event?: MouseEvent<HTMLButtonElement>) => void;
     title?: string;
-    /**
-     * The content show on hover
-     * @default undefined
-     */
-    hoverContent?: ReactNode;
-    /**
-     * Secondary string (or React content)
-     */
-    secondaryContent?: ReactNode;
     'aria-label'?: string;
     'data-test-id'?: string;
     children: ReactNode;
 };
 
-export const Tag = ({
+export type TagHoverContentProps = {
+    children: ReactNode;
+};
+
+export type TagSecondaryContentProps = {
+    children: ReactNode;
+};
+
+const TagRoot = ({
     'aria-label': ariaLabel,
     'data-test-id': dataTestId = 'tag',
     children,
     disabled = false,
     emphasis = 'strong',
-    hoverContent,
     onAddClick,
     onClick,
     onDismiss,
-    secondaryContent,
     size = 'default',
     title,
     variant,
 }: TagProps) => {
     const [isHover, setIsHover] = useState(false);
+
+    // Extract hover content from slots
+    let extractedHoverContent: ReactNode = null;
+    const processedChildren = Children.map(children, (child) => {
+        if (isValidElement(child) && child.type === TagHoverContent) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+            extractedHoverContent = child.props.children;
+            return null;
+        }
+        return child;
+    });
 
     const commonProps = {
         'aria-label': ariaLabel || title,
@@ -89,11 +97,10 @@ export const Tag = ({
     const contentProps = {
         'aria-label': ariaLabel || title,
         disabled,
-        hoverContent,
+        hoverContent: extractedHoverContent,
         isHover,
         onAddClick,
         onDismiss,
-        secondaryContent,
     };
 
     if (onClick) {
@@ -106,17 +113,18 @@ export const Tag = ({
                 onMouseEnter={() => setIsHover(true)}
                 onMouseLeave={() => setIsHover(false)}
             >
-                <TagContent {...contentProps}>{children}</TagContent>
+                <TagContent {...contentProps}>{processedChildren}</TagContent>
             </button>
         );
     }
 
     return (
         <div {...commonProps}>
-            <TagContent {...contentProps}>{children}</TagContent>
+            <TagContent {...contentProps}>{processedChildren}</TagContent>
         </div>
     );
 };
+TagRoot.displayName = 'Tag';
 
 const TagContent = ({
     'aria-label': ariaLabel,
@@ -126,19 +134,32 @@ const TagContent = ({
     isHover = false,
     onAddClick,
     onDismiss,
-    secondaryContent,
-}: TagProps & { isHover?: boolean }) => {
+}: TagProps & { hoverContent?: ReactNode; isHover?: boolean }) => {
+    // Process children to handle secondary content slots in their natural position
+    let secondaryIndex = 0;
+    const processedChildren = Children.map(children, (child) => {
+        if (isValidElement(child) && child.type === TagSecondaryContent) {
+            const currentIndex = secondaryIndex++;
+            return (
+                <div className={styles.secondaryContent} key={`secondary-${currentIndex}`}>
+                    {/* eslint-disable-next-line @typescript-eslint/no-unsafe-member-access */}
+                    {child.props.children}
+                </div>
+            );
+        }
+        return child;
+    });
+
     return (
         <>
             {hoverContent ? (
                 <div data-hover={isHover}>
                     <div>{hoverContent}</div>
-                    <div>{children}</div>
+                    <div>{processedChildren}</div>
                 </div>
             ) : (
-                children
+                processedChildren
             )}
-            {secondaryContent ? <div className={styles.secondaryContent}>{secondaryContent}</div> : null}
             <TagActionButtons
                 aria-label={ariaLabel}
                 disabled={disabled}
@@ -193,3 +214,21 @@ const TagActionButtons = ({ 'aria-label': ariaLabel, disabled, onAddClick, onDis
         </>
     );
 };
+
+export const TagHoverContent = ({ children }: TagHoverContentProps) => {
+    return <>{children}</>;
+};
+TagHoverContent.displayName = 'Tag.HoverContent';
+
+export const TagSecondaryContent = ({ children }: TagSecondaryContentProps) => {
+    return <>{children}</>;
+};
+TagSecondaryContent.displayName = 'Tag.SecondaryContent';
+
+export const Tag = TagRoot as typeof TagRoot & {
+    HoverContent: typeof TagHoverContent;
+    SecondaryContent: typeof TagSecondaryContent;
+    displayName?: string;
+};
+Tag.HoverContent = TagHoverContent;
+Tag.SecondaryContent = TagSecondaryContent;

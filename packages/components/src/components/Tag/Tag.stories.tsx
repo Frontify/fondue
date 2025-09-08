@@ -4,12 +4,16 @@ import { IconColorFan, IconDotsHorizontal } from '@frontify/fondue-icons';
 import { action } from '@storybook/addon-actions';
 import { type Meta, type StoryObj } from '@storybook/react';
 
-import { Tag } from './Tag';
+import { Tag, TagHoverContent, TagSecondaryContent } from './Tag';
 
 type Story = StoryObj<typeof Tag>;
 const meta: Meta<typeof Tag> = {
     title: 'Components/Tag',
     component: Tag,
+    subcomponents: {
+        'Tag.HoverContent': TagHoverContent,
+        'Tag.SecondaryContent': TagSecondaryContent,
+    },
     tags: ['autodocs'],
     parameters: {
         status: {
@@ -30,10 +34,12 @@ export const LabelOnly: Story = {
 };
 
 export const WithSecondaryContent: Story = {
-    args: {
-        secondaryContent: 'Secondary',
-    },
-    render: (args) => <Tag {...args}>Text</Tag>,
+    render: (args) => (
+        <Tag {...args}>
+            Text
+            <Tag.SecondaryContent>Secondary</Tag.SecondaryContent>
+        </Tag>
+    ),
 };
 
 export const WithOnClick: Story = {
@@ -99,14 +105,59 @@ export const BetweenElements: Story = {
 export const WithHoverContent: Story = {
     args: {
         onClick: action('onClick'),
-        hoverContent: (
-            <div className="tw-flex tw-w-full tw-justify-center">
-                <IconDotsHorizontal />
-            </div>
-        ),
     },
     render: (args) => {
-        return <Tag {...args}>This is a tag!</Tag>;
+        return (
+            <Tag {...args}>
+                This is a tag!
+                <Tag.HoverContent>
+                    <div className="tw-flex tw-w-full tw-justify-center">
+                        <IconDotsHorizontal />
+                    </div>
+                </Tag.HoverContent>
+            </Tag>
+        );
+    },
+};
+
+export const WithSecondaryContentBefore: Story = {
+    render: (args) => {
+        return (
+            <Tag {...args}>
+                <Tag.SecondaryContent>Before</Tag.SecondaryContent>
+                Main content
+            </Tag>
+        );
+    },
+};
+
+export const WithMultipleSecondaryContent: Story = {
+    render: (args) => {
+        return (
+            <Tag {...args}>
+                <Tag.SecondaryContent>First</Tag.SecondaryContent>
+                Main content
+                <Tag.SecondaryContent>Second</Tag.SecondaryContent>
+            </Tag>
+        );
+    },
+};
+
+export const WithBothSlotTypes: Story = {
+    args: {
+        onClick: action('onClick'),
+    },
+    render: (args) => {
+        return (
+            <Tag {...args}>
+                <Tag.SecondaryContent>Prefix</Tag.SecondaryContent>
+                Main content
+                <Tag.HoverContent>
+                    <IconDotsHorizontal />
+                </Tag.HoverContent>
+                <Tag.SecondaryContent>Suffix</Tag.SecondaryContent>
+            </Tag>
+        );
     },
 };
 
