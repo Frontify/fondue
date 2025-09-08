@@ -87,7 +87,6 @@ const TagRoot = ({
         'data-dismissable': !!onDismiss,
         'data-emphasis': emphasis,
         'data-size': size,
-        'data-test-id': dataTestId,
         'data-variant': variant,
         className: styles.root,
     };
@@ -107,6 +106,7 @@ const TagRoot = ({
                 onMouseEnter={() => setIsHover(true)}
                 onMouseLeave={() => setIsHover(false)}
                 title={title}
+                data-test-id={dataTestId}
             >
                 {processedChildren}
             </TagMainContent>
@@ -123,6 +123,7 @@ TagRoot.displayName = 'Tag';
 
 const TagMainContent = ({
     'aria-label': ariaLabel,
+    'data-test-id': dataTestId,
     children,
     disabled = false,
     hoverContent,
@@ -133,6 +134,7 @@ const TagMainContent = ({
     title,
 }: {
     'aria-label'?: string;
+    'data-test-id'?: string;
     children: ReactNode;
     disabled?: boolean;
     hoverContent?: ReactNode;
@@ -166,17 +168,18 @@ const TagMainContent = ({
         processedChildren
     );
 
-    if (onClick && !disabled) {
+    if (onClick) {
         return (
             <button
                 type="button"
                 aria-label={ariaLabel}
                 title={title}
                 className={styles.mainContent}
-                onClick={onClick}
+                onClick={disabled ? undefined : onClick}
                 onMouseEnter={onMouseEnter}
                 onMouseLeave={onMouseLeave}
                 disabled={disabled}
+                data-test-id={dataTestId}
             >
                 {content}
             </button>
@@ -184,7 +187,12 @@ const TagMainContent = ({
     }
 
     return (
-        <div className={styles.mainContent} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+        <div
+            className={styles.mainContent}
+            onMouseEnter={onMouseEnter}
+            onMouseLeave={onMouseLeave}
+            data-test-id={dataTestId}
+        >
             {content}
         </div>
     );
