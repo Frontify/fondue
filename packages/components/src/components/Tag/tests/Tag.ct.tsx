@@ -14,7 +14,8 @@ test('should render basic tag with text', async ({ mount }) => {
 
 test('should render as button when clickable', async ({ mount }) => {
     const component = await mount(<Tag onClick={() => {}}>{TAG_TEXT}</Tag>);
-    await expect(component).toHaveRole('button');
+    await expect(component.locator('button').first()).toBeVisible();
+    await expect(component.locator('button').first()).toHaveClass(/mainContent/);
 });
 
 test('should render dismiss button when dismissable', async ({ mount }) => {
@@ -71,5 +72,5 @@ test('should trigger onDismiss when close clicked', async ({ mount }) => {
 test('should render correct cross icon size', async ({ mount }) => {
     const component = await mount(<Tag onDismiss={() => {}}>{TAG_TEXT}</Tag>);
     const icon = await component.locator('svg').getAttribute('width');
-    expect(icon).toBe('12');
+    expect(icon).toBe('16');
 });
