@@ -3,9 +3,9 @@
 import * as LabelPrimitive from '@radix-ui/react-label';
 import { type ForwardedRef, forwardRef, type MouseEventHandler, type ReactNode } from 'react';
 
-import styles from './styles/label.module.scss';
-
 import { cn } from '#/utilities/styleUtilities';
+
+import styles from './styles/label.module.scss';
 
 export type LabelProps = {
     id?: string;
