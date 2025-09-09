@@ -185,7 +185,7 @@
         "react-textarea-autosize": "^8.5.9",
         "remark-gfm": "^3.0.1",
         "remark-parse": "^10.0.2",
-        "slate": "^0.102.0",
+        "slate": "^0.118.0",
         "slate-react": "^0.102.0",
         "unified": "^10.1.2",
         "unist-util-visit": "^5.0.0"
