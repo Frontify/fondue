@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import * as LabelPrimitive from '@radix-ui/react-label';
-import { type ForwardedRef, forwardRef, type MouseEventHandler, type ReactNode } from 'react';
+import { type ForwardedRef, forwardRef, type MouseEventHandler, type ReactNode, useRef, useLayoutEffect } from 'react';
 
 import { cn } from '#/utilities/styleUtilities';
 
@@ -28,6 +28,19 @@ export const LabelComponent = (
     { className, 'data-test-id': dataTestId = 'fondue-label', children, ...props }: LabelProps,
     ref: ForwardedRef<HTMLLabelElement>,
 ) => {
+    const hiddenTextRef = useRef<HTMLSpanElement>(null);
+
+    useLayoutEffect(() => {
+        const interactiveElements = hiddenTextRef.current?.querySelectorAll('button,input,a,[tabindex]');
+        if (interactiveElements) {
+            for (const element of interactiveElements) {
+                element.setAttribute('tabindex', '-1');
+                element.setAttribute('id', '');
+                element.setAttribute('data-test-id', '');
+            }
+        }
+    }, []);
+
     return (
         <LabelPrimitive.Root
             ref={ref}
@@ -50,7 +63,7 @@ export const LabelComponent = (
             {...props}
         >
             {/* Hidden version with medium font weight to reserve space */}
-            <span className={styles.hiddenText} aria-hidden="true">
+            <span className={styles.hiddenText} aria-hidden="true" ref={hiddenTextRef}>
                 {children}
             </span>
             {/* Visible version (inherits all styling from parent) */}
