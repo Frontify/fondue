@@ -10,6 +10,9 @@ import { IconSize } from '@foundation/Icon/IconSize';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 
+/**
+ * @deprecated Use the new Tag component from @frontify/fondue/components instead
+ */
 export enum TagType {
     Suggested = 'Suggested',
     Selected = 'Selected',
@@ -17,11 +20,17 @@ export enum TagType {
     PreviouslySelected = 'PreviouslySelected',
 }
 
+/**
+ * @deprecated Use the new Tag component from @frontify/fondue/components instead
+ */
 export enum TagSize {
     Small = 'Small',
     Medium = 'Medium',
 }
 
+/**
+ * @deprecated Use the new Tag component from @frontify/fondue/components instead
+ */
 export const tagStyles: Record<TagType, string> = {
     [TagType.Suggested]:
         'tw-border tw-bg-base tw-text-text-weak tw-border-line hover:tw-text-text hover:tw-border-line-strong',
@@ -33,6 +42,9 @@ export const tagStyles: Record<TagType, string> = {
         'tw-bg-base tw-border tw-text-box-selected-strong tw-border-box-selected-strong hover:tw-bg-box-neutral hover:tw-text-box-selected-inverse hover:tw-border-box-selected-inverse',
 };
 
+/**
+ * @deprecated Use the new Tag component from @frontify/fondue/components instead
+ */
 export type TagProps = { 'data-test-id'?: string } & (TagPropsUnselected | TagPropsSelected);
 
 type TagPropsSelected = {
@@ -49,6 +61,9 @@ type TagPropsUnselected = {
     size?: TagSize;
 };
 
+/**
+ * @deprecated Use the new Tag component from @frontify/fondue/components instead
+ */
 export const Tag = ({ type, label, onClick, size = TagSize.Medium, 'data-test-id': dataTestId = 'tag' }: TagProps) => {
     const ref = useRef<HTMLButtonElement | null>(null);
     const { isFocusVisible, focusProps } = useFocusRing();

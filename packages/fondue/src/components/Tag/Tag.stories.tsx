@@ -5,6 +5,9 @@ import { type Meta, type StoryFn } from '@storybook/react';
 
 import { Tag, type TagProps, TagSize, TagType } from './Tag';
 
+/**
+ ### This component is deprecated, please use the [new Tag component](/docs/current_components-tag--documentation) instead.
+ */
 export default {
     title: 'Components/Tag',
     component: Tag,
