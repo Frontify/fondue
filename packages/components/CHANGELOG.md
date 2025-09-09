@@ -1,5 +1,11 @@
 # @frontify/fondue-components
 
+## 19.6.1
+
+### Patch Changes
+
+- [#2427](https://github.com/Frontify/fondue/pull/2427) [`44798f9`](https://github.com/Frontify/fondue/commit/44798f912100902cd4008a8333d78116d2354548) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add missing props to textarea
+
 ## 19.6.0
 
 ### Minor Changes
