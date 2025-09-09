@@ -20,7 +20,6 @@ const meta: Meta<typeof Badge> = {
         emphasis: 'strong',
         variant: 'default',
         size: 'default',
-        dismissable: false,
         disabled: false,
         status: undefined,
     },
@@ -37,12 +36,12 @@ export const WithOnClick: Story = {
 };
 
 export const WithDismiss: Story = {
-    args: { dismissable: true, onDismiss: action('onDismiss') },
+    args: { onDismiss: action('onDismiss') },
     render: (args) => <Badge {...args}>Text</Badge>,
 };
 
 export const WithOnClickAndDismiss: Story = {
-    args: { onClick: action('onClick'), dismissable: true, onDismiss: action('onDismiss') },
+    args: { onClick: action('onClick'), onDismiss: action('onDismiss') },
     render: (args) => <Badge {...args}>Text</Badge>,
 };
 

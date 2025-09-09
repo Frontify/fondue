@@ -34,11 +34,7 @@ type BadgeProps = {
      */
     onClick?: (event?: MouseEvent<HTMLButtonElement>) => void;
     /**
-     * @default false
-     */
-    dismissable?: boolean;
-    /**
-     * Click handler on dismiss
+     * Click handler on dismiss - providing this will show the dismiss button
      */
     onDismiss?: (event?: MouseEvent<HTMLButtonElement>) => void;
     /**
@@ -56,7 +52,6 @@ export const Badge = ({
     'data-test-id': dataTestId = 'badge',
     children,
     disabled = false,
-    dismissable = false,
     emphasis = 'strong',
     onClick,
     onDismiss,
@@ -69,7 +64,7 @@ export const Badge = ({
         'aria-label': ariaLabel || title,
         'data-component': 'badge',
         'data-disabled': disabled,
-        'data-dismissable': dismissable,
+        'data-dismissable': !!onDismiss,
         'data-emphasis': emphasis,
         'data-size': size,
         'data-test-id': dataTestId,
@@ -81,7 +76,6 @@ export const Badge = ({
     const contentProps = {
         'aria-label': ariaLabel || title,
         disabled,
-        dismissable,
         onDismiss,
         status,
     };
@@ -101,19 +95,12 @@ export const Badge = ({
     );
 };
 
-const BadgeContent = ({
-    'aria-label': ariaLabel,
-    children,
-    disabled = false,
-    dismissable = false,
-    onDismiss,
-    status,
-}: BadgeProps) => {
+const BadgeContent = ({ 'aria-label': ariaLabel, children, disabled = false, onDismiss, status }: BadgeProps) => {
     return (
         <>
             {status && <BadgeStatus status={status} />}
             {children}
-            {dismissable && (
+            {onDismiss && (
                 <button
                     type="button"
                     aria-label={`Dismiss ${ariaLabel}`}
