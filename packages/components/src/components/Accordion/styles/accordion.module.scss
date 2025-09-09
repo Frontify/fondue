@@ -43,7 +43,7 @@
     position: relative;
     min-width: fit-content;
     display: grid;
-    grid-template-columns: 1fr min-content 60px;
+    grid-template-columns: 1fr min-content max-content;
     gap: 1rem;
 
     & > .accordionSlot {
