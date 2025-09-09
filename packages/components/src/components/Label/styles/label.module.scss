@@ -6,7 +6,7 @@
     position: relative;
     display: flex;
     gap: var(--spacing-x-small);
-    font-family: var(--body-family);
+    font-family: var(--typography-font-family-primary);
     font-size: var(--typography-font-size-medium);
     line-height: var(--typography-line-height-medium);
     color: var(--color-secondary-default);
@@ -53,7 +53,7 @@
         display: flex;
         margin-left: calc(-1 * var(--spacing-x-small));
         margin-top: -1px;
-        font-family: var(--body-family);
+        font-family: var(--typography-font-family-primary);
         font-size: var(--typography-font-size-small);
         font-weight: 500;
         color: var(--color-error-default);

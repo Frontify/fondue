@@ -5,9 +5,9 @@
 .root {
     --gap: 0.375rem; // 6px according to Figma
 
-    font-size: var(--body-size-small);
-    line-height: var(--body-size-small-line-height);
-    border-radius: var(--radius);
+    font-size: var(--typography-font-size-small);
+    line-height: var(--typography-line-height-tight);
+    border-radius: var(--border-radius-medium);
     position: relative;
     display: inline-flex;
     transition: background-color 250ms, color 250ms;
@@ -18,18 +18,18 @@
 
     &[data-size="small"] {
         .mainContent {
-            padding: 2px var(--space-xs);
+            padding: 2px var(--spacing-x-small);
         }
     }
 
     &[data-disabled="true"] {
-        background-color: var(--box-disabled-color);
-        color: var(--box-disabled-color-inverse);
+        background-color: var(--color-container-disabled-default);
+        color: var(--color-container-disabled-on-disabled);
         cursor: default;
 
         &:hover {
-            background-color: var(--box-disabled-color);
-            color: var(--box-disabled-color-inverse);
+            background-color: var(--color-container-disabled-default);
+            color: var(--color-container-disabled-on-disabled);
         }
 
         .mainContent:is(button),
@@ -44,7 +44,7 @@
     }
 
     .mainContent {
-        padding: var(--space-xxs) var(--space-xs);
+        padding: var(--spacing-xx-small) var(--spacing-x-small);
         gap: var(--gap);
         display: flex;
         align-items: center;
@@ -156,7 +156,7 @@
             color: var(--box-#{$color}-inverse-color);
 
             .secondaryContent {
-                color: var(--text-color-weak);
+                color: var(--color-secondary-default);
             }
 
             .mainContent:is(button) {
