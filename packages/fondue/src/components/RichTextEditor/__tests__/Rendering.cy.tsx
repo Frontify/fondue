@@ -88,8 +88,8 @@ describe('RichTextEditor Rendering', () => {
             {
                 type: 'ul',
                 children: [
-                    { type: 'li', children: [{ type: 'lic', children: [{ text: 'foo' }] }] },
-                    { type: 'li', children: [{ type: 'lic', children: [{ text: 'bar' }] }] },
+                    { type: 'li', children: [{ children: [{ text: 'foo' }], type: 'lic' }] },
+                    { type: 'li', children: [{ children: [{ text: 'bar' }], type: 'lic' }] },
                 ],
             },
         ]);
