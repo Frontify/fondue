@@ -176,8 +176,204 @@
     }
 }
 
-@include variant(default, neutral);
-@include variant(positive, positive);
-@include variant(highlight, selected);
-@include variant(warning, warning);
-@include variant(negative, negative);
+
+.root:not([data-disabled="true"]) {
+    .secondaryContent {
+        color: var(--color-primary-on-primary);
+    }
+    &[data-emphasis="weak"] {
+        .secondaryContent {
+            color: var(--color-secondary-default);
+        }
+    }
+}
+
+.root[data-variant=default]:not([data-disabled="true"]) {
+    background-color: var(--color-primary-default);
+    color: var(--color-primary-on-primary);
+
+    .mainContent:is(button) {
+        &:hover {
+            background-color: var(--color-primary-hover);
+            color: var(--color-primary-on-primary);
+        }
+    }
+
+    .actionButton {
+        &:hover {
+            background-color: var(--color-primary-hover);
+            color: var(--color-primary-on-primary);
+        }
+    }
+
+    &[data-emphasis="weak"] {
+        background-color: var(--color-container-secondary-default);
+        color: var(--color-container-secondary-on-secondary-container);
+
+        .mainContent:is(button) {
+            &:hover {
+                background-color: var(--color-container-secondary-hover);
+                color: var(--color-container-secondary-on-secondary-container);
+            }
+        }
+
+        .actionButton {
+            &:hover {
+                background-color: var(--color-container-secondary-hover);
+                color: var(--color-container-secondary-on-secondary-container);
+            }
+        }
+    }
+}
+
+.root[data-variant=positive]:not([data-disabled="true"]) {
+    background-color: var(--color-success-default);
+    color: var(--color-success-on-success);
+
+    .mainContent:is(button) {
+        &:hover {
+            background-color: var(--color-success-hover);
+            color: var(--color-success-on-success);
+        }
+    }
+
+    .actionButton {
+        &:hover {
+            background-color: var(--color-success-hover);
+            color: var(--color-success-on-success);
+        }
+    }
+
+    &[data-emphasis="weak"] {
+        background-color: var(--color-container-success-default);
+        color: var(--color-container-success-on-success-container);
+
+        .mainContent:is(button) {
+            &:hover {
+                background-color: var(--color-container-success-hover);
+                color: var(--color-container-success-on-success-container);
+            }
+        }
+
+        .actionButton {
+            &:hover {
+                background-color: var(--color-container-success-hover);
+                color: var(--color-container-success-on-success-container);
+            }
+        }
+    }
+}
+
+.root[data-variant=highlight]:not([data-disabled="true"]) {
+    background-color: var(--color-highlight-default);
+    color: var(--color-highlight-on-highlight);
+
+    .mainContent:is(button) {
+        &:hover {
+            background-color: var(--color-highlight-hover);
+            color: var(--color-highlight-on-highlight);
+        }
+    }
+
+    .actionButton {
+        &:hover {
+            background-color: var(--color-highlight-hover);
+            color: var(--color-highlight-on-highlight);
+        }
+    }
+
+    &[data-emphasis="weak"] {
+        background-color: var(--color-container-highlight-default);
+        color: var(--color-container-highlight-on-highlight-container);
+
+        .mainContent:is(button) {
+            &:hover {
+                background-color: var(--color-container-highlight-hover);
+                color: var(--color-container-highlight-on-highlight-container);
+            }
+        }
+
+        .actionButton {
+            &:hover {
+                background-color: var(--color-container-highlight-hover);
+                color: var(--color-container-highlight-on-highlight-container);
+            }
+        }
+    }
+}
+
+.root[data-variant=warning]:not([data-disabled="true"]) {
+    background-color: var(--color-warning-default);
+    color: var(--color-warning-on-warning);
+
+    .mainContent:is(button) {
+        &:hover {
+            background-color: var(--color-warning-hover);
+            color: var(--color-warning-on-warning);
+        }
+    }
+
+    .actionButton {
+        &:hover {
+            background-color: var(--color-warning-hover);
+            color: var(--color-warning-on-warning);
+        }
+    }
+
+    &[data-emphasis="weak"] {
+        background-color: var(--color-container-warning-default);
+        color: var(--color-container-warning-on-warning-container);
+
+        .mainContent:is(button) {
+            &:hover {
+                background-color: var(--color-container-warning-hover);
+                color: var(--color-container-warning-on-warning-container);
+            }
+        }
+
+        .actionButton {
+            &:hover {
+                background-color: var(--color-container-warning-hover);
+                color: var(--color-container-warning-on-warning-container);
+            }
+        }
+    }
+}
+
+.root[data-variant=negative]:not([data-disabled="true"]) {
+    background-color: var(--color-error-default);
+    color: var(--color-error-on-error);
+
+    .mainContent:is(button) {
+        &:hover {
+            background-color: var(--color-error-hover);
+            color: var(--color-error-on-error);
+        }
+    }
+
+    .actionButton {
+        &:hover {
+            background-color: var(--color-error-hover);
+            color: var(--color-error-on-error);
+        }
+    }
+
+    &[data-emphasis="weak"] {
+        background-color: var(--color-container-error-default);
+        color: var(--color-container-error-on-error-container);
+
+        .mainContent:is(button) {
+            &:hover {
+                background-color: var(--color-container-error-hover);
+                color: var(--color-container-error-on-error-container);
+            }
+        }
+
+        .actionButton {
+            &:hover {
+                background-color: var(--color-container-error-hover);
+                color: var(--color-container-error-on-error-container);
+            }
+        }
+    }
+}
