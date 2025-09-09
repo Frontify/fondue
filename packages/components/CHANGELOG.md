@@ -1,5 +1,20 @@
 # @frontify/fondue-components
 
+## 20.0.0-beta.7
+
+### Minor Changes
+
+- [#2420](https://github.com/Frontify/fondue/pull/2420) [`319ecd3`](https://github.com/Frontify/fondue/commit/319ecd314d2095ac13e3f23b77f90dc2091bf541) Thanks [@syeo66](https://github.com/syeo66)! - feat(Tag): Implement Tags similar to Badge implementation
+
+- [#2407](https://github.com/Frontify/fondue/pull/2407) [`b484cd3`](https://github.com/Frontify/fondue/commit/b484cd3b6d853b83585183793906b8313b205aa4) Thanks [@syeo66](https://github.com/syeo66)! - feat(ColorPicker): output alpha percentage in ColorPickerInput
+
+### Patch Changes
+
+- [#2421](https://github.com/Frontify/fondue/pull/2421) [`a2b361c`](https://github.com/Frontify/fondue/commit/a2b361cae3ed7f4836aa7eb77166a34766bf28d1) Thanks [@syeo66](https://github.com/syeo66)! - refactor(Label): move away from Tailwind
+
+- Updated dependencies []:
+    - @frontify/fondue-tokens@5.0.0-beta.4
+
 ## 20.0.0-beta.6
 
 ### Major Changes
