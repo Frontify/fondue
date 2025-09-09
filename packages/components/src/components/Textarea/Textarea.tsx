@@ -2,15 +2,15 @@
 
 import { IconCheckMark, IconCross, IconExclamationMarkTriangle } from '@frontify/fondue-icons';
 import {
-    type ChangeEventHandler,
     useEffect,
     useRef,
     useState,
+    type ChangeEventHandler,
+    type CSSProperties,
     type FocusEventHandler,
     type KeyboardEventHandler,
-    type SyntheticEvent,
     type ReactElement,
-    type CSSProperties,
+    type SyntheticEvent,
 } from 'react';
 
 import styles from './styles/textarea.module.scss';
@@ -24,7 +24,10 @@ export type ExtraAction = {
 type Status = 'default' | 'loading' | 'success' | 'error';
 
 type TextareaProps = {
-    'data-test-id'?: string;
+    /**
+     * The id of the textarea
+     */
+    id?: string;
     /**
      * If `true`, Textarea will have `autoComplete` functionality
      */
@@ -91,6 +94,14 @@ type TextareaProps = {
      * Event handler called when the text inside of text input is selected
      */
     onSelect?: (event: SyntheticEvent<HTMLTextAreaElement>) => void;
+    /**
+     * If `true`, Textarea will be required
+     */
+    required?: boolean;
+    /**
+     * The test id of the textarea
+     */
+    'data-test-id'?: string;
     placeholder?: string;
     readOnly?: boolean;
     resizable?: boolean;
