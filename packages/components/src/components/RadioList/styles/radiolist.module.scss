@@ -4,10 +4,10 @@
 
 .root {
     display: flex;
-    gap: var(--space-xs);
+    gap: var(--spacing-x-small);
 
     & button:not(:first-child) {
-        margin-left: var(--space-xs);
+        margin-left: var(--spacing-x-small);
     }
 
     &[data-readonly="true"] {
@@ -30,7 +30,7 @@
     width: 1rem;
     height: 1rem;
     border-radius: 100%;
-    border: 1px solid var(--line-color-x-strong);
+    border: 1px solid var(--color-line-strong);
     cursor: pointer;
 
     transition: border cubic-bezier(0.4, 0, 0.2, 1) 150ms;
@@ -40,24 +40,24 @@
     }
 
     &:hover {
-        border: 1px solid var(--line-color-xx-strong);
+        border: 1px solid var(--color-line-strong);
 
         [data-state="checked"]::after {
-            outline: 6px solid var(--box-neutral-strong-color-hover);
+            outline: 6px solid var(--color-primary-hover);
         }
     }
 
     .root[data-emphasis="highlight"] &:hover {
         [data-state="checked"]::after {
-            outline: 6px solid var(--box-selected-strong-color-hover);
+            outline: 6px solid var(--color-highlight-hover);
         }
     }
 
     &:disabled, .root[data-emphasis="highlight"] &:disabled {
-        border: 1px solid var(--line-color-strong);
+        border: 1px solid var(--color-line-strong);
 
         [data-state="checked"]::after {
-            outline: 6px solid var(--box-neutral-color);
+            outline: 6px solid var(--color-container-secondary-default);
         }
     }
 
@@ -81,13 +81,13 @@
         height: 6px;
         border-radius: 50%;
         box-sizing: border-box;
-        outline: 6px solid var(--box-neutral-strong-color);
+        outline: 6px solid var(--color-primary-default);
         transition: outline cubic-bezier(0.4, 0, 0.2, 1) 150ms;
     }
 
     .root[data-emphasis="highlight"] & {
         &::after {
-            outline: 6px solid var(--box-selected-strong-color);
+            outline: 6px solid var(--color-highlight-default);
         }
     }
 }

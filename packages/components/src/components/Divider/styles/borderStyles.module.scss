@@ -4,7 +4,7 @@
     &[data-orientation="horizontal"][data-variant="dashed"] {
         border-image: repeating-linear-gradient(90deg,
                 /* 4px dash */
-                var(--line-color) 0 4px,
+                var(--color-line-mid) 0 4px,
                 /* 3px gap (7px - 4px) */
                 transparent 4px 7px
             ) 1;
@@ -13,7 +13,7 @@
     &[data-orientation="vertical"][data-variant="dashed"] {
         border-image: repeating-linear-gradient(0deg,
                 /* 4px dash */
-                var(--line-color) 0 4px,
+                var(--color-line-mid) 0 4px,
                 /* 3px gap (7px - 4px) */
                 transparent 4px 7px
             ) 1;

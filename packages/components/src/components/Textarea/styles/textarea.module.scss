@@ -10,19 +10,19 @@
     grid-template-areas: "decorator textarea tools";
     grid-template-columns: max-content 1fr max-content;
 
-    font-family: var(--body-family-stack);
+    font-family: var(--body-family);
     font-weight: 400;
-    font-size: var(--body-size-medium);
+    font-size: var(--typography-font-size-medium);
 
-    line-height: var(--body-size-medium-line-height);
+    line-height: var(--typography-line-height-medium);
     text-align: start;
     min-height: sizeToken.get(9);
     box-sizing: border-box;
 
-    color: var(--text-color);
-    background-color: var(--base-color);
-    border-radius: var(--radius);
-    border: var(--line-width) solid var(--line-color-strong);
+    color: var(--color-primary-default);
+    background-color: var(--color-surface-default);
+    border-radius: var(--border-radius-medium);
+    border: var(--border-width-default) solid var(--color-line-strong);
 
     & {
         @include focusStyle.focus-outline;
@@ -30,11 +30,11 @@
     }
 
     &:hover {
-        border-color: var(--line-color-x-strong);
+        border-color: var(--color-line-strong);
     }
 
     &:has([data-show-focus-ring='false']:focus) {
-        border-color: var(--line-color-xx-strong);
+        border-color: var(--color-line-strong);
     }
 
     &:has(textarea[readonly]) {
@@ -42,16 +42,16 @@
     }
 
     &:has(textarea:disabled) {
-        border-color: var(--line-color-weak);
-        background-color: var(--box-disabled-color);
+        border-color: var(--color-line-subtle);
+        background-color: var(--color-container-disabled-default);
     }
 
     &[data-status='success'] {
-        border-color: var(--text-color-positive);
+        border-color: var(--color-success-default);
     }
 
     &[data-status='error'] {
-        border-color: var(--text-color-negative);
+        border-color: var(--color-error-default);
     }
 
     &[data-max-rows='true'][data-autosize='true']::after {
@@ -88,7 +88,7 @@
     padding-right: sizeToken.get(3);
     padding-top: sizeToken.get(2);
     padding-bottom: sizeToken.get(2);
-    border-radius: calc(var(--radius) - var(--line-width));
+    border-radius: calc(var(--border-radius-medium) - var(--border-width-default));
     resize: none;
     grid-area: textarea;
     outline: 2px solid transparent;
@@ -103,7 +103,7 @@
     }
 
     &::placeholder {
-        color: var(--text-color-x-weak);
+        color: var(--color-secondary-default);
     }
 
     &:-moz-focusring {
@@ -128,12 +128,12 @@
     // Readonly styles
     &[readonly] {
         cursor: text;
-        color: var(--text-color-weak);
+        color: var(--color-secondary-default);
         text-indent: 0px;
     }
 
     &[readonly]~.slot {
-        color: var(--text-color-weak);
+        color: var(--color-secondary-default);
     }
 
     &[readonly]~.slot:not([data-name='right']) {
@@ -141,12 +141,12 @@
     }
 
     &:disabled {
-        color: var(--text-color-disabled);
+        color: var(--color-disabled-default);
         cursor: not-allowed;
     }
 
     &:disabled~.slot {
-        color: var(--text-color-disabled);
+        color: var(--color-disabled-default);
     }
 }
 
@@ -179,8 +179,8 @@
 
 
 .toolsButton {
-    background-color: var(--base-color);
-    border-radius: var(--radius);
+    background-color: var(--color-surface-default);
+    border-radius: var(--border-radius-medium);
 
     & {
         @include focusStyle.focus-outline;
@@ -189,23 +189,23 @@
 
     &:hover,
     &:focus-visible {
-        background-color: var(--button-background-color);
+        background-color: var(--color-container-secondary-default);
         z-index: 1;
     }
 
     &:disabled {
         background-color: transparent;
         cursor: not-allowed;
-        color: var(--text-color-weak);
+        color: var(--color-secondary-default);
     }
 }
 
 .success {
-    color: var(--button-positive-icon-color);
+    color: var(--color-container-success-on-success-container);
 }
 
 .error {
-    color: var(--button-negative-icon-color);
+    color: var(--color-container-error-on-error-container);
 }
 
 .loadingStatus {
@@ -218,8 +218,8 @@
     pointer-events: none;
     align-items: center;
     justify-content: center;
-    background-color: var(--base-color);
-    border: var(--line-width) solid var(--line-color-strong);
+    background-color: var(--color-surface-default);
+    border: var(--border-width-default) solid var(--color-line-strong);
     border-radius: 9999px;
 
     &::before {
@@ -229,7 +229,7 @@
         justify-content: center;
         width: sizeToken.get(4);
         height: sizeToken.get(4);
-        border: var(--line-width) solid var(--text-color-interactive);
+        border: var(--border-width-default) solid var(--color-highlight-default);
         border-top-color: transparent;
         border-radius: 9999px;
         animation: spin 1s linear infinite;

@@ -95,22 +95,22 @@
 }
 
 .color-on-container-secondary {
-    color: var(--box-neutral-inverse-color);
+    color: var(--color-container-secondary-on-secondary-container);
 }
 .color-on-container-disabled {
-    color: var(--box-disabled-color-inverse);
+    color: var(--color-container-disabled-on-disabled);
 }
 .color-on-container-error {
-    color: var(--box-negative-inverse-color);
+    color: var(--color-container-error-on-error-container);
 }
 .color-on-container-success {
-    color: var(--box-positive-inverse-color);
+    color: var(--color-container-success-on-success-container);
 }
 .color-on-container-warning {
-    color: var(--box-warning-inverse-color);
+    color: var(--color-container-warning-on-warning-container);
 }
 .color-on-container-highlight {
-    color: var(--box-selected-inverse-color);
+    color: var(--color-container-highlight-on-highlight-container);
 }
 
 .truncate {
