@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import type { ThemeVars } from '@storybook/theming';
 import { create } from '@storybook/theming/create';
 
-export const light = create({
+export const light: ThemeVars = create({
     base: 'light',
 
     colorPrimary: '#2d3232',
@@ -37,7 +38,7 @@ export const light = create({
     brandImage: '/img/logo-charcoal.svg',
 });
 
-export const dark = create({
+export const dark: ThemeVars = create({
     base: 'dark',
 
     colorPrimary: '#fafafa',
