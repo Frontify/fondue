@@ -63,11 +63,11 @@ export const LabelComponent = (
             {...props}
         >
             {/* Hidden version with medium font weight to reserve space */}
-            <span className={styles.hiddenText} aria-hidden="true" ref={hiddenTextRef}>
+            <span className={`${styles.hiddenText} ${styles.contentArea}`} aria-hidden="true" ref={hiddenTextRef}>
                 {children}
             </span>
             {/* Visible version (inherits all styling from parent) */}
-            <span className={styles.visibleText}>{children}</span>
+            <span className={`${styles.visibleText} ${styles.contentArea}`}>{children}</span>
         </LabelPrimitive.Root>
     );
 };
