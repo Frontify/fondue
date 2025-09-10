@@ -2,6 +2,54 @@
 
 @use '../../../utilities/focusStyle.module.scss';
 
+@mixin variant($name, $color) {
+    &[data-variant=#{$name}]:not([data-disabled="true"]) {
+        background-color: var(--box-#{$color}-strong-color);
+        color: var(--box-#{$color}-strong-inverse-color);
+
+        .secondaryContent {
+            color: var(--box-#{$color}-strong-inverse-color);
+        }
+
+        .mainContent:is(button) {
+            &:hover {
+                background-color: var(--box-#{$color}-strong-color-hover);
+                color: var(--box-#{$color}-strong-inverse-color-hover);
+            }
+        }
+
+        .actionButton {
+            &:hover {
+                background-color: var(--box-#{$color}-strong-color-hover);
+                color: var(--box-#{$color}-strong-inverse-color-hover);
+            }
+        }
+
+        &[data-emphasis="weak"] {
+            background-color: var(--box-#{$color}-color);
+            color: var(--box-#{$color}-inverse-color);
+
+            .secondaryContent {
+                color: var(--text-color-weak);
+            }
+
+            .mainContent:is(button) {
+                &:hover {
+                    background-color: var(--box-#{$color}-color-hover);
+                    color: var(--box-#{$color}-inverse-color-hover);
+                }
+            }
+
+            .actionButton {
+                &:hover {
+                    background-color: var(--box-#{$color}-color-hover);
+                    color: var(--box-#{$color}-inverse-color-hover);
+                }
+            }
+        }
+    }
+}
+
 .root {
     --gap: 0.375rem; // 6px according to Figma
 
@@ -126,58 +174,6 @@
         }
     }
 
+    @include variant(default, neutral);
+    @include variant(highlight, selected);
 }
-
-@mixin variant($name, $color) {
-    .root[data-variant=#{$name}]:not([data-disabled="true"]) {
-        background-color: var(--box-#{$color}-strong-color);
-        color: var(--box-#{$color}-strong-inverse-color);
-
-        .secondaryContent {
-            color: var(--box-#{$color}-strong-inverse-color);
-        }
-
-        .mainContent:is(button) {
-            &:hover {
-                background-color: var(--box-#{$color}-strong-color-hover);
-                color: var(--box-#{$color}-strong-inverse-color-hover);
-            }
-        }
-
-        .actionButton {
-            &:hover {
-                background-color: var(--box-#{$color}-strong-color-hover);
-                color: var(--box-#{$color}-strong-inverse-color-hover);
-            }
-        }
-
-        &[data-emphasis="weak"] {
-            background-color: var(--box-#{$color}-color);
-            color: var(--box-#{$color}-inverse-color);
-
-            .secondaryContent {
-                color: var(--text-color-weak);
-            }
-
-            .mainContent:is(button) {
-                &:hover {
-                    background-color: var(--box-#{$color}-color-hover);
-                    color: var(--box-#{$color}-inverse-color-hover);
-                }
-            }
-
-            .actionButton {
-                &:hover {
-                    background-color: var(--box-#{$color}-color-hover);
-                    color: var(--box-#{$color}-inverse-color-hover);
-                }
-            }
-        }
-    }
-}
-
-@include variant(default, neutral);
-@include variant(positive, positive);
-@include variant(highlight, selected);
-@include variant(warning, warning);
-@include variant(negative, negative);

@@ -54,6 +54,17 @@
             color: var(--text-color-disabled);
         }
     }
+
+}
+
+.caret {
+    @include transitions.transition-all;
+
+    &[data-state='open'] {
+        .caret {
+            transform: rotate(180deg);
+        }
+    }
 }
 
 .colorName {
@@ -109,14 +120,4 @@
     margin: sizeToken.get(1);
     @include focusStyle.focus-outline;
     pointer-events: all;
-}
-
-.caret {
-    @include transitions.transition-all;
-}
-
-[data-state='open'] {
-    .caret {
-        transform: rotate(180deg);
-    }
 }
