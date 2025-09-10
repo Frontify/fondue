@@ -24,8 +24,8 @@ test('should render dismiss button when dismissable', async ({ mount }) => {
 });
 
 test('should apply variant styles', async ({ mount }) => {
-    const component = await mount(<Tag variant="warning">{TAG_TEXT}</Tag>);
-    await expect(component).toHaveAttribute('data-variant', 'warning');
+    const component = await mount(<Tag variant="highlight">{TAG_TEXT}</Tag>);
+    await expect(component).toHaveAttribute('data-variant', 'highlight');
 });
 
 test('should apply size styles', async ({ mount }) => {
