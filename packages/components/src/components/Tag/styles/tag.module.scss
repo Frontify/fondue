@@ -177,7 +177,4 @@
 }
 
 @include variant(default, neutral);
-@include variant(positive, positive);
 @include variant(highlight, selected);
-@include variant(warning, warning);
-@include variant(negative, negative);

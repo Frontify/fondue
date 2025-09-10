@@ -5,7 +5,7 @@ import { Children, isValidElement, useState, type MouseEvent, type ReactNode } f
 
 import styles from './styles/tag.module.scss';
 
-type TagStyle = 'default' | 'positive' | 'highlight' | 'warning' | 'negative';
+type TagStyle = 'default' | 'highlight';
 
 type TagEmphasis = 'strong' | 'weak';
 
