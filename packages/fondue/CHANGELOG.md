@@ -1,5 +1,14 @@
 # @frontify/fondue
 
+## 12.12.4
+
+### Patch Changes
+
+- [#2426](https://github.com/Frontify/fondue/pull/2426) [`b01777c`](https://github.com/Frontify/fondue/commit/b01777c7ced4efd0263e3f05c81f2fe2408f228e) Thanks [@fulopdaniel](https://github.com/fulopdaniel)! - chore: bump plate to patched versions
+
+- Updated dependencies [[`44798f9`](https://github.com/Frontify/fondue/commit/44798f912100902cd4008a8333d78116d2354548)]:
+    - @frontify/fondue-components@19.6.1
+
 ## 12.12.3
 
 ### Patch Changes
