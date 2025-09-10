@@ -31,6 +31,7 @@ export const LabelComponent = (
     const hiddenTextRef = useRef<HTMLSpanElement>(null);
 
     useLayoutEffect(() => {
+        // prevent duplicated interactive elements within the hidden element
         const interactiveElements = hiddenTextRef.current?.querySelectorAll('button,input,a,[tabindex]');
         if (interactiveElements) {
             for (const element of interactiveElements) {
