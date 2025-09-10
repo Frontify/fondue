@@ -37,6 +37,10 @@
     &[data-state='open'] {
         border-color: var(--line-color-xx-strong);
         color: var(--line-color-xx-strong);
+
+        .caret {
+            transform: rotate(180deg);
+        }
     }
 
     &:has(button[data-color-input-select]:focus-visible) {
@@ -59,12 +63,6 @@
 
 .caret {
     @include transitions.transition-all;
-
-    &[data-state='open'] {
-        .caret {
-            transform: rotate(180deg);
-        }
-    }
 }
 
 .colorName {
