@@ -1,3 +1,5 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
 @mixin variant($name, $color) {
     &[data-status=#{$name}] {
         background-color: var(--box-#{$color}-strong-color-hover);
