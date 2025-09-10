@@ -6,130 +6,6 @@
 
 $radius-without-border: calc(var(--radius) - var(--line-width));
 
-[data-tabs-variant="default"] {
-    .triggerListWrapper {
-        position: relative;
-        width: 100%;
-        display: flex;
-        align-items: center;
-        padding-left: sizeToken.get(3);
-        padding-right: sizeToken.get(3);
-        gap: sizeToken.get(2);
-        border-bottom: 1px solid var(--line-color);
-        box-sizing: border-box;
-    }
-
-    .trigger {
-        color: var(--text-color-weak);
-        font-size: var(--body-size-large);
-        white-space: nowrap;
-        margin: sizeToken.get(2);
-        display: flex;
-        align-items: center;
-        gap: sizeToken.get(1);
-
-        & {
-            @include focusStyle.focus-outline;
-            @include transitions.transition-colors;
-        }
-
-        &:hover,
-        &:focus {
-            color: var(--text-color);
-        }
-
-        &:disabled {
-            color: var(--text-color-disabled);
-        }
-
-        &[data-state='active'] {
-            color: var(--text-color);
-            font-weight: 500;
-        }
-    }
-
-
-    .activeIndicator {
-        position: absolute;
-        height: 3px;
-        border-top-left-radius: var(--radius-x-large);
-        border-top-right-radius: var(--radius-x-large);
-        background-color: var(--box-neutral-strong-color);
-        bottom: 0;
-        left: 0;
-        width: 0;
-        margin-left: sizeToken.get(3);
-
-        & {
-            @include transitions.transition;
-        }
-    }
-}
-
-[data-tabs-variant="pill"] {
-    .activeIndicator {
-        display: none;
-    }
-
-    .triggerListWrapper {
-        position: relative;
-        width: 100%;
-        display: flex;
-        align-items: center;
-        padding: 0;
-        gap: sizeToken.get(2);
-        box-sizing: border-box;
-    }
-
-    .triggerList {
-        height: auto;
-        padding: sizeToken.get(3);
-    }
-
-    .trigger {
-        color: var(--text-color);
-        font-size: var(--body-size-small);
-        font-weight: 500;
-        line-height: var(--body-size-small-line-height);
-        white-space: nowrap;
-        display: flex;
-        gap: sizeToken.get(1);
-        align-items: center;
-        padding: sizeToken.get(1) sizeToken.get(2);
-
-        & {
-            @include focusStyle.focus-outline;
-            @include transitions.transition-colors;
-        }
-
-        &:hover,
-        &:focus {
-            color: var(--button-text-color-hover);
-            background-color: var(--button-background-color-hover);
-            border-radius: var(--radius);
-        }
-
-        &:disabled {
-            color: var(--text-color-disabled);
-        }
-
-        &[data-state='active'] {
-            color: var(--button-text-color);
-            background-color: var(--button-background-color);
-            border-radius: var(--radius);
-        }
-
-        [data-component="badge"] {
-            padding-top: 2px;
-            padding-bottom: 2px;
-        }
-
-        &:active {
-            background-color: var(--button-background-color-pressed);
-        }
-    }
-}
-
 .root {
     position: relative;
     display: flex;
@@ -137,6 +13,153 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
     width: 100%;
     height: 100%;
     box-sizing: border-box;
+
+    &[data-tabs-variant="default"] {
+        .triggerListWrapper {
+            position: relative;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            padding-left: sizeToken.get(3);
+            padding-right: sizeToken.get(3);
+            gap: sizeToken.get(2);
+            border-bottom: 1px solid var(--line-color);
+            box-sizing: border-box;
+        }
+
+        .trigger {
+            color: var(--text-color-weak);
+            font-size: var(--body-size-large);
+            white-space: nowrap;
+            margin: sizeToken.get(2);
+            display: flex;
+            align-items: center;
+            gap: sizeToken.get(1);
+
+            & {
+                @include focusStyle.focus-outline;
+                @include transitions.transition-colors;
+            }
+
+            &:hover,
+            &:focus {
+                color: var(--text-color);
+            }
+
+            &:disabled {
+                color: var(--text-color-disabled);
+            }
+
+            &[data-state='active'] {
+                color: var(--text-color);
+                font-weight: 500;
+            }
+        }
+
+        .activeIndicator {
+            position: absolute;
+            height: 3px;
+            border-top-left-radius: var(--radius-x-large);
+            border-top-right-radius: var(--radius-x-large);
+            background-color: var(--box-neutral-strong-color);
+            bottom: 0;
+            left: 0;
+            width: 0;
+            margin-left: sizeToken.get(3);
+
+            & {
+                @include transitions.transition;
+            }
+        }
+    }
+
+    &[data-tabs-variant="pill"] {
+        .activeIndicator {
+            display: none;
+        }
+
+        .triggerListWrapper {
+            position: relative;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            padding: 0;
+            gap: sizeToken.get(2);
+            box-sizing: border-box;
+        }
+
+        .triggerList {
+            height: auto;
+            padding: sizeToken.get(3);
+        }
+
+        .trigger {
+            color: var(--text-color);
+            font-size: var(--body-size-small);
+            font-weight: 500;
+            line-height: var(--body-size-small-line-height);
+            white-space: nowrap;
+            display: flex;
+            gap: sizeToken.get(1);
+            align-items: center;
+            padding: sizeToken.get(1) sizeToken.get(2);
+
+            & {
+                @include focusStyle.focus-outline;
+                @include transitions.transition-colors;
+            }
+
+            &:hover,
+            &:focus {
+                color: var(--button-text-color-hover);
+                background-color: var(--button-background-color-hover);
+                border-radius: var(--radius);
+            }
+
+            &:disabled {
+                color: var(--text-color-disabled);
+            }
+
+            &[data-state='active'] {
+                color: var(--button-text-color);
+                background-color: var(--button-background-color);
+                border-radius: var(--radius);
+            }
+
+            [data-component="badge"] {
+                padding-top: 2px;
+                padding-bottom: 2px;
+            }
+
+            &:active {
+                background-color: var(--button-background-color-pressed);
+            }
+        }
+    }
+
+    &[data-tabs-content-padding='tight'] {
+        .content {
+            padding: sizeToken.get(2);
+        }
+    }
+
+    &[data-tabs-content-padding='compact'] {
+        .content {
+            padding: sizeToken.get(3);
+        }
+    }
+
+    &[data-tabs-content-padding='comfortable'] {
+        .content {
+            padding: sizeToken.get(4);
+        }
+    }
+
+    &[data-tabs-content-padding='spacious'] {
+        .content {
+            padding: sizeToken.get(6);
+        }
+    }
 }
 
 .triggerList {
@@ -157,20 +180,4 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
 
 .content {
     color: var(--text-color);
-
-    [data-tabs-content-padding='tight'] & {
-        padding: sizeToken.get(2);
-    }
-
-    [data-tabs-content-padding='compact'] & {
-        padding: sizeToken.get(3);
-    }
-
-    [data-tabs-content-padding='comfortable'] & {
-        padding: sizeToken.get(4);
-    }
-
-    [data-tabs-content-padding='spacious'] & {
-        padding: sizeToken.get(6);
-    }
 }
