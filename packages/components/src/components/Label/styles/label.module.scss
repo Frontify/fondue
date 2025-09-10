@@ -16,20 +16,20 @@
     }
 
     // Hover states for various input types
-    &:has(+ * input:hover:not(:disabled)),
-    &:has(~ button:hover:not(:disabled)) {
+    &:has(+ * input:hover:not(:disabled):not([data-readonly="true"]):not([aria-readonly="true"])),
+    &:has(~ button:hover:not(:disabled):not([data-readonly="true"]):not([aria-readonly="true"])) {
         color: var(--text-color);
     }
 
     // Peer hover (when this label is a peer)
-    :has(&) input:hover:not(:disabled) ~ &,
-    :has(&) button:hover:not(:disabled) ~ & {
+    :has(&) input:hover:not(:disabled):not([data-readonly="true"]):not([aria-readonly="true"])~&,
+    :has(&) button:hover:not(:disabled):not([data-readonly="true"]):not([aria-readonly="true"])~& {
         color: var(--text-color);
     }
 
     // Checked/indeterminate states
-    [data-state="checked"] + &,
-    [data-state="indeterminate"] + & {
+    [data-state="checked"]+&,
+    [data-state="indeterminate"]+& {
         font-weight: 500;
     }
 
@@ -41,8 +41,8 @@
     }
 
     // Peer disabled
-    input:disabled ~ &,
-    button:disabled ~ & {
+    input:disabled~&,
+    button:disabled~& {
         color: var(--text-color-disabled);
         cursor: not-allowed;
     }
@@ -66,6 +66,11 @@
     &::after {
         display: none;
     }
+}
+
+.contentArea {
+    gap: 2px;
+    display: flex;
 }
 
 .hiddenText {

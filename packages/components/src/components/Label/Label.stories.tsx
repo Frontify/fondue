@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconIcon } from '@frontify/fondue-icons';
+import { IconQuestionMarkCircle } from '@frontify/fondue-icons';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { type ComponentProps } from 'react';
 
@@ -148,7 +148,7 @@ export const WithTooltip: Story = {
                     Hello World
                     <Tooltip.Root>
                         <Tooltip.Trigger>
-                            <IconIcon size={16} />
+                            <IconQuestionMarkCircle size={16} />
                         </Tooltip.Trigger>
                         <Tooltip.Content>Tooltip</Tooltip.Content>
                     </Tooltip.Root>
