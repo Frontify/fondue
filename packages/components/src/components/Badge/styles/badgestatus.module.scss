@@ -1,3 +1,11 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+@mixin variant($name, $color) {
+    &[data-status=#{$name}] {
+        background-color: var(--box-#{$color}-strong-color-hover);
+    }
+}
+
 .root {
     border-radius: 9999px;
     width: 0.5rem;
@@ -7,17 +15,10 @@
     flex-shrink: 0;
     flex-grow: 0;
     background-color: var(--status-color);
+
+    @include variant(default, neutral);
+    @include variant(positive, positive);
+    @include variant(highlight, selected);
+    @include variant(warning, warning);
+    @include variant(negative, negative);
 }
-
-@mixin variant($name, $color) {
-    .root[data-status=#{$name}] {
-        background-color: var(--box-#{$color}-strong-color-hover);
-    }
-}
-
-
-@include variant(default, neutral);
-@include variant(positive, positive);
-@include variant(highlight, selected);
-@include variant(warning, warning);
-@include variant(negative, negative);

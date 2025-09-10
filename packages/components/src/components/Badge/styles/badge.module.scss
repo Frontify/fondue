@@ -2,22 +2,8 @@
 
 @use '../../../utilities/focusStyle.module.scss';
 
-.root {
-    font-size: var(--body-size-small);
-    line-height: var(--body-size-small-line-height);
-    padding: var(--space-xxs) var(--space-xs);
-    gap: var(--space-xxs);
-    border-radius: 9999px;
-    position: relative;
-    display: inline-flex;
-    transition: background-color 250ms, color 250ms;
-    align-items: center;
-    white-space: nowrap;
-    min-height: 1rem;
-}
-
 @mixin variant($name, $color) {
-    .root[data-variant=#{$name}]:not([data-disabled="true"]) {
+    &[data-variant=#{$name}]:not([data-disabled="true"]) {
         background-color: var(--box-#{$color}-strong-color);
         color: var(--box-#{$color}-strong-inverse-color);
 
@@ -46,24 +32,38 @@
     }
 }
 
-@include variant(default, neutral);
-@include variant(positive, positive);
-@include variant(highlight, selected);
-@include variant(warning, warning);
-@include variant(negative, negative);
+.root {
+    font-size: var(--body-size-small);
+    line-height: var(--body-size-small-line-height);
+    padding: var(--space-xxs) var(--space-xs);
+    gap: var(--space-xxs);
+    border-radius: 9999px;
+    position: relative;
+    display: inline-flex;
+    transition: background-color 250ms, color 250ms;
+    align-items: center;
+    white-space: nowrap;
+    min-height: 1rem;
 
-[data-size="small"] {
-    padding: 2px var(--space-xs);
-}
+    @include variant(default, neutral);
+    @include variant(positive, positive);
+    @include variant(highlight, selected);
+    @include variant(warning, warning);
+    @include variant(negative, negative);
 
-[data-disabled="true"] {
-    background-color: var(--box-disabled-color);
-    color: var(--box-disabled-color-inverse);
-    cursor: default;
+    &[data-size="small"] {
+        padding: 2px var(--space-xs);
+    }
 
-    &:hover {
+    &[data-disabled="true"] {
         background-color: var(--box-disabled-color);
         color: var(--box-disabled-color-inverse);
+        cursor: default;
+
+        &:hover {
+            background-color: var(--box-disabled-color);
+            color: var(--box-disabled-color-inverse);
+        }
     }
 }
 
