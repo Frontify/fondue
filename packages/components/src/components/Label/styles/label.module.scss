@@ -66,6 +66,13 @@
     &::after {
         display: none;
     }
+
+    &[data-variant="strong"] {
+        font-family: var(--heading-family-stack);
+        font-size: var(--heading-size-medium);
+        line-height: var(--heading-size-medium-line-height);
+        font-weight: var(--heading-weight-strong-number);
+    }
 }
 
 .contentArea {

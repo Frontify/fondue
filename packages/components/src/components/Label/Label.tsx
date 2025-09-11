@@ -7,6 +7,8 @@ import { cn } from '#/utilities/styleUtilities';
 
 import styles from './styles/label.module.scss';
 
+type LabelVariant = 'default' | 'strong';
+
 export type LabelProps = {
     id?: string;
     children: ReactNode;
@@ -19,13 +21,18 @@ export type LabelProps = {
      * @default false
      */
     required?: boolean;
+    /**
+     * The variant of the label
+     * @default "default"
+     */
+    variant?: LabelVariant;
     className?: string;
     onClick?: MouseEventHandler<HTMLLabelElement>;
     'data-test-id'?: string;
 };
 
 export const LabelComponent = (
-    { className, 'data-test-id': dataTestId = 'fondue-label', children, ...props }: LabelProps,
+    { className, 'data-test-id': dataTestId = 'fondue-label', children, variant = 'default', ...props }: LabelProps,
     ref: ForwardedRef<HTMLLabelElement>,
 ) => {
     const hiddenTextRef = useRef<HTMLSpanElement>(null);
@@ -46,6 +53,7 @@ export const LabelComponent = (
         <LabelPrimitive.Root
             ref={ref}
             data-required={props.required}
+            data-variant={variant}
             className={cn(styles.root, className)}
             data-test-id={dataTestId}
             onClick={(event) => {
