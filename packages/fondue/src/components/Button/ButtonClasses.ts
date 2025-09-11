@@ -178,10 +178,7 @@ export const ButtonStyleClasses: Record<ButtonEmphasis, Record<UpdatedButtonStyl
                 'group-active:tw-text-button-negative-icon-pressed ',
         },
         [ButtonStyle.Loud]: {
-            button:
-                'tw-bg-box-selected ' +
-                'hover:tw-bg-box-selected-hover ' +
-                'active:tw-bg-box-selected-pressed ',
+            button: 'tw-bg-box-selected hover:tw-bg-box-selected-hover active:tw-bg-box-selected-pressed ',
             icon:
                 'tw-text-box-selected-inverse ' +
                 'group-hover:tw-text-box-selected-inverse-hover' +
