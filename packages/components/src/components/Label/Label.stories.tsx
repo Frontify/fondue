@@ -158,3 +158,22 @@ export const WithTooltip: Story = {
         );
     },
 };
+
+export const Strong: Story = {
+    args: {
+        children: 'Strong Label',
+        variant: 'strong',
+    },
+    render: (args) => {
+        // Used to get the correct component name in the Storybook of the `TextInput` (instead of `TextInput.Root`)
+        const STextInput = (props: ComponentProps<typeof TextInput>) => <TextInput {...props} />;
+        STextInput.displayName = 'TextInput';
+
+        return (
+            <div className="tw-flex tw-flex-col tw-gap-2">
+                <Label {...args} htmlFor="input-strong" />
+                <STextInput id="input-strong" placeholder="Enter your name" />
+            </div>
+        );
+    },
+};

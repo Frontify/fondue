@@ -6,13 +6,23 @@
     position: relative;
     display: flex;
     gap: var(--space-xs);
-    font-family: var(--body-family-stack);
-    font-size: var(--body-size-medium);
-    line-height: var(--body-size-medium-line-height);
-    color: var(--text-color-weak);
 
     & {
         @include transitions.transition-colors;
+    }
+
+    &[data-variant="default"] {
+        font-family: var(--body-family-stack);
+        font-size: var(--body-size-medium);
+        line-height: var(--body-size-medium-line-height);
+        color: var(--text-color-weak);
+    }
+
+    &[data-variant="strong"] {
+        font-family: var(--heading-family-stack);
+        font-size: var(--heading-size-medium);
+        line-height: var(--heading-size-medium-line-height);
+        font-weight: var(--heading-weight-strong-number);
     }
 
     // Hover states for various input types
@@ -66,6 +76,7 @@
     &::after {
         display: none;
     }
+
 }
 
 .contentArea {
