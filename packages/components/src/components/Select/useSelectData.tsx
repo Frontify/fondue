@@ -1,17 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconCross } from '@frontify/fondue-icons';
 import {
     Children,
     cloneElement,
     isValidElement,
     useCallback,
+    useEffect,
     useMemo,
     useState,
     type ReactNode,
-    useEffect,
 } from 'react';
 
+import { SelectClear } from './SelectClear';
 import { ForwardedRefSelectItem, type SelectItemProps } from './SelectItem';
 import { ForwardedRefSelectSlot, type SelectSlotProps } from './SelectSlot';
 import { getSelectOptionValue } from './utils';
@@ -130,7 +130,7 @@ export const useSelectData = (children: ReactNode, getAsyncItems?: AsyncItemsFet
                         if (child.props.children) {
                             clearButton = child;
                         } else {
-                            clearButton = cloneElement(child, { children: <IconCross size={16} /> });
+                            clearButton = cloneElement(child, { children: <SelectClear /> });
                         }
                     }
                 }

@@ -2,12 +2,14 @@
 
 import { IconCross } from '@frontify/fondue-icons';
 
+import { Button } from '../Button/Button';
+
 import styles from './styles/select.module.scss';
 
-export const SelectClear = () => {
+export const SelectClear = ({ onClear }: { onClear?: () => void }) => {
     return (
-        <button aria-label="clear input" className={styles.clear} type="button">
-            <IconCross size={16} />
-        </button>
+        <Button aria-label="clear input" type="button" size="small" emphasis="weak" aspect="square" onPress={onClear}>
+            <IconCross className={styles.clearIcon} size={16} />
+        </Button>
     );
 };

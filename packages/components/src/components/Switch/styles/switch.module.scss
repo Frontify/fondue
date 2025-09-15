@@ -74,6 +74,6 @@
     }
 
     &[data-state='checked'] {
-        transform: translate(calc(var(--switch-width) - 100% + 1px), -1px);
+        transform: translate(calc(var(--switch-width) - 100% - 1px), -1px);
     }
 }

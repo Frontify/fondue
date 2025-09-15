@@ -4,14 +4,14 @@ import { IconIcon } from '@frontify/fondue-icons';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { useState } from 'react';
 
-import { Flex } from '#/components/Flex/Flex.tsx';
-
 import { Button } from '../Button/Button';
 
 import { SelectCombobox } from './Combobox';
 import { Select, SelectInput } from './Select';
 import { SelectItem, SelectItemGroup } from './SelectItem';
 import { SelectSlot } from './SelectSlot';
+
+import { Flex } from '#/components/Flex/Flex.tsx';
 
 type Story = StoryObj<typeof meta>;
 const meta: Meta<typeof SelectInput> = {
@@ -199,7 +199,11 @@ export const CustomClearElement: Story = {
     render: (args) => {
         return (
             <Select {...args}>
-                <Select.Slot name="clear">Clear</Select.Slot>
+                <Select.Slot name="clear">
+                    <Button size="small" emphasis="strong" onPress={() => {}}>
+                        Clear
+                    </Button>
+                </Select.Slot>
                 <Select.Slot name="left">
                     <IconIcon size={16} />
                 </Select.Slot>

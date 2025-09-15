@@ -3,11 +3,13 @@
 import { IconCaretDown, IconCross, IconDroplet } from '@frontify/fondue-icons';
 import { type CSSProperties, type ForwardedRef, forwardRef } from 'react';
 
-import { type CommonAriaAttrs } from '#/utilities/types';
+import { Button } from '../Button/Button';
 
 import styles from './styles/colorInput.module.scss';
 import { type RgbaColor } from './types';
 import { colorToCss, getColorWithName } from './utils';
+
+import { type CommonAriaAttrs } from '#/utilities/types';
 
 type ColorPickerInputProps = {
     id?: string;
@@ -78,15 +80,9 @@ export const ColorPickerInput = (
             </button>
             <div className={styles.actions}>
                 {onClear && (
-                    <button
-                        type="button"
-                        aria-label="Clear color"
-                        onClick={onClear}
-                        className={styles.clear}
-                        disabled={disabled}
-                    >
-                        <IconCross size={16} />
-                    </button>
+                    <Button onPress={onClear} disabled={disabled} size="small" emphasis="weak" aspect="square">
+                        <IconCross className={styles.clearIcon} size={16} />
+                    </Button>
                 )}
                 <div className={styles.caret} data-state={isOpen ? 'open' : 'closed'}>
                     <IconCaretDown size={16} className={styles.caret} />

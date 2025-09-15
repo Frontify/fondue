@@ -29,6 +29,8 @@
     border: var(--line-width) solid var(--line-color-strong);
     cursor: pointer;
 
+
+
     & {
         @include focusStyle.focus-outline;
     }
@@ -178,14 +180,12 @@
 .clear {
     display: flex;
     height: 100%;
-    width: fit-content;
     align-items: center;
     justify-content: center;
     padding: 0 sizeToken.get(3);
-    color: var(--text-color-weak);
 
-    &:hover {
-        color: var(--text-color-weak-hover);
+    button:not(:hover) > .clearIcon {
+        color: var(--text-color-weak);
     }
 }
 

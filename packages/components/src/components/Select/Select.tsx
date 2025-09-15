@@ -6,14 +6,14 @@ import { Slot as RadixSlot } from '@radix-ui/react-slot';
 import { useSelect } from 'downshift';
 import { forwardRef, useRef, useState, type ForwardedRef, type ReactNode } from 'react';
 
-import { type CommonAriaProps } from '#/helpers/aria';
-
 import { ForwardedRefCombobox } from './Combobox';
 import { ForwardedRefSelectItem, ForwardedRefSelectItemGroup } from './SelectItem';
 import { SelectMenu, type SelectMenuViewportCollisionPadding } from './SelectMenu';
 import { ForwardedRefSelectSlot } from './SelectSlot';
 import styles from './styles/select.module.scss';
 import { useSelectData } from './useSelectData';
+
+import { type CommonAriaProps } from '#/helpers/aria';
 
 export type SelectComponentProps = {
     /**
