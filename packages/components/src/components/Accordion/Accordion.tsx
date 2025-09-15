@@ -193,7 +193,7 @@ export const AccordionContent = ({
     children,
     divider = false,
     onClick,
-    padding = 'large',
+    padding,
 }: AccordionContentProps) => {
     return (
         <RadixAccordion.Content
