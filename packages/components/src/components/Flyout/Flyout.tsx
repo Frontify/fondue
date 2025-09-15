@@ -113,6 +113,10 @@ export type FlyoutContentProps = {
      * @default 'compact'
      */
     viewportCollisionPadding?: FlyoutViewportCollisionPadding;
+    /**
+     * Event handler called when auto-focusing on open
+     */
+    onOpenAutoFocus?: (event: Event) => void;
     children?: ReactNode;
     'data-test-id'?: string;
 };

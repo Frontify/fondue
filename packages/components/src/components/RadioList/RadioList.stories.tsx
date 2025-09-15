@@ -64,16 +64,14 @@ const meta: Meta<typeof RadioList.Root> = {
 
                 <RadioList.RadioButton id={idOption3} value="3" />
                 <Label htmlFor={idOption3} required={args.required}>
-                    <Flex gap={2} align="center">
-                        Option 3
-                        <Tooltip.Root>
-                            <Tooltip.Trigger>
-                                <IconQuestionMarkCircle size="16" />
-                            </Tooltip.Trigger>
+                    Option 3
+                    <Tooltip.Root>
+                        <Tooltip.Trigger>
+                            <IconQuestionMarkCircle size="16" />
+                        </Tooltip.Trigger>
 
-                            <Tooltip.Content>I'm a tooltip!</Tooltip.Content>
-                        </Tooltip.Root>
-                    </Flex>
+                        <Tooltip.Content>I'm a tooltip!</Tooltip.Content>
+                    </Tooltip.Root>
                 </Label>
             </RadioList.Root>
         );

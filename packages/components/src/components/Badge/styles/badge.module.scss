@@ -2,22 +2,9 @@
 
 @use '../../../utilities/focusStyle.module.scss';
 
-.root {
-    font-size: var(--typography-font-size-small);
-    line-height: var(--typography-line-height-tight);
-    padding: var(--spacing-xx-small) var(--spacing-x-small);
-    gap: var(--spacing-xx-small);
-    border-radius: 9999px;
-    position: relative;
-    display: inline-flex;
-    transition: background-color 250ms, color 250ms;
-    align-items: center;
-    white-space: nowrap;
-    min-height: 1rem;
-}
 
 @mixin variant($name, $color, $weakColor: $color) {
-    .root[data-variant=#{$name}]:not([data-disabled="true"]) {
+    &[data-variant=#{$name}]:not([data-disabled="true"]) {
         background-color: var(--color-#{$color}-default);
         color: var(--color-#{$color}-on-#{$color});
 
@@ -46,11 +33,26 @@
     }
 }
 
-@include variant(default, primary, secondary);
-@include variant(positive, success);
-@include variant(highlight, highlight);
-@include variant(warning, warning);
-@include variant(negative, error);
+.root {
+    font-size: var(--typography-font-size-small);
+    line-height: var(--typography-line-height-tight);
+    padding: var(--spacing-xx-small) var(--spacing-x-small);
+    gap: var(--spacing-xx-small);
+    border-radius: 9999px;
+    position: relative;
+    display: inline-flex;
+    transition: background-color 250ms, color 250ms;
+    align-items: center;
+    white-space: nowrap;
+    min-height: 1rem;
+
+    @include variant(default, primary, secondary);
+    @include variant(positive, success);
+    @include variant(highlight, highlight);
+    @include variant(warning, warning);
+    @include variant(negative, error);
+}
+
 
 [data-size="small"] {
     padding: 2px var(--spacing-x-small);

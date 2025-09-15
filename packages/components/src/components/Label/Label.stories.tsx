@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconIcon } from '@frontify/fondue-icons';
+import { IconQuestionMarkCircle } from '@frontify/fondue-icons';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { type ComponentProps } from 'react';
 
@@ -148,12 +148,31 @@ export const WithTooltip: Story = {
                     Hello World
                     <Tooltip.Root>
                         <Tooltip.Trigger>
-                            <IconIcon size={16} />
+                            <IconQuestionMarkCircle size={16} />
                         </Tooltip.Trigger>
                         <Tooltip.Content>Tooltip</Tooltip.Content>
                     </Tooltip.Root>
                 </Label>
                 <STextInput id="input-tooltip" placeholder="Enter your name" />
+            </div>
+        );
+    },
+};
+
+export const Strong: Story = {
+    args: {
+        children: 'Strong Label',
+        variant: 'strong',
+    },
+    render: (args) => {
+        // Used to get the correct component name in the Storybook of the `TextInput` (instead of `TextInput.Root`)
+        const STextInput = (props: ComponentProps<typeof TextInput>) => <TextInput {...props} />;
+        STextInput.displayName = 'TextInput';
+
+        return (
+            <div className="tw-flex tw-flex-col tw-gap-2">
+                <Label {...args} htmlFor="input-strong" />
+                <STextInput id="input-strong" placeholder="Enter your name" />
             </div>
         );
     },

@@ -76,3 +76,11 @@ export const WithExtraActions: Story = {
     },
     render: (args) => <Textarea {...args} />,
 };
+
+export const Required: Story = {
+    args: {
+        placeholder: 'Enter some long form text here',
+        required: true,
+    },
+    render: (args) => <Textarea {...args} />,
+};

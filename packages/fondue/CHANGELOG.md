@@ -118,6 +118,24 @@
     - @frontify/fondue-tokens@5.0.0-beta.0
     - @frontify/fondue-icons@0.18.0-beta.0
 
+## 12.12.5
+
+### Patch Changes
+
+- [#2434](https://github.com/Frontify/fondue/pull/2434) [`33d5d53`](https://github.com/Frontify/fondue/commit/33d5d539f11ace6729509ca4b5724cdc76c0e8f3) Thanks [@peter-tudosa](https://github.com/peter-tudosa)! - feat(RTE): remove cmd+e keyboard shortcut
+
+- Updated dependencies [[`f9d9641`](https://github.com/Frontify/fondue/commit/f9d9641c5e57a1152734dca156e1f2e48e59f4fc), [`a4d875b`](https://github.com/Frontify/fondue/commit/a4d875be4f4669c29debce291962e30516bcbcf5), [`eb5fa31`](https://github.com/Frontify/fondue/commit/eb5fa3186bc928ab9dfbdf063b392cd7cf3c675a), [`4a50637`](https://github.com/Frontify/fondue/commit/4a50637f1fa21a30b45e54445ae53b23d53dc1fb), [`853bd52`](https://github.com/Frontify/fondue/commit/853bd52f7dacb9c7ba8124c2600f334c7c7a86b5), [`81e0e4c`](https://github.com/Frontify/fondue/commit/81e0e4c7cdd2d16ae58d961a5e8ace969d8d6330)]:
+    - @frontify/fondue-components@19.7.0
+
+## 12.12.4
+
+### Patch Changes
+
+- [#2426](https://github.com/Frontify/fondue/pull/2426) [`b01777c`](https://github.com/Frontify/fondue/commit/b01777c7ced4efd0263e3f05c81f2fe2408f228e) Thanks [@fulopdaniel](https://github.com/fulopdaniel)! - chore: bump plate to patched versions
+
+- Updated dependencies [[`44798f9`](https://github.com/Frontify/fondue/commit/44798f912100902cd4008a8333d78116d2354548)]:
+    - @frontify/fondue-components@19.6.1
+
 ## 12.12.3
 
 ### Patch Changes

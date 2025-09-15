@@ -19,7 +19,13 @@ export class CodePlugin extends Plugin {
     }
 
     plugins(): PlatePlugin[] {
-        return [createCodePlugin()];
+        return [
+            createCodePlugin({
+                options: {
+                    hotkey: [],
+                },
+            }),
+        ];
     }
 }
 

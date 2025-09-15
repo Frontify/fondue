@@ -95,16 +95,14 @@ export const WithTooltip: Story = {
             <Flex gap={2}>
                 <Checkbox {...args} id={checkboxId} aria-labelledby={labelId} value={value} onChange={handleToggle} />
                 <Label id={labelId} htmlFor={checkboxId} required={args.required}>
-                    <Flex gap={2} align="center">
-                        Checkbox
-                        <Tooltip.Root>
-                            <Tooltip.Trigger>
-                                <IconQuestionMarkCircle size="16" />
-                            </Tooltip.Trigger>
+                    Checkbox
+                    <Tooltip.Root>
+                        <Tooltip.Trigger>
+                            <IconQuestionMarkCircle size="16" />
+                        </Tooltip.Trigger>
 
-                            <Tooltip.Content>I am a tooltip!</Tooltip.Content>
-                        </Tooltip.Root>
-                    </Flex>
+                        <Tooltip.Content>I am a tooltip!</Tooltip.Content>
+                    </Tooltip.Root>
                 </Label>
             </Flex>
         );

@@ -4,7 +4,7 @@ import { type StorybookConfig } from '@storybook/react-vite';
 
 const productionPathPrefix = process.env.STORYBOOK_PATH_PREFIX ? `${process.env.STORYBOOK_PATH_PREFIX}charts/` : '/';
 
-export default {
+const config: StorybookConfig = {
     stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
     staticDirs: ['assets'],
     addons: [
@@ -51,4 +51,6 @@ export default {
 
         return config;
     },
-} satisfies StorybookConfig;
+};
+
+export default config;

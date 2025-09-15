@@ -37,6 +37,10 @@
     &:has([data-state='open']) {
         border-color: var(--color-line-strong);
         color: var(--color-line-strong);
+
+        .caret {
+            transform: rotate(180deg);
+        }
     }
 
     &:has(button[data-color-input-select]:focus-visible) {
@@ -58,6 +62,11 @@
             border-color: var(--color-line-subtle);
         }
     }
+
+}
+
+.caret {
+    @include transitions.transition-all;
 }
 
 .colorName {
@@ -113,14 +122,4 @@
     margin: sizeToken.get(1);
     @include focusStyle.focus-outline;
     pointer-events: all;
-}
-
-.caret {
-    @include transitions.transition-all;
-}
-
-[data-state='open'] {
-    .caret {
-        transform: rotate(180deg);
-    }
 }
