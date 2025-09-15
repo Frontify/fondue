@@ -45,6 +45,10 @@ export type AccordionRootProps = {
      * @default 'large'
      */
     padding?: AccordionPadding;
+    /**
+     * Callback function that is called when the value of the accordion changes.
+     */
+    onValueChange?: (value: string[]) => void;
 };
 
 export const AccordionRoot = ({
@@ -55,6 +59,7 @@ export const AccordionRoot = ({
     disabled,
     value,
     padding = 'large',
+    onValueChange,
 }: AccordionRootProps) => {
     return (
         <RadixAccordion.Root
@@ -66,6 +71,7 @@ export const AccordionRoot = ({
             value={value}
             data-border={border}
             data-accordion-padding={padding}
+            onValueChange={onValueChange}
         >
             {children}
         </RadixAccordion.Root>
@@ -193,7 +199,7 @@ export const AccordionContent = ({
     children,
     divider = false,
     onClick,
-    padding = 'large',
+    padding,
 }: AccordionContentProps) => {
     return (
         <RadixAccordion.Content
