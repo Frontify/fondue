@@ -112,7 +112,7 @@ const placementMap: Record<`${TooltipPosition | 'top' | 'bottom' | 'left' | 'rig
 const getArrowClasses = (currentPlacement: string, brightHeader: BrightHeaderStyle | undefined, alignment: string) => {
     switch (true) {
         case currentPlacement.toString().includes(TooltipPosition.Top.toLowerCase()):
-            return 'before:tw-border-t-0 before:tw-border-l-0 tw-bottom-[-6px] before:tw-dark before:tw-bg-base';
+            return 'before:tw-border-t-0 before:tw-border-l-0 tw-bottom-[-6px] before:tw-bg-primary';
         case currentPlacement.toString().includes(TooltipPosition.Right.toLowerCase()):
             return merge([
                 'before:tw-border-t-0 before:tw-border-r-0 tw-left-[-5px]',
@@ -121,12 +121,12 @@ const getArrowClasses = (currentPlacement: string, brightHeader: BrightHeaderSty
                 alignment === TooltipAlignment.Start &&
                 currentPlacement.toString().includes(TooltipAlignment.Start.toLowerCase())
                     ? brightHeaderArrowBackgroundColors[brightHeader]
-                    : 'before:tw-dark before:tw-bg-base',
+                    : 'before:tw-bg-primary',
             ]);
         case currentPlacement.toString().includes(TooltipPosition.Bottom.toLowerCase()):
             return merge([
                 'before:tw-border-b-0 before:tw-border-r-0 tw-top-[-6px]',
-                brightHeader ? brightHeaderArrowBackgroundColors[brightHeader] : 'before:tw-dark before:tw-bg-base',
+                brightHeader ? brightHeaderArrowBackgroundColors[brightHeader] : 'before:tw-bg-primary',
             ]);
         case currentPlacement.toString().includes(TooltipPosition.Left.toLowerCase()):
             return merge([
@@ -136,10 +136,10 @@ const getArrowClasses = (currentPlacement: string, brightHeader: BrightHeaderSty
                 alignment === TooltipAlignment.Start &&
                 currentPlacement.toString().includes(TooltipAlignment.Start.toLowerCase())
                     ? brightHeaderArrowBackgroundColors[brightHeader]
-                    : 'before:tw-dark before:tw-bg-base',
+                    : 'before:tw-bg-primary',
             ]);
         default:
-            return 'before:tw-border-b-0 before:tw-border-r-0 tw-top-[-6px] before:tw-dark before:tw-bg-base';
+            return 'before:tw-border-b-0 before:tw-border-r-0 tw-top-[-6px] before:tw-primary';
     }
 };
 
@@ -336,9 +336,9 @@ export const LegacyTooltip = ({
                     ref={setTooltipContainerRef}
                     aria-hidden={shouldPreventTooltipOpening}
                     className={merge([
-                        'tw-popper-container tw-inline-block tw-max-w-[200px] tw-dark tw-bg-base tw-rounded-md tw-shadow-mid tw-text-text tw-z-[120000]',
+                        'tw-popper-container tw-inline-block tw-max-w-[200px] tw-bg-primary tw-rounded-md tw-shadow-mid tw-text-primary-on-primary tw-z-[120000]',
                         !isOpen && 'tw-opacity-0 tw-h-0 tw-w-0 tw-overflow-hidden',
-                        withStrongBorder && 'tw-border tw-border-line-strong',
+                        withStrongBorder && 'tw-border tw-border-line-mid',
                     ])}
                     data-test-id={dataTestId}
                     role="tooltip"
@@ -350,7 +350,7 @@ export const LegacyTooltip = ({
                     {brightHeader ? <BrightHeader headerStyle={brightHeader} /> : null}
                     <div
                         className={merge([
-                            'tw-px-3 tw-dark tw-bg-base tw-rounded-md tw-relative tw-z-[120000]',
+                            'tw-px-3 tw-bg-primary tw-rounded-md tw-relative tw-z-[120000]',
                             hasLargePaddingTop ? paddingsTop.large : paddingsTop.small,
                             linkUrl ? paddingsBottom.large : paddingsBottom.small,
                         ])}
