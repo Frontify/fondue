@@ -30,7 +30,7 @@
             color: var(--box-#{$color}-inverse-color);
 
             .secondaryContent {
-                color: var(--text-color-weak);
+                color: var(--color-secondary-default);
             }
 
             .mainContent:is(button) {

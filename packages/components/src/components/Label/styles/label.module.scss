@@ -10,24 +10,24 @@
     font-size: var(--typography-font-size-medium);
     line-height: var(--typography-line-height-medium);
     color: var(--color-secondary-default);
-    gap: var(--space-xs);
+    gap: var(--spacing-x-small);
 
     & {
         @include transitions.transition-colors;
     }
 
     &[data-variant="default"] {
-        font-family: var(--body-family-stack);
-        font-size: var(--body-size-medium);
-        line-height: var(--body-size-medium-line-height);
-        color: var(--text-color-weak);
+        font-family: var(--body-family);
+        font-size: var(--typography-font-size-medium);
+        line-height: var(--typography-line-height-medium);
+        color: var(--color-secondary-default);
     }
 
     &[data-variant="strong"] {
-        font-family: var(--heading-family-stack);
-        font-size: var(--heading-size-medium);
-        line-height: var(--heading-size-medium-line-height);
-        font-weight: var(--heading-weight-strong-number);
+        font-family: var(--typography-font-family-primary);
+        font-size: var(--typography-font-size-medium);
+        line-height: var(--typography-line-height-tight);
+        font-weight: var(--typography-font-weight-bold);
     }
 
     // Hover states for various input types
