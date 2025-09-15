@@ -22,7 +22,7 @@ $radius-without-border: calc(var(--border-radius-medium) - var(--border-width-de
     height: sizeToken.get(9);
     box-sizing: border-box;
 
-    background-color: var(--color-container-secondary-default);
+    background-color: var(--color-surface-dim);
     border: var(--border-width-default) solid var(--color-line-mid);
     border-radius: var(--border-radius-medium);
 
@@ -46,7 +46,7 @@ $radius-without-border: calc(var(--border-radius-medium) - var(--border-width-de
 
     // Hover on unselected items but not when disabled
     &[aria-checked='false']:enabled:hover:not(:focus-visible) {
-        background-color: var(--color-container-secondary-hover);
+        background-color: var(--color-surface-hover);
     }
 
     // Apply border radius based on the index
