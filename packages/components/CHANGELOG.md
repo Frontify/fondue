@@ -1,5 +1,23 @@
 # @frontify/fondue-components
 
+## 19.7.0
+
+### Minor Changes
+
+- [#2435](https://github.com/Frontify/fondue/pull/2435) [`eb5fa31`](https://github.com/Frontify/fondue/commit/eb5fa3186bc928ab9dfbdf063b392cd7cf3c675a) Thanks [@syeo66](https://github.com/syeo66)! - feat(Label): add strong variant
+
+- [#2431](https://github.com/Frontify/fondue/pull/2431) [`81e0e4c`](https://github.com/Frontify/fondue/commit/81e0e4c7cdd2d16ae58d961a5e8ace969d8d6330) Thanks [@syeo66](https://github.com/syeo66)! - refactor(Tag): remove positive, negative and warning variants
+
+### Patch Changes
+
+- [#2424](https://github.com/Frontify/fondue/pull/2424) [`f9d9641`](https://github.com/Frontify/fondue/commit/f9d9641c5e57a1152734dca156e1f2e48e59f4fc) Thanks [@syeo66](https://github.com/syeo66)! - refactor(Label): some small adjustments
+
+- [#2430](https://github.com/Frontify/fondue/pull/2430) [`a4d875b`](https://github.com/Frontify/fondue/commit/a4d875be4f4669c29debce291962e30516bcbcf5) Thanks [@syeo66](https://github.com/syeo66)! - feat(Flyout): expose onOpenAutoFocus
+
+- [#2433](https://github.com/Frontify/fondue/pull/2433) [`4a50637`](https://github.com/Frontify/fondue/commit/4a50637f1fa21a30b45e54445ae53b23d53dc1fb) Thanks [@syeo66](https://github.com/syeo66)! - refactor(CSS): fix mixins creating global classes
+
+- [#2439](https://github.com/Frontify/fondue/pull/2439) [`853bd52`](https://github.com/Frontify/fondue/commit/853bd52f7dacb9c7ba8124c2600f334c7c7a86b5) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: fix accordion padding inheritance
+
 ## 19.6.1
 
 ### Patch Changes
