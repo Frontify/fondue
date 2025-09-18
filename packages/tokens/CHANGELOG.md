@@ -1,5 +1,11 @@
 # @frontify/fondue-tokens
 
+## 5.0.0-beta.5
+
+### Major Changes
+
+- [`18c3e1e`](https://github.com/Frontify/fondue/commit/18c3e1e75d69b7f4fb2ce68f8eb1d9a8fab9a3a7) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: merge main branch into v13
+
 ## 5.0.0-beta.4
 
 ### Patch Changes
