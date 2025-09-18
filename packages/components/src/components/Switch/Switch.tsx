@@ -3,10 +3,10 @@
 import * as RadixSwitch from '@radix-ui/react-switch';
 import { type FormEvent, type ForwardedRef, forwardRef } from 'react';
 
-import styles from './styles/switch.module.scss';
-
 import { cn } from '#/utilities/styleUtilities';
 import { type CommonAriaAttrs } from '#/utilities/types';
+
+import styles from './styles/switch.module.scss';
 
 type SwitchProps = {
     id?: string;
