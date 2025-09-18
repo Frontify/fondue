@@ -35,7 +35,7 @@
     &:hover {
         border-color: var(--line-color-x-strong);
         color: var(--text-color-weak);
-        .button:not(:hover) .clearIcon {
+        button:not(:hover) .clearIcon {
             color: var(--text-color-weak);
         }
     }
@@ -44,7 +44,7 @@
     &[data-state='open'] {
         border-color: var(--line-color-xx-strong);
         color: var(--line-color-xx-strong);
-        .button:not(:hover) .clearIcon {
+        button:not(:hover) .clearIcon {
             color: var(--text-color-weak);
         }
 
