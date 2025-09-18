@@ -118,7 +118,7 @@ export const cssVariableReplacements = {
     'var(--line-color-mighty)': 'var(--color-line-mid)',
     'var(--line-width)': 'var(--border-width-default)',
     'var(--line-width-large)': 'var(--border-width-large)',
-    'var(--overlay-color)': 'var(--color-overlay)',
+    'var(--overlay-color)': 'var(--color-overlay-default)',
     'var(--radius)': 'var(--border-radius-medium)',
     'var(--radius-small)': 'var(--border-radius-small)',
     'var(--radius-large)': 'var(--border-radius-large)',

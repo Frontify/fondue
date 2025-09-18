@@ -190,7 +190,7 @@
     --line-color-mighty: /** @deprecated use updated token instead **/ var(--color-line-mid);
     --line-width: /** @deprecated use updated token instead **/ var(--border-width-default);
     --line-width-large: /** @deprecated use updated token instead **/ var(--border-width-large);
-    --overlay-color: /** @deprecated use updated token instead **/ var(--color-overlay);
+    --overlay-color: /** @deprecated use updated token instead **/ var(--color-overlay-default);
     --radius: /** @deprecated use updated token instead **/ var(--border-radius-medium);
     --radius-small: /** @deprecated use updated token instead **/ var(--border-radius-small);
     --radius-large: /** @deprecated use updated token instead **/ var(--border-radius-large);
