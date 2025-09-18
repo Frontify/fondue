@@ -454,3 +454,4 @@ test('should display correct clearIcon colors in different hover states', async 
     await clearButton.hover();
     const clearButtonHoveredColor = await clearIcon.evaluate((el) => getComputedStyle(el).getPropertyValue('color'));
     expect(clearButtonHoveredColor).toBe('rgb(119, 123, 123)');
+});
