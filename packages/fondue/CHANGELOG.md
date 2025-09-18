@@ -1,5 +1,19 @@
 # @frontify/fondue
 
+## 13.0.0-beta.10
+
+### Major Changes
+
+- [`18c3e1e`](https://github.com/Frontify/fondue/commit/18c3e1e75d69b7f4fb2ce68f8eb1d9a8fab9a3a7) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: merge main branch into v13
+
+### Patch Changes
+
+- Updated dependencies [[`18c3e1e`](https://github.com/Frontify/fondue/commit/18c3e1e75d69b7f4fb2ce68f8eb1d9a8fab9a3a7), [`1812186`](https://github.com/Frontify/fondue/commit/181218691da26a629dcbf992bae405f769879ff8), [`301b90e`](https://github.com/Frontify/fondue/commit/301b90e5b9f04523b2a7f926e654655f42e5ddaf), [`d868114`](https://github.com/Frontify/fondue/commit/d86811431bb12264faf431cf1a38a1f22b75c6d9)]:
+    - @frontify/fondue-components@20.0.0-beta.8
+    - @frontify/fondue-tokens@5.0.0-beta.5
+    - @frontify/fondue-charts@7.0.0-beta.5
+    - @frontify/fondue-icons@0.18.0-beta.2
+
 ## 13.0.0-beta.9
 
 ### Major Changes
