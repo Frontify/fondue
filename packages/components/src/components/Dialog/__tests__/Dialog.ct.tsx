@@ -5,6 +5,7 @@ import sinon from 'sinon';
 
 import { Button } from '#/components/Button/Button';
 import { TextInput } from '#/components/TextInput/TextInput';
+import { Tooltip } from '#/components/Tooltip/Tooltip';
 import { FOCUS_BORDER_CSS, FOCUS_OUTLINE_CSS } from '#/helpers/constants';
 
 import { Dialog } from '../Dialog';
@@ -496,4 +497,36 @@ test('should focus first input in body when dialog opens', async ({ mount, page 
     const textInput1 = page.getByTestId(TEXT_INPUT_TEST_ID_1);
 
     await expect(textInput1).toBeFocused();
+});
+
+test('should not focus the tooltip trigger when dialog opens', async ({ mount, page }) => {
+    const component = await mount(
+        <Dialog.Root>
+            <Dialog.Trigger>
+                <Button>{DIALOG_TRIGGER_TEXT}</Button>
+            </Dialog.Trigger>
+            <Dialog.Content>
+                <Dialog.Header>{DIALOG_HEADER_TEXT}</Dialog.Header>
+                <Dialog.Body>
+                    <Tooltip.Root>
+                        <Tooltip.Trigger data-test-id="tooltip-trigger">Tooltip Trigger</Tooltip.Trigger>
+                        <Tooltip.Content side="right" padding="compact">
+                            Tooltip Content
+                        </Tooltip.Content>
+                    </Tooltip.Root>
+                    <input data-test-id={TEXT_INPUT_TEST_ID_1} />
+                </Dialog.Body>
+            </Dialog.Content>
+        </Dialog.Root>,
+    );
+
+    const dialogTrigger = page.getByTestId(DIALOG_TRIGGER_TEST_ID);
+
+    await expect(component).toBeVisible();
+
+    await dialogTrigger.focus();
+    await page.keyboard.press('Enter');
+
+    await expect(page.getByTestId('tooltip-trigger')).not.toBeFocused();
+    await expect(page.getByTestId(TEXT_INPUT_TEST_ID_1)).toBeFocused();
 });

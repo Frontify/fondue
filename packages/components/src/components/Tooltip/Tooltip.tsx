@@ -26,10 +26,10 @@ export type TooltipRootProps = {
     children: Array<ReactElement<TooltipTriggerProps | TooltipContentProps>>;
 };
 
-export const TooltipRoot = ({ children, enterDelay = 700, open, onOpenChange, ...props }: TooltipRootProps) => {
+export const TooltipRoot = ({ children, enterDelay = 700, open, onOpenChange }: TooltipRootProps) => {
     return (
         <RadixTooltip.Provider>
-            <RadixTooltip.Root delayDuration={enterDelay} open={open} onOpenChange={onOpenChange} {...props}>
+            <RadixTooltip.Root delayDuration={enterDelay} open={open} onOpenChange={onOpenChange}>
                 {children}
             </RadixTooltip.Root>
         </RadixTooltip.Provider>
@@ -53,6 +53,7 @@ export const TooltipTrigger = (
 ) => {
     return (
         <RadixTooltip.Trigger
+            data-tooltip-trigger
             data-test-id={dataTestId}
             type={!asChild ? 'button' : undefined}
             asChild={asChild}
@@ -86,7 +87,7 @@ export const TooltipContent = (
         maxWidth,
         'data-test-id': dataTestId = 'fondue-tooltip-content',
         padding = 'spacious',
-        ...props
+        side,
     }: TooltipContentProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
@@ -102,7 +103,7 @@ export const TooltipContent = (
                     collisionPadding={16}
                     sideOffset={8}
                     ref={ref}
-                    {...props}
+                    side={side}
                 >
                     {children}
                     <RadixTooltip.Arrow aria-hidden="true" className={styles.arrow} />
