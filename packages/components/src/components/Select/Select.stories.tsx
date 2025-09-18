@@ -199,7 +199,11 @@ export const CustomClearElement: Story = {
     render: (args) => {
         return (
             <Select {...args}>
-                <Select.Slot name="clear">Clear</Select.Slot>
+                <Select.Slot name="clear">
+                    <Button size="small" emphasis="strong" onPress={() => {}}>
+                        Clear
+                    </Button>
+                </Select.Slot>
                 <Select.Slot name="left">
                     <IconIcon size={16} />
                 </Select.Slot>
