@@ -299,7 +299,7 @@
   --color-line-mid: rgba(191, 191, 184, 0.5);
   --color-line-strong: var(--color-neutral-05);
   --color-line-subtle: rgba(191, 191, 184, 0.2);
-  --color-overlay-overlay: rgba(0, 0, 0, 0.5);
+  --color-overlay-default: rgba(0, 0, 0, 0.5);
   --color-primary-active: var(--color-neutral-20);
   --color-primary-default: var(--color-neutral-05);
   --color-primary-hover: var(--color-neutral-15);
@@ -380,7 +380,7 @@
   --color-line-mid: rgba(135, 135, 129, 0.5);
   --color-line-strong: var(--color-neutral-95);
   --color-line-subtle: rgba(135, 135, 129, 0.2);
-  --color-overlay-overlay: rgba(17, 17, 16, 0.5);
+  --color-overlay-default: rgba(17, 17, 16, 0.5);
   --color-primary-active: var(--color-neutral-80);
   --color-primary-default: var(--color-neutral-95);
   --color-primary-hover: var(--color-neutral-85);

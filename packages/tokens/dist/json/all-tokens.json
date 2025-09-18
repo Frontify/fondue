@@ -648,15 +648,15 @@
       }
     },
     "overlay": {
-      "overlay": {
-        "name": "color-overlay-overlay",
+      "default": {
+        "name": "color-overlay-default",
         "type": "color",
-        "value": "var(--color-overlay-overlay)",
+        "value": "var(--color-overlay-default)",
         "path": [
           "light",
           "color",
           "overlay",
-          "overlay"
+          "default"
         ]
       }
     },

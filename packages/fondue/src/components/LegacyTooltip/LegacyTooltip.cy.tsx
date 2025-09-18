@@ -131,10 +131,10 @@ describe('Tooltip Component', () => {
         cy.get(TOOLTIP_ID).should('not.be.visible');
     });
 
-    it('should render a strong border', () => {
+    it('should render a mid border', () => {
         initTooltip({ content: TOOLTIP_TEXT, withStrongBorder: true });
 
-        cy.get(TOOLTIP_ID).should('have.class', 'tw-border tw-border-line-strong');
+        cy.get(TOOLTIP_ID).should('have.class', 'tw-border tw-border-line-mid');
     });
 
     it('should render an icon next to the tooltip', () => {

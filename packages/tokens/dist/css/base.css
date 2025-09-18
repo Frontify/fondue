@@ -110,7 +110,7 @@
   --color-neutral-85: rgba(53, 53, 51, 1);
   --color-neutral-90: rgba(36, 36, 34, 1);
   --color-neutral-95: rgba(17, 17, 16, 1);
-  --color-overlay-overlay: rgba(17, 17, 16, 0.5);
+  --color-overlay-default: rgba(17, 17, 16, 0.5);
   --color-primary-active: var(--color-neutral-80);
   --color-primary-default: var(--color-neutral-95);
   --color-primary-hover: var(--color-neutral-85);
