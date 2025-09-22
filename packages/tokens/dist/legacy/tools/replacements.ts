@@ -399,6 +399,7 @@ const tailwindTokenReplacements = {
 
     // outline
     'tw-outline-violet(?![a-zA-Z0-9-])': 'tw-outline',
+    'tw-outline-blue(?![a-zA-Z0-9-])': 'tw-outline',
 
     // borderRadius
     'tw-rounded(?![a-zA-Z0-9-])': 'tw-rounded-medium', // Old DEFAULT (var(--radius)) maps to new borderRadius.medium (var(--border-radius-medium))

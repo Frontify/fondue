@@ -88,11 +88,13 @@ const getTheme = (dictionary: Dictionary) => {
             tokens,
         }),
 
-        ringColor: {
+        outlineColor: {
             DEFAULT: 'var(--color-focus-default)',
         },
-
-        outline: { DEFAULT: '1px solid var(--color-focus-default)' },
+        outlineWidth: {
+            DEFAULT: '4px',
+        },
+        outlineOffset: { DEFAULT: '2px' },
 
         boxShadow: getObject({
             identifier: ['shadow'],

@@ -23,7 +23,7 @@ $radius-without-border: calc(var(--border-radius-medium) - var(--border-width-de
             padding-left: sizeToken.get(3);
             padding-right: sizeToken.get(3);
             gap: sizeToken.get(2);
-            border-bottom: 1px solid var(--color-line-mid);
+            border-bottom: 1px solid var(--color-line-subtle);
             box-sizing: border-box;
         }
 

@@ -68,10 +68,11 @@ const getUtilClasses = (dictionary: Dictionary, identifier: string[]) => {
     return utils;
 };
 
-export const buildTextUtil = ({ dictionary }: { dictionary: Dictionary }): string => {
+export const buildUtils = ({ dictionary }: { dictionary: Dictionary }): string => {
     return `plugin(function({ addUtilities }) {
       addUtilities({
         ${getUtilClasses(dictionary, ['text'])}
+        '.ring-focus' : { boxShadow: '0 0 0 2px var(--color-surface-default), 0 0 0 6px var(--color-focus-default)', outline: 'none'}
       })
     })`;
 };

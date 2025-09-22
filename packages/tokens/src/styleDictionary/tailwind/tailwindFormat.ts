@@ -3,13 +3,13 @@
 import { type Dictionary } from 'style-dictionary';
 
 import { buildTheme } from './buildTheme';
-import { buildTextUtil } from './buildUtils';
+import { buildUtils } from './buildUtils';
 
 export const tailwindFormat = {
     name: 'tailwind',
     format: ({ dictionary }: { dictionary: Dictionary }) => {
         const theme = buildTheme({ dictionary });
-        const utils = buildTextUtil({ dictionary });
+        const utils = buildUtils({ dictionary });
         return template(theme, utils);
     },
 };

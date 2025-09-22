@@ -18,9 +18,6 @@ export default {
     content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}', './.storybook/DocumentationTemplate.mdx'],
     theme: {
         extend: {
-            outlineColor: {
-                blue: '#4196fb',
-            },
             colors: {
                 transparent: 'transparent',
                 current: 'currentColor',
