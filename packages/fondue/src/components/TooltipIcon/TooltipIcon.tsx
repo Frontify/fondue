@@ -1,11 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type ReactElement, cloneElement } from 'react';
+
 import { LegacyTooltip, type LegacyTooltipProps } from '@components/LegacyTooltip/LegacyTooltip';
 import IconQuestionMarkCircle from '@foundation/Icon/Generated/IconQuestionMarkCircle';
 import { type IconProps } from '@foundation/Icon/IconProps';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { merge } from '@utilities/merge';
-import { type ReactElement, cloneElement } from 'react';
 
 export type TooltipIconProps = {
     tooltip?: LegacyTooltipProps;
