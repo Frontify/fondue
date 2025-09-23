@@ -386,7 +386,7 @@ return (
     </Dialog.Trigger>
     <Dialog.Content>
         <Dialog.SideContent>
-            <div className="tw-bg-box-positive-strong tw-h-full tw-w-full"></div>
+            <div className="tw-bg-success tw-h-full tw-w-full"></div>
         </Dialog.SideContent>
         <Dialog.Header>Header</Dialog.Header>
         <Dialog.Body padding="spacious">
@@ -571,7 +571,7 @@ return (
         </Button>
         <InlineDialog anchor={triggerRef} open={isOpen} handleClose={() => setIsOpen(false)}>
             <DialogBody padding="comfortable">
-                <Box className="tw-text-text">
+                <Box className="tw-text-primary">
                     <TextExample />
                     <TextExample />
                     <TextExample />
