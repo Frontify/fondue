@@ -146,18 +146,21 @@ type DialogContextType = {
 const DialogContext = createContext<DialogContextType>({ isModal: false });
 DialogContext.displayName = 'DialogContext';
 
-export const DialogRoot = ({ children, ...props }: DialogRootProps) => {
-    const value = useMemo(() => ({ isModal: props.modal ?? false }), [props.modal]);
+export const DialogRoot = ({ children, modal, onOpenChange, open }: DialogRootProps) => {
+    const value = useMemo(() => ({ isModal: modal ?? false }), [modal]);
+
     return (
         <DialogContext.Provider value={value}>
-            <RadixDialog.Root {...props}>{children}</RadixDialog.Root>
+            <RadixDialog.Root open={open} onOpenChange={onOpenChange} modal={modal}>
+                {children}
+            </RadixDialog.Root>
         </DialogContext.Provider>
     );
 };
 DialogRoot.displayName = 'Dialog.Root';
 
 export const DialogTrigger = (
-    { asChild = true, children, 'data-test-id': dataTestId = 'fondue-dialog-trigger', ...props }: DialogTriggerProps,
+    { asChild = true, children, 'data-test-id': dataTestId = 'fondue-dialog-trigger' }: DialogTriggerProps,
     ref: ForwardedRef<HTMLButtonElement>,
 ) => {
     return (
@@ -168,7 +171,6 @@ export const DialogTrigger = (
             data-test-id={dataTestId}
             asChild={asChild}
             ref={ref}
-            {...props}
         >
             {children}
         </RadixDialog.Trigger>
@@ -203,7 +205,6 @@ export const DialogContent = (
         showUnderlay = false,
         rounded = true,
         children,
-        ...props
     }: DialogContentProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
@@ -218,7 +219,7 @@ export const DialogContent = (
         const dialogBody = contentRef.current?.querySelector('[data-dialog-layout-component="body"]');
 
         const firstFocusable = dialogBody?.querySelector(
-            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+            'button:not([data-tooltip-trigger="true"]), [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
         );
 
         if (firstFocusable instanceof HTMLElement) {
@@ -246,7 +247,6 @@ export const DialogContent = (
                         data-dialog-rounded={rounded}
                         data-test-id={dataTestId}
                         data-dialog-vertical-align={verticalAlign}
-                        {...props}
                     >
                         {children}
                     </RadixDialog.Content>
