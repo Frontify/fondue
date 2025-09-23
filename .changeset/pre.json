@@ -1,12 +1,12 @@
 {
   "mode": "pre",
-  "tag": "beta",
+  "tag": "rc",
   "initialVersions": {
-    "@frontify/fondue-charts": "6.0.1",
-    "@frontify/fondue-components": "19.1.0",
-    "@frontify/fondue": "12.10.3",
-    "@frontify/fondue-icons": "0.17.0",
-    "@frontify/fondue-tokens": "4.2.0",
+    "@frontify/fondue-charts": "7.0.0-beta.5",
+    "@frontify/fondue-components": "20.0.0-beta.8",
+    "@frontify/fondue": "13.0.0-beta.10",
+    "@frontify/fondue-icons": "0.18.0-beta.2",
+    "@frontify/fondue-tokens": "5.0.0-beta.5",
     "@frontify/fondue-storybook-docs": "0.0.1"
   },
   "changesets": [
