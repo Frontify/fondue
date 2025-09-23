@@ -184,7 +184,7 @@
     padding: 0 sizeToken.get(3);
 
     button:not(:hover) > .clearIcon {
-        color: var(--text-color-weak);
+        color: var(--color-secondary-default);
     }
 }
 

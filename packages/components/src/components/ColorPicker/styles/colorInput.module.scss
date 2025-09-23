@@ -29,7 +29,7 @@
     }
 
     button:not(:hover) .clearIcon {
-        color: var(--text-color-x-weak);
+        color: var(--color-secondary-default);
     }
 
     &:hover {
@@ -37,7 +37,7 @@
         color: var(--color-secondary-default);
 
         button:not(:hover) .clearIcon {
-            color: var(--text-color-weak);
+            color: var(--color-secondary-default);
         }
     }
 
@@ -47,7 +47,7 @@
         color: var(--color-line-strong);
 
         button:not(:hover) .clearIcon {
-            color: var(--text-color-weak);
+            color: var(--color-secondary-default);
         }
 
         .caret {
@@ -67,7 +67,7 @@
         cursor: default;
 
         button .clearIcon {
-            color: var(--text-color-disabled);
+            color: var(--color-disabled-default);
         }
 
         .colorName {

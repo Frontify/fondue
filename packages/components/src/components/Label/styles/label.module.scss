@@ -17,7 +17,7 @@
     }
 
     &[data-variant="default"] {
-        font-family: var(--body-family);
+        font-family: var(--typography-font-family-primary);
         font-size: var(--typography-font-size-medium);
         line-height: var(--typography-line-height-medium);
         color: var(--color-secondary-default);
