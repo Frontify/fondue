@@ -1,5 +1,22 @@
 # @frontify/fondue
 
+## 13.0.0-rc.11
+
+### Major Changes
+
+- [#2446](https://github.com/Frontify/fondue/pull/2446) [`4660ad7`](https://github.com/Frontify/fondue/commit/4660ad71917f8d9d27f8e64d4d30a0ffc32813fd) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: add utility for focus ring
+
+- [#2446](https://github.com/Frontify/fondue/pull/2446) [`8565448`](https://github.com/Frontify/fondue/commit/8565448e1dc10a3f1a9cc496234f1e3f7a4afedf) Thanks [@github-actions](https://github.com/apps/github-actions)! - chore: remove unused exports
+
+- [#2446](https://github.com/Frontify/fondue/pull/2446) [`0038587`](https://github.com/Frontify/fondue/commit/0038587d4cd59cf13331b750aaaf9ebbe97cc0d2) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: minor style approvements
+
+### Patch Changes
+
+- Updated dependencies [[`4660ad7`](https://github.com/Frontify/fondue/commit/4660ad71917f8d9d27f8e64d4d30a0ffc32813fd), [`191c62e`](https://github.com/Frontify/fondue/commit/191c62e0c73d3cf90396954df121b46e7f50eb88), [`0038587`](https://github.com/Frontify/fondue/commit/0038587d4cd59cf13331b750aaaf9ebbe97cc0d2)]:
+    - @frontify/fondue-components@20.0.0-rc.9
+    - @frontify/fondue-tokens@5.0.0-rc.6
+    - @frontify/fondue-charts@7.0.0-rc.6
+
 ## 13.0.0-beta.10
 
 ### Major Changes
