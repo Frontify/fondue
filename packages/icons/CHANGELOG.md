@@ -1,5 +1,11 @@
 # @frontify/fondue-icons
 
+## 0.18.0-rc.0
+
+### Minor Changes
+
+- chore: fondue release candidate
+
 ## 0.18.0-beta.2
 
 ### Minor Changes
