@@ -23,7 +23,11 @@ export const TokenPreviewCard = ({ identifier, value, name, path, tokenPreview, 
             <Flex direction="row" justify="space-between" align="flex-end" gap={1} maxWidth="100%">
                 <Flex direction="column" gap={1} minWidth="0">
                     <span className="tw-body-medium-x-strong tw-text-primary">{identifier}</span>
-                    <VariableValue variableName={name} className="tw-body-x-small tw-text-primary tw-line-clamp-1" />
+                    <VariableValue
+                        variableName={name}
+                        variableValue={value}
+                        className="tw-body-x-small tw-text-primary tw-line-clamp-1"
+                    />
                 </Flex>
                 <Flyout.Root>
                     <Flyout.Trigger>

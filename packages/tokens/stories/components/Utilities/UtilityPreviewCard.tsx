@@ -12,12 +12,18 @@ import { type UtilityPreview, type UtilityProperty } from './types';
 const UtilityPropertyList = ({ properties }: { properties: [string, UtilityProperty][] }) => {
     return (
         <div className="tw-grid tw-grid-cols-[fit-content(1px)_1fr] tw-gap-1 tw-text-primary">
-            {properties.map(([key, value]) => (
-                <Fragment key={key}>
-                    <span className="tw-whitespace-nowrap tw-body-x-small-x-strong ">{key}:</span>
-                    <VariableValue variableName={value.name} className="tw-min-w-0 tw-line-clamp-1 tw-body-x-small" />
-                </Fragment>
-            ))}
+            {properties
+                .filter(([_key, value]) => value.type !== 'rawValue')
+                .map(([key, value]) => (
+                    <Fragment key={key}>
+                        <span className="tw-whitespace-nowrap tw-body-x-small-x-strong ">{key}:</span>
+                        <VariableValue
+                            variableName={value.name}
+                            variableValue={value.value}
+                            className="tw-min-w-0 tw-line-clamp-1 tw-body-x-small"
+                        />
+                    </Fragment>
+                ))}
         </div>
     );
 };

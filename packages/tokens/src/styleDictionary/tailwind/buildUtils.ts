@@ -2,6 +2,8 @@
 
 import { type Dictionary, type TransformedToken } from 'style-dictionary';
 
+import { focusRingUtility } from '../../static/customUtilities';
+
 const getObject = ({
     tokens,
     identifier,
@@ -68,11 +70,18 @@ const getUtilClasses = (dictionary: Dictionary, identifier: string[]) => {
     return utils;
 };
 
+const getCustomUtilClasses = (customUtilities: { value: { [key: string]: string } }) => {
+    return Object.entries(customUtilities.value).reduce((acc, [key, value]) => {
+        acc += `${key}: '${value}',`;
+        return acc;
+    }, '');
+};
+
 export const buildUtils = ({ dictionary }: { dictionary: Dictionary }): string => {
     return `plugin(function({ addUtilities }) {
       addUtilities({
         ${getUtilClasses(dictionary, ['text'])}
-        '.ring-focus' : { boxShadow: '0 0 0 2px var(--color-surface-default), 0 0 0 6px var(--color-focus-default)', outline: 'none'}
+        '.ring-focus': {${getCustomUtilClasses(focusRingUtility)}}
       })
     })`;
 };
