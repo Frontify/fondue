@@ -18,11 +18,21 @@ type DatePickerTriggerProps = {
     onClick?: () => void;
     validation?: Validation;
     onDateChanged?: ((date: [Date | null, Date | null] | null) => void) | ((date: Date | null) => void);
+    'aria-label': string;
 };
 
 export const DatePickerTrigger = forwardRef<HTMLDivElement, DatePickerTriggerProps>(
     (
-        { value, onClick, isClearable, placeHolder, isCalendarOpen, validation = Validation.Default, onDateChanged },
+        {
+            value,
+            onClick,
+            isClearable,
+            placeHolder,
+            isCalendarOpen,
+            validation = Validation.Default,
+            onDateChanged,
+            'aria-label': ariaLabel,
+        },
         ref,
     ) => {
         const isWarningOrErrorValidationState = validation === Validation.Error || validation === Validation.Warning;
@@ -73,6 +83,7 @@ export const DatePickerTrigger = forwardRef<HTMLDivElement, DatePickerTriggerPro
                             onClick?.();
                         }
                     }}
+                    aria-label={ariaLabel}
                     data-test-id="open-close-click-zone"
                 ></div>
                 <TextInput

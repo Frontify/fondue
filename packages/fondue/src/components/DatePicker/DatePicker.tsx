@@ -59,6 +59,7 @@ export type DatePickerProps = {
     onClose?: () => void;
     onBlur?: () => void;
     onKeyDown?: (event: KeyboardEvent<HTMLDivElement>) => void;
+    triggerAriaLabel?: string;
     'data-test-id'?: string;
 } & (SingleDatePickerProps | RangeDatePickerProps);
 
@@ -99,6 +100,7 @@ export const DatePicker = forwardRef<ReactDatePickerRef, DatePickerProps>(
             filterDate = () => true,
             variant = 'single',
             'data-test-id': dataTestId = 'date-picker',
+            triggerAriaLabel = 'Open or close the date picker',
         },
         ref,
     ) => {
@@ -153,6 +155,7 @@ export const DatePicker = forwardRef<ReactDatePickerRef, DatePickerProps>(
                                 onDateChanged={onChange}
                                 aria-haspopup="dialog"
                                 aria-expanded={isCalendarOpen}
+                                aria-label={triggerAriaLabel}
                             />
                         )
                     }
