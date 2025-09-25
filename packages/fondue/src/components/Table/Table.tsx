@@ -16,14 +16,23 @@ import { TableColumnHeader, TableColumnHeaderType } from './TableColumnHeader';
 import { TableHeaderRow } from './TableHeaderRow';
 import { TableRow } from './TableRow';
 
+/**
+ * @deprecated Use `Table` from `@frontify/fondue/components` instead.
+ */
 export enum SelectionMode {
     NoSelect = 'none',
     SingleSelect = 'single',
     MultiSelect = 'multiple',
 }
 
+/**
+ * @deprecated Use `Table` from `@frontify/fondue/components` instead.
+ */
 export type ColumnAlign = 'left' | 'right';
 
+/**
+ * @deprecated Use `Table` from `@frontify/fondue/components` instead.
+ */
 export type Cell = {
     sortId: string | number;
     value: ReactNode;
@@ -31,6 +40,9 @@ export type Cell = {
     align?: ColumnAlign;
 };
 
+/**
+ * @deprecated Use `Table` from `@frontify/fondue/components` instead.
+ */
 export type Column = {
     name: string;
     titleNode?: ReactNode;
@@ -39,6 +51,9 @@ export type Column = {
     align?: ColumnAlign;
 };
 
+/**
+ * @deprecated Use `Table` from `@frontify/fondue/components` instead.
+ */
 export type Row = {
     key: Key;
     // cell keys have to correspond to column key values
@@ -47,6 +62,9 @@ export type Row = {
     actionElements?: ReactNode;
 };
 
+/**
+ * @deprecated Use `Table` from `@frontify/fondue/components` instead.
+ */
 export type TableProps = {
     columns: Column[];
     rows: Row[];
@@ -57,6 +75,9 @@ export type TableProps = {
     ariaLabel?: string;
 };
 
+/**
+ * @deprecated Use `Table` from `@frontify/fondue/components` instead.
+ */
 export enum SortDirection {
     Ascending = 'ascending',
     Descending = 'descending',
@@ -106,6 +127,9 @@ const getRowFromId = (rows: Row[], id: Key) => rows.find(({ key }) => key === id
 
 const getAllRowIds = (rows: Row[]): Key[] => rows.map(({ key: id }) => id);
 
+/**
+ * @deprecated Use `Table` from `@frontify/fondue/components` instead.
+ */
 export const Table = ({
     columns,
     rows,
@@ -216,4 +240,7 @@ export const Table = ({
         </div>
     );
 };
+/**
+ * @deprecated Use `Table` from `@frontify/fondue/components` instead.
+ */
 Table.displayName = 'FondueTable';

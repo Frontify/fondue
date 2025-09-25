@@ -1,7 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type Key, cloneElement, useEffect, useRef, useState } from 'react';
-
 import { Checkbox, CheckboxState } from '@components/Checkbox/Checkbox';
 import IconArrowBidirectional from '@foundation/Icon/Generated/IconArrowBidirectional';
 import IconArrowDown from '@foundation/Icon/Generated/IconArrowDown';
@@ -9,14 +7,21 @@ import IconArrowUp from '@foundation/Icon/Generated/IconArrowUp';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
+import { type Key, cloneElement, useEffect, useRef, useState } from 'react';
 
 import { type ColumnAlign, SelectionMode, SortDirection } from './Table';
 
+/**
+ * @deprecated Use `Table` from `@frontify/fondue/components` instead.
+ */
 export enum TableColumnHeaderType {
     Default = 'Default',
     SelectAll = 'SelectAll',
 }
 
+/**
+ * @deprecated Use `Table` from `@frontify/fondue/components` instead.
+ */
 export type TableColumnHeaderProps = {
     column: any;
     type?: TableColumnHeaderType;
@@ -29,6 +34,9 @@ export type TableColumnHeaderProps = {
     align?: ColumnAlign;
 };
 
+/**
+ * @deprecated Use `Table` from `@frontify/fondue/components` instead.
+ */
 export const TableColumnHeader = ({
     column,
     type = TableColumnHeaderType.Default,

@@ -1,24 +1,31 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { action } from '@storybook/addon-actions';
-import { type Meta, type StoryFn } from '@storybook/react';
-import { type ReactElement, useEffect, useState } from 'react';
-
 import { Badge } from '@components/Badge/Badge';
 import { Button, ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button';
 import { TextInput } from '@components/TextInput/TextInput';
 import IconDotsVertical from '@foundation/Icon/Generated/IconDotsVertical';
 import IconFaceHappy from '@foundation/Icon/Generated/IconFaceHappy';
 import { IconSize } from '@foundation/Icon/IconSize';
+import { action } from '@storybook/addon-actions';
+import { type Meta, type StoryFn } from '@storybook/react';
+import { type ReactElement, useEffect, useState } from 'react';
 
 import { type Column, type Row, SelectionMode, SortDirection, Table, type TableProps } from './Table';
 
+/**
+ ### This component is deprecated, please use the [new Table component](/docs/current_components-table--documentation) instead.
+ */
 export default {
     title: 'Components/Table',
     component: Table,
     tags: ['autodocs'],
     args: {
         selectionMode: SelectionMode.NoSelect,
+    },
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
     },
     argTypes: {
         type: {
