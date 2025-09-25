@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type Key, useRef } from 'react';
+
 import { Checkbox as CheckboxComponent, CheckboxState } from '@components/Checkbox/Checkbox';
 import { merge } from '@utilities/merge';
-import { type Key, useRef } from 'react';
 
 import { type ColumnAlign, SelectionMode } from './Table';
 
