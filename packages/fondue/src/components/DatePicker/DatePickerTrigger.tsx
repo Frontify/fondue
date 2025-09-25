@@ -1,5 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { forwardRef } from 'react';
+
 import { TextInput } from '@components/TextInput';
 import IconCalendar from '@foundation/Icon/Generated/IconCalendar';
 import IconCaretDown from '@foundation/Icon/Generated/IconCaretDown';
@@ -7,7 +9,6 @@ import IconCaretUp from '@foundation/Icon/Generated/IconCaretUp';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { merge } from '@utilities/merge';
 import { Validation } from '@utilities/validation';
-import { forwardRef } from 'react';
 
 type DatePickerTriggerProps = {
     placeHolder?: string;

@@ -1,13 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type Meta, type StoryFn } from '@storybook/react';
+import { addDays, subDays } from 'date-fns';
+import { useRef, useState } from 'react';
+
 import { Badge, BadgeEmphasis, BadgeStyle } from '@components/Badge';
 import { Button } from '@components/Button';
 import { FormControl } from '@components/FormControl';
 import IconCalendar16 from '@foundation/Icon/Generated/IconCalendar16';
-import { type Meta, type StoryFn } from '@storybook/react';
 import { Validation } from '@utilities/validation';
-import { addDays, subDays } from 'date-fns';
-import { useRef, useState } from 'react';
 
 import { DatePicker, type DatePickerProps, type ReactDatePickerRef } from './DatePicker';
 
