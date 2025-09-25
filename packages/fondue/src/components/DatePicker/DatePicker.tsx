@@ -2,13 +2,8 @@
 
 import './styles.css';
 
-import { offset, shift } from '@floating-ui/dom';
-import { format, getYear } from 'date-fns';
-import { forwardRef, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
-import ReactDatePicker from 'react-datepicker';
-import { createPortal } from 'react-dom';
-
 import { Button, ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button';
+import { offset, shift } from '@floating-ui/dom';
 import IconCaretLeft from '@foundation/Icon/Generated/IconCaretLeft';
 import IconCaretLeftDouble from '@foundation/Icon/Generated/IconCaretLeftDouble';
 import IconCaretRight from '@foundation/Icon/Generated/IconCaretRight';
@@ -16,6 +11,10 @@ import IconCaretRightDouble from '@foundation/Icon/Generated/IconCaretRightDoubl
 import { IconSize } from '@foundation/Icon/IconSize';
 import { merge } from '@utilities/merge';
 import { Validation } from '@utilities/validation';
+import { format, getYear } from 'date-fns';
+import { forwardRef, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
+import ReactDatePicker from 'react-datepicker';
+import { createPortal } from 'react-dom';
 
 import { DatePickerTrigger } from './DatePickerTrigger';
 
@@ -59,6 +58,7 @@ export type DatePickerProps = {
     onClose?: () => void;
     onBlur?: () => void;
     onKeyDown?: (event: KeyboardEvent<HTMLDivElement>) => void;
+    triggerAriaLabel?: string;
     'data-test-id'?: string;
 } & (SingleDatePickerProps | RangeDatePickerProps);
 
@@ -99,6 +99,7 @@ export const DatePicker = forwardRef<ReactDatePickerRef, DatePickerProps>(
             filterDate = () => true,
             variant = 'single',
             'data-test-id': dataTestId = 'date-picker',
+            triggerAriaLabel = 'Open or close the date picker',
         },
         ref,
     ) => {
@@ -153,6 +154,7 @@ export const DatePicker = forwardRef<ReactDatePickerRef, DatePickerProps>(
                                 onDateChanged={onChange}
                                 aria-haspopup="dialog"
                                 aria-expanded={isCalendarOpen}
+                                aria-label={triggerAriaLabel}
                             />
                         )
                     }

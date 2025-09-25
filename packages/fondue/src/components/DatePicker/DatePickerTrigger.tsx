@@ -1,7 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { forwardRef } from 'react';
-
 import { TextInput } from '@components/TextInput';
 import IconCalendar from '@foundation/Icon/Generated/IconCalendar';
 import IconCaretDown from '@foundation/Icon/Generated/IconCaretDown';
@@ -9,6 +7,7 @@ import IconCaretUp from '@foundation/Icon/Generated/IconCaretUp';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { merge } from '@utilities/merge';
 import { Validation } from '@utilities/validation';
+import { forwardRef } from 'react';
 
 type DatePickerTriggerProps = {
     placeHolder?: string;
@@ -18,11 +17,21 @@ type DatePickerTriggerProps = {
     onClick?: () => void;
     validation?: Validation;
     onDateChanged?: ((date: [Date | null, Date | null] | null) => void) | ((date: Date | null) => void);
+    'aria-label': string;
 };
 
 export const DatePickerTrigger = forwardRef<HTMLDivElement, DatePickerTriggerProps>(
     (
-        { value, onClick, isClearable, placeHolder, isCalendarOpen, validation = Validation.Default, onDateChanged },
+        {
+            value,
+            onClick,
+            isClearable,
+            placeHolder,
+            isCalendarOpen,
+            validation = Validation.Default,
+            onDateChanged,
+            'aria-label': ariaLabel,
+        },
         ref,
     ) => {
         const isWarningOrErrorValidationState = validation === Validation.Error || validation === Validation.Warning;
@@ -73,6 +82,7 @@ export const DatePickerTrigger = forwardRef<HTMLDivElement, DatePickerTriggerPro
                             onClick?.();
                         }
                     }}
+                    aria-label={ariaLabel}
                     data-test-id="open-close-click-zone"
                 ></div>
                 <TextInput
