@@ -1,5 +1,17 @@
 # @frontify/fondue
 
+## 12.13.0
+
+### Minor Changes
+
+- [#2452](https://github.com/Frontify/fondue/pull/2452) [`79e5f5c`](https://github.com/Frontify/fondue/commit/79e5f5c07165ffd351c44d158ba69421e47e06c1) Thanks [@syeo66](https://github.com/syeo66)! - feat(DatePicker): add hugWidth prop
+
+### Patch Changes
+
+- Updated dependencies [[`e275b57`](https://github.com/Frontify/fondue/commit/e275b576e30b9b4e502d8036a702c43b3696c5a5), [`d04e30d`](https://github.com/Frontify/fondue/commit/d04e30d490c859aa52ba29a4c5fc5745e2d9e85b)]:
+    - @frontify/fondue-components@21.0.0
+    - @frontify/fondue-icons@0.19.0
+
 ## 12.12.6
 
 ### Patch Changes
