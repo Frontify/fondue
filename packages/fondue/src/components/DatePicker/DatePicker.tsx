@@ -55,8 +55,10 @@ export type DatePickerProps = {
     inline?: boolean;
     filterDate?: (date: Date) => boolean;
     fixedHeight?: boolean;
-    /** When false, stretches to 100% of container width.
-     * @default true */
+    /**
+     * @description When false, stretches to 100% of container width.
+     * @default true
+     */
     hugWidth?: boolean;
     onOpen?: () => void;
     onClose?: () => void;
