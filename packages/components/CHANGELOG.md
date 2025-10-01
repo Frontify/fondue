@@ -1,5 +1,14 @@
 # @frontify/fondue-components
 
+## 21.0.0
+
+### Patch Changes
+
+- [#2453](https://github.com/Frontify/fondue/pull/2453) [`e275b57`](https://github.com/Frontify/fondue/commit/e275b576e30b9b4e502d8036a702c43b3696c5a5) Thanks [@syeo66](https://github.com/syeo66)! - chore(Tag): fix focus ring visibility
+
+- Updated dependencies [[`d04e30d`](https://github.com/Frontify/fondue/commit/d04e30d490c859aa52ba29a4c5fc5745e2d9e85b)]:
+    - @frontify/fondue-icons@0.19.0
+
 ## 20.0.0
 
 ### Patch Changes
