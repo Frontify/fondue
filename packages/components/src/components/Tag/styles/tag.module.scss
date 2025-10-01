@@ -62,7 +62,6 @@
     align-items: stretch;
     white-space: nowrap;
     min-height: 1rem;
-    overflow: hidden;
 
     &[data-size="small"] {
         .mainContent {
@@ -102,6 +101,12 @@
         background: transparent;
         color: inherit;
         font: inherit;
+        border-radius: var(--radius);
+
+        &:not(:last-child) {
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+        }
 
         &:has(~.actionButton) {
             margin-right: -0.3rem;
@@ -125,7 +130,6 @@
         border: none 0 transparent;
         background: transparent;
         color: inherit;
-        border-radius: 0;
         cursor: pointer;
         display: flex;
         align-items: center;
@@ -133,6 +137,12 @@
         transition: background-color 250ms, color 250ms;
         flex-shrink: 0;
         aspect-ratio: 1;
+        border-radius: 0;
+
+        &:last-child {
+            border-top-right-radius: var(--radius);
+            border-bottom-right-radius: var(--radius);
+        }
 
         & {
             @include focusStyle.focus-outline;
