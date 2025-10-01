@@ -55,6 +55,11 @@ export type DatePickerProps = {
     inline?: boolean;
     filterDate?: (date: Date) => boolean;
     fixedHeight?: boolean;
+    /**
+     * @description When false, stretches to 100% of container width.
+     * @default true
+     */
+    hugWidth?: boolean;
     onOpen?: () => void;
     onClose?: () => void;
     onBlur?: () => void;
@@ -99,6 +104,7 @@ export const DatePicker = forwardRef<ReactDatePickerRef, DatePickerProps>(
             inline = false,
             filterDate = () => true,
             variant = 'single',
+            hugWidth = true,
             'data-test-id': dataTestId = 'date-picker',
             triggerAriaLabel = 'Open or close the date picker',
         },
@@ -124,8 +130,9 @@ export const DatePicker = forwardRef<ReactDatePickerRef, DatePickerProps>(
         };
 
         return (
-            <div data-test-id={dataTestId}>
+            <div data-test-id={dataTestId} className={hugWidth ? 'tw-w-auto' : 'tw-w-full'}>
                 <ReactDatePickerComponent
+                    wrapperClassName={hugWidth ? 'tw-w-auto' : 'tw-w-full'}
                     calendarClassName={merge([
                         'react-datepicker-wrap tw-pointer-events-auto',
                         inline && 'react-datepicker-inline',
@@ -153,6 +160,7 @@ export const DatePicker = forwardRef<ReactDatePickerRef, DatePickerProps>(
                                 placeHolder={placeHolder}
                                 validation={validation}
                                 onDateChanged={onChange}
+                                hugWidth={hugWidth}
                                 aria-haspopup="dialog"
                                 aria-expanded={isCalendarOpen}
                                 aria-label={triggerAriaLabel}
