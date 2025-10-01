@@ -18,6 +18,7 @@ type DatePickerTriggerProps = {
     onClick?: () => void;
     validation?: Validation;
     onDateChanged?: ((date: [Date | null, Date | null] | null) => void) | ((date: Date | null) => void);
+    hugWidth?: boolean;
     'aria-label': string;
 };
 
@@ -31,6 +32,7 @@ export const DatePickerTrigger = forwardRef<HTMLDivElement, DatePickerTriggerPro
             isCalendarOpen,
             validation = Validation.Default,
             onDateChanged,
+            hugWidth = true,
             'aria-label': ariaLabel,
         },
         ref,
@@ -61,7 +63,7 @@ export const DatePickerTrigger = forwardRef<HTMLDivElement, DatePickerTriggerPro
         );
 
         return (
-            <div ref={ref}>
+            <div ref={ref} className={hugWidth ? 'tw-w-auto' : 'tw-w-full'}>
                 <div
                     className={merge([
                         'tw-absolute tw-top-2 tw-text-black-60 tw-z-[1]',
