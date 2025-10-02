@@ -1,5 +1,11 @@
 # @frontify/fondue-components
 
+## 21.0.1
+
+### Patch Changes
+
+- [#2454](https://github.com/Frontify/fondue/pull/2454) [`cf378e5`](https://github.com/Frontify/fondue/commit/cf378e5cb60c3631987d98099de0b549a24ccc37) Thanks [@syeo66](https://github.com/syeo66)! - fix(SegmentedControl): make max size react to the containers max width
+
 ## 21.0.0
 
 ### Patch Changes
