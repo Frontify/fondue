@@ -62,18 +62,17 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
 }
 
 .itemLabel {
+    position: relative;
     display: flex;
     flex-grow: 1;
     align-items: center;
     justify-content: center;
     border-radius: inherit;
-    // Responsive padding: shrinks from 1rem to 0.25rem based on available space
-    padding-left: clamp(sizeToken.get(1), 2vw + 0.25rem, sizeToken.get(4));
-    padding-right: clamp(sizeToken.get(1), 2vw + 0.25rem, sizeToken.get(4));
+    padding-left: clamp(0rem, 2vw + 0.25rem, sizeToken.get(4));
+    padding-right: clamp(0rem, 2vw + 0.25rem, sizeToken.get(4));
     gap: sizeToken.get(2);
     color: var(--text-color-weak);
     min-width: 0;
-    overflow: hidden;
 
     font-size: var(--body-size-medium);
     line-height: var(--body-size-medium-line-height);
@@ -154,6 +153,7 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
     & {
         @include transitions.transition-transform;
     }
+
 
     // Outline of active item
     &::before {

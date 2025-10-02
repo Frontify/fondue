@@ -105,6 +105,11 @@ export const IconAndText: Story = {
             </SegmentedControl.Item>
         </SegmentedControl.Root>
     ),
+    decorators: (Story) => (
+        <div className="tw-w-80">
+            <Story />
+        </div>
+    ),
 };
 
 export const Disabled: Story = {
@@ -123,6 +128,11 @@ export const Disabled: Story = {
                 Third
             </SegmentedControl.Item>
         </SegmentedControl.Root>
+    ),
+    decorators: (Story) => (
+        <div className="tw-w-80">
+            <Story />
+        </div>
     ),
 };
 
@@ -149,5 +159,25 @@ export const FullWidth: Story = {
             <SegmentedControl.Item value="second">Second</SegmentedControl.Item>
             <SegmentedControl.Item value="third">Third</SegmentedControl.Item>
         </SegmentedControl.Root>
+    ),
+    decorators: (Story) => (
+        <div className="tw-w-96">
+            <Story />
+        </div>
+    ),
+};
+
+export const ContainerTooSmall: Story = {
+    render: (args) => (
+        <SegmentedControl.Root {...args}>
+            <SegmentedControl.Item value="first">First</SegmentedControl.Item>
+            <SegmentedControl.Item value="second">Second</SegmentedControl.Item>
+            <SegmentedControl.Item value="third">Third</SegmentedControl.Item>
+        </SegmentedControl.Root>
+    ),
+    decorators: (Story) => (
+        <div className="tw-w-40">
+            <Story />
+        </div>
     ),
 };
