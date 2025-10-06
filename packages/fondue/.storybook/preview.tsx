@@ -51,6 +51,16 @@ export const globalTypes = {
             showName: true,
         },
     },
+    direction: {
+        name: 'Direction',
+        description: 'Text direction',
+        defaultValue: 'ltr',
+        toolbar: {
+            icon: 'paragraph',
+            items: ['ltr', 'rtl'],
+            dynamicTitle: true,
+        },
+    },
 };
 export const parameters = {
     options: {
