@@ -8,18 +8,20 @@ import { type ComponentType } from 'react';
 import { Flex } from '../src/components/Flex/Flex';
 
 import DocumentationTemplate from './DocumentationTemplate.mdx';
-import { withTheme } from './components/StoryWithTeme';
+import { withTheme } from './components/StoryWithTheme';
 
 const ThemeProviderWrapper: Decorator = (Story: ComponentType, context: StoryContext) => {
+    const { direction = 'ltr' } = context.globals;
+
     if (context.globals.theme === 'both') {
         return (
             <Flex direction="column">
-                {withTheme(Story, 'light', { label: 'Light theme' })}
-                {withTheme(Story, 'dark', { label: 'Dark theme' })}
+                {withTheme(Story, 'light', { label: 'Light theme', direction })}
+                {withTheme(Story, 'dark', { label: 'Dark theme', direction })}
             </Flex>
         );
     }
-    return withTheme(Story, context.globals.theme);
+    return withTheme(Story, context.globals.theme, { direction });
 };
 
 const preview: Preview = {
@@ -46,6 +48,16 @@ const preview: Preview = {
                         icon: 'contrast',
                     },
                 ],
+                dynamicTitle: true,
+            },
+        },
+        direction: {
+            name: 'Direction',
+            description: 'Text direction',
+            defaultValue: 'ltr',
+            toolbar: {
+                icon: 'paragraph',
+                items: ['ltr', 'rtl'],
                 dynamicTitle: true,
             },
         },
