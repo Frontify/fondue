@@ -6,6 +6,7 @@ import { ThemeProvider } from '../../src/components/ThemeProvider/ThemeProvider'
 
 type withThemeOptions = {
     label?: string;
+    direction?: 'ltr' | 'rtl';
 };
 
 export const withTheme = (
@@ -15,7 +16,10 @@ export const withTheme = (
 ) => {
     return (
         <ThemeProvider theme={theme}>
-            <div style={{ padding: '2rem', backgroundColor: 'var(--base-color)', position: 'relative' }}>
+            <div
+                style={{ padding: '2rem', backgroundColor: 'var(--base-color)', position: 'relative' }}
+                dir={options?.direction ?? 'ltr'}
+            >
                 {options?.label && (
                     <span
                         style={{
