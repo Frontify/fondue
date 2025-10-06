@@ -114,6 +114,7 @@ export const TextFieldRoot = (
         status = 'neutral',
         'data-test-id': dataTestId = 'fondue-text-input',
         'aria-errormessage': ariaErrormessage,
+        placeholder,
         ...inputProps
     }: TextInputProps,
     ref: ForwardedRef<HTMLInputElement>,
@@ -125,29 +126,33 @@ export const TextFieldRoot = (
             {status === 'loading' ? (
                 <div className={styles.loadingStatus} data-test-id={`${dataTestId}-loader`} />
             ) : null}
-            <input
-                onMouseDown={(mouseEvent) => {
-                    wasClicked.current = true;
-                    mouseEvent.currentTarget.dataset.showFocusRing = 'false';
-                }}
-                type="text"
-                {...inputProps}
-                onFocus={(focusEvent) => {
-                    if (!wasClicked.current) {
-                        focusEvent.target.dataset.showFocusRing = 'true';
-                    }
-                    inputProps.onFocus?.(focusEvent);
-                }}
-                onBlur={(blurEvent) => {
-                    blurEvent.target.dataset.showFocusRing = 'false';
-                    wasClicked.current = false;
-                    inputProps.onBlur?.(blurEvent);
-                }}
-                ref={ref}
-                className={styles.input}
-                aria-invalid={status === 'error'}
-                aria-errormessage={status === 'error' ? ariaErrormessage : undefined}
-            />
+            <div className={styles.inputWrapper}>
+                {placeholder && <div className={styles.placeholder}>{placeholder}</div>}
+                <input
+                    onMouseDown={(mouseEvent) => {
+                        wasClicked.current = true;
+                        mouseEvent.currentTarget.dataset.showFocusRing = 'false';
+                    }}
+                    type="text"
+                    placeholder={placeholder}
+                    {...inputProps}
+                    onFocus={(focusEvent) => {
+                        if (!wasClicked.current) {
+                            focusEvent.target.dataset.showFocusRing = 'true';
+                        }
+                        inputProps.onFocus?.(focusEvent);
+                    }}
+                    onBlur={(blurEvent) => {
+                        blurEvent.target.dataset.showFocusRing = 'false';
+                        wasClicked.current = false;
+                        inputProps.onBlur?.(blurEvent);
+                    }}
+                    ref={ref}
+                    className={styles.input}
+                    aria-invalid={status === 'error'}
+                    aria-errormessage={status === 'error' ? ariaErrormessage : undefined}
+                />
+            </div>
 
             {status === 'success' ? (
                 <IconCheckMark size={16} className={styles.iconSuccess} data-test-id={`${dataTestId}-success-icon`} />

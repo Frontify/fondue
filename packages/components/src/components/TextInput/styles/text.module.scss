@@ -67,6 +67,7 @@
 
     &::placeholder {
         color: var(--text-color-x-weak);
+        opacity: 0;
     }
 
     &:-moz-focusring {
@@ -83,7 +84,7 @@
 
     // Remove border-radius and padding on the right if there’s a right-side slot
     &:has(~ .slot[data-side='right'], ~ .slot:not([data-side='right']) ~ .slot:not([data-side='left'])) {
-        padding-right: 0;
+        padding-inline-end: 0;
         border-top-right-radius: 0;
         border-bottom-right-radius: 0;
     }
@@ -94,18 +95,21 @@
         color: var(--text-color-weak);
         text-indent: 0px;
     }
-    &[readonly] ~ .slot {
+
+    &[readonly]~.slot {
         color: var(--text-color-weak);
     }
-    &[readonly] ~ .slot:not([data-name='right']) {
-        padding-left: 0px;
+
+    &[readonly]~.slot:not([data-name='right']) {
+        padding-inline-start: 0px;
     }
 
     &:disabled {
         cursor: text;
         color: var(--text-color-disabled);
     }
-    &:disabled ~ .slot {
+
+    &:disabled~.slot {
         color: var(--text-color-disabled);
     }
 }
@@ -116,8 +120,8 @@
     align-items: center;
     cursor: text;
     gap: sizeToken.get(1.5);
-    padding-left: sizeToken.get(3);
-    padding-right: sizeToken.get(1.5);
+    padding-inline-start: sizeToken.get(3);
+    padding-inline-end: sizeToken.get(1.5);
 
     // Left slot
     &:not([data-name='right']) {
@@ -135,7 +139,7 @@
     }
 
     // 2 slots without any name should be implicitly ordered
-    &:not([data-name='right']) ~ :not([data-name='left']) {
+    &:not([data-name='right'])~ :not([data-name='left']) {
         order: 0;
         margin-left: 0px;
         margin-right: 0px;
@@ -202,4 +206,36 @@
 
 .tw-dark .root {
     background-color: transparent;
+}
+
+.inputWrapper {
+    display: grid;
+    width: 100%;
+    grid-template-areas: "stack";
+    grid-template-columns: 100%;
+
+    &>* {
+        grid-area: stack;
+    }
+
+    .placeholder {
+        color: var(--text-color-x-weak);
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        pointer-events: none;
+        opacity: 0;
+        text-indent: sizeToken.get(3);
+        display: block;
+        text-align: inherit;
+        font-family: var(--body-family-stack);
+        font-weight: 400;
+        font-size: var(--body-size-medium);
+        line-height: sizeToken.get(9);
+    }
+
+    // Show placeholder only when input is empty
+    &:has(input:placeholder-shown) .placeholder {
+        opacity: 1;
+    }
 }
