@@ -65,15 +65,15 @@ export const globalTypes = {
             ],
             dynamicTitle: true,
         },
-        direction: {
-            name: 'Direction',
-            description: 'Text direction',
-            defaultValue: 'ltr',
-            toolbar: {
-                icon: 'paragraph',
-                items: ['ltr', 'rtl'],
-                dynamicTitle: true,
-            },
+    },
+    direction: {
+        name: 'Direction',
+        description: 'Text direction',
+        defaultValue: 'ltr',
+        toolbar: {
+            icon: 'paragraph',
+            items: ['ltr', 'rtl'],
+            dynamicTitle: true,
         },
     },
 };
