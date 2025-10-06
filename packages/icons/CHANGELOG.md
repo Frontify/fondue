@@ -1,5 +1,11 @@
 # @frontify/fondue-icons
 
+## 0.20.0
+
+### Minor Changes
+
+- [#2456](https://github.com/Frontify/fondue/pull/2456) [`f4cb7aa`](https://github.com/Frontify/fondue/commit/f4cb7aa5c98a134187452fe9cef327c69c5b57a5) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
+
 ## 0.19.0
 
 ### Minor Changes
