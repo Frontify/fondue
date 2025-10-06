@@ -28,6 +28,10 @@
         @include transitions.transition-colors;
     }
 
+    &:has(input[data-show-focus-ring='true']) {
+        @include focusStyle.focus-outline-styles;
+    }
+
     &:hover {
         border-color: var(--line-color-x-strong);
     }
