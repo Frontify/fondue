@@ -7,7 +7,7 @@
     gap: var(--space-xs);
 
     & button:not(:first-child) {
-        margin-left: var(--space-xs);
+        margin-inline-start: var(--space-xs);
     }
 
     &[data-readonly="true"] {
@@ -19,7 +19,7 @@
         grid-template-columns: 1rem auto;
 
         & button {
-            margin-left: 0;
+            margin-inline-start: 0;
         }
     }
 
