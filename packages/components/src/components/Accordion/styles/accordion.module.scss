@@ -66,7 +66,7 @@
     grid-row: 1;
     align-items: center;
     outline: 0;
-    text-align: left;
+    text-align: start;
     width: 100%;
     padding: var(--accordion-vertical-padding) var(--accordion-horizontal-padding);
 
@@ -96,7 +96,7 @@
 
 .accordionContent {
     width: 100%;
-    text-align: left;
+    text-align: start;
     overflow: hidden;
 
     &[data-item-padding="none"] {
