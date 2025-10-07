@@ -687,3 +687,35 @@ export const WithTooltip: Story = {
         </Dialog.Root>
     ),
 };
+
+export const RTL: Story = {
+    args: {
+        children: 'I am a dialog content',
+        dir: 'rtl',
+    },
+    render: (args) => {
+        return (
+            <Dialog.Root>
+                <Dialog.Trigger>
+                    <Button>Open dialog</Button>
+                </Dialog.Trigger>
+                <Dialog.Content {...args}>
+                    <Dialog.SideContent>
+                        <div className="tw-bg-box-positive-strong tw-h-full tw-w-full"></div>
+                    </Dialog.SideContent>
+                    <Dialog.Header>
+                        <Dialog.Title>Header</Dialog.Title>
+                    </Dialog.Header>
+                    <Dialog.Body>
+                        This dialog demonstrates RTL (Right-to-Left) text direction. Notice how the close button, side
+                        content, and button positions are mirrored.
+                    </Dialog.Body>
+                    <Dialog.Footer>
+                        <Button emphasis="default">Cancel</Button>
+                        <Button>Submit</Button>
+                    </Dialog.Footer>
+                </Dialog.Content>
+            </Dialog.Root>
+        );
+    },
+};
