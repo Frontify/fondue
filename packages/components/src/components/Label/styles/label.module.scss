@@ -61,7 +61,7 @@
     &[data-required="true"]::after {
         content: "*";
         display: flex;
-        margin-left: calc(-1 * var(--space-xs));
+        margin-inline-start: calc(-1 * var(--space-xs));
         margin-top: -1px;
         font-family: var(--body-family-stack);
         font-size: var(--body-size-small);
