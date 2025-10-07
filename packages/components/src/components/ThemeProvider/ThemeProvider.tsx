@@ -25,7 +25,7 @@ type ThemeProviderProps = {
     asChild?: boolean;
 };
 
-export const ThemeContext = createContext<{ theme: AvailableTheme; dir: 'ltr' | 'rtl' }>({
+export const ThemeContext = createContext<Pick<ThemeProviderProps, 'theme' | 'dir'>>({
     theme: 'light',
     dir: 'ltr',
 });
