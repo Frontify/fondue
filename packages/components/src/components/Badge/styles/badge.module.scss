@@ -35,7 +35,8 @@
 .root {
     font-size: var(--body-size-small);
     line-height: var(--body-size-small-line-height);
-    padding: var(--space-xxs) var(--space-xs);
+    padding-block: var(--space-xxs);
+    padding-inline: var(--space-xs);
     gap: var(--space-xxs);
     border-radius: 9999px;
     position: relative;
@@ -52,7 +53,8 @@
     @include variant(negative, negative);
 
     &[data-size="small"] {
-        padding: 2px var(--space-xs);
+        padding-block: 2px;
+        padding-inline: var(--space-xs);
     }
 
     &[data-disabled="true"] {
