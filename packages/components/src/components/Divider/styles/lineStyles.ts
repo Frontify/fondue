@@ -18,7 +18,7 @@ export const lineStyles = sv({
         },
         direction: {
             horizontal: 'tw-border-t tw-w-full',
-            vertical: 'tw-border-r tw-min-h-4 tw-h-full',
+            vertical: 'tw-border-e tw-min-h-4 tw-h-full',
         },
     },
     defaultVariants: {
