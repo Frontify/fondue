@@ -147,10 +147,11 @@ export const FlyoutContent = (
     }: FlyoutContentProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
-    const theme = useFondueTheme();
+    const { theme, dir } = useFondueTheme();
+
     return (
         <RadixPopover.Portal>
-            <ThemeProvider theme={theme}>
+            <ThemeProvider theme={theme} dir={dir}>
                 <div data-test-id="fondue-flyout-overlay" className={styles.overlay} />
                 <RadixPopover.Content
                     style={
