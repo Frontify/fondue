@@ -25,10 +25,7 @@ type ThemeProviderProps = {
     asChild?: boolean;
 };
 
-export const ThemeContext = createContext<Pick<ThemeProviderProps, 'theme' | 'dir'>>({
-    theme: 'light',
-    dir: 'ltr',
-});
+export const ThemeContext = createContext<Pick<ThemeProviderProps, 'theme' | 'dir'>>({ theme: 'light', dir: 'ltr' });
 ThemeContext.displayName = 'ThemeContext';
 
 export const useFondueTheme = () => {
