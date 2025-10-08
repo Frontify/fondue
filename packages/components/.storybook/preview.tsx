@@ -11,17 +11,18 @@ import DocumentationTemplate from './DocumentationTemplate.mdx';
 import { withTheme } from './components/StoryWithTheme';
 
 const ThemeProviderWrapper: Decorator = (Story: ComponentType, context: StoryContext) => {
-    const { direction = 'ltr' } = context.globals;
+    const { direction = 'ltr', theme = 'light' } = context.globals;
 
-    if (context.globals.theme === 'both') {
+    if (theme === 'both') {
         return (
             <Flex direction="column">
-                {withTheme(Story, 'light', { label: 'Light theme', direction })}
-                {withTheme(Story, 'dark', { label: 'Dark theme', direction })}
+                {withTheme(Story, { label: 'Light theme', theme: 'light', direction })}
+                {withTheme(Story, { label: 'Dark theme', theme: 'dark', direction })}
             </Flex>
         );
     }
-    return withTheme(Story, context.globals.theme, { direction });
+
+    return withTheme(Story, { theme, direction });
 };
 
 const preview: Preview = {

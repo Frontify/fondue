@@ -76,12 +76,6 @@ export type DialogContentProps = {
      * @default false
      */
     showUnderlay?: boolean;
-    /**
-     * Text direction for the dialog content
-     * @default undefined
-     * @remarks This prop is primarily intended for testing purposes. In production, the direction should be inherited from the document or parent elements.
-     */
-    dir?: 'ltr' | 'rtl';
     children?: ReactNode;
     'data-test-id'?: string;
 };
@@ -210,12 +204,11 @@ export const DialogContent = (
         'data-test-id': dataTestId = 'fondue-dialog-content',
         showUnderlay = false,
         rounded = true,
-        dir,
         children,
     }: DialogContentProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
-    const theme = useFondueTheme();
+    const { theme, dir } = useFondueTheme();
     const contentRef = useRef<HTMLDivElement>(null);
 
     useSyncRefs<HTMLDivElement>(contentRef, ref);
@@ -236,7 +229,7 @@ export const DialogContent = (
 
     return (
         <RadixDialog.Portal>
-            <ThemeProvider theme={theme}>
+            <ThemeProvider theme={theme} dir={dir}>
                 <DialogUnderlay showUnderlay={showUnderlay}>
                     <RadixDialog.Content
                         style={
