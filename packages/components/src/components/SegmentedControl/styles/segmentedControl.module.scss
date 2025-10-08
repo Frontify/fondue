@@ -26,6 +26,11 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
     border-radius: var(--radius);
 
     isolation: isolate;
+    direction: ltr;
+
+    [dir='rtl'] & {
+        direction: rtl;
+    }
 
     &[data-hug-width='true'] {
         width: fit-content;
@@ -45,12 +50,12 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
 
     // Apply border radius based on the index
     &:first-child {
-        border-top-left-radius: $radius-without-border;
-        border-bottom-left-radius: $radius-without-border;
+        border-start-start-radius: $radius-without-border;
+        border-end-start-radius: $radius-without-border;
     }
     &:nth-last-child(2) {
-        border-top-right-radius: $radius-without-border;
-        border-bottom-right-radius: $radius-without-border;
+        border-start-end-radius: $radius-without-border;
+        border-end-end-radius: $radius-without-border;
     }
 
     // Focus styles for keyboard navigation, custom rounding applied to match the active indicator
@@ -68,8 +73,7 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
     align-items: center;
     justify-content: center;
     border-radius: inherit;
-    padding-left: clamp(0rem, 2vw, sizeToken.get(4));
-    padding-right: clamp(0rem, 2vw, sizeToken.get(4));
+    padding-inline: clamp(0rem, 2vw, sizeToken.get(4));
     gap: sizeToken.get(2);
     color: var(--text-color-weak);
     min-width: 0;
@@ -145,7 +149,7 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
     position: absolute;
     z-index: -1;
     top: 0;
-    left: 0;
+    inset-inline-start: 0;
     height: 100%;
 
     pointer-events: none;
@@ -187,6 +191,11 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
         .item[aria-checked='true']:nth-child(#{$index}) ~ & {
             transform: translateX(calc(100% * calc(#{$index} - 1)));
         }
+
+        // RTL support: reverse the transform direction
+        [dir='rtl'] .item[aria-checked='true']:nth-child(#{$index}) ~ & {
+            transform: translateX(calc(-100% * calc(#{$index} - 1)));
+        }
     }
 }
 
@@ -197,8 +206,7 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
     z-index: -1;
     min-width: 1px;
     width: 1px;
-    margin-left: -0.5px;
-    margin-right: -0.5px;
+    margin-inline: -0.5px;
     background-color: var(--line-color-strong);
 
     & {
