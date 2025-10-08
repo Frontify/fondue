@@ -3,6 +3,7 @@
 import * as RadioGroupPrimitve from '@radix-ui/react-radio-group';
 import { type ReactNode } from 'react';
 
+import { useFondueTheme } from '#/components/ThemeProvider/ThemeProvider';
 import { cn } from '#/utilities/styleUtilities';
 
 import styles from './styles/radiolist.module.scss';
@@ -33,6 +34,8 @@ const RadioListRoot = ({
     value,
     'data-test-id': dataTestId,
 }: RadioListRootProps) => {
+    const { dir } = useFondueTheme();
+
     return (
         <RadioGroupPrimitve.Root
             aria-readonly={readOnly}
@@ -41,6 +44,7 @@ const RadioListRoot = ({
             data-emphasis={emphasis}
             data-readonly={readOnly}
             data-test-id={dataTestId}
+            dir={dir}
             disabled={disabled}
             onValueChange={onValueChange}
             orientation={orientation}
