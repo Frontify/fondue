@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import * as RadioGroupPrimitve from '@radix-ui/react-radio-group';
-import { type ReactNode, useEffect, useRef, useState } from 'react';
+import { type ReactNode } from 'react';
 
-import { getDirectionFromDOM } from '#/utilities/domUtilities';
+import { useFondueTheme } from '#/components/ThemeProvider/ThemeProvider';
 import { cn } from '#/utilities/styleUtilities';
 
 import styles from './styles/radiolist.module.scss';
@@ -34,21 +34,10 @@ const RadioListRoot = ({
     value,
     'data-test-id': dataTestId,
 }: RadioListRootProps) => {
-    const [dir, setDir] = useState<'ltr' | 'rtl' | undefined>(undefined);
-    const rootRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        if (!rootRef.current) {
-            return;
-        }
-
-        const detectedDir = getDirectionFromDOM(rootRef.current);
-        setDir(detectedDir);
-    }, []);
+    const { dir } = useFondueTheme();
 
     return (
         <RadioGroupPrimitve.Root
-            ref={rootRef}
             aria-readonly={readOnly}
             asChild={asChild}
             className={cn([className, asChild ? undefined : styles.root])}

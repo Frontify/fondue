@@ -111,29 +111,3 @@ export function addShowFocusRing(event: FocusEvent<HTMLDivElement, HTMLElement>)
 
     triggerElement.dataset.autoFocusVisible = 'true';
 }
-
-/**
- * Detects the text direction (LTR/RTL) by traversing up the DOM tree.
- * Searches for the nearest parent element with a dir attribute, or falls back
- * to the computed direction style.
- *
- * @param {HTMLElement} element - The element to start searching from.
- * @returns {'ltr' | 'rtl'} The detected text direction.
- *
- * @example
- * const direction = getDirectionFromDOM(myElementRef.current);
- * console.log(direction); // 'ltr' or 'rtl'
- */
-export function getDirectionFromDOM(element: HTMLElement): 'ltr' | 'rtl' {
-    let currentElement: HTMLElement | null = element.parentElement;
-    while (currentElement) {
-        const dirAttribute = currentElement.getAttribute('dir');
-        if (dirAttribute === 'rtl' || dirAttribute === 'ltr') {
-            return dirAttribute;
-        }
-        currentElement = currentElement.parentElement;
-    }
-
-    const computedDir = window.getComputedStyle(element).direction;
-    return computedDir === 'rtl' ? 'rtl' : 'ltr';
-}
