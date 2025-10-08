@@ -91,10 +91,11 @@ export const TooltipContent = (
     }: TooltipContentProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
-    const theme = useFondueTheme();
+    const { theme, dir } = useFondueTheme();
+
     return (
         <RadixTooltip.Portal>
-            <ThemeProvider theme={theme}>
+            <ThemeProvider theme={theme} dir={dir}>
                 <RadixTooltip.Content
                     data-test-id={dataTestId}
                     data-tooltip-spacing={padding}
