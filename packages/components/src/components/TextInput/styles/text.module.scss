@@ -79,18 +79,18 @@
         outline-offset: 2px;
     }
 
-    // Remove border-radius and text-indent/padding on the left if there’s a left-side slot
+    // Remove border-radius and text-indent/padding on the left if there's a left-side slot
     &:has(~ div:not([data-name='right'])) {
         text-indent: 0px;
-        border-top-left-radius: 0px;
-        border-bottom-left-radius: 0px;
+        border-start-start-radius: 0px;
+        border-end-start-radius: 0px;
     }
 
-    // Remove border-radius and padding on the right if there’s a right-side slot
+    // Remove border-radius and padding on the right if there's a right-side slot
     &:has(~ .slot[data-side='right'], ~ .slot:not([data-side='right']) ~ .slot:not([data-side='left'])) {
         padding-inline-end: 0;
-        border-top-right-radius: 0;
-        border-bottom-right-radius: 0;
+        border-start-end-radius: 0;
+        border-end-end-radius: 0;
     }
 
     // Readonly styles
@@ -130,23 +130,20 @@
     // Left slot
     &:not([data-name='right']) {
         order: -1;
-        margin-left: 0px;
-        margin-right: 0px;
+        margin-inline: 0px;
     }
 
     // Right slot
     &[data-name='right'] {
         order: 0;
-        margin-left: 0px;
-        margin-right: 0px;
-        padding-right: sizeToken.get(3);
+        margin-inline: 0px;
+        padding-inline-end: sizeToken.get(3);
     }
 
     // 2 slots without any name should be implicitly ordered
     &:not([data-name='right'])~ :not([data-name='left']) {
         order: 0;
-        margin-left: 0px;
-        margin-right: 0px;
+        margin-inline: 0px;
     }
 }
 
@@ -154,8 +151,7 @@
     display: flex;
     align-items: center;
     height: 100%;
-    margin-left: sizeToken.get(3);
-    margin-right: sizeToken.get(3);
+    margin-inline: sizeToken.get(3);
     color: var(--text-color-positive);
 }
 
@@ -163,15 +159,14 @@
     display: flex;
     align-items: center;
     height: 100%;
-    margin-left: sizeToken.get(3);
-    margin-right: sizeToken.get(3);
+    margin-inline: sizeToken.get(3);
     color: var(--text-color-negative);
 }
 
-// Icon with a right slot shouldn't have a margin right
+// Icon with a right slot shouldn't have a margin on the end side
 .iconSuccess:has(~ .slot[data-name='right']),
 .iconError:has(~ .slot[data-name='right']) {
-    margin-right: 0px;
+    margin-inline-end: 0px;
 }
 
 .loadingStatus {
@@ -180,7 +175,7 @@
     width: sizeToken.get(6);
     height: sizeToken.get(6);
     top: sizeToken.get(-3);
-    right: sizeToken.get(-3);
+    inset-inline-end: sizeToken.get(-3);
     pointer-events: none;
     align-items: center;
     justify-content: center;
