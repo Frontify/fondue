@@ -138,10 +138,10 @@ export const Basic: Story = {
                 {TABLE_DATA.map((user) => (
                     <Table.Row key={user.email}>
                         <Table.RowCell>
-                            <div className="flex items-center gap-2">
+                            <div className="tw-flex tw-items-center tw-gap-2">
                                 <div>
-                                    <div className="font-medium">{user.name}</div>
-                                    <div className="text-sm text-gray-500">{user.email}</div>
+                                    <div className="tw-font-medium">{user.name}</div>
+                                    <div className="tw-text-sm tw-text-gray-500">{user.email}</div>
                                 </div>
                             </div>
                         </Table.RowCell>
@@ -304,10 +304,10 @@ export const Sortable: Story = {
                     {sortedUsers.map((user) => (
                         <Table.Row key={user.email}>
                             <Table.RowCell>
-                                <div className="flex items-center gap-2">
+                                <div className="tw-flex tw-items-center tw-gap-2">
                                     <div>
-                                        <div className="font-medium">{user.name}</div>
-                                        <div className="text-sm text-gray-500">{user.email}</div>
+                                        <div className="tw-font-medium">{user.name}</div>
+                                        <div className="tw-text-sm tw-text-gray-500">{user.email}</div>
                                     </div>
                                 </div>
                             </Table.RowCell>
@@ -339,10 +339,10 @@ export const StickyHead: Story = {
                     (user, index) => (
                         <Table.Row key={`${user.email}-${index}`}>
                             <Table.RowCell>
-                                <div className="flex items-center gap-2">
+                                <div className="tw-flex tw-items-center tw-gap-2">
                                     <div>
-                                        <div className="font-medium">{user.name}</div>
-                                        <div className="text-sm text-gray-500">{user.email}</div>
+                                        <div className="tw-font-medium">{user.name}</div>
+                                        <div className="tw-text-sm tw-text-gray-500">{user.email}</div>
                                     </div>
                                 </div>
                             </Table.RowCell>
@@ -390,10 +390,10 @@ export const StickyFirstColumn: Story = {
                 {TABLE_DATA.map((user) => (
                     <Table.Row key={user.email}>
                         <Table.RowCell>
-                            <div className="flex items-center gap-2">
+                            <div className="tw-flex tw-items-center tw-gap-2">
                                 <div>
-                                    <div className="font-medium">{user.name}</div>
-                                    <div className="text-sm text-gray-500">{user.email}</div>
+                                    <div className="tw-font-medium">{user.name}</div>
+                                    <div className="tw-text-sm tw-text-gray-500">{user.email}</div>
                                 </div>
                             </div>
                         </Table.RowCell>
@@ -440,10 +440,10 @@ export const StickyHeadAndCol: Story = {
                 {[...TABLE_DATA, ...TABLE_DATA, ...TABLE_DATA].map((user) => (
                     <Table.Row key={user.email}>
                         <Table.RowCell>
-                            <div className="flex items-center gap-2">
+                            <div className="tw-flex tw-items-center tw-gap-2">
                                 <div>
-                                    <div className="font-medium">{user.name}</div>
-                                    <div className="text-sm text-gray-500">{user.email}</div>
+                                    <div className="tw-font-medium">{user.name}</div>
+                                    <div className="tw-text-sm tw-text-gray-500">{user.email}</div>
                                 </div>
                             </div>
                         </Table.RowCell>
@@ -474,10 +474,10 @@ export const Interactive: Story = {
                 {TABLE_DATA.map((user) => (
                     <Table.Row key={user.email} onClick={() => alert(`Clicked on ${user.name}`)}>
                         <Table.RowCell>
-                            <div className="flex items-center gap-2">
+                            <div className="tw-flex tw-items-center tw-gap-2">
                                 <div>
-                                    <div className="font-medium">{user.name}</div>
-                                    <div className="text-sm text-gray-500">{user.email}</div>
+                                    <div className="tw-font-medium">{user.name}</div>
+                                    <div className="tw-text-sm tw-text-gray-500">{user.email}</div>
                                 </div>
                             </div>
                         </Table.RowCell>
@@ -513,10 +513,10 @@ export const Disabled: Story = {
                         disabled={index % 3 === 0}
                     >
                         <Table.RowCell>
-                            <div className="flex items-center gap-2">
+                            <div className="tw-flex tw-items-center tw-gap-2">
                                 <div>
-                                    <div className="font-medium">{user.name}</div>
-                                    <div className="text-sm text-gray-500">{user.email}</div>
+                                    <div className="tw-font-medium">{user.name}</div>
+                                    <div className="tw-text-sm tw-text-gray-500">{user.email}</div>
                                 </div>
                             </div>
                         </Table.RowCell>
@@ -544,10 +544,10 @@ export const WithCaption: Story = {
                 {TABLE_DATA.slice(0, 5).map((user) => (
                     <Table.Row key={user.email}>
                         <Table.RowCell>
-                            <div className="flex items-center gap-2">
+                            <div className="tw-flex tw-items-center tw-gap-2">
                                 <div>
-                                    <div className="font-medium">{user.name}</div>
-                                    <div className="text-sm text-gray-500">{user.email}</div>
+                                    <div className="tw-font-medium">{user.name}</div>
+                                    <div className="tw-text-sm tw-text-gray-500">{user.email}</div>
                                 </div>
                             </div>
                         </Table.RowCell>
