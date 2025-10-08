@@ -91,10 +91,11 @@ export const SelectMenu = ({
         spacious: 24,
     };
 
-    const theme = useFondueTheme();
+    const { theme, dir } = useFondueTheme();
+
     return (
         <RadixPopover.Portal>
-            <ThemeProvider theme={theme}>
+            <ThemeProvider theme={theme} dir={dir}>
                 <RadixPopover.Content
                     align={align}
                     side={side}

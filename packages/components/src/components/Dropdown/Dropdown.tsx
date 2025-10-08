@@ -124,11 +124,11 @@ export const DropdownContent = (
     }: DropdownContentProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
-    const theme = useFondueTheme();
+    const { theme, dir } = useFondueTheme();
 
     return (
         <RadixDropdown.Portal>
-            <ThemeProvider theme={theme}>
+            <ThemeProvider theme={theme} dir={dir}>
                 <RadixDropdown.Content
                     align={align}
                     collisionPadding={VIEWPORT_COLLISION_PADDING_MAP[viewportCollisionPadding]}
@@ -214,10 +214,11 @@ export const DropdownSubContent = (
     { children, 'data-test-id': dataTestId = 'fondue-dropdown-subcontent' }: DropdownSubContentProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
-    const theme = useFondueTheme();
+    const { theme, dir } = useFondueTheme();
+
     return (
         <RadixDropdown.Portal>
-            <ThemeProvider theme={theme}>
+            <ThemeProvider theme={theme} dir={dir}>
                 <RadixDropdown.SubContent className={styles.subContent} data-test-id={dataTestId} ref={ref}>
                     {children}
                 </RadixDropdown.SubContent>

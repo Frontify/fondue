@@ -208,7 +208,7 @@ export const DialogContent = (
     }: DialogContentProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
-    const theme = useFondueTheme();
+    const { theme, dir } = useFondueTheme();
     const contentRef = useRef<HTMLDivElement>(null);
 
     useSyncRefs<HTMLDivElement>(contentRef, ref);
@@ -229,7 +229,7 @@ export const DialogContent = (
 
     return (
         <RadixDialog.Portal>
-            <ThemeProvider theme={theme}>
+            <ThemeProvider theme={theme} dir={dir}>
                 <DialogUnderlay showUnderlay={showUnderlay}>
                     <RadixDialog.Content
                         style={
@@ -247,6 +247,7 @@ export const DialogContent = (
                         data-dialog-rounded={rounded}
                         data-test-id={dataTestId}
                         data-dialog-vertical-align={verticalAlign}
+                        dir={dir}
                     >
                         {children}
                     </RadixDialog.Content>

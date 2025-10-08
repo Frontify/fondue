@@ -104,12 +104,12 @@
         border-radius: var(--radius);
 
         &:not(:last-child) {
-            border-top-right-radius: 0;
-            border-bottom-right-radius: 0;
+            border-start-end-radius: 0;
+            border-end-end-radius: 0;
         }
 
         &:has(~.actionButton) {
-            margin-right: -0.3rem;
+            margin-inline-end: -0.3rem;
         }
 
         &:is(button) {
@@ -140,8 +140,8 @@
         border-radius: 0;
 
         &:last-child {
-            border-top-right-radius: var(--radius);
-            border-bottom-right-radius: var(--radius);
+            border-start-end-radius: var(--radius);
+            border-end-end-radius: var(--radius);
         }
 
         & {
