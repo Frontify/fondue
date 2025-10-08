@@ -2,4 +2,4 @@
 "@frontify/fondue-components": minor
 ---
 
-feat(Tag): supoort RTL
+feat(Tag): support RTL
