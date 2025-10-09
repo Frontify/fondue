@@ -2,4 +2,4 @@
 "@frontify/fondue-components": patch
 ---
 
-fix: add missing default value
+fix(Badge): add missing default value for `variant` prop
