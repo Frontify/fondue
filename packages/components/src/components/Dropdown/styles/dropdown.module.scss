@@ -64,7 +64,7 @@
         transition: none;
     }
 
-    &:not([data-show-focus-ring='false']) {
+    &:not([data-show-focus-ring="false"]) {
         @include focusStyle.focus-outline;
     }
 
@@ -123,8 +123,8 @@
 }
 
 .group {
-    .item ~ &,
-    .group ~ & {
+    .item~&,
+    .group~& {
         border-top: var(--line-width) solid var(--line-color-strong);
     }
 
@@ -160,17 +160,17 @@
         order: 1;
         margin-left: auto;
 
-        & ~ .subMenuIndicator {
+        &~.subMenuIndicator {
             margin-left: sizeToken.get(1.5);
         }
     }
 
     // 2 slots without any name should be implicitly ordered
-    &:not([data-name='right']) ~ .slot:not([data-name='left']) {
+    &:not([data-name='right'])~.slot:not([data-name='left']) {
         order: 1;
         margin-left: auto;
 
-        & ~ .subMenuIndicator {
+        &~.subMenuIndicator {
             margin-left: 0;
         }
     }
