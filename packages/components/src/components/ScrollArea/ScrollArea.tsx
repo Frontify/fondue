@@ -3,6 +3,8 @@
 import * as RadixScrollArea from '@radix-ui/react-scroll-area';
 import { type ForwardedRef, forwardRef, type ReactElement, type ReactNode } from 'react';
 
+import { useFondueTheme } from '../ThemeProvider/ThemeProvider';
+
 import styles from './styles/scrollArea.module.scss';
 
 export type ScrollAreaProps = {
@@ -55,9 +57,12 @@ const ScrollAreaComponent = (
     }: ScrollAreaProps,
     ref: ForwardedRef<HTMLDivElement>,
 ): ReactElement => {
+    const { dir } = useFondueTheme();
+
     return (
         <RadixScrollArea.Root
             type={type}
+            dir={dir}
             className={styles.root}
             style={{ maxWidth }}
             data-test-id={dataTestId}
