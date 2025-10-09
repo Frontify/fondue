@@ -139,6 +139,7 @@ export const FlyoutContent = (
         rounded = 'medium',
         width = 'fit-content',
         shadow = 'medium',
+        side,
         triggerOffset = 'compact',
         viewportCollisionPadding = 'compact',
         'data-test-id': dataTestId = 'fondue-flyout-content',
@@ -148,6 +149,21 @@ export const FlyoutContent = (
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     const { theme, dir } = useFondueTheme();
+
+    const getAdjustedSide = (side?: 'top' | 'right' | 'bottom' | 'left') => {
+        if (!side || dir === 'ltr') {
+            return side;
+        }
+
+        if (side === 'left') {
+            return 'right';
+        }
+        if (side === 'right') {
+            return 'left';
+        }
+
+        return side;
+    };
 
     return (
         <RadixPopover.Portal>
@@ -164,6 +180,7 @@ export const FlyoutContent = (
                     align={align}
                     collisionPadding={VIEWPORT_COLLISION_PADDING_MAP[viewportCollisionPadding]}
                     sideOffset={SPACING_MAP[triggerOffset]}
+                    side={getAdjustedSide(side)}
                     className={styles.root}
                     data-flyout-spacing={padding}
                     data-rounded={rounded}
