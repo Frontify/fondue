@@ -30,24 +30,39 @@ const moveActiveIndicator = (triggerListElement: HTMLDivElement, activeIndicator
         return;
     }
 
+    // Get the computed direction to handle RTL correctly
+    const direction = getComputedStyle(triggerListElement).direction;
+    const isRTL = direction === 'rtl';
+
     const isOverflowingLeft = triggerListElement?.scrollLeft > activeTriggerElement?.offsetLeft;
     const isOverflowingRight =
         activeTriggerElement?.offsetLeft + activeTriggerElement?.offsetWidth > triggerListElement?.offsetWidth;
+
+    // Helper function to calculate position based on direction
+    const getInlineStartPosition = (position: number) => {
+        if (isRTL) {
+            // In RTL, insetInlineStart maps to 'right', so we need to calculate from the right edge
+            return triggerListElement.offsetWidth - position - activeTriggerElement.offsetWidth;
+        }
+        return position;
+    };
 
     if (isOverflowingLeft) {
         const willFitAllItemsToTheLeft =
             triggerListElement.offsetWidth > activeTriggerElement.offsetWidth + activeTriggerElement.offsetLeft;
         if (willFitAllItemsToTheLeft) {
-            activeIndicatorElement.style.left = `${activeTriggerElement.offsetLeft}px`;
+            activeIndicatorElement.style.insetInlineStart = `${getInlineStartPosition(activeTriggerElement.offsetLeft)}px`;
         } else {
-            activeIndicatorElement.style.left = `${triggerListElement.offsetWidth - activeTriggerElement.offsetWidth}px`;
+            const position = triggerListElement.offsetWidth - activeTriggerElement.offsetWidth;
+            activeIndicatorElement.style.insetInlineStart = `${getInlineStartPosition(position)}px`;
         }
         activeIndicatorElement.style.width = `${activeTriggerElement?.offsetWidth}px`;
     } else if (isOverflowingRight) {
-        activeIndicatorElement.style.left = `${triggerListElement.clientWidth - activeTriggerElement.offsetWidth}px`;
+        const position = triggerListElement.clientWidth - activeTriggerElement.offsetWidth;
+        activeIndicatorElement.style.insetInlineStart = `${getInlineStartPosition(position)}px`;
         activeIndicatorElement.style.width = `${activeTriggerElement.offsetWidth}px`;
     } else {
-        activeIndicatorElement.style.left = `${activeTriggerElement.offsetLeft}px`;
+        activeIndicatorElement.style.insetInlineStart = `${getInlineStartPosition(activeTriggerElement.offsetLeft)}px`;
         activeIndicatorElement.style.width = `${activeTriggerElement.offsetWidth}px`;
     }
 };
