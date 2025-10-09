@@ -125,7 +125,7 @@ export const DropdownContent = (
         children,
         preventTriggerFocusOnClose,
         viewportCollisionPadding = 'compact',
-        forceMount = undefined,
+        forceMount = false,
         'data-test-id': dataTestId = 'fondue-dropdown-content',
     }: DropdownContentProps,
     ref: ForwardedRef<HTMLDivElement>,
