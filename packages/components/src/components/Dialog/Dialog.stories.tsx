@@ -674,16 +674,14 @@ export const WithTooltip: Story = {
     render: (args) => (
         <Dialog.Root>
             <Tooltip.Root>
-                <Dialog.Trigger asChild>
+                <Tooltip.Trigger asChild>
                     <Button>
-                        <Tooltip.Trigger asChild>
-                            <span>
-                                <span>Trigger</span>
-                            </span>
-                        </Tooltip.Trigger>
-                        <Tooltip.Content>Dialog tooltip</Tooltip.Content>
+                        <Dialog.Trigger asChild>
+                            <span>Trigger</span>
+                        </Dialog.Trigger>
                     </Button>
-                </Dialog.Trigger>
+                </Tooltip.Trigger>
+                <Tooltip.Content>Dialog tooltip</Tooltip.Content>
             </Tooltip.Root>
             <Dialog.Content>
                 <Dialog.Body {...args} />
