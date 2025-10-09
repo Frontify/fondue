@@ -93,12 +93,27 @@ export const SelectMenu = ({
 
     const { theme, dir } = useFondueTheme();
 
+    const getAdjustedSide = (side: 'left' | 'right' | 'bottom' | 'top') => {
+        if (dir === 'ltr') {
+            return side;
+        }
+
+        if (side === 'left') {
+            return 'right';
+        }
+        if (side === 'right') {
+            return 'left';
+        }
+
+        return side;
+    };
+
     return (
         <RadixPopover.Portal>
             <ThemeProvider theme={theme} dir={dir}>
                 <RadixPopover.Content
                     align={align}
-                    side={side}
+                    side={getAdjustedSide(side)}
                     collisionPadding={VIEWPORT_COLLISION_PADDING_MAP[viewportCollisionPadding] + 8}
                     onOpenAutoFocus={handleOnOpenAutoFocus}
                     className={styles.portal}
