@@ -20,8 +20,8 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
             width: 100%;
             display: flex;
             align-items: center;
-            padding-left: sizeToken.get(3);
-            padding-right: sizeToken.get(3);
+            padding-inline-start: sizeToken.get(3);
+            padding-inline-end: sizeToken.get(3);
             gap: sizeToken.get(2);
             border-bottom: 1px solid var(--line-color);
             box-sizing: border-box;
@@ -59,13 +59,13 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
         .activeIndicator {
             position: absolute;
             height: 3px;
-            border-top-left-radius: var(--radius-x-large);
-            border-top-right-radius: var(--radius-x-large);
+            border-start-start-radius: var(--radius-x-large);
+            border-start-end-radius: var(--radius-x-large);
             background-color: var(--box-neutral-strong-color);
             bottom: 0;
-            left: 0;
+            inset-inline-start: 0;
             width: 0;
-            margin-left: sizeToken.get(3);
+            margin-inline-start: sizeToken.get(3);
 
             & {
                 @include transitions.transition;

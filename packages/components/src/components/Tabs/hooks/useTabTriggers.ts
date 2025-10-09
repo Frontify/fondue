@@ -38,16 +38,16 @@ const moveActiveIndicator = (triggerListElement: HTMLDivElement, activeIndicator
         const willFitAllItemsToTheLeft =
             triggerListElement.offsetWidth > activeTriggerElement.offsetWidth + activeTriggerElement.offsetLeft;
         if (willFitAllItemsToTheLeft) {
-            activeIndicatorElement.style.left = `${activeTriggerElement.offsetLeft}px`;
+            activeIndicatorElement.style.insetInlineStart = `${activeTriggerElement.offsetLeft}px`;
         } else {
-            activeIndicatorElement.style.left = `${triggerListElement.offsetWidth - activeTriggerElement.offsetWidth}px`;
+            activeIndicatorElement.style.insetInlineStart = `${triggerListElement.offsetWidth - activeTriggerElement.offsetWidth}px`;
         }
         activeIndicatorElement.style.width = `${activeTriggerElement?.offsetWidth}px`;
     } else if (isOverflowingRight) {
-        activeIndicatorElement.style.left = `${triggerListElement.clientWidth - activeTriggerElement.offsetWidth}px`;
+        activeIndicatorElement.style.insetInlineStart = `${triggerListElement.clientWidth - activeTriggerElement.offsetWidth}px`;
         activeIndicatorElement.style.width = `${activeTriggerElement.offsetWidth}px`;
     } else {
-        activeIndicatorElement.style.left = `${activeTriggerElement.offsetLeft}px`;
+        activeIndicatorElement.style.insetInlineStart = `${activeTriggerElement.offsetLeft}px`;
         activeIndicatorElement.style.width = `${activeTriggerElement.offsetWidth}px`;
     }
 };
