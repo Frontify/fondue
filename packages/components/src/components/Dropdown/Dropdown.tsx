@@ -99,6 +99,11 @@ export type DropdownContentProps = {
      * @default 'compact'
      */
     viewportCollisionPadding?: DropdownViewportCollisionPadding;
+    /**
+     * When true, the content will always be mounted in the DOM. Before enabling, make sure you really need it.
+     * @default false
+     */
+    forceMount?: boolean;
 };
 
 const SPACING_MAP: Record<DropdownSpacing, number> = {
@@ -120,6 +125,7 @@ export const DropdownContent = (
         children,
         preventTriggerFocusOnClose,
         viewportCollisionPadding = 'compact',
+        forceMount = undefined,
         'data-test-id': dataTestId = 'fondue-dropdown-content',
     }: DropdownContentProps,
     ref: ForwardedRef<HTMLDivElement>,
@@ -127,7 +133,7 @@ export const DropdownContent = (
     const { theme, dir } = useFondueTheme();
 
     return (
-        <RadixDropdown.Portal>
+        <RadixDropdown.Portal forceMount={forceMount || undefined}>
             <ThemeProvider theme={theme} dir={dir}>
                 <RadixDropdown.Content
                     align={align}
@@ -137,11 +143,15 @@ export const DropdownContent = (
                     className={styles.content}
                     data-test-id={dataTestId}
                     ref={ref}
+                    onPointerDownOutside={(event) => {
+                        event.preventDefault();
+                    }}
                     onCloseAutoFocus={(event) => {
                         if (preventTriggerFocusOnClose) {
                             event.preventDefault();
                         }
                     }}
+                    forceMount={forceMount || undefined}
                 >
                     {children}
                 </RadixDropdown.Content>
