@@ -35,7 +35,7 @@
 }
 
 .subContent {
-    margin-left: sizeToken.get(2);
+    margin-inline-start: sizeToken.get(2);
 }
 
 .item,
@@ -111,7 +111,11 @@
 
     .subMenuIndicator {
         order: 2;
-        margin-left: auto;
+        margin-inline-start: auto;
+    }
+
+    [dir='rtl'] & .subMenuIndicator {
+        transform: scaleX(-1);
     }
 }
 
@@ -152,20 +156,20 @@
     // Right slot
     &[data-name='right'] {
         order: 1;
-        margin-left: auto;
+        margin-inline-start: auto;
 
         &~.subMenuIndicator {
-            margin-left: sizeToken.get(1.5);
+            margin-inline-start: sizeToken.get(1.5);
         }
     }
 
     // 2 slots without any name should be implicitly ordered
     &:not([data-name='right'])~.slot:not([data-name='left']) {
         order: 1;
-        margin-left: auto;
+        margin-inline-start: auto;
 
         &~.subMenuIndicator {
-            margin-left: 0;
+            margin-inline-start: 0;
         }
     }
 }
