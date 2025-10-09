@@ -84,19 +84,23 @@
     border-bottom: var(--line-width) solid var(--line-color);
 
     .root[data-flyout-spacing='tight'] & {
-        padding: sizeToken.get(2);
+        padding-block: sizeToken.get(2);
+        padding-inline: sizeToken.get(2);
     }
 
     .root[data-flyout-spacing='compact'] & {
-        padding: sizeToken.get(4);
+        padding-block: sizeToken.get(4);
+        padding-inline: sizeToken.get(4);
     }
 
     .root[data-flyout-spacing='comfortable'] & {
-        padding: sizeToken.get(6);
+        padding-block: sizeToken.get(6);
+        padding-inline: sizeToken.get(6);
     }
 
     .root[data-flyout-spacing='spacious'] & {
-        padding: sizeToken.get(10);
+        padding-block: sizeToken.get(10);
+        padding-inline: sizeToken.get(10);
     }
 }
 
@@ -114,19 +118,23 @@
     }
 
     .root[data-flyout-spacing='tight'] & {
-        padding: sizeToken.get(2);
+        padding-block: sizeToken.get(2);
+        padding-inline: sizeToken.get(2);
     }
 
     .root[data-flyout-spacing='compact'] & {
-        padding: sizeToken.get(2) sizeToken.get(4);
+        padding-block: sizeToken.get(2);
+        padding-inline: sizeToken.get(4);
     }
 
     .root[data-flyout-spacing='comfortable'] & {
-        padding: sizeToken.get(4) sizeToken.get(6);
+        padding-block: sizeToken.get(4);
+        padding-inline: sizeToken.get(6);
     }
 
     .root[data-flyout-spacing='spacious'] & {
-        padding: sizeToken.get(6) sizeToken.get(10);
+        padding-block: sizeToken.get(6);
+        padding-inline: sizeToken.get(10);
     }
 }
 
@@ -139,19 +147,23 @@
     border-top: var(--line-width) solid var(--line-color);
 
     .root[data-flyout-spacing='tight'] & {
-        padding: sizeToken.get(2);
+        padding-block: sizeToken.get(2);
+        padding-inline: sizeToken.get(2);
     }
 
     .root[data-flyout-spacing='compact'] & {
-        padding: sizeToken.get(4);
+        padding-block: sizeToken.get(4);
+        padding-inline: sizeToken.get(4);
     }
 
     .root[data-flyout-spacing='comfortable'] & {
-        padding: sizeToken.get(6);
+        padding-block: sizeToken.get(6);
+        padding-inline: sizeToken.get(6);
     }
 
     .root[data-flyout-spacing='spacious'] & {
-        padding: sizeToken.get(10);
+        padding-block: sizeToken.get(10);
+        padding-inline: sizeToken.get(10);
     }
 }
 
