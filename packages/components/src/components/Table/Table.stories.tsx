@@ -533,7 +533,7 @@ export const StickyHeaderAndRightColumn: Story = {
             defaultViewport: 'mobile',
         },
     },
-    render: ({ ...args}) => (
+    render: ({ ...args }) => (
         <Table.Root {...args}>
             <Table.Header sticky>
                 <Table.Row>
