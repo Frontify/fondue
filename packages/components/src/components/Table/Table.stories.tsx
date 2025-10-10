@@ -323,7 +323,7 @@ export const Sortable: Story = {
 
 export const StickyHead: Story = {
     render: ({ ...args }) => (
-        <Table.Root {...args} sticky="head">
+        <Table.Root {...args} stickyHeader>
             <Table.Header>
                 <Table.Row>
                     <Table.HeaderCell width="250px">Name</Table.HeaderCell>
@@ -375,7 +375,7 @@ export const StickyFirstColumn: Story = {
         },
     },
     render: ({ ...args }) => (
-        <Table.Root {...args} sticky="col">
+        <Table.Root {...args} stickyLeftColumn>
             <Table.Header>
                 <Table.Row>
                     <Table.HeaderCell>Name</Table.HeaderCell>
@@ -425,7 +425,7 @@ export const StickyHeadAndCol: Story = {
         },
     },
     render: ({ ...args }) => (
-        <Table.Root {...args} sticky="both">
+        <Table.Root {...args} stickyHeader stickyLeftColumn>
             <Table.Header>
                 <Table.Row>
                     <Table.HeaderCell>Name</Table.HeaderCell>
@@ -452,6 +452,184 @@ export const StickyHeadAndCol: Story = {
                         <Table.RowCell>{user.initialLogin}</Table.RowCell>
                         <Table.RowCell>{user.lastLogin}</Table.RowCell>
                         <Table.RowCell>{user.twoFa ? 'Yes' : 'No'}</Table.RowCell>
+                    </Table.Row>
+                ))}
+            </Table.Body>
+        </Table.Root>
+    ),
+};
+
+export const StickyRightColumn: Story = {
+    parameters: {
+        viewport: {
+            viewports: {
+                mobile: {
+                    name: 'Mobile',
+                    styles: {
+                        width: '320px',
+                        height: '600px',
+                    },
+                },
+            },
+            defaultViewport: 'mobile',
+        },
+    },
+    render: ({ ...args }) => (
+        <Table.Root {...args} stickyRightColumn>
+            <Table.Header>
+                <Table.Row>
+                    <Table.HeaderCell>Name</Table.HeaderCell>
+                    <Table.HeaderCell>Invited by</Table.HeaderCell>
+                    <Table.HeaderCell>Last seen</Table.HeaderCell>
+                    <Table.HeaderCell>Initial login</Table.HeaderCell>
+                    <Table.HeaderCell>Last login</Table.HeaderCell>
+                    <Table.HeaderCell>Actions</Table.HeaderCell>
+                </Table.Row>
+            </Table.Header>
+            <Table.Body>
+                {TABLE_DATA.map((user) => (
+                    <Table.Row key={user.email}>
+                        <Table.RowCell>
+                            <div className="tw-flex tw-items-center tw-gap-2">
+                                <div>
+                                    <div className="tw-font-medium">{user.name}</div>
+                                    <div className="tw-text-sm tw-text-gray-500">{user.email}</div>
+                                </div>
+                            </div>
+                        </Table.RowCell>
+                        <Table.RowCell>{user.invited}</Table.RowCell>
+                        <Table.RowCell>{user.lastSeen}</Table.RowCell>
+                        <Table.RowCell>{user.initialLogin}</Table.RowCell>
+                        <Table.RowCell>{user.lastLogin}</Table.RowCell>
+                        <Table.RowCell>
+                            <Flex gap="0.25rem">
+                                <Button size="small" aspect="square" emphasis="weak">
+                                    <IconPen size={16} />
+                                </Button>
+                                <Button variant="danger" size="small" aspect="square" emphasis="weak">
+                                    <IconTrashBin size={16} />
+                                </Button>
+                            </Flex>
+                        </Table.RowCell>
+                    </Table.Row>
+                ))}
+            </Table.Body>
+        </Table.Root>
+    ),
+};
+
+export const StickyHeaderAndRightColumn: Story = {
+    parameters: {
+        viewport: {
+            viewports: {
+                mobile: {
+                    name: 'Mobile',
+                    styles: {
+                        width: '320px',
+                        height: '600px',
+                    },
+                },
+            },
+            defaultViewport: 'mobile',
+        },
+    },
+    render: ({ ...args }) => (
+        <Table.Root {...args} stickyHeader stickyRightColumn>
+            <Table.Header>
+                <Table.Row>
+                    <Table.HeaderCell>Name</Table.HeaderCell>
+                    <Table.HeaderCell>Invited by</Table.HeaderCell>
+                    <Table.HeaderCell>Last seen</Table.HeaderCell>
+                    <Table.HeaderCell>Initial login</Table.HeaderCell>
+                    <Table.HeaderCell>Last login</Table.HeaderCell>
+                    <Table.HeaderCell>Actions</Table.HeaderCell>
+                </Table.Row>
+            </Table.Header>
+            <Table.Body>
+                {[...TABLE_DATA, ...TABLE_DATA, ...TABLE_DATA].map((user, index) => (
+                    <Table.Row key={`${user.email}-${index}`}>
+                        <Table.RowCell>
+                            <div className="tw-flex tw-items-center tw-gap-2">
+                                <div>
+                                    <div className="tw-font-medium">{user.name}</div>
+                                    <div className="tw-text-sm tw-text-gray-500">{user.email}</div>
+                                </div>
+                            </div>
+                        </Table.RowCell>
+                        <Table.RowCell>{user.invited}</Table.RowCell>
+                        <Table.RowCell>{user.lastSeen}</Table.RowCell>
+                        <Table.RowCell>{user.initialLogin}</Table.RowCell>
+                        <Table.RowCell>{user.lastLogin}</Table.RowCell>
+                        <Table.RowCell>
+                            <Flex gap="0.25rem">
+                                <Button size="small" aspect="square" emphasis="weak">
+                                    <IconPen size={16} />
+                                </Button>
+                                <Button variant="danger" size="small" aspect="square" emphasis="weak">
+                                    <IconTrashBin size={16} />
+                                </Button>
+                            </Flex>
+                        </Table.RowCell>
+                    </Table.Row>
+                ))}
+            </Table.Body>
+        </Table.Root>
+    ),
+};
+
+export const StickyAllDirections: Story = {
+    name: 'Sticky Header, Left & Right Columns',
+    parameters: {
+        viewport: {
+            viewports: {
+                mobile: {
+                    name: 'Mobile',
+                    styles: {
+                        width: '320px',
+                        height: '600px',
+                    },
+                },
+            },
+            defaultViewport: 'mobile',
+        },
+    },
+    render: ({ ...args }) => (
+        <Table.Root {...args} stickyHeader stickyLeftColumn stickyRightColumn>
+            <Table.Header>
+                <Table.Row>
+                    <Table.HeaderCell>Name</Table.HeaderCell>
+                    <Table.HeaderCell>Invited by</Table.HeaderCell>
+                    <Table.HeaderCell>Last seen</Table.HeaderCell>
+                    <Table.HeaderCell>Initial login</Table.HeaderCell>
+                    <Table.HeaderCell>Last login</Table.HeaderCell>
+                    <Table.HeaderCell>Actions</Table.HeaderCell>
+                </Table.Row>
+            </Table.Header>
+            <Table.Body>
+                {[...TABLE_DATA, ...TABLE_DATA, ...TABLE_DATA].map((user, index) => (
+                    <Table.Row key={`${user.email}-${index}`}>
+                        <Table.RowCell>
+                            <div className="tw-flex tw-items-center tw-gap-2">
+                                <div>
+                                    <div className="tw-font-medium">{user.name}</div>
+                                    <div className="tw-text-sm tw-text-gray-500">{user.email}</div>
+                                </div>
+                            </div>
+                        </Table.RowCell>
+                        <Table.RowCell>{user.invited}</Table.RowCell>
+                        <Table.RowCell>{user.lastSeen}</Table.RowCell>
+                        <Table.RowCell>{user.initialLogin}</Table.RowCell>
+                        <Table.RowCell>{user.lastLogin}</Table.RowCell>
+                        <Table.RowCell>
+                            <Flex gap="0.25rem">
+                                <Button size="small" aspect="square" emphasis="weak">
+                                    <IconPen size={16} />
+                                </Button>
+                                <Button variant="danger" size="small" aspect="square" emphasis="weak">
+                                    <IconTrashBin size={16} />
+                                </Button>
+                            </Flex>
+                        </Table.RowCell>
                     </Table.Row>
                 ))}
             </Table.Body>

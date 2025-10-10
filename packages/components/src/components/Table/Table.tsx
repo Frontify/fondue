@@ -36,14 +36,44 @@ type TableRootProps = {
     fontSize?: 'small' | 'medium';
     /**
      * Whether header should stick to the top when scrolling
+     * @deprecated Use `stickyHeader`, `stickyLeftColumn`, or `stickyRightColumn` instead
      */
     sticky?: 'head' | 'col' | 'both';
+    /**
+     * Whether the header should stick to the top when scrolling
+     */
+    stickyHeader?: boolean;
+    /**
+     * Whether the first column should stick to the left when scrolling horizontally
+     */
+    stickyLeftColumn?: boolean;
+    /**
+     * Whether the last column should stick to the right when scrolling horizontally
+     */
+    stickyRightColumn?: boolean;
     children: ReactNode;
 } & CommonAriaAttrs &
     Pick<AriaAttributes, 'aria-multiselectable'>;
 
 export const TableRoot = forwardRef<HTMLTableElement, TableRootProps>(
-    ({ layout = 'auto', fontSize = 'medium', sticky, children, ...props }, ref) => {
+    (
+        {
+            layout = 'auto',
+            fontSize = 'medium',
+            sticky,
+            stickyHeader,
+            stickyLeftColumn,
+            stickyRightColumn,
+            children,
+            ...props
+        },
+        ref,
+    ) => {
+        // Normalize deprecated `sticky` prop to new boolean flags
+        const effectiveStickyHeader = stickyHeader ?? (sticky === 'head' || sticky === 'both');
+        const effectiveStickyLeftColumn = stickyLeftColumn ?? (sticky === 'col' || sticky === 'both');
+        const effectiveStickyRightColumn = stickyRightColumn ?? false;
+
         return (
             // eslint-disable-next-line jsx-a11y-x/no-noninteractive-element-interactions
             <table
@@ -51,7 +81,9 @@ export const TableRoot = forwardRef<HTMLTableElement, TableRootProps>(
                 className={styles.table}
                 data-layout={layout}
                 data-font-size={fontSize}
-                data-sticky={sticky}
+                data-sticky-header={effectiveStickyHeader}
+                data-sticky-left-column={effectiveStickyLeftColumn}
+                data-sticky-right-column={effectiveStickyRightColumn}
                 onKeyDown={handleKeyDown}
                 {...props}
             >

@@ -16,8 +16,7 @@
         background-color: var(--base-color),
     );
 
-    &[data-sticky='head'],
-    &[data-sticky='both'] {
+    &[data-sticky-header='true'] {
         thead {
             @each $prop, $value in $sticky-base {
                 #{$prop}: $value;
@@ -27,8 +26,7 @@
         }
     }
 
-    &[data-sticky='col'],
-    &[data-sticky='both'] {
+    &[data-sticky-left-column='true'] {
         .headerCell:first-child,
         .rowCell:first-child {
             @each $prop, $value in $sticky-base {
@@ -36,6 +34,17 @@
             }
             inset-inline-start: 0;
             border-inline-end: 1px solid var(--line-color);
+        }
+    }
+
+    &[data-sticky-right-column='true'] {
+        .headerCell:last-child,
+        .rowCell:last-child {
+            @each $prop, $value in $sticky-base {
+                #{$prop}: $value;
+            }
+            inset-inline-end: 0;
+            border-inline-start: 1px solid var(--line-color);
         }
     }
 
