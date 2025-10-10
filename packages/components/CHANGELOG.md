@@ -1,5 +1,59 @@
 # @frontify/fondue-components
 
+## 22.1.0
+
+### Minor Changes
+
+- [#2473](https://github.com/Frontify/fondue/pull/2473) [`a4b9e95`](https://github.com/Frontify/fondue/commit/a4b9e95738e9a2cfa5b0a62dba08b20cfdccc941) Thanks [@syeo66](https://github.com/syeo66)! - feat(TextInput): support RTL
+
+- [#2481](https://github.com/Frontify/fondue/pull/2481) [`50a5ae4`](https://github.com/Frontify/fondue/commit/50a5ae47dc323dc80e1d8637ccb98a337dc8812c) Thanks [@syeo66](https://github.com/syeo66)! - feat(Tabs): support RTL
+
+- [#2462](https://github.com/Frontify/fondue/pull/2462) [`af75e2b`](https://github.com/Frontify/fondue/commit/af75e2bea6bbd1dd937b4f969ad298495e50e6ba) Thanks [@syeo66](https://github.com/syeo66)! - feat(Badge): support RTL
+
+- [#2469](https://github.com/Frontify/fondue/pull/2469) [`98d5b5f`](https://github.com/Frontify/fondue/commit/98d5b5f9b18d5c53b1f3551c6fdf3b1a742513ee) Thanks [@syeo66](https://github.com/syeo66)! - feat(SegmentedControl): support RTL
+
+- [#2484](https://github.com/Frontify/fondue/pull/2484) [`a0be8d3`](https://github.com/Frontify/fondue/commit/a0be8d3db075d9a6c6a9d399a93156f13aacf986) Thanks [@syeo66](https://github.com/syeo66)! - feat(Table): add sticky right columns
+
+- [#2480](https://github.com/Frontify/fondue/pull/2480) [`14f8093`](https://github.com/Frontify/fondue/commit/14f809393ad3dd5e7efb28293ff866459de859d3) Thanks [@syeo66](https://github.com/syeo66)! - feat(Select): support RTL
+
+- [#2471](https://github.com/Frontify/fondue/pull/2471) [`ebc26be`](https://github.com/Frontify/fondue/commit/ebc26bedc60a32f7b36ddd24368b40481932661a) Thanks [@syeo66](https://github.com/syeo66)! - feat(Table): add rtl support
+
+- [#2477](https://github.com/Frontify/fondue/pull/2477) [`e707f34`](https://github.com/Frontify/fondue/commit/e707f348ced14ba9ee1db5b00f8d73a3ac1b111f) Thanks [@syeo66](https://github.com/syeo66)! - feat(Flyout): support RTL
+
+- [#2470](https://github.com/Frontify/fondue/pull/2470) [`f9aab01`](https://github.com/Frontify/fondue/commit/f9aab019e1a38bcbe73a1a59ed2fb2cca0841d29) Thanks [@syeo66](https://github.com/syeo66)! - feat(Switch): support RTL
+
+- [#2474](https://github.com/Frontify/fondue/pull/2474) [`71fe962`](https://github.com/Frontify/fondue/commit/71fe9629fa952243df65cf7a449706c33826d5cd) Thanks [@syeo66](https://github.com/syeo66)! - feat(Tooltip): support RTL
+
+- [#2464](https://github.com/Frontify/fondue/pull/2464) [`db9c4a8`](https://github.com/Frontify/fondue/commit/db9c4a8ac8cc16ac6165732e43e2a85044db89f4) Thanks [@syeo66](https://github.com/syeo66)! - feat(Dialog): implement RTL support
+
+- [#2472](https://github.com/Frontify/fondue/pull/2472) [`1d9bad2`](https://github.com/Frontify/fondue/commit/1d9bad2273aa23d8018d08fe60cfe618a0aa1b5e) Thanks [@syeo66](https://github.com/syeo66)! - feat(Tag): support RTL
+
+- [#2479](https://github.com/Frontify/fondue/pull/2479) [`73c40c3`](https://github.com/Frontify/fondue/commit/73c40c398c2b93aab6c6ed2a0123044fdec4ab72) Thanks [@jcosta33](https://github.com/jcosta33)! - feat(`Dropdown`): expose radix's forceMount prop
+
+- [#2461](https://github.com/Frontify/fondue/pull/2461) [`3c0467d`](https://github.com/Frontify/fondue/commit/3c0467dda572b8bb768606bc900b04c6a1cfc2db) Thanks [@syeo66](https://github.com/syeo66)! - feat(Accordion): add RTL support
+
+- [#2466](https://github.com/Frontify/fondue/pull/2466) [`ac40f75`](https://github.com/Frontify/fondue/commit/ac40f754e4cd7476267e83db972aadd6e075ceca) Thanks [@syeo66](https://github.com/syeo66)! - feat(Label): support RTL
+
+- [#2476](https://github.com/Frontify/fondue/pull/2476) [`038b04e`](https://github.com/Frontify/fondue/commit/038b04e374d23a52f3af933d9f7a92f2ec24feba) Thanks [@syeo66](https://github.com/syeo66)! - feat(Dropdown): support RTL
+
+- [#2475](https://github.com/Frontify/fondue/pull/2475) [`1788696`](https://github.com/Frontify/fondue/commit/17886966e51619bd1de920b29c0bcf0bb1d37520) Thanks [@syeo66](https://github.com/syeo66)! - feat(Layout): Adjust layout to RTL
+
+- [#2463](https://github.com/Frontify/fondue/pull/2463) [`2b1d7f6`](https://github.com/Frontify/fondue/commit/2b1d7f698a020abaf8d3354a3e76bc353fad4caa) Thanks [@syeo66](https://github.com/syeo66)! - feat(ColorPicker): Add RTL support. Also include Select cause it's used.
+
+- [#2467](https://github.com/Frontify/fondue/pull/2467) [`027b331`](https://github.com/Frontify/fondue/commit/027b33163e233ff2d37689bb1fa57b3ed1be41f9) Thanks [@syeo66](https://github.com/syeo66)! - feat(RadioList): support RTL
+
+- [#2478](https://github.com/Frontify/fondue/pull/2478) [`b5d9e3a`](https://github.com/Frontify/fondue/commit/b5d9e3a9f6e203cf54aed378593e817ec85f9634) Thanks [@syeo66](https://github.com/syeo66)! - feat(ScrollArea): support RTL
+
+### Patch Changes
+
+- [#2460](https://github.com/Frontify/fondue/pull/2460) [`c0a59e6`](https://github.com/Frontify/fondue/commit/c0a59e690bb8f4c96cdf2e8ebef83422b4240a37) Thanks [@syeo66](https://github.com/syeo66)! - feat(TextInput): add ellipsis to input placeholder
+
+- [#2457](https://github.com/Frontify/fondue/pull/2457) [`41bc9d5`](https://github.com/Frontify/fondue/commit/41bc9d5e68b81e92eb11732c171c500c7ca7c63a) Thanks [@syeo66](https://github.com/syeo66)! - feat: add ltr-rtl switch to storybook
+
+- [#2465](https://github.com/Frontify/fondue/pull/2465) [`e131669`](https://github.com/Frontify/fondue/commit/e13166949922fc8461c6f8d87a0905863f4c9592) Thanks [@syeo66](https://github.com/syeo66)! - feat(Divider): support RTL
+
+- [#2483](https://github.com/Frontify/fondue/pull/2483) [`03e6bb5`](https://github.com/Frontify/fondue/commit/03e6bb5fa308e7d158668a0c8952b5e8bd6db616) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix(Badge): add missing default value for `variant` prop
+
 ## 22.0.0
 
 ### Patch Changes
