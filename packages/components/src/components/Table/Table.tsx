@@ -44,16 +44,7 @@ type TableRootProps = {
     Pick<AriaAttributes, 'aria-multiselectable'>;
 
 export const TableRoot = forwardRef<HTMLTableElement, TableRootProps>(
-    (
-        {
-            layout = 'auto',
-            fontSize = 'medium',
-            sticky,
-            children,
-            ...props
-        },
-        ref,
-    ) => {
+    ({ layout = 'auto', fontSize = 'medium', sticky, children, ...props }, ref) => {
         // Handle deprecated `sticky` prop for backward compatibility
         const legacyStickyHeader = sticky === 'head' || sticky === 'both';
         const legacyStickyLeftColumn = sticky === 'col' || sticky === 'both';
@@ -100,13 +91,7 @@ type TableHeaderProps = {
 export const TableHeader = forwardRef<HTMLTableSectionElement, TableHeaderProps>(
     ({ sticky = false, children, 'aria-label': ariaLabel, 'aria-busy': ariaBusy }, ref) => {
         return (
-            <thead
-                ref={ref}
-                className={styles.header}
-                data-sticky={sticky}
-                aria-label={ariaLabel}
-                aria-busy={ariaBusy}
-            >
+            <thead ref={ref} className={styles.header} data-sticky={sticky} aria-label={ariaLabel} aria-busy={ariaBusy}>
                 {children}
             </thead>
         );
