@@ -323,8 +323,8 @@ export const Sortable: Story = {
 
 export const StickyHead: Story = {
     render: ({ ...args }) => (
-        <Table.Root {...args} stickyHeader>
-            <Table.Header>
+        <Table.Root {...args}>
+            <Table.Header sticky>
                 <Table.Row>
                     <Table.HeaderCell width="250px">Name</Table.HeaderCell>
                     <Table.HeaderCell width="150px">Invited by</Table.HeaderCell>
@@ -425,8 +425,8 @@ export const StickyHeadAndCol: Story = {
         },
     },
     render: ({ ...args }) => (
-        <Table.Root {...args} stickyHeader stickyLeftColumn>
-            <Table.Header>
+        <Table.Root {...args} stickyLeftColumn>
+            <Table.Header sticky>
                 <Table.Row>
                     <Table.HeaderCell>Name</Table.HeaderCell>
                     <Table.HeaderCell>Invited by</Table.HeaderCell>
@@ -534,8 +534,8 @@ export const StickyHeaderAndRightColumn: Story = {
         },
     },
     render: ({ ...args }) => (
-        <Table.Root {...args} stickyHeader stickyRightColumn>
-            <Table.Header>
+        <Table.Root {...args} stickyRightColumn>
+            <Table.Header sticky>
                 <Table.Row>
                     <Table.HeaderCell>Name</Table.HeaderCell>
                     <Table.HeaderCell>Invited by</Table.HeaderCell>
@@ -594,8 +594,8 @@ export const StickyAllDirections: Story = {
         },
     },
     render: ({ ...args }) => (
-        <Table.Root {...args} stickyHeader stickyLeftColumn stickyRightColumn>
-            <Table.Header>
+        <Table.Root {...args} stickyLeftColumn stickyRightColumn>
+            <Table.Header sticky>
                 <Table.Row>
                     <Table.HeaderCell>Name</Table.HeaderCell>
                     <Table.HeaderCell>Invited by</Table.HeaderCell>

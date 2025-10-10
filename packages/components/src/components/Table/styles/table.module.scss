@@ -16,16 +16,6 @@
         background-color: var(--base-color),
     );
 
-    &[data-sticky-header='true'] {
-        thead {
-            @each $prop, $value in $sticky-base {
-                #{$prop}: $value;
-            }
-            top: 0;
-            z-index: 2;
-        }
-    }
-
     &[data-sticky-left-column='true'] {
         .headerCell:first-child,
         .rowCell:first-child {
@@ -76,6 +66,15 @@
     padding: sizeToken.get(3) sizeToken.get(2);
     text-align: start;
     color: var(--text-color);
+}
+
+.header {
+    &[data-sticky='true'] {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        background-color: var(--base-color);
+    }
 }
 
 .headerCell {

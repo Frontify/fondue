@@ -36,13 +36,9 @@ type TableRootProps = {
     fontSize?: 'small' | 'medium';
     /**
      * Whether header should stick to the top when scrolling
-     * @deprecated Use `stickyHeader`, `stickyLeftColumn`, or `stickyRightColumn` instead
+     * @deprecated Use `Table.Header sticky` prop, `stickyLeftColumn`, or `stickyRightColumn` instead
      */
     sticky?: 'head' | 'col' | 'both';
-    /**
-     * Whether the header should stick to the top when scrolling
-     */
-    stickyHeader?: boolean;
     /**
      * Whether the first column should stick to the left when scrolling horizontally
      */
@@ -61,7 +57,6 @@ export const TableRoot = forwardRef<HTMLTableElement, TableRootProps>(
             layout = 'auto',
             fontSize = 'medium',
             sticky,
-            stickyHeader,
             stickyLeftColumn,
             stickyRightColumn,
             children,
@@ -70,7 +65,6 @@ export const TableRoot = forwardRef<HTMLTableElement, TableRootProps>(
         ref,
     ) => {
         // Normalize deprecated `sticky` prop to new boolean flags
-        const effectiveStickyHeader = stickyHeader ?? (sticky === 'head' || sticky === 'both');
         const effectiveStickyLeftColumn = stickyLeftColumn ?? (sticky === 'col' || sticky === 'both');
         const effectiveStickyRightColumn = stickyRightColumn ?? false;
 
@@ -81,7 +75,6 @@ export const TableRoot = forwardRef<HTMLTableElement, TableRootProps>(
                 className={styles.table}
                 data-layout={layout}
                 data-font-size={fontSize}
-                data-sticky-header={effectiveStickyHeader}
                 data-sticky-left-column={effectiveStickyLeftColumn}
                 data-sticky-right-column={effectiveStickyRightColumn}
                 onKeyDown={handleKeyDown}
@@ -104,15 +97,26 @@ export const TableCaption = forwardRef<HTMLTableCaptionElement, { children: Reac
 TableCaption.displayName = 'Table.Caption';
 
 type TableHeaderProps = {
+    /**
+     * Whether the header should stick to the top when scrolling
+     * @default false
+     */
+    sticky?: boolean;
     children: ReactNode;
     'aria-label'?: string;
     'aria-busy'?: boolean;
 };
 
 export const TableHeader = forwardRef<HTMLTableSectionElement, TableHeaderProps>(
-    ({ children, 'aria-label': ariaLabel, 'aria-busy': ariaBusy }, ref) => {
+    ({ sticky = false, children, 'aria-label': ariaLabel, 'aria-busy': ariaBusy }, ref) => {
         return (
-            <thead ref={ref} className={styles.header} aria-label={ariaLabel} aria-busy={ariaBusy}>
+            <thead
+                ref={ref}
+                className={styles.header}
+                data-sticky={sticky}
+                aria-label={ariaLabel}
+                aria-busy={ariaBusy}
+            >
                 {children}
             </thead>
         );
