@@ -16,8 +16,8 @@
         background-color: var(--base-color),
     );
 
-    &[data-sticky='head'],
-    &[data-sticky='both'] {
+    // Legacy support for deprecated data-sticky-header attribute
+    &[data-sticky-header='true'] {
         thead {
             @each $prop, $value in $sticky-base {
                 #{$prop}: $value;
@@ -27,8 +27,8 @@
         }
     }
 
-    &[data-sticky='col'],
-    &[data-sticky='both'] {
+    // Legacy support for deprecated data-sticky-left-column attribute
+    &[data-sticky-left-column='true'] {
         .headerCell:first-child,
         .rowCell:first-child {
             @each $prop, $value in $sticky-base {
@@ -36,6 +36,29 @@
             }
             inset-inline-start: 0;
             border-inline-end: 1px solid var(--line-color);
+        }
+    }
+
+    // New approach: sticky columns controlled by tbody attributes
+    &:has(tbody[data-first-column-sticky='true']) {
+        .headerCell:first-child,
+        .rowCell:first-child {
+            @each $prop, $value in $sticky-base {
+                #{$prop}: $value;
+            }
+            inset-inline-start: 0;
+            border-inline-end: 1px solid var(--line-color);
+        }
+    }
+
+    &:has(tbody[data-last-column-sticky='true']) {
+        .headerCell:last-child,
+        .rowCell:last-child {
+            @each $prop, $value in $sticky-base {
+                #{$prop}: $value;
+            }
+            inset-inline-end: 0;
+            border-inline-start: 1px solid var(--line-color);
         }
     }
 
@@ -67,6 +90,15 @@
     padding: sizeToken.get(3) sizeToken.get(2);
     text-align: start;
     color: var(--text-color);
+}
+
+.header {
+    &[data-sticky='true'] {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        background-color: var(--base-color);
+    }
 }
 
 .headerCell {
