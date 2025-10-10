@@ -121,8 +121,8 @@ test('should handle header with loading state', async ({ mount }) => {
 
 test('should handle sticky first column', async ({ mount }) => {
     const component = await mount(
-        <Table.Root stickyLeftColumn aria-label="Table">
-            <Table.Body aria-busy>
+        <Table.Root aria-label="Table">
+            <Table.Body firstColumnSticky aria-busy>
                 <Table.Row>
                     <Table.RowCell>Test</Table.RowCell>
                 </Table.Row>
@@ -130,19 +130,19 @@ test('should handle sticky first column', async ({ mount }) => {
         </Table.Root>,
     );
 
-    await expect(component).toHaveAttribute('data-sticky-left-column', 'true');
+    await expect(component.locator('tbody')).toHaveAttribute('data-first-column-sticky', 'true');
     await expect(component.locator('tbody')).toHaveAttribute('aria-busy', 'true');
 });
 
 test('should handle sticky first column and head', async ({ mount }) => {
     const component = await mount(
-        <Table.Root stickyLeftColumn aria-label="Table">
+        <Table.Root aria-label="Table">
             <Table.Header sticky>
                 <Table.Row>
                     <Table.HeaderCell>Name</Table.HeaderCell>
                 </Table.Row>
             </Table.Header>
-            <Table.Body>
+            <Table.Body firstColumnSticky>
                 <Table.Row>
                     <Table.RowCell>Test</Table.RowCell>
                 </Table.Row>
@@ -151,13 +151,13 @@ test('should handle sticky first column and head', async ({ mount }) => {
     );
 
     await expect(component.locator('thead')).toHaveAttribute('data-sticky', 'true');
-    await expect(component).toHaveAttribute('data-sticky-left-column', 'true');
+    await expect(component.locator('tbody')).toHaveAttribute('data-first-column-sticky', 'true');
 });
 
 test('should handle sticky right column', async ({ mount }) => {
     const component = await mount(
-        <Table.Root stickyRightColumn aria-label="Table">
-            <Table.Body>
+        <Table.Root aria-label="Table">
+            <Table.Body lastColumnSticky>
                 <Table.Row>
                     <Table.RowCell>Test 1</Table.RowCell>
                     <Table.RowCell>Test 2</Table.RowCell>
@@ -166,12 +166,12 @@ test('should handle sticky right column', async ({ mount }) => {
         </Table.Root>,
     );
 
-    await expect(component).toHaveAttribute('data-sticky-right-column', 'true');
+    await expect(component.locator('tbody')).toHaveAttribute('data-last-column-sticky', 'true');
 });
 
 test('should handle all sticky combinations', async ({ mount }) => {
     const component = await mount(
-        <Table.Root stickyLeftColumn stickyRightColumn aria-label="Table">
+        <Table.Root aria-label="Table">
             <Table.Header sticky>
                 <Table.Row>
                     <Table.HeaderCell>Name</Table.HeaderCell>
@@ -179,7 +179,7 @@ test('should handle all sticky combinations', async ({ mount }) => {
                     <Table.HeaderCell>Actions</Table.HeaderCell>
                 </Table.Row>
             </Table.Header>
-            <Table.Body>
+            <Table.Body firstColumnSticky lastColumnSticky>
                 <Table.Row>
                     <Table.RowCell>Test 1</Table.RowCell>
                     <Table.RowCell>Test 2</Table.RowCell>
@@ -190,8 +190,8 @@ test('should handle all sticky combinations', async ({ mount }) => {
     );
 
     await expect(component.locator('thead')).toHaveAttribute('data-sticky', 'true');
-    await expect(component).toHaveAttribute('data-sticky-left-column', 'true');
-    await expect(component).toHaveAttribute('data-sticky-right-column', 'true');
+    await expect(component.locator('tbody')).toHaveAttribute('data-first-column-sticky', 'true');
+    await expect(component.locator('tbody')).toHaveAttribute('data-last-column-sticky', 'true');
 });
 
 test('should handle all HeaderCell configurations', async ({ mount }) => {
@@ -423,4 +423,64 @@ test('should set title when content is truncated', async ({ mount }) => {
         'title',
         'This is a very long row cell content that should definitely get truncated',
     );
+});
+
+test('should support legacy sticky="head" prop', async ({ mount }) => {
+    const component = await mount(
+        <Table.Root sticky="head" aria-label="Table">
+            <Table.Header>
+                <Table.Row>
+                    <Table.HeaderCell>Name</Table.HeaderCell>
+                </Table.Row>
+            </Table.Header>
+            <Table.Body>
+                <Table.Row>
+                    <Table.RowCell>Test</Table.RowCell>
+                </Table.Row>
+            </Table.Body>
+        </Table.Root>,
+    );
+
+    await expect(component).toHaveAttribute('data-sticky-header', 'true');
+    await expect(component).toHaveAttribute('data-sticky-left-column', 'false');
+});
+
+test('should support legacy sticky="col" prop', async ({ mount }) => {
+    const component = await mount(
+        <Table.Root sticky="col" aria-label="Table">
+            <Table.Header>
+                <Table.Row>
+                    <Table.HeaderCell>Name</Table.HeaderCell>
+                </Table.Row>
+            </Table.Header>
+            <Table.Body>
+                <Table.Row>
+                    <Table.RowCell>Test</Table.RowCell>
+                </Table.Row>
+            </Table.Body>
+        </Table.Root>,
+    );
+
+    await expect(component).toHaveAttribute('data-sticky-header', 'false');
+    await expect(component).toHaveAttribute('data-sticky-left-column', 'true');
+});
+
+test('should support legacy sticky="both" prop', async ({ mount }) => {
+    const component = await mount(
+        <Table.Root sticky="both" aria-label="Table">
+            <Table.Header>
+                <Table.Row>
+                    <Table.HeaderCell>Name</Table.HeaderCell>
+                </Table.Row>
+            </Table.Header>
+            <Table.Body>
+                <Table.Row>
+                    <Table.RowCell>Test</Table.RowCell>
+                </Table.Row>
+            </Table.Body>
+        </Table.Root>,
+    );
+
+    await expect(component).toHaveAttribute('data-sticky-header', 'true');
+    await expect(component).toHaveAttribute('data-sticky-left-column', 'true');
 });

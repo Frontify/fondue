@@ -375,7 +375,7 @@ export const StickyFirstColumn: Story = {
         },
     },
     render: ({ ...args }) => (
-        <Table.Root {...args} stickyLeftColumn>
+        <Table.Root {...args}>
             <Table.Header>
                 <Table.Row>
                     <Table.HeaderCell>Name</Table.HeaderCell>
@@ -386,7 +386,7 @@ export const StickyFirstColumn: Story = {
                     <Table.HeaderCell>2FA</Table.HeaderCell>
                 </Table.Row>
             </Table.Header>
-            <Table.Body>
+            <Table.Body firstColumnSticky>
                 {TABLE_DATA.map((user) => (
                     <Table.Row key={user.email}>
                         <Table.RowCell>
@@ -425,7 +425,7 @@ export const StickyHeadAndCol: Story = {
         },
     },
     render: ({ ...args }) => (
-        <Table.Root {...args} stickyLeftColumn>
+        <Table.Root {...args}>
             <Table.Header sticky>
                 <Table.Row>
                     <Table.HeaderCell>Name</Table.HeaderCell>
@@ -436,7 +436,7 @@ export const StickyHeadAndCol: Story = {
                     <Table.HeaderCell>2FA</Table.HeaderCell>
                 </Table.Row>
             </Table.Header>
-            <Table.Body>
+            <Table.Body firstColumnSticky>
                 {[...TABLE_DATA, ...TABLE_DATA, ...TABLE_DATA].map((user) => (
                     <Table.Row key={user.email}>
                         <Table.RowCell>
@@ -475,7 +475,7 @@ export const StickyRightColumn: Story = {
         },
     },
     render: ({ ...args }) => (
-        <Table.Root {...args} stickyRightColumn>
+        <Table.Root {...args}>
             <Table.Header>
                 <Table.Row>
                     <Table.HeaderCell>Name</Table.HeaderCell>
@@ -486,7 +486,7 @@ export const StickyRightColumn: Story = {
                     <Table.HeaderCell>Actions</Table.HeaderCell>
                 </Table.Row>
             </Table.Header>
-            <Table.Body>
+            <Table.Body lastColumnSticky>
                 {TABLE_DATA.map((user) => (
                     <Table.Row key={user.email}>
                         <Table.RowCell>
@@ -533,8 +533,8 @@ export const StickyHeaderAndRightColumn: Story = {
             defaultViewport: 'mobile',
         },
     },
-    render: ({ ...args }) => (
-        <Table.Root {...args} stickyRightColumn>
+    render: ({ ...args}) => (
+        <Table.Root {...args}>
             <Table.Header sticky>
                 <Table.Row>
                     <Table.HeaderCell>Name</Table.HeaderCell>
@@ -545,7 +545,7 @@ export const StickyHeaderAndRightColumn: Story = {
                     <Table.HeaderCell>Actions</Table.HeaderCell>
                 </Table.Row>
             </Table.Header>
-            <Table.Body>
+            <Table.Body lastColumnSticky>
                 {[...TABLE_DATA, ...TABLE_DATA, ...TABLE_DATA].map((user, index) => (
                     <Table.Row key={`${user.email}-${index}`}>
                         <Table.RowCell>
@@ -594,7 +594,7 @@ export const StickyAllDirections: Story = {
         },
     },
     render: ({ ...args }) => (
-        <Table.Root {...args} stickyLeftColumn stickyRightColumn>
+        <Table.Root {...args}>
             <Table.Header sticky>
                 <Table.Row>
                     <Table.HeaderCell>Name</Table.HeaderCell>
@@ -605,7 +605,7 @@ export const StickyAllDirections: Story = {
                     <Table.HeaderCell>Actions</Table.HeaderCell>
                 </Table.Row>
             </Table.Header>
-            <Table.Body>
+            <Table.Body firstColumnSticky lastColumnSticky>
                 {[...TABLE_DATA, ...TABLE_DATA, ...TABLE_DATA].map((user, index) => (
                     <Table.Row key={`${user.email}-${index}`}>
                         <Table.RowCell>

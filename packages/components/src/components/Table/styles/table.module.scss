@@ -16,6 +16,18 @@
         background-color: var(--base-color),
     );
 
+    // Legacy support for deprecated data-sticky-header attribute
+    &[data-sticky-header='true'] {
+        thead {
+            @each $prop, $value in $sticky-base {
+                #{$prop}: $value;
+            }
+            top: 0;
+            z-index: 2;
+        }
+    }
+
+    // Legacy support for deprecated data-sticky-left-column attribute
     &[data-sticky-left-column='true'] {
         .headerCell:first-child,
         .rowCell:first-child {
@@ -27,7 +39,19 @@
         }
     }
 
-    &[data-sticky-right-column='true'] {
+    // New approach: sticky columns controlled by tbody attributes
+    &:has(tbody[data-first-column-sticky='true']) {
+        .headerCell:first-child,
+        .rowCell:first-child {
+            @each $prop, $value in $sticky-base {
+                #{$prop}: $value;
+            }
+            inset-inline-start: 0;
+            border-inline-end: 1px solid var(--line-color);
+        }
+    }
+
+    &:has(tbody[data-last-column-sticky='true']) {
         .headerCell:last-child,
         .rowCell:last-child {
             @each $prop, $value in $sticky-base {
