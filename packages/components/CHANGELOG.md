@@ -1,5 +1,11 @@
 # @frontify/fondue-components
 
+## 22.1.1
+
+### Patch Changes
+
+- [#2487](https://github.com/Frontify/fondue/pull/2487) [`3bc298c`](https://github.com/Frontify/fondue/commit/3bc298cd79b13af29329834bfc9ce532cb723bb3) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(`Dropdown`): click away to close not working
+
 ## 22.1.0
 
 ### Minor Changes
