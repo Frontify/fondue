@@ -2,7 +2,6 @@
 
 import { IconCaretRight } from '@frontify/fondue-icons';
 import * as RadixDropdown from '@radix-ui/react-dropdown-menu';
-import { i } from 'node_modules/vite/dist/node/types.d-aGj9QkWt';
 import { Children, forwardRef, useMemo, useRef, type ForwardedRef, type ReactNode } from 'react';
 
 import { ThemeProvider, useFondueTheme } from '../ThemeProvider/ThemeProvider';
