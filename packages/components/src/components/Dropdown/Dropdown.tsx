@@ -146,7 +146,14 @@ export const DropdownContent = (
                     data-test-id={dataTestId}
                     ref={ref}
                     onPointerDownOutside={(event) => {
-                        event.preventDefault();
+                        if (forceMount && event.currentTarget instanceof HTMLElement) {
+                            // Trigger is technically outside the dropdown content and when forceMount is true
+                            // the content is always in the DOM so the onPointerDownOutside event is triggered
+                            const dropdownIsOpen = event.currentTarget.getAttribute('data-state') === 'open';
+                            if (dropdownIsOpen) {
+                                event.preventDefault();
+                            }
+                        }
                     }}
                     onCloseAutoFocus={(event) => {
                         if (preventTriggerFocusOnClose) {

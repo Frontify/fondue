@@ -472,3 +472,78 @@ test('should not render group if it has no children', async ({ mount, page }) =>
     const groupHeading = page.getByTestId(DROPDOWN_GROUP_TEST_ID).getByText('hello world');
     await expect(groupHeading).not.toBeVisible();
 });
+
+test('should close when clicking outside', async ({ mount, page }) => {
+    const component = await mount(
+        <div>
+            <input type="text" id="dummy-input" placeholder="test" />
+            <Dropdown.Root>
+                <Dropdown.Trigger>
+                    <Button data-test-id={DROPDOWN_TRIGGER_TEST_ID}>Trigger</Button>
+                </Dropdown.Trigger>
+                <Dropdown.Content side="right" data-test-id={DROPDOWN_CONTENT_TEST_ID}>
+                    <Dropdown.Item onSelect={() => {}}>Item 1</Dropdown.Item>
+                </Dropdown.Content>
+            </Dropdown.Root>
+        </div>,
+    );
+
+    await expect(component).toBeVisible();
+    await expect(page.getByTestId(DROPDOWN_TRIGGER_TEST_ID)).toBeVisible();
+
+    // Open the dropdown
+    await page.getByTestId(DROPDOWN_TRIGGER_TEST_ID).focus();
+    await page.keyboard.press('Enter');
+
+    await expect(page.getByTestId(DROPDOWN_CONTENT_TEST_ID)).toBeVisible();
+
+    // Click outside the dropdown
+    await page.mouse.click(0, 0);
+    await expect(page.getByTestId(DROPDOWN_CONTENT_TEST_ID)).not.toBeVisible();
+});
+
+test('should render children in the DOM when `forceMount` is true', async ({ mount, page }) => {
+    const component = await mount(
+        <Dropdown.Root>
+            <Dropdown.Trigger>
+                <Button data-test-id={DROPDOWN_TRIGGER_TEST_ID}>Trigger</Button>
+            </Dropdown.Trigger>
+            <Dropdown.Content data-test-id={DROPDOWN_CONTENT_TEST_ID} forceMount>
+                <Dropdown.Item onSelect={() => {}}>Item 1</Dropdown.Item>
+                <Dropdown.Item onSelect={() => {}}>Item 2</Dropdown.Item>
+                <Dropdown.Item onSelect={() => {}}>Item 3</Dropdown.Item>
+            </Dropdown.Content>
+        </Dropdown.Root>,
+    );
+
+    await expect(component).toBeVisible();
+    await expect(page.getByTestId(DROPDOWN_CONTENT_TEST_ID)).toBeAttached();
+});
+
+test('should open when clicked and `forceMount` is true', async ({ mount, page }) => {
+    const component = await mount(
+        <Dropdown.Root>
+            <Dropdown.Trigger>
+                <Button data-test-id={DROPDOWN_TRIGGER_TEST_ID}>Trigger</Button>
+            </Dropdown.Trigger>
+            <Dropdown.Content data-test-id={DROPDOWN_CONTENT_TEST_ID} forceMount>
+                <Dropdown.Item onSelect={() => {}}>Item 1</Dropdown.Item>
+                <Dropdown.Item onSelect={() => {}}>Item 2</Dropdown.Item>
+                <Dropdown.Item onSelect={() => {}}>Item 3</Dropdown.Item>
+            </Dropdown.Content>
+        </Dropdown.Root>,
+    );
+
+    await expect(component).toBeVisible();
+    await expect(page.getByTestId(DROPDOWN_TRIGGER_TEST_ID)).toBeVisible();
+
+    // Open the dropdown
+    await page.getByTestId(DROPDOWN_TRIGGER_TEST_ID).focus();
+    await page.keyboard.press('Enter');
+
+    await expect(page.getByTestId(DROPDOWN_CONTENT_TEST_ID)).toBeVisible();
+
+    // Click outside the dropdown
+    await page.mouse.click(0, 0);
+    await expect(page.getByTestId(DROPDOWN_CONTENT_TEST_ID)).not.toBeVisible();
+});
