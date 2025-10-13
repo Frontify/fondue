@@ -487,16 +487,22 @@ test('should close when clicking outside', async ({ mount, page }) => {
             </Dropdown.Root>
         </div>,
     );
+
     await expect(component).toBeVisible();
     await expect(page.getByTestId(DROPDOWN_TRIGGER_TEST_ID)).toBeVisible();
+
+    // Open the dropdown
     await page.getByTestId(DROPDOWN_TRIGGER_TEST_ID).focus();
     await page.keyboard.press('Enter');
+
     await expect(page.getByTestId(DROPDOWN_CONTENT_TEST_ID)).toBeVisible();
+
+    // Click outside the dropdown
     await page.mouse.click(0, 0);
     await expect(page.getByTestId(DROPDOWN_CONTENT_TEST_ID)).not.toBeVisible();
 });
 
-test('should render children when forceMount is true', async ({ mount, page }) => {
+test('should render children in the DOM when `forceMount` is true', async ({ mount, page }) => {
     const component = await mount(
         <Dropdown.Root>
             <Dropdown.Trigger>
@@ -509,11 +515,12 @@ test('should render children when forceMount is true', async ({ mount, page }) =
             </Dropdown.Content>
         </Dropdown.Root>,
     );
+
     await expect(component).toBeVisible();
     await expect(page.getByTestId(DROPDOWN_CONTENT_TEST_ID)).toBeAttached();
 });
 
-test('should open when clicked and forceMount is true', async ({ mount, page }) => {
+test('should open when clicked and `forceMount` is true', async ({ mount, page }) => {
     const component = await mount(
         <Dropdown.Root>
             <Dropdown.Trigger>
@@ -526,9 +533,17 @@ test('should open when clicked and forceMount is true', async ({ mount, page }) 
             </Dropdown.Content>
         </Dropdown.Root>,
     );
+
     await expect(component).toBeVisible();
     await expect(page.getByTestId(DROPDOWN_TRIGGER_TEST_ID)).toBeVisible();
+
+    // Open the dropdown
     await page.getByTestId(DROPDOWN_TRIGGER_TEST_ID).focus();
     await page.keyboard.press('Enter');
+
     await expect(page.getByTestId(DROPDOWN_CONTENT_TEST_ID)).toBeVisible();
+
+    // Click outside the dropdown
+    await page.mouse.click(0, 0);
+    await expect(page.getByTestId(DROPDOWN_CONTENT_TEST_ID)).not.toBeVisible();
 });
