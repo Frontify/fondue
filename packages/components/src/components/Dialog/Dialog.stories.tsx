@@ -675,9 +675,11 @@ export const WithTooltip: Story = {
         <Dialog.Root>
             <Tooltip.Root>
                 <Tooltip.Trigger asChild>
-                    <Dialog.Trigger asChild>
-                        <Button>Trigger</Button>
-                    </Dialog.Trigger>
+                    <span style={{ display: 'inline-flex' }}>
+                        <Dialog.Trigger asChild>
+                            <Button>Trigger</Button>
+                        </Dialog.Trigger>
+                    </span>
                 </Tooltip.Trigger>
                 <Tooltip.Content>Dropdown tooltip</Tooltip.Content>
             </Tooltip.Root>
