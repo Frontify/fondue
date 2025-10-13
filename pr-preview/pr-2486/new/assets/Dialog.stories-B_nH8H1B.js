@@ -551,9 +551,9 @@ import{j as e}from"./jsx-runtime-BYYWji4R.js";import{r as $e}from"./index-ClcD9V
                             provident.
                             <br />
                             <br />
-                            Similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum
-                            fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum
-                            soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere
+                            Similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga.
+                            Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta
+                            nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere
                             possimus, omnis voluptas assumenda est, omnis dolor repellendus.
                             <br />
                             <br />
