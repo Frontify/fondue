@@ -5,7 +5,7 @@ import { setInteractionModality } from '@react-aria/interactions';
 import { useRadio, useRadioGroup } from '@react-aria/radio';
 import { VisuallyHidden } from '@react-aria/visually-hidden';
 import { useRadioGroupState, type RadioGroupState } from '@react-stately/radio';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { forwardRef, useLayoutEffect, useMemo, useRef, useState, type ReactElement } from 'react';
 
 import { type IconProps } from '@foundation/Icon/IconProps';

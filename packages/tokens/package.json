@@ -72,13 +72,13 @@
         "@storybook/react-vite": "^8.6.12",
         "@storybook/theming": "^8.6.12",
         "@types/chroma-js": "^3.1.1",
-        "@types/node": "^22.18.0",
-        "@types/react": "^18.3.24",
+        "@types/node": "^22.18.10",
+        "@types/react": "^18.3.26",
         "@types/react-dom": "^18.3.7",
-        "@vitejs/plugin-react": "^4.7.0",
-        "chalk": "^5.6.0",
+        "@vitejs/plugin-react": "^5.0.4",
+        "chalk": "^5.6.2",
         "chroma-js": "^3.1.2",
-        "eslint": "^9.34.0",
+        "eslint": "^9.37.0",
         "eslint-plugin-notice": "^1.0.0",
         "nodemon": "^3.1.10",
         "prettier": "^3.6.2",
@@ -87,9 +87,8 @@
         "rimraf": "^6.0.1",
         "storybook": "^8.6.12",
         "style-dictionary": "^4.4.0",
-        "tailwindcss": "^3.4.17",
-        "tsx": "^4.20.5",
-        "typescript": "^5.9.2",
-        "typescript-eslint": "^8.41.0"
+        "tailwindcss": "^3.4.18",
+        "tsx": "^4.20.6",
+        "typescript": "^5.9.3"
     }
 }

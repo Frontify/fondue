@@ -7,22 +7,21 @@
     gap: var(--spacing-x-small);
 
     & button:not(:first-child) {
-        margin-left: var(--spacing-x-small);
+        margin-inline-start: var(--spacing-x-small);
     }
 
-    &[data-readonly="true"] {
-       pointer-events: none;
+    &[data-readonly='true'] {
+        pointer-events: none;
     }
 
-    &[data-orientation="vertical"] {
+    &[data-orientation='vertical'] {
         display: grid;
         grid-template-columns: 1rem auto;
 
         & button {
-            margin-left: 0;
+            margin-inline-start: 0;
         }
     }
-
 }
 
 .item {
@@ -35,28 +34,29 @@
 
     transition: border cubic-bezier(0.4, 0, 0.2, 1) 150ms;
 
-    &[data-readonly="true"] {
-       pointer-events: none;
+    &[data-readonly='true'] {
+        pointer-events: none;
     }
 
     &:hover {
         border: 1px solid var(--color-line-strong);
 
-        [data-state="checked"]::after {
+        [data-state='checked']::after {
             outline: 6px solid var(--color-primary-hover);
         }
     }
 
-    .root[data-emphasis="highlight"] &:hover {
-        [data-state="checked"]::after {
+    .root[data-emphasis='highlight'] &:hover {
+        [data-state='checked']::after {
             outline: 6px solid var(--color-highlight-hover);
         }
     }
 
-    &:disabled, .root[data-emphasis="highlight"] &:disabled {
+    &:disabled,
+    .root[data-emphasis='highlight'] &:disabled {
         border: 1px solid var(--color-line-strong);
 
-        [data-state="checked"]::after {
+        [data-state='checked']::after {
             outline: 6px solid var(--color-container-secondary-default);
         }
     }
@@ -75,7 +75,7 @@
     position: relative;
 
     &::after {
-        content: "";
+        content: '';
         display: block;
         width: 6px;
         height: 6px;
@@ -85,7 +85,7 @@
         transition: outline cubic-bezier(0.4, 0, 0.2, 1) 150ms;
     }
 
-    .root[data-emphasis="highlight"] & {
+    .root[data-emphasis='highlight'] & {
         &::after {
             outline: 6px solid var(--color-highlight-default);
         }

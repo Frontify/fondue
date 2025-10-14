@@ -174,6 +174,7 @@ export const Textarea = ({
             data-resizable={resizable}
             data-status={status}
             data-max-rows={!!maxRows}
+            data-test-id={dataTestId}
             style={{ '--max-rows': `${maxRows}` } as CSSProperties}
         >
             {decorator ? <div className={styles.decorator}>{decorator}</div> : null}

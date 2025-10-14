@@ -95,8 +95,7 @@
     align-items: center;
     gap: sizeToken.get(2);
     flex-grow: 1;
-    padding-left: sizeToken.get(3);
-    padding-right: sizeToken.get(3);
+    padding-inline: sizeToken.get(3);
     height: sizeToken.get(9);
     outline: none;
     width: 100%;
@@ -124,9 +123,8 @@
 
 .actions {
     position: absolute;
-    top: 0;
-    bottom: 0;
-    right: sizeToken.get(3);
+    inset-block: 0;
+    inset-inline-end: sizeToken.get(3);
     display: flex;
     align-items: center;
     pointer-events: none;

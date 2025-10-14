@@ -2,7 +2,7 @@
     "name": "root",
     "private": true,
     "type": "module",
-    "packageManager": "pnpm@10.15.0+sha512.486ebc259d3e999a4e8691ce03b5cac4a71cbeca39372a9b762cb500cfdf0873e2cb16abe3d951b1ee2cf012503f027b98b6584e4df22524e0c7450d9ec7aa7b",
+    "packageManager": "pnpm@10.18.3+sha512.bbd16e6d7286fd7e01f6b3c0b3c932cda2965c06a908328f74663f10a9aea51f1129eea615134bf992831b009eabe167ecb7008b597f40ff9bc75946aadfb08d",
     "engines": {
         "node": "^22",
         "npm": "<=0"
@@ -30,11 +30,11 @@
     },
     "devDependencies": {
         "@changesets/changelog-github": "^0.5.1",
-        "@changesets/cli": "^2.29.6",
+        "@changesets/cli": "^2.29.7",
         "chokidar-cli": "^3.0.0",
         "concurrently": "^9.2.1",
         "glob": "^11.0.3",
-        "taze": "^19.3.0",
-        "wait-on": "^8.0.4"
+        "taze": "^19.7.0",
+        "wait-on": "^9.0.1"
     }
 }

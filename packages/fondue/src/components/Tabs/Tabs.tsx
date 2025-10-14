@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { useFocusRing } from '@react-aria/focus';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import {
     Children,
     type KeyboardEvent,

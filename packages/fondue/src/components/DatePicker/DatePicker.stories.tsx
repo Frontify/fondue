@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type Meta, type StoryFn } from '@storybook/react';
+import { type Meta, type StoryFn } from '@storybook/react-vite';
 import { addDays, subDays } from 'date-fns';
 import { useRef, useState } from 'react';
 
@@ -28,6 +28,34 @@ export default {
         validation: {
             options: Object.values(Validation),
             control: { type: 'select' },
+        },
+        isClearable: {
+            defaultValue: false,
+            control: { type: 'boolean' },
+        },
+        shouldCloseOnSelect: {
+            defaultValue: false,
+            control: { type: 'boolean' },
+        },
+        hasPopperArrow: {
+            defaultValue: true,
+            control: { type: 'boolean' },
+        },
+        preventOpenOnFocus: {
+            defaultValue: false,
+            control: { type: 'boolean' },
+        },
+        inline: {
+            defaultValue: false,
+            control: { type: 'boolean' },
+        },
+        fixedHeight: {
+            defaultValue: true,
+            control: { type: 'boolean' },
+        },
+        hugWidth: {
+            defaultValue: true,
+            control: { type: 'boolean' },
         },
     },
 } as Meta<DatePickerProps>;
@@ -203,3 +231,13 @@ export const Inline = WithWrapperDiv.bind({});
 Inline.args = {
     inline: true,
 };
+
+export const FullWidth = Template.bind({});
+FullWidth.args = {
+    placeHolder: 'Select a date',
+    isClearable: true,
+    shouldCloseOnSelect: true,
+    hugWidth: false,
+};
+
+FullWidth.storyName = 'Full Width';

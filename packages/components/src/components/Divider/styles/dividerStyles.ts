@@ -7,7 +7,7 @@ export const dividerStyles = sv({
     variants: {
         direction: {
             horizontal: 'tw-flex-col tw-h-0 tw-border-t tw-w-full',
-            vertical: 'tw-flex-row tw-w-0 tw-border-r tw-h-full ',
+            vertical: 'tw-flex-row tw-w-0 tw-border-e tw-h-full ',
         },
         color: {
             weak: 'tw-border-line-subtle',

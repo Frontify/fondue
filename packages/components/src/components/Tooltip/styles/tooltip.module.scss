@@ -16,11 +16,13 @@
     @include text.text-sm;
 
     &[data-tooltip-spacing='compact'] {
-        padding: sizeToken.get(1) sizeToken.get(2);
+        padding-block: sizeToken.get(1);
+        padding-inline: sizeToken.get(2);
     }
 
     &[data-tooltip-spacing='spacious'] {
-        padding: sizeToken.get(2) sizeToken.get(3);
+        padding-block: sizeToken.get(2);
+        padding-inline: sizeToken.get(3);
     }
 }
 

@@ -7,7 +7,7 @@ type TableHeaderRowProps = {
 };
 
 /**
- * @deprecated Please use updated table component from `@frontify/fondue/components` instead.
+ * @deprecated Use `Table` from `@frontify/fondue/components` instead.
  */
 export const TableHeaderRow = ({ children }: TableHeaderRowProps) => {
     const ref = useRef<HTMLTableRowElement | null>(null);

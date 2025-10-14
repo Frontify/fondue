@@ -5,7 +5,7 @@
 
 .table {
     position: relative;
-    text-align: left;
+    text-align: start;
     border-collapse: separate;
     border-spacing: 0;
     width: 100%;
@@ -16,8 +16,8 @@
         background-color: var(--color-surface-default),
     );
 
-    &[data-sticky='head'],
-    &[data-sticky='both'] {
+    // Legacy support for deprecated data-sticky-header attribute
+    &[data-sticky-header='true'] {
         thead {
             @each $prop, $value in $sticky-base {
                 #{$prop}: $value;
@@ -27,15 +27,38 @@
         }
     }
 
-    &[data-sticky='col'],
-    &[data-sticky='both'] {
+    // Legacy support for deprecated data-sticky-left-column attribute
+    &[data-sticky-left-column='true'] {
         .headerCell:first-child,
         .rowCell:first-child {
             @each $prop, $value in $sticky-base {
                 #{$prop}: $value;
             }
-            left: 0;
-            border-right: 1px solid var(--color-line-subtle);
+            inset-inline-start: 0;
+            border-inline-end: 1px solid var(--color-line-subtle);
+        }
+    }
+
+    // New approach: sticky columns controlled by tbody attributes
+    &:has(tbody[data-first-column-sticky='true']) {
+        .headerCell:first-child,
+        .rowCell:first-child {
+            @each $prop, $value in $sticky-base {
+                #{$prop}: $value;
+            }
+            inset-inline-start: 0;
+            border-inline-end: 1px solid var(--color-line-subtle);
+        }
+    }
+
+    &:has(tbody[data-last-column-sticky='true']) {
+        .headerCell:last-child,
+        .rowCell:last-child {
+            @each $prop, $value in $sticky-base {
+                #{$prop}: $value;
+            }
+            inset-inline-end: 0;
+            border-inline-start: 1px solid var(--color-line-subtle);
         }
     }
 
@@ -65,8 +88,17 @@
 
 .caption {
     padding: sizeToken.get(3) sizeToken.get(2);
-    text-align: left;
+    text-align: start;
     color: var(--color-primary-default);
+}
+
+.header {
+    &[data-sticky='true'] {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        background-color: var(--base-color);
+    }
 }
 
 .headerCell {
@@ -176,7 +208,7 @@
 .headerCell,
 .rowCell {
     &[data-align='left'] {
-        text-align: left;
+        text-align: start;
 
         .cellContent {
             justify-content: flex-start;
@@ -192,7 +224,7 @@
     }
 
     &[data-align='right'] {
-        text-align: right;
+        text-align: end;
 
         .cellContent {
             justify-content: flex-end;

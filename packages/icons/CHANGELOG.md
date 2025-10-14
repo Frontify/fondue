@@ -6,7 +6,19 @@
 
 - chore: fondue release candidate
 
-## 0.18.0-beta.2
+## 0.20.0
+
+### Minor Changes
+
+- [#2456](https://github.com/Frontify/fondue/pull/2456) [`f4cb7aa`](https://github.com/Frontify/fondue/commit/f4cb7aa5c98a134187452fe9cef327c69c5b57a5) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
+
+## 0.19.0
+
+### Minor Changes
+
+- [#2448](https://github.com/Frontify/fondue/pull/2448) [`d04e30d`](https://github.com/Frontify/fondue/commit/d04e30d490c859aa52ba29a4c5fc5745e2d9e85b) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
+
+## 0.18.0
 
 ### Minor Changes
 

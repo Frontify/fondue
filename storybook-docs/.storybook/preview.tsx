@@ -39,6 +39,9 @@ export const parameters = {
             },
         },
     },
+    docs: {
+        codePanel: true,
+    },
 };
 export const globalTypes = {
     theme: {
@@ -63,6 +66,16 @@ export const globalTypes = {
                     icon: 'contrast',
                 },
             ],
+            dynamicTitle: true,
+        },
+    },
+    direction: {
+        name: 'Direction',
+        description: 'Text direction',
+        defaultValue: 'ltr',
+        toolbar: {
+            icon: 'paragraph',
+            items: ['ltr', 'rtl'],
             dynamicTitle: true,
         },
     },

@@ -16,6 +16,14 @@
     overflow: auto;
     max-height: var(--radix-dropdown-menu-content-available-height);
 
+    &[data-state='closed'] {
+        display: none;
+    }
+
+    &[data-state='open'] {
+        display: block;
+    }
+
     & {
         @include shadow.shadow-lg;
     }
@@ -35,7 +43,7 @@
 }
 
 .subContent {
-    margin-left: sizeToken.get(2);
+    margin-inline-start: sizeToken.get(2);
 }
 
 .item,
@@ -55,7 +63,6 @@
     &:active {
         transition: none;
     }
-
 
     &:not([data-show-focus-ring="false"]) {
         @include focusStyle.focus-outline;
@@ -109,12 +116,15 @@
 
     .subMenuIndicator {
         order: 2;
-        margin-left: auto;
+        margin-inline-start: auto;
+    }
+
+    [dir='rtl'] & .subMenuIndicator {
+        transform: scaleX(-1);
     }
 }
 
 .group {
-
     .item~&,
     .group~& {
         border-top: var(--border-width-default) solid var(--color-line-subtle);
@@ -150,20 +160,20 @@
     // Right slot
     &[data-name='right'] {
         order: 1;
-        margin-left: auto;
+        margin-inline-start: auto;
 
         &~.subMenuIndicator {
-            margin-left: sizeToken.get(1.5);
+            margin-inline-start: sizeToken.get(1.5);
         }
     }
 
     // 2 slots without any name should be implicitly ordered
     &:not([data-name='right'])~.slot:not([data-name='left']) {
         order: 1;
-        margin-left: auto;
+        margin-inline-start: auto;
 
         &~.subMenuIndicator {
-            margin-left: 0;
+            margin-inline-start: 0;
         }
     }
 }

@@ -77,4 +77,12 @@
     &[data-state='checked'] {
         transform: translate(calc(var(--switch-width) - 100% - 1px), -1px);
     }
+
+    [dir='rtl'] & {
+        transform: translate(1px, -1px);
+
+        &[data-state='checked'] {
+            transform: translate(calc(-1 * (var(--switch-width) - 100% - 1px)), -1px);
+        }
+    }
 }

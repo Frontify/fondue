@@ -6,7 +6,7 @@ import { useMenuTrigger } from '@react-aria/menu';
 import { DismissButton, useOverlay } from '@react-aria/overlays';
 import { mergeProps } from '@react-aria/utils';
 import { useMenuTriggerState } from '@react-stately/menu';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'motion/react';
 import { type ReactElement, useEffect, useRef, useState } from 'react';
 
 import { ActionMenu, type ActionMenuBlock } from '@components/ActionMenu/ActionMenu';

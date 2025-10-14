@@ -17,7 +17,7 @@ import { TableHeaderRow } from './TableHeaderRow';
 import { TableRow } from './TableRow';
 
 /**
- * @deprecated Please use updated table component from `@frontify/fondue/components` instead.
+ * @deprecated Use `Table` from `@frontify/fondue/components` instead.
  */
 export enum SelectionMode {
     NoSelect = 'none',
@@ -26,12 +26,12 @@ export enum SelectionMode {
 }
 
 /**
- * @deprecated Please use updated table component from `@frontify/fondue/components` instead.
+ * @deprecated Use `Table` from `@frontify/fondue/components` instead.
  */
 export type ColumnAlign = 'left' | 'right';
 
 /**
- * @deprecated Please use updated table component from `@frontify/fondue/components` instead.
+ * @deprecated Use `Table` from `@frontify/fondue/components` instead.
  */
 export type Cell = {
     sortId: string | number;
@@ -41,7 +41,7 @@ export type Cell = {
 };
 
 /**
- * @deprecated Please use updated table component from `@frontify/fondue/components` instead.
+ * @deprecated Use `Table` from `@frontify/fondue/components` instead.
  */
 export type Column = {
     name: string;
@@ -52,7 +52,7 @@ export type Column = {
 };
 
 /**
- * @deprecated Please use updated table component from `@frontify/fondue/components` instead.
+ * @deprecated Use `Table` from `@frontify/fondue/components` instead.
  */
 export type Row = {
     key: Key;
@@ -63,7 +63,7 @@ export type Row = {
 };
 
 /**
- * @deprecated Please use updated table component from `@frontify/fondue/components` instead.
+ * @deprecated Use `Table` from `@frontify/fondue/components` instead.
  */
 export type TableProps = {
     columns: Column[];
@@ -76,7 +76,7 @@ export type TableProps = {
 };
 
 /**
- * @deprecated Please use updated table component from `@frontify/fondue/components` instead.
+ * @deprecated Use `Table` from `@frontify/fondue/components` instead.
  */
 export enum SortDirection {
     Ascending = 'ascending',
@@ -128,7 +128,7 @@ const getRowFromId = (rows: Row[], id: Key) => rows.find(({ key }) => key === id
 const getAllRowIds = (rows: Row[]): Key[] => rows.map(({ key: id }) => id);
 
 /**
- * @deprecated Please use updated table component from `@frontify/fondue/components` instead.
+ * @deprecated Use `Table` from `@frontify/fondue/components` instead.
  */
 export const Table = ({
     columns,
@@ -240,4 +240,7 @@ export const Table = ({
         </div>
     );
 };
+/**
+ * @deprecated Use `Table` from `@frontify/fondue/components` instead.
+ */
 Table.displayName = 'FondueTable';

@@ -2,9 +2,8 @@
 
 @use '../../../utilities/focusStyle.module.scss';
 
-
 @mixin variant($name, $color, $weakColor: $color) {
-    &[data-variant=#{$name}]:not([data-disabled="true"]) {
+    &[data-variant='#{$name}']:not([data-disabled='true']) {
         background-color: var(--color-#{$color}-default);
         color: var(--color-#{$color}-on-#{$color});
 
@@ -21,7 +20,7 @@
             color: var(--color-#{$color}-on-#{$color});
         }
 
-        &[data-emphasis="weak"] {
+        &[data-emphasis='weak'] {
             background-color: var(--color-container-#{$weakColor}-default);
             color: var(--color-container-#{$weakColor}-on-#{$weakColor}-container);
 
@@ -36,12 +35,15 @@
 .root {
     font-size: var(--typography-font-size-small);
     line-height: var(--typography-line-height-tight);
-    padding: var(--spacing-xx-small) var(--spacing-x-small);
+    padding-block: var(--spacing-xx-small);
+    padding-inline: var(--spacing-x-small);
     gap: var(--spacing-xx-small);
     border-radius: 9999px;
     position: relative;
     display: inline-flex;
-    transition: background-color 250ms, color 250ms;
+    transition:
+        background-color 250ms,
+        color 250ms;
     align-items: center;
     white-space: nowrap;
     min-height: 1rem;
@@ -51,21 +53,21 @@
     @include variant(highlight, highlight);
     @include variant(warning, warning);
     @include variant(negative, error);
-}
 
+    &[data-size='small'] {
+        padding-block: 2px;
+        padding-inline: var(--spacing-x-small);
+    }
 
-[data-size="small"] {
-    padding: 2px var(--spacing-x-small);
-}
-
-[data-disabled="true"] {
-    background-color: var(--color-container-disabled-default);
-    color: var(--color-container-disabled-on-disabled);
-    cursor: default;
-
-    &:hover {
+    &[data-disabled='true'] {
         background-color: var(--color-container-disabled-default);
         color: var(--color-container-disabled-on-disabled);
+        cursor: default;
+
+        &:hover {
+            background-color: var(--color-container-disabled-default);
+            color: var(--color-container-disabled-on-disabled);
+        }
     }
 }
 

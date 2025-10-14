@@ -38,16 +38,16 @@
 
     &[data-scrollbar-gutter='stable'],
     &[data-scrollbar-type='always'] {
-        padding-right: var(--scrollbar-size);
-        padding-bottom: var(--scrollbar-size);
+        padding-inline-end: var(--scrollbar-size);
+        padding-block-end: var(--scrollbar-size);
     }
 
     &[data-scrollbar-gutter='stable-horizontal'] {
-        padding-bottom: var(--scrollbar-size);
+        padding-block-end: var(--scrollbar-size);
     }
 
     &[data-scrollbar-gutter='stable-vertical'] {
-        padding-right: var(--scrollbar-size);
+        padding-inline-end: var(--scrollbar-size);
     }
 }
 
