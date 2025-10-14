@@ -18,7 +18,6 @@ $radius-without-border: calc(var(--border-radius-medium) - var(--border-width-de
     font-weight: 400;
     text-align: center;
 
-    min-width: max-content;
     height: sizeToken.get(9);
     box-sizing: border-box;
 
@@ -27,6 +26,11 @@ $radius-without-border: calc(var(--border-radius-medium) - var(--border-width-de
     border-radius: var(--border-radius-medium);
 
     isolation: isolate;
+    direction: ltr;
+
+    [dir='rtl'] & {
+        direction: rtl;
+    }
 
     &[data-hug-width='true'] {
         width: fit-content;
@@ -43,6 +47,7 @@ $radius-without-border: calc(var(--border-radius-medium) - var(--border-width-de
     align-items: stretch;
     justify-content: center;
     user-select: none;
+    min-width: 0;
 
     // Hover on unselected items but not when disabled
     &[aria-checked='false']:enabled:hover:not(:focus-visible) {
@@ -51,12 +56,12 @@ $radius-without-border: calc(var(--border-radius-medium) - var(--border-width-de
 
     // Apply border radius based on the index
     &:first-child {
-        border-top-left-radius: $radius-without-border;
-        border-bottom-left-radius: $radius-without-border;
+        border-start-start-radius: $radius-without-border;
+        border-end-start-radius: $radius-without-border;
     }
     &:nth-last-child(2) {
-        border-top-right-radius: $radius-without-border;
-        border-bottom-right-radius: $radius-without-border;
+        border-start-end-radius: $radius-without-border;
+        border-end-end-radius: $radius-without-border;
     }
 
     // Focus styles for keyboard navigation, custom rounding applied to match the active indicator
@@ -70,15 +75,16 @@ $radius-without-border: calc(var(--border-radius-medium) - var(--border-width-de
 }
 
 .itemLabel {
+    position: relative;
     display: flex;
     flex-grow: 1;
     align-items: center;
     justify-content: center;
     border-radius: inherit;
-    padding-left: sizeToken.get(4);
-    padding-right: sizeToken.get(4);
+    padding-inline: clamp(0rem, 2vw, sizeToken.get(4));
     gap: sizeToken.get(2);
     color: var(--color-container-secondary-on-secondary-container);
+    min-width: 0;
 
     font-size: var(--typography-font-size-medium);
     line-height: var(--typography-line-height-medium);
@@ -91,8 +97,6 @@ $radius-without-border: calc(var(--border-radius-medium) - var(--border-width-de
     .item:disabled & {
         color: var(--color-container-disabled-on-disabled-container);
     }
-
-
 }
 
 .itemLabelActive {
@@ -151,7 +155,7 @@ $radius-without-border: calc(var(--border-radius-medium) - var(--border-width-de
     display: none;
     position: absolute;
     top: 0;
-    left: 0;
+    inset-inline-start: 0;
     height: 100%;
     pointer-events: none;
 
@@ -190,6 +194,11 @@ $radius-without-border: calc(var(--border-radius-medium) - var(--border-width-de
         .item[aria-checked='true']:nth-child(#{$index}) ~ & {
             transform: translateX(calc(100% * calc(#{$index} - 1)));
         }
+
+        // RTL support: reverse the transform direction
+        [dir='rtl'] .item[aria-checked='true']:nth-child(#{$index}) ~ & {
+            transform: translateX(calc(-100% * calc(#{$index} - 1)));
+        }
     }
 }
 
@@ -198,8 +207,7 @@ $radius-without-border: calc(var(--border-radius-medium) - var(--border-width-de
     transition-timing-function: ease-out;
     min-width: 1px;
     width: 1px;
-    margin-left: -0.5px;
-    margin-right: -0.5px;
+    margin-inline: -0.5px;
     background-color: var(--color-line-mid);
 
     & {

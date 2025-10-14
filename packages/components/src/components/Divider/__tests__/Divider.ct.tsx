@@ -51,7 +51,7 @@ test('should render with color strong', async ({ mount }) => {
 
 test('should render with direction vertical', async ({ mount }) => {
     const component = await mount(<Divider direction="vertical" />);
-    await expect(component).toHaveClass(/tw-border-r/);
+    await expect(component).toHaveClass(/tw-border-e/);
 });
 
 test('should render with padding none horizontal', async ({ mount }) => {

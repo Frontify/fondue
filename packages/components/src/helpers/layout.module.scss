@@ -98,26 +98,26 @@ $layoutProperties: (
             top: var(--#{$breakpoint}-top-computed);
         }
         @if (list.index($additional-properties, 'right')) {
-            right: var(--#{$breakpoint}-right-computed);
+            inset-inline-end: var(--#{$breakpoint}-right-computed);
         }
         @if (list.index($additional-properties, 'bottom')) {
             bottom: var(--#{$breakpoint}-bottom-computed);
         }
         @if (list.index($additional-properties, 'left')) {
-            left: var(--#{$breakpoint}-left-computed);
+            inset-inline-start: var(--#{$breakpoint}-left-computed);
         }
 
         @if (list.index($additional-properties, 'margin')) {
             margin: var(--#{$breakpoint}-margin-computed);
         }
         @if (list.index($additional-properties, 'margin-left')) {
-            margin-left: var(
+            margin-inline-start: var(
                 --#{$breakpoint}-margin-left-computed,
                 var(--#{$breakpoint}-margin-x-computed, var(--#{$breakpoint}-margin-computed))
             );
         }
         @if (list.index($additional-properties, 'margin-right')) {
-            margin-right: var(
+            margin-inline-end: var(
                 --#{$breakpoint}-margin-right-computed,
                 var(--#{$breakpoint}-margin-x-computed, var(--#{$breakpoint}-margin-computed))
             );
@@ -139,13 +139,13 @@ $layoutProperties: (
             padding: var(--#{$breakpoint}-padding-computed);
         }
         @if (list.index($additional-properties, 'padding-left')) {
-            padding-left: var(
+            padding-inline-start: var(
                 --#{$breakpoint}-padding-left-computed,
                 var(--#{$breakpoint}-padding-x-computed, var(--#{$breakpoint}-padding-computed))
             );
         }
         @if (list.index($additional-properties, 'padding-right')) {
-            padding-right: var(
+            padding-inline-end: var(
                 --#{$breakpoint}-padding-right-computed,
                 var(--#{$breakpoint}-padding-x-computed, var(--#{$breakpoint}-padding-computed))
             );

@@ -16,14 +16,14 @@
         @include transitions.transition-colors;
     }
 
-    &[data-variant="default"] {
+    &[data-variant='default'] {
         font-family: var(--typography-font-family-primary);
         font-size: var(--typography-font-size-medium);
         line-height: var(--typography-line-height-medium);
         color: var(--color-secondary-default);
     }
 
-    &[data-variant="strong"] {
+    &[data-variant='strong'] {
         font-family: var(--typography-font-family-primary);
         font-size: var(--typography-font-size-medium);
         line-height: var(--typography-line-height-tight);
@@ -31,20 +31,20 @@
     }
 
     // Hover states for various input types
-    &:has(+ * input:hover:not(:disabled):not([data-readonly="true"]):not([aria-readonly="true"])),
-    &:has(~ button:hover:not(:disabled):not([data-readonly="true"]):not([aria-readonly="true"])) {
+    &:has(+ * input:hover:not(:disabled):not([data-readonly='true']):not([aria-readonly='true'])),
+    &:has(~ button:hover:not(:disabled):not([data-readonly='true']):not([aria-readonly='true'])) {
         color: var(--color-primary-default);
     }
 
     // Peer hover (when this label is a peer)
-    :has(&) input:hover:not(:disabled):not([data-readonly="true"]):not([aria-readonly="true"])~&,
-    :has(&) button:hover:not(:disabled):not([data-readonly="true"]):not([aria-readonly="true"])~& {
+    :has(&) input:hover:not(:disabled):not([data-readonly='true']):not([aria-readonly='true']) ~ &,
+    :has(&) button:hover:not(:disabled):not([data-readonly='true']):not([aria-readonly='true']) ~ & {
         color: var(--color-primary-default);
     }
 
     // Checked/indeterminate states
-    [data-state="checked"]+&,
-    [data-state="indeterminate"]+& {
+    [data-state='checked'] + &,
+    [data-state='indeterminate'] + & {
         font-weight: 500;
     }
 
@@ -56,17 +56,17 @@
     }
 
     // Peer disabled
-    input:disabled~&,
-    button:disabled~& {
+    input:disabled ~ &,
+    button:disabled ~ & {
         color: var(--color-disabled-default);
         cursor: not-allowed;
     }
 
     // Required asterisk
-    &[data-required="true"]::after {
-        content: "*";
+    &[data-required='true']::after {
+        content: '*';
         display: flex;
-        margin-left: calc(-1 * var(--spacing-x-small));
+        margin-inline-start: calc(-1 * var(--space-xs));
         margin-top: -1px;
         font-family: var(--typography-font-family-primary);
         font-size: var(--typography-font-size-small);
@@ -74,14 +74,13 @@
         color: var(--color-error-default);
     }
 
-    &[data-required="true"]:hover::after {
+    &[data-required='true']:hover::after {
         color: var(--color-error-hover);
     }
 
     &::after {
         display: none;
     }
-
 }
 
 .contentArea {

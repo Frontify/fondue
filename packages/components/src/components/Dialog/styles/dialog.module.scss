@@ -8,8 +8,7 @@
 .content {
     display: block;
     position: fixed;
-    left: sizeToken.get(2);
-    right: sizeToken.get(2);
+    inset-inline: sizeToken.get(2);
     top: 50%;
     transform: translateY(-50%);
     background-color: var(--color-surface-default);
@@ -67,7 +66,8 @@
         }
 
         .body {
-            padding: sizeToken.get(2) sizeToken.get(4);
+            padding-block: sizeToken.get(2);
+            padding-inline: sizeToken.get(4);
         }
     }
 
@@ -78,7 +78,8 @@
         }
 
         .body {
-            padding: sizeToken.get(4) sizeToken.get(6);
+            padding-block: sizeToken.get(4);
+            padding-inline: sizeToken.get(6);
         }
     }
 
@@ -89,7 +90,8 @@
         }
 
         .body {
-            padding: sizeToken.get(6) sizeToken.get(10);
+            padding-block: sizeToken.get(6);
+            padding-inline: sizeToken.get(10);
         }
     }
 
@@ -103,7 +105,7 @@
         grid-column: 1;
 
         &[data-show-border='true'] {
-            border-bottom: var(--border-width-default) solid var(--color-line-subtle);
+            border-block-end: var(--border-width-default) solid var(--color-line-subtle);
         }
 
         &[data-dialog-header-padding='none'] {
@@ -156,15 +158,18 @@
         }
 
         &[data-dialog-body-padding='compact'] {
-            padding: sizeToken.get(2) sizeToken.get(4);
+            padding-block: sizeToken.get(2);
+            padding-inline: sizeToken.get(4);
         }
 
         &[data-dialog-body-padding='comfortable'] {
-            padding: sizeToken.get(4) sizeToken.get(6);
+            padding-block: sizeToken.get(4);
+            padding-inline: sizeToken.get(6);
         }
 
         &[data-dialog-body-padding='spacious'] {
-            padding: sizeToken.get(6) sizeToken.get(10);
+            padding-block: sizeToken.get(6);
+            padding-inline: sizeToken.get(10);
         }
 
         & {
@@ -205,7 +210,7 @@
         }
 
         &[data-show-border='true'] {
-            border-top: var(--border-width-default) solid var(--color-line-subtle);
+            border-block-start: var(--border-width-default) solid var(--color-line-subtle);
         }
 
         & {
@@ -219,10 +224,7 @@
 
 .underlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    inset: 0;
     background-color: rgb(from var(--color-primary-default) r g b / 0);
     pointer-events: auto;
 

@@ -91,10 +91,26 @@ export const TooltipContent = (
     }: TooltipContentProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
-    const theme = useFondueTheme();
+    const { theme, dir } = useFondueTheme();
+
+    const getAdjustedSide = (side?: 'top' | 'right' | 'bottom' | 'left') => {
+        if (!side || dir === 'ltr') {
+            return side;
+        }
+
+        if (side === 'left') {
+            return 'right';
+        }
+        if (side === 'right') {
+            return 'left';
+        }
+
+        return side;
+    };
+
     return (
         <RadixTooltip.Portal>
-            <ThemeProvider theme={theme}>
+            <ThemeProvider theme={theme} dir={dir}>
                 <RadixTooltip.Content
                     data-test-id={dataTestId}
                     data-tooltip-spacing={padding}
@@ -103,7 +119,7 @@ export const TooltipContent = (
                     collisionPadding={16}
                     sideOffset={8}
                     ref={ref}
-                    side={side}
+                    side={getAdjustedSide(side)}
                 >
                     {children}
                     <RadixTooltip.Arrow aria-hidden="true" className={styles.arrow} />

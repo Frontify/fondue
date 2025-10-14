@@ -99,6 +99,11 @@ export type DropdownContentProps = {
      * @default 'compact'
      */
     viewportCollisionPadding?: DropdownViewportCollisionPadding;
+    /**
+     * When true, the content will always be mounted in the DOM. Before enabling, make sure you really need it.
+     * @default false
+     */
+    forceMount?: boolean;
 };
 
 const SPACING_MAP: Record<DropdownSpacing, number> = {
@@ -120,16 +125,19 @@ export const DropdownContent = (
         children,
         preventTriggerFocusOnClose,
         viewportCollisionPadding = 'compact',
+        forceMount = false,
         'data-test-id': dataTestId = 'fondue-dropdown-content',
     }: DropdownContentProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
-    const theme = useFondueTheme();
+    const { theme, dir } = useFondueTheme();
 
     return (
-        <RadixDropdown.Portal>
-            <ThemeProvider theme={theme}>
+        <RadixDropdown.Portal forceMount={forceMount || undefined}>
+            <ThemeProvider theme={theme} dir={dir}>
                 <RadixDropdown.Content
+                    // @ts-expect-error - dir prop works at runtime but is not in the Radix UI type definition
+                    dir={dir}
                     align={align}
                     collisionPadding={VIEWPORT_COLLISION_PADDING_MAP[viewportCollisionPadding]}
                     sideOffset={SPACING_MAP[triggerOffset]}
@@ -137,11 +145,22 @@ export const DropdownContent = (
                     className={styles.content}
                     data-test-id={dataTestId}
                     ref={ref}
+                    onPointerDownOutside={(event) => {
+                        if (forceMount && event.currentTarget instanceof HTMLElement) {
+                            // Trigger is technically outside the dropdown content and when forceMount is true
+                            // the content is always in the DOM so the onPointerDownOutside event is triggered
+                            const dropdownIsOpen = event.currentTarget.getAttribute('data-state') === 'open';
+                            if (dropdownIsOpen) {
+                                event.preventDefault();
+                            }
+                        }
+                    }}
                     onCloseAutoFocus={(event) => {
                         if (preventTriggerFocusOnClose) {
                             event.preventDefault();
                         }
                     }}
+                    forceMount={forceMount || undefined}
                 >
                     {children}
                 </RadixDropdown.Content>
@@ -232,11 +251,18 @@ export const DropdownSubContent = (
     { children, 'data-test-id': dataTestId = 'fondue-dropdown-subcontent' }: DropdownSubContentProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
-    const theme = useFondueTheme();
+    const { theme, dir } = useFondueTheme();
+
     return (
         <RadixDropdown.Portal>
-            <ThemeProvider theme={theme}>
-                <RadixDropdown.SubContent className={styles.subContent} data-test-id={dataTestId} ref={ref}>
+            <ThemeProvider theme={theme} dir={dir}>
+                <RadixDropdown.SubContent
+                    // @ts-expect-error - dir prop works at runtime but is not in the Radix UI type definition
+                    dir={dir}
+                    className={styles.subContent}
+                    data-test-id={dataTestId}
+                    ref={ref}
+                >
                     {children}
                 </RadixDropdown.SubContent>
             </ThemeProvider>

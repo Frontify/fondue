@@ -18,6 +18,7 @@ import { useControllableState } from '#/hooks/useControllableState';
 
 import { Button } from '../Button/Button';
 import { Dropdown } from '../Dropdown/Dropdown';
+import { useFondueTheme } from '../ThemeProvider/ThemeProvider';
 
 import { useTabTriggers } from './hooks/useTabTriggers';
 import styles from './styles/tabs.module.scss';
@@ -85,6 +86,8 @@ export const TabsRoot = (
     }: TabsRootProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
+    const { dir } = useFondueTheme();
+
     const [activeTab, setActiveTab] = useControllableState({
         prop: propsActiveTab,
         defaultProp: defaultActiveTab,
@@ -108,6 +111,7 @@ export const TabsRoot = (
         <TabTriggerContext.Provider value={contextValue}>
             <RadixTabs.Root
                 ref={ref}
+                dir={dir}
                 className={styles.root}
                 onValueChange={handleSetActiveTab}
                 value={activeTab ?? triggers[0]?.value}

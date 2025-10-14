@@ -58,7 +58,7 @@ export const Badge = ({
     size = 'default',
     status,
     title,
-    variant,
+    variant = 'default',
 }: BadgeProps) => {
     const commonProps = {
         'aria-label': ariaLabel || title,

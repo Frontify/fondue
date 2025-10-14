@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconQuestionMarkCircle } from '@frontify/fondue-icons';
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useId } from 'react';
 
 import { Flex } from '../Flex/Flex';

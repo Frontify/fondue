@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconIcon, IconPen } from '@frontify/fondue-icons';
-import { action } from '@storybook/addon-actions';
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { type ComponentProps } from 'react';
+import { action } from 'storybook/actions';
 
 import { Button } from '../Button/Button';
 import { Flex } from '../Flex/Flex';

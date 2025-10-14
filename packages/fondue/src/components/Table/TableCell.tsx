@@ -8,7 +8,7 @@ import { merge } from '@utilities/merge';
 import { type ColumnAlign, SelectionMode } from './Table';
 
 /**
- * @deprecated Please use updated table component from `@frontify/fondue/components` instead.
+ * @deprecated Use `Table` from `@frontify/fondue/components` instead.
  */
 export enum TableCellType {
     Default = 'Default',
@@ -16,7 +16,7 @@ export enum TableCellType {
 }
 
 /**
- * @deprecated Please use updated table component from `@frontify/fondue/components` instead.
+ * @deprecated Use `Table` from `@frontify/fondue/components` instead.
  */
 export type TableCellProps = {
     cell: any;
@@ -29,7 +29,7 @@ export type TableCellProps = {
 };
 
 /**
- * @deprecated Please use updated table component from `@frontify/fondue/components` instead.
+ * @deprecated Use `Table` from `@frontify/fondue/components` instead.
  */
 export const TableCell = ({
     cell,

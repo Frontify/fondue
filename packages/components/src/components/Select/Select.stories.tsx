@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconIcon } from '@frontify/fondue-icons';
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 
 import { Flex } from '#/components/Flex/Flex.tsx';
@@ -64,7 +64,7 @@ export const Combobox: Story = {
     },
 };
 
-export const ComboboxWithAsyncItems: Story = {
+export const ComboboxWithAsyncItems: StoryObj<typeof Select.Combobox> = {
     args: {
         placeholder: 'Select an item',
         getAsyncItems: async (filterText: string) => {

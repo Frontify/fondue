@@ -2,11 +2,13 @@
 
 // @ts-check
 
+// @ts-expect-error No types available
 import frontifyConfig from '@frontify/eslint-config-react';
+import { defineConfig } from 'eslint/config';
+// @ts-expect-error No types available
 import noticePlugin from 'eslint-plugin-notice';
-import tseslint from 'typescript-eslint';
 
-export default tseslint.config(
+export default defineConfig(
     {
         ignores: [
             'storybook-static/',

@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { action } from '@storybook/addon-actions';
-import { type Meta, type StoryFn } from '@storybook/react';
+import { type Meta, type StoryFn } from '@storybook/react-vite';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { action } from 'storybook/actions';
 
 import { Button } from '@components/Button/Button';
 import { ButtonEmphasis, ButtonStyle } from '@components/Button/ButtonTypes';

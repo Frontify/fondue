@@ -2,8 +2,8 @@
 
 import '@frontify/fondue-tokens/legacy/tokens';
 import '@frontify/fondue-tokens/styles';
-import type { Preview } from '@storybook/react';
 import '../src/index.css';
+import { type Preview } from '@storybook/react-vite';
 import DocumentationTemplate from './DocumentationTemplate.mdx';
 
 const preview: Preview = {

@@ -3,7 +3,7 @@
 import { type ReactNode, useRef } from 'react';
 
 /**
- * @deprecated Please use updated table component from `@frontify/fondue/components` instead.
+ * @deprecated Use `Table` from `@frontify/fondue/components` instead.
  */
 export type TableRowProps = {
     isSelected?: boolean;
@@ -11,7 +11,7 @@ export type TableRowProps = {
 };
 
 /**
- * @deprecated Please use updated table component from `@frontify/fondue/components` instead.
+ * @deprecated Use `Table` from `@frontify/fondue/components` instead.
  */
 export const TableRow = ({ isSelected = false, children }: TableRowProps) => {
     const ref = useRef<HTMLTableRowElement | null>(null);

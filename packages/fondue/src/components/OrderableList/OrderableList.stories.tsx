@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { chain } from '@react-aria/utils';
-import { type Meta, type StoryFn } from '@storybook/react';
+import { type Meta, type StoryFn } from '@storybook/react-vite';
 import { useEffect, useRef, useState } from 'react';
 
 import { renderContent, storyItems } from '@components/OrderableList/utils';

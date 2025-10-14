@@ -3,7 +3,7 @@
 import '@frontify/fondue-tokens/styles';
 import '../src/styles.scss';
 
-import { type Decorator, type Preview, type StoryContext } from '@storybook/react';
+import { type Preview, type Decorator, type StoryContext } from '@storybook/react-vite';
 import { type ComponentType } from 'react';
 
 import { Flex } from '../src/components/Flex/Flex';
@@ -12,15 +12,18 @@ import DocumentationTemplate from './DocumentationTemplate.mdx';
 import { withTheme } from './components/StoryWithTheme';
 
 const ThemeProviderWrapper: Decorator = (Story: ComponentType, context: StoryContext) => {
-    if (context.globals.theme === 'both') {
+    const { direction = 'ltr', theme = 'light' } = context.globals;
+
+    if (theme === 'both') {
         return (
             <Flex direction="column">
-                {withTheme(Story, 'light', { label: 'Light theme' })}
-                {withTheme(Story, 'dark', { label: 'Dark theme' })}
+                {withTheme(Story, { label: 'Light theme', theme: 'light', direction })}
+                {withTheme(Story, { label: 'Dark theme', theme: 'dark', direction })}
             </Flex>
         );
     }
-    return withTheme(Story, context.globals.theme);
+
+    return withTheme(Story, { theme, direction });
 };
 
 const preview: Preview = {
@@ -50,6 +53,16 @@ const preview: Preview = {
                 dynamicTitle: true,
             },
         },
+        direction: {
+            name: 'Direction',
+            description: 'Text direction',
+            defaultValue: 'ltr',
+            toolbar: {
+                icon: 'paragraph',
+                items: ['ltr', 'rtl'],
+                dynamicTitle: true,
+            },
+        },
     },
     initialGlobals: {
         theme: 'light',
@@ -64,10 +77,13 @@ const preview: Preview = {
         },
         docs: {
             page: DocumentationTemplate,
+
             toc: {
                 title: 'Table of contents',
                 headingSelector: 'h2, h3',
             },
+
+            codePanel: true,
         },
         controls: {
             matchers: {

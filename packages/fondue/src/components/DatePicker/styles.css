@@ -17,7 +17,7 @@
 
 .react-datepicker-wrap {
     font-family: var(--body-family);
-    border-radius: var(--radius);
+    border-radius: var(--border-radius-medium);
     border: 1px solid var(--line-color-x-strong);
     box-shadow: 0 3px 10px 0 rgba(8, 8, 8, 0.3);
 }
@@ -40,14 +40,14 @@
 }
 
 .react-datepicker-popper .react-datepicker__triangle::after {
-    border-bottom-color: var(--base-color) !important;
-    fill: var(--base-color) !important;
-    color: var(--base-color) !important;
+    border-bottom-color: var(--color-surface-default) !important;
+    fill: var(--color-surface-default) !important;
+    color: var(--color-surface-default) !important;
 }
 
 .react-datepicker-popper .react-datepicker__triangle {
-    fill: var(--base-color) !important;
-    color: var(--base-color) !important;
+    fill: var(--color-surface-default) !important;
+    color: var(--color-surface-default) !important;
 }
 
 .react-datepicker-wrap .react-datepicker__header {
@@ -82,7 +82,7 @@
 
 .react-datepicker-wrap .future-date,
 .react-datepicker-wrap .react-datepicker__day.react-datepicker__day--keyboard-selected {
-    background: var(--base-color-alt);
+    background: var(--color-surface-dim);
     color: var(--box-neutral-inverse-color);
 }
 
@@ -101,7 +101,7 @@
     border-radius: 0;
     border: none;
     outline-color: #5e9ed6;
-    color: var(--base-color);
+    color: var(--color-surface-default);
 }
 
 .react-datepicker-wrap .react-datepicker__day.range-day:hover {
@@ -125,9 +125,9 @@
 .react-datepicker__day.react-datepicker__day--in-range.react-datepicker__day--range-start.react-datepicker__day--in-selecting-range.range-day,
 .react-datepicker__day.react-datepicker__day--in-selecting-range.react-datepicker__day--selecting-range-start.range-day {
     background-color: #825fff;
-    color: var(--base-color);
+    color: var(--color-surface-default);
     border: none;
-    outline-color: var(--base-color);
+    outline-color: var(--color-surface-default);
 }
 
 .react-datepicker__day--in-range.range-day,
@@ -143,7 +143,7 @@
 }
 
 .react-datepicker__day.range-day {
-    background: var(--base-color-alt);
+    background: var(--color-surface-dim);
     color: #2d3232;
 }
 

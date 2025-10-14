@@ -3,7 +3,7 @@
 import { useDialog } from '@react-aria/dialog';
 import { FocusScope } from '@react-aria/focus';
 import { OverlayContainer, useModal, useOverlay, usePreventScroll } from '@react-aria/overlays';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'motion/react';
 import { memo, useMemo, useRef, type ReactElement } from 'react';
 
 import { merge } from '@utilities/merge';

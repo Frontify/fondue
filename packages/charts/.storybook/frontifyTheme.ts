@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import type { ThemeVars } from '@storybook/theming';
-import { create } from '@storybook/theming/create';
+import type { ThemeVars } from 'storybook/theming';
+import { create } from 'storybook/theming/create';
 
 export const light: ThemeVars = create({
     base: 'light',

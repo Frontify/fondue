@@ -13,7 +13,7 @@ import { merge } from '@utilities/merge';
 import { type ColumnAlign, SelectionMode, SortDirection } from './Table';
 
 /**
- * @deprecated Please use updated table component from `@frontify/fondue/components` instead.
+ * @deprecated Use `Table` from `@frontify/fondue/components` instead.
  */
 export enum TableColumnHeaderType {
     Default = 'Default',
@@ -21,7 +21,7 @@ export enum TableColumnHeaderType {
 }
 
 /**
- * @deprecated Please use updated table component from `@frontify/fondue/components` instead.
+ * @deprecated Use `Table` from `@frontify/fondue/components` instead.
  */
 export type TableColumnHeaderProps = {
     column: any;
@@ -36,7 +36,7 @@ export type TableColumnHeaderProps = {
 };
 
 /**
- * @deprecated Please use updated table component from `@frontify/fondue/components` instead.
+ * @deprecated Use `Table` from `@frontify/fondue/components` instead.
  */
 export const TableColumnHeader = ({
     column,

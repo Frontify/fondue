@@ -3,7 +3,7 @@
 import '@frontify/fondue-tokens/legacy/tokens';
 import '@frontify/fondue-tokens/styles';
 
-import { Decorator } from '@storybook/react';
+import { Decorator } from '@storybook/react-vite';
 import '../src/styles.css';
 import { dark, light } from './frontifyTheme';
 
@@ -48,6 +48,16 @@ export const globalTypes = {
                 { value: 'side-by-side', icon: 'sidebar', title: 'side by side' },
             ],
             showName: true,
+        },
+    },
+    direction: {
+        name: 'Direction',
+        description: 'Text direction',
+        defaultValue: 'ltr',
+        toolbar: {
+            icon: 'paragraph',
+            items: ['ltr', 'rtl'],
+            dynamicTitle: true,
         },
     },
 };
