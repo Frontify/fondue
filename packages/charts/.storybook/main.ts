@@ -26,6 +26,9 @@ const config: StorybookConfig = {
     docs: {
         defaultName: 'Documentation',
     },
+    core: {
+        disableTelemetry: true,
+    },
     managerHead: (head, { configType }) => {
         if (configType === 'PRODUCTION' && process.env.STORYBOOK_PATH_PREFIX) {
             const injections = [

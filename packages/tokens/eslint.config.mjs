@@ -4,10 +4,11 @@
 
 // @ts-expect-error No types available
 import frontifyConfig from '@frontify/eslint-config-react';
+import { defineConfig } from 'eslint/config';
 // @ts-expect-error No types available
 import noticePlugin from 'eslint-plugin-notice';
+// @ts-expect-error No types available
 import tailwindcssPlugin from 'eslint-plugin-tailwindcss';
-import { defineConfig } from 'eslint/config';
 
 export default defineConfig(
     {

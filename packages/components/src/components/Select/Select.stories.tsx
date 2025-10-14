@@ -63,7 +63,7 @@ export const Combobox: Story = {
     },
 };
 
-export const ComboboxWithAsyncItems: Story = {
+export const ComboboxWithAsyncItems: StoryObj<typeof Select.Combobox> = {
     args: {
         placeholder: 'Select an item',
         getAsyncItems: async (filterText: string) => {

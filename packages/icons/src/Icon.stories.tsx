@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useArgs } from 'storybook/preview-api';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import fuzzysort from 'fuzzysort';
 import { kebabCase } from 'lodash-es';
 import { type FormEvent } from 'react';
+import { useArgs } from 'storybook/preview-api';
 
 import * as FondueIcons from './icons';
 

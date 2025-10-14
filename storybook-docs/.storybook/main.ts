@@ -26,6 +26,9 @@ const config: StorybookConfig = {
     docs: {
         defaultName: 'Documentation',
     },
+    core: {
+        disableTelemetry: true,
+    },
     refs: (_config, { configType }) => {
         if (configType === 'DEVELOPMENT') {
             return {
