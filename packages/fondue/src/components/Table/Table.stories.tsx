@@ -35,11 +35,6 @@ export default {
             control: { type: 'select' },
         },
     },
-    parameters: {
-        status: {
-            type: 'deprecated',
-        },
-    },
 } as Meta<TableProps>;
 
 const User = ({ name }: { name: string }): ReactElement => (

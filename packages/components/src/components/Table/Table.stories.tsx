@@ -37,8 +37,8 @@ const meta: Meta<typeof TableRoot> = {
         layout: {
             control: {
                 type: 'select',
-                options: ['auto', 'fixed'],
             },
+            options: ['auto', 'fixed'],
             defaultValue: 'auto',
         },
     },

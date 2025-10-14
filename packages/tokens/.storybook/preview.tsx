@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type Decorator, type Preview, type StoryContext } from '@storybook/react';
+import { type Decorator, type Preview, type StoryContext } from '@storybook/react-vite';
 import { type ComponentType } from 'react';
 
 import '@frontify/fondue-components/styles';
@@ -55,18 +55,24 @@ const preview: Preview = {
     },
     parameters: {
         layout: 'fullscreen',
+
         options: {
             storySort: {
                 order: ['Tokens', 'Utilities', 'Typography', 'Layout', 'Components'],
                 method: 'alphabetical',
             },
         },
+
         controls: {
             matchers: {
                 color: /(background|color)$/i,
                 date: /Date$/i,
             },
         },
+
+        docs: {
+            codePanel: true
+        }
     },
     decorators: [ThemeProviderWrapper],
 };

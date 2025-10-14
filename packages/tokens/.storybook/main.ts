@@ -8,27 +8,22 @@ export default {
     stories: ['../stories/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
     staticDirs: ['assets'],
     addons: [
-        {
-            name: '@storybook/addon-essentials',
-            options: {
-                backgrounds: false,
-                outline: false,
-                measure: false,
-            },
-        },
-        '@storybook/addon-links',
-        '@storybook/addon-interactions',
-        '@storybook/addon-a11y',
-        '@storybook/addon-storysource',
         '@etchteam/storybook-addon-status',
+        '@storybook/addon-links',
+        '@storybook/addon-a11y',
+        '@storybook/addon-docs',
     ],
     framework: {
         name: '@storybook/react-vite',
         options: {},
     },
     docs: {
-        autodocs: 'tag',
         defaultName: 'Documentation',
+    },
+    features: {
+        backgrounds: false,
+        outline: false,
+        measure: false,
     },
     managerHead: (head, { configType }) => {
         if (configType === 'PRODUCTION' && process.env.STORYBOOK_PATH_PREFIX) {
