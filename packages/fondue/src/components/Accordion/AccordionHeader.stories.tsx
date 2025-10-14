@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type Meta, type StoryFn } from '@storybook/react';
+import { type Meta, type StoryFn } from '@storybook/react-vite';
 
 import IconExclamationMarkTriangle from '@foundation/Icon/Generated/IconExclamationMarkTriangle';
 import IconHome from '@foundation/Icon/Generated/IconHome';

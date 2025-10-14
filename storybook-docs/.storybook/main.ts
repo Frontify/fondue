@@ -5,29 +5,25 @@ import { type StorybookConfig } from '@storybook/react-vite';
 const pathPrefix = process.env.STORYBOOK_PATH_PREFIX || '/';
 
 const config: StorybookConfig = {
-    stories: ['../stories/**/*.mdx', '../stories/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
+    stories: ['../stories/**/*.mdx', '../stories/**/*.stories.@(ts|tsx)'],
     addons: [
-        {
-            name: '@storybook/addon-essentials',
-            options: {
-                backgrounds: false,
-                outline: false,
-                measure: false,
-            },
-        },
+        '@vueless/storybook-dark-mode',
         '@storybook/addon-links',
-        '@storybook/addon-interactions',
         '@storybook/addon-a11y',
-        '@storybook/addon-storysource',
         '@etchteam/storybook-addon-status',
+        '@storybook/addon-docs',
     ],
     staticDirs: ['assets'],
     framework: {
         name: '@storybook/react-vite',
         options: {},
     },
+    features: {
+        backgrounds: false,
+        outline: false,
+        measure: false,
+    },
     docs: {
-        autodocs: 'tag',
         defaultName: 'Documentation',
     },
     refs: (_config, { configType }) => {

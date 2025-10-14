@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { useOverlayTriggerState } from '@react-stately/overlays';
-import { action } from '@storybook/addon-actions';
-import { type Meta, type StoryFn } from '@storybook/react';
+import { action } from 'storybook/actions';
+import { type Meta, type StoryFn } from '@storybook/react-vite';
 import { useState } from 'react';
 
 import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';

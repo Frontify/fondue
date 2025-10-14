@@ -5,29 +5,25 @@ import { type StorybookConfig } from '@storybook/react-vite';
 const productionPathPrefix = process.env.STORYBOOK_PATH_PREFIX ? `${process.env.STORYBOOK_PATH_PREFIX}legacy/` : '/';
 
 export default {
-    stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
+    stories: ['../src/**/*.mdx', '../src/**/*.stories.@(ts|tsx)'],
     staticDirs: ['assets'],
     addons: [
-        {
-            name: '@storybook/addon-essentials',
-            options: {
-                backgrounds: false,
-                outline: false,
-                measure: false,
-            },
-        },
-        '@storybook/addon-links',
-        '@storybook/addon-interactions',
-        'storybook-dark-mode',
-        '@storybook/addon-a11y',
         '@etchteam/storybook-addon-status',
+        '@vueless/storybook-dark-mode',
+        '@storybook/addon-links',
+        '@storybook/addon-a11y',
+        '@storybook/addon-docs',
     ],
     framework: {
         name: '@storybook/react-vite',
         options: {},
     },
+    features: {
+        backgrounds: false,
+        outline: false,
+        measure: false,
+    },
     docs: {
-        autodocs: 'tag',
         defaultName: 'Documentation',
     },
     managerHead: (head, { configType }) => {

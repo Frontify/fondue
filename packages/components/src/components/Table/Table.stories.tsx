@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconFunnel, IconMagnifier, IconPen, IconTrashBin } from '@frontify/fondue-icons';
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useMemo, useState, type FormEvent } from 'react';
 
 import { Button } from '../Button/Button';

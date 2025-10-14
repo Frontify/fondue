@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type Meta, type StoryFn } from '@storybook/react';
+import { type Meta, type StoryFn } from '@storybook/react-vite';
 
 import IconAnchor16 from '@foundation/Icon/Generated/IconAnchor16';
 import IconColorFan16 from '@foundation/Icon/Generated/IconColorFan16';

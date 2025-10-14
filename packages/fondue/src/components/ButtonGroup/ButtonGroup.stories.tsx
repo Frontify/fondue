@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { action } from '@storybook/addon-actions';
-import { type Meta, type StoryFn } from '@storybook/react';
+import { action } from 'storybook/actions';
+import { type Meta, type StoryFn } from '@storybook/react-vite';
 
 import { Button, ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button';
 import IconCheckMark from '@foundation/Icon/Generated/IconCheckMark';

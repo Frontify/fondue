@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { action } from '@storybook/addon-actions';
-import { type Meta, type StoryFn } from '@storybook/react';
+import { action } from 'storybook/actions';
+import { type Meta, type StoryFn } from '@storybook/react-vite';
 import { useRef, useState } from 'react';
 
 import { Box } from '@components/Box';

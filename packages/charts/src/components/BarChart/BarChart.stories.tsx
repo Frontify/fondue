@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type Meta, type StoryFn } from '@storybook/react';
+import { type Meta, type StoryFn } from '@storybook/react-vite';
 import { browserUsage, exoplanets, planets } from '@visx/mock-data';
 
 import { BarChart, type BarChartProps, type BarChartSeries } from './';

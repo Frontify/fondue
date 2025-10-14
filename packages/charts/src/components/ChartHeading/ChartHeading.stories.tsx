@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type StoryFn } from '@storybook/react';
+import { type StoryFn } from '@storybook/react-vite';
 
 import { ChartHeading, type ChartHeadingProps } from '@components/ChartHeading';
 

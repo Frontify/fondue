@@ -8,9 +8,9 @@ import frontifyConfig from '@frontify/eslint-config-react';
 import noticePlugin from 'eslint-plugin-notice';
 // @ts-expect-error No types available
 import tailwindcssPlugin from 'eslint-plugin-tailwindcss';
-import tseslint from 'typescript-eslint';
+import { defineConfig } from 'eslint/config';
 
-export default tseslint.config(
+export default defineConfig(
     {
         ignores: [
             'src/foundation/Icon/Generated/**/*.tsx',

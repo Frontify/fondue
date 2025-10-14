@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type Meta, type StoryFn } from '@storybook/react';
+import { type Meta, type StoryFn } from '@storybook/react-vite';
 
 import { POPPER_STORY_ARGS } from '@components/Popper/constantStories';
 import { Tooltip, type TooltipProps } from '@components/Tooltip/Tooltip';

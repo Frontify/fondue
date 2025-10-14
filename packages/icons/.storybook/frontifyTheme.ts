@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { create } from '@storybook/theming/create';
+import { create } from 'storybook/theming/create';
 
 export const light = create({
     base: 'light',

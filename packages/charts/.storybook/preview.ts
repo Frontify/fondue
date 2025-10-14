@@ -3,7 +3,7 @@
 import '../src/index.css';
 import '@frontify/fondue-tokens/styles';
 import '@frontify/fondue-tokens/themes/theme.dark.css';
-import type { Preview } from '@storybook/react';
+import { type Preview } from '@storybook/react-vite';
 import DocumentationTemplate from './DocumentationTemplate.mdx';
 
 const preview: Preview = {

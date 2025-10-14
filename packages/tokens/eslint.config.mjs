@@ -2,12 +2,14 @@
 
 // @ts-check
 
+// @ts-expect-error No types available
 import frontifyConfig from '@frontify/eslint-config-react';
+// @ts-expect-error No types available
 import noticePlugin from 'eslint-plugin-notice';
 import tailwindcssPlugin from 'eslint-plugin-tailwindcss';
-import tseslint from 'typescript-eslint';
+import { defineConfig } from 'eslint/config';
 
-export default tseslint.config(
+export default defineConfig(
     {
         ignores: ['tmp/', 'dist/', 'node_modules/'],
     },

@@ -2,7 +2,7 @@
 
 import '@frontify/fondue-tokens/styles';
 import 'tailwindcss/tailwind.css';
-import type { Preview } from '@storybook/react';
+import type { Preview } from '@storybook/react-vite';
 import DocumentationTemplate from './DocumentationTemplate.mdx';
 
 const preview: Preview = {
