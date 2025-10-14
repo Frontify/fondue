@@ -12,12 +12,12 @@ type ThemeProviderProps = {
      * The theme to apply
      * @default "light"
      * */
-    theme: AvailableTheme;
+    theme?: AvailableTheme;
     /**
      * Direction to apply to the theme
      * @default "ltr"
      */
-    dir: 'ltr' | 'rtl';
+    dir?: 'ltr' | 'rtl';
     /**
      * Change the default rendered element for the one passed as a child, merging their props and behavior.
      * @default false

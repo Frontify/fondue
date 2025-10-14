@@ -11,15 +11,18 @@ import './styles.css';
 import { withTheme } from './components/StoryWithTheme';
 
 const ThemeProviderWrapper: Decorator = (Story: ComponentType, context: StoryContext) => {
-    if (context.globals.theme === 'both') {
+    const { direction = 'ltr', theme = 'light' } = context.globals;
+
+    if (theme === 'both') {
         return (
             <div className={`tw-flex tw-flex-col ${styles.base}`}>
-                {withTheme(Story, 'light', { label: 'Light theme' })}
-                {withTheme(Story, 'dark', { label: 'Dark theme' })}
+                {withTheme(Story, { label: 'Light theme', theme: 'light', direction })}
+                {withTheme(Story, { label: 'Dark theme', theme: 'dark', direction })}
             </div>
         );
     }
-    return withTheme(Story, context.globals.theme as 'light' | 'dark');
+
+    return withTheme(Story, { theme, direction });
 };
 
 const preview: Preview = {
@@ -71,8 +74,8 @@ const preview: Preview = {
         },
 
         docs: {
-            codePanel: true
-        }
+            codePanel: true,
+        },
     },
     decorators: [ThemeProviderWrapper],
 };
