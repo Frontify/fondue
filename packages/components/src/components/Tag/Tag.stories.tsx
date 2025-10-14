@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconColorFan, IconDotsHorizontal } from '@frontify/fondue-icons';
-import { action } from 'storybook/actions';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { action } from 'storybook/actions';
 
 import { Tag, TagHoverContent, TagSecondaryContent } from './Tag';
 

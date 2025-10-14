@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconColorFan, IconIcon } from '@frontify/fondue-icons';
-import { action } from 'storybook/actions';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { action } from 'storybook/actions';
 
 import { Button } from './Button';
 
