@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { chain } from '@react-aria/utils';
-import { action } from 'storybook/actions';
 import { type Meta, type StoryFn } from '@storybook/react-vite';
 import { useState, type MutableRefObject } from 'react';
+import { action } from 'storybook/actions';
 
 import { BadgeStatus, BadgeStyle } from '@components/Badge';
 import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';

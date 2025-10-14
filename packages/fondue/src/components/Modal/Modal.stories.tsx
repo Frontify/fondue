@@ -2,9 +2,9 @@
 
 import { OverlayContainer, OverlayProvider } from '@react-aria/overlays';
 import { useOverlayTriggerState } from '@react-stately/overlays';
-import { action } from 'storybook/actions';
 import { type Meta, type StoryFn } from '@storybook/react-vite';
 import { useState } from 'react';
+import { action } from 'storybook/actions';
 
 import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';
 import { FormControl, FormControlDirection, FormControlStyle } from '@components/FormControl';

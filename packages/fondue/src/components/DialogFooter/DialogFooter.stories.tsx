@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { action } from 'storybook/actions';
 import { type Meta, type StoryFn } from '@storybook/react-vite';
+import { action } from 'storybook/actions';
 
 import { ButtonEmphasis, ButtonStyle } from '@components/Button';
 import { Flex } from '@components/Flex';

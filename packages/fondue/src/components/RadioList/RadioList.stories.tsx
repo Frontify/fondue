@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { action } from 'storybook/actions';
 import { type Meta, type StoryFn } from '@storybook/react-vite';
+import { action } from 'storybook/actions';
 
 import { RadioButton, RadioButtonEmphasis } from './RadioButton';
 import { RadioList, RadioListDirection, type RadioListProps } from './RadioList';
