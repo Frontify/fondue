@@ -101,7 +101,7 @@
         background: transparent;
         color: inherit;
         font: inherit;
-        border-radius: var(--radius);
+        border-radius: var(--border-radius-medium);
 
         &:not(:last-child) {
             border-start-end-radius: 0;
@@ -140,8 +140,8 @@
         border-radius: 0;
 
         &:last-child {
-            border-start-end-radius: var(--radius);
-            border-end-end-radius: var(--radius);
+            border-start-end-radius: var(--border-radius-medium);
+            border-end-end-radius: var(--border-radius-medium);
         }
 
         & {

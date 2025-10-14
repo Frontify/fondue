@@ -494,7 +494,7 @@ export const StickyRightColumn: Story = {
                             <div className="tw-flex tw-items-center tw-gap-2">
                                 <div>
                                     <div className="tw-font-medium">{user.name}</div>
-                                    <div className="tw-text-sm tw-text-gray-500">{user.email}</div>
+                                    <div className="tw-text-small tw-text-primary-on-primary">{user.email}</div>
                                 </div>
                             </div>
                         </Table.RowCell>
@@ -553,7 +553,7 @@ export const StickyHeaderAndRightColumn: Story = {
                             <div className="tw-flex tw-items-center tw-gap-2">
                                 <div>
                                     <div className="tw-font-medium">{user.name}</div>
-                                    <div className="tw-text-sm tw-text-gray-500">{user.email}</div>
+                                    <div className="tw-text-small tw-text-primary-on-primary">{user.email}</div>
                                 </div>
                             </div>
                         </Table.RowCell>
@@ -613,7 +613,7 @@ export const StickyAllDirections: Story = {
                             <div className="tw-flex tw-items-center tw-gap-2">
                                 <div>
                                     <div className="tw-font-medium">{user.name}</div>
-                                    <div className="tw-text-sm tw-text-gray-500">{user.email}</div>
+                                    <div className="tw-text-small tw-text-primary-on-primary">{user.email}</div>
                                 </div>
                             </div>
                         </Table.RowCell>
