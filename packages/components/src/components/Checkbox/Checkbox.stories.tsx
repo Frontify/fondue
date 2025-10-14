@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconQuestionMarkCircle } from '@frontify/fondue-icons';
-import { action } from '@storybook/addon-actions';
-import { type Meta, type StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { type FormEvent, useState, useId } from 'react';
+import { action } from 'storybook/actions';
 
 import { Flex } from '../Flex/Flex';
 import { Label } from '../Label/Label';

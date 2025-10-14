@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { action } from '@storybook/addon-actions';
-import { type Meta, type StoryFn } from '@storybook/react';
+import { type Meta, type StoryFn } from '@storybook/react-vite';
 import { useEffect, useState } from 'react';
+import { action } from 'storybook/actions';
 
 import IconIcon from '@foundation/Icon/Generated/IconIcon';
 import { IconSize } from '@foundation/Icon/IconSize';

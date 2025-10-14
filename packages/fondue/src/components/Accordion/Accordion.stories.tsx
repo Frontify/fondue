@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { action } from '@storybook/addon-actions';
-import { type Meta, type StoryFn } from '@storybook/react';
+import { type Meta, type StoryFn } from '@storybook/react-vite';
 import { type ReactElement, type ReactNode, useState } from 'react';
+import { action } from 'storybook/actions';
 
 import { AssetInput, AssetInputSize } from '@components/AssetInput/AssetInput';
 import { assetInputActions } from '@components/AssetInput/asset-input-actions';

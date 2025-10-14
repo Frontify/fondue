@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { action } from '@storybook/addon-actions';
-import { type Meta, type StoryFn } from '@storybook/react';
+import { type Meta, type StoryFn } from '@storybook/react-vite';
+import { action } from 'storybook/actions';
 
 import { MenuItemContentSize, MenuItemStyle, SelectionIndicatorIcon } from '@components/MenuItem';
 import IconMusicNote from '@foundation/Icon/Generated/IconMusicNote';

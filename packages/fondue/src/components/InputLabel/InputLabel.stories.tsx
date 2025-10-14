@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type Meta, type StoryFn } from '@storybook/react';
+import { type Meta, type StoryFn } from '@storybook/react-vite';
 
 import { TooltipIconTriggerStyle } from '@components/TooltipIcon';
 import IconExclamationMarkCircle from '@foundation/Icon/Generated/IconExclamationMarkCircle';

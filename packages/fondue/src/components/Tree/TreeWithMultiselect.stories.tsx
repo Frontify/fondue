@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type Meta } from '@storybook/react';
+import { type Meta } from '@storybook/react-vite';
 import { useEffect, useState } from 'react';
 
 import { Container } from '@components/Container';

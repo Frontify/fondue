@@ -4,7 +4,7 @@ import '@frontify/fondue-tokens/styles';
 import '@frontify/fondue-tokens/themes/theme.dark.css';
 import '@frontify/fondue-components/styles';
 
-import { Decorator } from '@storybook/react';
+import { Decorator } from '@storybook/react-vite';
 import '../src/styles.css';
 import { dark, light } from './frontifyTheme';
 

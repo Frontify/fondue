@@ -39,6 +39,9 @@ export const parameters = {
             },
         },
     },
+    docs: {
+        codePanel: true,
+    },
 };
 export const globalTypes = {
     theme: {

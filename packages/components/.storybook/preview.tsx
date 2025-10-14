@@ -2,7 +2,7 @@
 
 import '../src/styles.scss';
 
-import { type Preview, type Decorator, type StoryContext } from '@storybook/react';
+import { type Preview, type Decorator, type StoryContext } from '@storybook/react-vite';
 import { type ComponentType } from 'react';
 
 import { Flex } from '../src/components/Flex/Flex';
@@ -70,10 +70,13 @@ const preview: Preview = {
         layout: 'fullscreen',
         docs: {
             page: DocumentationTemplate,
+
             toc: {
                 title: 'Table of contents',
                 headingSelector: 'h2, h3',
             },
+
+            codePanel: true,
         },
         controls: {
             matchers: {
