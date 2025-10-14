@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'motion/react';
 import { type ReactElement } from 'react';
 
 import { INSET_BORDER, MIGHTY_INSET_BORDER } from '@utilities/borderStyle';
