@@ -5,7 +5,7 @@ import { type StorybookConfig } from '@storybook/react-vite';
 const productionPathPrefix = process.env.STORYBOOK_PATH_PREFIX ? `${process.env.STORYBOOK_PATH_PREFIX}icons/` : '/';
 
 export default {
-    stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
+    stories: ['../src/**/*.mdx', '../src/**/*.stories.@(ts|tsx)'],
     staticDirs: ['assets'],
     addons: [
         '@etchteam/storybook-addon-status',
