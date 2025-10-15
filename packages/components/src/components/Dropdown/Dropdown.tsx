@@ -130,8 +130,9 @@ export const DropdownContent = (
     }: DropdownContentProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
+    const localRef = useRef<HTMLDivElement>(null);
     const { theme, dir } = useFondueTheme();
-
+    const actualRef = ref || localRef;
     return (
         <RadixDropdown.Portal forceMount={forceMount || undefined}>
             <ThemeProvider theme={theme} dir={dir}>
@@ -144,15 +145,35 @@ export const DropdownContent = (
                     side={side}
                     className={styles.content}
                     data-test-id={dataTestId}
-                    ref={ref}
+                    ref={actualRef}
                     onPointerDownOutside={(event) => {
-                        if (forceMount && event.currentTarget instanceof HTMLElement) {
-                            // Trigger is technically outside the dropdown content and when forceMount is true
-                            // the content is always in the DOM so the onPointerDownOutside event is triggered
-                            const dropdownIsOpen = event.currentTarget.getAttribute('data-state') === 'open';
-                            if (dropdownIsOpen) {
-                                event.preventDefault();
+                        if (!forceMount) {
+                            return;
+                        }
+
+                        if (!(event.target instanceof Element)) {
+                            return;
+                        }
+
+                        if (!(actualRef instanceof Object) || !('current' in actualRef)) {
+                            return;
+                        }
+
+                        let element = event.target as Element | null;
+                        let controlsId: string | null = null;
+
+                        while (element && element !== document.body) {
+                            controlsId = element.getAttribute('aria-controls');
+
+                            if (controlsId) {
+                                break;
                             }
+
+                            element = element.parentElement;
+                        }
+
+                        if (controlsId === actualRef.current?.id) {
+                            event.preventDefault();
                         }
                     }}
                     onCloseAutoFocus={(event) => {
