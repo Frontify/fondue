@@ -1,0 +1,1 @@
+import{r as o}from"./iframe-sarzTi8L.js";const s=(e,r=10)=>{const c=o.useRef();return o.useCallback((...t)=>{clearTimeout(c.current),c.current=setTimeout(()=>e.apply(void 0,t),r)},[e,r])};export{s as u};
