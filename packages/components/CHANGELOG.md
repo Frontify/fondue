@@ -1,5 +1,17 @@
 # @frontify/fondue-components
 
+## 22.2.0
+
+### Minor Changes
+
+- [#2493](https://github.com/Frontify/fondue/pull/2493) [`27674b5`](https://github.com/Frontify/fondue/commit/27674b5693be116bfb7cbc350e6eb6740e673ddd) Thanks [@syeo66](https://github.com/syeo66)! - fix(Dialog): Dialog position error
+
+### Patch Changes
+
+- [#2496](https://github.com/Frontify/fondue/pull/2496) [`82c683f`](https://github.com/Frontify/fondue/commit/82c683f8539b3f0a0fceaf2d3a77e614c2f1dc4b) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(`Dropdown`): inconsistent forceMount trigger behavior
+
+- [#2494](https://github.com/Frontify/fondue/pull/2494) [`399118a`](https://github.com/Frontify/fondue/commit/399118a64ee4495e4e11b86c7f0f053e9b4c2392) Thanks [@syeo66](https://github.com/syeo66)! - fix(TextInput): adjust placeholder text placement
+
 ## 22.1.2
 
 ### Patch Changes
