@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconCaretDown } from '@frontify/fondue-icons';
 import { expect, test } from '@playwright/experimental-ct-react';
 import * as sinon from 'sinon';
 
@@ -14,6 +15,7 @@ const DROPDOWN_GROUP_TEST_ID = 'fondue-dropdown-group';
 const DROPDOWN_SUB_TRIGGER_TEST_ID = 'fondue-dropdown-sub-trigger';
 const DROPDOWN_SUB_CONTENT_TEST_ID = 'fondue-dropdown-sub-content';
 const DROPDOWN_ITEM_TEST_ID = 'fondue-dropdown-item';
+const DROPDOWN_ICON_TEST_ID = 'fondue-dropdown-icon';
 
 test('should render without error', async ({ mount, page }) => {
     const component = await mount(
@@ -546,4 +548,78 @@ test('should open when clicked and `forceMount` is true', async ({ mount, page }
     // Click outside the dropdown
     await page.mouse.click(0, 0);
     await expect(page.getByTestId(DROPDOWN_CONTENT_TEST_ID)).not.toBeVisible();
+});
+
+test('should close the first dropdown when opening the second one with forceMount', async ({ mount, page }) => {
+    const component = await mount(
+        <div style={{ display: 'flex', gap: 10 }}>
+            <Dropdown.Root>
+                <Dropdown.Trigger>
+                    <Button data-test-id="dropdown-trigger-1">Trigger 1</Button>
+                </Dropdown.Trigger>
+                <Dropdown.Content data-test-id="dropdown-content-1" forceMount>
+                    <Dropdown.Item onSelect={() => ({})}>Item 1</Dropdown.Item>
+                </Dropdown.Content>
+            </Dropdown.Root>
+            <Dropdown.Root>
+                <Dropdown.Trigger>
+                    <Button data-test-id="dropdown-trigger-2">Trigger 2</Button>
+                </Dropdown.Trigger>
+                <Dropdown.Content data-test-id="dropdown-content-2" forceMount>
+                    <Dropdown.Item onSelect={() => ({})}>Item 1</Dropdown.Item>
+                </Dropdown.Content>
+            </Dropdown.Root>
+        </div>,
+    );
+
+    await expect(component).toBeVisible();
+    const trigger1 = page.getByTestId('dropdown-trigger-1');
+    const trigger2 = page.getByTestId('dropdown-trigger-2');
+    const content1 = page.getByTestId('dropdown-content-1');
+    const content2 = page.getByTestId('dropdown-content-2');
+
+    await expect(content1).toBeAttached();
+    await expect(content2).toBeAttached();
+    await expect(content1).not.toBeVisible();
+    await expect(content2).not.toBeVisible();
+
+    await trigger1.click();
+    await expect(content1).toBeVisible();
+    await expect(content2).not.toBeVisible();
+
+    await trigger2.click();
+    await expect(content1).not.toBeVisible();
+    await expect(content2).toBeVisible();
+});
+
+test('should open dropdown when clicking on icon inside trigger with forceMount', async ({ mount, page }) => {
+    const component = await mount(
+        <Dropdown.Root>
+            <Dropdown.Trigger>
+                <Button data-test-id={DROPDOWN_TRIGGER_TEST_ID}>
+                    Trigger
+                    <IconCaretDown data-test-id={DROPDOWN_ICON_TEST_ID} />
+                </Button>
+            </Dropdown.Trigger>
+            <Dropdown.Content data-test-id={DROPDOWN_CONTENT_TEST_ID} forceMount>
+                <Dropdown.Item onSelect={() => ({})}>Item 1</Dropdown.Item>
+            </Dropdown.Content>
+        </Dropdown.Root>,
+    );
+
+    await expect(component).toBeVisible();
+    const trigger = page.getByTestId(DROPDOWN_TRIGGER_TEST_ID);
+    const icon = page.getByTestId(DROPDOWN_ICON_TEST_ID);
+    const content = page.getByTestId(DROPDOWN_CONTENT_TEST_ID);
+
+    await expect(trigger).toBeVisible();
+    await expect(icon).toBeVisible();
+    await expect(content).toBeAttached();
+    await expect(content).not.toBeVisible();
+
+    await icon.click();
+    await expect(content).toBeVisible();
+
+    await icon.click();
+    await expect(content).not.toBeVisible();
 });
