@@ -224,6 +224,8 @@
     }
 
     .placeholder {
+        display: flex;
+        align-items: center;
         color: var(--text-color-x-weak);
         overflow: hidden;
         white-space: nowrap;
