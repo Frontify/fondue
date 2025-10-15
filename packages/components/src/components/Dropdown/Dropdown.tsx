@@ -159,7 +159,7 @@ export const DropdownContent = (
                             return;
                         }
 
-                        let element = event.target as Element | null;
+                        let element: Element | null = event.target;
                         let controlsId: string | null = null;
 
                         while (element && element !== document.body) {
