@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconIcon } from '@frontify/fondue-icons';
+import { IconIcon, IconPen, IconTrashBin } from '@frontify/fondue-icons';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { action } from 'storybook/actions';
 
-import { Button, ColorPicker, Dropdown, Flex, Flyout } from '#/index';
+import { Badge, Button, ColorPicker, Dropdown, Flex, Flyout } from '#/index';
 
 import { Accordion, AccordionContent, AccordionHeader, AccordionItem, AccordionRoot } from './Accordion';
 
@@ -177,6 +177,34 @@ export const Default: Story = {
                 <Accordion.Item value="accordion-test-7">
                     <Accordion.Header>Item without padding</Accordion.Header>
                     <Accordion.Content padding="none">
+                        Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt
+                        ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo
+                        dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor
+                        sit amet.
+                    </Accordion.Content>
+                </Accordion.Item>
+
+                <Accordion.Item value="accordion-test-8">
+                    <Accordion.Header>
+                        <Flex gap={2}>
+                            Item with badge
+                            <Badge>42 entries</Badge>
+                            <Badge emphasis="strong" variant="highlight">
+                                very pretty
+                            </Badge>
+                        </Flex>
+                        <Accordion.Slot name="action">
+                            <Flex gap={2}>
+                                <Button size="small" emphasis="weak" aspect="square">
+                                    <IconPen size={16} />
+                                </Button>
+                                <Button size="small" emphasis="weak" aspect="square">
+                                    <IconTrashBin size={16} />
+                                </Button>
+                            </Flex>
+                        </Accordion.Slot>
+                    </Accordion.Header>
+                    <Accordion.Content >
                         Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt
                         ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo
                         dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor
