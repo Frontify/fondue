@@ -8,7 +8,6 @@
 .content {
     display: block;
     position: fixed;
-    inset-inline: sizeToken.get(2);
     top: 50%;
     transform: translateY(-50%);
     background-color: var(--base-color);
