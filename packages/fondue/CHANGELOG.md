@@ -1,5 +1,11 @@
 # @frontify/fondue
 
+## 12.14.2
+
+### Patch Changes
+
+- [`7938e88`](https://github.com/Frontify/fondue/commit/7938e884ef4dc1b96bb900bfabe3923b8caebbfa) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: bump version since it wasn't bumped with previous release
+
 ## 12.14.1
 
 ### Patch Changes
