@@ -84,6 +84,16 @@
             max-width: 0;
         }
     }
+
+    &[data-no-border='true'] {
+        .headerCell {
+            border-top: none;
+        }
+
+        .row:last-child .rowCell {
+            border-bottom: none;
+        }
+    }
 }
 
 .caption {

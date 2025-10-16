@@ -960,3 +960,57 @@ export const WidthControl: Story = {
         </div>
     ),
 };
+
+export const NoBorder: Story = {
+    name: 'No Border (Within Container)',
+    render: ({ ...args }) => (
+        <Flex direction="column" gap="2rem">
+            <div>
+                <h3 style={{ marginBottom: '0.5rem' }}>Without noBorder (default)</h3>
+                <div style={{ border: '1px solid var(--line-color)', borderRadius: '8px', padding: '0 1rem' }}>
+                    <Table.Root {...args}>
+                        <Table.Header>
+                            <Table.Row>
+                                <Table.HeaderCell>Name</Table.HeaderCell>
+                                <Table.HeaderCell>Role</Table.HeaderCell>
+                                <Table.HeaderCell>Last Seen</Table.HeaderCell>
+                            </Table.Row>
+                        </Table.Header>
+                        <Table.Body>
+                            {TABLE_DATA.slice(0, 3).map((user) => (
+                                <Table.Row key={user.id}>
+                                    <Table.RowCell>{user.name}</Table.RowCell>
+                                    <Table.RowCell>{user.role}</Table.RowCell>
+                                    <Table.RowCell>{user.lastSeen}</Table.RowCell>
+                                </Table.Row>
+                            ))}
+                        </Table.Body>
+                    </Table.Root>
+                </div>
+            </div>
+            <div>
+                <h3 style={{ marginBottom: '0.5rem' }}>With noBorder=true</h3>
+                <div style={{ border: '1px solid var(--line-color)', borderRadius: '8px', padding: '0 1rem' }}>
+                    <Table.Root {...args} noBorder>
+                        <Table.Header>
+                            <Table.Row>
+                                <Table.HeaderCell>Name</Table.HeaderCell>
+                                <Table.HeaderCell>Role</Table.HeaderCell>
+                                <Table.HeaderCell>Last Seen</Table.HeaderCell>
+                            </Table.Row>
+                        </Table.Header>
+                        <Table.Body>
+                            {TABLE_DATA.slice(0, 3).map((user) => (
+                                <Table.Row key={user.id}>
+                                    <Table.RowCell>{user.name}</Table.RowCell>
+                                    <Table.RowCell>{user.role}</Table.RowCell>
+                                    <Table.RowCell>{user.lastSeen}</Table.RowCell>
+                                </Table.Row>
+                            ))}
+                        </Table.Body>
+                    </Table.Root>
+                </div>
+            </div>
+        </Flex>
+    ),
+};
