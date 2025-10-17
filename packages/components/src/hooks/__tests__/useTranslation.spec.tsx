@@ -28,7 +28,7 @@ const DefaultWrapper = ({ children }: { children: ReactNode }) => <ThemeProvider
 // Custom render function that allows passing custom translations
 const renderWithTranslations = (
     ui: ReactElement,
-    translations?: Translations | Partial<Translations>,
+    translations?: Translations,
     options?: Omit<RenderOptions, 'wrapper'>,
 ) => {
     const Wrapper = ({ children }: { children: ReactNode }) => (
@@ -102,37 +102,6 @@ describe('useTranslation', () => {
         });
     });
 
-    describe('partial translations', () => {
-        const partialTranslations: Partial<Translations> = {
-            colorPicker: {
-                selectColor: 'Pick a color',
-                selectFormat: en.colorPicker.selectFormat,
-                hexValue: en.colorPicker.hexValue,
-                redChannel: en.colorPicker.redChannel,
-                greenChannel: en.colorPicker.greenChannel,
-                blueChannel: en.colorPicker.blueChannel,
-                opacity: en.colorPicker.opacity,
-            },
-        };
-
-        it('uses custom translations where provided', () => {
-            const { getByTestId } = renderWithTranslations(
-                <TestComponent translationKey="colorPicker.selectColor" />,
-                partialTranslations,
-            );
-
-            expect(getByTestId('translated-text')).toHaveTextContent('Pick a color');
-        });
-
-        it('falls back to English for missing translations', () => {
-            const { getByTestId } = renderWithTranslations(
-                <TestComponent translationKey="dialog.close" />,
-                partialTranslations,
-            );
-
-            expect(getByTestId('translated-text')).toHaveTextContent('Close');
-        });
-    });
 
     describe('edge cases', () => {
         it('handles empty string variables', () => {
