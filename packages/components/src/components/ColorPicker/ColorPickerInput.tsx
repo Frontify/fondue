@@ -3,6 +3,7 @@
 import { IconCaretDown, IconCross, IconDroplet } from '@frontify/fondue-icons';
 import { type CSSProperties, type ForwardedRef, forwardRef } from 'react';
 
+import { useTranslation } from '#/hooks/useTranslation';
 import { type CommonAriaAttrs } from '#/utilities/types';
 
 import { Button } from '../Button/Button';
@@ -52,6 +53,7 @@ export const ColorPickerInput = (
     }: ColorPickerInputProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
+    const { t } = useTranslation();
     const colorName = currentColor?.name ?? (currentColor ? getColorWithName(currentColor, 'RGBA').name : '');
     return (
         <div id={id} className={styles.root} ref={forwardedRef} data-test-id={dataTestId}>
@@ -72,7 +74,7 @@ export const ColorPickerInput = (
                 ) : (
                     <>
                         <IconDroplet size={16} />
-                        <span>Select Color</span>
+                        <span>{t('colorPicker.selectColor')}</span>
                     </>
                 )}
 

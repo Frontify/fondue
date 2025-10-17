@@ -15,6 +15,7 @@ import {
 
 import { type CommonAriaProps } from '#/helpers/aria';
 import { useSyncRefs } from '#/hooks/useSyncRefs';
+import { useTranslation } from '#/hooks/useTranslation';
 import { addAutoFocusAttribute, addShowFocusRing } from '#/utilities/domUtilities';
 
 import { ThemeProvider, useFondueTheme } from '../ThemeProvider/ThemeProvider';
@@ -269,6 +270,8 @@ export const DialogHeader = (
     }: DialogHeaderProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
+    const { t } = useTranslation();
+
     return (
         <div
             data-test-id={dataTestId}
@@ -284,7 +287,7 @@ export const DialogHeader = (
                     role="button"
                     data-test-id={`${dataTestId}-close`}
                     className="tw-cursor-pointer"
-                    aria-label="Close"
+                    aria-label={t('dialog.close')}
                     {...closeProps}
                 >
                     <IconCross size={20} />
