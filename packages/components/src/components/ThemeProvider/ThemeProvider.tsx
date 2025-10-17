@@ -4,7 +4,7 @@ import styles from '@frontify/fondue-tokens/theme-tokens';
 import { Slot } from '@radix-ui/react-slot';
 import { createContext, useContext, useMemo, type ReactNode } from 'react';
 
-import { deepMerge, en, type Translations } from '../../locales';
+import { en, type Translations } from '../../locales';
 
 type AvailableTheme = keyof typeof styles;
 
@@ -23,6 +23,7 @@ type ThemeProviderProps = {
     /**
      * Translations object to use for component strings.
      * Import from '@frontify/fondue/components/locales' or provide your own.
+     * Must be a complete Translations object.
      * @default English translations
      * @example
      * ```tsx
@@ -30,7 +31,7 @@ type ThemeProviderProps = {
      * <ThemeProvider translations={de}>...</ThemeProvider>
      * ```
      */
-    translations?: Translations | Partial<Translations>;
+    translations?: Translations;
     /**
      * Change the default rendered element for the one passed as a child, merging their props and behavior.
      * @default false
@@ -64,20 +65,8 @@ export const ThemeProvider = ({
 }: ThemeProviderProps) => {
     const Comp = asChild ? Slot : 'div';
 
-    // Merge custom translations with English defaults
     const finalTranslations = useMemo(() => {
-        if (!customTranslations) {
-            return en;
-        }
-
-        // If it's a complete Translations object, use it directly
-        // Otherwise, merge partial translations with English defaults
-        const hasAllKeys = Object.keys(en).every((key) => key in customTranslations);
-        if (hasAllKeys) {
-            return customTranslations as Translations;
-        }
-
-        return deepMerge(en, customTranslations);
+        return customTranslations || en;
     }, [customTranslations]);
 
     const contextValue = useMemo(
