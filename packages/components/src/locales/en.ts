@@ -1,40 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export type Translations = {
-    colorPicker: {
-        selectColor: string;
-        selectFormat: string;
-        hexValue: string;
-        redChannel: string;
-        greenChannel: string;
-        blueChannel: string;
-        opacity: string;
-    };
-    dialog: {
-        close: string;
-    };
-    flyout: {
-        close: string;
-    };
-    select: {
-        clear: string;
-        toggleMenu: string;
-    };
-    switch: {
-        defaultLabel: string;
-    };
-    table: {
-        sortByDescending: string;
-        sortByAscending: string;
-        sortDescending: string;
-        sortAscending: string;
-    };
-    badge: {
-        dismiss: string;
-    };
-};
-
-export const en: Translations = {
+export const en = {
     colorPicker: {
         selectColor: 'Select Color',
         selectFormat: 'Select a color format',
@@ -67,3 +33,5 @@ export const en: Translations = {
         dismiss: 'Dismiss ${label}',
     },
 };
+
+export type Translations = typeof en;
