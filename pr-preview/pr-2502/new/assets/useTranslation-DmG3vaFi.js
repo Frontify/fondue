@@ -1,1 +1,0 @@
-import{r as l,T as u}from"./iframe-C8eyM2H-.js";const p=()=>{const{translations:r}=l.useContext(u);return{t:l.useCallback((n,s)=>{const a=n.split(".");let t=r;for(const e of a)if(typeof t=="object"&&t!==null&&e in t)t=t[e];else return n;let o=String(t);if(s)for(const[e,c]of Object.entries(s))o=o.replaceAll(`\${${e}}`,c);return o},[r])}};export{p as u};
