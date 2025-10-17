@@ -102,7 +102,6 @@ describe('useTranslation', () => {
         });
     });
 
-
     describe('edge cases', () => {
         it('handles empty string variables', () => {
             const { getByTestId } = render(<TestComponent translationKey="badge.dismiss" variables={{ label: '' }} />, {
