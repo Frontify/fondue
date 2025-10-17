@@ -27,7 +27,7 @@ type ThemeProviderProps = {
      * @default English translations
      * @example
      * ```tsx
-     * import { de } from '@frontify/fondue/components/locales';
+     * import { de } from '@frontify/fondue/components/locales/de';
      * <ThemeProvider translations={de}>...</ThemeProvider>
      * ```
      */
