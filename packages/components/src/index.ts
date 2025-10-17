@@ -32,6 +32,3 @@ export { TextInput } from './components/TextInput/TextInput';
 export { Textarea } from './components/Textarea/Textarea';
 export { ThemeContext, ThemeProvider, useFondueTheme } from './components/ThemeProvider/ThemeProvider';
 export { Tooltip } from './components/Tooltip/Tooltip';
-
-// i18n types - import translations from '@frontify/fondue/components/locales/{lang}'
-export type { Locale, Translations } from './locales';
