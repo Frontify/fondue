@@ -76,7 +76,7 @@ const SwitchComponent = (
             defaultChecked={defaultValue}
             className={cn([styles.root, styles[size]])}
             onCheckedChange={onChange}
-            aria-label={ariaLabel ?? t('switch.defaultLabel')}
+            aria-label={ariaLabel ?? t('Switch_defaultLabel')}
             data-test-id={dataTestId}
             {...props}
         >

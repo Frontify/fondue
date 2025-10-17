@@ -13,7 +13,7 @@ export const SelectClear = ({ onClear }: { onClear?: () => void }) => {
 
     return (
         <Button
-            aria-label={t('select.clear')}
+            aria-label={t('Select_clear')}
             type="button"
             size="small"
             emphasis="weak"

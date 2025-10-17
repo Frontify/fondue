@@ -14,10 +14,10 @@ import { ThemeContext } from '../components/ThemeProvider/ThemeProvider';
  * const { t } = useTranslation();
  *
  * // Simple translation
- * const label = t('colorPicker.selectColor');
+ * const label = t('ColorPicker_selectColor');
  *
  * // Translation with variables
- * const sortLabel = t('table.sortByAscending', { column: 'Name' });
+ * const sortLabel = t('Table_sortByAscending', { column: 'Name' });
  * ```
  */
 export const useTranslation = () => {
@@ -25,31 +25,33 @@ export const useTranslation = () => {
 
     /**
      * Translates a key to its localized string value.
-     * Supports nested keys using dot notation (e.g., 'colorPicker.selectColor')
-     * and variable interpolation using ${variable} syntax.
+     * Keys follow the format ComponentName_localLabelName[_moreLocalLabelName]
+     * and support variable interpolation using ${variable} syntax.
      *
-     * @param key - The translation key in dot notation
+     * @param key - The translation key (e.g., 'ColorPicker_selectColor')
      * @param variables - Optional variables to interpolate into the translation
      * @returns The translated string, or the key itself if translation is not found
      */
     const t = useCallback(
-        (key: string, variables?: Record<string, string>): string => {
-            // Navigate nested object using dot notation
-            const keys = key.split('.');
-            let value: unknown = translations;
+        (key: keyof typeof translations, variables?: Record<string, string>): string => {
+            // Direct lookup for flat keys
+            const value = translations[key];
 
-            for (const k of keys) {
-                if (typeof value === 'object' && value !== null && k in value) {
-                    value = (value as Record<string, unknown>)[k];
-                } else {
-                    if (process.env.NODE_ENV !== 'production') {
-                        console.warn(`[Fondue] Translation key "${key}" not found`);
-                    }
-                    return key;
+            if (value === undefined) {
+                if (process.env.NODE_ENV !== 'production') {
+                    console.warn(`[Fondue] Translation key "${key}" not found`);
                 }
+                return key;
             }
 
-            let text = String(value);
+            if (typeof value !== 'string') {
+                if (process.env.NODE_ENV !== 'production') {
+                    console.warn(`[Fondue] Translation value for key "${key}" is not a string`);
+                }
+                return key;
+            }
+
+            let text = value;
 
             // Variable interpolation: replace ${variable} with actual values
             if (variables) {

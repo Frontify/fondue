@@ -3,35 +3,21 @@
 import { type Translations } from './en';
 
 export const it: Translations = {
-    colorPicker: {
-        selectColor: 'Seleziona colore',
-        selectFormat: 'Seleziona un formato di colore',
-        hexValue: 'Valore colore esadecimale',
-        redChannel: 'Canale colore rosso',
-        greenChannel: 'Canale colore verde',
-        blueChannel: 'Canale colore blu',
-        opacity: 'Opacità del colore',
-    },
-    dialog: {
-        close: 'Chiudi',
-    },
-    flyout: {
-        close: 'Chiudi',
-    },
-    select: {
-        clear: 'cancella input',
-        toggleMenu: 'attiva menu',
-    },
-    switch: {
-        defaultLabel: 'Interruttore',
-    },
-    table: {
-        sortByDescending: 'Ordina per ${column} decrescente',
-        sortByAscending: 'Ordina per ${column} crescente',
-        sortDescending: 'Ordina decrescente',
-        sortAscending: 'Ordina crescente',
-    },
-    badge: {
-        dismiss: 'Chiudi ${label}',
-    },
+    ColorPicker_selectColor: 'Seleziona colore',
+    ColorPicker_selectFormat: 'Seleziona un formato di colore',
+    ColorPicker_hexValue: 'Valore colore esadecimale',
+    ColorPicker_redChannel: 'Canale colore rosso',
+    ColorPicker_greenChannel: 'Canale colore verde',
+    ColorPicker_blueChannel: 'Canale colore blu',
+    ColorPicker_opacity: 'Opacità del colore',
+    Dialog_close: 'Chiudi',
+    Flyout_close: 'Chiudi',
+    Select_clear: 'cancella input',
+    Select_toggleMenu: 'attiva menu',
+    Switch_defaultLabel: 'Interruttore',
+    Table_sortByDescending: 'Ordina per ${column} decrescente',
+    Table_sortByAscending: 'Ordina per ${column} crescente',
+    Table_sortDescending: 'Ordina decrescente',
+    Table_sortAscending: 'Ordina crescente',
+    Badge_dismiss: 'Chiudi ${label}',
 };

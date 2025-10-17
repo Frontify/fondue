@@ -15,7 +15,7 @@ const TestComponent = ({
     translationKey,
     variables,
 }: {
-    translationKey: string;
+    translationKey: keyof Translations;
     variables?: Record<string, string>;
 }) => {
     const { t } = useTranslation();
@@ -40,15 +40,15 @@ const renderWithTranslations = (
 describe('useTranslation', () => {
     describe('default English translations', () => {
         it('translates a simple key', () => {
-            const { getByTestId } = render(<TestComponent translationKey="colorPicker.selectColor" />, {
+            const { getByTestId } = render(<TestComponent translationKey="ColorPicker_selectColor" />, {
                 wrapper: DefaultWrapper,
             });
 
             expect(getByTestId('translated-text')).toHaveTextContent('Select Color');
         });
 
-        it('translates nested keys', () => {
-            const { getByTestId } = render(<TestComponent translationKey="dialog.close" />, {
+        it('translates flat keys', () => {
+            const { getByTestId } = render(<TestComponent translationKey="Dialog_close" />, {
                 wrapper: DefaultWrapper,
             });
 
@@ -57,7 +57,7 @@ describe('useTranslation', () => {
 
         it('handles variable interpolation', () => {
             const { getByTestId } = render(
-                <TestComponent translationKey="table.sortByAscending" variables={{ column: 'Name' }} />,
+                <TestComponent translationKey="Table_sortByAscending" variables={{ column: 'Name' }} />,
                 { wrapper: DefaultWrapper },
             );
 
@@ -66,7 +66,7 @@ describe('useTranslation', () => {
 
         it('handles multiple variable interpolation', () => {
             const { getByTestId } = render(
-                <TestComponent translationKey="badge.dismiss" variables={{ label: 'Warning' }} />,
+                <TestComponent translationKey="Badge_dismiss" variables={{ label: 'Warning' }} />,
                 { wrapper: DefaultWrapper },
             );
 
@@ -74,18 +74,18 @@ describe('useTranslation', () => {
         });
 
         it('returns the key as fallback when translation is not found', () => {
-            const { getByTestId } = render(<TestComponent translationKey="nonexistent.key" />, {
+            const { getByTestId } = render(<TestComponent translationKey={'Nonexistent_key' as keyof Translations} />, {
                 wrapper: DefaultWrapper,
             });
 
-            expect(getByTestId('translated-text')).toHaveTextContent('nonexistent.key');
+            expect(getByTestId('translated-text')).toHaveTextContent('Nonexistent_key');
         });
     });
 
     describe('custom translations', () => {
         it('uses provided German translations', () => {
             const { getByTestId } = renderWithTranslations(
-                <TestComponent translationKey="colorPicker.selectColor" />,
+                <TestComponent translationKey="ColorPicker_selectColor" />,
                 de,
             );
 
@@ -94,7 +94,7 @@ describe('useTranslation', () => {
 
         it('uses provided German translations with variables', () => {
             const { getByTestId } = renderWithTranslations(
-                <TestComponent translationKey="table.sortByDescending" variables={{ column: 'Name' }} />,
+                <TestComponent translationKey="Table_sortByDescending" variables={{ column: 'Name' }} />,
                 de,
             );
 
@@ -104,7 +104,7 @@ describe('useTranslation', () => {
 
     describe('edge cases', () => {
         it('handles empty string variables', () => {
-            const { getByTestId } = render(<TestComponent translationKey="badge.dismiss" variables={{ label: '' }} />, {
+            const { getByTestId } = render(<TestComponent translationKey="Badge_dismiss" variables={{ label: '' }} />, {
                 wrapper: DefaultWrapper,
             });
 
@@ -112,7 +112,7 @@ describe('useTranslation', () => {
         });
 
         it('handles missing variables in template strings', () => {
-            const { getByTestId } = render(<TestComponent translationKey="table.sortByAscending" />, {
+            const { getByTestId } = render(<TestComponent translationKey="Table_sortByAscending" />, {
                 wrapper: DefaultWrapper,
             });
 
@@ -121,7 +121,7 @@ describe('useTranslation', () => {
         });
 
         it('handles special characters in translation values', () => {
-            const { getByTestId } = render(<TestComponent translationKey="select.clear" />, {
+            const { getByTestId } = render(<TestComponent translationKey="Select_clear" />, {
                 wrapper: DefaultWrapper,
             });
 
@@ -131,19 +131,8 @@ describe('useTranslation', () => {
 
     describe('dynamic translation keys', () => {
         it('translates all keys defined in the English locale', () => {
-            // Dynamically collect all translation keys from the en object
-            const keys: string[] = [];
-            const collectKeys = (obj: Record<string, unknown>, prefix = '') => {
-                for (const [key, value] of Object.entries(obj)) {
-                    const fullKey = prefix ? `${prefix}.${key}` : key;
-                    if (typeof value === 'string') {
-                        keys.push(fullKey);
-                    } else if (typeof value === 'object' && value !== null) {
-                        collectKeys(value as Record<string, unknown>, fullKey);
-                    }
-                }
-            };
-            collectKeys(en);
+            // Collect all translation keys from the flat en object
+            const keys = Object.keys(en) as Array<keyof Translations>;
 
             // Test that all keys can be translated
             for (const key of keys) {

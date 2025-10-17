@@ -287,7 +287,7 @@ export const DialogHeader = (
                     role="button"
                     data-test-id={`${dataTestId}-close`}
                     className="tw-cursor-pointer"
-                    aria-label={t('dialog.close')}
+                    aria-label={t('Dialog_close')}
                     {...closeProps}
                 >
                     <IconCross size={20} />

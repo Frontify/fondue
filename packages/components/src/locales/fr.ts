@@ -3,35 +3,21 @@
 import { type Translations } from './en';
 
 export const fr: Translations = {
-    colorPicker: {
-        selectColor: 'Sélectionner une couleur',
-        selectFormat: 'Sélectionner un format de couleur',
-        hexValue: 'Valeur de couleur hexadécimale',
-        redChannel: 'Canal de couleur rouge',
-        greenChannel: 'Canal de couleur vert',
-        blueChannel: 'Canal de couleur bleu',
-        opacity: 'Opacité de la couleur',
-    },
-    dialog: {
-        close: 'Fermer',
-    },
-    flyout: {
-        close: 'Fermer',
-    },
-    select: {
-        clear: 'effacer la saisie',
-        toggleMenu: 'basculer le menu',
-    },
-    switch: {
-        defaultLabel: 'Interrupteur',
-    },
-    table: {
-        sortByDescending: 'Trier par ${column} décroissant',
-        sortByAscending: 'Trier par ${column} croissant',
-        sortDescending: 'Trier par ordre décroissant',
-        sortAscending: 'Trier par ordre croissant',
-    },
-    badge: {
-        dismiss: 'Fermer ${label}',
-    },
+    ColorPicker_selectColor: 'Sélectionner une couleur',
+    ColorPicker_selectFormat: 'Sélectionner un format de couleur',
+    ColorPicker_hexValue: 'Valeur de couleur hexadécimale',
+    ColorPicker_redChannel: 'Canal de couleur rouge',
+    ColorPicker_greenChannel: 'Canal de couleur vert',
+    ColorPicker_blueChannel: 'Canal de couleur bleu',
+    ColorPicker_opacity: 'Opacité de la couleur',
+    Dialog_close: 'Fermer',
+    Flyout_close: 'Fermer',
+    Select_clear: 'effacer la saisie',
+    Select_toggleMenu: 'basculer le menu',
+    Switch_defaultLabel: 'Interrupteur',
+    Table_sortByDescending: 'Trier par ${column} décroissant',
+    Table_sortByAscending: 'Trier par ${column} croissant',
+    Table_sortDescending: 'Trier par ordre décroissant',
+    Table_sortAscending: 'Trier par ordre croissant',
+    Badge_dismiss: 'Fermer ${label}',
 };

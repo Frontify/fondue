@@ -223,7 +223,7 @@ export const FlyoutHeader = (
                     role="button"
                     data-test-id={`${dataTestId}-close`}
                     className={styles.close}
-                    aria-label={t('flyout.close')}
+                    aria-label={t('Flyout_close')}
                     {...closeProps}
                 >
                     <IconCross size={20} />

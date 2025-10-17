@@ -194,12 +194,12 @@ export const TableHeaderCell = forwardRef<HTMLTableCellElement, TableHeaderCellP
         const sortLabel = useMemo(() => {
             if (typeof children === 'string') {
                 if (sortDirection === 'ascending') {
-                    return sortTranslations?.sortDescending ?? t('table.sortByDescending', { column: children });
+                    return sortTranslations?.sortDescending ?? t('Table_sortByDescending', { column: children });
                 }
-                return sortTranslations?.sortAscending ?? t('table.sortByAscending', { column: children });
+                return sortTranslations?.sortAscending ?? t('Table_sortByAscending', { column: children });
             }
 
-            return sortDirection === 'ascending' ? t('table.sortDescending') : t('table.sortAscending');
+            return sortDirection === 'ascending' ? t('Table_sortDescending') : t('Table_sortAscending');
         }, [children, sortDirection, sortTranslations, t]);
 
         const handleSortChange = () => {

@@ -3,35 +3,21 @@
 import { type Translations } from './en';
 
 export const nl: Translations = {
-    colorPicker: {
-        selectColor: 'Selecteer kleur',
-        selectFormat: 'Selecteer een kleurformaat',
-        hexValue: 'Hex-kleurwaarde',
-        redChannel: 'Rood kleurkanaal',
-        greenChannel: 'Groen kleurkanaal',
-        blueChannel: 'Blauw kleurkanaal',
-        opacity: 'Kleurdekking',
-    },
-    dialog: {
-        close: 'Sluiten',
-    },
-    flyout: {
-        close: 'Sluiten',
-    },
-    select: {
-        clear: 'invoer wissen',
-        toggleMenu: 'menu schakelen',
-    },
-    switch: {
-        defaultLabel: 'Schakelaar',
-    },
-    table: {
-        sortByDescending: 'Sorteer op ${column} aflopend',
-        sortByAscending: 'Sorteer op ${column} oplopend',
-        sortDescending: 'Sorteer aflopend',
-        sortAscending: 'Sorteer oplopend',
-    },
-    badge: {
-        dismiss: 'Sluit ${label}',
-    },
+    ColorPicker_selectColor: 'Selecteer kleur',
+    ColorPicker_selectFormat: 'Selecteer een kleurformaat',
+    ColorPicker_hexValue: 'Hex-kleurwaarde',
+    ColorPicker_redChannel: 'Rood kleurkanaal',
+    ColorPicker_greenChannel: 'Groen kleurkanaal',
+    ColorPicker_blueChannel: 'Blauw kleurkanaal',
+    ColorPicker_opacity: 'Kleurdekking',
+    Dialog_close: 'Sluiten',
+    Flyout_close: 'Sluiten',
+    Select_clear: 'invoer wissen',
+    Select_toggleMenu: 'menu schakelen',
+    Switch_defaultLabel: 'Schakelaar',
+    Table_sortByDescending: 'Sorteer op ${column} aflopend',
+    Table_sortByAscending: 'Sorteer op ${column} oplopend',
+    Table_sortDescending: 'Sorteer aflopend',
+    Table_sortAscending: 'Sorteer oplopend',
+    Badge_dismiss: 'Sluit ${label}',
 };

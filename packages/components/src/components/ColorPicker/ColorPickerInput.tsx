@@ -74,7 +74,7 @@ export const ColorPickerInput = (
                 ) : (
                     <>
                         <IconDroplet size={16} />
-                        <span>{t('colorPicker.selectColor')}</span>
+                        <span>{t('ColorPicker_selectColor')}</span>
                     </>
                 )}
 

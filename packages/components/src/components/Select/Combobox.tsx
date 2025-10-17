@@ -200,7 +200,7 @@ export const SelectCombobox = (
                     ) : null}
                     <div className={styles.icons}>
                         <button
-                            aria-label={t('select.toggleMenu')}
+                            aria-label={t('Select_toggleMenu')}
                             {...getToggleButtonProps()}
                             type="button"
                             disabled={disabled}

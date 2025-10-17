@@ -69,7 +69,7 @@ export const ColorValueInput = (
             <div className={styles.colorFormatInput}>
                 <Select
                     data-test-id="color-picker-select-format"
-                    aria-label={t('colorPicker.selectFormat')}
+                    aria-label={t('ColorPicker_selectFormat')}
                     onSelect={(selectedValue) => {
                         setCurrentFormat(selectedValue as ColorFormat);
                     }}
@@ -94,7 +94,7 @@ export const ColorValueInput = (
                     onChange={(event) => {
                         setHexColorValue(event.target.value);
                     }}
-                    aria-label={t('colorPicker.hexValue')}
+                    aria-label={t('ColorPicker_hexValue')}
                 >
                     <TextInput.Slot name="left">
                         <span className={styles.inputDecorator}>#</span>
@@ -113,7 +113,7 @@ export const ColorValueInput = (
                                 red: getLimitedColorChannelValue(event.target.value),
                             });
                         }}
-                        aria-label={t('colorPicker.redChannel')}
+                        aria-label={t('ColorPicker_redChannel')}
                     >
                         <TextInput.Slot name="left">
                             <span className={styles.inputDecorator}>R</span>
@@ -130,7 +130,7 @@ export const ColorValueInput = (
                                 green: getLimitedColorChannelValue(event.target.value),
                             });
                         }}
-                        aria-label={t('colorPicker.greenChannel')}
+                        aria-label={t('ColorPicker_greenChannel')}
                     >
                         <TextInput.Slot name="left">
                             <span className={styles.inputDecorator}>G</span>
@@ -147,7 +147,7 @@ export const ColorValueInput = (
                                 blue: getLimitedColorChannelValue(event.target.value),
                             });
                         }}
-                        aria-label={t('colorPicker.blueChannel')}
+                        aria-label={t('ColorPicker_blueChannel')}
                     >
                         <TextInput.Slot name="left">
                             <span className={styles.inputDecorator}>B</span>
@@ -168,7 +168,7 @@ export const ColorValueInput = (
                             alpha: getLimitedColorChannelValue(event.target.value, 0, 100) / 100,
                         });
                     }}
-                    aria-label={t('colorPicker.opacity')}
+                    aria-label={t('ColorPicker_opacity')}
                 >
                     <TextInput.Slot name="left">
                         <span className={styles.inputDecorator}>A</span>

@@ -107,7 +107,7 @@ const BadgeContent = ({ 'aria-label': ariaLabel, children, disabled = false, onD
             {onDismiss && (
                 <button
                     type="button"
-                    aria-label={t('badge.dismiss', { label: ariaLabel || '' })}
+                    aria-label={t('Badge_dismiss', { label: ariaLabel || '' })}
                     className={styles.dismiss}
                     disabled={disabled}
                     onClick={onDismiss}

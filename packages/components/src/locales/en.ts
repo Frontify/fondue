@@ -1,37 +1,23 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 export const en = {
-    colorPicker: {
-        selectColor: 'Select Color',
-        selectFormat: 'Select a color format',
-        hexValue: 'Hex color value',
-        redChannel: 'Red Color Channel',
-        greenChannel: 'Green Color Channel',
-        blueChannel: 'Blue Color Channel',
-        opacity: 'Color Opacity',
-    },
-    dialog: {
-        close: 'Close',
-    },
-    flyout: {
-        close: 'Close',
-    },
-    select: {
-        clear: 'clear input',
-        toggleMenu: 'toggle menu',
-    },
-    switch: {
-        defaultLabel: 'Switch',
-    },
-    table: {
-        sortByDescending: 'Sort by ${column} descending',
-        sortByAscending: 'Sort by ${column} ascending',
-        sortDescending: 'Sort descending',
-        sortAscending: 'Sort ascending',
-    },
-    badge: {
-        dismiss: 'Dismiss ${label}',
-    },
+    ColorPicker_selectColor: 'Select Color',
+    ColorPicker_selectFormat: 'Select a color format',
+    ColorPicker_hexValue: 'Hex color value',
+    ColorPicker_redChannel: 'Red Color Channel',
+    ColorPicker_greenChannel: 'Green Color Channel',
+    ColorPicker_blueChannel: 'Blue Color Channel',
+    ColorPicker_opacity: 'Color Opacity',
+    Dialog_close: 'Close',
+    Flyout_close: 'Close',
+    Select_clear: 'clear input',
+    Select_toggleMenu: 'toggle menu',
+    Switch_defaultLabel: 'Switch',
+    Table_sortByDescending: 'Sort by ${column} descending',
+    Table_sortByAscending: 'Sort by ${column} ascending',
+    Table_sortDescending: 'Sort descending',
+    Table_sortAscending: 'Sort ascending',
+    Badge_dismiss: 'Dismiss ${label}',
 };
 
 export type Translations = typeof en;

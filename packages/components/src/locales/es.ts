@@ -3,35 +3,21 @@
 import { type Translations } from './en';
 
 export const es: Translations = {
-    colorPicker: {
-        selectColor: 'Seleccionar color',
-        selectFormat: 'Seleccionar un formato de color',
-        hexValue: 'Valor de color hexadecimal',
-        redChannel: 'Canal de color rojo',
-        greenChannel: 'Canal de color verde',
-        blueChannel: 'Canal de color azul',
-        opacity: 'Opacidad del color',
-    },
-    dialog: {
-        close: 'Cerrar',
-    },
-    flyout: {
-        close: 'Cerrar',
-    },
-    select: {
-        clear: 'borrar entrada',
-        toggleMenu: 'alternar menú',
-    },
-    switch: {
-        defaultLabel: 'Interruptor',
-    },
-    table: {
-        sortByDescending: 'Ordenar por ${column} descendente',
-        sortByAscending: 'Ordenar por ${column} ascendente',
-        sortDescending: 'Ordenar descendente',
-        sortAscending: 'Ordenar ascendente',
-    },
-    badge: {
-        dismiss: 'Cerrar ${label}',
-    },
+    ColorPicker_selectColor: 'Seleccionar color',
+    ColorPicker_selectFormat: 'Seleccionar un formato de color',
+    ColorPicker_hexValue: 'Valor de color hexadecimal',
+    ColorPicker_redChannel: 'Canal de color rojo',
+    ColorPicker_greenChannel: 'Canal de color verde',
+    ColorPicker_blueChannel: 'Canal de color azul',
+    ColorPicker_opacity: 'Opacidad del color',
+    Dialog_close: 'Cerrar',
+    Flyout_close: 'Cerrar',
+    Select_clear: 'borrar entrada',
+    Select_toggleMenu: 'alternar menú',
+    Switch_defaultLabel: 'Interruptor',
+    Table_sortByDescending: 'Ordenar por ${column} descendente',
+    Table_sortByAscending: 'Ordenar por ${column} ascendente',
+    Table_sortDescending: 'Ordenar descendente',
+    Table_sortAscending: 'Ordenar ascendente',
+    Badge_dismiss: 'Cerrar ${label}',
 };

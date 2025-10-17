@@ -3,35 +3,21 @@
 import { type Translations } from './en';
 
 export const pl: Translations = {
-    colorPicker: {
-        selectColor: 'Wybierz kolor',
-        selectFormat: 'Wybierz format koloru',
-        hexValue: 'Wartość koloru szesnastkowego',
-        redChannel: 'Czerwony kanał koloru',
-        greenChannel: 'Zielony kanał koloru',
-        blueChannel: 'Niebieski kanał koloru',
-        opacity: 'Przezroczystość koloru',
-    },
-    dialog: {
-        close: 'Zamknij',
-    },
-    flyout: {
-        close: 'Zamknij',
-    },
-    select: {
-        clear: 'wyczyść pole',
-        toggleMenu: 'przełącz menu',
-    },
-    switch: {
-        defaultLabel: 'Przełącznik',
-    },
-    table: {
-        sortByDescending: 'Sortuj według ${column} malejąco',
-        sortByAscending: 'Sortuj według ${column} rosnąco',
-        sortDescending: 'Sortuj malejąco',
-        sortAscending: 'Sortuj rosnąco',
-    },
-    badge: {
-        dismiss: 'Zamknij ${label}',
-    },
+    ColorPicker_selectColor: 'Wybierz kolor',
+    ColorPicker_selectFormat: 'Wybierz format koloru',
+    ColorPicker_hexValue: 'Wartość koloru szesnastkowego',
+    ColorPicker_redChannel: 'Czerwony kanał koloru',
+    ColorPicker_greenChannel: 'Zielony kanał koloru',
+    ColorPicker_blueChannel: 'Niebieski kanał koloru',
+    ColorPicker_opacity: 'Przezroczystość koloru',
+    Dialog_close: 'Zamknij',
+    Flyout_close: 'Zamknij',
+    Select_clear: 'wyczyść pole',
+    Select_toggleMenu: 'przełącz menu',
+    Switch_defaultLabel: 'Przełącznik',
+    Table_sortByDescending: 'Sortuj według ${column} malejąco',
+    Table_sortByAscending: 'Sortuj według ${column} rosnąco',
+    Table_sortDescending: 'Sortuj malejąco',
+    Table_sortAscending: 'Sortuj rosnąco',
+    Badge_dismiss: 'Zamknij ${label}',
 };

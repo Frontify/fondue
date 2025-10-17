@@ -3,35 +3,21 @@
 import { type Translations } from './en';
 
 export const de: Translations = {
-    colorPicker: {
-        selectColor: 'Farbe auswählen',
-        selectFormat: 'Farbformat auswählen',
-        hexValue: 'Hex-Farbwert',
-        redChannel: 'Roter Farbkanal',
-        greenChannel: 'Grüner Farbkanal',
-        blueChannel: 'Blauer Farbkanal',
-        opacity: 'Deckkraft',
-    },
-    dialog: {
-        close: 'Schließen',
-    },
-    flyout: {
-        close: 'Schließen',
-    },
-    select: {
-        clear: 'Eingabe löschen',
-        toggleMenu: 'Menü umschalten',
-    },
-    switch: {
-        defaultLabel: 'Schalter',
-    },
-    table: {
-        sortByDescending: 'Nach ${column} absteigend sortieren',
-        sortByAscending: 'Nach ${column} aufsteigend sortieren',
-        sortDescending: 'Absteigend sortieren',
-        sortAscending: 'Aufsteigend sortieren',
-    },
-    badge: {
-        dismiss: '${label} schließen',
-    },
+    ColorPicker_selectColor: 'Farbe auswählen',
+    ColorPicker_selectFormat: 'Farbformat auswählen',
+    ColorPicker_hexValue: 'Hex-Farbwert',
+    ColorPicker_redChannel: 'Roter Farbkanal',
+    ColorPicker_greenChannel: 'Grüner Farbkanal',
+    ColorPicker_blueChannel: 'Blauer Farbkanal',
+    ColorPicker_opacity: 'Deckkraft',
+    Dialog_close: 'Schließen',
+    Flyout_close: 'Schließen',
+    Select_clear: 'Eingabe löschen',
+    Select_toggleMenu: 'Menü umschalten',
+    Switch_defaultLabel: 'Schalter',
+    Table_sortByDescending: 'Nach ${column} absteigend sortieren',
+    Table_sortByAscending: 'Nach ${column} aufsteigend sortieren',
+    Table_sortDescending: 'Absteigend sortieren',
+    Table_sortAscending: 'Aufsteigend sortieren',
+    Badge_dismiss: '${label} schließen',
 };
