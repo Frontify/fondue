@@ -1,7 +1,7 @@
 {
     "name": "@frontify/fondue-tokens",
     "type": "module",
-    "version": "5.0.0-rc.0",
+    "version": "5.0.0-rc.1",
     "description": "Single source of truth for Fondue Design Tokens",
     "author": "Frontify Developers <developers@frontify.com>",
     "homepage": "https://github.com/Frontify/fondue",

@@ -1,5 +1,21 @@
 # @frontify/fondue-components
 
+## 23.0.0-rc.1
+
+### Minor Changes
+
+- [#2500](https://github.com/Frontify/fondue/pull/2500) [`2ab3038`](https://github.com/Frontify/fondue/commit/2ab3038c837a1dd149764e3191ce1f0ea37f7300) Thanks [@syeo66](https://github.com/syeo66)! - feat(Table): add noBorder prop
+
+### Patch Changes
+
+- [#2492](https://github.com/Frontify/fondue/pull/2492) [`f5785d1`](https://github.com/Frontify/fondue/commit/f5785d1155c4b295573cd8fbdb88114b1ecaef1e) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
+
+- [`06016db`](https://github.com/Frontify/fondue/commit/06016db7131d2611dad9b88115e80c9fe9d2051e) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: merge main into v13
+
+- Updated dependencies [[`f5785d1`](https://github.com/Frontify/fondue/commit/f5785d1155c4b295573cd8fbdb88114b1ecaef1e), [`06016db`](https://github.com/Frontify/fondue/commit/06016db7131d2611dad9b88115e80c9fe9d2051e)]:
+    - @frontify/fondue-tokens@5.0.0-rc.1
+    - @frontify/fondue-icons@0.21.0-rc.1
+
 ## 20.0.0-rc.0
 
 ### Major Changes
