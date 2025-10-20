@@ -9,11 +9,13 @@
     display: block;
     position: fixed;
     top: 50%;
-    transform: translateY(-50%);
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
     background-color: var(--base-color);
     box-shadow: var(--shadow-matrix);
     border: var(--line-width) solid var(--line-color);
     z-index: 1;
+    width: calc(100vw - 2rem);
     max-width: var(--dialog-max-width);
     min-height: var(--dialog-min-height);
     max-height: calc(100dvh - 10rem);
@@ -24,8 +26,6 @@
 
     & {
         @include mediaQuery.sm {
-            left: 50%;
-            transform: translateX(-50%) translateY(-50%);
             width: max-content;
             min-width: var(--dialog-min-width);
             grid-template-rows: auto minmax(0, 1fr) auto;
@@ -39,11 +39,7 @@
 
     &[data-dialog-vertical-align='top'] {
         top: 5rem;
-        transform: translateY(0);
-
-        @include mediaQuery.sm {
-            transform: translateX(-50%) translateY(0);
-        }
+        transform: translateX(-50%) translateY(0);
     }
 
     &[data-dialog-rounded='true'] {
