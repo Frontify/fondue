@@ -60,13 +60,13 @@ export const ThemeProvider = ({
     children,
     theme = 'light',
     dir = 'ltr',
-    translations: customTranslations,
+    translations: customTranslations = en,
     asChild = false,
 }: ThemeProviderProps) => {
     const Comp = asChild ? Slot : 'div';
 
     const finalTranslations = useMemo(() => {
-        return customTranslations || en;
+        return customTranslations;
     }, [customTranslations]);
 
     const contextValue = useMemo(
