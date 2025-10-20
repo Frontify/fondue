@@ -4,7 +4,7 @@ import styles from '@frontify/fondue-tokens/theme-tokens';
 import { Slot } from '@radix-ui/react-slot';
 import { createContext, useContext, useMemo, type ReactNode } from 'react';
 
-import { en, type Translations } from '../../locales';
+import { enUS, type Translations } from '../../locales';
 
 type AvailableTheme = keyof typeof styles;
 
@@ -24,11 +24,11 @@ type ThemeProviderProps = {
      * Translations object to use for component strings.
      * Import from '@frontify/fondue/components/locales' or provide your own.
      * Must be a complete Translations object.
-     * @default "en"
+     * @default "enUS"
      * @example
      * ```tsx
-     * import { de } from '@frontify/fondue/components/locales/de';
-     * <ThemeProvider translations={de}>...</ThemeProvider>
+     * import { deDE } from '@frontify/fondue/components/locales';
+     * <ThemeProvider translations={deDE}>...</ThemeProvider>
      * ```
      */
     translations?: Translations;
@@ -48,7 +48,7 @@ type ThemeContextValue = {
 export const ThemeContext = createContext<ThemeContextValue>({
     theme: 'light',
     dir: 'ltr',
-    translations: en,
+    translations: enUS,
 });
 ThemeContext.displayName = 'ThemeContext';
 
@@ -60,7 +60,7 @@ export const ThemeProvider = ({
     children,
     theme = 'light',
     dir = 'ltr',
-    translations: customTranslations = en,
+    translations: customTranslations = enUS,
     asChild = false,
 }: ThemeProviderProps) => {
     const Comp = asChild ? Slot : 'div';

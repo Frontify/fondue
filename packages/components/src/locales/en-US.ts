@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export const en = {
+export const enUS = {
     ColorPicker_selectColor: 'Select Color',
     ColorPicker_selectFormat: 'Select a color format',
     ColorPicker_hexValue: 'Hex color value',
@@ -20,4 +20,4 @@ export const en = {
     Badge_dismiss: 'Dismiss ${label}',
 };
 
-export type Translations = typeof en;
+export type Translations = typeof enUS;

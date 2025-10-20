@@ -6,8 +6,8 @@ import { describe, expect, it } from 'vitest';
 
 import { ThemeProvider } from '../../components/ThemeProvider/ThemeProvider';
 import { type Translations } from '../../locales';
-import { de } from '../../locales/de';
-import { en } from '../../locales/en';
+import { deDE } from '../../locales/de-DE';
+import { enUS } from '../../locales/en-US';
 import { useTranslation } from '../useTranslation';
 
 // Test component that uses the translation hook
@@ -86,7 +86,7 @@ describe('useTranslation', () => {
         it('uses provided German translations', () => {
             const { getByTestId } = renderWithTranslations(
                 <TestComponent translationKey="ColorPicker_selectColor" />,
-                de,
+                deDE,
             );
 
             expect(getByTestId('translated-text')).toHaveTextContent('Farbe auswählen');
@@ -95,7 +95,7 @@ describe('useTranslation', () => {
         it('uses provided German translations with variables', () => {
             const { getByTestId } = renderWithTranslations(
                 <TestComponent translationKey="Table_sortByDescending" variables={{ column: 'Name' }} />,
-                de,
+                deDE,
             );
 
             expect(getByTestId('translated-text')).toHaveTextContent('Nach Name absteigend sortieren');
@@ -131,8 +131,8 @@ describe('useTranslation', () => {
 
     describe('dynamic translation keys', () => {
         it('translates all keys defined in the English locale', () => {
-            // Collect all translation keys from the flat en object
-            const keys = Object.keys(en) as Array<keyof Translations>;
+            // Collect all translation keys from the flat enUS object
+            const keys = Object.keys(enUS) as Array<keyof Translations>;
 
             // Test that all keys can be translated
             for (const key of keys) {
