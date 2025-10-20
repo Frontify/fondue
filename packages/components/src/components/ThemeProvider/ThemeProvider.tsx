@@ -24,7 +24,7 @@ type ThemeProviderProps = {
      * Translations object to use for component strings.
      * Import from '@frontify/fondue/components/locales' or provide your own.
      * Must be a complete Translations object.
-     * @default English translations
+     * @default "en"
      * @example
      * ```tsx
      * import { de } from '@frontify/fondue/components/locales/de';
