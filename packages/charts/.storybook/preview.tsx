@@ -1,25 +1,22 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import '@frontify/fondue-tokens/legacy/tokens';
 import '@frontify/fondue-tokens/styles';
-import '../src/styles.scss';
-
-import { type Decorator, type Preview, type StoryContext } from '@storybook/react-vite';
-import { type ComponentType } from 'react';
-
-import { Flex } from '../src/components/Flex/Flex';
-
-import DocumentationTemplate from './DocumentationTemplate.mdx';
+import { Decorator, StoryContext, type Preview } from '@storybook/react-vite';
+import { ComponentType } from 'react';
+import '../src/index.css';
 import { withTheme } from './components/StoryWithTheme';
+import DocumentationTemplate from './DocumentationTemplate.mdx';
 
 const ThemeProviderWrapper: Decorator = (Story: ComponentType, context: StoryContext) => {
     const { direction = 'ltr', theme = 'light' } = context.globals;
 
     if (theme === 'both') {
         return (
-            <Flex direction="column">
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
                 {withTheme(Story, { label: 'Light theme', theme: 'light', direction })}
                 {withTheme(Story, { label: 'Dark theme', theme: 'dark', direction })}
-            </Flex>
+            </div>
         );
     }
 
@@ -68,22 +65,12 @@ const preview: Preview = {
         theme: 'light',
     },
     parameters: {
-        layout: 'fullscreen',
-        options: {
-            storySort: {
-                order: ['Tokens', 'Utilities', 'Typography', 'Layout', 'Components'],
-                method: 'alphabetical',
-            },
-        },
         docs: {
             page: DocumentationTemplate,
-
             toc: {
                 title: 'Table of contents',
                 headingSelector: 'h2, h3',
             },
-
-            codePanel: true,
         },
         controls: {
             matchers: {
@@ -91,6 +78,7 @@ const preview: Preview = {
                 date: /Date$/i,
             },
         },
+        layout: 'fullscreen',
         status: {
             type: 'legacy',
             statuses: {
