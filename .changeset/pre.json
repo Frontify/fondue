@@ -10,18 +10,19 @@
     "@frontify/fondue-storybook-docs": "0.0.1"
   },
   "changesets": [
+    "brown-cats-exist",
     "brown-cows-appear",
     "brown-sloths-cross",
     "clever-games-rest",
     "cool-apples-poke",
+    "crazy-times-jump",
     "curly-clowns-rule",
     "cyan-roses-win",
-    "fair-apples-lie",
     "four-jobs-hammer",
     "free-hoops-try",
+    "gentle-bats-write",
     "huge-breads-sniff",
     "lemon-cycles-lead",
-    "little-cobras-join",
     "mean-gifts-live",
     "modern-doors-give",
     "neat-geese-call",
@@ -33,7 +34,6 @@
     "sweet-shoes-bow",
     "swift-worlds-kiss",
     "thin-buckets-open",
-    "update-icons-20250917135102",
     "wild-islands-turn"
   ]
 }
