@@ -968,7 +968,7 @@ export const NoBorder: Story = {
         <Flex direction="column" gap="2rem">
             <div>
                 <h3 style={{ marginBottom: '0.5rem' }}>Without noBorder (default)</h3>
-                <div style={{ border: '1px solid var(--line-color)', borderRadius: '8px', padding: '0 1rem' }}>
+                <div style={{ border: '1px solid var(--color-line-mid)', borderRadius: '8px', padding: '0 1rem' }}>
                     <Table.Root {...args}>
                         <Table.Header>
                             <Table.Row>
@@ -991,7 +991,7 @@ export const NoBorder: Story = {
             </div>
             <div>
                 <h3 style={{ marginBottom: '0.5rem' }}>With noBorder=true</h3>
-                <div style={{ border: '1px solid var(--line-color)', borderRadius: '8px', padding: '0 1rem' }}>
+                <div style={{ border: '1px solid var(--color-line-mid)', borderRadius: '8px', padding: '0 1rem' }}>
                     <Table.Root {...args} noBorder>
                         <Table.Header>
                             <Table.Row>
