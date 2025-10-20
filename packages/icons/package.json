@@ -61,6 +61,7 @@
         "@types/node": "^22.18.10",
         "@types/react": "^18.3.26",
         "@vitejs/plugin-react": "^4.7.0",
+        "@vueless/storybook-dark-mode": "^9.0.9",
         "autoprefixer": "^10.4.21",
         "dotenv-cli": "^10.0.0",
         "eslint": "^9.37.0",

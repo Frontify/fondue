@@ -19,6 +19,11 @@ type ThemeProviderProps = {
      */
     dir?: 'ltr' | 'rtl';
     /**
+     * Direction to apply to the theme
+     * @default "ltr"
+     */
+    dir: 'ltr' | 'rtl';
+    /**
      * Change the default rendered element for the one passed as a child, merging their props and behavior.
      * @default false
      */

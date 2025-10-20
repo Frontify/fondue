@@ -21,6 +21,29 @@
 ### Major Changes
 
 - [`18c3e1e`](https://github.com/Frontify/fondue/commit/18c3e1e75d69b7f4fb2ce68f8eb1d9a8fab9a3a7) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: merge main branch into v13
+
+## 22.2.0
+
+### Minor Changes
+
+- [#2493](https://github.com/Frontify/fondue/pull/2493) [`27674b5`](https://github.com/Frontify/fondue/commit/27674b5693be116bfb7cbc350e6eb6740e673ddd) Thanks [@syeo66](https://github.com/syeo66)! - fix(Dialog): Dialog position error
+
+### Patch Changes
+
+- [#2496](https://github.com/Frontify/fondue/pull/2496) [`82c683f`](https://github.com/Frontify/fondue/commit/82c683f8539b3f0a0fceaf2d3a77e614c2f1dc4b) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(`Dropdown`): inconsistent forceMount trigger behavior
+
+- [#2494](https://github.com/Frontify/fondue/pull/2494) [`399118a`](https://github.com/Frontify/fondue/commit/399118a64ee4495e4e11b86c7f0f053e9b4c2392) Thanks [@syeo66](https://github.com/syeo66)! - fix(TextInput): adjust placeholder text placement
+
+## 22.1.2
+
+### Patch Changes
+
+- [#2489](https://github.com/Frontify/fondue/pull/2489) [`8e261ee`](https://github.com/Frontify/fondue/commit/8e261ee93694bf5ad67e65775c5a990620c3db42) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
+
+- Updated dependencies [[`8e261ee`](https://github.com/Frontify/fondue/commit/8e261ee93694bf5ad67e65775c5a990620c3db42)]:
+    - @frontify/fondue-tokens@4.2.3
+    - @frontify/fondue-icons@0.20.1
+
 ## 22.1.1
 
 ### Patch Changes
@@ -108,6 +131,8 @@
 ### Patch Changes
 
 - [#2444](https://github.com/Frontify/fondue/pull/2444) [`301b90e`](https://github.com/Frontify/fondue/commit/301b90e5b9f04523b2a7f926e654655f42e5ddaf) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add button styles for clear actions + fix switch handle positioning
+
+<<<<<<< HEAD
 
 - Updated dependencies [[`18c3e1e`](https://github.com/Frontify/fondue/commit/18c3e1e75d69b7f4fb2ce68f8eb1d9a8fab9a3a7), [`d868114`](https://github.com/Frontify/fondue/commit/d86811431bb12264faf431cf1a38a1f22b75c6d9)]:
     - @frontify/fondue-tokens@5.0.0-beta.5
@@ -217,9 +242,8 @@
 
 - [#2393](https://github.com/Frontify/fondue/pull/2393) [`ac3f322`](https://github.com/Frontify/fondue/commit/ac3f322dc5490b98c4785720e879a5bef434467f) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
 
-- Updated dependencies [[`b8331f6`](https://github.com/Frontify/fondue/commit/b8331f6c0ef3bedd7e2d4ac0575ca069d75734d0), [`ac3f322`](https://github.com/Frontify/fondue/commit/ac3f322dc5490b98c4785720e879a5bef434467f)]:
-    - @frontify/fondue-tokens@4.2.1
-    - @frontify/fondue-icons@0.17.1
+- # Updated dependencies [[`b8331f6`](https://github.com/Frontify/fondue/commit/b8331f6c0ef3bedd7e2d4ac0575ca069d75734d0), [`ac3f322`](https://github.com/Frontify/fondue/commit/ac3f322dc5490b98c4785720e879a5bef434467f)]: - @frontify/fondue-tokens@4.2.1 - @frontify/fondue-icons@0.17.1
+    > > > > > > > main
 - [#2443](https://github.com/Frontify/fondue/pull/2443) [`191c62e`](https://github.com/Frontify/fondue/commit/191c62e0c73d3cf90396954df121b46e7f50eb88) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix: prevent tooltip focus which would open the tooltip when opening dialogs
 
 - [#2447](https://github.com/Frontify/fondue/pull/2447) [`41f6423`](https://github.com/Frontify/fondue/commit/41f642365afe3b8805beef45007dddf4a0f73b6a) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: add missing props

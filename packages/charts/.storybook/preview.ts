@@ -2,7 +2,7 @@
 
 import '@frontify/fondue-tokens/legacy/tokens';
 import '@frontify/fondue-tokens/styles';
-import '../src/index.css';
+import '@frontify/fondue-tokens/themes/theme.dark.css';
 import { type Preview } from '@storybook/react-vite';
 import DocumentationTemplate from './DocumentationTemplate.mdx';
 

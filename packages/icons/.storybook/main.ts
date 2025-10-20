@@ -9,6 +9,7 @@ export default {
     staticDirs: ['assets'],
     addons: [
         '@etchteam/storybook-addon-status',
+        '@vueless/storybook-dark-mode',
         '@storybook/addon-links',
         '@storybook/addon-a11y',
         '@storybook/addon-docs',

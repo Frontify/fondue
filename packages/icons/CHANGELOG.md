@@ -6,6 +6,12 @@
 
 - chore: fondue release candidate
 
+## 0.20.1
+
+### Patch Changes
+
+- [#2489](https://github.com/Frontify/fondue/pull/2489) [`8e261ee`](https://github.com/Frontify/fondue/commit/8e261ee93694bf5ad67e65775c5a990620c3db42) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
+
 ## 0.20.0
 
 ### Minor Changes

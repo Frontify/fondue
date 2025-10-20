@@ -148,6 +148,25 @@
     - @frontify/fondue-charts@7.0.0-beta.0
     - @frontify/fondue-tokens@5.0.0-beta.0
     - @frontify/fondue-icons@0.18.0-beta.0
+
+## 12.14.2
+
+### Patch Changes
+
+- [`7938e88`](https://github.com/Frontify/fondue/commit/7938e884ef4dc1b96bb900bfabe3923b8caebbfa) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: bump version since it wasn't bumped with previous release
+
+## 12.14.1
+
+### Patch Changes
+
+- [#2489](https://github.com/Frontify/fondue/pull/2489) [`8e261ee`](https://github.com/Frontify/fondue/commit/8e261ee93694bf5ad67e65775c5a990620c3db42) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
+
+- Updated dependencies [[`8e261ee`](https://github.com/Frontify/fondue/commit/8e261ee93694bf5ad67e65775c5a990620c3db42)]:
+    - @frontify/fondue-components@22.1.2
+    - @frontify/fondue-charts@6.0.5
+    - @frontify/fondue-tokens@4.2.3
+    - @frontify/fondue-icons@0.20.1
+
 ## 12.14.0
 
 ### Minor Changes

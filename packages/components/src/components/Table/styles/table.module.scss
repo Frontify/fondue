@@ -84,6 +84,16 @@
             max-width: 0;
         }
     }
+
+    &[data-no-border='true'] {
+        .headerCell {
+            border-top: none;
+        }
+
+        .row:last-child .rowCell {
+            border-bottom: none;
+        }
+    }
 }
 
 .caption {
@@ -98,6 +108,15 @@
         top: 0;
         z-index: 2;
         background-color: var(--color-surface-default);
+    }
+}
+
+.header {
+    &[data-sticky='true'] {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        background-color: var(--base-color);
     }
 }
 

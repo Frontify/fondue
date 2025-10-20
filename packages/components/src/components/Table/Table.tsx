@@ -2,10 +2,10 @@
 
 import { IconArrowBidirectional, IconArrowDown, IconArrowUp } from '@frontify/fondue-icons';
 import {
-    type AriaAttributes,
     forwardRef,
     useMemo,
     useRef,
+    type AriaAttributes,
     type CSSProperties,
     type KeyboardEvent,
     type MouseEvent,
@@ -39,12 +39,17 @@ type TableRootProps = {
      * @deprecated Use `Table.Header sticky` prop instead. For sticky columns, use `Table.Body firstColumnSticky` or `lastColumnSticky` props
      */
     sticky?: 'head' | 'col' | 'both';
+    /**
+     * Whether to remove the top and bottom borders from the table
+     * @default false
+     */
+    noBorder?: boolean;
     children: ReactNode;
 } & CommonAriaAttrs &
     Pick<AriaAttributes, 'aria-multiselectable'>;
 
 export const TableRoot = forwardRef<HTMLTableElement, TableRootProps>(
-    ({ layout = 'auto', fontSize = 'medium', sticky, children, ...props }, ref) => {
+    ({ layout = 'auto', fontSize = 'medium', sticky, noBorder = false, children, ...props }, ref) => {
         // Handle deprecated `sticky` prop for backward compatibility
         const legacyStickyHeader = sticky === 'head' || sticky === 'both';
         const legacyStickyLeftColumn = sticky === 'col' || sticky === 'both';
@@ -58,6 +63,7 @@ export const TableRoot = forwardRef<HTMLTableElement, TableRootProps>(
                 data-font-size={fontSize}
                 data-sticky-header={legacyStickyHeader}
                 data-sticky-left-column={legacyStickyLeftColumn}
+                data-no-border={noBorder}
                 onKeyDown={handleKeyDown}
                 {...props}
             >

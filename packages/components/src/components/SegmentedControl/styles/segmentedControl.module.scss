@@ -163,6 +163,7 @@ $radius-without-border: calc(var(--border-radius-medium) - var(--border-width-de
         @include transitions.transition-transform;
     }
 
+
     // Outline of active item
     &::before {
         content: '';

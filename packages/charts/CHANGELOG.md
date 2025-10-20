@@ -59,6 +59,15 @@
 - Updated dependencies [[`d010cb5`](https://github.com/Frontify/fondue/commit/d010cb53242c9d9e9112bb369a9af975189ba36a)]:
     - @frontify/fondue-tokens@5.0.0-beta.0
 
+## 6.0.5
+
+### Patch Changes
+
+- [#2489](https://github.com/Frontify/fondue/pull/2489) [`8e261ee`](https://github.com/Frontify/fondue/commit/8e261ee93694bf5ad67e65775c5a990620c3db42) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
+
+- Updated dependencies [[`8e261ee`](https://github.com/Frontify/fondue/commit/8e261ee93694bf5ad67e65775c5a990620c3db42)]:
+    - @frontify/fondue-tokens@4.2.3
+
 ## 6.0.4
 
 ### Patch Changes

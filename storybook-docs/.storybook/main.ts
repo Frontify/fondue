@@ -7,6 +7,7 @@ const pathPrefix = process.env.STORYBOOK_PATH_PREFIX || '/';
 const config: StorybookConfig = {
     stories: ['../stories/**/*.mdx', '../stories/**/*.stories.@(ts|tsx)'],
     addons: [
+        '@vueless/storybook-dark-mode',
         '@storybook/addon-links',
         '@storybook/addon-a11y',
         '@etchteam/storybook-addon-status',

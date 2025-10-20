@@ -96,6 +96,7 @@
         "@vitejs/plugin-react": "^5.0.4",
         "@vitest/coverage-v8": "^3.2.4",
         "@vitest/ui": "^3.2.4",
+        "@vueless/storybook-dark-mode": "^9.0.9",
         "autoprefixer": "^10.4.21",
         "chalk": "^5.6.2",
         "eslint": "^9.37.0",
