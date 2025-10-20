@@ -1,0 +1,27 @@
+import{r as p,j as t}from"./iframe-rp4tXvK6.js";import{a as b}from"./Box-2dTAdpb8.js";import{B as h}from"./Button-K5oMp-8A.js";import{P as g}from"./constantStories-DEfmjXOT.js";import{b as x,P as d}from"./Tooltip-BofyqpBt.js";import"./preload-helper-C1FmrZbK.js";import"./borderStyle-D9jrV09G.js";import"./merge-DI-veSMP.js";import"./focusStyle-Ch_WJ4aJ.js";import"./input-BhBf-420.js";import"./Divider-BqYvBMoL.js";import"./Dropdown-CxVEn7Ee.js";import"./useButton-Br0F6n1W.js";import"./useFocusable-BXSsLKfC.js";import"./useFocusRing-CWvOmuKZ.js";import"./useEffectEvent-B0iZo-5j.js";import"./chain-4_YXu52x.js";import"./index-BiHInXmF.js";import"./FocusScope-DS4FnLeH.js";import"./useOverlayTriggerState-BEZ2lrWP.js";import"./useControlledState-CX_cH9Ot.js";import"./useMenuTrigger-AUhvJe9v.js";import"./useLabels-CK5UeFmu.js";import"./useLocalizedStringFormatter-CJs-_R01.js";import"./context-Bt6ZMdHa.js";import"./VisuallyHidden-wRfshC6s.js";import"./helper-DAqcxCSd.js";import"./keyboard-Dl2NWKmf.js";import"./SelectionManager-BL4wQlQg.js";import"./useField-CvqfyaBW.js";import"./useFormValidationState-BWKkO5l0.js";import"./usePopper-D4FJxQQU.js";import"./index-BYPbgCc9.js";import"./MenuItem-DrfZk6bm.js";import"./IconSize-BcCrF_mi.js";import"./IconCaretRight-C06zx3vP.js";import"./IconCheckMark-BGU497N_.js";import"./elements-BOYmskOL.js";import"./LoadingCircle-jwtl8KLB.js";import"./Trigger-B0mWSjy0.js";import"./IconCaretDown-2pKBTVXl.js";import"./IconCaretDown16-0TQW92SM.js";import"./IconCross-BdcwsUq9.js";import"./IconExclamationMarkTriangle-DiSrNeKR.js";import"./IconExclamationMarkTriangle24-wUfSIYbA.js";import"./IconTrashBin16-7vreT6af.js";import"./IconTrashBin24-DBiRwG0M.js";import"./validation-C9S5KgfE.js";import"./EnablePortalWrapper-DCsum9UA.js";import"./Portal-C6lyvz6z.js";import"./useMemoizedId-Crrjl7nt.js";import"./FormControl-DJASPagM.js";import"./InputLabel-CFfHIgFB.js";import"./TooltipIcon-BQzsb3pk.js";import"./LegacyTooltip-DSvPmMNC.js";import"./useLink-B7X21rmN.js";import"./IconExclamationMarkCircle24-XfyTkQV4.js";import"./IconQuestionMarkCircle-xJoVN4sY.js";import"./Switch-CCAjHMbz.js";import"./TabItem-lQw6FqM2.js";import"./TextInput-CrXCZLZg.js";import"./Tree-DUNDCnFz.js";import"./_Uint8Array-CwPxMkg2.js";import"./useClickOutside-XwQX8AXH.js";import"./dialog-D9O7a7Fm.js";const _t={title:"Utilities/Popper",component:d,tags:["autodocs"],parameters:{status:{type:"deprecated"},docs:{description:{component:"### This component is deprecated, please use the [new Flyout](/docs/current_components-flyout--documentation) component instead."}}},args:{placement:"bottom-start",offset:[0,8],flip:!0,strategy:"absolute",withArrow:!1,arrowCustomColors:x},argTypes:{...g,withArrow:{control:{type:"boolean"}},arrowCustomColors:{description:'Color Styling for the popper arrow using tailwind classes and before prefix, example: "before:tw-border before:tw-border-line-x-strong before:tw-bg-base"',control:{type:"text"}},isDetached:{description:"if true, the popper container will detach from the Trigger position and act as a Dialog",control:{type:"boolean"}},verticalAlignment:{description:"if isDetached is set to true, verticalAlignment will position the Dialog either in the center of the viewport or on Top of the screen.",options:["top","centered"],control:{type:"radio"}}}},u=f=>{const[r,w]=p.useState(!1),n=p.useRef(null);return t.jsxs("div",{className:"tw-flex tw-justify-center",children:[t.jsx(h,{ref:n,onClick:()=>w(!r),children:"Hello"}),t.jsx(d,{...f,anchor:n,open:r,children:t.jsx(b,{className:"tw-bg-base tw-border tw-border-black tw-w-[400px]",children:t.jsx("p",{children:"Some content"})})})]})},o=u.bind({});o.args={enablePortal:!1};const e=u.bind({});e.args={enablePortal:!0};var i,s,a;o.parameters={...o.parameters,docs:{...(i=o.parameters)==null?void 0:i.docs,source:{originalSource:`args => {
+  const [open, setOpen] = useState(false);
+  const anchorRef = useRef<HTMLButtonElement | null>(null);
+  return <div className="tw-flex tw-justify-center">
+            <Button ref={anchorRef} onClick={() => setOpen(!open)}>
+                Hello
+            </Button>
+            <Popper {...args} anchor={anchorRef} open={open}>
+                <Box className="tw-bg-base tw-border tw-border-black tw-w-[400px]">
+                    <p>Some content</p>
+                </Box>
+            </Popper>
+        </div>;
+}`,...(a=(s=o.parameters)==null?void 0:s.docs)==null?void 0:a.source}}};var m,c,l;e.parameters={...e.parameters,docs:{...(m=e.parameters)==null?void 0:m.docs,source:{originalSource:`args => {
+  const [open, setOpen] = useState(false);
+  const anchorRef = useRef<HTMLButtonElement | null>(null);
+  return <div className="tw-flex tw-justify-center">
+            <Button ref={anchorRef} onClick={() => setOpen(!open)}>
+                Hello
+            </Button>
+            <Popper {...args} anchor={anchorRef} open={open}>
+                <Box className="tw-bg-base tw-border tw-border-black tw-w-[400px]">
+                    <p>Some content</p>
+                </Box>
+            </Popper>
+        </div>;
+}`,...(l=(c=e.parameters)==null?void 0:c.docs)==null?void 0:l.source}}};const Ht=["Default","WithPortal"];export{o as Default,e as WithPortal,Ht as __namedExportsOrder,_t as default};
