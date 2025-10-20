@@ -132,8 +132,6 @@
 
 - [#2444](https://github.com/Frontify/fondue/pull/2444) [`301b90e`](https://github.com/Frontify/fondue/commit/301b90e5b9f04523b2a7f926e654655f42e5ddaf) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add button styles for clear actions + fix switch handle positioning
 
-<<<<<<< HEAD
-
 - Updated dependencies [[`18c3e1e`](https://github.com/Frontify/fondue/commit/18c3e1e75d69b7f4fb2ce68f8eb1d9a8fab9a3a7), [`d868114`](https://github.com/Frontify/fondue/commit/d86811431bb12264faf431cf1a38a1f22b75c6d9)]:
     - @frontify/fondue-tokens@5.0.0-beta.5
     - @frontify/fondue-icons@0.18.0-beta.2
