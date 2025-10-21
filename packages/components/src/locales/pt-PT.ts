@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type Translations } from './index';
+import { type Translations } from './types';
 
 export const ptPT: Translations = {
     ColorPicker_selectColor: 'Selecionar cor',

@@ -14,7 +14,7 @@ import { ptPT } from './pt-PT';
 
 export { deCH, deDE, enUS, esES, frCH, frFR, itCH, itIT, nlNL, plPL, ptPT };
 
-export type Translations = typeof enUS;
+export { type Translations } from './types';
 
 export const availableLocales = [
     'en-US',
