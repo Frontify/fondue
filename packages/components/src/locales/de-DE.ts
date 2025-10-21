@@ -1,6 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export const deDE = {
+import { type Translations } from './index';
+
+export const deDE: Translations = {
     ColorPicker_selectColor: 'Farbe auswählen',
     ColorPicker_selectFormat: 'Farbformat auswählen',
     ColorPicker_hexValue: 'Hex-Farbwert',

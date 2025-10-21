@@ -1,6 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export const esES = {
+import { type Translations } from './index';
+
+export const esES: Translations = {
     ColorPicker_selectColor: 'Seleccionar color',
     ColorPicker_selectFormat: 'Seleccionar un formato de color',
     ColorPicker_hexValue: 'Valor de color hexadecimal',

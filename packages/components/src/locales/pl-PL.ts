@@ -1,6 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export const plPL = {
+import { type Translations } from './index';
+
+export const plPL: Translations = {
     ColorPicker_selectColor: 'Wybierz kolor',
     ColorPicker_selectFormat: 'Wybierz format koloru',
     ColorPicker_hexValue: 'Wartość koloru szesnastkowego',
