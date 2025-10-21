@@ -15,6 +15,7 @@ import {
 
 import { useSyncRefs } from '#/hooks/useSyncRefs';
 import { useTextTruncation } from '#/hooks/useTextTruncation';
+import { useTranslation } from '#/hooks/useTranslation';
 import { type CommonAriaAttrs } from '#/utilities/types';
 
 import { Box } from '../Box/Box';
@@ -184,6 +185,7 @@ export const TableHeaderCell = forwardRef<HTMLTableCellElement, TableHeaderCellP
         },
         ref,
     ) => {
+        const { t } = useTranslation();
         const cellRef = useRef<HTMLTableCellElement>(null);
         useSyncRefs<HTMLTableCellElement>(cellRef, ref);
 
@@ -192,13 +194,13 @@ export const TableHeaderCell = forwardRef<HTMLTableCellElement, TableHeaderCellP
         const sortLabel = useMemo(() => {
             if (typeof children === 'string') {
                 if (sortDirection === 'ascending') {
-                    return sortTranslations?.sortDescending ?? `Sort by ${children} descending`;
+                    return sortTranslations?.sortDescending ?? t('Table_sortByDescending', { column: children });
                 }
-                return sortTranslations?.sortAscending ?? `Sort by ${children} ascending`;
+                return sortTranslations?.sortAscending ?? t('Table_sortByAscending', { column: children });
             }
 
-            return sortDirection === 'ascending' ? 'Sort descending' : 'Sort ascending';
-        }, [children, sortDirection, sortTranslations]);
+            return sortDirection === 'ascending' ? t('Table_sortDescending') : t('Table_sortAscending');
+        }, [children, sortDirection, sortTranslations, t]);
 
         const handleSortChange = () => {
             if (!onSortChange) {

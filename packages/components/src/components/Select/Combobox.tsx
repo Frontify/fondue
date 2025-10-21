@@ -9,6 +9,7 @@ import { forwardRef, useMemo, useRef, useState, type FocusEvent, type ForwardedR
 import { LoadingCircle } from '#/components/LoadingCircle/LoadingCircle.tsx';
 import { ForwardedRefSelectSlot } from '#/components/Select/SelectSlot.tsx';
 import { type CommonAriaProps } from '#/helpers/aria';
+import { useTranslation } from '#/hooks/useTranslation';
 
 import { SelectMenu, type SelectMenuViewportCollisionPadding } from './SelectMenu';
 import styles from './styles/select.module.scss';
@@ -91,6 +92,7 @@ export const SelectCombobox = (
     }: ComboboxProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
+    const { t } = useTranslation();
     const { inputSlots, menuSlots, items, filterText, clearButton, getItemByValue, setFilterText, asyncItemStatus } =
         useSelectData(children, getAsyncItems);
 
@@ -198,7 +200,7 @@ export const SelectCombobox = (
                     ) : null}
                     <div className={styles.icons}>
                         <button
-                            aria-label="toggle menu"
+                            aria-label={t('Select_toggleMenu')}
                             {...getToggleButtonProps()}
                             type="button"
                             disabled={disabled}

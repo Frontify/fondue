@@ -3,6 +3,8 @@
 import { IconCross } from '@frontify/fondue-icons';
 import { type MouseEvent, type ReactNode } from 'react';
 
+import { useTranslation } from '#/hooks/useTranslation';
+
 import { BadgeStatus, type BadgeStatusProps } from './BadgeStatus';
 import styles from './styles/badge.module.scss';
 
@@ -96,6 +98,8 @@ export const Badge = ({
 };
 
 const BadgeContent = ({ 'aria-label': ariaLabel, children, disabled = false, onDismiss, status }: BadgeProps) => {
+    const { t } = useTranslation();
+
     return (
         <>
             {status && <BadgeStatus status={status} />}
@@ -103,7 +107,7 @@ const BadgeContent = ({ 'aria-label': ariaLabel, children, disabled = false, onD
             {onDismiss && (
                 <button
                     type="button"
-                    aria-label={`Dismiss ${ariaLabel}`}
+                    aria-label={t('Badge_dismiss', { label: ariaLabel || '' })}
                     className={styles.dismiss}
                     disabled={disabled}
                     onClick={onDismiss}

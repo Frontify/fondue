@@ -3,6 +3,7 @@
 import * as RadixSwitch from '@radix-ui/react-switch';
 import { type FormEvent, type ForwardedRef, forwardRef } from 'react';
 
+import { useTranslation } from '#/hooks/useTranslation';
 import { cn } from '#/utilities/styleUtilities';
 import { type CommonAriaAttrs } from '#/utilities/types';
 
@@ -61,24 +62,28 @@ const SwitchComponent = (
         size = 'medium',
         onChange,
         'data-test-id': dataTestId = 'fondue-switch',
-        'aria-label': ariaLabel = 'Switch',
+        'aria-label': ariaLabel,
         ...props
     }: SwitchProps,
     ref: ForwardedRef<HTMLButtonElement>,
-) => (
-    <RadixSwitch.Root
-        ref={ref}
-        checked={value}
-        defaultChecked={defaultValue}
-        className={cn([styles.root, styles[size]])}
-        onCheckedChange={onChange}
-        aria-label={ariaLabel}
-        data-test-id={dataTestId}
-        {...props}
-    >
-        <RadixSwitch.Thumb className={styles.thumb} />
-    </RadixSwitch.Root>
-);
+) => {
+    const { t } = useTranslation();
+
+    return (
+        <RadixSwitch.Root
+            ref={ref}
+            checked={value}
+            defaultChecked={defaultValue}
+            className={cn([styles.root, styles[size]])}
+            onCheckedChange={onChange}
+            aria-label={ariaLabel ?? t('Switch_defaultLabel')}
+            data-test-id={dataTestId}
+            {...props}
+        >
+            <RadixSwitch.Thumb className={styles.thumb} />
+        </RadixSwitch.Root>
+    );
+};
 
 export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(SwitchComponent);
 Switch.displayName = 'Switch';
