@@ -1,8 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type Translations } from './en-US';
-
-export const nlNL: Translations = {
+export const nlNL = {
     ColorPicker_selectColor: 'Selecteer kleur',
     ColorPicker_selectFormat: 'Selecteer een kleurformaat',
     ColorPicker_hexValue: 'Hex-kleurwaarde',

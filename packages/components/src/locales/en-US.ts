@@ -19,5 +19,3 @@ export const enUS = {
     Table_sortAscending: 'Sort ascending',
     Badge_dismiss: 'Dismiss ${label}',
 };
-
-export type Translations = typeof enUS;

@@ -1,8 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type Translations } from './en-US';
-
-export const ptPT: Translations = {
+export const ptPT = {
     ColorPicker_selectColor: 'Selecionar cor',
     ColorPicker_selectFormat: 'Selecionar um formato de cor',
     ColorPicker_hexValue: 'Valor de cor hexadecimal',
