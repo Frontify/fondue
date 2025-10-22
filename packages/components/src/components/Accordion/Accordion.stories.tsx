@@ -186,13 +186,15 @@ export const Default: Story = {
 
                 <Accordion.Item value="accordion-test-8">
                     <Accordion.Header>
-                        <Flex gap={2}>
-                            Item with badge
-                            <Badge>42 entries</Badge>
-                            <Badge emphasis="strong" variant="highlight">
-                                very pretty
-                            </Badge>
-                        </Flex>
+                        <Flex gap={2}>Item with badge</Flex>
+                        <Accordion.Slot>
+                            <Flex gap={2}>
+                                <Badge>42 entries</Badge>
+                                <Badge emphasis="strong" variant="highlight">
+                                    very pretty
+                                </Badge>
+                            </Flex>
+                        </Accordion.Slot>
                         <Accordion.Slot name="action">
                             <Flex gap={2}>
                                 <Button size="small" emphasis="weak" aspect="square">

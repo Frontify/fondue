@@ -43,17 +43,20 @@
     position: relative;
     min-width: fit-content;
     display: grid;
-    grid-template-columns: 1fr min-content max-content;
+    grid-template-columns: auto 1rem 1fr max-content;
+    grid-template-areas: "content caret slot actions";
     gap: 1rem;
 
     & > .accordionSlot {
         display: flex;
         align-items: center;
-        justify-content: center;
+        justify-content: flex-start;
+        grid-area: slot;
         grid-row: 1;
 
         &[data-name="action"] {
-            grid-column: 2;
+            grid-area: action;
+            grid-row: 1;
         }
     }
 }
@@ -82,13 +85,13 @@
     }
 
     & .accordionCaret {
-        grid-column: 3;
+        grid-area: caret;
         grid-row: 1;
         min-width: 1rem;
     }
 
     & .accordionTriggerContent {
-        grid-column: 1;
+        grid-area: content;
         grid-row: 1;
     }
 
