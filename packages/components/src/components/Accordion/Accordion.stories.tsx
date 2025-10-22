@@ -94,7 +94,7 @@ export const Default: Story = {
                 <Accordion.Item value="accordion-test-0">
                     <Accordion.Header>
                         <Flex gap={2} align="center">
-                            <IconIcon />
+                            <IconIcon size="20" />
                             Item with icon
                         </Flex>
                     </Accordion.Header>
@@ -186,15 +186,17 @@ export const Default: Story = {
 
                 <Accordion.Item value="accordion-test-8">
                     <Accordion.Header>
-                        <Flex gap={2}>
-                            Item with badge
-                            <Badge>42 entries</Badge>
-                            <Badge emphasis="strong" variant="highlight">
-                                very pretty
-                            </Badge>
-                        </Flex>
-                        <Accordion.Slot name="action">
+                        Item with badge
+                        <Accordion.Slot>
                             <Flex gap={2}>
+                                <Badge>42 entries</Badge>
+                                <Badge emphasis="strong" variant="highlight">
+                                    very pretty
+                                </Badge>
+                            </Flex>
+                        </Accordion.Slot>
+                        <Accordion.Slot name="action">
+                            <Flex gap={1}>
                                 <Button size="small" emphasis="weak" aspect="square">
                                     <IconPen size={16} />
                                 </Button>
@@ -226,7 +228,7 @@ export const WithSmallPadding: Story = {
                 <Accordion.Item value="accordion-test-0">
                     <Accordion.Header>
                         <Flex gap={2} align="center">
-                            <IconIcon />
+                            <IconIcon size="20" />
                             Item with icon
                         </Flex>
                     </Accordion.Header>

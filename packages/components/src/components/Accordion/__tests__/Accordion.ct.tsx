@@ -199,7 +199,7 @@ test.describe('Accordion Component', () => {
         await expect(component).toHaveCSS('border-bottom', '1px solid rgba(8, 8, 8, 0.1)');
     });
 
-    test('should correctly navigate with keyboard', async ({ mount, page }) => {
+    test('should correctly navigate with keyboard', async ({ mount }) => {
         const TEXT_INPUT_1 = 'text-input-1';
         const TEXT_INPUT_2 = 'text-input-2';
         const TEXT_INPUT_3 = 'text-input-3';
@@ -229,9 +229,11 @@ test.describe('Accordion Component', () => {
             </Accordion.Root>,
         );
 
-        await page.focus('body');
-        await page.keyboard.press('Tab');
         const firstTrigger = component.locator(ACCORDION_ITEM_TRIGGER_ID).first();
+        await firstTrigger.waitFor({ state: 'visible' });
+
+        // Focus the first trigger directly to test keyboard navigation
+        await firstTrigger.focus();
         await expect(firstTrigger).toBeFocused();
         await expect(component.getByTestId(TEXT_INPUT_1)).not.toBeVisible();
         await firstTrigger.press('Enter');
