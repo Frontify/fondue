@@ -94,7 +94,7 @@ export const Default: Story = {
                 <Accordion.Item value="accordion-test-0">
                     <Accordion.Header>
                         <Flex gap={2} align="center">
-                            <IconIcon />
+                            <IconIcon size="20" />
                             Item with icon
                         </Flex>
                     </Accordion.Header>
@@ -228,7 +228,7 @@ export const WithSmallPadding: Story = {
                 <Accordion.Item value="accordion-test-0">
                     <Accordion.Header>
                         <Flex gap={2} align="center">
-                            <IconIcon />
+                            <IconIcon size="20" />
                             Item with icon
                         </Flex>
                     </Accordion.Header>
