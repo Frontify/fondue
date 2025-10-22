@@ -196,7 +196,7 @@ export const Default: Story = {
                             </Flex>
                         </Accordion.Slot>
                         <Accordion.Slot name="action">
-                            <Flex gap={2}>
+                            <Flex gap={1}>
                                 <Button size="small" emphasis="weak" aspect="square">
                                     <IconPen size={16} />
                                 </Button>
