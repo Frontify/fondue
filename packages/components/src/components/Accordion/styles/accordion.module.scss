@@ -43,7 +43,7 @@
     position: relative;
     min-width: fit-content;
     display: grid;
-    grid-template-columns: auto 12px 1fr max-content;
+    grid-template-columns: auto 1rem 1fr max-content;
     grid-template-areas: "content caret slot actions";
     gap: 0.75rem;
 

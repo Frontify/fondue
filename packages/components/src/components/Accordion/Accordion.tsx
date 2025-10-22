@@ -165,7 +165,7 @@ export const AccordionHeader = ({
         <RadixAccordion.Header asChild={asChild} className={styles.accordionHeader} onClick={onClick}>
             <RadixAccordion.Trigger className={styles.accordionTrigger} data-test-id={dataTestId}>
                 <div className={styles.accordionTriggerContent}>{triggerContent}</div>
-                <IconCaretDown className={styles.accordionCaret} size="12" />
+                <IconCaretDown className={styles.accordionCaret} size="16" />
             </RadixAccordion.Trigger>
             {slots}
         </RadixAccordion.Header>
