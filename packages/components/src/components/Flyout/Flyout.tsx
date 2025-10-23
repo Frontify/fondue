@@ -5,6 +5,7 @@ import * as RadixPopover from '@radix-ui/react-popover';
 import { forwardRef, type CSSProperties, type ForwardedRef, type ReactNode } from 'react';
 
 import { type CommonAriaProps } from '#/helpers/aria';
+import { useTranslation } from '#/hooks/useTranslation';
 import { addAutoFocusAttribute, addShowFocusRing } from '#/utilities/domUtilities';
 
 import { Button } from '../Button/Button';
@@ -213,6 +214,8 @@ export const FlyoutHeader = (
     { showCloseButton, children, 'data-test-id': dataTestId = 'fondue-flyout-header', closeProps }: FlyoutHeaderProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
+    const { t } = useTranslation();
+
     return (
         <div data-test-id={dataTestId} ref={ref} className={styles.header}>
             <div>{children}</div>
@@ -222,7 +225,7 @@ export const FlyoutHeader = (
                         size="small"
                         aspect="square"
                         emphasis="weak"
-                        aria-label="Close"
+                        aria-label={t('Flyout_close')}
                         data-test-id={`${dataTestId}-close`}
                     >
                         <IconCross size={20} />

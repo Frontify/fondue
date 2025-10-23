@@ -19,7 +19,11 @@
             "types": "./dist/index.d.ts",
             "import": "./dist/fondue-components.js"
         },
-        "./styles": "./dist/style.css"
+        "./styles": "./dist/style.css",
+        "./locales/*": {
+            "types": "./dist/locales/*.d.ts",
+            "import": "./dist/locales/*.js"
+        }
     },
     "files": [
         "dist"

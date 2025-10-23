@@ -166,8 +166,3 @@
         padding-inline: sizeToken.get(10);
     }
 }
-
-.close {
-    @include focusStyle.focus-outline;
-    cursor: pointer;
-}
