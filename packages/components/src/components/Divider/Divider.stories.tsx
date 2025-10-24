@@ -20,6 +20,13 @@ const meta: Meta<typeof Divider> = {
             type: 'released',
         },
     },
+    decorators: [
+        (Story) => (
+            <div className="tw-h-8">
+                <Story />
+            </div>
+        ),
+    ],
 };
 export default meta;
 
@@ -49,11 +56,4 @@ export const Vertical: Story = {
     args: {
         direction: 'vertical',
     },
-    decorators: [
-        (Story) => (
-            <div className="tw-h-8">
-                <Story />
-            </div>
-        ),
-    ],
 };
