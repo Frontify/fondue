@@ -61,6 +61,9 @@ export const getNewIconsFromFigma = async ({
 
     for (const componentSet of componentSets) {
         const iconShapeName = kebabCase(componentSet.name.trim());
+        if (['Johanna', 'UnknownIcon'].includes(iconShapeName)) {
+            continue;
+        }
         const iconDirectory = `${ICONS_DIRECTORY}/${iconShapeName}`;
         const iconShapeHasChanged = didComponentChange(componentSet);
 
