@@ -51,7 +51,7 @@ test('should render with color strong', async ({ mount }) => {
 
 test('should render with color x-strong', async ({ mount }) => {
     const component = await mount(<Divider color="x-strong" />);
-    await expect(component).toHaveClass(/tw-border-x-line-strong/);
+    await expect(component).toHaveClass(/tw-border-line-x-strong/);
 });
 
 test('should render with direction vertical', async ({ mount }) => {
