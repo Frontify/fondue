@@ -1,76 +1,36 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 .root {
-    &[data-orientation="horizontal"][data-variant="dashed"] {
+    &[data-variant="dashed"] {
         &[data-color="weak"] {
-            border-image: repeating-linear-gradient(90deg,
-                    /* 4px dash */
-                    var(--line-color-weak) 0 4px,
-                    /* 3px gap (7px - 4px) */
-                    transparent 4px 7px
-                ) 1;
+            --divider-color: var(--line-color-weak);
         }
 
         &[data-color="default"] {
-            border-image: repeating-linear-gradient(90deg,
-                    /* 4px dash */
-                    var(--line-color) 0 4px,
-                    /* 3px gap (7px - 4px) */
-                    transparent 4px 7px
-                ) 1;
+            --divider-color: var(--line-color);
         }
 
         &[data-color="strong"] {
-            border-image: repeating-linear-gradient(90deg,
-                    /* 4px dash */
-                    var(--line-color-strong) 0 4px,
-                    /* 3px gap (7px - 4px) */
-                    transparent 4px 7px
-                ) 1;
+            --divider-color: var(--line-color-strong);
         }
 
         &[data-color="x-strong"] {
+            --divider-color: var(--line-color-x-strong);
+        }
+
+        &[data-orientation="horizontal"] {
             border-image: repeating-linear-gradient(90deg,
                     /* 4px dash */
-                    var(--line-color-x-strong) 0 4px,
-                    /* 3px gap (7px - 4px) */
-                    transparent 4px 7px
-                ) 1;
-        }
-    }
-
-    &[data-orientation="vertical"][data-variant="dashed"] {
-        &[data-color="weak"] {
-            border-image: repeating-linear-gradient(0deg,
-                    /* 4px dash */
-                    var(--line-color-weak) 0 4px,
+                    var(--divider-color) 0 4px,
                     /* 3px gap (7px - 4px) */
                     transparent 4px 7px
                 ) 1;
         }
 
-        &[data-color="default"] {
+        &[data-orientation="vertical"] {
             border-image: repeating-linear-gradient(0deg,
                     /* 4px dash */
-                    var(--line-color) 0 4px,
-                    /* 3px gap (7px - 4px) */
-                    transparent 4px 7px
-                ) 1;
-        }
-
-        &[data-color="strong"] {
-            border-image: repeating-linear-gradient(0deg,
-                    /* 4px dash */
-                    var(--line-color-strong) 0 4px,
-                    /* 3px gap (7px - 4px) */
-                    transparent 4px 7px
-                ) 1;
-        }
-
-        &[data-color="x-strong"] {
-            border-image: repeating-linear-gradient(0deg,
-                    /* 4px dash */
-                    var(--line-color-x-strong) 0 4px,
+                    var(--divider-color) 0 4px,
                     /* 3px gap (7px - 4px) */
                     transparent 4px 7px
                 ) 1;
