@@ -1,0 +1,1 @@
+import{k as o,h as t,u as r}from"./iframe-8L2y8SuE.js";const c=Object.freeze(Object.defineProperty({__proto__:null,MDXProvider:t,useMDXComponents:r},Symbol.toStringTag,{value:"Module"}));var a,e=o;a=e.createRoot,e.hydrateRoot;export{a as c,c as i};
