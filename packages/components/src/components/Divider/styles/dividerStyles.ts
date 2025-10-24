@@ -13,6 +13,7 @@ export const dividerStyles = sv({
             weak: 'tw-border-line-subtle',
             default: 'tw-border-line-mid',
             strong: 'tw-border-line-strong',
+            'x-strong': 'tw-border-line-x-strong',
         },
         variant: {
             solid: 'tw-border-solid',

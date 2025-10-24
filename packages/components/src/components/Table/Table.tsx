@@ -5,12 +5,14 @@ import {
     forwardRef,
     useMemo,
     useRef,
-    type AriaAttributes,
+    useEffect,
+    useState,
     type CSSProperties,
     type KeyboardEvent,
     type MouseEvent,
     type ReactElement,
     type ReactNode,
+    AriaAttributes,
 } from 'react';
 
 import { useSyncRefs } from '#/hooks/useSyncRefs';
@@ -36,6 +38,19 @@ type TableRootProps = {
      */
     fontSize?: 'small' | 'medium';
     /**
+     * Additional spacing between table cells (both horizontal and vertical)
+     *
+     * This value is added to the default cell spacing. For example, with `gutter="48px"`,
+     * cells will have 48px of additional space between them in both directions
+     * (24px added to each side).
+     *
+     * Accepts any CSS length value with units (e.g., '16px', '1rem', '48px')
+     *
+     * **Important:** Always include a unit, even for zero (use '0px', not '0')
+     * @default '0px'
+     */
+    gutter?: CSSProperties['borderSpacing'];
+    /**
      * Whether header should stick to the top when scrolling
      * @deprecated Use `Table.Header sticky` prop instead. For sticky columns, use `Table.Body firstColumnSticky` or `lastColumnSticky` props
      */
@@ -50,21 +65,61 @@ type TableRootProps = {
     Pick<AriaAttributes, 'aria-multiselectable'>;
 
 export const TableRoot = forwardRef<HTMLTableElement, TableRootProps>(
-    ({ layout = 'auto', fontSize = 'medium', sticky, noBorder = false, children, ...props }, ref) => {
+    ({ layout = 'auto', fontSize = 'medium', gutter = '0px', sticky, noBorder = false, children, ...props }, ref) => {
+        const tableRef = useRef<HTMLTableElement>(null);
+        const [hasHorizontalOverflow, setHasHorizontalOverflow] = useState(false);
+
+        useSyncRefs<HTMLTableElement>(tableRef, ref);
+
         // Handle deprecated `sticky` prop for backward compatibility
         const legacyStickyHeader = sticky === 'head' || sticky === 'both';
         const legacyStickyLeftColumn = sticky === 'col' || sticky === 'both';
 
+        useEffect(() => {
+            const table = tableRef.current;
+            if (!table) {
+                return;
+            }
+
+            const checkOverflow = () => {
+                const parent = table.parentElement;
+                if (!parent) {
+                    return;
+                }
+
+                const tableWidth = table.scrollWidth;
+                const parentWidth = parent.clientWidth;
+                setHasHorizontalOverflow(tableWidth > parentWidth);
+            };
+
+            checkOverflow();
+
+            const resizeObserver = new ResizeObserver(checkOverflow);
+            resizeObserver.observe(table);
+            if (table.parentElement) {
+                resizeObserver.observe(table.parentElement);
+            }
+
+            return () => {
+                resizeObserver.disconnect();
+            };
+        }, [children]);
+
         return (
             // eslint-disable-next-line jsx-a11y-x/no-noninteractive-element-interactions
             <table
-                ref={ref}
+                ref={tableRef}
                 className={styles.table}
+                style={{
+                    // @ts-expect-error CSS custom properties are not in CSSProperties type
+                    '--table-gutter': gutter,
+                }}
                 data-layout={layout}
                 data-font-size={fontSize}
                 data-sticky-header={legacyStickyHeader}
                 data-sticky-left-column={legacyStickyLeftColumn}
                 data-no-border={noBorder}
+                data-has-horizontal-overflow={hasHorizontalOverflow}
                 onKeyDown={handleKeyDown}
                 {...props}
             >
@@ -138,7 +193,7 @@ type TableHeaderCellProps = {
      */
     truncate?: boolean;
     /**
-     * Aria label for asceding/descending sort. Variables: {column} - column name
+     * Aria label for ascending/descending sort. Variables: {column} - column name
      * @default "Sort by {column} ascending/descending"
      */
     sortTranslations?: {

@@ -1,21 +1,39 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 .root {
-    &[data-orientation="horizontal"][data-variant="dashed"] {
-        border-image: repeating-linear-gradient(90deg,
-                /* 4px dash */
-                var(--color-line-mid) 0 4px,
-                /* 3px gap (7px - 4px) */
-                transparent 4px 7px
-            ) 1;
-    }
+    &[data-variant="dashed"] {
+        &[data-color="weak"] {
+            --divider-color: var(--line-color-weak);
+        }
 
-    &[data-orientation="vertical"][data-variant="dashed"] {
-        border-image: repeating-linear-gradient(0deg,
-                /* 4px dash */
-                var(--color-line-mid) 0 4px,
-                /* 3px gap (7px - 4px) */
-                transparent 4px 7px
-            ) 1;
+        &[data-color="default"] {
+            --divider-color: var(--line-color);
+        }
+
+        &[data-color="strong"] {
+            --divider-color: var(--line-color-strong);
+        }
+
+        &[data-color="x-strong"] {
+            --divider-color: var(--line-color-x-strong);
+        }
+
+        &[data-orientation="horizontal"] {
+            border-image: repeating-linear-gradient(90deg,
+                    /* 4px dash */
+                    var(--divider-color) 0 4px,
+                    /* 3px gap (7px - 4px) */
+                    transparent 4px 7px
+                ) 1;
+        }
+
+        &[data-orientation="vertical"] {
+            border-image: repeating-linear-gradient(0deg,
+                    /* 4px dash */
+                    var(--divider-color) 0 4px,
+                    /* 3px gap (7px - 4px) */
+                    transparent 4px 7px
+                ) 1;
+        }
     }
 }
