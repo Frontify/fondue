@@ -56,6 +56,7 @@ export const Divider = forwardRef<HTMLDivElement, DividerProps>(
             direction = 'horizontal',
             className,
             variant,
+            color,
             as = 'div',
             decorative,
             ...props
@@ -71,12 +72,14 @@ export const Divider = forwardRef<HTMLDivElement, DividerProps>(
                     dividerStyles({
                         direction,
                         variant,
+                        color,
                         ...props,
                     }),
                     borderStyles.root,
                     className,
                 )}
                 data-variant={variant}
+                data-color={color}
                 data-test-id={dataTestId}
                 decorative={decorative}
                 data-orientation={direction}
