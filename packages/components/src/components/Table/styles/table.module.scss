@@ -35,7 +35,13 @@
                 #{$prop}: $value;
             }
             inset-inline-start: 0;
-            border-inline-end: 1px solid var(--line-color);
+        }
+
+        &[data-has-horizontal-overflow='true'] {
+            .headerCell:first-child,
+            .rowCell:first-child {
+                border-inline-end: 1px solid var(--line-color);
+            }
         }
     }
 
@@ -47,7 +53,13 @@
                 #{$prop}: $value;
             }
             inset-inline-start: 0;
-            border-inline-end: 1px solid var(--line-color);
+        }
+
+        &[data-has-horizontal-overflow='true'] {
+            .headerCell:first-child,
+            .rowCell:first-child {
+                border-inline-end: 1px solid var(--line-color);
+            }
         }
     }
 
@@ -58,7 +70,13 @@
                 #{$prop}: $value;
             }
             inset-inline-end: 0;
-            border-inline-start: 1px solid var(--line-color);
+        }
+
+        &[data-has-horizontal-overflow='true'] {
+            .headerCell:last-child,
+            .rowCell:last-child {
+                border-inline-start: 1px solid var(--line-color);
+            }
         }
     }
 
