@@ -13,8 +13,8 @@ import { Flex } from '@components/Flex';
 import { InlineDialog } from '@components/InlineDialog';
 import { Tooltip, type TooltipProps } from '@components/Tooltip/Tooltip';
 import IconIcon24 from '@foundation/Icon/Generated/IconIcon24';
-import IconJohanna from '@foundation/Icon/Generated/IconJohanna';
-import IconJohanna24 from '@foundation/Icon/Generated/IconJohanna24';
+import IconIcon from '@foundation/Icon/Generated/IconIcon';
+import IconIcon24 from '@foundation/Icon/Generated/IconIcon24';
 
 /**
  ### This component is deprecated, please use the [new Tooltip component](/docs/current_components-tooltip--documentation) instead.
@@ -35,7 +35,7 @@ const WithinInlineDialogTemplate: StoryFn<TooltipProps> = () => {
 
     return (
         <Flex justify="center">
-            <Button icon={<IconJohanna />} ref={triggerRef} onClick={() => setIsDialogOpen(!isDialogOpen)}>
+            <Button icon={<IconIcon />} ref={triggerRef} onClick={() => setIsDialogOpen(!isDialogOpen)}>
                 Open InlineDialog
             </Button>
             <InlineDialog handleClose={() => setIsDialogOpen(false)} anchor={triggerRef} open={isDialogOpen}>
@@ -105,7 +105,7 @@ const MultipleTooltipsTemplate: StoryFn<TooltipProps> = () => {
                 <IconIcon24 />
             </Tooltip>
             <Tooltip leaveDelay={0} content="Something else">
-                <IconJohanna24 />
+                <IconIcon24 />
             </Tooltip>
         </>
     );

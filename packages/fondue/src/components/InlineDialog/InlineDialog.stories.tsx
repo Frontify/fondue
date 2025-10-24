@@ -7,7 +7,7 @@ import { Box } from '@components/Box';
 import { Button } from '@components/Button';
 import { DialogBody } from '@components/DialogBody/DialogBody';
 import { POPPER_STORY_ARGS } from '@components/Popper/constantStories';
-import IconJohanna from '@foundation/Icon/Generated/IconJohanna';
+import IconIcon from '@foundation/Icon/Generated/IconIcon';
 
 import { Modality } from '../../types';
 
@@ -81,7 +81,7 @@ const Template: StoryFn<InlineDialogProps> = (args) => {
 
     return (
         <Box className="tw-w-fit">
-            <Button icon={<IconJohanna />} onClick={() => setIsOpen(!isOpen)} ref={triggerRef}>
+            <Button icon={<IconIcon />} onClick={() => setIsOpen(!isOpen)} ref={triggerRef}>
                 Trigger
             </Button>
             <InlineDialog {...args} anchor={triggerRef} open={isOpen} handleClose={() => setIsOpen(false)}>
