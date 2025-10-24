@@ -6,6 +6,8 @@ import {
     forwardRef,
     useMemo,
     useRef,
+    useEffect,
+    useState,
     type CSSProperties,
     type KeyboardEvent,
     type MouseEvent,
@@ -64,14 +66,49 @@ type TableRootProps = {
 
 export const TableRoot = forwardRef<HTMLTableElement, TableRootProps>(
     ({ layout = 'auto', fontSize = 'medium', gutter = '0px', sticky, noBorder = false, children, ...props }, ref) => {
+        const tableRef = useRef<HTMLTableElement>(null);
+        const [hasHorizontalOverflow, setHasHorizontalOverflow] = useState(false);
+
+        useSyncRefs<HTMLTableElement>(tableRef, ref);
+
         // Handle deprecated `sticky` prop for backward compatibility
         const legacyStickyHeader = sticky === 'head' || sticky === 'both';
         const legacyStickyLeftColumn = sticky === 'col' || sticky === 'both';
 
+        useEffect(() => {
+            const table = tableRef.current;
+            if (!table) {
+                return;
+            }
+
+            const checkOverflow = () => {
+                const parent = table.parentElement;
+                if (!parent) {
+                    return;
+                }
+
+                const tableWidth = table.scrollWidth;
+                const parentWidth = parent.clientWidth;
+                setHasHorizontalOverflow(tableWidth > parentWidth);
+            };
+
+            checkOverflow();
+
+            const resizeObserver = new ResizeObserver(checkOverflow);
+            resizeObserver.observe(table);
+            if (table.parentElement) {
+                resizeObserver.observe(table.parentElement);
+            }
+
+            return () => {
+                resizeObserver.disconnect();
+            };
+        }, [children]);
+
         return (
             // eslint-disable-next-line jsx-a11y-x/no-noninteractive-element-interactions
             <table
-                ref={ref}
+                ref={tableRef}
                 className={styles.table}
                 style={{
                     // @ts-expect-error CSS custom properties are not in CSSProperties type
@@ -82,6 +119,7 @@ export const TableRoot = forwardRef<HTMLTableElement, TableRootProps>(
                 data-sticky-header={legacyStickyHeader}
                 data-sticky-left-column={legacyStickyLeftColumn}
                 data-no-border={noBorder}
+                data-has-horizontal-overflow={hasHorizontalOverflow}
                 onKeyDown={handleKeyDown}
                 {...props}
             >

@@ -484,3 +484,55 @@ test('should support legacy sticky="both" prop', async ({ mount }) => {
     await expect(component).toHaveAttribute('data-sticky-header', 'true');
     await expect(component).toHaveAttribute('data-sticky-left-column', 'true');
 });
+
+test('should set data-has-horizontal-overflow when content overflows', async ({ mount }) => {
+    const component = await mount(
+        <div style={{ width: '100px', overflow: 'auto' }}>
+            <Table.Root aria-label="Test Table">
+                <Table.Header>
+                    <Table.Row>
+                        <Table.HeaderCell>Column 1</Table.HeaderCell>
+                        <Table.HeaderCell>Column 2</Table.HeaderCell>
+                        <Table.HeaderCell>Column 3</Table.HeaderCell>
+                    </Table.Row>
+                </Table.Header>
+                <Table.Body>
+                    <Table.Row>
+                        <Table.RowCell>This is some long content</Table.RowCell>
+                        <Table.RowCell>This is some more long content</Table.RowCell>
+                        <Table.RowCell>This is even more long content</Table.RowCell>
+                    </Table.Row>
+                </Table.Body>
+            </Table.Root>
+        </div>,
+    );
+
+    const table = component.locator('table');
+    await expect(table).toHaveAttribute('data-has-horizontal-overflow', 'true');
+});
+
+test('should not set data-has-horizontal-overflow when content does not overflow', async ({ mount }) => {
+    const component = await mount(
+        <div style={{ width: '1200px', overflow: 'auto' }}>
+            <Table.Root aria-label="Test Table">
+                <Table.Header>
+                    <Table.Row>
+                        <Table.HeaderCell>Column 1</Table.HeaderCell>
+                        <Table.HeaderCell>Column 2</Table.HeaderCell>
+                        <Table.HeaderCell>Column 3</Table.HeaderCell>
+                    </Table.Row>
+                </Table.Header>
+                <Table.Body>
+                    <Table.Row>
+                        <Table.RowCell>Short</Table.RowCell>
+                        <Table.RowCell>Content</Table.RowCell>
+                        <Table.RowCell>Here</Table.RowCell>
+                    </Table.Row>
+                </Table.Body>
+            </Table.Root>
+        </div>,
+    );
+
+    const table = component.locator('table');
+    await expect(table).toHaveAttribute('data-has-horizontal-overflow', 'false');
+});
