@@ -13,8 +13,6 @@ import { Flex } from '@components/Flex';
 import { InlineDialog } from '@components/InlineDialog';
 import { Tooltip, type TooltipProps } from '@components/Tooltip/Tooltip';
 import IconIcon24 from '@foundation/Icon/Generated/IconIcon24';
-import IconIcon from '@foundation/Icon/Generated/IconIcon';
-import IconIcon24 from '@foundation/Icon/Generated/IconIcon24';
 
 /**
  ### This component is deprecated, please use the [new Tooltip component](/docs/current_components-tooltip--documentation) instead.
@@ -35,7 +33,7 @@ const WithinInlineDialogTemplate: StoryFn<TooltipProps> = () => {
 
     return (
         <Flex justify="center">
-            <Button icon={<IconIcon />} ref={triggerRef} onClick={() => setIsDialogOpen(!isDialogOpen)}>
+            <Button icon={<IconIcon24 />} ref={triggerRef} onClick={() => setIsDialogOpen(!isDialogOpen)}>
                 Open InlineDialog
             </Button>
             <InlineDialog handleClose={() => setIsDialogOpen(false)} anchor={triggerRef} open={isDialogOpen}>
