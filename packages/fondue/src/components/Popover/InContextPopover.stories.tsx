@@ -9,7 +9,7 @@ import { DialogBody } from '@components/DialogBody';
 import { DialogFooter } from '@components/DialogFooter';
 import { DialogHeader } from '@components/DialogHeader';
 import { Popover } from '@components/Popover/Popover';
-import IconJohanna from '@foundation/Icon/Generated/IconJohanna';
+import IconIcon from '@foundation/Icon/Generated/IconIcon';
 
 import { type OverlayProps } from '../../types';
 
@@ -28,7 +28,7 @@ const WithInteractiveContentTemplate: StoryFn<OverlayProps> = (args) => {
 
     return (
         <div className="tw-h-32 tw-flex tw-justify-center tw-items-center">
-            <Button icon={<IconJohanna />} onClick={() => setIsOpen(!isOpen)} ref={triggerRef}>
+            <Button icon={<IconIcon />} onClick={() => setIsOpen(!isOpen)} ref={triggerRef}>
                 Trigger
             </Button>
             <Popover {...args} anchor={triggerRef} open={isOpen} handleClose={() => setIsOpen(false)}>

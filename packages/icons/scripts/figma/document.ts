@@ -4,7 +4,7 @@ import type * as Figma from 'figma-api';
 
 /**
  * Takes any array of Figma SceneNodes and returns a flat array of all
- * the ComponentSetNodes containted within.
+ * the ComponentSetNodes contained within.
  *
  * Note that it is returning the full document node, which
  * contains all children, styles etc.

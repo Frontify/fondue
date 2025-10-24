@@ -8,7 +8,7 @@ import { Container } from '@components/Container';
 import { Popover } from '@components/Popover/Popover';
 import { POPPER_STORY_ARGS } from '@components/Popper/constantStories';
 import IconExclamationMarkTriangle16 from '@foundation/Icon/Generated/IconExclamationMarkTriangle16';
-import IconJohanna from '@foundation/Icon/Generated/IconJohanna';
+import IconIcon from '@foundation/Icon/Generated/IconIcon';
 
 import { type OverlayProps } from '../../types';
 
@@ -52,7 +52,7 @@ const Template: StoryFn<OverlayProps> = (args) => {
     const triggerRef = useRef<HTMLButtonElement | null>(null);
     return (
         <div className="tw-h-32 tw-flex tw-justify-center tw-items-center">
-            <Button icon={<IconJohanna />} onClick={() => setIsOpen(!isOpen)} ref={triggerRef}>
+            <Button icon={<IconIcon />} onClick={() => setIsOpen(!isOpen)} ref={triggerRef}>
                 Trigger
             </Button>
             <Popover {...args} anchor={triggerRef} open={isOpen} handleClose={() => setIsOpen(false)}>
