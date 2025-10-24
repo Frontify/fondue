@@ -125,7 +125,18 @@
     }
 
     &[data-sortable='false'] {
-        padding: sizeToken.get(3) sizeToken.get(2);
+        padding-top: calc(0.75rem + var(--table-gutter, 0px) / 2);
+        padding-bottom: calc(0.75rem + var(--table-gutter, 0px) / 2);
+        padding-inline-start: calc(0.5rem + var(--table-gutter, 0px) / 2);
+        padding-inline-end: calc(0.5rem + var(--table-gutter, 0px) / 2);
+
+        &:first-child {
+            padding-inline-start: sizeToken.get(2);
+        }
+
+        &:last-child {
+            padding-inline-end: sizeToken.get(2);
+        }
     }
 
     &[data-no-shrink='true'] {
@@ -141,7 +152,10 @@
     text-align: inherit;
     align-items: center;
     gap: 0.25rem;
-    padding: sizeToken.get(3) sizeToken.get(2);
+    padding-top: calc(0.75rem + var(--table-gutter, 0px) / 2);
+    padding-bottom: calc(0.75rem + var(--table-gutter, 0px) / 2);
+    padding-inline-start: calc(0.5rem + var(--table-gutter, 0px) / 2);
+    padding-inline-end: calc(0.5rem + var(--table-gutter, 0px) / 2);
 
     appearance: none;
     background: none;
@@ -150,6 +164,14 @@
     font: inherit;
     color: inherit;
     cursor: pointer;
+
+    .headerCell:first-child & {
+        padding-inline-start: sizeToken.get(2);
+    }
+
+    .headerCell:last-child & {
+        padding-inline-end: sizeToken.get(2);
+    }
 
     &[data-active='true'] {
         color: var(--text-color);
@@ -203,9 +225,20 @@
 
     font-weight: 400;
     line-height: sizeToken.get(4);
-    padding: sizeToken.get(2);
+    padding-top: calc(0.5rem + var(--table-gutter, 0px) / 2);
+    padding-bottom: calc(0.5rem + var(--table-gutter, 0px) / 2);
+    padding-inline-start: calc(0.5rem + var(--table-gutter, 0px) / 2);
+    padding-inline-end: calc(0.5rem + var(--table-gutter, 0px) / 2);
 
     border-bottom: 1px solid var(--line-color);
+
+    &:first-child {
+        padding-inline-start: sizeToken.get(2);
+    }
+
+    &:last-child {
+        padding-inline-end: sizeToken.get(2);
+    }
 }
 
 .headerCell,

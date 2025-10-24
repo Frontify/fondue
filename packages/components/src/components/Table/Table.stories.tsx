@@ -40,6 +40,14 @@ const meta: Meta<typeof TableRoot> = {
             },
             defaultValue: 'auto',
         },
+        gutter: {
+            control: {
+                type: 'text',
+            },
+            description:
+                'Spacing between table cells (horizontal gutter). Accepts any CSS length value (e.g., "16px", "1rem", "48px")',
+            defaultValue: '0px',
+        },
     },
 };
 
@@ -1010,6 +1018,77 @@ export const NoBorder: Story = {
                         </Table.Body>
                     </Table.Root>
                 </div>
+            </div>
+        </Flex>
+    ),
+};
+
+export const CustomGutter: Story = {
+    name: 'Custom Gutter Spacing',
+    render: ({ ...args }) => (
+        <Flex direction="column" gap="2rem">
+            <div>
+                <h3 style={{ marginBottom: '0.5rem' }}>Default (no extra gutter)</h3>
+                <Table.Root {...args}>
+                    <Table.Header>
+                        <Table.Row>
+                            <Table.HeaderCell>Name</Table.HeaderCell>
+                            <Table.HeaderCell>Role</Table.HeaderCell>
+                            <Table.HeaderCell>Last Seen</Table.HeaderCell>
+                        </Table.Row>
+                    </Table.Header>
+                    <Table.Body>
+                        {TABLE_DATA.slice(0, 3).map((user) => (
+                            <Table.Row key={user.id}>
+                                <Table.RowCell>{user.name}</Table.RowCell>
+                                <Table.RowCell>{user.role}</Table.RowCell>
+                                <Table.RowCell>{user.lastSeen}</Table.RowCell>
+                            </Table.Row>
+                        ))}
+                    </Table.Body>
+                </Table.Root>
+            </div>
+            <div>
+                <h3 style={{ marginBottom: '0.5rem' }}>16px gutter</h3>
+                <Table.Root {...args} gutter="16px">
+                    <Table.Header>
+                        <Table.Row>
+                            <Table.HeaderCell>Name</Table.HeaderCell>
+                            <Table.HeaderCell>Role</Table.HeaderCell>
+                            <Table.HeaderCell>Last Seen</Table.HeaderCell>
+                        </Table.Row>
+                    </Table.Header>
+                    <Table.Body>
+                        {TABLE_DATA.slice(0, 3).map((user) => (
+                            <Table.Row key={user.id}>
+                                <Table.RowCell>{user.name}</Table.RowCell>
+                                <Table.RowCell>{user.role}</Table.RowCell>
+                                <Table.RowCell>{user.lastSeen}</Table.RowCell>
+                            </Table.Row>
+                        ))}
+                    </Table.Body>
+                </Table.Root>
+            </div>
+            <div>
+                <h3 style={{ marginBottom: '0.5rem' }}>48px gutter</h3>
+                <Table.Root {...args} gutter="48px">
+                    <Table.Header>
+                        <Table.Row>
+                            <Table.HeaderCell>Name</Table.HeaderCell>
+                            <Table.HeaderCell>Role</Table.HeaderCell>
+                            <Table.HeaderCell>Last Seen</Table.HeaderCell>
+                        </Table.Row>
+                    </Table.Header>
+                    <Table.Body>
+                        {TABLE_DATA.slice(0, 3).map((user) => (
+                            <Table.Row key={user.id}>
+                                <Table.RowCell>{user.name}</Table.RowCell>
+                                <Table.RowCell>{user.role}</Table.RowCell>
+                                <Table.RowCell>{user.lastSeen}</Table.RowCell>
+                            </Table.Row>
+                        ))}
+                    </Table.Body>
+                </Table.Root>
             </div>
         </Flex>
     ),
