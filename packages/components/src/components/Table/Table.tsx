@@ -36,6 +36,19 @@ type TableRootProps = {
      */
     fontSize?: 'small' | 'medium';
     /**
+     * Additional spacing between table cells (both horizontal and vertical)
+     *
+     * This value is added to the default cell spacing. For example, with `gutter="48px"`,
+     * cells will have 48px of additional space between them in both directions
+     * (24px added to each side).
+     *
+     * Accepts any CSS length value with units (e.g., '16px', '1rem', '48px')
+     *
+     * **Important:** Always include a unit, even for zero (use '0px', not '0')
+     * @default '0px'
+     */
+    gutter?: CSSProperties['borderSpacing'];
+    /**
      * Whether header should stick to the top when scrolling
      * @deprecated Use `Table.Header sticky` prop instead. For sticky columns, use `Table.Body firstColumnSticky` or `lastColumnSticky` props
      */
@@ -50,7 +63,7 @@ type TableRootProps = {
     Pick<AriaAttributes, 'aria-multiselectable'>;
 
 export const TableRoot = forwardRef<HTMLTableElement, TableRootProps>(
-    ({ layout = 'auto', fontSize = 'medium', sticky, noBorder = false, children, ...props }, ref) => {
+    ({ layout = 'auto', fontSize = 'medium', gutter = '0px', sticky, noBorder = false, children, ...props }, ref) => {
         // Handle deprecated `sticky` prop for backward compatibility
         const legacyStickyHeader = sticky === 'head' || sticky === 'both';
         const legacyStickyLeftColumn = sticky === 'col' || sticky === 'both';
@@ -60,6 +73,10 @@ export const TableRoot = forwardRef<HTMLTableElement, TableRootProps>(
             <table
                 ref={ref}
                 className={styles.table}
+                style={{
+                    // @ts-expect-error CSS custom properties are not in CSSProperties type
+                    '--table-gutter': gutter,
+                }}
                 data-layout={layout}
                 data-font-size={fontSize}
                 data-sticky-header={legacyStickyHeader}
