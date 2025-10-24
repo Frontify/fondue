@@ -1,0 +1,32 @@
+import{j as e}from"./iframe-CM-rC4pW.js";import{F as p}from"./Flex-BtvjQvQY.js";import{a as n,b as a,D as i}from"./Divider-DS3QNkAW.js";import"./preload-helper-qBSLZfTS.js";import"./Box-DqdYGOYd.js";import"./borderStyle-D9jrV09G.js";import"./merge-DI-veSMP.js";import"./focusStyle-Ch_WJ4aJ.js";import"./input-DeL375Sl.js";import"./Button-CenNVBp8.js";import"./useButton-B0mM1imS.js";import"./useFocusable-DxQGPu8E.js";import"./useFocusRing-65bRAxqP.js";import"./useEffectEvent-CiImHouW.js";import"./chain-5aqg5xgJ.js";import"./index-nGC6dqdw.js";import"./IconSize-BcCrF_mi.js";import"./FormControl-DNUPkDjx.js";import"./InputLabel-DXmhaygW.js";import"./TooltipIcon-Dc96l6Xh.js";import"./LegacyTooltip-ppPP8AMC.js";import"./useLink-DKND8L_-.js";import"./usePopper-C9oL71dO.js";import"./index-CW6wVUMq.js";import"./Portal-BZmq1DWy.js";import"./useMemoizedId-do8RxhNb.js";import"./IconCheckMark-65Jmd977.js";import"./IconExclamationMarkCircle24-BL0yj-2z.js";import"./IconExclamationMarkTriangle-BGBvrNZu.js";import"./IconExclamationMarkTriangle24-CdnFfC2B.js";import"./IconQuestionMarkCircle-BdV_lOz6.js";import"./validation-C9S5KgfE.js";import"./LoadingCircle-Drb61Rof.js";import"./Switch-GxhEavR1.js";import"./TabItem-_vqA6YBV.js";import"./elements-BOYmskOL.js";import"./TextInput-CEsrv-ON.js";import"./IconCross-n48ME2rd.js";import"./Tooltip-s2Wcg1K3.js";import"./useClickOutside-COgqo7bE.js";import"./EnablePortalWrapper-B39I2ECN.js";import"./dialog-D9O7a7Fm.js";import"./Tree-Iitc_LxH.js";import"./_Uint8Array-CwPxMkg2.js";import"./Trigger-CRpr7kn-.js";import"./IconCaretDown-maSGby9p.js";import"./IconCaretDown16-BmJK5U7d.js";import"./IconTrashBin16-BqeWSU2Q.js";import"./IconTrashBin24-D801_wi5.js";const ae={title:"Components/Divider",component:i,tags:["autodocs"],args:{color:"red",vertical:!1,"data-test-id":"custom-test-id"},parameters:{status:{type:"deprecated"},docs:{description:{component:"### This component is deprecated, please use the [new Divider component](/docs/current_components-divider--documentation) instead."}}},argTypes:{color:{control:{type:"color"}},style:{options:Object.values(a),control:{type:"select",labels:Object.entries(a).reduce((t,[o,s])=>({...t,[s]:o}),{})}},height:{options:Object.values(n),control:{type:"select",labels:Object.entries(n).reduce((t,[o,s])=>({...t,[s]:o}),{})}},vertical:{control:{type:"boolean"}}}},r=t=>t.vertical?e.jsxs(p,{direction:"row",children:[e.jsx("div",{children:"Just like life, cheeseburgers are meant to be relished."}),e.jsx(i,{...t}),e.jsx("div",{children:"Sometimes we lose sight of what really matters in life. There’s something to be said for a gourmet brie and truffle burger paired with parmesan frites, but don’t let that make you forget about the ol’ faithful with American cheddar and a squishy bun. Lettuce remind you that cheeseburgers come in all forms - bun intended."}),e.jsx(i,{...t}),e.jsx("div",{children:"Cheeseburgers are like a metaphor for life."}),e.jsx(i,{...t}),e.jsx("div",{children:"All the good stuff is in the middle but the rest of it is necessary too."})]}):e.jsxs("div",{className:"tw-flex tw-flex-col",children:[e.jsx("div",{children:"Just like life, cheeseburgers are meant to be relished."}),e.jsx(i,{...t}),e.jsx("div",{children:"Sometimes we lose sight of what really matters in life. There’s something to be said for a gourmet brie and truffle burger paired with parmesan frites, but don’t let that make you forget about the ol’ faithful with American cheddar and a squishy bun. Lettuce remind you that cheeseburgers come in all forms - bun intended."}),e.jsx(i,{...t}),e.jsx("div",{children:"Cheeseburgers are like a metaphor for life."}),e.jsx(i,{...t}),e.jsx("div",{children:"All the good stuff is in the middle but the rest of it is necessary too."})]});r.__docgenInfo={description:"",methods:[],displayName:"Divider",props:{as:{required:!1,tsType:{name:"union",raw:"'div' | 'li'",elements:[{name:"literal",value:"'div'"},{name:"literal",value:"'li'"}]},description:""},style:{required:!1,tsType:{name:"DividerStyle"},description:""},height:{required:!1,tsType:{name:"union",raw:"DividerHeight | string",elements:[{name:"DividerHeight"},{name:"string"}]},description:""},color:{required:!1,tsType:{name:"string"},description:""},vertical:{required:!1,tsType:{name:"boolean"},description:""},"data-test-id":{required:!1,tsType:{name:"string"},description:""}}};var d,m,l;r.parameters={...r.parameters,docs:{...(d=r.parameters)==null?void 0:d.docs,source:{originalSource:`(args: DividerProps) => {
+  if (args.vertical) {
+    return <Flex direction="row">
+                <div>Just like life, cheeseburgers are meant to be relished.</div>
+                <DividerComponent {...args} />
+                <div>
+                    Sometimes we lose sight of what really matters in life. There’s something to be said for a gourmet
+                    brie and truffle burger paired with parmesan frites, but don’t let that make you forget about the
+                    ol’ faithful with American cheddar and a squishy bun. Lettuce remind you that cheeseburgers come in
+                    all forms - bun intended.
+                </div>
+                <DividerComponent {...args} />
+                <div>Cheeseburgers are like a metaphor for life.</div>
+                <DividerComponent {...args} />
+                <div>All the good stuff is in the middle but the rest of it is necessary too.</div>
+            </Flex>;
+  }
+  return <div className="tw-flex tw-flex-col">
+            <div>Just like life, cheeseburgers are meant to be relished.</div>
+            <DividerComponent {...args} />
+            <div>
+                Sometimes we lose sight of what really matters in life. There’s something to be said for a gourmet brie
+                and truffle burger paired with parmesan frites, but don’t let that make you forget about the ol’
+                faithful with American cheddar and a squishy bun. Lettuce remind you that cheeseburgers come in all
+                forms - bun intended.
+            </div>
+            <DividerComponent {...args} />
+            <div>Cheeseburgers are like a metaphor for life.</div>
+            <DividerComponent {...args} />
+            <div>All the good stuff is in the middle but the rest of it is necessary too.</div>
+        </div>;
+}`,...(l=(m=r.parameters)==null?void 0:m.docs)==null?void 0:l.source}}};const de=["Divider"];export{r as Divider,de as __namedExportsOrder,ae as default};
