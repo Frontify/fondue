@@ -125,8 +125,8 @@
     }
 
     &[data-sortable='false'] {
-        padding-top: calc(0.75rem + var(--table-gutter, 0px) / 2);
-        padding-bottom: calc(0.75rem + var(--table-gutter, 0px) / 2);
+        padding-top: 0.75rem;
+        padding-bottom: 0.75rem;
         padding-inline-start: calc(0.5rem + var(--table-gutter, 0px) / 2);
         padding-inline-end: calc(0.5rem + var(--table-gutter, 0px) / 2);
 
@@ -152,8 +152,8 @@
     text-align: inherit;
     align-items: center;
     gap: 0.25rem;
-    padding-top: calc(0.75rem + var(--table-gutter, 0px) / 2);
-    padding-bottom: calc(0.75rem + var(--table-gutter, 0px) / 2);
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
     padding-inline-start: calc(0.5rem + var(--table-gutter, 0px) / 2);
     padding-inline-end: calc(0.5rem + var(--table-gutter, 0px) / 2);
 
