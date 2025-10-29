@@ -1,5 +1,14 @@
 # @frontify/fondue
 
+## 13.0.0-rc.2
+
+### Patch Changes
+
+- Updated dependencies [[`e2e133e`](https://github.com/Frontify/fondue/commit/e2e133e56d7f60866bfd8f0f2d82553325d16599)]:
+    - @frontify/fondue-components@24.0.0-rc.0
+    - @frontify/fondue-icons@0.22.0-rc.0
+    - @frontify/fondue-tokens@5.0.0-rc.1
+
 ## 13.0.0-rc.1
 
 ### Patch Changes
