@@ -3,12 +3,18 @@
 import defaultColors from 'tailwindcss/colors';
 import defaultTheme from 'tailwindcss/defaultTheme';
 
+const entries = Object.entries(Object.getOwnPropertyDescriptors(defaultColors)).filter(([key, descriptor]) => {
+    return typeof descriptor.get !== 'function'; // Exclude getters
+});
+
+const nonDeprecatedColors = Object.fromEntries(entries.map(([key, descriptor]) => [key, descriptor.value]));
+
 export default {
     presets: [],
     theme: {
         extend: {
             colors: {
-                ...defaultColors,
+                ...nonDeprecatedColors,
                 base: { DEFAULT: 'var(--color-surface-default)', alt: 'var(--color-surface-dim)' },
                 box: {
                     neutral: 'var(--color-container-secondary-default)',
