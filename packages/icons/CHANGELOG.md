@@ -1,5 +1,11 @@
 # @frontify/fondue-icons
 
+## 0.21.0-rc.2
+
+### Minor Changes
+
+- [`e2e133e`](https://github.com/Frontify/fondue/commit/e2e133e56d7f60866bfd8f0f2d82553325d16599) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: bump versions
+
 ## 0.21.0
 
 ### Minor Changes
