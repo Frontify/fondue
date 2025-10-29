@@ -1,5 +1,17 @@
 # @frontify/fondue-icons
 
+## 0.21.0
+
+### Minor Changes
+
+- [#2506](https://github.com/Frontify/fondue/pull/2506) [`077b7b7`](https://github.com/Frontify/fondue/commit/077b7b7cd967aaf82000f3c76b6da33926b8163a) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
+
+- [#2507](https://github.com/Frontify/fondue/pull/2507) [`8cd5c6d`](https://github.com/Frontify/fondue/commit/8cd5c6d8142721293e1708b74ccf5c16b41675ce) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
+
+- [#2512](https://github.com/Frontify/fondue/pull/2512) [`bd5c4ee`](https://github.com/Frontify/fondue/commit/bd5c4ee6b2d3a2adcdbcc928208df061031764b4) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
+
+- [#2512](https://github.com/Frontify/fondue/pull/2512) [`bd5c4ee`](https://github.com/Frontify/fondue/commit/bd5c4ee6b2d3a2adcdbcc928208df061031764b4) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
+
 ## 0.21.0-rc.1
 
 ### Patch Changes
@@ -7,12 +19,6 @@
 - [#2492](https://github.com/Frontify/fondue/pull/2492) [`f5785d1`](https://github.com/Frontify/fondue/commit/f5785d1155c4b295573cd8fbdb88114b1ecaef1e) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
 
 - [`06016db`](https://github.com/Frontify/fondue/commit/06016db7131d2611dad9b88115e80c9fe9d2051e) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: merge main into v13
-
-## 0.18.0-rc.0
-
-### Minor Changes
-
-- chore: fondue release candidate
 
 ## 0.20.1
 
@@ -37,6 +43,12 @@
 ### Minor Changes
 
 - [#2441](https://github.com/Frontify/fondue/pull/2441) [`d868114`](https://github.com/Frontify/fondue/commit/d86811431bb12264faf431cf1a38a1f22b75c6d9) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
+
+## 0.18.0-rc.0
+
+### Minor Changes
+
+- chore: fondue release candidate
 
 ## 0.18.0-beta.1
 

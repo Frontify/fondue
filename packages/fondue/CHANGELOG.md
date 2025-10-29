@@ -163,6 +163,16 @@
     - @frontify/fondue-tokens@5.0.0-beta.0
     - @frontify/fondue-icons@0.18.0-beta.0
 
+## 12.14.3
+
+### Patch Changes
+
+- [#2512](https://github.com/Frontify/fondue/pull/2512) [`bd5c4ee`](https://github.com/Frontify/fondue/commit/bd5c4ee6b2d3a2adcdbcc928208df061031764b4) Thanks [@github-actions](https://github.com/apps/github-actions)! - chore: update icons
+
+- Updated dependencies [[`2ab3038`](https://github.com/Frontify/fondue/commit/2ab3038c837a1dd149764e3191ce1f0ea37f7300), [`75b8a7c`](https://github.com/Frontify/fondue/commit/75b8a7c010bf4b5589d192cc8d37b44b3b92e9ce), [`02b2cbe`](https://github.com/Frontify/fondue/commit/02b2cbe0ccb0cb75eda04e2669015fea47dfdd69), [`ff44723`](https://github.com/Frontify/fondue/commit/ff44723b28c2d5627e8237aa1dd19e0237a62687), [`2664050`](https://github.com/Frontify/fondue/commit/26640502805bf07792475db41d237f1c06603530), [`8d61009`](https://github.com/Frontify/fondue/commit/8d61009c2b363431d8487b2fe6ec211493006e31), [`077b7b7`](https://github.com/Frontify/fondue/commit/077b7b7cd967aaf82000f3c76b6da33926b8163a), [`8cd5c6d`](https://github.com/Frontify/fondue/commit/8cd5c6d8142721293e1708b74ccf5c16b41675ce), [`bd5c4ee`](https://github.com/Frontify/fondue/commit/bd5c4ee6b2d3a2adcdbcc928208df061031764b4), [`bd5c4ee`](https://github.com/Frontify/fondue/commit/bd5c4ee6b2d3a2adcdbcc928208df061031764b4), [`4760653`](https://github.com/Frontify/fondue/commit/47606532901ca12c35196ccd367c7fbb2eee5e1e), [`bd5c4ee`](https://github.com/Frontify/fondue/commit/bd5c4ee6b2d3a2adcdbcc928208df061031764b4)]:
+    - @frontify/fondue-components@23.0.0
+    - @frontify/fondue-icons@0.21.0
+
 ## 12.14.2
 
 ### Patch Changes
