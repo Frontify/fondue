@@ -3,28 +3,28 @@
 import { IconArrowBidirectional, IconArrowDown, IconArrowUp } from '@frontify/fondue-icons';
 import {
     forwardRef,
+    useEffect,
     useMemo,
     useRef,
-    useEffect,
     useState,
+    type AriaAttributes,
     type CSSProperties,
     type KeyboardEvent,
     type MouseEvent,
     type ReactElement,
     type ReactNode,
-    AriaAttributes,
 } from 'react';
-
-import { useSyncRefs } from '#/hooks/useSyncRefs';
-import { useTextTruncation } from '#/hooks/useTextTruncation';
-import { useTranslation } from '#/hooks/useTranslation';
-import { type CommonAriaAttrs } from '#/utilities/types';
 
 import { Box } from '../Box/Box';
 import { LoadingCircle } from '../LoadingCircle/LoadingCircle';
 
 import styles from './styles/table.module.scss';
 import { handleKeyDown, shouldIgnoreRowClick } from './utils';
+
+import { useSyncRefs } from '#/hooks/useSyncRefs';
+import { useTextTruncation } from '#/hooks/useTextTruncation';
+import { useTranslation } from '#/hooks/useTranslation';
+import { type CommonAriaAttrs } from '#/utilities/types';
 
 type TableRootProps = {
     /**
