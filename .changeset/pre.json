@@ -10,7 +10,6 @@
     "@frontify/fondue-storybook-docs": "0.0.1"
   },
   "changesets": [
-    "brown-cats-exist",
     "brown-cows-appear",
     "brown-sloths-cross",
     "clever-games-rest",
@@ -27,6 +26,7 @@
     "modern-doors-give",
     "neat-geese-call",
     "nine-weeks-juggle",
+    "open-cobras-sleep",
     "quiet-weeks-eat",
     "rotten-results-repeat",
     "sad-carpets-appear",
