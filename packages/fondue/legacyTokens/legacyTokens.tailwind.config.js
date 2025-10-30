@@ -25,6 +25,9 @@ export default {
                 big: '0px 25px 80px 0px rgba(80, 80, 80, 0.20)',
                 none: 'none',
             },
+            ringColor: {
+                blue: 'var(--focus-ring-color)',
+            },
             colors: {
                 transparent: 'transparent',
                 current: 'currentColor',
