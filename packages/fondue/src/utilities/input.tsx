@@ -39,13 +39,13 @@ type InputStyleGroup =
  * @deprecated Please use a fondue component instead.
  **/
 export const InputStyles: Record<InputStyleGroup, string> = {
-    base: 'tw-flex tw-items-center tw-justify-between tw-gap-2 tw-px-3 tw-transition tw-text-sm tw-font-sans tw-relative tw-bg-base tw-border tw-rounded tw-line-strong',
+    base: 'tw-flex tw-items-center tw-justify-between tw-gap-2 tw-px-3 tw-transition tw-text-sm tw-font-sans tw-relative tw-bg-base tw-border tw-rounded tw-line-mid',
     width: 'tw-w-full',
     height: 'tw-h-9 tw-min-h-[2.35rem]',
-    element: 'tw-bg-transparent tw-border-line-strong tw-text-text tw-placeholder-text-x-weak tw-outline-none tw-p-2',
-    focus: 'focus:tw-border-line-xx-strong',
-    focusWithin: 'focus-within:tw-border-line-xx-strong focus-within:hover:tw-border-line-xx-strong',
-    hover: 'hover:tw-border-line-x-strong',
+    element: 'tw-bg-transparent tw-border-line-mid tw-text-text tw-placeholder-text-x-weak tw-outline-none tw-p-2',
+    focus: 'focus:tw-border-line-strong',
+    focusWithin: 'focus-within:tw-border-line-strong focus-within:hover:tw-border-line-strong',
+    hover: 'hover:tw-border-line-strong',
     disabled:
         'disabled:tw-bg-box-disabled disabled:tw-border-line-weak disabled:tw-text-text-disabled disabled:hover:tw-cursor-not-allowed disabled:hover:tw-border-line-weak',
     readOnly:
