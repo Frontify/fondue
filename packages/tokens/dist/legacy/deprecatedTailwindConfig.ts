@@ -3,7 +3,7 @@
 import defaultColors from 'tailwindcss/colors';
 import defaultTheme from 'tailwindcss/defaultTheme';
 
-const entries = Object.entries(Object.getOwnPropertyDescriptors(defaultColors)).filter(([key, descriptor]) => {
+const entries = Object.entries(Object.getOwnPropertyDescriptors(defaultColors)).filter(([_, descriptor]) => {
     return typeof descriptor.get !== 'function'; // Exclude getters
 });
 
