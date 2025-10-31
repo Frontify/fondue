@@ -51,7 +51,7 @@
         "./tokens/tailwind": "./dist/packages/tokens/tailwind/tailwind.config.js",
         "./legacyTokens/tailwind": "./dist/legacyTokens.tailwind.config.js",
         "./legacyTokens/base": "./dist/packages/tokens/css/deprecatedBaseTokens.css",
-        "./legacyTokens/tools/replaceLegacyTokens": "./dist/packages/tokens/tools/replaceLegacyTokens.ts",
+        "./legacyTokens/tools/replaceLegacyTokens": "./dist/packages/tokens/legacy/tools/replaceLegacyTokens.ts",
         "./dist/*": "./dist/*"
     },
     "main": "dist/index.umd.js",

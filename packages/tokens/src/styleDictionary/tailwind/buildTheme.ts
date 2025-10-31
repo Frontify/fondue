@@ -80,6 +80,7 @@ const getTheme = (dictionary: Dictionary) => {
                 identifier: ['border-radius'],
                 tokens,
             }),
+            DEFAULT: 'var(--border-radius-medium)',
             full: '9999px',
         },
 
