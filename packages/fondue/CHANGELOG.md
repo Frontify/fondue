@@ -1,5 +1,11 @@
 # @frontify/fondue
 
+## 13.0.0-rc.4
+
+### Major Changes
+
+- [`11227f4`](https://github.com/Frontify/fondue/commit/11227f45e151492d67606f522380c453d0d71bb8) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: fix textarea tokens
+
 ## 13.0.0-rc.3
 
 ### Major Changes
