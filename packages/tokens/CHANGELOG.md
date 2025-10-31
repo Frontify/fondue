@@ -1,5 +1,13 @@
 # @frontify/fondue-tokens
 
+## 5.0.0-rc.2
+
+### Major Changes
+
+- [`9a63275`](https://github.com/Frontify/fondue/commit/9a63275ad8914610f653a8aa7cc9b1cd44987b46) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: fix RTE color mapping
+
+- [`a76c463`](https://github.com/Frontify/fondue/commit/a76c4633c16d22d38ee987dc790bec8cfded30b5) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: remove deprecated tailwind colors
+
 ## 5.0.0-rc.1
 
 ### Patch Changes

@@ -1,5 +1,22 @@
 # @frontify/fondue
 
+## 13.0.0-rc.3
+
+### Major Changes
+
+- [`9a63275`](https://github.com/Frontify/fondue/commit/9a63275ad8914610f653a8aa7cc9b1cd44987b46) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: fix RTE color mapping
+
+- [`a76c463`](https://github.com/Frontify/fondue/commit/a76c4633c16d22d38ee987dc790bec8cfded30b5) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: remove deprecated tailwind colors
+
+- [`9a63275`](https://github.com/Frontify/fondue/commit/9a63275ad8914610f653a8aa7cc9b1cd44987b46) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: add missing legacy token
+
+### Patch Changes
+
+- Updated dependencies [[`9a63275`](https://github.com/Frontify/fondue/commit/9a63275ad8914610f653a8aa7cc9b1cd44987b46), [`a76c463`](https://github.com/Frontify/fondue/commit/a76c4633c16d22d38ee987dc790bec8cfded30b5)]:
+    - @frontify/fondue-tokens@5.0.0-rc.2
+    - @frontify/fondue-charts@7.0.0-rc.2
+    - @frontify/fondue-components@24.0.0-rc.1
+
 ## 13.0.0-rc.2
 
 ### Patch Changes
