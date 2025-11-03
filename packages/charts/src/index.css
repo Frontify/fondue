@@ -28,7 +28,7 @@
     --fc-axis-x-color: var(--color-line-strong);
     --fc-axis-y-color: 'transparent';
     --fc-grid-stroke-color: var(--color-line-mid);
-    --fc-tooltip-crosshair-stroke-color: var(--color-line-strong);
+    --fc-tooltip-crosshair-stroke-color: var(--color-line-mid);
     --fc-tooltip-crosshair-stroke-color-weak: rgba(8, 8, 8, 0.05);
 
     --fc-font-family: var(--typography-font-family-primary);
