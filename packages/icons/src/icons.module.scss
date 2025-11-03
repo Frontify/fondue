@@ -8,16 +8,21 @@
  * overriding the browser's forced-colors adjustments.
  */
 @media (forced-colors: active) {
-    svg.fondue,
-    svg.fondue path,
-    svg.fondue rect,
-    svg.fondue circle,
-    svg.fondue ellipse,
-    svg.fondue line,
-    svg.fondue polyline,
-    svg.fondue polygon {
+    .fondue {
         color: currentColor !important;
         fill: currentColor !important;
         stroke: currentColor !important;
+
+        path,
+        rect,
+        circle,
+        ellipse,
+        line,
+        polyline,
+        polygon {
+            color: currentColor !important;
+            fill: currentColor !important;
+            stroke: currentColor !important;
+        }
     }
 }
