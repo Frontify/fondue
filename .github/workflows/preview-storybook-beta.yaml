@@ -4,6 +4,7 @@ on:
     push:
         branches:
             - v13
+            - main
     workflow_dispatch:
 
 jobs:
@@ -39,10 +40,10 @@ jobs:
             - name: Build Storybook docs
               run: pnpm build:storybook:packages && pnpm build:storybook:main
               env:
-                  STORYBOOK_PATH_PREFIX: "/beta/"
+                  STORYBOOK_PATH_PREFIX: "/next/"
 
             - name: Deploy Storybook to GitHub Pages
               uses: JamesIves/github-pages-deploy-action@v4
               with:
                   folder: ./storybook-docs/storybook-static
-                  target-folder: beta
+                  target-folder: next
