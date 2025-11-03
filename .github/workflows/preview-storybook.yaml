@@ -49,3 +49,4 @@ jobs:
                   clean-exclude: |
                       pr-preview
                       beta
+                      next
