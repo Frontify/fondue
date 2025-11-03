@@ -22,7 +22,7 @@
     color: var(--color-primary-default);
     background-color: var(--color-surface-default);
     border-radius: var(--border-radius-medium);
-    border: var(--border-width-default) solid var(--color-line-strong);
+    border: var(--border-width-default) solid var(--color-line-mid);
 
     & {
         @include focusStyle.focus-outline;
@@ -219,7 +219,7 @@
     align-items: center;
     justify-content: center;
     background-color: var(--color-surface-default);
-    border: var(--border-width-default) solid var(--color-line-strong);
+    border: var(--border-width-default) solid var(--color-line-mid);
     border-radius: 9999px;
 
     &::before {

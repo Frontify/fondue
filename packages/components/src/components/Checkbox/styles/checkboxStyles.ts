@@ -5,7 +5,7 @@ import { sv } from '#/utilities/styleUtilities';
 
 export const checkboxStyles = sv({
     base:
-        'tw-peer tw-relative tw-inline-flex tw-bg-surface tw-text-white tw-shrink-0 tw-rounded-medium tw-border tw-border-line-strong group-hover:tw-border-line-strong hover:tw-border-line-strong tw-transition-colors ' +
+        'tw-peer tw-relative tw-inline-flex tw-bg-surface tw-text-white tw-shrink-0 tw-rounded-medium tw-border tw-border-line-mid group-hover:tw-border-line-strong hover:tw-border-line-strong tw-transition-colors ' +
         'data-[state="checked"]:tw-border-transparent data-[state="indeterminate"]:tw-border-transparent ' +
         'disabled:tw-border-line-strong disabled:tw-bg-surface disabled:tw-cursor-not-allowed data-[state="checked"]:disabled:tw-bg-disabled ' +
         'data-[readonly="true"]:tw-pointer-events-none ' +
