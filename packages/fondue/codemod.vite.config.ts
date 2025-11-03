@@ -2,8 +2,17 @@
 
 import { resolve } from 'node:path';
 
-import { defineConfig } from 'vite';
+import { defineConfig, type Plugin } from 'vite';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
+
+const shebangPlugin = (): Plugin => {
+    return {
+        name: 'shebang',
+        renderChunk(code) {
+            return `#!/usr/bin/env node\n${code}`;
+        },
+    };
+};
 
 export default defineConfig({
     plugins: [
@@ -15,6 +24,7 @@ export default defineConfig({
                 },
             ],
         }),
+        shebangPlugin(),
     ],
     build: {
         lib: {
