@@ -1,5 +1,17 @@
 # @frontify/fondue
 
+## 13.0.0-rc.4
+
+### Major Changes
+
+- [#2517](https://github.com/Frontify/fondue/pull/2517) [`11227f4`](https://github.com/Frontify/fondue/commit/11227f45e151492d67606f522380c453d0d71bb8) Thanks [@github-actions](https://github.com/apps/github-actions)! - fix: fix textarea tokens
+
+### Patch Changes
+
+- Updated dependencies [[`3dce660`](https://github.com/Frontify/fondue/commit/3dce6601501fb40d3c4d3eaa0cc0c6c2a37c1afa)]:
+    - @frontify/fondue-components@24.0.0-rc.2
+    - @frontify/fondue-tokens@5.0.0-rc.2
+
 ## 13.0.0-rc.3
 
 ### Major Changes

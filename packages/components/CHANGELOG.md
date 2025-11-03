@@ -1,5 +1,16 @@
 # @frontify/fondue-components
 
+## 24.0.0-rc.2
+
+### Major Changes
+
+- [`3dce660`](https://github.com/Frontify/fondue/commit/3dce6601501fb40d3c4d3eaa0cc0c6c2a37c1afa) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: update token usage
+
+### Patch Changes
+
+- Updated dependencies []:
+    - @frontify/fondue-tokens@5.0.0-rc.2
+
 ## 24.0.0-rc.1
 
 ### Patch Changes
