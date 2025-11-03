@@ -14,7 +14,7 @@ export enum Validation {
  * @deprecated Please use a custom function instead.
  **/
 export const validationClassMap: Record<Validation, string> = {
-    [Validation.Default]: 'tw-border-line-strong dark:tw-border-line-strong',
+    [Validation.Default]: 'tw-border-line dark:tw-border-line',
     [Validation.Loading]: 'tw-border-line dark:tw-border-line',
     [Validation.Success]: 'tw-border-text-positive dark:tw-border-text-positive',
     [Validation.Error]: 'tw-border-text-negative dark:tw-border-text-negative',
