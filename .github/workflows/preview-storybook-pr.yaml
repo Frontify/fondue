@@ -37,13 +37,13 @@ jobs:
               if: github.event.action != 'closed'
               run: pnpm i --frozen-lockfile
 
-            - name: Build Fondue Icons
-              if: github.event.action != 'closed'
-              run: pnpm build:icons
-
             - name: Build Fondue Tokens
               if: github.event.action != 'closed'
               run: pnpm build:tokens
+
+            - name: Build Fondue Icons
+              if: github.event.action != 'closed'
+              run: pnpm build:icons
 
             - name: Build Fondue Components
               if: github.event.action != 'closed'

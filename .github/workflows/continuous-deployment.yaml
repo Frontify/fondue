@@ -32,11 +32,11 @@ jobs:
             - name: Generate (old) icons
               run: pnpm --stream --filter {packages/fondue} generate:icons && pnpm --stream --filter {packages/fondue} generate:componentsEnum
 
-            - name: Build Fondue Icons
-              run: pnpm build:icons
-
             - name: Build Fondue Tokens
               run: pnpm build:tokens
+
+            - name: Build Fondue Icons
+              run: pnpm build:icons
 
             - name: Build Fondue Charts
               run: pnpm build:charts
@@ -71,11 +71,11 @@ jobs:
             - name: Generate (old) icons
               run: pnpm --stream --filter {packages/fondue} generate:icons && pnpm --stream --filter {packages/fondue} generate:componentsEnum
 
-            - name: Build Fondue Icons
-              run: pnpm build:icons
-
             - name: Build Fondue Tokens
               run: pnpm build:tokens
+
+            - name: Build Fondue Icons
+              run: pnpm build:icons
 
             - name: Build Fondue Charts
               run: pnpm build:charts
@@ -165,11 +165,11 @@ jobs:
             - name: Install dependencies
               run: pnpm install --frozen-lockfile
 
-            - name: Build Fondue icons
-              run: pnpm build:icons
-
             - name: Build Fondue Tokens
               run: pnpm build:tokens
+
+            - name: Build Fondue Icons
+              run: pnpm build:icons
 
             - name: Unit test
               run: pnpm --stream --filter {packages/components} test
