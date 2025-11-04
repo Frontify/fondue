@@ -1,0 +1,5 @@
+import{T as s}from"./Text-CeLkjyCD.js";import"./iframe-DefGCpub.js";import"./preload-helper-WJy0Y5Cm.js";import"./styleUtilities-Byf6Fdv2.js";const p={title:"Typography/Text",component:s,tags:["autodocs"],parameters:{status:{type:"beta"}},argTypes:{as:{type:"string",control:"select",options:[void 0,"a","abbr","address","em","label","li","span","strong","time","p"]},weight:{type:"string",control:"select",options:[void 0,"default","strong","x-strong"]},size:{type:"string",control:"select",options:[void 0,"x-small","small","medium","large"]},color:{type:"string",control:"select",options:[void 0,"default","weak","x-weak","disabled","negative","positive","warning","interactive"]},boxColor:{type:"string",control:"select",options:[void 0,"neutral","selected","disabled","positive","negative","warning"]}}},e={args:{children:"Hello World"}};var t,o,r;e.parameters={...e.parameters,docs:{...(t=e.parameters)==null?void 0:t.docs,source:{originalSource:`{
+  args: {
+    children: 'Hello World'
+  }
+}`,...(r=(o=e.parameters)==null?void 0:o.docs)==null?void 0:r.source}}};const c=["Default"];export{e as Default,c as __namedExportsOrder,p as default};
