@@ -10,6 +10,7 @@ import {
 } from 'react';
 
 import { defaultAttributes } from './constants';
+import styles from './icons.module.scss';
 import { htmlKeysToJsxKeys } from './utilities/jsxKeyFormat';
 import { kebabCase } from './utilities/stringCasing';
 
@@ -76,7 +77,9 @@ export const createFondueIcon = (iconName: string, iconNode: IconNode): FondueIc
                     color,
                     width: iconSizeToNumber[size],
                     height: iconSizeToNumber[size],
-                    className: ['fondue', `fondue-${kebabCase(iconName)}`, className].filter(Boolean).join(' '),
+                    className: ['fondue', styles.fondue, `fondue-${kebabCase(iconName)}`, className]
+                        .filter(Boolean)
+                        .join(' '),
                     'data-test-id': `fondue-icons-${kebabCase(iconName)}`,
                     key: `fondue-icons-${kebabCase(iconName)}`,
                     ...rest,

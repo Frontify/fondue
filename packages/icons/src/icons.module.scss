@@ -1,0 +1,28 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+/**
+ * Forced Colors Mode Support
+ *
+ * Ensures icons respect Windows High Contrast Mode and other forced-colors contexts
+ * by enforcing currentColor inheritance. This prevents parent component styles from
+ * overriding the browser's forced-colors adjustments.
+ */
+@media (forced-colors: active) {
+    .fondue {
+        color: currentColor !important;
+        fill: currentColor !important;
+        stroke: currentColor !important;
+
+        path,
+        rect,
+        circle,
+        ellipse,
+        line,
+        polyline,
+        polygon {
+            color: currentColor !important;
+            fill: currentColor !important;
+            stroke: currentColor !important;
+        }
+    }
+}
