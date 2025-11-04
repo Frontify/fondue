@@ -47,11 +47,13 @@
     "peerDependencies": {
         "react": "^18"
     },
+    "dependencies": {
+        "@frontify/fondue-tokens": "workspace:^"
+    },
     "devDependencies": {
         "@babel/core": "^7.28.4",
         "@etchteam/storybook-addon-status": "^7.0.1",
         "@frontify/eslint-config-react": "^1.0.4",
-        "@frontify/fondue-tokens": "workspace:^",
         "@iconify/tools": "^4.1.4",
         "@storybook/addon-a11y": "^9.1.10",
         "@storybook/addon-docs": "^9.1.10",

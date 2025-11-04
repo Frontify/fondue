@@ -24,6 +24,9 @@ jobs:
             - name: Install dependencies
               run: pnpm i --frozen-lockfile
 
+            - name: Build Fondue Tokens
+              run: pnpm build:tokens
+
             - name: Build icons
               run: pnpm build:icons
               env:
