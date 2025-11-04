@@ -1,5 +1,16 @@
 # @frontify/fondue
 
+## 13.0.0-rc.5
+
+### Major Changes
+
+- [#2525](https://github.com/Frontify/fondue/pull/2525) [`2b9e58d`](https://github.com/Frontify/fondue/commit/2b9e58d157a2b1d8d57b04e908dc3b13c7c587f0) Thanks [@github-actions](https://github.com/apps/github-actions)! - fix: adjust legacy textarea border token
+
+### Patch Changes
+
+- Updated dependencies [[`810a2ba`](https://github.com/Frontify/fondue/commit/810a2baf8808d08b6d06fa223134834f9f07f33e)]:
+    - @frontify/fondue-charts@7.0.0-rc.3
+
 ## 13.0.0-rc.4
 
 ### Major Changes

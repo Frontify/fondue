@@ -1,5 +1,11 @@
 # @frontify/fondue-charts
 
+## 7.0.0-rc.3
+
+### Major Changes
+
+- [#2525](https://github.com/Frontify/fondue/pull/2525) [`810a2ba`](https://github.com/Frontify/fondue/commit/810a2baf8808d08b6d06fa223134834f9f07f33e) Thanks [@github-actions](https://github.com/apps/github-actions)! - fix: adjust chart crosshair color token
+
 ## 7.0.0-rc.2
 
 ### Patch Changes
