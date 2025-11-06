@@ -112,6 +112,7 @@ export const TooltipContent = (
         <RadixTooltip.Portal>
             <ThemeProvider theme={theme} dir={dir}>
                 <RadixTooltip.Content
+                    dir={dir}
                     data-test-id={dataTestId}
                     data-tooltip-spacing={padding}
                     className={cn(styles.root, className)}
