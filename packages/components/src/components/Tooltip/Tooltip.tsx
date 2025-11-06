@@ -112,7 +112,6 @@ export const TooltipContent = (
         <RadixTooltip.Portal>
             <ThemeProvider theme={theme} dir={dir}>
                 <RadixTooltip.Content
-                    // @ts-expect-error - dir prop works at runtime but is not in the Radix UI type definition
                     dir={dir}
                     data-test-id={dataTestId}
                     data-tooltip-spacing={padding}

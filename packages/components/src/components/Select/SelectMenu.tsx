@@ -112,7 +112,6 @@ export const SelectMenu = ({
         <RadixPopover.Portal>
             <ThemeProvider theme={theme} dir={dir}>
                 <RadixPopover.Content
-                    // @ts-expect-error - dir prop works at runtime but is not in the Radix UI type definition
                     dir={dir}
                     align={align}
                     side={getAdjustedSide(side)}

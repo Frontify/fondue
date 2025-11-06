@@ -171,7 +171,6 @@ export const FlyoutContent = (
             <ThemeProvider theme={theme} dir={dir}>
                 <div data-test-id="fondue-flyout-overlay" className={styles.overlay} />
                 <RadixPopover.Content
-                    // @ts-expect-error - dir prop works at runtime but is not in the Radix UI type definition
                     dir={dir}
                     style={
                         {
