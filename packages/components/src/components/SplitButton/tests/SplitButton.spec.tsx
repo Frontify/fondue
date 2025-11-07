@@ -80,6 +80,42 @@ describe('SplitButton component', () => {
         expect(splitButton).toHaveAttribute('data-disabled', 'true');
     });
 
+    it('reacts on enter key', async () => {
+        const contentListener = vi.fn();
+        const { getByTestId } = render(
+            <SplitButton>
+                <SplitButton.Content onPress={contentListener}>{SPLIT_BUTTON_TEXT}</SplitButton.Content>
+                <SplitButton.Action>
+                    <button type="button">Action</button>
+                </SplitButton.Action>
+            </SplitButton>,
+        );
+
+        const content = getByTestId(CONTENT_TEST_ID);
+        expect(contentListener).not.toHaveBeenCalled();
+        content.focus();
+        await userEvent.keyboard('{Enter}');
+        expect(contentListener).toHaveBeenCalledOnce();
+    });
+
+    it('reacts on space key', async () => {
+        const contentListener = vi.fn();
+        const { getByTestId } = render(
+            <SplitButton>
+                <SplitButton.Content onPress={contentListener}>{SPLIT_BUTTON_TEXT}</SplitButton.Content>
+                <SplitButton.Action>
+                    <button type="button">Action</button>
+                </SplitButton.Action>
+            </SplitButton>,
+        );
+
+        const content = getByTestId(CONTENT_TEST_ID);
+        expect(contentListener).not.toHaveBeenCalled();
+        content.focus();
+        await userEvent.keyboard('{ }');
+        expect(contentListener).toHaveBeenCalledOnce();
+    });
+
     it('has role="group"', () => {
         const { getByTestId } = render(
             <SplitButton>
