@@ -1,0 +1,350 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+@use '../../../utilities/focusStyle.module.scss';
+
+@mixin content-button-style($bg-base, $bg-hover, $bg-pressed, $text-color, $icon-color, $text-hover: null) {
+    background-color: var(--#{$bg-base});
+    color: var(--#{$text-color});
+
+    &:hover {
+        background-color: var(--#{$bg-hover});
+        @if $text-hover {
+            color: var(--#{$text-hover});
+        }
+    }
+
+    &:active {
+        background-color: var(--#{$bg-pressed});
+        @if $text-hover {
+            color: var(--#{$text-hover});
+        }
+    }
+
+    [class*="Icon"] {
+        color: var(--#{$icon-color});
+    }
+}
+
+@mixin action-button-style($bg-base, $bg-hover, $bg-pressed, $text-color, $icon-color) {
+    .action > button {
+        background-color: var(--#{$bg-base});
+        color: var(--#{$text-color});
+
+        &:hover {
+            background-color: var(--#{$bg-hover});
+        }
+
+        &:active {
+            background-color: var(--#{$bg-pressed});
+        }
+
+        svg {
+            color: var(--#{$icon-color});
+        }
+    }
+}
+
+.root {
+    display: inline-flex;
+    align-items: stretch;
+    position: relative;
+    box-sizing: border-box;
+    font-family: var(--font-family-body);
+    font-weight: 500;
+    white-space: nowrap;
+    transition: background-color 250ms, color 250ms;
+
+    &[data-size="small"] {
+        height: 1.5rem;
+        font-size: var(--body-size-small);
+        line-height: var(--body-size-small-line-height);
+
+        .content {
+            padding-inline: 0.5rem;
+        }
+
+        .action > button {
+            min-width: 1.5rem;
+        }
+    }
+
+    &[data-size="medium"] {
+        height: 2.25rem;
+        font-size: var(--body-size-medium);
+        line-height: var(--body-size-medium-line-height);
+
+        .content {
+            padding-inline: 1rem;
+        }
+    }
+
+    &[data-size="large"] {
+        height: 3rem;
+        font-size: var(--body-size-large);
+        line-height: var(--body-size-large-line-height);
+
+        .content {
+            padding-inline: 1.5rem;
+        }
+    }
+
+    border-radius: var(--radius);
+
+    &[data-disabled="true"] {
+        .content {
+            background-color: var(--box-disabled-color);
+            color: var(--box-disabled-color-inverse);
+            cursor: not-allowed;
+            pointer-events: none;
+            border-inline-end: 1px solid var(--line-color);
+
+            [class*="Icon"] {
+                color: var(--box-disabled-color-inverse);
+            }
+        }
+    }
+
+    // Default variant
+    &[data-variant="default"][data-emphasis="default"]:not([data-disabled="true"]) {
+        .content {
+            @include content-button-style(
+                button-background-color,
+                button-background-color-hover,
+                button-background-color-pressed,
+                button-text-color,
+                button-icon-color
+            );
+        }
+    }
+
+    &[data-variant="default"][data-emphasis="weak"]:not([data-disabled="true"]) {
+        .content {
+            @include content-button-style(
+                transparent,
+                button-background-color-hover,
+                button-background-color-pressed,
+                button-text-color,
+                button-icon-color
+            );
+        }
+    }
+
+    &[data-variant="default"][data-emphasis="strong"]:not([data-disabled="true"]) {
+        .content {
+            @include content-button-style(
+                button-strong-background-color,
+                button-strong-background-color-hover,
+                button-strong-background-color-pressed,
+                button-strong-text-color,
+                button-strong-icon-color,
+                button-strong-text-color
+            );
+        }
+    }
+
+    // Positive variant
+    &[data-variant="positive"][data-emphasis="default"]:not([data-disabled="true"]) {
+        .content {
+            @include content-button-style(
+                button-positive-background-color,
+                button-positive-background-color-hover,
+                button-positive-background-color-pressed,
+                button-positive-text-color,
+                button-positive-icon-color
+            );
+        }
+    }
+
+    &[data-variant="positive"][data-emphasis="weak"]:not([data-disabled="true"]) {
+        .content {
+            @include content-button-style(
+                transparent,
+                button-positive-background-color-hover,
+                button-positive-background-color-pressed,
+                button-positive-text-color,
+                button-positive-icon-color
+            );
+        }
+    }
+
+    &[data-variant="positive"][data-emphasis="strong"]:not([data-disabled="true"]) {
+        .content {
+            @include content-button-style(
+                box-positive-strong-color,
+                box-positive-strong-color-hover,
+                box-positive-strong-color-pressed,
+                box-positive-strong-inverse-color,
+                box-positive-strong-inverse-color,
+                box-positive-strong-inverse-color
+            );
+        }
+
+        @include action-button-style(
+            box-positive-strong-color,
+            box-positive-strong-color-hover,
+            box-positive-strong-color-pressed,
+            box-positive-strong-inverse-color,
+            box-positive-strong-inverse-color
+        );
+    }
+
+    // Negative variant
+    &[data-variant="negative"][data-emphasis="default"]:not([data-disabled="true"]) {
+        .content {
+            @include content-button-style(
+                button-negative-background-color,
+                button-negative-background-color-hover,
+                button-negative-background-color-pressed,
+                button-negative-text-color,
+                button-negative-icon-color
+            );
+        }
+    }
+
+    &[data-variant="negative"][data-emphasis="weak"]:not([data-disabled="true"]) {
+        .content {
+            @include content-button-style(
+                transparent,
+                button-negative-background-color-hover,
+                button-negative-background-color-pressed,
+                button-negative-text-color,
+                button-negative-icon-color
+            );
+        }
+    }
+
+    &[data-variant="negative"][data-emphasis="strong"]:not([data-disabled="true"]) {
+        .content {
+            @include content-button-style(
+                box-negative-strong-color,
+                box-negative-strong-color-hover,
+                box-negative-strong-color-pressed,
+                box-negative-strong-inverse-color,
+                box-negative-strong-inverse-color,
+                box-negative-strong-inverse-color
+            );
+        }
+
+        @include action-button-style(
+            box-negative-strong-color,
+            box-negative-strong-color-hover,
+            box-negative-strong-color-pressed,
+            box-negative-strong-inverse-color,
+            box-negative-strong-inverse-color
+        );
+    }
+
+    // Danger variant
+    &[data-variant="danger"][data-emphasis="default"]:not([data-disabled="true"]) {
+        .content {
+            @include content-button-style(
+                button-background-color,
+                button-background-color-hover,
+                button-background-color-pressed,
+                button-text-color,
+                button-negative-icon-color
+            );
+        }
+    }
+
+    &[data-variant="danger"][data-emphasis="weak"]:not([data-disabled="true"]) {
+        .content {
+            @include content-button-style(
+                transparent,
+                button-background-color-hover,
+                button-background-color-pressed,
+                button-text-color,
+                button-negative-icon-color
+            );
+        }
+    }
+
+    &[data-variant="danger"][data-emphasis="strong"]:not([data-disabled="true"]) {
+        .content {
+            @include content-button-style(
+                button-danger-background-color,
+                button-danger-background-color-hover,
+                button-danger-background-color-pressed,
+                button-danger-text-color,
+                button-danger-icon-color,
+                button-danger-text-color
+            );
+        }
+    }
+
+    // Loud variant
+    &[data-variant="loud"][data-emphasis="default"]:not([data-disabled="true"]) {
+        .content {
+            @include content-button-style(
+                box-selected-color,
+                box-selected-color-hover,
+                box-selected-color-pressed,
+                box-selected-inverse-color,
+                box-selected-inverse-color
+            );
+        }
+    }
+
+    &[data-variant="loud"][data-emphasis="weak"]:not([data-disabled="true"]) {
+        .content {
+            @include content-button-style(
+                transparent,
+                box-selected-color-hover,
+                box-selected-color-pressed,
+                box-selected-inverse-color,
+                box-selected-inverse-color
+            );
+        }
+    }
+
+    &[data-variant="loud"][data-emphasis="strong"]:not([data-disabled="true"]) {
+        .content {
+            @include content-button-style(
+                box-selected-strong-color,
+                box-selected-strong-color-hover,
+                box-selected-strong-color-pressed,
+                box-selected-strong-inverse-color,
+                box-selected-strong-inverse-color,
+                box-selected-strong-inverse-color
+            );
+        }
+    }
+}
+
+.content {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font: inherit;
+    box-sizing: border-box;
+    transition: background-color 250ms, color 250ms;
+    white-space: nowrap;
+    border-start-start-radius: var(--radius);
+    border-end-start-radius: var(--radius);
+    border-start-end-radius: 0;
+    border-end-end-radius: 0;
+    border: none;
+    border-inline-end: 1px solid var(--line-color);
+
+    & {
+        @include focusStyle.focus-outline;
+    }
+}
+
+.action {
+    display: flex;
+    align-items: stretch;
+    flex-shrink: 0;
+
+    > button {
+        height: 100%;
+        min-width: 2.25rem;
+        border-start-end-radius: var(--radius);
+        border-end-end-radius: var(--radius);
+        border-start-start-radius: 0;
+        border-end-start-radius: 0;
+    }
+}
