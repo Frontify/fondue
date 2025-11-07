@@ -328,9 +328,14 @@
     border-end-end-radius: 0;
     border: none;
     border-inline-end: 1px solid var(--line-color);
+    position: relative;
 
     & {
         @include focusStyle.focus-outline;
+    }
+
+    &:focus-visible {
+        z-index: 1;
     }
 }
 
