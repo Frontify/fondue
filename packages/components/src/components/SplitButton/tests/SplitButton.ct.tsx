@@ -4,7 +4,6 @@ import { IconPlus } from '@frontify/fondue-icons';
 import { expect, test } from '@playwright/experimental-ct-react';
 
 import { Button } from '../../Button/Button';
-
 import { SplitButton } from '../SplitButton';
 
 const SPLIT_BUTTON_TEXT = 'Primary Action';
