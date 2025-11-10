@@ -1,0 +1,22 @@
+import{r as n,j as y}from"./iframe-B8HjM2bH.js";import{C as f}from"./colors-cqDZVL9s.js";import{C as F,E as g}from"./example-palettes-BCgEJ8JL.js";import"./preload-helper-CG1F6kIz.js";import"./SegmentedControls-lVfP7WLj.js";import"./useFocusRing-3Gw7Pb6L.js";import"./useEffectEvent-DldudAt0.js";import"./useFocusable-CZmCl03Y.js";import"./chain-DcfYi800.js";import"./index-DQu1qdiw.js";import"./useFormValidationState-DsTfsc6h.js";import"./FocusScope-DzUilBpY.js";import"./useField-73JdbjyK.js";import"./useLabels-BdWZl8t7.js";import"./context-C88ziPfd.js";import"./VisuallyHidden-O156DaXA.js";import"./useControlledState-Cruvscar.js";import"./useMemoizedId-C7w6N4e1.js";import"./focusStyle-Ch_WJ4aJ.js";import"./merge-DI-veSMP.js";import"./proxy-B4sk3uMt.js";import"./TextInput-6wrBtR06.js";import"./LoadingCircle-CsRn3Dui.js";import"./IconCheckMark-D2gcRUJK.js";import"./IconSize-BcCrF_mi.js";import"./IconCross-DNgwupST.js";import"./IconExclamationMarkTriangle-0oh_v4Q_.js";import"./IconExclamationMarkTriangle24-Cug0QU8I.js";import"./validation-C9S5KgfE.js";import"./LegacyTooltip-D1gEUfx1.js";import"./useLink-By4Pag_x.js";import"./usePopper-aUIx4INC.js";import"./index-e4lb8Yn9.js";import"./Button-Cxlg_Jlu.js";import"./useButton-B3xO9RgR.js";import"./Portal-CydnS4Q0.js";import"./IconExclamationMarkCircle24-BZjJkaig.js";import"./IconMagnifier-IoIIHIGx.js";import"./IconMagnifier16-BMXt2MbS.js";import"./index-DS-hrHYG.js";import"./Dropdown-1D2p0mCw.js";import"./useOverlayTriggerState-C_2tGnG8.js";import"./useMenuTrigger-n-N-gLF7.js";import"./useLocalizedStringFormatter-DnKFZXOJ.js";import"./helper-Ijke0SGX.js";import"./keyboard-CXSBV2-2.js";import"./SelectionManager-DHIj7-4C.js";import"./MenuItem-Dye6i1me.js";import"./IconCaretRight-43PqgEC-.js";import"./elements-BOYmskOL.js";import"./Trigger-qLWd3HsL.js";import"./IconCaretDown-jnmRmvBC.js";import"./IconCaretDown16-DooVhUZz.js";import"./IconTrashBin16-D23_ZH0V.js";import"./IconTrashBin24-DkqIbv5B.js";import"./EnablePortalWrapper-mRPgidZV.js";const _r={title:"Components/Color Picker",component:F,tags:["autodocs"],args:{currentColor:{red:85,green:102,blue:255}},argTypes:{onSelect:{action:"Select Color"}},parameters:{status:{type:"deprecated"},docs:{description:{component:"### This component is deprecated, please use the [new Color Picker component](/docs/current_components-colorpicker--documentation) instead."}}}},s=e=>{const[x,P]=n.useState(e.currentColor),[k,E]=n.useState(f.Hex);return y.jsx(F,{...e,currentColor:x,currentFormat:k,setFormat:E,onSelect:m=>{e.onSelect(m),P(m)}})},t=s.bind({}),r=s.bind({});r.args={palettes:g,allowCustomColor:!1};const o=s.bind({});o.args={palettes:g};var c,a,l;t.parameters={...t.parameters,docs:{...(c=t.parameters)==null?void 0:c.docs,source:{originalSource:`args => {
+  const [selectedColor, setSelectedColor] = useState(args.currentColor);
+  const [currentFormat, setCurrentFormat] = useState(ColorFormat.Hex);
+  return <ColorPicker {...args} currentColor={selectedColor} currentFormat={currentFormat} setFormat={setCurrentFormat} onSelect={color => {
+    args.onSelect(color);
+    setSelectedColor(color);
+  }} />;
+}`,...(l=(a=t.parameters)==null?void 0:a.docs)==null?void 0:l.source}}};var p,i,u;r.parameters={...r.parameters,docs:{...(p=r.parameters)==null?void 0:p.docs,source:{originalSource:`args => {
+  const [selectedColor, setSelectedColor] = useState(args.currentColor);
+  const [currentFormat, setCurrentFormat] = useState(ColorFormat.Hex);
+  return <ColorPicker {...args} currentColor={selectedColor} currentFormat={currentFormat} setFormat={setCurrentFormat} onSelect={color => {
+    args.onSelect(color);
+    setSelectedColor(color);
+  }} />;
+}`,...(u=(i=r.parameters)==null?void 0:i.docs)==null?void 0:u.source}}};var C,d,S;o.parameters={...o.parameters,docs:{...(C=o.parameters)==null?void 0:C.docs,source:{originalSource:`args => {
+  const [selectedColor, setSelectedColor] = useState(args.currentColor);
+  const [currentFormat, setCurrentFormat] = useState(ColorFormat.Hex);
+  return <ColorPicker {...args} currentColor={selectedColor} currentFormat={currentFormat} setFormat={setCurrentFormat} onSelect={color => {
+    args.onSelect(color);
+    setSelectedColor(color);
+  }} />;
+}`,...(S=(d=o.parameters)==null?void 0:d.docs)==null?void 0:S.source}}};const br=["OnlyCustomColor","OnlyBrandColor","WithBrandColors"];export{r as OnlyBrandColor,t as OnlyCustomColor,o as WithBrandColors,br as __namedExportsOrder,_r as default};
