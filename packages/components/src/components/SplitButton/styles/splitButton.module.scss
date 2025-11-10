@@ -104,8 +104,8 @@
         }
     }
 
-    // Default variant
-    &[data-variant="default"][data-emphasis="default"]:not([data-disabled="true"]) {
+    // Default variant (only variant)
+    &[data-emphasis="default"]:not([data-disabled="true"]) {
         .content {
             @include content-button-style(
                 button-background-color,
@@ -117,7 +117,7 @@
         }
     }
 
-    &[data-variant="default"][data-emphasis="weak"]:not([data-disabled="true"]) {
+    &[data-emphasis="weak"]:not([data-disabled="true"]) {
         .content {
             @include content-button-style(
                 transparent,
@@ -129,7 +129,7 @@
         }
     }
 
-    &[data-variant="default"][data-emphasis="strong"]:not([data-disabled="true"]) {
+    &[data-emphasis="strong"]:not([data-disabled="true"]) {
         .content {
             @include content-button-style(
                 button-strong-background-color,
@@ -138,174 +138,6 @@
                 button-strong-text-color,
                 button-strong-icon-color,
                 button-strong-text-color
-            );
-        }
-    }
-
-    // Positive variant
-    &[data-variant="positive"][data-emphasis="default"]:not([data-disabled="true"]) {
-        .content {
-            @include content-button-style(
-                button-positive-background-color,
-                button-positive-background-color-hover,
-                button-positive-background-color-pressed,
-                button-positive-text-color,
-                button-positive-icon-color
-            );
-        }
-    }
-
-    &[data-variant="positive"][data-emphasis="weak"]:not([data-disabled="true"]) {
-        .content {
-            @include content-button-style(
-                transparent,
-                button-positive-background-color-hover,
-                button-positive-background-color-pressed,
-                button-positive-text-color,
-                button-positive-icon-color
-            );
-        }
-    }
-
-    &[data-variant="positive"][data-emphasis="strong"]:not([data-disabled="true"]) {
-        .content {
-            @include content-button-style(
-                box-positive-strong-color,
-                box-positive-strong-color-hover,
-                box-positive-strong-color-pressed,
-                box-positive-strong-inverse-color,
-                box-positive-strong-inverse-color,
-                box-positive-strong-inverse-color
-            );
-        }
-
-        @include action-button-style(
-            box-positive-strong-color,
-            box-positive-strong-color-hover,
-            box-positive-strong-color-pressed,
-            box-positive-strong-inverse-color,
-            box-positive-strong-inverse-color
-        );
-    }
-
-    // Negative variant
-    &[data-variant="negative"][data-emphasis="default"]:not([data-disabled="true"]) {
-        .content {
-            @include content-button-style(
-                button-negative-background-color,
-                button-negative-background-color-hover,
-                button-negative-background-color-pressed,
-                button-negative-text-color,
-                button-negative-icon-color
-            );
-        }
-    }
-
-    &[data-variant="negative"][data-emphasis="weak"]:not([data-disabled="true"]) {
-        .content {
-            @include content-button-style(
-                transparent,
-                button-negative-background-color-hover,
-                button-negative-background-color-pressed,
-                button-negative-text-color,
-                button-negative-icon-color
-            );
-        }
-    }
-
-    &[data-variant="negative"][data-emphasis="strong"]:not([data-disabled="true"]) {
-        .content {
-            @include content-button-style(
-                box-negative-strong-color,
-                box-negative-strong-color-hover,
-                box-negative-strong-color-pressed,
-                box-negative-strong-inverse-color,
-                box-negative-strong-inverse-color,
-                box-negative-strong-inverse-color
-            );
-        }
-
-        @include action-button-style(
-            box-negative-strong-color,
-            box-negative-strong-color-hover,
-            box-negative-strong-color-pressed,
-            box-negative-strong-inverse-color,
-            box-negative-strong-inverse-color
-        );
-    }
-
-    // Danger variant
-    &[data-variant="danger"][data-emphasis="default"]:not([data-disabled="true"]) {
-        .content {
-            @include content-button-style(
-                button-background-color,
-                button-background-color-hover,
-                button-background-color-pressed,
-                button-text-color,
-                button-negative-icon-color
-            );
-        }
-    }
-
-    &[data-variant="danger"][data-emphasis="weak"]:not([data-disabled="true"]) {
-        .content {
-            @include content-button-style(
-                transparent,
-                button-background-color-hover,
-                button-background-color-pressed,
-                button-text-color,
-                button-negative-icon-color
-            );
-        }
-    }
-
-    &[data-variant="danger"][data-emphasis="strong"]:not([data-disabled="true"]) {
-        .content {
-            @include content-button-style(
-                button-danger-background-color,
-                button-danger-background-color-hover,
-                button-danger-background-color-pressed,
-                button-danger-text-color,
-                button-danger-icon-color,
-                button-danger-text-color
-            );
-        }
-    }
-
-    // Loud variant
-    &[data-variant="loud"][data-emphasis="default"]:not([data-disabled="true"]) {
-        .content {
-            @include content-button-style(
-                box-selected-color,
-                box-selected-color-hover,
-                box-selected-color-pressed,
-                box-selected-inverse-color,
-                box-selected-inverse-color
-            );
-        }
-    }
-
-    &[data-variant="loud"][data-emphasis="weak"]:not([data-disabled="true"]) {
-        .content {
-            @include content-button-style(
-                transparent,
-                box-selected-color-hover,
-                box-selected-color-pressed,
-                box-selected-inverse-color,
-                box-selected-inverse-color
-            );
-        }
-    }
-
-    &[data-variant="loud"][data-emphasis="strong"]:not([data-disabled="true"]) {
-        .content {
-            @include content-button-style(
-                box-selected-strong-color,
-                box-selected-strong-color-hover,
-                box-selected-strong-color-pressed,
-                box-selected-strong-inverse-color,
-                box-selected-strong-inverse-color,
-                box-selected-strong-inverse-color
             );
         }
     }

@@ -51,7 +51,7 @@ describe('SplitButton component', () => {
 
     it('applies correct data attributes', () => {
         const { getByTestId } = render(
-            <SplitButton variant="positive" emphasis="strong" size="large">
+            <SplitButton emphasis="strong" size="large">
                 <SplitButton.Content>{SPLIT_BUTTON_TEXT}</SplitButton.Content>
                 <SplitButton.Action>
                     <button type="button">Action</button>
@@ -60,7 +60,6 @@ describe('SplitButton component', () => {
         );
 
         const splitButton = getByTestId(SPLIT_BUTTON_TEST_ID);
-        expect(splitButton).toHaveAttribute('data-variant', 'positive');
         expect(splitButton).toHaveAttribute('data-emphasis', 'strong');
         expect(splitButton).toHaveAttribute('data-size', 'large');
     });

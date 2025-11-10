@@ -25,7 +25,6 @@ const meta: Meta<typeof SplitButton> = {
         },
     },
     args: {
-        variant: 'default',
         emphasis: 'strong',
         size: 'medium',
         disabled: false,
@@ -40,7 +39,7 @@ export const Default: Story = {
             <SplitButton.Action>
                 <Dropdown.Root>
                     <Dropdown.Trigger asChild>
-                        <Button variant={args.variant} emphasis={args.emphasis} size={args.size} aspect="square">
+                        <Button emphasis={args.emphasis} size={args.size} aspect="square">
                             <IconCaretDown size={16} />
                         </Button>
                     </Dropdown.Trigger>
@@ -65,7 +64,7 @@ export const WithIcon: Story = {
             <SplitButton.Action>
                 <Dropdown.Root>
                     <Dropdown.Trigger asChild>
-                        <Button variant={args.variant} emphasis={args.emphasis} size={args.size} aspect="square">
+                        <Button emphasis={args.emphasis} size={args.size} aspect="square">
                             <IconCaretDown size={16} />
                         </Button>
                     </Dropdown.Trigger>
@@ -80,97 +79,6 @@ export const WithIcon: Story = {
     ),
 };
 
-export const AllVariants: Story = {
-    render: (args) => (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <SplitButton {...args} variant="default">
-                <SplitButton.Content onPress={action('default')}>Default</SplitButton.Content>
-                <SplitButton.Action>
-                    <Dropdown.Root>
-                        <Dropdown.Trigger asChild>
-                            <Button variant="default" emphasis={args.emphasis} size={args.size} aspect="square">
-                                <IconCaretDown size={16} />
-                            </Button>
-                        </Dropdown.Trigger>
-                        <Dropdown.Content align="end">
-                            <Dropdown.Item onSelect={action('option-1')}>Option 1</Dropdown.Item>
-                            <Dropdown.Item onSelect={action('option-2')}>Option 2</Dropdown.Item>
-                        </Dropdown.Content>
-                    </Dropdown.Root>
-                </SplitButton.Action>
-            </SplitButton>
-
-            <SplitButton {...args} variant="positive">
-                <SplitButton.Content onPress={action('positive')}>Positive</SplitButton.Content>
-                <SplitButton.Action>
-                    <Dropdown.Root>
-                        <Dropdown.Trigger asChild>
-                            <Button variant="positive" emphasis={args.emphasis} size={args.size} aspect="square">
-                                <IconCaretDown size={16} />
-                            </Button>
-                        </Dropdown.Trigger>
-                        <Dropdown.Content align="end">
-                            <Dropdown.Item onSelect={action('option-1')}>Option 1</Dropdown.Item>
-                            <Dropdown.Item onSelect={action('option-2')}>Option 2</Dropdown.Item>
-                        </Dropdown.Content>
-                    </Dropdown.Root>
-                </SplitButton.Action>
-            </SplitButton>
-
-            <SplitButton {...args} variant="negative">
-                <SplitButton.Content onPress={action('negative')}>Negative</SplitButton.Content>
-                <SplitButton.Action>
-                    <Dropdown.Root>
-                        <Dropdown.Trigger asChild>
-                            <Button variant="negative" emphasis={args.emphasis} size={args.size} aspect="square">
-                                <IconCaretDown size={16} />
-                            </Button>
-                        </Dropdown.Trigger>
-                        <Dropdown.Content align="end">
-                            <Dropdown.Item onSelect={action('option-1')}>Option 1</Dropdown.Item>
-                            <Dropdown.Item onSelect={action('option-2')}>Option 2</Dropdown.Item>
-                        </Dropdown.Content>
-                    </Dropdown.Root>
-                </SplitButton.Action>
-            </SplitButton>
-
-            <SplitButton {...args} variant="danger">
-                <SplitButton.Content onPress={action('danger')}>Danger</SplitButton.Content>
-                <SplitButton.Action>
-                    <Dropdown.Root>
-                        <Dropdown.Trigger asChild>
-                            <Button variant="danger" emphasis={args.emphasis} size={args.size} aspect="square">
-                                <IconCaretDown size={16} />
-                            </Button>
-                        </Dropdown.Trigger>
-                        <Dropdown.Content align="end">
-                            <Dropdown.Item onSelect={action('option-1')}>Option 1</Dropdown.Item>
-                            <Dropdown.Item onSelect={action('option-2')}>Option 2</Dropdown.Item>
-                        </Dropdown.Content>
-                    </Dropdown.Root>
-                </SplitButton.Action>
-            </SplitButton>
-
-            <SplitButton {...args} variant="loud">
-                <SplitButton.Content onPress={action('loud')}>Loud</SplitButton.Content>
-                <SplitButton.Action>
-                    <Dropdown.Root>
-                        <Dropdown.Trigger asChild>
-                            <Button variant="loud" emphasis={args.emphasis} size={args.size} aspect="square">
-                                <IconCaretDown size={16} />
-                            </Button>
-                        </Dropdown.Trigger>
-                        <Dropdown.Content align="end">
-                            <Dropdown.Item onSelect={action('option-1')}>Option 1</Dropdown.Item>
-                            <Dropdown.Item onSelect={action('option-2')}>Option 2</Dropdown.Item>
-                        </Dropdown.Content>
-                    </Dropdown.Root>
-                </SplitButton.Action>
-            </SplitButton>
-        </div>
-    ),
-};
-
 export const AllEmphasis: Story = {
     render: (args) => (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -179,7 +87,7 @@ export const AllEmphasis: Story = {
                 <SplitButton.Action>
                     <Dropdown.Root>
                         <Dropdown.Trigger asChild>
-                            <Button variant={args.variant} emphasis="strong" size={args.size} aspect="square">
+                            <Button emphasis="strong" size={args.size} aspect="square">
                                 <IconCaretDown size={16} />
                             </Button>
                         </Dropdown.Trigger>
@@ -196,7 +104,7 @@ export const AllEmphasis: Story = {
                 <SplitButton.Action>
                     <Dropdown.Root>
                         <Dropdown.Trigger asChild>
-                            <Button variant={args.variant} emphasis="default" size={args.size} aspect="square">
+                            <Button emphasis="default" size={args.size} aspect="square">
                                 <IconCaretDown size={16} />
                             </Button>
                         </Dropdown.Trigger>
@@ -213,7 +121,7 @@ export const AllEmphasis: Story = {
                 <SplitButton.Action>
                     <Dropdown.Root>
                         <Dropdown.Trigger asChild>
-                            <Button variant={args.variant} emphasis="weak" size={args.size} aspect="square">
+                            <Button emphasis="weak" size={args.size} aspect="square">
                                 <IconCaretDown size={16} />
                             </Button>
                         </Dropdown.Trigger>
@@ -236,7 +144,7 @@ export const AllSizes: Story = {
                 <SplitButton.Action>
                     <Dropdown.Root>
                         <Dropdown.Trigger asChild>
-                            <Button variant={args.variant} emphasis={args.emphasis} size="small" aspect="square">
+                            <Button emphasis={args.emphasis} size="small" aspect="square">
                                 <IconCaretDown size={12} />
                             </Button>
                         </Dropdown.Trigger>
@@ -253,7 +161,7 @@ export const AllSizes: Story = {
                 <SplitButton.Action>
                     <Dropdown.Root>
                         <Dropdown.Trigger asChild>
-                            <Button variant={args.variant} emphasis={args.emphasis} size="medium" aspect="square">
+                            <Button emphasis={args.emphasis} size="medium" aspect="square">
                                 <IconCaretDown size={16} />
                             </Button>
                         </Dropdown.Trigger>
@@ -270,7 +178,7 @@ export const AllSizes: Story = {
                 <SplitButton.Action>
                     <Dropdown.Root>
                         <Dropdown.Trigger asChild>
-                            <Button variant={args.variant} emphasis={args.emphasis} size="large" aspect="square">
+                            <Button emphasis={args.emphasis} size="large" aspect="square">
                                 <IconCaretDown size={20} />
                             </Button>
                         </Dropdown.Trigger>
@@ -295,13 +203,7 @@ export const Disabled: Story = {
             <SplitButton.Action>
                 <Dropdown.Root>
                     <Dropdown.Trigger asChild>
-                        <Button
-                            variant={args.variant}
-                            emphasis={args.emphasis}
-                            size={args.size}
-                            aspect="square"
-                            disabled
-                        >
+                        <Button emphasis={args.emphasis} size={args.size} aspect="square" disabled>
                             <IconCaretDown size={16} />
                         </Button>
                     </Dropdown.Trigger>
@@ -322,7 +224,7 @@ export const AlternativeIcon: Story = {
             <SplitButton.Action rotateIcon={false}>
                 <Dropdown.Root>
                     <Dropdown.Trigger asChild>
-                        <Button variant={args.variant} emphasis={args.emphasis} size={args.size} aspect="square">
+                        <Button emphasis={args.emphasis} size={args.size} aspect="square">
                             <IconDotsVertical size={16} />
                         </Button>
                     </Dropdown.Trigger>
@@ -346,7 +248,7 @@ export const ComplexMenu: Story = {
             <SplitButton.Action>
                 <Dropdown.Root>
                     <Dropdown.Trigger asChild>
-                        <Button variant={args.variant} emphasis={args.emphasis} size={args.size} aspect="square">
+                        <Button emphasis={args.emphasis} size={args.size} aspect="square">
                             <IconCaretDown size={16} />
                         </Button>
                     </Dropdown.Trigger>

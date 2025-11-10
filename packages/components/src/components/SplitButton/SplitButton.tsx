@@ -4,17 +4,11 @@ import { forwardRef, type ForwardedRef, type MouseEvent, type ReactNode } from '
 
 import styles from './styles/splitButton.module.scss';
 
-type ButtonStyle = 'default' | 'positive' | 'negative' | 'danger' | 'loud';
-
 type ButtonSize = 'small' | 'medium' | 'large';
 
 type ButtonEmphasis = 'default' | 'weak' | 'strong';
 
 export type SplitButtonProps = {
-    /**
-     * @default 'default'
-     */
-    variant?: ButtonStyle;
     /**
      * @default 'default'
      */
@@ -93,7 +87,6 @@ const SplitButtonRoot = forwardRef<HTMLDivElement, SplitButtonProps>(
             disabled = false,
             emphasis = 'default',
             size = 'medium',
-            variant = 'default',
         }: SplitButtonProps,
         ref: ForwardedRef<HTMLDivElement>,
     ) => {
@@ -104,7 +97,6 @@ const SplitButtonRoot = forwardRef<HTMLDivElement, SplitButtonProps>(
                 aria-label={ariaLabel}
                 data-test-id={dataTestId}
                 data-component="split-button"
-                data-variant={variant}
                 data-emphasis={emphasis}
                 data-size={size}
                 data-disabled={disabled}

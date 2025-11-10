@@ -34,18 +34,6 @@ test('should have role="group"', async ({ mount }) => {
     await expect(component).toHaveRole('group');
 });
 
-test('should apply variant styles', async ({ mount }) => {
-    const component = await mount(
-        <SplitButton variant="positive">
-            <SplitButton.Content>{SPLIT_BUTTON_TEXT}</SplitButton.Content>
-            <SplitButton.Action>
-                <button type="button">{ACTION_BUTTON_TEXT}</button>
-            </SplitButton.Action>
-        </SplitButton>,
-    );
-    await expect(component).toHaveAttribute('data-variant', 'positive');
-});
-
 test('should apply size styles', async ({ mount }) => {
     const component = await mount(
         <SplitButton size="large">
@@ -159,23 +147,6 @@ test('should render with custom aria-label', async ({ mount }) => {
         </SplitButton>,
     );
     await expect(component).toHaveAttribute('aria-label', ariaLabel);
-});
-
-test('should render all variant options', async ({ mount }) => {
-    const variants = ['default', 'positive', 'negative', 'danger', 'loud'] as const;
-
-    for (const variant of variants) {
-        const component = await mount(
-            <SplitButton variant={variant}>
-                <SplitButton.Content>{SPLIT_BUTTON_TEXT}</SplitButton.Content>
-                <SplitButton.Action>
-                    <button type="button">{ACTION_BUTTON_TEXT}</button>
-                </SplitButton.Action>
-            </SplitButton>,
-        );
-        await expect(component).toHaveAttribute('data-variant', variant);
-        await component.unmount();
-    }
 });
 
 test('should render all size options', async ({ mount }) => {
