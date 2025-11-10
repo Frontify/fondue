@@ -76,6 +76,11 @@ export type SplitButtonActionProps = {
      * Test ID for the action slot
      */
     'data-test-id'?: string;
+    /**
+     * Whether to rotate the icon 180 degrees when active (typically for caret icons)
+     * @default true
+     */
+    rotateIcon?: boolean;
     children: ReactNode;
 };
 
@@ -146,10 +151,11 @@ SplitButtonContent.displayName = 'SplitButton.Content';
 const SplitButtonAction = ({
     'aria-label': ariaLabel,
     'data-test-id': dataTestId = 'split-button-action',
+    rotateIcon = true,
     children,
 }: SplitButtonActionProps) => {
     return (
-        <div aria-label={ariaLabel} data-test-id={dataTestId} className={styles.action}>
+        <div aria-label={ariaLabel} data-test-id={dataTestId} data-rotate-icon={rotateIcon} className={styles.action}>
             {children}
         </div>
     );

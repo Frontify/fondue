@@ -319,7 +319,7 @@ export const AlternativeIcon: Story = {
     render: (args) => (
         <SplitButton {...args}>
             <SplitButton.Content onPress={action('primary')}>More Actions</SplitButton.Content>
-            <SplitButton.Action>
+            <SplitButton.Action rotateIcon={false}>
                 <Dropdown.Root>
                     <Dropdown.Trigger asChild>
                         <Button variant={args.variant} emphasis={args.emphasis} size={args.size} aspect="square">
