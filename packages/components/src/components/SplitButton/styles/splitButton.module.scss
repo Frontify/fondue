@@ -358,5 +358,13 @@
         border-end-end-radius: var(--radius);
         border-start-start-radius: 0;
         border-end-start-radius: 0;
+
+        svg {
+            transition: transform 500ms cubic-bezier(0.87, 0, 0.13, 1);
+        }
+
+        &[data-state="open"] svg {
+            transform: rotate(180deg);
+        }
     }
 }
