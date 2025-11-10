@@ -3,8 +3,8 @@
 import { type Meta, type StoryFn } from '@storybook/react-vite';
 import { useCallback, useEffect, useState } from 'react';
 
-import { Box } from '@components/Box/Box';
-import { FormField } from '@components/FormField/FormField';
+import { Box } from '@components/Box';
+import { FormField } from '@components/FormField';
 import IconClipboard16 from '@foundation/Icon/Generated/IconClipboard16';
 import IconNook16 from '@foundation/Icon/Generated/IconNook16';
 import IconQuestionMark16 from '@foundation/Icon/Generated/IconQuestionMark16';
@@ -34,7 +34,7 @@ const ExtraActions: ExtraAction[] = [
  */
 // @ts-expect-error - type changed?
 export default {
-    title: 'Legacy Components/Textarea',
+    title: 'Components/Textarea',
     component: Textarea,
     tags: ['autodocs'],
     argTypes: {

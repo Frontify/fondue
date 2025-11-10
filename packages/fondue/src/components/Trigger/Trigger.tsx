@@ -12,25 +12,16 @@ import { FOCUS_STYLE, FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { Validation, validationClassMap } from '@utilities/validation';
 
-/**
- * @deprecated Please use a custom component instead.
- */
 export enum TriggerSize {
     Small = 'Small',
     Large = 'Large',
 }
 
-/**
- * @deprecated Please use a custom component instead.
- */
 export enum TriggerEmphasis {
     Default = 'Default',
     Weak = 'Weak',
 }
 
-/**
- * @deprecated Please use a custom component instead.
- */
 export type TriggerProps = {
     disabled?: boolean;
     children?: ReactNode;
@@ -67,9 +58,6 @@ const getTriggerClassNames = (
               ]),
     ]);
 
-/**
- * @deprecated Please use a custom component instead.
- */
 export const Trigger = ({
     buttonProps,
     onClear,
@@ -167,8 +155,4 @@ export const Trigger = ({
         </div>
     );
 };
-
-/**
- * @deprecated Please use a custom component instead.
- */
 Trigger.displayName = 'FondueTrigger';

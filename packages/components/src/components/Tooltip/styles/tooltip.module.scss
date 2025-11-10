@@ -4,14 +4,14 @@
 @use '../../../utilities/text.module.scss';
 
 .root {
-    background-color: var(--color-primary-default);
-    color: var(--color-primary-on-primary);
-    border-radius: var(--border-radius-medium);
+    background-color: var(--box-neutral-mighty-color);
+    color: var(--box-neutral-mighty-inverse-color);
+    border-radius: var(--radius);
     max-width: sizeToken.get(48);
     overflow: hidden;
     word-wrap: break-word;
     transform-origin: var(--radix-tooltip-content-transform-origin);
-    border: 1px solid var(--color-line-strong);
+    border: 1px solid var(--box-neutral-mighty-color-hover);
 
     @include text.text-sm;
 
@@ -27,7 +27,7 @@
 }
 
 .arrow {
-    fill: var(--color-primary-default);
-    filter: drop-shadow(0 1px 0px var(--color-line-strong));
+    fill: var(--box-neutral-mighty-color);
+    filter: drop-shadow(0 1px 0px var(--box-neutral-mighty-color-hover));
     transform: translateY(-1px);
 }

@@ -163,7 +163,7 @@ export const WithBothSlotTypes: Story = {
 
 export const MultipleTagsInRow: Story = {
     render: (args) => (
-        <div className="tw-flex tw-flex-nowrap tw-border tw-border-line-mid tw-rounded-medium tw-p-2 tw-gap-2">
+        <div className="tw-flex tw-flex-nowrap tw-border tw-border-line tw-rounded tw-p-2 tw-gap-2">
             <Tag {...args}>
                 <IconColorFan size="16" /> Text
             </Tag>

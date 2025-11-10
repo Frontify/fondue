@@ -7,11 +7,8 @@ import IconIcon from '@foundation/Icon/Generated/IconIcon';
 import { Badge } from './Badge';
 import { BadgeEmphasis, type BadgeProps, BadgeStatus, BadgeStyle } from './types';
 
-/**
- ### This component is deprecated, please use the [new Badge component](/docs/current_components-badge--documentation) instead.
- */
 export default {
-    title: 'Legacy Components/Deprecated/Badge',
+    title: 'Components/Badge',
     component: Badge,
     tags: ['autodocs'],
     argTypes: {
@@ -38,11 +35,6 @@ export default {
         emphasis: BadgeEmphasis.Strong,
         disabled: false,
         withTitleAttribute: true,
-    },
-    parameters: {
-        status: {
-            type: 'deprecated',
-        },
     },
 } as Meta<BadgeProps>;
 

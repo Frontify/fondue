@@ -4,18 +4,12 @@ import { type ReactElement } from 'react';
 
 import { merge } from '@utilities/merge';
 
-/**
- * @deprecated Please use updated LoadingCircle component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#loading-circle the migration guide}.
- */
 export enum LoadingCircleStyle {
     Progress = 'Progress',
     Positive = 'Positive',
     Danger = 'Danger',
 }
 
-/**
- * @deprecated Please use updated LoadingCircle component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#loading-circle the migration guide}.
- */
 export enum LoadingCircleSize {
     ExtraSmall = 'ExtraSmall',
     Small = 'Small',
@@ -23,27 +17,18 @@ export enum LoadingCircleSize {
     Large = 'Large',
 }
 
-/**
- * @deprecated Please use updated LoadingCircle component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#loading-circle the migration guide}.
- */
 export type LoadingCircleProps = {
     style?: LoadingCircleStyle;
     size?: LoadingCircleSize;
     'data-test-id'?: string;
 };
 
-/**
- * @deprecated Please use updated LoadingCircle component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#loading-circle the migration guide}.
- */
 export const statusClasses: Record<LoadingCircleStyle, string> = {
     [LoadingCircleStyle.Progress]: 'tw-border-violet-60',
     [LoadingCircleStyle.Positive]: 'tw-border-green-60',
     [LoadingCircleStyle.Danger]: 'tw-border-red-60',
 };
 
-/**
- * @deprecated Please use updated LoadingCircle component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#loading-circle the migration guide}.
- */
 export const sizeClasses: Record<LoadingCircleSize, string> = {
     [LoadingCircleSize.ExtraSmall]: 'tw-w-4 tw-h-4',
     [LoadingCircleSize.Small]: 'tw-w-5 tw-h-5',

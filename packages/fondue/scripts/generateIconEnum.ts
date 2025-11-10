@@ -11,9 +11,6 @@ const ICON_ENUM_OUTPUT_PATH = './src/foundation/Icon/IconEnum.ts';
     const iconNames = iconFilePath.map((path) => path.name.replaceAll(/(^Icon)|(\.tsx$)/g, ''));
 
     const iconsEnumString = `
-        /**
-         * @deprecated Use icons from \`@frontify/fondue/icons\` instead.
-         */
         export enum IconEnum {
             ${iconNames.map((name) => `${name} = "${name}"`).join(',\n')}
         };

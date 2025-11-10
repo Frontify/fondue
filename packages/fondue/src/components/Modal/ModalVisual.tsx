@@ -3,8 +3,7 @@
 import { type ReactElement } from 'react';
 
 import { FrontifyPattern } from '@components/FrontifyPattern/FrontifyPattern';
-import { PatternDesign, PatternScale } from '@foundation/Pattern';
-import { patternThemes } from '@foundation/Pattern/PatternTheme';
+import { PatternDesign, PatternScale, patternThemes } from '@foundation/Pattern';
 import { merge } from '@utilities/merge';
 
 import { type ModalVisualProps } from './types';

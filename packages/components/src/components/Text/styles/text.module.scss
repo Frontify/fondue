@@ -1,44 +1,45 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 .root {
-    font-family: var(--typography-font-family-primary);
+    font-family: var(--body-family);
     max-width: 100%;
 }
 
-.weight-default { font-weight: var(--typography-font-weight-regular); }
-.weight-strong { font-weight: var(--typography-font-weight-medium); }
-.weight-x-strong { font-weight: var(--typography-font-weight-bold); }
+.weight-default { font-weight: var(--body-weight-number); }
+.weight-strong { font-weight: var(--body-weight-strong-number); }
+.weight-x-strong { font-weight: var(--body-weight-x-strong-number); }
 
 .size-x-small {
-    font-size: var(--typography-font-size-x-small);
-    line-height: var(--typography-line-height-tight);
+    font-size: var(--body-size-x-small);
+    line-height: var(--body-size-x-small-line-height);
 }
 .size-small {
-    font-size: var(--typography-font-size-small);
-    line-height: var(--typography-line-height-tight);
+    font-size: var(--body-size-small);
+    line-height: var(--body-size-small-line-height);
 }
 .size-medium  {
-    font-size: var(--typography-font-size-medium);
-    line-height: var(--typography-line-height-medium);
+    font-size: var(--body-size-medium);
+    line-height: var(--body-size-medium-line-height);
 }
 .size-large {
-    font-size: var(--typography-font-size-large);
-    line-height: var(--typography-line-height-wide);
+    font-size: var(--body-size-large);
+    line-height: var(--body-size-large-line-height);
 }
 
 
-.color-default { color: var(--color-primary-default); }
-.color-weak { color: var(--color-secondary-default); }
-.color-disabled { color: var(--color-disabled-default); }
-.color-negative { color: var(--color-error-default); }
-.color-positive { color: var(--color-success-default); }
-.color-warning { color: var(--color-warning-default); }
-.color-interactive { color: var(--color-highlight-default); }
+.color-default { color: var(--text-color); }
+.color-weak { color: var(--text-color-weak); }
+.color-x-weak { color: var(--text-color-x-weak); }
+.color-disabled { color: var(--text-color-disabled); }
+.color-negative { color: var(--text-color-negative); }
+.color-positive { color: var(--text-color-positive); }
+.color-warning { color: var(--text-color-warning); }
+.color-interactive { color: var(--text-color-interactive); }
 
-.color-box-neutral { color: var(--color-container-secondary-on-secondary-container); }
-.color-box-selected { color: var(--color-container-highlight-on-highlight-container); }
-.color-box-disabled { color: var(--color-container-disabled-on-disabled-container); }
-.color-box-positive { color: var(--color-container-success-on-success-container); }
-.color-box-negative { color: var(--color-container-error-on-error-container); }
-.color-box-warning { color: var(--color-container-warning-on-warning-container); }
+.color-box-neutral { color: var(--box-neutral-inverse-color); }
+.color-box-selected { color: var(--box-selected-inverse-color); }
+.color-box-disabled { color: var(--box-disabled-color-inverse); }
+.color-box-positive { color: var(--box-positive-inverse-color); }
+.color-box-negative { color: var(--box-negative-inverse-color); }
+.color-box-warning { color: var(--box-warning-inverse-color); }
 

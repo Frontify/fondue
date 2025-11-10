@@ -9,17 +9,10 @@
         "copy:charts:storybook": "mkdir -p storybook-static/charts && cp -r ../packages/charts/storybook-static/. storybook-static/charts",
         "copy:icons:storybook": "mkdir -p storybook-static/icons && cp -r ../packages/icons/storybook-static/. storybook-static/icons",
         "copy:fondue:storybook": "mkdir -p storybook-static/legacy && cp -r ../packages/fondue/storybook-static/. storybook-static/legacy",
-        "copy:tokens:storybook": "mkdir -p storybook-static/tokens && cp -r ../packages/tokens/storybook-static/. storybook-static/tokens",
-        "build:storybook": "storybook build && pnpm run copy:ui:storybook && pnpm run copy:fondue:storybook && pnpm copy:charts:storybook && pnpm copy:icons:storybook && pnpm copy:tokens:storybook",
+        "build:storybook": "storybook build && pnpm run copy:ui:storybook && pnpm run copy:fondue:storybook && pnpm copy:charts:storybook && pnpm copy:icons:storybook",
         "lint": "eslint .",
         "lint:fix": "eslint --fix .",
         "typecheck": "tsc --noEmit"
-    },
-    "dependencies": {
-        "@storybook/manager-api": "^8.6.12",
-        "@storybook/theming": "^8.6.12",
-        "react": "^18.3.1",
-        "react-dom": "^18.3.1"
     },
     "devDependencies": {
         "@babel/core": "^7.28.4",
@@ -32,9 +25,12 @@
         "@types/node": "^22.18.10",
         "@types/react": "^18.3.26",
         "@types/react-dom": "^18.3.7",
+        "@vueless/storybook-dark-mode": "^9.0.9",
         "eslint": "^9.37.0",
         "eslint-plugin-notice": "^1.0.0",
         "prettier": "^3.6.2",
+        "react": "^18.3.1",
+        "react-dom": "^18.3.1",
         "storybook": "^9.1.10",
         "typescript": "^5.9.3",
         "vite": "^5.4.20"

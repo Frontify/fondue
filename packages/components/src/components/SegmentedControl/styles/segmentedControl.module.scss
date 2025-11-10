@@ -4,7 +4,7 @@
 @use '../../../utilities/transitions.module.scss';
 @use '../../../utilities/focusStyle.module.scss';
 
-$radius-without-border: calc(var(--border-radius-medium) - var(--border-width-default));
+$radius-without-border: calc(var(--radius) - var(--line-width));
 
 .root {
     width: 100%;
@@ -14,16 +14,16 @@ $radius-without-border: calc(var(--border-radius-medium) - var(--border-width-de
     grid-auto-columns: 1fr;
     align-items: stretch;
 
-    font-family: var(--typography-font-family-primary);
+    font-family: var(--body-family-stack);
     font-weight: 400;
     text-align: center;
 
     height: sizeToken.get(9);
     box-sizing: border-box;
 
-    background-color: var(--color-surface-dim);
-    border: var(--border-width-default) solid var(--color-line-mid);
-    border-radius: var(--border-radius-medium);
+    background-color: var(--base-color-alt);
+    border: var(--line-width) solid var(--line-color-strong);
+    border-radius: var(--radius);
 
     isolation: isolate;
     direction: ltr;
@@ -36,9 +36,8 @@ $radius-without-border: calc(var(--border-radius-medium) - var(--border-width-de
         width: fit-content;
     }
 
-    &[aria-disabled='true'] {
-        background-color: var(--color-surface-default);
-        border-color: var(--color-line-subtle);
+    &:disabled {
+        background-color: var(--base-color-alt);
     }
 }
 
@@ -48,11 +47,6 @@ $radius-without-border: calc(var(--border-radius-medium) - var(--border-width-de
     justify-content: center;
     user-select: none;
     min-width: 0;
-
-    // Hover on unselected items but not when disabled
-    &[aria-checked='false']:enabled:hover:not(:focus-visible) {
-        background-color: var(--color-surface-hover);
-    }
 
     // Apply border radius based on the index
     &:first-child {
@@ -65,11 +59,9 @@ $radius-without-border: calc(var(--border-radius-medium) - var(--border-width-de
     }
 
     // Focus styles for keyboard navigation, custom rounding applied to match the active indicator
-
     &:focus-visible {
-        z-index: 1;
         border-radius: $radius-without-border;
-        outline: 4px solid var(--color-focus-default);
+        outline: 2px solid var(--focus-ring-color);
         outline-offset: 2px;
     }
 }
@@ -83,31 +75,32 @@ $radius-without-border: calc(var(--border-radius-medium) - var(--border-width-de
     border-radius: inherit;
     padding-inline: clamp(0rem, 2vw, sizeToken.get(4));
     gap: sizeToken.get(2);
-    color: var(--color-container-secondary-on-secondary-container);
+    color: var(--text-color-weak);
     min-width: 0;
 
-    font-size: var(--typography-font-size-medium);
-    line-height: var(--typography-line-height-medium);
+    font-size: var(--body-size-medium);
+    line-height: var(--body-size-medium-line-height);
 
     // Prevent shrinking of icons
     & svg {
         flex-shrink: 0;
     }
 
-    .item:disabled & {
-        color: var(--color-container-disabled-on-disabled-container);
+    // Hover on unselected items but not when disabled
+    .item[aria-checked='false']:enabled &:hover {
+        background-color: #00005506;
     }
 }
 
 .itemLabelActive {
     transition-timing-function: ease-in;
-    z-index: 1;
+
     display: inline-flex;
     gap: sizeToken.get(2);
     align-items: center;
     justify-content: center;
     opacity: 0;
-    color: var(--color-primary-default);
+    color: var(--text-color);
 
     font-weight: 500;
 
@@ -117,7 +110,7 @@ $radius-without-border: calc(var(--border-radius-medium) - var(--border-width-de
 
     // Color the label based on the disabled state
     .item:disabled & {
-        color: var(--color-container-disabled-on-disabled-container);
+        color: var(--box-disabled-color-inverse);
     }
     .item[aria-checked='true'] & {
         opacity: 1;
@@ -143,7 +136,7 @@ $radius-without-border: calc(var(--border-radius-medium) - var(--border-width-de
 
     // Color the label based on the disabled state
     .item:disabled & {
-        color: var(--color-container-disabled-on-disabled);
+        color: var(--box-disabled-color-inverse);
     }
     .item[aria-checked='true'] & {
         opacity: 0;
@@ -154,9 +147,11 @@ $radius-without-border: calc(var(--border-radius-medium) - var(--border-width-de
 .activeIndicator {
     display: none;
     position: absolute;
+    z-index: -1;
     top: 0;
     inset-inline-start: 0;
     height: 100%;
+
     pointer-events: none;
 
     & {
@@ -170,8 +165,9 @@ $radius-without-border: calc(var(--border-radius-medium) - var(--border-width-de
         position: absolute;
         inset: 0;
         border-radius: $radius-without-border;
-        background-color: var(--color-surface-default);
-        box-shadow: 0 0 0 var(--border-width-default) var(--color-line-strong);
+        background-color: var(--base-color);
+
+        box-shadow: 0 0 0 var(--line-width) var(--line-color-xx-strong);
     }
 
     // Show the active indicator when the state is on
@@ -181,8 +177,8 @@ $radius-without-border: calc(var(--border-radius-medium) - var(--border-width-de
 
     // Active indicator style when segmented control/item is disabled
     .item:disabled ~ &::before {
-        background-color: var(--color-container-disabled-default);
-        box-shadow: 0 0 0 var(--border-width-default) var(--color-line-mid);
+        background-color: var(--box-disabled-color);
+        box-shadow: 0 0 0 var(--line-width) var(--line-color-x-strong);
     }
 
     // Used to animate the active indicator horizontally
@@ -206,17 +202,15 @@ $radius-without-border: calc(var(--border-radius-medium) - var(--border-width-de
 .separator {
     // Make separators slow to disappear and fast to appear, in pair with the other `ease-in` transition
     transition-timing-function: ease-out;
+
+    z-index: -1;
     min-width: 1px;
     width: 1px;
     margin-inline: -0.5px;
-    background-color: var(--color-line-mid);
+    background-color: var(--line-color-strong);
 
     & {
         @include transitions.transition-opacity;
-    }
-
-    .item:disabled & {
-        background-color: var(--color-line-subtle);
     }
 
     // Hide the separator when the state is on to rely on the active item's border

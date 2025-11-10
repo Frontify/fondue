@@ -27,7 +27,7 @@
 }
 
 .track {
-    background-color: var(--color-container-secondary-default);
+    background-color: var(--box-neutral-color);
     position: relative;
     flex-grow: 1;
     border-radius: 4px;
@@ -35,26 +35,34 @@
 
     .range {
         position: absolute;
-        background-color: var(--color-primary-default);
+        background-color: var(--box-neutral-strong-color);
         border-radius: 4px;
         height: 100%;
 
         &[data-disabled] {
-            background-color: var(--color-disabled-default);
+            background-color: var(--box-neutral-color);
         }
     }
 }
 
 .thumb {
+    --slider-thumb-hover-box-shadow-color: color-mix(
+        in srgb,
+        var(--box-neutral-inverse-color-pressed) 15%,
+        transparent
+    );
+    --slider-thumb-active-outline-color: color-mix(in srgb, var(--box-neutral-inverse-color-hover) 20%, transparent);
+    --slider-thumb-disabled-border-color: color-mix(in srgb, var(--box-neutral-inverse-color-pressed) 10%, transparent);
+
     display: block;
 
     width: sizeToken.get(5);
     height: sizeToken.get(5);
 
-    background-color: var(--color-surface-default);
-    border: 1px solid var(--color-line-mid);
+    background-color: var(--base-color);
+    border: 1px solid var(--line-color-strong);
     border-radius: 100%;
-    outline: 0 solid var(--color-shadow-default);
+    outline: 0 solid var(--slider-thumb-active-outline-color);
 
     cursor: pointer;
     box-sizing: border-box;
@@ -65,7 +73,7 @@
     }
 
     &:hover {
-        box-shadow: var(--shadow-default);
+        box-shadow: 0px 3px 10px 0px var(--slider-thumb-hover-box-shadow-color);
 
         &:active,
         //firefox support requires this additional selector
@@ -84,7 +92,7 @@
     }
 
     &[data-disabled] {
-        background-color: var(--color-disabled-default);
-        border-color: var(--color-line-mid);
+        background-color: var(--box-neutral-color);
+        border-color: var(--slider-thumb-disabled-border-color);
     }
 }

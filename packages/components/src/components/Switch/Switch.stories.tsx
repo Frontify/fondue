@@ -12,7 +12,6 @@ import { Switch } from './Switch';
 type Story = StoryObj<typeof Switch>;
 
 const meta: Meta<typeof Switch> = {
-    title: 'Components/Switch',
     component: Switch,
     tags: ['autodocs'],
     parameters: {

@@ -5,6 +5,7 @@ import { Pie } from '@visx/shape';
 import { useRef, useState } from 'react';
 
 import { DEFAULT_PADDING } from '@components/PieChart/consts';
+import { gradientColorAccessorByIndex } from '@components/PieChart/helpers';
 import { useResponsiveChart } from '@components/PieChart/hooks/useResponsiveChart';
 import { Legend } from '@components/common/components';
 import { colorAccessorByIndex } from '@components/common/helpers';
@@ -20,6 +21,7 @@ export const PieChart = ({
     showLabelValue = false,
     showLabelPercentage = false,
     shouldSortData = false,
+    colorScale = 'discrete',
 }: PieChartProps) => {
     const [labelsPadding, setLabelsPadding] = useState<Padding>(DEFAULT_PADDING);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -29,6 +31,8 @@ export const PieChart = ({
     const pieData = nonZeroData.length > 0 ? nonZeroData : data;
 
     const sortedPieData = shouldSortData ? pieData.sort((a, b) => b.value - a.value) : pieData;
+
+    const colorAccessor = colorScale === 'continuous' ? gradientColorAccessorByIndex : colorAccessorByIndex;
 
     return (
         <div
@@ -60,6 +64,7 @@ export const PieChart = ({
                                             showLabelTitle={showLabelTitle}
                                             path={path}
                                             setPaddingForLabels={setLabelsPadding}
+                                            colorScale={colorScale}
                                             valueFormatter={valueFormatter}
                                         />
                                     ))}
@@ -70,11 +75,7 @@ export const PieChart = ({
                 </Group>
             </svg>
             {labelStyle === 'legend' && (
-                <Legend
-                    names={data.map((datum) => datum.label)}
-                    style={'circle'}
-                    colorAccessor={colorAccessorByIndex}
-                />
+                <Legend names={data.map((datum) => datum.label)} style={'circle'} colorAccessor={colorAccessor} />
             )}
         </div>
     );

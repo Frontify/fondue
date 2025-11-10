@@ -236,26 +236,8 @@ export const DropdownSubTrigger = (
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     const { content } = useProcessedChildren(children);
-    const wasMouseInteracted = useRef(false);
     return (
-        <RadixDropdown.SubTrigger
-            className={styles.subTrigger}
-            data-show-focus-ring={wasMouseInteracted.current}
-            data-test-id={dataTestId}
-            ref={ref}
-            onMouseEnter={() => {
-                wasMouseInteracted.current = true;
-            }}
-            onFocus={(focusEvent) => {
-                if (!wasMouseInteracted.current) {
-                    focusEvent.target.dataset.showFocusRing = 'true';
-                }
-            }}
-            onBlur={(blurEvent) => {
-                blurEvent.target.dataset.showFocusRing = 'false';
-                wasMouseInteracted.current = false;
-            }}
-        >
+        <RadixDropdown.SubTrigger className={styles.subTrigger} data-test-id={dataTestId} ref={ref}>
             {content}
             <IconCaretRight className={styles.subMenuIndicator} size={16} />
         </RadixDropdown.SubTrigger>

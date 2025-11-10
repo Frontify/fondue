@@ -33,7 +33,7 @@ test('should render without error', async ({ mount }) => {
             </Dialog.Trigger>
             <Dialog.Content data-test-id={DIALOG_CONTENT_TEST_ID}>
                 <Dialog.SideContent data-test-id={DIALOG_SIDE_CONTENT_TEST_ID}>
-                    <div className="tw-bg-success tw-h-full tw-w-full"></div>
+                    <div className="tw-bg-box-positive-strong tw-h-full tw-w-full"></div>
                 </Dialog.SideContent>
                 <Dialog.Header data-test-id={DIALOG_HEADER_TEST_ID}>{DIALOG_HEADER_TEXT}</Dialog.Header>
                 <Dialog.Body data-test-id={DIALOG_BODY_TEST_ID}>{DIALOG_BODY_TEXT}</Dialog.Body>
@@ -178,7 +178,7 @@ test('should render trigger element', async ({ mount, page }) => {
             </Dialog.Trigger>
             <Dialog.Content data-test-id={DIALOG_CONTENT_TEST_ID}>
                 <Dialog.SideContent data-test-id={DIALOG_SIDE_CONTENT_TEST_ID}>
-                    <div className="tw-bg-success tw-h-full tw-w-full"></div>
+                    <div className="tw-bg-box-positive-strong tw-h-full tw-w-full"></div>
                 </Dialog.SideContent>
                 <Dialog.Header data-test-id={DIALOG_HEADER_TEST_ID}>{DIALOG_HEADER_TEXT}</Dialog.Header>
                 <Dialog.Body data-test-id={DIALOG_BODY_TEST_ID}>{DIALOG_BODY_TEXT}</Dialog.Body>
@@ -203,7 +203,7 @@ test('should open on trigger click', async ({ mount, page }) => {
             </Dialog.Trigger>
             <Dialog.Content data-test-id={DIALOG_CONTENT_TEST_ID}>
                 <Dialog.SideContent data-test-id={DIALOG_SIDE_CONTENT_TEST_ID}>
-                    <div className="tw-bg-success tw-h-full tw-w-full"></div>
+                    <div className="tw-bg-box-positive-strong tw-h-full tw-w-full"></div>
                 </Dialog.SideContent>
                 <Dialog.Header data-test-id={DIALOG_HEADER_TEST_ID}>{DIALOG_HEADER_TEXT}</Dialog.Header>
                 <Dialog.Body data-test-id={DIALOG_BODY_TEST_ID}>{DIALOG_BODY_TEXT}</Dialog.Body>
@@ -231,7 +231,7 @@ test('should close on close button click', async ({ mount, page }) => {
             </Dialog.Trigger>
             <Dialog.Content data-test-id={DIALOG_CONTENT_TEST_ID}>
                 <Dialog.SideContent data-test-id={DIALOG_SIDE_CONTENT_TEST_ID}>
-                    <div className="tw-bg-success tw-h-full tw-w-full"></div>
+                    <div className="tw-bg-box-positive-strong tw-h-full tw-w-full"></div>
                 </Dialog.SideContent>
                 <Dialog.Header data-test-id={DIALOG_HEADER_TEST_ID}>{DIALOG_HEADER_TEXT}</Dialog.Header>
                 <Dialog.Body data-test-id={DIALOG_BODY_TEST_ID}>{DIALOG_BODY_TEXT}</Dialog.Body>
@@ -262,7 +262,7 @@ test('should open show open from prop', async ({ mount, page }) => {
             </Dialog.Trigger>
             <Dialog.Content data-test-id={DIALOG_CONTENT_TEST_ID}>
                 <Dialog.SideContent data-test-id={DIALOG_SIDE_CONTENT_TEST_ID}>
-                    <div className="tw-bg-success tw-h-full tw-w-full"></div>
+                    <div className="tw-bg-box-positive-strong tw-h-full tw-w-full"></div>
                 </Dialog.SideContent>
                 <Dialog.Header data-test-id={DIALOG_HEADER_TEST_ID}>{DIALOG_HEADER_TEXT}</Dialog.Header>
                 <Dialog.Body data-test-id={DIALOG_BODY_TEST_ID}>{DIALOG_BODY_TEXT}</Dialog.Body>
@@ -289,7 +289,7 @@ test('should call event handler on open and close', async ({ mount, page }) => {
             </Dialog.Trigger>
             <Dialog.Content data-test-id={DIALOG_CONTENT_TEST_ID}>
                 <Dialog.SideContent data-test-id={DIALOG_SIDE_CONTENT_TEST_ID}>
-                    <div className="tw-bg-success tw-h-full tw-w-full"></div>
+                    <div className="tw-bg-box-positive-strong tw-h-full tw-w-full"></div>
                 </Dialog.SideContent>
                 <Dialog.Header data-test-id={DIALOG_HEADER_TEST_ID}>{DIALOG_HEADER_TEXT}</Dialog.Header>
                 <Dialog.Body data-test-id={DIALOG_BODY_TEST_ID}>{DIALOG_BODY_TEXT}</Dialog.Body>
@@ -318,7 +318,7 @@ test('should show layout elements', async ({ mount, page }) => {
             </Dialog.Trigger>
             <Dialog.Content data-test-id={DIALOG_CONTENT_TEST_ID}>
                 <Dialog.SideContent data-test-id={DIALOG_SIDE_CONTENT_TEST_ID}>
-                    <div className="tw-bg-success tw-h-full tw-w-full"></div>
+                    <div className="tw-bg-box-positive-strong tw-h-full tw-w-full"></div>
                 </Dialog.SideContent>
                 <Dialog.Header data-test-id={DIALOG_HEADER_TEST_ID}>{DIALOG_HEADER_TEXT}</Dialog.Header>
                 <Dialog.Body data-test-id={DIALOG_BODY_TEST_ID}>{DIALOG_BODY_TEXT}</Dialog.Body>

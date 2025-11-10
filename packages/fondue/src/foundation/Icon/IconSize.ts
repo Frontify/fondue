@@ -1,8 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-/**
- * @deprecated Use icons from `@frontify/fondue/icons` instead.
- */
 export enum IconSize {
     Size12 = 'Size12',
     Size16 = 'Size16',
@@ -11,9 +8,6 @@ export enum IconSize {
     Size32 = 'Size32',
 }
 
-/**
- * @deprecated Use icons from `@frontify/fondue/icons` instead.
- */
 export const IconSizeMap = {
     [IconSize.Size12]: '!tw-h-3 !tw-w-3',
     [IconSize.Size16]: '!tw-h-4 !tw-w-4',

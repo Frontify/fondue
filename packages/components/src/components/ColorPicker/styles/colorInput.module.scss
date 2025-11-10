@@ -12,42 +12,40 @@
     gap: sizeToken.get(2);
     overflow: hidden;
 
-    font-family: var(--typography-font-family-primary);
+    font-family: var(--body-family-stack);
     font-weight: 400;
-    font-size: var(--typography-font-size-medium);
-    line-height: var(--typography-line-height-medium);
+    font-size: var(--body-size-medium);
+    line-height: var(--body-size-medium-line-height);
     box-sizing: border-box;
 
     text-align: start;
-    color: var(--color-secondary-default);
-    background-color: var(--color-surface-default);
-    border-radius: var(--border-radius-medium);
-    border: var(--border-width-default) solid var(--color-line-mid);
+    color: var(--text-color-x-weak);
+    background-color: var(--base-color);
+    border-radius: var(--radius);
+    border: var(--line-width) solid var(--line-color-strong);
 
     & {
         @include transitions.transition-colors;
     }
 
     button:not(:hover) .clearIcon {
-        color: var(--color-secondary-default);
+        color: var(--text-color-x-weak);
     }
 
     &:hover {
-        border-color: var(--color-line-strong);
-        color: var(--color-secondary-default);
-
+        border-color: var(--line-color-x-strong);
+        color: var(--text-color-weak);
         button:not(:hover) .clearIcon {
-            color: var(--color-secondary-default);
+            color: var(--text-color-weak);
         }
     }
 
     &:has(:focus-visible),
-    &:has([data-state='open']) {
-        border-color: var(--color-line-strong);
-        color: var(--color-line-strong);
-
+    &[data-state='open'] {
+        border-color: var(--line-color-xx-strong);
+        color: var(--line-color-xx-strong);
         button:not(:hover) .clearIcon {
-            color: var(--color-secondary-default);
+            color: var(--text-color-weak);
         }
 
         .caret {
@@ -61,21 +59,17 @@
 
     &:has(:disabled),
     &[data-disabled='true'] {
-        border-color: var(--color-line-subtle);
-        background-color: var(--color-container-disabled-default);
-        color: var(--color-disabled-default);
-        cursor: default;
+        border-color: var(--line-color-weak);
+        background-color: var(--box-disabled-color);
+        color: var(--text-color-disabled);
 
         button .clearIcon {
-            color: var(--color-disabled-default);
+            color: var(--text-color-disabled);
         }
+        cursor: default;
 
         .colorName {
-            color: var(--color-disabled-default);
-        }
-
-        .colorIndicator {
-            border-color: var(--color-line-subtle);
+            color: var(--text-color-disabled);
         }
     }
 
@@ -86,7 +80,7 @@
 }
 
 .colorName {
-    color: var(--color-primary-default);
+    color: var(--text-color);
 }
 
 .button {
@@ -107,9 +101,9 @@
     width: sizeToken.get(4);
     height: sizeToken.get(4);
     border-radius: sizeToken.get(1);
-    border: var(--border-width-default) solid var(--color-line-mid);
+    border: 1px solid var(--line-color-x-strong);
     background-clip: padding-box;
-    background-image: repeating-conic-gradient(var(--color-surface-default) 0% 25%, var(--color-line-subtle) 0% 50%);
+    background-image: repeating-conic-gradient(white 0% 25%, var(--line-color-strong) 0% 50%);
     background-size: 6px 6px;
     background-position: -0.5px -0.5px;
 

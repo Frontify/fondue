@@ -3,21 +3,16 @@
 import { type Meta, type StoryFn } from '@storybook/react-vite';
 import { useState } from 'react';
 
-import { Button } from '@components/Button/Button';
-import { ButtonEmphasis, ButtonStyle } from '@components/Button/ButtonTypes';
+import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';
 import { Divider } from '@components/Divider/Divider';
 import { SegmentedControls } from '@components/SegmentedControls/SegmentedControls';
-import { LegacyStack } from '@layout/LegacyStack/LegacyStack';
+import { LegacyStack } from '@layout/LegacyStack';
 import { Text } from '@typography/Text';
 
 import { Card, type CardProps } from './Card';
 
-/**
- ### *Legacy component warning*
- #### This is a unmaintained legacy component. It will be deprecated and replaced with a new component in an upcoming release.
- */
 export default {
-    title: 'Legacy Components/Card',
+    title: 'Components/Card',
     component: Card,
     tags: ['autodocs'],
     args: {

@@ -3,7 +3,7 @@
 import { type ReactElement, type ReactNode } from 'react';
 
 import { type BadgeProps } from '@components/Badge';
-import { type ButtonProps } from '@components/Button/Button';
+import { type ButtonProps } from '@components/Button';
 import { type PopperProps } from '@components/Popper/types';
 import { type IconProps } from '@foundation/Icon/IconProps';
 

@@ -11,9 +11,6 @@ import { BadgeStatusIcon } from './BadgeStatusIcon';
 import { getCircularSizeClasses, getSizeClasses, getStyleClasses } from './helpers';
 import { BadgeEmphasis, type BadgeProps, BadgeStyle } from './types';
 
-/**
- * @deprecated Please use updated badge component from `@frontify/fondue/components` instead.
- */
 export const Badge = ({
     children,
     status,

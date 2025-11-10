@@ -17,7 +17,7 @@ import { usePopper } from 'react-popper';
 import { CheckboxState } from '@components/Checkbox/Checkbox';
 import { Checklist, ChecklistDirection } from '@components/Checklist/Checklist';
 import { Tag, TagSize, TagType } from '@components/Tag';
-import { Trigger, TriggerEmphasis } from '@components/Trigger/Trigger';
+import { Trigger, TriggerEmphasis } from '@components/Trigger';
 import { DEFAULT_DROPDOWN_MAX_HEIGHT, useDropdownAutoHeight } from '@hooks/useDropdownAutoHeight';
 import { Text } from '@typography/Text';
 import { EnablePortalWrapper } from '@utilities/dialogs/EnablePortalWrapper';

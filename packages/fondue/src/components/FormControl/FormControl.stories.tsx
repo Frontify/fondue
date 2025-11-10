@@ -18,12 +18,8 @@ import {
     HelperPosition,
 } from './FormControl';
 
-/**
- ### This component is deprecated, please use the your own form component instead.
- For use in frontify `web-app`, you can use the common `Form` component.
- */
 export default {
-    title: 'Legacy Components/Deprecated/Form Control',
+    title: 'Components/Form Control',
     component: FormControl,
     tags: ['autodocs'],
     args: {
@@ -54,11 +50,6 @@ export default {
         style: {
             options: Object.values(FormControlStyle),
             control: 'radio',
-        },
-    },
-    parameters: {
-        status: {
-            type: 'deprecated',
         },
     },
 } as Meta<FormControlProps>;

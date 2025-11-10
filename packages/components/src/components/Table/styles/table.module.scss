@@ -13,7 +13,7 @@
     $sticky-base: (
         position: sticky,
         z-index: 1,
-        background-color: var(--color-surface-default),
+        background-color: var(--base-color),
     );
 
     // Legacy support for deprecated data-sticky-header attribute
@@ -81,11 +81,11 @@
     }
 
     &[data-font-size='small'] {
-        font-size: var(--typography-font-size-x-small);
+        font-size: var(--body-size-x-small);
     }
 
     &[data-font-size='medium'] {
-        font-size: var(--typography-font-size-small);
+        font-size: var(--body-size-small);
     }
 
     &[data-full-width='false'] {
@@ -117,7 +117,7 @@
 .caption {
     padding: sizeToken.get(3) sizeToken.get(2);
     text-align: start;
-    color: var(--color-primary-default);
+    color: var(--text-color);
 }
 
 .header {
@@ -125,30 +125,21 @@
         position: sticky;
         top: 0;
         z-index: 2;
-        background-color: var(--color-surface-default);
-    }
-}
-
-.header {
-    &[data-sticky='true'] {
-        position: sticky;
-        top: 0;
-        z-index: 2;
-        background-color: var(--color-surface-default);
+        background-color: var(--base-color);
     }
 }
 
 .headerCell {
-    font-size: var(--typography-font-size-small);
+    font-size: var(--body-size-small);
     font-weight: 400;
-    line-height: var(--typography-line-height-tight);
-    color: var(--color-secondary-default);
+    line-height: sizeToken.get(4);
+    color: var(--text-color-weak);
 
-    border-top: 1px solid var(--color-line-subtle);
-    border-bottom: 1px solid var(--color-line-subtle);
+    border-top: 1px solid var(--line-color);
+    border-bottom: 1px solid var(--line-color);
 
     &:hover {
-        color: var(--color-secondary-hover);
+        color: var(--text-color-hover);
     }
 
     &[data-sortable='false'] {
@@ -189,7 +180,7 @@
     border: none;
     margin: 0;
     font: inherit;
-    color: var(--color-primary-default);
+    color: inherit;
     cursor: pointer;
 
     .headerCell:first-child & {
@@ -201,18 +192,16 @@
     }
 
     &[data-active='true'] {
-        color: var(--color-primary-default);
-
-        .sortIndicator {
-            color: var(--color-secondary-active);
-        }
+        color: var(--text-color);
     }
 
     &:focus-visible {
         @include focusStyle.focus-outline;
     }
 
-
+    .sortIndicator {
+        color: var(--text-color-disabled);
+    }
 }
 
 .body {
@@ -229,7 +218,7 @@
     }
 
     &[data-selected='true'] {
-        background-color: var(--color-container-highlight-default);
+        background-color: var(--box-selected-color);
     }
 
     &[data-disabled='true'] {
@@ -243,14 +232,14 @@
 
         &:not([data-disabled='true']) {
             &:not([data-selected='true']):hover {
-                background-color: var(--color-surface-dim);
+                background-color: var(--base-color-alt);
             }
         }
     }
 }
 
 .rowCell {
-    color: var(--color-primary-default);
+    color: var(--text-color);
 
     font-weight: 400;
     line-height: sizeToken.get(4);
@@ -259,7 +248,7 @@
     padding-inline-start: calc(0.5rem + var(--table-gutter, 0px) / 2);
     padding-inline-end: calc(0.5rem + var(--table-gutter, 0px) / 2);
 
-    border-bottom: 1px solid var(--color-line-subtle);
+    border-bottom: 1px solid var(--line-color);
 
     &:first-child {
         padding-inline-start: sizeToken.get(2);

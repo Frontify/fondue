@@ -4,7 +4,7 @@ import { type PieArcDatum } from '@visx/shape/lib/shapes/Pie';
 import { type Arc as ArcType } from 'd3-shape';
 import { type Dispatch, Fragment, type SetStateAction, useState } from 'react';
 
-import { type Padding, type PieChartDatum } from '@components/PieChart';
+import { type ColorScale, type Padding, type PieChartDatum } from '@components/PieChart';
 import { ArcPath } from '@components/PieChart/components/ArcPath';
 import { Label } from '@components/PieChart/components/Label';
 import { resizeArcIfZero } from '@components/PieChart/helpers/resizeArcIfZero';
@@ -21,6 +21,7 @@ type ArcProps = {
     showLabelValue: boolean;
     showLabelPercentage: boolean;
     setPaddingForLabels: Dispatch<SetStateAction<Padding>>;
+    colorScale: ColorScale;
     valueFormatter?: ValueFormatter;
 };
 
@@ -35,6 +36,7 @@ export const Arc = ({
     showLabelTitle,
     path,
     setPaddingForLabels,
+    colorScale,
     valueFormatter,
 }: ArcProps) => {
     const showLabelsOnHover = numberOfArcs > 3;
@@ -52,6 +54,7 @@ export const Arc = ({
             <ArcPath
                 arcDatum={nonZeroArc}
                 path={path}
+                colorScale={colorScale}
                 onMouseEnter={() => setIsArcHovered(true)}
                 onMouseLeave={() => setIsArcHovered(false)}
             />
@@ -68,6 +71,7 @@ export const Arc = ({
                 valueFormatter={valueFormatter}
                 labelsShownOnHover={showLabelsOnHover}
                 hideLabel={hideLabel}
+                colorScale={colorScale}
             />
         </Fragment>
     );

@@ -1,8 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-/**
- * @deprecated
- */
 export enum PatternTheme {
     Black = 'Black',
     Green = 'Green',
@@ -11,9 +8,6 @@ export enum PatternTheme {
     Red = 'Red',
 }
 
-/**
- * @deprecated
- */
 export const patternThemes: Record<PatternTheme, string> = {
     [PatternTheme.Black]: 'tw-text-black',
     [PatternTheme.Green]: 'tw-text-green-60',

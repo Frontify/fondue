@@ -2,7 +2,7 @@
 
 @mixin variant($name, $color) {
     &[data-status=#{$name}] {
-        background-color: var($color);
+        background-color: var(--box-#{$color}-strong-color-hover);
     }
 }
 
@@ -15,9 +15,9 @@
     flex-grow: 0;
     background-color: var(--status-color);
 
-    @include variant(default, --color-primary-default);
-    @include variant(positive, --color-success-default);
-    @include variant(highlight, -color-highlight-default);
-    @include variant(warning, --color-warning-default);
-    @include variant(negative, --color-error-default);
+    @include variant(default, neutral);
+    @include variant(positive, positive);
+    @include variant(highlight, selected);
+    @include variant(warning, warning);
+    @include variant(negative, negative);
 }

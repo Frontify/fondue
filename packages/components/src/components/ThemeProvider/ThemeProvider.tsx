@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import styles from '@frontify/fondue-tokens/themes';
+import styles from '@frontify/fondue-tokens/theme-tokens';
 import { Slot } from '@radix-ui/react-slot';
 import { createContext, useContext, useMemo, type ReactNode } from 'react';
 
@@ -81,7 +81,7 @@ export const ThemeProvider = ({
 
     return (
         <ThemeContext.Provider value={contextValue}>
-            <Comp dir={dir} className={`${styles[theme]} fondue-theme-provider`}>
+            <Comp dir={dir} className={styles[theme]}>
                 {children}
             </Comp>
         </ThemeContext.Provider>

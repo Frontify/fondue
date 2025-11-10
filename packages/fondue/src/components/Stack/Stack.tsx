@@ -2,30 +2,16 @@
 
 import { Children, type ReactElement, type ReactNode } from 'react';
 
-import { Box } from '@components/Box/Box';
+import { Box } from '@components/Box';
 import { GAP_DIRECTIONS, GetGapClassName, type SpacingValue } from '@utilities/dimensions';
 import { merge } from '@utilities/merge';
 
 import { type ContainerHTMLElement } from '../../types/elements';
 
-/**
- * @deprecated Use `Flex` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#layout-components the migration guide}.
- */
 export type STACK_DIRECTION = 'row' | 'column' | 'row-reverse' | 'column-reverse';
 
-/**
- * @deprecated Use `Flex` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#layout-components the migration guide}.
- */
 export type STACK_JUSTIFY = 'start' | 'end' | 'center' | 'between' | 'around' | 'evenly';
-
-/**
- * @deprecated Use `Flex` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#layout-components the migration guide}.
- */
 export type STACK_ALIGN_ITEMS = 'start' | 'end' | 'center' | 'baseline' | 'stretch';
-
-/**
- * @deprecated Use `Flex` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#layout-components the migration guide}.
- */
 export type STACK_ALIGN_CONTENT =
     | 'start'
     | 'end'
@@ -37,9 +23,6 @@ export type STACK_ALIGN_CONTENT =
     | 'stretch'
     | 'normal';
 
-/**
- * @deprecated Use `Flex` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#layout-components the migration guide}.
- */
 export type STACK_PROPS = {
     children?: ReactNode | ReactNode[] | JSX.Element;
     direction?: STACK_DIRECTION;
@@ -61,9 +44,6 @@ export type STACK_PROPS = {
     as?: ContainerHTMLElement;
 };
 
-/**
- * @deprecated Use `Flex` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#layout-components the migration guide}.
- */
 export const STACK_DIRECTION_MAPPING = {
     row: 'tw-flex-row',
     column: 'tw-flex-col',
@@ -88,9 +68,6 @@ const STACK_ALIGN_ITEMS_MAPPING = {
     stretch: 'tw-items-stretch',
 };
 
-/**
- * @deprecated Use `Flex` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#layout-components the migration guide}.
- */
 export const STACK_TEST_ID = 'fondue-stack';
 
 /**

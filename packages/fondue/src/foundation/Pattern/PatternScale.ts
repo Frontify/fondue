@@ -1,8 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-/**
- * @deprecated
- */
 export enum PatternScale {
     SM = 'SM',
     MD = 'MD',
@@ -11,9 +8,6 @@ export enum PatternScale {
     XXL = 'XXL',
 }
 
-/**
- * @deprecated
- */
 export const patternScales: Record<PatternScale, string> = {
     [PatternScale.SM]: '1',
     [PatternScale.MD]: '2',

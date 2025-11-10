@@ -11,23 +11,14 @@ import { merge } from '@utilities/merge';
 import { SelectMenuItem } from './SelectMenuItem';
 import { SelectMenuSection } from './SelectMenuSection';
 
-/**
- * @deprecated Use `Select` from `@frontify/fondue/components` instead.
- */
 export type MenuItemType = Omit<MenuItemProps, 'switchComponent'> & { id: string | number; link?: string };
 
-/**
- * @deprecated Use `Select` from `@frontify/fondue/components` instead.
- */
 export type MenuBlock = {
     id: string;
     menuItems: MenuItemType[];
     ariaLabel?: string;
 };
 
-/**
- * @deprecated Use `Select` from `@frontify/fondue/components` instead.
- */
 export type SelectMenuProps = {
     menuBlocks: MenuBlock[];
     ariaProps: AriaListBoxOptions<any>;
@@ -36,9 +27,6 @@ export type SelectMenuProps = {
     scrollable?: boolean;
 };
 
-/**
- * @deprecated Use `Select` from `@frontify/fondue/components` instead.
- */
 export const SelectMenu = ({
     menuBlocks,
     ariaProps,

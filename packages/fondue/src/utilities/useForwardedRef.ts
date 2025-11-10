@@ -2,9 +2,6 @@
 
 import { type ForwardedRef, type MutableRefObject, useEffect, useRef } from 'react';
 
-/**
- * @deprecated Please use a custom function instead.
- **/
 export function useForwardedRef<T>(ref: ForwardedRef<T>): MutableRefObject<T | null> {
     const innerRef = useRef(null);
 

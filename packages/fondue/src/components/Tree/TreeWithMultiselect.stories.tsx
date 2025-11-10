@@ -3,7 +3,7 @@
 import { type Meta } from '@storybook/react-vite';
 import { useEffect, useState } from 'react';
 
-import { Container } from '@components/Container/Container';
+import { Container } from '@components/Container';
 import {
     TreeItemBorderClassMap,
     TreeItemBorderRadiusClassMap,
@@ -20,12 +20,8 @@ import IconDocument from '@foundation/Icon/Generated/IconDocument';
 import { TreeItemMultiselect } from './TreeItem/TreeItemMultiselect';
 import { getNewSelectedItems } from './helpers';
 
-/**
- ### *Legacy component warning*
- #### This is a unmaintained legacy component. It will be deprecated and replaced with a new component in an upcoming release.
- */
 export default {
-    title: 'Legacy Components/Tree/Multiselect',
+    title: 'Components/Tree/Multiselect',
     component: TreeView,
     tags: ['autodocs'],
     parameters: {

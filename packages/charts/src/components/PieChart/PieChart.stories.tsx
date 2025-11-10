@@ -52,6 +52,19 @@ export default {
             type: { name: 'boolean', value: false, required: false },
             description: 'Sorts the data by value if set to true.',
         },
+        colorScale: {
+            name: 'colorScale',
+            description: 'The color scale to be used for the chart.',
+            control: {
+                type: 'select',
+            },
+            options: ['discrete', 'continuous'],
+            type: { name: 'other', value: 'discrete | continuous', required: false },
+            table: {
+                type: { summary: 'discrete | continuous' },
+                defaultValue: { summary: 'discrete' },
+            },
+        },
     },
 } as Meta<PieChartProps>;
 
@@ -149,6 +162,7 @@ TenDataPoints.args = {
     showLabelTitle: true,
     showLabelValue: true,
     showLabelPercentage: true,
+    colorScale: 'continuous',
 };
 
 export const MoreThanTenDataPoints = Template.bind({});
@@ -159,4 +173,5 @@ MoreThanTenDataPoints.args = {
     showLabelTitle: true,
     showLabelValue: true,
     showLabelPercentage: true,
+    colorScale: 'continuous',
 };

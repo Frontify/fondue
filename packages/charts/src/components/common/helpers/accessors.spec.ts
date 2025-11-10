@@ -82,7 +82,7 @@ describe('common accessors', () => {
         });
     });
 
-    describe('hoverColorAccessorByIndex', () => {
+    describe('hoverColorWeakAccessorByIndex', () => {
         it('handles first three data sets', () => {
             expect(hoverColorAccessorByIndex(0)).toBe(HOVER_COLORS[0]);
             expect(hoverColorAccessorByIndex(1)).toBe(HOVER_COLORS[1]);

@@ -5,8 +5,7 @@ import { type ReactElement, useEffect, useState } from 'react';
 import { action } from 'storybook/actions';
 
 import { Badge } from '@components/Badge/Badge';
-import { Button } from '@components/Button/Button';
-import { ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button/ButtonTypes';
+import { Button, ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button';
 import { TextInput } from '@components/TextInput/TextInput';
 import IconDotsVertical from '@foundation/Icon/Generated/IconDotsVertical';
 import IconFaceHappy from '@foundation/Icon/Generated/IconFaceHappy';
@@ -18,7 +17,7 @@ import { type Column, type Row, SelectionMode, SortDirection, Table, type TableP
  ### This component is deprecated, please use the [new Table component](/docs/current_components-table--documentation) instead.
  */
 export default {
-    title: 'Legacy Components/Deprecated/Table',
+    title: 'Components/Table',
     component: Table,
     tags: ['autodocs'],
     args: {

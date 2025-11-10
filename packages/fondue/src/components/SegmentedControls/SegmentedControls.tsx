@@ -13,9 +13,6 @@ import { useMemoizedId } from '@hooks/useMemoizedId';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 
-/**
- * @deprecated Use `SegmentedControl` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#segmented-control the migration guide}.
- */
 export type IconItem = {
     id: string;
     icon: ReactElement<IconProps>;
@@ -24,23 +21,14 @@ export type IconItem = {
     disabled?: boolean;
 };
 
-/**
- * @deprecated Use `SegmentedControl` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#segmented-control the migration guide}.
- */
 export type TextOrNumberItem = {
     id: string;
     value: string | number;
     disabled?: boolean;
 };
 
-/**
- * @deprecated Use `SegmentedControl` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#segmented-control the migration guide}.
- */
 export type SegmentSize = 'small' | 'medium';
 
-/**
- * @deprecated Use `SegmentedControl` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#segmented-control the migration guide}.
- */
 export type SegmentedControlsProps = {
     id?: string;
     items: (TextOrNumberItem | IconItem)[];

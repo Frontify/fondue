@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { CheckboxState } from '@components/Checkbox/Checkbox';
+import { CheckboxState } from '@components/Checkbox';
 
 import { ROOT_ID } from './constants';
 import {

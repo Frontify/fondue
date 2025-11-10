@@ -15,7 +15,6 @@ import { SelectSlot } from './SelectSlot';
 
 type Story = StoryObj<typeof meta>;
 const meta: Meta<typeof SelectInput> = {
-    title: 'Components/Select',
     component: SelectInput,
     subcomponents: {
         'Select.Combobox': SelectCombobox,

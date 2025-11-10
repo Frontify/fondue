@@ -11,7 +11,6 @@ import { Slider } from './Slider';
 type Story = StoryObj<typeof Slider>;
 
 const meta: Meta<typeof Slider> = {
-    title: 'Components/Slider',
     component: Slider,
     tags: ['autodocs'],
     parameters: {

@@ -6,11 +6,8 @@ import { sharedTypographyArgTypes, sharedTypographyArgs } from '../shared/Shared
 
 import { Heading as HeadingComponent, type HeadingProps } from './Heading';
 
-/**
- ### This component is deprecated, please use the [new Heading component](/docs/current_typography-heading--documentation) instead.
- */
 export default {
-    title: 'Legacy Components/Deprecated/Heading',
+    title: 'Typography/Heading',
     component: HeadingComponent,
     argTypes: {
         size: {
@@ -38,11 +35,6 @@ export default {
         as: 'span',
         color: 'default',
         ...sharedTypographyArgs,
-    },
-    parameters: {
-        status: {
-            type: 'deprecated',
-        },
     },
 } as Meta<HeadingProps>;
 

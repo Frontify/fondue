@@ -46,7 +46,7 @@ test('render the success status', async ({ mount }) => {
     );
 
     await expect(component).toHaveAttribute('data-status', 'success');
-    await expect(component).toHaveCSS('border', '1px solid rgb(22, 133, 0)');
+    await expect(component).toHaveCSS('border', '1px solid rgb(21, 129, 111)');
     await expect(component.getByTestId(SELECT_SUCCESS_ICON_TEST_ID)).toBeVisible();
 });
 
@@ -60,7 +60,7 @@ test('render the error status', async ({ mount }) => {
     );
 
     await expect(component).toHaveAttribute('data-status', 'error');
-    await expect(component).toHaveCSS('border', '1px solid rgb(222, 36, 23)');
+    await expect(component).toHaveCSS('border', '1px solid rgb(217, 47, 76)');
     await expect(component.getByTestId(SELECT_ERROR_ICON_TEST_ID)).toBeVisible();
 });
 
@@ -106,19 +106,19 @@ test('should navigate though menu with arrow', async ({ mount, page }) => {
 
     await expect(page.getByTestId(ITEM_TEST_ID1)).toHaveAttribute('data-highlighted', 'true');
     await expect(page.getByTestId(ITEM_TEST_ID2)).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
-    await expect(page.getByTestId(ITEM_TEST_ID1)).toHaveCSS('background-color', 'rgb(240, 240, 235)');
+    await expect(page.getByTestId(ITEM_TEST_ID1)).toHaveCSS('background-color', 'rgb(241, 241, 241)');
 
     await page.keyboard.press('ArrowDown');
 
     await expect(page.getByTestId(ITEM_TEST_ID2)).toHaveAttribute('data-highlighted', 'true');
     await expect(page.getByTestId(ITEM_TEST_ID1)).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
-    await expect(page.getByTestId(ITEM_TEST_ID2)).toHaveCSS('background-color', 'rgb(240, 240, 235)');
+    await expect(page.getByTestId(ITEM_TEST_ID2)).toHaveCSS('background-color', 'rgb(241, 241, 241)');
 
     await page.keyboard.press('ArrowUp');
 
     await expect(page.getByTestId(ITEM_TEST_ID1)).toHaveAttribute('data-highlighted', 'true');
     await expect(page.getByTestId(ITEM_TEST_ID2)).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
-    await expect(page.getByTestId(ITEM_TEST_ID1)).toHaveCSS('background-color', 'rgb(240, 240, 235)');
+    await expect(page.getByTestId(ITEM_TEST_ID1)).toHaveCSS('background-color', 'rgb(241, 241, 241)');
 });
 
 test('should select item in list', async ({ mount, page }) => {

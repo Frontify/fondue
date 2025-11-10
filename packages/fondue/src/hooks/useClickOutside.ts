@@ -2,9 +2,6 @@
 
 import { useEffect, useRef } from 'react';
 
-/**
- * @deprecated Please use a custom function instead.
- **/
 export const useClickOutside = <T extends HTMLElement = HTMLElement>(
     callback: () => void,
     ignoredElements?: HTMLElement[],

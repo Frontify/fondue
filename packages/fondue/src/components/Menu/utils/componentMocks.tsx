@@ -2,7 +2,7 @@
 
 import { useRef, useState } from 'react';
 
-import { Button } from '@components/Button/Button';
+import { Button } from '@components/Button';
 import { MenuItem } from '@components/MenuItem';
 
 import { Menu, type MenuProps } from '../Menu';

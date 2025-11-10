@@ -4,17 +4,17 @@
 
 .root {
     display: flex;
-    gap: var(--spacing-x-small);
+    gap: var(--space-xs);
 
     & button:not(:first-child) {
-        margin-inline-start: var(--spacing-x-small);
+        margin-inline-start: var(--space-xs);
     }
 
-    &[data-readonly='true'] {
-        pointer-events: none;
+    &[data-readonly="true"] {
+       pointer-events: none;
     }
 
-    &[data-orientation='vertical'] {
+    &[data-orientation="vertical"] {
         display: grid;
         grid-template-columns: 1rem auto;
 
@@ -22,6 +22,7 @@
             margin-inline-start: 0;
         }
     }
+
 }
 
 .item {
@@ -29,35 +30,34 @@
     width: 1rem;
     height: 1rem;
     border-radius: 100%;
-    border: 1px solid var(--color-line-mid);
+    border: 1px solid var(--line-color-x-strong);
     cursor: pointer;
 
     transition: border cubic-bezier(0.4, 0, 0.2, 1) 150ms;
 
-    &[data-readonly='true'] {
-        pointer-events: none;
+    &[data-readonly="true"] {
+       pointer-events: none;
     }
 
     &:hover {
-        border: 1px solid var(--color-line-strong);
+        border: 1px solid var(--line-color-xx-strong);
 
-        [data-state='checked']::after {
-            outline: 6px solid var(--color-primary-hover);
+        [data-state="checked"]::after {
+            outline: 6px solid var(--box-neutral-strong-color-hover);
         }
     }
 
-    .root[data-emphasis='highlight'] &:hover {
-        [data-state='checked']::after {
-            outline: 6px solid var(--color-highlight-hover);
+    .root[data-emphasis="highlight"] &:hover {
+        [data-state="checked"]::after {
+            outline: 6px solid var(--box-selected-strong-color-hover);
         }
     }
 
-    &:disabled,
-    .root[data-emphasis='highlight'] &:disabled {
-        border: 1px solid var(--color-line-strong);
+    &:disabled, .root[data-emphasis="highlight"] &:disabled {
+        border: 1px solid var(--line-color-strong);
 
-        [data-state='checked']::after {
-            outline: 6px solid var(--color-container-secondary-default);
+        [data-state="checked"]::after {
+            outline: 6px solid var(--box-neutral-color);
         }
     }
 
@@ -75,19 +75,19 @@
     position: relative;
 
     &::after {
-        content: '';
+        content: "";
         display: block;
         width: 6px;
         height: 6px;
         border-radius: 50%;
         box-sizing: border-box;
-        outline: 6px solid var(--color-primary-default);
+        outline: 6px solid var(--box-neutral-strong-color);
         transition: outline cubic-bezier(0.4, 0, 0.2, 1) 150ms;
     }
 
-    .root[data-emphasis='highlight'] & {
+    .root[data-emphasis="highlight"] & {
         &::after {
-            outline: 6px solid var(--color-highlight-default);
+            outline: 6px solid var(--box-selected-strong-color);
         }
     }
 }

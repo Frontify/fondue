@@ -2,9 +2,7 @@
 
 import { type ReactElement } from 'react';
 
-import { Button } from '@components/Button/Button';
-import { ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button/ButtonTypes';
-import { LoadingCircle, LoadingCircleSize } from '@components/LoadingCircle/LoadingCircle';
+import { Button, ButtonEmphasis, ButtonSize, ButtonStyle, LoadingCircle, LoadingCircleSize } from '@components/index';
 import IconCheckMark16 from '@foundation/Icon/Generated/IconCheckMark16';
 import IconCross16 from '@foundation/Icon/Generated/IconCross16';
 import IconExclamationMarkTriangle16 from '@foundation/Icon/Generated/IconExclamationMarkTriangle16';
@@ -35,26 +33,20 @@ type InputStyleGroup =
     | 'disabled'
     | 'readOnly';
 
-/**
- * @deprecated Please use a fondue component instead.
- **/
 export const InputStyles: Record<InputStyleGroup, string> = {
-    base: 'tw-flex tw-items-center tw-justify-between tw-gap-2 tw-px-3 tw-transition tw-text-sm tw-font-sans tw-relative tw-bg-base tw-border tw-rounded tw-line-mid',
+    base: 'tw-flex tw-items-center tw-justify-between tw-gap-2 tw-px-3 tw-transition tw-text-sm tw-font-sans tw-relative tw-bg-base tw-border tw-rounded tw-line-strong',
     width: 'tw-w-full',
     height: 'tw-h-9 tw-min-h-[2.35rem]',
-    element: 'tw-bg-transparent tw-border-line-mid tw-text-text tw-placeholder-text-x-weak tw-outline-none tw-p-2',
-    focus: 'focus:tw-border-line-strong',
-    focusWithin: 'focus-within:tw-border-line-strong focus-within:hover:tw-border-line-strong',
-    hover: 'hover:tw-border-line-strong',
+    element: 'tw-bg-transparent tw-border-line-strong tw-text-text tw-placeholder-text-x-weak tw-outline-none tw-p-2',
+    focus: 'focus:tw-border-line-xx-strong',
+    focusWithin: 'focus-within:tw-border-line-xx-strong focus-within:hover:tw-border-line-xx-strong',
+    hover: 'hover:tw-border-line-x-strong',
     disabled:
         'disabled:tw-bg-box-disabled disabled:tw-border-line-weak disabled:tw-text-text-disabled disabled:hover:tw-cursor-not-allowed disabled:hover:tw-border-line-weak',
     readOnly:
         'read-only:tw-bg-box-disabled read-only:tw-border-none read-only:tw-text-text-weak read-only:hover:tw-cursor-not-allowed read-only:hover:tw-border-line-weak',
 };
 
-/**
- * @deprecated Please use a fondue component or a custom function instead.
- **/
 export const HelperText = ({
     text,
     disabled = false,
@@ -75,9 +67,6 @@ export const HelperText = ({
 };
 HelperText.displayName = 'FondueHelperText';
 
-/**
- * @deprecated Please use a fondue component or a custom function instead.
- **/
 export const GetStatusIcon = (status: Validation, dataTestId: string): ReactElement | null => {
     let statusIcon: ReactElement | null;
     switch (status) {
@@ -106,9 +95,6 @@ export const GetStatusIcon = (status: Validation, dataTestId: string): ReactElem
 
 GetStatusIcon.displayName = 'FondueGetStatusIcon';
 
-/**
- * @deprecated Please use a fondue component or a custom function instead.
- **/
 export const InputActions = ({
     clearable,
     disabled,
@@ -151,9 +137,6 @@ export const InputActions = ({
 
 InputActions.displayName = 'FondueInputActionButtons';
 
-/**
- * @deprecated Please use a fondue component or a custom function instead.
- **/
 export const InputExtraActions = ({ actions, disabled, dataTestId }: InputExtraActionsProps) => {
     return actions.map((action) => {
         const id = generateRandomId();

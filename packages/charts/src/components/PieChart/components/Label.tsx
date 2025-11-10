@@ -3,10 +3,16 @@
 import { type PieArcDatum } from '@visx/shape/lib/shapes/Pie';
 import { type Dispatch, type SetStateAction, useEffect } from 'react';
 
-import { type Padding, type PieChartDatum } from '@components/PieChart';
+import { type ColorScale, type Padding, type PieChartDatum } from '@components/PieChart';
 import { LABEL_PERCENTAGE_STYLE, LABEL_TITLE_STYLE, LABEL_VALUE_STYLE } from '@components/PieChart/components/consts';
 import { DEFAULT_PADDING } from '@components/PieChart/consts';
-import { getLineCoordinates, getPadding, getTextCoordinates, getTextOffset } from '@components/PieChart/helpers';
+import {
+    getLineCoordinates,
+    getPadding,
+    getTextCoordinates,
+    getTextOffset,
+    gradientColorAccessorByIndex,
+} from '@components/PieChart/helpers';
 import { useTextWidths } from '@components/PieChart/hooks/useTextWidths';
 import { colorAccessorByIndex } from '@components/common/helpers';
 import { type ValueFormatter } from '@components/common/types';
@@ -24,6 +30,7 @@ type LabelProps = {
     setPadding: Dispatch<SetStateAction<Padding>>;
     labelsShownOnHover: boolean;
     hideLabel: boolean;
+    colorScale: ColorScale;
     valueFormatter?: ValueFormatter;
 };
 
@@ -39,6 +46,7 @@ export const Label = ({
     setPadding,
     labelsShownOnHover,
     hideLabel,
+    colorScale,
     valueFormatter,
 }: LabelProps) => {
     const { data, startAngle, endAngle, index } = arcDatum;
@@ -92,11 +100,13 @@ export const Label = ({
         setPadding,
     ]);
 
+    const colorAccessor = colorScale === 'continuous' ? gradientColorAccessorByIndex : colorAccessorByIndex;
+
     return labelExists && !hideLabel ? (
         <g>
             <path
                 d={`M ${x1} ${y1} L ${x2} ${y2} H ${x3}`}
-                stroke={colorAccessorByIndex(index)}
+                stroke={colorAccessor(index)}
                 strokeWidth={'2px'}
                 fill={'none'}
             ></path>

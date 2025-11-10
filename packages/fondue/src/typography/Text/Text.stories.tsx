@@ -2,18 +2,15 @@
 
 import { type Meta, type StoryFn } from '@storybook/react-vite';
 
-import { Container } from '@components/Container/Container';
+import { Container } from '@components/Container';
 import { SPACING_VALUES } from '@utilities/dimensions';
 
 import { sharedTypographyArgTypes, sharedTypographyArgs } from '../shared/Shared';
 
 import { Text as TextComponent, type TextProps } from './Text';
 
-/**
- ### This component is deprecated, please use the [new Text component](/docs/current_typography-text--documentation) instead.
- */
 export default {
-    title: 'Legacy Components/Deprecated/Text',
+    title: 'Typography/Text',
     component: TextComponent,
     argTypes: {
         size: {
@@ -46,11 +43,6 @@ export default {
         as: 'span',
         color: 'default',
         ...sharedTypographyArgs,
-    },
-    parameters: {
-        status: {
-            type: 'deprecated',
-        },
     },
 } as Meta<TextProps>;
 

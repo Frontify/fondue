@@ -4,24 +4,12 @@ import { type ReactElement, type ReactNode } from 'react';
 
 import { merge } from '@utilities/merge';
 
-/**
- * @deprecated Use `Flex` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#layout-components the migration guide}.
- */
 export type LegacyStackSpacing = 'none' | 'xxs' | 'xs' | 's' | 'm' | 'l' | 'xl' | 'xxl';
 
-/**
- * @deprecated Use `Flex` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#layout-components the migration guide}.
- */
 export type LegacyStackJustify = 'start' | 'end' | 'center' | 'between' | 'around' | 'evenly';
 
-/**
- * @deprecated Use `Flex` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#layout-components the migration guide}.
- */
 export type LegacyStackAlign = 'start' | 'end' | 'stretch' | 'center';
 
-/**
- * @deprecated Use `Flex` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#layout-components the migration guide}.
- */
 export type LegacyStackProps = {
     padding: LegacyStackSpacing;
     spacing: LegacyStackSpacing;

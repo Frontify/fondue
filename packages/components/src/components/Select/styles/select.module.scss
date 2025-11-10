@@ -12,58 +12,60 @@
     align-items: stretch;
     text-align: start;
 
-    font-family: var(--typography-font-family-primary);
+    font-family: var(--body-family-stack);
     font-weight: 400;
-    font-size: var(--typography-font-size-medium);
+    font-size: var(--body-size-medium);
 
     min-width: 0;
     width: 100%;
-    line-height: var(--typography-line-height-medium);
+    line-height: var(--body-size-medium-line-height);
     height: sizeToken.get(9);
     box-sizing: border-box;
 
-    color: var(--color-primary-default);
-    background-color: var(--color-surface-default);
+    color: var(--text-color);
+    background-color: var(--base-color);
 
-    border-radius: var(--border-radius-medium);
-    border: var(--border-width-default) solid var(--color-line-mid);
+    border-radius: var(--radius);
+    border: var(--line-width) solid var(--line-color-strong);
     cursor: pointer;
+
+
 
     & {
         @include focusStyle.focus-outline;
     }
 
     &:hover {
-        border-color: var(--color-line-strong);
+        border-color: var(--line-color-x-strong);
     }
 
     &[data-show-focus-ring='false']:focus,
     &:has(input[data-show-focus-ring='false']:focus) {
-        border-color: var(--color-line-strong);
+        border-color: var(--line-color-xx-strong);
     }
 
     &:has(input:disabled),
     &[data-disabled='true'] {
-        border-color: var(--color-line-subtle);
-        background-color: var(--color-container-disabled-default);
-        color: var(--color-disabled-default);
+        border-color: var(--line-color-weak);
+        background-color: var(--box-disabled-color);
+        color: var(--text-color-disabled);
         cursor: default;
     }
 
     &[data-status='success'] {
-        border-color: var(--color-success-default);
+        border-color: var(--text-color-positive);
     }
 
     &[data-status='error'] {
-        border-color: var(--color-error-default);
+        border-color: var(--text-color-negative);
     }
 
     &[data-empty='true'] {
-        color: var(--color-secondary-default);
+        color: var(--text-color-x-weak);
     }
 
     &:has(input:placeholder-shown) {
-        color: var(--color-secondary-default);
+        color: var(--text-color-x-weak);
     }
 }
 
@@ -93,7 +95,7 @@
     text-indent: sizeToken.get(3);
     outline: 2px solid transparent;
     outline-offset: 2px;
-    border-radius: calc(var(--border-radius-medium) - var(--border-width-default));
+    border-radius: calc(var(--radius) - var(--line-width));
     white-space: nowrap;
     line-height: 100%;
     overflow: hidden;
@@ -103,7 +105,7 @@
 .input,
 .selectedValue {
     &::placeholder {
-        color: var(--color-secondary-default);
+        color: var(--text-color-x-weak);
     }
 
     // Remove border-radius and text-indent/padding on the left if there's a left-side slot
@@ -121,10 +123,11 @@
     }
 
     &:disabled {
-        color: var(--color-disabled-default);
+        color: var(--text-color-disabled);
     }
-    &:disabled ~ .slot {
-        color: var(--color-disabled-default);
+
+    &:disabled~.slot {
+        color: var(--text-color-disabled);
     }
 }
 
@@ -136,7 +139,7 @@
     gap: sizeToken.get(1.5);
     padding-inline-start: sizeToken.get(3);
     padding-inline-end: sizeToken.get(2);
-    color: var(--color-primary-default);
+    color: var(--text-color);
 
     // Left slot
     &[data-name='left'] {
@@ -179,7 +182,7 @@
     padding: 0 sizeToken.get(3);
 
     button:not(:hover) > .clearIcon {
-        color: var(--color-secondary-default);
+        color: var(--text-color-weak);
     }
 }
 
@@ -196,14 +199,14 @@
     align-items: center;
     justify-content: center;
     margin: 0 sizeToken.get(1);
-    color: var(--color-secondary-default);
+    color: var(--text-color-weak);
 
     & {
         @include transitions.transition-transform;
     }
 
     &:hover {
-        color: var(--color-secondary-hover);
+        color: var(--text-color-weak-hover);
     }
 
     div[role='combobox'][aria-expanded='true'] &,
@@ -215,25 +218,25 @@
 .iconSuccess {
     height: 100%;
     margin: 0 sizeToken.get(1);
-    color: var(--color-success-default);
+    color: var(--text-color-positive);
 }
 
 .iconError {
     height: 100%;
     margin: 0 sizeToken.get(1);
-    color: var(--color-error-default);
+    color: var(--text-color-negative);
 }
 
 .menu {
     display: none;
-    border-radius: var(--border-radius-medium);
-    background-color: var(--color-surface-default);
-    border: var(--border-width-default) solid var(--color-line-subtle);
+    border-radius: var(--radius);
+    background-color: var(--base-color);
+    border: var(--line-width) solid var(--line-color);
     max-width: calc(100dvw - sizeToken.get(8));
     min-width: var(--radix-popover-trigger-width);
     overflow: auto;
     max-height: var(--radix-popover-content-available-height);
-    color: var(--color-primary-default);
+    color: var(--text-color);
 
     &:has(li[role='option']) {
         display: block;
@@ -279,10 +282,11 @@
     border-radius: sizeToken.get(1);
     cursor: pointer;
     text-align: start;
-    font-size: var(--typography-font-size-medium);
-    line-height: var(--typography-line-height-medium);
-    color: var(--color-primary-default);
+    font-size: var(--body-size-medium);
+    line-height: var(--body-size-medium-line-height);
+    color: var(--text-color);
     outline-style: none;
+
 
     &:first-child {
         margin-block-start: sizeToken.get(2);
@@ -293,11 +297,12 @@
     }
 
     &[data-highlighted='true'] {
-        background-color: var(--color-surface-hover);
+        background-color: var(--box-neutral-color);
+        color: var(--box-neutral-inverse-color-hover);
     }
 
     &[data-highlighted]:active {
-        background-color: var(--color-surface-active);
+        background-color: var(--box-neutral-color-hover);
         transition: none;
     }
 
@@ -309,7 +314,8 @@
 
     .menu[data-has-interacted='false'] &[data-selected='true']:not(:hover),
     &[data-selected='true'][data-highlighted='false'] {
-        background-color: var(--color-surface-active);
+        background-color: var(--box-neutral-color-hover);
+        color: var(--box-neutral-inverse-color-hover);
     }
 
     .itemValue {
@@ -328,8 +334,8 @@
 }
 
 .group {
-    .item + & {
-        border-top: var(--border-width-default) solid var(--color-line-mid);
+    .item+& {
+        border-top: var(--line-width) solid var(--line-color-strong);
         margin-bottom: 0.5rem;
     }
 
@@ -338,16 +344,16 @@
     }
 
     &:has(+ .item, + .group) {
-        border-bottom: var(--border-width-default) solid var(--color-line-mid);
+        border-bottom: var(--line-width) solid var(--line-color-strong);
     }
 }
 
 .groupHeading {
     text-transform: uppercase;
     line-height: sizeToken.get(4);
-    color: var(--color-secondary-default);
-    font-size: var(--typography-font-size-x-small);
-    font-weight: var(--typography-font-weight-medium);
+    color: var(--text-color-x-weak);
+    font-size: var(--body-size-x-small);
+    font-weight: var(--body-weight-strong-number);
     padding-block: sizeToken.get(2) 0;
     padding-inline: sizeToken.get(5);
     margin-block-start: sizeToken.get(1);

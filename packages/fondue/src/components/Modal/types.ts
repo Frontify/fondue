@@ -9,22 +9,13 @@ import { type PatternDesign, type PatternTheme } from '@foundation/Pattern';
 
 import { type ButtonProps } from '../Button/Button';
 
-/**
- * @deprecated Use `Dialog` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md the migration guide}.
- */
 export type ModalButton = Omit<ButtonProps, 'size'>;
 
-/**
- * @deprecated Use `Dialog` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md the migration guide}.
- */
 export type ModalVisualProps = {
     pattern?: PatternDesign;
     foregroundColor?: PatternTheme;
 };
 
-/**
- * @deprecated Use `Dialog` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md the migration guide}.
- */
 export enum ModalHeaderVariant {
     Default = 'Default',
     Informative = 'Informative',
@@ -33,9 +24,6 @@ export enum ModalHeaderVariant {
     Warning = 'Warning',
 }
 
-/**
- * @deprecated Use `Dialog` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md the migration guide}.
- */
 export const modalHeaderVariants: Record<ModalHeaderVariant, string> = {
     [ModalHeaderVariant.Default]: 'tw-text-grey-80',
     [ModalHeaderVariant.Informative]: 'tw-text-violet-60',
@@ -44,9 +32,6 @@ export const modalHeaderVariants: Record<ModalHeaderVariant, string> = {
     [ModalHeaderVariant.Warning]: 'tw-text-yellow-60',
 };
 
-/**
- * @deprecated Use `Dialog` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md the migration guide}.
- */
 export type ModalHeaderProps = {
     title?: string;
     leadText?: ReactNode;
@@ -56,41 +41,26 @@ export type ModalHeaderProps = {
 
 type ModalBodyChildren = ReactElement | ReactElement[];
 
-/**
- * @deprecated Use `Dialog` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md the migration guide}.
- */
 export type ModalBodyProps = {
     direction?: ScrollWrapperDirection;
     children?: ModalBodyChildren;
     horizontalPadding?: boolean;
 };
 
-/**
- * @deprecated Use `Dialog` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md the migration guide}.
- */
 export type ModalFooterProps = {
     buttons: [ModalButton] | [ModalButton, ModalButton];
 };
 
-/**
- * @deprecated Use `Dialog` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md the migration guide}.
- */
 export enum ModalWidth {
     Default = 'Default',
     Small = 'Small',
     Large = 'Large',
 }
 
-/**
- * @deprecated Use `Dialog` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md the migration guide}.
- */
 export type ModalPadding = {
     [key: string]: { top: string; horizontal: string; bottom: string };
 };
 
-/**
- * @deprecated Use `Dialog` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md the migration guide}.
- */
 export type ModalProps = {
     visual?: ModalVisualProps;
     width?: ModalWidth;

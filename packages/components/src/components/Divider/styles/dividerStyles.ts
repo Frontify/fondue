@@ -10,8 +10,8 @@ export const dividerStyles = sv({
             vertical: 'tw-flex-row tw-w-0 tw-border-e tw-h-full ',
         },
         color: {
-            weak: 'tw-border-line-subtle',
-            default: 'tw-border-line-mid',
+            weak: 'tw-border-line-weak',
+            default: 'tw-border-line',
             strong: 'tw-border-line-strong',
             'x-strong': 'tw-border-line-x-strong',
         },

@@ -18,7 +18,6 @@ declare global {
     }
 }
 
-import '@frontify/fondue-tokens/legacy/tokens';
-import '@frontify/fondue-tokens/styles';
 import 'cypress-real-events/support';
 import '../../src/styles.css';
+import '@frontify/fondue-tokens/styles';

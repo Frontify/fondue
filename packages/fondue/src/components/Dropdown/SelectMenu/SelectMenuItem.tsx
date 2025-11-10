@@ -20,9 +20,6 @@ type SelectMenuItemProps = {
     node: Node<object>;
 };
 
-/**
- * @deprecated Use `Select` from `@frontify/fondue/components` instead.
- */
 export const SelectMenuItem = ({ state, menuItem, node }: SelectMenuItemProps): ReactElement => {
     const ref = useRef<HTMLLIElement | null>(null);
     const { optionProps, isSelected } = useOption(

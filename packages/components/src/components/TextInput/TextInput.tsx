@@ -2,10 +2,10 @@
 
 import { IconCheckMark, IconExclamationMarkTriangle } from '@frontify/fondue-icons';
 import {
+    type FocusEvent,
     forwardRef,
     useRef,
     type ChangeEvent,
-    type FocusEvent,
     type ForwardedRef,
     type KeyboardEvent,
     type ReactNode,
@@ -13,8 +13,6 @@ import {
 } from 'react';
 
 import { cn } from '#/utilities/styleUtilities';
-
-import { LoadingCircle } from '../LoadingCircle/LoadingCircle';
 
 import styles from './styles/text.module.scss';
 
@@ -126,9 +124,7 @@ export const TextFieldRoot = (
     return (
         <div className={cn(styles.root, className)} data-status={status} data-test-id={dataTestId}>
             {status === 'loading' ? (
-                <div className={styles.loadingStatus} data-test-id={`${dataTestId}-loader`}>
-                    <LoadingCircle size="xx-small" />
-                </div>
+                <div className={styles.loadingStatus} data-test-id={`${dataTestId}-loader`} />
             ) : null}
             <div className={styles.inputWrapper}>
                 {placeholder && <div className={styles.placeholder}>{placeholder}</div>}

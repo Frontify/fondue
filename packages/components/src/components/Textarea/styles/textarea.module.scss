@@ -10,19 +10,19 @@
     grid-template-areas: "decorator textarea tools";
     grid-template-columns: max-content 1fr max-content;
 
-    font-family: var(--typography-font-family-primary);
+    font-family: var(--body-family-stack);
     font-weight: 400;
-    font-size: var(--typography-font-size-medium);
+    font-size: var(--body-size-medium);
 
-    line-height: var(--typography-line-height-medium);
+    line-height: var(--body-size-medium-line-height);
     text-align: start;
     min-height: sizeToken.get(9);
     box-sizing: border-box;
 
-    color: var(--color-primary-default);
-    background-color: var(--color-surface-default);
-    border-radius: var(--border-radius-medium);
-    border: var(--border-width-default) solid var(--color-line-mid);
+    color: var(--text-color);
+    background-color: var(--base-color);
+    border-radius: var(--radius);
+    border: var(--line-width) solid var(--line-color-strong);
 
     & {
         @include focusStyle.focus-outline;
@@ -30,11 +30,11 @@
     }
 
     &:hover {
-        border-color: var(--color-line-strong);
+        border-color: var(--line-color-x-strong);
     }
 
     &:has([data-show-focus-ring='false']:focus) {
-        border-color: var(--color-line-strong);
+        border-color: var(--line-color-xx-strong);
     }
 
     &:has(textarea[readonly]) {
@@ -42,16 +42,16 @@
     }
 
     &:has(textarea:disabled) {
-        border-color: var(--color-line-subtle);
-        background-color: var(--color-container-disabled-default);
+        border-color: var(--line-color-weak);
+        background-color: var(--box-disabled-color);
     }
 
     &[data-status='success'] {
-        border-color: var(--color-success-default);
+        border-color: var(--text-color-positive);
     }
 
     &[data-status='error'] {
-        border-color: var(--color-error-default);
+        border-color: var(--text-color-negative);
     }
 
     &[data-max-rows='true'][data-autosize='true']::after {
@@ -88,7 +88,7 @@
     padding-right: sizeToken.get(3);
     padding-top: sizeToken.get(2);
     padding-bottom: sizeToken.get(2);
-    border-radius: calc(var(--border-radius-medium) - var(--border-width-default));
+    border-radius: calc(var(--radius) - var(--line-width));
     resize: none;
     grid-area: textarea;
     outline: 2px solid transparent;
@@ -103,7 +103,7 @@
     }
 
     &::placeholder {
-        color: var(--color-secondary-default);
+        color: var(--text-color-x-weak);
     }
 
     &:-moz-focusring {
@@ -128,12 +128,12 @@
     // Readonly styles
     &[readonly] {
         cursor: text;
-        color: var(--color-secondary-default);
+        color: var(--text-color-weak);
         text-indent: 0px;
     }
 
     &[readonly]~.slot {
-        color: var(--color-secondary-default);
+        color: var(--text-color-weak);
     }
 
     &[readonly]~.slot:not([data-name='right']) {
@@ -141,12 +141,12 @@
     }
 
     &:disabled {
-        color: var(--color-disabled-default);
+        color: var(--text-color-disabled);
         cursor: not-allowed;
     }
 
     &:disabled~.slot {
-        color: var(--color-disabled-default);
+        color: var(--text-color-disabled);
     }
 }
 
@@ -179,8 +179,8 @@
 
 
 .toolsButton {
-    background-color: var(--color-surface-default);
-    border-radius: var(--border-radius-medium);
+    background-color: var(--base-color);
+    border-radius: var(--radius);
 
     & {
         @include focusStyle.focus-outline;
@@ -189,23 +189,23 @@
 
     &:hover,
     &:focus-visible {
-        background-color: var(--color-container-secondary-default);
+        background-color: var(--button-background-color);
         z-index: 1;
     }
 
     &:disabled {
         background-color: transparent;
         cursor: not-allowed;
-        color: var(--color-secondary-default);
+        color: var(--text-color-weak);
     }
 }
 
 .success {
-    color: var(--color-container-success-on-success-container);
+    color: var(--button-positive-icon-color);
 }
 
 .error {
-    color: var(--color-container-error-on-error-container);
+    color: var(--button-negative-icon-color);
 }
 
 .loadingStatus {
@@ -218,8 +218,8 @@
     pointer-events: none;
     align-items: center;
     justify-content: center;
-    background-color: var(--color-surface-default);
-    border: var(--border-width-default) solid var(--color-line-mid);
+    background-color: var(--base-color);
+    border: var(--line-width) solid var(--line-color-strong);
     border-radius: 9999px;
 
     &::before {
@@ -229,7 +229,7 @@
         justify-content: center;
         width: sizeToken.get(4);
         height: sizeToken.get(4);
-        border: var(--border-width-default) solid var(--color-highlight-default);
+        border: var(--line-width) solid var(--text-color-interactive);
         border-top-color: transparent;
         border-radius: 9999px;
         animation: spin 1s linear infinite;

@@ -8,7 +8,6 @@ import { type CommonAriaProps } from '#/helpers/aria';
 import { useTranslation } from '#/hooks/useTranslation';
 import { addAutoFocusAttribute, addShowFocusRing } from '#/utilities/domUtilities';
 
-import { Button } from '../Button/Button';
 import { ThemeProvider, useFondueTheme } from '../ThemeProvider/ThemeProvider';
 
 import styles from './styles/flyout.module.scss';
@@ -221,16 +220,14 @@ export const FlyoutHeader = (
         <div data-test-id={dataTestId} ref={ref} className={styles.header}>
             <div>{children}</div>
             {showCloseButton && (
-                <RadixPopover.Close asChild {...closeProps}>
-                    <Button
-                        size="small"
-                        aspect="square"
-                        emphasis="weak"
-                        aria-label={t('Flyout_close')}
-                        data-test-id={`${dataTestId}-close`}
-                    >
-                        <IconCross size={20} />
-                    </Button>
+                <RadixPopover.Close
+                    role="button"
+                    data-test-id={`${dataTestId}-close`}
+                    className={styles.close}
+                    aria-label={t('Flyout_close')}
+                    {...closeProps}
+                >
+                    <IconCross size={20} />
                 </RadixPopover.Close>
             )}
         </div>

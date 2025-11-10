@@ -2,7 +2,8 @@
 
 import { getColorDisplayValue } from '@utilities/colors';
 import { merge } from '@utilities/merge';
-import { ColorFormat } from 'src/types/colors';
+
+import { ColorFormat } from '../../types';
 
 import { badgeStatusClasses, isBadgeStatus } from './helpers';
 import { type BadgeStatusIconProps } from './types';

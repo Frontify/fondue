@@ -11,7 +11,7 @@ import { type LegacyTextareaProps, LegacyTextarea as TextareaComponent } from '.
  ### This component is deprecated, please use the [new Textarea component](/docs/current_components-textarea--documentation) instead.
  */
 export default {
-    title: 'Legacy Components/Deprecated/LegacyTextarea',
+    title: 'Deprecated/LegacyTextarea',
     component: TextareaComponent,
     tags: ['autodocs'],
     args: {

@@ -13,18 +13,18 @@
     border-radius: 100%;
     border-width: 2px;
     border-style: solid;
-    border-color: var(--color-highlight-default);
+    border-color: var(--text-color-interactive);
     border-top-color: transparent;
     aspect-ratio: 1 / 1;
     padding: 0;
 
     &[data-variant='success'] {
-        border-color: var(--color-success-default);
+        border-color: var(--text-color-positive);
         border-top-color: transparent;
     }
 
     &[data-variant='danger'] {
-        border-color: var(--color-error-default);
+        border-color: var(--text-color-negative);
         border-top-color: transparent;
     }
 

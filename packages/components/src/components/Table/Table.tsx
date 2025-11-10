@@ -2,12 +2,12 @@
 
 import { IconArrowBidirectional, IconArrowDown, IconArrowUp } from '@frontify/fondue-icons';
 import {
+    type AriaAttributes,
     forwardRef,
-    useEffect,
     useMemo,
     useRef,
+    useEffect,
     useState,
-    type AriaAttributes,
     type CSSProperties,
     type KeyboardEvent,
     type MouseEvent,
@@ -193,7 +193,7 @@ type TableHeaderCellProps = {
      */
     truncate?: boolean;
     /**
-     * Aria label for ascending/descending sort. Variables: {column} - column name
+     * Aria label for asceding/descending sort. Variables: {column} - column name
      * @default "Sort by {column} ascending/descending"
      */
     sortTranslations?: {
@@ -305,9 +305,9 @@ export const TableHeaderCell = forwardRef<HTMLTableCellElement, TableHeaderCellP
                         )}
                         <Box width={3}>
                             {sortDirection === 'ascending' ? (
-                                <IconArrowUp className={styles.sortIndicator} size="12" />
+                                <IconArrowUp size="12" />
                             ) : sortDirection === 'descending' ? (
-                                <IconArrowDown className={styles.sortIndicator} size="12" />
+                                <IconArrowDown size="12" />
                             ) : (
                                 <IconArrowBidirectional className={styles.sortIndicator} size="12" />
                             )}

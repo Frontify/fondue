@@ -2,14 +2,13 @@
 
 import { useRef, useState } from 'react';
 
-import { Box } from '@components/Box/Box';
-import { Button } from '@components/Button/Button';
-import { ButtonEmphasis } from '@components/Button/ButtonTypes';
-import { DialogBody } from '@components/DialogBody/DialogBody';
-import { Dropdown } from '@components/Dropdown/Dropdown';
+import { Box } from '@components/Box';
+import { Button, ButtonEmphasis } from '@components/Button';
+import { DialogBody } from '@components/DialogBody';
+import { Dropdown } from '@components/Dropdown';
 import IconDotsVertical16 from '@foundation/Icon/Generated/IconDotsVertical16';
 
-import { Modality } from '../../types/dialog';
+import { Modality } from '../../types';
 
 import { InlineDialog, type InlineDialogProps } from './InlineDialog';
 

@@ -20,7 +20,6 @@ export default defineConfig(
             'src/subpackages/tokens.js',
             'README.md',
             'dist',
-            'legacyTokens',
             '.storybook',
             'storybook-static',
             'node_modules',

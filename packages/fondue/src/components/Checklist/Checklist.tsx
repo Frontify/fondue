@@ -7,17 +7,11 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Checkbox, type CheckboxProps, CheckboxState } from '@components/Checkbox/Checkbox';
 import { merge } from '@utilities/merge';
 
-/**
- * @deprecated Use `Checkbox` from `@frontify/fondue/components` instead.
- */
 export enum ChecklistDirection {
     Horizontal = 'Horizontal',
     Vertical = 'Vertical',
 }
 
-/**
- * @deprecated Use `Checkbox` from `@frontify/fondue/components` instead.
- */
 export type Columns = 1 | 2 | 3 | 4;
 
 const columnsStyle: Record<Columns, string> = {
@@ -27,14 +21,8 @@ const columnsStyle: Record<Columns, string> = {
     4: 'tw-grid-cols-4',
 };
 
-/**
- * @deprecated Use `Checkbox` from `@frontify/fondue/components` instead.
- */
 export type CheckboxValue = Omit<CheckboxProps, 'onChange' | 'groupInputProps' | 'value'> & { value: string };
 
-/**
- * @deprecated Use `Checkbox` from `@frontify/fondue/components` instead.
- */
 export type ChecklistBase = {
     checkboxes: CheckboxValue[];
     setActiveValues: (value: string[]) => void;
@@ -43,9 +31,6 @@ export type ChecklistBase = {
     'data-test-id'?: string;
 };
 
-/**
- * @deprecated Use `Checkbox` from `@frontify/fondue/components` instead.
- */
 export type ChecklistProps = ChecklistBase & {
     direction: ChecklistDirection.Vertical | ChecklistDirection.Horizontal;
     columns?: Columns;
@@ -100,9 +85,6 @@ const getLastItemColumnSpan = (items: CheckboxValue[], columns: number) => {
     return `${gridSpan} ${columns - spanItems + 1}`;
 };
 
-/**
- * @deprecated Use `Checkbox` from `@frontify/fondue/components` instead.
- */
 export const Checklist = ({
     checkboxes,
     setActiveValues,

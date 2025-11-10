@@ -9,7 +9,7 @@ import { useMenuTriggerState } from '@react-stately/menu';
 import { AnimatePresence, motion } from 'motion/react';
 import { type ReactElement, useEffect, useRef, useState } from 'react';
 
-import { ActionMenu, type ActionMenuBlock } from '@components/ActionMenu/ActionMenu';
+import { ActionMenu, type ActionMenuBlock } from '@components/ActionMenu/ActionMenu/ActionMenu';
 import IconCaretDown from '@foundation/Icon/Generated/IconCaretDown';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { useMemoizedId } from '@hooks/useMemoizedId';

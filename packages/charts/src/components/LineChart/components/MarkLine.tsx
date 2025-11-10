@@ -63,8 +63,8 @@ export const MarkLine = ({ value, name }: MarkLineProps) => {
                 y={yPositionText}
                 ref={textRef}
                 strokeWidth={0}
-                fill={'var(--color-secondary-default)'}
-                className="tw-text-x-small tw-font-bold tw-font-primary"
+                fill={'var(--text-color-weak)'}
+                className="tw-text-xs tw-font-bold tw-font-body"
             >
                 {name}
             </text>

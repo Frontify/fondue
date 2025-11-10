@@ -21,7 +21,6 @@ import {
 
 type Story = StoryObj<typeof meta>;
 const meta: Meta<typeof DropdownRoot> = {
-    title: 'Components/Dropdown',
     component: DropdownRoot,
     subcomponents: {
         'Dropdown.Trigger': DropdownTrigger,
@@ -264,7 +263,7 @@ export const CustomItem: Story = {
             <Dropdown.Content>
                 <Dropdown.Item onSelect={() => {}}>Item 1</Dropdown.Item>
                 <Dropdown.Item onSelect={() => {}}>
-                    <div className="tw-bg-highlight">test bla</div>
+                    <div className="tw-bg-red-50">test bla</div>
                 </Dropdown.Item>
                 <Dropdown.Item onSelect={() => {}}>Item 2</Dropdown.Item>
                 <Dropdown.Item onSelect={() => {}}>Item 3</Dropdown.Item>

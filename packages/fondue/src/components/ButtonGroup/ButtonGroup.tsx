@@ -1,0 +1,36 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+import { Children, type ReactElement, type ReactNode, cloneElement, isValidElement } from 'react';
+
+import { type ButtonProps, ButtonSize } from '@components/Button';
+import { merge } from '@utilities/merge';
+
+export type ButtonGroupProps = { size: ButtonSize; children?: ReactNode; 'data-test-id'?: string };
+
+const spacing: Record<ButtonSize, string> = {
+    [ButtonSize.Small]: 'tw-gap-x-1',
+    [ButtonSize.Medium]: 'tw-gap-x-2',
+    [ButtonSize.Large]: 'tw-gap-x-3',
+};
+
+/**
+ * @deprecated Please use updated the `Flex` layout component from `@frontify/fondue/components` as a wrapper arount the `Button` component instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#button the migration guide}.
+ */
+export const ButtonGroup = ({
+    children,
+    size,
+    'data-test-id': dataTestId = 'button-group',
+}: ButtonGroupProps): ReactElement => {
+    return (
+        <div data-test-id={dataTestId} className={merge(['tw-display tw-inline-flex tw-flex-row', spacing[size]])}>
+            {Children.map(children, (child) => {
+                if (!isValidElement(child)) {
+                    return null;
+                }
+
+                return cloneElement(child as ReactElement<ButtonProps>, { size });
+            })}
+        </div>
+    );
+};
+ButtonGroup.displayName = 'FondueButtonGroup';

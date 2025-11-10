@@ -4,11 +4,10 @@ import { type Meta, type StoryFn } from '@storybook/react-vite';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { action } from 'storybook/actions';
 
-import { Button } from '@components/Button/Button';
-import { ButtonEmphasis, ButtonStyle } from '@components/Button/ButtonTypes';
-import { Container } from '@components/Container/Container';
-import { DialogBody } from '@components/DialogBody/DialogBody';
-import { InlineDialog } from '@components/InlineDialog/InlineDialog';
+import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';
+import { Container } from '@components/Container';
+import { DialogBody } from '@components/DialogBody';
+import { InlineDialog } from '@components/InlineDialog';
 import {
     TreeItem,
     TreeItemBorderClassMap,
@@ -29,14 +28,10 @@ import {
 } from '@components/Tree/utils';
 import IconDocument from '@foundation/Icon/Generated/IconDocument';
 
-import { Modality } from '../../types/dialog';
+import { Modality } from '../../types';
 
-/**
- ### *Legacy component warning*
- #### This is a unmaintained legacy component. It will be deprecated and replaced with a new component in an upcoming release.
- */
 export default {
-    title: 'Legacy Components/Tree',
+    title: 'Components/Tree',
     component: TreeView,
     tags: ['autodocs'],
     args: {

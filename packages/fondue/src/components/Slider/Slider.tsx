@@ -11,7 +11,7 @@ import {
     useState,
 } from 'react';
 
-import { TextInput, TextInputType } from '@components/TextInput/TextInput';
+import { TextInput, TextInputType } from '@components/TextInput';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { debounce } from '@utilities/debounce';
 import { merge } from '@utilities/merge';
@@ -34,53 +34,25 @@ type BaseSliderProps = {
     'data-test-id'?: string;
 };
 
-/**
- * @deprecated Use `Slider` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#slider the migration guide}.
- */
 export type SliderValue = {
     raw: number;
     withSuffix: string;
 };
 
-/**
- * @deprecated Use `Slider` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#slider the migration guide}.
- */
 export type SliderProps = BaseSliderProps &
     Pick<AriaAttributes, 'aria-label'> &
     Pick<AriaAttributes, 'aria-labelledby'>;
 
-/**
- * @deprecated Use `Slider` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#slider the migration guide}.
- */
 export enum SliderError {
     MinMax = 'MinMax',
     ValueOutOfRange = 'ValueOutOfRange',
     ValueNaN = 'ValueNaN',
 }
 
-/**
- * @deprecated Use `Slider` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#slider the migration guide}.
- */
 export const MIN_DEFAULT_VALUE = 0;
-
-/**
- * @deprecated Use `Slider` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#slider the migration guide}.
- */
 export const MAX_DEFAULT_VALUE = 100;
-
-/**
- * @deprecated Use `Slider` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#slider the migration guide}.
- */
 export const STEP_DEFAULT_VALUE = 1;
-
-/**
- * @deprecated Use `Slider` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#slider the migration guide}.
- */
 export const STEP_MULTIPLIER_DEFAULT_VALUE = 5;
-
-/**
- * @deprecated Use `Slider` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#slider the migration guide}.
- */
 export const ARIA_LABEL_DEFAULT_VALUE = 'Slider text input';
 const DEBOUNCE_INTERVAL = 3;
 const INCREMENT_KEYS = ['ArrowUp', 'ArrowRight'];

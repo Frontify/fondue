@@ -11,7 +11,7 @@ const meta: Meta<typeof Text> = {
     tags: ['autodocs'],
     parameters: {
         status: {
-            type: 'released',
+            type: 'beta',
         },
     },
     argTypes: {

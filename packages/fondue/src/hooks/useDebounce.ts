@@ -2,9 +2,6 @@
 
 import { useCallback, useRef } from 'react';
 
-/**
- * @deprecated Please use a custom function instead.
- **/
 export const useDebounce = <T extends unknown[]>(func: (...args: T) => void, timeout = 10) => {
     const timer = useRef<ReturnType<typeof setTimeout>>();
 

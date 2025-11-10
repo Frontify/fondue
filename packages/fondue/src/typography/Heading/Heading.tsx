@@ -11,9 +11,6 @@ type HeadingWeight = 'default' | 'strong';
 type HeadingSize = 'medium' | 'large' | 'x-large' | 'xx-large';
 type HeadingColor = 'default' | 'weak' | 'x-weak' | 'disabled' | 'negative' | 'positive' | 'warning' | 'interactive';
 
-/**
- * @deprecated Please use updated heading component from `@frontify/fondue/components` instead.
- */
 export type HeadingProps = SharedTypographyProps & {
     size?: HeadingSize;
     weight?: HeadingWeight;
@@ -45,9 +42,6 @@ const colorMap: Record<HeadingColor, string> = {
     interactive: 'tw-text-text-interactive',
 };
 
-/**
- * @deprecated Please use updated heading component from `@frontify/fondue/components` instead.
- */
 export const Heading = ({
     children,
     as: Tag = 'span',

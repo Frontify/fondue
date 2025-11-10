@@ -5,9 +5,9 @@ import { sv } from '#/utilities/styleUtilities';
 
 export const checkboxStyles = sv({
     base:
-        'tw-peer tw-relative tw-inline-flex tw-bg-surface tw-text-white tw-shrink-0 tw-rounded-medium tw-border tw-border-line-mid group-hover:tw-border-line-strong hover:tw-border-line-strong tw-transition-colors ' +
+        'tw-peer tw-relative tw-inline-flex tw-bg-base tw-text-white tw-shrink-0 tw-rounded tw-border tw-border-line-x-strong group-hover:tw-border-line-xx-strong hover:tw-border-line-xx-strong tw-transition-colors ' +
         'data-[state="checked"]:tw-border-transparent data-[state="indeterminate"]:tw-border-transparent ' +
-        'disabled:tw-border-line-strong disabled:tw-bg-surface disabled:tw-cursor-not-allowed data-[state="checked"]:disabled:tw-bg-disabled ' +
+        'disabled:tw-border-line-strong disabled:tw-bg-base disabled:tw-cursor-not-allowed data-[state="checked"]:disabled:tw-bg-box-disabled-strong ' +
         'data-[readonly="true"]:tw-pointer-events-none ' +
         `${FOCUS_OUTLINE}`,
     variants: {
@@ -17,11 +17,11 @@ export const checkboxStyles = sv({
         },
         emphasis: {
             default:
-                'data-[state="checked"]:tw-bg-highlight data-[state="checked"]:hover:tw-bg-highlight-hover data-[state="checked"]:active:tw-bg-highlight-active ' +
-                'data-[state="indeterminate"]:tw-bg-highlight data-[state="indeterminate"]:hover:tw-bg-highlight-hover data-[state="indeterminate"]:active:tw-bg-highlight-active ',
+                'data-[state="checked"]:tw-bg-box-selected-strong data-[state="checked"]:hover:tw-bg-box-selected-strong-hover data-[state="checked"]:active:tw-bg-box-selected-strong-pressed ' +
+                'data-[state="indeterminate"]:tw-bg-box-selected-strong data-[state="indeterminate"]:hover:tw-bg-box-selected-strong-hover data-[state="indeterminate"]:active:tw-bg-box-selected-strong-pressed ',
             weak:
-                'data-[state="checked"]:tw-bg-primary data-[state="checked"]:hover:tw-bg-primary-hover data-[state="checked"]:active:tw-bg-primary-active ' +
-                'data-[state="indeterminate"]:tw-bg-primary data-[state="indeterminate"]:hover:tw-bg-primary-hover data-[state="indeterminate"]:active:tw-bg-primary-active ',
+                'data-[state="checked"]:tw-bg-box-neutral-strong data-[state="checked"]:hover:tw-bg-box-neutral-strong-hover data-[state="checked"]:active:tw-bg-box-neutral-strong-pressed ' +
+                'data-[state="indeterminate"]:tw-bg-box-neutral-strong data-[state="indeterminate"]:hover:tw-bg-box-neutral-strong-hover data-[state="indeterminate"]:active:tw-bg-box-neutral-strong-pressed ',
         },
     },
     defaultVariants: {

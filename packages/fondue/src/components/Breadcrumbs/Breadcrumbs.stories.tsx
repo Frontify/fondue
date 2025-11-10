@@ -17,12 +17,8 @@ const ITEMS = [
     { label: 'Item 5', link },
 ];
 
-/**
- ### *Legacy component warning*
- #### This is a unmaintained legacy component. It will be deprecated and replaced with a new component in an upcoming release.
- */
 export default {
-    title: 'Legacy Components/Breadcrumbs',
+    title: 'Components/Breadcrumbs',
     component: Breadcrumbs,
     tags: ['autodocs'],
     args: {
@@ -49,11 +45,6 @@ export default {
             control: { type: 'boolean' },
         },
         onBlur: { action: 'onBlur' },
-    },
-    parameters: {
-        status: {
-            type: 'deprecated',
-        },
     },
 } as Meta<BreadcrumbsProps>;
 

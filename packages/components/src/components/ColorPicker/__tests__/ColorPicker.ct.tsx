@@ -422,3 +422,36 @@ test('color picker input should display a disabled button when disabled', async 
     const button = component.locator('button').first();
     await expect(button).toBeDisabled();
 });
+
+test('should display correct clearIcon colors in different hover states', async ({ mount }) => {
+    const component = await mount(
+        <ColorPicker.Input
+            aria-label="Color picker input"
+            currentColor={{
+                red: 255,
+                green: 0,
+                blue: 0,
+                alpha: 0.4,
+                name: '#ff0000',
+            }}
+            onClear={() => {}}
+        />,
+    );
+
+    const clearIcon = component.locator('svg[data-test-id="fondue-icons-cross"]');
+    const inputButton = component.locator('button[data-color-input-select]');
+    const clearButton = component.locator('button:has(svg[data-test-id="fondue-icons-cross"])');
+
+    await clearIcon.waitFor();
+
+    const defaultColor = await clearIcon.evaluate((el) => getComputedStyle(el).getPropertyValue('color'));
+    expect(defaultColor).toBe('rgb(129, 132, 132)');
+
+    await inputButton.hover();
+    const inputHoveredColor = await clearIcon.evaluate((el) => getComputedStyle(el).getPropertyValue('color'));
+    expect(inputHoveredColor).toBe('rgb(108, 112, 112)');
+
+    await clearButton.hover();
+    const clearButtonHoveredColor = await clearIcon.evaluate((el) => getComputedStyle(el).getPropertyValue('color'));
+    expect(clearButtonHoveredColor).toBe('rgb(45, 50, 50)');
+});

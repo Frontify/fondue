@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Box } from '@components/Box/Box';
+import { Box } from '@components/Box';
 
 import { Flex, type FlexProps } from './Flex';
 

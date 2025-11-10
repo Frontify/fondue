@@ -48,8 +48,8 @@ const ButtonEmphasisWeak = {
     [ButtonStyle.Default]: {
         button:
             'tw-border-transparent ' +
-            'hover:tw-bg-container-secondary-hover ' +
-            'active:tw-bg-container-secondary-active ',
+            'hover:tw-bg-button-background-hover hover:tw-border-button-border ' +
+            'active:tw-bg-button-background-pressed ',
         icon:
             'tw-text-button-icon ' +
             'group-hover:tw-text-button-icon-hover ' +
@@ -62,7 +62,7 @@ const ButtonEmphasisWeak = {
     [ButtonStyle.Positive]: {
         button:
             'tw-border-transparent ' +
-            'hover:tw-bg-button-positive-background-hover ' +
+            'hover:tw-bg-button-positive-background-hover hover:tw-border-button-positive-border ' +
             'active:tw-bg-button-positive-background-pressed ',
         icon:
             'tw-text-button-strong-positive-icon ' +
@@ -76,7 +76,7 @@ const ButtonEmphasisWeak = {
     [ButtonStyle.Negative]: {
         button:
             'tw-border-transparent ' +
-            'hover:tw-bg-button-negative-background-hover ' +
+            'hover:tw-bg-button-negative-background-hover hover:tw-border-button-negative-border ' +
             'active:tw-bg-button-negative-background-pressed ',
         icon:
             'tw-text-button-negative-icon ' +
@@ -90,8 +90,8 @@ const ButtonEmphasisWeak = {
     [ButtonStyle.Danger]: {
         button:
             'tw-border-transparent ' +
-            'hover:tw-bg-container-secondary-hover ' +
-            'active:tw-bg-container-secondary-active ',
+            'hover:tw-bg-button-background-hover ' +
+            'active:tw-bg-button-background-pressed ',
         icon:
             'tw-text-button-negative-icon ' +
             'group-hover:tw-text-button-negative-icon-hover' +
@@ -123,9 +123,9 @@ export const ButtonStyleClasses: Record<ButtonEmphasis, Record<UpdatedButtonStyl
     [ButtonEmphasis.Default]: {
         [ButtonStyle.Default]: {
             button:
-                'tw-bg-container-secondary ' +
-                'hover:tw-bg-container-secondary-hover ' +
-                'active:tw-bg-container-secondary-active ',
+                'tw-bg-button-background tw-border-button-border ' +
+                'hover:tw-bg-button-background-hover ' +
+                'active:tw-bg-button-background-pressed ',
             icon:
                 'tw-text-button-icon ' +
                 'group-hover:tw-text-button-icon-hover ' +
@@ -165,9 +165,9 @@ export const ButtonStyleClasses: Record<ButtonEmphasis, Record<UpdatedButtonStyl
         },
         [ButtonStyle.Danger]: {
             button:
-                'tw-bg-container-secondary ' +
-                'hover:tw-bg-container-secondary-hover ' +
-                'active:tw-bg-container-secondary-active ',
+                'tw-bg-button-background tw-border-button-border ' +
+                'hover:tw-bg-button-background-hover ' +
+                'active:tw-bg-button-background-pressed ',
             icon:
                 'tw-text-button-negative-icon ' +
                 'group-hover:tw-text-button-negative-icon-hover' +
@@ -178,7 +178,10 @@ export const ButtonStyleClasses: Record<ButtonEmphasis, Record<UpdatedButtonStyl
                 'group-active:tw-text-button-negative-icon-pressed ',
         },
         [ButtonStyle.Loud]: {
-            button: 'tw-bg-box-selected hover:tw-bg-box-selected-hover active:tw-bg-box-selected-pressed ',
+            button:
+                'tw-bg-box-selected tw-border-button-border ' +
+                'hover:tw-bg-box-selected-hover ' +
+                'active:tw-bg-box-selected-pressed ',
             icon:
                 'tw-text-box-selected-inverse ' +
                 'group-hover:tw-text-box-selected-inverse-hover' +

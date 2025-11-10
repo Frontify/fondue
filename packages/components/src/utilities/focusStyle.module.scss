@@ -7,8 +7,8 @@
         transition-duration: 0ms;
 
         box-shadow:
-            0 0 0 2px var(--color-surface-default),
-            0 0 0 6px var(--color-focus-default);
+            0 0 0 2px var(--base-color),
+            0 0 0 6px var(--focus-ring-color);
     }
 }
 

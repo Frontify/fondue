@@ -1,3 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export { type MenuItemType } from './SelectMenu';
+export * from './SelectMenu';
+export * from './SelectMenuItem';
+export * from './SelectMenuSection';

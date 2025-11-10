@@ -6,11 +6,8 @@ import { PatternDesign, PatternScale, PatternTheme } from '@foundation/Pattern';
 
 import { FrontifyPattern, type FrontifyPatternProps } from './FrontifyPattern';
 
-/**
- ### This component is deprecated, please use the your own component instead.
- */
 export default {
-    title: 'Legacy Components/Deprecated/FrontifyPattern',
+    title: 'Components/FrontifyPattern',
     component: FrontifyPattern,
     tags: ['autodocs'],
     argTypes: {
@@ -28,11 +25,6 @@ export default {
             options: Object.keys(PatternTheme),
             defaultValue: PatternTheme.Black,
             control: { type: 'select' },
-        },
-    },
-    parameters: {
-        status: {
-            type: 'deprecated',
         },
     },
     decorators: [

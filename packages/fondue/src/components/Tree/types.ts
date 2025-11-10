@@ -4,8 +4,7 @@ import { type Active, type Collision, type Over, type Translate } from '@dnd-kit
 import { type useSortable } from '@dnd-kit/sortable';
 import { type MutableRefObject, type ReactElement, type ReactNode } from 'react';
 
-import { type InternalTreeItemProps } from './TreeItem';
-import { type Overlay } from './TreeItem/TreeItemOverlay';
+import { type InternalTreeItemProps, type Overlay } from './TreeItem';
 import { type Projection } from './helpers';
 
 export type SensorContext = MutableRefObject<{
@@ -101,23 +100,24 @@ export const TreeItemColorsClassMap: Record<TreeItemColors, TreeItemColorStyles>
         dragHanlderTextColor: '',
         selectedDragHanlderTextColor: '',
     },
-    soft: {
-        textColor: 'tw-text-primary',
-        selectedTextColor: 'tw-font-medium tw-text-primary',
-        backgroundColor: 'group-hover:tw-bg-surface-hover',
-        selectedBackgroundColor: 'tw-bg-surface-active group-hover:tw-bg-surface-hover',
-        pressedBackgroundColor: 'group-active:tw-bg-surface-active',
-        dragHanlderTextColor: 'tw-text-primary',
-        selectedDragHanlderTextColor: 'tw-text-primary',
-    },
     neutral: {
-        textColor: 'tw-text-primary',
-        selectedTextColor: 'tw-font-medium tw-text-primary',
-        backgroundColor: 'group-hover:tw-bg-container-secondary-hover',
-        selectedBackgroundColor: 'tw-bg-container-secondary-active group-hover:tw-bg-container-secondary-hover',
-        pressedBackgroundColor: 'group-active:tw-bg-container-secondary-active',
-        dragHanlderTextColor: 'tw-text-primary',
-        selectedDragHanlderTextColor: 'tw-text-primary',
+        textColor: 'tw-text-text',
+        selectedTextColor: 'tw-font-medium tw-text-box-neutral-strong-inverse',
+        backgroundColor: 'group-hover:tw-bg-box-neutral',
+        selectedBackgroundColor: 'tw-bg-box-neutral-strong group-hover:tw-bg-box-neutral-strong-hover',
+        pressedBackgroundColor: 'group-active:tw-bg-box-neutral-pressed',
+        dragHanlderTextColor: 'tw-text-text',
+        selectedDragHanlderTextColor: 'tw-text-box-neutral-strong-inverse',
+    },
+    soft: {
+        textColor: 'tw-text-text',
+        selectedTextColor: 'tw-font-medium tw-text-box-neutral-strong',
+        backgroundColor: 'group-hover:tw-bg-box-neutral-hover',
+        selectedBackgroundColor:
+            'tw-bg-box-neutral-strong-inverse-hover group-hover:tw-bg-box-neutral-strong-inverse-hover',
+        pressedBackgroundColor: 'group-active:tw-bg-box-neutral-pressed',
+        dragHanlderTextColor: 'tw-text-text',
+        selectedDragHanlderTextColor: 'tw-text-box-neutral-strong',
     },
 };
 

@@ -2,19 +2,19 @@
 
 import { type Meta, type StoryFn } from '@storybook/react-vite';
 
+import { Button } from '@components/Button/Button';
+import { ButtonGroup } from '@components/ButtonGroup/ButtonGroup';
 import IconExclamationMarkCircle24 from '@foundation/Icon/Generated/IconExclamationMarkCircle24';
 import IconExclamationMarkTriangle24 from '@foundation/Icon/Generated/IconExclamationMarkTriangle24';
 import IconTrashBin24 from '@foundation/Icon/Generated/IconTrashBin24';
 
+import { ButtonSize, ButtonStyle } from '../Button/ButtonTypes';
+
 import { Toast as ToastComponent } from './Toast';
 import { ToastAnimationDirection, type ToastProps, ToastStyle } from './types';
 
-/**
- ### *Legacy component warning*
- #### This is a unmaintained legacy component. It will be deprecated and replaced with a new component in an upcoming release.
- */
 export default {
-    title: 'Legacy Components/Toast',
+    title: 'Components/Toast',
     component: ToastComponent,
     tags: ['autodocs'],
     argTypes: {
@@ -80,12 +80,20 @@ WithInteractiveContent.args = {
     style: ToastStyle.Danger,
     icon: <IconTrashBin24 />,
     children: (
-        <div className="tw-flex tw-p-4">
-            <div className="tw-border-r tw-border-black-20 tw-pr-4">
-                <div className="tw-font-bold">Item Deletion Confirmation</div>
-                <span className="tw-mt-1">You are about to delete this item</span>
+        <>
+            <div className="tw-flex tw-p-4">
+                <div className="tw-border-r tw-border-black-20 tw-pr-4">
+                    <div className="tw-font-bold">Item Deletion Confirmation</div>
+                    <span className="tw-mt-1">You are about to delete this item</span>
+                </div>
             </div>
-        </div>
+            <div className="tw-flex tw-items-center tw-py-4 tw-pr-4">
+                <ButtonGroup size={ButtonSize.Medium}>
+                    <Button style={ButtonStyle.Secondary}>Yes, delete it</Button>
+                    <Button>Cancel</Button>
+                </ButtonGroup>
+            </div>
+        </>
     ),
 };
 

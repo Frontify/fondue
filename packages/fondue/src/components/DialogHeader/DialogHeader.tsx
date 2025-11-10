@@ -1,12 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Box } from '@components/Box/Box';
-import { Flex } from '@components/Flex/Flex';
+import { Box } from '@components/Box';
+import { Flex } from '@components/Flex';
 import IconCross from '@foundation/Icon/Generated/IconCross';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 
-import { type DialogHeaderProps, dialogHeadingMap, dialogPaddingMap } from '../../types/dialog';
+import { type DialogHeaderProps, dialogHeadingMap, dialogPaddingMap } from '../../types';
 
 /**
  * @deprecated Use `Dialog` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#dialog the migration guide}.

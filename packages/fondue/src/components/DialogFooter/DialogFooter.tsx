@@ -2,15 +2,14 @@
 
 import { type ReactElement } from 'react';
 
-import { Box } from '@components/Box/Box';
-import { Button } from '@components/Button/Button';
-import { ButtonEmphasis, ButtonSize } from '@components/Button/ButtonTypes';
-import { Flex } from '@components/Flex/Flex';
+import { Box } from '@components/Box';
+import { Button, ButtonEmphasis, ButtonSize } from '@components/Button';
+import { Flex } from '@components/Flex';
 import IconArrowLeft from '@foundation/Icon/Generated/IconArrowLeft';
 import { useMobileDetection } from '@hooks/useMobileDetection';
 import { merge } from '@utilities/merge';
 
-import { type DialogFooterProps, dialogPaddingMap } from '../../types/dialog';
+import { type DialogFooterProps, dialogPaddingMap } from '../../types';
 
 /**
  * @deprecated Use `Dialog` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#dialog the migration guide}.

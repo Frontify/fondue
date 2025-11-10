@@ -16,9 +16,6 @@ import { Validation, validationClassMap } from '@utilities/validation';
 
 import { type InputBaseProps, InputTypes } from '../../types/input';
 
-/**
- * @deprecated Use `TextInput` from `@frontify/fondue/components` with `type="password"` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#text-input the migration guide}.
- */
 export type PasswordInputProps = { obfuscated?: boolean } & Omit<
     InputBaseProps<string>,
     'valueSelect' | 'decorator' | 'suffix'

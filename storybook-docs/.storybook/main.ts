@@ -7,6 +7,7 @@ const pathPrefix = process.env.STORYBOOK_PATH_PREFIX || '/';
 const config: StorybookConfig = {
     stories: ['../stories/**/*.mdx', '../stories/**/*.stories.@(ts|tsx)'],
     addons: [
+        '@vueless/storybook-dark-mode',
         '@storybook/addon-links',
         '@storybook/addon-a11y',
         '@etchteam/storybook-addon-status',
@@ -31,21 +32,15 @@ const config: StorybookConfig = {
     refs: (_config, { configType }) => {
         if (configType === 'DEVELOPMENT') {
             return {
-                tokens: {
-                    title: 'Tokens',
-                    url: 'http://localhost:6005',
+                current: {
+                    title: 'Current',
+                    url: 'http://localhost:6006',
                     type: 'auto-inject',
                     expanded: true,
                 },
                 icons: {
                     title: 'Icons',
                     url: 'http://localhost:6007',
-                    type: 'auto-inject',
-                    expanded: true,
-                },
-                current: {
-                    title: 'Components',
-                    url: 'http://localhost:6006',
                     type: 'auto-inject',
                     expanded: true,
                 },
@@ -65,19 +60,14 @@ const config: StorybookConfig = {
         }
 
         return {
-            tokens: {
-                title: 'Tokens',
-                url: `${pathPrefix}tokens/`,
+            current: {
+                title: 'Current',
+                url: `${pathPrefix}new`,
                 expanded: true,
             },
             icons: {
                 title: 'Icons',
                 url: `${pathPrefix}icons`,
-                expanded: true,
-            },
-            current: {
-                title: 'Components',
-                url: `${pathPrefix}new`,
                 expanded: true,
             },
             charts: {

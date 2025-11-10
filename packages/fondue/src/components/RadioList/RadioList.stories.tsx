@@ -6,12 +6,8 @@ import { action } from 'storybook/actions';
 import { RadioButton, RadioButtonEmphasis } from './RadioButton';
 import { RadioList, RadioListDirection, type RadioListProps } from './RadioList';
 
-/**
- ### *Legacy component warning*
- #### This is a unmaintained legacy component. It will be deprecated and replaced with a new component in an upcoming release.
- */
 export default {
-    title: 'Legacy Components/RadioList',
+    title: 'Components/RadioList',
     component: RadioList,
     tags: ['autodocs'],
     parameters: {

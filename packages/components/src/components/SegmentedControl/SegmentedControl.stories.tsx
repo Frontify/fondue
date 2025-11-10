@@ -113,11 +113,8 @@ export const IconAndText: Story = {
 };
 
 export const Disabled: Story = {
-    args: {
-        disabled: true,
-    },
     render: (args) => (
-        <SegmentedControl.Root {...args}>
+        <SegmentedControl.Root {...args} disabled>
             <SegmentedControl.Item value="first">
                 <IconIcon size={20} />
                 First

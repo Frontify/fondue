@@ -10,9 +10,6 @@ type CodeSize = 'small' | 'medium' | 'large';
 
 type CodeColor = 'default' | 'weak' | 'x-weak' | 'disabled' | 'negative' | 'positive' | 'warning' | 'interactive';
 
-/**
- * @deprecated Please use updated Code component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#code the migration guide}.
- */
 export type CodeProps = {
     size?: CodeSize;
     weight?: CodeWeight;
@@ -43,9 +40,6 @@ const colorMap: Record<CodeColor, string> = {
     interactive: 'tw-text-text-interactive',
 };
 
-/**
- * @deprecated Please use updated Code component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#code the migration guide}.
- */
 export const Code = ({
     children,
     as: Tag = 'span',

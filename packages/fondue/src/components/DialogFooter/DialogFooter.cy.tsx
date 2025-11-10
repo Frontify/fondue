@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { ButtonEmphasis } from '@components/Button/ButtonTypes';
+import { ButtonEmphasis } from '@components/Button';
 
 import { DialogFooter } from './DialogFooter';
 

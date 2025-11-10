@@ -3,21 +3,18 @@
 import { type Meta, type StoryFn } from '@storybook/react-vite';
 import { useState } from 'react';
 
-import { NumberInput } from '@components/NumberInput/NumberInput';
-import { TextInput, TextInputType } from '@components/TextInput/TextInput';
+import { TextInput, TextInputType } from '@components/TextInput';
 import IconInfo from '@foundation/Icon/Generated/IconInfo';
 import IconNook16 from '@foundation/Icon/Generated/IconNook16';
 import IconQuestionMark from '@foundation/Icon/Generated/IconQuestionMark';
 import { Validation } from '@utilities/validation';
 
+import { NumberInput } from '../NumberInput';
+
 import { FormField, type FormFieldProps } from './FormField';
 
-/**
- ### This component is deprecated, please use the your own form component instead.
- For use in frontify `web-app`, you can use the common `Form` components.
- */
 export default {
-    title: 'Legacy Components/Deprecated/FormField',
+    title: 'Components/FormField',
     component: FormField,
     tags: ['autodocs'],
     argTypes: {
@@ -77,11 +74,6 @@ export default {
             name: 'readOnly',
             defaultValue: false,
             control: { type: 'boolean' },
-        },
-    },
-    parameters: {
-        status: {
-            type: 'deprecated',
         },
     },
     args: {

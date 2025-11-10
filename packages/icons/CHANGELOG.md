@@ -1,11 +1,5 @@
 # @frontify/fondue-icons
 
-## 0.22.0-rc.0
-
-### Minor Changes
-
-- [`e2e133e`](https://github.com/Frontify/fondue/commit/e2e133e56d7f60866bfd8f0f2d82553325d16599) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: bump versions
-
 ## 0.21.0
 
 ### Minor Changes
@@ -17,14 +11,6 @@
 - [#2512](https://github.com/Frontify/fondue/pull/2512) [`bd5c4ee`](https://github.com/Frontify/fondue/commit/bd5c4ee6b2d3a2adcdbcc928208df061031764b4) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
 
 - [#2512](https://github.com/Frontify/fondue/pull/2512) [`bd5c4ee`](https://github.com/Frontify/fondue/commit/bd5c4ee6b2d3a2adcdbcc928208df061031764b4) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
-
-## 0.21.0-rc.1
-
-### Patch Changes
-
-- [#2492](https://github.com/Frontify/fondue/pull/2492) [`f5785d1`](https://github.com/Frontify/fondue/commit/f5785d1155c4b295573cd8fbdb88114b1ecaef1e) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
-
-- [`06016db`](https://github.com/Frontify/fondue/commit/06016db7131d2611dad9b88115e80c9fe9d2051e) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: merge main into v13
 
 ## 0.20.1
 
@@ -49,24 +35,6 @@
 ### Minor Changes
 
 - [#2441](https://github.com/Frontify/fondue/pull/2441) [`d868114`](https://github.com/Frontify/fondue/commit/d86811431bb12264faf431cf1a38a1f22b75c6d9) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
-
-## 0.18.0-rc.0
-
-### Minor Changes
-
-- chore: fondue release candidate
-
-## 0.18.0-beta.1
-
-### Patch Changes
-
-- [#2394](https://github.com/Frontify/fondue/pull/2394) [`6e7dd18`](https://github.com/Frontify/fondue/commit/6e7dd18ce96b8680409f9099e7dc57e1dea9ae8e) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
-
-## 0.18.0-beta.0
-
-### Minor Changes
-
-- [#2302](https://github.com/Frontify/fondue/pull/2302) [`d010cb5`](https://github.com/Frontify/fondue/commit/d010cb53242c9d9e9112bb369a9af975189ba36a) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: overhauled token generation and switched to new token set
 
 ## 0.17.1
 

@@ -2,9 +2,6 @@
 
 import { type ReactElement } from 'react';
 
-/**
- * @deprecated Please use updated Divider component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#divider the migration guide}.
- */
 export enum DividerStyle {
     NoLine = 'noline',
     Dashed = 'dashed',
@@ -12,18 +9,12 @@ export enum DividerStyle {
     Dotted = 'dotted',
 }
 
-/**
- * @deprecated Please use updated Divider component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#divider the migration guide}.
- */
 export enum DividerHeight {
     Small = '36px',
     Medium = '60px',
     Large = '96px',
 }
 
-/**
- * @deprecated Please use updated Divider component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#divider the migration guide}.
- */
 export type DividerProps = {
     as?: 'div' | 'li';
     style?: DividerStyle;

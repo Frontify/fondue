@@ -2,10 +2,9 @@
 
 import { type ReactNode, useRef, useState } from 'react';
 
-import { Box } from '@components/Box/Box';
-import { Button } from '@components/Button/Button';
-import { ButtonEmphasis, ButtonStyle } from '@components/Button/ButtonTypes';
-import { TextInput } from '@components/TextInput/TextInput';
+import { Box } from '@components/Box';
+import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';
+import { TextInput } from '@components/TextInput';
 import { useFocusTrap } from '@hooks/useFocusTrap';
 
 const TOGGLE_BUTTON = '[data-test-id=toggle-button]';

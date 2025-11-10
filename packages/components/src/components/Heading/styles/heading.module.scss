@@ -1,34 +1,35 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 .root {
-    font-family: var(--typography-font-family-primary);
+    font-family: var(--heading-family-stack);
 }
 
 .size-medium {
-    font-size: var(--typography-font-size-medium);
-    line-height: var(--typography-line-height-tight);
+    font-size: var(--heading-size-medium);
+    line-height: var(--heading-size-medium-line-height);
 }
 .size-large {
-    font-size: var(--typography-font-size-large);
-    line-height: var(--typography-line-height-wide);
+    font-size: var(--heading-size-large);
+    line-height: var(--heading-size-large-line-height);
 }
 .size-x-large {
-    font-size: var(--typography-font-size-x-large);
-    line-height: var(--typography-line-height-loose);
+    font-size: var(--heading-size-x-large);
+    line-height: var(--heading-size-x-large-line-height);
 }
 .size-xx-large {
-    font-size: var(--typography-font-size-xx-large);
-    line-height: var(--typography-line-height-extra-loose);
+    font-size: var(--heading-size-xx-large);
+    line-height: var(--heading-size-xx-large-line-height);
 }
 
-.weight-default { font-weight: var(--typography-font-weight-medium); }
-.weight-strong { font-weight: var(--typography-font-weight-bold); }
+.weight-default { font-weight: var(--heading-weight-number); }
+.weight-strong { font-weight: var(--heading-weight-strong-number); }
 
-.color-default { color: var(--color-primary-default); }
-.color-weak { color: var(--color-secondary-default); }
-.color-disabled { color: var(--color-disabled-default); }
-.color-negative { color: var(--color-error-default); }
-.color-positive { color: var(--color-success-default); }
-.color-warning { color: var(--color-warning-default); }
-.color-interactive { color: var(--color-highlight-default); }
+.color-default { color: var(--text-color); }
+.color-weak { color: var(--text-color-weak); }
+.color-x-weak { color: var(--text-color-x-weak); }
+.color-disabled { color: var(--text-color-disabled); }
+.color-negative { color: var(--text-color-negative); }
+.color-positive { color: var(--text-color-positive); }
+.color-warning { color: var(--text-color-warning); }
+.color-interactive { color: var(--text-color-interactive); }
 

@@ -5,20 +5,20 @@ import { sv } from '#/utilities/styleUtilities';
 
 export const buttonStyles = sv({
     base:
-        'tw-group tw-relative tw-flex tw-flex-row tw-gap-2 tw-items-center tw-justify-center tw-cursor-pointer tw-font-primary tw-font-medium tw-box-border tw-whitespace-nowrap tw-transition-colors ' +
+        'tw-group tw-relative tw-flex tw-flex-row tw-gap-2 tw-items-center tw-justify-center tw-cursor-pointer tw-font-body tw-font-medium tw-box-border tw-whitespace-nowrap tw-transition-colors ' +
         `${FOCUS_OUTLINE}`,
     variants: {
         disabled: {
-            true: 'tw-cursor-not-allowed tw-pointer-events-none tw-bg-container-disabled',
+            true: 'tw-cursor-not-allowed tw-pointer-events-none tw-text-box-disabled-inverse tw-bg-box-disabled',
         },
         rounding: {
-            medium: 'tw-rounded-medium',
+            medium: 'tw-rounded',
             full: 'tw-rounded-full',
         },
         size: {
-            small: 'tw-h-6 tw-body-small',
-            medium: 'tw-h-9 tw-body-medium',
-            large: 'tw-h-12 tw-body-large',
+            small: 'tw-h-6 tw-text-body-small',
+            medium: 'tw-h-9 tw-text-body-medium',
+            large: 'tw-h-12 tw-text-body-large',
         },
         aspect: {
             square: 'tw-aspect-square tw-px-0',
@@ -46,111 +46,132 @@ export const buttonStyles = sv({
             variant: 'default',
             emphasis: 'default',
             class:
-                'tw-bg-container-secondary ' +
-                'hover:tw-bg-container-secondary-hover ' +
-                'active:tw-bg-container-secondary-active',
+                'tw-bg-button-background ' +
+                'hover:tw-bg-button-background-hover ' +
+                'active:tw-bg-button-background-pressed',
         },
         {
             disabled: false,
             variant: 'default',
             emphasis: 'weak',
-            class: 'hover:tw-bg-container-secondary-hover active:tw-bg-container-secondary-active',
+            class: 'hover:tw-bg-button-background-hover active:tw-bg-button-background-pressed',
         },
         {
             disabled: false,
             variant: 'default',
             emphasis: 'strong',
-            class: 'tw-bg-primary hover:tw-bg-primary-hover active:tw-bg-primary-active',
+            class:
+                'tw-bg-button-strong-background ' +
+                'hover:tw-bg-button-strong-background-hover ' +
+                'active:tw-bg-button-strong-background-pressed',
         },
         {
             disabled: false,
             variant: 'positive',
             emphasis: 'default',
             class:
-                'tw-bg-container-success ' +
-                'hover:tw-bg-container-success-hover ' +
-                'active:tw-bg-container-success-active',
+                'tw-bg-button-positive-background ' +
+                'hover:tw-bg-button-positive-background-hover ' +
+                'active:tw-bg-button-positive-background-pressed',
         },
         {
             disabled: false,
             variant: 'positive',
             emphasis: 'weak',
-            class: 'hover:tw-bg-container-success-hover active:tw-bg-container-success-active',
+            class: 'hover:tw-bg-button-positive-background-hover active:tw-bg-button-positive-background-pressed',
         },
         {
             disabled: false,
             variant: 'positive',
             emphasis: 'strong',
-            class: 'tw-bg-success hover:tw-bg-success-hover active:tw-bg-success-active',
+            class:
+                'tw-bg-button-strong-positive-background ' +
+                'hover:tw-bg-button-strong-positive-background-hover ' +
+                'active:tw-bg-button-strong-positive-background-pressed',
         },
         {
             disabled: false,
             variant: 'negative',
             emphasis: 'default',
-            class: 'tw-bg-container-error hover:tw-bg-container-error-hover active:tw-bg-container-error-active',
+            class:
+                'tw-bg-button-negative-background ' +
+                'hover:tw-bg-button-negative-background-hover ' +
+                'active:tw-bg-button-negative-background-pressed',
         },
         {
             disabled: false,
             variant: 'negative',
             emphasis: 'weak',
-            class: 'hover:tw-bg-container-error-hover active:tw-bg-container-error-active',
+            class: 'hover:tw-bg-button-negative-background-hover active:tw-bg-button-negative-background-pressed',
         },
         {
             disabled: false,
             variant: 'negative',
             emphasis: 'strong',
-            class: 'tw-bg-error hover:tw-bg-error-hover active:tw-bg-error-active',
+            class:
+                'tw-bg-button-strong-negative-background ' +
+                'hover:tw-bg-button-strong-negative-background-hover ' +
+                'active:tw-bg-button-strong-negative-background-pressed',
         },
         {
             disabled: false,
             variant: 'danger',
             emphasis: 'default',
-            class: 'tw-bg-error hover:tw-bg-error-hover active:tw-bg-error-active',
+            class:
+                'tw-bg-button-background ' +
+                'hover:tw-bg-button-background-hover ' +
+                'active:tw-bg-button-background-pressed',
         },
         {
             disabled: false,
             variant: 'danger',
             emphasis: 'weak',
-            class: 'tw-bg-error hover:tw-bg-error-hover active:tw-bg-error-active',
+            class: 'hover:tw-bg-button-background-hover active:tw-bg-button-background-pressed',
         },
         {
             disabled: false,
             variant: 'danger',
             emphasis: 'strong',
-            class: 'tw-bg-error hover:tw-bg-error-hover active:tw-bg-error-active',
+            class:
+                'tw-bg-button-danger-background ' +
+                'hover:tw-bg-button-danger-background-hover ' +
+                'active:tw-bg-button-danger-background-pressed',
         },
         {
             disabled: false,
             variant: 'loud',
             emphasis: 'default',
-            class: 'tw-bg-container-highlight hover:tw-bg-container-highlight-hover active:tw-bg-container-highlight-active',
+            class: 'tw-bg-box-selected hover:tw-bg-box-selected-hover active:tw-bg-box-selected-pressed',
         },
         {
             disabled: false,
             variant: 'loud',
             emphasis: 'weak',
-            class: 'tw-border-transparent hover:tw-bg-container-highlight-hover active:tw-bg-container-highlight-active',
+            class: 'tw-border-transparent hover:tw-bg-box-selected-hover active:tw-bg-box-selected-pressed',
         },
         {
             disabled: false,
             variant: 'loud',
             emphasis: 'strong',
-            class: 'tw-bg-highlight hover:tw-bg-highlight-hover active:tw-bg-highlight-active',
+            class:
+                'tw-bg-box-selected-strong ' +
+                'hover:tw-bg-box-selected-strong-hover ' +
+                'active:tw-bg-box-selected-strong-pressed ',
         },
         {
             aspect: 'default',
             size: 'small',
-            class: 'tw-px-3 tw-gap-1.5',
+            class: 'tw-px-2',
         },
         {
             aspect: 'default',
             size: 'medium',
-            class: 'tw-px-4 tw-gap-1.5',
+            class: 'tw-px-4',
         },
         {
             aspect: 'default',
             size: 'large',
-            class: 'tw-px-6 tw-gap-2',
+            class: 'tw-px-6',
         },
     ],
     defaultVariants: {
