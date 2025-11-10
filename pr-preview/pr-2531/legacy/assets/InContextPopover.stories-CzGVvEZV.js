@@ -1,0 +1,25 @@
+import{r as p,j as t}from"./iframe-Bx9GVrJZ.js";import{a as l}from"./Box-CMjufgGn.js";import{B as d}from"./Button-Da3Gx_ir.js";import{D as u}from"./DialogBody-D_hU0Nj0.js";import{D as g}from"./DialogFooter-CBaQVBvJ.js";import{D as f}from"./DialogHeader-D8fV2m5h.js";import{P as n}from"./Popover-0BWEP8dc.js";import{I as x}from"./IconIcon-Ct5V9yPm.js";import"./preload-helper-CG1F6kIz.js";import"./borderStyle-D9jrV09G.js";import"./merge-DI-veSMP.js";import"./focusStyle-Ch_WJ4aJ.js";import"./input-CIGcvm77.js";import"./Checkbox-sW9wnNG2.js";import"./useFocusable-Dn-i4bwA.js";import"./useFocusRing-C_gjdnsv.js";import"./useEffectEvent-B5LtIWRy.js";import"./chain-C8kX9J9x.js";import"./index-C-gYs3Hr.js";import"./useFormValidationState-lVOleaOT.js";import"./useControlledState-BucMWiPd.js";import"./InputLabel-Oiy5y5vo.js";import"./TooltipIcon-_olP1H5z.js";import"./LegacyTooltip-CFgqf3d2.js";import"./useLink-A_GFgEa6.js";import"./usePopper-BsRWJAOy.js";import"./index-B_AR-7Zm.js";import"./Portal-C-f1HJei.js";import"./IconSize-BcCrF_mi.js";import"./useMemoizedId-GZQJvteq.js";import"./IconCheckMark-DAJ8cKO8.js";import"./IconExclamationMarkCircle24-CG5Ngt4w.js";import"./IconExclamationMarkTriangle-BaN9k6Ci.js";import"./IconExclamationMarkTriangle24-DsN51Y9L.js";import"./IconQuestionMarkCircle-wL1ZuTv1.js";import"./IconMinus-QL3DQ7_H.js";import"./Divider-DkiqWb8u.js";import"./Dropdown-uCdqZBwA.js";import"./useButton-1VD-WXX-.js";import"./FocusScope-BWhix_t8.js";import"./useOverlayTriggerState-CNPfYaKC.js";import"./useMenuTrigger-Dq-KTEQX.js";import"./useLabels-CxNtTZQy.js";import"./useLocalizedStringFormatter-B0X-g_J7.js";import"./context-CVGDgHuw.js";import"./VisuallyHidden-BuG4UE6u.js";import"./helper-DImH7bvT.js";import"./keyboard-BDlz2Gq6.js";import"./SelectionManager-Cqcjm5ME.js";import"./useField-CX812b-c.js";import"./MenuItem-DhmRC9QT.js";import"./IconCaretRight-D1M-LicO.js";import"./elements-BOYmskOL.js";import"./LoadingCircle-BUBQ-nVM.js";import"./Trigger-CNpMaSFH.js";import"./IconCaretDown-ojAjKLdu.js";import"./IconCaretDown16-CZX7ke6L.js";import"./IconCross-yaftdHV6.js";import"./IconTrashBin16-BjKSA6mw.js";import"./IconTrashBin24-B_YShVa4.js";import"./validation-C9S5KgfE.js";import"./EnablePortalWrapper-DGsp_PpL.js";import"./FormControl-BXkKBcHn.js";import"./Switch-DZKRmo2d.js";import"./TabItem-CP7LJa8L.js";import"./TextInput-CEItFKq9.js";import"./Tooltip-CDtgP5s8.js";import"./useClickOutside-BSKSo8Jy.js";import"./dialog-D9O7a7Fm.js";import"./Tree-DIr1AUUe.js";import"./_Uint8Array-CwPxMkg2.js";import"./Flex-D2lYMPxP.js";import"./IconIcon16-K2Crls6R.js";import"./IconIcon24-DPxzJY9P.js";const St={title:"Experimental/Popover/In Context",Component:n,tags:["autodocs"],args:{theme:"light"}},h=c=>{const[e,i]=p.useState(!1),r=p.useRef(null);return t.jsxs("div",{className:"tw-h-32 tw-flex tw-justify-center tw-items-center",children:[t.jsx(d,{icon:t.jsx(x,{}),onClick:()=>i(!e),ref:r,children:"Trigger"}),t.jsx(n,{...c,anchor:r,open:e,handleClose:()=>i(!1),children:t.jsxs(l,{className:"tw-w-[400px]",children:[t.jsx(f,{title:"Title",padding:"compact"}),t.jsx(u,{padding:"compact",children:t.jsx("p",{children:"Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eos explicabo iure placeat quae quidem reiciendis sequi, veniam. Cupiditate eos necessitatibus nemo non obcaecati, quod ullam. Beatae deserunt eum quibusdam ratione."})}),t.jsx(g,{padding:"compact",actionButtons:[{children:"Confirm",onClick:()=>i(!1)}]})]})})]})},o=h.bind({});o.args={};var m,s,a;o.parameters={...o.parameters,docs:{...(m=o.parameters)==null?void 0:m.docs,source:{originalSource:`args => {
+  const [isOpen, setIsOpen] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
+  return <div className="tw-h-32 tw-flex tw-justify-center tw-items-center">
+            <Button icon={<IconIcon />} onClick={() => setIsOpen(!isOpen)} ref={triggerRef}>
+                Trigger
+            </Button>
+            <Popover {...args} anchor={triggerRef} open={isOpen} handleClose={() => setIsOpen(false)}>
+                <Box className="tw-w-[400px]">
+                    <DialogHeader title="Title" padding="compact"></DialogHeader>
+                    <DialogBody padding="compact">
+                        <p>
+                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eos explicabo iure placeat quae
+                            quidem reiciendis sequi, veniam. Cupiditate eos necessitatibus nemo non obcaecati, quod
+                            ullam. Beatae deserunt eum quibusdam ratione.
+                        </p>
+                    </DialogBody>
+                    <DialogFooter padding="compact" actionButtons={[{
+          children: 'Confirm',
+          onClick: () => setIsOpen(false)
+        }]}></DialogFooter>
+                </Box>
+            </Popover>
+        </div>;
+}`,...(a=(s=o.parameters)==null?void 0:s.docs)==null?void 0:a.source}}};const Wt=["WithHeaderAndFooter"];export{o as WithHeaderAndFooter,Wt as __namedExportsOrder,St as default};
