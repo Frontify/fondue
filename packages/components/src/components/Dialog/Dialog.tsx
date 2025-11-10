@@ -220,7 +220,7 @@ export const DialogContent = (
         const focusableSelector =
             'button:not([data-tooltip-trigger="true"]), [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
 
-        // Try to find focusable element in order: body -> footer -> header -> content
+        // Try to find focusable element in order: body -> footer -> header
         const dialogBody = contentRef.current?.querySelector('[data-dialog-layout-component="body"]');
         const dialogFooter = contentRef.current?.querySelector('[data-dialog-layout-component="footer"]');
         const dialogHeader = contentRef.current?.querySelector('[data-dialog-layout-component="header"]');
@@ -232,9 +232,6 @@ export const DialogContent = (
 
         if (firstFocusable instanceof HTMLElement) {
             firstFocusable.focus();
-        } else if (contentRef.current) {
-            // Fallback: focus the dialog content itself
-            contentRef.current.focus();
         }
     };
 
