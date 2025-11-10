@@ -102,6 +102,17 @@
                 color: var(--box-disabled-color-inverse);
             }
         }
+
+        .action > button {
+            background-color: var(--box-disabled-color);
+            color: var(--box-disabled-color-inverse);
+            cursor: not-allowed;
+            pointer-events: none;
+
+            svg {
+                color: var(--box-disabled-color-inverse);
+            }
+        }
     }
 
     // Default variant (only variant)
