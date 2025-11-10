@@ -309,6 +309,13 @@
             );
         }
     }
+
+    // Remove divider for weak emphasis
+    &[data-emphasis="weak"]:not([data-disabled="true"]) {
+        .content {
+            border-inline-end: none;
+        }
+    }
 }
 
 .content {
