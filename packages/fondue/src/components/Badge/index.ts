@@ -1,4 +1,4 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 export * from './Badge';
-export * from './types';
+export { BadgeEmphasis, BadgeStatus, BadgeStyle, type BadgeProps } from './types';

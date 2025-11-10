@@ -25,6 +25,9 @@ type ColorInputTriggerProps = Pick<ColorPickerFlyoutProps, 'id' | 'currentColor'
     onDelete?: () => void;
 };
 
+/**
+ * @deprecated Use the `Flyout` together with the new `Color Picker` component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#color-picker the migration guide}.
+ */
 export const ColorInputTrigger = ({
     id,
     currentColor,

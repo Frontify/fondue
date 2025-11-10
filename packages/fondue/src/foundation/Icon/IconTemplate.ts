@@ -10,7 +10,7 @@ export const IconTemplate: Template = ({ interfaces, componentName, jsx }, { tpl
       ${interfaces}
 
       /**
-      * @deprecated Import Icons from \`@frontify/fondue/components\` instead.
+      * @deprecated Use icons from \`@frontify/fondue/icons\` instead.
       */
       function ${componentName}(props: GeneratedIconProps): ReactElement<GeneratedIconProps> {
         const customClassName = "tw-flex tw-items-center tw-justify-center tw-fill-current";
@@ -18,6 +18,9 @@ export const IconTemplate: Template = ({ interfaces, componentName, jsx }, { tpl
         return ${jsx};
       }
 
+      /**
+      * @deprecated Use icons from \`@frontify/fondue/icons\` instead.
+      */
       export default memo(${componentName});
     `;
 };

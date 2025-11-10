@@ -85,6 +85,9 @@ const AriaAccordionItem = ({
     );
 };
 
+/**
+ * @deprecated Please use a custom component instead.
+ */
 const mapToAriaProps = (children: ReactElement<AccordionItemProps>[]): TreeProps<AccordionItemProps> => {
     const ariaChildren = Children.map(children, (child, index) => {
         const { header, children } = child.props;

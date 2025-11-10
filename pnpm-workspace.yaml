@@ -1,10 +1,12 @@
 packages:
-  - packages/*
-  - storybook-docs
+    - packages/*
+    - storybook-docs
 
 onlyBuiltDependencies:
-  - cypress
-  - esbuild
-  - unrs-resolver
+    - "@bundled-es-modules/glob"
+    - cypress
+    - esbuild
+    - style-dictionary
+    - unrs-resolver
 
 prefer-workspace-packages: true

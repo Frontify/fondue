@@ -8,11 +8,7 @@ export default defineConfig({
         viteStaticCopy({
             targets: [
                 {
-                    src: 'node_modules/@frontify/fondue-tokens/dist/tailwind/tailwind.config.js',
-                    dest: '',
-                },
-                {
-                    src: 'node_modules/@frontify/fondue-tokens/dist/theme',
+                    src: 'node_modules/@frontify/fondue-tokens/dist/*',
                     dest: '',
                 },
             ],
@@ -20,7 +16,7 @@ export default defineConfig({
     ],
     build: {
         lib: {
-            entry: 'src/subpackages/tokens.js',
+            entry: 'src/subpackages/tokens.ts',
             name: 'FondueTokens',
             fileName: 'fondue-tokens',
         },

@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import '@frontify/fondue-tokens/styles';
 import '../src/styles.scss';
 
-import { type Preview, type Decorator, type StoryContext } from '@storybook/react-vite';
+import { type Decorator, type Preview, type StoryContext } from '@storybook/react-vite';
 import { type ComponentType } from 'react';
 
 import { Flex } from '../src/components/Flex/Flex';
@@ -68,6 +69,12 @@ const preview: Preview = {
     },
     parameters: {
         layout: 'fullscreen',
+        options: {
+            storySort: {
+                order: ['Tokens', 'Utilities', 'Typography', 'Layout', 'Components'],
+                method: 'alphabetical',
+            },
+        },
         docs: {
             page: DocumentationTemplate,
 

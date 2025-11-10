@@ -1,7 +1,7 @@
 {
     "name": "@frontify/fondue-tokens",
     "type": "module",
-    "version": "4.2.3",
+    "version": "5.0.0-rc.2",
     "description": "Single source of truth for Fondue Design Tokens",
     "author": "Frontify Developers <developers@frontify.com>",
     "homepage": "https://github.com/Frontify/fondue",
@@ -20,43 +20,55 @@
         "variables"
     ],
     "exports": {
-        ".": "./dist/js/colors.json",
-        "./tokens": "./dist/js/tokens.json",
+        "./styles": "./dist/css/base.css",
         "./tailwind": "./dist/tailwind/tailwind.config.js",
-        "./styles": "./dist/css/all.css",
-        "./theme-tokens": {
-            "types": "./dist/theme/themes.module.css.d.ts",
-            "import": "./dist/theme/themes.module.css"
+        "./themes": {
+            "types": "./dist/themes/themes.module.css.d.ts",
+            "import": "./dist/themes/themes.module.css"
         },
-        "./themes/*": "./dist/css/*"
+        "./json": "./dist/json/all-tokens.json",
+        "./json/colors": "./dist/json/colors.json",
+        "./json/semantic": "./dist/json/semantic.json",
+        "./json/utilities": "./dist/json/utilities.json",
+        "./legacy/tokens": "./dist/legacy/deprecatedBaseTokens.css",
+        "./legacy/tailwind": "./dist/legacy/deprecatedTailwindConfig.ts",
+        "./legacy/tools/replaceLegacyTokens": "./tools/replaceLegacyTokens.ts"
     },
     "files": [
         "dist"
     ],
     "scripts": {
-        "clean": "rimraf dist",
-        "build": "pnpm clean && tsx src/build.ts",
-        "build:debug": "pnpm clean && tsx src/build.ts --debug && pnpm build:tailwind:debug",
-        "build:tailwind:debug": "tailwind -c ./dist/tailwind/tailwind.config.js -o ./dist/css/tailwind_unpurged.css",
+        "build": "tsx src/buildTokens.ts && cp -r legacyTokens/* ./dist/legacy && mkdir -p ./dist/legacy/tools && cp -r tools/* ./dist/legacy/tools",
         "lint": "eslint .",
         "lint:fix": "eslint --fix .",
-        "typecheck": "tsc --noEmit"
+        "migrate": "tsx tools/migrate.js",
+        "typecheck": "tsc --noEmit",
+        "build:storybook": "tailwindcss -o .storybook/styles.css && storybook build",
+        "storybook": "storybook dev -p 6005"
     },
     "publishConfig": {
         "access": "public"
     },
     "peerDependencies": {
-        "react": "^18",
-        "react-dom": "^18",
-        "tailwindcss": "^3.0.0"
+        "tailwindcss": "^3.4.17"
+    },
+    "dependencies": {
+        "@types/react": "^18.3.20",
+        "react": "^18.3.1"
     },
     "devDependencies": {
         "@frontify/eslint-config-react": "^1.0.4",
+        "@frontify/fondue-components": "workspace:*",
+        "@frontify/fondue-icons": "workspace:*",
+        "@storybook/addon-a11y": "^9.1.10",
+        "@storybook/addon-docs": "^9.1.10",
+        "@storybook/addon-links": "^9.1.10",
+        "@storybook/react-vite": "^9.1.10",
         "@types/chroma-js": "^3.1.1",
         "@types/node": "^22.18.10",
-        "@types/react": "^18.3.24",
+        "@types/react": "^18.3.26",
         "@types/react-dom": "^18.3.7",
-        "@vitejs/plugin-react": "^4.7.0",
+        "@vitejs/plugin-react": "^5.0.4",
         "chalk": "^5.6.2",
         "chroma-js": "^3.1.2",
         "eslint": "^9.37.0",
@@ -66,7 +78,9 @@
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
         "rimraf": "^6.0.1",
-        "style-dictionary": "^3.9.2",
+        "storybook": "^9.1.10",
+        "style-dictionary": "^4.4.0",
+        "tailwindcss": "^3.4.18",
         "tsx": "^4.20.6",
         "typescript": "^5.9.3"
     }

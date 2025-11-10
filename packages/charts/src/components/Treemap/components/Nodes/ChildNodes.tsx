@@ -5,7 +5,7 @@ import { type HierarchyNode, type HierarchyRectangularNode } from 'd3-hierarchy'
 import { useState } from 'react';
 
 import { handlePointerMove } from '@components/Treemap/components/Nodes/helpers';
-import { colorAccessor, weakColorAccessor } from '@components/Treemap/helpers';
+import { colorAccessor, hoverColorAccessor } from '@components/Treemap/helpers';
 import { type TreemapDataPoint, type TreemapDataPointGroup, type TreemapTooltipState } from '@components/Treemap/types';
 
 type ChildNodesProps = {
@@ -30,6 +30,7 @@ export const ChildNodes = ({ childNodes, setTooltipState }: ChildNodesProps) => 
                 const y0RelativeToParent = child.y0 - deltaY;
                 const width = child.x1 - child.x0;
                 const height = child.y1 - child.y0;
+                const isHovered = hoveredGroup === child.data.id;
 
                 return (
                     <Group
@@ -47,9 +48,13 @@ export const ChildNodes = ({ childNodes, setTooltipState }: ChildNodesProps) => 
                             y={y0RelativeToParent}
                             width={width}
                             height={height}
-                            fill={weakColorAccessor(child.data.data.color)}
+                            fill={
+                                isHovered
+                                    ? hoverColorAccessor(child.data.data.color)
+                                    : colorAccessor(child.data.data.color)
+                            }
                         />
-                        {hoveredGroup === child.data.id && (
+                        {isHovered && (
                             <rect
                                 x={x0RelativeToParent + 1}
                                 y={y0RelativeToParent + 1}

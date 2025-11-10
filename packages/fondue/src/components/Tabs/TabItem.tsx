@@ -6,6 +6,9 @@ import { type BadgeProps } from '@components/Badge';
 import { checkIfContainInteractiveElements } from '@utilities/elements';
 import { merge } from '@utilities/merge';
 
+/**
+ * @deprecated Please use updated tabs component from `@frontify/fondue/components` instead.
+ */
 export type TabItemProps = {
     id: string;
     // eslint-disable-next-line @eslint-react/no-unused-props
@@ -21,6 +24,9 @@ export type TabItemProps = {
     active?: boolean;
 };
 
+/**
+ * @deprecated Please use updated tabs component from `@frontify/fondue/components` instead.
+ */
 export const TabItem = ({ active, disabled, children, id }: TabItemProps): Nullable<ReactElement> => {
     const [ref, setRef] = useState<HTMLDivElement | null>(null);
     const [hasInteractiveElements, setHasInteractiveElements] = useState(false);

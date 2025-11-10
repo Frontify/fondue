@@ -11,6 +11,7 @@ import { Accordion, AccordionContent, AccordionHeader, AccordionItem, AccordionR
 
 type Story = StoryObj<typeof AccordionRoot>;
 const meta: Meta<typeof AccordionRoot> = {
+    title: 'Components/Accordion',
     component: AccordionRoot,
     tags: ['autodocs'],
     subcomponents: {

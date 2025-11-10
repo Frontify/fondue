@@ -6,14 +6,14 @@
 
 .root {
     position: relative;
-    background-color: var(--box-neutral-color);
-    border: 1px solid var(--line-color-x-strong);
+    background-color: var(--color-container-secondary-default);
+    border: 1px solid var(--color-line-mid);
     box-sizing: border-box;
     flex-grow: 0;
     flex-shrink: 0;
 
     &:enabled:hover {
-        background-color: var(--box-neutral-color-hover);
+        background-color: var(--color-container-secondary-hover);
     }
 
     &.small {
@@ -40,19 +40,20 @@
     }
 
     &[data-state='checked'] {
-        background-color: var(--text-color-weak);
+        border-color: var(--color-line-strong);
+        background-color: var(--color-primary-default);
 
         &:enabled:hover {
-            background-color: var(--box-neutral-strong-color-hover);
+            background-color: var(--color-primary-hover);
         }
     }
 
     &:disabled {
-        border-color: var(--line-color);
-        background-color: var(--box-neutral-color);
+        border-color: var(--color-line-subtle);
+        background-color: var(--color-container-disabled-default);
 
         .thumb {
-            border-color: var(--line-color-strong);
+            border-color: var(--color-line-mid);
         }
     }
 }
@@ -65,9 +66,9 @@
     width: calc(var(--switch-height));
     height: calc(var(--switch-height));
 
-    background-color: var(--base-color);
+    background-color: var(--color-surface-default);
     border-radius: 9999px;
-    border: 1px solid var(--box-neutral-inverse-color);
+    border: 1px solid var(--color-line-strong);
 
     & {
         @include transitions.transition-transform;

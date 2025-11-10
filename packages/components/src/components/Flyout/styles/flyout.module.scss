@@ -8,19 +8,19 @@
 .root {
     display: flex;
     flex-direction: column;
-    background-color: var(--base-color);
-    border: var(--line-width) solid var(--line-color);
+    background-color: var(--color-surface-default);
+    border: var(--border-width-default) solid var(--color-line-subtle);
     width: 100%;
     overflow: auto;
     max-height: var(--radix-popover-content-available-height);
-    color: var(--text-color);
+    color: var(--color-primary-default);
 
     &[data-rounded='medium'] {
-        border-radius: var(--radius);
+        border-radius: var(--border-radius-medium);
     }
 
     &[data-rounded='large'] {
-        border-radius: var(--radius-large);
+        border-radius: var(--border-radius-large);
     }
 
     &[data-shadow='medium'] {
@@ -38,7 +38,7 @@
             width: var(--flyout-width);
             max-width: var(--flyout-max-width);
             margin-top: 0;
-            background-color: var(--base-color);
+            background-color: var(--color-surface-default);
         }
     }
 
@@ -64,7 +64,7 @@
     left: 0;
     width: 100dvw;
     height: 100dvh;
-    background-color: var(--box-positive-strong-inverse-color);
+    background-color: var(--color-success-on-success);
     opacity: 0.3;
     pointer-events: none;
 
@@ -81,7 +81,7 @@
     justify-content: space-between;
     align-items: center;
     font-weight: 500;
-    border-bottom: var(--line-width) solid var(--line-color);
+    border-bottom: var(--border-width-default) solid var(--color-line-subtle);
 
     .root[data-flyout-spacing='tight'] & {
         padding-block: sizeToken.get(2);
@@ -144,7 +144,7 @@
     justify-content: flex-end;
     gap: sizeToken.get(2);
     font-weight: 400;
-    border-top: var(--line-width) solid var(--line-color);
+    border-top: var(--border-width-default) solid var(--color-line-subtle);
 
     .root[data-flyout-spacing='tight'] & {
         padding-block: sizeToken.get(2);
@@ -165,9 +165,4 @@
         padding-block: sizeToken.get(10);
         padding-inline: sizeToken.get(10);
     }
-}
-
-.close {
-    @include focusStyle.focus-outline;
-    cursor: pointer;
 }

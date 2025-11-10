@@ -11,7 +11,7 @@ import { dividerStyles } from './styles/dividerStyles';
 type DividerStyle = 'noline' | 'dashed' | 'solid';
 type DividerPadding = 'none' | 'small' | 'medium' | 'large';
 type DividerDirection = 'horizontal' | 'vertical';
-type DividerColor = 'weak' | 'default' | 'strong' | 'x-strong';
+type DividerColor = 'weak' | 'default' | 'strong';
 
 export type DividerProps = {
     /**

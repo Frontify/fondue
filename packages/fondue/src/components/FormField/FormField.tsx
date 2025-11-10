@@ -9,7 +9,9 @@ import { generateRandomId } from '@utilities/generateRandomId';
 import { HelperText } from '@utilities/input';
 import { merge } from '@utilities/merge';
 import { Validation } from '@utilities/validation';
-
+/**
+ * @deprecated Please use a custom component instead.
+ */
 export type LabelProps = {
     text: string;
     hugWidth?: boolean;
@@ -18,7 +20,9 @@ export type LabelProps = {
     tooltips?: TooltipProps[];
     toolTipSize?: IconSize;
 };
-
+/**
+ * @deprecated Please use a custom component instead.
+ */
 export type FormFieldProps = {
     children: ReactElement;
     label: LabelProps;
@@ -96,7 +100,9 @@ const FormattedLabel = ({ label, disabled, readOnly, dataTestId }: FormattedLabe
         </span>
     );
 };
-
+/**
+ * @deprecated Please use a custom component instead.
+ */
 export const FormField = ({
     children,
     disabled = false,

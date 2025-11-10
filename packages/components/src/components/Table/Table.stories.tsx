@@ -15,6 +15,7 @@ import { Table, TableBody, TableHeader, TableHeaderCell, TableRoot, TableRow, Ta
 
 type Story = StoryObj<typeof TableRoot>;
 const meta: Meta<typeof TableRoot> = {
+    title: 'Components/Table',
     component: TableRoot,
     subcomponents: {
         'Table.Header': TableHeader,
@@ -36,8 +37,8 @@ const meta: Meta<typeof TableRoot> = {
         layout: {
             control: {
                 type: 'select',
-                options: ['auto', 'fixed'],
             },
+            options: ['auto', 'fixed'],
             defaultValue: 'auto',
         },
         gutter: {
@@ -149,7 +150,7 @@ export const Basic: Story = {
                             <div className="tw-flex tw-items-center tw-gap-2">
                                 <div>
                                     <div className="tw-font-medium">{user.name}</div>
-                                    <div className="tw-text-sm tw-text-gray-500">{user.email}</div>
+                                    <div className="tw-body-small tw-text-secondary">{user.email}</div>
                                 </div>
                             </div>
                         </Table.RowCell>
@@ -315,7 +316,7 @@ export const Sortable: Story = {
                                 <div className="tw-flex tw-items-center tw-gap-2">
                                     <div>
                                         <div className="tw-font-medium">{user.name}</div>
-                                        <div className="tw-text-sm tw-text-gray-500">{user.email}</div>
+                                        <div className="tw-body-small tw-text-secondary">{user.email}</div>
                                     </div>
                                 </div>
                             </Table.RowCell>
@@ -350,7 +351,7 @@ export const StickyHead: Story = {
                                 <div className="tw-flex tw-items-center tw-gap-2">
                                     <div>
                                         <div className="tw-font-medium">{user.name}</div>
-                                        <div className="tw-text-sm tw-text-gray-500">{user.email}</div>
+                                        <div className="tw-body-small tw-text-secondary">{user.email}</div>
                                     </div>
                                 </div>
                             </Table.RowCell>
@@ -401,7 +402,7 @@ export const StickyFirstColumn: Story = {
                             <div className="tw-flex tw-items-center tw-gap-2">
                                 <div>
                                     <div className="tw-font-medium">{user.name}</div>
-                                    <div className="tw-text-sm tw-text-gray-500">{user.email}</div>
+                                    <div className="tw-body-small tw-text-secondary">{user.email}</div>
                                 </div>
                             </div>
                         </Table.RowCell>
@@ -451,7 +452,7 @@ export const StickyHeadAndCol: Story = {
                             <div className="tw-flex tw-items-center tw-gap-2">
                                 <div>
                                     <div className="tw-font-medium">{user.name}</div>
-                                    <div className="tw-text-sm tw-text-gray-500">{user.email}</div>
+                                    <div className="tw-body-small tw-text-secondary">{user.email}</div>
                                 </div>
                             </div>
                         </Table.RowCell>
@@ -501,7 +502,7 @@ export const StickyRightColumn: Story = {
                             <div className="tw-flex tw-items-center tw-gap-2">
                                 <div>
                                     <div className="tw-font-medium">{user.name}</div>
-                                    <div className="tw-text-sm tw-text-gray-500">{user.email}</div>
+                                    <div className="tw-text-small tw-text-primary-on-primary">{user.email}</div>
                                 </div>
                             </div>
                         </Table.RowCell>
@@ -560,7 +561,7 @@ export const StickyHeaderAndRightColumn: Story = {
                             <div className="tw-flex tw-items-center tw-gap-2">
                                 <div>
                                     <div className="tw-font-medium">{user.name}</div>
-                                    <div className="tw-text-sm tw-text-gray-500">{user.email}</div>
+                                    <div className="tw-text-small tw-text-primary-on-primary">{user.email}</div>
                                 </div>
                             </div>
                         </Table.RowCell>
@@ -620,7 +621,7 @@ export const StickyAllDirections: Story = {
                             <div className="tw-flex tw-items-center tw-gap-2">
                                 <div>
                                     <div className="tw-font-medium">{user.name}</div>
-                                    <div className="tw-text-sm tw-text-gray-500">{user.email}</div>
+                                    <div className="tw-text-small tw-text-primary-on-primary">{user.email}</div>
                                 </div>
                             </div>
                         </Table.RowCell>
@@ -663,7 +664,7 @@ export const Interactive: Story = {
                             <div className="tw-flex tw-items-center tw-gap-2">
                                 <div>
                                     <div className="tw-font-medium">{user.name}</div>
-                                    <div className="tw-text-sm tw-text-gray-500">{user.email}</div>
+                                    <div className="tw-body-small tw-text-secondary">{user.email}</div>
                                 </div>
                             </div>
                         </Table.RowCell>
@@ -702,7 +703,7 @@ export const Disabled: Story = {
                             <div className="tw-flex tw-items-center tw-gap-2">
                                 <div>
                                     <div className="tw-font-medium">{user.name}</div>
-                                    <div className="tw-text-sm tw-text-gray-500">{user.email}</div>
+                                    <div className="tw-body-small tw-text-secondary">{user.email}</div>
                                 </div>
                             </div>
                         </Table.RowCell>
@@ -733,7 +734,7 @@ export const WithCaption: Story = {
                             <div className="tw-flex tw-items-center tw-gap-2">
                                 <div>
                                     <div className="tw-font-medium">{user.name}</div>
-                                    <div className="tw-text-sm tw-text-gray-500">{user.email}</div>
+                                    <div className="tw-body-small tw-text-secondary">{user.email}</div>
                                 </div>
                             </div>
                         </Table.RowCell>
@@ -975,7 +976,7 @@ export const NoBorder: Story = {
         <Flex direction="column" gap="2rem">
             <div>
                 <h3 style={{ marginBottom: '0.5rem' }}>Without noBorder (default)</h3>
-                <div style={{ border: '1px solid var(--line-color)', borderRadius: '8px', padding: '0 1rem' }}>
+                <div style={{ border: '1px solid var(--color-line-mid)', borderRadius: '8px', padding: '0 1rem' }}>
                     <Table.Root {...args}>
                         <Table.Header>
                             <Table.Row>
@@ -998,7 +999,7 @@ export const NoBorder: Story = {
             </div>
             <div>
                 <h3 style={{ marginBottom: '0.5rem' }}>With noBorder=true</h3>
-                <div style={{ border: '1px solid var(--line-color)', borderRadius: '8px', padding: '0 1rem' }}>
+                <div style={{ border: '1px solid var(--color-line-mid)', borderRadius: '8px', padding: '0 1rem' }}>
                     <Table.Root {...args} noBorder>
                         <Table.Header>
                             <Table.Row>

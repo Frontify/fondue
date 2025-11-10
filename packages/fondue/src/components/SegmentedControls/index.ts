@@ -1,3 +1,3 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export * from './SegmentedControls';
+export { IconItem, SegmentedControlsProps, SegmentSize, TextOrNumberItem } from './SegmentedControls';

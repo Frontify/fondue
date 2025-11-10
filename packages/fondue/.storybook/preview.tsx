@@ -1,8 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import '@frontify/fondue-tokens/legacy/tokens';
 import '@frontify/fondue-tokens/styles';
-import '@frontify/fondue-tokens/themes/theme.dark.css';
-import '@frontify/fondue-components/styles';
 
 import { Decorator } from '@storybook/react-vite';
 import '../src/styles.css';
@@ -65,7 +64,7 @@ export const globalTypes = {
 export const parameters = {
     options: {
         storySort: {
-            order: ['Tokens', 'Foundation', 'Layout', 'Typography', 'Components'],
+            order: ['Legacy Components', ['*', 'Deprecated']],
         },
     },
     darkMode: {

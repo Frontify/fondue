@@ -6,8 +6,14 @@ import { type IconProps } from '@foundation/Icon/IconProps';
 
 import { type Color } from '../../types';
 
+/**
+ * @deprecated Please use updated badge component from `@frontify/fondue/components` instead.
+ */
 export type BadgeSize = 'small' | 'medium';
 
+/**
+ * @deprecated Please use updated badge component from `@frontify/fondue/components` instead.
+ */
 export type BadgeProps = {
     style?: BadgeStyle;
     icon?: ReactElement<IconProps>;
@@ -23,8 +29,14 @@ export type BadgeProps = {
     withTitleAttribute?: boolean;
 };
 
+/**
+ * @deprecated Please use updated badge component from `@frontify/fondue/components` instead.
+ */
 export type BadgeStatusIconProps = { status: BadgeStatus | Color | string; disabled: boolean; 'data-test-id'?: string };
 
+/**
+ * @deprecated Please use updated badge component from `@frontify/fondue/components` instead.
+ */
 export enum BadgeStatus {
     Positive = 'Positive',
     Progress = 'Progress',
@@ -32,6 +44,9 @@ export enum BadgeStatus {
     Danger = 'Danger',
 }
 
+/**
+ * @deprecated Please use updated badge component from `@frontify/fondue/components` instead.
+ */
 export enum BadgeStyle {
     Primary = 'Primary',
     Positive = 'Positive',
@@ -40,6 +55,9 @@ export enum BadgeStyle {
     Danger = 'Danger',
 }
 
+/**
+ * @deprecated Please use updated badge component from `@frontify/fondue/components` instead.
+ */
 export enum BadgeEmphasis {
     Strong = 'Strong',
     None = 'None',

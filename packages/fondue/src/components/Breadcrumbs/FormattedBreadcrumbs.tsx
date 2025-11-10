@@ -2,7 +2,7 @@
 
 import { type ReactElement, useRef } from 'react';
 
-import { OverflowMenu, type OverflowMenuItemProps } from '../OverflowMenu';
+import { OverflowMenu, type OverflowMenuItemProps } from '@components/OverflowMenu/OverflowMenu';
 
 import { BreadcrumbItem } from './BreadcrumbItem';
 import { type BreadcrumbsProps } from './Breadcrumbs';

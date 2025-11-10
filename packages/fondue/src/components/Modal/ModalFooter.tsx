@@ -2,7 +2,8 @@
 
 import { useContext, type ReactElement } from 'react';
 
-import { Button, ButtonSize } from '@components/Button';
+import { Button } from '@components/Button/Button';
+import { ButtonSize } from '@components/Button/ButtonTypes';
 
 import { ModalLayoutContext } from './context/ModalLayout';
 import { type ModalFooterProps } from './types';

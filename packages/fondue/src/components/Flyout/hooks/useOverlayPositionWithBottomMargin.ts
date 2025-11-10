@@ -3,8 +3,7 @@
 import { type AriaPositionProps, useOverlayPosition } from '@react-aria/overlays';
 import { type MutableRefObject, useLayoutEffect, useState } from 'react';
 
-import { FlyoutPlacement } from '@components/Flyout';
-
+import { FlyoutPlacement } from '../../Flyout/Flyout';
 import { getTotalOverlayHeight } from '../helpers/getTotalOverlayHeight';
 import { getVerticalPositioning } from '../helpers/getVerticalPositioning';
 

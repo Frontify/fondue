@@ -2,7 +2,7 @@
 
 import { forwardRef } from 'react';
 
-import { TextInput } from '@components/TextInput';
+import { TextInput } from '@components/TextInput/TextInput';
 import IconCalendar from '@foundation/Icon/Generated/IconCalendar';
 import IconCaretDown from '@foundation/Icon/Generated/IconCaretDown';
 import IconCaretUp from '@foundation/Icon/Generated/IconCaretUp';

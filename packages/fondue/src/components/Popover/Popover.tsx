@@ -5,7 +5,7 @@ import { Z_INDEX_POPOVER } from '@utilities/dialogs/constants';
 import { ARROW_DARK_THEME, ARROW_LIGHT_THEME } from '@utilities/overlayStyle';
 import { type WithRequired } from 'src/types/withRequired';
 
-import { Modality, type OverlayProps } from '../../types';
+import { Modality, type OverlayProps } from '../../types/dialog';
 
 type PopoverProps = Omit<
     OverlayProps,

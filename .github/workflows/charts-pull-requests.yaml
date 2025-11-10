@@ -86,8 +86,5 @@ jobs:
             - name: Install dependencies
               run: pnpm install --frozen-lockfile
 
-            - name: Build Fondue Tokens
-              run: pnpm build:tokens
-
             - name: Unit tests
               run: pnpm --stream --filter {packages/charts} test

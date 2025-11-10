@@ -29,7 +29,7 @@ test('render the success status', async ({ mount }) => {
     const component = await mount(<TextInput status="success" />);
 
     await expect(component).toHaveAttribute('data-status', 'success');
-    await expect(component).toHaveCSS('border', '1px solid rgb(21, 129, 111)');
+    await expect(component).toHaveCSS('border', '1px solid rgb(22, 133, 0)');
     await expect(component.getByTestId(TEXT_INPUT_SUCCESS_ICON_TEST_ID)).toBeVisible();
 });
 
@@ -37,7 +37,7 @@ test('render the loading status', async ({ mount }) => {
     const component = await mount(<TextInput status="loading" />);
 
     await expect(component).toHaveAttribute('data-status', 'loading');
-    await expect(component).toHaveCSS('border', '1px solid rgba(8, 8, 8, 0.15)');
+    await expect(component).toHaveCSS('border', '1px solid rgba(135, 135, 129, 0.5)');
     await expect(component.getByTestId(TEXT_INPUT_LOADER_TEST_ID)).toBeVisible();
 });
 
@@ -46,7 +46,7 @@ test('render the error status ', async ({ mount }) => {
 
     await expect(component).toHaveAttribute('data-status', 'error');
     await expect(component.getByRole('textbox')).toHaveAttribute('aria-invalid', 'true');
-    await expect(component).toHaveCSS('border', '1px solid rgb(217, 47, 76)');
+    await expect(component).toHaveCSS('border', '1px solid rgb(222, 36, 23)');
     await expect(component.getByTestId(TEXT_INPUT_ERROR_ICON_TEST_ID)).toBeVisible();
 });
 

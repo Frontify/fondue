@@ -8,7 +8,7 @@ import IconIcon from '@foundation/Icon/Generated/IconIcon';
 import { RadioPill as RadioPillComponent, type RadioPillProps } from './RadioPill';
 
 export default {
-    title: 'Components/Radio Pill',
+    title: 'Legacy Components/Radio Pill',
     component: RadioPillComponent,
     tags: ['autodocs'],
     args: {

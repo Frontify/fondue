@@ -8,6 +8,9 @@ import { useMemoizedId } from '@hooks/useMemoizedId';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 
+/**
+ * @deprecated Use the new `Color Picker` component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#color-picker the migration guide}.
+ */
 export type ColorInputProps = {
     min?: number;
     max?: number;
@@ -15,11 +18,17 @@ export type ColorInputProps = {
     'aria-label'?: string;
 } & Pick<TextInputBaseProps, 'decorator' | 'value' | 'onChange' | 'type' | 'size' | 'onBlur' | 'onEnterPressed'>;
 
+/**
+ * @deprecated Use the new `Color Picker` component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#color-picker the migration guide}.
+ */
 export enum DecoratorPosition {
     Left = 'Left',
     Right = 'Right',
 }
 
+/**
+ * @deprecated Use the new `Color Picker` component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#color-picker the migration guide}.
+ */
 export const ColorInput = ({
     min,
     max,

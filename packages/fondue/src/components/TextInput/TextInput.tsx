@@ -15,7 +15,7 @@ import {
     type ReactNode,
 } from 'react';
 
-import { LoadingCircle, LoadingCircleSize } from '@components/LoadingCircle';
+import { LoadingCircle, LoadingCircleSize } from '@components/LoadingCircle/LoadingCircle';
 import IconCheckMark from '@foundation/Icon/Generated/IconCheckMark';
 import IconClipboard from '@foundation/Icon/Generated/IconClipboard';
 import IconCross from '@foundation/Icon/Generated/IconCross';
@@ -29,8 +29,11 @@ import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { Validation, validationClassMap } from '@utilities/validation';
 
-import { LegacyTooltip, type LegacyTooltipProps } from '../LegacyTooltip';
+import { LegacyTooltip, type LegacyTooltipProps } from '../LegacyTooltip/LegacyTooltip';
 
+/**
+ * @deprecated Use `TextInput` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md} the migration guide}.
+ */
 export enum TextInputType {
     Text = 'text',
     Password = 'password',
@@ -38,6 +41,9 @@ export enum TextInputType {
     Search = 'search',
 }
 
+/**
+ * @deprecated Use `TextInput` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md} the migration guide}.
+ */
 export type TextInputExtraAction = {
     onClick: () => void;
     icon: ReactElement;
@@ -46,6 +52,9 @@ export type TextInputExtraAction = {
     disabled?: boolean;
 };
 
+/**
+ * @deprecated Use `TextInput` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md} the migration guide}.
+ */
 export type TextInputBaseProps = {
     id?: string;
     type?: TextInputType;
@@ -109,6 +118,10 @@ type TextInputPasswordProps = TextInputBaseProps & {
     type: TextInputType.Password;
     obfuscated?: boolean;
 };
+
+/**
+ * @deprecated Use `TextInput` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md} the migration guide}.
+ */
 export type TextInputProps = TextInputTextProps | TextInputNumberProps | TextInputPasswordProps | TextInputSearchProps;
 
 type ExtraActionButtonProps = {

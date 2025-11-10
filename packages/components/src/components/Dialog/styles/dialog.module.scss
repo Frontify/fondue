@@ -8,12 +8,13 @@
 .content {
     display: block;
     position: fixed;
+    inset-inline: sizeToken.get(2);
     top: 50%;
     left: 50%;
     transform: translateX(-50%) translateY(-50%);
-    background-color: var(--base-color);
-    box-shadow: var(--shadow-matrix);
-    border: var(--line-width) solid var(--line-color);
+    background-color: var(--color-surface-default);
+    box-shadow: var(--shadow-default);
+    border: var(--border-width-default) solid var(--color-line-subtle);
     z-index: 1;
     width: calc(100vw - 2rem);
     max-width: var(--dialog-max-width);
@@ -22,7 +23,7 @@
     overflow: hidden;
     grid-template-rows: auto auto minmax(0, 1fr) auto;
     box-sizing: border-box;
-    color: var(--text-color);
+    color: var(--color-primary-default);
 
     & {
         @include mediaQuery.sm {
@@ -43,7 +44,7 @@
     }
 
     &[data-dialog-rounded='true'] {
-        border-radius: var(--radius-large);
+        border-radius: var(--border-radius-large);
     }
 
     &[data-dialog-padding='tight'] {
@@ -95,12 +96,12 @@
         height: fit-content;
         justify-content: space-between;
         align-items: center;
-        font-weight: var(--heading-weight-number);
+        font-weight: var(--typography-font-weight-medium);
         grid-row: 2;
         grid-column: 1;
 
         &[data-show-border='true'] {
-            border-block-end: var(--line-width) solid var(--line-color);
+            border-block-end: var(--border-width-default) solid var(--color-line-subtle);
         }
 
         &[data-dialog-header-padding='none'] {
@@ -205,7 +206,7 @@
         }
 
         &[data-show-border='true'] {
-            border-block-start: var(--line-width) solid var(--line-color);
+            border-block-start: var(--border-width-default) solid var(--color-line-subtle);
         }
 
         & {
@@ -220,11 +221,11 @@
 .underlay {
     position: fixed;
     inset: 0;
-    background-color: rgb(from var(--box-neutral-mighty-color) r g b / 0);
+    background-color: rgb(from var(--color-primary-default) r g b / 0);
     pointer-events: auto;
 
     &[data-visible='true'] {
-        background-color: rgb(from var(--box-neutral-mighty-color) r g b / 0.5);
+        background-color: rgb(from var(--color-primary-default) r g b / 0.5);
     }
 }
 

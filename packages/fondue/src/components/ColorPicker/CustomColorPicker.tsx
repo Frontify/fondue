@@ -7,14 +7,18 @@ import { RgbaColorPicker } from 'react-colorful';
 import { Dropdown } from '@components/Dropdown/Dropdown';
 import { TextInputType } from '@components/TextInput/TextInput';
 import { toLongRgb, toShortRgb } from '@utilities/colors';
+import { ColorFormat } from 'src/types/colors';
 
-import { type Color, ColorFormat } from '../../types';
+import { type Color } from '../../types';
 
 import { ColorInput, DecoratorPosition } from './ColorInput';
 import { type ColorPickerProps } from './ColorPicker';
 
 const convertToHex = (color: Color) => new TinyColor(toShortRgb(color)).toHex();
 
+/**
+ * @deprecated Use the new `Color Picker` component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#color-picker the migration guide}.
+ */
 export const CustomColorPicker = ({
     currentColor,
     currentFormat,

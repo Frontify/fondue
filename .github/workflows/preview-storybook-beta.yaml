@@ -1,0 +1,49 @@
+name: Deploy Storybook Beta
+
+on:
+    push:
+        branches:
+            - v13
+            - main
+    workflow_dispatch:
+
+jobs:
+    deploy-preview:
+        name: Deploy Storybook
+        runs-on: ubuntu-latest
+        timeout-minutes: 10
+
+        steps:
+            - name: Checkout default branch
+              uses: actions/checkout@v4
+
+            - name: Use pnpm
+              uses: pnpm/action-setup@v3
+              with:
+                  run_install: false
+
+            - name: Use Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version-file: ".nvmrc"
+                  cache: "pnpm"
+
+            - name: Install npm dependencies
+              run: pnpm i --frozen-lockfile
+
+            - name: Build Fondue Icons
+              run: pnpm build:icons
+
+            - name: Build Fondue Components
+              run: pnpm build:components
+
+            - name: Build Storybook docs
+              run: pnpm build:storybook:packages && pnpm build:storybook:main
+              env:
+                  STORYBOOK_PATH_PREFIX: "/next/"
+
+            - name: Deploy Storybook to GitHub Pages
+              uses: JamesIves/github-pages-deploy-action@v4
+              with:
+                  folder: ./storybook-docs/storybook-static
+                  target-folder: next

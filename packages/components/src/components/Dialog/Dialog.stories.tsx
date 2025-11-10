@@ -25,6 +25,7 @@ import {
 
 type Story = StoryObj<typeof meta>;
 const meta: Meta<typeof DialogContent> = {
+    title: 'Components/Dialog',
     component: DialogContent,
     subcomponents: {
         'Dialog.Root': DialogRoot,
@@ -51,7 +52,7 @@ const meta: Meta<typeof DialogContent> = {
                 </Dialog.Trigger>
                 <Dialog.Content {...args}>
                     <Dialog.SideContent>
-                        <div className="tw-bg-box-positive-strong tw-h-full tw-w-full"></div>
+                        <div className="tw-bg-success tw-h-full tw-w-full"></div>
                     </Dialog.SideContent>
                     <Dialog.Header>
                         <Dialog.Title>Header</Dialog.Title>
@@ -150,7 +151,7 @@ export const WithSideContent: Story = {
                 </Dialog.Trigger>
                 <Dialog.Content {...args}>
                     <Dialog.SideContent>
-                        <div className="tw-bg-box-positive-strong tw-h-full tw-min-w-40"></div>
+                        <div className="tw-bg-success tw-h-full tw-min-w-40"></div>
                     </Dialog.SideContent>
                     <Dialog.Body {...args} />
                 </Dialog.Content>
@@ -194,7 +195,7 @@ export const WithLongText: Story = {
                 </Dialog.Trigger>
                 <Dialog.Content {...args}>
                     <Dialog.SideContent>
-                        <div className="tw-bg-box-positive-strong tw-h-full tw-min-w-40"></div>
+                        <div className="tw-bg-success tw-h-full tw-min-w-40"></div>
                     </Dialog.SideContent>
                     <Dialog.Header>
                         <Dialog.Title>Header</Dialog.Title>
@@ -222,7 +223,7 @@ export const WithCustomElementForClose: Story = {
                 </Dialog.Trigger>
                 <Dialog.Content {...args}>
                     <Dialog.SideContent>
-                        <div className="tw-bg-box-positive-strong tw-h-full tw-min-w-40"></div>
+                        <div className="tw-bg-success tw-h-full tw-min-w-40"></div>
                     </Dialog.SideContent>
                     <Dialog.Header>
                         <Dialog.Title asChild>
@@ -254,7 +255,7 @@ export const WithAnnouncedDescription: Story = {
                 </Dialog.Trigger>
                 <Dialog.Content {...args}>
                     <Dialog.SideContent>
-                        <div className="tw-bg-box-positive-strong tw-h-full tw-min-w-40"></div>
+                        <div className="tw-bg-success tw-h-full tw-min-w-40"></div>
                     </Dialog.SideContent>
                     <Dialog.Header>
                         <Dialog.Title>Dialog Header</Dialog.Title>
@@ -285,7 +286,7 @@ export const WithCustomElementAnnouncements: Story = {
                 </Dialog.Trigger>
                 <Dialog.Content {...args}>
                     <Dialog.SideContent>
-                        <div className="tw-bg-box-positive-strong tw-h-full tw-min-w-40"></div>
+                        <div className="tw-bg-success tw-h-full tw-min-w-40"></div>
                     </Dialog.SideContent>
                     <Dialog.Header>
                         <Dialog.Title asChild>

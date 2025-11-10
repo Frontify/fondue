@@ -2,6 +2,9 @@
 
 import { useCallback, useEffect, useState } from 'react';
 
+/**
+ * @deprecated Please use a custom function instead.
+ **/
 export const useCopy = (resetAfterMS = 2000) => {
     const [status, setStatus] = useState<'success' | 'error' | 'idle'>('idle');
 

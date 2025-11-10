@@ -2,12 +2,12 @@
 
 import { type MouseEvent, type ReactElement, type ReactNode } from 'react';
 
-import { ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button';
 import { Button } from '@components/Button/Button';
-import { Checkbox } from '@components/Checkbox';
+import { ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button/ButtonTypes';
+import { Checkbox } from '@components/Checkbox/Checkbox';
 import { FormControl } from '@components/FormControl';
 import { FloatingModalWrapper } from '@components/RichTextEditor/components';
-import { TextInput } from '@components/TextInput';
+import { TextInput } from '@components/TextInput/TextInput';
 import IconCheckMark20 from '@foundation/Icon/Generated/IconCheckMark20';
 
 import { type InsertModalStateProps } from './types';

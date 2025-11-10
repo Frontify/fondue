@@ -36,7 +36,7 @@ import { IconSize } from '@foundation/Icon/IconSize';
 ${importsTsx(props.components)};
 
 /**
- * @deprecated Import Icons from \`@frontify/fondue/components\` instead.
+ * @deprecated Use icons from \`@frontify/fondue/icons\` instead.
  */
 const ${props.name} = (props: GeneratedIconProps): ReactElement<GeneratedIconProps> => {
     const size = props.size || IconSize.Size16;
@@ -48,6 +48,9 @@ const ${props.name} = (props: GeneratedIconProps): ReactElement<GeneratedIconPro
 };
 ${props.name}.displayName = 'Fondue${props.name}';
 
+/**
+ * @deprecated Use icons from \`@frontify/fondue/icons\` instead.
+ */
 export default memo(${props.name});
 `;
 };

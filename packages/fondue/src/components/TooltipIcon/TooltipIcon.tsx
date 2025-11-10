@@ -6,7 +6,6 @@ import { LegacyTooltip, type LegacyTooltipProps } from '@components/LegacyToolti
 import IconQuestionMarkCircle from '@foundation/Icon/Generated/IconQuestionMarkCircle';
 import { type IconProps } from '@foundation/Icon/IconProps';
 import { IconSize } from '@foundation/Icon/IconSize';
-import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 
 export type TooltipIconProps = {
@@ -62,8 +61,7 @@ export const TooltipIcon = ({
                                 aria-label="More info"
                                 data-test-id={`${dataTestId}-trigger`}
                                 className={merge([
-                                    'tw-inline-flex tw-justify-center tw-items-center tw-cursor-default tw-outline-none tw-rounded-full',
-                                    FOCUS_VISIBLE_STYLE,
+                                    'tw-inline-flex tw-justify-center tw-items-center tw-cursor-default tw-outline-none tw-rounded-full focus-visible:tw-ring-focus',
                                     tooltipTriggerStyleClass[triggerStyle],
                                     tooltipHoverClasses[triggerStyle],
                                 ])}

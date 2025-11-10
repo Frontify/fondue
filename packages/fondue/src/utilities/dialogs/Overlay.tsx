@@ -2,8 +2,8 @@
 
 import { useCallback, useEffect, useState } from 'react';
 
-import { Popper } from '@components/Popper';
-import { Portal } from '@components/Portal';
+import { Popper } from '@components/Popper/Popper';
+import { Portal } from '@components/Portal/Portal';
 import { useClickOutside } from '@hooks/useClickOutside';
 import { useDropdownAutoHeight } from '@hooks/useDropdownAutoHeight';
 import { useFocusTrap } from '@hooks/useFocusTrap';
@@ -14,8 +14,17 @@ import { Z_INDEX_MODAL_BACKDROP } from '@utilities/dialogs/constants';
 import { merge, mergeRefs } from '@utilities/merge';
 import { OVERLAY_CONTAINER_DARK_THEME_STYLING, OVERLAY_CONTAINER_LIGHT_THEME_STYLING } from '@utilities/overlayStyle';
 
-import { type BaseDialogProps, Modality, type OverlayProps, overlayBorderRadius, overlayShadowMap } from '../../types';
+import {
+    type BaseDialogProps,
+    Modality,
+    type OverlayProps,
+    overlayBorderRadius,
+    overlayShadowMap,
+} from '../../types/dialog';
 
+/**
+ * @deprecated Use `Dialog` from `@frontify/fondue/components` instead.
+ */
 export const Overlay = ({
     id: customId,
     open,

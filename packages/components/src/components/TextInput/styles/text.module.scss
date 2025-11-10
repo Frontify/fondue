@@ -9,19 +9,19 @@
     display: flex;
     align-items: stretch;
 
-    font-family: var(--body-family-stack);
+    font-family: var(--typography-font-family-primary);
     font-weight: 400;
-    font-size: var(--body-size-medium);
+    font-size: var(--typography-font-size-medium);
 
-    line-height: var(--body-size-medium-line-height);
+    line-height: var(--typography-line-height-medium);
     text-align: start;
     height: sizeToken.get(9);
     box-sizing: border-box;
 
-    color: var(--text-color);
-    background-color: var(--base-color);
-    border-radius: var(--radius);
-    border: var(--line-width) solid var(--line-color-strong);
+    color: var(--color-primary-default);
+    background-color: var(--color-surface-default);
+    border-radius: var(--border-radius-medium);
+    border: var(--border-width-default) solid var(--color-line-mid);
 
     & {
         @include focusStyle.focus-outline;
@@ -33,11 +33,15 @@
     }
 
     &:hover {
-        border-color: var(--line-color-x-strong);
+        border-color: var(--color-line-strong);
     }
 
-    &:has([data-show-focus-ring='false']:focus) {
-        border-color: var(--line-color-xx-strong);
+    &:hover {
+        border-color: var(--color-line-strong);
+    }
+
+    &:has([data-show-focus-ring='false']:focus):not(:has(input[readonly])) {
+        border-color: var(--color-line-strong);
     }
 
     &:has(input[readonly]) {
@@ -45,16 +49,29 @@
     }
 
     &:has(input:disabled) {
-        border-color: var(--line-color-weak);
-        background-color: var(--box-disabled-color);
+        border-color: var(--color-line-subtle);
+        background-color: var(--color-container-disabled-default);
     }
 
     &[data-status='success'] {
-        border-color: var(--text-color-positive);
+        border-color: var(--color-success-default);
     }
 
     &[data-status='error'] {
-        border-color: var(--text-color-negative);
+        border-color: var(--color-error-default);
+    }
+
+    // Remove text-indent and border-radius from input and placeholder when there's a left slot
+    &:has(.slot:not([data-name='right'])) {
+        .input {
+            text-indent: 0px;
+            border-start-start-radius: 0px;
+            border-end-start-radius: 0px;
+        }
+
+        .placeholder {
+            text-indent: 0px;
+        }
     }
 
     // Remove text-indent and border-radius from input and placeholder when there's a left slot
@@ -80,10 +97,10 @@
     text-indent: sizeToken.get(3);
     outline: 2px solid transparent;
     outline-offset: 2px;
-    border-radius: calc(var(--radius) - var(--line-width));
+    border-radius: calc(var(--border-radius-medium) - var(--border-width-default));
 
     &::placeholder {
-        color: var(--text-color-x-weak);
+        color: var(--color-secondary-default);
         opacity: 0;
     }
 
@@ -102,25 +119,25 @@
     // Readonly styles
     &[readonly] {
         cursor: text;
-        color: var(--text-color-weak);
+        color: var(--color-primary-default);
         text-indent: 0px;
     }
 
-    &[readonly]~.slot {
-        color: var(--text-color-weak);
+    &[readonly] ~ .slot {
+        color: var(--color-primary-default);
     }
 
-    &[readonly]~.slot:not([data-name='right']) {
+    &[readonly] ~ .slot:not([data-name='right']) {
         padding-inline-start: 0px;
     }
 
     &:disabled {
         cursor: text;
-        color: var(--text-color-disabled);
+        color: var(--color-disabled-default);
     }
 
-    &:disabled~.slot {
-        color: var(--text-color-disabled);
+    &:disabled ~ .slot {
+        color: var(--color-disabled-default);
     }
 }
 
@@ -158,7 +175,7 @@
     align-items: center;
     height: 100%;
     margin-inline: sizeToken.get(3);
-    color: var(--text-color-positive);
+    color: var(--color-success-default);
 }
 
 .iconError {
@@ -166,7 +183,7 @@
     align-items: center;
     height: 100%;
     margin-inline: sizeToken.get(3);
-    color: var(--text-color-negative);
+    color: var(--color-error-default);
 }
 
 // Icon with a right slot shouldn't have a margin on the end side
@@ -185,22 +202,9 @@
     pointer-events: none;
     align-items: center;
     justify-content: center;
-    background-color: var(--base-color);
-    border: var(--line-width) solid var(--line-color-strong);
+    background-color: var(--color-surface-default);
+    border: var(--border-width-default) solid var(--color-line-mid);
     border-radius: 9999px;
-
-    &::before {
-        content: '';
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: sizeToken.get(4);
-        height: sizeToken.get(4);
-        border: var(--line-width) solid var(--text-color-interactive);
-        border-top-color: transparent;
-        border-radius: 9999px;
-        animation: spin 1s linear infinite;
-    }
 }
 
 @keyframes spin {
@@ -216,17 +220,17 @@
 .inputWrapper {
     display: grid;
     width: 100%;
-    grid-template-areas: "stack";
+    grid-template-areas: 'stack';
     grid-template-columns: 100%;
 
-    &>* {
+    & > * {
         grid-area: stack;
     }
 
     .placeholder {
         display: flex;
         align-items: center;
-        color: var(--text-color-x-weak);
+        color: var(--color-secondary-default);
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
@@ -235,9 +239,9 @@
         text-indent: sizeToken.get(3);
         display: block;
         text-align: inherit;
-        font-family: var(--body-family-stack);
+        font-family: var(--body-family);
         font-weight: 400;
-        font-size: var(--body-size-medium);
+        font-size: var(--typography-font-size-medium);
         line-height: sizeToken.get(9);
     }
 

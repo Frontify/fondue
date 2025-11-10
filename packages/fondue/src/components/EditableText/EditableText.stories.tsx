@@ -7,11 +7,20 @@ import { EditableMode, EditableText, type EditableTextProps } from '@components/
 import IconPen from '@foundation/Icon/Generated/IconPen';
 import { IconSize } from '@foundation/Icon/IconSize';
 
+/**
+ ### *Legacy component warning*
+ #### This is a unmaintained legacy component. It will be deprecated and replaced with a new component in an upcoming release.
+ */
 export default {
-    title: 'Components/Editable Text',
+    title: 'Legacy Components/Editable Text',
     component: EditableText,
     tags: ['autodocs'],
-    parameters: { actions: { argTypesRegex: '^on.*' } },
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
+        actions: { argTypesRegex: '^on.*' },
+    },
     argTypes: {
         children: {
             table: {

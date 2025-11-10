@@ -10,7 +10,7 @@ import {
 } from '@udecode/plate-link';
 import { type Dispatch, type MouseEvent, type Reducer, useEffect, useReducer } from 'react';
 
-import { CheckboxState } from '@components/Checkbox';
+import { CheckboxState } from '@components/Checkbox/Checkbox';
 
 import { getLegacyUrl, getUrl } from '../../utils';
 

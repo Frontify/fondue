@@ -46,8 +46,9 @@ import {
 } from '@components/Tree/types';
 
 import { TreeContext, type TreeContextProps } from './TreeContext';
-import { type InternalTreeItemProps, type Overlay, TreeItemOverlay } from './TreeItem';
+import { type InternalTreeItemProps, TreeItemOverlay } from './TreeItem';
 import { type InternalTreeItemMultiSelectProps } from './TreeItem/TreeItemMultiselect';
+import { type Overlay } from './TreeItem/TreeItemOverlay';
 import {
     ROOT_ID,
     currentNodesChanged,

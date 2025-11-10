@@ -2,10 +2,10 @@
 
 import { useRef, useState } from 'react';
 
-import { Button } from '@components/Button';
+import { Button } from '@components/Button/Button';
 import { Popover } from '@components/Popover/Popover';
 
-import { type OverlayProps } from '../../types';
+import { type OverlayProps } from '../../types/dialog';
 
 const POPOVER_SELECTOR = '[data-test-id=fondue-popover-content]';
 const POPOVER_TRIGGER = '[data-test-id=popover-trigger]';

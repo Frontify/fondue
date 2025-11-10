@@ -12,6 +12,9 @@ type TextSize = 'x-small' | 'small' | 'medium' | 'large';
 type TextColor = 'default' | 'weak' | 'x-weak' | 'disabled' | 'negative' | 'positive' | 'warning' | 'interactive';
 type BoxColor = 'neutral' | 'selected' | 'disabled' | 'positive' | 'negative' | 'warning';
 
+/**
+ * @deprecated Please use updated text component from `@frontify/fondue/components` instead.
+ */
 export type TextProps = SharedTypographyProps &
     AriaAttributes & {
         size?: TextSize;
@@ -56,6 +59,9 @@ const boxColorMap: Record<BoxColor, string> = {
     warning: 'tw-text-box-warning-inverse',
 };
 
+/**
+ * @deprecated Please use updated text component from `@frontify/fondue/components` instead.
+ */
 export const Text = ({
     children,
     as: Tag = 'span',

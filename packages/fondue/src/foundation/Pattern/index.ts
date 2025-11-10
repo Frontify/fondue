@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export * from './PatternScale';
-export * from './PatternTheme';
-export * from './PatternDesigns';
+export { PatternDesign } from './PatternDesigns';
+export { PatternScale } from './PatternScale';
 export * from './PatternScaleOrigin';
+export { PatternTheme } from './PatternTheme';

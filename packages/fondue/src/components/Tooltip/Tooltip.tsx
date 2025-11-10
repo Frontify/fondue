@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState, type PointerEvent, type ReactElement } from 'react';
 
-import { type PopperPlacement } from '@components/Popper';
+import { type PopperPlacement } from '@components/Popper/types';
 import { useClickOutside } from '@hooks/useClickOutside';
 import { Overlay } from '@utilities/dialogs/Overlay';
 import { Z_INDEX_TOOLTIP } from '@utilities/dialogs/constants';
@@ -11,8 +11,11 @@ import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { ARROW_DARK_THEME } from '@utilities/overlayStyle';
 
-import { Modality } from '../../types';
+import { Modality } from '../../types/dialog';
 
+/**
+ * @deprecated Please use updated tooltip component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md the migration guide}.
+ */
 export type TooltipProps = {
     id?: string;
     children: ReactElement;

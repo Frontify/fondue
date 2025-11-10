@@ -7,7 +7,7 @@ import { LoadingCircle } from '../LoadingCircle';
 test('should render with defaults', async ({ mount }) => {
     const component = await mount(<LoadingCircle />);
     await expect(component).toBeVisible();
-    await expect(component).toHaveCSS('border-left-color', 'rgb(113, 89, 215)');
+    await expect(component).toHaveCSS('border-left-color', 'rgb(182, 10, 227)');
     await expect(component).toHaveCSS('width', '32px');
     await expect(component).toHaveCSS('height', '32px');
 });
@@ -43,17 +43,17 @@ test('should render large', async ({ mount }) => {
 test('should render progress variant', async ({ mount }) => {
     const component = await mount(<LoadingCircle variant="progress" />);
     await expect(component).toBeVisible();
-    await expect(component).toHaveCSS('border-left-color', 'rgb(113, 89, 215)');
+    await expect(component).toHaveCSS('border-left-color', 'rgb(182, 10, 227)');
 });
 
 test('should render success variant', async ({ mount }) => {
     const component = await mount(<LoadingCircle variant="success" />);
     await expect(component).toBeVisible();
-    await expect(component).toHaveCSS('border-left-color', 'rgb(21, 129, 111)');
+    await expect(component).toHaveCSS('border-left-color', 'rgb(22, 133, 0)');
 });
 
 test('should render danger variant', async ({ mount }) => {
     const component = await mount(<LoadingCircle variant="danger" />);
     await expect(component).toBeVisible();
-    await expect(component).toHaveCSS('border-left-color', 'rgb(217, 47, 76)');
+    await expect(component).toHaveCSS('border-left-color', 'rgb(222, 36, 23)');
 });

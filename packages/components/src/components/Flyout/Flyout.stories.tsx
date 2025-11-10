@@ -10,6 +10,7 @@ import { Flyout, FlyoutBody, FlyoutContent, FlyoutFooter, FlyoutHeader, FlyoutRo
 
 type Story = StoryObj<typeof meta>;
 const meta: Meta<typeof FlyoutContent> = {
+    title: 'Components/Flyout',
     component: FlyoutContent,
     subcomponents: {
         'Flyout.Root': FlyoutRoot,
@@ -209,7 +210,7 @@ export const WithCustomContent: Story = {
                     <Button>Open flyout</Button>
                 </Flyout.Trigger>
                 <Flyout.Content {...args}>
-                    <div className="tw-bg-box-neutral tw-p-10">This is FlyoutContent</div>
+                    <div className="tw-bg-container-secondary tw-p-10">This is FlyoutContent</div>
                 </Flyout.Content>
             </Flyout.Root>
         );

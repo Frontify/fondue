@@ -2,17 +2,15 @@
 
 import { type ReactElement, cloneElement } from 'react';
 
-import {
-    PatternDesign,
-    PatternScale,
-    type PatternScaleOrigin,
-    PatternTheme,
-    patternDesigns,
-    patternScales,
-    patternThemes,
-} from '@foundation/Pattern';
+import { PatternDesign, PatternScale, type PatternScaleOrigin, PatternTheme } from '@foundation/Pattern';
+import { patternDesigns } from '@foundation/Pattern/PatternDesigns';
+import { patternScales } from '@foundation/Pattern/PatternScale';
+import { patternThemes } from '@foundation/Pattern/PatternTheme';
 import { merge } from '@utilities/merge';
 
+/**
+ * @deprecated Please use a custom component instead.
+ */
 export type FrontifyPatternProps = {
     pattern: PatternDesign;
     scale?: PatternScale;
@@ -21,6 +19,9 @@ export type FrontifyPatternProps = {
     'data-test-id'?: string;
 };
 
+/**
+ * @deprecated Please use a custom component instead.
+ */
 export const FrontifyPattern = ({
     pattern = PatternDesign.DigitalAssets,
     scale = PatternScale.SM,

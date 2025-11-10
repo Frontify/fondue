@@ -13,7 +13,7 @@ type WithThemeOptions = {
 export const withTheme = (Story: ComponentType, options: WithThemeOptions) => {
     return (
         <ThemeProvider theme={options.theme} dir={options.direction}>
-            <div style={{ padding: '2rem', backgroundColor: 'var(--base-color)', position: 'relative' }}>
+            <div style={{ padding: '2rem', backgroundColor: 'var(--color-surface-default)', position: 'relative' }}>
                 {options?.label && (
                     <span
                         style={{

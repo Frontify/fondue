@@ -9,6 +9,9 @@ import IconExclamationMarkTriangle from '@foundation/Icon/Generated/IconExclamat
 import { IconSize } from '@foundation/Icon/IconSize';
 import { merge } from '@utilities/merge';
 
+/**
+ * @deprecated Please use updated `Tooltip` component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tooltip the migration guide}.
+ */
 export enum BrightHeaderStyle {
     Information = 'Information',
     Warning = 'Warning',
@@ -16,6 +19,9 @@ export enum BrightHeaderStyle {
     Note = 'Note',
 }
 
+/**
+ * @deprecated Please use updated `Tooltip` component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tooltip the migration guide}.
+ */
 export const brightHeaderBackgroundColors: Record<BrightHeaderStyle, string> = {
     [BrightHeaderStyle.Information]: 'tw-bg-box-selected-strong',
     [BrightHeaderStyle.Warning]: 'tw-bg-box-negative-strong-pressed',
@@ -23,6 +29,9 @@ export const brightHeaderBackgroundColors: Record<BrightHeaderStyle, string> = {
     [BrightHeaderStyle.Note]: 'tw-bg-box-warning-strong',
 };
 
+/**
+ * @deprecated Please use updated `Tooltip` component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tooltip the migration guide}.
+ */
 export const brightHeaderArrowBackgroundColors: Record<BrightHeaderStyle, string> = {
     [BrightHeaderStyle.Information]: 'before:tw-bg-box-selected-strong',
     [BrightHeaderStyle.Warning]: 'before:tw-bg-box-negative-strong-pressed',
@@ -41,6 +50,9 @@ type BrightHeaderProps = {
     headerStyle: BrightHeaderStyle;
 };
 
+/**
+ * @deprecated Please use updated `Tooltip` component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tooltip the migration guide}.
+ */
 export const BrightHeader = ({ headerStyle }: BrightHeaderProps): ReactElement => {
     return (
         <div

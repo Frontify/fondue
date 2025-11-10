@@ -4,9 +4,9 @@ import { type Meta, type StoryFn } from '@storybook/react-vite';
 import { useState } from 'react';
 
 import { BadgeStyle } from '@components/Badge';
-import { Button } from '@components/Button';
+import { Button } from '@components/Button/Button';
 import { Checkbox as CheckboxComponent, type CheckboxProps, CheckboxState } from '@components/Checkbox/Checkbox';
-import { Divider } from '@components/Divider';
+import { Divider } from '@components/Divider/Divider';
 import { TabItem, type TabItemProps } from '@components/Tabs/TabItem';
 import IconIcon from '@foundation/Icon/Generated/IconIcon';
 import { IconSize } from '@foundation/Icon/IconSize';
@@ -118,8 +118,11 @@ const data: TabItemProps[] = [
     },
 ];
 
+/**
+ ### This component is deprecated, please use the [new Tabs component](/docs/current_components-tabs--documentation) instead.
+ */
 export default {
-    title: 'Components/Tabs',
+    title: 'Legacy Components/Deprecated/Tabs',
     component: Tabs,
     tags: ['autodocs'],
     argTypes: {
@@ -136,6 +139,11 @@ export default {
         minHeight: {
             type: 'string',
             defaultValue: '50px',
+        },
+    },
+    parameters: {
+        status: {
+            type: 'deprecated',
         },
     },
 } as Meta<TabsProps>;
