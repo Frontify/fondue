@@ -7,16 +7,16 @@ import { action } from 'storybook/actions';
 import { Button } from '../Button/Button';
 import { Dropdown } from '../Dropdown/Dropdown';
 
-import { SplitButton } from './SplitButton';
+import { SplitButton, SplitButtonRoot, SplitButtonContent, SplitButtonAction } from './SplitButton';
 
-type Story = StoryObj<typeof SplitButton>;
+type Story = StoryObj<typeof SplitButtonRoot>;
 
-const meta: Meta<typeof SplitButton> = {
+const meta: Meta<typeof SplitButtonRoot> = {
     title: 'Components/Split Button',
-    component: SplitButton,
+    component: SplitButtonRoot,
     subcomponents: {
-        'SplitButton.Content': SplitButton.Content,
-        'SplitButton.Action': SplitButton.Action,
+        'SplitButton.Content': SplitButtonContent,
+        'SplitButton.Action': SplitButtonAction,
     },
     tags: ['autodocs'],
     parameters: {
@@ -34,7 +34,7 @@ export default meta;
 
 export const Default: Story = {
     render: (args) => (
-        <SplitButton {...args}>
+        <SplitButton.Root {...args}>
             <SplitButton.Content onPress={action('primary-action')}>Primary Action</SplitButton.Content>
             <SplitButton.Action>
                 <Dropdown.Root>
@@ -50,13 +50,13 @@ export const Default: Story = {
                     </Dropdown.Content>
                 </Dropdown.Root>
             </SplitButton.Action>
-        </SplitButton>
+        </SplitButton.Root>
     ),
 };
 
 export const WithIcon: Story = {
     render: (args) => (
-        <SplitButton {...args}>
+        <SplitButton.Root {...args}>
             <SplitButton.Content onPress={action('add')}>
                 <IconPlus size={16} />
                 Add Item
@@ -75,14 +75,14 @@ export const WithIcon: Story = {
                     </Dropdown.Content>
                 </Dropdown.Root>
             </SplitButton.Action>
-        </SplitButton>
+        </SplitButton.Root>
     ),
 };
 
 export const AllEmphasis: Story = {
     render: (args) => (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <SplitButton {...args} emphasis="strong">
+            <SplitButton.Root {...args} emphasis="strong">
                 <SplitButton.Content onPress={action('strong')}>Strong</SplitButton.Content>
                 <SplitButton.Action>
                     <Dropdown.Root>
@@ -97,9 +97,9 @@ export const AllEmphasis: Story = {
                         </Dropdown.Content>
                     </Dropdown.Root>
                 </SplitButton.Action>
-            </SplitButton>
+            </SplitButton.Root>
 
-            <SplitButton {...args} emphasis="default">
+            <SplitButton.Root {...args} emphasis="default">
                 <SplitButton.Content onPress={action('default')}>Default</SplitButton.Content>
                 <SplitButton.Action>
                     <Dropdown.Root>
@@ -114,9 +114,9 @@ export const AllEmphasis: Story = {
                         </Dropdown.Content>
                     </Dropdown.Root>
                 </SplitButton.Action>
-            </SplitButton>
+            </SplitButton.Root>
 
-            <SplitButton {...args} emphasis="weak">
+            <SplitButton.Root {...args} emphasis="weak">
                 <SplitButton.Content onPress={action('weak')}>Weak</SplitButton.Content>
                 <SplitButton.Action>
                     <Dropdown.Root>
@@ -131,7 +131,7 @@ export const AllEmphasis: Story = {
                         </Dropdown.Content>
                     </Dropdown.Root>
                 </SplitButton.Action>
-            </SplitButton>
+            </SplitButton.Root>
         </div>
     ),
 };
@@ -139,7 +139,7 @@ export const AllEmphasis: Story = {
 export const AllSizes: Story = {
     render: (args) => (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'flex-start' }}>
-            <SplitButton {...args} size="small">
+            <SplitButton.Root {...args} size="small">
                 <SplitButton.Content onPress={action('small')}>Small</SplitButton.Content>
                 <SplitButton.Action>
                     <Dropdown.Root>
@@ -154,9 +154,9 @@ export const AllSizes: Story = {
                         </Dropdown.Content>
                     </Dropdown.Root>
                 </SplitButton.Action>
-            </SplitButton>
+            </SplitButton.Root>
 
-            <SplitButton {...args} size="medium">
+            <SplitButton.Root {...args} size="medium">
                 <SplitButton.Content onPress={action('medium')}>Medium</SplitButton.Content>
                 <SplitButton.Action>
                     <Dropdown.Root>
@@ -171,9 +171,9 @@ export const AllSizes: Story = {
                         </Dropdown.Content>
                     </Dropdown.Root>
                 </SplitButton.Action>
-            </SplitButton>
+            </SplitButton.Root>
 
-            <SplitButton {...args} size="large">
+            <SplitButton.Root {...args} size="large">
                 <SplitButton.Content onPress={action('large')}>Large</SplitButton.Content>
                 <SplitButton.Action>
                     <Dropdown.Root>
@@ -188,7 +188,7 @@ export const AllSizes: Story = {
                         </Dropdown.Content>
                     </Dropdown.Root>
                 </SplitButton.Action>
-            </SplitButton>
+            </SplitButton.Root>
         </div>
     ),
 };
@@ -198,7 +198,7 @@ export const Disabled: Story = {
         disabled: true,
     },
     render: (args) => (
-        <SplitButton {...args}>
+        <SplitButton.Root {...args}>
             <SplitButton.Content onPress={action('disabled')}>Disabled Action</SplitButton.Content>
             <SplitButton.Action>
                 <Dropdown.Root>
@@ -213,13 +213,13 @@ export const Disabled: Story = {
                     </Dropdown.Content>
                 </Dropdown.Root>
             </SplitButton.Action>
-        </SplitButton>
+        </SplitButton.Root>
     ),
 };
 
 export const AlternativeIcon: Story = {
     render: (args) => (
-        <SplitButton {...args}>
+        <SplitButton.Root {...args}>
             <SplitButton.Content onPress={action('primary')}>More Actions</SplitButton.Content>
             <SplitButton.Action rotateIcon={false}>
                 <Dropdown.Root>
@@ -237,13 +237,13 @@ export const AlternativeIcon: Story = {
                     </Dropdown.Content>
                 </Dropdown.Root>
             </SplitButton.Action>
-        </SplitButton>
+        </SplitButton.Root>
     ),
 };
 
 export const ComplexMenu: Story = {
     render: (args) => (
-        <SplitButton {...args}>
+        <SplitButton.Root {...args}>
             <SplitButton.Content onPress={action('save')}>Save</SplitButton.Content>
             <SplitButton.Action>
                 <Dropdown.Root>
@@ -275,6 +275,6 @@ export const ComplexMenu: Story = {
                     </Dropdown.Content>
                 </Dropdown.Root>
             </SplitButton.Action>
-        </SplitButton>
+        </SplitButton.Root>
     ),
 };

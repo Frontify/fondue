@@ -78,7 +78,7 @@ export type SplitButtonActionProps = {
     children: ReactNode;
 };
 
-const SplitButtonRoot = forwardRef<HTMLDivElement, SplitButtonProps>(
+export const SplitButtonRoot = forwardRef<HTMLDivElement, SplitButtonProps>(
     (
         {
             'aria-label': ariaLabel,
@@ -107,9 +107,9 @@ const SplitButtonRoot = forwardRef<HTMLDivElement, SplitButtonProps>(
         );
     },
 );
-SplitButtonRoot.displayName = 'SplitButton';
+SplitButtonRoot.displayName = 'SplitButton.Root';
 
-const SplitButtonContent = forwardRef<HTMLButtonElement, SplitButtonContentProps>(
+export const SplitButtonContent = forwardRef<HTMLButtonElement, SplitButtonContentProps>(
     (
         {
             'aria-label': ariaLabel,
@@ -140,7 +140,7 @@ const SplitButtonContent = forwardRef<HTMLButtonElement, SplitButtonContentProps
 );
 SplitButtonContent.displayName = 'SplitButton.Content';
 
-const SplitButtonAction = ({
+export const SplitButtonAction = ({
     'aria-label': ariaLabel,
     'data-test-id': dataTestId = 'split-button-action',
     rotateIcon = true,
@@ -154,10 +154,8 @@ const SplitButtonAction = ({
 };
 SplitButtonAction.displayName = 'SplitButton.Action';
 
-export const SplitButton = SplitButtonRoot as typeof SplitButtonRoot & {
-    Content: typeof SplitButtonContent;
-    Action: typeof SplitButtonAction;
-    displayName?: string;
+export const SplitButton = {
+    Root: SplitButtonRoot,
+    Content: SplitButtonContent,
+    Action: SplitButtonAction,
 };
-SplitButton.Content = SplitButtonContent;
-SplitButton.Action = SplitButtonAction;

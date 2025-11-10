@@ -14,12 +14,12 @@ const ACTION_TEST_ID = 'split-button-action';
 describe('SplitButton component', () => {
     it('renders with content and action', () => {
         const { getByTestId } = render(
-            <SplitButton>
+            <SplitButton.Root>
                 <SplitButton.Content>{SPLIT_BUTTON_TEXT}</SplitButton.Content>
                 <SplitButton.Action>
                     <button type="button">Action</button>
                 </SplitButton.Action>
-            </SplitButton>,
+            </SplitButton.Root>,
         );
 
         const splitButton = getByTestId(SPLIT_BUTTON_TEST_ID);
@@ -35,12 +35,12 @@ describe('SplitButton component', () => {
     it('reacts on content click', async () => {
         const contentListener = vi.fn();
         const { getByTestId } = render(
-            <SplitButton>
+            <SplitButton.Root>
                 <SplitButton.Content onPress={contentListener}>{SPLIT_BUTTON_TEXT}</SplitButton.Content>
                 <SplitButton.Action>
                     <button type="button">Action</button>
                 </SplitButton.Action>
-            </SplitButton>,
+            </SplitButton.Root>,
         );
 
         const content = getByTestId(CONTENT_TEST_ID);
@@ -51,12 +51,12 @@ describe('SplitButton component', () => {
 
     it('applies correct data attributes', () => {
         const { getByTestId } = render(
-            <SplitButton emphasis="strong" size="large">
+            <SplitButton.Root emphasis="strong" size="large">
                 <SplitButton.Content>{SPLIT_BUTTON_TEXT}</SplitButton.Content>
                 <SplitButton.Action>
                     <button type="button">Action</button>
                 </SplitButton.Action>
-            </SplitButton>,
+            </SplitButton.Root>,
         );
 
         const splitButton = getByTestId(SPLIT_BUTTON_TEST_ID);
@@ -67,12 +67,12 @@ describe('SplitButton component', () => {
     it('applies disabled attribute', () => {
         const contentListener = vi.fn();
         const { getByTestId } = render(
-            <SplitButton disabled>
+            <SplitButton.Root disabled>
                 <SplitButton.Content onPress={contentListener}>{SPLIT_BUTTON_TEXT}</SplitButton.Content>
                 <SplitButton.Action>
                     <button type="button">Action</button>
                 </SplitButton.Action>
-            </SplitButton>,
+            </SplitButton.Root>,
         );
 
         const splitButton = getByTestId(SPLIT_BUTTON_TEST_ID);
@@ -82,12 +82,12 @@ describe('SplitButton component', () => {
     it('reacts on enter key', async () => {
         const contentListener = vi.fn();
         const { getByTestId } = render(
-            <SplitButton>
+            <SplitButton.Root>
                 <SplitButton.Content onPress={contentListener}>{SPLIT_BUTTON_TEXT}</SplitButton.Content>
                 <SplitButton.Action>
                     <button type="button">Action</button>
                 </SplitButton.Action>
-            </SplitButton>,
+            </SplitButton.Root>,
         );
 
         const content = getByTestId(CONTENT_TEST_ID);
@@ -100,12 +100,12 @@ describe('SplitButton component', () => {
     it('reacts on space key', async () => {
         const contentListener = vi.fn();
         const { getByTestId } = render(
-            <SplitButton>
+            <SplitButton.Root>
                 <SplitButton.Content onPress={contentListener}>{SPLIT_BUTTON_TEXT}</SplitButton.Content>
                 <SplitButton.Action>
                     <button type="button">Action</button>
                 </SplitButton.Action>
-            </SplitButton>,
+            </SplitButton.Root>,
         );
 
         const content = getByTestId(CONTENT_TEST_ID);
@@ -117,12 +117,12 @@ describe('SplitButton component', () => {
 
     it('has role="group"', () => {
         const { getByTestId } = render(
-            <SplitButton>
+            <SplitButton.Root>
                 <SplitButton.Content>{SPLIT_BUTTON_TEXT}</SplitButton.Content>
                 <SplitButton.Action>
                     <button type="button">Action</button>
                 </SplitButton.Action>
-            </SplitButton>,
+            </SplitButton.Root>,
         );
 
         const splitButton = getByTestId(SPLIT_BUTTON_TEST_ID);
@@ -132,12 +132,12 @@ describe('SplitButton component', () => {
     it('forwards ref to root element', () => {
         const ref = vi.fn();
         render(
-            <SplitButton ref={ref}>
+            <SplitButton.Root ref={ref}>
                 <SplitButton.Content>{SPLIT_BUTTON_TEXT}</SplitButton.Content>
                 <SplitButton.Action>
                     <button type="button">Action</button>
                 </SplitButton.Action>
-            </SplitButton>,
+            </SplitButton.Root>,
         );
 
         expect(ref).toHaveBeenCalled();
@@ -147,12 +147,12 @@ describe('SplitButton component', () => {
     it('forwards ref to content button', () => {
         const ref = vi.fn();
         render(
-            <SplitButton>
+            <SplitButton.Root>
                 <SplitButton.Content ref={ref}>{SPLIT_BUTTON_TEXT}</SplitButton.Content>
                 <SplitButton.Action>
                     <button type="button">Action</button>
                 </SplitButton.Action>
-            </SplitButton>,
+            </SplitButton.Root>,
         );
 
         expect(ref).toHaveBeenCalled();
