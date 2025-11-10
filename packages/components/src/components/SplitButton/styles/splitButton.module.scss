@@ -213,3 +213,22 @@
         }
     }
 }
+
+// Apply active colors for each emphasis when dropdown is open
+.root[data-emphasis="default"]:not([data-disabled="true"]) {
+    .action > button[data-state="open"] {
+        background-color: var(--button-background-color-pressed) !important;
+    }
+}
+
+.root[data-emphasis="weak"]:not([data-disabled="true"]) {
+    .action > button[data-state="open"] {
+        background-color: var(--button-background-color-pressed) !important;
+    }
+}
+
+.root[data-emphasis="strong"]:not([data-disabled="true"]) {
+    .action > button[data-state="open"] {
+        background-color: var(--button-strong-background-color-pressed) !important;
+    }
+}
