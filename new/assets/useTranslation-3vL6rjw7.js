@@ -1,0 +1,1 @@
+import{r as s,T as c}from"./iframe-yUdi6ZyT.js";const f=()=>{const{translations:n}=s.useContext(c);return{t:s.useCallback((t,o)=>{const e=n[t];if(e===void 0||typeof e!="string")return t;let r=e;if(o)for(const[a,u]of Object.entries(o))r=r.replaceAll(`\${${a}}`,u);return r},[n])}};export{f as u};
