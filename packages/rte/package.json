@@ -71,7 +71,7 @@
         "node": ">=18"
     },
     "scripts": {
-        "build": "pnpm clean && pnpm generate:icons && pnpm generate:componentsEnum && pnpm build:library && pnpm build:styles-with-tw && pnpm build:package:components && pnpm build:package:icons && pnpm build:package:charts && pnpm build:package:tokens && pnpm build:tools",
+        "build": "pnpm clean && pnpm generate:icons && pnpm generate:componentsEnum && pnpm build:library && pnpm build:package:components && pnpm build:package:icons && pnpm build:package:charts && pnpm build:package:tokens && pnpm build:tools",
         "build:library": "vite build",
         "build:styles-with-tw": "postcss ./src/components/**/*.css --config src/components/postcss.config.cjs -o dist/styles-without-tailwind.css",
         "build:storybook": "pnpm generate:icons && pnpm generate:componentsEnum && storybook build",
