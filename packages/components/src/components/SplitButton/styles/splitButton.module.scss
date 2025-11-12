@@ -86,6 +86,10 @@
         .content {
             padding-inline: 1.5rem;
         }
+
+        .action > button {
+            min-width: 3rem;
+        }
     }
 
     border-radius: var(--radius);
