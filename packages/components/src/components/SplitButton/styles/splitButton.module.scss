@@ -265,6 +265,27 @@
     }
 }
 
+// Individual Content disabled state (higher specificity to override emphasis styles)
+.root .content:disabled {
+    background-color: var(--box-disabled-color) !important;
+    color: var(--box-disabled-color-inverse) !important;
+    cursor: not-allowed;
+    pointer-events: none;
+    border-inline-end: 1px solid var(--line-color);
+
+    &:hover {
+        background-color: var(--box-disabled-color) !important;
+    }
+
+    &:active {
+        background-color: var(--box-disabled-color) !important;
+    }
+
+    [class*="Icon"] {
+        color: var(--box-disabled-color-inverse) !important;
+    }
+}
+
 // Individual ActionButton disabled state (higher specificity to override emphasis styles)
 .root .action > .actionButton:disabled {
     background-color: var(--box-disabled-color) !important;

@@ -216,6 +216,30 @@ export const Disabled: Story = {
     ),
 };
 
+export const ContentDisabled: Story = {
+    render: (args) => (
+        <SplitButton.Root {...args}>
+            <SplitButton.Content disabled onPress={action('primary-action')}>
+                Primary Action (disabled)
+            </SplitButton.Content>
+            <SplitButton.Action>
+                <Dropdown.Root>
+                    <Dropdown.Trigger asChild>
+                        <SplitButton.ActionButton aria-label="More options">
+                            <IconCaretDown size={16} />
+                        </SplitButton.ActionButton>
+                    </Dropdown.Trigger>
+                    <Dropdown.Content align="end">
+                        <Dropdown.Item onSelect={action('option-1')}>Option 1</Dropdown.Item>
+                        <Dropdown.Item onSelect={action('option-2')}>Option 2</Dropdown.Item>
+                        <Dropdown.Item onSelect={action('option-3')}>Option 3</Dropdown.Item>
+                    </Dropdown.Content>
+                </Dropdown.Root>
+            </SplitButton.Action>
+        </SplitButton.Root>
+    ),
+};
+
 export const ActionButtonDisabled: Story = {
     render: (args) => (
         <SplitButton.Root {...args}>

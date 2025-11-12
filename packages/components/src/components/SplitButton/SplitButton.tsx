@@ -39,6 +39,11 @@ export type SplitButtonContentProps = {
      */
     type?: 'button' | 'submit' | 'reset';
     /**
+     * Whether the button is disabled
+     * @default false
+     */
+    disabled?: boolean;
+    /**
      * Click handler
      */
     onPress?: (event?: MouseEvent<HTMLButtonElement>) => void;
@@ -146,6 +151,7 @@ export const SplitButtonContent = forwardRef<HTMLButtonElement, SplitButtonConte
             'aria-describedby': ariaDescribedby,
             'data-test-id': dataTestId = 'split-button-content',
             children,
+            disabled = false,
             onPress,
             title,
             type = 'button',
@@ -156,6 +162,7 @@ export const SplitButtonContent = forwardRef<HTMLButtonElement, SplitButtonConte
             <button
                 ref={ref}
                 type={type}
+                disabled={disabled}
                 aria-label={ariaLabel}
                 aria-describedby={ariaDescribedby}
                 title={title}
