@@ -78,6 +78,36 @@ export type SplitButtonActionProps = {
     children: ReactNode;
 };
 
+export type SplitButtonActionButtonProps = {
+    /**
+     * Button type
+     * @default 'button'
+     */
+    type?: 'button' | 'submit' | 'reset';
+    /**
+     * Whether the button is disabled
+     * @default false
+     */
+    disabled?: boolean;
+    /**
+     * Accessible label
+     */
+    'aria-label'?: string;
+    /**
+     * Accessible description
+     */
+    'aria-describedby'?: string;
+    /**
+     * Test ID for the action button
+     */
+    'data-test-id'?: string;
+    /**
+     * Button title
+     */
+    title?: string;
+    children: ReactNode;
+};
+
 export const SplitButtonRoot = forwardRef<HTMLDivElement, SplitButtonProps>(
     (
         {
@@ -154,8 +184,42 @@ export const SplitButtonAction = ({
 };
 SplitButtonAction.displayName = 'SplitButton.Action';
 
+export const SplitButtonActionButton = forwardRef<HTMLButtonElement, SplitButtonActionButtonProps>(
+    (
+        {
+            'aria-label': ariaLabel,
+            'aria-describedby': ariaDescribedby,
+            'data-test-id': dataTestId = 'split-button-action-button',
+            children,
+            disabled = false,
+            title,
+            type = 'button',
+            ...props
+        },
+        ref,
+    ) => {
+        return (
+            <button
+                ref={ref}
+                type={type}
+                disabled={disabled}
+                aria-label={ariaLabel}
+                aria-describedby={ariaDescribedby}
+                title={title}
+                data-test-id={dataTestId}
+                className={styles.actionButton}
+                {...props}
+            >
+                {children}
+            </button>
+        );
+    },
+);
+SplitButtonActionButton.displayName = 'SplitButton.ActionButton';
+
 export const SplitButton = {
     Root: SplitButtonRoot,
     Content: SplitButtonContent,
     Action: SplitButtonAction,
+    ActionButton: SplitButtonActionButton,
 };

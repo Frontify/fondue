@@ -126,6 +126,14 @@
                 button-icon-color
             );
         }
+
+        @include action-button-style(
+            button-background-color,
+            button-background-color-hover,
+            button-background-color-pressed,
+            button-text-color,
+            button-icon-color
+        );
     }
 
     &[data-emphasis="weak"]:not([data-disabled="true"]) {
@@ -138,6 +146,14 @@
                 button-icon-color
             );
         }
+
+        @include action-button-style(
+            transparent,
+            button-background-color-hover,
+            button-background-color-pressed,
+            button-text-color,
+            button-icon-color
+        );
     }
 
     &[data-emphasis="strong"]:not([data-disabled="true"]) {
@@ -151,6 +167,14 @@
                 button-strong-text-color
             );
         }
+
+        @include action-button-style(
+            button-strong-background-color,
+            button-strong-background-color-hover,
+            button-strong-background-color-pressed,
+            button-strong-text-color,
+            button-strong-icon-color
+        );
     }
 
     // Remove divider for weak emphasis
@@ -211,6 +235,49 @@
         &[data-state="open"] svg {
             transform: rotate(180deg);
         }
+    }
+}
+
+.actionButton {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font: inherit;
+    box-sizing: border-box;
+    border: none;
+    transition: background-color 250ms, color 250ms;
+    white-space: nowrap;
+    position: relative;
+
+    & {
+        @include focusStyle.focus-outline;
+    }
+
+    &:focus-visible {
+        z-index: 1;
+    }
+}
+
+// Individual ActionButton disabled state (higher specificity to override emphasis styles)
+.root .action > .actionButton:disabled {
+    background-color: var(--box-disabled-color) !important;
+    color: var(--box-disabled-color-inverse) !important;
+    cursor: not-allowed;
+    pointer-events: none;
+
+    &:hover {
+        background-color: var(--box-disabled-color) !important;
+    }
+
+    &:active {
+        background-color: var(--box-disabled-color) !important;
+    }
+
+    svg {
+        color: var(--box-disabled-color-inverse) !important;
     }
 }
 
