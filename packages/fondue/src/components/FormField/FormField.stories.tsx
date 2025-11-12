@@ -3,10 +3,8 @@
 import { type Meta, type StoryFn } from '@storybook/react-vite';
 import { useState } from 'react';
 
-import { NumberInput } from '@components/NumberInput/NumberInput';
 import { TextInput, TextInputType } from '@components/TextInput/TextInput';
 import IconInfo from '@foundation/Icon/Generated/IconInfo';
-import IconNook16 from '@foundation/Icon/Generated/IconNook16';
 import IconQuestionMark from '@foundation/Icon/Generated/IconQuestionMark';
 import { Validation } from '@utilities/validation';
 
@@ -90,12 +88,14 @@ export default {
 } as Meta<FormFieldProps>;
 
 export const Default: StoryFn<FormFieldProps> = (args) => {
-    const [currentValue, setCurrentValue] = useState<number | string | undefined>(undefined);
-    const handleChange = (value?: number) => {
-        args.error = value ? value < 0 : false;
+    const [currentValue, setCurrentValue] = useState<string>('');
+    const handleChange = (value: string) => {
+        const numValue = parseFloat(value);
+        args.error = !isNaN(numValue) && numValue < 0;
         setCurrentValue(value);
     };
-    const currentValidation = args.error ? Validation.Error : Validation.Success;
+    const numValue = parseFloat(currentValue);
+    const currentValidation = !isNaN(numValue) && numValue >= 0 ? Validation.Success : args.error ? Validation.Error : Validation.Default;
     return (
         <FormField
             {...args}
@@ -104,16 +104,13 @@ export const Default: StoryFn<FormFieldProps> = (args) => {
                 secondaryLabel: '1/10',
                 required: true,
             }}
-            errorText={'Value must be greater and 0.'}
-            status={isNaN(Number(currentValue)) ? Validation.Default : currentValidation}
+            errorText={'Value must be greater than 0.'}
+            status={currentValidation}
         >
-            <NumberInput
-                controls
-                stepInterval={20}
-                clearable
+            <TextInput
+                type={TextInputType.Text}
                 onChange={handleChange}
-                suffix="px"
-                decorator={<IconNook16 />}
+                value={currentValue}
                 placeholder="Enter a number..."
             />
         </FormField>
