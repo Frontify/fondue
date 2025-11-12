@@ -64,7 +64,8 @@ export type SelectComponentProps = {
      */
     id?: string;
     /**
-     * The value of the select is shown as plan text when set to true, items child components are used if set to true
+     * The value of the select is shown as plain text (from the label prop) when set to true.
+     * Items child components are used if set to false
      * @default true
      */
     showStringValue?: boolean;
