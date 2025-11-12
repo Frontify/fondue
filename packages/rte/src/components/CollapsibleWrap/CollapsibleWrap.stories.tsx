@@ -2,7 +2,6 @@
 
 import { type Meta, type StoryFn } from '@storybook/react-vite';
 
-import { Card } from '@components/Card';
 import { Heading } from '@typography/Heading';
 import { Text } from '@typography/Text';
 
@@ -21,7 +20,7 @@ export default {
 } as Meta<CollapsibleWrapProps>;
 
 export const CollapsibleWrap: StoryFn<CollapsibleWrapProps> = (args) => (
-    <Card>
+    <div className="tw-border tw-border-black-10 tw-rounded">
         <div className="tw-divide-y tw-divide-black-10">
             <div className="tw-p-3">
                 <Heading>Collapsible Wrap</Heading>
@@ -33,11 +32,11 @@ export const CollapsibleWrap: StoryFn<CollapsibleWrapProps> = (args) => (
                 </div>
             </CollapsibleWrapComponent>
         </div>
-    </Card>
+    </div>
 );
 
 export const CollapsibleWrapNoStartingAnimation: StoryFn<CollapsibleWrapProps> = (args) => (
-    <Card>
+    <div className="tw-border tw-border-black-10 tw-rounded">
         <div className="tw-divide-y tw-divide-black-10">
             <div className="tw-p-3">
                 <Heading>Collapsible Wrap Without First Animation</Heading>
@@ -49,5 +48,5 @@ export const CollapsibleWrapNoStartingAnimation: StoryFn<CollapsibleWrapProps> =
                 </div>
             </CollapsibleWrapComponent>
         </div>
-    </Card>
+    </div>
 );

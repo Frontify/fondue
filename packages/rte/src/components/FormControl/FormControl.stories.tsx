@@ -3,7 +3,6 @@
 import { type Meta, type StoryFn } from '@storybook/react-vite';
 import { useState } from 'react';
 
-import { Checklist, ChecklistDirection } from '@components/Checklist/Checklist';
 import { Dropdown, DropdownSize } from '@components/Dropdown/Dropdown';
 import { MenuItemContentSize } from '@components/MenuItem';
 import { SegmentedControls } from '@components/SegmentedControls/SegmentedControls';
@@ -143,25 +142,3 @@ export const WithDropdown: StoryFn<FormControlProps> = (args) => {
     );
 };
 
-export const WithVerticalChecklist: StoryFn<FormControlProps> = (args) => {
-    const [activeBoxes, setActiveBoxes] = useState<string[]>([]);
-    const checkboxes = Array.from({ length: 5 })
-        .fill({})
-        .map((_, index) => ({
-            id: `checkbox-${index}`,
-            value: `checkbox-${index}`,
-            label: `Checkbox Nr. ${index}`,
-            tooltip: { content: `Random Tooltip ${index}` },
-        }));
-
-    return (
-        <FormControl {...args}>
-            <Checklist
-                activeValues={activeBoxes}
-                setActiveValues={setActiveBoxes}
-                direction={ChecklistDirection.Vertical}
-                checkboxes={checkboxes}
-            />
-        </FormControl>
-    );
-};
