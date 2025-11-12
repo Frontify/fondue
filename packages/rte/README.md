@@ -1,4 +1,4 @@
-# Fondue Design System by Frontify
+# Fondue Rich Text Editor
 
 <a href="https://github.com/Frontify/fondue/actions/workflows/continuous-integration.yml">
     <img src="https://github.com/Frontify/react-components/actions/workflows/continuous-integration.yml/badge.svg" alt="CI Status" />
@@ -7,39 +7,83 @@
     <img src="https://snyk.io/test/github/Frontify/fondue/badge.svg" alt="Known Vulnerabilities" />
 </a>
 <a href="https://github.com/Frontify/fondue/blob/main/README.md" title="latest">
-    <img alt="latest" src="https://img.shields.io/npm/v/@frontify/fondue/latest.svg" />
+    <img alt="latest" src="https://img.shields.io/npm/v/@frontify/fondue-rte/latest.svg" alt="NPM Version" />
 </a>
 
-## Using `@frontify/fondue`
+Rich Text Editor components for the Fondue Design System, built with [Plate](https://platejs.org/) (based on [Slate.js](https://www.slatejs.org/)).
 
-1. Install fondue from npm
+## Installation
 
 ```shell
-npm install @frontify/fondue
+npm install @frontify/fondue-rte
 ```
 
-2. Load Fondue Stylesheet
+Or using pnpm:
+
+```shell
+pnpm add @frontify/fondue-rte
+```
+
+## Usage
 
 ```typescript
-import '@frontify/fondue/style';
+import { RichTextEditor } from '@frontify/fondue-rte';
+
+// Use the Rich Text Editor in your component
+<RichTextEditor />
 ```
 
-3. Use Components
+## Features
 
-```typescript
-import { Button } from '@frontify/fondue';
-```
+- Built on Plate editor framework with extensive plugin system
+- Full-featured rich text editing capabilities
+- Integrated with Fondue design system tokens and components
+- Comprehensive accessibility support
+- TypeScript support
 
-Fondue provides two builds: ES modules and UMD modules. Documentation for the provided components and how to use them is available in [Storybook](https://fondue-components.frontify.com/).
+## Development
+
+This package is part of the Fondue monorepo. For development:
+
+1. Install dependencies from the root:
+   ```shell
+   pnpm install
+   ```
+
+2. Build the package:
+   ```shell
+   pnpm build:rte
+   ```
+
+3. Run Storybook for development:
+   ```shell
+   pnpm storybook
+   ```
+   The RTE Storybook will be available at http://localhost:6011
+
+4. Run tests:
+   ```shell
+   cd packages/rte
+   pnpm test
+   ```
+
+## Testing
+
+This package uses [Cypress](https://www.cypress.io/) for component testing.
 
 ## Contributing
 
-See [Contribution Guidelines](CONTRIBUTING.md) for contributing and local development help.
+See [Contribution Guidelines](../../CONTRIBUTING.md) for contributing and local development help.
+
+## Related Packages
+
+- [@frontify/fondue](../fondue) - Main Fondue component library
+- [@frontify/fondue-components](../components) - New refactored Fondue components
+- [@frontify/fondue-tokens](../tokens) - Design tokens
+- [@frontify/fondue-icons](../icons) - Icon components
 
 ## Important Links
 
--   [Storybook](https://storybook.js.org/docs/react/get-started/introduction) – Used for isolated development and documentation of Fondue components
--   [https://www.cypress.io/](Cypress) – Used for Testing in Fondue
--   [Frontify React Guidelines](https://www.notion.so/React-Architecture-0ce55540be0b48fa88a2c3848e35eb81) – Internal Coding Guidelines for Frontify
--   [Fondue Tokens](https://github.com/Frontify/fondue-tokens) – Design Tokens used at Frontify
--   [Tailwind](https://tailwindcss.com/docs) – Utility-first CSS framework used in Fondue
+- [Fondue Storybook](https://fondue-components.frontify.com/) - Component documentation
+- [Plate Documentation](https://platejs.org/) - Plate editor framework
+- [Slate Documentation](https://www.slatejs.org/) - Slate.js core library
