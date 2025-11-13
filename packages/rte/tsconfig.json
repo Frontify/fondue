@@ -1,0 +1,51 @@
+{
+    "compilerOptions": {
+        "allowJs": true,
+        "baseUrl": ".",
+        "esModuleInterop": true,
+        "jsx": "react-jsx",
+        "lib": ["dom", "dom.iterable", "esnext"],
+        "module": "ESNext",
+        "moduleResolution": "Bundler",
+        "noEmit": true,
+        "noUnusedLocals": true,
+        "paths": {
+            "@components/*": ["./src/components/*"],
+            "@foundation/*": ["./src/foundation/*"],
+            "@hooks/*": ["./src/hooks/*"],
+            "@layout/*": ["./src/layout/*"],
+            "@typography/*": ["./src/typography/*"],
+            "@utilities/*": ["./src/utilities/*"]
+        },
+        "resolveJsonModule": true,
+        "skipLibCheck": true,
+        "strict": true,
+        "target": "esnext",
+        "types": ["cypress", "cypress-real-events", "vite/client", "node"]
+    },
+    "exclude": ["node_modules", "dist"],
+    "include": [
+        ".storybook",
+        "eslint.config.mjs",
+        "postcss.config.cjs",
+        "cypress.config.ts",
+        "src",
+        "cypress",
+        "scripts",
+        "vite.config.ts",
+        "tailwind.config.js",
+        "components.vite.config.ts",
+        "charts.vite.config.ts",
+        "icons.vite.config.ts",
+        "tailwind.config.js",
+        "legacyComponents.tailwind.config.ts",
+        "tokens.vite.config.ts",
+        "codemod.vite.config.ts",
+        "internal-tools.vite.config.ts",
+        "legacyTokens",
+        "tools"
+    ],
+    "ts-node": {
+        "files": true
+    }
+}

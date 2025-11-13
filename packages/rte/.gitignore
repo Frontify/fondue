@@ -1,0 +1,7 @@
+# Build
+storybook-static
+dist
+
+# Testing
+cypress/videos
+cypress/screenshots

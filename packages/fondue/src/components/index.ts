@@ -21,7 +21,6 @@ export * from './MultiSelect';
 export * from './OrderableList';
 export * from './RadioList';
 export * from './RadioPill';
-export * from './RichTextEditor';
 export * from './Table';
 export * from './Tabs';
 export * from './Textarea';

@@ -148,7 +148,6 @@
         "SensorContext",
         "SortableProps",
         "SortableTreeItemProps",
-        "TLinkElement",
         "Toast",
         "ToastAnimationDirection",
         "ToastProps",
@@ -220,7 +219,6 @@
         "shouldUpdateTreeState",
         "toastStylesBackgroundColorsMap",
         "updateNodeWithNewChildren",
-        "useEditorState",
         "useTreeItem",
         "verticalGapClassMap"
     ]
