@@ -6,5 +6,4 @@ export * from './components';
 export * from './hooks';
 export * from './plate';
 export * from './types';
-export * from './typography';
 export * from './utilities';

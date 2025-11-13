@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export * from './dnd';
 export { TABBABLE_ELEMENTS } from './elements';
 export * from './focusStyle';
 export * from './merge';
