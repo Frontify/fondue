@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { Slot as RadixSlot } from '@radix-ui/react-slot';
 import { forwardRef, type ForwardedRef, type MouseEvent, type ReactNode } from 'react';
 
 import { cn } from '#/utilities/styleUtilities';
@@ -63,6 +64,7 @@ export type ButtonProps = {
     'aria-label'?: string;
     'aria-describedby'?: string;
     'data-test-id'?: string;
+    asChild?: boolean;
     className?: string;
 };
 
@@ -78,12 +80,15 @@ export const Button = forwardRef<HTMLButtonElement | null, ButtonProps>(
             className = '',
             onPress = () => {},
             hugWidth = true,
+            asChild,
             ...props
         }: ButtonProps,
         ref: ForwardedRef<HTMLButtonElement | null>,
     ) => {
+        const Comp = asChild ? RadixSlot : 'button';
+
         return (
-            <button
+            <Comp
                 ref={ref}
                 type={type}
                 form={form}
@@ -103,7 +108,7 @@ export const Button = forwardRef<HTMLButtonElement | null, ButtonProps>(
                 }}
             >
                 {children}
-            </button>
+            </Comp>
         );
     },
 );
