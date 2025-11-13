@@ -1,5 +1,20 @@
 # @frontify/fondue-components
 
+## 24.0.0
+
+### Minor Changes
+
+- [#2532](https://github.com/Frontify/fondue/pull/2532) [`7e5c213`](https://github.com/Frontify/fondue/commit/7e5c213808909799838721fb7ea25d50467e35ee) Thanks [@syeo66](https://github.com/syeo66)! - fix(Dialog): focus does not switch to footer
+
+- [#2527](https://github.com/Frontify/fondue/pull/2527) [`c010260`](https://github.com/Frontify/fondue/commit/c010260934a74538e597a7eae8d31c6795481fdc) Thanks [@syeo66](https://github.com/syeo66)! - fix(Accordion): padding gets lost on border=false
+
+- [#2530](https://github.com/Frontify/fondue/pull/2530) [`881a660`](https://github.com/Frontify/fondue/commit/881a660350069313cb51bc0274e08777fe4d03f0) Thanks [@syeo66](https://github.com/syeo66)! - fix(useFondueTheme): make sure useFondueTheme always returns a direction
+
+### Patch Changes
+
+- Updated dependencies [[`737f0de`](https://github.com/Frontify/fondue/commit/737f0de29d5b5f2dbca1937c24026137089d3d29), [`38bcce6`](https://github.com/Frontify/fondue/commit/38bcce66a2eb78c98570906a3ef81bd2c4e645a8), [`3613743`](https://github.com/Frontify/fondue/commit/3613743fbc6dbf43c26f49d802389780b0b8d1d5)]:
+    - @frontify/fondue-icons@0.22.0
+
 ## 23.0.0
 
 ### Minor Changes
