@@ -7,7 +7,6 @@ export * from './Dropdown/SelectMenu';
 export * from './EditableText';
 export * from './Flyout';
 export * from './FormControl';
-export * from './FrontifyPattern';
 export * from './InputLabel';
 export * from './MenuItem';
 export * from './OrderableList';
