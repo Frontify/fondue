@@ -70,3 +70,15 @@ export const WithIconAndLabel: Story = {
         </Button>
     ),
 };
+
+export const WithLink: Story = {
+    name: 'With Link as Child',
+    args: {
+        asChild: true,
+    },
+    render: (args) => (
+        <Button {...args}>
+            <a href="https://www.frontify.com/">Button Text</a>
+        </Button>
+    ),
+};
