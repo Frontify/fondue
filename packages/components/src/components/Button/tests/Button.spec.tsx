@@ -39,6 +39,19 @@ describe('Button component', () => {
         expect(clickListener).toHaveBeenCalledOnce();
     });
 
+    it('reacts on click when rendering a link', () => {
+        const clickListener = vi.fn();
+        const { getByTestId } = render(
+            <Button onPress={clickListener} asChild>
+                <a href="https://www.frontify.com/">{BUTTON_TEXT}</a>
+            </Button>,
+        );
+        const button = getByTestId(BUTTON_TEST_ID);
+        expect(clickListener).not.toHaveBeenCalled();
+        button.click();
+        expect(clickListener).toHaveBeenCalledOnce();
+    });
+
     it('does not react on click when disabled', () => {
         const clickListener = vi.fn();
         const { getByTestId } = render(
