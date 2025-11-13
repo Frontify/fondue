@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import IconExclamationMarkCircle from '@foundation/Icon/Generated/IconExclamationMarkCircle';
-import IconIcon from '@foundation/Icon/Generated/IconIcon';
-import { IconSize } from '@foundation/Icon/IconSize';
+import { IconExclamationMarkCircle } from '@frontify/fondue-icons';
+import { IconIcon } from '@frontify/fondue-icons';
+import { IconSize } from '@frontify/fondue-icons';
 
 import { BrightHeaderStyle, brightHeaderBackgroundColors } from './BrightHeader';
 import { LegacyTooltip, type LegacyTooltipProps, TooltipAlignment, TooltipPosition } from './LegacyTooltip';

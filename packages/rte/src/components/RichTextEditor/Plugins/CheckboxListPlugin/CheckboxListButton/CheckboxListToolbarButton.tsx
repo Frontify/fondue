@@ -16,7 +16,7 @@ import { focusEditor } from '@udecode/slate-react';
 
 import { IconStylingWrapper } from '@components/RichTextEditor/Plugins/helper';
 import { ToolbarButton } from '@components/RichTextEditor/components/Toolbar/ToolbarButton';
-import IconListCheck16 from '@foundation/Icon/Generated/IconListCheck16';
+import { IconListCheck as IconListCheck16 } from '@frontify/fondue-icons';
 
 import { ELEMENT_CHECK_ITEM } from '../id';
 

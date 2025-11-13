@@ -2,11 +2,11 @@
 
 import { type ReactElement, cloneElement } from 'react';
 
-import IconCheckMark from '@foundation/Icon/Generated/IconCheckMark';
-import IconDocument from '@foundation/Icon/Generated/IconDocument';
-import IconExclamationMarkCircle from '@foundation/Icon/Generated/IconExclamationMarkCircle';
-import IconExclamationMarkTriangle from '@foundation/Icon/Generated/IconExclamationMarkTriangle';
-import { IconSize } from '@foundation/Icon/IconSize';
+import { IconCheckMark } from '@frontify/fondue-icons';
+import { IconDocument } from '@frontify/fondue-icons';
+import { IconExclamationMarkCircle } from '@frontify/fondue-icons';
+import { IconExclamationMarkTriangle } from '@frontify/fondue-icons';
+import { IconSize } from '@frontify/fondue-icons';
 import { merge } from '@utilities/merge';
 
 /**

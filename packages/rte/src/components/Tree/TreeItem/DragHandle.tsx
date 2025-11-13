@@ -2,7 +2,7 @@
 
 import { type ButtonHTMLAttributes, type DetailedHTMLProps, forwardRef } from 'react';
 
-import IconGrabHandle12 from '@foundation/Icon/Generated/IconGrabHandle12';
+import { IconGrabHandle as IconGrabHandle12 } from '@frontify/fondue-icons';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 

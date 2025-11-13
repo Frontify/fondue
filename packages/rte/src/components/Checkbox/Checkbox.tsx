@@ -16,9 +16,9 @@ import {
 } from 'react';
 
 import { InputLabel, type InputLabelTooltipProps } from '@components/InputLabel/InputLabel';
-import IconCheckMark from '@foundation/Icon/Generated/IconCheckMark';
-import IconMinus from '@foundation/Icon/Generated/IconMinus';
-import { IconSize } from '@foundation/Icon/IconSize';
+import { IconCheckMark } from '@frontify/fondue-icons';
+import { IconMinus } from '@frontify/fondue-icons';
+import { IconSize } from '@frontify/fondue-icons';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';

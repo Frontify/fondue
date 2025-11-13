@@ -23,7 +23,7 @@ import {
     useDynamicNavigationMock,
     useNavigationWithLazyLoadedItemsMock,
 } from '@components/Tree/utils';
-import IconDocument from '@foundation/Icon/Generated/IconDocument';
+import { IconDocument } from '@frontify/fondue-icons';
 
 
 /**

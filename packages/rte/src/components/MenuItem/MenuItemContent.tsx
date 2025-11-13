@@ -2,7 +2,7 @@
 
 import { type HTMLAttributes, type ReactElement, type ReactNode, cloneElement } from 'react';
 
-import { IconSize } from '@foundation/Icon/IconSize';
+import { IconSize } from '@frontify/fondue-icons';
 import { merge } from '@utilities/merge';
 
 import { MenuItemContentSize } from './types';

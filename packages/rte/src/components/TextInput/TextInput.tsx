@@ -16,13 +16,13 @@ import {
 } from 'react';
 
 import { LoadingCircle, LoadingCircleSize } from '@components/LoadingCircle/LoadingCircle';
-import IconCheckMark from '@foundation/Icon/Generated/IconCheckMark';
-import IconClipboard from '@foundation/Icon/Generated/IconClipboard';
-import IconCross from '@foundation/Icon/Generated/IconCross';
-import IconCrossCircle from '@foundation/Icon/Generated/IconCrossCircle';
-import IconExclamationMarkTriangle from '@foundation/Icon/Generated/IconExclamationMarkTriangle';
-import IconEye from '@foundation/Icon/Generated/IconEye';
-import IconEyeOff from '@foundation/Icon/Generated/IconEyeOff';
+import { IconCheckMark } from '@frontify/fondue-icons';
+import { IconClipboard } from '@frontify/fondue-icons';
+import { IconCross } from '@frontify/fondue-icons';
+import { IconCrossCircle } from '@frontify/fondue-icons';
+import { IconExclamationMarkTriangle } from '@frontify/fondue-icons';
+import { IconEye } from '@frontify/fondue-icons';
+import { IconEyeOff } from '@frontify/fondue-icons';
 import { useCopy } from '@hooks/useCopy';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { FOCUS_STYLE } from '@utilities/focusStyle';

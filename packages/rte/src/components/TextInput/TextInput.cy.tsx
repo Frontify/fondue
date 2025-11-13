@@ -2,7 +2,7 @@
 
 import { type ReactElement, useEffect, useState } from 'react';
 
-import IconIcon from '@foundation/Icon/Generated/IconIcon';
+import { IconIcon } from '@frontify/fondue-icons';
 import { Validation } from '@utilities/validation';
 
 import { TextInput, type TextInputProps, TextInputType } from './TextInput';

@@ -2,7 +2,7 @@
 
 import { cloneElement, useContext, type ReactElement } from 'react';
 
-import { IconSize } from '@foundation/Icon/IconSize';
+import { IconSize } from '@frontify/fondue-icons';
 import { merge } from '@utilities/merge';
 
 import { ModalLayoutContext } from './context/ModalLayout';

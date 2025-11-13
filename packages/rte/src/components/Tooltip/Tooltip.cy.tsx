@@ -2,7 +2,7 @@
 
 import { type PopperPlacement } from '@components/Popper/types';
 import { Tooltip } from '@components/Tooltip/Tooltip';
-import IconIcon24 from '@foundation/Icon/Generated/IconIcon24';
+import { IconIcon as IconIcon24 } from '@frontify/fondue-icons';
 
 const TOOLTIP_SELECTOR = '[data-test-id=fondue-tooltip-content]';
 const TOOLTIP_TRIGGER = '[data-test-id=tooltip-trigger]';

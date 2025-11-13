@@ -2,7 +2,7 @@
 
 import { type PlateRenderElementProps } from '@udecode/plate-core';
 
-import IconPeople12 from '@foundation/Icon/Generated/IconPeople12';
+import { IconPeople as IconPeople12 } from '@frontify/fondue-icons';
 
 import { MentionableCategory } from '../types';
 

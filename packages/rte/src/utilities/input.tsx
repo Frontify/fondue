@@ -5,11 +5,11 @@ import { type ReactElement } from 'react';
 import { Button } from '@components/Button/Button';
 import { ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button/ButtonTypes';
 import { LoadingCircle, LoadingCircleSize } from '@components/LoadingCircle/LoadingCircle';
-import IconCheckMark16 from '@foundation/Icon/Generated/IconCheckMark16';
-import IconCross16 from '@foundation/Icon/Generated/IconCross16';
-import IconExclamationMarkTriangle16 from '@foundation/Icon/Generated/IconExclamationMarkTriangle16';
-import IconEye16 from '@foundation/Icon/Generated/IconEye16';
-import IconEyeOff16 from '@foundation/Icon/Generated/IconEyeOff16';
+import { IconCheckMark as IconCheckMark16 } from '@frontify/fondue-icons';
+import { IconCross as IconCross16 } from '@frontify/fondue-icons';
+import { IconExclamationMarkTriangle as IconExclamationMarkTriangle16 } from '@frontify/fondue-icons';
+import { IconEye as IconEye16 } from '@frontify/fondue-icons';
+import { IconEyeOff as IconEyeOff16 } from '@frontify/fondue-icons';
 
 import { type InputActionsProps, type InputExtraActionsProps } from '../types/input';
 

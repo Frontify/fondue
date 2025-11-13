@@ -15,7 +15,7 @@ import {
 } from '@components/Tree';
 import { type TreeItemStyling, type TreeNodeWithoutElements, type TreeProps } from '@components/Tree/types';
 import { type TreeItemMockMultiselect, treeItemsMockMultiseclect } from '@components/Tree/utils';
-import IconDocument from '@foundation/Icon/Generated/IconDocument';
+import { IconDocument } from '@frontify/fondue-icons';
 
 import { TreeItemMultiselect } from './TreeItem/TreeItemMultiselect';
 import { getNewSelectedItems } from './helpers';

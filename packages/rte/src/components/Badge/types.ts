@@ -2,7 +2,7 @@
 
 import { type ReactElement, type ReactNode } from 'react';
 
-import { type IconProps } from '@foundation/Icon/IconProps';
+import { type FondueIconProps as IconProps } from '@frontify/fondue-icons';
 
 import { type Color } from '../../types';
 

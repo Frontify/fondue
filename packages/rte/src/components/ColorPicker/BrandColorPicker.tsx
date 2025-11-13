@@ -5,11 +5,11 @@ import { type ReactElement, useEffect, useState } from 'react';
 
 import { SegmentedControls } from '@components/SegmentedControls/SegmentedControls';
 import { TextInput } from '@components/TextInput/TextInput';
-import IconCheckMark from '@foundation/Icon/Generated/IconCheckMark';
-import IconGridRegular from '@foundation/Icon/Generated/IconGridRegular';
-import IconMagnifier from '@foundation/Icon/Generated/IconMagnifier';
-import IconStackVertical from '@foundation/Icon/Generated/IconStackVertical';
-import { IconSize } from '@foundation/Icon/IconSize';
+import { IconCheckMark } from '@frontify/fondue-icons';
+import { IconGridRegular } from '@frontify/fondue-icons';
+import { IconMagnifier } from '@frontify/fondue-icons';
+import { IconStackVertical } from '@frontify/fondue-icons';
+import { IconSize } from '@frontify/fondue-icons';
 import { isColorLight, toShortRgb } from '@utilities/colors';
 import { merge } from '@utilities/merge';
 

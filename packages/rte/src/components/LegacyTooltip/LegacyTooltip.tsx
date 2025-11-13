@@ -20,7 +20,7 @@ import { usePopper } from 'react-popper';
 import { Button } from '@components/Button/Button';
 import { ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button/ButtonTypes';
 import { Portal } from '@components/Portal/Portal';
-import { IconSize } from '@foundation/Icon/IconSize';
+import { IconSize } from '@frontify/fondue-icons';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';

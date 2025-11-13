@@ -2,7 +2,7 @@
 
 import { type Meta, type StoryFn } from '@storybook/react-vite';
 
-import IconIcon from '@foundation/Icon/Generated/IconIcon';
+import { IconIcon } from '@frontify/fondue-icons';
 
 import { Badge } from './Badge';
 import { BadgeEmphasis, type BadgeProps, BadgeStatus, BadgeStyle } from './types';

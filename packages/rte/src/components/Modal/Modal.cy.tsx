@@ -2,7 +2,7 @@
 
 import { OverlayProvider } from '@react-aria/overlays';
 
-import IconIcon from '@foundation/Icon/Generated/IconIcon';
+import { IconIcon } from '@frontify/fondue-icons';
 import { PatternDesign, PatternTheme } from '@foundation/Pattern';
 
 import { Modal } from './Modal';

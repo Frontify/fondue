@@ -4,9 +4,9 @@ import { useFocusRing } from '@react-aria/focus';
 import { type FocusEvent, type MouseEvent, type ReactNode } from 'react';
 
 import { MenuItemContent, type MenuItemContentProps } from '@components/MenuItem/MenuItemContent';
-import IconCaretRight from '@foundation/Icon/Generated/IconCaretRight';
-import IconCheckMark from '@foundation/Icon/Generated/IconCheckMark';
-import { IconSize } from '@foundation/Icon/IconSize';
+import { IconCaretRight } from '@frontify/fondue-icons';
+import { IconCheckMark } from '@frontify/fondue-icons';
+import { IconSize } from '@frontify/fondue-icons';
 import { getItemElementType } from '@utilities/elements';
 import { FOCUS_STYLE_NO_OFFSET } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';

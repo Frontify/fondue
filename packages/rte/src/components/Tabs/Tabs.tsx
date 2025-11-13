@@ -17,7 +17,7 @@ import {
 
 import { Badge } from '@components/Badge';
 import { type TabItemProps } from '@components/Tabs/TabItem';
-import IconDotsHorizontal from '@foundation/Icon/Generated/IconDotsHorizontal';
+import { IconDotsHorizontal } from '@frontify/fondue-icons';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { type DimensionUnity } from '@utilities/dimensions';
 import { FOCUS_STYLE, FOCUS_VISIBLE_STYLE, FOCUS_VISIBLE_STYLE_INSET } from '@utilities/focusStyle';

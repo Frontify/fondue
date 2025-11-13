@@ -7,7 +7,7 @@ import { IconStylingWrapper } from '@components/RichTextEditor/Plugins/helper';
 import { ToolbarButton } from '@components/RichTextEditor/components/Toolbar/ToolbarButton';
 import { type ToolbarButtonProps } from '@components/RichTextEditor/components/Toolbar/types';
 import { getTooltip } from '@components/RichTextEditor/helpers/getTooltip';
-import IconTextColumnBreak16 from '@foundation/Icon/Generated/IconTextColumnBreak16';
+import { IconTextColumnBreak as IconTextColumnBreak16 } from '@frontify/fondue-icons';
 
 import { toggleColumnBreak } from './onKeyDownColumnBreak';
 import { getColumnBreakCount } from './utils/getColumnBreakCount';

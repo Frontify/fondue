@@ -6,7 +6,7 @@ import { focusEditor } from '@udecode/slate-react';
 import { type ReactNode, forwardRef } from 'react';
 
 import { ToolbarButton } from '@components/RichTextEditor/components/Toolbar/ToolbarButton';
-import IconLink16 from '@foundation/Icon/Generated/IconLink16';
+import { IconLink as IconLink16 } from '@frontify/fondue-icons';
 
 import { IconStylingWrapper } from '../helper';
 

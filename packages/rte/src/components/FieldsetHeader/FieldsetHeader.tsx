@@ -3,11 +3,11 @@
 import { type ReactElement, type ReactNode, cloneElement, isValidElement } from 'react';
 
 import { Switch, type SwitchSize } from '@components/Switch/Switch';
-import IconCaretDown from '@foundation/Icon/Generated/IconCaretDown';
-import IconMinus from '@foundation/Icon/Generated/IconMinus';
-import IconPlus from '@foundation/Icon/Generated/IconPlus';
-import { type IconProps } from '@foundation/Icon/IconProps';
-import { IconSize } from '@foundation/Icon/IconSize';
+import { IconCaretDown } from '@frontify/fondue-icons';
+import { IconMinus } from '@frontify/fondue-icons';
+import { IconPlus } from '@frontify/fondue-icons';
+import { type FondueIconProps as IconProps } from '@frontify/fondue-icons';
+import { IconSize } from '@frontify/fondue-icons';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { merge } from '@utilities/merge';
 

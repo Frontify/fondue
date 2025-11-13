@@ -4,7 +4,7 @@ import { getPluginType } from '@udecode/plate-core';
 
 import { ListToolbarButton } from '@components/RichTextEditor/Plugins/ListPlugin/ListToolbarButton';
 import { getTooltip } from '@components/RichTextEditor/helpers/getTooltip';
-import IconListNumbers16 from '@foundation/Icon/Generated/IconListNumbers16';
+import { IconListNumbers as IconListNumbers16 } from '@frontify/fondue-icons';
 
 import { ButtonWrapper, IconStylingWrapper } from '../../helper';
 import { type PluginButtonProps } from '../../types';

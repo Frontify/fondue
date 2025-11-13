@@ -2,8 +2,8 @@
 
 import { type ReactElement, type ReactNode, cloneElement } from 'react';
 
-import IconCross from '@foundation/Icon/Generated/IconCross';
-import { IconSize } from '@foundation/Icon/IconSize';
+import { IconCross } from '@frontify/fondue-icons';
+import { IconSize } from '@frontify/fondue-icons';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 

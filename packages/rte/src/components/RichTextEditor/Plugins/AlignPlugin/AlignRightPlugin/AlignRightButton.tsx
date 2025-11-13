@@ -2,7 +2,7 @@
 
 import { AlignmentToolbarButton } from '@components/RichTextEditor/Plugins/AlignPlugin/AlignmentToolbarbutton';
 import { getTooltip } from '@components/RichTextEditor/helpers';
-import IconTextAlignmentRight16 from '@foundation/Icon/Generated/IconTextAlignmentRight16';
+import { IconTextAlignmentRight as IconTextAlignmentRight16 } from '@frontify/fondue-icons';
 
 import { ButtonWrapper, IconStylingWrapper } from '../../helper';
 import { type PluginButtonProps } from '../../types';

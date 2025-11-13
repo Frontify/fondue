@@ -2,7 +2,7 @@
 
 import { Children, type ReactNode } from 'react';
 
-import IconGrabHandle12 from '@foundation/Icon/Generated/IconGrabHandle12';
+import { IconGrabHandle as IconGrabHandle12 } from '@frontify/fondue-icons';
 import { merge } from '@utilities/merge';
 
 import { INDENTATION_WIDTH } from '../helpers';

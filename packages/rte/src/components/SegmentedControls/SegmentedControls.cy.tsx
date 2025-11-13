@@ -2,10 +2,10 @@
 
 import { type ReactElement, useState } from 'react';
 
-import IconTextAlignmentCentre from '@foundation/Icon/Generated/IconTextAlignmentCentre';
-import IconTextAlignmentLeft from '@foundation/Icon/Generated/IconTextAlignmentLeft';
-import IconTextAlignmentRight from '@foundation/Icon/Generated/IconTextAlignmentRight';
-import { IconSize } from '@foundation/Icon/IconSize';
+import { IconTextAlignmentCentre } from '@frontify/fondue-icons';
+import { IconTextAlignmentLeft } from '@frontify/fondue-icons';
+import { IconTextAlignmentRight } from '@frontify/fondue-icons';
+import { IconSize } from '@frontify/fondue-icons';
 
 import { type IconItem, type SegmentSize, SegmentedControls, type TextOrNumberItem } from './SegmentedControls';
 

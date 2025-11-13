@@ -4,8 +4,8 @@ import { type StoryFn } from '@storybook/react-vite';
 import { useState } from 'react';
 
 import { EditableMode, EditableText, type EditableTextProps } from '@components/EditableText/EditableText';
-import IconPen from '@foundation/Icon/Generated/IconPen';
-import { IconSize } from '@foundation/Icon/IconSize';
+import { IconPen } from '@frontify/fondue-icons';
+import { IconSize } from '@frontify/fondue-icons';
 
 /**
  ### *Legacy component warning*

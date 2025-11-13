@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import IconTextColumnBreak16 from '@foundation/Icon/Generated/IconTextColumnBreak16';
+import { IconTextColumnBreak as IconTextColumnBreak16 } from '@frontify/fondue-icons';
 
 import { ButtonWrapper, IconStylingWrapper } from '../../helper';
 import { type PluginButtonProps } from '../../types';

@@ -3,9 +3,9 @@
 import { type ReactElement, cloneElement } from 'react';
 
 import { LegacyTooltip, type LegacyTooltipProps } from '@components/LegacyTooltip/LegacyTooltip';
-import IconQuestionMarkCircle from '@foundation/Icon/Generated/IconQuestionMarkCircle';
-import { type IconProps } from '@foundation/Icon/IconProps';
-import { IconSize } from '@foundation/Icon/IconSize';
+import { IconQuestionMarkCircle } from '@frontify/fondue-icons';
+import { type FondueIconProps as IconProps } from '@frontify/fondue-icons';
+import { IconSize } from '@frontify/fondue-icons';
 import { merge } from '@utilities/merge';
 
 export type TooltipIconProps = {

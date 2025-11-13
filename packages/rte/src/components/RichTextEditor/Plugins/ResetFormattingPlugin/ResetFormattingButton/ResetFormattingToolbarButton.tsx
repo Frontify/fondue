@@ -7,7 +7,7 @@ import { ToolbarButton } from '@components/RichTextEditor/components/Toolbar/Too
 import { type ToolbarButtonProps } from '@components/RichTextEditor/components/Toolbar/types';
 import { getTooltip } from '@components/RichTextEditor/helpers/getTooltip';
 import { resetFormatting } from '@components/RichTextEditor/utils/resetFormatting';
-import IconEraser16 from '@foundation/Icon/Generated/IconEraser16';
+import { IconEraser as IconEraser16 } from '@frontify/fondue-icons';
 
 export const ResetFormattingToolbarButton = ({ id, ...props }: ToolbarButtonProps) => {
     const editor = useEditorState(useEventPlateId(id));

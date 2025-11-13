@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconSize } from '@foundation/Icon/IconSize';
+import { IconSize } from '@frontify/fondue-icons';
 
 import { TooltipIcon } from './TooltipIcon';
 

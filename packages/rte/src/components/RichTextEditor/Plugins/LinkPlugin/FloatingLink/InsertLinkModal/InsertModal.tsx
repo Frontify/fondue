@@ -8,7 +8,7 @@ import { Checkbox } from '@components/Checkbox/Checkbox';
 import { FormControl } from '@components/FormControl';
 import { FloatingModalWrapper } from '@components/RichTextEditor/components';
 import { TextInput } from '@components/TextInput/TextInput';
-import IconCheckMark20 from '@foundation/Icon/Generated/IconCheckMark20';
+import { IconCheckMark as IconCheckMark20 } from '@frontify/fondue-icons';
 
 import { type InsertModalStateProps } from './types';
 

@@ -2,7 +2,7 @@
 
 import { type ForwardedRef, forwardRef } from 'react';
 
-import IconCaretDown12 from '@foundation/Icon/Generated/IconCaretDown12';
+import { IconCaretDown as IconCaretDown12 } from '@frontify/fondue-icons';
 import { merge } from '@utilities/merge';
 
 import { type DropdownTriggerProps } from './types';

@@ -5,7 +5,7 @@ import { getPluginType } from '@udecode/plate-core';
 import { MarkToolbarButton } from '@components/RichTextEditor/Plugins/MarkPlugin/MarkToolbarButton';
 import { getHotkeyByPlatform } from '@components/RichTextEditor/helpers/getHotkeyByPlatform';
 import { getTooltip } from '@components/RichTextEditor/helpers/getTooltip';
-import IconTextFormatBold16 from '@foundation/Icon/Generated/IconTextFormatBold16';
+import { IconTextFormatBold as IconTextFormatBold16 } from '@frontify/fondue-icons';
 
 import { ButtonWrapper, IconStylingWrapper } from '../../helper';
 import { type PluginButtonProps } from '../../types';

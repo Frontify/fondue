@@ -3,9 +3,9 @@
 import { type ComboboxItemProps } from '@udecode/plate-combobox';
 import { type ReactElement } from 'react';
 
-import IconPeople12 from '@foundation/Icon/Generated/IconPeople12';
-import IconPerson12 from '@foundation/Icon/Generated/IconPerson12';
-import IconTarget12 from '@foundation/Icon/Generated/IconTarget12';
+import { IconPeople as IconPeople12 } from '@frontify/fondue-icons';
+import { IconPerson as IconPerson12 } from '@frontify/fondue-icons';
+import { IconTarget as IconTarget12 } from '@frontify/fondue-icons';
 
 import { type MentionItemData, MentionableCategory } from '../types';
 

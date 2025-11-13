@@ -8,7 +8,7 @@ import { useRadioGroupState, type RadioGroupState } from '@react-stately/radio';
 import { motion } from 'motion/react';
 import { forwardRef, useLayoutEffect, useMemo, useRef, useState, type ReactElement } from 'react';
 
-import { type IconProps } from '@foundation/Icon/IconProps';
+import { type FondueIconProps as IconProps } from '@frontify/fondue-icons';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
