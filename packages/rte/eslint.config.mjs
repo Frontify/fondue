@@ -13,10 +13,6 @@ import tailwindcssPlugin from 'eslint-plugin-tailwindcss';
 export default defineConfig(
     {
         ignores: [
-            'src/foundation/Icon/Generated/**/*.tsx',
-            'src/foundation/Icon/Generated/index.ts',
-            'src/foundation/Icon/IconEnum.ts',
-            'src/components/ComponentEnum.ts',
             'src/subpackages/tokens.js',
             'README.md',
             'dist',
