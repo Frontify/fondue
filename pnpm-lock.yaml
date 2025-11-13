@@ -848,9 +848,6 @@ importers:
       '@dnd-kit/utilities':
         specifier: ^3.2.2
         version: 3.2.2(react@18.3.1)
-      '@floating-ui/dom':
-        specifier: ^1.7.4
-        version: 1.7.4
       '@frontify/fondue-charts':
         specifier: workspace:^
         version: link:../charts
@@ -875,24 +872,15 @@ importers:
       '@radix-ui/react-tooltip':
         specifier: ^1.2.8
         version: 1.2.8(@types/react-dom@18.3.7(@types/react@18.3.26))(@types/react@18.3.26)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@react-aria/accordion':
-        specifier: 3.0.0-alpha.29
-        version: 3.0.0-alpha.29(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@react-aria/aria-modal-polyfill':
         specifier: ^3.7.15
         version: 3.7.15(react@18.3.1)
-      '@react-aria/breadcrumbs':
-        specifier: ^3.5.29
-        version: 3.5.29(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@react-aria/button':
         specifier: ^3.14.2
         version: 3.14.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@react-aria/checkbox':
         specifier: ^3.16.2
         version: 3.16.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@react-aria/combobox':
-        specifier: ^3.14.0
-        version: 3.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@react-aria/dialog':
         specifier: ^3.5.31
         version: 3.5.31(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -920,36 +908,18 @@ importers:
       '@react-aria/select':
         specifier: ^3.17.0
         version: 3.17.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@react-aria/selection':
-        specifier: ^3.26.0
-        version: 3.26.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@react-aria/table':
-        specifier: ^3.17.8
-        version: 3.17.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@react-aria/tooltip':
-        specifier: ^3.8.8
-        version: 3.8.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@react-aria/utils':
         specifier: ^3.31.0
         version: 3.31.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@react-aria/visually-hidden':
         specifier: ^3.8.28
         version: 3.8.28(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@react-stately/checkbox':
-        specifier: ^3.7.2
-        version: 3.7.2(react@18.3.1)
       '@react-stately/collections':
         specifier: ^3.12.8
         version: 3.12.8(react@18.3.1)
-      '@react-stately/combobox':
-        specifier: ^3.12.0
-        version: 3.12.0(react@18.3.1)
       '@react-stately/list':
         specifier: ^3.13.1
         version: 3.13.1(react@18.3.1)
-      '@react-stately/menu':
-        specifier: ^3.9.8
-        version: 3.9.8(react@18.3.1)
       '@react-stately/overlays':
         specifier: ^3.6.20
         version: 3.6.20(react@18.3.1)
@@ -959,27 +929,15 @@ importers:
       '@react-stately/select':
         specifier: ^3.8.0
         version: 3.8.0(react@18.3.1)
-      '@react-stately/table':
-        specifier: ^3.15.1
-        version: 3.15.1(react@18.3.1)
       '@react-stately/toggle':
         specifier: ^3.9.2
         version: 3.9.2(react@18.3.1)
-      '@react-stately/tooltip':
-        specifier: ^3.5.8
-        version: 3.5.8(react@18.3.1)
       '@react-stately/tree':
         specifier: ^3.9.3
         version: 3.9.3(react@18.3.1)
-      '@react-types/dialog':
-        specifier: ^3.5.22
-        version: 3.5.22(react@18.3.1)
       '@react-types/shared':
         specifier: ^3.32.1
         version: 3.32.1(react@18.3.1)
-      '@tailwindcss/forms':
-        specifier: ^0.5.10
-        version: 0.5.10(tailwindcss@3.4.18(tsx@4.20.6))
       '@udecode/plate-alignment':
         specifier: ^31.0.0
         version: 31.0.0(@udecode/plate-common@36.5.9(@types/react@18.3.26)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react-native@0.74.0(@babel/core@7.28.4)(@babel/preset-env@7.24.4(@babel/core@7.28.4))(@types/react@18.3.26)(react@18.3.1))(react@18.3.1)(scheduler@0.26.0)(slate-history@0.100.0(slate@0.102.0))(slate-hyperscript@0.100.0(slate@0.102.0))(slate-react@0.102.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(slate@0.102.0))(slate@0.102.0))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(slate-history@0.100.0(slate@0.102.0))(slate-hyperscript@0.100.0(slate@0.102.0))(slate-react@0.102.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(slate@0.102.0))(slate@0.102.0)
@@ -998,9 +956,6 @@ importers:
       '@udecode/plate-combobox':
         specifier: ^31.0.0
         version: 31.0.0(@udecode/plate-common@36.5.9(@types/react@18.3.26)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react-native@0.74.0(@babel/core@7.28.4)(@babel/preset-env@7.24.4(@babel/core@7.28.4))(@types/react@18.3.26)(react@18.3.1))(react@18.3.1)(scheduler@0.26.0)(slate-history@0.100.0(slate@0.102.0))(slate-hyperscript@0.100.0(slate@0.102.0))(slate-react@0.102.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(slate@0.102.0))(slate@0.102.0))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(slate-history@0.100.0(slate@0.102.0))(slate-hyperscript@0.100.0(slate@0.102.0))(slate-react@0.102.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(slate@0.102.0))(slate@0.102.0)
-      '@udecode/plate-common':
-        specifier: ^36.5.9
-        version: 36.5.9(@types/react@18.3.26)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react-native@0.74.0(@babel/core@7.28.4)(@babel/preset-env@7.24.4(@babel/core@7.28.4))(@types/react@18.3.26)(react@18.3.1))(react@18.3.1)(scheduler@0.26.0)(slate-history@0.100.0(slate@0.102.0))(slate-hyperscript@0.100.0(slate@0.102.0))(slate-react@0.102.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(slate@0.102.0))(slate@0.102.0)
       '@udecode/plate-core':
         specifier: ^36.5.9
         version: 36.5.9(@types/react@18.3.26)(immer@10.1.1)(react-dom@18.3.1(react@18.3.1))(react-native@0.74.0(@babel/core@7.28.4)(@babel/preset-env@7.24.4(@babel/core@7.28.4))(@types/react@18.3.26)(react@18.3.1))(react@18.3.1)(scheduler@0.26.0)(slate-history@0.100.0(slate@0.102.0))(slate-hyperscript@0.100.0(slate@0.102.0))(slate-react@0.102.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(slate@0.102.0))(slate@0.102.0)
@@ -1052,27 +1007,12 @@ importers:
       '@udecode/zustood':
         specifier: 2.0.0
         version: 2.0.0(react-dom@18.3.1(react@18.3.1))(react-native@0.74.0(@babel/core@7.28.4)(@babel/preset-env@7.24.4(@babel/core@7.28.4))(@types/react@18.3.26)(react@18.3.1))(react@18.3.1)(scheduler@0.26.0)(zustand@4.5.2(@types/react@18.3.26)(immer@10.1.1)(react@18.3.1))
-      commander:
-        specifier: ^14.0.0
-        version: 14.0.1
-      date-fns:
-        specifier: ^3.6.0
-        version: 3.6.0
       escape-html:
         specifier: ^1.0.3
         version: 1.0.3
-      execa:
-        specifier: ^9.6.0
-        version: 9.6.0
       immer:
         specifier: ^10.1.1
         version: 10.1.1
-      is-hotkey:
-        specifier: ^0.2.0
-        version: 0.2.0
-      jscodeshift:
-        specifier: ^0.14.0
-        version: 0.14.0(@babel/preset-env@7.24.4(@babel/core@7.28.4))
       lodash-es:
         specifier: ^4.17.21
         version: 4.17.21
@@ -1082,9 +1022,6 @@ importers:
       react-colorful:
         specifier: ^5.6.1
         version: 5.6.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react-datepicker:
-        specifier: ^6.9.0
-        version: 6.9.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-dnd:
         specifier: ^16.0.1
         version: 16.0.1(@types/node@22.18.11)(@types/react@18.3.26)(react@18.3.1)
@@ -1100,9 +1037,6 @@ importers:
       react-popper:
         specifier: ^2.3.0
         version: 2.3.0(@popperjs/core@2.11.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react-textarea-autosize:
-        specifier: ^8.5.9
-        version: 8.5.9(@types/react@18.3.26)(react@18.3.1)
       remark-gfm:
         specifier: ^3.0.1
         version: 3.0.1
