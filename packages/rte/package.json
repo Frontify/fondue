@@ -24,34 +24,12 @@
     ],
     "sideEffects": false,
     "exports": {
-        "./components": {
-            "types": "./dist/packages/components/components.d.ts",
-            "require": "./dist/packages/components/fondue-components.umd.cjs",
-            "import": "./dist/packages/components/fondue-components.js"
-        },
-        "./components/styles": "./dist/packages/components/style.css",
-        "./icons": {
-            "types": "./dist/packages/icons/icons.d.ts",
-            "require": "./dist/packages/icons/fondue-icons.umd.cjs",
-            "import": "./dist/packages/icons/fondue-icons.js"
-        },
-        "./charts": {
-            "types": "./dist/packages/charts/charts.d.ts",
-            "require": "./dist/packages/charts/fondue-charts.umd.cjs",
-            "import": "./dist/packages/charts/fondue-charts.js"
-        },
-        "./charts/styles": "./dist/packages/charts/style.css",
         ".": {
             "types": "./dist/index.d.ts",
             "require": "./dist/index.umd.js",
             "import": "./dist/index.es.js"
         },
         "./styles": "./dist/style.css",
-        "./tokens/base": "./dist/packages/tokens/css/base.css",
-        "./tokens/tailwind": "./dist/packages/tokens/tailwind/tailwind.config.js",
-        "./legacyTokens/tailwind": "./dist/legacyTokens.tailwind.config.js",
-        "./legacyTokens/base": "./dist/packages/tokens/css/deprecatedBaseTokens.css",
-        "./legacyTokens/tools/replaceLegacyTokens": "./dist/packages/tokens/legacy/tools/replaceLegacyTokens.ts",
         "./dist/*": "./dist/*"
     },
     "main": "dist/index.umd.js",
@@ -59,40 +37,28 @@
     "unpkg": "dist/index.umd.js",
     "jsdelivr": "dist/index.umd.js",
     "types": "dist/index.d.ts",
-    "bin": {
-        "codemod": "./dist/tools/codemod/index.js",
-        "internal": "./dist/tools/internal/index.js"
-    },
     "files": [
-        "dist",
-        "tailwind.config.ts"
+        "dist"
     ],
     "engines": {
         "node": ">=18"
     },
     "scripts": {
-        "build": "pnpm clean && pnpm build:library && pnpm build:package:components && pnpm build:package:icons && pnpm build:package:charts && pnpm build:package:tokens && pnpm build:tools",
+        "build": "pnpm clean && pnpm build:library",
         "build:library": "vite build",
         "build:styles-with-tw": "postcss ./src/components/**/*.css --config src/components/postcss.config.cjs -o dist/styles-without-tailwind.css",
         "build:storybook": "storybook build",
-        "build:package:components": "vite build -c components.vite.config.ts",
-        "build:package:icons": "vite build -c icons.vite.config.ts",
-        "build:package:charts": "vite build -c charts.vite.config.ts",
-        "build:package:tokens": "vite build -c tokens.vite.config.ts",
-        "build:tools": "tsx scripts/detectDeprecatedExports/detectDeprecatedExports.ts tools/constants/fondueExports.json && vite build -c codemod.vite.config.ts && vite build -c internal-tools.vite.config.ts",
         "dev": "cross-env NODE_ENV=development pnpm dev:library",
         "dev:library": "vite build --emptyOutDir false --watch",
         "clean": "rimraf dist",
         "lint": "eslint .",
         "lint:fix": "eslint --fix .",
-        "tools:analyze": "tsx tools/index.ts",
         "test": "cypress run --component",
         "test:browser": "cypress open --component",
         "test:file": "cypress run --component --spec",
         "typecheck": "tsc --noEmit",
         "storybook": "storybook dev -p 6011",
-        "ci": "pnpm install --frozen-lockfile",
-        "run:tools": "tsx tools/index.ts"
+        "ci": "pnpm install --frozen-lockfile"
     },
     "peerDependencies": {
         "react": "^18",
