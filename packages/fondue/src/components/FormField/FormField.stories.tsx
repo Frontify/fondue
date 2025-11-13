@@ -95,7 +95,8 @@ export const Default: StoryFn<FormFieldProps> = (args) => {
         setCurrentValue(value);
     };
     const numValue = parseFloat(currentValue);
-    const currentValidation = !isNaN(numValue) && numValue >= 0 ? Validation.Success : args.error ? Validation.Error : Validation.Default;
+    const currentValidation =
+        !isNaN(numValue) && numValue >= 0 ? Validation.Success : args.error ? Validation.Error : Validation.Default;
     return (
         <FormField
             {...args}
