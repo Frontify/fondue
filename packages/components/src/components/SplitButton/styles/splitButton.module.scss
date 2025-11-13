@@ -1,0 +1,326 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+@use '../../../utilities/focusStyle.module.scss';
+
+@mixin content-button-style($bg-base, $bg-hover, $bg-pressed, $text-color, $icon-color, $text-hover: null) {
+    background-color: var(--#{$bg-base});
+    color: var(--#{$text-color});
+
+    &:hover {
+        background-color: var(--#{$bg-hover});
+        @if $text-hover {
+            color: var(--#{$text-hover});
+        }
+    }
+
+    &:active {
+        background-color: var(--#{$bg-pressed});
+        @if $text-hover {
+            color: var(--#{$text-hover});
+        }
+    }
+
+    [class*="Icon"] {
+        color: var(--#{$icon-color});
+    }
+}
+
+@mixin action-button-style($bg-base, $bg-hover, $bg-pressed, $text-color, $icon-color) {
+    .action > button {
+        background-color: var(--#{$bg-base});
+        color: var(--#{$text-color});
+
+        &:hover {
+            background-color: var(--#{$bg-hover});
+        }
+
+        &:active {
+            background-color: var(--#{$bg-pressed});
+        }
+
+        svg {
+            color: var(--#{$icon-color});
+        }
+    }
+}
+
+.root {
+    display: inline-flex;
+    align-items: stretch;
+    position: relative;
+    box-sizing: border-box;
+    font-family: var(--font-family-body);
+    font-weight: 500;
+    white-space: nowrap;
+    transition: background-color 250ms, color 250ms;
+
+    &[data-size="small"] {
+        height: 1.5rem;
+        font-size: var(--body-size-small);
+        line-height: var(--body-size-small-line-height);
+
+        .content {
+            padding-inline: 0.5rem;
+        }
+
+        .action > button {
+            min-width: 1.5rem;
+        }
+    }
+
+    &[data-size="medium"] {
+        height: 2.25rem;
+        font-size: var(--body-size-medium);
+        line-height: var(--body-size-medium-line-height);
+
+        .content {
+            padding-inline: 1rem;
+        }
+    }
+
+    &[data-size="large"] {
+        height: 3rem;
+        font-size: var(--body-size-large);
+        line-height: var(--body-size-large-line-height);
+
+        .content {
+            padding-inline: 1.5rem;
+        }
+
+        .action > button {
+            min-width: 3rem;
+        }
+    }
+
+    border-radius: var(--radius);
+
+    &[data-disabled="true"] {
+        .content {
+            background-color: var(--box-disabled-color);
+            color: var(--box-disabled-color-inverse);
+            cursor: not-allowed;
+            pointer-events: none;
+            border-inline-end: 1px solid var(--line-color);
+
+            [class*="Icon"] {
+                color: var(--box-disabled-color-inverse);
+            }
+        }
+
+        .action > button {
+            background-color: var(--box-disabled-color);
+            color: var(--box-disabled-color-inverse);
+            cursor: not-allowed;
+            pointer-events: none;
+
+            svg {
+                color: var(--box-disabled-color-inverse);
+            }
+        }
+    }
+
+    // Default variant (only variant)
+    &[data-emphasis="default"]:not([data-disabled="true"]) {
+        .content {
+            @include content-button-style(
+                button-background-color,
+                button-background-color-hover,
+                button-background-color-pressed,
+                button-text-color,
+                button-icon-color
+            );
+        }
+
+        @include action-button-style(
+            button-background-color,
+            button-background-color-hover,
+            button-background-color-pressed,
+            button-text-color,
+            button-icon-color
+        );
+    }
+
+    &[data-emphasis="weak"]:not([data-disabled="true"]) {
+        .content {
+            @include content-button-style(
+                transparent,
+                button-background-color-hover,
+                button-background-color-pressed,
+                button-text-color,
+                button-icon-color
+            );
+        }
+
+        @include action-button-style(
+            transparent,
+            button-background-color-hover,
+            button-background-color-pressed,
+            button-text-color,
+            button-icon-color
+        );
+    }
+
+    &[data-emphasis="strong"]:not([data-disabled="true"]) {
+        .content {
+            @include content-button-style(
+                button-strong-background-color,
+                button-strong-background-color-hover,
+                button-strong-background-color-pressed,
+                button-strong-text-color,
+                button-strong-icon-color,
+                button-strong-text-color
+            );
+        }
+
+        @include action-button-style(
+            button-strong-background-color,
+            button-strong-background-color-hover,
+            button-strong-background-color-pressed,
+            button-strong-text-color,
+            button-strong-icon-color
+        );
+    }
+
+    // Remove divider for weak emphasis
+    &[data-emphasis="weak"]:not([data-disabled="true"]) {
+        .content {
+            border-inline-end: none;
+        }
+    }
+}
+
+.content {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font: inherit;
+    box-sizing: border-box;
+    transition: background-color 250ms, color 250ms;
+    white-space: nowrap;
+    border-start-start-radius: var(--radius);
+    border-end-start-radius: var(--radius);
+    border-start-end-radius: 0;
+    border-end-end-radius: 0;
+    border: none;
+    border-inline-end: 1px solid var(--line-color);
+    position: relative;
+
+    & {
+        @include focusStyle.focus-outline;
+    }
+
+    &:focus-visible {
+        z-index: 1;
+    }
+}
+
+.action {
+    display: flex;
+    align-items: stretch;
+    flex-shrink: 0;
+
+    > button {
+        height: 100%;
+        min-width: 2.25rem;
+        border-start-end-radius: var(--radius);
+        border-end-end-radius: var(--radius);
+        border-start-start-radius: 0;
+        border-end-start-radius: 0;
+    }
+
+    &[data-rotate-icon="true"] > button {
+        svg {
+            transition: transform 150ms ease-out;
+        }
+
+        &[data-state="open"] svg {
+            transform: rotate(180deg);
+        }
+    }
+}
+
+.actionButton {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font: inherit;
+    box-sizing: border-box;
+    border: none;
+    transition: background-color 250ms, color 250ms;
+    white-space: nowrap;
+    position: relative;
+
+    & {
+        @include focusStyle.focus-outline;
+    }
+
+    &:focus-visible {
+        z-index: 1;
+    }
+}
+
+// Individual Content disabled state (higher specificity to override emphasis styles)
+.root .content:disabled {
+    background-color: var(--box-disabled-color) !important;
+    color: var(--box-disabled-color-inverse) !important;
+    cursor: not-allowed;
+    pointer-events: none;
+    border-inline-end: 1px solid var(--line-color);
+
+    &:hover {
+        background-color: var(--box-disabled-color) !important;
+    }
+
+    &:active {
+        background-color: var(--box-disabled-color) !important;
+    }
+
+    [class*="Icon"] {
+        color: var(--box-disabled-color-inverse) !important;
+    }
+}
+
+// Individual ActionButton disabled state (higher specificity to override emphasis styles)
+.root .action > .actionButton:disabled {
+    background-color: var(--box-disabled-color) !important;
+    color: var(--box-disabled-color-inverse) !important;
+    cursor: not-allowed;
+    pointer-events: none;
+
+    &:hover {
+        background-color: var(--box-disabled-color) !important;
+    }
+
+    &:active {
+        background-color: var(--box-disabled-color) !important;
+    }
+
+    svg {
+        color: var(--box-disabled-color-inverse) !important;
+    }
+}
+
+// Apply active colors for each emphasis when dropdown is open
+.root[data-emphasis="default"]:not([data-disabled="true"]) {
+    .action > button[data-state="open"] {
+        background-color: var(--button-background-color-pressed) !important;
+    }
+}
+
+.root[data-emphasis="weak"]:not([data-disabled="true"]) {
+    .action > button[data-state="open"] {
+        background-color: var(--button-background-color-pressed) !important;
+    }
+}
+
+.root[data-emphasis="strong"]:not([data-disabled="true"]) {
+    .action > button[data-state="open"] {
+        background-color: var(--button-strong-background-color-pressed) !important;
+    }
+}

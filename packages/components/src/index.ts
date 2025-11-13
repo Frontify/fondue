@@ -23,6 +23,7 @@ export { Section } from './components/Section/Section';
 export { SegmentedControl } from './components/SegmentedControl/SegmentedControl';
 export { Select } from './components/Select/Select';
 export { Slider } from './components/Slider/Slider';
+export { SplitButton } from './components/SplitButton/SplitButton';
 export { Switch } from './components/Switch/Switch';
 export { Table } from './components/Table/Table';
 export { Tag } from './components/Tag/Tag';
