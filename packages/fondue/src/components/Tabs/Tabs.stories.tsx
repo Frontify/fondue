@@ -6,7 +6,6 @@ import { useState } from 'react';
 import { BadgeStyle } from '@components/Badge';
 import { Button } from '@components/Button/Button';
 import { Checkbox as CheckboxComponent, type CheckboxProps, CheckboxState } from '@components/Checkbox/Checkbox';
-import { Divider } from '@components/Divider/Divider';
 import { TabItem, type TabItemProps } from '@components/Tabs/TabItem';
 import IconIcon from '@foundation/Icon/Generated/IconIcon';
 import { IconSize } from '@foundation/Icon/IconSize';
@@ -99,7 +98,9 @@ const data: TabItemProps[] = [
                     meatball picanha short ribs. Meatloaf buffalo shoulder, tail beef ribs corned beef short ribs ground
                     round andouille pork belly landjaeger swine hamburger meatball. Ham hock turducken tri-tip picanha,
                     buffalo leberkas pork loin chuck ground round.
-                    <Divider />
+                </Text>
+                <hr className="tw-my-4 tw-border-black-10" />
+                <Text>
                     <Button>Some button</Button>
                 </Text>
             </div>

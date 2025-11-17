@@ -61,6 +61,12 @@ const config: StorybookConfig = {
                     type: 'auto-inject',
                     expanded: true,
                 },
+                rte: {
+                    title: 'Rich Text Editor',
+                    url: 'http://localhost:6011',
+                    type: 'auto-inject',
+                    expanded: true,
+                },
             };
         }
 
@@ -88,6 +94,11 @@ const config: StorybookConfig = {
             legacy: {
                 title: 'Legacy',
                 url: `${pathPrefix}legacy`,
+                expanded: true,
+            },
+            rte: {
+                title: 'Rich Text Editor',
+                url: `${pathPrefix}rte`,
                 expanded: true,
             },
         };

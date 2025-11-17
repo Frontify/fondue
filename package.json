@@ -8,11 +8,12 @@
         "npm": "<=0"
     },
     "scripts": {
-        "build": "pnpm build:charts && pnpm build:icons && pnpm build:components && pnpm build:fondue",
+        "build": "pnpm build:charts && pnpm build:icons && pnpm build:components && pnpm build:fondue && pnpm build:rte",
         "build:charts": "pnpm --stream --filter {packages/charts} build",
         "build:components": "pnpm --stream --filter {packages/components} build",
         "build:fondue": "pnpm --stream --filter {packages/fondue} build",
         "build:icons": "pnpm --stream --filter {packages/icons} build",
+        "build:rte": "pnpm --stream --filter {packages/rte} build",
         "build:tokens": "pnpm --stream --filter {packages/tokens} build",
         "build:storybook": "pnpm build && pnpm build:storybook:packages && pnpm build:storybook:main",
         "build:storybook:main": "pnpm --stream --filter {storybook-docs} build:storybook",
@@ -21,7 +22,7 @@
         "ci:version": "changeset version",
         "lint": "pnpm --stream --filter {packages/*} --filter {storybook-docs} lint",
         "storybook": "concurrently 'pnpm storybook:packages' 'pnpm storybook:main'",
-        "storybook:main": "wait-on http://localhost:6005 http://localhost:6006 http://localhost:6007 http://localhost:6008 http://localhost:6009 && pnpm --stream  --filter {storybook-docs} storybook",
+        "storybook:main": "wait-on http://localhost:6005 http://localhost:6006 http://localhost:6007 http://localhost:6008 http://localhost:6009 http://localhost:6011 && pnpm --stream  --filter {storybook-docs} storybook",
         "storybook:packages": "pnpm --parallel --filter {packages/*} storybook --no-open",
         "typecheck": "pnpm --stream --filter {packages/*} --filter {storybook-docs} typecheck",
         "changeset": "changeset",
