@@ -1093,3 +1093,27 @@ export const CustomGutter: Story = {
         </Flex>
     ),
 };
+
+export const MinimumWidthColumnsWithExpandingLast: Story = {
+    name: 'Minimum Width Columns (Last Expands)',
+    render: ({ ...args }) => (
+        <Table.Root {...args}>
+            <Table.Header>
+                <Table.Row>
+                    <Table.HeaderCell noShrink>Name</Table.HeaderCell>
+                    <Table.HeaderCell noShrink>Role</Table.HeaderCell>
+                    <Table.HeaderCell>Last Seen (Expands)</Table.HeaderCell>
+                </Table.Row>
+            </Table.Header>
+            <Table.Body>
+                {TABLE_DATA.slice(0, 3).map((user) => (
+                    <Table.Row key={user.id}>
+                        <Table.RowCell>{user.name}</Table.RowCell>
+                        <Table.RowCell>{user.role}</Table.RowCell>
+                        <Table.RowCell>{user.lastSeen}</Table.RowCell>
+                    </Table.Row>
+                ))}
+            </Table.Body>
+        </Table.Root>
+    ),
+};
