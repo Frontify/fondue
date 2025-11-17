@@ -47,14 +47,14 @@ type ColorValueInputProps = {
     'data-test-id'?: string;
 };
 
-const noop = () => {};
+const nooperation = () => {};
 
 export const ColorValueInput = (
     {
         currentColor = DEFAULT_COLOR,
-        onColorChange = noop,
+        onColorChange = nooperation,
         currentFormat = DEFAULT_FORMAT,
-        setCurrentFormat = noop,
+        setCurrentFormat = nooperation,
         'data-test-id': dataTestId = 'color-picker-value-input',
     }: ColorValueInputProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
