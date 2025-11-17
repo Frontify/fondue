@@ -1,8 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ReactElement, type ReactNode } from 'react';
-
 import { type FondueIconProps as IconProps } from '@frontify/fondue-icons';
+import { type ReactElement, type ReactNode } from 'react';
 
 import { type Color } from '../../types';
 

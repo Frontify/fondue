@@ -1,13 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import {
+    IconCaretDown,
+    IconMinus,
+    IconPlus,
+    type FondueIconProps as IconProps,
+    IconSize,
+} from '@frontify/fondue-icons';
 import { type ReactElement, type ReactNode, cloneElement, isValidElement } from 'react';
 
 import { Switch, type SwitchSize } from '@components/Switch/Switch';
-import { IconCaretDown } from '@frontify/fondue-icons';
-import { IconMinus } from '@frontify/fondue-icons';
-import { IconPlus } from '@frontify/fondue-icons';
-import { type FondueIconProps as IconProps } from '@frontify/fondue-icons';
-import { IconSize } from '@frontify/fondue-icons';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { merge } from '@utilities/merge';
 

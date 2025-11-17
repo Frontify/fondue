@@ -1,9 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconCross as IconCross20, IconMagnifier as IconMagnifier16 } from '@frontify/fondue-icons';
 import { type UseEmojiPickerType } from '@udecode/plate-emoji';
-
-import { IconCross as IconCross20 } from '@frontify/fondue-icons';
-import { IconMagnifier as IconMagnifier16 } from '@frontify/fondue-icons';
 
 export type EmojiPickerSearchAndClearProps = Pick<UseEmojiPickerType, 'i18n' | 'searchValue' | 'clearSearch'>;
 

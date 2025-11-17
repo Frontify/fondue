@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconCheckMark as IconCheckMark20 } from '@frontify/fondue-icons';
 import { type MouseEvent, type ReactElement, type ReactNode } from 'react';
 
 import { Button } from '@components/Button/Button';
@@ -8,7 +9,6 @@ import { Checkbox } from '@components/Checkbox/Checkbox';
 import { FormControl } from '@components/FormControl';
 import { FloatingModalWrapper } from '@components/RichTextEditor/components';
 import { TextInput } from '@components/TextInput/TextInput';
-import { IconCheckMark as IconCheckMark20 } from '@frontify/fondue-icons';
 
 import { type InsertModalStateProps } from './types';
 

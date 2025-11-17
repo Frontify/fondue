@@ -8,6 +8,7 @@ import { merge } from '@utilities/merge';
 
 export const MentionInputElement = forwardRef(
     (
+        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
         { className, onClick, ...props }: PlateElementProps & { onClick?: (mentionNode: unknown) => void },
         ref: ForwardedRef<HTMLDivElement>,
     ) => {

@@ -1,8 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type Meta, type StoryFn } from '@storybook/react-vite';
-
 import { IconIcon } from '@frontify/fondue-icons';
+import { type Meta, type StoryFn } from '@storybook/react-vite';
 
 import { Badge } from './Badge';
 import { BadgeEmphasis, type BadgeProps, BadgeStatus, BadgeStyle } from './types';

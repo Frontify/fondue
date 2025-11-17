@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconListCheck as IconListCheck16 } from '@frontify/fondue-icons';
 import { type PlateEditor, toggleNodeType, useEditorState, useEventPlateId } from '@udecode/plate-core';
 import { unwrapList } from '@udecode/plate-list';
 import { ELEMENT_PARAGRAPH } from '@udecode/plate-paragraph';
@@ -16,7 +17,6 @@ import { focusEditor } from '@udecode/slate-react';
 
 import { IconStylingWrapper } from '@components/RichTextEditor/Plugins/helper';
 import { ToolbarButton } from '@components/RichTextEditor/components/Toolbar/ToolbarButton';
-import { IconListCheck as IconListCheck16 } from '@frontify/fondue-icons';
 
 import { ELEMENT_CHECK_ITEM } from '../id';
 

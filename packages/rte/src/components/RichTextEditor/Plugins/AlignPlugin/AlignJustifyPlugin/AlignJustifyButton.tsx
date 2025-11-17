@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconTextAlignmentJustify as IconTextAlignmentJustify16 } from '@frontify/fondue-icons';
+
 import { AlignmentToolbarButton } from '@components/RichTextEditor/Plugins/AlignPlugin/AlignmentToolbarbutton';
 import { getTooltip } from '@components/RichTextEditor/helpers';
-import { IconTextAlignmentJustify as IconTextAlignmentJustify16 } from '@frontify/fondue-icons';
 
 import { ButtonWrapper, IconStylingWrapper } from '../../helper';
 import { type PluginButtonProps } from '../../types';

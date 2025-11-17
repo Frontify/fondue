@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type FondueIconProps as IconProps } from '@frontify/fondue-icons';
 import { type ReactElement, type ReactNode } from 'react';
 
 import { type BadgeProps } from '@components/Badge';
 import { type ButtonProps } from '@components/Button/Button';
 import { type PopperProps } from '@components/Popper/types';
-import { type FondueIconProps as IconProps } from '@frontify/fondue-icons';
 
 export type DialogPadding = 'none' | 'compact' | 'comfortable' | 'spacious';
 export const DIALOG_PADDING = ['compact', 'comfortable', 'spacious']; // To be used in Stories

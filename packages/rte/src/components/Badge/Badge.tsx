@@ -1,9 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconCross, IconSize } from '@frontify/fondue-icons';
 import { type ReactElement, type ReactNode, cloneElement } from 'react';
 
-import { IconCross } from '@frontify/fondue-icons';
-import { IconSize } from '@frontify/fondue-icons';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 
