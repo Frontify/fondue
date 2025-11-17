@@ -13,10 +13,8 @@ import tailwindcssPlugin from 'eslint-plugin-tailwindcss';
 export default defineConfig(
     {
         ignores: [
-            'src/subpackages/tokens.js',
             'README.md',
             'dist',
-            'legacyTokens',
             '.storybook',
             'storybook-static',
             'node_modules',
