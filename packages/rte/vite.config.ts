@@ -39,19 +39,19 @@ export default defineConfig({
             external: [...dependencies, ...peerDependencies, 'react-dom/client', 'react/jsx-runtime'],
             output: [
                 {
-                    name: 'Fondue',
+                    name: 'FondueRte',
                     format: 'es',
                     preserveModules: true,
                     preserveModulesRoot: 'src',
                     globals,
                 },
                 {
-                    name: 'Fondue',
+                    name: 'FondueRte',
                     format: 'umd',
                     globals,
                 },
                 {
-                    name: 'Fondue',
+                    name: 'FondueRte',
                     format: 'cjs',
                     globals,
                 },
