@@ -47,12 +47,14 @@ type ColorValueInputProps = {
     'data-test-id'?: string;
 };
 
+const noop = () => {};
+
 export const ColorValueInput = (
     {
         currentColor = DEFAULT_COLOR,
-        onColorChange = () => {},
+        onColorChange = noop,
         currentFormat = DEFAULT_FORMAT,
-        setCurrentFormat = () => {},
+        setCurrentFormat = noop,
         'data-test-id': dataTestId = 'color-picker-value-input',
     }: ColorValueInputProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
@@ -92,7 +94,11 @@ export const ColorValueInput = (
                         }
                     }}
                     onChange={(event) => {
-                        setHexColorValue(event.target.value);
+                        const inputValue = event.target.value.startsWith('#')
+                            ? event.target.value.slice(1)
+                            : event.target.value;
+
+                        setHexColorValue(inputValue);
                     }}
                     aria-label={t('ColorPicker_hexValue')}
                 >
