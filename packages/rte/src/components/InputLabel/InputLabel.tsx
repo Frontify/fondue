@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconSize } from '@frontify/fondue-icons';
 import { type ReactElement, type ReactNode } from 'react';
 
 import { type LegacyTooltipProps } from '@components/LegacyTooltip/LegacyTooltip';
 import { TooltipIcon, type TooltipIconProps } from '@components/TooltipIcon/TooltipIcon';
-import { IconSize } from '@frontify/fondue-icons';
 import { merge } from '@utilities/merge';
 
 /**

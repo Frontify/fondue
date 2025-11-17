@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconCheckMark } from '@frontify/fondue-icons';
 import { type ReactElement } from 'react';
 
 import { Button, type ButtonProps } from '@components/Button/Button';
 import { ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button/ButtonTypes';
-import { IconCheckMark } from '@frontify/fondue-icons';
 import { merge } from '@utilities/merge';
 
 /**

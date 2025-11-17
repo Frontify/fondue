@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { TooltipIconTriggerStyle } from '@components/TooltipIcon';
 import { IconReport } from '@frontify/fondue-icons';
+
+import { TooltipIconTriggerStyle } from '@components/TooltipIcon';
 
 import { InputLabel } from './InputLabel';
 

@@ -1,15 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import {
+    IconCheckMark as IconCheckMark16,
+    IconCross as IconCross16,
+    IconExclamationMarkTriangle as IconExclamationMarkTriangle16,
+    IconEye as IconEye16,
+    IconEyeOff as IconEyeOff16,
+} from '@frontify/fondue-icons';
 import { type ReactElement } from 'react';
 
 import { Button } from '@components/Button/Button';
 import { ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button/ButtonTypes';
 import { LoadingCircle, LoadingCircleSize } from '@components/LoadingCircle/LoadingCircle';
-import { IconCheckMark as IconCheckMark16 } from '@frontify/fondue-icons';
-import { IconCross as IconCross16 } from '@frontify/fondue-icons';
-import { IconExclamationMarkTriangle as IconExclamationMarkTriangle16 } from '@frontify/fondue-icons';
-import { IconEye as IconEye16 } from '@frontify/fondue-icons';
-import { IconEyeOff as IconEyeOff16 } from '@frontify/fondue-icons';
 
 import { type InputActionsProps, type InputExtraActionsProps } from '../types/input';
 

@@ -1,12 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import {
+    IconCheckMark,
+    IconDocument,
+    IconExclamationMarkCircle,
+    IconExclamationMarkTriangle,
+    IconSize,
+} from '@frontify/fondue-icons';
 import { type ReactElement, cloneElement } from 'react';
 
-import { IconCheckMark } from '@frontify/fondue-icons';
-import { IconDocument } from '@frontify/fondue-icons';
-import { IconExclamationMarkCircle } from '@frontify/fondue-icons';
-import { IconExclamationMarkTriangle } from '@frontify/fondue-icons';
-import { IconSize } from '@frontify/fondue-icons';
 import { merge } from '@utilities/merge';
 
 /**

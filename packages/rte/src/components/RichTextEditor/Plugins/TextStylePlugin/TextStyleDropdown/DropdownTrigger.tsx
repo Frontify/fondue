@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconCaretDown as IconCaretDown12 } from '@frontify/fondue-icons';
 import { type ForwardedRef, forwardRef } from 'react';
 
-import { IconCaretDown as IconCaretDown12 } from '@frontify/fondue-icons';
 import { merge } from '@utilities/merge';
 
 import { type DropdownTriggerProps } from './types';

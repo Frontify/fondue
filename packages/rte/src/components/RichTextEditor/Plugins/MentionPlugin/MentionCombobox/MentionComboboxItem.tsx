@@ -1,11 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import {
+    IconPeople as IconPeople12,
+    IconPerson as IconPerson12,
+    IconTarget as IconTarget12,
+} from '@frontify/fondue-icons';
 import { type ComboboxItemProps } from '@udecode/plate-combobox';
 import { type ReactElement } from 'react';
-
-import { IconPeople as IconPeople12 } from '@frontify/fondue-icons';
-import { IconPerson as IconPerson12 } from '@frontify/fondue-icons';
-import { IconTarget as IconTarget12 } from '@frontify/fondue-icons';
 
 import { type MentionItemData, MentionableCategory } from '../types';
 

@@ -1,12 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconLink as IconLink16 } from '@frontify/fondue-icons';
 import { useEditorRef } from '@udecode/plate-core';
 import { useLinkToolbarButton, useLinkToolbarButtonState } from '@udecode/plate-link';
 import { focusEditor } from '@udecode/slate-react';
 import { type ReactNode, forwardRef } from 'react';
 
 import { ToolbarButton } from '@components/RichTextEditor/components/Toolbar/ToolbarButton';
-import { IconLink as IconLink16 } from '@frontify/fondue-icons';
 
 import { IconStylingWrapper } from '../helper';
 

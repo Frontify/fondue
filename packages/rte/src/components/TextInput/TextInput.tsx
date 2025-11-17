@@ -1,5 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import {
+    IconCheckMark,
+    IconClipboard,
+    IconCross,
+    IconCrossCircle,
+    IconExclamationMarkTriangle,
+    IconEye,
+    IconEyeOff,
+} from '@frontify/fondue-icons';
 import { useFocusRing } from '@react-aria/focus';
 import {
     forwardRef,
@@ -16,13 +25,6 @@ import {
 } from 'react';
 
 import { LoadingCircle, LoadingCircleSize } from '@components/LoadingCircle/LoadingCircle';
-import { IconCheckMark } from '@frontify/fondue-icons';
-import { IconClipboard } from '@frontify/fondue-icons';
-import { IconCross } from '@frontify/fondue-icons';
-import { IconCrossCircle } from '@frontify/fondue-icons';
-import { IconExclamationMarkTriangle } from '@frontify/fondue-icons';
-import { IconEye } from '@frontify/fondue-icons';
-import { IconEyeOff } from '@frontify/fondue-icons';
 import { useCopy } from '@hooks/useCopy';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { FOCUS_STYLE } from '@utilities/focusStyle';

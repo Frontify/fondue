@@ -1,8 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type PlateRenderElementProps } from '@udecode/plate-core';
-
 import { IconPeople as IconPeople12 } from '@frontify/fondue-icons';
+import { type PlateRenderElementProps } from '@udecode/plate-core';
 
 import { MentionableCategory } from '../types';
 

@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconCheckMark, IconMinus, IconSize } from '@frontify/fondue-icons';
 import { useCheckbox } from '@react-aria/checkbox';
 import { useFocusRing } from '@react-aria/focus';
 import { mergeProps } from '@react-aria/utils';
@@ -16,9 +17,6 @@ import {
 } from 'react';
 
 import { InputLabel, type InputLabelTooltipProps } from '@components/InputLabel/InputLabel';
-import { IconCheckMark } from '@frontify/fondue-icons';
-import { IconMinus } from '@frontify/fondue-icons';
-import { IconSize } from '@frontify/fondue-icons';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';

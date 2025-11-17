@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconCaretDown as IconCaretDown16 } from '@frontify/fondue-icons';
 import * as ToolbarPrimitive from '@radix-ui/react-toolbar';
 import { type ElementRef, forwardRef } from 'react';
 
-import { IconCaretDown as IconCaretDown16 } from '@frontify/fondue-icons';
 import { merge } from '@utilities/merge';
 
 import { withTooltip } from './Tooltip';

@@ -12,13 +12,7 @@ import tailwindcssPlugin from 'eslint-plugin-tailwindcss';
 
 export default defineConfig(
     {
-        ignores: [
-            'README.md',
-            'dist',
-            '.storybook',
-            'storybook-static',
-            'node_modules',
-        ],
+        ignores: ['README.md', 'dist', '.storybook', 'storybook-static', 'node_modules'],
     },
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     frontifyConfig,

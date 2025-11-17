@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconIcon } from '@frontify/fondue-icons';
 import { type ReactElement, useEffect, useState } from 'react';
 
-import { IconIcon } from '@frontify/fondue-icons';
 import { Validation } from '@utilities/validation';
 
 import { TextInput, type TextInputProps, TextInputType } from './TextInput';

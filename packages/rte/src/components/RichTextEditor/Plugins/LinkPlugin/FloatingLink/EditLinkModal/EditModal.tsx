@@ -1,13 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconPen as IconPen16, IconTrashBin as IconTrashBin16 } from '@frontify/fondue-icons';
 import { useLinkOpenButtonState } from '@udecode/plate-link';
 import { type MouseEvent } from 'react';
 
 import { getUrlFromLinkOrLegacyLink } from '@components/RichTextEditor/Plugins/LinkPlugin/utils';
 import { FloatingModalWrapper } from '@components/RichTextEditor/components';
 import { useRichTextEditorContext } from '@components/RichTextEditor/context';
-import { IconPen as IconPen16 } from '@frontify/fondue-icons';
-import { IconTrashBin as IconTrashBin16 } from '@frontify/fondue-icons';
 
 import { LINK_PLUGIN } from '../../id';
 

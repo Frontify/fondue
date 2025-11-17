@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconFaceHappy as IconFaceHappy16 } from '@frontify/fondue-icons';
 import { useEmojiDropdownMenuState } from '@udecode/plate-emoji';
 
 import { EmojiToolbarDropdown } from '@components/RichTextEditor/Plugins/EmojiPlugin/EmojiToolbarDropdown';
 import { useEmojiSelect } from '@components/RichTextEditor/Plugins/EmojiPlugin/useEmojiSelect';
 import { ToolbarButton } from '@components/RichTextEditor/components/Toolbar/ToolbarButton';
-import { IconFaceHappy as IconFaceHappy16 } from '@frontify/fondue-icons';
 
 import { ButtonWrapper, IconStylingWrapper } from '../helper';
 import { type PluginButtonProps } from '../types';

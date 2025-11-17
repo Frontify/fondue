@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconSize } from '@frontify/fondue-icons';
 import { type Placement } from '@popperjs/core';
 import { useLink } from '@react-aria/link';
 import {
@@ -20,7 +21,6 @@ import { usePopper } from 'react-popper';
 import { Button } from '@components/Button/Button';
 import { ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button/ButtonTypes';
 import { Portal } from '@components/Portal/Portal';
-import { IconSize } from '@frontify/fondue-icons';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';

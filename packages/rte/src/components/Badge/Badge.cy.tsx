@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconDocumentText } from '@frontify/fondue-icons';
-import { IconSize } from '@frontify/fondue-icons';
+import { IconDocumentText, IconSize } from '@frontify/fondue-icons';
 
 import { Badge } from './Badge';
 import { BadgeEmphasis, BadgeStatus, BadgeStyle } from './types';
