@@ -2,16 +2,20 @@
 
 import { IconCheckMark, IconCross, IconExclamationMarkTriangle } from '@frontify/fondue-icons';
 import {
+    forwardRef,
     useEffect,
     useRef,
     useState,
     type ChangeEventHandler,
     type CSSProperties,
     type FocusEventHandler,
+    type ForwardedRef,
     type KeyboardEventHandler,
     type ReactElement,
     type SyntheticEvent,
 } from 'react';
+
+import { useSyncRefs } from '#/hooks/useSyncRefs';
 
 import styles from './styles/textarea.module.scss';
 
@@ -114,28 +118,33 @@ type TextareaProps = {
     value?: string;
 };
 
-export const Textarea = ({
-    'data-test-id': dataTestId = 'fondue-textarea',
-    autocomplete,
-    autosize,
-    clearable,
-    decorator,
-    defaultValue,
-    disabled,
-    extraActions,
-    focusOnMount,
-    minRows: rows = 1,
-    maxRows,
-    onEnterPressed,
-    readOnly,
-    resizable,
-    selectable = true,
-    status = 'default',
-    value: inputValue,
-    ...props
-}: TextareaProps) => {
+const TextareaComponent = (
+    {
+        'data-test-id': dataTestId = 'fondue-textarea',
+        autocomplete,
+        autosize,
+        clearable,
+        decorator,
+        defaultValue,
+        disabled,
+        extraActions,
+        focusOnMount,
+        minRows: rows = 1,
+        maxRows,
+        onEnterPressed,
+        readOnly,
+        resizable,
+        selectable = true,
+        status = 'default',
+        value: inputValue,
+        ...props
+    }: TextareaProps,
+    forwardedRef: ForwardedRef<HTMLTextAreaElement>,
+) => {
     const ref = useRef<HTMLTextAreaElement>(null);
     const wasClicked = useRef(false);
+
+    useSyncRefs<HTMLTextAreaElement>(ref, forwardedRef);
 
     const [value, setValue] = useState(inputValue ?? defaultValue ?? '');
 
@@ -244,3 +253,6 @@ export const Textarea = ({
         </div>
     );
 };
+
+export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(TextareaComponent);
+Textarea.displayName = 'Textarea';
