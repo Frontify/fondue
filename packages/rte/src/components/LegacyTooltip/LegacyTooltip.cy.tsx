@@ -29,7 +29,7 @@ export const TooltipComponent = (args: TooltipTestProps) => {
                 {...args}
                 triggerElement={
                     <div data-test-id="tooltip-trigger" className="tw-flex tw-justify-center tw-items-center">
-                        <IconExclamationMarkCircle size={IconSize.Size16} filled />
+                        <IconExclamationMarkCircle size={IconSize.Size16} />
                         <span>Tooltip trigger</span>
                     </div>
                 }
