@@ -10,6 +10,7 @@ import {
 } from 'react';
 
 import { defaultAttributes } from './constants';
+import styles from './icons.module.scss';
 import { htmlKeysToJsxKeys } from './utilities/jsxKeyFormat';
 import { kebabCase } from './utilities/stringCasing';
 
@@ -18,12 +19,13 @@ export type IconNode = [elementName: keyof ReactSVG, attrs: Record<string, strin
 export type SVGAttributes = Partial<SVGProps<SVGSVGElement>>;
 type ComponentAttributes = RefAttributes<SVGSVGElement> & SVGAttributes;
 
-type IconSizeAsNumber = 12 | 16 | 20 | 24 | 32;
+type IconSizeAsNumber = 8 | 12 | 16 | 20 | 24 | 32;
 
 /**
  * @deprecated Use a string or number instead
  */
 export enum IconSize {
+    Size8 = 'Size8',
     Size12 = 'Size12',
     Size16 = 'Size16',
     Size20 = 'Size20',
@@ -38,11 +40,13 @@ export type FondueIconProps = ComponentAttributes & {
 export type FondueIcon = ForwardRefExoticComponent<FondueIconProps>;
 
 const iconSizeToNumber: Record<Exclude<FondueIconProps['size'], undefined>, IconSizeAsNumber> = {
+    [IconSize.Size8]: 8,
     [IconSize.Size12]: 12,
     [IconSize.Size16]: 16,
     [IconSize.Size20]: 20,
     [IconSize.Size24]: 24,
     [IconSize.Size32]: 32,
+    8: 8,
     12: 12,
     16: 16,
     20: 20,
@@ -76,7 +80,9 @@ export const createFondueIcon = (iconName: string, iconNode: IconNode): FondueIc
                     color,
                     width: iconSizeToNumber[size],
                     height: iconSizeToNumber[size],
-                    className: ['fondue', `fondue-${kebabCase(iconName)}`, className].filter(Boolean).join(' '),
+                    className: ['fondue', styles.fondue, `fondue-${kebabCase(iconName)}`, className]
+                        .filter(Boolean)
+                        .join(' '),
                     'data-test-id': `fondue-icons-${kebabCase(iconName)}`,
                     key: `fondue-icons-${kebabCase(iconName)}`,
                     ...rest,

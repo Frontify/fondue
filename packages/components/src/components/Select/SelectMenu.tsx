@@ -112,6 +112,7 @@ export const SelectMenu = ({
         <RadixPopover.Portal>
             <ThemeProvider theme={theme} dir={dir}>
                 <RadixPopover.Content
+                    dir={dir}
                     align={align}
                     side={getAdjustedSide(side)}
                     collisionPadding={VIEWPORT_COLLISION_PADDING_MAP[viewportCollisionPadding] + 8}

@@ -1,10 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-.root[data-border='true'] {
-    border-bottom: var(--border-width-default) solid var(--color-line-subtle);
-    border-top: var(--border-width-default) solid var(--color-line-subtle);
-
-    &[data-accordion-padding='none'] {
+.root {
+    &[data-accordion-padding="none"] {
         --accordion-vertical-padding: 0px;
         --accordion-horizontal-padding: 0px;
     }
@@ -22,6 +19,11 @@
     &[data-accordion-padding='large'] {
         --accordion-vertical-padding: var(--spacing-large);
         --accordion-horizontal-padding: var(--spacing-x-large);
+    }
+
+    &[data-border="true"] {
+        border-bottom: var(--line-width) solid var(--line-color);
+        border-top: var(--line-width) solid var(--line-color);
     }
 }
 

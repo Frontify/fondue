@@ -172,6 +172,7 @@ export const FlyoutContent = (
             <ThemeProvider theme={theme} dir={dir}>
                 <div data-test-id="fondue-flyout-overlay" className={styles.overlay} />
                 <RadixPopover.Content
+                    dir={dir}
                     style={
                         {
                             '--flyout-max-width': maxWidth,

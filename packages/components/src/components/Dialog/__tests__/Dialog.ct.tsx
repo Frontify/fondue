@@ -530,3 +530,34 @@ test('should not focus the tooltip trigger when dialog opens', async ({ mount, p
     await expect(page.getByTestId('tooltip-trigger')).not.toBeFocused();
     await expect(page.getByTestId(TEXT_INPUT_TEST_ID_1)).toBeFocused();
 });
+
+test('should focus first button in footer when body has no focusable elements', async ({ mount, page }) => {
+    const component = await mount(
+        <Dialog.Root>
+            <Dialog.Trigger>
+                <Button>{DIALOG_TRIGGER_TEXT}</Button>
+            </Dialog.Trigger>
+            <Dialog.Content>
+                <Dialog.Header>{DIALOG_HEADER_TEXT}</Dialog.Header>
+                <Dialog.Body>
+                    <p>Just some text, no focusable elements</p>
+                </Dialog.Body>
+                <Dialog.Footer>
+                    <Button data-test-id="footer-button-1">Cancel</Button>
+                    <Button data-test-id="footer-button-2">Submit</Button>
+                </Dialog.Footer>
+            </Dialog.Content>
+        </Dialog.Root>,
+    );
+
+    const dialogTrigger = page.getByTestId(DIALOG_TRIGGER_TEST_ID);
+
+    await expect(component).toBeVisible();
+    await expect(dialogTrigger).toBeVisible();
+
+    await dialogTrigger.focus();
+    await page.keyboard.press('Enter');
+
+    const firstFooterButton = page.getByTestId('footer-button-1');
+    await expect(firstFooterButton).toBeFocused();
+});

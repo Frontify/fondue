@@ -422,3 +422,131 @@ test('color picker input should display a disabled button when disabled', async 
     const button = component.locator('button').first();
     await expect(button).toBeDisabled();
 });
+
+test('should display correct clearIcon colors in different hover states', async ({ mount }) => {
+    const component = await mount(
+        <ColorPicker.Input
+            aria-label="Color picker input"
+            currentColor={{
+                red: 255,
+                green: 0,
+                blue: 0,
+                alpha: 0.4,
+                name: '#ff0000',
+            }}
+            onClear={() => {}}
+        />,
+    );
+
+    const clearIcon = component.locator('svg[data-test-id="fondue-icons-cross"]');
+    const inputButton = component.locator('button[data-color-input-select]');
+    const clearButton = component.locator('button:has(svg[data-test-id="fondue-icons-cross"])');
+
+    await clearIcon.waitFor();
+
+    const defaultColor = await clearIcon.evaluate((el) => getComputedStyle(el).getPropertyValue('color'));
+    expect(defaultColor).toBe('rgb(129, 132, 132)');
+
+    await inputButton.hover();
+    const inputHoveredColor = await clearIcon.evaluate((el) => getComputedStyle(el).getPropertyValue('color'));
+    expect(inputHoveredColor).toBe('rgb(108, 112, 112)');
+
+    await clearButton.hover();
+    const clearButtonHoveredColor = await clearIcon.evaluate((el) => getComputedStyle(el).getPropertyValue('color'));
+    expect(clearButtonHoveredColor).toBe('rgb(45, 50, 50)');
+});
+
+test('should strip leading # when typing hex value', async ({ mount }) => {
+    const component = await mount(
+        <ColorPicker.Root
+            currentColor={SAMPLE_COLOR_INPUT_VALUE}
+            defaultFormat="HEX"
+            data-test-id={COLOR_PICKER_TEST_ID}
+        >
+            <ColorPicker.Values data-test-id={COLOR_PICKER_VALUE_INPUT_TEST_ID} />
+        </ColorPicker.Root>,
+    );
+    await expect(component).toBeVisible();
+    const hexInput = component.getByTestId(COLOR_PICKER_VALUE_INPUT_HEX_TEST_ID).locator('input');
+    await hexInput.fill('#abc123');
+    await expect(hexInput).toHaveValue('abc123');
+});
+
+test('should strip leading # when pasting hex value', async ({ mount, page }) => {
+    const component = await mount(
+        <ColorPicker.Root
+            currentColor={SAMPLE_COLOR_INPUT_VALUE}
+            defaultFormat="HEX"
+            data-test-id={COLOR_PICKER_TEST_ID}
+        >
+            <ColorPicker.Values data-test-id={COLOR_PICKER_VALUE_INPUT_TEST_ID} />
+        </ColorPicker.Root>,
+    );
+    await expect(component).toBeVisible();
+    const hexInput = component.getByTestId(COLOR_PICKER_VALUE_INPUT_HEX_TEST_ID).locator('input');
+
+    // Simulate pasting a value with #
+    await hexInput.click();
+    await hexInput.fill('');
+    await page.evaluate(() => {
+        navigator.clipboard.writeText('#ff5733');
+    });
+    await hexInput.press('Control+V');
+    // Wait a bit for the paste to process
+    await page.waitForTimeout(100);
+    const value = await hexInput.inputValue();
+    expect(value.startsWith('#')).toBe(false);
+});
+
+test('should handle hex value without leading # normally', async ({ mount }) => {
+    const component = await mount(
+        <ColorPicker.Root
+            currentColor={SAMPLE_COLOR_INPUT_VALUE}
+            defaultFormat="HEX"
+            data-test-id={COLOR_PICKER_TEST_ID}
+        >
+            <ColorPicker.Values data-test-id={COLOR_PICKER_VALUE_INPUT_TEST_ID} />
+        </ColorPicker.Root>,
+    );
+    await expect(component).toBeVisible();
+    const hexInput = component.getByTestId(COLOR_PICKER_VALUE_INPUT_HEX_TEST_ID).locator('input');
+    await hexInput.fill('def456');
+    await expect(hexInput).toHaveValue('def456');
+});
+
+test('should strip multiple # characters from beginning', async ({ mount }) => {
+    const component = await mount(
+        <ColorPicker.Root
+            currentColor={SAMPLE_COLOR_INPUT_VALUE}
+            defaultFormat="HEX"
+            data-test-id={COLOR_PICKER_TEST_ID}
+        >
+            <ColorPicker.Values data-test-id={COLOR_PICKER_VALUE_INPUT_TEST_ID} />
+        </ColorPicker.Root>,
+    );
+    await expect(component).toBeVisible();
+    const hexInput = component.getByTestId(COLOR_PICKER_VALUE_INPUT_HEX_TEST_ID).locator('input');
+    await hexInput.fill('##abcdef');
+    // Only the first # should be stripped, so we should have '#abcdef'
+    await expect(hexInput).toHaveValue('#abcdef');
+});
+
+test('should trigger color change with stripped # on blur', async ({ mount }) => {
+    const onChange = sinon.spy();
+    const component = await mount(
+        <ColorPicker.Root
+            onColorChange={onChange}
+            currentColor={SAMPLE_COLOR_INPUT_VALUE}
+            defaultFormat="HEX"
+            data-test-id={COLOR_PICKER_TEST_ID}
+        >
+            <ColorPicker.Values data-test-id={COLOR_PICKER_VALUE_INPUT_TEST_ID} />
+        </ColorPicker.Root>,
+    );
+    await expect(component).toBeVisible();
+    const hexInput = component.getByTestId(COLOR_PICKER_VALUE_INPUT_HEX_TEST_ID).locator('input');
+    await hexInput.fill('#ff5733');
+    await hexInput.blur();
+    expect(onChange.callCount).toBe(1);
+    expect(onChange.getCall(0).args[0]).toEqual({ red: 255, green: 87, blue: 51, alpha: 0.8, name: '#ff5733 80%' });
+});

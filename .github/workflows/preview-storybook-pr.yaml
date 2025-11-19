@@ -45,10 +45,6 @@ jobs:
               if: github.event.action != 'closed'
               run: pnpm build:components
 
-            - name: Build Fondue Components
-              if: github.event.action != 'closed'
-              run: pnpm build:components
-
             - name: Build Storybook docs
               if: github.event.action != 'closed'
               run: pnpm build:storybook:packages && pnpm build:storybook:main

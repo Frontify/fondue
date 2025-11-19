@@ -53,7 +53,12 @@ export const ThemeContext = createContext<ThemeContextValue>({
 ThemeContext.displayName = 'ThemeContext';
 
 export const useFondueTheme = () => {
-    return useContext(ThemeContext);
+    const context = useContext(ThemeContext);
+    // Ensure we always have a valid direction, defaulting to 'ltr' if not provided
+    return {
+        ...context,
+        dir: context.dir || 'ltr',
+    };
 };
 
 export const ThemeProvider = ({
