@@ -1,5 +1,17 @@
 # @frontify/fondue-icons
 
+## 0.22.0
+
+### Minor Changes
+
+- [#2523](https://github.com/Frontify/fondue/pull/2523) [`38bcce6`](https://github.com/Frontify/fondue/commit/38bcce66a2eb78c98570906a3ef81bd2c4e645a8) Thanks [@syeo66](https://github.com/syeo66)! - feat: add xx-small icon sizes
+
+- [#2522](https://github.com/Frontify/fondue/pull/2522) [`3613743`](https://github.com/Frontify/fondue/commit/3613743fbc6dbf43c26f49d802389780b0b8d1d5) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
+
+### Patch Changes
+
+- [#2524](https://github.com/Frontify/fondue/pull/2524) [`737f0de`](https://github.com/Frontify/fondue/commit/737f0de29d5b5f2dbca1937c24026137089d3d29) Thanks [@syeo66](https://github.com/syeo66)! - fix: enforce currentColors in svg when forced-colors=active
+
 ## 0.21.0
 
 ### Minor Changes
