@@ -4,10 +4,10 @@ import { IconCaretDown } from '@frontify/fondue-icons';
 import { expect, test } from '@playwright/experimental-ct-react';
 import * as sinon from 'sinon';
 
+import { Dropdown } from '../Dropdown';
+
 import { Button } from '#/components/Button/Button';
 import { MAX_HEIGHT_MARGIN } from '#/utilities/domUtilities';
-
-import { Dropdown } from '../Dropdown';
 
 const DROPDOWN_TRIGGER_TEST_ID = 'fondue-dropdown-trigger';
 const DROPDOWN_CONTENT_TEST_ID = 'fondue-dropdown-content';
@@ -323,14 +323,16 @@ test('should have max height equal to available space', async ({ mount, page }) 
             </Dropdown.Content>
         </Dropdown.Root>,
     );
+    await page.setViewportSize({ width: 800, height: 300 });
+    const windowHeight = page.viewportSize()?.height || 0;
 
     await expect(component).toBeVisible();
-    await component.click();
+    await expect(page.getByTestId(DROPDOWN_TRIGGER_TEST_ID)).toBeVisible();
+    await page.getByTestId(DROPDOWN_TRIGGER_TEST_ID).click();
 
     const dialog = page.getByTestId(DROPDOWN_CONTENT_TEST_ID);
     await expect(dialog).toBeVisible();
-    await page.setViewportSize({ width: 800, height: 300 });
-    const windowHeight = page.viewportSize()?.height || 0;
+
     const boundingBox = await dialog.boundingBox();
     const expectedMaxHeight = windowHeight - (boundingBox?.y || 0) - MAX_HEIGHT_MARGIN;
     const actualMaxHeight = await dialog.evaluate((node) => parseFloat(window.getComputedStyle(node).maxHeight));
@@ -477,7 +479,7 @@ test('should not render group if it has no children', async ({ mount, page }) =>
 
 test('should close when clicking outside', async ({ mount, page }) => {
     const component = await mount(
-        <div>
+        <div style={{ padding: '50px' }}>
             <input type="text" id="dummy-input" placeholder="test" />
             <Dropdown.Root>
                 <Dropdown.Trigger>
