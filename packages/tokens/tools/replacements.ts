@@ -89,7 +89,7 @@ export const cssVariableReplacements = {
     'var(--box-warning-strong-inverse-color)': 'var(--color-warning-on-warning)',
     'var(--box-warning-strong-inverse-color-hover)': 'var(--color-warning-on-warning)',
     'var(--box-warning-strong-inverse-color-pressed)': 'var(--color-warning-on-warning)',
-    'var(--code-family)': 'var(--typography-font-family-monoe)',
+    'var(--code-family)': 'var(--typography-font-family-monospace)',
     'var(--code-family-stack)': 'var(--typography-font-family-monospace)',
     'var(--code-weight-name)': 'var(--typography-font-weight-regular)',
     'var(--code-weight-number)': 'var(--typography-font-weight-regular)',

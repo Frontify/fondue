@@ -22,8 +22,8 @@
     }
 
     &[data-border="true"] {
-        border-bottom: var(--line-width) solid var(--line-color);
-        border-top: var(--line-width) solid var(--line-color);
+        border-bottom: var(--border-width-default) solid var(--color-line-subtle);
+        border-top: var(--border-width-default) solid var(--color-line-subtle);
     }
 }
 

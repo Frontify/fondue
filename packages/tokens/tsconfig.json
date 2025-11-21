@@ -25,6 +25,7 @@
         "stories",
         ".storybook/*",
         ".storybook/components/*",
+        "playwright",
         "tailwind.config.ts"
     ],
     "references": [{ "path": "./tsconfig.node.json" }]
