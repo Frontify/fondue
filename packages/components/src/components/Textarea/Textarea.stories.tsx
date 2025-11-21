@@ -4,13 +4,18 @@ import { IconClipboard, IconNook } from '@frontify/fondue-icons';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { action } from 'storybook/actions';
 
-import { Textarea } from './Textarea';
+import { type ComponentProps } from 'react';
+
+import { Textarea, TextareaRoot, TextareaSlot } from './Textarea';
 
 type Story = StoryObj<typeof meta>;
 
-const meta: Meta<typeof Textarea> = {
+const meta: Meta<typeof TextareaRoot> = {
     title: 'Components/Textarea',
-    component: Textarea,
+    component: TextareaRoot,
+    subcomponents: {
+        'Textarea.Slot': TextareaSlot,
+    },
     tags: ['autodocs'],
     parameters: {
         status: {
@@ -36,13 +41,18 @@ const meta: Meta<typeof Textarea> = {
         selectable: true,
         value: undefined,
     },
+    render: (args) => {
+        // Used to get the correct component in the Storybook for the simple cases (`Textarea` instead of `Textarea.Root`)
+        // More complex cases are using the Story `render` function
+        const Component = (props: ComponentProps<typeof Textarea>) => <Textarea {...props} />;
+        Component.displayName = 'Textarea';
+        return <Component {...args} />;
+    },
 };
 
 export default meta;
 
-export const Default: Story = {
-    render: (args) => <Textarea {...args} />,
-};
+export const Default: Story = {};
 
 export const WithDecoratorAndAutosize: Story = {
     args: {
@@ -50,16 +60,13 @@ export const WithDecoratorAndAutosize: Story = {
         decorator: <IconNook size={16} />,
         placeholder: 'Enter some long form text here',
     },
-    render: (args) => <Textarea {...args} />,
 };
-
 
 export const Required: Story = {
     args: {
         placeholder: 'Enter some long form text here',
         required: true,
     },
-    render: (args) => <Textarea {...args} />,
 };
 
 export const WithSlots: Story = {

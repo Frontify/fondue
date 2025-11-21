@@ -128,7 +128,7 @@ type TextareaProps = {
     value?: string;
 };
 
-const TextareaComponent = (
+export const TextareaRoot = (
     {
         'data-test-id': dataTestId = 'fondue-textarea',
         autocomplete,
@@ -266,6 +266,7 @@ const TextareaComponent = (
         </div>
     );
 };
+TextareaRoot.displayName = 'Textarea.Root';
 
 export type TextareaSlotProps = {
     children: ReactNode;
@@ -282,11 +283,11 @@ export const TextareaSlot = (
 
 TextareaSlot.displayName = 'Textarea.Slot';
 
-const ForwardedRefTextareaRoot = forwardRef<HTMLTextAreaElement, TextareaProps>(TextareaComponent);
+const ForwardedRefTextareaRoot = forwardRef<HTMLTextAreaElement, TextareaProps>(TextareaRoot);
 const ForwardedRefTextareaSlot = forwardRef<HTMLDivElement, TextareaSlotProps>(TextareaSlot);
 
 // @ts-expect-error We support both single component (without slots) and compound components (with slots)
-export const Textarea: typeof TextareaComponent & {
+export const Textarea: typeof TextareaRoot & {
     Root: typeof ForwardedRefTextareaRoot;
     Slot: typeof ForwardedRefTextareaSlot;
 } = ForwardedRefTextareaRoot;
