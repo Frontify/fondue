@@ -42,13 +42,18 @@ const getTheme = (dictionary: Dictionary) => {
     const tokens = dictionary.allTokens;
 
     return {
-        colors: getObject({
-            tokens,
-            identifier: ['color'],
-            filter: (token) => {
-                return token.attributes?.type !== 'base';
-            },
-        }),
+        colors: {
+            ...getObject({
+                tokens,
+                identifier: ['color'],
+                filter: (token) => {
+                    return token.attributes?.type !== 'base';
+                },
+            }),
+            inherit: 'inherit',
+            current: 'currentColor',
+            transparent: 'transparent',
+        },
 
         fontSize: getObject({
             identifier: ['typography', 'font-size'],
