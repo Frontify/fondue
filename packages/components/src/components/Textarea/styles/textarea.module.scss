@@ -6,9 +6,8 @@
 
 .root {
     position: relative;
-    display: grid;
-    grid-template-areas: "decorator textarea tools";
-    grid-template-columns: max-content 1fr max-content;
+    display: flex;
+    align-items: stretch;
 
     font-family: var(--body-family-stack);
     font-weight: 400;
@@ -54,29 +53,41 @@
         border-color: var(--text-color-negative);
     }
 
-    &[data-max-rows='true'][data-autosize='true']::after {
-        max-height: calc(var(--max-rows) * 1lh + 1rem);
-    }
-
-    &[data-autosize='true']::after {
-        content: attr(data-replicated-value) " ";
-        white-space: pre-wrap;
-        visibility: hidden;
-        grid-area: textarea;
-        padding-left: sizeToken.get(3);
-        padding-right: sizeToken.get(3);
-        padding-top: sizeToken.get(2);
-        padding-bottom: sizeToken.get(2);
-        font: inherit;
-    }
-
-    &[data-autosize='true'] .textarea {
-        overflow: hidden;
-    }
-
     &[data-disabled='true'] {
         cursor: not-allowed;
     }
+}
+
+.textareaWrapper {
+    display: grid;
+    flex: 1;
+    grid-template-areas: "stack";
+    grid-template-columns: 100%;
+    align-items: stretch;
+
+    &>* {
+        grid-area: stack;
+    }
+}
+
+.root[data-max-rows='true'][data-autosize='true'] .textareaWrapper::after {
+    max-height: calc(var(--max-rows) * 1lh + 1rem);
+}
+
+.root[data-autosize='true'] .textareaWrapper::after {
+    content: attr(data-replicated-value) " ";
+    white-space: pre-wrap;
+    visibility: hidden;
+    padding-left: sizeToken.get(3);
+    padding-right: sizeToken.get(3);
+    padding-top: sizeToken.get(2);
+    padding-bottom: sizeToken.get(2);
+    font: inherit;
+    grid-area: stack;
+}
+
+.root[data-autosize='true'] .textarea {
+    overflow: hidden;
 }
 
 .textarea {
@@ -90,7 +101,6 @@
     padding-bottom: sizeToken.get(2);
     border-radius: calc(var(--radius) - var(--line-width));
     resize: none;
-    grid-area: textarea;
     outline: 2px solid transparent;
     outline-offset: 2px;
 
@@ -111,15 +121,17 @@
         outline-offset: 2px;
     }
 
-    // Remove border-radius and text-indent/padding on the left if there’s a left-side slot
-    [data-has-decorator="true"] & {
+    // Remove border-radius and padding on the left if there's a left-side decorator or slot
+    [data-has-decorator="true"] &,
+    .root:has(.slot:not([data-name='right'])) & {
         padding-left: 0;
         border-top-left-radius: 0px;
         border-bottom-left-radius: 0px;
     }
 
-    // Remove border-radius and padding on the right if there’s a right-side slot
-    [data-has-tools="true"] & {
+    // Remove border-radius and padding on the right if there's a right-side slot or tools
+    [data-has-tools="true"] &,
+    .root:has(.slot[data-name='right']) & {
         padding-right: 0;
         border-top-right-radius: 0;
         border-bottom-right-radius: 0;
@@ -129,15 +141,10 @@
     &[readonly] {
         cursor: text;
         color: var(--text-color-weak);
-        text-indent: 0px;
     }
 
     &[readonly]~.slot {
         color: var(--text-color-weak);
-    }
-
-    &[readonly]~.slot:not([data-name='right']) {
-        padding-left: 0px;
     }
 
     &:disabled {
@@ -151,13 +158,13 @@
 }
 
 .decorator:not(:empty) {
-    grid-area: decorator;
     display: flex;
     padding: sizeToken.get(2);
     align-items: flex-start;
     justify-items: flex-start;
     min-width: sizeToken.get(9);
     box-sizing: border-box;
+    order: -1;
 
     >* {
         flex-shrink: 0;
@@ -169,14 +176,37 @@
     padding-left: sizeToken.get(2);
     display: flex;
     gap: sizeToken.get(1);
-    grid-area: tools;
     align-items: center;
+    order: 1;
 
     >* {
         flex-shrink: 0;
     }
 }
 
+.slot {
+    display: flex;
+    flex-shrink: 0;
+    align-items: flex-start;
+    cursor: text;
+    gap: sizeToken.get(1.5);
+    padding-inline-start: sizeToken.get(2);
+    padding-inline-end: sizeToken.get(1.5);
+    padding-top: sizeToken.get(2);
+
+    // Left slot
+    &:not([data-name='right']) {
+        order: -1;
+        margin-inline: 0px;
+    }
+
+    // Right slot
+    &[data-name='right'] {
+        order: 2;
+        margin-inline: 0px;
+        padding-inline-end: sizeToken.get(3);
+    }
+}
 
 .toolsButton {
     background-color: var(--base-color);
