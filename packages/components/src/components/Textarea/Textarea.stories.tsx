@@ -2,9 +2,8 @@
 
 import { IconClipboard, IconNook } from '@frontify/fondue-icons';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { action } from 'storybook/actions';
-
 import { type ComponentProps } from 'react';
+import { action } from 'storybook/actions';
 
 import { Textarea, TextareaRoot, TextareaSlot } from './Textarea';
 
@@ -87,4 +86,3 @@ export const WithSlots: Story = {
         </Textarea.Root>
     ),
 };
-
