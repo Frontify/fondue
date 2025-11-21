@@ -4,10 +4,10 @@ import { IconCaretDown } from '@frontify/fondue-icons';
 import { expect, test } from '@playwright/experimental-ct-react';
 import * as sinon from 'sinon';
 
-import { Dropdown } from '../Dropdown';
-
 import { Button } from '#/components/Button/Button';
 import { MAX_HEIGHT_MARGIN } from '#/utilities/domUtilities';
+
+import { Dropdown } from '../Dropdown';
 
 const DROPDOWN_TRIGGER_TEST_ID = 'fondue-dropdown-trigger';
 const DROPDOWN_CONTENT_TEST_ID = 'fondue-dropdown-content';

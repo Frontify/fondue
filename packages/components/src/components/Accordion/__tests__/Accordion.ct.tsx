@@ -2,9 +2,9 @@
 
 import { expect, test } from '@playwright/experimental-ct-react';
 
-import { Accordion } from '../Accordion';
-
 import { TextInput } from '#/components/TextInput/TextInput';
+
+import { Accordion } from '../Accordion';
 
 const ACCORDION_ITEM_CONTENT_ID = '[data-test-id="inner-collapsible-wrap"]';
 const ACCORDION_ITEM_ID = '[data-test-id=fondue-accordion-item]';
