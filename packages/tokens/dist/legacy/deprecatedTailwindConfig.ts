@@ -186,8 +186,8 @@ export default {
             fontFamily: {
                 ...defaultTheme.fontFamily,
                 body: 'var(--typography-font-family-primary)',
-                'body--stack': 'var(--body-family)',
-                code: 'var(--typography-font-family-monoe)',
+                'body--stack': 'var(--typography-font-family-primary)',
+                code: 'var(--typography-font-family-monospace)',
                 'code--stack': 'var(--typography-font-family-monospace)',
                 heading: 'var(--typography-font-family-primary)',
                 'heading--stack': 'var(--typography-font-family-primary)',
