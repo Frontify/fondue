@@ -24,77 +24,62 @@ test('should render dismiss button when dismissable', async ({ mount }) => {
 });
 
 test('should apply variant styles', async ({ mount }) => {
-    const component = (
-        await mount(
-            <Tag data-test-id="tag-root" variant="highlight">
-                {TAG_TEXT}
-            </Tag>,
-        )
-    )
-        .locator('div')
-        .first();
+    const wrapper = await mount(
+        <Tag data-test-id="tag-root" variant="highlight">
+            {TAG_TEXT}
+        </Tag>,
+    );
+    const component = wrapper.locator('div').first();
 
     await expect(component).toHaveAttribute('data-variant', 'highlight');
 });
 
 test('should apply size styles', async ({ mount }) => {
-    const component = (
-        await mount(
-            <Tag data-test-id="tag-root" size="small">
-                {TAG_TEXT}
-            </Tag>,
-        )
-    )
-        .locator('div')
-        .first();
+    const wrapper = await mount(
+        <Tag data-test-id="tag-root" size="small">
+            {TAG_TEXT}
+        </Tag>,
+    );
+    const component = wrapper.locator('div').first();
 
     await expect(component).toHaveAttribute('data-size', 'small');
 });
 
 test('should apply emphasis styles', async ({ mount }) => {
-    const component = (
-        await mount(
-            <Tag data-test-id="tag-root" emphasis="weak">
-                {TAG_TEXT}
-            </Tag>,
-        )
-    )
-        .locator('div')
-        .first();
+    const wrapper = await mount(
+        <Tag data-test-id="tag-root" emphasis="weak">
+            {TAG_TEXT}
+        </Tag>,
+    );
+    const component = wrapper.locator('div').first();
     await expect(component).toHaveAttribute('data-emphasis', 'weak');
 });
 
 test('should handle disabled state', async ({ mount }) => {
-    const component = (
-        await mount(
-            <Tag disabled data-test-id="tag-root">
-                {TAG_TEXT}
-            </Tag>,
-        )
-    )
-        .locator('div')
-        .first();
+    const wrapper = await mount(
+        <Tag disabled data-test-id="tag-root">
+            {TAG_TEXT}
+        </Tag>,
+    );
+    const component = wrapper.locator('div').first();
     await expect(component).toHaveAttribute('data-disabled', 'true');
 });
 
 test('should render icon with text', async ({ mount }) => {
-    const component = (
-        await mount(
-            <Tag data-test-id="tag-root">
-                <IconIcon />
-                {TAG_TEXT}
-            </Tag>,
-        )
-    )
-        .locator('div')
-        .first();
+    const wrapper = await mount(
+        <Tag data-test-id="tag-root">
+            <IconIcon />
+            {TAG_TEXT}
+        </Tag>,
+    );
+    const component = wrapper.locator('div').first();
     await expect(component.locator('svg')).toBeVisible();
     await expect(component).toContainText(TAG_TEXT);
 });
 
 test('should trigger onDismiss when close clicked', async ({ mount }) => {
     let dismissed = false;
-    const component = await mount(
+    const wrapper = await mount(
         <Tag
             onDismiss={() => {
                 dismissed = true;
@@ -103,12 +88,14 @@ test('should trigger onDismiss when close clicked', async ({ mount }) => {
             {TAG_TEXT}
         </Tag>,
     );
+    const component = wrapper.locator('div').first();
     await component.locator('button[aria-label^="Dismiss"]').click();
     expect(dismissed).toBe(true);
 });
 
 test('should render correct cross icon size', async ({ mount }) => {
-    const component = await mount(<Tag onDismiss={() => {}}>{TAG_TEXT}</Tag>);
+    const wrapper = await mount(<Tag onDismiss={() => {}}>{TAG_TEXT}</Tag>);
+    const component = wrapper.locator('div').first();
     const icon = await component.locator('svg').getAttribute('width');
     expect(icon).toBe('16');
 });

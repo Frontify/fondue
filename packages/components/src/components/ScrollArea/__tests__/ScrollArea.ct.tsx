@@ -224,7 +224,7 @@ test('renders corner when both scrollbars are visible', async ({ mount }) => {
 
     await expect(corner).toBeVisible();
 });
-test('should render no padding', async ({ mount, page }) => {
+test('should render no padding', async ({ mount }) => {
     const wrapper = await mount(
         <ScrollArea data-test-id={SCROLLAREA_ROOT_TEST_ID}>
             <div />
@@ -235,7 +235,7 @@ test('should render no padding', async ({ mount, page }) => {
     await expect(component).toHaveCSS('padding', '0px');
 });
 
-test('should render tight padding', async ({ mount, page }) => {
+test('should render tight padding', async ({ mount }) => {
     const wrapper = await mount(
         <ScrollArea padding="tight" data-test-id={SCROLLAREA_ROOT_TEST_ID}>
             <div />
@@ -246,7 +246,7 @@ test('should render tight padding', async ({ mount, page }) => {
     await expect(component).toHaveCSS('padding', '8px');
 });
 
-test('should render compact padding', async ({ mount, page }) => {
+test('should render compact padding', async ({ mount }) => {
     const wrapper = await mount(
         <ScrollArea padding="compact" data-test-id={SCROLLAREA_ROOT_TEST_ID}>
             <div />
@@ -256,7 +256,7 @@ test('should render compact padding', async ({ mount, page }) => {
     await expect(component).toHaveCSS('padding', '8px 16px');
 });
 
-test('should render comfortable padding', async ({ mount, page }) => {
+test('should render comfortable padding', async ({ mount }) => {
     const wrapper = await mount(
         <ScrollArea padding="comfortable" data-test-id={SCROLLAREA_ROOT_TEST_ID}>
             <div />
@@ -266,7 +266,7 @@ test('should render comfortable padding', async ({ mount, page }) => {
     await expect(component).toHaveCSS('padding', '16px 24px');
 });
 
-test('should render spacious padding', async ({ mount, page }) => {
+test('should render spacious padding', async ({ mount }) => {
     const wrapper = await mount(
         <ScrollArea padding="spacious" data-test-id={SCROLLAREA_ROOT_TEST_ID}>
             <div />
