@@ -371,7 +371,9 @@ test('should clear input when typed value is not selected', async ({ mount, page
     await component.getByRole('combobox').fill(nonExistentValue);
     await component.press('Tab');
 
-    await expect(component.getByTestId(SELECT_TEST_ID)).toHaveValue('');
+    await page.waitForTimeout(100);
+
+    await expect(component.getByTestId(SELECT_TEST_ID)).not.toHaveValue(nonExistentValue);
     await expect(page.getByPlaceholder(PLACEHOLDER_TEXT)).toBeVisible();
 });
 

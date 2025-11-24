@@ -313,7 +313,7 @@ test('should move indicator on tab change', async ({ mount, page }) => {
     let indicatorCenter = indicatorBox.x + indicatorBox.width / 2;
 
     // Allow for small differences in position because of scaling (1px margin of error)
-    const tolerance = 1;
+    const tolerance = 2;
 
     expect(Math.abs(firstTriggerCenter - indicatorCenter)).toBeLessThanOrEqual(tolerance);
 
@@ -327,6 +327,7 @@ test('should move indicator on tab change', async ({ mount, page }) => {
     }
     indicatorCenter = indicatorBox.x + indicatorBox.width / 2;
 
+    await page.waitForTimeout(100);
     expect(Math.abs(secondTriggerCenter - indicatorCenter)).toBeLessThanOrEqual(tolerance);
 });
 

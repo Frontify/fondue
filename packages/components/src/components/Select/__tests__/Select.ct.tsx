@@ -379,13 +379,15 @@ test('should have max height equal to available space', async ({ mount, page }) 
         </Select>,
     );
 
+    await page.setViewportSize({ width: 800, height: 300 });
+    const windowHeight = page.viewportSize()?.height || 0;
+
     await expect(component).toBeVisible();
     await component.click();
 
     const dialog = page.getByTestId(SELECT_MENU_TEST_ID);
     await expect(dialog).toBeVisible();
-    await page.setViewportSize({ width: 800, height: 300 });
-    const windowHeight = page.viewportSize()?.height || 0;
+
     const boundingBox = await dialog.boundingBox();
     const expectedMaxHeight = windowHeight - (boundingBox?.y || 0) - MAX_HEIGHT_MARGIN;
     const actualMaxHeight = await dialog.evaluate((node) => parseFloat(window.getComputedStyle(node).maxHeight));
