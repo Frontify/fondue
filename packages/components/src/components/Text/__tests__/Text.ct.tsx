@@ -14,15 +14,17 @@ test('should render without error', async ({ mount }) => {
 });
 
 test('should render text as span by default', async ({ mount }) => {
-    const component = await mount(<Text data-test-id={TEXT_TEST_ID}>{SAMPLE_TEXT}</Text>);
+    const component = (await mount(<Text data-test-id={TEXT_TEST_ID}>{SAMPLE_TEXT}</Text>)).getByTestId(TEXT_TEST_ID);
     await expect(component).toHaveJSProperty('nodeName', 'SPAN');
 });
 
 test('should render text as specified element', async ({ mount }) => {
-    const component = await mount(
-        <Text as="p" data-test-id={TEXT_TEST_ID}>
-            {SAMPLE_TEXT}
-        </Text>,
-    );
+    const component = (
+        await mount(
+            <Text as="p" data-test-id={TEXT_TEST_ID}>
+                {SAMPLE_TEXT}
+            </Text>,
+        )
+    ).getByTestId(TEXT_TEST_ID);
     await expect(component).toHaveJSProperty('nodeName', 'P');
 });

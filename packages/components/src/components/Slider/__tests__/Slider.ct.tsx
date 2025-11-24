@@ -63,15 +63,17 @@ test('should render with controlled value', async ({ mount }) => {
 });
 
 test('should render with custom aria attributes and test id', async ({ mount }) => {
-    const component = await mount(
-        <Slider
-            data-test-id={SLIDER_TEST_ID}
-            aria-label="custom-label"
-            aria-labelledby="custom-label"
-            aria-describedby="custom-description"
-            defaultValue={[0]}
-        />,
-    );
+    const component = (
+        await mount(
+            <Slider
+                data-test-id={SLIDER_TEST_ID}
+                aria-label="custom-label"
+                aria-labelledby="custom-label"
+                aria-describedby="custom-description"
+                defaultValue={[0]}
+            />,
+        )
+    ).getByTestId(SLIDER_TEST_ID);
     expect(await component.getAttribute('data-test-id')).toBe('test-slider');
     expect(await component.getAttribute('aria-label')).toBe('custom-label');
     expect(await component.getAttribute('aria-labelledby')).toBe('custom-label');
@@ -152,7 +154,9 @@ test('should set and enforce min and max values', async ({ mount, page }) => {
 });
 
 test('should not interact with slider when disabled', async ({ mount }) => {
-    const component = await mount(<Slider aria-label="disabled-slider" disabled defaultValue={[50]} />);
+    const component = (
+        await mount(<Slider aria-label="disabled-slider" disabled defaultValue={[50]} data-test-id={SLIDER_TEST_ID} />)
+    ).getByTestId(SLIDER_TEST_ID);
 
     expect(await component.getAttribute('aria-disabled')).toBe('true');
     expect(await component.getAttribute('data-disabled')).toBeDefined();

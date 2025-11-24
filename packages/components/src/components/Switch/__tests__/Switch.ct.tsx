@@ -6,10 +6,15 @@ import sinon from 'sinon';
 import { Switch } from '../Switch';
 
 const ARIA_LABEL = 'Toggle airplane mode';
+const SWITCH_TEST_ID = 'switch';
 
 test('should toggle switch state', async ({ mount }) => {
     const onChange = sinon.spy();
-    const component = await mount(<Switch aria-label={ARIA_LABEL} onChange={onChange} defaultValue={false} />);
+    const component = (
+        await mount(
+            <Switch aria-label={ARIA_LABEL} onChange={onChange} defaultValue={false} data-test-id={SWITCH_TEST_ID} />,
+        )
+    ).getByTestId(SWITCH_TEST_ID);
 
     await expect(component).toHaveAttribute('aria-checked', 'false');
     await component.click();
@@ -24,7 +29,11 @@ test('should handle controlled component behavior', async ({ mount }) => {
         checked = newChecked;
     });
 
-    const component = await mount(<Switch aria-label={ARIA_LABEL} value={checked} onChange={onChange} />);
+    const component = (
+        await mount(
+            <Switch aria-label={ARIA_LABEL} value={checked} onChange={onChange} data-test-id={SWITCH_TEST_ID} />,
+        )
+    ).getByTestId(SWITCH_TEST_ID);
 
     expect(await component.getAttribute('aria-checked')).toBe('false');
 
@@ -33,19 +42,22 @@ test('should handle controlled component behavior', async ({ mount }) => {
 });
 
 test('should apply size classes', async ({ mount }) => {
-    const component = await mount(<Switch aria-label={ARIA_LABEL} />);
+    const wrapper = await mount(<Switch aria-label={ARIA_LABEL} data-test-id={SWITCH_TEST_ID} />);
+    const component = wrapper.getByTestId(SWITCH_TEST_ID);
     await expect(component).toHaveClass(/medium/);
 
-    await component.update(<Switch aria-label={ARIA_LABEL} size="large" />);
+    await wrapper.update(<Switch aria-label={ARIA_LABEL} size="large" data-test-id={SWITCH_TEST_ID} />);
     await expect(component).toHaveClass(/large/);
 
-    await component.update(<Switch aria-label={ARIA_LABEL} size="small" />);
+    await wrapper.update(<Switch aria-label={ARIA_LABEL} size="small" data-test-id={SWITCH_TEST_ID} />);
     await expect(component).toHaveClass(/small/);
 });
 
 test('should update value when user focuses and presses enter', async ({ mount }) => {
     const onChange = sinon.spy();
-    const component = await mount(<Switch aria-label={ARIA_LABEL} onChange={onChange} />);
+    const component = (
+        await mount(<Switch aria-label={ARIA_LABEL} onChange={onChange} data-test-id={SWITCH_TEST_ID} />)
+    ).getByTestId(SWITCH_TEST_ID);
 
     await component.focus();
 
@@ -59,7 +71,9 @@ test('should update value when user focuses and presses enter', async ({ mount }
 });
 
 test('should respect the disabled state', async ({ mount }) => {
-    const component = await mount(<Switch aria-label={ARIA_LABEL} disabled />);
+    const component = (
+        await mount(<Switch aria-label={ARIA_LABEL} disabled data-test-id={SWITCH_TEST_ID} />)
+    ).getByTestId(SWITCH_TEST_ID);
     await expect(component).toHaveAttribute('disabled');
 });
 

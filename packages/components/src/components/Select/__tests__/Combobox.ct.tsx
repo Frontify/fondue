@@ -245,7 +245,7 @@ test('should not open menu when disabled', async ({ mount, page }) => {
     );
     const input = await component.getByTestId(SELECT_TEST_ID);
     await expect(input).toBeVisible();
-    await input.click();
+    await input.click({ force: true });
 
     await expect(page.getByTestId(ITEM_TEST_ID1)).not.toBeVisible();
 
@@ -256,7 +256,7 @@ test('should not open menu when disabled', async ({ mount, page }) => {
     await page.keyboard.press('Enter');
 
     await expect(page.getByPlaceholder(PLACEHOLDER_TEXT)).toBeVisible();
-    await expect(component).not.toHaveValue(ITEM_TEXT2);
+    await expect(input).not.toHaveValue(ITEM_TEXT2);
 });
 
 test('should allow to clear', async ({ mount, page }) => {

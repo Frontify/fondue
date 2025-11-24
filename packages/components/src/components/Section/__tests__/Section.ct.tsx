@@ -24,7 +24,7 @@ test('should render without error', async ({ mount }) => {
 test('should not inherit parent props', async ({ mount }) => {
     const component = (
         await mount(
-            <Section p="20px" m="50px">
+            <Section p="20px" m="50px" data-test-id="section-root">
                 <Section data-test-id="flex-child">{SECTION_TEXT}</Section>
             </Section>,
         )
@@ -53,6 +53,7 @@ test('should render with size tokens', async ({ mount }) => {
                 top={15}
                 right={14}
                 left={13}
+                data-test-id="section-root"
             >
                 {SECTION_TEXT}
             </Section>,
