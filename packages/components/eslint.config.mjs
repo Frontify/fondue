@@ -37,6 +37,13 @@ export default defineConfig(
                 tsconfigRootDir: import.meta.dirname,
             },
         },
+        settings: {
+            'import/resolver': {
+                typescript: {
+                    project: `${import.meta.dirname}/tsconfig.json`,
+                },
+            },
+        },
         plugins: {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             notice: noticePlugin,

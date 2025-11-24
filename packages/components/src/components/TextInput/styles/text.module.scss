@@ -239,7 +239,7 @@
         text-indent: sizeToken.get(3);
         display: block;
         text-align: inherit;
-        font-family: var(--body-family);
+        font-family: var(--typography-font-family-primary);
         font-weight: 400;
         font-size: var(--typography-font-size-medium);
         line-height: sizeToken.get(9);
