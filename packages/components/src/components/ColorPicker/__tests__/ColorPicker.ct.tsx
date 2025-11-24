@@ -424,22 +424,21 @@ test('color picker input should display a disabled button when disabled', async 
 });
 
 test('should display correct clearIcon colors in different hover states', async ({ mount }) => {
-    const component = (
-        await mount(
-            <ColorPicker.Input
-                aria-label="Color picker input"
-                currentColor={{
-                    red: 255,
-                    green: 0,
-                    blue: 0,
-                    alpha: 0.4,
-                    name: '#ff0000',
-                }}
-                onClear={() => {}}
-                data-test-id="color-picker-input"
-            />,
-        )
-    ).getByTestId('color-picker-input');
+    const wrapper = await mount(
+        <ColorPicker.Input
+            aria-label="Color picker input"
+            currentColor={{
+                red: 255,
+                green: 0,
+                blue: 0,
+                alpha: 0.4,
+                name: '#ff0000',
+            }}
+            onClear={() => {}}
+            data-test-id="color-picker-input"
+        />,
+    );
+    const component = wrapper.getByTestId('color-picker-input');
 
     const clearIcon = component.locator('svg[data-test-id="fondue-icons-cross"]');
     const inputButton = component.locator('button[data-color-input-select]');

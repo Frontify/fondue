@@ -7,19 +7,19 @@ import { Flex } from '../Flex';
 const FLEX_TEXT = 'sample flex';
 
 test('should render without error', async ({ mount }) => {
-    const component = (await mount(<Flex data-test-id="flex-root">{FLEX_TEXT}</Flex>)).getByTestId('flex-root');
+    const wrapper = await mount(<Flex data-test-id="flex-root">{FLEX_TEXT}</Flex>);
+    const component = wrapper.getByTestId('flex-root');
     await expect(component).toBeVisible();
     await expect(component).toContainText(FLEX_TEXT);
 });
 
 test('should not inherit parent props', async ({ mount }) => {
-    const component = (
-        await mount(
-            <Flex p="20px" gap="50px" data-test-id="flex-root">
-                <Flex data-test-id="flex-child">{FLEX_TEXT}</Flex>
-            </Flex>,
-        )
-    ).getByTestId('flex-root');
+    const wrapper = await mount(
+        <Flex p="20px" gap="50px" data-test-id="flex-root">
+            <Flex data-test-id="flex-child">{FLEX_TEXT}</Flex>
+        </Flex>,
+    );
+    const component = wrapper.getByTestId('flex-root');
 
     await expect(component).toHaveCSS('padding', '20px');
     await expect(component).toHaveCSS('gap', '50px');
@@ -31,26 +31,25 @@ test('should not inherit parent props', async ({ mount }) => {
 });
 
 test('should render with size tokens', async ({ mount }) => {
-    const component = (
-        await mount(
-            <Flex
-                p={8}
-                my={10}
-                gap={16}
-                minWidth={120}
-                width={256}
-                minHeight={18}
-                height={20}
-                bottom={16}
-                top={15}
-                right={14}
-                left={13}
-                data-test-id="flex-root"
-            >
-                {FLEX_TEXT}
-            </Flex>,
-        )
-    ).getByTestId('flex-root');
+    const wrapper = await mount(
+        <Flex
+            p={8}
+            my={10}
+            gap={16}
+            minWidth={120}
+            width={256}
+            minHeight={18}
+            height={20}
+            bottom={16}
+            top={15}
+            right={14}
+            left={13}
+            data-test-id="flex-root"
+        >
+            {FLEX_TEXT}
+        </Flex>,
+    );
+    const component = wrapper.getByTestId('flex-root');
 
     await expect(component).toHaveCSS('padding', '32px');
     await expect(component).toHaveCSS('margin', '40px 0px');
@@ -80,7 +79,8 @@ test.describe('Responsiveness (base)', () => {
     test.use({ viewport: { width: 200, height: 200 } });
 
     test('should render with responsive flex directions', async ({ mount }) => {
-        const component = (await mount(ResponsiveComponent)).getByTestId('flex-root');
+        const wrapper = await mount(ResponsiveComponent);
+        const component = wrapper.getByTestId('flex-root');
         await expect(component).toHaveCSS('flex-direction', 'row');
         await expect(component).toHaveCSS('gap', '80px');
         await expect(component).toHaveCSS('padding', '10px');
@@ -91,7 +91,8 @@ test.describe('Responsiveness (lg)', () => {
     test.use({ viewport: { width: 1600, height: 900 } });
 
     test('should render with responsive flex directions', async ({ mount }) => {
-        const component = (await mount(ResponsiveComponent)).getByTestId('flex-root');
+        const wrapper = await mount(ResponsiveComponent);
+        const component = wrapper.getByTestId('flex-root');
         await expect(component).toHaveCSS('flex-direction', 'column');
         await expect(component).toHaveCSS('gap', '120px');
         await expect(component).toHaveCSS('padding', '100px');

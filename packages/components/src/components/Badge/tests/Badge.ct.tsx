@@ -13,79 +13,72 @@ test('should render basic badge with text', async ({ mount }) => {
 });
 
 test('should render as button when clickable', async ({ mount }) => {
-    const component = (
-        await mount(
-            <Badge data-test-id="badge-root" onClick={() => {}}>
-                {BADGE_TEXT}
-            </Badge>,
-        )
-    ).getByTestId('badge-root');
+    const wrapper = await mount(
+        <Badge data-test-id="badge-root" onClick={() => {}}>
+            {BADGE_TEXT}
+        </Badge>,
+    );
+    const component = wrapper.getByTestId('badge-root');
     await expect(component).toHaveRole('button');
 });
 
 test('should render status indicator when provided', async ({ mount }) => {
-    const component = (
-        await mount(
-            <Badge data-test-id="badge-root" status="positive">
-                {BADGE_TEXT}
-            </Badge>,
-        )
-    ).getByTestId('badge-root');
+    const wrapper = await mount(
+        <Badge data-test-id="badge-root" status="positive">
+            {BADGE_TEXT}
+        </Badge>,
+    );
+    const component = wrapper.getByTestId('badge-root');
     await expect(component.getByTestId('badge-status')).toBeVisible();
 });
 
 test('should render dismiss button when dismissable', async ({ mount }) => {
-    const component = (
-        await mount(
-            <Badge data-test-id="badge-root" onDismiss={() => {}}>
-                {BADGE_TEXT}
-            </Badge>,
-        )
-    ).getByTestId('badge-root');
+    const wrapper = await mount(
+        <Badge data-test-id="badge-root" onDismiss={() => {}}>
+            {BADGE_TEXT}
+        </Badge>,
+    );
+    const component = wrapper.getByTestId('badge-root');
     await expect(component.locator('button[aria-label^="Dismiss"]')).toBeVisible();
 });
 
 test('should apply variant styles', async ({ mount }) => {
-    const component = (
-        await mount(
-            <Badge data-test-id="badge-root" variant="warning">
-                {BADGE_TEXT}
-            </Badge>,
-        )
-    ).getByTestId('badge-root');
+    const wrapper = await mount(
+        <Badge data-test-id="badge-root" variant="warning">
+            {BADGE_TEXT}
+        </Badge>,
+    );
+    const component = wrapper.getByTestId('badge-root');
     await expect(component).toHaveAttribute('data-variant', 'warning');
 });
 
 test('should apply size styles', async ({ mount }) => {
-    const component = (
-        await mount(
-            <Badge data-test-id="badge-root" size="small">
-                {BADGE_TEXT}
-            </Badge>,
-        )
-    ).getByTestId('badge-root');
+    const wrapper = await mount(
+        <Badge data-test-id="badge-root" size="small">
+            {BADGE_TEXT}
+        </Badge>,
+    );
+    const component = wrapper.getByTestId('badge-root');
     await expect(component).toHaveAttribute('data-size', 'small');
 });
 
 test('should apply emphasis styles', async ({ mount }) => {
-    const component = (
-        await mount(
-            <Badge data-test-id="badge-root" emphasis="weak">
-                {BADGE_TEXT}
-            </Badge>,
-        )
-    ).getByTestId('badge-root');
+    const wrapper = await mount(
+        <Badge data-test-id="badge-root" emphasis="weak">
+            {BADGE_TEXT}
+        </Badge>,
+    );
+    const component = wrapper.getByTestId('badge-root');
     await expect(component).toHaveAttribute('data-emphasis', 'weak');
 });
 
 test('should handle disabled state', async ({ mount }) => {
-    const component = (
-        await mount(
-            <Badge data-test-id="badge-root" disabled>
-                {BADGE_TEXT}
-            </Badge>,
-        )
-    ).getByTestId('badge-root');
+    const wrapper = await mount(
+        <Badge data-test-id="badge-root" disabled>
+            {BADGE_TEXT}
+        </Badge>,
+    );
+    const component = wrapper.getByTestId('badge-root');
     await expect(component).toHaveAttribute('data-disabled', 'true');
 });
 

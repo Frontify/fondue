@@ -172,32 +172,30 @@ test.describe('Accordion Component', () => {
     });
 
     test('shows borders when border prop is set to true', async ({ mount }) => {
-        const component = (
-            await mount(
-                <Accordion.Root value={['1']} border data-test-id="accordion-root">
-                    <Accordion.Item value="1">
-                        <Accordion.Header>1</Accordion.Header>
-                        <Accordion.Content>1</Accordion.Content>
-                    </Accordion.Item>
-                </Accordion.Root>,
-            )
-        ).getByTestId('accordion-root');
+        const wrapper = await mount(
+            <Accordion.Root value={['1']} border data-test-id="accordion-root">
+                <Accordion.Item value="1">
+                    <Accordion.Header>1</Accordion.Header>
+                    <Accordion.Content>1</Accordion.Content>
+                </Accordion.Item>
+            </Accordion.Root>,
+        );
+        const component = wrapper.getByTestId('accordion-root');
 
         await expect(component).toHaveCSS('border-top', '1px solid rgba(135, 135, 129, 0.2)');
         await expect(component).toHaveCSS('border-bottom', '1px solid rgba(135, 135, 129, 0.2)');
     });
 
     test('does not show borders when border prop is set to false', async ({ mount }) => {
-        const component = (
-            await mount(
-                <Accordion.Root value={['1']} border={false} data-test-id="accordion-root">
-                    <Accordion.Item value="1">
-                        <Accordion.Header>1</Accordion.Header>
-                        <Accordion.Content>1</Accordion.Content>
-                    </Accordion.Item>
-                </Accordion.Root>,
-            )
-        ).getByTestId('accordion-root');
+        const wrapper = await mount(
+            <Accordion.Root value={['1']} border={false} data-test-id="accordion-root">
+                <Accordion.Item value="1">
+                    <Accordion.Header>1</Accordion.Header>
+                    <Accordion.Content>1</Accordion.Content>
+                </Accordion.Item>
+            </Accordion.Root>,
+        );
+        const component = wrapper.getByTestId('accordion-root');
 
         await expect(component).not.toHaveCSS('border-top', '1px solid rgba(135, 135, 129, 0.1)');
         await expect(component).not.toHaveCSS('border-bottom', '1px solid rgba(135, 135, 129, 0.2)');
