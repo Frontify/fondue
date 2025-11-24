@@ -26,26 +26,30 @@ const SELECT_SUCCESS_ICON_TEST_ID = `${SELECT_TEST_ID}-success-icon`;
 const SELECT_ERROR_ICON_TEST_ID = `${SELECT_TEST_ID}-error-icon`;
 
 test('should render with placeholder', async ({ mount }) => {
-    const component = await mount(
-        <Select aria-label="test" data-test-id={SELECT_TEST_ID} placeholder={PLACEHOLDER_TEXT}>
-            <Select.Slot name="menu">
-                <Select.Item value="test1">{ITEM_TEXT1}</Select.Item>
-            </Select.Slot>
-        </Select>,
-    );
+    const component = (
+        await mount(
+            <Select aria-label="test" data-test-id={SELECT_TEST_ID} placeholder={PLACEHOLDER_TEXT}>
+                <Select.Slot name="menu">
+                    <Select.Item value="test1">{ITEM_TEXT1}</Select.Item>
+                </Select.Slot>
+            </Select>,
+        )
+    ).getByTestId(SELECT_TEST_ID);
 
     await expect(component).toBeVisible();
     await expect(component).toContainText(PLACEHOLDER_TEXT);
 });
 
 test('render the success status', async ({ mount }) => {
-    const component = await mount(
-        <Select aria-label="test" data-test-id={SELECT_TEST_ID} status="success">
-            <Select.Slot name="menu">
-                <Select.Item value="test1">{ITEM_TEXT1}</Select.Item>
-            </Select.Slot>
-        </Select>,
-    );
+    const component = (
+        await mount(
+            <Select aria-label="test" data-test-id={SELECT_TEST_ID} status="success">
+                <Select.Slot name="menu">
+                    <Select.Item value="test1">{ITEM_TEXT1}</Select.Item>
+                </Select.Slot>
+            </Select>,
+        )
+    ).getByTestId(SELECT_TEST_ID);
 
     await expect(component).toHaveAttribute('data-status', 'success');
     await expect(component).toHaveCSS('border', '1px solid rgb(22, 133, 0)');
@@ -53,13 +57,15 @@ test('render the success status', async ({ mount }) => {
 });
 
 test('render the error status', async ({ mount }) => {
-    const component = await mount(
-        <Select aria-label="test" data-test-id={SELECT_TEST_ID} status="error">
-            <Select.Slot name="menu">
-                <Select.Item value="test1">{ITEM_TEXT1}</Select.Item>
-            </Select.Slot>
-        </Select>,
-    );
+    const component = (
+        await mount(
+            <Select aria-label="test" data-test-id={SELECT_TEST_ID} status="error">
+                <Select.Slot name="menu">
+                    <Select.Item value="test1">{ITEM_TEXT1}</Select.Item>
+                </Select.Slot>
+            </Select>,
+        )
+    ).getByTestId(SELECT_TEST_ID);
 
     await expect(component).toHaveAttribute('data-status', 'error');
     await expect(component).toHaveCSS('border', '1px solid rgb(222, 36, 23)');
@@ -67,18 +73,20 @@ test('render the error status', async ({ mount }) => {
 });
 
 test('should open menu and show item', async ({ mount, page }) => {
-    const component = await mount(
-        <Select aria-label="test" data-test-id={SELECT_TEST_ID} placeholder={PLACEHOLDER_TEXT}>
-            <Select.Slot name="menu">
-                <Select.Item data-test-id={ITEM_TEST_ID1} value="test1">
-                    {ITEM_TEXT1}
-                </Select.Item>
-                <Select.Item data-test-id={ITEM_TEST_ID2} value="test2">
-                    {ITEM_TEXT2}
-                </Select.Item>
-            </Select.Slot>
-        </Select>,
-    );
+    const component = (
+        await mount(
+            <Select aria-label="test" data-test-id={SELECT_TEST_ID} placeholder={PLACEHOLDER_TEXT}>
+                <Select.Slot name="menu">
+                    <Select.Item data-test-id={ITEM_TEST_ID1} value="test1">
+                        {ITEM_TEXT1}
+                    </Select.Item>
+                    <Select.Item data-test-id={ITEM_TEST_ID2} value="test2">
+                        {ITEM_TEXT2}
+                    </Select.Item>
+                </Select.Slot>
+            </Select>,
+        )
+    ).getByTestId(SELECT_TEST_ID);
 
     await expect(component).toBeVisible();
     await component.click();
@@ -90,18 +98,20 @@ test('should open menu and show item', async ({ mount, page }) => {
 });
 
 test('should navigate though menu with arrow', async ({ mount, page }) => {
-    const component = await mount(
-        <Select aria-label="test" data-test-id={SELECT_TEST_ID} placeholder={PLACEHOLDER_TEXT}>
-            <Select.Slot name="menu">
-                <Select.Item data-test-id={ITEM_TEST_ID1} value="test1">
-                    {ITEM_TEXT1}
-                </Select.Item>
-                <Select.Item data-test-id={ITEM_TEST_ID2} value="test2">
-                    {ITEM_TEXT2}
-                </Select.Item>
-            </Select.Slot>
-        </Select>,
-    );
+    const component = (
+        await mount(
+            <Select aria-label="test" data-test-id={SELECT_TEST_ID} placeholder={PLACEHOLDER_TEXT}>
+                <Select.Slot name="menu">
+                    <Select.Item data-test-id={ITEM_TEST_ID1} value="test1">
+                        {ITEM_TEXT1}
+                    </Select.Item>
+                    <Select.Item data-test-id={ITEM_TEST_ID2} value="test2">
+                        {ITEM_TEXT2}
+                    </Select.Item>
+                </Select.Slot>
+            </Select>,
+        )
+    ).getByTestId(SELECT_TEST_ID);
 
     await expect(component).toBeVisible();
     await component.click();
@@ -127,23 +137,25 @@ test('should navigate though menu with arrow', async ({ mount, page }) => {
 
 test('should select item in list', async ({ mount, page }) => {
     const onSelectChange = sinon.spy();
-    const component = await mount(
-        <Select
-            onSelect={onSelectChange}
-            aria-label="test"
-            data-test-id={SELECT_TEST_ID}
-            placeholder={PLACEHOLDER_TEXT}
-        >
-            <Select.Slot name="menu">
-                <Select.Item data-test-id={ITEM_TEST_ID1} value="test1">
-                    {ITEM_TEXT1}
-                </Select.Item>
-                <Select.Item data-test-id={ITEM_TEST_ID2} value="test2">
-                    {ITEM_TEXT2}
-                </Select.Item>
-            </Select.Slot>
-        </Select>,
-    );
+    const component = (
+        await mount(
+            <Select
+                onSelect={onSelectChange}
+                aria-label="test"
+                data-test-id={SELECT_TEST_ID}
+                placeholder={PLACEHOLDER_TEXT}
+            >
+                <Select.Slot name="menu">
+                    <Select.Item data-test-id={ITEM_TEST_ID1} value="test1">
+                        {ITEM_TEXT1}
+                    </Select.Item>
+                    <Select.Item data-test-id={ITEM_TEST_ID2} value="test2">
+                        {ITEM_TEXT2}
+                    </Select.Item>
+                </Select.Slot>
+            </Select>,
+        )
+    ).getByTestId(SELECT_TEST_ID);
 
     await expect(component).toBeVisible();
     await component.click();
@@ -159,25 +171,27 @@ test('should select item in list', async ({ mount, page }) => {
 
 test('should select item in group in list', async ({ mount, page }) => {
     const onSelectChange = sinon.spy();
-    const component = await mount(
-        <Select
-            onSelect={onSelectChange}
-            aria-label="test"
-            data-test-id={SELECT_TEST_ID}
-            placeholder={PLACEHOLDER_TEXT}
-        >
-            <Select.Slot name="menu">
-                <Select.Item data-test-id={ITEM_TEST_ID1} value="test1">
-                    {ITEM_TEXT1}
-                </Select.Item>
-                <Select.Group data-test-id={GROUP_TEST_ID} groupId="group1">
-                    <Select.Item data-test-id={ITEM_TEST_ID2} value="test2">
-                        {ITEM_TEXT2}
+    const component = (
+        await mount(
+            <Select
+                onSelect={onSelectChange}
+                aria-label="test"
+                data-test-id={SELECT_TEST_ID}
+                placeholder={PLACEHOLDER_TEXT}
+            >
+                <Select.Slot name="menu">
+                    <Select.Item data-test-id={ITEM_TEST_ID1} value="test1">
+                        {ITEM_TEXT1}
                     </Select.Item>
-                </Select.Group>
-            </Select.Slot>
-        </Select>,
-    );
+                    <Select.Group data-test-id={GROUP_TEST_ID} groupId="group1">
+                        <Select.Item data-test-id={ITEM_TEST_ID2} value="test2">
+                            {ITEM_TEXT2}
+                        </Select.Item>
+                    </Select.Group>
+                </Select.Slot>
+            </Select>,
+        )
+    ).getByTestId(SELECT_TEST_ID);
 
     await expect(component).toBeVisible();
     await component.click();
@@ -193,23 +207,25 @@ test('should select item in group in list', async ({ mount, page }) => {
 
 test('should select custom item in list', async ({ mount, page }) => {
     const onSelectChange = sinon.spy();
-    const component = await mount(
-        <Select
-            onSelect={onSelectChange}
-            aria-label="test"
-            data-test-id={SELECT_TEST_ID}
-            placeholder={PLACEHOLDER_TEXT}
-        >
-            <Select.Slot name="menu">
-                <Select.Item data-test-id={ITEM_TEST_ID1} label={ITEM_LABEL1} value="test1">
-                    <IconIcon />
-                </Select.Item>
-                <Select.Item data-test-id={ITEM_TEST_ID2} label={ITEM_LABEL2} value="test2">
-                    <IconIcon />
-                </Select.Item>
-            </Select.Slot>
-        </Select>,
-    );
+    const component = (
+        await mount(
+            <Select
+                onSelect={onSelectChange}
+                aria-label="test"
+                data-test-id={SELECT_TEST_ID}
+                placeholder={PLACEHOLDER_TEXT}
+            >
+                <Select.Slot name="menu">
+                    <Select.Item data-test-id={ITEM_TEST_ID1} label={ITEM_LABEL1} value="test1">
+                        <IconIcon />
+                    </Select.Item>
+                    <Select.Item data-test-id={ITEM_TEST_ID2} label={ITEM_LABEL2} value="test2">
+                        <IconIcon />
+                    </Select.Item>
+                </Select.Slot>
+            </Select>,
+        )
+    ).getByTestId(SELECT_TEST_ID);
 
     await expect(component).toBeVisible();
     await component.click();
@@ -224,18 +240,20 @@ test('should select custom item in list', async ({ mount, page }) => {
 });
 
 test('should not open menu when disabled', async ({ mount, page }) => {
-    const component = await mount(
-        <Select disabled aria-label="test" data-test-id={SELECT_TEST_ID} placeholder={PLACEHOLDER_TEXT}>
-            <Select.Slot name="menu">
-                <Select.Item data-test-id={ITEM_TEST_ID1} value="test1">
-                    {ITEM_TEXT1}
-                </Select.Item>
-                <Select.Item data-test-id={ITEM_TEST_ID2} value="test2">
-                    {ITEM_TEXT2}
-                </Select.Item>
-            </Select.Slot>
-        </Select>,
-    );
+    const component = (
+        await mount(
+            <Select disabled aria-label="test" data-test-id={SELECT_TEST_ID} placeholder={PLACEHOLDER_TEXT}>
+                <Select.Slot name="menu">
+                    <Select.Item data-test-id={ITEM_TEST_ID1} value="test1">
+                        {ITEM_TEXT1}
+                    </Select.Item>
+                    <Select.Item data-test-id={ITEM_TEST_ID2} value="test2">
+                        {ITEM_TEXT2}
+                    </Select.Item>
+                </Select.Slot>
+            </Select>,
+        )
+    ).getByTestId(SELECT_TEST_ID);
 
     await expect(component).toBeVisible();
     await component.click();
@@ -254,27 +272,29 @@ test('should not open menu when disabled', async ({ mount, page }) => {
 
 test('should allow to clear', async ({ mount, page }) => {
     const onSelectChange = sinon.spy();
-    const component = await mount(
-        <Select
-            onSelect={onSelectChange}
-            data-test-id={SELECT_TEST_ID}
-            aria-label="test"
-            placeholder={PLACEHOLDER_TEXT}
-        >
-            <Select.Slot name="left">
-                <div data-test-id={SLOT_LEFT_TEST_ID}>Left Slot</div>
-            </Select.Slot>
-            <Select.Slot data-test-id={SLOT_CLEAR_TEST_ID} name="clear" />
-            <Select.Slot name="menu">
-                <Select.Item data-test-id={ITEM_TEST_ID1} value="test1">
-                    {ITEM_TEXT1}
-                </Select.Item>
-                <Select.Item data-test-id={ITEM_TEST_ID2} value="test2">
-                    {ITEM_TEXT2}
-                </Select.Item>
-            </Select.Slot>
-        </Select>,
-    );
+    const component = (
+        await mount(
+            <Select
+                onSelect={onSelectChange}
+                data-test-id={SELECT_TEST_ID}
+                aria-label="test"
+                placeholder={PLACEHOLDER_TEXT}
+            >
+                <Select.Slot name="left">
+                    <div data-test-id={SLOT_LEFT_TEST_ID}>Left Slot</div>
+                </Select.Slot>
+                <Select.Slot data-test-id={SLOT_CLEAR_TEST_ID} name="clear" />
+                <Select.Slot name="menu">
+                    <Select.Item data-test-id={ITEM_TEST_ID1} value="test1">
+                        {ITEM_TEXT1}
+                    </Select.Item>
+                    <Select.Item data-test-id={ITEM_TEST_ID2} value="test2">
+                        {ITEM_TEXT2}
+                    </Select.Item>
+                </Select.Slot>
+            </Select>,
+        )
+    ).getByTestId(SELECT_TEST_ID);
 
     await expect(component).toBeVisible();
     await component.click();
@@ -296,21 +316,23 @@ test('should allow to clear', async ({ mount, page }) => {
 });
 
 test('should render left slot', async ({ mount, page }) => {
-    const component = await mount(
-        <Select aria-label="test" data-test-id={SELECT_TEST_ID} placeholder={PLACEHOLDER_TEXT}>
-            <Select.Slot data-test-id={SLOT_LEFT_TEST_ID} name="left">
-                <div>Left Slot</div>
-            </Select.Slot>
-            <Select.Slot name="menu">
-                <Select.Item data-test-id={ITEM_TEST_ID1} value="test1">
-                    {ITEM_TEXT1}
-                </Select.Item>
-                <Select.Item data-test-id={ITEM_TEST_ID2} value="test2">
-                    {ITEM_TEXT2}
-                </Select.Item>
-            </Select.Slot>
-        </Select>,
-    );
+    const component = (
+        await mount(
+            <Select aria-label="test" data-test-id={SELECT_TEST_ID} placeholder={PLACEHOLDER_TEXT}>
+                <Select.Slot data-test-id={SLOT_LEFT_TEST_ID} name="left">
+                    <div>Left Slot</div>
+                </Select.Slot>
+                <Select.Slot name="menu">
+                    <Select.Item data-test-id={ITEM_TEST_ID1} value="test1">
+                        {ITEM_TEXT1}
+                    </Select.Item>
+                    <Select.Item data-test-id={ITEM_TEST_ID2} value="test2">
+                        {ITEM_TEXT2}
+                    </Select.Item>
+                </Select.Slot>
+            </Select>,
+        )
+    ).getByTestId(SELECT_TEST_ID);
 
     await expect(component).toBeVisible();
     await expect(page.getByTestId(SLOT_LEFT_TEST_ID)).toBeVisible();
@@ -318,21 +340,23 @@ test('should render left slot', async ({ mount, page }) => {
 });
 
 test('should render right slot', async ({ mount, page }) => {
-    const component = await mount(
-        <Select aria-label="test" data-test-id={SELECT_TEST_ID} placeholder={PLACEHOLDER_TEXT}>
-            <Select.Slot data-test-id={SLOT_RIGHT_TEST_ID} name="right">
-                <div>Right Slot</div>
-            </Select.Slot>
-            <Select.Slot name="menu">
-                <Select.Item data-test-id={ITEM_TEST_ID1} value="test1">
-                    {ITEM_TEXT1}
-                </Select.Item>
-                <Select.Item data-test-id={ITEM_TEST_ID2} value="test2">
-                    {ITEM_TEXT2}
-                </Select.Item>
-            </Select.Slot>
-        </Select>,
-    );
+    const component = (
+        await mount(
+            <Select aria-label="test" data-test-id={SELECT_TEST_ID} placeholder={PLACEHOLDER_TEXT}>
+                <Select.Slot data-test-id={SLOT_RIGHT_TEST_ID} name="right">
+                    <div>Right Slot</div>
+                </Select.Slot>
+                <Select.Slot name="menu">
+                    <Select.Item data-test-id={ITEM_TEST_ID1} value="test1">
+                        {ITEM_TEXT1}
+                    </Select.Item>
+                    <Select.Item data-test-id={ITEM_TEST_ID2} value="test2">
+                        {ITEM_TEXT2}
+                    </Select.Item>
+                </Select.Slot>
+            </Select>,
+        )
+    ).getByTestId(SELECT_TEST_ID);
 
     await expect(component).toBeVisible();
     await expect(page.getByTestId(SLOT_RIGHT_TEST_ID)).toBeVisible();
@@ -340,21 +364,23 @@ test('should render right slot', async ({ mount, page }) => {
 });
 
 test('should render custom clear slot', async ({ mount, page }) => {
-    const component = await mount(
-        <Select aria-label="test" data-test-id={SELECT_TEST_ID} placeholder={PLACEHOLDER_TEXT}>
-            <Select.Slot data-test-id={SLOT_CLEAR_TEST_ID} name="clear">
-                <div>Clear Slot</div>
-            </Select.Slot>
-            <Select.Slot name="menu">
-                <Select.Item data-test-id={ITEM_TEST_ID1} value="test1">
-                    {ITEM_TEXT1}
-                </Select.Item>
-                <Select.Item data-test-id={ITEM_TEST_ID2} value="test2">
-                    {ITEM_TEXT2}
-                </Select.Item>
-            </Select.Slot>
-        </Select>,
-    );
+    const component = (
+        await mount(
+            <Select aria-label="test" data-test-id={SELECT_TEST_ID} placeholder={PLACEHOLDER_TEXT}>
+                <Select.Slot data-test-id={SLOT_CLEAR_TEST_ID} name="clear">
+                    <div>Clear Slot</div>
+                </Select.Slot>
+                <Select.Slot name="menu">
+                    <Select.Item data-test-id={ITEM_TEST_ID1} value="test1">
+                        {ITEM_TEXT1}
+                    </Select.Item>
+                    <Select.Item data-test-id={ITEM_TEST_ID2} value="test2">
+                        {ITEM_TEXT2}
+                    </Select.Item>
+                </Select.Slot>
+            </Select>,
+        )
+    ).getByTestId(SELECT_TEST_ID);
 
     await expect(component).toBeVisible();
     await expect(page.getByTestId(SLOT_CLEAR_TEST_ID)).toBeVisible();
@@ -362,22 +388,24 @@ test('should render custom clear slot', async ({ mount, page }) => {
 });
 
 test('should have max height equal to available space', async ({ mount, page }) => {
-    const component = await mount(
-        <Select aria-label="test" data-test-id={SELECT_TEST_ID} placeholder={PLACEHOLDER_TEXT}>
-            <Select.Slot name="menu">
-                <Select.Item value="test1">{ITEM_TEXT1}</Select.Item>
-                <Select.Item value="test2">{ITEM_TEXT2}</Select.Item>
-                <Select.Item value="test1">{ITEM_TEXT1}</Select.Item>
-                <Select.Item value="test2">{ITEM_TEXT2}</Select.Item>
-                <Select.Item value="test1">{ITEM_TEXT1}</Select.Item>
-                <Select.Item value="test2">{ITEM_TEXT2}</Select.Item>
-                <Select.Item value="test1">{ITEM_TEXT1}</Select.Item>
-                <Select.Item value="test2">{ITEM_TEXT2}</Select.Item>
-                <Select.Item value="test1">{ITEM_TEXT1}</Select.Item>
-                <Select.Item value="test2">{ITEM_TEXT2}</Select.Item>
-            </Select.Slot>
-        </Select>,
-    );
+    const component = (
+        await mount(
+            <Select aria-label="test" data-test-id={SELECT_TEST_ID} placeholder={PLACEHOLDER_TEXT}>
+                <Select.Slot name="menu">
+                    <Select.Item value="test1">{ITEM_TEXT1}</Select.Item>
+                    <Select.Item value="test2">{ITEM_TEXT2}</Select.Item>
+                    <Select.Item value="test1">{ITEM_TEXT1}</Select.Item>
+                    <Select.Item value="test2">{ITEM_TEXT2}</Select.Item>
+                    <Select.Item value="test1">{ITEM_TEXT1}</Select.Item>
+                    <Select.Item value="test2">{ITEM_TEXT2}</Select.Item>
+                    <Select.Item value="test1">{ITEM_TEXT1}</Select.Item>
+                    <Select.Item value="test2">{ITEM_TEXT2}</Select.Item>
+                    <Select.Item value="test1">{ITEM_TEXT1}</Select.Item>
+                    <Select.Item value="test2">{ITEM_TEXT2}</Select.Item>
+                </Select.Slot>
+            </Select>,
+        )
+    ).getByTestId(SELECT_TEST_ID);
 
     await expect(component).toBeVisible();
     await component.click();
@@ -393,13 +421,15 @@ test('should have max height equal to available space', async ({ mount, page }) 
 });
 
 test('render focus ring and no border when keyboard focused', async ({ mount, page }) => {
-    await mount(
-        <Select aria-label="test" data-test-id={SELECT_TEST_ID} placeholder={PLACEHOLDER_TEXT}>
-            <Select.Slot name="menu">
-                <Select.Item value="test1">{ITEM_TEXT1}</Select.Item>
-            </Select.Slot>
-        </Select>,
-    );
+    const component = (
+        await mount(
+            <Select aria-label="test" data-test-id={SELECT_TEST_ID} placeholder={PLACEHOLDER_TEXT}>
+                <Select.Slot name="menu">
+                    <Select.Item value="test1">{ITEM_TEXT1}</Select.Item>
+                </Select.Slot>
+            </Select>,
+        )
+    ).getByTestId(SELECT_TEST_ID);
 
     const select = page.getByTestId(SELECT_TEST_ID);
 
@@ -417,13 +447,15 @@ test('render focus ring and no border when keyboard focused', async ({ mount, pa
 });
 
 test('render border and no focus ring when mouse focused', async ({ mount, page }) => {
-    const component = await mount(
-        <Select aria-label="test" data-test-id={SELECT_TEST_ID} placeholder={PLACEHOLDER_TEXT}>
-            <Select.Slot name="menu">
-                <Select.Item value="test1">{ITEM_TEXT1}</Select.Item>
-            </Select.Slot>
-        </Select>,
-    );
+    const component = (
+        await mount(
+            <Select aria-label="test" data-test-id={SELECT_TEST_ID} placeholder={PLACEHOLDER_TEXT}>
+                <Select.Slot name="menu">
+                    <Select.Item value="test1">{ITEM_TEXT1}</Select.Item>
+                </Select.Slot>
+            </Select>,
+        )
+    ).getByTestId(SELECT_TEST_ID);
     const select = page.getByTestId(SELECT_TEST_ID);
 
     await page.focus('body');
@@ -444,18 +476,20 @@ test('render border and no focus ring when mouse focused', async ({ mount, page 
 });
 
 test('render indicator on selected item', async ({ mount, page }) => {
-    const component = await mount(
-        <Select aria-label="test" data-test-id={SELECT_TEST_ID} placeholder={PLACEHOLDER_TEXT}>
-            <Select.Slot name="menu">
-                <Select.Item data-test-id={ITEM_TEST_ID1} value="test1">
-                    {ITEM_TEXT1}
-                </Select.Item>
-                <Select.Item data-test-id={ITEM_TEST_ID2} value="test2">
-                    {ITEM_TEXT2}
-                </Select.Item>
-            </Select.Slot>
-        </Select>,
-    );
+    const component = (
+        await mount(
+            <Select aria-label="test" data-test-id={SELECT_TEST_ID} placeholder={PLACEHOLDER_TEXT}>
+                <Select.Slot name="menu">
+                    <Select.Item data-test-id={ITEM_TEST_ID1} value="test1">
+                        {ITEM_TEXT1}
+                    </Select.Item>
+                    <Select.Item data-test-id={ITEM_TEST_ID2} value="test2">
+                        {ITEM_TEXT2}
+                    </Select.Item>
+                </Select.Slot>
+            </Select>,
+        )
+    ).getByTestId(SELECT_TEST_ID);
 
     await expect(component).toBeVisible();
     await component.click();

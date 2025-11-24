@@ -4,17 +4,20 @@ import { expect, test } from '@playwright/experimental-ct-react';
 
 import { ScrollArea } from '../ScrollArea';
 
+const SCROLLAREA_ROOT_TEST_ID = 'fondue-scroll-area';
 const SCROLLAREA_VIEWPORT_TEST_ID = 'fondue-scroll-area-viewport';
 const SCROLLAREA_CONTENT_TEST_ID = 'fondue-scroll-area-content';
 const SCROLLAREA_SCROLLBAR_VERTICAL_TEST_ID = 'fondue-scroll-area-vertical-scrollbar';
 const SCROLLAREA_SCROLLBAR_HORIZONTAL_TEST_ID = 'fondue-scroll-area-horizontal-scrollbar';
 
 test('renders with default props', async ({ mount }) => {
-    const component = await mount(
-        <ScrollArea>
-            <div style={{ height: '1000px', width: '1000px' }}>Scrollable content</div>
-        </ScrollArea>,
-    );
+    const component = (
+        await mount(
+            <ScrollArea data-test-id={SCROLLAREA_ROOT_TEST_ID}>
+                <div style={{ height: '1000px', width: '1000px' }}>Scrollable content</div>
+            </ScrollArea>,
+        )
+    ).getByTestId(SCROLLAREA_ROOT_TEST_ID);
 
     await expect(component).toBeVisible();
     await expect(component).toHaveCSS('max-width', '100%');
@@ -26,11 +29,13 @@ test('renders with default props', async ({ mount }) => {
 });
 
 test('renders with custom maxHeight and maxWidth', async ({ mount }) => {
-    const component = await mount(
-        <ScrollArea maxHeight="500px" maxWidth="800px">
-            <div style={{ height: '1000px', width: '1000px' }}>Scrollable content</div>
-        </ScrollArea>,
-    );
+    const component = (
+        await mount(
+            <ScrollArea maxHeight="500px" maxWidth="800px" data-test-id={SCROLLAREA_ROOT_TEST_ID}>
+                <div style={{ height: '1000px', width: '1000px' }}>Scrollable content</div>
+            </ScrollArea>,
+        )
+    ).getByTestId(SCROLLAREA_ROOT_TEST_ID);
 
     await expect(component).toBeVisible();
     await expect(component).toHaveCSS('max-width', '800px');
@@ -42,11 +47,13 @@ test('renders with custom maxHeight and maxWidth', async ({ mount }) => {
 });
 
 test('renders scrollbars on hover', async ({ mount }) => {
-    const component = await mount(
-        <ScrollArea maxHeight="300px" maxWidth="300px">
-            <div style={{ height: '1000px', width: '1000px' }}>Scrollable content</div>
-        </ScrollArea>,
-    );
+    const component = (
+        await mount(
+            <ScrollArea maxHeight="300px" maxWidth="300px" data-test-id={SCROLLAREA_ROOT_TEST_ID}>
+                <div style={{ height: '1000px', width: '1000px' }}>Scrollable content</div>
+            </ScrollArea>,
+        )
+    ).getByTestId(SCROLLAREA_ROOT_TEST_ID);
 
     const verticalScrollbar = component.getByTestId(SCROLLAREA_SCROLLBAR_VERTICAL_TEST_ID);
     const horizontalScrollbar = component.getByTestId(SCROLLAREA_SCROLLBAR_HORIZONTAL_TEST_ID);
@@ -61,7 +68,13 @@ test('renders scrollbars on hover', async ({ mount }) => {
 });
 
 test('renders scrollbars always', async ({ mount }) => {
-    const component = await mount(<ScrollArea type="always">Scrollable content</ScrollArea>);
+    const component = (
+        await mount(
+            <ScrollArea type="always" data-test-id={SCROLLAREA_ROOT_TEST_ID}>
+                Scrollable content
+            </ScrollArea>,
+        )
+    ).getByTestId(SCROLLAREA_ROOT_TEST_ID);
 
     const verticalScrollbar = component.getByTestId(SCROLLAREA_SCROLLBAR_VERTICAL_TEST_ID);
     const horizontalScrollbar = component.getByTestId(SCROLLAREA_SCROLLBAR_HORIZONTAL_TEST_ID);
@@ -71,11 +84,13 @@ test('renders scrollbars always', async ({ mount }) => {
 });
 
 test('renders scrollbars only when content overflows (and it does not)', async ({ mount }) => {
-    const component = await mount(
-        <ScrollArea type="auto" maxHeight="300px" maxWidth="300px">
-            Scrollable content
-        </ScrollArea>,
-    );
+    const component = (
+        await mount(
+            <ScrollArea type="auto" maxHeight="300px" maxWidth="300px" data-test-id={SCROLLAREA_ROOT_TEST_ID}>
+                Scrollable content
+            </ScrollArea>,
+        )
+    ).getByTestId(SCROLLAREA_ROOT_TEST_ID);
 
     const verticalScrollbar = component.getByTestId(SCROLLAREA_SCROLLBAR_VERTICAL_TEST_ID);
     const horizontalScrollbar = component.getByTestId(SCROLLAREA_SCROLLBAR_HORIZONTAL_TEST_ID);
@@ -85,11 +100,13 @@ test('renders scrollbars only when content overflows (and it does not)', async (
 });
 
 test('renders scrollbars only when content overflows (and it does)', async ({ mount }) => {
-    const component = await mount(
-        <ScrollArea type="auto" maxHeight="300px" maxWidth="300px">
-            <div style={{ height: '1000px', width: '1000px' }}>Scrollable content</div>
-        </ScrollArea>,
-    );
+    const component = (
+        await mount(
+            <ScrollArea type="auto" maxHeight="300px" maxWidth="300px" data-test-id={SCROLLAREA_ROOT_TEST_ID}>
+                <div style={{ height: '1000px', width: '1000px' }}>Scrollable content</div>
+            </ScrollArea>,
+        )
+    ).getByTestId(SCROLLAREA_ROOT_TEST_ID);
 
     const verticalScrollbar = component.getByTestId(SCROLLAREA_SCROLLBAR_VERTICAL_TEST_ID);
     const horizontalScrollbar = component.getByTestId(SCROLLAREA_SCROLLBAR_HORIZONTAL_TEST_ID);
@@ -99,11 +116,13 @@ test('renders scrollbars only when content overflows (and it does)', async ({ mo
 });
 
 test('renders scrollbars only when scrolling', async ({ mount }) => {
-    const component = await mount(
-        <ScrollArea type="scroll" maxHeight="300px" maxWidth="300px">
-            <div style={{ height: '1000px', width: '1000px' }}>Scrollable content</div>
-        </ScrollArea>,
-    );
+    const component = (
+        await mount(
+            <ScrollArea type="scroll" maxHeight="300px" maxWidth="300px" data-test-id={SCROLLAREA_ROOT_TEST_ID}>
+                <div style={{ height: '1000px', width: '1000px' }}>Scrollable content</div>
+            </ScrollArea>,
+        )
+    ).getByTestId(SCROLLAREA_ROOT_TEST_ID);
 
     const verticalScrollbar = component.getByTestId(SCROLLAREA_SCROLLBAR_VERTICAL_TEST_ID);
     const horizontalScrollbar = component.getByTestId(SCROLLAREA_SCROLLBAR_HORIZONTAL_TEST_ID);
@@ -122,17 +141,19 @@ test('renders scrollbars only when scrolling', async ({ mount }) => {
 });
 
 test('scrolls content vertically by dragging the scrollbar thumb', async ({ mount, page }) => {
-    const component = await mount(
-        <ScrollArea maxHeight="300px" maxWidth="300px">
-            <div style={{ height: '1000px', width: '100%' }}>
-                {Array.from({ length: 20 }, (_, i) => (
-                    <p key={i} data-test-id={`paragraph-${i}`}>
-                        Paragraph {i + 1}
-                    </p>
-                ))}
-            </div>
-        </ScrollArea>,
-    );
+    const component = (
+        await mount(
+            <ScrollArea maxHeight="300px" maxWidth="300px" data-test-id={SCROLLAREA_ROOT_TEST_ID}>
+                <div style={{ height: '1000px', width: '100%' }}>
+                    {Array.from({ length: 20 }, (_, i) => (
+                        <p key={i} data-test-id={`paragraph-${i}`}>
+                            Paragraph {i + 1}
+                        </p>
+                    ))}
+                </div>
+            </ScrollArea>,
+        )
+    ).getByTestId(SCROLLAREA_ROOT_TEST_ID);
 
     await component.hover();
 
@@ -161,15 +182,17 @@ test('scrolls content vertically by dragging the scrollbar thumb', async ({ moun
 });
 
 test('scrolls content horizontally by dragging the scrollbar thumb', async ({ mount, page }) => {
-    const component = await mount(
-        <ScrollArea maxHeight="300px" maxWidth="300px">
-            <div style={{ height: '100%', width: '1000px' }}>
-                <p style={{ whiteSpace: 'nowrap' }} data-test-id="long-text">
-                    {Array.from({ length: 50 }, (_, i) => `Word${i} `).join('')}
-                </p>
-            </div>
-        </ScrollArea>,
-    );
+    const component = (
+        await mount(
+            <ScrollArea maxHeight="300px" maxWidth="300px" data-test-id={SCROLLAREA_ROOT_TEST_ID}>
+                <div style={{ height: '100%', width: '1000px' }}>
+                    <p style={{ whiteSpace: 'nowrap' }} data-test-id="long-text">
+                        {Array.from({ length: 50 }, (_, i) => `Word${i} `).join('')}
+                    </p>
+                </div>
+            </ScrollArea>,
+        )
+    ).getByTestId(SCROLLAREA_ROOT_TEST_ID);
 
     await component.hover();
 
@@ -197,11 +220,13 @@ test('scrolls content horizontally by dragging the scrollbar thumb', async ({ mo
 });
 
 test('renders corner when both scrollbars are visible', async ({ mount }) => {
-    const component = await mount(
-        <ScrollArea maxHeight="300px" maxWidth="300px">
-            <div style={{ height: '1000px', width: '1000px' }}>Scrollable content</div>
-        </ScrollArea>,
-    );
+    const component = (
+        await mount(
+            <ScrollArea maxHeight="300px" maxWidth="300px" data-test-id={SCROLLAREA_ROOT_TEST_ID}>
+                <div style={{ height: '1000px', width: '1000px' }}>Scrollable content</div>
+            </ScrollArea>,
+        )
+    ).getByTestId(SCROLLAREA_ROOT_TEST_ID);
 
     await component.hover();
 
@@ -210,60 +235,72 @@ test('renders corner when both scrollbars are visible', async ({ mount }) => {
     await expect(corner).toBeVisible();
 });
 test('should render no padding', async ({ mount, page }) => {
-    await mount(
-        <ScrollArea>
-            <div />
-        </ScrollArea>,
-    );
+    (
+        await mount(
+            <ScrollArea data-test-id={SCROLLAREA_ROOT_TEST_ID}>
+                <div />
+            </ScrollArea>,
+        )
+    ).getByTestId(SCROLLAREA_VIEWPORT_TEST_ID);
 
     await expect(page.getByTestId(SCROLLAREA_VIEWPORT_TEST_ID)).toHaveCSS('padding', '0px');
 });
 
 test('should render tight padding', async ({ mount, page }) => {
-    await mount(
-        <ScrollArea padding="tight">
-            <div />
-        </ScrollArea>,
-    );
+    (
+        await mount(
+            <ScrollArea padding="tight" data-test-id={SCROLLAREA_ROOT_TEST_ID}>
+                <div />
+            </ScrollArea>,
+        )
+    ).getByTestId(SCROLLAREA_VIEWPORT_TEST_ID);
 
     await expect(page.getByTestId(SCROLLAREA_VIEWPORT_TEST_ID)).toHaveCSS('padding', '8px');
 });
 
 test('should render compact padding', async ({ mount, page }) => {
-    await mount(
-        <ScrollArea padding="compact">
-            <div />
-        </ScrollArea>,
-    );
+    (
+        await mount(
+            <ScrollArea padding="compact" data-test-id={SCROLLAREA_ROOT_TEST_ID}>
+                <div />
+            </ScrollArea>,
+        )
+    ).getByTestId(SCROLLAREA_VIEWPORT_TEST_ID);
     await expect(page.getByTestId(SCROLLAREA_VIEWPORT_TEST_ID)).toHaveCSS('padding', '8px 16px');
 });
 
 test('should render comfortable padding', async ({ mount, page }) => {
-    await mount(
-        <ScrollArea padding="comfortable">
-            <div />
-        </ScrollArea>,
-    );
+    (
+        await mount(
+            <ScrollArea padding="comfortable" data-test-id={SCROLLAREA_ROOT_TEST_ID}>
+                <div />
+            </ScrollArea>,
+        )
+    ).getByTestId(SCROLLAREA_VIEWPORT_TEST_ID);
     await expect(page.getByTestId(SCROLLAREA_VIEWPORT_TEST_ID)).toHaveCSS('padding', '16px 24px');
 });
 
 test('should render spacious padding', async ({ mount, page }) => {
-    await mount(
-        <ScrollArea padding="spacious">
-            <div />
-        </ScrollArea>,
-    );
+    (
+        await mount(
+            <ScrollArea padding="spacious" data-test-id={SCROLLAREA_ROOT_TEST_ID}>
+                <div />
+            </ScrollArea>,
+        )
+    ).getByTestId(SCROLLAREA_VIEWPORT_TEST_ID);
     await expect(page.getByTestId(SCROLLAREA_VIEWPORT_TEST_ID)).toHaveCSS('padding', '24px 40px');
 });
 
 test('renders without gutter', async ({ mount }) => {
-    const component = await mount(
-        <ScrollArea maxHeight={500} maxWidth={600}>
-            <div data-test-id={SCROLLAREA_CONTENT_TEST_ID} style={{ height: '1000px', width: '100%' }}>
-                Scrollable content
-            </div>
-        </ScrollArea>,
-    );
+    const component = (
+        await mount(
+            <ScrollArea maxHeight={500} maxWidth={600} data-test-id={SCROLLAREA_ROOT_TEST_ID}>
+                <div data-test-id={SCROLLAREA_CONTENT_TEST_ID} style={{ height: '1000px', width: '100%' }}>
+                    Scrollable content
+                </div>
+            </ScrollArea>,
+        )
+    ).getByTestId(SCROLLAREA_ROOT_TEST_ID);
 
     await expect(component).toBeVisible();
     const componentElement = await component.boundingBox();
@@ -273,13 +310,15 @@ test('renders without gutter', async ({ mount }) => {
 });
 
 test('renders with gutter', async ({ mount }) => {
-    const component = await mount(
-        <ScrollArea maxHeight={500} maxWidth={600} scrollbarGutter="stable">
-            <div data-test-id={SCROLLAREA_CONTENT_TEST_ID} style={{ height: '1000px', width: '100%' }}>
-                Scrollable content
-            </div>
-        </ScrollArea>,
-    );
+    const component = (
+        await mount(
+            <ScrollArea maxHeight={500} maxWidth={600} scrollbarGutter="stable" data-test-id={SCROLLAREA_ROOT_TEST_ID}>
+                <div data-test-id={SCROLLAREA_CONTENT_TEST_ID} style={{ height: '1000px', width: '100%' }}>
+                    Scrollable content
+                </div>
+            </ScrollArea>,
+        )
+    ).getByTestId(SCROLLAREA_ROOT_TEST_ID);
 
     await expect(component).toBeVisible();
     const componentElement = await component.boundingBox();
@@ -289,13 +328,15 @@ test('renders with gutter', async ({ mount }) => {
 });
 
 test('renders with gutter when type is always', async ({ mount }) => {
-    const component = await mount(
-        <ScrollArea maxHeight={500} maxWidth={600} type="always">
-            <div data-test-id={SCROLLAREA_CONTENT_TEST_ID} style={{ height: '1000px', width: '100%' }}>
-                Scrollable content
-            </div>
-        </ScrollArea>,
-    );
+    const component = (
+        await mount(
+            <ScrollArea maxHeight={500} maxWidth={600} type="always" data-test-id={SCROLLAREA_ROOT_TEST_ID}>
+                <div data-test-id={SCROLLAREA_CONTENT_TEST_ID} style={{ height: '1000px', width: '100%' }}>
+                    Scrollable content
+                </div>
+            </ScrollArea>,
+        )
+    ).getByTestId(SCROLLAREA_ROOT_TEST_ID);
 
     await expect(component).toBeVisible();
     const componentElement = await component.boundingBox();
