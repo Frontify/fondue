@@ -502,8 +502,7 @@ test('should close when clicking outside', async ({ mount, page }) => {
     await expect(page.getByTestId(DROPDOWN_CONTENT_TEST_ID)).toBeVisible();
 
     // Click outside the dropdown
-    await page.mouse.click(0, 0);
-    await page.waitForTimeout(100);
+    await page.locator('body').click();
     await expect(page.getByTestId(DROPDOWN_CONTENT_TEST_ID)).not.toBeVisible();
 });
 
