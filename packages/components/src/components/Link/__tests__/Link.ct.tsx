@@ -24,11 +24,14 @@ test('calls navigate on click', async ({ mount }) => {
     const navigateStub = sinon.stub();
     const useHrefStub = sinon.stub().returns('/resolved/bar');
 
-    const component = await mount(
+    const wrapper = await mount(
         <RouterProvider navigate={navigateStub} useHref={useHrefStub}>
-            <Link href="/bar">Navigate Link</Link>
+            <Link href="/bar" data-test-id="link-root">
+                Navigate Link
+            </Link>
         </RouterProvider>,
     );
+    const component = wrapper.getByTestId('link-root');
 
     await component.click();
     expect(navigateStub.calledOnceWith('/bar')).toBeTruthy();

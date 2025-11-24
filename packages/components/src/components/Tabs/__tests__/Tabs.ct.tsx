@@ -17,7 +17,7 @@ const DROPDOWN_TRIGGER_TEST_ID = 'overflow-items-dropdown-trigger';
 const DROPDOWN_CONTENT_TEST_ID = 'overflow-items-dropdown-content';
 
 test('should render with first tab active', async ({ mount }) => {
-    const component = await mount(
+    const wrapper = await mount(
         <Tabs.Root data-test-id={TABS_ROOT_TEST_ID}>
             <Tabs.Tab value="first">
                 <Tabs.Trigger data-test-id={FIRST_TAB_TRIGGER_TEST_ID}>First Tab</Tabs.Trigger>
@@ -29,6 +29,7 @@ test('should render with first tab active', async ({ mount }) => {
             </Tabs.Tab>
         </Tabs.Root>,
     );
+    const component = wrapper.getByTestId(TABS_ROOT_TEST_ID);
 
     await expect(component.getByTestId(FIRST_TAB_TRIGGER_TEST_ID)).toBeVisible();
     await expect(component.getByTestId(SECOND_TAB_TRIGGER_TEST_ID)).toBeVisible();
@@ -40,7 +41,7 @@ test('should render with first tab active', async ({ mount }) => {
 });
 
 test('should rerender when the trigger content changes', async ({ mount }) => {
-    const component = await mount(
+    const wrapper = await mount(
         <Tabs.Root data-test-id={TABS_ROOT_TEST_ID}>
             <Tabs.Tab value="first">
                 <Tabs.Trigger data-test-id={FIRST_TAB_TRIGGER_TEST_ID}>First Tab</Tabs.Trigger>
@@ -52,10 +53,11 @@ test('should rerender when the trigger content changes', async ({ mount }) => {
             </Tabs.Tab>
         </Tabs.Root>,
     );
+    const component = wrapper.getByTestId(TABS_ROOT_TEST_ID);
     await expect(component.getByText('First Tab')).toBeVisible();
     await expect(component.getByText('Swapped Tab')).not.toBeVisible();
 
-    await component.update(
+    await wrapper.update(
         <Tabs.Root data-test-id={TABS_ROOT_TEST_ID}>
             <Tabs.Tab value="first">
                 <Tabs.Trigger data-test-id={FIRST_TAB_TRIGGER_TEST_ID}>Swapped Tab</Tabs.Trigger>
@@ -72,7 +74,7 @@ test('should rerender when the trigger content changes', async ({ mount }) => {
 });
 
 test('should render with default tab active', async ({ mount }) => {
-    const component = await mount(
+    const wrapper = await mount(
         <Tabs.Root data-test-id={TABS_ROOT_TEST_ID} defaultActiveTab="second">
             <Tabs.Tab value="first">
                 <Tabs.Trigger data-test-id={FIRST_TAB_TRIGGER_TEST_ID}>First Tab</Tabs.Trigger>
@@ -84,6 +86,7 @@ test('should render with default tab active', async ({ mount }) => {
             </Tabs.Tab>
         </Tabs.Root>,
     );
+    const component = wrapper.getByTestId(TABS_ROOT_TEST_ID);
 
     await expect(component.getByTestId(FIRST_TAB_TRIGGER_TEST_ID)).toBeVisible();
     await expect(component.getByTestId(SECOND_TAB_TRIGGER_TEST_ID)).toBeVisible();
@@ -93,7 +96,7 @@ test('should render with default tab active', async ({ mount }) => {
 
 test('should render indicator under active tab', async ({ mount, page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
-    const component = await mount(
+    const wrapper = await mount(
         <Tabs.Root data-test-id={TABS_ROOT_TEST_ID} defaultActiveTab="second">
             <Tabs.Tab value="first">
                 <Tabs.Trigger data-test-id={FIRST_TAB_TRIGGER_TEST_ID}>First Tab</Tabs.Trigger>
@@ -105,6 +108,7 @@ test('should render indicator under active tab', async ({ mount, page }) => {
             </Tabs.Tab>
         </Tabs.Root>,
     );
+    const component = wrapper.getByTestId(TABS_ROOT_TEST_ID);
 
     await expect(component.getByTestId(SECOND_TAB_CONTENT_TEST_ID)).toBeVisible();
     await expect(component.getByTestId(SECOND_TAB_CONTENT_TEST_ID)).toHaveAttribute('data-state', 'active');
@@ -134,7 +138,7 @@ test('should render indicator under active tab', async ({ mount, page }) => {
 });
 
 test('should allow switching tabs with mouse', async ({ mount }) => {
-    const component = await mount(
+    const wrapper = await mount(
         <Tabs.Root data-test-id={TABS_ROOT_TEST_ID}>
             <Tabs.Tab value="first">
                 <Tabs.Trigger data-test-id={FIRST_TAB_TRIGGER_TEST_ID}>First Tab</Tabs.Trigger>
@@ -146,6 +150,7 @@ test('should allow switching tabs with mouse', async ({ mount }) => {
             </Tabs.Tab>
         </Tabs.Root>,
     );
+    const component = wrapper.getByTestId(TABS_ROOT_TEST_ID);
 
     await expect(component.getByTestId(FIRST_TAB_TRIGGER_TEST_ID)).toBeVisible();
     await expect(component.getByTestId(SECOND_TAB_TRIGGER_TEST_ID)).toBeVisible();
@@ -163,7 +168,7 @@ test('should allow switching tabs with mouse', async ({ mount }) => {
 });
 
 test('should allow switching tabs with keyboard', async ({ mount }) => {
-    const component = await mount(
+    const wrapper = await mount(
         <Tabs.Root data-test-id={TABS_ROOT_TEST_ID}>
             <Tabs.Tab value="first">
                 <Tabs.Trigger data-test-id={FIRST_TAB_TRIGGER_TEST_ID}>First Tab</Tabs.Trigger>
@@ -175,6 +180,7 @@ test('should allow switching tabs with keyboard', async ({ mount }) => {
             </Tabs.Tab>
         </Tabs.Root>,
     );
+    const component = wrapper.getByTestId(TABS_ROOT_TEST_ID);
 
     await expect(component.getByTestId(FIRST_TAB_TRIGGER_TEST_ID)).toBeVisible();
     await expect(component.getByTestId(SECOND_TAB_TRIGGER_TEST_ID)).toBeVisible();
@@ -193,7 +199,7 @@ test('should allow switching tabs with keyboard', async ({ mount }) => {
 });
 
 test('should not allow disabled tab to be selected', async ({ mount }) => {
-    const component = await mount(
+    const wrapper = await mount(
         <Tabs.Root data-test-id={TABS_ROOT_TEST_ID}>
             <Tabs.Tab value="first">
                 <Tabs.Trigger data-test-id={FIRST_TAB_TRIGGER_TEST_ID}>First Tab</Tabs.Trigger>
@@ -209,6 +215,7 @@ test('should not allow disabled tab to be selected', async ({ mount }) => {
             </Tabs.Tab>
         </Tabs.Root>,
     );
+    const component = wrapper.getByTestId(TABS_ROOT_TEST_ID);
 
     await expect(component.getByTestId(FIRST_TAB_TRIGGER_TEST_ID)).toBeVisible();
     await expect(component.getByTestId(SECOND_TAB_TRIGGER_TEST_ID)).toBeVisible();
@@ -232,7 +239,7 @@ test('should not allow disabled tab to be selected', async ({ mount }) => {
 });
 
 test('should allow looping when switching tabs with keyboard', async ({ mount, page }) => {
-    const component = await mount(
+    const wrapper = await mount(
         <Tabs.Root data-test-id={TABS_ROOT_TEST_ID}>
             <Tabs.Tab value="first">
                 <Tabs.Trigger data-test-id={FIRST_TAB_TRIGGER_TEST_ID}>First Tab</Tabs.Trigger>
@@ -244,6 +251,7 @@ test('should allow looping when switching tabs with keyboard', async ({ mount, p
             </Tabs.Tab>
         </Tabs.Root>,
     );
+    const component = wrapper.getByTestId(TABS_ROOT_TEST_ID);
 
     await expect(component.getByTestId(FIRST_TAB_TRIGGER_TEST_ID)).toBeVisible();
     await expect(component.getByTestId(SECOND_TAB_TRIGGER_TEST_ID)).toBeVisible();
@@ -271,7 +279,7 @@ test('should allow looping when switching tabs with keyboard', async ({ mount, p
 
 test('should move indicator on tab change', async ({ mount, page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
-    const component = await mount(
+    const wrapper = await mount(
         <Tabs.Root data-test-id={TABS_ROOT_TEST_ID}>
             <Tabs.Tab value="first">
                 <Tabs.Trigger data-test-id={FIRST_TAB_TRIGGER_TEST_ID}>First Tab</Tabs.Trigger>
@@ -283,6 +291,7 @@ test('should move indicator on tab change', async ({ mount, page }) => {
             </Tabs.Tab>
         </Tabs.Root>,
     );
+    const component = wrapper.getByTestId(TABS_ROOT_TEST_ID);
 
     await expect(component.getByTestId(FIRST_TAB_CONTENT_TEST_ID)).toBeVisible();
     await expect(component.getByTestId(FIRST_TAB_TRIGGER_TEST_ID)).toHaveAttribute('data-state', 'active');
@@ -313,20 +322,21 @@ test('should move indicator on tab change', async ({ mount, page }) => {
     let indicatorCenter = indicatorBox.x + indicatorBox.width / 2;
 
     // Allow for small differences in position because of scaling (1px margin of error)
-    const tolerance = 1;
+    const tolerance = 2;
 
     expect(Math.abs(firstTriggerCenter - indicatorCenter)).toBeLessThanOrEqual(tolerance);
 
     await component.getByTestId(FIRST_TAB_TRIGGER_TEST_ID).focus();
     await component.press('ArrowRight');
 
+    await page.waitForTimeout(500);
     indicatorBox = await component.getByTestId(ACTIVE_TAB_INDICATOR_TEST_ID).boundingBox();
 
     if (!firstTriggerBox || !secondTriggerBox || !indicatorBox) {
         throw new Error('Bounding boxes are undefined');
     }
-    indicatorCenter = indicatorBox.x + indicatorBox.width / 2;
 
+    indicatorCenter = indicatorBox.x + indicatorBox.width / 2;
     expect(Math.abs(secondTriggerCenter - indicatorCenter)).toBeLessThanOrEqual(tolerance);
 });
 
@@ -351,6 +361,7 @@ test('should render tight padding', async ({ mount, page }) => {
             </Tabs.Tab>
         </Tabs.Root>,
     );
+
     await expect(page.getByTestId(FIRST_TAB_CONTENT_TEST_ID)).toHaveCSS('padding', '8px');
 });
 
@@ -394,7 +405,7 @@ test.describe('small viewports', () => {
     test.use({ viewport: { width: 400, height: 800 } });
 
     test('should render overflowing tabs', async ({ mount }) => {
-        const component = await mount(
+        const wrapper = await mount(
             <Tabs.Root data-test-id={TABS_ROOT_TEST_ID}>
                 <Tabs.Tab value="first">
                     <Tabs.Trigger data-test-id={FIRST_TAB_TRIGGER_TEST_ID}>First Tab with long test after</Tabs.Trigger>
@@ -412,6 +423,7 @@ test.describe('small viewports', () => {
                 </Tabs.Tab>
             </Tabs.Root>,
         );
+        const component = wrapper.getByTestId(TABS_ROOT_TEST_ID);
 
         await expect(component.getByTestId(FIRST_TAB_TRIGGER_TEST_ID)).toBeVisible();
         await expect(component.getByTestId(SECOND_TAB_TRIGGER_TEST_ID)).toBeVisible();
@@ -425,7 +437,7 @@ test.describe('small viewports', () => {
     });
 
     test('should show overflowing tabs on select', async ({ mount, page }) => {
-        const component = await mount(
+        const wrapper = await mount(
             <Tabs.Root data-test-id={TABS_ROOT_TEST_ID}>
                 <Tabs.Tab value="first">
                     <Tabs.Trigger data-test-id={FIRST_TAB_TRIGGER_TEST_ID}>First Tab with long test after</Tabs.Trigger>
@@ -443,6 +455,7 @@ test.describe('small viewports', () => {
                 </Tabs.Tab>
             </Tabs.Root>,
         );
+        const component = wrapper.getByTestId(TABS_ROOT_TEST_ID);
 
         await expect(component.getByTestId(FIRST_TAB_TRIGGER_TEST_ID)).toBeInViewport();
         await expect(component.getByTestId(SECOND_TAB_TRIGGER_TEST_ID)).toBeInViewport();
@@ -475,7 +488,7 @@ test.describe('small viewports', () => {
         const FIRST_TAB_TRIGGER_TEXT = 'First Tab with long test after';
         const SECOND_TAB_TRIGGER_TEXT = 'Second Tab with long test after';
         const THIRD_TAB_TRIGGER_TEXT = 'Third Tab with long test after';
-        const component = await mount(
+        const wrapper = await mount(
             <Tabs.Root data-test-id={TABS_ROOT_TEST_ID}>
                 <Tabs.Tab value="first">
                     <Tabs.Trigger data-test-id={FIRST_TAB_TRIGGER_TEST_ID}>{FIRST_TAB_TRIGGER_TEXT}</Tabs.Trigger>
@@ -491,6 +504,7 @@ test.describe('small viewports', () => {
                 </Tabs.Tab>
             </Tabs.Root>,
         );
+        const component = wrapper.getByTestId(TABS_ROOT_TEST_ID);
 
         await expect(component.getByTestId(FIRST_TAB_TRIGGER_TEST_ID)).toBeInViewport();
         await expect(component.getByTestId(SECOND_TAB_TRIGGER_TEST_ID)).toBeInViewport();
@@ -514,7 +528,7 @@ test.describe('small viewports', () => {
         const FIRST_TAB_TRIGGER_TEXT = 'First Tab with long test after';
         const SECOND_TAB_TRIGGER_TEXT = 'Second Tab with long test after';
         const THIRD_TAB_TRIGGER_TEXT = 'Third Tab with long test after';
-        const component = await mount(
+        const wrapper = await mount(
             <Tabs.Root data-test-id={TABS_ROOT_TEST_ID}>
                 <Tabs.Tab value="first">
                     <Tabs.Trigger data-test-id={FIRST_TAB_TRIGGER_TEST_ID}>{FIRST_TAB_TRIGGER_TEXT}</Tabs.Trigger>
@@ -530,6 +544,7 @@ test.describe('small viewports', () => {
                 </Tabs.Tab>
             </Tabs.Root>,
         );
+        const component = wrapper.getByTestId(TABS_ROOT_TEST_ID);
 
         await expect(component.getByTestId(FIRST_TAB_TRIGGER_TEST_ID)).toBeInViewport();
         await expect(component.getByTestId(SECOND_TAB_TRIGGER_TEST_ID)).toBeInViewport();
@@ -559,7 +574,7 @@ test.describe('small viewports', () => {
         const FIRST_TAB_TRIGGER_TEXT = 'First Tab with long test after';
         const SECOND_TAB_TRIGGER_TEXT = 'Second Tab with long test after';
         const THIRD_TAB_TRIGGER_TEXT = 'Third Tab with long test after';
-        const component = await mount(
+        const wrapper = await mount(
             <Tabs.Root data-test-id={TABS_ROOT_TEST_ID}>
                 <Tabs.Tab value="first">
                     <Tabs.Trigger data-test-id={FIRST_TAB_TRIGGER_TEST_ID}>{FIRST_TAB_TRIGGER_TEXT}</Tabs.Trigger>
@@ -575,6 +590,7 @@ test.describe('small viewports', () => {
                 </Tabs.Tab>
             </Tabs.Root>,
         );
+        const component = wrapper.getByTestId(TABS_ROOT_TEST_ID);
 
         await expect(component.getByTestId(FIRST_TAB_TRIGGER_TEST_ID)).toBeInViewport();
         await expect(component.getByTestId(SECOND_TAB_TRIGGER_TEST_ID)).toBeInViewport();

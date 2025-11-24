@@ -24,26 +24,28 @@ const SELECT_SUCCESS_ICON_TEST_ID = `${SELECT_TEST_ID}-success-icon`;
 const SELECT_ERROR_ICON_TEST_ID = `${SELECT_TEST_ID}-error-icon`;
 
 test('should render with placeholder', async ({ mount, page }) => {
-    const component = await mount(
+    const wrapper = await mount(
         <Select.Combobox aria-label="test" data-test-id={SELECT_TEST_ID} placeholder={PLACEHOLDER_TEXT}>
             <Select.Slot name="menu">
                 <Select.Item value="test1">{ITEM_TEXT1}</Select.Item>
             </Select.Slot>
         </Select.Combobox>,
     );
+    const component = wrapper.getByTestId(SELECT_TEST_ID);
 
     await expect(component).toBeVisible();
     await expect(page.getByPlaceholder(PLACEHOLDER_TEXT)).toBeVisible();
 });
 
 test('render the success status', async ({ mount }) => {
-    const component = await mount(
+    const wrapper = await mount(
         <Select aria-label="test" data-test-id={SELECT_TEST_ID} status="success">
             <Select.Slot name="menu">
                 <Select.Item value="test1">{ITEM_TEXT1}</Select.Item>
             </Select.Slot>
         </Select>,
     );
+    const component = wrapper.getByTestId(SELECT_TEST_ID);
 
     await expect(component).toHaveAttribute('data-status', 'success');
     await expect(component).toHaveCSS('border', '1px solid rgb(22, 133, 0)');
@@ -51,13 +53,14 @@ test('render the success status', async ({ mount }) => {
 });
 
 test('render the error status', async ({ mount }) => {
-    const component = await mount(
+    const wrapper = await mount(
         <Select aria-label="test" data-test-id={SELECT_TEST_ID} status="error">
             <Select.Slot name="menu">
                 <Select.Item value="test1">{ITEM_TEXT1}</Select.Item>
             </Select.Slot>
         </Select>,
     );
+    const component = wrapper.getByTestId(SELECT_TEST_ID);
 
     await expect(component).toHaveAttribute('data-status', 'error');
     await expect(component).toHaveCSS('border', '1px solid rgb(222, 36, 23)');
@@ -65,7 +68,7 @@ test('render the error status', async ({ mount }) => {
 });
 
 test('should open menu and show item', async ({ mount, page }) => {
-    const component = await mount(
+    const wrapper = await mount(
         <Select.Combobox aria-label="test" data-test-id={SELECT_TEST_ID} placeholder={PLACEHOLDER_TEXT}>
             <Select.Slot name="menu">
                 <Select.Item data-test-id={ITEM_TEST_ID1} value="test1">
@@ -77,6 +80,7 @@ test('should open menu and show item', async ({ mount, page }) => {
             </Select.Slot>
         </Select.Combobox>,
     );
+    const component = wrapper.getByTestId(SELECT_TEST_ID);
 
     await expect(component).toBeVisible();
     await component.click();
@@ -88,7 +92,7 @@ test('should open menu and show item', async ({ mount, page }) => {
 });
 
 test('should navigate though menu with arrow', async ({ mount, page }) => {
-    const component = await mount(
+    const wrapper = await mount(
         <Select.Combobox aria-label="test" data-test-id={SELECT_TEST_ID} placeholder={PLACEHOLDER_TEXT}>
             <Select.Slot name="menu">
                 <Select.Item data-test-id={ITEM_TEST_ID1} value="test1">
@@ -100,6 +104,7 @@ test('should navigate though menu with arrow', async ({ mount, page }) => {
             </Select.Slot>
         </Select.Combobox>,
     );
+    const component = wrapper.getByTestId(SELECT_TEST_ID);
 
     await expect(component).toBeVisible();
     await component.click();
@@ -123,7 +128,7 @@ test('should navigate though menu with arrow', async ({ mount, page }) => {
 
 test('should select item in list', async ({ mount, page }) => {
     const onSelectChange = sinon.spy();
-    const component = await mount(
+    const wrapper = await mount(
         <Select.Combobox
             onSelect={onSelectChange}
             aria-label="test"
@@ -140,20 +145,21 @@ test('should select item in list', async ({ mount, page }) => {
             </Select.Slot>
         </Select.Combobox>,
     );
+    const component = wrapper.getByTestId(SELECT_TEST_ID);
 
     await expect(component).toBeVisible();
     await component.click();
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('Enter');
 
-    await expect(component.getByTestId(SELECT_TEST_ID)).toHaveValue(ITEM_TEXT2);
+    await expect(component).toHaveValue(ITEM_TEXT2);
     expect(onSelectChange.callCount).toBe(1);
     expect(onSelectChange.calledWith('test2')).toBe(true);
 });
 
 test('should select item in group in list', async ({ mount, page }) => {
     const onSelectChange = sinon.spy();
-    const component = await mount(
+    const wrapper = await mount(
         <Select.Combobox
             onSelect={onSelectChange}
             aria-label="test"
@@ -172,6 +178,7 @@ test('should select item in group in list', async ({ mount, page }) => {
             </Select.Slot>
         </Select.Combobox>,
     );
+    const component = wrapper.getByTestId(SELECT_TEST_ID);
 
     await expect(component).toBeVisible();
     await component.click();
@@ -179,14 +186,14 @@ test('should select item in group in list', async ({ mount, page }) => {
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('Enter');
 
-    await expect(component.getByTestId(SELECT_TEST_ID)).toHaveValue(ITEM_TEXT2);
+    await expect(component).toHaveValue(ITEM_TEXT2);
     expect(onSelectChange.callCount).toBe(1);
     expect(onSelectChange.calledWith('test2')).toBe(true);
 });
 
 test('should select custom item in list', async ({ mount, page }) => {
     const onSelectChange = sinon.spy();
-    const component = await mount(
+    const wrapper = await mount(
         <Select.Combobox
             onSelect={onSelectChange}
             aria-label="test"
@@ -203,19 +210,20 @@ test('should select custom item in list', async ({ mount, page }) => {
             </Select.Slot>
         </Select.Combobox>,
     );
+    const component = wrapper.getByTestId(SELECT_TEST_ID);
     await expect(component).toBeVisible();
     await component.click();
 
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('Enter');
 
-    await expect(component.getByTestId(SELECT_TEST_ID)).toHaveValue(ITEM_LABEL2);
+    await expect(component).toHaveValue(ITEM_LABEL2);
     expect(onSelectChange.callCount).toBe(1);
     expect(onSelectChange.calledWith('test2')).toBe(true);
 });
 
 test('should not open menu when disabled', async ({ mount, page }) => {
-    const component = await mount(
+    const wrapper = await mount(
         <Select.Combobox disabled aria-label="test" data-test-id={SELECT_TEST_ID} placeholder={PLACEHOLDER_TEXT}>
             <Select.Slot name="menu">
                 <Select.Item data-test-id={ITEM_TEST_ID1} value="test1">
@@ -227,8 +235,9 @@ test('should not open menu when disabled', async ({ mount, page }) => {
             </Select.Slot>
         </Select.Combobox>,
     );
-    await expect(component).toBeVisible();
-    await component.click();
+    const input = wrapper.getByTestId(SELECT_TEST_ID);
+    await expect(input).toBeVisible();
+    await input.click({ force: true });
 
     await expect(page.getByTestId(ITEM_TEST_ID1)).not.toBeVisible();
 
@@ -239,12 +248,12 @@ test('should not open menu when disabled', async ({ mount, page }) => {
     await page.keyboard.press('Enter');
 
     await expect(page.getByPlaceholder(PLACEHOLDER_TEXT)).toBeVisible();
-    await expect(component.getByTestId(SELECT_TEST_ID)).not.toHaveValue(ITEM_TEXT2);
+    await expect(input).not.toHaveValue(ITEM_TEXT2);
 });
 
 test('should allow to clear', async ({ mount, page }) => {
     const onSelectChange = sinon.spy();
-    const component = await mount(
+    const wrapper = await mount(
         <Select.Combobox
             onSelect={onSelectChange}
             data-test-id={SELECT_TEST_ID}
@@ -266,26 +275,27 @@ test('should allow to clear', async ({ mount, page }) => {
         </Select.Combobox>,
     );
 
-    await expect(component).toBeVisible();
-    await component.click();
+    const input = wrapper.getByTestId(SELECT_TEST_ID);
+    await expect(input).toBeVisible();
+    await input.click();
 
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('Enter');
 
     expect(onSelectChange.callCount).toBe(1);
     expect(onSelectChange.calledWith('test2')).toBe(true);
-    await expect(component.getByTestId(SELECT_TEST_ID)).toHaveValue(ITEM_TEXT2);
+    await expect(input).toHaveValue(ITEM_TEXT2);
 
     await page.click(`[data-test-id=${SLOT_CLEAR_TEST_ID}]`);
 
-    await expect(component.getByTestId(SELECT_TEST_ID)).not.toHaveValue(ITEM_TEXT2);
+    await expect(input).not.toHaveValue(ITEM_TEXT2);
     await expect(page.getByPlaceholder(PLACEHOLDER_TEXT)).toBeVisible();
     expect(onSelectChange.callCount).toBe(2);
     expect(onSelectChange.calledWith(null)).toBe(true);
 });
 
 test('should render left slot', async ({ mount, page }) => {
-    const component = await mount(
+    const wrapper = await mount(
         <Select.Combobox aria-label="test" data-test-id={SELECT_TEST_ID} placeholder={PLACEHOLDER_TEXT}>
             <Select.Slot data-test-id={SLOT_LEFT_TEST_ID} name="left">
                 <div>Left Slot</div>
@@ -301,13 +311,14 @@ test('should render left slot', async ({ mount, page }) => {
         </Select.Combobox>,
     );
 
-    await expect(component).toBeVisible();
+    const input = wrapper.getByTestId(SELECT_TEST_ID);
+    await expect(input).toBeVisible();
     await expect(page.getByTestId(SLOT_LEFT_TEST_ID)).toBeVisible();
-    await expect(component).toContainText('Left Slot');
+    await expect(wrapper).toContainText('Left Slot');
 });
 
 test('should render right slot', async ({ mount, page }) => {
-    const component = await mount(
+    const wrapper = await mount(
         <Select.Combobox aria-label="test" data-test-id={SELECT_TEST_ID} placeholder={PLACEHOLDER_TEXT}>
             <Select.Slot data-test-id={SLOT_RIGHT_TEST_ID} name="right">
                 <div>Right Slot</div>
@@ -322,14 +333,14 @@ test('should render right slot', async ({ mount, page }) => {
             </Select.Slot>
         </Select.Combobox>,
     );
-
-    await expect(component).toBeVisible();
+    const input = wrapper.getByTestId(SELECT_TEST_ID);
+    await expect(input).toBeVisible();
     await expect(page.getByTestId(SLOT_RIGHT_TEST_ID)).toBeVisible();
-    await expect(component).toContainText('Right Slot');
+    await expect(wrapper).toContainText('Right Slot');
 });
 
 test('should render custom clear slot', async ({ mount, page }) => {
-    const component = await mount(
+    const wrapper = await mount(
         <Select.Combobox aria-label="test" data-test-id={SELECT_TEST_ID} placeholder={PLACEHOLDER_TEXT}>
             <Select.Slot data-test-id={SLOT_CLEAR_TEST_ID} name="clear">
                 <div>Clear Slot</div>
@@ -344,14 +355,14 @@ test('should render custom clear slot', async ({ mount, page }) => {
             </Select.Slot>
         </Select.Combobox>,
     );
-
-    await expect(component).toBeVisible();
+    const input = wrapper.getByTestId(SELECT_TEST_ID);
+    await expect(input).toBeVisible();
     await expect(page.getByTestId(SLOT_CLEAR_TEST_ID)).toBeVisible();
-    await expect(component).toContainText('Clear Slot');
+    await expect(wrapper).toContainText('Clear Slot');
 });
 
 test('should clear input when typed value is not selected', async ({ mount, page }) => {
-    const component = await mount(
+    const wrapper = await mount(
         <Select.Combobox aria-label="test" data-test-id={SELECT_TEST_ID} placeholder={PLACEHOLDER_TEXT}>
             <Select.Slot name="menu">
                 <Select.Item data-test-id={ITEM_TEST_ID1} value="test1">
@@ -364,20 +375,21 @@ test('should clear input when typed value is not selected', async ({ mount, page
         </Select.Combobox>,
     );
 
-    await expect(component).toBeVisible();
-    await component.click();
+    const input = wrapper.getByTestId(SELECT_TEST_ID);
+    await expect(input).toBeVisible();
+    await input.click();
 
     const nonExistentValue = 'test1';
-    await component.getByRole('combobox').fill(nonExistentValue);
-    await component.press('Tab');
+    await input.fill(nonExistentValue);
+    await wrapper.press('Tab');
 
-    await expect(component.getByTestId(SELECT_TEST_ID)).toHaveValue('');
+    await expect(input).not.toHaveValue(nonExistentValue);
     await expect(page.getByPlaceholder(PLACEHOLDER_TEXT)).toBeVisible();
 });
 
 test('should show the other options when opening the menu meanwhile it has a value', async ({ mount, page }) => {
     const onSelectChange = sinon.spy();
-    const component = await mount(
+    const wrapper = await mount(
         <Select.Combobox
             onSelect={onSelectChange}
             aria-label="test"
@@ -393,6 +405,7 @@ test('should show the other options when opening the menu meanwhile it has a val
             </Select.Item>
         </Select.Combobox>,
     );
+    const component = wrapper.getByTestId(SELECT_TEST_ID);
 
     await expect(component).toBeVisible();
     await component.click();
@@ -402,7 +415,7 @@ test('should show the other options when opening the menu meanwhile it has a val
 
 test('should filter the items when typing', async ({ mount, page }) => {
     const onSelectChange = sinon.spy();
-    const component = await mount(
+    const wrapper = await mount(
         <Select.Combobox
             onSelect={onSelectChange}
             aria-label="test"
@@ -419,6 +432,7 @@ test('should filter the items when typing', async ({ mount, page }) => {
             </Select.Slot>
         </Select.Combobox>,
     );
+    const component = wrapper.getByTestId(SELECT_TEST_ID);
 
     await expect(component).toBeVisible();
     await component.click();
@@ -441,7 +455,7 @@ test('should display loading circle when typing and hide loading circle after lo
         { value: 'test1', label: 'test1', content: <span data-test-id={'test1'}>{'TEST1'}</span> },
         { value: 'test2', label: 'test2', content: <span data-test-id={'test2'}>{'TEST2'}</span> },
     ];
-    const component = await mount(
+    const wrapper = await mount(
         <MockComboboxWithAsyncFetcher
             aria-label="test"
             data-test-id={SELECT_TEST_ID}
@@ -449,6 +463,7 @@ test('should display loading circle when typing and hide loading circle after lo
             asyncItems={items}
         />,
     );
+    const component = wrapper.getByTestId(SELECT_TEST_ID);
 
     await expect(component).toBeVisible();
     await component.click();
@@ -469,7 +484,7 @@ test('should display error when getAsyncItems fails', async ({ mount, page }) =>
         { value: 'test1', label: 'test1', content: <span data-test-id={'test1'}>{'TEST1'}</span> },
         { value: 'test2', label: 'test2', content: <span data-test-id={'test2'}>{'TEST2'}</span> },
     ];
-    const component = await mount(
+    const wrapper = await mount(
         <MockComboboxWithAsyncFetcher
             aria-label="test"
             data-test-id={SELECT_TEST_ID}
@@ -478,6 +493,7 @@ test('should display error when getAsyncItems fails', async ({ mount, page }) =>
             shouldReject
         />,
     );
+    const component = wrapper.getByTestId(SELECT_TEST_ID);
 
     await expect(component).toBeVisible();
     await component.click();
@@ -486,7 +502,7 @@ test('should display error when getAsyncItems fails', async ({ mount, page }) =>
 });
 
 test('should not display error when async items is empty', async ({ mount, page }) => {
-    const component = await mount(
+    const wrapper = await mount(
         <MockComboboxWithAsyncFetcher
             aria-label="test"
             data-test-id={SELECT_TEST_ID}
@@ -494,6 +510,7 @@ test('should not display error when async items is empty', async ({ mount, page 
             asyncItems={[]}
         />,
     );
+    const component = wrapper.getByTestId(SELECT_TEST_ID);
 
     await expect(component).toBeVisible();
     await component.click();

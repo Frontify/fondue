@@ -26,26 +26,28 @@ const SELECT_SUCCESS_ICON_TEST_ID = `${SELECT_TEST_ID}-success-icon`;
 const SELECT_ERROR_ICON_TEST_ID = `${SELECT_TEST_ID}-error-icon`;
 
 test('should render with placeholder', async ({ mount }) => {
-    const component = await mount(
+    const wrapper = await mount(
         <Select aria-label="test" data-test-id={SELECT_TEST_ID} placeholder={PLACEHOLDER_TEXT}>
             <Select.Slot name="menu">
                 <Select.Item value="test1">{ITEM_TEXT1}</Select.Item>
             </Select.Slot>
         </Select>,
     );
+    const component = wrapper.getByTestId(SELECT_TEST_ID);
 
     await expect(component).toBeVisible();
     await expect(component).toContainText(PLACEHOLDER_TEXT);
 });
 
 test('render the success status', async ({ mount }) => {
-    const component = await mount(
+    const wrapper = await mount(
         <Select aria-label="test" data-test-id={SELECT_TEST_ID} status="success">
             <Select.Slot name="menu">
                 <Select.Item value="test1">{ITEM_TEXT1}</Select.Item>
             </Select.Slot>
         </Select>,
     );
+    const component = wrapper.getByTestId(SELECT_TEST_ID);
 
     await expect(component).toHaveAttribute('data-status', 'success');
     await expect(component).toHaveCSS('border', '1px solid rgb(22, 133, 0)');
@@ -53,13 +55,14 @@ test('render the success status', async ({ mount }) => {
 });
 
 test('render the error status', async ({ mount }) => {
-    const component = await mount(
+    const wrapper = await mount(
         <Select aria-label="test" data-test-id={SELECT_TEST_ID} status="error">
             <Select.Slot name="menu">
                 <Select.Item value="test1">{ITEM_TEXT1}</Select.Item>
             </Select.Slot>
         </Select>,
     );
+    const component = wrapper.getByTestId(SELECT_TEST_ID);
 
     await expect(component).toHaveAttribute('data-status', 'error');
     await expect(component).toHaveCSS('border', '1px solid rgb(222, 36, 23)');
@@ -67,7 +70,7 @@ test('render the error status', async ({ mount }) => {
 });
 
 test('should open menu and show item', async ({ mount, page }) => {
-    const component = await mount(
+    const wrapper = await mount(
         <Select aria-label="test" data-test-id={SELECT_TEST_ID} placeholder={PLACEHOLDER_TEXT}>
             <Select.Slot name="menu">
                 <Select.Item data-test-id={ITEM_TEST_ID1} value="test1">
@@ -79,6 +82,7 @@ test('should open menu and show item', async ({ mount, page }) => {
             </Select.Slot>
         </Select>,
     );
+    const component = wrapper.getByTestId(SELECT_TEST_ID);
 
     await expect(component).toBeVisible();
     await component.click();
@@ -90,7 +94,7 @@ test('should open menu and show item', async ({ mount, page }) => {
 });
 
 test('should navigate though menu with arrow', async ({ mount, page }) => {
-    const component = await mount(
+    const wrapper = await mount(
         <Select aria-label="test" data-test-id={SELECT_TEST_ID} placeholder={PLACEHOLDER_TEXT}>
             <Select.Slot name="menu">
                 <Select.Item data-test-id={ITEM_TEST_ID1} value="test1">
@@ -102,6 +106,7 @@ test('should navigate though menu with arrow', async ({ mount, page }) => {
             </Select.Slot>
         </Select>,
     );
+    const component = wrapper.getByTestId(SELECT_TEST_ID);
 
     await expect(component).toBeVisible();
     await component.click();
@@ -127,7 +132,7 @@ test('should navigate though menu with arrow', async ({ mount, page }) => {
 
 test('should select item in list', async ({ mount, page }) => {
     const onSelectChange = sinon.spy();
-    const component = await mount(
+    const wrapper = await mount(
         <Select
             onSelect={onSelectChange}
             aria-label="test"
@@ -144,6 +149,7 @@ test('should select item in list', async ({ mount, page }) => {
             </Select.Slot>
         </Select>,
     );
+    const component = wrapper.getByTestId(SELECT_TEST_ID);
 
     await expect(component).toBeVisible();
     await component.click();
@@ -159,7 +165,7 @@ test('should select item in list', async ({ mount, page }) => {
 
 test('should select item in group in list', async ({ mount, page }) => {
     const onSelectChange = sinon.spy();
-    const component = await mount(
+    const wrapper = await mount(
         <Select
             onSelect={onSelectChange}
             aria-label="test"
@@ -178,6 +184,7 @@ test('should select item in group in list', async ({ mount, page }) => {
             </Select.Slot>
         </Select>,
     );
+    const component = wrapper.getByTestId(SELECT_TEST_ID);
 
     await expect(component).toBeVisible();
     await component.click();
@@ -193,7 +200,7 @@ test('should select item in group in list', async ({ mount, page }) => {
 
 test('should select custom item in list', async ({ mount, page }) => {
     const onSelectChange = sinon.spy();
-    const component = await mount(
+    const wrapper = await mount(
         <Select
             onSelect={onSelectChange}
             aria-label="test"
@@ -210,6 +217,7 @@ test('should select custom item in list', async ({ mount, page }) => {
             </Select.Slot>
         </Select>,
     );
+    const component = wrapper.getByTestId(SELECT_TEST_ID);
 
     await expect(component).toBeVisible();
     await component.click();
@@ -224,7 +232,7 @@ test('should select custom item in list', async ({ mount, page }) => {
 });
 
 test('should not open menu when disabled', async ({ mount, page }) => {
-    const component = await mount(
+    const wrapper = await mount(
         <Select disabled aria-label="test" data-test-id={SELECT_TEST_ID} placeholder={PLACEHOLDER_TEXT}>
             <Select.Slot name="menu">
                 <Select.Item data-test-id={ITEM_TEST_ID1} value="test1">
@@ -236,6 +244,7 @@ test('should not open menu when disabled', async ({ mount, page }) => {
             </Select.Slot>
         </Select>,
     );
+    const component = wrapper.getByTestId(SELECT_TEST_ID);
 
     await expect(component).toBeVisible();
     await component.click();
@@ -254,7 +263,7 @@ test('should not open menu when disabled', async ({ mount, page }) => {
 
 test('should allow to clear', async ({ mount, page }) => {
     const onSelectChange = sinon.spy();
-    const component = await mount(
+    const wrapper = await mount(
         <Select
             onSelect={onSelectChange}
             data-test-id={SELECT_TEST_ID}
@@ -275,6 +284,7 @@ test('should allow to clear', async ({ mount, page }) => {
             </Select.Slot>
         </Select>,
     );
+    const component = wrapper.getByTestId(SELECT_TEST_ID);
 
     await expect(component).toBeVisible();
     await component.click();
@@ -296,7 +306,7 @@ test('should allow to clear', async ({ mount, page }) => {
 });
 
 test('should render left slot', async ({ mount, page }) => {
-    const component = await mount(
+    const wrapper = await mount(
         <Select aria-label="test" data-test-id={SELECT_TEST_ID} placeholder={PLACEHOLDER_TEXT}>
             <Select.Slot data-test-id={SLOT_LEFT_TEST_ID} name="left">
                 <div>Left Slot</div>
@@ -311,6 +321,7 @@ test('should render left slot', async ({ mount, page }) => {
             </Select.Slot>
         </Select>,
     );
+    const component = wrapper.getByTestId(SELECT_TEST_ID);
 
     await expect(component).toBeVisible();
     await expect(page.getByTestId(SLOT_LEFT_TEST_ID)).toBeVisible();
@@ -318,7 +329,7 @@ test('should render left slot', async ({ mount, page }) => {
 });
 
 test('should render right slot', async ({ mount, page }) => {
-    const component = await mount(
+    const wrapper = await mount(
         <Select aria-label="test" data-test-id={SELECT_TEST_ID} placeholder={PLACEHOLDER_TEXT}>
             <Select.Slot data-test-id={SLOT_RIGHT_TEST_ID} name="right">
                 <div>Right Slot</div>
@@ -333,6 +344,7 @@ test('should render right slot', async ({ mount, page }) => {
             </Select.Slot>
         </Select>,
     );
+    const component = wrapper.getByTestId(SELECT_TEST_ID);
 
     await expect(component).toBeVisible();
     await expect(page.getByTestId(SLOT_RIGHT_TEST_ID)).toBeVisible();
@@ -340,7 +352,7 @@ test('should render right slot', async ({ mount, page }) => {
 });
 
 test('should render custom clear slot', async ({ mount, page }) => {
-    const component = await mount(
+    const wrapper = await mount(
         <Select aria-label="test" data-test-id={SELECT_TEST_ID} placeholder={PLACEHOLDER_TEXT}>
             <Select.Slot data-test-id={SLOT_CLEAR_TEST_ID} name="clear">
                 <div>Clear Slot</div>
@@ -355,6 +367,7 @@ test('should render custom clear slot', async ({ mount, page }) => {
             </Select.Slot>
         </Select>,
     );
+    const component = wrapper.getByTestId(SELECT_TEST_ID);
 
     await expect(component).toBeVisible();
     await expect(page.getByTestId(SLOT_CLEAR_TEST_ID)).toBeVisible();
@@ -362,7 +375,7 @@ test('should render custom clear slot', async ({ mount, page }) => {
 });
 
 test('should have max height equal to available space', async ({ mount, page }) => {
-    const component = await mount(
+    const wrapper = await mount(
         <Select aria-label="test" data-test-id={SELECT_TEST_ID} placeholder={PLACEHOLDER_TEXT}>
             <Select.Slot name="menu">
                 <Select.Item value="test1">{ITEM_TEXT1}</Select.Item>
@@ -378,14 +391,16 @@ test('should have max height equal to available space', async ({ mount, page }) 
             </Select.Slot>
         </Select>,
     );
+    const component = wrapper.getByTestId(SELECT_TEST_ID);
+    await page.setViewportSize({ width: 800, height: 300 });
+    const windowHeight = page.viewportSize()?.height || 0;
 
     await expect(component).toBeVisible();
     await component.click();
 
     const dialog = page.getByTestId(SELECT_MENU_TEST_ID);
     await expect(dialog).toBeVisible();
-    await page.setViewportSize({ width: 800, height: 300 });
-    const windowHeight = page.viewportSize()?.height || 0;
+
     const boundingBox = await dialog.boundingBox();
     const expectedMaxHeight = windowHeight - (boundingBox?.y || 0) - MAX_HEIGHT_MARGIN;
     const actualMaxHeight = await dialog.evaluate((node) => parseFloat(window.getComputedStyle(node).maxHeight));
@@ -417,13 +432,14 @@ test('render focus ring and no border when keyboard focused', async ({ mount, pa
 });
 
 test('render border and no focus ring when mouse focused', async ({ mount, page }) => {
-    const component = await mount(
+    const wrapper = await mount(
         <Select aria-label="test" data-test-id={SELECT_TEST_ID} placeholder={PLACEHOLDER_TEXT}>
             <Select.Slot name="menu">
                 <Select.Item value="test1">{ITEM_TEXT1}</Select.Item>
             </Select.Slot>
         </Select>,
     );
+    const component = wrapper.getByTestId(SELECT_TEST_ID);
     const select = page.getByTestId(SELECT_TEST_ID);
 
     await page.focus('body');
@@ -444,7 +460,7 @@ test('render border and no focus ring when mouse focused', async ({ mount, page 
 });
 
 test('render indicator on selected item', async ({ mount, page }) => {
-    const component = await mount(
+    const wrapper = await mount(
         <Select aria-label="test" data-test-id={SELECT_TEST_ID} placeholder={PLACEHOLDER_TEXT}>
             <Select.Slot name="menu">
                 <Select.Item data-test-id={ITEM_TEST_ID1} value="test1">
@@ -456,6 +472,7 @@ test('render indicator on selected item', async ({ mount, page }) => {
             </Select.Slot>
         </Select>,
     );
+    const component = wrapper.getByTestId(SELECT_TEST_ID);
 
     await expect(component).toBeVisible();
     await component.click();

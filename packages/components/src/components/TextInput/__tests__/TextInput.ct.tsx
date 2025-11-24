@@ -14,19 +14,19 @@ const TEXT_INPUT_SUCCESS_ICON_TEST_ID = 'fondue-text-input-success-icon';
 const TEXT_INPUT_ERROR_ICON_TEST_ID = 'fondue-text-input-error-icon';
 
 test('render with the correct value', async ({ mount }) => {
-    const component = await mount(<TextInput value={TEXT_INPUT_TEXT} />);
-
+    const wrapper = await mount(<TextInput value={TEXT_INPUT_TEXT} data-test-id={TEXT_INPUT_TEST_ID} />);
+    const component = wrapper.getByTestId(TEXT_INPUT_TEST_ID);
     await expect(component.getByRole('textbox')).toHaveValue(TEXT_INPUT_TEXT);
 });
-
 test('render with the correct placeholder', async ({ mount }) => {
-    const component = await mount(<TextInput placeholder={TEXT_INPUT_TEXT} />);
-
+    const wrapper = await mount(<TextInput placeholder={TEXT_INPUT_TEXT} data-test-id={TEXT_INPUT_TEST_ID} />);
+    const component = wrapper.getByTestId(TEXT_INPUT_TEST_ID);
     await expect(component.getByRole('textbox')).toHaveAttribute('placeholder', TEXT_INPUT_TEXT);
 });
 
 test('render the success status', async ({ mount }) => {
-    const component = await mount(<TextInput status="success" />);
+    const wrapper = await mount(<TextInput status="success" data-test-id={TEXT_INPUT_TEST_ID} />);
+    const component = wrapper.getByTestId(TEXT_INPUT_TEST_ID);
 
     await expect(component).toHaveAttribute('data-status', 'success');
     await expect(component).toHaveCSS('border', '1px solid rgb(22, 133, 0)');
@@ -34,7 +34,8 @@ test('render the success status', async ({ mount }) => {
 });
 
 test('render the loading status', async ({ mount }) => {
-    const component = await mount(<TextInput status="loading" />);
+    const wrapper = await mount(<TextInput status="loading" data-test-id={TEXT_INPUT_TEST_ID} />);
+    const component = wrapper.getByTestId(TEXT_INPUT_TEST_ID);
 
     await expect(component).toHaveAttribute('data-status', 'loading');
     await expect(component).toHaveCSS('border', '1px solid rgba(135, 135, 129, 0.5)');
@@ -42,7 +43,8 @@ test('render the loading status', async ({ mount }) => {
 });
 
 test('render the error status ', async ({ mount }) => {
-    const component = await mount(<TextInput status="error" />);
+    const wrapper = await mount(<TextInput status="error" data-test-id={TEXT_INPUT_TEST_ID} />);
+    const component = wrapper.getByTestId(TEXT_INPUT_TEST_ID);
 
     await expect(component).toHaveAttribute('data-status', 'error');
     await expect(component.getByRole('textbox')).toHaveAttribute('aria-invalid', 'true');
@@ -52,7 +54,8 @@ test('render the error status ', async ({ mount }) => {
 
 test('emits on change event', async ({ mount }) => {
     const onChange = sinon.spy();
-    const component = await mount(<TextInput onChange={onChange} />);
+    const wrapper = await mount(<TextInput onChange={onChange} data-test-id={TEXT_INPUT_TEST_ID} />);
+    const component = wrapper.getByTestId(TEXT_INPUT_TEST_ID);
 
     await component.getByRole('textbox').pressSequentially(TEXT_INPUT_TEXT);
 
@@ -62,7 +65,8 @@ test('emits on change event', async ({ mount }) => {
 test('emits the focus and blur events', async ({ mount }) => {
     const onFocus = sinon.spy();
     const onBlur = sinon.spy();
-    const component = await mount(<TextInput onFocus={onFocus} onBlur={onBlur} />);
+    const wrapper = await mount(<TextInput onFocus={onFocus} onBlur={onBlur} data-test-id={TEXT_INPUT_TEST_ID} />);
+    const component = wrapper.getByTestId(TEXT_INPUT_TEST_ID);
 
     await component.getByRole('textbox').focus();
     expect(onFocus.called).toBe(true);
@@ -72,19 +76,21 @@ test('emits the focus and blur events', async ({ mount }) => {
 });
 
 test('render disabled state', async ({ mount }) => {
-    const component = await mount(<TextInput disabled />);
+    const wrapper = await mount(<TextInput disabled data-test-id={TEXT_INPUT_TEST_ID} />);
+    const component = wrapper.getByTestId(TEXT_INPUT_TEST_ID);
 
     await expect(component.getByRole('textbox')).toBeDisabled();
 });
 
 test('render read-only state', async ({ mount }) => {
-    const component = await mount(<TextInput readOnly />);
+    const wrapper = await mount(<TextInput readOnly data-test-id={TEXT_INPUT_TEST_ID} />);
+    const component = wrapper.getByTestId(TEXT_INPUT_TEST_ID);
 
     await expect(component.getByRole('textbox')).toHaveAttribute('readonly');
 });
 
 test('render both slots side', async ({ mount }) => {
-    const component = await mount(
+    const wrapper = await mount(
         <TextInput.Root>
             <TextInput.Slot name="left">
                 <button type="button" data-test-id="left-button-slot">
@@ -98,13 +104,14 @@ test('render both slots side', async ({ mount }) => {
             </TextInput.Slot>
         </TextInput.Root>,
     );
+    const component = wrapper.getByTestId(TEXT_INPUT_TEST_ID);
 
     await expect(component.getByTestId('left-button-slot')).toBeVisible();
     await expect(component.getByTestId('right-button-slot')).toBeVisible();
 });
 
 test('render slot on the right side and apply correct focus order', async ({ mount }) => {
-    const component = await mount(
+    const wrapper = await mount(
         <TextInput.Root>
             <TextInput.Slot name="right">
                 <button type="button" data-test-id="right-button-slot">
@@ -113,6 +120,7 @@ test('render slot on the right side and apply correct focus order', async ({ mou
             </TextInput.Slot>
         </TextInput.Root>,
     );
+    const component = wrapper.getByTestId(TEXT_INPUT_TEST_ID);
 
     // Focus input
     await component.press('Tab');
@@ -123,7 +131,8 @@ test('render slot on the right side and apply correct focus order', async ({ mou
 });
 
 test('render focus ring and no border when keyboard focused', async ({ mount, page }) => {
-    const component = await mount(<TextInput value={TEXT_INPUT_TEXT} />);
+    const wrapper = await mount(<TextInput value={TEXT_INPUT_TEXT} data-test-id={TEXT_INPUT_TEST_ID} />);
+    const component = wrapper.getByTestId(TEXT_INPUT_TEST_ID);
     const input = page.getByTestId(TEXT_INPUT_TEST_ID);
 
     await page.focus('body');
@@ -140,7 +149,8 @@ test('render focus ring and no border when keyboard focused', async ({ mount, pa
 });
 
 test('render border and no focus ring when mouse focused', async ({ mount, page }) => {
-    const component = await mount(<TextInput value={TEXT_INPUT_TEXT} />);
+    const wrapper = await mount(<TextInput value={TEXT_INPUT_TEXT} data-test-id={TEXT_INPUT_TEST_ID} />);
+    const component = wrapper.getByTestId(TEXT_INPUT_TEST_ID);
     const input = page.getByTestId(TEXT_INPUT_TEST_ID);
 
     await page.focus('body');
