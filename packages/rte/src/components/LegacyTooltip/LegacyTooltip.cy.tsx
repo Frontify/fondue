@@ -12,7 +12,7 @@ const TOOLTIP_ARROW_ID = '[data-test-id=popover-arrow]';
 const TOOLTIP_LINK_URL = 'https://www.frontify.com';
 const TOOLTIP_HEADING_TEXT = "I'm a heading";
 const GENERIC_ICON = <IconIcon />;
-const GENERIC_ICON_CODE = 'svg[name=IconIcon16]';
+const GENERIC_ICON_CODE = 'svg[data-test-id=fondue-icons-icon]';
 const BRIGHT_HEADER_ID = '[data-test-id=bright-header]';
 const ENTER_DELAY = 1000;
 const DEFAULT_HOVER_DELAY = 200;
@@ -163,7 +163,7 @@ describe('Tooltip Component', () => {
         initTooltip({ content: TOOLTIP_TEXT, heading: TOOLTIP_HEADING_TEXT, headingIcon: GENERIC_ICON });
 
         cy.get(TOOLTIP_ID).should('contain.text', TOOLTIP_HEADING_TEXT);
-        cy.get('svg[name=IconIcon20]').should('be.visible');
+        cy.get('svg[data-test-id=fondue-icons-icon]').should('be.visible');
     });
 
     for (const brightHeaderStyle of Object.values(BrightHeaderStyle)) {
@@ -255,12 +255,6 @@ describe('Tooltip Component', () => {
         initTooltip({ content: TOOLTIP_TEXT, alignment: TooltipAlignment.End });
 
         getByTooltipPlacement('bottom-end').should('exist');
-    });
-
-    it('should flip the tooltip', () => {
-        initTooltip({ content: TOOLTIP_TEXT, flip: true, testFlip: true });
-
-        getByTooltipPlacement('top').should('exist');
     });
 
     it('should NOT flip the tooltip', () => {

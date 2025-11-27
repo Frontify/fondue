@@ -36,7 +36,7 @@ const CheckboxComponent = (props: CheckboxProps): ReactElement => {
 };
 
 const verifyCheckboxExists = () => {
-    cy.get(CHECKBOX_ID).get('svg').invoke('attr', 'name').should('eq', 'IconCheckMark16');
+    cy.get(CHECKBOX_ID).get('svg').invoke('attr', 'data-test-id').should('eq', 'fondue-icons-check-mark');
 };
 
 describe('Checkbox component', () => {
@@ -56,7 +56,7 @@ describe('Checkbox component', () => {
     it('renders with a minus icon if indeterminate', () => {
         cy.mount(<CheckboxComponent state={CheckboxState.Mixed} />);
 
-        cy.get(CHECKBOX_ID).get('svg').invoke('attr', 'name').should('eq', 'IconMinus16');
+        cy.get(CHECKBOX_ID).get('svg').invoke('attr', 'data-test-id').should('eq', 'fondue-icons-minus');
         cy.get(CHECKBOX_INPUT_ID).invoke('attr', 'checked').should('not.exist');
     });
 
@@ -135,7 +135,7 @@ describe('Checkbox component', () => {
         cy.get('body').realPress('Tab');
         cy.get(CHECKBOX_INPUT_ID).should('be.focused');
         cy.get(CHECKBOX_ID).realPress('Space');
-        cy.get(CHECKBOX_ID).get('svg').invoke('attr', 'name').should('eq', 'IconCheckMark16');
+        cy.get(CHECKBOX_ID).get('svg').invoke('attr', 'data-test-id').should('eq', 'fondue-icons-check-mark');
     });
 
     it('should focus the tooltip using the keyboard', () => {
