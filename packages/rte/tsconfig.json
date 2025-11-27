@@ -33,7 +33,7 @@
         "cypress",
         "vite.config.ts",
         "tailwind.config.js",
-        "legacyTokens.tailwind.config.ts"
+        "legacyTokens.tailwind.config.js"
     ],
     "ts-node": {
         "files": true
