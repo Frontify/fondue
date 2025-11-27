@@ -142,7 +142,7 @@ jobs:
               run: pnpm build:components
 
             - name: Component Tests
-              run: pnpm run --stream --filter {packages/fondue} test --spec $(node ./.github/lib/cypress-matrix.mjs ${{ strategy.job-total }} ${{ matrix.containers }})
+              run: pnpm run --stream --filter {packages/fondue} test
 
     rte-component-tests:
         name: RTE Component Tests
