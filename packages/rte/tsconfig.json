@@ -31,19 +31,9 @@
         "cypress.config.ts",
         "src",
         "cypress",
-        "scripts",
         "vite.config.ts",
         "tailwind.config.js",
-        "components.vite.config.ts",
-        "charts.vite.config.ts",
-        "icons.vite.config.ts",
-        "tailwind.config.js",
-        "legacyComponents.tailwind.config.ts",
-        "tokens.vite.config.ts",
-        "codemod.vite.config.ts",
-        "internal-tools.vite.config.ts",
-        "legacyTokens",
-        "tools"
+        "legacyTokens.tailwind.config.ts"
     ],
     "ts-node": {
         "files": true
