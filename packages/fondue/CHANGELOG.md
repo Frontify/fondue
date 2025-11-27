@@ -1,5 +1,16 @@
 # @frontify/fondue
 
+## 13.0.0-rc.7
+
+### Major Changes
+
+- [#2547](https://github.com/Frontify/fondue/pull/2547) [`fc89048`](https://github.com/Frontify/fondue/commit/fc890486613baaa1d6fdf8af5aefb7a29668691a) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add subexport for rte subpackage
+
+### Patch Changes
+
+- Updated dependencies [[`a4df74d`](https://github.com/Frontify/fondue/commit/a4df74dab2328a2afe0505a1afd34b57d233106c)]:
+    - @frontify/fondue-rte@0.0.1-rc.6
+
 ## 13.0.0-rc.6
 
 ### Major Changes
