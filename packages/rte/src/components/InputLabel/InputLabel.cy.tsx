@@ -70,11 +70,11 @@ describe('InputLabel Component', () => {
             .first()
             .should('have.class', 'tw-text-box-negative-inverse')
             .find('svg')
-            .should('have.attr', 'name', 'IconQuestionMarkCircle16');
+            .should('have.attr', 'data-test-id', 'fondue-icons-question-mark-circle');
         cy.get(TOOLTIP_ICON_TRIGGER_ID)
             .last()
             .should('have.class', 'tw-text-text-weak')
             .find('svg')
-            .should('have.attr', 'name', 'IconReport16');
+            .should('have.attr', 'data-test-id', 'fondue-icons-report');
     });
 });
