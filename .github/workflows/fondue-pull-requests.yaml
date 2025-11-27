@@ -49,7 +49,7 @@ jobs:
               run: pnpm build:rte
 
             - name: Lint code
-              run: pnpm --stream --filter {packages/fondue} --filter {packages/components} --filter {packages/icons} lint
+              run: pnpm --stream --filter {packages/fondue} --filter {packages/components} --filter {packages/icons} --filter {packages/rte} lint
 
     typecheck:
         name: Typecheck
@@ -90,7 +90,7 @@ jobs:
               run: pnpm build:rte
 
             - name: Typecheck code
-              run: pnpm --stream --filter {packages/fondue} --filter {packages/components} --filter {packages/icons} typecheck
+              run: pnpm --stream --filter {packages/fondue} --filter {packages/components} --filter {packages/icons} --filter {packages/rte} typecheck
 
     old-component-tests:
         name: Old Component Tests
