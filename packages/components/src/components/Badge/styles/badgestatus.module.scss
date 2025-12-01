@@ -21,3 +21,17 @@
     @include variant(warning, warning);
     @include variant(negative, negative);
 }
+
+/**
+ * High Contrast Mode Support
+ *
+ * Ensures the status dot is visible in Windows High Contrast Mode
+ * by adding a border that respects system colors.
+ */
+@media (forced-colors: active) {
+    .root {
+        background-color: currentColor !important;
+        border: 1px solid currentColor;
+        forced-color-adjust: none;
+    }
+}

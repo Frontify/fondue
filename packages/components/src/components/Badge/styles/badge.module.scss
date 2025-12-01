@@ -83,3 +83,33 @@
         @include focusStyle.focus-outline;
     }
 }
+
+/**
+ * High Contrast Mode Support
+ *
+ * Ensures badges are visible and have proper boundaries in Windows High Contrast Mode
+ * and other forced-colors contexts by adding borders and respecting system colors.
+ */
+@media (forced-colors: active) {
+    .root {
+        border: 1px solid currentColor;
+        forced-color-adjust: none;
+        background-color: Canvas !important;
+        color: CanvasText !important;
+
+        &:is(button):hover {
+            background-color: Canvas !important;
+            color: CanvasText !important;
+            border-color: Highlight;
+        }
+
+        &[data-disabled="true"] {
+            border-color: GrayText;
+            color: GrayText !important;
+        }
+    }
+
+    .dismiss {
+        border: 1px solid currentColor;
+    }
+}
