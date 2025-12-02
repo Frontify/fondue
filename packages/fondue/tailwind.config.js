@@ -8,5 +8,6 @@ import legacyComponentsTailwindConfig from './legacyTokens/legacyTokens.tailwind
 export default {
     presets: [frontifyTailwindConfig, legacyComponentsTailwindConfig],
     content: ['./src/**/*.{js,ts,tsx}'],
+    darkMode: '',
     prefix: 'tw-',
 };
