@@ -20,4 +20,7 @@ export const esES: Translations = {
     Table_sortDescending: 'Ordenar descendente',
     Table_sortAscending: 'Ordenar ascendente',
     Badge_dismiss: 'Cerrar ${label}',
+    Toast_undo: 'Deshacer',
+    Toast_dismiss: 'Cerrar',
+    Toast_shortcut: 'Atajo de teclado: ${key}',
 };

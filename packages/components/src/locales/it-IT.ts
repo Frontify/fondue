@@ -20,4 +20,7 @@ export const itIT: Translations = {
     Table_sortDescending: 'Ordina decrescente',
     Table_sortAscending: 'Ordina crescente',
     Badge_dismiss: 'Chiudi ${label}',
+    Toast_undo: 'Annulla',
+    Toast_dismiss: 'Chiudi',
+    Toast_shortcut: 'Scorciatoia da tastiera: ${key}',
 };

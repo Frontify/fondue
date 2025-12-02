@@ -20,4 +20,7 @@ export const plPL: Translations = {
     Table_sortDescending: 'Sortuj malejąco',
     Table_sortAscending: 'Sortuj rosnąco',
     Badge_dismiss: 'Zamknij ${label}',
+    Toast_undo: 'Cofnij',
+    Toast_dismiss: 'Zamknij',
+    Toast_shortcut: 'Skrót klawiszowy: ${key}',
 };

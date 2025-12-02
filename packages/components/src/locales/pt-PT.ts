@@ -20,4 +20,7 @@ export const ptPT: Translations = {
     Table_sortDescending: 'Ordenar descendente',
     Table_sortAscending: 'Ordenar ascendente',
     Badge_dismiss: 'Fechar ${label}',
+    Toast_undo: 'Desfazer',
+    Toast_dismiss: 'Fechar',
+    Toast_shortcut: 'Atalho de teclado: ${key}',
 };

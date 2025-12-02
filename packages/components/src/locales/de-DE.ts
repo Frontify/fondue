@@ -20,4 +20,7 @@ export const deDE: Translations = {
     Table_sortDescending: 'Absteigend sortieren',
     Table_sortAscending: 'Aufsteigend sortieren',
     Badge_dismiss: '${label} schließen',
+    Toast_undo: 'Rückgängig',
+    Toast_dismiss: 'Schließen',
+    Toast_shortcut: 'Tastenkombination: ${key}',
 };

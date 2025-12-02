@@ -18,4 +18,7 @@ export const enUS = {
     Table_sortDescending: 'Sort descending',
     Table_sortAscending: 'Sort ascending',
     Badge_dismiss: 'Dismiss ${label}',
+    Toast_undo: 'Undo',
+    Toast_dismiss: 'Dismiss',
+    Toast_shortcut: 'Keyboard shortcut: ${key}',
 };

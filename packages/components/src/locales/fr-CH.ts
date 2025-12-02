@@ -20,4 +20,7 @@ export const frCH: Translations = {
     Table_sortDescending: 'Trier par ordre décroissant',
     Table_sortAscending: 'Trier par ordre croissant',
     Badge_dismiss: 'Fermer ${label}',
+    Toast_undo: 'Annuler',
+    Toast_dismiss: 'Fermer',
+    Toast_shortcut: 'Raccourci clavier: ${key}',
 };

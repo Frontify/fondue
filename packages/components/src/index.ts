@@ -32,4 +32,5 @@ export { Text } from './components/Text/Text';
 export { TextInput } from './components/TextInput/TextInput';
 export { Textarea } from './components/Textarea/Textarea';
 export { ThemeContext, ThemeProvider, useFondueTheme } from './components/ThemeProvider/ThemeProvider';
+export { Toast } from './components/Toast/Toast';
 export { Tooltip } from './components/Tooltip/Tooltip';

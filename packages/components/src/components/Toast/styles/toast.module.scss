@@ -1,0 +1,115 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+@use '../../../utilities/focusStyle.module.scss';
+
+.root {
+    display: flex;
+    align-items: center;
+    gap: var(--space-s);
+    padding: var(--space-s) var(--space-m);
+    background-color: var(--box-neutral-strong-color);
+    color: var(--box-neutral-strong-inverse-color);
+    border-radius: var(--border-radius-m);
+    box-shadow: var(--elevation-m);
+    font-size: var(--body-size-small);
+    line-height: var(--body-size-small-line-height);
+    min-width: 300px;
+    max-width: 600px;
+    position: relative;
+}
+
+.icon {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    color: inherit;
+}
+
+.message {
+    flex: 1;
+    color: inherit;
+    word-break: break-word;
+}
+
+.actions {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+}
+
+.action {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    color: inherit;
+}
+
+.shortcut {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--space-xxs) var(--space-xs);
+    border-radius: var(--border-radius-s);
+    background-color: rgba(0, 0, 0, 0.15);
+    font-size: var(--body-size-xsmall);
+    line-height: var(--body-size-xsmall-line-height);
+    font-family: var(--font-family-mono, monospace);
+    color: inherit;
+    white-space: nowrap;
+}
+
+.button {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xxs);
+    padding: var(--space-xxs) var(--space-xs);
+    border: none;
+    border-radius: var(--border-radius-s);
+    background-color: transparent;
+    color: inherit;
+    font-size: var(--body-size-small);
+    line-height: var(--body-size-small-line-height);
+    cursor: pointer;
+    transition: background-color 150ms;
+
+    &:hover {
+        background-color: rgba(0, 0, 0, 0.1);
+    }
+
+    &:active {
+        background-color: rgba(0, 0, 0, 0.15);
+    }
+
+    & {
+        @include focusStyle.focus-outline;
+    }
+
+    span {
+        white-space: nowrap;
+    }
+}
+
+.dismiss {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-xxs);
+    border: none;
+    border-radius: var(--border-radius-s);
+    background-color: transparent;
+    color: inherit;
+    cursor: pointer;
+    transition: background-color 150ms;
+
+    &:hover {
+        background-color: rgba(0, 0, 0, 0.1);
+    }
+
+    &:active {
+        background-color: rgba(0, 0, 0, 0.15);
+    }
+
+    & {
+        @include focusStyle.focus-outline;
+    }
+}

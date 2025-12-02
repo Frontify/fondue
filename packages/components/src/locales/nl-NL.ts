@@ -20,4 +20,7 @@ export const nlNL: Translations = {
     Table_sortDescending: 'Sorteer aflopend',
     Table_sortAscending: 'Sorteer oplopend',
     Badge_dismiss: 'Sluit ${label}',
+    Toast_undo: 'Ongedaan maken',
+    Toast_dismiss: 'Sluiten',
+    Toast_shortcut: 'Toetsenbordsneltoets: ${key}',
 };
