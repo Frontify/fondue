@@ -1,5 +1,11 @@
 # @frontify/fondue
 
+## 13.0.0-rc.8
+
+### Major Changes
+
+- [#2551](https://github.com/Frontify/fondue/pull/2551) [`ad9a809`](https://github.com/Frontify/fondue/commit/ad9a80995af7f1107094676585a328d7a3e831c4) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: remove darkmode from legacy components
+
 ## 13.0.0-rc.7
 
 ### Major Changes
