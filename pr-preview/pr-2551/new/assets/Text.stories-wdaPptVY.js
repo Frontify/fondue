@@ -1,5 +1,0 @@
-import{T as s}from"./Text-Bq-Lp4bt.js";import"./iframe-UpR0Ys68.js";import"./preload-helper-Dxe1e-6H.js";import"./styleUtilities-A7Ia-tuh.js";const p={title:"Typography/Text",component:s,tags:["autodocs"],parameters:{status:{type:"released"}},argTypes:{as:{type:"string",control:"select",options:[void 0,"a","abbr","address","em","label","li","span","strong","time","p"]},weight:{type:"string",control:"select",options:[void 0,"default","strong","x-strong"]},size:{type:"string",control:"select",options:[void 0,"x-small","small","medium","large"]},color:{type:"string",control:"select",options:[void 0,"default","weak","x-weak","disabled","negative","positive","warning","interactive"]},boxColor:{type:"string",control:"select",options:[void 0,"neutral","selected","disabled","positive","negative","warning"]}}},e={args:{children:"Hello World"}};var t,o,r;e.parameters={...e.parameters,docs:{...(t=e.parameters)==null?void 0:t.docs,source:{originalSource:`{
-  args: {
-    children: 'Hello World'
-  }
-}`,...(r=(o=e.parameters)==null?void 0:o.docs)==null?void 0:r.source}}};const d=["Default"];export{e as Default,d as __namedExportsOrder,p as default};
