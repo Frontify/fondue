@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconCheckMark as IconCheckMark20 } from '@frontify/fondue-icons';
+import { IconCheckMark } from '@frontify/fondue-icons';
 import { type MouseEvent, type ReactElement, type ReactNode } from 'react';
 
 import { Button } from '@components/Button/Button';
@@ -83,7 +83,7 @@ export const InsertModal = ({
                 <Button
                     onClick={onSave}
                     size={ButtonSize.Medium}
-                    icon={<IconCheckMark20 />}
+                    icon={<IconCheckMark size={16} />}
                     disabled={!isValidUrlOrEmpty() || !hasValues}
                 >
                     Save

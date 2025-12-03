@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconSubscript as IconSubscript16 } from '@frontify/fondue-icons';
+import { IconSubscript } from '@frontify/fondue-icons';
 import { MARK_SUPERSCRIPT } from '@udecode/plate-basic-marks';
 import { getPluginType } from '@udecode/plate-core';
 
@@ -18,7 +18,7 @@ export const SubscriptButton = ({ editor, id }: PluginButtonProps) => (
             nodeType={getPluginType(editor, id)}
             clear={getPluginType(editor, MARK_SUPERSCRIPT)}
         >
-            <IconStylingWrapper icon={<IconSubscript16 />} />
+            <IconStylingWrapper icon={<IconSubscript size={16} />} />
         </MarkToolbarButton>
     </ButtonWrapper>
 );

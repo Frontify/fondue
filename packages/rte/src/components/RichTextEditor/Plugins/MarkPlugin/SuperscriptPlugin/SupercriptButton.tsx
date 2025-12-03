@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconSuperscript as IconSuperscript16 } from '@frontify/fondue-icons';
+import { IconSuperscript } from '@frontify/fondue-icons';
 import { MARK_SUBSCRIPT } from '@udecode/plate-basic-marks';
 import { getPluginType } from '@udecode/plate-core';
 
@@ -18,7 +18,7 @@ export const SuperscriptButton = ({ editor, id }: PluginButtonProps) => (
             nodeType={getPluginType(editor, id)}
             clear={getPluginType(editor, MARK_SUBSCRIPT)}
         >
-            <IconStylingWrapper icon={<IconSuperscript16 />} />
+            <IconStylingWrapper icon={<IconSuperscript size={16} />} />
         </MarkToolbarButton>
     </ButtonWrapper>
 );

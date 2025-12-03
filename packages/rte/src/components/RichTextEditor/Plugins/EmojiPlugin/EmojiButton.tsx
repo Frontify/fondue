@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconFaceHappy as IconFaceHappy16 } from '@frontify/fondue-icons';
+import { IconFaceHappy } from '@frontify/fondue-icons';
 import { useEmojiDropdownMenuState } from '@udecode/plate-emoji';
 
 import { EmojiToolbarDropdown } from '@components/RichTextEditor/Plugins/EmojiPlugin/EmojiToolbarDropdown';
@@ -23,7 +23,7 @@ export const EmojiButton = ({ id }: PluginButtonProps) => {
                 setIsOpen={setIsOpen}
                 control={
                     <ToolbarButton pressed={isOpen}>
-                        <IconStylingWrapper icon={<IconFaceHappy16 />} />
+                        <IconStylingWrapper icon={<IconFaceHappy size={16} />} />
                     </ToolbarButton>
                 }
             >

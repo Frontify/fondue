@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconTextColumnBreak as IconTextColumnBreak16 } from '@frontify/fondue-icons';
+import { IconTextColumnBreak } from '@frontify/fondue-icons';
 import { type PlateEditor, type PlatePlugin, useEditorState, useEventPlateId } from '@udecode/plate-core';
 import { someNode } from '@udecode/slate';
 
@@ -34,7 +34,7 @@ export const ColumnBreakToolbarButton = ({ id, ...props }: ToolbarButtonProps) =
             }}
             {...props}
         >
-            <IconStylingWrapper icon={<IconTextColumnBreak16 />} />
+            <IconStylingWrapper icon={<IconTextColumnBreak size={16} />} />
         </ToolbarButton>
     );
 };

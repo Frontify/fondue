@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconListCheck as IconListCheck16 } from '@frontify/fondue-icons';
+import { IconListCheck } from '@frontify/fondue-icons';
 import { type PlateEditor, toggleNodeType, useEditorState, useEventPlateId } from '@udecode/plate-core';
 import { unwrapList } from '@udecode/plate-list';
 import { ELEMENT_PARAGRAPH } from '@udecode/plate-paragraph';
@@ -36,7 +36,7 @@ export const CheckboxListToolbarButton = ({ id, type = ELEMENT_CHECK_ITEM }: { i
                 focusEditor(editor);
             }}
         >
-            <IconStylingWrapper icon={<IconListCheck16 />} />
+            <IconStylingWrapper icon={<IconListCheck size={16} />} />
         </ToolbarButton>
     );
 };
