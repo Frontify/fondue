@@ -1,5 +1,11 @@
 # @frontify/fondue-components
 
+## 24.2.0
+
+### Minor Changes
+
+- [#2550](https://github.com/Frontify/fondue/pull/2550) [`96f6fad`](https://github.com/Frontify/fondue/commit/96f6fad82bc48c0d870aca4657d3f3c6b4232c70) Thanks [@syeo66](https://github.com/syeo66)! - fix(Badge): improve forced-color handling
+
 ## 24.1.0
 
 ### Minor Changes
