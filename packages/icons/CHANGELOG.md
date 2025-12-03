@@ -1,5 +1,16 @@
 # @frontify/fondue-icons
 
+## 0.23.0-rc.0
+
+### Minor Changes
+
+- [`9033c88`](https://github.com/Frontify/fondue/commit/9033c886f71d43c3a051ef7bccca6e63f5af1e0d) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: bump versions after merging main
+
+### Patch Changes
+
+- Updated dependencies []:
+    - @frontify/fondue-tokens@5.0.0-rc.2
+
 ## 0.22.0
 
 ### Minor Changes
