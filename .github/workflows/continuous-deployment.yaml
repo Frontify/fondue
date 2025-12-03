@@ -10,7 +10,7 @@ concurrency: ${{ github.workflow }}-${{ github.ref }}
 jobs:
     lint:
         name: Lint
-        runs-on: ffy-ubuntu-24.04-arm
+        runs-on: ubuntu-latest
         timeout-minutes: 10
 
         steps:
@@ -49,7 +49,7 @@ jobs:
 
     typecheck:
         name: Typecheck
-        runs-on: ffy-ubuntu-24.04-arm
+        runs-on: ubuntu-latest
         timeout-minutes: 10
 
         steps:
@@ -88,7 +88,7 @@ jobs:
 
     old-component-tests:
         name: Old Component Tests
-        runs-on: ffy-ubuntu-24.04-arm
+        runs-on: ubuntu-latest
         timeout-minutes: 10
 
         strategy:
@@ -144,7 +144,7 @@ jobs:
 
     component-tests:
         name: Component Tests
-        runs-on: ffy-ubuntu-24.04-arm
+        runs-on: ubuntu-latest
         timeout-minutes: 25
 
         steps:
@@ -182,7 +182,7 @@ jobs:
 
     publish:
         name: Publish
-        runs-on: ffy-ubuntu-24.04-arm
+        runs-on: ubuntu-latest
         timeout-minutes: 10
 
         needs: [lint, typecheck, old-component-tests, component-tests]
