@@ -12,13 +12,18 @@ import {
     type ForwardedRef,
     type KeyboardEventHandler,
     type ReactElement,
+    type ReactNode,
     type SyntheticEvent,
 } from 'react';
 
 import { useSyncRefs } from '#/hooks/useSyncRefs';
+import { cn } from '#/utilities/styleUtilities';
 
 import styles from './styles/textarea.module.scss';
 
+/**
+ * @deprecated Use Textarea.Slot instead for custom actions
+ */
 export type ExtraAction = {
     icon: ReactElement;
     title: string;
@@ -32,6 +37,10 @@ type TextareaProps = {
      * The id of the textarea
      */
     id?: string;
+    /**
+     * The place where the textarea slots are placed
+     */
+    children?: ReactNode;
     /**
      * If `true`, Textarea will have `autoComplete` functionality
      */
@@ -55,6 +64,7 @@ type TextareaProps = {
     disabled?: boolean;
     /**
      * Collection of extra actions the input can preform
+     * @deprecated Use Textarea.Slot instead for custom actions
      */
     extraActions?: ExtraAction[];
     /**
@@ -118,11 +128,12 @@ type TextareaProps = {
     value?: string;
 };
 
-const TextareaComponent = (
+export const TextareaRoot = (
     {
         'data-test-id': dataTestId = 'fondue-textarea',
         autocomplete,
         autosize,
+        children,
         clearable,
         decorator,
         defaultValue,
@@ -179,7 +190,6 @@ const TextareaComponent = (
             data-disabled={disabled || readOnly}
             data-has-decorator={decorator ? true : false}
             data-has-tools={hasTools}
-            data-replicated-value={value}
             data-resizable={resizable}
             data-status={status}
             data-max-rows={!!maxRows}
@@ -187,38 +197,40 @@ const TextareaComponent = (
             style={{ '--max-rows': `${maxRows}` } as CSSProperties}
         >
             {decorator ? <div className={styles.decorator}>{decorator}</div> : null}
-            <textarea
-                {...props}
-                onMouseDown={(mouseEvent) => {
-                    wasClicked.current = true;
-                    mouseEvent.currentTarget.dataset.showFocusRing = 'false';
-                }}
-                onFocus={(focusEvent) => {
-                    if (!wasClicked.current) {
-                        focusEvent.target.dataset.showFocusRing = 'true';
-                    }
-                    props.onFocus?.(focusEvent);
-                }}
-                onBlur={(blurEvent) => {
-                    blurEvent.target.dataset.showFocusRing = 'false';
-                    wasClicked.current = false;
-                    props.onBlur?.(blurEvent);
-                }}
-                autoComplete={autocomplete ? 'on' : 'off'}
-                className={styles.textarea}
-                disabled={disabled}
-                onKeyDown={handleKeyDown}
-                onInput={(event) => setValue(event.currentTarget.value)}
-                onSelect={(event) => {
-                    if (!selectable) {
-                        event.currentTarget.selectionStart = event.currentTarget.selectionEnd;
-                    }
-                }}
-                readOnly={readOnly}
-                ref={ref}
-                rows={rows}
-                value={value}
-            ></textarea>
+            <div className={styles.textareaWrapper} data-replicated-value={value}>
+                <textarea
+                    {...props}
+                    onMouseDown={(mouseEvent) => {
+                        wasClicked.current = true;
+                        mouseEvent.currentTarget.dataset.showFocusRing = 'false';
+                    }}
+                    onFocus={(focusEvent) => {
+                        if (!wasClicked.current) {
+                            focusEvent.target.dataset.showFocusRing = 'true';
+                        }
+                        props.onFocus?.(focusEvent);
+                    }}
+                    onBlur={(blurEvent) => {
+                        blurEvent.target.dataset.showFocusRing = 'false';
+                        wasClicked.current = false;
+                        props.onBlur?.(blurEvent);
+                    }}
+                    autoComplete={autocomplete ? 'on' : 'off'}
+                    className={styles.textarea}
+                    disabled={disabled}
+                    onKeyDown={handleKeyDown}
+                    onInput={(event) => setValue(event.currentTarget.value)}
+                    onSelect={(event) => {
+                        if (!selectable) {
+                            event.currentTarget.selectionStart = event.currentTarget.selectionEnd;
+                        }
+                    }}
+                    readOnly={readOnly}
+                    ref={ref}
+                    rows={rows}
+                    value={value}
+                ></textarea>
+            </div>
             {status === 'loading' && <div className={styles.loadingStatus} data-test-id={`${dataTestId}-loader`} />}
             {hasTools && (
                 <div className={styles.tools}>
@@ -250,9 +262,34 @@ const TextareaComponent = (
                     )}
                 </div>
             )}
+            {children}
         </div>
     );
 };
+TextareaRoot.displayName = 'Textarea.Root';
 
-export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(TextareaComponent);
-Textarea.displayName = 'Textarea';
+export type TextareaSlotProps = {
+    children: ReactNode;
+    name?: 'left' | 'right';
+    className?: string;
+};
+
+export const TextareaSlot = (
+    { name, className, ...slotProps }: TextareaSlotProps,
+    forwardedRef: ForwardedRef<HTMLDivElement>,
+) => {
+    return <div data-slot data-name={name} {...slotProps} ref={forwardedRef} className={cn(styles.slot, className)} />;
+};
+
+TextareaSlot.displayName = 'Textarea.Slot';
+
+const ForwardedRefTextareaRoot = forwardRef<HTMLTextAreaElement, TextareaProps>(TextareaRoot);
+const ForwardedRefTextareaSlot = forwardRef<HTMLDivElement, TextareaSlotProps>(TextareaSlot);
+
+// @ts-expect-error We support both single component (without slots) and compound components (with slots)
+export const Textarea: typeof TextareaRoot & {
+    Root: typeof ForwardedRefTextareaRoot;
+    Slot: typeof ForwardedRefTextareaSlot;
+} = ForwardedRefTextareaRoot;
+Textarea.Root = ForwardedRefTextareaRoot;
+Textarea.Slot = ForwardedRefTextareaSlot;
