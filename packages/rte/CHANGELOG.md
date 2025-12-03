@@ -1,5 +1,11 @@
 # @frontify/fondue-rte
 
+## 0.0.1-rc.8
+
+### Patch Changes
+
+- [#2555](https://github.com/Frontify/fondue/pull/2555) [`1a4c800`](https://github.com/Frontify/fondue/commit/1a4c800a2f992e6bb3c3590737abce0448110a0f) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: adjust rte toolbar
+
 ## 0.0.1-rc.7
 
 ### Patch Changes
