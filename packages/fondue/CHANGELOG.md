@@ -1,5 +1,14 @@
 # @frontify/fondue
 
+## 12.14.5
+
+### Patch Changes
+
+- [`ed78796`](https://github.com/Frontify/fondue/commit/ed78796762d92f4cd48e8c38cac12cab962016f3) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: testing release with trusted publisher
+
+- Updated dependencies [[`3a4f967`](https://github.com/Frontify/fondue/commit/3a4f967614fb290ea3af0811ff2aa09d30cae226)]:
+    - @frontify/fondue-components@24.1.0
+
 ## 12.14.4
 
 ### Patch Changes
