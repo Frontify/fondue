@@ -1,5 +1,16 @@
 # @frontify/fondue-components
 
+## 25.0.0-rc.1
+
+### Minor Changes
+
+- [#2550](https://github.com/Frontify/fondue/pull/2550) [`96f6fad`](https://github.com/Frontify/fondue/commit/96f6fad82bc48c0d870aca4657d3f3c6b4232c70) Thanks [@syeo66](https://github.com/syeo66)! - fix(Badge): improve forced-color handling
+
+### Patch Changes
+
+- Updated dependencies []:
+    - @frontify/fondue-tokens@5.0.0-rc.2
+
 ## 25.0.0-rc.0
 
 ### Minor Changes
