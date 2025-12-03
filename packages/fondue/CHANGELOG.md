@@ -1,5 +1,16 @@
 # @frontify/fondue
 
+## 13.0.0-rc.10
+
+### Major Changes
+
+- [`40b760a`](https://github.com/Frontify/fondue/commit/40b760aa780a4e29c1ee98b34316c05870ecba1f) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: bump dependencies
+
+### Patch Changes
+
+- Updated dependencies [[`1a4c800`](https://github.com/Frontify/fondue/commit/1a4c800a2f992e6bb3c3590737abce0448110a0f)]:
+    - @frontify/fondue-rte@0.0.1-rc.8
+
 ## 13.0.0-rc.9
 
 ### Patch Changes
