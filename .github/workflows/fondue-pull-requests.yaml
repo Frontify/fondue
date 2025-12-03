@@ -45,6 +45,9 @@ jobs:
             - name: Build Fondue icons
               run: pnpm build:icons
 
+            - name: Build Fondue Components
+              run: pnpm build:components
+
             - name: Build Fondue RTE
               run: pnpm build:rte
 
