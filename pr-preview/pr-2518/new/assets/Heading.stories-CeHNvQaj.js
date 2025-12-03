@@ -1,5 +1,0 @@
-import{H as a}from"./Heading-H6Qvi-Pl.js";import"./iframe-CM_zsLw_.js";import"./preload-helper-B46SeKxo.js";import"./styleUtilities-Byf6Fdv2.js";const p={title:"Typography/Heading",component:a,tags:["autodocs"],parameters:{status:{type:"beta"}},args:{},argTypes:{as:{type:"string",control:"select",options:[void 0,"span","p","h1","h2","h3","h4","h5","h6"]},color:{type:"string",control:"select",options:[void 0,"default","weak","x-weak","disabled","negative","positive","warning","interactive"]},size:{type:"string",control:"select",options:[void 0,"medium","large","x-large","xx-large"]},weight:{type:"string",control:"select",options:[void 0,"default","strong"]},"data-test-id":{type:"string",control:"text"}}},t={args:{children:"Hello World"}};var e,o,r;t.parameters={...t.parameters,docs:{...(e=t.parameters)==null?void 0:e.docs,source:{originalSource:`{
-  args: {
-    children: 'Hello World'
-  }
-}`,...(r=(o=t.parameters)==null?void 0:o.docs)==null?void 0:r.source}}};const c=["Default"];export{t as Default,c as __namedExportsOrder,p as default};
