@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-@import '../node_modules/@frontify/fondue-components/dist/style.css';
+@import '@frontify/fondue-components/styles';
 
 @tailwind base;
 @tailwind components;
