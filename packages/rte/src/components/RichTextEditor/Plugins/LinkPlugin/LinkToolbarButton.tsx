@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconLink as IconLink16 } from '@frontify/fondue-icons';
+import { IconLink } from '@frontify/fondue-icons';
 import { useEditorRef } from '@udecode/plate-core';
 import { useLinkToolbarButton, useLinkToolbarButtonState } from '@udecode/plate-link';
 import { focusEditor } from '@udecode/slate-react';
@@ -26,7 +26,7 @@ export const LinkToolbarButton = forwardRef<HTMLButtonElement, { disabled: boole
                 {...props}
                 {...rootProps}
             >
-                <IconStylingWrapper icon={<IconLink16 />} />
+                <IconStylingWrapper icon={<IconLink size={16} />} />
             </ToolbarButton>
         );
     },

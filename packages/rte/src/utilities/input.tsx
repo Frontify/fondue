@@ -1,12 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import {
-    IconCheckMark as IconCheckMark16,
-    IconCross as IconCross16,
-    IconExclamationMarkTriangle as IconExclamationMarkTriangle16,
-    IconEye as IconEye16,
-    IconEyeOff as IconEyeOff16,
-} from '@frontify/fondue-icons';
+import { IconCheckMark, IconCross, IconExclamationMarkTriangle, IconEye, IconEyeOff } from '@frontify/fondue-icons';
 import { type ReactElement } from 'react';
 
 import { Button } from '@components/Button/Button';
@@ -84,11 +78,11 @@ export const GetStatusIcon = (status: Validation, dataTestId: string): ReactElem
     let statusIcon: ReactElement | null;
     switch (status) {
         case Validation.Success:
-            statusIcon = <IconCheckMark16 />;
+            statusIcon = <IconCheckMark size={16} />;
             break;
         case Validation.Error:
         case Validation.Warning:
-            statusIcon = <IconExclamationMarkTriangle16 />;
+            statusIcon = <IconExclamationMarkTriangle size={16} />;
             break;
         case Validation.Loading:
             statusIcon = <LoadingCircle size={LoadingCircleSize.Small} />;
@@ -130,7 +124,7 @@ export const InputActions = ({
                     onClick={callbacks.password}
                     title={`${isObfuscated ? 'show' : 'hide'} text input`}
                     aria-label={`${isObfuscated ? 'show' : 'hide'} text input`}
-                    icon={isObfuscated ? <IconEye16 /> : <IconEyeOff16 />}
+                    icon={isObfuscated ? <IconEye size={16} /> : <IconEyeOff size={16} />}
                     data-test-id={`${dataTestId}-visibility-icon`}
                 />
             )}
@@ -140,7 +134,7 @@ export const InputActions = ({
                     onClick={callbacks.clearable}
                     disabled={disabled}
                     emphasis={ButtonEmphasis.Weak}
-                    icon={<IconCross16 />}
+                    icon={<IconCross size={16} />}
                     title="Clear Input"
                     size={ButtonSize.Small}
                     aria-label="Clear value"

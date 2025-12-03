@@ -63,7 +63,7 @@ export const InputLabel = ({
                     id={id}
                     htmlFor={htmlFor}
                     className={merge([
-                        'tw-select-none tw-max-w-full',
+                        'tw-select-none tw-text-medium tw-max-w-full',
                         bold && 'tw-font-medium',
                         disabled || !clickable
                             ? 'hover:tw-cursor-not-allowed tw-pointer-events-none'
@@ -77,7 +77,7 @@ export const InputLabel = ({
             </div>
 
             {required && (
-                <span data-test-id={`${dataTestId}-required`} className="tw-h-4 tw-text-m tw-text-text-negative">
+                <span data-test-id={`${dataTestId}-required`} className="tw-h-4 tw-text-medium tw-text-text-negative">
                     *
                 </span>
             )}

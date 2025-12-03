@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconTextBrackets as IconTextBrackets16 } from '@frontify/fondue-icons';
+import { IconTextBrackets } from '@frontify/fondue-icons';
 import { getPluginType } from '@udecode/plate-core';
 
 import { MarkToolbarButton } from '@components/RichTextEditor/Plugins/MarkPlugin/MarkToolbarButton';
@@ -12,7 +12,7 @@ import { type PluginButtonProps } from '../../types';
 export const CodeButton = ({ editor, id }: PluginButtonProps) => (
     <ButtonWrapper id={id}>
         <MarkToolbarButton tooltip={getTooltip('Code')} nodeType={getPluginType(editor, id)}>
-            <IconStylingWrapper icon={<IconTextBrackets16 />} />
+            <IconStylingWrapper icon={<IconTextBrackets size={16} />} />
         </MarkToolbarButton>
     </ButtonWrapper>
 );

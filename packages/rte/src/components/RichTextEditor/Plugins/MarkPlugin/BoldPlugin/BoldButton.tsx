@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconTextFormatBold as IconTextFormatBold16 } from '@frontify/fondue-icons';
+import { IconTextFormatBold } from '@frontify/fondue-icons';
 import { getPluginType } from '@udecode/plate-core';
 
 import { MarkToolbarButton } from '@components/RichTextEditor/Plugins/MarkPlugin/MarkToolbarButton';
@@ -16,7 +16,7 @@ export const BoldButton = ({ editor, id }: PluginButtonProps) => (
             tooltip={getTooltip(`Bold\n${getHotkeyByPlatform('Ctrl+B')}`)}
             nodeType={getPluginType(editor, id)}
         >
-            <IconStylingWrapper icon={<IconTextFormatBold16 />} />
+            <IconStylingWrapper icon={<IconTextFormatBold size={16} />} />
         </MarkToolbarButton>
     </ButtonWrapper>
 );

@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconEraser as IconEraser16 } from '@frontify/fondue-icons';
+import { IconEraser } from '@frontify/fondue-icons';
 import { useEditorState, useEventPlateId } from '@udecode/plate-core';
 
 import { IconStylingWrapper } from '@components/RichTextEditor/Plugins/helper';
@@ -21,7 +21,7 @@ export const ResetFormattingToolbarButton = ({ id, ...props }: ToolbarButtonProp
             }}
             {...props}
         >
-            <IconStylingWrapper icon={<IconEraser16 />} />
+            <IconStylingWrapper icon={<IconEraser size={16} />} />
         </ToolbarButton>
     );
 };
