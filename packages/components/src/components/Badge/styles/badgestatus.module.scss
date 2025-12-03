@@ -21,3 +21,44 @@
     @include variant(warning, warning);
     @include variant(negative, negative);
 }
+
+/**
+ * High Contrast Mode Support
+ *
+ * Ensures the status dot is visible in Windows High Contrast Mode
+ * and uses different system colors to maintain status distinction.
+ */
+@media (forced-colors: active) {
+    .root {
+        forced-color-adjust: none;
+        border: 2px solid currentColor;
+
+        // Use different system colors for different status types
+        &[data-status="default"] {
+            background-color: CanvasText !important;
+        }
+
+        &[data-status="positive"] {
+            background-color: LinkText !important;
+        }
+
+        &[data-status="highlight"] {
+            background-color: Highlight !important;
+        }
+
+        &[data-status="warning"] {
+            background-color: CanvasText !important;
+            border-style: dashed;
+        }
+
+        &[data-status="negative"] {
+            background-color: CanvasText !important;
+            border-width: 3px;
+        }
+
+        // For custom colors, use currentColor as fallback
+        &:not([data-status]) {
+            background-color: currentColor !important;
+        }
+    }
+}
