@@ -2,9 +2,9 @@
     "name": "root",
     "private": true,
     "type": "module",
-    "packageManager": "pnpm@10.18.3+sha512.bbd16e6d7286fd7e01f6b3c0b3c932cda2965c06a908328f74663f10a9aea51f1129eea615134bf992831b009eabe167ecb7008b597f40ff9bc75946aadfb08d",
+    "packageManager": "pnpm@10.24.0+sha512.01ff8ae71b4419903b65c60fb2dc9d34cf8bb6e06d03bde112ef38f7a34d6904c424ba66bea5cdcf12890230bf39f9580473140ed9c946fef328b6e5238a345a",
     "engines": {
-        "node": "^22",
+        "node": "^24",
         "npm": "<=0"
     },
     "scripts": {
@@ -18,24 +18,23 @@
         "build:storybook": "pnpm build && pnpm build:storybook:packages && pnpm build:storybook:main",
         "build:storybook:main": "pnpm --stream --filter {storybook-docs} build:storybook",
         "build:storybook:packages": "pnpm --stream --parallel --filter {packages/*} build:storybook",
-        "ci:publish": "pnpm build && changeset publish",
-        "ci:version": "changeset version",
         "lint": "pnpm --stream --filter {packages/*} --filter {storybook-docs} lint",
         "storybook": "concurrently 'pnpm storybook:packages' 'pnpm storybook:main'",
         "storybook:main": "wait-on http://localhost:6005 http://localhost:6006 http://localhost:6007 http://localhost:6008 http://localhost:6009 http://localhost:6011 && pnpm --stream  --filter {storybook-docs} storybook",
         "storybook:packages": "pnpm --parallel --filter {packages/*} storybook --no-open",
         "typecheck": "pnpm --stream --filter {packages/*} --filter {storybook-docs} typecheck",
         "changeset": "changeset",
+        "release": "pnpm build && pnpm publish -r --access=public",
         "update": "taze -r -I major",
         "create:component": "pnpm --stream --filter {packages/components} create:component"
     },
     "devDependencies": {
-        "@changesets/changelog-github": "^0.5.1",
-        "@changesets/cli": "^2.29.7",
+        "@changesets/changelog-github": "^0.5.2",
+        "@changesets/cli": "^2.29.8",
         "chokidar-cli": "^3.0.0",
         "concurrently": "^9.2.1",
-        "glob": "^11.0.3",
-        "taze": "^19.7.0",
-        "wait-on": "^9.0.1"
+        "glob": "^13.0.0",
+        "taze": "^19.9.2",
+        "wait-on": "^9.0.3"
     }
 }

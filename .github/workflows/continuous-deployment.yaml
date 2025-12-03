@@ -20,6 +20,8 @@ jobs:
 
             - name: Use pnpm
               uses: pnpm/action-setup@v4.2.0
+              with:
+                  run_install: false
 
             - name: Use Node.js
               uses: actions/setup-node@v6
@@ -59,6 +61,8 @@ jobs:
 
             - name: Use pnpm
               uses: pnpm/action-setup@v4.2.0
+              with:
+                  run_install: false
 
             - name: Use Node.js
               uses: actions/setup-node@v6
@@ -101,15 +105,15 @@ jobs:
             - name: Checkout current commit
               uses: actions/checkout@v6
 
-            - name: Use Node.js
-              uses: actions/setup-node@v6
-              with:
-                  node-version-file: ".nvmrc"
-
             - name: Use pnpm
               uses: pnpm/action-setup@v4.2.0
               with:
                   run_install: false
+
+            - name: Use Node.js
+              uses: actions/setup-node@v6
+              with:
+                  node-version-file: ".nvmrc"
 
             - name: Get pnpm store directory
               id: pnpm-cache
@@ -241,6 +245,8 @@ jobs:
 
             - name: Use pnpm
               uses: pnpm/action-setup@v4.2.0
+              with:
+                  run_install: false
 
             - name: Use Node.js
               uses: actions/setup-node@v6
@@ -257,8 +263,8 @@ jobs:
               with:
                   commit: "chore: release packages"
                   title: "chore: release packages"
-                  version: pnpm ci:version
-                  publish: pnpm ci:publish
+                  createGithubReleases: true
+                  publish: pnpm release
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   NPM_CONFIG_PROVENANCE: true
