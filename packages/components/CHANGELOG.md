@@ -14,6 +14,12 @@
     - @frontify/fondue-icons@0.23.0-rc.0
     - @frontify/fondue-tokens@5.0.0-rc.2
 
+## 24.1.0
+
+### Minor Changes
+
+- [#2541](https://github.com/Frontify/fondue/pull/2541) [`3a4f967`](https://github.com/Frontify/fondue/commit/3a4f967614fb290ea3af0811ff2aa09d30cae226) Thanks [@syeo66](https://github.com/syeo66)! - feat(Textarea): Add slots and deprecate extraActions
+
 ## 24.0.0
 
 ### Minor Changes
