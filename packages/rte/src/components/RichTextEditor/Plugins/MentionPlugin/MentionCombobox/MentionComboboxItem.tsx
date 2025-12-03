@@ -1,10 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import {
-    IconPeople as IconPeople12,
-    IconPerson as IconPerson12,
-    IconTarget as IconTarget12,
-} from '@frontify/fondue-icons';
+import { IconPeople, IconPerson, IconTarget } from '@frontify/fondue-icons';
 import { type ComboboxItemProps } from '@udecode/plate-combobox';
 import { type ReactElement } from 'react';
 
@@ -24,11 +20,11 @@ const RenderImage = ({ image, category, text, id }: RenderAvatarProps) => {
 
     switch (category) {
         case MentionableCategory.GROUP:
-            return <IconPeople12 />;
+            return <IconPeople size={12} />;
         case MentionableCategory.ALL:
-            return <IconTarget12 />;
+            return <IconTarget size={12} />;
         default:
-            return <IconPerson12 />;
+            return <IconPerson size={12} />;
     }
 };
 

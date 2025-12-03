@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconCaretDown as IconCaretDown12 } from '@frontify/fondue-icons';
+import { IconCaretDown } from '@frontify/fondue-icons';
 import { type ForwardedRef, forwardRef } from 'react';
 
 import { merge } from '@utilities/merge';
@@ -30,7 +30,7 @@ export const DropdownTriggerComponent = (
         >
             <span className="tw-text-xs tw-truncate">{label}</span>
             <div className={merge(['tw-transition-transform', open && 'tw-rotate-180'])}>
-                <IconCaretDown12 />
+                <IconCaretDown size={12} />
             </div>
         </div>
     </button>

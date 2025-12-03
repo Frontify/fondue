@@ -12,7 +12,7 @@ import { type PluginButtonProps } from '../../types';
 export const StrikethroughButton = ({ editor, id }: PluginButtonProps) => (
     <ButtonWrapper id={id}>
         <MarkToolbarButton tooltip={getTooltip('Strikethrough')} nodeType={getPluginType(editor, id)}>
-            <IconStylingWrapper icon={<IconTextFormatStrikethrough />} />
+            <IconStylingWrapper icon={<IconTextFormatStrikethrough size={16} />} />
         </MarkToolbarButton>
     </ButtonWrapper>
 );
