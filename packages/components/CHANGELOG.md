@@ -1,5 +1,15 @@
 # @frontify/fondue-components
 
+## 25.0.0-rc.2
+
+### Patch Changes
+
+- [#2559](https://github.com/Frontify/fondue/pull/2559) [`c9e139a`](https://github.com/Frontify/fondue/commit/c9e139a3e374253d6abf73fbed646576d1c3d3c0) Thanks [@syeo66](https://github.com/syeo66)! - fix(Badge): disabled color
+
+- Updated dependencies [[`eb292a2`](https://github.com/Frontify/fondue/commit/eb292a255c4b8459f3ca0e06d5fbfcd3d155ca4b)]:
+    - @frontify/fondue-icons@0.23.0-rc.1
+    - @frontify/fondue-tokens@5.0.0-rc.2
+
 ## 25.0.0-rc.1
 
 ### Minor Changes
