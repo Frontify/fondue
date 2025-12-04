@@ -1,5 +1,16 @@
 # @frontify/fondue
 
+## 13.0.0-rc.11
+
+### Patch Changes
+
+- [#2560](https://github.com/Frontify/fondue/pull/2560) [`81fe421`](https://github.com/Frontify/fondue/commit/81fe421604b0f35d8ded9b43ba3c33f6ba09fdc9) Thanks [@github-actions](https://github.com/apps/github-actions)! - chore: bump fondue version
+
+- Updated dependencies [[`c9e139a`](https://github.com/Frontify/fondue/commit/c9e139a3e374253d6abf73fbed646576d1c3d3c0), [`eb292a2`](https://github.com/Frontify/fondue/commit/eb292a255c4b8459f3ca0e06d5fbfcd3d155ca4b)]:
+    - @frontify/fondue-components@25.0.0-rc.2
+    - @frontify/fondue-icons@0.23.0-rc.1
+    - @frontify/fondue-tokens@5.0.0-rc.2
+
 ## 13.0.0-rc.10
 
 ### Major Changes
@@ -262,6 +273,7 @@
     - @frontify/fondue-charts@7.0.0-beta.0
     - @frontify/fondue-tokens@5.0.0-beta.0
     - @frontify/fondue-icons@0.18.0-beta.0
+
 ## 12.14.5
 
 ### Patch Changes
