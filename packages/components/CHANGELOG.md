@@ -1,5 +1,12 @@
 # @frontify/fondue-components
 
+## 25.0.0
+
+### Patch Changes
+
+- Updated dependencies [[`eb292a2`](https://github.com/Frontify/fondue/commit/eb292a255c4b8459f3ca0e06d5fbfcd3d155ca4b)]:
+    - @frontify/fondue-icons@0.23.0
+
 ## 24.2.0
 
 ### Minor Changes
