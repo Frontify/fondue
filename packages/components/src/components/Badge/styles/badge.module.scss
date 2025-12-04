@@ -61,12 +61,12 @@
 
     &[data-disabled='true'] {
         background-color: var(--color-container-disabled-default);
-        color: var(--color-container-disabled-on-disabled);
+        color: var(--color-container-disabled-on-disabled-container);
         cursor: default;
 
         &:hover {
             background-color: var(--color-container-disabled-default);
-            color: var(--color-container-disabled-on-disabled);
+            color: var(--color-container-disabled-on-disabled-container);
         }
     }
 }
