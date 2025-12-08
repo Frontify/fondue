@@ -20,4 +20,5 @@ export const deDE: Translations = {
     Table_sortDescending: 'Absteigend sortieren',
     Table_sortAscending: 'Aufsteigend sortieren',
     Badge_dismiss: '${label} schließen',
+    Notice_dismiss: 'Meldung schließen',
 };

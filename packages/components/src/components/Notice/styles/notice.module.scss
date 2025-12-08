@@ -1,0 +1,172 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+@use '../../../utilities/focusStyle.module.scss';
+
+@mixin variant($name, $color, $weakColor: $color, $useVariant: false) {
+    &[data-variant='#{$name}'] {
+        &[data-emphasis='default'] {
+            background-color: var(--color-container-#{$color}-default);
+            @if $useVariant {
+                color: var(--color-container-#{$color}-on-#{$color}-container-variant);
+            } @else {
+                color: var(--color-container-#{$color}-on-#{$color}-container);
+            }
+        }
+
+        &[data-emphasis='strong'] {
+            background-color: var(--color-#{$color}-default);
+            color: var(--color-#{$color}-on-#{$color});
+        }
+
+        &[data-emphasis='weak'] {
+            background-color: var(--color-container-#{$weakColor}-default);
+            color: var(--color-container-#{$weakColor}-on-#{$weakColor}-container);
+        }
+    }
+}
+
+.root {
+    display: flex;
+    align-items: center;
+    border-radius: var(--border-radius-medium);
+    transition:
+        background-color 250ms,
+        color 250ms;
+    position: relative;
+    box-sizing: border-box;
+
+    // Size variants
+    &[data-size='medium'] {
+        min-height: 36px;
+        padding: var(--spacing-x-small) var(--spacing-small);
+        gap: var(--spacing-x-small);
+        font-size: var(--typography-font-size-x-small);
+        line-height: var(--typography-line-height-tight);
+    }
+
+    &[data-size='large'] {
+        min-height: 64px;
+        padding: var(--spacing-large);
+        gap: var(--spacing-small);
+        font-size: var(--typography-font-size-medium);
+        line-height: var(--typography-line-height-normal);
+    }
+
+    // Color variants
+    @include variant(default, secondary, secondary, true); // secondary has -variant token
+    @include variant(highlight, highlight);
+    @include variant(positive, success);
+    @include variant(danger, error);
+    @include variant(warning, warning);
+}
+
+.icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: currentColor;
+
+    [data-size='medium'] & {
+        width: 16px;
+        height: 16px;
+    }
+
+    [data-size='large'] & {
+        width: 20px;
+        height: 20px;
+    }
+}
+
+.content {
+    flex: 1;
+    min-width: 0;
+    font-family: var(--typography-font-family-primary);
+    font-weight: var(--typography-font-weight-regular);
+}
+
+.action {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.dismiss {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    padding: 0;
+    margin: 0;
+    border: none;
+    background: transparent;
+    color: currentColor;
+    cursor: pointer;
+    border-radius: var(--border-radius-small);
+    transition: opacity 250ms;
+
+    &:hover {
+        opacity: 0.7;
+    }
+
+    & {
+        @include focusStyle.focus-outline;
+    }
+
+    [data-size='medium'] & {
+        width: 16px;
+        height: 16px;
+    }
+
+    [data-size='large'] & {
+        width: 20px;
+        height: 20px;
+    }
+}
+
+/**
+ * High Contrast Mode Support
+ *
+ * Ensures notices are visible and have proper boundaries in Windows High Contrast Mode
+ * and other forced-colors contexts.
+ */
+@media (forced-colors: active) {
+    .root {
+        border: 2px solid currentColor;
+        forced-color-adjust: none;
+        background-color: Canvas !important;
+        color: CanvasText !important;
+
+        &[data-variant='default'] {
+            border-style: solid;
+        }
+
+        &[data-variant='highlight'] {
+            border-style: double;
+            border-color: Highlight;
+        }
+
+        &[data-variant='positive'] {
+            border-style: solid;
+            border-color: LinkText;
+        }
+
+        &[data-variant='danger'] {
+            border-style: solid;
+            border-width: 3px;
+        }
+
+        &[data-variant='warning'] {
+            border-style: dashed;
+        }
+    }
+
+    .dismiss {
+        border: 1px solid currentColor;
+
+        &:hover {
+            background-color: Highlight !important;
+            color: HighlightText !important;
+        }
+    }
+}
