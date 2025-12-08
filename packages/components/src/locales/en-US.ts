@@ -18,4 +18,5 @@ export const enUS = {
     Table_sortDescending: 'Sort descending',
     Table_sortAscending: 'Sort ascending',
     Badge_dismiss: 'Dismiss ${label}',
+    Notice_dismiss: 'Dismiss notice',
 };
