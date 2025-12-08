@@ -61,6 +61,12 @@
     @include variant(positive, success);
     @include variant(danger, error);
     @include variant(warning, warning);
+
+    // Override: Strong emphasis default variant should use primary background
+    &[data-variant='default'][data-emphasis='strong'] {
+        background-color: var(--color-primary-default);
+        color: var(--color-primary-on-primary);
+    }
 }
 
 .icon {
