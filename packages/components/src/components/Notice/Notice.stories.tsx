@@ -21,7 +21,7 @@ const meta: Meta<typeof Notice> = {
     tags: ['autodocs'],
     parameters: {
         status: {
-            type: 'in-development',
+            type: 'released',
         },
     },
     args: {
