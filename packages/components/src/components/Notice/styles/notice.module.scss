@@ -102,7 +102,7 @@
             color: currentColor !important;
         }
 
-        // Override button background for better integration with notice
+        // Override button border for better integration with notice
         &:where([data-test-id='fondue-button']) {
             border: none;
         }
