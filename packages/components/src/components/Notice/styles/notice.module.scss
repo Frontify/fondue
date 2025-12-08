@@ -22,8 +22,8 @@
         }
 
         &[data-emphasis='weak'] {
-            background-color: var(--color-container-#{$weakColor}-default);
-            color: var(--color-container-#{$weakColor}-on-#{$weakColor}-container);
+            background-color: var(--color-surface-dim);
+            color: var(--color-secondary-default);
         }
     }
 }
@@ -92,6 +92,214 @@
     display: flex;
     align-items: center;
     flex-shrink: 0;
+
+    // Ensure buttons within notices inherit appropriate colors
+    button {
+        color: currentColor;
+
+        // Ensure SVG icons inherit button text color
+        svg {
+            color: currentColor !important;
+        }
+
+        // Override button background for better integration with notice
+        &:where([data-test-id='fondue-button']) {
+            border: none;
+        }
+    }
+
+    // Default emphasis: solid variant-colored buttons
+    [data-emphasis='default'][data-variant='default'] & button:where([data-test-id='fondue-button']) {
+        background-color: var(--color-secondary-default);
+        color: var(--color-secondary-on-secondary);
+
+        &:hover {
+            background-color: var(--color-secondary-hover);
+        }
+
+        &:active {
+            background-color: var(--color-secondary-active);
+        }
+    }
+
+    [data-emphasis='default'][data-variant='highlight'] & button:where([data-test-id='fondue-button']) {
+        background-color: var(--color-highlight-default);
+        color: var(--color-highlight-on-highlight);
+
+        &:hover {
+            background-color: var(--color-highlight-hover);
+        }
+
+        &:active {
+            background-color: var(--color-highlight-active);
+        }
+    }
+
+    [data-emphasis='default'][data-variant='positive'] & button:where([data-test-id='fondue-button']) {
+        background-color: var(--color-success-default);
+        color: var(--color-success-on-success);
+
+        &:hover {
+            background-color: var(--color-success-hover);
+        }
+
+        &:active {
+            background-color: var(--color-success-active);
+        }
+    }
+
+    [data-emphasis='default'][data-variant='warning'] & button:where([data-test-id='fondue-button']) {
+        background-color: var(--color-warning-default);
+        color: var(--color-warning-on-warning);
+
+        &:hover {
+            background-color: var(--color-warning-hover);
+        }
+
+        &:active {
+            background-color: var(--color-warning-active);
+        }
+    }
+
+    [data-emphasis='default'][data-variant='danger'] & button:where([data-test-id='fondue-button']) {
+        background-color: var(--color-error-default);
+        color: var(--color-error-on-error);
+
+        &:hover {
+            background-color: var(--color-error-hover);
+        }
+
+        &:active {
+            background-color: var(--color-error-active);
+        }
+    }
+
+    // Weak emphasis: variant-colored buttons
+    [data-emphasis='weak'][data-variant='default'] & button:where([data-test-id='fondue-button']) {
+        background-color: var(--color-container-secondary-default);
+
+        &:hover {
+            background-color: var(--color-container-secondary-hover);
+        }
+
+        &:active {
+            background-color: var(--color-container-secondary-active);
+        }
+    }
+
+    [data-emphasis='weak'][data-variant='highlight'] & button:where([data-test-id='fondue-button']) {
+        background-color: var(--color-container-highlight-default);
+
+        &:hover {
+            background-color: var(--color-container-highlight-hover);
+        }
+
+        &:active {
+            background-color: var(--color-container-highlight-active);
+        }
+    }
+
+    [data-emphasis='weak'][data-variant='positive'] & button:where([data-test-id='fondue-button']) {
+        background-color: var(--color-container-success-default);
+
+        &:hover {
+            background-color: var(--color-container-success-hover);
+        }
+
+        &:active {
+            background-color: var(--color-container-success-active);
+        }
+    }
+
+    [data-emphasis='weak'][data-variant='warning'] & button:where([data-test-id='fondue-button']) {
+        background-color: var(--color-container-warning-default);
+
+        &:hover {
+            background-color: var(--color-container-warning-hover);
+        }
+
+        &:active {
+            background-color: var(--color-container-warning-active);
+        }
+    }
+
+    [data-emphasis='weak'][data-variant='danger'] & button:where([data-test-id='fondue-button']) {
+        background-color: var(--color-container-error-default);
+
+        &:hover {
+            background-color: var(--color-container-error-hover);
+        }
+
+        &:active {
+            background-color: var(--color-container-error-active);
+        }
+    }
+
+    // Strong emphasis: variant container-colored buttons
+    [data-emphasis='strong'][data-variant='default'] & button:where([data-test-id='fondue-button']) {
+        background-color: var(--color-container-secondary-default);
+        color: var(--color-container-secondary-on-secondary-container-variant);
+
+        &:hover {
+            background-color: var(--color-container-secondary-hover);
+        }
+
+        &:active {
+            background-color: var(--color-container-secondary-active);
+        }
+    }
+
+    [data-emphasis='strong'][data-variant='highlight'] & button:where([data-test-id='fondue-button']) {
+        background-color: var(--color-container-highlight-default);
+        color: var(--color-container-highlight-on-highlight-container);
+
+        &:hover {
+            background-color: var(--color-container-highlight-hover);
+        }
+
+        &:active {
+            background-color: var(--color-container-highlight-active);
+        }
+    }
+
+    [data-emphasis='strong'][data-variant='positive'] & button:where([data-test-id='fondue-button']) {
+        background-color: var(--color-container-success-default);
+        color: var(--color-container-success-on-success-container);
+
+        &:hover {
+            background-color: var(--color-container-success-hover);
+        }
+
+        &:active {
+            background-color: var(--color-container-success-active);
+        }
+    }
+
+    [data-emphasis='strong'][data-variant='warning'] & button:where([data-test-id='fondue-button']) {
+        background-color: var(--color-container-warning-default);
+        color: var(--color-container-warning-on-warning-container);
+
+        &:hover {
+            background-color: var(--color-container-warning-hover);
+        }
+
+        &:active {
+            background-color: var(--color-container-warning-active);
+        }
+    }
+
+    [data-emphasis='strong'][data-variant='danger'] & button:where([data-test-id='fondue-button']) {
+        background-color: var(--color-container-error-default);
+        color: var(--color-container-error-on-error-container);
+
+        &:hover {
+            background-color: var(--color-container-error-hover);
+        }
+
+        &:active {
+            background-color: var(--color-container-error-active);
+        }
+    }
 }
 
 .dismiss {
@@ -161,6 +369,15 @@
 
         &[data-variant='warning'] {
             border-style: dashed;
+        }
+    }
+
+    .action button {
+        border: 2px solid currentColor !important;
+
+        &:hover {
+            background-color: Highlight !important;
+            color: HighlightText !important;
         }
     }
 

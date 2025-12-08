@@ -1,6 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconCheckMark, IconExclamationMarkTriangle, IconInfo } from '@frontify/fondue-icons';
+import {
+    IconArrowRoundAntiClockwise,
+    IconCheckMark,
+    IconExclamationMarkTriangle,
+    IconInfo,
+    IconLightning,
+} from '@frontify/fondue-icons';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { action } from 'storybook/actions';
 
@@ -54,6 +60,7 @@ export const WithAction: Story = {
             icon={<IconInfo size="16" />}
             action={
                 <Button size="small" emphasis="default" onPress={action('undo')}>
+                    <IconArrowRoundAntiClockwise size={16} />
                     Undo
                 </Button>
             }
@@ -71,6 +78,7 @@ export const WithActionAndDismiss: Story = {
             icon={<IconInfo size="16" />}
             action={
                 <Button size="small" emphasis="default" onPress={action('undo')}>
+                    <IconArrowRoundAntiClockwise size={16} />
                     Undo
                 </Button>
             }
@@ -142,6 +150,7 @@ export const SizeLarge: Story = {
             icon={<IconInfo size="20" />}
             action={
                 <Button size="small" emphasis="default" onPress={action('undo')}>
+                    <IconArrowRoundAntiClockwise size={16} />
                     Undo
                 </Button>
             }
@@ -206,5 +215,246 @@ export const LongContent: Story = {
             This is a notice with much longer content to demonstrate how the component handles text wrapping. The
             content area should expand to accommodate all the text while maintaining proper spacing between elements.
         </Notice>
+    ),
+};
+
+export const AllVariantsWithActions: Story = {
+    render: (args) => (
+        <div className="tw-flex tw-flex-col tw-gap-4">
+            <Notice
+                {...args}
+                variant="default"
+                icon={<IconLightning size="16" />}
+                action={
+                    <Button size="small" emphasis="default" onPress={action('undo')}>
+                        <IconArrowRoundAntiClockwise size={16} />
+                        Undo
+                    </Button>
+                }
+                onDismiss={action('onDismiss')}
+            >
+                Neutral message text
+            </Notice>
+            <Notice
+                {...args}
+                variant="highlight"
+                icon={<IconLightning size="16" />}
+                action={
+                    <Button size="small" emphasis="default" onPress={action('undo')}>
+                        <IconArrowRoundAntiClockwise size={16} />
+                        Undo
+                    </Button>
+                }
+                onDismiss={action('onDismiss')}
+            >
+                Highlight message text
+            </Notice>
+            <Notice
+                {...args}
+                variant="positive"
+                icon={<IconLightning size="16" />}
+                action={
+                    <Button size="small" emphasis="default" onPress={action('undo')}>
+                        <IconArrowRoundAntiClockwise size={16} />
+                        Undo
+                    </Button>
+                }
+                onDismiss={action('onDismiss')}
+            >
+                Positive message text
+            </Notice>
+            <Notice
+                {...args}
+                variant="warning"
+                icon={<IconLightning size="16" />}
+                action={
+                    <Button size="small" emphasis="default" onPress={action('undo')}>
+                        <IconArrowRoundAntiClockwise size={16} />
+                        Undo
+                    </Button>
+                }
+                onDismiss={action('onDismiss')}
+            >
+                Warning message text
+            </Notice>
+            <Notice
+                {...args}
+                variant="danger"
+                icon={<IconLightning size="16" />}
+                action={
+                    <Button size="small" emphasis="default" onPress={action('undo')}>
+                        <IconArrowRoundAntiClockwise size={16} />
+                        Undo
+                    </Button>
+                }
+                onDismiss={action('onDismiss')}
+            >
+                Danger message text
+            </Notice>
+        </div>
+    ),
+};
+
+export const AllVariantsWeakEmphasis: Story = {
+    render: (args) => (
+        <div className="tw-flex tw-flex-col tw-gap-4">
+            <Notice
+                {...args}
+                variant="default"
+                emphasis="weak"
+                icon={<IconLightning size="16" />}
+                action={
+                    <Button size="small" emphasis="default" onPress={action('undo')}>
+                        <IconArrowRoundAntiClockwise size={16} />
+                        Undo
+                    </Button>
+                }
+                onDismiss={action('onDismiss')}
+            >
+                Neutral message text
+            </Notice>
+            <Notice
+                {...args}
+                variant="highlight"
+                emphasis="weak"
+                icon={<IconLightning size="16" />}
+                action={
+                    <Button size="small" emphasis="default" onPress={action('undo')}>
+                        <IconArrowRoundAntiClockwise size={16} />
+                        Undo
+                    </Button>
+                }
+                onDismiss={action('onDismiss')}
+            >
+                Highlight message text
+            </Notice>
+            <Notice
+                {...args}
+                variant="positive"
+                emphasis="weak"
+                icon={<IconLightning size="16" />}
+                action={
+                    <Button size="small" emphasis="default" onPress={action('undo')}>
+                        <IconArrowRoundAntiClockwise size={16} />
+                        Undo
+                    </Button>
+                }
+                onDismiss={action('onDismiss')}
+            >
+                Positive message text
+            </Notice>
+            <Notice
+                {...args}
+                variant="warning"
+                emphasis="weak"
+                icon={<IconLightning size="16" />}
+                action={
+                    <Button size="small" emphasis="default" onPress={action('undo')}>
+                        <IconArrowRoundAntiClockwise size={16} />
+                        Undo
+                    </Button>
+                }
+                onDismiss={action('onDismiss')}
+            >
+                Warning message text
+            </Notice>
+            <Notice
+                {...args}
+                variant="danger"
+                emphasis="weak"
+                icon={<IconLightning size="16" />}
+                action={
+                    <Button size="small" emphasis="default" onPress={action('undo')}>
+                        <IconArrowRoundAntiClockwise size={16} />
+                        Undo
+                    </Button>
+                }
+                onDismiss={action('onDismiss')}
+            >
+                Danger message text
+            </Notice>
+        </div>
+    ),
+};
+
+export const AllVariantsStrongEmphasis: Story = {
+    render: (args) => (
+        <div className="tw-flex tw-flex-col tw-gap-4">
+            <Notice
+                {...args}
+                variant="default"
+                emphasis="strong"
+                icon={<IconLightning size="16" />}
+                action={
+                    <Button size="small" emphasis="default" onPress={action('undo')}>
+                        <IconArrowRoundAntiClockwise size={16} />
+                        Undo
+                    </Button>
+                }
+                onDismiss={action('onDismiss')}
+            >
+                Neutral message text
+            </Notice>
+            <Notice
+                {...args}
+                variant="highlight"
+                emphasis="strong"
+                icon={<IconLightning size="16" />}
+                action={
+                    <Button size="small" emphasis="default" onPress={action('undo')}>
+                        <IconArrowRoundAntiClockwise size={16} />
+                        Undo
+                    </Button>
+                }
+                onDismiss={action('onDismiss')}
+            >
+                Highlight message text
+            </Notice>
+            <Notice
+                {...args}
+                variant="positive"
+                emphasis="strong"
+                icon={<IconLightning size="16" />}
+                action={
+                    <Button size="small" emphasis="default" onPress={action('undo')}>
+                        <IconArrowRoundAntiClockwise size={16} />
+                        Undo
+                    </Button>
+                }
+                onDismiss={action('onDismiss')}
+            >
+                Positive message text
+            </Notice>
+            <Notice
+                {...args}
+                variant="warning"
+                emphasis="strong"
+                icon={<IconLightning size="16" />}
+                action={
+                    <Button size="small" emphasis="default" onPress={action('undo')}>
+                        <IconArrowRoundAntiClockwise size={16} />
+                        Undo
+                    </Button>
+                }
+                onDismiss={action('onDismiss')}
+            >
+                Warning message text
+            </Notice>
+            <Notice
+                {...args}
+                variant="danger"
+                emphasis="strong"
+                icon={<IconLightning size="16" />}
+                action={
+                    <Button size="small" emphasis="default" onPress={action('undo')}>
+                        <IconArrowRoundAntiClockwise size={16} />
+                        Undo
+                    </Button>
+                }
+                onDismiss={action('onDismiss')}
+            >
+                Danger message text
+            </Notice>
+        </div>
     ),
 };
