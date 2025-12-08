@@ -81,10 +81,10 @@ export const Notice = ({
             role="status"
             aria-live="polite"
         >
-            {icon && <div className={styles.icon}>{icon}</div>}
+            {icon ? <div className={styles.icon}>{icon}</div> : null}
             <div className={styles.content}>{children}</div>
-            {action && <div className={styles.action}>{action}</div>}
-            {onDismiss && (
+            {action ? <div className={styles.action}>{action}</div> : null}
+            {onDismiss ? (
                 <button
                     type="button"
                     aria-label={ariaLabel || t('Notice_dismiss')}
@@ -93,7 +93,7 @@ export const Notice = ({
                 >
                     <IconCross size={size === 'large' ? '20' : '16'} />
                 </button>
-            )}
+            ) : null}
         </div>
     );
 };

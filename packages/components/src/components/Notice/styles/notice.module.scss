@@ -6,9 +6,12 @@
     &[data-variant='#{$name}'] {
         &[data-emphasis='default'] {
             background-color: var(--color-container-#{$color}-default);
+
             @if $useVariant {
                 color: var(--color-container-#{$color}-on-#{$color}-container-variant);
-            } @else {
+            }
+
+            @else {
                 color: var(--color-container-#{$color}-on-#{$color}-container);
             }
         }
