@@ -183,6 +183,7 @@
     // Weak emphasis: variant-colored buttons
     [data-emphasis='weak'][data-variant='default'] & button:where([data-test-id='fondue-button']) {
         background-color: var(--color-container-secondary-default);
+        color: var(--color-container-secondary-on-secondary-container);
 
         &:hover {
             background-color: var(--color-container-secondary-hover);
@@ -195,6 +196,7 @@
 
     [data-emphasis='weak'][data-variant='highlight'] & button:where([data-test-id='fondue-button']) {
         background-color: var(--color-container-highlight-default);
+        color: var(--color-container-highlight-on-highlight-container);
 
         &:hover {
             background-color: var(--color-container-highlight-hover);
@@ -207,6 +209,7 @@
 
     [data-emphasis='weak'][data-variant='positive'] & button:where([data-test-id='fondue-button']) {
         background-color: var(--color-container-success-default);
+        color: var(--color-container-success-on-success-container);
 
         &:hover {
             background-color: var(--color-container-success-hover);
@@ -219,6 +222,7 @@
 
     [data-emphasis='weak'][data-variant='warning'] & button:where([data-test-id='fondue-button']) {
         background-color: var(--color-container-secondary-default);
+        color: var(--color-container-secondary-on-secondary-container);
 
         &:hover {
             background-color: var(--color-container-secondary-hover);
@@ -245,7 +249,7 @@
     // Strong emphasis: variant container-colored buttons
     [data-emphasis='strong'][data-variant='default'] & button:where([data-test-id='fondue-button']) {
         background-color: var(--color-container-secondary-default);
-        color: var(--color-container-secondary-on-secondary-container-variant);
+        color: var(--color-container-secondary-on-secondary-container);
 
         &:hover {
             background-color: var(--color-container-secondary-hover);
@@ -284,7 +288,7 @@
 
     [data-emphasis='strong'][data-variant='warning'] & button:where([data-test-id='fondue-button']) {
         background-color: var(--color-container-secondary-default);
-        color: var(--color-container-secondary-on-secondary-container-variant);
+        color: var(--color-container-secondary-on-secondary-container);
 
         &:hover {
             background-color: var(--color-container-secondary-hover);
