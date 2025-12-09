@@ -22,7 +22,7 @@
     }
 
     &.medium {
-        --switch-width: #{sizeToken.get(7.5)};
+        --switch-width: #{sizeToken.get(8)};
         --switch-height: #{sizeToken.get(4)};
     }
 
