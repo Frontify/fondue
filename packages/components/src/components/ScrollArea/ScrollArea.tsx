@@ -66,9 +66,9 @@ const ScrollAreaComponent = (
             className={styles.root}
             style={{ maxWidth }}
             data-test-id={dataTestId}
-            ref={ref}
         >
             <RadixScrollArea.Viewport
+                ref={ref}
                 className={styles.viewport}
                 style={{ maxHeight }}
                 data-scroll-padding={padding}
