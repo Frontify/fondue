@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { expect, test } from '@playwright/experimental-ct-react';
-import React from 'react';
 
 import { ScrollArea } from '../ScrollArea';
 
