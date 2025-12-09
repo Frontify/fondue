@@ -85,6 +85,23 @@
         width: 20px;
         height: 20px;
     }
+
+    // Weak emphasis icons should be colored based on variant
+    [data-emphasis='weak'][data-variant='highlight'] & {
+        color: var(--color-highlight-default);
+    }
+
+    [data-emphasis='weak'][data-variant='positive'] & {
+        color: var(--color-success-default);
+    }
+
+    [data-emphasis='weak'][data-variant='warning'] & {
+        color: var(--color-warning-default);
+    }
+
+    [data-emphasis='weak'][data-variant='danger'] & {
+        color: var(--color-error-default);
+    }
 }
 
 .content {
