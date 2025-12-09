@@ -115,9 +115,7 @@ test('should apply large size', async ({ mount }) => {
 });
 
 test('should render icon when provided', async ({ mount }) => {
-    const component = await mount(
-        <Notice icon={<IconInfo data-testid="test-icon" size="16" />}>{NOTICE_TEXT}</Notice>,
-    );
+    const component = await mount(<Notice icon={<IconInfo data-testid="test-icon" size="16" />}>{NOTICE_TEXT}</Notice>);
     await expect(component.locator('svg')).toBeVisible();
     await expect(component).toContainText(NOTICE_TEXT);
 });
@@ -200,7 +198,11 @@ test('should render dismiss icon with large size when size is large', async ({ m
 
 test('should apply custom className', async ({ mount }) => {
     const customClass = 'custom-class';
-    const wrapper = await mount(<Notice data-test-id="notice-root" className={customClass}>{NOTICE_TEXT}</Notice>);
+    const wrapper = await mount(
+        <Notice data-test-id="notice-root" className={customClass}>
+            {NOTICE_TEXT}
+        </Notice>,
+    );
     const notice = wrapper.getByTestId('notice-root');
     await expect(notice).toHaveClass(new RegExp(customClass));
 });
