@@ -69,7 +69,21 @@ export const Required: Story = {
 export const WithLabel: Story = {
     render: (args) => (
         <>
-            <Label id="label" htmlFor="switch">
+            <Label id="label" htmlFor="switch" required={args.required}>
+                Switch
+            </Label>
+            <Switch {...args} id="switch" aria-labelledby="label" />
+        </>
+    ),
+};
+
+export const WithLabelRequired: Story = {
+    args: {
+        required: true,
+    },
+    render: (args) => (
+        <>
+            <Label id="label" htmlFor="switch" required={args.required}>
                 Switch
             </Label>
             <Switch {...args} id="switch" aria-labelledby="label" />
@@ -80,7 +94,7 @@ export const WithLabel: Story = {
 export const WithLabelAndTooltip: Story = {
     render: (args) => (
         <>
-            <Label id="label" htmlFor="switch">
+            <Label id="label" htmlFor="switch" required={args.required}>
                 Switch
                 <Tooltip.Root>
                     <Tooltip.Trigger>
