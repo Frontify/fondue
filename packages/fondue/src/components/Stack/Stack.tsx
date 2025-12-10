@@ -26,20 +26,6 @@ export type STACK_ALIGN_ITEMS = 'start' | 'end' | 'center' | 'baseline' | 'stret
 /**
  * @deprecated Use `Flex` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#layout-components the migration guide}.
  */
-export type STACK_ALIGN_CONTENT =
-    | 'start'
-    | 'end'
-    | 'center'
-    | 'between'
-    | 'around'
-    | 'evenly'
-    | 'baseline'
-    | 'stretch'
-    | 'normal';
-
-/**
- * @deprecated Use `Flex` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#layout-components the migration guide}.
- */
 export type STACK_PROPS = {
     children?: ReactNode | ReactNode[] | JSX.Element;
     direction?: STACK_DIRECTION;

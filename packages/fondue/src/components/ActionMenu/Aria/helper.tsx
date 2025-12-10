@@ -1,18 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Item, Section } from '@react-stately/collections';
-import { type ReactNode } from 'react';
 
 import { type MenuBlock, type MenuItemType } from '../../Dropdown/SelectMenu/SelectMenu';
 import { type ActionMenuBlock, type ActionMenuItemType } from '../ActionMenu';
-
-/**
- * @deprecated Please use a custom component instead.
- */
-export type MenuStateType = {
-    'aria-label': string;
-    children: ReactNode;
-};
 
 // Method return type is unclear because React Aria hook props are inexplicitly typed
 

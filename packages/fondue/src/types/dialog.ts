@@ -36,35 +36,7 @@ export const dialogHeadingMap: Record<DialogPadding, string> = {
     spacious: 'tw-text-heading-xx-large',
 };
 
-export type DialogHeaderProps = {
-    title: string;
-    separator?: boolean;
-    onClose?: () => void;
-    icon?: ReactElement<IconProps>;
-    badge?: ReactElement<BadgeProps>;
-    children?: ReactNode;
-    padding?: 'compact' | 'comfortable' | 'spacious';
-    'data-test-id'?: string;
-};
-
-export type DialogBodyProps = {
-    children: ReactNode;
-    maxHeight?: number | string;
-    padding?: DialogPadding;
-    'data-test-id'?: string;
-};
-
-export type DialogFooterProps = {
-    children?: ReactNode;
-    actionButtons: ButtonProps[];
-    backButton?: Omit<ButtonProps, 'emphasis' | 'icon' | 'size'>;
-    padding?: DialogPadding;
-    separator?: boolean;
-    'data-test-id'?: string;
-};
-
 export enum Modality {
-    Modal = 'modal',
     NonModal = 'non-modal',
     BlockingModal = 'blocking-modal',
 }

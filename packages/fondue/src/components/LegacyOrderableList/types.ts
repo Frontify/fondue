@@ -36,5 +36,4 @@ export type LegacyOrderableListProps<T> = {
 export enum LegacyItemDragState {
     Dragging = 'Dragging',
     Idle = 'Idle',
-    Preview = 'Preview',
 }

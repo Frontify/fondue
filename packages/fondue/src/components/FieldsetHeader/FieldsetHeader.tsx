@@ -15,7 +15,7 @@ export const ACCORDION_ICON_CONTAINER_ID = 'accordion-icon-container';
 
 export const ADDREMOVE_ICON_CONTAINER_ID = 'addremove-icon-container';
 
-export enum FieldsetHeaderSize {
+enum FieldsetHeaderSize {
     Small = 'Small',
     Medium = 'Medium',
     Large = 'Large',

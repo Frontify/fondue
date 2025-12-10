@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type AriaAttributes, type InputHTMLAttributes, type ReactElement } from 'react';
+import { type AriaAttributes, type ReactElement } from 'react';
 
 import { type Validation } from '@utilities/validation';
 
@@ -14,15 +14,6 @@ export type InputSharedBaseProps = {
     status?: Validation;
     'data-test-id'?: string;
 } & AriaAttributes;
-
-export type InputBaseProps<TValue> = {
-    size?: number;
-    suffix?: string;
-    value?: TValue;
-    valueSelect?: boolean;
-    onChange?: (value?: TValue) => void;
-} & InputSharedBaseProps &
-    Omit<InputHTMLAttributes<HTMLInputElement>, 'className' | 'style' | 'onChange' | 'value'>;
 
 export type InputType = 'Text' | 'Textarea' | 'Password' | 'Number';
 

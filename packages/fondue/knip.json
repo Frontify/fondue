@@ -1,0 +1,26 @@
+{
+    "$schema": "https://unpkg.com/knip@5/schema.json",
+    "entry": ["src/index.ts", "src/subpackages/*.ts"],
+    "ignoreDependencies": [
+        "@frontify/fondue-charts",
+        "@frontify/fondue-components",
+        "@frontify/fondue-icons",
+        "@frontify/fondue-rte",
+        "@frontify/fondue-tokens",
+        "@svgr/plugin-jsx",
+        "@svgr/plugin-svgo",
+        "@svgr/plugin-prettier",
+        "postcss-import",
+        "ts-node",
+        "@tailwindcss/forms",
+        "commander",
+        "execa",
+        "eslint-plugin-tailwindcss"
+    ],
+    "ignoreExportsUsedInFile": {
+        "interface": true,
+        "type": true
+    },
+    "project": ["src/**/*.{ts,tsx,js,jsx}"],
+    "tags": ["-lintignore"]
+}

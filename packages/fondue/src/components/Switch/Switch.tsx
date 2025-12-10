@@ -23,11 +23,6 @@ export type SwitchSize = 'small' | 'medium';
  */
 export type SwitchMode = 'on' | 'off' | 'indeterminate';
 
-/**
- * @deprecated Use `Switch` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#switch the migration guide}.
- */
-export type SwitchLabelStyle = 'default' | 'heading';
-
 const trackSizeClasses: Record<SwitchSize, string> = {
     small: 'tw-w-[22px] tw-h-3',
     medium: 'tw-w-[30px] tw-h-4',

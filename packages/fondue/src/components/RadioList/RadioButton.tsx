@@ -6,7 +6,6 @@ import { useMemoizedId } from '@hooks/useMemoizedId';
 import { checkIfContainInteractiveElements } from '@utilities/elements';
 
 export enum RadioButtonEmphasis {
-    Default = 'Default',
     Weak = 'Weak',
 }
 

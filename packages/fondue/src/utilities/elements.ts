@@ -3,11 +3,6 @@
 import { type MouseEvent } from 'react';
 
 /**
- * @deprecated Use a custom function instead.
- */
-export type ItemElementType = 'a' | 'button' | 'span';
-
-/**
  * @deprecated Please use a custom function instead.
  */
 export const TABBABLE_ELEMENTS = [
