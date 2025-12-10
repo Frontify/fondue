@@ -326,3 +326,76 @@ test('renders with gutter when type is always', async ({ mount }) => {
 
     expect(componentElement?.width).toBe((contentElement?.width || 0) + 10);
 });
+
+test('programmatically scrolls vertically using ref', async ({ mount }) => {
+    const wrapper = await mount(
+        <ScrollArea maxHeight="300px" maxWidth="300px" type="always" data-test-id={SCROLLAREA_ROOT_TEST_ID}>
+            <div style={{ height: '1000px' }}>
+                {Array.from({ length: 50 }, (_, i) => (
+                    <p key={i} data-test-id={`paragraph-${i}`}>
+                        Paragraph {i + 1}
+                    </p>
+                ))}
+            </div>
+        </ScrollArea>,
+    );
+
+    const viewport = wrapper.getByTestId(SCROLLAREA_VIEWPORT_TEST_ID);
+
+    // Programmatically set scrollTop
+    await viewport.evaluate((el) => {
+        el.scrollTop = 200;
+    });
+
+    const scrollTop = await viewport.evaluate((el) => el.scrollTop);
+    expect(scrollTop).toBe(200);
+});
+
+test('programmatically scrolls horizontally using ref', async ({ mount }) => {
+    const wrapper = await mount(
+        <ScrollArea maxHeight="300px" maxWidth="300px" type="always" data-test-id={SCROLLAREA_ROOT_TEST_ID}>
+            <div style={{ width: '1000px' }}>
+                <p style={{ whiteSpace: 'nowrap' }}>{Array.from({ length: 100 }, (_, i) => `Word${i} `).join('')}</p>
+            </div>
+        </ScrollArea>,
+    );
+
+    const viewport = wrapper.getByTestId(SCROLLAREA_VIEWPORT_TEST_ID);
+
+    // Programmatically set scrollLeft
+    await viewport.evaluate((el) => {
+        el.scrollLeft = 150;
+    });
+
+    const scrollLeft = await viewport.evaluate((el) => el.scrollLeft);
+    expect(scrollLeft).toBe(150);
+});
+
+test('reads scroll position and dimensions via viewport ref', async ({ mount }) => {
+    const wrapper = await mount(
+        <ScrollArea maxHeight="300px" maxWidth="300px" type="always" data-test-id={SCROLLAREA_ROOT_TEST_ID}>
+            <div style={{ height: '1000px', width: '1000px' }}>Scrollable content</div>
+        </ScrollArea>,
+    );
+
+    const viewport = wrapper.getByTestId(SCROLLAREA_VIEWPORT_TEST_ID);
+
+    // Set scroll position
+    await viewport.evaluate((el) => {
+        el.scrollTop = 100;
+        el.scrollLeft = 50;
+    });
+
+    // Read all scroll properties
+    const scrollInfo = await viewport.evaluate((el) => ({
+        scrollTop: el.scrollTop,
+        scrollLeft: el.scrollLeft,
+        scrollHeight: el.scrollHeight,
+        scrollWidth: el.scrollWidth,
+    }));
+
+    expect(scrollInfo.scrollTop).toBe(100);
+    expect(scrollInfo.scrollLeft).toBe(50);
+    expect(scrollInfo.scrollHeight).toBeGreaterThan(300);
+    expect(scrollInfo.scrollWidth).toBeGreaterThan(300);
+});
