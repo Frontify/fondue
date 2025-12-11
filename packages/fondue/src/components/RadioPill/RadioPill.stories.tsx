@@ -7,8 +7,12 @@ import IconIcon from '@foundation/Icon/Generated/IconIcon';
 
 import { RadioPill as RadioPillComponent, type RadioPillProps } from './RadioPill';
 
+/**
+ ### *Legacy component warning*
+ #### This is a deprecated component. It will be removed in an future release.
+ */
 export default {
-    title: 'Legacy Components/Radio Pill',
+    title: 'Legacy Components/Deprecated/Radio Pill',
     component: RadioPillComponent,
     tags: ['autodocs'],
     args: {

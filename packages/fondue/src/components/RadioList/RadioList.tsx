@@ -9,12 +9,16 @@ import { generateRandomId } from '@utilities/generateRandomId';
 import { merge } from '@utilities/merge';
 
 import { RadioButtonEmphasis, type RadioButtonProps } from './RadioButton';
-
+/**
+ * @deprecated Use `RadioList` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#radiolist the migration guide}.
+ */
 export enum RadioListDirection {
     Horizontal = 'Horizontal',
     Vertical = 'Vertical',
 }
-
+/**
+ * @deprecated Use `RadioList` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#radiolist the migration guide}.
+ */
 export type RadioListProps = {
     children: ReactNode;
     onChange?: (value: string) => void;

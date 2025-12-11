@@ -11,10 +11,10 @@ import { ToastAnimationDirection, type ToastProps, ToastStyle } from './types';
 
 /**
  ### *Legacy component warning*
- #### This is a unmaintained legacy component. It will be deprecated and replaced with a new component in an upcoming release.
+ #### This is a deprecated component. It will be removed in an future release.
  */
 export default {
-    title: 'Legacy Components/Toast',
+    title: 'Legacy Components/Deprecated/Toast',
     component: ToastComponent,
     tags: ['autodocs'],
     argTypes: {
