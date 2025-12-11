@@ -22,7 +22,7 @@ export enum BrightHeaderStyle {
 /**
  * @deprecated Please use updated `Tooltip` component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tooltip the migration guide}.
  */
-export const brightHeaderBackgroundColors: Record<BrightHeaderStyle, string> = {
+const brightHeaderBackgroundColors: Record<BrightHeaderStyle, string> = {
     [BrightHeaderStyle.Information]: 'tw-bg-box-selected-strong',
     [BrightHeaderStyle.Warning]: 'tw-bg-box-negative-strong-pressed',
     [BrightHeaderStyle.Tip]: 'tw-bg-box-positive-strong-pressed',

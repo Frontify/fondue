@@ -12,7 +12,7 @@ import { type AccordionHeaderProps } from './types';
 /**
  * @deprecated Please use updated Accordion component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#accordion the migration guide}.
  */
-export const ACCORDION_HEADER_TEST_ID = 'fondue-accordion-header';
+const ACCORDION_HEADER_TEST_ID = 'fondue-accordion-header';
 
 /**
  * @deprecated Please use updated Accordion component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#accordion the migration guide}.

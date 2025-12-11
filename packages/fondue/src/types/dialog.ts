@@ -1,21 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ReactElement, type ReactNode } from 'react';
-
-import { type BadgeProps } from '@components/Badge';
-import { type ButtonProps } from '@components/Button/Button';
 import { type PopperProps } from '@components/Popper/types';
-import { type IconProps } from '@foundation/Icon/IconProps';
 
 export type DialogPadding = 'none' | 'compact' | 'comfortable' | 'spacious';
-export const DIALOG_PADDING = ['compact', 'comfortable', 'spacious']; // To be used in Stories
-
-export const dialogPaddingMap: Record<DialogPadding, string> = {
-    none: 'tw-p-0',
-    compact: 'tw-p-4',
-    comfortable: 'tw-p-6',
-    spacious: 'tw-p-10',
-};
 
 export const overlayShadowMap: Record<string, string> = {
     none: 'tw-shadow-none',
@@ -27,13 +14,6 @@ export const overlayShadowMap: Record<string, string> = {
 export const overlayBorderRadius: Record<string, string> = {
     small: 'tw-rounded',
     large: 'tw-rounded-lg',
-};
-
-export const dialogHeadingMap: Record<DialogPadding, string> = {
-    none: 'tw-text-heading-large',
-    compact: 'tw-text-heading-large',
-    comfortable: 'tw-text-heading-x-large',
-    spacious: 'tw-text-heading-xx-large',
 };
 
 export enum Modality {

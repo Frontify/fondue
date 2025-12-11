@@ -10,7 +10,7 @@ type DropdownAutoHeightProps = {
     isDialog?: boolean;
 };
 
-export const getInnerOverlayHeight = (triggerRef: MutableRefObject<HTMLElement | null>) => {
+const getInnerOverlayHeight = (triggerRef: MutableRefObject<HTMLElement | null>) => {
     let maxHeight = 'auto';
     if (triggerRef.current) {
         const { innerHeight } = window;

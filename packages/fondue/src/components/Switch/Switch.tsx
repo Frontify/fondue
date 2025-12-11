@@ -11,11 +11,6 @@ import { merge } from '@utilities/merge';
 /**
  * @deprecated Use `Switch` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#switch the migration guide}.
  */
-export const SWITCH_ID = 'switch-container';
-
-/**
- * @deprecated Use `Switch` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#switch the migration guide}.
- */
 export type SwitchSize = 'small' | 'medium';
 
 /**

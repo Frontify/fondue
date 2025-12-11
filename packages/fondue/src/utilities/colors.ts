@@ -23,17 +23,7 @@ export const getColorDisplayValue = (color: Color, format: ColorFormat, showAlph
     }
 };
 
-export const isColorLight = (color: Color): boolean => {
-    const parsedColor = new TinyColor(toShortRgb(color));
-    return parsedColor.isLight() || parsedColor.getAlpha() < 0.25;
-};
-
-export const toShortRgb = (color: Color): ColorRgb => {
+const toShortRgb = (color: Color): ColorRgb => {
     const { red, green, blue, alpha } = color;
     return { r: red, g: green, b: blue, a: alpha };
-};
-
-export const toLongRgb = (color: ColorRgb): Color => {
-    const { r, g, b, a } = color;
-    return { red: r, green: g, blue: b, alpha: a };
 };

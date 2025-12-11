@@ -31,7 +31,7 @@ export enum TagSize {
 /**
  * @deprecated Use the new Tag component from @frontify/fondue/components instead
  */
-export const tagStyles: Record<TagType, string> = {
+const tagStyles: Record<TagType, string> = {
     [TagType.Suggested]:
         'tw-border tw-bg-base tw-text-text-weak tw-border-line hover:tw-text-text hover:tw-border-line-strong',
     [TagType.Selected]:

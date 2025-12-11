@@ -17,13 +17,6 @@ export type InputSharedBaseProps = {
 
 export type InputType = 'Text' | 'Textarea' | 'Password' | 'Number';
 
-export const InputTypes: Record<InputType, string> = {
-    Text: 'text',
-    Textarea: 'textarea',
-    Password: 'password',
-    Number: 'number',
-};
-
 export type InputActionCallbacks = {
     text?: () => void;
     textarea?: () => void;

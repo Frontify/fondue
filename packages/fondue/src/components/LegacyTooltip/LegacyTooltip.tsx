@@ -90,19 +90,14 @@ export enum TooltipPosition {
 export enum TooltipAlignment {
     Start = 'Start',
     Middle = 'Middle',
-    End = 'End',
 }
 
 const placementMap: Record<`${TooltipPosition | 'top' | 'bottom' | 'left' | 'right'}-${TooltipAlignment}`, Placement> =
     {
         'top-Start': 'top-start',
-        'top-End': 'top-end',
         'bottom-Start': 'bottom-start',
-        'bottom-End': 'bottom-end',
         'left-Start': 'left-start',
-        'left-End': 'left-end',
         'right-Start': 'right-start',
-        'right-End': 'right-end',
         'top-Middle': 'top',
         'right-Middle': 'right',
         'bottom-Middle': 'bottom',

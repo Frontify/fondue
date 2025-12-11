@@ -16,7 +16,7 @@ export type TooltipIconProps = {
     'data-test-id'?: string;
 };
 
-export enum TooltipIconTriggerStyle {
+enum TooltipIconTriggerStyle {
     Danger = 'Danger',
     Warning = 'Warning',
     Primary = 'Primary',

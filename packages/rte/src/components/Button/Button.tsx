@@ -1,7 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { buttonIconSizeMap, buttonTypeMap } from '@components/Button/mappings';
 import { useButton } from '@react-aria/button';
 import { useFocusRing } from '@react-aria/focus';
+import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
+import { merge } from '@utilities/merge';
+import { useForwardedRef } from '@utilities/useForwardedRef';
 import {
     cloneElement,
     forwardRef,
@@ -10,11 +14,6 @@ import {
     type ReactElement,
     type ReactNode,
 } from 'react';
-
-import { buttonIconSizeMap, buttonTypeMap } from '@components/Button/mappings';
-import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
-import { merge } from '@utilities/merge';
-import { useForwardedRef } from '@utilities/useForwardedRef';
 
 import {
     ButtonCommonClasses,
