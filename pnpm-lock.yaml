@@ -415,9 +415,6 @@ importers:
       '@react-aria/accordion':
         specifier: 3.0.0-alpha.29
         version: 3.0.0-alpha.29(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@react-aria/aria-modal-polyfill':
-        specifier: ^3.7.15
-        version: 3.7.15(react@18.3.1)
       '@react-aria/breadcrumbs':
         specifier: ^3.5.29
         version: 3.5.29(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -427,9 +424,6 @@ importers:
       '@react-aria/checkbox':
         specifier: ^3.16.2
         version: 3.16.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@react-aria/dialog':
-        specifier: ^3.5.31
-        version: 3.5.31(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@react-aria/focus':
         specifier: ^3.21.2
         version: 3.21.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -472,9 +466,6 @@ importers:
       '@react-stately/menu':
         specifier: ^3.9.8
         version: 3.9.8(react@18.3.1)
-      '@react-stately/overlays':
-        specifier: ^3.6.20
-        version: 3.6.20(react@18.3.1)
       '@react-stately/radio':
         specifier: ^3.11.2
         version: 3.11.2(react@18.3.1)
@@ -517,18 +508,9 @@ importers:
       motion:
         specifier: ^12.23.24
         version: 12.23.24(@emotion/is-prop-valid@0.8.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react-colorful:
-        specifier: ^5.6.1
-        version: 5.6.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-datepicker:
         specifier: ^6.9.0
         version: 6.9.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react-dnd:
-        specifier: ^16.0.1
-        version: 16.0.1(@types/node@22.18.10)(@types/react@18.3.26)(react@18.3.1)
-      react-dnd-html5-backend:
-        specifier: ^16.0.1
-        version: 16.0.1
       react-fast-compare:
         specifier: ^3.2.2
         version: 3.2.2
