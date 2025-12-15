@@ -1,0 +1,5 @@
+import{H as s}from"./Heading-DXC90IF3.js";import"./iframe-DYKh8kK3.js";import"./preload-helper-5fg-36yc.js";import"./styleUtilities-A7Ia-tuh.js";const p={title:"Typography/Heading",component:s,tags:["autodocs"],parameters:{status:{type:"released"}},args:{},argTypes:{as:{type:"string",control:"select",options:[void 0,"span","p","h1","h2","h3","h4","h5","h6"]},color:{type:"string",control:"select",options:[void 0,"default","weak","x-weak","disabled","negative","positive","warning","interactive"]},size:{type:"string",control:"select",options:[void 0,"medium","large","x-large","xx-large"]},weight:{type:"string",control:"select",options:[void 0,"default","strong"]},"data-test-id":{type:"string",control:"text"}}},e={args:{children:"Hello World"}};var t,o,r;e.parameters={...e.parameters,docs:{...(t=e.parameters)==null?void 0:t.docs,source:{originalSource:`{
+  args: {
+    children: 'Hello World'
+  }
+}`,...(r=(o=e.parameters)==null?void 0:o.docs)==null?void 0:r.source}}};const d=["Default"];export{e as Default,d as __namedExportsOrder,p as default};
