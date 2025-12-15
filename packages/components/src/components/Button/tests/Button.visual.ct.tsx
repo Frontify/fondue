@@ -256,7 +256,7 @@ test.describe('Button Visual Regression', () => {
         test('hugWidth true', async ({ mount }) => {
             const wrapper = await mount(
                 <div style={{ padding: '20px', width: '300px' }}>
-                    <Button hugWidth={true}>{BUTTON_TEXT}</Button>
+                    <Button hugWidth>{BUTTON_TEXT}</Button>
                 </div>,
             );
             await expect(wrapper).toHaveScreenshot('button-hugwidth-true.png');
@@ -282,7 +282,7 @@ test.describe('Button Visual Regression', () => {
             await expect(wrapper).toHaveScreenshot('button-disabled.png');
         });
 
-        test('hover state', async ({ mount, page }) => {
+        test('hover state', async ({ mount }) => {
             const wrapper = await mount(
                 <div style={{ padding: '20px' }}>
                     <Button data-test-id="button-hover">{BUTTON_TEXT}</Button>
