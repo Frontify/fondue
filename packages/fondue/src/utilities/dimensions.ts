@@ -6,9 +6,18 @@ type PaddingDirection = 'padding' | 'padding-x' | 'padding-y';
 type MarginDirectionKey = 'MARGIN' | 'MARGIN_X' | 'MARGIN_Y';
 type MarginDirection = 'margin' | 'margin-x' | 'margin-y';
 
+/**
+ * @deprecated This type is deprecated and will be removed in the next major version.
+ */
 export type SpacingValue = 0 | 4 | 8 | 12 | 16 | 20 | 24 | 28 | 32 | 36 | 40;
+/**
+ * @deprecated This type is deprecated and will be removed in the next major version.
+ */
 export type DimensionUnity = '%' | 'px' | 'rem' | 'em' | 'vh' | 'vw';
 
+/**
+ * @deprecated This constant is deprecated and will be removed in the next major version.
+ */
 export const SPACING_VALUES: SpacingValue[] = [0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40];
 const PADDING_VALUES_MAP: Record<SpacingValue, string> = {
     0: 'tw-p-0',
@@ -52,6 +61,9 @@ const PADDING_Y_VALUES_MAP: Record<SpacingValue, string> = {
     40: 'tw-py-10',
 };
 
+/**
+ * @deprecated This constant is deprecated and will be removed in the next major version.
+ */
 export const PADDING_DIRECTIONS: Record<PaddingDirectionKey, PaddingDirection> = {
     PADDING: 'padding',
     PADDING_X: 'padding-x',
@@ -100,6 +112,9 @@ const MARGIN_Y_VALUES_MAP: Record<SpacingValue, string> = {
     40: 'tw-my-10',
 };
 
+/**
+ * @deprecated This constant is deprecated and will be removed in the next major version.
+ */
 export const MARGIN_DIRECTIONS: Record<MarginDirectionKey, MarginDirection> = {
     MARGIN: 'margin',
     MARGIN_X: 'margin-x',
@@ -110,6 +125,9 @@ const getMappedSpacingValue = (map: SpacingMapType, spacingValue: SpacingValue) 
     return SPACING_VALUES.includes(spacingValue) ? map[spacingValue] : '';
 };
 
+/**
+ * @deprecated This function is deprecated and will be removed in the next major version.
+ */
 export const GetPaddingClassNames = (direction: PaddingDirection, padding?: SpacingValue): string => {
     if (padding) {
         switch (direction) {
@@ -126,6 +144,9 @@ export const GetPaddingClassNames = (direction: PaddingDirection, padding?: Spac
     return '';
 };
 
+/**
+ * @deprecated This function is deprecated and will be removed in the next major version.
+ */
 export const GetMarginClassNames = (direction: MarginDirection, margin?: SpacingValue): string => {
     if (margin) {
         switch (direction) {

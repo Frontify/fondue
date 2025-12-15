@@ -4,6 +4,9 @@ import { TinyColor } from '@ctrl/tinycolor';
 
 import { type Color, ColorFormat, type ColorRgb } from '../types/colors';
 
+/**
+ * @deprecated This function is deprecated and will be removed in the next major version.
+ */
 export const getColorDisplayValue = (color: Color, format: ColorFormat, showAlpha = true): string => {
     const parsedColor = new TinyColor(toShortRgb(color));
 

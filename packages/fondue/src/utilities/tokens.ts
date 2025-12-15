@@ -1,5 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+/**
+ * @deprecated This constant is deprecated and will be removed in the next major version.
+ */
 export const BOX_BG_ALIAS_TOKENS_CLASSES = [
     'tw-bg-box-neutral',
     'tw-bg-box-neutral-strong',
@@ -15,6 +18,9 @@ export const BOX_BG_ALIAS_TOKENS_CLASSES = [
     'tw-bg-box-warning-strong',
 ];
 
+/**
+ * @deprecated This constant is deprecated and will be removed in the next major version.
+ */
 export const BOX_TEXT_ALIAS_TOKENS_CLASSES = [
     'tw-text-box-neutral-inverse',
     'tw-text-box-neutral-strong-inverse',

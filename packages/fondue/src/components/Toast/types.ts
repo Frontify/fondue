@@ -2,6 +2,9 @@
 
 import { type ReactNode } from 'react';
 
+/**
+ * @deprecated This component is deprecated and will be removed in the next major version.
+ */
 export type ToastProps = {
     isOpen: boolean;
     style: ToastStyle;
@@ -13,11 +16,17 @@ export type ToastProps = {
     'data-test-id'?: string;
 };
 
+/**
+ * @deprecated This component is deprecated and will be removed in the next major version.
+ */
 export enum ToastAnimationDirection {
     BottomToTop = 'BottomToTop',
     TopToBottom = 'TopToBottom',
 }
 
+/**
+ * @deprecated This component is deprecated and will be removed in the next major version.
+ */
 export enum ToastStyle {
     Loud = 'Loud',
     Danger = 'Danger',
@@ -25,6 +34,9 @@ export enum ToastStyle {
     Warning = 'Warning',
 }
 
+/**
+ * @deprecated This component is deprecated and will be removed in the next major version.
+ */
 export const toastStylesBackgroundColorsMap: Record<ToastStyle, string> = {
     [ToastStyle.Loud]: 'tw-bg-box-selected-strong',
     [ToastStyle.Danger]: 'tw-bg-box-negative-strong-pressed',
@@ -32,4 +44,7 @@ export const toastStylesBackgroundColorsMap: Record<ToastStyle, string> = {
     [ToastStyle.Warning]: 'tw-bg-box-warning-strong',
 };
 
+/**
+ * @deprecated This component is deprecated and will be removed in the next major version.
+ */
 export type ToastTheme = 'light' | 'dark';

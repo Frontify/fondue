@@ -9,20 +9,32 @@ import {
     type UpdatedButtonStyle,
 } from './ButtonTypes';
 
+/**
+ * @deprecated Please use updated button component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#button the migration guide}.
+ */
 export const ButtonCommonClasses =
     'tw-group ' +
     'tw-border ' +
     'tw-box-box tw-relative tw-flex tw-items-center tw-justify-center ' +
     'tw-cursor-pointer tw-outline-none tw-font-body tw-font-medium ';
 
+/**
+ * @deprecated Please use updated button component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#button the migration guide}.
+ */
 export const ButtonDisabledClasses =
     'tw-not-allowed tw-pointer-events-none tw-border-transparent tw-text-box-disabled-inverse tw-bg-box-disabled ';
 
+/**
+ * @deprecated Please use updated button component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#button the migration guide}.
+ */
 export const ButtonRoundingClasses: Record<ButtonRounding, string> = {
     [ButtonRounding.Medium]: 'tw-rounded',
     [ButtonRounding.Full]: 'tw-rounded-full',
 };
 
+/**
+ * @deprecated Please use updated button component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#button the migration guide}.
+ */
 export const ButtonSizeClasses: Record<ButtonSize, Record<'default' | 'iconOnly', string>> = {
     [ButtonSize.Small]: {
         default: 'tw-px-2 tw-h-6 tw-text-body-small ',
@@ -38,6 +50,9 @@ export const ButtonSizeClasses: Record<ButtonSize, Record<'default' | 'iconOnly'
     },
 };
 
+/**
+ * @deprecated Please use updated button component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#button the migration guide}.
+ */
 export const IconSpacingClasses: Record<ButtonSize, string> = {
     [ButtonSize.Small]: 'tw--ml-0.5 tw-mr-1 ',
     [ButtonSize.Medium]: 'tw--ml-1 tw-mr-1.5 ',
@@ -119,6 +134,9 @@ const ButtonEmphasisWeak = {
  * - We're deprecating Primary and Secondary in favour of 'emphasis' (-33%)
  */
 
+/**
+ * @deprecated Please use updated button component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#button the migration guide}.
+ */
 export const ButtonStyleClasses: Record<ButtonEmphasis, Record<UpdatedButtonStyle, ButtonElements>> = {
     [ButtonEmphasis.Default]: {
         [ButtonStyle.Default]: {

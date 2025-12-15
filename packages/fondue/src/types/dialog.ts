@@ -2,8 +2,9 @@
 
 import { type PopperProps } from '@components/Popper/types';
 
-export type DialogPadding = 'none' | 'compact' | 'comfortable' | 'spacious';
-
+/**
+ * @deprecated This object is deprecated and will be removed in the next major version.
+ */
 export const overlayShadowMap: Record<string, string> = {
     none: 'tw-shadow-none',
     small: 'tw-shadow',
@@ -11,16 +12,25 @@ export const overlayShadowMap: Record<string, string> = {
     large: 'tw-shadow-big',
 };
 
+/**
+ * @deprecated This object is deprecated and will be removed in the next major version.
+ */
 export const overlayBorderRadius: Record<string, string> = {
     small: 'tw-rounded',
     large: 'tw-rounded-lg',
 };
 
+/**
+ * @deprecated This enum is deprecated and will be removed in the next major version.
+ */
 export enum Modality {
     NonModal = 'non-modal',
     BlockingModal = 'blocking-modal',
 }
 
+/**
+ * @deprecated This type is deprecated and will be removed in the next major version.
+ */
 export type BaseDialogProps = {
     modality?: Modality;
     maxWidth?: string | number;
@@ -36,6 +46,9 @@ export type BaseDialogProps = {
     width?: string | number;
 };
 
+/**
+ * @deprecated This type is deprecated and will be removed in the next major version.
+ */
 export type OverlayProps = PopperProps & {
     id?: string;
     open: boolean;

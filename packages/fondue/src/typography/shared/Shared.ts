@@ -1,5 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+/**
+ * @deprecated This object is deprecated and will be removed in the next major version.
+ */
 export const sharedTypographyArgTypes = {
     overflow: {
         options: ['ellipsis', 'clip', 'visible', 'truncate'],
@@ -23,6 +26,9 @@ export const sharedTypographyArgTypes = {
     },
 };
 
+/**
+ * @deprecated This object is deprecated and will be removed in the next major version.
+ */
 export const sharedTypographyArgs = {
     overflow: 'visible',
     wordBreak: 'normal',

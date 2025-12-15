@@ -2,6 +2,9 @@
 
 import { useCallback, useEffect, useState } from 'react';
 
+/**
+ * @deprecated Please use custom keyboard navigation instead.
+ */
 export const useMenuKeyboardNavigation = (
     isMenuOpened: boolean,
     menuContainerRef: HTMLElement | null,

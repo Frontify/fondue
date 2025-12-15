@@ -52,6 +52,9 @@ const updateItemsSort = <T extends object>(
     return changedItems;
 };
 
+/**
+ * @deprecated This function is deprecated and will be removed in the next major version.
+ */
 export const moveItems = <T extends object>(
     targetItem: DraggableItem<T> | undefined,
     sourceItem: DraggableItem<T>,

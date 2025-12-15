@@ -4,6 +4,9 @@ import { type AriaAttributes, type ReactElement } from 'react';
 
 import { type Validation } from '@utilities/validation';
 
+/**
+ * @deprecated This type is deprecated and will be removed in the next major version.
+ */
 export type InputSharedBaseProps = {
     autocomplete?: boolean;
     clearable?: boolean;
@@ -15,8 +18,9 @@ export type InputSharedBaseProps = {
     'data-test-id'?: string;
 } & AriaAttributes;
 
-export type InputType = 'Text' | 'Textarea' | 'Password' | 'Number';
-
+/**
+ * @deprecated This type is deprecated and will be removed in the next major version.
+ */
 export type InputActionCallbacks = {
     text?: () => void;
     textarea?: () => void;
@@ -25,6 +29,9 @@ export type InputActionCallbacks = {
     clearable?: () => void;
 };
 
+/**
+ * @deprecated This type is deprecated and will be removed in the next major version.
+ */
 export type InputActionsProps = {
     clearable?: boolean;
     obfuscated?: boolean;
@@ -35,12 +42,18 @@ export type InputActionsProps = {
     dataTestId?: string;
 };
 
+/**
+ * @deprecated This type is deprecated and will be removed in the next major version.
+ */
 export type ExtraAction = {
     icon: ReactElement;
     title: string;
     callback: () => void;
 };
 
+/**
+ * @deprecated This type is deprecated and will be removed in the next major version.
+ */
 export type InputExtraActionsProps = {
     actions: ExtraAction[];
     disabled?: boolean;

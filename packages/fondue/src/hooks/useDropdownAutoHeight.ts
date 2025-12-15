@@ -2,6 +2,9 @@
 
 import { type MutableRefObject, useLayoutEffect, useState } from 'react';
 
+/**
+ * @deprecated This component is deprecated and will be removed in the next major version.
+ */
 export const DEFAULT_DROPDOWN_MAX_HEIGHT = 'auto';
 
 type DropdownAutoHeightProps = {
@@ -22,6 +25,9 @@ const getInnerOverlayHeight = (triggerRef: MutableRefObject<HTMLElement | null>)
     return maxHeight;
 };
 
+/**
+ * @deprecated This function is deprecated and will be removed in the next major version.
+ */
 export const useDropdownAutoHeight = (
     triggerRef: MutableRefObject<HTMLElement | null>,
     { isOpen, autoResize }: DropdownAutoHeightProps,

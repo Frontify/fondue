@@ -2,6 +2,9 @@
 
 import { type DraggableItem } from '@utilities/dnd/types';
 
+/**
+ * @deprecated This function is deprecated and will be removed in the next major version.
+ */
 export const draggableItemCompareFn = <T extends object>(itemA: DraggableItem<T>, itemB: DraggableItem<T>): number => {
     if (itemA.sort === null && itemB.sort === null) {
         return 1;
