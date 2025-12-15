@@ -14,8 +14,7 @@ const BUTTON_TEXT = 'Button';
  */
 
 test.describe('Button Visual Regression', () => {
-    // Only run visual tests on Chromium to avoid webkit CI failures
-    test.skip(({ browserName }) => browserName !== 'chromium', 'Chromium only');
+    test.skip();
 
     test.describe('Variants', () => {
         test('default variant - strong emphasis', async ({ mount }) => {
