@@ -1,0 +1,389 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+@use '../../../utilities/focusStyle.module.scss';
+@use '../../../utilities/transitions.module.scss';
+@use '../../../utilities/sizeToken.module.scss';
+
+// Mixin for button variants
+@mixin variant($variant, $emphasis, $bg-default, $bg-hover, $bg-active, $text-color, $text-hover: null, $text-active: null, $icon-color: null, $icon-hover: null, $icon-active: null) {
+    &[data-variant='#{$variant}'][data-emphasis='#{$emphasis}']:not([disabled]) {
+        background-color: var(--color-#{$bg-default});
+
+        &:hover {
+            background-color: var(--color-#{$bg-hover});
+        }
+
+        &:active {
+            background-color: var(--color-#{$bg-active});
+        }
+
+        color: var(--color-#{$text-color});
+
+        @if $text-hover {
+            &:hover {
+                color: var(--color-#{$text-hover});
+            }
+        }
+
+        @if $text-active {
+            &:active {
+                color: var(--color-#{$text-active});
+            }
+        }
+
+        // Icon styles
+        & svg {
+            @if $icon-color {
+                color: var(--color-#{$icon-color});
+            } @else {
+                color: var(--color-#{$text-color});
+            }
+
+            @if $icon-hover {
+                .root:hover & {
+                    color: var(--color-#{$icon-hover});
+                }
+            } @else if $text-hover {
+                .root:hover & {
+                    color: var(--color-#{$text-hover});
+                }
+            }
+
+            @if $icon-active {
+                .root:active & {
+                    color: var(--color-#{$icon-active});
+                }
+            } @else if $text-active {
+                .root:active & {
+                    color: var(--color-#{$text-active});
+                }
+            }
+
+            line-height: 0;
+        }
+    }
+}
+
+// Mixin for weak emphasis variants (no default background)
+@mixin variant-weak($variant, $bg-hover, $bg-active, $text-color, $text-hover: null, $text-active: null, $icon-color: null, $icon-hover: null, $icon-active: null) {
+    &[data-variant='#{$variant}'][data-emphasis='weak']:not([disabled]) {
+        background-color: transparent;
+
+        &:hover {
+            background-color: var(--color-#{$bg-hover});
+        }
+
+        &:active {
+            background-color: var(--color-#{$bg-active});
+        }
+
+        color: var(--color-#{$text-color});
+
+        @if $text-hover {
+            &:hover {
+                color: var(--color-#{$text-hover});
+            }
+        }
+
+        @if $text-active {
+            &:active {
+                color: var(--color-#{$text-active});
+            }
+        }
+
+        // Icon styles
+        & svg {
+            @if $icon-color {
+                color: var(--color-#{$icon-color});
+            } @else {
+                color: var(--color-#{$text-color});
+            }
+
+            @if $icon-hover {
+                .root:hover & {
+                    color: var(--color-#{$icon-hover});
+                }
+            } @else if $text-hover {
+                .root:hover & {
+                    color: var(--color-#{$text-hover});
+                }
+            }
+
+            @if $icon-active {
+                .root:active & {
+                    color: var(--color-#{$icon-active});
+                }
+            } @else if $text-active {
+                .root:active & {
+                    color: var(--color-#{$text-active});
+                }
+            }
+
+            line-height: 0;
+        }
+    }
+}
+
+.root {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-family: var(--typography-font-family-primary);
+    font-weight: var(--typography-font-weight-medium);
+    box-sizing: border-box;
+    white-space: nowrap;
+    border: none;
+
+    & {
+        @include focusStyle.focus-outline;
+        @include transitions.transition-colors;
+    }
+
+    // Default variant - default emphasis
+    @include variant('default', 'default',
+        'container-secondary-default',
+        'container-secondary-hover',
+        'container-secondary-active',
+        'primary-default',
+        'primary-hover',
+        'primary-pressed'
+    );
+
+    // Default variant - weak emphasis
+    @include variant-weak('default',
+        'container-secondary-hover',
+        'container-secondary-active',
+        'primary-default',
+        'primary-hover',
+        'primary-pressed'
+    );
+
+    // Default variant - strong emphasis
+    @include variant('default', 'strong',
+        'primary-default',
+        'primary-hover',
+        'primary-active',
+        'primary-on-primary',
+        'primary-on-primary',
+        'primary-on-primary'
+    );
+
+    // Positive variant - default emphasis
+    @include variant('positive', 'default',
+        'container-success-default',
+        'container-success-hover',
+        'container-success-active',
+        'container-success-on-success-container',
+        'container-success-on-success-container',
+        'container-success-on-success-container-pressed'
+    );
+
+    // Positive variant - weak emphasis
+    @include variant-weak('positive',
+        'container-success-hover',
+        'container-success-active',
+        'success-default',
+        'container-success-on-success-container',
+        'container-success-on-success-container'
+    );
+
+    // Positive variant - strong emphasis
+    @include variant('positive', 'strong',
+        'success-default',
+        'success-hover',
+        'success-active',
+        'success-on-success',
+        'success-on-success',
+        'success-on-success'
+    );
+
+    // Negative variant - default emphasis
+    @include variant('negative', 'default',
+        'container-error-default',
+        'container-error-hover',
+        'container-error-active',
+        'container-error-on-error-container',
+        'container-error-on-error-container',
+        'container-error-on-error-container',
+        'container-error-on-error-container',
+        'button-negative-icon-hover',
+        'button-negative-icon-pressed'
+    );
+
+    // Negative variant - weak emphasis
+    @include variant-weak('negative',
+        'container-error-hover',
+        'container-error-active',
+        'error-default',
+        'container-error-on-error-container',
+        'container-error-on-error-container'
+    );
+
+    // Negative variant - strong emphasis
+    @include variant('negative', 'strong',
+        'error-default',
+        'error-hover',
+        'error-active',
+        'error-on-error',
+        'error-on-error',
+        'error-on-error'
+    );
+
+    // Danger variant - default emphasis
+    @include variant('danger', 'default',
+        'error-default',
+        'error-hover',
+        'error-active',
+        'error-on-error',
+        'error-on-error',
+        'error-on-error'
+    );
+
+    // Danger variant - weak emphasis
+    @include variant('danger', 'weak',
+        'error-default',
+        'error-hover',
+        'error-active',
+        'error-on-error',
+        'error-on-error',
+        'error-on-error'
+    );
+
+    // Danger variant - strong emphasis
+    @include variant('danger', 'strong',
+        'error-default',
+        'error-hover',
+        'error-active',
+        'error-on-error',
+        'error-on-error',
+        'error-on-error'
+    );
+
+    // Loud variant - default emphasis
+    @include variant('loud', 'default',
+        'container-highlight-default',
+        'container-highlight-hover',
+        'container-highlight-active',
+        'container-highlight-on-highlight-container',
+        'container-highlight-on-highlight-container',
+        'container-highlight-on-highlight-container'
+    );
+
+    // Loud variant - weak emphasis (special case with transparent border)
+    &[data-variant='loud'][data-emphasis='weak']:not([disabled]) {
+        background-color: transparent;
+        border-color: transparent;
+
+        &:hover {
+            background-color: var(--color-container-highlight-hover);
+        }
+
+        &:active {
+            background-color: var(--color-container-highlight-active);
+        }
+
+        color: var(--color-highlight-default);
+
+        &:hover {
+            color: var(--color-container-highlight-on-highlight-container);
+        }
+
+        &:active {
+            color: var(--color-container-highlight-on-highlight-container);
+        }
+
+        & svg {
+            color: var(--color-highlight-default);
+
+            .root:hover & {
+                color: var(--color-container-highlight-on-highlight-container);
+            }
+
+            .root:active & {
+                color: var(--color-container-highlight-on-highlight-container);
+            }
+
+            line-height: 0;
+        }
+    }
+
+    // Loud variant - strong emphasis
+    @include variant('loud', 'strong',
+        'highlight-default',
+        'highlight-hover',
+        'highlight-active',
+        'highlight-on-highlight',
+        'highlight-on-highlight',
+        'highlight-on-highlight'
+    );
+
+    // Size variants
+    &[data-size='small'] {
+        height: sizeToken.get(6);
+        font-size: var(--typography-font-size-small);
+        line-height: var(--typography-line-height-tight);
+
+        &[data-aspect='default'] {
+            padding-inline: sizeToken.get(3);
+            gap: sizeToken.get(1.5);
+        }
+    }
+
+    &[data-size='medium'] {
+        height: sizeToken.get(9);
+        font-size: var(--typography-font-size-medium);
+        line-height: var(--typography-line-height-medium);
+
+        &[data-aspect='default'] {
+            padding-inline: sizeToken.get(4);
+            gap: sizeToken.get(1.5);
+        }
+    }
+
+    &[data-size='large'] {
+        height: sizeToken.get(12);
+        font-size: var(--typography-font-size-large);
+        line-height: var(--typography-line-height-wide);
+
+        &[data-aspect='default'] {
+            padding-inline: sizeToken.get(6);
+            gap: sizeToken.get(2);
+        }
+    }
+
+    // Rounding variants
+    &[data-rounding='medium'] {
+        border-radius: var(--border-radius-medium);
+    }
+
+    &[data-rounding='full'] {
+        border-radius: 9999px;
+    }
+
+    // Aspect variants
+    &[data-aspect='square'] {
+        aspect-ratio: 1 / 1;
+        padding-inline: 0;
+    }
+
+    // HugWidth variant
+    &[data-hug-width='false'] {
+        width: 100%;
+    }
+
+    // Disabled state
+    &[disabled] {
+        cursor: not-allowed;
+        pointer-events: none;
+        background-color: var(--color-container-disabled-default);
+        color: var(--color-container-disabled-on-disabled-container);
+
+        & svg {
+            color: var(--color-container-disabled-on-disabled-container);
+        }
+    }
+}
