@@ -9,7 +9,8 @@ import { RadioPill as RadioPillComponent, type RadioPillProps } from './RadioPil
 
 /**
  ### *Legacy component warning*
- #### This is a deprecated component. It will be removed in an future release.
+ #### This is a deprecated component. It will be removed in the next major version.
+ #### _**Use the [new Radio List component](/docs/current_components-radiolist--documentation) instead.**_
  */
 export default {
     title: 'Legacy Components/Deprecated/Radio Pill',
@@ -28,6 +29,11 @@ export default {
                 Icon: <IconIcon />,
             },
             control: { type: 'select' },
+        },
+    },
+    parameters: {
+        status: {
+            type: 'deprecated',
         },
     },
 } as Meta<RadioPillProps>;

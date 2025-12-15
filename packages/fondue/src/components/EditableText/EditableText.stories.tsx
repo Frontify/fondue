@@ -9,7 +9,7 @@ import { IconSize } from '@foundation/Icon/IconSize';
 
 /**
  ### *Legacy component warning*
- #### This is a deprecated component. It will be removed in an future release.
+ #### This is a unmaintained legacy component. It will be deprecated and replaced with a new component in an upcoming release.
  */
 export default {
     title: 'Legacy Components/Editable Text',
@@ -17,7 +17,7 @@ export default {
     tags: ['autodocs'],
     parameters: {
         status: {
-            type: 'deprecated',
+            type: 'legacy',
         },
         actions: { argTypesRegex: '^on.*' },
     },

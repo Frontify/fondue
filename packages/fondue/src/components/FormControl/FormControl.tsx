@@ -92,6 +92,9 @@ export type FormControlProps = {
     'data-test-id'?: string;
 };
 
+/**
+ * @deprecated This component is deprecated and will be removed in the next major version.
+ */
 export const FormControl = ({
     label,
     children,

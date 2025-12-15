@@ -30,11 +30,13 @@ const ExtraActions: ExtraAction[] = [
 ];
 
 /**
- ### This component is deprecated, please use the [new Textarea component](/docs/current_components-textarea--documentation) instead.
+ ### *Legacy component warning*
+ #### This is a deprecated component. It will be removed in the next major version.
+ #### _**Use the [new Textarea component](/docs/current_components-textarea--documentation) instead.**_
  */
 // @ts-expect-error - type changed?
 export default {
-    title: 'Legacy Components/Textarea',
+    title: 'Legacy Components/Deprecated/Textarea',
     component: Textarea,
     tags: ['autodocs'],
     argTypes: {

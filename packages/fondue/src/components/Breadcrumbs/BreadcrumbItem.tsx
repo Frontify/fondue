@@ -25,12 +25,18 @@ const Separator = () => (
     </svg>
 );
 
+/*
+ * @deprecated This type is deprecated and will be removed in the next major version.
+ */
 type BreadcrumbItemProps = Pick<Breadcrumb, 'label' | 'link' | 'onClick' | 'decorator'> & {
     showSeparator: boolean;
     children?: ReactElement;
     'data-test-id'?: string;
 };
 
+/**
+ * @deprecated This component is deprecated and will be removed in the next major version.
+ */
 export const BreadcrumbItem = ({
     decorator,
     label,

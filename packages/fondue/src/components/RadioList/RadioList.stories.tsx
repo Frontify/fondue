@@ -8,7 +8,8 @@ import { RadioList, RadioListDirection, type RadioListProps } from './RadioList'
 
 /**
  ### *Legacy component warning*
- #### This is a deprecated component. It will be removed in an future release.
+ #### This is a deprecated component. It will be removed in the next major version.
+ #### _**Use the [new Radio List component](/docs/current_components-radiolist--documentation) instead.**_
  */
 export default {
     title: 'Legacy Components/Deprecated/RadioList',

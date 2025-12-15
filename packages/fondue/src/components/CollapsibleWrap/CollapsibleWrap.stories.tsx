@@ -10,13 +10,19 @@ import { type CollapsibleWrapProps } from './types';
 
 /**
  ### *Legacy component warning*
- #### This is a deprecated component. It will be removed in an future release.
+ #### This is a deprecated component. It will be removed in the next major version.
+ #### _**Use the [new Accordion component](/docs/current_components-accordion--documentation) instead.**_
  */
 export default {
     title: 'Legacy Components/Deprecated/Collapsible Wrap',
     component: CollapsibleWrapComponent,
     tags: ['autodocs'],
     args: { isOpen: true, animateOpacity: true },
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
+    },
 } as Meta<CollapsibleWrapProps>;
 
 export const CollapsibleWrap: StoryFn<CollapsibleWrapProps> = (args) => (

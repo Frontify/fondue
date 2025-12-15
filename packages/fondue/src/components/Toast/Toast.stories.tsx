@@ -11,7 +11,7 @@ import { ToastAnimationDirection, type ToastProps, ToastStyle } from './types';
 
 /**
  ### *Legacy component warning*
- #### This is a deprecated component. It will be removed in an future release.
+ #### This is a deprecated component. It will be removed in the next major version.
  */
 export default {
     title: 'Legacy Components/Deprecated/Toast',
@@ -36,6 +36,11 @@ export default {
         enableExitAnimation: { control: { type: 'boolean' }, defaultValue: false },
         icon: { table: { disable: true } },
         children: { table: { disable: true } },
+    },
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
     },
 } as Meta;
 
