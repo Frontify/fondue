@@ -3,7 +3,7 @@
 import { type ReactElement } from 'react';
 
 import { type DragHandlerPosition, type TreeItemStyling, type TreeProps } from '@components/Tree/types';
-import { type DraggableItem } from '@utilities/dnd';
+import { type DraggableItem } from '@utilities/dnd/types';
 
 export type RenderListItem<T> = (items: OrderableListItem<T>) => ReactElement;
 

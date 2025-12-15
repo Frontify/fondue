@@ -13,13 +13,9 @@ import { usePopper } from 'react-popper';
 import { getDisabledItemIds, getMenuItems, mapToAriaProps } from '@components/ActionMenu/Aria/helper';
 import { type MenuBlock, type MenuItemType, SelectMenu } from '@components/Dropdown/SelectMenu/SelectMenu';
 import { LoadingCircle, LoadingCircleSize } from '@components/LoadingCircle/LoadingCircle';
-import {
-    MenuItemContent,
-    MenuItemContentSize,
-    MenuItemStyle,
-    MenuItemTextColorState,
-    menuItemTextColorRecord,
-} from '@components/MenuItem';
+import { MenuItemContentSize, MenuItemStyle } from '@components/MenuItem';
+import { menuItemTextColorRecord, MenuItemTextColorState } from '@components/MenuItem/MenuItem';
+import { MenuItemContent } from '@components/MenuItem/MenuItemContent';
 import { Trigger, TriggerEmphasis, TriggerSize } from '@components/Trigger/Trigger';
 import { DEFAULT_DROPDOWN_MAX_HEIGHT, useDropdownAutoHeight } from '@hooks/useDropdownAutoHeight';
 import { useMemoizedId } from '@hooks/useMemoizedId';
