@@ -14,8 +14,6 @@ const BUTTON_TEXT = 'Button';
  */
 
 test.describe('Button Visual Regression', () => {
-    test.skip();
-
     test.describe('Variants', () => {
         test('default variant - strong emphasis', async ({ mount }) => {
             const wrapper = await mount(
