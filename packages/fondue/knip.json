@@ -1,5 +1,6 @@
 {
     "$schema": "https://unpkg.com/knip@5/schema.json",
+    "cypress": false,
     "entry": ["src/index.ts", "src/subpackages/*.ts"],
     "ignoreDependencies": [
         "@frontify/fondue-charts",
@@ -21,6 +22,6 @@
         "interface": true,
         "type": true
     },
-    "project": ["src/**/*.{ts,tsx,js,jsx}"],
+    "project": ["src/**/*.{ts,tsx,js,jsx}", "!src/**/*.cy.tsx", "!src/**/*.spec.{ts,tsx}"],
     "tags": ["-lintignore"]
 }

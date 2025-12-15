@@ -105,7 +105,8 @@
         "storybook": "storybook dev -p 6009",
         "ci": "pnpm install --frozen-lockfile",
         "run:tools": "tsx tools/index.ts",
-        "knip": "knip"
+        "knip": "knip",
+        "knip:fix": "knip --fix --allow-remove-files"
     },
     "peerDependencies": {
         "react": "^18",
