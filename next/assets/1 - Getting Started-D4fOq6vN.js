@@ -1,4 +1,4 @@
-import{j as e}from"./jsx-runtime-BsFSozwC.js";import{useMDXComponents as i}from"./index-aHwVinMw.js";import"./iframe-BH4_Y2So.js";import"./preload-helper-C1FmrZbK.js";function t(o){const n={a:"a",code:"code",h1:"h1",h2:"h2",h3:"h3",h4:"h4",li:"li",p:"p",pre:"pre",strong:"strong",ul:"ul",...i(),...o.components};return e.jsxs(e.Fragment,{children:[e.jsx(n.h1,{id:"getting-started",children:"Getting started"}),`
+import{j as e}from"./jsx-runtime-Oeh5bK3i.js";import{useMDXComponents as i}from"./index-DwWnXZ6f.js";import"./iframe-QxU37AYE.js";import"./preload-helper-C1FmrZbK.js";function t(o){const n={a:"a",code:"code",h1:"h1",h2:"h2",h3:"h3",h4:"h4",li:"li",p:"p",pre:"pre",strong:"strong",ul:"ul",...i(),...o.components};return e.jsxs(e.Fragment,{children:[e.jsx(n.h1,{id:"getting-started",children:"Getting started"}),`
 `,e.jsxs(n.p,{children:["Welcome to Fondue, the design system for the ",e.jsx(n.a,{href:"https://frontify.com",rel:"nofollow",children:"Frontify"})," ecosystem."]}),`
 `,e.jsx(n.h2,{id:"installation",children:"Installation"}),`
 `,e.jsx(n.p,{children:"Add the Fondue design system package as a dependency to your project."}),`
@@ -35,6 +35,9 @@ import '@frontify/fondue/components/styles';
 
 // legacy component styles
 import '@frontify/fondue/styles';
+
+// rte styles
+import '@frontify/fondue/rte/styles';
 `})}),`
 `,e.jsx(n.h4,{id:"font-family",children:"Font Family"}),`
 `,e.jsx(n.p,{children:"Due to licensing restrictions, we cannot provide the fonts in the package. You therefore need to define the font faces in your application."}),`

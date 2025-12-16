@@ -1,4 +1,4 @@
-import{j as e}from"./jsx-runtime-BsFSozwC.js";import{useMDXComponents as s}from"./index-aHwVinMw.js";import"./iframe-BH4_Y2So.js";import"./preload-helper-C1FmrZbK.js";function i(o){const n={a:"a",blockquote:"blockquote",code:"code",h1:"h1",h2:"h2",h3:"h3",li:"li",ol:"ol",p:"p",pre:"pre",ul:"ul",...s(),...o.components};return e.jsxs(e.Fragment,{children:[e.jsx(n.h1,{id:"how-to-contribute",children:"How to contribute"}),`
+import{j as e}from"./jsx-runtime-Oeh5bK3i.js";import{useMDXComponents as s}from"./index-DwWnXZ6f.js";import"./iframe-QxU37AYE.js";import"./preload-helper-C1FmrZbK.js";function i(o){const n={a:"a",blockquote:"blockquote",code:"code",h1:"h1",h2:"h2",h3:"h3",li:"li",ol:"ol",p:"p",pre:"pre",ul:"ul",...s(),...o.components};return e.jsxs(e.Fragment,{children:[e.jsx(n.h1,{id:"how-to-contribute",children:"How to contribute"}),`
 `,e.jsx(n.h2,{id:"running-fondue-locally",children:"Running Fondue locally"}),`
 `,e.jsxs(n.ol,{children:[`
 `,e.jsx(n.li,{children:"Clone the Git repository"}),`
