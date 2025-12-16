@@ -3,7 +3,6 @@
 import * as Separator from '@radix-ui/react-separator';
 import { forwardRef, type ForwardedRef, type ReactElement } from 'react';
 
-import borderStyles from './styles/borderStyles.module.scss';
 import styles from './styles/divider.module.scss';
 
 type DividerStyle = 'noline' | 'dashed' | 'solid';
@@ -66,7 +65,7 @@ export const Divider = forwardRef<HTMLDivElement, DividerProps>(
         return (
             <Separator.Root
                 ref={ref}
-                className={`${styles.root} ${borderStyles.root} ${className}`}
+                className={`${styles.root} ${className}`}
                 data-variant={variant}
                 data-color={color}
                 data-padding={padding}

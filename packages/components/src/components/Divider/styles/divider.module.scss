@@ -44,6 +44,45 @@
 
     &[data-variant='dashed'] {
         border-style: dashed;
+
+        // Custom dashed pattern with precise dash/gap sizing
+        &[data-color='weak'] {
+            --divider-color: var(--color-line-subtle);
+        }
+
+        &[data-color='default'] {
+            --divider-color: var(--color-line-mid);
+        }
+
+        &[data-color='strong'] {
+            --divider-color: var(--color-line-strong);
+        }
+
+        &[data-color='x-strong'] {
+            --divider-color: var(--color-line-strong);
+        }
+
+        &[data-orientation='horizontal'] {
+            border-image: repeating-linear-gradient(
+                    90deg,
+                    /* 4px dash */
+                    var(--divider-color) 0 4px,
+                    /* 3px gap (7px - 4px) */
+                    transparent 4px 7px
+                )
+                1;
+        }
+
+        &[data-orientation='vertical'] {
+            border-image: repeating-linear-gradient(
+                    0deg,
+                    /* 4px dash */
+                    var(--divider-color) 0 4px,
+                    /* 3px gap (7px - 4px) */
+                    transparent 4px 7px
+                )
+                1;
+        }
     }
 
     &[data-variant='noline'] {
