@@ -1,0 +1,1 @@
+const r=t=>t.filter(Boolean).join(" "),s=(...t)=>{const n=t.filter(Boolean);return n.length<=1?n[0]??null:function(f){for(const e of n)typeof e=="function"?e(f):e&&(e.current=f)}};export{s as a,r as m};
