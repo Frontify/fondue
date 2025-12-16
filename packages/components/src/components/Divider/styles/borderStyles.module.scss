@@ -3,19 +3,19 @@
 .root {
     &[data-variant="dashed"] {
         &[data-color="weak"] {
-            --divider-color: var(--line-color-weak);
+            --divider-color: var(--color-line-subtle);
         }
 
         &[data-color="default"] {
-            --divider-color: var(--line-color);
+            --divider-color: var(--color-line-mid);
         }
 
         &[data-color="strong"] {
-            --divider-color: var(--line-color-strong);
+            --divider-color: var(--color-line-strong);
         }
 
         &[data-color="x-strong"] {
-            --divider-color: var(--line-color-x-strong);
+            --divider-color: var(--color-line-strong);
         }
 
         &[data-orientation="horizontal"] {

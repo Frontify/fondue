@@ -3,10 +3,8 @@
 import * as Separator from '@radix-ui/react-separator';
 import { forwardRef, type ForwardedRef, type ReactElement } from 'react';
 
-import { cn } from '#/utilities/styleUtilities';
-
 import borderStyles from './styles/borderStyles.module.scss';
-import { dividerStyles } from './styles/dividerStyles';
+import styles from './styles/divider.module.scss';
 
 type DividerStyle = 'noline' | 'dashed' | 'solid';
 type DividerPadding = 'none' | 'small' | 'medium' | 'large';
@@ -54,12 +52,12 @@ export const Divider = forwardRef<HTMLDivElement, DividerProps>(
         {
             'data-test-id': dataTestId = 'fondue-divider',
             direction = 'horizontal',
-            className,
-            variant,
-            color,
+            padding = 'medium',
+            className = '',
+            variant = 'solid',
+            color = 'default',
             as = 'div',
             decorative,
-            ...props
         }: DividerProps,
         ref: ForwardedRef<HTMLDivElement | null>,
     ): ReactElement => {
@@ -68,18 +66,10 @@ export const Divider = forwardRef<HTMLDivElement, DividerProps>(
         return (
             <Separator.Root
                 ref={ref}
-                className={cn(
-                    dividerStyles({
-                        direction,
-                        variant,
-                        color,
-                        ...props,
-                    }),
-                    borderStyles.root,
-                    className,
-                )}
+                className={`${styles.root} ${borderStyles.root} ${className}`}
                 data-variant={variant}
                 data-color={color}
+                data-padding={padding}
                 data-test-id={dataTestId}
                 decorative={decorative}
                 data-orientation={direction}
