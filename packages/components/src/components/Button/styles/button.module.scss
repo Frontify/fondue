@@ -60,6 +60,19 @@
             }
 
             line-height: 0;
+
+            // Forced colors mode support
+            @media (forced-colors: active) {
+                color: CanvasText;
+
+                .root:hover & {
+                    color: CanvasText;
+                }
+
+                .root:active & {
+                    color: CanvasText;
+                }
+            }
         }
     }
 }
@@ -120,6 +133,19 @@
             }
 
             line-height: 0;
+
+            // Forced colors mode support
+            @media (forced-colors: active) {
+                color: CanvasText;
+
+                .root:hover & {
+                    color: CanvasText;
+                }
+
+                .root:active & {
+                    color: CanvasText;
+                }
+            }
         }
     }
 }
@@ -141,6 +167,11 @@
     & {
         @include focusStyle.focus-outline;
         @include transitions.transition-colors;
+    }
+
+    // Forced colors mode support
+    @media (forced-colors: active) {
+        border: 1px solid ButtonText;
     }
 
     // Default variant - default emphasis
@@ -308,6 +339,19 @@
             }
 
             line-height: 0;
+
+            // Forced colors mode support
+            @media (forced-colors: active) {
+                color: CanvasText;
+
+                .root:hover & {
+                    color: CanvasText;
+                }
+
+                .root:active & {
+                    color: CanvasText;
+                }
+            }
         }
     }
 
@@ -384,6 +428,11 @@
 
         & svg {
             color: var(--color-container-disabled-on-disabled-container);
+
+            // Forced colors mode support
+            @media (forced-colors: active) {
+                color: GrayText;
+            }
         }
     }
 }
