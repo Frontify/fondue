@@ -1,8 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
 import { type StorybookConfig } from '@storybook/react-vite';
 
 const pathPrefix = process.env.STORYBOOK_PATH_PREFIX || '/';
+
+const getAbsolutePath = (packageName: string): string => {
+    return dirname(fileURLToPath(import.meta.resolve(packageName)));
+};
 
 const config: StorybookConfig = {
     stories: ['../stories/**/*.mdx', '../stories/**/*.stories.@(ts|tsx)'],
@@ -101,6 +108,26 @@ const config: StorybookConfig = {
                 url: `${pathPrefix}rte`,
                 expanded: true,
             },
+        };
+    },
+    viteFinal: (viteConfig) => {
+        const mdxReactShimPath = join(getAbsolutePath('@storybook/addon-docs'), 'mdx-react-shim.js');
+
+        return {
+            ...viteConfig,
+            plugins: [
+                ...(viteConfig.plugins ?? []),
+                {
+                    name: 'fix-mdx-file-imports',
+                    enforce: 'pre',
+                    resolveId(source) {
+                        if (source.startsWith('file://') && source.includes('mdx-react-shim')) {
+                            return mdxReactShimPath;
+                        }
+                        return null;
+                    },
+                },
+            ],
         };
     },
 };
