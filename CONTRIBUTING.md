@@ -23,10 +23,12 @@ This Storybook instance is configured and served from the `/storybook-docs` pack
 
 In the background, multiple instances of Storybook will start up, one for each component package in the monorepo.
 
--   Storybook for `@frontify/fondue-components` will be available on port 6006
--   Storybook for `@frontify/fondue-icons` will be available on port 6007
--   Storybook for `@frontify/fondue-charts` will be available on port 6008
--   Storybook for `@frontify/fondue` will be available on port 6009
+- Storybook for `@frontify/fondue-tokens` will be available on port 6005
+- Storybook for `@frontify/fondue-components` will be available on port 6006
+- Storybook for `@frontify/fondue-icons` will be available on port 6007
+- Storybook for `@frontify/fondue-charts` will be available on port 6008
+- Storybook for `@frontify/fondue-rte` will be available on port 6011
+- Storybook for `@frontify/fondue` will be available on port 6009
 
 You can also start the Storybook instances for the individual packages by running `pnpm storybook` in the respective package directory.
 
@@ -59,9 +61,9 @@ pnpm create:component FancyComponent
 
 This will add a folder inside `src/components` with the name `CoolCatsAndKittens` and three files:
 
--   `CoolCatsAndKittens.tsx` which is where your React magic happens 🧙‍♀️
--   `CoolCatsAndKittens.spec.tsx` is the place to write your tests 🔬
--   `CoolCatsAndKittens.stories.tsx` is for your Stories inside Storybook 📄
+- `CoolCatsAndKittens.tsx` which is where your React magic happens 🧙‍♀️
+- `CoolCatsAndKittens.spec.tsx` is the place to write your tests 🔬
+- `CoolCatsAndKittens.stories.tsx` is for your Stories inside Storybook 📄
 
 ## Building packages
 
@@ -70,10 +72,10 @@ To build the packages, run `pnpm build` in the respective package directory.
 
 Alternatively you can run the following scripts in the root directory.
 
--   `pnpm build:components`
--   `pnpm build:fondue`
--   `pnpm build:icons`
--   `pnpm build:charts`
+- `pnpm build:components`
+- `pnpm build:fondue`
+- `pnpm build:icons`
+- `pnpm build:charts`
 
 ## Releasing packages
 
@@ -83,15 +85,15 @@ To bump the version of a package, run `pnpm changeset` in the root directory and
 
 When creating your changeset, please prefix the description with "When creating your changeset, please prefix the description with one of the following:
 
--   `feat:` for a new feature
--   `fix:` for a bug fix
--   `chore:` for changes to the build process or auxiliary tools and libraries such as documentation generation
--   `docs:` for documentation only changes
--   `build:` for changes that affect the build system or external dependencies
--   `refactor:` for a code change that neither fixes a bug nor adds a feature
--   `perf:` for a code change that improves performance
--   `test:` for adding missing tests or correcting existing tests
--   `ci:` for changes to our CI configuration files and scripts
+- `feat:` for a new feature
+- `fix:` for a bug fix
+- `chore:` for changes to the build process or auxiliary tools and libraries such as documentation generation
+- `docs:` for documentation only changes
+- `build:` for changes that affect the build system or external dependencies
+- `refactor:` for a code change that neither fixes a bug nor adds a feature
+- `perf:` for a code change that improves performance
+- `test:` for adding missing tests or correcting existing tests
+- `ci:` for changes to our CI configuration files and scripts
 
 These prefixes help to quickly identify the type of changes included in the release. The description should be easily readable and understandable. Clear and concise descriptions help others to understand the changes you've made and their impact on the project.
 
