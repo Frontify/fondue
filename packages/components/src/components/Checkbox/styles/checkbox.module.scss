@@ -51,6 +51,7 @@
 
             &:enabled:hover {
                 background-color: var(--color-highlight-hover);
+                border-color: transparent;
             }
 
             &:enabled:active {
@@ -67,6 +68,7 @@
 
             &:enabled:hover {
                 background-color: var(--color-primary-hover);
+                border-color: transparent;
             }
 
             &:enabled:active {
