@@ -1,1 +1,0 @@
-import{e as t}from"./iframe-DDbaHXd8.js";function o(n){return!!n&&typeof n=="object"&&"props"in n&&n.props!=null}function p(n){return t.Children.toArray(n).flatMap(function(r){return typeof r=="object"&&"props"in r&&r.props.children?r.props.children:r}).filter(function(r){return o(r)})}export{p as g};
