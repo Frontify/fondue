@@ -1,0 +1,6 @@
+import{H as i}from"./Heading-sxrFJKPX.js";import"./iframe-C3oeNlJC.js";import"./preload-helper-mNEUNaaY.js";import"./styleUtilities-A7Ia-tuh.js";const g={title:"Typography/Heading",component:i,tags:["autodocs"],parameters:{status:{type:"released"}},args:{},argTypes:{as:{type:"string",control:"select",options:[void 0,"span","p","h1","h2","h3","h4","h5","h6"]},color:{type:"string",control:"select",options:[void 0,"default","weak","x-weak","disabled","negative","positive","warning","interactive"]},size:{type:"string",control:"select",options:[void 0,"medium","large","x-large","xx-large"]},weight:{type:"string",control:"select",options:[void 0,"default","strong"]},"data-test-id":{type:"string",control:"text"}}},e={args:{children:"Hello World"}};var t,o,r;e.parameters={...e.parameters,docs:{...(t=e.parameters)==null?void 0:t.docs,source:{code:`const Default = () => <Heading>Hello World</Heading>;
+`,...(r=(o=e.parameters)==null?void 0:o.docs)==null?void 0:r.source}}};var a,s,n;e.parameters={...e.parameters,docs:{...(a=e.parameters)==null?void 0:a.docs,source:{originalSource:`{
+  args: {
+    children: 'Hello World'
+  }
+}`,...(n=(s=e.parameters)==null?void 0:s.docs)==null?void 0:n.source}}};const m=["Default"];export{e as Default,m as __namedExportsOrder,g as default};
