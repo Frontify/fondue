@@ -3,8 +3,6 @@
 import * as RadixTooltip from '@radix-ui/react-tooltip';
 import { forwardRef, type ForwardedRef, type ReactElement, type ReactNode } from 'react';
 
-import { cn } from '#/utilities/styleUtilities';
-
 import { ThemeProvider, useFondueTheme } from '../ThemeProvider/ThemeProvider';
 
 import styles from './styles/tooltip.module.scss';
@@ -115,7 +113,7 @@ export const TooltipContent = (
                     dir={dir}
                     data-test-id={dataTestId}
                     data-tooltip-spacing={padding}
-                    className={cn(styles.root, className)}
+                    className={`${styles.root} ${className}`}
                     style={{ maxWidth }}
                     collisionPadding={16}
                     sideOffset={8}

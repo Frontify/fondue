@@ -17,7 +17,6 @@ import {
 } from 'react';
 
 import { useSyncRefs } from '#/hooks/useSyncRefs';
-import { cn } from '#/utilities/styleUtilities';
 
 import styles from './styles/textarea.module.scss';
 
@@ -278,7 +277,7 @@ export const TextareaSlot = (
     { name, className, ...slotProps }: TextareaSlotProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
-    return <div data-slot data-name={name} {...slotProps} ref={forwardedRef} className={cn(styles.slot, className)} />;
+    return <div data-slot data-name={name} {...slotProps} ref={forwardedRef} className={`${styles.slot} ${className}`} />;
 };
 
 TextareaSlot.displayName = 'Textarea.Slot';

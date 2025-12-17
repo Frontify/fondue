@@ -12,8 +12,6 @@ import {
     type SyntheticEvent,
 } from 'react';
 
-import { cn } from '#/utilities/styleUtilities';
-
 import { LoadingCircle } from '../LoadingCircle/LoadingCircle';
 
 import styles from './styles/text.module.scss';
@@ -124,7 +122,7 @@ export const TextFieldRoot = (
     const wasClicked = useRef(false);
 
     return (
-        <div className={cn(styles.root, className)} data-status={status} data-test-id={dataTestId}>
+        <div className={`${styles.root} ${className}`} data-status={status} data-test-id={dataTestId}>
             {status === 'loading' ? (
                 <div className={styles.loadingStatus} data-test-id={`${dataTestId}-loader`}>
                     <LoadingCircle size="xx-small" />
@@ -186,7 +184,7 @@ export const TextFieldSlot = (
     { name, className, ...slotProps }: TextFieldSlotProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
-    return <div data-slot data-name={name} {...slotProps} ref={forwardedRef} className={cn(styles.slot, className)} />;
+    return <div data-slot data-name={name} {...slotProps} ref={forwardedRef} className={`${styles.slot} ${className}`} />;
 };
 
 TextFieldSlot.displayName = 'TextField.Slot';
