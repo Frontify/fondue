@@ -122,7 +122,11 @@ export const TextFieldRoot = (
     const wasClicked = useRef(false);
 
     return (
-        <div className={[styles.root, className].filter(Boolean).join(' ')} data-status={status} data-test-id={dataTestId}>
+        <div
+            className={[styles.root, className].filter(Boolean).join(' ')}
+            data-status={status}
+            data-test-id={dataTestId}
+        >
             {status === 'loading' ? (
                 <div className={styles.loadingStatus} data-test-id={`${dataTestId}-loader`}>
                     <LoadingCircle size="xx-small" />
@@ -184,7 +188,15 @@ export const TextFieldSlot = (
     { name, className, ...slotProps }: TextFieldSlotProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
-    return <div data-slot data-name={name} {...slotProps} ref={forwardedRef} className={[styles.slot, className].filter(Boolean).join(' ')} />;
+    return (
+        <div
+            data-slot
+            data-name={name}
+            {...slotProps}
+            ref={forwardedRef}
+            className={[styles.slot, className].filter(Boolean).join(' ')}
+        />
+    );
 };
 
 TextFieldSlot.displayName = 'TextField.Slot';
