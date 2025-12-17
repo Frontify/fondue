@@ -19,6 +19,7 @@ export default {
         '@storybook/addon-links',
         '@storybook/addon-a11y',
         '@storybook/addon-docs',
+        '@storybook/addon-mcp',
     ],
     framework: {
         name: '@storybook/react-vite',
@@ -28,6 +29,8 @@ export default {
         backgrounds: false,
         outline: false,
         measure: false,
+        experimentalComponentsManifest: true,
+        experimentalCodeExamples: true,
     },
     docs: {
         defaultName: 'Documentation',
