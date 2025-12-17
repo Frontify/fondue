@@ -277,7 +277,7 @@ export const TextareaSlot = (
     { name, className, ...slotProps }: TextareaSlotProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
-    return <div data-slot data-name={name} {...slotProps} ref={forwardedRef} className={`${styles.slot} ${className}`} />;
+    return <div data-slot data-name={name} {...slotProps} ref={forwardedRef} className={[styles.slot, className].filter(Boolean).join(' ')} />;
 };
 
 TextareaSlot.displayName = 'Textarea.Slot';

@@ -89,7 +89,7 @@ const RadioListRadioButton = ({
                 }
             }}
             aria-readonly={readOnly}
-            className={`${styles.peer} ${styles.item}`}
+            className={styles.item}
             data-readonly={readOnly}
             data-test-id={dataTestId}
             disabled={disabled}
