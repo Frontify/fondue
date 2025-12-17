@@ -1,11 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ReactElement, type ReactNode } from 'react';
-
 import { type LegacyTooltipProps } from '@components/LegacyTooltip/LegacyTooltip';
 import { TooltipIcon, type TooltipIconProps } from '@components/TooltipIcon/TooltipIcon';
-import { IconSize } from '@foundation/Icon/IconSize';
 import { merge } from '@utilities/merge';
+import { type ReactElement, type ReactNode } from 'react';
 
 /**
  * @deprecated Use `Label` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#label-old-inputlabel the migration guide}.
@@ -85,7 +83,7 @@ export const InputLabel = ({
                 <div key={key} className="tw-leading-3">
                     <TooltipIcon
                         tooltip={{ ...tooltipProps, hoverDelay }}
-                        iconSize={IconSize.Size16}
+                        iconSize={16}
                         triggerIcon={triggerIcon}
                         triggerStyle={triggerStyle}
                     />

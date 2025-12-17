@@ -1,20 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ReactElement, cloneElement } from 'react';
-
 import { LegacyTooltip, type LegacyTooltipProps } from '@components/LegacyTooltip/LegacyTooltip';
-import IconQuestionMarkCircle from '@foundation/Icon/Generated/IconQuestionMarkCircle';
-import { type IconProps } from '@foundation/Icon/IconProps';
-import { IconSize } from '@foundation/Icon/IconSize';
+import { type IconIcon, IconQuestionMarkCircle } from '@frontify/fondue-icons';
 import { merge } from '@utilities/merge';
+import { type ComponentProps, type ReactElement, cloneElement } from 'react';
 
+type FondueIconProps = ComponentProps<typeof IconIcon>;
 /**
  * @deprecated Please use updated tooltip component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tooltip the migration guide}.
  */
 export type TooltipIconProps = {
     tooltip?: LegacyTooltipProps;
-    iconSize?: IconSize;
-    triggerIcon?: ReactElement<IconProps>;
+    iconSize?: FondueIconProps['size'];
+    triggerIcon?: ReactElement<FondueIconProps>;
     triggerStyle?: TooltipIconTriggerStyle | 'danger' | 'warning' | 'primary';
     'data-test-id'?: string;
 };
@@ -48,7 +46,7 @@ const tooltipHoverClasses = {
  */
 export const TooltipIcon = ({
     tooltip,
-    iconSize = IconSize.Size16,
+    iconSize = 16,
     triggerIcon = <IconQuestionMarkCircle />,
     triggerStyle = TooltipIconTriggerStyle.Primary,
     'data-test-id': dataTestId = 'tooltip-icon',
