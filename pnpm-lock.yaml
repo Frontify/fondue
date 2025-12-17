@@ -73,8 +73,8 @@ importers:
         specifier: ^7.28.4
         version: 7.28.4
       '@etchteam/storybook-addon-status':
-        specifier: ^7.0.1
-        version: 7.0.1(storybook@10.1.9(@testing-library/dom@10.4.1)(prettier@3.6.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+        specifier: ^8.0.0
+        version: 8.0.0(storybook@10.1.9(@testing-library/dom@10.4.1)(prettier@3.6.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
       '@frontify/eslint-config-react':
         specifier: ^1.0.4
         version: 1.0.4(@types/eslint@8.56.9)(eslint@9.37.0(jiti@1.21.7))(prettier@3.6.2)(react@18.3.1)(ts-api-utils@2.1.0(typescript@5.9.3))(typescript@5.9.3)
@@ -251,8 +251,8 @@ importers:
         specifier: ^7.28.4
         version: 7.28.4
       '@etchteam/storybook-addon-status':
-        specifier: ^7.0.1
-        version: 7.0.1(storybook@10.1.9(@testing-library/dom@10.4.1)(prettier@3.6.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+        specifier: ^8.0.0
+        version: 8.0.0(storybook@10.1.9(@testing-library/dom@10.4.1)(prettier@3.6.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
       '@frontify/eslint-config-react':
         specifier: ^1.0.4
         version: 1.0.4(@types/eslint@8.56.9)(eslint@9.37.0(jiti@2.6.1))(prettier@3.6.2)(react@18.3.1)(ts-api-utils@2.1.0(typescript@5.9.3))(typescript@5.9.3)
@@ -594,8 +594,8 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3(cypress@14.5.4)
       '@etchteam/storybook-addon-status':
-        specifier: ^7.0.1
-        version: 7.0.1(storybook@10.1.9(@testing-library/dom@10.4.1)(prettier@3.6.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+        specifier: ^8.0.0
+        version: 8.0.0(storybook@10.1.9(@testing-library/dom@10.4.1)(prettier@3.6.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
       '@frontify/eslint-config-react':
         specifier: ^1.0.4
         version: 1.0.4(@types/eslint@8.56.9)(eslint@9.37.0(jiti@2.6.1))(prettier@3.6.2)(react@18.3.1)(ts-api-utils@2.1.0(typescript@5.9.3))(typescript@5.9.3)
@@ -748,8 +748,8 @@ importers:
         specifier: ^7.28.4
         version: 7.28.4
       '@etchteam/storybook-addon-status':
-        specifier: ^7.0.1
-        version: 7.0.1(storybook@10.1.9(@testing-library/dom@10.4.1)(prettier@3.6.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+        specifier: ^8.0.0
+        version: 8.0.0(storybook@10.1.9(@testing-library/dom@10.4.1)(prettier@3.6.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
       '@frontify/eslint-config-react':
         specifier: ^1.0.4
         version: 1.0.4(@types/eslint@8.56.9)(eslint@9.37.0(jiti@2.6.1))(prettier@3.6.2)(react@18.3.1)(ts-api-utils@2.1.0(typescript@5.9.3))(typescript@5.9.3)
@@ -1070,8 +1070,8 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3(cypress@14.5.4)
       '@etchteam/storybook-addon-status':
-        specifier: ^7.0.1
-        version: 7.0.1(storybook@10.1.9(@testing-library/dom@10.4.1)(prettier@3.6.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+        specifier: ^8.0.0
+        version: 8.0.0(storybook@10.1.9(@testing-library/dom@10.4.1)(prettier@3.6.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
       '@frontify/eslint-config-react':
         specifier: ^1.0.4
         version: 1.0.4(@types/eslint@8.56.9)(eslint@9.37.0(jiti@2.6.1))(prettier@3.6.2)(react@18.3.1)(ts-api-utils@2.1.0(typescript@5.9.3))(typescript@5.9.3)
@@ -1318,8 +1318,8 @@ importers:
         specifier: ^7.28.4
         version: 7.28.4
       '@etchteam/storybook-addon-status':
-        specifier: ^7.0.1
-        version: 7.0.1(storybook@10.1.9(@testing-library/dom@10.4.1)(prettier@3.6.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+        specifier: ^8.0.0
+        version: 8.0.0(storybook@10.1.9(@testing-library/dom@10.4.1)(prettier@3.6.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
       '@frontify/eslint-config-react':
         specifier: ^1.0.4
         version: 1.0.4(@types/eslint@8.56.9)(eslint@9.37.0(jiti@2.6.1))(prettier@3.6.2)(react@18.3.1)(ts-api-utils@2.1.0(typescript@5.9.3))(typescript@5.9.3)
@@ -2643,10 +2643,10 @@ packages:
     resolution: {integrity: sha512-sB5uyeq+dwCWyPi31B2gQlVlo+j5brPlWx4yZBrEaRo/nhdDE8Xke1gsGgtiBdaBTxuTkceLVuVt/pclrasb0A==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
-  '@etchteam/storybook-addon-status@7.0.1':
-    resolution: {integrity: sha512-KF3wwb2MICgq3mYFFvMGRbG6eo4iq8xbZ+UyrFyIPFN9+ehJRKpiKR+Ku2PebyIuQGPl7qMICa9bkwboL/iutQ==}
+  '@etchteam/storybook-addon-status@8.0.0':
+    resolution: {integrity: sha512-PR0qiT5ndB32rfRi3a6QJE66sUuTD2GeJMmQFdaEOLjTWuJ/usdZ6hXXCmWadPLZXcg6wkvHGFQxDSOKNVjU9A==}
     peerDependencies:
-      storybook: ^9.0.0
+      storybook: ^10.0.0
 
   '@floating-ui/core@1.7.3':
     resolution: {integrity: sha512-sGnvb5dmrJaKEZ+LDIpguvdX3bDlEllmv4/ClQ9awcmCZrlx5jQyyMWFM5kBI+EyNOCDDiKk8il0zeuX3Zlg/w==}
@@ -12510,7 +12510,7 @@ snapshots:
       '@eslint/core': 0.16.0
       levn: 0.4.1
 
-  '@etchteam/storybook-addon-status@7.0.1(storybook@10.1.9(@testing-library/dom@10.4.1)(prettier@3.6.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
+  '@etchteam/storybook-addon-status@8.0.0(storybook@10.1.9(@testing-library/dom@10.4.1)(prettier@3.6.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
     dependencies:
       lodash: 4.17.21
       storybook: 10.1.9(@testing-library/dom@10.4.1)(prettier@3.6.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)

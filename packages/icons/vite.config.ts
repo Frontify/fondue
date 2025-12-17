@@ -16,6 +16,13 @@ const globals = {
 
 export default defineConfig({
     plugins: [react(), tsConfigPaths(), dts({ insertTypesEntry: true, exclude: ['**/*.stories.tsx'] })],
+    css: {
+        preprocessorOptions: {
+            scss: {
+                api: 'modern-compiler',
+            },
+        },
+    },
     build: {
         lib: {
             entry: './src/index.ts',
