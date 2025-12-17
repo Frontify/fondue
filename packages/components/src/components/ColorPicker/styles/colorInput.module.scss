@@ -28,27 +28,15 @@
         @include transitions.transition-colors;
     }
 
-    button:not(:hover) .clearIcon {
-        color: var(--color-secondary-default);
-    }
-
     &:hover {
         border-color: var(--color-line-strong);
         color: var(--color-secondary-default);
-
-        button:not(:hover) .clearIcon {
-            color: var(--color-secondary-default);
-        }
     }
 
     &:has(:focus-visible),
     &:has([data-state='open']) {
         border-color: var(--color-line-strong);
         color: var(--color-line-strong);
-
-        button:not(:hover) .clearIcon {
-            color: var(--color-secondary-default);
-        }
 
         .caret {
             transform: rotate(180deg);
@@ -65,10 +53,6 @@
         background-color: var(--color-container-disabled-default);
         color: var(--color-disabled-default);
         cursor: default;
-
-        button .clearIcon {
-            color: var(--color-disabled-default);
-        }
 
         .colorName {
             color: var(--color-disabled-default);
@@ -132,6 +116,15 @@
 
     & > button:has(.clearIcon) {
         pointer-events: all;
+    }
+
+    button:not(:hover) .clearIcon {
+        color: var(--color-secondary-default) !important;
+    }
+
+    .root:has(:disabled) button .clearIcon,
+    .root[data-disabled='true'] button .clearIcon {
+        color: var(--color-disabled-default) !important;
     }
 }
 
