@@ -1,9 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type ReactElement, type ReactNode, cloneElement, isValidElement } from 'react';
+
 import { InputLabel, type InputLabelProps } from '@components/InputLabel/InputLabel';
 import { merge } from '@utilities/merge';
 import { Validation } from '@utilities/validation';
-import { type ReactElement, type ReactNode, cloneElement, isValidElement } from 'react';
 /**
  * @deprecated Please use a custom component instead.
  */

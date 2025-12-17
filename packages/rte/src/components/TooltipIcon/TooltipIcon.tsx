@@ -1,9 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { LegacyTooltip, type LegacyTooltipProps } from '@components/LegacyTooltip/LegacyTooltip';
 import { IconQuestionMarkCircle, type FondueIconProps as IconProps, IconSize } from '@frontify/fondue-icons';
-import { merge } from '@utilities/merge';
 import { type ReactElement, cloneElement } from 'react';
+
+import { LegacyTooltip, type LegacyTooltipProps } from '@components/LegacyTooltip/LegacyTooltip';
+import { merge } from '@utilities/merge';
 
 export type TooltipIconProps = {
     tooltip?: LegacyTooltipProps;
