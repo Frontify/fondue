@@ -1,0 +1,87 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+@keyframes loading-bar-infinite {
+    0% {
+        transform: translateX(0) scaleX(0);
+    }
+    40% {
+        transform: translateX(0) scaleX(0.4);
+    }
+    100% {
+        transform: translateX(100%) scaleX(0.5);
+    }
+}
+
+.container {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+
+    // Rounded variant
+    &[data-rounded='true'] {
+        border-radius: var(--border-radius-medium);
+    }
+
+    // Size variants
+    &[data-size='small'] {
+        height: 0.25rem; // 1 * 0.25rem (h-1)
+    }
+
+    &[data-size='medium'] {
+        height: 0.5rem; // 2 * 0.25rem (h-2)
+    }
+
+    &[data-size='large'] {
+        height: 0.75rem; // 3 * 0.25rem (h-3)
+    }
+
+    &[data-size='x-large'] {
+        height: 1rem; // 4 * 0.25rem (h-4)
+    }
+
+    // Color variants
+    &[data-variant='default'] {
+        background-color: var(--color-container-highlight-default);
+    }
+
+    &[data-variant='positive'] {
+        background-color: var(--color-container-success-default);
+    }
+
+    &[data-variant='negative'] {
+        background-color: var(--color-container-error-default);
+    }
+}
+
+.indicator {
+    height: 100%;
+    width: 100%;
+
+    // Color variants
+    &[data-variant='default'] {
+        background-color: var(--color-highlight-default);
+    }
+
+    &[data-variant='positive'] {
+        background-color: var(--color-success-default);
+    }
+
+    &[data-variant='negative'] {
+        background-color: var(--color-error-default);
+    }
+
+    // Indeterminate state (null value)
+    &[data-indeterminate='true'] {
+        animation: loading-bar-infinite 1s infinite linear;
+        transform-origin: 0% 50%;
+    }
+
+    // Determinate state (has value)
+    &[data-indeterminate='false'] {
+        transition-property: all;
+        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        transition-duration: 150ms;
+        transform-origin: left;
+        transform: scaleX(var(--loading-bar-proportion));
+    }
+}
