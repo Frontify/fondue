@@ -24,11 +24,6 @@
     }
 }
 
-// Peer class for sibling selector support (replaces Tailwind's tw-peer)
-// This is an empty marker class that can be referenced by sibling selectors
-.peer {
-}
-
 .item {
     all: unset;
     width: 1rem;
