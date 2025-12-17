@@ -1,14 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconQuestionMarkCircle, type FondueIconProps as IconProps, IconSize } from '@frontify/fondue-icons';
-import { type ReactElement, cloneElement } from 'react';
-
 import { LegacyTooltip, type LegacyTooltipProps } from '@components/LegacyTooltip/LegacyTooltip';
+import { IconQuestionMarkCircle, type FondueIconProps as IconProps, IconSize } from '@frontify/fondue-icons';
 import { merge } from '@utilities/merge';
+import { type ReactElement, cloneElement } from 'react';
 
 export type TooltipIconProps = {
     tooltip?: LegacyTooltipProps;
-    iconSize?: IconSize;
+    iconSize?: IconProps['size'];
     triggerIcon?: ReactElement<IconProps>;
     triggerStyle?: TooltipIconTriggerStyle | 'danger' | 'warning' | 'primary';
     'data-test-id'?: string;

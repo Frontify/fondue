@@ -1,18 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { LegacyTooltip, type LegacyTooltipProps } from '@components/LegacyTooltip/LegacyTooltip';
-import { type IconIcon, IconQuestionMarkCircle } from '@frontify/fondue-icons';
+import { type FondueIconProps as IconProps, IconQuestionMarkCircle } from '@frontify/fondue-icons';
 import { merge } from '@utilities/merge';
-import { type ComponentProps, type ReactElement, cloneElement } from 'react';
+import { type ReactElement, cloneElement } from 'react';
 
-type FondueIconProps = ComponentProps<typeof IconIcon>;
 /**
  * @deprecated Please use updated tooltip component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tooltip the migration guide}.
  */
 export type TooltipIconProps = {
     tooltip?: LegacyTooltipProps;
-    iconSize?: FondueIconProps['size'];
-    triggerIcon?: ReactElement<FondueIconProps>;
+    iconSize?: IconProps['size'];
+    triggerIcon?: ReactElement<IconProps>;
     triggerStyle?: TooltipIconTriggerStyle | 'danger' | 'warning' | 'primary';
     'data-test-id'?: string;
 };
