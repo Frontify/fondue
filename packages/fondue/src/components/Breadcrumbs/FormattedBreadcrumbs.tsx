@@ -8,6 +8,9 @@ import { BreadcrumbItem } from './BreadcrumbItem';
 import { type BreadcrumbsProps } from './Breadcrumbs';
 import { CurrentBreadcrumbItem } from './CurrentBreadcrumbItem';
 
+/**
+ * @deprecated This component is deprecated and will be removed in the next major version.
+ */
 export const FormattedBreadcrumbs = ({
     items,
     keepRoot,

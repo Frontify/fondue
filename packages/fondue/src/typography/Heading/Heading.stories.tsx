@@ -7,7 +7,9 @@ import { sharedTypographyArgTypes, sharedTypographyArgs } from '../shared/Shared
 import { Heading as HeadingComponent, type HeadingProps } from './Heading';
 
 /**
- ### This component is deprecated, please use the [new Heading component](/docs/current_typography-heading--documentation) instead.
+ ### *Legacy component warning*
+ #### This is a deprecated component. It will be removed in the next major version.
+ #### _**Use the [new Heading component](/docs/current_typography-heading--documentation) instead.**_
  */
 export default {
     title: 'Legacy Components/Deprecated/Heading',

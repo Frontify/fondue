@@ -39,7 +39,7 @@ export type MenuItemProps = {
 /**
  * @deprecated Use `Dropdown` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#dropdown the migration guide}.
  */
-export const menuItemSizeClassMap: Record<MenuItemContentSize, string> = {
+const menuItemSizeClassMap: Record<MenuItemContentSize, string> = {
     [MenuItemContentSize.XSmall]: 'tw-px-5 tw-py-2 tw-min-h-[36px]',
     [MenuItemContentSize.Small]: 'tw-px-5 tw-py-2.5 tw-min-h-[36px]',
     [MenuItemContentSize.Large]: 'tw-px-5 tw-py-3 tw-min-h-[60px]',

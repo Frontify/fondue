@@ -15,7 +15,9 @@ import { IconSize } from '@foundation/Icon/IconSize';
 import { type Column, type Row, SelectionMode, SortDirection, Table, type TableProps } from './Table';
 
 /**
- ### This component is deprecated, please use the [new Table component](/docs/current_components-table--documentation) instead.
+ ### *Legacy component warning*
+ #### This is a deprecated component. It will be removed in the next major version.
+ #### _**Use the [new Table component](/docs/current_components-table--documentation) instead.**_
  */
 export default {
     title: 'Legacy Components/Deprecated/Table',

@@ -17,7 +17,7 @@ export default {
     tags: ['autodocs'],
     parameters: {
         status: {
-            type: 'deprecated',
+            type: 'legacy',
         },
         actions: { argTypesRegex: '^on.*' },
     },

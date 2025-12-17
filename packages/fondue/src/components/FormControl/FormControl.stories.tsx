@@ -19,7 +19,8 @@ import {
 } from './FormControl';
 
 /**
- ### This component is deprecated, please use the your own form component instead.
+ ### *Legacy component warning*
+ #### This is a deprecated component. It will be removed in the next major version.
  For use in frontify `web-app`, you can use the common `Form` component.
  */
 export default {

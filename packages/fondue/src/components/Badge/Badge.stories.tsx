@@ -8,7 +8,9 @@ import { Badge } from './Badge';
 import { BadgeEmphasis, type BadgeProps, BadgeStatus, BadgeStyle } from './types';
 
 /**
- ### This component is deprecated, please use the [new Badge component](/docs/current_components-badge--documentation) instead.
+ ### *Legacy component warning*
+ #### This is a deprecated component. It will be removed in the next major version.
+ #### _**Use the [new Badge component](/docs/current_components-badge--documentation) instead.**_
  */
 export default {
     title: 'Legacy Components/Deprecated/Badge',

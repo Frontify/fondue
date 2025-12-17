@@ -8,6 +8,9 @@ import { type IconProps } from '@foundation/Icon/IconProps';
 import { IconSize } from '@foundation/Icon/IconSize';
 import { merge } from '@utilities/merge';
 
+/**
+ * @deprecated Please use updated tooltip component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tooltip the migration guide}.
+ */
 export type TooltipIconProps = {
     tooltip?: LegacyTooltipProps;
     iconSize?: IconSize;
@@ -16,7 +19,7 @@ export type TooltipIconProps = {
     'data-test-id'?: string;
 };
 
-export enum TooltipIconTriggerStyle {
+enum TooltipIconTriggerStyle {
     Danger = 'Danger',
     Warning = 'Warning',
     Primary = 'Primary',

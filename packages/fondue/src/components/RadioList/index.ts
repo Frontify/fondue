@@ -1,4 +1,4 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export * from './RadioList';
-export * from './RadioButton';
+export { RadioList, RadioListDirection } from './RadioList';
+export { RadioButton } from './RadioButton';

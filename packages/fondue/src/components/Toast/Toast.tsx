@@ -20,6 +20,9 @@ const getContainerClasses = (theme: ToastTheme) => {
     return merge([CONTAINER_BASE_CLASSES, theme === 'dark' ? DARK_VARIANT_CLASSES : LIGHT_VARIANT_CLASSES]);
 };
 
+/**
+ * @deprecated This component is deprecated and will be removed in the next major version.
+ */
 export const Toast = ({
     isOpen,
     style,

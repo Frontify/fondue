@@ -39,16 +39,16 @@ test('should handle controlled component behavior', async ({ mount }) => {
     sinon.assert.calledOnceWithExactly(onChange, true);
 });
 
-test('should apply size classes', async ({ mount }) => {
+test('should apply size data attributes', async ({ mount }) => {
     const wrapper = await mount(<Switch aria-label={ARIA_LABEL} data-test-id={SWITCH_TEST_ID} />);
     const component = wrapper.getByTestId(SWITCH_TEST_ID);
-    await expect(component).toHaveClass(/medium/);
+    await expect(component).toHaveAttribute('data-size', 'medium');
 
     await wrapper.update(<Switch aria-label={ARIA_LABEL} size="large" data-test-id={SWITCH_TEST_ID} />);
-    await expect(component).toHaveClass(/large/);
+    await expect(component).toHaveAttribute('data-size', 'large');
 
     await wrapper.update(<Switch aria-label={ARIA_LABEL} size="small" data-test-id={SWITCH_TEST_ID} />);
-    await expect(component).toHaveClass(/small/);
+    await expect(component).toHaveAttribute('data-size', 'small');
 });
 
 test('should update value when user focuses and presses enter', async ({ mount }) => {

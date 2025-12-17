@@ -14,6 +14,9 @@ import { type Breadcrumb } from './Breadcrumbs';
 
 type CurrentBreadcrumbItemProps = Breadcrumb;
 
+/**
+ * @deprecated This component is deprecated and will be removed in the next major version.
+ */
 export const CurrentBreadcrumbItem = ({
     label,
     badges,

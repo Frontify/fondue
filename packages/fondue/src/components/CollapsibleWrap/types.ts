@@ -2,6 +2,9 @@
 
 import { type ReactNode } from 'react';
 
+/**
+ * @deprecated Please use updated accordion component from `@frontify/fondue/components` instead.
+ */
 export type CollapsibleWrapProps = {
     isOpen: boolean;
     preventInitialAnimation?: boolean;

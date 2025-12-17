@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-import { TriggerEmphasis } from '@components/Trigger';
+import { TriggerEmphasis } from '@components/Trigger/Trigger';
 import { Validation } from '@utilities/validation';
 
 import { MultiSelect } from './MultiSelect';

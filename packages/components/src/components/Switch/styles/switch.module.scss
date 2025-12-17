@@ -16,17 +16,17 @@
         background-color: var(--color-container-secondary-hover);
     }
 
-    &.small {
+    &[data-size='small'] {
         --switch-width: #{sizeToken.get(6)};
         --switch-height: #{sizeToken.get(3)};
     }
 
-    &.medium {
+    &[data-size='medium'] {
         --switch-width: #{sizeToken.get(8)};
         --switch-height: #{sizeToken.get(4)};
     }
 
-    &.large {
+    &[data-size='large'] {
         --switch-width: #{sizeToken.get(9)};
         --switch-height: #{sizeToken.get(5)};
     }
