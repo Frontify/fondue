@@ -13,6 +13,54 @@ test('render with the correct text', async ({ mount }) => {
     await expect(component.getByText(LABEL_TEXT).last()).toBeVisible();
 });
 
+test('render with default variant data attribute', async ({ mount }) => {
+    const component = await mount(<Label htmlFor="random-id">{LABEL_TEXT}</Label>);
+    const label = component.getByTestId(LABEL_TEST_ID);
+
+    await expect(label).toHaveAttribute('data-variant', 'default');
+});
+
+test('render with strong variant data attribute', async ({ mount }) => {
+    const component = await mount(
+        <Label htmlFor="random-id" variant="strong">
+            {LABEL_TEXT}
+        </Label>,
+    );
+    const label = component.getByTestId(LABEL_TEST_ID);
+
+    await expect(label).toHaveAttribute('data-variant', 'strong');
+});
+
+test('render with required data attribute when required', async ({ mount }) => {
+    const component = await mount(
+        <Label htmlFor="random-id" required>
+            {LABEL_TEXT}
+        </Label>,
+    );
+    const label = component.getByTestId(LABEL_TEST_ID);
+
+    await expect(label).toHaveAttribute('data-required', 'true');
+});
+
+test('not have required data attribute when not required', async ({ mount }) => {
+    const component = await mount(<Label htmlFor="random-id">{LABEL_TEXT}</Label>);
+    const label = component.getByTestId(LABEL_TEST_ID);
+
+    await expect(label).not.toHaveAttribute('data-required', 'true');
+});
+
+test('render with custom className', async ({ mount }) => {
+    const customClass = 'custom-test-class';
+    const component = await mount(
+        <Label htmlFor="random-id" className={customClass}>
+            {LABEL_TEXT}
+        </Label>,
+    );
+    const label = component.getByTestId(LABEL_TEST_ID);
+
+    await expect(label).toHaveClass(new RegExp(customClass));
+});
+
 test('focus the input linked to the label on click', async ({ mount }) => {
     const component = await mount(
         <div>
