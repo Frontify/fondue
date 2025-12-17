@@ -1,5 +1,11 @@
 # @frontify/fondue-tokens
 
+## 5.0.0-rc.3
+
+### Major Changes
+
+- [#2583](https://github.com/Frontify/fondue/pull/2583) [`0b953d7`](https://github.com/Frontify/fondue/commit/0b953d7e0098cefc60a845fd67e0b8d46fb5098c) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: upgrade `@types/react`and adjust legacy `TooltipIcon` to work with new icons
+
 ## 5.0.0-rc.2
 
 ### Major Changes
