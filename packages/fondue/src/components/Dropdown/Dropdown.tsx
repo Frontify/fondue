@@ -13,24 +13,15 @@ import { usePopper } from 'react-popper';
 import { getDisabledItemIds, getMenuItems, mapToAriaProps } from '@components/ActionMenu/Aria/helper';
 import { type MenuBlock, type MenuItemType, SelectMenu } from '@components/Dropdown/SelectMenu/SelectMenu';
 import { LoadingCircle, LoadingCircleSize } from '@components/LoadingCircle/LoadingCircle';
-import {
-    MenuItemContent,
-    MenuItemContentSize,
-    MenuItemStyle,
-    MenuItemTextColorState,
-    menuItemTextColorRecord,
-} from '@components/MenuItem';
+import { MenuItemContentSize, MenuItemStyle } from '@components/MenuItem';
+import { menuItemTextColorRecord, MenuItemTextColorState } from '@components/MenuItem/MenuItem';
+import { MenuItemContent } from '@components/MenuItem/MenuItemContent';
 import { Trigger, TriggerEmphasis, TriggerSize } from '@components/Trigger/Trigger';
 import { DEFAULT_DROPDOWN_MAX_HEIGHT, useDropdownAutoHeight } from '@hooks/useDropdownAutoHeight';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { EnablePortalWrapper } from '@utilities/dialogs/EnablePortalWrapper';
 import { merge } from '@utilities/merge';
 import { Validation } from '@utilities/validation';
-
-/**
- * @deprecated Use `Dropdown` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#dropdown the migration guide}.
- */
-export const DEFAULT_DROPDOWN_MIN_ANIMATION_HEIGHT = 36; // Small Input height as default
 
 /**
  * @deprecated Use `Dropdown` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#dropdown the migration guide}.
@@ -43,7 +34,7 @@ export enum DropdownSize {
 /**
  * @deprecated Use `Dropdown` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#dropdown the migration guide}.
  */
-export enum DropdownAlignment {
+enum DropdownAlignment {
     Start = 'Start',
     End = 'End',
 }
@@ -51,7 +42,7 @@ export enum DropdownAlignment {
 /**
  * @deprecated Use `Dropdown` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#dropdown the migration guide}.
  */
-export enum DropdownPosition {
+enum DropdownPosition {
     Top = 'Top',
     Bottom = 'Bottom',
 }

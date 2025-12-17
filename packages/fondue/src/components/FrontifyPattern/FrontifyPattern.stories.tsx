@@ -7,7 +7,8 @@ import { PatternDesign, PatternScale, PatternTheme } from '@foundation/Pattern';
 import { FrontifyPattern, type FrontifyPatternProps } from './FrontifyPattern';
 
 /**
- ### This component is deprecated, please use the your own component instead.
+ ### *Legacy component warning*
+ #### This is a deprecated component. It will be removed in the next major version.
  */
 export default {
     title: 'Legacy Components/Deprecated/FrontifyPattern',

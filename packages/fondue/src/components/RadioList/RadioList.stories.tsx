@@ -8,10 +8,11 @@ import { RadioList, RadioListDirection, type RadioListProps } from './RadioList'
 
 /**
  ### *Legacy component warning*
- #### This is a unmaintained legacy component. It will be deprecated and replaced with a new component in an upcoming release.
+ #### This is a deprecated component. It will be removed in the next major version.
+ #### _**Use the [new Radio List component](/docs/current_components-radiolist--documentation) instead.**_
  */
 export default {
-    title: 'Legacy Components/RadioList',
+    title: 'Legacy Components/Deprecated/RadioList',
     component: RadioList,
     tags: ['autodocs'],
     parameters: {

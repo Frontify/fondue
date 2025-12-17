@@ -2,6 +2,9 @@
 
 import { useCallback, useEffect } from 'react';
 
+/**
+ * @deprecated This hook is deprecated and will be removed in the next major version.
+ */
 export const useHandleCloseOnEscape = (
     open: boolean,
     { isBlockingModal, callback }: { isBlockingModal?: boolean; callback?: () => void } = { isBlockingModal: false },

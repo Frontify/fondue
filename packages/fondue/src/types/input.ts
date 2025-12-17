@@ -1,9 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type AriaAttributes, type InputHTMLAttributes, type ReactElement } from 'react';
+import { type AriaAttributes, type ReactElement } from 'react';
 
 import { type Validation } from '@utilities/validation';
 
+/**
+ * @deprecated This type is deprecated and will be removed in the next major version.
+ */
 export type InputSharedBaseProps = {
     autocomplete?: boolean;
     clearable?: boolean;
@@ -15,24 +18,9 @@ export type InputSharedBaseProps = {
     'data-test-id'?: string;
 } & AriaAttributes;
 
-export type InputBaseProps<TValue> = {
-    size?: number;
-    suffix?: string;
-    value?: TValue;
-    valueSelect?: boolean;
-    onChange?: (value?: TValue) => void;
-} & InputSharedBaseProps &
-    Omit<InputHTMLAttributes<HTMLInputElement>, 'className' | 'style' | 'onChange' | 'value'>;
-
-export type InputType = 'Text' | 'Textarea' | 'Password' | 'Number';
-
-export const InputTypes: Record<InputType, string> = {
-    Text: 'text',
-    Textarea: 'textarea',
-    Password: 'password',
-    Number: 'number',
-};
-
+/**
+ * @deprecated This type is deprecated and will be removed in the next major version.
+ */
 export type InputActionCallbacks = {
     text?: () => void;
     textarea?: () => void;
@@ -41,6 +29,9 @@ export type InputActionCallbacks = {
     clearable?: () => void;
 };
 
+/**
+ * @deprecated This type is deprecated and will be removed in the next major version.
+ */
 export type InputActionsProps = {
     clearable?: boolean;
     obfuscated?: boolean;
@@ -51,12 +42,18 @@ export type InputActionsProps = {
     dataTestId?: string;
 };
 
+/**
+ * @deprecated This type is deprecated and will be removed in the next major version.
+ */
 export type ExtraAction = {
     icon: ReactElement;
     title: string;
     callback: () => void;
 };
 
+/**
+ * @deprecated This type is deprecated and will be removed in the next major version.
+ */
 export type InputExtraActionsProps = {
     actions: ExtraAction[];
     disabled?: boolean;

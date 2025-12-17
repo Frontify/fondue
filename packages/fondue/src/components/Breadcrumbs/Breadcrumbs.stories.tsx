@@ -19,10 +19,11 @@ const ITEMS = [
 
 /**
  ### *Legacy component warning*
- #### This is a unmaintained legacy component. It will be deprecated and replaced with a new component in an upcoming release.
+ #### This is a deprecated component. It will be removed in the next major version.
+ For use in frontify `web-app`, you can use the breadcrumbs from the navigation.
  */
 export default {
-    title: 'Legacy Components/Breadcrumbs',
+    title: 'Legacy Components/Deprecated/Breadcrumbs',
     component: Breadcrumbs,
     tags: ['autodocs'],
     args: {

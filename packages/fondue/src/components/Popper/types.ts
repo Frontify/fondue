@@ -3,6 +3,9 @@
 import { type PositioningStrategy } from '@popperjs/core/lib/types';
 import { type ReactNode, type RefObject } from 'react';
 
+/**
+ * @deprecated Please use updated flyout component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#flyout-old-inlinedialog the migration guide}.
+ */
 export type PopperPlacement =
     | 'top'
     | 'bottom'
@@ -17,6 +20,9 @@ export type PopperPlacement =
     | 'left-start'
     | 'left-end';
 
+/**
+ * @deprecated Please use updated flyout component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#flyout-old-inlinedialog the migration guide}.
+ */
 export type PopperProps = {
     children?: ReactNode;
     anchor: RefObject<Element>;
@@ -36,11 +42,17 @@ export type PopperProps = {
     arrowCustomColors?: string;
 };
 
+/**
+ * @deprecated Please use updated flyout component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#flyout-old-inlinedialog the migration guide}.
+ */
 export type PopperDimension = {
     width: number;
     height: number;
 };
 
+/**
+ * @deprecated Please use updated flyout component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#flyout-old-inlinedialog the migration guide}.
+ */
 export type PrepareElementStyleProps = {
     dimension: PopperDimension;
     isVerticalAlignedToTop: boolean;

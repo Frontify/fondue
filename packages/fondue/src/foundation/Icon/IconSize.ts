@@ -10,17 +10,3 @@ export enum IconSize {
     Size24 = 'Size24',
     Size32 = 'Size32',
 }
-
-/**
- * @deprecated Use icons from `@frontify/fondue/icons` instead.
- */
-export const IconSizeMap = {
-    [IconSize.Size12]: '!tw-h-3 !tw-w-3',
-    [IconSize.Size16]: '!tw-h-4 !tw-w-4',
-    [IconSize.Size20]: '!tw-h-5 !tw-w-5',
-    [IconSize.Size24]: '!tw-h-6 !tw-w-6',
-    [IconSize.Size32]: '!tw-h-8 !tw-w-8',
-    16: '!tw-h-4 !tw-w-4',
-    20: '!tw-h-5 !tw-w-5',
-    24: '!tw-h-6 !tw-w-6',
-};

@@ -8,6 +8,9 @@ import { type Color } from '../../types';
 
 import { type BadgeProps, type BadgeSize, BadgeStatus, BadgeStyle } from './types';
 
+/**
+ * @deprecated Please use updated badge component from `@frontify/fondue/components` instead.
+ */
 export const getStyleClasses = (style: BadgeStyle, hasHover: boolean, strong: boolean): string =>
     (strong
         ? {
@@ -55,15 +58,24 @@ export const getStyleClasses = (style: BadgeStyle, hasHover: boolean, strong: bo
               ]),
           })[style] ?? '';
 
+/**
+ * @deprecated Please use updated badge component from `@frontify/fondue/components` instead.
+ */
 export const isBadgeStatus = (style: BadgeStatus | Color | string): style is BadgeStatus =>
     Object.values(BadgeStatus).includes(style as BadgeStatus);
 
+/**
+ * @deprecated Please use updated badge component from `@frontify/fondue/components` instead.
+ */
 export const getCircularSizeClasses = (size: BadgeSize) =>
     ({
         small: 'tw-h-5 tw-w-5',
         medium: 'tw-h-6 tw-w-6',
     })[size];
 
+/**
+ * @deprecated Please use updated badge component from `@frontify/fondue/components` instead.
+ */
 export const getSizeClasses = (
     children: ReactNode,
     status: BadgeProps['status'],
@@ -90,6 +102,9 @@ export const getSizeClasses = (
     }
 };
 
+/**
+ * @deprecated Please use updated badge component from `@frontify/fondue/components` instead.
+ */
 export const badgeStatusClasses: Record<BadgeStatus, string> = {
     [BadgeStatus.Positive]: 'tw-bg-green-60',
     [BadgeStatus.Progress]: 'tw-bg-violet-60',

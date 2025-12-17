@@ -4,7 +4,7 @@ import { type Meta, type StoryFn } from '@storybook/react-vite';
 import { useState } from 'react';
 
 import { FormControl } from '@components/FormControl';
-import { TriggerEmphasis } from '@components/Trigger';
+import { TriggerEmphasis } from '@components/Trigger/Trigger';
 import { Validation } from '@utilities/validation';
 
 import {

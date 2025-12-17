@@ -5,11 +5,16 @@ import { useRef } from 'react';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { checkIfContainInteractiveElements } from '@utilities/elements';
 
+/**
+ * @deprecated Use `RadioList` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#radiolist the migration guide}.
+ */
 export enum RadioButtonEmphasis {
-    Default = 'Default',
     Weak = 'Weak',
 }
 
+/**
+ * @deprecated Use `RadioList` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#radiolist the migration guide}.
+ */
 export type RadioButtonProps = {
     value: string;
     disabled?: boolean;

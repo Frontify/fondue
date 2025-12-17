@@ -34,6 +34,9 @@ import {
     type UpdatedButtonStyle,
 } from './ButtonTypes';
 
+/**
+ * @deprecated Please use updated button component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#button the migration guide}.
+ */
 export type ButtonProps = {
     type?: ButtonType;
     title?: string;

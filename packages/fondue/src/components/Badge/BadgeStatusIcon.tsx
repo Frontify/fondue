@@ -7,6 +7,9 @@ import { ColorFormat } from 'src/types/colors';
 import { badgeStatusClasses, isBadgeStatus } from './helpers';
 import { type BadgeStatusIconProps } from './types';
 
+/**
+ * @deprecated Please use updated badge component from `@frontify/fondue/components` instead.
+ */
 export const BadgeStatusIcon = ({ status, disabled, 'data-test-id': dataTestId = 'badge' }: BadgeStatusIconProps) => (
     <div className="tw-flex-none tw-inline-flex tw-justify-center tw-items-center ">
         <span

@@ -17,6 +17,9 @@ const mapBreadcrumbsToAriaProps = (items: Breadcrumb[]) => ({
     )),
 });
 
+/**
+ * @deprecated This type is deprecated and will be removed in the next major version.
+ */
 export type Breadcrumb = {
     label: string;
     link?: string;
@@ -27,6 +30,9 @@ export type Breadcrumb = {
     'data-test-id'?: string;
 } & Pick<BreadcrumbsProps, 'activeInline'>;
 
+/**
+ * @deprecated This type is deprecated and will be removed in the next major version.
+ */
 export type BreadcrumbsProps = {
     items: Breadcrumb[];
     keepRoot?: boolean;
@@ -36,18 +42,27 @@ export type BreadcrumbsProps = {
     verticalGap?: BreadcrumbGap;
 };
 
+/**
+ * @deprecated This type is deprecated and will be removed in the next major version.
+ */
 export enum BreadcrumbGap {
     None = 'None',
     Small = 'Small',
     Medium = 'Medium',
 }
 
+/**
+ * @deprecated This constant is deprecated and will be removed in the next major version.
+ */
 export const verticalGapClassMap: Record<BreadcrumbGap, string> = {
     [BreadcrumbGap.None]: 'tw-gap-y-0',
     [BreadcrumbGap.Small]: 'tw-gap-y-0.5',
     [BreadcrumbGap.Medium]: 'tw-gap-y-1',
 };
 
+/**
+ * @deprecated This component is deprecated and will be removed in the next major version.
+ */
 export const Breadcrumbs = ({
     items,
     keepRoot = true,

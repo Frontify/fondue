@@ -7,7 +7,7 @@ import { merge } from '@utilities/merge';
 /**
  * @deprecated Please use updated LoadingCircle component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#loading-circle the migration guide}.
  */
-export enum LoadingCircleStyle {
+enum LoadingCircleStyle {
     Progress = 'Progress',
     Positive = 'Positive',
     Danger = 'Danger',
@@ -35,7 +35,7 @@ export type LoadingCircleProps = {
 /**
  * @deprecated Please use updated LoadingCircle component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#loading-circle the migration guide}.
  */
-export const statusClasses: Record<LoadingCircleStyle, string> = {
+const statusClasses: Record<LoadingCircleStyle, string> = {
     [LoadingCircleStyle.Progress]: 'tw-border-violet-60',
     [LoadingCircleStyle.Positive]: 'tw-border-green-60',
     [LoadingCircleStyle.Danger]: 'tw-border-red-60',
@@ -44,7 +44,7 @@ export const statusClasses: Record<LoadingCircleStyle, string> = {
 /**
  * @deprecated Please use updated LoadingCircle component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#loading-circle the migration guide}.
  */
-export const sizeClasses: Record<LoadingCircleSize, string> = {
+const sizeClasses: Record<LoadingCircleSize, string> = {
     [LoadingCircleSize.ExtraSmall]: 'tw-w-4 tw-h-4',
     [LoadingCircleSize.Small]: 'tw-w-5 tw-h-5',
     [LoadingCircleSize.Medium]: 'tw-w-8 tw-h-8',
