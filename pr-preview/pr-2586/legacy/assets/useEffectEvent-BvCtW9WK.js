@@ -1,0 +1,1 @@
+import{a as n,r}from"./iframe-ll9h_AHH.js";const f=typeof document<"u"?n.useLayoutEffect:()=>{};var a;const s=(a=n.useInsertionEffect)!==null&&a!==void 0?a:f;function $(c){const t=r.useRef(null);return s(()=>{t.current=c},[c]),r.useCallback((...o)=>{const e=t.current;return e==null?void 0:e(...o)},[])}export{f as $,$ as a};
