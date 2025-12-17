@@ -8,12 +8,12 @@ import { Flex } from '../Flex/Flex';
 import { Label } from '../Label/Label';
 import { Tooltip } from '../Tooltip/Tooltip';
 
-import { RadioList } from './RadioList';
+import { RadioList, RadioListRoot } from './RadioList';
 
-type Story = StoryObj<typeof RadioList.Root>;
-const meta: Meta<typeof RadioList.Root> = {
+type Story = StoryObj<typeof RadioListRoot>;
+const meta: Meta<typeof RadioListRoot> = {
     title: 'Components/RadioList',
-    component: RadioList.Root,
+    component: RadioListRoot,
     tags: ['autodocs'],
     parameters: {
         status: {

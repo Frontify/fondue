@@ -114,7 +114,7 @@ test('should have custom max width', async ({ mount, page }) => {
 test('should show on correct default side top', async ({ mount, page }) => {
     const component = await mount(
         <div style={{ margin: 250 }}>
-            <Tooltip.Root>
+            <Tooltip.Root enterDelay={0}>
                 <Tooltip.Trigger data-test-id={TOOLTIP_TRIGGER_TEST_ID}>
                     <Button>Hover over me!</Button>
                 </Tooltip.Trigger>
@@ -314,7 +314,7 @@ test('should allow for external control of open state', async ({ mount, page }) 
     await expect(tooltipContent).toBeVisible();
 });
 
-test('should trigger callback on open state change', async ({ mount }) => {
+test('should trigger callback on open state change', async ({ mount, page }) => {
     const onOpenChange = sinon.spy();
     const component = await mount(
         <Tooltip.Root onOpenChange={onOpenChange} enterDelay={0}>
@@ -329,6 +329,7 @@ test('should trigger callback on open state change', async ({ mount }) => {
     await expect(component).toBeVisible();
     expect(onOpenChange.callCount).toBe(0);
     await component.getByTestId(TOOLTIP_TRIGGER_TEST_ID).hover();
+    await expect(page.getByTestId(TOOLTIP_CONTENT_TEST_ID)).toBeVisible();
     expect(onOpenChange.callCount).toBe(1);
 });
 

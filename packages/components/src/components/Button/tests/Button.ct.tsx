@@ -54,7 +54,7 @@ test('should render in positive medium and with only only an icon and fully roun
     );
     const component = wrapper.getByTestId('button-root');
     await expect(component).toBeVisible();
-    await expect(component).toHaveClass(/tw-rounded-full/);
+    await expect(component).toHaveAttribute('data-rounding', 'full');
     await expect(component.locator('data-test-id=fondue-icon-icon')).toBeVisible();
 });
 

@@ -1,0 +1,117 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+.root {
+    display: flex;
+    align-self: stretch;
+    justify-content: center;
+
+    // Direction variants
+    &[data-orientation='horizontal'] {
+        flex-direction: column;
+        height: 0;
+        border-top-width: 1px;
+        width: 100%;
+    }
+
+    &[data-orientation='vertical'] {
+        flex-direction: row;
+        width: 0;
+        border-inline-end-width: 1px;
+        height: 100%;
+    }
+
+    // Color variants
+    &[data-color='weak'] {
+        border-color: var(--color-line-subtle);
+    }
+
+    &[data-color='default'] {
+        border-color: var(--color-line-mid);
+    }
+
+    &[data-color='strong'] {
+        border-color: var(--color-line-strong);
+    }
+
+    &[data-color='x-strong'] {
+        border-color: var(--color-line-strong);
+    }
+
+    // Style variants
+    &[data-variant='solid'] {
+        border-style: solid;
+    }
+
+    &[data-variant='dashed'] {
+        border-style: dashed;
+
+        // Custom dashed pattern with precise dash/gap sizing
+        &[data-color='weak'] {
+            --divider-color: var(--color-line-subtle);
+        }
+
+        &[data-color='default'] {
+            --divider-color: var(--color-line-mid);
+        }
+
+        &[data-color='strong'] {
+            --divider-color: var(--color-line-strong);
+        }
+
+        &[data-color='x-strong'] {
+            --divider-color: var(--color-line-strong);
+        }
+
+        &[data-orientation='horizontal'] {
+            border-image: repeating-linear-gradient(
+                    90deg,
+                    /* 4px dash */
+                    var(--divider-color) 0 4px,
+                    /* 3px gap (7px - 4px) */
+                    transparent 4px 7px
+                )
+                1;
+        }
+
+        &[data-orientation='vertical'] {
+            border-image: repeating-linear-gradient(
+                    0deg,
+                    /* 4px dash */
+                    var(--divider-color) 0 4px,
+                    /* 3px gap (7px - 4px) */
+                    transparent 4px 7px
+                )
+                1;
+        }
+    }
+
+    &[data-variant='noline'] {
+        border-style: none;
+    }
+
+    // Padding variants - Horizontal
+    &[data-orientation='horizontal'][data-padding='small'] {
+        margin-block: 1rem; // 4 * 0.25rem
+    }
+
+    &[data-orientation='horizontal'][data-padding='medium'] {
+        margin-block: 1.75rem; // 7 * 0.25rem
+    }
+
+    &[data-orientation='horizontal'][data-padding='large'] {
+        margin-block: 3rem; // 12 * 0.25rem
+    }
+
+    // Padding variants - Vertical
+    &[data-orientation='vertical'][data-padding='small'] {
+        margin-inline: 1rem; // 4 * 0.25rem
+    }
+
+    &[data-orientation='vertical'][data-padding='medium'] {
+        margin-inline: 1.75rem; // 7 * 0.25rem
+    }
+
+    &[data-orientation='vertical'][data-padding='large'] {
+        margin-inline: 3rem; // 12 * 0.25rem
+    }
+}

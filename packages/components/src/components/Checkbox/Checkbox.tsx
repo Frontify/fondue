@@ -4,9 +4,7 @@ import { IconCheckMark, IconMinus } from '@frontify/fondue-icons';
 import * as CheckboxPrimitive from '@radix-ui/react-checkbox';
 import { forwardRef, type FormEvent, type ForwardedRef } from 'react';
 
-import { cn } from '#/utilities/styleUtilities';
-
-import { checkboxIndicatorStyles, checkboxStyles } from './styles/checkboxStyles';
+import styles from './styles/checkbox.module.scss';
 
 export type CheckboxProps = {
     id?: string;
@@ -72,6 +70,8 @@ export const CheckboxComponent = (
         value,
         onChange,
         defaultValue,
+        size = 'default',
+        emphasis = 'default',
         'data-test-id': dataTestId = 'fondue-checkbox',
         readOnly,
         ...props
@@ -83,7 +83,10 @@ export const CheckboxComponent = (
             ref={ref}
             checked={value}
             defaultChecked={defaultValue}
-            className={cn(checkboxStyles(props), className)}
+            className={`${styles.root} ${className || ''}`}
+            data-size={size}
+            data-emphasis={emphasis}
+            data-readonly={readOnly}
             onClick={(event) => {
                 if (readOnly) {
                     event.preventDefault();
@@ -100,20 +103,19 @@ export const CheckboxComponent = (
                 props.onFocus?.(event);
             }}
             data-test-id={dataTestId}
-            data-readonly={readOnly}
             aria-readonly={readOnly}
             {...props}
         >
-            <CheckboxPrimitive.Indicator className={checkboxIndicatorStyles}>
+            <CheckboxPrimitive.Indicator className={styles.indicator}>
                 <IconMinus
                     size={16}
-                    className='tw-hidden tw-opacity-0 group-data-[state="indeterminate"]:tw-block group-data-[state="indeterminate"]:tw-opacity-100 tw-transition-opacity'
+                    className={`${styles.icon} ${styles.iconIndeterminate}`}
                     data-test-id="icon-indeterminate"
                 />
 
                 <IconCheckMark
                     size={16}
-                    className='tw-hidden tw-opacity-0 group-data-[state="checked"]:tw-block group-data-[state="checked"]:tw-opacity-100 tw-transition-opacity'
+                    className={`${styles.icon} ${styles.iconChecked}`}
                     data-test-id="icon-checked"
                 />
             </CheckboxPrimitive.Indicator>
