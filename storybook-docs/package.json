@@ -29,7 +29,7 @@
         "@storybook/addon-links": "^10.1.9",
         "@storybook/react-vite": "^10.1.9",
         "@types/node": "^22.18.10",
-        "@types/react": "^18.3.26",
+        "@types/react": "^18.3.27",
         "@types/react-dom": "^18.3.7",
         "eslint": "^9.37.0",
         "eslint-plugin-notice": "^1.0.0",

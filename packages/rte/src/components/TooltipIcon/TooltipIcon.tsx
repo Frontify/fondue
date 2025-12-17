@@ -8,7 +8,7 @@ import { merge } from '@utilities/merge';
 
 export type TooltipIconProps = {
     tooltip?: LegacyTooltipProps;
-    iconSize?: IconSize;
+    iconSize?: IconProps['size'];
     triggerIcon?: ReactElement<IconProps>;
     triggerStyle?: TooltipIconTriggerStyle | 'danger' | 'warning' | 'primary';
     'data-test-id'?: string;
