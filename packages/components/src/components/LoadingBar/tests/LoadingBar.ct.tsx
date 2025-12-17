@@ -109,3 +109,69 @@ test('should render intermediate state with max value', async ({ mount }) => {
     await expect(component).toHaveAttribute('aria-busy', 'true');
     await expect(component).not.toHaveAttribute('aria-valuetext');
 });
+
+test('should render with correct data attribute for default variant', async ({ mount }) => {
+    const wrapper = await mount(
+        <LoadingBar value={50} variant="default" aria-label="Loading" data-test-id="loading-bar" />,
+    );
+    const component = wrapper.getByTestId('loading-bar');
+    await expect(component).toHaveAttribute('data-variant', 'default');
+});
+
+test('should render with correct data attribute for positive variant', async ({ mount }) => {
+    const wrapper = await mount(
+        <LoadingBar value={50} variant="positive" aria-label="Loading" data-test-id="loading-bar" />,
+    );
+    const component = wrapper.getByTestId('loading-bar');
+    await expect(component).toHaveAttribute('data-variant', 'positive');
+});
+
+test('should render with correct data attribute for negative variant', async ({ mount }) => {
+    const wrapper = await mount(
+        <LoadingBar value={50} variant="negative" aria-label="Loading" data-test-id="loading-bar" />,
+    );
+    const component = wrapper.getByTestId('loading-bar');
+    await expect(component).toHaveAttribute('data-variant', 'negative');
+});
+
+test('should render with correct data attribute for small size', async ({ mount }) => {
+    const wrapper = await mount(<LoadingBar value={50} size="small" aria-label="Loading" data-test-id="loading-bar" />);
+    const component = wrapper.getByTestId('loading-bar');
+    await expect(component).toHaveAttribute('data-size', 'small');
+});
+
+test('should render with correct data attribute for medium size', async ({ mount }) => {
+    const wrapper = await mount(
+        <LoadingBar value={50} size="medium" aria-label="Loading" data-test-id="loading-bar" />,
+    );
+    const component = wrapper.getByTestId('loading-bar');
+    await expect(component).toHaveAttribute('data-size', 'medium');
+});
+
+test('should render with correct data attribute for large size', async ({ mount }) => {
+    const wrapper = await mount(<LoadingBar value={50} size="large" aria-label="Loading" data-test-id="loading-bar" />);
+    const component = wrapper.getByTestId('loading-bar');
+    await expect(component).toHaveAttribute('data-size', 'large');
+});
+
+test('should render with correct data attribute for x-large size', async ({ mount }) => {
+    const wrapper = await mount(
+        <LoadingBar value={50} size="x-large" aria-label="Loading" data-test-id="loading-bar" />,
+    );
+    const component = wrapper.getByTestId('loading-bar');
+    await expect(component).toHaveAttribute('data-size', 'x-large');
+});
+
+test('should render with correct data attribute for rounded true', async ({ mount }) => {
+    const wrapper = await mount(<LoadingBar value={50} rounded aria-label="Loading" data-test-id="loading-bar" />);
+    const component = wrapper.getByTestId('loading-bar');
+    await expect(component).toHaveAttribute('data-rounded', 'true');
+});
+
+test('should render with correct data attribute for rounded false', async ({ mount }) => {
+    const wrapper = await mount(
+        <LoadingBar value={50} rounded={false} aria-label="Loading" data-test-id="loading-bar" />,
+    );
+    const component = wrapper.getByTestId('loading-bar');
+    await expect(component).toHaveAttribute('data-rounded', 'false');
+});
