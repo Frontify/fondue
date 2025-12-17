@@ -1,9 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { LegacyTooltip, type LegacyTooltipProps } from '@components/LegacyTooltip/LegacyTooltip';
 import { type FondueIconProps as IconProps, IconQuestionMarkCircle } from '@frontify/fondue-icons';
-import { merge } from '@utilities/merge';
 import { type ReactElement, cloneElement } from 'react';
+
+import { LegacyTooltip, type LegacyTooltipProps } from '@components/LegacyTooltip/LegacyTooltip';
+import { merge } from '@utilities/merge';
 
 /**
  * @deprecated Please use updated tooltip component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tooltip the migration guide}.

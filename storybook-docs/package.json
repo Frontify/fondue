@@ -17,8 +17,6 @@
         "typecheck": "tsc --noEmit"
     },
     "dependencies": {
-        "@storybook/manager-api": "^8.6.12",
-        "@storybook/theming": "^8.6.12",
         "react": "^18.3.1",
         "react-dom": "^18.3.1"
     },
@@ -26,17 +24,18 @@
         "@babel/core": "^7.28.4",
         "@etchteam/storybook-addon-status": "^7.0.1",
         "@frontify/eslint-config-react": "^1.0.4",
-        "@storybook/addon-a11y": "^9.1.10",
-        "@storybook/addon-docs": "^9.1.10",
-        "@storybook/addon-links": "^9.1.10",
-        "@storybook/react-vite": "^9.1.10",
+        "@storybook/addon-a11y": "^10.1.9",
+        "@storybook/addon-docs": "^10.1.9",
+        "@storybook/addon-links": "^10.1.9",
+        "@storybook/react-vite": "^10.1.9",
         "@types/node": "^22.18.10",
         "@types/react": "^18.3.27",
         "@types/react-dom": "^18.3.7",
         "eslint": "^9.37.0",
         "eslint-plugin-notice": "^1.0.0",
+        "eslint-plugin-storybook": "10.1.9",
         "prettier": "^3.6.2",
-        "storybook": "^9.1.10",
+        "storybook": "^10.1.9",
         "typescript": "^5.9.3",
         "vite": "^5.4.20"
     }

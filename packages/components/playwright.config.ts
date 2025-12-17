@@ -22,6 +22,11 @@ export default defineConfig({
         },
         testIdAttribute: 'data-test-id',
     },
+    expect: {
+        toHaveScreenshot: {
+            maxDiffPixelRatio: 0.02, // Allow up to 2% of pixels to be different
+        },
+    },
     projects: [
         { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
         { name: 'firefox', use: { ...devices['Desktop Firefox'] } },

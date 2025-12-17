@@ -20,6 +20,7 @@ export { Link } from './components/Link/Link';
 export { LoadingBar } from './components/LoadingBar/LoadingBar';
 export { LoadingCircle } from './components/LoadingCircle/LoadingCircle';
 export { Notice, type NoticeProps } from './components/Notice/Notice';
+export { RadioList } from './components/RadioList/RadioList';
 export { RouterProvider, type RouterProviderProps } from './components/RouterProvider/RouterProvider';
 export { ScrollArea } from './components/ScrollArea/ScrollArea';
 export { Section } from './components/Section/Section';
