@@ -1,7 +1,7 @@
 {
     "name": "@frontify/fondue-charts",
     "type": "module",
-    "version": "7.0.0-rc.3",
+    "version": "7.0.0-rc.4",
     "description": "Frontify's data viz library",
     "author": "Frontify Developers <developers@frontify.com>",
     "repository": {
