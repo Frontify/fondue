@@ -21,7 +21,7 @@ type RadioListRootProps = {
     value?: string;
     'data-test-id'?: string;
 };
-const RadioListRoot = ({
+export const RadioListRoot = ({
     asChild,
     children,
     className,
