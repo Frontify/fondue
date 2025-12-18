@@ -1,5 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+/**
+ * @deprecated These tests verify the behavior of deprecated utilities (cn and sv).
+ * The utilities are kept for backwards compatibility but should not be used in new code.
+ * All components have been migrated to SCSS modules.
+ */
+
 import { describe, expect, it } from 'vitest';
 
 import { cn, sv } from '#/utilities/styleUtilities';
