@@ -2,8 +2,6 @@
 
 import { forwardRef, type ReactNode, type MouseEvent, useCallback } from 'react';
 
-import { cn } from '#/utilities/styleUtilities';
-
 import { useFondueRouter } from '../RouterProvider/RouterProvider';
 
 import styles from './styles/link.module.scss';
@@ -146,7 +144,7 @@ export const Link = forwardRef<HTMLAnchorElement, LinkProps>(
         return (
             <a
                 id={id}
-                className={cn([
+                className={[
                     styles.root,
                     styles[`size-${size}`],
                     styles[`weight-${weight}`],
@@ -155,7 +153,9 @@ export const Link = forwardRef<HTMLAnchorElement, LinkProps>(
                     truncate && styles.truncate,
                     computedColor,
                     className,
-                ])}
+                ]
+                    .filter(Boolean)
+                    .join(' ')}
                 ref={ref}
                 href={disabled ? undefined : resolvedHref}
                 onClick={handleClick}

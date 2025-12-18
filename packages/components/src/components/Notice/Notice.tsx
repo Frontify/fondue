@@ -77,7 +77,7 @@ export const Notice = ({
             data-emphasis={emphasis}
             data-size={size}
             data-test-id={dataTestId}
-            className={`${styles.root} ${className}`.trim()}
+            className={[styles.root, className].filter(Boolean).join(' ')}
             role="status"
             aria-live="polite"
         >

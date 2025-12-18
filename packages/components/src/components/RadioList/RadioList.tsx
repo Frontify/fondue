@@ -4,7 +4,6 @@ import * as RadioGroupPrimitve from '@radix-ui/react-radio-group';
 import { type ReactNode } from 'react';
 
 import { useFondueTheme } from '#/components/ThemeProvider/ThemeProvider';
-import { cn } from '#/utilities/styleUtilities';
 
 import styles from './styles/radiolist.module.scss';
 
@@ -40,7 +39,7 @@ export const RadioListRoot = ({
         <RadioGroupPrimitve.Root
             aria-readonly={readOnly}
             asChild={asChild}
-            className={cn([className, asChild ? undefined : styles.root])}
+            className={[className, asChild ? undefined : styles.root].filter(Boolean).join(' ')}
             data-emphasis={emphasis}
             data-readonly={readOnly}
             data-test-id={dataTestId}
@@ -90,7 +89,7 @@ const RadioListRadioButton = ({
                 }
             }}
             aria-readonly={readOnly}
-            className={`tw-peer ${styles.item}`}
+            className={styles.item}
             data-readonly={readOnly}
             data-test-id={dataTestId}
             disabled={disabled}

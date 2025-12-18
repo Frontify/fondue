@@ -83,7 +83,7 @@ export const CheckboxComponent = (
             ref={ref}
             checked={value}
             defaultChecked={defaultValue}
-            className={`${styles.root} ${className || ''}`}
+            className={[styles.root, className].filter(Boolean).join(' ')}
             data-size={size}
             data-emphasis={emphasis}
             data-readonly={readOnly}
@@ -109,13 +109,13 @@ export const CheckboxComponent = (
             <CheckboxPrimitive.Indicator className={styles.indicator}>
                 <IconMinus
                     size={16}
-                    className={`${styles.icon} ${styles.iconIndeterminate}`}
+                    className={[styles.icon, styles.iconIndeterminate].filter(Boolean).join(' ')}
                     data-test-id="icon-indeterminate"
                 />
 
                 <IconCheckMark
                     size={16}
-                    className={`${styles.icon} ${styles.iconChecked}`}
+                    className={[styles.icon, styles.iconChecked].filter(Boolean).join(' ')}
                     data-test-id="icon-checked"
                 />
             </CheckboxPrimitive.Indicator>

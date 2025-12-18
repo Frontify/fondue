@@ -24,6 +24,13 @@ test('render with the correct placeholder', async ({ mount }) => {
     await expect(component.getByRole('textbox')).toHaveAttribute('placeholder', TEXT_INPUT_TEXT);
 });
 
+test('render the neutral status by default', async ({ mount }) => {
+    const wrapper = await mount(<TextInput data-test-id={TEXT_INPUT_TEST_ID} />);
+    const component = wrapper.getByTestId(TEXT_INPUT_TEST_ID);
+
+    await expect(component).toHaveAttribute('data-status', 'neutral');
+});
+
 test('render the success status', async ({ mount }) => {
     const wrapper = await mount(<TextInput status="success" data-test-id={TEXT_INPUT_TEST_ID} />);
     const component = wrapper.getByTestId(TEXT_INPUT_TEST_ID);

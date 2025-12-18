@@ -65,7 +65,7 @@ export const Divider = forwardRef<HTMLDivElement, DividerProps>(
         return (
             <Separator.Root
                 ref={ref}
-                className={`${styles.root} ${className}`}
+                className={[styles.root, className].filter(Boolean).join(' ')}
                 data-variant={variant}
                 data-color={color}
                 data-padding={padding}
