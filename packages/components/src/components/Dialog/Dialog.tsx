@@ -293,7 +293,6 @@ export const DialogHeader = (
                 <RadixDialog.Close
                     role="button"
                     data-test-id={`${dataTestId}-close`}
-                    className="tw-cursor-pointer"
                     aria-label={t('Dialog_close')}
                     {...closeProps}
                 >
