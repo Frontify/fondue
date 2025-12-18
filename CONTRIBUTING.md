@@ -53,17 +53,21 @@ The name of the branch is not really relevant. Nonetheless we usually go for a p
 
 ### Create component files
 
-Theres a nifty script that creates that files you'll need:
+Theres a nifty script that creates the files you'll need:
 
 ```shell
 pnpm create:component FancyComponent
 ```
 
-This will add a folder inside `src/components` with the name `CoolCatsAndKittens` and three files:
+This will add a folder inside `src/components` with the name `FancyComponent` containing:
 
-- `CoolCatsAndKittens.tsx` which is where your React magic happens 🧙‍♀️
-- `CoolCatsAndKittens.spec.tsx` is the place to write your tests 🔬
-- `CoolCatsAndKittens.stories.tsx` is for your Stories inside Storybook 📄
+- `FancyComponent.tsx` - Your React component 🧙‍♀️
+- `FancyComponent.spec.ts` - Unit tests 🔬
+- `FancyComponent.ct.tsx` - Visual/component tests with Playwright 🎭
+- `FancyComponent.stories.tsx` - Storybook stories 📄
+- `styles/fancy-component.module.scss` - SCSS module for styling 🎨
+
+**Styling approach**: Components use SCSS modules with data attributes for variants (e.g., `data-size="large"`). See existing components like Button or Label for examples.
 
 ## Building packages
 

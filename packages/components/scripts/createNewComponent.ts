@@ -5,6 +5,7 @@ import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import chalk from 'chalk';
 
 import templates from './templates';
+import { toKebabCase } from './transforms';
 
 (() => {
     const componentName = process.argv[3] || process.argv[2];
@@ -35,7 +36,13 @@ import templates from './templates';
                 mkdirSync(`${componentDirectory}/${template.subdirectory}`);
             }
         }
-        writeFileSync(`${directory}/${componentName}${template.extension}`, template.content);
+
+        // Use kebab-case for SCSS module files to match existing component patterns
+        const filename = template.extension.endsWith('.module.scss')
+            ? `${toKebabCase(componentName)}${template.extension}`
+            : `${componentName}${template.extension}`;
+
+        writeFileSync(`${directory}/${filename}`, template.content);
     }
 
     console.log(chalk.green(`Component created in ${componentDirectory}`));
