@@ -1,7 +1,7 @@
 {
     "name": "@frontify/fondue-tokens",
     "type": "module",
-    "version": "5.0.0-rc.2",
+    "version": "5.0.0-rc.3",
     "description": "Single source of truth for Fondue Design Tokens",
     "author": "Frontify Developers <developers@frontify.com>",
     "homepage": "https://github.com/Frontify/fondue",
@@ -66,7 +66,7 @@
         "@storybook/react-vite": "^10.1.9",
         "@types/chroma-js": "^3.1.1",
         "@types/node": "^22.18.10",
-        "@types/react": "^18.3.26",
+        "@types/react": "^18.3.27",
         "@types/react-dom": "^18.3.7",
         "@vitejs/plugin-react": "^5.0.4",
         "chalk": "^5.6.2",

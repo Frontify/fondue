@@ -12,7 +12,7 @@ const getAbsolutePath = (packageName: string): string => {
 };
 
 export default {
-    stories: ['../src/**/*.mdx', '../src/**/*.stories.@(ts|tsx)'],
+    stories: ['../src/**/*.stories.@(ts|tsx)'],
     staticDirs: ['assets'],
     addons: [
         '@etchteam/storybook-addon-status',

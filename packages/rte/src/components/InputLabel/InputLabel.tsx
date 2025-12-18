@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconSize } from '@frontify/fondue-icons';
 import { type ReactElement, type ReactNode } from 'react';
 
 import { type LegacyTooltipProps } from '@components/LegacyTooltip/LegacyTooltip';
@@ -85,7 +84,7 @@ export const InputLabel = ({
                 <div key={key} className="tw-leading-3">
                     <TooltipIcon
                         tooltip={{ ...tooltipProps, hoverDelay }}
-                        iconSize={IconSize.Size16}
+                        iconSize={16}
                         triggerIcon={triggerIcon}
                         triggerStyle={triggerStyle}
                     />

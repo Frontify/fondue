@@ -8,6 +8,7 @@ import {
     useFloatingLinkInsert,
     useFloatingLinkInsertState,
 } from '@udecode/plate-link';
+import { type CSSProperties } from 'react';
 import { createPortal } from 'react-dom';
 
 import { EditModal } from './EditLinkModal';
@@ -57,7 +58,7 @@ export const CustomFloatingLink = () => {
             {insertState.isOpen &&
                 !editState.isOpen &&
                 createPortal(
-                    <div data-is-underlay ref={insertRef} {...insertProps} style={insertProps.style}>
+                    <div data-is-underlay ref={insertRef} {...insertProps} style={insertProps.style as CSSProperties}>
                         {input}
                     </div>,
                     document.body,
@@ -65,7 +66,7 @@ export const CustomFloatingLink = () => {
 
             {editState.isOpen &&
                 createPortal(
-                    <div data-is-underlay ref={editRef} {...editProps} style={editProps.style}>
+                    <div data-is-underlay ref={editRef} {...editProps} style={editProps.style as CSSProperties}>
                         {editContent}
                     </div>,
                     document.body,

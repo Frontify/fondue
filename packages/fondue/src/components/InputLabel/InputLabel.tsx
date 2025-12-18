@@ -4,7 +4,6 @@ import { type ReactElement, type ReactNode } from 'react';
 
 import { type LegacyTooltipProps } from '@components/LegacyTooltip/LegacyTooltip';
 import { TooltipIcon, type TooltipIconProps } from '@components/TooltipIcon/TooltipIcon';
-import { IconSize } from '@foundation/Icon/IconSize';
 import { merge } from '@utilities/merge';
 
 /**
@@ -85,7 +84,7 @@ export const InputLabel = ({
                 <div key={key} className="tw-leading-3">
                     <TooltipIcon
                         tooltip={{ ...tooltipProps, hoverDelay }}
-                        iconSize={IconSize.Size16}
+                        iconSize={16}
                         triggerIcon={triggerIcon}
                         triggerStyle={triggerStyle}
                     />

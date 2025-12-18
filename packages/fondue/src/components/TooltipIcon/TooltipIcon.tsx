@@ -1,11 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type FondueIconProps as IconProps, IconQuestionMarkCircle } from '@frontify/fondue-icons';
 import { type ReactElement, cloneElement } from 'react';
 
 import { LegacyTooltip, type LegacyTooltipProps } from '@components/LegacyTooltip/LegacyTooltip';
-import IconQuestionMarkCircle from '@foundation/Icon/Generated/IconQuestionMarkCircle';
-import { type IconProps } from '@foundation/Icon/IconProps';
-import { IconSize } from '@foundation/Icon/IconSize';
 import { merge } from '@utilities/merge';
 
 /**
@@ -13,7 +11,7 @@ import { merge } from '@utilities/merge';
  */
 export type TooltipIconProps = {
     tooltip?: LegacyTooltipProps;
-    iconSize?: IconSize;
+    iconSize?: IconProps['size'];
     triggerIcon?: ReactElement<IconProps>;
     triggerStyle?: TooltipIconTriggerStyle | 'danger' | 'warning' | 'primary';
     'data-test-id'?: string;
@@ -48,7 +46,7 @@ const tooltipHoverClasses = {
  */
 export const TooltipIcon = ({
     tooltip,
-    iconSize = IconSize.Size16,
+    iconSize = 16,
     triggerIcon = <IconQuestionMarkCircle />,
     triggerStyle = TooltipIconTriggerStyle.Primary,
     'data-test-id': dataTestId = 'tooltip-icon',

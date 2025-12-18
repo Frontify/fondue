@@ -1,7 +1,7 @@
 {
     "name": "@frontify/fondue-charts",
     "type": "module",
-    "version": "7.0.0-rc.3",
+    "version": "7.0.0-rc.4",
     "description": "Frontify's data viz library",
     "author": "Frontify Developers <developers@frontify.com>",
     "repository": {
@@ -66,7 +66,7 @@
     },
     "devDependencies": {
         "@babel/core": "^7.28.4",
-        "@etchteam/storybook-addon-status": "^7.0.1",
+        "@etchteam/storybook-addon-status": "^8.0.0",
         "@frontify/eslint-config-react": "^1.0.4",
         "@frontify/fondue-tokens": "workspace:^",
         "@storybook/addon-a11y": "^10.1.9",
@@ -79,7 +79,7 @@
         "@types/d3-scale": "^4.0.9",
         "@types/d3-shape": "^3.1.7",
         "@types/lodash-es": "^4.17.12",
-        "@types/react": "^18.3.26",
+        "@types/react": "^18.3.27",
         "@types/react-dom": "^18.3.7",
         "@visx/mock-data": "^3.12.0",
         "@vitejs/plugin-react": "^4.7.0",
