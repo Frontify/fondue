@@ -1,1 +1,0 @@
-import{r as u}from"./iframe-Bd9TRXeK.js";function p(f,s,{checkForDefaultPrevented:t=!0}={}){return function(c){if(f==null||f(c),t===!1||!c.defaultPrevented)return s==null?void 0:s(c)}}var h=globalThis!=null&&globalThis.document?u.useLayoutEffect:()=>{};export{p as c,h as u};
