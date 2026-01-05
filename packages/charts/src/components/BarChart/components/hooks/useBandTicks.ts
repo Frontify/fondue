@@ -1,9 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { DataContext } from '@visx/xychart';
-import { useContext, useEffect, useMemo, type Dispatch, type SetStateAction } from 'react';
+import { useContext, useEffect, useState, type Dispatch, type SetStateAction } from 'react';
 
 export const useBandTicks = (horizontal: boolean, updateBandTicks: Dispatch<SetStateAction<string[]>>) => {
+    const [filteredTicks, setFilteredTicks] = useState<string[]>([]);
     const dataContext = useContext(DataContext);
     const { xScale, yScale } = dataContext;
 
@@ -12,7 +13,7 @@ export const useBandTicks = (horizontal: boolean, updateBandTicks: Dispatch<SetS
     const chartWidth = dataContext?.innerWidth ?? null;
     const chartHeight = dataContext?.innerHeight ?? null;
 
-    const filteredTicks = useMemo(() => {
+    useEffect(() => {
         const chartSize = horizontal ? chartHeight : chartWidth;
         if (chartSize && ticksJSON) {
             let ticks: string[] = JSON.parse(ticksJSON);
@@ -23,14 +24,10 @@ export const useBandTicks = (horizontal: boolean, updateBandTicks: Dispatch<SetS
                 ticks = ticks.filter((_, index) => index % 2 === 0);
                 pxPerTick = chartSize / ticks.length;
             }
-            return ticks;
+            setFilteredTicks(ticks);
+            updateBandTicks(ticks);
         }
-        return [];
-    }, [chartWidth, chartHeight, horizontal, ticksJSON]);
-
-    useEffect(() => {
-        updateBandTicks(filteredTicks);
-    }, [filteredTicks, updateBandTicks]);
+    }, [chartWidth, chartHeight, horizontal, updateBandTicks, ticksJSON]);
 
     return filteredTicks;
 };
