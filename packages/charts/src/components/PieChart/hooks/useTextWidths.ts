@@ -18,6 +18,7 @@ export const useTextWidths = (label: string, value: string, percentage: string) 
         const labelWidth = getSVGTextDimensions(label, LABEL_TITLE_STYLE).width ?? 0;
         const valueWidth = getSVGTextDimensions(value, LABEL_VALUE_STYLE).width ?? 0;
         const percentageWidth = getSVGTextDimensions(percentage, LABEL_PERCENTAGE_STYLE).width ?? 0;
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setWidths({ labelWidth, valueWidth, percentageWidth });
     }, [label, value, percentage]);
 
