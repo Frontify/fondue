@@ -58,6 +58,7 @@ export const useMargin = (props: UseMarginProps) => {
         if (firstLabelOverflowsBy > marginLeft) {
             marginLeft = firstLabelOverflowsBy;
         }
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setMargin({
             top: 10,
             right: 20,
