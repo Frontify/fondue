@@ -60,7 +60,7 @@
         "@storybook/addon-links": "^10.1.11",
         "@storybook/react-vite": "^10.1.11",
         "@types/lodash-es": "^4.17.12",
-        "@types/node": "^22.19.3",
+        "@types/node": "^24.1.0",
         "@types/react": "^18.3.27",
         "@vitejs/plugin-react": "^4.7.0",
         "autoprefixer": "^10.4.23",
