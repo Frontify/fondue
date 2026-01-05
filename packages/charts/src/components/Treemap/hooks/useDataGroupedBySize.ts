@@ -1,14 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { isEqual } from 'lodash-es';
-import { useEffect, useRef, useState } from 'react';
+import { useMemo } from 'react';
 
 import {
     getDataPointsToBeGrouped,
     getFirstLevelGroups,
     getSecondLevelGroups,
 } from '@components/Treemap/hooks/helpers/dataGroupingHelper';
-import { type ColorLabelMap, type TreemapDataPoint, type TreemapDataPointGroup } from '@components/Treemap/types';
+import { type ColorLabelMap, type TreemapDataPoint } from '@components/Treemap/types';
 
 import { usePrevious } from '../../../hooks/usePrevious';
 
@@ -17,16 +17,10 @@ export const useDataGroupedBySize = (
     sizeThreshold: null | number,
     groupColorLabelMap?: ColorLabelMap,
 ) => {
-    const [groupedData, setGroupedData] = useState<(TreemapDataPoint | TreemapDataPointGroup)[]>(data);
-    const wasGrouped = useRef(false);
     const previousData = usePrevious(data);
     const didDataChange = !isEqual(data, previousData) && previousData !== undefined;
 
-    if (didDataChange && !!sizeThreshold) {
-        wasGrouped.current = false;
-    }
-
-    useEffect(() => {
+    const result = useMemo(() => {
         if ((sizeThreshold && sizeThreshold > 0) || didDataChange) {
             const { unchanged, toBeGroupedFirstLevel, toBeGroupedSecondLevel } = getDataPointsToBeGrouped(
                 data,
@@ -41,11 +35,17 @@ export const useDataGroupedBySize = (
                 groupColorLabelMap,
             );
 
-            wasGrouped.current = true;
-
-            setGroupedData([...unchanged, ...groupsFirstLevel, ...groupsSecondLevel]);
+            return {
+                groupedData: [...unchanged, ...groupsFirstLevel, ...groupsSecondLevel],
+                wasGrouped: true,
+            };
         }
-    }, [data, sizeThreshold, groupColorLabelMap]);
 
-    return { groupedData, wasGrouped: wasGrouped.current };
+        return {
+            groupedData: data,
+            wasGrouped: false,
+        };
+    }, [data, sizeThreshold, groupColorLabelMap, didDataChange]);
+
+    return result;
 };

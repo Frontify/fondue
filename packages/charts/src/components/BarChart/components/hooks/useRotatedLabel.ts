@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { DataContext } from '@visx/xychart';
-import { useContext, useEffect, useState, type Dispatch, type SetStateAction } from 'react';
+import { useContext, useEffect, useMemo, type Dispatch, type SetStateAction } from 'react';
 
 import { getBandScaleColumnWidth } from '@components/BarChart/components/helpers';
 import { getSVGTextDimensions } from '@components/common/helpers';
@@ -39,7 +39,6 @@ export const useRotatedLabel = (
     updateFirstLabelOverflowsBy: Dispatch<SetStateAction<number>>,
     labelFormatter: LabelFormatter,
 ) => {
-    const [angle, setAngle] = useState(0);
     const dataContext = useContext(DataContext);
     const { xScale } = dataContext;
     const scale = horizontal ? undefined : xScale;
@@ -47,17 +46,21 @@ export const useRotatedLabel = (
     const ticksJSON = scale ? JSON.stringify(formattedTicks) : null;
     const columnWidth = Math.round(getBandScaleColumnWidth(scale));
 
+    const angle = useMemo(() => {
+        if (columnWidth > 0 && ticksJSON) {
+            const ticks: string[] = JSON.parse(ticksJSON);
+            const { rotationAngle } = getRotationAngleAndMaxHeight(ticks, columnWidth);
+            return rotationAngle;
+        }
+        return 0;
+    }, [columnWidth, ticksJSON]);
+
     useEffect(() => {
         if (columnWidth > 0 && ticksJSON) {
             const ticks: string[] = JSON.parse(ticksJSON);
-
-            const { rotationAngle, maxHeight, firstItemWidth } = getRotationAngleAndMaxHeight(ticks, columnWidth);
-
-            setAngle(rotationAngle);
+            const { maxHeight, firstItemWidth } = getRotationAngleAndMaxHeight(ticks, columnWidth);
             updateMaxLabelHeight(maxHeight);
             updateFirstLabelOverflowsBy(firstItemWidth - columnWidth / 2);
-        } else {
-            setAngle(0);
         }
     }, [columnWidth, ticksJSON, updateMaxLabelHeight, updateFirstLabelOverflowsBy]);
 

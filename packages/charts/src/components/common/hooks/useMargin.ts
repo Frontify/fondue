@@ -1,8 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type TextProps } from '@visx/text';
-import { type Margin } from '@visx/xychart';
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 
 import { truncateTextLabel } from '@components/BarChart/helpers';
 import { getSVGTextDimensions } from '@components/LineChart/helpers';
@@ -17,8 +16,6 @@ type UseMarginProps = {
     maxLabelHeight?: number;
     firstLabelOverflowsBy?: number;
 };
-
-const DEFAULT_MARGIN = { bottom: 24, left: 52.265625, right: 20, top: 10 };
 
 const findLongestFormattedTickValue = ({ ticks, tickLabelStyle, valueFormatter }: UseMarginProps) => {
     return ticks.reduce((longestTickLength: number, tick) => {
@@ -38,32 +35,31 @@ const getTickLabelOffset = ({ tickLabelStyle, tickLength }: Pick<UseMarginProps,
 
 export const useMargin = (props: UseMarginProps) => {
     const { tickLabelStyle, ticks, valueFormatter, tickLength, maxLabelHeight = 6, firstLabelOverflowsBy = 0 } = props;
-    const [margin, setMargin] = useState<Margin>(DEFAULT_MARGIN);
 
     const tickLabelOffset = getTickLabelOffset({ tickLabelStyle, tickLength });
     const ticksJSON = JSON.stringify(ticks);
     const styleJSON = JSON.stringify(tickLabelStyle);
 
-    useEffect(() => {
-        const ticks = JSON.parse(ticksJSON);
+    const margin = useMemo(() => {
+        const parsedTicks = JSON.parse(ticksJSON);
         const style = JSON.parse(styleJSON);
 
         const longestFormattedValue = findLongestFormattedTickValue({
-            ticks,
+            ticks: parsedTicks,
             tickLabelStyle: style as TextProps,
-            tickLength: ticks.length,
+            tickLength: parsedTicks.length,
             valueFormatter,
         });
         let marginLeft = longestFormattedValue + tickLabelOffset;
         if (firstLabelOverflowsBy > marginLeft) {
             marginLeft = firstLabelOverflowsBy;
         }
-        setMargin({
+        return {
             top: 10,
             right: 20,
             bottom: maxLabelHeight + 18,
             left: marginLeft,
-        });
+        };
     }, [ticksJSON, styleJSON, valueFormatter, maxLabelHeight, firstLabelOverflowsBy, tickLabelOffset]);
 
     return margin;
