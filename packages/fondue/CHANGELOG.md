@@ -1,5 +1,11 @@
 # @frontify/fondue
 
+## 13.0.0-rc.13
+
+### Major Changes
+
+- [#2591](https://github.com/Frontify/fondue/pull/2591) [`e2cad13`](https://github.com/Frontify/fondue/commit/e2cad13b41d72feae6cc1afeccfdec7817d73aac) Thanks [@noahwaldner](https://github.com/noahwaldner)! - chore: remove unused legacy exports
+
 ## 13.0.0-rc.12
 
 ### Major Changes
