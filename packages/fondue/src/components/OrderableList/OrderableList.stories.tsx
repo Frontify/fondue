@@ -127,6 +127,7 @@ export const OrderableList: StoryFn<OrderableListProps<StoryListItem> & Orderabl
     useEffect(() => {
         if (prevSelectedId.current !== selectedId) {
             prevSelectedId.current = selectedId;
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setCurrentSelectedId(selectedId);
         }
     }, [selectedId, prevSelectedId]);

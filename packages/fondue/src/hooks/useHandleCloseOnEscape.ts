@@ -9,6 +9,7 @@ export const useHandleCloseOnEscape = (
     open: boolean,
     { isBlockingModal, callback }: { isBlockingModal?: boolean; callback?: () => void } = { isBlockingModal: false },
 ): void => {
+    // eslint-disable-next-line @eslint-react/no-unnecessary-use-callback
     const checkKeyboardEvent = useCallback(
         (event: KeyboardEvent) => {
             const callbackFnc = typeof callback === 'function' ? callback : () => ({});

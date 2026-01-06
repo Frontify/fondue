@@ -265,7 +265,11 @@ test('should open submenu by keyboard', async ({ mount, page }) => {
     expect(onSelect.calledOnce).toBe(true);
 });
 
-test('should open submenu by mouse', async ({ mount, page }) => {
+test('should open submenu by mouse', async ({ mount, page, browserName }) => {
+    test.skip(
+        browserName === 'firefox',
+        'Firefox does not properly trigger Radix UI submenu hover events with Playwright',
+    );
     const onSelect = sinon.spy();
     const component = await mount(
         <Dropdown.Root>

@@ -186,6 +186,7 @@ describe('Table Component', () => {
 
             useEffect(() => {
                 if (filter === '') {
+                    // eslint-disable-next-line react-hooks/set-state-in-effect
                     setFilteredRows(TABLE_ROWS);
                 }
                 const newFilteredRowsValue = TABLE_ROWS.filter((row) => {

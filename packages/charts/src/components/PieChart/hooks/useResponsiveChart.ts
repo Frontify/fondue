@@ -26,6 +26,7 @@ export const useResponsiveChart = (
             const fullWidthWithLabels = sizeProp + labelPadding.left + labelPadding.right;
             if (containerRef.current) {
                 if (containerRef.current.clientWidth < fullWidthWithLabels) {
+                    // eslint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect
                     setLabelStyle('legend');
                     setSize(Math.min(containerRef.current.clientWidth, sizeProp));
                 } else {

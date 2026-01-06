@@ -44,14 +44,13 @@ export const useControllableState = <TValue>({
 const useUncontrolledState = <TValue>({ defaultProp, onChange }: Omit<UseControllableStateParams<TValue>, 'prop'>) => {
     const [value, setValue] = useState<TValue | undefined>(defaultProp);
     const prevValueRef = useRef(value);
-    const handleChange = useMemo(() => onChange, [onChange]);
 
     useEffect(() => {
         if (prevValueRef.current !== value) {
-            handleChange?.(value as TValue);
+            onChange?.(value as TValue);
             prevValueRef.current = value;
         }
-    }, [value, prevValueRef, handleChange]);
+    }, [onChange, value]);
 
     return [value, setValue] as const;
 };

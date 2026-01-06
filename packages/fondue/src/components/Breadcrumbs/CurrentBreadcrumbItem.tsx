@@ -65,6 +65,7 @@ export const CurrentBreadcrumbItem = ({
             ])}
             data-test-id={`${dataTestId}-item`}
         >
+            {/* eslint-disable-next-line react-hooks/static-components */}
             <Element ref={ref} {...props} className={classNames}>
                 {decorator}
                 {label}

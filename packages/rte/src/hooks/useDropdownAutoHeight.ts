@@ -33,6 +33,7 @@ export const useDropdownAutoHeight = (
             updateMaxHeight();
             window.addEventListener('resize', updateMaxHeight);
         } else if (autoResize && !isOpen) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setMaxHeight(DEFAULT_DROPDOWN_MAX_HEIGHT);
         }
 

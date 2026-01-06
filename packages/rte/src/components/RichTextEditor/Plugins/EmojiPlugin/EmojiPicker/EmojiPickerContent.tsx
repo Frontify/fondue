@@ -153,8 +153,10 @@ export function EmojiPickerContent({
                 'tw-h-full tw-min-h-[50%] tw-overflow-y-auto tw-overflow-x-hidden tw-px-3 [&::-webkit-scrollbar]:tw-w-4 [&::-webkit-scrollbar-button]:tw-hidden [&::-webkit-scrollbar-button]:tw-h-0 [&::-webkit-scrollbar-button]:tw-w-0 [&::-webkit-scrollbar-thumb]:hover:tw-bg-[#f3f4f6] [&::-webkit-scrollbar-thumb]:tw-min-h-[65px] [&::-webkit-scrollbar-thumb]:tw-rounded-2xl [&::-webkit-scrollbar-thumb]:tw-border-solid [&::-webkit-scrollbar-thumb]:tw-border-4 [&::-webkit-scrollbar-thumb]:tw-border-white [&::-webkit-scrollbar-track]:tw-border-0'
             }
             data-id="scroll"
+            // eslint-disable-next-line react-hooks/refs
             ref={refs.current.contentRoot}
         >
+            {/* eslint-disable-next-line react-hooks/refs */}
             <div ref={refs.current.content} className="tw-h-full">
                 {isSearching ? renderSearchList() : renderEmojiList()}
             </div>

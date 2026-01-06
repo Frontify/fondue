@@ -61,10 +61,12 @@ describe('Toast Rendering', () => {
                 <Button onClick={onClickStub}>I am focusable</Button>
             </Toast>,
         );
+        // Wait for the Toast animation to complete (0.3s delay + 0.2s duration)
+        cy.wait(500);
         cy.window().focus();
         cy.get('body').realPress('Tab');
         cy.get('button').should('have.focus');
-        cy.get('button').type('{enter}');
+        cy.get('button').realPress('Enter');
         cy.wrap(onClickStub).should('have.been.calledOnce');
     });
 });

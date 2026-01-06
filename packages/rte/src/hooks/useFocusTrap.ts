@@ -11,6 +11,7 @@ export const useFocusTrap = <T extends HTMLElement = HTMLElement>(
 ) => {
     const elementRef = useRef<T>(null);
 
+    // eslint-disable-next-line @eslint-react/no-unnecessary-use-callback
     const handleFocus = useCallback(
         (event: KeyboardEvent) => {
             const focusableElements = [...(elementRef.current?.querySelectorAll(TABBABLE_ELEMENTS) ?? [])];

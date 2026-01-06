@@ -84,16 +84,19 @@
         color: var(--color-error-default);
     }
 
-    &[data-highlighted] {
+    &[data-highlighted],
+    &:hover:not([data-disabled]) {
         background-color: var(--color-surface-hover);
     }
 
-    &[data-highlighted]:active {
+    &[data-highlighted]:active,
+    &:hover:not([data-disabled]):active {
         background-color: var(--color-surface-active);
         transition: none;
     }
 
-    &[data-emphasis='danger'][data-highlighted] {
+    &[data-emphasis='danger'][data-highlighted],
+    &[data-emphasis='danger']:hover:not([data-disabled]) {
         background-color: var(--color-error-hover);
         color: var(--color-primary-on-primary);
     }

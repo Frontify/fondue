@@ -150,6 +150,7 @@ export const MultiselectWithBasicItem = ({ ...args }: TreeProps) => {
     const [treeItems, setTreeItems] = useState<TreeItemMockMultiselect[]>([]);
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setTreeItems(treeItemsMockMultiseclect);
     }, []);
 

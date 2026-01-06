@@ -240,6 +240,7 @@ export const DropdownSubTrigger = (
     return (
         <RadixDropdown.SubTrigger
             className={styles.subTrigger}
+            // eslint-disable-next-line react-hooks/refs
             data-show-focus-ring={wasMouseInteracted.current}
             data-test-id={dataTestId}
             ref={ref}
@@ -345,6 +346,7 @@ export const DropdownItem = (
             ref={ref}
             disabled={disabled}
             asChild={asChild}
+            // eslint-disable-next-line react-hooks/refs
             data-show-focus-ring={wasMouseInteracted.current}
             onMouseEnter={() => {
                 wasMouseInteracted.current = true;

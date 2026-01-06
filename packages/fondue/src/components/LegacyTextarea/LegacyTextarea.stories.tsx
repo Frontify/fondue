@@ -51,6 +51,7 @@ export default {
 
 export const LegacyTextarea: StoryFn<LegacyTextareaProps> = (args: LegacyTextareaProps) => {
     const [input, setInput] = useState('');
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     useEffect(() => setInput(`${args.value ?? ''}`), [args.value]);
 
     return <TextareaComponent {...args} value={input} onInput={setInput} />;

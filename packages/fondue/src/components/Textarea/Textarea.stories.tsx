@@ -235,6 +235,7 @@ const TextareaTemplate: StoryFn<TextareaProps> = (args) => {
     const [input, setInput] = useState<string | undefined>(value ?? undefined);
     useEffect(() => {
         if (value) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setInput(value);
         }
     }, [value, setInput]);
@@ -285,6 +286,7 @@ export const WithFormFieldCombination: StoryFn<TextareaProps> = (args) => {
     const maxChars = 160;
     const currentChars = input ? input.length : 0;
 
+    // eslint-disable-next-line @eslint-react/no-unnecessary-use-callback
     const handleValidation = useCallback(() => {
         if (currentChars === 0) {
             setCurrentStatus(undefined);
@@ -300,6 +302,7 @@ export const WithFormFieldCombination: StoryFn<TextareaProps> = (args) => {
     };
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         handleValidation();
     }, [input, handleValidation]);
 
