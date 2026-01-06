@@ -37,6 +37,7 @@ const useAsyncItems = (filterText: string, getAsyncItems?: AsyncItemsFetcher) =>
     });
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setError(null);
         if (!getAsyncItems) {
             setAsyncResult({

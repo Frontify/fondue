@@ -153,7 +153,8 @@ export const SelectInput = (
                     data-test-id={dataTestId}
                     {...(disabled
                         ? {}
-                        : getToggleButtonProps({
+                        : // eslint-disable-next-line react-hooks/refs
+                          getToggleButtonProps({
                               'aria-label': 'aria-label' in props ? props['aria-label'] : undefined,
                               ref: forwardedRef,
                           }))}

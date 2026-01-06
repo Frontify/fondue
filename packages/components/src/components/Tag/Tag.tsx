@@ -73,7 +73,7 @@ const TagRoot = ({
     let extractedHoverContent: ReactNode = null;
     const processedChildren = Children.map(children, (child) => {
         if (isValidElement(child) && child.type === TagHoverContent) {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+            // eslint-disable-next-line react-hooks/immutability
             extractedHoverContent = child.props.children;
             return null;
         }
