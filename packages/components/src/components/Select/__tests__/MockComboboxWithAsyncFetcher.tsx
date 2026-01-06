@@ -2,7 +2,7 @@
 
 import { type ComboboxProps } from '#/components/Select/Combobox.tsx';
 import { Select } from '#/components/Select/Select.tsx';
-import { type AsyncItem, type AsyncItemsFetcher } from '#/components/Select/useSelectData.tsx';
+import { type AsyncItem, type AsyncItemsFetcher } from '#/components/Select/hooks/useSelectData';
 
 type MockComboboxWithAsyncFetcherProps = {
     asyncItems: AsyncItem[];

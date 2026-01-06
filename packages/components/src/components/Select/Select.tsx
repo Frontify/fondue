@@ -3,17 +3,19 @@
 import { IconCaretDown, IconCheckMark, IconExclamationMarkTriangle } from '@frontify/fondue-icons';
 import * as RadixPopover from '@radix-ui/react-popover';
 import { Slot as RadixSlot } from '@radix-ui/react-slot';
-import { useSelect } from 'downshift';
+import { useSelect, useMultipleSelection } from 'downshift';
 import { forwardRef, useRef, useState, type ForwardedRef, type ReactNode } from 'react';
 
 import { type CommonAriaProps } from '#/helpers/aria';
+
+import { Badge } from '../Badge/Badge';
 
 import { ForwardedRefCombobox } from './Combobox';
 import { ForwardedRefSelectItem, ForwardedRefSelectItemGroup } from './SelectItem';
 import { SelectMenu, type SelectMenuViewportCollisionPadding } from './SelectMenu';
 import { ForwardedRefSelectSlot } from './SelectSlot';
+import { useSelectData } from './hooks/useSelectData';
 import styles from './styles/select.module.scss';
-import { useSelectData } from './useSelectData';
 
 export type SelectComponentProps = {
     /**
@@ -64,6 +66,11 @@ export type SelectComponentProps = {
      */
     id?: string;
     /**
+     * Whether the select component is multiple
+     * @default false
+     */
+    multiple?: boolean;
+    /**
      * The value of the select is shown as plain text (from the label prop) when set to true.
      * Items child components are used if set to false
      * @default true
@@ -91,6 +98,7 @@ export const SelectInput = (
         showStringValue = true,
         'data-test-id': dataTestId = 'fondue-select',
         viewportCollisionPadding = 'compact',
+        multiple = false,
         ...props
     }: SelectComponentProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
@@ -104,8 +112,24 @@ export const SelectInput = (
 
     const [hasInteractedSinceOpening, setHasInteractedSinceOpening] = useState(false);
 
-    const { getToggleButtonProps, getMenuProps, getItemProps, reset, selectedItem, isOpen, highlightedIndex } =
-        useSelect({
+    const { getDropdownProps, addSelectedItem, removeSelectedItem, selectedItems } = useMultipleSelection({
+        initialSelectedItems: defaultItem ? [defaultItem] : [],
+    });
+
+    const toggleSelectedItem = (item: any) => {
+        console.log('item', item);
+        console.log('selectedItems', selectedItems);
+        if (selectedItems.some((selectedItem) => selectedItem.value === item.value)) {
+            console.log('removeSelectedItem', item);
+            removeSelectedItem(item);
+        } else {
+            console.log('addSelectedItem', item);
+            addSelectedItem(item);
+        }
+    };
+
+    const { getToggleButtonProps, getMenuProps, getItemProps, reset, isOpen, highlightedIndex, selectedItem } =
+        useSelect<{ value: string; label: string; children?: ReactNode }>({
             items,
             defaultSelectedItem: defaultItem,
             selectedItem: activeItem,
@@ -121,6 +145,27 @@ export const SelectInput = (
                 onSelect?.(selectedItem?.value ?? null);
             },
             itemToString: (item) => (item ? item.label : ''),
+            ...(multiple
+                ? {
+                      stateReducer: (state, actionAndChanges) => {
+                          const { changes, type } = actionAndChanges;
+                          switch (type) {
+                              case useSelect.stateChangeTypes.ToggleButtonKeyDownEnter:
+                              case useSelect.stateChangeTypes.ToggleButtonKeyDownSpaceButton:
+                              case useSelect.stateChangeTypes.ItemClick:
+                                  if (changes.selectedItem) {
+                                      toggleSelectedItem(changes.selectedItem);
+                                  }
+                                  return {
+                                      ...changes,
+                                      isOpen: true, // keep the menu open after selection.
+                                      highlightedIndex: state.highlightedIndex,
+                                  };
+                          }
+                          return changes;
+                      },
+                  }
+                : {}),
         });
 
     const displayedValue = selectedItem
@@ -149,17 +194,27 @@ export const SelectInput = (
                     className={styles.root}
                     data-status={status}
                     data-disabled={disabled}
-                    data-empty={!selectedItem}
+                    data-empty={selectedItems.length === 0}
                     data-test-id={dataTestId}
                     {...(disabled
                         ? {}
-                        : // eslint-disable-next-line react-hooks/refs
-                          getToggleButtonProps({
-                              'aria-label': 'aria-label' in props ? props['aria-label'] : undefined,
-                              ref: forwardedRef,
-                          }))}
+                        : getToggleButtonProps(
+                              // eslint-disable-next-line react-hooks/refs
+                              getDropdownProps({
+                                  'aria-label': 'aria-label' in props ? props['aria-label'] : undefined,
+                                  ref: forwardedRef,
+                              }),
+                          ))}
                 >
-                    <span className={styles.selectedValue}>{displayedValue}</span>
+                    {multiple ? (
+                        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                            {selectedItems.map((selectedItem) => (
+                                <Badge key={selectedItem.value}>{selectedItem.label}</Badge>
+                            ))}
+                        </div>
+                    ) : (
+                        <span className={styles.selectedValue}>{displayedValue}</span>
+                    )}
                     {inputSlots}
                     {clearButton ? (
                         <RadixSlot
@@ -198,7 +253,7 @@ export const SelectInput = (
                 highlightedIndex={highlightedIndex}
                 getMenuProps={getMenuProps}
                 getItemProps={getItemProps}
-                selectedItem={selectedItem}
+                selectedItems={selectedItems}
                 hasInteractedSinceOpening={hasInteractedSinceOpening}
                 viewportCollisionPadding={viewportCollisionPadding}
             >
