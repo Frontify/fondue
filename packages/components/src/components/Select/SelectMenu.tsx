@@ -54,9 +54,11 @@ export type SelectMenuProps = {
      * @internal
      * The type of the menu.
      */
-    selectedItem?: {
-        value: string;
-    } | null;
+    selectedItems?:
+        | {
+              value: string;
+          }[]
+        | null;
     /**
      * @internal
      * A boolean to indicate if highlighted item was changed since opening the menu.
@@ -83,7 +85,7 @@ export const SelectMenu = ({
     filterText,
     align,
     side,
-    selectedItem,
+    selectedItems,
     hasInteractedSinceOpening,
     viewportCollisionPadding = 'compact',
     onEscapeKeyDown,
@@ -154,7 +156,9 @@ export const SelectMenu = ({
                                             ...(child.ref ? { ref: child.ref } : {}),
                                         });
 
-                                        const isSelected = selectedItem?.value === optionData.value;
+                                        const isSelected = selectedItems?.some(
+                                            (selectedItem) => selectedItem.value === optionData.value,
+                                        );
 
                                         return (
                                             <RadixSlot

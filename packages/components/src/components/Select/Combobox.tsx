@@ -13,7 +13,7 @@ import { useTranslation } from '#/hooks/useTranslation';
 
 import { SelectMenu, type SelectMenuViewportCollisionPadding } from './SelectMenu';
 import styles from './styles/select.module.scss';
-import { useSelectData, type AsyncItemsFetcher } from './useSelectData';
+import { useSelectData, type AsyncItemsFetcher } from './hooks/useSelectData';
 
 export type ComboboxProps = {
     /**

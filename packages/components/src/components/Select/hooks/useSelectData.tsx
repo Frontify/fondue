@@ -11,10 +11,10 @@ import {
     type ReactNode,
 } from 'react';
 
-import { SelectClear } from './SelectClear';
-import { ForwardedRefSelectItem, type SelectItemProps } from './SelectItem';
-import { ForwardedRefSelectSlot, type SelectSlotProps } from './SelectSlot';
-import { getSelectOptionValue } from './utils';
+import { SelectClear } from '../SelectClear';
+import { ForwardedRefSelectItem, type SelectItemProps } from '../SelectItem';
+import { ForwardedRefSelectSlot, type SelectSlotProps } from '../SelectSlot';
+import { getSelectOptionValue } from '../utils';
 
 export type SelectItemType = {
     value: string;

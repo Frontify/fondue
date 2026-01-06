@@ -6,7 +6,7 @@ import { Children, isValidElement } from 'react';
 import { describe, expect, it } from 'vitest';
 
 import { Select } from '../Select';
-import { type AsyncItem, getRecursiveOptionValues, useSelectData } from '../useSelectData';
+import { type AsyncItem, getRecursiveOptionValues, useSelectData } from '../hooks/useSelectData';
 
 const getMockedGetAsyncItems =
     (shouldError: boolean = false) =>
