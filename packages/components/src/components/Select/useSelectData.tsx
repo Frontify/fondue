@@ -111,6 +111,7 @@ export const getRecursiveOptionValues = (
  */
 export const useSelectData = (children: ReactNode, getAsyncItems?: AsyncItemsFetcher) => {
     const [filterText, setFilterText] = useState('');
+    // eslint-disable-next-line react-hooks/preserve-manual-memoization
     const { inputSlots, menuSlots, itemValues, clearButton } = useMemo(() => {
         const inputSlots: ReactNode[] = [];
         const menuSlots: ReactNode[] = [];
