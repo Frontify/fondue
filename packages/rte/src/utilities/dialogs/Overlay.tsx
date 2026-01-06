@@ -64,6 +64,7 @@ export const Overlay = ({
         const trigger = anchor?.current;
 
         if (trigger) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setTriggerElementRef(trigger as HTMLElement);
         }
     }, [anchor]);

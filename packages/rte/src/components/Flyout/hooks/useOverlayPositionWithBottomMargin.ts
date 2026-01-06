@@ -84,6 +84,7 @@ export const useOverlayPositionWithBottomMargin = ({
 
     if (typeof positionProps?.style?.maxHeight === 'number' && !flipVerticalPosition) {
         const heightToSubtract = INTERCOM_BUTTON_HEIGHT - DEFAULT_OVERLAY_PADDING;
+        // eslint-disable-next-line react-hooks/immutability
         positionProps.style.maxHeight -= heightToSubtract;
     }
 

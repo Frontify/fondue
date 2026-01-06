@@ -75,6 +75,7 @@ export const Popper = ({
     useEffect(() => {
         const trigger = anchor?.current;
 
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setReferenceElement(trigger as HTMLElement);
     }, [anchor]);
 
@@ -99,6 +100,7 @@ export const Popper = ({
     useEffect(() => {
         const newOffset = withArrow ? getNewOffsetBasedOnArrowPosition(currentPlacement, offset) : offset;
 
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setPopperOffset((prevOffset) => {
             if (newOffset[0] !== prevOffset[0] || newOffset[1] !== prevOffset[1]) {
                 return newOffset;

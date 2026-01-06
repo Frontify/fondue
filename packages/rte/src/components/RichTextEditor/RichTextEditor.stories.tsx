@@ -477,6 +477,7 @@ defaultPluginsWithColumns
 type MultiColumnProps = ComponentProps<typeof RichTextEditorComponent> & { columns: number; columnGap: string };
 
 export const MultiColumns: StoryFn<MultiColumnProps> = (args: MultiColumnProps) => {
+    // eslint-disable-next-line react-hooks/immutability
     delete args.plugins;
 
     const plugins = new PluginComposer();

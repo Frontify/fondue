@@ -295,6 +295,7 @@ export const LegacyTooltip = ({
         setIsOpen(shouldPreventTooltipOpening ? false : open);
     }, [open, shouldPreventTooltipOpening]);
 
+    // eslint-disable-next-line @eslint-react/no-unnecessary-use-callback
     const listenForEsc = useCallback(
         (event: KeyboardEvent) => {
             if (isOpen && event.key === 'Escape') {
