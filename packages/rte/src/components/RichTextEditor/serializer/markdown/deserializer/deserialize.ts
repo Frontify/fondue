@@ -108,7 +108,7 @@ export default function deserialize<T extends InputNodeTypes>(
                 return {
                     break: true,
                     type: types.paragraph,
-                    children: [{ text: node.value?.replace(/<br>/g, '') || '' }],
+                    children: [{ text: node.value?.replaceAll('<br>', '') || '' }],
                 } as ParagraphNode<T>;
             }
             return { type: types.paragraph, children: [{ text: node.value || '' }] };
@@ -149,7 +149,7 @@ export default function deserialize<T extends InputNodeTypes>(
         }
         case 'text': {
             // Unicode Character 'NO-BREAK SPACE' (U+00A0)
-            return { text: node.value?.replace(/\u00A0/g, '').length === 0 ? '' : node.value };
+            return { text: node.value?.replaceAll('\u00A0', '').length === 0 ? '' : node.value };
         }
         default: {
             return { text: node.value ?? '' };
