@@ -13,7 +13,9 @@ import { ForwardedRefSelectItem, ForwardedRefSelectItemGroup } from './SelectIte
 import { SelectMenu, type SelectMenuViewportCollisionPadding } from './SelectMenu';
 import { ForwardedRefSelectSlot } from './SelectSlot';
 import styles from './styles/select.module.scss';
-import { useSelectData } from './useSelectData';
+import { useSelectData } from './hooks/useSelectData';
+import { useMultipleSelection } from 'downshift';
+import { Flex } from '../Flex/Flex';
 
 export type SelectComponentProps = {
     /**
@@ -104,28 +106,61 @@ export const SelectInput = (
 
     const [hasInteractedSinceOpening, setHasInteractedSinceOpening] = useState(false);
 
-    const { getToggleButtonProps, getMenuProps, getItemProps, reset, selectedItem, isOpen, highlightedIndex } =
-        useSelect({
-            items,
-            defaultSelectedItem: defaultItem,
-            selectedItem: activeItem,
-            toggleButtonId: id,
-            labelId: 'aria-labelledby' in props ? props['aria-labelledby'] : undefined,
-            onIsOpenChange: () => {
-                setHasInteractedSinceOpening(false);
-            },
-            onHighlightedIndexChange: () => {
-                setHasInteractedSinceOpening(true);
-            },
-            onSelectedItemChange: ({ selectedItem }) => {
-                onSelect?.(selectedItem?.value ?? null);
-            },
-            itemToString: (item) => (item ? item.label : ''),
-        });
+    const { getSelectedItemProps, getDropdownProps, addSelectedItem, removeSelectedItem, selectedItems } =
+        useMultipleSelection({ initialSelectedItems: defaultItem ? [defaultItem] : [] });
 
-    const displayedValue = selectedItem
-        ? (!showStringValue && selectedItem.children) || selectedItem.label
-        : placeholder;
+    const toggleSelectedItem = (item: any) => {
+        console.log('item', item);
+        console.log('selectedItems', selectedItems);
+        if (selectedItems.some((selectedItem) => selectedItem.value === item.value)) {
+            console.log('removeSelectedItem', item);
+            removeSelectedItem(item);
+        } else {
+            console.log('addSelectedItem', item);
+            addSelectedItem(item);
+        }
+    };
+
+    const { getToggleButtonProps, getMenuProps, getItemProps, reset, isOpen, highlightedIndex } = useSelect({
+        items,
+        defaultSelectedItem: defaultItem,
+        selectedItem: activeItem,
+        toggleButtonId: id,
+        labelId: 'aria-labelledby' in props ? props['aria-labelledby'] : undefined,
+        onIsOpenChange: () => {
+            setHasInteractedSinceOpening(false);
+        },
+        onHighlightedIndexChange: () => {
+            setHasInteractedSinceOpening(true);
+        },
+        onSelectedItemChange: ({ selectedItem }) => {
+            onSelect?.(selectedItem?.value ?? null);
+        },
+        itemToString: (item) => (item ? item.label : ''),
+        stateReducer: (state, actionAndChanges) => {
+            const { changes, type } = actionAndChanges;
+            // console.log('stateReducer', type, changes);
+            switch (type) {
+                case useSelect.stateChangeTypes.ToggleButtonKeyDownEnter:
+                case useSelect.stateChangeTypes.ToggleButtonKeyDownSpaceButton:
+                case useSelect.stateChangeTypes.ItemClick:
+                    if (changes.selectedItem) {
+                        toggleSelectedItem(changes.selectedItem);
+                    }
+                    return {
+                        ...changes,
+                        isOpen: true, // keep the menu open after selection.
+                        highlightedIndex: state.highlightedIndex,
+                    };
+            }
+            return changes;
+        },
+    });
+
+    const displayedValue =
+        selectedItems.length > 0
+            ? (!showStringValue && selectedItems[0]?.children) || selectedItems[0]?.label
+            : placeholder;
 
     return (
         <RadixPopover.Root open={isOpen}>
@@ -149,17 +184,32 @@ export const SelectInput = (
                     className={styles.root}
                     data-status={status}
                     data-disabled={disabled}
-                    data-empty={!selectedItem}
+                    data-empty={selectedItems.length === 0}
                     data-test-id={dataTestId}
                     {...(disabled
                         ? {}
                         : // eslint-disable-next-line react-hooks/refs
-                          getToggleButtonProps({
-                              'aria-label': 'aria-label' in props ? props['aria-label'] : undefined,
-                              ref: forwardedRef,
-                          }))}
+                          getToggleButtonProps(
+                              getDropdownProps({
+                                  'aria-label': 'aria-label' in props ? props['aria-label'] : undefined,
+                                  ref: forwardedRef,
+                              }),
+                          ))}
                 >
-                    <span className={styles.selectedValue}>{displayedValue}</span>
+                    {/* <span className={styles.selectedValue}>{displayedValue}</span> */}
+                    <Flex>
+                        {selectedItems.map((selectedItem, index) => (
+                            <span
+                                key={selectedItem.value}
+                                {...getSelectedItemProps({
+                                    selectedItem: selectedItem,
+                                    index: index,
+                                })}
+                            >
+                                {selectedItem.label}
+                            </span>
+                        ))}
+                    </Flex>
                     {inputSlots}
                     {clearButton ? (
                         <RadixSlot
@@ -198,7 +248,7 @@ export const SelectInput = (
                 highlightedIndex={highlightedIndex}
                 getMenuProps={getMenuProps}
                 getItemProps={getItemProps}
-                selectedItem={selectedItem}
+                selectedItems={selectedItems}
                 hasInteractedSinceOpening={hasInteractedSinceOpening}
                 viewportCollisionPadding={viewportCollisionPadding}
             >
