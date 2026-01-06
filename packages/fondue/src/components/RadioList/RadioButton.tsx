@@ -30,6 +30,7 @@ export type RadioButtonProps = {
 export const RadioButton = ({ ...props }: RadioButtonProps) => {
     const id = useMemoizedId();
     const ref = useRef<HTMLDivElement | null>(null);
+    // eslint-disable-next-line react-hooks/refs
     const hasInteractiveElements = checkIfContainInteractiveElements(ref.current);
 
     return (
