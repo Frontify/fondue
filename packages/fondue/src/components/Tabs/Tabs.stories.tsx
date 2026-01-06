@@ -3,13 +3,12 @@
 import { type Meta, type StoryFn } from '@storybook/react-vite';
 import { useState } from 'react';
 
-import { BadgeStyle } from '@components/Badge';
+import { BadgeStyle } from '@components/Badge/types';
 import { Button } from '@components/Button/Button';
 import { Checkbox as CheckboxComponent, type CheckboxProps, CheckboxState } from '@components/Checkbox/Checkbox';
 import { TabItem, type TabItemProps } from '@components/Tabs/TabItem';
 import IconIcon from '@foundation/Icon/Generated/IconIcon';
 import { IconSize } from '@foundation/Icon/IconSize';
-import { Text } from '@typography/Text';
 
 import { TabSize, Tabs, TabsPaddingX, type TabsProps } from './Tabs';
 
@@ -41,13 +40,11 @@ const CustomCheckbox = () => {
 
 const TextParagraph = () => {
     return (
-        <Text>
-            <p>
-                Bacon ipsum dolor amet spare ribs swine meatloaf, pastrami cupim tail leberkas frankfurter jowl chislic
-                shoulder. Frankfurter drumstick t-bone bacon ground round. Cupim pork loin shank kielbasa. Short loin
-                shank meatloaf tongue. Chicken sirloin swine ball tip. Turkey pork kevin burgdoggen meatball t-bone.
-            </p>
-        </Text>
+        <p>
+            Bacon ipsum dolor amet spare ribs swine meatloaf, pastrami cupim tail leberkas frankfurter jowl chislic
+            shoulder. Frankfurter drumstick t-bone bacon ground round. Cupim pork loin shank kielbasa. Short loin shank
+            meatloaf tongue. Chicken sirloin swine ball tip. Turkey pork kevin burgdoggen meatball t-bone.
+        </p>
     );
 };
 
@@ -79,12 +76,12 @@ const data: TabItemProps[] = [
         id: 'tab-3',
         label: 'A long tab name',
         children: (
-            <Text>
+            <p>
                 Sirloin prosciutto cow short loin, andouille bresaola doner fatback pork loin. Tongue ribeye kielbasa
                 pastrami. Meatball tail hamburger beef ribs beef ball tip pork chop buffalo short loin boudin chicken
                 pastrami ribeye picanha flank. Shoulder chicken pancetta shankle biltong rump hamburger kielbasa tri-tip
                 ham hock frankfurter.
-            </Text>
+            </p>
         ),
     },
     {
@@ -92,17 +89,17 @@ const data: TabItemProps[] = [
         label: 'An even longer tab name',
         children: (
             <div>
-                <Text>
+                <p>
                     Porchetta burgdoggen kielbasa tenderloin boudin, ham cow pork loin salami. Pork chop swine meatloaf,
                     sausage ground round tenderloin beef pork chislic chicken short loin landjaeger. Pig pork chop
                     meatball picanha short ribs. Meatloaf buffalo shoulder, tail beef ribs corned beef short ribs ground
                     round andouille pork belly landjaeger swine hamburger meatball. Ham hock turducken tri-tip picanha,
                     buffalo leberkas pork loin chuck ground round.
-                </Text>
+                </p>
                 <hr className="tw-my-4 tw-border-black-10" />
-                <Text>
+                <p>
                     <Button>Some button</Button>
-                </Text>
+                </p>
             </div>
         ),
     },
@@ -115,7 +112,7 @@ const data: TabItemProps[] = [
     {
         id: 'tab-6',
         label: 'Last tab',
-        children: <Text>Meat.</Text>,
+        children: <p>Meat.</p>,
     },
 ];
 

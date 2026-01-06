@@ -20,7 +20,6 @@ import { Tag, TagSize, TagType } from '@components/Tag';
 import { TextInput } from '@components/TextInput/TextInput';
 import { Trigger, TriggerEmphasis } from '@components/Trigger/Trigger';
 import { DEFAULT_DROPDOWN_MAX_HEIGHT, useDropdownAutoHeight } from '@hooks/useDropdownAutoHeight';
-import { Text } from '@typography/Text';
 import { EnablePortalWrapper } from '@utilities/dialogs/EnablePortalWrapper';
 import { merge } from '@utilities/merge';
 import { Validation } from '@utilities/validation';
@@ -255,7 +254,9 @@ export const FilterableMultiSelect = ({
                         onKeyDown={handleSpaceBarToggle}
                     >
                         <div className="tw-flex tw-flex-wrap tw-gap-2 tw-outline-none tw-items-center tw-min-h-[28px]">
-                            {label && hasSelectedItems && <Text weight="strong">{label}</Text>}
+                            {label && hasSelectedItems && (
+                                <span className="tw-body-medium-strong tw-text-primary">{label}</span>
+                            )}
                             {type === FilterableMultiSelectType.Default &&
                                 activeItemKeys.map((key) => (
                                     <Tag
@@ -281,7 +282,9 @@ export const FilterableMultiSelect = ({
                                     />
                                 )}
 
-                            {activeItemKeys.length === 0 && placeholder && <Text color="weak">{placeholder}</Text>}
+                            {activeItemKeys.length === 0 && placeholder && (
+                                <span className="tw-body-medium tw-text-secondary">{placeholder}</span>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -325,9 +328,7 @@ export const FilterableMultiSelect = ({
                                 )}
 
                                 {checkboxes.length === 0 && searchTerm !== '' && (
-                                    <Text size="small" color="weak">
-                                        {emptyFilteredResultsLabel}
-                                    </Text>
+                                    <span className="tw-body-small tw-text-secondary">{emptyFilteredResultsLabel}</span>
                                 )}
                             </div>
                         </FocusScope>

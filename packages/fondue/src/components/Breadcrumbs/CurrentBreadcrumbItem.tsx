@@ -5,7 +5,7 @@ import { useFocusRing } from '@react-aria/focus';
 import { mergeProps } from '@react-aria/utils';
 import { type ReactElement, useRef } from 'react';
 
-import { Badge } from '@components/Badge';
+import { Badge } from '@components/Badge/Badge';
 import { getItemElementType } from '@utilities/elements';
 import { FOCUS_STYLE_NO_OFFSET } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';

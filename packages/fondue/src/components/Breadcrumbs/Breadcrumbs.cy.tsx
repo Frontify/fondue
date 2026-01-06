@@ -2,7 +2,7 @@
 
 import { type ReactElement, useState } from 'react';
 
-import { type BreadcrumbsProps, BreadcrumbGap, Breadcrumbs, verticalGapClassMap } from './Breadcrumbs';
+import { type BreadcrumbsProps, BreadcrumbGap, Breadcrumbs } from './Breadcrumbs';
 
 beforeEach('Getting the seperator', () => {
     cy.intercept('GET', '/img/diagonal-line.svg', '/public/img/diagonal-line.svg');
@@ -110,16 +110,16 @@ describe('Breadcrumb component', () => {
 
     it('should render gap class appropriately', () => {
         cy.mount(<Breadcrumbs items={BREADCRUMB_ITEMS_MIXED_ELEMENTS} />);
-        cy.get(BREADCRUMB_ID).should('have.class', verticalGapClassMap.Medium);
+        cy.get(BREADCRUMB_ID).should('have.class', 'tw-gap-y-1');
 
         cy.mount(<Breadcrumbs items={BREADCRUMB_ITEMS_MIXED_ELEMENTS} verticalGap={BreadcrumbGap.None} />);
-        cy.get(BREADCRUMB_ID).should('have.class', verticalGapClassMap[BreadcrumbGap.None]);
+        cy.get(BREADCRUMB_ID).should('have.class', 'tw-gap-y-0');
 
         cy.mount(<Breadcrumbs items={BREADCRUMB_ITEMS_MIXED_ELEMENTS} verticalGap={BreadcrumbGap.Small} />);
-        cy.get(BREADCRUMB_ID).should('have.class', verticalGapClassMap[BreadcrumbGap.Small]);
+        cy.get(BREADCRUMB_ID).should('have.class', 'tw-gap-y-0.5');
 
         cy.mount(<Breadcrumbs items={BREADCRUMB_ITEMS_MIXED_ELEMENTS} verticalGap={BreadcrumbGap.Medium} />);
-        cy.get(BREADCRUMB_ID).should('have.class', verticalGapClassMap[BreadcrumbGap.Medium]);
+        cy.get(BREADCRUMB_ID).should('have.class', 'tw-gap-y-1');
     });
 
     it('should be able to handle a changing number of items', () => {

@@ -3,7 +3,7 @@
 import { type Meta, type StoryFn } from '@storybook/react-vite';
 import { action } from 'storybook/actions';
 
-import { BadgeStatus, BadgeStyle } from '@components/Badge';
+import { BadgeStatus, BadgeStyle } from '@components/Badge/types';
 import IconIcon from '@foundation/Icon/Generated/IconIcon';
 
 import { BreadcrumbGap, Breadcrumbs, type BreadcrumbsProps } from './Breadcrumbs';

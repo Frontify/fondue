@@ -1,22 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type AriaAttributes, type ReactElement } from 'react';
-
-import { type Validation } from '@utilities/validation';
-
-/**
- * @deprecated This type is deprecated and will be removed in the next major version.
- */
-export type InputSharedBaseProps = {
-    autocomplete?: boolean;
-    clearable?: boolean;
-    decorator?: ReactElement;
-    extraActions?: ExtraAction[];
-    hugWidth?: boolean;
-    id?: string;
-    status?: Validation;
-    'data-test-id'?: string;
-} & AriaAttributes;
+import { type ReactElement } from 'react';
 
 /**
  * @deprecated This type is deprecated and will be removed in the next major version.

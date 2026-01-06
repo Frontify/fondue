@@ -1,11 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconCheckMark, IconCross, IconExclamationMarkTriangle, IconEye, IconEyeOff } from '@frontify/fondue-icons';
-import { type ReactElement } from 'react';
-
 import { Button } from '@components/Button/Button';
 import { ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button/ButtonTypes';
 import { LoadingCircle, LoadingCircleSize } from '@components/LoadingCircle/LoadingCircle';
+import { IconCheckMark, IconCross, IconExclamationMarkTriangle, IconEye, IconEyeOff } from '@frontify/fondue-icons';
+import { type ReactElement } from 'react';
 
 import { type InputActionsProps, type InputExtraActionsProps } from '../types/input';
 
