@@ -142,8 +142,8 @@ InsideFormControlAndOverSegmentedControls.args = {
 const formatOptions = { day: 'numeric', month: 'short', year: 'numeric' } as const;
 
 const TemplateDateRange: StoryFn<DatePickerProps> = () => {
-    const [startDate, setStartDate] = useState<Date | null>(subDays(new Date(), 40));
-    const [endDate, setEndDate] = useState<Date | null>(new Date());
+    const [startDate, setStartDate] = useState<Date | null>(() => subDays(new Date(), 40));
+    const [endDate, setEndDate] = useState<Date | null>(() => new Date());
     const onChange = (dates: [Date | null, Date | null] | null) => {
         if (!dates) {
             return;

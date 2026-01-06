@@ -169,6 +169,7 @@ export const Dropdown = ({
         'Bottom-Start': 'bottom-start',
         'Bottom-End': 'bottom-end',
     };
+    // eslint-disable-next-line react-hooks/refs
     const popperInstance = usePopper(triggerRef?.current, dropdownRef.current, {
         placement: placementMap[`${position}-${alignment}`],
         strategy: 'fixed',
@@ -230,6 +231,7 @@ export const Dropdown = ({
                         ref={dropdownRef}
                         style={{
                             ...popperInstance.styles.popper,
+                            // eslint-disable-next-line react-hooks/refs
                             width: triggerRef.current?.getBoundingClientRect().width,
                             minWidth: 'fit-content',
                         }}

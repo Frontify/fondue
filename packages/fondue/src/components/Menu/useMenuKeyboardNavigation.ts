@@ -14,6 +14,7 @@ export const useMenuKeyboardNavigation = (
     const [itemsElements, setItemsElements] = useState<NodeList>();
     const [menuKeyboardNavigationAction, setMenuKeyboardNavigationAction] = useState('');
 
+    // eslint-disable-next-line @eslint-react/no-unnecessary-use-callback
     const handleKeyDown = useCallback(
         (event: KeyboardEvent) => {
             if (!itemsElements || !['Tab', 'ArrowDown', 'ArrowUp', 'Escape'].includes(event.key)) {
@@ -57,6 +58,7 @@ export const useMenuKeyboardNavigation = (
         }
 
         if (!itemsElements && focusableItems.length > 0) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setItemsElements(focusableItems);
         }
     }, [isMenuOpened, menuContainerRef, itemsElements, handleKeyDown, focusableElementsSelector]);
@@ -73,6 +75,7 @@ export const useMenuKeyboardNavigation = (
 
     useEffect(() => {
         if (!isMenuOpened) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setItemsElements(undefined);
             setMenuKeyboardNavigationAction('');
         }

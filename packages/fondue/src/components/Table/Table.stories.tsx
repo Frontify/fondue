@@ -287,6 +287,7 @@ const TemplateWithSearch: StoryFn<TableProps> = (args) => {
 
     useEffect(() => {
         if (filter === '') {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setFilteredRows(rows);
         }
         const newFilteredRowsValue = rows.filter((row) => {

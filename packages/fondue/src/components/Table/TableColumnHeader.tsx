@@ -63,6 +63,7 @@ export const TableColumnHeader = ({
 
     useEffect(() => {
         if (isColumnSorted) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setIcon(sortDirection === SortDirection.Descending ? <IconArrowDown /> : <IconArrowUp />);
         } else {
             setIcon(<IconArrowBidirectional />);

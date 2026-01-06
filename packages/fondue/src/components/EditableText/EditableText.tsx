@@ -157,6 +157,7 @@ export const EditableText = ({
     // Clone Child and add ref to Children
     const ChildrenWithRef =
         children &&
+        // eslint-disable-next-line @eslint-react/no-clone-element, react-hooks/refs
         cloneElement(children, {
             ref: childRef,
         });

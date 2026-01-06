@@ -53,6 +53,7 @@ export const OrderableList = <T extends object>({
         // sort the incoming items
         const itemsClone = [...items];
         itemsClone.sort(listItemsCompareFn);
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setItemsState(itemsClone);
     }, [items]);
 

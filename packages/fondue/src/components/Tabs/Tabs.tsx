@@ -219,6 +219,7 @@ export const Tabs = ({
 
     // First render
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         checkIfOverflowing();
     }, [checkIfOverflowing]);
 

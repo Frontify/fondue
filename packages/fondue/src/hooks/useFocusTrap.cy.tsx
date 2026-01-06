@@ -23,6 +23,7 @@ const FocusableComponent = ({
 }) => {
     const triggerRef = useRef<HTMLButtonElement | null>(null);
     const [isOpen, setIsOpen] = useState(false);
+    // eslint-disable-next-line react-hooks/refs
     const { elementRef } = useFocusTrap<HTMLDivElement>(isOpen, ignoreFocusTrap, triggerRef.current);
     return (
         <div data-test-id="container">
