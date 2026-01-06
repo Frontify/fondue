@@ -2,9 +2,6 @@
 
 import { type Meta, type StoryFn } from '@storybook/react-vite';
 
-import { Heading } from '@typography/Heading';
-import { Text } from '@typography/Text';
-
 import { CollapsibleWrap as CollapsibleWrapComponent } from './CollapsibleWrap';
 import { type CollapsibleWrapProps } from './types';
 
@@ -29,12 +26,12 @@ export const CollapsibleWrap: StoryFn<CollapsibleWrapProps> = (args) => (
     <div className="tw-border tw-border-black-10 tw-rounded-md">
         <div className="tw-divide-y tw-divide-black-10">
             <div className="tw-p-3">
-                <Heading>Collapsible Wrap</Heading>
+                <h2>Collapsible Wrap</h2>
             </div>
             <CollapsibleWrapComponent {...args}>
                 <div className="tw-h-[200px] tw-p-5 tw-bg-black-5 tw-flex tw-justify-center tw-items-center tw-flex-col">
-                    <Text>I am the child content of the Collapsible Wrap Component.</Text>
-                    <Text>Toggle the open state to hide me.</Text>
+                    <p>I am the child content of the Collapsible Wrap Component.</p>
+                    <p>Toggle the open state to hide me.</p>
                 </div>
             </CollapsibleWrapComponent>
         </div>
@@ -45,12 +42,12 @@ export const CollapsibleWrapNoStartingAnimation: StoryFn<CollapsibleWrapProps> =
     <div className="tw-border tw-border-black-10 tw-rounded-md">
         <div className="tw-divide-y tw-divide-black-10">
             <div className="tw-p-3">
-                <Heading>Collapsible Wrap Without First Animation</Heading>
+                <h2>Collapsible Wrap Without First Animation</h2>
             </div>
             <CollapsibleWrapComponent {...args} preventInitialAnimation>
                 <div className="tw-h-[200px] tw-p-5 tw-bg-black-5 tw-flex tw-justify-center tw-items-center tw-flex-col">
-                    <Text>I am the child content of the Collapsible Wrap Component.</Text>
-                    <Text>Toggle the open state to hide me.</Text>
+                    <p>I am the child content of the Collapsible Wrap Component.</p>
+                    <p>Toggle the open state to hide me.</p>
                 </div>
             </CollapsibleWrapComponent>
         </div>

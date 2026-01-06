@@ -2,7 +2,7 @@
 
 import { type ReactElement, type ReactNode, useEffect, useState } from 'react';
 
-import { type BadgeProps } from '@components/Badge';
+import { type BadgeProps } from '@components/Badge/types';
 import { checkIfContainInteractiveElements } from '@utilities/elements';
 import { merge } from '@utilities/merge';
 

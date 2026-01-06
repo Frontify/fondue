@@ -19,7 +19,6 @@ import { Checklist, ChecklistDirection } from '@components/Checklist/Checklist';
 import { Tag, TagSize, TagType } from '@components/Tag';
 import { Trigger, TriggerEmphasis } from '@components/Trigger/Trigger';
 import { DEFAULT_DROPDOWN_MAX_HEIGHT, useDropdownAutoHeight } from '@hooks/useDropdownAutoHeight';
-import { Text } from '@typography/Text';
 import { EnablePortalWrapper } from '@utilities/dialogs/EnablePortalWrapper';
 import { merge } from '@utilities/merge';
 import { Validation } from '@utilities/validation';
@@ -239,7 +238,9 @@ export const MultiSelect = ({
                         onKeyDown={handleSpacebarToggle}
                     >
                         <div className="tw-flex tw-flex-wrap tw-gap-2 tw-outline-none tw-items-center tw-min-h-[28px]">
-                            {label && hasSelectedItems && <Text weight="strong">{label}</Text>}
+                            {label && hasSelectedItems && (
+                                <span className="tw-body-medium-strong tw-text-primary">{label}</span>
+                            )}
                             {type === MultiSelectType.Default &&
                                 activeItemKeys.map((key) => (
                                     <Tag
@@ -262,7 +263,9 @@ export const MultiSelect = ({
                                 />
                             )}
 
-                            {activeItemKeys.length === 0 && placeholder && <Text color="weak">{placeholder}</Text>}
+                            {activeItemKeys.length === 0 && placeholder && (
+                                <span className="tw-body-medium tw-text-secondary">{placeholder}</span>
+                            )}
                         </div>
                     </div>
                 </div>

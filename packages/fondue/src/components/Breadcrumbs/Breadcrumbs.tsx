@@ -3,7 +3,7 @@
 import { type AriaBreadcrumbsProps, useBreadcrumbs } from '@react-aria/breadcrumbs';
 import { type MouseEvent, type ReactElement } from 'react';
 
-import { type BadgeProps } from '@components/Badge';
+import { type BadgeProps } from '@components/Badge/types';
 import { type IconProps } from '@foundation/Icon/IconProps';
 import { merge } from '@utilities/merge';
 
@@ -54,7 +54,7 @@ export enum BreadcrumbGap {
 /**
  * @deprecated This constant is deprecated and will be removed in the next major version.
  */
-export const verticalGapClassMap: Record<BreadcrumbGap, string> = {
+const verticalGapClassMap: Record<BreadcrumbGap, string> = {
     [BreadcrumbGap.None]: 'tw-gap-y-0',
     [BreadcrumbGap.Small]: 'tw-gap-y-0.5',
     [BreadcrumbGap.Medium]: 'tw-gap-y-1',

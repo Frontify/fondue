@@ -18,7 +18,6 @@ export type DimensionUnity = '%' | 'px' | 'rem' | 'em' | 'vh' | 'vw';
 /**
  * @deprecated This constant is deprecated and will be removed in the next major version.
  */
-export const SPACING_VALUES: SpacingValue[] = [0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40];
 const PADDING_VALUES_MAP: Record<SpacingValue, string> = {
     0: 'tw-p-0',
     4: 'tw-p-1',
@@ -121,6 +120,7 @@ export const MARGIN_DIRECTIONS: Record<MarginDirectionKey, MarginDirection> = {
     MARGIN_Y: 'margin-y',
 };
 
+const SPACING_VALUES: SpacingValue[] = [0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40];
 const getMappedSpacingValue = (map: SpacingMapType, spacingValue: SpacingValue) => {
     return SPACING_VALUES.includes(spacingValue) ? map[spacingValue] : '';
 };

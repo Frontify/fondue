@@ -3,7 +3,6 @@
 export * from './Accordion';
 export * from './ActionMenu';
 export * from './AssetInput';
-export * from './Badge';
 export * from './Breadcrumbs';
 export * from './CollapsibleWrap';
 export * from './ComponentEnum';
@@ -22,6 +21,5 @@ export * from './OrderableList';
 export * from './RadioList';
 export * from './Table';
 export * from './Tabs';
-export * from './Textarea';
 export * from './Toast';
 export * from './Tree';
