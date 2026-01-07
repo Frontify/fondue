@@ -509,7 +509,7 @@
 <header>
   <div class="wrap">
     <h1>Components Manifest</h1>
-    <div class="summary"><a class="filter-pill all" data-k="all" href="#filter-all">All</a><span class="filter-pill ok" aria-disabled="true">35 components ok</span><a class="filter-pill info" data-k="infos" href="#filter-infos">35/35 infos</a><span class="filter-pill ok" aria-disabled="true">305 stories ok</span></div>
+    <div class="summary"><a class="filter-pill all" data-k="all" href="#filter-all">All</a><span class="filter-pill ok" aria-disabled="true">35 components ok</span><a class="filter-pill info" data-k="infos" href="#filter-infos">35/35 infos</a><span class="filter-pill ok" aria-disabled="true">314 stories ok</span></div>
   </div>
 </header>
 <main>
@@ -2508,9 +2508,9 @@ onFormatChange?: (format: ColorFormat) =&gt; void = () =&gt; {}</code></pre>
     <div class="title">
       <h2><span class="status-dot dot-ok"></span> DialogContent</h2>
       <div class="badges">
-        <label for="c-7-components-dialog-props" class="badge ok as-toggle">9 prop types</label>
+        <label for="c-7-components-dialog-props" class="badge ok as-toggle">10 prop types</label>
         <label for="c-7-components-dialog-info" class="badge info as-toggle">1 info</label>
-        <label for="c-7-components-dialog-stories" class="badge ok as-toggle">24 stories</label>
+        <label for="c-7-components-dialog-stories" class="badge ok as-toggle">27 stories</label>
       </div>
     </div>
     <div class="meta" title="./src/components/Dialog/Dialog.stories.tsx">components-dialog · ./src/components/Dialog/Dialog.stories.tsx</div>
@@ -2540,7 +2540,7 @@ onFormatChange?: (format: ColorFormat) =&gt; void = () =&gt; {}</code></pre>
           <div class="note ok">
             <div class="row">
               <span class="ex-name">Prop types</span>
-              <span class="badge ok">9 prop types</span>
+              <span class="badge ok">10 prop types</span>
             </div>
             <pre><code>Component: src/components/Dialog/Dialog.tsx::DialogContent</code></pre>
             <pre><code>Props:</code></pre>
@@ -2565,6 +2565,11 @@ minHeight?: string = &#39;200px&#39;
  * @default &quot;400px&quot;
  */
 minWidth?: string = &#39;400px&#39;
+
+/**
+ * Event handler called when the escape key is pressed.
+ */
+onEscapeKeyDown?: (event: KeyboardEvent) =&gt; void
 
 /**
  * Define the padding of the dialog
@@ -3398,6 +3403,145 @@ verticalAlign?: &#39;top&#39; | &#39;center&#39; = &#39;center&#39;</code></pre>
     );
 };</code></pre>
             </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">OnEscapeKeyDown</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const OnEscapeKeyDown = () =&gt; {
+    return (
+        &lt;Dialog.Root&gt;
+            &lt;Dialog.Trigger&gt;
+                &lt;Button&gt;Open dialog&lt;/Button&gt;
+            &lt;/Dialog.Trigger&gt;
+            &lt;Dialog.Content
+                onEscapeKeyDown={() =&gt; {
+                    alert(&#39;Escape key was pressed!&#39;);
+                }}&gt;
+                &lt;Dialog.Header&gt;
+                    &lt;Dialog.Title&gt;Dialog with onEscapeKeyDown&lt;/Dialog.Title&gt;
+                &lt;/Dialog.Header&gt;
+                &lt;Dialog.Body&gt;This dialog will show an alert when you press the Escape key, then close normally.
+                                        &lt;/Dialog.Body&gt;
+                &lt;Dialog.Footer&gt;
+                    &lt;Button emphasis=&quot;default&quot;&gt;Cancel&lt;/Button&gt;
+                    &lt;Button&gt;Submit&lt;/Button&gt;
+                &lt;/Dialog.Footer&gt;
+            &lt;/Dialog.Content&gt;
+        &lt;/Dialog.Root&gt;
+    );
+};</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">PreventCloseOnEscape</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const PreventCloseOnEscape = () =&gt; {
+    return (
+        &lt;Dialog.Root&gt;
+            &lt;Dialog.Trigger&gt;
+                &lt;Button&gt;Open dialog&lt;/Button&gt;
+            &lt;/Dialog.Trigger&gt;
+            &lt;Dialog.Content
+                onEscapeKeyDown={(event) =&gt; {
+                    event.preventDefault();
+                    alert(&#39;Escape key pressed, but dialog will not close!&#39;);
+                }}&gt;
+                &lt;Dialog.Header&gt;
+                    &lt;Dialog.Title&gt;Dialog preventing close on Escape&lt;/Dialog.Title&gt;
+                &lt;/Dialog.Header&gt;
+                &lt;Dialog.Body&gt;This dialog prevents closing when Escape is pressed. You must use the Cancel button or close
+                                            button to close it.
+                                        &lt;/Dialog.Body&gt;
+                &lt;Dialog.Footer&gt;
+                    &lt;Dialog.Close&gt;
+                        &lt;Button emphasis=&quot;default&quot;&gt;Cancel&lt;/Button&gt;
+                    &lt;/Dialog.Close&gt;
+                    &lt;Button&gt;Submit&lt;/Button&gt;
+                &lt;/Dialog.Footer&gt;
+            &lt;/Dialog.Content&gt;
+        &lt;/Dialog.Root&gt;
+    );
+};</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">NestedDialogsWithEscapeKey</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const NestedDialogsWithEscapeKey = () =&gt; {
+    const [outerEscapeCount, setOuterEscapeCount] = useState(0);
+    const [innerEscapeCount, setInnerEscapeCount] = useState(0);
+
+    return (
+        &lt;Flex direction=&quot;column&quot; gap=&quot;16px&quot;&gt;
+            &lt;div&gt;
+                &lt;strong&gt;Outer Dialog Escape Count:&lt;/strong&gt; {outerEscapeCount}
+            &lt;/div&gt;
+            &lt;div&gt;
+                &lt;strong&gt;Inner Dialog Escape Count:&lt;/strong&gt; {innerEscapeCount}
+            &lt;/div&gt;
+            &lt;Dialog.Root&gt;
+                &lt;Dialog.Trigger&gt;
+                    &lt;Button&gt;Open Outer Dialog&lt;/Button&gt;
+                &lt;/Dialog.Trigger&gt;
+                &lt;Dialog.Content
+                    showUnderlay
+                    onEscapeKeyDown={() =&gt; {
+                        setOuterEscapeCount((prev) =&gt; prev + 1);
+                    }}&gt;
+                    &lt;Dialog.Header&gt;
+                        &lt;Dialog.Title&gt;Outer Dialog&lt;/Dialog.Title&gt;
+                    &lt;/Dialog.Header&gt;
+                    &lt;Dialog.Body&gt;
+                        &lt;Flex direction=&quot;column&quot; gap=&quot;16px&quot;&gt;
+                            &lt;p&gt;This is the outer dialog. Press Escape to close it, or open the inner dialog below.
+                                                                &lt;/p&gt;
+                            &lt;Dialog.Root&gt;
+                                &lt;Dialog.Trigger&gt;
+                                    &lt;Button&gt;Open Inner Dialog&lt;/Button&gt;
+                                &lt;/Dialog.Trigger&gt;
+                                &lt;Dialog.Content
+                                    showUnderlay
+                                    onEscapeKeyDown={() =&gt; {
+                                        setInnerEscapeCount((prev) =&gt; prev + 1);
+                                    }}&gt;
+                                    &lt;Dialog.Header&gt;
+                                        &lt;Dialog.Title&gt;Inner Dialog&lt;/Dialog.Title&gt;
+                                    &lt;/Dialog.Header&gt;
+                                    &lt;Dialog.Body&gt;
+                                        &lt;p&gt;This is the inner dialog. When you press Escape, this dialog closes
+                                                                                            first, and the outer dialog remains open. Press Escape again to close
+                                                                                            the outer dialog.
+                                                                                        &lt;/p&gt;
+                                    &lt;/Dialog.Body&gt;
+                                    &lt;Dialog.Footer&gt;
+                                        &lt;Dialog.Close&gt;
+                                            &lt;Button emphasis=&quot;default&quot;&gt;Close Inner&lt;/Button&gt;
+                                        &lt;/Dialog.Close&gt;
+                                    &lt;/Dialog.Footer&gt;
+                                &lt;/Dialog.Content&gt;
+                            &lt;/Dialog.Root&gt;
+                        &lt;/Flex&gt;
+                    &lt;/Dialog.Body&gt;
+                    &lt;Dialog.Footer&gt;
+                        &lt;Dialog.Close&gt;
+                            &lt;Button emphasis=&quot;default&quot;&gt;Close Outer&lt;/Button&gt;
+                        &lt;/Dialog.Close&gt;
+                    &lt;/Dialog.Footer&gt;
+                &lt;/Dialog.Content&gt;
+            &lt;/Dialog.Root&gt;
+        &lt;/Flex&gt;
+    );
+};</code></pre>
+            </div>
         </div>
   </div>
 </article>
@@ -3564,7 +3708,7 @@ variant?: &#39;noline&#39; | &#39;dashed&#39; | &#39;solid&#39; = &#39;solid&#39
       <div class="badges">
         <label for="c-9-components-dropdown-props" class="badge ok as-toggle">5 prop types</label>
         <label for="c-9-components-dropdown-info" class="badge info as-toggle">1 info</label>
-        <label for="c-9-components-dropdown-stories" class="badge ok as-toggle">15 stories</label>
+        <label for="c-9-components-dropdown-stories" class="badge ok as-toggle">17 stories</label>
       </div>
     </div>
     <div class="meta" title="./src/components/Dropdown/Dropdown.stories.tsx">components-dropdown · ./src/components/Dropdown/Dropdown.stories.tsx</div>
@@ -4008,6 +4152,49 @@ open?: boolean</code></pre>
         &lt;Button&gt;Trigger&lt;/Button&gt;
     &lt;/Dropdown.Trigger&gt;
     &lt;Dropdown.Content viewportCollisionPadding=&quot;spacious&quot;&gt;
+        &lt;Dropdown.Item onSelect={() =&gt; {}}&gt;Item 1&lt;/Dropdown.Item&gt;
+        &lt;Dropdown.Item onSelect={() =&gt; {}}&gt;Item 2&lt;/Dropdown.Item&gt;
+        &lt;Dropdown.Item onSelect={() =&gt; {}}&gt;Item 3&lt;/Dropdown.Item&gt;
+    &lt;/Dropdown.Content&gt;
+&lt;/Dropdown.Root&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">OnEscapeKeyDown</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const OnEscapeKeyDown = () =&gt; &lt;Dropdown.Root&gt;
+    &lt;Dropdown.Trigger&gt;
+        &lt;Button&gt;Trigger&lt;/Button&gt;
+    &lt;/Dropdown.Trigger&gt;
+    &lt;Dropdown.Content
+        onEscapeKeyDown={() =&gt; {
+            alert(&#39;Escape key was pressed!&#39;);
+        }}&gt;
+        &lt;Dropdown.Item onSelect={() =&gt; {}}&gt;Item 1&lt;/Dropdown.Item&gt;
+        &lt;Dropdown.Item onSelect={() =&gt; {}}&gt;Item 2&lt;/Dropdown.Item&gt;
+        &lt;Dropdown.Item onSelect={() =&gt; {}}&gt;Item 3&lt;/Dropdown.Item&gt;
+    &lt;/Dropdown.Content&gt;
+&lt;/Dropdown.Root&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">PreventCloseOnEscape</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const PreventCloseOnEscape = () =&gt; &lt;Dropdown.Root&gt;
+    &lt;Dropdown.Trigger&gt;
+        &lt;Button&gt;Trigger&lt;/Button&gt;
+    &lt;/Dropdown.Trigger&gt;
+    &lt;Dropdown.Content
+        onEscapeKeyDown={(event) =&gt; {
+            event.preventDefault();
+            alert(&#39;Escape key pressed, but dropdown will not close!&#39;);
+        }}&gt;
         &lt;Dropdown.Item onSelect={() =&gt; {}}&gt;Item 1&lt;/Dropdown.Item&gt;
         &lt;Dropdown.Item onSelect={() =&gt; {}}&gt;Item 2&lt;/Dropdown.Item&gt;
         &lt;Dropdown.Item onSelect={() =&gt; {}}&gt;Item 3&lt;/Dropdown.Item&gt;
@@ -4487,9 +4674,9 @@ wrap?: ({ [key in Breakpoint]?: TValue } &amp; { base?: TValue }) | TValue</code
     <div class="title">
       <h2><span class="status-dot dot-ok"></span> FlyoutContent</h2>
       <div class="badges">
-        <label for="c-11-components-flyout-props" class="badge ok as-toggle">12 prop types</label>
+        <label for="c-11-components-flyout-props" class="badge ok as-toggle">13 prop types</label>
         <label for="c-11-components-flyout-info" class="badge info as-toggle">1 info</label>
-        <label for="c-11-components-flyout-stories" class="badge ok as-toggle">24 stories</label>
+        <label for="c-11-components-flyout-stories" class="badge ok as-toggle">26 stories</label>
       </div>
     </div>
     <div class="meta" title="./src/components/Flyout/Flyout.stories.tsx">components-flyout · ./src/components/Flyout/Flyout.stories.tsx</div>
@@ -4519,7 +4706,7 @@ wrap?: ({ [key in Breakpoint]?: TValue } &amp; { base?: TValue }) | TValue</code
           <div class="note ok">
             <div class="row">
               <span class="ex-name">Prop types</span>
-              <span class="badge ok">12 prop types</span>
+              <span class="badge ok">13 prop types</span>
             </div>
             <pre><code>Component: src/components/Flyout/Flyout.tsx::FlyoutContent</code></pre>
             <pre><code>Props:</code></pre>
@@ -4538,6 +4725,11 @@ data-test-id?: string = &#39;fondue-flyout-content&#39;
  * @default &quot;360px&quot;
  */
 maxWidth?: string = &#39;360px&#39;
+
+/**
+ * Event handler called when the escape key is pressed.
+ */
+onEscapeKeyDown?: (event: KeyboardEvent) =&gt; void
 
 /**
  * Event handler called when auto-focusing on open
@@ -5196,6 +5388,57 @@ width?: string = &#39;fit-content&#39;</code></pre>
             &lt;/Flyout.Trigger&gt;
             &lt;Flyout.Content viewportCollisionPadding=&quot;spacious&quot;&gt;
                 &lt;Flyout.Body viewportCollisionPadding=&quot;spacious&quot;&gt;Hello World&lt;/Flyout.Body&gt;
+            &lt;/Flyout.Content&gt;
+        &lt;/Flyout.Root&gt;
+    );
+};</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">OnEscapeKeyDown</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const OnEscapeKeyDown = () =&gt; {
+    return (
+        &lt;Flyout.Root&gt;
+            &lt;Flyout.Trigger&gt;
+                &lt;Button&gt;Open flyout&lt;/Button&gt;
+            &lt;/Flyout.Trigger&gt;
+            &lt;Flyout.Content
+                onEscapeKeyDown={() =&gt; {
+                    alert(&#39;Escape key was pressed!&#39;);
+                }}&gt;
+                &lt;Flyout.Header&gt;Flyout with onEscapeKeyDown&lt;/Flyout.Header&gt;
+                &lt;Flyout.Body&gt;This flyout will show an alert when you press the Escape key, then close normally.
+                                        &lt;/Flyout.Body&gt;
+            &lt;/Flyout.Content&gt;
+        &lt;/Flyout.Root&gt;
+    );
+};</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">PreventCloseOnEscape</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const PreventCloseOnEscape = () =&gt; {
+    return (
+        &lt;Flyout.Root&gt;
+            &lt;Flyout.Trigger&gt;
+                &lt;Button&gt;Open flyout&lt;/Button&gt;
+            &lt;/Flyout.Trigger&gt;
+            &lt;Flyout.Content
+                onEscapeKeyDown={(event) =&gt; {
+                    event.preventDefault();
+                    alert(&#39;Escape key pressed, but flyout will not close!&#39;);
+                }}&gt;
+                &lt;Flyout.Header showCloseButton&gt;Flyout preventing close on Escape&lt;/Flyout.Header&gt;
+                &lt;Flyout.Body&gt;This flyout prevents closing when Escape is pressed. You must use the close button to close it.
+                                        &lt;/Flyout.Body&gt;
             &lt;/Flyout.Content&gt;
         &lt;/Flyout.Root&gt;
     );
@@ -8320,9 +8563,9 @@ value?: TValue</code></pre>
     <div class="title">
       <h2><span class="status-dot dot-ok"></span> SelectInput</h2>
       <div class="badges">
-        <label for="c-23-components-select-props" class="badge ok as-toggle">20 prop types</label>
+        <label for="c-23-components-select-props" class="badge ok as-toggle">21 prop types</label>
         <label for="c-23-components-select-info" class="badge info as-toggle">1 info</label>
-        <label for="c-23-components-select-stories" class="badge ok as-toggle">19 stories</label>
+        <label for="c-23-components-select-stories" class="badge ok as-toggle">21 stories</label>
       </div>
     </div>
     <div class="meta" title="./src/components/Select/Select.stories.tsx">components-select · ./src/components/Select/Select.stories.tsx</div>
@@ -8352,7 +8595,7 @@ value?: TValue</code></pre>
           <div class="note ok">
             <div class="row">
               <span class="ex-name">Prop types</span>
-              <span class="badge ok">20 prop types</span>
+              <span class="badge ok">21 prop types</span>
             </div>
             <pre><code>Component: src/components/Select/Select.tsx::SelectInput</code></pre>
             <pre><code>Props:</code></pre>
@@ -8416,6 +8659,11 @@ disabled?: boolean
  * Id of the select component
  */
 id?: string
+
+/**
+ * Event handler called when the escape key is pressed.
+ */
+onEscapeKeyDown?: (event: KeyboardEvent) =&gt; void
 
 /**
  * Callback function that is called when an item is selected.
@@ -8986,6 +9234,50 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39; = &#39;compact
               <pre><code>const Errored = () =&gt; {
     return (
         &lt;Select.Combobox aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot; status=&quot;error&quot;&gt;
+            &lt;Select.Item value=&quot;test1&quot;&gt;Test1&lt;/Select.Item&gt;
+            &lt;Select.Item value=&quot;test2&quot;&gt;Test2&lt;/Select.Item&gt;
+            &lt;Select.Item value=&quot;test3&quot;&gt;Test3&lt;/Select.Item&gt;
+        &lt;/Select.Combobox&gt;
+    );
+};</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">OnEscapeKeyDown</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const OnEscapeKeyDown = () =&gt; {
+    return (
+        &lt;Select
+            aria-label=&quot;Select an item&quot;
+            placeholder=&quot;Select an item&quot;
+            onEscapeKeyDown={() =&gt; {
+                alert(&#39;Escape key was pressed!&#39;);
+            }}&gt;
+            &lt;Select.Item value=&quot;test1&quot;&gt;Test1&lt;/Select.Item&gt;
+            &lt;Select.Item value=&quot;test2&quot;&gt;Test2&lt;/Select.Item&gt;
+            &lt;Select.Item value=&quot;test3&quot;&gt;Test3&lt;/Select.Item&gt;
+        &lt;/Select&gt;
+    );
+};</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">ComboboxOnEscapeKeyDown</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const ComboboxOnEscapeKeyDown = () =&gt; {
+    return (
+        &lt;Select.Combobox
+            aria-label=&quot;Select an item&quot;
+            placeholder=&quot;Select an item&quot;
+            onEscapeKeyDown={() =&gt; {
+                alert(&#39;Escape key was pressed!&#39;);
+            }}&gt;
             &lt;Select.Item value=&quot;test1&quot;&gt;Test1&lt;/Select.Item&gt;
             &lt;Select.Item value=&quot;test2&quot;&gt;Test2&lt;/Select.Item&gt;
             &lt;Select.Item value=&quot;test3&quot;&gt;Test3&lt;/Select.Item&gt;
