@@ -561,3 +561,92 @@ test('should focus first button in footer when body has no focusable elements', 
     const firstFooterButton = page.getByTestId('footer-button-1');
     await expect(firstFooterButton).toBeFocused();
 });
+
+test('should call onEscapeKeyDown when escape is pressed', async ({ mount, page }) => {
+    const onEscapeKeyDown = sinon.spy();
+    await mount(
+        <Dialog.Root open>
+            <Dialog.Trigger>
+                <Button>{DIALOG_TRIGGER_TEXT}</Button>
+            </Dialog.Trigger>
+            <Dialog.Content data-test-id={DIALOG_CONTENT_TEST_ID} onEscapeKeyDown={onEscapeKeyDown}>
+                <Dialog.Header>{DIALOG_HEADER_TEXT}</Dialog.Header>
+                <Dialog.Body>{DIALOG_BODY_TEXT}</Dialog.Body>
+            </Dialog.Content>
+        </Dialog.Root>,
+    );
+
+    const contentElement = page.getByTestId(DIALOG_CONTENT_TEST_ID);
+    await expect(contentElement).toBeVisible();
+    expect(onEscapeKeyDown.callCount).toBe(0);
+    await page.keyboard.press('Escape');
+    expect(onEscapeKeyDown.callCount).toBe(1);
+});
+
+test('should prevent dialog close when onEscapeKeyDown calls preventDefault', async ({ mount, page }) => {
+    const onEscapeKeyDown = sinon.spy((event: KeyboardEvent) => {
+        event.preventDefault();
+    });
+    await mount(
+        <Dialog.Root open>
+            <Dialog.Trigger>
+                <Button>{DIALOG_TRIGGER_TEXT}</Button>
+            </Dialog.Trigger>
+            <Dialog.Content data-test-id={DIALOG_CONTENT_TEST_ID} onEscapeKeyDown={onEscapeKeyDown}>
+                <Dialog.Header>{DIALOG_HEADER_TEXT}</Dialog.Header>
+                <Dialog.Body>{DIALOG_BODY_TEXT}</Dialog.Body>
+            </Dialog.Content>
+        </Dialog.Root>,
+    );
+
+    const contentElement = page.getByTestId(DIALOG_CONTENT_TEST_ID);
+    await expect(contentElement).toBeVisible();
+    expect(onEscapeKeyDown.callCount).toBe(0);
+    await page.keyboard.press('Escape');
+    expect(onEscapeKeyDown.callCount).toBe(1);
+    // Dialog should still be visible because we prevented the default behavior
+    await expect(contentElement).toBeVisible();
+});
+
+test('should close nested dropdown before dialog when escape is pressed', async ({ mount, page }) => {
+    const { Dropdown } = await import('#/components/Dropdown/Dropdown');
+    await mount(
+        <Dialog.Root open>
+            <Dialog.Trigger>
+                <Button>{DIALOG_TRIGGER_TEXT}</Button>
+            </Dialog.Trigger>
+            <Dialog.Content data-test-id={DIALOG_CONTENT_TEST_ID}>
+                <Dialog.Header>{DIALOG_HEADER_TEXT}</Dialog.Header>
+                <Dialog.Body>
+                    <Dropdown.Root>
+                        <Dropdown.Trigger>
+                            <Button data-test-id="nested-dropdown-trigger">Open Dropdown</Button>
+                        </Dropdown.Trigger>
+                        <Dropdown.Content data-test-id="nested-dropdown-content">
+                            <Dropdown.Item onSelect={() => {}}>Item 1</Dropdown.Item>
+                            <Dropdown.Item onSelect={() => {}}>Item 2</Dropdown.Item>
+                        </Dropdown.Content>
+                    </Dropdown.Root>
+                </Dialog.Body>
+            </Dialog.Content>
+        </Dialog.Root>,
+    );
+
+    const dialogContent = page.getByTestId(DIALOG_CONTENT_TEST_ID);
+    await expect(dialogContent).toBeVisible();
+
+    // Open the nested dropdown
+    const dropdownTrigger = page.getByTestId('nested-dropdown-trigger');
+    await dropdownTrigger.click();
+    const dropdownContent = page.getByTestId('nested-dropdown-content');
+    await expect(dropdownContent).toBeVisible();
+
+    // First escape should close the dropdown
+    await page.keyboard.press('Escape');
+    await expect(dropdownContent).not.toBeVisible();
+    await expect(dialogContent).toBeVisible();
+
+    // Second escape should close the dialog
+    await page.keyboard.press('Escape');
+    await expect(dialogContent).not.toBeVisible();
+});

@@ -499,3 +499,5 @@ test('render indicator on selected item', async ({ mount, page }) => {
     await expect(firstItem).toHaveCSS('background-color', 'rgb(234, 234, 228)');
     await expect(chekmarkIcon).toBeVisible();
 });
+
+

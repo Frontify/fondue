@@ -77,6 +77,10 @@ export type DialogContentProps = {
      * @default false
      */
     showUnderlay?: boolean;
+    /**
+     * Event handler called when the escape key is pressed.
+     */
+    onEscapeKeyDown?: (event: KeyboardEvent) => void;
     children?: ReactNode;
     'data-test-id'?: string;
 };
@@ -205,6 +209,7 @@ export const DialogContent = (
         'data-test-id': dataTestId = 'fondue-dialog-content',
         showUnderlay = false,
         rounded = true,
+        onEscapeKeyDown,
         children,
     }: DialogContentProps,
     ref: ForwardedRef<HTMLDivElement>,
@@ -251,6 +256,7 @@ export const DialogContent = (
                         className={styles.content}
                         onFocus={addShowFocusRing}
                         onOpenAutoFocus={handleOpenAutoFocus}
+                        onEscapeKeyDown={onEscapeKeyDown}
                         data-dialog-padding={padding}
                         data-dialog-rounded={rounded}
                         data-test-id={dataTestId}

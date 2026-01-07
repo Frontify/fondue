@@ -71,6 +71,10 @@ export type ComboboxProps = {
      * Function to fetch items asynchronously.
      */
     getAsyncItems?: AsyncItemsFetcher;
+    /**
+     * Event handler called when the escape key is pressed.
+     */
+    onEscapeKeyDown?: (event: KeyboardEvent) => void;
 } & CommonAriaProps;
 
 export const SelectCombobox = (
@@ -88,6 +92,7 @@ export const SelectCombobox = (
         id,
         viewportCollisionPadding = 'compact',
         getAsyncItems,
+        onEscapeKeyDown,
         ...props
     }: ComboboxProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
@@ -238,6 +243,7 @@ export const SelectCombobox = (
                 selectedItem={selectedItem}
                 hasInteractedSinceOpening={hasInteractedSinceOpening}
                 viewportCollisionPadding={viewportCollisionPadding}
+                onEscapeKeyDown={onEscapeKeyDown}
             >
                 {menuSlots}
             </SelectMenu>

@@ -521,3 +521,5 @@ test('should not display error when async items is empty', async ({ mount, page 
 
     await expect(component.getByTestId(`${SELECT_TEST_ID}-error-icon`)).not.toBeVisible();
 });
+
+
