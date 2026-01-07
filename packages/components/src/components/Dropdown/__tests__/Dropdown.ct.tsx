@@ -629,3 +629,26 @@ test('should open dropdown when clicking on icon inside trigger with forceMount'
     await icon.click();
     await expect(content).not.toBeVisible();
 });
+
+test('should call onEscapeKeyDown when escape is pressed', async ({ mount, page }) => {
+    const onEscapeKeyDown = sinon.spy();
+    const component = await mount(
+        <Dropdown.Root>
+            <Dropdown.Trigger>
+                <Button data-test-id={DROPDOWN_TRIGGER_TEST_ID}>Trigger</Button>
+            </Dropdown.Trigger>
+            <Dropdown.Content data-test-id={DROPDOWN_CONTENT_TEST_ID} onEscapeKeyDown={onEscapeKeyDown}>
+                <Dropdown.Item onSelect={() => {}}>Item 1</Dropdown.Item>
+                <Dropdown.Item onSelect={() => {}}>Item 2</Dropdown.Item>
+            </Dropdown.Content>
+        </Dropdown.Root>,
+    );
+
+    await expect(component).toBeVisible();
+    await page.getByTestId(DROPDOWN_TRIGGER_TEST_ID).click();
+    await expect(page.getByTestId(DROPDOWN_CONTENT_TEST_ID)).toBeVisible();
+
+    expect(onEscapeKeyDown.callCount).toBe(0);
+    await page.keyboard.press('Escape');
+    expect(onEscapeKeyDown.callCount).toBe(1);
+});

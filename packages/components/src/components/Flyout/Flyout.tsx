@@ -118,6 +118,10 @@ export type FlyoutContentProps = {
      * Event handler called when auto-focusing on open
      */
     onOpenAutoFocus?: (event: Event) => void;
+    /**
+     * Event handler called when the escape key is pressed.
+     */
+    onEscapeKeyDown?: (event: KeyboardEvent) => void;
     children?: ReactNode;
     'data-test-id'?: string;
 };

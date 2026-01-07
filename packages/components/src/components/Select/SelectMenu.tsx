@@ -68,6 +68,11 @@ export type SelectMenuProps = {
      * @default 'compact'
      */
     viewportCollisionPadding?: SelectMenuViewportCollisionPadding;
+    /**
+     * @internal
+     * Event handler called when the escape key is pressed.
+     */
+    onEscapeKeyDown?: (event: KeyboardEvent) => void;
 };
 
 export const SelectMenu = ({
@@ -81,6 +86,7 @@ export const SelectMenu = ({
     selectedItem,
     hasInteractedSinceOpening,
     viewportCollisionPadding = 'compact',
+    onEscapeKeyDown,
 }: SelectMenuProps) => {
     const handleOnOpenAutoFocus = (event: Event) => {
         event.preventDefault();
@@ -117,6 +123,7 @@ export const SelectMenu = ({
                     side={getAdjustedSide(side)}
                     collisionPadding={VIEWPORT_COLLISION_PADDING_MAP[viewportCollisionPadding] + 8}
                     onOpenAutoFocus={handleOnOpenAutoFocus}
+                    onEscapeKeyDown={onEscapeKeyDown}
                     className={styles.portal}
                 >
                     <ul

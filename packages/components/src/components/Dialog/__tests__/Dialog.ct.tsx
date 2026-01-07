@@ -4,6 +4,7 @@ import { expect, test } from '@playwright/experimental-ct-react';
 import sinon from 'sinon';
 
 import { Button } from '#/components/Button/Button';
+import { Dropdown } from '#/components/Dropdown/Dropdown';
 import { TextInput } from '#/components/TextInput/TextInput';
 import { Tooltip } from '#/components/Tooltip/Tooltip';
 import { FOCUS_BORDER_CSS, FOCUS_OUTLINE_CSS } from '#/helpers/constants';
@@ -560,4 +561,156 @@ test('should focus first button in footer when body has no focusable elements', 
 
     const firstFooterButton = page.getByTestId('footer-button-1');
     await expect(firstFooterButton).toBeFocused();
+});
+
+test('should call onEscapeKeyDown when escape is pressed', async ({ mount, page }) => {
+    const onEscapeKeyDown = sinon.spy();
+    await mount(
+        <Dialog.Root open>
+            <Dialog.Trigger>
+                <Button>{DIALOG_TRIGGER_TEXT}</Button>
+            </Dialog.Trigger>
+            <Dialog.Content data-test-id={DIALOG_CONTENT_TEST_ID} onEscapeKeyDown={onEscapeKeyDown}>
+                <Dialog.Header>{DIALOG_HEADER_TEXT}</Dialog.Header>
+                <Dialog.Body>{DIALOG_BODY_TEXT}</Dialog.Body>
+            </Dialog.Content>
+        </Dialog.Root>,
+    );
+
+    const contentElement = page.getByTestId(DIALOG_CONTENT_TEST_ID);
+    await expect(contentElement).toBeVisible();
+    expect(onEscapeKeyDown.callCount).toBe(0);
+    await page.keyboard.press('Escape');
+    expect(onEscapeKeyDown.callCount).toBe(1);
+});
+
+test('should prevent dialog close when onEscapeKeyDown calls preventDefault', async ({ mount, page }) => {
+    const onEscapeKeyDown = sinon.spy((event: KeyboardEvent) => {
+        event.preventDefault();
+    });
+    await mount(
+        <Dialog.Root open>
+            <Dialog.Trigger>
+                <Button>{DIALOG_TRIGGER_TEXT}</Button>
+            </Dialog.Trigger>
+            <Dialog.Content data-test-id={DIALOG_CONTENT_TEST_ID} onEscapeKeyDown={onEscapeKeyDown}>
+                <Dialog.Header>{DIALOG_HEADER_TEXT}</Dialog.Header>
+                <Dialog.Body>{DIALOG_BODY_TEXT}</Dialog.Body>
+            </Dialog.Content>
+        </Dialog.Root>,
+    );
+
+    const contentElement = page.getByTestId(DIALOG_CONTENT_TEST_ID);
+    await expect(contentElement).toBeVisible();
+    expect(onEscapeKeyDown.callCount).toBe(0);
+    await page.keyboard.press('Escape');
+    expect(onEscapeKeyDown.callCount).toBe(1);
+    // Dialog should still be visible because we prevented the default behavior
+    await expect(contentElement).toBeVisible();
+});
+
+test('should close nested dropdown before dialog when escape is pressed', async ({ mount, page }) => {
+    await mount(
+        <Dialog.Root>
+            <Dialog.Trigger data-test-id="dialog-trigger">
+                <Button>{DIALOG_TRIGGER_TEXT}</Button>
+            </Dialog.Trigger>
+            <Dialog.Content data-test-id={DIALOG_CONTENT_TEST_ID}>
+                <Dialog.Header>{DIALOG_HEADER_TEXT}</Dialog.Header>
+                <Dialog.Body>
+                    <Dropdown.Root>
+                        <Dropdown.Trigger>
+                            <Button data-test-id="nested-dropdown-trigger">Open Dropdown</Button>
+                        </Dropdown.Trigger>
+                        <Dropdown.Content data-test-id="nested-dropdown-content">
+                            <Dropdown.Item onSelect={() => {}}>Item 1</Dropdown.Item>
+                            <Dropdown.Item onSelect={() => {}}>Item 2</Dropdown.Item>
+                        </Dropdown.Content>
+                    </Dropdown.Root>
+                </Dialog.Body>
+            </Dialog.Content>
+        </Dialog.Root>,
+    );
+
+    // Open the dialog
+    const dialogTrigger = page.getByTestId('dialog-trigger');
+    await dialogTrigger.click();
+
+    const dialogContent = page.getByTestId(DIALOG_CONTENT_TEST_ID);
+    await expect(dialogContent).toBeVisible();
+
+    // Open the nested dropdown
+    const dropdownTrigger = page.getByTestId('nested-dropdown-trigger');
+    await dropdownTrigger.click();
+    const dropdownContent = page.getByTestId('nested-dropdown-content');
+    await expect(dropdownContent).toBeVisible();
+
+    // First escape should close the dropdown
+    await page.keyboard.press('Escape');
+    await expect(dropdownContent).not.toBeVisible();
+    await expect(dialogContent).toBeVisible();
+
+    // Second escape should close the dialog
+    await page.keyboard.press('Escape');
+    await expect(dialogContent).not.toBeVisible();
+});
+
+test('should close inner dialog before outer dialog when escape is pressed in nested dialogs', async ({
+    mount,
+    page,
+}) => {
+    const outerOnEscapeKeyDown = sinon.spy();
+    const innerOnEscapeKeyDown = sinon.spy();
+
+    await mount(
+        <Dialog.Root>
+            <Dialog.Trigger data-test-id="outer-dialog-trigger">
+                <Button>{DIALOG_TRIGGER_TEXT}</Button>
+            </Dialog.Trigger>
+            <Dialog.Content data-test-id="outer-dialog-content" onEscapeKeyDown={outerOnEscapeKeyDown}>
+                <Dialog.Header>Outer Dialog</Dialog.Header>
+                <Dialog.Body>
+                    <Dialog.Root>
+                        <Dialog.Trigger data-test-id="inner-dialog-trigger">
+                            <Button>Open Inner Dialog</Button>
+                        </Dialog.Trigger>
+                        <Dialog.Content data-test-id="inner-dialog-content" onEscapeKeyDown={innerOnEscapeKeyDown}>
+                            <Dialog.Header>Inner Dialog</Dialog.Header>
+                            <Dialog.Body>Inner dialog content</Dialog.Body>
+                        </Dialog.Content>
+                    </Dialog.Root>
+                </Dialog.Body>
+            </Dialog.Content>
+        </Dialog.Root>,
+    );
+
+    // Open the outer dialog
+    const outerTrigger = page.getByTestId('outer-dialog-trigger');
+    await outerTrigger.click();
+
+    const outerDialogContent = page.getByTestId('outer-dialog-content');
+    await expect(outerDialogContent).toBeVisible();
+
+    // Open the inner dialog
+    const innerTrigger = page.getByTestId('inner-dialog-trigger');
+    await innerTrigger.click();
+
+    const innerDialogContent = page.getByTestId('inner-dialog-content');
+    await expect(innerDialogContent).toBeVisible();
+
+    // Both dialogs should be visible
+    await expect(outerDialogContent).toBeVisible();
+    await expect(innerDialogContent).toBeVisible();
+
+    // First escape should close the inner dialog
+    await page.keyboard.press('Escape');
+    expect(innerOnEscapeKeyDown.callCount).toBe(1);
+    expect(outerOnEscapeKeyDown.callCount).toBe(0);
+    await expect(innerDialogContent).not.toBeVisible();
+    await expect(outerDialogContent).toBeVisible();
+
+    // Second escape should close the outer dialog
+    await page.keyboard.press('Escape');
+    expect(outerOnEscapeKeyDown.callCount).toBe(1);
+    await expect(outerDialogContent).not.toBeVisible();
 });

@@ -104,6 +104,10 @@ export type DropdownContentProps = {
      * @default false
      */
     forceMount?: boolean;
+    /**
+     * Event handler called when the escape key is pressed.
+     */
+    onEscapeKeyDown?: (event: KeyboardEvent) => void;
 };
 
 const SPACING_MAP: Record<DropdownSpacing, number> = {
@@ -126,6 +130,7 @@ export const DropdownContent = (
         preventTriggerFocusOnClose,
         viewportCollisionPadding = 'compact',
         forceMount = false,
+        onEscapeKeyDown,
         'data-test-id': dataTestId = 'fondue-dropdown-content',
     }: DropdownContentProps,
     ref: ForwardedRef<HTMLDivElement>,
@@ -146,6 +151,7 @@ export const DropdownContent = (
                     className={styles.content}
                     data-test-id={dataTestId}
                     ref={actualRef}
+                    onEscapeKeyDown={onEscapeKeyDown}
                     onPointerDownOutside={(event) => {
                         if (!forceMount) {
                             return;

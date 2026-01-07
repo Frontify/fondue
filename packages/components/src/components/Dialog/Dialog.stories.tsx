@@ -759,3 +759,140 @@ export const WithScrollArea: Story = {
         );
     },
 };
+
+export const OnEscapeKeyDown: Story = {
+    render: (args) => {
+        return (
+            <Dialog.Root>
+                <Dialog.Trigger>
+                    <Button>Open dialog</Button>
+                </Dialog.Trigger>
+                <Dialog.Content
+                    {...args}
+                    onEscapeKeyDown={() => {
+                        alert('Escape key was pressed!');
+                    }}
+                >
+                    <Dialog.Header>
+                        <Dialog.Title>Dialog with onEscapeKeyDown</Dialog.Title>
+                    </Dialog.Header>
+                    <Dialog.Body>
+                        This dialog will show an alert when you press the Escape key, then close normally.
+                    </Dialog.Body>
+                    <Dialog.Footer>
+                        <Button emphasis="default">Cancel</Button>
+                        <Button>Submit</Button>
+                    </Dialog.Footer>
+                </Dialog.Content>
+            </Dialog.Root>
+        );
+    },
+};
+
+export const PreventCloseOnEscape: Story = {
+    render: (args) => {
+        return (
+            <Dialog.Root>
+                <Dialog.Trigger>
+                    <Button>Open dialog</Button>
+                </Dialog.Trigger>
+                <Dialog.Content
+                    {...args}
+                    onEscapeKeyDown={(event) => {
+                        event.preventDefault();
+                        alert('Escape key pressed, but dialog will not close!');
+                    }}
+                >
+                    <Dialog.Header>
+                        <Dialog.Title>Dialog preventing close on Escape</Dialog.Title>
+                    </Dialog.Header>
+                    <Dialog.Body>
+                        This dialog prevents closing when Escape is pressed. You must use the Cancel button or close
+                        button to close it.
+                    </Dialog.Body>
+                    <Dialog.Footer>
+                        <Dialog.Close>
+                            <Button emphasis="default">Cancel</Button>
+                        </Dialog.Close>
+                        <Button>Submit</Button>
+                    </Dialog.Footer>
+                </Dialog.Content>
+            </Dialog.Root>
+        );
+    },
+};
+
+export const NestedDialogsWithEscapeKey: Story = {
+    render: (args) => {
+        const [outerEscapeCount, setOuterEscapeCount] = useState(0);
+        const [innerEscapeCount, setInnerEscapeCount] = useState(0);
+
+        return (
+            <Flex direction="column" gap="16px">
+                <div>
+                    <strong>Outer Dialog Escape Count:</strong> {outerEscapeCount}
+                </div>
+                <div>
+                    <strong>Inner Dialog Escape Count:</strong> {innerEscapeCount}
+                </div>
+
+                <Dialog.Root>
+                    <Dialog.Trigger>
+                        <Button>Open Outer Dialog</Button>
+                    </Dialog.Trigger>
+                    <Dialog.Content
+                        {...args}
+                        showUnderlay
+                        onEscapeKeyDown={() => {
+                            setOuterEscapeCount((prev) => prev + 1);
+                        }}
+                    >
+                        <Dialog.Header>
+                            <Dialog.Title>Outer Dialog</Dialog.Title>
+                        </Dialog.Header>
+                        <Dialog.Body>
+                            <Flex direction="column" gap="16px">
+                                <p>
+                                    This is the outer dialog. Press Escape to close it, or open the inner dialog below.
+                                </p>
+
+                                <Dialog.Root>
+                                    <Dialog.Trigger>
+                                        <Button>Open Inner Dialog</Button>
+                                    </Dialog.Trigger>
+                                    <Dialog.Content
+                                        showUnderlay
+                                        onEscapeKeyDown={() => {
+                                            setInnerEscapeCount((prev) => prev + 1);
+                                        }}
+                                    >
+                                        <Dialog.Header>
+                                            <Dialog.Title>Inner Dialog</Dialog.Title>
+                                        </Dialog.Header>
+                                        <Dialog.Body>
+                                            <p>
+                                                This is the inner dialog. When you press Escape, this dialog closes
+                                                first, and the outer dialog remains open. Press Escape again to close
+                                                the outer dialog.
+                                            </p>
+                                        </Dialog.Body>
+                                        <Dialog.Footer>
+                                            <Dialog.Close>
+                                                <Button emphasis="default">Close Inner</Button>
+                                            </Dialog.Close>
+                                        </Dialog.Footer>
+                                    </Dialog.Content>
+                                </Dialog.Root>
+                            </Flex>
+                        </Dialog.Body>
+                        <Dialog.Footer>
+                            <Dialog.Close>
+                                <Button emphasis="default">Close Outer</Button>
+                            </Dialog.Close>
+                        </Dialog.Footer>
+                    </Dialog.Content>
+                </Dialog.Root>
+            </Flex>
+        );
+    },
+};
