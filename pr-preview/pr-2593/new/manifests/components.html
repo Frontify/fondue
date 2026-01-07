@@ -509,7 +509,7 @@
 <header>
   <div class="wrap">
     <h1>Components Manifest</h1>
-    <div class="summary"><a class="filter-pill all" data-k="all" href="#filter-all">All</a><span class="filter-pill ok" aria-disabled="true">35 components ok</span><a class="filter-pill info" data-k="infos" href="#filter-infos">35/35 infos</a><span class="filter-pill ok" aria-disabled="true">313 stories ok</span></div>
+    <div class="summary"><a class="filter-pill all" data-k="all" href="#filter-all">All</a><span class="filter-pill ok" aria-disabled="true">35 components ok</span><a class="filter-pill info" data-k="infos" href="#filter-infos">35/35 infos</a><span class="filter-pill ok" aria-disabled="true">314 stories ok</span></div>
   </div>
 </header>
 <main>
@@ -2510,7 +2510,7 @@ onFormatChange?: (format: ColorFormat) =&gt; void = () =&gt; {}</code></pre>
       <div class="badges">
         <label for="c-7-components-dialog-props" class="badge ok as-toggle">10 prop types</label>
         <label for="c-7-components-dialog-info" class="badge info as-toggle">1 info</label>
-        <label for="c-7-components-dialog-stories" class="badge ok as-toggle">26 stories</label>
+        <label for="c-7-components-dialog-stories" class="badge ok as-toggle">27 stories</label>
       </div>
     </div>
     <div class="meta" title="./src/components/Dialog/Dialog.stories.tsx">components-dialog · ./src/components/Dialog/Dialog.stories.tsx</div>
@@ -3466,6 +3466,79 @@ verticalAlign?: &#39;top&#39; | &#39;center&#39; = &#39;center&#39;</code></pre>
                 &lt;/Dialog.Footer&gt;
             &lt;/Dialog.Content&gt;
         &lt;/Dialog.Root&gt;
+    );
+};</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">NestedDialogsWithEscapeKey</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const NestedDialogsWithEscapeKey = () =&gt; {
+    const [outerEscapeCount, setOuterEscapeCount] = useState(0);
+    const [innerEscapeCount, setInnerEscapeCount] = useState(0);
+
+    return (
+        &lt;Flex direction=&quot;column&quot; gap=&quot;16px&quot;&gt;
+            &lt;div&gt;
+                &lt;strong&gt;Outer Dialog Escape Count:&lt;/strong&gt; {outerEscapeCount}
+            &lt;/div&gt;
+            &lt;div&gt;
+                &lt;strong&gt;Inner Dialog Escape Count:&lt;/strong&gt; {innerEscapeCount}
+            &lt;/div&gt;
+            &lt;Dialog.Root&gt;
+                &lt;Dialog.Trigger&gt;
+                    &lt;Button&gt;Open Outer Dialog&lt;/Button&gt;
+                &lt;/Dialog.Trigger&gt;
+                &lt;Dialog.Content
+                    showUnderlay
+                    onEscapeKeyDown={() =&gt; {
+                        setOuterEscapeCount((prev) =&gt; prev + 1);
+                    }}&gt;
+                    &lt;Dialog.Header&gt;
+                        &lt;Dialog.Title&gt;Outer Dialog&lt;/Dialog.Title&gt;
+                    &lt;/Dialog.Header&gt;
+                    &lt;Dialog.Body&gt;
+                        &lt;Flex direction=&quot;column&quot; gap=&quot;16px&quot;&gt;
+                            &lt;p&gt;This is the outer dialog. Press Escape to close it, or open the inner dialog below.
+                                                                &lt;/p&gt;
+                            &lt;Dialog.Root&gt;
+                                &lt;Dialog.Trigger&gt;
+                                    &lt;Button&gt;Open Inner Dialog&lt;/Button&gt;
+                                &lt;/Dialog.Trigger&gt;
+                                &lt;Dialog.Content
+                                    showUnderlay
+                                    onEscapeKeyDown={() =&gt; {
+                                        setInnerEscapeCount((prev) =&gt; prev + 1);
+                                    }}&gt;
+                                    &lt;Dialog.Header&gt;
+                                        &lt;Dialog.Title&gt;Inner Dialog&lt;/Dialog.Title&gt;
+                                    &lt;/Dialog.Header&gt;
+                                    &lt;Dialog.Body&gt;
+                                        &lt;p&gt;This is the inner dialog. When you press Escape, this dialog closes
+                                                                                            first, and the outer dialog remains open. Press Escape again to close
+                                                                                            the outer dialog.
+                                                                                        &lt;/p&gt;
+                                    &lt;/Dialog.Body&gt;
+                                    &lt;Dialog.Footer&gt;
+                                        &lt;Dialog.Close&gt;
+                                            &lt;Button emphasis=&quot;default&quot;&gt;Close Inner&lt;/Button&gt;
+                                        &lt;/Dialog.Close&gt;
+                                    &lt;/Dialog.Footer&gt;
+                                &lt;/Dialog.Content&gt;
+                            &lt;/Dialog.Root&gt;
+                        &lt;/Flex&gt;
+                    &lt;/Dialog.Body&gt;
+                    &lt;Dialog.Footer&gt;
+                        &lt;Dialog.Close&gt;
+                            &lt;Button emphasis=&quot;default&quot;&gt;Close Outer&lt;/Button&gt;
+                        &lt;/Dialog.Close&gt;
+                    &lt;/Dialog.Footer&gt;
+                &lt;/Dialog.Content&gt;
+            &lt;/Dialog.Root&gt;
+        &lt;/Flex&gt;
     );
 };</code></pre>
             </div>
