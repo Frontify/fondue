@@ -4,6 +4,7 @@ import { expect, test } from '@playwright/experimental-ct-react';
 import sinon from 'sinon';
 
 import { Button } from '#/components/Button/Button';
+import { Dropdown } from '#/components/Dropdown/Dropdown';
 import { TextInput } from '#/components/TextInput/TextInput';
 import { Tooltip } from '#/components/Tooltip/Tooltip';
 import { FOCUS_BORDER_CSS, FOCUS_OUTLINE_CSS } from '#/helpers/constants';
@@ -609,10 +610,9 @@ test('should prevent dialog close when onEscapeKeyDown calls preventDefault', as
 });
 
 test('should close nested dropdown before dialog when escape is pressed', async ({ mount, page }) => {
-    const { Dropdown } = await import('#/components/Dropdown/Dropdown');
     await mount(
-        <Dialog.Root open>
-            <Dialog.Trigger>
+        <Dialog.Root>
+            <Dialog.Trigger data-test-id="dialog-trigger">
                 <Button>{DIALOG_TRIGGER_TEXT}</Button>
             </Dialog.Trigger>
             <Dialog.Content data-test-id={DIALOG_CONTENT_TEST_ID}>
@@ -631,6 +631,10 @@ test('should close nested dropdown before dialog when escape is pressed', async 
             </Dialog.Content>
         </Dialog.Root>,
     );
+
+    // Open the dialog
+    const dialogTrigger = page.getByTestId('dialog-trigger');
+    await dialogTrigger.click();
 
     const dialogContent = page.getByTestId(DIALOG_CONTENT_TEST_ID);
     await expect(dialogContent).toBeVisible();
