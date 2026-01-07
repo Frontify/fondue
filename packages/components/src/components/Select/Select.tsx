@@ -16,6 +16,7 @@ import styles from './styles/select.module.scss';
 import { useSelectData } from './hooks/useSelectData';
 import { useMultipleSelection } from 'downshift';
 import { Flex } from '../Flex/Flex';
+import { Badge } from '../Badge/Badge';
 
 export type SelectComponentProps = {
     /**
@@ -106,8 +107,9 @@ export const SelectInput = (
 
     const [hasInteractedSinceOpening, setHasInteractedSinceOpening] = useState(false);
 
-    const { getSelectedItemProps, getDropdownProps, addSelectedItem, removeSelectedItem, selectedItems } =
-        useMultipleSelection({ initialSelectedItems: defaultItem ? [defaultItem] : [] });
+    const { getDropdownProps, addSelectedItem, removeSelectedItem, selectedItems } = useMultipleSelection({
+        initialSelectedItems: defaultItem ? [defaultItem] : [],
+    });
 
     const toggleSelectedItem = (item: any) => {
         console.log('item', item);
@@ -197,19 +199,20 @@ export const SelectInput = (
                           ))}
                 >
                     {/* <span className={styles.selectedValue}>{displayedValue}</span> */}
-                    <Flex>
+                    <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
                         {selectedItems.map((selectedItem, index) => (
-                            <span
+                            <Badge
+                                onDismiss={(event) => {
+                                    event.stopPropagation();
+                                    removeSelectedItem(selectedItem);
+                                }}
+                                size="small"
                                 key={selectedItem.value}
-                                {...getSelectedItemProps({
-                                    selectedItem: selectedItem,
-                                    index: index,
-                                })}
                             >
                                 {selectedItem.label}
-                            </span>
+                            </Badge>
                         ))}
-                    </Flex>
+                    </div>
                     {inputSlots}
                     {clearButton ? (
                         <RadixSlot
