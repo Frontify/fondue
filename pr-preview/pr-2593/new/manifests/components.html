@@ -509,7 +509,7 @@
 <header>
   <div class="wrap">
     <h1>Components Manifest</h1>
-    <div class="summary"><a class="filter-pill all" data-k="all" href="#filter-all">All</a><span class="filter-pill ok" aria-disabled="true">35 components ok</span><a class="filter-pill info" data-k="infos" href="#filter-infos">35/35 infos</a><span class="filter-pill ok" aria-disabled="true">315 stories ok</span></div>
+    <div class="summary"><a class="filter-pill all" data-k="all" href="#filter-all">All</a><span class="filter-pill ok" aria-disabled="true">35 components ok</span><a class="filter-pill info" data-k="infos" href="#filter-infos">35/35 infos</a><span class="filter-pill ok" aria-disabled="true">313 stories ok</span></div>
   </div>
 </header>
 <main>
@@ -8492,7 +8492,7 @@ value?: TValue</code></pre>
       <div class="badges">
         <label for="c-23-components-select-props" class="badge ok as-toggle">21 prop types</label>
         <label for="c-23-components-select-info" class="badge info as-toggle">1 info</label>
-        <label for="c-23-components-select-stories" class="badge ok as-toggle">23 stories</label>
+        <label for="c-23-components-select-stories" class="badge ok as-toggle">21 stories</label>
       </div>
     </div>
     <div class="meta" title="./src/components/Select/Select.stories.tsx">components-select · ./src/components/Select/Select.stories.tsx</div>
@@ -9192,29 +9192,6 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39; = &#39;compact
             </div>
             <div class="note ok">
               <div class="row">
-                <span class="ex-name">PreventCloseOnEscape</span>
-                <span class="badge ok">story ok</span>
-              </div>
-              
-              
-              <pre><code>const PreventCloseOnEscape = () =&gt; {
-    return (
-        &lt;Select
-            aria-label=&quot;Select an item&quot;
-            placeholder=&quot;Select an item&quot;
-            onEscapeKeyDown={(event) =&gt; {
-                event.preventDefault();
-                alert(&#39;Escape key pressed, but select will not close!&#39;);
-            }}&gt;
-            &lt;Select.Item value=&quot;test1&quot;&gt;Test1&lt;/Select.Item&gt;
-            &lt;Select.Item value=&quot;test2&quot;&gt;Test2&lt;/Select.Item&gt;
-            &lt;Select.Item value=&quot;test3&quot;&gt;Test3&lt;/Select.Item&gt;
-        &lt;/Select&gt;
-    );
-};</code></pre>
-            </div>
-            <div class="note ok">
-              <div class="row">
                 <span class="ex-name">ComboboxOnEscapeKeyDown</span>
                 <span class="badge ok">story ok</span>
               </div>
@@ -9227,29 +9204,6 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39; = &#39;compact
             placeholder=&quot;Select an item&quot;
             onEscapeKeyDown={() =&gt; {
                 alert(&#39;Escape key was pressed!&#39;);
-            }}&gt;
-            &lt;Select.Item value=&quot;test1&quot;&gt;Test1&lt;/Select.Item&gt;
-            &lt;Select.Item value=&quot;test2&quot;&gt;Test2&lt;/Select.Item&gt;
-            &lt;Select.Item value=&quot;test3&quot;&gt;Test3&lt;/Select.Item&gt;
-        &lt;/Select.Combobox&gt;
-    );
-};</code></pre>
-            </div>
-            <div class="note ok">
-              <div class="row">
-                <span class="ex-name">ComboboxPreventCloseOnEscape</span>
-                <span class="badge ok">story ok</span>
-              </div>
-              
-              
-              <pre><code>const ComboboxPreventCloseOnEscape = () =&gt; {
-    return (
-        &lt;Select.Combobox
-            aria-label=&quot;Select an item&quot;
-            placeholder=&quot;Select an item&quot;
-            onEscapeKeyDown={(event) =&gt; {
-                event.preventDefault();
-                alert(&#39;Escape key pressed, but combobox will not close!&#39;);
             }}&gt;
             &lt;Select.Item value=&quot;test1&quot;&gt;Test1&lt;/Select.Item&gt;
             &lt;Select.Item value=&quot;test2&quot;&gt;Test2&lt;/Select.Item&gt;
