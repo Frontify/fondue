@@ -650,3 +650,63 @@ test('should close nested dropdown before dialog when escape is pressed', async 
     await page.keyboard.press('Escape');
     await expect(dialogContent).not.toBeVisible();
 });
+
+test('should close inner dialog before outer dialog when escape is pressed in nested dialogs', async ({
+    mount,
+    page,
+}) => {
+    const outerOnEscapeKeyDown = sinon.spy();
+    const innerOnEscapeKeyDown = sinon.spy();
+
+    await mount(
+        <Dialog.Root>
+            <Dialog.Trigger data-test-id="outer-dialog-trigger">
+                <Button>{DIALOG_TRIGGER_TEXT}</Button>
+            </Dialog.Trigger>
+            <Dialog.Content data-test-id="outer-dialog-content" onEscapeKeyDown={outerOnEscapeKeyDown}>
+                <Dialog.Header>Outer Dialog</Dialog.Header>
+                <Dialog.Body>
+                    <Dialog.Root>
+                        <Dialog.Trigger data-test-id="inner-dialog-trigger">
+                            <Button>Open Inner Dialog</Button>
+                        </Dialog.Trigger>
+                        <Dialog.Content data-test-id="inner-dialog-content" onEscapeKeyDown={innerOnEscapeKeyDown}>
+                            <Dialog.Header>Inner Dialog</Dialog.Header>
+                            <Dialog.Body>Inner dialog content</Dialog.Body>
+                        </Dialog.Content>
+                    </Dialog.Root>
+                </Dialog.Body>
+            </Dialog.Content>
+        </Dialog.Root>,
+    );
+
+    // Open the outer dialog
+    const outerTrigger = page.getByTestId('outer-dialog-trigger');
+    await outerTrigger.click();
+
+    const outerDialogContent = page.getByTestId('outer-dialog-content');
+    await expect(outerDialogContent).toBeVisible();
+
+    // Open the inner dialog
+    const innerTrigger = page.getByTestId('inner-dialog-trigger');
+    await innerTrigger.click();
+
+    const innerDialogContent = page.getByTestId('inner-dialog-content');
+    await expect(innerDialogContent).toBeVisible();
+
+    // Both dialogs should be visible
+    await expect(outerDialogContent).toBeVisible();
+    await expect(innerDialogContent).toBeVisible();
+
+    // First escape should close the inner dialog
+    await page.keyboard.press('Escape');
+    expect(innerOnEscapeKeyDown.callCount).toBe(1);
+    expect(outerOnEscapeKeyDown.callCount).toBe(0);
+    await expect(innerDialogContent).not.toBeVisible();
+    await expect(outerDialogContent).toBeVisible();
+
+    // Second escape should close the outer dialog
+    await page.keyboard.press('Escape');
+    expect(outerOnEscapeKeyDown.callCount).toBe(1);
+    await expect(outerDialogContent).not.toBeVisible();
+});

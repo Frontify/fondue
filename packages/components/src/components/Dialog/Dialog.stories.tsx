@@ -821,3 +821,78 @@ export const PreventCloseOnEscape: Story = {
         );
     },
 };
+
+export const NestedDialogsWithEscapeKey: Story = {
+    render: (args) => {
+        const [outerEscapeCount, setOuterEscapeCount] = useState(0);
+        const [innerEscapeCount, setInnerEscapeCount] = useState(0);
+
+        return (
+            <Flex direction="column" gap="16px">
+                <div>
+                    <strong>Outer Dialog Escape Count:</strong> {outerEscapeCount}
+                </div>
+                <div>
+                    <strong>Inner Dialog Escape Count:</strong> {innerEscapeCount}
+                </div>
+
+                <Dialog.Root>
+                    <Dialog.Trigger>
+                        <Button>Open Outer Dialog</Button>
+                    </Dialog.Trigger>
+                    <Dialog.Content
+                        {...args}
+                        showUnderlay
+                        onEscapeKeyDown={() => {
+                            setOuterEscapeCount((prev) => prev + 1);
+                        }}
+                    >
+                        <Dialog.Header>
+                            <Dialog.Title>Outer Dialog</Dialog.Title>
+                        </Dialog.Header>
+                        <Dialog.Body>
+                            <Flex direction="column" gap="16px">
+                                <p>
+                                    This is the outer dialog. Press Escape to close it, or open the inner dialog below.
+                                </p>
+
+                                <Dialog.Root>
+                                    <Dialog.Trigger>
+                                        <Button>Open Inner Dialog</Button>
+                                    </Dialog.Trigger>
+                                    <Dialog.Content
+                                        showUnderlay
+                                        onEscapeKeyDown={() => {
+                                            setInnerEscapeCount((prev) => prev + 1);
+                                        }}
+                                    >
+                                        <Dialog.Header>
+                                            <Dialog.Title>Inner Dialog</Dialog.Title>
+                                        </Dialog.Header>
+                                        <Dialog.Body>
+                                            <p>
+                                                This is the inner dialog. When you press Escape, this dialog closes
+                                                first, and the outer dialog remains open. Press Escape again to close
+                                                the outer dialog.
+                                            </p>
+                                        </Dialog.Body>
+                                        <Dialog.Footer>
+                                            <Dialog.Close>
+                                                <Button emphasis="default">Close Inner</Button>
+                                            </Dialog.Close>
+                                        </Dialog.Footer>
+                                    </Dialog.Content>
+                                </Dialog.Root>
+                            </Flex>
+                        </Dialog.Body>
+                        <Dialog.Footer>
+                            <Dialog.Close>
+                                <Button emphasis="default">Close Outer</Button>
+                            </Dialog.Close>
+                        </Dialog.Footer>
+                    </Dialog.Content>
+                </Dialog.Root>
+            </Flex>
+        );
+    },
+};
