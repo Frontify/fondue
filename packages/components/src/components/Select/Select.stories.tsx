@@ -535,27 +535,6 @@ export const OnEscapeKeyDown: Story = {
     },
 };
 
-export const PreventCloseOnEscape: Story = {
-    args: {
-        placeholder: 'Select an item',
-    },
-    render: (args) => {
-        return (
-            <Select
-                {...args}
-                onEscapeKeyDown={(event) => {
-                    event.preventDefault();
-                    alert('Escape key pressed, but select will not close!');
-                }}
-            >
-                <Select.Item value="test1">Test1</Select.Item>
-                <Select.Item value="test2">Test2</Select.Item>
-                <Select.Item value="test3">Test3</Select.Item>
-            </Select>
-        );
-    },
-};
-
 export const ComboboxOnEscapeKeyDown: Story = {
     args: {
         placeholder: 'Select an item',
@@ -566,27 +545,6 @@ export const ComboboxOnEscapeKeyDown: Story = {
                 {...args}
                 onEscapeKeyDown={() => {
                     alert('Escape key was pressed!');
-                }}
-            >
-                <Select.Item value="test1">Test1</Select.Item>
-                <Select.Item value="test2">Test2</Select.Item>
-                <Select.Item value="test3">Test3</Select.Item>
-            </Select.Combobox>
-        );
-    },
-};
-
-export const ComboboxPreventCloseOnEscape: Story = {
-    args: {
-        placeholder: 'Select an item',
-    },
-    render: (args) => {
-        return (
-            <Select.Combobox
-                {...args}
-                onEscapeKeyDown={(event) => {
-                    event.preventDefault();
-                    alert('Escape key pressed, but combobox will not close!');
                 }}
             >
                 <Select.Item value="test1">Test1</Select.Item>
