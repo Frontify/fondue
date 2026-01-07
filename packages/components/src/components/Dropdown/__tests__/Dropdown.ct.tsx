@@ -652,4 +652,3 @@ test('should call onEscapeKeyDown when escape is pressed', async ({ mount, page 
     await page.keyboard.press('Escape');
     expect(onEscapeKeyDown.callCount).toBe(1);
 });
-
