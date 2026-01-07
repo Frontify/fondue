@@ -432,3 +432,50 @@ export const SpaciousViewportCollisionPadding: Story = {
         );
     },
 };
+
+export const OnEscapeKeyDown: Story = {
+    render: ({ ...args }) => {
+        return (
+            <Flyout.Root>
+                <Flyout.Trigger>
+                    <Button>Open flyout</Button>
+                </Flyout.Trigger>
+                <Flyout.Content
+                    {...args}
+                    onEscapeKeyDown={() => {
+                        alert('Escape key was pressed!');
+                    }}
+                >
+                    <Flyout.Header>Flyout with onEscapeKeyDown</Flyout.Header>
+                    <Flyout.Body>
+                        This flyout will show an alert when you press the Escape key, then close normally.
+                    </Flyout.Body>
+                </Flyout.Content>
+            </Flyout.Root>
+        );
+    },
+};
+
+export const PreventCloseOnEscape: Story = {
+    render: ({ ...args }) => {
+        return (
+            <Flyout.Root>
+                <Flyout.Trigger>
+                    <Button>Open flyout</Button>
+                </Flyout.Trigger>
+                <Flyout.Content
+                    {...args}
+                    onEscapeKeyDown={(event) => {
+                        event.preventDefault();
+                        alert('Escape key pressed, but flyout will not close!');
+                    }}
+                >
+                    <Flyout.Header showCloseButton>Flyout preventing close on Escape</Flyout.Header>
+                    <Flyout.Body>
+                        This flyout prevents closing when Escape is pressed. You must use the close button to close it.
+                    </Flyout.Body>
+                </Flyout.Content>
+            </Flyout.Root>
+        );
+    },
+};

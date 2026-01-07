@@ -413,3 +413,42 @@ export const SpaciousViewportCollisionPadding: Story = {
         </Dropdown.Root>
     ),
 };
+
+export const OnEscapeKeyDown: Story = {
+    render: ({ ...args }) => (
+        <Dropdown.Root {...args}>
+            <Dropdown.Trigger>
+                <Button>Trigger</Button>
+            </Dropdown.Trigger>
+            <Dropdown.Content
+                onEscapeKeyDown={() => {
+                    alert('Escape key was pressed!');
+                }}
+            >
+                <Dropdown.Item onSelect={() => {}}>Item 1</Dropdown.Item>
+                <Dropdown.Item onSelect={() => {}}>Item 2</Dropdown.Item>
+                <Dropdown.Item onSelect={() => {}}>Item 3</Dropdown.Item>
+            </Dropdown.Content>
+        </Dropdown.Root>
+    ),
+};
+
+export const PreventCloseOnEscape: Story = {
+    render: ({ ...args }) => (
+        <Dropdown.Root {...args}>
+            <Dropdown.Trigger>
+                <Button>Trigger</Button>
+            </Dropdown.Trigger>
+            <Dropdown.Content
+                onEscapeKeyDown={(event) => {
+                    event.preventDefault();
+                    alert('Escape key pressed, but dropdown will not close!');
+                }}
+            >
+                <Dropdown.Item onSelect={() => {}}>Item 1</Dropdown.Item>
+                <Dropdown.Item onSelect={() => {}}>Item 2</Dropdown.Item>
+                <Dropdown.Item onSelect={() => {}}>Item 3</Dropdown.Item>
+            </Dropdown.Content>
+        </Dropdown.Root>
+    ),
+};

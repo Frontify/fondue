@@ -759,3 +759,65 @@ export const WithScrollArea: Story = {
         );
     },
 };
+
+export const OnEscapeKeyDown: Story = {
+    render: (args) => {
+        return (
+            <Dialog.Root>
+                <Dialog.Trigger>
+                    <Button>Open dialog</Button>
+                </Dialog.Trigger>
+                <Dialog.Content
+                    {...args}
+                    onEscapeKeyDown={() => {
+                        alert('Escape key was pressed!');
+                    }}
+                >
+                    <Dialog.Header>
+                        <Dialog.Title>Dialog with onEscapeKeyDown</Dialog.Title>
+                    </Dialog.Header>
+                    <Dialog.Body>
+                        This dialog will show an alert when you press the Escape key, then close normally.
+                    </Dialog.Body>
+                    <Dialog.Footer>
+                        <Button emphasis="default">Cancel</Button>
+                        <Button>Submit</Button>
+                    </Dialog.Footer>
+                </Dialog.Content>
+            </Dialog.Root>
+        );
+    },
+};
+
+export const PreventCloseOnEscape: Story = {
+    render: (args) => {
+        return (
+            <Dialog.Root>
+                <Dialog.Trigger>
+                    <Button>Open dialog</Button>
+                </Dialog.Trigger>
+                <Dialog.Content
+                    {...args}
+                    onEscapeKeyDown={(event) => {
+                        event.preventDefault();
+                        alert('Escape key pressed, but dialog will not close!');
+                    }}
+                >
+                    <Dialog.Header>
+                        <Dialog.Title>Dialog preventing close on Escape</Dialog.Title>
+                    </Dialog.Header>
+                    <Dialog.Body>
+                        This dialog prevents closing when Escape is pressed. You must use the Cancel button or close
+                        button to close it.
+                    </Dialog.Body>
+                    <Dialog.Footer>
+                        <Dialog.Close>
+                            <Button emphasis="default">Cancel</Button>
+                        </Dialog.Close>
+                        <Button>Submit</Button>
+                    </Dialog.Footer>
+                </Dialog.Content>
+            </Dialog.Root>
+        );
+    },
+};
