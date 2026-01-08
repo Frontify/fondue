@@ -412,7 +412,6 @@ const tailwindTokenReplacements = {
     'tw-([^-]+)-xs(?![a-zA-Z0-9-])': 'tw-$1-x-small',
     'tw-([^-]+)-s(?![a-zA-Z0-9-])': 'tw-$1-small',
     'tw-([^-]+)-m(?![a-zA-Z0-9-])': 'tw-$1-medium',
-    'tw-([^-]+)-l(?![a-zA-Z0-9-])': 'tw-$1-large',
     'tw-([^-]+)-xl(?![a-zA-Z0-9-])': 'tw-$1-x-large',
     'tw-([^-]+)-xxl(?![a-zA-Z0-9-])': 'tw-$1-xx-large',
 };
