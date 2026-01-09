@@ -151,7 +151,7 @@
         "commander": "^14.0.2",
         "date-fns": "^3.6.0",
         "execa": "^9.6.1",
-        "immer": "^10.2.0",
+        "immer": "10.1.1",
         "jscodeshift": "^0.14.0",
         "lodash-es": "^4.17.22",
         "motion": "^12.23.27",
