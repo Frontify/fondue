@@ -1,0 +1,1 @@
+import{m as e}from"./merge-DI-veSMP.js";const o="before:tw-pointer-events-none before:tw-block before:tw-rounded before:tw-top-0 before:tw-left-0 before:tw-bg-transparent before:tw-absolute before:tw-w-full before:tw-h-full",r=e([o,"before:tw-shadow-inner-line-x-strong"]),n=e([o,"before:tw-shadow-inner-mighty"]);export{r as I,n as M};
