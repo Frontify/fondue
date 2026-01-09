@@ -1,5 +1,16 @@
 # @frontify/fondue-icons
 
+## 0.23.0-rc.4
+
+### Minor Changes
+
+- [#2596](https://github.com/Frontify/fondue/pull/2596) [`f62de74`](https://github.com/Frontify/fondue/commit/f62de743188570ce7fe3cb1b9e3a00f2823e7354) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: downgrade immer to fix issue with hotkeys
+
+### Patch Changes
+
+- Updated dependencies [[`f62de74`](https://github.com/Frontify/fondue/commit/f62de743188570ce7fe3cb1b9e3a00f2823e7354)]:
+    - @frontify/fondue-tokens@5.0.0-rc.5
+
 ## 0.23.0-rc.3
 
 ### Minor Changes

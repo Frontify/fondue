@@ -1,7 +1,7 @@
 {
     "name": "@frontify/fondue-rte",
     "type": "module",
-    "version": "0.0.1-rc.10",
+    "version": "0.0.1-rc.11",
     "description": "Rich Text Editor components extracted from Fondue design system",
     "author": "Frontify Developers <developers@frontify.com>",
     "homepage": "https://github.com/Frontify/fondue",

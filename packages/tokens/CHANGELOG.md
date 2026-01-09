@@ -1,5 +1,11 @@
 # @frontify/fondue-tokens
 
+## 5.0.0-rc.5
+
+### Major Changes
+
+- [#2596](https://github.com/Frontify/fondue/pull/2596) [`f62de74`](https://github.com/Frontify/fondue/commit/f62de743188570ce7fe3cb1b9e3a00f2823e7354) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: downgrade immer to fix issue with hotkeys
+
 ## 5.0.0-rc.4
 
 ### Major Changes
