@@ -1,5 +1,22 @@
 # @frontify/fondue
 
+## 13.0.0-rc.14
+
+### Major Changes
+
+- [#2594](https://github.com/Frontify/fondue/pull/2594) [`049e77d`](https://github.com/Frontify/fondue/commit/049e77df0875a20fd00ec4c570a9f02b0252d874) Thanks [@github-actions](https://github.com/apps/github-actions)! - chore: release all packages
+
+### Patch Changes
+
+- [#2593](https://github.com/Frontify/fondue/pull/2593) [`4e21dbc`](https://github.com/Frontify/fondue/commit/4e21dbcf8b9058d720c0ca704b1153717222fd3d) Thanks [@syeo66](https://github.com/syeo66)! - feat: expose onEscapeKeyDown in multiple components
+
+- Updated dependencies [[`049e77d`](https://github.com/Frontify/fondue/commit/049e77df0875a20fd00ec4c570a9f02b0252d874), [`4e21dbc`](https://github.com/Frontify/fondue/commit/4e21dbcf8b9058d720c0ca704b1153717222fd3d)]:
+    - @frontify/fondue-components@25.0.0-rc.4
+    - @frontify/fondue-charts@7.0.0-rc.5
+    - @frontify/fondue-tokens@5.0.0-rc.4
+    - @frontify/fondue-icons@0.23.0-rc.3
+    - @frontify/fondue-rte@0.0.1-rc.10
+
 ## 13.0.0-rc.13
 
 ### Major Changes

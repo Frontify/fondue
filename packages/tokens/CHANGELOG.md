@@ -1,5 +1,11 @@
 # @frontify/fondue-tokens
 
+## 5.0.0-rc.4
+
+### Major Changes
+
+- [#2594](https://github.com/Frontify/fondue/pull/2594) [`049e77d`](https://github.com/Frontify/fondue/commit/049e77df0875a20fd00ec4c570a9f02b0252d874) Thanks [@github-actions](https://github.com/apps/github-actions)! - chore: release all packages
+
 ## 5.0.0-rc.3
 
 ### Major Changes
