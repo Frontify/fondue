@@ -19,7 +19,7 @@
     @include transitions.transition-colors;
     @include focusStyle.focus-outline;
 
-    &:enabled:hover {
+    &:enabled:hover:not([data-readonly='true']) {
         border-color: var(--color-line-strong);
     }
 
@@ -49,7 +49,7 @@
         &[data-state='indeterminate'] {
             background-color: var(--color-highlight-default);
 
-            &:enabled:hover {
+            &:enabled:hover:not([data-readonly='true']) {
                 background-color: var(--color-highlight-hover);
                 border-color: transparent;
             }
@@ -66,7 +66,7 @@
         &[data-state='indeterminate'] {
             background-color: var(--color-primary-default);
 
-            &:enabled:hover {
+            &:enabled:hover:not([data-readonly='true']) {
                 background-color: var(--color-primary-hover);
                 border-color: transparent;
             }
