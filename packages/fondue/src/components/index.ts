@@ -18,8 +18,5 @@ export * from './LegacyTextarea';
 export * from './MenuItem';
 export * from './MultiSelect';
 export * from './OrderableList';
-export * from './RadioList';
-export * from './Table';
-export * from './Tabs';
 export * from './Toast';
 export * from './Tree';
