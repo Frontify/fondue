@@ -1,5 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import '@frontify/fondue-charts/styles';
+import './charts.styles.css';
 
 export * from '@frontify/fondue-charts';

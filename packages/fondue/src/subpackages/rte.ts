@@ -1,5 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import '@frontify/fondue-rte/styles';
+import './rte.styles.css';
 
 export * from '@frontify/fondue-rte';
