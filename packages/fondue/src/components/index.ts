@@ -5,7 +5,6 @@ export * from './ActionMenu';
 export * from './AssetInput';
 export * from './Breadcrumbs';
 export * from './CollapsibleWrap';
-export * from './ComponentEnum';
 export * from './DatePicker';
 export * from './Dropdown/SelectMenu';
 export * from './EditableText';

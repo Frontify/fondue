@@ -55,7 +55,6 @@
         "AssetType",
         "CollapsibleWrap",
         "CollisionPosition",
-        "ComponentEnum",
         "DatePicker",
         "DatePickerProps",
         "DatePickerTrigger",

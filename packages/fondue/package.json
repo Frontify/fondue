@@ -77,10 +77,10 @@
         "node": ">=18"
     },
     "scripts": {
-        "build": "pnpm clean && pnpm generate:icons && pnpm generate:componentsEnum && pnpm build:library && pnpm build:styles-with-tw && pnpm build:package:components && pnpm build:package:icons && pnpm build:package:charts && pnpm build:package:tokens && pnpm build:package:rte && pnpm build:tools",
+        "build": "pnpm clean && pnpm generate:icons && pnpm build:library && pnpm build:styles-with-tw && pnpm build:package:components && pnpm build:package:icons && pnpm build:package:charts && pnpm build:package:tokens && pnpm build:package:rte && pnpm build:tools",
         "build:library": "vite build",
         "build:styles-with-tw": "postcss ./src/components/**/*.css --config src/components/postcss.config.cjs -o dist/styles-without-tailwind.css",
-        "build:storybook": "pnpm generate:icons && pnpm generate:componentsEnum && storybook build",
+        "build:storybook": "pnpm generate:icons && storybook build",
         "build:package:components": "vite build -c components.vite.config.ts",
         "build:package:icons": "vite build -c icons.vite.config.ts",
         "build:package:charts": "vite build -c charts.vite.config.ts",
@@ -93,7 +93,6 @@
         "component:create": "tsx scripts/createNewComponent.ts",
         "generate:icons": "pnpm generate:reactIcons && pnpm generate:iconsEnum",
         "generate:iconsEnum": "tsx ./scripts/generateIconEnum.ts",
-        "generate:componentsEnum": "tsx ./scripts/generateComponentEnum.ts",
         "generate:reactIcons": "tsx ./scripts/generateReactIcons.ts",
         "lint": "eslint .",
         "lint:fix": "eslint --fix .",
