@@ -15,7 +15,10 @@ import {
     Tree as TreeView,
 } from '@components/Tree';
 import { type TreeItemStyling, type TreeNodeWithoutElements, type TreeProps } from '@components/Tree/types';
-import { type TreeItemMockMultiselect, treeItemsMockMultiseclect } from '@components/Tree/utils';
+import {
+    type TreeItemMockMultiselect,
+    treeItemsMockMultiseclect as treeItemsMockMultiselect,
+} from '@components/Tree/utils';
 
 import { TreeItemMultiselect } from './TreeItem/TreeItemMultiselect';
 import { getNewSelectedItems } from './helpers';
@@ -150,7 +153,8 @@ export const MultiselectWithBasicItem = ({ ...args }: TreeProps) => {
     const [treeItems, setTreeItems] = useState<TreeItemMockMultiselect[]>([]);
 
     useEffect(() => {
-        setTreeItems(treeItemsMockMultiseclect);
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setTreeItems(treeItemsMockMultiselect);
     }, []);
 
     const handleItemSelected = (id: string, ignoreRemoveSelected = false, nodes: TreeNodeWithoutElements[] = []) => {

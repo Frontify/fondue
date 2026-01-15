@@ -177,6 +177,7 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                   : 'tw-border tw-border-line-xx-strong',
           ]);
 
+    // eslint-disable-next-line @eslint-react/no-unnecessary-use-callback
     const checkOverflowing = useCallback(() => {
         if (labelContainer.current) {
             setIsLabelOverflowing(labelContainer.current?.scrollWidth > labelContainer.current?.clientWidth);
@@ -193,6 +194,7 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
         if ((!label && !helperText) || hideLabel) {
             return;
         }
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         checkOverflowing();
 
         window.removeEventListener('resize', checkOverflowing);
