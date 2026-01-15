@@ -20,7 +20,6 @@ import { usePopper } from 'react-popper';
 import { Button } from '@components/Button/Button';
 import { ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button/ButtonTypes';
 import { Portal } from '@components/Portal/Portal';
-import { IconSize } from '@foundation/Icon/IconSize';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
@@ -290,7 +289,6 @@ export const LegacyTooltip = ({
         setIsOpen(shouldPreventTooltipOpening ? false : open);
     }, [open, shouldPreventTooltipOpening]);
 
-    // eslint-disable-next-line @eslint-react/no-unnecessary-use-callback
     const listenForEsc = useCallback(
         (event: KeyboardEvent) => {
             if (isOpen && event.key === 'Escape') {
@@ -354,9 +352,7 @@ export const LegacyTooltip = ({
                         {heading ? (
                             <h4 className="tw-flex tw-text-m tw-font-bold tw-mb-1">
                                 {headingIcon && (
-                                    <span className="tw-mr-1.5">
-                                        {cloneElement(headingIcon, { size: IconSize.Size20 })}
-                                    </span>
+                                    <span className="tw-mr-1.5">{cloneElement(headingIcon, { size: 20 })}</span>
                                 )}
                                 {heading}
                             </h4>
@@ -364,7 +360,7 @@ export const LegacyTooltip = ({
                         <div className="tw-flex">
                             {tooltipIcon ? (
                                 <span className="tw-shrink-0 tw-mr-1 tw-leading-4">
-                                    {cloneElement(tooltipIcon, { size: IconSize.Size16 })}
+                                    {cloneElement(tooltipIcon, { size: 16 })}
                                 </span>
                             ) : null}
                             <span className="tw-text-s tw-min-w-0 tw-break-words">{content}</span>

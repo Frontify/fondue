@@ -35,7 +35,7 @@
         "node": ">=18"
     },
     "scripts": {
-        "build": "pnpm build:download-new-icons && pnpm build:generate-react-icons && vite build",
+        "build": " pnpm build:generate-react-icons && vite build",
         "build:download-new-icons": "dotenv tsx scripts/download_new_icons.ts",
         "build:generate-react-icons": "tsx scripts/generate_react_icons.ts",
         "build:storybook": "storybook build",

@@ -2,8 +2,6 @@
 
 import { type ReactElement, cloneElement, isValidElement, useState } from 'react';
 
-import { type IconProps } from '@foundation/Icon/IconProps';
-import { IconSize } from '@foundation/Icon/IconSize';
 import { merge } from '@utilities/merge';
 
 import { AccordionHeaderIcon } from './AccordionHeaderIcon';
@@ -42,8 +40,8 @@ export const AccordionHeader = ({
             >
                 {isValidElement(decorator) && (
                     <span data-test-id={`${dataTestId}-decorator`} className="tw-shrink-0 tw-leading-4">
-                        {cloneElement(decorator as ReactElement<IconProps>, {
-                            size: IconSize.Size16,
+                        {cloneElement(decorator as ReactElement, {
+                            size: 16,
                         })}
                     </span>
                 )}

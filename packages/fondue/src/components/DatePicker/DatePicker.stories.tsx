@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconCalendar } from '@frontify/fondue-icons';
 import { type Meta, type StoryFn } from '@storybook/react-vite';
 import { addDays, subDays } from 'date-fns';
 import { useRef, useState } from 'react';
@@ -8,7 +9,6 @@ import { Badge } from '@components/Badge/Badge';
 import { BadgeEmphasis, BadgeStyle } from '@components/Badge/types';
 import { Button } from '@components/Button/Button';
 import { FormControl } from '@components/FormControl';
-import IconCalendar16 from '@foundation/Icon/Generated/IconCalendar16';
 import { Validation } from '@utilities/validation';
 
 import { DatePicker, type DatePickerProps, type ReactDatePickerRef } from './DatePicker';
@@ -180,7 +180,7 @@ const TemplateDateRange: StoryFn<DatePickerProps> = () => {
                     type="button"
                     className="tw-flex tw-items-center hover:tw-bg-box-neutral-hover tw-py-2 tw-px-4 tw-rounded tw-gap-2"
                 >
-                    <IconCalendar16 />
+                    <IconCalendar size={16} />
                     Date:
                     <Badge style={BadgeStyle.Progress} emphasis={BadgeEmphasis.Strong} size="small">
                         {new Intl.DateTimeFormat('en-US', formatOptions).format(startDate || new Date())} -{' '}

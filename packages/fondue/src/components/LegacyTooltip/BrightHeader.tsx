@@ -1,12 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import {
+    IconCheckMark,
+    IconDocument,
+    IconExclamationMarkCircle,
+    IconExclamationMarkTriangle,
+} from '@frontify/fondue-icons';
 import { type ReactElement, cloneElement } from 'react';
 
-import IconCheckMark from '@foundation/Icon/Generated/IconCheckMark';
-import IconDocument from '@foundation/Icon/Generated/IconDocument';
-import IconExclamationMarkCircle from '@foundation/Icon/Generated/IconExclamationMarkCircle';
-import IconExclamationMarkTriangle from '@foundation/Icon/Generated/IconExclamationMarkTriangle';
-import { IconSize } from '@foundation/Icon/IconSize';
 import { merge } from '@utilities/merge';
 
 /**
@@ -62,7 +63,7 @@ export const BrightHeader = ({ headerStyle }: BrightHeaderProps): ReactElement =
                 brightHeaderBackgroundColors[headerStyle],
             ])}
         >
-            {cloneElement(brightHeaderIcon[headerStyle], { size: IconSize.Size20 })}
+            {cloneElement(brightHeaderIcon[headerStyle], { size: 20 })}
         </div>
     );
 };

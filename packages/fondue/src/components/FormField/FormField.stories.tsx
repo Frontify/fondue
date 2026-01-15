@@ -1,11 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconInfo, IconQuestionMark } from '@frontify/fondue-icons';
 import { type Meta, type StoryFn } from '@storybook/react-vite';
 import { useState } from 'react';
 
 import { TextInput, TextInputType } from '@components/TextInput/TextInput';
-import IconInfo from '@foundation/Icon/Generated/IconInfo';
-import IconQuestionMark from '@foundation/Icon/Generated/IconQuestionMark';
 import { Validation } from '@utilities/validation';
 
 import { FormField, type FormFieldProps } from './FormField';
@@ -92,7 +91,6 @@ export const Default: StoryFn<FormFieldProps> = (args) => {
     const [currentValue, setCurrentValue] = useState<string>('');
     const handleChange = (value: string) => {
         const numValue = parseFloat(value);
-        // eslint-disable-next-line react-hooks/immutability
         args.error = !isNaN(numValue) && numValue < 0;
         setCurrentValue(value);
     };
@@ -144,7 +142,6 @@ export const WithError: StoryFn<FormFieldProps> = (args) => {
     const handleChange = (value: string) => {
         if (value.length > 0) {
             setCurrentValue(value);
-            // eslint-disable-next-line react-hooks/immutability
             args.error = !/^a+$/.test(value);
         } else {
             setCurrentValue('');
