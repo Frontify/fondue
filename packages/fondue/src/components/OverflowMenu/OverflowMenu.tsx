@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconDotsHorizontal } from '@frontify/fondue-icons';
 import { useFocusRing } from '@react-aria/focus';
 import { type MouseEvent, useRef, useState } from 'react';
 
 import { Menu } from '@components/Menu/Menu';
 import { MenuItem } from '@components/MenuItem';
-import IconDotsHorizontal from '@foundation/Icon/Generated/IconDotsHorizontal';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 

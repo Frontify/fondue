@@ -3,6 +3,7 @@
 import './styles.css';
 
 import { offset, shift } from '@floating-ui/dom';
+import { IconCaretLeft, IconCaretLeftDouble, IconCaretRight, IconCaretRightDouble } from '@frontify/fondue-icons';
 import { format, getYear } from 'date-fns';
 import { forwardRef, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
 import ReactDatePicker from 'react-datepicker';
@@ -10,11 +11,6 @@ import { createPortal } from 'react-dom';
 
 import { Button } from '@components/Button/Button';
 import { ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button/ButtonTypes';
-import IconCaretLeft from '@foundation/Icon/Generated/IconCaretLeft';
-import IconCaretLeftDouble from '@foundation/Icon/Generated/IconCaretLeftDouble';
-import IconCaretRight from '@foundation/Icon/Generated/IconCaretRight';
-import IconCaretRightDouble from '@foundation/Icon/Generated/IconCaretRightDouble';
-import { IconSize } from '@foundation/Icon/IconSize';
 import { merge } from '@utilities/merge';
 import { Validation } from '@utilities/validation';
 
@@ -194,14 +190,14 @@ export const DatePicker = forwardRef<ReactDatePickerRef, DatePickerProps>(
                                     size={ButtonSize.Medium}
                                     onClick={decreaseYear}
                                     emphasis={ButtonEmphasis.Weak}
-                                    icon={<IconCaretLeftDouble size={IconSize.Size20} />}
+                                    icon={<IconCaretLeftDouble size={20} />}
                                 />
                                 <Button
                                     style={ButtonStyle.Default}
                                     size={ButtonSize.Medium}
                                     onClick={decreaseMonth}
                                     emphasis={ButtonEmphasis.Weak}
-                                    icon={<IconCaretLeft size={IconSize.Size20} />}
+                                    icon={<IconCaretLeft size={20} />}
                                 />
                                 <p className="tw-font-sans tw-font-semibold tw-grow tw-self-center">
                                     {format(date, 'MMMM')} {getYear(date)}
@@ -211,14 +207,14 @@ export const DatePicker = forwardRef<ReactDatePickerRef, DatePickerProps>(
                                     size={ButtonSize.Medium}
                                     onClick={increaseMonth}
                                     emphasis={ButtonEmphasis.Weak}
-                                    icon={<IconCaretRight size={IconSize.Size20} />}
+                                    icon={<IconCaretRight size={20} />}
                                 />
                                 <Button
                                     style={ButtonStyle.Default}
                                     size={ButtonSize.Medium}
                                     onClick={increaseYear}
                                     emphasis={ButtonEmphasis.Weak}
-                                    icon={<IconCaretRightDouble size={IconSize.Size20} />}
+                                    icon={<IconCaretRightDouble size={20} />}
                                 />
                             </div>
                         </div>

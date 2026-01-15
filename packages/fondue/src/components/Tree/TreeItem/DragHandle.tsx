@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconGrabHandle } from '@frontify/fondue-icons';
 import { type ButtonHTMLAttributes, type DetailedHTMLProps, forwardRef } from 'react';
 
-import IconGrabHandle12 from '@foundation/Icon/Generated/IconGrabHandle12';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 
@@ -34,7 +34,7 @@ export const DragHandle = forwardRef<HTMLButtonElement, DragHandleProps>(
                 ])}
                 data-test-id="fondue-tree-item-drag-handle"
             >
-                <IconGrabHandle12 />
+                <IconGrabHandle size={12} />
             </button>
         );
     },

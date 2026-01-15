@@ -1,9 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconMusicNote } from '@frontify/fondue-icons';
 import { type ReactElement, cloneElement } from 'react';
 
-import IconMusicNote from '@foundation/Icon/Generated/IconMusicNote';
-import { IconSize } from '@foundation/Icon/IconSize';
 import { merge } from '@utilities/merge';
 
 import { type AssetInputProps, AssetInputSize } from './AssetInput';
@@ -46,12 +45,10 @@ export const AssetThumbnail = ({
         >
             {thumbnailVariant === 'icon' && (
                 <span data-test-id="asset-input-thumbnail-icon">
-                    {asset.icon && cloneElement(asset.icon, { size: IconSize.Size24 })}
+                    {asset.icon && cloneElement(asset.icon, { size: 24 })}
                 </span>
             )}
-            {thumbnailVariant === 'audio' && (
-                <IconMusicNote size={IconSize.Size24} data-test-id="asset-input-thumbnail-audio" />
-            )}
+            {thumbnailVariant === 'audio' && <IconMusicNote size={24} data-test-id="asset-input-thumbnail-audio" />}
             {thumbnailVariant === 'default' && (
                 <img
                     src={asset.src}

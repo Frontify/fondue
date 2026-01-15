@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type FondueIconProps } from '@frontify/fondue-icons';
 import { type AriaBreadcrumbsProps, useBreadcrumbs } from '@react-aria/breadcrumbs';
 import { type MouseEvent, type ReactElement } from 'react';
 
 import { type BadgeProps } from '@components/Badge/types';
-import { type IconProps } from '@foundation/Icon/IconProps';
 import { merge } from '@utilities/merge';
 
 import { FormattedBreadcrumbs } from './FormattedBreadcrumbs';
@@ -24,7 +24,7 @@ export type Breadcrumb = {
     label: string;
     link?: string;
     onClick?: <T extends HTMLButtonElement | HTMLAnchorElement>(event: MouseEvent<T>) => void;
-    decorator?: ReactElement<IconProps>;
+    decorator?: ReactElement<FondueIconProps>;
     bold?: boolean;
     badges?: BadgeProps[];
     'data-test-id'?: string;

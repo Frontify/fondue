@@ -21,16 +21,14 @@
         "skipLibCheck": true,
         "strict": true,
         "target": "esnext",
-        "types": ["cypress", "cypress-real-events", "vite/client", "node"]
+        "types": ["vite/client", "node"]
     },
     "exclude": ["node_modules", "dist"],
     "include": [
         ".storybook",
         "eslint.config.mjs",
         "postcss.config.cjs",
-        "cypress.config.ts",
         "src",
-        "cypress",
         "scripts",
         "vite.config.ts",
         "tailwind.config.js",

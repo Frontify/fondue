@@ -2,7 +2,6 @@
 
 import { type HTMLAttributes, type ReactElement, type ReactNode, cloneElement } from 'react';
 
-import { IconSize } from '@foundation/Icon/IconSize';
 import { merge } from '@utilities/merge';
 
 import { MenuItemContentSize } from './types';
@@ -49,7 +48,7 @@ export const MenuItemContent = ({
         {decorator && (
             <span className={merge(['tw-shrink-0', paddingRight[size]])} data-test-id="menu-item-decorator">
                 {cloneElement(decorator, {
-                    size: size === MenuItemContentSize.Large ? IconSize.Size24 : IconSize.Size16,
+                    size: size === MenuItemContentSize.Large ? 24 : 16,
                 })}
             </span>
         )}

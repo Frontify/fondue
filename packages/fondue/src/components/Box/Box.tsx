@@ -9,7 +9,7 @@ import {
     PADDING_DIRECTIONS,
     type SpacingValue,
 } from '@utilities/dimensions';
-import { merge } from '@utilities/index';
+import { merge } from '@utilities/merge';
 
 import { type ContainerHTMLElement } from '../../types/elements';
 

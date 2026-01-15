@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconDocument } from '@frontify/fondue-icons';
 import { type Meta, type StoryFn } from '@storybook/react-vite';
 import { memo, useEffect, useMemo, useState } from 'react';
 import { action } from 'storybook/actions';
@@ -23,7 +24,6 @@ import {
     useDynamicNavigationMock,
     useNavigationWithLazyLoadedItemsMock,
 } from '@components/Tree/utils';
-import IconDocument from '@foundation/Icon/Generated/IconDocument';
 
 /**
  ### *Legacy component warning*
