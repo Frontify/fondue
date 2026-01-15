@@ -1,9 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type FondueIconProps, IconCaretDown } from '@frontify/fondue-icons';
 import { type ReactElement } from 'react';
 
-import IconCaretDown from '@foundation/Icon/Generated/IconCaretDown';
-import { IconSize } from '@foundation/Icon/IconSize';
 import { merge } from '@utilities/merge';
 
 import { type AccordionHeaderIconProps, type AccordionHeaderIconSize } from './types';
@@ -13,10 +12,10 @@ import { type AccordionHeaderIconProps, type AccordionHeaderIconSize } from './t
  */
 const ACCORDION_HEADER_ICON_ID = 'fondue-accordion-header-icon';
 
-const sizeMap: Record<AccordionHeaderIconSize, IconSize> = {
-    small: IconSize.Size12,
-    medium: IconSize.Size16,
-    large: IconSize.Size20,
+const sizeMap: Record<AccordionHeaderIconSize, FondueIconProps['size']> = {
+    small: 12,
+    medium: 16,
+    large: 20,
 };
 
 /**

@@ -1,11 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconPen } from '@frontify/fondue-icons';
 import { type StoryFn } from '@storybook/react-vite';
 import { useState } from 'react';
 
 import { EditableMode, EditableText, type EditableTextProps } from '@components/EditableText/EditableText';
-import IconPen from '@foundation/Icon/Generated/IconPen';
-import { IconSize } from '@foundation/Icon/IconSize';
 
 /**
  ### *Legacy component warning*
@@ -67,7 +66,7 @@ const EditableTemplateIcon: StoryFn<EditableTextProps> = (args: EditableTextProp
             <EditableText {...args} onEditableSave={(value) => setLabel(value)}>
                 <h1>{label}</h1>
             </EditableText>{' '}
-            <IconPen size={IconSize.Size24} />
+            <IconPen size={24} />
         </div>
     );
 };
@@ -107,7 +106,7 @@ export const ControlledExample: StoryFn<EditableTextProps> = () => {
             >
                 <h1 className={'tw-text-xl'}>{label}</h1>
             </EditableText>
-            <IconPen size={IconSize.Size24} />
+            <IconPen size={24} />
         </div>
     );
 };

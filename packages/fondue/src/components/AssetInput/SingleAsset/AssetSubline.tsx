@@ -1,9 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconArrowCircleUp, IconImageStack } from '@frontify/fondue-icons';
 import { type ReactElement } from 'react';
-
-import IconArrowCircleUp from '@foundation/Icon/Generated/IconArrowCircleUp';
-import IconImageStack from '@foundation/Icon/Generated/IconImageStack';
 
 import { type AssetInputProps } from '../AssetInput';
 

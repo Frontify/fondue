@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconIcon } from '@frontify/fondue-icons';
 import { type Meta, type StoryFn } from '@storybook/react-vite';
 import { action } from 'storybook/actions';
 
 import { BadgeStatus, BadgeStyle } from '@components/Badge/types';
-import IconIcon from '@foundation/Icon/Generated/IconIcon';
 
 import { BreadcrumbGap, Breadcrumbs, type BreadcrumbsProps } from './Breadcrumbs';
 

@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconCheckMark, IconMinus } from '@frontify/fondue-icons';
 import { useCheckbox } from '@react-aria/checkbox';
 import { useFocusRing } from '@react-aria/focus';
 import { mergeProps } from '@react-aria/utils';
@@ -16,9 +17,6 @@ import {
 } from 'react';
 
 import { InputLabel, type InputLabelTooltipProps } from '@components/InputLabel/InputLabel';
-import IconCheckMark from '@foundation/Icon/Generated/IconCheckMark';
-import IconMinus from '@foundation/Icon/Generated/IconMinus';
-import { IconSize } from '@foundation/Icon/IconSize';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
@@ -158,9 +156,7 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
     );
 
     const stateMap: Record<CheckboxState, ReactNode> = {
-        [CheckboxState.Checked]: (
-            <IconCheckMark size={size === CheckboxSize.XLarge ? IconSize.Size24 : IconSize.Size16} />
-        ),
+        [CheckboxState.Checked]: <IconCheckMark size={size === CheckboxSize.XLarge ? 24 : 16} />,
         [CheckboxState.Mixed]: <IconMinus />,
         [CheckboxState.Unchecked]: null,
     };

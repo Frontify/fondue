@@ -1,12 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconCaretRight, IconCheckMark } from '@frontify/fondue-icons';
 import { useFocusRing } from '@react-aria/focus';
 import { type FocusEvent, type MouseEvent, type ReactNode } from 'react';
 
 import { MenuItemContent, type MenuItemContentProps } from '@components/MenuItem/MenuItemContent';
-import IconCaretRight from '@foundation/Icon/Generated/IconCaretRight';
-import IconCheckMark from '@foundation/Icon/Generated/IconCheckMark';
-import { IconSize } from '@foundation/Icon/IconSize';
 import { getItemElementType } from '@utilities/elements';
 import { FOCUS_STYLE_NO_OFFSET } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
@@ -116,7 +114,7 @@ export const MenuItem = ({
     'data-test-id': dataTestId = 'menu-item',
     type,
 }: MenuItemProps) => {
-    const currentIconSize = size === MenuItemContentSize.XSmall ? IconSize.Size16 : IconSize.Size20;
+    const currentIconSize = size === MenuItemContentSize.XSmall ? 16 : 20;
 
     const currentIcon = {
         [SelectionIndicatorIcon.CaretRight]: (

@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconGrabHandle } from '@frontify/fondue-icons';
 import { Children, type ReactNode } from 'react';
 
-import IconGrabHandle12 from '@foundation/Icon/Generated/IconGrabHandle12';
 import { merge } from '@utilities/merge';
 
 import { INDENTATION_WIDTH } from '../helpers';
@@ -37,7 +37,7 @@ export const TreeItemOverlay = ({
 
     const dragHandler = (
         <button type="button" tabIndex={-1} className="tw-p-1 tw-touch-none">
-            <IconGrabHandle12 />
+            <IconGrabHandle size={12} />
         </button>
     );
 

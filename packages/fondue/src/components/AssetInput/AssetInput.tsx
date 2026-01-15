@@ -1,13 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type FondueIconProps, IconArrowCircleUp, IconImageStack } from '@frontify/fondue-icons';
 import { type ChangeEvent, type ReactElement, useRef } from 'react';
 
 import { type ActionMenuProps } from '@components/ActionMenu/ActionMenu';
 import { Button } from '@components/Button/Button';
 import { ButtonEmphasis, ButtonStyle } from '@components/Button/ButtonTypes';
-import IconArrowCircleUp from '@foundation/Icon/Generated/IconArrowCircleUp';
-import IconImageStack from '@foundation/Icon/Generated/IconImageStack';
-import { type IconProps } from '@foundation/Icon/IconProps';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { merge } from '@utilities/merge';
 
@@ -43,7 +41,7 @@ type IconAsset = BaseAsset & {
     extension?: undefined;
     src?: undefined;
     alt?: undefined;
-    icon: ReactElement<IconProps>;
+    icon: ReactElement<FondueIconProps>;
     size?: undefined;
 };
 

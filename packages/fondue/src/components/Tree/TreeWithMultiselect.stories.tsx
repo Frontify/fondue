@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconDocument } from '@frontify/fondue-icons';
 import { type Meta } from '@storybook/react-vite';
 import { useEffect, useState } from 'react';
 
@@ -14,8 +15,10 @@ import {
     Tree as TreeView,
 } from '@components/Tree';
 import { type TreeItemStyling, type TreeNodeWithoutElements, type TreeProps } from '@components/Tree/types';
-import { type TreeItemMockMultiselect, treeItemsMockMultiseclect } from '@components/Tree/utils';
-import IconDocument from '@foundation/Icon/Generated/IconDocument';
+import {
+    type TreeItemMockMultiselect,
+    treeItemsMockMultiseclect as treeItemsMockMultiselect,
+} from '@components/Tree/utils';
 
 import { TreeItemMultiselect } from './TreeItem/TreeItemMultiselect';
 import { getNewSelectedItems } from './helpers';
@@ -151,7 +154,7 @@ export const MultiselectWithBasicItem = ({ ...args }: TreeProps) => {
 
     useEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect
-        setTreeItems(treeItemsMockMultiseclect);
+        setTreeItems(treeItemsMockMultiselect);
     }, []);
 
     const handleItemSelected = (id: string, ignoreRemoveSelected = false, nodes: TreeNodeWithoutElements[] = []) => {
