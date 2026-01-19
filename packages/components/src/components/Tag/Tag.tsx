@@ -75,7 +75,7 @@ const TagRoot = forwardRef<HTMLButtonElement | HTMLDivElement, TagProps>(
             onDismiss,
             size = 'default',
             title,
-            variant,
+            variant = 'default',
         },
         ref,
     ) => {
