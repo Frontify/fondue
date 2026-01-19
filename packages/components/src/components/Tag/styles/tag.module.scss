@@ -2,32 +2,32 @@
 
 @use '../../../utilities/focusStyle.module.scss';
 
-@mixin variant($name, $color) {
-    &[data-variant=#{$name}]:not([data-disabled="true"]) {
-        background-color: var(--box-#{$color}-strong-color);
-        color: var(--box-#{$color}-strong-inverse-color);
+@mixin variant($name, $color, $weakColor: $color) {
+    &[data-variant='#{$name}']:not([data-disabled="true"]) {
+        background-color: var(--color-#{$color}-default);
+        color: var(--color-#{$color}-on-#{$color});
 
         .secondaryContent {
-            color: var(--box-#{$color}-strong-inverse-color);
+            color: var(--color-#{$color}-on-#{$color});
         }
 
         .mainContent:is(button) {
             &:hover {
-                background-color: var(--box-#{$color}-strong-color-hover);
-                color: var(--box-#{$color}-strong-inverse-color-hover);
+                background-color: var(--color-#{$color}-hover);
+                color: var(--color-#{$color}-on-#{$color});
             }
         }
 
         .actionButton {
             &:hover {
-                background-color: var(--box-#{$color}-strong-color-hover);
-                color: var(--box-#{$color}-strong-inverse-color-hover);
+                background-color: var(--color-#{$color}-hover);
+                color: var(--color-#{$color}-on-#{$color});
             }
         }
 
         &[data-emphasis="weak"] {
-            background-color: var(--box-#{$color}-color);
-            color: var(--box-#{$color}-inverse-color);
+            background-color: var(--color-container-#{$weakColor}-default);
+            color: var(--color-container-#{$weakColor}-on-#{$weakColor}-container);
 
             .secondaryContent {
                 color: var(--color-secondary-default);
@@ -35,15 +35,15 @@
 
             .mainContent:is(button) {
                 &:hover {
-                    background-color: var(--box-#{$color}-color-hover);
-                    color: var(--box-#{$color}-inverse-color-hover);
+                    background-color: var(--color-container-#{$weakColor}-hover);
+                    color: var(--color-container-#{$weakColor}-on-#{$weakColor}-container);
                 }
             }
 
             .actionButton {
                 &:hover {
-                    background-color: var(--box-#{$color}-color-hover);
-                    color: var(--box-#{$color}-inverse-color-hover);
+                    background-color: var(--color-container-#{$weakColor}-hover);
+                    color: var(--color-container-#{$weakColor}-on-#{$weakColor}-container);
                 }
             }
         }
@@ -184,6 +184,6 @@
         }
     }
 
-    @include variant(default, neutral);
-    @include variant(highlight, selected);
+    @include variant(default, primary, secondary);
+    @include variant(highlight, highlight);
 }

@@ -65,7 +65,7 @@ const TagRoot = ({
     onDismiss,
     size = 'default',
     title,
-    variant,
+    variant = 'default',
 }: TagProps) => {
     const [isHover, setIsHover] = useState(false);
 
