@@ -283,13 +283,13 @@ TagSecondaryContent.displayName = 'Tag.SecondaryContent';
  * - When onClick is explicitly provided, TypeScript matches the second overload,
  *   correctly inferring HTMLButtonElement for the ref
  */
-interface TagComponent {
+type TagComponent = {
     (props: TagPropsWithoutClick & React.RefAttributes<HTMLDivElement>): React.ReactNode;
     (props: TagPropsWithClick & React.RefAttributes<HTMLButtonElement>): React.ReactNode;
     displayName?: string;
     HoverContent: typeof TagHoverContent;
     SecondaryContent: typeof TagSecondaryContent;
-}
+};
 
 export const Tag: TagComponent = TagRoot as unknown as TagComponent;
 Tag.HoverContent = TagHoverContent;
