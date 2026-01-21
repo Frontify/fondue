@@ -646,6 +646,19 @@
       ]
     }
   },
+  "low-contrast": {
+    "default": {
+      "name": "color-low-contrast-default",
+      "type": "color",
+      "value": "var(--color-low-contrast-default)",
+      "path": [
+        "light",
+        "color",
+        "low-contrast",
+        "default"
+      ]
+    }
+  },
   "overlay": {
     "default": {
       "name": "color-overlay-default",
