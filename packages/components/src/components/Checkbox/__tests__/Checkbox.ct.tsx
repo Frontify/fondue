@@ -97,3 +97,19 @@ test('loop through the checkbox state with keyboard', async ({ mount }) => {
     await component.press('Space');
     await expect(component.getByTestId(CHECKBOX_ICON_CHECKED_TEST_ID)).not.toBeVisible();
 });
+
+test('render with error status', async ({ mount }) => {
+    const wrapper = await mount(<Checkbox status="error" data-test-id="checkbox-root" />);
+    const component = wrapper.getByTestId('checkbox-root');
+
+    await expect(component).toBeVisible();
+    await expect(component).toHaveAttribute('data-status', 'error');
+    await expect(component).toHaveAttribute('aria-invalid', 'true');
+});
+
+test('render with error status has error border color', async ({ mount }) => {
+    const wrapper = await mount(<Checkbox status="error" data-test-id="checkbox-root" />);
+    const component = wrapper.getByTestId('checkbox-root');
+
+    await expect(component).toHaveCSS('border-color', 'rgb(222, 36, 23)');
+});
