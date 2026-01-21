@@ -72,6 +72,7 @@
   --color-line-mid: rgba(135, 135, 129, 0.5);
   --color-line-strong: var(--color-neutral-95);
   --color-line-subtle: rgba(135, 135, 129, 0.2);
+  --color-low-contrast-default: var(--color-neutral-40);
   --color-marker-00: rgba(255, 255, 255, 1);
   --color-marker-05: rgba(253, 246, 255, 1);
   --color-marker-10: rgba(252, 242, 255, 1);
