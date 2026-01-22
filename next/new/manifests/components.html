@@ -509,7 +509,7 @@
 <header>
   <div class="wrap">
     <h1>Components Manifest</h1>
-    <div class="summary"><a class="filter-pill all" data-k="all" href="#filter-all">All</a><span class="filter-pill ok" aria-disabled="true">35 components ok</span><a class="filter-pill info" data-k="infos" href="#filter-infos">35/35 infos</a><span class="filter-pill ok" aria-disabled="true">314 stories ok</span></div>
+    <div class="summary"><a class="filter-pill all" data-k="all" href="#filter-all">All</a><span class="filter-pill ok" aria-disabled="true">35 components ok</span><a class="filter-pill info" data-k="infos" href="#filter-infos">35/35 infos</a><span class="filter-pill ok" aria-disabled="true">315 stories ok</span></div>
   </div>
 </header>
 <main>
@@ -1691,9 +1691,9 @@ variant?: &#39;default&#39; | &#39;positive&#39; | &#39;negative&#39; | &#39;dan
     <div class="title">
       <h2><span class="status-dot dot-ok"></span> CheckboxComponent</h2>
       <div class="badges">
-        <label for="c-4-components-checkbox-props" class="badge ok as-toggle">17 prop types</label>
+        <label for="c-4-components-checkbox-props" class="badge ok as-toggle">18 prop types</label>
         <label for="c-4-components-checkbox-info" class="badge info as-toggle">1 info</label>
-        <label for="c-4-components-checkbox-stories" class="badge ok as-toggle">8 stories</label>
+        <label for="c-4-components-checkbox-stories" class="badge ok as-toggle">9 stories</label>
       </div>
     </div>
     <div class="meta" title="./src/components/Checkbox/Checkbox.stories.tsx">components-checkbox · ./src/components/Checkbox/Checkbox.stories.tsx</div>
@@ -1723,7 +1723,7 @@ variant?: &#39;default&#39; | &#39;positive&#39; | &#39;negative&#39; | &#39;dan
           <div class="note ok">
             <div class="row">
               <span class="ex-name">Prop types</span>
-              <span class="badge ok">17 prop types</span>
+              <span class="badge ok">18 prop types</span>
             </div>
             <pre><code>Component: src/components/Checkbox/Checkbox.tsx::CheckboxComponent</code></pre>
             <pre><code>Props:</code></pre>
@@ -1794,6 +1794,12 @@ required?: boolean
 size?: &#39;default&#39; | &#39;large&#39; = &#39;default&#39;
 
 /**
+ * Status of the checkbox
+ * @default &quot;default&quot;
+ */
+status?: &#39;default&#39; | &#39;error&#39; = &#39;default&#39;
+
+/**
  * The controlled value of the checkbox
  * @default false
  */
@@ -1809,7 +1815,15 @@ value?: boolean | &#39;indeterminate&#39;</code></pre>
                 <div class="row">
                   <span class="ex-name">Imports</span>
                 </div>
-                <pre><code>import { Checkbox, CheckboxComponent, Flex, IconQuestionMarkCircle, Label, Tooltip } from "@frontify/fondue-components";</code></pre>
+                <pre><code>import {
+    Checkbox,
+    CheckboxComponent,
+    Flex,
+    IconQuestionMarkCircle,
+    Label,
+    Text,
+    Tooltip,
+} from "@frontify/fondue-components";</code></pre>
               </div>
           
           
@@ -2118,6 +2132,49 @@ value?: boolean | &#39;indeterminate&#39;</code></pre>
                 &lt;Label id=&quot;label-3&quot; htmlFor=&quot;checkbox-3&quot;&gt;Checkbox 3
                                         &lt;/Label&gt;
             &lt;/Flex&gt;
+        &lt;/Flex&gt;
+    );
+};</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">WithErrorAndHelpText</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const WithErrorAndHelpText = () =&gt; {
+    const [value, setValue] = useState(args.value);
+    const id = useId();
+    const checkboxId = `checkbox-${id}`;
+    const labelId = `label-${id}`;
+    const helpTextId = `helptext-${id}`;
+
+    const handleToggle = (event: FormEvent) =&gt; {
+        action(&#39;onChange&#39;)(event);
+        setValue((prevIsChecked) =&gt; (prevIsChecked === &#39;indeterminate&#39; ? true : !prevIsChecked));
+    };
+
+    return (
+        &lt;Flex direction=&quot;column&quot; gap={2}&gt;
+            &lt;Flex gap={2} align=&quot;center&quot;&gt;
+                &lt;Checkbox
+                    disabled={false}
+                    required={false}
+                    readOnly={false}
+                    onBlur={action(&#39;onBlur&#39;)}
+                    onFocus={action(&#39;onFocus&#39;)}
+                    id={checkboxId}
+                    aria-labelledby={labelId}
+                    aria-describedby={helpTextId}
+                    value={value}
+                    onChange={handleToggle}
+                    status=&quot;error&quot; /&gt;
+                &lt;Label id={labelId} htmlFor={checkboxId}&gt;I agree to the terms and conditions.
+                                        &lt;/Label&gt;
+            &lt;/Flex&gt;
+            &lt;Text id={helpTextId} size=&quot;small&quot; color=&quot;negative&quot;&gt;Please check this box to continue.
+                                &lt;/Text&gt;
         &lt;/Flex&gt;
     );
 };</code></pre>
