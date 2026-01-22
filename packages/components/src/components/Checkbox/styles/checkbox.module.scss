@@ -88,6 +88,15 @@
             background-color: var(--color-disabled-default);
         }
     }
+
+    // Error state
+    &[data-status='error'] {
+        border-color: var(--color-error-default);
+
+        &:enabled:hover:not([data-readonly='true']) {
+            border-color: var(--color-error-default);
+        }
+    }
 }
 
 .indicator {

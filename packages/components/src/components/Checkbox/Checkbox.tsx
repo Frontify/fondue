@@ -45,6 +45,11 @@ export type CheckboxProps = {
      * @default false
      */
     readOnly?: boolean;
+    /**
+     * Status of the checkbox
+     * @default "default"
+     */
+    status?: 'default' | 'error';
     className?: string;
     /**
      * Event handler called when the checkbox value changes
@@ -72,6 +77,7 @@ export const CheckboxComponent = (
         defaultValue,
         size = 'default',
         emphasis = 'default',
+        status = 'default',
         'data-test-id': dataTestId = 'fondue-checkbox',
         readOnly,
         ...props
@@ -87,6 +93,7 @@ export const CheckboxComponent = (
             data-size={size}
             data-emphasis={emphasis}
             data-readonly={readOnly}
+            data-status={status}
             onClick={(event) => {
                 if (readOnly) {
                     event.preventDefault();
@@ -104,6 +111,7 @@ export const CheckboxComponent = (
             }}
             data-test-id={dataTestId}
             aria-readonly={readOnly}
+            aria-invalid={status === 'error'}
             {...props}
         >
             <CheckboxPrimitive.Indicator className={styles.indicator}>

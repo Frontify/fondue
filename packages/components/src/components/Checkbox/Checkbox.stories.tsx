@@ -7,6 +7,7 @@ import { action } from 'storybook/actions';
 
 import { Flex } from '../Flex/Flex';
 import { Label } from '../Label/Label';
+import { Text } from '../Text/Text';
 import { Tooltip } from '../Tooltip/Tooltip';
 
 import { Checkbox, CheckboxComponent } from './Checkbox';
@@ -160,6 +161,43 @@ export const Checklist: Story = {
                         Checkbox 3
                     </Label>
                 </Flex>
+            </Flex>
+        );
+    },
+};
+
+export const WithErrorAndHelpText: Story = {
+    render: (args) => {
+        const [value, setValue] = useState(args.value);
+        const id = useId();
+        const checkboxId = `checkbox-${id}`;
+        const labelId = `label-${id}`;
+        const helpTextId = `helptext-${id}`;
+
+        const handleToggle = (event: FormEvent) => {
+            action('onChange')(event);
+            setValue((prevIsChecked) => (prevIsChecked === 'indeterminate' ? true : !prevIsChecked));
+        };
+
+        return (
+            <Flex direction="column" gap={2}>
+                <Flex gap={2} align="center">
+                    <Checkbox
+                        {...args}
+                        id={checkboxId}
+                        aria-labelledby={labelId}
+                        aria-describedby={helpTextId}
+                        value={value}
+                        onChange={handleToggle}
+                        status="error"
+                    />
+                    <Label id={labelId} htmlFor={checkboxId}>
+                        I agree to the terms and conditions.
+                    </Label>
+                </Flex>
+                <Text id={helpTextId} size="small" color="negative">
+                    Please check this box to continue.
+                </Text>
             </Flex>
         );
     },
