@@ -509,7 +509,7 @@
 <header>
   <div class="wrap">
     <h1>Components Manifest</h1>
-    <div class="summary"><a class="filter-pill all" data-k="all" href="#filter-all">All</a><span class="filter-pill ok" aria-disabled="true">35 components ok</span><a class="filter-pill info" data-k="infos" href="#filter-infos">35/35 infos</a><span class="filter-pill ok" aria-disabled="true">315 stories ok</span></div>
+    <div class="summary"><a class="filter-pill all" data-k="all" href="#filter-all">All</a><span class="filter-pill ok" aria-disabled="true">35 components ok</span><a class="filter-pill info" data-k="infos" href="#filter-infos">35/35 infos</a><span class="filter-pill ok" aria-disabled="true">310 stories ok</span></div>
   </div>
 </header>
 <main>
@@ -2334,7 +2334,7 @@ onClick?: () =&gt; void</code></pre>
       <div class="badges">
         <label for="c-6-components-colorpicker-props" class="badge ok as-toggle">7 prop types</label>
         <label for="c-6-components-colorpicker-info" class="badge info as-toggle">1 info</label>
-        <label for="c-6-components-colorpicker-stories" class="badge ok as-toggle">5 stories</label>
+        
       </div>
     </div>
     <div class="meta" title="./src/components/ColorPicker/ColorPicker.stories.tsx">components-colorpicker · ./src/components/ColorPicker/ColorPicker.stories.tsx</div>
@@ -2346,7 +2346,7 @@ onClick?: () =&gt; void</code></pre>
   <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
   
   <input id="c-6-components-colorpicker-info" class="tg tg-info" type="checkbox" hidden />
-  <input id="c-6-components-colorpicker-stories" class="tg tg-stories" type="checkbox" hidden />
+  
   <input id="c-6-components-colorpicker-props" class="tg tg-props" type="checkbox" hidden />
 
   <div class="panels">
@@ -2412,146 +2412,6 @@ onFormatChange?: (format: ColorFormat) =&gt; void = () =&gt; {}</code></pre>
           </div>
         </div>
     
-        <div class="panel panel-stories">
-          
-          
-          
-          <div class="note ok">
-                <div class="row">
-                  <span class="ex-name">Imports</span>
-                </div>
-                <pre><code>import { Button, ColorPicker, ColorPickerRoot, Flyout } from "@frontify/fondue-components";</code></pre>
-              </div>
-          
-          
-            <div class="note ok">
-              <div class="row">
-                <span class="ex-name">Default</span>
-                <span class="badge ok">story ok</span>
-              </div>
-              
-              
-              <pre><code>const Default = (args) =&gt; {
-    const [currentColor, setCurrentColor] = useState(args.currentColor);
-    return (
-        &lt;ColorPicker.Root defaultFormat=&quot;HEX&quot; currentColor={currentColor} onColorChange={setCurrentColor}&gt;
-            &lt;ColorPicker.Values /&gt;
-            &lt;ColorPicker.Gradient /&gt;
-        &lt;/ColorPicker.Root&gt;
-    );
-};</code></pre>
-            </div>
-            <div class="note ok">
-              <div class="row">
-                <span class="ex-name">WithRgbaDefaultFormat</span>
-                <span class="badge ok">story ok</span>
-              </div>
-              
-              
-              <pre><code>const WithRgbaDefaultFormat = (args) =&gt; {
-    const [currentColor, setCurrentColor] = useState(args.currentColor);
-    return (
-        &lt;ColorPicker.Root currentColor={currentColor} onColorChange={setCurrentColor} defaultFormat=&quot;RGBA&quot;&gt;
-            &lt;ColorPicker.Values /&gt;
-            &lt;ColorPicker.Gradient /&gt;
-        &lt;/ColorPicker.Root&gt;
-    );
-};</code></pre>
-            </div>
-            <div class="note ok">
-              <div class="row">
-                <span class="ex-name">OnlyPicker</span>
-                <span class="badge ok">story ok</span>
-              </div>
-              
-              
-              <pre><code>const OnlyPicker = (args) =&gt; {
-    const [currentColor, setCurrentColor] = useState(args.currentColor);
-    return (
-        &lt;ColorPicker.Root currentColor={currentColor} onColorChange={setCurrentColor}&gt;
-            &lt;ColorPicker.Gradient /&gt;
-        &lt;/ColorPicker.Root&gt;
-    );
-};</code></pre>
-            </div>
-            <div class="note ok">
-              <div class="row">
-                <span class="ex-name">OnlyValues</span>
-                <span class="badge ok">story ok</span>
-              </div>
-              
-              
-              <pre><code>const OnlyValues = (args) =&gt; {
-    const [currentColor, setCurrentColor] = useState(args.currentColor);
-    return (
-        &lt;ColorPicker.Root currentColor={currentColor} onColorChange={setCurrentColor}&gt;
-            &lt;ColorPicker.Values /&gt;
-        &lt;/ColorPicker.Root&gt;
-    );
-};</code></pre>
-            </div>
-            <div class="note ok">
-              <div class="row">
-                <span class="ex-name">InFlyout</span>
-                <span class="badge ok">story ok</span>
-              </div>
-              
-              
-              <pre><code>const InFlyout = (args) =&gt; {
-    const [savedColor, setSavedColor] = useState(args.currentColor);
-    const [currentColor, setCurrentColor] = useState(args.currentColor);
-    const [currentFormat, setCurrentFormat] = useState(args.currentFormat);
-    const [isOpen, setIsOpen] = useState(true);
-    return (
-        &lt;Flyout.Root open={isOpen} onOpenChange={setIsOpen}&gt;
-            &lt;Flyout.Trigger&gt;
-                &lt;ColorPicker.Input
-                    aria-label=&quot;Color Picker&quot;
-                    currentColor={currentColor}
-                    onClear={() =&gt; {
-                        setCurrentColor(undefined);
-                    }}
-                /&gt;
-            &lt;/Flyout.Trigger&gt;
-            &lt;Flyout.Content maxWidth=&quot;600px&quot;&gt;
-                &lt;Flyout.Body&gt;
-                    &lt;div className=&quot;tw-p-2 md:tw-w-[450px]&quot;&gt;
-                        &lt;ColorPicker.Root
-                            currentFormat={currentFormat}
-                            currentColor={currentColor}
-                            onColorChange={setCurrentColor}
-                            onFormatChange={setCurrentFormat}
-                        &gt;
-                            &lt;ColorPicker.Values /&gt;
-                            &lt;ColorPicker.Gradient /&gt;
-                        &lt;/ColorPicker.Root&gt;
-                    &lt;/div&gt;
-                &lt;/Flyout.Body&gt;
-                &lt;Flyout.Footer&gt;
-                    &lt;Button
-                        emphasis=&quot;default&quot;
-                        onPress={() =&gt; {
-                            setIsOpen(false);
-                            setCurrentColor(savedColor);
-                        }}
-                    &gt;
-                        Cancel
-                    &lt;/Button&gt;
-                    &lt;Button
-                        onPress={() =&gt; {
-                            setIsOpen(false);
-                            setSavedColor(currentColor);
-                        }}
-                    &gt;
-                        Save
-                    &lt;/Button&gt;
-                &lt;/Flyout.Footer&gt;
-            &lt;/Flyout.Content&gt;
-        &lt;/Flyout.Root&gt;
-    );
-};</code></pre>
-            </div>
-        </div>
   </div>
 </article>
 <article
@@ -3711,7 +3571,7 @@ variant?: &#39;noline&#39; | &#39;dashed&#39; | &#39;solid&#39; = &#39;solid&#39
               </div>
               
               
-              <pre><code>const Primary = () =&gt; &lt;Divider color=&quot;default&quot; variant=&quot;solid&quot; padding=&quot;medium&quot; direction=&quot;horizontal&quot;&gt;&lt;/Divider&gt;;</code></pre>
+              <pre><code>const Primary = () =&gt; &lt;Divider color=&quot;default&quot; variant=&quot;solid&quot; padding=&quot;medium&quot; direction=&quot;horizontal&quot; /&gt;;</code></pre>
             </div>
             <div class="note ok">
               <div class="row">
@@ -3720,7 +3580,7 @@ variant?: &#39;noline&#39; | &#39;dashed&#39; | &#39;solid&#39; = &#39;solid&#39
               </div>
               
               
-              <pre><code>const CustomColor = () =&gt; &lt;Divider color=&quot;strong&quot; variant=&quot;solid&quot; padding=&quot;medium&quot; direction=&quot;horizontal&quot;&gt;&lt;/Divider&gt;;</code></pre>
+              <pre><code>const CustomColor = () =&gt; &lt;Divider color=&quot;strong&quot; variant=&quot;solid&quot; padding=&quot;medium&quot; direction=&quot;horizontal&quot; /&gt;;</code></pre>
             </div>
             <div class="note ok">
               <div class="row">
@@ -3729,7 +3589,7 @@ variant?: &#39;noline&#39; | &#39;dashed&#39; | &#39;solid&#39; = &#39;solid&#39
               </div>
               
               
-              <pre><code>const CustomStyle = () =&gt; &lt;Divider color=&quot;default&quot; variant=&quot;dashed&quot; padding=&quot;medium&quot; direction=&quot;horizontal&quot;&gt;&lt;/Divider&gt;;</code></pre>
+              <pre><code>const CustomStyle = () =&gt; &lt;Divider color=&quot;default&quot; variant=&quot;dashed&quot; padding=&quot;medium&quot; direction=&quot;horizontal&quot; /&gt;;</code></pre>
             </div>
             <div class="note ok">
               <div class="row">
@@ -3738,7 +3598,7 @@ variant?: &#39;noline&#39; | &#39;dashed&#39; | &#39;solid&#39; = &#39;solid&#39
               </div>
               
               
-              <pre><code>const CustomHeight = () =&gt; &lt;Divider color=&quot;default&quot; variant=&quot;solid&quot; padding=&quot;large&quot; direction=&quot;horizontal&quot;&gt;&lt;/Divider&gt;;</code></pre>
+              <pre><code>const CustomHeight = () =&gt; &lt;Divider color=&quot;default&quot; variant=&quot;solid&quot; padding=&quot;large&quot; direction=&quot;horizontal&quot; /&gt;;</code></pre>
             </div>
             <div class="note ok">
               <div class="row">
@@ -3747,7 +3607,7 @@ variant?: &#39;noline&#39; | &#39;dashed&#39; | &#39;solid&#39; = &#39;solid&#39
               </div>
               
               
-              <pre><code>const Vertical = () =&gt; &lt;Divider color=&quot;default&quot; variant=&quot;solid&quot; padding=&quot;medium&quot; direction=&quot;vertical&quot;&gt;&lt;/Divider&gt;;</code></pre>
+              <pre><code>const Vertical = () =&gt; &lt;Divider color=&quot;default&quot; variant=&quot;solid&quot; padding=&quot;medium&quot; direction=&quot;vertical&quot; /&gt;;</code></pre>
             </div>
         </div>
   </div>
@@ -6540,7 +6400,7 @@ variant?: &#39;default&#39; | &#39;positive&#39; | &#39;negative&#39; = &#39;def
               </div>
               
               
-              <pre><code>const WithDefinedValue = () =&gt; &lt;LoadingBar value={42} max={100} rounded aria-label=&quot;Fondue Loading Bar&quot;&gt;&lt;/LoadingBar&gt;;</code></pre>
+              <pre><code>const WithDefinedValue = () =&gt; &lt;LoadingBar value={42} max={100} rounded aria-label=&quot;Fondue Loading Bar&quot; /&gt;;</code></pre>
             </div>
             <div class="note ok">
               <div class="row">
@@ -6549,7 +6409,7 @@ variant?: &#39;default&#39; | &#39;positive&#39; | &#39;negative&#39; = &#39;def
               </div>
               
               
-              <pre><code>const Indeterminate = () =&gt; &lt;LoadingBar value={null} max={100} rounded aria-label=&quot;Fondue Loading Bar&quot;&gt;&lt;/LoadingBar&gt;;</code></pre>
+              <pre><code>const Indeterminate = () =&gt; &lt;LoadingBar value={null} max={100} rounded aria-label=&quot;Fondue Loading Bar&quot; /&gt;;</code></pre>
             </div>
         </div>
   </div>
@@ -6636,7 +6496,7 @@ variant?: &#39;progress&#39; | &#39;success&#39; | &#39;danger&#39; = &#39;progr
               </div>
               
               
-              <pre><code>const Default = () =&gt; &lt;LoadingCircle&gt;&lt;/LoadingCircle&gt;;</code></pre>
+              <pre><code>const Default = () =&gt; &lt;LoadingCircle /&gt;;</code></pre>
             </div>
         </div>
   </div>
@@ -9466,7 +9326,7 @@ value?: number[]</code></pre>
               </div>
               
               
-              <pre><code>const SimpleSlider = () =&gt; &lt;Slider min={0} max={100} name=&quot;Simple slider&quot;&gt;&lt;/Slider&gt;;</code></pre>
+              <pre><code>const SimpleSlider = () =&gt; &lt;Slider min={0} max={100} name=&quot;Simple slider&quot; /&gt;;</code></pre>
             </div>
             <div class="note ok">
               <div class="row">
@@ -9475,7 +9335,7 @@ value?: number[]</code></pre>
               </div>
               
               
-              <pre><code>const Disabled = () =&gt; &lt;Slider min={0} max={100} disabled defaultValue={[50]}&gt;&lt;/Slider&gt;;</code></pre>
+              <pre><code>const Disabled = () =&gt; &lt;Slider min={0} max={100} disabled defaultValue={[50]} /&gt;;</code></pre>
             </div>
             <div class="note ok">
               <div class="row">
@@ -9484,7 +9344,7 @@ value?: number[]</code></pre>
               </div>
               
               
-              <pre><code>const MinimumAndMaximum = () =&gt; &lt;Slider min={50} max={1000}&gt;&lt;/Slider&gt;;</code></pre>
+              <pre><code>const MinimumAndMaximum = () =&gt; &lt;Slider min={50} max={1000} /&gt;;</code></pre>
             </div>
             <div class="note ok">
               <div class="row">
@@ -9493,7 +9353,7 @@ value?: number[]</code></pre>
               </div>
               
               
-              <pre><code>const MinimumGap = () =&gt; &lt;Slider min={0} max={100} minStepsBetweenThumbs={25}&gt;&lt;/Slider&gt;;</code></pre>
+              <pre><code>const MinimumGap = () =&gt; &lt;Slider min={0} max={100} minStepsBetweenThumbs={25} /&gt;;</code></pre>
             </div>
             <div class="note ok">
               <div class="row">
@@ -9502,7 +9362,7 @@ value?: number[]</code></pre>
               </div>
               
               
-              <pre><code>const StepSize = () =&gt; &lt;Slider min={0} max={100} step={25}&gt;&lt;/Slider&gt;;</code></pre>
+              <pre><code>const StepSize = () =&gt; &lt;Slider min={0} max={100} step={25} /&gt;;</code></pre>
             </div>
             <div class="note ok">
               <div class="row">
@@ -9511,7 +9371,7 @@ value?: number[]</code></pre>
               </div>
               
               
-              <pre><code>const MultipleThumbsUncontrolled = () =&gt; &lt;Slider min={0} max={100} defaultValue={[33, 67]}&gt;&lt;/Slider&gt;;</code></pre>
+              <pre><code>const MultipleThumbsUncontrolled = () =&gt; &lt;Slider min={0} max={100} defaultValue={[33, 67]} /&gt;;</code></pre>
             </div>
             <div class="note ok">
               <div class="row">
@@ -10157,7 +10017,7 @@ value?: boolean</code></pre>
               </div>
               
               
-              <pre><code>const Checked = () =&gt; &lt;Switch id=&quot;airplane-mode&quot; aria-label=&quot;Toggle airplane mode&quot; defaultValue&gt;&lt;/Switch&gt;;</code></pre>
+              <pre><code>const Checked = () =&gt; &lt;Switch id=&quot;airplane-mode&quot; aria-label=&quot;Toggle airplane mode&quot; defaultValue /&gt;;</code></pre>
             </div>
             <div class="note ok">
               <div class="row">
@@ -10166,7 +10026,7 @@ value?: boolean</code></pre>
               </div>
               
               
-              <pre><code>const Unchecked = () =&gt; &lt;Switch id=&quot;airplane-mode&quot; aria-label=&quot;Toggle airplane mode&quot; defaultValue={false}&gt;&lt;/Switch&gt;;</code></pre>
+              <pre><code>const Unchecked = () =&gt; &lt;Switch id=&quot;airplane-mode&quot; aria-label=&quot;Toggle airplane mode&quot; defaultValue={false} /&gt;;</code></pre>
             </div>
             <div class="note ok">
               <div class="row">
@@ -10179,7 +10039,7 @@ value?: boolean</code></pre>
     id=&quot;airplane-mode&quot;
     aria-label=&quot;Toggle airplane mode&quot;
     defaultValue={false}
-    disabled&gt;&lt;/Switch&gt;;</code></pre>
+    disabled /&gt;;</code></pre>
             </div>
             <div class="note ok">
               <div class="row">
@@ -10192,7 +10052,7 @@ value?: boolean</code></pre>
     id=&quot;airplane-mode&quot;
     aria-label=&quot;Toggle airplane mode&quot;
     defaultValue={false}
-    required&gt;&lt;/Switch&gt;;</code></pre>
+    required /&gt;;</code></pre>
             </div>
             <div class="note ok">
               <div class="row">
