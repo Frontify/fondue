@@ -47,7 +47,7 @@ export const defaultStyles: Record<string, Record<string, CSSPropertiesHover> | 
     'link-plugin': {
         fontSize: '14px',
         fontStyle: 'normal',
-        color: 'rgb(113, 89, 215)',
+        color: 'rgba(182, 10, 227, 1)',
         textDecoration: 'underline',
         cursor: 'pointer',
     },

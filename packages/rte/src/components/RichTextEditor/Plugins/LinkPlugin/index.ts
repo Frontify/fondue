@@ -24,7 +24,7 @@ const createLinkPlugin: ReturnType<typeof createPluginFactory<NonNullable<unknow
             skipInvalid: true,
             afterMatch: true,
         },
-        triggerFloatingLinkHotkeys: 'meta+k, ctrl+k',
+        triggerFloatingLinkHotkeys: 'meta+shift+u, ctrl+shift+u',
         keepSelectedTextOnPaste: true,
     },
 });
