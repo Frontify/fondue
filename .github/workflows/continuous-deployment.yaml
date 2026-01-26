@@ -170,7 +170,7 @@ jobs:
         runs-on: ubuntu-latest
         timeout-minutes: 10
 
-        needs: [lint, typecheck, old-component-tests, component-tests]
+        needs: [lint, typecheck, component-tests]
 
         permissions:
             contents: write # to create release (changesets/action)
