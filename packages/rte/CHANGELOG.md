@@ -1,5 +1,19 @@
 # @frontify/fondue-rte
 
+## 0.0.1-rc.12
+
+### Patch Changes
+
+- [#2608](https://github.com/Frontify/fondue/pull/2608) [`682c415`](https://github.com/Frontify/fondue/commit/682c4156d1458302a36a71a17f91efc72dd3b667) Thanks [@peter-tudosa](https://github.com/peter-tudosa)! - refactor: update link color and keyboard shortcut
+
+- [#2609](https://github.com/Frontify/fondue/pull/2609) [`0ab6e64`](https://github.com/Frontify/fondue/commit/0ab6e64e3bdf1198f89f7d946c44cad003185d2a) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
+
+- Updated dependencies [[`0bf06d0`](https://github.com/Frontify/fondue/commit/0bf06d03217ff2b8c3ccaa3c4e9e573981e520e2), [`19f55b5`](https://github.com/Frontify/fondue/commit/19f55b50fa30f51e21305ec58653b78545a5d1aa), [`64de9ad`](https://github.com/Frontify/fondue/commit/64de9adab9080e5414ed95d5d97f10dedb3cb7e2), [`7d0e2bf`](https://github.com/Frontify/fondue/commit/7d0e2bf98768f1b131e12526e6f1f067e35dd345), [`7952ccf`](https://github.com/Frontify/fondue/commit/7952ccf0083efddcbf3ff453430981d18da2fb3b), [`0ab6e64`](https://github.com/Frontify/fondue/commit/0ab6e64e3bdf1198f89f7d946c44cad003185d2a), [`e888ea6`](https://github.com/Frontify/fondue/commit/e888ea616ddc4f8e7abd54572796fc0022c77fa5), [`98dbeb6`](https://github.com/Frontify/fondue/commit/98dbeb6794a5960685db5520267a0f5a2a736fe8)]:
+    - @frontify/fondue-components@25.0.0-rc.6
+    - @frontify/fondue-tokens@5.0.0-rc.6
+    - @frontify/fondue-charts@7.0.0-rc.7
+    - @frontify/fondue-icons@0.23.0-rc.5
+
 ## 0.0.1-rc.11
 
 ### Patch Changes

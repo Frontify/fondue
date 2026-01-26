@@ -1,5 +1,14 @@
 # @frontify/fondue-icons
 
+## 0.23.0-rc.5
+
+### Patch Changes
+
+- [#2609](https://github.com/Frontify/fondue/pull/2609) [`0ab6e64`](https://github.com/Frontify/fondue/commit/0ab6e64e3bdf1198f89f7d946c44cad003185d2a) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
+
+- Updated dependencies [[`7952ccf`](https://github.com/Frontify/fondue/commit/7952ccf0083efddcbf3ff453430981d18da2fb3b), [`0ab6e64`](https://github.com/Frontify/fondue/commit/0ab6e64e3bdf1198f89f7d946c44cad003185d2a)]:
+    - @frontify/fondue-tokens@5.0.0-rc.6
+
 ## 0.23.0-rc.4
 
 ### Minor Changes
