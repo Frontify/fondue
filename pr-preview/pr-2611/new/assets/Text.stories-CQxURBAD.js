@@ -1,0 +1,6 @@
+import{T as n}from"./Text-CvoSqZmI.js";import"./iframe-SULdst2T.js";import"./preload-helper-CfkNuHRc.js";const d={title:"Typography/Text",component:n,tags:["autodocs"],parameters:{status:{type:"released"}},argTypes:{as:{type:"string",control:"select",options:[void 0,"a","abbr","address","em","label","li","span","strong","time","p"]},weight:{type:"string",control:"select",options:[void 0,"default","strong","x-strong"]},size:{type:"string",control:"select",options:[void 0,"x-small","small","medium","large"]},color:{type:"string",control:"select",options:[void 0,"default","weak","x-weak","disabled","negative","positive","warning","interactive"]},boxColor:{type:"string",control:"select",options:[void 0,"neutral","selected","disabled","positive","negative","warning"]}}},e={args:{children:"Hello World"}};var t,o,r;e.parameters={...e.parameters,docs:{...(t=e.parameters)==null?void 0:t.docs,source:{code:`const Default = () => <Text>Hello World</Text>;
+`,...(r=(o=e.parameters)==null?void 0:o.docs)==null?void 0:r.source}}};var s,a,l;e.parameters={...e.parameters,docs:{...(s=e.parameters)==null?void 0:s.docs,source:{originalSource:`{
+  args: {
+    children: 'Hello World'
+  }
+}`,...(l=(a=e.parameters)==null?void 0:a.docs)==null?void 0:l.source}}};const m=["Default"];export{e as Default,m as __namedExportsOrder,d as default};
