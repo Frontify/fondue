@@ -1,5 +1,69 @@
 # @frontify/fondue-icons
 
+## 0.23.0-rc.5
+
+### Patch Changes
+
+- [#2609](https://github.com/Frontify/fondue/pull/2609) [`0ab6e64`](https://github.com/Frontify/fondue/commit/0ab6e64e3bdf1198f89f7d946c44cad003185d2a) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
+
+- Updated dependencies [[`7952ccf`](https://github.com/Frontify/fondue/commit/7952ccf0083efddcbf3ff453430981d18da2fb3b), [`0ab6e64`](https://github.com/Frontify/fondue/commit/0ab6e64e3bdf1198f89f7d946c44cad003185d2a)]:
+    - @frontify/fondue-tokens@5.0.0-rc.6
+
+## 0.23.0-rc.4
+
+### Minor Changes
+
+- [#2596](https://github.com/Frontify/fondue/pull/2596) [`f62de74`](https://github.com/Frontify/fondue/commit/f62de743188570ce7fe3cb1b9e3a00f2823e7354) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: downgrade immer to fix issue with hotkeys
+
+### Patch Changes
+
+- Updated dependencies [[`f62de74`](https://github.com/Frontify/fondue/commit/f62de743188570ce7fe3cb1b9e3a00f2823e7354)]:
+    - @frontify/fondue-tokens@5.0.0-rc.5
+
+## 0.23.0-rc.3
+
+### Minor Changes
+
+- [#2594](https://github.com/Frontify/fondue/pull/2594) [`049e77d`](https://github.com/Frontify/fondue/commit/049e77df0875a20fd00ec4c570a9f02b0252d874) Thanks [@github-actions](https://github.com/apps/github-actions)! - chore: release all packages
+
+### Patch Changes
+
+- Updated dependencies [[`049e77d`](https://github.com/Frontify/fondue/commit/049e77df0875a20fd00ec4c570a9f02b0252d874)]:
+    - @frontify/fondue-tokens@5.0.0-rc.4
+
+## 0.23.0-rc.2
+
+### Minor Changes
+
+- [#2583](https://github.com/Frontify/fondue/pull/2583) [`0b953d7`](https://github.com/Frontify/fondue/commit/0b953d7e0098cefc60a845fd67e0b8d46fb5098c) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: upgrade `@types/react`and adjust legacy `TooltipIcon` to work with new icons
+
+### Patch Changes
+
+- Updated dependencies [[`0b953d7`](https://github.com/Frontify/fondue/commit/0b953d7e0098cefc60a845fd67e0b8d46fb5098c)]:
+    - @frontify/fondue-tokens@5.0.0-rc.3
+
+## 0.23.0-rc.1
+
+### Minor Changes
+
+- [#2549](https://github.com/Frontify/fondue/pull/2549) [`eb292a2`](https://github.com/Frontify/fondue/commit/eb292a255c4b8459f3ca0e06d5fbfcd3d155ca4b) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
+
+### Patch Changes
+
+- Updated dependencies []:
+    - @frontify/fondue-tokens@5.0.0-rc.2
+
+## 0.23.0-rc.0
+
+### Minor Changes
+
+- [`9033c88`](https://github.com/Frontify/fondue/commit/9033c886f71d43c3a051ef7bccca6e63f5af1e0d) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: bump versions after merging main
+
+### Patch Changes
+
+- Updated dependencies []:
+    - @frontify/fondue-tokens@5.0.0-rc.2
+
 ## 0.22.0
 
 ### Minor Changes
@@ -12,6 +76,27 @@
 
 - [#2524](https://github.com/Frontify/fondue/pull/2524) [`737f0de`](https://github.com/Frontify/fondue/commit/737f0de29d5b5f2dbca1937c24026137089d3d29) Thanks [@syeo66](https://github.com/syeo66)! - fix: enforce currentColors in svg when forced-colors=active
 
+## 0.22.0-rc.1
+
+### Minor Changes
+
+- [#2523](https://github.com/Frontify/fondue/pull/2523) [`38bcce6`](https://github.com/Frontify/fondue/commit/38bcce66a2eb78c98570906a3ef81bd2c4e645a8) Thanks [@syeo66](https://github.com/syeo66)! - feat: add xx-small icon sizes
+
+- [#2522](https://github.com/Frontify/fondue/pull/2522) [`3613743`](https://github.com/Frontify/fondue/commit/3613743fbc6dbf43c26f49d802389780b0b8d1d5) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
+
+### Patch Changes
+
+- [#2524](https://github.com/Frontify/fondue/pull/2524) [`737f0de`](https://github.com/Frontify/fondue/commit/737f0de29d5b5f2dbca1937c24026137089d3d29) Thanks [@syeo66](https://github.com/syeo66)! - fix: enforce currentColors in svg when forced-colors=active
+
+- Updated dependencies []:
+    - @frontify/fondue-tokens@5.0.0-rc.2
+
+## 0.22.0-rc.0
+
+### Minor Changes
+
+- [`e2e133e`](https://github.com/Frontify/fondue/commit/e2e133e56d7f60866bfd8f0f2d82553325d16599) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: bump versions
+
 ## 0.21.0
 
 ### Minor Changes
@@ -23,6 +108,14 @@
 - [#2512](https://github.com/Frontify/fondue/pull/2512) [`bd5c4ee`](https://github.com/Frontify/fondue/commit/bd5c4ee6b2d3a2adcdbcc928208df061031764b4) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
 
 - [#2512](https://github.com/Frontify/fondue/pull/2512) [`bd5c4ee`](https://github.com/Frontify/fondue/commit/bd5c4ee6b2d3a2adcdbcc928208df061031764b4) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
+
+## 0.21.0-rc.1
+
+### Patch Changes
+
+- [#2492](https://github.com/Frontify/fondue/pull/2492) [`f5785d1`](https://github.com/Frontify/fondue/commit/f5785d1155c4b295573cd8fbdb88114b1ecaef1e) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
+
+- [`06016db`](https://github.com/Frontify/fondue/commit/06016db7131d2611dad9b88115e80c9fe9d2051e) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: merge main into v13
 
 ## 0.20.1
 
@@ -47,6 +140,24 @@
 ### Minor Changes
 
 - [#2441](https://github.com/Frontify/fondue/pull/2441) [`d868114`](https://github.com/Frontify/fondue/commit/d86811431bb12264faf431cf1a38a1f22b75c6d9) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
+
+## 0.18.0-rc.0
+
+### Minor Changes
+
+- chore: fondue release candidate
+
+## 0.18.0-beta.1
+
+### Patch Changes
+
+- [#2394](https://github.com/Frontify/fondue/pull/2394) [`6e7dd18`](https://github.com/Frontify/fondue/commit/6e7dd18ce96b8680409f9099e7dc57e1dea9ae8e) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
+
+## 0.18.0-beta.0
+
+### Minor Changes
+
+- [#2302](https://github.com/Frontify/fondue/pull/2302) [`d010cb5`](https://github.com/Frontify/fondue/commit/d010cb53242c9d9e9112bb369a9af975189ba36a) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: overhauled token generation and switched to new token set
 
 ## 0.17.1
 

@@ -17,20 +17,26 @@ import {
 } from 'react';
 import { usePopper } from 'react-popper';
 
-import { Button, ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button';
-import { Portal } from '@components/Portal';
-import { IconSize } from '@foundation/Icon/IconSize';
+import { Button } from '@components/Button/Button';
+import { ButtonEmphasis, ButtonSize, ButtonStyle } from '@components/Button/ButtonTypes';
+import { Portal } from '@components/Portal/Portal';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 
 import { BrightHeader, brightHeaderArrowBackgroundColors, type BrightHeaderStyle } from './BrightHeader';
 
+/**
+ * @deprecated Please use updated `Tooltip` component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tooltip the migration guide}.
+ */
 export type TooltipButton = {
     label: string;
     action: () => void;
 };
 
+/**
+ * @deprecated Please use updated `Tooltip` component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tooltip the migration guide}.
+ */
 export type LegacyTooltipProps = {
     triggerElement?: ReactElement;
     content: ReactNode;
@@ -67,6 +73,9 @@ const paddingsBottom = {
     large: 'tw-pb-3',
 };
 
+/**
+ * @deprecated Please use updated `Tooltip` component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tooltip the migration guide}.
+ */
 export enum TooltipPosition {
     Top = 'top',
     Right = 'right',
@@ -74,22 +83,20 @@ export enum TooltipPosition {
     Left = 'left',
 }
 
+/**
+ * @deprecated Please use updated `Tooltip` component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tooltip the migration guide}.
+ */
 export enum TooltipAlignment {
     Start = 'Start',
     Middle = 'Middle',
-    End = 'End',
 }
 
 const placementMap: Record<`${TooltipPosition | 'top' | 'bottom' | 'left' | 'right'}-${TooltipAlignment}`, Placement> =
     {
         'top-Start': 'top-start',
-        'top-End': 'top-end',
         'bottom-Start': 'bottom-start',
-        'bottom-End': 'bottom-end',
         'left-Start': 'left-start',
-        'left-End': 'left-end',
         'right-Start': 'right-start',
-        'right-End': 'right-end',
         'top-Middle': 'top',
         'right-Middle': 'right',
         'bottom-Middle': 'bottom',
@@ -99,7 +106,7 @@ const placementMap: Record<`${TooltipPosition | 'top' | 'bottom' | 'left' | 'rig
 const getArrowClasses = (currentPlacement: string, brightHeader: BrightHeaderStyle | undefined, alignment: string) => {
     switch (true) {
         case currentPlacement.toString().includes(TooltipPosition.Top.toLowerCase()):
-            return 'before:tw-border-t-0 before:tw-border-l-0 tw-bottom-[-6px] before:tw-dark before:tw-bg-base';
+            return 'before:tw-border-t-0 before:tw-border-l-0 tw-bottom-[-6px] before:tw-bg-primary';
         case currentPlacement.toString().includes(TooltipPosition.Right.toLowerCase()):
             return merge([
                 'before:tw-border-t-0 before:tw-border-r-0 tw-left-[-5px]',
@@ -108,12 +115,12 @@ const getArrowClasses = (currentPlacement: string, brightHeader: BrightHeaderSty
                 alignment === TooltipAlignment.Start &&
                 currentPlacement.toString().includes(TooltipAlignment.Start.toLowerCase())
                     ? brightHeaderArrowBackgroundColors[brightHeader]
-                    : 'before:tw-dark before:tw-bg-base',
+                    : 'before:tw-bg-primary',
             ]);
         case currentPlacement.toString().includes(TooltipPosition.Bottom.toLowerCase()):
             return merge([
                 'before:tw-border-b-0 before:tw-border-r-0 tw-top-[-6px]',
-                brightHeader ? brightHeaderArrowBackgroundColors[brightHeader] : 'before:tw-dark before:tw-bg-base',
+                brightHeader ? brightHeaderArrowBackgroundColors[brightHeader] : 'before:tw-bg-primary',
             ]);
         case currentPlacement.toString().includes(TooltipPosition.Left.toLowerCase()):
             return merge([
@@ -123,10 +130,10 @@ const getArrowClasses = (currentPlacement: string, brightHeader: BrightHeaderSty
                 alignment === TooltipAlignment.Start &&
                 currentPlacement.toString().includes(TooltipAlignment.Start.toLowerCase())
                     ? brightHeaderArrowBackgroundColors[brightHeader]
-                    : 'before:tw-dark before:tw-bg-base',
+                    : 'before:tw-bg-primary',
             ]);
         default:
-            return 'before:tw-border-b-0 before:tw-border-r-0 tw-top-[-6px] before:tw-dark before:tw-bg-base';
+            return 'before:tw-border-b-0 before:tw-border-r-0 tw-top-[-6px] before:tw-primary';
     }
 };
 
@@ -282,6 +289,7 @@ export const LegacyTooltip = ({
         setIsOpen(shouldPreventTooltipOpening ? false : open);
     }, [open, shouldPreventTooltipOpening]);
 
+    // eslint-disable-next-line @eslint-react/no-unnecessary-use-callback
     const listenForEsc = useCallback(
         (event: KeyboardEvent) => {
             if (isOpen && event.key === 'Escape') {
@@ -323,9 +331,9 @@ export const LegacyTooltip = ({
                     ref={setTooltipContainerRef}
                     aria-hidden={shouldPreventTooltipOpening}
                     className={merge([
-                        'tw-popper-container tw-inline-block tw-max-w-[200px] tw-dark tw-bg-base tw-rounded-md tw-shadow-mid tw-text-text tw-z-[120000]',
+                        'tw-popper-container tw-inline-block tw-max-w-[200px] tw-bg-primary tw-rounded-md tw-shadow-mid tw-text-primary-on-primary tw-z-[120000]',
                         !isOpen && 'tw-opacity-0 tw-h-0 tw-w-0 tw-overflow-hidden',
-                        withStrongBorder && 'tw-border tw-border-line-strong',
+                        withStrongBorder && 'tw-border tw-border-line-mid',
                     ])}
                     data-test-id={dataTestId}
                     role="tooltip"
@@ -337,7 +345,7 @@ export const LegacyTooltip = ({
                     {brightHeader ? <BrightHeader headerStyle={brightHeader} /> : null}
                     <div
                         className={merge([
-                            'tw-px-3 tw-dark tw-bg-base tw-rounded-md tw-relative tw-z-[120000]',
+                            'tw-px-3 tw-bg-primary tw-rounded-md tw-relative tw-z-[120000]',
                             hasLargePaddingTop ? paddingsTop.large : paddingsTop.small,
                             linkUrl ? paddingsBottom.large : paddingsBottom.small,
                         ])}
@@ -345,9 +353,7 @@ export const LegacyTooltip = ({
                         {heading ? (
                             <h4 className="tw-flex tw-text-m tw-font-bold tw-mb-1">
                                 {headingIcon && (
-                                    <span className="tw-mr-1.5">
-                                        {cloneElement(headingIcon, { size: IconSize.Size20 })}
-                                    </span>
+                                    <span className="tw-mr-1.5">{cloneElement(headingIcon, { size: 20 })}</span>
                                 )}
                                 {heading}
                             </h4>
@@ -355,7 +361,7 @@ export const LegacyTooltip = ({
                         <div className="tw-flex">
                             {tooltipIcon ? (
                                 <span className="tw-shrink-0 tw-mr-1 tw-leading-4">
-                                    {cloneElement(tooltipIcon, { size: IconSize.Size16 })}
+                                    {cloneElement(tooltipIcon, { size: 16 })}
                                 </span>
                             ) : null}
                             <span className="tw-text-s tw-min-w-0 tw-break-words">{content}</span>

@@ -4,7 +4,7 @@ import { type Meta, type StoryFn } from '@storybook/react-vite';
 import { useState } from 'react';
 
 import { FormControl } from '@components/FormControl';
-import { TriggerEmphasis } from '@components/Trigger';
+import { TriggerEmphasis } from '@components/Trigger/Trigger';
 import { Validation } from '@utilities/validation';
 
 import {
@@ -14,8 +14,12 @@ import {
     MultiSelectType,
 } from './MultiSelect';
 
+/**
+ ### *Legacy component warning*
+ #### This is a unmaintained legacy component. It will be deprecated and replaced with a new component in an upcoming release.
+ */
 export default {
-    title: 'Components/Multi Select',
+    title: 'Legacy Components/Multi Select',
     component: MultiSelectComponent,
     tags: ['autodocs'],
     args: {

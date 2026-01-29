@@ -1,23 +1,23 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type FondueIconProps as IconProps, IconQuestionMarkCircle } from '@frontify/fondue-icons';
 import { type ReactElement, cloneElement } from 'react';
 
 import { LegacyTooltip, type LegacyTooltipProps } from '@components/LegacyTooltip/LegacyTooltip';
-import IconQuestionMarkCircle from '@foundation/Icon/Generated/IconQuestionMarkCircle';
-import { type IconProps } from '@foundation/Icon/IconProps';
-import { IconSize } from '@foundation/Icon/IconSize';
-import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 
+/**
+ * @deprecated Please use updated tooltip component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tooltip the migration guide}.
+ */
 export type TooltipIconProps = {
     tooltip?: LegacyTooltipProps;
-    iconSize?: IconSize;
+    iconSize?: IconProps['size'];
     triggerIcon?: ReactElement<IconProps>;
     triggerStyle?: TooltipIconTriggerStyle | 'danger' | 'warning' | 'primary';
     'data-test-id'?: string;
 };
 
-export enum TooltipIconTriggerStyle {
+enum TooltipIconTriggerStyle {
     Danger = 'Danger',
     Warning = 'Warning',
     Primary = 'Primary',
@@ -46,7 +46,7 @@ const tooltipHoverClasses = {
  */
 export const TooltipIcon = ({
     tooltip,
-    iconSize = IconSize.Size16,
+    iconSize = 16,
     triggerIcon = <IconQuestionMarkCircle />,
     triggerStyle = TooltipIconTriggerStyle.Primary,
     'data-test-id': dataTestId = 'tooltip-icon',
@@ -62,8 +62,7 @@ export const TooltipIcon = ({
                                 aria-label="More info"
                                 data-test-id={`${dataTestId}-trigger`}
                                 className={merge([
-                                    'tw-inline-flex tw-justify-center tw-items-center tw-cursor-default tw-outline-none tw-rounded-full',
-                                    FOCUS_VISIBLE_STYLE,
+                                    'tw-inline-flex tw-justify-center tw-items-center tw-cursor-default tw-outline-none tw-rounded-full focus-visible:tw-ring-focus',
                                     tooltipTriggerStyleClass[triggerStyle],
                                     tooltipHoverClasses[triggerStyle],
                                 ])}

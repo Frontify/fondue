@@ -2,11 +2,13 @@
 
 import { type HTMLAttributes, type ReactElement, type ReactNode, cloneElement } from 'react';
 
-import { IconSize } from '@foundation/Icon/IconSize';
 import { merge } from '@utilities/merge';
 
 import { MenuItemContentSize } from './types';
 
+/**
+ * @deprecated Use `Dropdown` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#dropdown the migration guide}.
+ */
 export type MenuItemContentProps = {
     title?: ReactNode;
     decorator?: ReactElement;
@@ -26,6 +28,9 @@ const paddingRight: Record<MenuItemContentSize, string> = {
     [MenuItemContentSize.Large]: 'tw-pr-2',
 };
 
+/**
+ * @deprecated Use `Dropdown` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#dropdown the migration guide}.
+ */
 export const MenuItemContent = ({
     title,
     decorator,
@@ -43,7 +48,7 @@ export const MenuItemContent = ({
         {decorator && (
             <span className={merge(['tw-shrink-0', paddingRight[size]])} data-test-id="menu-item-decorator">
                 {cloneElement(decorator, {
-                    size: size === MenuItemContentSize.Large ? IconSize.Size24 : IconSize.Size16,
+                    size: size === MenuItemContentSize.Large ? 24 : 16,
                 })}
             </span>
         )}

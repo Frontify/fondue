@@ -3,6 +3,7 @@
 import { type screens } from '../../tailwind.config';
 
 export type Breakpoint = keyof typeof screens;
+
 export type Responsive<TValue> = ({ [key in Breakpoint]?: TValue } & { base?: TValue }) | TValue;
 
 export type SizeValue = SpacingValue | 'auto' | 'fit-content' | 'intrinsic' | 'max-content' | 'min-content';

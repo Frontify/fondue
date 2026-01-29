@@ -33,7 +33,7 @@
     }
 
     &[data-show-shadow='true'] {
-        box-shadow: inset 0 -15px 8px -10px var(--box-neutral-color);
+        box-shadow: inset 0 -15px 8px -10px var(--color-shadow-default);
     }
 
     &[data-scrollbar-gutter='stable'],
@@ -61,14 +61,14 @@
     padding: 2px;
     box-sizing: border-box;
 
-    background: var(--box-neutral-color);
+    background: var(--color-container-secondary-default);
 
     & {
         @include transitions.transition-colors;
     }
 
     &:hover {
-        background: var(--box-neutral-color-hover);
+        background: var(--color-container-secondary-hover);
     }
 
     &[data-orientation='vertical'] {
@@ -83,7 +83,7 @@
 
 .thumb {
     flex: 1;
-    background: var(--box-neutral-strong-color);
+    background: var(--color-container-secondary-on-secondary-container);
     border-radius: var(--scrollbar-size);
     position: relative;
 
@@ -101,5 +101,5 @@
 }
 
 .corner {
-    background: var(--box-neutral-color-hover);
+    background: var(--color-container-secondary-hover);
 }

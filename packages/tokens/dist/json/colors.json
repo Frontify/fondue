@@ -1,0 +1,929 @@
+{
+  "charts": {
+    "dim": {
+      "default": {
+        "name": "color-charts-dim-default",
+        "type": "color",
+        "value": "var(--color-charts-dim-default)",
+        "path": [
+          "light",
+          "color",
+          "charts",
+          "dim",
+          "default"
+        ]
+      }
+    },
+    "missing": {
+      "default": {
+        "name": "color-charts-missing-default",
+        "type": "color",
+        "value": "var(--color-charts-missing-default)",
+        "path": [
+          "light",
+          "color",
+          "charts",
+          "missing",
+          "default"
+        ]
+      }
+    },
+    "negative": {
+      "default": {
+        "name": "color-charts-negative-default",
+        "type": "color",
+        "value": "var(--color-charts-negative-default)",
+        "path": [
+          "light",
+          "color",
+          "charts",
+          "negative",
+          "default"
+        ]
+      },
+      "hover": {
+        "name": "color-charts-negative-hover",
+        "type": "color",
+        "value": "var(--color-charts-negative-hover)",
+        "path": [
+          "light",
+          "color",
+          "charts",
+          "negative",
+          "hover"
+        ]
+      },
+      "subtle": {
+        "name": "color-charts-negative-subtle",
+        "type": "color",
+        "value": "var(--color-charts-negative-subtle)",
+        "path": [
+          "light",
+          "color",
+          "charts",
+          "negative",
+          "subtle"
+        ]
+      }
+    },
+    "primary": {
+      "default": {
+        "name": "color-charts-primary-default",
+        "type": "color",
+        "value": "var(--color-charts-primary-default)",
+        "path": [
+          "light",
+          "color",
+          "charts",
+          "primary",
+          "default"
+        ]
+      },
+      "hover": {
+        "name": "color-charts-primary-hover",
+        "type": "color",
+        "value": "var(--color-charts-primary-hover)",
+        "path": [
+          "light",
+          "color",
+          "charts",
+          "primary",
+          "hover"
+        ]
+      },
+      "subtle": {
+        "name": "color-charts-primary-subtle",
+        "type": "color",
+        "value": "var(--color-charts-primary-subtle)",
+        "path": [
+          "light",
+          "color",
+          "charts",
+          "primary",
+          "subtle"
+        ]
+      }
+    },
+    "secondary": {
+      "default": {
+        "name": "color-charts-secondary-default",
+        "type": "color",
+        "value": "var(--color-charts-secondary-default)",
+        "path": [
+          "light",
+          "color",
+          "charts",
+          "secondary",
+          "default"
+        ]
+      },
+      "hover": {
+        "name": "color-charts-secondary-hover",
+        "type": "color",
+        "value": "var(--color-charts-secondary-hover)",
+        "path": [
+          "light",
+          "color",
+          "charts",
+          "secondary",
+          "hover"
+        ]
+      },
+      "subtle": {
+        "name": "color-charts-secondary-subtle",
+        "type": "color",
+        "value": "var(--color-charts-secondary-subtle)",
+        "path": [
+          "light",
+          "color",
+          "charts",
+          "secondary",
+          "subtle"
+        ]
+      }
+    },
+    "tertiary": {
+      "default": {
+        "name": "color-charts-tertiary-default",
+        "type": "color",
+        "value": "var(--color-charts-tertiary-default)",
+        "path": [
+          "light",
+          "color",
+          "charts",
+          "tertiary",
+          "default"
+        ]
+      },
+      "hover": {
+        "name": "color-charts-tertiary-hover",
+        "type": "color",
+        "value": "var(--color-charts-tertiary-hover)",
+        "path": [
+          "light",
+          "color",
+          "charts",
+          "tertiary",
+          "hover"
+        ]
+      },
+      "subtle": {
+        "name": "color-charts-tertiary-subtle",
+        "type": "color",
+        "value": "var(--color-charts-tertiary-subtle)",
+        "path": [
+          "light",
+          "color",
+          "charts",
+          "tertiary",
+          "subtle"
+        ]
+      }
+    }
+  },
+  "container": {
+    "disabled": {
+      "default": {
+        "name": "color-container-disabled-default",
+        "type": "color",
+        "value": "var(--color-container-disabled-default)",
+        "path": [
+          "light",
+          "color",
+          "container",
+          "disabled",
+          "default"
+        ]
+      },
+      "on-disabled-container": {
+        "name": "color-container-disabled-on-disabled-container",
+        "type": "color",
+        "value": "var(--color-container-disabled-on-disabled-container)",
+        "path": [
+          "light",
+          "color",
+          "container",
+          "disabled",
+          "on-disabled-container"
+        ]
+      }
+    },
+    "error": {
+      "active": {
+        "name": "color-container-error-active",
+        "type": "color",
+        "value": "var(--color-container-error-active)",
+        "path": [
+          "light",
+          "color",
+          "container",
+          "error",
+          "active"
+        ]
+      },
+      "default": {
+        "name": "color-container-error-default",
+        "type": "color",
+        "value": "var(--color-container-error-default)",
+        "path": [
+          "light",
+          "color",
+          "container",
+          "error",
+          "default"
+        ]
+      },
+      "hover": {
+        "name": "color-container-error-hover",
+        "type": "color",
+        "value": "var(--color-container-error-hover)",
+        "path": [
+          "light",
+          "color",
+          "container",
+          "error",
+          "hover"
+        ]
+      },
+      "on-error-container": {
+        "name": "color-container-error-on-error-container",
+        "type": "color",
+        "value": "var(--color-container-error-on-error-container)",
+        "path": [
+          "light",
+          "color",
+          "container",
+          "error",
+          "on-error-container"
+        ]
+      }
+    },
+    "highlight": {
+      "active": {
+        "name": "color-container-highlight-active",
+        "type": "color",
+        "value": "var(--color-container-highlight-active)",
+        "path": [
+          "light",
+          "color",
+          "container",
+          "highlight",
+          "active"
+        ]
+      },
+      "default": {
+        "name": "color-container-highlight-default",
+        "type": "color",
+        "value": "var(--color-container-highlight-default)",
+        "path": [
+          "light",
+          "color",
+          "container",
+          "highlight",
+          "default"
+        ]
+      },
+      "hover": {
+        "name": "color-container-highlight-hover",
+        "type": "color",
+        "value": "var(--color-container-highlight-hover)",
+        "path": [
+          "light",
+          "color",
+          "container",
+          "highlight",
+          "hover"
+        ]
+      },
+      "on-highlight-container": {
+        "name": "color-container-highlight-on-highlight-container",
+        "type": "color",
+        "value": "var(--color-container-highlight-on-highlight-container)",
+        "path": [
+          "light",
+          "color",
+          "container",
+          "highlight",
+          "on-highlight-container"
+        ]
+      }
+    },
+    "secondary": {
+      "active": {
+        "name": "color-container-secondary-active",
+        "type": "color",
+        "value": "var(--color-container-secondary-active)",
+        "path": [
+          "light",
+          "color",
+          "container",
+          "secondary",
+          "active"
+        ]
+      },
+      "default": {
+        "name": "color-container-secondary-default",
+        "type": "color",
+        "value": "var(--color-container-secondary-default)",
+        "path": [
+          "light",
+          "color",
+          "container",
+          "secondary",
+          "default"
+        ]
+      },
+      "hover": {
+        "name": "color-container-secondary-hover",
+        "type": "color",
+        "value": "var(--color-container-secondary-hover)",
+        "path": [
+          "light",
+          "color",
+          "container",
+          "secondary",
+          "hover"
+        ]
+      },
+      "on-secondary-container": {
+        "name": "color-container-secondary-on-secondary-container",
+        "type": "color",
+        "value": "var(--color-container-secondary-on-secondary-container)",
+        "path": [
+          "light",
+          "color",
+          "container",
+          "secondary",
+          "on-secondary-container"
+        ]
+      },
+      "on-secondary-container-variant": {
+        "name": "color-container-secondary-on-secondary-container-variant",
+        "type": "color",
+        "value": "var(--color-container-secondary-on-secondary-container-variant)",
+        "path": [
+          "light",
+          "color",
+          "container",
+          "secondary",
+          "on-secondary-container-variant"
+        ]
+      }
+    },
+    "success": {
+      "active": {
+        "name": "color-container-success-active",
+        "type": "color",
+        "value": "var(--color-container-success-active)",
+        "path": [
+          "light",
+          "color",
+          "container",
+          "success",
+          "active"
+        ]
+      },
+      "default": {
+        "name": "color-container-success-default",
+        "type": "color",
+        "value": "var(--color-container-success-default)",
+        "path": [
+          "light",
+          "color",
+          "container",
+          "success",
+          "default"
+        ]
+      },
+      "hover": {
+        "name": "color-container-success-hover",
+        "type": "color",
+        "value": "var(--color-container-success-hover)",
+        "path": [
+          "light",
+          "color",
+          "container",
+          "success",
+          "hover"
+        ]
+      },
+      "on-success-container": {
+        "name": "color-container-success-on-success-container",
+        "type": "color",
+        "value": "var(--color-container-success-on-success-container)",
+        "path": [
+          "light",
+          "color",
+          "container",
+          "success",
+          "on-success-container"
+        ]
+      }
+    },
+    "warning": {
+      "active": {
+        "name": "color-container-warning-active",
+        "type": "color",
+        "value": "var(--color-container-warning-active)",
+        "path": [
+          "light",
+          "color",
+          "container",
+          "warning",
+          "active"
+        ]
+      },
+      "default": {
+        "name": "color-container-warning-default",
+        "type": "color",
+        "value": "var(--color-container-warning-default)",
+        "path": [
+          "light",
+          "color",
+          "container",
+          "warning",
+          "default"
+        ]
+      },
+      "hover": {
+        "name": "color-container-warning-hover",
+        "type": "color",
+        "value": "var(--color-container-warning-hover)",
+        "path": [
+          "light",
+          "color",
+          "container",
+          "warning",
+          "hover"
+        ]
+      },
+      "on-warning-container": {
+        "name": "color-container-warning-on-warning-container",
+        "type": "color",
+        "value": "var(--color-container-warning-on-warning-container)",
+        "path": [
+          "light",
+          "color",
+          "container",
+          "warning",
+          "on-warning-container"
+        ]
+      }
+    }
+  },
+  "disabled": {
+    "default": {
+      "name": "color-disabled-default",
+      "type": "color",
+      "value": "var(--color-disabled-default)",
+      "path": [
+        "light",
+        "color",
+        "disabled",
+        "default"
+      ]
+    },
+    "on-disabled": {
+      "name": "color-disabled-on-disabled",
+      "type": "color",
+      "value": "var(--color-disabled-on-disabled)",
+      "path": [
+        "light",
+        "color",
+        "disabled",
+        "on-disabled"
+      ]
+    }
+  },
+  "error": {
+    "active": {
+      "name": "color-error-active",
+      "type": "color",
+      "value": "var(--color-error-active)",
+      "path": [
+        "light",
+        "color",
+        "error",
+        "active"
+      ]
+    },
+    "default": {
+      "name": "color-error-default",
+      "type": "color",
+      "value": "var(--color-error-default)",
+      "path": [
+        "light",
+        "color",
+        "error",
+        "default"
+      ]
+    },
+    "hover": {
+      "name": "color-error-hover",
+      "type": "color",
+      "value": "var(--color-error-hover)",
+      "path": [
+        "light",
+        "color",
+        "error",
+        "hover"
+      ]
+    },
+    "on-error": {
+      "name": "color-error-on-error",
+      "type": "color",
+      "value": "var(--color-error-on-error)",
+      "path": [
+        "light",
+        "color",
+        "error",
+        "on-error"
+      ]
+    }
+  },
+  "focus": {
+    "contrast": {
+      "name": "color-focus-contrast",
+      "type": "color",
+      "value": "var(--color-focus-contrast)",
+      "path": [
+        "light",
+        "color",
+        "focus",
+        "contrast"
+      ]
+    },
+    "default": {
+      "name": "color-focus-default",
+      "type": "color",
+      "value": "var(--color-focus-default)",
+      "path": [
+        "light",
+        "color",
+        "focus",
+        "default"
+      ]
+    }
+  },
+  "highlight": {
+    "active": {
+      "name": "color-highlight-active",
+      "type": "color",
+      "value": "var(--color-highlight-active)",
+      "path": [
+        "light",
+        "color",
+        "highlight",
+        "active"
+      ]
+    },
+    "default": {
+      "name": "color-highlight-default",
+      "type": "color",
+      "value": "var(--color-highlight-default)",
+      "path": [
+        "light",
+        "color",
+        "highlight",
+        "default"
+      ]
+    },
+    "hover": {
+      "name": "color-highlight-hover",
+      "type": "color",
+      "value": "var(--color-highlight-hover)",
+      "path": [
+        "light",
+        "color",
+        "highlight",
+        "hover"
+      ]
+    },
+    "on-highlight": {
+      "name": "color-highlight-on-highlight",
+      "type": "color",
+      "value": "var(--color-highlight-on-highlight)",
+      "path": [
+        "light",
+        "color",
+        "highlight",
+        "on-highlight"
+      ]
+    }
+  },
+  "line": {
+    "mid": {
+      "name": "color-line-mid",
+      "type": "color",
+      "value": "var(--color-line-mid)",
+      "path": [
+        "light",
+        "color",
+        "line",
+        "mid"
+      ]
+    },
+    "strong": {
+      "name": "color-line-strong",
+      "type": "color",
+      "value": "var(--color-line-strong)",
+      "path": [
+        "light",
+        "color",
+        "line",
+        "strong"
+      ]
+    },
+    "subtle": {
+      "name": "color-line-subtle",
+      "type": "color",
+      "value": "var(--color-line-subtle)",
+      "path": [
+        "light",
+        "color",
+        "line",
+        "subtle"
+      ]
+    }
+  },
+  "low-contrast": {
+    "default": {
+      "name": "color-low-contrast-default",
+      "type": "color",
+      "value": "var(--color-low-contrast-default)",
+      "path": [
+        "light",
+        "color",
+        "low-contrast",
+        "default"
+      ]
+    }
+  },
+  "overlay": {
+    "default": {
+      "name": "color-overlay-default",
+      "type": "color",
+      "value": "var(--color-overlay-default)",
+      "path": [
+        "light",
+        "color",
+        "overlay",
+        "default"
+      ]
+    }
+  },
+  "primary": {
+    "active": {
+      "name": "color-primary-active",
+      "type": "color",
+      "value": "var(--color-primary-active)",
+      "path": [
+        "light",
+        "color",
+        "primary",
+        "active"
+      ]
+    },
+    "default": {
+      "name": "color-primary-default",
+      "type": "color",
+      "value": "var(--color-primary-default)",
+      "path": [
+        "light",
+        "color",
+        "primary",
+        "default"
+      ]
+    },
+    "hover": {
+      "name": "color-primary-hover",
+      "type": "color",
+      "value": "var(--color-primary-hover)",
+      "path": [
+        "light",
+        "color",
+        "primary",
+        "hover"
+      ]
+    },
+    "on-primary": {
+      "name": "color-primary-on-primary",
+      "type": "color",
+      "value": "var(--color-primary-on-primary)",
+      "path": [
+        "light",
+        "color",
+        "primary",
+        "on-primary"
+      ]
+    },
+    "on-primary-variant": {
+      "name": "color-primary-on-primary-variant",
+      "type": "color",
+      "value": "var(--color-primary-on-primary-variant)",
+      "path": [
+        "light",
+        "color",
+        "primary",
+        "on-primary-variant"
+      ]
+    }
+  },
+  "secondary": {
+    "active": {
+      "name": "color-secondary-active",
+      "type": "color",
+      "value": "var(--color-secondary-active)",
+      "path": [
+        "light",
+        "color",
+        "secondary",
+        "active"
+      ]
+    },
+    "default": {
+      "name": "color-secondary-default",
+      "type": "color",
+      "value": "var(--color-secondary-default)",
+      "path": [
+        "light",
+        "color",
+        "secondary",
+        "default"
+      ]
+    },
+    "hover": {
+      "name": "color-secondary-hover",
+      "type": "color",
+      "value": "var(--color-secondary-hover)",
+      "path": [
+        "light",
+        "color",
+        "secondary",
+        "hover"
+      ]
+    },
+    "on-secondary": {
+      "name": "color-secondary-on-secondary",
+      "type": "color",
+      "value": "var(--color-secondary-on-secondary)",
+      "path": [
+        "light",
+        "color",
+        "secondary",
+        "on-secondary"
+      ]
+    }
+  },
+  "shadow": {
+    "default": {
+      "name": "color-shadow-default",
+      "type": "color",
+      "value": "var(--color-shadow-default)",
+      "path": [
+        "light",
+        "color",
+        "shadow",
+        "default"
+      ]
+    }
+  },
+  "success": {
+    "active": {
+      "name": "color-success-active",
+      "type": "color",
+      "value": "var(--color-success-active)",
+      "path": [
+        "light",
+        "color",
+        "success",
+        "active"
+      ]
+    },
+    "default": {
+      "name": "color-success-default",
+      "type": "color",
+      "value": "var(--color-success-default)",
+      "path": [
+        "light",
+        "color",
+        "success",
+        "default"
+      ]
+    },
+    "hover": {
+      "name": "color-success-hover",
+      "type": "color",
+      "value": "var(--color-success-hover)",
+      "path": [
+        "light",
+        "color",
+        "success",
+        "hover"
+      ]
+    },
+    "on-success": {
+      "name": "color-success-on-success",
+      "type": "color",
+      "value": "var(--color-success-on-success)",
+      "path": [
+        "light",
+        "color",
+        "success",
+        "on-success"
+      ]
+    }
+  },
+  "surface": {
+    "active": {
+      "name": "color-surface-active",
+      "type": "color",
+      "value": "var(--color-surface-active)",
+      "path": [
+        "light",
+        "color",
+        "surface",
+        "active"
+      ]
+    },
+    "default": {
+      "name": "color-surface-default",
+      "type": "color",
+      "value": "var(--color-surface-default)",
+      "path": [
+        "light",
+        "color",
+        "surface",
+        "default"
+      ]
+    },
+    "dim": {
+      "name": "color-surface-dim",
+      "type": "color",
+      "value": "var(--color-surface-dim)",
+      "path": [
+        "light",
+        "color",
+        "surface",
+        "dim"
+      ]
+    },
+    "hover": {
+      "name": "color-surface-hover",
+      "type": "color",
+      "value": "var(--color-surface-hover)",
+      "path": [
+        "light",
+        "color",
+        "surface",
+        "hover"
+      ]
+    }
+  },
+  "warning": {
+    "active": {
+      "name": "color-warning-active",
+      "type": "color",
+      "value": "var(--color-warning-active)",
+      "path": [
+        "light",
+        "color",
+        "warning",
+        "active"
+      ]
+    },
+    "default": {
+      "name": "color-warning-default",
+      "type": "color",
+      "value": "var(--color-warning-default)",
+      "path": [
+        "light",
+        "color",
+        "warning",
+        "default"
+      ]
+    },
+    "hover": {
+      "name": "color-warning-hover",
+      "type": "color",
+      "value": "var(--color-warning-hover)",
+      "path": [
+        "light",
+        "color",
+        "warning",
+        "hover"
+      ]
+    },
+    "on-warning": {
+      "name": "color-warning-on-warning",
+      "type": "color",
+      "value": "var(--color-warning-on-warning)",
+      "path": [
+        "light",
+        "color",
+        "warning",
+        "on-warning"
+      ]
+    }
+  }
+}

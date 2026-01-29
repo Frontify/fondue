@@ -1,19 +1,24 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconCalendar } from '@frontify/fondue-icons';
 import { type Meta, type StoryFn } from '@storybook/react-vite';
 import { addDays, subDays } from 'date-fns';
 import { useRef, useState } from 'react';
 
-import { Badge, BadgeEmphasis, BadgeStyle } from '@components/Badge';
-import { Button } from '@components/Button';
+import { Badge } from '@components/Badge/Badge';
+import { BadgeEmphasis, BadgeStyle } from '@components/Badge/types';
+import { Button } from '@components/Button/Button';
 import { FormControl } from '@components/FormControl';
-import IconCalendar16 from '@foundation/Icon/Generated/IconCalendar16';
 import { Validation } from '@utilities/validation';
 
 import { DatePicker, type DatePickerProps, type ReactDatePickerRef } from './DatePicker';
 
+/**
+ ### *Legacy component warning*
+ #### This is a unmaintained legacy component. It will be deprecated and replaced with a new component in an upcoming release.
+ */
 export default {
-    title: 'Components/DatePicker',
+    title: 'Legacy Components/DatePicker',
     component: DatePicker,
     tags: ['autodocs'],
     args: {
@@ -137,8 +142,8 @@ InsideFormControlAndOverSegmentedControls.args = {
 const formatOptions = { day: 'numeric', month: 'short', year: 'numeric' } as const;
 
 const TemplateDateRange: StoryFn<DatePickerProps> = () => {
-    const [startDate, setStartDate] = useState<Date | null>(subDays(new Date(), 40));
-    const [endDate, setEndDate] = useState<Date | null>(new Date());
+    const [startDate, setStartDate] = useState<Date | null>(() => subDays(new Date(), 40));
+    const [endDate, setEndDate] = useState<Date | null>(() => new Date());
     const onChange = (dates: [Date | null, Date | null] | null) => {
         if (!dates) {
             return;
@@ -175,7 +180,7 @@ const TemplateDateRange: StoryFn<DatePickerProps> = () => {
                     type="button"
                     className="tw-flex tw-items-center hover:tw-bg-box-neutral-hover tw-py-2 tw-px-4 tw-rounded tw-gap-2"
                 >
-                    <IconCalendar16 />
+                    <IconCalendar size={16} />
                     Date:
                     <Badge style={BadgeStyle.Progress} emphasis={BadgeEmphasis.Strong} size="small">
                         {new Intl.DateTimeFormat('en-US', formatOptions).format(startDate || new Date())} -{' '}

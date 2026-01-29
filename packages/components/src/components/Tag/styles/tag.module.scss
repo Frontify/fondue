@@ -2,48 +2,48 @@
 
 @use '../../../utilities/focusStyle.module.scss';
 
-@mixin variant($name, $color) {
-    &[data-variant=#{$name}]:not([data-disabled="true"]) {
-        background-color: var(--box-#{$color}-strong-color);
-        color: var(--box-#{$color}-strong-inverse-color);
+@mixin variant($name, $color, $weakColor: $color) {
+    &[data-variant='#{$name}']:not([data-disabled="true"]) {
+        background-color: var(--color-#{$color}-default);
+        color: var(--color-#{$color}-on-#{$color});
 
         .secondaryContent {
-            color: var(--box-#{$color}-strong-inverse-color);
+            color: var(--color-#{$color}-on-#{$color});
         }
 
         .mainContent:is(button) {
             &:hover {
-                background-color: var(--box-#{$color}-strong-color-hover);
-                color: var(--box-#{$color}-strong-inverse-color-hover);
+                background-color: var(--color-#{$color}-hover);
+                color: var(--color-#{$color}-on-#{$color});
             }
         }
 
         .actionButton {
             &:hover {
-                background-color: var(--box-#{$color}-strong-color-hover);
-                color: var(--box-#{$color}-strong-inverse-color-hover);
+                background-color: var(--color-#{$color}-hover);
+                color: var(--color-#{$color}-on-#{$color});
             }
         }
 
         &[data-emphasis="weak"] {
-            background-color: var(--box-#{$color}-color);
-            color: var(--box-#{$color}-inverse-color);
+            background-color: var(--color-container-#{$weakColor}-default);
+            color: var(--color-container-#{$weakColor}-on-#{$weakColor}-container);
 
             .secondaryContent {
-                color: var(--text-color-weak);
+                color: var(--color-secondary-default);
             }
 
             .mainContent:is(button) {
                 &:hover {
-                    background-color: var(--box-#{$color}-color-hover);
-                    color: var(--box-#{$color}-inverse-color-hover);
+                    background-color: var(--color-container-#{$weakColor}-hover);
+                    color: var(--color-container-#{$weakColor}-on-#{$weakColor}-container);
                 }
             }
 
             .actionButton {
                 &:hover {
-                    background-color: var(--box-#{$color}-color-hover);
-                    color: var(--box-#{$color}-inverse-color-hover);
+                    background-color: var(--color-container-#{$weakColor}-hover);
+                    color: var(--color-container-#{$weakColor}-on-#{$weakColor}-container);
                 }
             }
         }
@@ -53,9 +53,9 @@
 .root {
     --gap: 0.375rem; // 6px according to Figma
 
-    font-size: var(--body-size-small);
-    line-height: var(--body-size-small-line-height);
-    border-radius: var(--radius);
+    font-size: var(--typography-font-size-small);
+    line-height: var(--typography-line-height-tight);
+    border-radius: var(--border-radius-medium);
     position: relative;
     display: inline-flex;
     transition: background-color 250ms, color 250ms;
@@ -65,18 +65,18 @@
 
     &[data-size="small"] {
         .mainContent {
-            padding: 2px var(--space-xs);
+            padding: 2px var(--spacing-x-small);
         }
     }
 
     &[data-disabled="true"] {
-        background-color: var(--box-disabled-color);
-        color: var(--box-disabled-color-inverse);
+        background-color: var(--color-container-disabled-default);
+        color: var(--color-container-disabled-on-disabled);
         cursor: default;
 
         &:hover {
-            background-color: var(--box-disabled-color);
-            color: var(--box-disabled-color-inverse);
+            background-color: var(--color-container-disabled-default);
+            color: var(--color-container-disabled-on-disabled);
         }
 
         .mainContent:is(button),
@@ -91,7 +91,7 @@
     }
 
     .mainContent {
-        padding: var(--space-xxs) var(--space-xs);
+        padding: var(--spacing-xx-small) var(--spacing-x-small);
         gap: var(--gap);
         display: flex;
         align-items: center;
@@ -101,7 +101,7 @@
         background: transparent;
         color: inherit;
         font: inherit;
-        border-radius: var(--radius);
+        border-radius: var(--border-radius-medium);
 
         &:not(:last-child) {
             border-start-end-radius: 0;
@@ -140,8 +140,8 @@
         border-radius: 0;
 
         &:last-child {
-            border-start-end-radius: var(--radius);
-            border-end-end-radius: var(--radius);
+            border-start-end-radius: var(--border-radius-medium);
+            border-end-end-radius: var(--border-radius-medium);
         }
 
         & {
@@ -184,6 +184,6 @@
         }
     }
 
-    @include variant(default, neutral);
-    @include variant(highlight, selected);
+    @include variant(default, primary, secondary);
+    @include variant(highlight, highlight);
 }

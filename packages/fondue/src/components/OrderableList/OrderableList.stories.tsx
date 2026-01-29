@@ -17,8 +17,12 @@ import {
 import { OrderableList as OrderableListComponent } from './OrderableList';
 import { type OrderableListItem, type OrderableListItemStyle, type OrderableListProps } from './types';
 
+/**
+ ### *Legacy component warning*
+ #### This is a unmaintained legacy component. It will be deprecated and replaced with a new component in an upcoming release.
+ */
 export default {
-    title: 'Components/Orderable List',
+    title: 'Legacy Components/Orderable List',
     component: OrderableListComponent,
     tags: ['autodocs'],
     args: {
@@ -123,6 +127,7 @@ export const OrderableList: StoryFn<OrderableListProps<StoryListItem> & Orderabl
     useEffect(() => {
         if (prevSelectedId.current !== selectedId) {
             prevSelectedId.current = selectedId;
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setCurrentSelectedId(selectedId);
         }
     }, [selectedId, prevSelectedId]);

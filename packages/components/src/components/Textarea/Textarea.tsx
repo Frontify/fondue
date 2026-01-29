@@ -17,7 +17,6 @@ import {
 } from 'react';
 
 import { useSyncRefs } from '#/hooks/useSyncRefs';
-import { cn } from '#/utilities/styleUtilities';
 
 import styles from './styles/textarea.module.scss';
 
@@ -173,6 +172,7 @@ export const TextareaRoot = (
     };
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setValue(inputValue ?? defaultValue ?? '');
     }, [defaultValue, inputValue]);
 
@@ -278,7 +278,15 @@ export const TextareaSlot = (
     { name, className, ...slotProps }: TextareaSlotProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
-    return <div data-slot data-name={name} {...slotProps} ref={forwardedRef} className={cn(styles.slot, className)} />;
+    return (
+        <div
+            data-slot
+            data-name={name}
+            {...slotProps}
+            ref={forwardedRef}
+            className={[styles.slot, className].filter(Boolean).join(' ')}
+        />
+    );
 };
 
 TextareaSlot.displayName = 'Textarea.Slot';

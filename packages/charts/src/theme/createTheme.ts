@@ -8,7 +8,7 @@ const TICK_LENGTH = 6;
 const TICK_OFFSET = 4;
 
 export const TICK_LABEL_STYLE = {
-    fontSize: 'var(--body-size-x-small)',
+    fontSize: 'var(--typography-font-size-x-small)',
     fontFamily: `var(${BODY_FONT_FAMILY})`,
     fontWeight: TICK_LABEL_WEIGHT,
     fill: 'var(--fc-font-color-weak)',

@@ -2,8 +2,6 @@
 
 import { type ReactElement, cloneElement, isValidElement, useState } from 'react';
 
-import { type IconProps } from '@foundation/Icon/IconProps';
-import { IconSize } from '@foundation/Icon/IconSize';
 import { merge } from '@utilities/merge';
 
 import { AccordionHeaderIcon } from './AccordionHeaderIcon';
@@ -12,7 +10,7 @@ import { type AccordionHeaderProps } from './types';
 /**
  * @deprecated Please use updated Accordion component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#accordion the migration guide}.
  */
-export const ACCORDION_HEADER_TEST_ID = 'fondue-accordion-header';
+const ACCORDION_HEADER_TEST_ID = 'fondue-accordion-header';
 
 /**
  * @deprecated Please use updated Accordion component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#accordion the migration guide}.
@@ -42,8 +40,8 @@ export const AccordionHeader = ({
             >
                 {isValidElement(decorator) && (
                     <span data-test-id={`${dataTestId}-decorator`} className="tw-shrink-0 tw-leading-4">
-                        {cloneElement(decorator as ReactElement<IconProps>, {
-                            size: IconSize.Size16,
+                        {cloneElement(decorator as ReactElement, {
+                            size: 16,
                         })}
                     </span>
                 )}

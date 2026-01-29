@@ -1,5 +1,93 @@
 # @frontify/fondue-tokens
 
+## 5.0.0-rc.6
+
+### Major Changes
+
+- [#2606](https://github.com/Frontify/fondue/pull/2606) [`7952ccf`](https://github.com/Frontify/fondue/commit/7952ccf0083efddcbf3ff453430981d18da2fb3b) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add new token
+
+### Patch Changes
+
+- [#2609](https://github.com/Frontify/fondue/pull/2609) [`0ab6e64`](https://github.com/Frontify/fondue/commit/0ab6e64e3bdf1198f89f7d946c44cad003185d2a) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
+
+## 5.0.0-rc.5
+
+### Major Changes
+
+- [#2596](https://github.com/Frontify/fondue/pull/2596) [`f62de74`](https://github.com/Frontify/fondue/commit/f62de743188570ce7fe3cb1b9e3a00f2823e7354) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: downgrade immer to fix issue with hotkeys
+
+## 5.0.0-rc.4
+
+### Major Changes
+
+- [#2594](https://github.com/Frontify/fondue/pull/2594) [`049e77d`](https://github.com/Frontify/fondue/commit/049e77df0875a20fd00ec4c570a9f02b0252d874) Thanks [@github-actions](https://github.com/apps/github-actions)! - chore: release all packages
+
+## 5.0.0-rc.3
+
+### Major Changes
+
+- [#2583](https://github.com/Frontify/fondue/pull/2583) [`0b953d7`](https://github.com/Frontify/fondue/commit/0b953d7e0098cefc60a845fd67e0b8d46fb5098c) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: upgrade `@types/react`and adjust legacy `TooltipIcon` to work with new icons
+
+## 5.0.0-rc.2
+
+### Major Changes
+
+- [`9a63275`](https://github.com/Frontify/fondue/commit/9a63275ad8914610f653a8aa7cc9b1cd44987b46) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: fix RTE color mapping
+
+- [`a76c463`](https://github.com/Frontify/fondue/commit/a76c4633c16d22d38ee987dc790bec8cfded30b5) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: remove deprecated tailwind colors
+
+## 5.0.0-rc.1
+
+### Patch Changes
+
+- [#2492](https://github.com/Frontify/fondue/pull/2492) [`f5785d1`](https://github.com/Frontify/fondue/commit/f5785d1155c4b295573cd8fbdb88114b1ecaef1e) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
+
+- [`06016db`](https://github.com/Frontify/fondue/commit/06016db7131d2611dad9b88115e80c9fe9d2051e) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: merge main into v13
+
+## 5.0.0-rc.0
+
+### Major Changes
+
+- [#2446](https://github.com/Frontify/fondue/pull/2446) [`4660ad7`](https://github.com/Frontify/fondue/commit/4660ad71917f8d9d27f8e64d4d30a0ffc32813fd) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: add utility for focus ring
+
+- [#2446](https://github.com/Frontify/fondue/pull/2446) [`0038587`](https://github.com/Frontify/fondue/commit/0038587d4cd59cf13331b750aaaf9ebbe97cc0d2) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: minor style approvements
+
+## 5.0.0-beta.5
+
+### Major Changes
+
+- [`18c3e1e`](https://github.com/Frontify/fondue/commit/18c3e1e75d69b7f4fb2ce68f8eb1d9a8fab9a3a7) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: merge main branch into v13
+
+## 5.0.0-beta.4
+
+### Patch Changes
+
+- [#2394](https://github.com/Frontify/fondue/pull/2394) [`6e7dd18`](https://github.com/Frontify/fondue/commit/6e7dd18ce96b8680409f9099e7dc57e1dea9ae8e) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
+
+## 5.0.0-beta.3
+
+### Major Changes
+
+- [#2351](https://github.com/Frontify/fondue/pull/2351) [`52b9562`](https://github.com/Frontify/fondue/commit/52b956216715ba7a78c7c434f7e7344a314d2e0c) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: improve token preview in storybook
+
+## 5.0.0-beta.2
+
+### Major Changes
+
+- [#2349](https://github.com/Frontify/fondue/pull/2349) [`4dbed1d`](https://github.com/Frontify/fondue/commit/4dbed1d68a1fbd19a368cc81713ecf893ec635a3) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: improved story preview and typing
+
+## 5.0.0-beta.1
+
+### Patch Changes
+
+- [`56ebddd`](https://github.com/Frontify/fondue/commit/56ebddd2e0851ffdd539137c949e82384e752ae2) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add module types to tailwind configs
+
+## 5.0.0-beta.0
+
+### Major Changes
+
+- [#2302](https://github.com/Frontify/fondue/pull/2302) [`d010cb5`](https://github.com/Frontify/fondue/commit/d010cb53242c9d9e9112bb369a9af975189ba36a) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: overhauled token generation and switched to new token set
+
 ## 4.2.3
 
 ### Patch Changes

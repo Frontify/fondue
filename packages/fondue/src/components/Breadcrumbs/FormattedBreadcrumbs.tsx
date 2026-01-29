@@ -2,12 +2,15 @@
 
 import { type ReactElement, useRef } from 'react';
 
-import { OverflowMenu, type OverflowMenuItemProps } from '../OverflowMenu';
+import { OverflowMenu, type OverflowMenuItemProps } from '@components/OverflowMenu/OverflowMenu';
 
 import { BreadcrumbItem } from './BreadcrumbItem';
 import { type BreadcrumbsProps } from './Breadcrumbs';
 import { CurrentBreadcrumbItem } from './CurrentBreadcrumbItem';
 
+/**
+ * @deprecated This component is deprecated and will be removed in the next major version.
+ */
 export const FormattedBreadcrumbs = ({
     items,
     keepRoot,

@@ -1,12 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconCaretRight } from '@frontify/fondue-icons';
 import { useButton } from '@react-aria/button';
 import { useFocusRing } from '@react-aria/focus';
 import { mergeProps } from '@react-aria/utils';
 import { type ReactElement, useRef } from 'react';
 
-import IconCaretRight from '@foundation/Icon/Generated/IconCaretRight';
-import { IconSize } from '@foundation/Icon/IconSize';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 
@@ -19,8 +18,6 @@ export type MultiAssetPreviewProps = {
     assets: AssetType[];
     onClick: () => void;
 };
-
-// const FOCUS_STYLE = "tw-border-black-90 dark:tw-border-black-10";
 
 export const MultiAssetPreview = ({ numberOfLocations, assets, onClick }: MultiAssetPreviewProps): ReactElement => {
     const buttonRef = useRef<HTMLButtonElement | null>(null);
@@ -55,7 +52,7 @@ export const MultiAssetPreview = ({ numberOfLocations, assets, onClick }: MultiA
                     </div>
                     <div className="tw-flex tw-items-center tw-text-black-70 tw-pl-4">
                         <div className="tw-absolute tw-right-12">
-                            <IconCaretRight size={IconSize.Size24} />
+                            <IconCaretRight size={24} />
                         </div>
                     </div>
                 </div>

@@ -6,8 +6,12 @@ import { AssetInput, type AssetInputProps, AssetInputSize } from './AssetInput';
 import { assetInputActions } from './asset-input-actions';
 import { EXAMPLE_IMAGES, MIXED_ASSETS } from './example-assets';
 
+/**
+ ### *Legacy component warning*
+ #### This is a unmaintained legacy component. It will be deprecated and replaced with a new component in an upcoming release.
+ */
 export default {
-    title: 'Components/Asset Input',
+    title: 'Legacy Components/Asset Input',
     component: AssetInput,
     tags: ['autodocs'],
     argTypes: {
@@ -33,12 +37,14 @@ const Template: StoryFn<AssetInputProps & { onItemClick: () => void }> = (args) 
     if (args?.actions) {
         for (const block of args.actions) {
             for (const item of block.menuItems) {
+                // eslint-disable-next-line react-hooks/immutability
                 item.onClick = args.onItemClick;
             }
         }
     }
 
     if (args.isLoading && args.assets) {
+        // eslint-disable-next-line react-hooks/immutability
         args.assets = undefined;
     }
 

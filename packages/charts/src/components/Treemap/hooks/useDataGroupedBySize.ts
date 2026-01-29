@@ -23,6 +23,7 @@ export const useDataGroupedBySize = (
     const didDataChange = !isEqual(data, previousData) && previousData !== undefined;
 
     if (didDataChange && !!sizeThreshold) {
+        // eslint-disable-next-line react-hooks/refs
         wasGrouped.current = false;
     }
 
@@ -47,5 +48,6 @@ export const useDataGroupedBySize = (
         }
     }, [data, sizeThreshold, groupColorLabelMap]);
 
+    // eslint-disable-next-line react-hooks/refs
     return { groupedData, wasGrouped: wasGrouped.current };
 };

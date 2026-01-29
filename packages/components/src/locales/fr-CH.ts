@@ -20,4 +20,5 @@ export const frCH: Translations = {
     Table_sortDescending: 'Trier par ordre décroissant',
     Table_sortAscending: 'Trier par ordre croissant',
     Badge_dismiss: 'Fermer ${label}',
+    Notice_dismiss: "Fermer l'avis",
 };

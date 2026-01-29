@@ -6,8 +6,8 @@ import sinon from 'sinon';
 import { Table } from '../Table';
 
 test('should render basic table structure', async ({ mount }) => {
-    const component = await mount(
-        <Table.Root aria-label="Test Table">
+    const wrapper = await mount(
+        <Table.Root aria-label="Test Table" data-test-id="table-root">
             <Table.Header>
                 <Table.Row>
                     <Table.HeaderCell>Name</Table.HeaderCell>
@@ -22,14 +22,15 @@ test('should render basic table structure', async ({ mount }) => {
             </Table.Body>
         </Table.Root>,
     );
+    const component = wrapper.getByTestId('table-root');
 
     await expect(component).toBeVisible();
     await expect(component.getByRole('columnheader')).toHaveCount(2);
 });
 
 test('should handle table layout modes', async ({ mount }) => {
-    const component = await mount(
-        <Table.Root layout="fixed" aria-label="Table">
+    const wrapper = await mount(
+        <Table.Root layout="fixed" aria-label="Table" data-test-id="table-root">
             <Table.Caption>Table Caption</Table.Caption>
             <Table.Header>
                 <Table.Row>
@@ -38,14 +39,15 @@ test('should handle table layout modes', async ({ mount }) => {
             </Table.Header>
         </Table.Root>,
     );
+    const component = wrapper.getByTestId('table-root');
 
     await expect(component).toHaveAttribute('data-layout', 'fixed');
     await expect(component.locator('caption')).toHaveText('Table Caption');
 });
 
 test('should handle table font size small', async ({ mount }) => {
-    const component = await mount(
-        <Table.Root aria-label="Table">
+    const wrapper = await mount(
+        <Table.Root aria-label="Table" data-test-id="table-root">
             <Table.Caption>Table Caption</Table.Caption>
             <Table.Header>
                 <Table.Row>
@@ -54,13 +56,14 @@ test('should handle table font size small', async ({ mount }) => {
             </Table.Header>
         </Table.Root>,
     );
+    const component = wrapper.getByTestId('table-root');
 
     await expect(component).toHaveAttribute('data-font-size', 'medium');
 });
 
 test('should handle table font size medium', async ({ mount }) => {
-    const component = await mount(
-        <Table.Root fontSize="small" aria-label="Table">
+    const wrapper = await mount(
+        <Table.Root fontSize="small" aria-label="Table" data-test-id="table-root">
             <Table.Caption>Table Caption</Table.Caption>
             <Table.Header>
                 <Table.Row>
@@ -69,13 +72,14 @@ test('should handle table font size medium', async ({ mount }) => {
             </Table.Header>
         </Table.Root>,
     );
+    const component = wrapper.getByTestId('table-root');
 
     await expect(component).toHaveAttribute('data-font-size', 'small');
 });
 
 test('should handle ARIA attributes', async ({ mount }) => {
-    const component = await mount(
-        <Table.Root aria-label="Test Table" aria-describedby="table-desc">
+    const wrapper = await mount(
+        <Table.Root aria-label="Test Table" aria-describedby="table-desc" data-test-id="table-root">
             <Table.Header>
                 <Table.Row>
                     <Table.HeaderCell>Name</Table.HeaderCell>
@@ -83,14 +87,15 @@ test('should handle ARIA attributes', async ({ mount }) => {
             </Table.Header>
         </Table.Root>,
     );
+    const component = wrapper.getByTestId('table-root');
 
     await expect(component).toHaveAttribute('aria-label', 'Test Table');
     await expect(component).toHaveAttribute('aria-describedby', 'table-desc');
 });
 
 test('should handle sticky header and ARIA attributes', async ({ mount }) => {
-    const component = await mount(
-        <Table.Root aria-label="Table">
+    const wrapper = await mount(
+        <Table.Root aria-label="Table" data-test-id="table-root">
             <Table.Header sticky aria-label="Header Section" aria-busy>
                 <Table.Row>
                     <Table.HeaderCell>Name</Table.HeaderCell>
@@ -98,6 +103,7 @@ test('should handle sticky header and ARIA attributes', async ({ mount }) => {
             </Table.Header>
         </Table.Root>,
     );
+    const component = wrapper.getByTestId('table-root');
 
     await expect(component.locator('thead')).toHaveAttribute('data-sticky', 'true');
     await expect(component.locator('thead')).toHaveAttribute('aria-label', 'Header Section');
@@ -105,8 +111,8 @@ test('should handle sticky header and ARIA attributes', async ({ mount }) => {
 });
 
 test('should handle header with loading state', async ({ mount }) => {
-    const component = await mount(
-        <Table.Root aria-label="Table">
+    const wrapper = await mount(
+        <Table.Root aria-label="Table" data-test-id="table-root">
             <Table.Header sticky>
                 <Table.Row>
                     <Table.HeaderCell state="loading">Name</Table.HeaderCell>
@@ -114,14 +120,15 @@ test('should handle header with loading state', async ({ mount }) => {
             </Table.Header>
         </Table.Root>,
     );
+    const component = wrapper.getByTestId('table-root');
 
     await expect(component.locator('thead')).toHaveAttribute('data-sticky', 'true');
     await expect(component.locator('th').getByTestId('fondue-loading-circle')).toBeVisible();
 });
 
 test('should handle sticky first column', async ({ mount }) => {
-    const component = await mount(
-        <Table.Root aria-label="Table">
+    const wrapper = await mount(
+        <Table.Root aria-label="Table" data-test-id="table-root">
             <Table.Body firstColumnSticky aria-busy>
                 <Table.Row>
                     <Table.RowCell>Test</Table.RowCell>
@@ -129,14 +136,15 @@ test('should handle sticky first column', async ({ mount }) => {
             </Table.Body>
         </Table.Root>,
     );
+    const component = wrapper.getByTestId('table-root');
 
     await expect(component.locator('tbody')).toHaveAttribute('data-first-column-sticky', 'true');
     await expect(component.locator('tbody')).toHaveAttribute('aria-busy', 'true');
 });
 
 test('should handle sticky first column and head', async ({ mount }) => {
-    const component = await mount(
-        <Table.Root aria-label="Table">
+    const wrapper = await mount(
+        <Table.Root aria-label="Table" data-test-id="table-root">
             <Table.Header sticky>
                 <Table.Row>
                     <Table.HeaderCell>Name</Table.HeaderCell>
@@ -149,14 +157,15 @@ test('should handle sticky first column and head', async ({ mount }) => {
             </Table.Body>
         </Table.Root>,
     );
+    const component = wrapper.getByTestId('table-root');
 
     await expect(component.locator('thead')).toHaveAttribute('data-sticky', 'true');
     await expect(component.locator('tbody')).toHaveAttribute('data-first-column-sticky', 'true');
 });
 
 test('should handle sticky right column', async ({ mount }) => {
-    const component = await mount(
-        <Table.Root aria-label="Table">
+    const wrapper = await mount(
+        <Table.Root aria-label="Table" data-test-id="table-root">
             <Table.Body lastColumnSticky>
                 <Table.Row>
                     <Table.RowCell>Test 1</Table.RowCell>
@@ -165,13 +174,14 @@ test('should handle sticky right column', async ({ mount }) => {
             </Table.Body>
         </Table.Root>,
     );
+    const component = wrapper.getByTestId('table-root');
 
     await expect(component.locator('tbody')).toHaveAttribute('data-last-column-sticky', 'true');
 });
 
 test('should handle all sticky combinations', async ({ mount }) => {
-    const component = await mount(
-        <Table.Root aria-label="Table">
+    const wrapper = await mount(
+        <Table.Root aria-label="Table" data-test-id="table-root">
             <Table.Header sticky>
                 <Table.Row>
                     <Table.HeaderCell>Name</Table.HeaderCell>
@@ -188,6 +198,7 @@ test('should handle all sticky combinations', async ({ mount }) => {
             </Table.Body>
         </Table.Root>,
     );
+    const component = wrapper.getByTestId('table-root');
 
     await expect(component.locator('thead')).toHaveAttribute('data-sticky', 'true');
     await expect(component.locator('tbody')).toHaveAttribute('data-first-column-sticky', 'true');
@@ -196,8 +207,8 @@ test('should handle all sticky combinations', async ({ mount }) => {
 
 test('should handle all HeaderCell configurations', async ({ mount }) => {
     const onSortChange = sinon.spy();
-    const component = await mount(
-        <Table.Root aria-label="Table">
+    const wrapper = await mount(
+        <Table.Root aria-label="Table" data-test-id="table-root">
             <Table.Header>
                 <Table.Row>
                     <Table.HeaderCell
@@ -219,6 +230,7 @@ test('should handle all HeaderCell configurations', async ({ mount }) => {
             </Table.Header>
         </Table.Root>,
     );
+    const component = wrapper.getByTestId('table-root');
 
     const headerCell = component.locator('th');
     await expect(headerCell).toHaveAttribute('scope', 'col');
@@ -231,8 +243,8 @@ test('should handle all HeaderCell configurations', async ({ mount }) => {
 test('should handle all row states and interactions', async ({ mount }) => {
     const onClick = sinon.spy();
     const onButtonClick = sinon.spy();
-    const component = await mount(
-        <Table.Root aria-label="Table">
+    const wrapper = await mount(
+        <Table.Root aria-label="Table" data-test-id="table-root">
             <Table.Body>
                 <Table.Row disabled aria-label="Test Row">
                     <Table.RowCell>Test</Table.RowCell>
@@ -257,6 +269,7 @@ test('should handle all row states and interactions', async ({ mount }) => {
             </Table.Body>
         </Table.Root>,
     );
+    const component = wrapper.getByTestId('table-root');
 
     const firstRow = component.locator('tr').nth(0);
     await expect(firstRow).toHaveAttribute('data-disabled', 'true');
@@ -277,8 +290,8 @@ test('should handle all row states and interactions', async ({ mount }) => {
 });
 
 test('should handle all cell configurations', async ({ mount }) => {
-    const component = await mount(
-        <Table.Root aria-label="Table">
+    const wrapper = await mount(
+        <Table.Root aria-label="Table" data-test-id="table-root">
             <Table.Body>
                 <Table.Row>
                     <Table.RowCell truncate align="center" aria-label="Test Cell">
@@ -288,6 +301,7 @@ test('should handle all cell configurations', async ({ mount }) => {
             </Table.Body>
         </Table.Root>,
     );
+    const component = wrapper.getByTestId('table-root');
 
     const cell = component.locator('td');
     await expect(cell).toHaveAttribute('data-truncate', 'true');
@@ -298,8 +312,8 @@ test('should handle all cell configurations', async ({ mount }) => {
 test('should cycle through sort directions', async ({ mount }) => {
     const onSortChange = sinon.spy();
 
-    const component = await mount(
-        <Table.Root aria-label="Table">
+    const wrapper = await mount(
+        <Table.Root aria-label="Table" data-test-id="table-root">
             <Table.Header>
                 <Table.Row>
                     <Table.HeaderCell onSortChange={onSortChange}>Name</Table.HeaderCell>
@@ -307,6 +321,7 @@ test('should cycle through sort directions', async ({ mount }) => {
             </Table.Header>
         </Table.Root>,
     );
+    const component = wrapper.getByTestId('table-root');
 
     const sortButton = component.getByRole('button');
 
@@ -316,8 +331,8 @@ test('should cycle through sort directions', async ({ mount }) => {
 
 test('should handle sorting functionality', async ({ mount }) => {
     const onSortChange = sinon.spy();
-    const component = await mount(
-        <Table.Root aria-label="Table">
+    const wrapper = await mount(
+        <Table.Root aria-label="Table" data-test-id="table-root">
             <Table.Header>
                 <Table.Row>
                     <Table.HeaderCell sortDirection="ascending" onSortChange={onSortChange}>
@@ -327,14 +342,15 @@ test('should handle sorting functionality', async ({ mount }) => {
             </Table.Header>
         </Table.Root>,
     );
+    const component = wrapper.getByTestId('table-root');
 
     await component.getByRole('button').click();
     sinon.assert.calledOnceWithExactly(onSortChange, 'descending');
 });
 
 test('should handle keyboard navigation', async ({ mount, page }) => {
-    const component = await mount(
-        <Table.Root aria-label="Table">
+    const wrapper = await mount(
+        <Table.Root aria-label="Table" data-test-id="table-root">
             <Table.Header>
                 <Table.Row>
                     <Table.HeaderCell sortDirection="ascending" onSortChange={sinon.spy()}>
@@ -366,6 +382,7 @@ test('should handle keyboard navigation', async ({ mount, page }) => {
             </Table.Body>
         </Table.Root>,
     );
+    const component = wrapper.getByTestId('table-root');
 
     await page.keyboard.press('Tab');
     await expect(component.getByRole('row').first()).toBeFocused();
@@ -391,9 +408,9 @@ test('should handle keyboard navigation', async ({ mount, page }) => {
 });
 
 test('should set title when content is truncated', async ({ mount }) => {
-    const component = await mount(
+    const wrapper = await mount(
         <div style={{ width: '200px' }}>
-            <Table.Root layout="fixed" aria-label="Table">
+            <Table.Root layout="fixed" aria-label="Table" data-test-id="table-root">
                 <Table.Header>
                     <Table.Row>
                         <Table.HeaderCell width="100px" truncate>
@@ -411,6 +428,7 @@ test('should set title when content is truncated', async ({ mount }) => {
             </Table.Root>
         </div>,
     );
+    const component = wrapper.getByTestId('table-root');
 
     const headerCell = component.locator('th');
     await expect(headerCell).toHaveAttribute(
@@ -426,8 +444,8 @@ test('should set title when content is truncated', async ({ mount }) => {
 });
 
 test('should support legacy sticky="head" prop', async ({ mount }) => {
-    const component = await mount(
-        <Table.Root sticky="head" aria-label="Table">
+    const wrapper = await mount(
+        <Table.Root sticky="head" aria-label="Table" data-test-id="table-root">
             <Table.Header>
                 <Table.Row>
                     <Table.HeaderCell>Name</Table.HeaderCell>
@@ -440,14 +458,15 @@ test('should support legacy sticky="head" prop', async ({ mount }) => {
             </Table.Body>
         </Table.Root>,
     );
+    const component = wrapper.getByTestId('table-root');
 
     await expect(component).toHaveAttribute('data-sticky-header', 'true');
     await expect(component).toHaveAttribute('data-sticky-left-column', 'false');
 });
 
 test('should support legacy sticky="col" prop', async ({ mount }) => {
-    const component = await mount(
-        <Table.Root sticky="col" aria-label="Table">
+    const wrapper = await mount(
+        <Table.Root sticky="col" aria-label="Table" data-test-id="table-root">
             <Table.Header>
                 <Table.Row>
                     <Table.HeaderCell>Name</Table.HeaderCell>
@@ -460,14 +479,15 @@ test('should support legacy sticky="col" prop', async ({ mount }) => {
             </Table.Body>
         </Table.Root>,
     );
+    const component = wrapper.getByTestId('table-root');
 
     await expect(component).toHaveAttribute('data-sticky-header', 'false');
     await expect(component).toHaveAttribute('data-sticky-left-column', 'true');
 });
 
 test('should support legacy sticky="both" prop', async ({ mount }) => {
-    const component = await mount(
-        <Table.Root sticky="both" aria-label="Table">
+    const wrapper = await mount(
+        <Table.Root sticky="both" aria-label="Table" data-test-id="table-root">
             <Table.Header>
                 <Table.Row>
                     <Table.HeaderCell>Name</Table.HeaderCell>
@@ -480,15 +500,16 @@ test('should support legacy sticky="both" prop', async ({ mount }) => {
             </Table.Body>
         </Table.Root>,
     );
+    const component = wrapper.getByTestId('table-root');
 
     await expect(component).toHaveAttribute('data-sticky-header', 'true');
     await expect(component).toHaveAttribute('data-sticky-left-column', 'true');
 });
 
 test('should set data-has-horizontal-overflow when content overflows', async ({ mount }) => {
-    const component = await mount(
+    const wrapper = await mount(
         <div style={{ width: '100px', overflow: 'auto' }}>
-            <Table.Root aria-label="Test Table">
+            <Table.Root aria-label="Test Table" data-test-id="table-root">
                 <Table.Header>
                     <Table.Row>
                         <Table.HeaderCell>Column 1</Table.HeaderCell>
@@ -506,15 +527,15 @@ test('should set data-has-horizontal-overflow when content overflows', async ({ 
             </Table.Root>
         </div>,
     );
+    const component = wrapper.getByTestId('table-root');
 
-    const table = component.locator('table');
-    await expect(table).toHaveAttribute('data-has-horizontal-overflow', 'true');
+    await expect(component).toHaveAttribute('data-has-horizontal-overflow', 'true');
 });
 
 test('should not set data-has-horizontal-overflow when content does not overflow', async ({ mount }) => {
-    const component = await mount(
+    const wrapper = await mount(
         <div style={{ width: '1200px', overflow: 'auto' }}>
-            <Table.Root aria-label="Test Table">
+            <Table.Root aria-label="Test Table" data-test-id="table-root">
                 <Table.Header>
                     <Table.Row>
                         <Table.HeaderCell>Column 1</Table.HeaderCell>
@@ -532,7 +553,7 @@ test('should not set data-has-horizontal-overflow when content does not overflow
             </Table.Root>
         </div>,
     );
+    const component = wrapper.getByTestId('table-root');
 
-    const table = component.locator('table');
-    await expect(table).toHaveAttribute('data-has-horizontal-overflow', 'false');
+    await expect(component).toHaveAttribute('data-has-horizontal-overflow', 'false');
 });

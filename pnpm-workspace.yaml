@@ -3,8 +3,11 @@ packages:
   - storybook-docs
 
 onlyBuiltDependencies:
+  - '@bundled-es-modules/glob'
+  - '@parcel/watcher'
   - cypress
   - esbuild
+  - style-dictionary
   - unrs-resolver
 
 prefer-workspace-packages: true

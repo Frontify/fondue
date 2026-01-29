@@ -1,13 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconDocument } from '@frontify/fondue-icons';
 import { type Meta, type StoryFn } from '@storybook/react-vite';
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 import { action } from 'storybook/actions';
 
-import { Button, ButtonEmphasis, ButtonStyle } from '@components/Button';
-import { Container } from '@components/Container';
-import { DialogBody } from '@components/DialogBody';
-import { InlineDialog } from '@components/InlineDialog';
+import { Container } from '@components/Container/Container';
 import {
     TreeItem,
     TreeItemBorderClassMap,
@@ -26,12 +24,13 @@ import {
     useDynamicNavigationMock,
     useNavigationWithLazyLoadedItemsMock,
 } from '@components/Tree/utils';
-import IconDocument from '@foundation/Icon/Generated/IconDocument';
 
-import { Modality } from '../../types';
-
+/**
+ ### *Legacy component warning*
+ #### This is a unmaintained legacy component. It will be deprecated and replaced with a new component in an upcoming release.
+ */
 export default {
-    title: 'Components/Tree',
+    title: 'Legacy Components/Tree',
     component: TreeView,
     tags: ['autodocs'],
     args: {
@@ -443,53 +442,6 @@ export const WithExpandOnSelect = ({ ...args }: TreeProps) => {
             <TreeView id={args.id} {...cleanProps(args)}>
                 {treeItemsMock.map((item) => renderTreeItemLabel({ ...item, onDrop, expandOnSelect: true }))}
             </TreeView>
-        </Container>
-    );
-};
-
-export const InsideInlineDialog = ({ ...args }: TreeProps) => {
-    const [expandedIds, setExpandedIds] = useState<string[]>([]);
-    const dialogTriggerRef = useRef<HTMLButtonElement | null>(null);
-
-    const handleItemExpand = useCallback((id: string) => {
-        setExpandedIds((ids) => [...ids, id]);
-    }, []);
-
-    const handleItemShrink = useCallback((id: string) => {
-        setExpandedIds((ids) => ids.filter((itemId: string) => itemId !== id));
-    }, []);
-
-    const [isOpen, setIsOpen] = useState(false);
-
-    return (
-        <Container maxWidth="800px">
-            <Button
-                ref={dialogTriggerRef}
-                style={ButtonStyle.Default}
-                emphasis={ButtonEmphasis.Strong}
-                onClick={() => setIsOpen(!isOpen)}
-            >
-                Click me
-            </Button>
-            <InlineDialog
-                anchor={dialogTriggerRef}
-                open={isOpen}
-                modality={Modality.NonModal}
-                enablePortal
-                handleClose={() => setIsOpen(false)}
-            >
-                <DialogBody>
-                    <TreeView
-                        id={args.id}
-                        {...cleanProps(args)}
-                        expandedIds={expandedIds}
-                        onExpand={handleItemExpand}
-                        onShrink={handleItemShrink}
-                    >
-                        {treeItemsMock.map(renderTreeItemLabel)}
-                    </TreeView>
-                </DialogBody>
-            </InlineDialog>
         </Container>
     );
 };

@@ -9,7 +9,7 @@ import {
     PADDING_DIRECTIONS,
     type SpacingValue,
 } from '@utilities/dimensions';
-import { merge } from '@utilities/index';
+import { merge } from '@utilities/merge';
 
 import { type ContainerHTMLElement } from '../../types/elements';
 
@@ -24,7 +24,7 @@ export type BoxProps = {
     as?: ContainerHTMLElement;
 } & HTMLAttributes<HTMLDivElement | HTMLSpanElement>;
 
-export const BOX_TEST_ID = 'fondue-box';
+const BOX_TEST_ID = 'fondue-box';
 
 /**
  * @deprecated Use `Box` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#layout-components the migration guide}.

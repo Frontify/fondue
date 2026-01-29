@@ -27,37 +27,9 @@ yarn add @frontify/fondue
 You can browse all available components in the Storybook instance of the [Fondue design system](https://fondue-components.frontify.com).
 This Storybook contains all components from all subpackages in the Fondue monorepo. Each component will have a badge in the top bar indicating its current lifecycle state.
 
-For the designers, the documentation is available in the [Fondue design system documentation](https://weare.frontify.com/document/1266?#/using-fondue) on weare.
+For the designers, the documentation is available in the [Fondue design system documentation](https://fondue.frontify.com) on weare.
 
-## Usage
-
-During the transition period in which we are cleaning up the Fondue components, you can use old and new components side by side.
-
-### Was this component already refactored?
-
-If a component was refactored, the old implementation will be marked as **deprecated**.
-
-This will be visible in the code when you consume the component and through a badge in the top bar of the Storybook story.
-
-### Using refactored components
-
-If you want to use a refactored component, you can already import them through the `/components` subexport in the fondue package.
-
-```tsx
-import { Button } from "@frontify/fondue/components";
-
-const App = () => <Button>Click Me</Button>;
-```
-
-### Using old components
-
-If you are using the old components, you can continue to import them directly from the `@frontify/fondue` package.
-
-```tsx
-import { Button } from "@frontify/fondue";
-
-const App = () => <Button>Click Me</Button>;
-```
+To get started, you can refer to the [Getting Started](https://fondue-components.frontify.com/?path=/docs/1-getting-started--documentation) story in the Storybook.
 
 ## Contributing
 
@@ -65,6 +37,5 @@ See [Contribution guidelines](CONTRIBUTING.md) for contributing and local develo
 
 ## Important links
 
--   [Storybook](https://fondue-components.frontify.com) – Storybook for previewing Fondue components
--   [Fondue documentation](https://weare.frontify.com/document/1266?#/using-fondue) – Documentation for the Fondue design system
--   [Tailwind](https://tailwindcss.com/docs) – Utility-first CSS framework used in fondue
+- [Storybook](https://fondue-components.frontify.com) – Storybook for previewing Fondue components
+- [Fondue documentation](https://fondue.frontify.com) – Documentation for the Fondue design system

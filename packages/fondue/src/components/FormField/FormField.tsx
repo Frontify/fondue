@@ -1,24 +1,28 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type FondueIconProps } from '@frontify/fondue-icons';
 import { VisuallyHidden } from '@react-aria/visually-hidden';
 import { cloneElement, type ReactElement } from 'react';
 
 import { Tooltip, type TooltipProps } from '@components/Tooltip/Tooltip';
-import { type IconSize } from '@foundation/Icon/IconSize';
 import { generateRandomId } from '@utilities/generateRandomId';
 import { HelperText } from '@utilities/input';
 import { merge } from '@utilities/merge';
 import { Validation } from '@utilities/validation';
-
+/**
+ * @deprecated Please use a custom component instead.
+ */
 export type LabelProps = {
     text: string;
     hugWidth?: boolean;
     required?: boolean;
     secondaryLabel?: string;
     tooltips?: TooltipProps[];
-    toolTipSize?: IconSize;
+    toolTipSize?: FondueIconProps['size'];
 };
-
+/**
+ * @deprecated Please use a custom component instead.
+ */
 export type FormFieldProps = {
     children: ReactElement;
     label: LabelProps;
@@ -96,7 +100,9 @@ const FormattedLabel = ({ label, disabled, readOnly, dataTestId }: FormattedLabe
         </span>
     );
 };
-
+/**
+ * @deprecated Please use a custom component instead.
+ */
 export const FormField = ({
     children,
     disabled = false,

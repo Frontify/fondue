@@ -1,12 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconArrowCircleUp, IconArrowOutExternal, IconCrop, IconCross, IconImageStack } from '@frontify/fondue-icons';
+
 import { type ActionMenuBlock } from '@components/ActionMenu/ActionMenu';
 import { MenuItemStyle } from '@components/MenuItem/types';
-import IconArrowCircleUp from '@foundation/Icon/Generated/IconArrowCircleUp';
-import IconArrowOutExternal from '@foundation/Icon/Generated/IconArrowOutExternal';
-import IconCrop from '@foundation/Icon/Generated/IconCrop';
-import IconCross from '@foundation/Icon/Generated/IconCross';
-import IconImageStack from '@foundation/Icon/Generated/IconImageStack';
 
 export const assetInputActions = [
     {

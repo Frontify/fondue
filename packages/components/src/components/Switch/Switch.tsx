@@ -4,7 +4,6 @@ import * as RadixSwitch from '@radix-ui/react-switch';
 import { type FormEvent, type ForwardedRef, forwardRef } from 'react';
 
 import { useTranslation } from '#/hooks/useTranslation';
-import { cn } from '#/utilities/styleUtilities';
 import { type CommonAriaAttrs } from '#/utilities/types';
 
 import styles from './styles/switch.module.scss';
@@ -74,10 +73,11 @@ const SwitchComponent = (
             ref={ref}
             checked={value}
             defaultChecked={defaultValue}
-            className={cn([styles.root, styles[size]])}
+            className={styles.root}
             onCheckedChange={onChange}
             aria-label={ariaLabel ?? t('Switch_defaultLabel')}
             data-test-id={dataTestId}
+            data-size={size}
             {...props}
         >
             <RadixSwitch.Thumb className={styles.thumb} />

@@ -7,13 +7,16 @@ import { type TreeState } from '@react-stately/tree';
 import { type Node } from '@react-types/shared';
 import { type ReactElement, useEffect, useRef, useState } from 'react';
 
-import { type ActionMenuItemType, type ActionMenuSwitchItemType } from '@components/ActionMenu';
+import { type ActionMenuItemType, type ActionMenuSwitchItemType } from '@components/ActionMenu/ActionMenu';
 import { type MenuItemType } from '@components/Dropdown';
 import { MenuItem } from '@components/MenuItem/MenuItem';
-import { Switch } from '@components/Switch';
+import { Switch } from '@components/Switch/Switch';
 import { FOCUS_STYLE_INSET } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 
+/**
+ * @deprecated Please use a custom component instead.
+ */
 export type AriaOptionProps = {
     menuItem: MenuItemType | ActionMenuItemType | ActionMenuSwitchItemType;
     node: Node<object>;
@@ -53,6 +56,7 @@ const useSwitch = (isSwitch: boolean, initialValue: boolean) => {
             const toggleSwitch = () => setSwitchValue(!switchValue);
             const switchComponent = <Switch size="small" mode={switchValue ? 'on' : 'off'} />;
 
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setSwitchObject({
                 switchComponent,
                 switchValue,
@@ -64,6 +68,9 @@ const useSwitch = (isSwitch: boolean, initialValue: boolean) => {
     return switchObject;
 };
 
+/**
+ * @deprecated Please use a custom component instead.
+ */
 export const AriaMenuItem = ({ menuItem, node, state, isSelected, onClick }: AriaOptionProps): ReactElement => {
     const ref = useRef<HTMLLIElement | null>(null);
     const initialValue = isActionMenuSwitchItem(menuItem) ? menuItem.initialValue : false;

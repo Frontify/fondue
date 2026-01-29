@@ -503,3 +503,49 @@ test('should render with spacious trigger offset', async ({ mount, page }) => {
         expect(contentElementBoundingBox.y).toBe(triggerElementBoundingBox.y + triggerElementBoundingBox.height + 16);
     }
 });
+
+test('should call onEscapeKeyDown when escape is pressed', async ({ mount, page }) => {
+    const onEscapeKeyDown = sinon.spy();
+    await mount(
+        <Flyout.Root open>
+            <Flyout.Trigger>
+                <Button>{FLYOUT_TRIGGER_TEXT}</Button>
+            </Flyout.Trigger>
+            <Flyout.Content data-test-id={FLYOUT_CONTENT_TEST_ID} onEscapeKeyDown={onEscapeKeyDown}>
+                <Flyout.Header>{FLYOUT_HEADER_TEXT}</Flyout.Header>
+                <Flyout.Body>{FLYOUT_BODY_TEXT}</Flyout.Body>
+            </Flyout.Content>
+        </Flyout.Root>,
+    );
+
+    const contentElement = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
+    await expect(contentElement).toBeVisible();
+    expect(onEscapeKeyDown.callCount).toBe(0);
+    await page.keyboard.press('Escape');
+    expect(onEscapeKeyDown.callCount).toBe(1);
+});
+
+test('should prevent flyout close when onEscapeKeyDown calls preventDefault', async ({ mount, page }) => {
+    const onEscapeKeyDown = sinon.spy((event: KeyboardEvent) => {
+        event.preventDefault();
+    });
+    await mount(
+        <Flyout.Root open>
+            <Flyout.Trigger>
+                <Button>{FLYOUT_TRIGGER_TEXT}</Button>
+            </Flyout.Trigger>
+            <Flyout.Content data-test-id={FLYOUT_CONTENT_TEST_ID} onEscapeKeyDown={onEscapeKeyDown}>
+                <Flyout.Header>{FLYOUT_HEADER_TEXT}</Flyout.Header>
+                <Flyout.Body>{FLYOUT_BODY_TEXT}</Flyout.Body>
+            </Flyout.Content>
+        </Flyout.Root>,
+    );
+
+    const contentElement = page.getByTestId(FLYOUT_CONTENT_TEST_ID);
+    await expect(contentElement).toBeVisible();
+    expect(onEscapeKeyDown.callCount).toBe(0);
+    await page.keyboard.press('Escape');
+    expect(onEscapeKeyDown.callCount).toBe(1);
+    // Flyout should still be visible because we prevented the default behavior
+    await expect(contentElement).toBeVisible();
+});

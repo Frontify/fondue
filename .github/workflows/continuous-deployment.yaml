@@ -31,12 +31,6 @@ jobs:
             - name: Install npm dependencies
               run: pnpm i --frozen-lockfile
 
-            - name: Generate (old) icons
-              run: pnpm --stream --filter {packages/fondue} generate:icons && pnpm --stream --filter {packages/fondue} generate:componentsEnum
-
-            - name: Build Fondue Tokens
-              run: pnpm build:tokens
-
             - name: Build Fondue Icons
               run: pnpm build:icons
 
@@ -45,6 +39,9 @@ jobs:
 
             - name: Build Fondue Components
               run: pnpm build:components
+
+            - name: Build Fondue RTE
+              run: pnpm build:rte
 
             - name: Lint code
               run: pnpm lint
@@ -72,12 +69,6 @@ jobs:
             - name: Install npm dependencies
               run: pnpm i --frozen-lockfile
 
-            - name: Generate (old) icons
-              run: pnpm --stream --filter {packages/fondue} generate:icons && pnpm --stream --filter {packages/fondue} generate:componentsEnum
-
-            - name: Build Fondue Tokens
-              run: pnpm build:tokens
-
             - name: Build Fondue Icons
               run: pnpm build:icons
 
@@ -87,32 +78,30 @@ jobs:
             - name: Build Fondue Components
               run: pnpm build:components
 
+            - name: Build Fondue RTE
+              run: pnpm build:rte
+
             - name: Typecheck code
               run: pnpm typecheck
 
-    old-component-tests:
-        name: Old Component Tests
+    rte-component-tests:
+        name: RTE Component Tests
         runs-on: ubuntu-latest
         timeout-minutes: 10
 
-        strategy:
-            fail-fast: false
-            matrix:
-                containers: [0, 1, 2, 3, 4, 5, 6, 7]
-
         steps:
             - name: Checkout current commit
-              uses: actions/checkout@v6
-
-            - name: Use pnpm
-              uses: pnpm/action-setup@v4.2.0
-              with:
-                  run_install: false
+              uses: actions/checkout@v4
 
             - name: Use Node.js
-              uses: actions/setup-node@v6
+              uses: actions/setup-node@v4
               with:
                   node-version-file: ".nvmrc"
+
+            - name: Use pnpm
+              uses: pnpm/action-setup@v3
+              with:
+                  run_install: false
 
             - name: Get pnpm store directory
               id: pnpm-cache
@@ -131,12 +120,6 @@ jobs:
             - name: Install dependencies
               run: pnpm install --frozen-lockfile
 
-            - name: Generate (old) icons
-              run: pnpm --stream --filter {packages/fondue} generate:icons && pnpm --stream --filter {packages/fondue} generate:componentsEnum
-
-            - name: Build Fondue Tokens
-              run: pnpm build:tokens
-
             - name: Build Fondue Icons
               run: pnpm build:icons
 
@@ -144,7 +127,7 @@ jobs:
               run: pnpm build:components
 
             - name: Component Tests
-              run: pnpm run --stream --filter {packages/fondue} test --spec $(node ./.github/lib/cypress-matrix.mjs ${{ strategy.job-total }} ${{ matrix.containers }})
+              run: pnpm run --stream --filter {packages/rte} test
 
     component-tests:
         name: Component Tests
@@ -169,10 +152,7 @@ jobs:
             - name: Install dependencies
               run: pnpm install --frozen-lockfile
 
-            - name: Build Fondue Tokens
-              run: pnpm build:tokens
-
-            - name: Build Fondue Icons
+            - name: Build Fondue icons
               run: pnpm build:icons
 
             - name: Unit test
@@ -189,7 +169,7 @@ jobs:
         runs-on: ubuntu-latest
         timeout-minutes: 10
 
-        needs: [lint, typecheck, old-component-tests, component-tests]
+        needs: [lint, typecheck, component-tests]
 
         permissions:
             contents: write # to create release (changesets/action)

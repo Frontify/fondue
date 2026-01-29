@@ -1,18 +1,25 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
 import { type StorybookConfig } from '@storybook/react-vite';
 
 const productionPathPrefix = process.env.STORYBOOK_PATH_PREFIX ? `${process.env.STORYBOOK_PATH_PREFIX}new/` : '/';
 
+const getAbsolutePath = (packageName: string): string => {
+    return dirname(fileURLToPath(import.meta.resolve(packageName)));
+};
+
 export default {
-    stories: ['../src/**/*.mdx', '../src/**/*.stories.@(ts|tsx)'],
+    stories: ['../src/**/*.stories.@(ts|tsx)'],
     staticDirs: ['assets'],
     addons: [
         '@etchteam/storybook-addon-status',
-        '@vueless/storybook-dark-mode',
         '@storybook/addon-links',
         '@storybook/addon-a11y',
         '@storybook/addon-docs',
+        '@storybook/addon-mcp',
     ],
     framework: {
         name: '@storybook/react-vite',
@@ -22,6 +29,8 @@ export default {
         backgrounds: false,
         outline: false,
         measure: false,
+        experimentalComponentsManifest: true,
+        experimentalCodeExamples: true,
     },
     docs: {
         defaultName: 'Documentation',
@@ -53,6 +62,23 @@ export default {
             config.optimizeDeps.exclude = ['./node_modules/.cache/storybook'];
         }
 
-        return config;
+        const mdxReactShimPath = join(getAbsolutePath('@storybook/addon-docs'), 'mdx-react-shim.js');
+
+        return {
+            ...config,
+            plugins: [
+                ...(config.plugins ?? []),
+                {
+                    name: 'fix-mdx-file-imports',
+                    enforce: 'pre',
+                    resolveId(source) {
+                        if (source.startsWith('file://') && source.includes('mdx-react-shim')) {
+                            return mdxReactShimPath;
+                        }
+                        return null;
+                    },
+                },
+            ],
+        };
     },
 } satisfies StorybookConfig;

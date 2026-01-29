@@ -20,4 +20,5 @@ export const itIT: Translations = {
     Table_sortDescending: 'Ordina decrescente',
     Table_sortAscending: 'Ordina crescente',
     Badge_dismiss: 'Chiudi ${label}',
+    Notice_dismiss: 'Chiudi avviso',
 };

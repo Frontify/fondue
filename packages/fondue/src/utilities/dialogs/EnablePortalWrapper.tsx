@@ -3,6 +3,9 @@
 import { type ReactElement, type ReactNode } from 'react';
 
 import { Portal } from '@components/Portal/Portal';
+/**
+ * @deprecated This component is deprecated and will be removed in the next major version.
+ */
 export const EnablePortalWrapper = ({
     enablePortal = true,
     children,

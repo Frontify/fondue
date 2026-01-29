@@ -1,27 +1,32 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconCaretDown, IconCross, IconExclamationMarkTriangle, IconTrashBin } from '@frontify/fondue-icons';
 import { useFocusRing } from '@react-aria/focus';
 import { type HTMLAttributes, type ReactElement, type ReactNode } from 'react';
 
-import IconCaretDown from '@foundation/Icon/Generated/IconCaretDown';
-import IconCross from '@foundation/Icon/Generated/IconCross';
-import IconExclamationMarkTriangle from '@foundation/Icon/Generated/IconExclamationMarkTriangle';
-import IconTrashBin from '@foundation/Icon/Generated/IconTrashBin';
-import { IconSize } from '@foundation/Icon/IconSize';
 import { FOCUS_STYLE, FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { Validation, validationClassMap } from '@utilities/validation';
 
+/**
+ * @deprecated Please use a custom component instead.
+ */
 export enum TriggerSize {
     Small = 'Small',
     Large = 'Large',
 }
 
+/**
+ * @deprecated Please use a custom component instead.
+ */
 export enum TriggerEmphasis {
     Default = 'Default',
     Weak = 'Weak',
 }
 
+/**
+ * @deprecated Please use a custom component instead.
+ */
 export type TriggerProps = {
     disabled?: boolean;
     children?: ReactNode;
@@ -58,6 +63,9 @@ const getTriggerClassNames = (
               ]),
     ]);
 
+/**
+ * @deprecated Please use a custom component instead.
+ */
 export const Trigger = ({
     buttonProps,
     onClear,
@@ -98,7 +106,7 @@ export const Trigger = ({
                         ])}
                         onClick={() => !!onClear && onClear()}
                     >
-                        <IconCross size={IconSize.Size12} />
+                        <IconCross size={12} />
                     </button>
                 )}
                 {!!onDelete && (
@@ -114,7 +122,7 @@ export const Trigger = ({
                         ])}
                         onClick={onDelete}
                     >
-                        <IconTrashBin size={IconSize.Size12} />
+                        <IconTrashBin size={12} />
                     </button>
                 )}
                 <button
@@ -135,7 +143,7 @@ export const Trigger = ({
                     ])}
                 >
                     <div className={merge(['tw-transition-transform', isOpen && 'tw-rotate-180'])}>
-                        <IconCaretDown size={IconSize.Size16} />
+                        <IconCaretDown size={16} />
                     </div>
                 </button>
 
@@ -155,4 +163,8 @@ export const Trigger = ({
         </div>
     );
 };
+
+/**
+ * @deprecated Please use a custom component instead.
+ */
 Trigger.displayName = 'FondueTrigger';

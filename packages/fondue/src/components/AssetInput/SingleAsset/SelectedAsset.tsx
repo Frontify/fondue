@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconCaretDown } from '@frontify/fondue-icons';
 import { useButton } from '@react-aria/button';
 import { FocusScope, useFocusRing } from '@react-aria/focus';
 import { useMenuTrigger } from '@react-aria/menu';
@@ -9,9 +10,7 @@ import { useMenuTriggerState } from '@react-stately/menu';
 import { AnimatePresence, motion } from 'motion/react';
 import { type ReactElement, useEffect, useRef, useState } from 'react';
 
-import { ActionMenu, type ActionMenuBlock } from '@components/ActionMenu/ActionMenu/ActionMenu';
-import IconCaretDown from '@foundation/Icon/Generated/IconCaretDown';
-import { IconSize } from '@foundation/Icon/IconSize';
+import { ActionMenu, type ActionMenuBlock } from '@components/ActionMenu/ActionMenu';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
@@ -135,7 +134,7 @@ export const SelectedAsset = ({
                                 isOpen ? 'tw-rotate-180 tw-text-black-90' : 'tw-text-black-60',
                             ])}
                         >
-                            <IconCaretDown size={IconSize.Size16} />
+                            <IconCaretDown size={16} />
                         </span>
                     </div>
                 </div>

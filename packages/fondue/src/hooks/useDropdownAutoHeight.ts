@@ -2,6 +2,9 @@
 
 import { type MutableRefObject, useLayoutEffect, useState } from 'react';
 
+/**
+ * @deprecated This component is deprecated and will be removed in the next major version.
+ */
 export const DEFAULT_DROPDOWN_MAX_HEIGHT = 'auto';
 
 type DropdownAutoHeightProps = {
@@ -10,7 +13,7 @@ type DropdownAutoHeightProps = {
     isDialog?: boolean;
 };
 
-export const getInnerOverlayHeight = (triggerRef: MutableRefObject<HTMLElement | null>) => {
+const getInnerOverlayHeight = (triggerRef: MutableRefObject<HTMLElement | null>) => {
     let maxHeight = 'auto';
     if (triggerRef.current) {
         const { innerHeight } = window;
@@ -22,6 +25,9 @@ export const getInnerOverlayHeight = (triggerRef: MutableRefObject<HTMLElement |
     return maxHeight;
 };
 
+/**
+ * @deprecated This function is deprecated and will be removed in the next major version.
+ */
 export const useDropdownAutoHeight = (
     triggerRef: MutableRefObject<HTMLElement | null>,
     { isOpen, autoResize }: DropdownAutoHeightProps,
@@ -33,6 +39,7 @@ export const useDropdownAutoHeight = (
             updateMaxHeight();
             window.addEventListener('resize', updateMaxHeight);
         } else if (autoResize && !isOpen) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setMaxHeight(DEFAULT_DROPDOWN_MAX_HEIGHT);
         }
 

@@ -1,10 +1,127 @@
 # @frontify/fondue-components
 
+## 25.0.0-rc.6
+
+### Minor Changes
+
+- [#2600](https://github.com/Frontify/fondue/pull/2600) [`0bf06d0`](https://github.com/Frontify/fondue/commit/0bf06d03217ff2b8c3ccaa3c4e9e573981e520e2) Thanks [@syeo66](https://github.com/syeo66)! - chore(Button): decrease side padding
+
+- [#2604](https://github.com/Frontify/fondue/pull/2604) [`64de9ad`](https://github.com/Frontify/fondue/commit/64de9adab9080e5414ed95d5d97f10dedb3cb7e2) Thanks [@syeo66](https://github.com/syeo66)! - fix(Tag): background colors were missing
+
+- [#2607](https://github.com/Frontify/fondue/pull/2607) [`e888ea6`](https://github.com/Frontify/fondue/commit/e888ea616ddc4f8e7abd54572796fc0022c77fa5) Thanks [@syeo66](https://github.com/syeo66)! - feat(Checkbox): add error state
+
+### Patch Changes
+
+- [#2598](https://github.com/Frontify/fondue/pull/2598) [`19f55b5`](https://github.com/Frontify/fondue/commit/19f55b50fa30f51e21305ec58653b78545a5d1aa) Thanks [@syeo66](https://github.com/syeo66)! - fix(Checkbox): prevent readonly hover
+
+- [#2605](https://github.com/Frontify/fondue/pull/2605) [`7d0e2bf`](https://github.com/Frontify/fondue/commit/7d0e2bf98768f1b131e12526e6f1f067e35dd345) Thanks [@syeo66](https://github.com/syeo66)! - feat(Tag): add ref prop
+
+- [#2609](https://github.com/Frontify/fondue/pull/2609) [`0ab6e64`](https://github.com/Frontify/fondue/commit/0ab6e64e3bdf1198f89f7d946c44cad003185d2a) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
+
+- [#2602](https://github.com/Frontify/fondue/pull/2602) [`98dbeb6`](https://github.com/Frontify/fondue/commit/98dbeb6794a5960685db5520267a0f5a2a736fe8) Thanks [@syeo66](https://github.com/syeo66)! - refactor(SplitButton): update side padding
+
+- Updated dependencies [[`7952ccf`](https://github.com/Frontify/fondue/commit/7952ccf0083efddcbf3ff453430981d18da2fb3b), [`0ab6e64`](https://github.com/Frontify/fondue/commit/0ab6e64e3bdf1198f89f7d946c44cad003185d2a)]:
+    - @frontify/fondue-tokens@5.0.0-rc.6
+    - @frontify/fondue-icons@0.23.0-rc.5
+
+## 25.0.0-rc.5
+
+### Major Changes
+
+- [#2596](https://github.com/Frontify/fondue/pull/2596) [`f62de74`](https://github.com/Frontify/fondue/commit/f62de743188570ce7fe3cb1b9e3a00f2823e7354) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: downgrade immer to fix issue with hotkeys
+
+### Patch Changes
+
+- Updated dependencies [[`f62de74`](https://github.com/Frontify/fondue/commit/f62de743188570ce7fe3cb1b9e3a00f2823e7354)]:
+    - @frontify/fondue-tokens@5.0.0-rc.5
+    - @frontify/fondue-icons@0.23.0-rc.4
+
+## 25.0.0-rc.4
+
+### Major Changes
+
+- [#2594](https://github.com/Frontify/fondue/pull/2594) [`049e77d`](https://github.com/Frontify/fondue/commit/049e77df0875a20fd00ec4c570a9f02b0252d874) Thanks [@github-actions](https://github.com/apps/github-actions)! - chore: release all packages
+
+### Patch Changes
+
+- [#2593](https://github.com/Frontify/fondue/pull/2593) [`4e21dbc`](https://github.com/Frontify/fondue/commit/4e21dbcf8b9058d720c0ca704b1153717222fd3d) Thanks [@syeo66](https://github.com/syeo66)! - feat: expose onEscapeKeyDown in multiple components
+
+- Updated dependencies [[`049e77d`](https://github.com/Frontify/fondue/commit/049e77df0875a20fd00ec4c570a9f02b0252d874)]:
+    - @frontify/fondue-tokens@5.0.0-rc.4
+    - @frontify/fondue-icons@0.23.0-rc.3
+
+## 25.0.0-rc.3
+
+### Major Changes
+
+- [#2583](https://github.com/Frontify/fondue/pull/2583) [`0b953d7`](https://github.com/Frontify/fondue/commit/0b953d7e0098cefc60a845fd67e0b8d46fb5098c) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: upgrade `@types/react`and adjust legacy `TooltipIcon` to work with new icons
+
+### Minor Changes
+
+- [#2567](https://github.com/Frontify/fondue/pull/2567) [`46016ad`](https://github.com/Frontify/fondue/commit/46016ad4ce7f7a05c5fc666311e5815eec791514) Thanks [@syeo66](https://github.com/syeo66)! - refactor(ScrollArea): move ref in actual viewport
+
+- [#2562](https://github.com/Frontify/fondue/pull/2562) [`493b333`](https://github.com/Frontify/fondue/commit/493b33342f695f43c3371a9d5ab852babb5ffca6) Thanks [@syeo66](https://github.com/syeo66)! - feat(Notice): initial implementation
+
+### Patch Changes
+
+- [#2564](https://github.com/Frontify/fondue/pull/2564) [`8a33af1`](https://github.com/Frontify/fondue/commit/8a33af120b8379fdd5ee3164af9e8901ecf4f7cb) Thanks [@syeo66](https://github.com/syeo66)! - fix(Switch): medium size 32px instead of 30px
+
+- [#2580](https://github.com/Frontify/fondue/pull/2580) [`1ff2cab`](https://github.com/Frontify/fondue/commit/1ff2cab1dd80d104b762a78b978cfdc06b70da3b) Thanks [@syeo66](https://github.com/syeo66)! - refactor(LoadingBar): migrate Tailwind to SCSS
+
+- [#2582](https://github.com/Frontify/fondue/pull/2582) [`888ae9b`](https://github.com/Frontify/fondue/commit/888ae9b0056762c802a9c60626b44cb71d7e925c) Thanks [@syeo66](https://github.com/syeo66)! - refactor(Switch): replace cn tool with data attribute
+
+- [#2572](https://github.com/Frontify/fondue/pull/2572) [`2f33abe`](https://github.com/Frontify/fondue/commit/2f33abe5b6b8a1c4719b5dca01519ac980292044) Thanks [@syeo66](https://github.com/syeo66)! - refactor(Button): move styles to scss
+
+- [#2577](https://github.com/Frontify/fondue/pull/2577) [`77e5ab9`](https://github.com/Frontify/fondue/commit/77e5ab9d24477a94865497f544d1ac06d221d4a1) Thanks [@syeo66](https://github.com/syeo66)! - refactor(Checkbox): move checkbox form tailwind to scss
+
+- [#2570](https://github.com/Frontify/fondue/pull/2570) [`e9f4ebd`](https://github.com/Frontify/fondue/commit/e9f4ebd640f775c5813bf77d4fe038bd18dd674f) Thanks [@syeo66](https://github.com/syeo66)! - fix(Buttons): icon styles of buttons did not respect forced-colors
+
+- [#2568](https://github.com/Frontify/fondue/pull/2568) [`cfc1142`](https://github.com/Frontify/fondue/commit/cfc11424a43ecb18547f4c6035c4dd56cc351799) Thanks [@syeo66](https://github.com/syeo66)! - fix(Notice): add colors to weak variant icons
+
+- Updated dependencies [[`0b953d7`](https://github.com/Frontify/fondue/commit/0b953d7e0098cefc60a845fd67e0b8d46fb5098c)]:
+    - @frontify/fondue-tokens@5.0.0-rc.3
+    - @frontify/fondue-icons@0.23.0-rc.2
+
+## 25.0.0-rc.2
+
+### Patch Changes
+
+- [#2559](https://github.com/Frontify/fondue/pull/2559) [`c9e139a`](https://github.com/Frontify/fondue/commit/c9e139a3e374253d6abf73fbed646576d1c3d3c0) Thanks [@syeo66](https://github.com/syeo66)! - fix(Badge): disabled color
+
+- Updated dependencies [[`eb292a2`](https://github.com/Frontify/fondue/commit/eb292a255c4b8459f3ca0e06d5fbfcd3d155ca4b)]:
+    - @frontify/fondue-icons@0.23.0-rc.1
+    - @frontify/fondue-tokens@5.0.0-rc.2
+
+## 25.0.0-rc.1
+
+### Minor Changes
+
+- [#2550](https://github.com/Frontify/fondue/pull/2550) [`96f6fad`](https://github.com/Frontify/fondue/commit/96f6fad82bc48c0d870aca4657d3f3c6b4232c70) Thanks [@syeo66](https://github.com/syeo66)! - fix(Badge): improve forced-color handling
+
 ## 24.2.0
 
 ### Minor Changes
 
 - [#2550](https://github.com/Frontify/fondue/pull/2550) [`96f6fad`](https://github.com/Frontify/fondue/commit/96f6fad82bc48c0d870aca4657d3f3c6b4232c70) Thanks [@syeo66](https://github.com/syeo66)! - fix(Badge): improve forced-color handling
+
+### Patch Changes
+
+- Updated dependencies []:
+    - @frontify/fondue-tokens@5.0.0-rc.2
+
+## 25.0.0-rc.0
+
+### Minor Changes
+
+- [`9033c88`](https://github.com/Frontify/fondue/commit/9033c886f71d43c3a051ef7bccca6e63f5af1e0d) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: bump versions after merging main
+
+- [#2541](https://github.com/Frontify/fondue/pull/2541) [`3a4f967`](https://github.com/Frontify/fondue/commit/3a4f967614fb290ea3af0811ff2aa09d30cae226) Thanks [@syeo66](https://github.com/syeo66)! - feat(Textarea): Add slots and deprecate extraActions
+
+### Patch Changes
+
+- Updated dependencies [[`9033c88`](https://github.com/Frontify/fondue/commit/9033c886f71d43c3a051ef7bccca6e63f5af1e0d)]:
+    - @frontify/fondue-icons@0.23.0-rc.0
+    - @frontify/fondue-tokens@5.0.0-rc.2
 
 ## 24.1.0
 
@@ -33,12 +150,97 @@
 - Updated dependencies [[`737f0de`](https://github.com/Frontify/fondue/commit/737f0de29d5b5f2dbca1937c24026137089d3d29), [`38bcce6`](https://github.com/Frontify/fondue/commit/38bcce66a2eb78c98570906a3ef81bd2c4e645a8), [`3613743`](https://github.com/Frontify/fondue/commit/3613743fbc6dbf43c26f49d802389780b0b8d1d5)]:
     - @frontify/fondue-icons@0.22.0
 
+## 24.0.0-rc.3
+
+### Minor Changes
+
+- [#2531](https://github.com/Frontify/fondue/pull/2531) [`30dd3ed`](https://github.com/Frontify/fondue/commit/30dd3ed372222da89836e7868a61ad5de9b7005b) Thanks [@syeo66](https://github.com/syeo66)! - feat(SplitButton): initial implementation of SplitButton
+
+- [#2532](https://github.com/Frontify/fondue/pull/2532) [`7e5c213`](https://github.com/Frontify/fondue/commit/7e5c213808909799838721fb7ea25d50467e35ee) Thanks [@syeo66](https://github.com/syeo66)! - fix(Dialog): focus does not switch to footer
+
+- [#2538](https://github.com/Frontify/fondue/pull/2538) [`d2d4ac2`](https://github.com/Frontify/fondue/commit/d2d4ac2d325d7bd693e4b45ba6da4f4ca34b4924) Thanks [@syeo66](https://github.com/syeo66)! - feat(ColorPicker): clean out starting # in color value input
+
+- [#2527](https://github.com/Frontify/fondue/pull/2527) [`c010260`](https://github.com/Frontify/fondue/commit/c010260934a74538e597a7eae8d31c6795481fdc) Thanks [@syeo66](https://github.com/syeo66)! - fix(Accordion): padding gets lost on border=false
+
+- [#2539](https://github.com/Frontify/fondue/pull/2539) [`c649d8a`](https://github.com/Frontify/fondue/commit/c649d8a96be2f0f8a81657e3fec534d258aeadcd) Thanks [@syeo66](https://github.com/syeo66)! - feat(Textarea): expose ref
+
+- [#2530](https://github.com/Frontify/fondue/pull/2530) [`881a660`](https://github.com/Frontify/fondue/commit/881a660350069313cb51bc0274e08777fe4d03f0) Thanks [@syeo66](https://github.com/syeo66)! - fix(useFondueTheme): make sure useFondueTheme always returns a direction
+
+### Patch Changes
+
+- Updated dependencies [[`737f0de`](https://github.com/Frontify/fondue/commit/737f0de29d5b5f2dbca1937c24026137089d3d29), [`38bcce6`](https://github.com/Frontify/fondue/commit/38bcce66a2eb78c98570906a3ef81bd2c4e645a8), [`3613743`](https://github.com/Frontify/fondue/commit/3613743fbc6dbf43c26f49d802389780b0b8d1d5)]:
+    - @frontify/fondue-icons@0.22.0-rc.1
+    - @frontify/fondue-tokens@5.0.0-rc.2
+
+## 24.0.0-rc.2
+
+### Major Changes
+
+- [`3dce660`](https://github.com/Frontify/fondue/commit/3dce6601501fb40d3c4d3eaa0cc0c6c2a37c1afa) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: update token usage
+
+### Patch Changes
+
+- Updated dependencies []:
+    - @frontify/fondue-tokens@5.0.0-rc.2
+
+## 24.0.0-rc.1
+
+### Patch Changes
+
+- Updated dependencies [[`9a63275`](https://github.com/Frontify/fondue/commit/9a63275ad8914610f653a8aa7cc9b1cd44987b46), [`a76c463`](https://github.com/Frontify/fondue/commit/a76c4633c16d22d38ee987dc790bec8cfded30b5)]:
+    - @frontify/fondue-tokens@5.0.0-rc.2
+
+## 24.0.0-rc.0
+
+### Major Changes
+
+- [`e2e133e`](https://github.com/Frontify/fondue/commit/e2e133e56d7f60866bfd8f0f2d82553325d16599) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: bump versions
+
+### Patch Changes
+
+- Updated dependencies [[`e2e133e`](https://github.com/Frontify/fondue/commit/e2e133e56d7f60866bfd8f0f2d82553325d16599)]:
+    - @frontify/fondue-icons@0.22.0-rc.0
+    - @frontify/fondue-tokens@5.0.0-rc.1
+
 ## 23.0.0
 
 ### Minor Changes
 
 - [#2500](https://github.com/Frontify/fondue/pull/2500) [`2ab3038`](https://github.com/Frontify/fondue/commit/2ab3038c837a1dd149764e3191ce1f0ea37f7300) Thanks [@syeo66](https://github.com/syeo66)! - feat(Table): add noBorder prop
 
+## 23.0.0-rc.1
+
+### Patch Changes
+
+- [#2492](https://github.com/Frontify/fondue/pull/2492) [`f5785d1`](https://github.com/Frontify/fondue/commit/f5785d1155c4b295573cd8fbdb88114b1ecaef1e) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
+
+- [`06016db`](https://github.com/Frontify/fondue/commit/06016db7131d2611dad9b88115e80c9fe9d2051e) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: merge main into v13
+
+- Updated dependencies [[`f5785d1`](https://github.com/Frontify/fondue/commit/f5785d1155c4b295573cd8fbdb88114b1ecaef1e), [`06016db`](https://github.com/Frontify/fondue/commit/06016db7131d2611dad9b88115e80c9fe9d2051e)]:
+    - @frontify/fondue-tokens@5.0.0-rc.1
+    - @frontify/fondue-icons@0.21.0-rc.1
+
+## 20.0.0-rc.0
+
+### Major Changes
+
+- [#2446](https://github.com/Frontify/fondue/pull/2446) [`4660ad7`](https://github.com/Frontify/fondue/commit/4660ad71917f8d9d27f8e64d4d30a0ffc32813fd) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: add utility for focus ring
+
+- [#2446](https://github.com/Frontify/fondue/pull/2446) [`0038587`](https://github.com/Frontify/fondue/commit/0038587d4cd59cf13331b750aaaf9ebbe97cc0d2) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: minor style approvements
+
+### Patch Changes
+
+- [#2443](https://github.com/Frontify/fondue/pull/2443) [`191c62e`](https://github.com/Frontify/fondue/commit/191c62e0c73d3cf90396954df121b46e7f50eb88) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix: prevent tooltip focus which would open the tooltip when opening dialogs
+
+- Updated dependencies [[`4660ad7`](https://github.com/Frontify/fondue/commit/4660ad71917f8d9d27f8e64d4d30a0ffc32813fd), [`0038587`](https://github.com/Frontify/fondue/commit/0038587d4cd59cf13331b750aaaf9ebbe97cc0d2)]:
+    - @frontify/fondue-tokens@5.0.0-rc.0
+    - @frontify/fondue-icons@0.18.0-rc.0
+
+## 20.0.0-beta.8
+
+### Major Changes
+
+- [`18c3e1e`](https://github.com/Frontify/fondue/commit/18c3e1e75d69b7f4fb2ce68f8eb1d9a8fab9a3a7) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: merge main branch into v13
 - [#2505](https://github.com/Frontify/fondue/pull/2505) [`02b2cbe`](https://github.com/Frontify/fondue/commit/02b2cbe0ccb0cb75eda04e2669015fea47dfdd69) Thanks [@syeo66](https://github.com/syeo66)! - feat(Accordion): adjust styling
 
 - [#2511](https://github.com/Frontify/fondue/pull/2511) [`8d61009`](https://github.com/Frontify/fondue/commit/8d61009c2b363431d8487b2fe6ec211493006e31) Thanks [@syeo66](https://github.com/syeo66)! - feat(Table): only show sticky column line dividers when needed
@@ -168,6 +370,116 @@
 
 - [#2444](https://github.com/Frontify/fondue/pull/2444) [`301b90e`](https://github.com/Frontify/fondue/commit/301b90e5b9f04523b2a7f926e654655f42e5ddaf) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add button styles for clear actions + fix switch handle positioning
 
+- Updated dependencies [[`18c3e1e`](https://github.com/Frontify/fondue/commit/18c3e1e75d69b7f4fb2ce68f8eb1d9a8fab9a3a7), [`d868114`](https://github.com/Frontify/fondue/commit/d86811431bb12264faf431cf1a38a1f22b75c6d9)]:
+    - @frontify/fondue-tokens@5.0.0-beta.5
+    - @frontify/fondue-icons@0.18.0-beta.2
+
+## 20.0.0-beta.7
+
+### Minor Changes
+
+- [#2420](https://github.com/Frontify/fondue/pull/2420) [`319ecd3`](https://github.com/Frontify/fondue/commit/319ecd314d2095ac13e3f23b77f90dc2091bf541) Thanks [@syeo66](https://github.com/syeo66)! - feat(Tag): Implement Tags similar to Badge implementation
+
+- [#2407](https://github.com/Frontify/fondue/pull/2407) [`b484cd3`](https://github.com/Frontify/fondue/commit/b484cd3b6d853b83585183793906b8313b205aa4) Thanks [@syeo66](https://github.com/syeo66)! - feat(ColorPicker): output alpha percentage in ColorPickerInput
+
+### Patch Changes
+
+- [#2421](https://github.com/Frontify/fondue/pull/2421) [`a2b361c`](https://github.com/Frontify/fondue/commit/a2b361cae3ed7f4836aa7eb77166a34766bf28d1) Thanks [@syeo66](https://github.com/syeo66)! - refactor(Label): move away from Tailwind
+
+- Updated dependencies []:
+    - @frontify/fondue-tokens@5.0.0-beta.4
+
+## 20.0.0-beta.6
+
+### Major Changes
+
+- [#2375](https://github.com/Frontify/fondue/pull/2375) [`c386194`](https://github.com/Frontify/fondue/commit/c38619436f41dd9f66182748ac6269a6e62d2378) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: adjust components with the new token styles
+
+### Patch Changes
+
+- [#2344](https://github.com/Frontify/fondue/pull/2344) [`2a57092`](https://github.com/Frontify/fondue/commit/2a5709213b22e54917feaee8de4a4092ee672617) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - feat: add basic `RouterProvider` and `Link`
+
+- [#2394](https://github.com/Frontify/fondue/pull/2394) [`6e7dd18`](https://github.com/Frontify/fondue/commit/6e7dd18ce96b8680409f9099e7dc57e1dea9ae8e) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
+
+- Updated dependencies [[`6e7dd18`](https://github.com/Frontify/fondue/commit/6e7dd18ce96b8680409f9099e7dc57e1dea9ae8e)]:
+    - @frontify/fondue-tokens@5.0.0-beta.4
+    - @frontify/fondue-icons@0.18.0-beta.1
+
+## 20.0.0-beta.5
+
+### Major Changes
+
+- [`efbfe58`](https://github.com/Frontify/fondue/commit/efbfe581fb15512c827b766beea0cb8f8f989b5b) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: update components with new tokens
+
+### Patch Changes
+
+- Updated dependencies []:
+    - @frontify/fondue-tokens@5.0.0-beta.3
+
+## 20.0.0-beta.4
+
+### Patch Changes
+
+- [#2356](https://github.com/Frontify/fondue/pull/2356) [`bea74b3`](https://github.com/Frontify/fondue/commit/bea74b38a57ce8db3468e17babfc3b66280a5d75) Thanks [@mbgspcii](https://github.com/mbgspcii)! - fix: prevent clicks inside a <Dialog> opened from a <Table.Row> from triggering the row click event.
+
+- Updated dependencies []:
+    - @frontify/fondue-tokens@5.0.0-beta.3
+
+## 20.0.0-beta.3
+
+### Major Changes
+
+- [#2351](https://github.com/Frontify/fondue/pull/2351) [`52b9562`](https://github.com/Frontify/fondue/commit/52b956216715ba7a78c7c434f7e7344a314d2e0c) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: improve token preview in storybook
+
+- [#2355](https://github.com/Frontify/fondue/pull/2355) [`dc1dbff`](https://github.com/Frontify/fondue/commit/dc1dbffd7e38672935d996565500db2770f63a40) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add deprecation notices to legacy components
+
+### Patch Changes
+
+- Updated dependencies [[`52b9562`](https://github.com/Frontify/fondue/commit/52b956216715ba7a78c7c434f7e7344a314d2e0c)]:
+    - @frontify/fondue-tokens@5.0.0-beta.3
+    - @frontify/fondue-icons@0.18.0-beta.0
+
+## 20.0.0-beta.2
+
+### Major Changes
+
+- [#2349](https://github.com/Frontify/fondue/pull/2349) [`4dbed1d`](https://github.com/Frontify/fondue/commit/4dbed1d68a1fbd19a368cc81713ecf893ec635a3) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: improved story preview and typing
+
+### Patch Changes
+
+- Updated dependencies [[`4dbed1d`](https://github.com/Frontify/fondue/commit/4dbed1d68a1fbd19a368cc81713ecf893ec635a3)]:
+    - @frontify/fondue-tokens@5.0.0-beta.2
+    - @frontify/fondue-icons@0.18.0-beta.0
+
+## 20.0.0-beta.1
+
+### Patch Changes
+
+- Updated dependencies [[`56ebddd`](https://github.com/Frontify/fondue/commit/56ebddd2e0851ffdd539137c949e82384e752ae2)]:
+    - @frontify/fondue-tokens@5.0.0-beta.1
+    - @frontify/fondue-icons@0.18.0-beta.0
+
+## 20.0.0-beta.0
+
+### Major Changes
+
+- [#2302](https://github.com/Frontify/fondue/pull/2302) [`d010cb5`](https://github.com/Frontify/fondue/commit/d010cb53242c9d9e9112bb369a9af975189ba36a) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: overhauled token generation and switched to new token set
+
+### Patch Changes
+
+- [#2340](https://github.com/Frontify/fondue/pull/2340) [`d64d03b`](https://github.com/Frontify/fondue/commit/d64d03b0c8428502a7098418ba2ab1e3c7edccfd) Thanks [@syeo66](https://github.com/syeo66)! - fix: the loading circle is skewed in some contexts
+
+- Updated dependencies [[`d010cb5`](https://github.com/Frontify/fondue/commit/d010cb53242c9d9e9112bb369a9af975189ba36a)]:
+    - @frontify/fondue-tokens@5.0.0-beta.0
+    - @frontify/fondue-icons@0.18.0-beta.0
+- [#2383](https://github.com/Frontify/fondue/pull/2383) [`f75e618`](https://github.com/Frontify/fondue/commit/f75e61872e14490f95c8f80aa164c1590d3d88b6) Thanks [@syeo66](https://github.com/syeo66)! - feat(Checkbox): enable readOnly flag
+
+- [#2377](https://github.com/Frontify/fondue/pull/2377) [`b8331f6`](https://github.com/Frontify/fondue/commit/b8331f6c0ef3bedd7e2d4ac0575ca069d75734d0) Thanks [@jcosta33](https://github.com/jcosta33)! - chore: dep updates and linting
+
+- [#2393](https://github.com/Frontify/fondue/pull/2393) [`ac3f322`](https://github.com/Frontify/fondue/commit/ac3f322dc5490b98c4785720e879a5bef434467f) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
+
+- # Updated dependencies [[`b8331f6`](https://github.com/Frontify/fondue/commit/b8331f6c0ef3bedd7e2d4ac0575ca069d75734d0), [`ac3f322`](https://github.com/Frontify/fondue/commit/ac3f322dc5490b98c4785720e879a5bef434467f)]: - @frontify/fondue-tokens@4.2.1 - @frontify/fondue-icons@0.17.1
+    > > > > > > > main
 - [#2443](https://github.com/Frontify/fondue/pull/2443) [`191c62e`](https://github.com/Frontify/fondue/commit/191c62e0c73d3cf90396954df121b46e7f50eb88) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix: prevent tooltip focus which would open the tooltip when opening dialogs
 
 - [#2447](https://github.com/Frontify/fondue/pull/2447) [`41f6423`](https://github.com/Frontify/fondue/commit/41f642365afe3b8805beef45007dddf4a0f73b6a) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: add missing props
@@ -200,16 +512,6 @@
 - [#2427](https://github.com/Frontify/fondue/pull/2427) [`44798f9`](https://github.com/Frontify/fondue/commit/44798f912100902cd4008a8333d78116d2354548) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add missing props to textarea
 
 ## 19.6.0
-
-### Minor Changes
-
-- [#2420](https://github.com/Frontify/fondue/pull/2420) [`319ecd3`](https://github.com/Frontify/fondue/commit/319ecd314d2095ac13e3f23b77f90dc2091bf541) Thanks [@syeo66](https://github.com/syeo66)! - feat(Tag): Implement Tags similar to Badge implementation
-
-- [#2407](https://github.com/Frontify/fondue/pull/2407) [`b484cd3`](https://github.com/Frontify/fondue/commit/b484cd3b6d853b83585183793906b8313b205aa4) Thanks [@syeo66](https://github.com/syeo66)! - feat(ColorPicker): output alpha percentage in ColorPickerInput
-
-### Patch Changes
-
-- [#2421](https://github.com/Frontify/fondue/pull/2421) [`a2b361c`](https://github.com/Frontify/fondue/commit/a2b361cae3ed7f4836aa7eb77166a34766bf28d1) Thanks [@syeo66](https://github.com/syeo66)! - refactor(Label): move away from Tailwind
 
 - [#2425](https://github.com/Frontify/fondue/pull/2425) [`2dcde14`](https://github.com/Frontify/fondue/commit/2dcde14bb9319f9e717c405ea4c421e009dfa974) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: adress issue with accordion caret width
 
@@ -251,20 +553,6 @@
 - [#2379](https://github.com/Frontify/fondue/pull/2379) [`3de6d1c`](https://github.com/Frontify/fondue/commit/3de6d1ca95d0cf34ee455427e51db34c6b7d6a47) Thanks [@syeo66](https://github.com/syeo66)! - feat(Tabs): expose asChild in Tabs.Content
 
 - [#2391](https://github.com/Frontify/fondue/pull/2391) [`26f3d8b`](https://github.com/Frontify/fondue/commit/26f3d8bd3757f9ef057b89c3048d490571d63b65) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: allow passing a action into `Accordion.Header` with `Accordion.Slot`
-
-### Patch Changes
-
-- [#2356](https://github.com/Frontify/fondue/pull/2356) [`bea74b3`](https://github.com/Frontify/fondue/commit/bea74b38a57ce8db3468e17babfc3b66280a5d75) Thanks [@mbgspcii](https://github.com/mbgspcii)! - fix: prevent clicks inside a <Dialog> opened from a <Table.Row> from triggering the row click event.
-
-- [#2383](https://github.com/Frontify/fondue/pull/2383) [`f75e618`](https://github.com/Frontify/fondue/commit/f75e61872e14490f95c8f80aa164c1590d3d88b6) Thanks [@syeo66](https://github.com/syeo66)! - feat(Checkbox): enable readOnly flag
-
-- [#2377](https://github.com/Frontify/fondue/pull/2377) [`b8331f6`](https://github.com/Frontify/fondue/commit/b8331f6c0ef3bedd7e2d4ac0575ca069d75734d0) Thanks [@jcosta33](https://github.com/jcosta33)! - chore: dep updates and linting
-
-- [#2393](https://github.com/Frontify/fondue/pull/2393) [`ac3f322`](https://github.com/Frontify/fondue/commit/ac3f322dc5490b98c4785720e879a5bef434467f) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
-
-- Updated dependencies [[`b8331f6`](https://github.com/Frontify/fondue/commit/b8331f6c0ef3bedd7e2d4ac0575ca069d75734d0), [`ac3f322`](https://github.com/Frontify/fondue/commit/ac3f322dc5490b98c4785720e879a5bef434467f)]:
-    - @frontify/fondue-tokens@4.2.1
-    - @frontify/fondue-icons@0.17.1
 
 ## 19.2.0
 

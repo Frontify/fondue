@@ -4,6 +4,9 @@ import { useCallback, useEffect, useRef } from 'react';
 
 import { TABBABLE_ELEMENTS } from '@utilities/elements';
 
+/**
+ * @deprecated This hook is deprecated and will be removed in the next major version.
+ */
 export const useFocusTrap = <T extends HTMLElement = HTMLElement>(
     isOpen: boolean,
     ignoreFocusTrap = false,
@@ -11,6 +14,7 @@ export const useFocusTrap = <T extends HTMLElement = HTMLElement>(
 ) => {
     const elementRef = useRef<T>(null);
 
+    // eslint-disable-next-line @eslint-react/no-unnecessary-use-callback
     const handleFocus = useCallback(
         (event: KeyboardEvent) => {
             const focusableElements = [...(elementRef.current?.querySelectorAll(TABBABLE_ELEMENTS) ?? [])];

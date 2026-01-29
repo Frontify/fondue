@@ -1,5 +1,130 @@
 # @frontify/fondue-charts
 
+## 7.0.0-rc.7
+
+### Patch Changes
+
+- [#2609](https://github.com/Frontify/fondue/pull/2609) [`0ab6e64`](https://github.com/Frontify/fondue/commit/0ab6e64e3bdf1198f89f7d946c44cad003185d2a) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
+
+- Updated dependencies [[`7952ccf`](https://github.com/Frontify/fondue/commit/7952ccf0083efddcbf3ff453430981d18da2fb3b), [`0ab6e64`](https://github.com/Frontify/fondue/commit/0ab6e64e3bdf1198f89f7d946c44cad003185d2a)]:
+    - @frontify/fondue-tokens@5.0.0-rc.6
+
+## 7.0.0-rc.6
+
+### Major Changes
+
+- [#2596](https://github.com/Frontify/fondue/pull/2596) [`f62de74`](https://github.com/Frontify/fondue/commit/f62de743188570ce7fe3cb1b9e3a00f2823e7354) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: downgrade immer to fix issue with hotkeys
+
+### Patch Changes
+
+- Updated dependencies [[`f62de74`](https://github.com/Frontify/fondue/commit/f62de743188570ce7fe3cb1b9e3a00f2823e7354)]:
+    - @frontify/fondue-tokens@5.0.0-rc.5
+
+## 7.0.0-rc.5
+
+### Major Changes
+
+- [#2594](https://github.com/Frontify/fondue/pull/2594) [`049e77d`](https://github.com/Frontify/fondue/commit/049e77df0875a20fd00ec4c570a9f02b0252d874) Thanks [@github-actions](https://github.com/apps/github-actions)! - chore: release all packages
+
+### Patch Changes
+
+- Updated dependencies [[`049e77d`](https://github.com/Frontify/fondue/commit/049e77df0875a20fd00ec4c570a9f02b0252d874)]:
+    - @frontify/fondue-tokens@5.0.0-rc.4
+
+## 7.0.0-rc.4
+
+### Major Changes
+
+- [#2583](https://github.com/Frontify/fondue/pull/2583) [`0b953d7`](https://github.com/Frontify/fondue/commit/0b953d7e0098cefc60a845fd67e0b8d46fb5098c) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: upgrade `@types/react`and adjust legacy `TooltipIcon` to work with new icons
+
+### Patch Changes
+
+- Updated dependencies [[`0b953d7`](https://github.com/Frontify/fondue/commit/0b953d7e0098cefc60a845fd67e0b8d46fb5098c)]:
+    - @frontify/fondue-tokens@5.0.0-rc.3
+
+## 7.0.0-rc.3
+
+### Major Changes
+
+- [#2525](https://github.com/Frontify/fondue/pull/2525) [`810a2ba`](https://github.com/Frontify/fondue/commit/810a2baf8808d08b6d06fa223134834f9f07f33e) Thanks [@github-actions](https://github.com/apps/github-actions)! - fix: adjust chart crosshair color token
+
+## 7.0.0-rc.2
+
+### Patch Changes
+
+- Updated dependencies [[`9a63275`](https://github.com/Frontify/fondue/commit/9a63275ad8914610f653a8aa7cc9b1cd44987b46), [`a76c463`](https://github.com/Frontify/fondue/commit/a76c4633c16d22d38ee987dc790bec8cfded30b5)]:
+    - @frontify/fondue-tokens@5.0.0-rc.2
+
+## 7.0.0-rc.1
+
+### Patch Changes
+
+- [#2492](https://github.com/Frontify/fondue/pull/2492) [`f5785d1`](https://github.com/Frontify/fondue/commit/f5785d1155c4b295573cd8fbdb88114b1ecaef1e) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
+
+- [`06016db`](https://github.com/Frontify/fondue/commit/06016db7131d2611dad9b88115e80c9fe9d2051e) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: merge main into v13
+
+- Updated dependencies [[`f5785d1`](https://github.com/Frontify/fondue/commit/f5785d1155c4b295573cd8fbdb88114b1ecaef1e), [`06016db`](https://github.com/Frontify/fondue/commit/06016db7131d2611dad9b88115e80c9fe9d2051e)]:
+    - @frontify/fondue-tokens@5.0.0-rc.1
+
+## 7.0.0-rc.0
+
+### Patch Changes
+
+- Updated dependencies [[`4660ad7`](https://github.com/Frontify/fondue/commit/4660ad71917f8d9d27f8e64d4d30a0ffc32813fd), [`0038587`](https://github.com/Frontify/fondue/commit/0038587d4cd59cf13331b750aaaf9ebbe97cc0d2)]:
+    - @frontify/fondue-tokens@5.0.0-rc.6
+
+## 7.0.0-beta.5
+
+### Patch Changes
+
+- [#2440](https://github.com/Frontify/fondue/pull/2440) [`1812186`](https://github.com/Frontify/fondue/commit/181218691da26a629dcbf992bae405f769879ff8) Thanks [@joseazevedo88](https://github.com/joseazevedo88)! - update chart tokens
+
+- Updated dependencies [[`18c3e1e`](https://github.com/Frontify/fondue/commit/18c3e1e75d69b7f4fb2ce68f8eb1d9a8fab9a3a7)]:
+    - @frontify/fondue-tokens@5.0.0-beta.5
+
+## 7.0.0-beta.4
+
+### Patch Changes
+
+- [#2395](https://github.com/Frontify/fondue/pull/2395) [`432b29b`](https://github.com/Frontify/fondue/commit/432b29b1ae4eb874cdd51b9f6b3b562970b04c62) Thanks [@joseazevedo88](https://github.com/joseazevedo88)! - Update charts with new tokens
+
+- [#2394](https://github.com/Frontify/fondue/pull/2394) [`6e7dd18`](https://github.com/Frontify/fondue/commit/6e7dd18ce96b8680409f9099e7dc57e1dea9ae8e) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
+
+- Updated dependencies [[`6e7dd18`](https://github.com/Frontify/fondue/commit/6e7dd18ce96b8680409f9099e7dc57e1dea9ae8e)]:
+    - @frontify/fondue-tokens@5.0.0-beta.4
+
+## 7.0.0-beta.3
+
+### Patch Changes
+
+- Updated dependencies [[`52b9562`](https://github.com/Frontify/fondue/commit/52b956216715ba7a78c7c434f7e7344a314d2e0c)]:
+    - @frontify/fondue-tokens@5.0.0-beta.3
+
+## 7.0.0-beta.2
+
+### Patch Changes
+
+- Updated dependencies [[`4dbed1d`](https://github.com/Frontify/fondue/commit/4dbed1d68a1fbd19a368cc81713ecf893ec635a3)]:
+    - @frontify/fondue-tokens@5.0.0-beta.2
+
+## 7.0.0-beta.1
+
+### Patch Changes
+
+- Updated dependencies [[`56ebddd`](https://github.com/Frontify/fondue/commit/56ebddd2e0851ffdd539137c949e82384e752ae2)]:
+    - @frontify/fondue-tokens@5.0.0-beta.1
+
+## 7.0.0-beta.0
+
+### Major Changes
+
+- [#2302](https://github.com/Frontify/fondue/pull/2302) [`d010cb5`](https://github.com/Frontify/fondue/commit/d010cb53242c9d9e9112bb369a9af975189ba36a) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: overhauled token generation and switched to new token set
+
+### Patch Changes
+
+- Updated dependencies [[`d010cb5`](https://github.com/Frontify/fondue/commit/d010cb53242c9d9e9112bb369a9af975189ba36a)]:
+    - @frontify/fondue-tokens@5.0.0-beta.0
+
 ## 6.0.5
 
 ### Patch Changes

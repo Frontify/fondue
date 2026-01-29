@@ -5,7 +5,7 @@ import { useFocusRing } from '@react-aria/focus';
 import { mergeProps } from '@react-aria/utils';
 import { type ReactElement, useRef } from 'react';
 
-import { Badge } from '@components/Badge';
+import { Badge } from '@components/Badge/Badge';
 import { getItemElementType } from '@utilities/elements';
 import { FOCUS_STYLE_NO_OFFSET } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
@@ -14,6 +14,9 @@ import { type Breadcrumb } from './Breadcrumbs';
 
 type CurrentBreadcrumbItemProps = Breadcrumb;
 
+/**
+ * @deprecated This component is deprecated and will be removed in the next major version.
+ */
 export const CurrentBreadcrumbItem = ({
     label,
     badges,
@@ -62,6 +65,7 @@ export const CurrentBreadcrumbItem = ({
             ])}
             data-test-id={`${dataTestId}-item`}
         >
+            {/* eslint-disable-next-line react-hooks/static-components */}
             <Element ref={ref} {...props} className={classNames}>
                 {decorator}
                 {label}

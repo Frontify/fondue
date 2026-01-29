@@ -15,6 +15,7 @@ import { SelectSlot } from './SelectSlot';
 
 type Story = StoryObj<typeof meta>;
 const meta: Meta<typeof SelectInput> = {
+    title: 'Components/Select',
     component: SelectInput,
     subcomponents: {
         'Select.Combobox': SelectCombobox,
@@ -506,6 +507,46 @@ export const Errored: Story = {
     render: (args) => {
         return (
             <Select.Combobox {...args}>
+                <Select.Item value="test1">Test1</Select.Item>
+                <Select.Item value="test2">Test2</Select.Item>
+                <Select.Item value="test3">Test3</Select.Item>
+            </Select.Combobox>
+        );
+    },
+};
+
+export const OnEscapeKeyDown: Story = {
+    args: {
+        placeholder: 'Select an item',
+    },
+    render: (args) => {
+        return (
+            <Select
+                {...args}
+                onEscapeKeyDown={() => {
+                    alert('Escape key was pressed!');
+                }}
+            >
+                <Select.Item value="test1">Test1</Select.Item>
+                <Select.Item value="test2">Test2</Select.Item>
+                <Select.Item value="test3">Test3</Select.Item>
+            </Select>
+        );
+    },
+};
+
+export const ComboboxOnEscapeKeyDown: Story = {
+    args: {
+        placeholder: 'Select an item',
+    },
+    render: (args) => {
+        return (
+            <Select.Combobox
+                {...args}
+                onEscapeKeyDown={() => {
+                    alert('Escape key was pressed!');
+                }}
+            >
                 <Select.Item value="test1">Test1</Select.Item>
                 <Select.Item value="test2">Test2</Select.Item>
                 <Select.Item value="test3">Test3</Select.Item>

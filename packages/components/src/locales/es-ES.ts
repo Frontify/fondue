@@ -20,4 +20,5 @@ export const esES: Translations = {
     Table_sortDescending: 'Ordenar descendente',
     Table_sortAscending: 'Ordenar ascendente',
     Badge_dismiss: 'Cerrar ${label}',
+    Notice_dismiss: 'Cerrar aviso',
 };

@@ -1,0 +1,420 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+@use '../../../utilities/focusStyle.module.scss';
+
+@mixin variant($name, $color, $weakColor: $color, $useVariant: false) {
+    &[data-variant='#{$name}'] {
+        &[data-emphasis='default'] {
+            background-color: var(--color-container-#{$color}-default);
+
+            @if $useVariant {
+                color: var(--color-container-#{$color}-on-#{$color}-container-variant);
+            }
+
+            @else {
+                color: var(--color-container-#{$color}-on-#{$color}-container);
+            }
+        }
+
+        &[data-emphasis='strong'] {
+            background-color: var(--color-#{$color}-default);
+            color: var(--color-#{$color}-on-#{$color});
+        }
+
+        &[data-emphasis='weak'] {
+            background-color: var(--color-surface-dim);
+            color: var(--color-secondary-default);
+        }
+    }
+}
+
+.root {
+    display: flex;
+    align-items: center;
+    border-radius: var(--border-radius-medium);
+    transition:
+        background-color 250ms,
+        color 250ms;
+    position: relative;
+    box-sizing: border-box;
+
+    // Size variants
+    &[data-size='medium'] {
+        min-height: 36px;
+        padding: var(--spacing-x-small) var(--spacing-small);
+        gap: var(--spacing-x-small);
+        font-size: var(--typography-font-size-x-small);
+        line-height: var(--typography-line-height-tight);
+    }
+
+    &[data-size='large'] {
+        min-height: 64px;
+        padding: var(--spacing-large);
+        gap: var(--spacing-small);
+        font-size: var(--typography-font-size-medium);
+        line-height: var(--typography-line-height-normal);
+    }
+
+    // Color variants
+    @include variant(default, secondary, secondary, true); // secondary has -variant token
+    @include variant(highlight, highlight);
+    @include variant(positive, success);
+    @include variant(danger, error);
+    @include variant(warning, warning);
+
+    // Override: Strong emphasis default variant should use primary background
+    &[data-variant='default'][data-emphasis='strong'] {
+        background-color: var(--color-primary-default);
+        color: var(--color-primary-on-primary);
+    }
+}
+
+.icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: currentColor;
+
+    [data-size='medium'] & {
+        width: 16px;
+        height: 16px;
+    }
+
+    [data-size='large'] & {
+        width: 20px;
+        height: 20px;
+    }
+
+    // Weak emphasis icons should be colored based on variant
+    [data-emphasis='weak'][data-variant='highlight'] & {
+        color: var(--color-highlight-default);
+    }
+
+    [data-emphasis='weak'][data-variant='positive'] & {
+        color: var(--color-success-default);
+    }
+
+    [data-emphasis='weak'][data-variant='warning'] & {
+        color: var(--color-warning-default);
+    }
+
+    [data-emphasis='weak'][data-variant='danger'] & {
+        color: var(--color-error-default);
+    }
+}
+
+.content {
+    flex: 1;
+    min-width: 0;
+    font-family: var(--typography-font-family-primary);
+    font-weight: var(--typography-font-weight-regular);
+}
+
+.action {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+
+    // Ensure buttons within notices inherit appropriate colors
+    button {
+        color: currentColor;
+
+        // Ensure SVG icons inherit button text color
+        svg {
+            color: currentColor !important;
+        }
+
+        // Override button border for better integration with notice
+        &:where([data-test-id='fondue-button']) {
+            border: none;
+        }
+    }
+
+    // Default emphasis: solid variant-colored buttons
+    [data-emphasis='default'][data-variant='default'] & button:where([data-test-id='fondue-button']) {
+        background-color: var(--color-primary-default);
+        color: var(--color-primary-on-primary);
+
+        &:hover {
+            background-color: var(--color-primary-hover);
+        }
+
+        &:active {
+            background-color: var(--color-primary-active);
+        }
+    }
+
+    [data-emphasis='default'][data-variant='highlight'] & button:where([data-test-id='fondue-button']) {
+        background-color: var(--color-highlight-default);
+        color: var(--color-highlight-on-highlight);
+
+        &:hover {
+            background-color: var(--color-highlight-hover);
+        }
+
+        &:active {
+            background-color: var(--color-highlight-active);
+        }
+    }
+
+    [data-emphasis='default'][data-variant='positive'] & button:where([data-test-id='fondue-button']) {
+        background-color: var(--color-success-default);
+        color: var(--color-success-on-success);
+
+        &:hover {
+            background-color: var(--color-success-hover);
+        }
+
+        &:active {
+            background-color: var(--color-success-active);
+        }
+    }
+
+    [data-emphasis='default'][data-variant='warning'] & button:where([data-test-id='fondue-button']) {
+        background-color: var(--color-primary-default);
+        color: var(--color-primary-on-primary);
+
+        &:hover {
+            background-color: var(--color-primary-hover);
+        }
+
+        &:active {
+            background-color: var(--color-primary-active);
+        }
+    }
+
+    [data-emphasis='default'][data-variant='danger'] & button:where([data-test-id='fondue-button']) {
+        background-color: var(--color-error-default);
+        color: var(--color-error-on-error);
+
+        &:hover {
+            background-color: var(--color-error-hover);
+        }
+
+        &:active {
+            background-color: var(--color-error-active);
+        }
+    }
+
+    // Weak emphasis: variant-colored buttons
+    [data-emphasis='weak'][data-variant='default'] & button:where([data-test-id='fondue-button']) {
+        background-color: var(--color-container-secondary-default);
+        color: var(--color-container-secondary-on-secondary-container);
+
+        &:hover {
+            background-color: var(--color-container-secondary-hover);
+        }
+
+        &:active {
+            background-color: var(--color-container-secondary-active);
+        }
+    }
+
+    [data-emphasis='weak'][data-variant='highlight'] & button:where([data-test-id='fondue-button']) {
+        background-color: var(--color-container-highlight-default);
+        color: var(--color-container-highlight-on-highlight-container);
+
+        &:hover {
+            background-color: var(--color-container-highlight-hover);
+        }
+
+        &:active {
+            background-color: var(--color-container-highlight-active);
+        }
+    }
+
+    [data-emphasis='weak'][data-variant='positive'] & button:where([data-test-id='fondue-button']) {
+        background-color: var(--color-container-success-default);
+        color: var(--color-container-success-on-success-container);
+
+        &:hover {
+            background-color: var(--color-container-success-hover);
+        }
+
+        &:active {
+            background-color: var(--color-container-success-active);
+        }
+    }
+
+    [data-emphasis='weak'][data-variant='warning'] & button:where([data-test-id='fondue-button']) {
+        background-color: var(--color-container-secondary-default);
+        color: var(--color-container-secondary-on-secondary-container);
+
+        &:hover {
+            background-color: var(--color-container-secondary-hover);
+        }
+
+        &:active {
+            background-color: var(--color-container-secondary-active);
+        }
+    }
+
+    [data-emphasis='weak'][data-variant='danger'] & button:where([data-test-id='fondue-button']) {
+        background-color: var(--color-error-default);
+        color: var(--color-error-on-error);
+
+        &:hover {
+            background-color: var(--color-error-hover);
+        }
+
+        &:active {
+            background-color: var(--color-error-active);
+        }
+    }
+
+    // Strong emphasis: variant container-colored buttons
+    [data-emphasis='strong'][data-variant='default'] & button:where([data-test-id='fondue-button']) {
+        background-color: var(--color-container-secondary-default);
+        color: var(--color-container-secondary-on-secondary-container);
+
+        &:hover {
+            background-color: var(--color-container-secondary-hover);
+        }
+
+        &:active {
+            background-color: var(--color-container-secondary-active);
+        }
+    }
+
+    [data-emphasis='strong'][data-variant='highlight'] & button:where([data-test-id='fondue-button']) {
+        background-color: var(--color-container-highlight-default);
+        color: var(--color-container-highlight-on-highlight-container);
+
+        &:hover {
+            background-color: var(--color-container-highlight-hover);
+        }
+
+        &:active {
+            background-color: var(--color-container-highlight-active);
+        }
+    }
+
+    [data-emphasis='strong'][data-variant='positive'] & button:where([data-test-id='fondue-button']) {
+        background-color: var(--color-container-success-default);
+        color: var(--color-container-success-on-success-container);
+
+        &:hover {
+            background-color: var(--color-container-success-hover);
+        }
+
+        &:active {
+            background-color: var(--color-container-success-active);
+        }
+    }
+
+    [data-emphasis='strong'][data-variant='warning'] & button:where([data-test-id='fondue-button']) {
+        background-color: var(--color-container-secondary-default);
+        color: var(--color-container-secondary-on-secondary-container);
+
+        &:hover {
+            background-color: var(--color-container-secondary-hover);
+        }
+
+        &:active {
+            background-color: var(--color-container-secondary-active);
+        }
+    }
+
+    [data-emphasis='strong'][data-variant='danger'] & button:where([data-test-id='fondue-button']) {
+        background-color: var(--color-container-error-default);
+        color: var(--color-container-error-on-error-container);
+
+        &:hover {
+            background-color: var(--color-container-error-hover);
+        }
+
+        &:active {
+            background-color: var(--color-container-error-active);
+        }
+    }
+}
+
+.dismiss {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    padding: 0;
+    margin: 0;
+    border: none;
+    background: transparent;
+    color: currentColor;
+    cursor: pointer;
+    border-radius: var(--border-radius-small);
+    transition: opacity 250ms;
+
+    &:hover {
+        opacity: 0.7;
+    }
+
+    & {
+        @include focusStyle.focus-outline;
+    }
+
+    [data-size='medium'] & {
+        width: 16px;
+        height: 16px;
+    }
+
+    [data-size='large'] & {
+        width: 20px;
+        height: 20px;
+    }
+}
+
+/**
+ * High Contrast Mode Support
+ *
+ * Ensures notices are visible and have proper boundaries in Windows High Contrast Mode
+ * and other forced-colors contexts.
+ */
+@media (forced-colors: active) {
+    .root {
+        border: 2px solid currentColor;
+        forced-color-adjust: none;
+        background-color: Canvas !important;
+        color: CanvasText !important;
+
+        &[data-variant='default'] {
+            border-style: solid;
+        }
+
+        &[data-variant='highlight'] {
+            border-style: double;
+            border-color: Highlight;
+        }
+
+        &[data-variant='positive'] {
+            border-style: solid;
+            border-color: LinkText;
+        }
+
+        &[data-variant='danger'] {
+            border-style: solid;
+            border-width: 3px;
+        }
+
+        &[data-variant='warning'] {
+            border-style: dashed;
+        }
+    }
+
+    .action button {
+        border: 2px solid currentColor !important;
+
+        &:hover {
+            background-color: Highlight !important;
+            color: HighlightText !important;
+        }
+    }
+
+    .dismiss {
+        border: 1px solid currentColor;
+
+        &:hover {
+            background-color: Highlight !important;
+            color: HighlightText !important;
+        }
+    }
+}

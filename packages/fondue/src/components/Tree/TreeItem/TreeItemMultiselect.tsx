@@ -4,7 +4,7 @@ import { noop } from 'lodash-es';
 import { Children, type MouseEvent, memo, useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { Checkbox, CheckboxEmphasis, CheckboxSize, CheckboxState } from '@components/Checkbox/Checkbox';
-import { Container } from '@components/Container';
+import { Container } from '@components/Container/Container';
 import {
     type RegisterNodeChildrenPayload,
     type TreeItemMultiselectProps,

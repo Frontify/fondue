@@ -7,11 +7,12 @@ import { Section } from '../Section';
 const SECTION_TEXT = 'sample section';
 
 test('should render without error', async ({ mount }) => {
-    const component = await mount(
-        <Section p="100px" m="40px" maxWidth="1000px">
+    const wrapper = await mount(
+        <Section p="100px" m="40px" maxWidth="1000px" data-test-id="section-root">
             {SECTION_TEXT}
         </Section>,
     );
+    const component = wrapper.getByTestId('section-root');
     await expect(component).toBeVisible();
     await expect(component).toContainText(SECTION_TEXT);
     await expect(component).toHaveCSS('padding', '100px');
@@ -20,11 +21,12 @@ test('should render without error', async ({ mount }) => {
 });
 
 test('should not inherit parent props', async ({ mount }) => {
-    const component = await mount(
-        <Section p="20px" m="50px">
+    const wrapper = await mount(
+        <Section p="20px" m="50px" data-test-id="section-root">
             <Section data-test-id="flex-child">{SECTION_TEXT}</Section>
         </Section>,
     );
+    const component = wrapper.getByTestId('section-root');
 
     await expect(component).toHaveCSS('padding', '20px');
     await expect(component).toHaveCSS('margin', '50px');
@@ -36,7 +38,7 @@ test('should not inherit parent props', async ({ mount }) => {
 });
 
 test('should render with size tokens', async ({ mount }) => {
-    const component = await mount(
+    const wrapper = await mount(
         <Section
             p={6}
             m={20}
@@ -48,10 +50,12 @@ test('should render with size tokens', async ({ mount }) => {
             top={15}
             right={14}
             left={13}
+            data-test-id="section-root"
         >
             {SECTION_TEXT}
         </Section>,
     );
+    const component = wrapper.getByTestId('section-root');
 
     await expect(component).toHaveCSS('padding', '24px');
     await expect(component).toHaveCSS('margin', '80px');

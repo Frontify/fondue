@@ -1,20 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconExclamationMarkCircle, IconExclamationMarkTriangle, IconTrashBin } from '@frontify/fondue-icons';
 import { type Meta, type StoryFn } from '@storybook/react-vite';
-
-import { Button } from '@components/Button/Button';
-import { ButtonGroup } from '@components/ButtonGroup/ButtonGroup';
-import IconExclamationMarkCircle24 from '@foundation/Icon/Generated/IconExclamationMarkCircle24';
-import IconExclamationMarkTriangle24 from '@foundation/Icon/Generated/IconExclamationMarkTriangle24';
-import IconTrashBin24 from '@foundation/Icon/Generated/IconTrashBin24';
-
-import { ButtonSize, ButtonStyle } from '../Button/ButtonTypes';
 
 import { Toast as ToastComponent } from './Toast';
 import { ToastAnimationDirection, type ToastProps, ToastStyle } from './types';
 
+/**
+ ### *Legacy component warning*
+ #### This is a deprecated component. It will be removed in the next major version.
+ */
 export default {
-    title: 'Components/Toast',
+    title: 'Legacy Components/Deprecated/Toast',
     component: ToastComponent,
     tags: ['autodocs'],
     argTypes: {
@@ -36,6 +33,11 @@ export default {
         enableExitAnimation: { control: { type: 'boolean' }, defaultValue: false },
         icon: { table: { disable: true } },
         children: { table: { disable: true } },
+    },
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
     },
 } as Meta;
 
@@ -61,7 +63,7 @@ export const InformativeToastAtTheBottom = WithLeftBottomContainer.bind({});
 InformativeToastAtTheBottom.args = {
     isOpen: true,
     style: ToastStyle.Loud,
-    icon: <IconExclamationMarkCircle24 />,
+    icon: <IconExclamationMarkCircle size={24} />,
     children: <div className="tw-p-4 tw-flex tw-items-center">Item successfully added</div>,
 };
 
@@ -69,7 +71,7 @@ export const WarningToastAtTheTop = WithRightTopContainer.bind({});
 WarningToastAtTheTop.args = {
     isOpen: true,
     style: ToastStyle.Warning,
-    icon: <IconExclamationMarkTriangle24 />,
+    icon: <IconExclamationMarkTriangle size={24} />,
     animationDirection: ToastAnimationDirection.TopToBottom,
     children: <div className="tw-p-4 tw-flex tw-items-center">Your password will expire in 7 days</div>,
 };
@@ -78,22 +80,14 @@ export const WithInteractiveContent = WithRightBottomContainer.bind({});
 WithInteractiveContent.args = {
     isOpen: true,
     style: ToastStyle.Danger,
-    icon: <IconTrashBin24 />,
+    icon: <IconTrashBin size={24} />,
     children: (
-        <>
-            <div className="tw-flex tw-p-4">
-                <div className="tw-border-r tw-border-black-20 tw-pr-4">
-                    <div className="tw-font-bold">Item Deletion Confirmation</div>
-                    <span className="tw-mt-1">You are about to delete this item</span>
-                </div>
+        <div className="tw-flex tw-p-4">
+            <div className="tw-border-r tw-border-black-20 tw-pr-4">
+                <div className="tw-font-bold">Item Deletion Confirmation</div>
+                <span className="tw-mt-1">You are about to delete this item</span>
             </div>
-            <div className="tw-flex tw-items-center tw-py-4 tw-pr-4">
-                <ButtonGroup size={ButtonSize.Medium}>
-                    <Button style={ButtonStyle.Secondary}>Yes, delete it</Button>
-                    <Button>Cancel</Button>
-                </ButtonGroup>
-            </div>
-        </>
+        </div>
     ),
 };
 
@@ -102,7 +96,7 @@ DarkTheme.args = {
     isOpen: true,
     style: ToastStyle.Loud,
     theme: 'dark',
-    icon: <IconExclamationMarkCircle24 />,
+    icon: <IconExclamationMarkCircle size={24} />,
     children: (
         <div className="tw-p-4 tw-flex tw-items-center tw-text-box-neutral-mighty-inverse">Item successfully added</div>
     ),

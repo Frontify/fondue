@@ -4,7 +4,7 @@
 @use '../../../utilities/transitions.module.scss';
 @use '../../../utilities/focusStyle.module.scss';
 
-$radius-without-border: calc(var(--radius) - var(--line-width));
+$radius-without-border: calc(var(--border-radius-medium) - var(--border-width-default));
 
 .root {
     position: relative;
@@ -14,7 +14,7 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
     height: 100%;
     box-sizing: border-box;
 
-    &[data-tabs-variant="default"] {
+    &[data-tabs-variant='default'] {
         .triggerListWrapper {
             position: relative;
             width: 100%;
@@ -23,13 +23,13 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
             padding-inline-start: sizeToken.get(3);
             padding-inline-end: sizeToken.get(3);
             gap: sizeToken.get(2);
-            border-bottom: 1px solid var(--line-color);
+            border-bottom: 1px solid var(--color-line-subtle);
             box-sizing: border-box;
         }
 
         .trigger {
-            color: var(--text-color-weak);
-            font-size: var(--body-size-large);
+            color: var(--color-secondary-default);
+            font-size: var(--typography-font-size-large);
             white-space: nowrap;
             margin: sizeToken.get(2);
             display: flex;
@@ -43,15 +43,15 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
 
             &:hover,
             &:focus {
-                color: var(--text-color);
+                color: var(--color-primary-default);
             }
 
             &:disabled {
-                color: var(--text-color-disabled);
+                color: var(--color-disabled-default);
             }
 
             &[data-state='active'] {
-                color: var(--text-color);
+                color: var(--color-primary-default);
                 font-weight: 500;
             }
         }
@@ -59,9 +59,9 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
         .activeIndicator {
             position: absolute;
             height: 3px;
-            border-start-start-radius: var(--radius-x-large);
-            border-start-end-radius: var(--radius-x-large);
-            background-color: var(--box-neutral-strong-color);
+            border-start-start-radius: var(--border-radius-x-large);
+            border-start-end-radius: var(--border-radius-x-large);
+            background-color: var(--color-primary-default);
             bottom: 0;
             inset-inline-start: 0;
             width: 0;
@@ -73,7 +73,7 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
         }
     }
 
-    &[data-tabs-variant="pill"] {
+    &[data-tabs-variant='pill'] {
         .activeIndicator {
             display: none;
         }
@@ -94,10 +94,10 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
         }
 
         .trigger {
-            color: var(--text-color);
-            font-size: var(--body-size-small);
+            color: var(--color-primary-default);
+            font-size: var(--typography-font-size-small);
             font-weight: 500;
-            line-height: var(--body-size-small-line-height);
+            line-height: var(--typography-line-height-tight);
             white-space: nowrap;
             display: flex;
             gap: sizeToken.get(1);
@@ -112,27 +112,27 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
             &:hover,
             &:focus {
                 color: var(--button-text-color-hover);
-                background-color: var(--button-background-color-hover);
-                border-radius: var(--radius);
+                background-color: var(--color-container-secondary-hover);
+                border-radius: var(--border-radius-medium);
             }
 
             &:disabled {
-                color: var(--text-color-disabled);
+                color: var(--color-disabled-default);
             }
 
             &[data-state='active'] {
-                color: var(--button-text-color);
-                background-color: var(--button-background-color);
-                border-radius: var(--radius);
+                color: var(--color-primary-default);
+                background-color: var(--color-container-secondary-default);
+                border-radius: var(--border-radius-medium);
             }
 
-            [data-component="badge"] {
+            [data-component='badge'] {
                 padding-top: 2px;
                 padding-bottom: 2px;
             }
 
             &:active {
-                background-color: var(--button-background-color-pressed);
+                background-color: var(--color-container-secondary-active);
             }
         }
     }
@@ -177,7 +177,6 @@ $radius-without-border: calc(var(--radius) - var(--line-width));
     }
 }
 
-
 .content {
-    color: var(--text-color);
+    color: var(--color-primary-default);
 }

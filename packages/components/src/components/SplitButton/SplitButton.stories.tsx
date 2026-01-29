@@ -20,7 +20,7 @@ const meta: Meta<typeof SplitButtonRoot> = {
     tags: ['autodocs'],
     parameters: {
         status: {
-            type: 'in_development',
+            type: 'released',
         },
     },
     args: {

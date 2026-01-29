@@ -8,10 +8,12 @@ import { Validation } from '@utilities/validation';
 import { type LegacyTextareaProps, LegacyTextarea as TextareaComponent } from './LegacyTextarea';
 
 /**
- ### This component is deprecated, please use the [new Textarea component](/docs/current_components-textarea--documentation) instead.
+ ### *Legacy component warning*
+ #### This is a deprecated component. It will be removed in the next major version.
+ #### _**Use the [new Textarea component](/docs/current_components-textarea--documentation) instead.**_
  */
 export default {
-    title: 'Deprecated/LegacyTextarea',
+    title: 'Legacy Components/Deprecated/LegacyTextarea',
     component: TextareaComponent,
     tags: ['autodocs'],
     args: {
@@ -49,6 +51,7 @@ export default {
 
 export const LegacyTextarea: StoryFn<LegacyTextareaProps> = (args: LegacyTextareaProps) => {
     const [input, setInput] = useState('');
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     useEffect(() => setInput(`${args.value ?? ''}`), [args.value]);
 
     return <TextareaComponent {...args} value={input} onInput={setInput} />;

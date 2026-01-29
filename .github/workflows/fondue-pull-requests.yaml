@@ -39,17 +39,17 @@ jobs:
             - name: Install npm dependencies
               run: pnpm i --frozen-lockfile
 
-            - name: Generate (old) icons
-              run: pnpm --stream --filter {packages/fondue} generate:icons && pnpm --stream --filter {packages/fondue} generate:componentsEnum
-
-            - name: Build Fondue Tokens
-              run: pnpm build:tokens
-
-            - name: Build Fondue Icons
+            - name: Build Fondue icons
               run: pnpm build:icons
 
+            - name: Build Fondue Components
+              run: pnpm build:components
+
+            - name: Build Fondue RTE
+              run: pnpm build:rte
+
             - name: Lint code
-              run: pnpm --stream --filter {packages/fondue} --filter {packages/components} --filter {packages/icons} lint
+              run: pnpm --stream --filter {packages/fondue} --filter {packages/components} --filter {packages/icons} --filter {packages/rte} lint
 
     typecheck:
         name: Typecheck
@@ -74,13 +74,7 @@ jobs:
             - name: Install npm dependencies
               run: pnpm i --frozen-lockfile
 
-            - name: Generate (old) icons
-              run: pnpm --stream --filter {packages/fondue} generate:icons && pnpm --stream --filter {packages/fondue} generate:componentsEnum
-
-            - name: Build Fondue Tokens
-              run: pnpm build:tokens
-
-            - name: Build Fondue Icons
+            - name: Build Fondue icons
               run: pnpm build:icons
 
             - name: Build Fondue Charts
@@ -89,18 +83,16 @@ jobs:
             - name: Build Fondue Components
               run: pnpm build:components
 
-            - name: Typecheck code
-              run: pnpm --stream --filter {packages/fondue} --filter {packages/components} --filter {packages/icons} typecheck
+            - name: Build Fondue RTE
+              run: pnpm build:rte
 
-    old-component-tests:
-        name: Old Component Tests
+            - name: Typecheck code
+              run: pnpm --stream --filter {packages/fondue} --filter {packages/components} --filter {packages/icons} --filter {packages/rte} typecheck
+
+    rte-component-tests:
+        name: RTE Component Tests
         runs-on: ubuntu-latest
         timeout-minutes: 10
-
-        strategy:
-            fail-fast: false
-            matrix:
-                containers: [0, 1, 2, 3, 4, 5, 6, 7]
 
         steps:
             - name: Checkout current commit
@@ -122,6 +114,7 @@ jobs:
 
             - name: Setup pnpm cache
               uses: actions/cache@v4
+              id: npm_cache
               with:
                   path: |
                       ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
@@ -132,12 +125,6 @@ jobs:
             - name: Install dependencies
               run: pnpm install --frozen-lockfile
 
-            - name: Generate (old) icons
-              run: pnpm --stream --filter {packages/fondue} generate:icons && pnpm --stream --filter {packages/fondue} generate:componentsEnum
-
-            - name: Build Fondue Tokens
-              run: pnpm build:tokens
-
             - name: Build Fondue Icons
               run: pnpm build:icons
 
@@ -145,7 +132,7 @@ jobs:
               run: pnpm build:components
 
             - name: Component Tests
-              run: pnpm run --stream --filter {packages/fondue} test --spec $(node ./.github/lib/cypress-matrix.mjs ${{ strategy.job-total }} ${{ matrix.containers }})
+              run: pnpm run --stream --filter {packages/rte} test
 
     component-tests:
         name: Component Tests
@@ -169,9 +156,6 @@ jobs:
 
             - name: Install dependencies
               run: pnpm install --frozen-lockfile
-
-            - name: Build Fondue Tokens
-              run: pnpm build:tokens
 
             - name: Build Fondue Icons
               run: pnpm build:icons

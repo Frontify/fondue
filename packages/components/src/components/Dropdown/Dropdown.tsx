@@ -104,6 +104,10 @@ export type DropdownContentProps = {
      * @default false
      */
     forceMount?: boolean;
+    /**
+     * Event handler called when the escape key is pressed.
+     */
+    onEscapeKeyDown?: (event: KeyboardEvent) => void;
 };
 
 const SPACING_MAP: Record<DropdownSpacing, number> = {
@@ -126,6 +130,7 @@ export const DropdownContent = (
         preventTriggerFocusOnClose,
         viewportCollisionPadding = 'compact',
         forceMount = false,
+        onEscapeKeyDown,
         'data-test-id': dataTestId = 'fondue-dropdown-content',
     }: DropdownContentProps,
     ref: ForwardedRef<HTMLDivElement>,
@@ -146,6 +151,7 @@ export const DropdownContent = (
                     className={styles.content}
                     data-test-id={dataTestId}
                     ref={actualRef}
+                    onEscapeKeyDown={onEscapeKeyDown}
                     onPointerDownOutside={(event) => {
                         if (!forceMount) {
                             return;
@@ -236,8 +242,27 @@ export const DropdownSubTrigger = (
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     const { content } = useProcessedChildren(children);
+    const wasMouseInteracted = useRef(false);
     return (
-        <RadixDropdown.SubTrigger className={styles.subTrigger} data-test-id={dataTestId} ref={ref}>
+        <RadixDropdown.SubTrigger
+            className={styles.subTrigger}
+            // eslint-disable-next-line react-hooks/refs
+            data-show-focus-ring={wasMouseInteracted.current}
+            data-test-id={dataTestId}
+            ref={ref}
+            onMouseEnter={() => {
+                wasMouseInteracted.current = true;
+            }}
+            onFocus={(focusEvent) => {
+                if (!wasMouseInteracted.current) {
+                    focusEvent.target.dataset.showFocusRing = 'true';
+                }
+            }}
+            onBlur={(blurEvent) => {
+                blurEvent.target.dataset.showFocusRing = 'false';
+                wasMouseInteracted.current = false;
+            }}
+        >
             {content}
             <IconCaretRight className={styles.subMenuIndicator} size={16} />
         </RadixDropdown.SubTrigger>
@@ -327,6 +352,7 @@ export const DropdownItem = (
             ref={ref}
             disabled={disabled}
             asChild={asChild}
+            // eslint-disable-next-line react-hooks/refs
             data-show-focus-ring={wasMouseInteracted.current}
             onMouseEnter={() => {
                 wasMouseInteracted.current = true;

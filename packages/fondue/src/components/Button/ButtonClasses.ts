@@ -9,20 +9,32 @@ import {
     type UpdatedButtonStyle,
 } from './ButtonTypes';
 
+/**
+ * @deprecated Please use updated button component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#button the migration guide}.
+ */
 export const ButtonCommonClasses =
     'tw-group ' +
     'tw-border ' +
     'tw-box-box tw-relative tw-flex tw-items-center tw-justify-center ' +
     'tw-cursor-pointer tw-outline-none tw-font-body tw-font-medium ';
 
+/**
+ * @deprecated Please use updated button component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#button the migration guide}.
+ */
 export const ButtonDisabledClasses =
     'tw-not-allowed tw-pointer-events-none tw-border-transparent tw-text-box-disabled-inverse tw-bg-box-disabled ';
 
+/**
+ * @deprecated Please use updated button component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#button the migration guide}.
+ */
 export const ButtonRoundingClasses: Record<ButtonRounding, string> = {
     [ButtonRounding.Medium]: 'tw-rounded',
     [ButtonRounding.Full]: 'tw-rounded-full',
 };
 
+/**
+ * @deprecated Please use updated button component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#button the migration guide}.
+ */
 export const ButtonSizeClasses: Record<ButtonSize, Record<'default' | 'iconOnly', string>> = {
     [ButtonSize.Small]: {
         default: 'tw-px-2 tw-h-6 tw-text-body-small ',
@@ -38,6 +50,9 @@ export const ButtonSizeClasses: Record<ButtonSize, Record<'default' | 'iconOnly'
     },
 };
 
+/**
+ * @deprecated Please use updated button component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#button the migration guide}.
+ */
 export const IconSpacingClasses: Record<ButtonSize, string> = {
     [ButtonSize.Small]: 'tw--ml-0.5 tw-mr-1 ',
     [ButtonSize.Medium]: 'tw--ml-1 tw-mr-1.5 ',
@@ -48,8 +63,8 @@ const ButtonEmphasisWeak = {
     [ButtonStyle.Default]: {
         button:
             'tw-border-transparent ' +
-            'hover:tw-bg-button-background-hover hover:tw-border-button-border ' +
-            'active:tw-bg-button-background-pressed ',
+            'hover:tw-bg-container-secondary-hover ' +
+            'active:tw-bg-container-secondary-active ',
         icon:
             'tw-text-button-icon ' +
             'group-hover:tw-text-button-icon-hover ' +
@@ -62,7 +77,7 @@ const ButtonEmphasisWeak = {
     [ButtonStyle.Positive]: {
         button:
             'tw-border-transparent ' +
-            'hover:tw-bg-button-positive-background-hover hover:tw-border-button-positive-border ' +
+            'hover:tw-bg-button-positive-background-hover ' +
             'active:tw-bg-button-positive-background-pressed ',
         icon:
             'tw-text-button-strong-positive-icon ' +
@@ -76,7 +91,7 @@ const ButtonEmphasisWeak = {
     [ButtonStyle.Negative]: {
         button:
             'tw-border-transparent ' +
-            'hover:tw-bg-button-negative-background-hover hover:tw-border-button-negative-border ' +
+            'hover:tw-bg-button-negative-background-hover ' +
             'active:tw-bg-button-negative-background-pressed ',
         icon:
             'tw-text-button-negative-icon ' +
@@ -90,8 +105,8 @@ const ButtonEmphasisWeak = {
     [ButtonStyle.Danger]: {
         button:
             'tw-border-transparent ' +
-            'hover:tw-bg-button-background-hover ' +
-            'active:tw-bg-button-background-pressed ',
+            'hover:tw-bg-container-secondary-hover ' +
+            'active:tw-bg-container-secondary-active ',
         icon:
             'tw-text-button-negative-icon ' +
             'group-hover:tw-text-button-negative-icon-hover' +
@@ -119,13 +134,16 @@ const ButtonEmphasisWeak = {
  * - We're deprecating Primary and Secondary in favour of 'emphasis' (-33%)
  */
 
+/**
+ * @deprecated Please use updated button component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#button the migration guide}.
+ */
 export const ButtonStyleClasses: Record<ButtonEmphasis, Record<UpdatedButtonStyle, ButtonElements>> = {
     [ButtonEmphasis.Default]: {
         [ButtonStyle.Default]: {
             button:
-                'tw-bg-button-background tw-border-button-border ' +
-                'hover:tw-bg-button-background-hover ' +
-                'active:tw-bg-button-background-pressed ',
+                'tw-bg-container-secondary ' +
+                'hover:tw-bg-container-secondary-hover ' +
+                'active:tw-bg-container-secondary-active ',
             icon:
                 'tw-text-button-icon ' +
                 'group-hover:tw-text-button-icon-hover ' +
@@ -165,9 +183,9 @@ export const ButtonStyleClasses: Record<ButtonEmphasis, Record<UpdatedButtonStyl
         },
         [ButtonStyle.Danger]: {
             button:
-                'tw-bg-button-background tw-border-button-border ' +
-                'hover:tw-bg-button-background-hover ' +
-                'active:tw-bg-button-background-pressed ',
+                'tw-bg-container-secondary ' +
+                'hover:tw-bg-container-secondary-hover ' +
+                'active:tw-bg-container-secondary-active ',
             icon:
                 'tw-text-button-negative-icon ' +
                 'group-hover:tw-text-button-negative-icon-hover' +
@@ -178,10 +196,7 @@ export const ButtonStyleClasses: Record<ButtonEmphasis, Record<UpdatedButtonStyl
                 'group-active:tw-text-button-negative-icon-pressed ',
         },
         [ButtonStyle.Loud]: {
-            button:
-                'tw-bg-box-selected tw-border-button-border ' +
-                'hover:tw-bg-box-selected-hover ' +
-                'active:tw-bg-box-selected-pressed ',
+            button: 'tw-bg-box-selected hover:tw-bg-box-selected-hover active:tw-bg-box-selected-pressed ',
             icon:
                 'tw-text-box-selected-inverse ' +
                 'group-hover:tw-text-box-selected-inverse-hover' +

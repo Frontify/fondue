@@ -12,6 +12,7 @@ import { Switch } from './Switch';
 type Story = StoryObj<typeof Switch>;
 
 const meta: Meta<typeof Switch> = {
+    title: 'Components/Switch',
     component: Switch,
     tags: ['autodocs'],
     parameters: {
@@ -68,7 +69,21 @@ export const Required: Story = {
 export const WithLabel: Story = {
     render: (args) => (
         <>
-            <Label id="label" htmlFor="switch">
+            <Label id="label" htmlFor="switch" required={args.required}>
+                Switch
+            </Label>
+            <Switch {...args} id="switch" aria-labelledby="label" />
+        </>
+    ),
+};
+
+export const WithLabelRequired: Story = {
+    args: {
+        required: true,
+    },
+    render: (args) => (
+        <>
+            <Label id="label" htmlFor="switch" required={args.required}>
                 Switch
             </Label>
             <Switch {...args} id="switch" aria-labelledby="label" />
@@ -79,7 +94,7 @@ export const WithLabel: Story = {
 export const WithLabelAndTooltip: Story = {
     render: (args) => (
         <>
-            <Label id="label" htmlFor="switch">
+            <Label id="label" htmlFor="switch" required={args.required}>
                 Switch
                 <Tooltip.Root>
                     <Tooltip.Trigger>
@@ -113,4 +128,37 @@ export const Size: Story = {
             <Switch {...args} size="large" />
         </>
     ),
+};
+
+export const HugWidth: Story = {
+    render: (args) => (
+        <div className="tw-flex tw-flex-col tw-gap-4">
+            <div>
+                <div className="tw-mb-2">hugWidth: true (default) - Use flex with gap</div>
+                <div className="tw-flex tw-gap-1.5 tw-items-center">
+                    <Label id="label-hug-true" htmlFor="switch-hug-true">
+                        Label
+                    </Label>
+                    <Switch {...args} id="switch-hug-true" aria-labelledby="label-hug-true" />
+                </div>
+            </div>
+            <div>
+                <div className="tw-mb-2">hugWidth: false - Use flex with justify-between and full width</div>
+                <div className="tw-flex tw-justify-between tw-items-center tw-w-full">
+                    <Label id="label-hug-false" htmlFor="switch-hug-false">
+                        Label
+                    </Label>
+                    <Switch {...args} id="switch-hug-false" aria-labelledby="label-hug-false" />
+                </div>
+            </div>
+        </div>
+    ),
+    decorators: [],
+    parameters: {
+        docs: {
+            description: {
+                story: 'The Switch component does not have a `hugWidth` prop. Instead, control the layout using flex container styles. When `hugWidth: true`, use a flex container with a small gap. When `hugWidth: false`, use a flex container with `justify-between` and full width.',
+            },
+        },
+    },
 };

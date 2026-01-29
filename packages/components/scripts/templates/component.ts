@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { toCamelCase, toKebabCase } from '../transforms';
+import { toKebabCase } from '../transforms';
 import { type ComponentFileBuilderResponse } from '../types';
 
 export const Setup = (componentName: string): ComponentFileBuilderResponse => ({
@@ -8,13 +8,13 @@ export const Setup = (componentName: string): ComponentFileBuilderResponse => ({
 
 import { type ReactNode } from 'react';
 
-import { ${toCamelCase(componentName)}Styles } from './styles/${toCamelCase(componentName)}Styles';
+import styles from './styles/${toKebabCase(componentName)}.module.scss';
 
 export type ${componentName}Props = { children?: ReactNode };
 
 export const ${componentName} = ({ children }: ${componentName}Props) => {
     return (
-        <div className={${toCamelCase(componentName)}Styles()} data-test-id="fondue-${toKebabCase(componentName)}">
+        <div className={styles.root} data-test-id="fondue-${toKebabCase(componentName)}">
             {children}
         </div>
     );

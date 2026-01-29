@@ -1,9 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconDocument } from '@frontify/fondue-icons';
 import { type Meta } from '@storybook/react-vite';
 import { useEffect, useState } from 'react';
 
-import { Container } from '@components/Container';
+import { Container } from '@components/Container/Container';
 import {
     TreeItemBorderClassMap,
     TreeItemBorderRadiusClassMap,
@@ -14,14 +15,20 @@ import {
     Tree as TreeView,
 } from '@components/Tree';
 import { type TreeItemStyling, type TreeNodeWithoutElements, type TreeProps } from '@components/Tree/types';
-import { type TreeItemMockMultiselect, treeItemsMockMultiseclect } from '@components/Tree/utils';
-import IconDocument from '@foundation/Icon/Generated/IconDocument';
+import {
+    type TreeItemMockMultiselect,
+    treeItemsMockMultiseclect as treeItemsMockMultiselect,
+} from '@components/Tree/utils';
 
 import { TreeItemMultiselect } from './TreeItem/TreeItemMultiselect';
 import { getNewSelectedItems } from './helpers';
 
+/**
+ ### *Legacy component warning*
+ #### This is a unmaintained legacy component. It will be deprecated and replaced with a new component in an upcoming release.
+ */
 export default {
-    title: 'Components/Tree/Multiselect',
+    title: 'Legacy Components/Tree/Multiselect',
     component: TreeView,
     tags: ['autodocs'],
     parameters: {
@@ -146,7 +153,8 @@ export const MultiselectWithBasicItem = ({ ...args }: TreeProps) => {
     const [treeItems, setTreeItems] = useState<TreeItemMockMultiselect[]>([]);
 
     useEffect(() => {
-        setTreeItems(treeItemsMockMultiseclect);
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setTreeItems(treeItemsMockMultiselect);
     }, []);
 
     const handleItemSelected = (id: string, ignoreRemoveSelected = false, nodes: TreeNodeWithoutElements[] = []) => {

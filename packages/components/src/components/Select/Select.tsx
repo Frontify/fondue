@@ -74,6 +74,10 @@ export type SelectComponentProps = {
      * @default 'compact'
      */
     viewportCollisionPadding?: SelectMenuViewportCollisionPadding;
+    /**
+     * Event handler called when the escape key is pressed.
+     */
+    onEscapeKeyDown?: (event: KeyboardEvent) => void;
 } & CommonAriaProps;
 
 export const SelectInput = (
@@ -91,6 +95,7 @@ export const SelectInput = (
         showStringValue = true,
         'data-test-id': dataTestId = 'fondue-select',
         viewportCollisionPadding = 'compact',
+        onEscapeKeyDown,
         ...props
     }: SelectComponentProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
@@ -153,7 +158,8 @@ export const SelectInput = (
                     data-test-id={dataTestId}
                     {...(disabled
                         ? {}
-                        : getToggleButtonProps({
+                        : // eslint-disable-next-line react-hooks/refs
+                          getToggleButtonProps({
                               'aria-label': 'aria-label' in props ? props['aria-label'] : undefined,
                               ref: forwardedRef,
                           }))}
@@ -200,6 +206,7 @@ export const SelectInput = (
                 selectedItem={selectedItem}
                 hasInteractedSinceOpening={hasInteractedSinceOpening}
                 viewportCollisionPadding={viewportCollisionPadding}
+                onEscapeKeyDown={onEscapeKeyDown}
             >
                 {menuSlots}
             </SelectMenu>

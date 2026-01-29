@@ -1,12 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconCalendar, IconCaretDown, IconCaretUp } from '@frontify/fondue-icons';
 import { forwardRef } from 'react';
 
-import { TextInput } from '@components/TextInput';
-import IconCalendar from '@foundation/Icon/Generated/IconCalendar';
-import IconCaretDown from '@foundation/Icon/Generated/IconCaretDown';
-import IconCaretUp from '@foundation/Icon/Generated/IconCaretUp';
-import { IconSize } from '@foundation/Icon/IconSize';
+import { TextInput } from '@components/TextInput/TextInput';
 import { merge } from '@utilities/merge';
 import { Validation } from '@utilities/validation';
 
@@ -70,7 +67,7 @@ export const DatePickerTrigger = forwardRef<HTMLDivElement, DatePickerTriggerPro
                         carrotRightSideTWPositionClass,
                     ])}
                 >
-                    {isCalendarOpen ? <IconCaretUp size={IconSize.Size20} /> : <IconCaretDown size={IconSize.Size20} />}
+                    {isCalendarOpen ? <IconCaretUp size={20} /> : <IconCaretDown size={20} />}
                 </div>
                 <div
                     className={merge([

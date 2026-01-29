@@ -7,9 +7,13 @@ import { type MutableRefObject, type Ref, type RefCallback } from 'react';
  *
  * @param classNames Array of class names
  * @returns Clean string to be used for class name
+ * @deprecated This function is deprecated and will be removed in the next major version.
  */
 export const merge = (classNames: (string | undefined | boolean)[]): string => classNames.filter(Boolean).join(' ');
 
+/**
+ * @deprecated This function is deprecated and will be removed in the next major version.
+ */
 export const mergeRefs = <T>(...inputRefs: (Ref<T> | undefined)[]): Ref<T> | RefCallback<T> => {
     const filteredInputRefs = inputRefs.filter(Boolean);
 

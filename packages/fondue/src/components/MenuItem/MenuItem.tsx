@@ -1,18 +1,19 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconCaretRight, IconCheckMark } from '@frontify/fondue-icons';
 import { useFocusRing } from '@react-aria/focus';
 import { type FocusEvent, type MouseEvent, type ReactNode } from 'react';
 
 import { MenuItemContent, type MenuItemContentProps } from '@components/MenuItem/MenuItemContent';
-import IconCaretRight from '@foundation/Icon/Generated/IconCaretRight';
-import IconCheckMark from '@foundation/Icon/Generated/IconCheckMark';
-import { IconSize } from '@foundation/Icon/IconSize';
 import { getItemElementType } from '@utilities/elements';
 import { FOCUS_STYLE_NO_OFFSET } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 
 import { MenuItemContentSize, MenuItemStyle, SelectionIndicatorIcon } from './types';
 
+/**
+ * @deprecated Use `Dropdown` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#dropdown the migration guide}.
+ */
 export type MenuItemProps = {
     style?: MenuItemStyle;
     disabled?: boolean;
@@ -33,18 +34,27 @@ export type MenuItemProps = {
     'data-test-id'?: string;
 } & Omit<MenuItemContentProps, 'iconSize'>;
 
-export const menuItemSizeClassMap: Record<MenuItemContentSize, string> = {
+/**
+ * @deprecated Use `Dropdown` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#dropdown the migration guide}.
+ */
+const menuItemSizeClassMap: Record<MenuItemContentSize, string> = {
     [MenuItemContentSize.XSmall]: 'tw-px-5 tw-py-2 tw-min-h-[36px]',
     [MenuItemContentSize.Small]: 'tw-px-5 tw-py-2.5 tw-min-h-[36px]',
     [MenuItemContentSize.Large]: 'tw-px-5 tw-py-3 tw-min-h-[60px]',
 };
 
+/**
+ * @deprecated Use `Dropdown` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#dropdown the migration guide}.
+ */
 export enum MenuItemTextColorState {
     Default = 'Default',
     Active = 'Active',
     Disabled = 'Disabled',
 }
 
+/**
+ * @deprecated Use `Dropdown` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#dropdown the migration guide}.
+ */
 export const menuItemTextColorRecord: Record<MenuItemStyle, Record<MenuItemTextColorState, string>> = {
     [MenuItemStyle.Primary]: {
         [MenuItemTextColorState.Default]: 'tw-text-text-x-weak',
@@ -63,6 +73,9 @@ export const menuItemTextColorRecord: Record<MenuItemStyle, Record<MenuItemTextC
     },
 };
 
+/**
+ * @deprecated Use `Dropdown` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#dropdown the migration guide}.
+ */
 const menuItemHoverColorRecord: Record<MenuItemStyle, string> = {
     [MenuItemStyle.Primary]: 'hover:tw-text-text',
     [MenuItemStyle.Danger]: 'hover:tw-text-text-negative',
@@ -101,7 +114,7 @@ export const MenuItem = ({
     'data-test-id': dataTestId = 'menu-item',
     type,
 }: MenuItemProps) => {
-    const currentIconSize = size === MenuItemContentSize.XSmall ? IconSize.Size16 : IconSize.Size20;
+    const currentIconSize = size === MenuItemContentSize.XSmall ? 16 : 20;
 
     const currentIcon = {
         [SelectionIndicatorIcon.CaretRight]: (

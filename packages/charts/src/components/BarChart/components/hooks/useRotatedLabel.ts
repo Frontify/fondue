@@ -53,6 +53,7 @@ export const useRotatedLabel = (
 
             const { rotationAngle, maxHeight, firstItemWidth } = getRotationAngleAndMaxHeight(ticks, columnWidth);
 
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setAngle(rotationAngle);
             updateMaxLabelHeight(maxHeight);
             updateFirstLabelOverflowsBy(firstItemWidth - columnWidth / 2);

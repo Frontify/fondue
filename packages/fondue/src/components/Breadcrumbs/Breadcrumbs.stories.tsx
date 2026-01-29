@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconIcon } from '@frontify/fondue-icons';
 import { type Meta, type StoryFn } from '@storybook/react-vite';
 import { action } from 'storybook/actions';
 
-import { BadgeStatus, BadgeStyle } from '@components/Badge';
-import IconIcon from '@foundation/Icon/Generated/IconIcon';
+import { BadgeStatus, BadgeStyle } from '@components/Badge/types';
 
 import { BreadcrumbGap, Breadcrumbs, type BreadcrumbsProps } from './Breadcrumbs';
 
@@ -17,8 +17,13 @@ const ITEMS = [
     { label: 'Item 5', link },
 ];
 
+/**
+ ### *Legacy component warning*
+ #### This is a deprecated component. It will be removed in the next major version.
+ For use in frontify `web-app`, you can use the breadcrumbs from the navigation.
+ */
 export default {
-    title: 'Components/Breadcrumbs',
+    title: 'Legacy Components/Deprecated/Breadcrumbs',
     component: Breadcrumbs,
     tags: ['autodocs'],
     args: {
@@ -45,6 +50,11 @@ export default {
             control: { type: 'boolean' },
         },
         onBlur: { action: 'onBlur' },
+    },
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
     },
 } as Meta<BreadcrumbsProps>;
 

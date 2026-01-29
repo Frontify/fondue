@@ -1,9 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconCross } from '@frontify/fondue-icons';
 import { type ReactElement, type ReactNode, cloneElement } from 'react';
 
-import IconCross from '@foundation/Icon/Generated/IconCross';
-import { IconSize } from '@foundation/Icon/IconSize';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 
@@ -11,6 +10,9 @@ import { BadgeStatusIcon } from './BadgeStatusIcon';
 import { getCircularSizeClasses, getSizeClasses, getStyleClasses } from './helpers';
 import { BadgeEmphasis, type BadgeProps, BadgeStyle } from './types';
 
+/**
+ * @deprecated Please use updated badge component from `@frontify/fondue/components` instead.
+ */
 export const Badge = ({
     children,
     status,
@@ -79,7 +81,7 @@ export const Badge = ({
                         data-test-id={`${dataTestId}-icon`}
                         className={merge(['tw-flex-none tw-leading-none', disabled && 'tw-opacity-30'])}
                     >
-                        {cloneElement(icon, { size: IconSize.Size16 })}
+                        {cloneElement(icon, { size: 16 })}
                     </span>
                 ) : null}
                 {children ? (
@@ -100,7 +102,7 @@ export const Badge = ({
                     onClick={() => onDismiss()}
                     aria-label={`Dismiss ${badgeTitle}`}
                 >
-                    <IconCross size={IconSize.Size16} />
+                    <IconCross size={16} />
                 </button>
             ) : null}
         </div>

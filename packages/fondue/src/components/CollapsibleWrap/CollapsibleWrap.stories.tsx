@@ -2,48 +2,54 @@
 
 import { type Meta, type StoryFn } from '@storybook/react-vite';
 
-import { Card } from '@components/Card';
-import { Heading } from '@typography/Heading';
-import { Text } from '@typography/Text';
-
 import { CollapsibleWrap as CollapsibleWrapComponent } from './CollapsibleWrap';
 import { type CollapsibleWrapProps } from './types';
 
+/**
+ ### *Legacy component warning*
+ #### This is a deprecated component. It will be removed in the next major version.
+ #### _**Use the [new Accordion component](/docs/current_components-accordion--documentation) instead.**_
+ */
 export default {
-    title: 'Components/Collapsible Wrap',
+    title: 'Legacy Components/Deprecated/Collapsible Wrap',
     component: CollapsibleWrapComponent,
     tags: ['autodocs'],
     args: { isOpen: true, animateOpacity: true },
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
+    },
 } as Meta<CollapsibleWrapProps>;
 
 export const CollapsibleWrap: StoryFn<CollapsibleWrapProps> = (args) => (
-    <Card>
+    <div className="tw-border tw-border-black-10 tw-rounded-md">
         <div className="tw-divide-y tw-divide-black-10">
             <div className="tw-p-3">
-                <Heading>Collapsible Wrap</Heading>
+                <h2>Collapsible Wrap</h2>
             </div>
             <CollapsibleWrapComponent {...args}>
                 <div className="tw-h-[200px] tw-p-5 tw-bg-black-5 tw-flex tw-justify-center tw-items-center tw-flex-col">
-                    <Text>I am the child content of the Collapsible Wrap Component.</Text>
-                    <Text>Toggle the open state to hide me.</Text>
+                    <p>I am the child content of the Collapsible Wrap Component.</p>
+                    <p>Toggle the open state to hide me.</p>
                 </div>
             </CollapsibleWrapComponent>
         </div>
-    </Card>
+    </div>
 );
 
 export const CollapsibleWrapNoStartingAnimation: StoryFn<CollapsibleWrapProps> = (args) => (
-    <Card>
+    <div className="tw-border tw-border-black-10 tw-rounded-md">
         <div className="tw-divide-y tw-divide-black-10">
             <div className="tw-p-3">
-                <Heading>Collapsible Wrap Without First Animation</Heading>
+                <h2>Collapsible Wrap Without First Animation</h2>
             </div>
             <CollapsibleWrapComponent {...args} preventInitialAnimation>
                 <div className="tw-h-[200px] tw-p-5 tw-bg-black-5 tw-flex tw-justify-center tw-items-center tw-flex-col">
-                    <Text>I am the child content of the Collapsible Wrap Component.</Text>
-                    <Text>Toggle the open state to hide me.</Text>
+                    <p>I am the child content of the Collapsible Wrap Component.</p>
+                    <p>Toggle the open state to hide me.</p>
                 </div>
             </CollapsibleWrapComponent>
         </div>
-    </Card>
+    </div>
 );

@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconCheckMark, IconMinus } from '@frontify/fondue-icons';
 import { useCheckbox } from '@react-aria/checkbox';
 import { useFocusRing } from '@react-aria/focus';
 import { mergeProps } from '@react-aria/utils';
@@ -16,32 +17,41 @@ import {
 } from 'react';
 
 import { InputLabel, type InputLabelTooltipProps } from '@components/InputLabel/InputLabel';
-import IconCheckMark from '@foundation/Icon/Generated/IconCheckMark';
-import IconMinus from '@foundation/Icon/Generated/IconMinus';
-import { IconSize } from '@foundation/Icon/IconSize';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 import { useForwardedRef } from '@utilities/useForwardedRef';
 
+/**
+ * @deprecated Use `Checkbox` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#checkbox the migration guide}.
+ */
 export enum CheckboxState {
     Checked = 'Checked',
     Unchecked = 'Unchecked',
     Mixed = 'Mixed',
 }
 
+/**
+ * @deprecated Use `Checkbox` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#checkbox the migration guide}.
+ */
 export enum CheckboxEmphasis {
     Default = 'Default',
     Weak = 'Weak',
     Strong = 'Strong',
 }
 
+/**
+ * @deprecated Use `Checkbox` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#checkbox the migration guide}.
+ */
 export enum CheckboxSize {
     Default = 'Default',
     Large = 'Large',
     XLarge = 'XLarge',
 }
 
+/**
+ * @deprecated Use `Checkbox` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#checkbox the migration guide}.
+ */
 export type CheckboxProps = {
     id?: string;
     state?: CheckboxState;
@@ -146,9 +156,7 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
     );
 
     const stateMap: Record<CheckboxState, ReactNode> = {
-        [CheckboxState.Checked]: (
-            <IconCheckMark size={size === CheckboxSize.XLarge ? IconSize.Size24 : IconSize.Size16} />
-        ),
+        [CheckboxState.Checked]: <IconCheckMark size={size === CheckboxSize.XLarge ? 24 : 16} />,
         [CheckboxState.Mixed]: <IconMinus />,
         [CheckboxState.Unchecked]: null,
     };
@@ -169,6 +177,7 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                   : 'tw-border tw-border-line-xx-strong',
           ]);
 
+    // eslint-disable-next-line @eslint-react/no-unnecessary-use-callback
     const checkOverflowing = useCallback(() => {
         if (labelContainer.current) {
             setIsLabelOverflowing(labelContainer.current?.scrollWidth > labelContainer.current?.clientWidth);
@@ -185,6 +194,7 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
         if ((!label && !helperText) || hideLabel) {
             return;
         }
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         checkOverflowing();
 
         window.removeEventListener('resize', checkOverflowing);

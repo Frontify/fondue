@@ -13,23 +13,6 @@ import {
     type TreeItemStyling,
 } from '../types';
 
-export const getTreeItemStyling = (itemStyle: TreeItemStyling) => {
-    const itemStyleProps = {
-        spacingY: 'none',
-        contentHight: 'single-line',
-        shadow: 'none',
-        borderRadius: 'small',
-        borderWidth: 'none',
-        borderStyle: 'none',
-        activeColorStyle: 'neutral',
-        ...itemStyle,
-    };
-
-    itemStyleProps.spacingY = itemStyleProps.spacingY || 'none';
-
-    return itemStyleProps;
-};
-
 export const getMultiselectLiClassName = (itemStyleProps: TreeItemStyling, isDisabled: boolean) => {
     const styling = TreeItemColorsClassMap[itemStyleProps.activeColorStyle ?? 'neutral'];
     return merge([

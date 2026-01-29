@@ -3,7 +3,6 @@
 import { type ReactNode, forwardRef, type ForwardedRef, type HTMLAttributeAnchorTarget } from 'react';
 
 import { type CommonAriaProps } from '#/helpers/aria';
-import { cn } from '#/utilities/styleUtilities';
 
 import styles from './styles/text.module.scss';
 
@@ -98,13 +97,15 @@ export const Text = forwardRef(
     ) => (
         <Tag
             data-test-id="text"
-            className={cn([
+            className={[
                 styles.root,
                 styles[`size-${size}`],
                 styles[`weight-${weight}`],
                 styles[boxColor ? `color-box-${boxColor}` : `color-${color}`],
                 className,
-            ])}
+            ]
+                .filter(Boolean)
+                .join(' ')}
             // @ts-expect-error ref can not be inferred properly by TS
             ref={ref}
             {...props}

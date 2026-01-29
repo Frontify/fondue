@@ -3,8 +3,6 @@
 import * as LabelPrimitive from '@radix-ui/react-label';
 import { type ForwardedRef, forwardRef, type MouseEventHandler, type ReactNode, useRef, useLayoutEffect } from 'react';
 
-import { cn } from '#/utilities/styleUtilities';
-
 import styles from './styles/label.module.scss';
 
 type LabelVariant = 'default' | 'strong';
@@ -54,7 +52,7 @@ export const LabelComponent = (
             ref={ref}
             data-required={props.required}
             data-variant={variant}
-            className={cn(styles.root, className)}
+            className={[styles.root, className].filter(Boolean).join(' ')}
             data-test-id={dataTestId}
             onClick={(event) => {
                 // Add support of Select component, Radix only allows native `select`
@@ -72,11 +70,15 @@ export const LabelComponent = (
             {...props}
         >
             {/* Hidden version with medium font weight to reserve space */}
-            <span className={`${styles.hiddenText} ${styles.contentArea}`} aria-hidden="true" ref={hiddenTextRef}>
+            <span
+                className={[styles.hiddenText, styles.contentArea].filter(Boolean).join(' ')}
+                aria-hidden="true"
+                ref={hiddenTextRef}
+            >
                 {children}
             </span>
             {/* Visible version (inherits all styling from parent) */}
-            <span className={`${styles.visibleText} ${styles.contentArea}`}>{children}</span>
+            <span className={[styles.visibleText, styles.contentArea].filter(Boolean).join(' ')}>{children}</span>
         </LabelPrimitive.Root>
     );
 };

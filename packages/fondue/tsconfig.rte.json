@@ -1,0 +1,5 @@
+{
+    "exclude": ["node_modules", "dist", "**/*.stories.tsx"],
+    "extends": "./tsconfig.json",
+    "include": ["src/subpackages/rte.ts", "src/global.d.ts"]
+}

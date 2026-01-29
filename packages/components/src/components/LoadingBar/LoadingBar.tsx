@@ -3,7 +3,7 @@
 import * as ProgressRadixPrimitive from '@radix-ui/react-progress';
 import { forwardRef, type CSSProperties, type ElementRef, type ForwardedRef } from 'react';
 
-import { loadingBarContainerStyles, loadingBarStyles } from './styles/loadingBarStyles';
+import styles from './styles/loadingBar.module.scss';
 
 export type LoadingBarProps = {
     /**
@@ -58,7 +58,10 @@ export const LoadingBar = forwardRef<ElementRef<typeof ProgressRadixPrimitive.Ro
             <ProgressRadixPrimitive.Root
                 ref={ref}
                 data-test-id={dataTestId}
-                className={loadingBarContainerStyles({ rounded, size, variant })}
+                className={styles.container}
+                data-rounded={rounded}
+                data-size={size}
+                data-variant={variant}
                 aria-busy={value !== max}
                 value={value}
                 max={max}
@@ -72,7 +75,9 @@ export const LoadingBar = forwardRef<ElementRef<typeof ProgressRadixPrimitive.Ro
                 {...props}
             >
                 <ProgressRadixPrimitive.Indicator
-                    className={loadingBarStyles({ variant, indeterminateState: value === null })}
+                    className={styles.indicator}
+                    data-variant={variant}
+                    data-indeterminate={value === null}
                 />
             </ProgressRadixPrimitive.Root>
         );

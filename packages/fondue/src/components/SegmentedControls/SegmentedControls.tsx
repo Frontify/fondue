@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type FondueIconProps } from '@frontify/fondue-icons';
 import { useFocusRing } from '@react-aria/focus';
 import { setInteractionModality } from '@react-aria/interactions';
 import { useRadio, useRadioGroup } from '@react-aria/radio';
@@ -8,27 +9,38 @@ import { useRadioGroupState, type RadioGroupState } from '@react-stately/radio';
 import { motion } from 'motion/react';
 import { forwardRef, useLayoutEffect, useMemo, useRef, useState, type ReactElement } from 'react';
 
-import { type IconProps } from '@foundation/Icon/IconProps';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 
+/**
+ * @deprecated Use `SegmentedControl` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#segmented-control the migration guide}.
+ */
 export type IconItem = {
     id: string;
-    icon: ReactElement<IconProps>;
+    icon: ReactElement<FondueIconProps>;
     value?: string;
     ariaLabel: string;
     disabled?: boolean;
 };
 
+/**
+ * @deprecated Use `SegmentedControl` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#segmented-control the migration guide}.
+ */
 export type TextOrNumberItem = {
     id: string;
     value: string | number;
     disabled?: boolean;
 };
 
+/**
+ * @deprecated Use `SegmentedControl` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#segmented-control the migration guide}.
+ */
 export type SegmentSize = 'small' | 'medium';
 
+/**
+ * @deprecated Use `SegmentedControl` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#segmented-control the migration guide}.
+ */
 export type SegmentedControlsProps = {
     id?: string;
     items: (TextOrNumberItem | IconItem)[];

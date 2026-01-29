@@ -1,0 +1,321 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+:root {
+    --base-color: /** @deprecated use updated token instead **/ var(--color-surface-default);
+    --base-color-alt: /** @deprecated use updated token instead **/ var(--color-surface-dim);
+    --body-family: /** @deprecated use updated token instead **/ var(--typography-font-family-primary);
+    --body-family-stack: /** @deprecated use updated token instead **/ var(--body-family);
+    --body-weight-name: /** @deprecated use updated token instead **/ var(--typography-font-weight-regular);
+    --body-weight-number: /** @deprecated use updated token instead **/ var(--typography-font-weight-regular);
+    --body-weight-strong-name: /** @deprecated use updated token instead **/ var(--typography-font-weight-medium);
+    --body-weight-strong-number: /** @deprecated use updated token instead **/ var(--typography-font-weight-medium);
+    --body-weight-x-strong-name: /** @deprecated use updated token instead **/ var(--typography-font-weight-bold);
+    --body-weight-x-strong-number: /** @deprecated use updated token instead **/ var(--typography-font-weight-bold);
+    --body-size-x-small: /** @deprecated use updated token instead **/ var(--typography-font-size-x-small);
+    --body-size-x-small-line-height: /** @deprecated use updated token instead **/ var(--typography-line-height-tight);
+    --body-size-small: /** @deprecated use updated token instead **/ var(--typography-font-size-small);
+    --body-size-small-line-height: /** @deprecated use updated token instead **/ var(--typography-line-height-tight);
+    --body-size-medium: /** @deprecated use updated token instead **/ var(--typography-font-size-medium);
+    --body-size-medium-line-height: /** @deprecated use updated token instead **/ var(--typography-line-height-medium);
+    --body-size-large: /** @deprecated use updated token instead **/ var(--typography-font-size-large);
+    --body-size-large-line-height: /** @deprecated use updated token instead **/ var(--typography-line-height-wide);
+    --box-neutral-color: /** @deprecated use updated token instead **/ var(--color-container-secondary-default);
+    --box-neutral-color-hover: /** @deprecated use updated token instead **/ var(--color-container-secondary-hover);
+    --box-neutral-color-pressed: /** @deprecated use updated token instead **/ var(--color-container-secondary-active);
+    --box-neutral-inverse-color: /** @deprecated use updated token instead **/ var(
+        --color-container-secondary-on-secondary-container
+    );
+    --box-neutral-inverse-color-hover: /** @deprecated use updated token instead **/ var(
+        --color-container-secondary-on-secondary-container
+    );
+    --box-neutral-inverse-color-pressed: /** @deprecated use updated token instead **/ var(
+        --color-container-secondary-on-secondary-container
+    );
+    --box-neutral-strong-color: /** @deprecated use updated token instead **/ var(--color-primary-default);
+    --box-neutral-strong-color-hover: /** @deprecated use updated token instead **/ var(--color-primary-hover);
+    --box-neutral-strong-color-pressed: /** @deprecated use updated token instead **/ var(--color-primary-active);
+    --box-neutral-strong-inverse-color: /** @deprecated use updated token instead **/ var(--color-primary-on-primary);
+    --box-neutral-strong-inverse-color-hover: /** @deprecated use updated token instead **/ var(
+        --color-primary-on-primary
+    );
+    --box-neutral-strong-inverse-color-pressed: /** @deprecated use updated token instead **/ var(
+        --color-primary-on-primary
+    );
+    --box-neutral-mighty-color: /** @deprecated use updated token instead **/ var(--color-primary-default);
+    --box-neutral-mighty-color-hover: /** @deprecated use updated token instead **/ var(--color-primary-hover);
+    --box-neutral-mighty-color-pressed: /** @deprecated use updated token instead **/ var(--color-primary-active);
+    --box-neutral-mighty-inverse-color: /** @deprecated use updated token instead **/ var(--color-primary-on-primary);
+    --box-neutral-mighty-inverse-color-hover: /** @deprecated use updated token instead **/ var(
+        --color-primary-on-primary
+    );
+    --box-neutral-mighty-inverse-color-pressed: /** @deprecated use updated token instead **/ var(
+        --color-primary-on-primary
+    );
+    --box-selected-color: /** @deprecated use updated token instead **/ var(--color-container-highlight-default);
+    --box-selected-color-hover: /** @deprecated use updated token instead **/ var(--color-container-highlight-hover);
+    --box-selected-color-pressed: /** @deprecated use updated token instead **/ var(--color-container-highlight-active);
+    --box-selected-inverse-color: /** @deprecated use updated token instead **/ var(
+        --color-container-highlight-on-highlight-container
+    );
+    --box-selected-inverse-color-hover: /** @deprecated use updated token instead **/ var(
+        --color-container-highlight-on-highlight-container
+    );
+    --box-selected-inverse-color-pressed: /** @deprecated use updated token instead **/ var(
+        --color-container-highlight-on-highlight-container
+    );
+    --box-selected-strong-color: /** @deprecated use updated token instead **/ var(--color-highlight-default);
+    --box-selected-strong-color-hover: /** @deprecated use updated token instead **/ var(--color-highlight-hover);
+    --box-selected-strong-color-pressed: /** @deprecated use updated token instead **/ var(--color-highlight-active);
+    --box-selected-strong-inverse-color: /** @deprecated use updated token instead **/ var(
+        --color-highlight-on-highlight
+    );
+    --box-selected-strong-inverse-color-hover: /** @deprecated use updated token instead **/ var(
+        --color-highlight-on-highlight
+    );
+    --box-selected-strong-inverse-color-pressed: /** @deprecated use updated token instead **/ var(
+        --color-highlight-on-highlight
+    );
+    --box-disabled-color: /** @deprecated use updated token instead **/ var(--color-container-disabled-default);
+    --box-disabled-color-inverse: /** @deprecated use updated token instead **/ var(
+        --color-container-disabled-on-disabled
+    );
+    --box-disabled-strong-color: /** @deprecated use updated token instead **/ var(--color-disabled-default);
+    --box-disabled-strong-color-inverse: /** @deprecated use updated token instead **/ var(
+        --color-disabled-on-disabled
+    );
+    --box-positive-color: /** @deprecated use updated token instead **/ var(--color-container-success-default);
+    --box-positive-color-hover: /** @deprecated use updated token instead **/ var(--color-container-success-hover);
+    --box-positive-color-pressed: /** @deprecated use updated token instead **/ var(--color-container-success-active);
+    --box-positive-inverse-color: /** @deprecated use updated token instead **/ var(
+        --color-container-success-on-success-container
+    );
+    --box-positive-inverse-color-hover: /** @deprecated use updated token instead **/ var(
+        --color-container-success-on-success-container
+    );
+    --box-positive-inverse-color-pressed: /** @deprecated use updated token instead **/ var(
+        --color-container-success-on-success-container
+    );
+    --box-positive-strong-color: /** @deprecated use updated token instead **/ var(--color-success-default);
+    --box-positive-strong-color-hover: /** @deprecated use updated token instead **/ var(--color-success-hover);
+    --box-positive-strong-color-pressed: /** @deprecated use updated token instead **/ var(--color-success-active);
+    --box-positive-strong-inverse-color: /** @deprecated use updated token instead **/ var(--color-success-on-success);
+    --box-positive-strong-inverse-color-hover: /** @deprecated use updated token instead **/ var(
+        --color-success-on-success
+    );
+    --box-positive-strong-inverse-color-pressed: /** @deprecated use updated token instead **/ var(
+        --color-success-on-success
+    );
+    --box-negative-color: /** @deprecated use updated token instead **/ var(--color-container-error-default);
+    --box-negative-color-hover: /** @deprecated use updated token instead **/ var(--color-container-error-hover);
+    --box-negative-color-pressed: /** @deprecated use updated token instead **/ var(--color-container-error-active);
+    --box-negative-inverse-color: /** @deprecated use updated token instead **/ var(
+        --color-container-error-on-error-container
+    );
+    --box-negative-inverse-color-hover: /** @deprecated use updated token instead **/ var(
+        --color-container-error-on-error-container
+    );
+    --box-negative-inverse-color-pressed: /** @deprecated use updated token instead **/ var(
+        --color-container-error-on-error-container
+    );
+    --box-negative-strong-color: /** @deprecated use updated token instead **/ var(--color-error-default);
+    --box-negative-strong-color-hover: /** @deprecated use updated token instead **/ var(--color-error-hover);
+    --box-negative-strong-color-pressed: /** @deprecated use updated token instead **/ var(--color-error-active);
+    --box-negative-strong-inverse-color: /** @deprecated use updated token instead **/ var(--color-error-on-error);
+    --box-negative-strong-inverse-color-hover: /** @deprecated use updated token instead **/ var(
+        --color-error-on-error
+    );
+    --box-negative-strong-inverse-color-pressed: /** @deprecated use updated token instead **/ var(
+        --color-error-on-error
+    );
+    --box-warning-color: /** @deprecated use updated token instead **/ var(--color-container-warning-default);
+    --box-warning-color-hover: /** @deprecated use updated token instead **/ var(--color-container-warning-hover);
+    --box-warning-color-pressed: /** @deprecated use updated token instead **/ var(--color-container-warning-active);
+    --box-warning-inverse-color: /** @deprecated use updated token instead **/ var(
+        --color-container-warning-on-warning-container
+    );
+    --box-warning-inverse-color-hover: /** @deprecated use updated token instead **/ var(
+        --color-container-warning-on-warning-container
+    );
+    --box-warning-inverse-color-pressed: /** @deprecated use updated token instead **/ var(
+        --color-container-warning-on-warning-container
+    );
+    --box-warning-strong-color: /** @deprecated use updated token instead **/ var(--color-warning-default);
+    --box-warning-strong-color-hover: /** @deprecated use updated token instead **/ var(--color-warning-hover);
+    --box-warning-strong-color-pressed: /** @deprecated use updated token instead **/ var(--color-warning-active);
+    --box-warning-strong-inverse-color: /** @deprecated use updated token instead **/ var(--color-warning-on-warning);
+    --box-warning-strong-inverse-color-hover: /** @deprecated use updated token instead **/ var(
+        --color-warning-on-warning
+    );
+    --box-warning-strong-inverse-color-pressed: /** @deprecated use updated token instead **/ var(
+        --color-warning-on-warning
+    );
+    --code-family: /** @deprecated use updated token instead **/ var(--typography-font-family-monospace);
+    --code-family-stack: /** @deprecated use updated token instead **/ var(--typography-font-family-monospace);
+    --code-weight-name: /** @deprecated use updated token instead **/ var(--typography-font-weight-regular);
+    --code-weight-number: /** @deprecated use updated token instead **/ var(--typography-font-weight-regular);
+    --code-weight-strong-name: /** @deprecated use updated token instead **/ var(--typography-font-weight-bold);
+    --code-weight-strong-number: /** @deprecated use updated token instead **/ var(--typography-font-weight-bold);
+    --code-size-small:  /** @deprecated use updated token instead **/ var(--typography-font-size-small);
+    --code-size-small-line-height:  /** @deprecated use updated token instead **/ var(--typography-line-height-tight);
+    --code-size-medium:  /** @deprecated use updated token instead **/ var(--typography-font-size-medium);
+    --code-size-medium-line-height:  /** @deprecated use updated token instead **/ var(--typography-line-height-tight);
+    --code-size-large:  /** @deprecated use updated token instead **/ var(--typography-font-size-large);
+    --code-size-large-line-height:  /** @deprecated use updated token instead **/ var(--typography-line-height-wide);
+    --focus-ring-color: /** @deprecated use updated token instead **/ var(--color-focus-default);
+    --heading-family: /** @deprecated use updated token instead **/ var(--typography-font-family-primary);
+    --heading-family-stack: /** @deprecated use updated token instead **/ var(--typography-font-family-primary);
+    --heading-weight-name: /** @deprecated use updated token instead **/ var(--typography-font-weight-medium);
+    --heading-weight-number: /** @deprecated use updated token instead **/ var(--typography-font-weight-medium);
+    --heading-weight-strong-name: /** @deprecated use updated token instead **/ var(--typography-font-weight-bold);
+    --heading-weight-strong-number: /** @deprecated use updated token instead **/ var(--typography-font-weight-bold);
+    --heading-size-medium: /** @deprecated use updated token instead **/ var(--typography-font-size-medium);
+    --heading-size-medium-line-height: /** @deprecated use updated token instead **/ var(
+        --typography-line-height-tight
+    );
+    --heading-size-large: /** @deprecated use updated token instead **/ var(--typography-font-size-large);
+    --heading-size-large-line-height: /** @deprecated use updated token instead **/ var(--typography-line-height-wide);
+    --heading-size-x-large: /** @deprecated use updated token instead **/ var(--typography-font-size-x-large);
+    --heading-size-x-large-line-height: /** @deprecated use updated token instead **/ var(
+        --typography-line-height-loose
+    );
+    --heading-size-xx-large: /** @deprecated use updated token instead **/ var(--typography-font-size-xx-large);
+    --heading-size-xx-large-line-height: /** @deprecated use updated token instead **/ var(
+        --typography-line-height-extra-loose
+    );
+    --line-color: /** @deprecated use updated token instead **/ var(--color-line-mid);
+    --line-color-weak: /** @deprecated use updated token instead **/ var(--color-line-subtle);
+    --line-color-strong: /** @deprecated use updated token instead **/ var(--color-line-strong);
+    --line-color-x-strong: /** @deprecated use updated token instead **/ var(--color-line-strong);
+    --line-color-xx-strong: /** @deprecated use updated token instead **/ var(--color-line-strong);
+    --line-color-mighty: /** @deprecated use updated token instead **/ var(--color-line-mid);
+    --line-width: /** @deprecated use updated token instead **/ var(--border-width-default);
+    --line-width-large: /** @deprecated use updated token instead **/ var(--border-width-large);
+    --overlay-color: /** @deprecated use updated token instead **/ var(--color-overlay-default);
+    --radius: /** @deprecated use updated token instead **/ var(--border-radius-medium);
+    --radius-small: /** @deprecated use updated token instead **/ var(--border-radius-small);
+    --radius-large: /** @deprecated use updated token instead **/ var(--border-radius-large);
+    --radius-x-large: /** @deprecated use updated token instead **/ var(--border-radius-x-large);
+    --shadow-matrix: /** @deprecated use updated token instead **/ var(--shadow-default);
+    --shadow-offset-x: /** @deprecated use updated token instead **/;
+    --shadow-offset-y: /** @deprecated use updated token instead **/;
+    --shadow-spread: /** @deprecated use updated token instead **/;
+    --shadow-blur: /** @deprecated use updated token instead **/;
+    --shadow-color: /** @deprecated use updated token instead **/;
+    --shadow-top-matrix: /** @deprecated use updated token instead **/ var(--shadow-default);
+    --shadow-top-offset-x: /** @deprecated use updated token instead **/;
+    --shadow-top-offset-y: /** @deprecated use updated token instead **/;
+    --shadow-top-spread: /** @deprecated use updated token instead **/;
+    --shadow-bottom-matrix: /** @deprecated use updated token instead **/ var(--shadow-default);
+    --shadow-bottom-offset-x: /** @deprecated use updated token instead **/;
+    --shadow-bottom-offset-y: /** @deprecated use updated token instead **/;
+    --shadow-bottom-spread: /** @deprecated use updated token instead **/;
+    --shadow-large-matrix: /** @deprecated use updated token instead **/ var(--shadow-default);
+    --shadow-large-offset-x: /** @deprecated use updated token instead **/;
+    --shadow-large-offset-y: /** @deprecated use updated token instead **/;
+    --shadow-large-spread: /** @deprecated use updated token instead **/;
+    --shadow-large-blur: /** @deprecated use updated token instead **/;
+    --shadow-large-color: /** @deprecated use updated token instead **/ var(--color-shadow-default);
+    --space-xxs: /** @deprecated use updated token instead **/ var(--spacing-xx-small);
+    --space-xs: /** @deprecated use updated token instead **/ var(--spacing-x-small);
+    --space-s: /** @deprecated use updated token instead **/ var(--spacing-small);
+    --space-m: /** @deprecated use updated token instead **/ var(--spacing-medium);
+    --space-l: /** @deprecated use updated token instead **/ var(--spacing-large);
+    --space-xl: /** @deprecated use updated token instead **/ var(--spacing-x-large);
+    --space-xxl: /** @deprecated use updated token instead **/ var(--spacing-xx-large);
+    --text-color: /** @deprecated use updated token instead **/ var(--color-primary-default);
+    --text-color-hover: /** @deprecated use updated token instead **/ var(--color-primary-hover);
+    --text-color-pressed: /** @deprecated use updated token instead **/ var(--color-primary-active);
+    --text-color-weak: /** @deprecated use updated token instead **/ var(--color-secondary-default);
+    --text-color-weak-hover: /** @deprecated use updated token instead **/ var(--color-secondary-hover);
+    --text-color-weak-pressed: /** @deprecated use updated token instead **/ var(--color-secondary-active);
+    --text-color-x-weak: /** @deprecated use updated token instead **/ var(--color-secondary-default);
+    --text-color-disabled: /** @deprecated use updated token instead **/ var(--color-disabled-default);
+    --text-color-negative: /** @deprecated use updated token instead **/ var(--color-error-default);
+    --text-color-negative-hover: /** @deprecated use updated token instead **/ var(--color-error-hover);
+    --text-color-negative-pressed: /** @deprecated use updated token instead **/ var(--color-error-active);
+    --text-color-positive: /** @deprecated use updated token instead **/ var(--color-success-default);
+    --text-color-positive-hover: /** @deprecated use updated token instead **/ var(--color-success-hover);
+    --text-color-positive-pressed: /** @deprecated use updated token instead **/ var(--color-success-active);
+    --text-color-warning: /** @deprecated use updated token instead **/ var(--color-warning-default);
+    --text-color-warning-hover: /** @deprecated use updated token instead **/ var(--color-warning-hover);
+    --text-color-warning-pressed: /** @deprecated use updated token instead **/ var(--color-warning-active);
+    --text-color-interactive: /** @deprecated use updated token instead **/ var(--color-highlight-default);
+    --text-color-interactive-hover: /** @deprecated use updated token instead **/ var(--color-highlight-hover);
+    --text-color-interactive-pressed: /** @deprecated use updated token instead **/ var(--color-highlight-active);
+    --button-background-color: /** @deprecated use updated token instead **/ var(--color-container-secondary-default);
+    --button-background-color-hover: /** @deprecated use updated token instead **/ var(
+        --color-container-secondary-hover
+    );
+    --button-background-color-pressed: /** @deprecated use updated token instead **/ var(
+        --color-container-secondary-active
+    );
+    --button-text-color: /** @deprecated use updated token instead **/ var(--color-primary-default);
+    --button-icon-color: /** @deprecated use updated token instead **/ var(--color-primary-default);
+    --button-border-color: /** @deprecated use updated token instead **/ var(--color-primary-default);
+    --button-negative-background-color: /** @deprecated use updated token instead **/ var(
+        --color-container-error-default
+    );
+    --button-negative-background-color-hover: /** @deprecated use updated token instead **/ var(
+        --color-container-error-hover
+    );
+    --button-negative-background-color-pressed: /** @deprecated use updated token instead **/ var(
+        --color-container-error-active
+    );
+    --button-negative-text-color: /** @deprecated use updated token instead **/ var(
+        --color-container-error-on-error-container
+    );
+    --button-negative-icon-color: /** @deprecated use updated token instead **/ var(
+        --color-container-error-on-error-container
+    );
+    --button-negative-border-color: /** @deprecated use updated token instead **/;
+    --button-positive-background-color: /** @deprecated use updated token instead **/ var(
+        --color-container-success-default
+    );
+    --button-positive-background-color-hover: /** @deprecated use updated token instead **/ var(
+        --color-container-success-hover
+    );
+    --button-positive-background-color-pressed: /** @deprecated use updated token instead **/ var(
+        --color-container-success-active
+    );
+    --button-positive-text-color: /** @deprecated use updated token instead **/ var(
+        --color-container-success-on-success-container
+    );
+    --button-positive-icon-color: /** @deprecated use updated token instead **/ var(
+        --color-container-success-on-success-container
+    );
+    --button-positive-border-color: /** @deprecated use updated token instead */;
+    --button-strong-background-color: /** @deprecated use updated token instead **/ var(--color-primary-default);
+    --button-strong-background-color-hover: /** @deprecated use updated token instead **/ var(--color-primary-hover);
+    --button-strong-background-color-pressed: /** @deprecated use updated token instead **/ var(--color-primary-active);
+    --button-strong-text-color: /** @deprecated use updated token instead **/ var(--color-primary-on-primary);
+    --button-strong-icon-color: /** @deprecated use updated token instead **/ var(--color-primary-on-primary);
+    --button-strong-border-color: /** @deprecated use updated token instead **/ var(--color-line-mid);
+    --button-strong-negative-background-color: /** @deprecated use updated token instead **/ var(--color-error-default);
+    --button-strong-negative-background-color-hover: /** @deprecated use updated token instead **/ var(
+        --color-error-hover
+    );
+    --button-strong-negative-background-color-pressed: /** @deprecated use updated token instead **/ var(
+        --color-error-active
+    );
+    --button-strong-negative-text-color: /** @deprecated use updated token instead **/ var(--color-error-on-error);
+    --button-strong-negative-icon-color: /** @deprecated use updated token instead **/ var(--color-error-on-error);
+    --button-strong-negative-border-color: /** @deprecated use updated token instead **/;
+    --button-strong-positive-background-color: /** @deprecated use updated token instead **/ var(
+        --color-success-default
+    );
+    --button-strong-positive-background-color-hover: /** @deprecated use updated token instead **/ var(
+        --color-success-hover
+    );
+    --button-strong-positive-background-color-pressed: /** @deprecated use updated token instead **/ var(
+        --color-success-active
+    );
+    --button-strong-positive-text-color: /** @deprecated use updated token instead **/ var(--color-success-on-success);
+    --button-strong-positive-icon-color: /** @deprecated use updated token instead **/ var(--color-success-on-success);
+    --button-strong-positive-border-color: /** @deprecated use updated token instead **/;
+    --button-danger-background-color: /** @deprecated use updated token instead **/ var(--color-error-default);
+    --button-danger-background-color-hover: /** @deprecated use updated token instead **/ var(--color-error-hover);
+    --button-danger-background-color-pressed: /** @deprecated use updated token instead **/ var(--color-error-active);
+    --button-danger-text-color: /** @deprecated use updated token instead **/ var(--color-error-on-error);
+    --button-danger-icon-color: /** @deprecated use updated token instead **/ var(--color-error-on-error);
+    --button-danger-border-color: /** @deprecated use updated token instead **/;
+}

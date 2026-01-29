@@ -1,13 +1,19 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
 import { type StorybookConfig } from '@storybook/react-vite';
 
 const pathPrefix = process.env.STORYBOOK_PATH_PREFIX || '/';
 
+const getAbsolutePath = (packageName: string): string => {
+    return dirname(fileURLToPath(import.meta.resolve(packageName)));
+};
+
 const config: StorybookConfig = {
-    stories: ['../stories/**/*.mdx', '../stories/**/*.stories.@(ts|tsx)'],
+    stories: ['../stories/**/*.mdx'],
     addons: [
-        '@vueless/storybook-dark-mode',
         '@storybook/addon-links',
         '@storybook/addon-a11y',
         '@etchteam/storybook-addon-status',
@@ -32,15 +38,21 @@ const config: StorybookConfig = {
     refs: (_config, { configType }) => {
         if (configType === 'DEVELOPMENT') {
             return {
-                current: {
-                    title: 'Current',
-                    url: 'http://localhost:6006',
+                tokens: {
+                    title: 'Tokens',
+                    url: 'http://localhost:6005',
                     type: 'auto-inject',
                     expanded: true,
                 },
                 icons: {
                     title: 'Icons',
                     url: 'http://localhost:6007',
+                    type: 'auto-inject',
+                    expanded: true,
+                },
+                current: {
+                    title: 'Components',
+                    url: 'http://localhost:6006',
                     type: 'auto-inject',
                     expanded: true,
                 },
@@ -56,18 +68,29 @@ const config: StorybookConfig = {
                     type: 'auto-inject',
                     expanded: true,
                 },
+                rte: {
+                    title: 'Rich Text Editor',
+                    url: 'http://localhost:6011',
+                    type: 'auto-inject',
+                    expanded: true,
+                },
             };
         }
 
         return {
-            current: {
-                title: 'Current',
-                url: `${pathPrefix}new`,
+            tokens: {
+                title: 'Tokens',
+                url: `${pathPrefix}tokens/`,
                 expanded: true,
             },
             icons: {
                 title: 'Icons',
                 url: `${pathPrefix}icons`,
+                expanded: true,
+            },
+            current: {
+                title: 'Components',
+                url: `${pathPrefix}new`,
                 expanded: true,
             },
             charts: {
@@ -80,6 +103,31 @@ const config: StorybookConfig = {
                 url: `${pathPrefix}legacy`,
                 expanded: true,
             },
+            rte: {
+                title: 'Rich Text Editor',
+                url: `${pathPrefix}rte`,
+                expanded: true,
+            },
+        };
+    },
+    viteFinal: (viteConfig) => {
+        const mdxReactShimPath = join(getAbsolutePath('@storybook/addon-docs'), 'mdx-react-shim.js');
+
+        return {
+            ...viteConfig,
+            plugins: [
+                ...(viteConfig.plugins ?? []),
+                {
+                    name: 'fix-mdx-file-imports',
+                    enforce: 'pre',
+                    resolveId(source) {
+                        if (source.startsWith('file://') && source.includes('mdx-react-shim')) {
+                            return mdxReactShimPath;
+                        }
+                        return null;
+                    },
+                },
+            ],
         };
     },
 };

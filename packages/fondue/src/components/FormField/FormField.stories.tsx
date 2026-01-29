@@ -1,20 +1,21 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconInfo, IconQuestionMark } from '@frontify/fondue-icons';
 import { type Meta, type StoryFn } from '@storybook/react-vite';
 import { useState } from 'react';
 
-import { TextInput, TextInputType } from '@components/TextInput';
-import IconInfo from '@foundation/Icon/Generated/IconInfo';
-import IconNook16 from '@foundation/Icon/Generated/IconNook16';
-import IconQuestionMark from '@foundation/Icon/Generated/IconQuestionMark';
+import { TextInput, TextInputType } from '@components/TextInput/TextInput';
 import { Validation } from '@utilities/validation';
-
-import { NumberInput } from '../NumberInput';
 
 import { FormField, type FormFieldProps } from './FormField';
 
+/**
+ ### *Legacy component warning*
+ #### This is a deprecated component. It will be removed in the next major version.
+ For use in frontify `web-app`, you can use the common `Form` components.
+ */
 export default {
-    title: 'Components/FormField',
+    title: 'Legacy Components/Deprecated/FormField',
     component: FormField,
     tags: ['autodocs'],
     argTypes: {
@@ -76,18 +77,27 @@ export default {
             control: { type: 'boolean' },
         },
     },
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
+    },
     args: {
         error: false,
     },
 } as Meta<FormFieldProps>;
 
 export const Default: StoryFn<FormFieldProps> = (args) => {
-    const [currentValue, setCurrentValue] = useState<number | string | undefined>(undefined);
-    const handleChange = (value?: number) => {
-        args.error = value ? value < 0 : false;
+    const [currentValue, setCurrentValue] = useState<string>('');
+    const handleChange = (value: string) => {
+        const numValue = parseFloat(value);
+        // eslint-disable-next-line react-hooks/immutability
+        args.error = !Number.isNaN(numValue) && numValue < 0;
         setCurrentValue(value);
     };
-    const currentValidation = args.error ? Validation.Error : Validation.Success;
+    const numValue = parseFloat(currentValue);
+    const currentValidation =
+        !isNaN(numValue) && numValue >= 0 ? Validation.Success : args.error ? Validation.Error : Validation.Default;
     return (
         <FormField
             {...args}
@@ -96,16 +106,13 @@ export const Default: StoryFn<FormFieldProps> = (args) => {
                 secondaryLabel: '1/10',
                 required: true,
             }}
-            errorText={'Value must be greater and 0.'}
-            status={isNaN(Number(currentValue)) ? Validation.Default : currentValidation}
+            errorText={'Value must be greater than 0.'}
+            status={currentValidation}
         >
-            <NumberInput
-                controls
-                stepInterval={20}
-                clearable
+            <TextInput
+                type={TextInputType.Text}
                 onChange={handleChange}
-                suffix="px"
-                decorator={<IconNook16 />}
+                value={currentValue}
                 placeholder="Enter a number..."
             />
         </FormField>
@@ -136,6 +143,7 @@ export const WithError: StoryFn<FormFieldProps> = (args) => {
     const handleChange = (value: string) => {
         if (value.length > 0) {
             setCurrentValue(value);
+            // eslint-disable-next-line react-hooks/immutability
             args.error = !/^a+$/.test(value);
         } else {
             setCurrentValue('');

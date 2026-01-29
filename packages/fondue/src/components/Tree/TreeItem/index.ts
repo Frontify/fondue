@@ -3,6 +3,6 @@
 export * from './DragHandle';
 export * from './ExpandButton';
 export * from './TreeItem';
-export * from './TreeItemOverlay';
-export * from './useTreeItem';
 export * from './TreeItemMultiselect';
+export { TreeItemOverlay } from './TreeItemOverlay';
+export * from './useTreeItem';

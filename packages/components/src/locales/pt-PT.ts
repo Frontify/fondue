@@ -20,4 +20,5 @@ export const ptPT: Translations = {
     Table_sortDescending: 'Ordenar descendente',
     Table_sortAscending: 'Ordenar ascendente',
     Badge_dismiss: 'Fechar ${label}',
+    Notice_dismiss: 'Fechar aviso',
 };

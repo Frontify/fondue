@@ -5,11 +5,10 @@ import { type StorybookConfig } from '@storybook/react-vite';
 const productionPathPrefix = process.env.STORYBOOK_PATH_PREFIX ? `${process.env.STORYBOOK_PATH_PREFIX}legacy/` : '/';
 
 export default {
-    stories: ['../src/**/*.mdx', '../src/**/*.stories.@(ts|tsx)'],
+    stories: ['../src/**/*.stories.@(ts|tsx)'],
     staticDirs: ['assets'],
     addons: [
         '@etchteam/storybook-addon-status',
-        '@vueless/storybook-dark-mode',
         '@storybook/addon-links',
         '@storybook/addon-a11y',
         '@storybook/addon-docs',

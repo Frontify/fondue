@@ -1,0 +1,134 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+@use '../../../utilities/sizeToken.module.scss';
+@use '../../../utilities/focusStyle.module.scss';
+@use '../../../utilities/transitions.module.scss';
+
+.root {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background-color: var(--color-surface-default);
+    color: white;
+    border-radius: var(--border-radius-medium);
+    border: 1px solid var(--color-line-mid);
+    box-sizing: border-box;
+
+    @include transitions.transition-colors;
+    @include focusStyle.focus-outline;
+
+    &:enabled:hover:not([data-readonly='true']) {
+        border-color: var(--color-line-strong);
+    }
+
+    &[data-state='checked'],
+    &[data-state='indeterminate'] {
+        border-color: transparent;
+    }
+
+    &[data-readonly='true'] {
+        pointer-events: none;
+    }
+
+    // Size variants
+    &[data-size='default'] {
+        width: #{sizeToken.get(4)};
+        height: #{sizeToken.get(4)};
+    }
+
+    &[data-size='large'] {
+        width: #{sizeToken.get(5)};
+        height: #{sizeToken.get(5)};
+    }
+
+    // Emphasis: default (highlight colors)
+    &[data-emphasis='default'] {
+        &[data-state='checked'],
+        &[data-state='indeterminate'] {
+            background-color: var(--color-highlight-default);
+
+            &:enabled:hover:not([data-readonly='true']) {
+                background-color: var(--color-highlight-hover);
+                border-color: transparent;
+            }
+
+            &:enabled:active {
+                background-color: var(--color-highlight-active);
+            }
+        }
+    }
+
+    // Emphasis: weak (primary colors)
+    &[data-emphasis='weak'] {
+        &[data-state='checked'],
+        &[data-state='indeterminate'] {
+            background-color: var(--color-primary-default);
+
+            &:enabled:hover:not([data-readonly='true']) {
+                background-color: var(--color-primary-hover);
+                border-color: transparent;
+            }
+
+            &:enabled:active {
+                background-color: var(--color-primary-active);
+            }
+        }
+    }
+
+    &:disabled {
+        border-color: var(--color-disabled-default);
+        background-color: var(--color-surface-default);
+        cursor: not-allowed;
+
+        &[data-state='checked'],
+        &[data-state='indeterminate'] {
+            border-color: transparent;
+            background-color: var(--color-disabled-default);
+        }
+    }
+
+    // Error state
+    &[data-status='error'] {
+        border-color: var(--color-error-default);
+
+        &:enabled:hover:not([data-readonly='true']) {
+            border-color: var(--color-error-default);
+        }
+    }
+}
+
+.indicator {
+    position: absolute;
+    inset: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: currentcolor;
+    opacity: 0;
+
+    @include transitions.transition-opacity;
+
+    &[data-state='checked'],
+    &[data-state='indeterminate'] {
+        opacity: 1;
+    }
+}
+
+.icon {
+    display: none;
+    opacity: 0;
+
+    @include transitions.transition-opacity;
+
+    .indicator[data-state='indeterminate'] &.iconIndeterminate {
+        display: block;
+        opacity: 1;
+    }
+
+    .indicator[data-state='checked'] &.iconChecked {
+        display: block;
+        opacity: 1;
+    }
+}

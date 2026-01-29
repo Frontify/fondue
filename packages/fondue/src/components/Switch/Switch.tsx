@@ -7,13 +7,16 @@ import { InputLabel, type InputLabelTooltipProps } from '@components/InputLabel/
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
-export const SWITCH_ID = 'switch-container';
 
+/**
+ * @deprecated Use `Switch` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#switch the migration guide}.
+ */
 export type SwitchSize = 'small' | 'medium';
 
+/**
+ * @deprecated Use `Switch` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#switch the migration guide}.
+ */
 export type SwitchMode = 'on' | 'off' | 'indeterminate';
-
-export type SwitchLabelStyle = 'default' | 'heading';
 
 const trackSizeClasses: Record<SwitchSize, string> = {
     small: 'tw-w-[22px] tw-h-3',
@@ -33,8 +36,11 @@ const dotSizeClasses: Record<SwitchSize, Record<'dimensions' | 'activeWidth' | '
     },
 };
 
-const indeterminateLineClasses = 'tw-w-2 tw-h-[1px]';
+const indeterminateLineClasses = 'tw-w-2 tw-h-px';
 
+/**
+ * @deprecated Use `Switch` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#switch the migration guide}.
+ */
 export type SwitchProps = {
     id?: string;
     mode?: SwitchMode;

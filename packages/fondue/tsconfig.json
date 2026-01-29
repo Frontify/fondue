@@ -21,24 +21,28 @@
         "skipLibCheck": true,
         "strict": true,
         "target": "esnext",
-        "types": ["cypress", "cypress-real-events", "vite/client", "node"]
+        "types": ["vite/client", "node"]
     },
     "exclude": ["node_modules", "dist"],
     "include": [
         ".storybook",
         "eslint.config.mjs",
         "postcss.config.cjs",
-        "cypress.config.ts",
         "src",
-        "cypress",
         "scripts",
         "vite.config.ts",
         "tailwind.config.js",
         "components.vite.config.ts",
         "charts.vite.config.ts",
         "icons.vite.config.ts",
-        "tailwind.config.ts",
-        "tokens.vite.config.ts"
+        "rte.vite.config.ts",
+        "tailwind.config.js",
+        "legacyComponents.tailwind.config.ts",
+        "tokens.vite.config.ts",
+        "codemod.vite.config.ts",
+        "internal-tools.vite.config.ts",
+        "legacyTokens",
+        "tools"
     ],
     "ts-node": {
         "files": true

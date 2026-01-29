@@ -1,17 +1,23 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { toCamelCase } from '../../transforms';
 import { type ComponentFileBuilderResponse } from '../../types';
 
-export const Setup = (componentName: string): ComponentFileBuilderResponse => ({
+export const Setup = (): ComponentFileBuilderResponse => ({
     content: `/* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { sv } from '#/utilities/styleUtilities';
+.root {
+    display: block;
 
-export const ${toCamelCase(componentName)}Styles = sv({
-    base: 'tw-block',
-});
+    // Example variant using data attributes
+    // &[data-variant='primary'] {
+    //     color: var(--color-primary-default);
+    // }
+    //
+    // &[data-size='large'] {
+    //     font-size: var(--typography-font-size-large);
+    // }
+}
 `,
-    extension: 'Styles.ts',
+    extension: `.module.scss`,
     subdirectory: 'styles',
 });

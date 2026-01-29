@@ -2,11 +2,7 @@
 
 import { forwardRef, type ForwardedRef, type MouseEvent, type ReactNode } from 'react';
 
-import { cn } from '#/utilities/styleUtilities';
-
-import { buttonStyles } from './styles/buttonStyles';
-import { iconStyles } from './styles/iconStyles';
-import { textStyles } from './styles/textStyles';
+import styles from './styles/button.module.scss';
 
 type ButtonRounding = 'medium' | 'full';
 
@@ -71,8 +67,11 @@ export const Button = forwardRef<HTMLButtonElement | null, ButtonProps>(
         {
             children,
             type = 'button',
-            variant,
+            variant = 'default',
             size = 'medium',
+            emphasis = 'strong',
+            rounding = 'medium',
+            aspect = 'default',
             form,
             'data-test-id': dataTestId = 'fondue-button',
             className = '',
@@ -88,12 +87,13 @@ export const Button = forwardRef<HTMLButtonElement | null, ButtonProps>(
                 type={type}
                 form={form}
                 data-test-id={dataTestId}
-                className={cn(
-                    buttonStyles({ size, variant, hugWidth, ...props }),
-                    textStyles({ variant, ...props }),
-                    iconStyles({ variant, ...props }),
-                    className,
-                )}
+                className={[styles.root, className].filter(Boolean).join(' ')}
+                data-variant={variant}
+                data-size={size}
+                data-emphasis={emphasis}
+                data-rounding={rounding}
+                data-aspect={aspect}
+                data-hug-width={String(hugWidth)}
                 {...props}
                 onClick={(event) => {
                     // @ts-expect-error - Allows other components who use Button as a trigger to pass an action

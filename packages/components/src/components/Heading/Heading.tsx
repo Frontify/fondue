@@ -3,7 +3,6 @@
 import { type ElementType, type ForwardedRef, forwardRef, type ReactNode } from 'react';
 
 import { type CommonAriaProps } from '#/helpers/aria';
-import { cn } from '#/utilities/styleUtilities';
 
 import styles from './styles/heading.module.scss';
 
@@ -52,13 +51,15 @@ export const Heading = forwardRef(
     ) => {
         return (
             <Tag
-                className={cn([
+                className={[
                     styles.root,
                     styles[`size-${size}`],
                     styles[`weight-${weight}`],
                     styles[`color-${color}`],
                     className,
-                ])}
+                ]
+                    .filter(Boolean)
+                    .join(' ')}
                 role={role}
                 aria-label={ariaLabel}
                 aria-hidden={ariaHidden}

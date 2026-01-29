@@ -4,6 +4,9 @@ import { type HTMLAttributes, type ReactNode, forwardRef } from 'react';
 
 import { merge } from '@utilities/merge';
 
+/**
+ * @deprecated Use `Dropdown` from `@frontify/fondue/components` instead.
+ */
 export type AriaListProps = {
     ariaProps: HTMLAttributes<HTMLElement>;
     border?: boolean;
@@ -11,6 +14,9 @@ export type AriaListProps = {
     scrollable?: boolean;
 };
 
+/**
+ * @deprecated Use `Dropdown` from `@frontify/fondue/components` instead.
+ */
 export const AriaList = forwardRef<HTMLUListElement | null, AriaListProps>(
     ({ ariaProps, children, scrollable = false, border = true }, ref) => (
         <ul

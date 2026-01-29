@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconExclamationMarkTriangle } from '@frontify/fondue-icons';
 import { useFocusRing } from '@react-aria/focus';
 import {
     type AriaAttributes,
@@ -13,8 +14,7 @@ import {
 } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 
-import { LoadingCircle, LoadingCircleSize } from '@components/LoadingCircle';
-import IconExclamationMarkTriangle from '@foundation/Icon/Generated/IconExclamationMarkTriangle';
+import { LoadingCircle, LoadingCircleSize } from '@components/LoadingCircle/LoadingCircle';
 import { useMemoizedId } from '@hooks/useMemoizedId';
 import { FOCUS_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';

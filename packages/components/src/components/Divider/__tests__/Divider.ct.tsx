@@ -10,91 +10,103 @@ test('should render without error', async ({ mount }) => {
 });
 
 test('should render with data-test-id', async ({ mount }) => {
-    const component = await mount(<Divider data-test-id="test-id" />);
-    await expect(component).toHaveAttribute('data-test-id', 'test-id');
+    const wrapper = await mount(<Divider data-test-id="test-id" />);
+    const component = wrapper.getByTestId('test-id');
+    await expect(component).toBeVisible();
 });
 
 test('should render with custom classname', async ({ mount }) => {
-    const component = await mount(<Divider className="tw-h-96" />);
+    const wrapper = await mount(<Divider className="tw-h-96" data-test-id="divider-root" />);
+    const component = wrapper.getByTestId('divider-root');
     await expect(component).toHaveClass(/tw-h-96/);
 });
 
 test('should render with style solid', async ({ mount }) => {
-    const component = await mount(<Divider variant="solid" />);
-    await expect(component).toHaveClass(/tw-border-solid/);
+    const wrapper = await mount(<Divider variant="solid" data-test-id="divider-root" />);
+    const component = wrapper.getByTestId('divider-root');
+    await expect(component).toHaveAttribute('data-variant', 'solid');
 });
 
 test('should render with style dashed', async ({ mount }) => {
-    const component = await mount(<Divider variant="dashed" />);
-    await expect(component).toHaveClass(/tw-border-dashed/);
+    const wrapper = await mount(<Divider variant="dashed" data-test-id="divider-root" />);
+    const component = wrapper.getByTestId('divider-root');
+    await expect(component).toHaveAttribute('data-variant', 'dashed');
 });
 
 test('should render with style noline', async ({ mount }) => {
-    const component = await mount(<Divider variant="noline" />);
-    await expect(component).toHaveClass(/tw-border-none/);
+    const wrapper = await mount(<Divider variant="noline" data-test-id="divider-root" />);
+    const component = wrapper.getByTestId('divider-root');
+    await expect(component).toHaveAttribute('data-variant', 'noline');
 });
 
 test('should render with color weak', async ({ mount }) => {
-    const component = await mount(<Divider color="weak" />);
-    await expect(component).toHaveClass(/tw-border-line-weak/);
+    const wrapper = await mount(<Divider color="weak" data-test-id="divider-root" />);
+    const component = wrapper.getByTestId('divider-root');
+    await expect(component).toHaveAttribute('data-color', 'weak');
 });
 
 test('should render with color default', async ({ mount }) => {
-    const component = await mount(<Divider color="default" />);
-    await expect(component).toHaveClass(/tw-border-line /);
+    const wrapper = await mount(<Divider color="default" data-test-id="divider-root" />);
+    const component = wrapper.getByTestId('divider-root');
+    await expect(component).toHaveAttribute('data-color', 'default');
 });
 
 test('should render with color strong', async ({ mount }) => {
-    const component = await mount(<Divider color="strong" />);
-    await expect(component).toHaveClass(/tw-border-line-strong/);
-});
-
-test('should render with color x-strong', async ({ mount }) => {
-    const component = await mount(<Divider color="x-strong" />);
-    await expect(component).toHaveClass(/tw-border-line-x-strong/);
+    const wrapper = await mount(<Divider color="strong" data-test-id="divider-root" />);
+    const component = wrapper.getByTestId('divider-root');
+    await expect(component).toHaveAttribute('data-color', 'strong');
 });
 
 test('should render with direction vertical', async ({ mount }) => {
-    const component = await mount(<Divider direction="vertical" />);
-    await expect(component).toHaveClass(/tw-border-e/);
+    const wrapper = await mount(<Divider direction="vertical" data-test-id="divider-root" />);
+    const component = wrapper.getByTestId('divider-root');
+    await expect(component).toHaveAttribute('data-orientation', 'vertical');
 });
 
 test('should render with padding none horizontal', async ({ mount }) => {
-    const component = await mount(<Divider padding="none" />);
-    await expect(component).not.toHaveClass(/tw-my-/);
+    const wrapper = await mount(<Divider padding="none" data-test-id="divider-root" />);
+    const component = wrapper.getByTestId('divider-root');
+    await expect(component).toHaveAttribute('data-padding', 'none');
 });
 
 test('should render with padding none vertical', async ({ mount }) => {
-    const component = await mount(<Divider direction="vertical" padding="none" />);
-    await expect(component).not.toHaveClass(/tw-mx-/);
+    const wrapper = await mount(<Divider direction="vertical" padding="none" data-test-id="divider-root" />);
+    const component = wrapper.getByTestId('divider-root');
+    await expect(component).toHaveAttribute('data-padding', 'none');
 });
 
 test('should render with padding small horizontal', async ({ mount }) => {
-    const component = await mount(<Divider padding="small" />);
-    await expect(component).toHaveClass(/tw-my-4/);
+    const wrapper = await mount(<Divider padding="small" data-test-id="divider-root" />);
+    const component = wrapper.getByTestId('divider-root');
+    await expect(component).toHaveAttribute('data-padding', 'small');
 });
 
 test('should render with padding small vertical', async ({ mount }) => {
-    const component = await mount(<Divider direction="vertical" padding="small" />);
-    await expect(component).toHaveClass(/tw-mx-4/);
+    const wrapper = await mount(<Divider direction="vertical" padding="small" data-test-id="divider-root" />);
+    const component = wrapper.getByTestId('divider-root');
+    await expect(component).toHaveAttribute('data-padding', 'small');
 });
 
 test('should render with padding medium horizontal', async ({ mount }) => {
-    const component = await mount(<Divider padding="medium" />);
-    await expect(component).toHaveClass(/tw-my-7/);
+    const wrapper = await mount(<Divider padding="medium" data-test-id="divider-root" />);
+    const component = wrapper.getByTestId('divider-root');
+    await expect(component).toHaveAttribute('data-padding', 'medium');
 });
 
 test('should render with padding medium vertical', async ({ mount }) => {
-    const component = await mount(<Divider direction="vertical" padding="medium" />);
-    await expect(component).toHaveClass(/tw-mx-7/);
+    const wrapper = await mount(<Divider direction="vertical" padding="medium" data-test-id="divider-root" />);
+    const component = wrapper.getByTestId('divider-root');
+    await expect(component).toHaveAttribute('data-padding', 'medium');
 });
 
 test('should render with padding large horizontal', async ({ mount }) => {
-    const component = await mount(<Divider padding="large" />);
-    await expect(component).toHaveClass(/tw-my-12/);
+    const wrapper = await mount(<Divider padding="large" data-test-id="divider-root" />);
+    const component = wrapper.getByTestId('divider-root');
+    await expect(component).toHaveAttribute('data-padding', 'large');
 });
 
 test('should render with padding large vertical', async ({ mount }) => {
-    const component = await mount(<Divider direction="vertical" padding="large" />);
-    await expect(component).toHaveClass(/tw-mx-12/);
+    const wrapper = await mount(<Divider direction="vertical" padding="large" data-test-id="divider-root" />);
+    const component = wrapper.getByTestId('divider-root');
+    await expect(component).toHaveAttribute('data-padding', 'large');
 });

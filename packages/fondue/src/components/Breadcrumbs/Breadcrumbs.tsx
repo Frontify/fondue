@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type FondueIconProps } from '@frontify/fondue-icons';
 import { type AriaBreadcrumbsProps, useBreadcrumbs } from '@react-aria/breadcrumbs';
 import { type MouseEvent, type ReactElement } from 'react';
 
-import { type BadgeProps } from '@components/Badge';
-import { type IconProps } from '@foundation/Icon/IconProps';
+import { type BadgeProps } from '@components/Badge/types';
 import { merge } from '@utilities/merge';
 
 import { FormattedBreadcrumbs } from './FormattedBreadcrumbs';
@@ -17,16 +17,22 @@ const mapBreadcrumbsToAriaProps = (items: Breadcrumb[]) => ({
     )),
 });
 
+/**
+ * @deprecated This type is deprecated and will be removed in the next major version.
+ */
 export type Breadcrumb = {
     label: string;
     link?: string;
     onClick?: <T extends HTMLButtonElement | HTMLAnchorElement>(event: MouseEvent<T>) => void;
-    decorator?: ReactElement<IconProps>;
+    decorator?: ReactElement<FondueIconProps>;
     bold?: boolean;
     badges?: BadgeProps[];
     'data-test-id'?: string;
 } & Pick<BreadcrumbsProps, 'activeInline'>;
 
+/**
+ * @deprecated This type is deprecated and will be removed in the next major version.
+ */
 export type BreadcrumbsProps = {
     items: Breadcrumb[];
     keepRoot?: boolean;
@@ -36,18 +42,27 @@ export type BreadcrumbsProps = {
     verticalGap?: BreadcrumbGap;
 };
 
+/**
+ * @deprecated This type is deprecated and will be removed in the next major version.
+ */
 export enum BreadcrumbGap {
     None = 'None',
     Small = 'Small',
     Medium = 'Medium',
 }
 
-export const verticalGapClassMap: Record<BreadcrumbGap, string> = {
+/**
+ * @deprecated This constant is deprecated and will be removed in the next major version.
+ */
+const verticalGapClassMap: Record<BreadcrumbGap, string> = {
     [BreadcrumbGap.None]: 'tw-gap-y-0',
     [BreadcrumbGap.Small]: 'tw-gap-y-0.5',
     [BreadcrumbGap.Medium]: 'tw-gap-y-1',
 };
 
+/**
+ * @deprecated This component is deprecated and will be removed in the next major version.
+ */
 export const Breadcrumbs = ({
     items,
     keepRoot = true,

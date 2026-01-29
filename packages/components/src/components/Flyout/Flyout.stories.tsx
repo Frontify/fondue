@@ -10,6 +10,7 @@ import { Flyout, FlyoutBody, FlyoutContent, FlyoutFooter, FlyoutHeader, FlyoutRo
 
 type Story = StoryObj<typeof meta>;
 const meta: Meta<typeof FlyoutContent> = {
+    title: 'Components/Flyout',
     component: FlyoutContent,
     subcomponents: {
         'Flyout.Root': FlyoutRoot,
@@ -209,7 +210,7 @@ export const WithCustomContent: Story = {
                     <Button>Open flyout</Button>
                 </Flyout.Trigger>
                 <Flyout.Content {...args}>
-                    <div className="tw-bg-box-neutral tw-p-10">This is FlyoutContent</div>
+                    <div className="tw-bg-container-secondary tw-p-10">This is FlyoutContent</div>
                 </Flyout.Content>
             </Flyout.Root>
         );
@@ -426,6 +427,53 @@ export const SpaciousViewportCollisionPadding: Story = {
                 </Flyout.Trigger>
                 <Flyout.Content {...args}>
                     <Flyout.Body {...args} />
+                </Flyout.Content>
+            </Flyout.Root>
+        );
+    },
+};
+
+export const OnEscapeKeyDown: Story = {
+    render: ({ ...args }) => {
+        return (
+            <Flyout.Root>
+                <Flyout.Trigger>
+                    <Button>Open flyout</Button>
+                </Flyout.Trigger>
+                <Flyout.Content
+                    {...args}
+                    onEscapeKeyDown={() => {
+                        alert('Escape key was pressed!');
+                    }}
+                >
+                    <Flyout.Header>Flyout with onEscapeKeyDown</Flyout.Header>
+                    <Flyout.Body>
+                        This flyout will show an alert when you press the Escape key, then close normally.
+                    </Flyout.Body>
+                </Flyout.Content>
+            </Flyout.Root>
+        );
+    },
+};
+
+export const PreventCloseOnEscape: Story = {
+    render: ({ ...args }) => {
+        return (
+            <Flyout.Root>
+                <Flyout.Trigger>
+                    <Button>Open flyout</Button>
+                </Flyout.Trigger>
+                <Flyout.Content
+                    {...args}
+                    onEscapeKeyDown={(event) => {
+                        event.preventDefault();
+                        alert('Escape key pressed, but flyout will not close!');
+                    }}
+                >
+                    <Flyout.Header showCloseButton>Flyout preventing close on Escape</Flyout.Header>
+                    <Flyout.Body>
+                        This flyout prevents closing when Escape is pressed. You must use the close button to close it.
+                    </Flyout.Body>
                 </Flyout.Content>
             </Flyout.Root>
         );

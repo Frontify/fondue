@@ -1,0 +1,2076 @@
+{
+  "colors": {
+    "charts": {
+      "dim": {
+        "default": {
+          "name": "color-charts-dim-default",
+          "type": "color",
+          "value": "var(--color-charts-dim-default)",
+          "path": [
+            "light",
+            "color",
+            "charts",
+            "dim",
+            "default"
+          ]
+        }
+      },
+      "missing": {
+        "default": {
+          "name": "color-charts-missing-default",
+          "type": "color",
+          "value": "var(--color-charts-missing-default)",
+          "path": [
+            "light",
+            "color",
+            "charts",
+            "missing",
+            "default"
+          ]
+        }
+      },
+      "negative": {
+        "default": {
+          "name": "color-charts-negative-default",
+          "type": "color",
+          "value": "var(--color-charts-negative-default)",
+          "path": [
+            "light",
+            "color",
+            "charts",
+            "negative",
+            "default"
+          ]
+        },
+        "hover": {
+          "name": "color-charts-negative-hover",
+          "type": "color",
+          "value": "var(--color-charts-negative-hover)",
+          "path": [
+            "light",
+            "color",
+            "charts",
+            "negative",
+            "hover"
+          ]
+        },
+        "subtle": {
+          "name": "color-charts-negative-subtle",
+          "type": "color",
+          "value": "var(--color-charts-negative-subtle)",
+          "path": [
+            "light",
+            "color",
+            "charts",
+            "negative",
+            "subtle"
+          ]
+        }
+      },
+      "primary": {
+        "default": {
+          "name": "color-charts-primary-default",
+          "type": "color",
+          "value": "var(--color-charts-primary-default)",
+          "path": [
+            "light",
+            "color",
+            "charts",
+            "primary",
+            "default"
+          ]
+        },
+        "hover": {
+          "name": "color-charts-primary-hover",
+          "type": "color",
+          "value": "var(--color-charts-primary-hover)",
+          "path": [
+            "light",
+            "color",
+            "charts",
+            "primary",
+            "hover"
+          ]
+        },
+        "subtle": {
+          "name": "color-charts-primary-subtle",
+          "type": "color",
+          "value": "var(--color-charts-primary-subtle)",
+          "path": [
+            "light",
+            "color",
+            "charts",
+            "primary",
+            "subtle"
+          ]
+        }
+      },
+      "secondary": {
+        "default": {
+          "name": "color-charts-secondary-default",
+          "type": "color",
+          "value": "var(--color-charts-secondary-default)",
+          "path": [
+            "light",
+            "color",
+            "charts",
+            "secondary",
+            "default"
+          ]
+        },
+        "hover": {
+          "name": "color-charts-secondary-hover",
+          "type": "color",
+          "value": "var(--color-charts-secondary-hover)",
+          "path": [
+            "light",
+            "color",
+            "charts",
+            "secondary",
+            "hover"
+          ]
+        },
+        "subtle": {
+          "name": "color-charts-secondary-subtle",
+          "type": "color",
+          "value": "var(--color-charts-secondary-subtle)",
+          "path": [
+            "light",
+            "color",
+            "charts",
+            "secondary",
+            "subtle"
+          ]
+        }
+      },
+      "tertiary": {
+        "default": {
+          "name": "color-charts-tertiary-default",
+          "type": "color",
+          "value": "var(--color-charts-tertiary-default)",
+          "path": [
+            "light",
+            "color",
+            "charts",
+            "tertiary",
+            "default"
+          ]
+        },
+        "hover": {
+          "name": "color-charts-tertiary-hover",
+          "type": "color",
+          "value": "var(--color-charts-tertiary-hover)",
+          "path": [
+            "light",
+            "color",
+            "charts",
+            "tertiary",
+            "hover"
+          ]
+        },
+        "subtle": {
+          "name": "color-charts-tertiary-subtle",
+          "type": "color",
+          "value": "var(--color-charts-tertiary-subtle)",
+          "path": [
+            "light",
+            "color",
+            "charts",
+            "tertiary",
+            "subtle"
+          ]
+        }
+      }
+    },
+    "container": {
+      "disabled": {
+        "default": {
+          "name": "color-container-disabled-default",
+          "type": "color",
+          "value": "var(--color-container-disabled-default)",
+          "path": [
+            "light",
+            "color",
+            "container",
+            "disabled",
+            "default"
+          ]
+        },
+        "on-disabled-container": {
+          "name": "color-container-disabled-on-disabled-container",
+          "type": "color",
+          "value": "var(--color-container-disabled-on-disabled-container)",
+          "path": [
+            "light",
+            "color",
+            "container",
+            "disabled",
+            "on-disabled-container"
+          ]
+        }
+      },
+      "error": {
+        "active": {
+          "name": "color-container-error-active",
+          "type": "color",
+          "value": "var(--color-container-error-active)",
+          "path": [
+            "light",
+            "color",
+            "container",
+            "error",
+            "active"
+          ]
+        },
+        "default": {
+          "name": "color-container-error-default",
+          "type": "color",
+          "value": "var(--color-container-error-default)",
+          "path": [
+            "light",
+            "color",
+            "container",
+            "error",
+            "default"
+          ]
+        },
+        "hover": {
+          "name": "color-container-error-hover",
+          "type": "color",
+          "value": "var(--color-container-error-hover)",
+          "path": [
+            "light",
+            "color",
+            "container",
+            "error",
+            "hover"
+          ]
+        },
+        "on-error-container": {
+          "name": "color-container-error-on-error-container",
+          "type": "color",
+          "value": "var(--color-container-error-on-error-container)",
+          "path": [
+            "light",
+            "color",
+            "container",
+            "error",
+            "on-error-container"
+          ]
+        }
+      },
+      "highlight": {
+        "active": {
+          "name": "color-container-highlight-active",
+          "type": "color",
+          "value": "var(--color-container-highlight-active)",
+          "path": [
+            "light",
+            "color",
+            "container",
+            "highlight",
+            "active"
+          ]
+        },
+        "default": {
+          "name": "color-container-highlight-default",
+          "type": "color",
+          "value": "var(--color-container-highlight-default)",
+          "path": [
+            "light",
+            "color",
+            "container",
+            "highlight",
+            "default"
+          ]
+        },
+        "hover": {
+          "name": "color-container-highlight-hover",
+          "type": "color",
+          "value": "var(--color-container-highlight-hover)",
+          "path": [
+            "light",
+            "color",
+            "container",
+            "highlight",
+            "hover"
+          ]
+        },
+        "on-highlight-container": {
+          "name": "color-container-highlight-on-highlight-container",
+          "type": "color",
+          "value": "var(--color-container-highlight-on-highlight-container)",
+          "path": [
+            "light",
+            "color",
+            "container",
+            "highlight",
+            "on-highlight-container"
+          ]
+        }
+      },
+      "secondary": {
+        "active": {
+          "name": "color-container-secondary-active",
+          "type": "color",
+          "value": "var(--color-container-secondary-active)",
+          "path": [
+            "light",
+            "color",
+            "container",
+            "secondary",
+            "active"
+          ]
+        },
+        "default": {
+          "name": "color-container-secondary-default",
+          "type": "color",
+          "value": "var(--color-container-secondary-default)",
+          "path": [
+            "light",
+            "color",
+            "container",
+            "secondary",
+            "default"
+          ]
+        },
+        "hover": {
+          "name": "color-container-secondary-hover",
+          "type": "color",
+          "value": "var(--color-container-secondary-hover)",
+          "path": [
+            "light",
+            "color",
+            "container",
+            "secondary",
+            "hover"
+          ]
+        },
+        "on-secondary-container": {
+          "name": "color-container-secondary-on-secondary-container",
+          "type": "color",
+          "value": "var(--color-container-secondary-on-secondary-container)",
+          "path": [
+            "light",
+            "color",
+            "container",
+            "secondary",
+            "on-secondary-container"
+          ]
+        },
+        "on-secondary-container-variant": {
+          "name": "color-container-secondary-on-secondary-container-variant",
+          "type": "color",
+          "value": "var(--color-container-secondary-on-secondary-container-variant)",
+          "path": [
+            "light",
+            "color",
+            "container",
+            "secondary",
+            "on-secondary-container-variant"
+          ]
+        }
+      },
+      "success": {
+        "active": {
+          "name": "color-container-success-active",
+          "type": "color",
+          "value": "var(--color-container-success-active)",
+          "path": [
+            "light",
+            "color",
+            "container",
+            "success",
+            "active"
+          ]
+        },
+        "default": {
+          "name": "color-container-success-default",
+          "type": "color",
+          "value": "var(--color-container-success-default)",
+          "path": [
+            "light",
+            "color",
+            "container",
+            "success",
+            "default"
+          ]
+        },
+        "hover": {
+          "name": "color-container-success-hover",
+          "type": "color",
+          "value": "var(--color-container-success-hover)",
+          "path": [
+            "light",
+            "color",
+            "container",
+            "success",
+            "hover"
+          ]
+        },
+        "on-success-container": {
+          "name": "color-container-success-on-success-container",
+          "type": "color",
+          "value": "var(--color-container-success-on-success-container)",
+          "path": [
+            "light",
+            "color",
+            "container",
+            "success",
+            "on-success-container"
+          ]
+        }
+      },
+      "warning": {
+        "active": {
+          "name": "color-container-warning-active",
+          "type": "color",
+          "value": "var(--color-container-warning-active)",
+          "path": [
+            "light",
+            "color",
+            "container",
+            "warning",
+            "active"
+          ]
+        },
+        "default": {
+          "name": "color-container-warning-default",
+          "type": "color",
+          "value": "var(--color-container-warning-default)",
+          "path": [
+            "light",
+            "color",
+            "container",
+            "warning",
+            "default"
+          ]
+        },
+        "hover": {
+          "name": "color-container-warning-hover",
+          "type": "color",
+          "value": "var(--color-container-warning-hover)",
+          "path": [
+            "light",
+            "color",
+            "container",
+            "warning",
+            "hover"
+          ]
+        },
+        "on-warning-container": {
+          "name": "color-container-warning-on-warning-container",
+          "type": "color",
+          "value": "var(--color-container-warning-on-warning-container)",
+          "path": [
+            "light",
+            "color",
+            "container",
+            "warning",
+            "on-warning-container"
+          ]
+        }
+      }
+    },
+    "disabled": {
+      "default": {
+        "name": "color-disabled-default",
+        "type": "color",
+        "value": "var(--color-disabled-default)",
+        "path": [
+          "light",
+          "color",
+          "disabled",
+          "default"
+        ]
+      },
+      "on-disabled": {
+        "name": "color-disabled-on-disabled",
+        "type": "color",
+        "value": "var(--color-disabled-on-disabled)",
+        "path": [
+          "light",
+          "color",
+          "disabled",
+          "on-disabled"
+        ]
+      }
+    },
+    "error": {
+      "active": {
+        "name": "color-error-active",
+        "type": "color",
+        "value": "var(--color-error-active)",
+        "path": [
+          "light",
+          "color",
+          "error",
+          "active"
+        ]
+      },
+      "default": {
+        "name": "color-error-default",
+        "type": "color",
+        "value": "var(--color-error-default)",
+        "path": [
+          "light",
+          "color",
+          "error",
+          "default"
+        ]
+      },
+      "hover": {
+        "name": "color-error-hover",
+        "type": "color",
+        "value": "var(--color-error-hover)",
+        "path": [
+          "light",
+          "color",
+          "error",
+          "hover"
+        ]
+      },
+      "on-error": {
+        "name": "color-error-on-error",
+        "type": "color",
+        "value": "var(--color-error-on-error)",
+        "path": [
+          "light",
+          "color",
+          "error",
+          "on-error"
+        ]
+      }
+    },
+    "focus": {
+      "contrast": {
+        "name": "color-focus-contrast",
+        "type": "color",
+        "value": "var(--color-focus-contrast)",
+        "path": [
+          "light",
+          "color",
+          "focus",
+          "contrast"
+        ]
+      },
+      "default": {
+        "name": "color-focus-default",
+        "type": "color",
+        "value": "var(--color-focus-default)",
+        "path": [
+          "light",
+          "color",
+          "focus",
+          "default"
+        ]
+      }
+    },
+    "highlight": {
+      "active": {
+        "name": "color-highlight-active",
+        "type": "color",
+        "value": "var(--color-highlight-active)",
+        "path": [
+          "light",
+          "color",
+          "highlight",
+          "active"
+        ]
+      },
+      "default": {
+        "name": "color-highlight-default",
+        "type": "color",
+        "value": "var(--color-highlight-default)",
+        "path": [
+          "light",
+          "color",
+          "highlight",
+          "default"
+        ]
+      },
+      "hover": {
+        "name": "color-highlight-hover",
+        "type": "color",
+        "value": "var(--color-highlight-hover)",
+        "path": [
+          "light",
+          "color",
+          "highlight",
+          "hover"
+        ]
+      },
+      "on-highlight": {
+        "name": "color-highlight-on-highlight",
+        "type": "color",
+        "value": "var(--color-highlight-on-highlight)",
+        "path": [
+          "light",
+          "color",
+          "highlight",
+          "on-highlight"
+        ]
+      }
+    },
+    "line": {
+      "mid": {
+        "name": "color-line-mid",
+        "type": "color",
+        "value": "var(--color-line-mid)",
+        "path": [
+          "light",
+          "color",
+          "line",
+          "mid"
+        ]
+      },
+      "strong": {
+        "name": "color-line-strong",
+        "type": "color",
+        "value": "var(--color-line-strong)",
+        "path": [
+          "light",
+          "color",
+          "line",
+          "strong"
+        ]
+      },
+      "subtle": {
+        "name": "color-line-subtle",
+        "type": "color",
+        "value": "var(--color-line-subtle)",
+        "path": [
+          "light",
+          "color",
+          "line",
+          "subtle"
+        ]
+      }
+    },
+    "low-contrast": {
+      "default": {
+        "name": "color-low-contrast-default",
+        "type": "color",
+        "value": "var(--color-low-contrast-default)",
+        "path": [
+          "light",
+          "color",
+          "low-contrast",
+          "default"
+        ]
+      }
+    },
+    "overlay": {
+      "default": {
+        "name": "color-overlay-default",
+        "type": "color",
+        "value": "var(--color-overlay-default)",
+        "path": [
+          "light",
+          "color",
+          "overlay",
+          "default"
+        ]
+      }
+    },
+    "primary": {
+      "active": {
+        "name": "color-primary-active",
+        "type": "color",
+        "value": "var(--color-primary-active)",
+        "path": [
+          "light",
+          "color",
+          "primary",
+          "active"
+        ]
+      },
+      "default": {
+        "name": "color-primary-default",
+        "type": "color",
+        "value": "var(--color-primary-default)",
+        "path": [
+          "light",
+          "color",
+          "primary",
+          "default"
+        ]
+      },
+      "hover": {
+        "name": "color-primary-hover",
+        "type": "color",
+        "value": "var(--color-primary-hover)",
+        "path": [
+          "light",
+          "color",
+          "primary",
+          "hover"
+        ]
+      },
+      "on-primary": {
+        "name": "color-primary-on-primary",
+        "type": "color",
+        "value": "var(--color-primary-on-primary)",
+        "path": [
+          "light",
+          "color",
+          "primary",
+          "on-primary"
+        ]
+      },
+      "on-primary-variant": {
+        "name": "color-primary-on-primary-variant",
+        "type": "color",
+        "value": "var(--color-primary-on-primary-variant)",
+        "path": [
+          "light",
+          "color",
+          "primary",
+          "on-primary-variant"
+        ]
+      }
+    },
+    "secondary": {
+      "active": {
+        "name": "color-secondary-active",
+        "type": "color",
+        "value": "var(--color-secondary-active)",
+        "path": [
+          "light",
+          "color",
+          "secondary",
+          "active"
+        ]
+      },
+      "default": {
+        "name": "color-secondary-default",
+        "type": "color",
+        "value": "var(--color-secondary-default)",
+        "path": [
+          "light",
+          "color",
+          "secondary",
+          "default"
+        ]
+      },
+      "hover": {
+        "name": "color-secondary-hover",
+        "type": "color",
+        "value": "var(--color-secondary-hover)",
+        "path": [
+          "light",
+          "color",
+          "secondary",
+          "hover"
+        ]
+      },
+      "on-secondary": {
+        "name": "color-secondary-on-secondary",
+        "type": "color",
+        "value": "var(--color-secondary-on-secondary)",
+        "path": [
+          "light",
+          "color",
+          "secondary",
+          "on-secondary"
+        ]
+      }
+    },
+    "shadow": {
+      "default": {
+        "name": "color-shadow-default",
+        "type": "color",
+        "value": "var(--color-shadow-default)",
+        "path": [
+          "light",
+          "color",
+          "shadow",
+          "default"
+        ]
+      }
+    },
+    "success": {
+      "active": {
+        "name": "color-success-active",
+        "type": "color",
+        "value": "var(--color-success-active)",
+        "path": [
+          "light",
+          "color",
+          "success",
+          "active"
+        ]
+      },
+      "default": {
+        "name": "color-success-default",
+        "type": "color",
+        "value": "var(--color-success-default)",
+        "path": [
+          "light",
+          "color",
+          "success",
+          "default"
+        ]
+      },
+      "hover": {
+        "name": "color-success-hover",
+        "type": "color",
+        "value": "var(--color-success-hover)",
+        "path": [
+          "light",
+          "color",
+          "success",
+          "hover"
+        ]
+      },
+      "on-success": {
+        "name": "color-success-on-success",
+        "type": "color",
+        "value": "var(--color-success-on-success)",
+        "path": [
+          "light",
+          "color",
+          "success",
+          "on-success"
+        ]
+      }
+    },
+    "surface": {
+      "active": {
+        "name": "color-surface-active",
+        "type": "color",
+        "value": "var(--color-surface-active)",
+        "path": [
+          "light",
+          "color",
+          "surface",
+          "active"
+        ]
+      },
+      "default": {
+        "name": "color-surface-default",
+        "type": "color",
+        "value": "var(--color-surface-default)",
+        "path": [
+          "light",
+          "color",
+          "surface",
+          "default"
+        ]
+      },
+      "dim": {
+        "name": "color-surface-dim",
+        "type": "color",
+        "value": "var(--color-surface-dim)",
+        "path": [
+          "light",
+          "color",
+          "surface",
+          "dim"
+        ]
+      },
+      "hover": {
+        "name": "color-surface-hover",
+        "type": "color",
+        "value": "var(--color-surface-hover)",
+        "path": [
+          "light",
+          "color",
+          "surface",
+          "hover"
+        ]
+      }
+    },
+    "warning": {
+      "active": {
+        "name": "color-warning-active",
+        "type": "color",
+        "value": "var(--color-warning-active)",
+        "path": [
+          "light",
+          "color",
+          "warning",
+          "active"
+        ]
+      },
+      "default": {
+        "name": "color-warning-default",
+        "type": "color",
+        "value": "var(--color-warning-default)",
+        "path": [
+          "light",
+          "color",
+          "warning",
+          "default"
+        ]
+      },
+      "hover": {
+        "name": "color-warning-hover",
+        "type": "color",
+        "value": "var(--color-warning-hover)",
+        "path": [
+          "light",
+          "color",
+          "warning",
+          "hover"
+        ]
+      },
+      "on-warning": {
+        "name": "color-warning-on-warning",
+        "type": "color",
+        "value": "var(--color-warning-on-warning)",
+        "path": [
+          "light",
+          "color",
+          "warning",
+          "on-warning"
+        ]
+      }
+    }
+  },
+  "semantic": {
+    "border-radius": {
+      "large": {
+        "name": "border-radius-large",
+        "type": "float",
+        "value": "var(--border-radius-large)",
+        "path": [
+          "default",
+          "border-radius",
+          "large"
+        ]
+      },
+      "medium": {
+        "name": "border-radius-medium",
+        "type": "float",
+        "value": "var(--border-radius-medium)",
+        "path": [
+          "default",
+          "border-radius",
+          "medium"
+        ]
+      },
+      "small": {
+        "name": "border-radius-small",
+        "type": "float",
+        "value": "var(--border-radius-small)",
+        "path": [
+          "default",
+          "border-radius",
+          "small"
+        ]
+      },
+      "x-large": {
+        "name": "border-radius-x-large",
+        "type": "float",
+        "value": "var(--border-radius-x-large)",
+        "path": [
+          "default",
+          "border-radius",
+          "x-large"
+        ]
+      }
+    },
+    "border-width": {
+      "default": {
+        "name": "border-width-default",
+        "type": "float",
+        "value": "var(--border-width-default)",
+        "path": [
+          "default",
+          "border-width",
+          "default"
+        ]
+      },
+      "large": {
+        "name": "border-width-large",
+        "type": "float",
+        "value": "var(--border-width-large)",
+        "path": [
+          "default",
+          "border-width",
+          "large"
+        ]
+      }
+    },
+    "shadow": {
+      "big": {
+        "name": "shadow-big",
+        "type": "shadow",
+        "value": "var(--shadow-big)",
+        "path": [
+          "default",
+          "shadow",
+          "big"
+        ]
+      },
+      "default": {
+        "name": "shadow-default",
+        "type": "shadow",
+        "value": "var(--shadow-default)",
+        "path": [
+          "default",
+          "shadow",
+          "default"
+        ]
+      },
+      "mid": {
+        "name": "shadow-mid",
+        "type": "shadow",
+        "value": "var(--shadow-mid)",
+        "path": [
+          "default",
+          "shadow",
+          "mid"
+        ]
+      }
+    },
+    "spacing": {
+      "large": {
+        "name": "spacing-large",
+        "type": "float",
+        "value": "var(--spacing-large)",
+        "path": [
+          "default",
+          "spacing",
+          "large"
+        ]
+      },
+      "medium": {
+        "name": "spacing-medium",
+        "type": "float",
+        "value": "var(--spacing-medium)",
+        "path": [
+          "default",
+          "spacing",
+          "medium"
+        ]
+      },
+      "small": {
+        "name": "spacing-small",
+        "type": "float",
+        "value": "var(--spacing-small)",
+        "path": [
+          "default",
+          "spacing",
+          "small"
+        ]
+      },
+      "x-large": {
+        "name": "spacing-x-large",
+        "type": "float",
+        "value": "var(--spacing-x-large)",
+        "path": [
+          "default",
+          "spacing",
+          "x-large"
+        ]
+      },
+      "x-small": {
+        "name": "spacing-x-small",
+        "type": "float",
+        "value": "var(--spacing-x-small)",
+        "path": [
+          "default",
+          "spacing",
+          "x-small"
+        ]
+      },
+      "xx-large": {
+        "name": "spacing-xx-large",
+        "type": "float",
+        "value": "var(--spacing-xx-large)",
+        "path": [
+          "default",
+          "spacing",
+          "xx-large"
+        ]
+      },
+      "xx-small": {
+        "name": "spacing-xx-small",
+        "type": "float",
+        "value": "var(--spacing-xx-small)",
+        "path": [
+          "default",
+          "spacing",
+          "xx-small"
+        ]
+      }
+    },
+    "typography": {
+      "font-family": {
+        "monospace": {
+          "name": "typography-font-family-monospace",
+          "type": "string",
+          "value": "var(--typography-font-family-monospace)",
+          "path": [
+            "default",
+            "typography",
+            "font-family",
+            "monospace"
+          ]
+        },
+        "primary": {
+          "name": "typography-font-family-primary",
+          "type": "string",
+          "value": "var(--typography-font-family-primary)",
+          "path": [
+            "default",
+            "typography",
+            "font-family",
+            "primary"
+          ]
+        }
+      },
+      "font-size": {
+        "large": {
+          "name": "typography-font-size-large",
+          "type": "float",
+          "value": "var(--typography-font-size-large)",
+          "path": [
+            "default",
+            "typography",
+            "font-size",
+            "large"
+          ]
+        },
+        "medium": {
+          "name": "typography-font-size-medium",
+          "type": "float",
+          "value": "var(--typography-font-size-medium)",
+          "path": [
+            "default",
+            "typography",
+            "font-size",
+            "medium"
+          ]
+        },
+        "small": {
+          "name": "typography-font-size-small",
+          "type": "float",
+          "value": "var(--typography-font-size-small)",
+          "path": [
+            "default",
+            "typography",
+            "font-size",
+            "small"
+          ]
+        },
+        "x-large": {
+          "name": "typography-font-size-x-large",
+          "type": "float",
+          "value": "var(--typography-font-size-x-large)",
+          "path": [
+            "default",
+            "typography",
+            "font-size",
+            "x-large"
+          ]
+        },
+        "x-small": {
+          "name": "typography-font-size-x-small",
+          "type": "float",
+          "value": "var(--typography-font-size-x-small)",
+          "path": [
+            "default",
+            "typography",
+            "font-size",
+            "x-small"
+          ]
+        },
+        "xx-large": {
+          "name": "typography-font-size-xx-large",
+          "type": "float",
+          "value": "var(--typography-font-size-xx-large)",
+          "path": [
+            "default",
+            "typography",
+            "font-size",
+            "xx-large"
+          ]
+        },
+        "xx-small": {
+          "name": "typography-font-size-xx-small",
+          "type": "float",
+          "value": "var(--typography-font-size-xx-small)",
+          "path": [
+            "default",
+            "typography",
+            "font-size",
+            "xx-small"
+          ]
+        }
+      },
+      "font-weight": {
+        "bold": {
+          "name": "typography-font-weight-bold",
+          "type": "float",
+          "value": "var(--typography-font-weight-bold)",
+          "path": [
+            "default",
+            "typography",
+            "font-weight",
+            "bold"
+          ]
+        },
+        "medium": {
+          "name": "typography-font-weight-medium",
+          "type": "float",
+          "value": "var(--typography-font-weight-medium)",
+          "path": [
+            "default",
+            "typography",
+            "font-weight",
+            "medium"
+          ]
+        },
+        "regular": {
+          "name": "typography-font-weight-regular",
+          "type": "float",
+          "value": "var(--typography-font-weight-regular)",
+          "path": [
+            "default",
+            "typography",
+            "font-weight",
+            "regular"
+          ]
+        }
+      },
+      "letter-spacing": {
+        "default": {
+          "name": "typography-letter-spacing-default",
+          "type": "float",
+          "value": "var(--typography-letter-spacing-default)",
+          "path": [
+            "default",
+            "typography",
+            "letter-spacing",
+            "default"
+          ]
+        },
+        "wide": {
+          "name": "typography-letter-spacing-wide",
+          "type": "float",
+          "value": "var(--typography-letter-spacing-wide)",
+          "path": [
+            "default",
+            "typography",
+            "letter-spacing",
+            "wide"
+          ]
+        }
+      },
+      "line-height": {
+        "extra-loose": {
+          "name": "typography-line-height-extra-loose",
+          "type": "float",
+          "value": "var(--typography-line-height-extra-loose)",
+          "path": [
+            "default",
+            "typography",
+            "line-height",
+            "extra-loose"
+          ]
+        },
+        "loose": {
+          "name": "typography-line-height-loose",
+          "type": "float",
+          "value": "var(--typography-line-height-loose)",
+          "path": [
+            "default",
+            "typography",
+            "line-height",
+            "loose"
+          ]
+        },
+        "medium": {
+          "name": "typography-line-height-medium",
+          "type": "float",
+          "value": "var(--typography-line-height-medium)",
+          "path": [
+            "default",
+            "typography",
+            "line-height",
+            "medium"
+          ]
+        },
+        "tight": {
+          "name": "typography-line-height-tight",
+          "type": "float",
+          "value": "var(--typography-line-height-tight)",
+          "path": [
+            "default",
+            "typography",
+            "line-height",
+            "tight"
+          ]
+        },
+        "wide": {
+          "name": "typography-line-height-wide",
+          "type": "float",
+          "value": "var(--typography-line-height-wide)",
+          "path": [
+            "default",
+            "typography",
+            "line-height",
+            "wide"
+          ]
+        }
+      },
+      "text-transform": {
+        "default": {
+          "name": "typography-text-transform-default",
+          "type": "string",
+          "value": "var(--typography-text-transform-default)",
+          "path": [
+            "default",
+            "typography",
+            "text-transform",
+            "default"
+          ]
+        },
+        "uppercase": {
+          "name": "typography-text-transform-uppercase",
+          "type": "string",
+          "value": "var(--typography-text-transform-uppercase)",
+          "path": [
+            "default",
+            "typography",
+            "text-transform",
+            "uppercase"
+          ]
+        }
+      }
+    }
+  },
+  "utilities": {
+    "text": {
+      "body": {
+        "large": {
+          "default": {
+            "font-family": {
+              "name": "text-body-large-default-font-family",
+              "type": "string",
+              "value": "ref_typography/font-family/primary"
+            },
+            "font-size": {
+              "name": "text-body-large-default-font-size",
+              "type": "float",
+              "value": "ref_typography/font-size/large"
+            },
+            "font-weight": {
+              "name": "text-body-large-default-font-weight",
+              "type": "float",
+              "value": "ref_typography/font-weight/regular"
+            },
+            "letter-casing": {
+              "name": "text-body-large-default-letter-casing",
+              "type": "string",
+              "value": "ref_typography/text-transform/default"
+            },
+            "letter-spacing": {
+              "name": "text-body-large-default-letter-spacing",
+              "type": "float",
+              "value": "ref_typography/letter-spacing/default"
+            },
+            "line-height": {
+              "name": "text-body-large-default-line-height",
+              "type": "float",
+              "value": "ref_typography/line-height/wide"
+            }
+          },
+          "strong": {
+            "font-family": {
+              "name": "text-body-large-strong-font-family",
+              "type": "string",
+              "value": "ref_typography/font-family/primary"
+            },
+            "font-size": {
+              "name": "text-body-large-strong-font-size",
+              "type": "float",
+              "value": "ref_typography/font-size/large"
+            },
+            "font-weight": {
+              "name": "text-body-large-strong-font-weight",
+              "type": "float",
+              "value": "ref_typography/font-weight/medium"
+            },
+            "letter-casing": {
+              "name": "text-body-large-strong-letter-casing",
+              "type": "string",
+              "value": "ref_typography/text-transform/default"
+            },
+            "letter-spacing": {
+              "name": "text-body-large-strong-letter-spacing",
+              "type": "float",
+              "value": "ref_typography/letter-spacing/default"
+            },
+            "line-height": {
+              "name": "text-body-large-strong-line-height",
+              "type": "float",
+              "value": "ref_typography/line-height/wide"
+            }
+          },
+          "x-strong": {
+            "font-family": {
+              "name": "text-body-large-x-strong-font-family",
+              "type": "string",
+              "value": "ref_typography/font-family/primary"
+            },
+            "font-size": {
+              "name": "text-body-large-x-strong-font-size",
+              "type": "float",
+              "value": "ref_typography/font-size/large"
+            },
+            "font-weight": {
+              "name": "text-body-large-x-strong-font-weight",
+              "type": "float",
+              "value": "ref_typography/font-weight/bold"
+            },
+            "letter-casing": {
+              "name": "text-body-large-x-strong-letter-casing",
+              "type": "string",
+              "value": "ref_typography/text-transform/default"
+            },
+            "letter-spacing": {
+              "name": "text-body-large-x-strong-letter-spacing",
+              "type": "float",
+              "value": "ref_typography/letter-spacing/default"
+            },
+            "line-height": {
+              "name": "text-body-large-x-strong-line-height",
+              "type": "float",
+              "value": "ref_typography/line-height/wide"
+            }
+          }
+        },
+        "medium": {
+          "default": {
+            "font-family": {
+              "name": "text-body-medium-default-font-family",
+              "type": "string",
+              "value": "ref_typography/font-family/primary"
+            },
+            "font-size": {
+              "name": "text-body-medium-default-font-size",
+              "type": "float",
+              "value": "ref_typography/font-size/medium"
+            },
+            "font-weight": {
+              "name": "text-body-medium-default-font-weight",
+              "type": "float",
+              "value": "ref_typography/font-weight/regular"
+            },
+            "letter-casing": {
+              "name": "text-body-medium-default-letter-casing",
+              "type": "string",
+              "value": "ref_typography/text-transform/default"
+            },
+            "letter-spacing": {
+              "name": "text-body-medium-default-letter-spacing",
+              "type": "float",
+              "value": "ref_typography/letter-spacing/default"
+            },
+            "line-height": {
+              "name": "text-body-medium-default-line-height",
+              "type": "float",
+              "value": "ref_typography/line-height/medium"
+            }
+          },
+          "strong": {
+            "font-family": {
+              "name": "text-body-medium-strong-font-family",
+              "type": "string",
+              "value": "ref_typography/font-family/primary"
+            },
+            "font-size": {
+              "name": "text-body-medium-strong-font-size",
+              "type": "float",
+              "value": "ref_typography/font-size/medium"
+            },
+            "font-weight": {
+              "name": "text-body-medium-strong-font-weight",
+              "type": "float",
+              "value": "ref_typography/font-weight/medium"
+            },
+            "letter-casing": {
+              "name": "text-body-medium-strong-letter-casing",
+              "type": "string",
+              "value": "ref_typography/text-transform/default"
+            },
+            "letter-spacing": {
+              "name": "text-body-medium-strong-letter-spacing",
+              "type": "float",
+              "value": "ref_typography/letter-spacing/default"
+            },
+            "line-height": {
+              "name": "text-body-medium-strong-line-height",
+              "type": "float",
+              "value": "ref_typography/line-height/medium"
+            }
+          },
+          "x-strong": {
+            "font-family": {
+              "name": "text-body-medium-x-strong-font-family",
+              "type": "string",
+              "value": "ref_typography/font-family/primary"
+            },
+            "font-size": {
+              "name": "text-body-medium-x-strong-font-size",
+              "type": "float",
+              "value": "ref_typography/font-size/medium"
+            },
+            "font-weight": {
+              "name": "text-body-medium-x-strong-font-weight",
+              "type": "float",
+              "value": "ref_typography/font-weight/bold"
+            },
+            "letter-casing": {
+              "name": "text-body-medium-x-strong-letter-casing",
+              "type": "string",
+              "value": "ref_typography/text-transform/default"
+            },
+            "letter-spacing": {
+              "name": "text-body-medium-x-strong-letter-spacing",
+              "type": "float",
+              "value": "ref_typography/letter-spacing/default"
+            },
+            "line-height": {
+              "name": "text-body-medium-x-strong-line-height",
+              "type": "float",
+              "value": "ref_typography/line-height/medium"
+            }
+          }
+        },
+        "small": {
+          "default": {
+            "font-family": {
+              "name": "text-body-small-default-font-family",
+              "type": "string",
+              "value": "ref_typography/font-family/primary"
+            },
+            "font-size": {
+              "name": "text-body-small-default-font-size",
+              "type": "float",
+              "value": "ref_typography/font-size/small"
+            },
+            "font-weight": {
+              "name": "text-body-small-default-font-weight",
+              "type": "float",
+              "value": "ref_typography/font-weight/regular"
+            },
+            "letter-casing": {
+              "name": "text-body-small-default-letter-casing",
+              "type": "string",
+              "value": "ref_typography/text-transform/default"
+            },
+            "letter-spacing": {
+              "name": "text-body-small-default-letter-spacing",
+              "type": "float",
+              "value": "ref_typography/letter-spacing/default"
+            },
+            "line-height": {
+              "name": "text-body-small-default-line-height",
+              "type": "float",
+              "value": "ref_typography/line-height/tight"
+            }
+          },
+          "strong": {
+            "font-family": {
+              "name": "text-body-small-strong-font-family",
+              "type": "string",
+              "value": "ref_typography/font-family/primary"
+            },
+            "font-size": {
+              "name": "text-body-small-strong-font-size",
+              "type": "float",
+              "value": "ref_typography/font-size/small"
+            },
+            "font-weight": {
+              "name": "text-body-small-strong-font-weight",
+              "type": "float",
+              "value": "ref_typography/font-weight/medium"
+            },
+            "letter-casing": {
+              "name": "text-body-small-strong-letter-casing",
+              "type": "string",
+              "value": "ref_typography/text-transform/default"
+            },
+            "letter-spacing": {
+              "name": "text-body-small-strong-letter-spacing",
+              "type": "float",
+              "value": "ref_typography/letter-spacing/default"
+            },
+            "line-height": {
+              "name": "text-body-small-strong-line-height",
+              "type": "float",
+              "value": "ref_typography/line-height/tight"
+            }
+          },
+          "x-strong": {
+            "font-family": {
+              "name": "text-body-small-x-strong-font-family",
+              "type": "string",
+              "value": "ref_typography/font-family/primary"
+            },
+            "font-size": {
+              "name": "text-body-small-x-strong-font-size",
+              "type": "float",
+              "value": "ref_typography/font-size/small"
+            },
+            "font-weight": {
+              "name": "text-body-small-x-strong-font-weight",
+              "type": "float",
+              "value": "ref_typography/font-weight/bold"
+            },
+            "letter-casing": {
+              "name": "text-body-small-x-strong-letter-casing",
+              "type": "string",
+              "value": "ref_typography/text-transform/default"
+            },
+            "letter-spacing": {
+              "name": "text-body-small-x-strong-letter-spacing",
+              "type": "float",
+              "value": "ref_typography/letter-spacing/default"
+            },
+            "line-height": {
+              "name": "text-body-small-x-strong-line-height",
+              "type": "float",
+              "value": "ref_typography/line-height/tight"
+            }
+          }
+        },
+        "x-small": {
+          "default": {
+            "font-family": {
+              "name": "text-body-x-small-default-font-family",
+              "type": "string",
+              "value": "ref_typography/font-family/primary"
+            },
+            "font-size": {
+              "name": "text-body-x-small-default-font-size",
+              "type": "float",
+              "value": "ref_typography/font-size/x-small"
+            },
+            "font-weight": {
+              "name": "text-body-x-small-default-font-weight",
+              "type": "float",
+              "value": "ref_typography/font-weight/regular"
+            },
+            "letter-casing": {
+              "name": "text-body-x-small-default-letter-casing",
+              "type": "string",
+              "value": "ref_typography/text-transform/default"
+            },
+            "letter-spacing": {
+              "name": "text-body-x-small-default-letter-spacing",
+              "type": "float",
+              "value": "ref_typography/letter-spacing/default"
+            },
+            "line-height": {
+              "name": "text-body-x-small-default-line-height",
+              "type": "float",
+              "value": "ref_typography/line-height/tight"
+            }
+          },
+          "strong": {
+            "font-family": {
+              "name": "text-body-x-small-strong-font-family",
+              "type": "string",
+              "value": "ref_typography/font-family/primary"
+            },
+            "font-size": {
+              "name": "text-body-x-small-strong-font-size",
+              "type": "float",
+              "value": "ref_typography/font-size/x-small"
+            },
+            "font-weight": {
+              "name": "text-body-x-small-strong-font-weight",
+              "type": "float",
+              "value": "ref_typography/font-weight/medium"
+            },
+            "letter-casing": {
+              "name": "text-body-x-small-strong-letter-casing",
+              "type": "string",
+              "value": "ref_typography/text-transform/default"
+            },
+            "letter-spacing": {
+              "name": "text-body-x-small-strong-letter-spacing",
+              "type": "float",
+              "value": "ref_typography/letter-spacing/default"
+            },
+            "line-height": {
+              "name": "text-body-x-small-strong-line-height",
+              "type": "float",
+              "value": "ref_typography/line-height/tight"
+            }
+          },
+          "x-strong": {
+            "font-family": {
+              "name": "text-body-x-small-x-strong-font-family",
+              "type": "string",
+              "value": "ref_typography/font-family/primary"
+            },
+            "font-size": {
+              "name": "text-body-x-small-x-strong-font-size",
+              "type": "float",
+              "value": "ref_typography/font-size/x-small"
+            },
+            "font-weight": {
+              "name": "text-body-x-small-x-strong-font-weight",
+              "type": "float",
+              "value": "ref_typography/font-weight/bold"
+            },
+            "letter-casing": {
+              "name": "text-body-x-small-x-strong-letter-casing",
+              "type": "string",
+              "value": "ref_typography/text-transform/default"
+            },
+            "letter-spacing": {
+              "name": "text-body-x-small-x-strong-letter-spacing",
+              "type": "float",
+              "value": "ref_typography/letter-spacing/default"
+            },
+            "line-height": {
+              "name": "text-body-x-small-x-strong-line-height",
+              "type": "float",
+              "value": "ref_typography/line-height/tight"
+            }
+          }
+        }
+      },
+      "heading": {
+        "category": {
+          "default": {
+            "font-family": {
+              "name": "text-heading-category-default-font-family",
+              "type": "string",
+              "value": "ref_typography/font-family/primary"
+            },
+            "font-size": {
+              "name": "text-heading-category-default-font-size",
+              "type": "float",
+              "value": "ref_typography/font-size/xx-small"
+            },
+            "font-weight": {
+              "name": "text-heading-category-default-font-weight",
+              "type": "float",
+              "value": "ref_typography/font-weight/medium"
+            },
+            "letter-casing": {
+              "name": "text-heading-category-default-letter-casing",
+              "type": "string",
+              "value": "ref_typography/text-transform/uppercase"
+            },
+            "letter-spacing": {
+              "name": "text-heading-category-default-letter-spacing",
+              "type": "float",
+              "value": "ref_typography/letter-spacing/wide"
+            },
+            "line-height": {
+              "name": "text-heading-category-default-line-height",
+              "type": "float",
+              "value": "ref_typography/line-height/tight"
+            }
+          },
+          "strong": {
+            "font-family": {
+              "name": "text-heading-category-strong-font-family",
+              "type": "string",
+              "value": "ref_typography/font-family/primary"
+            },
+            "font-size": {
+              "name": "text-heading-category-strong-font-size",
+              "type": "float",
+              "value": "ref_typography/font-size/xx-small"
+            },
+            "font-weight": {
+              "name": "text-heading-category-strong-font-weight",
+              "type": "float",
+              "value": "ref_typography/font-weight/bold"
+            },
+            "letter-casing": {
+              "name": "text-heading-category-strong-letter-casing",
+              "type": "string",
+              "value": "ref_typography/text-transform/uppercase"
+            },
+            "letter-spacing": {
+              "name": "text-heading-category-strong-letter-spacing",
+              "type": "float",
+              "value": "ref_typography/letter-spacing/wide"
+            },
+            "line-height": {
+              "name": "text-heading-category-strong-line-height",
+              "type": "float",
+              "value": "ref_typography/line-height/tight"
+            }
+          }
+        },
+        "large": {
+          "default": {
+            "font-family": {
+              "name": "text-heading-large-default-font-family",
+              "type": "string",
+              "value": "ref_typography/font-family/primary"
+            },
+            "font-size": {
+              "name": "text-heading-large-default-font-size",
+              "type": "float",
+              "value": "ref_typography/font-size/large"
+            },
+            "font-weight": {
+              "name": "text-heading-large-default-font-weight",
+              "type": "float",
+              "value": "ref_typography/font-weight/medium"
+            },
+            "letter-casing": {
+              "name": "text-heading-large-default-letter-casing",
+              "type": "string",
+              "value": "ref_typography/text-transform/default"
+            },
+            "letter-spacing": {
+              "name": "text-heading-large-default-letter-spacing",
+              "type": "float",
+              "value": "ref_typography/letter-spacing/default"
+            },
+            "line-height": {
+              "name": "text-heading-large-default-line-height",
+              "type": "float",
+              "value": "ref_typography/line-height/wide"
+            }
+          },
+          "strong": {
+            "font-family": {
+              "name": "text-heading-large-strong-font-family",
+              "type": "string",
+              "value": "ref_typography/font-family/primary"
+            },
+            "font-size": {
+              "name": "text-heading-large-strong-font-size",
+              "type": "float",
+              "value": "ref_typography/font-size/large"
+            },
+            "font-weight": {
+              "name": "text-heading-large-strong-font-weight",
+              "type": "float",
+              "value": "ref_typography/font-weight/bold"
+            },
+            "letter-casing": {
+              "name": "text-heading-large-strong-letter-casing",
+              "type": "string",
+              "value": "ref_typography/text-transform/default"
+            },
+            "letter-spacing": {
+              "name": "text-heading-large-strong-letter-spacing",
+              "type": "float",
+              "value": "ref_typography/letter-spacing/default"
+            },
+            "line-height": {
+              "name": "text-heading-large-strong-line-height",
+              "type": "float",
+              "value": "ref_typography/line-height/wide"
+            }
+          }
+        },
+        "medium": {
+          "default": {
+            "font-family": {
+              "name": "text-heading-medium-default-font-family",
+              "type": "string",
+              "value": "ref_typography/font-family/primary"
+            },
+            "font-size": {
+              "name": "text-heading-medium-default-font-size",
+              "type": "float",
+              "value": "ref_typography/font-size/medium"
+            },
+            "font-weight": {
+              "name": "text-heading-medium-default-font-weight",
+              "type": "float",
+              "value": "ref_typography/font-weight/medium"
+            },
+            "letter-casing": {
+              "name": "text-heading-medium-default-letter-casing",
+              "type": "string",
+              "value": "ref_typography/text-transform/default"
+            },
+            "letter-spacing": {
+              "name": "text-heading-medium-default-letter-spacing",
+              "type": "float",
+              "value": "ref_typography/letter-spacing/default"
+            },
+            "line-height": {
+              "name": "text-heading-medium-default-line-height",
+              "type": "float",
+              "value": "ref_typography/line-height/tight"
+            }
+          },
+          "strong": {
+            "font-family": {
+              "name": "text-heading-medium-strong-font-family",
+              "type": "string",
+              "value": "ref_typography/font-family/primary"
+            },
+            "font-size": {
+              "name": "text-heading-medium-strong-font-size",
+              "type": "float",
+              "value": "ref_typography/font-size/medium"
+            },
+            "font-weight": {
+              "name": "text-heading-medium-strong-font-weight",
+              "type": "float",
+              "value": "ref_typography/font-weight/bold"
+            },
+            "letter-casing": {
+              "name": "text-heading-medium-strong-letter-casing",
+              "type": "string",
+              "value": "ref_typography/text-transform/default"
+            },
+            "letter-spacing": {
+              "name": "text-heading-medium-strong-letter-spacing",
+              "type": "float",
+              "value": "ref_typography/letter-spacing/default"
+            },
+            "line-height": {
+              "name": "text-heading-medium-strong-line-height",
+              "type": "float",
+              "value": "ref_typography/line-height/tight"
+            }
+          }
+        },
+        "x-large": {
+          "default": {
+            "font-family": {
+              "name": "text-heading-x-large-default-font-family",
+              "type": "string",
+              "value": "ref_typography/font-family/primary"
+            },
+            "font-size": {
+              "name": "text-heading-x-large-default-font-size",
+              "type": "float",
+              "value": "ref_typography/font-size/x-large"
+            },
+            "font-weight": {
+              "name": "text-heading-x-large-default-font-weight",
+              "type": "float",
+              "value": "ref_typography/font-weight/medium"
+            },
+            "letter-casing": {
+              "name": "text-heading-x-large-default-letter-casing",
+              "type": "string",
+              "value": "ref_typography/text-transform/default"
+            },
+            "letter-spacing": {
+              "name": "text-heading-x-large-default-letter-spacing",
+              "type": "float",
+              "value": "ref_typography/letter-spacing/default"
+            },
+            "line-height": {
+              "name": "text-heading-x-large-default-line-height",
+              "type": "float",
+              "value": "ref_typography/line-height/loose"
+            }
+          },
+          "strong": {
+            "font-family": {
+              "name": "text-heading-x-large-strong-font-family",
+              "type": "string",
+              "value": "ref_typography/font-family/primary"
+            },
+            "font-size": {
+              "name": "text-heading-x-large-strong-font-size",
+              "type": "float",
+              "value": "ref_typography/font-size/x-large"
+            },
+            "font-weight": {
+              "name": "text-heading-x-large-strong-font-weight",
+              "type": "float",
+              "value": "ref_typography/font-weight/bold"
+            },
+            "letter-casing": {
+              "name": "text-heading-x-large-strong-letter-casing",
+              "type": "string",
+              "value": "ref_typography/text-transform/default"
+            },
+            "letter-spacing": {
+              "name": "text-heading-x-large-strong-letter-spacing",
+              "type": "float",
+              "value": "ref_typography/letter-spacing/default"
+            },
+            "line-height": {
+              "name": "text-heading-x-large-strong-line-height",
+              "type": "float",
+              "value": "ref_typography/line-height/loose"
+            }
+          }
+        },
+        "xx-large": {
+          "default": {
+            "font-family": {
+              "name": "text-heading-xx-large-default-font-family",
+              "type": "string",
+              "value": "ref_typography/font-family/primary"
+            },
+            "font-size": {
+              "name": "text-heading-xx-large-default-font-size",
+              "type": "float",
+              "value": "ref_typography/font-size/xx-large"
+            },
+            "font-weight": {
+              "name": "text-heading-xx-large-default-font-weight",
+              "type": "float",
+              "value": "ref_typography/font-weight/medium"
+            },
+            "letter-casing": {
+              "name": "text-heading-xx-large-default-letter-casing",
+              "type": "string",
+              "value": "ref_typography/text-transform/default"
+            },
+            "letter-spacing": {
+              "name": "text-heading-xx-large-default-letter-spacing",
+              "type": "float",
+              "value": "ref_typography/letter-spacing/default"
+            },
+            "line-height": {
+              "name": "text-heading-xx-large-default-line-height",
+              "type": "float",
+              "value": "ref_typography/line-height/extra loose"
+            }
+          },
+          "strong": {
+            "font-family": {
+              "name": "text-heading-xx-large-strong-font-family",
+              "type": "string",
+              "value": "ref_typography/font-family/primary"
+            },
+            "font-size": {
+              "name": "text-heading-xx-large-strong-font-size",
+              "type": "float",
+              "value": "ref_typography/font-size/xx-large"
+            },
+            "font-weight": {
+              "name": "text-heading-xx-large-strong-font-weight",
+              "type": "float",
+              "value": "ref_typography/font-weight/bold"
+            },
+            "letter-casing": {
+              "name": "text-heading-xx-large-strong-letter-casing",
+              "type": "string",
+              "value": "ref_typography/text-transform/default"
+            },
+            "letter-spacing": {
+              "name": "text-heading-xx-large-strong-letter-spacing",
+              "type": "float",
+              "value": "ref_typography/letter-spacing/default"
+            },
+            "line-height": {
+              "name": "text-heading-xx-large-strong-line-height",
+              "type": "float",
+              "value": "ref_typography/line-height/extra loose"
+            }
+          }
+        }
+      }
+    }
+  }
+}
