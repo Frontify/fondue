@@ -45,5 +45,3 @@ jobs:
                   folder: ./storybook-docs/storybook-static
                   clean-exclude: |
                       pr-preview
-                      beta
-                      next
