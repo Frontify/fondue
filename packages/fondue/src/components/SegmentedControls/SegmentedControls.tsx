@@ -32,7 +32,7 @@ export type SegmentSize = 'small' | 'medium';
 export type SegmentedControlsProps = {
     id?: string;
     items: (TextOrNumberItem | IconItem)[];
-    activeItemId?: string;
+    activeItemId?: string | null;
     onChange: (id: string) => void;
     ariaLabel?: string;
     disabled?: boolean;
