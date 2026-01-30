@@ -39,3 +39,4 @@ See [Contribution guidelines](CONTRIBUTING.md) for contributing and local develo
 
 - [Storybook](https://fondue-components.frontify.com) – Storybook for previewing Fondue components
 - [Fondue documentation](https://fondue.frontify.com) – Documentation for the Fondue design system
+
