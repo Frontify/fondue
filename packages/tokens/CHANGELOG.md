@@ -1,5 +1,45 @@
 # @frontify/fondue-tokens
 
+## 5.0.0
+
+### Major Changes
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: improve token preview in storybook
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: merge main branch into v13
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: upgrade `@types/react`and adjust legacy `TooltipIcon` to work with new icons
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add utility for focus ring
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - chore: release all packages
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: fix RTE color mapping
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add new token
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: improved story preview and typing
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: remove deprecated tailwind colors
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: minor style approvements
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: overhauled token generation and switched to new token set
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: downgrade immer to fix issue with hotkeys
+
+### Patch Changes
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - chore: update dependencies
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - chore: merge main into v13
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add module types to tailwind configs
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - chore: update dependencies
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - chore: update dependencies
+
 ## 5.0.0-rc.6
 
 ### Major Changes

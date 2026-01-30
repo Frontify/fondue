@@ -1,5 +1,36 @@
 # @frontify/fondue-charts
 
+## 7.0.0
+
+### Major Changes
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: upgrade `@types/react`and adjust legacy `TooltipIcon` to work with new icons
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - chore: release all packages
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: overhauled token generation and switched to new token set
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: adjust chart crosshair color token
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: downgrade immer to fix issue with hotkeys
+
+### Patch Changes
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - chore: update dependencies
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - update chart tokens
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - chore: merge main into v13
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - Update charts with new tokens
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - chore: update dependencies
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - chore: update dependencies
+
+- Updated dependencies [[`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669)]:
+    - @frontify/fondue-tokens@5.0.0
+
 ## 7.0.0-rc.7
 
 ### Patch Changes
