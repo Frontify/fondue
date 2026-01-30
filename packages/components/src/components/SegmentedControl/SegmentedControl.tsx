@@ -14,7 +14,7 @@ export type SegmentedControlRootProps<TValue extends string = string> = {
      * The default value of the segmented control
      * Used for uncontrolled components
      */
-    defaultValue: TValue;
+    defaultValue?: TValue;
     /**
      * The controlled value of the segmented control
      */
