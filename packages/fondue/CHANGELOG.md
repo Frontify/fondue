@@ -1,5 +1,122 @@
 # @frontify/fondue
 
+## 13.0.0
+
+### Major Changes
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: improve export detection
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - bump dependencies
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: improve token preview in storybook
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: merge main branch into v13
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: upgrade `@types/react`and adjust legacy `TooltipIcon` to work with new icons
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add utility for focus ring
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: added codemod tools
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - chore: release all packages
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: fix RTE color mapping
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: fix textarea tokens
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: move commander out of dev dependencies
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: adjust legacy textarea border token
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: adjusted codemod to only check for public exports
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: improved story preview and typing
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: remove darkmode from legacy components
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add deprecation notices to legacy components
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add subexport for rte subpackage
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - chore: remove all unused exports and marked remainders as deprecated
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: bump dependencies
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: remove deprecated tailwind colors
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: remove unused exports
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - chore: remove unused exports
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: add missing legacy token
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: remove legacy components
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: minor style approvements
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - chore: remove unused exports
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: overhauled token generation and switched to new token set
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - chore: remove unused legacy exports
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: downgrade immer to fix issue with hotkeys
+
+### Minor Changes
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - chore(Button): decrease side padding
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix(Tag): background colors were missing
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - refactor(ScrollArea): move ref in actual viewport
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat(Checkbox): add error state
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat(Notice): initial implementation
+
+### Patch Changes
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix(Checkbox): prevent readonly hover
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix(Switch): medium size 32px instead of 30px
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - chore: bump fondue version
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - chore: update dependencies
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - refactor(LoadingBar): migrate Tailwind to SCSS
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat(Tag): add ref prop
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - refactor(Switch): replace cn tool with data attribute
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - chore: merge main into v13
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - refactor(Button): move styles to scss
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: expose onEscapeKeyDown in multiple components
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - refactor(Checkbox): move checkbox form tailwind to scss
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix(Buttons): icon styles of buttons did not respect forced-colors
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add module types to tailwind configs
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - chore: update dependencies
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - refactor(SplitButton): update side padding
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix(Notice): add colors to weak variant icons
+
+- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - chore: update dependencies
+
+- Updated dependencies [[`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`bfa2903`](https://github.com/Frontify/fondue/commit/bfa29038ada10805ccf4d52e4f4034aea4c7163a), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`eb292a2`](https://github.com/Frontify/fondue/commit/eb292a255c4b8459f3ca0e06d5fbfcd3d155ca4b), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669)]:
+    - @frontify/fondue-components@25.0.0
+    - @frontify/fondue-icons@0.23.0
+    - @frontify/fondue-tokens@5.0.0
+    - @frontify/fondue-charts@7.0.0
+    - @frontify/fondue-rte@0.0.1
+
 ## 13.0.0-rc.16
 
 ### Major Changes
