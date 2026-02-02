@@ -4,12 +4,11 @@ import { IconCaretDown, IconCheckMark, IconExclamationMarkTriangle } from '@fron
 import * as RadixPopover from '@radix-ui/react-popover';
 import { Slot as RadixSlot } from '@radix-ui/react-slot';
 import { useSelect } from 'downshift';
-import { forwardRef, useRef, useState, type ForwardedRef, type ReactNode } from 'react';
+import { forwardRef, useCallback, useMemo, useRef, useState, type ForwardedRef, type ReactNode } from 'react';
 
 import { type CommonAriaProps } from '#/helpers/aria';
 
-import { Badge } from '../Badge/Badge';
-
+import { CollapsibleBadges } from './CollapsibleBadges';
 import { SelectMenu, type SelectMenuViewportCollisionPadding } from './SelectMenu';
 import { useSelectData } from './hooks/useSelectData';
 import styles from './styles/select.module.scss';
@@ -111,9 +110,29 @@ const SelectBaseInput = (
 ) => {
     const { inputSlots, menuSlots, items, clearButton, getItemByValue } = useSelectData(children);
 
-    const wasClicked = useRef(false);
+    const wasClickedRef = useRef(false);
 
     const [hasInteractedSinceOpening, setHasInteractedSinceOpening] = useState(false);
+
+    const getDisplayedValue = useCallback(
+        (itemValue?: string): ReactNode => {
+            const selectedItem = getItemByValue(itemValue);
+            if (selectedItem) {
+                return showStringValue && selectedItem?.children ? selectedItem.children : selectedItem?.label;
+            }
+            return undefined;
+        },
+        [getItemByValue, showStringValue],
+    );
+
+    const badgeItems = useMemo(
+        () =>
+            selectedItemValues.map((value) => {
+                const displayValue = getDisplayedValue(value);
+                return { value, displayValue };
+            }),
+        [selectedItemValues, getDisplayedValue],
+    );
 
     const { getToggleButtonProps, getMenuProps, getItemProps, reset, isOpen, highlightedIndex } = useSelect<{
         value: string;
@@ -154,30 +173,22 @@ const SelectBaseInput = (
             : {}),
     });
 
-    const getDisplayedValue = (itemValue?: string) => {
-        const selectedItem = getItemByValue(itemValue);
-        if (selectedItem) {
-            return showStringValue && selectedItem?.children ? selectedItem.children : selectedItem?.label;
-        }
-        return undefined;
-    };
-
     return (
         <RadixPopover.Root open={isOpen}>
             <RadixPopover.Anchor
                 asChild
                 onMouseDown={(mouseEvent) => {
-                    wasClicked.current = true;
+                    wasClickedRef.current = true;
                     mouseEvent.currentTarget.dataset.showFocusRing = 'false';
                 }}
                 onFocus={(focusEvent) => {
-                    if (!wasClicked.current) {
+                    if (!wasClickedRef.current) {
                         focusEvent.target.dataset.showFocusRing = 'true';
                     }
                 }}
                 onBlur={(blurEvent) => {
                     blurEvent.target.dataset.showFocusRing = 'false';
-                    wasClicked.current = false;
+                    wasClickedRef.current = false;
                 }}
             >
                 <div
@@ -195,19 +206,8 @@ const SelectBaseInput = (
                           }))}
                 >
                     {multiple ? (
-                        <div
-                            className={styles.selectedValue}
-                            style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}
-                        >
-                            {selectedItemValues.length > 0
-                                ? selectedItemValues.map((selectedItemValue) => {
-                                      return (
-                                          <Badge emphasis="weak" key={selectedItemValue}>
-                                              {getDisplayedValue(selectedItemValue)}
-                                          </Badge>
-                                      );
-                                  })
-                                : placeholder}
+                        <div className={styles.selectedValue}>
+                            <CollapsibleBadges items={badgeItems} placeholder={placeholder} onDismiss={onItemSelect} />
                         </div>
                     ) : (
                         <span className={styles.selectedValue}>

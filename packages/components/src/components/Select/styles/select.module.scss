@@ -353,3 +353,22 @@
     margin-block-start: sizeToken.get(1);
     letter-spacing: 0.8px;
 }
+
+.badgesContainer {
+    display: flex;
+    align-items: center;
+    gap: sizeToken.get(1);
+    overflow: hidden;
+    min-width: 0;
+    flex: 1;
+}
+
+.badgeWrapper {
+    flex-shrink: 0;
+
+    &[data-visible='false'] {
+        visibility: hidden;
+        position: absolute;
+        pointer-events: none;
+    }
+}
