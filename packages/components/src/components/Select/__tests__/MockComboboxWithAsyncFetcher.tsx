@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type ComboboxProps } from '#/components/Select/Combobox.tsx';
-import { Select } from '#/components/Select/Select.tsx';
+import { Select } from '#/components/Select/SelectBase';
 import { type AsyncItem, type AsyncItemsFetcher } from '#/components/Select/hooks/useSelectData';
 
 type MockComboboxWithAsyncFetcherProps = {

@@ -9,15 +9,19 @@ import { Flex } from '#/components/Flex/Flex.tsx';
 import { Button } from '../Button/Button';
 
 import { SelectCombobox } from './Combobox';
-import { Select, SelectInput } from './Select';
 import { SelectItem, SelectItemGroup } from './SelectItem';
+import { SelectMultiple } from './SelectMultiple';
+import { SelectSingle } from './SelectSingle';
 import { SelectSlot } from './SelectSlot';
 
+import { Select } from './index';
+
 type Story = StoryObj<typeof meta>;
-const meta: Meta<typeof SelectInput> = {
+const meta: Meta<typeof SelectSingle> = {
     title: 'Components/Select',
-    component: SelectInput,
+    component: SelectSingle,
     subcomponents: {
+        'Select.Multi': SelectMultiple,
         'Select.Combobox': SelectCombobox,
         'Select.Slot': SelectSlot,
         'Select.Group': SelectItemGroup,
@@ -32,9 +36,6 @@ const meta: Meta<typeof SelectInput> = {
     args: {
         'aria-label': 'Select an item',
         placeholder: 'Select an item',
-        onSelect: (data) => {
-            console.log('data', data);
-        },
     },
 };
 export default meta;
@@ -48,6 +49,19 @@ export const SimpleSelect: Story = {
                 <Select.Item value="test2">Test2</Select.Item>
                 <Select.Item value="test3">Test3</Select.Item>
             </Select>
+        );
+    },
+};
+
+export const MultipleSelect: StoryObj<typeof SelectMultiple> = {
+    name: 'Select.Multiple',
+    render: (args) => {
+        return (
+            <Select.Multiple {...args}>
+                <Select.Item value="test1">Test1</Select.Item>
+                <Select.Item value="test2">Test2</Select.Item>
+                <Select.Item value="test3">Test3</Select.Item>
+            </Select.Multiple>
         );
     },
 };

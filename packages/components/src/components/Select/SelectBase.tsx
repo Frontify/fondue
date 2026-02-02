@@ -10,37 +10,23 @@ import { type CommonAriaProps } from '#/helpers/aria';
 
 import { Badge } from '../Badge/Badge';
 
-import { ForwardedRefCombobox } from './Combobox';
-import { ForwardedRefSelectItem, ForwardedRefSelectItemGroup } from './SelectItem';
 import { SelectMenu, type SelectMenuViewportCollisionPadding } from './SelectMenu';
-import { ForwardedRefSelectSlot } from './SelectSlot';
-import { useMultiselect } from './hooks/useMultiselect';
 import { useSelectData } from './hooks/useSelectData';
 import styles from './styles/select.module.scss';
 
-export type SelectComponentProps = {
+// --- Base ---
+
+export type SelectSharedProps = {
     /**
      * Children of the Select component. This can contain the `Select.Slot` components for the label, decorators, clear action and menu.
      */
     children?: ReactNode;
     /**
-     * Callback function that is called when an item is selected.
-     */
-    onSelect?: (selectedValues: string[] | null) => void;
-    /**
-     * The active value in the select component. This is used to control the select externally.
-     */
-    value?: string[] | null;
-    /**
-     * The default value of the select component. Used for uncontrolled usages.
-     */
-    defaultValue?: string[];
-    /**
      * The placeholder in the select component.
      */
     placeholder?: string;
     /**
-     * Status of the text input
+     * Status of the text input.
      * @default "neutral"
      */
     status?: 'neutral' | 'success' | 'error';
@@ -63,22 +49,17 @@ export type SelectComponentProps = {
      */
     'data-test-id'?: string;
     /**
-     * Id of the select component
+     * Id of the select component.
      */
     id?: string;
     /**
-     * Whether the select component is multiple
-     * @default false
-     */
-    multiple?: boolean;
-    /**
      * The value of the select is shown as plain text (from the label prop) when set to true.
-     * Items child components are used if set to false
+     * Items child components are used if set to false.
      * @default true
      */
     showStringValue?: boolean;
     /**
-     * Define the minimum distance between the select menu and the viewport edge
+     * Define the minimum distance between the select menu and the viewport edge.
      * @default 'compact'
      */
     viewportCollisionPadding?: SelectMenuViewportCollisionPadding;
@@ -88,12 +69,31 @@ export type SelectComponentProps = {
     onEscapeKeyDown?: (event: KeyboardEvent) => void;
 } & CommonAriaProps;
 
-export const SelectInput = (
+export type SelectBaseProps = SelectSharedProps & {
+    /**
+     * The currently selected item values.
+     */
+    selectedItemValues: string[];
+    /**
+     * Callback fired when an item is selected or deselected.
+     */
+    onItemSelect: (value?: string) => void;
+    /**
+     * Callback fired when the selection is cleared.
+     */
+    onClear: () => void;
+    /**
+     * Whether the select allows multiple selections.
+     */
+    multiple: boolean;
+};
+
+const SelectBaseInput = (
     {
         children,
-        onSelect,
-        value,
-        defaultValue,
+        selectedItemValues,
+        onItemSelect,
+        onClear,
         placeholder = '',
         status = 'neutral',
         disabled,
@@ -104,14 +104,12 @@ export const SelectInput = (
         'data-test-id': dataTestId = 'fondue-select',
         viewportCollisionPadding = 'compact',
         onEscapeKeyDown,
-        multiple = false,
+        multiple,
         ...props
-    }: SelectComponentProps,
+    }: SelectBaseProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
     const { inputSlots, menuSlots, items, clearButton, getItemByValue } = useSelectData(children);
-
-    const { selectedItemValues, toggleSelectedItem } = useMultiselect(onSelect, value, defaultValue);
 
     const wasClicked = useRef(false);
 
@@ -133,7 +131,7 @@ export const SelectInput = (
             setHasInteractedSinceOpening(true);
         },
         onSelectedItemChange: ({ selectedItem }) => {
-            toggleSelectedItem(selectedItem?.value);
+            onItemSelect(selectedItem?.value);
         },
         itemToString: (item) => (item ? item.label : ''),
         ...(multiple
@@ -201,9 +199,15 @@ export const SelectInput = (
                             className={styles.selectedValue}
                             style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}
                         >
-                            {selectedItemValues.map((selectedItemValue) => {
-                                return <Badge key={selectedItemValue}>{getDisplayedValue(selectedItemValue)}</Badge>;
-                            })}
+                            {selectedItemValues.length > 0
+                                ? selectedItemValues.map((selectedItemValue) => {
+                                      return (
+                                          <Badge emphasis="weak" key={selectedItemValue}>
+                                              {getDisplayedValue(selectedItemValue)}
+                                          </Badge>
+                                      );
+                                  })
+                                : placeholder}
                         </div>
                     ) : (
                         <span className={styles.selectedValue}>
@@ -215,6 +219,7 @@ export const SelectInput = (
                         <RadixSlot
                             onClick={(event) => {
                                 event.stopPropagation();
+                                onClear();
                                 reset();
                             }}
                             className={styles.clear}
@@ -258,23 +263,5 @@ export const SelectInput = (
         </RadixPopover.Root>
     );
 };
-SelectInput.displayName = 'Select';
 
-export const ForwardedRefSelect = forwardRef<HTMLDivElement, SelectComponentProps>(SelectInput);
-
-// @ts-expect-error We support both Select and Select.Combobox as the Root
-export const Select: typeof SelectInput & {
-    Combobox: typeof ForwardedRefCombobox;
-    Item: typeof ForwardedRefSelectItem;
-    Group: typeof ForwardedRefSelectItemGroup;
-    Slot: typeof ForwardedRefSelectSlot;
-} = ForwardedRefSelect;
-Select.displayName = 'Select';
-Select.Combobox = ForwardedRefCombobox;
-Select.Combobox.displayName = 'Select.Combobox';
-Select.Item = ForwardedRefSelectItem;
-Select.Item.displayName = 'Select.Item';
-Select.Group = ForwardedRefSelectItemGroup;
-Select.Group.displayName = 'Select.Group';
-Select.Slot = ForwardedRefSelectSlot;
-Select.Slot.displayName = 'Select.Slot';
+export const SelectBase = forwardRef<HTMLDivElement, SelectBaseProps>(SelectBaseInput);

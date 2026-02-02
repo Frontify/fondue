@@ -5,7 +5,7 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import { Children, isValidElement } from 'react';
 import { describe, expect, it } from 'vitest';
 
-import { Select } from '../Select';
+import { Select } from '../SelectBase';
 import { type AsyncItem, getRecursiveOptionValues, useSelectData } from '../hooks/useSelectData';
 
 const getMockedGetAsyncItems =

@@ -7,7 +7,7 @@ import * as sinon from 'sinon';
 import { FOCUS_BORDER_CSS, FOCUS_OUTLINE_CSS } from '#/helpers/constants';
 import { MAX_HEIGHT_MARGIN } from '#/utilities/domUtilities';
 
-import { Select } from '../Select';
+import { Select } from '../SelectBase';
 
 const SELECT_TEST_ID = 'test-select';
 const SELECT_MENU_TEST_ID = 'fondue-select-menu';

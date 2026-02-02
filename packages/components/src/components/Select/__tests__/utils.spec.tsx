@@ -3,7 +3,7 @@
 import { IconIcon } from '@frontify/fondue-icons';
 import { describe, expect, it, vi } from 'vitest';
 
-import { Select } from '../Select';
+import { Select } from '../SelectBase';
 import { type SelectItemProps } from '../SelectItem';
 import { getSelectOptionValue, isReactLeaf, recursiveMap } from '../utils';
 

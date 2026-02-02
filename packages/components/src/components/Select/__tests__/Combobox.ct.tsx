@@ -6,7 +6,7 @@ import * as sinon from 'sinon';
 
 import { MockComboboxWithAsyncFetcher } from '#/components/Select/__tests__/MockComboboxWithAsyncFetcher.tsx';
 
-import { Select } from '../Select';
+import { Select } from '../SelectBase';
 
 const SELECT_TEST_ID = 'test-combobox';
 const GROUP_TEST_ID = 'test-group';

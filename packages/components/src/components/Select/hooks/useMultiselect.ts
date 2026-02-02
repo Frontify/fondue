@@ -31,8 +31,13 @@ export const useMultiselect = (
         }
     };
 
+    const clear = () => {
+        setSelectedItems([]);
+    };
+
     return {
         selectedItemValues,
         toggleSelectedItem,
+        clear,
     };
 };
