@@ -40,10 +40,6 @@ type BadgeProps = {
      */
     onDismiss?: (event: MouseEvent<HTMLButtonElement>) => void;
     /**
-     * Tab index for the dismiss button. Set to -1 to remove from tab order.
-     */
-    dismissTabIndex?: number;
-    /**
      * The color of the status dot
      */
     status?: BadgeStatusProps['status'];
