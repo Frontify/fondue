@@ -54,7 +54,6 @@ export const Badge = ({
     'data-test-id': dataTestId = 'badge',
     children,
     disabled = false,
-    dismissTabIndex,
     emphasis = 'strong',
     onClick,
     onDismiss,
@@ -79,7 +78,6 @@ export const Badge = ({
     const contentProps = {
         'aria-label': ariaLabel || title,
         disabled,
-        dismissTabIndex,
         onDismiss,
         status,
     };
@@ -99,14 +97,7 @@ export const Badge = ({
     );
 };
 
-const BadgeContent = ({
-    'aria-label': ariaLabel,
-    children,
-    disabled = false,
-    dismissTabIndex,
-    onDismiss,
-    status,
-}: BadgeProps) => {
+const BadgeContent = ({ 'aria-label': ariaLabel, children, disabled = false, onDismiss, status }: BadgeProps) => {
     const { t } = useTranslation();
 
     return (
@@ -120,7 +111,6 @@ const BadgeContent = ({
                     className={styles.dismiss}
                     disabled={disabled}
                     onClick={onDismiss}
-                    tabIndex={dismissTabIndex}
                 >
                     <IconCross size="12" />
                 </button>
