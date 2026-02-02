@@ -23,6 +23,10 @@ type CollapsibleBadgesProps = {
      * Space will be reserved for this element in the calculation.
      */
     children?: ReactNode;
+    /**
+     * Total number of selected items (for screen reader announcements).
+     */
+    selectedCount?: number;
 };
 
 const calculateVisibleCount = (
@@ -63,7 +67,13 @@ const calculateVisibleCount = (
     return Math.max(1, count);
 };
 
-export const CollapsibleBadges = ({ items, placeholder, onDismiss, children }: CollapsibleBadgesProps): ReactNode => {
+export const CollapsibleBadges = ({
+    items,
+    placeholder,
+    onDismiss,
+    children,
+    selectedCount = 0,
+}: CollapsibleBadgesProps): ReactNode => {
     const containerRef = useRef<HTMLDivElement>(null);
     const badgeRefsMapRef = useRef<Map<string, HTMLDivElement>>(new Map());
     const subscribersRef = useRef<Set<() => void>>(new Set());
@@ -111,8 +121,17 @@ export const CollapsibleBadges = ({ items, placeholder, onDismiss, children }: C
         return placeholder;
     }
 
+    const selectedCountText =
+        selectedCount === 1 ? '1 item selected' : selectedCount > 1 ? `${selectedCount} items selected` : '';
+
     return (
         <div ref={containerRef} className={styles.badgesContainer}>
+            {/* Screen reader announcement for selection changes */}
+            <span className={styles.srOnly} aria-live="polite" aria-atomic="true">
+                {selectedCountText}
+            </span>
+            {/* Input first in DOM for tab order, but visually appears after badges via CSS order */}
+            {children}
             {items.map((item, index) => {
                 const isVisible = index < visibleCount;
                 return (
@@ -130,6 +149,7 @@ export const CollapsibleBadges = ({ items, placeholder, onDismiss, children }: C
                     >
                         <Badge
                             emphasis="weak"
+                            aria-label={typeof item.displayValue === 'string' ? item.displayValue : item.value}
                             onDismiss={(event) => {
                                 event.stopPropagation();
                                 onDismiss(item.value);
@@ -141,11 +161,12 @@ export const CollapsibleBadges = ({ items, placeholder, onDismiss, children }: C
                 );
             })}
             {overflowCount > 0 && (
-                <div className={styles.badgeWrapper}>
-                    <Badge emphasis="weak">+{overflowCount}</Badge>
+                <div className={styles.badgeWrapper} aria-label={`${overflowCount} more items selected`}>
+                    <Badge emphasis="weak" aria-hidden="true">
+                        +{overflowCount}
+                    </Badge>
                 </div>
             )}
-            {children}
         </div>
     );
 };

@@ -377,6 +377,18 @@
     }
 }
 
+.srOnly {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
 .multiSelectInput {
     flex: 1 1 0;
     min-width: sizeToken.get(6);
@@ -388,6 +400,7 @@
     font-size: inherit;
     line-height: inherit;
     color: inherit;
+    order: 1; // Visually after badges, but first in DOM for tab order
 
     &::placeholder {
         color: var(--color-secondary-default);

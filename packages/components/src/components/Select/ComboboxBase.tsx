@@ -4,7 +4,16 @@ import { IconCaretDown, IconCheckMark, IconExclamationMarkTriangle } from '@fron
 import * as RadixPopover from '@radix-ui/react-popover';
 import { Slot as RadixSlot } from '@radix-ui/react-slot';
 import { useCombobox, useMultipleSelection } from 'downshift';
-import { forwardRef, useMemo, useRef, useState, type FocusEvent, type ForwardedRef, type ReactNode } from 'react';
+import {
+    forwardRef,
+    useId,
+    useMemo,
+    useRef,
+    useState,
+    type FocusEvent,
+    type ForwardedRef,
+    type ReactNode,
+} from 'react';
 
 import { LoadingCircle } from '#/components/LoadingCircle/LoadingCircle.tsx';
 import { ForwardedRefSelectSlot } from '#/components/Select/SelectSlot.tsx';
@@ -114,6 +123,7 @@ const ComboboxBaseInput = (
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ): ReactNode => {
     const { t } = useTranslation();
+    const selectionDescriptionId = useId();
     const { inputSlots, menuSlots, items, filterText, clearButton, getItemByValue, setFilterText, asyncItemStatus } =
         useSelectData(children, getAsyncItems);
 
@@ -127,17 +137,22 @@ const ComboboxBaseInput = (
             .filter((item): item is SelectItem => item !== undefined && 'value' in item && 'label' in item);
     }, [selectedItemValues, getItemByValue]);
 
-    const { getDropdownProps, removeSelectedItem } = useMultipleSelection<SelectItem>({
-        selectedItems: multiple ? selectedItems : [],
-        onStateChange({ selectedItems: newSelectedItems, type }) {
-            if (type === useMultipleSelection.stateChangeTypes.SelectedItemKeyDownBackspace) {
-                const removedItem = selectedItems.find((item) => !newSelectedItems?.includes(item));
-                if (removedItem) {
-                    onItemSelect(removedItem.value);
-                }
-            }
-        },
-    });
+    const multipleSelectionResult = useMultipleSelection<SelectItem>(
+        multiple
+            ? {
+                  selectedItems,
+                  onStateChange({ selectedItems: newSelectedItems, type }) {
+                      if (type === useMultipleSelection.stateChangeTypes.SelectedItemKeyDownBackspace) {
+                          const removedItem = selectedItems.find((item) => !newSelectedItems?.includes(item));
+                          if (removedItem) {
+                              onItemSelect(removedItem.value);
+                          }
+                      }
+                  },
+              }
+            : { selectedItems: [] },
+    );
+    const removeSelectedItem = multiple ? multipleSelectionResult.removeSelectedItem : (): void => {};
 
     const {
         getInputProps,
@@ -154,7 +169,8 @@ const ComboboxBaseInput = (
         selectedItem: multiple ? null : (getItemByValue(selectedItemValues[0]) as SelectItem | null | undefined),
         defaultHighlightedIndex: 0,
         toggleButtonId: id,
-        labelId: 'aria-labelledby' in props ? props['aria-labelledby'] : undefined,
+        // Only set labelId if aria-labelledby is explicitly provided, otherwise downshift generates an orphan ID
+        ...('aria-labelledby' in props && props['aria-labelledby'] ? { labelId: props['aria-labelledby'] } : {}),
         onSelectedItemChange: ({ selectedItem }) => {
             if (selectedItem) {
                 onItemSelect(selectedItem.value);
@@ -235,6 +251,20 @@ const ComboboxBaseInput = (
         });
     }, [selectedItemValues, getItemByValue]);
 
+    // Description for screen readers when focusing the input
+    const selectionDescription = useMemo((): string => {
+        if (!multiple || selectedItemValues.length === 0) {
+            return '';
+        }
+        const labels = selectedItemValues
+            .map((value) => {
+                const item = getItemByValue(value) as SelectItem | undefined;
+                return item?.label ?? value;
+            })
+            .join(', ');
+        return `${selectedItemValues.length} selected: ${labels}`;
+    }, [multiple, selectedItemValues, getItemByValue]);
+
     const handleDismissBadge = (value: string): void => {
         const item = getItemByValue(value) as SelectItem | undefined;
         if (item) {
@@ -259,31 +289,52 @@ const ComboboxBaseInput = (
                     data-empty={selectedItemValues.length === 0}
                 >
                     {multiple ? (
-                        <CollapsibleBadges items={badgeItems} onDismiss={handleDismissBadge}>
-                            <input
-                                {...getInputProps(getDropdownProps({ preventKeyAction: isOpen }))}
-                                data-test-id={dataTestId}
-                                placeholder={selectedItemValues.length === 0 ? placeholder : ''}
-                                className={styles.multiSelectInput}
-                                disabled={disabled}
-                                onMouseDown={(mouseEvent) => {
-                                    console.log('onMouseDown', mouseEvent.currentTarget);
-                                    wasClickedRef.current = true;
-                                    mouseEvent.currentTarget.dataset.showFocusRing = 'false';
-                                }}
-                                onFocus={(focusEvent) => {
-                                    console.log('onFocus', focusEvent.target);
-                                    if (!wasClickedRef.current) {
-                                        focusEvent.target.dataset.showFocusRing = 'true';
-                                    }
-                                }}
-                                onBlur={onBlurHandler}
-                            />
-                        </CollapsibleBadges>
+                        <>
+                            {/* Hidden description for screen readers - announced on focus */}
+                            <span id={selectionDescriptionId} className={styles.srOnly}>
+                                {selectionDescription}
+                            </span>
+                            <CollapsibleBadges
+                                items={badgeItems}
+                                onDismiss={handleDismissBadge}
+                                selectedCount={selectedItemValues.length}
+                            >
+                                <input
+                                    {...getInputProps({
+                                        'aria-label': 'aria-label' in props ? props['aria-label'] : undefined,
+                                        // Remove auto-generated aria-labelledby if not explicitly provided
+                                        'aria-labelledby':
+                                            'aria-labelledby' in props && props['aria-labelledby']
+                                                ? props['aria-labelledby']
+                                                : undefined,
+                                        'aria-describedby': selectionDescription ? selectionDescriptionId : undefined,
+                                    })}
+                                    data-test-id={dataTestId}
+                                    placeholder={selectedItemValues.length === 0 ? placeholder : ''}
+                                    className={styles.multiSelectInput}
+                                    disabled={disabled}
+                                    onMouseDown={(mouseEvent) => {
+                                        wasClickedRef.current = true;
+                                        mouseEvent.currentTarget.dataset.showFocusRing = 'false';
+                                    }}
+                                    onFocus={(focusEvent) => {
+                                        if (!wasClickedRef.current) {
+                                            focusEvent.target.dataset.showFocusRing = 'true';
+                                        }
+                                    }}
+                                    onBlur={onBlurHandler}
+                                />
+                            </CollapsibleBadges>
+                        </>
                     ) : (
                         <input
                             {...getInputProps({
                                 'aria-label': 'aria-label' in props ? props['aria-label'] : undefined,
+                                // Remove auto-generated aria-labelledby if not explicitly provided
+                                'aria-labelledby':
+                                    'aria-labelledby' in props && props['aria-labelledby']
+                                        ? props['aria-labelledby']
+                                        : undefined,
                             })}
                             data-test-id={dataTestId}
                             placeholder={placeholder}
@@ -310,6 +361,7 @@ const ComboboxBaseInput = (
                             }}
                             className={styles.clear}
                             role="button"
+                            aria-label="Clear selection"
                         >
                             {clearButton}
                         </RadixSlot>
@@ -336,14 +388,21 @@ const ComboboxBaseInput = (
                                 size={16}
                                 className={styles.iconSuccess}
                                 data-test-id={`${dataTestId}-success-icon`}
+                                aria-hidden="true"
                             />
                         ) : null}
                         {hasError ? (
-                            <IconExclamationMarkTriangle
-                                size={16}
-                                className={styles.iconError}
-                                data-test-id={`${dataTestId}-error-icon`}
-                            />
+                            <>
+                                <IconExclamationMarkTriangle
+                                    size={16}
+                                    className={styles.iconError}
+                                    data-test-id={`${dataTestId}-error-icon`}
+                                    aria-hidden="true"
+                                />
+                                <span className={styles.srOnly} role="alert">
+                                    Error
+                                </span>
+                            </>
                         ) : null}
                     </div>
                 </div>
