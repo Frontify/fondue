@@ -32,6 +32,9 @@ const meta: Meta<typeof SelectInput> = {
     args: {
         'aria-label': 'Select an item',
         placeholder: 'Select an item',
+        onSelect: (data) => {
+            console.log('data', data);
+        },
     },
 };
 export default meta;

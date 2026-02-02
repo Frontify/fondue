@@ -3,7 +3,7 @@
 import { IconCaretDown, IconCheckMark, IconExclamationMarkTriangle } from '@frontify/fondue-icons';
 import * as RadixPopover from '@radix-ui/react-popover';
 import { Slot as RadixSlot } from '@radix-ui/react-slot';
-import { useSelect, useMultipleSelection } from 'downshift';
+import { useSelect } from 'downshift';
 import { forwardRef, useRef, useState, type ForwardedRef, type ReactNode } from 'react';
 
 import { type CommonAriaProps } from '#/helpers/aria';
@@ -14,6 +14,7 @@ import { ForwardedRefCombobox } from './Combobox';
 import { ForwardedRefSelectItem, ForwardedRefSelectItemGroup } from './SelectItem';
 import { SelectMenu, type SelectMenuViewportCollisionPadding } from './SelectMenu';
 import { ForwardedRefSelectSlot } from './SelectSlot';
+import { useMultiselect } from './hooks/useMultiselect';
 import { useSelectData } from './hooks/useSelectData';
 import styles from './styles/select.module.scss';
 
@@ -25,15 +26,15 @@ export type SelectComponentProps = {
     /**
      * Callback function that is called when an item is selected.
      */
-    onSelect?: (selectedValue: string | null) => void;
+    onSelect?: (selectedValues: string[] | null) => void;
     /**
      * The active value in the select component. This is used to control the select externally.
      */
-    value?: string | null;
+    value?: string[] | null;
     /**
      * The default value of the select component. Used for uncontrolled usages.
      */
-    defaultValue?: string;
+    defaultValue?: string[];
     /**
      * The placeholder in the select component.
      */
@@ -110,72 +111,58 @@ export const SelectInput = (
 ) => {
     const { inputSlots, menuSlots, items, clearButton, getItemByValue } = useSelectData(children);
 
-    const defaultItem = getItemByValue(defaultValue);
-    const activeItem = getItemByValue(value);
+    const { selectedItemValues, toggleSelectedItem } = useMultiselect(onSelect, value, defaultValue);
 
     const wasClicked = useRef(false);
 
     const [hasInteractedSinceOpening, setHasInteractedSinceOpening] = useState(false);
 
-    const { getDropdownProps, addSelectedItem, removeSelectedItem, selectedItems } = useMultipleSelection({
-        initialSelectedItems: defaultItem ? [defaultItem] : [],
+    const { getToggleButtonProps, getMenuProps, getItemProps, reset, isOpen, highlightedIndex } = useSelect<{
+        value: string;
+        label: string;
+        children?: ReactNode;
+    }>({
+        items,
+        selectedItem: null,
+        toggleButtonId: id,
+        labelId: 'aria-labelledby' in props ? props['aria-labelledby'] : undefined,
+        onIsOpenChange: () => {
+            setHasInteractedSinceOpening(false);
+        },
+        onHighlightedIndexChange: () => {
+            setHasInteractedSinceOpening(true);
+        },
+        onSelectedItemChange: ({ selectedItem }) => {
+            toggleSelectedItem(selectedItem?.value);
+        },
+        itemToString: (item) => (item ? item.label : ''),
+        ...(multiple
+            ? {
+                  stateReducer: (state, actionAndChanges) => {
+                      const { changes, type } = actionAndChanges;
+                      switch (type) {
+                          case useSelect.stateChangeTypes.ToggleButtonKeyDownEnter:
+                          case useSelect.stateChangeTypes.ToggleButtonKeyDownSpaceButton:
+                          case useSelect.stateChangeTypes.ItemClick:
+                              return {
+                                  ...changes,
+                                  isOpen: true,
+                                  highlightedIndex: state.highlightedIndex,
+                              };
+                      }
+                      return changes;
+                  },
+              }
+            : {}),
     });
 
-    const toggleSelectedItem = (item: any) => {
-        console.log('item', item);
-        console.log('selectedItems', selectedItems);
-        if (selectedItems.some((selectedItem) => selectedItem.value === item.value)) {
-            console.log('removeSelectedItem', item);
-            removeSelectedItem(item);
-        } else {
-            console.log('addSelectedItem', item);
-            addSelectedItem(item);
+    const getDisplayedValue = (itemValue?: string) => {
+        const selectedItem = getItemByValue(itemValue);
+        if (selectedItem) {
+            return showStringValue && selectedItem?.children ? selectedItem.children : selectedItem?.label;
         }
+        return undefined;
     };
-
-    const { getToggleButtonProps, getMenuProps, getItemProps, reset, isOpen, highlightedIndex, selectedItem } =
-        useSelect<{ value: string; label: string; children?: ReactNode }>({
-            items,
-            defaultSelectedItem: defaultItem,
-            selectedItem: activeItem,
-            toggleButtonId: id,
-            labelId: 'aria-labelledby' in props ? props['aria-labelledby'] : undefined,
-            onIsOpenChange: () => {
-                setHasInteractedSinceOpening(false);
-            },
-            onHighlightedIndexChange: () => {
-                setHasInteractedSinceOpening(true);
-            },
-            onSelectedItemChange: ({ selectedItem }) => {
-                onSelect?.(selectedItem?.value ?? null);
-            },
-            itemToString: (item) => (item ? item.label : ''),
-            ...(multiple
-                ? {
-                      stateReducer: (state, actionAndChanges) => {
-                          const { changes, type } = actionAndChanges;
-                          switch (type) {
-                              case useSelect.stateChangeTypes.ToggleButtonKeyDownEnter:
-                              case useSelect.stateChangeTypes.ToggleButtonKeyDownSpaceButton:
-                              case useSelect.stateChangeTypes.ItemClick:
-                                  if (changes.selectedItem) {
-                                      toggleSelectedItem(changes.selectedItem);
-                                  }
-                                  return {
-                                      ...changes,
-                                      isOpen: true, // keep the menu open after selection.
-                                      highlightedIndex: state.highlightedIndex,
-                                  };
-                          }
-                          return changes;
-                      },
-                  }
-                : {}),
-        });
-
-    const displayedValue = selectedItem
-        ? (!showStringValue && selectedItem.children) || selectedItem.label
-        : placeholder;
 
     return (
         <RadixPopover.Root open={isOpen}>
@@ -199,26 +186,29 @@ export const SelectInput = (
                     className={styles.root}
                     data-status={status}
                     data-disabled={disabled}
-                    data-empty={selectedItems.length === 0}
+                    data-empty={selectedItemValues.length === 0}
                     data-test-id={dataTestId}
                     {...(disabled
                         ? {}
-                        : getToggleButtonProps(
-                              // eslint-disable-next-line react-hooks/refs
-                              getDropdownProps({
-                                  'aria-label': 'aria-label' in props ? props['aria-label'] : undefined,
-                                  ref: forwardedRef,
-                              }),
-                          ))}
+                        : // eslint-disable-next-line react-hooks/refs
+                          getToggleButtonProps({
+                              'aria-label': 'aria-label' in props ? props['aria-label'] : undefined,
+                              ref: forwardedRef,
+                          }))}
                 >
                     {multiple ? (
-                        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                            {selectedItems.map((selectedItem) => (
-                                <Badge key={selectedItem.value}>{selectedItem.label}</Badge>
-                            ))}
+                        <div
+                            className={styles.selectedValue}
+                            style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}
+                        >
+                            {selectedItemValues.map((selectedItemValue) => {
+                                return <Badge key={selectedItemValue}>{getDisplayedValue(selectedItemValue)}</Badge>;
+                            })}
                         </div>
                     ) : (
-                        <span className={styles.selectedValue}>{displayedValue}</span>
+                        <span className={styles.selectedValue}>
+                            {getDisplayedValue(selectedItemValues[0]) || placeholder}
+                        </span>
                     )}
                     {inputSlots}
                     {clearButton ? (
@@ -258,7 +248,7 @@ export const SelectInput = (
                 highlightedIndex={highlightedIndex}
                 getMenuProps={getMenuProps}
                 getItemProps={getItemProps}
-                selectedItems={selectedItems}
+                selectedItemValues={selectedItemValues}
                 hasInteractedSinceOpening={hasInteractedSinceOpening}
                 viewportCollisionPadding={viewportCollisionPadding}
                 onEscapeKeyDown={onEscapeKeyDown}
