@@ -8,7 +8,8 @@ import { Flex } from '#/components/Flex/Flex.tsx';
 
 import { Button } from '../Button/Button';
 
-import { SelectCombobox } from './Combobox';
+import { ComboboxMultiple } from './ComboboxMultiple';
+import { ComboboxSingle } from './ComboboxSingle';
 import { SelectItem, SelectItemGroup } from './SelectItem';
 import { SelectMultiple } from './SelectMultiple';
 import { SelectSingle } from './SelectSingle';
@@ -22,7 +23,8 @@ const meta: Meta<typeof SelectSingle> = {
     component: SelectSingle,
     subcomponents: {
         'Select.Multi': SelectMultiple,
-        'Select.Combobox': SelectCombobox,
+        'Select.Combobox': ComboboxSingle,
+        'Select.Combobox.Multiple': ComboboxMultiple,
         'Select.Slot': SelectSlot,
         'Select.Group': SelectItemGroup,
         'Select.Item': SelectItem,
@@ -568,6 +570,81 @@ export const ComboboxOnEscapeKeyDown: Story = {
                 <Select.Item value="test2">Test2</Select.Item>
                 <Select.Item value="test3">Test3</Select.Item>
             </Select.Combobox>
+        );
+    },
+};
+
+export const ComboboxMultipleDefault: Story = {
+    render: () => {
+        const [selectedValues, setSelectedValues] = useState<string[]>([]);
+
+        const handleSelect = (values: string[] | null): void => {
+            setSelectedValues(values ?? []);
+        };
+
+        return (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                <Select.Combobox.Multiple
+                    placeholder="Search and select items"
+                    value={selectedValues}
+                    onSelect={handleSelect}
+                >
+                    <Select.Item value="apple">Apple</Select.Item>
+                    <Select.Item value="banana">Banana</Select.Item>
+                    <Select.Item value="cherry">Cherry</Select.Item>
+                    <Select.Item value="date">Date</Select.Item>
+                    <Select.Item value="elderberry">Elderberry</Select.Item>
+                    <Select.Item value="fig">Fig</Select.Item>
+                    <Select.Item value="grape">Grape</Select.Item>
+                </Select.Combobox.Multiple>
+            </div>
+        );
+    },
+};
+
+export const ComboboxMultipleWithClear: Story = {
+    render: () => {
+        const [selectedValues, setSelectedValues] = useState<string[]>(['apple', 'banana']);
+
+        const handleSelect = (values: string[] | null): void => {
+            setSelectedValues(values ?? []);
+        };
+
+        return (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                <Select.Combobox.Multiple
+                    placeholder="Search and select items"
+                    value={selectedValues}
+                    onSelect={handleSelect}
+                >
+                    <Select.Slot name="clear" />
+                    <Select.Slot name="menu">
+                        <Select.Item value="apple">Apple</Select.Item>
+                        <Select.Item value="banana">Banana</Select.Item>
+                        <Select.Item value="cherry">Cherry</Select.Item>
+                        <Select.Item value="date">Date</Select.Item>
+                        <Select.Item value="elderberry">Elderberry</Select.Item>
+                    </Select.Slot>
+                </Select.Combobox.Multiple>
+            </div>
+        );
+    },
+};
+
+export const ComboboxMultipleUncontrolled: Story = {
+    render: () => {
+        return (
+            <Select.Combobox.Multiple
+                placeholder="Search and select items"
+                defaultValue={['apple', 'cherry']}
+                onSelect={(values) => console.log('Selected:', values)}
+            >
+                <Select.Item value="apple">Apple</Select.Item>
+                <Select.Item value="banana">Banana</Select.Item>
+                <Select.Item value="cherry">Cherry</Select.Item>
+                <Select.Item value="date">Date</Select.Item>
+                <Select.Item value="elderberry">Elderberry</Select.Item>
+            </Select.Combobox.Multiple>
         );
     },
 };

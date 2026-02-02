@@ -7,6 +7,7 @@ import { Badge } from '../Badge/Badge';
 import styles from './styles/select.module.scss';
 const BADGE_GAP = 4;
 const OVERFLOW_BADGE_MIN_WIDTH = 40;
+const INPUT_MIN_WIDTH = 24;
 
 type BadgeItem = {
     value: string;
@@ -17,19 +18,26 @@ type CollapsibleBadgesProps = {
     items: BadgeItem[];
     placeholder?: string;
     onDismiss: (value: string) => void;
+    /**
+     * Optional children to render at the end (e.g., an input field).
+     * Space will be reserved for this element in the calculation.
+     */
+    children?: ReactNode;
 };
 
 const calculateVisibleCount = (
     container: HTMLDivElement | null,
     badgeRefsMap: Map<string, HTMLDivElement>,
     items: BadgeItem[],
+    reserveInputSpace: boolean,
 ): number => {
     if (!container || items.length === 0) {
         return items.length;
     }
 
     const containerWidth = container.offsetWidth;
-    let usedWidth = 0;
+    const inputReservedWidth = reserveInputSpace ? INPUT_MIN_WIDTH + BADGE_GAP : 0;
+    let usedWidth = inputReservedWidth;
     let count = 0;
 
     for (const item of items) {
@@ -55,11 +63,12 @@ const calculateVisibleCount = (
     return Math.max(1, count);
 };
 
-export const CollapsibleBadges = ({ items, placeholder, onDismiss }: CollapsibleBadgesProps): ReactNode => {
+export const CollapsibleBadges = ({ items, placeholder, onDismiss, children }: CollapsibleBadgesProps): ReactNode => {
     const containerRef = useRef<HTMLDivElement>(null);
     const badgeRefsMapRef = useRef<Map<string, HTMLDivElement>>(new Map());
     const subscribersRef = useRef<Set<() => void>>(new Set());
     const visibleCountRef = useRef(items.length);
+    const hasChildren = children !== undefined;
 
     const subscribe = (callback: () => void): (() => void) => {
         subscribersRef.current.add(callback);
@@ -67,7 +76,7 @@ export const CollapsibleBadges = ({ items, placeholder, onDismiss }: Collapsible
         const container = containerRef.current;
         if (container) {
             const resizeObserver = new ResizeObserver(() => {
-                const newCount = calculateVisibleCount(container, badgeRefsMapRef.current, items);
+                const newCount = calculateVisibleCount(container, badgeRefsMapRef.current, items, hasChildren);
                 if (newCount !== visibleCountRef.current) {
                     visibleCountRef.current = newCount;
                     for (const cb of subscribersRef.current) {
@@ -89,7 +98,7 @@ export const CollapsibleBadges = ({ items, placeholder, onDismiss }: Collapsible
     };
 
     const getSnapshot = (): number => {
-        const newCount = calculateVisibleCount(containerRef.current, badgeRefsMapRef.current, items);
+        const newCount = calculateVisibleCount(containerRef.current, badgeRefsMapRef.current, items, hasChildren);
         visibleCountRef.current = newCount;
         return newCount;
     };
@@ -98,7 +107,7 @@ export const CollapsibleBadges = ({ items, placeholder, onDismiss }: Collapsible
 
     const overflowCount = items.length - visibleCount;
 
-    if (items.length === 0) {
+    if (items.length === 0 && !children) {
         return placeholder;
     }
 
@@ -136,6 +145,7 @@ export const CollapsibleBadges = ({ items, placeholder, onDismiss }: Collapsible
                     <Badge emphasis="weak">+{overflowCount}</Badge>
                 </div>
             )}
+            {children}
         </div>
     );
 };
