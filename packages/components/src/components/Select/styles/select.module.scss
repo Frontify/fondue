@@ -33,6 +33,11 @@
         @include focusStyle.focus-outline;
     }
 
+    // Focus outline for nested inputs (e.g., inside CollapsibleBadges)
+    &:has(input[data-show-focus-ring='true']:focus) {
+        @include focusStyle.focus-outline-styles;
+    }
+
     &:hover {
         border-color: var(--color-line-strong);
     }
