@@ -33,11 +33,11 @@ type SelectItem = {
 
 export type ComboboxSharedProps = {
     /**
-     * Children of the Combobox component. This can contain the `Select.Slot` components for the label, decorators, clear action and menu.
+     * Children of the Combobox component. This can contain the `Select.Slot` components for the label, decorators, clear action and menu
      */
     children?: ReactNode;
     /**
-     * The placeholder in the combobox component.
+     * The placeholder in the combobox component
      */
     placeholder?: string;
     /**
@@ -46,16 +46,16 @@ export type ComboboxSharedProps = {
      */
     status?: 'neutral' | 'success' | 'error';
     /**
-     * Disables the combobox component.
+     * Disables the combobox component
      */
     disabled?: boolean;
     /**
-     * The alignment of the menu.
+     * The alignment of the menu
      * @default "start"
      */
     alignMenu?: 'start' | 'center' | 'end';
     /**
-     * Defines the preferred side of the combobox. It will not be respected if there are collisions with the viewport.
+     * Defines the preferred side of the combobox. It will not be respected if there are collisions with the viewport
      * @default "bottom"
      */
     side?: 'left' | 'right' | 'bottom' | 'top';
@@ -64,7 +64,7 @@ export type ComboboxSharedProps = {
      */
     id?: string;
     /**
-     * The data test id of the combobox component.
+     * The data test id of the combobox component
      */
     'data-test-id'?: string;
     /**
@@ -73,30 +73,30 @@ export type ComboboxSharedProps = {
      */
     viewportCollisionPadding?: SelectMenuViewportCollisionPadding;
     /**
-     * Function to fetch items asynchronously.
+     * Function to fetch items asynchronously
      */
     getAsyncItems?: AsyncItemsFetcher;
     /**
-     * Event handler called when the escape key is pressed.
+     * Event handler called when the escape key is pressed
      */
     onEscapeKeyDown?: (event: KeyboardEvent) => void;
 } & CommonAriaProps;
 
-export type ComboboxBaseProps = ComboboxSharedProps & {
+type ComboboxBaseProps = ComboboxSharedProps & {
     /**
-     * The currently selected item values.
+     * The currently selected item values
      */
     selectedItemValues: string[];
     /**
-     * Callback fired when an item is selected or deselected.
+     * Callback fired when an item is selected or deselected
      */
     onItemSelect: (value?: string) => void;
     /**
-     * Callback fired when the selection is cleared.
+     * Callback fired when the selection is cleared
      */
     onClear: () => void;
     /**
-     * Whether the combobox allows multiple selections.
+     * Whether the combobox allows multiple selections
      */
     multiple: boolean;
 };

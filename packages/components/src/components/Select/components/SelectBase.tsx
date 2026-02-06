@@ -13,76 +13,74 @@ import { SelectMenu, type SelectMenuViewportCollisionPadding } from './SelectMen
 import { useSelectData } from '../hooks/useSelectData';
 import styles from '../styles/select.module.scss';
 
-// --- Base ---
-
 export type SelectSharedProps = {
     /**
-     * Children of the Select component. This can contain the `Select.Slot` components for the label, decorators, clear action and menu.
+     * Children of the Select component. This can contain the `Select.Slot` components for the label, decorators, clear action and menu
      */
     children?: ReactNode;
     /**
-     * The placeholder in the select component.
+     * The placeholder in the select component
      */
     placeholder?: string;
     /**
-     * Status of the text input.
+     * Status of the text input
      * @default "neutral"
      */
     status?: 'neutral' | 'success' | 'error';
     /**
-     * Disables the select component.
+     * Disables the select component
      */
     disabled?: boolean;
     /**
-     * The alignment of the menu.
+     * The alignment of the menu
      * @default "start"
      */
     alignMenu?: 'start' | 'center' | 'end';
     /**
-     * Defines the preferred side of the select. It will not be respected if there are collisions with the viewport.
+     * Defines the preferred side of the select. It will not be respected if there are collisions with the viewport
      * @default "bottom"
      */
     side?: 'left' | 'right' | 'bottom' | 'top';
     /**
-     * The data test id of the select component.
+     * The data test id of the select component
      */
     'data-test-id'?: string;
     /**
-     * Id of the select component.
+     * Id of the select component
      */
     id?: string;
     /**
-     * The value of the select is shown as plain text (from the label prop) when set to true.
-     * Items child components are used if set to false.
+     * The value of the select is shown as plain text (from the label prop) when set to true
+     * Items child components are used if set to false
      * @default true
      */
     showStringValue?: boolean;
     /**
-     * Define the minimum distance between the select menu and the viewport edge.
+     * Define the minimum distance between the select menu and the viewport edge
      * @default 'compact'
      */
     viewportCollisionPadding?: SelectMenuViewportCollisionPadding;
     /**
-     * Event handler called when the escape key is pressed.
+     * Event handler called when the escape key is pressed
      */
     onEscapeKeyDown?: (event: KeyboardEvent) => void;
 } & CommonAriaProps;
 
-export type SelectBaseProps = SelectSharedProps & {
+type SelectBaseProps = SelectSharedProps & {
     /**
-     * The currently selected item values.
+     * The currently selected item values
      */
     selectedItemValues: string[];
     /**
-     * Callback fired when an item is selected or deselected.
+     * Callback fired when an item is selected or deselected
      */
     onItemSelect: (value?: string) => void;
     /**
-     * Callback fired when the selection is cleared.
+     * Callback fired when the selection is cleared
      */
     onClear: () => void;
     /**
-     * Whether the select allows multiple selections.
+     * Whether the select allows multiple selections
      */
     multiple: boolean;
 };
@@ -110,7 +108,7 @@ const SelectBaseInput = (
 ) => {
     const { inputSlots, menuSlots, items, clearButton, getItemByValue } = useSelectData(children);
 
-    const wasClickedRef = useRef(false);
+    const wasClicked = useRef(false);
 
     const [hasInteractedSinceOpening, setHasInteractedSinceOpening] = useState(false);
 
@@ -178,17 +176,17 @@ const SelectBaseInput = (
             <RadixPopover.Anchor
                 asChild
                 onMouseDown={(mouseEvent) => {
-                    wasClickedRef.current = true;
+                    wasClicked.current = true;
                     mouseEvent.currentTarget.dataset.showFocusRing = 'false';
                 }}
                 onFocus={(focusEvent) => {
-                    if (!wasClickedRef.current) {
+                    if (!wasClicked.current) {
                         focusEvent.target.dataset.showFocusRing = 'true';
                     }
                 }}
                 onBlur={(blurEvent) => {
                     blurEvent.target.dataset.showFocusRing = 'false';
-                    wasClickedRef.current = false;
+                    wasClicked.current = false;
                 }}
             >
                 <div

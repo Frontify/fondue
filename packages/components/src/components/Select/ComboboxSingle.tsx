@@ -7,15 +7,15 @@ import { useSingleSelect } from './hooks/useSingleSelect';
 
 export type ComboboxSingleProps = ComboboxSharedProps & {
     /**
-     * The active value in the combobox component. This is used to control the combobox externally.
+     * The active value in the combobox component. This is used to control the combobox externally
      */
     value?: string | null;
     /**
-     * Callback function that is called when an item is selected.
+     * Callback function that is called when an item is selected
      */
     onSelect?: (selectedValue: string | null) => void;
     /**
-     * The default value of the combobox component. Used for uncontrolled usages.
+     * The default value of the combobox component. Used for uncontrolled usages
      */
     defaultValue?: string;
 };

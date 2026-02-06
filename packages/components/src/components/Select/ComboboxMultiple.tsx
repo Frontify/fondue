@@ -7,15 +7,15 @@ import { useMultiselect } from './hooks/useMultiselect';
 
 export type ComboboxMultipleProps = ComboboxSharedProps & {
     /**
-     * The active value in the combobox component. This is used to control the combobox externally.
+     * The active value in the combobox component. This is used to control the combobox externally
      */
     value?: string[] | null;
     /**
-     * Callback function that is called when items are selected.
+     * Callback function that is called when items are selected
      */
     onSelect?: (selectedValues: string[] | null) => void;
     /**
-     * The default value of the combobox component. Used for uncontrolled usages.
+     * The default value of the combobox component. Used for uncontrolled usages
      */
     defaultValue?: string[];
 };

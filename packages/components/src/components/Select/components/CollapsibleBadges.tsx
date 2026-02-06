@@ -19,12 +19,12 @@ type CollapsibleBadgesProps = {
     placeholder?: string;
     onDismiss: (value: string) => void;
     /**
-     * Optional children to render at the end (e.g., an input field).
-     * Space will be reserved for this element in the calculation.
+     * Optional children to render at the end (e.g., an input field)
+     * Space will be reserved for this element in the calculation
      */
     children?: ReactNode;
     /**
-     * Total number of selected items (for screen reader announcements).
+     * Total number of selected items (for screen reader announcements)
      */
     selectedCount?: number;
 };
