@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ComboboxProps } from '#/components/Select/Combobox.tsx';
-import { Select } from '#/components/Select/SelectBase';
+import { Select } from '#/components/Select';
 import { type AsyncItem, type AsyncItemsFetcher } from '#/components/Select/hooks/useSelectData';
 
+type ComboboxProps = typeof Select.Combobox;
 type MockComboboxWithAsyncFetcherProps = {
     asyncItems: AsyncItem[];
     shouldReject?: boolean;

@@ -116,7 +116,7 @@ const SelectBaseInput = (
         (itemValue?: string): ReactNode => {
             const selectedItem = getItemByValue(itemValue);
             if (selectedItem) {
-                return showStringValue && selectedItem?.children ? selectedItem.children : selectedItem?.label;
+                return !showStringValue && selectedItem?.children ? selectedItem.children : selectedItem?.label;
             }
             return undefined;
         },

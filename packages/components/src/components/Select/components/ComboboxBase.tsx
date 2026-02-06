@@ -223,24 +223,6 @@ const ComboboxBaseInput = (
         return !getAsyncItems && !items.find((item) => item.label.toLowerCase().includes(inputValue.toLowerCase()));
     }, [inputValue, items, getAsyncItems, multiple]);
 
-    const onBlurHandler = (blurEvent: FocusEvent<HTMLInputElement, Element>): void => {
-        blurEvent.target.dataset.showFocusRing = 'false';
-        wasClickedRef.current = false;
-
-        if (!multiple) {
-            const selectedItemLabel = selectedItem?.label ?? '';
-            const isOutdated = selectedItemLabel.toLocaleLowerCase() !== inputValue.toLocaleLowerCase();
-
-            if (isOutdated) {
-                reset();
-            }
-        }
-
-        if (getInputProps().onBlur) {
-            getInputProps().onBlur?.(blurEvent);
-        }
-    };
-
     const hasError = valueInvalid || !!asyncItemStatus.error || status === 'error';
 
     const badgeItems = useMemo(() => {
@@ -276,6 +258,24 @@ const ComboboxBaseInput = (
     const handleClear = (): void => {
         onClear();
         reset();
+    };
+
+    const onBlurHandler = (blurEvent: FocusEvent<HTMLInputElement, Element>): void => {
+        blurEvent.target.dataset.showFocusRing = 'false';
+        wasClickedRef.current = false;
+
+        if (!multiple) {
+            const selectedItemLabel = selectedItem?.label ?? '';
+            const isOutdated = selectedItemLabel.toLocaleLowerCase() !== inputValue.toLocaleLowerCase();
+
+            if (isOutdated) {
+                reset();
+            }
+        }
+
+        if (getInputProps().onBlur) {
+            getInputProps().onBlur?.(blurEvent);
+        }
     };
 
     return (
