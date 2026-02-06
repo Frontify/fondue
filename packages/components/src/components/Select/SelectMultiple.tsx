@@ -2,7 +2,7 @@
 
 import { forwardRef, type ForwardedRef } from 'react';
 
-import { SelectBase, type SelectSharedProps } from './SelectBase';
+import { SelectBase, type SelectSharedProps } from './components/SelectBase';
 import { useMultiselect } from './hooks/useMultiselect';
 
 export type SelectMultipleProps = SelectSharedProps & {

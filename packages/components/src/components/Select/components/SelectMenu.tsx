@@ -5,11 +5,11 @@ import { Slot as RadixSlot } from '@radix-ui/react-slot';
 import { type UseComboboxPropGetters, type UseSelectPropGetters } from 'downshift';
 import { isValidElement, type ForwardedRef, type MouseEvent, type ReactElement, type ReactNode } from 'react';
 
-import { ThemeProvider, useFondueTheme } from '../ThemeProvider/ThemeProvider';
+import { ThemeProvider, useFondueTheme } from '#/components/ThemeProvider/ThemeProvider';
 
 import { type SelectItemProps } from './SelectItem';
-import styles from './styles/select.module.scss';
-import { getSelectOptionValue, recursiveMap } from './utils';
+import styles from '../styles/select.module.scss';
+import { getSelectOptionValue, recursiveMap } from '../utils';
 
 export type SelectMenuViewportCollisionPadding = 'compact' | 'spacious';
 

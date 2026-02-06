@@ -2,7 +2,7 @@
 
 import { forwardRef, type ForwardedRef } from 'react';
 
-import { SelectBase, type SelectSharedProps } from './SelectBase';
+import { SelectBase, type SelectSharedProps } from './components/SelectBase';
 import { useSingleSelect } from './hooks/useSingleSelect';
 
 export type SelectSingleProps = SelectSharedProps & {

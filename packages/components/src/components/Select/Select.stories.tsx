@@ -10,10 +10,10 @@ import { Button } from '../Button/Button';
 
 import { ComboboxMultiple } from './ComboboxMultiple';
 import { ComboboxSingle } from './ComboboxSingle';
-import { SelectItem, SelectItemGroup } from './SelectItem';
+import { SelectItem, SelectItemGroup } from './components/SelectItem';
 import { SelectMultiple } from './SelectMultiple';
 import { SelectSingle } from './SelectSingle';
-import { SelectSlot } from './SelectSlot';
+import { SelectSlot } from './components/SelectSlot';
 
 import { Select } from './index';
 

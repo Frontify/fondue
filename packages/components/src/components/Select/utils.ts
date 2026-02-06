@@ -9,7 +9,7 @@ import {
     type ReactNode,
 } from 'react';
 
-import { ForwardedRefSelectItem, type SelectItemProps } from './SelectItem';
+import { ForwardedRefSelectItem, type SelectItemProps } from './components/SelectItem';
 
 /**
  * Extracts and returns an object containing `value` and `label` from a given SelectItemProps object.

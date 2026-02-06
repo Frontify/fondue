@@ -2,7 +2,7 @@
 
 import { forwardRef, type ForwardedRef } from 'react';
 
-import { ComboboxBase, type ComboboxSharedProps } from './ComboboxBase';
+import { ComboboxBase, type ComboboxSharedProps } from './components/ComboboxBase';
 import { useSingleSelect } from './hooks/useSingleSelect';
 
 export type ComboboxSingleProps = ComboboxSharedProps & {

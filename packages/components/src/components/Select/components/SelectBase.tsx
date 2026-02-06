@@ -10,8 +10,8 @@ import { type CommonAriaProps } from '#/helpers/aria';
 
 import { CollapsibleBadges } from './CollapsibleBadges';
 import { SelectMenu, type SelectMenuViewportCollisionPadding } from './SelectMenu';
-import { useSelectData } from './hooks/useSelectData';
-import styles from './styles/select.module.scss';
+import { useSelectData } from '../hooks/useSelectData';
+import styles from '../styles/select.module.scss';
 
 // --- Base ---
 

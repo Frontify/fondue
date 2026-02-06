@@ -16,14 +16,14 @@ import {
 } from 'react';
 
 import { LoadingCircle } from '#/components/LoadingCircle/LoadingCircle.tsx';
-import { ForwardedRefSelectSlot } from '#/components/Select/SelectSlot.tsx';
+import { ForwardedRefSelectSlot } from './SelectSlot';
 import { type CommonAriaProps } from '#/helpers/aria';
 import { useTranslation } from '#/hooks/useTranslation';
-
 import { CollapsibleBadges } from './CollapsibleBadges';
 import { SelectMenu, type SelectMenuViewportCollisionPadding } from './SelectMenu';
-import { useSelectData, type AsyncItemsFetcher } from './hooks/useSelectData';
-import styles from './styles/select.module.scss';
+import { useSelectData, type AsyncItemsFetcher } from '../hooks/useSelectData';
+
+import styles from '../styles/select.module.scss';
 
 type SelectItem = {
     value: string;

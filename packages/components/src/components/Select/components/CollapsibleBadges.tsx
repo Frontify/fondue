@@ -2,9 +2,9 @@
 
 import { useSyncExternalStore, useRef, type ReactNode } from 'react';
 
-import { Badge } from '../Badge/Badge';
+import { Badge } from '#/components/Badge/Badge';
 
-import styles from './styles/select.module.scss';
+import styles from '../styles/select.module.scss';
 const BADGE_GAP = 4;
 const OVERFLOW_BADGE_MIN_WIDTH = 40;
 const INPUT_MIN_WIDTH = 24;

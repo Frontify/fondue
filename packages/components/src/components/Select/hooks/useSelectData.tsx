@@ -11,9 +11,9 @@ import {
     type ReactNode,
 } from 'react';
 
-import { SelectClear } from '../SelectClear';
-import { ForwardedRefSelectItem, type SelectItemProps } from '../SelectItem';
-import { ForwardedRefSelectSlot, type SelectSlotProps } from '../SelectSlot';
+import { SelectClear } from '../components/SelectClear';
+import { ForwardedRefSelectItem, type SelectItemProps } from '../components/SelectItem';
+import { ForwardedRefSelectSlot, type SelectSlotProps } from '../components/SelectSlot';
 import { getSelectOptionValue } from '../utils';
 
 export type SelectItemType = {
