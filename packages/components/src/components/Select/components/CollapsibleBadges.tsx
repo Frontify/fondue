@@ -1,10 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useSyncExternalStore, useRef, type ReactNode } from 'react';
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 
 import { Badge } from '#/components/Badge/Badge';
 
 import styles from '../styles/select.module.scss';
+
 const BADGE_GAP = 4;
 const OVERFLOW_BADGE_MIN_WIDTH = 40;
 const INPUT_MIN_WIDTH = 24;
@@ -18,53 +19,52 @@ type CollapsibleBadgesProps = {
     items: BadgeItem[];
     placeholder?: string;
     onDismiss: (value: string) => void;
-    /**
-     * Optional children to render at the end (e.g., an input field)
-     * Space will be reserved for this element in the calculation
-     */
+    /** Optional children to render at the end (e.g., an input field). Space is reserved in the layout calculation. */
     children?: ReactNode;
-    /**
-     * Total number of selected items (for screen reader announcements)
-     */
+    /** Total number of selected items (for screen reader announcements). */
     selectedCount?: number;
 };
 
 const calculateVisibleCount = (
-    container: HTMLDivElement | null,
-    badgeRefsMap: Map<string, HTMLDivElement>,
+    container: HTMLDivElement,
+    badgeElements: Map<string, HTMLDivElement>,
     items: BadgeItem[],
-    reserveInputSpace: boolean,
+    hasInputSlot: boolean,
 ): number => {
-    if (!container || items.length === 0) {
-        return items.length;
-    }
-
     const containerWidth = container.offsetWidth;
-    const inputReservedWidth = reserveInputSpace ? INPUT_MIN_WIDTH + BADGE_GAP : 0;
-    let usedWidth = inputReservedWidth;
+    let usedWidth = hasInputSlot ? INPUT_MIN_WIDTH + BADGE_GAP : 0;
     let count = 0;
 
     for (const item of items) {
-        const badgeElement = badgeRefsMap.get(item.value);
+        const badgeElement = badgeElements.get(item.value);
         if (!badgeElement) {
             continue;
         }
 
         const badgeWidth = badgeElement.offsetWidth;
         const widthWithGap = count > 0 ? badgeWidth + BADGE_GAP : badgeWidth;
-        const remainingItems = items.length - count - 1;
-        const needsOverflowBadge = remainingItems > 0;
-        const reservedWidth = needsOverflowBadge ? OVERFLOW_BADGE_MIN_WIDTH + BADGE_GAP : 0;
+        const hasMoreAfterThis = items.length - count - 1 > 0;
+        const reservedWidth = hasMoreAfterThis ? OVERFLOW_BADGE_MIN_WIDTH + BADGE_GAP : 0;
 
-        if (usedWidth + widthWithGap + reservedWidth <= containerWidth) {
-            usedWidth += widthWithGap;
-            count++;
-        } else {
+        if (usedWidth + widthWithGap + reservedWidth > containerWidth) {
             break;
         }
+
+        usedWidth += widthWithGap;
+        count++;
     }
 
     return Math.max(1, count);
+};
+
+const getSelectedCountText = (count: number): string => {
+    if (count === 1) {
+        return '1 item selected';
+    }
+    if (count > 1) {
+        return `${count} items selected`;
+    }
+    return '';
 };
 
 export const CollapsibleBadges = ({
@@ -75,91 +75,69 @@ export const CollapsibleBadges = ({
     selectedCount = 0,
 }: CollapsibleBadgesProps): ReactNode => {
     const containerRef = useRef<HTMLDivElement>(null);
-    const badgeRefsMapRef = useRef<Map<string, HTMLDivElement>>(new Map());
-    const subscribersRef = useRef<Set<() => void>>(new Set());
-    const visibleCountRef = useRef(items.length);
+    const badgeElementsRef = useRef<Map<string, HTMLDivElement>>(new Map());
+    const [visibleCount, setVisibleCount] = useState(items.length);
     const hasChildren = children !== undefined;
 
-    const subscribe = (callback: () => void): (() => void) => {
-        subscribersRef.current.add(callback);
-
+    const recalculate = useCallback((): void => {
         const container = containerRef.current;
-        if (container) {
-            const resizeObserver = new ResizeObserver(() => {
-                const newCount = calculateVisibleCount(container, badgeRefsMapRef.current, items, hasChildren);
-                if (newCount !== visibleCountRef.current) {
-                    visibleCountRef.current = newCount;
-                    for (const cb of subscribersRef.current) {
-                        cb();
-                    }
-                }
-            });
-            resizeObserver.observe(container);
+        if (!container || items.length === 0) {
+            setVisibleCount(items.length);
+            return;
+        }
+        setVisibleCount(calculateVisibleCount(container, badgeElementsRef.current, items, hasChildren));
+    }, [items, hasChildren]);
 
-            return (): void => {
-                subscribersRef.current.delete(callback);
-                resizeObserver.disconnect();
-            };
+    useEffect(() => {
+        const container = containerRef.current;
+        if (!container) {
+            return;
         }
 
+        const observer = new ResizeObserver(recalculate);
+        observer.observe(container);
         return (): void => {
-            subscribersRef.current.delete(callback);
+            observer.disconnect();
         };
-    };
-
-    const getSnapshot = (): number => {
-        const newCount = calculateVisibleCount(containerRef.current, badgeRefsMapRef.current, items, hasChildren);
-        visibleCountRef.current = newCount;
-        return newCount;
-    };
-
-    const visibleCount = useSyncExternalStore(subscribe, getSnapshot, () => items.length);
-
-    const overflowCount = items.length - visibleCount;
+    }, [recalculate]);
 
     if (items.length === 0 && !children) {
         return placeholder;
     }
 
-    const selectedCountText =
-        selectedCount === 1 ? '1 item selected' : selectedCount > 1 ? `${selectedCount} items selected` : '';
+    const overflowCount = items.length - visibleCount;
 
     return (
         <div ref={containerRef} className={styles.badgesContainer}>
-            {/* Screen reader announcement for selection changes */}
             <span className={styles.srOnly} aria-live="polite" aria-atomic="true">
-                {selectedCountText}
+                {getSelectedCountText(selectedCount)}
             </span>
-            {/* Input first in DOM for tab order, but visually appears after badges via CSS order */}
             {children}
-            {items.map((item, index) => {
-                const isVisible = index < visibleCount;
-                return (
-                    <div
-                        key={item.value}
-                        ref={(element): void => {
-                            if (element) {
-                                badgeRefsMapRef.current.set(item.value, element);
-                            } else {
-                                badgeRefsMapRef.current.delete(item.value);
-                            }
+            {items.map((item, index) => (
+                <div
+                    key={item.value}
+                    ref={(element): void => {
+                        if (element) {
+                            badgeElementsRef.current.set(item.value, element);
+                        } else {
+                            badgeElementsRef.current.delete(item.value);
+                        }
+                    }}
+                    className={styles.badgeWrapper}
+                    data-visible={index < visibleCount}
+                >
+                    <Badge
+                        emphasis="weak"
+                        aria-label={typeof item.displayValue === 'string' ? item.displayValue : item.value}
+                        onDismiss={(event) => {
+                            event.stopPropagation();
+                            onDismiss(item.value);
                         }}
-                        className={styles.badgeWrapper}
-                        data-visible={isVisible}
                     >
-                        <Badge
-                            emphasis="weak"
-                            aria-label={typeof item.displayValue === 'string' ? item.displayValue : item.value}
-                            onDismiss={(event) => {
-                                event.stopPropagation();
-                                onDismiss(item.value);
-                            }}
-                        >
-                            {item.displayValue}
-                        </Badge>
-                    </div>
-                );
-            })}
+                        {item.displayValue}
+                    </Badge>
+                </div>
+            ))}
             {overflowCount > 0 && (
                 <div className={styles.badgeWrapper} aria-label={`${overflowCount} more items selected`}>
                     <Badge emphasis="weak" aria-hidden="true">
