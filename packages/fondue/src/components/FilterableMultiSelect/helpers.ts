@@ -6,6 +6,9 @@ import { merge } from '@utilities/merge';
 
 import { FilterableMultiSelectSize } from './FilterableMultiSelect';
 
+/**
+ * @deprecated Please use updated Multiple Combobox component from `@frontify/fondue/components` instead.
+ */
 export const getPaddingClasses = (size: FilterableMultiSelectSize) => {
     const classes = ['tw-pr-9'];
     switch (size) {
@@ -27,6 +30,9 @@ This function should live here temporarily and removed once the new MultiSelect 
 The new Hook update works well in any overlay component but doesn't work in the current MultiSelect component.
 It messes with the Popper positioning which should be also fixed in another PR using the combo -> Popper component, overlayStyles, and downshift.
 */
+/**
+ * @deprecated Please use updated Multiple Combobox component from `@frontify/fondue/components` instead.
+ */
 export const useClickOutside = (
     reference: HTMLElement | null,
     callback: () => void,
