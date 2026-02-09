@@ -1,28 +1,23 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconCaretDown, IconCheckMark, IconExclamationMarkTriangle } from '@frontify/fondue-icons';
+import { IconCaretDown } from '@frontify/fondue-icons';
 import * as RadixPopover from '@radix-ui/react-popover';
-import { Slot as RadixSlot } from '@radix-ui/react-slot';
 import { useCombobox, useMultipleSelection } from 'downshift';
-import {
-    forwardRef,
-    useId,
-    useMemo,
-    useRef,
-    useState,
-    type FocusEvent,
-    type ForwardedRef,
-    type ReactNode,
-} from 'react';
+import { forwardRef, useMemo, useState, type FocusEvent, type ForwardedRef, type ReactNode } from 'react';
 
 import { LoadingCircle } from '#/components/LoadingCircle/LoadingCircle.tsx';
-import { ForwardedRefSelectSlot } from './SelectSlot';
 import { type CommonAriaProps } from '#/helpers/aria';
 import { useTranslation } from '#/hooks/useTranslation';
+
+import { ClearButton } from './ClearButton';
 import { CollapsibleBadges } from './CollapsibleBadges';
 import { SelectMenu, type SelectMenuViewportCollisionPadding } from './SelectMenu';
+import { ForwardedRefSelectSlot } from './SelectSlot';
+import { StatusIcons } from './StatusIcons';
+import { useBadgeItems } from '../hooks/useBadgeItems';
+import { useFocusRing } from '../hooks/useFocusRing';
 import { useSelectData, type AsyncItemsFetcher } from '../hooks/useSelectData';
-
+import { useSelectionDescription } from '../hooks/useSelectionDescription';
 import styles from '../styles/select.module.scss';
 
 type SelectItem = {
@@ -123,13 +118,17 @@ const ComboboxBaseInput = (
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ): ReactNode => {
     const { t } = useTranslation();
-    const selectionDescriptionId = useId();
     const { inputSlots, menuSlots, items, filterText, clearButton, getItemByValue, setFilterText, asyncItemStatus } =
         useSelectData(children, getAsyncItems);
+    const { wasClickedRef, onMouseDown, onFocus, onBlur } = useFocusRing();
+    const { selectionDescriptionId, selectionDescription } = useSelectionDescription(
+        multiple,
+        selectedItemValues,
+        getItemByValue,
+    );
+    const badgeItems = useBadgeItems(selectedItemValues, getItemByValue);
 
     const [hasInteractedSinceOpening, setHasInteractedSinceOpening] = useState(false);
-
-    const wasClickedRef = useRef(false);
 
     const selectedItems = useMemo((): SelectItem[] => {
         return selectedItemValues
@@ -225,28 +224,6 @@ const ComboboxBaseInput = (
 
     const hasError = valueInvalid || !!asyncItemStatus.error || status === 'error';
 
-    const badgeItems = useMemo(() => {
-        return selectedItemValues.map((value) => {
-            const item = getItemByValue(value) as SelectItem | undefined;
-            const displayValue = item?.label ?? value;
-            return { value, displayValue };
-        });
-    }, [selectedItemValues, getItemByValue]);
-
-    // Description for screen readers when focusing the input
-    const selectionDescription = useMemo((): string => {
-        if (!multiple || selectedItemValues.length === 0) {
-            return '';
-        }
-        const labels = selectedItemValues
-            .map((value) => {
-                const item = getItemByValue(value) as SelectItem | undefined;
-                return item?.label ?? value;
-            })
-            .join(', ');
-        return `${selectedItemValues.length} selected: ${labels}`;
-    }, [multiple, selectedItemValues, getItemByValue]);
-
     const handleDismissBadge = (value: string): void => {
         const item = getItemByValue(value) as SelectItem | undefined;
         if (item) {
@@ -261,8 +238,7 @@ const ComboboxBaseInput = (
     };
 
     const onBlurHandler = (blurEvent: FocusEvent<HTMLInputElement, Element>): void => {
-        blurEvent.target.dataset.showFocusRing = 'false';
-        wasClickedRef.current = false;
+        onBlur(blurEvent);
 
         if (!multiple) {
             const selectedItemLabel = selectedItem?.label ?? '';
@@ -313,15 +289,8 @@ const ComboboxBaseInput = (
                                     placeholder={selectedItemValues.length === 0 ? placeholder : ''}
                                     className={styles.multiSelectInput}
                                     disabled={disabled}
-                                    onMouseDown={(mouseEvent) => {
-                                        wasClickedRef.current = true;
-                                        mouseEvent.currentTarget.dataset.showFocusRing = 'false';
-                                    }}
-                                    onFocus={(focusEvent) => {
-                                        if (!wasClickedRef.current) {
-                                            focusEvent.target.dataset.showFocusRing = 'true';
-                                        }
-                                    }}
+                                    onMouseDown={onMouseDown}
+                                    onFocus={onFocus}
                                     onBlur={onBlurHandler}
                                 />
                             </CollapsibleBadges>
@@ -340,32 +309,13 @@ const ComboboxBaseInput = (
                             placeholder={placeholder}
                             className={styles.input}
                             disabled={disabled}
-                            onMouseDown={(mouseEvent) => {
-                                wasClickedRef.current = true;
-                                mouseEvent.currentTarget.dataset.showFocusRing = 'false';
-                            }}
-                            onFocus={(focusEvent) => {
-                                if (!wasClickedRef.current) {
-                                    focusEvent.target.dataset.showFocusRing = 'true';
-                                }
-                            }}
+                            onMouseDown={onMouseDown}
+                            onFocus={onFocus}
                             onBlur={onBlurHandler}
                         />
                     )}
                     {inputSlots}
-                    {clearButton ? (
-                        <RadixSlot
-                            onClick={(event) => {
-                                event.stopPropagation();
-                                handleClear();
-                            }}
-                            className={styles.clear}
-                            role="button"
-                            aria-label="Clear selection"
-                        >
-                            {clearButton}
-                        </RadixSlot>
-                    ) : null}
+                    {clearButton ? <ClearButton onClear={handleClear}>{clearButton}</ClearButton> : null}
                     {asyncItemStatus.isLoading && isOpen ? (
                         <ForwardedRefSelectSlot name="right" data-test-id={`${dataTestId}-right-slot`}>
                             <LoadingCircle size="x-small" data-test-id={`${dataTestId}-loading-circle`} />
@@ -383,27 +333,7 @@ const ComboboxBaseInput = (
                         >
                             <IconCaretDown size={16} className={styles.caret} />
                         </button>
-                        {status === 'success' ? (
-                            <IconCheckMark
-                                size={16}
-                                className={styles.iconSuccess}
-                                data-test-id={`${dataTestId}-success-icon`}
-                                aria-hidden="true"
-                            />
-                        ) : null}
-                        {hasError ? (
-                            <>
-                                <IconExclamationMarkTriangle
-                                    size={16}
-                                    className={styles.iconError}
-                                    data-test-id={`${dataTestId}-error-icon`}
-                                    aria-hidden="true"
-                                />
-                                <span className={styles.srOnly} role="alert">
-                                    Error
-                                </span>
-                            </>
-                        ) : null}
+                        <StatusIcons status={status} hasError={hasError} dataTestId={dataTestId} />
                     </div>
                 </div>
             </RadixPopover.Anchor>

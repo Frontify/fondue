@@ -1,16 +1,20 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconCaretDown, IconCheckMark, IconExclamationMarkTriangle } from '@frontify/fondue-icons';
+import { IconCaretDown } from '@frontify/fondue-icons';
 import * as RadixPopover from '@radix-ui/react-popover';
-import { Slot as RadixSlot } from '@radix-ui/react-slot';
 import { useSelect } from 'downshift';
-import { forwardRef, useCallback, useMemo, useRef, useState, type ForwardedRef, type ReactNode } from 'react';
+import { forwardRef, useCallback, useMemo, useState, type ForwardedRef, type ReactNode } from 'react';
 
 import { type CommonAriaProps } from '#/helpers/aria';
 
+import { ClearButton } from './ClearButton';
 import { CollapsibleBadges } from './CollapsibleBadges';
 import { SelectMenu, type SelectMenuViewportCollisionPadding } from './SelectMenu';
+import { StatusIcons } from './StatusIcons';
+import { useBadgeItems } from '../hooks/useBadgeItems';
+import { useFocusRing } from '../hooks/useFocusRing';
 import { useSelectData } from '../hooks/useSelectData';
+import { useSelectionDescription } from '../hooks/useSelectionDescription';
 import styles from '../styles/select.module.scss';
 
 export type SelectSharedProps = {
@@ -105,10 +109,15 @@ const SelectBaseInput = (
         ...props
     }: SelectBaseProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
-) => {
+): ReactNode => {
     const { inputSlots, menuSlots, items, clearButton, getItemByValue } = useSelectData(children);
-
-    const wasClicked = useRef(false);
+    const { onMouseDown, onFocus, onBlur } = useFocusRing();
+    const { selectionDescriptionId, selectionDescription } = useSelectionDescription(
+        multiple,
+        selectedItemValues,
+        getItemByValue,
+    );
+    const badgeItems = useBadgeItems(selectedItemValues, getItemByValue);
 
     const [hasInteractedSinceOpening, setHasInteractedSinceOpening] = useState(false);
 
@@ -121,15 +130,6 @@ const SelectBaseInput = (
             return undefined;
         },
         [getItemByValue, showStringValue],
-    );
-
-    const badgeItems = useMemo(
-        () =>
-            selectedItemValues.map((value) => {
-                const displayValue = getDisplayedValue(value);
-                return { value, displayValue };
-            }),
-        [selectedItemValues, getDisplayedValue],
     );
 
     const { getToggleButtonProps, getMenuProps, getItemProps, reset, isOpen, highlightedIndex } = useSelect<{
@@ -171,27 +171,24 @@ const SelectBaseInput = (
             : {}),
     });
 
+    const hasError = status === 'error';
+
+    const handleClear = (): void => {
+        onClear();
+        reset();
+    };
+
+    const singleSelectValue = useMemo(
+        (): ReactNode => getDisplayedValue(selectedItemValues[0]) || placeholder,
+        [getDisplayedValue, selectedItemValues, placeholder],
+    );
+
     return (
         <RadixPopover.Root open={isOpen}>
-            <RadixPopover.Anchor
-                asChild
-                onMouseDown={(mouseEvent) => {
-                    wasClicked.current = true;
-                    mouseEvent.currentTarget.dataset.showFocusRing = 'false';
-                }}
-                onFocus={(focusEvent) => {
-                    if (!wasClicked.current) {
-                        focusEvent.target.dataset.showFocusRing = 'true';
-                    }
-                }}
-                onBlur={(blurEvent) => {
-                    blurEvent.target.dataset.showFocusRing = 'false';
-                    wasClicked.current = false;
-                }}
-            >
+            <RadixPopover.Anchor asChild onMouseDown={onMouseDown} onFocus={onFocus} onBlur={onBlur}>
                 <div
                     className={styles.root}
-                    data-status={status}
+                    data-status={hasError ? 'error' : status}
                     data-disabled={disabled}
                     data-empty={selectedItemValues.length === 0}
                     data-test-id={dataTestId}
@@ -200,47 +197,33 @@ const SelectBaseInput = (
                         : // eslint-disable-next-line react-hooks/refs
                           getToggleButtonProps({
                               'aria-label': 'aria-label' in props ? props['aria-label'] : undefined,
+                              'aria-describedby': selectionDescription ? selectionDescriptionId : undefined,
                               ref: forwardedRef,
                           }))}
                 >
                     {multiple ? (
-                        <div className={styles.selectedValue}>
-                            <CollapsibleBadges items={badgeItems} placeholder={placeholder} onDismiss={onItemSelect} />
-                        </div>
+                        <>
+                            {/* Hidden description for screen readers - announced on focus */}
+                            <span id={selectionDescriptionId} className={styles.srOnly}>
+                                {selectionDescription}
+                            </span>
+                            <div className={styles.selectedValue}>
+                                <CollapsibleBadges
+                                    items={badgeItems}
+                                    placeholder={placeholder}
+                                    onDismiss={onItemSelect}
+                                    selectedCount={selectedItemValues.length}
+                                />
+                            </div>
+                        </>
                     ) : (
-                        <span className={styles.selectedValue}>
-                            {getDisplayedValue(selectedItemValues[0]) || placeholder}
-                        </span>
+                        <span className={styles.selectedValue}>{singleSelectValue}</span>
                     )}
                     {inputSlots}
-                    {clearButton ? (
-                        <RadixSlot
-                            onClick={(event) => {
-                                event.stopPropagation();
-                                onClear();
-                                reset();
-                            }}
-                            className={styles.clear}
-                        >
-                            {clearButton}
-                        </RadixSlot>
-                    ) : null}
+                    {clearButton ? <ClearButton onClear={handleClear}>{clearButton}</ClearButton> : null}
                     <div className={styles.icons}>
                         <IconCaretDown size={16} className={styles.caret} />
-                        {status === 'success' ? (
-                            <IconCheckMark
-                                size={16}
-                                className={styles.iconSuccess}
-                                data-test-id={`${dataTestId}-success-icon`}
-                            />
-                        ) : null}
-                        {status === 'error' ? (
-                            <IconExclamationMarkTriangle
-                                size={16}
-                                className={styles.iconError}
-                                data-test-id={`${dataTestId}-error-icon`}
-                            />
-                        ) : null}
+                        <StatusIcons status={status} hasError={hasError} dataTestId={dataTestId} />
                     </div>
                 </div>
             </RadixPopover.Anchor>
@@ -261,5 +244,6 @@ const SelectBaseInput = (
         </RadixPopover.Root>
     );
 };
+SelectBaseInput.displayName = 'Select';
 
 export const SelectBase = forwardRef<HTMLDivElement, SelectBaseProps>(SelectBaseInput);
