@@ -73,6 +73,7 @@
         "@radix-ui/react-tooltip": "^1.2.8",
         "downshift": "^9.0.13",
         "react-colorful": "^5.6.1",
+        "react-day-picker": "^9.13.1",
         "tailwind-merge": "^2.6.0",
         "tailwind-variants": "^0.3.1"
     },

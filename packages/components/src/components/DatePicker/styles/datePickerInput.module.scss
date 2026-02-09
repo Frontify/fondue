@@ -1,0 +1,137 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+@use '../../../utilities/sizeToken.module.scss';
+@use '../../../utilities/focusStyle.module.scss';
+@use '../../../utilities/transitions.module.scss';
+
+
+.root {
+    width: 100%;
+    position: relative;
+    justify-content: start;
+    align-items: center;
+    gap: sizeToken.get(2);
+    overflow: hidden;
+
+    font-family: var(--typography-font-family-primary);
+    font-weight: 400;
+    font-size: var(--typography-font-size-medium);
+    line-height: var(--typography-line-height-medium);
+    box-sizing: border-box;
+
+    text-align: start;
+    color: var(--color-secondary-default);
+    background-color: var(--color-surface-default);
+    border-radius: var(--border-radius-medium);
+    border: var(--border-width-default) solid var(--color-line-mid);
+
+    & {
+        @include transitions.transition-colors;
+    }
+
+    &:hover {
+        border-color: var(--color-line-strong);
+        color: var(--color-secondary-default);
+    }
+
+    &:has(:focus-visible),
+    &:has([data-state='open']) {
+        border-color: var(--color-line-strong);
+        color: var(--color-line-strong);
+
+        .caret {
+            transform: rotate(180deg);
+        }
+    }
+
+    &:has(button[data-color-input-select]:focus-visible) {
+        @include focusStyle.focus-outline-styles;
+    }
+
+    &:has(:disabled),
+    &[data-disabled='true'] {
+        border-color: var(--color-line-subtle);
+        background-color: var(--color-container-disabled-default);
+        color: var(--color-disabled-default);
+        cursor: default;
+
+        .colorName {
+            color: var(--color-disabled-default);
+        }
+
+        .colorIndicator {
+            border-color: var(--color-line-subtle);
+        }
+    }
+
+}
+
+.caret {
+    @include transitions.transition-all;
+}
+
+.colorName {
+    color: var(--color-primary-default);
+}
+
+.button {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    gap: sizeToken.get(2);
+    flex-grow: 1;
+    padding-inline: sizeToken.get(3);
+    height: sizeToken.get(9);
+    outline: none;
+    width: 100%;
+}
+
+.colorIndicator {
+    position: relative;
+    overflow: hidden;
+    width: sizeToken.get(4);
+    height: sizeToken.get(4);
+    border-radius: sizeToken.get(1);
+    border: var(--border-width-default) solid var(--color-line-mid);
+    background-clip: padding-box;
+    background-image: repeating-conic-gradient(var(--color-surface-default) 0% 25%, var(--color-line-subtle) 0% 50%);
+    background-size: 6px 6px;
+    background-position: -0.5px -0.5px;
+
+    &::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-color: var(--active-color);
+    }
+}
+
+.actions {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: sizeToken.get(3);
+    display: flex;
+    align-items: center;
+    pointer-events: none;
+    gap: sizeToken.get(2);
+
+    & > button:has(.clearIcon) {
+        pointer-events: all;
+    }
+
+    button:not(:hover) .clearIcon {
+        color: var(--color-secondary-default) !important;
+    }
+
+    .root:has(:disabled) button .clearIcon,
+    .root[data-disabled='true'] button .clearIcon {
+        color: var(--color-disabled-default) !important;
+    }
+}
+
+.clear {
+    outline: none;
+    padding: sizeToken.get(1);
+    margin: sizeToken.get(1);
+    @include focusStyle.focus-outline;
+    pointer-events: all;
+}
