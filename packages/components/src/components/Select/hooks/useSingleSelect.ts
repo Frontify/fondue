@@ -13,7 +13,6 @@ export const useSingleSelect = (
     const selectedItemValues = selectedValue !== null ? [selectedValue] : [];
 
     const selectItem = (item?: string) => {
-        console.log('item', item);
         if (!item) {
             return;
         }
@@ -21,7 +20,6 @@ export const useSingleSelect = (
         if (!value) {
             setSelectedItemState(newValue);
         }
-        console.log('newValue', newValue);
         onSelect?.(newValue);
     };
 

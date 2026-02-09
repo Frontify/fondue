@@ -376,11 +376,6 @@ describe('SelectMultiple - Accessibility', () => {
         });
 
         it('overflow wrapper has descriptive aria-label', () => {
-            renderMultiSelect({
-                'aria-label': 'Fruit picker',
-                value: ['apple', 'banana'],
-            });
-
             const { container } = renderMultiSelect({
                 'aria-label': 'Fruit picker',
                 value: ['apple', 'banana', 'cherry'],

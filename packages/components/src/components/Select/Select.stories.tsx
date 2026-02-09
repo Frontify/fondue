@@ -22,7 +22,7 @@ const meta: Meta<typeof SelectSingle> = {
     title: 'Components/Select',
     component: SelectSingle,
     subcomponents: {
-        'Select.Multi': SelectMultiple,
+        'Select.Multiple': SelectMultiple,
         'Select.Combobox': ComboboxSingle,
         'Select.Combobox.Multiple': ComboboxMultiple,
         'Select.Slot': SelectSlot,

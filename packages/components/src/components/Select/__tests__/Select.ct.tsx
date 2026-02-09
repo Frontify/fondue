@@ -8,7 +8,6 @@ import { FOCUS_BORDER_CSS, FOCUS_OUTLINE_CSS } from '#/helpers/constants';
 import { MAX_HEIGHT_MARGIN } from '#/utilities/domUtilities';
 
 import { Select } from '#/components/Select';
-import { waitFor } from '@testing-library/react';
 
 const SELECT_TEST_ID = 'test-select';
 const SELECT_MENU_TEST_ID = 'fondue-select-menu';
