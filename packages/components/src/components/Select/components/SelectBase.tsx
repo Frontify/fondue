@@ -220,6 +220,11 @@ const SelectBaseInput = (
                               ref: triggerRef,
                           }))}
                 >
+                    {selectionDescription ? (
+                        <span id={selectionDescriptionId} className={styles.srOnly}>
+                            {selectionDescription}
+                        </span>
+                    ) : null}
                     {multiple ? (
                         <div className={styles.selectedValue}>
                             <CollapsibleBadges
