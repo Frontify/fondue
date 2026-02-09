@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
 
 import { Badge } from '#/components/Badge/Badge';
 
@@ -125,6 +125,11 @@ export const CollapsibleBadges = ({
                     }}
                     className={styles.badgeWrapper}
                     data-visible={index < visibleCount}
+                    onKeyDown={(event: KeyboardEvent<HTMLDivElement>): void => {
+                        if (event.key === 'Enter' || event.key === ' ') {
+                            event.stopPropagation();
+                        }
+                    }}
                 >
                     <Badge
                         emphasis="weak"

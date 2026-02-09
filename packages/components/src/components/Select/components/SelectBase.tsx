@@ -3,7 +3,7 @@
 import { IconCaretDown } from '@frontify/fondue-icons';
 import * as RadixPopover from '@radix-ui/react-popover';
 import { useSelect } from 'downshift';
-import { forwardRef, useCallback, useMemo, useState, type ForwardedRef, type ReactNode } from 'react';
+import { forwardRef, useCallback, useMemo, useRef, useState, type ForwardedRef, type ReactNode } from 'react';
 
 import { type CommonAriaProps } from '#/helpers/aria';
 
@@ -110,6 +110,18 @@ const SelectBaseInput = (
     }: SelectBaseProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ): ReactNode => {
+    const internalRef = useRef<HTMLDivElement | null>(null);
+    const triggerRef = useCallback(
+        (node: HTMLDivElement | null): void => {
+            internalRef.current = node;
+            if (typeof forwardedRef === 'function') {
+                forwardedRef(node);
+            } else if (forwardedRef) {
+                (forwardedRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
+            }
+        },
+        [forwardedRef],
+    );
     const { inputSlots, menuSlots, items, clearButton, getItemByValue } = useSelectData(children);
     const { onMouseDown, onFocus, onBlur } = useFocusRing();
     const { selectionDescriptionId, selectionDescription } = useSelectionDescription(
@@ -164,6 +176,11 @@ const SelectBaseInput = (
                                   isOpen: true,
                                   highlightedIndex: state.highlightedIndex,
                               };
+                          case useSelect.stateChangeTypes.ToggleButtonBlur:
+                              return {
+                                  ...changes,
+                                  selectedItem: state.selectedItem,
+                              };
                       }
                       return changes;
                   },
@@ -187,6 +204,7 @@ const SelectBaseInput = (
         <RadixPopover.Root open={isOpen}>
             <RadixPopover.Anchor asChild onMouseDown={onMouseDown} onFocus={onFocus} onBlur={onBlur}>
                 <div
+                    ref={triggerRef}
                     className={styles.root}
                     data-status={hasError ? 'error' : status}
                     data-disabled={disabled}
@@ -198,20 +216,19 @@ const SelectBaseInput = (
                           getToggleButtonProps({
                               'aria-label': 'aria-label' in props ? props['aria-label'] : undefined,
                               'aria-describedby': selectionDescription ? selectionDescriptionId : undefined,
-                              ref: forwardedRef,
+                              ref: triggerRef,
                           }))}
                 >
                     {multiple ? (
                         <>
-                            {/* Hidden description for screen readers - announced on focus */}
-                            <span id={selectionDescriptionId} className={styles.srOnly}>
-                                {selectionDescription}
-                            </span>
                             <div className={styles.selectedValue}>
                                 <CollapsibleBadges
                                     items={badgeItems}
                                     placeholder={placeholder}
-                                    onDismiss={onItemSelect}
+                                    onDismiss={(value) => {
+                                        onItemSelect(value);
+                                        internalRef.current?.focus();
+                                    }}
                                     selectedCount={selectedItemValues.length}
                                 />
                             </div>

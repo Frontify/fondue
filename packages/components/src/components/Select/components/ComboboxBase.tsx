@@ -3,7 +3,7 @@
 import { IconCaretDown } from '@frontify/fondue-icons';
 import * as RadixPopover from '@radix-ui/react-popover';
 import { useCombobox, useMultipleSelection } from 'downshift';
-import { forwardRef, useMemo, useState, type FocusEvent, type ForwardedRef, type ReactNode } from 'react';
+import { forwardRef, useMemo, useRef, useState, type FocusEvent, type ForwardedRef, type ReactNode } from 'react';
 
 import { LoadingCircle } from '#/components/LoadingCircle/LoadingCircle.tsx';
 import { type CommonAriaProps } from '#/helpers/aria';
@@ -117,6 +117,7 @@ const ComboboxBaseInput = (
     }: ComboboxBaseProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ): ReactNode => {
+    const inputRef = useRef<HTMLInputElement>(null);
     const { t } = useTranslation();
     const { inputSlots, menuSlots, items, filterText, clearButton, getItemByValue, setFilterText, asyncItemStatus } =
         useSelectData(children, getAsyncItems);
@@ -229,6 +230,8 @@ const ComboboxBaseInput = (
         if (item) {
             removeSelectedItem(item);
             onItemSelect(value);
+            console.log('inputRef', inputRef.current);
+            inputRef.current?.focus();
         }
     };
 
@@ -277,6 +280,7 @@ const ComboboxBaseInput = (
                             >
                                 <input
                                     {...getInputProps({
+                                        ref: inputRef,
                                         'aria-label': 'aria-label' in props ? props['aria-label'] : undefined,
                                         // Remove auto-generated aria-labelledby if not explicitly provided
                                         'aria-labelledby':
