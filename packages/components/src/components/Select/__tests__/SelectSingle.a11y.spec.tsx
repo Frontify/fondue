@@ -35,8 +35,10 @@ describe('SelectSingle - Accessibility', () => {
         it('passes aria-labelledby to the trigger', () => {
             const { container } = render(
                 <>
-                    <label id="fruit-label">Pick a fruit</label>
-                    <Select aria-labelledby="fruit-label">
+                    <label id="fruit-label" htmlFor="fruit-select">
+                        Pick a fruit
+                    </label>
+                    <Select id="fruit-select" aria-labelledby="fruit-label">
                         <Select.Slot name="menu">
                             <Select.Item value="apple">Apple</Select.Item>
                         </Select.Slot>

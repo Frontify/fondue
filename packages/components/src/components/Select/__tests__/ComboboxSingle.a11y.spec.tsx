@@ -35,8 +35,10 @@ describe('ComboboxSingle - Accessibility', () => {
         it('passes aria-labelledby to the input', () => {
             render(
                 <>
-                    <label id="fruit-label">Pick a fruit</label>
-                    <Select.Combobox aria-labelledby="fruit-label">
+                    <label id="fruit-label" htmlFor="fruit-combobox">
+                        Pick a fruit
+                    </label>
+                    <Select.Combobox id="fruit-combobox" aria-labelledby="fruit-label">
                         <Select.Slot name="menu">
                             <Select.Item value="apple">Apple</Select.Item>
                         </Select.Slot>

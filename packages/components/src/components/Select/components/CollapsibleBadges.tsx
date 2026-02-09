@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useCallback, useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
 
 import { Badge } from '#/components/Badge/Badge';
 
@@ -79,27 +79,26 @@ export const CollapsibleBadges = ({
     const [visibleCount, setVisibleCount] = useState(items.length);
     const hasChildren = children !== undefined;
 
-    const recalculate = useCallback((): void => {
-        const container = containerRef.current;
-        if (!container || items.length === 0) {
-            setVisibleCount(items.length);
-            return;
-        }
-        setVisibleCount(calculateVisibleCount(container, badgeElementsRef.current, items, hasChildren));
-    }, [items, hasChildren]);
-
     useEffect(() => {
         const container = containerRef.current;
         if (!container) {
             return;
         }
 
+        const recalculate = (): void => {
+            if (items.length === 0) {
+                setVisibleCount(items.length);
+                return;
+            }
+            setVisibleCount(calculateVisibleCount(container, badgeElementsRef.current, items, hasChildren));
+        };
+
         const observer = new ResizeObserver(recalculate);
         observer.observe(container);
         return (): void => {
             observer.disconnect();
         };
-    }, [recalculate]);
+    }, [items, hasChildren]);
 
     if (items.length === 0 && !children) {
         return placeholder;
@@ -123,6 +122,7 @@ export const CollapsibleBadges = ({
                             badgeElementsRef.current.delete(item.value);
                         }
                     }}
+                    role="presentation"
                     className={styles.badgeWrapper}
                     data-visible={index < visibleCount}
                     onKeyDown={(event: KeyboardEvent<HTMLDivElement>): void => {

@@ -9,16 +9,17 @@ import { LoadingCircle } from '#/components/LoadingCircle/LoadingCircle.tsx';
 import { type CommonAriaProps } from '#/helpers/aria';
 import { useTranslation } from '#/hooks/useTranslation';
 
-import { ClearButton } from './ClearButton';
-import { CollapsibleBadges } from './CollapsibleBadges';
-import { SelectMenu, type SelectMenuViewportCollisionPadding } from './SelectMenu';
-import { ForwardedRefSelectSlot } from './SelectSlot';
-import { StatusIcons } from './StatusIcons';
 import { useBadgeItems } from '../hooks/useBadgeItems';
 import { useFocusRing } from '../hooks/useFocusRing';
 import { useSelectData, type AsyncItemsFetcher } from '../hooks/useSelectData';
 import { useSelectionDescription } from '../hooks/useSelectionDescription';
 import styles from '../styles/select.module.scss';
+
+import { ClearButton } from './ClearButton';
+import { CollapsibleBadges } from './CollapsibleBadges';
+import { SelectMenu, type SelectMenuViewportCollisionPadding } from './SelectMenu';
+import { ForwardedRefSelectSlot } from './SelectSlot';
+import { StatusIcons } from './StatusIcons';
 
 type SelectItem = {
     value: string;
@@ -117,7 +118,7 @@ const ComboboxBaseInput = (
     }: ComboboxBaseProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ): ReactNode => {
-    const inputRef = useRef<HTMLInputElement>(null);
+    const inputRef = useRef<HTMLInputElement | null>(null);
     const { t } = useTranslation();
     const { inputSlots, menuSlots, items, filterText, clearButton, getItemByValue, setFilterText, asyncItemStatus } =
         useSelectData(children, getAsyncItems);

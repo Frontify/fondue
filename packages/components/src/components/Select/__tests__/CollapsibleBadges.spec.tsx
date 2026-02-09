@@ -85,7 +85,7 @@ describe('CollapsibleBadges', () => {
         const user = userEvent.setup();
 
         render(
-            // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
+            // eslint-disable-next-line jsx-a11y-x/click-events-have-key-events, jsx-a11y-x/no-static-element-interactions
             <div onClick={outerClick}>
                 <CollapsibleBadges items={[{ value: 'a', displayValue: 'Alpha' }]} onDismiss={onDismiss} />
             </div>,

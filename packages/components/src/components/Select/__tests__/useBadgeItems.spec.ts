@@ -53,7 +53,7 @@ describe('useBadgeItems', () => {
 
         const { result } = renderHook(() => useBadgeItems(['x'], getItemByValue));
 
-        expect(result.current[0].displayValue).toBe('Custom Label');
+        expect(result.current[0]?.displayValue).toBe('Custom Label');
     });
 
     it('handles mixed found and not-found items', () => {

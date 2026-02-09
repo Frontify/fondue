@@ -40,8 +40,10 @@ describe('ComboboxMultiple - Accessibility', () => {
         it('passes aria-labelledby to the input element', () => {
             render(
                 <>
-                    <label id="my-label">Choose your fruits</label>
-                    <Select.Combobox.Multiple aria-labelledby="my-label">
+                    <label id="my-label" htmlFor="my-combobox">
+                        Choose your fruits
+                    </label>
+                    <Select.Combobox.Multiple id="my-combobox" aria-labelledby="my-label">
                         <Select.Slot name="menu">
                             <Select.Item value="apple">Apple</Select.Item>
                         </Select.Slot>
@@ -335,10 +337,8 @@ describe('ComboboxMultiple - Accessibility', () => {
         it('badges have aria-label matching the item label', () => {
             renderMultiCombobox({ 'aria-label': 'Fruit picker', value: ['apple'] });
 
-            const badges = screen
-                .getAllByTestId('badge')
-                .filter((el) => el.getAttribute('data-dismissable') === 'true');
-            expect(badges[0]).toHaveAttribute('aria-label', 'Apple');
+            const badge = screen.getAllByTestId('badge').find((el) => el.getAttribute('data-dismissable') === 'true');
+            expect(badge).toHaveAttribute('aria-label', 'Apple');
         });
 
         it('overflow badge has aria-hidden="true" to avoid confusion', () => {

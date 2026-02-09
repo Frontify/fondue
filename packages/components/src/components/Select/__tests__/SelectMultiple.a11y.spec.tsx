@@ -40,8 +40,10 @@ describe('SelectMultiple - Accessibility', () => {
         it('passes aria-labelledby to the trigger element', () => {
             const { container } = render(
                 <>
-                    <label id="my-label">Choose your fruits</label>
-                    <Select.Multiple aria-labelledby="my-label">
+                    <label id="my-label" htmlFor="my-select">
+                        Choose your fruits
+                    </label>
+                    <Select.Multiple id="my-select" aria-labelledby="my-label">
                         <Select.Slot name="menu">
                             <Select.Item value="apple">Apple</Select.Item>
                         </Select.Slot>
@@ -353,10 +355,8 @@ describe('SelectMultiple - Accessibility', () => {
                 value: ['apple'],
             });
 
-            const badges = screen
-                .getAllByTestId('badge')
-                .filter((el) => el.getAttribute('data-dismissable') === 'true');
-            expect(badges[0]).toHaveAttribute('aria-label', 'Apple');
+            const badge = screen.getAllByTestId('badge').find((el) => el.getAttribute('data-dismissable') === 'true');
+            expect(badge).toHaveAttribute('aria-label', 'Apple');
         });
 
         it('overflow badge has aria-hidden="true"', () => {

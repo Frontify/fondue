@@ -5,6 +5,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { Select } from '#/components/Select';
 import { type SelectItemProps } from '#/components/Select/components/SelectItem';
+
 import { getSelectOptionValue, isReactLeaf, recursiveMap } from '../utils';
 
 describe('getSelectOptionValue', () => {

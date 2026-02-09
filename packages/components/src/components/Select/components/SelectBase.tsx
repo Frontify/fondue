@@ -7,15 +7,16 @@ import { forwardRef, useCallback, useMemo, useRef, useState, type ForwardedRef, 
 
 import { type CommonAriaProps } from '#/helpers/aria';
 
-import { ClearButton } from './ClearButton';
-import { CollapsibleBadges } from './CollapsibleBadges';
-import { SelectMenu, type SelectMenuViewportCollisionPadding } from './SelectMenu';
-import { StatusIcons } from './StatusIcons';
 import { useBadgeItems } from '../hooks/useBadgeItems';
 import { useFocusRing } from '../hooks/useFocusRing';
 import { useSelectData } from '../hooks/useSelectData';
 import { useSelectionDescription } from '../hooks/useSelectionDescription';
 import styles from '../styles/select.module.scss';
+
+import { ClearButton } from './ClearButton';
+import { CollapsibleBadges } from './CollapsibleBadges';
+import { SelectMenu, type SelectMenuViewportCollisionPadding } from './SelectMenu';
+import { StatusIcons } from './StatusIcons';
 
 export type SelectSharedProps = {
     /**
@@ -117,7 +118,7 @@ const SelectBaseInput = (
             if (typeof forwardedRef === 'function') {
                 forwardedRef(node);
             } else if (forwardedRef) {
-                (forwardedRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
+                forwardedRef.current = node;
             }
         },
         [forwardedRef],
@@ -220,19 +221,17 @@ const SelectBaseInput = (
                           }))}
                 >
                     {multiple ? (
-                        <>
-                            <div className={styles.selectedValue}>
-                                <CollapsibleBadges
-                                    items={badgeItems}
-                                    placeholder={placeholder}
-                                    onDismiss={(value) => {
-                                        onItemSelect(value);
-                                        internalRef.current?.focus();
-                                    }}
-                                    selectedCount={selectedItemValues.length}
-                                />
-                            </div>
-                        </>
+                        <div className={styles.selectedValue}>
+                            <CollapsibleBadges
+                                items={badgeItems}
+                                placeholder={placeholder}
+                                onDismiss={(value) => {
+                                    onItemSelect(value);
+                                    internalRef.current?.focus();
+                                }}
+                                selectedCount={selectedItemValues.length}
+                            />
+                        </div>
                     ) : (
                         <span className={styles.selectedValue}>{singleSelectValue}</span>
                     )}

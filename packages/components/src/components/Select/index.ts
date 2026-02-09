@@ -2,9 +2,9 @@
 
 import { ComboboxMultiple } from './ComboboxMultiple';
 import { ComboboxSingle } from './ComboboxSingle';
-import { ForwardedRefSelectItem, ForwardedRefSelectItemGroup } from './components/SelectItem';
 import { SelectMultiple } from './SelectMultiple';
 import { SelectSingle } from './SelectSingle';
+import { ForwardedRefSelectItem, ForwardedRefSelectItemGroup } from './components/SelectItem';
 import { ForwardedRefSelectSlot } from './components/SelectSlot';
 
 type ComboboxComponent = typeof ComboboxSingle & {

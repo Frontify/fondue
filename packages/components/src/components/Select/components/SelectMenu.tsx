@@ -7,9 +7,10 @@ import { isValidElement, type ForwardedRef, type MouseEvent, type ReactElement, 
 
 import { ThemeProvider, useFondueTheme } from '#/components/ThemeProvider/ThemeProvider';
 
-import { type SelectItemProps } from './SelectItem';
 import styles from '../styles/select.module.scss';
 import { getSelectOptionValue, recursiveMap } from '../utils';
+
+import { type SelectItemProps } from './SelectItem';
 
 export type SelectMenuViewportCollisionPadding = 'compact' | 'spacious';
 

@@ -4,9 +4,8 @@ import { IconIcon } from '@frontify/fondue-icons';
 import { expect, test } from '@playwright/experimental-ct-react';
 import * as sinon from 'sinon';
 
-import { MockComboboxWithAsyncFetcher } from '#/components/Select/__tests__/MockComboboxWithAsyncFetcher.tsx';
-
 import { Select } from '#/components/Select';
+import { MockComboboxWithAsyncFetcher } from '#/components/Select/__tests__/MockComboboxWithAsyncFetcher.tsx';
 
 const SELECT_TEST_ID = 'test-combobox';
 const GROUP_TEST_ID = 'test-group';
@@ -474,6 +473,7 @@ test('should display loading circle when typing and hide loading circle after lo
         })
         .then(async () => {
             await expect(page.getByTestId(`${SELECT_TEST_ID}-loading-circle`)).not.toBeVisible();
+            return undefined;
         })
         .catch(() => {});
     await expect(page.getByTestId(`${SELECT_TEST_ID}-loading-circle`)).toBeVisible();

@@ -2,9 +2,8 @@
 
 import { IconCross } from '@frontify/fondue-icons';
 
-import { useTranslation } from '#/hooks/useTranslation';
-
 import { Button } from '#/components/Button/Button';
+import { useTranslation } from '#/hooks/useTranslation';
 
 import styles from '../styles/select.module.scss';
 

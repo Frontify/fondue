@@ -1,13 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type ComponentProps } from 'react';
+
 import { Select } from '#/components/Select';
 import { type AsyncItem, type AsyncItemsFetcher } from '#/components/Select/hooks/useSelectData';
 
-type ComboboxProps = typeof Select.Combobox;
 type MockComboboxWithAsyncFetcherProps = {
     asyncItems: AsyncItem[];
     shouldReject?: boolean;
-} & ComboboxProps;
+} & ComponentProps<typeof Select.Combobox>;
 
 export const MockComboboxWithAsyncFetcher = ({
     asyncItems,
