@@ -3,7 +3,16 @@
 import { IconCaretDown } from '@frontify/fondue-icons';
 import * as RadixPopover from '@radix-ui/react-popover';
 import { useCombobox, useMultipleSelection } from 'downshift';
-import { forwardRef, useMemo, useRef, useState, type FocusEvent, type ForwardedRef, type ReactNode } from 'react';
+import {
+    forwardRef,
+    useCallback,
+    useMemo,
+    useRef,
+    useState,
+    type FocusEvent,
+    type ForwardedRef,
+    type ReactNode,
+} from 'react';
 
 import { LoadingCircle } from '#/components/LoadingCircle/LoadingCircle.tsx';
 import { type CommonAriaProps } from '#/helpers/aria';
@@ -119,6 +128,9 @@ const ComboboxBaseInput = (
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ): ReactNode => {
     const inputRef = useRef<HTMLInputElement | null>(null);
+    const inputCallbackRef = useCallback((node: HTMLInputElement | null): void => {
+        inputRef.current = node;
+    }, []);
     const { t } = useTranslation();
     const { inputSlots, menuSlots, items, filterText, clearButton, getItemByValue, setFilterText, asyncItemStatus } =
         useSelectData(children, getAsyncItems);
@@ -280,8 +292,9 @@ const ComboboxBaseInput = (
                                 selectedCount={selectedItemValues.length}
                             >
                                 <input
+                                    // eslint-disable-next-line react-hooks/refs
                                     {...getInputProps({
-                                        ref: inputRef,
+                                        ref: inputCallbackRef,
                                         'aria-label': 'aria-label' in props ? props['aria-label'] : undefined,
                                         // Remove auto-generated aria-labelledby if not explicitly provided
                                         'aria-labelledby':
