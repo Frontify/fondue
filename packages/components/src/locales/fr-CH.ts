@@ -14,6 +14,8 @@ export const frCH: Translations = {
     Flyout_close: 'Fermer',
     Select_clear: 'effacer la saisie',
     Select_toggleMenu: 'basculer le menu',
+    Select_error: 'Erreur',
+    Select_selectedCount: '${count} sélectionné: ${items}',
     Switch_defaultLabel: 'Interrupteur',
     Table_sortByDescending: 'Trier par ${column} décroissant',
     Table_sortByAscending: 'Trier par ${column} croissant',

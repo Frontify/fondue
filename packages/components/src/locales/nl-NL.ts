@@ -14,6 +14,8 @@ export const nlNL: Translations = {
     Flyout_close: 'Sluiten',
     Select_clear: 'invoer wissen',
     Select_toggleMenu: 'menu schakelen',
+    Select_error: 'Fout',
+    Select_selectedCount: '${count} geselecteerd: ${items}',
     Switch_defaultLabel: 'Schakelaar',
     Table_sortByDescending: 'Sorteer op ${column} aflopend',
     Table_sortByAscending: 'Sorteer op ${column} oplopend',

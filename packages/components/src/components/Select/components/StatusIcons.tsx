@@ -4,6 +4,7 @@ import { IconCheckMark, IconExclamationMarkTriangle } from '@frontify/fondue-ico
 import { type ReactNode } from 'react';
 
 import styles from '../styles/select.module.scss';
+import { useTranslation } from '#/hooks/useTranslation';
 
 type StatusIconsProps = {
     /** The current status of the component. */
@@ -15,6 +16,7 @@ type StatusIconsProps = {
 };
 
 export const StatusIcons = ({ status, hasError, dataTestId }: StatusIconsProps): ReactNode => {
+    const { t } = useTranslation();
     return (
         <>
             {status === 'success' ? (
@@ -34,7 +36,7 @@ export const StatusIcons = ({ status, hasError, dataTestId }: StatusIconsProps):
                         aria-hidden="true"
                     />
                     <span className={styles.srOnly} role="alert">
-                        Error
+                        {t('Select_error')}
                     </span>
                 </>
             ) : null}

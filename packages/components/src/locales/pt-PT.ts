@@ -14,6 +14,8 @@ export const ptPT: Translations = {
     Flyout_close: 'Fechar',
     Select_clear: 'limpar entrada',
     Select_toggleMenu: 'alternar menu',
+    Select_error: 'Erro',
+    Select_selectedCount: '${count} selecionado: ${items}',
     Switch_defaultLabel: 'Interruptor',
     Table_sortByDescending: 'Ordenar por ${column} descendente',
     Table_sortByAscending: 'Ordenar por ${column} ascendente',

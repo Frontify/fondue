@@ -14,6 +14,8 @@ export const itIT: Translations = {
     Flyout_close: 'Chiudi',
     Select_clear: 'cancella input',
     Select_toggleMenu: 'attiva menu',
+    Select_error: 'Errore',
+    Select_selectedCount: '${count} selezionato: ${items}',
     Switch_defaultLabel: 'Interruttore',
     Table_sortByDescending: 'Ordina per ${column} decrescente',
     Table_sortByAscending: 'Ordina per ${column} crescente',

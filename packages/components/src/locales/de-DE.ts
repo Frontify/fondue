@@ -14,6 +14,8 @@ export const deDE: Translations = {
     Flyout_close: 'Schließen',
     Select_clear: 'Eingabe löschen',
     Select_toggleMenu: 'Menü umschalten',
+    Select_error: 'Fehler',
+    Select_selectedCount: '${count} ausgewählt: ${items}',
     Switch_defaultLabel: 'Schalter',
     Table_sortByDescending: 'Nach ${column} absteigend sortieren',
     Table_sortByAscending: 'Nach ${column} aufsteigend sortieren',

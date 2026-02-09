@@ -15,6 +15,8 @@ export const esES: Translations = {
     Select_clear: 'borrar entrada',
     Select_toggleMenu: 'alternar menú',
     Switch_defaultLabel: 'Interruptor',
+    Select_error: 'Error de selección',
+    Select_selectedCount: '${count} seleccionado: ${items}',
     Table_sortByDescending: 'Ordenar por ${column} descendente',
     Table_sortByAscending: 'Ordenar por ${column} ascendente',
     Table_sortDescending: 'Ordenar descendente',

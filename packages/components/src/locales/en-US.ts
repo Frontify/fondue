@@ -12,6 +12,8 @@ export const enUS = {
     Flyout_close: 'Close',
     Select_clear: 'clear input',
     Select_toggleMenu: 'toggle menu',
+    Select_error: 'Error',
+    Select_selectedCount: '${count} selected: ${items}',
     Switch_defaultLabel: 'Switch',
     Table_sortByDescending: 'Sort by ${column} descending',
     Table_sortByAscending: 'Sort by ${column} ascending',

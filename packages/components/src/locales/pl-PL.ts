@@ -14,6 +14,8 @@ export const plPL: Translations = {
     Flyout_close: 'Zamknij',
     Select_clear: 'wyczyść pole',
     Select_toggleMenu: 'przełącz menu',
+    Select_error: 'Błąd',
+    Select_selectedCount: '${count} wybranych: ${items}',
     Switch_defaultLabel: 'Przełącznik',
     Table_sortByDescending: 'Sortuj według ${column} malejąco',
     Table_sortByAscending: 'Sortuj według ${column} rosnąco',
