@@ -6,6 +6,7 @@ export { Accordion } from './components/Accordion/Accordion';
 export { Badge } from './components/Badge/Badge';
 export { Box } from './components/Box/Box';
 export { Button } from './components/Button/Button';
+export { Card } from './components/Card/Card';
 export { Checkbox } from './components/Checkbox/Checkbox';
 export { ColorPicker } from './components/ColorPicker/ColorPicker';
 export { Dialog } from './components/Dialog/Dialog';
