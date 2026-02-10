@@ -36,7 +36,7 @@ describe('CollapsibleBadges', () => {
         const dismissButton = screen.getByRole('button', { name: /Alpha/i });
         await user.click(dismissButton);
 
-        expect(onDismiss).toHaveBeenCalledWith('a');
+        expect(onDismiss).toHaveBeenCalledWith('a', true);
     });
 
     it('renders children when provided', () => {
@@ -85,7 +85,6 @@ describe('CollapsibleBadges', () => {
         const user = userEvent.setup();
 
         render(
-            // eslint-disable-next-line jsx-a11y-x/click-events-have-key-events, jsx-a11y-x/no-static-element-interactions
             <div onClick={outerClick}>
                 <CollapsibleBadges items={[{ value: 'a', displayValue: 'Alpha' }]} onDismiss={onDismiss} />
             </div>,
@@ -94,7 +93,7 @@ describe('CollapsibleBadges', () => {
         const dismissButton = screen.getByRole('button', { name: /Alpha/i });
         await user.click(dismissButton);
 
-        expect(onDismiss).toHaveBeenCalledWith('a');
+        expect(onDismiss).toHaveBeenCalledWith('a', true);
         expect(outerClick).not.toHaveBeenCalled();
     });
 });
