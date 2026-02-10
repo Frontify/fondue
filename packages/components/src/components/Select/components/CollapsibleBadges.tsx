@@ -87,7 +87,7 @@ export const CollapsibleBadges = ({
 
         const recalculate = (): void => {
             if (items.length === 0) {
-                setVisibleCount(items.length);
+                setVisibleCount(0);
                 return;
             }
             setVisibleCount(calculateVisibleCount(container, badgeElementsRef.current, items, hasChildren));
