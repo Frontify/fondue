@@ -2,11 +2,10 @@
 
 import { IconCross } from '@frontify/fondue-icons';
 
+import { Button } from '#/components/Button/Button';
 import { useTranslation } from '#/hooks/useTranslation';
 
-import { Button } from '../Button/Button';
-
-import styles from './styles/select.module.scss';
+import styles from '../styles/select.module.scss';
 
 export const SelectClear = ({ onClear }: { onClear?: () => void }) => {
     const { t } = useTranslation();
