@@ -1,6 +1,123 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+@use '../../../utilities/focusStyle.module.scss';
+@use '../../../utilities/transitions.module.scss';
+@use '../../../utilities/sizeToken.module.scss';
+
 .root {
     font-family: var(--typography-font-family-primary);
     max-width: 100%;
+}
+
+.toggleMonthButtonContainer {
+    position: absolute;
+    height: var(--rdp-nav-height);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.toggleMonthButton {
+    height: sizeToken.get(8);
+    width: sizeToken.get(8);
+}
+
+.nextMonthButtonContainer {
+    inset-inline-end: 0;
+    top: 0;
+}
+
+.button {
+    font-family: var(--typography-font-family-primary);
+    font-weight: var(--typography-font-weight-medium);
+    box-sizing: border-box;
+    white-space: nowrap;
+    border: none;
+    color: var(--color-primary-default);
+    font-size: var(--typography-font-size-medium);
+    line-height: var(--typography-line-height-medium);
+    aspect-ratio: 1 / 1;
+    border-radius: var(--border-radius-large);
+
+    & {
+        @include focusStyle.focus-outline;
+        @include transitions.transition-colors;
+    }
+}
+
+.dayButton {
+    margin: sizeToken.get(1);
+    height: sizeToken.get(6);
+
+}
+
+.week {
+    margin-top: sizeToken.get(2);
+    display: flex;
+    width: 100%;
+}
+
+.day {
+    &[data-today="true"] {
+        .dayButton {
+            font-weight: var(--typography-font-weight-bold);
+            border: 1px solid var(--color-primary-default);
+        }
+    }
+
+    &:not([data-selected="true"]) {
+
+        &:hover {
+            background-color: var(--color-container-secondary-hover);
+        }
+    }
+}
+
+.weekday {
+    font-size: var(--typography-font-size-small);
+    line-height: var(--typography-line-height-small);
+    font-weight: var(--typography-font-weight-medium);
+    color: var(--color-container-secondary-on-secondary-container);
+    height: sizeToken.get(8);
+    width: sizeToken.get(8);
+    margin: sizeToken.get(1);
+    padding: sizeToken.get(1);
+    box-sizing: border-box;
+}
+
+.weekdays {
+    display: flex;
+    width: 100%;
+}
+
+.selected {
+    background-color: var(--color-container-highlight-active);
+    color: var(--color-container-highlight-on-highlight-container);
+}
+
+.rangeStart {
+    background-color: var(--color-container-highlight-active);
+    color: var(--color-container-highlight-on-highlight-container);
+
+    &:not(.rangeEnd) {
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+
+    }
+}
+
+.rangeEnd {
+    background-color: var(--color-container-highlight-active);
+    color: var(--color-container-highlight-on-highlight-container);
+
+    &:not(.rangeStart) {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+    }
+}
+
+.rangeMiddle {
+    border-radius: 0;
+    background-color: var(--color-container-highlight-hover);
+    color: var(--color-container-highlight-on-highlight-container);
 }
