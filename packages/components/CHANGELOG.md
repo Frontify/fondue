@@ -1,5 +1,17 @@
 # @frontify/fondue-components
 
+## 26.0.0
+
+### Minor Changes
+
+- [#2619](https://github.com/Frontify/fondue/pull/2619) [`31f7341`](https://github.com/Frontify/fondue/commit/31f7341a466649fac3363d4a753fd8101d4fb4cb) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add refactored multi select component
+
+### Patch Changes
+
+- Updated dependencies [[`0509788`](https://github.com/Frontify/fondue/commit/050978884da4e1c654f1a2d8cbb36f49950bcaa3)]:
+    - @frontify/fondue-icons@0.24.0
+    - @frontify/fondue-tokens@5.0.0
+
 ## 25.0.0
 
 ### Major Changes
