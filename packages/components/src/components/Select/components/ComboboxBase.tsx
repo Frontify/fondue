@@ -253,7 +253,7 @@ const ComboboxBaseInput = (
         reset();
     };
 
-    const onBlurHandler = (blurEvent: FocusEvent<HTMLInputElement, Element>): void => {
+    const handleBlur = (blurEvent: FocusEvent<HTMLInputElement, Element>): void => {
         onBlur(blurEvent);
 
         if (!multiple) {
@@ -309,7 +309,7 @@ const ComboboxBaseInput = (
                                     disabled={disabled}
                                     onMouseDown={onMouseDown}
                                     onFocus={onFocus}
-                                    onBlur={onBlurHandler}
+                                    onBlur={handleBlur}
                                 />
                             </CollapsibleBadges>
                         </>
@@ -329,7 +329,7 @@ const ComboboxBaseInput = (
                             disabled={disabled}
                             onMouseDown={onMouseDown}
                             onFocus={onFocus}
-                            onBlur={onBlurHandler}
+                            onBlur={handleBlur}
                         />
                     )}
                     {inputSlots}

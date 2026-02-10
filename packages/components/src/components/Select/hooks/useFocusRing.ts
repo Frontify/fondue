@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useRef, type FocusEvent, type MouseEvent, type MutableRefObject } from 'react';
+import { useCallback, useRef, type FocusEvent, type MouseEvent, type MutableRefObject } from 'react';
 
 type FocusRingHandlers = {
     /** Ref tracking whether the element was activated via mouse click. */
@@ -16,21 +16,21 @@ type FocusRingHandlers = {
 export const useFocusRing = (): FocusRingHandlers => {
     const wasClickedRef = useRef(false);
 
-    const onMouseDown = (event: MouseEvent<HTMLElement>): void => {
+    const onMouseDown = useCallback((event: MouseEvent<HTMLElement>): void => {
         wasClickedRef.current = true;
         event.currentTarget.dataset.showFocusRing = 'false';
-    };
+    }, []);
 
-    const onFocus = (event: FocusEvent<HTMLElement>): void => {
+    const onFocus = useCallback((event: FocusEvent<HTMLElement>): void => {
         if (!wasClickedRef.current) {
             event.target.dataset.showFocusRing = 'true';
         }
-    };
+    }, []);
 
-    const onBlur = (event: FocusEvent<HTMLElement>): void => {
+    const onBlur = useCallback((event: FocusEvent<HTMLElement>): void => {
         event.target.dataset.showFocusRing = 'false';
         wasClickedRef.current = false;
-    };
+    }, []);
 
     return { wasClickedRef, onMouseDown, onFocus, onBlur };
 };

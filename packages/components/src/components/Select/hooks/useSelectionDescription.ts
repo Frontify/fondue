@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { useId, useMemo } from 'react';
+
 import { useTranslation } from '#/hooks/useTranslation';
 
 type SelectItemLike = {
@@ -34,7 +35,7 @@ export const useSelectionDescription = (
             })
             .join(', ');
         return t('Select_selectedCount', { count: selectedItemValues.length.toString(), items: labels });
-    }, [isMultiple, selectedItemValues, getItemByValue]);
+    }, [isMultiple, selectedItemValues, getItemByValue, t]);
 
     return { selectionDescriptionId, selectionDescription };
 };

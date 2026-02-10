@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
 
 import { Badge } from '#/components/Badge/Badge';
+import { useTranslation } from '#/hooks/useTranslation';
 
 import styles from '../styles/select.module.scss';
 
@@ -57,16 +58,6 @@ const calculateVisibleCount = (
     return Math.max(1, count);
 };
 
-const getSelectedCountText = (count: number): string => {
-    if (count === 1) {
-        return '1 item selected';
-    }
-    if (count > 1) {
-        return `${count} items selected`;
-    }
-    return '';
-};
-
 export const CollapsibleBadges = ({
     items,
     placeholder,
@@ -74,6 +65,7 @@ export const CollapsibleBadges = ({
     children,
     selectedCount = 0,
 }: CollapsibleBadgesProps): ReactNode => {
+    const { t } = useTranslation();
     const containerRef = useRef<HTMLDivElement>(null);
     const badgeElementsRef = useRef<Map<string, HTMLDivElement>>(new Map());
     const [visibleCount, setVisibleCount] = useState(items.length);
@@ -105,6 +97,16 @@ export const CollapsibleBadges = ({
     }
 
     const overflowCount = items.length - visibleCount;
+
+    const getSelectedCountText = (count: number): string => {
+        if (count === 1) {
+            return t('Select_singleItemSelected');
+        }
+        if (count > 1) {
+            return t('Select_multipleItemsSelected', { count: count.toString() });
+        }
+        return '';
+    };
 
     return (
         <div ref={containerRef} className={styles.badgesContainer}>
@@ -144,7 +146,10 @@ export const CollapsibleBadges = ({
                 </div>
             ))}
             {overflowCount > 0 && (
-                <div className={styles.badgeWrapper} aria-label={`${overflowCount} more items selected`}>
+                <div
+                    className={styles.badgeWrapper}
+                    aria-label={t('Select_additionalItemsSelected', { count: overflowCount.toString() })}
+                >
                     <Badge emphasis="weak" aria-hidden="true">
                         +{overflowCount}
                     </Badge>
