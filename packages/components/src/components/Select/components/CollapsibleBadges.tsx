@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
+import { type MouseEvent, useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
 
 import { Badge } from '#/components/Badge/Badge';
 import { useTranslation } from '#/hooks/useTranslation';
@@ -19,7 +19,7 @@ type BadgeItem = {
 type CollapsibleBadgesProps = {
     items: BadgeItem[];
     placeholder?: string;
-    onDismiss: (value: string) => void;
+    onDismiss: (value: string, preventFocusRing: boolean) => void;
     /** Optional children to render at the end (e.g., an input field). Space is reserved in the layout calculation. */
     children?: ReactNode;
     /** Total number of selected items (for screen reader announcements). */
@@ -66,6 +66,7 @@ export const CollapsibleBadges = ({
     selectedCount = 0,
 }: CollapsibleBadgesProps): ReactNode => {
     const { t } = useTranslation();
+    const wasClickedRef = useRef(false);
     const containerRef = useRef<HTMLDivElement>(null);
     const badgeElementsRef = useRef<Map<string, HTMLDivElement>>(new Map());
     const [visibleCount, setVisibleCount] = useState(items.length);
@@ -132,13 +133,17 @@ export const CollapsibleBadges = ({
                             event.stopPropagation();
                         }
                     }}
+                    onMouseDown={(): void => {
+                        wasClickedRef.current = true;
+                    }}
                 >
                     <Badge
                         emphasis="weak"
                         aria-label={typeof item.displayValue === 'string' ? item.displayValue : item.value}
                         onDismiss={(event) => {
                             event.stopPropagation();
-                            onDismiss(item.value);
+                            onDismiss(item.value, wasClickedRef.current);
+                            wasClickedRef.current = false;
                         }}
                     >
                         {item.displayValue}

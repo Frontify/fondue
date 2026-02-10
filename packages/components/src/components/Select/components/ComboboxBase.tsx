@@ -238,13 +238,17 @@ const ComboboxBaseInput = (
 
     const hasError = valueInvalid || !!asyncItemStatus.error || status === 'error';
 
-    const handleDismissBadge = (value: string): void => {
+    const handleDismissBadge = (value: string, preventFocusRing: boolean): void => {
         const item = getItemByValue(value) as SelectItem | undefined;
         if (item) {
             removeSelectedItem(item);
             onItemSelect(value);
-            console.log('inputRef', inputRef.current);
-            inputRef.current?.focus();
+            if (inputRef.current) {
+                inputRef.current.focus();
+                if (preventFocusRing) {
+                    inputRef.current.dataset.showFocusRing = 'false';
+                }
+            }
         }
     };
 
