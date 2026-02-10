@@ -3,8 +3,9 @@
 import { IconCheckMark, IconExclamationMarkTriangle } from '@frontify/fondue-icons';
 import { type ReactNode } from 'react';
 
-import styles from '../styles/select.module.scss';
 import { useTranslation } from '#/hooks/useTranslation';
+
+import styles from '../styles/select.module.scss';
 
 type StatusIconsProps = {
     /** The current status of the component. */
