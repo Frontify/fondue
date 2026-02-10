@@ -1,5 +1,16 @@
 # @frontify/fondue-rte
 
+## 0.0.3
+
+### Patch Changes
+
+- [`80d58b0`](https://github.com/Frontify/fondue/commit/80d58b07a7026cda8b47299558e07ada953afdb9) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update fondue export json
+
+- Updated dependencies [[`80d58b0`](https://github.com/Frontify/fondue/commit/80d58b07a7026cda8b47299558e07ada953afdb9)]:
+    - @frontify/fondue-components@26.0.1
+    - @frontify/fondue-icons@0.24.1
+    - @frontify/fondue-tokens@5.0.0
+
 ## 0.0.2
 
 ### Patch Changes
