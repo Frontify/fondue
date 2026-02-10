@@ -153,6 +153,37 @@ export const ItemGroups: Story = {
     ),
 };
 
+export const MultipleGroupsWithHeadings: Story = {
+    render: ({ ...args }) => (
+        <Dropdown.Root {...args}>
+            <Dropdown.Trigger>
+                <Button>Trigger</Button>
+            </Dropdown.Trigger>
+            <Dropdown.Content>
+                <Dropdown.Group heading="File Actions">
+                    <Dropdown.Item onSelect={() => {}}>New File</Dropdown.Item>
+                    <Dropdown.Item onSelect={() => {}}>Open File</Dropdown.Item>
+                    <Dropdown.Item onSelect={() => {}}>Save File</Dropdown.Item>
+                </Dropdown.Group>
+                <Dropdown.Group heading="Edit Actions">
+                    <Dropdown.Item onSelect={() => {}}>Copy</Dropdown.Item>
+                    <Dropdown.Item onSelect={() => {}}>Paste</Dropdown.Item>
+                    <Dropdown.Item onSelect={() => {}}>Cut</Dropdown.Item>
+                </Dropdown.Group>
+                <Dropdown.Group heading="View Options">
+                    <Dropdown.Item onSelect={() => {}}>Zoom In</Dropdown.Item>
+                    <Dropdown.Item onSelect={() => {}}>Zoom Out</Dropdown.Item>
+                    <Dropdown.Item onSelect={() => {}}>Reset Zoom</Dropdown.Item>
+                </Dropdown.Group>
+                <Dropdown.Group heading="Settings">
+                    <Dropdown.Item onSelect={() => {}}>Preferences</Dropdown.Item>
+                    <Dropdown.Item onSelect={() => {}}>About</Dropdown.Item>
+                </Dropdown.Group>
+            </Dropdown.Content>
+        </Dropdown.Root>
+    ),
+};
+
 export const SubMenus: Story = {
     render: ({ ...args }) => (
         <Dropdown.Root {...args}>
