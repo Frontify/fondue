@@ -23,6 +23,25 @@ const meta: Meta<typeof AccordionRoot> = {
         status: {
             type: 'released',
         },
+        docs: {
+            description: {
+                component: [
+                    'The accordion component is a vertically stacked list of interactive headers that toggle the visibility of associated content.',
+                    '',
+                    'It helps organize large amounts of information by collapsing it into digestible sections, conserving space and improving scannability.',
+                    '',
+                    'Every accordion has a job to do — and so does each part inside it. From icons to actions, everything has a purpose.',
+                    '',
+                    '**Actions:** Use the dedicated space on the right of the header for relevant actions. Keep primary actions visible for quick access. Tuck away non-essential ones behind the vertical three dot icon to reduce visual clutter.',
+                    '',
+                    '**Separators:** Show or hide a visual separator based on the layout needs.',
+                    '',
+                    '**Leading icon:** Add a leading icon to reinforce the meaning of the label, or skip it for a simpler look.',
+                    '',
+                    '**Padding:** Padding can be applied to both the accordion header and its content area. Adjust the spacing as needed to align with layout and readability requirements.',
+                ].join('\n'),
+            },
+        },
     },
     args: {},
 };
