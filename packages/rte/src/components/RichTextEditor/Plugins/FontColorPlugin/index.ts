@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { createFontColorPlugin } from '@udecode/plate-font';
+import { type PlatePlugin } from '@udecode/plate-core';
 
 import { Plugin, type PluginProps } from '../Plugin';
 
@@ -11,5 +12,7 @@ export class FontColorPlugin extends Plugin {
         super('font-color-plugin', { button: FontColorButton, ...props });
     }
 
-    plugins = () => [createFontColorPlugin()];
+    plugins(): PlatePlugin[] {
+        return [createFontColorPlugin()];
+    }
 }
