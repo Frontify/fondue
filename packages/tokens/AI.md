@@ -6,13 +6,10 @@ This document describes the Fondue design system's Tailwind utility classes. Tok
 
 ```tsx
 // Import base tokens (required)
-import '@frontify/fondue-tokens/styles';
-
-// Use as Tailwind preset
-import tokensConfig from '@frontify/fondue-tokens/tailwind';
+import fondueTailwindConfig from '@frontify/fondue/tokens/tailwind';
 
 export default {
-  presets: [tokensConfig],
+  presets: [frontifyTailwindConfig],
 };
 ```
 
