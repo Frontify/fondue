@@ -5,8 +5,7 @@ This document describes the React components exported by `@frontify/fondue-compo
 ## Setup
 
 ```tsx
-import '@frontify/fondue-components/styles';
-import { ThemeProvider, RouterProvider, Button } from '@frontify/fondue-components';
+import { ThemeProvider, RouterProvider } from '@frontify/fondue/components';
 
 function App() {
   return (
