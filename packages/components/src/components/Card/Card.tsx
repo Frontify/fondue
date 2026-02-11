@@ -148,14 +148,14 @@ export type CardBannerProps = {
     'data-test-id'?: string;
     /**
      * The height variant of the banner.
-     * @default 'small'
+     * @default 'large'
      */
     size?: CardBannerSize;
     children?: ReactNode;
 };
 
 export const CardBanner = (
-    { 'data-test-id': dataTestId = 'fondue-card-banner', size = 'small', children }: CardBannerProps,
+    { 'data-test-id': dataTestId = 'fondue-card-banner', size = 'large', children }: CardBannerProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     const { selected } = useContext(CardContext);

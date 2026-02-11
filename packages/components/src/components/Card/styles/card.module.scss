@@ -1,13 +1,50 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+@use '../../../utilities/focusStyle.module.scss';
+@use '../../../utilities/sizeToken.module.scss';
+@use '../../../utilities/transitions.module.scss';
+
+// Mixin for card state variants (default, hover, selected, hover+selected)
+@mixin card-state(
+    $border-color,
+    $box-shadow: none,
+    $banner-bg,
+    $banner-overlay-bg: rgba(0, 0, 0, 0),
+    $icon-bg,
+    $icon-color,
+    $action-btn-border-color: transparent,
+    $action-btn-color
+) {
+    border-color: var(--color-#{$border-color});
+    box-shadow: $box-shadow;
+
+    & .banner {
+        background-color: var(--color-#{$banner-bg});
+    }
+
+    & .bannerOverlay {
+        background-color: $banner-overlay-bg;
+    }
+
+    & .icon {
+        background-color: var(--color-#{$icon-bg});
+        color: var(--color-#{$icon-color});
+    }
+
+    & .actionsButton {
+        border-color: $action-btn-border-color;
+        color: var(--color-#{$action-btn-color});
+    }
+}
+
 .root {
     position: relative;
-    min-width: 240px;
+    min-width: sizeToken.get(60);
     display: grid;
     grid-template-areas:
-        'banner  banner   banner'
-        'icon    title    actions'
-        'icon    meta     actions';
+        'banner     banner   banner'
+        'thumbnail  title    actions'
+        'thumbnail  meta     actions';
     grid-template-columns: auto 1fr auto;
     grid-template-rows: auto auto auto;
     border-radius: var(--border-radius-large);
@@ -18,18 +55,56 @@
     outline: none;
     transition: border-color 150ms ease-in-out, box-shadow 150ms ease-in-out;
 
+    &:has(> .overlay:focus-visible) {
+        @include focusStyle.focus-outline-styles;
+    }
+
+    // Default state
+    @include card-state(
+        $border-color: 'line-subtle',
+        $banner-bg: 'container-subtle',
+        $icon-bg: 'container-subtle',
+        $icon-color: 'secondary-default',
+        $action-btn-color: 'secondary-default'
+    );
+
+    // Hover state
     &:hover {
-        border-color: var(--color-line-default);
+        @include card-state(
+            $border-color: 'line-default',
+            $banner-bg: 'container-hover',
+            $banner-overlay-bg: rgba(0, 0, 0, 0.08),
+            $icon-bg: 'container-interactive-default',
+            $icon-color: 'interactive-default',
+            $action-btn-border-color: var(--color-line-subtle),
+            $action-btn-color: 'primary-default'
+        );
     }
 
-    &:has(.overlay:focus-visible) {
-        outline: 4px solid var(--color-focus-default);
-        border-radius: var(--border-radius-large);
-    }
-
+    // Selected state
     &[data-selected='true'] {
-        border-color: var(--color-interactive-default);
-        box-shadow: 0 0 0 1px var(--color-interactive-default);
+        @include card-state(
+            $border-color: 'interactive-default',
+            $box-shadow: 0 0 0 1px var(--color-interactive-default),
+            $banner-bg: 'container-subtle',
+            $icon-bg: 'container-interactive-default',
+            $icon-color: 'interactive-default',
+            $action-btn-color: 'secondary-default'
+        );
+    }
+
+    // Hover + Selected state
+    &[data-selected='true']:hover {
+        @include card-state(
+            $border-color: 'interactive-default',
+            $box-shadow: 0 0 0 1px var(--color-interactive-default),
+            $banner-bg: 'container-hover',
+            $banner-overlay-bg: rgba(0, 0, 0, 0.08),
+            $icon-bg: 'container-interactive-default',
+            $icon-color: 'interactive-default',
+            $action-btn-border-color: var(--color-line-subtle),
+            $action-btn-color: 'primary-default'
+        );
     }
 }
 
@@ -46,16 +121,13 @@
     color: transparent;
 }
 
-/* -------------------------------------------------------------------------- */
-/* Banner                                                                     */
-/* -------------------------------------------------------------------------- */
-
 .banner {
     grid-area: banner;
     position: relative;
     overflow: hidden;
-    background-color: var(--color-container-subtle);
-    transition: background-color 150ms ease-in-out;
+    border-radius: var(--border-radius-large);
+    pointer-events: none;
+    @include transitions.transition-colors;
 
     &[data-size='small'] {
         aspect-ratio: 9 / 4;
@@ -63,10 +135,6 @@
 
     &[data-size='large'] {
         aspect-ratio: 9 / 6;
-    }
-
-    .root:hover & {
-        background-color: var(--color-container-hover);
     }
 }
 
@@ -98,13 +166,8 @@
 .bannerOverlay {
     position: absolute;
     inset: 0;
-    background-color: rgba(0, 0, 0, 0);
-    transition: background-color 150ms ease-in-out;
     pointer-events: none;
-
-    .root:hover & {
-        background-color: rgba(0, 0, 0, 0.08);
-    }
+    @include transitions.transition-colors;
 }
 
 .bannerIcon {
@@ -114,7 +177,7 @@
     width: 100%;
     height: 100%;
     color: var(--card-banner-icon-color, var(--color-secondary-default));
-    transition: color 150ms ease-in-out;
+    @include transitions.transition-colors;
 
     .root:hover & {
         color: var(--card-banner-icon-hover-color, var(--color-primary-default));
@@ -145,18 +208,15 @@
     justify-content: flex-end;
 }
 
-/* -------------------------------------------------------------------------- */
-/* Icon / Logo                                                                */
-/* -------------------------------------------------------------------------- */
-
 .logo {
-    grid-area: icon;
-    width: 40px;
-    height: 40px;
+    grid-area: thumbnail;
+    width: sizeToken.get(9);
+    height: sizeToken.get(9);
     border-radius: var(--border-radius-medium);
     object-fit: contain;
     align-self: center;
     margin: var(--spacing-small) 0 var(--spacing-small) var(--spacing-medium);
+    pointer-events: none;
 
     &[data-overlap='true'] {
         grid-area: banner;
@@ -173,52 +233,51 @@
 }
 
 .icon {
-    grid-area: icon;
+    grid-area: thumbnail;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    height: 40px;
+    width: sizeToken.get(9);
+    height: sizeToken.get(9);
     border-radius: var(--border-radius-medium);
     align-self: center;
     margin: var(--spacing-small) 0 var(--spacing-small) var(--spacing-medium);
-    background-color: var(--color-container-subtle);
-    color: var(--color-secondary-default);
-    transition: background-color 150ms ease-in-out, color 150ms ease-in-out;
-
-    .root:hover &,
-    .root[data-selected='true'] & {
-        background-color: var(--color-container-interactive-default);
-        color: var(--color-interactive-default);
-    }
+    pointer-events: none;
+    @include transitions.transition-colors;
 }
-
-/* -------------------------------------------------------------------------- */
-/* Title / Meta                                                               */
-/* -------------------------------------------------------------------------- */
 
 .title {
     grid-area: title;
     padding: var(--spacing-small) var(--spacing-small) 0;
-    font-weight: var(--font-weight-medium);
+    font-family: var(--typography-font-family-primary);
+    font-size: var(--typography-font-size-small);
+    font-weight: var(--typography-font-weight-medium);
+    font-kerning: none;
+    line-height: var(--typography-line-height-tight);
     color: var(--color-primary-default);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     align-self: end;
     min-width: 0;
+    pointer-events: none;
 }
 
 .meta {
     grid-area: meta;
     padding: 0 var(--spacing-small);
-    font-size: var(--font-size-small);
+    font-family: var(--typography-font-family-primary);
+    font-size: var(--typography-font-size-small);
+    font-weight: var(--typography-font-weight-regular);
+    font-kerning: none;
+    line-height: var(--typography-line-height-tight);
     color: var(--color-secondary-default);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     align-self: start;
     min-width: 0;
+    pointer-events: none;
 }
 
 .metas {
@@ -228,8 +287,13 @@
     padding: 0 var(--spacing-small);
     align-self: start;
     min-width: 0;
-    font-size: var(--font-size-small);
+    font-family: var(--typography-font-family-primary);
+    font-size: var(--typography-font-size-small);
+    font-weight: var(--typography-font-weight-regular);
+    font-kerning: none;
+    line-height: var(--typography-line-height-tight);
     color: var(--color-secondary-default);
+    pointer-events: none;
 
     & > .meta {
         grid-area: unset;
@@ -245,10 +309,6 @@
         flex-shrink: 0;
     }
 }
-
-/* -------------------------------------------------------------------------- */
-/* Actions                                                                    */
-/* -------------------------------------------------------------------------- */
 
 .actions {
     grid-area: actions;
@@ -270,25 +330,17 @@
     border-radius: var(--border-radius-medium);
     border: var(--border-width-default) solid transparent;
     background: transparent;
-    color: var(--color-secondary-default);
     cursor: pointer;
     outline: none;
-    transition: background-color 150ms ease-in-out, color 150ms ease-in-out, border-color 150ms ease-in-out;
+    @include transitions.transition-colors;
 
-    /* emphasis weak: subtle hover */
     &:hover {
         color: var(--color-primary-default);
     }
 
-    /* emphasis default: when card is hovered, buttons become more prominent */
-    .root:hover & {
-        border-color: var(--color-line-subtle);
-        color: var(--color-primary-default);
-
-        &:hover {
-            background-color: var(--color-container-hover);
-            border-color: var(--color-line-default);
-        }
+    .root:hover &:hover {
+        background-color: var(--color-container-hover);
+        border-color: var(--color-line-default);
     }
 
     &:focus-visible {
