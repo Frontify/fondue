@@ -18,7 +18,7 @@ function App() {
 }
 ```
 
-- **ThemeProvider** (required): wraps your app. Props: `theme` (`'light'` | `'dark'`), `dir` (`'ltr'` | `'rtl'`), `translations` (i18n object, defaults to English).
+- **ThemeProvider** (required): wraps your app. Props: `theme` (`'light'` | `'dark'`), `dir` (`'ltr'` | `'rtl'`), `translations` (i18n object, defaults to English), `asChild` (boolean, default `false` — renders as `<div>` or passes through to child).
 - **useFondueTheme**: hook to access theme context (`{ theme, dir, translations }`). Use when building custom theme-aware components.
 - **RouterProvider** (required for `<Link>`): provides navigation. Props: `navigate` (function), `useHref` (function).
 - **Icons**: import from `@frontify/fondue-icons` (e.g., `import { IconPlus } from '@frontify/fondue-icons'`).
@@ -36,6 +36,8 @@ function App() {
 | A multi-line text input | `<Textarea>` |
 | A dropdown select (no typing) | `<Select>` |
 | A searchable/filterable select | `<Select.Combobox>` |
+| A multi-select dropdown | `<Select.Multiple>` |
+| A searchable multi-select | `<Select.Combobox.Multiple>` |
 | A right-click or action menu | `<Dropdown>` |
 | A checkbox | `<Checkbox>` |
 | A boolean on/off toggle | `<Switch>` |
@@ -73,8 +75,8 @@ function App() {
 | Component | Key props | Renders as |
 |---|---|---|
 | `Box` | `display`, `as` (`'div'`\|`'span'`) | Generic `<div>` |
-| `Flex` | `direction`, `align`, `justify`, `gap`, `wrap` | Flexbox `<div>` |
-| `Grid` | `columns`, `rows`, `gap`, `align`, `justify` | CSS Grid `<div>` |
+| `Flex` | `direction`, `align`, `justify`, `gap`, `gapX`, `gapY`, `wrap` | Flexbox `<div>` |
+| `Grid` | `columns`, `rows`, `flow`, `gap`, `gapX`, `gapY`, `align`, `justify` | CSS Grid `<div>` |
 | `Section` | `display` | Semantic `<section>` |
 
 **ScrollArea** — styled scrollable container. Built on `@radix-ui/react-scroll-area`.
@@ -83,7 +85,10 @@ function App() {
 |---|---|---|
 | `type` | `'hover'`, `'auto'`, `'always'`, `'scroll'` | `'hover'` |
 | `maxHeight` | CSS value | `'100%'` |
+| `maxWidth` | CSS value | `'100%'` |
 | `padding` | `'none'`\|`'tight'`\|`'compact'`\|`'comfortable'`\|`'spacious'` | `'compact'` |
+| `scrollbarGutter` | `'auto'`\|`'stable'`\|`'stable-horizontal'`\|`'stable-vertical'` | `'auto'` |
+| `showShadow` | boolean | — |
 
 ```tsx
 <Flex direction="row" align="center" justify="space-between" gap={16}>
@@ -99,10 +104,12 @@ function App() {
 | Component | Key props | Default |
 |---|---|---|
 | `Heading` | `as` (`'h1'`–`'h6'`, `'span'`, `'p'`), `size` (`'medium'`\|`'large'`\|`'x-large'`\|`'xx-large'`), `weight` (`'default'`\|`'strong'`), `color` | `as='span'`, `size='medium'` |
-| `Text` | `as` (`'span'`, `'p'`, `'em'`, `'strong'`, etc.), `size` (`'x-small'`\|`'small'`\|`'medium'`\|`'large'`), `weight` (`'default'`\|`'strong'`\|`'x-strong'`), `color` | `as='span'`, `size='medium'` |
+| `Text` | `as` (`'span'`, `'p'`, `'em'`, `'strong'`, `'a'`, `'abbr'`, `'address'`, `'label'`, `'li'`, `'time'`), `size` (`'x-small'`\|`'small'`\|`'medium'`\|`'large'`), `weight` (`'default'`\|`'strong'`\|`'x-strong'`), `color`, `boxColor` | `as='span'`, `size='medium'` |
 | `Label` | `htmlFor` (required), `required`, `variant` (`'default'`\|`'strong'`) | — |
 
 Color options for Heading/Text: `'default'`, `'weak'`, `'x-weak'`, `'disabled'`, `'negative'`, `'positive'`, `'warning'`, `'interactive'`.
+
+Text `boxColor` options: `'neutral'`, `'selected'`, `'disabled'`, `'positive'`, `'negative'`, `'warning'`. Use for highlighted text backgrounds.
 
 Label is built on `@radix-ui/react-label`. **Always pair Label with a form field using `htmlFor`.**
 
@@ -144,11 +151,25 @@ Pure HTML. Composition: `SplitButton.Root > SplitButton.Content + SplitButton.Ac
 |---|---|
 | `SplitButton.Root` | `emphasis`, `size`, `disabled` |
 | `SplitButton.Content` | `onPress`, `type` |
-| `SplitButton.ActionButton` | `aria-label` |
+| `SplitButton.Action` | `aria-label`, `rotateIcon` (default `true`) |
+| `SplitButton.ActionButton` | `aria-label`, `type`, `disabled` |
 
 ### Link
 
-Uses `RouterProvider` for client-side navigation. Props: `href` (required), `size`, `weight`, `color` (`'primary'`\|`'secondary'`\|`'error'`\|etc.), `underline` (`'auto'`\|`'always'`\|`'hover'`\|`'none'`), `target`.
+Uses `RouterProvider` for client-side navigation.
+
+| Prop | Values | Default |
+|---|---|---|
+| `href` | string (required) | — |
+| `size` | `'xx-small'`\|`'x-small'`\|`'small'`\|`'medium'`\|`'large'`\|`'x-large'`\|`'xx-large'` | `'medium'` |
+| `weight` | `'regular'`\|`'medium'`\|`'bold'` | `'regular'` |
+| `color` | `'primary'`\|`'secondary'`\|`'error'`\|`'success'`\|`'warning'`\|`'highlight'` | `'primary'` |
+| `underline` | `'auto'`\|`'always'`\|`'hover'`\|`'none'` | `'auto'` |
+| `target` | string | `'_self'` |
+| `disabled` | boolean | `false` |
+| `truncate` | boolean | — |
+| `wrap` | `'wrap'`\|`'nowrap'` | `'nowrap'` |
+| `onContainer` | `'secondary'`\|`'disabled'`\|`'error'`\|`'success'`\|`'warning'`\|`'highlight'` | — |
 
 ---
 
@@ -158,12 +179,17 @@ All form components support **controlled** (`value`) and **uncontrolled** (`defa
 
 ### TextInput
 
-Pure HTML `<input>`. Has `TextInput.Slot` for decorators.
+Pure HTML `<input>`. Has `TextInput.Slot` for decorators. Also available as compound: `TextInput.Root > TextInput.Slot + input`.
 
 | Prop | Values | Default |
 |---|---|---|
-| `type` | `'text'`, `'email'`, `'password'`, `'number'`, `'search'`, `'url'`, `'tel'`, `'date'`, `'time'` | `'text'` |
+| `type` | `'text'`, `'email'`, `'password'`, `'number'`, `'search'`, `'url'`, `'tel'`, `'date'`, `'time'`, `'hidden'` | `'text'` |
 | `status` | `'neutral'`, `'success'`, `'error'`, `'loading'` | `'neutral'` |
+| `required` | boolean | `false` |
+| `readOnly` | boolean | `false` |
+| `maxLength` | number | — |
+| `autoComplete` | string | `'on'` |
+| `spellCheck` | boolean | `true` |
 
 ```tsx
 <TextInput placeholder="Search..." status="error">
@@ -173,21 +199,33 @@ Pure HTML `<input>`. Has `TextInput.Slot` for decorators.
 
 ### Textarea
 
-Pure HTML `<textarea>`. Has `Textarea.Slot` for decorators. Extra props: `autosize`, `clearable`, `minRows`, `maxRows`, `onEnterPressed`, `status`.
+Pure HTML `<textarea>`. Has `Textarea.Slot` for decorators. Also available as compound: `Textarea.Root > Textarea.Slot + textarea`.
+
+| Prop | Values | Default |
+|---|---|---|
+| `status` | `'default'`, `'loading'`, `'success'`, `'error'` | `'default'` |
+| `autosize` | boolean | — |
+| `clearable` | boolean | — |
+| `minRows` | number | `1` |
+| `maxRows` | number | — |
+| `resizable` | boolean | — |
+| `onEnterPressed` | callback | — |
 
 ### Checkbox
 
-Built on `@radix-ui/react-checkbox`. Props: `value` (`boolean` | `'indeterminate'`), `size` (`'default'`\|`'large'`), `emphasis` (`'default'`\|`'weak'`), `status` (`'default'`\|`'error'`), `onChange`, `readOnly`.
+Built on `@radix-ui/react-checkbox`. Props: `value` (`boolean` | `'indeterminate'`), `size` (`'default'`\|`'large'`), `emphasis` (`'default'`\|`'weak'`), `status` (`'default'`\|`'error'`), `onChange`, `readOnly`, `required`.
 
 ### Switch
 
-Built on `@radix-ui/react-switch`. Props: `value` (boolean), `onChange` (receives `boolean`), `size` (`'small'`\|`'medium'`\|`'large'`).
+Built on `@radix-ui/react-switch`. Props: `value` (boolean), `defaultValue` (boolean), `onChange` (receives `boolean`), `size` (`'small'`\|`'medium'`\|`'large'`), `required`.
 
 ### Select
 
-Built on Downshift + `@radix-ui/react-popover`. Two modes:
-- `<Select>` — standard dropdown (no typing)
-- `<Select.Combobox>` — searchable/filterable
+Built on Downshift + `@radix-ui/react-popover`. Four modes:
+- `<Select>` — standard single dropdown (no typing)
+- `<Select.Multiple>` — multi-select dropdown
+- `<Select.Combobox>` — searchable/filterable single select
+- `<Select.Combobox.Multiple>` — searchable/filterable multi-select
 
 Sub-components: `Select.Item` (`value` required, `label` for display text), `Select.Group` (`heading`), `Select.Slot`.
 
@@ -195,6 +233,11 @@ Sub-components: `Select.Item` (`value` required, `label` for display text), `Sel
 |---|---|---|
 | `status` | `'neutral'`, `'success'`, `'error'` | `'neutral'` |
 | `placeholder` | string | `''` |
+| `alignMenu` | `'start'`\|`'center'`\|`'end'` | `'start'` |
+| `side` | `'left'`\|`'right'`\|`'bottom'`\|`'top'` | `'bottom'` |
+| `showStringValue` | boolean | `true` |
+
+For single selects: `value?: string | null`, `onSelect` receives a string. For multiple selects: `value?: string[] | null`, `onSelect` receives a string array. Combobox variants also accept `getAsyncItems` for async item fetching.
 
 ```tsx
 <Select placeholder="Choose color..." onSelect={(val) => setColor(val)} aria-label="Color">
@@ -206,11 +249,18 @@ Sub-components: `Select.Item` (`value` required, `label` for display text), `Sel
 
 ### Slider
 
-Built on `@radix-ui/react-slider`. Props: `value` (number array — use `[n]` for single, `[min, max]` for range), `min`, `max`, `step`, `onChange`, `onCommit`.
+Built on `@radix-ui/react-slider`. Props: `value` (number array — use `[n]` for single, `[min, max]` for range), `min`, `max`, `step`, `minStepsBetweenThumbs`, `onChange`, `onCommit`.
 
 ### RadioList
 
 Built on `@radix-ui/react-radio-group`. Composition: `RadioList.Root > RadioList.RadioButton`. **Pair each RadioButton with a `<Label>`.**
+
+| Prop (Root) | Values | Default |
+|---|---|---|
+| `emphasis` | `'default'`\|`'highlight'` | `'default'` |
+| `orientation` | `'vertical'`\|`'horizontal'` | — |
+| `readOnly` | boolean | — |
+| `required` | boolean | — |
 
 ```tsx
 <RadioList.Root value={selected} onValueChange={setSelected} orientation="vertical">
@@ -243,6 +293,7 @@ Built on `@radix-ui/react-tabs`. Composition: `Tabs.Root > Tabs.Tab > [Tabs.Trig
 | `size` | `'medium'`, `'large'` | `'medium'` |
 | `variant` | `'default'`, `'pill'` | `'default'` |
 | `padding` | `'none'`\|`'tight'`\|`'compact'`\|`'comfortable'`\|`'spacious'` | `'compact'` |
+| `onActiveTabChange` | callback | — |
 
 ```tsx
 <Tabs.Root defaultActiveTab="general" size="medium">
@@ -267,7 +318,15 @@ Props on Root: `value`/`defaultValue`, `onValueChange`, `hugWidth` (default `tru
 
 Built on `@radix-ui/react-accordion` (always `type="multiple"` — multiple sections can be open). Composition: `Accordion.Root > Accordion.Item > [Accordion.Header + Accordion.Content]`. Optional: `Accordion.Slot` for action buttons in header.
 
-Props on Root: `value`/`defaultValue` (string arrays), `onValueChange`, `border`, `padding`.
+| Prop (Root) | Values | Default |
+|---|---|---|
+| `value`/`defaultValue` | string arrays | — |
+| `onValueChange` | callback | — |
+| `border` | boolean | `true` |
+| `padding` | `'none'`\|`'small'`\|`'medium'`\|`'large'` | `'large'` |
+| `disabled` | boolean | `false` |
+
+Content also accepts `padding` (`'none'`\|`'small'`\|`'medium'`\|`'large'`, default `'large'`) and `divider` (boolean).
 
 ---
 
@@ -279,11 +338,11 @@ Alert banner. Props: `variant` (`'default'`\|`'highlight'`\|`'positive'`\|`'dang
 
 ### Badge
 
-Inline status pill. Props: `variant` (`'default'`\|`'positive'`\|`'highlight'`\|`'warning'`\|`'negative'`), `emphasis` (`'strong'`\|`'weak'`), `size` (`'default'`\|`'small'`), `status` (colored dot: `'positive'`\|`'warning'`\|`'negative'`\|etc.), `onClick`, `onDismiss`.
+Inline status pill. Props: `variant` (`'default'`\|`'positive'`\|`'highlight'`\|`'warning'`\|`'negative'`), `emphasis` (`'strong'`\|`'weak'`), `size` (`'default'`\|`'small'`), `status` (colored dot: `'positive'`\|`'warning'`\|`'negative'`\|etc.), `onClick`, `onDismiss`, `disabled`.
 
 ### Tag
 
-Removable keyword/chip. Props: `variant` (`'default'`\|`'highlight'`), `emphasis` (`'strong'`\|`'weak'`), `onClick`, `onDismiss`, `onAddClick`. Sub-components: `Tag.HoverContent`, `Tag.SecondaryContent`.
+Removable keyword/chip. Props: `variant` (`'default'`\|`'highlight'`), `emphasis` (`'strong'`\|`'weak'`), `size` (`'default'`\|`'small'`), `onClick`, `onDismiss`, `onAddClick`, `disabled`. Sub-components: `Tag.HoverContent`, `Tag.SecondaryContent`.
 
 ### LoadingCircle
 
@@ -291,7 +350,7 @@ Spinner. Props: `size` (`'xx-small'`–`'large'`), `variant` (`'progress'`\|`'su
 
 ### LoadingBar
 
-Built on `@radix-ui/react-progress`. Progress bar. Props: `value` (number or `null` for indeterminate), `max`, `variant` (`'default'`\|`'positive'`\|`'negative'`), `size` (`'small'`\|`'medium'`\|`'large'`\|`'x-large'`). **Requires `aria-label` or `aria-labelledby`.**
+Built on `@radix-ui/react-progress`. Progress bar. Props: `value` (number or `null` for indeterminate), `max`, `variant` (`'default'`\|`'positive'`\|`'negative'`), `size` (`'small'`\|`'medium'`\|`'large'`\|`'x-large'`), `rounded` (default `true`). **Requires `aria-label` or `aria-labelledby`.**
 
 ### Tooltip
 
@@ -306,7 +365,7 @@ Built on `@radix-ui/react-tooltip`. Composition: `Tooltip.Root > [Tooltip.Trigge
 </Tooltip.Root>
 ```
 
-Props on Root: `enterDelay` (ms, default 700). Props on Content: `side`, `padding` (`'spacious'`\|`'compact'`).
+Props on Root: `enterDelay` (ms, default 700). Props on Content: `side`, `padding` (`'spacious'`\|`'compact'`), `maxWidth`.
 
 ---
 
@@ -327,7 +386,11 @@ Additional: `Dialog.Title` (for accessible title), `Dialog.Description`, `Dialog
 | `showUnderlay` | Content | boolean | `false` |
 | `padding` | Content, Header, Body, Footer | `'none'`\|`'tight'`\|`'compact'`\|`'comfortable'`\|`'spacious'` | `'compact'` |
 | `maxWidth` / `minWidth` | Content | CSS string | `'800px'` / `'400px'` |
+| `minHeight` | Content | CSS string | `'200px'` |
+| `verticalAlign` | Content | `'top'`\|`'center'` | `'center'` |
+| `rounded` | Content | boolean | `true` |
 | `showCloseButton` | Header | boolean | `true` |
+| `showBorder` | Header, Footer | boolean | `true` |
 
 ```tsx
 <Dialog.Root modal open={isOpen} onOpenChange={setIsOpen}>
@@ -354,7 +417,17 @@ Built on `@radix-ui/react-popover`. Non-modal popover panel. Composition:
 Flyout.Root > [Flyout.Trigger + Flyout.Content > [Flyout.Header + Flyout.Body + Flyout.Footer]]
 ```
 
-Key props on Content: `side`, `align`, `maxWidth` (default `'360px'`), `padding`, `shadow`, `rounded`. Props on Header: `showCloseButton`. Props on Body: `scrollable`.
+| Prop | On | Values | Default |
+|---|---|---|---|
+| `side` | Content | `'top'`\|`'right'`\|`'bottom'`\|`'left'` | `'bottom'` |
+| `align` | Content | `'start'`\|`'center'`\|`'end'` | `'start'` |
+| `maxWidth` | Content | CSS string | `'360px'` |
+| `width` | Content | CSS string | `'fit-content'` |
+| `padding` | Content | `'none'`\|`'tight'`\|`'compact'`\|`'comfortable'`\|`'spacious'` | `'compact'` |
+| `shadow` | Content | `'none'`\|`'medium'`\|`'large'` | `'medium'` |
+| `rounded` | Content | `'none'`\|`'medium'`\|`'large'` | `'medium'` |
+| `showCloseButton` | Header | boolean | `false` |
+| `scrollable` | Body | boolean | `false` |
 
 ### Dropdown
 
@@ -383,16 +456,19 @@ Optional: `Table.Caption`.
 | `layout` | Root | `'auto'`\|`'fixed'` | `'auto'` |
 | `fontSize` | Root | `'small'`\|`'medium'` | `'medium'` |
 | `gutter` | Root | CSS length (e.g. `'16px'`) | `'0px'` |
+| `noBorder` | Root | boolean | `false` |
 | `sticky` | Header | boolean | `false` |
 | `firstColumnSticky` / `lastColumnSticky` | Body | boolean | `false` |
 | `sortDirection` | HeaderCell | `'ascending'`\|`'descending'`\|`undefined` | — |
 | `onSortChange` | HeaderCell | callback | — |
 | `align` | HeaderCell, RowCell | `'left'`\|`'center'`\|`'right'` | `'left'` |
+| `truncate` | HeaderCell, RowCell | boolean | `false` |
 | `selected` / `onClick` | Row | boolean / callback | — |
+| `disabled` | Row | boolean | `false` |
 
 ### Divider
 
-Built on `@radix-ui/react-separator`. Props: `variant` (`'solid'`\|`'dashed'`\|`'noline'`), `direction` (`'horizontal'`\|`'vertical'`), `color` (`'weak'`\|`'default'`\|`'strong'`), `padding`.
+Built on `@radix-ui/react-separator`. Props: `variant` (`'solid'`\|`'dashed'`\|`'noline'`), `direction` (`'horizontal'`\|`'vertical'`), `color` (`'weak'`\|`'default'`\|`'strong'`), `padding` (`'none'`\|`'small'`\|`'medium'`\|`'large'`), `as` (`'div'`\|`'li'`).
 
 ---
 
