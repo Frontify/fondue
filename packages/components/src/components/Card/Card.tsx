@@ -5,7 +5,6 @@ import {
     createContext,
     forwardRef,
     useCallback,
-    useContext,
     useMemo,
     type CSSProperties,
     type ForwardedRef,
@@ -158,21 +157,17 @@ export const CardBanner = (
     { 'data-test-id': dataTestId = 'fondue-card-banner', size = 'large', children }: CardBannerProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
-    const { selected } = useContext(CardContext);
-
     return (
         <div ref={ref} className={styles.banner} data-test-id={dataTestId} data-size={size}>
             {children}
             <div className={styles.bannerOverlay} />
-            {selected && (
-                <div
-                    className={styles.selectionIndicator}
-                    data-test-id="fondue-card-selection-indicator"
-                    aria-hidden="true"
-                >
-                    <IconCheckMark size={16} />
-                </div>
-            )}
+            <div
+                className={styles.selectionIndicator}
+                data-test-id="fondue-card-selection-indicator"
+                aria-hidden="true"
+            >
+                <IconCheckMark size={16} />
+            </div>
         </div>
     );
 };

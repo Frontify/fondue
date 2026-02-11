@@ -236,6 +236,47 @@ export const FourStates: Story = {
     render: () => <FourStatesExample />,
 };
 
+const BannerFitExample = () => {
+    const [selected, setSelected] = useState<string | null>(null);
+
+    return (
+        <Flex gap="1rem">
+            <div style={{ flex: 1, minWidth: 0 }}>
+                <Card.Root selected={selected === 'cover'} onClick={() => setSelected('cover')}>
+                    <Card.Banner>
+                        <Card.BannerImage src="https://picsum.photos/seed/asset/300/300" alt="Cover fit" fit="cover" />
+                    </Card.Banner>
+
+                    <Card.Icon icon={<IconFolder size={20} />} />
+
+                    <Card.Title>fit=&quot;cover&quot; (default)</Card.Title>
+                    <Card.Meta>Image fills and crops</Card.Meta>
+                </Card.Root>
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+                <Card.Root selected={selected === 'contain'} onClick={() => setSelected('contain')}>
+                    <Card.Banner>
+                        <Card.BannerImage
+                            src="https://picsum.photos/seed/asset/300/300"
+                            alt="Contain fit"
+                            fit="contain"
+                        />
+                    </Card.Banner>
+
+                    <Card.Icon icon={<IconFolder size={20} />} />
+
+                    <Card.Title>fit=&quot;contain&quot;</Card.Title>
+                    <Card.Meta>Image fits within bounds</Card.Meta>
+                </Card.Root>
+            </div>
+        </Flex>
+    );
+};
+
+export const BannerFit: Story = {
+    render: () => <BannerFitExample />,
+};
+
 const AssetCardExample = () => {
     const [selected, setSelected] = useState(true);
 

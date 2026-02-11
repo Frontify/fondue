@@ -6,29 +6,24 @@
 
 // Mixin for card state variants (default, hover, selected, hover+selected)
 @mixin card-state(
-    $border-color,
+    $root-border-color: transparent,
+    $root-bg: null,
     $box-shadow: none,
-    $banner-bg,
-    $banner-overlay-bg: rgba(0, 0, 0, 0),
-    $icon-bg,
-    $icon-color,
+    $banner-border-color: transparent,
+    $banner-border-radius: 0,
     $action-btn-border-color: transparent,
     $action-btn-color
 ) {
-    border-color: var(--color-#{$border-color});
+    border-color: $root-border-color;
     box-shadow: $box-shadow;
 
+    @if $root-bg {
+        background-color: var(--color-#{$root-bg});
+    }
+
     & .banner {
-        background-color: var(--color-#{$banner-bg});
-    }
-
-    & .bannerOverlay {
-        background-color: $banner-overlay-bg;
-    }
-
-    & .icon {
-        background-color: var(--color-#{$icon-bg});
-        color: var(--color-#{$icon-color});
+        box-shadow: inset 0 0 0 1px $banner-border-color;
+        border-radius: $banner-border-radius;
     }
 
     & .actionsButton {
@@ -48,8 +43,8 @@
     grid-template-columns: auto 1fr auto;
     grid-template-rows: auto auto auto;
     border-radius: var(--border-radius-large);
-    border: var(--border-width-default) solid var(--color-line-subtle);
-    background-color: var(--color-container-default);
+    border: var(--border-width-default) solid transparent;
+    background-color: var(--color-surface-default);
     overflow: hidden;
     cursor: pointer;
     outline: none;
@@ -61,21 +56,16 @@
 
     // Default state
     @include card-state(
-        $border-color: 'line-subtle',
-        $banner-bg: 'container-subtle',
-        $icon-bg: 'container-subtle',
-        $icon-color: 'secondary-default',
+        $banner-border-color: var(--color-line-subtle),
+        $banner-border-radius: var(--border-radius-large),
         $action-btn-color: 'secondary-default'
     );
 
     // Hover state
     &:hover {
         @include card-state(
-            $border-color: 'line-default',
-            $banner-bg: 'container-hover',
-            $banner-overlay-bg: rgba(0, 0, 0, 0.08),
-            $icon-bg: 'container-interactive-default',
-            $icon-color: 'interactive-default',
+            $root-border-color: var(--color-line-subtle),
+            $root-bg: 'surface-hover',
             $action-btn-border-color: var(--color-line-subtle),
             $action-btn-color: 'primary-default'
         );
@@ -84,11 +74,9 @@
     // Selected state
     &[data-selected='true'] {
         @include card-state(
-            $border-color: 'interactive-default',
+            $root-border-color: var(--color-line-strong),
+            $root-bg: 'surface-dim',
             $box-shadow: 0 0 0 1px var(--color-interactive-default),
-            $banner-bg: 'container-subtle',
-            $icon-bg: 'container-interactive-default',
-            $icon-color: 'interactive-default',
             $action-btn-color: 'secondary-default'
         );
     }
@@ -96,12 +84,9 @@
     // Hover + Selected state
     &[data-selected='true']:hover {
         @include card-state(
-            $border-color: 'interactive-default',
+            $root-border-color: var(--color-interactive-default),
+            $root-bg: 'surface-hover',
             $box-shadow: 0 0 0 1px var(--color-interactive-default),
-            $banner-bg: 'container-hover',
-            $banner-overlay-bg: rgba(0, 0, 0, 0.08),
-            $icon-bg: 'container-interactive-default',
-            $icon-color: 'interactive-default',
             $action-btn-border-color: var(--color-line-subtle),
             $action-btn-color: 'primary-default'
         );
@@ -125,7 +110,7 @@
     grid-area: banner;
     position: relative;
     overflow: hidden;
-    border-radius: var(--border-radius-large);
+    background-color: var(--color-surface-dim);
     pointer-events: none;
     @include transitions.transition-colors;
 
@@ -186,63 +171,75 @@
 
 .selectionIndicator {
     position: absolute;
-    top: var(--spacing-small);
-    left: var(--spacing-small);
-    display: flex;
+    top: var(--spacing-medium);
+    left: var(--spacing-medium);
+    display: none;
     align-items: center;
     justify-content: center;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    background-color: var(--color-interactive-default);
-    color: var(--color-container-default);
+    width: sizeToken.get(5);
+    height: sizeToken.get(5);
+    border-radius: var(--border-radius-medium);
+    pointer-events: none;
+
+    .root:hover & {
+        display: flex;
+        border: var(--border-width-default) solid var(--color-line-mid);
+        background-color: var(--color-surface-default);
+        color: transparent;
+    }
+
+    // Selected state: show with dark bg
+    .root[data-selected='true'] & {
+        display: flex;
+        border: none;
+        background-color: var(--color-primary-default);
+        color: var(--color-primary-on-primary);
+    }
 }
 
 .badges {
     position: absolute;
-    top: var(--spacing-small);
-    right: var(--spacing-small);
+    top: var(--spacing-medium);
+    right: var(--spacing-medium);
     display: flex;
     gap: var(--spacing-xx-small);
     flex-wrap: wrap;
     justify-content: flex-end;
 }
 
-.logo {
+.logo,
+.icon {
     grid-area: thumbnail;
     width: sizeToken.get(9);
     height: sizeToken.get(9);
     border-radius: var(--border-radius-medium);
-    object-fit: contain;
+    background-color: var(--color-surface-dim);
     align-self: center;
     margin: var(--spacing-small) 0 var(--spacing-small) var(--spacing-medium);
     pointer-events: none;
+}
+
+.logo {
+    object-fit: contain;
 
     &[data-overlap='true'] {
         grid-area: banner;
-        width: 48px;
-        height: 48px;
+        width: sizeToken.get(12);
+        height: sizeToken.get(12);
         border-radius: 50%;
-        border: 2px solid var(--color-container-default);
+        border: 2px solid var(--color-surface-default);
         align-self: end;
         justify-self: end;
-        margin: 0 var(--spacing-medium) calc(-24px) 0;
+        margin: 0 var(--spacing-medium) calc(sizeToken.get(6) * -1) 0;
         z-index: 1;
         object-fit: cover;
     }
 }
 
 .icon {
-    grid-area: thumbnail;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: sizeToken.get(9);
-    height: sizeToken.get(9);
-    border-radius: var(--border-radius-medium);
-    align-self: center;
-    margin: var(--spacing-small) 0 var(--spacing-small) var(--spacing-medium);
-    pointer-events: none;
     @include transitions.transition-colors;
 }
 
@@ -250,7 +247,7 @@
     grid-area: title;
     padding: var(--spacing-small) var(--spacing-small) 0;
     font-family: var(--typography-font-family-primary);
-    font-size: var(--typography-font-size-small);
+    font-size: var(--typography-font-size-medium);
     font-weight: var(--typography-font-weight-medium);
     font-kerning: none;
     line-height: var(--typography-line-height-tight);
@@ -318,15 +315,15 @@
     align-items: center;
     align-self: center;
     gap: var(--spacing-xx-small);
-    padding: 0 var(--spacing-small) 0 0;
+    padding: 0 sizeToken.get(2.5) 0 0;
 }
 
 .actionsButton {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 32px;
-    height: 32px;
+    width: sizeToken.get(6);
+    height: sizeToken.get(6);
     border-radius: var(--border-radius-medium);
     border: var(--border-width-default) solid transparent;
     background: transparent;
