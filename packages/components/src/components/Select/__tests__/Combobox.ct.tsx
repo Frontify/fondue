@@ -501,6 +501,36 @@ test('should display error when getAsyncItems fails', async ({ mount, page }) =>
     await expect(page.getByTestId(`${SELECT_TEST_ID}-error-icon`)).toBeVisible();
 });
 
+test('should select an item with empty string value', async ({ mount, page }) => {
+    const onSelectChange = sinon.spy();
+    const wrapper = await mount(
+        <Select.Combobox
+            onSelect={onSelectChange}
+            aria-label="test"
+            data-test-id={SELECT_TEST_ID}
+            placeholder={PLACEHOLDER_TEXT}
+        >
+            <Select.Slot name="menu">
+                <Select.Item data-test-id={ITEM_TEST_ID1} value="">
+                    {ITEM_TEXT1}
+                </Select.Item>
+                <Select.Item data-test-id={ITEM_TEST_ID2} value="test2">
+                    {ITEM_TEXT2}
+                </Select.Item>
+            </Select.Slot>
+        </Select.Combobox>,
+    );
+    const component = wrapper.getByTestId(SELECT_TEST_ID);
+
+    await expect(component).toBeVisible();
+    await component.click();
+    await page.keyboard.press('Enter');
+
+    await expect(component).toHaveValue(ITEM_TEXT1);
+    expect(onSelectChange.callCount).toBe(1);
+    expect(onSelectChange.calledWith('')).toBe(true);
+});
+
 test('should not display error when async items is empty', async ({ mount, page }) => {
     const wrapper = await mount(
         <MockComboboxWithAsyncFetcher

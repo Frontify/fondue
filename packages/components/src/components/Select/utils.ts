@@ -38,14 +38,14 @@ export const getSelectOptionValue = ({
 } => {
     if (children && typeof children === 'string') {
         return {
-            value: value ? value : children,
-            label: label ? label : children,
+            value: value !== undefined ? value : children,
+            label: label !== undefined ? label : children,
         };
     }
 
     return {
-        value: value || '',
-        label: label ? label : value || '',
+        value: value ?? '',
+        label: label !== undefined ? label : (value ?? ''),
         ...(children ? { children } : null),
     };
 };

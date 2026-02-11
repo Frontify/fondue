@@ -14,11 +14,11 @@ export const useSingleSelect = (
 
     const selectItem = useCallback(
         (item?: string) => {
-            if (!item) {
+            if (item === undefined) {
                 return;
             }
             const newValue = selectedValue === item ? null : item;
-            if (!value) {
+            if (value === undefined) {
                 setSelectedItemState(newValue);
             }
             onSelect?.(newValue);
@@ -27,7 +27,7 @@ export const useSingleSelect = (
     );
 
     const clear = useCallback(() => {
-        if (!value) {
+        if (value === undefined) {
             setSelectedItemState(null);
         }
         onSelect?.(null);

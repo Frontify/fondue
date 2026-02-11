@@ -108,6 +108,23 @@ describe('useSelectData', () => {
         });
     });
 
+    it('returns item with empty string value', () => {
+        const slotWithEmptyValue = (
+            <Select.Slot key="test" name="menu">
+                <Select.Item value="">Empty Value</Select.Item>
+                <Select.Item value="test1">Test1</Select.Item>
+            </Select.Slot>
+        );
+        const {
+            result: { current: result },
+        } = renderHook(() => useSelectData(slotWithEmptyValue));
+
+        expect(result.getItemByValue('')).toEqual({
+            value: '',
+            label: 'Empty Value',
+        });
+    });
+
     it('returns handles filterText', () => {
         const { result } = renderHook(() => useSelectData(menuSlot));
 

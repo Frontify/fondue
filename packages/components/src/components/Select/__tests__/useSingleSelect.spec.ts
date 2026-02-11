@@ -59,6 +59,26 @@ describe('useSingleSelect', () => {
             expect(result.current.selectedItemValues).toEqual(['a']);
         });
 
+        it('selects an empty string value', () => {
+            const { result } = renderHook(() => useSingleSelect());
+
+            act(() => {
+                result.current.selectItem('');
+            });
+
+            expect(result.current.selectedItemValues).toEqual(['']);
+        });
+
+        it('deselects an empty string value when selecting it again', () => {
+            const { result } = renderHook(() => useSingleSelect(undefined, undefined, ''));
+
+            act(() => {
+                result.current.selectItem('');
+            });
+
+            expect(result.current.selectedItemValues).toEqual([]);
+        });
+
         it('clears the selection', () => {
             const { result } = renderHook(() => useSingleSelect(undefined, undefined, 'a'));
 
@@ -126,6 +146,24 @@ describe('useSingleSelect', () => {
             });
 
             expect(onSelect).toHaveBeenCalledWith(null);
+        });
+
+        it('uses empty string as a valid controlled value', () => {
+            const { result } = renderHook(() => useSingleSelect(undefined, ''));
+
+            expect(result.current.selectedItemValues).toEqual(['']);
+        });
+
+        it('does not update internal state when controlled value is an empty string', () => {
+            const onSelect = vi.fn();
+            const { result } = renderHook(() => useSingleSelect(onSelect, ''));
+
+            act(() => {
+                result.current.selectItem('a');
+            });
+
+            expect(result.current.selectedItemValues).toEqual(['']);
+            expect(onSelect).toHaveBeenCalledWith('a');
         });
     });
 
