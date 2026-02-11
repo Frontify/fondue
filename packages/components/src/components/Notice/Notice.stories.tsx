@@ -23,6 +23,29 @@ const meta: Meta<typeof Notice> = {
         status: {
             type: 'released',
         },
+        docs: {
+            description: {
+                component: [
+                    'The notice component is a persistent, inline message that communicates important information, status updates, or actions within the context of the UI.',
+                    '',
+                    "It helps keep users informed without interrupting their workflow by presenting clear, accessible feedback that stays visible until acknowledged.",
+                    '',
+                    'A notice is made up of clearly defined parts that work together to deliver information and optionally prompt a response. Each element plays a specific role in supporting the overall purpose of the message — whether it\'s informing the user, alerting them, or encouraging a quick action.',
+                    '',
+                    '**Emphasis:** Emphasis controls the visual weight of a notice and shapes how users perceive its importance. `default` for standard messages that don\'t need to compete for attention, `strong` to draw attention to critical or high-priority information, and `weak` for subtle messages that are informative but not urgent.',
+                    '',
+                    '**Variant:** Variants communicate the tone and intent of a notice. `default` for general-purpose messages without emotional weight or urgency, `highlight` for informational messages that are noteworthy but not critical, `positive` for success or confirmation, `warning` for caution when something needs attention but isn\'t dangerous, and `danger` for high-priority or critical messages such as errors requiring immediate action — use carefully and sparingly.',
+                    '',
+                    '**Icon:** Using an icon in a notice can enhance its recognizability and convey its function more intuitively, improving usability by allowing users to quickly grasp the meaning of the message without relying solely on text.',
+                    '',
+                    '**Dismissible:** When a notice is dismissible, a close icon is displayed, allowing users to remove the message.',
+                    '',
+                    '**Button:** Use a button when there\'s a clear, lightweight action that directly relates to the message content. Avoid using this prop if no immediate action is needed.',
+                    '',
+                    '**In the dark:** To ensure all notice components work seamlessly in dark mode, each color token is paired with a themed counterpart. When the dark theme is active, tokens automatically switch to their dark variants.',
+                ].join('\n'),
+            },
+        },
     },
     args: {
         variant: 'default',

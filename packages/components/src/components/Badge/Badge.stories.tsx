@@ -15,6 +15,29 @@ const meta: Meta<typeof Badge> = {
         status: {
             type: 'released',
         },
+        docs: {
+            description: {
+                component: [
+                    'The badge component is a small indicator used to highlight status, count, or contextual information.',
+                    '',
+                    'It helps convey concise data at a glance, enhancing clarity without overwhelming the interface.',
+                    '',
+                    'Badges follow a simple, flexible structure. At their core, they include a label, with optional elements that enhance their meaning or interactivity. Each part plays a role in making the badge more informative, functional, or visually distinct depending on your use case.',
+                    '',
+                    '**Emphasis:** Use emphasis to control visual hierarchy and draw attention appropriately. Badges can appear with either a `strong` or `weak` emphasis, depending on the level of visibility needed. Use `strong` for primary, high-priority information, and `weak` for more subtle or secondary content.',
+                    '',
+                    '**Variant:** Variants help convey the context or meaning behind a badge at a glance. Choose the variant based on the message you want to communicate — whether it\'s neutral, positive, attention-grabbing, cautionary, or critical.',
+                    '',
+                    '**Size:** Badges come in two sizes to support different layout needs. Use the smaller size when space is limited or when the badge plays a secondary role in the interface. Always consider visual hierarchy and surrounding elements when selecting a size.',
+                    '',
+                    '**Status:** Use the status dot to reflect live states, activity, or system indicators. Only use it when status context is meaningful to the user.',
+                    '',
+                    '**Icon:** Use a leading icon to add visual context or reinforce meaning. Add this when the badge needs an extra visual cue.',
+                    '',
+                    '**Dismissible:** Use dismissible badges when they represent content that users can remove on their own. They\'re especially useful in contexts like filters or selections.',
+                ].join('\n'),
+            },
+        },
     },
     args: {
         emphasis: 'strong',
