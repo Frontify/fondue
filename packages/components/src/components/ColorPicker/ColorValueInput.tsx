@@ -4,7 +4,7 @@ import { type ForwardedRef, forwardRef, useEffect, useState } from 'react';
 
 import { useTranslation } from '#/hooks/useTranslation';
 
-import { Select } from '../Select/Select';
+import { Select } from '../Select';
 import { TextInput } from '../TextInput/TextInput';
 
 import styles from './styles/customColorPicker.module.scss';

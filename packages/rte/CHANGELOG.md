@@ -1,5 +1,27 @@
 # @frontify/fondue-rte
 
+## 0.0.3
+
+### Patch Changes
+
+- [`80d58b0`](https://github.com/Frontify/fondue/commit/80d58b07a7026cda8b47299558e07ada953afdb9) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update fondue export json
+
+- Updated dependencies [[`80d58b0`](https://github.com/Frontify/fondue/commit/80d58b07a7026cda8b47299558e07ada953afdb9)]:
+    - @frontify/fondue-components@26.0.1
+    - @frontify/fondue-icons@0.24.1
+    - @frontify/fondue-tokens@5.0.0
+
+## 0.0.2
+
+### Patch Changes
+
+- [#2617](https://github.com/Frontify/fondue/pull/2617) [`0f59d44`](https://github.com/Frontify/fondue/commit/0f59d4448399c396e691ee46150f7f2786f3d325) Thanks [@peter-tudosa](https://github.com/peter-tudosa)! - Add selector for the new dialogs for RTE click outside logic
+
+- Updated dependencies [[`31f7341`](https://github.com/Frontify/fondue/commit/31f7341a466649fac3363d4a753fd8101d4fb4cb), [`0509788`](https://github.com/Frontify/fondue/commit/050978884da4e1c654f1a2d8cbb36f49950bcaa3)]:
+    - @frontify/fondue-components@26.0.0
+    - @frontify/fondue-icons@0.24.0
+    - @frontify/fondue-tokens@5.0.0
+
 ## 0.0.1
 
 ### Patch Changes
