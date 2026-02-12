@@ -1,5 +1,14 @@
 # @frontify/fondue-components
 
+## 26.0.2
+
+### Patch Changes
+
+- [#2623](https://github.com/Frontify/fondue/pull/2623) [`95e1fb5`](https://github.com/Frontify/fondue/commit/95e1fb59b52ff2e5203bd8147ecbc6f712464b83) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix: allow empty string values in the Select / Combobox / Multiselect
+
+- Updated dependencies []:
+    - @frontify/fondue-tokens@5.0.0
+
 ## 26.0.1
 
 ### Patch Changes
