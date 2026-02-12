@@ -18,7 +18,7 @@ export const useMultiselect = (
     };
 
     const toggleSelectedItem = (toggledItem?: string) => {
-        if (!toggledItem) {
+        if (toggledItem === undefined) {
             return;
         }
         const index = selectedItemValues.findIndex((selectedItemValue) => toggledItem === selectedItemValue);

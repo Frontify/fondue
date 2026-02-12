@@ -59,8 +59,18 @@ describe('useMultiselect', () => {
             expect(result.current.selectedItemValues).toEqual(['a']);
         });
 
-        it('does nothing when toggling an empty string (falsy guard)', () => {
+        it('adds an empty string when toggling it as a new item', () => {
             const { result } = renderHook(() => useMultiselect(undefined, undefined, ['a']));
+
+            act(() => {
+                result.current.toggleSelectedItem('');
+            });
+
+            expect(result.current.selectedItemValues).toEqual(['a', '']);
+        });
+
+        it('removes an empty string when toggling it as an already-selected item', () => {
+            const { result } = renderHook(() => useMultiselect(undefined, undefined, ['', 'a']));
 
             act(() => {
                 result.current.toggleSelectedItem('');

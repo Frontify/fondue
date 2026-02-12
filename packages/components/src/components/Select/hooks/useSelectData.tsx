@@ -155,7 +155,7 @@ export const useSelectData = (children: ReactNode, getAsyncItems?: AsyncItemsFet
     );
 
     const getItemByValue = useCallback(
-        (value?: string | null) => (value ? itemValues.find((item) => item.value === value) : undefined),
+        (value?: string | null) => (value !== undefined ? itemValues.find((item) => item.value === value) : undefined),
         [itemValues],
     );
 

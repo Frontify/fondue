@@ -37,6 +37,24 @@ describe('getSelectOptionValue', () => {
         expect(item.value).toBe('test1');
         expect(item.label).toBe('labelvalue');
     });
+
+    it('preserves empty string value when children is a string', () => {
+        const basicItem = <Select.Item value="">Some Label</Select.Item>;
+        const item = getSelectOptionValue(basicItem.props as SelectItemProps);
+        expect(item.value).toBe('');
+        expect(item.label).toBe('Some Label');
+    });
+
+    it('preserves empty string value when children is a component', () => {
+        const basicItem = (
+            <Select.Item value="" label="labelvalue">
+                <IconIcon />
+            </Select.Item>
+        );
+        const item = getSelectOptionValue(basicItem.props as SelectItemProps);
+        expect(item.value).toBe('');
+        expect(item.label).toBe('labelvalue');
+    });
 });
 
 describe('isReactLeaf', () => {
