@@ -115,7 +115,7 @@
         "@frontify/fondue-rte": "workspace:^",
         "@frontify/fondue-tokens": "workspace:^",
         "@popperjs/core": "^2.11.8",
-        "@react-aria/accordion": "3.0.0-alpha.29",
+        "@react-aria/accordion": "3.0.0-alpha.37",
         "@react-aria/breadcrumbs": "^3.5.30",
         "@react-aria/button": "^3.14.3",
         "@react-aria/checkbox": "^3.16.3",
