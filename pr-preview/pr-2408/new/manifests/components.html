@@ -509,7 +509,7 @@
 <header>
   <div class="wrap">
     <h1>Components Manifest</h1>
-    <div class="summary"><a class="filter-pill all" data-k="all" href="#filter-all">All</a><span class="filter-pill ok" aria-disabled="true">35 components ok</span><a class="filter-pill info" data-k="infos" href="#filter-infos">35/35 infos</a><span class="filter-pill ok" aria-disabled="true">310 stories ok</span></div>
+    <div class="summary"><a class="filter-pill all" data-k="all" href="#filter-all">All</a><span class="filter-pill ok" aria-disabled="true">35 components ok</span><a class="filter-pill info" data-k="infos" href="#filter-infos">35/35 infos</a><span class="filter-pill ok" aria-disabled="true">313 stories ok</span></div>
   </div>
 </header>
 <main>
@@ -908,12 +908,12 @@ emphasis?: &#39;strong&#39; | &#39;weak&#39; = &#39;strong&#39;
 /**
  * Click handler
  */
-onClick?: (event?: MouseEvent&lt;HTMLButtonElement&gt;) =&gt; void
+onClick?: (event: MouseEvent&lt;HTMLButtonElement&gt;) =&gt; void
 
 /**
  * Click handler on dismiss - providing this will show the dismiss button
  */
-onDismiss?: (event?: MouseEvent&lt;HTMLButtonElement&gt;) =&gt; void
+onDismiss?: (event: MouseEvent&lt;HTMLButtonElement&gt;) =&gt; void
 
 /**
  * @default &#39;default&#39;
@@ -3625,7 +3625,7 @@ variant?: &#39;noline&#39; | &#39;dashed&#39; | &#39;solid&#39; = &#39;solid&#39
       <div class="badges">
         <label for="c-9-components-dropdown-props" class="badge ok as-toggle">5 prop types</label>
         <label for="c-9-components-dropdown-info" class="badge info as-toggle">1 info</label>
-        <label for="c-9-components-dropdown-stories" class="badge ok as-toggle">17 stories</label>
+        <label for="c-9-components-dropdown-stories" class="badge ok as-toggle">18 stories</label>
       </div>
     </div>
     <div class="meta" title="./src/components/Dropdown/Dropdown.stories.tsx">components-dropdown · ./src/components/Dropdown/Dropdown.stories.tsx</div>
@@ -3811,6 +3811,40 @@ open?: boolean</code></pre>
             &lt;Dropdown.Item onSelect={() =&gt; {}}&gt;Item 6&lt;/Dropdown.Item&gt;
             &lt;Dropdown.Item onSelect={() =&gt; {}}&gt;Item 7&lt;/Dropdown.Item&gt;
             &lt;Dropdown.Item onSelect={() =&gt; {}}&gt;Item 8&lt;/Dropdown.Item&gt;
+        &lt;/Dropdown.Group&gt;
+    &lt;/Dropdown.Content&gt;
+&lt;/Dropdown.Root&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">MultipleGroupsWithHeadings</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const MultipleGroupsWithHeadings = () =&gt; &lt;Dropdown.Root&gt;
+    &lt;Dropdown.Trigger&gt;
+        &lt;Button&gt;Trigger&lt;/Button&gt;
+    &lt;/Dropdown.Trigger&gt;
+    &lt;Dropdown.Content&gt;
+        &lt;Dropdown.Group heading=&quot;File Actions&quot;&gt;
+            &lt;Dropdown.Item onSelect={() =&gt; {}}&gt;New File&lt;/Dropdown.Item&gt;
+            &lt;Dropdown.Item onSelect={() =&gt; {}}&gt;Open File&lt;/Dropdown.Item&gt;
+            &lt;Dropdown.Item onSelect={() =&gt; {}}&gt;Save File&lt;/Dropdown.Item&gt;
+        &lt;/Dropdown.Group&gt;
+        &lt;Dropdown.Group heading=&quot;Edit Actions&quot;&gt;
+            &lt;Dropdown.Item onSelect={() =&gt; {}}&gt;Copy&lt;/Dropdown.Item&gt;
+            &lt;Dropdown.Item onSelect={() =&gt; {}}&gt;Paste&lt;/Dropdown.Item&gt;
+            &lt;Dropdown.Item onSelect={() =&gt; {}}&gt;Cut&lt;/Dropdown.Item&gt;
+        &lt;/Dropdown.Group&gt;
+        &lt;Dropdown.Group heading=&quot;View Options&quot;&gt;
+            &lt;Dropdown.Item onSelect={() =&gt; {}}&gt;Zoom In&lt;/Dropdown.Item&gt;
+            &lt;Dropdown.Item onSelect={() =&gt; {}}&gt;Zoom Out&lt;/Dropdown.Item&gt;
+            &lt;Dropdown.Item onSelect={() =&gt; {}}&gt;Reset Zoom&lt;/Dropdown.Item&gt;
+        &lt;/Dropdown.Group&gt;
+        &lt;Dropdown.Group heading=&quot;Settings&quot;&gt;
+            &lt;Dropdown.Item onSelect={() =&gt; {}}&gt;Preferences&lt;/Dropdown.Item&gt;
+            &lt;Dropdown.Item onSelect={() =&gt; {}}&gt;About&lt;/Dropdown.Item&gt;
         &lt;/Dropdown.Group&gt;
     &lt;/Dropdown.Content&gt;
 &lt;/Dropdown.Root&gt;;</code></pre>
@@ -8475,14 +8509,14 @@ value?: TValue</code></pre>
   has-info 
   no-story-error"
   role="listitem"
-  aria-label="SelectInput">
+  aria-label="SelectSingle">
   <div class="head">
     <div class="title">
-      <h2><span class="status-dot dot-ok"></span> SelectInput</h2>
+      <h2><span class="status-dot dot-ok"></span> SelectSingle</h2>
       <div class="badges">
         <label for="c-23-components-select-props" class="badge ok as-toggle">21 prop types</label>
         <label for="c-23-components-select-info" class="badge info as-toggle">1 info</label>
-        <label for="c-23-components-select-stories" class="badge ok as-toggle">21 stories</label>
+        <label for="c-23-components-select-stories" class="badge ok as-toggle">23 stories</label>
       </div>
     </div>
     <div class="meta" title="./src/components/Select/Select.stories.tsx">components-select · ./src/components/Select/Select.stories.tsx</div>
@@ -8514,13 +8548,13 @@ value?: TValue</code></pre>
               <span class="ex-name">Prop types</span>
               <span class="badge ok">21 prop types</span>
             </div>
-            <pre><code>Component: src/components/Select/Select.tsx::SelectInput</code></pre>
+            <pre><code>Component: src/components/Select/SelectSingle.tsx::SelectSingle</code></pre>
             <pre><code>Props:</code></pre>
             <pre><code>/**
- * The alignment of the menu.
+ * The alignment of the menu
  * @default &quot;start&quot;
  */
-alignMenu?: &#39;start&#39; | &#39;center&#39; | &#39;end&#39; = &#39;start&#39;
+alignMenu?: &#39;start&#39; | &#39;center&#39; | &#39;end&#39;
 
 /**
  * Aria described by for the component.
@@ -8553,22 +8587,22 @@ aria-label?: string
 aria-labelledby?: string
 
 /**
- * Children of the Select component. This can contain the `Select.Slot` components for the label, decorators, clear action and menu.
+ * Children of the Select component. This can contain the `Select.Slot` components for the label, decorators, clear action and menu
  */
 children?: ReactNode
 
 /**
- * The data test id of the select component.
+ * The data test id of the select component
  */
-data-test-id?: string = &#39;fondue-select&#39;
+data-test-id?: string
 
 /**
- * The default value of the select component. Used for uncontrolled usages.
+ * The default value of the select component. Used for uncontrolled usages
  */
 defaultValue?: string
 
 /**
- * Disables the select component.
+ * Disables the select component
  */
 disabled?: boolean
 
@@ -8578,19 +8612,19 @@ disabled?: boolean
 id?: string
 
 /**
- * Event handler called when the escape key is pressed.
+ * Event handler called when the escape key is pressed
  */
 onEscapeKeyDown?: (event: KeyboardEvent) =&gt; void
 
 /**
- * Callback function that is called when an item is selected.
+ * Callback function that is called when an item is selected
  */
 onSelect?: (selectedValue: string | null) =&gt; void
 
 /**
- * The placeholder in the select component.
+ * The placeholder in the select component
  */
-placeholder?: string = &#39;&#39;
+placeholder?: string
 
 /**
  * Aria role for the component.
@@ -8598,26 +8632,26 @@ placeholder?: string = &#39;&#39;
 role?: string
 
 /**
- * The value of the select is shown as plain text (from the label prop) when set to true.
+ * The value of the select is shown as plain text (from the label prop) when set to true
  * Items child components are used if set to false
  * @default true
  */
-showStringValue?: boolean = true
+showStringValue?: boolean
 
 /**
- * Defines the preferred side of the select. It will not be respected if there are collisions with the viewport.
+ * Defines the preferred side of the select. It will not be respected if there are collisions with the viewport
  * @default &quot;bottom&quot;
  */
-side?: &#39;left&#39; | &#39;right&#39; | &#39;bottom&#39; | &#39;top&#39; = &#39;bottom&#39;
+side?: &#39;left&#39; | &#39;right&#39; | &#39;bottom&#39; | &#39;top&#39;
 
 /**
  * Status of the text input
  * @default &quot;neutral&quot;
  */
-status?: &#39;neutral&#39; | &#39;success&#39; | &#39;error&#39; = &#39;neutral&#39;
+status?: &#39;neutral&#39; | &#39;success&#39; | &#39;error&#39;
 
 /**
- * The active value in the select component. This is used to control the select externally.
+ * The active value in the select component. This is used to control the select externally
  */
 value?: string | null
 
@@ -8625,7 +8659,7 @@ value?: string | null
  * Define the minimum distance between the select menu and the viewport edge
  * @default &#39;compact&#39;
  */
-viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39; = &#39;compact&#39;</code></pre>
+viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
           </div>
         </div>
     
@@ -8637,7 +8671,7 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39; = &#39;compact
                 <div class="row">
                   <span class="ex-name">Imports</span>
                 </div>
-                <pre><code>import { Button, Flex, IconIcon, Select, SelectInput } from "@frontify/fondue-components";</code></pre>
+                <pre><code>import { Button, Flex, IconIcon, Select, SelectSingle } from "@frontify/fondue-components";</code></pre>
               </div>
           
           
@@ -8660,6 +8694,23 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39; = &#39;compact
             </div>
             <div class="note ok">
               <div class="row">
+                <span class="ex-name">MultipleSelect</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const MultipleSelect = () =&gt; {
+    return (
+        &lt;Select.Multiple aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot;&gt;
+            &lt;Select.Item value=&quot;test1&quot;&gt;Test1&lt;/Select.Item&gt;
+            &lt;Select.Item value=&quot;test2&quot;&gt;Test2&lt;/Select.Item&gt;
+            &lt;Select.Item value=&quot;test3&quot;&gt;Test3&lt;/Select.Item&gt;
+        &lt;/Select.Multiple&gt;
+    );
+};</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
                 <span class="ex-name">Combobox</span>
                 <span class="badge ok">story ok</span>
               </div>
@@ -8672,6 +8723,39 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39; = &#39;compact
             &lt;Select.Item value=&quot;test2&quot;&gt;Test2&lt;/Select.Item&gt;
             &lt;Select.Item value=&quot;test3&quot;&gt;Test3&lt;/Select.Item&gt;
         &lt;/Select.Combobox&gt;
+    );
+};</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">MultipleCombobox</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const MultipleCombobox = () =&gt; {
+    const [selectedValues, setSelectedValues] = useState&lt;string[]&gt;([]);
+
+    const handleSelect = (values: string[] | null): void =&gt; {
+        setSelectedValues(values ?? []);
+    };
+
+    return (
+        &lt;div style={{ display: &#39;flex&#39;, flexDirection: &#39;column&#39;, gap: 16 }}&gt;
+            &lt;Select.Combobox.Multiple
+                placeholder=&quot;Search and select items&quot;
+                value={selectedValues}
+                onSelect={handleSelect}
+            &gt;
+                &lt;Select.Item value=&quot;apple&quot;&gt;Apple&lt;/Select.Item&gt;
+                &lt;Select.Item value=&quot;banana&quot;&gt;Banana&lt;/Select.Item&gt;
+                &lt;Select.Item value=&quot;cherry&quot;&gt;Cherry&lt;/Select.Item&gt;
+                &lt;Select.Item value=&quot;date&quot;&gt;Date&lt;/Select.Item&gt;
+                &lt;Select.Item value=&quot;elderberry&quot;&gt;Elderberry&lt;/Select.Item&gt;
+                &lt;Select.Item value=&quot;fig&quot;&gt;Fig&lt;/Select.Item&gt;
+                &lt;Select.Item value=&quot;grape&quot;&gt;Grape&lt;/Select.Item&gt;
+            &lt;/Select.Combobox.Multiple&gt;
+        &lt;/div&gt;
     );
 };</code></pre>
             </div>
