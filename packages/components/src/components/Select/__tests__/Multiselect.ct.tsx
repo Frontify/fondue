@@ -39,13 +39,12 @@ test('should select an item with empty string value', async ({ mount, page }) =>
 
     await page.getByTestId(ITEM_TEST_ID1).click();
 
+    await expect(page.getByTestId(ITEM_TEST_ID1)).toHaveAttribute('aria-selected', 'true');
     expect(onSelectChange.callCount).toBe(1);
     expect(onSelectChange.calledWith([''])).toBe(true);
-    await expect(page.getByTestId(ITEM_TEST_ID1)).toHaveAttribute('aria-selected', 'true');
 });
 
-// FIXME: flaky test on CI only
-test.skip('should deselect an item with empty string value', async ({ mount, page }) => {
+test('should deselect an item with empty string value', async ({ mount, page }) => {
     const onSelectChange = sinon.spy();
     const wrapper = await mount(
         <SelectMultiple onSelect={onSelectChange} aria-label="test" data-test-id={SELECT_TEST_ID} defaultValue={['']}>
@@ -68,7 +67,7 @@ test.skip('should deselect an item with empty string value', async ({ mount, pag
 
     await page.getByTestId(ITEM_TEST_ID1).click();
 
+    await expect(page.getByTestId(ITEM_TEST_ID1)).toHaveAttribute('aria-selected', 'false');
     expect(onSelectChange.callCount).toBe(1);
     expect(onSelectChange.calledWith([])).toBe(true);
-    await expect(page.getByTestId(ITEM_TEST_ID1)).toHaveAttribute('aria-selected', 'false');
 });
