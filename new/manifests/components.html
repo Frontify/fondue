@@ -8684,7 +8684,10 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
               
               <pre><code>const SimpleSelect = () =&gt; {
     return (
-        &lt;Select aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot;&gt;
+        &lt;Select
+            aria-label=&quot;Select an item&quot;
+            placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}&gt;
             &lt;Select.Item value=&quot;test1&quot;&gt;Test1&lt;/Select.Item&gt;
             &lt;Select.Item value=&quot;test2&quot;&gt;Test2&lt;/Select.Item&gt;
             &lt;Select.Item value=&quot;test3&quot;&gt;Test3&lt;/Select.Item&gt;
@@ -8701,7 +8704,10 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
               
               <pre><code>const MultipleSelect = () =&gt; {
     return (
-        &lt;Select.Multiple aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot;&gt;
+        &lt;Select.Multiple
+            aria-label=&quot;Select an item&quot;
+            placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}&gt;
             &lt;Select.Item value=&quot;test1&quot;&gt;Test1&lt;/Select.Item&gt;
             &lt;Select.Item value=&quot;test2&quot;&gt;Test2&lt;/Select.Item&gt;
             &lt;Select.Item value=&quot;test3&quot;&gt;Test3&lt;/Select.Item&gt;
@@ -8718,7 +8724,10 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
               
               <pre><code>const Combobox = () =&gt; {
     return (
-        &lt;Select.Combobox aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot;&gt;
+        &lt;Select.Combobox
+            aria-label=&quot;Select an item&quot;
+            placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}&gt;
             &lt;Select.Item value=&quot;test1&quot;&gt;Test1&lt;/Select.Item&gt;
             &lt;Select.Item value=&quot;test2&quot;&gt;Test2&lt;/Select.Item&gt;
             &lt;Select.Item value=&quot;test3&quot;&gt;Test3&lt;/Select.Item&gt;
@@ -8771,6 +8780,7 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
         &lt;Select.Combobox
             aria-label=&quot;Select an item&quot;
             placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}
             getAsyncItems={async (filterText: string) =&gt; {
                 const items = [
                     {
@@ -8825,7 +8835,11 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
               
               <pre><code>const Disabled = () =&gt; {
     return (
-        &lt;Select aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot; disabled&gt;
+        &lt;Select
+            aria-label=&quot;Select an item&quot;
+            placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}
+            disabled&gt;
             &lt;Select.Slot name=&quot;menu&quot;&gt;
                 &lt;Select.Item value=&quot;test1&quot;&gt;Test1&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test2&quot;&gt;Test2&lt;/Select.Item&gt;
@@ -8844,7 +8858,10 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
               
               <pre><code>const WithPlaceholder = () =&gt; {
     return (
-        &lt;Select aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot;&gt;
+        &lt;Select
+            aria-label=&quot;Select an item&quot;
+            placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}&gt;
             &lt;Select.Slot name=&quot;menu&quot;&gt;
                 &lt;Select.Item value=&quot;test1&quot;&gt;Test1&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test2&quot;&gt;Test2&lt;/Select.Item&gt;
@@ -8863,7 +8880,10 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
               
               <pre><code>const WithDecorator = () =&gt; {
     return (
-        &lt;Select aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot;&gt;
+        &lt;Select
+            aria-label=&quot;Select an item&quot;
+            placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}&gt;
             &lt;Select.Slot name=&quot;left&quot;&gt;
                 &lt;IconIcon size={16} /&gt;
             &lt;/Select.Slot&gt;
@@ -8888,7 +8908,10 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
               
               <pre><code>const Clearable = () =&gt; {
     return (
-        &lt;Select aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot;&gt;
+        &lt;Select
+            aria-label=&quot;Select an item&quot;
+            placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}&gt;
             &lt;Select.Slot name=&quot;right&quot;&gt;
                 &lt;IconIcon size={16} /&gt;
             &lt;/Select.Slot&gt;
@@ -8911,7 +8934,10 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
               
               <pre><code>const CustomClearElement = () =&gt; {
     return (
-        &lt;Select aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot;&gt;
+        &lt;Select
+            aria-label=&quot;Select an item&quot;
+            placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}&gt;
             &lt;Select.Slot name=&quot;clear&quot;&gt;
                 &lt;Button size=&quot;small&quot; emphasis=&quot;strong&quot; onPress={() =&gt; {}}&gt;Clear
                                         &lt;/Button&gt;
@@ -8943,6 +8969,7 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
         &lt;Select
             aria-label=&quot;Select an item&quot;
             placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}
             defaultValue=&quot;test1&quot;&gt;
             &lt;Select.Slot name=&quot;menu&quot;&gt;
                 &lt;Select.Item value=&quot;test1&quot;&gt;Test1&lt;/Select.Item&gt;
@@ -8962,7 +8989,10 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
               
               <pre><code>const ItemGroups = () =&gt; {
     return (
-        &lt;Select aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot;&gt;
+        &lt;Select
+            aria-label=&quot;Select an item&quot;
+            placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}&gt;
             &lt;Select.Slot name=&quot;menu&quot;&gt;
                 &lt;Select.Item value=&quot;test1&quot;&gt;Test1&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test2&quot;&gt;Test2&lt;/Select.Item&gt;
@@ -8986,7 +9016,10 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
               
               <pre><code>const ItemGroupsWithHeaders = () =&gt; {
     return (
-        &lt;Select aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot;&gt;
+        &lt;Select
+            aria-label=&quot;Select an item&quot;
+            placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}&gt;
             &lt;Select.Slot name=&quot;menu&quot;&gt;
                 &lt;Select.Item value=&quot;test1&quot;&gt;Test1&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test2&quot;&gt;Test2&lt;/Select.Item&gt;
@@ -9015,7 +9048,10 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
               
               <pre><code>const OnlyItemGroups = () =&gt; {
     return (
-        &lt;Select aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot;&gt;
+        &lt;Select
+            aria-label=&quot;Select an item&quot;
+            placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}&gt;
             &lt;Select.Slot name=&quot;menu&quot;&gt;
                 &lt;Select.Group groupId=&quot;Group 1&quot;&gt;
                     &lt;Select.Item value=&quot;test1&quot;&gt;Test1&lt;/Select.Item&gt;
@@ -9040,7 +9076,10 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
               
               <pre><code>const CustomItem = () =&gt; {
     return (
-        &lt;Select aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot;&gt;
+        &lt;Select
+            aria-label=&quot;Select an item&quot;
+            placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}&gt;
             &lt;Select.Slot name=&quot;menu&quot;&gt;
                 &lt;Select.Item value=&quot;ch&quot; label=&quot;Switzerland&quot;&gt;
                     &lt;div className=&quot;tw-flex tw-items-center tw-gap-4&quot;&gt;
@@ -9073,6 +9112,7 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
         &lt;Select
             aria-label=&quot;Select an item&quot;
             placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}
             showStringValue={false}&gt;
             &lt;Select.Slot name=&quot;menu&quot;&gt;
                 &lt;Select.Item value=&quot;ch&quot; label=&quot;Switzerland&quot;&gt;
@@ -9134,7 +9174,10 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
               <pre><code>const OverflowingText = () =&gt; {
     return (
         &lt;div style={{ display: &#39;flex&#39;, gap: 8, maxWidth: 600 }}&gt;
-            &lt;Select aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot;&gt;
+            &lt;Select
+                aria-label=&quot;Select an item&quot;
+                placeholder=&quot;Select an item&quot;
+                onSelect={action(&#39;onSelect&#39;)}&gt;
                 &lt;Select.Item value=&quot;test1&quot;&gt;Test1 - This is a very long text to see how it overflows This is a very long text to see how it
                                             overflows This is a very long text to see how it overflows y long text to see how it overflows
                                             This is a very long text to see how it overflows This is a very long text to see how it
@@ -9144,12 +9187,18 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
                 &lt;Select.Item value=&quot;test2&quot;&gt;Test2&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test3&quot;&gt;Test3&lt;/Select.Item&gt;
             &lt;/Select&gt;
-            &lt;Select.Combobox aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot;&gt;
+            &lt;Select.Combobox
+                aria-label=&quot;Select an item&quot;
+                placeholder=&quot;Select an item&quot;
+                onSelect={action(&#39;onSelect&#39;)}&gt;
                 &lt;Select.Item value=&quot;test1&quot;&gt;Test1 - This is a very long text to see how it overflows&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test2&quot;&gt;Test2&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test3&quot;&gt;Test3&lt;/Select.Item&gt;
             &lt;/Select.Combobox&gt;
-            &lt;Select.Combobox aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot;&gt;
+            &lt;Select.Combobox
+                aria-label=&quot;Select an item&quot;
+                placeholder=&quot;Select an item&quot;
+                onSelect={action(&#39;onSelect&#39;)}&gt;
                 &lt;Select.Item value=&quot;test1&quot;&gt;Test1 - This is a very long text to see how it overflows&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test2&quot;&gt;Test2&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test3&quot;&gt;Test3&lt;/Select.Item&gt;
@@ -9168,7 +9217,10 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
               <pre><code>const ListOverflow = () =&gt; {
     return (
         &lt;&gt;
-            &lt;Select aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot;&gt;
+            &lt;Select
+                aria-label=&quot;Select an item&quot;
+                placeholder=&quot;Select an item&quot;
+                onSelect={action(&#39;onSelect&#39;)}&gt;
                 &lt;Select.Item value=&quot;test1&quot;&gt;Test1&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test2&quot;&gt;Test2&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test3&quot;&gt;Test3&lt;/Select.Item&gt;
@@ -9177,7 +9229,10 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
                 &lt;Select.Item value=&quot;test6&quot;&gt;Test6&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test7&quot;&gt;Test7&lt;/Select.Item&gt;
             &lt;/Select&gt;
-            &lt;Select aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot;&gt;
+            &lt;Select
+                aria-label=&quot;Select an item&quot;
+                placeholder=&quot;Select an item&quot;
+                onSelect={action(&#39;onSelect&#39;)}&gt;
                 &lt;Select.Item value=&quot;test1&quot;&gt;Test1&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test2&quot;&gt;Test2&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test3&quot;&gt;Test3&lt;/Select.Item&gt;
@@ -9186,7 +9241,10 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
                 &lt;Select.Item value=&quot;test6&quot;&gt;Test6&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test7&quot;&gt;Test7&lt;/Select.Item&gt;
             &lt;/Select&gt;
-            &lt;Select aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot;&gt;
+            &lt;Select
+                aria-label=&quot;Select an item&quot;
+                placeholder=&quot;Select an item&quot;
+                onSelect={action(&#39;onSelect&#39;)}&gt;
                 &lt;Select.Item value=&quot;test1&quot;&gt;Test1&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test2&quot;&gt;Test2&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test3&quot;&gt;Test3&lt;/Select.Item&gt;
@@ -9195,7 +9253,10 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
                 &lt;Select.Item value=&quot;test6&quot;&gt;Test6&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test7&quot;&gt;Test7&lt;/Select.Item&gt;
             &lt;/Select&gt;
-            &lt;Select aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot;&gt;
+            &lt;Select
+                aria-label=&quot;Select an item&quot;
+                placeholder=&quot;Select an item&quot;
+                onSelect={action(&#39;onSelect&#39;)}&gt;
                 &lt;Select.Item value=&quot;test1&quot;&gt;Test1&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test2&quot;&gt;Test2&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test3&quot;&gt;Test3&lt;/Select.Item&gt;
@@ -9217,7 +9278,11 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
               
               <pre><code>const Success = () =&gt; {
     return (
-        &lt;Select aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot; status=&quot;success&quot;&gt;
+        &lt;Select
+            aria-label=&quot;Select an item&quot;
+            placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}
+            status=&quot;success&quot;&gt;
             &lt;Select.Item value=&quot;test1&quot;&gt;Test1&lt;/Select.Item&gt;
             &lt;Select.Item value=&quot;test2&quot;&gt;Test2&lt;/Select.Item&gt;
             &lt;Select.Item value=&quot;test3&quot;&gt;Test3&lt;/Select.Item&gt;
@@ -9234,7 +9299,11 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
               
               <pre><code>const Errored = () =&gt; {
     return (
-        &lt;Select.Combobox aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot; status=&quot;error&quot;&gt;
+        &lt;Select.Combobox
+            aria-label=&quot;Select an item&quot;
+            placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}
+            status=&quot;error&quot;&gt;
             &lt;Select.Item value=&quot;test1&quot;&gt;Test1&lt;/Select.Item&gt;
             &lt;Select.Item value=&quot;test2&quot;&gt;Test2&lt;/Select.Item&gt;
             &lt;Select.Item value=&quot;test3&quot;&gt;Test3&lt;/Select.Item&gt;
@@ -9254,6 +9323,7 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
         &lt;Select
             aria-label=&quot;Select an item&quot;
             placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}
             onEscapeKeyDown={() =&gt; {
                 alert(&#39;Escape key was pressed!&#39;);
             }}&gt;
@@ -9276,6 +9346,7 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
         &lt;Select.Combobox
             aria-label=&quot;Select an item&quot;
             placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}
             onEscapeKeyDown={() =&gt; {
                 alert(&#39;Escape key was pressed!&#39;);
             }}&gt;
