@@ -29,16 +29,6 @@ describe('useSingleSelect', () => {
             expect(result.current.selectedItemValues).toEqual(['a']);
         });
 
-        it('deselects an item when selecting the same item again', () => {
-            const { result } = renderHook(() => useSingleSelect(undefined, undefined, 'a'));
-
-            act(() => {
-                result.current.selectItem('a');
-            });
-
-            expect(result.current.selectedItemValues).toEqual([]);
-        });
-
         it('replaces the selected item when selecting a different item', () => {
             const { result } = renderHook(() => useSingleSelect(undefined, undefined, 'a'));
 
@@ -69,14 +59,14 @@ describe('useSingleSelect', () => {
             expect(result.current.selectedItemValues).toEqual(['']);
         });
 
-        it('deselects an empty string value when selecting it again', () => {
+        it('keeps the empty string value when selecting it again', () => {
             const { result } = renderHook(() => useSingleSelect(undefined, undefined, ''));
 
             act(() => {
                 result.current.selectItem('');
             });
 
-            expect(result.current.selectedItemValues).toEqual([]);
+            expect(result.current.selectedItemValues).toEqual(['']);
         });
 
         it('clears the selection', () => {
@@ -126,7 +116,7 @@ describe('useSingleSelect', () => {
             expect(onSelect).toHaveBeenCalledWith('y');
         });
 
-        it('calls onSelect with null when toggling the same item off', () => {
+        it('calls onSelect with the same value when selecting the same item', () => {
             const onSelect = vi.fn();
             const { result } = renderHook(() => useSingleSelect(onSelect, 'x'));
 
@@ -134,7 +124,7 @@ describe('useSingleSelect', () => {
                 result.current.selectItem('x');
             });
 
-            expect(onSelect).toHaveBeenCalledWith(null);
+            expect(onSelect).toHaveBeenCalledWith('x');
         });
 
         it('calls onSelect with null on clear', () => {
