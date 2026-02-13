@@ -1,5 +1,15 @@
 # @frontify/fondue
 
+## 13.1.3
+
+### Patch Changes
+
+- [`ac3ba9e`](https://github.com/Frontify/fondue/commit/ac3ba9e0808f98fe55baad710dd3d7f977b032b8) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update fondue-components
+
+- Updated dependencies [[`70062c5`](https://github.com/Frontify/fondue/commit/70062c5ccd1adf6c2748494226d3b7fc07f0f0b4)]:
+    - @frontify/fondue-components@26.0.3
+    - @frontify/fondue-tokens@5.0.0
+
 ## 13.1.2
 
 ### Patch Changes

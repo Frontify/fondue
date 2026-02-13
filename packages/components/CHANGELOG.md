@@ -1,5 +1,14 @@
 # @frontify/fondue-components
 
+## 26.0.3
+
+### Patch Changes
+
+- [`70062c5`](https://github.com/Frontify/fondue/commit/70062c5ccd1adf6c2748494226d3b7fc07f0f0b4) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix: selecting the same item shouldn't fire `null` in the `onSelect`
+
+- Updated dependencies []:
+    - @frontify/fondue-tokens@5.0.0
+
 ## 26.0.2
 
 ### Patch Changes
