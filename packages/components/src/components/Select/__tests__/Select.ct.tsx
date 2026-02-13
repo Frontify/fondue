@@ -530,3 +530,46 @@ test('render indicator on selected item', async ({ mount, page }) => {
     await expect(firstItem).toHaveCSS('background-color', 'rgb(240, 240, 235)');
     await expect(chekmarkIcon).toBeVisible();
 });
+
+test('should handle state with default value set to first item', async ({ mount, page }) => {
+    const onSelectChange = sinon.spy();
+
+    const wrapper = await mount(
+        <Select
+            value="test1"
+            onSelect={(value) => {
+                onSelectChange(value);
+            }}
+            aria-label="test"
+            data-test-id={SELECT_TEST_ID}
+            placeholder={PLACEHOLDER_TEXT}
+        >
+            <Select.Slot name="menu">
+                <Select.Item data-test-id={ITEM_TEST_ID1} value="test1">
+                    {ITEM_TEXT1}
+                </Select.Item>
+                <Select.Item data-test-id={ITEM_TEST_ID2} value="test2">
+                    {ITEM_TEXT2}
+                </Select.Item>
+            </Select.Slot>
+        </Select>,
+    );
+    const component = wrapper.getByTestId(SELECT_TEST_ID);
+
+    await expect(component).toBeVisible();
+    await expect(component).toContainText(ITEM_TEXT1);
+
+    await component.click();
+
+    const firstItem = page.getByTestId(ITEM_TEST_ID1);
+    await expect(firstItem).toBeVisible();
+    await expect(firstItem).toHaveAttribute('data-selected', 'true');
+    await expect(firstItem).toHaveAttribute('aria-selected', 'true');
+
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+
+    await expect(component).toContainText(ITEM_TEXT1);
+    expect(onSelectChange.callCount).toBe(1);
+    expect(onSelectChange.calledWith('test1')).toBe(true);
+});

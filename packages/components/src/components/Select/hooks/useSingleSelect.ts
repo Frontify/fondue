@@ -17,13 +17,12 @@ export const useSingleSelect = (
             if (item === undefined) {
                 return;
             }
-            const newValue = selectedValue === item ? null : item;
             if (value === undefined) {
-                setSelectedItemState(newValue);
+                setSelectedItemState(item);
             }
-            onSelect?.(newValue);
+            onSelect?.(item);
         },
-        [selectedValue, value, onSelect],
+        [value, onSelect],
     );
 
     const clear = useCallback(() => {

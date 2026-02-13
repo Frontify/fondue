@@ -203,30 +203,43 @@ const ComboboxBaseInput = (
             setHasInteractedSinceOpening(true);
         },
         itemToString: (item) => (item ? item.label : ''),
-        ...(multiple
-            ? {
-                  stateReducer: (state, actionAndChanges) => {
-                      const { changes, type } = actionAndChanges;
-                      switch (type) {
-                          case useCombobox.stateChangeTypes.InputKeyDownEnter:
-                          case useCombobox.stateChangeTypes.ItemClick:
-                              return {
-                                  ...changes,
-                                  isOpen: true,
-                                  highlightedIndex: state.highlightedIndex,
-                                  inputValue: '',
-                              };
-                          case useCombobox.stateChangeTypes.InputBlur:
-                              // Select item on blur (Tab key) but clear the input
-                              return {
-                                  ...changes,
-                                  inputValue: '',
-                              };
-                      }
-                      return changes;
-                  },
-              }
-            : {}),
+        stateReducer: (state, actionAndChanges) => {
+            const { changes, type } = actionAndChanges;
+            if (multiple) {
+                switch (type) {
+                    case useCombobox.stateChangeTypes.InputKeyDownEnter:
+                    case useCombobox.stateChangeTypes.ItemClick:
+                        return {
+                            ...changes,
+                            isOpen: true,
+                            highlightedIndex: state.highlightedIndex,
+                            inputValue: '',
+                        };
+                    case useCombobox.stateChangeTypes.InputBlur:
+                        // Select item on blur (Tab key) but clear the input
+                        return {
+                            ...changes,
+                            inputValue: '',
+                        };
+                }
+            } else {
+                // For single select, handle re-selection of the same item
+                // onSelectedItemChange doesn't fire when selecting the same item, so we call onItemSelect here
+                switch (type) {
+                    case useCombobox.stateChangeTypes.InputKeyDownEnter:
+                    case useCombobox.stateChangeTypes.ItemClick:
+                        if (
+                            changes.selectedItem &&
+                            state.selectedItem &&
+                            changes.selectedItem.value === state.selectedItem.value
+                        ) {
+                            onItemSelect(changes.selectedItem.value);
+                        }
+                        break;
+                }
+            }
+            return changes;
+        },
     });
 
     const valueInvalid = useMemo(() => {
