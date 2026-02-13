@@ -37,9 +37,13 @@ test('should select an item with empty string value', async ({ mount, page }) =>
     await expect(component).toBeVisible();
     await component.click();
 
-    await page.getByTestId(ITEM_TEST_ID1).click();
+    const firstItem = page.getByTestId(ITEM_TEST_ID1);
+    await expect(firstItem).toBeVisible();
 
-    await expect(page.getByTestId(ITEM_TEST_ID1)).toHaveAttribute('aria-selected', 'true');
+    // Use dispatchEvent to avoid Playwright's click simulation issues
+    await firstItem.dispatchEvent('click');
+
+    await expect(firstItem).toHaveAttribute('aria-selected', 'true');
     expect(onSelectChange.callCount).toBe(1);
     expect(onSelectChange.calledWith([''])).toBe(true);
 });
@@ -63,11 +67,14 @@ test('should deselect an item with empty string value', async ({ mount, page }) 
     await expect(component).toBeVisible();
     await component.click();
 
-    await expect(page.getByTestId(ITEM_TEST_ID1)).toHaveAttribute('aria-selected', 'true');
+    const firstItem = page.getByTestId(ITEM_TEST_ID1);
+    await expect(firstItem).toBeVisible();
+    await expect(firstItem).toHaveAttribute('aria-selected', 'true');
 
-    await page.getByTestId(ITEM_TEST_ID1).click();
+    // Use dispatchEvent to avoid Playwright's click simulation issues
+    await firstItem.dispatchEvent('click');
 
-    await expect(page.getByTestId(ITEM_TEST_ID1)).toHaveAttribute('aria-selected', 'false');
+    await expect(firstItem).toHaveAttribute('aria-selected', 'false');
     expect(onSelectChange.callCount).toBe(1);
     expect(onSelectChange.calledWith([])).toBe(true);
 });

@@ -3,6 +3,7 @@
 import { IconIcon } from '@frontify/fondue-icons';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
+import { action } from 'storybook/actions';
 
 import { Flex } from '#/components/Flex/Flex.tsx';
 
@@ -38,6 +39,7 @@ const meta: Meta<typeof SelectSingle> = {
     args: {
         'aria-label': 'Select an item',
         placeholder: 'Select an item',
+        onSelect: action('onSelect'),
     },
 };
 export default meta;
