@@ -23,6 +23,19 @@ const meta: Meta<typeof AccordionRoot> = {
         status: {
             type: 'released',
         },
+        docs: {
+            description: {
+                component: [
+                    'A vertically stacked list of interactive headers that toggle the visibility of associated content. Helps organize large amounts of information by collapsing it into digestible sections.',
+                    '',
+                    "**When to use:** When content can be grouped into discrete sections and users don't need to see everything at once.",
+                    '',
+                    '**Actions:** Use `Accordion.Slot` with `name="action"` to place actions on the right of the header. Keep primary actions visible and tuck non-essential ones behind a three-dot menu.',
+                    '',
+                    '**Leading icon:** Add a leading icon as a child of `Accordion.Header` to reinforce the meaning of the label, or skip it for a simpler look.',
+                ].join('\n'),
+            },
+        },
     },
     args: {},
 };

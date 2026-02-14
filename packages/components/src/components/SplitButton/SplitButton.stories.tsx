@@ -22,6 +22,19 @@ const meta: Meta<typeof SplitButtonRoot> = {
         status: {
             type: 'released',
         },
+        docs: {
+            description: {
+                component: [
+                    'Combines a primary action with a dropdown of related options. Clicking the lead button triggers the default action, while the trailing button opens a dropdown with additional choices.',
+                    '',
+                    '**When to use:** When an action has related alternatives that can be grouped together without crowding the interface.',
+                    '',
+                    "**Leading icon:** An icon can enhance recognizability and convey the button's function more intuitively.",
+                    '',
+                    '**Dropdown trigger:** The trailing button should only use the caret or vertical dots icon. Split buttons are designed only to trigger dropdown menus — no other behaviors should be attached.',
+                ].join('\n'),
+            },
+        },
     },
     args: {
         emphasis: 'strong',

@@ -23,6 +23,15 @@ const meta: Meta<typeof Notice> = {
         status: {
             type: 'released',
         },
+        docs: {
+            description: {
+                component: [
+                    'A persistent, inline message that communicates important information, status updates, or actions. Stays visible until dismissed, keeping users informed without interrupting their workflow.',
+                    '',
+                    '**When to use:** To surface contextual feedback, warnings, or success confirmations inline — not for transient toast-style notifications.',
+                ].join('\n'),
+            },
+        },
     },
     args: {
         variant: 'default',

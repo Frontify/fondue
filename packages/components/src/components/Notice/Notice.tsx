@@ -15,27 +15,30 @@ type NoticeSize = 'medium' | 'large';
 
 export type NoticeProps = {
     /**
+     * Conveys the tone. `'default'` for neutral messages, `'highlight'` for noteworthy information, `'positive'` for success, `'warning'` for caution, `'danger'` for critical errors — use sparingly.
      * @default 'default'
      */
     variant?: NoticeVariant;
     /**
+     * Controls visual weight. `'default'` for standard messages, `'strong'` for critical or high-priority information, `'weak'` for subtle, non-urgent messages.
      * @default 'default'
      */
     emphasis?: NoticeEmphasis;
     /**
+     * Controls the notice size. `'medium'` for standard use, `'large'` for more prominent messages.
      * @default 'medium'
      */
     size?: NoticeSize;
     /**
-     * Leading icon element
+     * Leading icon element to enhance recognizability and convey the notice's function at a glance.
      */
     icon?: ReactNode;
     /**
-     * Action element (typically a button)
+     * Action element (typically a Button). Use when there's a clear, lightweight action related to the message content.
      */
     action?: ReactNode;
     /**
-     * Callback when the dismiss button is clicked
+     * Callback when the dismiss button is clicked. When provided, a close icon is displayed allowing users to remove the message.
      */
     onDismiss?: (event?: MouseEvent<HTMLButtonElement>) => void;
     /**

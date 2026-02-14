@@ -15,6 +15,21 @@ const meta: Meta<typeof Button> = {
         status: {
             type: 'released',
         },
+        docs: {
+            description: {
+                component: [
+                    'An interactive element that triggers actions — from submitting a form to opening a menu. At least one content element must be included: a label, an icon, or both.',
+                    '',
+                    '**When to use:** For actions and commands only. Use links for navigation — buttons trigger an immediate result, links navigate to a new location.',
+                    '',
+                    '**Icon:** Pass an icon as a child to add visual context. Use `aspect="square"` for icon-only buttons.',
+                    '',
+                    '**Caret:** Signals that clicking will reveal additional options. Usually used with the Dropdown component.',
+                    '',
+                    '**Accessible labeling:** Use concise, descriptive labels that reflect the action. Prefer specific verbs like "Submit" or "Download" over vague terms like "Go" or "Click here."',
+                ].join('\n'),
+            },
+        },
     },
     args: {
         type: 'button',

@@ -21,6 +21,21 @@ const meta: Meta<typeof CheckboxComponent> = {
         status: {
             type: 'released',
         },
+        docs: {
+            description: {
+                component: [
+                    'An input for selecting from predefined options. On its own, it captures a single selection — group a few together for multi-select scenarios.',
+                    '',
+                    '**When to use:** For binary choices or selecting multiple items from a list. Pair with a `Label` component for usability and a larger tap target.',
+                    '',
+                    '**Selection state:** The `value` prop supports `true` (selected), `false` (unselected), and `"indeterminate"` (partial group selection). Indeterminate is a visual cue only and doesn\'t affect the underlying value.',
+                    '',
+                    "**Label:** Whenever possible, include a visible label. In patterns like card or image selection where labels aren't practical, ensure the checkbox's meaning is clear from context.",
+                    '',
+                    '**Tooltip:** Use a Tooltip component alongside the label when additional context is needed. Keep content concise and avoid relying on it for critical information.',
+                ].join('\n'),
+            },
+        },
     },
     args: {
         disabled: false,
