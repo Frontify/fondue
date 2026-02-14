@@ -21,32 +21,31 @@ export type CheckboxProps = {
      */
     value?: boolean | 'indeterminate';
     /**
-     * The size of the checkbox
+     * Controls the checkbox size. `'default'` fits most layouts, `'large'` for touch-friendly environments or increased visual weight.
      * @default "default"
      */
     size?: 'default' | 'large';
     /**
-     * The emphasis of the checkbox
+     * Controls visual prominence. `'default'` is subtle for standard forms, `'weak'` for reduced visual weight.
      * @default "default"
      */
     emphasis?: 'default' | 'weak';
     /**
-     * Disable the checkbox
      * @default false
      */
     disabled?: boolean;
     /**
-     * Make the checkbox required in form
+     * Marks the checkbox as required for form submission. The indicator should appear next to the label.
      * @default false
      */
     required?: boolean;
     /**
-     * Make the checkbox read-only
+     * Makes the checkbox read-only. The checkbox is visible and focusable but its value cannot be changed by user interaction.
      * @default false
      */
     readOnly?: boolean;
     /**
-     * Status of the checkbox
+     * Visual status of the checkbox. Use `'error'` to indicate a validation failure.
      * @default "default"
      */
     status?: 'default' | 'error';

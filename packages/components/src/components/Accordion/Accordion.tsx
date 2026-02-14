@@ -218,7 +218,13 @@ export const AccordionContent = ({
 AccordionContent.displayName = 'Accordion.Content';
 
 export type AccordionSlotProps = {
+    /**
+     * Content to render inside the slot, typically action buttons or controls.
+     */
     children: ReactNode;
+    /**
+     * The slot placement. Use `'action'` to position content on the right side of the header for quick-access actions.
+     */
     name?: 'action';
     'data-test-id'?: string;
 };

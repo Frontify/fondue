@@ -18,6 +18,7 @@ type ButtonAspect = 'default' | 'square';
 
 export type ButtonProps = {
     /**
+     * The HTML button type. Use `'submit'` for form submission, `'reset'` to clear form fields, `'button'` for general actions.
      * @default "button"
      */
     type?: ButtonType;
@@ -26,18 +27,22 @@ export type ButtonProps = {
      */
     title?: string;
     /**
+     * Conveys the tone of the action. `'default'` for neutral actions, `'positive'` for confirmations like "Approve", `'negative'` for cautionary actions like "Cancel", `'danger'` for irreversible actions like "Delete", `'loud'` for high-visibility actions — use sparingly.
      * @default "default"
      */
     variant?: ButtonStyle;
     /**
+     * Controls visual hierarchy. `'strong'` for primary actions, `'default'` for common actions, `'weak'` for secondary or less prominent options.
      * @default "strong"
      */
     emphasis?: ButtonEmphasis;
     /**
+     * Controls the button size. `'small'` for tight spaces or lower priority, `'medium'` for most layouts, `'large'` for prominent actions.
      * @default "medium"
      */
     size?: ButtonSize;
     /**
+     * Controls border radius. `'medium'` for standard buttons, `'full'` for pill-shaped buttons.
      * @default "medium"
      */
     rounding?: ButtonRounding;
@@ -46,14 +51,19 @@ export type ButtonProps = {
      */
     disabled?: boolean;
     /**
+     * Controls the aspect ratio. `'default'` for standard buttons with label, `'square'` for icon-only buttons.
      * @default "default"
      */
     aspect?: ButtonAspect;
     /**
+     * When `true`, the button sizes to fit its content. When `false`, the button expands to fill its container width. Use full-width sparingly — it works well on mobile or at the bottom of forms.
      * @default true
      */
     hugWidth?: boolean;
     children?: ReactNode;
+    /**
+     * Callback fired when the button is pressed.
+     */
     onPress?: (event?: MouseEvent<HTMLButtonElement>) => void;
     form?: string;
     'aria-label'?: string;
