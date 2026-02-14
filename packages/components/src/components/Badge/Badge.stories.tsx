@@ -18,11 +18,9 @@ const meta: Meta<typeof Badge> = {
         docs: {
             description: {
                 component: [
-                    'The badge component is a small indicator used to highlight status, count, or contextual information.',
+                    'A small indicator used to highlight status, count, or category. Conveys concise data at a glance without overwhelming the interface.',
                     '',
-                    'It helps convey concise data at a glance, enhancing clarity without overwhelming the interface.',
-                    '',
-                    'Badges follow a simple, flexible structure. At their core, they include a label, with optional elements that enhance their meaning or interactivity.',
+                    '**When to use:** To surface metadata, counts, or status alongside other content — such as labels in a list, filter tags, or notification counts.',
                     '',
                     '**Icon:** Pass an icon as a child alongside the label to add visual context or reinforce meaning.',
                 ].join('\n'),

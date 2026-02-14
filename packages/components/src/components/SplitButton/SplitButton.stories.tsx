@@ -25,17 +25,11 @@ const meta: Meta<typeof SplitButtonRoot> = {
         docs: {
             description: {
                 component: [
-                    'Split buttons combine a primary action with a dropdown of related options. Clicking the lead button triggers the default action, while the trailing button opens a dropdown with additional choices.',
+                    'Combines a primary action with a dropdown of related options. Clicking the lead button triggers the default action, while the trailing button opens a dropdown with additional choices.',
                     '',
-                    'Each part — from the label to the dropdown icon — works together to keep actions clear and flexible.',
+                    '**When to use:** When an action has related alternatives that can be grouped together without crowding the interface.',
                     '',
-                    '**When to use:** Not every action needs a menu — but when one does, a split button is your best option. Use it to group related tasks without crowding the interface.',
-                    '',
-                    '**Emphasis:** Controls visual weight and perceived importance. `strong` for primary actions, `default` for secondary actions, `weak` for less frequently used actions.',
-                    '',
-                    '**Size:** `small` for less prominent actions or tight spaces, `medium` as the go-to for most scenarios, `large` for actions that need standout visibility.',
-                    '',
-                    "**Leading icon:** Using an icon can enhance recognizability and convey the button's function more intuitively.",
+                    "**Leading icon:** An icon can enhance recognizability and convey the button's function more intuitively.",
                     '',
                     '**Dropdown trigger:** The trailing button should only use the caret or vertical dots icon. Split buttons are designed only to trigger dropdown menus — no other behaviors should be attached.',
                 ].join('\n'),

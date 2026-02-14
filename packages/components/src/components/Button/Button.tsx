@@ -27,12 +27,12 @@ export type ButtonProps = {
      */
     title?: string;
     /**
-     * Conveys the tone of the action. `'default'` for neutral actions, `'positive'` for confirmations like "Approve", `'negative'` for cautionary actions like "Cancel", `'danger'` for irreversible actions like "Delete", `'loud'` for high-visibility actions — use sparingly.
+     * Conveys the tone. `'default'` for neutral actions, `'positive'` for confirmations like "Approve", `'negative'` for cautionary actions like "Cancel", `'danger'` for irreversible actions like "Delete", `'loud'` for high-visibility actions — use sparingly.
      * @default "default"
      */
     variant?: ButtonStyle;
     /**
-     * Controls visual hierarchy. `'strong'` for primary actions, `'default'` for common actions, `'weak'` for secondary or less prominent options.
+     * Controls visual weight. `'strong'` for primary actions, `'default'` for common actions, `'weak'` for secondary or less prominent options.
      * @default "strong"
      */
     emphasis?: ButtonEmphasis;

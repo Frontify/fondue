@@ -18,17 +18,13 @@ const meta: Meta<typeof Button> = {
         docs: {
             description: {
                 component: [
-                    "Buttons are interactive elements that let users get things done — from submitting a form to triggering a specific action.",
+                    'An interactive element that triggers actions — from submitting a form to opening a menu. At least one content element must be included: a label, an icon, or both.',
                     '',
-                    "You'll find them everywhere in a UI. Buttons are small but mighty tools for turning intention into action.",
-                    '',
-                    'A button is made up of key parts that work together to create a clear, actionable element. At least one content element must be included — either a label, an icon, or both.',
+                    '**When to use:** For actions and commands only. Use links for navigation — buttons trigger an immediate result, links navigate to a new location.',
                     '',
                     '**Icon:** Pass an icon as a child to add visual context. Use `aspect="square"` for icon-only buttons.',
                     '',
-                    '**Caret:** The caret signals that clicking will reveal additional options. Usually used with the Dropdown component.',
-                    '',
-                    '**Action vs. navigation:** Buttons are for actions or commands only. Use links for navigation — buttons trigger an immediate result, links navigate to a new location.',
+                    '**Caret:** Signals that clicking will reveal additional options. Usually used with the Dropdown component.',
                     '',
                     '**Accessible labeling:** Use concise, descriptive labels that reflect the action. Prefer specific verbs like "Submit" or "Download" over vague terms like "Go" or "Click here."',
                 ].join('\n'),

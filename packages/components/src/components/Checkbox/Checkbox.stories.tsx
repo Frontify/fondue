@@ -24,11 +24,9 @@ const meta: Meta<typeof CheckboxComponent> = {
         docs: {
             description: {
                 component: [
-                    'A checkbox is an input for selecting from predefined options.',
+                    'An input for selecting from predefined options. On its own, it captures a single selection — group a few together for multi-select scenarios.',
                     '',
-                    "On its own, it's a quick yes-or-no choice — but group a few together, and it becomes a flexible way for users to pick multiple options from a list.",
-                    '',
-                    'At minimum, a checkbox must include the checkbox element itself. Pair it with a `Label` component for usability and a larger tap target. A tooltip icon or required indicator can be added for extra context.',
+                    '**When to use:** For binary choices or selecting multiple items from a list. Pair with a `Label` component for usability and a larger tap target.',
                     '',
                     '**Selection state:** The `value` prop supports `true` (selected), `false` (unselected), and `"indeterminate"` (partial group selection). Indeterminate is a visual cue only and doesn\'t affect the underlying value.',
                     '',

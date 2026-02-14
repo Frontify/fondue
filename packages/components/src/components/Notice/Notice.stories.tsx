@@ -26,13 +26,9 @@ const meta: Meta<typeof Notice> = {
         docs: {
             description: {
                 component: [
-                    'The notice component is a persistent, inline message that communicates important information, status updates, or actions within the context of the UI.',
+                    'A persistent, inline message that communicates important information, status updates, or actions. Stays visible until dismissed, keeping users informed without interrupting their workflow.',
                     '',
-                    "It helps keep users informed without interrupting their workflow by presenting clear, accessible feedback that stays visible until acknowledged.",
-                    '',
-                    'A notice is made up of clearly defined parts that work together to deliver information and optionally prompt a response.',
-                    '',
-                    '**In the dark:** Color tokens automatically switch to their dark variants when the dark theme is active.',
+                    '**When to use:** To surface contextual feedback, warnings, or success confirmations inline — not for transient toast-style notifications.',
                 ].join('\n'),
             },
         },

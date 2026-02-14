@@ -15,7 +15,7 @@ type NoticeSize = 'medium' | 'large';
 
 export type NoticeProps = {
     /**
-     * Communicates the tone and intent. `'default'` for neutral messages, `'highlight'` for noteworthy information, `'positive'` for success, `'warning'` for caution, `'danger'` for critical errors — use sparingly.
+     * Conveys the tone. `'default'` for neutral messages, `'highlight'` for noteworthy information, `'positive'` for success, `'warning'` for caution, `'danger'` for critical errors — use sparingly.
      * @default 'default'
      */
     variant?: NoticeVariant;

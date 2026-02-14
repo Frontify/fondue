@@ -26,7 +26,7 @@ export type CheckboxProps = {
      */
     size?: 'default' | 'large';
     /**
-     * Controls visual prominence. `'default'` is subtle for standard forms, `'weak'` for reduced visual weight.
+     * Controls visual weight. `'default'` is subtle for standard forms, `'weak'` for reduced visual weight.
      * @default "default"
      */
     emphasis?: 'default' | 'weak';

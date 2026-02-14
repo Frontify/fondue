@@ -21,7 +21,7 @@ type BadgeProps = {
      */
     emphasis?: BadgeEmphasis;
     /**
-     * Conveys the tone or meaning of the badge. `'default'` for neutral, `'positive'` for success, `'highlight'` for informational, `'warning'` for caution, `'negative'` for critical.
+     * Conveys the tone. `'default'` for neutral, `'positive'` for success, `'highlight'` for informational, `'warning'` for caution, `'negative'` for critical.
      * @default 'default'
      */
     variant?: BadgeStyle;
