@@ -564,42 +564,41 @@
             <pre><code>Component: src/components/Accordion/Accordion.tsx::AccordionRoot</code></pre>
             <pre><code>Props:</code></pre>
             <pre><code>/**
- * Show or hide the top and bottom border
+ * Shows or hides the top and bottom border.
  * @default true
  */
 border?: boolean = true
 
 /**
- * Children of the Accordion component. This should contain the `Accordion.Item` components
+ * Should contain `Accordion.Item` components.
  */
 children?: ReactNode
 
 data-test-id?: string = &#39;fondue-accordion&#39;
 
 /**
- * The value of the items whose contents are expanded when the accordion is initially rendered.
- * Use `defaultValue` if you do not need to control the state of an accordion.
+ * The items whose contents are expanded on initial render. Use when you do not need to control accordion state.
  */
 defaultValue?: string[]
 
 /**
- * Whether or not an accordion is disabled from user interaction.
+ * Disables the accordion from user interaction.
  */
 disabled?: boolean
 
 /**
- * Callback function that is called when the value of the accordion changes.
+ * Callback fired when the expanded items change.
  */
 onValueChange?: (value: string[]) =&gt; void
 
 /**
- * Controls if we show paddings around the header.
+ * Controls padding around the header. `&#39;none&#39;` for no padding, `&#39;small&#39;`, `&#39;medium&#39;`, or `&#39;large&#39;` for increasing spacing.
  * @default &#39;large&#39;
  */
 padding?: &#39;none&#39; | &#39;small&#39; | &#39;medium&#39; | &#39;large&#39; = &#39;large&#39;
 
 /**
- * The controlled stateful value of the accordion items whose contents are expanded.
+ * The controlled value of the items whose contents are expanded.
  */
 value?: string[]</code></pre>
           </div>
@@ -901,33 +900,36 @@ data-test-id?: string = &#39;badge&#39;
 disabled?: boolean = false
 
 /**
+ * Controls visual weight. Use `&#39;strong&#39;` for high-priority information, `&#39;weak&#39;` for subtle or secondary content.
  * @default &#39;strong&#39;
  */
 emphasis?: &#39;strong&#39; | &#39;weak&#39; = &#39;strong&#39;
 
 /**
- * Click handler
+ * Click handler. When provided, the badge renders as a button element.
  */
 onClick?: (event: MouseEvent&lt;HTMLButtonElement&gt;) =&gt; void
 
 /**
- * Click handler on dismiss - providing this will show the dismiss button
+ * Dismiss handler. When provided, a dismiss button is shown, useful for filters or removable selections.
  */
 onDismiss?: (event: MouseEvent&lt;HTMLButtonElement&gt;) =&gt; void
 
 /**
+ * Controls the badge size. Use `&#39;small&#39;` when space is limited or the badge plays a secondary role.
  * @default &#39;default&#39;
  */
 size?: &#39;default&#39; | &#39;small&#39; = &#39;default&#39;
 
 /**
- * The color of the status dot
+ * Displays a status dot to reflect live states or activity. Accepts a preset (`&#39;positive&#39;`, `&#39;warning&#39;`, etc.) or a custom color value.
  */
 status?: BadgeStatusProps[&#39;status&#39;]
 
 title?: string
 
 /**
+ * Conveys the tone. `&#39;default&#39;` for neutral, `&#39;positive&#39;` for success, `&#39;highlight&#39;` for informational, `&#39;warning&#39;` for caution, `&#39;negative&#39;` for critical.
  * @default &#39;default&#39;
  */
 variant?: &#39;default&#39; | &#39;positive&#39; | &#39;highlight&#39; | &#39;warning&#39; | &#39;negative&#39; = &#39;default&#39;</code></pre>
@@ -1514,6 +1516,7 @@ width?: ({ [key in Breakpoint]?: TValue } &amp; { base?: TValue }) | TValue</cod
 aria-label?: string
 
 /**
+ * Controls the aspect ratio. `&#39;default&#39;` for standard buttons with label, `&#39;square&#39;` for icon-only buttons.
  * @default &quot;default&quot;
  */
 aspect?: &#39;default&#39; | &#39;square&#39; = &#39;default&#39;
@@ -1530,6 +1533,7 @@ data-test-id?: string = &#39;fondue-button&#39;
 disabled?: boolean
 
 /**
+ * Controls visual weight. `&#39;strong&#39;` for primary actions, `&#39;default&#39;` for common actions, `&#39;weak&#39;` for secondary or less prominent options.
  * @default &quot;strong&quot;
  */
 emphasis?: &#39;default&#39; | &#39;weak&#39; | &#39;strong&#39; = &#39;strong&#39;
@@ -1537,18 +1541,24 @@ emphasis?: &#39;default&#39; | &#39;weak&#39; | &#39;strong&#39; = &#39;strong&#
 form?: string
 
 /**
+ * When `true`, the button sizes to fit its content. When `false`, the button expands to fill its container width. Use full-width sparingly — it works well on mobile or at the bottom of forms.
  * @default true
  */
 hugWidth?: boolean = true
 
+/**
+ * Callback fired when the button is pressed.
+ */
 onPress?: (event?: MouseEvent&lt;HTMLButtonElement&gt;) =&gt; void = () =&gt; {}
 
 /**
+ * Controls border radius. `&#39;medium&#39;` for standard buttons, `&#39;full&#39;` for pill-shaped buttons.
  * @default &quot;medium&quot;
  */
 rounding?: &#39;medium&#39; | &#39;full&#39; = &#39;medium&#39;
 
 /**
+ * Controls the button size. `&#39;small&#39;` for tight spaces or lower priority, `&#39;medium&#39;` for most layouts, `&#39;large&#39;` for prominent actions.
  * @default &quot;medium&quot;
  */
 size?: &#39;small&#39; | &#39;medium&#39; | &#39;large&#39; = &#39;medium&#39;
@@ -1559,11 +1569,13 @@ size?: &#39;small&#39; | &#39;medium&#39; | &#39;large&#39; = &#39;medium&#39;
 title?: string
 
 /**
+ * The HTML button type. Use `&#39;submit&#39;` for form submission, `&#39;reset&#39;` to clear form fields, `&#39;button&#39;` for general actions.
  * @default &quot;button&quot;
  */
 type?: &#39;button&#39; | &#39;submit&#39; | &#39;reset&#39; = &#39;button&#39;
 
 /**
+ * Conveys the tone. `&#39;default&#39;` for neutral actions, `&#39;positive&#39;` for confirmations like &quot;Approve&quot;, `&#39;negative&#39;` for cautionary actions like &quot;Cancel&quot;, `&#39;danger&#39;` for irreversible actions like &quot;Delete&quot;, `&#39;loud&#39;` for high-visibility actions — use sparingly.
  * @default &quot;default&quot;
  */
 variant?: &#39;default&#39; | &#39;positive&#39; | &#39;negative&#39; | &#39;danger&#39; | &#39;loud&#39; = &#39;default&#39;</code></pre>
@@ -1745,13 +1757,12 @@ data-test-id?: string = &#39;fondue-checkbox&#39;
 defaultValue?: boolean | &#39;indeterminate&#39;
 
 /**
- * Disable the checkbox
  * @default false
  */
 disabled?: boolean
 
 /**
- * The emphasis of the checkbox
+ * Controls visual weight. `&#39;default&#39;` is subtle for standard forms, `&#39;weak&#39;` for reduced visual weight.
  * @default &quot;default&quot;
  */
 emphasis?: &#39;default&#39; | &#39;weak&#39; = &#39;default&#39;
@@ -1776,25 +1787,25 @@ onChange?: (event: FormEvent&lt;HTMLButtonElement&gt;) =&gt; void
 onFocus?: (event: FormEvent&lt;HTMLButtonElement&gt;) =&gt; void
 
 /**
- * Make the checkbox read-only
+ * Makes the checkbox read-only. The checkbox is visible and focusable but its value cannot be changed by user interaction.
  * @default false
  */
 readOnly?: boolean
 
 /**
- * Make the checkbox required in form
+ * Marks the checkbox as required for form submission. The indicator should appear next to the label.
  * @default false
  */
 required?: boolean
 
 /**
- * The size of the checkbox
+ * Controls the checkbox size. `&#39;default&#39;` fits most layouts, `&#39;large&#39;` for touch-friendly environments or increased visual weight.
  * @default &quot;default&quot;
  */
 size?: &#39;default&#39; | &#39;large&#39; = &#39;default&#39;
 
 /**
- * Status of the checkbox
+ * Visual status of the checkbox. Use `&#39;error&#39;` to indicate a validation failure.
  * @default &quot;default&quot;
  */
 status?: &#39;default&#39; | &#39;error&#39; = &#39;default&#39;
@@ -6583,7 +6594,7 @@ variant?: &#39;progress&#39; | &#39;success&#39; | &#39;danger&#39; = &#39;progr
             <pre><code>Component: src/components/Notice/Notice.tsx::Notice</code></pre>
             <pre><code>Props:</code></pre>
             <pre><code>/**
- * Action element (typically a button)
+ * Action element (typically a Button). Use when there&#39;s a clear, lightweight action related to the message content.
  */
 action?: ReactNode
 
@@ -6608,26 +6619,29 @@ className?: string = &#39;&#39;
 data-test-id?: string = &#39;notice&#39;
 
 /**
+ * Controls visual weight. `&#39;default&#39;` for standard messages, `&#39;strong&#39;` for critical or high-priority information, `&#39;weak&#39;` for subtle, non-urgent messages.
  * @default &#39;default&#39;
  */
 emphasis?: &#39;default&#39; | &#39;strong&#39; | &#39;weak&#39; = &#39;default&#39;
 
 /**
- * Leading icon element
+ * Leading icon element to enhance recognizability and convey the notice&#39;s function at a glance.
  */
 icon?: ReactNode
 
 /**
- * Callback when the dismiss button is clicked
+ * Callback when the dismiss button is clicked. When provided, a close icon is displayed allowing users to remove the message.
  */
 onDismiss?: (event?: MouseEvent&lt;HTMLButtonElement&gt;) =&gt; void
 
 /**
+ * Controls the notice size. `&#39;medium&#39;` for standard use, `&#39;large&#39;` for more prominent messages.
  * @default &#39;medium&#39;
  */
 size?: &#39;medium&#39; | &#39;large&#39; = &#39;medium&#39;
 
 /**
+ * Conveys the tone. `&#39;default&#39;` for neutral messages, `&#39;highlight&#39;` for noteworthy information, `&#39;positive&#39;` for success, `&#39;warning&#39;` for caution, `&#39;danger&#39;` for critical errors — use sparingly.
  * @default &#39;default&#39;
  */
 variant?: &#39;default&#39; | &#39;highlight&#39; | &#39;positive&#39; | &#39;danger&#39; | &#39;warning&#39; = &#39;default&#39;</code></pre>
@@ -8684,7 +8698,10 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
               
               <pre><code>const SimpleSelect = () =&gt; {
     return (
-        &lt;Select aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot;&gt;
+        &lt;Select
+            aria-label=&quot;Select an item&quot;
+            placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}&gt;
             &lt;Select.Item value=&quot;test1&quot;&gt;Test1&lt;/Select.Item&gt;
             &lt;Select.Item value=&quot;test2&quot;&gt;Test2&lt;/Select.Item&gt;
             &lt;Select.Item value=&quot;test3&quot;&gt;Test3&lt;/Select.Item&gt;
@@ -8701,7 +8718,10 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
               
               <pre><code>const MultipleSelect = () =&gt; {
     return (
-        &lt;Select.Multiple aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot;&gt;
+        &lt;Select.Multiple
+            aria-label=&quot;Select an item&quot;
+            placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}&gt;
             &lt;Select.Item value=&quot;test1&quot;&gt;Test1&lt;/Select.Item&gt;
             &lt;Select.Item value=&quot;test2&quot;&gt;Test2&lt;/Select.Item&gt;
             &lt;Select.Item value=&quot;test3&quot;&gt;Test3&lt;/Select.Item&gt;
@@ -8718,7 +8738,10 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
               
               <pre><code>const Combobox = () =&gt; {
     return (
-        &lt;Select.Combobox aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot;&gt;
+        &lt;Select.Combobox
+            aria-label=&quot;Select an item&quot;
+            placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}&gt;
             &lt;Select.Item value=&quot;test1&quot;&gt;Test1&lt;/Select.Item&gt;
             &lt;Select.Item value=&quot;test2&quot;&gt;Test2&lt;/Select.Item&gt;
             &lt;Select.Item value=&quot;test3&quot;&gt;Test3&lt;/Select.Item&gt;
@@ -8771,6 +8794,7 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
         &lt;Select.Combobox
             aria-label=&quot;Select an item&quot;
             placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}
             getAsyncItems={async (filterText: string) =&gt; {
                 const items = [
                     {
@@ -8825,7 +8849,11 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
               
               <pre><code>const Disabled = () =&gt; {
     return (
-        &lt;Select aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot; disabled&gt;
+        &lt;Select
+            aria-label=&quot;Select an item&quot;
+            placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}
+            disabled&gt;
             &lt;Select.Slot name=&quot;menu&quot;&gt;
                 &lt;Select.Item value=&quot;test1&quot;&gt;Test1&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test2&quot;&gt;Test2&lt;/Select.Item&gt;
@@ -8844,7 +8872,10 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
               
               <pre><code>const WithPlaceholder = () =&gt; {
     return (
-        &lt;Select aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot;&gt;
+        &lt;Select
+            aria-label=&quot;Select an item&quot;
+            placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}&gt;
             &lt;Select.Slot name=&quot;menu&quot;&gt;
                 &lt;Select.Item value=&quot;test1&quot;&gt;Test1&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test2&quot;&gt;Test2&lt;/Select.Item&gt;
@@ -8863,7 +8894,10 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
               
               <pre><code>const WithDecorator = () =&gt; {
     return (
-        &lt;Select aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot;&gt;
+        &lt;Select
+            aria-label=&quot;Select an item&quot;
+            placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}&gt;
             &lt;Select.Slot name=&quot;left&quot;&gt;
                 &lt;IconIcon size={16} /&gt;
             &lt;/Select.Slot&gt;
@@ -8888,7 +8922,10 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
               
               <pre><code>const Clearable = () =&gt; {
     return (
-        &lt;Select aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot;&gt;
+        &lt;Select
+            aria-label=&quot;Select an item&quot;
+            placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}&gt;
             &lt;Select.Slot name=&quot;right&quot;&gt;
                 &lt;IconIcon size={16} /&gt;
             &lt;/Select.Slot&gt;
@@ -8911,7 +8948,10 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
               
               <pre><code>const CustomClearElement = () =&gt; {
     return (
-        &lt;Select aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot;&gt;
+        &lt;Select
+            aria-label=&quot;Select an item&quot;
+            placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}&gt;
             &lt;Select.Slot name=&quot;clear&quot;&gt;
                 &lt;Button size=&quot;small&quot; emphasis=&quot;strong&quot; onPress={() =&gt; {}}&gt;Clear
                                         &lt;/Button&gt;
@@ -8943,6 +8983,7 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
         &lt;Select
             aria-label=&quot;Select an item&quot;
             placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}
             defaultValue=&quot;test1&quot;&gt;
             &lt;Select.Slot name=&quot;menu&quot;&gt;
                 &lt;Select.Item value=&quot;test1&quot;&gt;Test1&lt;/Select.Item&gt;
@@ -8962,7 +9003,10 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
               
               <pre><code>const ItemGroups = () =&gt; {
     return (
-        &lt;Select aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot;&gt;
+        &lt;Select
+            aria-label=&quot;Select an item&quot;
+            placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}&gt;
             &lt;Select.Slot name=&quot;menu&quot;&gt;
                 &lt;Select.Item value=&quot;test1&quot;&gt;Test1&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test2&quot;&gt;Test2&lt;/Select.Item&gt;
@@ -8986,7 +9030,10 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
               
               <pre><code>const ItemGroupsWithHeaders = () =&gt; {
     return (
-        &lt;Select aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot;&gt;
+        &lt;Select
+            aria-label=&quot;Select an item&quot;
+            placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}&gt;
             &lt;Select.Slot name=&quot;menu&quot;&gt;
                 &lt;Select.Item value=&quot;test1&quot;&gt;Test1&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test2&quot;&gt;Test2&lt;/Select.Item&gt;
@@ -9015,7 +9062,10 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
               
               <pre><code>const OnlyItemGroups = () =&gt; {
     return (
-        &lt;Select aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot;&gt;
+        &lt;Select
+            aria-label=&quot;Select an item&quot;
+            placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}&gt;
             &lt;Select.Slot name=&quot;menu&quot;&gt;
                 &lt;Select.Group groupId=&quot;Group 1&quot;&gt;
                     &lt;Select.Item value=&quot;test1&quot;&gt;Test1&lt;/Select.Item&gt;
@@ -9040,7 +9090,10 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
               
               <pre><code>const CustomItem = () =&gt; {
     return (
-        &lt;Select aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot;&gt;
+        &lt;Select
+            aria-label=&quot;Select an item&quot;
+            placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}&gt;
             &lt;Select.Slot name=&quot;menu&quot;&gt;
                 &lt;Select.Item value=&quot;ch&quot; label=&quot;Switzerland&quot;&gt;
                     &lt;div className=&quot;tw-flex tw-items-center tw-gap-4&quot;&gt;
@@ -9073,6 +9126,7 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
         &lt;Select
             aria-label=&quot;Select an item&quot;
             placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}
             showStringValue={false}&gt;
             &lt;Select.Slot name=&quot;menu&quot;&gt;
                 &lt;Select.Item value=&quot;ch&quot; label=&quot;Switzerland&quot;&gt;
@@ -9134,7 +9188,10 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
               <pre><code>const OverflowingText = () =&gt; {
     return (
         &lt;div style={{ display: &#39;flex&#39;, gap: 8, maxWidth: 600 }}&gt;
-            &lt;Select aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot;&gt;
+            &lt;Select
+                aria-label=&quot;Select an item&quot;
+                placeholder=&quot;Select an item&quot;
+                onSelect={action(&#39;onSelect&#39;)}&gt;
                 &lt;Select.Item value=&quot;test1&quot;&gt;Test1 - This is a very long text to see how it overflows This is a very long text to see how it
                                             overflows This is a very long text to see how it overflows y long text to see how it overflows
                                             This is a very long text to see how it overflows This is a very long text to see how it
@@ -9144,12 +9201,18 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
                 &lt;Select.Item value=&quot;test2&quot;&gt;Test2&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test3&quot;&gt;Test3&lt;/Select.Item&gt;
             &lt;/Select&gt;
-            &lt;Select.Combobox aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot;&gt;
+            &lt;Select.Combobox
+                aria-label=&quot;Select an item&quot;
+                placeholder=&quot;Select an item&quot;
+                onSelect={action(&#39;onSelect&#39;)}&gt;
                 &lt;Select.Item value=&quot;test1&quot;&gt;Test1 - This is a very long text to see how it overflows&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test2&quot;&gt;Test2&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test3&quot;&gt;Test3&lt;/Select.Item&gt;
             &lt;/Select.Combobox&gt;
-            &lt;Select.Combobox aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot;&gt;
+            &lt;Select.Combobox
+                aria-label=&quot;Select an item&quot;
+                placeholder=&quot;Select an item&quot;
+                onSelect={action(&#39;onSelect&#39;)}&gt;
                 &lt;Select.Item value=&quot;test1&quot;&gt;Test1 - This is a very long text to see how it overflows&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test2&quot;&gt;Test2&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test3&quot;&gt;Test3&lt;/Select.Item&gt;
@@ -9168,7 +9231,10 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
               <pre><code>const ListOverflow = () =&gt; {
     return (
         &lt;&gt;
-            &lt;Select aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot;&gt;
+            &lt;Select
+                aria-label=&quot;Select an item&quot;
+                placeholder=&quot;Select an item&quot;
+                onSelect={action(&#39;onSelect&#39;)}&gt;
                 &lt;Select.Item value=&quot;test1&quot;&gt;Test1&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test2&quot;&gt;Test2&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test3&quot;&gt;Test3&lt;/Select.Item&gt;
@@ -9177,7 +9243,10 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
                 &lt;Select.Item value=&quot;test6&quot;&gt;Test6&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test7&quot;&gt;Test7&lt;/Select.Item&gt;
             &lt;/Select&gt;
-            &lt;Select aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot;&gt;
+            &lt;Select
+                aria-label=&quot;Select an item&quot;
+                placeholder=&quot;Select an item&quot;
+                onSelect={action(&#39;onSelect&#39;)}&gt;
                 &lt;Select.Item value=&quot;test1&quot;&gt;Test1&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test2&quot;&gt;Test2&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test3&quot;&gt;Test3&lt;/Select.Item&gt;
@@ -9186,7 +9255,10 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
                 &lt;Select.Item value=&quot;test6&quot;&gt;Test6&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test7&quot;&gt;Test7&lt;/Select.Item&gt;
             &lt;/Select&gt;
-            &lt;Select aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot;&gt;
+            &lt;Select
+                aria-label=&quot;Select an item&quot;
+                placeholder=&quot;Select an item&quot;
+                onSelect={action(&#39;onSelect&#39;)}&gt;
                 &lt;Select.Item value=&quot;test1&quot;&gt;Test1&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test2&quot;&gt;Test2&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test3&quot;&gt;Test3&lt;/Select.Item&gt;
@@ -9195,7 +9267,10 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
                 &lt;Select.Item value=&quot;test6&quot;&gt;Test6&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test7&quot;&gt;Test7&lt;/Select.Item&gt;
             &lt;/Select&gt;
-            &lt;Select aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot;&gt;
+            &lt;Select
+                aria-label=&quot;Select an item&quot;
+                placeholder=&quot;Select an item&quot;
+                onSelect={action(&#39;onSelect&#39;)}&gt;
                 &lt;Select.Item value=&quot;test1&quot;&gt;Test1&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test2&quot;&gt;Test2&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test3&quot;&gt;Test3&lt;/Select.Item&gt;
@@ -9217,7 +9292,11 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
               
               <pre><code>const Success = () =&gt; {
     return (
-        &lt;Select aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot; status=&quot;success&quot;&gt;
+        &lt;Select
+            aria-label=&quot;Select an item&quot;
+            placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}
+            status=&quot;success&quot;&gt;
             &lt;Select.Item value=&quot;test1&quot;&gt;Test1&lt;/Select.Item&gt;
             &lt;Select.Item value=&quot;test2&quot;&gt;Test2&lt;/Select.Item&gt;
             &lt;Select.Item value=&quot;test3&quot;&gt;Test3&lt;/Select.Item&gt;
@@ -9234,7 +9313,11 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
               
               <pre><code>const Errored = () =&gt; {
     return (
-        &lt;Select.Combobox aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot; status=&quot;error&quot;&gt;
+        &lt;Select.Combobox
+            aria-label=&quot;Select an item&quot;
+            placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}
+            status=&quot;error&quot;&gt;
             &lt;Select.Item value=&quot;test1&quot;&gt;Test1&lt;/Select.Item&gt;
             &lt;Select.Item value=&quot;test2&quot;&gt;Test2&lt;/Select.Item&gt;
             &lt;Select.Item value=&quot;test3&quot;&gt;Test3&lt;/Select.Item&gt;
@@ -9254,6 +9337,7 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
         &lt;Select
             aria-label=&quot;Select an item&quot;
             placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}
             onEscapeKeyDown={() =&gt; {
                 alert(&#39;Escape key was pressed!&#39;);
             }}&gt;
@@ -9276,6 +9360,7 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
         &lt;Select.Combobox
             aria-label=&quot;Select an item&quot;
             placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}
             onEscapeKeyDown={() =&gt; {
                 alert(&#39;Escape key was pressed!&#39;);
             }}&gt;
