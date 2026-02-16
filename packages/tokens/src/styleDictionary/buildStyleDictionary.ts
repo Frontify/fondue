@@ -1,11 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import StyleDictionary, { type Token, type TransformedToken } from 'style-dictionary';
+import StyleDictionary, { type Token, type TransformedToken, type Dictionary } from 'style-dictionary';
 
+import { generateFigmaMapping } from '../generateFigmaMapping';
 import { type BoxShadowValue, type Config } from '../types';
 
 import { orderedVariables } from './cssFormat';
 import { tailwindFormat } from './tailwind/tailwindFormat';
+
+const figmaMappingFormat = {
+    name: 'figmaMapping',
+    format: ({ dictionary }: { dictionary: Dictionary }) => generateFigmaMapping(dictionary),
+};
 
 StyleDictionary.registerTransform({
     type: 'value',
@@ -145,6 +151,7 @@ const frontifyFileHeader = {
 StyleDictionary.registerFileHeader(frontifyFileHeader);
 StyleDictionary.registerFormat(tailwindFormat);
 StyleDictionary.registerFormat(orderedVariables);
+StyleDictionary.registerFormat(figmaMappingFormat);
 
 export const buildStyleDictionary = (config: Config) => {
     const allTokensPath = new URL('../../.tmp/tokens/all-tokens.json', import.meta.url).pathname;
@@ -296,6 +303,25 @@ export const buildStyleDictionary = (config: Config) => {
                             showFileHeader: true,
                             fileHeader: 'frontify-file-header',
                         },
+                    },
+                ],
+            },
+
+            figmaMapping: {
+                buildPath: 'dist/',
+                transforms: [
+                    'number/roundToTwoDecimals',
+                    'figma/colorToScaledRgbaString',
+                    'figma/shadowToMatrix',
+                    'name/kebabWithoutThemeName',
+                    'value/refToCSSVariable',
+                    'value/convertPxToRem',
+                    'value/convertValueToPx',
+                ],
+                files: [
+                    {
+                        destination: 'figma-mapping.md',
+                        format: 'figmaMapping',
                     },
                 ],
             },
