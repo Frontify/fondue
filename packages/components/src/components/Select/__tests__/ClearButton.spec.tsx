@@ -38,7 +38,6 @@ describe('ClearButton', () => {
         const user = userEvent.setup();
 
         render(
-            // eslint-disable-next-line jsx-a11y-x/click-events-have-key-events, jsx-a11y-x/no-static-element-interactions
             <div onClick={outerClick}>
                 <ClearButton onClear={onClear}>
                     <button type="button">Clear</button>

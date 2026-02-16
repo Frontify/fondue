@@ -534,8 +534,8 @@ export const PillVariantWithDivider: Story = {
                 <Tabs.Content>
                     <b>Share Settings</b>
                     <p>
-                        Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
-                        est laborum.
+                        Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim
+                        id est laborum.
                     </p>
                 </Tabs.Content>
             </Tabs.Tab>
@@ -544,7 +544,8 @@ export const PillVariantWithDivider: Story = {
                 <Tabs.Content>
                     <b>Analytics Settings</b>
                     <p>
-                        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.
+                        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque
+                        laudantium.
                     </p>
                 </Tabs.Content>
             </Tabs.Tab>

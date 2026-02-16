@@ -94,7 +94,6 @@ export const TabsRoot = (
     }: TabsRootProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
-
     const { dir } = useFondueTheme();
 
     const [activeTab, setActiveTab] = useControllableState({
