@@ -372,33 +372,27 @@ export const DialogClose = ({ children }: DialogCloseProps) => {
 };
 DialogClose.displayName = 'Dialog.Close';
 
-const screenReaderOnlyStyles: CSSProperties = {
-    position: 'absolute',
-    width: '1px',
-    height: '1px',
-    padding: 0,
-    margin: '-1px',
-    overflow: 'hidden',
-    clip: 'rect(0, 0, 0, 0)',
-    whiteSpace: 'nowrap',
-    border: 0,
-};
-
 export const DialogTitle = ({ children, asChild, screenReaderOnly = false }: DialogAnnouncementProps) => {
     if (screenReaderOnly && !asChild) {
         return (
             <RadixDialog.Title asChild>
-                <span style={screenReaderOnlyStyles}>{children}</span>
+                <span className={styles.screenReaderOnly}>{children}</span>
             </RadixDialog.Title>
         );
     }
-    
+
     if (screenReaderOnly && asChild) {
-        // When using asChild with screenReaderOnly, apply styles to the child
+        // When using asChild with screenReaderOnly, apply className to the child
         return (
             <RadixDialog.Title asChild>
                 {typeof children === 'object' && children && 'props' in children
-                    ? { ...children, props: { ...children.props, style: { ...children.props.style, ...screenReaderOnlyStyles } } }
+                    ? {
+                          ...children,
+                          props: {
+                              ...children.props,
+                              className: `${children.props.className || ''} ${styles.screenReaderOnly}`.trim(),
+                          },
+                      }
                     : children}
             </RadixDialog.Title>
         );
@@ -412,17 +406,23 @@ export const DialogDescription = ({ children, asChild, screenReaderOnly = false 
     if (screenReaderOnly && !asChild) {
         return (
             <RadixDialog.Description asChild>
-                <span style={screenReaderOnlyStyles}>{children}</span>
+                <span className={styles.screenReaderOnly}>{children}</span>
             </RadixDialog.Description>
         );
     }
-    
+
     if (screenReaderOnly && asChild) {
-        // When using asChild with screenReaderOnly, apply styles to the child
+        // When using asChild with screenReaderOnly, apply className to the child
         return (
             <RadixDialog.Description asChild>
                 {typeof children === 'object' && children && 'props' in children
-                    ? { ...children, props: { ...children.props, style: { ...children.props.style, ...screenReaderOnlyStyles } } }
+                    ? {
+                          ...children,
+                          props: {
+                              ...children.props,
+                              className: `${children.props.className || ''} ${styles.screenReaderOnly}`.trim(),
+                          },
+                      }
                     : children}
             </RadixDialog.Description>
         );

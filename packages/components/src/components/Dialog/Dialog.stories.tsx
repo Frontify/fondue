@@ -1000,7 +1000,7 @@ export const WithTabsInContent: Story = {
                         </Tabs.Tab>
                         </Tabs.Root>
                     </Dialog.Body>
-                    <Dialog.Footer withBorder padding="compact">
+                    <Dialog.Footer showBorder padding="compact">
                         <Dialog.Close>
                             <Button>Close</Button>
                         </Dialog.Close>
