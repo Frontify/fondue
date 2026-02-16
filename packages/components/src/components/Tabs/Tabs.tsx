@@ -52,9 +52,16 @@ export type TabsRootProps = {
     onActiveTabChange?: (value: string) => void;
     /**
      * Select the used variant
-     * “default 'default'
+     * @default 'default'
      */
     variant?: 'default' | 'pill';
+    /**
+     * Add a divider line below the tabs
+     * Only available when variant is 'pill'
+     * Useful for tabs placed inside Dialog content
+     * @default false
+     */
+    withDivider?: boolean;
 };
 
 const TabConfigContext = createContext<{
@@ -82,10 +89,12 @@ export const TabsRoot = (
         onActiveTabChange,
         children,
         variant = 'default',
+        withDivider = false,
         ...props
     }: TabsRootProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
+
     const { dir } = useFondueTheme();
 
     const [activeTab, setActiveTab] = useControllableState({
@@ -107,6 +116,9 @@ export const TabsRoot = (
 
     const contextValue = useMemo(() => ({ addTrigger }), [addTrigger]);
 
+    // Only apply withDivider when variant is 'pill'
+    const shouldShowDivider = variant === 'pill' && withDivider;
+
     return (
         <TabTriggerContext.Provider value={contextValue}>
             <RadixTabs.Root
@@ -117,6 +129,7 @@ export const TabsRoot = (
                 value={activeTab ?? triggers[0]?.value}
                 data-tabs-content-padding={padding}
                 data-tabs-variant={variant}
+                data-tabs-with-divider={shouldShowDivider}
                 {...props}
             >
                 <div className={styles.triggerListWrapper}>

@@ -496,4 +496,67 @@ export const PillVariantWithBadge: Story = {
     ),
 };
 
+export const PillVariantWithDivider: Story = {
+    render: (args) => (
+        <Tabs.Root variant="pill" withDivider {...args}>
+            <Tabs.Tab value="general">
+                <Tabs.Trigger>General</Tabs.Trigger>
+                <Tabs.Content>
+                    <b>General Settings</b>
+                    <p>
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+                        labore et dolore magna aliqua.
+                    </p>
+                </Tabs.Content>
+            </Tabs.Tab>
+            <Tabs.Tab value="team">
+                <Tabs.Trigger>Team</Tabs.Trigger>
+                <Tabs.Content>
+                    <b>Team Settings</b>
+                    <p>
+                        Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                        consequat.
+                    </p>
+                </Tabs.Content>
+            </Tabs.Tab>
+            <Tabs.Tab value="targets">
+                <Tabs.Trigger>Targets</Tabs.Trigger>
+                <Tabs.Content>
+                    <b>Target Settings</b>
+                    <p>
+                        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+                        pariatur.
+                    </p>
+                </Tabs.Content>
+            </Tabs.Tab>
+            <Tabs.Tab value="share">
+                <Tabs.Trigger>Share</Tabs.Trigger>
+                <Tabs.Content>
+                    <b>Share Settings</b>
+                    <p>
+                        Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
+                        est laborum.
+                    </p>
+                </Tabs.Content>
+            </Tabs.Tab>
+            <Tabs.Tab value="analytics">
+                <Tabs.Trigger>Analytics</Tabs.Trigger>
+                <Tabs.Content>
+                    <b>Analytics Settings</b>
+                    <p>
+                        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.
+                    </p>
+                </Tabs.Content>
+            </Tabs.Tab>
+            <Tabs.Tab value="changelog">
+                <Tabs.Trigger>Changelog</Tabs.Trigger>
+                <Tabs.Content>
+                    <b>Changelog</b>
+                    <p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium.</p>
+                </Tabs.Content>
+            </Tabs.Tab>
+        </Tabs.Root>
+    ),
+};
+
 export default meta;
