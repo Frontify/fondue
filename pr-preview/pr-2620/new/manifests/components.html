@@ -582,7 +582,8 @@ data-test-id?: string = &#39;fondue-accordion&#39;
 defaultValue?: string[]
 
 /**
- * Disables the accordion from user interaction.
+ * Prevents interaction and dims the accordion visually.
+ * @default false
  */
 disabled?: boolean
 
@@ -890,11 +891,15 @@ value?: string[]</code></pre>
             <pre><code>Props:</code></pre>
             <pre><code>aria-label?: string
 
+/**
+ * The badge content — typically short text, a number, or a label.
+ */
 children: ReactNode
 
 data-test-id?: string = &#39;badge&#39;
 
 /**
+ * Prevents interaction and dims the badge visually.
  * @default false
  */
 disabled?: boolean = false
@@ -926,6 +931,9 @@ size?: &#39;default&#39; | &#39;small&#39; = &#39;default&#39;
  */
 status?: BadgeStatusProps[&#39;status&#39;]
 
+/**
+ * Tooltip text shown on hover. Also used as the accessible name when no `aria-label` is provided.
+ */
 title?: string
 
 /**
@@ -1257,8 +1265,8 @@ aria-label?: string
 aria-labelledby?: string
 
 /**
- * The element to render the Box component as.
- * @default &#39;div&#39;
+ * The HTML element to render. Use `&#39;span&#39;` for inline contexts.
+ * @default &quot;div&quot;
  */
 as?: &#39;div&#39; | &#39;span&#39; = &#39;div&#39;
 
@@ -1272,8 +1280,8 @@ children?: ReactNode
 data-test-id?: string = &#39;fondue-box&#39;
 
 /**
- * The display property.
- * @default &#39;block&#39;
+ * Controls the display mode. `&#39;block&#39;` for standard box, `&#39;inline-block&#39;` for inline with box behavior, `&#39;none&#39;` to hide.
+ * @default &quot;block&quot;
  */
 display?: ({ [key in Breakpoint]?: TValue } &amp; { base?: TValue }) | TValue
 
@@ -1521,6 +1529,9 @@ aria-label?: string
  */
 aspect?: &#39;default&#39; | &#39;square&#39; = &#39;default&#39;
 
+/**
+ * The button content — text, icons, or a combination of both.
+ */
 children?: ReactNode
 
 className?: string = &#39;&#39;
@@ -1528,6 +1539,7 @@ className?: string = &#39;&#39;
 data-test-id?: string = &#39;fondue-button&#39;
 
 /**
+ * Prevents interaction and dims the button visually.
  * @default false
  */
 disabled?: boolean
@@ -1538,6 +1550,9 @@ disabled?: boolean
  */
 emphasis?: &#39;default&#39; | &#39;weak&#39; | &#39;strong&#39; = &#39;strong&#39;
 
+/**
+ * Associates the button with a `&lt;form&gt;` by its `id`. Use when the button sits outside the form element in the DOM.
+ */
 form?: string
 
 /**
@@ -1564,7 +1579,7 @@ rounding?: &#39;medium&#39; | &#39;full&#39; = &#39;medium&#39;
 size?: &#39;small&#39; | &#39;medium&#39; | &#39;large&#39; = &#39;medium&#39;
 
 /**
- * @default null
+ * Tooltip text shown on hover. Also used as the accessible name when no `aria-label` is provided.
  */
 title?: string
 
@@ -1750,13 +1765,13 @@ className?: string
 data-test-id?: string = &#39;fondue-checkbox&#39;
 
 /**
- * The default value of the checkbox
- * Used for uncontrolled components
+ * The initial checked state for uncontrolled usage. Pass `&#39;indeterminate&#39;` for a mixed state (e.g., when some but not all child items are selected).
  * @default false
  */
 defaultValue?: boolean | &#39;indeterminate&#39;
 
 /**
+ * Prevents interaction and dims the checkbox visually.
  * @default false
  */
 disabled?: boolean
@@ -1772,17 +1787,17 @@ id?: string
 name?: string
 
 /**
- * Event handler called when the checkbox is blurred
+ * Callback fired when the checkbox loses focus.
  */
 onBlur?: (event: FormEvent&lt;HTMLButtonElement&gt;) =&gt; void
 
 /**
- * Event handler called when the checkbox value changes
+ * Callback fired when the checked state changes.
  */
 onChange?: (event: FormEvent&lt;HTMLButtonElement&gt;) =&gt; void
 
 /**
- * Event handler called when the checkbox is focused
+ * Callback fired when the checkbox gains focus.
  */
 onFocus?: (event: FormEvent&lt;HTMLButtonElement&gt;) =&gt; void
 
@@ -1811,7 +1826,7 @@ size?: &#39;default&#39; | &#39;large&#39; = &#39;default&#39;
 status?: &#39;default&#39; | &#39;error&#39; = &#39;default&#39;
 
 /**
- * The controlled value of the checkbox
+ * The controlled checked state. Use together with `onChange` for controlled usage. Pass `&#39;indeterminate&#39;` for a mixed state.
  * @default false
  */
 value?: boolean | &#39;indeterminate&#39;</code></pre>
@@ -2241,7 +2256,7 @@ value?: boolean | &#39;indeterminate&#39;</code></pre>
             <pre><code>Component: src/components/ColorPicker/ColorPickerInput.tsx::ColorPickerInput</code></pre>
             <pre><code>Props:</code></pre>
             <pre><code>/**
- * The active color in the color picker
+ * The active color shown in the swatch preview.
  */
 currentColor?: {
     red: number;
@@ -2251,30 +2266,28 @@ currentColor?: {
     name?: string;
 }
 
-/**
- * The test id of the color picker input
- */
 data-test-id?: string = &#39;color-picker-input&#39;
 
 /**
- * Whether the color picker input is disabled
+ * Prevents interaction and dims the input visually.
+ * @default false
  */
 disabled?: boolean = false
 
 id?: string
 
 /**
- * The open state of the color picker used to determine arrow state
+ * Whether the color picker panel is currently visible. Controls the caret direction indicator.
  */
 isOpen?: boolean
 
 /**
- * callback for clearing the color
+ * Callback fired when the user clicks the clear button. When provided, a clear button is shown.
  */
 onClear?: () =&gt; void
 
 /**
- * Event handler called when the color picker input is clicked
+ * Callback fired when the user clicks the input trigger. Use this to toggle the picker panel open.
  */
 onClick?: () =&gt; void</code></pre>
           </div>
@@ -2380,12 +2393,12 @@ onClick?: () =&gt; void</code></pre>
             <pre><code>Component: src/components/ColorPicker/ColorPicker.tsx::ColorPickerRoot</code></pre>
             <pre><code>Props:</code></pre>
             <pre><code>/**
- * The children of the color picker component. This can contain multiple `ColorPicker.Values` or `ColorPicker.Gradient` components.
+ * The picker content. Compose with `ColorPicker.Values` for hex/rgba inputs and `ColorPicker.Gradient` for the visual color area.
  */
 children?: ReactNode
 
 /**
- * The active color in the color picker
+ * The active color. Pass an `RgbaColor` object with `red`, `green`, `blue`, and optional `alpha` channels.
  */
 currentColor?: {
     red: number;
@@ -2396,28 +2409,25 @@ currentColor?: {
 } = { red: 255, green: 255, blue: 255, alpha: 1, name: &#39;&#39; }
 
 /**
- * The active color format in the color picker
+ * The controlled color format. Use together with `onFormatChange` for controlled format switching between `&#39;HEX&#39;` and `&#39;RGBA&#39;`.
  */
 currentFormat?: &#39;HEX&#39; | &#39;RGBA&#39;
 
-/**
- * The test id of the color picker
- */
 data-test-id?: string = &#39;color-picker-input&#39;
 
 /**
- * The default format to use for the color input when not controlled externally
+ * The initial color format for uncontrolled usage.
  * @default &quot;HEX&quot;
  */
 defaultFormat?: &#39;HEX&#39; | &#39;RGBA&#39; = &#39;HEX&#39;
 
 /**
- * Event handler called when the color changes
+ * Callback fired whenever the color changes — through the gradient, the value inputs, or the alpha slider.
  */
 onColorChange?: (color: RgbaColor) =&gt; void = () =&gt; {}
 
 /**
- * Event handler called when the color format changes
+ * Callback fired when the user toggles between HEX and RGBA format.
  */
 onFormatChange?: (format: ColorFormat) =&gt; void = () =&gt; {}</code></pre>
           </div>
@@ -2477,48 +2487,48 @@ onFormatChange?: (format: ColorFormat) =&gt; void = () =&gt; {}</code></pre>
 data-test-id?: string = &#39;fondue-dialog-content&#39;
 
 /**
- * Define a maximum width for the dialog
+ * The maximum width of the dialog panel. Accepts any CSS length value.
  * @default &quot;800px&quot;
  */
 maxWidth?: string = &#39;800px&#39;
 
 /**
- * Define a minimum height for the dialog
+ * The minimum height of the dialog panel. Accepts any CSS length value.
  * @default &quot;200px&quot;
  */
 minHeight?: string = &#39;200px&#39;
 
 /**
- * Define a minimum width for the dialog
+ * The minimum width of the dialog panel. Accepts any CSS length value.
  * @default &quot;400px&quot;
  */
 minWidth?: string = &#39;400px&#39;
 
 /**
- * Event handler called when the escape key is pressed.
+ * Callback fired when the Escape key is pressed. Use to intercept or prevent closing.
  */
 onEscapeKeyDown?: (event: KeyboardEvent) =&gt; void
 
 /**
- * Define the padding of the dialog
+ * Controls the inner padding of the dialog content. `&#39;compact&#39;` for most dialogs, `&#39;spacious&#39;` for rich content areas.
  * @default &quot;compact&quot;
  */
 padding?: &#39;none&#39; | &#39;tight&#39; | &#39;compact&#39; | &#39;comfortable&#39; | &#39;spacious&#39; = &#39;compact&#39;
 
 /**
- * Add rounded corners to the dialog
+ * Adds rounded corners to the dialog panel.
  * @default true
  */
 rounded?: boolean = true
 
 /**
- * Show a dark underlay behind the dialog
+ * Shows a dark overlay behind the dialog to draw focus to the content.
  * @default false
  */
 showUnderlay?: boolean = false
 
 /**
- * The vertical alignment of the divider
+ * Controls the vertical position. `&#39;center&#39;` for standard dialogs, `&#39;top&#39;` for tall or scrollable content that should anchor near the top.
  * @default &quot;center&quot;
  */
 verticalAlign?: &#39;top&#39; | &#39;center&#39; = &#39;center&#39;</code></pre>
@@ -3521,7 +3531,7 @@ verticalAlign?: &#39;top&#39; | &#39;center&#39; = &#39;center&#39;</code></pre>
             <pre><code>Component: src/components/Divider/Divider.tsx::Divider</code></pre>
             <pre><code>Props:</code></pre>
             <pre><code>/**
- * The html element to be used
+ * The HTML element to render. Use `&#39;li&#39;` when the divider sits inside a list.
  * @default &quot;div&quot;
  */
 as?: &#39;div&#39; | &#39;li&#39; = &#39;div&#39;
@@ -3529,7 +3539,7 @@ as?: &#39;div&#39; | &#39;li&#39; = &#39;div&#39;
 className?: string = &#39;&#39;
 
 /**
- * The color of the divider
+ * Controls the line color intensity. `&#39;weak&#39;` for subtle separation, `&#39;default&#39;` for standard, `&#39;strong&#39;` for prominent borders.
  * @default &quot;default&quot;
  */
 color?: &#39;weak&#39; | &#39;default&#39; | &#39;strong&#39; = &#39;default&#39;
@@ -3537,26 +3547,25 @@ color?: &#39;weak&#39; | &#39;default&#39; | &#39;strong&#39; = &#39;default&#39
 data-test-id?: string = &#39;fondue-divider&#39;
 
 /**
- * When `true`, signifies that it is purely visual, carries no semantic
- * meaning, and ensures it is not present in the accessibility tree.
+ * When `true`, the divider is purely visual — it carries no semantic meaning and is hidden from the accessibility tree.
  * @default false
  */
 decorative?: boolean
 
 /**
- * The direction of the divider
+ * Controls the orientation. `&#39;horizontal&#39;` for full-width breaks, `&#39;vertical&#39;` for side-by-side content separation.
  * @default &quot;horizontal&quot;
  */
 direction?: &#39;horizontal&#39; | &#39;vertical&#39; = &#39;horizontal&#39;
 
 /**
- * The padding of the divider
+ * Controls the spacing around the divider. `&#39;none&#39;` for tight layouts, `&#39;medium&#39;` for standard separation, `&#39;large&#39;` for prominent breaks.
  * @default &quot;medium&quot;
  */
 padding?: &#39;none&#39; | &#39;small&#39; | &#39;medium&#39; | &#39;large&#39; = &#39;medium&#39;
 
 /**
- * The style of the divider
+ * Controls the line style. `&#39;solid&#39;` for a continuous line, `&#39;dashed&#39;` for a dotted line, `&#39;noline&#39;` for spacing-only separation.
  * @default &quot;solid&quot;
  */
 variant?: &#39;noline&#39; | &#39;dashed&#39; | &#39;solid&#39; = &#39;solid&#39;</code></pre>
@@ -3675,18 +3684,18 @@ variant?: &#39;noline&#39; | &#39;dashed&#39; | &#39;solid&#39; = &#39;solid&#39
 data-test-id?: string = &#39;fondue-dropdown&#39;
 
 /**
- * When set to true, interaction with outside elements will be disabled and only menu content will be visible to screen readers.
+ * When `true`, prevents interaction with the rest of the page and restricts screen-reader access to the menu only.
  * @default false
  */
 modal?: boolean = false
 
 /**
- * Callback that is called when the open state of the dropdown changes.
+ * Callback fired when the dropdown opens or closes.
  */
 onOpenChange?: (open: boolean) =&gt; void
 
 /**
- * Controls the open state of the dropdown.
+ * The controlled open state. Use together with `onOpenChange` for programmatic control.
  */
 open?: boolean</code></pre>
           </div>
@@ -4214,7 +4223,7 @@ open?: boolean</code></pre>
             <pre><code>Component: src/components/Flex/Flex.tsx::Flex</code></pre>
             <pre><code>Props:</code></pre>
             <pre><code>/**
- * The alignment of the children.
+ * Aligns children along the cross axis. `&#39;center&#39;` for vertical centering in a row, `&#39;stretch&#39;` to fill the container height.
  */
 align?: ({ [key in Breakpoint]?: TValue } &amp; { base?: TValue }) | TValue
 
@@ -4249,8 +4258,8 @@ aria-label?: string
 aria-labelledby?: string
 
 /**
- * The element to render the Flex component as.
- * @default &#39;div&#39;
+ * The HTML element to render. Use `&#39;span&#39;` for inline flex contexts.
+ * @default &quot;div&quot;
  */
 as?: &#39;div&#39; | &#39;span&#39; = &#39;div&#39;
 
@@ -4264,29 +4273,29 @@ children?: ReactNode
 data-test-id?: string = &#39;fondue-flex&#39;
 
 /**
- * The direction of the children.
- * @default &#39;row&#39;
+ * Sets the main axis. `&#39;row&#39;` for horizontal, `&#39;column&#39;` for vertical stacking. Supports responsive values.
+ * @default &quot;row&quot;
  */
 direction?: ({ [key in Breakpoint]?: TValue } &amp; { base?: TValue }) | TValue
 
 /**
- * The display property.
- * @default &#39;flex&#39;
+ * Controls the display mode. `&#39;flex&#39;` for block-level flex, `&#39;inline-flex&#39;` for inline contexts, `&#39;none&#39;` to hide.
+ * @default &quot;flex&quot;
  */
 display?: ({ [key in Breakpoint]?: TValue } &amp; { base?: TValue }) | TValue
 
 /**
- * The gap between the children.
+ * Spacing between children in both directions. Values are spacing tokens (1 = 0.25rem). Supports responsive values.
  */
 gap?: ({ [key in Breakpoint]?: TValue } &amp; { base?: TValue }) | TValue
 
 /**
- * The horizontal gap between the children.
+ * Horizontal spacing between children. Overrides `gap` for the horizontal axis.
  */
 gapX?: ({ [key in Breakpoint]?: TValue } &amp; { base?: TValue }) | TValue
 
 /**
- * The vertical gap between the children.
+ * Vertical spacing between children. Overrides `gap` for the vertical axis.
  */
 gapY?: ({ [key in Breakpoint]?: TValue } &amp; { base?: TValue }) | TValue
 
@@ -4296,7 +4305,7 @@ gapY?: ({ [key in Breakpoint]?: TValue } &amp; { base?: TValue }) | TValue
 height?: ({ [key in Breakpoint]?: TValue } &amp; { base?: TValue }) | TValue
 
 /**
- * The justification of the children.
+ * Distributes children along the main axis. `&#39;space-between&#39;` for even spacing, `&#39;center&#39;` for centering.
  */
 justify?: ({ [key in Breakpoint]?: TValue } &amp; { base?: TValue }) | TValue
 
@@ -4436,7 +4445,7 @@ top?: ({ [key in Breakpoint]?: TValue } &amp; { base?: TValue }) | TValue
 width?: ({ [key in Breakpoint]?: TValue } &amp; { base?: TValue }) | TValue
 
 /**
- * The wrap property.
+ * Controls whether children wrap to new lines. `&#39;wrap&#39;` for multi-line, `&#39;nowrap&#39;` to keep on one line.
  */
 wrap?: ({ [key in Breakpoint]?: TValue } &amp; { base?: TValue }) | TValue</code></pre>
           </div>
@@ -4673,7 +4682,7 @@ wrap?: ({ [key in Breakpoint]?: TValue } &amp; { base?: TValue }) | TValue</code
             <pre><code>Component: src/components/Flyout/Flyout.tsx::FlyoutContent</code></pre>
             <pre><code>Props:</code></pre>
             <pre><code>/**
- * Define the prefered alignment of the flyout. Can be overriden by viewport collisions viewport.
+ * Controls the horizontal alignment of the flyout relative to the trigger.
  * @default &quot;start&quot;
  */
 align?: &#39;start&#39; | &#39;center&#39; | &#39;end&#39; = &#39;start&#39;
@@ -4683,59 +4692,59 @@ children?: ReactNode
 data-test-id?: string = &#39;fondue-flyout-content&#39;
 
 /**
- * Define the maximum width of the flyout
+ * The maximum width of the flyout. Accepts any CSS length value.
  * @default &quot;360px&quot;
  */
 maxWidth?: string = &#39;360px&#39;
 
 /**
- * Event handler called when the escape key is pressed.
+ * Callback fired when the Escape key is pressed while the flyout is open.
  */
 onEscapeKeyDown?: (event: KeyboardEvent) =&gt; void
 
 /**
- * Event handler called when auto-focusing on open
+ * Callback fired when the flyout auto-focuses on open. Call `event.preventDefault()` to take manual control of focus.
  */
 onOpenAutoFocus?: (event: Event) =&gt; void
 
 /**
- * Define the padding of the flyout
+ * Controls the inner padding of the flyout content.
  * @default &quot;compact&quot;
  */
 padding?: &#39;none&#39; | &#39;tight&#39; | &#39;compact&#39; | &#39;comfortable&#39; | &#39;spacious&#39; = &#39;compact&#39;
 
 /**
- * Add rounded corners to the flyout
+ * Controls the border radius. `&#39;none&#39;` for sharp edges, `&#39;medium&#39;` for standard, `&#39;large&#39;` for more rounded corners.
  * @default &quot;medium&quot;
  */
 rounded?: &#39;none&#39; | &#39;medium&#39; | &#39;large&#39; = &#39;medium&#39;
 
 /**
- * Add a shadow to the flyout
+ * Controls the drop shadow. `&#39;none&#39;` for flat layouts, `&#39;medium&#39;` for standard elevation, `&#39;large&#39;` for prominent overlays.
  * @default &quot;medium&quot;
  */
 shadow?: &#39;none&#39; | &#39;medium&#39; | &#39;large&#39; = &#39;medium&#39;
 
 /**
- * Define the prefered side of the flyout. Can be overriden by viewport collisions viewport.
+ * The preferred side the flyout opens on. Falls back to the opposite side if there isn&#39;t enough viewport space.
  * @default &quot;bottom&quot;
  */
 side?: &#39;top&#39; | &#39;right&#39; | &#39;bottom&#39; | &#39;left&#39;
 
 /**
- * Defines the spacing between the dropdown and its trigger.
+ * Controls the spacing between the flyout and its trigger.
  * @default &#39;compact&#39;
  */
 triggerOffset?: &#39;compact&#39; | &#39;comfortable&#39; | &#39;spacious&#39; = &#39;compact&#39;
 
 /**
- * Define the minimum distance between the flyout and the viewport edge
+ * Controls the minimum distance between the flyout and the viewport edge.
  * @default &#39;compact&#39;
  */
 viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39; = &#39;compact&#39;
 
 /**
- * Define the fixed width of the flyout
+ * Sets a fixed width for the flyout. Accepts any CSS length value.
  * @default &quot;fit-content&quot;
  */
 width?: string = &#39;fit-content&#39;</code></pre>
@@ -5457,7 +5466,7 @@ width?: string = &#39;fit-content&#39;</code></pre>
             <pre><code>Component: src/components/Grid/Grid.tsx::Grid</code></pre>
             <pre><code>Props:</code></pre>
             <pre><code>/**
- * The alignment of the children.
+ * Aligns children along the block (vertical) axis within their grid area.
  */
 align?: ({ [key in Breakpoint]?: TValue } &amp; { base?: TValue }) | TValue
 
@@ -5492,8 +5501,8 @@ aria-label?: string
 aria-labelledby?: string
 
 /**
- * The element to render the Grid component as.
- * @default &#39;div&#39;
+ * The HTML element to render. Use `&#39;span&#39;` for inline grid contexts.
+ * @default &quot;div&quot;
  */
 as?: &#39;div&#39; | &#39;span&#39; = &#39;div&#39;
 
@@ -5505,35 +5514,35 @@ bottom?: ({ [key in Breakpoint]?: TValue } &amp; { base?: TValue }) | TValue
 children?: ReactNode
 
 /**
- * The columns property.
+ * Defines the column template. Pass a number for equal-width columns or a CSS grid-template-columns string for custom sizing.
  */
 columns?: ({ [key in Breakpoint]?: TValue } &amp; { base?: TValue }) | TValue
 
 data-test-id?: string = &#39;fondue-grid&#39;
 
 /**
- * The display property.
- * @default &#39;grid&#39;
+ * Controls the display mode. `&#39;grid&#39;` for block-level grid, `&#39;inline-grid&#39;` for inline contexts, `&#39;none&#39;` to hide.
+ * @default &quot;grid&quot;
  */
 display?: &#39;none&#39; | &#39;grid&#39; | &#39;inline-grid&#39;
 
 /**
- * The flow property.
+ * Controls the auto-placement algorithm. `&#39;row&#39;` fills rows first, `&#39;column&#39;` fills columns first, `&#39;dense&#39;` fills gaps.
  */
 flow?: ({ [key in Breakpoint]?: TValue } &amp; { base?: TValue }) | TValue
 
 /**
- * The gap between the children.
+ * Spacing between children in both directions. Values are spacing tokens (1 = 0.25rem). Supports responsive values.
  */
 gap?: ({ [key in Breakpoint]?: TValue } &amp; { base?: TValue }) | TValue
 
 /**
- * The horizontal gap between the children.
+ * Horizontal spacing between columns. Overrides `gap` for the horizontal axis.
  */
 gapX?: ({ [key in Breakpoint]?: TValue } &amp; { base?: TValue }) | TValue
 
 /**
- * The vertical gap between the children.
+ * Vertical spacing between rows. Overrides `gap` for the vertical axis.
  */
 gapY?: ({ [key in Breakpoint]?: TValue } &amp; { base?: TValue }) | TValue
 
@@ -5543,7 +5552,7 @@ gapY?: ({ [key in Breakpoint]?: TValue } &amp; { base?: TValue }) | TValue
 height?: ({ [key in Breakpoint]?: TValue } &amp; { base?: TValue }) | TValue
 
 /**
- * The justification of the children.
+ * Aligns children along the inline (horizontal) axis within their grid area.
  */
 justify?: ({ [key in Breakpoint]?: TValue } &amp; { base?: TValue }) | TValue
 
@@ -5673,7 +5682,7 @@ right?: ({ [key in Breakpoint]?: TValue } &amp; { base?: TValue }) | TValue
 role?: string
 
 /**
- * The rows property.
+ * Defines the row template. Pass a number for equal-height rows or a CSS grid-template-rows string for custom sizing.
  */
 rows?: ({ [key in Breakpoint]?: TValue } &amp; { base?: TValue }) | TValue
 
@@ -6384,42 +6393,39 @@ wrap?: &#39;wrap&#39; | &#39;nowrap&#39; = &#39;nowrap&#39;</code></pre>
             </div>
             <pre><code>Component: src/components/LoadingBar/LoadingBar.tsx::LoadingBar</code></pre>
             <pre><code>Props:</code></pre>
-            <pre><code>/**
- * @default &#39;fondue-loading-bar&#39;
- */
-data-test-id?: string = &#39;fondue-loading-bar&#39;
+            <pre><code>data-test-id?: string = &#39;fondue-loading-bar&#39;
 
 /**
- * The label of the loading bar for accessibility purposes
+ * Custom function to generate an accessible value label. Receives the current value and max, returns a string like &quot;42 of 100 files uploaded.&quot;
  */
 getValueLabel?: (value: number, max: number) =&gt; string
 
 /**
- * The maximum value of the loading bar
+ * The maximum value representing 100% completion.
  * @default 100
  */
 max?: number = 100
 
 /**
- * Add rounded corners to the loading bar
+ * Adds rounded corners to the bar ends.
  * @default true
  */
 rounded?: boolean = true
 
 /**
- * The size of the loading bar
+ * Controls the bar height. `&#39;small&#39;` for inline indicators, `&#39;medium&#39;` for standard use, `&#39;large&#39;` and `&#39;x-large&#39;` for prominent displays.
  * @default &quot;medium&quot;
  */
 size?: &#39;small&#39; | &#39;medium&#39; | &#39;large&#39; | &#39;x-large&#39; = &#39;medium&#39;
 
 /**
- * The current value of the loading bar. If `null`, the loading bar will be in an indeterminate state.
+ * The current progress value. Pass `null` for an indeterminate (unknown duration) state.
  * @default null
  */
 value: number | null
 
 /**
- * The style of the loading bar
+ * Conveys the tone. `&#39;default&#39;` for neutral progress, `&#39;positive&#39;` for successful completion, `&#39;negative&#39;` for errors or warnings.
  * @default &quot;default&quot;
  */
 variant?: &#39;default&#39; | &#39;positive&#39; | &#39;negative&#39; = &#39;default&#39;</code></pre>
@@ -6509,14 +6515,14 @@ variant?: &#39;default&#39; | &#39;positive&#39; | &#39;negative&#39; = &#39;def
             <pre><code>data-test-id?: string = &#39;fondue-loading-circle-content&#39;
 
 /**
- * The size of the loading circle
+ * Controls the spinner size. `&#39;xx-small&#39;` for inline indicators, `&#39;medium&#39;` for standard loading states, `&#39;large&#39;` for full-page spinners.
  * @default &quot;medium&quot;
  */
 size?: &#39;xx-small&#39; | &#39;x-small&#39; | &#39;small&#39; | &#39;medium&#39; | &#39;large&#39; = &#39;medium&#39;
 
 /**
- * The  variant of the loading circle.
- * @default &#39;progress&#39;
+ * Controls the visual state. `&#39;progress&#39;` for an active spinner, `&#39;success&#39;` for a completed state, `&#39;danger&#39;` for a failed state.
+ * @default &quot;progress&quot;
  */
 variant?: &#39;progress&#39; | &#39;success&#39; | &#39;danger&#39; = &#39;progress&#39;</code></pre>
           </div>
@@ -6599,23 +6605,17 @@ variant?: &#39;progress&#39; | &#39;success&#39; | &#39;danger&#39; = &#39;progr
 action?: ReactNode
 
 /**
- * Custom aria-label for the dismiss button
+ * Custom accessible label for the dismiss button. Overrides the default &quot;Dismiss&quot; text.
  */
 aria-label?: string
 
 /**
- * Message content
+ * The message content — text, links, or formatted content describing the notice.
  */
 children: ReactNode
 
-/**
- * Additional CSS class
- */
 className?: string = &#39;&#39;
 
-/**
- * Test ID for the component
- */
 data-test-id?: string = &#39;notice&#39;
 
 /**
@@ -7216,26 +7216,59 @@ variant?: &#39;default&#39; | &#39;highlight&#39; | &#39;positive&#39; | &#39;da
             </div>
             <pre><code>Component: src/components/RadioList/RadioList.tsx::RadioListRoot</code></pre>
             <pre><code>Props:</code></pre>
-            <pre><code>asChild?: boolean
+            <pre><code>/**
+ * Merge props onto the child element instead of rendering a wrapper.
+ * @default false
+ */
+asChild?: boolean
 
+/**
+ * Should contain `RadioList.RadioButton` components paired with labels.
+ */
 children?: ReactNode
 
 className?: string
 
 data-test-id?: string
 
+/**
+ * Prevents interaction with all radio buttons in the group.
+ * @default false
+ */
 disabled?: boolean
 
+/**
+ * Controls the visual style. `&#39;default&#39;` for standard radio buttons, `&#39;highlight&#39;` for a more prominent selected state.
+ * @default &quot;default&quot;
+ */
 emphasis?: &#39;default&#39; | &#39;highlight&#39; = &#39;default&#39;
 
+/**
+ * Callback fired when the selected value changes.
+ * @param value - The value of the newly selected radio button
+ */
 onValueChange?: (value: string) =&gt; void
 
+/**
+ * Controls the layout direction. `&#39;vertical&#39;` stacks options top-to-bottom, `&#39;horizontal&#39;` places them side by side.
+ */
 orientation?: &#39;vertical&#39; | &#39;horizontal&#39;
 
+/**
+ * When `true`, the radio group is visually interactive but cannot be changed. Useful for displaying a locked selection.
+ * @default false
+ */
 readOnly?: boolean
 
+/**
+ * Marks the radio group as required in a form context.
+ * @default false
+ */
 required?: boolean
 
+/**
+ * The controlled selected value. Use together with `onValueChange`.
+ */
 value?: string</code></pre>
           </div>
         </div>
@@ -7619,40 +7652,38 @@ value?: string</code></pre>
 data-test-id?: string = &#39;fondue-scroll-area&#39;
 
 /**
- * Maximum height of the scroll area
- * @default &#39;100%&#39;
+ * Maximum height before vertical scrolling activates. Accepts CSS values or numbers (pixels).
+ * @default &quot;100%&quot;
  */
 maxHeight?: string | number = &#39;100%&#39;
 
 /**
- * Minimum width of the scroll area
- * @default &#39;100%&#39;
+ * Maximum width before horizontal scrolling activates. Accepts CSS values or numbers (pixels).
+ * @default &quot;100%&quot;
  */
 maxWidth?: string | number = &#39;100%&#39;
 
 /**
- * Define the padding of the scroll area
+ * Controls the inner padding of the scroll area. `&#39;compact&#39;` for most use cases, `&#39;spacious&#39;` for breathing room.
  * @default &quot;compact&quot;
  */
 padding?: &#39;none&#39; | &#39;tight&#39; | &#39;compact&#39; | &#39;comfortable&#39; | &#39;spacious&#39;
 
 /**
- * Determines if the scrollbar should take up space in the content area
- * @default &#39;auto&#39;
+ * Controls whether scrollbars reserve space in the layout. `&#39;stable&#39;` prevents content shift when scrollbars appear, `&#39;auto&#39;` lets the browser decide.
+ * @default &quot;auto&quot;
  */
 scrollbarGutter?: &#39;auto&#39; | &#39;stable&#39; | &#39;stable-horizontal&#39; | &#39;stable-vertical&#39; = &#39;auto&#39;
 
 /**
- * Determines if a inset shadow should be shown the edge of the component
+ * Shows an inset shadow at the scroll edges to indicate more content is available.
+ * @default false
  */
 showShadow?: boolean = false
 
 /**
- * &quot;auto&quot; visible when content is overflowing on the corresponding orientation.
- * &quot;always&quot; always visible regardless of whether the content is overflowing. Sets the scrollbar gutter to stable.
- * &quot;scroll&quot; visible when the user is scrolling along its corresponding orientation.
- * &quot;hover&quot; when the user is hovering over the scroll area.
- * @default &#39;hover&#39;
+ * Controls scrollbar visibility. `&#39;hover&#39;` shows on mouse-over, `&#39;scroll&#39;` shows while scrolling, `&#39;auto&#39;` shows when content overflows, `&#39;always&#39;` keeps scrollbars permanently visible.
+ * @default &quot;hover&quot;
  */
 type?: &#39;auto&#39; | &#39;always&#39; | &#39;scroll&#39; | &#39;hover&#39; = &#39;hover&#39;</code></pre>
           </div>
@@ -8301,22 +8332,24 @@ width?: ({ [key in Breakpoint]?: TValue } &amp; { base?: TValue }) | TValue</cod
             </div>
             <pre><code>Component: src/components/SegmentedControl/SegmentedControl.tsx::SegmentedControlRoot</code></pre>
             <pre><code>Props:</code></pre>
-            <pre><code>children: ReactNode
+            <pre><code>/**
+ * Should contain `SegmentedControl.Item` components.
+ */
+children: ReactNode
 
 /**
- * The default value of the segmented control
- * Used for uncontrolled components
+ * The initially selected value for uncontrolled usage.
  */
 defaultValue?: TValue
 
 /**
- * Disable the segmented control
+ * Prevents interaction with the entire control.
  * @default false
  */
 disabled?: boolean
 
 /**
- * Specify if the segmented control should only take the width of its content
+ * When `true`, the control sizes to fit its content. When `false`, it expands to fill its container width.
  * @default true
  */
 hugWidth?: boolean = true
@@ -8324,12 +8357,13 @@ hugWidth?: boolean = true
 id?: string
 
 /**
- * Event handler called when the value changes
+ * Callback fired when the selected option changes.
+ * @param value - The value of the newly selected item
  */
 onValueChange?: (value: TValue) =&gt; void
 
 /**
- * The controlled value of the segmented control
+ * The controlled selected value. Use together with `onValueChange`.
  */
 value?: TValue</code></pre>
           </div>
@@ -8565,7 +8599,8 @@ value?: TValue</code></pre>
             <pre><code>Component: src/components/Select/SelectSingle.tsx::SelectSingle</code></pre>
             <pre><code>Props:</code></pre>
             <pre><code>/**
- * The alignment of the menu
+ * Controls the horizontal alignment of the dropdown menu relative to the trigger.
+ * 
  * @default &quot;start&quot;
  */
 alignMenu?: &#39;start&#39; | &#39;center&#39; | &#39;end&#39;
@@ -8601,42 +8636,44 @@ aria-label?: string
 aria-labelledby?: string
 
 /**
- * Children of the Select component. This can contain the `Select.Slot` components for the label, decorators, clear action and menu
+ * The select content. Use `Select.Item` for options, `Select.Group` for grouped options,
+ * and `Select.Slot` for decorators, clear actions, or custom menu content.
  */
 children?: ReactNode
 
-/**
- * The data test id of the select component
- */
 data-test-id?: string
 
 /**
- * The default value of the select component. Used for uncontrolled usages
+ * The initial selected value for uncontrolled usage.
+ * The component manages its own state internally.
  */
 defaultValue?: string
 
 /**
- * Disables the select component
+ * Prevents interaction and dims the select visually.
+ * 
+ * @default false
  */
 disabled?: boolean
 
-/**
- * Id of the select component
- */
 id?: string
 
 /**
- * Event handler called when the escape key is pressed
+ * Callback fired when the Escape key is pressed while the menu is open.
  */
 onEscapeKeyDown?: (event: KeyboardEvent) =&gt; void
 
 /**
- * Callback function that is called when an item is selected
+ * Callback fired when the user picks or clears an option.
+ * Receives the selected item&#39;s `value` string, or `null` when cleared.
+ * 
+ * @param selectedValue - The value of the selected item, or `null`.
  */
 onSelect?: (selectedValue: string | null) =&gt; void
 
 /**
- * The placeholder in the select component
+ * Text shown when no value is selected.
+ * Use it to hint at the expected choice — e.g., &quot;Choose a language.&quot;
  */
 placeholder?: string
 
@@ -8646,32 +8683,40 @@ placeholder?: string
 role?: string
 
 /**
- * The value of the select is shown as plain text (from the label prop) when set to true
- * Items child components are used if set to false
+ * When `true`, shows the selected item&#39;s `label` as plain text.
+ * When `false`, renders the item&#39;s `children` instead — useful for rich content like icons or badges.
+ * 
  * @default true
  */
 showStringValue?: boolean
 
 /**
- * Defines the preferred side of the select. It will not be respected if there are collisions with the viewport
+ * The preferred side the dropdown opens on.
+ * Falls back to the opposite side if there isn&#39;t enough viewport space.
+ * 
  * @default &quot;bottom&quot;
  */
 side?: &#39;left&#39; | &#39;right&#39; | &#39;bottom&#39; | &#39;top&#39;
 
 /**
- * Status of the text input
+ * Conveys validation state. `&#39;neutral&#39;` for default, `&#39;success&#39;` for valid input,
+ * `&#39;error&#39;` for invalid input.
+ * 
  * @default &quot;neutral&quot;
  */
 status?: &#39;neutral&#39; | &#39;success&#39; | &#39;error&#39;
 
 /**
- * The active value in the select component. This is used to control the select externally
+ * The controlled selected value. Use together with `onSelect` for controlled usage.
+ * Pass `null` to clear the selection.
  */
 value?: string | null
 
 /**
- * Define the minimum distance between the select menu and the viewport edge
- * @default &#39;compact&#39;
+ * Controls the minimum distance between the dropdown menu and the viewport edge.
+ * `&#39;compact&#39;` keeps it tight, `&#39;spacious&#39;` adds breathing room.
+ * 
+ * @default &quot;compact&quot;
  */
 viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
           </div>
@@ -9424,14 +9469,13 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
             <pre><code>data-test-id?: string = &#39;fondue-slider&#39;
 
 /**
- * The default value of the slider
- * Used for uncontrolled components
+ * The initial value for uncontrolled usage. Pass an array with one number for a single thumb, or two numbers for a range.
  * @default [0]
  */
 defaultValue?: number[] = [0]
 
 /**
- * Disable the slider
+ * Prevents interaction and dims the slider visually.
  * @default false
  */
 disabled?: boolean
@@ -9439,38 +9483,45 @@ disabled?: boolean
 id?: string
 
 /**
- * Maximum value of the slider
+ * The maximum selectable value.
  * @default 100
  */
 max?: number
 
 /**
- * Minimum value of the slider
+ * The minimum selectable value.
  * @default 0
  */
 min?: number
 
 /**
- * The minimum steps between thumbs in a range slider
+ * The minimum distance between thumbs in a range slider, measured in steps. Prevents thumbs from overlapping.
  * @default 0
  */
 minStepsBetweenThumbs?: number
 
 name?: string
 
+/**
+ * Callback fired continuously as the thumb is dragged. Use for live previews.
+ * @param value - The current slider value(s)
+ */
 onChange?: (value: number[]) =&gt; void
 
+/**
+ * Callback fired when the thumb is released. Use for committing the final value (e.g., saving to state or API).
+ * @param value - The committed slider value(s)
+ */
 onCommit?: (value: number[]) =&gt; void
 
 /**
- * The granularity with which the slider can step through values
+ * The granularity of allowed values. For example, `step={5}` snaps to multiples of 5.
  * @default 1
  */
 step?: number
 
 /**
- * The controlled value of the slider
- * @default [0]
+ * The controlled value. Use together with `onChange`. Pass an array with one number for a single thumb, or two numbers for a range.
  */
 value?: number[]</code></pre>
           </div>
@@ -9716,16 +9767,19 @@ children: ReactNode
 data-test-id?: string = &#39;split-button&#39;
 
 /**
+ * Prevents interaction and dims the entire button group visually.
  * @default false
  */
 disabled?: boolean = false
 
 /**
+ * Controls the visual prominence. `&#39;default&#39;` for standard actions, `&#39;weak&#39;` for secondary options, `&#39;strong&#39;` for primary calls to action.
  * @default &#39;default&#39;
  */
 emphasis?: &#39;default&#39; | &#39;weak&#39; | &#39;strong&#39; = &#39;default&#39;
 
 /**
+ * Controls the button size. `&#39;small&#39;` for toolbars, `&#39;medium&#39;` for most layouts, `&#39;large&#39;` for prominent actions.
  * @default &#39;medium&#39;
  */
 size?: &#39;small&#39; | &#39;medium&#39; | &#39;large&#39; = &#39;medium&#39;</code></pre>
@@ -10114,13 +10168,13 @@ size?: &#39;small&#39; | &#39;medium&#39; | &#39;large&#39; = &#39;medium&#39;</
             <pre><code>data-test-id?: string = &#39;fondue-switch&#39;
 
 /**
- * The default value of the select component. Used for uncontrolled usages.
+ * The initial checked state for uncontrolled usage.
  * @default false
  */
 defaultValue?: boolean
 
 /**
- * Disables the select component.
+ * Prevents interaction and dims the switch visually.
  * @default false
  */
 disabled?: boolean
@@ -10130,37 +10184,35 @@ id?: string
 name?: string
 
 /**
- * Event handler called when the checkbox is blurred
- * @param event - The event object
+ * Event handler called when the switch loses focus.
  */
 onBlur?: (event: FormEvent&lt;HTMLButtonElement&gt;) =&gt; void
 
 /**
- * Callback function that is called when the switch is toggled.
- * @param checked - The new checked state of the switch
+ * Callback fired when the switch is toggled.
+ * @param checked - The new checked state
  */
 onChange?: (checked: boolean) =&gt; void
 
 /**
- * Event handler called when the checkbox is focused
- * @param event - The event object
+ * Event handler called when the switch receives focus.
  */
 onFocus?: (event: FormEvent&lt;HTMLButtonElement&gt;) =&gt; void
 
 /**
- * Whether the switch is required.
+ * Marks the switch as required in a form context.
  * @default false
  */
 required?: boolean
 
 /**
- * The size of the switch component.
- * @default medium
+ * Controls the switch size. `&#39;small&#39;` for tight spaces, `&#39;medium&#39;` for most layouts, `&#39;large&#39;` for prominent toggles.
+ * @default &quot;medium&quot;
  */
 size?: &#39;small&#39; | &#39;medium&#39; | &#39;large&#39; = &#39;medium&#39;
 
 /**
- * The active value in the select component. This is used to control the select externally.
+ * The controlled checked state of the switch. Use together with `onChange` for controlled usage.
  * @default false
  */
 value?: boolean</code></pre>
@@ -10393,8 +10445,8 @@ value?: boolean</code></pre>
             <pre><code>children: ReactNode
 
 /**
- * Font size of the table content
- * @default &#39;small&#39;
+ * Controls the text size of table content. `&#39;small&#39;` for dense data tables, `&#39;medium&#39;` for standard readability.
+ * @default &#39;medium&#39;
  */
 fontSize?: &#39;small&#39; | &#39;medium&#39; = &#39;medium&#39;
 
@@ -10413,13 +10465,13 @@ fontSize?: &#39;small&#39; | &#39;medium&#39; = &#39;medium&#39;
 gutter?: CSSProperties[&#39;borderSpacing&#39;] = &#39;0px&#39;
 
 /**
- * Whether the table should have a fixed or auto layout
+ * Controls how column widths are calculated. `&#39;auto&#39;` sizes columns to fit their content, `&#39;fixed&#39;` distributes width evenly for predictable layouts.
  * @default &#39;auto&#39;
  */
 layout?: &#39;auto&#39; | &#39;fixed&#39; = &#39;auto&#39;
 
 /**
- * Whether to remove the top and bottom borders from the table
+ * Removes the top and bottom borders. Useful when the table sits inside a container that already provides visual separation.
  * @default false
  */
 noBorder?: boolean = false
@@ -11488,40 +11540,43 @@ sticky?: &#39;head&#39; | &#39;col&#39; | &#39;both&#39;</code></pre>
             <pre><code>Component: src/components/Tabs/Tabs.tsx::TabsRoot</code></pre>
             <pre><code>Props:</code></pre>
             <pre><code>/**
- * The controlled value of the active tab
+ * The controlled active tab value. Use together with `onActiveTabChange`.
  */
 activeTab?: string
 
+/**
+ * Should contain `Tabs.Tab` components.
+ */
 children: ReactNode
 
 /**
- * The default active tab
- * Used for uncontrolled components
+ * The initially active tab value for uncontrolled usage.
  */
 defaultActiveTab?: string
 
 id?: string
 
 /**
- * Event handler called when the active tab changes
+ * Callback fired when the active tab changes.
+ * @param value - The value of the newly active tab
  */
 onActiveTabChange?: (value: string) =&gt; void
 
 /**
- * Define the padding of the dialog
+ * Controls the content area padding. `&#39;none&#39;` for custom layouts, `&#39;compact&#39;` for most use cases, `&#39;spacious&#39;` for breathing room.
  * @default &quot;compact&quot;
  */
 padding?: &#39;none&#39; | &#39;tight&#39; | &#39;compact&#39; | &#39;comfortable&#39; | &#39;spacious&#39; = &#39;compact&#39;
 
 /**
- * The height of the tabs
- * @default &#39;medium&#39;
+ * Controls the tab trigger height. `&#39;medium&#39;` for standard layouts, `&#39;large&#39;` for prominent navigation.
+ * @default &quot;medium&quot;
  */
 size?: &#39;medium&#39; | &#39;large&#39; = &#39;medium&#39;
 
 /**
- * Select the used variant
- * “default &#39;default&#39;
+ * Controls the visual style. `&#39;default&#39;` for underline-style tabs, `&#39;pill&#39;` for filled pill-shaped tabs.
+ * @default &quot;default&quot;
  */
 variant?: &#39;default&#39; | &#39;pill&#39; = &#39;default&#39;</code></pre>
           </div>
@@ -12056,39 +12111,43 @@ children: ReactNode
 data-test-id?: string = &#39;tag&#39;
 
 /**
+ * Prevents interaction and dims the tag visually.
  * @default false
  */
 disabled?: boolean = false
 
 /**
- * @default &#39;strong&#39;
+ * Controls visual weight. `&#39;strong&#39;` for prominent tags, `&#39;weak&#39;` for subtle or secondary tags.
+ * @default &quot;strong&quot;
  */
 emphasis?: &#39;strong&#39; | &#39;weak&#39; = &#39;strong&#39;
 
 /**
- * Click handler on add click - providing this will show the add button
+ * Callback fired when the add button is clicked. When provided, an add icon is shown.
  */
 onAddClick?: (event?: MouseEvent&lt;HTMLButtonElement&gt;) =&gt; void
 
 /**
- * Click handler - when provided, the Tag renders as a button element
+ * Callback fired when the tag is clicked. When provided, the tag renders as a `&lt;button&gt;` element.
  */
 onClick?: (event?: MouseEvent&lt;HTMLButtonElement&gt;) =&gt; void
 
 /**
- * Click handler on dismiss - providing this will show the dismiss button
+ * Callback fired when the dismiss button is clicked. When provided, a dismiss icon is shown.
  */
 onDismiss?: (event?: MouseEvent&lt;HTMLButtonElement&gt;) =&gt; void
 
 /**
- * @default &#39;default&#39;
+ * Controls the tag size. `&#39;default&#39;` for standard use, `&#39;small&#39;` for compact layouts or inline usage.
+ * @default &quot;default&quot;
  */
 size?: &#39;default&#39; | &#39;small&#39; = &#39;default&#39;
 
 title?: string
 
 /**
- * @default &#39;default&#39;
+ * Controls the color scheme. `&#39;default&#39;` for neutral tags, `&#39;highlight&#39;` for visually distinct or active tags.
+ * @default &quot;default&quot;
  */
 variant?: &#39;default&#39; | &#39;highlight&#39; = &#39;default&#39;</code></pre>
           </div>
@@ -12475,40 +12534,41 @@ weight?: any = &#39;default&#39;</code></pre>
             <pre><code>Component: src/components/Textarea/Textarea.tsx::TextareaRoot</code></pre>
             <pre><code>Props:</code></pre>
             <pre><code>/**
- * If `true`, Textarea will have `autoComplete` functionality
+ * Enables browser autocomplete suggestions for the textarea.
  */
 autocomplete?: boolean
 
 /**
- * If `true`, component rendered is a auto sizing Textarea
+ * When `true`, the textarea grows automatically as the user types, eliminating the need for manual resizing.
  */
 autosize?: boolean
 
 /**
- * The place where the textarea slots are placed
+ * Slot content placed alongside the textarea. Use `Textarea.Slot` for left/right decorators or actions.
  */
 children?: ReactNode
 
 /**
- * Render `clear` button to clear input on click
+ * Shows a clear button that empties the textarea on click.
  */
 clearable?: boolean
 
-/**
- * The test id of the textarea
- */
 data-test-id?: string = &#39;fondue-textarea&#39;
 
 /**
- * A `ReactElement` that will be rendered at the start of the `Textarea`
+ * A React element rendered at the start of the textarea — typically an icon or label prefix.
  */
 decorator?: ReactElement
 
 /**
- * Initial value
+ * The initial value for uncontrolled usage.
  */
 defaultValue?: string
 
+/**
+ * Prevents interaction and dims the textarea visually.
+ * @default false
+ */
 disabled?: boolean
 
 /**
@@ -12518,80 +12578,93 @@ disabled?: boolean
 extraActions?: ExtraAction[]
 
 /**
- * If `true`, Textarea will be focused on mount
+ * When `true`, the textarea receives focus automatically when the component mounts.
  */
 focusOnMount?: boolean
 
-/**
- * The id of the textarea
- */
 id?: string
 
 /**
- * If `autosize` is `false`, this property is ignored
+ * The maximum number of visible text rows before scrolling activates. Only applies when `autosize` is `true`.
  */
 maxRows?: number
 
 /**
- * If autosize is false, this is used as rows property for default textarea
+ * The minimum number of visible text rows. Only applies when `autosize` is `false`.
  * @default 1
  */
 minRows?: number = 1
 
 /**
- * Event handler called when the text input is blurred
+ * Callback fired when the textarea loses focus.
  */
 onBlur?: FocusEventHandler&lt;HTMLTextAreaElement&gt;
 
 /**
- * Event handler called when the textarea value changes
+ * Callback fired when the textarea value changes.
  */
 onChange?: ChangeEventHandler&lt;HTMLTextAreaElement&gt;
 
 /**
- * Event handler called when Enter is pressed
+ * Callback fired specifically when the Enter key is pressed. Useful for submit-on-enter behavior.
  */
 onEnterPressed?: KeyboardEventHandler&lt;HTMLTextAreaElement&gt;
 
 /**
- * Event handler called when the text input is focused
+ * Callback fired when the textarea gains focus.
  */
 onFocus?: FocusEventHandler&lt;HTMLTextAreaElement&gt;
 
 /**
- * Event handler called when a key is pressed
+ * Callback fired when a key is pressed inside the textarea.
  */
 onKeyDown?: KeyboardEventHandler&lt;HTMLTextAreaElement&gt;
 
 /**
- * Event handler called when a key is released
+ * Callback fired when a key is released inside the textarea.
  */
 onKeyUp?: KeyboardEventHandler&lt;HTMLTextAreaElement&gt;
 
 /**
- * Event handler called when the text inside of text input is selected
+ * Callback fired when the user selects text inside the textarea.
  */
 onSelect?: (event: SyntheticEvent&lt;HTMLTextAreaElement&gt;) =&gt; void
 
+/**
+ * Text shown when the textarea is empty. Use it to hint at the expected input.
+ */
 placeholder?: string
 
+/**
+ * Makes the textarea read-only — the value is visible but cannot be edited.
+ */
 readOnly?: boolean
 
 /**
- * If `true`, Textarea will be required
+ * Marks the textarea as required for form validation.
  */
 required?: boolean
 
+/**
+ * When `true`, shows a drag handle for manual resizing.
+ */
 resizable?: boolean
 
+/**
+ * When `false`, prevents the user from selecting text inside the textarea.
+ * @default true
+ */
 selectable?: boolean = true
 
 /**
- * The current status of the input. It will trigger the corresponding icon to be appended to the Textarea.
+ * Conveys the validation state visually. `&#39;success&#39;` shows a checkmark, `&#39;error&#39;` shows a warning icon, `&#39;loading&#39;` shows a progress indicator.
  * @default &#39;default&#39;
  */
 status?: &#39;default&#39; | &#39;loading&#39; | &#39;success&#39; | &#39;error&#39; = &#39;default&#39;
 
+/**
+ * The controlled value. Use together with `onChange` for controlled usage.
+ */
 value?: string</code></pre>
           </div>
         </div>
@@ -12809,13 +12882,13 @@ aria-label?: string
 aria-labelledby?: string
 
 /**
- * Set the type of input so autocomplete can help the user
+ * Controls the browser&#39;s autocomplete behavior. Pass a specific token like `&#39;email&#39;`, `&#39;username&#39;`, or `&#39;off&#39;` to disable.
  * @default &quot;on&quot;
  */
 autoComplete?: string
 
 /**
- * The place where the input slots are placed
+ * Slot content placed alongside the input. Use `TextInput.Slot` for left/right decorators or actions.
  */
 children?: ReactNode
 
@@ -12824,13 +12897,12 @@ className?: string
 data-test-id?: string = &#39;fondue-text-input&#39;
 
 /**
- * The default value of the text input
- * Used for uncontrolled components
+ * The initial value for uncontrolled usage. Accepts a string or number.
  */
 defaultValue?: string | number
 
 /**
- * Disable the text input
+ * Prevents interaction and dims the input visually.
  * @default false
  */
 disabled?: boolean
@@ -12838,79 +12910,79 @@ disabled?: boolean
 id?: string
 
 /**
- * The maximum length of the text input
+ * The maximum number of characters the user can enter.
  */
 maxLength?: number
 
 name?: string
 
 /**
- * Event handler called when the text input is blurred
+ * Callback fired when the input loses focus.
  */
 onBlur?: (event: FocusEvent&lt;HTMLInputElement&gt;) =&gt; void
 
 /**
- * Event handler called when the text input value changes
+ * Callback fired when the input value changes.
  */
 onChange?: (event: ChangeEvent&lt;HTMLInputElement&gt;) =&gt; void
 
 /**
- * Event handler called when the text input is focused
+ * Callback fired when the input gains focus.
  */
 onFocus?: (event: FocusEvent&lt;HTMLInputElement&gt;) =&gt; void
 
 /**
- * Event handler called when a key is pressed
+ * Callback fired when a key is pressed inside the input.
  */
 onKeyDown?: (event: KeyboardEvent&lt;HTMLInputElement&gt;) =&gt; void
 
 /**
- * Event handler called when a key is released
+ * Callback fired when a key is released inside the input.
  */
 onKeyUp?: (event: KeyboardEvent&lt;HTMLInputElement&gt;) =&gt; void
 
 /**
- * Event handler called when the text inside of text input is selected
+ * Callback fired when the user selects text inside the input.
  */
 onSelect?: (event: SyntheticEvent&lt;HTMLInputElement&gt;) =&gt; void
 
 /**
- * The placeholder in the text input
+ * Text shown when the input is empty. Use it to hint at the expected input.
  */
 placeholder?: string
 
 /**
- * Make the text input read-only
+ * Makes the input read-only — the value is visible but cannot be edited.
  * @default false
  */
 readOnly?: boolean
 
 /**
- * Make the text input required in form
+ * Marks the input as required for form validation.
  * @default false
  */
 required?: boolean
 
 /**
- * Make the text input spell-checkable
+ * Enables browser spell-checking for the input content.
  * @default true
  */
 spellCheck?: boolean
 
 /**
- * Status of the text input
+ * Conveys validation state visually. `&#39;success&#39;` shows a checkmark, `&#39;error&#39;` shows a warning icon, `&#39;loading&#39;` shows a spinner.
  * @default &quot;neutral&quot;
  */
 status?: &#39;neutral&#39; | &#39;success&#39; | &#39;error&#39; | &#39;loading&#39; = &#39;neutral&#39;
 
 /**
- * Type of the text input
+ * The HTML input type. Use `&#39;password&#39;` for secrets, `&#39;email&#39;` for email addresses, `&#39;number&#39;` for numeric input, `&#39;search&#39;` for search fields.
  * @default &quot;text&quot;
  */
 type?: &#39;date&#39; | &#39;email&#39; | &#39;hidden&#39; | &#39;number&#39; | &#39;password&#39; | &#39;search&#39; | &#39;tel&#39; | &#39;text&#39; | &#39;time&#39; | &#39;url&#39;
 
 /**
- * The controlled value of the text input
+ * The controlled value. Use together with `onChange` for controlled usage.
  */
 value?: string | number</code></pre>
           </div>
@@ -13288,15 +13360,19 @@ className?: string
 
 data-test-id?: string = &#39;fondue-tooltip-content&#39;
 
+/**
+ * The maximum width of the tooltip. Accepts any CSS length value.
+ */
 maxWidth?: string
 
 /**
+ * Controls the inner padding. `&#39;spacious&#39;` for text tooltips, `&#39;compact&#39;` for dense layouts.
  * @default &quot;spacious&quot;
  */
 padding?: &#39;spacious&#39; | &#39;compact&#39; = &#39;spacious&#39;
 
 /**
- * Defines the preferred side of the tooltip. It will not be respected if there are collisions with the viewport.
+ * The preferred side the tooltip appears on. Falls back to the opposite side if there isn&#39;t enough viewport space.
  */
 side?: &#39;top&#39; | &#39;right&#39; | &#39;bottom&#39; | &#39;left&#39;</code></pre>
           </div>
@@ -13533,18 +13609,18 @@ side?: &#39;top&#39; | &#39;right&#39; | &#39;bottom&#39; | &#39;left&#39;</code
             <pre><code>children: Array&lt;ReactElement&lt;TooltipTriggerProps | TooltipContentProps&gt;&gt;
 
 /**
- * The delay in milliseconds before the tooltip appears.
+ * The delay in milliseconds before the tooltip appears on hover. Set to `0` for instant display.
  * @default 700
  */
 enterDelay?: number = 700
 
 /**
- * Callback that is called when the open state of the tooltip changes.
+ * Callback fired when the tooltip opens or closes.
  */
 onOpenChange?: (open: boolean) =&gt; void
 
 /**
- * Sets the open state of the tooltip.
+ * The controlled open state. Use together with `onOpenChange` for programmatic control.
  */
 open?: boolean</code></pre>
           </div>
