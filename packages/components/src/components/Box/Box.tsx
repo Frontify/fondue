@@ -10,13 +10,13 @@ import styles from './styles/box.module.scss';
 
 export type BoxProps = LayoutComponentProps & {
     /**
-     * The element to render the Box component as.
-     * @default 'div'
+     * The HTML element to render. Use `'span'` for inline contexts.
+     * @default "div"
      */
     as?: 'div' | 'span';
     /**
-     * The display property.
-     * @default 'block'
+     * Controls the display mode. `'block'` for standard box, `'inline-block'` for inline with box behavior, `'none'` to hide.
+     * @default "block"
      */
     display?: Responsive<'none' | 'block' | 'inline-block' | 'inline'>;
 

@@ -10,14 +10,17 @@ type ButtonEmphasis = 'default' | 'weak' | 'strong';
 
 export type SplitButtonProps = {
     /**
+     * Controls the visual prominence. `'default'` for standard actions, `'weak'` for secondary options, `'strong'` for primary calls to action.
      * @default 'default'
      */
     emphasis?: ButtonEmphasis;
     /**
+     * Controls the button size. `'small'` for toolbars, `'medium'` for most layouts, `'large'` for prominent actions.
      * @default 'medium'
      */
     size?: ButtonSize;
     /**
+     * Prevents interaction and dims the entire button group visually.
      * @default false
      */
     disabled?: boolean;
@@ -34,17 +37,17 @@ export type SplitButtonProps = {
 
 export type SplitButtonContentProps = {
     /**
-     * Button type
+     * The HTML button type. Use `'submit'` inside forms, `'button'` (default) everywhere else.
      * @default 'button'
      */
     type?: 'button' | 'submit' | 'reset';
     /**
-     * Whether the button is disabled
+     * Prevents interaction with the primary button independently of the root `disabled` state.
      * @default false
      */
     disabled?: boolean;
     /**
-     * Click handler
+     * Callback fired when the primary button is clicked.
      */
     onPress?: (event?: MouseEvent<HTMLButtonElement>) => void;
     /**
@@ -60,7 +63,7 @@ export type SplitButtonContentProps = {
      */
     'data-test-id'?: string;
     /**
-     * Button title
+     * Tooltip text shown on hover.
      */
     title?: string;
     children: ReactNode;
@@ -76,7 +79,7 @@ export type SplitButtonActionProps = {
      */
     'data-test-id'?: string;
     /**
-     * Whether to rotate the icon 180 degrees when active (typically for caret icons)
+     * When `true`, rotates the child icon 180° when the action is active — typically used with a caret icon to indicate an open dropdown.
      * @default true
      */
     rotateIcon?: boolean;
@@ -85,12 +88,12 @@ export type SplitButtonActionProps = {
 
 export type SplitButtonActionButtonProps = {
     /**
-     * Button type
+     * The HTML button type. Use `'submit'` inside forms, `'button'` (default) everywhere else.
      * @default 'button'
      */
     type?: 'button' | 'submit' | 'reset';
     /**
-     * Whether the button is disabled
+     * Prevents interaction with the action button independently of the root `disabled` state.
      * @default false
      */
     disabled?: boolean;
@@ -107,7 +110,7 @@ export type SplitButtonActionButtonProps = {
      */
     'data-test-id'?: string;
     /**
-     * Button title
+     * Tooltip text shown on hover.
      */
     title?: string;
     children: ReactNode;
@@ -224,6 +227,7 @@ export const SplitButtonActionButton = forwardRef<HTMLButtonElement, SplitButton
 );
 SplitButtonActionButton.displayName = 'SplitButton.ActionButton';
 
+/** A two-part button — compose `Root` with a primary `Content` button and a secondary `Action` with an `ActionButton` trigger. */
 export const SplitButton = {
     Root: SplitButtonRoot,
     Content: SplitButtonContent,

@@ -16,36 +16,46 @@ type BadgeSize = 'default' | 'small';
 
 type BadgeProps = {
     /**
+     * Controls visual weight. Use `'strong'` for high-priority information, `'weak'` for subtle or secondary content.
      * @default 'strong'
      */
     emphasis?: BadgeEmphasis;
     /**
+     * Conveys the tone. `'default'` for neutral, `'positive'` for success, `'highlight'` for informational, `'warning'` for caution, `'negative'` for critical.
      * @default 'default'
      */
     variant?: BadgeStyle;
     /**
+     * Controls the badge size. Use `'small'` when space is limited or the badge plays a secondary role.
      * @default 'default'
      */
     size?: BadgeSize;
     /**
+     * Prevents interaction and dims the badge visually.
      * @default false
      */
     disabled?: boolean;
     /**
-     * Click handler
+     * Click handler. When provided, the badge renders as a button element.
      */
     onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
     /**
-     * Click handler on dismiss - providing this will show the dismiss button
+     * Dismiss handler. When provided, a dismiss button is shown, useful for filters or removable selections.
      */
     onDismiss?: (event: MouseEvent<HTMLButtonElement>) => void;
     /**
-     * The color of the status dot
+     * Displays a status dot to reflect live states or activity. Accepts a preset (`'positive'`, `'warning'`, etc.) or a custom color value.
      */
     status?: BadgeStatusProps['status'];
+    /**
+     * Tooltip text shown on hover. Also used as the accessible name when no `aria-label` is provided.
+     */
     title?: string;
     'aria-label'?: string;
     'data-test-id'?: string;
+    /**
+     * The badge content — typically short text, a number, or a label.
+     */
     children: ReactNode;
 };
 

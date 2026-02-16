@@ -42,6 +42,15 @@ const meta: Meta<typeof DialogContent> = {
         status: {
             type: 'released',
         },
+        docs: {
+            description: {
+                component: [
+                    'A modal overlay that interrupts the user to request input or confirmation. Traps focus and blocks interaction with the page behind it.',
+                    '',
+                    '**When to use:** For critical decisions that require explicit user action — confirmations, destructive operations, or multi-step forms. For non-blocking secondary content use `<Flyout>`.',
+                ].join('\n'),
+            },
+        },
     },
     args: {},
     render: (args) => {

@@ -20,53 +20,59 @@ import { StatusIcons } from './StatusIcons';
 
 export type SelectSharedProps = {
     /**
-     * Children of the Select component. This can contain the `Select.Slot` components for the label, decorators, clear action and menu
+     * The select content. Use `Select.Item` for options, `Select.Group` for grouped options,
+     * and `Select.Slot` for decorators, clear actions, or custom menu content.
      */
     children?: ReactNode;
     /**
-     * The placeholder in the select component
+     * Text shown when no value is selected.
+     * Use it to hint at the expected choice — e.g., "Choose a language."
      */
     placeholder?: string;
     /**
-     * Status of the text input
+     * Conveys validation state. `'neutral'` for default, `'success'` for valid input,
+     * `'error'` for invalid input.
+     *
      * @default "neutral"
      */
     status?: 'neutral' | 'success' | 'error';
     /**
-     * Disables the select component
+     * Prevents interaction and dims the select visually.
+     *
+     * @default false
      */
     disabled?: boolean;
     /**
-     * The alignment of the menu
+     * Controls the horizontal alignment of the dropdown menu relative to the trigger.
+     *
      * @default "start"
      */
     alignMenu?: 'start' | 'center' | 'end';
     /**
-     * Defines the preferred side of the select. It will not be respected if there are collisions with the viewport
+     * The preferred side the dropdown opens on.
+     * Falls back to the opposite side if there isn't enough viewport space.
+     *
      * @default "bottom"
      */
     side?: 'left' | 'right' | 'bottom' | 'top';
-    /**
-     * The data test id of the select component
-     */
     'data-test-id'?: string;
-    /**
-     * Id of the select component
-     */
     id?: string;
     /**
-     * The value of the select is shown as plain text (from the label prop) when set to true
-     * Items child components are used if set to false
+     * When `true`, shows the selected item's `label` as plain text.
+     * When `false`, renders the item's `children` instead — useful for rich content like icons or badges.
+     *
      * @default true
      */
     showStringValue?: boolean;
     /**
-     * Define the minimum distance between the select menu and the viewport edge
-     * @default 'compact'
+     * Controls the minimum distance between the dropdown menu and the viewport edge.
+     * `'compact'` keeps it tight, `'spacious'` adds breathing room.
+     *
+     * @default "compact"
      */
     viewportCollisionPadding?: SelectMenuViewportCollisionPadding;
     /**
-     * Event handler called when the escape key is pressed
+     * Callback fired when the Escape key is pressed while the menu is open.
      */
     onEscapeKeyDown?: (event: KeyboardEvent) => void;
 } & CommonAriaProps;

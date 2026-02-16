@@ -15,28 +15,26 @@ import { colorToCss, getColorWithName } from './utils';
 type ColorPickerInputProps = {
     id?: string;
     /**
-     * The active color in the color picker
+     * The active color shown in the swatch preview.
      */
     currentColor?: RgbaColor;
     /**
-     * The open state of the color picker used to determine arrow state
+     * Whether the color picker panel is currently visible. Controls the caret direction indicator.
      */
     isOpen?: boolean;
     /**
-     * Whether the color picker input is disabled
+     * Prevents interaction and dims the input visually.
+     * @default false
      */
     disabled?: boolean;
     /**
-     * callback for clearing the color
+     * Callback fired when the user clicks the clear button. When provided, a clear button is shown.
      */
     onClear?: () => void;
     /**
-     * Event handler called when the color picker input is clicked
+     * Callback fired when the user clicks the input trigger. Use this to toggle the picker panel open.
      */
     onClick?: () => void;
-    /**
-     * The test id of the color picker input
-     */
     'data-test-id'?: string;
 } & CommonAriaAttrs;
 

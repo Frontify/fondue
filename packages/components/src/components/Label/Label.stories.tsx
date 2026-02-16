@@ -20,6 +20,15 @@ const meta: Meta<typeof LabelComponent> = {
         status: {
             type: 'released',
         },
+        docs: {
+            description: {
+                component: [
+                    'A form field label that pairs with an input via `htmlFor`. Supports required indicators, tooltips, and optional secondary text.',
+                    '',
+                    '**When to use:** Always pair form controls (TextInput, Select, Checkbox, etc.) with a Label for accessibility.',
+                ].join('\n'),
+            },
+        },
     },
     args: {
         children: 'Label',

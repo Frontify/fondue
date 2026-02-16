@@ -22,6 +22,15 @@ const meta: Meta<typeof ColorPickerRoot> = {
         status: {
             type: 'released',
         },
+        docs: {
+            description: {
+                component: [
+                    'An interactive color selection control with gradient, hue, and value inputs. Outputs colors in hex, RGB, or HSL formats.',
+                    '',
+                    '**When to use:** When users need to pick or input a specific color — theme customization, brand settings, or design tools.',
+                ].join('\n'),
+            },
+        },
     },
     args: {},
 };

@@ -38,51 +38,57 @@ type SelectItem = {
 
 export type ComboboxSharedProps = {
     /**
-     * Children of the Combobox component. This can contain the `Select.Slot` components for the label, decorators, clear action and menu
+     * The combobox content. Use `Select.Item` for options, `Select.Group` for grouped options,
+     * and `Select.Slot` for decorators, clear actions, or custom menu content.
      */
     children?: ReactNode;
     /**
-     * The placeholder in the combobox component
+     * Text shown when no value is selected.
+     * Use it to hint at the expected choice — e.g., "Search languages\u2026"
      */
     placeholder?: string;
     /**
-     * Status of the text input
+     * Conveys validation state. `'neutral'` for default, `'success'` for valid input,
+     * `'error'` for invalid input.
+     *
      * @default "neutral"
      */
     status?: 'neutral' | 'success' | 'error';
     /**
-     * Disables the combobox component
+     * Prevents interaction and dims the combobox visually.
+     *
+     * @default false
      */
     disabled?: boolean;
     /**
-     * The alignment of the menu
+     * Controls the horizontal alignment of the dropdown menu relative to the trigger.
+     *
      * @default "start"
      */
     alignMenu?: 'start' | 'center' | 'end';
     /**
-     * Defines the preferred side of the combobox. It will not be respected if there are collisions with the viewport
+     * The preferred side the dropdown opens on.
+     * Falls back to the opposite side if there isn't enough viewport space.
+     *
      * @default "bottom"
      */
     side?: 'left' | 'right' | 'bottom' | 'top';
-    /**
-     * Id of the combobox component
-     */
     id?: string;
-    /**
-     * The data test id of the combobox component
-     */
     'data-test-id'?: string;
     /**
-     * Define the minimum distance between the select menu and the viewport edge
-     * @default 'compact'
+     * Controls the minimum distance between the dropdown menu and the viewport edge.
+     * `'compact'` keeps it tight, `'spacious'` adds breathing room.
+     *
+     * @default "compact"
      */
     viewportCollisionPadding?: SelectMenuViewportCollisionPadding;
     /**
-     * Function to fetch items asynchronously
+     * Async function that fetches items based on the user's typed filter text.
+     * Use this for server-side search or large datasets that shouldn't be loaded upfront.
      */
     getAsyncItems?: AsyncItemsFetcher;
     /**
-     * Event handler called when the escape key is pressed
+     * Callback fired when the Escape key is pressed while the menu is open.
      */
     onEscapeKeyDown?: (event: KeyboardEvent) => void;
 } & CommonAriaProps;
@@ -203,43 +209,30 @@ const ComboboxBaseInput = (
             setHasInteractedSinceOpening(true);
         },
         itemToString: (item) => (item ? item.label : ''),
-        stateReducer: (state, actionAndChanges) => {
-            const { changes, type } = actionAndChanges;
-            if (multiple) {
-                switch (type) {
-                    case useCombobox.stateChangeTypes.InputKeyDownEnter:
-                    case useCombobox.stateChangeTypes.ItemClick:
-                        return {
-                            ...changes,
-                            isOpen: true,
-                            highlightedIndex: state.highlightedIndex,
-                            inputValue: '',
-                        };
-                    case useCombobox.stateChangeTypes.InputBlur:
-                        // Select item on blur (Tab key) but clear the input
-                        return {
-                            ...changes,
-                            inputValue: '',
-                        };
-                }
-            } else {
-                // For single select, handle re-selection of the same item
-                // onSelectedItemChange doesn't fire when selecting the same item, so we call onItemSelect here
-                switch (type) {
-                    case useCombobox.stateChangeTypes.InputKeyDownEnter:
-                    case useCombobox.stateChangeTypes.ItemClick:
-                        if (
-                            changes.selectedItem &&
-                            state.selectedItem &&
-                            changes.selectedItem.value === state.selectedItem.value
-                        ) {
-                            onItemSelect(changes.selectedItem.value);
-                        }
-                        break;
-                }
-            }
-            return changes;
-        },
+        ...(multiple
+            ? {
+                  stateReducer: (state, actionAndChanges) => {
+                      const { changes, type } = actionAndChanges;
+                      switch (type) {
+                          case useCombobox.stateChangeTypes.InputKeyDownEnter:
+                          case useCombobox.stateChangeTypes.ItemClick:
+                              return {
+                                  ...changes,
+                                  isOpen: true,
+                                  highlightedIndex: state.highlightedIndex,
+                                  inputValue: '',
+                              };
+                          case useCombobox.stateChangeTypes.InputBlur:
+                              // Select item on blur (Tab key) but clear the input
+                              return {
+                                  ...changes,
+                                  inputValue: '',
+                              };
+                      }
+                      return changes;
+                  },
+              }
+            : {}),
     });
 
     const valueInvalid = useMemo(() => {

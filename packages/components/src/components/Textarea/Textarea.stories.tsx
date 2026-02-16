@@ -20,6 +20,15 @@ const meta: Meta<typeof TextareaRoot> = {
         status: {
             type: 'released',
         },
+        docs: {
+            description: {
+                component: [
+                    'A multi-line text field for longer-form content — descriptions, comments, or code. Supports auto-sizing, character limits, and action slots.',
+                    '',
+                    '**When to use:** When users need to enter more than a single line of text. For short inputs use `<TextInput>`.',
+                ].join('\n'),
+            },
+        },
     },
     args: {
         autocomplete: false,

@@ -18,6 +18,15 @@ const meta: Meta<typeof Slider> = {
         status: {
             type: 'released',
         },
+        docs: {
+            description: {
+                component: [
+                    'A draggable range input for selecting a numeric value or range within a defined minimum and maximum. Supports single and multi-thumb configurations.',
+                    '',
+                    '**When to use:** For continuous numeric values where the exact number matters less than the relative position — volume, opacity, price ranges.',
+                ].join('\n'),
+            },
+        },
     },
     argTypes: {
         defaultValue: {

@@ -8,15 +8,48 @@ import { useFondueTheme } from '#/components/ThemeProvider/ThemeProvider';
 import styles from './styles/radiolist.module.scss';
 
 type RadioListRootProps = {
+    /**
+     * Merge props onto the child element instead of rendering a wrapper.
+     * @default false
+     */
     asChild?: boolean;
+    /**
+     * Should contain `RadioList.RadioButton` components paired with labels.
+     */
     children?: ReactNode;
     className?: string;
+    /**
+     * Prevents interaction with all radio buttons in the group.
+     * @default false
+     */
     disabled?: boolean;
+    /**
+     * Controls the visual style. `'default'` for standard radio buttons, `'highlight'` for a more prominent selected state.
+     * @default "default"
+     */
     emphasis?: 'default' | 'highlight';
+    /**
+     * Callback fired when the selected value changes.
+     * @param value - The value of the newly selected radio button
+     */
     onValueChange?: (value: string) => void;
+    /**
+     * Controls the layout direction. `'vertical'` stacks options top-to-bottom, `'horizontal'` places them side by side.
+     */
     orientation?: 'vertical' | 'horizontal';
+    /**
+     * When `true`, the radio group is visually interactive but cannot be changed. Useful for displaying a locked selection.
+     * @default false
+     */
     readOnly?: boolean;
+    /**
+     * Marks the radio group as required in a form context.
+     * @default false
+     */
     required?: boolean;
+    /**
+     * The controlled selected value. Use together with `onValueChange`.
+     */
     value?: string;
     'data-test-id'?: string;
 };
@@ -103,6 +136,10 @@ const RadioListRadioButton = ({
 };
 RadioListRadioButton.displayName = 'RadioList.RadioButton';
 
+/**
+ * A group of mutually exclusive radio options — only one can be selected at a time.
+ * Use `RadioList.Root` as the container and `RadioList.RadioButton` for each option.
+ */
 export const RadioList = {
     Root: RadioListRoot,
     RadioButton: RadioListRadioButton,

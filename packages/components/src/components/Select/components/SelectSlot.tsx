@@ -6,16 +6,14 @@ import styles from '../styles/select.module.scss';
 
 export type SelectSlotProps = {
     /**
-     * The children of the select slot. This can be a custom component.
+     * The content to render in this slot — typically an icon, badge, or custom action.
      */
     children?: ReactNode;
     /**
-     * The slot name that is used to determine the placement.
+     * Controls where the slot content appears. `'left'` and `'right'` sit beside the selected value,
+     * `'clear'` renders a clear action, `'menu'` adds custom content at the bottom of the dropdown.
      */
     name: 'menu' | 'left' | 'right' | 'clear';
-    /**
-     * The data test id of the select slot.
-     */
     'data-test-id'?: string;
 };
 

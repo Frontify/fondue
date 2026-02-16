@@ -32,34 +32,35 @@ export type ExtraAction = {
 type Status = 'default' | 'loading' | 'success' | 'error';
 
 type TextareaProps = {
-    /**
-     * The id of the textarea
-     */
     id?: string;
     /**
-     * The place where the textarea slots are placed
+     * Slot content placed alongside the textarea. Use `Textarea.Slot` for left/right decorators or actions.
      */
     children?: ReactNode;
     /**
-     * If `true`, Textarea will have `autoComplete` functionality
+     * Enables browser autocomplete suggestions for the textarea.
      */
     autocomplete?: boolean;
     /**
-     * If `true`, component rendered is a auto sizing Textarea
+     * When `true`, the textarea grows automatically as the user types, eliminating the need for manual resizing.
      */
     autosize?: boolean;
     /**
-     * Render `clear` button to clear input on click
+     * Shows a clear button that empties the textarea on click.
      */
     clearable?: boolean;
     /**
-     * A `ReactElement` that will be rendered at the start of the `Textarea`
+     * A React element rendered at the start of the textarea — typically an icon or label prefix.
      */
     decorator?: ReactElement;
     /**
-     * Initial value
+     * The initial value for uncontrolled usage.
      */
     defaultValue?: string;
+    /**
+     * Prevents interaction and dims the textarea visually.
+     * @default false
+     */
     disabled?: boolean;
     /**
      * Collection of extra actions the input can preform
@@ -67,63 +68,76 @@ type TextareaProps = {
      */
     extraActions?: ExtraAction[];
     /**
-     * If `true`, Textarea will be focused on mount
+     * When `true`, the textarea receives focus automatically when the component mounts.
      */
     focusOnMount?: boolean;
     /**
-     * If autosize is false, this is used as rows property for default textarea
+     * The minimum number of visible text rows. Only applies when `autosize` is `false`.
      * @default 1
      */
     minRows?: number;
     /**
-     * If `autosize` is `false`, this property is ignored
+     * The maximum number of visible text rows before scrolling activates. Only applies when `autosize` is `true`.
      */
     maxRows?: number;
     /**
-     * Event handler called when the textarea value changes
+     * Callback fired when the textarea value changes.
      */
     onChange?: ChangeEventHandler<HTMLTextAreaElement>;
     /**
-     * Event handler called when the text input is blurred
+     * Callback fired when the textarea loses focus.
      */
     onBlur?: FocusEventHandler<HTMLTextAreaElement>;
     /**
-     * Event handler called when the text input is focused
+     * Callback fired when the textarea gains focus.
      */
     onFocus?: FocusEventHandler<HTMLTextAreaElement>;
     /**
-     * Event handler called when a key is pressed
+     * Callback fired when a key is pressed inside the textarea.
      */
     onKeyDown?: KeyboardEventHandler<HTMLTextAreaElement>;
     /**
-     * Event handler called when Enter is pressed
+     * Callback fired specifically when the Enter key is pressed. Useful for submit-on-enter behavior.
      */
     onEnterPressed?: KeyboardEventHandler<HTMLTextAreaElement>;
     /**
-     * Event handler called when a key is released
+     * Callback fired when a key is released inside the textarea.
      */
     onKeyUp?: KeyboardEventHandler<HTMLTextAreaElement>;
     /**
-     * Event handler called when the text inside of text input is selected
+     * Callback fired when the user selects text inside the textarea.
      */
     onSelect?: (event: SyntheticEvent<HTMLTextAreaElement>) => void;
     /**
-     * If `true`, Textarea will be required
+     * Marks the textarea as required for form validation.
      */
     required?: boolean;
-    /**
-     * The test id of the textarea
-     */
     'data-test-id'?: string;
+    /**
+     * Text shown when the textarea is empty. Use it to hint at the expected input.
+     */
     placeholder?: string;
+    /**
+     * Makes the textarea read-only — the value is visible but cannot be edited.
+     */
     readOnly?: boolean;
+    /**
+     * When `true`, shows a drag handle for manual resizing.
+     */
     resizable?: boolean;
+    /**
+     * When `false`, prevents the user from selecting text inside the textarea.
+     * @default true
+     */
     selectable?: boolean;
     /**
-     * The current status of the input. It will trigger the corresponding icon to be appended to the Textarea.
+     * Conveys the validation state visually. `'success'` shows a checkmark, `'error'` shows a warning icon, `'loading'` shows a progress indicator.
      * @default 'default'
      */
     status?: Status;
+    /**
+     * The controlled value. Use together with `onChange` for controlled usage.
+     */
     value?: string;
 };
 
@@ -269,7 +283,13 @@ export const TextareaRoot = (
 TextareaRoot.displayName = 'Textarea.Root';
 
 export type TextareaSlotProps = {
+    /**
+     * The slot content — typically an icon, button, or other action.
+     */
     children: ReactNode;
+    /**
+     * Controls where the slot appears. `'left'` places content at the start, `'right'` at the end of the textarea.
+     */
     name?: 'left' | 'right';
     className?: string;
 };

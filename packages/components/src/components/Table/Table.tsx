@@ -28,13 +28,13 @@ import { handleKeyDown, shouldIgnoreRowClick } from './utils';
 
 type TableRootProps = {
     /**
-     * Whether the table should have a fixed or auto layout
+     * Controls how column widths are calculated. `'auto'` sizes columns to fit their content, `'fixed'` distributes width evenly for predictable layouts.
      * @default 'auto'
      */
     layout?: 'auto' | 'fixed';
     /**
-     * Font size of the table content
-     * @default 'small'
+     * Controls the text size of table content. `'small'` for dense data tables, `'medium'` for standard readability.
+     * @default 'medium'
      */
     fontSize?: 'small' | 'medium';
     /**
@@ -56,7 +56,7 @@ type TableRootProps = {
      */
     sticky?: 'head' | 'col' | 'both';
     /**
-     * Whether to remove the top and bottom borders from the table
+     * Removes the top and bottom borders. Useful when the table sits inside a container that already provides visual separation.
      * @default false
      */
     noBorder?: boolean;
@@ -141,7 +141,7 @@ TableCaption.displayName = 'Table.Caption';
 
 type TableHeaderProps = {
     /**
-     * Whether the header should stick to the top when scrolling
+     * Pins the header row to the top of the scroll container so column labels remain visible while scrolling.
      * @default false
      */
     sticky?: boolean;
@@ -171,15 +171,15 @@ type TableHeaderCellProps = {
      */
     scope?: HTMLTableCellElement['scope'];
     /**
-     * Number of columns the cell should span
+     * The number of columns this header cell spans. Use for grouped column headers.
      */
     colSpan?: HTMLTableCellElement['colSpan'];
     /**
-     * Width of the column
+     * Sets a fixed column width. Accepts any CSS length value (e.g., `'200px'`, `'25%'`).
      */
     width?: CSSProperties['width'];
     /**
-     * Current sort direction of the column
+     * The current sort state of this column. Pass `'ascending'` or `'descending'` to show the active sort indicator, or `undefined` for unsorted.
      */
     sortDirection?: SortDirection;
     /**
@@ -193,7 +193,7 @@ type TableHeaderCellProps = {
      */
     truncate?: boolean;
     /**
-     * Aria label for ascending/descending sort. Variables: {column} - column name
+     * Custom labels for the sort button's accessible text. Use `{column}` as a placeholder for the column name.
      * @default "Sort by {column} ascending/descending"
      */
     sortTranslations?: {
@@ -201,22 +201,21 @@ type TableHeaderCellProps = {
         sortDescending?: string;
     };
     /**
-     * Whether the column should have a minimum width
+     * Prevents the column from shrinking below its content width. Useful for action columns or fixed-width cells.
      * @default false
      */
     noShrink?: boolean;
     /**
-     * State of the cell, used for displaying loading state
+     * Controls the cell's visual state. Set to `'loading'` to show a spinner alongside the header text.
      * @default 'idle'
      */
     state?: 'idle' | 'loading';
     /**
-     * The aria-label to be applied when state='loading'
+     * Accessible label announced by screen readers when `state` is `'loading'`.
      */
     loadingStateAriaLabel?: string;
     /**
-     * Handler called when the sort direction changes
-     * @param direction - The new sort direction
+     * Callback fired when the user clicks the sort button. Receives the new sort direction. Providing this prop makes the column sortable.
      */
     onSortChange?: (direction: SortDirection) => void;
     children: ReactNode;
@@ -324,12 +323,12 @@ TableHeaderCell.displayName = 'Table.HeaderCell';
 
 type TableBodyProps = {
     /**
-     * Whether the first column should stick to the left when scrolling horizontally
+     * Pins the first column to the left edge when the table scrolls horizontally. Useful for row labels or identifiers.
      * @default false
      */
     firstColumnSticky?: boolean;
     /**
-     * Whether the last column should stick to the right when scrolling horizontally
+     * Pins the last column to the right edge when the table scrolls horizontally. Useful for row actions.
      * @default false
      */
     lastColumnSticky?: boolean;
@@ -356,23 +355,19 @@ TableBody.displayName = 'Table.Body';
 
 type TableRowProps = {
     /**
-     * Whether the row is in a selected state
+     * Whether the row is in a selected (highlighted) state. Pairs with `onClick` for selectable rows.
      * @default false
      */
     selected?: boolean;
     /**
-     * Whether to disable interactions for this row
+     * Prevents interaction and dims the row visually.
      * @default false
      */
     disabled?: boolean;
     /**
-     * Handler called when the row is clicked or activated via keyboard
-     * If provided, the row will be hoverable and interactive
+     * Callback fired when the row is clicked or activated via keyboard (Enter/Space). When provided, the row becomes hoverable and interactive. Receives the current `selected` state.
      */
     onClick?: (selected: boolean) => void;
-    /**
-     * Content to be rendered within the row
-     */
     children: ReactNode;
     /**
      * Accessible label for the row
@@ -438,7 +433,7 @@ TableRow.displayName = 'Table.Row';
 
 type TableRowCellProps = {
     /**
-     * Number of columns the cell should span
+     * The number of columns this cell spans.
      */
     colSpan?: HTMLTableCellElement['colSpan'];
     /**
@@ -478,6 +473,7 @@ export const TableRowCell = forwardRef<HTMLTableCellElement, TableRowCellProps>(
 );
 TableRowCell.displayName = 'Table.RowCell';
 
+/** A data table — compose `Root` with `Caption`, `Header`, `HeaderCell`, `Body`, `Row`, and `RowCell` sub-components. */
 export const Table = {
     Root: TableRoot,
     Caption: TableCaption,
