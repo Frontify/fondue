@@ -37,6 +37,17 @@ const meta: Meta<typeof DropdownRoot> = {
         status: {
             type: 'released',
         },
+        docs: {
+            description: {
+                component: [
+                    'An action menu triggered by a button press or right-click. Shows a list of commands, options, or navigation items in a floating panel.',
+                    '',
+                    '**When to use:** For contextual actions like "Edit", "Delete", or "Share." For selecting a value from a list, use `<Select>` instead.',
+                    '',
+                    '**Submenus:** Use `Dropdown.SubMenu` to nest related actions under a parent item.',
+                ].join('\n'),
+            },
+        },
     },
     args: {},
 };

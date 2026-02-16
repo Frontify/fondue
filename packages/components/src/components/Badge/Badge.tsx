@@ -31,6 +31,7 @@ type BadgeProps = {
      */
     size?: BadgeSize;
     /**
+     * Prevents interaction and dims the badge visually.
      * @default false
      */
     disabled?: boolean;
@@ -46,9 +47,15 @@ type BadgeProps = {
      * Displays a status dot to reflect live states or activity. Accepts a preset (`'positive'`, `'warning'`, etc.) or a custom color value.
      */
     status?: BadgeStatusProps['status'];
+    /**
+     * Tooltip text shown on hover. Also used as the accessible name when no `aria-label` is provided.
+     */
     title?: string;
     'aria-label'?: string;
     'data-test-id'?: string;
+    /**
+     * The badge content — typically short text, a number, or a label.
+     */
     children: ReactNode;
 };
 

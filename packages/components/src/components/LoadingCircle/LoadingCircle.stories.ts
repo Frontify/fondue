@@ -13,6 +13,15 @@ const meta: Meta<typeof LoadingCircle> = {
         status: {
             type: 'released',
         },
+        docs: {
+            description: {
+                component: [
+                    'An animated circular spinner indicating that a process is in progress. Supports size variants and completion/error states.',
+                    '',
+                    '**When to use:** For indeterminate loading states — data fetching, form submission, or background processing. For determinate progress use `<LoadingBar>`.',
+                ].join('\n'),
+            },
+        },
     },
 };
 

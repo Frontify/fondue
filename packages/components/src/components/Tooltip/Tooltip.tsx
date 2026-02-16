@@ -9,15 +9,15 @@ import styles from './styles/tooltip.module.scss';
 
 export type TooltipRootProps = {
     /**
-     * Sets the open state of the tooltip.
+     * The controlled open state. Use together with `onOpenChange` for programmatic control.
      */
     open?: boolean;
     /**
-     * Callback that is called when the open state of the tooltip changes.
+     * Callback fired when the tooltip opens or closes.
      */
     onOpenChange?: (open: boolean) => void;
     /**
-     * The delay in milliseconds before the tooltip appears.
+     * The delay in milliseconds before the tooltip appears on hover. Set to `0` for instant display.
      * @default 700
      */
     enterDelay?: number;
@@ -37,7 +37,7 @@ TooltipRoot.displayName = 'Tooltip.Root';
 
 export type TooltipTriggerProps = {
     /**
-     * Change the default rendered element for the one passed as a child, merging their props and behavior.
+     * When `true`, merges the trigger's props and behavior onto its child element instead of rendering a wrapper button.
      * @default false
      */
     asChild?: boolean;
@@ -65,13 +65,17 @@ TooltipTrigger.displayName = 'Tooltip.Trigger';
 
 export type TooltipContentProps = {
     /**
+     * Controls the inner padding. `'spacious'` for text tooltips, `'compact'` for dense layouts.
      * @default "spacious"
      */
     padding?: 'spacious' | 'compact';
     /**
-     * Defines the preferred side of the tooltip. It will not be respected if there are collisions with the viewport.
+     * The preferred side the tooltip appears on. Falls back to the opposite side if there isn't enough viewport space.
      */
     side?: 'top' | 'right' | 'bottom' | 'left';
+    /**
+     * The maximum width of the tooltip. Accepts any CSS length value.
+     */
     maxWidth?: string;
     className?: string;
     children: ReactNode;
@@ -129,6 +133,7 @@ export const TooltipContent = (
 };
 TooltipContent.displayName = 'Tooltip.Content';
 
+/** An informational popup — compose `Root` with `Trigger` and `Content` sub-components. */
 export const Tooltip = {
     Root: TooltipRoot,
     Trigger: forwardRef<HTMLButtonElement, TooltipTriggerProps>(TooltipTrigger),

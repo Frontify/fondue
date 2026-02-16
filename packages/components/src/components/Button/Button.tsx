@@ -23,7 +23,7 @@ export type ButtonProps = {
      */
     type?: ButtonType;
     /**
-     * @default null
+     * Tooltip text shown on hover. Also used as the accessible name when no `aria-label` is provided.
      */
     title?: string;
     /**
@@ -47,6 +47,7 @@ export type ButtonProps = {
      */
     rounding?: ButtonRounding;
     /**
+     * Prevents interaction and dims the button visually.
      * @default false
      */
     disabled?: boolean;
@@ -60,11 +61,17 @@ export type ButtonProps = {
      * @default true
      */
     hugWidth?: boolean;
+    /**
+     * The button content — text, icons, or a combination of both.
+     */
     children?: ReactNode;
     /**
      * Callback fired when the button is pressed.
      */
     onPress?: (event?: MouseEvent<HTMLButtonElement>) => void;
+    /**
+     * Associates the button with a `<form>` by its `id`. Use when the button sits outside the form element in the DOM.
+     */
     form?: string;
     'aria-label'?: string;
     'aria-describedby'?: string;

@@ -42,19 +42,13 @@ export type NoticeProps = {
      */
     onDismiss?: (event?: MouseEvent<HTMLButtonElement>) => void;
     /**
-     * Custom aria-label for the dismiss button
+     * Custom accessible label for the dismiss button. Overrides the default "Dismiss" text.
      */
     'aria-label'?: string;
-    /**
-     * Test ID for the component
-     */
     'data-test-id'?: string;
-    /**
-     * Additional CSS class
-     */
     className?: string;
     /**
-     * Message content
+     * The message content — text, links, or formatted content describing the notice.
      */
     children: ReactNode;
 };

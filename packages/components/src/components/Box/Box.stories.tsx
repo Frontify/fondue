@@ -15,6 +15,15 @@ const meta: Meta<typeof Box> = {
         status: {
             type: 'released',
         },
+        docs: {
+            description: {
+                component: [
+                    'A generic container with responsive spacing, sizing, and positioning props. The simplest layout primitive in Fondue.',
+                    '',
+                    '**When to use:** When you need margin, padding, or sizing control without Flex or Grid behavior. For directional layouts use `<Flex>`, for two-dimensional layouts use `<Grid>`.',
+                ].join('\n'),
+            },
+        },
     },
     args: {
         width: 25,

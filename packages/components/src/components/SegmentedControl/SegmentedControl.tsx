@@ -9,27 +9,30 @@ import styles from './styles/segmentedControl.module.scss';
 
 export type SegmentedControlRootProps<TValue extends string = string> = {
     id?: string;
+    /**
+     * Should contain `SegmentedControl.Item` components.
+     */
     children: ReactNode;
     /**
-     * The default value of the segmented control
-     * Used for uncontrolled components
+     * The initially selected value for uncontrolled usage.
      */
     defaultValue?: TValue;
     /**
-     * The controlled value of the segmented control
+     * The controlled selected value. Use together with `onValueChange`.
      */
     value?: TValue;
     /**
-     * Event handler called when the value changes
+     * Callback fired when the selected option changes.
+     * @param value - The value of the newly selected item
      */
     onValueChange?: (value: TValue) => void;
     /**
-     * Disable the segmented control
+     * Prevents interaction with the entire control.
      * @default false
      */
     disabled?: boolean;
     /**
-     * Specify if the segmented control should only take the width of its content
+     * When `true`, the control sizes to fit its content. When `false`, it expands to fill its container width.
      * @default true
      */
     hugWidth?: boolean;
@@ -77,7 +80,13 @@ export const SegmentedControlRoot = <TValue extends string = string>(
 SegmentedControlRoot.displayName = 'SegmentedControl.Root';
 
 type SegmentedControlItemProps = {
+    /**
+     * The label content displayed inside the segment — text, an icon, or both.
+     */
     children: ReactNode;
+    /**
+     * A unique value that identifies this option. Passed to `onValueChange` when selected.
+     */
     value: string;
 };
 
@@ -99,6 +108,10 @@ export const SegmentedControlItem = (
 );
 SegmentedControlItem.displayName = 'SegmentedControl.Item';
 
+/**
+ * A compact, horizontal toggle group for switching between 2–4 mutually exclusive options.
+ * Use `SegmentedControl.Root` as the container and `SegmentedControl.Item` for each option.
+ */
 export const SegmentedControl = {
     Root: forwardRef(SegmentedControlRoot) as <TValue extends string = string>(
         props: SegmentedControlRootProps<TValue> & { ref?: ForwardedRef<HTMLDivElement> },

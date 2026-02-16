@@ -25,6 +25,15 @@ const meta: Meta<typeof Flex> = {
         status: {
             type: 'released',
         },
+        docs: {
+            description: {
+                component: [
+                    'A one-dimensional layout container using CSS Flexbox. Arranges children along a row or column with configurable alignment, spacing, and wrapping.',
+                    '',
+                    '**When to use:** For single-axis layouts — toolbars, button groups, stacked forms. For two-dimensional layouts use `<Grid>`, for plain spacing use `<Box>`.',
+                ].join('\n'),
+            },
+        },
     },
     args: {
         gap: 4,

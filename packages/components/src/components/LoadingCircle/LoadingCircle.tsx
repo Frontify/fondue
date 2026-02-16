@@ -6,12 +6,12 @@ import styles from './styles/loadingCircleStyles.module.scss';
 
 export type LoadingCircleProps = {
     /**
-     * The  variant of the loading circle.
-     * @default 'progress'
+     * Controls the visual state. `'progress'` for an active spinner, `'success'` for a completed state, `'danger'` for a failed state.
+     * @default "progress"
      */
     variant?: 'progress' | 'success' | 'danger';
     /**
-     * The size of the loading circle
+     * Controls the spinner size. `'xx-small'` for inline indicators, `'medium'` for standard loading states, `'large'` for full-page spinners.
      * @default "medium"
      */
     size?: 'xx-small' | 'x-small' | 'small' | 'medium' | 'large';

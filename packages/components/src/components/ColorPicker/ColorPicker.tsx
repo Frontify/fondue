@@ -12,33 +12,30 @@ import { DEFAULT_COLOR, DEFAULT_FORMAT, getColorWithName } from './utils';
 
 type ColorPickerProps = {
     /**
-     * The children of the color picker component. This can contain multiple `ColorPicker.Values` or `ColorPicker.Gradient` components.
+     * The picker content. Compose with `ColorPicker.Values` for hex/rgba inputs and `ColorPicker.Gradient` for the visual color area.
      */
     children?: ReactNode;
     /**
-     * The active color in the color picker
+     * The active color. Pass an `RgbaColor` object with `red`, `green`, `blue`, and optional `alpha` channels.
      */
     currentColor?: RgbaColor;
     /**
-     * Event handler called when the color changes
+     * Callback fired whenever the color changes — through the gradient, the value inputs, or the alpha slider.
      */
     onColorChange?: (color: RgbaColor) => void;
     /**
-     * The active color format in the color picker
+     * The controlled color format. Use together with `onFormatChange` for controlled format switching between `'HEX'` and `'RGBA'`.
      */
     currentFormat?: ColorFormat;
     /**
-     * Event handler called when the color format changes
+     * Callback fired when the user toggles between HEX and RGBA format.
      */
     onFormatChange?: (format: ColorFormat) => void;
     /**
-     * The default format to use for the color input when not controlled externally
+     * The initial color format for uncontrolled usage.
      * @default "HEX"
      */
     defaultFormat?: ColorFormat;
-    /**
-     * The test id of the color picker
-     */
     'data-test-id'?: string;
 };
 
@@ -90,6 +87,7 @@ const ColorPickerSlot = ({ children, ...props }: ColorPickerSlotProps) => <Radix
 
 export const ForwardedRefColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(ColorPickerRoot);
 
+/** A color selection tool — compose `Root` with `Values`, `Gradient`, and `Input` sub-components. */
 export const ColorPicker = {
     Root: ForwardedRefColorPicker,
     Values: ForwardedRefColorValueInput,

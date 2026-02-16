@@ -28,6 +28,15 @@ const meta: Meta<typeof FlyoutContent> = {
         status: {
             type: 'released',
         },
+        docs: {
+            description: {
+                component: [
+                    'A non-modal popover panel anchored to a trigger element. Displays supplementary content, forms, or actions without leaving the current context.',
+                    '',
+                    '**When to use:** For secondary interactions that don\'t warrant a full dialog — inline editing, filter panels, or preview cards. For modal interruptions use `<Dialog>`.',
+                ].join('\n'),
+            },
+        },
     },
     args: {
         children: 'Hello World',

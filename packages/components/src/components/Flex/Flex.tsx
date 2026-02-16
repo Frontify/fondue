@@ -10,42 +10,42 @@ import styles from './styles/flex.module.scss';
 
 export type FlexProps = LayoutComponentProps & {
     /**
-     * The element to render the Flex component as.
-     * @default 'div'
+     * The HTML element to render. Use `'span'` for inline flex contexts.
+     * @default "div"
      */
     as?: 'div' | 'span';
     /**
-     * The display property.
-     * @default 'flex'
+     * Controls the display mode. `'flex'` for block-level flex, `'inline-flex'` for inline contexts, `'none'` to hide.
+     * @default "flex"
      */
     display?: Responsive<'none' | 'flex' | 'inline-flex'>;
     /**
-     * The direction of the children.
-     * @default 'row'
+     * Sets the main axis. `'row'` for horizontal, `'column'` for vertical stacking. Supports responsive values.
+     * @default "row"
      */
     direction?: Responsive<'row' | 'row-reverse' | 'column' | 'column-reverse'>;
     /**
-     * The alignment of the children.
+     * Aligns children along the cross axis. `'center'` for vertical centering in a row, `'stretch'` to fill the container height.
      */
     align?: Responsive<'flex-start' | 'center' | 'flex-end' | 'stretch' | 'baseline'>;
     /**
-     * The justification of the children.
+     * Distributes children along the main axis. `'space-between'` for even spacing, `'center'` for centering.
      */
     justify?: Responsive<'flex-start' | 'center' | 'flex-end' | 'space-between' | 'space-around' | 'space-evenly'>;
     /**
-     * The wrap property.
+     * Controls whether children wrap to new lines. `'wrap'` for multi-line, `'nowrap'` to keep on one line.
      */
     wrap?: Responsive<'nowrap' | 'wrap' | 'wrap-reverse'>;
     /**
-     * The gap between the children.
+     * Spacing between children in both directions. Values are spacing tokens (1 = 0.25rem). Supports responsive values.
      */
     gap?: Responsive<SizeValue>;
     /**
-     * The horizontal gap between the children.
+     * Horizontal spacing between children. Overrides `gap` for the horizontal axis.
      */
     gapX?: Responsive<SizeValue>;
     /**
-     * The vertical gap between the children.
+     * Vertical spacing between children. Overrides `gap` for the vertical axis.
      */
     gapY?: Responsive<SizeValue>;
 

@@ -19,6 +19,17 @@ const meta: Meta<typeof Switch> = {
         status: {
             type: 'released',
         },
+        docs: {
+            description: {
+                component: [
+                    'A toggle control for binary on/off settings. Applies the change immediately without requiring a form submission.',
+                    '',
+                    '**When to use:** For instant-effect settings like "Enable notifications" or "Dark mode." For choices that require confirmation, use a Checkbox with a submit button instead.',
+                    '',
+                    '**Label:** Always pair with a `<Label>` for accessibility. Place the label to the left of the switch.',
+                ].join('\n'),
+            },
+        },
     },
     argTypes: {
         size: {

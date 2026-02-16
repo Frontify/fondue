@@ -13,6 +13,15 @@ const meta: Meta<typeof Heading> = {
         status: {
             type: 'released',
         },
+        docs: {
+            description: {
+                component: [
+                    'A polymorphic heading element where visual size and semantic HTML level are controlled independently. Renders as any heading tag (`h1`–`h6`) or a `span`.',
+                    '',
+                    '**When to use:** For page, section, or card headings. Choose the `as` tag for document outline semantics and `size` for visual appearance independently.',
+                ].join('\n'),
+            },
+        },
     },
     args: {},
     argTypes: {

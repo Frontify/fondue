@@ -13,6 +13,15 @@ const meta: Meta<typeof LoadingBar> = {
         status: {
             type: 'released',
         },
+        docs: {
+            description: {
+                component: [
+                    'A horizontal progress bar showing completion progress as a filled track. Supports determinate (known percentage) and indeterminate (unknown duration) modes.',
+                    '',
+                    '**When to use:** When progress can be measured — file uploads, multi-step processes, or quota usage. For unknown durations, consider `<LoadingCircle>` instead.',
+                ].join('\n'),
+            },
+        },
     },
     args: {
         value: 42,

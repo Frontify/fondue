@@ -10,13 +10,12 @@ export type CheckboxProps = {
     id?: string;
     name?: string;
     /**
-     * The default value of the checkbox
-     * Used for uncontrolled components
+     * The initial checked state for uncontrolled usage. Pass `'indeterminate'` for a mixed state (e.g., when some but not all child items are selected).
      * @default false
      */
     defaultValue?: boolean | 'indeterminate';
     /**
-     * The controlled value of the checkbox
+     * The controlled checked state. Use together with `onChange` for controlled usage. Pass `'indeterminate'` for a mixed state.
      * @default false
      */
     value?: boolean | 'indeterminate';
@@ -31,6 +30,7 @@ export type CheckboxProps = {
      */
     emphasis?: 'default' | 'weak';
     /**
+     * Prevents interaction and dims the checkbox visually.
      * @default false
      */
     disabled?: boolean;
@@ -51,15 +51,15 @@ export type CheckboxProps = {
     status?: 'default' | 'error';
     className?: string;
     /**
-     * Event handler called when the checkbox value changes
+     * Callback fired when the checked state changes.
      */
     onChange?: (event: FormEvent<HTMLButtonElement>) => void;
     /**
-     * Event handler called when the checkbox is blurred
+     * Callback fired when the checkbox loses focus.
      */
     onBlur?: (event: FormEvent<HTMLButtonElement>) => void;
     /**
-     * Event handler called when the checkbox is focused
+     * Callback fired when the checkbox gains focus.
      */
     onFocus?: (event: FormEvent<HTMLButtonElement>) => void;
     'data-test-id'?: string;

@@ -25,6 +25,15 @@ const meta: Meta<typeof TooltipRoot> = {
         status: {
             type: 'released',
         },
+        docs: {
+            description: {
+                component: [
+                    'A small, floating text label that appears on hover or focus to describe an element. Disappears when the user moves away.',
+                    '',
+                    '**When to use:** To provide supplementary context for icons, truncated text, or controls that lack a visible label. Keep content brief — for richer content use `<Flyout>`.',
+                ].join('\n'),
+            },
+        },
     },
     render: ({ ...args }) => {
         return (

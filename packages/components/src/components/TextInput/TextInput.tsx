@@ -20,84 +20,83 @@ export type TextInputProps = {
     id?: string;
     name?: string;
     /**
-     * The place where the input slots are placed
+     * Slot content placed alongside the input. Use `TextInput.Slot` for left/right decorators or actions.
      */
     children?: ReactNode;
     /**
-     * The default value of the text input
-     * Used for uncontrolled components
+     * The initial value for uncontrolled usage. Accepts a string or number.
      */
     defaultValue?: string | number;
     /**
-     * The controlled value of the text input
+     * The controlled value. Use together with `onChange` for controlled usage.
      */
     value?: string | number;
     /**
-     * Type of the text input
+     * The HTML input type. Use `'password'` for secrets, `'email'` for email addresses, `'number'` for numeric input, `'search'` for search fields.
      * @default "text"
      */
     type?: 'date' | 'email' | 'hidden' | 'number' | 'password' | 'search' | 'tel' | 'text' | 'time' | 'url';
     /**
-     * The placeholder in the text input
+     * Text shown when the input is empty. Use it to hint at the expected input.
      */
     placeholder?: string;
     /**
-     * Disable the text input
+     * Prevents interaction and dims the input visually.
      * @default false
      */
     disabled?: boolean;
     /**
-     * Make the text input required in form
+     * Marks the input as required for form validation.
      * @default false
      */
     required?: boolean;
     /**
-     * Make the text input spell-checkable
+     * Enables browser spell-checking for the input content.
      * @default true
      */
     spellCheck?: boolean;
     /**
-     * Make the text input read-only
+     * Makes the input read-only — the value is visible but cannot be edited.
      * @default false
      */
     readOnly?: boolean;
     /**
-     * Set the type of input so autocomplete can help the user
+     * Controls the browser's autocomplete behavior. Pass a specific token like `'email'`, `'username'`, or `'off'` to disable.
      * @default "on"
      */
     autoComplete?: string;
     /**
-     * The maximum length of the text input
+     * The maximum number of characters the user can enter.
      */
     maxLength?: number;
     /**
-     * Status of the text input
+     * Conveys validation state visually. `'success'` shows a checkmark, `'error'` shows a warning icon, `'loading'` shows a spinner.
      * @default "neutral"
      */
     status?: 'neutral' | 'success' | 'error' | 'loading';
     className?: string;
     /**
-     * Event handler called when the text input value changes
+     * Callback fired when the input value changes.
      */
     onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
     /**
-     * Event handler called when the text input is blurred
+     * Callback fired when the input loses focus.
      */
     onBlur?: (event: FocusEvent<HTMLInputElement>) => void;
     /**
-     * Event handler called when the text input is focused
+     * Callback fired when the input gains focus.
      */
     onFocus?: (event: FocusEvent<HTMLInputElement>) => void;
     /**
-     * Event handler called when a key is pressed
+     * Callback fired when a key is pressed inside the input.
      */
     onKeyDown?: (event: KeyboardEvent<HTMLInputElement>) => void;
     /**
-     * Event handler called when a key is released
+     * Callback fired when a key is released inside the input.
      */
     onKeyUp?: (event: KeyboardEvent<HTMLInputElement>) => void;
     /**
-     * Event handler called when the text inside of text input is selected
+     * Callback fired when the user selects text inside the input.
      */
     onSelect?: (event: SyntheticEvent<HTMLInputElement>) => void;
     'data-test-id'?: string;
@@ -179,7 +178,13 @@ export const TextFieldRoot = (
 TextFieldRoot.displayName = 'TextField.Root';
 
 export type TextFieldSlotProps = {
+    /**
+     * The slot content — typically an icon, button, or other action.
+     */
     children: ReactNode;
+    /**
+     * Controls where the slot appears. `'left'` places content at the start, `'right'` at the end of the input.
+     */
     name?: 'left' | 'right';
     className?: string;
 };

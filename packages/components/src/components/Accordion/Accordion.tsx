@@ -32,7 +32,8 @@ export type AccordionRootProps = {
      */
     defaultValue?: string[];
     /**
-     * Disables the accordion from user interaction.
+     * Prevents interaction and dims the accordion visually.
+     * @default false
      */
     disabled?: boolean;
     /**
@@ -81,7 +82,7 @@ AccordionRoot.displayName = 'Accordion.Root';
 export type AccordionItemProps = {
     'data-test-id'?: string;
     /**
-     * Children of the Accordion item. This should contain the `Accordion.Header` and `Accordion.Content` components
+     * The item content. Should contain an `Accordion.Header` and an `Accordion.Content`.
      */
     children?: ReactNode;
     /**
@@ -129,11 +130,11 @@ export type AccordionHeaderProps = {
      */
     asChild?: boolean;
     /**
-     * Click callback for this item.
+     * Callback fired when the header is clicked.
      */
     onClick?: MouseEventHandler<HTMLDivElement>;
     /**
-     * Children of the Accordion header.
+     * The header content — text, icons, and optional `Accordion.Slot` elements for actions.
      */
     children?: ReactNode;
 };
@@ -175,7 +176,7 @@ AccordionHeader.displayName = 'Accordion.Header';
 type AccordionContentProps = {
     'data-test-id'?: string;
     /**
-     * Children of the Accordion content. This contains the main content.
+     * The collapsible content revealed when this item is expanded.
      */
     children?: ReactNode;
     /**
@@ -183,12 +184,12 @@ type AccordionContentProps = {
      */
     divider?: boolean;
     /**
-     * Click callback for the content.
+     * Callback fired when the content area is clicked.
      */
     onClick?: MouseEventHandler<HTMLDivElement>;
     /**
-     * Controls if we show paddings around the content.
-     * @default 'large'
+     * Controls padding around the content area. Inherits from the root's `padding` when omitted.
+     * @default "large"
      */
     padding?: AccordionPadding;
 };
@@ -247,6 +248,7 @@ const ForwardedRefAccordionSlot = forwardRef<HTMLDivElement, AccordionSlotProps>
  */
 const DeprecatedAccordionTrigger = ({ children }: { children: ReactNode }) => children;
 
+/** A vertically stacked set of collapsible sections — compose `Root` with `Item`, `Header`, `Content`, and `Slot` sub-components. */
 export const Accordion = {
     Root: AccordionRoot,
     Item: AccordionItem,

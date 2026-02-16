@@ -21,6 +21,15 @@ const meta: Meta<typeof SegmentedControlRoot> = {
         status: {
             type: 'released',
         },
+        docs: {
+            description: {
+                component: [
+                    'A compact, horizontal toggle group for switching between 2–4 mutually exclusive options. Behaves like radio buttons with a tab-like appearance.',
+                    '',
+                    '**When to use:** For view-mode toggles, layout switchers, or small option sets where all choices should be visible at once. For longer lists, use `<RadioList>` or `<Select>`.',
+                ].join('\n'),
+            },
+        },
     },
     args: {
         defaultValue: 'first',

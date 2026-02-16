@@ -19,6 +19,15 @@ const meta: Meta<typeof Tag> = {
         status: {
             type: 'released',
         },
+        docs: {
+            description: {
+                component: [
+                    'A compact, interactive chip for representing keywords, categories, or user-generated labels. Supports selection, dismissal, and hover actions.',
+                    '',
+                    '**When to use:** For removable or selectable keywords — filter chips, applied tags, or multi-select tokens. For non-interactive status indicators, use `<Badge>` instead.',
+                ].join('\n'),
+            },
+        },
     },
     args: {
         emphasis: 'strong',

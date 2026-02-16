@@ -13,6 +13,15 @@ const meta: Meta<typeof Text> = {
         status: {
             type: 'released',
         },
+        docs: {
+            description: {
+                component: [
+                    'A polymorphic text element for body copy, labels, and inline text. Renders as a `span` by default but can be any inline or block text element.',
+                    '',
+                    '**When to use:** For body text, descriptions, captions, or any non-heading text. Choose the `as` tag for semantics (`p`, `label`, `em`) and `size`/`weight` for visual styling.',
+                ].join('\n'),
+            },
+        },
     },
     argTypes: {
         as: {

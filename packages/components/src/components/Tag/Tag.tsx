@@ -13,31 +13,35 @@ type TagSize = 'default' | 'small';
 
 type TagProps = {
     /**
-     * @default 'strong'
+     * Controls visual weight. `'strong'` for prominent tags, `'weak'` for subtle or secondary tags.
+     * @default "strong"
      */
     emphasis?: TagEmphasis;
     /**
-     * @default 'default'
+     * Controls the color scheme. `'default'` for neutral tags, `'highlight'` for visually distinct or active tags.
+     * @default "default"
      */
     variant?: TagStyle;
     /**
-     * @default 'default'
+     * Controls the tag size. `'default'` for standard use, `'small'` for compact layouts or inline usage.
+     * @default "default"
      */
     size?: TagSize;
     /**
+     * Prevents interaction and dims the tag visually.
      * @default false
      */
     disabled?: boolean;
     /**
-     * Click handler - when provided, the Tag renders as a button element
+     * Callback fired when the tag is clicked. When provided, the tag renders as a `<button>` element.
      */
     onClick?: (event?: MouseEvent<HTMLButtonElement>) => void;
     /**
-     * Click handler on dismiss - providing this will show the dismiss button
+     * Callback fired when the dismiss button is clicked. When provided, a dismiss icon is shown.
      */
     onDismiss?: (event?: MouseEvent<HTMLButtonElement>) => void;
     /**
-     * Click handler on add click - providing this will show the add button
+     * Callback fired when the add button is clicked. When provided, an add icon is shown.
      */
     onAddClick?: (event?: MouseEvent<HTMLButtonElement>) => void;
     title?: string;

@@ -23,6 +23,15 @@ const meta: Meta<typeof TextFieldRoot> = {
         status: {
             type: 'released',
         },
+        docs: {
+            description: {
+                component: [
+                    'A single-line text field for short-form input — names, emails, search queries, URLs. Supports slots for icons, buttons, or other decorations.',
+                    '',
+                    '**When to use:** For single-line text entry. For multi-line content use `<Textarea>`, for choosing from a predefined list use `<Select>`.',
+                ].join('\n'),
+            },
+        },
     },
     args: {
         placeholder: 'Placeholder',
