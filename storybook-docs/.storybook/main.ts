@@ -90,7 +90,7 @@ const config: StorybookConfig = {
             },
             current: {
                 title: 'Components',
-                url: `${pathPrefix}new`,
+                url: `http://localhost:6050`,
                 expanded: true,
             },
             charts: {
