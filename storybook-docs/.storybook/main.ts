@@ -80,32 +80,32 @@ const config: StorybookConfig = {
         return {
             tokens: {
                 title: 'Tokens',
-                url: `${pathPrefix}tokens/`,
+                url: `http://${process.env.URL_PREFIX ? `${process.env.URL_PREFIX}.` : ''}tokens.ffy-fondue.test/`,
                 expanded: true,
             },
             icons: {
                 title: 'Icons',
-                url: `${pathPrefix}icons`,
+                url: `http://${process.env.URL_PREFIX ? `${process.env.URL_PREFIX}.` : ''}icons.ffy-fondue.test/`,
                 expanded: true,
             },
             current: {
                 title: 'Components',
-                url: `http://localhost:6050`,
+                url: `http://${process.env.URL_PREFIX ? `${process.env.URL_PREFIX}.` : ''}components.ffy-fondue.test/`,
                 expanded: true,
             },
             charts: {
                 title: 'Charts',
-                url: `${pathPrefix}charts`,
+                url: `http://${process.env.URL_PREFIX ? `${process.env.URL_PREFIX}.` : ''}charts.ffy-fondue.test/`,
                 expanded: true,
             },
             legacy: {
                 title: 'Legacy',
-                url: `${pathPrefix}legacy`,
+                url: `http://${process.env.URL_PREFIX ? `${process.env.URL_PREFIX}.` : ''}legacy.ffy-fondue.test/`,
                 expanded: true,
             },
             rte: {
                 title: 'Rich Text Editor',
-                url: `${pathPrefix}rte`,
+                url: `http://${process.env.URL_PREFIX ? `${process.env.URL_PREFIX}.` : ''}rte.ffy-fondue.test/`,
                 expanded: true,
             },
         };

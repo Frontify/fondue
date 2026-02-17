@@ -5,20 +5,17 @@
     "private": true,
     "scripts": {
         "storybook": "storybook dev -p 6010",
-        "copy:ui:storybook": "mkdir -p storybook-static/new && cp -r ../packages/components/storybook-static/. storybook-static/new",
-        "copy:charts:storybook": "mkdir -p storybook-static/charts && cp -r ../packages/charts/storybook-static/. storybook-static/charts",
-        "copy:icons:storybook": "mkdir -p storybook-static/icons && cp -r ../packages/icons/storybook-static/. storybook-static/icons",
-        "copy:fondue:storybook": "mkdir -p storybook-static/legacy && cp -r ../packages/fondue/storybook-static/. storybook-static/legacy",
-        "copy:tokens:storybook": "mkdir -p storybook-static/tokens && cp -r ../packages/tokens/storybook-static/. storybook-static/tokens",
-        "copy:rte:storybook": "mkdir -p storybook-static/rte && cp -r ../packages/rte/storybook-static/. storybook-static/rte",
-        "build:storybook": "storybook build && pnpm run copy:ui:storybook && pnpm run copy:fondue:storybook && pnpm copy:charts:storybook && pnpm copy:icons:storybook && pnpm copy:tokens:storybook && pnpm copy:rte:storybook",
+        "copy:ui:storybook": "mkdir -p dist/components && cp -r ../packages/components/storybook-static/. dist/components",
+        "copy:charts:storybook": "mkdir -p dist/charts && cp -r ../packages/charts/storybook-static/. dist/charts",
+        "copy:icons:storybook": "mkdir -p dist/icons && cp -r ../packages/icons/storybook-static/. dist/icons",
+        "copy:fondue:storybook": "mkdir -p dist/legacy && cp -r ../packages/fondue/storybook-static/. dist/legacy",
+        "copy:tokens:storybook": "mkdir -p dist/tokens && cp -r ../packages/tokens/storybook-static/. dist/tokens",
+        "copy:rte:storybook": "mkdir -p dist/rte && cp -r ../packages/rte/storybook-static/. dist/rte",
+        "build:docs:storybook": "mkdir -p dist/docs && storybook build && cp -r storybook-static/. dist/docs",
+        "build:storybook": "pnpm build:docs:storybook && pnpm copy:ui:storybook && pnpm copy:fondue:storybook && pnpm copy:charts:storybook && pnpm copy:icons:storybook && pnpm copy:tokens:storybook && pnpm copy:rte:storybook",
         "lint": "eslint .",
         "lint:fix": "eslint --fix .",
         "typecheck": "tsc --noEmit"
-    },
-    "dependencies": {
-        "react": "^18.3.1",
-        "react-dom": "^18.3.1"
     },
     "devDependencies": {
         "@babel/core": "^7.28.4",
