@@ -4,8 +4,6 @@ import { type StorybookConfig } from '@storybook/react-vite';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const productionPathPrefix = process.env.STORYBOOK_PATH_PREFIX ? `${process.env.STORYBOOK_PATH_PREFIX}icons/` : '/';
-
 const getAbsolutePath = (packageName: string): string => {
     return dirname(fileURLToPath(import.meta.resolve(packageName)));
 };
@@ -35,21 +33,13 @@ export default {
         disableTelemetry: true,
     },
     managerHead: (head, { configType }) => {
-        if (configType === 'PRODUCTION' && process.env.STORYBOOK_PATH_PREFIX) {
-            const injections = [
-                `<link rel="shortcut icon" type="image/x-icon" href="${productionPathPrefix}favicon.ico">`,
-                `<script>window.PREVIEW_URL = '${productionPathPrefix}iframe.html'</script>`,
-            ];
-            return `${head}${injections.join('')}`;
+        if (configType === 'PRODUCTION') {
+            return `${head}<script>window.PREVIEW_URL = '/iframe.html'</script>`;
         }
 
         return head;
     },
     viteFinal(config, { configType }) {
-        if (configType === 'PRODUCTION' && process.env.STORYBOOK_PATH_PREFIX) {
-            config.base = productionPathPrefix;
-        }
-
         // @ts-expect-error untyped name property
         config.plugins = (config.plugins ?? []).filter((plugin) => plugin?.name !== 'vite:dts');
 

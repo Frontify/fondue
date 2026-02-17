@@ -5,8 +5,6 @@ import { fileURLToPath } from 'node:url';
 
 import { type StorybookConfig } from '@storybook/react-vite';
 
-const pathPrefix = process.env.STORYBOOK_PATH_PREFIX || '/';
-
 const getAbsolutePath = (packageName: string): string => {
     return dirname(fileURLToPath(import.meta.resolve(packageName)));
 };
@@ -109,6 +107,13 @@ const config: StorybookConfig = {
                 expanded: true,
             },
         };
+    },
+    managerHead: (head, { configType }) => {
+        if (configType === 'PRODUCTION') {
+            return `${head}<script>window.PREVIEW_URL = '/iframe.html'</script>`;
+        }
+
+        return head;
     },
     viteFinal: (viteConfig) => {
         const mdxReactShimPath = join(getAbsolutePath('@storybook/addon-docs'), 'mdx-react-shim.js');
