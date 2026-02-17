@@ -509,7 +509,7 @@
 <header>
   <div class="wrap">
     <h1>Components Manifest</h1>
-    <div class="summary"><a class="filter-pill all" data-k="all" href="#filter-all">All</a><span class="filter-pill ok" aria-disabled="true">35 components ok</span><a class="filter-pill info" data-k="infos" href="#filter-infos">35/35 infos</a><span class="filter-pill ok" aria-disabled="true">313 stories ok</span></div>
+    <div class="summary"><a class="filter-pill all" data-k="all" href="#filter-all">All</a><span class="filter-pill ok" aria-disabled="true">35 components ok</span><a class="filter-pill info" data-k="infos" href="#filter-infos">35/35 infos</a><span class="filter-pill ok" aria-disabled="true">315 stories ok</span></div>
   </div>
 </header>
 <main>
@@ -2427,7 +2427,7 @@ onFormatChange?: (format: ColorFormat) =&gt; void = () =&gt; {}</code></pre>
       <div class="badges">
         <label for="c-7-components-dialog-props" class="badge ok as-toggle">10 prop types</label>
         <label for="c-7-components-dialog-info" class="badge info as-toggle">1 info</label>
-        <label for="c-7-components-dialog-stories" class="badge ok as-toggle">27 stories</label>
+        <label for="c-7-components-dialog-stories" class="badge ok as-toggle">28 stories</label>
       </div>
     </div>
     <div class="meta" title="./src/components/Dialog/Dialog.stories.tsx">components-dialog · ./src/components/Dialog/Dialog.stories.tsx</div>
@@ -2529,6 +2529,7 @@ verticalAlign?: &#39;top&#39; | &#39;center&#39; = &#39;center&#39;</code></pre>
     Flex,
     Flyout,
     ScrollArea,
+    Tabs,
     TextInput,
     Tooltip,
 } from "@frontify/fondue-components";</code></pre>
@@ -3456,6 +3457,139 @@ verticalAlign?: &#39;top&#39; | &#39;center&#39; = &#39;center&#39;</code></pre>
                 &lt;/Dialog.Content&gt;
             &lt;/Dialog.Root&gt;
         &lt;/Flex&gt;
+    );
+};</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">WithTabsInContent</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const WithTabsInContent = () =&gt; {
+    return (
+        &lt;Dialog.Root&gt;
+            &lt;Dialog.Trigger&gt;
+                &lt;Button&gt;Open Settings Dialog&lt;/Button&gt;
+            &lt;/Dialog.Trigger&gt;
+            &lt;Dialog.Content padding=&quot;none&quot; minWidth=&quot;min(800px, 95vw)&quot; minHeight=&quot;min(500px, 80vh)&quot;&gt;
+                {/* Screen reader only title and description for accessibility */}
+                &lt;Dialog.Title screenReaderOnly&gt;Settings&lt;/Dialog.Title&gt;
+                &lt;Dialog.Description screenReaderOnly&gt;Manage your application settings&lt;/Dialog.Description&gt;
+                &lt;Dialog.Body padding=&quot;none&quot;&gt;
+                    &lt;Tabs.Root variant=&quot;pill&quot; withDivider padding=&quot;none&quot;&gt;
+                        &lt;Tabs.Tab value=&quot;general&quot;&gt;
+                            &lt;Tabs.Trigger&gt;General&lt;/Tabs.Trigger&gt;
+                            &lt;Tabs.Content&gt;
+                                &lt;div style={{ padding: &#39;24px&#39; }}&gt;
+                                    &lt;h3 style={{ marginTop: 0, marginBottom: &#39;16px&#39;, fontSize: &#39;16px&#39; }}&gt;
+                                        &lt;strong&gt;Search&lt;/strong&gt;
+                                    &lt;/h3&gt;
+                                    &lt;div style={{ marginBottom: &#39;24px&#39; }}&gt;
+                                        &lt;div style={{ marginBottom: &#39;8px&#39;, fontWeight: 500 }}&gt;Cross-guideline search
+                                                                                        &lt;/div&gt;
+                                        &lt;p
+                                            style={{
+                                                margin: 0,
+                                                color: &#39;var(--color-secondary-default)&#39;,
+                                                fontSize: &#39;14px&#39;,
+                                            }}&gt;Allow users to find results from all the guidelines they have access to
+                                                                                            within the current brand.
+                                                                                        &lt;/p&gt;
+                                    &lt;/div&gt;
+                                    &lt;h3 style={{ marginBottom: &#39;16px&#39;, fontSize: &#39;16px&#39; }}&gt;
+                                        &lt;strong&gt;Action Toolbar&lt;/strong&gt;
+                                    &lt;/h3&gt;
+                                    &lt;div style={{ marginBottom: &#39;16px&#39; }}&gt;
+                                        &lt;div style={{ marginBottom: &#39;8px&#39;, fontWeight: 500 }}&gt;Apps&lt;/div&gt;
+                                        &lt;p
+                                            style={{
+                                                margin: 0,
+                                                color: &#39;var(--color-secondary-default)&#39;,
+                                                fontSize: &#39;14px&#39;,
+                                            }}&gt;Make any installed apps for guidelines available for all logged-in
+                                                                                            users.
+                                                                                        &lt;/p&gt;
+                                    &lt;/div&gt;
+                                    &lt;div style={{ marginBottom: &#39;16px&#39; }}&gt;
+                                        &lt;div style={{ marginBottom: &#39;8px&#39;, fontWeight: 500 }}&gt;Copy link&lt;/div&gt;
+                                        &lt;p
+                                            style={{
+                                                margin: 0,
+                                                color: &#39;var(--color-secondary-default)&#39;,
+                                                fontSize: &#39;14px&#39;,
+                                            }}&gt;Enable logged-in users to quickly copy and share links to guideline
+                                                                                            pages.
+                                                                                        &lt;/p&gt;
+                                    &lt;/div&gt;
+                                &lt;/div&gt;
+                            &lt;/Tabs.Content&gt;
+                        &lt;/Tabs.Tab&gt;
+                        &lt;Tabs.Tab value=&quot;team&quot;&gt;
+                            &lt;Tabs.Trigger&gt;Team&lt;/Tabs.Trigger&gt;
+                            &lt;Tabs.Content&gt;
+                                &lt;div style={{ padding: &#39;24px&#39; }}&gt;
+                                    &lt;h3 style={{ marginTop: 0, marginBottom: &#39;16px&#39; }}&gt;
+                                        &lt;strong&gt;Team Settings&lt;/strong&gt;
+                                    &lt;/h3&gt;
+                                    &lt;p&gt;Manage team members, roles, and permissions for your organization.&lt;/p&gt;
+                                &lt;/div&gt;
+                            &lt;/Tabs.Content&gt;
+                        &lt;/Tabs.Tab&gt;
+                        &lt;Tabs.Tab value=&quot;targets&quot;&gt;
+                            &lt;Tabs.Trigger&gt;Targets&lt;/Tabs.Trigger&gt;
+                            &lt;Tabs.Content&gt;
+                                &lt;div style={{ padding: &#39;24px&#39; }}&gt;
+                                    &lt;h3 style={{ marginTop: 0, marginBottom: &#39;16px&#39; }}&gt;
+                                        &lt;strong&gt;Target Settings&lt;/strong&gt;
+                                    &lt;/h3&gt;
+                                    &lt;p&gt;Configure deployment targets and environments for your projects.&lt;/p&gt;
+                                &lt;/div&gt;
+                            &lt;/Tabs.Content&gt;
+                        &lt;/Tabs.Tab&gt;
+                        &lt;Tabs.Tab value=&quot;share&quot;&gt;
+                            &lt;Tabs.Trigger&gt;Share&lt;/Tabs.Trigger&gt;
+                            &lt;Tabs.Content&gt;
+                                &lt;div style={{ padding: &#39;24px&#39; }}&gt;
+                                    &lt;h3 style={{ marginTop: 0, marginBottom: &#39;16px&#39; }}&gt;
+                                        &lt;strong&gt;Share Settings&lt;/strong&gt;
+                                    &lt;/h3&gt;
+                                    &lt;p&gt;Control how content is shared with external users and collaborators.&lt;/p&gt;
+                                &lt;/div&gt;
+                            &lt;/Tabs.Content&gt;
+                        &lt;/Tabs.Tab&gt;
+                        &lt;Tabs.Tab value=&quot;analytics&quot;&gt;
+                            &lt;Tabs.Trigger&gt;Analytics&lt;/Tabs.Trigger&gt;
+                            &lt;Tabs.Content&gt;
+                                &lt;div style={{ padding: &#39;24px&#39; }}&gt;
+                                    &lt;h3 style={{ marginTop: 0, marginBottom: &#39;16px&#39; }}&gt;
+                                        &lt;strong&gt;Analytics Settings&lt;/strong&gt;
+                                    &lt;/h3&gt;
+                                    &lt;p&gt;View and configure analytics tracking and reporting options.&lt;/p&gt;
+                                &lt;/div&gt;
+                            &lt;/Tabs.Content&gt;
+                        &lt;/Tabs.Tab&gt;
+                        &lt;Tabs.Tab value=&quot;changelog&quot;&gt;
+                            &lt;Tabs.Trigger&gt;Changelog&lt;/Tabs.Trigger&gt;
+                            &lt;Tabs.Content&gt;
+                                &lt;div style={{ padding: &#39;24px&#39; }}&gt;
+                                    &lt;h3 style={{ marginTop: 0, marginBottom: &#39;16px&#39; }}&gt;
+                                        &lt;strong&gt;Changelog&lt;/strong&gt;
+                                    &lt;/h3&gt;
+                                    &lt;p&gt;View recent changes and updates to your application settings.&lt;/p&gt;
+                                &lt;/div&gt;
+                            &lt;/Tabs.Content&gt;
+                        &lt;/Tabs.Tab&gt;
+                    &lt;/Tabs.Root&gt;
+                &lt;/Dialog.Body&gt;
+                &lt;Dialog.Footer showBorder padding=&quot;compact&quot;&gt;
+                    &lt;Dialog.Close&gt;
+                        &lt;Button&gt;Close&lt;/Button&gt;
+                    &lt;/Dialog.Close&gt;
+                &lt;/Dialog.Footer&gt;
+            &lt;/Dialog.Content&gt;
+        &lt;/Dialog.Root&gt;
     );
 };</code></pre>
             </div>
@@ -8684,7 +8818,10 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
               
               <pre><code>const SimpleSelect = () =&gt; {
     return (
-        &lt;Select aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot;&gt;
+        &lt;Select
+            aria-label=&quot;Select an item&quot;
+            placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}&gt;
             &lt;Select.Item value=&quot;test1&quot;&gt;Test1&lt;/Select.Item&gt;
             &lt;Select.Item value=&quot;test2&quot;&gt;Test2&lt;/Select.Item&gt;
             &lt;Select.Item value=&quot;test3&quot;&gt;Test3&lt;/Select.Item&gt;
@@ -8701,7 +8838,10 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
               
               <pre><code>const MultipleSelect = () =&gt; {
     return (
-        &lt;Select.Multiple aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot;&gt;
+        &lt;Select.Multiple
+            aria-label=&quot;Select an item&quot;
+            placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}&gt;
             &lt;Select.Item value=&quot;test1&quot;&gt;Test1&lt;/Select.Item&gt;
             &lt;Select.Item value=&quot;test2&quot;&gt;Test2&lt;/Select.Item&gt;
             &lt;Select.Item value=&quot;test3&quot;&gt;Test3&lt;/Select.Item&gt;
@@ -8718,7 +8858,10 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
               
               <pre><code>const Combobox = () =&gt; {
     return (
-        &lt;Select.Combobox aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot;&gt;
+        &lt;Select.Combobox
+            aria-label=&quot;Select an item&quot;
+            placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}&gt;
             &lt;Select.Item value=&quot;test1&quot;&gt;Test1&lt;/Select.Item&gt;
             &lt;Select.Item value=&quot;test2&quot;&gt;Test2&lt;/Select.Item&gt;
             &lt;Select.Item value=&quot;test3&quot;&gt;Test3&lt;/Select.Item&gt;
@@ -8771,6 +8914,7 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
         &lt;Select.Combobox
             aria-label=&quot;Select an item&quot;
             placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}
             getAsyncItems={async (filterText: string) =&gt; {
                 const items = [
                     {
@@ -8825,7 +8969,11 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
               
               <pre><code>const Disabled = () =&gt; {
     return (
-        &lt;Select aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot; disabled&gt;
+        &lt;Select
+            aria-label=&quot;Select an item&quot;
+            placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}
+            disabled&gt;
             &lt;Select.Slot name=&quot;menu&quot;&gt;
                 &lt;Select.Item value=&quot;test1&quot;&gt;Test1&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test2&quot;&gt;Test2&lt;/Select.Item&gt;
@@ -8844,7 +8992,10 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
               
               <pre><code>const WithPlaceholder = () =&gt; {
     return (
-        &lt;Select aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot;&gt;
+        &lt;Select
+            aria-label=&quot;Select an item&quot;
+            placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}&gt;
             &lt;Select.Slot name=&quot;menu&quot;&gt;
                 &lt;Select.Item value=&quot;test1&quot;&gt;Test1&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test2&quot;&gt;Test2&lt;/Select.Item&gt;
@@ -8863,7 +9014,10 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
               
               <pre><code>const WithDecorator = () =&gt; {
     return (
-        &lt;Select aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot;&gt;
+        &lt;Select
+            aria-label=&quot;Select an item&quot;
+            placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}&gt;
             &lt;Select.Slot name=&quot;left&quot;&gt;
                 &lt;IconIcon size={16} /&gt;
             &lt;/Select.Slot&gt;
@@ -8888,7 +9042,10 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
               
               <pre><code>const Clearable = () =&gt; {
     return (
-        &lt;Select aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot;&gt;
+        &lt;Select
+            aria-label=&quot;Select an item&quot;
+            placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}&gt;
             &lt;Select.Slot name=&quot;right&quot;&gt;
                 &lt;IconIcon size={16} /&gt;
             &lt;/Select.Slot&gt;
@@ -8911,7 +9068,10 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
               
               <pre><code>const CustomClearElement = () =&gt; {
     return (
-        &lt;Select aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot;&gt;
+        &lt;Select
+            aria-label=&quot;Select an item&quot;
+            placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}&gt;
             &lt;Select.Slot name=&quot;clear&quot;&gt;
                 &lt;Button size=&quot;small&quot; emphasis=&quot;strong&quot; onPress={() =&gt; {}}&gt;Clear
                                         &lt;/Button&gt;
@@ -8943,6 +9103,7 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
         &lt;Select
             aria-label=&quot;Select an item&quot;
             placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}
             defaultValue=&quot;test1&quot;&gt;
             &lt;Select.Slot name=&quot;menu&quot;&gt;
                 &lt;Select.Item value=&quot;test1&quot;&gt;Test1&lt;/Select.Item&gt;
@@ -8962,7 +9123,10 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
               
               <pre><code>const ItemGroups = () =&gt; {
     return (
-        &lt;Select aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot;&gt;
+        &lt;Select
+            aria-label=&quot;Select an item&quot;
+            placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}&gt;
             &lt;Select.Slot name=&quot;menu&quot;&gt;
                 &lt;Select.Item value=&quot;test1&quot;&gt;Test1&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test2&quot;&gt;Test2&lt;/Select.Item&gt;
@@ -8986,7 +9150,10 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
               
               <pre><code>const ItemGroupsWithHeaders = () =&gt; {
     return (
-        &lt;Select aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot;&gt;
+        &lt;Select
+            aria-label=&quot;Select an item&quot;
+            placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}&gt;
             &lt;Select.Slot name=&quot;menu&quot;&gt;
                 &lt;Select.Item value=&quot;test1&quot;&gt;Test1&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test2&quot;&gt;Test2&lt;/Select.Item&gt;
@@ -9015,7 +9182,10 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
               
               <pre><code>const OnlyItemGroups = () =&gt; {
     return (
-        &lt;Select aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot;&gt;
+        &lt;Select
+            aria-label=&quot;Select an item&quot;
+            placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}&gt;
             &lt;Select.Slot name=&quot;menu&quot;&gt;
                 &lt;Select.Group groupId=&quot;Group 1&quot;&gt;
                     &lt;Select.Item value=&quot;test1&quot;&gt;Test1&lt;/Select.Item&gt;
@@ -9040,7 +9210,10 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
               
               <pre><code>const CustomItem = () =&gt; {
     return (
-        &lt;Select aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot;&gt;
+        &lt;Select
+            aria-label=&quot;Select an item&quot;
+            placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}&gt;
             &lt;Select.Slot name=&quot;menu&quot;&gt;
                 &lt;Select.Item value=&quot;ch&quot; label=&quot;Switzerland&quot;&gt;
                     &lt;div className=&quot;tw-flex tw-items-center tw-gap-4&quot;&gt;
@@ -9073,6 +9246,7 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
         &lt;Select
             aria-label=&quot;Select an item&quot;
             placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}
             showStringValue={false}&gt;
             &lt;Select.Slot name=&quot;menu&quot;&gt;
                 &lt;Select.Item value=&quot;ch&quot; label=&quot;Switzerland&quot;&gt;
@@ -9134,7 +9308,10 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
               <pre><code>const OverflowingText = () =&gt; {
     return (
         &lt;div style={{ display: &#39;flex&#39;, gap: 8, maxWidth: 600 }}&gt;
-            &lt;Select aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot;&gt;
+            &lt;Select
+                aria-label=&quot;Select an item&quot;
+                placeholder=&quot;Select an item&quot;
+                onSelect={action(&#39;onSelect&#39;)}&gt;
                 &lt;Select.Item value=&quot;test1&quot;&gt;Test1 - This is a very long text to see how it overflows This is a very long text to see how it
                                             overflows This is a very long text to see how it overflows y long text to see how it overflows
                                             This is a very long text to see how it overflows This is a very long text to see how it
@@ -9144,12 +9321,18 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
                 &lt;Select.Item value=&quot;test2&quot;&gt;Test2&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test3&quot;&gt;Test3&lt;/Select.Item&gt;
             &lt;/Select&gt;
-            &lt;Select.Combobox aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot;&gt;
+            &lt;Select.Combobox
+                aria-label=&quot;Select an item&quot;
+                placeholder=&quot;Select an item&quot;
+                onSelect={action(&#39;onSelect&#39;)}&gt;
                 &lt;Select.Item value=&quot;test1&quot;&gt;Test1 - This is a very long text to see how it overflows&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test2&quot;&gt;Test2&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test3&quot;&gt;Test3&lt;/Select.Item&gt;
             &lt;/Select.Combobox&gt;
-            &lt;Select.Combobox aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot;&gt;
+            &lt;Select.Combobox
+                aria-label=&quot;Select an item&quot;
+                placeholder=&quot;Select an item&quot;
+                onSelect={action(&#39;onSelect&#39;)}&gt;
                 &lt;Select.Item value=&quot;test1&quot;&gt;Test1 - This is a very long text to see how it overflows&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test2&quot;&gt;Test2&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test3&quot;&gt;Test3&lt;/Select.Item&gt;
@@ -9168,7 +9351,10 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
               <pre><code>const ListOverflow = () =&gt; {
     return (
         &lt;&gt;
-            &lt;Select aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot;&gt;
+            &lt;Select
+                aria-label=&quot;Select an item&quot;
+                placeholder=&quot;Select an item&quot;
+                onSelect={action(&#39;onSelect&#39;)}&gt;
                 &lt;Select.Item value=&quot;test1&quot;&gt;Test1&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test2&quot;&gt;Test2&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test3&quot;&gt;Test3&lt;/Select.Item&gt;
@@ -9177,7 +9363,10 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
                 &lt;Select.Item value=&quot;test6&quot;&gt;Test6&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test7&quot;&gt;Test7&lt;/Select.Item&gt;
             &lt;/Select&gt;
-            &lt;Select aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot;&gt;
+            &lt;Select
+                aria-label=&quot;Select an item&quot;
+                placeholder=&quot;Select an item&quot;
+                onSelect={action(&#39;onSelect&#39;)}&gt;
                 &lt;Select.Item value=&quot;test1&quot;&gt;Test1&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test2&quot;&gt;Test2&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test3&quot;&gt;Test3&lt;/Select.Item&gt;
@@ -9186,7 +9375,10 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
                 &lt;Select.Item value=&quot;test6&quot;&gt;Test6&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test7&quot;&gt;Test7&lt;/Select.Item&gt;
             &lt;/Select&gt;
-            &lt;Select aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot;&gt;
+            &lt;Select
+                aria-label=&quot;Select an item&quot;
+                placeholder=&quot;Select an item&quot;
+                onSelect={action(&#39;onSelect&#39;)}&gt;
                 &lt;Select.Item value=&quot;test1&quot;&gt;Test1&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test2&quot;&gt;Test2&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test3&quot;&gt;Test3&lt;/Select.Item&gt;
@@ -9195,7 +9387,10 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
                 &lt;Select.Item value=&quot;test6&quot;&gt;Test6&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test7&quot;&gt;Test7&lt;/Select.Item&gt;
             &lt;/Select&gt;
-            &lt;Select aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot;&gt;
+            &lt;Select
+                aria-label=&quot;Select an item&quot;
+                placeholder=&quot;Select an item&quot;
+                onSelect={action(&#39;onSelect&#39;)}&gt;
                 &lt;Select.Item value=&quot;test1&quot;&gt;Test1&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test2&quot;&gt;Test2&lt;/Select.Item&gt;
                 &lt;Select.Item value=&quot;test3&quot;&gt;Test3&lt;/Select.Item&gt;
@@ -9217,7 +9412,11 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
               
               <pre><code>const Success = () =&gt; {
     return (
-        &lt;Select aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot; status=&quot;success&quot;&gt;
+        &lt;Select
+            aria-label=&quot;Select an item&quot;
+            placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}
+            status=&quot;success&quot;&gt;
             &lt;Select.Item value=&quot;test1&quot;&gt;Test1&lt;/Select.Item&gt;
             &lt;Select.Item value=&quot;test2&quot;&gt;Test2&lt;/Select.Item&gt;
             &lt;Select.Item value=&quot;test3&quot;&gt;Test3&lt;/Select.Item&gt;
@@ -9234,7 +9433,11 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
               
               <pre><code>const Errored = () =&gt; {
     return (
-        &lt;Select.Combobox aria-label=&quot;Select an item&quot; placeholder=&quot;Select an item&quot; status=&quot;error&quot;&gt;
+        &lt;Select.Combobox
+            aria-label=&quot;Select an item&quot;
+            placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}
+            status=&quot;error&quot;&gt;
             &lt;Select.Item value=&quot;test1&quot;&gt;Test1&lt;/Select.Item&gt;
             &lt;Select.Item value=&quot;test2&quot;&gt;Test2&lt;/Select.Item&gt;
             &lt;Select.Item value=&quot;test3&quot;&gt;Test3&lt;/Select.Item&gt;
@@ -9254,6 +9457,7 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
         &lt;Select
             aria-label=&quot;Select an item&quot;
             placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}
             onEscapeKeyDown={() =&gt; {
                 alert(&#39;Escape key was pressed!&#39;);
             }}&gt;
@@ -9276,6 +9480,7 @@ viewportCollisionPadding?: &#39;compact&#39; | &#39;spacious&#39;</code></pre>
         &lt;Select.Combobox
             aria-label=&quot;Select an item&quot;
             placeholder=&quot;Select an item&quot;
+            onSelect={action(&#39;onSelect&#39;)}
             onEscapeKeyDown={() =&gt; {
                 alert(&#39;Escape key was pressed!&#39;);
             }}&gt;
@@ -11366,9 +11571,9 @@ sticky?: &#39;head&#39; | &#39;col&#39; | &#39;both&#39;</code></pre>
     <div class="title">
       <h2><span class="status-dot dot-ok"></span> TabsRoot</h2>
       <div class="badges">
-        <label for="c-28-components-tabs-props" class="badge ok as-toggle">8 prop types</label>
+        <label for="c-28-components-tabs-props" class="badge ok as-toggle">9 prop types</label>
         <label for="c-28-components-tabs-info" class="badge info as-toggle">1 info</label>
-        <label for="c-28-components-tabs-stories" class="badge ok as-toggle">13 stories</label>
+        <label for="c-28-components-tabs-stories" class="badge ok as-toggle">14 stories</label>
       </div>
     </div>
     <div class="meta" title="./src/components/Tabs/Tabs.stories.tsx">components-tabs · ./src/components/Tabs/Tabs.stories.tsx</div>
@@ -11398,7 +11603,7 @@ sticky?: &#39;head&#39; | &#39;col&#39; | &#39;both&#39;</code></pre>
           <div class="note ok">
             <div class="row">
               <span class="ex-name">Prop types</span>
-              <span class="badge ok">8 prop types</span>
+              <span class="badge ok">9 prop types</span>
             </div>
             <pre><code>Component: src/components/Tabs/Tabs.tsx::TabsRoot</code></pre>
             <pre><code>Props:</code></pre>
@@ -11436,9 +11641,17 @@ size?: &#39;medium&#39; | &#39;large&#39; = &#39;medium&#39;
 
 /**
  * Select the used variant
- * “default &#39;default&#39;
+ * @default &#39;default&#39;
  */
-variant?: &#39;default&#39; | &#39;pill&#39; = &#39;default&#39;</code></pre>
+variant?: &#39;default&#39; | &#39;pill&#39; = &#39;default&#39;
+
+/**
+ * Add a divider line below the tabs
+ * Only available when variant is &#39;pill&#39;
+ * Useful for tabs placed inside Dialog content
+ * @default false
+ */
+withDivider?: boolean = false</code></pre>
           </div>
         </div>
     
@@ -11911,6 +12124,71 @@ variant?: &#39;default&#39; | &#39;pill&#39; = &#39;default&#39;</code></pre>
                                 et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
                                 aliquip ex ea commodo consequat.
                             &lt;/Tabs.Content&gt;
+    &lt;/Tabs.Tab&gt;
+&lt;/Tabs.Root&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">PillVariantWithDivider</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const PillVariantWithDivider = () =&gt; &lt;Tabs.Root
+    variant=&quot;pill&quot;
+    withDivider
+    onActiveTabChange={action(&#39;onActiveTabChange&#39;)}&gt;
+    &lt;Tabs.Tab value=&quot;general&quot;&gt;
+        &lt;Tabs.Trigger&gt;General&lt;/Tabs.Trigger&gt;
+        &lt;Tabs.Content&gt;
+            &lt;b&gt;General Settings&lt;/b&gt;
+            &lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+                                        labore et dolore magna aliqua.
+                                    &lt;/p&gt;
+        &lt;/Tabs.Content&gt;
+    &lt;/Tabs.Tab&gt;
+    &lt;Tabs.Tab value=&quot;team&quot;&gt;
+        &lt;Tabs.Trigger&gt;Team&lt;/Tabs.Trigger&gt;
+        &lt;Tabs.Content&gt;
+            &lt;b&gt;Team Settings&lt;/b&gt;
+            &lt;p&gt;Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                                        consequat.
+                                    &lt;/p&gt;
+        &lt;/Tabs.Content&gt;
+    &lt;/Tabs.Tab&gt;
+    &lt;Tabs.Tab value=&quot;targets&quot;&gt;
+        &lt;Tabs.Trigger&gt;Targets&lt;/Tabs.Trigger&gt;
+        &lt;Tabs.Content&gt;
+            &lt;b&gt;Target Settings&lt;/b&gt;
+            &lt;p&gt;Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+                                        pariatur.
+                                    &lt;/p&gt;
+        &lt;/Tabs.Content&gt;
+    &lt;/Tabs.Tab&gt;
+    &lt;Tabs.Tab value=&quot;share&quot;&gt;
+        &lt;Tabs.Trigger&gt;Share&lt;/Tabs.Trigger&gt;
+        &lt;Tabs.Content&gt;
+            &lt;b&gt;Share Settings&lt;/b&gt;
+            &lt;p&gt;Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim
+                                        id est laborum.
+                                    &lt;/p&gt;
+        &lt;/Tabs.Content&gt;
+    &lt;/Tabs.Tab&gt;
+    &lt;Tabs.Tab value=&quot;analytics&quot;&gt;
+        &lt;Tabs.Trigger&gt;Analytics&lt;/Tabs.Trigger&gt;
+        &lt;Tabs.Content&gt;
+            &lt;b&gt;Analytics Settings&lt;/b&gt;
+            &lt;p&gt;Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque
+                                        laudantium.
+                                    &lt;/p&gt;
+        &lt;/Tabs.Content&gt;
+    &lt;/Tabs.Tab&gt;
+    &lt;Tabs.Tab value=&quot;changelog&quot;&gt;
+        &lt;Tabs.Trigger&gt;Changelog&lt;/Tabs.Trigger&gt;
+        &lt;Tabs.Content&gt;
+            &lt;b&gt;Changelog&lt;/b&gt;
+            &lt;p&gt;At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium.&lt;/p&gt;
+        &lt;/Tabs.Content&gt;
     &lt;/Tabs.Tab&gt;
 &lt;/Tabs.Root&gt;;</code></pre>
             </div>
