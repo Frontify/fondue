@@ -13,6 +13,7 @@ $radius-without-border: calc(var(--border-radius-medium) - var(--border-width-de
     width: 100%;
     height: 100%;
     box-sizing: border-box;
+    min-height: 0;
 
     // When used inside a Dialog grid layout, span all columns
     &[data-tabs-with-divider='true'] {
@@ -194,4 +195,7 @@ $radius-without-border: calc(var(--border-radius-medium) - var(--border-width-de
 
 .content {
     color: var(--color-primary-default);
+    min-height: 0;
+    flex: 1;
+    overflow: hidden;
 }
