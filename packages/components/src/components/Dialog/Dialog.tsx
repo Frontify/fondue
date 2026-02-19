@@ -145,7 +145,15 @@ export type DialogSideContentProps = { children?: ReactNode; 'data-test-id'?: st
 
 export type DialogCloseProps = { children?: ReactNode };
 
-export type DialogAnnouncementProps = { children?: ReactNode; asChild?: boolean };
+export type DialogAnnouncementProps = {
+    children?: ReactNode;
+    asChild?: boolean;
+    /**
+     * Visually hide the element while keeping it accessible to screen readers
+     * @default false
+     */
+    screenReaderOnly?: boolean;
+};
 
 type DialogContextType = {
     isModal: boolean;
@@ -367,12 +375,62 @@ export const DialogClose = ({ children }: DialogCloseProps) => {
 };
 DialogClose.displayName = 'Dialog.Close';
 
-export const DialogTitle = ({ children, asChild }: DialogAnnouncementProps) => {
+export const DialogTitle = ({ children, asChild, screenReaderOnly = false }: DialogAnnouncementProps) => {
+    if (screenReaderOnly && !asChild) {
+        return (
+            <RadixDialog.Title asChild>
+                <span className={styles.screenReaderOnly}>{children}</span>
+            </RadixDialog.Title>
+        );
+    }
+
+    if (screenReaderOnly && asChild) {
+        // When using asChild with screenReaderOnly, apply className to the child
+        return (
+            <RadixDialog.Title asChild>
+                {typeof children === 'object' && children && 'props' in children
+                    ? {
+                          ...children,
+                          props: {
+                              ...children.props,
+                              className: `${children.props.className || ''} ${styles.screenReaderOnly}`.trim(),
+                          },
+                      }
+                    : children}
+            </RadixDialog.Title>
+        );
+    }
+
     return <RadixDialog.Title asChild={asChild}>{children}</RadixDialog.Title>;
 };
 DialogTitle.displayName = 'Dialog.Title';
 
-export const DialogDescription = ({ children, asChild }: DialogAnnouncementProps) => {
+export const DialogDescription = ({ children, asChild, screenReaderOnly = false }: DialogAnnouncementProps) => {
+    if (screenReaderOnly && !asChild) {
+        return (
+            <RadixDialog.Description asChild>
+                <span className={styles.screenReaderOnly}>{children}</span>
+            </RadixDialog.Description>
+        );
+    }
+
+    if (screenReaderOnly && asChild) {
+        // When using asChild with screenReaderOnly, apply className to the child
+        return (
+            <RadixDialog.Description asChild>
+                {typeof children === 'object' && children && 'props' in children
+                    ? {
+                          ...children,
+                          props: {
+                              ...children.props,
+                              className: `${children.props.className || ''} ${styles.screenReaderOnly}`.trim(),
+                          },
+                      }
+                    : children}
+            </RadixDialog.Description>
+        );
+    }
+
     return <RadixDialog.Description asChild={asChild}>{children}</RadixDialog.Description>;
 };
 DialogDescription.displayName = 'Dialog.Description';
