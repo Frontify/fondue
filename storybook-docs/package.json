@@ -5,13 +5,7 @@
     "private": true,
     "scripts": {
         "storybook": "storybook dev -p 6010",
-        "copy:ui:storybook": "mkdir -p storybook-static/new && cp -r ../packages/components/storybook-static/. storybook-static/new",
-        "copy:charts:storybook": "mkdir -p storybook-static/charts && cp -r ../packages/charts/storybook-static/. storybook-static/charts",
-        "copy:icons:storybook": "mkdir -p storybook-static/icons && cp -r ../packages/icons/storybook-static/. storybook-static/icons",
-        "copy:fondue:storybook": "mkdir -p storybook-static/legacy && cp -r ../packages/fondue/storybook-static/. storybook-static/legacy",
-        "copy:tokens:storybook": "mkdir -p storybook-static/tokens && cp -r ../packages/tokens/storybook-static/. storybook-static/tokens",
-        "copy:rte:storybook": "mkdir -p storybook-static/rte && cp -r ../packages/rte/storybook-static/. storybook-static/rte",
-        "build:storybook": "storybook build && pnpm run copy:ui:storybook && pnpm run copy:fondue:storybook && pnpm copy:charts:storybook && pnpm copy:icons:storybook && pnpm copy:tokens:storybook && pnpm copy:rte:storybook",
+        "build:storybook": "storybook build",
         "lint": "eslint .",
         "lint:fix": "eslint --fix .",
         "typecheck": "tsc --noEmit"
