@@ -9,6 +9,11 @@ const getAbsolutePath = (packageName: string): string => {
     return dirname(fileURLToPath(import.meta.resolve(packageName)));
 };
 
+const domain = process.env.STORYBOOK_DOMAIN ?? 'ffy-fondue.test';
+const prefix = process.env.URL_PREFIX ? `${process.env.URL_PREFIX}.` : '';
+
+const buildRefUrl = (subdomain: string): string => `http://${prefix}${subdomain}.${domain}/`;
+
 const config: StorybookConfig = {
     stories: ['../stories/**/*.mdx'],
     addons: [
@@ -34,6 +39,15 @@ const config: StorybookConfig = {
         disableTelemetry: true,
     },
     refs: (_config, { configType }) => {
+        console.log('[storybook refs]', {
+            configType,
+            URL_PREFIX: process.env.URL_PREFIX,
+            STORYBOOK_DOMAIN: process.env.STORYBOOK_DOMAIN,
+            domain,
+            prefix,
+            exampleUrl: buildRefUrl('components'),
+        });
+
         if (configType === 'DEVELOPMENT') {
             return {
                 tokens: {
@@ -78,32 +92,32 @@ const config: StorybookConfig = {
         return {
             tokens: {
                 title: 'Tokens',
-                url: `http://${process.env.URL_PREFIX ? `${process.env.URL_PREFIX}.` : ''}tokens.ffy-fondue.test/`,
+                url: buildRefUrl('tokens'),
                 expanded: true,
             },
             icons: {
                 title: 'Icons',
-                url: `http://${process.env.URL_PREFIX ? `${process.env.URL_PREFIX}.` : ''}icons.ffy-fondue.test/`,
+                url: buildRefUrl('icons'),
                 expanded: true,
             },
             current: {
                 title: 'Components',
-                url: `http://${process.env.URL_PREFIX ? `${process.env.URL_PREFIX}.` : ''}components.ffy-fondue.test/`,
+                url: buildRefUrl('components'),
                 expanded: true,
             },
             charts: {
                 title: 'Charts',
-                url: `http://${process.env.URL_PREFIX ? `${process.env.URL_PREFIX}.` : ''}charts.ffy-fondue.test/`,
+                url: buildRefUrl('charts'),
                 expanded: true,
             },
             legacy: {
                 title: 'Legacy',
-                url: `http://${process.env.URL_PREFIX ? `${process.env.URL_PREFIX}.` : ''}legacy.ffy-fondue.test/`,
+                url: buildRefUrl('legacy'),
                 expanded: true,
             },
             rte: {
                 title: 'Rich Text Editor',
-                url: `http://${process.env.URL_PREFIX ? `${process.env.URL_PREFIX}.` : ''}rte.ffy-fondue.test/`,
+                url: buildRefUrl('rte'),
                 expanded: true,
             },
         };

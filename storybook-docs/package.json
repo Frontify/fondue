@@ -11,8 +11,9 @@
         "copy:fondue:storybook": "mkdir -p dist/legacy && cp -r ../packages/fondue/storybook-static/. dist/legacy",
         "copy:tokens:storybook": "mkdir -p dist/tokens && cp -r ../packages/tokens/storybook-static/. dist/tokens",
         "copy:rte:storybook": "mkdir -p dist/rte && cp -r ../packages/rte/storybook-static/. dist/rte",
-        "build:docs:storybook": "mkdir -p dist/docs && storybook build && cp -r storybook-static/. dist/docs",
-        "build:storybook": "pnpm build:docs:storybook && pnpm copy:ui:storybook && pnpm copy:fondue:storybook && pnpm copy:charts:storybook && pnpm copy:icons:storybook && pnpm copy:tokens:storybook && pnpm copy:rte:storybook",
+        "build:docs": "mkdir -p dist/docs && storybook build && cp -r storybook-static/. dist/docs",
+        "build:storybook": "pnpm build:docs && pnpm copy:ui:storybook && pnpm copy:charts:storybook && pnpm copy:icons:storybook && pnpm copy:fondue:storybook && pnpm copy:tokens:storybook && pnpm copy:rte:storybook",
+        "docker": "docker rm -f fondue-storybook 2>/dev/null; docker buildx build -t fondue-storybook:local . && docker run --name fondue-storybook -p 5050:80 -e STORYBOOK_DOMAIN=${STORYBOOK_DOMAIN:-ffy-fondue.test} fondue-storybook:local",
         "lint": "eslint .",
         "lint:fix": "eslint --fix .",
         "typecheck": "tsc --noEmit"

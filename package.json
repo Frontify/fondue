@@ -18,6 +18,7 @@
         "build:storybook": "pnpm build && pnpm build:storybook:packages && pnpm build:storybook:main",
         "build:storybook:main": "pnpm --stream --filter {storybook-docs} build:storybook",
         "build:storybook:packages": "pnpm --stream --parallel --filter {packages/*} build:storybook",
+        "preview": "pnpm build:storybook && pnpm --stream --filter {storybook-docs} docker",
         "lint": "pnpm --stream --filter {packages/*} --filter {storybook-docs} lint",
         "storybook": "concurrently 'pnpm storybook:packages' 'pnpm storybook:main'",
         "storybook:main": "wait-on http://localhost:6005 http://localhost:6006 http://localhost:6007 http://localhost:6008 http://localhost:6009 http://localhost:6011 && pnpm --stream  --filter {storybook-docs} storybook",
