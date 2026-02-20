@@ -11,6 +11,14 @@ const getAbsolutePath = (packageName: string): string => {
     return dirname(fileURLToPath(import.meta.resolve(packageName)));
 };
 
+const getSubpackageURL = (subpackage: string): string => {
+    if (process.env.CONTEXT === 'deploy-preview' && process.env.DEPLOY_PREVIEW_PREFIX) {
+        return `https://deploy-preview-${process.env.DEPLOY_PREVIEW_PREFIX}--fondue-${subpackage}.netlify.app`;
+    } else {
+        return pathPrefix;
+    }
+};
+
 const config: StorybookConfig = {
     stories: ['../stories/**/*.mdx'],
     addons: [
@@ -79,33 +87,33 @@ const config: StorybookConfig = {
 
         return {
             tokens: {
-                title: 'Tokens',
-                url: `${pathPrefix}tokens/`,
+                title: `${process.env.CONTEXT ? process.env.CONTEXT : 'no context'} - Tokens`,
+                url: `${getSubpackageURL('tokens')}`,
                 expanded: true,
             },
             icons: {
-                title: 'Icons',
-                url: `${pathPrefix}icons`,
+                title: `${process.env.DEPLOY_PREVIEW_PREFIX ? `${process.env.DEPLOY_PREVIEW_PREFIX}` : 'no context'} - Icons`,
+                url: `${getSubpackageURL('icons')}`,
                 expanded: true,
             },
             current: {
                 title: 'Components',
-                url: `${pathPrefix}new`,
+                url: `${getSubpackageURL('components')}`,
                 expanded: true,
             },
             charts: {
                 title: 'Charts',
-                url: `${pathPrefix}charts`,
+                url: `${getSubpackageURL('charts')}`,
                 expanded: true,
             },
             legacy: {
                 title: 'Legacy',
-                url: `${pathPrefix}legacy`,
+                url: `${getSubpackageURL('legacy')}`,
                 expanded: true,
             },
             rte: {
                 title: 'Rich Text Editor',
-                url: `${pathPrefix}rte`,
+                url: `${getSubpackageURL('rte')}`,
                 expanded: true,
             },
         };
