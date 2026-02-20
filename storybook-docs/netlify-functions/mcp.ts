@@ -1,13 +1,13 @@
-import { createStorybookMcpHandler } from "@storybook/mcp";
-import { basename } from "node:path";
+/* (c) Copyright Frontify Ltd., all rights reserved. */
 
-const MANIFESTS_BASE = "https://fondue-components.netlify.app/manifests";
+import { basename } from 'node:path';
+
+import { createStorybookMcpHandler } from '@storybook/mcp';
+
+const MANIFESTS_BASE = 'https://fondue-components.netlify.app/manifests';
 
 const handler = await createStorybookMcpHandler({
-    manifestProvider: async (
-        request: Request | undefined,
-        path: string,
-    ): Promise<string> => {
+    manifestProvider: async (_request: Request | undefined, path: string): Promise<string> => {
         const url = `${MANIFESTS_BASE}/${basename(path)}`;
         const response = await fetch(url);
         if (!response.ok) {
@@ -22,6 +22,6 @@ export default async (req: Request): Promise<Response> => {
 };
 
 export const config = {
-    path: "/mcp",
+    path: '/mcp',
     preferStatic: true,
 };
