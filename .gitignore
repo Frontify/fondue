@@ -4,3 +4,6 @@ node_modules
 .vscode
 
 *storybook.log
+
+# Local Netlify folder
+.netlify

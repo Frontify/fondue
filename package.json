@@ -33,6 +33,9 @@
         "update": "taze -r -I major",
         "create:component": "pnpm --stream --filter {packages/components} create:component"
     },
+    "dependencies": {
+        "@storybook/mcp": "^0.4.0"
+    },
     "devDependencies": {
         "@changesets/changelog-github": "^0.5.2",
         "@changesets/cli": "^2.29.8",
