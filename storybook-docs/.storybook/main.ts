@@ -13,7 +13,7 @@ const getAbsolutePath = (packageName: string): string => {
 
 const getSubpackageURL = (subpackage: string): string => {
     if (process.env.CONTEXT === 'deploy-preview' && process.env.DEPLOY_PREVIEW_PREFIX) {
-        return `https://deploy-preview-${process.env.DEPLOY_PREVIEW_PREFIX}--fondue-${subpackage}.netlify.app`;
+        return `https://deploy-preview-${process.env.DEPLOY_PREVIEW_PREFIX}--fondue-${subpackage}.netlify.app/`;
     } else {
         return pathPrefix;
     }
@@ -87,12 +87,12 @@ const config: StorybookConfig = {
 
         return {
             tokens: {
-                title: `${process.env.CONTEXT ? process.env.CONTEXT : 'no context'} - Tokens`,
+                title: 'Tokens',
                 url: `${getSubpackageURL('tokens')}`,
                 expanded: true,
             },
             icons: {
-                title: `${process.env.DEPLOY_PREVIEW_PREFIX ? `${process.env.DEPLOY_PREVIEW_PREFIX}` : 'no context'} - Icons`,
+                title: 'Icons',
                 url: `${getSubpackageURL('icons')}`,
                 expanded: true,
             },
