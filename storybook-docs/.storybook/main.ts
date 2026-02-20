@@ -5,19 +5,17 @@ import { fileURLToPath } from 'node:url';
 
 import { type StorybookConfig } from '@storybook/react-vite';
 
-const pathPrefix = process.env.STORYBOOK_PATH_PREFIX || '/';
-
 const getAbsolutePath = (packageName: string): string => {
     return dirname(fileURLToPath(import.meta.resolve(packageName)));
 };
 
 const getSubpackageURL = (subpackage: string): string => {
-    if (process.env.CONTEXT === 'deploy-preview' && process.env.DEPLOY_PREVIEW_PREFIX) {
-        console.log('deploy-preview', process.env.DEPLOY_PREVIEW_PREFIX);
+    if (process.env.CONTEXT === 'deploy-preview' && process.env.REVIEW_ID) {
+        console.log('deploy-review-id', process.env.REVIEW_ID);
         console.log('subpackage', subpackage);
-        return `https://deploy-preview-${process.env.DEPLOY_PREVIEW_PREFIX}--fondue-${subpackage}.netlify.app/`;
+        return `https://deploy-preview-${process.env.REVIEW_ID}--fondue-${subpackage}.netlify.app/`;
     } else {
-        return pathPrefix;
+        return `https://fondue-${subpackage}.netlify.app/`;
     }
 };
 
