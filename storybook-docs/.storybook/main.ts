@@ -11,8 +11,6 @@ const getAbsolutePath = (packageName: string): string => {
 
 const getSubpackageURL = (subpackage: string): string => {
     if (process.env.CONTEXT === 'deploy-preview' && process.env.REVIEW_ID) {
-        console.log('deploy-review-id', process.env.REVIEW_ID);
-        console.log('subpackage', subpackage);
         return `https://deploy-preview-${process.env.REVIEW_ID}--fondue-${subpackage}.netlify.app/`;
     } else {
         return `https://fondue-${subpackage}.netlify.app/`;
