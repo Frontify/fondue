@@ -4,7 +4,7 @@ import { basename } from 'node:path';
 
 import { createStorybookMcpHandler } from '@storybook/mcp';
 
-const MANIFESTS_BASE = 'https://fondue-components.netlify.app/manifests';
+const MANIFESTS_BASE = 'https://components.fondue-components.frontify.com/manifests';
 
 const handler = await createStorybookMcpHandler({
     manifestProvider: async (_request: Request | undefined, path: string): Promise<string> => {
