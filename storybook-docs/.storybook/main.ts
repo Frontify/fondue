@@ -11,9 +11,9 @@ const getAbsolutePath = (packageName: string): string => {
 
 const getSubpackageURL = (subpackage: string): string => {
     if (process.env.CONTEXT === 'deploy-preview' && process.env.REVIEW_ID) {
-        return `https://deploy-preview-${process.env.REVIEW_ID}--fondue-${subpackage}.netlify.app/`;
+        return `https://deploy-preview-${process.env.REVIEW_ID}.${subpackage}.fondue-components.frontify.com/`;
     } else {
-        return `https://fondue-${subpackage}.netlify.app/`;
+        return `https://${subpackage}.fondue-components.frontify.com/`;
     }
 };
 
