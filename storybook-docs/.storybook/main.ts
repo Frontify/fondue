@@ -5,10 +5,16 @@ import { fileURLToPath } from 'node:url';
 
 import { type StorybookConfig } from '@storybook/react-vite';
 
-const pathPrefix = process.env.STORYBOOK_PATH_PREFIX || '/';
-
 const getAbsolutePath = (packageName: string): string => {
     return dirname(fileURLToPath(import.meta.resolve(packageName)));
+};
+
+const getSubpackageURL = (subpackage: string): string => {
+    if (process.env.CONTEXT === 'deploy-preview' && process.env.REVIEW_ID) {
+        return `https://deploy-preview-${process.env.REVIEW_ID}.${subpackage}.fondue-components.frontify.com/`;
+    } else {
+        return `https://${subpackage}.fondue-components.frontify.com/`;
+    }
 };
 
 const config: StorybookConfig = {
@@ -80,32 +86,32 @@ const config: StorybookConfig = {
         return {
             tokens: {
                 title: 'Tokens',
-                url: `${pathPrefix}tokens/`,
+                url: `${getSubpackageURL('tokens')}`,
                 expanded: true,
             },
             icons: {
                 title: 'Icons',
-                url: `${pathPrefix}icons`,
+                url: `${getSubpackageURL('icons')}`,
                 expanded: true,
             },
             current: {
                 title: 'Components',
-                url: `${pathPrefix}new`,
+                url: `${getSubpackageURL('components')}`,
                 expanded: true,
             },
             charts: {
                 title: 'Charts',
-                url: `${pathPrefix}charts`,
+                url: `${getSubpackageURL('charts')}`,
                 expanded: true,
             },
             legacy: {
                 title: 'Legacy',
-                url: `${pathPrefix}legacy`,
+                url: `${getSubpackageURL('legacy')}`,
                 expanded: true,
             },
             rte: {
                 title: 'Rich Text Editor',
-                url: `${pathPrefix}rte`,
+                url: `${getSubpackageURL('rte')}`,
                 expanded: true,
             },
         };

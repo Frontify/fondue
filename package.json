@@ -17,7 +17,12 @@
         "build:tokens": "pnpm --stream --filter {packages/tokens} build",
         "build:storybook": "pnpm build && pnpm build:storybook:packages && pnpm build:storybook:main",
         "build:storybook:main": "pnpm --stream --filter {storybook-docs} build:storybook",
-        "build:storybook:packages": "pnpm --stream --parallel --filter {packages/*} build:storybook",
+        "build:storybook:icons": "pnpm build:icons && pnpm --stream --filter {packages/icons} build:storybook",
+        "build:storybook:components": "pnpm build:icons && pnpm --stream --filter {packages/components} build:storybook",
+        "build:storybook:fondue": "pnpm build:icons && pnpm --stream --filter {packages/fondue} build:storybook",
+        "build:storybook:tokens": "pnpm build:icons && pnpm build:components && pnpm --stream --filter {packages/tokens} build:storybook",
+        "build:storybook:charts": "pnpm --stream --filter {packages/charts} build:storybook",
+        "build:storybook:rte": "pnpm build:icons && pnpm build:components && pnpm --stream --filter {packages/rte} build:storybook",
         "lint": "pnpm --stream --filter {packages/*} --filter {storybook-docs} lint",
         "storybook": "concurrently 'pnpm storybook:packages' 'pnpm storybook:main'",
         "storybook:main": "wait-on http://localhost:6005 http://localhost:6006 http://localhost:6007 http://localhost:6008 http://localhost:6009 http://localhost:6011 && pnpm --stream  --filter {storybook-docs} storybook",
@@ -27,6 +32,9 @@
         "release": "pnpm build && changeset tag && pnpm publish -r --access=public",
         "update": "taze -r -I major",
         "create:component": "pnpm --stream --filter {packages/components} create:component"
+    },
+    "dependencies": {
+        "@storybook/mcp": "^0.4.0"
     },
     "devDependencies": {
         "@changesets/changelog-github": "^0.5.2",
