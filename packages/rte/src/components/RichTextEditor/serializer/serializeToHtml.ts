@@ -6,11 +6,18 @@ import { type CSSProperties } from 'react';
 import { type PluginComposer, defaultPlugins } from '../Plugins';
 import { type MentionableItems } from '../Plugins/MentionPlugin';
 import { mapMentionable } from '../Plugins/MentionPlugin/helpers';
+import { MENTION_PLUGIN } from '../Plugins/MentionPlugin/id';
+import { type MentionPluginProps } from '../Plugins/MentionPlugin/types';
 import { defaultStyles } from '../utils';
 import { parseRawValue } from '../utils/parseRawValue';
 
 import { type CSSPropertiesHover } from './types';
 import { serializeNodeToHtmlRecursive } from './utils/serializeNodeToHtmlRecursive';
+
+const getMentionableFromPlugins = (plugins: PluginComposer): MentionableItems | undefined => {
+    const mentionPlugin = plugins.registeredPlugins.find((p) => p.id === MENTION_PLUGIN);
+    return (mentionPlugin?.props as MentionPluginProps | undefined)?.mentionableItems;
+};
 
 export const serializeRawToHtml = (
     raw: string,
@@ -21,7 +28,8 @@ export const serializeRawToHtml = (
 ): string => {
     const nodes = parseRawValue({ raw, plugins });
     const styles = plugins.getStyles;
-    return serializeNodesToHtml(nodes, { columns, columnGap, styles, customClass });
+    const mentionable = getMentionableFromPlugins(plugins);
+    return serializeNodesToHtml(nodes, { columns, columnGap, styles, customClass, mentionable });
 };
 export const serializeRawToHtmlAsync = async (
     raw: string,
@@ -32,7 +40,8 @@ export const serializeRawToHtmlAsync = async (
 ): Promise<string> => {
     const nodes = parseRawValue({ raw, plugins });
     const styles = plugins.getStyles;
-    return Promise.resolve(serializeNodesToHtml(nodes, { columns, columnGap, styles, customClass }));
+    const mentionable = getMentionableFromPlugins(plugins);
+    return Promise.resolve(serializeNodesToHtml(nodes, { columns, columnGap, styles, customClass, mentionable }));
 };
 
 export type SerializeNodesToHtmlOptions = {
