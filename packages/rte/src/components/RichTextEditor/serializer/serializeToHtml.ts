@@ -4,10 +4,8 @@ import { type TDescendant } from '@udecode/slate';
 import { type CSSProperties } from 'react';
 
 import { type PluginComposer, defaultPlugins } from '../Plugins';
-import { type MentionableItems } from '../Plugins/MentionPlugin';
+import { MentionPlugin, type MentionableItems } from '../Plugins/MentionPlugin';
 import { mapMentionable } from '../Plugins/MentionPlugin/helpers';
-import { MENTION_PLUGIN } from '../Plugins/MentionPlugin/id';
-import { type MentionPluginProps } from '../Plugins/MentionPlugin/types';
 import { defaultStyles } from '../utils';
 import { parseRawValue } from '../utils/parseRawValue';
 
@@ -15,8 +13,10 @@ import { type CSSPropertiesHover } from './types';
 import { serializeNodeToHtmlRecursive } from './utils/serializeNodeToHtmlRecursive';
 
 const getMentionableFromPlugins = (plugins: PluginComposer): MentionableItems | undefined => {
-    const mentionPlugin = plugins.registeredPlugins.find((p) => p.id === MENTION_PLUGIN);
-    return (mentionPlugin?.props as MentionPluginProps | undefined)?.mentionableItems;
+    const mentionPlugin = plugins.registeredPlugins.find((plugin) => {
+        return plugin instanceof MentionPlugin;
+    });
+    return mentionPlugin?.props?.mentionableItems;
 };
 
 export const serializeRawToHtml = (
