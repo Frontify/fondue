@@ -23,6 +23,7 @@ export class PluginComposer {
     private inlineElements: InlineData[] = [];
     private toolbarButtons: ToolbarButtons = new ToolbarPositionWithButtons();
     private styles: Record<string, CSSProperties> = {};
+    private originalPlugins: Plugin[] = [];
 
     constructor(protected props?: PluginComposerProps) {}
 
@@ -31,6 +32,7 @@ export class PluginComposer {
             const groupOfPlugins: Plugin[] = Array.isArray(group) ? group : [group];
 
             for (const plugin of groupOfPlugins) {
+                this.originalPlugins.push(plugin);
                 this.addElement(plugin.markupElement);
                 this.addElement(plugin.markupInputElement);
                 this.addLeafElements(plugin.leafMarkupElements);
@@ -142,5 +144,9 @@ export class PluginComposer {
 
     get getStyles(): Record<string, CSSProperties> {
         return this.styles;
+    }
+
+    get registeredPlugins(): readonly Plugin[] {
+        return this.originalPlugins;
     }
 }
