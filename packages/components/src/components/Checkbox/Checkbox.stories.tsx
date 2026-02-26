@@ -37,8 +37,8 @@ const meta: Meta<typeof CheckboxComponent> = {
         const labelId = `label-${id}`;
 
         const handleToggle = (event: FormEvent) => {
-            action('onChange')(event);
             setValue((prevIsChecked) => (prevIsChecked === 'indeterminate' ? true : !prevIsChecked));
+            action('onChange')(event);
         };
 
         return (
@@ -88,8 +88,8 @@ export const WithTooltip: Story = {
         const labelId = `label-${id}`;
 
         const handleToggle = (event: FormEvent) => {
-            action('onChange')(event);
             setValue((prevIsChecked) => (prevIsChecked === 'indeterminate' ? true : !prevIsChecked));
+            action('onChange')(event);
         };
 
         return (
@@ -115,8 +115,8 @@ export const WithoutLabel: Story = {
         const [value, setValue] = useState(args.value);
 
         const handleToggle = (event: FormEvent) => {
-            action('onChange')(event);
             setValue((prevIsChecked) => (prevIsChecked === 'indeterminate' ? true : !prevIsChecked));
+            action('onChange')(event);
         };
 
         return (
@@ -175,8 +175,8 @@ export const WithErrorAndHelpText: Story = {
         const helpTextId = `helptext-${id}`;
 
         const handleToggle = (event: FormEvent) => {
-            action('onChange')(event);
             setValue((prevIsChecked) => (prevIsChecked === 'indeterminate' ? true : !prevIsChecked));
+            action('onChange')(event);
         };
 
         return (
