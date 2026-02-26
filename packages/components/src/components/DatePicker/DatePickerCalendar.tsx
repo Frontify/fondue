@@ -9,6 +9,7 @@ import {
     type OnSelectHandler,
     type DateRange as DayPickerDateRange,
     type CustomComponents,
+    type Matcher,
 } from 'react-day-picker';
 import 'react-day-picker/style.css';
 import { type Locale } from 'react-day-picker/locale';
@@ -43,7 +44,11 @@ export type DatePickerBaseProps = {
     disabledDates?: DisabledDates[];
 };
 
-type DatePickerCalendarProps = DatePickerBaseProps & DatePickerCalendarModeProps;
+type DatePickerCalendarProps = DatePickerBaseProps &
+    DatePickerCalendarModeProps & {
+        modifiers: Record<string, Matcher>;
+        onDayMouseEnter: (day: Date) => void;
+    };
 
 export const DatePickerCalendar = forwardRef<HTMLDivElement, DatePickerCalendarProps>(
     (
@@ -51,7 +56,6 @@ export const DatePickerCalendar = forwardRef<HTMLDivElement, DatePickerCalendarP
         ref,
     ): JSX.Element => {
         const defaultClassNames = getDefaultClassNames();
-        console.log('disabledDates', disabledDates);
 
         return (
             <div ref={ref} data-test-id={dataTestId}>
@@ -69,11 +73,16 @@ export const DatePickerCalendar = forwardRef<HTMLDivElement, DatePickerCalendarP
                         week: `${defaultClassNames.week} ${styles.week}`,
                         weekday: styles.weekday,
                         weekdays: `${defaultClassNames.weekdays} ${styles.weekdays}`,
-                        range_start: styles.rangeStart,
-                        range_end: styles.rangeEnd,
-                        range_middle: styles.rangeMiddle,
+                        range_start: styles.selectedStart,
+                        range_end: styles.selectedEnd,
+                        range_middle: styles.selectedMiddle,
                     }}
                     {...modeProps}
+                    modifiersClassNames={{
+                        hoverRange: `${styles.hoverRange}`,
+                        hoverStart: `${styles.hoverStart}`,
+                        hoverEnd: `${styles.hoverEnd}`,
+                    }}
                 />
             </div>
         );

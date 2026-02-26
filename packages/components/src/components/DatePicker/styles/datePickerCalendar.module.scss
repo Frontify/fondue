@@ -29,7 +29,6 @@
 .nextMonthButtonContainer {
     inset-inline-end: 0;
     top: 0;
-
 }
 
 .button {
@@ -71,14 +70,14 @@
     padding-bottom: 0;
     transition: none;
 
-    &[data-today="true"] {
+    &[data-today='true'] {
         .dayButton {
             font-weight: var(--typography-font-weight-bold);
             border: 1px solid var(--color-primary-default);
         }
     }
 
-    &:not([data-selected="true"]) {
+    &:not([data-selected='true']):not(.hoverRange) {
         &:hover {
             .dayButton {
                 background-color: var(--color-container-secondary-hover);
@@ -116,43 +115,39 @@
     padding-left: 0;
     margin-right: sizeToken.get(0.5);
     padding-right: 0;
-
-
 }
 
-.rangeStart {
+@mixin rangeStartDay {
     background-color: var(--color-container-highlight-active);
     color: var(--color-container-highlight-on-highlight-container);
 
-    &:not(.rangeEnd) {
-        border-top-right-radius: 0;
-        border-bottom-right-radius: 0;
-        margin-left: sizeToken.get(0.5);
-        padding-left: 0;
-        margin-right: 0;
-        padding-right: sizeToken.get(0.5);
-        width: sizeToken.get(8.5);
-
-    }
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-top-left-radius: var(--border-radius-large);
+    border-bottom-left-radius: var(--border-radius-large);
+    margin-left: sizeToken.get(0.5);
+    padding-left: 0;
+    margin-right: 0;
+    padding-right: sizeToken.get(0.5);
+    width: sizeToken.get(8.5);
 }
 
-.rangeEnd {
+@mixin rangeEndDay {
     background-color: var(--color-container-highlight-active);
     color: var(--color-container-highlight-on-highlight-container);
 
-
-    &:not(.rangeStart) {
-        border-top-left-radius: 0;
-        border-bottom-left-radius: 0;
-        margin-right: sizeToken.get(0.5);
-        padding-right: 0;
-        margin-left: 0;
-        padding-left: sizeToken.get(0.5);
-        width: sizeToken.get(8.5);
-    }
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-top-right-radius: var(--border-radius-large);
+    border-bottom-right-radius: var(--border-radius-large);
+    margin-right: sizeToken.get(0.5);
+    padding-right: 0;
+    margin-left: 0;
+    padding-left: sizeToken.get(0.5);
+    width: sizeToken.get(8.5);
 }
 
-.rangeMiddle {
+@mixin rangeMiddleDay {
     border-radius: 0;
     background-color: var(--color-container-highlight-hover);
     color: var(--color-container-highlight-on-highlight-container);
@@ -161,4 +156,32 @@
     margin-right: 0;
     padding-right: sizeToken.get(0.5);
     width: sizeToken.get(9);
+}
+
+.day:not(.hoverRange) {
+    &.selectedMiddle {
+        @include rangeMiddleDay;
+    }
+
+    &.selectedStart:not(.selectedEnd) {
+        @include rangeStartDay;
+    }
+
+    &.selectedEnd:not(.selectedStart) {
+        @include rangeEndDay;
+    }
+}
+
+.day.hoverRange {
+    &:not(.hoverStart):not(.hoverEnd) {
+        @include rangeMiddleDay;
+    }
+
+    &.hoverStart:not(.hoverEnd) {
+        @include rangeStartDay;
+    }
+
+    &.hoverEnd:not(.hoverStart) {
+        @include rangeEndDay;
+    }
 }
