@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconArrowLeft, IconArrowRight } from '@frontify/fondue-icons';
 import { forwardRef } from 'react';
 import {
     getDefaultClassNames,
-    type DayButtonProps,
     DayPicker,
     type PreviousMonthButtonProps,
     type OnSelectHandler,
@@ -13,9 +13,9 @@ import {
 import 'react-day-picker/style.css';
 import { type Locale } from 'react-day-picker/locale';
 
-import styles from './styles/datePickerCalendar.module.scss';
+import { Button } from '../Button/Button';
 
-import { IconArrowLeft, IconCaretLeft, IconCaretRight } from '@frontify/fondue-icons';
+import styles from './styles/datePickerCalendar.module.scss';
 
 type DatePickerCalendarModeProps =
     | { mode: 'single'; required: true; selected: Date | undefined; onSelect: OnSelectHandler<Date> }
@@ -42,7 +42,7 @@ export const DatePickerCalendar = forwardRef<HTMLDivElement, DatePickerCalendarP
                     navLayout="around"
                     data-test-id={dataTestId}
                     locale={locale}
-                    components={getCustomComponents(locale)}
+                    components={getCustomComponents()}
                     classNames={{
                         day: ` ${styles.day} ${styles.button}`,
                         day_button: `${styles.button} ${styles.dayButton}`,
@@ -62,35 +62,52 @@ export const DatePickerCalendar = forwardRef<HTMLDivElement, DatePickerCalendarP
 );
 DatePickerCalendar.displayName = 'DatePickerCalendar';
 
-const getCustomComponents = (locale?: Locale): Partial<CustomComponents> => ({
-    // DayButton: ({ day, modifiers, ...props }: DayButtonProps): JSX.Element => {
-    //     return (
-    //         <button
-    //             {...props}
-    //             type="button"
-    //             className={`${styles.button} ${styles.dayButton}`}
-    //             data-active={modifiers.selected}
-    //             data-today={modifiers.today}
-    //         >
-    //             <span>{day.date.toLocaleDateString(locale?.code, { day: 'numeric' })}</span>
-    //         </button>
-    //     );
-    // },
-    PreviousMonthButton: ({ ...props }: PreviousMonthButtonProps): JSX.Element => {
+const getCustomComponents = (): Partial<CustomComponents> => ({
+    PreviousMonthButton: ({
+        onClick,
+        'aria-label': ariaLabel,
+        'aria-disabled': ariaDisabled,
+    }: PreviousMonthButtonProps): JSX.Element => {
         return (
-            <div className={styles.toggleMonthButtonContainer}>
-                <button {...props} type="button" className={`${styles.button} ${styles.toggleMonthButton}`}>
-                    <IconCaretLeft size={20} />
-                </button>
+            <div className={`${styles.toggleMonthButtonContainer} `}>
+                <Button
+                    emphasis="weak"
+                    size="small"
+                    aspect="square"
+                    aria-label={ariaLabel}
+                    aria-disabled={ariaDisabled}
+                    onPress={(event) => {
+                        if (event) {
+                            onClick?.(event);
+                        }
+                    }}
+                >
+                    <IconArrowLeft size={16} />
+                </Button>
             </div>
         );
     },
-    NextMonthButton: ({ ...props }: PreviousMonthButtonProps): JSX.Element => {
+    NextMonthButton: ({
+        onClick,
+        'aria-label': ariaLabel,
+        'aria-disabled': ariaDisabled,
+    }: PreviousMonthButtonProps): JSX.Element => {
         return (
             <div className={`${styles.toggleMonthButtonContainer} ${styles.nextMonthButtonContainer}`}>
-                <button {...props} type="button" className={`${styles.button} ${styles.toggleMonthButton}`}>
-                    <IconCaretRight size={20} />
-                </button>
+                <Button
+                    emphasis="weak"
+                    size="small"
+                    aspect="square"
+                    aria-label={ariaLabel}
+                    aria-disabled={ariaDisabled}
+                    onPress={(event) => {
+                        if (event) {
+                            onClick?.(event);
+                        }
+                    }}
+                >
+                    <IconArrowRight size={16} />
+                </Button>
             </div>
         );
     },
