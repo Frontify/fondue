@@ -2,7 +2,7 @@
 
 import { forwardRef, type ForwardedRef, type ReactNode } from 'react';
 
-import styles from './styles/select.module.scss';
+import styles from '../styles/select.module.scss';
 
 export type SelectSlotProps = {
     /**

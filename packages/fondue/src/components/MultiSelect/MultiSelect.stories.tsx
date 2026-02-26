@@ -16,10 +16,10 @@ import {
 
 /**
  ### *Legacy component warning*
- #### This is a unmaintained legacy component. It will be deprecated and replaced with a new component in an upcoming release.
+ #### This is a deprecated component. It will be removed in the next major version.
  */
 export default {
-    title: 'Legacy Components/Multi Select',
+    title: 'Legacy Components/Deprecated/Multi Select',
     component: MultiSelectComponent,
     tags: ['autodocs'],
     args: {
@@ -83,6 +83,11 @@ export default {
         },
         indeterminateItemKeys: {
             table: { disable: true },
+        },
+    },
+    parameters: {
+        status: {
+            type: 'deprecated',
         },
     },
 } as Meta;

@@ -1,5 +1,45 @@
 # @frontify/fondue-components
 
+## 26.0.3
+
+### Patch Changes
+
+- [`70062c5`](https://github.com/Frontify/fondue/commit/70062c5ccd1adf6c2748494226d3b7fc07f0f0b4) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix: selecting the same item shouldn't fire `null` in the `onSelect`
+
+- Updated dependencies []:
+    - @frontify/fondue-tokens@5.0.0
+
+## 26.0.2
+
+### Patch Changes
+
+- [#2623](https://github.com/Frontify/fondue/pull/2623) [`95e1fb5`](https://github.com/Frontify/fondue/commit/95e1fb59b52ff2e5203bd8147ecbc6f712464b83) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix: allow empty string values in the Select / Combobox / Multiselect
+
+- Updated dependencies []:
+    - @frontify/fondue-tokens@5.0.0
+
+## 26.0.1
+
+### Patch Changes
+
+- [`80d58b0`](https://github.com/Frontify/fondue/commit/80d58b07a7026cda8b47299558e07ada953afdb9) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update fondue export json
+
+- Updated dependencies [[`80d58b0`](https://github.com/Frontify/fondue/commit/80d58b07a7026cda8b47299558e07ada953afdb9)]:
+    - @frontify/fondue-icons@0.24.1
+    - @frontify/fondue-tokens@5.0.0
+
+## 26.0.0
+
+### Minor Changes
+
+- [#2619](https://github.com/Frontify/fondue/pull/2619) [`31f7341`](https://github.com/Frontify/fondue/commit/31f7341a466649fac3363d4a753fd8101d4fb4cb) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add refactored multi select component
+
+### Patch Changes
+
+- Updated dependencies [[`0509788`](https://github.com/Frontify/fondue/commit/050978884da4e1c654f1a2d8cbb36f49950bcaa3)]:
+    - @frontify/fondue-icons@0.24.0
+    - @frontify/fondue-tokens@5.0.0
+
 ## 25.0.0
 
 ### Major Changes

@@ -7,6 +7,7 @@ import { Button } from '../Button/Button';
 import { Flex } from '../Flex/Flex';
 import { Flyout } from '../Flyout/Flyout';
 import { ScrollArea } from '../ScrollArea/ScrollArea';
+import { Tabs } from '../Tabs/Tabs';
 import { TextInput } from '../TextInput/TextInput';
 import { Tooltip } from '../Tooltip/Tooltip';
 
@@ -893,6 +894,141 @@ export const NestedDialogsWithEscapeKey: Story = {
                     </Dialog.Content>
                 </Dialog.Root>
             </Flex>
+        );
+    },
+};
+
+export const WithTabsInContent: Story = {
+    render: (args) => {
+        return (
+            <Dialog.Root>
+                <Dialog.Trigger>
+                    <Button>Open Settings Dialog</Button>
+                </Dialog.Trigger>
+                <Dialog.Content {...args} padding="none" minWidth="min(800px, 95vw)" minHeight="min(500px, 80vh)">
+                    {/* Screen reader only title and description for accessibility */}
+                    <Dialog.Title screenReaderOnly>Settings</Dialog.Title>
+                    <Dialog.Description screenReaderOnly>Manage your application settings</Dialog.Description>
+                    <Dialog.Body padding="none">
+                        <Tabs.Root variant="pill" withDivider padding="none">
+                            <Tabs.Tab value="general">
+                                <Tabs.Trigger>General</Tabs.Trigger>
+                                <Tabs.Content>
+                                    <div style={{ padding: '24px' }}>
+                                        <h3 style={{ marginTop: 0, marginBottom: '16px', fontSize: '16px' }}>
+                                            <strong>Search</strong>
+                                        </h3>
+                                        <div style={{ marginBottom: '24px' }}>
+                                            <div style={{ marginBottom: '8px', fontWeight: 500 }}>
+                                                Cross-guideline search
+                                            </div>
+                                            <p
+                                                style={{
+                                                    margin: 0,
+                                                    color: 'var(--color-secondary-default)',
+                                                    fontSize: '14px',
+                                                }}
+                                            >
+                                                Allow users to find results from all the guidelines they have access to
+                                                within the current brand.
+                                            </p>
+                                        </div>
+                                        <h3 style={{ marginBottom: '16px', fontSize: '16px' }}>
+                                            <strong>Action Toolbar</strong>
+                                        </h3>
+                                        <div style={{ marginBottom: '16px' }}>
+                                            <div style={{ marginBottom: '8px', fontWeight: 500 }}>Apps</div>
+                                            <p
+                                                style={{
+                                                    margin: 0,
+                                                    color: 'var(--color-secondary-default)',
+                                                    fontSize: '14px',
+                                                }}
+                                            >
+                                                Make any installed apps for guidelines available for all logged-in
+                                                users.
+                                            </p>
+                                        </div>
+                                        <div style={{ marginBottom: '16px' }}>
+                                            <div style={{ marginBottom: '8px', fontWeight: 500 }}>Copy link</div>
+                                            <p
+                                                style={{
+                                                    margin: 0,
+                                                    color: 'var(--color-secondary-default)',
+                                                    fontSize: '14px',
+                                                }}
+                                            >
+                                                Enable logged-in users to quickly copy and share links to guideline
+                                                pages.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </Tabs.Content>
+                            </Tabs.Tab>
+                            <Tabs.Tab value="team">
+                                <Tabs.Trigger>Team</Tabs.Trigger>
+                                <Tabs.Content>
+                                    <div style={{ padding: '24px' }}>
+                                        <h3 style={{ marginTop: 0, marginBottom: '16px' }}>
+                                            <strong>Team Settings</strong>
+                                        </h3>
+                                        <p>Manage team members, roles, and permissions for your organization.</p>
+                                    </div>
+                                </Tabs.Content>
+                            </Tabs.Tab>
+                            <Tabs.Tab value="targets">
+                                <Tabs.Trigger>Targets</Tabs.Trigger>
+                                <Tabs.Content>
+                                    <div style={{ padding: '24px' }}>
+                                        <h3 style={{ marginTop: 0, marginBottom: '16px' }}>
+                                            <strong>Target Settings</strong>
+                                        </h3>
+                                        <p>Configure deployment targets and environments for your projects.</p>
+                                    </div>
+                                </Tabs.Content>
+                            </Tabs.Tab>
+                            <Tabs.Tab value="share">
+                                <Tabs.Trigger>Share</Tabs.Trigger>
+                                <Tabs.Content>
+                                    <div style={{ padding: '24px' }}>
+                                        <h3 style={{ marginTop: 0, marginBottom: '16px' }}>
+                                            <strong>Share Settings</strong>
+                                        </h3>
+                                        <p>Control how content is shared with external users and collaborators.</p>
+                                    </div>
+                                </Tabs.Content>
+                            </Tabs.Tab>
+                            <Tabs.Tab value="analytics">
+                                <Tabs.Trigger>Analytics</Tabs.Trigger>
+                                <Tabs.Content>
+                                    <div style={{ padding: '24px' }}>
+                                        <h3 style={{ marginTop: 0, marginBottom: '16px' }}>
+                                            <strong>Analytics Settings</strong>
+                                        </h3>
+                                        <p>View and configure analytics tracking and reporting options.</p>
+                                    </div>
+                                </Tabs.Content>
+                            </Tabs.Tab>
+                            <Tabs.Tab value="changelog">
+                                <Tabs.Trigger>Changelog</Tabs.Trigger>
+                                <Tabs.Content>
+                                    <div style={{ padding: '24px' }}>
+                                        <h3 style={{ marginTop: 0, marginBottom: '16px' }}>
+                                            <strong>Changelog</strong>
+                                        </h3>
+                                        <p>View recent changes and updates to your application settings.</p>
+                                    </div>
+                                </Tabs.Content>
+                            </Tabs.Tab>
+                        </Tabs.Root>
+                    </Dialog.Body>
+                    <Dialog.Footer showBorder padding="compact">
+                        <Dialog.Close>
+                            <Button>Close</Button>
+                        </Dialog.Close>
+                    </Dialog.Footer>
+                </Dialog.Content>
+            </Dialog.Root>
         );
     },
 };

@@ -148,6 +148,8 @@
         overflow: hidden;
         grid-row: 3;
         grid-column: 1;
+        min-height: 0;
+        flex: 1;
 
         &[data-dialog-body-padding='none'] {
             padding: sizeToken.get(0);
@@ -244,4 +246,16 @@
             grid-row: 1 / span 3;
         }
     }
+}
+
+.screenReaderOnly {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
 }

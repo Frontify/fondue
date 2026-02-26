@@ -4,10 +4,9 @@ import { IconIcon } from '@frontify/fondue-icons';
 import { expect, test } from '@playwright/experimental-ct-react';
 import * as sinon from 'sinon';
 
+import { Select } from '#/components/Select';
 import { FOCUS_BORDER_CSS, FOCUS_OUTLINE_CSS } from '#/helpers/constants';
 import { MAX_HEIGHT_MARGIN } from '#/utilities/domUtilities';
-
-import { Select } from '../Select';
 
 const SELECT_TEST_ID = 'test-select';
 const SELECT_MENU_TEST_ID = 'fondue-select-menu';
@@ -459,6 +458,38 @@ test('render border and no focus ring when mouse focused', async ({ mount, page 
     await expect(select).not.toHaveCSS(...FOCUS_OUTLINE_CSS);
 });
 
+test('should select an item with empty string value', async ({ mount, page }) => {
+    const onSelectChange = sinon.spy();
+    const wrapper = await mount(
+        <Select
+            onSelect={onSelectChange}
+            aria-label="test"
+            data-test-id={SELECT_TEST_ID}
+            placeholder={PLACEHOLDER_TEXT}
+        >
+            <Select.Slot name="menu">
+                <Select.Item data-test-id={ITEM_TEST_ID1} value="">
+                    {ITEM_TEXT1}
+                </Select.Item>
+                <Select.Item data-test-id={ITEM_TEST_ID2} value="test2">
+                    {ITEM_TEXT2}
+                </Select.Item>
+            </Select.Slot>
+        </Select>,
+    );
+    const component = wrapper.getByTestId(SELECT_TEST_ID);
+
+    await expect(component).toBeVisible();
+    await component.click();
+
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+
+    await expect(component).toContainText(ITEM_TEXT1);
+    expect(onSelectChange.callCount).toBe(1);
+    expect(onSelectChange.calledWith('')).toBe(true);
+});
+
 test('render indicator on selected item', async ({ mount, page }) => {
     const wrapper = await mount(
         <Select aria-label="test" data-test-id={SELECT_TEST_ID} placeholder={PLACEHOLDER_TEXT}>
@@ -496,6 +527,49 @@ test('render indicator on selected item', async ({ mount, page }) => {
 
     await page.keyboard.press('ArrowDown');
 
-    await expect(firstItem).toHaveCSS('background-color', 'rgb(234, 234, 228)');
+    await expect(firstItem).toHaveCSS('background-color', 'rgb(240, 240, 235)');
     await expect(chekmarkIcon).toBeVisible();
+});
+
+test('should handle state with default value set to first item', async ({ mount, page }) => {
+    const onSelectChange = sinon.spy();
+
+    const wrapper = await mount(
+        <Select
+            value="test1"
+            onSelect={(value) => {
+                onSelectChange(value);
+            }}
+            aria-label="test"
+            data-test-id={SELECT_TEST_ID}
+            placeholder={PLACEHOLDER_TEXT}
+        >
+            <Select.Slot name="menu">
+                <Select.Item data-test-id={ITEM_TEST_ID1} value="test1">
+                    {ITEM_TEXT1}
+                </Select.Item>
+                <Select.Item data-test-id={ITEM_TEST_ID2} value="test2">
+                    {ITEM_TEXT2}
+                </Select.Item>
+            </Select.Slot>
+        </Select>,
+    );
+    const component = wrapper.getByTestId(SELECT_TEST_ID);
+
+    await expect(component).toBeVisible();
+    await expect(component).toContainText(ITEM_TEXT1);
+
+    await component.click();
+
+    const firstItem = page.getByTestId(ITEM_TEST_ID1);
+    await expect(firstItem).toBeVisible();
+    await expect(firstItem).toHaveAttribute('data-selected', 'true');
+    await expect(firstItem).toHaveAttribute('aria-selected', 'true');
+
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+
+    await expect(component).toContainText(ITEM_TEXT1);
+    expect(onSelectChange.callCount).toBe(1);
+    expect(onSelectChange.calledWith('test1')).toBe(true);
 });

@@ -1,5 +1,25 @@
 # @frontify/fondue-icons
 
+## 0.24.1
+
+### Patch Changes
+
+- [`80d58b0`](https://github.com/Frontify/fondue/commit/80d58b07a7026cda8b47299558e07ada953afdb9) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update fondue export json
+
+- Updated dependencies []:
+    - @frontify/fondue-tokens@5.0.0
+
+## 0.24.0
+
+### Minor Changes
+
+- [#2571](https://github.com/Frontify/fondue/pull/2571) [`0509788`](https://github.com/Frontify/fondue/commit/050978884da4e1c654f1a2d8cbb36f49950bcaa3) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
+
+### Patch Changes
+
+- Updated dependencies []:
+    - @frontify/fondue-tokens@5.0.0
+
 ## 0.23.0
 
 ### Minor Changes

@@ -17,6 +17,6 @@
         "target": "ES2021",
         "useDefineForClassFields": true
     },
-    "include": [".storybook/**/*", "stories"],
+    "include": [".storybook/**/*", "stories", "netlify-functions"],
     "references": [{ "path": "./tsconfig.node.json" }]
 }

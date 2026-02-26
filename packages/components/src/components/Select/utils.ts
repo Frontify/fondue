@@ -9,7 +9,7 @@ import {
     type ReactNode,
 } from 'react';
 
-import { ForwardedRefSelectItem, type SelectItemProps } from './SelectItem';
+import { ForwardedRefSelectItem, type SelectItemProps } from './components/SelectItem';
 
 /**
  * Extracts and returns an object containing `value` and `label` from a given SelectItemProps object.
@@ -38,14 +38,14 @@ export const getSelectOptionValue = ({
 } => {
     if (children && typeof children === 'string') {
         return {
-            value: value ? value : children,
-            label: label ? label : children,
+            value: value !== undefined ? value : children,
+            label: label !== undefined ? label : children,
         };
     }
 
     return {
-        value: value || '',
-        label: label ? label : value || '',
+        value: value ?? '',
+        label: label !== undefined ? label : (value ?? ''),
         ...(children ? { children } : null),
     };
 };

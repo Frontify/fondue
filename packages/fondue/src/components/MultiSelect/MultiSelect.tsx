@@ -25,16 +25,25 @@ import { Validation } from '@utilities/validation';
 
 import { getPaddingClasses, useClickOutside } from './helpers';
 
+/**
+ * @deprecated Please use updated Multiple Select component from `@frontify/fondue/components` instead.
+ */
 export enum MultiSelectType {
     Default = 'Default',
     Summarized = 'Summarized',
 }
 
+/**
+ * @deprecated Please use updated Multiple Select component from `@frontify/fondue/components` instead.
+ */
 export enum MultiSelectSize {
     Small = 'Small',
     Medium = 'Medium',
 }
 
+/**
+ * @deprecated Please use updated Multiple Select component from `@frontify/fondue/components` instead.
+ */
 export type MultiSelectItem = {
     value: string;
     isCategory?: boolean;
@@ -44,6 +53,9 @@ export type MultiSelectItem = {
     ariaLabel?: string;
 };
 
+/**
+ * @deprecated Please use updated Multiple Select component from `@frontify/fondue/components` instead.
+ */
 export type MultiSelectProps = {
     items: MultiSelectItem[];
     activeItemKeys: (string | number)[];
@@ -62,6 +74,9 @@ export type MultiSelectProps = {
     enablePortal?: boolean;
 };
 
+/**
+ * @deprecated Please use updated Multiple Select component from `@frontify/fondue/components` instead.
+ */
 export type Item = {
     label: string;
     value: string;
@@ -72,6 +87,9 @@ export type Item = {
     ariaLabel?: string;
 };
 
+/**
+ * @deprecated Please use updated Multiple Select component from `@frontify/fondue/components` instead.
+ */
 export const MultiSelect = ({
     items,
     activeItemKeys,

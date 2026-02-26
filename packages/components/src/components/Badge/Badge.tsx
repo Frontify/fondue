@@ -34,11 +34,11 @@ type BadgeProps = {
     /**
      * Click handler
      */
-    onClick?: (event?: MouseEvent<HTMLButtonElement>) => void;
+    onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
     /**
      * Click handler on dismiss - providing this will show the dismiss button
      */
-    onDismiss?: (event?: MouseEvent<HTMLButtonElement>) => void;
+    onDismiss?: (event: MouseEvent<HTMLButtonElement>) => void;
     /**
      * The color of the status dot
      */

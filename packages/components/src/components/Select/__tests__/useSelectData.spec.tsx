@@ -5,8 +5,9 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import { Children, isValidElement } from 'react';
 import { describe, expect, it } from 'vitest';
 
-import { Select } from '../Select';
-import { type AsyncItem, getRecursiveOptionValues, useSelectData } from '../useSelectData';
+import { Select } from '#/components/Select';
+
+import { type AsyncItem, getRecursiveOptionValues, useSelectData } from '../hooks/useSelectData';
 
 const getMockedGetAsyncItems =
     (shouldError: boolean = false) =>
@@ -104,6 +105,23 @@ describe('useSelectData', () => {
         expect(result.getItemByValue('test1')).toEqual({
             value: 'test1',
             label: 'Test1',
+        });
+    });
+
+    it('returns item with empty string value', () => {
+        const slotWithEmptyValue = (
+            <Select.Slot key="test" name="menu">
+                <Select.Item value="">Empty Value</Select.Item>
+                <Select.Item value="test1">Test1</Select.Item>
+            </Select.Slot>
+        );
+        const {
+            result: { current: result },
+        } = renderHook(() => useSelectData(slotWithEmptyValue));
+
+        expect(result.getItemByValue('')).toEqual({
+            value: '',
+            label: 'Empty Value',
         });
     });
 

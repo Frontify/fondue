@@ -11,10 +11,10 @@ import {
     type ReactNode,
 } from 'react';
 
-import { SelectClear } from './SelectClear';
-import { ForwardedRefSelectItem, type SelectItemProps } from './SelectItem';
-import { ForwardedRefSelectSlot, type SelectSlotProps } from './SelectSlot';
-import { getSelectOptionValue } from './utils';
+import { SelectClear } from '../components/SelectClear';
+import { ForwardedRefSelectItem, type SelectItemProps } from '../components/SelectItem';
+import { ForwardedRefSelectSlot, type SelectSlotProps } from '../components/SelectSlot';
+import { getSelectOptionValue } from '../utils';
 
 export type SelectItemType = {
     value: string;
@@ -155,7 +155,7 @@ export const useSelectData = (children: ReactNode, getAsyncItems?: AsyncItemsFet
     );
 
     const getItemByValue = useCallback(
-        (value?: string | null) => (value ? itemValues.find((item) => item.value === value) : undefined),
+        (value?: string | null) => (value !== undefined ? itemValues.find((item) => item.value === value) : undefined),
         [itemValues],
     );
 

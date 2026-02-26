@@ -5,7 +5,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { type ComponentProps } from 'react';
 
 import { Checkbox } from '../Checkbox/Checkbox';
-import { Select } from '../Select/Select';
+import { Select } from '../Select';
 import { TextInput } from '../TextInput/TextInput';
 import { Tooltip } from '../Tooltip/Tooltip';
 

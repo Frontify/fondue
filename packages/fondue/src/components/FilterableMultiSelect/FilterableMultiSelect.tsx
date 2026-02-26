@@ -26,16 +26,25 @@ import { Validation } from '@utilities/validation';
 
 import { getPaddingClasses, useClickOutside } from './helpers';
 
+/**
+ * @deprecated Please use updated Multiple Combobox component from `@frontify/fondue/components` instead.
+ */
 export enum FilterableMultiSelectType {
     Default = 'Default',
     Summarized = 'Summarized',
 }
 
+/**
+ * @deprecated Please use updated Multiple Combobox component from `@frontify/fondue/components` instead.
+ */
 export enum FilterableMultiSelectSize {
     Small = 'Small',
     Medium = 'Medium',
 }
 
+/**
+ * @deprecated Please use updated Multiple Combobox component from `@frontify/fondue/components` instead.
+ */
 export type FilterableMultiSelectItem = {
     value: string;
     isCategory?: boolean;
@@ -45,6 +54,9 @@ export type FilterableMultiSelectItem = {
     ariaLabel?: string;
 };
 
+/**
+ * @deprecated Please use updated Multiple Combobox component from `@frontify/fondue/components` instead.
+ */
 export type FilterableMultiSelectProps = {
     items: FilterableMultiSelectItem[];
     activeItemKeys: (string | number)[];
@@ -75,6 +87,9 @@ type FilterableMultiSelectCheckboxItem = {
     ariaLabel?: string;
 };
 
+/**
+ * @deprecated Please use updated Multiple Combobox component from `@frontify/fondue/components` instead.
+ */
 export const FilterableMultiSelect = ({
     items,
     activeItemKeys,

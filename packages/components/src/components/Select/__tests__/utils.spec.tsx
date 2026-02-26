@@ -3,8 +3,9 @@
 import { IconIcon } from '@frontify/fondue-icons';
 import { describe, expect, it, vi } from 'vitest';
 
-import { Select } from '../Select';
-import { type SelectItemProps } from '../SelectItem';
+import { Select } from '#/components/Select';
+import { type SelectItemProps } from '#/components/Select/components/SelectItem';
+
 import { getSelectOptionValue, isReactLeaf, recursiveMap } from '../utils';
 
 describe('getSelectOptionValue', () => {
@@ -34,6 +35,24 @@ describe('getSelectOptionValue', () => {
         );
         const item = getSelectOptionValue(basicItem.props as SelectItemProps);
         expect(item.value).toBe('test1');
+        expect(item.label).toBe('labelvalue');
+    });
+
+    it('preserves empty string value when children is a string', () => {
+        const basicItem = <Select.Item value="">Some Label</Select.Item>;
+        const item = getSelectOptionValue(basicItem.props as SelectItemProps);
+        expect(item.value).toBe('');
+        expect(item.label).toBe('Some Label');
+    });
+
+    it('preserves empty string value when children is a component', () => {
+        const basicItem = (
+            <Select.Item value="" label="labelvalue">
+                <IconIcon />
+            </Select.Item>
+        );
+        const item = getSelectOptionValue(basicItem.props as SelectItemProps);
+        expect(item.value).toBe('');
         expect(item.label).toBe('labelvalue');
     });
 });

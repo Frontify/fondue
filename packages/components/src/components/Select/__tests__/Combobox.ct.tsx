@@ -4,9 +4,8 @@ import { IconIcon } from '@frontify/fondue-icons';
 import { expect, test } from '@playwright/experimental-ct-react';
 import * as sinon from 'sinon';
 
+import { Select } from '#/components/Select';
 import { MockComboboxWithAsyncFetcher } from '#/components/Select/__tests__/MockComboboxWithAsyncFetcher.tsx';
-
-import { Select } from '../Select';
 
 const SELECT_TEST_ID = 'test-combobox';
 const GROUP_TEST_ID = 'test-group';
@@ -474,6 +473,7 @@ test('should display loading circle when typing and hide loading circle after lo
         })
         .then(async () => {
             await expect(page.getByTestId(`${SELECT_TEST_ID}-loading-circle`)).not.toBeVisible();
+            return undefined;
         })
         .catch(() => {});
     await expect(page.getByTestId(`${SELECT_TEST_ID}-loading-circle`)).toBeVisible();
@@ -501,6 +501,36 @@ test('should display error when getAsyncItems fails', async ({ mount, page }) =>
     await expect(page.getByTestId(`${SELECT_TEST_ID}-error-icon`)).toBeVisible();
 });
 
+test('should select an item with empty string value', async ({ mount, page }) => {
+    const onSelectChange = sinon.spy();
+    const wrapper = await mount(
+        <Select.Combobox
+            onSelect={onSelectChange}
+            aria-label="test"
+            data-test-id={SELECT_TEST_ID}
+            placeholder={PLACEHOLDER_TEXT}
+        >
+            <Select.Slot name="menu">
+                <Select.Item data-test-id={ITEM_TEST_ID1} value="">
+                    {ITEM_TEXT1}
+                </Select.Item>
+                <Select.Item data-test-id={ITEM_TEST_ID2} value="test2">
+                    {ITEM_TEXT2}
+                </Select.Item>
+            </Select.Slot>
+        </Select.Combobox>,
+    );
+    const component = wrapper.getByTestId(SELECT_TEST_ID);
+
+    await expect(component).toBeVisible();
+    await component.click();
+    await page.keyboard.press('Enter');
+
+    await expect(component).toHaveValue(ITEM_TEXT1);
+    expect(onSelectChange.callCount).toBe(1);
+    expect(onSelectChange.calledWith('')).toBe(true);
+});
+
 test('should not display error when async items is empty', async ({ mount, page }) => {
     const wrapper = await mount(
         <MockComboboxWithAsyncFetcher
@@ -520,4 +550,46 @@ test('should not display error when async items is empty', async ({ mount, page 
     await page.keyboard.type(ITEM_TEXT1);
 
     await expect(component.getByTestId(`${SELECT_TEST_ID}-error-icon`)).not.toBeVisible();
+});
+
+test('should handle state with default value set to first item', async ({ mount, page }) => {
+    const onSelectChange = sinon.spy();
+
+    const wrapper = await mount(
+        <Select.Combobox
+            value="test1"
+            onSelect={(value) => {
+                onSelectChange(value);
+            }}
+            aria-label="test"
+            data-test-id={SELECT_TEST_ID}
+            placeholder={PLACEHOLDER_TEXT}
+        >
+            <Select.Slot name="menu">
+                <Select.Item data-test-id={ITEM_TEST_ID1} value="test1">
+                    {ITEM_TEXT1}
+                </Select.Item>
+                <Select.Item data-test-id={ITEM_TEST_ID2} value="test2">
+                    {ITEM_TEXT2}
+                </Select.Item>
+            </Select.Slot>
+        </Select.Combobox>,
+    );
+    const component = wrapper.getByTestId(SELECT_TEST_ID);
+
+    await expect(component).toBeVisible();
+    await expect(component).toHaveValue(ITEM_TEXT1);
+
+    await component.click();
+
+    const firstItem = page.getByTestId(ITEM_TEST_ID1);
+    await expect(firstItem).toBeVisible();
+    await expect(firstItem).toHaveAttribute('data-selected', 'true');
+    await expect(firstItem).toHaveAttribute('aria-selected', 'true');
+
+    await page.keyboard.press('Enter');
+
+    await expect(component).toHaveValue(ITEM_TEXT1);
+    expect(onSelectChange.callCount).toBe(1);
+    expect(onSelectChange.calledWith('test1')).toBe(true);
 });

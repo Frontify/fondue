@@ -3,22 +3,29 @@
 import { IconIcon } from '@frontify/fondue-icons';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
+import { action } from 'storybook/actions';
 
 import { Flex } from '#/components/Flex/Flex.tsx';
 
 import { Button } from '../Button/Button';
 
-import { SelectCombobox } from './Combobox';
-import { Select, SelectInput } from './Select';
-import { SelectItem, SelectItemGroup } from './SelectItem';
-import { SelectSlot } from './SelectSlot';
+import { ComboboxMultiple } from './ComboboxMultiple';
+import { ComboboxSingle } from './ComboboxSingle';
+import { SelectMultiple } from './SelectMultiple';
+import { SelectSingle } from './SelectSingle';
+import { SelectItem, SelectItemGroup } from './components/SelectItem';
+import { SelectSlot } from './components/SelectSlot';
+
+import { Select } from './index';
 
 type Story = StoryObj<typeof meta>;
-const meta: Meta<typeof SelectInput> = {
+const meta: Meta<typeof SelectSingle> = {
     title: 'Components/Select',
-    component: SelectInput,
+    component: SelectSingle,
     subcomponents: {
-        'Select.Combobox': SelectCombobox,
+        'Select.Multiple': SelectMultiple,
+        'Select.Combobox': ComboboxSingle,
+        'Select.Combobox.Multiple': ComboboxMultiple,
         'Select.Slot': SelectSlot,
         'Select.Group': SelectItemGroup,
         'Select.Item': SelectItem,
@@ -32,6 +39,7 @@ const meta: Meta<typeof SelectInput> = {
     args: {
         'aria-label': 'Select an item',
         placeholder: 'Select an item',
+        onSelect: action('onSelect'),
     },
 };
 export default meta;
@@ -49,6 +57,19 @@ export const SimpleSelect: Story = {
     },
 };
 
+export const MultipleSelect: StoryObj<typeof SelectMultiple> = {
+    name: 'Select Multiple',
+    render: (args) => {
+        return (
+            <Select.Multiple {...args}>
+                <Select.Item value="test1">Test1</Select.Item>
+                <Select.Item value="test2">Test2</Select.Item>
+                <Select.Item value="test3">Test3</Select.Item>
+            </Select.Multiple>
+        );
+    },
+};
+
 export const Combobox: Story = {
     args: {
         placeholder: 'Select an item',
@@ -60,6 +81,35 @@ export const Combobox: Story = {
                 <Select.Item value="test2">Test2</Select.Item>
                 <Select.Item value="test3">Test3</Select.Item>
             </Select.Combobox>
+        );
+    },
+};
+
+export const MultipleCombobox: Story = {
+    name: 'Combobox Multiple',
+    render: () => {
+        const [selectedValues, setSelectedValues] = useState<string[]>([]);
+
+        const handleSelect = (values: string[] | null): void => {
+            setSelectedValues(values ?? []);
+        };
+
+        return (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                <Select.Combobox.Multiple
+                    placeholder="Search and select items"
+                    value={selectedValues}
+                    onSelect={handleSelect}
+                >
+                    <Select.Item value="apple">Apple</Select.Item>
+                    <Select.Item value="banana">Banana</Select.Item>
+                    <Select.Item value="cherry">Cherry</Select.Item>
+                    <Select.Item value="date">Date</Select.Item>
+                    <Select.Item value="elderberry">Elderberry</Select.Item>
+                    <Select.Item value="fig">Fig</Select.Item>
+                    <Select.Item value="grape">Grape</Select.Item>
+                </Select.Combobox.Multiple>
+            </div>
         );
     },
 };
