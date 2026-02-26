@@ -46,8 +46,8 @@
 }
 
 .dayButton {
-    margin: sizeToken.get(1);
     height: sizeToken.get(6);
+    width: sizeToken.get(6);
 
 }
 
@@ -58,6 +58,13 @@
 }
 
 .day {
+    height: sizeToken.get(6);
+    width: sizeToken.get(8);
+    padding-left: sizeToken.get(1);
+    padding-right: sizeToken.get(1);
+    padding-top: 0;
+    padding-bottom: 0;
+
     &[data-today="true"] {
         .dayButton {
             font-weight: var(--typography-font-weight-bold);
@@ -68,7 +75,9 @@
     &:not([data-selected="true"]) {
 
         &:hover {
-            background-color: var(--color-container-secondary-hover);
+            .dayButton {
+                background-color: var(--color-container-secondary-hover);
+            }
         }
     }
 }
@@ -93,6 +102,13 @@
 .selected {
     background-color: var(--color-container-highlight-active);
     color: var(--color-container-highlight-on-highlight-container);
+    width: sizeToken.get(6);
+    margin-left: sizeToken.get(1);
+    padding-left: 0;
+    margin-right: sizeToken.get(1);
+    padding-right: 0;
+
+
 }
 
 .rangeStart {
@@ -100,8 +116,13 @@
     color: var(--color-container-highlight-on-highlight-container);
 
     &:not(.rangeEnd) {
-            border-top-right-radius: 0;
-            border-bottom-right-radius: 0;
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+        margin-left: sizeToken.get(1);
+        padding-left: 0;
+        margin-right: sizeToken.get(0);
+        padding-right: sizeToken.get(1);
+        width: sizeToken.get(7);
 
     }
 }
@@ -110,9 +131,15 @@
     background-color: var(--color-container-highlight-active);
     color: var(--color-container-highlight-on-highlight-container);
 
+
     &:not(.rangeStart) {
         border-top-left-radius: 0;
         border-bottom-left-radius: 0;
+        margin-right: sizeToken.get(1);
+        padding-right: 0;
+        margin-left: 0;
+        padding-left: sizeToken.get(1);
+        width: sizeToken.get(7);
     }
 }
 
@@ -120,4 +147,9 @@
     border-radius: 0;
     background-color: var(--color-container-highlight-hover);
     color: var(--color-container-highlight-on-highlight-container);
+    margin-left: 0;
+    padding-left: sizeToken.get(1);
+    margin-right: 0;
+    padding-right: sizeToken.get(1);
+    width: sizeToken.get(8);
 }
