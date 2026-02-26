@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconArrowLeft, IconArrowRight } from '@frontify/fondue-icons';
-import { forwardRef } from 'react';
+import { forwardRef, useEffect, useRef } from 'react';
 import {
     getDefaultClassNames,
     DayPicker,
@@ -10,6 +10,7 @@ import {
     type DateRange as DayPickerDateRange,
     type CustomComponents,
     type Matcher,
+    type DayButtonProps,
 } from 'react-day-picker';
 import 'react-day-picker/style.css';
 import { type Locale } from 'react-day-picker/locale';
@@ -68,7 +69,6 @@ export const DatePickerCalendar = forwardRef<HTMLDivElement, DatePickerCalendarP
                     disabled={disabledDates}
                     classNames={{
                         day: ` ${styles.day} ${styles.button}`,
-                        day_button: `${styles.button} ${styles.dayButton}`,
                         selected: styles.selected,
                         week: `${defaultClassNames.week} ${styles.week}`,
                         weekday: styles.weekday,
@@ -91,6 +91,29 @@ export const DatePickerCalendar = forwardRef<HTMLDivElement, DatePickerCalendarP
 DatePickerCalendar.displayName = 'DatePickerCalendar';
 
 const getCustomComponents = (): Partial<CustomComponents> => ({
+    DayButton: ({ day, modifiers, onClick, onMouseEnter, onMouseLeave, ...props }: DayButtonProps): JSX.Element => {
+        const buttonRef = useRef<HTMLButtonElement>(null);
+
+        useEffect(() => {
+            if (modifiers.focused) {
+                buttonRef.current?.focus();
+            }
+        }, [modifiers.focused]);
+
+        return (
+            <button
+                {...props}
+                ref={buttonRef}
+                className={styles.dayButton}
+                onClick={onClick}
+                onMouseEnter={onMouseEnter}
+                onMouseLeave={onMouseLeave}
+                type="button"
+            >
+                <div className={`${styles.dayContent} ${styles.button}`}>{day.date.getDate()}</div>
+            </button>
+        );
+    },
     PreviousMonthButton: ({
         onClick,
         'aria-label': ariaLabel,

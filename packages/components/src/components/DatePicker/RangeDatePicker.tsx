@@ -55,6 +55,9 @@ export const RangeDatePickerRoot = (
     const handleDayMouseEnter = (day: Date) => {
         setHoveredDay(day);
     };
+    const handleDayMouseLeave = () => {
+        setHoveredDay(undefined);
+    };
 
     const hoverModifiers = useMemo(() => {
         const hoverTime = hoveredDay?.getTime();
@@ -90,8 +93,6 @@ export const RangeDatePickerRoot = (
         };
     }, [hoveredDay, selectedDateRange]);
 
-    console.log(hoverModifiers.hoverRange);
-
     return (
         <DatePickerCalendar
             {...props}
@@ -102,6 +103,7 @@ export const RangeDatePickerRoot = (
             selected={selectedDateRange}
             onSelect={handleSelect}
             onDayMouseEnter={handleDayMouseEnter}
+            onDayMouseLeave={handleDayMouseLeave}
             modifiers={hoverModifiers}
         />
     );
