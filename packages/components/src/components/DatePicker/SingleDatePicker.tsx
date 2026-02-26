@@ -3,16 +3,15 @@
 import { forwardRef, type ForwardedRef } from 'react';
 import { type OnSelectHandler } from 'react-day-picker';
 
-import { DatePickerCalendar } from './DatePickerCalendar';
+import { type DatePickerBaseProps, DatePickerCalendar } from './DatePickerCalendar';
 
 type SingleDatePickerProps = {
-    'data-test-id'?: string;
     selected?: Date;
     onSelect?: (date: Date) => void;
 };
 
 export const SingleDatePickerRoot = (
-    { 'data-test-id': dataTestId, onSelect, selected }: SingleDatePickerProps,
+    { 'data-test-id': dataTestId, onSelect, selected, ...props }: SingleDatePickerProps & DatePickerBaseProps,
     ref: ForwardedRef<HTMLDivElement>,
 ): JSX.Element => {
     const handleSelect: OnSelectHandler<Date> = (date) => {
@@ -21,6 +20,7 @@ export const SingleDatePickerRoot = (
 
     return (
         <DatePickerCalendar
+            {...props}
             ref={ref}
             data-test-id={dataTestId}
             mode="single"

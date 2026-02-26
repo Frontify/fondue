@@ -2,12 +2,13 @@
 
 import { forwardRef, useState, type ForwardedRef } from 'react';
 
+import { type DatePickerBaseProps } from './DatePickerCalendar';
 import { type DateRange, RangeDatePicker } from './RangeDatePicker';
 import { SingleDatePicker } from './SingleDatePicker';
 
-export type DatePickerRootProps = {
+type DatePickerRootProps = {
     'data-test-id'?: string;
-};
+} & DatePickerBaseProps;
 
 export const DatePickerRoot = (
     { 'data-test-id': dataTestId = 'fondue-date-picker', ...props }: DatePickerRootProps,

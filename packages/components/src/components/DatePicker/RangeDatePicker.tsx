@@ -3,7 +3,7 @@
 import { forwardRef, type ForwardedRef } from 'react';
 import { type OnSelectHandler, type DateRange as DayPickerDateRange } from 'react-day-picker';
 
-import { DatePickerCalendar } from './DatePickerCalendar';
+import { type DatePickerBaseProps, DatePickerCalendar } from './DatePickerCalendar';
 
 type DateRange = {
     from: Date;
@@ -28,7 +28,7 @@ const transformPickerDateRangeToFondueDateRange = (dateRange: DayPickerDateRange
 };
 
 export const RangeDatePickerRoot = (
-    { 'data-test-id': dataTestId, onSelect, selected }: RangeDatePickerProps,
+    { 'data-test-id': dataTestId, onSelect, selected, ...props }: RangeDatePickerProps & DatePickerBaseProps,
     ref: ForwardedRef<HTMLDivElement>,
 ): JSX.Element => {
     const handleSelect: OnSelectHandler<DayPickerDateRange> = (pickerDateRange) => {
@@ -38,6 +38,7 @@ export const RangeDatePickerRoot = (
 
     return (
         <DatePickerCalendar
+            {...props}
             ref={ref}
             data-test-id={dataTestId}
             mode="range"

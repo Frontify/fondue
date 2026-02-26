@@ -26,16 +26,33 @@ type DatePickerCalendarModeProps =
           onSelect: OnSelectHandler<DayPickerDateRange>;
       };
 
-export type DatePickerCalendarProps = {
+type DisabledDates =
+    | {
+          from: Date;
+          to: Date;
+      }
+    | { before: Date }
+    | { after: Date };
+
+export type DatePickerBaseProps = {
     /** The test id applied to the wrapper and forwarded to DayPicker. */
     'data-test-id'?: string;
     /** The locale used to format the dates. */
     locale?: Locale;
-} & DatePickerCalendarModeProps;
+    /** The days to be disabled. */
+    disabledDates?: DisabledDates[];
+};
+
+type DatePickerCalendarProps = DatePickerBaseProps & DatePickerCalendarModeProps;
 
 export const DatePickerCalendar = forwardRef<HTMLDivElement, DatePickerCalendarProps>(
-    ({ 'data-test-id': dataTestId = 'fondue-date-picker-calendar', locale, ...modeProps }, ref): JSX.Element => {
+    (
+        { 'data-test-id': dataTestId = 'fondue-date-picker-calendar', locale, disabledDates, ...modeProps },
+        ref,
+    ): JSX.Element => {
         const defaultClassNames = getDefaultClassNames();
+        console.log('disabledDates', disabledDates);
+
         return (
             <div ref={ref} data-test-id={dataTestId}>
                 <DayPicker
@@ -43,6 +60,8 @@ export const DatePickerCalendar = forwardRef<HTMLDivElement, DatePickerCalendarP
                     data-test-id={dataTestId}
                     locale={locale}
                     components={getCustomComponents()}
+                    showOutsideDays
+                    disabled={disabledDates}
                     classNames={{
                         day: ` ${styles.day} ${styles.button}`,
                         day_button: `${styles.button} ${styles.dayButton}`,
