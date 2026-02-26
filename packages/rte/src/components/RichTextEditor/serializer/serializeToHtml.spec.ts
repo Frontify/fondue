@@ -1,8 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { MentionableCategory, PluginComposer } from '@components/RichTextEditor/Plugins';
+import { MentionPlugin } from '@components/RichTextEditor/Plugins/MentionPlugin';
+import { ParagraphPlugin } from '@components/RichTextEditor/Plugins/TextStylePlugin';
+
 import { nodesToSerialize } from '../helpers/exampleValues';
 
-import { serializeNodesToHtml } from './serializeToHtml';
+import { serializeNodesToHtml, serializeRawToHtml } from './serializeToHtml';
 
 describe('serializeNodesToHtml()', () => {
     it('should serialize nodes to html string', () => {
@@ -59,6 +63,38 @@ describe('serializeNodesToHtml()', () => {
         ];
         const serialized = serializeNodesToHtml(node);
         expect(serialized).to.contain('&lt;img src=x onerror=&#39;alert(123)&#39;/&gt;\\n');
+    });
+
+    it('should serialize mentions via serializeRawToHtml when PluginComposer has MentionPlugin', () => {
+        const raw = JSON.stringify([
+            {
+                type: 'p',
+                children: [
+                    { text: 'test ', textStyle: 'p' },
+                    {
+                        type: 'mention',
+                        children: [{ text: '' }],
+                        value: 'John Doe',
+                        category: 'user',
+                        id: '2',
+                    },
+                    { text: ' ' },
+                ],
+                align: 'left',
+            },
+        ]);
+
+        const plugins = new PluginComposer({ noToolbar: true }).setPlugin(
+            new ParagraphPlugin(),
+            new MentionPlugin({
+                mentionableItems: [
+                    { data: { id: '2', category: MentionableCategory.USER }, key: '0', text: 'John Doe' },
+                ],
+            }),
+        );
+
+        const result = serializeRawToHtml(raw, plugins);
+        expect(result).to.match(/<p.*>test <span.*>John Doe<\/span> <\/p>/);
     });
 
     describe('paragraph', () => {
