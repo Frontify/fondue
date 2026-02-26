@@ -68,14 +68,14 @@ export const DatePickerCalendar = forwardRef<HTMLDivElement, DatePickerCalendarP
                     showOutsideDays
                     disabled={disabledDates}
                     classNames={{
-                        day: ` ${styles.day} ${styles.button}`,
-                        selected: styles.selected,
+                        day: `${styles.day}`,
+                        selected: `${styles.selected}`,
                         week: `${defaultClassNames.week} ${styles.week}`,
-                        weekday: styles.weekday,
+                        weekday: `${styles.weekday}`,
                         weekdays: `${defaultClassNames.weekdays} ${styles.weekdays}`,
-                        range_start: styles.selectedStart,
-                        range_end: styles.selectedEnd,
-                        range_middle: styles.selectedMiddle,
+                        range_start: `${styles.selectedStart}`,
+                        range_end: `${styles.selectedEnd}`,
+                        range_middle: `${styles.selectedMiddle}`,
                     }}
                     {...modeProps}
                     modifiersClassNames={{
