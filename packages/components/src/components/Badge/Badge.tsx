@@ -46,12 +46,14 @@ type BadgeProps = {
     title?: string;
     'aria-label'?: string;
     'data-test-id'?: string;
+    'data-dismiss-test-id'?: string;
     children: ReactNode;
 };
 
 export const Badge = ({
     'aria-label': ariaLabel,
     'data-test-id': dataTestId = 'badge',
+    'data-dismiss-test-id': dataDismissTestId = 'badge-dismiss',
     children,
     disabled = false,
     emphasis = 'strong',
