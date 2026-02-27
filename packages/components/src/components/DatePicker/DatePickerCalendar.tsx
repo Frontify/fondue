@@ -13,7 +13,6 @@ import {
     type DayButtonProps,
 } from 'react-day-picker';
 import 'react-day-picker/style.css';
-import { type Locale } from 'react-day-picker/locale';
 
 import { Button } from '../Button/Button';
 import { useFondueTheme } from '../ThemeProvider/ThemeProvider';
@@ -32,33 +31,26 @@ type DatePickerCalendarModeProps =
           onDayMouseLeave?: (day: Date) => void;
       };
 
-type DisabledDates =
-    | {
-          from: Date;
-          to: Date;
-      }
-    | { before: Date }
-    | { after: Date }
-    | Date;
+type DisabledDates = { before: Date } | { after: Date };
 
 export type DatePickerBaseProps = {
-    /** The locale used to format the dates. */
-    locale?: Locale;
     /** The days to be disabled. */
-    disabledDates?: DisabledDates[];
+    disabledDates?: DisabledDates | DisabledDates[];
     /** The test id applied to the wrapper and forwarded to DayPicker. */
     'data-test-id'?: string;
+    /** The time zone (IANA or UTC offset) the date object is in. */
+    timeZone?: string;
 };
 
 type DatePickerCalendarProps = DatePickerBaseProps & DatePickerCalendarModeProps;
 
 export const DatePickerCalendar = forwardRef<HTMLDivElement, DatePickerCalendarProps>(
-    (
-        { 'data-test-id': dataTestId = 'fondue-date-picker-calendar', locale, disabledDates, ...modeProps },
-        ref,
-    ): JSX.Element => {
+    ({ 'data-test-id': dataTestId = 'fondue-date-picker-calendar', disabledDates, ...modeProps }, ref): JSX.Element => {
         const defaultClassNames = getDefaultClassNames();
-        const { dir } = useFondueTheme();
+        const {
+            dir,
+            translations: { dateLocale },
+        } = useFondueTheme();
 
         const defaultMonth = useMemo(() => {
             if (modeProps.mode === 'single') {
@@ -72,11 +64,12 @@ export const DatePickerCalendar = forwardRef<HTMLDivElement, DatePickerCalendarP
                 <DayPicker
                     navLayout="around"
                     data-test-id={dataTestId}
-                    locale={locale}
+                    locale={dateLocale}
                     components={getCustomComponents()}
                     showOutsideDays
                     disabled={disabledDates}
                     defaultMonth={defaultMonth}
+                    timeZone="America/Los_Angeles"
                     dir={dir}
                     classNames={{
                         root: `${defaultClassNames.root} ${styles.root}`,
@@ -154,9 +147,7 @@ const getCustomComponents = (): Partial<CustomComponents> => ({
         onClick,
         'aria-label': ariaLabel,
         'aria-disabled': ariaDisabled,
-        ...props
     }: PreviousMonthButtonProps): JSX.Element => {
-        console.log(props);
         return (
             <div className={`${styles.toggleMonthButtonContainer} ${styles.nextMonthButtonContainer}`}>
                 <Button

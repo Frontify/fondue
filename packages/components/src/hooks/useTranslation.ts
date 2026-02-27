@@ -21,7 +21,9 @@ import { ThemeContext } from '../components/ThemeProvider/ThemeProvider';
  * ```
  */
 export const useTranslation = () => {
-    const { translations } = useContext(ThemeContext);
+    const {
+        translations: { translationStrings: translations },
+    } = useContext(ThemeContext);
 
     /**
      * Translates a key to its localized string value.

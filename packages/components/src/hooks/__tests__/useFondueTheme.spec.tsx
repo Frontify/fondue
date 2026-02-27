@@ -13,7 +13,7 @@ const TestComponent = () => {
         <div>
             <div data-test-id="theme">{theme}</div>
             <div data-test-id="dir">{dir}</div>
-            <div data-test-id="translations">{translations.Dialog_close}</div>
+            <div data-test-id="translations">{translations.translationStrings.Dialog_close}</div>
         </div>
     );
 };

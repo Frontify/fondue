@@ -1,8 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { pt as dateLocale } from 'date-fns/locale';
+
 import { type Translations } from './types';
 
-export const ptPT: Translations = {
+const translations = {
     ColorPicker_selectColor: 'Selecionar cor',
     ColorPicker_selectFormat: 'Selecionar um formato de cor',
     ColorPicker_hexValue: 'Valor de cor hexadecimal',
@@ -26,4 +28,9 @@ export const ptPT: Translations = {
     Table_sortAscending: 'Ordenar ascendente',
     Badge_dismiss: 'Fechar ${label}',
     Notice_dismiss: 'Fechar aviso',
+};
+
+export const ptPT: Translations = {
+    translationStrings: translations,
+    dateLocale,
 };

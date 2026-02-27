@@ -71,6 +71,7 @@
         "@radix-ui/react-tabs": "^1.1.13",
         "@radix-ui/react-toggle-group": "^1.1.11",
         "@radix-ui/react-tooltip": "^1.2.8",
+        "date-fns": "^3.6.0",
         "downshift": "^9.0.13",
         "react-colorful": "^5.6.1",
         "react-day-picker": "^9.13.1",

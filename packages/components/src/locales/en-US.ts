@@ -1,6 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export const enUS = {
+import { enUS as dateLocale } from 'date-fns/locale';
+
+const translations = {
     ColorPicker_selectColor: 'Select Color',
     ColorPicker_selectFormat: 'Select a color format',
     ColorPicker_hexValue: 'Hex color value',
@@ -24,4 +26,9 @@ export const enUS = {
     Table_sortAscending: 'Sort ascending',
     Badge_dismiss: 'Dismiss ${label}',
     Notice_dismiss: 'Dismiss notice',
+};
+
+export const enUS = {
+    translationStrings: translations,
+    dateLocale,
 };
