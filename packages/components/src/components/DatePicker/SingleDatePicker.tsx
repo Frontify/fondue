@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { forwardRef, type ForwardedRef } from 'react';
+import { forwardRef, useMemo, useState, type ForwardedRef } from 'react';
 import { type OnSelectHandler } from 'react-day-picker';
 
 import { type DatePickerBaseProps, DatePickerCalendar } from './DatePickerCalendar';
@@ -8,13 +8,22 @@ import { type DatePickerBaseProps, DatePickerCalendar } from './DatePickerCalend
 type SingleDatePickerProps = {
     selected?: Date;
     onSelect?: (date: Date) => void;
-};
+} & DatePickerBaseProps;
 
-export const SingleDatePickerRoot = (
-    { 'data-test-id': dataTestId, onSelect, selected, ...props }: SingleDatePickerProps & DatePickerBaseProps,
+export const SingleDatePicker = (
+    { 'data-test-id': dataTestId, onSelect, selected, ...props }: SingleDatePickerProps,
     ref: ForwardedRef<HTMLDivElement>,
 ): JSX.Element => {
+    const [internalSelectedDate, setInternalSelectedDate] = useState<Date | undefined>(selected);
+    const selectedDate = useMemo(() => {
+        if (selected) {
+            return selected;
+        }
+        return internalSelectedDate;
+    }, [internalSelectedDate, selected]);
+
     const handleSelect: OnSelectHandler<Date> = (date) => {
+        setInternalSelectedDate(date);
         onSelect?.(date);
     };
 
@@ -25,13 +34,11 @@ export const SingleDatePickerRoot = (
             data-test-id={dataTestId}
             mode="single"
             required
-            selected={selected}
+            selected={selectedDate}
             onSelect={handleSelect}
         />
     );
 };
 
-SingleDatePickerRoot.displayName = 'SingleDatePicker';
-
-export type { SingleDatePickerProps };
-export const SingleDatePicker = forwardRef<HTMLDivElement, SingleDatePickerProps>(SingleDatePickerRoot);
+SingleDatePicker.displayName = 'SingleDatePicker';
+export const ForwardedRefSingleDatePicker = forwardRef<HTMLDivElement, SingleDatePickerProps>(SingleDatePicker);

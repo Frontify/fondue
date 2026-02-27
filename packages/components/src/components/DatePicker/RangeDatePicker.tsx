@@ -5,7 +5,7 @@ import { type OnSelectHandler, type DateRange as DayPickerDateRange } from 'reac
 
 import { type DatePickerBaseProps, DatePickerCalendar } from './DatePickerCalendar';
 
-type DateRange = {
+export type DateRange = {
     from: Date;
     to: Date;
 };
@@ -14,7 +14,7 @@ type RangeDatePickerProps = {
     'data-test-id'?: string;
     selected?: DateRange;
     onSelect?: (dateRange: DateRange) => void;
-};
+} & DatePickerBaseProps;
 
 const transformPickerDateRangeToFondueDateRange = (dateRange: DayPickerDateRange): DateRange => {
     if (!dateRange.from || !dateRange.to) {
@@ -38,19 +38,22 @@ const transformFondueDateRangeToPickerDateRange = (dateRange?: DateRange): DayPi
     };
 };
 
-export const RangeDatePickerRoot = (
-    { 'data-test-id': dataTestId, onSelect, selected, ...props }: RangeDatePickerProps & DatePickerBaseProps,
+export const RangeDatePicker = (
+    { 'data-test-id': dataTestId, onSelect, selected, ...props }: RangeDatePickerProps,
     ref: ForwardedRef<HTMLDivElement>,
 ): JSX.Element => {
+    const [internalSelectedDateRange, setInternalSelectedDateRange] = useState<DateRange | undefined>(selected);
+
     const selectedDateRange = useMemo(() => {
-        return transformFondueDateRangeToPickerDateRange(selected);
-    }, [selected]);
+        return transformFondueDateRangeToPickerDateRange(selected ?? internalSelectedDateRange);
+    }, [selected, internalSelectedDateRange]);
 
     const [hoveredDay, setHoveredDay] = useState<Date | undefined>(undefined);
 
     const handleSelect: OnSelectHandler<DayPickerDateRange> = (pickerDateRange) => {
         const dateRange = transformPickerDateRangeToFondueDateRange(pickerDateRange);
         onSelect?.(dateRange);
+        setInternalSelectedDateRange(dateRange);
     };
     const handleDayMouseEnter = (day: Date) => {
         setHoveredDay(day);
@@ -109,7 +112,5 @@ export const RangeDatePickerRoot = (
     );
 };
 
-RangeDatePickerRoot.displayName = 'RangeDatePicker';
-
-export type { DateRange, RangeDatePickerProps };
-export const RangeDatePicker = forwardRef<HTMLDivElement, RangeDatePickerProps>(RangeDatePickerRoot);
+RangeDatePicker.displayName = 'RangeDatePicker';
+export const ForwardedRefRangeDatePicker = forwardRef<HTMLDivElement, RangeDatePickerProps>(RangeDatePicker);

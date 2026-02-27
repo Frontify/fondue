@@ -3,6 +3,10 @@
 @use '../../../utilities/focusStyle.module.scss';
 @use '../../../utilities/sizeToken.module.scss';
 
+.wrapper {
+    width: fit-content;
+}
+
 .toggleMonthButtonContainer {
     position: absolute;
     height: var(--rdp-nav-height);
@@ -13,17 +17,15 @@
     margin-right: sizeToken.get(2);
 }
 
-.toggleMonthButton {
-    height: sizeToken.get(8);
-    width: sizeToken.get(8);
-    &:hover {
-        background-color: var(--color-container-secondary-hover);
-    }
-}
-
 .nextMonthButtonContainer {
     inset-inline-end: 0;
     top: 0;
+}
+
+.root[dir='rtl'] {
+    .toggleMonthButtonContainer {
+        transform: rotate(180deg);
+    }
 }
 
 .weekday {
@@ -69,7 +71,7 @@
         pointer-events: none;
     }
 
-    &:not([data-selected='true']):not(.hoverRange) {
+    &:not([data-selected='true']):not(.hoverRange):not([data-disabled='true']) {
         &:hover {
             .dayContent {
                 background-color: var(--color-container-secondary-hover);

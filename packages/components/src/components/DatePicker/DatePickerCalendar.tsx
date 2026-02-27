@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconArrowLeft, IconArrowRight } from '@frontify/fondue-icons';
-import { forwardRef, useEffect, useRef } from 'react';
+import { forwardRef, useEffect, useMemo, useRef } from 'react';
 import {
     getDefaultClassNames,
     DayPicker,
@@ -16,6 +16,7 @@ import 'react-day-picker/style.css';
 import { type Locale } from 'react-day-picker/locale';
 
 import { Button } from '../Button/Button';
+import { useFondueTheme } from '../ThemeProvider/ThemeProvider';
 
 import styles from './styles/datePickerCalendar.module.scss';
 
@@ -26,6 +27,9 @@ type DatePickerCalendarModeProps =
           required: true;
           selected: DayPickerDateRange | undefined;
           onSelect: OnSelectHandler<DayPickerDateRange>;
+          modifiers?: Record<string, Matcher>;
+          onDayMouseEnter?: (day: Date) => void;
+          onDayMouseLeave?: (day: Date) => void;
       };
 
 type DisabledDates =
@@ -34,22 +38,19 @@ type DisabledDates =
           to: Date;
       }
     | { before: Date }
-    | { after: Date };
+    | { after: Date }
+    | Date;
 
 export type DatePickerBaseProps = {
-    /** The test id applied to the wrapper and forwarded to DayPicker. */
-    'data-test-id'?: string;
     /** The locale used to format the dates. */
     locale?: Locale;
     /** The days to be disabled. */
     disabledDates?: DisabledDates[];
+    /** The test id applied to the wrapper and forwarded to DayPicker. */
+    'data-test-id'?: string;
 };
 
-type DatePickerCalendarProps = DatePickerBaseProps &
-    DatePickerCalendarModeProps & {
-        modifiers: Record<string, Matcher>;
-        onDayMouseEnter: (day: Date) => void;
-    };
+type DatePickerCalendarProps = DatePickerBaseProps & DatePickerCalendarModeProps;
 
 export const DatePickerCalendar = forwardRef<HTMLDivElement, DatePickerCalendarProps>(
     (
@@ -57,9 +58,17 @@ export const DatePickerCalendar = forwardRef<HTMLDivElement, DatePickerCalendarP
         ref,
     ): JSX.Element => {
         const defaultClassNames = getDefaultClassNames();
+        const { dir } = useFondueTheme();
+
+        const defaultMonth = useMemo(() => {
+            if (modeProps.mode === 'single') {
+                return modeProps.selected;
+            }
+            return modeProps.selected?.from;
+        }, [modeProps]);
 
         return (
-            <div ref={ref} data-test-id={dataTestId}>
+            <div ref={ref} data-test-id={dataTestId} className={styles.wrapper}>
                 <DayPicker
                     navLayout="around"
                     data-test-id={dataTestId}
@@ -67,7 +76,10 @@ export const DatePickerCalendar = forwardRef<HTMLDivElement, DatePickerCalendarP
                     components={getCustomComponents()}
                     showOutsideDays
                     disabled={disabledDates}
+                    defaultMonth={defaultMonth}
+                    dir={dir}
                     classNames={{
+                        root: `${defaultClassNames.root} ${styles.root}`,
                         day: `${styles.day}`,
                         selected: `${styles.selected}`,
                         week: `${defaultClassNames.week} ${styles.week}`,
@@ -142,7 +154,9 @@ const getCustomComponents = (): Partial<CustomComponents> => ({
         onClick,
         'aria-label': ariaLabel,
         'aria-disabled': ariaDisabled,
+        ...props
     }: PreviousMonthButtonProps): JSX.Element => {
+        console.log(props);
         return (
             <div className={`${styles.toggleMonthButtonContainer} ${styles.nextMonthButtonContainer}`}>
                 <Button
