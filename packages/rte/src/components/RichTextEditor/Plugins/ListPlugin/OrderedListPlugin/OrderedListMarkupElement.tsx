@@ -1,53 +1,46 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type PlateEditor, type PlateRenderLeafProps, useEditorRef } from '@udecode/plate-core';
-import { ELEMENT_LI, ELEMENT_OL } from '@udecode/plate-list';
-import { type TElement, getNodeAncestors } from '@udecode/slate';
-import { findNodePath } from '@udecode/slate-react';
+import { type PlateRenderLeafProps, useEditorRef } from '@udecode/plate-core';
+import { ELEMENT_OL } from '@udecode/plate-list';
+import { type TElement } from '@udecode/slate';
+import { type CSSProperties } from 'react';
 
 import { MarkupElement } from '../../MarkupElement';
+import { DEFAULT_OL_STYLES, type OrderedListLevelStyle } from '../types';
+import { getNestingLevel } from '../utils';
 
-const LIST_TYPES = [
-    "[&>li>p]:before:tw-content-[counter(count,decimal)_'._']",
-    "[&>li>p]:before:tw-content-[counter(count,_lower-alpha)_'._']",
-    "[&>li>p]:before:tw-content-[counter(count,lower-roman)_'._']",
-];
+export const OL_CLASSES =
+    "tw-list-none tw-pl-[10px] tw-mb-[10px] tw-ml-[15px] [&>li>p]:before:tw-whitespace-nowrap [&>li>p]:before:tw-pr-1 [&>li>p]:before:tw-tabular-nums [&>li>p]:before:tw-content-[counter(count,var(--counter-type))_'._'] [&>li>p]:before:tw-text-[color:var(--counter-color)]";
 
-const getNestingLevel = (editor: PlateEditor, element: TElement) => {
-    const path = findNodePath(editor, element);
-    if (!path) {
-        return 0;
-    }
+export const createOrderedListNode = (listStyles: OrderedListLevelStyle[] = DEFAULT_OL_STYLES) => {
+    const OrderedListNode = ({ attributes, children, element }: PlateRenderLeafProps & { element: TElement }) => {
+        const editor = useEditorRef();
+        const nestingLevel = getNestingLevel(editor, element);
+        const levelStyle = listStyles[nestingLevel % listStyles.length];
 
-    const nodeAncestors = getNodeAncestors(editor, path);
-    return Array.from(nodeAncestors).filter((node) => node[0].type === ELEMENT_LI).length;
-};
-
-export const getOrderedListClasses = (nestingLevel: number) =>
-    `tw-list-none tw-pl-[10px] tw-mb-[10px] tw-ml-[15px] [&>li>p]:before:tw-whitespace-nowrap [&>li>p]:before:tw-pr-1 [&>li>p]:before:tw-tabular-nums ${
-        LIST_TYPES[nestingLevel % 3]
-    }`;
-export const OL_STYLES = { counterReset: 'count' };
-
-export const OrderedListMarkupElementNode: (props: PlateRenderLeafProps & { element: TElement }) => JSX.Element = ({
-    attributes,
-    children,
-    element,
-}) => {
-    const editor = useEditorRef();
-    const nestingLevel = getNestingLevel(editor, element);
-
-    return (
-        <ol className={getOrderedListClasses(nestingLevel)} {...attributes} style={OL_STYLES}>
-            {children}
-        </ol>
-    );
+        return (
+            <ol
+                className={OL_CLASSES}
+                {...attributes}
+                style={
+                    {
+                        counterReset: 'count',
+                        '--counter-type': levelStyle.counterType,
+                        '--counter-color': levelStyle.color ?? 'currentColor',
+                    } as CSSProperties
+                }
+            >
+                {children}
+            </ol>
+        );
+    };
+    return OrderedListNode;
 };
 
 export class OrderedListMarkupElement extends MarkupElement {
     constructor(
         id = ELEMENT_OL,
-        node: (props: PlateRenderLeafProps & { element: TElement }) => JSX.Element = OrderedListMarkupElementNode,
+        node: (props: PlateRenderLeafProps & { element: TElement }) => JSX.Element = createOrderedListNode(),
     ) {
         super(id, node);
     }

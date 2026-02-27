@@ -2,19 +2,25 @@
 
 import { ListPlugin } from '../ListPlugin';
 import { LIST_PLUGIN } from '../id';
-import { type ListPluginProps } from '../types';
+import { type OrderedListLevelStyle, type OrderedListPluginProps } from '../types';
 
 import { OrderedListButton } from './OrderedListButton';
-import { OrderedListMarkupElement } from './OrderedListMarkupElement';
+import { OrderedListMarkupElement, createOrderedListNode } from './OrderedListMarkupElement';
 
 export class OrderedListPlugin extends ListPlugin {
-    constructor(props?: ListPluginProps) {
+    public readonly listStyles?: OrderedListLevelStyle[];
+
+    constructor(props?: OrderedListPluginProps) {
+        const { listStyles, ...rest } = props ?? {};
+
         super({
             id: LIST_PLUGIN,
             button: OrderedListButton,
-            markupElement: new OrderedListMarkupElement(),
-            ...props,
+            markupElement: new OrderedListMarkupElement(undefined, createOrderedListNode(listStyles)),
+            ...rest,
         });
+
+        this.listStyles = listStyles;
     }
 }
 
