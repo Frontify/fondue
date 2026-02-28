@@ -62,6 +62,8 @@ export const Badge = ({
     title,
     variant = 'default',
 }: BadgeProps) => {
+    const { t } = useTranslation();
+
     const commonProps = {
         'aria-label': ariaLabel || title,
         'data-component': 'badge',
@@ -75,46 +77,57 @@ export const Badge = ({
         title,
     };
 
-    const contentProps = {
-        'aria-label': ariaLabel || title,
-        disabled,
-        onDismiss,
-        status,
-    };
+    const dismissButton = onDismiss ? (
+        <button
+            type="button"
+            aria-label={t('Badge_dismiss', { label: ariaLabel || title || '' })}
+            className={styles.dismiss}
+            data-test-id={`${dataTestId}-dismiss`}
+            disabled={disabled}
+            onClick={onDismiss}
+        >
+            <IconCross size="12" />
+        </button>
+    ) : null;
+
+    // When both onClick and onDismiss are provided, render as siblings inside a
+    // wrapper div to avoid nesting interactive elements (invalid HTML / a11y issue).
+    if (onClick && onDismiss) {
+        return (
+            <div {...commonProps}>
+                <button
+                    type="button"
+                    aria-label={ariaLabel || title}
+                    className={styles.inner}
+                    disabled={disabled}
+                    onClick={onClick}
+                >
+                    <BadgeContent status={status}>{children}</BadgeContent>
+                </button>
+                {dismissButton}
+            </div>
+        );
+    }
 
     if (onClick) {
         return (
             <button type="button" disabled={disabled} {...commonProps} onClick={onClick}>
-                <BadgeContent {...contentProps}>{children}</BadgeContent>
+                <BadgeContent status={status}>{children}</BadgeContent>
             </button>
         );
     }
 
     return (
         <div {...commonProps}>
-            <BadgeContent {...contentProps}>{children}</BadgeContent>
+            <BadgeContent status={status}>{children}</BadgeContent>
+            {dismissButton}
         </div>
     );
 };
 
-const BadgeContent = ({ 'aria-label': ariaLabel, children, disabled = false, onDismiss, status }: BadgeProps) => {
-    const { t } = useTranslation();
-
-    return (
-        <>
-            {status && <BadgeStatus status={status} />}
-            {children}
-            {onDismiss && (
-                <button
-                    type="button"
-                    aria-label={t('Badge_dismiss', { label: ariaLabel || '' })}
-                    className={styles.dismiss}
-                    disabled={disabled}
-                    onClick={onDismiss}
-                >
-                    <IconCross size="12" />
-                </button>
-            )}
-        </>
-    );
-};
+const BadgeContent = ({ children, status }: { children: ReactNode; status?: BadgeStatusProps['status'] }) => (
+    <>
+        {status && <BadgeStatus status={status} />}
+        {children}
+    </>
+);
