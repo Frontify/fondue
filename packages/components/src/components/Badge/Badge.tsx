@@ -45,15 +45,17 @@ type BadgeProps = {
     status?: BadgeStatusProps['status'];
     title?: string;
     'aria-label'?: string;
+    /**
+     * Test ID applied to the badge root element. The dismiss button (when present) uses this value suffixed with `-dismiss`.
+     * @default 'badge'
+     */
     'data-test-id'?: string;
-    'data-dismiss-test-id'?: string;
     children: ReactNode;
 };
 
 export const Badge = ({
     'aria-label': ariaLabel,
     'data-test-id': dataTestId = 'badge',
-    'data-dismiss-test-id': dataDismissTestId = 'badge-dismiss',
     children,
     disabled = false,
     emphasis = 'strong',
