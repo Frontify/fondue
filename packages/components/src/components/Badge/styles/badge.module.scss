@@ -10,9 +10,7 @@
         &:is(button) {
             cursor: pointer;
 
-            & {
-                @include focusStyle.focus-outline;
-            }
+            @include focusStyle.focus-outline;
         }
 
         &:is(button):hover,
@@ -85,9 +83,7 @@
     align-items: center;
     gap: var(--spacing-xx-small);
 
-    & {
-        @include focusStyle.focus-outline;
-    }
+    @include focusStyle.focus-outline;
 }
 
 .dismiss {
@@ -100,9 +96,7 @@
     color: inherit;
     border-radius: 0.25rem;
 
-    & {
-        @include focusStyle.focus-outline;
-    }
+    @include focusStyle.focus-outline;
 }
 
 /**
