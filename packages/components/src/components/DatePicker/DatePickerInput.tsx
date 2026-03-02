@@ -60,7 +60,7 @@ export const DatePickerInput = (
                 type="button"
                 data-color-input-select
             >
-                <span className={styles.dateName}>{currentDate?.toLocaleDateString()}</span>
+                <span className={styles.dateName}>{currentDate?.toLocaleDateString('de-CH')}</span>
             </button>
             <div className={styles.actions}>
                 {onClear && (

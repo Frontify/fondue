@@ -20,7 +20,7 @@ export default meta;
 
 export const Default: Story = {
     args: {
-        currentDate: new Date(),
+        currentDate: new Date('2026-02-11T00:00:00.000-08:00'),
     },
     render: (args) => {
         return <ForwardedRefDatePickerInput {...args} onClear={() => {}} />;

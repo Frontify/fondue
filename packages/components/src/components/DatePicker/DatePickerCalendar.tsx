@@ -7,7 +7,7 @@ import {
     DayPicker,
     type PreviousMonthButtonProps,
     type OnSelectHandler,
-    type DateRange as DayPickerDateRange,
+    type DateRange as InternalDayPickerDateRange,
     type CustomComponents,
     type Matcher,
     type DayButtonProps,
@@ -24,8 +24,8 @@ type DatePickerCalendarModeProps =
     | {
           mode: 'range';
           required: true;
-          selected: DayPickerDateRange | undefined;
-          onSelect: OnSelectHandler<DayPickerDateRange>;
+          selected: InternalDayPickerDateRange | undefined;
+          onSelect: OnSelectHandler<InternalDayPickerDateRange>;
           modifiers?: Record<string, Matcher>;
           onDayMouseEnter?: (day: Date) => void;
           onDayMouseLeave?: (day: Date) => void;
@@ -38,8 +38,6 @@ export type DatePickerBaseProps = {
     disabledDates?: DisabledDates | DisabledDates[];
     /** The test id applied to the wrapper and forwarded to DayPicker. */
     'data-test-id'?: string;
-    /** The time zone (IANA or UTC offset) the date object is in. */
-    timeZone?: string;
 };
 
 type DatePickerCalendarProps = DatePickerBaseProps & DatePickerCalendarModeProps;
@@ -69,7 +67,7 @@ export const DatePickerCalendar = forwardRef<HTMLDivElement, DatePickerCalendarP
                     showOutsideDays
                     disabled={disabledDates}
                     defaultMonth={defaultMonth}
-                    timeZone="America/Los_Angeles"
+                    timeZone="UTC"
                     dir={dir}
                     classNames={{
                         root: `${defaultClassNames.root} ${styles.root}`,

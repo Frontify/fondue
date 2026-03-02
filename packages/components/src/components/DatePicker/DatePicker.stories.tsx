@@ -5,8 +5,9 @@ import { action } from 'storybook/actions';
 import { useState } from 'storybook/internal/preview-api';
 
 import { DatePicker } from './DatePicker';
-import { type DateRange, RangeDatePicker } from './RangeDatePicker';
+import { RangeDatePicker } from './RangeDatePicker';
 import { SingleDatePicker } from './SingleDatePicker';
+import { type DatePickerDateRange } from './types';
 
 type Story = StoryObj<typeof SingleDatePicker>;
 const meta: Meta<typeof SingleDatePicker> = {
@@ -49,40 +50,22 @@ export const ControlledSingleDate: Story = {
 
 export const RangeDate: StoryObj<typeof RangeDatePicker> = {
     args: {},
-    render: () => {
-        return <DatePicker.Range />;
+    render: (args) => {
+        return <DatePicker.Range {...args} />;
     },
 };
 
 export const ControlledRangeDate: StoryObj<typeof RangeDatePicker> = {
     args: {},
     render: (args) => {
-        const defaultDateRange = { from: new Date(2026, 1, 17), to: new Date(2026, 1, 24) };
-        const [selectedDateRange, setSelectedDateRange] = useState<DateRange | undefined>(defaultDateRange);
+        const defaultDateRange = { from: { year: 2026, month: 1, day: 17 }, to: { year: 2026, month: 1, day: 24 } };
+        const [selectedDateRange, setSelectedDateRange] = useState<DatePickerDateRange | undefined>(defaultDateRange);
 
-        const handleSelect = (dateRange: DateRange) => {
+        const handleSelect = (dateRange: DatePickerDateRange) => {
             setSelectedDateRange(dateRange);
             args.onSelect?.(dateRange);
         };
         return <DatePicker.Range {...args} selected={selectedDateRange} onSelect={handleSelect} />;
-    },
-};
-
-export const DisabledIndividualDates: Story = {
-    args: {
-        disabledDates: [new Date(2026, 1, 17), new Date(2026, 1, 21), new Date(2026, 1, 25)],
-    },
-    render: (args) => {
-        return <DatePicker {...args} />;
-    },
-};
-
-export const DisabledDateRange: Story = {
-    args: {
-        disabledDates: [{ from: new Date(2026, 1, 17), to: new Date(2026, 1, 24) }],
-    },
-    render: (args) => {
-        return <DatePicker {...args} />;
     },
 };
 

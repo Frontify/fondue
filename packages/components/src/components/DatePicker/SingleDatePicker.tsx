@@ -4,29 +4,19 @@ import { forwardRef, useMemo, useState, type ForwardedRef } from 'react';
 import { type OnSelectHandler } from 'react-day-picker';
 
 import { type DatePickerBaseProps, DatePickerCalendar } from './DatePickerCalendar';
+import { useSingleDate } from './hooks/useSingleDate';
+import { type DatePickerDate } from './types';
 
 type SingleDatePickerProps = {
-    selected?: Date;
-    onSelect?: (date: Date) => void;
+    selected?: DatePickerDate;
+    onSelect?: (date?: DatePickerDate) => void;
 } & DatePickerBaseProps;
 
 export const SingleDatePicker = (
     { 'data-test-id': dataTestId, onSelect, selected, ...props }: SingleDatePickerProps,
     ref: ForwardedRef<HTMLDivElement>,
 ): JSX.Element => {
-    const [internalSelectedDate, setInternalSelectedDate] = useState<Date | undefined>(selected);
-    const selectedDate = useMemo(() => {
-        if (selected) {
-            return selected;
-        }
-        return internalSelectedDate;
-    }, [internalSelectedDate, selected]);
-
-    const handleSelect: OnSelectHandler<Date> = (date) => {
-        setInternalSelectedDate(date);
-        onSelect?.(date);
-    };
-
+    const { selectedDate, handleSelect } = useSingleDate(selected, onSelect);
     return (
         <DatePickerCalendar
             {...props}
