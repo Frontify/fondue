@@ -7,6 +7,12 @@
     width: fit-content;
 }
 
+.root[dir='rtl'] {
+    .toggleMonthButtonContainer {
+        transform: rotate(180deg);
+    }
+}
+
 .toggleMonthButtonContainer {
     position: absolute;
     height: var(--rdp-nav-height);
@@ -20,12 +26,6 @@
 .nextMonthButtonContainer {
     inset-inline-end: 0;
     top: 0;
-}
-
-.root[dir='rtl'] {
-    .toggleMonthButtonContainer {
-        transform: rotate(180deg);
-    }
 }
 
 .weekday {
