@@ -1,5 +1,22 @@
 # @frontify/fondue-components
 
+## 27.0.0
+
+### Major Changes
+
+- [#2639](https://github.com/Frontify/fondue/pull/2639) [`39a18ec`](https://github.com/Frontify/fondue/commit/39a18ec58cb6d3b4bfffd3cc48b311b59e91bda2) Thanks [@joelharkes](https://github.com/joelharkes)! - Fix badge button in button a11y issue when onclick and dimiss are both set.
+
+### Minor Changes
+
+- [#2629](https://github.com/Frontify/fondue/pull/2629) [`e8cf780`](https://github.com/Frontify/fondue/commit/e8cf7807a7856c8535b40e75682054eb2749ccb8) Thanks [@syeo66](https://github.com/syeo66)! - feat(Tabs): add pill tabs with divider line
+
+### Patch Changes
+
+- [#2630](https://github.com/Frontify/fondue/pull/2630) [`49665d9`](https://github.com/Frontify/fondue/commit/49665d9d3e14c956e0da9089b12af01a5dce7ecc) Thanks [@syeo66](https://github.com/syeo66)! - feat(Dialog): improve composability with Tabs and ScrollArea
+
+- Updated dependencies []:
+    - @frontify/fondue-tokens@5.0.0
+
 ## 26.0.3
 
 ### Patch Changes
