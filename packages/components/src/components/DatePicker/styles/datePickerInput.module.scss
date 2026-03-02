@@ -42,7 +42,7 @@
         }
     }
 
-    &:has(button[data-color-input-select]:focus-visible) {
+    &:has(button[data-date-input-select]:focus-visible) {
         @include focusStyle.focus-outline-styles;
     }
 
@@ -53,12 +53,8 @@
         color: var(--color-disabled-default);
         cursor: default;
 
-        .colorName {
+        .dateName {
             color: var(--color-disabled-default);
-        }
-
-        .colorIndicator {
-            border-color: var(--color-line-subtle);
         }
     }
 }
@@ -67,7 +63,7 @@
     @include transitions.transition-all;
 }
 
-.colorName {
+.dateName {
     color: var(--color-primary-default);
 }
 
@@ -81,26 +77,6 @@
     height: sizeToken.get(9);
     outline: none;
     width: 100%;
-}
-
-.colorIndicator {
-    position: relative;
-    overflow: hidden;
-    width: sizeToken.get(4);
-    height: sizeToken.get(4);
-    border-radius: sizeToken.get(1);
-    border: var(--border-width-default) solid var(--color-line-mid);
-    background-clip: padding-box;
-    background-image: repeating-conic-gradient(var(--color-surface-default) 0% 25%, var(--color-line-subtle) 0% 50%);
-    background-size: 6px 6px;
-    background-position: -0.5px -0.5px;
-
-    &::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background-color: var(--active-color);
-    }
 }
 
 .actions {

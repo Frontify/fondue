@@ -12,6 +12,7 @@ const translations = {
     ColorPicker_greenChannel: 'Groen kleurkanaal',
     ColorPicker_blueChannel: 'Blauw kleurkanaal',
     ColorPicker_opacity: 'Kleurdekking',
+    DatePicker_selectDate: 'Selecteer datum',
     Dialog_close: 'Sluiten',
     Flyout_close: 'Sluiten',
     Select_clear: 'invoer wissen',

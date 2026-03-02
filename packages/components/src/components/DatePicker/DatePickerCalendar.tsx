@@ -6,6 +6,7 @@ import {
     getDefaultClassNames,
     DayPicker,
     type PreviousMonthButtonProps,
+    type NextMonthButtonProps,
     type OnSelectHandler,
     type DateRange as InternalDayPickerDateRange,
     type CustomComponents,
@@ -56,8 +57,6 @@ export const DatePickerCalendar = forwardRef<HTMLDivElement, DatePickerCalendarP
             }
             return modeProps.selected?.from;
         }, [modeProps]);
-
-        console.log(dateLocale);
 
         return (
             <div ref={ref} data-test-id={dataTestId} className={styles.wrapper}>
@@ -149,7 +148,7 @@ const getCustomComponents = (): Partial<CustomComponents> => ({
         onClick,
         'aria-label': ariaLabel,
         'aria-disabled': ariaDisabled,
-    }: PreviousMonthButtonProps): JSX.Element => {
+    }: NextMonthButtonProps): JSX.Element => {
         return (
             <div className={`${styles.toggleMonthButtonContainer} ${styles.nextMonthButtonContainer}`}>
                 <Button

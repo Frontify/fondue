@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { action } from 'storybook/actions';
 
 import { ForwardedRefDatePickerInput, DatePickerInput } from './DatePickerInput';
 
@@ -27,7 +28,7 @@ export const SingleDate: Story = {
         },
     },
     render: (args) => {
-        return <ForwardedRefDatePickerInput {...args} onClear={() => {}} />;
+        return <ForwardedRefDatePickerInput {...args} />;
     },
 };
 
@@ -47,7 +48,7 @@ export const DateRangeSameMonth: Story = {
         },
     },
     render: (args) => {
-        return <ForwardedRefDatePickerInput {...args} onClear={() => {}} />;
+        return <ForwardedRefDatePickerInput {...args} />;
     },
 };
 
@@ -67,7 +68,7 @@ export const DateRangeDifferentMonth: Story = {
         },
     },
     render: (args) => {
-        return <ForwardedRefDatePickerInput {...args} onClear={() => {}} />;
+        return <ForwardedRefDatePickerInput {...args} />;
     },
 };
 
@@ -88,20 +89,29 @@ export const DateRangeDifferentYear: Story = {
         },
     },
     render: (args) => {
-        return <ForwardedRefDatePickerInput {...args} onClear={() => {}} />;
+        return <ForwardedRefDatePickerInput {...args} />;
+    },
+};
+
+export const Clearable: Story = {
+    args: {
+        onClear: action('onClear'),
+    },
+    render: (args) => {
+        return <ForwardedRefDatePickerInput {...args} />;
     },
 };
 
 export const Empty: Story = {
     args: {},
     render: (args) => {
-        return <ForwardedRefDatePickerInput {...args} onClear={() => {}} />;
+        return <ForwardedRefDatePickerInput {...args} />;
     },
 };
 
 export const Disabled: Story = {
     args: {},
     render: (args) => {
-        return <ForwardedRefDatePickerInput {...args} disabled onClear={() => {}} />;
+        return <ForwardedRefDatePickerInput {...args} disabled />;
     },
 };

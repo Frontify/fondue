@@ -12,6 +12,7 @@ const translations = {
     ColorPicker_greenChannel: 'Canal de color verde',
     ColorPicker_blueChannel: 'Canal de color azul',
     ColorPicker_opacity: 'Opacidad del color',
+    DatePicker_selectDate: 'Seleccionar fecha',
     Dialog_close: 'Cerrar',
     Flyout_close: 'Cerrar',
     Select_clear: 'borrar entrada',

@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconCaretDown, IconCross } from '@frontify/fondue-icons';
+import { IconCalendar, IconCaretDown, IconCross } from '@frontify/fondue-icons';
 import { type ForwardedRef, forwardRef, useMemo } from 'react';
 
+import { useTranslation } from '#/hooks/useTranslation';
 import { type CommonAriaAttrs } from '#/utilities/types';
 
 import { Button } from '../Button/Button';
@@ -47,11 +48,12 @@ export const DatePickerInput = (
         disabled = false,
         onClear,
         onClick,
-        'data-test-id': dataTestId = 'color-picker-input',
+        'data-test-id': dataTestId = 'date-picker-input',
         ...props
     }: DatePickerInputProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
+    const { t } = useTranslation();
     const displayString = useMemo(() => getDateDisplayString(selected), [selected]);
     return (
         <div id={id} className={styles.root} ref={forwardedRef} data-test-id={dataTestId}>
@@ -61,9 +63,14 @@ export const DatePickerInput = (
                 disabled={disabled}
                 onClick={onClick}
                 type="button"
-                data-color-input-select
+                data-date-input-select
             >
-                <span className={styles.dateName}>{displayString}</span>
+                <IconCalendar size={16} />
+                {displayString ? (
+                    <span className={styles.dateName}>{displayString}</span>
+                ) : (
+                    <span>{t('DatePicker_selectDate')}</span>
+                )}
             </button>
             <div className={styles.actions}>
                 {onClear && (
@@ -79,5 +86,5 @@ export const DatePickerInput = (
     );
 };
 
-DatePickerInput.displayName = 'ColorPicker.Input';
+DatePickerInput.displayName = 'DatePicker.Input';
 export const ForwardedRefDatePickerInput = forwardRef<HTMLDivElement, DatePickerInputProps>(DatePickerInput);
