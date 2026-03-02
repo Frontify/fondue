@@ -79,19 +79,19 @@ describe('TextStylePlugin', () => {
 
         cy.get('[contenteditable=true] ol').should(
             'have.class',
-            "[&>li>p]:before:tw-content-[counter(count,decimal)_'._']",
+            "[&>li>p]:before:tw-content-[counter(count,var(--counter-type))_'._']",
         );
         cy.get('[contenteditable=true] ol ol').should(
             'have.class',
-            "[&>li>p]:before:tw-content-[counter(count,_lower-alpha)_'._']",
+            "[&>li>p]:before:tw-content-[counter(count,var(--counter-type))_'._']",
         );
         cy.get('[contenteditable=true] ol ol ol').should(
             'have.class',
-            "[&>li>p]:before:tw-content-[counter(count,lower-roman)_'._']",
+            "[&>li>p]:before:tw-content-[counter(count,var(--counter-type))_'._']",
         );
         cy.get('[contenteditable=true] ol ol ol ol').should(
             'have.class',
-            "[&>li>p]:before:tw-content-[counter(count,decimal)_'._']",
+            "[&>li>p]:before:tw-content-[counter(count,var(--counter-type))_'._']",
         );
     });
 

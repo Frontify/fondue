@@ -508,9 +508,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
             ],
         };
         const result = serializeNodeToHtmlRecursive(node, defaultStyles, {
-            unorderedListStyles: [
-                { shape: '◦', color: '#999', size: '0.8em' },
-            ],
+            unorderedListStyles: [{ shape: '◦', color: '#999', size: '0.8em' }],
         });
 
         expect(result).to.include("--bullet-character: '◦'");
