@@ -127,6 +127,7 @@
 }
 
 @mixin rangeStartDay {
+    opacity: 1;
     .dayButton > .dayContent {
         background-color: var(--color-container-highlight-active);
         color: var(--color-container-highlight-on-highlight-container);
@@ -144,6 +145,7 @@
 }
 
 @mixin rangeEndDay {
+    opacity: 1;
     .dayButton > .dayContent {
         background-color: var(--color-container-highlight-active);
         color: var(--color-container-highlight-on-highlight-container);
@@ -161,6 +163,7 @@
 }
 
 @mixin rangeMiddleDay {
+    opacity: 1;
     .dayButton > .dayContent {
         border-radius: 0;
         background-color: var(--color-container-highlight-hover);
@@ -173,7 +176,7 @@
     }
 }
 
-.day:not(.hoverRange) {
+.day {
     &.selectedMiddle {
         @include rangeMiddleDay;
     }
@@ -187,16 +190,46 @@
     }
 }
 
-.day.hoverRange {
-    &:not(.hoverStart):not(.hoverEnd) {
-        @include rangeMiddleDay;
+.week {
+    &:has(~ .week .day.hoverAfter:hover) .day {
+        &.hoverAfter {
+            @include rangeMiddleDay;
+        }
+        &.hoverSelected {
+            @include rangeStartDay;
+        }
     }
 
-    &.hoverStart:not(.hoverEnd) {
-        @include rangeStartDay;
+    &:has(.day.hoverAfter:hover) .day {
+        &.hoverAfter:hover {
+            @include rangeEndDay;
+        }
+        &.hoverAfter:has(~ .day.hoverAfter:hover) {
+            @include rangeMiddleDay;
+        }
+        &.hoverSelected {
+            @include rangeStartDay;
+        }
     }
 
-    &.hoverEnd:not(.hoverStart) {
-        @include rangeEndDay;
+    &:has(.day.hoverBefore:hover) .day {
+        &.hoverBefore:hover {
+            @include rangeStartDay;
+        }
+        &.hoverBefore:hover ~ .day.hoverBefore {
+            @include rangeMiddleDay;
+        }
+        &.hoverSelected {
+            @include rangeEndDay;
+        }
+    }
+
+    &:has(.day.hoverBefore:hover) ~ .week .day {
+        &.hoverBefore {
+            @include rangeMiddleDay;
+        }
+        &.hoverSelected {
+            @include rangeEndDay;
+        }
     }
 }

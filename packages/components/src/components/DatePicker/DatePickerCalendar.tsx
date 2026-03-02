@@ -82,9 +82,9 @@ export const DatePickerCalendar = forwardRef<HTMLDivElement, DatePickerCalendarP
                     }}
                     {...modeProps}
                     modifiersClassNames={{
-                        hoverRange: `${styles.hoverRange}`,
-                        hoverStart: `${styles.hoverStart}`,
-                        hoverEnd: `${styles.hoverEnd}`,
+                        hoverAfter: `${styles.hoverAfter}`,
+                        hoverBefore: `${styles.hoverBefore}`,
+                        hoverSelected: `${styles.hoverSelected}`,
                     }}
                 />
             </div>

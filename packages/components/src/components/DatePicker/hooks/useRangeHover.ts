@@ -1,54 +1,33 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { type DateRange as InternalDayPickerDateRange } from 'react-day-picker';
 
 export const useRangeHover = (selectedDateRange?: InternalDayPickerDateRange) => {
-    const [hoveredDay, setHoveredDay] = useState<Date | undefined>(undefined);
     const hoverModifiers = useMemo(() => {
-        const hoverTime = hoveredDay?.getTime();
-        const fromTime = selectedDateRange?.from?.getTime();
-        const toTime = selectedDateRange?.to?.getTime();
-
-        let fromModifier: Date | undefined;
-        let toModifier: Date | undefined;
-
-        if (!hoverTime || !fromTime || !toTime || toTime > fromTime) {
+        if (
+            !selectedDateRange?.from ||
+            !selectedDateRange?.to ||
+            selectedDateRange?.to.getTime() > selectedDateRange?.from.getTime()
+        ) {
             return {
-                hoverRange: false,
-                hoverStart: false,
-                hoverEnd: false,
+                hoverBefore: false,
+                hoverAfter: false,
+                hoverSelected: false,
             };
         }
-
-        if (hoverTime >= toTime) {
-            fromModifier = selectedDateRange?.from;
-            toModifier = hoveredDay;
-        } else if (hoverTime <= fromTime) {
-            fromModifier = hoveredDay;
-            toModifier = selectedDateRange?.to;
-        }
-
         return {
-            hoverRange: {
-                from: fromModifier,
-                to: toModifier,
+            hoverBefore: {
+                before: selectedDateRange?.from,
             },
-            hoverStart: fromModifier ?? false,
-            hoverEnd: toModifier ?? false,
+            hoverAfter: {
+                after: selectedDateRange?.to,
+            },
+            hoverSelected: selectedDateRange?.from,
         };
-    }, [hoveredDay, selectedDateRange]);
-
-    const handleDayMouseEnter = (day: Date) => {
-        setHoveredDay(day);
-    };
-    const handleDayMouseLeave = () => {
-        setHoveredDay(undefined);
-    };
+    }, [selectedDateRange]);
 
     return {
         hoverModifiers,
-        handleDayMouseEnter,
-        handleDayMouseLeave,
     };
 };
