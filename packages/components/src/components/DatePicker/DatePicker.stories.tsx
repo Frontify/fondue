@@ -4,7 +4,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { action } from 'storybook/actions';
 import { useState } from 'storybook/internal/preview-api';
 
-import { DatePicker } from './DatePicker';
+import { DatePicker, type DatePickerDate } from './DatePicker';
 import { RangeDatePicker } from './RangeDatePicker';
 import { SingleDatePicker } from './SingleDatePicker';
 import { type DatePickerDateRange } from './types';
@@ -38,9 +38,12 @@ export const SingleDate: Story = {
 export const ControlledSingleDate: Story = {
     args: {},
     render: (args) => {
-        const defaultDate = new Date(2026, 1, 17);
-        const [selectedDate, setSelectedDate] = useState<Date | undefined>(defaultDate);
-        const handleSelect = (date: Date) => {
+        const [selectedDate, setSelectedDate] = useState<DatePickerDate>({
+            year: 2026,
+            month: 1,
+            day: 17,
+        });
+        const handleSelect = (date: DatePickerDate) => {
             setSelectedDate(date);
             args.onSelect?.(date);
         };

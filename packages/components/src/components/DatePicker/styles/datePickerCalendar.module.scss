@@ -79,7 +79,7 @@
         }
     }
 
-    &.outside {
+    &.outside:not(.disabled) {
         opacity: 1;
         .dayContent {
             color: var(--color-secondary-default);
