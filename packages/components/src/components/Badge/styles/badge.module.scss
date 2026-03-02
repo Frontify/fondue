@@ -10,12 +10,11 @@
         &:is(button) {
             cursor: pointer;
 
-            & {
-                @include focusStyle.focus-outline;
-            }
+            @include focusStyle.focus-outline;
         }
 
-        &:is(button):hover {
+        &:is(button):hover,
+        &:has(.inner:hover) {
             background-color: var(--color-#{$color}-hover);
             color: var(--color-#{$color}-on-#{$color});
         }
@@ -24,7 +23,8 @@
             background-color: var(--color-container-#{$weakColor}-default);
             color: var(--color-container-#{$weakColor}-on-#{$weakColor}-container);
 
-            &:is(button):hover {
+            &:is(button):hover,
+            &:has(.inner:hover) {
                 background-color: var(--color-container-#{$weakColor}-hover);
                 color: var(--color-container-#{$weakColor}-on-#{$weakColor}-container);
             }
@@ -71,6 +71,21 @@
     }
 }
 
+.inner {
+    padding: 0;
+    margin: 0;
+    border: none;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xx-small);
+
+    @include focusStyle.focus-outline;
+}
+
 .dismiss {
     padding: 0;
     margin: 0;
@@ -81,9 +96,7 @@
     color: inherit;
     border-radius: 0.25rem;
 
-    & {
-        @include focusStyle.focus-outline;
-    }
+    @include focusStyle.focus-outline;
 }
 
 /**
@@ -126,7 +139,8 @@
             border-color: CanvasText;
         }
 
-        &:is(button):hover {
+        &:is(button):hover,
+        &:has(.inner:hover) {
             background-color: Highlight !important;
             color: HighlightText !important;
             border-color: HighlightText;
