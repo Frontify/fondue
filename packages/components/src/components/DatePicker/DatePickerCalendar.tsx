@@ -57,6 +57,8 @@ export const DatePickerCalendar = forwardRef<HTMLDivElement, DatePickerCalendarP
             return modeProps.selected?.from;
         }, [modeProps]);
 
+        console.log(dateLocale);
+
         return (
             <div ref={ref} data-test-id={dataTestId} className={styles.wrapper}>
                 <DayPicker
@@ -67,8 +69,8 @@ export const DatePickerCalendar = forwardRef<HTMLDivElement, DatePickerCalendarP
                     showOutsideDays
                     disabled={disabledDates}
                     defaultMonth={defaultMonth}
-                    timeZone="UTC"
                     dir={dir}
+                    timeZone="UTC"
                     classNames={{
                         root: `${defaultClassNames.root} ${styles.root}`,
                         day: `${styles.day}`,
@@ -79,6 +81,8 @@ export const DatePickerCalendar = forwardRef<HTMLDivElement, DatePickerCalendarP
                         range_start: `${styles.selectedStart}`,
                         range_end: `${styles.selectedEnd}`,
                         range_middle: `${styles.selectedMiddle}`,
+                        disabled: `${styles.disabled}`,
+                        outside: `${styles.outside}`,
                     }}
                     {...modeProps}
                     modifiersClassNames={{

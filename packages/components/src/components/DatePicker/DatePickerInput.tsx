@@ -1,20 +1,22 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconCaretDown, IconCross } from '@frontify/fondue-icons';
-import { type ForwardedRef, forwardRef } from 'react';
+import { type ForwardedRef, forwardRef, useMemo } from 'react';
 
 import { type CommonAriaAttrs } from '#/utilities/types';
 
 import { Button } from '../Button/Button';
 
+import { getDateDisplayString } from './helpers/dateDisplayFormatter';
 import styles from './styles/datePickerInput.module.scss';
+import { type DatePickerDateRange, type DatePickerDate } from './types';
 
 type DatePickerInputProps = {
     id?: string;
     /**
-     * The active date in the date picker
+     * The active date or date range in the date picker
      */
-    currentDate?: Date;
+    selected?: DatePickerDateRange | DatePickerDate;
     /**
      * The open state of the date picker used to determine arrow state
      */
@@ -40,7 +42,7 @@ type DatePickerInputProps = {
 export const DatePickerInput = (
     {
         id,
-        currentDate,
+        selected,
         isOpen,
         disabled = false,
         onClear,
@@ -50,6 +52,7 @@ export const DatePickerInput = (
     }: DatePickerInputProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
 ) => {
+    const displayString = useMemo(() => getDateDisplayString(selected), [selected]);
     return (
         <div id={id} className={styles.root} ref={forwardedRef} data-test-id={dataTestId}>
             <button
@@ -60,7 +63,7 @@ export const DatePickerInput = (
                 type="button"
                 data-color-input-select
             >
-                <span className={styles.dateName}>{currentDate?.toLocaleDateString('de-CH')}</span>
+                <span className={styles.dateName}>{displayString}</span>
             </button>
             <div className={styles.actions}>
                 {onClear && (
@@ -69,7 +72,7 @@ export const DatePickerInput = (
                     </Button>
                 )}
                 <div className={styles.caret} data-state={isOpen ? 'open' : 'closed'}>
-                    <IconCaretDown size={16} className={styles.caret} />
+                    <IconCaretDown size={16} />
                 </div>
             </div>
         </div>

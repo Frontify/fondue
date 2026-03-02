@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { forwardRef, useMemo, useState, type ForwardedRef } from 'react';
-import { type OnSelectHandler } from 'react-day-picker';
+import { forwardRef, type ForwardedRef } from 'react';
 
 import { type DatePickerBaseProps, DatePickerCalendar } from './DatePickerCalendar';
 import { useSingleDate } from './hooks/useSingleDate';

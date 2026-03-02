@@ -87,7 +87,7 @@ export const ColorPickerInput = (
                     </Button>
                 )}
                 <div className={styles.caret} data-state={isOpen ? 'open' : 'closed'}>
-                    <IconCaretDown size={16} className={styles.caret} />
+                    <IconCaretDown size={16} />
                 </div>
             </div>
         </div>

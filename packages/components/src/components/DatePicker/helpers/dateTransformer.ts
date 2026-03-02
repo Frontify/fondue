@@ -24,9 +24,7 @@ export const transformDatePickerDateToDate = (datePickerDate?: DatePickerDate): 
     return new Date(Date.UTC(datePickerDate.year, datePickerDate.month - 1, datePickerDate.day));
 };
 
-export const transformPickerDateRangeToFondueDateRange = (
-    dateRange?: InternalDayPickerDateRange,
-): DatePickerDateRange => {
+export const transformPickerDateRangeToDateRange = (dateRange?: InternalDayPickerDateRange): DatePickerDateRange => {
     const fromDate = transformDateToDatePickerDate(dateRange?.from);
     const toDate = transformDateToDatePickerDate(dateRange?.to);
     if (!fromDate || !toDate) {
@@ -39,8 +37,8 @@ export const transformPickerDateRangeToFondueDateRange = (
     };
 };
 
-export const transformFondueDateRangeToPickerDateRange = (
-    dateRange: DatePickerDateRange,
+export const transformDateRangeToPickerDateRange = (
+    dateRange?: DatePickerDateRange,
 ): InternalDayPickerDateRange | undefined => {
     if (!dateRange) {
         return undefined;

@@ -3,7 +3,6 @@
 @use '../../../utilities/focusStyle.module.scss';
 @use '../../../utilities/transitions.module.scss';
 
-
 .root {
     width: 100%;
     position: relative;
@@ -62,7 +61,6 @@
             border-color: var(--color-line-subtle);
         }
     }
-
 }
 
 .caret {

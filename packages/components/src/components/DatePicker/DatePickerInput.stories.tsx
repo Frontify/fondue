@@ -18,9 +18,74 @@ const meta: Meta<typeof DatePickerInput> = {
 };
 export default meta;
 
-export const Default: Story = {
+export const SingleDate: Story = {
     args: {
-        currentDate: new Date('2026-02-11T00:00:00.000-08:00'),
+        selected: {
+            year: 2026,
+            month: 2,
+            day: 11,
+        },
+    },
+    render: (args) => {
+        return <ForwardedRefDatePickerInput {...args} onClear={() => {}} />;
+    },
+};
+
+export const DateRangeSameMonth: Story = {
+    args: {
+        selected: {
+            from: {
+                year: 2026,
+                month: 2,
+                day: 11,
+            },
+            to: {
+                year: 2026,
+                month: 2,
+                day: 16,
+            },
+        },
+    },
+    render: (args) => {
+        return <ForwardedRefDatePickerInput {...args} onClear={() => {}} />;
+    },
+};
+
+export const DateRangeDifferentMonth: Story = {
+    args: {
+        selected: {
+            from: {
+                year: 2026,
+                month: 2,
+                day: 11,
+            },
+            to: {
+                year: 2026,
+                month: 3,
+                day: 16,
+            },
+        },
+    },
+    render: (args) => {
+        return <ForwardedRefDatePickerInput {...args} onClear={() => {}} />;
+    },
+};
+
+export const DateRangeDifferentYear: Story = {
+    args: {
+        selected: {
+            from: {
+                year: 2026,
+                month: 2,
+                day: 11,
+            },
+
+            to: {
+                year: 2027,
+                month: 3,
+                day: 16,
+            },
+        },
     },
     render: (args) => {
         return <ForwardedRefDatePickerInput {...args} onClear={() => {}} />;

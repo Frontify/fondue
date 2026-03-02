@@ -71,10 +71,30 @@
         pointer-events: none;
     }
 
+    &.disabled {
+        opacity: 1;
+        .dayContent {
+            background-color: var(--color-container-disabled-default);
+            color: var(--color-container-disabled-on-disabled-container);
+        }
+    }
+
+    &.outside {
+        opacity: 1;
+        .dayContent {
+            color: var(--color-secondary-default);
+        }
+    }
+
     &:not([data-selected='true']):not(.hoverRange):not([data-disabled='true']) {
         &:hover {
             .dayContent {
                 background-color: var(--color-container-secondary-hover);
+            }
+        }
+        &:active {
+            .dayContent {
+                background-color: var(--color-container-secondary-active);
             }
         }
     }
@@ -166,7 +186,7 @@
     opacity: 1;
     .dayButton > .dayContent {
         border-radius: 0;
-        background-color: var(--color-container-highlight-hover);
+        background-color: var(--color-container-highlight-default);
         color: var(--color-container-highlight-on-highlight-container);
         margin-left: 0;
         padding-left: sizeToken.get(0.5);
