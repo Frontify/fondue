@@ -65,6 +65,7 @@ const ScrollAreaComponent = (
             dir={dir}
             className={styles.root}
             style={{ maxWidth }}
+            data-component="scroll-area"
             data-test-id={dataTestId}
         >
             <RadixScrollArea.Viewport
