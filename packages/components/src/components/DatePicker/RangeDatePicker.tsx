@@ -10,14 +10,14 @@ import { type DatePickerDateRange } from './types';
 type RangeDatePickerProps = {
     'data-test-id'?: string;
     selected?: DatePickerDateRange;
-    onSelect?: (dateRange: DatePickerDateRange) => void;
+    onChange?: (dateRange: DatePickerDateRange) => void;
 } & DatePickerBaseProps;
 
 export const RangeDatePicker = (
-    { 'data-test-id': dataTestId, onSelect, selected, ...props }: RangeDatePickerProps,
+    { 'data-test-id': dataTestId, onChange, selected, ...props }: RangeDatePickerProps,
     ref: ForwardedRef<HTMLDivElement>,
 ): JSX.Element => {
-    const { selectedDateRange, handleSelect } = useDateRange(selected, onSelect);
+    const { selectedDateRange, handleSelect } = useDateRange(selected, onChange);
     const { hoverModifiers } = useRangeHover(selectedDateRange);
 
     return (

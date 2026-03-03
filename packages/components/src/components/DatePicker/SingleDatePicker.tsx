@@ -8,14 +8,14 @@ import { type DatePickerDate } from './types';
 
 type SingleDatePickerProps = {
     selected?: DatePickerDate;
-    onSelect?: (date?: DatePickerDate) => void;
+    onChange?: (date?: DatePickerDate) => void;
 } & DatePickerBaseProps;
 
 export const SingleDatePicker = (
-    { 'data-test-id': dataTestId, onSelect, selected, ...props }: SingleDatePickerProps,
+    { 'data-test-id': dataTestId, onChange, selected, ...props }: SingleDatePickerProps,
     ref: ForwardedRef<HTMLDivElement>,
 ): JSX.Element => {
-    const { selectedDate, handleSelect } = useSingleDate(selected, onSelect);
+    const { selectedDate, handleSelect } = useSingleDate(selected, onChange);
     return (
         <DatePickerCalendar
             {...props}

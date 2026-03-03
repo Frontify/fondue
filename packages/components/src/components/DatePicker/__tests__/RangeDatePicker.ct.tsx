@@ -48,13 +48,13 @@ test.describe('RangeDatePicker', () => {
         expect(count).toBeGreaterThan(0);
     });
 
-    test('should call onSelect when a day is clicked', async ({ mount }) => {
-        const onSelect = sinon.spy();
+    test('should call onChange when a day is clicked', async ({ mount }) => {
+        const onChange = sinon.spy();
         const component = await mount(
-            <DatePicker.Range data-test-id={RANGE_TEST_ID} selected={RANGE_SELECTION} onSelect={onSelect} />,
+            <DatePicker.Range data-test-id={RANGE_TEST_ID} selected={RANGE_SELECTION} onChange={onChange} />,
         );
         await component.getByText('20', { exact: true }).click();
-        expect(onSelect.callCount).toBe(1);
+        expect(onChange.callCount).toBe(1);
     });
 
     test('should navigate to the next month', async ({ mount }) => {

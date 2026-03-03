@@ -19,6 +19,9 @@ type DatePickerTriggerProps = {
     'aria-label': string;
 };
 
+/**
+ * @deprecated Use `DatePickerInput` from `@frontify/fondue/components` instead.
+ */
 export const DatePickerTrigger = forwardRef<HTMLDivElement, DatePickerTriggerProps>(
     (
         {

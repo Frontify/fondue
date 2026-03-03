@@ -23,7 +23,7 @@ const meta: Meta<typeof SingleDatePicker> = {
         },
     },
     args: {
-        onSelect: action('onSelect'),
+        onChange: action('onChange'),
     },
     render: (args) => {
         return <DatePicker {...args} />;
@@ -43,11 +43,11 @@ export const ControlledSingleDate: Story = {
             month: 1,
             day: 17,
         });
-        const handleSelect = (date: DatePickerDate) => {
+        const handleChange = (date: DatePickerDate) => {
             setSelectedDate(date);
-            args.onSelect?.(date);
+            args.onChange?.(date);
         };
-        return <DatePicker {...args} selected={selectedDate} onSelect={handleSelect} />;
+        return <DatePicker {...args} selected={selectedDate} onChange={handleChange} />;
     },
 };
 
@@ -64,11 +64,11 @@ export const ControlledRangeDate: StoryObj<typeof RangeDatePicker> = {
         const defaultDateRange = { from: { year: 2026, month: 1, day: 17 }, to: { year: 2026, month: 1, day: 24 } };
         const [selectedDateRange, setSelectedDateRange] = useState<DatePickerDateRange | undefined>(defaultDateRange);
 
-        const handleSelect = (dateRange: DatePickerDateRange) => {
+        const handleChange = (dateRange: DatePickerDateRange) => {
             setSelectedDateRange(dateRange);
-            args.onSelect?.(dateRange);
+            args.onChange?.(dateRange);
         };
-        return <DatePicker.Range {...args} selected={selectedDateRange} onSelect={handleSelect} />;
+        return <DatePicker.Range {...args} selected={selectedDateRange} onChange={handleChange} />;
     },
 };
 

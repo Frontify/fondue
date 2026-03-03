@@ -41,18 +41,18 @@ test.describe('SingleDatePicker', () => {
         await expect(selectedDay.locator('div')).toHaveText('15');
     });
 
-    test('should call onSelect when a day is clicked', async ({ mount }) => {
-        const onSelect = sinon.spy();
+    test('should call onChange when a day is clicked', async ({ mount }) => {
+        const onChange = sinon.spy();
         const component = await mount(
             <DatePicker
                 data-test-id={DATE_PICKER_TEST_ID}
                 selected={{ year: 2025, month: 3, day: 15 }}
-                onSelect={onSelect}
+                onChange={onChange}
             />,
         );
         await component.getByText('20', { exact: true }).click();
-        expect(onSelect.callCount).toBe(1);
-        expect(onSelect.getCall(0).args[0]).toEqual({ year: 2025, month: 3, day: 20 });
+        expect(onChange.callCount).toBe(1);
+        expect(onChange.getCall(0).args[0]).toEqual({ year: 2025, month: 3, day: 20 });
     });
 
     test('should navigate to the next month', async ({ mount }) => {
