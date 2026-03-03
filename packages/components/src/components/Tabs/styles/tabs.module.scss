@@ -195,7 +195,14 @@ $radius-without-border: calc(var(--border-radius-medium) - var(--border-width-de
 
 .content {
     color: var(--color-primary-default);
-    min-height: 0;
-    flex: 1;
-    overflow: hidden;
+}
+
+// Only apply flex layout properties when used with withDivider (Dialog composition)
+// AND when a ScrollArea is actually present inside the content
+.root[data-tabs-with-divider='true'] {
+    .content:has([data-component='scroll-area']) {
+        min-height: 0;
+        flex: 1;
+        overflow: hidden;
+    }
 }
