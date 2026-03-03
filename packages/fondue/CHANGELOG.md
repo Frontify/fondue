@@ -1,5 +1,15 @@
 # @frontify/fondue
 
+## 13.1.5
+
+### Patch Changes
+
+- [#2643](https://github.com/Frontify/fondue/pull/2643) [`42aabbe`](https://github.com/Frontify/fondue/commit/42aabbe4c8d7e19575f591a8c6d957e9485ce347) Thanks [@syeo66](https://github.com/syeo66)! - fix(Tabs): Tabs should only use flex layout with ScrollArea
+
+- Updated dependencies [[`42aabbe`](https://github.com/Frontify/fondue/commit/42aabbe4c8d7e19575f591a8c6d957e9485ce347)]:
+    - @frontify/fondue-components@27.0.1
+    - @frontify/fondue-tokens@5.0.0
+
 ## 13.1.4
 
 ### Patch Changes
