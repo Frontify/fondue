@@ -8,7 +8,6 @@ import { useRangeHover } from './hooks/useRangeHover';
 import { type DatePickerDateRange } from './types';
 
 type RangeDatePickerProps = {
-    'data-test-id'?: string;
     selected?: DatePickerDateRange;
     onChange?: (dateRange: DatePickerDateRange) => void;
 } & DatePickerBaseProps;
