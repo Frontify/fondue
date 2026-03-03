@@ -8,46 +8,42 @@ import { forwardRef, useMemo, useRef, useState, type ForwardedRef, type ReactNod
 import { getListItems } from './hooks/useItemOrder';
 import styles from './styles/orderable-list.module.scss';
 
-export type SortableItemProps = { children?: ReactNode; id: string; index: number };
-
-export const SortableItem = ({ children, id, index }: SortableItemProps, ref: ForwardedRef<HTMLDivElement>) => {
-    const internalRef = useRef<HTMLDivElement | null>(null);
-
-    const mergedRef = (node: HTMLDivElement | null) => {
-        internalRef.current = node;
-        if (typeof ref === 'function') {
-            ref(node);
-        } else if (ref !== null) {
-            ref.current = node;
-        }
-    };
-
-    const { isDragging, handleRef } = useSortable({ id, index, element: internalRef });
-
-    return (
-        <div
-            className={styles.item}
-            data-dragging={isDragging}
-            data-test-id="fondue-orderable-list-item"
-            ref={mergedRef}
-        >
-            <div className={styles.content}>{children}</div>
-            <button type="button" aria-label="drag" className={styles.handle} ref={handleRef}>
-                <IconGrabHandle size={16} />
-            </button>
-        </div>
-    );
-};
-SortableItem.displayName = 'SortableItem';
-export const ForwardedRefSortableItem = forwardRef<HTMLDivElement, SortableItemProps>(SortableItem);
-
 export type OrderableListItemProps = { children?: ReactNode; id: string };
 export const OrderableListItem = () => {
     return null;
 };
 
-OrderableListItem.displayName = 'OrderableListItem';
-export const ForwardedRefOrderableListItem = forwardRef<HTMLDivElement, OrderableListItemProps>(OrderableListItem);
+export const SortableItem = forwardRef<HTMLDivElement, OrderableListItemProps & { index: number }>(
+    ({ children, id, index }, ref) => {
+        const internalRef = useRef<HTMLDivElement | null>(null);
+
+        const mergedRef = (node: HTMLDivElement | null) => {
+            internalRef.current = node;
+            if (typeof ref === 'function') {
+                ref(node);
+            } else if (ref !== null) {
+                ref.current = node;
+            }
+        };
+
+        const { isDragging, handleRef } = useSortable({ id, index, element: internalRef });
+
+        return (
+            <div
+                className={styles.item}
+                data-dragging={isDragging}
+                data-test-id="fondue-orderable-list-item"
+                ref={mergedRef}
+            >
+                <div className={styles.content}>{children}</div>
+                <button type="button" aria-label="drag" className={styles.handle} ref={handleRef}>
+                    <IconGrabHandle size={16} />
+                </button>
+            </div>
+        );
+    },
+);
+SortableItem.displayName = 'SortableItem';
 
 type OrderableListItemSpacing = 'tight' | 'compact' | 'comfortable';
 type OrderableListProps = { children?: ReactNode; spacing?: OrderableListItemSpacing };
@@ -81,9 +77,9 @@ export const OrderableListRoot = (
         <DragDropProvider onDragEnd={handleDragEnd}>
             <div className={styles.root} data-spacing={spacing} data-test-id="fondue-orderable-list" ref={ref}>
                 {itemsWithIds.map((item, index) => (
-                    <ForwardedRefSortableItem key={item.id} id={item.id} index={index} ref={item.ref}>
+                    <SortableItem key={item.id} index={index} {...item}>
                         {item.children}
-                    </ForwardedRefSortableItem>
+                    </SortableItem>
                 ))}
             </div>
         </DragDropProvider>
@@ -94,8 +90,8 @@ const ForwardedRefOrderableListRoot = forwardRef<HTMLDivElement, OrderableListPr
 
 export const OrderableList: {
     Root: typeof ForwardedRefOrderableListRoot;
-    Item: typeof ForwardedRefOrderableListItem;
+    Item: typeof OrderableListItem;
 } = {
     Root: ForwardedRefOrderableListRoot,
-    Item: ForwardedRefOrderableListItem,
+    Item: OrderableListItem,
 };

@@ -4,7 +4,7 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useRef } from 'storybook/internal/preview-api';
 
-import { OrderableList, OrderableListRoot } from './OrderableList';
+import { OrderableList, OrderableListItem, OrderableListRoot } from './OrderableList';
 
 type Story = StoryObj<typeof OrderableListRoot>;
 const meta: Meta<typeof OrderableListRoot> = {
@@ -24,9 +24,9 @@ export const Default: Story = {
         const testRef = useRef<HTMLDivElement | null>(null);
         return (
             <OrderableList.Root spacing="compact">
-                <OrderableList.Item id="1" ref={testRef}>
+                <OrderableListItem id="1" ref={testRef}>
                     <div>Item 1</div>
-                </OrderableList.Item>
+                </OrderableListItem>
                 <OrderableList.Item id="2">
                     <div>Item 2</div>
                 </OrderableList.Item>

@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 @use '../../../utilities/sizeToken.module.scss';
+@use '../../../utilities/transitions.module.scss';
 
 .root {
     display: flex;
@@ -14,18 +15,11 @@
     &[data-spacing='comfortable'] {
         gap: var(--spacing-medium);
     }
-
-    // Example variant using data attributes
-    // &[data-variant='primary'] {
-    //     color: var(--color-primary-default);
-    // }
-    //
-    // &[data-size='large'] {
-    //     font-size: var(--typography-font-size-large);
-    // }
 }
 
 .item {
+    @include transitions.transition-box-shadow;
+
     position: relative;
     display: grid;
     grid-template-columns: 1fr sizeToken.get(7);
@@ -33,15 +27,14 @@
     border: var(--border-width-default) solid var(--color-line-subtle);
     border-radius: var(--border-radius-medium);
     background-color: var(--color-surface-default);
-    box-shadow: var(--shadow-small);
+    box-shadow: none;
 
     &:hover {
         border-color: var(--color-line-mid);
     }
     &[data-dragging='true'] {
-        background-color: var(--color-surface-active);
-        box-shadow: var(--shadow-mid);
-        border-color: var(--color-line-strong);
+        box-shadow: var(--shadow-default);
+        border-color: var(--color-line-mid);
     }
 
     .content {
@@ -60,7 +53,15 @@
     top: var(--spacing-xx-small);
     bottom: var(--spacing-xx-small);
     width: sizeToken.get(5);
-    background-color: var(--color-container-secondary-default);
     border-radius: calc(var(--border-radius-medium) - var(--border-width-default));
     cursor: grab;
+
+    &:hover {
+        background-color: var(--color-container-secondary-hover);
+    }
+
+    &:active,
+    .item[data-dragging='true'] & {
+        background-color: var(--color-container-secondary-active);
+    }
 }
