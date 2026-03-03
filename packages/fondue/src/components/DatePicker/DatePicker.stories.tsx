@@ -17,7 +17,7 @@ import { DatePicker, type DatePickerProps, type ReactDatePickerRef } from './Dat
  * @deprecated Use `DatePicker` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#datepicker the migration guide}.
  */
 export default {
-    title: 'Legacy Components/DatePicker',
+    title: 'Legacy Components/Deprecated/DatePicker',
     component: DatePicker,
     tags: ['autodocs'],
     args: {
