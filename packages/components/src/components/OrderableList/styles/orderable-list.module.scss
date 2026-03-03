@@ -1,0 +1,66 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+@use '../../../utilities/sizeToken.module.scss';
+
+.root {
+    display: flex;
+    flex-direction: column;
+
+    &[data-spacing='tight'] {
+        gap: var(--spacing-xx-small);
+    }
+    &[data-spacing='compact'] {
+        gap: var(--spacing-small);
+    }
+    &[data-spacing='comfortable'] {
+        gap: var(--spacing-medium);
+    }
+
+    // Example variant using data attributes
+    // &[data-variant='primary'] {
+    //     color: var(--color-primary-default);
+    // }
+    //
+    // &[data-size='large'] {
+    //     font-size: var(--typography-font-size-large);
+    // }
+}
+
+.item {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr sizeToken.get(7);
+    align-items: center;
+    border: var(--border-width-default) solid var(--color-line-subtle);
+    border-radius: var(--border-radius-medium);
+    background-color: var(--color-surface-default);
+    box-shadow: var(--shadow-small);
+
+    &:hover {
+        border-color: var(--color-line-mid);
+    }
+    &[data-dragging='true'] {
+        background-color: var(--color-surface-active);
+        box-shadow: var(--shadow-mid);
+        border-color: var(--color-line-strong);
+    }
+
+    .content {
+        padding: var(--spacing-small);
+        cursor: pointer;
+    }
+}
+
+.handle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    box-sizing: border-box;
+    right: var(--spacing-xx-small);
+    top: var(--spacing-xx-small);
+    bottom: var(--spacing-xx-small);
+    width: sizeToken.get(5);
+    background-color: var(--color-container-secondary-default);
+    border-radius: calc(var(--border-radius-medium) - var(--border-width-default));
+    cursor: grab;
+}
