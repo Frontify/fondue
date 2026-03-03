@@ -24,7 +24,7 @@ export const createUnorderedListNode = (listStyles: UnorderedListLevelStyle[] = 
                 {...attributes}
                 style={
                     {
-                        '--bullet-character': `'${levelStyle.shape}'`,
+                        '--bullet-character': levelStyle.shape ?? "'\u2022'",
                         '--bullet-color': levelStyle.color ?? 'currentColor',
                         '--bullet-size': levelStyle.size ?? '1em',
                     } as CSSProperties

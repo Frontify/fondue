@@ -139,7 +139,7 @@ const MapNodeTypesToHtml: { [key: string]: ({ ...args }: Arguments) => string } 
         const nestingLevel = Math.max(args.rootNestingCount - getNestingLevels([args.node], ELEMENT_UL), 0);
         const ulStyles = args.unorderedListStyles ?? DEFAULT_UL_STYLES;
         const levelStyle = ulStyles[nestingLevel % ulStyles.length];
-        const style = `--bullet-character: '${levelStyle.shape}'; --bullet-color: ${levelStyle.color ?? 'currentColor'}; --bullet-size: ${levelStyle.size ?? '1em'};`;
+        const style = `--bullet-character:${levelStyle.shape}; --bullet-color: ${levelStyle.color ?? 'currentColor'}; --bullet-size: ${levelStyle.size ?? '1em'};`;
         return `<ul dir="auto" class="${UL_CLASSES} ${args.classNames}" style="${style}">${args.children}</ul>`;
     },
     [ELEMENT_OL]: ({ classNames, children, node, rootNestingCount, orderedListStyles }) => {

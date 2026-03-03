@@ -63,7 +63,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
         const result = serializeNodeToHtmlRecursive(node, defaultStyles, {});
 
         expect(result).to.be.equal(
-            `<ol dir="auto" class="tw-list-none tw-pl-[10px] tw-mb-[10px] tw-ml-[15px] [&>li>p]:before:tw-whitespace-nowrap [&>li>p]:before:tw-pr-1 [&>li>p]:before:tw-tabular-nums [&>li>p]:before:tw-content-[counter(count,var(--counter-type))_'._'] [&>li>p]:before:tw-text-[color:var(--counter-color)] tw-break-words" style="counter-reset: count; --counter-type: decimal; --counter-color: currentColor;"><li dir="auto" class="tw-break-words [&>p]:before:tw-flex [&>p]:before:tw-justify-end [&>p]:before:tw-w-[1.2em] !tw-no-underline !tw-list-item" style="font-size: 14px; font-style: normal; font-weight: normal; counter-increment: count;"><p dir="auto" class="tw-break-words tw-justify-start tw-inline-grid tw-grid-cols-[min-content_repeat(3,_auto)]"><span class="${LIST_ITEM_SPAN_CLASSES}">First item</span></p></li><li dir="auto" class="tw-break-words [&>p]:before:tw-flex [&>p]:before:tw-justify-end [&>p]:before:tw-w-[1.2em] !tw-no-underline !tw-list-item" style="font-size: 14px; font-style: normal; font-weight: normal; counter-increment: count;"><p dir="auto" class="tw-break-words tw-justify-start tw-inline-grid tw-grid-cols-[min-content_repeat(3,_auto)]"><span class="${LIST_ITEM_SPAN_CLASSES}">Second item</span></p></li></ol>`,
+            `<ol dir="auto" class="tw-list-none tw-pl-[10px] tw-mb-[10px] tw-ml-[15px] [&>li>p]:before:tw-whitespace-nowrap [&>li>p]:before:tw-pr-1 [&>li>p]:before:tw-tabular-nums [&>li>p]:before:tw-content-[counter(count,var(--counter-type))_'._'] [&>li>p]:before:tw-text-[color:var(--counter-color)] tw-break-words" style="counter-reset: count; --counter-type: decimal; --counter-color: currentColor;"><li dir="auto" class="tw-break-words [&>p]:before:tw-flex [&>p]:before:tw-justify-end [&>p]:before:tw-w-[1.2em] !tw-no-underline !tw-list-item [&>p]:before:tw-content-[var(--bullet-character)] [--parent-lh:1lh] [&>p]:before:tw-leading-[var(--parent-lh)]" style="font-size: 14px; font-style: normal; font-weight: normal; counter-increment: count;"><p dir="auto" class="tw-break-words tw-justify-start tw-inline-grid tw-grid-cols-[min-content_repeat(3,_auto)]"><span class="${LIST_ITEM_SPAN_CLASSES}">First item</span></p></li><li dir="auto" class="tw-break-words [&>p]:before:tw-flex [&>p]:before:tw-justify-end [&>p]:before:tw-w-[1.2em] !tw-no-underline !tw-list-item [&>p]:before:tw-content-[var(--bullet-character)] [--parent-lh:1lh] [&>p]:before:tw-leading-[var(--parent-lh)]" style="font-size: 14px; font-style: normal; font-weight: normal; counter-increment: count;"><p dir="auto" class="tw-break-words tw-justify-start tw-inline-grid tw-grid-cols-[min-content_repeat(3,_auto)]"><span class="${LIST_ITEM_SPAN_CLASSES}">Second item</span></p></li></ol>`,
         );
     });
 
@@ -95,7 +95,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
         const result = serializeNodeToHtmlRecursive(node, defaultStyles, {});
 
         expect(result).to.be.equal(
-            `<ol dir="auto" class="tw-list-none tw-pl-[10px] tw-mb-[10px] tw-ml-[15px] [&>li>p]:before:tw-whitespace-nowrap [&>li>p]:before:tw-pr-1 [&>li>p]:before:tw-tabular-nums [&>li>p]:before:tw-content-[counter(count,var(--counter-type))_'._'] [&>li>p]:before:tw-text-[color:var(--counter-color)] tw-break-words" style="counter-reset: count; --counter-type: decimal; --counter-color: currentColor;"><li dir="auto" class="tw-break-words [&>p]:before:tw-flex [&>p]:before:tw-justify-end [&>p]:before:tw-w-[1.2em] !tw-no-underline !tw-list-item" style="font-size: 14px; font-style: normal; font-weight: normal; counter-increment: count;"><p dir="auto" class="tw-break-words tw-break-after-column tw-break-inside-avoid-column tw-justify-start tw-grid tw-grid-cols-[min-content_repeat(3,_auto)]"><span class="${LIST_ITEM_SPAN_CLASSES}">First item</span></p></li><li dir="auto" class="tw-break-words [&>p]:before:tw-flex [&>p]:before:tw-justify-end [&>p]:before:tw-w-[1.2em] !tw-no-underline !tw-list-item" style="font-size: 14px; font-style: normal; font-weight: normal; counter-increment: count;"><p dir="auto" class="tw-break-words tw-justify-start tw-inline-grid tw-grid-cols-[min-content_repeat(3,_auto)]"><span class="${LIST_ITEM_SPAN_CLASSES}">Second item</span></p></li></ol>`,
+            `<ol dir="auto" class="tw-list-none tw-pl-[10px] tw-mb-[10px] tw-ml-[15px] [&>li>p]:before:tw-whitespace-nowrap [&>li>p]:before:tw-pr-1 [&>li>p]:before:tw-tabular-nums [&>li>p]:before:tw-content-[counter(count,var(--counter-type))_'._'] [&>li>p]:before:tw-text-[color:var(--counter-color)] tw-break-words" style="counter-reset: count; --counter-type: decimal; --counter-color: currentColor;"><li dir="auto" class="tw-break-words [&>p]:before:tw-flex [&>p]:before:tw-justify-end [&>p]:before:tw-w-[1.2em] !tw-no-underline !tw-list-item [&>p]:before:tw-content-[var(--bullet-character)] [--parent-lh:1lh] [&>p]:before:tw-leading-[var(--parent-lh)]" style="font-size: 14px; font-style: normal; font-weight: normal; counter-increment: count;"><p dir="auto" class="tw-break-words tw-break-after-column tw-break-inside-avoid-column tw-justify-start tw-grid tw-grid-cols-[min-content_repeat(3,_auto)]"><span class="${LIST_ITEM_SPAN_CLASSES}">First item</span></p></li><li dir="auto" class="tw-break-words [&>p]:before:tw-flex [&>p]:before:tw-justify-end [&>p]:before:tw-w-[1.2em] !tw-no-underline !tw-list-item [&>p]:before:tw-content-[var(--bullet-character)] [--parent-lh:1lh] [&>p]:before:tw-leading-[var(--parent-lh)]" style="font-size: 14px; font-style: normal; font-weight: normal; counter-increment: count;"><p dir="auto" class="tw-break-words tw-justify-start tw-inline-grid tw-grid-cols-[min-content_repeat(3,_auto)]"><span class="${LIST_ITEM_SPAN_CLASSES}">Second item</span></p></li></ol>`,
         );
     });
 
@@ -189,7 +189,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
         const result = serializeNodeToHtmlRecursive(node, defaultStyles, {});
 
         expect(result).to.be.equal(
-            `<ul dir="auto" class="tw-list-none tw-pl-[10px] tw-mb-[10px] tw-ml-[15px] [&>li>p]:before:tw-whitespace-nowrap [&>li>p]:before:tw-px-2 [&>li>p]:before:tw-content-[var(--bullet-character)] [&>li>p]:before:tw-text-[color:var(--bullet-color)] [&>li>p]:before:tw-text-[length:var(--bullet-size)] tw-break-words" style="--bullet-character: '•'; --bullet-color: currentColor; --bullet-size: 1em;"><li dir="auto" class="tw-break-words [&>p]:before:tw-flex [&>p]:before:tw-justify-end [&>p]:before:tw-w-[1.2em] !tw-no-underline !tw-list-item" style="font-size: 14px; font-style: normal; font-weight: normal; counter-increment: count;"><p dir="auto" class="tw-break-words tw-justify-start tw-inline-grid tw-grid-cols-[min-content_repeat(3,_auto)]"><span class="${LIST_ITEM_SPAN_CLASSES}">This comes first.</span></p></li></ul>`,
+            `<ul dir="auto" class="tw-list-none tw-pl-[10px] tw-mb-[10px] tw-ml-[15px] [&>li>p]:before:tw-whitespace-nowrap [&>li>p]:before:tw-px-2 [&>li>p]:before:tw-content-[var(--bullet-character)] [&>li>p]:before:tw-text-[color:var(--bullet-color)] [&>li>p]:before:tw-text-[length:var(--bullet-size)] tw-break-words" style="--bullet-character:'•'; --bullet-color: currentColor; --bullet-size: 1em;"><li dir="auto" class="tw-break-words [&>p]:before:tw-flex [&>p]:before:tw-justify-end [&>p]:before:tw-w-[1.2em] !tw-no-underline !tw-list-item [&>p]:before:tw-content-[var(--bullet-character)] [--parent-lh:1lh] [&>p]:before:tw-leading-[var(--parent-lh)]" style="font-size: 14px; font-style: normal; font-weight: normal; counter-increment: count;"><p dir="auto" class="tw-break-words tw-justify-start tw-inline-grid tw-grid-cols-[min-content_repeat(3,_auto)]"><span class="${LIST_ITEM_SPAN_CLASSES}">This comes first.</span></p></li></ul>`,
         );
     });
 
@@ -508,10 +508,10 @@ describe('serializeNodeToHtmlRecursive()', () => {
             ],
         };
         const result = serializeNodeToHtmlRecursive(node, defaultStyles, {
-            unorderedListStyles: [{ shape: '◦', color: '#999', size: '0.8em' }],
+            unorderedListStyles: [{ shape: "'◦'", color: '#999', size: '0.8em' }],
         });
 
-        expect(result).to.include("--bullet-character: '◦'");
+        expect(result).to.include("--bullet-character:'◦'");
         expect(result).to.include('--bullet-color: #999');
         expect(result).to.include('--bullet-size: 0.8em');
         expect(result).to.not.include("tw-content-['•']");
@@ -533,10 +533,10 @@ describe('serializeNodeToHtmlRecursive()', () => {
             ],
         };
         const result = serializeNodeToHtmlRecursive(node, defaultStyles, {
-            unorderedListStyles: [{ shape: '▪' }],
+            unorderedListStyles: [{ shape: "'▪'" }],
         });
 
-        expect(result).to.include("--bullet-character: '▪'");
+        expect(result).to.include("--bullet-character:'▪'");
         expect(result).to.include('--bullet-color: currentColor');
         expect(result).to.include('--bullet-size: 1em');
     });

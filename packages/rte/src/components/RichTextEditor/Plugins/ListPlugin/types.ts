@@ -29,7 +29,7 @@ export const DEFAULT_OL_STYLES: OrderedListLevelStyle[] = [
     { counterType: 'lower-roman' },
 ];
 
-export const DEFAULT_UL_STYLES: UnorderedListLevelStyle[] = [{ shape: '\u2022' }];
+export const DEFAULT_UL_STYLES: UnorderedListLevelStyle[] = [{ shape: "'\u2022'" }];
 
 export type OrderedListPluginProps = ListPluginProps & {
     listStyles?: OrderedListLevelStyle[];

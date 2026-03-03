@@ -205,9 +205,9 @@ export const SerializedToHTMLWithCustomListStyles: StoryFn<RichTextEditorProps> 
                     { counterType: 'lower-roman', color: '#2ecc71' },
                 ],
                 unorderedListStyles: [
-                    { shape: '\u2022', color: '#e74c3c', size: '1.2em' },
-                    { shape: '\u25E6', color: '#3498db', size: '1em' },
-                    { shape: '\u25AA', color: '#2ecc71', size: '0.8em' },
+                    { shape: "'\u2022'", color: '#e74c3c', size: '1.2em' },
+                    { shape: "'\u25E6'", color: '#3498db', size: '1em' },
+                    { shape: "'\u25AA'", color: '#2ecc71', size: '0.8em' },
                 ],
             }}
         />
@@ -304,9 +304,9 @@ const customListStylePlugins = new PluginComposer();
 customListStylePlugins.setPlugin([
     new UnorderedListPlugin({
         listStyles: [
-            { shape: '\u2022', color: '#e74c3c', size: '1.2em' },
-            { shape: '\u25E6', color: '#3498db', size: '1em' },
-            { shape: '\u25AA', color: '#2ecc71', size: '0.8em' },
+            { shape: "'\u2022'", color: '#e74c3c', size: '1.2em' },
+            { shape: "'\u25E6'", color: '#3498db', size: '1em' },
+            { shape: "'\u25AA'", color: '#2ecc71', size: '0.8em' },
         ],
     }),
     new OrderedListPlugin({
