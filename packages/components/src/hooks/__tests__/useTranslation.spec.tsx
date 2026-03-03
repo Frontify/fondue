@@ -15,7 +15,7 @@ const TestComponent = ({
     translationKey,
     variables,
 }: {
-    translationKey: keyof Translations;
+    translationKey: keyof Translations['translationStrings'];
     variables?: Record<string, string>;
 }) => {
     const { t } = useTranslation();
@@ -74,9 +74,12 @@ describe('useTranslation', () => {
         });
 
         it('returns the key as fallback when translation is not found', () => {
-            const { getByTestId } = render(<TestComponent translationKey={'Nonexistent_key' as keyof Translations} />, {
-                wrapper: DefaultWrapper,
-            });
+            const { getByTestId } = render(
+                <TestComponent translationKey={'Nonexistent_key' as keyof Translations['translationStrings']} />,
+                {
+                    wrapper: DefaultWrapper,
+                },
+            );
 
             expect(getByTestId('translated-text')).toHaveTextContent('Nonexistent_key');
         });
@@ -132,7 +135,7 @@ describe('useTranslation', () => {
     describe('dynamic translation keys', () => {
         it('translates all keys defined in the English locale', () => {
             // Collect all translation keys from the flat enUS object
-            const keys = Object.keys(enUS) as Array<keyof Translations>;
+            const keys = Object.keys(enUS.translationStrings) as Array<keyof Translations['translationStrings']>;
 
             // Test that all keys can be translated
             for (const key of keys) {
