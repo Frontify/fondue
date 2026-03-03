@@ -100,7 +100,7 @@ export const InFlyout: Story = {
         const [selectedDate, setSelectedDate] = useState<DatePickerDateRange | undefined>(undefined);
         const [isOpen, setIsOpen] = useState(true);
         return (
-            <div className="tw-w-64">
+            <div style={{ width: '350px' }}>
                 <Flyout.Root open={isOpen} onOpenChange={setIsOpen}>
                     <Flyout.Trigger>
                         <DatePicker.Input
