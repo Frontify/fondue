@@ -1,0 +1,255 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+@use '../../../utilities/focusStyle.module.scss';
+@use '../../../utilities/sizeToken.module.scss';
+
+.wrapper {
+    width: fit-content;
+}
+
+.root[dir='rtl'] {
+    .toggleMonthButtonContainer {
+        transform: rotate(180deg);
+    }
+}
+
+.toggleMonthButtonContainer {
+    position: absolute;
+    height: var(--rdp-nav-height);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: sizeToken.get(2);
+    margin-right: sizeToken.get(2);
+}
+
+.nextMonthButtonContainer {
+    inset-inline-end: 0;
+    top: 0;
+}
+
+.weekday {
+    font-size: var(--typography-font-size-small);
+    line-height: var(--typography-line-height-tight);
+    font-weight: var(--typography-font-weight-bold);
+    color: var(--color-container-secondary-on-secondary-container);
+    height: sizeToken.get(6);
+    width: sizeToken.get(9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.weekdays {
+    display: flex;
+    width: 100%;
+}
+
+.week {
+    display: flex;
+    width: 100%;
+}
+
+.day {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: sizeToken.get(9);
+    width: sizeToken.get(9);
+    padding: 0;
+
+    &[data-today='true']:after {
+        content: '';
+        position: absolute;
+        top: sizeToken.get(0.5);
+        left: sizeToken.get(0.5);
+        width: sizeToken.get(8);
+        height: sizeToken.get(8);
+        border: 1px solid var(--color-primary-default);
+        border-radius: var(--border-radius-large);
+        pointer-events: none;
+    }
+
+    &.disabled {
+        opacity: 1;
+        .dayContent {
+            background-color: var(--color-container-disabled-default);
+            color: var(--color-container-disabled-on-disabled-container);
+        }
+    }
+
+    &.outside:not(.disabled) {
+        opacity: 1;
+        .dayContent {
+            color: var(--color-secondary-default);
+        }
+    }
+
+    &:not([data-selected='true']):not(.hoverRange):not([data-disabled='true']) {
+        &:hover {
+            .dayContent {
+                background-color: var(--color-container-secondary-hover);
+            }
+        }
+        &:active {
+            .dayContent {
+                background-color: var(--color-container-secondary-active);
+            }
+        }
+    }
+}
+
+.dayButton {
+    height: sizeToken.get(9);
+    width: sizeToken.get(9);
+    outline: none;
+
+    &:focus-visible {
+        z-index: 1;
+        .dayContent {
+            @include focusStyle.focus-outline-styles;
+        }
+    }
+}
+
+.dayContent {
+    height: sizeToken.get(8);
+    width: sizeToken.get(8);
+    margin: sizeToken.get(0.5);
+    transition: none;
+
+    font-family: var(--typography-font-family-primary);
+    font-weight: var(--typography-font-weight-medium);
+    box-sizing: border-box;
+    white-space: nowrap;
+    border: none;
+    color: var(--color-primary-default);
+    font-size: var(--typography-font-size-medium);
+    aspect-ratio: 1 / 1;
+    border-radius: var(--border-radius-large);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.selected {
+    .dayButton > .dayContent {
+        background-color: var(--color-container-highlight-active);
+        color: var(--color-container-highlight-on-highlight-container);
+        width: sizeToken.get(8);
+        margin-left: sizeToken.get(0.5);
+        padding-left: 0;
+        margin-right: sizeToken.get(0.5);
+        padding-right: 0;
+    }
+}
+
+@mixin rangeStartDay {
+    opacity: 1;
+    .dayButton > .dayContent {
+        background-color: var(--color-container-highlight-active);
+        color: var(--color-container-highlight-on-highlight-container);
+
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+        border-top-left-radius: var(--border-radius-large);
+        border-bottom-left-radius: var(--border-radius-large);
+        margin-left: sizeToken.get(0.5);
+        padding-left: 0;
+        margin-right: 0;
+        padding-right: sizeToken.get(0.5);
+        width: sizeToken.get(8.5);
+    }
+}
+
+@mixin rangeEndDay {
+    opacity: 1;
+    .dayButton > .dayContent {
+        background-color: var(--color-container-highlight-active);
+        color: var(--color-container-highlight-on-highlight-container);
+
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        border-top-right-radius: var(--border-radius-large);
+        border-bottom-right-radius: var(--border-radius-large);
+        margin-right: sizeToken.get(0.5);
+        padding-right: 0;
+        margin-left: 0;
+        padding-left: sizeToken.get(0.5);
+        width: sizeToken.get(8.5);
+    }
+}
+
+@mixin rangeMiddleDay {
+    opacity: 1;
+    .dayButton > .dayContent {
+        border-radius: 0;
+        background-color: var(--color-container-highlight-default);
+        color: var(--color-container-highlight-on-highlight-container);
+        margin-left: 0;
+        padding-left: sizeToken.get(0.5);
+        margin-right: 0;
+        padding-right: sizeToken.get(0.5);
+        width: sizeToken.get(9);
+    }
+}
+
+.day {
+    &.selectedMiddle {
+        @include rangeMiddleDay;
+    }
+
+    &.selectedStart:not(.selectedEnd) {
+        @include rangeStartDay;
+    }
+
+    &.selectedEnd:not(.selectedStart) {
+        @include rangeEndDay;
+    }
+}
+
+.week {
+    &:has(~ .week .day.hoverAfter:hover) .day {
+        &.hoverAfter {
+            @include rangeMiddleDay;
+        }
+        &.hoverSelected {
+            @include rangeStartDay;
+        }
+    }
+
+    &:has(.day.hoverAfter:hover) .day {
+        &.hoverAfter:hover {
+            @include rangeEndDay;
+        }
+        &.hoverAfter:has(~ .day.hoverAfter:hover) {
+            @include rangeMiddleDay;
+        }
+        &.hoverSelected {
+            @include rangeStartDay;
+        }
+    }
+
+    &:has(.day.hoverBefore:hover) .day {
+        &.hoverBefore:hover {
+            @include rangeStartDay;
+        }
+        &.hoverBefore:hover ~ .day.hoverBefore {
+            @include rangeMiddleDay;
+        }
+        &.hoverSelected {
+            @include rangeEndDay;
+        }
+    }
+
+    &:has(.day.hoverBefore:hover) ~ .week .day {
+        &.hoverBefore {
+            @include rangeMiddleDay;
+        }
+        &.hoverSelected {
+            @include rangeEndDay;
+        }
+    }
+}

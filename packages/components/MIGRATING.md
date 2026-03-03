@@ -19,6 +19,9 @@ This document describes the changes that you need to make to your code to migrat
         - [Color Picker](#color-picker)
             - [Old](#color-picker-old)
             - [New](#color-picker-new)
+        - [DatePicker](#datepicker)
+            - [Old](#datepicker-old)
+            - [New](#datepicker-new)
         - [Dialog](#dialog)
             - [Old](#dialog-old)
             - [New](#dialog-new)
@@ -288,6 +291,108 @@ const [currentColor, setCurrentColor] = useState({ red: 85, green: 102, blue: 25
     <ColorPicker.Gradient />
 </ColorPicker.Root>
 ```
+
+### DatePicker
+
+Changes:
+
+- The `DatePicker` now uses `react-day-picker` instead of `react-datepicker`.
+- The component uses a compound component pattern with `DatePicker` (single), `DatePicker.Range`, and `DatePicker.Input`.
+- **Date format changed**: Values are now `DatePickerDate` objects (`{ year, month, day }`) instead of native `Date` objects.
+    - Range mode uses `DatePickerDateRange` (`{ from: DatePickerDate, to: DatePickerDate }`) instead of separate `startDate` / `endDate` props.
+- The `onChange` callback signature has changed: it now receives a `DatePickerDate` (or `DatePickerDateRange` for range mode) instead of a native `Date`.
+- The `minDate`, `maxDate`, and `filterDate` props have been replaced by `disabledDates`, which accepts `{ before: Date }` and/or `{ after: Date }` matchers.
+- The `DatePicker.Input` is now a standalone component that can be used as a trigger. It replaces `customTrigger` and the internal `DatePickerTrigger`.
+- The calendar no longer includes a built-in popover. Use the `Flyout` component for popover behavior.
+- Removed properties:
+    - `variant` (use `DatePicker` for single and `DatePicker.Range` for range)
+    - `value`, `startDate`, `endDate` (replaced by `selected`)
+    - `placeHolder`, `dateFormat`, `validation`, `hugWidth` (handle via `DatePicker.Input` or custom trigger)
+    - `customTrigger`, `customHeader`, `children`
+    - `inline`, `isClearable`, `shouldCloseOnSelect`, `hasPopperArrow`, `preventOpenOnFocus`, `fixedHeight`
+    - `onOpen`, `onClose`, `onBlur`, `onKeyDown`, `triggerAriaLabel`
+
+#### Old
+
+```tsx
+const [selectedDate, setSelectedDate] = useState<Date | null>(new Date(2026, 0, 17));
+
+<DatePicker
+    value={selectedDate}
+    onChange={(date) => setSelectedDate(date)}
+    dateFormat="MMM dd, yyyy"
+    placeHolder="Select a date"
+    isClearable
+    minDate={new Date()}
+    validation={Validation.Default}
+/>
+```
+
+```tsx
+const [startDate, setStartDate] = useState<Date | null>(new Date(2026, 0, 17));
+const [endDate, setEndDate] = useState<Date | null>(new Date(2026, 0, 24));
+
+<DatePicker
+    variant="range"
+    value={startDate}
+    startDate={startDate}
+    endDate={endDate}
+    onChange={([start, end]) => {
+        setStartDate(start);
+        setEndDate(end);
+    }}
+/>
+```
+
+#### New
+
+```tsx
+const [selectedDate, setSelectedDate] = useState<DatePickerDate>({
+    year: 2026,
+    month: 1,
+    day: 17,
+});
+
+<DatePicker selected={selectedDate} onChange={setSelectedDate} disabledDates={[{ before: new Date() }]} />
+```
+
+```tsx
+const [selectedDateRange, setSelectedDateRange] = useState<DatePickerDateRange>({
+    from: { year: 2026, month: 1, day: 17 },
+    to: { year: 2026, month: 1, day: 24 },
+});
+
+<DatePicker.Range selected={selectedDateRange} onChange={setSelectedDateRange} />
+```
+
+To use the date picker in a popover with a trigger input, compose it with `Flyout` and `DatePicker.Input`:
+
+```tsx
+const [isOpen, setIsOpen] = useState(false);
+const [selectedDate, setSelectedDate] = useState<DatePickerDate>();
+
+<Flyout.Root open={isOpen} onOpenChange={setIsOpen}>
+    <Flyout.Trigger>
+        <DatePicker.Input
+            selected={selectedDate}
+            isOpen={isOpen}
+            onClear={() => setSelectedDate(undefined)}
+        />
+    </Flyout.Trigger>
+    <Flyout.Content>
+        <DatePicker selected={selectedDate} onChange={setSelectedDate} />
+    </Flyout.Content>
+</Flyout.Root>
+```
+
+#### Upgrade Steps:
+
+1. Replace `import { DatePicker } from '@frontify/fondue'` with `import { DatePicker } from '@frontify/fondue/components'`
+2. Convert `Date` values to `DatePickerDate` objects (`{ year, month, day }`)
+3. Update the `onChange` signature: it now receives `DatePickerDate` (or `DatePickerDateRange`) instead of a native `Date`
+4. For range mode, replace `<DatePicker variant="range">` with `<DatePicker.Range>`
+5. Replace `minDate`/`maxDate` with `disabledDates` matchers
+6. If using the date picker in a popover, wrap it with `Flyout` and use `DatePicker.Input` as the trigger
 
 ### Dialog
 

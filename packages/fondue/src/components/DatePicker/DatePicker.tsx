@@ -34,6 +34,9 @@ type RangeDatePickerProps = {
     endDate: Date | null;
 };
 
+/**
+ * @deprecated Use `DatePicker` from `@frontify/fondue/components` instead.
+ */
 export type DatePickerProps = {
     placeHolder?: string;
     isClearable?: boolean;
@@ -72,8 +75,14 @@ const getDayClasses = (variant: DatePickerProps['variant'], date: Date) => {
     return 'range-day';
 };
 
+/**
+ * @deprecated Use `DatePicker` from `@frontify/fondue/components` instead.
+ */
 export type ReactDatePickerRef = ReactDatePicker<boolean, undefined>;
 
+/**
+ * @deprecated Use `DatePicker` from `@frontify/fondue/components` instead.
+ */
 export const DatePicker = forwardRef<ReactDatePickerRef, DatePickerProps>(
     (
         {

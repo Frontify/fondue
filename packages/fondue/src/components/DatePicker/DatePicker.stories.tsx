@@ -14,11 +14,10 @@ import { Validation } from '@utilities/validation';
 import { DatePicker, type DatePickerProps, type ReactDatePickerRef } from './DatePicker';
 
 /**
- ### *Legacy component warning*
- #### This is a unmaintained legacy component. It will be deprecated and replaced with a new component in an upcoming release.
+ * @deprecated Use `DatePicker` from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#datepicker the migration guide}.
  */
 export default {
-    title: 'Legacy Components/DatePicker',
+    title: 'Legacy Components/Deprecated/DatePicker',
     component: DatePicker,
     tags: ['autodocs'],
     args: {
@@ -56,6 +55,11 @@ export default {
         hugWidth: {
             defaultValue: true,
             control: { type: 'boolean' },
+        },
+    },
+    parameters: {
+        status: {
+            type: 'deprecated',
         },
     },
 } as Meta<DatePickerProps>;

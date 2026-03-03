@@ -1,6 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export const enUS = {
+import { enUS as dateLocale } from 'date-fns/locale';
+
+const translations = {
     ColorPicker_selectColor: 'Select Color',
     ColorPicker_selectFormat: 'Select a color format',
     ColorPicker_hexValue: 'Hex color value',
@@ -8,6 +10,7 @@ export const enUS = {
     ColorPicker_greenChannel: 'Green Color Channel',
     ColorPicker_blueChannel: 'Blue Color Channel',
     ColorPicker_opacity: 'Color Opacity',
+    DatePicker_selectDate: 'Select Date',
     Dialog_close: 'Close',
     Flyout_close: 'Close',
     Select_clear: 'clear input',
@@ -24,4 +27,9 @@ export const enUS = {
     Table_sortAscending: 'Sort ascending',
     Badge_dismiss: 'Dismiss ${label}',
     Notice_dismiss: 'Dismiss notice',
+};
+
+export const enUS = {
+    translationStrings: translations,
+    dateLocale,
 };

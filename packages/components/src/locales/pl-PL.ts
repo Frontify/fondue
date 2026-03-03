@@ -1,8 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { pl as dateLocale } from 'date-fns/locale';
+
 import { type Translations } from './types';
 
-export const plPL: Translations = {
+const translations = {
     ColorPicker_selectColor: 'Wybierz kolor',
     ColorPicker_selectFormat: 'Wybierz format koloru',
     ColorPicker_hexValue: 'Wartość koloru szesnastkowego',
@@ -10,6 +12,7 @@ export const plPL: Translations = {
     ColorPicker_greenChannel: 'Zielony kanał koloru',
     ColorPicker_blueChannel: 'Niebieski kanał koloru',
     ColorPicker_opacity: 'Przezroczystość koloru',
+    DatePicker_selectDate: 'Wybierz datę',
     Dialog_close: 'Zamknij',
     Flyout_close: 'Zamknij',
     Select_clear: 'wyczyść pole',
@@ -26,4 +29,9 @@ export const plPL: Translations = {
     Table_sortAscending: 'Sortuj rosnąco',
     Badge_dismiss: 'Zamknij ${label}',
     Notice_dismiss: 'Zamknij powiadomienie',
+};
+
+export const plPL: Translations = {
+    translationStrings: translations,
+    dateLocale,
 };

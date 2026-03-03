@@ -1,8 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { nl as dateLocale } from 'date-fns/locale';
+
 import { type Translations } from './types';
 
-export const nlNL: Translations = {
+const translations = {
     ColorPicker_selectColor: 'Selecteer kleur',
     ColorPicker_selectFormat: 'Selecteer een kleurformaat',
     ColorPicker_hexValue: 'Hex-kleurwaarde',
@@ -10,6 +12,7 @@ export const nlNL: Translations = {
     ColorPicker_greenChannel: 'Groen kleurkanaal',
     ColorPicker_blueChannel: 'Blauw kleurkanaal',
     ColorPicker_opacity: 'Kleurdekking',
+    DatePicker_selectDate: 'Selecteer datum',
     Dialog_close: 'Sluiten',
     Flyout_close: 'Sluiten',
     Select_clear: 'invoer wissen',
@@ -26,4 +29,9 @@ export const nlNL: Translations = {
     Table_sortAscending: 'Sorteer oplopend',
     Badge_dismiss: 'Sluit ${label}',
     Notice_dismiss: 'Melding sluiten',
+};
+
+export const nlNL: Translations = {
+    translationStrings: translations,
+    dateLocale,
 };
