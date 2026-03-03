@@ -20,17 +20,23 @@ import { useFondueTheme } from '../ThemeProvider/ThemeProvider';
 
 import styles from './styles/datePickerCalendar.module.scss';
 
-type DatePickerCalendarModeProps =
-    | { mode: 'single'; required: true; selected: Date | undefined; onSelect: OnSelectHandler<Date> }
-    | {
-          mode: 'range';
-          required: true;
-          selected: InternalDayPickerDateRange | undefined;
-          onSelect: OnSelectHandler<InternalDayPickerDateRange>;
-          modifiers?: Record<string, Matcher>;
-          onDayMouseEnter?: (day: Date) => void;
-          onDayMouseLeave?: (day: Date) => void;
-      };
+type DatePickerCalendarSingleModeProps = {
+    mode: 'single';
+    required: true;
+    selected: Date | undefined;
+    onSelect: OnSelectHandler<Date>;
+};
+type DatePickerCalendarRangeModeProps = {
+    mode: 'range';
+    required: true;
+    selected: InternalDayPickerDateRange | undefined;
+    onSelect: OnSelectHandler<InternalDayPickerDateRange>;
+    modifiers?: Record<string, Matcher>;
+    onDayMouseEnter?: (day: Date) => void;
+    onDayMouseLeave?: (day: Date) => void;
+};
+
+type DatePickerCalendarModeProps = DatePickerCalendarSingleModeProps | DatePickerCalendarRangeModeProps;
 
 type DisabledDates = { before: Date } | { after: Date };
 

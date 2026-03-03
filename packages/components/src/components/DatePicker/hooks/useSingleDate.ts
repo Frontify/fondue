@@ -8,9 +8,16 @@ import { type DatePickerDate } from '../types';
 
 export const useSingleDate = (selected?: DatePickerDate, onSelect?: (date?: DatePickerDate) => void) => {
     const [internalSelectedDate, setInternalSelectedDate] = useState<DatePickerDate | undefined>(selected);
+    const [prevSelected, setPrevSelected] = useState<DatePickerDate | undefined>(selected);
+
+    if (prevSelected !== selected) {
+        setPrevSelected(selected);
+        setInternalSelectedDate(selected);
+    }
+
     const selectedDate = useMemo(() => {
-        return transformDatePickerDateToDate(selected ?? internalSelectedDate);
-    }, [internalSelectedDate, selected]);
+        return transformDatePickerDateToDate(internalSelectedDate);
+    }, [internalSelectedDate]);
 
     const handleSelect: OnSelectHandler<Date> = (date) => {
         const datePickerDate = transformDateToDatePickerDate(date);

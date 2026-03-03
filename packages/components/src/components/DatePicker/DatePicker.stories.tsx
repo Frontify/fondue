@@ -4,6 +4,9 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { action } from 'storybook/actions';
 import { useState } from 'storybook/internal/preview-api';
 
+import { Button } from '../Button/Button';
+import { Flyout } from '../Flyout/Flyout';
+
 import { DatePicker, type DatePickerDate } from './DatePicker';
 import { RangeDatePicker } from './RangeDatePicker';
 import { SingleDatePicker } from './SingleDatePicker';
@@ -87,5 +90,60 @@ export const DisabledDatesAfter: Story = {
     },
     render: (args) => {
         return <DatePicker {...args} />;
+    },
+};
+
+export const InFlyout: Story = {
+    args: {},
+    render: () => {
+        const [savedDateRange, setSavedDateRange] = useState<DatePickerDateRange | undefined>(undefined);
+        const [selectedDate, setSelectedDate] = useState<DatePickerDateRange | undefined>(undefined);
+        const [isOpen, setIsOpen] = useState(true);
+        return (
+            <div className="tw-w-64">
+                <Flyout.Root open={isOpen} onOpenChange={setIsOpen}>
+                    <Flyout.Trigger>
+                        <DatePicker.Input
+                            aria-label="Date Picker"
+                            selected={savedDateRange}
+                            isOpen={isOpen}
+                            onClear={() => {
+                                setSavedDateRange(undefined);
+                                setSelectedDate(undefined);
+                            }}
+                        />
+                    </Flyout.Trigger>
+                    <Flyout.Content>
+                        <Flyout.Body>
+                            <DatePicker.Range
+                                selected={selectedDate}
+                                onChange={(dateRange) => {
+                                    setSelectedDate(dateRange);
+                                }}
+                            />
+                        </Flyout.Body>
+                        <Flyout.Footer>
+                            <Button
+                                emphasis="default"
+                                onPress={() => {
+                                    setIsOpen(false);
+                                    setSelectedDate(savedDateRange);
+                                }}
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                onPress={() => {
+                                    setIsOpen(false);
+                                    setSavedDateRange(selectedDate);
+                                }}
+                            >
+                                Save
+                            </Button>
+                        </Flyout.Footer>
+                    </Flyout.Content>
+                </Flyout.Root>
+            </div>
+        );
     },
 };

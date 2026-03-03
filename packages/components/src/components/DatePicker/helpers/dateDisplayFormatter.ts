@@ -6,6 +6,10 @@ import { type DatePickerDate, type DatePickerDateRange } from '../types';
 
 import { transformDateRangeToPickerDateRange, transformDatePickerDateToDate } from './dateTransformer';
 
+const isDateRange = (selected?: DatePickerDateRange | DatePickerDate): selected is DatePickerDateRange => {
+    return Boolean(selected && 'from' in selected && 'to' in selected);
+};
+
 const getSingleDateDisplayString = (selected?: DatePickerDate): string | undefined => {
     const singleDate = transformDatePickerDateToDate(selected);
     if (!singleDate) {
@@ -36,7 +40,7 @@ const getDateRangeDisplayString = (selected?: DatePickerDateRange): string | und
 };
 
 export const getDateDisplayString = (selected?: DatePickerDateRange | DatePickerDate): string | undefined => {
-    if (selected && 'from' in selected && 'to' in selected) {
+    if (isDateRange(selected)) {
         return getDateRangeDisplayString(selected);
     }
     return getSingleDateDisplayString(selected);

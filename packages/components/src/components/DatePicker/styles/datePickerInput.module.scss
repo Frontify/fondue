@@ -6,6 +6,7 @@
 .root {
     width: 100%;
     position: relative;
+    display: flex;
     justify-content: start;
     align-items: center;
     gap: sizeToken.get(2);
@@ -73,18 +74,18 @@
     align-items: center;
     gap: sizeToken.get(2);
     flex-grow: 1;
+    min-width: 0;
     padding-inline: sizeToken.get(3);
     height: sizeToken.get(9);
     outline: none;
-    width: 100%;
+    overflow: hidden;
 }
 
 .actions {
-    position: absolute;
-    inset-block: 0;
-    inset-inline-end: sizeToken.get(3);
     display: flex;
     align-items: center;
+    flex-shrink: 0;
+    padding-inline-end: sizeToken.get(3);
     pointer-events: none;
     gap: sizeToken.get(2);
 

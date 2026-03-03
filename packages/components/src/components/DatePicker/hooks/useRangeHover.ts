@@ -3,6 +3,26 @@
 import { useMemo } from 'react';
 import { type DateRange as InternalDayPickerDateRange } from 'react-day-picker';
 
+type RangeHoverModifiers = {
+    hoverBefore:
+        | {
+              before: Date;
+          }
+        | false;
+    hoverAfter:
+        | {
+              after: Date;
+          }
+        | false;
+    hoverSelected: Date | false;
+};
+
+const DISABLED_MODIFIERS: RangeHoverModifiers = {
+    hoverBefore: false,
+    hoverAfter: false,
+    hoverSelected: false,
+};
+
 export const useRangeHover = (selectedDateRange?: InternalDayPickerDateRange) => {
     const hoverModifiers = useMemo(() => {
         if (
@@ -10,11 +30,7 @@ export const useRangeHover = (selectedDateRange?: InternalDayPickerDateRange) =>
             !selectedDateRange?.to ||
             selectedDateRange?.to.getTime() > selectedDateRange?.from.getTime()
         ) {
-            return {
-                hoverBefore: false,
-                hoverAfter: false,
-                hoverSelected: false,
-            };
+            return DISABLED_MODIFIERS;
         }
         return {
             hoverBefore: {
