@@ -15,6 +15,17 @@ const meta: Meta<typeof Badge> = {
         status: {
             type: 'released',
         },
+        docs: {
+            description: {
+                component: [
+                    'A small indicator used to highlight status, count, or category. Conveys concise data at a glance without overwhelming the interface.',
+                    '',
+                    '**When to use:** To surface metadata, counts, or status alongside other content — such as labels in a list, filter tags, or notification counts.',
+                    '',
+                    '**Icon:** Pass an icon as a child alongside the label to add visual context or reinforce meaning.',
+                ].join('\n'),
+            },
+        },
     },
     args: {
         emphasis: 'strong',

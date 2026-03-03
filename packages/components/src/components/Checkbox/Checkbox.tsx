@@ -10,57 +10,56 @@ export type CheckboxProps = {
     id?: string;
     name?: string;
     /**
-     * The default value of the checkbox
-     * Used for uncontrolled components
+     * The initial checked state for uncontrolled usage. Pass `'indeterminate'` for a mixed state (e.g., when some but not all child items are selected).
      * @default false
      */
     defaultValue?: boolean | 'indeterminate';
     /**
-     * The controlled value of the checkbox
+     * The controlled checked state. Use together with `onChange` for controlled usage. Pass `'indeterminate'` for a mixed state.
      * @default false
      */
     value?: boolean | 'indeterminate';
     /**
-     * The size of the checkbox
+     * Controls the checkbox size. `'default'` fits most layouts, `'large'` for touch-friendly environments or increased visual weight.
      * @default "default"
      */
     size?: 'default' | 'large';
     /**
-     * The emphasis of the checkbox
+     * Controls visual weight. `'default'` is subtle for standard forms, `'weak'` for reduced visual weight.
      * @default "default"
      */
     emphasis?: 'default' | 'weak';
     /**
-     * Disable the checkbox
+     * Prevents interaction and dims the checkbox visually.
      * @default false
      */
     disabled?: boolean;
     /**
-     * Make the checkbox required in form
+     * Marks the checkbox as required for form submission. The indicator should appear next to the label.
      * @default false
      */
     required?: boolean;
     /**
-     * Make the checkbox read-only
+     * Makes the checkbox read-only. The checkbox is visible and focusable but its value cannot be changed by user interaction.
      * @default false
      */
     readOnly?: boolean;
     /**
-     * Status of the checkbox
+     * Visual status of the checkbox. Use `'error'` to indicate a validation failure.
      * @default "default"
      */
     status?: 'default' | 'error';
     className?: string;
     /**
-     * Event handler called when the checkbox value changes
+     * Callback fired when the checked state changes.
      */
     onChange?: (event: FormEvent<HTMLButtonElement>) => void;
     /**
-     * Event handler called when the checkbox is blurred
+     * Callback fired when the checkbox loses focus.
      */
     onBlur?: (event: FormEvent<HTMLButtonElement>) => void;
     /**
-     * Event handler called when the checkbox is focused
+     * Callback fired when the checkbox gains focus.
      */
     onFocus?: (event: FormEvent<HTMLButtonElement>) => void;
     'data-test-id'?: string;

@@ -24,6 +24,17 @@ const meta: Meta<typeof TabsRoot> = {
         status: {
             type: 'released',
         },
+        docs: {
+            description: {
+                component: [
+                    'A set of layered content panels — only one visible at a time. Organizes related content into switchable views without leaving the page.',
+                    '',
+                    '**When to use:** When content naturally splits into parallel categories that users switch between. For collapsible sections stacked vertically, use Accordion instead.',
+                    '',
+                    '**Overflow:** Tabs that exceed the container width are automatically tucked into a dropdown menu.',
+                ].join('\n'),
+            },
+        },
     },
     args: {
         onActiveTabChange: action('onActiveTabChange'),

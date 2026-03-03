@@ -29,6 +29,15 @@ const meta: Meta<typeof TableRoot> = {
         status: {
             type: 'released',
         },
+        docs: {
+            description: {
+                component: [
+                    'A structured data table with header, body, rows, and cells. Supports sorting indicators, row selection, and inline actions.',
+                    '',
+                    '**When to use:** For displaying tabular data that users scan, compare, or act on — user lists, asset inventories, permission matrices.',
+                ].join('\n'),
+            },
+        },
     },
     args: {
         'aria-label': 'User Management Table',

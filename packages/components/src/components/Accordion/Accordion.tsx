@@ -19,34 +19,34 @@ type AccordionPadding = 'none' | 'small' | 'medium' | 'large';
 export type AccordionRootProps = {
     'data-test-id'?: string;
     /**
-     * Show or hide the top and bottom border
+     * Shows or hides the top and bottom border.
      * @default true
      */
     border?: boolean;
     /**
-     * Children of the Accordion component. This should contain the `Accordion.Item` components
+     * Should contain `Accordion.Item` components.
      */
     children?: ReactNode;
     /**
-     * The value of the items whose contents are expanded when the accordion is initially rendered.
-     * Use `defaultValue` if you do not need to control the state of an accordion.
+     * The items whose contents are expanded on initial render. Use when you do not need to control accordion state.
      */
     defaultValue?: string[];
     /**
-     * Whether or not an accordion is disabled from user interaction.
+     * Prevents interaction and dims the accordion visually.
+     * @default false
      */
     disabled?: boolean;
     /**
-     * The controlled stateful value of the accordion items whose contents are expanded.
+     * The controlled value of the items whose contents are expanded.
      */
     value?: string[];
     /**
-     * Controls if we show paddings around the header.
+     * Controls padding around the header. `'none'` for no padding, `'small'`, `'medium'`, or `'large'` for increasing spacing.
      * @default 'large'
      */
     padding?: AccordionPadding;
     /**
-     * Callback function that is called when the value of the accordion changes.
+     * Callback fired when the expanded items change.
      */
     onValueChange?: (value: string[]) => void;
 };
@@ -82,7 +82,7 @@ AccordionRoot.displayName = 'Accordion.Root';
 export type AccordionItemProps = {
     'data-test-id'?: string;
     /**
-     * Children of the Accordion item. This should contain the `Accordion.Header` and `Accordion.Content` components
+     * The item content. Should contain an `Accordion.Header` and an `Accordion.Content`.
      */
     children?: ReactNode;
     /**
@@ -130,11 +130,11 @@ export type AccordionHeaderProps = {
      */
     asChild?: boolean;
     /**
-     * Click callback for this item.
+     * Callback fired when the header is clicked.
      */
     onClick?: MouseEventHandler<HTMLDivElement>;
     /**
-     * Children of the Accordion header.
+     * The header content — text, icons, and optional `Accordion.Slot` elements for actions.
      */
     children?: ReactNode;
 };
@@ -176,7 +176,7 @@ AccordionHeader.displayName = 'Accordion.Header';
 type AccordionContentProps = {
     'data-test-id'?: string;
     /**
-     * Children of the Accordion content. This contains the main content.
+     * The collapsible content revealed when this item is expanded.
      */
     children?: ReactNode;
     /**
@@ -184,12 +184,12 @@ type AccordionContentProps = {
      */
     divider?: boolean;
     /**
-     * Click callback for the content.
+     * Callback fired when the content area is clicked.
      */
     onClick?: MouseEventHandler<HTMLDivElement>;
     /**
-     * Controls if we show paddings around the content.
-     * @default 'large'
+     * Controls padding around the content area. Inherits from the root's `padding` when omitted.
+     * @default "large"
      */
     padding?: AccordionPadding;
 };
@@ -218,7 +218,13 @@ export const AccordionContent = ({
 AccordionContent.displayName = 'Accordion.Content';
 
 export type AccordionSlotProps = {
+    /**
+     * Content to render inside the slot, typically action buttons or controls.
+     */
     children: ReactNode;
+    /**
+     * The slot placement. Use `'action'` to position content on the right side of the header for quick-access actions.
+     */
     name?: 'action';
     'data-test-id'?: string;
 };
@@ -242,6 +248,7 @@ const ForwardedRefAccordionSlot = forwardRef<HTMLDivElement, AccordionSlotProps>
  */
 const DeprecatedAccordionTrigger = ({ children }: { children: ReactNode }) => children;
 
+/** A vertically stacked set of collapsible sections — compose `Root` with `Item`, `Header`, `Content`, and `Slot` sub-components. */
 export const Accordion = {
     Root: AccordionRoot,
     Item: AccordionItem,

@@ -19,6 +19,15 @@ const meta: Meta<typeof Divider> = {
         status: {
             type: 'released',
         },
+        docs: {
+            description: {
+                component: [
+                    'A visual separator between content sections. Renders as an `<hr>` with configurable orientation, style, and spacing.',
+                    '',
+                    '**When to use:** To visually group or separate content areas. Set `decorative` to `true` when the divider carries no semantic meaning.',
+                ].join('\n'),
+            },
+        },
     },
     decorators: [
         (Story) => (

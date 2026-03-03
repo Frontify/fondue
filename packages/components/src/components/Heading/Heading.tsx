@@ -14,10 +14,26 @@ type TagType = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'span' | 'p';
 
 export type HeadingProps<TTag extends TagType = 'span'> = CommonAriaProps & {
     'data-test-id'?: string;
+    /**
+     * The HTML element used to render the heading. Choose a semantic level that matches the document outline — the visual size is controlled independently via `size`.
+     * @default "span"
+     */
     as?: TTag;
     children?: ReactNode;
+    /**
+     * Controls the text color. `'default'` for primary headings, `'weak'` for secondary, `'x-weak'` for tertiary, `'disabled'` for inactive, `'interactive'` for clickable headings.
+     * @default "default"
+     */
     color?: HeadingColor;
+    /**
+     * Controls the visual size independently from the semantic HTML element. `'medium'` for section headings, `'large'` for page headings, `'x-large'` and `'xx-large'` for hero areas.
+     * @default "medium"
+     */
     size?: HeadingSize;
+    /**
+     * Controls the font weight. `'default'` for regular weight, `'strong'` for emphasized headings.
+     * @default "default"
+     */
     weight?: HeadingWeight;
     className?: string;
 };

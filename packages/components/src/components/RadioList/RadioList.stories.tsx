@@ -19,6 +19,15 @@ const meta: Meta<typeof RadioListRoot> = {
         status: {
             type: 'released',
         },
+        docs: {
+            description: {
+                component: [
+                    'A list of mutually exclusive radio options. Only one option can be selected at a time.',
+                    '',
+                    '**When to use:** When users must choose exactly one option from a visible list. For 2–4 compact options, consider `<SegmentedControl>` instead. For dropdowns, use `<Select>`.',
+                ].join('\n'),
+            },
+        },
     },
     args: {
         disabled: false,

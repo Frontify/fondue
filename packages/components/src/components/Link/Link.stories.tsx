@@ -14,6 +14,15 @@ const meta: Meta<LinkProps> = {
         status: {
             type: 'beta',
         },
+        docs: {
+            description: {
+                component: [
+                    'An anchor element for navigating to another page or URL. Integrates with RouterProvider for client-side routing.',
+                    '',
+                    '**When to use:** For navigation — going to a new page or URL. For triggering actions, use `<Button>` instead.',
+                ].join('\n'),
+            },
+        },
     },
     decorators: [
         (Story) => (

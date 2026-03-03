@@ -25,6 +25,15 @@ const meta: Meta<typeof Grid> = {
         status: {
             type: 'released',
         },
+        docs: {
+            description: {
+                component: [
+                    'A two-dimensional layout container using CSS Grid. Defines rows and columns for complex, responsive layouts.',
+                    '',
+                    '**When to use:** For two-dimensional layouts like card grids, dashboards, or form layouts. For single-axis layouts use `<Flex>`.',
+                ].join('\n'),
+            },
+        },
     },
     args: {
         columns: 'repeat(3, 1fr)',

@@ -12,16 +12,16 @@ import styles from './styles/dropdown.module.scss';
 export type DropdownRootProps = {
     children?: ReactNode;
     /**
-     * When set to true, interaction with outside elements will be disabled and only menu content will be visible to screen readers.
+     * When `true`, prevents interaction with the rest of the page and restricts screen-reader access to the menu only.
      * @default false
      */
     modal?: boolean;
     /**
-     * Controls the open state of the dropdown.
+     * The controlled open state. Use together with `onOpenChange` for programmatic control.
      */
     open?: boolean;
     /**
-     * Callback that is called when the open state of the dropdown changes.
+     * Callback fired when the dropdown opens or closes.
      */
     onOpenChange?: (open: boolean) => void;
 
@@ -45,7 +45,7 @@ DropdownRoot.displayName = 'Dropdown.Root';
 
 export type DropdownTriggerProps = {
     /**
-     * Change the default rendered element for the one passed as a child, merging their props and behavior.
+     * When `true`, merges the trigger's props and behavior onto its child element instead of rendering a wrapper button.
      * @default true
      */
     asChild?: boolean;
@@ -76,36 +76,36 @@ export type DropdownContentProps = {
     children?: ReactNode;
     'data-test-id'?: string;
     /**
-     * Defines the alignment of the dropdown.
+     * Controls the horizontal alignment of the menu relative to the trigger.
      * @default "start"
      */
     align?: 'start' | 'center' | 'end';
     /**
-     * Defines the preferred side of the dropdown. It will not be respected if there are collisions with the viewport.
+     * The preferred side the menu opens on. Falls back to the opposite side if there isn't enough viewport space.
      * @default "bottom"
      */
     side?: 'top' | 'right' | 'bottom' | 'left';
     /**
-     * Defines the spacing between the dropdown and its trigger.
+     * Controls the spacing between the dropdown menu and its trigger. `'compact'` for tight layouts, `'spacious'` for breathing room.
      * @default 'compact'
      */
     triggerOffset?: DropdownSpacing;
     /**
-     * Prevents the focus from being set on the trigger when the dropdown is closed.
+     * When `true`, prevents focus from returning to the trigger when the dropdown closes. Useful when the trigger is removed from the DOM on close.
      */
     preventTriggerFocusOnClose?: boolean;
     /**
-     * Define the minimum distance between the dropdown and the viewport edge
+     * Controls the minimum distance between the menu and the viewport edge.
      * @default 'compact'
      */
     viewportCollisionPadding?: DropdownViewportCollisionPadding;
     /**
-     * When true, the content will always be mounted in the DOM. Before enabling, make sure you really need it.
+     * When `true`, the menu content stays mounted in the DOM even when closed. Use sparingly — only when unmounting causes layout issues.
      * @default false
      */
     forceMount?: boolean;
     /**
-     * Event handler called when the escape key is pressed.
+     * Callback fired when the Escape key is pressed while the menu is open.
      */
     onEscapeKeyDown?: (event: KeyboardEvent) => void;
 };
@@ -302,24 +302,24 @@ DropdownSubContent.displayName = 'Dropdown.SubContent';
 export type DropdownItemProps = {
     children: ReactNode;
     /**
-     * Disables the item.
+     * Prevents interaction and dims the item visually.
      */
     disabled?: boolean;
     /**
-     * The text value of the item that is passed to the onSelect callback.
+     * A plain-text representation of the item's content, used for typeahead keyboard navigation.
      */
     textValue?: string;
     /**
-     * The style of the item.
+     * Controls the item's visual tone. Use `'danger'` for destructive actions like delete.
      * @default "default"
      */
     emphasis?: 'default' | 'danger';
     /**
-     * Callback that is called when the item is selected.
+     * Callback fired when the user selects this item.
      */
     onSelect?: (event: Event) => void;
     /**
-     * If true, the item props will be passed to the child element.
+     * When `true`, merges the item's props and behavior onto its child element.
      * @default false
      */
     asChild?: boolean;
@@ -396,6 +396,7 @@ const ForwardedRefDropdownSubContent = forwardRef<HTMLDivElement, DropdownSubCon
 const ForwardedRefDropdownItem = forwardRef<HTMLDivElement, DropdownItemProps>(DropdownItem);
 const ForwardedRefDropdownSlot = forwardRef<HTMLDivElement, DropdownSlotProps>(DropdownSlot);
 
+/** A menu triggered by a button — compose `Root` with `Trigger`, `Content`, `Item`, `Group`, `Slot`, `SubMenu`, `SubTrigger`, and `SubContent` sub-components. */
 export const Dropdown = {
     Root: DropdownRoot,
     Trigger: ForwardedRefDropdownTrigger,

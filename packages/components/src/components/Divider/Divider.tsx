@@ -12,33 +12,32 @@ type DividerColor = 'weak' | 'default' | 'strong';
 
 export type DividerProps = {
     /**
-     * The style of the divider
+     * Controls the line style. `'solid'` for a continuous line, `'dashed'` for a dotted line, `'noline'` for spacing-only separation.
      * @default "solid"
      */
     variant?: DividerStyle;
     /**
-     * The padding of the divider
+     * Controls the spacing around the divider. `'none'` for tight layouts, `'medium'` for standard separation, `'large'` for prominent breaks.
      * @default "medium"
      */
     padding?: DividerPadding;
     /**
-     * The color of the divider
+     * Controls the line color intensity. `'weak'` for subtle separation, `'default'` for standard, `'strong'` for prominent borders.
      * @default "default"
      */
     color?: DividerColor;
     /**
-     * The direction of the divider
+     * Controls the orientation. `'horizontal'` for full-width breaks, `'vertical'` for side-by-side content separation.
      * @default "horizontal"
      */
     direction?: DividerDirection;
     /**
-     * The html element to be used
+     * The HTML element to render. Use `'li'` when the divider sits inside a list.
      * @default "div"
      */
     as?: 'div' | 'li';
     /**
-     * When `true`, signifies that it is purely visual, carries no semantic
-     * meaning, and ensures it is not present in the accessibility tree.
+     * When `true`, the divider is purely visual — it carries no semantic meaning and is hidden from the accessibility tree.
      * @default false
      */
     decorative?: boolean;

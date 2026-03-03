@@ -7,26 +7,30 @@ import styles from '../styles/select.module.scss';
 
 export type SelectItemProps = {
     /**
-     * The value of the select item.
+     * A unique string that identifies this option.
+     * This is the value passed to `onSelect` when the user picks this item.
      */
     value: string;
-    /**
-     * The data test id of the select item.
-     */
     'data-test-id'?: string;
 } & (
     | {
           /**
-           * The label of the select item. Required when the child is not a string.
+           * The plain-text label for this option. Required when `children` is a custom component
+           * so the select can display and filter by text.
            */
           label: string;
           /**
-           * The children of the select item. This can be a custom component or a string.
+           * Custom content rendered inside the option.
+           * When omitted, the `label` text is displayed instead.
            */
           children?: ReactNode;
       }
     | {
           label?: string;
+          /**
+           * The text content for this option. When passed as a string,
+           * it doubles as both the label and the display content.
+           */
           children: string;
       }
 );
@@ -48,20 +52,17 @@ export const ForwardedRefSelectItem = forwardRef<HTMLLIElement, SelectItemProps>
 
 export type SelectItemGroupProps = {
     /**
-     * The children of the select item group. This can contain multiple `Select.Item` components.
+     * The group's options. Nest `Select.Item` components here.
      */
     children: ReactNode;
     /**
-     * The internal group ID of the select item group.
+     * A unique identifier for this group, used internally to track option membership.
      */
     groupId: string;
     /**
-     * The groups heading
+     * An optional visible heading displayed above the group's options — e.g., "Recently used."
      */
     heading?: string;
-    /**
-     * The data test id of the select item group.
-     */
     'data-test-id'?: string;
 };
 

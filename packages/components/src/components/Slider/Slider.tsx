@@ -11,42 +11,48 @@ export type SliderProps = {
     id?: string;
     name?: string;
     /**
-     * The default value of the slider
-     * Used for uncontrolled components
+     * The initial value for uncontrolled usage. Pass an array with one number for a single thumb, or two numbers for a range.
      * @default [0]
      */
     defaultValue?: number[];
     /**
-     * The controlled value of the slider
-     * @default [0]
+     * The controlled value. Use together with `onChange`. Pass an array with one number for a single thumb, or two numbers for a range.
      */
     value?: number[];
     /**
-     * Minimum value of the slider
+     * The minimum selectable value.
      * @default 0
      */
     min?: number;
     /**
-     * Maximum value of the slider
+     * The maximum selectable value.
      * @default 100
      */
     max?: number;
     /**
-     * The granularity with which the slider can step through values
+     * The granularity of allowed values. For example, `step={5}` snaps to multiples of 5.
      * @default 1
      */
     step?: number;
     /**
-     * The minimum steps between thumbs in a range slider
+     * The minimum distance between thumbs in a range slider, measured in steps. Prevents thumbs from overlapping.
      * @default 0
      */
     minStepsBetweenThumbs?: number;
     /**
-     * Disable the slider
+     * Prevents interaction and dims the slider visually.
      * @default false
      */
     disabled?: boolean;
+    /**
+     * Callback fired continuously as the thumb is dragged. Use for live previews.
+     * @param value - The current slider value(s)
+     */
     onChange?: (value: number[]) => void;
+    /**
+     * Callback fired when the thumb is released. Use for committing the final value (e.g., saving to state or API).
+     * @param value - The committed slider value(s)
+     */
     onCommit?: (value: number[]) => void;
     'data-test-id'?: string;
 } & CommonAriaAttrs;

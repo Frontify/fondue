@@ -24,17 +24,17 @@ import styles from './styles/dialog.module.scss';
 
 export type DialogRootProps = {
     /**
-     * Disable interaction with the rest of the page
+     * When `true`, prevents interaction with the rest of the page and restricts screen-reader access to the dialog content only.
      * @default false
      */
     modal?: boolean;
     /**
-     * The controlled `open` state of the dialog
+     * The controlled open state. Use together with `onOpenChange` for controlled usage.
      * @default false
      */
     open?: boolean;
     /**
-     * Event handler called when the `open` state changes
+     * Callback fired when the dialog opens or closes. Receives the new `open` state.
      */
     onOpenChange?: (open: boolean) => void;
     children?: ReactNode;
@@ -42,43 +42,43 @@ export type DialogRootProps = {
 
 export type DialogContentProps = {
     /**
-     * Add rounded corners to the dialog
+     * Adds rounded corners to the dialog panel.
      * @default true
      */
     rounded?: boolean;
     /**
-     * Define the padding of the dialog
+     * Controls the inner padding of the dialog content. `'compact'` for most dialogs, `'spacious'` for rich content areas.
      * @default "compact"
      */
     padding?: 'none' | 'tight' | 'compact' | 'comfortable' | 'spacious';
     /**
-     * The vertical alignment of the divider
+     * Controls the vertical position. `'center'` for standard dialogs, `'top'` for tall or scrollable content that should anchor near the top.
      * @default "center"
      */
     verticalAlign?: 'top' | 'center';
 
     /**
-     * Define a maximum width for the dialog
+     * The maximum width of the dialog panel. Accepts any CSS length value.
      * @default "800px"
      */
     maxWidth?: string;
     /**
-     * Define a minimum width for the dialog
+     * The minimum width of the dialog panel. Accepts any CSS length value.
      * @default "400px"
      */
     minWidth?: string;
     /**
-     * Define a minimum height for the dialog
+     * The minimum height of the dialog panel. Accepts any CSS length value.
      * @default "200px"
      */
     minHeight?: string;
     /**
-     * Show a dark underlay behind the dialog
+     * Shows a dark overlay behind the dialog to draw focus to the content.
      * @default false
      */
     showUnderlay?: boolean;
     /**
-     * Event handler called when the escape key is pressed.
+     * Callback fired when the Escape key is pressed. Use to intercept or prevent closing.
      */
     onEscapeKeyDown?: (event: KeyboardEvent) => void;
     children?: ReactNode;
@@ -87,7 +87,7 @@ export type DialogContentProps = {
 
 export type DialogTriggerProps = {
     /**
-     * Change the default rendered element for the one passed as a child, merging their props and behavior.
+     * When `true`, merges the trigger's props and behavior onto its child element instead of rendering a wrapper.
      * @default true
      */
     asChild?: boolean;
@@ -97,19 +97,22 @@ export type DialogTriggerProps = {
 
 export type DialogHeaderProps = {
     /**
-     * Define the padding for the dialog header
+     * Overrides the content-level padding for the header section.
      */
     padding?: 'none' | 'tight' | 'compact' | 'comfortable' | 'spacious';
     /**
-     * Show a border at the bottom of the header
+     * Shows a separator line at the bottom of the header.
      * @default true
      */
     showBorder?: boolean;
     /**
-     * Show a close button in the header
+     * Shows a close button (×) in the header corner.
      * @default true
      */
     showCloseButton?: boolean;
+    /**
+     * Additional ARIA props forwarded to the close button for accessibility customization.
+     */
     closeProps?: CommonAriaProps;
     children?: ReactNode;
     'data-test-id'?: string;
@@ -117,11 +120,11 @@ export type DialogHeaderProps = {
 
 export type DialogFooterProps = {
     /**
-     * Define the padding for the dialog footer
+     * Overrides the content-level padding for the footer section.
      */
     padding?: 'none' | 'tight' | 'compact' | 'comfortable' | 'spacious';
     /**
-     * Show a border at the top of the footer
+     * Shows a separator line at the top of the footer.
      * @default true
      */
     showBorder?: boolean;
@@ -131,7 +134,7 @@ export type DialogFooterProps = {
 
 export type DialogBodyProps = {
     /**
-     * Define the padding for the dialog body
+     * Overrides the content-level padding for the body section.
      */
     padding?: 'none' | 'tight' | 'compact' | 'comfortable' | 'spacious';
     children?: ReactNode;
@@ -432,6 +435,7 @@ export const DialogDescription = ({ children, asChild, screenReaderOnly = false 
 };
 DialogDescription.displayName = 'Dialog.Description';
 
+/** A modal or non-modal dialog — compose `Root` with `Trigger`, `Content`, `Header`, `Body`, `Footer`, `Title`, `Description`, `Close`, and `SideContent` sub-components. */
 export const Dialog = {
     Root: DialogRoot,
     Title: DialogTitle,

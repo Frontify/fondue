@@ -7,15 +7,20 @@ import { useMultiselect } from './hooks/useMultiselect';
 
 export type ComboboxMultipleProps = ComboboxSharedProps & {
     /**
-     * The active value in the combobox component. This is used to control the combobox externally
+     * The controlled selected values. Use together with `onSelect` for controlled usage.
+     * Pass `null` to clear all selections.
      */
     value?: string[] | null;
     /**
-     * Callback function that is called when items are selected
+     * Callback fired when the selection changes.
+     * Receives the full array of selected `value` strings, or `null` when all are cleared.
+     *
+     * @param selectedValues - The values of all selected items, or `null`.
      */
     onSelect?: (selectedValues: string[] | null) => void;
     /**
-     * The default value of the combobox component. Used for uncontrolled usages
+     * The initial selected values for uncontrolled usage.
+     * The component manages its own state internally.
      */
     defaultValue?: string[];
 };

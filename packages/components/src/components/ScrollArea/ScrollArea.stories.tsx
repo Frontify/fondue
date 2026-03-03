@@ -13,6 +13,15 @@ const meta: Meta<typeof ScrollArea> = {
         status: {
             type: 'released',
         },
+        docs: {
+            description: {
+                component: [
+                    'A scrollable container with styled scrollbars and optional shadow indicators. Provides consistent scroll behavior across browsers.',
+                    '',
+                    '**When to use:** When content may overflow a fixed-height or fixed-width container — such as sidebar panels, dropdown lists, or modal bodies.',
+                ].join('\n'),
+            },
+        },
     },
     args: {},
 };

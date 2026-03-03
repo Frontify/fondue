@@ -7,15 +7,20 @@ import { useSingleSelect } from './hooks/useSingleSelect';
 
 export type SelectSingleProps = SelectSharedProps & {
     /**
-     * The active value in the select component. This is used to control the select externally
+     * The controlled selected value. Use together with `onSelect` for controlled usage.
+     * Pass `null` to clear the selection.
      */
     value?: string | null;
     /**
-     * Callback function that is called when an item is selected
+     * Callback fired when the user picks or clears an option.
+     * Receives the selected item's `value` string, or `null` when cleared.
+     *
+     * @param selectedValue - The value of the selected item, or `null`.
      */
     onSelect?: (selectedValue: string | null) => void;
     /**
-     * The default value of the select component. Used for uncontrolled usages
+     * The initial selected value for uncontrolled usage.
+     * The component manages its own state internally.
      */
     defaultValue?: string;
 };

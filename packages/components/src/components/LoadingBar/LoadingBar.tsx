@@ -7,36 +7,33 @@ import styles from './styles/loadingBar.module.scss';
 
 export type LoadingBarProps = {
     /**
-     * The current value of the loading bar. If `null`, the loading bar will be in an indeterminate state.
+     * The current progress value. Pass `null` for an indeterminate (unknown duration) state.
      * @default null
      */
     value: number | null;
     /**
-     * The maximum value of the loading bar
+     * The maximum value representing 100% completion.
      * @default 100
      */
     max?: number;
-    /**
-     * @default 'fondue-loading-bar'
-     */
     'data-test-id'?: string;
     /**
-     * Add rounded corners to the loading bar
+     * Adds rounded corners to the bar ends.
      * @default true
      */
     rounded?: boolean;
     /**
-     * The style of the loading bar
+     * Conveys the tone. `'default'` for neutral progress, `'positive'` for successful completion, `'negative'` for errors or warnings.
      * @default "default"
      */
     variant?: 'default' | 'positive' | 'negative';
     /**
-     * The size of the loading bar
+     * Controls the bar height. `'small'` for inline indicators, `'medium'` for standard use, `'large'` and `'x-large'` for prominent displays.
      * @default "medium"
      */
     size?: 'small' | 'medium' | 'large' | 'x-large';
     /**
-     * The label of the loading bar for accessibility purposes
+     * Custom function to generate an accessible value label. Receives the current value and max, returns a string like "42 of 100 files uploaded."
      */
     getValueLabel?: (value: number, max: number) => string;
 } & ({ 'aria-label': string } | { 'aria-labelledby': string });

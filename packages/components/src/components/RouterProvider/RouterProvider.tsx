@@ -5,11 +5,13 @@ import { createContext, useContext, useMemo, type ReactNode } from 'react';
 export type RouterProviderProps = {
     children: ReactNode;
     /**
-     * Function to navigate to a specific path
+     * Navigation function called when a `<Link>` is clicked. Wire this to your router's push/navigate method.
+     * @param path - The destination path
      */
     navigate: (path: string) => void;
     /**
-     * Function to resolves a URL against the current location.
+     * Resolves a path into a full URL. Wire this to your router's href resolution logic.
+     * @param path - The path to resolve
      */
     useHref: (path: string) => string;
 };

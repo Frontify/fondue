@@ -10,46 +10,45 @@ import styles from './styles/grid.module.scss';
 
 export type GridProps = LayoutComponentProps & {
     /**
-     * The element to render the Grid component as.
-     * @default 'div'
+     * The HTML element to render. Use `'span'` for inline grid contexts.
+     * @default "div"
      */
     as?: 'div' | 'span';
-
     /**
-     * The display property.
-     * @default 'grid'
+     * Controls the display mode. `'grid'` for block-level grid, `'inline-grid'` for inline contexts, `'none'` to hide.
+     * @default "grid"
      */
     display?: 'none' | 'grid' | 'inline-grid';
     /**
-     * The columns property.
+     * Defines the column template. Pass a number for equal-width columns or a CSS grid-template-columns string for custom sizing.
      */
     columns?: Responsive<string | number>;
     /**
-     * The rows property.
+     * Defines the row template. Pass a number for equal-height rows or a CSS grid-template-rows string for custom sizing.
      */
     rows?: Responsive<string | number>;
     /**
-     * The flow property.
+     * Controls the auto-placement algorithm. `'row'` fills rows first, `'column'` fills columns first, `'dense'` fills gaps.
      */
     flow?: Responsive<'row' | 'column' | 'dense' | 'row-dense' | 'column-dense'>;
     /**
-     * The alignment of the children.
+     * Aligns children along the block (vertical) axis within their grid area.
      */
     align?: Responsive<'start' | 'center' | 'end' | 'baseline' | 'stretch'>;
     /**
-     * The justification of the children.
+     * Aligns children along the inline (horizontal) axis within their grid area.
      */
     justify?: Responsive<'start' | 'center' | 'end' | 'between'>;
     /**
-     * The gap between the children.
+     * Spacing between children in both directions. Values are spacing tokens (1 = 0.25rem). Supports responsive values.
      */
     gap?: Responsive<SizeValue>;
     /**
-     * The horizontal gap between the children.
+     * Horizontal spacing between columns. Overrides `gap` for the horizontal axis.
      */
     gapX?: Responsive<SizeValue>;
     /**
-     * The vertical gap between the children.
+     * Vertical spacing between rows. Overrides `gap` for the vertical axis.
      */
     gapY?: Responsive<SizeValue>;
 

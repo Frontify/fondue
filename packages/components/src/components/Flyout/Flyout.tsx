@@ -15,17 +15,17 @@ import styles from './styles/flyout.module.scss';
 
 export type FlyoutRootProps = {
     /**
-     * Disable interaction with the rest of the page
+     * When `true`, prevents interaction with the rest of the page while the flyout is open.
      * @default false
      */
     modal?: boolean;
     /**
-     * The controlled `open` state of the flyout
+     * The controlled open state. Use together with `onOpenChange` for programmatic control.
      * @default false
      */
     open?: boolean;
     /**
-     * Event handler called when the `open` state changes
+     * Callback fired when the flyout opens or closes.
      */
     onOpenChange?: (open: boolean) => void;
     children?: ReactNode;
@@ -38,7 +38,7 @@ FlyoutRoot.displayName = 'Flyout.Root';
 
 export type FlyoutTriggerProps = {
     /**
-     * Change the default rendered element for the one passed as a child, merging their props and behavior.
+     * When `true`, merges the trigger's props and behavior onto its child element instead of rendering a wrapper button.
      * @default true
      */
     asChild?: boolean;
@@ -70,56 +70,56 @@ type FlyoutSpacing = 'compact' | 'comfortable' | 'spacious';
 type FlyoutViewportCollisionPadding = 'compact' | 'spacious';
 export type FlyoutContentProps = {
     /**
-     * Add a shadow to the flyout
+     * Controls the drop shadow. `'none'` for flat layouts, `'medium'` for standard elevation, `'large'` for prominent overlays.
      * @default "medium"
      */
     shadow?: 'none' | 'medium' | 'large';
     /**
-     * Add rounded corners to the flyout
+     * Controls the border radius. `'none'` for sharp edges, `'medium'` for standard, `'large'` for more rounded corners.
      * @default "medium"
      */
     rounded?: 'none' | 'medium' | 'large';
     /**
-     * Define the prefered side of the flyout. Can be overriden by viewport collisions viewport.
+     * The preferred side the flyout opens on. Falls back to the opposite side if there isn't enough viewport space.
      * @default "bottom"
      */
     side?: 'top' | 'right' | 'bottom' | 'left';
     /**
-     * Define the prefered alignment of the flyout. Can be overriden by viewport collisions viewport.
+     * Controls the horizontal alignment of the flyout relative to the trigger.
      * @default "start"
      */
     align?: 'start' | 'center' | 'end';
     /**
-     * Define the padding of the flyout
+     * Controls the inner padding of the flyout content.
      * @default "compact"
      */
     padding?: 'none' | 'tight' | 'compact' | 'comfortable' | 'spacious';
     /**
-     * Define the fixed width of the flyout
+     * Sets a fixed width for the flyout. Accepts any CSS length value.
      * @default "fit-content"
      */
     width?: string;
     /**
-     * Defines the spacing between the dropdown and its trigger.
+     * Controls the spacing between the flyout and its trigger.
      * @default 'compact'
      */
     triggerOffset?: FlyoutSpacing;
     /**
-     * Define the maximum width of the flyout
+     * The maximum width of the flyout. Accepts any CSS length value.
      * @default "360px"
      */
     maxWidth?: string;
     /**
-     * Define the minimum distance between the flyout and the viewport edge
+     * Controls the minimum distance between the flyout and the viewport edge.
      * @default 'compact'
      */
     viewportCollisionPadding?: FlyoutViewportCollisionPadding;
     /**
-     * Event handler called when auto-focusing on open
+     * Callback fired when the flyout auto-focuses on open. Call `event.preventDefault()` to take manual control of focus.
      */
     onOpenAutoFocus?: (event: Event) => void;
     /**
-     * Event handler called when the escape key is pressed.
+     * Callback fired when the Escape key is pressed while the flyout is open.
      */
     onEscapeKeyDown?: (event: KeyboardEvent) => void;
     children?: ReactNode;
@@ -206,12 +206,15 @@ FlyoutContent.displayName = 'Flyout.Content';
 
 export type FlyoutHeaderProps = {
     /**
-     * Show a close button in the header
+     * Shows a close button (x) in the header.
      * @default false
      */
     showCloseButton?: boolean;
     children?: ReactNode;
     'data-test-id'?: string;
+    /**
+     * Additional ARIA props forwarded to the close button for accessibility customization.
+     */
     closeProps?: CommonAriaProps;
 };
 
@@ -260,7 +263,7 @@ export type FlyoutBodyProps = {
     children?: ReactNode;
     'data-test-id'?: string;
     /**
-     * Allow the body to scroll if the max height of the flyout is reached
+     * When `true`, the body becomes scrollable when its content exceeds the flyout's max height.
      * @default false
      */
     scrollable?: boolean;
@@ -284,6 +287,7 @@ export const FlyoutBody = (
 };
 FlyoutBody.displayName = 'Flyout.Body';
 
+/** A popover panel — compose `Root` with `Trigger`, `Content`, `Header`, `Body`, and `Footer` sub-components. */
 export const Flyout = {
     Root: FlyoutRoot,
     Trigger: forwardRef<HTMLButtonElement, FlyoutTriggerProps>(FlyoutTrigger),

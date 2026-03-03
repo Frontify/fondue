@@ -12,43 +12,41 @@ type SwitchProps = {
     id?: string;
     name?: string;
     /**
-     * The size of the switch component.
-     * @default medium
+     * Controls the switch size. `'small'` for tight spaces, `'medium'` for most layouts, `'large'` for prominent toggles.
+     * @default "medium"
      */
     size?: 'small' | 'medium' | 'large';
     /**
-     * The active value in the select component. This is used to control the select externally.
+     * The controlled checked state of the switch. Use together with `onChange` for controlled usage.
      * @default false
      */
     value?: boolean;
     /**
-     * The default value of the select component. Used for uncontrolled usages.
+     * The initial checked state for uncontrolled usage.
      * @default false
      */
     defaultValue?: boolean;
     /**
-     * Disables the select component.
+     * Prevents interaction and dims the switch visually.
      * @default false
      */
     disabled?: boolean;
     /**
-     * Whether the switch is required.
+     * Marks the switch as required in a form context.
      * @default false
      */
     required?: boolean;
     /**
-     * Callback function that is called when the switch is toggled.
-     * @param checked - The new checked state of the switch
+     * Callback fired when the switch is toggled.
+     * @param checked - The new checked state
      */
     onChange?: (checked: boolean) => void;
     /**
-     * Event handler called when the checkbox is blurred
-     * @param event - The event object
+     * Event handler called when the switch loses focus.
      */
     onBlur?: (event: FormEvent<HTMLButtonElement>) => void;
     /**
-     * Event handler called when the checkbox is focused
-     * @param event - The event object
+     * Event handler called when the switch receives focus.
      */
     onFocus?: (event: FormEvent<HTMLButtonElement>) => void;
     'data-test-id'?: string;

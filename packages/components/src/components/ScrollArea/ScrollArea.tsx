@@ -9,35 +9,33 @@ import styles from './styles/scrollArea.module.scss';
 
 export type ScrollAreaProps = {
     /**
-     * "auto" visible when content is overflowing on the corresponding orientation.
-     * "always" always visible regardless of whether the content is overflowing. Sets the scrollbar gutter to stable.
-     * "scroll" visible when the user is scrolling along its corresponding orientation.
-     * "hover" when the user is hovering over the scroll area.
-     * @default 'hover'
+     * Controls scrollbar visibility. `'hover'` shows on mouse-over, `'scroll'` shows while scrolling, `'auto'` shows when content overflows, `'always'` keeps scrollbars permanently visible.
+     * @default "hover"
      */
     type?: 'auto' | 'always' | 'scroll' | 'hover';
     /**
-     * Determines if the scrollbar should take up space in the content area
-     * @default 'auto'
+     * Controls whether scrollbars reserve space in the layout. `'stable'` prevents content shift when scrollbars appear, `'auto'` lets the browser decide.
+     * @default "auto"
      */
     scrollbarGutter?: 'auto' | 'stable' | 'stable-horizontal' | 'stable-vertical';
     /**
-     * Maximum height of the scroll area
-     * @default '100%'
+     * Maximum height before vertical scrolling activates. Accepts CSS values or numbers (pixels).
+     * @default "100%"
      */
     maxHeight?: string | number;
     /**
-     * Minimum width of the scroll area
-     * @default '100%'
+     * Maximum width before horizontal scrolling activates. Accepts CSS values or numbers (pixels).
+     * @default "100%"
      */
     maxWidth?: string | number;
     /**
-     * Define the padding of the scroll area
+     * Controls the inner padding of the scroll area. `'compact'` for most use cases, `'spacious'` for breathing room.
      * @default "compact"
      */
     padding?: 'none' | 'tight' | 'compact' | 'comfortable' | 'spacious';
     /**
-     * Determines if a inset shadow should be shown the edge of the component
+     * Shows an inset shadow at the scroll edges to indicate more content is available.
+     * @default false
      */
     showShadow?: boolean;
     'data-test-id'?: string;
