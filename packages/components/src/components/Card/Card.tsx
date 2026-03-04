@@ -2,10 +2,8 @@
 
 import { IconCheckMark } from '@frontify/fondue-icons';
 import {
-    createContext,
     forwardRef,
     useCallback,
-    useMemo,
     type CSSProperties,
     type ForwardedRef,
     type KeyboardEvent,
@@ -15,13 +13,6 @@ import {
 } from 'react';
 
 import styles from './styles/card.module.scss';
-
-type CardContextType = {
-    selected: boolean;
-};
-
-const CardContext = createContext<CardContextType>({ selected: false });
-CardContext.displayName = 'CardContext';
 
 export type CardRootProps = {
     'data-test-id'?: string;
@@ -80,7 +71,6 @@ export const CardRoot = (
     }: CardRootProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
-    const contextValue = useMemo(() => ({ selected }), [selected]);
     const hasOverlay = !!(href || onClick || onDoubleClick);
 
     const handleKeyDown = useCallback(
@@ -98,44 +88,42 @@ export const CardRoot = (
     );
 
     return (
-        <CardContext.Provider value={contextValue}>
-            <div
-                ref={ref}
-                className={styles.root}
-                data-test-id={dataTestId}
-                data-selected={selected}
-                onMouseEnter={onMouseEnter}
-                onMouseLeave={onMouseLeave}
-            >
-                {hasOverlay &&
-                    (href ? (
-                        <a
-                            className={styles.overlay}
-                            href={href}
-                            tabIndex={0}
-                            aria-label={ariaLabel}
-                            aria-describedby={ariaDescribedby}
-                            aria-current={selected ? 'true' : undefined}
-                            onClick={onClick}
-                            onDoubleClick={onDoubleClick}
-                            onKeyDown={handleKeyDown}
-                        />
-                    ) : (
-                        <button
-                            className={styles.overlay}
-                            type="button"
-                            tabIndex={0}
-                            aria-label={ariaLabel}
-                            aria-describedby={ariaDescribedby}
-                            aria-pressed={selected}
-                            onClick={onClick}
-                            onDoubleClick={onDoubleClick}
-                            onKeyDown={handleKeyDown}
-                        />
-                    ))}
-                {children}
-            </div>
-        </CardContext.Provider>
+        <div
+            ref={ref}
+            className={styles.root}
+            data-test-id={dataTestId}
+            data-selected={selected}
+            onMouseEnter={onMouseEnter}
+            onMouseLeave={onMouseLeave}
+        >
+            {hasOverlay &&
+                (href ? (
+                    <a
+                        className={styles.overlay}
+                        href={href}
+                        tabIndex={0}
+                        aria-label={ariaLabel}
+                        aria-describedby={ariaDescribedby}
+                        aria-current={selected ? 'true' : undefined}
+                        onClick={onClick}
+                        onDoubleClick={onDoubleClick}
+                        onKeyDown={handleKeyDown}
+                    />
+                ) : (
+                    <button
+                        className={styles.overlay}
+                        type="button"
+                        tabIndex={0}
+                        aria-label={ariaLabel}
+                        aria-describedby={ariaDescribedby}
+                        aria-pressed={selected}
+                        onClick={onClick}
+                        onDoubleClick={onDoubleClick}
+                        onKeyDown={handleKeyDown}
+                    />
+                ))}
+            {children}
+        </div>
     );
 };
 CardRoot.displayName = 'Card.Root';
@@ -285,20 +273,13 @@ export type CardLogoProps = {
      * @default ''
      */
     alt?: string;
-    /**
-     * When true, the logo overlaps the bottom-right of the banner area (collection-style).
-     * @default false
-     */
-    overlap?: boolean;
 };
 
 export const CardLogo = (
-    { 'data-test-id': dataTestId = 'fondue-card-logo', src, alt = '', overlap = false }: CardLogoProps,
+    { 'data-test-id': dataTestId = 'fondue-card-logo', src, alt = '' }: CardLogoProps,
     ref: ForwardedRef<HTMLImageElement>,
 ) => {
-    return (
-        <img ref={ref} className={styles.logo} data-test-id={dataTestId} data-overlap={overlap} src={src} alt={alt} />
-    );
+    return <img ref={ref} className={styles.logo} data-test-id={dataTestId} src={src} alt={alt} />;
 };
 CardLogo.displayName = 'Card.Logo';
 
