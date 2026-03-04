@@ -1,5 +1,5 @@
 ---
-"@frontify/fondue-rte": patch
+"@frontify/fondue-rte": minor
 ---
 
-feat(RTE): add custom list styles
+feat(*): add custom list styles
