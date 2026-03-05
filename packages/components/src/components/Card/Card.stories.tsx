@@ -6,6 +6,7 @@ import {
     IconFolder,
     IconHome,
     IconIcon,
+    IconImageStack,
     IconLightning,
     IconStar,
 } from '@frontify/fondue-icons';
@@ -204,6 +205,29 @@ export const CollectionCard: Story = {
     },
 };
 
+export const EmptyCollectionCard: Story = {
+    decorators: singleCardDecorators,
+    render: ({ metas = [] }) => {
+        const [selected, setSelected] = useState(false);
+
+        return (
+            <Card.Root selected={selected} onClick={() => setSelected((s) => !s)}>
+                <Card.Banner size="small">
+                    <Card.BannerIcon icon={<IconImageStack size={32} />} />
+                </Card.Banner>
+
+                <Card.Title>[Collection name]</Card.Title>
+                {renderMetas(metas)}
+
+                <Card.Actions>
+                    <Card.ActionsButton icon={<IconCog size={20} />} aria-label="Settings" />
+                    <Card.ActionsButton icon={<IconDotsVertical size={20} />} aria-label="More actions" />
+                </Card.Actions>
+            </Card.Root>
+        );
+    },
+};
+
 export const FolderCard: Story = {
     decorators: singleCardDecorators,
     render: ({ metas = [] }) => {
@@ -256,13 +280,24 @@ export const BrandCard: Story = {
 };
 
 export const MultipleBannerImages: Story = {
+    args: {
+        metas: ['No status', 'JPG'],
+        bannerSize: 'large',
+    },
+    argTypes: {
+        bannerSize: {
+            control: { type: 'inline-radio' },
+            options: ['small', 'large'],
+            description: 'Height variant of the banner.',
+        },
+    },
     decorators: singleCardDecorators,
-    render: ({ metas = [] }) => {
+    render: ({ metas = [], bannerSize }) => {
         const [selected, setSelected] = useState(false);
 
         return (
             <Card.Root selected={selected} onClick={() => setSelected((s) => !s)}>
-                <Card.Banner>
+                <Card.Banner size={bannerSize}>
                     <Card.BannerImages>
                         <Card.BannerImage src="https://picsum.photos/seed/img1/200/200" alt="Image 1" />
                         <Card.BannerImage src="https://picsum.photos/seed/img2/200/200" alt="Image 2" />
@@ -270,10 +305,13 @@ export const MultipleBannerImages: Story = {
                     </Card.BannerImages>
                 </Card.Banner>
 
-                <Card.Icon icon={<IconFolder size={20} />} />
-
                 <Card.Title>Three Images</Card.Title>
                 {renderMetas(metas)}
+
+                <Card.Actions>
+                    <Card.ActionsButton icon={<IconStar size={20} />} aria-label="Favorite" />
+                    <Card.ActionsButton icon={<IconDotsVertical size={20} />} aria-label="More actions" />
+                </Card.Actions>
             </Card.Root>
         );
     },
