@@ -1,5 +1,40 @@
 # @frontify/fondue-rte
 
+## 0.1.0
+
+### Minor Changes
+
+- [#2637](https://github.com/Frontify/fondue/pull/2637) [`701d6ee`](https://github.com/Frontify/fondue/commit/701d6ee6d1ffad292cbfd5d880aa8b821559029e) Thanks [@fulopdaniel](https://github.com/fulopdaniel)! - feat(\*): add custom list styles
+
+    Adds support for configurable list styles in the `UnorderedListPlugin` and `OrderedListPlugin`.
+    The styles can be customized per nesting level.
+
+    ```ts
+    new UnorderedListPlugin({
+        listStyles: [
+            { color: 'var(--f-theme-settings-list-bullet-1-color)', shape: 'var(--f-theme-settings-list-bullet-1-shape)', size: 'var(--f-theme-settings-list-bullet-1-size)' },
+            { color: 'var(--f-theme-settings-list-bullet-2-color)', shape: 'var(--f-theme-settings-list-bullet-2-shape)', size: 'var(--f-theme-settings-list-bullet-2-size)' },
+            { color: 'var(--f-theme-settings-list-bullet-3-color)', shape: 'var(--f-theme-settings-list-bullet-3-shape)', size: 'var(--f-theme-settings-list-bullet-3-size)' },
+        ],
+    }),
+
+    new OrderedListPlugin({
+        listStyles: [
+            { counterType: 'var(--f-theme-settings-list-numbered-1-counterType)', color: 'var(--f-theme-settings-list-numbered-1-color)' },
+            { counterType: 'var(--f-theme-settings-list-numbered-2-counterType)', color: 'var(--f-theme-settings-list-numbered-2-color)' },
+            { counterType: 'var(--f-theme-settings-list-numbered-3-counterType)', color: 'var(--f-theme-settings-list-numbered-3-color)' },
+        ],
+    }),
+    ```
+
+### Patch Changes
+
+- [#2648](https://github.com/Frontify/fondue/pull/2648) [`b093e77`](https://github.com/Frontify/fondue/commit/b093e77996ea99fa32b17a71b78de37b51398904) Thanks [@fulopdaniel](https://github.com/fulopdaniel)! - fix(MentionPlugin): adjust serialized rendering
+
+- Updated dependencies [[`f9216f3`](https://github.com/Frontify/fondue/commit/f9216f33c2f37dc65531717f0aefe1ac8654cdfe)]:
+    - @frontify/fondue-components@28.0.0
+    - @frontify/fondue-tokens@5.0.0
+
 ## 0.0.4
 
 ### Patch Changes

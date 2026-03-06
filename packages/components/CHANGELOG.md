@@ -1,5 +1,16 @@
 # @frontify/fondue-components
 
+## 28.0.0
+
+### Major Changes
+
+- [#2642](https://github.com/Frontify/fondue/pull/2642) [`f9216f3`](https://github.com/Frontify/fondue/commit/f9216f33c2f37dc65531717f0aefe1ac8654cdfe) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: Add refactored `DatePicker` component
+
+### Patch Changes
+
+- Updated dependencies []:
+    - @frontify/fondue-tokens@5.0.0
+
 ## 27.0.1
 
 ### Patch Changes
