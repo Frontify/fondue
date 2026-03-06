@@ -34,7 +34,7 @@ import {
     CardTitle,
 } from './Card';
 
-type PlaygroundArgs = Parameters<typeof CardRoot>[0] & {
+type PlaygroundArgs = {
     metas: string[];
     bannerSize: CardBannerSize;
     bannerFit: CardBannerFit;
@@ -127,16 +127,16 @@ export const Default: Story = {
                     />
                 </Card.Banner>
 
-                <Card.Icon icon={<IconFolder size={20} />} />
+                <Card.Icon><IconFolder size={20} /></Card.Icon>
 
                 <Card.Title>[Folder name that is long enough to be truncated]</Card.Title>
                 {renderMetas(metas)}
 
                 <Card.Actions>
-                    <Card.ActionsButton icon={<IconCog size={20} />} aria-label="Settings" />
+                    <Card.ActionsButton aria-label="Settings"><IconCog size={20} /></Card.ActionsButton>
                     <Dropdown.Root>
                         <Dropdown.Trigger>
-                            <Card.ActionsButton icon={<IconDotsVertical size={20} />} aria-label="More actions" />
+                            <Card.ActionsButton aria-label="More actions"><IconDotsVertical size={20} /></Card.ActionsButton>
                         </Dropdown.Trigger>
                         <Dropdown.Content>
                             <Dropdown.Item onSelect={() => {}}>Edit</Dropdown.Item>
@@ -171,8 +171,8 @@ export const AssetCard: Story = {
                 {renderMetas(metas)}
 
                 <Card.Actions>
-                    <Card.ActionsButton icon={<IconCog size={20} />} aria-label="Settings" />
-                    <Card.ActionsButton icon={<IconDotsVertical size={20} />} aria-label="More actions" />
+                    <Card.ActionsButton aria-label="Settings"><IconCog size={20} /></Card.ActionsButton>
+                    <Card.ActionsButton aria-label="More actions"><IconDotsVertical size={20} /></Card.ActionsButton>
                 </Card.Actions>
             </Card.Root>
         );
@@ -197,8 +197,8 @@ export const CollectionCard: Story = {
                 {renderMetas(metas)}
 
                 <Card.Actions>
-                    <Card.ActionsButton icon={<IconCog size={20} />} aria-label="Settings" />
-                    <Card.ActionsButton icon={<IconDotsVertical size={20} />} aria-label="More actions" />
+                    <Card.ActionsButton aria-label="Settings"><IconCog size={20} /></Card.ActionsButton>
+                    <Card.ActionsButton aria-label="More actions"><IconDotsVertical size={20} /></Card.ActionsButton>
                 </Card.Actions>
             </Card.Root>
         );
@@ -213,15 +213,15 @@ export const EmptyCollectionCard: Story = {
         return (
             <Card.Root selected={selected} onClick={() => setSelected((s) => !s)}>
                 <Card.Banner size="small">
-                    <Card.BannerIcon icon={<IconImageStack size={32} />} />
+                    <Card.BannerIcon><IconImageStack size={32} /></Card.BannerIcon>
                 </Card.Banner>
 
                 <Card.Title>[Collection name]</Card.Title>
                 {renderMetas(metas)}
 
                 <Card.Actions>
-                    <Card.ActionsButton icon={<IconCog size={20} />} aria-label="Settings" />
-                    <Card.ActionsButton icon={<IconDotsVertical size={20} />} aria-label="More actions" />
+                    <Card.ActionsButton aria-label="Settings"><IconCog size={20} /></Card.ActionsButton>
+                    <Card.ActionsButton aria-label="More actions"><IconDotsVertical size={20} /></Card.ActionsButton>
                 </Card.Actions>
             </Card.Root>
         );
@@ -236,19 +236,19 @@ export const FolderCard: Story = {
         return (
             <Card.Root selected={selected} onClick={() => setSelected((s) => !s)}>
                 <Card.Banner>
-                    <Card.BannerIcon icon={<IconHome size={32} />} />
+                    <Card.BannerIcon><IconHome size={32} /></Card.BannerIcon>
                     <Card.Badges>
                         <Badge emphasis="strong">Installed</Badge>
                     </Card.Badges>
                 </Card.Banner>
 
-                <Card.Icon icon={<IconFolder size={20} />} />
+                <Card.Icon><IconFolder size={20} /></Card.Icon>
 
                 <Card.Title>[Folder name]</Card.Title>
                 {renderMetas(metas)}
 
                 <Card.Actions>
-                    <Card.ActionsButton icon={<IconDotsVertical size={20} />} aria-label="More actions" />
+                    <Card.ActionsButton aria-label="More actions"><IconDotsVertical size={20} /></Card.ActionsButton>
                 </Card.Actions>
             </Card.Root>
         );
@@ -271,8 +271,8 @@ export const BrandCard: Story = {
                 <Card.Title>Card with Logo</Card.Title>
 
                 <Card.Actions>
-                    <Card.ActionsButton icon={<IconStar size={20} />} aria-label="Favorite" />
-                    <Card.ActionsButton icon={<IconDotsVertical size={20} />} aria-label="More actions" />
+                    <Card.ActionsButton aria-label="Favorite"><IconStar size={20} /></Card.ActionsButton>
+                    <Card.ActionsButton aria-label="More actions"><IconDotsVertical size={20} /></Card.ActionsButton>
                 </Card.Actions>
             </Card.Root>
         );
@@ -309,8 +309,8 @@ export const MultipleBannerImages: Story = {
                 {renderMetas(metas)}
 
                 <Card.Actions>
-                    <Card.ActionsButton icon={<IconStar size={20} />} aria-label="Favorite" />
-                    <Card.ActionsButton icon={<IconDotsVertical size={20} />} aria-label="More actions" />
+                    <Card.ActionsButton aria-label="Favorite"><IconStar size={20} /></Card.ActionsButton>
+                    <Card.ActionsButton aria-label="More actions"><IconDotsVertical size={20} /></Card.ActionsButton>
                 </Card.Actions>
             </Card.Root>
         );
@@ -329,7 +329,7 @@ export const WithoutBanner: Story = {
 
         return (
             <Card.Root selected={selected} onClick={() => setSelected((s) => !s)}>
-                <Card.Icon icon={<IconLightning size={20} />} />
+                <Card.Icon><IconLightning size={20} /></Card.Icon>
 
                 <Card.Title>[App name]</Card.Title>
                 {renderMetas(metas)}
@@ -338,7 +338,7 @@ export const WithoutBanner: Story = {
                     <Badge emphasis="strong" variant="highlight">
                         Badge
                     </Badge>
-                    <Card.ActionsButton icon={<IconDotsVertical size={20} />} aria-label="More actions" />
+                    <Card.ActionsButton aria-label="More actions"><IconDotsVertical size={20} /></Card.ActionsButton>
                 </Card.Actions>
             </Card.Root>
         );
@@ -401,7 +401,7 @@ const ResponsiveGridExample = ({ metas = [] }: { metas: string[] }) => {
                             {card.banner ? (
                                 <Card.BannerImage src={card.banner} alt={card.name} />
                             ) : (
-                                <Card.BannerIcon icon={<IconIcon size={32} />} />
+                                <Card.BannerIcon><IconIcon size={32} /></Card.BannerIcon>
                             )}
                         </Card.Banner>
 
@@ -411,9 +411,9 @@ const ResponsiveGridExample = ({ metas = [] }: { metas: string[] }) => {
                         {renderMetas(metas)}
 
                         <Card.Actions>
-                            <Card.ActionsButton icon={<IconStar size={20} />} aria-label="Favorite" />
-                            <Card.ActionsButton icon={<IconCog size={20} />} aria-label="Settings" />
-                            <Card.ActionsButton icon={<IconDotsVertical size={20} />} aria-label="More actions" />
+                            <Card.ActionsButton aria-label="Favorite"><IconStar size={20} /></Card.ActionsButton>
+                            <Card.ActionsButton aria-label="Settings"><IconCog size={20} /></Card.ActionsButton>
+                            <Card.ActionsButton aria-label="More actions"><IconDotsVertical size={20} /></Card.ActionsButton>
                         </Card.Actions>
                     </Card.Root>
                 );
@@ -424,6 +424,28 @@ const ResponsiveGridExample = ({ metas = [] }: { metas: string[] }) => {
 
 export const ResponsiveGrid: Story = {
     render: ({ metas = [] }) => <ResponsiveGridExample metas={metas} />,
+};
+
+export const NonInteractive: Story = {
+    decorators: singleCardDecorators,
+    render: ({ metas = [] }) => {
+        return (
+            <Card.Root>
+                <Card.Banner>
+                    <Card.BannerImage src="https://picsum.photos/seed/static/400/200" alt="Static card" />
+                </Card.Banner>
+
+                <Card.Icon><IconFolder size={20} /></Card.Icon>
+
+                <Card.Title>[Display-only card]</Card.Title>
+                {renderMetas(metas)}
+
+                <Card.Actions>
+                    <Card.ActionsButton aria-label="More actions"><IconDotsVertical size={20} /></Card.ActionsButton>
+                </Card.Actions>
+            </Card.Root>
+        );
+    },
 };
 
 export const FullExample: Story = {
@@ -446,10 +468,10 @@ export const FullExample: Story = {
                 {renderMetas(metas)}
 
                 <Card.Actions>
-                    <Card.ActionsButton icon={<IconCog size={20} />} aria-label="Settings" />
+                    <Card.ActionsButton aria-label="Settings"><IconCog size={20} /></Card.ActionsButton>
                     <Dropdown.Root>
                         <Dropdown.Trigger>
-                            <Card.ActionsButton icon={<IconDotsVertical size={20} />} aria-label="More actions" />
+                            <Card.ActionsButton aria-label="More actions"><IconDotsVertical size={20} /></Card.ActionsButton>
                         </Dropdown.Trigger>
                         <Dropdown.Content>
                             <Dropdown.Item onSelect={() => {}}>Edit</Dropdown.Item>

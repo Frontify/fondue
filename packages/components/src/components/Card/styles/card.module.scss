@@ -45,16 +45,8 @@
     border: var(--border-width-default) solid transparent;
     background-color: var(--color-surface-default);
     overflow: hidden;
-    cursor: pointer;
     outline: none;
-    transition:
-        background-color 150ms cubic-bezier(0.4, 0, 0.2, 1),
-        border-color 150ms cubic-bezier(0.4, 0, 0.2, 1),
-        box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1);
-
-    &:has(> .overlay:focus-visible) {
-        @include focusStyle.focus-outline-styles;
-    }
+    @include transitions.transition((background-color, border-color, box-shadow));
 
     // Default state
     @include card-state(
@@ -62,35 +54,44 @@
         $banner-border-radius: var(--border-radius-large)
     );
 
-    // Hover state
-    &:hover {
-        @include card-state(
-            $root-border-color: var(--color-line-subtle),
-            $root-bg: 'surface-hover',
-            $action-btn-border-color: var(--color-line-subtle),
-            $action-btn-bg-color: 'container-secondary-default'
-        );
-    }
+    // Interactive cards only
+    &[data-interactive='true'] {
+        cursor: pointer;
 
-    // Selected state
-    &[data-selected='true'] {
-        @include card-state(
-            $root-border-color: var(--color-line-strong),
-            $root-bg: 'surface-dim',
-            $box-shadow: 0 0 0 1px var(--color-interactive-default),
-            $action-btn-bg-color: 'container-secondary-default'
-        );
-    }
+        &:has(> .overlay:focus-visible) {
+            @include focusStyle.focus-outline-styles;
+        }
 
-    // Hover + Selected state
-    &[data-selected='true']:hover {
-        @include card-state(
-            $root-border-color: var(--color-interactive-default),
-            $root-bg: 'surface-hover',
-            $box-shadow: 0 0 0 1px var(--color-interactive-default),
-            $action-btn-border-color: var(--color-line-subtle),
-            $action-btn-bg-color: 'container-secondary-default'
-        );
+        // Hover state
+        &:hover {
+            @include card-state(
+                $root-border-color: var(--color-line-subtle),
+                $root-bg: 'surface-hover',
+                $action-btn-border-color: var(--color-line-subtle),
+                $action-btn-bg-color: 'container-secondary-default'
+            );
+        }
+
+        // Selected state
+        &[data-selected='true'] {
+            @include card-state(
+                $root-border-color: var(--color-line-strong),
+                $root-bg: 'surface-dim',
+                $box-shadow: 0 0 0 1px var(--color-interactive-default),
+                $action-btn-bg-color: 'container-secondary-default'
+            );
+        }
+
+        // Hover + Selected state
+        &[data-selected='true']:hover {
+            @include card-state(
+                $root-border-color: var(--color-interactive-default),
+                $root-bg: 'surface-hover',
+                $box-shadow: 0 0 0 1px var(--color-interactive-default),
+                $action-btn-border-color: var(--color-line-subtle),
+                $action-btn-bg-color: 'container-secondary-default'
+            );
+        }
     }
 }
 
@@ -115,7 +116,7 @@
     pointer-events: none;
     @include transitions.transition-colors;
 
-    .root:hover &:has(> .bannerIcon) {
+    .root[data-interactive='true']:hover &:has(> .bannerIcon) {
         background-color: var(--color-surface-hover);
     }
 
@@ -169,7 +170,7 @@
     color: var(--card-banner-icon-color, var(--color-secondary-default));
     @include transitions.transition-colors;
 
-    .root:hover & {
+    .root[data-interactive='true']:hover & {
         color: var(--card-banner-icon-hover-color, var(--color-primary-default));
     }
 }
@@ -186,14 +187,14 @@
     border-radius: var(--border-radius-medium);
     pointer-events: none;
 
-    .root:hover & {
+    .root[data-interactive='true']:hover & {
         display: flex;
         border: var(--border-width-default) solid var(--color-line-mid);
         background-color: var(--color-surface-default);
         color: transparent;
     }
 
-    .root[data-selected='true'] & {
+    .root[data-interactive='true'][data-selected='true'] & {
         display: flex;
         border: none;
         background-color: var(--color-primary-default);
@@ -222,7 +223,7 @@
     margin: var(--spacing-small) 0 var(--spacing-small) var(--spacing-small);
     pointer-events: none;
 
-    .root[data-selected='true'] & {
+    .root[data-interactive='true'][data-selected='true'] & {
         background-color: var(--color-surface-default);
     }
 }
@@ -336,7 +337,7 @@
         color: var(--color-primary-default);
     }
 
-    .root:hover &:hover {
+    .root[data-interactive='true']:hover &:hover {
         background-color: var(--color-container-secondary-default);
     }
 

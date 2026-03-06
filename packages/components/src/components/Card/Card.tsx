@@ -4,6 +4,8 @@ import { IconCheckMark } from '@frontify/fondue-icons';
 import {
     forwardRef,
     useCallback,
+    useId,
+    useRef,
     type CSSProperties,
     type ForwardedRef,
     type KeyboardEvent,
@@ -14,19 +16,13 @@ import {
 
 import styles from './styles/card.module.scss';
 
-export type CardRootProps = {
+type CardRootBaseProps = {
     'data-test-id'?: string;
     /**
      * Whether the card is in a selected state.
      * @default false
      */
     selected?: boolean;
-    /**
-     * Navigation URL. When provided the overlay renders as an anchor (`<a>`)
-     * instead of a button, enabling native link behavior (middle-click,
-     * right-click "Open in new tab", SEO).
-     */
-    href?: string;
     /**
      * Accessible label for the card's clickable overlay.
      */
@@ -35,16 +31,6 @@ export type CardRootProps = {
      * ID of the element that describes the card (e.g. a subtitle element).
      */
     'aria-describedby'?: string;
-    /**
-     * Click callback for the card surface (e.g. select).
-     * Does not fire when clicking action buttons.
-     */
-    onClick?: MouseEventHandler<HTMLElement>;
-    /**
-     * Double-click callback for the card surface (e.g. navigate).
-     * Does not fire when clicking action buttons.
-     */
-    onDoubleClick?: MouseEventHandler<HTMLElement>;
     /**
      * Called when the pointer enters the card.
      */
@@ -55,6 +41,47 @@ export type CardRootProps = {
     onMouseLeave?: MouseEventHandler<HTMLDivElement>;
     children?: ReactNode;
 };
+
+type CardRootInteractiveProps = {
+    /**
+     * Double-click callback for the card surface (e.g. navigate).
+     * Does not fire when clicking action buttons.
+     * Only available when `onClick` or `href` is provided.
+     */
+    onDoubleClick?: MouseEventHandler<HTMLElement>;
+};
+
+export type CardRootProps = CardRootBaseProps &
+    (
+        | {
+              /**
+               * Navigation URL. When provided the overlay renders as an anchor (`<a>`)
+               * instead of a button, enabling native link behavior (middle-click,
+               * right-click "Open in new tab", SEO).
+               */
+              href: string;
+              /**
+               * Click callback for the card surface (e.g. select).
+               * Does not fire when clicking action buttons.
+               */
+              onClick?: MouseEventHandler<HTMLElement>;
+              onDoubleClick?: CardRootInteractiveProps['onDoubleClick'];
+          }
+        | {
+              href?: never;
+              /**
+               * Click callback for the card surface (e.g. select).
+               * Does not fire when clicking action buttons.
+               */
+              onClick: MouseEventHandler<HTMLElement>;
+              onDoubleClick?: CardRootInteractiveProps['onDoubleClick'];
+          }
+        | {
+              href?: never;
+              onClick?: never;
+              onDoubleClick?: never;
+          }
+    );
 
 export const CardRoot = (
     {
@@ -71,7 +98,11 @@ export const CardRoot = (
     }: CardRootProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
-    const hasOverlay = !!(href || onClick || onDoubleClick);
+    const isClickable = !!(href || onClick || onDoubleClick);
+    const hasDualAction = !!(onDoubleClick && (onClick || href));
+    const generatedTitleId = useId();
+    const titleId = `${generatedTitleId}-title`;
+    const keyboardHintId = `${generatedTitleId}-keyboard-hint`;
 
     const handleKeyDown = useCallback(
         (event: KeyboardEvent<HTMLElement>) => {
@@ -87,24 +118,31 @@ export const CardRoot = (
         [onClick, onDoubleClick],
     );
 
+    const labelledby = ariaLabel ? undefined : titleId;
+    const describedby = hasDualAction ? [ariaDescribedby, keyboardHintId].filter(Boolean).join(' ') : ariaDescribedby;
+
     return (
         <div
             ref={ref}
             className={styles.root}
             data-test-id={dataTestId}
-            data-selected={selected}
+            data-interactive={isClickable}
+            data-selected={isClickable && selected}
+            data-title-id={titleId}
             onMouseEnter={onMouseEnter}
             onMouseLeave={onMouseLeave}
         >
-            {hasOverlay &&
+            {isClickable &&
                 (href ? (
                     <a
                         className={styles.overlay}
                         href={href}
                         tabIndex={0}
                         aria-label={ariaLabel}
-                        aria-describedby={ariaDescribedby}
+                        aria-labelledby={labelledby}
+                        aria-describedby={describedby}
                         aria-current={selected ? 'true' : undefined}
+                        aria-keyshortcuts={hasDualAction ? 'Enter Space' : undefined}
                         onClick={onClick}
                         onDoubleClick={onDoubleClick}
                         onKeyDown={handleKeyDown}
@@ -115,13 +153,20 @@ export const CardRoot = (
                         type="button"
                         tabIndex={0}
                         aria-label={ariaLabel}
-                        aria-describedby={ariaDescribedby}
+                        aria-labelledby={labelledby}
+                        aria-describedby={describedby}
                         aria-pressed={selected}
+                        aria-keyshortcuts={hasDualAction ? 'Enter Space' : undefined}
                         onClick={onClick}
                         onDoubleClick={onDoubleClick}
                         onKeyDown={handleKeyDown}
                     />
                 ))}
+            {hasDualAction && (
+                <span id={keyboardHintId} hidden>
+                    Press Enter to select, press Space to open
+                </span>
+            )}
             {children}
         </div>
     );
@@ -209,10 +254,6 @@ CardBannerImages.displayName = 'Card.BannerImages';
 export type CardBannerIconProps = {
     'data-test-id'?: string;
     /**
-     * The icon component to render.
-     */
-    icon: ReactNode;
-    /**
      * The color of the icon.
      */
     color?: string;
@@ -220,10 +261,11 @@ export type CardBannerIconProps = {
      * The color of the icon on hover.
      */
     hoverColor?: string;
+    children?: ReactNode;
 };
 
 export const CardBannerIcon = (
-    { 'data-test-id': dataTestId = 'fondue-card-banner-icon', icon, color, hoverColor }: CardBannerIconProps,
+    { 'data-test-id': dataTestId = 'fondue-card-banner-icon', color, hoverColor, children }: CardBannerIconProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     return (
@@ -239,7 +281,7 @@ export const CardBannerIcon = (
                 } as CSSProperties
             }
         >
-            {icon}
+            {children}
         </div>
     );
 };
@@ -285,19 +327,16 @@ CardLogo.displayName = 'Card.Logo';
 
 export type CardIconProps = {
     'data-test-id'?: string;
-    /**
-     * The icon component to render.
-     */
-    icon: ReactNode;
+    children?: ReactNode;
 };
 
 export const CardIcon = (
-    { 'data-test-id': dataTestId = 'fondue-card-icon', icon }: CardIconProps,
+    { 'data-test-id': dataTestId = 'fondue-card-icon', children }: CardIconProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     return (
         <div ref={ref} className={styles.icon} data-test-id={dataTestId} aria-hidden="true">
-            {icon}
+            {children}
         </div>
     );
 };
@@ -310,10 +349,33 @@ export type CardTitleProps = {
 
 export const CardTitle = (
     { 'data-test-id': dataTestId = 'fondue-card-title', children }: CardTitleProps,
-    ref: ForwardedRef<HTMLDivElement>,
+    externalRef: ForwardedRef<HTMLDivElement>,
 ) => {
+    const internalRef = useRef<HTMLDivElement | null>(null);
+
+    const setRef = useCallback(
+        (node: HTMLDivElement | null) => {
+            internalRef.current = node;
+
+            if (typeof externalRef === 'function') {
+                externalRef(node);
+            } else if (externalRef) {
+                (externalRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
+            }
+
+            if (node) {
+                const root = node.closest(`.${styles.root}`);
+                const titleId = root?.getAttribute('data-title-id');
+                if (titleId) {
+                    node.id = titleId;
+                }
+            }
+        },
+        [externalRef],
+    );
+
     return (
-        <div ref={ref} className={styles.title} data-test-id={dataTestId}>
+        <div ref={setRef} className={styles.title} data-test-id={dataTestId}>
             {children}
         </div>
     );
@@ -374,10 +436,6 @@ CardActions.displayName = 'Card.Actions';
 export type CardActionsButtonProps = {
     'data-test-id'?: string;
     /**
-     * The icon component to render inside the button.
-     */
-    icon: ReactNode;
-    /**
      * Accessible label for the button.
      */
     'aria-label'?: string;
@@ -385,14 +443,15 @@ export type CardActionsButtonProps = {
      * Click callback for the button.
      */
     onClick?: MouseEventHandler<HTMLButtonElement>;
+    children?: ReactNode;
 } & Omit<JSX.IntrinsicElements['button'], 'children' | 'ref'>;
 
 export const CardActionsButton = (
     {
         'data-test-id': dataTestId = 'fondue-card-actions-button',
         'aria-label': ariaLabel,
-        icon,
         onClick,
+        children,
         ...rest
     }: CardActionsButtonProps,
     ref: ForwardedRef<HTMLButtonElement>,
@@ -407,7 +466,7 @@ export const CardActionsButton = (
             onClick={onClick}
             {...rest}
         >
-            {icon}
+            {children}
         </button>
     );
 };
