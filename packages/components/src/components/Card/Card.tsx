@@ -385,7 +385,7 @@ export type CardActionsButtonProps = {
      * Click callback for the button.
      */
     onClick?: MouseEventHandler<HTMLButtonElement>;
-};
+} & Omit<JSX.IntrinsicElements['button'], 'children' | 'ref'>;
 
 export const CardActionsButton = (
     {
@@ -393,6 +393,7 @@ export const CardActionsButton = (
         'aria-label': ariaLabel,
         icon,
         onClick,
+        ...rest
     }: CardActionsButtonProps,
     ref: ForwardedRef<HTMLButtonElement>,
 ) => {
@@ -404,6 +405,7 @@ export const CardActionsButton = (
             aria-label={ariaLabel}
             type="button"
             onClick={onClick}
+            {...rest}
         >
             {icon}
         </button>
