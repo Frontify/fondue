@@ -26,12 +26,13 @@ export const SortableItem = forwardRef<HTMLDivElement, OrderableListItemProps & 
             }
         };
 
-        const { isDragging, handleRef } = useSortable({ id, index, element: internalRef });
+        const { isDragging, isDropping, handleRef } = useSortable({ id, index, element: internalRef });
 
         return (
             <div
                 className={styles.item}
                 data-dragging={isDragging}
+                data-dropping={isDropping}
                 data-test-id="fondue-orderable-list-item"
                 ref={mergedRef}
             >

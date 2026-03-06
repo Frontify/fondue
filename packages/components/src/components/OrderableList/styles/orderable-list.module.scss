@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 @use '../../../utilities/sizeToken.module.scss';
+@use '../../../utilities/focusStyle.module.scss';
 @use '../../../utilities/transitions.module.scss';
 
 .root {
@@ -29,7 +30,8 @@
     background-color: var(--color-surface-default);
     box-shadow: none;
 
-    &:hover {
+    &:hover,
+    &[data-dropping='true'] {
         border-color: var(--color-line-mid);
     }
     &[data-dragging='true'] {
@@ -44,6 +46,7 @@
 }
 
 .handle {
+    @include focusStyle.focus-outline;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -56,7 +59,9 @@
     border-radius: calc(var(--border-radius-medium) - var(--border-width-default));
     cursor: grab;
 
-    &:hover {
+    &:hover,
+    &:focus-visible,
+    .item[data-dropping='true'] & {
         background-color: var(--color-container-secondary-hover);
     }
 
