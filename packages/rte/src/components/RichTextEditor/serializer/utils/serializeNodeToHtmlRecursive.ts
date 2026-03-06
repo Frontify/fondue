@@ -11,11 +11,14 @@ import {
     getLicElementClassNames,
 } from '@components/RichTextEditor/Plugins/ListPlugin/ListItemContentMarkupElement';
 import { LI_CLASSNAMES, getLiStyles } from '@components/RichTextEditor/Plugins/ListPlugin/ListItemMarkupElement';
-import {
-    OL_STYLES,
-    getOrderedListClasses,
-} from '@components/RichTextEditor/Plugins/ListPlugin/OrderedListPlugin/OrderedListMarkupElement';
+import { OL_CLASSES } from '@components/RichTextEditor/Plugins/ListPlugin/OrderedListPlugin/OrderedListMarkupElement';
 import { UL_CLASSES } from '@components/RichTextEditor/Plugins/ListPlugin/UnorderedListPlugin/UnorderedListMarkupElement';
+import {
+    DEFAULT_OL_STYLES,
+    DEFAULT_UL_STYLES,
+    type OrderedListLevelStyle,
+    type UnorderedListLevelStyle,
+} from '@components/RichTextEditor/Plugins/ListPlugin/types';
 import { type MappedMentionableItems } from '@components/RichTextEditor/Plugins/MentionPlugin/types';
 import { TextStyles } from '@components/RichTextEditor/Plugins/TextStylePlugin/types';
 import { ELEMENT_BUTTON, alignmentClassnames } from '@components/RichTextEditor/Plugins/helper';
@@ -54,12 +57,19 @@ type NestingCount = {
 type SerializeNodeToHtmlRecursiveOptions = {
     mappedMentionable?: MappedMentionableItems;
     nestingCount?: NestingCount;
+    orderedListStyles?: OrderedListLevelStyle[];
+    unorderedListStyles?: UnorderedListLevelStyle[];
 };
 
 export const serializeNodeToHtmlRecursive = (
     node: TDescendant,
     styles: Record<string, CSSPropertiesHover> | ButtonStylesType,
-    { mappedMentionable, nestingCount = {} }: SerializeNodeToHtmlRecursiveOptions,
+    {
+        mappedMentionable,
+        nestingCount = {},
+        orderedListStyles,
+        unorderedListStyles,
+    }: SerializeNodeToHtmlRecursiveOptions,
 ): string => {
     if (isText(node)) {
         return serializeLeafToHtml(node);
@@ -74,6 +84,8 @@ export const serializeNodeToHtmlRecursive = (
                 [element.type as string]: rootNestingCount,
             },
             mappedMentionable,
+            orderedListStyles,
+            unorderedListStyles,
         });
     }
 
@@ -90,6 +102,8 @@ export const serializeNodeToHtmlRecursive = (
                 node,
                 mappedMentionable,
                 styles,
+                orderedListStyles,
+                unorderedListStyles,
             }) ?? children
         );
     } catch {
@@ -105,6 +119,8 @@ type Arguments = {
     node: TElement;
     mappedMentionable?: MappedMentionableItems;
     styles: Record<string, CSSPropertiesHover>;
+    orderedListStyles?: OrderedListLevelStyle[];
+    unorderedListStyles?: UnorderedListLevelStyle[];
 };
 
 const MapNodeTypesToHtml: { [key: string]: ({ ...args }: Arguments) => string } = {
@@ -119,12 +135,19 @@ const MapNodeTypesToHtml: { [key: string]: ({ ...args }: Arguments) => string } 
     [TextStyles.quote]: (args) => getTextStyleHtml(TextStyles.quote, args, 'p'),
     [TextStyles.imageTitle]: (args) => getTextStyleHtml(TextStyles.imageTitle, args, 'p'),
     [TextStyles.imageCaption]: (args) => getTextStyleHtml(TextStyles.imageCaption, args, 'p'),
-    [ELEMENT_UL]: (args) => `<ul dir="auto" class="${UL_CLASSES} ${args.classNames}">${args.children}</ul>`,
-    [ELEMENT_OL]: ({ classNames, children, node, rootNestingCount }) => {
+    [ELEMENT_UL]: (args) => {
+        const nestingLevel = Math.max(args.rootNestingCount - getNestingLevels([args.node], ELEMENT_UL), 0);
+        const ulStyles = args.unorderedListStyles ?? DEFAULT_UL_STYLES;
+        const levelStyle = ulStyles[nestingLevel % ulStyles.length];
+        const style = `--bullet-character:${levelStyle.shape}; --bullet-color: ${levelStyle.color ?? 'currentColor'}; --bullet-size: ${levelStyle.size ?? '1em'};`;
+        return `<ul dir="auto" class="${UL_CLASSES} ${args.classNames}" style="${style}">${args.children}</ul>`;
+    },
+    [ELEMENT_OL]: ({ classNames, children, node, rootNestingCount, orderedListStyles }) => {
         const nestingLevel = Math.max(rootNestingCount - getNestingLevels([node], ELEMENT_OL), 0);
-        return `<ol dir="auto" class="${getOrderedListClasses(nestingLevel)} ${classNames}" style="${reactCssPropsToCss(
-            OL_STYLES,
-        )}">${children}</ol>`;
+        const olStyles = orderedListStyles ?? DEFAULT_OL_STYLES;
+        const levelStyle = olStyles[nestingLevel % olStyles.length];
+        const style = `counter-reset: count; --counter-type: ${levelStyle.counterType}; --counter-color: ${levelStyle.color ?? 'currentColor'};`;
+        return `<ol dir="auto" class="${OL_CLASSES} ${classNames}" style="${style}">${children}</ol>`;
     },
     [ELEMENT_LI]: ({ classNames, children, node, styles }) =>
         `<li dir="auto" class="${classNames} ${LI_CLASSNAMES}" style="${reactCssPropsToCss(

@@ -195,6 +195,25 @@ export const SerializedToHTML: StoryFn<RichTextEditorProps> = () => {
     );
 };
 
+export const SerializedToHTMLWithCustomListStyles: StoryFn<RichTextEditorProps> = () => {
+    return (
+        <GetSerializedContent
+            props={{
+                orderedListStyles: [
+                    { counterType: 'decimal', color: '#e74c3c' },
+                    { counterType: 'upper-alpha', color: '#3498db' },
+                    { counterType: 'lower-roman', color: '#2ecc71' },
+                ],
+                unorderedListStyles: [
+                    { shape: "'\u2022'", color: '#e74c3c', size: '1.2em' },
+                    { shape: "'\u25E6'", color: '#3498db', size: '1em' },
+                    { shape: "'\u25AA'", color: '#2ecc71', size: '0.8em' },
+                ],
+            }}
+        />
+    );
+};
+
 export const MarkdownSerializerDeserializer: StoryFn<RichTextEditorProps> = () => {
     const toSlateTransform = Transform.use(new MarkdownToSlate());
     const resultSlate = toSlateTransform.process(markdownText);
@@ -278,6 +297,31 @@ listPlugins.setPlugin([new UnorderedListPlugin(), new OrderedListPlugin(), allTe
 export const WithList = RichTextEditorTemplate.bind({});
 WithList.args = {
     plugins: listPlugins,
+    value: JSON.stringify([unorderedListValue, orderedListValue]),
+};
+
+const customListStylePlugins = new PluginComposer();
+customListStylePlugins.setPlugin([
+    new UnorderedListPlugin({
+        listStyles: [
+            { shape: "'\u2022'", color: '#e74c3c', size: '1.2em' },
+            { shape: "'\u25E6'", color: '#3498db', size: '1em' },
+            { shape: "'\u25AA'", color: '#2ecc71', size: '0.8em' },
+        ],
+    }),
+    new OrderedListPlugin({
+        listStyles: [
+            { counterType: 'decimal', color: '#e74c3c' },
+            { counterType: 'upper-alpha', color: '#3498db' },
+            { counterType: 'lower-roman', color: '#2ecc71' },
+        ],
+    }),
+    allTextStylesPlugin,
+    new BoldPlugin(),
+]);
+export const WithCustomListStyles = RichTextEditorTemplate.bind({});
+WithCustomListStyles.args = {
+    plugins: customListStylePlugins,
     value: JSON.stringify([unorderedListValue, orderedListValue]),
 };
 

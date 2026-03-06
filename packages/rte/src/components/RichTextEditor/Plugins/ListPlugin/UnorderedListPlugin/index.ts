@@ -2,19 +2,25 @@
 
 import { ListPlugin } from '../ListPlugin';
 import { LIST_PLUGIN } from '../id';
-import { type ListPluginProps } from '../types';
+import { type UnorderedListLevelStyle, type UnorderedListPluginProps } from '../types';
 
 import { UnorderedListButton } from './UnorderedListButton';
-import { UnorderedListMarkupElement } from './UnorderedListMarkupElement';
+import { UnorderedListMarkupElement, createUnorderedListNode } from './UnorderedListMarkupElement';
 
 export class UnorderedListPlugin extends ListPlugin {
-    constructor(props?: ListPluginProps) {
+    public readonly listStyles?: UnorderedListLevelStyle[];
+
+    constructor(props?: UnorderedListPluginProps) {
+        const { listStyles, ...rest } = props ?? {};
+
         super({
             id: LIST_PLUGIN,
             button: UnorderedListButton,
-            markupElement: new UnorderedListMarkupElement(),
-            ...props,
+            markupElement: new UnorderedListMarkupElement(undefined, createUnorderedListNode(listStyles)),
+            ...rest,
         });
+
+        this.listStyles = listStyles;
     }
 }
 
