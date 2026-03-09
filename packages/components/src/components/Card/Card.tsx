@@ -2,9 +2,12 @@
 
 import { IconCheckMark } from '@frontify/fondue-icons';
 import {
+    Children,
     forwardRef,
+    isValidElement,
     useCallback,
     useId,
+    useMemo,
     useRef,
     type CSSProperties,
     type ForwardedRef,
@@ -121,6 +124,21 @@ export const CardRoot = (
     const labelledby = ariaLabel ? undefined : titleId;
     const describedby = hasDualAction ? [ariaDescribedby, keyboardHintId].filter(Boolean).join(' ') : ariaDescribedby;
 
+    const { actions, otherChildren } = useMemo(() => {
+        const actions: ReactNode[] = [];
+        const otherChildren: ReactNode[] = [];
+
+        Children.forEach(children, (child) => {
+            if (isValidElement(child) && child.type === ForwardedRefCardAction) {
+                actions.push(child);
+            } else {
+                otherChildren.push(child);
+            }
+        });
+
+        return { actions, otherChildren };
+    }, [children]);
+
     return (
         <div
             ref={ref}
@@ -167,7 +185,12 @@ export const CardRoot = (
                     Press Enter to select, press Space to open
                 </span>
             )}
-            {children}
+            {otherChildren}
+            {actions.length > 0 && (
+                <div className={styles.actions} data-test-id="fondue-card-actions">
+                    {actions}
+                </div>
+            )}
         </div>
     );
 };
@@ -234,23 +257,6 @@ export const CardBannerImage = (
 };
 CardBannerImage.displayName = 'Card.BannerImage';
 
-export type CardBannerImagesProps = {
-    'data-test-id'?: string;
-    children?: ReactNode;
-};
-
-export const CardBannerImages = (
-    { 'data-test-id': dataTestId = 'fondue-card-banner-images', children }: CardBannerImagesProps,
-    ref: ForwardedRef<HTMLDivElement>,
-) => {
-    return (
-        <div ref={ref} className={styles.bannerImages} data-test-id={dataTestId}>
-            {children}
-        </div>
-    );
-};
-CardBannerImages.displayName = 'Card.BannerImages';
-
 export type CardBannerIconProps = {
     'data-test-id'?: string;
     /**
@@ -304,43 +310,43 @@ export const CardBadges = (
 };
 CardBadges.displayName = 'Card.Badges';
 
-export type CardLogoProps = {
+export type CardThumbnailImageProps = {
     'data-test-id'?: string;
     /**
-     * The logo image source URL.
+     * The thumbnail image source URL.
      */
     src: string;
     /**
-     * Alternative text for the logo.
+     * Alternative text for the thumbnail image.
      * @default ''
      */
     alt?: string;
 };
 
-export const CardLogo = (
-    { 'data-test-id': dataTestId = 'fondue-card-logo', src, alt = '' }: CardLogoProps,
+export const CardThumbnailImage = (
+    { 'data-test-id': dataTestId = 'fondue-card-thumbnail-image', src, alt = '' }: CardThumbnailImageProps,
     ref: ForwardedRef<HTMLImageElement>,
 ) => {
-    return <img ref={ref} className={styles.logo} data-test-id={dataTestId} src={src} alt={alt} />;
+    return <img ref={ref} className={styles.thumbnailImage} data-test-id={dataTestId} src={src} alt={alt} />;
 };
-CardLogo.displayName = 'Card.Logo';
+CardThumbnailImage.displayName = 'Card.ThumbnailImage';
 
-export type CardIconProps = {
+export type CardThumbnailIconProps = {
     'data-test-id'?: string;
     children?: ReactNode;
 };
 
-export const CardIcon = (
-    { 'data-test-id': dataTestId = 'fondue-card-icon', children }: CardIconProps,
+export const CardThumbnailIcon = (
+    { 'data-test-id': dataTestId = 'fondue-card-thumbnail-icon', children }: CardThumbnailIconProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     return (
-        <div ref={ref} className={styles.icon} data-test-id={dataTestId} aria-hidden="true">
+        <div ref={ref} className={styles.thumbnailIcon} data-test-id={dataTestId} aria-hidden="true">
             {children}
         </div>
     );
 };
-CardIcon.displayName = 'Card.Icon';
+CardThumbnailIcon.displayName = 'Card.ThumbnailIcon';
 
 export type CardTitleProps = {
     'data-test-id'?: string;
@@ -360,7 +366,7 @@ export const CardTitle = (
             if (typeof externalRef === 'function') {
                 externalRef(node);
             } else if (externalRef) {
-                (externalRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
+                externalRef.current = node;
             }
 
             if (node) {
@@ -382,56 +388,41 @@ export const CardTitle = (
 };
 CardTitle.displayName = 'Card.Title';
 
-export type CardMetaProps = {
+export type CardDescriptionProps = {
     'data-test-id'?: string;
     children?: ReactNode;
 };
 
-export const CardMeta = (
-    { 'data-test-id': dataTestId = 'fondue-card-meta', children }: CardMetaProps,
+export const CardDescription = (
+    { 'data-test-id': dataTestId = 'fondue-card-description', children }: CardDescriptionProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     return (
-        <div ref={ref} className={styles.meta} data-test-id={dataTestId}>
+        <div ref={ref} className={styles.description} data-test-id={dataTestId}>
             {children}
         </div>
     );
 };
-CardMeta.displayName = 'Card.Meta';
+CardDescription.displayName = 'Card.Description';
 
-export type CardMetasProps = {
+export type CardActionProps = {
     'data-test-id'?: string;
     children?: ReactNode;
 };
 
-export const CardMetas = (
-    { 'data-test-id': dataTestId = 'fondue-card-metas', children }: CardMetasProps,
+export const CardAction = (
+    { 'data-test-id': dataTestId = 'fondue-card-action', children }: CardActionProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     return (
-        <div ref={ref} className={styles.metas} data-test-id={dataTestId}>
+        <div ref={ref} className={styles.action} data-test-id={dataTestId}>
             {children}
         </div>
     );
 };
-CardMetas.displayName = 'Card.Metas';
+CardAction.displayName = 'Card.Action';
 
-export type CardActionsProps = {
-    'data-test-id'?: string;
-    children?: ReactNode;
-};
-
-export const CardActions = (
-    { 'data-test-id': dataTestId = 'fondue-card-actions', children }: CardActionsProps,
-    ref: ForwardedRef<HTMLDivElement>,
-) => {
-    return (
-        <div ref={ref} className={styles.actions} data-test-id={dataTestId}>
-            {children}
-        </div>
-    );
-};
-CardActions.displayName = 'Card.Actions';
+const ForwardedRefCardAction = forwardRef<HTMLDivElement, CardActionProps>(CardAction);
 
 export type CardActionsButtonProps = {
     'data-test-id'?: string;
@@ -476,14 +467,13 @@ export const Card = {
     Root: forwardRef<HTMLDivElement, CardRootProps>(CardRoot),
     Banner: forwardRef<HTMLDivElement, CardBannerProps>(CardBanner),
     BannerImage: forwardRef<HTMLImageElement, CardBannerImageProps>(CardBannerImage),
-    BannerImages: forwardRef<HTMLDivElement, CardBannerImagesProps>(CardBannerImages),
+
     BannerIcon: forwardRef<HTMLDivElement, CardBannerIconProps>(CardBannerIcon),
     Badges: forwardRef<HTMLDivElement, CardBadgesProps>(CardBadges),
-    Logo: forwardRef<HTMLImageElement, CardLogoProps>(CardLogo),
-    Icon: forwardRef<HTMLDivElement, CardIconProps>(CardIcon),
+    ThumbnailImage: forwardRef<HTMLImageElement, CardThumbnailImageProps>(CardThumbnailImage),
+    ThumbnailIcon: forwardRef<HTMLDivElement, CardThumbnailIconProps>(CardThumbnailIcon),
     Title: forwardRef<HTMLDivElement, CardTitleProps>(CardTitle),
-    Meta: forwardRef<HTMLDivElement, CardMetaProps>(CardMeta),
-    Metas: forwardRef<HTMLDivElement, CardMetasProps>(CardMetas),
-    Actions: forwardRef<HTMLDivElement, CardActionsProps>(CardActions),
+    Description: forwardRef<HTMLDivElement, CardDescriptionProps>(CardDescription),
+    Action: ForwardedRefCardAction,
     ActionsButton: forwardRef<HTMLButtonElement, CardActionsButtonProps>(CardActionsButton),
 };

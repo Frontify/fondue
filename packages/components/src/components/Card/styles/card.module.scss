@@ -36,10 +36,10 @@
     min-width: sizeToken.get(60);
     display: grid;
     grid-template-areas:
-        'banner     banner   banner'
-        'thumbnail  title    actions'
-        'thumbnail  meta     actions';
-    grid-template-columns: auto 1fr auto;
+        'banner     banner   banner   banner'
+        'thumbnail  title    badges   actions'
+        'thumbnail  meta     badges   actions';
+    grid-template-columns: auto 1fr auto auto;
     grid-template-rows: auto minmax(calc(#{sizeToken.get(10)} / 2 + var(--spacing-small)), auto) minmax(calc(#{sizeToken.get(10)} / 2 + var(--spacing-small)), auto);
     border-radius: var(--border-radius-large);
     border: var(--border-width-default) solid transparent;
@@ -111,6 +111,7 @@
 .banner {
     grid-area: banner;
     position: relative;
+    display: flex;
     overflow: hidden;
     background-color: var(--color-surface-dim);
     pointer-events: none;
@@ -130,8 +131,8 @@
 }
 
 .bannerImage {
-    width: 100%;
-    height: 100%;
+    flex: 1;
+    min-width: 0;
     display: block;
 
     &[data-fit='cover'] {
@@ -140,17 +141,6 @@
 
     &[data-fit='contain'] {
         object-fit: contain;
-    }
-}
-
-.bannerImages {
-    display: flex;
-    width: 100%;
-    height: 100%;
-
-    & > .bannerImage {
-        flex: 1;
-        min-width: 0;
     }
 }
 
@@ -203,17 +193,27 @@
 }
 
 .badges {
-    position: absolute;
-    top: var(--spacing-medium);
-    right: var(--spacing-medium);
     display: flex;
     gap: var(--spacing-xx-small);
     flex-wrap: wrap;
     justify-content: flex-end;
+    pointer-events: none;
+
+    .root:has(> .banner) & {
+        position: absolute;
+        top: var(--spacing-medium);
+        right: var(--spacing-medium);
+    }
+
+    .root:not(:has(> .banner)) & {
+        grid-area: badges;
+        align-self: center;
+        padding: var(--spacing-small) 0;
+    }
 }
 
-.logo,
-.icon {
+.thumbnailImage,
+.thumbnailIcon {
     grid-area: thumbnail;
     width: sizeToken.get(10);
     height: sizeToken.get(10);
@@ -228,11 +228,11 @@
     }
 }
 
-.logo {
+.thumbnailImage {
     object-fit: contain;
 }
 
-.icon {
+.thumbnailIcon {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -255,14 +255,14 @@
     min-width: 0;
     pointer-events: none;
 
-    .root:not(:has(> .meta)):not(:has(> .metas)) & {
+    .root:not(:has(> .description)) & {
         grid-row: 2 / 4;
         align-self: center;
         padding-bottom: var(--spacing-small);
     }
 }
 
-.meta {
+.description {
     grid-area: meta;
     padding: 0 var(--spacing-small);
     font-family: var(--typography-font-family-primary);
@@ -279,36 +279,6 @@
     pointer-events: none;
 }
 
-.metas {
-    grid-area: meta;
-    display: flex;
-    align-items: center;
-    padding: 0 var(--spacing-small);
-    align-self: start;
-    min-width: 0;
-    font-family: var(--typography-font-family-primary);
-    font-size: var(--typography-font-size-small);
-    font-weight: var(--typography-font-weight-regular);
-    font-kerning: none;
-    line-height: var(--typography-line-height-tight);
-    color: var(--color-secondary-default);
-    pointer-events: none;
-
-    & > .meta {
-        grid-area: unset;
-        padding: 0;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-    & > .meta:not(:first-child)::before {
-        content: '\00B7';
-        margin: 0 var(--spacing-x-small);
-        flex-shrink: 0;
-    }
-}
-
 .actions {
     grid-area: actions;
     position: relative;
@@ -318,6 +288,11 @@
     align-self: stretch;
     gap: var(--spacing-xx-small);
     padding: var(--spacing-small);
+}
+
+.action {
+    display: flex;
+    align-items: center;
 }
 
 .actionsButton {
