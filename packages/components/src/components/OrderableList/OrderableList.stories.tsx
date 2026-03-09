@@ -1,6 +1,4 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
-
-/* (c) Copyright Frontify Ltd., all rights reserved. */
 import { IconTrashBin } from '@frontify/fondue-icons';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { type ReactNode } from 'react';
@@ -38,7 +36,7 @@ export const Default: Story = {
                         </OrderableList.ItemAction>
                         <OrderableList.DragHandle />
                     </OrderableList.Item>
-                    <OrderableList.Item id="2">
+                    <OrderableList.Item onSelect={() => console.log('selected')} id="2">
                         <OrderableList.ItemTitle>Item 2</OrderableList.ItemTitle>
                         <OrderableList.ItemDescription>Item 2 description</OrderableList.ItemDescription>
                         <OrderableList.ItemAction>

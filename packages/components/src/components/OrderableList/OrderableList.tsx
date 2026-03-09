@@ -3,7 +3,7 @@
 import { AxisModifier } from '@dnd-kit/abstract/modifiers';
 import { DragDropProvider, type DragEndEvent } from '@dnd-kit/react';
 import { isSortable } from '@dnd-kit/react/sortable';
-import { forwardRef, useMemo, type ForwardedRef, type ReactNode } from 'react';
+import { forwardRef, useCallback, useMemo, type ForwardedRef, type ReactNode } from 'react';
 
 import { OrderableListItem } from './OrderableListItem';
 import { OrderableListItemAction } from './OrderableListItemAction';
@@ -11,6 +11,7 @@ import { OrderableListItemDecorator } from './OrderableListItemDecorator';
 import { OrderableListItemDescription } from './OrderableListItemDescription';
 import { OrderableItemCustomHandle, OrderableItemDragHandle } from './OrderableListItemDragHandle';
 import { OrderableListItemTitle } from './OrderableListItemTitle';
+import { OrderableListAnnounceProvider, useAnnounceState } from './hooks/useOrderableListAnnounce';
 import { useOrderedListItems } from './hooks/useOrderedListItems';
 import styles from './styles/orderable-list.module.scss';
 
@@ -29,10 +30,16 @@ export const OrderableListRoot = (
     ref: ForwardedRef<HTMLUListElement>,
 ) => {
     const orderedItems = useOrderedListItems(children, order);
+    const { message, announce } = useAnnounceState();
 
     const axisModifier = useMemo(
         () => AxisModifier.configure({ axis: direction === 'vertical' ? 'x' : 'y', value: 0 }),
         [direction],
+    );
+
+    const getItemTitle = useCallback(
+        (itemId: string) => document.getElementById(`orderable-item-${itemId}-title`)?.textContent ?? itemId,
+        [],
     );
 
     const handleDragEnd: DragEndEvent = (event) => {
@@ -48,23 +55,31 @@ export const OrderableListRoot = (
                 if (removed) {
                     newItems.splice(index, 0, removed);
                     onOrderChange?.(newItems);
+                    announce(`${getItemTitle(removed)} dropped, moved from position ${initialIndex + 1} to ${index + 1} of ${order.length}`);
                 }
             }
         }
     };
 
     return (
-        <DragDropProvider onDragEnd={handleDragEnd} modifiers={[axisModifier]}>
-            <ul
-                className={styles.root}
-                data-spacing={spacing}
-                data-direction={direction}
-                data-test-id="fondue-orderable-list"
-                ref={ref}
-            >
-                {orderedItems}
-            </ul>
-        </DragDropProvider>
+        <OrderableListAnnounceProvider value={announce}>
+            <DragDropProvider onDragEnd={handleDragEnd} modifiers={[axisModifier]}>
+                <ul
+                    className={styles.root}
+                    aria-roledescription="sortable list"
+                    aria-label="Sortable list"
+                    data-spacing={spacing}
+                    data-direction={direction}
+                    data-test-id="fondue-orderable-list"
+                    ref={ref}
+                >
+                    {orderedItems}
+                </ul>
+                <div aria-live="polite" aria-atomic="true" className={styles.visuallyHidden}>
+                    {message}
+                </div>
+            </DragDropProvider>
+        </OrderableListAnnounceProvider>
     );
 };
 OrderableListRoot.displayName = 'OrderableList';

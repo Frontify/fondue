@@ -13,21 +13,21 @@ const getItemContentByType = (
 ): {
     actions: ReactNode[];
     content: ReactNode[];
-    dragHandle: ReactNode;
+    hasDragHandle: boolean;
 } => {
-    let dragHandle: ReactNode = undefined;
+    let hasDragHandle = false;
     const actions: ReactNode[] = [];
     const content: ReactNode[] = [];
     Children.forEach(children, (child) => {
         if (isValidElement<OrderableListItemActionProps>(child) && child.type === OrderableListItemAction) {
             actions.push(child);
         } else if (isValidElement(child) && child.type === OrderableItemDragHandle) {
-            dragHandle = child;
+            hasDragHandle = true;
         } else {
             content.push(child);
         }
     });
-    return { dragHandle, actions, content };
+    return { hasDragHandle, actions, content };
 };
 
 type OrderableListItemElement = ReactElement<OrderableListItemProps> & {
@@ -39,7 +39,7 @@ type ListItem = {
     ref: RefObject<HTMLLIElement> | null;
     children: ReactNode;
     actions: ReactNode[];
-    dragHandle: ReactNode;
+    hasDragHandle: boolean;
 };
 
 const getListItems = (children: ReactNode): ListItems => {
@@ -47,7 +47,7 @@ const getListItems = (children: ReactNode): ListItems => {
     Children.forEach(children, (child) => {
         if (isValidElement<OrderableListItemProps>(child) && child.type === OrderableListItem) {
             const typedChild = child as OrderableListItemElement;
-            const { actions, content, dragHandle } = getItemContentByType(typedChild.props.children);
+            const { actions, content, hasDragHandle } = getItemContentByType(typedChild.props.children);
             const itemId = typedChild.props.id;
             items[itemId] = {
                 ...typedChild.props,
@@ -55,7 +55,7 @@ const getListItems = (children: ReactNode): ListItems => {
                 ref: typedChild.ref,
                 actions,
                 children: content,
-                dragHandle,
+                hasDragHandle,
             };
         }
     });
@@ -74,11 +74,11 @@ export const useOrderedListItems = (children: ReactNode, order: string[]): React
         [order, itemsWithIds],
     );
 
-    return sortedItems.map(({ id, children, actions, dragHandle, ...props }, index) => (
+    return sortedItems.map(({ id, children, actions, hasDragHandle, ...props }, index) => (
         <OrderableListItemComponent key={id} index={index} id={id} {...props}>
             <OrderableListItemContent>{children}</OrderableListItemContent>
             {actions.length > 0 && <div className={styles.actions}>{actions}</div>}
-            {(actions.length > 0 || Boolean(dragHandle)) && <OrderableItemDragHandle />}
+            {(actions.length > 0 || hasDragHandle) && <OrderableItemDragHandle />}
         </OrderableListItemComponent>
     ));
 };

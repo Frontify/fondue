@@ -33,12 +33,16 @@ export const OrderableListItemComponent = forwardRef<HTMLLIElement, OrderableLis
 
         const { isDragging, isDropping, handleRef } = useSortable({ id, index, element: internalRef, disabled });
 
-        const ItemContextValue = useMemo(() => ({ dragHandleRef: handleRef, onSelect }), [handleRef, onSelect]);
+        const ItemContextValue = useMemo(
+            () => ({ itemId: id, dragHandleRef: handleRef, selected, onSelect }),
+            [id, handleRef, selected, onSelect],
+        );
 
         return (
             <OrderableItemContextProvider value={ItemContextValue}>
                 <li
                     className={styles.item}
+                    aria-roledescription="sortable item"
                     data-padding={padding}
                     data-dragging={isDragging}
                     data-dropping={isDropping}
