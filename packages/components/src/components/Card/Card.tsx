@@ -439,7 +439,7 @@ export type CardActionButtonProps = {
 
 export const CardActionButton = (
     {
-        'data-test-id': dataTestId = 'fondue-card-actions-button',
+        'data-test-id': dataTestId = 'fondue-card-action-button',
         'aria-label': ariaLabel,
         onClick,
         children,
@@ -450,7 +450,7 @@ export const CardActionButton = (
     return (
         <button
             ref={ref}
-            className={styles.actionsButton}
+            className={styles.actionButton}
             data-test-id={dataTestId}
             aria-label={ariaLabel}
             type="button"

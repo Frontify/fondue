@@ -10,9 +10,7 @@
     $root-bg: null,
     $box-shadow: none,
     $banner-border-color: transparent,
-    $banner-border-radius: 0,
-    $action-btn-border-color: transparent,
-    $action-btn-bg-color: transparent
+    $banner-border-radius: 0
 ) {
     border-color: $root-border-color;
     box-shadow: $box-shadow;
@@ -24,10 +22,6 @@
     & .banner {
         box-shadow: inset 0 0 0 1px $banner-border-color;
         border-radius: $banner-border-radius;
-    }
-
-    & .actionsButton {
-        background-color: var(--color-#{$action-btn-bg-color});
     }
 }
 
@@ -62,13 +56,12 @@
             @include focusStyle.focus-outline-styles;
         }
 
-        // Hover state
-        &:hover {
+        // Hover state (also when a dropdown is open inside the card)
+        &:hover,
+        &:has([data-state='open']) {
             @include card-state(
                 $root-border-color: var(--color-line-subtle),
-                $root-bg: 'surface-hover',
-                $action-btn-border-color: var(--color-line-subtle),
-                $action-btn-bg-color: 'container-secondary-default'
+                $root-bg: 'surface-hover'
             );
         }
 
@@ -77,19 +70,17 @@
             @include card-state(
                 $root-border-color: var(--color-line-strong),
                 $root-bg: 'surface-dim',
-                $box-shadow: 0 0 0 1px var(--color-interactive-default),
-                $action-btn-bg-color: 'container-secondary-default'
+                $box-shadow: 0 0 0 1px var(--color-interactive-default)
             );
         }
 
-        // Hover + Selected state
-        &[data-selected='true']:hover {
+        // Hover + Selected state (also when a dropdown is open inside the card)
+        &[data-selected='true']:hover,
+        &[data-selected='true']:has([data-state='open']) {
             @include card-state(
                 $root-border-color: var(--color-interactive-default),
                 $root-bg: 'surface-hover',
-                $box-shadow: 0 0 0 1px var(--color-interactive-default),
-                $action-btn-border-color: var(--color-line-subtle),
-                $action-btn-bg-color: 'container-secondary-default'
+                $box-shadow: 0 0 0 1px var(--color-interactive-default)
             );
         }
     }
@@ -117,7 +108,8 @@
     pointer-events: none;
     @include transitions.transition-colors;
 
-    .root[data-interactive='true']:hover &:has(> .bannerIcon) {
+    .root[data-interactive='true']:hover &:has(> .bannerIcon),
+    .root[data-interactive='true']:has([data-state='open']) &:has(> .bannerIcon) {
         background-color: var(--color-surface-hover);
     }
 
@@ -160,7 +152,8 @@
     color: var(--card-banner-icon-color, var(--color-secondary-default));
     @include transitions.transition-colors;
 
-    .root[data-interactive='true']:hover & {
+    .root[data-interactive='true']:hover &,
+    .root[data-interactive='true']:has([data-state='open']) & {
         color: var(--card-banner-icon-hover-color, var(--color-primary-default));
     }
 }
@@ -177,7 +170,8 @@
     border-radius: var(--border-radius-medium);
     pointer-events: none;
 
-    .root[data-interactive='true']:hover & {
+    .root[data-interactive='true']:hover &,
+    .root[data-interactive='true']:has([data-state='open']) & {
         display: flex;
         border: var(--border-width-default) solid var(--color-line-mid);
         background-color: var(--color-surface-default);
@@ -295,7 +289,7 @@
     align-items: center;
 }
 
-.actionsButton {
+.actionButton {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -308,11 +302,9 @@
     outline: none;
     @include transitions.transition-colors;
 
-    &:hover {
+    &:hover,
+    &[data-state='open'] {
         color: var(--color-primary-default);
-    }
-
-    .root[data-interactive='true']:hover &:hover {
         background-color: var(--color-container-secondary-default);
     }
 
