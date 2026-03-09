@@ -26,9 +26,9 @@ import {
     CardBannerImage,
     type CardBannerSize,
     CardDescription,
+    CardRoot,
     CardThumbnailIcon,
     CardThumbnailImage,
-    CardRoot,
     CardTitle,
 } from './Card';
 
@@ -77,11 +77,7 @@ const DefaultExample = ({ bannerSize, bannerFit, ...args }: PlaygroundArgs) => {
     return (
         <Card.Root {...args} selected={selected} onClick={() => setSelected((s) => !s)}>
             <Card.Banner size={bannerSize}>
-                <Card.BannerImage
-                    src="https://picsum.photos/seed/card1/400/200"
-                    alt="Sample image"
-                    fit={bannerFit}
-                />
+                <Card.BannerImage src="https://picsum.photos/seed/card1/400/200" alt="Sample image" fit={bannerFit} />
             </Card.Banner>
 
             <Card.ThumbnailIcon>
@@ -140,11 +136,7 @@ const AssetCardExample = () => {
     return (
         <Card.Root selected={selected} onClick={() => setSelected((s) => !s)}>
             <Card.Banner>
-                <Card.BannerImage
-                    src="https://picsum.photos/seed/asset/300/300"
-                    alt="Asset preview"
-                    fit="contain"
-                />
+                <Card.BannerImage src="https://picsum.photos/seed/asset/300/300" alt="Asset preview" fit="contain" />
             </Card.Banner>
 
             <Card.Title>[Asset name]</Card.Title>
