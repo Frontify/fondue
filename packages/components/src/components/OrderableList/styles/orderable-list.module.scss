@@ -74,7 +74,11 @@
 .content {
     flex: 1;
     display: grid;
-    grid-template-columns: auto 1fr;
+    &:has(.decorator),
+    &:has(.title),
+    &:has(.description) {
+        grid-template-columns: auto 1fr;
+    }
 
     .decorator {
         grid-column: 1;
@@ -90,6 +94,10 @@
         line-height: var(--typography-line-height-tight);
         color: var(--color-primary-default);
         align-self: end;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
     .description {
         grid-column: 2;
@@ -98,6 +106,10 @@
         line-height: var(--typography-line-height-tight);
         color: var(--color-primary-default);
         align-self: start;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 }
 
