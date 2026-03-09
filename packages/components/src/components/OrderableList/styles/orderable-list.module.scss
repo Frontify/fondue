@@ -26,21 +26,26 @@
     @include transitions.transition-box-shadow;
 
     position: relative;
-    display: grid;
-    grid-template-columns: 1fr max-content;
-    align-items: center;
+    display: flex;
+    flex-direction: row;
     border: var(--border-width-default) solid var(--color-line-subtle);
     border-radius: var(--border-radius-medium);
     background-color: var(--color-surface-default);
     box-shadow: none;
     cursor: grab;
+    overflow: hidden;
 
     .content {
-        padding: var(--spacing-small);
+        // padding: var(--spacing-small);
+        flex: 1;
     }
 
     &:has(.handle) {
         cursor: pointer;
+    }
+
+    &:not(:has(.handle)) {
+        cursor: grab;
     }
 
     &:hover,
@@ -51,6 +56,13 @@
         box-shadow: var(--shadow-default);
         border-color: var(--color-line-mid);
     }
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    margin-left: var(--spacing-small);
+    margin-right: var(--spacing-small);
 }
 
 .handle {

@@ -5,7 +5,7 @@ import { DragDropProvider, type DragEndEvent } from '@dnd-kit/react';
 import { isSortable } from '@dnd-kit/react/sortable';
 import { forwardRef, useMemo, type ForwardedRef, type ReactNode } from 'react';
 
-import { OrderableItem } from './OrderableItem';
+import { OrderableItem, OrderableItemHandle, OrderableListItemAction } from './OrderableItem';
 import { useOrderedListItems } from './hooks/useOrderedListItems';
 import styles from './styles/orderable-list.module.scss';
 
@@ -68,7 +68,11 @@ const ForwardedRefOrderableListRoot = forwardRef<HTMLDivElement, OrderableListPr
 export const OrderableList: {
     Root: typeof ForwardedRefOrderableListRoot;
     Item: typeof OrderableItem;
+    ItemAction: typeof OrderableListItemAction;
+    ItemHandle: typeof OrderableItemHandle;
 } = {
     Root: ForwardedRefOrderableListRoot,
     Item: OrderableItem,
+    ItemAction: OrderableListItemAction,
+    ItemHandle: OrderableItemHandle,
 };
