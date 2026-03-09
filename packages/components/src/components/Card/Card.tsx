@@ -424,7 +424,7 @@ CardAction.displayName = 'Card.Action';
 
 const ForwardedRefCardAction = forwardRef<HTMLDivElement, CardActionProps>(CardAction);
 
-export type CardActionsButtonProps = {
+export type CardActionButtonProps = {
     'data-test-id'?: string;
     /**
      * Accessible label for the button.
@@ -437,14 +437,14 @@ export type CardActionsButtonProps = {
     children?: ReactNode;
 } & Omit<JSX.IntrinsicElements['button'], 'children' | 'ref'>;
 
-export const CardActionsButton = (
+export const CardActionButton = (
     {
         'data-test-id': dataTestId = 'fondue-card-actions-button',
         'aria-label': ariaLabel,
         onClick,
         children,
         ...rest
-    }: CardActionsButtonProps,
+    }: CardActionButtonProps,
     ref: ForwardedRef<HTMLButtonElement>,
 ) => {
     return (
@@ -461,7 +461,7 @@ export const CardActionsButton = (
         </button>
     );
 };
-CardActionsButton.displayName = 'Card.ActionsButton';
+CardActionButton.displayName = 'Card.ActionButton';
 
 export const Card = {
     Root: forwardRef<HTMLDivElement, CardRootProps>(CardRoot),
@@ -475,5 +475,5 @@ export const Card = {
     Title: forwardRef<HTMLDivElement, CardTitleProps>(CardTitle),
     Description: forwardRef<HTMLDivElement, CardDescriptionProps>(CardDescription),
     Action: ForwardedRefCardAction,
-    ActionsButton: forwardRef<HTMLButtonElement, CardActionsButtonProps>(CardActionsButton),
+    ActionButton: forwardRef<HTMLButtonElement, CardActionButtonProps>(CardActionButton),
 };

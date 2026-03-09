@@ -18,7 +18,7 @@ import { Badge, Dropdown } from '#/index';
 import {
     Card,
     CardAction,
-    CardActionsButton,
+    CardActionButton,
     CardBadges,
     CardBanner,
     type CardBannerFit,
@@ -53,7 +53,7 @@ const meta: Meta<PlaygroundArgs> = {
         'Card.Title': CardTitle,
         'Card.Description': CardDescription,
         'Card.Action': CardAction,
-        'Card.ActionsButton': CardActionsButton,
+        'Card.ActionButton': CardActionButton,
     },
     parameters: {
         status: {
@@ -70,6 +70,48 @@ const singleCardDecorators: Story['decorators'] = [
         </div>
     ),
 ];
+
+const DefaultExample = ({ bannerSize, bannerFit, ...args }: PlaygroundArgs) => {
+    const [selected, setSelected] = useState(false);
+
+    return (
+        <Card.Root {...args} selected={selected} onClick={() => setSelected((s) => !s)}>
+            <Card.Banner size={bannerSize}>
+                <Card.BannerImage
+                    src="https://picsum.photos/seed/card1/400/200"
+                    alt="Sample image"
+                    fit={bannerFit}
+                />
+            </Card.Banner>
+
+            <Card.ThumbnailIcon>
+                <IconFolder size={20} />
+            </Card.ThumbnailIcon>
+
+            <Card.Title>[Folder name that is long enough to be truncated]</Card.Title>
+            <Card.Description>No status · 36 assets</Card.Description>
+
+            <Card.Action>
+                <Card.ActionButton aria-label="Settings">
+                    <IconCog size={20} />
+                </Card.ActionButton>
+            </Card.Action>
+            <Card.Action>
+                <Dropdown.Root>
+                    <Dropdown.Trigger>
+                        <Card.ActionButton aria-label="More actions">
+                            <IconDotsVertical size={20} />
+                        </Card.ActionButton>
+                    </Dropdown.Trigger>
+                    <Dropdown.Content>
+                        <Dropdown.Item onSelect={() => {}}>Edit</Dropdown.Item>
+                        <Dropdown.Item onSelect={() => {}}>Delete</Dropdown.Item>
+                    </Dropdown.Content>
+                </Dropdown.Root>
+            </Card.Action>
+        </Card.Root>
+    );
+};
 
 export const Default: Story = {
     decorators: singleCardDecorators,
@@ -89,208 +131,206 @@ export const Default: Story = {
         bannerSize: 'large',
         bannerFit: 'cover',
     },
-    render: ({ bannerSize, bannerFit, ...args }) => {
-        const [selected, setSelected] = useState(false);
+    render: (args) => <DefaultExample {...args} />,
+};
 
-        return (
-            <Card.Root {...args} selected={selected} onClick={() => setSelected((s) => !s)}>
-                <Card.Banner size={bannerSize}>
-                    <Card.BannerImage
-                        src="https://picsum.photos/seed/card1/400/200"
-                        alt="Sample image"
-                        fit={bannerFit}
-                    />
-                </Card.Banner>
+const AssetCardExample = () => {
+    const [selected, setSelected] = useState(true);
 
-                <Card.ThumbnailIcon>
-                    <IconFolder size={20} />
-                </Card.ThumbnailIcon>
+    return (
+        <Card.Root selected={selected} onClick={() => setSelected((s) => !s)}>
+            <Card.Banner>
+                <Card.BannerImage
+                    src="https://picsum.photos/seed/asset/300/300"
+                    alt="Asset preview"
+                    fit="contain"
+                />
+            </Card.Banner>
 
-                <Card.Title>[Folder name that is long enough to be truncated]</Card.Title>
-                <Card.Description>No status · 36 assets</Card.Description>
+            <Card.Title>[Asset name]</Card.Title>
+            <Card.Description>No status · 36 assets</Card.Description>
+            <Card.Badges>
+                <Badge>Badge</Badge>
+                <Badge>Badge</Badge>
+            </Card.Badges>
 
-                <Card.Action>
-                    <Card.ActionsButton aria-label="Settings">
-                        <IconCog size={20} />
-                    </Card.ActionsButton>
-                </Card.Action>
-                <Card.Action>
-                    <Dropdown.Root>
-                        <Dropdown.Trigger>
-                            <Card.ActionsButton aria-label="More actions">
-                                <IconDotsVertical size={20} />
-                            </Card.ActionsButton>
-                        </Dropdown.Trigger>
-                        <Dropdown.Content>
-                            <Dropdown.Item onSelect={() => {}}>Edit</Dropdown.Item>
-                            <Dropdown.Item onSelect={() => {}}>Delete</Dropdown.Item>
-                        </Dropdown.Content>
-                    </Dropdown.Root>
-                </Card.Action>
-            </Card.Root>
-        );
-    },
+            <Card.Action>
+                <Card.ActionButton aria-label="Settings">
+                    <IconCog size={20} />
+                </Card.ActionButton>
+            </Card.Action>
+            <Card.Action>
+                <Card.ActionButton aria-label="More actions">
+                    <IconDotsVertical size={20} />
+                </Card.ActionButton>
+            </Card.Action>
+        </Card.Root>
+    );
 };
 
 export const AssetCard: Story = {
     decorators: singleCardDecorators,
-    render: () => {
-        const [selected, setSelected] = useState(true);
+    render: () => <AssetCardExample />,
+};
 
-        return (
-            <Card.Root selected={selected} onClick={() => setSelected((s) => !s)}>
-                <Card.Banner>
-                    <Card.BannerImage
-                        src="https://picsum.photos/seed/asset/300/300"
-                        alt="Asset preview"
-                        fit="contain"
-                    />
-                </Card.Banner>
+const CollectionCardExample = () => {
+    const [selected, setSelected] = useState(false);
 
-                <Card.Title>[Asset name]</Card.Title>
-                <Card.Description>No status · 36 assets</Card.Description>
-                <Card.Badges>
-                    <Badge>Badge</Badge>
-                    <Badge>Badge</Badge>
-                </Card.Badges>
+    return (
+        <Card.Root selected={selected} onClick={() => setSelected((s) => !s)}>
+            <Card.Banner size="small">
+                <Card.BannerImage src="https://picsum.photos/seed/col1/300/200" alt="Image 1" />
+                <Card.BannerImage src="https://picsum.photos/seed/col2/300/200" alt="Image 2" />
+            </Card.Banner>
 
-                <Card.Action>
-                    <Card.ActionsButton aria-label="Settings">
-                        <IconCog size={20} />
-                    </Card.ActionsButton>
-                </Card.Action>
-                <Card.Action>
-                    <Card.ActionsButton aria-label="More actions">
-                        <IconDotsVertical size={20} />
-                    </Card.ActionsButton>
-                </Card.Action>
-            </Card.Root>
-        );
-    },
+            <Card.Title>[Collection name]</Card.Title>
+            <Card.Description>No status · 36 assets</Card.Description>
+
+            <Card.Action>
+                <Card.ActionButton aria-label="Settings">
+                    <IconCog size={20} />
+                </Card.ActionButton>
+            </Card.Action>
+            <Card.Action>
+                <Card.ActionButton aria-label="More actions">
+                    <IconDotsVertical size={20} />
+                </Card.ActionButton>
+            </Card.Action>
+        </Card.Root>
+    );
 };
 
 export const CollectionCard: Story = {
     decorators: singleCardDecorators,
-    render: () => {
-        const [selected, setSelected] = useState(false);
+    render: () => <CollectionCardExample />,
+};
 
-        return (
-            <Card.Root selected={selected} onClick={() => setSelected((s) => !s)}>
-                <Card.Banner size="small">
-                    <Card.BannerImage src="https://picsum.photos/seed/col1/300/200" alt="Image 1" />
-                    <Card.BannerImage src="https://picsum.photos/seed/col2/300/200" alt="Image 2" />
-                </Card.Banner>
+const EmptyCollectionCardExample = () => {
+    const [selected, setSelected] = useState(false);
 
-                <Card.Title>[Collection name]</Card.Title>
-                <Card.Description>No status · 36 assets</Card.Description>
+    return (
+        <Card.Root selected={selected} onClick={() => setSelected((s) => !s)}>
+            <Card.Banner size="small">
+                <Card.BannerIcon>
+                    <IconImageStack size={32} />
+                </Card.BannerIcon>
+            </Card.Banner>
 
-                <Card.Action>
-                    <Card.ActionsButton aria-label="Settings">
-                        <IconCog size={20} />
-                    </Card.ActionsButton>
-                </Card.Action>
-                <Card.Action>
-                    <Card.ActionsButton aria-label="More actions">
-                        <IconDotsVertical size={20} />
-                    </Card.ActionsButton>
-                </Card.Action>
-            </Card.Root>
-        );
-    },
+            <Card.Title>[Collection name]</Card.Title>
+            <Card.Description>No status · 36 assets</Card.Description>
+
+            <Card.Action>
+                <Card.ActionButton aria-label="Settings">
+                    <IconCog size={20} />
+                </Card.ActionButton>
+            </Card.Action>
+            <Card.Action>
+                <Card.ActionButton aria-label="More actions">
+                    <IconDotsVertical size={20} />
+                </Card.ActionButton>
+            </Card.Action>
+        </Card.Root>
+    );
 };
 
 export const EmptyCollectionCard: Story = {
     decorators: singleCardDecorators,
-    render: () => {
-        const [selected, setSelected] = useState(false);
+    render: () => <EmptyCollectionCardExample />,
+};
 
-        return (
-            <Card.Root selected={selected} onClick={() => setSelected((s) => !s)}>
-                <Card.Banner size="small">
-                    <Card.BannerIcon>
-                        <IconImageStack size={32} />
-                    </Card.BannerIcon>
-                </Card.Banner>
+const FolderCardExample = () => {
+    const [selected, setSelected] = useState(false);
 
-                <Card.Title>[Collection name]</Card.Title>
-                <Card.Description>No status · 36 assets</Card.Description>
+    return (
+        <Card.Root selected={selected} onClick={() => setSelected((s) => !s)}>
+            <Card.Banner>
+                <Card.BannerIcon>
+                    <IconHome size={32} />
+                </Card.BannerIcon>
+            </Card.Banner>
+            <Card.Badges>
+                <Badge emphasis="strong">Installed</Badge>
+            </Card.Badges>
 
-                <Card.Action>
-                    <Card.ActionsButton aria-label="Settings">
-                        <IconCog size={20} />
-                    </Card.ActionsButton>
-                </Card.Action>
-                <Card.Action>
-                    <Card.ActionsButton aria-label="More actions">
-                        <IconDotsVertical size={20} />
-                    </Card.ActionsButton>
-                </Card.Action>
-            </Card.Root>
-        );
-    },
+            <Card.ThumbnailIcon>
+                <IconFolder size={20} />
+            </Card.ThumbnailIcon>
+
+            <Card.Title>[Folder name]</Card.Title>
+            <Card.Description>No status · 36 assets</Card.Description>
+
+            <Card.Action>
+                <Card.ActionButton aria-label="More actions">
+                    <IconDotsVertical size={20} />
+                </Card.ActionButton>
+            </Card.Action>
+        </Card.Root>
+    );
 };
 
 export const FolderCard: Story = {
     decorators: singleCardDecorators,
-    render: () => {
-        const [selected, setSelected] = useState(false);
+    render: () => <FolderCardExample />,
+};
 
-        return (
-            <Card.Root selected={selected} onClick={() => setSelected((s) => !s)}>
-                <Card.Banner>
-                    <Card.BannerIcon>
-                        <IconHome size={32} />
-                    </Card.BannerIcon>
-                </Card.Banner>
-                <Card.Badges>
-                    <Badge emphasis="strong">Installed</Badge>
-                </Card.Badges>
+const BrandCardExample = () => {
+    const [selected, setSelected] = useState(false);
 
-                <Card.ThumbnailIcon>
-                    <IconFolder size={20} />
-                </Card.ThumbnailIcon>
+    return (
+        <Card.Root selected={selected} onClick={() => setSelected((s) => !s)}>
+            <Card.Banner>
+                <Card.BannerImage src="https://picsum.photos/seed/card4/400/200" alt="Banner" />
+            </Card.Banner>
 
-                <Card.Title>[Folder name]</Card.Title>
-                <Card.Description>No status · 36 assets</Card.Description>
+            <Card.ThumbnailImage src="https://picsum.photos/seed/logo/80/80" alt="Company logo" />
 
-                <Card.Action>
-                    <Card.ActionsButton aria-label="More actions">
-                        <IconDotsVertical size={20} />
-                    </Card.ActionsButton>
-                </Card.Action>
-            </Card.Root>
-        );
-    },
+            <Card.Title>Card with Logo</Card.Title>
+
+            <Card.Action>
+                <Card.ActionButton aria-label="Favorite">
+                    <IconStar size={20} />
+                </Card.ActionButton>
+            </Card.Action>
+            <Card.Action>
+                <Card.ActionButton aria-label="More actions">
+                    <IconDotsVertical size={20} />
+                </Card.ActionButton>
+            </Card.Action>
+        </Card.Root>
+    );
 };
 
 export const BrandCard: Story = {
     decorators: singleCardDecorators,
-    render: () => {
-        const [selected, setSelected] = useState(false);
+    render: () => <BrandCardExample />,
+};
 
-        return (
-            <Card.Root selected={selected} onClick={() => setSelected((s) => !s)}>
-                <Card.Banner>
-                    <Card.BannerImage src="https://picsum.photos/seed/card4/400/200" alt="Banner" />
-                </Card.Banner>
+const MultipleBannerImagesExample = ({ bannerSize }: Pick<PlaygroundArgs, 'bannerSize'>) => {
+    const [selected, setSelected] = useState(false);
 
-                <Card.ThumbnailImage src="https://picsum.photos/seed/logo/80/80" alt="Company logo" />
+    return (
+        <Card.Root selected={selected} onClick={() => setSelected((s) => !s)}>
+            <Card.Banner size={bannerSize}>
+                <Card.BannerImage src="https://picsum.photos/seed/img1/200/200" alt="Image 1" />
+                <Card.BannerImage src="https://picsum.photos/seed/img2/200/200" alt="Image 2" />
+                <Card.BannerImage src="https://picsum.photos/seed/img3/200/200" alt="Image 3" />
+            </Card.Banner>
 
-                <Card.Title>Card with Logo</Card.Title>
+            <Card.Title>Three Images</Card.Title>
+            <Card.Description>No status · 36 assets</Card.Description>
 
-                <Card.Action>
-                    <Card.ActionsButton aria-label="Favorite">
-                        <IconStar size={20} />
-                    </Card.ActionsButton>
-                </Card.Action>
-                <Card.Action>
-                    <Card.ActionsButton aria-label="More actions">
-                        <IconDotsVertical size={20} />
-                    </Card.ActionsButton>
-                </Card.Action>
-            </Card.Root>
-        );
-    },
+            <Card.Action>
+                <Card.ActionButton aria-label="Favorite">
+                    <IconStar size={20} />
+                </Card.ActionButton>
+            </Card.Action>
+            <Card.Action>
+                <Card.ActionButton aria-label="More actions">
+                    <IconDotsVertical size={20} />
+                </Card.ActionButton>
+            </Card.Action>
+        </Card.Root>
+    );
 };
 
 export const MultipleBannerImages: Story = {
@@ -305,61 +345,36 @@ export const MultipleBannerImages: Story = {
         },
     },
     decorators: singleCardDecorators,
-    render: ({ bannerSize }) => {
-        const [selected, setSelected] = useState(false);
+    render: (args) => <MultipleBannerImagesExample {...args} />,
+};
 
-        return (
-            <Card.Root selected={selected} onClick={() => setSelected((s) => !s)}>
-                <Card.Banner size={bannerSize}>
-                    <Card.BannerImage src="https://picsum.photos/seed/img1/200/200" alt="Image 1" />
-                    <Card.BannerImage src="https://picsum.photos/seed/img2/200/200" alt="Image 2" />
-                    <Card.BannerImage src="https://picsum.photos/seed/img3/200/200" alt="Image 3" />
-                </Card.Banner>
+const WithoutBannerExample = () => {
+    const [selected, setSelected] = useState(false);
 
-                <Card.Title>Three Images</Card.Title>
-                <Card.Description>No status · 36 assets</Card.Description>
+    return (
+        <Card.Root selected={selected} onClick={() => setSelected((s) => !s)}>
+            <Card.ThumbnailIcon>
+                <IconLightning size={20} />
+            </Card.ThumbnailIcon>
+            <Card.Badges>
+                <Badge emphasis="strong">Installed</Badge>
+            </Card.Badges>
 
-                <Card.Action>
-                    <Card.ActionsButton aria-label="Favorite">
-                        <IconStar size={20} />
-                    </Card.ActionsButton>
-                </Card.Action>
-                <Card.Action>
-                    <Card.ActionsButton aria-label="More actions">
-                        <IconDotsVertical size={20} />
-                    </Card.ActionsButton>
-                </Card.Action>
-            </Card.Root>
-        );
-    },
+            <Card.Title>[App name]</Card.Title>
+            <Card.Description>No status · 36 assets</Card.Description>
+
+            <Card.Action>
+                <Card.ActionButton aria-label="More actions">
+                    <IconDotsVertical size={20} />
+                </Card.ActionButton>
+            </Card.Action>
+        </Card.Root>
+    );
 };
 
 export const WithoutBanner: Story = {
     decorators: singleCardDecorators,
-
-    render: () => {
-        const [selected, setSelected] = useState(false);
-
-        return (
-            <Card.Root selected={selected} onClick={() => setSelected((s) => !s)}>
-                <Card.ThumbnailIcon>
-                    <IconLightning size={20} />
-                </Card.ThumbnailIcon>
-                <Card.Badges>
-                    <Badge emphasis="strong">Installed</Badge>
-                </Card.Badges>
-
-                <Card.Title>[App name]</Card.Title>
-                <Card.Description>No status · 36 assets</Card.Description>
-
-                <Card.Action>
-                    <Card.ActionsButton aria-label="More actions">
-                        <IconDotsVertical size={20} />
-                    </Card.ActionsButton>
-                </Card.Action>
-            </Card.Root>
-        );
-    },
+    render: () => <WithoutBannerExample />,
 };
 
 const gridCards = [
@@ -430,19 +445,19 @@ const ResponsiveGridExample = () => {
                         <Card.Description>No status · 36 assets</Card.Description>
 
                         <Card.Action>
-                            <Card.ActionsButton aria-label="Favorite">
+                            <Card.ActionButton aria-label="Favorite">
                                 <IconStar size={20} />
-                            </Card.ActionsButton>
+                            </Card.ActionButton>
                         </Card.Action>
                         <Card.Action>
-                            <Card.ActionsButton aria-label="Settings">
+                            <Card.ActionButton aria-label="Settings">
                                 <IconCog size={20} />
-                            </Card.ActionsButton>
+                            </Card.ActionButton>
                         </Card.Action>
                         <Card.Action>
-                            <Card.ActionsButton aria-label="More actions">
+                            <Card.ActionButton aria-label="More actions">
                                 <IconDotsVertical size={20} />
-                            </Card.ActionsButton>
+                            </Card.ActionButton>
                         </Card.Action>
                     </Card.Root>
                 );
@@ -472,57 +487,59 @@ export const NonInteractive: Story = {
                 <Card.Description>No status · 36 assets</Card.Description>
 
                 <Card.Action>
-                    <Card.ActionsButton aria-label="More actions">
+                    <Card.ActionButton aria-label="More actions">
                         <IconDotsVertical size={20} />
-                    </Card.ActionsButton>
+                    </Card.ActionButton>
                 </Card.Action>
             </Card.Root>
         );
     },
 };
 
+const FullExampleComponent = () => {
+    const [selected, setSelected] = useState(false);
+
+    return (
+        <Card.Root selected={selected} onClick={() => setSelected((s) => !s)}>
+            <Card.Banner>
+                <Card.BannerImage src="https://picsum.photos/seed/full/400/300" alt="Full example" />
+            </Card.Banner>
+            <Card.Badges>
+                <Badge>New</Badge>
+            </Card.Badges>
+
+            <Card.ThumbnailImage src="https://picsum.photos/seed/fulllogo/80/80" alt="Logo" />
+
+            <Card.Title>Complete Card Example</Card.Title>
+            <Card.Description>No status · 36 assets</Card.Description>
+
+            <Card.Action>
+                <Card.ActionButton aria-label="Settings">
+                    <IconCog size={20} />
+                </Card.ActionButton>
+            </Card.Action>
+            <Card.Action>
+                <Dropdown.Root>
+                    <Dropdown.Trigger>
+                        <Card.ActionButton aria-label="More actions">
+                            <IconDotsVertical size={20} />
+                        </Card.ActionButton>
+                    </Dropdown.Trigger>
+                    <Dropdown.Content>
+                        <Dropdown.Item onSelect={() => {}}>Edit</Dropdown.Item>
+                        <Dropdown.Item onSelect={() => {}}>Duplicate</Dropdown.Item>
+                        <hr />
+                        <Dropdown.Item onSelect={() => {}}>
+                            <span className="tw-text-negative-default">Delete</span>
+                        </Dropdown.Item>
+                    </Dropdown.Content>
+                </Dropdown.Root>
+            </Card.Action>
+        </Card.Root>
+    );
+};
+
 export const FullExample: Story = {
     decorators: singleCardDecorators,
-    render: () => {
-        const [selected, setSelected] = useState(false);
-
-        return (
-            <Card.Root selected={selected} onClick={() => setSelected((s) => !s)}>
-                <Card.Banner>
-                    <Card.BannerImage src="https://picsum.photos/seed/full/400/300" alt="Full example" />
-                </Card.Banner>
-                <Card.Badges>
-                    <Badge>New</Badge>
-                </Card.Badges>
-
-                <Card.ThumbnailImage src="https://picsum.photos/seed/fulllogo/80/80" alt="Logo" />
-
-                <Card.Title>Complete Card Example</Card.Title>
-                <Card.Description>No status · 36 assets</Card.Description>
-
-                <Card.Action>
-                    <Card.ActionsButton aria-label="Settings">
-                        <IconCog size={20} />
-                    </Card.ActionsButton>
-                </Card.Action>
-                <Card.Action>
-                    <Dropdown.Root>
-                        <Dropdown.Trigger>
-                            <Card.ActionsButton aria-label="More actions">
-                                <IconDotsVertical size={20} />
-                            </Card.ActionsButton>
-                        </Dropdown.Trigger>
-                        <Dropdown.Content>
-                            <Dropdown.Item onSelect={() => {}}>Edit</Dropdown.Item>
-                            <Dropdown.Item onSelect={() => {}}>Duplicate</Dropdown.Item>
-                            <hr />
-                            <Dropdown.Item onSelect={() => {}}>
-                                <span className="tw-text-negative-default">Delete</span>
-                            </Dropdown.Item>
-                        </Dropdown.Content>
-                    </Dropdown.Root>
-                </Card.Action>
-            </Card.Root>
-        );
-    },
+    render: () => <FullExampleComponent />,
 };
