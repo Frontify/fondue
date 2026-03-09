@@ -1,60 +1,34 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { AxisModifier } from '@dnd-kit/abstract/modifiers';
 import { DragDropProvider, type DragEndEvent } from '@dnd-kit/react';
-import { isSortable, useSortable } from '@dnd-kit/react/sortable';
-import { IconGrabHandle } from '@frontify/fondue-icons';
-import { forwardRef, useMemo, useRef, useState, type ForwardedRef, type ReactNode } from 'react';
+import { isSortable } from '@dnd-kit/react/sortable';
+import { forwardRef, useMemo, type ForwardedRef, type ReactNode } from 'react';
 
-import { getListItems } from './hooks/useItemOrder';
+import { OrderableItem } from './OrderableItem';
+import { useOrderedListItems } from './hooks/useOrderedListItems';
 import styles from './styles/orderable-list.module.scss';
 
-export type OrderableListItemProps = { children?: ReactNode; id: string };
-export const OrderableListItem = () => {
-    return null;
+type OrderableListItemSpacing = 'tight' | 'compact' | 'comfortable';
+type OrderableListDirection = 'vertical' | 'horizontal';
+type OrderableListProps = {
+    children: ReactNode;
+    spacing?: OrderableListItemSpacing;
+    direction?: OrderableListDirection;
+    order: string[];
+    onOrderChange?: (order: string[]) => void;
 };
 
-export const SortableItem = forwardRef<HTMLDivElement, OrderableListItemProps & { index: number }>(
-    ({ children, id, index }, ref) => {
-        const internalRef = useRef<HTMLDivElement | null>(null);
-
-        const mergedRef = (node: HTMLDivElement | null) => {
-            internalRef.current = node;
-            if (typeof ref === 'function') {
-                ref(node);
-            } else if (ref !== null) {
-                ref.current = node;
-            }
-        };
-
-        const { isDragging, isDropping, handleRef } = useSortable({ id, index, element: internalRef });
-
-        return (
-            <div
-                className={styles.item}
-                data-dragging={isDragging}
-                data-dropping={isDropping}
-                data-test-id="fondue-orderable-list-item"
-                ref={mergedRef}
-            >
-                <div className={styles.content}>{children}</div>
-                <button type="button" aria-label="drag" className={styles.handle} ref={handleRef}>
-                    <IconGrabHandle size={16} />
-                </button>
-            </div>
-        );
-    },
-);
-SortableItem.displayName = 'SortableItem';
-
-type OrderableListItemSpacing = 'tight' | 'compact' | 'comfortable';
-type OrderableListProps = { children?: ReactNode; spacing?: OrderableListItemSpacing };
-
 export const OrderableListRoot = (
-    { children, spacing = 'comfortable' }: OrderableListProps,
+    { children, spacing = 'comfortable', direction = 'vertical', order = [], onOrderChange }: OrderableListProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
-    const itemsWithIds = useMemo(() => getListItems(children), [children]);
-    const [items, setItems] = useState<string[]>(itemsWithIds.map((item) => item.id));
+    const orderedItems = useOrderedListItems(children, order);
+
+    const axisModifier = useMemo(
+        () => AxisModifier.configure({ axis: direction === 'vertical' ? 'x' : 'y', value: 0 }),
+        [direction],
+    );
 
     const handleDragEnd: DragEndEvent = (event) => {
         if (event.canceled) {
@@ -64,24 +38,26 @@ export const OrderableListRoot = (
         if (isSortable(source)) {
             const { initialIndex, index } = source;
             if (initialIndex !== index) {
-                const newItems = [...items];
+                const newItems = [...order];
                 const [removed] = newItems.splice(initialIndex, 1);
                 if (removed) {
                     newItems.splice(index, 0, removed);
-                    setItems(newItems);
+                    onOrderChange?.(newItems);
                 }
             }
         }
     };
 
     return (
-        <DragDropProvider onDragEnd={handleDragEnd}>
-            <div className={styles.root} data-spacing={spacing} data-test-id="fondue-orderable-list" ref={ref}>
-                {itemsWithIds.map((item, index) => (
-                    <SortableItem key={item.id} index={index} {...item}>
-                        {item.children}
-                    </SortableItem>
-                ))}
+        <DragDropProvider onDragEnd={handleDragEnd} modifiers={[axisModifier]}>
+            <div
+                className={styles.root}
+                data-spacing={spacing}
+                data-direction={direction}
+                data-test-id="fondue-orderable-list"
+                ref={ref}
+            >
+                {orderedItems}
             </div>
         </DragDropProvider>
     );
@@ -91,8 +67,8 @@ const ForwardedRefOrderableListRoot = forwardRef<HTMLDivElement, OrderableListPr
 
 export const OrderableList: {
     Root: typeof ForwardedRefOrderableListRoot;
-    Item: typeof OrderableListItem;
+    Item: typeof OrderableItem;
 } = {
     Root: ForwardedRefOrderableListRoot,
-    Item: OrderableListItem,
+    Item: OrderableItem,
 };

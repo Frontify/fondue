@@ -7,6 +7,10 @@
     display: flex;
     flex-direction: column;
 
+    &[data-direction='horizontal'] {
+        flex-direction: row;
+    }
+
     &[data-spacing='tight'] {
         gap: var(--spacing-xx-small);
     }
@@ -23,12 +27,21 @@
 
     position: relative;
     display: grid;
-    grid-template-columns: 1fr sizeToken.get(7);
+    grid-template-columns: 1fr max-content;
     align-items: center;
     border: var(--border-width-default) solid var(--color-line-subtle);
     border-radius: var(--border-radius-medium);
     background-color: var(--color-surface-default);
     box-shadow: none;
+    cursor: grab;
+
+    .content {
+        padding: var(--spacing-small);
+    }
+
+    &:has(.handle) {
+        cursor: pointer;
+    }
 
     &:hover,
     &[data-dropping='true'] {
@@ -38,11 +51,6 @@
         box-shadow: var(--shadow-default);
         border-color: var(--color-line-mid);
     }
-
-    .content {
-        padding: var(--spacing-small);
-        cursor: pointer;
-    }
 }
 
 .handle {
@@ -50,11 +58,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    position: absolute;
+    position: relative;
+    margin: var(--spacing-xx-small);
+    align-self: stretch;
     box-sizing: border-box;
-    right: var(--spacing-xx-small);
-    top: var(--spacing-xx-small);
-    bottom: var(--spacing-xx-small);
     width: sizeToken.get(5);
     border-radius: calc(var(--border-radius-medium) - var(--border-width-default));
     cursor: grab;

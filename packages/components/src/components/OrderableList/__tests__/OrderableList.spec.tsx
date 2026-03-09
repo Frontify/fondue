@@ -10,7 +10,9 @@ const ORDERABLE_LIST_TEXT = 'sample orderable-list';
 
 describe('OrderableList Component', () => {
     it('should render foo text correctly', () => {
-        const { getByTestId } = render(<OrderableList data-test-id={ORDERABLE_LIST_TEST_ID}>{ORDERABLE_LIST_TEXT}</OrderableList>);
+        const { getByTestId } = render(
+            <OrderableList.Root data-test-id={ORDERABLE_LIST_TEST_ID}>{ORDERABLE_LIST_TEXT}</OrderableList.Root>,
+        );
         const component = getByTestId(ORDERABLE_LIST_TEST_ID);
         expect(component).toContain(ORDERABLE_LIST_TEXT);
     });
