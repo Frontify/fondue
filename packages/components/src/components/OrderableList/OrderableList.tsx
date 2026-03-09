@@ -7,7 +7,10 @@ import { forwardRef, useMemo, type ForwardedRef, type ReactNode } from 'react';
 
 import { OrderableListItem } from './OrderableListItem';
 import { OrderableListItemAction } from './OrderableListItemAction';
+import { OrderableListItemDecorator } from './OrderableListItemDecorator';
+import { OrderableListItemDescription } from './OrderableListItemDescription';
 import { OrderableItemCustomHandle, OrderableItemDragHandle } from './OrderableListItemDragHandle';
+import { OrderableListItemTitle } from './OrderableListItemTitle';
 import { useOrderedListItems } from './hooks/useOrderedListItems';
 import styles from './styles/orderable-list.module.scss';
 
@@ -65,7 +68,7 @@ export const OrderableListRoot = (
     );
 };
 OrderableListRoot.displayName = 'OrderableList';
-const ForwardedRefOrderableListRoot = forwardRef<HTMLDivElement, OrderableListProps>(OrderableListRoot);
+const ForwardedRefOrderableListRoot = forwardRef<HTMLUListElement, OrderableListProps>(OrderableListRoot);
 
 export const OrderableList: {
     Root: typeof ForwardedRefOrderableListRoot;
@@ -73,10 +76,16 @@ export const OrderableList: {
     ItemAction: typeof OrderableListItemAction;
     CustomHandle: typeof OrderableItemCustomHandle;
     DragHandle: typeof OrderableItemDragHandle;
+    ItemTitle: typeof OrderableListItemTitle;
+    ItemDescription: typeof OrderableListItemDescription;
+    ItemDecorator: typeof OrderableListItemDecorator;
 } = {
     Root: ForwardedRefOrderableListRoot,
     Item: OrderableListItem,
     ItemAction: OrderableListItemAction,
     CustomHandle: OrderableItemCustomHandle,
     DragHandle: OrderableItemDragHandle,
+    ItemTitle: OrderableListItemTitle,
+    ItemDescription: OrderableListItemDescription,
+    ItemDecorator: OrderableListItemDecorator,
 };

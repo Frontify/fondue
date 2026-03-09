@@ -6,19 +6,19 @@ import { forwardRef, useRef, type ReactNode, useMemo } from 'react';
 import { OrderableItemContextProvider } from './hooks/useOrderedListItemContext';
 import styles from './styles/orderable-list.module.scss';
 
-export type OrderableItemPadding = 'none' | 'small';
-export type OrderableItemProps = {
+export type OrderableListItemPadding = 'none' | 'small';
+export type OrderableListItemProps = {
     children?: ReactNode;
     id: string;
     disabled?: boolean;
-    padding?: OrderableItemPadding;
+    padding?: OrderableListItemPadding;
     selected?: boolean;
     onSelect?: (isSelected: boolean) => void;
 };
-export const OrderableListItem = forwardRef<HTMLLIElement, OrderableItemProps>((_props, _ref) => null);
+export const OrderableListItem = forwardRef<HTMLLIElement, OrderableListItemProps>((_props, _ref) => null);
 OrderableListItem.displayName = 'OrderableListItem';
 
-export const OrderableListItemComponent = forwardRef<HTMLLIElement, OrderableItemProps & { index: number }>(
+export const OrderableListItemComponent = forwardRef<HTMLLIElement, OrderableListItemProps & { index: number }>(
     ({ children, id, index, disabled, padding = 'small', selected, onSelect }, ref) => {
         const internalRef = useRef<HTMLLIElement | null>(null);
 

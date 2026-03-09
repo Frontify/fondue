@@ -2,13 +2,9 @@
 
 import { Children, isValidElement, useMemo, type ReactElement, type ReactNode, type RefObject } from 'react';
 
-import {
-    OrderableItem,
-    OrderableItemComponent,
-    OrderableItemContent,
-    type OrderableItemProps,
-} from '../OrderableListItem';
+import { OrderableListItem, OrderableListItemComponent, type OrderableListItemProps } from '../OrderableListItem';
 import { OrderableListItemAction, type OrderableListItemActionProps } from '../OrderableListItemAction';
+import { OrderableListItemContent } from '../OrderableListItemContent';
 import { OrderableItemDragHandle } from '../OrderableListItemDragHandle';
 import styles from '../styles/orderable-list.module.scss';
 
@@ -34,13 +30,13 @@ const getItemContentByType = (
     return { dragHandle, actions, content };
 };
 
-type OrderableItemElement = ReactElement<OrderableItemProps> & {
-    ref: RefObject<HTMLDivElement> | null;
+type OrderableListItemElement = ReactElement<OrderableListItemProps> & {
+    ref: RefObject<HTMLLIElement> | null;
 };
 type ListItems = Record<string, ListItem>;
 type ListItem = {
     id: string;
-    ref: RefObject<HTMLDivElement> | null;
+    ref: RefObject<HTMLLIElement> | null;
     children: ReactNode;
     actions: ReactNode[];
     dragHandle: ReactNode;
@@ -49,8 +45,8 @@ type ListItem = {
 const getListItems = (children: ReactNode): ListItems => {
     const items: ListItems = {};
     Children.forEach(children, (child) => {
-        if (isValidElement<OrderableItemProps>(child) && child.type === OrderableItem) {
-            const typedChild = child as OrderableItemElement;
+        if (isValidElement<OrderableListItemProps>(child) && child.type === OrderableListItem) {
+            const typedChild = child as OrderableListItemElement;
             const { actions, content, dragHandle } = getItemContentByType(typedChild.props.children);
             const itemId = typedChild.props.id;
             items[itemId] = {
@@ -79,10 +75,10 @@ export const useOrderedListItems = (children: ReactNode, order: string[]): React
     );
 
     return sortedItems.map(({ id, children, actions, dragHandle, ...props }, index) => (
-        <OrderableItemComponent key={id} index={index} id={id} {...props}>
-            <OrderableItemContent>{children}</OrderableItemContent>
+        <OrderableListItemComponent key={id} index={index} id={id} {...props}>
+            <OrderableListItemContent>{children}</OrderableListItemContent>
             {actions.length > 0 && <div className={styles.actions}>{actions}</div>}
             {(actions.length > 0 || Boolean(dragHandle)) && <OrderableItemDragHandle />}
-        </OrderableItemComponent>
+        </OrderableListItemComponent>
     ));
 };

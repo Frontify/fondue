@@ -73,6 +73,32 @@
 
 .content {
     flex: 1;
+    display: grid;
+    grid-template-columns: auto 1fr;
+
+    .decorator {
+        grid-column: 1;
+        grid-row: 1 / 3;
+        align-self: center;
+        margin-right: var(--spacing-small);
+    }
+
+    .title {
+        grid-column: 2;
+        font-size: var(--typography-font-size-small);
+        font-weight: var(--typography-font-weight-medium);
+        line-height: var(--typography-line-height-tight);
+        color: var(--color-primary-default);
+        align-self: end;
+    }
+    .description {
+        grid-column: 2;
+        font-size: var(--typography-font-size-small);
+        font-weight: var(--typography-font-weight-regular);
+        line-height: var(--typography-line-height-tight);
+        color: var(--color-primary-default);
+        align-self: start;
+    }
 }
 
 .actions {
