@@ -2,6 +2,7 @@
 
 import { useSortable } from '@dnd-kit/react/sortable';
 import { IconGrabHandle } from '@frontify/fondue-icons';
+import { Slot } from '@radix-ui/react-slot';
 import { createContext, forwardRef, useRef, type ReactNode, useMemo, useContext } from 'react';
 
 import styles from './styles/orderable-list.module.scss';
@@ -19,8 +20,8 @@ OrderableItemContext.displayName = 'OrderableItemContext';
 
 export const OrderableItemComponent = forwardRef<
     HTMLDivElement,
-    OrderableItemProps & { index: number; showDragHandle?: boolean; actions: ReactNode[] }
->(({ children, id, index, disabled, showDragHandle, actions }, ref) => {
+    OrderableItemProps & { index: number; hasDragHandle: boolean; actions: ReactNode[] }
+>(({ children, id, index, disabled, actions, hasDragHandle }, ref) => {
     const internalRef = useRef<HTMLDivElement | null>(null);
 
     const mergedRef = (node: HTMLDivElement | null) => {
@@ -47,11 +48,7 @@ export const OrderableItemComponent = forwardRef<
             >
                 <div className={styles.content}>{children}</div>
                 {actions.length > 0 && <div className={styles.actions}>{actions}</div>}
-                {showDragHandle && (
-                    <button type="button" aria-label="drag" className={styles.handle} ref={handleRef}>
-                        <IconGrabHandle size={16} />
-                    </button>
-                )}
+                {(hasDragHandle || actions.length > 0) && <OrderableItemDragHandle />}
             </div>
         </OrderableItemContext.Provider>
     );
@@ -68,11 +65,21 @@ export const OrderableListItemAction = forwardRef<HTMLDivElement, OrderableListI
 });
 OrderableListItemAction.displayName = 'OrderableListItemAction';
 
-export const OrderableItemHandle = ({ children }: { children: ReactNode }) => {
+export const OrderableItemDragHandle = () => {
     const { dragHandleRef } = useContext(OrderableItemContext);
     return (
-        <div className={styles.dragHandle} ref={dragHandleRef}>
+        <button type="button" aria-label="drag" className={`${styles.handle} ${styles.dragHandle}`} ref={dragHandleRef}>
+            <IconGrabHandle size={16} />
+        </button>
+    );
+};
+
+export const OrderableItemCustomHandle = ({ children, asChild }: { children: ReactNode; asChild?: boolean }) => {
+    const { dragHandleRef } = useContext(OrderableItemContext);
+    const Component = asChild ? Slot : 'div';
+    return (
+        <Component className={styles.handle} ref={dragHandleRef}>
             {children}
-        </div>
+        </Component>
     );
 };

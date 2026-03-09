@@ -65,7 +65,7 @@
     margin-right: var(--spacing-small);
 }
 
-.handle {
+.dragHandle {
     @include focusStyle.focus-outline;
     display: flex;
     align-items: center;
@@ -76,7 +76,6 @@
     box-sizing: border-box;
     width: sizeToken.get(5);
     border-radius: calc(var(--border-radius-medium) - var(--border-width-default));
-    cursor: grab;
 
     &:hover,
     &:focus-visible,
@@ -88,4 +87,8 @@
     .item[data-dragging='true'] & {
         background-color: var(--color-container-secondary-active);
     }
+}
+
+.handle {
+    cursor: grab;
 }

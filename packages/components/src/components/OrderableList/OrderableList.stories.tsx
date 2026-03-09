@@ -35,6 +35,7 @@ export const Default: Story = {
                         <OrderableList.ItemAction>
                             <IconTrashBin size={16} />
                         </OrderableList.ItemAction>
+                        <OrderableList.DragHandle />
                     </OrderableList.Item>
                     <OrderableList.Item id="2">
                         <div>Item 2</div>
@@ -43,15 +44,19 @@ export const Default: Story = {
                                 <IconTrashBin size={16} />
                             </Button>
                         </OrderableList.ItemAction>
+                        <OrderableList.DragHandle />
                     </OrderableList.Item>
                     <OrderableList.Item id="3">
                         <div>Item 3</div>
+                        <OrderableList.DragHandle />
                     </OrderableList.Item>
                     <OrderableList.Item id="4">
                         <div>Item 4</div>
+                        <OrderableList.DragHandle />
                     </OrderableList.Item>
                     <OrderableList.Item id="5">
                         <div>Item 5</div>
+                        <OrderableList.DragHandle />
                     </OrderableList.Item>
                 </OrderableList.Root>
                 <button onClick={() => setOrder(['5', '2', '3', '4', '1'])}>Move Item 1 to end</button>
