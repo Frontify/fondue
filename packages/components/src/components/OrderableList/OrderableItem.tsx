@@ -1,85 +1,83 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { useSortable } from '@dnd-kit/react/sortable';
-import { IconGrabHandle } from '@frontify/fondue-icons';
-import { Slot } from '@radix-ui/react-slot';
-import { createContext, forwardRef, useRef, type ReactNode, useMemo, useContext } from 'react';
+import { forwardRef, useRef, type ReactNode, useMemo } from 'react';
 
+import { OrderableItemContextProvider, useOrderableItemContext } from './hooks/useOrderedListItemContext';
 import styles from './styles/orderable-list.module.scss';
 
-export type OrderableItemProps = { children?: ReactNode; id: string; disabled?: boolean };
+export type OrderableItemPadding = 'none' | 'small';
+export type OrderableItemProps = {
+    children?: ReactNode;
+    id: string;
+    disabled?: boolean;
+    padding?: OrderableItemPadding;
+    selected?: boolean;
+    onSelect?: (isSelected: boolean) => void;
+};
 export const OrderableItem = forwardRef<HTMLDivElement, OrderableItemProps>((_props, _ref) => null);
 OrderableItem.displayName = 'OrderableItem';
 
-type OrderableItemContextType = { dragHandleRef: (element: Element | null) => void };
-const OrderableItemContext = createContext<OrderableItemContextType>({
-    dragHandleRef: () => null,
-});
+export const OrderableItemComponent = forwardRef<HTMLDivElement, OrderableItemProps & { index: number }>(
+    ({ children, id, index, disabled, padding = 'small', selected, onSelect }, ref) => {
+        const internalRef = useRef<HTMLDivElement | null>(null);
 
-OrderableItemContext.displayName = 'OrderableItemContext';
+        const mergedRef = (node: HTMLDivElement | null) => {
+            internalRef.current = node;
+            if (typeof ref === 'function') {
+                ref(node);
+            } else if (ref !== null) {
+                ref.current = node;
+            }
+        };
 
-export const OrderableItemComponent = forwardRef<
-    HTMLDivElement,
-    OrderableItemProps & { index: number; hasDragHandle: boolean; actions: ReactNode[] }
->(({ children, id, index, disabled, actions, hasDragHandle }, ref) => {
-    const internalRef = useRef<HTMLDivElement | null>(null);
+        const { isDragging, isDropping, handleRef } = useSortable({ id, index, element: internalRef, disabled });
 
-    const mergedRef = (node: HTMLDivElement | null) => {
-        internalRef.current = node;
-        if (typeof ref === 'function') {
-            ref(node);
-        } else if (ref !== null) {
-            ref.current = node;
-        }
-    };
+        const ItemContextValue = useMemo(() => ({ dragHandleRef: handleRef, onSelect }), [handleRef, onSelect]);
 
-    const { isDragging, isDropping, handleRef } = useSortable({ id, index, element: internalRef, disabled });
-
-    const ItemContextValue = useMemo(() => ({ dragHandleRef: handleRef }), [handleRef]);
-
-    return (
-        <OrderableItemContext.Provider value={ItemContextValue}>
-            <div
-                className={styles.item}
-                data-dragging={isDragging}
-                data-dropping={isDropping}
-                data-test-id="fondue-orderable-list-item"
-                ref={mergedRef}
-            >
-                <div className={styles.content}>{children}</div>
-                {actions.length > 0 && <div className={styles.actions}>{actions}</div>}
-                {(hasDragHandle || actions.length > 0) && <OrderableItemDragHandle />}
-            </div>
-        </OrderableItemContext.Provider>
-    );
-});
+        return (
+            <OrderableItemContextProvider value={ItemContextValue}>
+                <div
+                    className={styles.item}
+                    data-padding={padding}
+                    data-dragging={isDragging}
+                    data-dropping={isDropping}
+                    data-selected={Boolean(selected)}
+                    data-test-id="fondue-orderable-list-item"
+                    ref={mergedRef}
+                >
+                    {children}
+                </div>
+            </OrderableItemContextProvider>
+        );
+    },
+);
 OrderableItemComponent.displayName = 'OrderableItemComponent';
 
-export type OrderableListItemActionProps = { children: ReactNode };
-export const OrderableListItemAction = forwardRef<HTMLDivElement, OrderableListItemActionProps>(({ children }, ref) => {
+export const OrderableItemContent = forwardRef<HTMLDivElement, { children: ReactNode }>(({ children }, ref) => {
+    const { onSelect } = useOrderableItemContext();
+
+    if (onSelect) {
+        return (
+            <div
+                className={styles.content}
+                ref={ref}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(event) => {
+                    if (event.key === 'Enter') {
+                        onSelect(true);
+                    }
+                }}
+            >
+                {children}
+            </div>
+        );
+    }
     return (
-        <div className={styles.action} ref={ref}>
+        <div className={styles.content} ref={ref}>
             {children}
         </div>
     );
 });
-OrderableListItemAction.displayName = 'OrderableListItemAction';
-
-export const OrderableItemDragHandle = () => {
-    const { dragHandleRef } = useContext(OrderableItemContext);
-    return (
-        <button type="button" aria-label="drag" className={`${styles.handle} ${styles.dragHandle}`} ref={dragHandleRef}>
-            <IconGrabHandle size={16} />
-        </button>
-    );
-};
-
-export const OrderableItemCustomHandle = ({ children, asChild }: { children: ReactNode; asChild?: boolean }) => {
-    const { dragHandleRef } = useContext(OrderableItemContext);
-    const Component = asChild ? Slot : 'div';
-    return (
-        <Component className={styles.handle} ref={dragHandleRef}>
-            {children}
-        </Component>
-    );
-};
+OrderableItemContent.displayName = 'OrderableItemContent';

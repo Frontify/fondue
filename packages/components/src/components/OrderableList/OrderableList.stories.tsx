@@ -3,7 +3,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 import { IconTrashBin } from '@frontify/fondue-icons';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { type ReactNode } from '@types/react';
+import { type ReactNode } from 'react';
 import { useRef, useState } from 'storybook/internal/preview-api';
 
 import { Button } from '#/index';
@@ -50,7 +50,7 @@ export const Default: Story = {
                         <div>Item 3</div>
                         <OrderableList.DragHandle />
                     </OrderableList.Item>
-                    <OrderableList.Item id="4">
+                    <OrderableList.Item selected onSelect={() => console.log('selected')} id="4">
                         <div>Item 4</div>
                         <OrderableList.DragHandle />
                     </OrderableList.Item>
@@ -95,12 +95,13 @@ const CustomItemContent = ({ children }: { children: ReactNode }) => {
     return (
         <div style={{ backgroundColor: 'red' }}>
             {children}
-            <OrderableList.ItemHandle>
-                <div style={{ backgroundColor: 'blue', height: '100px' }}>
-                    Background color
+
+            <div style={{ backgroundColor: 'blue', height: '100px' }}>
+                Background color
+                <OrderableList.CustomHandle asChild>
                     <span style={{ backgroundColor: 'green' }}>Drag handle</span>
-                </div>
-            </OrderableList.ItemHandle>
+                </OrderableList.CustomHandle>
+            </div>
         </div>
     );
 };
@@ -110,19 +111,19 @@ export const CustomItem: Story = {
         const testRef = useRef<HTMLDivElement | null>(null);
         return (
             <OrderableList.Root spacing="compact" order={['1', '2', '3', '4', '5']}>
-                <OrderableList.Item id="1" ref={testRef}>
+                <OrderableList.Item padding="none" id="1" ref={testRef}>
                     <CustomItemContent>Item 1</CustomItemContent>
                 </OrderableList.Item>
-                <OrderableList.Item id="2">
+                <OrderableList.Item padding="none" id="2">
                     <CustomItemContent>Item 2</CustomItemContent>
                 </OrderableList.Item>
-                <OrderableList.Item id="3">
+                <OrderableList.Item padding="none" id="3">
                     <CustomItemContent>Item 3</CustomItemContent>
                 </OrderableList.Item>
-                <OrderableList.Item id="4">
+                <OrderableList.Item padding="none" id="4">
                     <CustomItemContent>Item 4</CustomItemContent>
                 </OrderableList.Item>
-                <OrderableList.Item id="5">
+                <OrderableList.Item padding="none" id="5">
                     <CustomItemContent>Item 5</CustomItemContent>
                 </OrderableList.Item>
             </OrderableList.Root>
@@ -136,18 +137,23 @@ export const Horizontal: Story = {
             <OrderableList.Root spacing="compact" direction="horizontal" order={['1', '2', '3', '4', '5']}>
                 <OrderableList.Item id="1">
                     <div>Item 1</div>
+                    <OrderableList.DragHandle />
                 </OrderableList.Item>
                 <OrderableList.Item id="2">
                     <div>Item 2</div>
+                    <OrderableList.DragHandle />
                 </OrderableList.Item>
                 <OrderableList.Item id="3">
                     <div>Item 3</div>
+                    <OrderableList.DragHandle />
                 </OrderableList.Item>
                 <OrderableList.Item id="4">
                     <div>Item 4</div>
+                    <OrderableList.DragHandle />
                 </OrderableList.Item>
                 <OrderableList.Item id="5">
                     <div>Item 5</div>
+                    <OrderableList.DragHandle />
                 </OrderableList.Item>
             </OrderableList.Root>
         );

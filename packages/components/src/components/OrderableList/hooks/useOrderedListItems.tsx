@@ -2,35 +2,31 @@
 
 import { Children, isValidElement, useMemo, type ReactElement, type ReactNode, type RefObject } from 'react';
 
-import {
-    OrderableItem,
-    OrderableItemComponent,
-    OrderableListItemAction,
-    type OrderableListItemActionProps,
-    type OrderableItemProps,
-    OrderableItemDragHandle,
-} from '../OrderableItem';
+import { OrderableItem, OrderableItemComponent, OrderableItemContent, type OrderableItemProps } from '../OrderableItem';
+import { OrderableListItemAction, type OrderableListItemActionProps } from '../OrderableListItemAction';
+import { OrderableItemDragHandle } from '../OrderableListItemDragHandle';
+import styles from '../styles/orderable-list.module.scss';
 
 const getItemContentByType = (
     children: ReactNode,
 ): {
     actions: ReactNode[];
     content: ReactNode[];
-    hasDragHandle: boolean;
+    dragHandle: ReactNode;
 } => {
-    let hasDragHandle: boolean = false;
+    let dragHandle: ReactNode = undefined;
     const actions: ReactNode[] = [];
     const content: ReactNode[] = [];
     Children.forEach(children, (child) => {
         if (isValidElement<OrderableListItemActionProps>(child) && child.type === OrderableListItemAction) {
             actions.push(child);
         } else if (isValidElement(child) && child.type === OrderableItemDragHandle) {
-            hasDragHandle = true;
+            dragHandle = child;
         } else {
             content.push(child);
         }
     });
-    return { actions, content, hasDragHandle };
+    return { dragHandle, actions, content };
 };
 
 type OrderableItemElement = ReactElement<OrderableItemProps> & {
@@ -42,7 +38,7 @@ type ListItem = {
     ref: RefObject<HTMLDivElement> | null;
     children: ReactNode;
     actions: ReactNode[];
-    hasDragHandle: boolean;
+    dragHandle: ReactNode;
 };
 
 const getListItems = (children: ReactNode): ListItems => {
@@ -50,14 +46,15 @@ const getListItems = (children: ReactNode): ListItems => {
     Children.forEach(children, (child) => {
         if (isValidElement<OrderableItemProps>(child) && child.type === OrderableItem) {
             const typedChild = child as OrderableItemElement;
-            const { actions, content, hasDragHandle } = getItemContentByType(typedChild.props.children);
+            const { actions, content, dragHandle } = getItemContentByType(typedChild.props.children);
             const itemId = typedChild.props.id;
             items[itemId] = {
+                ...typedChild.props,
                 id: itemId,
                 ref: typedChild.ref,
                 actions,
                 children: content,
-                hasDragHandle,
+                dragHandle,
             };
         }
     });
@@ -66,6 +63,7 @@ const getListItems = (children: ReactNode): ListItems => {
 
 export const useOrderedListItems = (children: ReactNode, order: string[]): ReactNode => {
     const itemsWithIds = useMemo(() => getListItems(children), [children]);
+
     if (Object.keys(itemsWithIds).length !== order.length) {
         throw new Error('The number of items in the list does not match the order array');
     }
@@ -74,9 +72,12 @@ export const useOrderedListItems = (children: ReactNode, order: string[]): React
         () => order.map((id) => itemsWithIds[id]).filter((item) => item !== undefined),
         [order, itemsWithIds],
     );
-    return sortedItems.map(({ id, children, actions, hasDragHandle }, index) => (
-        <OrderableItemComponent key={id} index={index} id={id} actions={actions} hasDragHandle={hasDragHandle}>
-            {children}
+
+    return sortedItems.map(({ id, children, actions, dragHandle, ...props }, index) => (
+        <OrderableItemComponent key={id} index={index} id={id} {...props}>
+            <OrderableItemContent>{children}</OrderableItemContent>
+            {actions.length > 0 && <div className={styles.actions}>{actions}</div>}
+            {(actions.length > 0 || Boolean(dragHandle)) && <OrderableItemDragHandle />}
         </OrderableItemComponent>
     ));
 };

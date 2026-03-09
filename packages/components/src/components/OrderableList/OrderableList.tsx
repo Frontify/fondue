@@ -5,13 +5,9 @@ import { DragDropProvider, type DragEndEvent } from '@dnd-kit/react';
 import { isSortable } from '@dnd-kit/react/sortable';
 import { forwardRef, useMemo, type ForwardedRef, type ReactNode } from 'react';
 
-import {
-    OrderableItem,
-    OrderableItemCustomHandle,
-    OrderableItemDragHandle,
-    OrderableItemHandle,
-    OrderableListItemAction,
-} from './OrderableItem';
+import { OrderableItem } from './OrderableItem';
+import { OrderableListItemAction } from './OrderableListItemAction';
+import { OrderableItemCustomHandle, OrderableItemDragHandle } from './OrderableListItemDragHandle';
 import { useOrderedListItems } from './hooks/useOrderedListItems';
 import styles from './styles/orderable-list.module.scss';
 
