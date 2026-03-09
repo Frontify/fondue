@@ -2,7 +2,12 @@
 
 import { Children, isValidElement, useMemo, type ReactElement, type ReactNode, type RefObject } from 'react';
 
-import { OrderableItem, OrderableItemComponent, OrderableItemContent, type OrderableItemProps } from '../OrderableItem';
+import {
+    OrderableItem,
+    OrderableItemComponent,
+    OrderableItemContent,
+    type OrderableItemProps,
+} from '../OrderableListItem';
 import { OrderableListItemAction, type OrderableListItemActionProps } from '../OrderableListItemAction';
 import { OrderableItemDragHandle } from '../OrderableListItemDragHandle';
 import styles from '../styles/orderable-list.module.scss';

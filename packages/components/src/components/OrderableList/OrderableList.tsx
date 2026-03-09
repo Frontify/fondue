@@ -5,7 +5,7 @@ import { DragDropProvider, type DragEndEvent } from '@dnd-kit/react';
 import { isSortable } from '@dnd-kit/react/sortable';
 import { forwardRef, useMemo, type ForwardedRef, type ReactNode } from 'react';
 
-import { OrderableItem } from './OrderableItem';
+import { OrderableListItem } from './OrderableListItem';
 import { OrderableListItemAction } from './OrderableListItemAction';
 import { OrderableItemCustomHandle, OrderableItemDragHandle } from './OrderableListItemDragHandle';
 import { useOrderedListItems } from './hooks/useOrderedListItems';
@@ -23,7 +23,7 @@ type OrderableListProps = {
 
 export const OrderableListRoot = (
     { children, spacing = 'comfortable', direction = 'vertical', order = [], onOrderChange }: OrderableListProps,
-    ref: ForwardedRef<HTMLDivElement>,
+    ref: ForwardedRef<HTMLUListElement>,
 ) => {
     const orderedItems = useOrderedListItems(children, order);
 
@@ -52,7 +52,7 @@ export const OrderableListRoot = (
 
     return (
         <DragDropProvider onDragEnd={handleDragEnd} modifiers={[axisModifier]}>
-            <div
+            <ul
                 className={styles.root}
                 data-spacing={spacing}
                 data-direction={direction}
@@ -60,7 +60,7 @@ export const OrderableListRoot = (
                 ref={ref}
             >
                 {orderedItems}
-            </div>
+            </ul>
         </DragDropProvider>
     );
 };
@@ -69,13 +69,13 @@ const ForwardedRefOrderableListRoot = forwardRef<HTMLDivElement, OrderableListPr
 
 export const OrderableList: {
     Root: typeof ForwardedRefOrderableListRoot;
-    Item: typeof OrderableItem;
+    Item: typeof OrderableListItem;
     ItemAction: typeof OrderableListItemAction;
     CustomHandle: typeof OrderableItemCustomHandle;
     DragHandle: typeof OrderableItemDragHandle;
 } = {
     Root: ForwardedRefOrderableListRoot,
-    Item: OrderableItem,
+    Item: OrderableListItem,
     ItemAction: OrderableListItemAction,
     CustomHandle: OrderableItemCustomHandle,
     DragHandle: OrderableItemDragHandle,

@@ -38,7 +38,7 @@
     &[data-padding='small'] {
         .content,
         .actions {
-            padding: var(--spacing-xx-small);
+            padding: var(--spacing-x-small) var(--spacing-small);
         }
     }
     &[data-padding='none'] {
@@ -46,10 +46,6 @@
         .actions {
             padding: 0;
         }
-    }
-
-    .content {
-        flex: 1;
     }
 
     &:has(.handle) {
@@ -75,9 +71,17 @@
     }
 }
 
+.content {
+    flex: 1;
+}
+
 .actions {
     display: flex;
     align-items: center;
+}
+
+.handle {
+    cursor: grab;
 }
 
 .dragHandle {
@@ -103,8 +107,4 @@
     .item[data-dragging='true'] & {
         background-color: var(--color-container-secondary-active);
     }
-}
-
-.handle {
-    cursor: grab;
 }
