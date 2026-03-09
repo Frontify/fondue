@@ -152,6 +152,11 @@
     color: var(--card-banner-icon-color, var(--color-secondary-default));
     @include transitions.transition-colors;
 
+    > svg {
+        width: sizeToken.get(10);
+        height: sizeToken.get(10);
+    }
+
     .root[data-interactive='true']:hover &,
     .root[data-interactive='true']:has([data-state='open']) & {
         color: var(--card-banner-icon-hover-color, var(--color-primary-default));
