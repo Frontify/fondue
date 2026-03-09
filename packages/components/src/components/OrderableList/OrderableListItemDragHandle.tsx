@@ -33,3 +33,5 @@ export const OrderableItemCustomHandle = ({ children, asChild }: { children: Rea
         </Component>
     );
 };
+OrderableItemDragHandle.displayName = 'OrderableItemDragHandle';
+OrderableItemCustomHandle.displayName = 'OrderableItemCustomHandle';

@@ -102,6 +102,7 @@ test.describe('OrderableList', () => {
                         <OrderableList.ItemAction>
                             <button type="button">Delete</button>
                         </OrderableList.ItemAction>
+                        <OrderableList.DragHandle />
                     </OrderableList.Item>
                 </OrderableList.Root>,
             );
@@ -375,6 +376,141 @@ test.describe('OrderableList', () => {
             const content = component.locator(`[data-test-id="${ITEM_TEST_ID}"] > div[tabindex="0"]`);
             await content.focus();
             await expect(content).toBeFocused();
+        });
+    });
+
+    test.describe('custom handle', () => {
+        test('should render custom handle content', async ({ mount }) => {
+            const component = await mount(
+                <OrderableList.Root order={['1']}>
+                    <OrderableList.Item id="1">
+                        <OrderableList.ItemTitle>Item 1</OrderableList.ItemTitle>
+                        <OrderableList.CustomHandle>
+                            <span>Drag here</span>
+                        </OrderableList.CustomHandle>
+                    </OrderableList.Item>
+                </OrderableList.Root>,
+            );
+
+            await expect(component.getByText('Drag here')).toBeVisible();
+        });
+
+        test('should not render default drag handle when custom handle is used', async ({ mount }) => {
+            const component = await mount(
+                <OrderableList.Root order={['1']}>
+                    <OrderableList.Item id="1">
+                        <OrderableList.ItemTitle>Item 1</OrderableList.ItemTitle>
+                        <OrderableList.CustomHandle>
+                            <span>Drag here</span>
+                        </OrderableList.CustomHandle>
+                    </OrderableList.Item>
+                </OrderableList.Root>,
+            );
+
+            const defaultHandles = component.getByRole('button', { name: /Reorder/ });
+            await expect(defaultHandles).toHaveCount(0);
+        });
+
+        test('should render custom handle with asChild', async ({ mount }) => {
+            const component = await mount(
+                <OrderableList.Root order={['1']}>
+                    <OrderableList.Item id="1">
+                        <OrderableList.ItemTitle>Item 1</OrderableList.ItemTitle>
+                        <OrderableList.CustomHandle asChild>
+                            <button type="button">Custom drag</button>
+                        </OrderableList.CustomHandle>
+                    </OrderableList.Item>
+                </OrderableList.Root>,
+            );
+
+            await expect(component.getByRole('button', { name: 'Custom drag' })).toBeVisible();
+        });
+    });
+
+    test.describe('live region announcements', () => {
+        test('should render a live region for screen reader announcements', async ({ mount }) => {
+            const component = await mount(
+                <OrderableList.Root order={['1']}>
+                    <OrderableList.Item id="1">
+                        <OrderableList.ItemTitle>Item 1</OrderableList.ItemTitle>
+                    </OrderableList.Item>
+                </OrderableList.Root>,
+            );
+
+            const liveRegion = component.locator('[aria-live="polite"]');
+            await expect(liveRegion).toHaveCount(1);
+            await expect(liveRegion).toHaveAttribute('aria-atomic', 'true');
+        });
+    });
+
+    test.describe('aria-label', () => {
+        test('should use default aria-label', async ({ mount }) => {
+            const component = await mount(
+                <OrderableList.Root order={['1']}>
+                    <OrderableList.Item id="1">
+                        <OrderableList.ItemTitle>Item 1</OrderableList.ItemTitle>
+                    </OrderableList.Item>
+                </OrderableList.Root>,
+            );
+
+            const list = component.locator(`[data-test-id="${LIST_TEST_ID}"]`);
+            await expect(list).toHaveAttribute('aria-label', 'Sortable list');
+        });
+
+        test('should support custom aria-label', async ({ mount }) => {
+            const component = await mount(
+                <OrderableList.Root order={['1']} aria-label="Reorder layers">
+                    <OrderableList.Item id="1">
+                        <OrderableList.ItemTitle>Item 1</OrderableList.ItemTitle>
+                    </OrderableList.Item>
+                </OrderableList.Root>,
+            );
+
+            const list = component.locator(`[data-test-id="${LIST_TEST_ID}"]`);
+            await expect(list).toHaveAttribute('aria-label', 'Reorder layers');
+        });
+    });
+
+    test.describe('selection state', () => {
+        test('should not have data-selected attribute when item is not selectable', async ({ mount }) => {
+            const component = await mount(
+                <OrderableList.Root order={['1']}>
+                    <OrderableList.Item id="1">
+                        <OrderableList.ItemTitle>Item 1</OrderableList.ItemTitle>
+                    </OrderableList.Item>
+                </OrderableList.Root>,
+            );
+
+            const item = component.locator(`[data-test-id="${ITEM_TEST_ID}"]`);
+            await expect(item).not.toHaveAttribute('data-selected');
+        });
+
+        test('should not render role="button" when item is not selectable', async ({ mount }) => {
+            const component = await mount(
+                <OrderableList.Root order={['1']}>
+                    <OrderableList.Item id="1">
+                        <OrderableList.ItemTitle>Item 1</OrderableList.ItemTitle>
+                    </OrderableList.Item>
+                </OrderableList.Root>,
+            );
+
+            const contentButton = component.locator('div[role="button"]');
+            await expect(contentButton).toHaveCount(0);
+        });
+
+        test('should toggle selection on click when already selected', async ({ mount }) => {
+            let selectValue: boolean | null = null;
+            const component = await mount(
+                <OrderableList.Root order={['1']}>
+                    <OrderableList.Item id="1" selected onSelect={(v) => (selectValue = v)}>
+                        <OrderableList.ItemTitle>Item 1</OrderableList.ItemTitle>
+                        <OrderableList.DragHandle />
+                    </OrderableList.Item>
+                </OrderableList.Root>,
+            );
+
+            await component.locator('div[role="button"]').click();
+            expect(selectValue).toBe(false);
         });
     });
 });

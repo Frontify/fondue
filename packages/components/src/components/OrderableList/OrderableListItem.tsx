@@ -6,8 +6,6 @@ import { forwardRef, useRef, type ReactNode, useMemo } from 'react';
 import { OrderableItemContextProvider } from './hooks/useOrderedListItemContext';
 import styles from './styles/orderable-list.module.scss';
 
-const noopRef = () => null;
-
 export type OrderableListItemPadding = 'none' | 'small';
 export type OrderableListItemProps = {
     children?: ReactNode;
@@ -36,7 +34,7 @@ export const OrderableListItemComponent = forwardRef<HTMLLIElement, OrderableLis
         const { isDragging, isDropping, handleRef } = useSortable({ id, index, element: internalRef });
 
         const ItemContextValue = useMemo(
-            () => ({ itemId: id, dragHandleRef: disabled ? noopRef : handleRef, selected, onSelect }),
+            () => ({ itemId: id, dragHandleRef: disabled ? () => null : handleRef, selected, onSelect }),
             [id, disabled, handleRef, selected, onSelect],
         );
 
@@ -49,7 +47,7 @@ export const OrderableListItemComponent = forwardRef<HTMLLIElement, OrderableLis
                     data-disabled={disabled || undefined}
                     data-dragging={isDragging}
                     data-dropping={isDropping}
-                    data-selected={Boolean(selected)}
+                    data-selected={selected || undefined}
                     data-test-id="fondue-orderable-list-item"
                     ref={mergedRef}
                 >

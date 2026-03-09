@@ -2,12 +2,10 @@
 
 import { forwardRef, type KeyboardEvent, type ReactNode } from 'react';
 
+import { getItemTitle } from './helpers/getItemTitle';
 import { useOrderableListAnnounce } from './hooks/useOrderableListAnnounce';
 import { useOrderableItemContext } from './hooks/useOrderedListItemContext';
 import styles from './styles/orderable-list.module.scss';
-
-const getItemTitle = (itemId: string) =>
-    document.getElementById(`orderable-item-${itemId}-title`)?.textContent ?? itemId;
 
 export const OrderableListItemContent = forwardRef<HTMLDivElement, { children: ReactNode }>(({ children }, ref) => {
     const { itemId, onSelect, selected } = useOrderableItemContext();
