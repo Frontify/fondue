@@ -3,7 +3,7 @@
 import { AxisModifier } from '@dnd-kit/abstract/modifiers';
 import { DragDropProvider, type DragEndEvent } from '@dnd-kit/react';
 import { isSortable } from '@dnd-kit/react/sortable';
-import { forwardRef, useCallback, useMemo, type ForwardedRef, type ReactNode } from 'react';
+import { forwardRef, useMemo, type ForwardedRef, type ReactNode } from 'react';
 
 import { OrderableListItem } from './OrderableListItem';
 import { OrderableListItemAction } from './OrderableListItemAction';
@@ -14,6 +14,9 @@ import { OrderableListItemTitle } from './OrderableListItemTitle';
 import { OrderableListAnnounceProvider, useAnnounceState } from './hooks/useOrderableListAnnounce';
 import { useOrderedListItems } from './hooks/useOrderedListItems';
 import styles from './styles/orderable-list.module.scss';
+
+const getItemTitle = (itemId: string) =>
+    document.getElementById(`orderable-item-${itemId}-title`)?.textContent ?? itemId;
 
 type OrderableListItemSpacing = 'tight' | 'compact' | 'comfortable';
 type OrderableListDirection = 'vertical' | 'horizontal';
@@ -37,11 +40,6 @@ export const OrderableListRoot = (
         [direction],
     );
 
-    const getItemTitle = useCallback(
-        (itemId: string) => document.getElementById(`orderable-item-${itemId}-title`)?.textContent ?? itemId,
-        [],
-    );
-
     const handleDragEnd: DragEndEvent = (event) => {
         if (event.canceled) {
             return;
@@ -55,7 +53,9 @@ export const OrderableListRoot = (
                 if (removed) {
                     newItems.splice(index, 0, removed);
                     onOrderChange?.(newItems);
-                    announce(`${getItemTitle(removed)} dropped, moved from position ${initialIndex + 1} to ${index + 1} of ${order.length}`);
+                    announce(
+                        `${getItemTitle(removed)} dropped, moved from position ${initialIndex + 1} to ${index + 1} of ${order.length}`,
+                    );
                 }
             }
         }

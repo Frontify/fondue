@@ -4,13 +4,377 @@ import { expect, test } from '@playwright/experimental-ct-react';
 
 import { OrderableList } from '../OrderableList';
 
-const ORDERABLE_LIST_TEST_ID = 'test-orderable-list';
-const ORDERABLE_LIST_TEXT = 'sample orderable-list';
+const LIST_TEST_ID = 'fondue-orderable-list';
+const ITEM_TEST_ID = 'fondue-orderable-list-item';
 
-test('should render without error', async ({ mount }) => {
-    const component = await mount(
-        <OrderableList.Root data-test-id={ORDERABLE_LIST_TEST_ID}>{ORDERABLE_LIST_TEXT}</OrderableList.Root>,
-    );
-    await expect(component).toBeVisible();
-    await expect(component).toContainText(ORDERABLE_LIST_TEXT);
+test.describe('OrderableList', () => {
+    test.describe('rendering', () => {
+        test('should render all items', async ({ mount }) => {
+            const component = await mount(
+                <OrderableList.Root order={['1', '2', '3']}>
+                    <OrderableList.Item id="1">
+                        <OrderableList.ItemTitle>Item 1</OrderableList.ItemTitle>
+                    </OrderableList.Item>
+                    <OrderableList.Item id="2">
+                        <OrderableList.ItemTitle>Item 2</OrderableList.ItemTitle>
+                    </OrderableList.Item>
+                    <OrderableList.Item id="3">
+                        <OrderableList.ItemTitle>Item 3</OrderableList.ItemTitle>
+                    </OrderableList.Item>
+                </OrderableList.Root>,
+            );
+
+            await expect(component.getByText('Item 1')).toBeVisible();
+            await expect(component.getByText('Item 2')).toBeVisible();
+            await expect(component.getByText('Item 3')).toBeVisible();
+        });
+
+        test('should render items in the given order', async ({ mount }) => {
+            const component = await mount(
+                <OrderableList.Root order={['3', '1', '2']}>
+                    <OrderableList.Item id="1">
+                        <OrderableList.ItemTitle>Item 1</OrderableList.ItemTitle>
+                    </OrderableList.Item>
+                    <OrderableList.Item id="2">
+                        <OrderableList.ItemTitle>Item 2</OrderableList.ItemTitle>
+                    </OrderableList.Item>
+                    <OrderableList.Item id="3">
+                        <OrderableList.ItemTitle>Item 3</OrderableList.ItemTitle>
+                    </OrderableList.Item>
+                </OrderableList.Root>,
+            );
+
+            const items = component.locator(`[data-test-id="${ITEM_TEST_ID}"]`);
+            await expect(items.nth(0)).toContainText('Item 3');
+            await expect(items.nth(1)).toContainText('Item 1');
+            await expect(items.nth(2)).toContainText('Item 2');
+        });
+
+        test('should render descriptions', async ({ mount }) => {
+            const component = await mount(
+                <OrderableList.Root order={['1']}>
+                    <OrderableList.Item id="1">
+                        <OrderableList.ItemTitle>Item 1</OrderableList.ItemTitle>
+                        <OrderableList.ItemDescription>Description 1</OrderableList.ItemDescription>
+                    </OrderableList.Item>
+                </OrderableList.Root>,
+            );
+
+            await expect(component.getByText('Description 1')).toBeVisible();
+        });
+
+        test('should render drag handles', async ({ mount }) => {
+            const component = await mount(
+                <OrderableList.Root order={['1', '2']}>
+                    <OrderableList.Item id="1">
+                        <OrderableList.ItemTitle>Item 1</OrderableList.ItemTitle>
+                        <OrderableList.DragHandle />
+                    </OrderableList.Item>
+                    <OrderableList.Item id="2">
+                        <OrderableList.ItemTitle>Item 2</OrderableList.ItemTitle>
+                        <OrderableList.DragHandle />
+                    </OrderableList.Item>
+                </OrderableList.Root>,
+            );
+
+            const handles = component.getByRole('button', { name: /Reorder/ });
+            await expect(handles).toHaveCount(2);
+        });
+
+        test('should render decorator content', async ({ mount }) => {
+            const component = await mount(
+                <OrderableList.Root order={['1']}>
+                    <OrderableList.Item id="1">
+                        <OrderableList.ItemDecorator>A</OrderableList.ItemDecorator>
+                        <OrderableList.ItemTitle>Item 1</OrderableList.ItemTitle>
+                    </OrderableList.Item>
+                </OrderableList.Root>,
+            );
+
+            await expect(component.getByText('A')).toBeVisible();
+        });
+
+        test('should render action items', async ({ mount }) => {
+            const component = await mount(
+                <OrderableList.Root order={['1']}>
+                    <OrderableList.Item id="1">
+                        <OrderableList.ItemTitle>Item 1</OrderableList.ItemTitle>
+                        <OrderableList.ItemAction>
+                            <button type="button">Delete</button>
+                        </OrderableList.ItemAction>
+                    </OrderableList.Item>
+                </OrderableList.Root>,
+            );
+
+            await expect(component.getByRole('button', { name: 'Delete' })).toBeVisible();
+        });
+    });
+
+    test.describe('accessibility', () => {
+        test('should have sortable list role description', async ({ mount }) => {
+            const component = await mount(
+                <OrderableList.Root order={['1']}>
+                    <OrderableList.Item id="1">
+                        <OrderableList.ItemTitle>Item 1</OrderableList.ItemTitle>
+                    </OrderableList.Item>
+                </OrderableList.Root>,
+            );
+
+            const list = component.locator(`[data-test-id="${LIST_TEST_ID}"]`);
+            await expect(list).toHaveAttribute('aria-roledescription', 'sortable list');
+            await expect(list).toHaveAttribute('aria-label', 'Sortable list');
+        });
+
+        test('should have sortable item role description', async ({ mount }) => {
+            const component = await mount(
+                <OrderableList.Root order={['1', '2']}>
+                    <OrderableList.Item id="1">
+                        <OrderableList.ItemTitle>Item 1</OrderableList.ItemTitle>
+                    </OrderableList.Item>
+                    <OrderableList.Item id="2">
+                        <OrderableList.ItemTitle>Item 2</OrderableList.ItemTitle>
+                    </OrderableList.Item>
+                </OrderableList.Root>,
+            );
+
+            const items = component.locator(`[data-test-id="${ITEM_TEST_ID}"]`);
+            await expect(items.nth(0)).toHaveAttribute('aria-roledescription', 'sortable item');
+            await expect(items.nth(1)).toHaveAttribute('aria-roledescription', 'sortable item');
+        });
+
+        test('should label drag handles with item title', async ({ mount }) => {
+            const component = await mount(
+                <OrderableList.Root order={['1']}>
+                    <OrderableList.Item id="1">
+                        <OrderableList.ItemTitle>Item 1</OrderableList.ItemTitle>
+                        <OrderableList.DragHandle />
+                    </OrderableList.Item>
+                </OrderableList.Root>,
+            );
+
+            const handle = component.getByRole('button', { name: /Reorder/ });
+            await expect(handle).toHaveAccessibleName('Reorder Item 1');
+        });
+
+        test('should set title and description ids for aria references', async ({ mount }) => {
+            const component = await mount(
+                <OrderableList.Root order={['1']}>
+                    <OrderableList.Item id="1">
+                        <OrderableList.ItemTitle>Item 1</OrderableList.ItemTitle>
+                        <OrderableList.ItemDescription>Description 1</OrderableList.ItemDescription>
+                    </OrderableList.Item>
+                </OrderableList.Root>,
+            );
+
+            const title = component.locator('#orderable-item-1-title');
+            const description = component.locator('#orderable-item-1-description');
+            await expect(title).toHaveText('Item 1');
+            await expect(description).toHaveText('Description 1');
+        });
+    });
+
+    test.describe('selection', () => {
+        test('should render content as a button when selectable', async ({ mount }) => {
+            const component = await mount(
+                <OrderableList.Root order={['1']}>
+                    <OrderableList.Item id="1" selected={false} onSelect={() => {}}>
+                        <OrderableList.ItemTitle>Item 1</OrderableList.ItemTitle>
+                        <OrderableList.DragHandle />
+                    </OrderableList.Item>
+                </OrderableList.Root>,
+            );
+
+            const contentButton = component.locator('div[role="button"]');
+            await expect(contentButton).toBeVisible();
+            await expect(contentButton).toHaveAttribute('aria-pressed', 'false');
+        });
+
+        test('should call onSelect on click', async ({ mount }) => {
+            let selectValue: boolean | null = null;
+            const component = await mount(
+                <OrderableList.Root order={['1']}>
+                    <OrderableList.Item id="1" selected={false} onSelect={(v) => (selectValue = v)}>
+                        <OrderableList.ItemTitle>Item 1</OrderableList.ItemTitle>
+                        <OrderableList.DragHandle />
+                    </OrderableList.Item>
+                </OrderableList.Root>,
+            );
+
+            await component.locator('div[role="button"]').click();
+            expect(selectValue).toBe(true);
+        });
+
+        test('should call onSelect on Enter key', async ({ mount }) => {
+            let selectValue: boolean | null = null;
+            const component = await mount(
+                <OrderableList.Root order={['1']}>
+                    <OrderableList.Item id="1" selected={false} onSelect={(v) => (selectValue = v)}>
+                        <OrderableList.ItemTitle>Item 1</OrderableList.ItemTitle>
+                        <OrderableList.DragHandle />
+                    </OrderableList.Item>
+                </OrderableList.Root>,
+            );
+
+            const contentButton = component.locator('div[role="button"]');
+            await contentButton.focus();
+            await contentButton.press('Enter');
+            expect(selectValue).toBe(true);
+        });
+
+        test('should call onSelect on Space key', async ({ mount }) => {
+            let selectValue: boolean | null = null;
+            const component = await mount(
+                <OrderableList.Root order={['1']}>
+                    <OrderableList.Item id="1" selected={false} onSelect={(v) => (selectValue = v)}>
+                        <OrderableList.ItemTitle>Item 1</OrderableList.ItemTitle>
+                        <OrderableList.DragHandle />
+                    </OrderableList.Item>
+                </OrderableList.Root>,
+            );
+
+            const contentButton = component.locator('div[role="button"]');
+            await contentButton.focus();
+            await contentButton.press('Space');
+            expect(selectValue).toBe(true);
+        });
+
+        test('should show selected state', async ({ mount }) => {
+            const component = await mount(
+                <OrderableList.Root order={['1']}>
+                    <OrderableList.Item id="1" selected onSelect={() => {}}>
+                        <OrderableList.ItemTitle>Item 1</OrderableList.ItemTitle>
+                    </OrderableList.Item>
+                </OrderableList.Root>,
+            );
+
+            const item = component.locator(`[data-test-id="${ITEM_TEST_ID}"]`);
+            await expect(item).toHaveAttribute('data-selected', 'true');
+            await expect(item.locator('div[role="button"]')).toHaveAttribute('aria-pressed', 'true');
+        });
+    });
+
+    test.describe('disabled', () => {
+        test('should render disabled state', async ({ mount }) => {
+            const component = await mount(
+                <OrderableList.Root order={['1']}>
+                    <OrderableList.Item id="1" disabled>
+                        <OrderableList.ItemTitle>Item 1</OrderableList.ItemTitle>
+                        <OrderableList.DragHandle />
+                    </OrderableList.Item>
+                </OrderableList.Root>,
+            );
+
+            const item = component.locator(`[data-test-id="${ITEM_TEST_ID}"]`);
+            await expect(item).toHaveAttribute('data-disabled', 'true');
+        });
+
+        test('should apply disabled visual styles', async ({ mount }) => {
+            const component = await mount(
+                <OrderableList.Root order={['1']}>
+                    <OrderableList.Item id="1" disabled>
+                        <OrderableList.ItemTitle>Item 1</OrderableList.ItemTitle>
+                        <OrderableList.DragHandle />
+                    </OrderableList.Item>
+                </OrderableList.Root>,
+            );
+
+            const item = component.locator(`[data-test-id="${ITEM_TEST_ID}"]`);
+            await expect(item).toHaveCSS('opacity', '0.5');
+        });
+    });
+
+    test.describe('spacing', () => {
+        test('should set tight spacing', async ({ mount }) => {
+            const component = await mount(
+                <OrderableList.Root order={['1']} spacing="tight">
+                    <OrderableList.Item id="1">
+                        <OrderableList.ItemTitle>Item 1</OrderableList.ItemTitle>
+                    </OrderableList.Item>
+                </OrderableList.Root>,
+            );
+
+            await expect(component.locator(`[data-test-id="${LIST_TEST_ID}"]`)).toHaveAttribute(
+                'data-spacing',
+                'tight',
+            );
+        });
+
+        test('should set compact spacing', async ({ mount }) => {
+            const component = await mount(
+                <OrderableList.Root order={['1']} spacing="compact">
+                    <OrderableList.Item id="1">
+                        <OrderableList.ItemTitle>Item 1</OrderableList.ItemTitle>
+                    </OrderableList.Item>
+                </OrderableList.Root>,
+            );
+
+            await expect(component.locator(`[data-test-id="${LIST_TEST_ID}"]`)).toHaveAttribute(
+                'data-spacing',
+                'compact',
+            );
+        });
+
+        test('should set comfortable spacing', async ({ mount }) => {
+            const component = await mount(
+                <OrderableList.Root order={['1']} spacing="comfortable">
+                    <OrderableList.Item id="1">
+                        <OrderableList.ItemTitle>Item 1</OrderableList.ItemTitle>
+                    </OrderableList.Item>
+                </OrderableList.Root>,
+            );
+
+            await expect(component.locator(`[data-test-id="${LIST_TEST_ID}"]`)).toHaveAttribute(
+                'data-spacing',
+                'comfortable',
+            );
+        });
+    });
+
+    test.describe('direction', () => {
+        test('should default to vertical', async ({ mount }) => {
+            const component = await mount(
+                <OrderableList.Root order={['1']}>
+                    <OrderableList.Item id="1">
+                        <OrderableList.ItemTitle>Item 1</OrderableList.ItemTitle>
+                    </OrderableList.Item>
+                </OrderableList.Root>,
+            );
+
+            await expect(component.locator(`[data-test-id="${LIST_TEST_ID}"]`)).toHaveAttribute(
+                'data-direction',
+                'vertical',
+            );
+        });
+
+        test('should support horizontal direction', async ({ mount }) => {
+            const component = await mount(
+                <OrderableList.Root order={['1']} direction="horizontal">
+                    <OrderableList.Item id="1">
+                        <OrderableList.ItemTitle>Item 1</OrderableList.ItemTitle>
+                    </OrderableList.Item>
+                </OrderableList.Root>,
+            );
+
+            await expect(component.locator(`[data-test-id="${LIST_TEST_ID}"]`)).toHaveAttribute(
+                'data-direction',
+                'horizontal',
+            );
+        });
+    });
+
+    test.describe('keyboard navigation', () => {
+        test('should make content area focusable for non-selectable items', async ({ mount }) => {
+            const component = await mount(
+                <OrderableList.Root order={['1']}>
+                    <OrderableList.Item id="1">
+                        <OrderableList.ItemTitle>Item 1</OrderableList.ItemTitle>
+                    </OrderableList.Item>
+                </OrderableList.Root>,
+            );
+
+            const content = component.locator(`[data-test-id="${ITEM_TEST_ID}"] > div[tabindex="0"]`);
+            await content.focus();
+            await expect(content).toBeFocused();
+        });
+    });
 });

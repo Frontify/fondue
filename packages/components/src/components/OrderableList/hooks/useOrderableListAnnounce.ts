@@ -5,6 +5,7 @@ import { createContext, useCallback, useContext, useState } from 'react';
 type AnnounceFunction = (message: string) => void;
 
 const OrderableListAnnounceContext = createContext<AnnounceFunction>(() => {});
+OrderableListAnnounceContext.displayName = 'OrderableListAnnounceContext';
 
 export const OrderableListAnnounceProvider = OrderableListAnnounceContext.Provider;
 

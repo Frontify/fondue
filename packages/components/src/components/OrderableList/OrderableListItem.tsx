@@ -6,6 +6,8 @@ import { forwardRef, useRef, type ReactNode, useMemo } from 'react';
 import { OrderableItemContextProvider } from './hooks/useOrderedListItemContext';
 import styles from './styles/orderable-list.module.scss';
 
+const noopRef = () => null;
+
 export type OrderableListItemPadding = 'none' | 'small';
 export type OrderableListItemProps = {
     children?: ReactNode;
@@ -31,11 +33,11 @@ export const OrderableListItemComponent = forwardRef<HTMLLIElement, OrderableLis
             }
         };
 
-        const { isDragging, isDropping, handleRef } = useSortable({ id, index, element: internalRef, disabled });
+        const { isDragging, isDropping, handleRef } = useSortable({ id, index, element: internalRef });
 
         const ItemContextValue = useMemo(
-            () => ({ itemId: id, dragHandleRef: handleRef, selected, onSelect }),
-            [id, handleRef, selected, onSelect],
+            () => ({ itemId: id, dragHandleRef: disabled ? noopRef : handleRef, selected, onSelect }),
+            [id, disabled, handleRef, selected, onSelect],
         );
 
         return (
@@ -44,6 +46,7 @@ export const OrderableListItemComponent = forwardRef<HTMLLIElement, OrderableLis
                     className={styles.item}
                     aria-roledescription="sortable item"
                     data-padding={padding}
+                    data-disabled={disabled || undefined}
                     data-dragging={isDragging}
                     data-dropping={isDropping}
                     data-selected={Boolean(selected)}
