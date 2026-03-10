@@ -25,7 +25,7 @@ jobs:
               run: pnpm i --frozen-lockfile
 
             - name: Generate icons
-              run: pnpm --stream --filter {packages/fondue} build:download-new-icons
+              run: pnpm --stream --filter {packages/icons} build:download-new-icons
 
             - name: Check for changes
               id: git-check
