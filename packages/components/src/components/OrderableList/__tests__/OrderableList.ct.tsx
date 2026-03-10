@@ -364,7 +364,22 @@ test.describe('OrderableList', () => {
     });
 
     test.describe('keyboard navigation', () => {
-        test('should make content area focusable for non-selectable items', async ({ mount }) => {
+        test('should make content area focusable for non-selectable items with a drag handle', async ({ mount }) => {
+            const component = await mount(
+                <OrderableList.Root order={['1']}>
+                    <OrderableList.Item id="1">
+                        <OrderableList.ItemTitle>Item 1</OrderableList.ItemTitle>
+                        <OrderableList.DragHandle />
+                    </OrderableList.Item>
+                </OrderableList.Root>,
+            );
+
+            const content = component.locator(`[data-test-id="${ITEM_TEST_ID}"] > div[tabindex="0"]`);
+            await content.focus();
+            await expect(content).toBeFocused();
+        });
+
+        test('should not double-focus when no drag handle is present', async ({ mount }) => {
             const component = await mount(
                 <OrderableList.Root order={['1']}>
                     <OrderableList.Item id="1">
@@ -374,8 +389,7 @@ test.describe('OrderableList', () => {
             );
 
             const content = component.locator(`[data-test-id="${ITEM_TEST_ID}"] > div[tabindex="0"]`);
-            await content.focus();
-            await expect(content).toBeFocused();
+            await expect(content).toHaveCount(0);
         });
     });
 

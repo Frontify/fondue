@@ -8,13 +8,13 @@ import { useOrderableItemContext } from './hooks/useOrderedListItemContext';
 import styles from './styles/orderable-list.module.scss';
 
 export const OrderableListItemContent = forwardRef<HTMLDivElement, { children: ReactNode }>(({ children }, ref) => {
-    const { itemId, onSelect, selected } = useOrderableItemContext();
+    const { itemId, onSelect, selected, hasHandle } = useOrderableItemContext();
     const announce = useOrderableListAnnounce();
 
     if (!onSelect) {
         return (
             // eslint-disable-next-line jsx-a11y-x/no-noninteractive-tabindex
-            <div className={styles.content} ref={ref} tabIndex={0}>
+            <div className={styles.content} ref={ref} tabIndex={hasHandle ? 0 : undefined}>
                 {children}
             </div>
         );

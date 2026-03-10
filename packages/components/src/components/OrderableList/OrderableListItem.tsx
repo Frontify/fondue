@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { useSortable } from '@dnd-kit/react/sortable';
-import { forwardRef, useRef, type ReactNode, useMemo } from 'react';
+import { forwardRef, useCallback, useEffect, useRef, useState, type ReactNode, useMemo } from 'react';
 
 import { OrderableItemContextProvider } from './hooks/useOrderedListItemContext';
 import styles from './styles/orderable-list.module.scss';
@@ -33,13 +33,36 @@ export const OrderableListItemComponent = forwardRef<HTMLLIElement, OrderableLis
 
         const { isDragging, isDropping, handleRef } = useSortable({ id, index, element: internalRef });
 
-        const ItemContextValue = useMemo(
-            () => ({ itemId: id, dragHandleRef: disabled ? () => null : handleRef, selected, onSelect }),
-            [id, disabled, handleRef, selected, onSelect],
+        const [hasHandle, setHasHandle] = useState(false);
+        const wrappedHandleRef = useCallback(
+            (element: Element | null) => {
+                setHasHandle(element !== null);
+                if (!disabled) {
+                    handleRef(element);
+                }
+            },
+            [disabled, handleRef],
         );
 
+        const itemContextValue = useMemo(
+            () => ({ itemId: id, dragHandleRef: wrappedHandleRef, hasHandle, selected, onSelect }),
+            [id, wrappedHandleRef, hasHandle, selected, onSelect],
+        );
+
+        useEffect(() => {
+            if (process.env.NODE_ENV !== 'production') {
+                const titleElement = document.getElementById(`orderable-item-${id}-title`);
+                if (!titleElement) {
+                    console.warn(
+                        `[OrderableList] Item "${id}" is missing an <OrderableList.ItemTitle>. ` +
+                            'This is required for accessible drag-and-drop announcements',
+                    );
+                }
+            }
+        }, [id]);
+
         return (
-            <OrderableItemContextProvider value={ItemContextValue}>
+            <OrderableItemContextProvider value={itemContextValue}>
                 <li
                     className={styles.item}
                     aria-roledescription="sortable item"

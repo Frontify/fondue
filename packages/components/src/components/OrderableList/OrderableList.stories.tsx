@@ -2,7 +2,6 @@
 
 import { IconTrashBin } from '@frontify/fondue-icons';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { type ReactNode } from 'react';
 import { useState } from 'storybook/internal/preview-api';
 
 import { Button } from '#/index';
@@ -305,44 +304,126 @@ export const ExternallyControlled: Story = {
     },
 };
 
-const CustomItemContent = ({ children }: { children: ReactNode }) => {
-    return (
-        <div style={{ backgroundColor: 'var(--color-surface-dim)', padding: 12 }}>
-            {children}
-            <div style={{ marginTop: 8 }}>
-                <OrderableList.CustomHandle asChild>
-                    <span
-                        style={{
-                            display: 'inline-block',
-                            padding: '4px 8px',
-                            backgroundColor: 'var(--color-container-secondary-default)',
-                            borderRadius: 4,
-                            cursor: 'grab',
-                        }}
-                    >
-                        Drag here
-                    </span>
-                </OrderableList.CustomHandle>
-            </div>
-        </div>
-    );
-};
-
-export const CustomContent: Story = {
+export const CustomContentWithButtonHandle: Story = {
     render: () => {
         const [order, setOrder] = useState(['1', '2', '3']);
 
         return (
             <OrderableList.Root spacing="compact" order={order} onOrderChange={setOrder}>
-                <OrderableList.Item padding="none" id="1">
-                    <CustomItemContent>Item 1</CustomItemContent>
-                </OrderableList.Item>
-                <OrderableList.Item padding="none" id="2">
-                    <CustomItemContent>Item 2</CustomItemContent>
-                </OrderableList.Item>
-                <OrderableList.Item padding="none" id="3">
-                    <CustomItemContent>Item 3</CustomItemContent>
-                </OrderableList.Item>
+                {order.map((id) => (
+                    <OrderableList.Item padding="none" id={id} key={id}>
+                        <div style={{ backgroundColor: 'var(--color-surface-dim)', padding: 12 }}>
+                            <OrderableList.ItemTitle>Item {id}</OrderableList.ItemTitle>
+                            <div style={{ marginTop: 8 }}>
+                                <OrderableList.CustomHandle asChild>
+                                    <span
+                                        style={{
+                                            display: 'inline-block',
+                                            padding: '4px 8px',
+                                            backgroundColor: 'var(--color-container-secondary-default)',
+                                            cursor: 'grab',
+                                        }}
+                                    >
+                                        Drag here
+                                    </span>
+                                </OrderableList.CustomHandle>
+                            </div>
+                        </div>
+                    </OrderableList.Item>
+                ))}
+            </OrderableList.Root>
+        );
+    },
+};
+
+export const CustomContentWithCardHandle: Story = {
+    render: () => {
+        const [order, setOrder] = useState(['1', '2', '3']);
+
+        return (
+            <OrderableList.Root spacing="compact" order={order} onOrderChange={setOrder}>
+                {order.map((id) => (
+                    <OrderableList.Item padding="none" id={id} key={id}>
+                        <div
+                            style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                overflow: 'hidden',
+                            }}
+                        >
+                            <div
+                                style={{
+                                    padding: '8px 12px',
+                                    backgroundColor: 'var(--color-surface-dim)',
+                                    fontWeight: 600,
+                                }}
+                            >
+                                <OrderableList.ItemTitle>Card {id}</OrderableList.ItemTitle>
+                            </div>
+                            <OrderableList.CustomHandle asChild>
+                                <div
+                                    style={{
+                                        padding: 24,
+                                        backgroundColor: 'var(--color-container-secondary-default)',
+                                        cursor: 'grab',
+                                        textAlign: 'center',
+                                    }}
+                                >
+                                    Drag from this area
+                                </div>
+                            </OrderableList.CustomHandle>
+                        </div>
+                    </OrderableList.Item>
+                ))}
+            </OrderableList.Root>
+        );
+    },
+};
+
+export const CustomContentFullyDraggable: Story = {
+    render: () => {
+        const [order, setOrder] = useState(['1', '2', '3']);
+
+        return (
+            <OrderableList.Root spacing="compact" order={order} onOrderChange={setOrder}>
+                {order.map((id) => (
+                    <OrderableList.Item padding="none" id={id} key={id}>
+                        <div
+                            style={{
+                                padding: 16,
+                                backgroundColor: 'var(--color-surface-dim)',
+                                cursor: 'grab',
+                            }}
+                        >
+                            <OrderableList.ItemTitle>Item {id}</OrderableList.ItemTitle>
+                            <div style={{ marginTop: 4, color: 'var(--color-text-weak)' }}>
+                                The entire item is draggable
+                            </div>
+                        </div>
+                    </OrderableList.Item>
+                ))}
+            </OrderableList.Root>
+        );
+    },
+};
+
+export const CustomContentWithCustomTitle: Story = {
+    render: () => {
+        const [order, setOrder] = useState(['1', '2', '3']);
+
+        return (
+            <OrderableList.Root spacing="compact" order={order} onOrderChange={setOrder}>
+                {order.map((id) => (
+                    <OrderableList.Item padding="none" id={id} key={id}>
+                        <div style={{ padding: 16, backgroundColor: 'var(--color-surface-dim)' }}>
+                            <OrderableList.ItemTitle asChild>
+                                <span style={{ fontWeight: 600, letterSpacing: '0.2em', fontStyle: 'italic' }}>
+                                    Item {id}
+                                </span>
+                            </OrderableList.ItemTitle>
+                        </div>
+                    </OrderableList.Item>
+                ))}
             </OrderableList.Root>
         );
     },
