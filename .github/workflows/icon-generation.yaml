@@ -29,9 +29,6 @@ jobs:
               env:
                   FIGMA_ACCESS_TOKEN: ${{ secrets.FIGMA_ACCESS_TOKEN }}
 
-            - name: Generate icons
-              run: pnpm --stream --filter {packages/fondue} generate:icons
-
             - name: Check for changes
               id: git-check
               run: |
