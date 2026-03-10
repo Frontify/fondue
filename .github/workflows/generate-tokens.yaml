@@ -32,7 +32,6 @@ jobs:
               run: pnpm i --frozen-lockfile
 
             - name: Build tokens
-              working-directory: ./fondue
               env:
                   FIGMA_ACCESS_TOKEN: ${{ secrets.FIGMA_ACCESS_TOKEN }}
               run: pnpm build:tokens
