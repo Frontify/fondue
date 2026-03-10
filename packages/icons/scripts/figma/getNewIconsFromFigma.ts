@@ -70,9 +70,6 @@ export const getNewIconsFromFigma = async ({
         if ('children' in componentSet) {
             for (const componentNode of componentSet.children) {
                 const iconVariantName = getVariantName(componentNode);
-                if (!iconVariantName) {
-                    console.log('iconVariantName', iconShapeName, iconVariantName);
-                }
                 const iconFileName = `${iconShapeName}-${iconVariantName}.svg`;
                 const iconFileExists = existsSync(`${iconDirectory}/${iconFileName}`);
 
