@@ -11,8 +11,6 @@ import {
     useRef,
     type CSSProperties,
     type ForwardedRef,
-    type KeyboardEvent,
-    type MouseEvent,
     type MouseEventHandler,
     type ReactNode,
 } from 'react';
@@ -45,15 +43,6 @@ type CardRootBaseProps = {
     children?: ReactNode;
 };
 
-type CardRootInteractiveProps = {
-    /**
-     * Double-click callback for the card surface (e.g. navigate).
-     * Does not fire when clicking action buttons.
-     * Only available when `onClick` or `href` is provided.
-     */
-    onDoubleClick?: MouseEventHandler<HTMLElement>;
-};
-
 export type CardRootProps = CardRootBaseProps &
     (
         | {
@@ -64,11 +53,11 @@ export type CardRootProps = CardRootBaseProps &
                */
               href: string;
               /**
-               * Click callback for the card surface (e.g. select).
-               * Does not fire when clicking action buttons.
+               * Click callback for the card's selection checkbox.
+               * When both `href` and `onClick` are provided, clicking the card
+               * overlay navigates and clicking the checkbox fires `onClick`.
                */
               onClick?: MouseEventHandler<HTMLElement>;
-              onDoubleClick?: CardRootInteractiveProps['onDoubleClick'];
           }
         | {
               href?: never;
@@ -77,12 +66,10 @@ export type CardRootProps = CardRootBaseProps &
                * Does not fire when clicking action buttons.
                */
               onClick: MouseEventHandler<HTMLElement>;
-              onDoubleClick?: CardRootInteractiveProps['onDoubleClick'];
           }
         | {
               href?: never;
               onClick?: never;
-              onDoubleClick?: never;
           }
     );
 
@@ -94,35 +81,18 @@ export const CardRoot = (
         selected = false,
         href,
         onClick,
-        onDoubleClick,
         onMouseEnter,
         onMouseLeave,
         children,
     }: CardRootProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
-    const isClickable = !!(href || onClick || onDoubleClick);
-    const hasDualAction = !!(onDoubleClick && (onClick || href));
+    const isClickable = !!(href || onClick);
+    const hasDualAction = !!(href && onClick);
     const generatedTitleId = useId();
     const titleId = `${generatedTitleId}-title`;
-    const keyboardHintId = `${generatedTitleId}-keyboard-hint`;
-
-    const handleKeyDown = useCallback(
-        (event: KeyboardEvent<HTMLElement>) => {
-            if (event.key === 'Enter') {
-                event.preventDefault();
-                onClick?.(event as unknown as MouseEvent<HTMLElement>);
-            }
-            if (event.key === ' ') {
-                event.preventDefault();
-                onDoubleClick?.(event as unknown as MouseEvent<HTMLElement>);
-            }
-        },
-        [onClick, onDoubleClick],
-    );
 
     const labelledby = ariaLabel ? undefined : titleId;
-    const describedby = hasDualAction ? [ariaDescribedby, keyboardHintId].filter(Boolean).join(' ') : ariaDescribedby;
 
     const { actions, otherChildren } = useMemo(() => {
         const actions: ReactNode[] = [];
@@ -158,12 +128,8 @@ export const CardRoot = (
                         tabIndex={0}
                         aria-label={ariaLabel}
                         aria-labelledby={labelledby}
-                        aria-describedby={describedby}
+                        aria-describedby={ariaDescribedby}
                         aria-current={selected ? 'true' : undefined}
-                        aria-keyshortcuts={hasDualAction ? 'Enter Space' : undefined}
-                        onClick={onClick}
-                        onDoubleClick={onDoubleClick}
-                        onKeyDown={handleKeyDown}
                     />
                 ) : (
                     <button
@@ -172,18 +138,21 @@ export const CardRoot = (
                         tabIndex={0}
                         aria-label={ariaLabel}
                         aria-labelledby={labelledby}
-                        aria-describedby={describedby}
+                        aria-describedby={ariaDescribedby}
                         aria-pressed={selected}
-                        aria-keyshortcuts={hasDualAction ? 'Enter Space' : undefined}
                         onClick={onClick}
-                        onDoubleClick={onDoubleClick}
-                        onKeyDown={handleKeyDown}
                     />
                 ))}
             {hasDualAction && (
-                <span id={keyboardHintId} hidden>
-                    Press Enter to select, press Space to open
-                </span>
+                <button
+                    className={styles.checkbox}
+                    type="button"
+                    aria-label={selected ? 'Deselect' : 'Select'}
+                    aria-pressed={selected}
+                    onClick={onClick}
+                >
+                    <IconCheckMark size={16} />
+                </button>
             )}
             {otherChildren}
             {actions.length > 0 && (
@@ -370,8 +339,8 @@ export const CardTitle = (
             }
 
             if (node) {
-                const root = node.closest(`.${styles.root}`);
-                const titleId = root?.getAttribute('data-title-id');
+                const root = node.closest<HTMLElement>(`.${styles.root}`);
+                const titleId = root?.dataset.titleId;
                 if (titleId) {
                     node.id = titleId;
                 }

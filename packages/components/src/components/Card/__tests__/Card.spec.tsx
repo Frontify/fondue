@@ -197,22 +197,46 @@ describe('Card Component', () => {
         expect(screen.getByRole('link', { name: 'Go to page' })).toHaveAttribute('aria-current', 'true');
     });
 
-    it('should render keyboard hint when dual action (onClick + onDoubleClick)', () => {
+    it('should render a checkbox button when both href and onClick are provided', () => {
+        const handleClick = vi.fn();
         render(
-            <Card.Root onClick={() => {}} onDoubleClick={() => {}} aria-label="Card">
+            <Card.Root href="/page" onClick={handleClick} aria-label="Go to page">
                 <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
             </Card.Root>,
         );
-        expect(screen.getByText('Press Enter to select, press Space to open')).toBeInTheDocument();
+        expect(screen.getByRole('link', { name: 'Go to page' })).toHaveAttribute('href', '/page');
+        expect(screen.getByRole('button', { name: 'Select' })).toBeInTheDocument();
     });
 
-    it('should not render keyboard hint when single action only', () => {
+    it('should call onClick on the checkbox when both href and onClick are provided', async () => {
+        const handleClick = vi.fn();
         render(
-            <Card.Root onClick={() => {}} aria-label="Card">
+            <Card.Root href="/page" onClick={handleClick} aria-label="Go to page">
                 <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
             </Card.Root>,
         );
-        expect(screen.queryByText('Press Enter to select, press Space to open')).not.toBeInTheDocument();
+        await userEvent.click(screen.getByRole('button', { name: 'Select' }));
+        expect(handleClick).toHaveBeenCalledOnce();
+    });
+
+    it('should not render a checkbox when only href is provided', () => {
+        render(
+            <Card.Root href="/page" aria-label="Go to page">
+                <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
+            </Card.Root>,
+        );
+        expect(screen.getByRole('link')).toBeInTheDocument();
+        expect(screen.queryByRole('button')).not.toBeInTheDocument();
+    });
+
+    it('should not render a checkbox when only onClick is provided', () => {
+        render(
+            <Card.Root onClick={() => {}} aria-label="Select card">
+                <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
+            </Card.Root>,
+        );
+        expect(screen.getByRole('button', { name: 'Select card' })).toBeInTheDocument();
+        expect(screen.queryByRole('button', { name: 'Select' })).not.toBeInTheDocument();
     });
 
     it('should render banner with small size', () => {

@@ -99,6 +99,49 @@
     color: transparent;
 }
 
+.checkbox {
+    position: absolute;
+    top: var(--spacing-medium);
+    left: var(--spacing-medium);
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: sizeToken.get(5);
+    height: sizeToken.get(5);
+    padding: 0;
+    border-radius: var(--border-radius-medium);
+    border: var(--border-width-default) solid var(--color-line-mid);
+    background-color: var(--color-surface-default);
+    color: transparent;
+    cursor: pointer;
+    outline: none;
+    opacity: 0;
+    @include transitions.transition((opacity, background-color, border-color, color));
+
+    .root[data-interactive='true']:hover &,
+    .root[data-interactive='true']:has([data-state='open']) &,
+    &:focus-visible {
+        opacity: 1;
+    }
+
+    .root[data-interactive='true'][data-selected='true'] & {
+        opacity: 1;
+        border: none;
+        background-color: var(--color-primary-default);
+        color: var(--color-primary-on-primary);
+    }
+
+    &:focus-visible {
+        outline: 4px solid var(--color-focus-default);
+    }
+}
+
+// Hide the visual-only selection indicator when an interactive checkbox is present
+.root:has(> .checkbox) .selectionIndicator {
+    display: none !important;
+}
+
 .banner {
     grid-area: banner;
     position: relative;
