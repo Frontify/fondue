@@ -26,7 +26,7 @@ const meta: Meta<typeof OrderableListRoot> = {
     tags: ['autodocs'],
     parameters: {
         status: {
-            type: 'in_progress',
+            type: 'released',
         },
     },
 };

@@ -1,12 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useId } from '@react-aria/utils';
-import { useEffect, useMemo, useState } from 'react';
-
 import { Tree } from '@components/Tree/Tree';
 import { TreeItem } from '@components/Tree/TreeItem/TreeItem';
 import { type OnTreeDropCallback } from '@components/Tree/types';
+import { useId } from '@react-aria/utils';
 import { type DraggableItem } from '@utilities/dnd/types';
+import { useEffect, useMemo, useState } from 'react';
 
 import { type OrderableListItem, type OrderableListItemStyle, type OrderableListProps } from './types';
 
@@ -34,6 +33,9 @@ const moveItem = <T extends object>(
     return theItem ? [{ ...theItem, sort: newPosition }] : [];
 };
 
+/**
+ * @deprecated Use the new OrderableList component from @frontify/fondue/components instead.
+ */
 export const OrderableList = <T extends object>({
     onMove,
     dragDisabled,

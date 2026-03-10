@@ -106,11 +106,18 @@
         font-weight: var(--typography-font-weight-medium);
         line-height: var(--typography-line-height-tight);
         color: var(--color-primary-default);
-        align-self: end;
+        align-self: center;
         max-width: 100%;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+
+        &:has(+ .description) {
+            align-self: end;
+        }
+        & + .description {
+            align-self: start;
+        }
     }
     .description {
         grid-column: 2;
@@ -118,7 +125,7 @@
         font-weight: var(--typography-font-weight-regular);
         line-height: var(--typography-line-height-tight);
         color: var(--color-primary-default);
-        align-self: start;
+        align-self: center;
         max-width: 100%;
         overflow: hidden;
         text-overflow: ellipsis;

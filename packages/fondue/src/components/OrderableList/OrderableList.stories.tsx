@@ -1,9 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { chain } from '@react-aria/utils';
-import { type Meta, type StoryFn } from '@storybook/react-vite';
-import { useEffect, useRef, useState } from 'react';
-
 import { renderContent, storyItems } from '@components/OrderableList/utils';
 import {
     TreeItemBorderClassMap,
@@ -13,16 +9,19 @@ import {
     TreeItemShadowClassMap,
     TreeItemSpacingClassMap,
 } from '@components/Tree/types';
+import { chain } from '@react-aria/utils';
+import { type Meta, type StoryFn } from '@storybook/react-vite';
+import { useEffect, useRef, useState } from 'react';
 
 import { OrderableList as OrderableListComponent } from './OrderableList';
 import { type OrderableListItem, type OrderableListItemStyle, type OrderableListProps } from './types';
 
 /**
  ### *Legacy component warning*
- #### This is a unmaintained legacy component. It will be deprecated and replaced with a new component in an upcoming release.
+ #### This is a deprecated component. It will be removed in the next major version.
  */
 export default {
-    title: 'Legacy Components/Orderable List',
+    title: 'Legacy Components/Deprecated/Orderable List',
     component: OrderableListComponent,
     tags: ['autodocs'],
     args: {
@@ -98,6 +97,11 @@ export default {
             options: [...Object.keys(TreeItemColorsClassMap)],
             mapping: [...Object.values(TreeItemColorsClassMap)],
             control: { type: 'inline-radio' },
+        },
+    },
+    parameters: {
+        status: {
+            type: 'deprecated',
         },
     },
 } as Meta<OrderableListProps<StoryListItem>>;
