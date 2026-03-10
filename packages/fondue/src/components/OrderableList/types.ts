@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type ReactElement } from 'react';
+
 import { type DragHandlerPosition, type TreeItemStyling, type TreeProps } from '@components/Tree/types';
 import { type DraggableItem } from '@utilities/dnd/types';
-import { type ReactElement } from 'react';
 
 /**
  * @deprecated Use the new OrderableList component from @frontify/fondue/components instead.
