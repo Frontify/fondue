@@ -51,7 +51,7 @@
         cursor: grab;
     }
 
-    &:not([data-disabled]):hover,
+    &:not([data-disabled]):not([data-selected='true']):hover,
     &[data-dropping='true'] {
         border-color: var(--color-line-mid);
     }
@@ -61,7 +61,7 @@
     }
 
     &[data-selected='true'] {
-        border-color: var(--color-primary-default);
+        border-color: var(--color-line-strong);
         background-color: var(--color-surface-dim);
     }
 
