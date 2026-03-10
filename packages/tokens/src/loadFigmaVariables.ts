@@ -18,11 +18,22 @@ const fetchFigmaVariables = async (fileKey: Config['figmaFileKey']) => {
     if (!process.env.FIGMA_ACCESS_TOKEN) {
         throw new Error('FIGMA_ACCESS_TOKEN is not set');
     }
-    const figmaResponse = await fetch(`https://api.figma.com/v1/files/${fileKey}/variables/local`, {
+    const res = await fetch(`https://api.figma.com/v1/files/${fileKey}/variables/local`, {
         headers: {
             'X-Figma-Token': process.env.FIGMA_ACCESS_TOKEN,
         },
-    }).then((res) => res.json() as Promise<FigmaResponse>);
+    });
+
+    if (!res.ok) {
+        const body = await res.text();
+        throw new Error(`Figma API responded with ${res.status}: ${body}`);
+    }
+
+    const figmaResponse = (await res.json()) as FigmaResponse;
+
+    if (!figmaResponse.meta) {
+        throw new Error(`Unexpected Figma API response: ${JSON.stringify(figmaResponse)}`);
+    }
 
     return {
         collections: figmaResponse.meta.variableCollections,
