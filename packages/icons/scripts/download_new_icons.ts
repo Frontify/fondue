@@ -23,6 +23,9 @@ import { getNewIconsFromFigma } from './figma/getNewIconsFromFigma';
         frameId: FIGMA_ICON_FRAME_ID,
     });
 
+    console.log('icons', icons);
+    console.log('icons length', Object.keys(icons).length);
+
     if (Object.keys(icons).length === 0) {
         console.log('No changes to the Figma icons detected, exit the build now.');
         return;
