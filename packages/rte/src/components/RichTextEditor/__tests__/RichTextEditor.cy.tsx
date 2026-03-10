@@ -30,11 +30,11 @@ import {
     SoftBreakPlugin,
     StrikethroughPlugin,
     TextStylePlugin,
+    OL_CLASSES,
     UL_CLASSES,
     UNDERLINE_CLASSES,
     UnderlinePlugin,
     UnorderedListPlugin,
-    getOrderedListClasses,
 } from '../Plugins';
 import { ACTIVE_COLUMN_BREAK_CLASS_NAMES } from '../Plugins/ColumnBreakPlugin/utils/getColumnBreakClasses';
 import { RichTextEditor } from '../RichTextEditor';
@@ -838,14 +838,14 @@ describe('RichTextEditor Component', () => {
             cy.get('[contenteditable=true]').click().type('1. hello');
             cy.get('[contenteditable=true]').should('include.html', '<ol');
             cy.get('[contenteditable=true]').should('include.html', '<li');
-            cy.get('[contenteditable=true]').get('ol').should('have.class', getOrderedListClasses(0));
+            cy.get('[contenteditable=true]').get('ol').should('have.class', OL_CLASSES);
         });
 
         it('should autoformat 1) to ordered list', () => {
             cy.get('[contenteditable=true]').click().type('1. hello');
             cy.get('[contenteditable=true]').should('include.html', '<ol');
             cy.get('[contenteditable=true]').should('include.html', '<li');
-            cy.get('[contenteditable=true]').get('ol').should('have.class', getOrderedListClasses(0));
+            cy.get('[contenteditable=true]').get('ol').should('have.class', OL_CLASSES);
         });
 
         it('should autoformat [] to checkbox list', () => {
