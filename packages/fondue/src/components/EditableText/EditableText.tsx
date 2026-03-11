@@ -17,6 +17,9 @@ import { EditableTextHelper } from '@components/EditableText/lib/helper';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 
+/**
+ * @deprecated Use the new EditableText component from @frontify/fondue/components instead.
+ */
 export enum EditableMode {
     INPUT = 'INPUT',
     LABEL = 'LABEL',
@@ -46,11 +49,7 @@ interface EditableOptionProps {
 }
 
 /**
- * Add Children with badges or icons
- * onEditableSave callback to get updated Value
- * onAdditionalValueSave callback with more information (ex. ID)
- * onModeChange callback when state changes
- * options to specify styling and additional behaviours
+ * @deprecated Use the new EditableText component from @frontify/fondue/components instead.
  */
 export interface EditableTextProps {
     children?: ReactElement;
@@ -64,20 +63,7 @@ export interface EditableTextProps {
 }
 
 /**
- * Component to switch between Label and Input state. Wraps the Children
- * with a Button, to allow for accessibility and copies styles to input field
- *
- * Events:
- * - onEditableSave         // When changing from input to label state
- * - onModeChange           // Indicates which state is active
- * - onAdditionalValueSave  // Similar to editable Save with additional Values provided
- *
- * Options properties:
- * - mode:                   enum EditableMode  // {INPUT = 'INPUT',LABEL = 'LABEL'}
- * - enableDoubleClick:      boolean            // should the input be triggered by a double click or single click
- * - isSlimInputField:       boolean            // removes y padding
- * - additionalValues?:      string             // additional Values like ID
- *
+ * @deprecated Use the new EditableText component from @frontify/fondue/components instead.
  */
 export const EditableText = ({
     onEditableSave,

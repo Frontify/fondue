@@ -12,6 +12,7 @@ export { Dialog } from './components/Dialog/Dialog';
 export { Divider } from './components/Divider/Divider';
 export { Dropdown } from './components/Dropdown/Dropdown';
 export { DatePicker } from './components/DatePicker/DatePicker';
+export { EditableText } from './components/EditableText/EditableText';
 export { Flex } from './components/Flex/Flex';
 export { Flyout } from './components/Flyout/Flyout';
 export { Grid } from './components/Grid/Grid';

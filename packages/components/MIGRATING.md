@@ -329,7 +329,7 @@ const [selectedDate, setSelectedDate] = useState<Date | null>(new Date(2026, 0, 
     isClearable
     minDate={new Date()}
     validation={Validation.Default}
-/>
+/>;
 ```
 
 ```tsx
@@ -345,7 +345,7 @@ const [endDate, setEndDate] = useState<Date | null>(new Date(2026, 0, 24));
         setStartDate(start);
         setEndDate(end);
     }}
-/>
+/>;
 ```
 
 #### New
@@ -357,7 +357,7 @@ const [selectedDate, setSelectedDate] = useState<DatePickerDate>({
     day: 17,
 });
 
-<DatePicker selected={selectedDate} onChange={setSelectedDate} disabledDates={[{ before: new Date() }]} />
+<DatePicker selected={selectedDate} onChange={setSelectedDate} disabledDates={[{ before: new Date() }]} />;
 ```
 
 ```tsx
@@ -366,7 +366,7 @@ const [selectedDateRange, setSelectedDateRange] = useState<DatePickerDateRange>(
     to: { year: 2026, month: 1, day: 24 },
 });
 
-<DatePicker.Range selected={selectedDateRange} onChange={setSelectedDateRange} />
+<DatePicker.Range selected={selectedDateRange} onChange={setSelectedDateRange} />;
 ```
 
 To use the date picker in a popover with a trigger input, compose it with `Flyout` and `DatePicker.Input`:
@@ -377,16 +377,12 @@ const [selectedDate, setSelectedDate] = useState<DatePickerDate>();
 
 <Flyout.Root open={isOpen} onOpenChange={setIsOpen}>
     <Flyout.Trigger>
-        <DatePicker.Input
-            selected={selectedDate}
-            isOpen={isOpen}
-            onClear={() => setSelectedDate(undefined)}
-        />
+        <DatePicker.Input selected={selectedDate} isOpen={isOpen} onClear={() => setSelectedDate(undefined)} />
     </Flyout.Trigger>
     <Flyout.Content>
         <DatePicker selected={selectedDate} onChange={setSelectedDate} />
     </Flyout.Content>
-</Flyout.Root>
+</Flyout.Root>;
 ```
 
 #### Upgrade Steps:
@@ -402,8 +398,6 @@ const [selectedDate, setSelectedDate] = useState<DatePickerDate>();
 
 Changes:
 
-- The component no longer toggles between a hidden `<input>` and a `<button>` wrapper. It now uses `contentEditable` directly on the text element, making inline editing seamless.
-- The `children` prop now renders the text content directly instead of being cloned with a ref.
 - The `asChild` prop has been added to render the editable behavior on a custom element (e.g. `<h1>`), replacing the old pattern of passing a styled child element.
 - The `options` prop (with `mode`, `enableDoubleClick`, `isSlimInputField`, `additionalValues`, `removeBoxPadding`) has been removed entirely.
 - The `EditableMode` enum (`INPUT` / `LABEL`) has been removed. The component now enters edit mode on focus and exits on blur or Enter.
@@ -909,10 +903,10 @@ Changes:
 <RadioList.Root orientation="vertical" defaultValue="option1" onValueChange={handleChange}>
     <RadioList.RadioButton id="option1" value="option1" />
     <Label htmlFor="option1">Option 1</Label>
-    
+
     <RadioList.RadioButton id="option2" value="option2" />
     <Label htmlFor="option2">Option 2</Label>
-    
+
     <RadioList.RadioButton id="option3" value="option3" />
     <Label htmlFor="option3">Option 3</Label>
 </RadioList.Root>
@@ -1619,10 +1613,8 @@ const handleMove = (modifiedItems: DraggableItem<MyItem>[]) => {
         borderStyle: 'solid',
         activeColorStyle: 'soft',
     }}
-    renderContent={(item) => (
-        <div>{item.textContent}</div>
-    )}
-/>
+    renderContent={(item) => <div>{item.textContent}</div>}
+/>;
 ```
 
 #### New
@@ -1646,7 +1638,7 @@ const [order, setOrder] = useState(['1', '2', '3']);
         <OrderableList.ItemDescription>Item 3 description</OrderableList.ItemDescription>
         <OrderableList.DragHandle />
     </OrderableList.Item>
-</OrderableList.Root>
+</OrderableList.Root>;
 ```
 
 With selection, actions, and decorators:
@@ -1671,7 +1663,7 @@ const [selectedId, setSelectedId] = useState<string | null>(null);
         </OrderableList.ItemAction>
         <OrderableList.DragHandle />
     </OrderableList.Item>
-</OrderableList.Root>
+</OrderableList.Root>;
 ```
 
 With custom drag handle:
@@ -1804,7 +1796,7 @@ Changes:
     - The `content` prop has been removed and the content is now passed in as a child of `Tooltip.Content`.
 - The `placement` and `flip` props have been removed and replaced by `side`.
 
-              When the tooltip content collides with the viewport, it is automatically flipped to the other side and / or slightly shifted to fit into the viewport.
+                When the tooltip content collides with the viewport, it is automatically flipped to the other side and / or slightly shifted to fit into the viewport.
 
 - The `openOnMount` prop has been removed, the open state can be externally controlled with the `open` prop.
 - The `enablePortal` prop has been removed, the tooltip now uses a portal by default.
