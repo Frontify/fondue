@@ -47,9 +47,9 @@ export const CustomTextStyling: Story = {
     },
 };
 
-export const HugWidth: Story = {
+export const FullWidth: Story = {
     args: {
-        hugWidth: true,
+        hugWidth: false,
         children: 'Click to edit this text',
     },
 };

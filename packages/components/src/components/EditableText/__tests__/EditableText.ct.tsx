@@ -158,16 +158,16 @@ test('should not insert newline on Enter key', async ({ mount, page }) => {
     expect(textContent).not.toContain('\n');
 });
 
-test('should set data-hug-width based on hugWidth prop', async ({ mount }) => {
-    const component = await mount(<EditableText hugWidth>{EDITABLE_TEXT_TEXT}</EditableText>);
-    const root = component.getByTestId(EDITABLE_TEXT_TEST_ID);
-    await expect(root).toHaveAttribute('data-hug-width', 'true');
-});
-
-test('should default data-hug-width to false', async ({ mount }) => {
-    const component = await mount(<EditableText>{EDITABLE_TEXT_TEXT}</EditableText>);
+test('should set data-hug-width to false when hugWidth is false', async ({ mount }) => {
+    const component = await mount(<EditableText hugWidth={false}>{EDITABLE_TEXT_TEXT}</EditableText>);
     const root = component.getByTestId(EDITABLE_TEXT_TEST_ID);
     await expect(root).toHaveAttribute('data-hug-width', 'false');
+});
+
+test('should default data-hug-width to true', async ({ mount }) => {
+    const component = await mount(<EditableText>{EDITABLE_TEXT_TEXT}</EditableText>);
+    const root = component.getByTestId(EDITABLE_TEXT_TEST_ID);
+    await expect(root).toHaveAttribute('data-hug-width', 'true');
 });
 
 test('should hide pen icon from screen readers', async ({ mount }) => {

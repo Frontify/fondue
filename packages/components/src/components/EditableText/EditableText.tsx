@@ -18,7 +18,7 @@ export type EditableTextProps = {
     asChild?: boolean;
     /**
      * When true, the EditableText only takes the width of the content.
-     * @default false
+     * @default true
      */
     hugWidth?: boolean;
     /**
@@ -34,7 +34,7 @@ export const EditableText = forwardRef<HTMLElement, EditableTextProps>(
         {
             onChange,
             asChild,
-            hugWidth = false,
+            hugWidth = true,
             'aria-label': ariaLabel,
             children,
             'data-test-id': dataTestId = 'fondue-editable-text',
