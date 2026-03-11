@@ -1,0 +1,65 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+@use '../../../utilities/sizeToken.module.scss';
+@use '../../../utilities/focusStyle.module.scss';
+@use '../../../utilities/transitions.module.scss';
+
+.root {
+    display: flex;
+    align-items: center;
+    position: relative;
+    outline: none;
+    cursor: text;
+    width: fit-content;
+    max-width: 100%;
+    border-radius: var(--border-radius-medium);
+    border: var(--border-width-default) solid transparent;
+    padding-block: sizeToken.get(1.5);
+
+    @include transitions.transition-colors;
+
+    &:hover {
+        border-color: var(--color-line-strong);
+    }
+
+    &[data-editing='true'] {
+        border-color: var(--color-line-strong);
+        padding-inline-end: sizeToken.get(8);
+
+        .text {
+            padding-inline-end: sizeToken.get(1);
+        }
+    }
+
+    &[data-show-focus-ring='true'] {
+        @include focusStyle.focus-outline-styles;
+    }
+}
+
+.text {
+    outline: none;
+    padding-inline-start: sizeToken.get(3);
+    padding-inline-end: sizeToken.get(9);
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+    &[contenteditable='plaintext-only'] {
+        overflow: auto;
+        text-overflow: clip;
+        scrollbar-width: none;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
+    }
+}
+
+.icon {
+    display: flex;
+    position: absolute;
+    inset-inline-end: sizeToken.get(3);
+    pointer-events: none;
+    color: var(--color-secondary-default);
+}
