@@ -49,13 +49,31 @@
     }
 
     // Disabled states
-    &:has(+ * :disabled),
-    &:has(~ :disabled) {
+    // Apply disabled styling when there are disabled elements, but exclude elements
+    // that are within containers marked with data-label-ignore-disabled.
+    //
+    // Components like TextInput.Slot automatically set data-label-ignore-disabled="true"
+    // so that disabled buttons within slots don't affect the label's styling.
+    // This is useful for complex components like number inputs with increment/decrement buttons,
+    // where the buttons may be disabled independently of the input itself.
+    //
+    // Example:
+    // <Label htmlFor="my-input">Duration</Label>
+    // <TextInput.Root id="my-input" disabled={false}>
+    //   <TextInput.Slot name="right">
+    //     {/* This disabled button won't affect the label because Slot has data-label-ignore-disabled */}
+    //     <Button disabled>Decrement</Button>
+    //   </TextInput.Slot>
+    // </TextInput.Root>
+    
+    // Check for disabled descendants, but NOT if they're inside a data-label-ignore-disabled container
+    &:has(+ * :disabled):not(:has(+ * [data-label-ignore-disabled] :disabled)),
+    &:has(~ :disabled):not(:has(~ [data-label-ignore-disabled] :disabled)) {
         color: var(--color-disabled-default);
         cursor: not-allowed;
     }
 
-    // Peer disabled
+    // Peer disabled (form control is a direct sibling before the label)
     input:disabled ~ &,
     button:disabled ~ & {
         color: var(--color-disabled-default);
