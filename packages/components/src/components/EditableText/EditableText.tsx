@@ -108,9 +108,6 @@ export const EditableText = forwardRef<HTMLElement, EditableTextProps>(
                 >
                     {children}
                 </TextElement>
-                <span className={styles.icon} aria-hidden="true">
-                    <IconPen size={16} />
-                </span>
             </div>
         );
     },

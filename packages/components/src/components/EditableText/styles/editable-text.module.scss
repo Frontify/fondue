@@ -25,11 +25,6 @@
 
     &[data-editing='true'] {
         border-color: var(--color-line-strong);
-        padding-inline-end: sizeToken.get(9);
-
-        .text {
-            padding-inline-end: sizeToken.get(0);
-        }
     }
 
     &[data-show-focus-ring='true'] {
@@ -40,7 +35,7 @@
 .text {
     outline: none;
     padding-inline-start: sizeToken.get(3);
-    padding-inline-end: sizeToken.get(9);
+    padding-inline-end: sizeToken.get(3);
     min-width: 0;
     overflow: hidden;
     white-space: nowrap;

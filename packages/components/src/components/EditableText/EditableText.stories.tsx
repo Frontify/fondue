@@ -1,9 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { within } from '@testing-library/react';
 import { action } from 'storybook/actions';
+import { useRef } from 'storybook/internal/preview-api';
 
-import { Heading } from '#/index';
+import { Button, Flex, Heading } from '#/index';
 
 import { EditableText } from './EditableText';
 
@@ -51,5 +53,26 @@ export const FullWidth: Story = {
     args: {
         hugWidth: false,
         children: 'Click to edit this text',
+    },
+};
+
+export const triggerEditingExternally: Story = {
+    args: {
+        children: 'Click to edit this text',
+    },
+    render: (args) => {
+        const editableTextRef = useRef<HTMLElement | null>(null);
+        return (
+            <Flex gapX={8}>
+                <EditableText {...args} ref={editableTextRef} />
+                <Button
+                    onPress={() => {
+                        editableTextRef.current?.focus();
+                    }}
+                >
+                    Edit
+                </Button>
+            </Flex>
+        );
     },
 };
