@@ -64,6 +64,9 @@ This document describes the changes that you need to make to your code to migrat
         - [Table](#table)
             - [Old](#table-old)
             - [New](#table-new)
+        - [Orderable List](#orderable-list)
+            - [Old](#orderable-list-old)
+            - [New](#orderable-list-new)
         - [Text Input](#text-input)
             - [Old](#text-input-old)
             - [New](#text-input-new)
@@ -1489,6 +1492,158 @@ return (
     </Flex>
 );
 ```
+
+### Orderable List
+
+Changes:
+
+- **Component structure** now uses a composable compound component pattern:
+    - `OrderableList.Root` wraps all items and manages order state
+    - `OrderableList.Item` for each sortable item (requires unique `id`)
+    - `OrderableList.ItemTitle` for the item title text
+    - `OrderableList.ItemDescription` for the item description text
+    - `OrderableList.ItemDecorator` for decorative elements (icons, badges, etc.)
+    - `OrderableList.ItemAction` for action buttons within items
+    - `OrderableList.DragHandle` for the default drag handle with grab icon
+    - `OrderableList.CustomHandle` for custom drag handle elements
+
+- **Data model changed**:
+    - Items are no longer passed as a data array with `renderContent`. Instead, items are composed declaratively as children.
+    - The `items` prop (array of `OrderableListItem<T>` objects with `id`, `sort`, `alt`, etc.) has been replaced by an `order` prop (simple `string[]` of item IDs) on `OrderableList.Root`.
+    - The `onMove` callback (which received the full modified items array) has been replaced by `onOrderChange` (which receives the new order as a `string[]`).
+
+- **Drag handle changes**:
+    - The `dragHandlerPosition` prop (`'left' | 'right' | 'none'`) has been removed. Drag handle placement is now controlled by composition — place `OrderableList.DragHandle` wherever you want inside the item.
+    - If no `DragHandle` or `CustomHandle` is rendered, the entire item becomes draggable.
+    - `OrderableList.CustomHandle` supports an `asChild` prop for rendering custom drag handle elements.
+
+- **Layout and styling changes**:
+    - The `itemStyle` prop (with `spacingY`, `contentHight`, `shadow`, `borderRadius`, `borderWidth`, `borderStyle`, `activeColorStyle`) has been removed in favor of built-in spacing and styling.
+    - New `spacing` prop on `OrderableList.Root` with values `'tight'`, `'compact'`, or `'comfortable'`.
+    - New `direction` prop on `OrderableList.Root` with values `'vertical'` or `'horizontal'`.
+    - New `padding` prop on `OrderableList.Item` with values `'none'` or `'small'`.
+
+- **Selection changes**:
+    - The `selectedId` prop on the root has been replaced by `selected` and `onSelect` props on individual `OrderableList.Item` components.
+
+- **Removed properties**:
+    - `dragDisabled` (use `disabled` on individual `OrderableList.Item` instead)
+    - `enableDragDelay`
+    - `renderContent` (use composition instead)
+    - `items` (use `order` string array and compose items as children)
+
+- **Accessibility improvements**:
+    - Built-in live region announcements for drag operations
+    - `aria-label` prop on `OrderableList.Root` (defaults to `"Sortable list"`)
+    - Automatic `aria-roledescription` on list and items
+
+#### Old
+
+```tsx
+const [items, setItems] = useState<OrderableListItem<MyItem>[]>([
+    { id: '1', sort: 1, alt: 'Item 1', textContent: <p>Item 1</p> },
+    { id: '2', sort: 2, alt: 'Item 2', textContent: <p>Item 2</p> },
+    { id: '3', sort: 3, alt: 'Item 3', textContent: <p>Item 3</p> },
+]);
+
+const handleMove = (modifiedItems: DraggableItem<MyItem>[]) => {
+    // Manual reordering logic
+    setItems(reorder(modifiedItems));
+};
+
+<OrderableList
+    items={items}
+    onMove={handleMove}
+    dragDisabled={false}
+    dragHandlerPosition="right"
+    selectedId={currentSelectedId}
+    itemStyle={{
+        spacingY: 'small',
+        contentHight: 'content-fit',
+        shadow: 'small',
+        borderRadius: 'medium',
+        borderWidth: 'x-small',
+        borderStyle: 'solid',
+        activeColorStyle: 'soft',
+    }}
+    renderContent={(item) => (
+        <div>{item.textContent}</div>
+    )}
+/>
+```
+
+#### New
+
+```tsx
+const [order, setOrder] = useState(['1', '2', '3']);
+
+<OrderableList.Root spacing="compact" order={order} onOrderChange={setOrder}>
+    <OrderableList.Item id="1">
+        <OrderableList.ItemTitle>Item 1</OrderableList.ItemTitle>
+        <OrderableList.ItemDescription>Item 1 description</OrderableList.ItemDescription>
+        <OrderableList.DragHandle />
+    </OrderableList.Item>
+    <OrderableList.Item id="2">
+        <OrderableList.ItemTitle>Item 2</OrderableList.ItemTitle>
+        <OrderableList.ItemDescription>Item 2 description</OrderableList.ItemDescription>
+        <OrderableList.DragHandle />
+    </OrderableList.Item>
+    <OrderableList.Item id="3">
+        <OrderableList.ItemTitle>Item 3</OrderableList.ItemTitle>
+        <OrderableList.ItemDescription>Item 3 description</OrderableList.ItemDescription>
+        <OrderableList.DragHandle />
+    </OrderableList.Item>
+</OrderableList.Root>
+```
+
+With selection, actions, and decorators:
+
+```tsx
+const [order, setOrder] = useState(['1', '2', '3']);
+const [selectedId, setSelectedId] = useState<string | null>(null);
+
+<OrderableList.Root spacing="compact" order={order} onOrderChange={setOrder}>
+    <OrderableList.Item
+        id="1"
+        selected={selectedId === '1'}
+        onSelect={() => setSelectedId(selectedId === '1' ? null : '1')}
+    >
+        <OrderableList.ItemDecorator>A</OrderableList.ItemDecorator>
+        <OrderableList.ItemTitle>Item 1</OrderableList.ItemTitle>
+        <OrderableList.ItemDescription>Click to select</OrderableList.ItemDescription>
+        <OrderableList.ItemAction>
+            <Button aspect="square" emphasis="default" size="small">
+                <IconTrashBin size={16} />
+            </Button>
+        </OrderableList.ItemAction>
+        <OrderableList.DragHandle />
+    </OrderableList.Item>
+</OrderableList.Root>
+```
+
+With custom drag handle:
+
+```tsx
+<OrderableList.Item padding="none" id="1">
+    <div style={{ backgroundColor: 'var(--color-surface-dim)', padding: 12 }}>
+        Custom content
+        <OrderableList.CustomHandle asChild>
+            <span style={{ cursor: 'grab' }}>Drag here</span>
+        </OrderableList.CustomHandle>
+    </div>
+</OrderableList.Item>
+```
+
+#### Upgrade Steps:
+
+1. Replace `import { OrderableList } from '@frontify/fondue'` with `import { OrderableList } from '@frontify/fondue/components'`
+2. Convert the `items` data array to declarative `OrderableList.Item` children
+3. Replace `items` prop with `order` (a `string[]` of item IDs)
+4. Replace `onMove` with `onOrderChange` (receives `string[]`)
+5. Replace `renderContent` with composition using `OrderableList.ItemTitle`, `OrderableList.ItemDescription`, etc.
+6. Replace `dragHandlerPosition` by placing `OrderableList.DragHandle` inside items
+7. Replace `selectedId` with `selected`/`onSelect` props on individual items
+8. Replace `itemStyle` with the `spacing` prop on `OrderableList.Root`
 
 ### Text Input
 
