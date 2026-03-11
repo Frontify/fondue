@@ -43,7 +43,7 @@ export const AsHeading: Story = {
 export const CustomTextStyling: Story = {
     args: {
         asChild: true,
-        children: <p className="tw-body-small-x-strong tw-italic">Editable Text</p>,
+        children: <p className="tw-body-small-x-strong">Editable Text</p>,
     },
 };
 
