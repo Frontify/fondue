@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconPen } from '@frontify/fondue-icons';
 import { Slot } from '@radix-ui/react-slot';
 import { type ReactNode, forwardRef, useRef, useState } from 'react';
 

@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { within } from '@testing-library/react';
 import { action } from 'storybook/actions';
 import { useRef } from 'storybook/internal/preview-api';
 
