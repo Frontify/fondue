@@ -9,6 +9,7 @@ import styles from './styles/editable-text.module.scss';
 export type EditableTextProps = {
     /**
      * Callback fired with the plain text value when editing is confirmed (on blur or Enter).
+     * Only fires if the value has actually changed.
      */
     onChange?: (value: string) => void;
     /**
@@ -45,12 +46,14 @@ export const EditableText = forwardRef<HTMLElement, EditableTextProps>(
         const [isEditing, setIsEditing] = useState(false);
         const wasClickedRef = useRef(false);
         const rootRef = useRef<HTMLDivElement>(null);
+        const valueOnFocusRef = useRef('');
 
         const handleMouseDown = () => {
             wasClickedRef.current = true;
         };
 
         const handleFocus = (event: React.FocusEvent<HTMLElement>) => {
+            valueOnFocusRef.current = event.currentTarget.textContent ?? '';
             setIsEditing(true);
             rootRef.current?.setAttribute('data-show-focus-ring', String(!wasClickedRef.current));
             const element = event.currentTarget;
@@ -74,7 +77,10 @@ export const EditableText = forwardRef<HTMLElement, EditableTextProps>(
             rootRef.current?.setAttribute('data-show-focus-ring', 'false');
             wasClickedRef.current = false;
             event.currentTarget.scrollLeft = 0;
-            onChange?.(event.currentTarget.textContent ?? '');
+            const currentValue = event.currentTarget.textContent ?? '';
+            if (currentValue !== valueOnFocusRef.current) {
+                onChange?.(currentValue);
+            }
         };
 
         return (

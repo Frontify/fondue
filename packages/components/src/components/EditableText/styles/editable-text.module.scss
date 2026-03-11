@@ -2,7 +2,6 @@
 
 @use '../../../utilities/sizeToken.module.scss';
 @use '../../../utilities/focusStyle.module.scss';
-@use '../../../utilities/transitions.module.scss';
 
 .root {
     display: flex;
@@ -15,8 +14,6 @@
     border-radius: var(--border-radius-medium);
     border: var(--border-width-default) solid transparent;
     padding-block: sizeToken.get(1.5);
-
-    @include transitions.transition-colors;
 
     &[data-hug-width='true'] {
         width: fit-content;
