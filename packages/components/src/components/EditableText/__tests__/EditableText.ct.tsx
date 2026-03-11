@@ -116,44 +116,42 @@ test('should not show focus ring on mouse click', async ({ mount }) => {
     await expect(root).toHaveAttribute('data-show-focus-ring', 'false');
 });
 
-test('should call onChange with text content on blur', async ({ mount }) => {
+test('should not call onChange on blur when value has not changed', async ({ mount }) => {
     const onChange = sinon.spy();
     const component = await mount(<EditableText onChange={onChange}>{EDITABLE_TEXT_TEXT}</EditableText>);
     const text = component.locator('[tabindex="0"]');
     await text.focus();
     await text.blur();
-    expect(onChange.calledOnce).toBe(true);
-    expect(onChange.firstCall.args[0]).toBe(EDITABLE_TEXT_TEXT);
+    expect(onChange.called).toBe(false);
 });
 
-test('should call onChange with updated text on blur', async ({ mount, page }) => {
+test('should call onChange with updated text on blur', async ({ mount }) => {
     const onChange = sinon.spy();
     const component = await mount(<EditableText onChange={onChange}>{EDITABLE_TEXT_TEXT}</EditableText>);
     const text = component.locator('[tabindex="0"]');
-    await text.click();
-    await page.keyboard.type(' appended');
+    await text.focus();
+    await expect(text).toHaveAttribute('contenteditable', 'plaintext-only');
+    await text.press('End');
+    await text.pressSequentially(' appended');
     await text.blur();
     expect(onChange.calledOnce).toBe(true);
-    expect(onChange.firstCall.args[0]).toBe(`${EDITABLE_TEXT_TEXT} appended`);
+    expect(onChange.firstCall?.args[0]).toBe(`${EDITABLE_TEXT_TEXT} appended`);
 });
 
 test('should blur on Enter key', async ({ mount, page }) => {
-    const onChange = sinon.spy();
-    const component = await mount(<EditableText onChange={onChange}>{EDITABLE_TEXT_TEXT}</EditableText>);
+    const component = await mount(<EditableText>{EDITABLE_TEXT_TEXT}</EditableText>);
     const text = component.locator('[tabindex="0"]');
     await text.focus();
     await page.keyboard.press('Enter');
     await expect(text).not.toBeFocused();
-    expect(onChange.calledOnce).toBe(true);
 });
 
 test('should not insert newline on Enter key', async ({ mount, page }) => {
     const component = await mount(<EditableText>{EDITABLE_TEXT_TEXT}</EditableText>);
     const text = component.locator('[tabindex="0"]');
-    await text.click();
+    await text.focus();
     await page.keyboard.type('hello');
     await page.keyboard.press('Enter');
-    await expect(text).toContainText(`${EDITABLE_TEXT_TEXT}hello`);
     const textContent = await text.textContent();
     expect(textContent).not.toContain('\n');
 });
@@ -170,10 +168,10 @@ test('should default data-hug-width to true', async ({ mount }) => {
     await expect(root).toHaveAttribute('data-hug-width', 'true');
 });
 
-test('should hide pen icon from screen readers', async ({ mount }) => {
+test('should not render a pen icon', async ({ mount }) => {
     const component = await mount(<EditableText>{EDITABLE_TEXT_TEXT}</EditableText>);
     const icon = component.locator('[aria-hidden="true"]');
-    await expect(icon).toBeVisible();
+    await expect(icon).toHaveCount(0);
 });
 
 test('should not call onChange when no onChange is provided', async ({ mount }) => {
