@@ -9,11 +9,12 @@ import { EditableText } from './EditableText';
 
 type Story = StoryObj<typeof EditableText>;
 const meta: Meta<typeof EditableText> = {
+    title: 'Components/Editable Text',
     component: EditableText,
     tags: ['autodocs'],
     parameters: {
         status: {
-            type: 'in_progress',
+            type: 'released',
         },
     },
     args: {
