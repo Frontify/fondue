@@ -282,6 +282,46 @@ test.describe('OrderableList', () => {
             const item = component.locator(`[data-test-id="${ITEM_TEST_ID}"]`);
             await expect(item).toHaveCSS('opacity', '0.5');
         });
+
+        test('should not be draggable from content area when disabled', async ({ mount, page }) => {
+            const orderChanges: string[][] = [];
+            const component = await mount(
+                <OrderableList.Root order={['1', '2', '3']} onOrderChange={(order) => orderChanges.push(order)}>
+                    <OrderableList.Item id="1" disabled>
+                        <OrderableList.ItemTitle>Item 1</OrderableList.ItemTitle>
+                        <OrderableList.DragHandle />
+                    </OrderableList.Item>
+                    <OrderableList.Item id="2">
+                        <OrderableList.ItemTitle>Item 2</OrderableList.ItemTitle>
+                        <OrderableList.DragHandle />
+                    </OrderableList.Item>
+                    <OrderableList.Item id="3">
+                        <OrderableList.ItemTitle>Item 3</OrderableList.ItemTitle>
+                        <OrderableList.DragHandle />
+                    </OrderableList.Item>
+                </OrderableList.Root>,
+            );
+
+            const disabledItem = component.locator(`[data-test-id="${ITEM_TEST_ID}"]`).nth(0);
+            const targetItem = component.locator(`[data-test-id="${ITEM_TEST_ID}"]`).nth(2);
+
+            const disabledBox = await disabledItem.boundingBox();
+            const targetBox = await targetItem.boundingBox();
+
+            if (!disabledBox || !targetBox) {
+                throw new Error('Could not get bounding boxes');
+            }
+
+            // Attempt to drag the disabled item's content area
+            await page.mouse.move(disabledBox.x + disabledBox.width / 2, disabledBox.y + disabledBox.height / 2);
+            await page.mouse.down();
+            await page.mouse.move(targetBox.x + targetBox.width / 2, targetBox.y + targetBox.height / 2, {
+                steps: 10,
+            });
+            await page.mouse.up();
+
+            expect(orderChanges).toHaveLength(0);
+        });
     });
 
     test.describe('spacing', () => {

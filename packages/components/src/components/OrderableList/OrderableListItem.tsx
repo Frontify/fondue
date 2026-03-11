@@ -31,7 +31,7 @@ export const OrderableListItemComponent = forwardRef<HTMLLIElement, OrderableLis
             }
         };
 
-        const { isDragging, isDropping, handleRef } = useSortable({ id, index, element: internalRef });
+        const { isDragging, isDropping, handleRef } = useSortable({ id, index, element: internalRef, disabled });
 
         const [hasHandle, setHasHandle] = useState(false);
         const wrappedHandleRef = useCallback(
