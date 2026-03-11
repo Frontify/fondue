@@ -22,6 +22,7 @@ This document describes the changes that you need to make to your code to migrat
         - [DatePicker](#datepicker)
             - [Old](#datepicker-old)
             - [New](#datepicker-new)
+        - [EditableText](#editabletext)
         - [Dialog](#dialog)
             - [Old](#dialog-old)
             - [New](#dialog-new)
@@ -396,6 +397,58 @@ const [selectedDate, setSelectedDate] = useState<DatePickerDate>();
 4. For range mode, replace `<DatePicker variant="range">` with `<DatePicker.Range>`
 5. Replace `minDate`/`maxDate` with `disabledDates` matchers
 6. If using the date picker in a popover, wrap it with `Flyout` and use `DatePicker.Input` as the trigger
+
+### EditableText
+
+Changes:
+
+- The component no longer toggles between a hidden `<input>` and a `<button>` wrapper. It now uses `contentEditable` directly on the text element, making inline editing seamless.
+- The `children` prop now renders the text content directly instead of being cloned with a ref.
+- The `asChild` prop has been added to render the editable behavior on a custom element (e.g. `<h1>`), replacing the old pattern of passing a styled child element.
+- The `options` prop (with `mode`, `enableDoubleClick`, `isSlimInputField`, `additionalValues`, `removeBoxPadding`) has been removed entirely.
+- The `EditableMode` enum (`INPUT` / `LABEL`) has been removed. The component now enters edit mode on focus and exits on blur or Enter.
+- Callback changes:
+    - `onEditableSave` has been replaced by `onChange`, which fires on blur or Enter with the plain text value.
+    - `onModeChange` has been removed without replacement.
+    - `onAdditionalValueSave` has been removed without replacement.
+- The `isOverflowing` prop has been removed without replacement.
+- New props:
+    - `hugWidth` — when true, the component only takes the width of its content.
+    - `aria-label` — accessible label for the text field (recommended for accessibility compliance).
+    - `asChild` — renders on a custom element instead of a `<span>`.
+
+#### Old
+
+```tsx
+<EditableText
+    onEditableSave={(value) => handleSave(value)}
+    onModeChange={(mode) => setMode(mode)}
+    options={{
+        enableDoubleClick: true,
+        isSlimInputField: true,
+        mode: EditableMode.LABEL,
+    }}
+>
+    <h1>Editable Heading</h1>
+</EditableText>
+```
+
+#### New
+
+```tsx
+<EditableText asChild aria-label="Edit heading" onChange={(value) => handleSave(value)}>
+    <h1>Editable Heading</h1>
+</EditableText>
+```
+
+#### Upgrade Steps:
+
+1. Replace `import { EditableText, EditableMode } from '@frontify/fondue'` with `import { EditableText } from '@frontify/fondue/components'`
+2. Replace `onEditableSave` with `onChange`
+3. Remove `onModeChange` and `onAdditionalValueSave` callbacks
+4. Remove the `options` prop entirely — double-click behavior, slim input styling, and padding options no longer exist
+5. If your child was a styled element (e.g. `<h1>`), use `asChild` and pass the element as a child
+6. Add `aria-label` for accessibility compliance
 
 ### Dialog
 
