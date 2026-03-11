@@ -192,6 +192,7 @@ export const TextFieldSlot = (
         <div
             data-slot
             data-name={name}
+            data-label-ignore-disabled="true"
             {...slotProps}
             ref={forwardedRef}
             className={[styles.slot, className].filter(Boolean).join(' ')}

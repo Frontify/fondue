@@ -1,9 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconQuestionMarkCircle } from '@frontify/fondue-icons';
+import { IconQuestionMarkCircle, IconMinus, IconPlus } from '@frontify/fondue-icons';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { type ComponentProps } from 'react';
 
+import { Button } from '../Button/Button';
 import { Checkbox } from '../Checkbox/Checkbox';
 import { Select } from '../Select';
 import { TextInput } from '../TextInput/TextInput';
@@ -173,6 +174,90 @@ export const Strong: Story = {
             <div className="tw-flex tw-flex-col tw-gap-2">
                 <Label {...args} htmlFor="input-strong" />
                 <STextInput id="input-strong" placeholder="Enter your name" />
+            </div>
+        );
+    },
+};
+
+export const WithInputAndDisabledButtons: Story = {
+    args: {
+        children: 'Number Input',
+    },
+    render: (args) => {
+        return (
+            <div className="tw-flex tw-flex-col tw-gap-2">
+                <Label {...args} htmlFor="input-with-buttons" />
+                <TextInput.Root id="input-with-buttons" type="text" defaultValue="50">
+                    <TextInput.Slot name="right" className="!tw-p-0">
+                        <Button aspect="square" emphasis="weak" size="small" disabled aria-label="Decrease value">
+                            <IconMinus size={16} />
+                        </Button>
+                    </TextInput.Slot>
+                    <TextInput.Slot name="right" className="!tw-pl-0 !tw-pr-1">
+                        <Button aspect="square" emphasis="weak" size="small" aria-label="Increase value">
+                            <IconPlus size={16} />
+                        </Button>
+                    </TextInput.Slot>
+                </TextInput.Root>
+                <p style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
+                    The decrement button is disabled, but the label remains active because TextInput.Slot automatically
+                    prevents disabled children from affecting the label
+                </p>
+            </div>
+        );
+    },
+};
+
+export const WithManualIgnoreDisabled: Story = {
+    args: {
+        children: 'Custom Component',
+    },
+    render: (args) => {
+        return (
+            <div className="tw-flex tw-flex-col tw-gap-4">
+                <div>
+                    <Label {...args} htmlFor="custom-component" />
+                    <div className="tw-flex tw-gap-2 tw-mt-2">
+                        <TextInput
+                            id="custom-component"
+                            type="text"
+                            defaultValue="Custom value"
+                            className="tw-flex-1"
+                        />
+                        <div data-label-ignore-disabled="true" className="tw-flex tw-gap-1">
+                            <Button emphasis="weak" size="small" disabled aria-label="Action 1">
+                                Action 1
+                            </Button>
+                            <Button emphasis="weak" size="small" disabled aria-label="Action 2">
+                                Action 2
+                            </Button>
+                        </div>
+                    </div>
+                    <p style={{ fontSize: '12px', color: '#6b7280', marginTop: '8px' }}>
+                        The action buttons are disabled but don't affect the label because their container has{' '}
+                        <code>data-label-ignore-disabled=&quot;true&quot;</code>
+                    </p>
+                </div>
+
+                <div>
+                    <Label htmlFor="without-ignore" variant="strong">
+                        Without Ignore Attribute
+                    </Label>
+                    <div className="tw-flex tw-gap-2 tw-mt-2">
+                        <TextInput id="without-ignore" type="text" defaultValue="Custom value" className="tw-flex-1" />
+                        <div className="tw-flex tw-gap-1">
+                            <Button emphasis="weak" size="small" disabled aria-label="Action 1">
+                                Action 1
+                            </Button>
+                            <Button emphasis="weak" size="small" disabled aria-label="Action 2">
+                                Action 2
+                            </Button>
+                        </div>
+                    </div>
+                    <p style={{ fontSize: '12px', color: '#6b7280', marginTop: '8px' }}>
+                        Without the attribute, the label becomes disabled when there are disabled buttons nearby
+                    </p>
+                </div>
             </div>
         );
     },
