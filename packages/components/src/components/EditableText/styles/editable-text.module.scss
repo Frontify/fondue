@@ -10,7 +10,7 @@
     position: relative;
     outline: none;
     cursor: text;
-    width: fit-content;
+    width: 100%;
     max-width: 100%;
     border-radius: var(--border-radius-medium);
     border: var(--border-width-default) solid transparent;
@@ -18,16 +18,20 @@
 
     @include transitions.transition-colors;
 
+    &[data-hug-width='true'] {
+        width: fit-content;
+    }
+
     &:hover {
         border-color: var(--color-line-strong);
     }
 
     &[data-editing='true'] {
         border-color: var(--color-line-strong);
-        padding-inline-end: sizeToken.get(8);
+        padding-inline-end: sizeToken.get(9);
 
         .text {
-            padding-inline-end: sizeToken.get(1);
+            padding-inline-end: sizeToken.get(0);
         }
     }
 
@@ -44,6 +48,7 @@
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    width: 100%;
 
     &[contenteditable='plaintext-only'] {
         overflow: auto;

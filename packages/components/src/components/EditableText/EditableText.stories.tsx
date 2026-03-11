@@ -45,3 +45,10 @@ export const CustomTextStyling: Story = {
         children: <p className="tw-body-small-x-strong tw-italic">Editable Text</p>,
     },
 };
+
+export const HugWidth: Story = {
+    args: {
+        hugWidth: true,
+        children: 'Click to edit this text',
+    },
+};

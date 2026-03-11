@@ -2,13 +2,13 @@
 
 import { IconPen } from '@frontify/fondue-icons';
 import { Slot } from '@radix-ui/react-slot';
-import { type FormEvent, type ReactNode, forwardRef, useCallback, useRef, useState } from 'react';
+import { type ReactNode, forwardRef, useRef, useState } from 'react';
 
 import styles from './styles/editable-text.module.scss';
 
 export type EditableTextProps = {
     /**
-     * Callback fired on every input with the plain text value.
+     * Callback fired with the plain text value when editing is confirmed (on blur or Enter).
      */
     onChange?: (value: string) => void;
     /**
@@ -16,23 +16,35 @@ export type EditableTextProps = {
      * merging all editable props onto it.
      */
     asChild?: boolean;
+    /**
+     * When true, the EditableText only takes the width of the content.
+     * @default false
+     */
+    hugWidth?: boolean;
+    /**
+     * Accessible label for the editable text field.
+     */
+    'aria-label'?: string;
     children?: ReactNode;
     'data-test-id'?: string;
 };
 
 export const EditableText = forwardRef<HTMLElement, EditableTextProps>(
-    ({ onChange, asChild, children, 'data-test-id': dataTestId = 'fondue-editable-text' }, forwardedRef) => {
+    (
+        {
+            onChange,
+            asChild,
+            hugWidth = false,
+            'aria-label': ariaLabel,
+            children,
+            'data-test-id': dataTestId = 'fondue-editable-text',
+        },
+        forwardedRef,
+    ) => {
         const TextElement = asChild ? Slot : 'span';
         const [isEditing, setIsEditing] = useState(false);
         const wasClickedRef = useRef(false);
         const rootRef = useRef<HTMLDivElement>(null);
-
-        const handleInput = useCallback(
-            (event: FormEvent<HTMLElement>) => {
-                onChange?.(event.currentTarget.textContent ?? '');
-            },
-            [onChange],
-        );
 
         const handleMouseDown = () => {
             wasClickedRef.current = true;
@@ -53,6 +65,7 @@ export const EditableText = forwardRef<HTMLElement, EditableTextProps>(
         const handleKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
             if (event.key === 'Enter') {
                 event.preventDefault();
+                event.currentTarget.blur();
             }
         };
 
@@ -61,6 +74,7 @@ export const EditableText = forwardRef<HTMLElement, EditableTextProps>(
             rootRef.current?.setAttribute('data-show-focus-ring', 'false');
             wasClickedRef.current = false;
             event.currentTarget.scrollLeft = 0;
+            onChange?.(event.currentTarget.textContent ?? '');
         };
 
         return (
@@ -68,6 +82,7 @@ export const EditableText = forwardRef<HTMLElement, EditableTextProps>(
                 ref={rootRef}
                 className={styles.root}
                 data-editing={isEditing}
+                data-hug-width={hugWidth}
                 data-show-focus-ring="false"
                 data-test-id={dataTestId}
             >
@@ -77,8 +92,9 @@ export const EditableText = forwardRef<HTMLElement, EditableTextProps>(
                     contentEditable={isEditing ? 'plaintext-only' : undefined}
                     suppressContentEditableWarning
                     tabIndex={0}
-                    role="textbox"
-                    onInput={handleInput}
+                    role={isEditing ? 'textbox' : undefined}
+                    aria-label={isEditing ? ariaLabel : undefined}
+                    aria-live="off"
                     onMouseDown={handleMouseDown}
                     onFocus={handleFocus}
                     onKeyDown={handleKeyDown}
@@ -86,7 +102,7 @@ export const EditableText = forwardRef<HTMLElement, EditableTextProps>(
                 >
                     {children}
                 </TextElement>
-                <span className={styles.icon}>
+                <span className={styles.icon} aria-hidden="true">
                     <IconPen size={16} />
                 </span>
             </div>
