@@ -19,10 +19,10 @@ import { type OrderableListItem, type OrderableListItemStyle, type OrderableList
 
 /**
  ### *Legacy component warning*
- #### This is a unmaintained legacy component. It will be deprecated and replaced with a new component in an upcoming release.
+ #### This is a deprecated component. It will be removed in the next major version.
  */
 export default {
-    title: 'Legacy Components/Orderable List',
+    title: 'Legacy Components/Deprecated/Orderable List',
     component: OrderableListComponent,
     tags: ['autodocs'],
     args: {
@@ -98,6 +98,11 @@ export default {
             options: [...Object.keys(TreeItemColorsClassMap)],
             mapping: [...Object.values(TreeItemColorsClassMap)],
             control: { type: 'inline-radio' },
+        },
+    },
+    parameters: {
+        status: {
+            type: 'deprecated',
         },
     },
 } as Meta<OrderableListProps<StoryListItem>>;

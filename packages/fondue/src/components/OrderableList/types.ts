@@ -5,14 +5,26 @@ import { type ReactElement } from 'react';
 import { type DragHandlerPosition, type TreeItemStyling, type TreeProps } from '@components/Tree/types';
 import { type DraggableItem } from '@utilities/dnd/types';
 
+/**
+ * @deprecated Use the new OrderableList component from @frontify/fondue/components instead.
+ */
 export type RenderListItem<T> = (items: OrderableListItem<T>) => ReactElement;
 
+/**
+ * @deprecated Use the new OrderableList component from @frontify/fondue/components instead.
+ */
 export type OrderableListItem<T = Record<string, unknown>> = DraggableItem<T> & {
     alt: string;
 };
 
+/**
+ * @deprecated Use the new OrderableList component from @frontify/fondue/components instead.
+ */
 export type OrderableListItemStyle = TreeItemStyling;
 
+/**
+ * @deprecated Use the new OrderableList component from @frontify/fondue/components instead.
+ */
 export type OrderableListProps<T> = {
     items: OrderableListItem<T>[];
     dragDisabled: boolean;
