@@ -1,5 +1,23 @@
 # @frontify/fondue
 
+## 13.3.0
+
+### Minor Changes
+
+- [#2658](https://github.com/Frontify/fondue/pull/2658) [`2e5534d`](https://github.com/Frontify/fondue/commit/2e5534d53a8587786311f011b32f1bf9c4e55454) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: refactor EditableText component
+
+- [#2655](https://github.com/Frontify/fondue/pull/2655) [`16899f6`](https://github.com/Frontify/fondue/commit/16899f6005f9ec2bf63f6ebe5ed7467b53c27a98) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: refactor OrderableList component
+
+### Patch Changes
+
+- [#2657](https://github.com/Frontify/fondue/pull/2657) [`500b8de`](https://github.com/Frontify/fondue/commit/500b8de27ce5d50e8b37929e32dd61cfd348ce6b) Thanks [@syeo66](https://github.com/syeo66)! - fix(Label): it should not react on disabled nested elements
+
+- Updated dependencies [[`3ed56a6`](https://github.com/Frontify/fondue/commit/3ed56a6185d9f96959d8e38d34b34bbb6d526fde), [`2e5534d`](https://github.com/Frontify/fondue/commit/2e5534d53a8587786311f011b32f1bf9c4e55454), [`16899f6`](https://github.com/Frontify/fondue/commit/16899f6005f9ec2bf63f6ebe5ed7467b53c27a98), [`4794c76`](https://github.com/Frontify/fondue/commit/4794c762088e99a3a8da5160c4a9cb21e32019f4), [`500b8de`](https://github.com/Frontify/fondue/commit/500b8de27ce5d50e8b37929e32dd61cfd348ce6b)]:
+    - @frontify/fondue-components@29.0.0
+    - @frontify/fondue-icons@0.25.0
+    - @frontify/fondue-tokens@5.0.0
+    - @frontify/fondue-rte@0.1.1
+
 ## 13.2.0
 
 ### Minor Changes
