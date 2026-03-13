@@ -8,10 +8,10 @@ import { EditableMode, EditableText, type EditableTextProps } from '@components/
 
 /**
  ### *Legacy component warning*
- #### This is a unmaintained legacy component. It will be deprecated and replaced with a new component in an upcoming release.
+ #### This is a deprecated component. It will be removed in the next major version.
  */
 export default {
-    title: 'Legacy Components/Editable Text',
+    title: 'Legacy Components/Deprecated/Editable Text',
     component: EditableText,
     tags: ['autodocs'],
     parameters: {
