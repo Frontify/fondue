@@ -116,6 +116,11 @@
         border-end-end-radius: 0;
     }
 
+    &[type='time'] {
+        text-indent: 0;
+        padding-inline-start: sizeToken.get(3);
+    }
+
     // Readonly styles
     &[readonly] {
         cursor: text;
@@ -164,7 +169,7 @@
     }
 
     // 2 slots without any name should be implicitly ordered
-    &:not([data-name='right'])~ :not([data-name='left']) {
+    &:not([data-name='right']) ~ :not([data-name='left']) {
         order: 0;
         margin-inline: 0px;
     }

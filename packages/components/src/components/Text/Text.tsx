@@ -8,7 +8,7 @@ import styles from './styles/text.module.scss';
 
 type TextWeight = 'default' | 'strong' | 'x-strong';
 type TextSize = 'x-small' | 'small' | 'medium' | 'large';
-type TextColor = 'default' | 'weak' | 'x-weak' | 'disabled' | 'negative' | 'positive' | 'warning' | 'interactive';
+type TextColor = 'default' | 'weak' | 'disabled' | 'negative' | 'positive' | 'warning' | 'interactive';
 type BoxColor = 'neutral' | 'selected' | 'disabled' | 'positive' | 'negative' | 'warning';
 
 type TagType = 'a' | 'abbr' | 'address' | 'em' | 'label' | 'li' | 'span' | 'strong' | 'time' | 'p';

@@ -36,7 +36,7 @@ export type TextInputProps = {
      * Type of the text input
      * @default "text"
      */
-    type?: 'date' | 'email' | 'hidden' | 'number' | 'password' | 'search' | 'tel' | 'text' | 'time' | 'url';
+    type?: 'email' | 'hidden' | 'number' | 'password' | 'search' | 'tel' | 'text' | 'time' | 'url';
     /**
      * The placeholder in the text input
      */
