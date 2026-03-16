@@ -42,6 +42,10 @@
     outline: none;
     @include transitions.transition((background-color, border-color, box-shadow));
 
+    &:not(:has(> .banner)) {
+        background-color: var(--color-surface-dim);
+    }
+
     // Default state
     @include card-state(
         $banner-border-color: var(--color-line-subtle),
