@@ -21,6 +21,7 @@ export type DropdownItemProps = {
     editor: PlateEditor;
     type: Plugin;
     children: ReactNode;
+    onSelect?: () => void;
 };
 
 export type TextStyleButtonProps = PluginButtonProps & {
