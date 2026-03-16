@@ -22,7 +22,7 @@ const isInList = (editor: PlateEditor) =>
         mode: 'lowest',
     });
 
-export const DropdownItem = ({ editor, type, children }: DropdownItemProps) => {
+export const DropdownItem = ({ editor, type, children, onSelect }: DropdownItemProps) => {
     const isActive = editor?.selection
         ? getMark(editor, MARK_TEXT_STYLE) === type.id
         : someNode(editor, { match: { type } });
@@ -49,6 +49,7 @@ export const DropdownItem = ({ editor, type, children }: DropdownItemProps) => {
                         inactiveType: type.id,
                     });
                 }
+                onSelect?.();
             }}
         >
             {children}

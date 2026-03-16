@@ -37,7 +37,7 @@ export const TextStyleDropdown = ({ editorId, textStyles = [] }: TextStyleDropdo
                     {...dropdownProps}
                 >
                     {textStyles.map((stylePlugin) => (
-                        <DropdownItem editor={editor} type={stylePlugin} key={stylePlugin.id}>
+                        <DropdownItem editor={editor} type={stylePlugin} key={stylePlugin.id} onSelect={toggle}>
                             <span
                                 style={omit(stylePlugin.styles ?? {}, [
                                     'color',
