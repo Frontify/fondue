@@ -1,5 +1,18 @@
 # @frontify/fondue-rte
 
+## 0.1.1
+
+### Patch Changes
+
+- [#2660](https://github.com/Frontify/fondue/pull/2660) [`4804668`](https://github.com/Frontify/fondue/commit/48046687aa920257eca5f0c363ec5b5c1b9e2d40) Thanks [@fulopdaniel](https://github.com/fulopdaniel)! - fix(RTE): close text style dropdown on click
+
+- [#2663](https://github.com/Frontify/fondue/pull/2663) [`957c716`](https://github.com/Frontify/fondue/commit/957c7166bc7e8d19e07e069a38e21c0fe7a3984a) Thanks [@fulopdaniel](https://github.com/fulopdaniel)! - fix(RTE): toolbar position is not calculated properly
+
+- Updated dependencies [[`3ed56a6`](https://github.com/Frontify/fondue/commit/3ed56a6185d9f96959d8e38d34b34bbb6d526fde), [`2e5534d`](https://github.com/Frontify/fondue/commit/2e5534d53a8587786311f011b32f1bf9c4e55454), [`16899f6`](https://github.com/Frontify/fondue/commit/16899f6005f9ec2bf63f6ebe5ed7467b53c27a98), [`4794c76`](https://github.com/Frontify/fondue/commit/4794c762088e99a3a8da5160c4a9cb21e32019f4), [`dab4cef`](https://github.com/Frontify/fondue/commit/dab4cef3c76d71b115142fc465b3259ce5e3e97b), [`500b8de`](https://github.com/Frontify/fondue/commit/500b8de27ce5d50e8b37929e32dd61cfd348ce6b)]:
+    - @frontify/fondue-components@29.0.0
+    - @frontify/fondue-icons@0.25.0
+    - @frontify/fondue-tokens@5.0.0
+
 ## 0.1.0
 
 ### Minor Changes
