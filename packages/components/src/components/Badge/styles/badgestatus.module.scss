@@ -17,7 +17,7 @@
 
     @include variant(default, --color-primary-default);
     @include variant(positive, --color-success-default);
-    @include variant(highlight, -color-highlight-default);
+    @include variant(highlight, --color-highlight-default);
     @include variant(warning, --color-warning-default);
     @include variant(negative, --color-error-default);
 }
