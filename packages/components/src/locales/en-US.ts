@@ -26,6 +26,8 @@ const translations = {
     Table_sortDescending: 'Sort descending',
     Table_sortAscending: 'Sort ascending',
     Badge_dismiss: 'Dismiss ${label}',
+    Card_select: 'Select',
+    Card_deselect: 'Deselect',
     Notice_dismiss: 'Dismiss notice',
 };
 

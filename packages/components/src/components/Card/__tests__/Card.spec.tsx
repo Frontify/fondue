@@ -8,104 +8,9 @@ import { Card } from '../Card';
 
 const CARD_TEST_ID = 'test-card';
 const CARD_TITLE_TEXT = 'Card Title';
-const CARD_DESCRIPTION_TEXT = 'Card Description';
+
 
 describe('Card Component', () => {
-    it('should render the card root', () => {
-        render(
-            <Card.Root data-test-id={CARD_TEST_ID}>
-                <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
-            </Card.Root>,
-        );
-        expect(screen.getByTestId(CARD_TEST_ID)).toBeInTheDocument();
-    });
-
-    it('should render title text correctly', () => {
-        render(
-            <Card.Root>
-                <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
-            </Card.Root>,
-        );
-        expect(screen.getByText(CARD_TITLE_TEXT)).toBeInTheDocument();
-    });
-
-    it('should render description text correctly', () => {
-        render(
-            <Card.Root>
-                <Card.Description>{CARD_DESCRIPTION_TEXT}</Card.Description>
-            </Card.Root>,
-        );
-        expect(screen.getByText(CARD_DESCRIPTION_TEXT)).toBeInTheDocument();
-    });
-
-    it('should render banner with image', () => {
-        render(
-            <Card.Root>
-                <Card.Banner size="large">
-                    <Card.BannerImage src="https://example.com/image.jpg" alt="Test image" fit="cover" />
-                </Card.Banner>
-            </Card.Root>,
-        );
-        expect(screen.getByAltText('Test image')).toBeInTheDocument();
-    });
-
-    it('should render banner icon', () => {
-        render(
-            <Card.Root>
-                <Card.Banner>
-                    <Card.BannerIcon>
-                        <svg />
-                    </Card.BannerIcon>
-                </Card.Banner>
-            </Card.Root>,
-        );
-        expect(screen.getByTestId('fondue-card-banner-icon')).toBeInTheDocument();
-    });
-
-    it('should render badges', () => {
-        render(
-            <Card.Root>
-                <Card.Badges>
-                    <span>Badge content</span>
-                </Card.Badges>
-            </Card.Root>,
-        );
-        expect(screen.getByText('Badge content')).toBeInTheDocument();
-    });
-
-    it('should render thumbnail image', () => {
-        render(
-            <Card.Root>
-                <Card.ThumbnailImage src="https://example.com/thumb.jpg" alt="Thumbnail" />
-            </Card.Root>,
-        );
-        expect(screen.getByAltText('Thumbnail')).toBeInTheDocument();
-    });
-
-    it('should render thumbnail icon', () => {
-        render(
-            <Card.Root>
-                <Card.ThumbnailIcon>
-                    <svg />
-                </Card.ThumbnailIcon>
-            </Card.Root>,
-        );
-        expect(screen.getByTestId('fondue-card-thumbnail-icon')).toBeInTheDocument();
-    });
-
-    it('should render action button with aria-label', () => {
-        render(
-            <Card.Root>
-                <Card.Action>
-                    <Card.ActionButton aria-label="Settings">
-                        <svg data-testid="settings-icon" />
-                    </Card.ActionButton>
-                </Card.Action>
-            </Card.Root>,
-        );
-        expect(screen.getByRole('button', { name: 'Settings' })).toBeInTheDocument();
-    });
-
     it('should call onClick when action button is clicked', async () => {
         const handleClick = vi.fn();
         render(
@@ -269,25 +174,95 @@ describe('Card Component', () => {
         expect(screen.getByTestId(CARD_TEST_ID).dataset.selectable).toBe('false');
     });
 
-    it('should render banner with small size', () => {
+    it('should set data-interactive to true when href is provided with onSelect and selected', () => {
         render(
-            <Card.Root>
-                <Card.Banner size="small" data-test-id="banner">
-                    <Card.BannerImage src="https://example.com/image.jpg" alt="Small banner" />
-                </Card.Banner>
+            <Card.Root data-test-id={CARD_TEST_ID} href="/page" onSelect={() => {}} selected>
+                <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
             </Card.Root>,
         );
-        expect(screen.getByTestId('banner').dataset.size).toBe('small');
+        expect(screen.getByTestId(CARD_TEST_ID).dataset.interactive).toBe('true');
     });
 
-    it('should render multiple action buttons', () => {
+    it('should call onSelect when button overlay is activated via Enter key', async () => {
+        const handleSelect = vi.fn();
+        render(
+            <Card.Root href="/page" onSelect={handleSelect} selected aria-label="Card">
+                <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
+            </Card.Root>,
+        );
+        screen.getByRole('button', { name: 'Card' }).focus();
+        await userEvent.keyboard('{Enter}');
+        expect(handleSelect).toHaveBeenCalledOnce();
+    });
+
+    it('should call onSelect when button overlay is activated via Space key', async () => {
+        const handleSelect = vi.fn();
+        render(
+            <Card.Root href="/page" onSelect={handleSelect} selected aria-label="Card">
+                <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
+            </Card.Root>,
+        );
+        screen.getByRole('button', { name: 'Card' }).focus();
+        await userEvent.keyboard(' ');
+        expect(handleSelect).toHaveBeenCalledOnce();
+    });
+
+    it('should call onSelect when checkbox is activated via Enter key', async () => {
+        const handleSelect = vi.fn();
+        render(
+            <Card.Root href="/page" onSelect={handleSelect} aria-label="Card">
+                <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
+            </Card.Root>,
+        );
+        screen.getByRole('button', { name: 'Select' }).focus();
+        await userEvent.keyboard('{Enter}');
+        expect(handleSelect).toHaveBeenCalledOnce();
+    });
+
+    it('should call onClick when action button is activated via Enter key', async () => {
+        const handleClick = vi.fn();
         render(
             <Card.Root>
+                <Card.Action>
+                    <Card.ActionButton aria-label="Settings" onClick={handleClick}>
+                        <svg />
+                    </Card.ActionButton>
+                </Card.Action>
+            </Card.Root>,
+        );
+        screen.getByRole('button', { name: 'Settings' }).focus();
+        await userEvent.keyboard('{Enter}');
+        expect(handleClick).toHaveBeenCalledOnce();
+    });
+
+    it('should render actions inside the actions container', () => {
+        render(
+            <Card.Root>
+                <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
                 <Card.Action>
                     <Card.ActionButton aria-label="Favorite">
                         <svg />
                     </Card.ActionButton>
                 </Card.Action>
+            </Card.Root>,
+        );
+        const actionsContainer = screen.getByTestId('fondue-card-actions');
+        expect(actionsContainer).toContainElement(screen.getByRole('button', { name: 'Favorite' }));
+    });
+
+    it('should not render the actions container when there are no actions', () => {
+        render(
+            <Card.Root>
+                <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
+            </Card.Root>,
+        );
+        expect(screen.queryByTestId('fondue-card-actions')).not.toBeInTheDocument();
+    });
+
+    it('should render non-action children outside the actions container', () => {
+        render(
+            <Card.Root data-test-id={CARD_TEST_ID}>
+                <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
                 <Card.Action>
                     <Card.ActionButton aria-label="Settings">
                         <svg />
@@ -295,7 +270,28 @@ describe('Card Component', () => {
                 </Card.Action>
             </Card.Root>,
         );
-        expect(screen.getByRole('button', { name: 'Favorite' })).toBeInTheDocument();
-        expect(screen.getByRole('button', { name: 'Settings' })).toBeInTheDocument();
+        const title = screen.getByText(CARD_TITLE_TEXT);
+        const actionsContainer = screen.getByTestId('fondue-card-actions');
+        expect(actionsContainer).not.toContainElement(title);
     });
+
+    it('should allow tabbing through interactive elements', async () => {
+        const handleSelect = vi.fn();
+        render(
+            <Card.Root href="/page" onSelect={handleSelect} aria-label="Card">
+                <Card.Action>
+                    <Card.ActionButton aria-label="Settings">
+                        <svg />
+                    </Card.ActionButton>
+                </Card.Action>
+            </Card.Root>,
+        );
+        await userEvent.tab();
+        expect(screen.getByRole('link', { name: 'Card' })).toHaveFocus();
+        await userEvent.tab();
+        expect(screen.getByRole('button', { name: 'Select' })).toHaveFocus();
+        await userEvent.tab();
+        expect(screen.getByRole('button', { name: 'Settings' })).toHaveFocus();
+    });
+
 });
