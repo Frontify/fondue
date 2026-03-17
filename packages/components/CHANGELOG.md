@@ -1,5 +1,34 @@
 # @frontify/fondue-components
 
+## 29.0.0
+
+### Minor Changes
+
+- [#2658](https://github.com/Frontify/fondue/pull/2658) [`2e5534d`](https://github.com/Frontify/fondue/commit/2e5534d53a8587786311f011b32f1bf9c4e55454) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: refactor EditableText component
+
+- [#2655](https://github.com/Frontify/fondue/pull/2655) [`16899f6`](https://github.com/Frontify/fondue/commit/16899f6005f9ec2bf63f6ebe5ed7467b53c27a98) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: refactor OrderableList component
+
+### Patch Changes
+
+- [#2659](https://github.com/Frontify/fondue/pull/2659) [`3ed56a6`](https://github.com/Frontify/fondue/commit/3ed56a6185d9f96959d8e38d34b34bbb6d526fde) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: adress minor prop incinsistencies
+
+- [#2657](https://github.com/Frontify/fondue/pull/2657) [`500b8de`](https://github.com/Frontify/fondue/commit/500b8de27ce5d50e8b37929e32dd61cfd348ce6b) Thanks [@syeo66](https://github.com/syeo66)! - fix(Label): it should not react on disabled nested elements
+
+- Updated dependencies [[`4794c76`](https://github.com/Frontify/fondue/commit/4794c762088e99a3a8da5160c4a9cb21e32019f4), [`dab4cef`](https://github.com/Frontify/fondue/commit/dab4cef3c76d71b115142fc465b3259ce5e3e97b)]:
+    - @frontify/fondue-icons@0.25.0
+    - @frontify/fondue-tokens@5.0.0
+
+## 28.0.0
+
+### Major Changes
+
+- [#2642](https://github.com/Frontify/fondue/pull/2642) [`f9216f3`](https://github.com/Frontify/fondue/commit/f9216f33c2f37dc65531717f0aefe1ac8654cdfe) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: Add refactored `DatePicker` component
+
+### Patch Changes
+
+- Updated dependencies []:
+    - @frontify/fondue-tokens@5.0.0
+
 ## 27.0.1
 
 ### Patch Changes

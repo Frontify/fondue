@@ -1,0 +1,181 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+@use '../../../utilities/sizeToken.module.scss';
+@use '../../../utilities/focusStyle.module.scss';
+@use '../../../utilities/transitions.module.scss';
+
+.root {
+    display: flex;
+    flex-direction: column;
+
+    &[data-direction='horizontal'] {
+        flex-direction: row;
+    }
+
+    &[data-spacing='tight'] {
+        gap: var(--spacing-xx-small);
+    }
+    &[data-spacing='compact'] {
+        gap: var(--spacing-small);
+    }
+    &[data-spacing='comfortable'] {
+        gap: var(--spacing-medium);
+    }
+}
+
+.item {
+    @include transitions.transition-box-shadow;
+
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    border: var(--border-width-default) solid var(--color-line-subtle);
+    border-radius: var(--border-radius-medium);
+    background-color: var(--color-surface-default);
+    box-shadow: none;
+    overflow: hidden;
+
+    &[data-padding='small'] {
+        .content,
+        .actions {
+            padding: var(--spacing-x-small) var(--spacing-small);
+        }
+    }
+    &[data-padding='none'] {
+        .content,
+        .actions {
+            padding: 0;
+        }
+    }
+
+    &:not(:has(.handle)) {
+        cursor: grab;
+    }
+
+    &:not([data-disabled]):not([data-selected='true']):hover,
+    &[data-dropping='true'] {
+        border-color: var(--color-line-mid);
+    }
+    &[data-dragging='true'] {
+        box-shadow: var(--shadow-default);
+        border-color: var(--color-line-mid);
+    }
+
+    &[data-selected='true'] {
+        border-color: var(--color-line-strong);
+        background-color: var(--color-surface-dim);
+    }
+
+    &[data-disabled] {
+        opacity: 0.5;
+        cursor: default;
+
+        .handle {
+            cursor: default;
+        }
+    }
+
+    &:has(> .content:focus-visible),
+    &:not(:has(.handle)):focus-visible {
+        @include focusStyle.focus-outline-styles;
+    }
+}
+
+.content {
+    flex: 1;
+    display: grid;
+    outline: none;
+
+    &[data-clickable='true'] {
+        cursor: pointer;
+    }
+    &:has(> .decorator),
+    &:has(> .title),
+    &:has(> .description) {
+        grid-template-columns: auto 1fr;
+    }
+
+    .decorator {
+        grid-column: 1;
+        grid-row: 1 / 3;
+        align-self: center;
+        margin-right: var(--spacing-small);
+    }
+
+    & > .title {
+        grid-column: 2;
+        font-size: var(--typography-font-size-small);
+        font-weight: var(--typography-font-weight-medium);
+        line-height: var(--typography-line-height-tight);
+        color: var(--color-primary-default);
+        align-self: center;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+
+        &:has(+ .description) {
+            align-self: end;
+        }
+        & + .description {
+            align-self: start;
+        }
+    }
+    & > .description {
+        grid-column: 2;
+        font-size: var(--typography-font-size-small);
+        font-weight: var(--typography-font-weight-regular);
+        line-height: var(--typography-line-height-tight);
+        color: var(--color-primary-default);
+        align-self: center;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+}
+
+.handle {
+    cursor: grab;
+}
+
+.dragHandle {
+    @include focusStyle.focus-outline;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin: var(--spacing-x-small);
+    align-self: stretch;
+    box-sizing: border-box;
+    width: sizeToken.get(5);
+    min-height: sizeToken.get(5);
+    border-radius: calc(var(--border-radius-medium) - var(--border-width-default));
+
+    .item:not([data-disabled]) &:hover,
+    .item:not([data-disabled]) &:focus-visible,
+    .item[data-dropping='true'] & {
+        background-color: var(--color-container-secondary-hover);
+    }
+
+    .item:not([data-disabled]) &:active,
+    .item[data-dragging='true'] & {
+        background-color: var(--color-container-secondary-active);
+    }
+}
+
+.visuallyHidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}

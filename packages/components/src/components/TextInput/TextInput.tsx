@@ -36,7 +36,7 @@ export type TextInputProps = {
      * Type of the text input
      * @default "text"
      */
-    type?: 'date' | 'email' | 'hidden' | 'number' | 'password' | 'search' | 'tel' | 'text' | 'time' | 'url';
+    type?: 'email' | 'hidden' | 'number' | 'password' | 'search' | 'tel' | 'text' | 'time' | 'url';
     /**
      * The placeholder in the text input
      */
@@ -192,6 +192,7 @@ export const TextFieldSlot = (
         <div
             data-slot
             data-name={name}
+            data-label-ignore-disabled="true"
             {...slotProps}
             ref={forwardedRef}
             className={[styles.slot, className].filter(Boolean).join(' ')}

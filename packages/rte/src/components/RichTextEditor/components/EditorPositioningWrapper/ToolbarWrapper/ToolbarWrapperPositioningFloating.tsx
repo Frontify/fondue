@@ -29,7 +29,16 @@ export const ToolbarWrapperPositioningFloating = ({ children }: ToolbarWrapperPr
     }, []);
 
     const autoUpdateWithCleanup = (reference: ReferenceType, floating: HTMLElement, update: () => void) => {
-        cleanupFunction.current = autoUpdate(reference, floating, update);
+        const guardedUpdate = () => {
+            const selection = window.getSelection();
+            if (selection && selection.rangeCount > 0) {
+                const rect = selection.getRangeAt(0).getBoundingClientRect();
+                if (rect.width > 0 || rect.height > 0) {
+                    update();
+                }
+            }
+        };
+        cleanupFunction.current = autoUpdate(reference, floating, guardedUpdate, { animationFrame: true });
     };
 
     return (

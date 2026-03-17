@@ -1,5 +1,53 @@
 # @frontify/fondue-rte
 
+## 0.1.1
+
+### Patch Changes
+
+- [#2660](https://github.com/Frontify/fondue/pull/2660) [`4804668`](https://github.com/Frontify/fondue/commit/48046687aa920257eca5f0c363ec5b5c1b9e2d40) Thanks [@fulopdaniel](https://github.com/fulopdaniel)! - fix(RTE): close text style dropdown on click
+
+- [#2663](https://github.com/Frontify/fondue/pull/2663) [`957c716`](https://github.com/Frontify/fondue/commit/957c7166bc7e8d19e07e069a38e21c0fe7a3984a) Thanks [@fulopdaniel](https://github.com/fulopdaniel)! - fix(RTE): toolbar position is not calculated properly
+
+- Updated dependencies [[`3ed56a6`](https://github.com/Frontify/fondue/commit/3ed56a6185d9f96959d8e38d34b34bbb6d526fde), [`2e5534d`](https://github.com/Frontify/fondue/commit/2e5534d53a8587786311f011b32f1bf9c4e55454), [`16899f6`](https://github.com/Frontify/fondue/commit/16899f6005f9ec2bf63f6ebe5ed7467b53c27a98), [`4794c76`](https://github.com/Frontify/fondue/commit/4794c762088e99a3a8da5160c4a9cb21e32019f4), [`dab4cef`](https://github.com/Frontify/fondue/commit/dab4cef3c76d71b115142fc465b3259ce5e3e97b), [`500b8de`](https://github.com/Frontify/fondue/commit/500b8de27ce5d50e8b37929e32dd61cfd348ce6b)]:
+    - @frontify/fondue-components@29.0.0
+    - @frontify/fondue-icons@0.25.0
+    - @frontify/fondue-tokens@5.0.0
+
+## 0.1.0
+
+### Minor Changes
+
+- [#2637](https://github.com/Frontify/fondue/pull/2637) [`701d6ee`](https://github.com/Frontify/fondue/commit/701d6ee6d1ffad292cbfd5d880aa8b821559029e) Thanks [@fulopdaniel](https://github.com/fulopdaniel)! - feat(\*): add custom list styles
+
+    Adds support for configurable list styles in the `UnorderedListPlugin` and `OrderedListPlugin`.
+    The styles can be customized per nesting level.
+
+    ```ts
+    new UnorderedListPlugin({
+        listStyles: [
+            { color: 'var(--f-theme-settings-list-bullet-1-color)', shape: 'var(--f-theme-settings-list-bullet-1-shape)', size: 'var(--f-theme-settings-list-bullet-1-size)' },
+            { color: 'var(--f-theme-settings-list-bullet-2-color)', shape: 'var(--f-theme-settings-list-bullet-2-shape)', size: 'var(--f-theme-settings-list-bullet-2-size)' },
+            { color: 'var(--f-theme-settings-list-bullet-3-color)', shape: 'var(--f-theme-settings-list-bullet-3-shape)', size: 'var(--f-theme-settings-list-bullet-3-size)' },
+        ],
+    }),
+
+    new OrderedListPlugin({
+        listStyles: [
+            { counterType: 'var(--f-theme-settings-list-numbered-1-counterType)', color: 'var(--f-theme-settings-list-numbered-1-color)' },
+            { counterType: 'var(--f-theme-settings-list-numbered-2-counterType)', color: 'var(--f-theme-settings-list-numbered-2-color)' },
+            { counterType: 'var(--f-theme-settings-list-numbered-3-counterType)', color: 'var(--f-theme-settings-list-numbered-3-color)' },
+        ],
+    }),
+    ```
+
+### Patch Changes
+
+- [#2648](https://github.com/Frontify/fondue/pull/2648) [`b093e77`](https://github.com/Frontify/fondue/commit/b093e77996ea99fa32b17a71b78de37b51398904) Thanks [@fulopdaniel](https://github.com/fulopdaniel)! - fix(MentionPlugin): adjust serialized rendering
+
+- Updated dependencies [[`f9216f3`](https://github.com/Frontify/fondue/commit/f9216f33c2f37dc65531717f0aefe1ac8654cdfe)]:
+    - @frontify/fondue-components@28.0.0
+    - @frontify/fondue-tokens@5.0.0
+
 ## 0.0.4
 
 ### Patch Changes

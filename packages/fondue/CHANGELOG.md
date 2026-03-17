@@ -1,5 +1,36 @@
 # @frontify/fondue
 
+## 13.3.0
+
+### Minor Changes
+
+- [#2658](https://github.com/Frontify/fondue/pull/2658) [`2e5534d`](https://github.com/Frontify/fondue/commit/2e5534d53a8587786311f011b32f1bf9c4e55454) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: refactor EditableText component
+
+- [#2655](https://github.com/Frontify/fondue/pull/2655) [`16899f6`](https://github.com/Frontify/fondue/commit/16899f6005f9ec2bf63f6ebe5ed7467b53c27a98) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: refactor OrderableList component
+
+### Patch Changes
+
+- [#2657](https://github.com/Frontify/fondue/pull/2657) [`500b8de`](https://github.com/Frontify/fondue/commit/500b8de27ce5d50e8b37929e32dd61cfd348ce6b) Thanks [@syeo66](https://github.com/syeo66)! - fix(Label): it should not react on disabled nested elements
+
+- Updated dependencies [[`4804668`](https://github.com/Frontify/fondue/commit/48046687aa920257eca5f0c363ec5b5c1b9e2d40), [`3ed56a6`](https://github.com/Frontify/fondue/commit/3ed56a6185d9f96959d8e38d34b34bbb6d526fde), [`2e5534d`](https://github.com/Frontify/fondue/commit/2e5534d53a8587786311f011b32f1bf9c4e55454), [`16899f6`](https://github.com/Frontify/fondue/commit/16899f6005f9ec2bf63f6ebe5ed7467b53c27a98), [`4794c76`](https://github.com/Frontify/fondue/commit/4794c762088e99a3a8da5160c4a9cb21e32019f4), [`957c716`](https://github.com/Frontify/fondue/commit/957c7166bc7e8d19e07e069a38e21c0fe7a3984a), [`dab4cef`](https://github.com/Frontify/fondue/commit/dab4cef3c76d71b115142fc465b3259ce5e3e97b), [`500b8de`](https://github.com/Frontify/fondue/commit/500b8de27ce5d50e8b37929e32dd61cfd348ce6b)]:
+    - @frontify/fondue-rte@0.1.1
+    - @frontify/fondue-components@29.0.0
+    - @frontify/fondue-icons@0.25.0
+    - @frontify/fondue-tokens@5.0.0
+
+## 13.2.0
+
+### Minor Changes
+
+- [#2642](https://github.com/Frontify/fondue/pull/2642) [`f9216f3`](https://github.com/Frontify/fondue/commit/f9216f33c2f37dc65531717f0aefe1ac8654cdfe) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: Add refactored `DatePicker` component
+
+### Patch Changes
+
+- Updated dependencies [[`701d6ee`](https://github.com/Frontify/fondue/commit/701d6ee6d1ffad292cbfd5d880aa8b821559029e), [`b093e77`](https://github.com/Frontify/fondue/commit/b093e77996ea99fa32b17a71b78de37b51398904), [`f9216f3`](https://github.com/Frontify/fondue/commit/f9216f33c2f37dc65531717f0aefe1ac8654cdfe)]:
+    - @frontify/fondue-rte@0.1.0
+    - @frontify/fondue-components@28.0.0
+    - @frontify/fondue-tokens@5.0.0
+
 ## 13.1.5
 
 ### Patch Changes

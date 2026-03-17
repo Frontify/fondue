@@ -1,7 +1,7 @@
 {
     "name": "@frontify/fondue-icons",
     "type": "module",
-    "version": "0.24.1",
+    "version": "0.25.0",
     "description": "Frontify's icon SVGs",
     "homepage": "https://github.com/Frontify/fondue",
     "repository": {
@@ -35,7 +35,7 @@
         "node": ">=18"
     },
     "scripts": {
-        "build": " pnpm build:generate-react-icons && vite build",
+        "build": "pnpm build:generate-react-icons && vite build",
         "build:download-new-icons": "dotenv tsx scripts/download_new_icons.ts",
         "build:generate-react-icons": "tsx scripts/generate_react_icons.ts",
         "build:storybook": "storybook build",
