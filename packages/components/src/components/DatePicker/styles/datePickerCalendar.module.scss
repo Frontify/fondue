@@ -69,6 +69,7 @@
         border: 1px solid var(--color-primary-default);
         border-radius: var(--border-radius-large);
         pointer-events: none;
+        box-sizing: border-box;
     }
 
     &.disabled {
