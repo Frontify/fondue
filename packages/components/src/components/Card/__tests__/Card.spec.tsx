@@ -38,24 +38,6 @@ describe('Card Component', () => {
         expect(screen.getByText(CARD_DESCRIPTION_TEXT)).toBeInTheDocument();
     });
 
-    it('should have selected state when selected is true', () => {
-        render(
-            <Card.Root data-test-id={CARD_TEST_ID} selected={true} onClick={() => {}}>
-                <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
-            </Card.Root>,
-        );
-        expect(screen.getByTestId(CARD_TEST_ID).dataset.selected).toBe('true');
-    });
-
-    it('should have data-selected false when selected is false', () => {
-        render(
-            <Card.Root data-test-id={CARD_TEST_ID} selected={false} onClick={() => {}}>
-                <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
-            </Card.Root>,
-        );
-        expect(screen.getByTestId(CARD_TEST_ID).dataset.selected).toBe('false');
-    });
-
     it('should render banner with image', () => {
         render(
             <Card.Root>
@@ -139,15 +121,6 @@ describe('Card Component', () => {
         expect(handleClick).toHaveBeenCalledOnce();
     });
 
-    it('should render a button overlay when onClick is provided', () => {
-        render(
-            <Card.Root data-test-id={CARD_TEST_ID} onClick={() => {}}>
-                <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
-            </Card.Root>,
-        );
-        expect(screen.getByTestId(CARD_TEST_ID).dataset.interactive).toBe('true');
-    });
-
     it('should render an anchor overlay when href is provided', () => {
         render(
             <Card.Root href="/some-page">
@@ -155,6 +128,15 @@ describe('Card Component', () => {
             </Card.Root>,
         );
         expect(screen.getByRole('link')).toHaveAttribute('href', '/some-page');
+    });
+
+    it('should set data-interactive to true when href is provided', () => {
+        render(
+            <Card.Root data-test-id={CARD_TEST_ID} href="/page">
+                <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
+            </Card.Root>,
+        );
+        expect(screen.getByTestId(CARD_TEST_ID).dataset.interactive).toBe('true');
     });
 
     it('should not render an overlay when non-interactive', () => {
@@ -168,39 +150,20 @@ describe('Card Component', () => {
         expect(screen.queryByRole('link')).not.toBeInTheDocument();
     });
 
-    it('should call onClick when the card overlay is clicked', async () => {
-        const handleClick = vi.fn();
-        render(
-            <Card.Root onClick={handleClick} aria-label="Select card">
-                <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
-            </Card.Root>,
-        );
-        await userEvent.click(screen.getByRole('button', { name: 'Select card' }));
-        expect(handleClick).toHaveBeenCalledOnce();
-    });
-
-    it('should set aria-pressed on button overlay when selected', () => {
-        render(
-            <Card.Root selected onClick={() => {}} aria-label="Select card">
-                <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
-            </Card.Root>,
-        );
-        expect(screen.getByRole('button', { name: 'Select card' })).toHaveAttribute('aria-pressed', 'true');
-    });
-
     it('should set aria-current on anchor overlay when selected', () => {
         render(
-            <Card.Root selected href="/page" aria-label="Go to page">
+            <Card.Root selected href="/page" onSelect={() => {}} aria-label="Go to page">
                 <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
             </Card.Root>,
         );
-        expect(screen.getByRole('link', { name: 'Go to page' })).toHaveAttribute('aria-current', 'true');
+        // When selected with onSelect, the overlay is a button, not a link
+        expect(screen.queryByRole('link')).not.toBeInTheDocument();
     });
 
-    it('should render a checkbox button when both href and onClick are provided', () => {
+    it('should render a checkbox when both href and onSelect are provided', () => {
         const handleClick = vi.fn();
         render(
-            <Card.Root href="/page" onClick={handleClick} aria-label="Go to page">
+            <Card.Root href="/page" onSelect={handleClick} aria-label="Go to page">
                 <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
             </Card.Root>,
         );
@@ -208,10 +171,10 @@ describe('Card Component', () => {
         expect(screen.getByRole('button', { name: 'Select' })).toBeInTheDocument();
     });
 
-    it('should call onClick on the checkbox when both href and onClick are provided', async () => {
+    it('should call onSelect on the checkbox when both href and onSelect are provided', async () => {
         const handleClick = vi.fn();
         render(
-            <Card.Root href="/page" onClick={handleClick} aria-label="Go to page">
+            <Card.Root href="/page" onSelect={handleClick} aria-label="Go to page">
                 <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
             </Card.Root>,
         );
@@ -229,14 +192,81 @@ describe('Card Component', () => {
         expect(screen.queryByRole('button')).not.toBeInTheDocument();
     });
 
-    it('should not render a checkbox when only onClick is provided', () => {
+    it('should render link overlay when not selected and both href and onClick are provided', () => {
         render(
-            <Card.Root onClick={() => {}} aria-label="Select card">
+            <Card.Root href="/page" onSelect={() => {}} selected={false} aria-label="Card">
                 <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
             </Card.Root>,
         );
-        expect(screen.getByRole('button', { name: 'Select card' })).toBeInTheDocument();
-        expect(screen.queryByRole('button', { name: 'Select' })).not.toBeInTheDocument();
+        expect(screen.getByRole('link', { name: 'Card' })).toHaveAttribute('href', '/page');
+    });
+
+    it('should render button overlay when selected and both href and onClick are provided', () => {
+        const handleClick = vi.fn();
+        render(
+            <Card.Root href="/page" onSelect={handleClick} selected aria-label="Card">
+                <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
+            </Card.Root>,
+        );
+        // When selected, overlay switches to a button that fires onSelect
+        expect(screen.queryByRole('link')).not.toBeInTheDocument();
+        expect(screen.getByRole('button', { name: 'Card' })).toBeInTheDocument();
+    });
+
+    it('should call onSelect on the button overlay when card is selected', async () => {
+        const handleClick = vi.fn();
+        render(
+            <Card.Root href="/page" onSelect={handleClick} selected aria-label="Card">
+                <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
+            </Card.Root>,
+        );
+        await userEvent.click(screen.getByRole('button', { name: 'Card' }));
+        expect(handleClick).toHaveBeenCalledOnce();
+    });
+
+    it('should have data-selected true when selected with onSelect', () => {
+        render(
+            <Card.Root data-test-id={CARD_TEST_ID} href="/page" selected onSelect={() => {}}>
+                <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
+            </Card.Root>,
+        );
+        expect(screen.getByTestId(CARD_TEST_ID).dataset.selected).toBe('true');
+    });
+
+    it('should have data-selected false when not selected', () => {
+        render(
+            <Card.Root data-test-id={CARD_TEST_ID} href="/page" selected={false} onSelect={() => {}}>
+                <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
+            </Card.Root>,
+        );
+        expect(screen.getByTestId(CARD_TEST_ID).dataset.selected).toBe('false');
+    });
+
+    it('should set data-selectable to true when onSelect is provided', () => {
+        render(
+            <Card.Root data-test-id={CARD_TEST_ID} href="/page" onSelect={() => {}}>
+                <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
+            </Card.Root>,
+        );
+        expect(screen.getByTestId(CARD_TEST_ID).dataset.selectable).toBe('true');
+    });
+
+    it('should set data-selectable to false when only href is provided', () => {
+        render(
+            <Card.Root data-test-id={CARD_TEST_ID} href="/page">
+                <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
+            </Card.Root>,
+        );
+        expect(screen.getByTestId(CARD_TEST_ID).dataset.selectable).toBe('false');
+    });
+
+    it('should set data-selectable to false when non-interactive', () => {
+        render(
+            <Card.Root data-test-id={CARD_TEST_ID}>
+                <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
+            </Card.Root>,
+        );
+        expect(screen.getByTestId(CARD_TEST_ID).dataset.selectable).toBe('false');
     });
 
     it('should render banner with small size', () => {

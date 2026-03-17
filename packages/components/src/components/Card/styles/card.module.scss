@@ -25,14 +25,39 @@
     }
 }
 
+// Shared styles for the selection checkbox and the visual-only selection indicator
+@mixin selection-mark {
+    position: absolute;
+    top: var(--spacing-medium);
+    left: var(--spacing-medium);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: sizeToken.get(5);
+    height: sizeToken.get(5);
+    border-radius: var(--border-radius-medium);
+}
+
+@mixin selection-mark-default {
+    border: var(--border-width-default) solid var(--color-line-mid);
+    background-color: var(--color-surface-default);
+    color: transparent;
+}
+
+@mixin selection-mark-selected {
+    border: none;
+    background-color: var(--color-primary-default);
+    color: var(--color-primary-on-primary);
+}
+
 .root {
     position: relative;
     min-width: sizeToken.get(60);
     display: grid;
     grid-template-areas:
         'banner     banner   banner   banner'
-        'thumbnail  title    badges   actions'
-        'thumbnail  meta     badges   actions';
+        'thumbnail  title        badges   actions'
+        'thumbnail  description  badges   actions';
     grid-template-columns: auto 1fr auto auto;
     grid-template-rows: auto minmax(calc(#{sizeToken.get(10)} / 2 + var(--spacing-small)), auto) minmax(calc(#{sizeToken.get(10)} / 2 + var(--spacing-small)), auto);
     border-radius: var(--border-radius-large);
@@ -104,36 +129,24 @@
 }
 
 .checkbox {
-    position: absolute;
-    top: var(--spacing-medium);
-    left: var(--spacing-medium);
+    @include selection-mark;
+    @include selection-mark-default;
     z-index: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: sizeToken.get(5);
-    height: sizeToken.get(5);
     padding: 0;
-    border-radius: var(--border-radius-medium);
-    border: var(--border-width-default) solid var(--color-line-mid);
-    background-color: var(--color-surface-default);
-    color: transparent;
     cursor: pointer;
     outline: none;
     opacity: 0;
     @include transitions.transition((opacity, background-color, border-color, color));
 
-    .root[data-interactive='true']:hover &,
-    .root[data-interactive='true']:has([data-state='open']) &,
+    .root[data-selectable='true']:hover &,
+    .root[data-selectable='true']:has([data-state='open']) &,
     &:focus-visible {
         opacity: 1;
     }
 
-    .root[data-interactive='true'][data-selected='true'] & {
+    .root[data-selectable='true'][data-selected='true'] & {
+        @include selection-mark-selected;
         opacity: 1;
-        border: none;
-        background-color: var(--color-primary-default);
-        color: var(--color-primary-on-primary);
     }
 
     &:focus-visible {
@@ -142,8 +155,8 @@
 }
 
 // Hide the visual-only selection indicator when an interactive checkbox is present
-.root:has(> .checkbox) .selectionIndicator {
-    display: none !important;
+.root:has(> .checkbox) > .banner .selectionIndicator {
+    display: none;
 }
 
 .banner {
@@ -183,13 +196,6 @@
     }
 }
 
-.bannerOverlay {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    @include transitions.transition-colors;
-}
-
 .bannerIcon {
     display: flex;
     align-items: center;
@@ -211,30 +217,19 @@
 }
 
 .selectionIndicator {
-    position: absolute;
-    top: var(--spacing-medium);
-    left: var(--spacing-medium);
+    @include selection-mark;
     display: none;
-    align-items: center;
-    justify-content: center;
-    width: sizeToken.get(5);
-    height: sizeToken.get(5);
-    border-radius: var(--border-radius-medium);
     pointer-events: none;
 
-    .root[data-interactive='true']:hover &,
-    .root[data-interactive='true']:has([data-state='open']) & {
+    .root[data-selectable='true']:hover &,
+    .root[data-selectable='true']:has([data-state='open']) & {
+        @include selection-mark-default;
         display: flex;
-        border: var(--border-width-default) solid var(--color-line-mid);
-        background-color: var(--color-surface-default);
-        color: transparent;
     }
 
-    .root[data-interactive='true'][data-selected='true'] & {
+    .root[data-selectable='true'][data-selected='true'] & {
+        @include selection-mark-selected;
         display: flex;
-        border: none;
-        background-color: var(--color-primary-default);
-        color: var(--color-primary-on-primary);
     }
 }
 
@@ -309,7 +304,7 @@
 }
 
 .description {
-    grid-area: meta;
+    grid-area: description;
     padding: 0 var(--spacing-small);
     font-family: var(--typography-font-family-primary);
     font-size: var(--typography-font-size-small);

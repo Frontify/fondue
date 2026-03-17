@@ -3,12 +3,15 @@
 import {
     IconCog,
     IconDotsVertical,
+    IconExclamationMarkTriangle,
     IconFolder,
     IconHome,
     IconIcon,
     IconImageStack,
     IconLightning,
+    IconSpeechBubbleEmpty,
     IconStar,
+    IconTarget,
 } from '@frontify/fondue-icons';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { type ComponentType, useState } from 'react';
@@ -71,11 +74,11 @@ const singleCardDecorators: Story['decorators'] = [
     ),
 ];
 
-const DefaultExample = ({ bannerSize, bannerFit, ...args }: PlaygroundArgs) => {
+const DefaultExample = ({ bannerSize, bannerFit }: PlaygroundArgs) => {
     const [selected, setSelected] = useState(false);
 
     return (
-        <Card.Root {...args} selected={selected} onClick={() => setSelected((s) => !s)}>
+        <Card.Root href="#" selected={selected} onSelect={() => setSelected((s) => !s)}>
             <Card.Banner size={bannerSize}>
                 <Card.BannerImage src="https://picsum.photos/seed/card1/400/200" alt="Sample image" fit={bannerFit} />
             </Card.Banner>
@@ -131,10 +134,10 @@ export const Default: Story = {
 };
 
 const AssetCardExample = () => {
-    const [selected, setSelected] = useState(true);
+    const [selected, setSelected] = useState(false);
 
     return (
-        <Card.Root selected={selected} onClick={() => setSelected((s) => !s)}>
+        <Card.Root href="#" selected={selected} onSelect={() => setSelected((s) => !s)}>
             <Card.Banner>
                 <Card.BannerImage src="https://picsum.photos/seed/asset/300/300" alt="Asset preview" fit="contain" />
             </Card.Banner>
@@ -142,8 +145,16 @@ const AssetCardExample = () => {
             <Card.Title>[Asset name]</Card.Title>
             <Card.Description>No status · 36 assets</Card.Description>
             <Card.Badges>
-                <Badge>Badge</Badge>
-                <Badge>Badge</Badge>
+                <Badge variant="highlight" emphasis="weak">
+                    <IconSpeechBubbleEmpty size={20} /> 4
+                </Badge>
+                <Badge emphasis="weak">
+                    <IconTarget size={20} />
+                </Badge>
+                <Badge variant="warning" emphasis="weak">
+                    <IconExclamationMarkTriangle size={20} />
+                </Badge>
+                <Badge variant="highlight">New</Badge>
             </Card.Badges>
 
             <Card.Action>
@@ -169,7 +180,7 @@ const CollectionCardExample = () => {
     const [selected, setSelected] = useState(false);
 
     return (
-        <Card.Root selected={selected} onClick={() => setSelected((s) => !s)}>
+        <Card.Root href="#" selected={selected} onSelect={() => setSelected((s) => !s)}>
             <Card.Banner size="small">
                 <Card.BannerImage src="https://picsum.photos/seed/col1/300/200" alt="Image 1" />
                 <Card.BannerImage src="https://picsum.photos/seed/col2/300/200" alt="Image 2" />
@@ -201,7 +212,7 @@ const EmptyCollectionCardExample = () => {
     const [selected, setSelected] = useState(false);
 
     return (
-        <Card.Root selected={selected} onClick={() => setSelected((s) => !s)}>
+        <Card.Root href="#" selected={selected} onSelect={() => setSelected((s) => !s)}>
             <Card.Banner size="small">
                 <Card.BannerIcon>
                     <IconImageStack size={32} />
@@ -234,7 +245,7 @@ const FolderCardExample = () => {
     const [selected, setSelected] = useState(false);
 
     return (
-        <Card.Root selected={selected} onClick={() => setSelected((s) => !s)}>
+        <Card.Root href="#" selected={selected} onSelect={() => setSelected((s) => !s)}>
             <Card.Banner>
                 <Card.BannerIcon>
                     <IconHome size={32} />
@@ -269,7 +280,7 @@ const BrandCardExample = () => {
     const [selected, setSelected] = useState(false);
 
     return (
-        <Card.Root selected={selected} onClick={() => setSelected((s) => !s)}>
+        <Card.Root href="#" selected={selected} onSelect={() => setSelected((s) => !s)}>
             <Card.Banner>
                 <Card.BannerImage src="https://picsum.photos/seed/card4/400/200" alt="Banner" />
             </Card.Banner>
@@ -301,7 +312,7 @@ const MultipleBannerImagesExample = ({ bannerSize }: Pick<PlaygroundArgs, 'banne
     const [selected, setSelected] = useState(false);
 
     return (
-        <Card.Root selected={selected} onClick={() => setSelected((s) => !s)}>
+        <Card.Root href="#" selected={selected} onSelect={() => setSelected((s) => !s)}>
             <Card.Banner size={bannerSize}>
                 <Card.BannerImage src="https://picsum.photos/seed/img1/200/200" alt="Image 1" />
                 <Card.BannerImage src="https://picsum.photos/seed/img2/200/200" alt="Image 2" />
@@ -341,10 +352,8 @@ export const MultipleBannerImages: Story = {
 };
 
 const WithoutBannerExample = () => {
-    const [selected, setSelected] = useState(false);
-
     return (
-        <Card.Root selected={selected} onClick={() => setSelected((s) => !s)}>
+        <Card.Root href="#">
             <Card.ThumbnailIcon>
                 <IconLightning size={20} />
             </Card.ThumbnailIcon>
@@ -418,8 +427,9 @@ const ResponsiveGridExample = () => {
                 return (
                     <Card.Root
                         key={key}
+                        href="#"
                         selected={selectedKey === key}
-                        onClick={() => setSelectedKey(selectedKey === key ? null : key)}
+                        onSelect={() => setSelectedKey(selectedKey === key ? null : key)}
                     >
                         <Card.Banner>
                             {card.banner ? (
@@ -462,6 +472,30 @@ export const ResponsiveGrid: Story = {
     render: () => <ResponsiveGridExample />,
 };
 
+export const LinkOnly: Story = {
+    decorators: singleCardDecorators,
+    render: () => (
+        <Card.Root href="https://example.com" aria-label="Navigate to project">
+            <Card.Banner>
+                <Card.BannerImage src="https://picsum.photos/seed/link/400/200" alt="Link card" />
+            </Card.Banner>
+
+            <Card.ThumbnailIcon>
+                <IconFolder size={20} />
+            </Card.ThumbnailIcon>
+
+            <Card.Title>[Project name]</Card.Title>
+            <Card.Description>Click to navigate</Card.Description>
+
+            <Card.Action>
+                <Card.ActionButton aria-label="More actions">
+                    <IconDotsVertical size={20} />
+                </Card.ActionButton>
+            </Card.Action>
+        </Card.Root>
+    ),
+};
+
 export const NonInteractive: Story = {
     decorators: singleCardDecorators,
     render: () => {
@@ -492,7 +526,7 @@ const FullExampleComponent = () => {
     const [selected, setSelected] = useState(false);
 
     return (
-        <Card.Root selected={selected} onClick={() => setSelected((s) => !s)}>
+        <Card.Root href="#" selected={selected} onSelect={() => setSelected((s) => !s)}>
             <Card.Banner>
                 <Card.BannerImage src="https://picsum.photos/seed/full/400/300" alt="Full example" />
             </Card.Banner>
@@ -522,7 +556,7 @@ const FullExampleComponent = () => {
                         <Dropdown.Item onSelect={() => {}}>Duplicate</Dropdown.Item>
                         <hr />
                         <Dropdown.Item onSelect={() => {}}>
-                            <span className="tw-text-negative-default">Delete</span>
+                            <span className="tw-text-error">Delete</span>
                         </Dropdown.Item>
                     </Dropdown.Content>
                 </Dropdown.Root>

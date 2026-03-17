@@ -5,33 +5,23 @@ import {
     Children,
     forwardRef,
     isValidElement,
-    useCallback,
     useId,
+    useEffect,
     useMemo,
     useRef,
+    type ComponentProps,
     type CSSProperties,
     type ForwardedRef,
     type MouseEventHandler,
     type ReactNode,
 } from 'react';
 
+import { useSyncRefs } from '#/hooks/useSyncRefs';
+
 import styles from './styles/card.module.scss';
 
 type CardRootBaseProps = {
     'data-test-id'?: string;
-    /**
-     * Whether the card is in a selected state.
-     * @default false
-     */
-    selected?: boolean;
-    /**
-     * Accessible label for the card's clickable overlay.
-     */
-    'aria-label'?: string;
-    /**
-     * ID of the element that describes the card (e.g. a subtitle element).
-     */
-    'aria-describedby'?: string;
     /**
      * Called when the pointer enters the card.
      */
@@ -43,33 +33,50 @@ type CardRootBaseProps = {
     children?: ReactNode;
 };
 
+type CardRootInteractiveProps = {
+    /**
+     * Navigation URL. The overlay renders as an anchor (`<a>`),
+     * enabling native link behavior (middle-click, right-click "Open in new tab", SEO).
+     *
+     * When the card is not selected, clicking the surface navigates.
+     * When the card is selected and `onSelect` is provided, clicking the
+     * surface fires `onSelect` instead (e.g. to deselect).
+     */
+    href: string;
+    /**
+     * Accessible label for the card's clickable overlay.
+     */
+    'aria-label'?: string;
+    /**
+     * ID of the element that describes the card (e.g. a subtitle element).
+     */
+    'aria-describedby'?: string;
+};
+
 export type CardRootProps = CardRootBaseProps &
     (
-        | {
+        | (CardRootInteractiveProps & {
               /**
-               * Navigation URL. When provided the overlay renders as an anchor (`<a>`)
-               * instead of a button, enabling native link behavior (middle-click,
-               * right-click "Open in new tab", SEO).
+               * Selection callback for the card's checkbox.
+               * Also fires on the card surface when the card is selected.
                */
-              href: string;
+              onSelect: MouseEventHandler<HTMLElement>;
               /**
-               * Click callback for the card's selection checkbox.
-               * When both `href` and `onClick` are provided, clicking the card
-               * overlay navigates and clicking the checkbox fires `onClick`.
+               * Whether the card is in a selected state.
+               * @default false
                */
-              onClick?: MouseEventHandler<HTMLElement>;
-          }
-        | {
-              href?: never;
-              /**
-               * Click callback for the card surface (e.g. select).
-               * Does not fire when clicking action buttons.
-               */
-              onClick: MouseEventHandler<HTMLElement>;
-          }
+              selected?: boolean;
+          })
+        | (CardRootInteractiveProps & {
+              onSelect?: never;
+              selected?: never;
+          })
         | {
               href?: never;
-              onClick?: never;
+              onSelect?: never;
+              selected?: never;
+              'aria-label'?: never;
+              'aria-describedby'?: never;
           }
     );
 
@@ -80,15 +87,16 @@ export const CardRoot = (
         'aria-describedby': ariaDescribedby,
         selected = false,
         href,
-        onClick,
+        onSelect,
         onMouseEnter,
         onMouseLeave,
         children,
     }: CardRootProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
-    const isClickable = !!(href || onClick);
-    const hasDualAction = !!(href && onClick);
+    const isSelectable = !!onSelect;
+    const isClickable = !!href || (isSelectable && selected);
+    const showCheckbox = !!(href && onSelect);
     const generatedTitleId = useId();
     const titleId = `${generatedTitleId}-title`;
 
@@ -109,47 +117,51 @@ export const CardRoot = (
         return { actions, otherChildren };
     }, [children]);
 
+    const showLinkOverlay = !!href && !(isSelectable && selected);
+    const showButtonOverlay = isSelectable && selected;
+
     return (
         <div
             ref={ref}
             className={styles.root}
             data-test-id={dataTestId}
             data-interactive={isClickable}
-            data-selected={isClickable && selected}
+            data-selectable={isSelectable}
+            data-selected={isSelectable && selected}
             data-title-id={titleId}
             onMouseEnter={onMouseEnter}
             onMouseLeave={onMouseLeave}
         >
-            {isClickable &&
-                (href ? (
-                    <a
-                        className={styles.overlay}
-                        href={href}
-                        tabIndex={0}
-                        aria-label={ariaLabel}
-                        aria-labelledby={labelledby}
-                        aria-describedby={ariaDescribedby}
-                        aria-current={selected ? 'true' : undefined}
-                    />
-                ) : (
-                    <button
-                        className={styles.overlay}
-                        type="button"
-                        tabIndex={0}
-                        aria-label={ariaLabel}
-                        aria-labelledby={labelledby}
-                        aria-describedby={ariaDescribedby}
-                        aria-pressed={selected}
-                        onClick={onClick}
-                    />
-                ))}
-            {hasDualAction && (
+            {showLinkOverlay && (
+                <a
+                    className={styles.overlay}
+                    href={href}
+                    tabIndex={0}
+                    aria-label={ariaLabel}
+                    aria-labelledby={labelledby}
+                    aria-describedby={ariaDescribedby}
+                    aria-current={selected ? 'true' : undefined}
+                />
+            )}
+            {showButtonOverlay && (
+                <button
+                    className={styles.overlay}
+                    type="button"
+                    tabIndex={0}
+                    aria-label={ariaLabel}
+                    aria-labelledby={labelledby}
+                    aria-describedby={ariaDescribedby}
+                    aria-pressed={selected}
+                    onClick={onSelect}
+                />
+            )}
+            {showCheckbox && (
                 <button
                     className={styles.checkbox}
                     type="button"
                     aria-label={selected ? 'Deselect' : 'Select'}
                     aria-pressed={selected}
-                    onClick={onClick}
+                    onClick={onSelect}
                 >
                     <IconCheckMark size={16} />
                 </button>
@@ -185,7 +197,6 @@ export const CardBanner = (
     return (
         <div ref={ref} className={styles.banner} data-test-id={dataTestId} data-size={size}>
             {children}
-            <div className={styles.bannerOverlay} />
             <div
                 className={styles.selectionIndicator}
                 data-test-id="fondue-card-selection-indicator"
@@ -326,31 +337,22 @@ export const CardTitle = (
     { 'data-test-id': dataTestId = 'fondue-card-title', children }: CardTitleProps,
     externalRef: ForwardedRef<HTMLDivElement>,
 ) => {
-    const internalRef = useRef<HTMLDivElement | null>(null);
+    const localRef = useRef<HTMLDivElement>(null);
+    useSyncRefs(localRef, externalRef);
 
-    const setRef = useCallback(
-        (node: HTMLDivElement | null) => {
-            internalRef.current = node;
-
-            if (typeof externalRef === 'function') {
-                externalRef(node);
-            } else if (externalRef) {
-                externalRef.current = node;
+    useEffect(() => {
+        const node = localRef.current;
+        if (node) {
+            const root = node.closest<HTMLElement>(`.${styles.root}`);
+            const titleId = root?.dataset.titleId;
+            if (titleId) {
+                node.id = titleId;
             }
-
-            if (node) {
-                const root = node.closest<HTMLElement>(`.${styles.root}`);
-                const titleId = root?.dataset.titleId;
-                if (titleId) {
-                    node.id = titleId;
-                }
-            }
-        },
-        [externalRef],
-    );
+        }
+    }, []);
 
     return (
-        <div ref={setRef} className={styles.title} data-test-id={dataTestId}>
+        <div ref={localRef} className={styles.title} data-test-id={dataTestId}>
             {children}
         </div>
     );
@@ -404,7 +406,7 @@ export type CardActionButtonProps = {
      */
     onClick?: MouseEventHandler<HTMLButtonElement>;
     children?: ReactNode;
-} & Omit<JSX.IntrinsicElements['button'], 'children' | 'ref'>;
+} & Omit<ComponentProps<'button'>, 'children' | 'ref' | 'onClick' | 'aria-label'>;
 
 export const CardActionButton = (
     {
