@@ -1,5 +1,15 @@
 # @frontify/fondue
 
+## 13.3.1
+
+### Patch Changes
+
+- [`4941eab`](https://github.com/Frontify/fondue/commit/4941eab80bbe9a588c946ab6e69bec3f7f9634e3) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: minor datepicker fixes
+
+- Updated dependencies [[`d70403d`](https://github.com/Frontify/fondue/commit/d70403d07d7e4890666c4950c5f272b02c36953c), [`164a1fb`](https://github.com/Frontify/fondue/commit/164a1fb455d3d796fded75508fbd2eb203934dd1)]:
+    - @frontify/fondue-components@29.0.1
+    - @frontify/fondue-tokens@5.0.0
+
 ## 13.3.0
 
 ### Minor Changes
