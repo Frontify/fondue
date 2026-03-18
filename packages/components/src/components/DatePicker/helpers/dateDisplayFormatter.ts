@@ -4,14 +4,19 @@ import { format } from 'date-fns';
 
 import { type DatePickerDate, type DatePickerDateRange } from '../types';
 
-import { transformDateRangeToPickerDateRange, transformDatePickerDateToDate } from './dateTransformer';
+const toLocalDate = (date: DatePickerDate): Date | undefined => {
+    if (!date) {
+        return undefined;
+    }
+    return new Date(date.year, date.month - 1, date.day);
+};
 
 const isDateRange = (selected?: DatePickerDateRange | DatePickerDate): selected is DatePickerDateRange => {
     return Boolean(selected && 'from' in selected && 'to' in selected);
 };
 
 const getSingleDateDisplayString = (selected?: DatePickerDate): string | undefined => {
-    const singleDate = transformDatePickerDateToDate(selected);
+    const singleDate = toLocalDate(selected);
     if (!singleDate) {
         return undefined;
     }
@@ -19,24 +24,24 @@ const getSingleDateDisplayString = (selected?: DatePickerDate): string | undefin
 };
 
 const getDateRangeDisplayString = (selected?: DatePickerDateRange): string | undefined => {
-    const dateRange = transformDateRangeToPickerDateRange(selected);
-    if (!dateRange?.from || !dateRange?.to) {
+    const from = toLocalDate(selected?.from);
+    const to = toLocalDate(selected?.to);
+    if (!from || !to) {
         return undefined;
     }
 
-    const isSameYear = dateRange.from.getFullYear() === dateRange.to.getFullYear();
-
-    const isSameMonth = isSameYear && dateRange.from.getMonth() === dateRange.to.getMonth();
+    const isSameYear = from.getFullYear() === to.getFullYear();
+    const isSameMonth = isSameYear && from.getMonth() === to.getMonth();
 
     if (isSameMonth) {
-        return `${format(dateRange.from, 'MMM d')}\u2013${format(dateRange.to, 'd, yyyy')}`;
+        return `${format(from, 'MMM d')}\u2013${format(to, 'd, yyyy')}`;
     }
 
     if (isSameYear) {
-        return `${format(dateRange.from, 'MMM d')}\u2013${format(dateRange.to, 'MMM d, yyyy')}`;
+        return `${format(from, 'MMM d')}\u2013${format(to, 'MMM d, yyyy')}`;
     }
 
-    return `${format(dateRange.from, 'MMM d, yyyy')}\u2013${format(dateRange.to, 'MMM d, yyyy')}`;
+    return `${format(from, 'MMM d, yyyy')}\u2013${format(to, 'MMM d, yyyy')}`;
 };
 
 export const getDateDisplayString = (selected?: DatePickerDateRange | DatePickerDate): string | undefined => {
