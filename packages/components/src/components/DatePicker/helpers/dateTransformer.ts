@@ -9,10 +9,10 @@ export const transformDateToDatePickerDate = (date?: Date): DatePickerDate | und
         return undefined;
     }
     return {
-        year: date.getUTCFullYear(),
+        year: date.getFullYear(),
         // Month is 0-indexed in JavaScript, so we add 1 to get the correct month
-        month: date.getUTCMonth() + 1,
-        day: date.getUTCDate(),
+        month: date.getMonth() + 1,
+        day: date.getDate(),
     };
 };
 
@@ -21,7 +21,7 @@ export const transformDatePickerDateToDate = (datePickerDate?: DatePickerDate): 
         return undefined;
     }
     // Month is 0-indexed in JavaScript, so we subtract 1 to get the correct month
-    return new Date(Date.UTC(datePickerDate.year, datePickerDate.month - 1, datePickerDate.day));
+    return new Date(datePickerDate.year, datePickerDate.month - 1, datePickerDate.day);
 };
 
 export const transformPickerDateRangeToDateRange = (dateRange?: InternalDayPickerDateRange): DatePickerDateRange => {
