@@ -65,7 +65,7 @@ export const DatePickerInput = (
                 type="button"
                 data-date-input-select
             >
-                <IconCalendar size={16} />
+                <IconCalendar className={styles.icon} size={16} />
                 {displayString ? (
                     <span className={styles.dateName}>{displayString}</span>
                 ) : (
