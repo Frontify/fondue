@@ -1,5 +1,16 @@
 # @frontify/fondue-components
 
+## 29.0.1
+
+### Patch Changes
+
+- [#2664](https://github.com/Frontify/fondue/pull/2664) [`d70403d`](https://github.com/Frontify/fondue/commit/d70403d07d7e4890666c4950c5f272b02c36953c) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: adjust datepicker box sizing and add missing exports
+
+- [#2667](https://github.com/Frontify/fondue/pull/2667) [`164a1fb`](https://github.com/Frontify/fondue/commit/164a1fb455d3d796fded75508fbd2eb203934dd1) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix(Badge): missing `-` in variable
+
+- Updated dependencies []:
+    - @frontify/fondue-tokens@5.0.0
+
 ## 29.0.0
 
 ### Minor Changes
