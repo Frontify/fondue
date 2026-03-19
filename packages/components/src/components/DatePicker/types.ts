@@ -14,3 +14,5 @@ export type DatePickerDateRange =
           to: DatePickerDate;
       }
     | undefined;
+
+export type DisabledDatePickerDates = { before: DatePickerDate } | { after: DatePickerDate };

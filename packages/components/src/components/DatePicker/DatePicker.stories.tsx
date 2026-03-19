@@ -77,7 +77,7 @@ export const ControlledRangeDate: StoryObj<typeof RangeDatePicker> = {
 
 export const DisabledDatesBefore: Story = {
     args: {
-        disabledDates: [{ before: new Date() }],
+        disabledDates: [{ before: { year: 2026, month: 3, day: 19 } }],
     },
     render: (args) => {
         return <DatePicker {...args} />;
@@ -86,7 +86,7 @@ export const DisabledDatesBefore: Story = {
 
 export const DisabledDatesAfter: Story = {
     args: {
-        disabledDates: [{ after: new Date() }],
+        disabledDates: [{ after: { year: 2026, month: 3, day: 19 } }],
     },
     render: (args) => {
         return <DatePicker {...args} />;

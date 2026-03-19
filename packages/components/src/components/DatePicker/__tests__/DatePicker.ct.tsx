@@ -87,4 +87,40 @@ test.describe('SingleDatePicker', () => {
         await page.keyboard.press('ArrowRight');
         await expect(component.locator('button:focus div')).toHaveText('16');
     });
+
+    test('should disable dates before a given DatePickerDate', async ({ mount }) => {
+        const component = await mount(
+            <DatePicker
+                data-test-id={DATE_PICKER_TEST_ID}
+                selected={{ year: 2025, month: 3, day: 15 }}
+                disabledDates={[{ before: { year: 2025, month: 3, day: 10 } }]}
+            />,
+        );
+        const disabledDay = component.locator('td[class*="disabled"]').filter({ hasText: '5' });
+        await expect(disabledDay).toBeVisible();
+    });
+
+    test('should disable dates after a given DatePickerDate', async ({ mount }) => {
+        const component = await mount(
+            <DatePicker
+                data-test-id={DATE_PICKER_TEST_ID}
+                selected={{ year: 2025, month: 3, day: 15 }}
+                disabledDates={[{ after: { year: 2025, month: 3, day: 20 } }]}
+            />,
+        );
+        const disabledDay = component.locator('td[class*="disabled"]').filter({ hasText: '25' });
+        await expect(disabledDay).toBeVisible();
+    });
+
+    test('should not disable dates within the allowed range', async ({ mount }) => {
+        const component = await mount(
+            <DatePicker
+                data-test-id={DATE_PICKER_TEST_ID}
+                selected={{ year: 2025, month: 3, day: 15 }}
+                disabledDates={[{ before: { year: 2025, month: 3, day: 10 } }]}
+            />,
+        );
+        const enabledDay = component.locator('td:not([class*="disabled"])').filter({ hasText: '15' });
+        await expect(enabledDay).toBeVisible();
+    });
 });

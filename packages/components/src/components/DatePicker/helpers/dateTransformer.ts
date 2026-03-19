@@ -2,7 +2,7 @@
 
 import { type DateRange as InternalDayPickerDateRange } from 'react-day-picker';
 
-import { type DatePickerDate, type DatePickerDateRange } from '../types';
+import { type DisabledDatePickerDates, type DatePickerDate, type DatePickerDateRange } from '../types';
 
 export const transformDateToDatePickerDate = (date?: Date): DatePickerDate | undefined => {
     if (!date) {
@@ -48,4 +48,27 @@ export const transformDateRangeToPickerDateRange = (
         from: transformDatePickerDateToDate(dateRange.from),
         to: transformDatePickerDateToDate(dateRange.to),
     };
+};
+
+type DisabledDate = { before: Date } | { after: Date };
+
+export const transformDisabledDates = (
+    disabledDates?: DisabledDatePickerDates | DisabledDatePickerDates[],
+): DisabledDate[] | undefined => {
+    if (!disabledDates) {
+        return undefined;
+    }
+
+    const entries = Array.isArray(disabledDates) ? disabledDates : [disabledDates];
+
+    const transformedDisabledDates = entries.flatMap((entry): DisabledDate[] => {
+        if ('before' in entry) {
+            const date = transformDatePickerDateToDate(entry.before);
+            return date ? [{ before: date }] : [];
+        }
+        const date = transformDatePickerDateToDate(entry.after);
+        return date ? [{ after: date }] : [];
+    });
+
+    return transformedDisabledDates.length > 0 ? transformedDisabledDates : undefined;
 };
