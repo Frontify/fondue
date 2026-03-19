@@ -96,7 +96,7 @@ test.describe('SingleDatePicker', () => {
                 disabledDates={[{ before: { year: 2025, month: 3, day: 10 } }]}
             />,
         );
-        const disabledDay = component.locator('td[class*="disabled"]').filter({ hasText: '5' });
+        const disabledDay = component.locator('td[class*="disabled"]').filter({ hasText: /^5$/ });
         await expect(disabledDay).toBeVisible();
     });
 
@@ -108,7 +108,7 @@ test.describe('SingleDatePicker', () => {
                 disabledDates={[{ after: { year: 2025, month: 3, day: 20 } }]}
             />,
         );
-        const disabledDay = component.locator('td[class*="disabled"]').filter({ hasText: '25' });
+        const disabledDay = component.locator('td[class*="disabled"]').filter({ hasText: /^25$/ });
         await expect(disabledDay).toBeVisible();
     });
 
@@ -120,7 +120,7 @@ test.describe('SingleDatePicker', () => {
                 disabledDates={[{ before: { year: 2025, month: 3, day: 10 } }]}
             />,
         );
-        const enabledDay = component.locator('td:not([class*="disabled"])').filter({ hasText: '15' });
+        const enabledDay = component.locator('td:not([class*="disabled"])').filter({ hasText: /^15$/ });
         await expect(enabledDay).toBeVisible();
     });
 });
