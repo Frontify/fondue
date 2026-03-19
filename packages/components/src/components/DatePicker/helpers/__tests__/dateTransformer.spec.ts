@@ -7,6 +7,7 @@ import {
     transformDatePickerDateToDate,
     transformPickerDateRangeToDateRange,
     transformDateRangeToPickerDateRange,
+    transformDisabledDates,
 } from '../dateTransformer';
 
 describe('transformDateToDatePickerDate', () => {
@@ -100,5 +101,34 @@ describe('transformDateRangeToPickerDateRange', () => {
         const asPickerRange = transformDateRangeToPickerDateRange(original);
         const backToDateRange = transformPickerDateRangeToDateRange(asPickerRange);
         expect(backToDateRange).toStrictEqual(original);
+    });
+});
+
+describe('transformDisabledDates', () => {
+    it('should return undefined when no disabled dates are provided', () => {
+        expect(transformDisabledDates(undefined)).toBeUndefined();
+    });
+
+    it('should transform a single "before" entry', () => {
+        const result = transformDisabledDates({ before: { year: 2025, month: 3, day: 10 } });
+        expect(result).toStrictEqual([{ before: new Date(2025, 2, 10) }]);
+    });
+
+    it('should transform a single "after" entry', () => {
+        const result = transformDisabledDates({ after: { year: 2025, month: 6, day: 20 } });
+        expect(result).toStrictEqual([{ after: new Date(2025, 5, 20) }]);
+    });
+
+    it('should transform an array of entries', () => {
+        const result = transformDisabledDates([
+            { before: { year: 2025, month: 1, day: 1 } },
+            { after: { year: 2025, month: 12, day: 31 } },
+        ]);
+        expect(result).toStrictEqual([{ before: new Date(2025, 0, 1) }, { after: new Date(2025, 11, 31) }]);
+    });
+
+    it('should filter out entries with undefined DatePickerDate', () => {
+        const result = transformDisabledDates([{ before: undefined }, { after: { year: 2025, month: 6, day: 15 } }]);
+        expect(result).toStrictEqual([{ after: new Date(2025, 5, 15) }]);
     });
 });
