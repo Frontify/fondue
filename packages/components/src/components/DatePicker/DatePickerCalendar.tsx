@@ -75,7 +75,6 @@ export const DatePickerCalendar = forwardRef<HTMLDivElement, DatePickerCalendarP
                     disabled={disabledDates}
                     defaultMonth={defaultMonth}
                     dir={dir}
-                    timeZone="UTC"
                     classNames={{
                         root: `${defaultClassNames.root} ${styles.root}`,
                         day: `${styles.day}`,
