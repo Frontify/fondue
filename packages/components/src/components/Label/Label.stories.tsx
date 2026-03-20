@@ -47,6 +47,11 @@ export const Mandatory: Story = {
 };
 
 export const WithTextInput: Story = {
+    parameters: {
+        manifest: {
+            canonical: true,
+        },
+    },
     args: {
         children: 'Hello World',
     },

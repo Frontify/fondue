@@ -53,7 +53,13 @@ const meta: Meta<typeof CheckboxComponent> = {
 };
 export default meta;
 
-export const Default: Story = {};
+export const Default: Story = {
+    parameters: {
+        manifest: {
+            canonical: true,
+        },
+    },
+};
 
 export const Indeterminate: Story = {
     args: {

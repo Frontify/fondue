@@ -19,6 +19,11 @@ const meta: Meta<typeof ScrollArea> = {
 export default meta;
 
 export const Default: Story = {
+    parameters: {
+        manifest: {
+            canonical: true,
+        },
+    },
     render: (args) => {
         return (
             <ScrollArea {...args} maxHeight={200} maxWidth={600}>

@@ -34,6 +34,11 @@ const meta: Meta<typeof Flex> = {
 export default meta;
 
 export const Default: Story = {
+    parameters: {
+        manifest: {
+            canonical: true,
+        },
+    },
     render: (args) => {
         return (
             <Flex {...args}>

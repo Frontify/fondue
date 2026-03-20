@@ -88,6 +88,11 @@ const ResizableContent = () => {
 };
 
 export const Default: Story = {
+    parameters: {
+        manifest: {
+            canonical: true,
+        },
+    },
     args: {},
     render: (args) => {
         return (
