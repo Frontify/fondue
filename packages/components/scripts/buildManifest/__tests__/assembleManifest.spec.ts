@@ -148,7 +148,7 @@ describe('writeComponentManifest', () => {
         writeComponentManifest(manifest, 'src/components/Button');
 
         const [, content] = vi.mocked(writeFileSync).mock.calls[0];
-        const parsed = JSON.parse(String(content)) as ComponentManifest;
+        const parsed = JSON.parse(typeof content === 'string' ? content : JSON.stringify(content)) as ComponentManifest;
         expect(parsed.name).toBe('Button');
         expect(parsed.importStatement).toBe("import { Button } from '@frontify/fondue-components';");
     });
@@ -186,7 +186,12 @@ describe('writeGlobalManifest', () => {
         });
         writeGlobalManifest([manifest1, manifest2], '@frontify/fondue-components');
 
-        const parsed = JSON.parse(String(findGlobalManifestCall()[1]));
+        const call = findGlobalManifestCall();
+        if (!call) {
+            throw new Error('global manifest call not found');
+        }
+        const content1 = call[1];
+        const parsed = JSON.parse(typeof content1 === 'string' ? content1 : JSON.stringify(content1));
         expect(parsed.components).toHaveProperty('Button');
         expect(parsed.components).toHaveProperty('Badge');
     });
@@ -200,7 +205,12 @@ describe('writeGlobalManifest', () => {
         });
         writeGlobalManifest([manifest], '@frontify/fondue-components');
 
-        const parsed = JSON.parse(String(findGlobalManifestCall()[1]));
+        const call2 = findGlobalManifestCall();
+        if (!call2) {
+            throw new Error('global manifest call not found');
+        }
+        const content2 = call2[1];
+        const parsed = JSON.parse(typeof content2 === 'string' ? content2 : JSON.stringify(content2));
         const ref = parsed.components.Button;
 
         expect(ref.name).toBe('Button');
@@ -217,7 +227,12 @@ describe('writeGlobalManifest', () => {
         const manifest = assembleComponentManifest(baseInput);
         writeGlobalManifest([manifest], '@frontify/fondue-components');
 
-        const parsed = JSON.parse(String(findGlobalManifestCall()[1]));
+        const call3 = findGlobalManifestCall();
+        if (!call3) {
+            throw new Error('global manifest call not found');
+        }
+        const content3 = call3[1];
+        const parsed = JSON.parse(typeof content3 === 'string' ? content3 : JSON.stringify(content3));
         expect(parsed.schemaVersion).toBeDefined();
         expect(parsed.packageName).toBe('@frontify/fondue-components');
     });
