@@ -1,14 +1,14 @@
 // @vitest-environment node
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+vi.mock('node:fs');
+import { existsSync, readFileSync } from 'node:fs';
+
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 
-vi.mock('node:fs');
 vi.mock('../utils', () => ({
     resolveFromRoot: (...segments: string[]) => ['<root>', ...segments].join('/'),
 }));
-
-import { existsSync, readFileSync } from 'node:fs';
 
 import { readMetadata } from '../readMetadata';
 

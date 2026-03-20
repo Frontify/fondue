@@ -1,10 +1,10 @@
-// @vitest-environment node
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { describe, expect, it, vi, beforeEach } from 'vitest';
+// @vitest-environment node
 
 vi.mock('node:fs');
 vi.mock('glob');
+
 vi.mock('../utils', () => ({
     resolveFromRoot: (...segments: string[]) => ['<root>', ...segments].filter(Boolean).join('/'),
 }));
@@ -12,6 +12,7 @@ vi.mock('../utils', () => ({
 import { readFileSync } from 'node:fs';
 
 import { globSync } from 'glob';
+import { describe, expect, it, vi, beforeEach } from 'vitest';
 
 import { discoverComponents } from '../discoverComponents';
 

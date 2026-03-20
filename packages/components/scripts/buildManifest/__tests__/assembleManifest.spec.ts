@@ -1,5 +1,7 @@
-// @vitest-environment node
 /* (c) Copyright Frontify Ltd., all rights reserved. */
+
+// @vitest-environment node
+import { writeFileSync } from 'node:fs';
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -7,8 +9,6 @@ vi.mock('node:fs');
 vi.mock('../utils', () => ({
     resolveFromRoot: (...segments: string[]) => ['<root>', ...segments].join('/'),
 }));
-
-import { writeFileSync } from 'node:fs';
 
 import {
     assembleComponentManifest,

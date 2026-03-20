@@ -10,7 +10,6 @@ export type StoriesResult = {
     examples: Example[];
     status: string;
 };
-import { logWarn } from './utils';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -80,7 +79,7 @@ function extractMetaStatus(parametersNode: ts.Expression): string {
 }
 
 /** Walk `parameters.docs.description.story` to extract a string */
-function extractDescription(parametersNode: ts.Expression, sourceText: string): string {
+function extractDescription(parametersNode: ts.Expression): string {
     if (!ts.isObjectLiteralExpression(parametersNode)) {
         return '';
     }
