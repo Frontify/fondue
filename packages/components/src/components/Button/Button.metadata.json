@@ -1,0 +1,10 @@
+{
+    "category": "input",
+    "description": "",
+    "filePath": "src/components/Button/Button.tsx",
+    "instructions": "",
+    "name": "Button",
+    "relatedComponents": ["SplitButton", "Link"],
+    "storyFilePaths": ["src/components/Button/Button.stories.tsx"],
+    "tags": ["button", "action", "cta"]
+}

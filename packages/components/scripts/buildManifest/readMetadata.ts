@@ -1,28 +1,40 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { existsSync, readFileSync } from 'node:fs';
-import path from 'node:path';
-import matter from 'gray-matter';
 
 import { resolveFromRoot } from './utils';
 
 export type MetadataResult = {
     description: string;
+    category: string;
+    tags: string[];
+    relatedComponents: string[];
     instructions: string;
 };
 
+type MetadataJson = {
+    description?: string;
+    category?: string;
+    tags?: string[];
+    relatedComponents?: string[];
+    instructions?: string;
+};
+
 export function readMetadata(dirPath: string, componentName: string): MetadataResult | null {
-    const metaFilePath = resolveFromRoot(dirPath, `${componentName}.metadata.md`);
+    const metaFilePath = resolveFromRoot(dirPath, `${componentName}.metadata.json`);
 
     if (!existsSync(metaFilePath)) {
         return null;
     }
 
     const raw = readFileSync(metaFilePath, 'utf-8');
-    const { data, content } = matter(raw);
+    const data = JSON.parse(raw) as MetadataJson;
 
     return {
-        description: (data.description as string | undefined) ?? '',
-        instructions: content.trim(),
+        description: data.description ?? '',
+        category: data.category ?? '',
+        tags: Array.isArray(data.tags) ? data.tags : [],
+        relatedComponents: Array.isArray(data.relatedComponents) ? data.relatedComponents : [],
+        instructions: data.instructions ?? '',
     };
 }

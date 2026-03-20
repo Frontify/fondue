@@ -1,0 +1,19 @@
+{
+    "name": "Dropdown",
+    "description": "",
+    "category": "overlay",
+    "tags": [
+        "dropdown",
+        "menu",
+        "select"
+    ],
+    "relatedComponents": [
+        "Select",
+        "Flyout"
+    ],
+    "instructions": "",
+    "filePath": "src/components/Dropdown/Dropdown.tsx",
+    "storyFilePaths": [
+        "src/components/Dropdown/Dropdown.stories.tsx"
+    ]
+}

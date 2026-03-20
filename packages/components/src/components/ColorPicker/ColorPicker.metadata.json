@@ -1,0 +1,17 @@
+{
+    "name": "ColorPicker",
+    "description": "",
+    "category": "input",
+    "tags": [
+        "color",
+        "picker",
+        "input"
+    ],
+    "relatedComponents": [],
+    "instructions": "",
+    "filePath": "src/components/ColorPicker/ColorPicker.tsx",
+    "storyFilePaths": [
+        "src/components/ColorPicker/ColorPickerInput.stories.tsx",
+        "src/components/ColorPicker/ColorPicker.stories.tsx"
+    ]
+}

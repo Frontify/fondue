@@ -1,0 +1,19 @@
+{
+    "name": "Badge",
+    "description": "",
+    "category": "feedback",
+    "tags": [
+        "badge",
+        "label",
+        "status"
+    ],
+    "relatedComponents": [
+        "Tag",
+        "Notice"
+    ],
+    "instructions": "",
+    "filePath": "src/components/Badge/Badge.tsx",
+    "storyFilePaths": [
+        "src/components/Badge/Badge.stories.tsx"
+    ]
+}

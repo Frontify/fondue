@@ -1,0 +1,17 @@
+{
+    "name": "Section",
+    "description": "",
+    "category": "layout",
+    "tags": [
+        "section",
+        "container",
+        "layout"
+    ],
+    "relatedComponents": [
+        "Accordion",
+        "Box"
+    ],
+    "instructions": "",
+    "filePath": "src/components/Section/Section.tsx",
+    "storyFilePaths": []
+}

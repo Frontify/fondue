@@ -1,0 +1,19 @@
+{
+    "name": "OrderableList",
+    "description": "",
+    "category": "data",
+    "tags": [
+        "list",
+        "sortable",
+        "drag",
+        "reorder"
+    ],
+    "relatedComponents": [
+        "Table"
+    ],
+    "instructions": "",
+    "filePath": "src/components/OrderableList/OrderableList.tsx",
+    "storyFilePaths": [
+        "src/components/OrderableList/OrderableList.stories.tsx"
+    ]
+}

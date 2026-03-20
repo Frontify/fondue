@@ -1,0 +1,19 @@
+{
+    "name": "Dialog",
+    "description": "",
+    "category": "overlay",
+    "tags": [
+        "dialog",
+        "modal",
+        "overlay"
+    ],
+    "relatedComponents": [
+        "Flyout",
+        "Tooltip"
+    ],
+    "instructions": "",
+    "filePath": "src/components/Dialog/Dialog.tsx",
+    "storyFilePaths": [
+        "src/components/Dialog/Dialog.stories.tsx"
+    ]
+}

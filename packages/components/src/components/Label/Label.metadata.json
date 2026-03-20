@@ -1,0 +1,19 @@
+{
+    "name": "Label",
+    "description": "",
+    "category": "typography",
+    "tags": [
+        "label",
+        "form",
+        "typography"
+    ],
+    "relatedComponents": [
+        "Text",
+        "Heading"
+    ],
+    "instructions": "",
+    "filePath": "src/components/Label/Label.tsx",
+    "storyFilePaths": [
+        "src/components/Label/Label.stories.tsx"
+    ]
+}

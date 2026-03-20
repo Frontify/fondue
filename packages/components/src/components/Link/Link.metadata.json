@@ -1,0 +1,19 @@
+{
+    "name": "Link",
+    "description": "",
+    "category": "typography",
+    "tags": [
+        "link",
+        "anchor",
+        "navigation"
+    ],
+    "relatedComponents": [
+        "Button",
+        "Text"
+    ],
+    "instructions": "",
+    "filePath": "src/components/Link/Link.tsx",
+    "storyFilePaths": [
+        "src/components/Link/Link.stories.tsx"
+    ]
+}

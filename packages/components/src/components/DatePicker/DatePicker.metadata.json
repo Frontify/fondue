@@ -1,0 +1,20 @@
+{
+    "name": "DatePicker",
+    "description": "",
+    "category": "input",
+    "tags": [
+        "date",
+        "picker",
+        "calendar",
+        "input"
+    ],
+    "relatedComponents": [
+        "TextInput"
+    ],
+    "instructions": "",
+    "filePath": "src/components/DatePicker/DatePicker.ts",
+    "storyFilePaths": [
+        "src/components/DatePicker/DatePickerInput.stories.tsx",
+        "src/components/DatePicker/DatePicker.stories.tsx"
+    ]
+}

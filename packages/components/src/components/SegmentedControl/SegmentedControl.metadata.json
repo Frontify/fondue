@@ -1,0 +1,19 @@
+{
+    "name": "SegmentedControl",
+    "description": "",
+    "category": "input",
+    "tags": [
+        "segmented",
+        "toggle",
+        "tabs"
+    ],
+    "relatedComponents": [
+        "Tabs",
+        "RadioList"
+    ],
+    "instructions": "",
+    "filePath": "src/components/SegmentedControl/SegmentedControl.tsx",
+    "storyFilePaths": [
+        "src/components/SegmentedControl/SegmentedControl.stories.tsx"
+    ]
+}

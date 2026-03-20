@@ -1,0 +1,19 @@
+{
+    "name": "Tabs",
+    "description": "",
+    "category": "navigation",
+    "tags": [
+        "tabs",
+        "navigation",
+        "panel"
+    ],
+    "relatedComponents": [
+        "SegmentedControl",
+        "Accordion"
+    ],
+    "instructions": "",
+    "filePath": "src/components/Tabs/Tabs.tsx",
+    "storyFilePaths": [
+        "src/components/Tabs/Tabs.stories.tsx"
+    ]
+}

@@ -1,0 +1,16 @@
+{
+    "name": "LoadingBar",
+    "description": "",
+    "category": "feedback",
+    "tags": [
+        "loading",
+        "progress",
+        "bar"
+    ],
+    "relatedComponents": [
+        "LoadingCircle"
+    ],
+    "instructions": "",
+    "filePath": "src/components/LoadingBar/LoadingBar.tsx",
+    "storyFilePaths": []
+}

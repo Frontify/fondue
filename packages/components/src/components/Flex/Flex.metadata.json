@@ -1,0 +1,19 @@
+{
+    "name": "Flex",
+    "description": "",
+    "category": "layout",
+    "tags": [
+        "flex",
+        "flexbox",
+        "layout"
+    ],
+    "relatedComponents": [
+        "Box",
+        "Grid"
+    ],
+    "instructions": "",
+    "filePath": "src/components/Flex/Flex.tsx",
+    "storyFilePaths": [
+        "src/components/Flex/Flex.stories.tsx"
+    ]
+}

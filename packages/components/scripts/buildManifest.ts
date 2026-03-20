@@ -1,7 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { globSync } from 'glob';
-
 import {
     assembleComponentManifest,
     writeComponentManifest,
@@ -12,7 +10,7 @@ import { extractProps } from './buildManifest/extractProps';
 import { parseStories } from './buildManifest/parseStories';
 import { readMetadata } from './buildManifest/readMetadata';
 import { type ComponentManifest } from './buildManifest/types';
-import { log, logError, logSuccess, resolveFromRoot } from './buildManifest/utils';
+import { log, logError, logSuccess } from './buildManifest/utils';
 
 const PACKAGE_NAME = '@frontify/fondue-components';
 
@@ -37,14 +35,13 @@ function main(): void {
             logError(`Props extraction failed for ${component.name}: ${(error as Error).message}`);
         }
 
-        // 2. Find story files
-        const storiesGlob = resolveFromRoot(component.dirPath, '*.stories.tsx');
-        const storyFiles = globSync(storiesGlob);
-
-        // 3. Parse stories
+        // 2. Parse stories
         let examples: ComponentManifest['examples'] = [];
+        let storiesStatus = '';
         try {
-            examples = parseStories(storyFiles);
+            const storiesResult = parseStories(component.storyFilePaths);
+            examples = storiesResult.examples;
+            storiesStatus = storiesResult.status;
         } catch (error) {
             logError(`Story parsing failed for ${component.name}: ${(error as Error).message}`);
         }
@@ -59,6 +56,10 @@ function main(): void {
             subComponents,
             examples,
             description: metadata?.description ?? '',
+            status: storiesStatus || (metadata?.status ?? ''),
+            category: metadata?.category ?? '',
+            tags: metadata?.tags ?? [],
+            relatedComponents: metadata?.relatedComponents ?? [],
             instructions: metadata?.instructions ?? '',
             packageName: PACKAGE_NAME,
         });

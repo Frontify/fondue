@@ -19,11 +19,16 @@ export type Example = {
     description: string;
     code: string;
     sourceFile: string;
+    isCanonical: boolean;
 };
 
 export type ComponentManifest = {
     name: string;
     description: string;
+    status: string;
+    category: string;
+    tags: string[];
+    relatedComponents: string[];
     importStatement: string;
     filePath: string;
     props: PropInfo[];
@@ -35,6 +40,10 @@ export type ComponentManifest = {
 export type ComponentRef = {
     name: string;
     description: string;
+    status: string;
+    category: string;
+    tags: string[];
+    subComponentNames: string[];
     manifestPath: string;
 };
 
@@ -49,4 +58,5 @@ export type DiscoveredComponent = {
     name: string;
     filePath: string;
     dirPath: string;
+    storyFilePaths: string[];
 };

@@ -1,0 +1,19 @@
+{
+    "name": "EditableText",
+    "description": "",
+    "category": "input",
+    "tags": [
+        "editable",
+        "text",
+        "inline-edit"
+    ],
+    "relatedComponents": [
+        "TextInput",
+        "Textarea"
+    ],
+    "instructions": "",
+    "filePath": "src/components/EditableText/EditableText.tsx",
+    "storyFilePaths": [
+        "src/components/EditableText/EditableText.stories.tsx"
+    ]
+}

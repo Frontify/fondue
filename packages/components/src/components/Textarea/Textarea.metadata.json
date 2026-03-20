@@ -1,0 +1,19 @@
+{
+    "name": "Textarea",
+    "description": "",
+    "category": "input",
+    "tags": [
+        "textarea",
+        "form",
+        "input"
+    ],
+    "relatedComponents": [
+        "TextInput",
+        "EditableText"
+    ],
+    "instructions": "",
+    "filePath": "src/components/Textarea/Textarea.tsx",
+    "storyFilePaths": [
+        "src/components/Textarea/Textarea.stories.tsx"
+    ]
+}

@@ -1,0 +1,16 @@
+{
+    "name": "LoadingCircle",
+    "description": "",
+    "category": "feedback",
+    "tags": [
+        "loading",
+        "spinner",
+        "progress"
+    ],
+    "relatedComponents": [
+        "LoadingBar"
+    ],
+    "instructions": "",
+    "filePath": "src/components/LoadingCircle/LoadingCircle.tsx",
+    "storyFilePaths": []
+}

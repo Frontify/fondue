@@ -1,0 +1,17 @@
+{
+    "name": "Text",
+    "description": "",
+    "category": "typography",
+    "tags": [
+        "text",
+        "paragraph",
+        "typography"
+    ],
+    "relatedComponents": [
+        "Heading",
+        "Label"
+    ],
+    "instructions": "",
+    "filePath": "src/components/Text/Text.tsx",
+    "storyFilePaths": []
+}

@@ -1,0 +1,19 @@
+{
+    "name": "Box",
+    "description": "",
+    "category": "layout",
+    "tags": [
+        "box",
+        "container",
+        "layout"
+    ],
+    "relatedComponents": [
+        "Flex",
+        "Grid"
+    ],
+    "instructions": "",
+    "filePath": "src/components/Box/Box.tsx",
+    "storyFilePaths": [
+        "src/components/Box/Box.stories.tsx"
+    ]
+}

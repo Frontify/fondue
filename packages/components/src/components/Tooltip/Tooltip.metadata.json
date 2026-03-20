@@ -1,0 +1,20 @@
+{
+    "name": "Tooltip",
+    "description": "",
+    "category": "overlay",
+    "tags": [
+        "tooltip",
+        "hint",
+        "popover"
+    ],
+    "relatedComponents": [
+        "Flyout",
+        "Dialog"
+    ],
+    "instructions": "",
+    "filePath": "src/components/Tooltip/Tooltip.tsx",
+    "storyFilePaths": [
+        "src/components/Tooltip/TooltipContent.stories.tsx",
+        "src/components/Tooltip/Tooltip.stories.tsx"
+    ]
+}

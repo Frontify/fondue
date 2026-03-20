@@ -1,0 +1,18 @@
+{
+    "name": "Switch",
+    "description": "",
+    "category": "input",
+    "tags": [
+        "switch",
+        "toggle",
+        "boolean"
+    ],
+    "relatedComponents": [
+        "Checkbox"
+    ],
+    "instructions": "",
+    "filePath": "src/components/Switch/Switch.tsx",
+    "storyFilePaths": [
+        "src/components/Switch/Switch.stories.tsx"
+    ]
+}

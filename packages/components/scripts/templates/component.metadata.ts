@@ -3,14 +3,16 @@
 import { type ComponentFileBuilderResponse } from '../types';
 
 export const Setup = (componentName: string): ComponentFileBuilderResponse => ({
-    content: `---
-description: ""
-status: in_progress
----
-
-## Usage Guidelines
-
-<!-- Describe when and how to use ${componentName}. -->
+    content: `{
+  "name": "${componentName}",
+  "filePath": "src/components/${componentName}/${componentName}.tsx",
+  "storyFilePaths": ["src/components/${componentName}/${componentName}.stories.tsx"],
+  "description": "",
+  "category": "",
+  "tags": [],
+  "relatedComponents": [],
+  "instructions": ""
+}
 `,
-    extension: '.metadata.md',
+    extension: '.metadata.json',
 });

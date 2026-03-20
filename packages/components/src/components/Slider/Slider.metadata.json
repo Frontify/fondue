@@ -1,0 +1,16 @@
+{
+    "name": "Slider",
+    "description": "",
+    "category": "input",
+    "tags": [
+        "slider",
+        "range",
+        "input"
+    ],
+    "relatedComponents": [],
+    "instructions": "",
+    "filePath": "src/components/Slider/Slider.tsx",
+    "storyFilePaths": [
+        "src/components/Slider/Slider.stories.tsx"
+    ]
+}

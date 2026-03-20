@@ -1,0 +1,17 @@
+{
+    "name": "Heading",
+    "description": "",
+    "category": "typography",
+    "tags": [
+        "heading",
+        "title",
+        "typography"
+    ],
+    "relatedComponents": [
+        "Text",
+        "Label"
+    ],
+    "instructions": "",
+    "filePath": "src/components/Heading/Heading.tsx",
+    "storyFilePaths": []
+}

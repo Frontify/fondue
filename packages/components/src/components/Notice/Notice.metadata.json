@@ -1,0 +1,19 @@
+{
+    "name": "Notice",
+    "description": "",
+    "category": "feedback",
+    "tags": [
+        "notice",
+        "alert",
+        "message"
+    ],
+    "relatedComponents": [
+        "Badge",
+        "Tag"
+    ],
+    "instructions": "",
+    "filePath": "src/components/Notice/Notice.tsx",
+    "storyFilePaths": [
+        "src/components/Notice/Notice.stories.tsx"
+    ]
+}

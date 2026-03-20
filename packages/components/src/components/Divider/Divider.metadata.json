@@ -1,0 +1,16 @@
+{
+    "name": "Divider",
+    "description": "",
+    "category": "layout",
+    "tags": [
+        "divider",
+        "separator",
+        "rule"
+    ],
+    "relatedComponents": [],
+    "instructions": "",
+    "filePath": "src/components/Divider/Divider.tsx",
+    "storyFilePaths": [
+        "src/components/Divider/Divider.stories.tsx"
+    ]
+}

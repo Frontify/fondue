@@ -1,0 +1,16 @@
+{
+    "name": "RouterProvider",
+    "description": "",
+    "category": "utility",
+    "tags": [
+        "router",
+        "navigation",
+        "provider"
+    ],
+    "relatedComponents": [
+        "ThemeProvider"
+    ],
+    "instructions": "",
+    "filePath": "src/components/RouterProvider/RouterProvider.tsx",
+    "storyFilePaths": []
+}

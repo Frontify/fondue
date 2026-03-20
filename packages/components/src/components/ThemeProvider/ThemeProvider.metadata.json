@@ -1,0 +1,16 @@
+{
+    "name": "ThemeProvider",
+    "description": "",
+    "category": "utility",
+    "tags": [
+        "theme",
+        "provider",
+        "context"
+    ],
+    "relatedComponents": [
+        "RouterProvider"
+    ],
+    "instructions": "",
+    "filePath": "src/components/ThemeProvider/ThemeProvider.tsx",
+    "storyFilePaths": []
+}

@@ -1,0 +1,19 @@
+{
+    "name": "Grid",
+    "description": "",
+    "category": "layout",
+    "tags": [
+        "grid",
+        "layout",
+        "columns"
+    ],
+    "relatedComponents": [
+        "Box",
+        "Flex"
+    ],
+    "instructions": "",
+    "filePath": "src/components/Grid/Grid.tsx",
+    "storyFilePaths": [
+        "src/components/Grid/Grid.stories.tsx"
+    ]
+}

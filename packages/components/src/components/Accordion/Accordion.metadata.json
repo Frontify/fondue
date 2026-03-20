@@ -1,0 +1,19 @@
+{
+    "name": "Accordion",
+    "description": "",
+    "category": "layout",
+    "tags": [
+        "accordion",
+        "collapsible",
+        "expandable"
+    ],
+    "relatedComponents": [
+        "Tabs",
+        "Section"
+    ],
+    "instructions": "",
+    "filePath": "src/components/Accordion/Accordion.tsx",
+    "storyFilePaths": [
+        "src/components/Accordion/Accordion.stories.tsx"
+    ]
+}

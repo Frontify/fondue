@@ -1,0 +1,19 @@
+{
+    "name": "Select",
+    "description": "",
+    "category": "input",
+    "tags": [
+        "select",
+        "dropdown",
+        "form"
+    ],
+    "relatedComponents": [
+        "Dropdown",
+        "RadioList"
+    ],
+    "instructions": "",
+    "filePath": "src/components/Select/index.ts",
+    "storyFilePaths": [
+        "src/components/Select/Select.stories.tsx"
+    ]
+}

@@ -5,6 +5,11 @@ import path from 'node:path';
 import ts from 'typescript';
 
 import type { Example } from './types';
+
+export type StoriesResult = {
+    examples: Example[];
+    status: string;
+};
 import { logWarn } from './utils';
 
 // ---------------------------------------------------------------------------
@@ -53,23 +58,32 @@ function extractMetaArgsOnly(
     return {};
 }
 
+function findProp(obj: ts.ObjectLiteralExpression, name: string): ts.Expression | null {
+    for (const prop of obj.properties) {
+        if (
+            ts.isPropertyAssignment(prop) &&
+            ts.isIdentifier(prop.name) &&
+            prop.name.text === name
+        ) {
+            return prop.initializer;
+        }
+    }
+    return null;
+}
+
+/** Walk `parameters.status.type` to extract the component status string */
+function extractMetaStatus(parametersNode: ts.Expression): string {
+    if (!ts.isObjectLiteralExpression(parametersNode)) return '';
+    const status = findProp(parametersNode, 'status');
+    if (!status || !ts.isObjectLiteralExpression(status)) return '';
+    const type = findProp(status, 'type');
+    if (!type) return '';
+    return getStringValue(type) ?? '';
+}
+
 /** Walk `parameters.docs.description.story` to extract a string */
 function extractDescription(parametersNode: ts.Expression, sourceText: string): string {
     if (!ts.isObjectLiteralExpression(parametersNode)) return '';
-
-    function findProp(obj: ts.ObjectLiteralExpression, name: string): ts.Expression | null {
-        for (const prop of obj.properties) {
-            if (
-                ts.isPropertyAssignment(prop) &&
-                ts.isIdentifier(prop.name) &&
-                prop.name.text === name
-            ) {
-                return prop.initializer;
-            }
-        }
-        return null;
-    }
-
     const docs = findProp(parametersNode, 'docs');
     if (!docs || !ts.isObjectLiteralExpression(docs)) return '';
     const desc = findProp(docs, 'description');
@@ -77,6 +91,16 @@ function extractDescription(parametersNode: ts.Expression, sourceText: string): 
     const story = findProp(desc, 'story');
     if (!story) return '';
     return getStringValue(story) ?? '';
+}
+
+/** Walk `parameters.manifest.canonical` to extract a boolean */
+function extractIsCanonical(parametersNode: ts.Expression): boolean {
+    if (!ts.isObjectLiteralExpression(parametersNode)) return false;
+    const manifest = findProp(parametersNode, 'manifest');
+    if (!manifest || !ts.isObjectLiteralExpression(manifest)) return false;
+    const canonical = findProp(manifest, 'canonical');
+    if (!canonical) return false;
+    return canonical.kind === ts.SyntaxKind.TrueKeyword;
 }
 
 /** Pull JSX out of an arrow / function expression body */
@@ -112,6 +136,32 @@ function isJsxLike(node: ts.Node): boolean {
         ts.isJsxSelfClosingElement(node) ||
         ts.isJsxFragment(node)
     );
+}
+
+/** Serialise a merged args map to a JSX props string (excluding children/functions) */
+function serializeArgsAsProps(args: Record<string, string>): string {
+    const props: string[] = [];
+    for (const [key, val] of Object.entries(args)) {
+        if (key === 'children') continue;
+        if (val.startsWith('action(') || val.startsWith('() =>')) continue;
+        if (val === 'true') {
+            props.push(key);
+        } else if (val === 'false' || val === 'null' || val === 'undefined') {
+            // omit
+        } else if (val.startsWith('"') || val.startsWith("'")) {
+            props.push(`${key}=${val}`);
+        } else {
+            props.push(`${key}={${val}}`);
+        }
+    }
+    return props.join(' ');
+}
+
+/** Replace `{...args}` spreads in JSX with inlined props from the merged args map */
+function resolveArgsSpread(code: string, mergedArgs: Record<string, string>): string {
+    if (!code.includes('{...args}')) return code;
+    const inlined = serializeArgsAsProps(mergedArgs);
+    return code.replace(/\{\.\.\.\s*args\s*\}/g, inlined).replace(/  +/g, ' ').trim();
 }
 
 /** Clean up extracted code – replace action() stubs, normalise indent */
@@ -154,8 +204,9 @@ function synthesizeJsx(componentName: string, args: Record<string, string>): str
 // Main parser
 // ---------------------------------------------------------------------------
 
-export function parseStories(storyFilePaths: string[]): Example[] {
+export function parseStories(storyFilePaths: string[]): StoriesResult {
     const examples: Example[] = [];
+    let status = '';
 
     for (const filePath of storyFilePaths) {
         if (!existsSync(filePath)) continue;
@@ -188,13 +239,12 @@ export function parseStories(storyFilePaths: string[]): Example[] {
                     ) {
                         metaArgs = extractMetaArgsOnly(decl.initializer, sourceText);
                         for (const prop of decl.initializer.properties) {
-                            if (
-                                ts.isPropertyAssignment(prop) &&
-                                ts.isIdentifier(prop.name) &&
-                                prop.name.text === 'component' &&
-                                ts.isIdentifier(prop.initializer)
-                            ) {
+                            if (!ts.isPropertyAssignment(prop) || !ts.isIdentifier(prop.name)) continue;
+                            if (prop.name.text === 'component' && ts.isIdentifier(prop.initializer)) {
                                 metaComponentName = prop.initializer.text;
+                            }
+                            if (prop.name.text === 'parameters' && !status) {
+                                status = extractMetaStatus(prop.initializer);
                             }
                         }
                     }
@@ -205,13 +255,12 @@ export function parseStories(storyFilePaths: string[]): Example[] {
             if (ts.isExportAssignment(stmt) && !stmt.isExportEquals && ts.isObjectLiteralExpression(stmt.expression)) {
                 metaArgs = extractMetaArgsOnly(stmt.expression, sourceText);
                 for (const prop of stmt.expression.properties) {
-                    if (
-                        ts.isPropertyAssignment(prop) &&
-                        ts.isIdentifier(prop.name) &&
-                        prop.name.text === 'component' &&
-                        ts.isIdentifier(prop.initializer)
-                    ) {
+                    if (!ts.isPropertyAssignment(prop) || !ts.isIdentifier(prop.name)) continue;
+                    if (prop.name.text === 'component' && ts.isIdentifier(prop.initializer)) {
                         metaComponentName = prop.initializer.text;
+                    }
+                    if (prop.name.text === 'parameters' && !status) {
+                        status = extractMetaStatus(prop.initializer);
                     }
                 }
             }
@@ -239,6 +288,7 @@ export function parseStories(storyFilePaths: string[]): Example[] {
 
                 let storyName = exportName;
                 let description = '';
+                let isCanonical = false;
                 let renderCode: string | null = null;
                 const storyArgs: Record<string, string> = {};
 
@@ -263,16 +313,18 @@ export function parseStories(storyFilePaths: string[]): Example[] {
                         }
                         case 'parameters': {
                             description = extractDescription(prop.initializer, sourceText);
+                            isCanonical = extractIsCanonical(prop.initializer);
                             break;
                         }
                     }
                 }
 
+                const mergedArgs = { ...metaArgs, ...storyArgs };
+
                 let code: string;
                 if (renderCode) {
-                    code = cleanCode(renderCode);
+                    code = resolveArgsSpread(cleanCode(renderCode), mergedArgs);
                 } else if (metaComponentName) {
-                    const mergedArgs = { ...metaArgs, ...storyArgs };
                     code = synthesizeJsx(metaComponentName, mergedArgs);
                 } else {
                     continue; // no code to emit
@@ -282,6 +334,7 @@ export function parseStories(storyFilePaths: string[]): Example[] {
                     name: exportName,
                     storyName,
                     description,
+                    isCanonical,
                     code,
                     sourceFile: fileName,
                 });
@@ -289,5 +342,5 @@ export function parseStories(storyFilePaths: string[]): Example[] {
         }
     }
 
-    return examples;
+    return { examples, status };
 }

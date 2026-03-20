@@ -1,0 +1,19 @@
+{
+    "name": "Checkbox",
+    "description": "",
+    "category": "input",
+    "tags": [
+        "checkbox",
+        "form",
+        "toggle"
+    ],
+    "relatedComponents": [
+        "RadioList",
+        "Switch"
+    ],
+    "instructions": "",
+    "filePath": "src/components/Checkbox/Checkbox.tsx",
+    "storyFilePaths": [
+        "src/components/Checkbox/Checkbox.stories.tsx"
+    ]
+}

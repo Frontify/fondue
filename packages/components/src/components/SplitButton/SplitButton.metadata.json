@@ -1,0 +1,19 @@
+{
+    "name": "SplitButton",
+    "description": "",
+    "category": "input",
+    "tags": [
+        "split-button",
+        "button",
+        "dropdown"
+    ],
+    "relatedComponents": [
+        "Button",
+        "Dropdown"
+    ],
+    "instructions": "",
+    "filePath": "src/components/SplitButton/SplitButton.tsx",
+    "storyFilePaths": [
+        "src/components/SplitButton/SplitButton.stories.tsx"
+    ]
+}

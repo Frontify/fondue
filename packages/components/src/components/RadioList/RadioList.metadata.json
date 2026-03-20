@@ -1,0 +1,20 @@
+{
+    "name": "RadioList",
+    "description": "",
+    "category": "input",
+    "tags": [
+        "radio",
+        "list",
+        "form"
+    ],
+    "relatedComponents": [
+        "Checkbox",
+        "SegmentedControl",
+        "Select"
+    ],
+    "instructions": "",
+    "filePath": "src/components/RadioList/RadioList.tsx",
+    "storyFilePaths": [
+        "src/components/RadioList/RadioList.stories.tsx"
+    ]
+}
