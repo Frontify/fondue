@@ -18,7 +18,6 @@ export type Example = {
     storyName: string;
     description: string;
     code: string;
-    sourceFile: string;
     isCanonical: boolean;
 };
 

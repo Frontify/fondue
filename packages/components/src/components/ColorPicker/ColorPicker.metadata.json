@@ -1,6 +1,6 @@
 {
     "name": "ColorPicker",
-    "description": "",
+    "description": "A color selection panel with gradient canvas and hex/RGBA value inputs. Use when users need to pick or enter an exact color value.",
     "category": "input",
     "tags": [
         "color",
@@ -8,7 +8,7 @@
         "input"
     ],
     "relatedComponents": [],
-    "instructions": "",
+    "instructions": "The picker panel (ColorPicker.Root with ColorPicker.Gradient and/or ColorPicker.Values) does not include its own popover — wrap it in a Flyout for the standard trigger-and-panel pattern. Use ColorPicker.Input as the Flyout trigger to display the selected color. Colors are represented as RgbaColor objects ({ red, green, blue, alpha, name? }). Use currentFormat and onFormatChange to control HEX vs RGBA display.",
     "filePath": "src/components/ColorPicker/ColorPicker.tsx",
     "storyFilePaths": [
         "src/components/ColorPicker/ColorPickerInput.stories.tsx",

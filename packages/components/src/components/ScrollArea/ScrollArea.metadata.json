@@ -1,6 +1,6 @@
 {
     "name": "ScrollArea",
-    "description": "",
+    "description": "A container with custom styled scrollbars that activates when content overflows its bounds. Use when you need a scrollable region with consistent cross-browser scrollbar appearance.",
     "category": "layout",
     "tags": [
         "scroll",
@@ -10,7 +10,7 @@
     "relatedComponents": [
         "Box"
     ],
-    "instructions": "",
+    "instructions": "Set maxHeight and/or maxWidth to define the scrollable viewport. Use type='hover' (default) to only show scrollbars on hover, 'always' to always show them, or 'auto' to show only when overflowing. Use scrollbarGutter='stable' to prevent layout shift when content changes between scrollable and non-scrollable. Use showShadow to add an inset shadow at scroll edges.",
     "filePath": "src/components/ScrollArea/ScrollArea.tsx",
     "storyFilePaths": [
         "src/components/ScrollArea/ScrollArea.stories.tsx"

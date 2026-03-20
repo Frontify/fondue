@@ -1,6 +1,6 @@
 {
     "name": "Tooltip",
-    "description": "",
+    "description": "A hover-triggered hint overlay that provides additional context for an element. Use for icon-only buttons, truncated text, or any UI element that benefits from a brief explanation.",
     "category": "overlay",
     "tags": [
         "tooltip",
@@ -11,7 +11,7 @@
         "Flyout",
         "Dialog"
     ],
-    "instructions": "",
+    "instructions": "Compose as Tooltip.Root > Tooltip.Trigger + Tooltip.Content. Use asChild on Tooltip.Trigger to forward tooltip behavior onto a custom element (e.g. a Button). Default enter delay is 700ms — use enterDelay=0 for immediate display. Tooltip.Content appears on hover; use Flyout for click-triggered contextual panels with richer content.",
     "filePath": "src/components/Tooltip/Tooltip.tsx",
     "storyFilePaths": [
         "src/components/Tooltip/TooltipContent.stories.tsx",

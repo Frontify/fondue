@@ -33,6 +33,7 @@ function getParser(): docgen.FileParser {
                 shouldExtractLiteralValuesFromEnum: true,
                 shouldIncludePropTagMap: true,
                 propFilter: (prop) => {
+                    if (prop.name === 'className') return false;
                     if (prop.declarations && prop.declarations.length > 0) {
                         return prop.declarations.some((d) => !d.fileName.includes('node_modules'));
                     }

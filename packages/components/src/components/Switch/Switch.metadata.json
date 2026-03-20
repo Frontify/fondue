@@ -1,6 +1,6 @@
 {
     "name": "Switch",
-    "description": "",
+    "description": "A boolean toggle for enabling or disabling a setting. Use when toggling takes immediate effect without a form submission.",
     "category": "input",
     "tags": [
         "switch",
@@ -10,7 +10,7 @@
     "relatedComponents": [
         "Checkbox"
     ],
-    "instructions": "",
+    "instructions": "Always pair with a Label for accessibility — connect via id/htmlFor or use aria-labelledby. The Switch has no hugWidth prop; control layout using flex containers (use flex + gap for compact, flex + justify-between for full-width label-switch rows). Use Checkbox instead when the toggle is part of a form submitted later.",
     "filePath": "src/components/Switch/Switch.tsx",
     "storyFilePaths": [
         "src/components/Switch/Switch.stories.tsx"

@@ -1,6 +1,6 @@
 {
     "name": "Heading",
-    "description": "",
+    "description": "A semantic heading element for page and section titles with design-system typography styles. Use for h1–h6 headings and display text.",
     "category": "typography",
     "tags": [
         "heading",
@@ -11,7 +11,7 @@
         "Text",
         "Label"
     ],
-    "instructions": "",
+    "instructions": "Use the as prop to set the HTML element (h1–h6, p, span) and size to set the visual scale — these are independent, allowing semantic markup to differ from visual size. Use weight='strong' for bold headings. Use color to apply semantic text colors.",
     "filePath": "src/components/Heading/Heading.tsx",
     "storyFilePaths": []
 }

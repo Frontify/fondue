@@ -1,6 +1,6 @@
 {
     "name": "Flex",
-    "description": "",
+    "description": "A flexbox layout container for arranging children in a row or column with alignment, justification, and gap control. Use as the primary layout tool for linear arrangements.",
     "category": "layout",
     "tags": [
         "flex",
@@ -11,7 +11,7 @@
         "Box",
         "Grid"
     ],
-    "instructions": "",
+    "instructions": "All props (direction, gap, align, justify, wrap, spacing) support responsive objects with breakpoint keys (base, xs, sm, md, lg, xl, 2xl). Gap accepts design token numbers or pixel strings. Use as='span' for inline-flex contexts. Use Grid when you need two-dimensional column/row layouts.",
     "filePath": "src/components/Flex/Flex.tsx",
     "storyFilePaths": [
         "src/components/Flex/Flex.stories.tsx"

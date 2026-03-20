@@ -1,6 +1,6 @@
 {
     "name": "Link",
-    "description": "",
+    "description": "An inline navigation anchor with configurable typography and underline behavior. Use for hyperlinks within text content.",
     "category": "typography",
     "tags": [
         "link",
@@ -11,7 +11,7 @@
         "Button",
         "Text"
     ],
-    "instructions": "",
+    "instructions": "href is required. For SPA navigation, wrap the app with RouterProvider to enable client-side routing. Default target is '_self'; use target='_blank' with rel='noopener noreferrer' for external links (this is the default rel). Use Button instead for actions that don't navigate to a URL.",
     "filePath": "src/components/Link/Link.tsx",
     "storyFilePaths": [
         "src/components/Link/Link.stories.tsx"

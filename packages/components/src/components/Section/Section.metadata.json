@@ -1,17 +1,10 @@
 {
-    "name": "Section",
-    "description": "",
     "category": "layout",
-    "tags": [
-        "section",
-        "container",
-        "layout"
-    ],
-    "relatedComponents": [
-        "Accordion",
-        "Box"
-    ],
-    "instructions": "",
+    "description": "A semantic HTML section element with design-system spacing props. Use in place of Box when the content represents a standalone section of the page for document outline and accessibility purposes.",
     "filePath": "src/components/Section/Section.tsx",
-    "storyFilePaths": []
+    "instructions": "Functionally identical to Box but renders a <section> element. Supports all the same spacing, sizing, and positioning props as Box. Provide aria-label or aria-labelledby to identify the section to screen readers when no visible heading is present.",
+    "name": "Section",
+    "relatedComponents": ["Accordion", "Box"],
+    "storyFilePaths": [],
+    "tags": ["section", "container", "layout"]
 }

@@ -1,6 +1,6 @@
 {
     "name": "Badge",
-    "description": "",
+    "description": "A small inline label for displaying status, counts, or metadata alongside other content. Use for non-interactive annotations like entry counts or status indicators.",
     "category": "feedback",
     "tags": [
         "badge",
@@ -11,7 +11,7 @@
         "Tag",
         "Notice"
     ],
-    "instructions": "",
+    "instructions": "Use variant to control color semantics (default, positive, highlight, warning, negative). Use emphasis='weak' for a subtler appearance. Provide a status prop (string color or RgbaColor object) to show a colored dot. Provide onDismiss to show a dismiss button. Use Tag instead if the label needs to be removable or interactive in a form context.",
     "filePath": "src/components/Badge/Badge.tsx",
     "storyFilePaths": [
         "src/components/Badge/Badge.stories.tsx"

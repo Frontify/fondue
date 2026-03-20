@@ -1,6 +1,6 @@
 {
     "name": "OrderableList",
-    "description": "",
+    "description": "A drag-and-drop sortable list where users can reorder items. Use when the order of items has semantic meaning and needs to be changed by the user.",
     "category": "data",
     "tags": [
         "list",
@@ -11,7 +11,7 @@
     "relatedComponents": [
         "Table"
     ],
-    "instructions": "",
+    "instructions": "Compose as OrderableList.Root > OrderableList.Item. The order prop is a string array of item IDs that controls render order — always keep it in sync via onOrderChange. Each OrderableList.Item requires a unique id prop. Add OrderableList.DragHandle inside items for an explicit drag handle; omit it to make the entire item draggable. Use OrderableList.ItemTitle and OrderableList.ItemDescription for standard content layout. Add OrderableList.ItemAction for per-item action buttons.",
     "filePath": "src/components/OrderableList/OrderableList.tsx",
     "storyFilePaths": [
         "src/components/OrderableList/OrderableList.stories.tsx"

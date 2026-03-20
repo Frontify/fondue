@@ -1,8 +1,8 @@
 {
     "category": "input",
-    "description": "",
+    "description": "A clickable action element for triggering user actions. Use for primary CTAs, form submissions, and any discrete user action.",
     "filePath": "src/components/Button/Button.tsx",
-    "instructions": "",
+    "instructions": "Use variant to set intent (default, positive, negative, danger, loud) and emphasis to set visual weight (strong=filled, default=outlined, weak=ghost). Use aspect='square' with icon-only buttons and always provide a title or aria-label for accessibility. Use rounding='full' for circular icon buttons. Use SplitButton when a primary action needs a secondary dropdown menu.",
     "name": "Button",
     "relatedComponents": ["SplitButton", "Link"],
     "storyFilePaths": ["src/components/Button/Button.stories.tsx"],

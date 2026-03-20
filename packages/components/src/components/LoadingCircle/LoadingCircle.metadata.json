@@ -1,6 +1,6 @@
 {
     "name": "LoadingCircle",
-    "description": "",
+    "description": "A circular spinner for indicating loading or processing states. Use for inline or overlay loading indicators where a full progress bar is too large.",
     "category": "feedback",
     "tags": [
         "loading",
@@ -10,7 +10,7 @@
     "relatedComponents": [
         "LoadingBar"
     ],
-    "instructions": "",
+    "instructions": "Use variant='progress' (default) for ongoing loading, 'success' for completion, and 'danger' for failure. Size ranges from xx-small to large — match to the surrounding context. Use LoadingBar when progress percentage is available.",
     "filePath": "src/components/LoadingCircle/LoadingCircle.tsx",
     "storyFilePaths": []
 }

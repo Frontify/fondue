@@ -5,7 +5,7 @@ import path from 'node:path';
 
 import { globSync } from 'glob';
 
-import type { DiscoveredComponent } from './types';
+import { type DiscoveredComponent } from './types';
 import { resolveFromRoot } from './utils';
 
 type MetadataJson = {
@@ -21,7 +21,9 @@ export function discoverComponents(): DiscoveredComponent[] {
     for (const metadataFilePath of metadataFiles) {
         const data = JSON.parse(readFileSync(metadataFilePath, 'utf-8')) as MetadataJson;
 
-        if (!data.filePath) continue;
+        if (!data.filePath) {
+            continue;
+        }
 
         const name = data.name ?? path.basename(metadataFilePath, '.metadata.json');
         const filePath = data.filePath;

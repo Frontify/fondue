@@ -1,6 +1,6 @@
 {
     "name": "LoadingBar",
-    "description": "",
+    "description": "A horizontal progress bar for showing determinate or indeterminate loading progress. Use for file uploads, multi-step processes, or any operation with measurable progress.",
     "category": "feedback",
     "tags": [
         "loading",
@@ -10,7 +10,7 @@
     "relatedComponents": [
         "LoadingCircle"
     ],
-    "instructions": "",
+    "instructions": "Either aria-label or aria-labelledby is required for accessibility. Pass a numeric value for determinate progress (0 to max, default max=100). Omit value or pass null for indeterminate (animated) state. Use variant to communicate success or failure state. Use LoadingCircle for compact inline loading indicators.",
     "filePath": "src/components/LoadingBar/LoadingBar.tsx",
     "storyFilePaths": []
 }

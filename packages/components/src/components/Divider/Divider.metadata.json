@@ -1,6 +1,6 @@
 {
     "name": "Divider",
-    "description": "",
+    "description": "A visual separator between content sections, either horizontal or vertical. Use to create visual groupings without adding structural containers.",
     "category": "layout",
     "tags": [
         "divider",
@@ -8,7 +8,7 @@
         "rule"
     ],
     "relatedComponents": [],
-    "instructions": "",
+    "instructions": "Use direction='vertical' for inline dividers between horizontal elements. Set decorative=true when the divider is purely visual and should be hidden from screen readers. Use as='li' when the divider appears inside a list. The padding prop controls spacing around the line, not the line thickness.",
     "filePath": "src/components/Divider/Divider.tsx",
     "storyFilePaths": [
         "src/components/Divider/Divider.stories.tsx"

@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { existsSync, readFileSync } from 'node:fs';
-import path from 'node:path';
 import ts from 'typescript';
 
 import type { Example } from './types';
@@ -220,7 +219,6 @@ export function parseStories(storyFilePaths: string[]): StoriesResult {
             ts.ScriptKind.TSX,
         );
 
-        const fileName = path.basename(filePath);
         let metaComponentName = '';
         let metaArgs: Record<string, string> = {};
 
@@ -336,7 +334,6 @@ export function parseStories(storyFilePaths: string[]): StoriesResult {
                     description,
                     isCanonical,
                     code,
-                    sourceFile: fileName,
                 });
             }
         }
