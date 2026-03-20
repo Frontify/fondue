@@ -31,3 +31,7 @@ storybook-static
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+# Generated component manifests
+*.manifest.json
+/manifest.json

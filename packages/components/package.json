@@ -45,6 +45,7 @@
         "test:components": "playwright test --ui",
         "test:components:ci": "playwright test",
         "test:components:update-snapshot": "playwright test --update-snapshots",
+        "build:manifest": "tsx scripts/buildManifest.ts",
         "create:component": "tsx scripts/createNewComponent.ts"
     },
     "peerDependencies": {
@@ -106,6 +107,9 @@
         "@vitest/ui": "^3.2.4",
         "autoprefixer": "^10.4.23",
         "chalk": "^5.6.2",
+        "glob": "^11.0.0",
+        "gray-matter": "^4.0.3",
+        "react-docgen-typescript": "^2.2.2",
         "eslint": "^9.39.2",
         "eslint-plugin-notice": "^1.0.0",
         "eslint-plugin-tailwindcss": "^3.18.2",
