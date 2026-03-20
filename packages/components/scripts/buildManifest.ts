@@ -14,10 +14,10 @@ import { log, logError, logSuccess } from './buildManifest/utils';
 
 const PACKAGE_NAME = '@frontify/fondue-components';
 
-function main(): void {
-    log('Discovering components...');
+const main = (): void => {
+    console.log('Discovering components...');
     const components = discoverComponents();
-    log(`Found ${components.length} components.`);
+    console.log(`Found ${components.length} components.`);
 
     const manifests: ComponentManifest[] = [];
 
@@ -29,7 +29,7 @@ function main(): void {
         let subComponents: ComponentManifest['subComponents'] = [];
         let typeDefinitions: ComponentManifest['typeDefinitions'] = {};
         try {
-            const result = extractProps(component.name, component.filePath, component.dirPath);
+            const result = extractProps(component.name, component.dirPath);
             mainProps = result.mainProps;
             subComponents = result.subComponents;
             typeDefinitions = result.typeDefinitions;
@@ -48,35 +48,35 @@ function main(): void {
             logError(`Story parsing failed for ${component.name}: ${(error as Error).message}`);
         }
 
-        // 4. Read metadata
-        const metadata = readMetadata(component.dirPath, component.name);
+        // // 4. Read metadata
+        // const metadata = readMetadata(component.dirPath, component.name);
 
-        // 5. Assemble manifest
-        const manifest = assembleComponentManifest({
-            component,
-            mainProps,
-            subComponents,
-            examples,
-            description: metadata?.description ?? '',
-            status: storiesStatus || (metadata?.status ?? ''),
-            category: metadata?.category ?? '',
-            tags: metadata?.tags ?? [],
-            relatedComponents: metadata?.relatedComponents ?? [],
-            instructions: metadata?.instructions ?? '',
-            packageName: PACKAGE_NAME,
-            typeDefinitions,
-        });
+        // // 5. Assemble manifest
+        // const manifest = assembleComponentManifest({
+        //     component,
+        //     mainProps,
+        //     subComponents,
+        //     examples,
+        //     description: metadata?.description ?? '',
+        //     status: storiesStatus || (metadata?.status ?? ''),
+        //     category: metadata?.category ?? '',
+        //     tags: metadata?.tags ?? [],
+        //     relatedComponents: metadata?.relatedComponents ?? [],
+        //     instructions: metadata?.instructions ?? '',
+        //     packageName: PACKAGE_NAME,
+        //     typeDefinitions,
+        // });
 
-        // 6. Write per-component manifest
-        writeComponentManifest(manifest, component.dirPath);
-        manifests.push(manifest);
+        // // 6. Write per-component manifest
+        // writeComponentManifest(manifest, component.dirPath);
+        // manifests.push(manifest);
     }
 
-    // 7. Write global manifest
-    writeGlobalManifest(manifests, PACKAGE_NAME);
+    // // 7. Write global manifest
+    // writeGlobalManifest(manifests, PACKAGE_NAME);
 
-    logSuccess(`Done! ${manifests.length} components written to manifest.json`);
-}
+    // logSuccess(`Done! ${manifests.length} components written to manifest.json`);
+};
 
 try {
     main();

@@ -97,3 +97,4 @@ export const Notice = ({
         </div>
     );
 };
+Notice.displayName = 'Notice';

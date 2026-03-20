@@ -9,12 +9,13 @@ import { type DiscoveredComponent } from './types';
 import { resolveFromRoot } from './utils';
 
 type MetadataJson = {
-    name?: string;
-    filePath?: string;
-    storyFilePaths?: string[];
+    name: string;
+    filePath: string;
+    dirPath: string;
+    storyFilePaths: string[];
 };
 
-export function discoverComponents(): DiscoveredComponent[] {
+export const discoverComponents = (): DiscoveredComponent[] => {
     const metadataFiles = globSync(resolveFromRoot('src/components/**/*.metadata.json'));
     const components: DiscoveredComponent[] = [];
 
@@ -25,13 +26,11 @@ export function discoverComponents(): DiscoveredComponent[] {
             continue;
         }
 
-        const name = data.name ?? path.basename(metadataFilePath, '.metadata.json');
-        const filePath = data.filePath;
-        const dirPath = path.dirname(filePath);
+        const dirPath = path.dirname(data.filePath);
         const storyFilePaths = (data.storyFilePaths ?? []).map((p) => resolveFromRoot(p));
 
-        components.push({ name, filePath, dirPath, storyFilePaths });
+        components.push({ name: data.name, filePath: data.filePath, dirPath, storyFilePaths });
     }
 
     return components.sort((a, b) => a.name.localeCompare(b.name));
-}
+};

@@ -29,5 +29,5 @@ export const SingleDatePicker = (
     );
 };
 
-SingleDatePicker.displayName = 'SingleDatePicker';
+SingleDatePicker.displayName = 'DatePicker';
 export const ForwardedRefSingleDatePicker = forwardRef<HTMLDivElement, SingleDatePickerProps>(SingleDatePicker);

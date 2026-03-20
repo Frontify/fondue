@@ -125,6 +125,8 @@ export const Badge = ({
     );
 };
 
+Badge.displayName = 'Badge';
+
 const BadgeContent = ({ children, status }: { children: ReactNode; status?: BadgeStatusProps['status'] }) => (
     <>
         {status && <BadgeStatus status={status} />}
