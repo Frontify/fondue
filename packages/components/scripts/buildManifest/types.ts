@@ -6,6 +6,8 @@ export type PropInfo = {
     required: boolean;
     defaultValue: string | null;
     description: string;
+    deprecated: boolean;
+    deprecationMessage: string;
 };
 
 export type SubComponent = {
@@ -34,6 +36,7 @@ export type ComponentManifest = {
     subComponents: SubComponent[];
     examples: Example[];
     instructions: string;
+    typeDefinitions: Record<string, string>;
 };
 
 export type ComponentRef = {

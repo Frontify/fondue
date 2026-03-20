@@ -27,10 +27,12 @@ function main(): void {
         // 1. Extract props + sub-components
         let mainProps: ComponentManifest['props'] = [];
         let subComponents: ComponentManifest['subComponents'] = [];
+        let typeDefinitions: ComponentManifest['typeDefinitions'] = {};
         try {
             const result = extractProps(component.name, component.filePath, component.dirPath);
             mainProps = result.mainProps;
             subComponents = result.subComponents;
+            typeDefinitions = result.typeDefinitions;
         } catch (error) {
             logError(`Props extraction failed for ${component.name}: ${(error as Error).message}`);
         }
@@ -62,6 +64,7 @@ function main(): void {
             relatedComponents: metadata?.relatedComponents ?? [],
             instructions: metadata?.instructions ?? '',
             packageName: PACKAGE_NAME,
+            typeDefinitions,
         });
 
         // 6. Write per-component manifest

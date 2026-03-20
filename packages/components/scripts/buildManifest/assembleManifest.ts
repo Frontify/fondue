@@ -25,6 +25,7 @@ export type AssembleInput = {
     relatedComponents: string[];
     instructions: string;
     packageName: string;
+    typeDefinitions: Record<string, string>;
 };
 
 export function assembleComponentManifest(input: AssembleInput): ComponentManifest {
@@ -41,6 +42,7 @@ export function assembleComponentManifest(input: AssembleInput): ComponentManife
         subComponents: input.subComponents,
         examples: input.examples,
         instructions: input.instructions,
+        typeDefinitions: input.typeDefinitions,
     };
 }
 

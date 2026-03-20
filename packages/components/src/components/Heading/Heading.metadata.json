@@ -13,5 +13,5 @@
     ],
     "instructions": "Use the as prop to set the HTML element (h1–h6, p, span) and size to set the visual scale — these are independent, allowing semantic markup to differ from visual size. Use weight='strong' for bold headings. Use color to apply semantic text colors.",
     "filePath": "src/components/Heading/Heading.tsx",
-    "storyFilePaths": []
+    "storyFilePaths": ["src/components/Heading/Heading.stories.ts"]
 }

@@ -10,6 +10,7 @@ import type { PropInfo, SubComponent } from './types';
 import { resolveFromRoot, logWarn } from './utils';
 
 let _parser: docgen.FileParser | null = null;
+let _typeProgram: ts.Program | null = null;
 
 function getParser(): docgen.FileParser {
     if (!_parser) {
@@ -100,6 +101,78 @@ function getForwardRefInnerName(filePath: string, forwardRefVarName: string): st
     return null;
 }
 
+function getTypeProgram(): ts.Program {
+    if (!_typeProgram) {
+        const srcFiles = globSync('src/**/*.{ts,tsx}', {
+            cwd: resolveFromRoot(),
+            absolute: true,
+        }).filter(
+            (f) =>
+                !f.includes('.stories.') &&
+                !f.includes('.spec.') &&
+                !f.includes('.ct.') &&
+                !f.includes('/__tests__/'),
+        );
+        _typeProgram = ts.createProgram(srcFiles, {
+            jsx: ts.JsxEmit.ReactJSX,
+            skipLibCheck: true,
+            noEmit: true,
+            strict: false,
+            allowSyntheticDefaultImports: true,
+            esModuleInterop: true,
+            baseUrl: resolveFromRoot(),
+            paths: { '#/*': ['./src/*'] },
+        });
+    }
+    return _typeProgram;
+}
+
+function extractTypeNamesFromString(typeStr: string): string[] {
+    // Match PascalCase identifiers — these are the candidates for custom type resolution
+    const matches = typeStr.match(/\b[A-Z][a-zA-Z0-9]+\b/g) ?? [];
+    return [...new Set(matches)];
+}
+
+function collectTypeDefinitions(allProps: PropInfo[]): Record<string, string> {
+    const typeNames = new Set(allProps.flatMap((p) => extractTypeNamesFromString(p.type)));
+    if (typeNames.size === 0) return {};
+
+    const program = getTypeProgram();
+    const srcRoot = resolveFromRoot('src');
+    const printer = ts.createPrinter({ newLine: ts.NewLineKind.LineFeed });
+    const result: Record<string, string> = {};
+    const secondPass = new Set<string>();
+
+    function visitSourceFiles(targets: Set<string>): void {
+        for (const sourceFile of program.getSourceFiles()) {
+            // Only resolve types declared in our own src/ — skips builtins, React, node_modules
+            if (!sourceFile.fileName.startsWith(srcRoot)) continue;
+            ts.forEachChild(sourceFile, function visit(node: ts.Node) {
+                if (
+                    ts.isTypeAliasDeclaration(node) &&
+                    targets.has(node.name.text) &&
+                    !result[node.name.text]
+                ) {
+                    const text = printer.printNode(ts.EmitHint.Unspecified, node.type, sourceFile);
+                    result[node.name.text] = text;
+                    // Queue any new type names referenced in this definition
+                    for (const name of extractTypeNamesFromString(text)) {
+                        if (!typeNames.has(name) && !result[name]) {
+                            secondPass.add(name);
+                        }
+                    }
+                }
+                ts.forEachChild(node, visit);
+            });
+        }
+    }
+
+    visitSourceFiles(typeNames);
+    if (secondPass.size > 0) visitSourceFiles(secondPass);
+
+    return result;
+}
+
 function getTypeString(type: docgen.PropItemType): string {
     if (type.name === 'enum' && Array.isArray(type.value)) {
         return (type.value as Array<{ value: string }>).map((v) => v.value).join(' | ');
@@ -108,20 +181,25 @@ function getTypeString(type: docgen.PropItemType): string {
 }
 
 function convertProps(propsRecord: docgen.Props): PropInfo[] {
-    return Object.values(propsRecord).map((prop) => ({
-        name: prop.name,
-        type: getTypeString(prop.type),
-        required: prop.required,
-        defaultValue: prop.defaultValue?.value ?? null,
-        description: prop.description,
-    }));
+    return Object.values(propsRecord).map((prop) => {
+        const deprecatedTag = (prop.tags as Record<string, string> | undefined)?.deprecated;
+        return {
+            name: prop.name,
+            type: getTypeString(prop.type),
+            required: prop.required,
+            defaultValue: prop.defaultValue?.value ?? null,
+            description: prop.description,
+            deprecated: deprecatedTag !== undefined,
+            deprecationMessage: deprecatedTag ?? '',
+        };
+    });
 }
 
 export function extractProps(
     componentName: string,
     filePath: string,
     dirPath: string,
-): { mainProps: PropInfo[]; subComponents: SubComponent[] } {
+): { mainProps: PropInfo[]; subComponents: SubComponent[]; typeDefinitions: Record<string, string> } {
     const parser = getParser();
     const absoluteDir = resolveFromRoot(dirPath);
 
@@ -194,5 +272,8 @@ export function extractProps(
         props,
     }));
 
-    return { mainProps, subComponents };
+    const allProps = [...mainProps, ...subComponents.flatMap((s) => s.props)];
+    const typeDefinitions = collectTypeDefinitions(allProps);
+
+    return { mainProps, subComponents, typeDefinitions };
 }
