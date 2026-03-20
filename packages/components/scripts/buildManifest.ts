@@ -1,5 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { existsSync, mkdirSync, rmSync } from 'node:fs';
+
 import {
     assembleComponentManifest,
     writeComponentManifest,
@@ -10,11 +12,17 @@ import { extractProps } from './buildManifest/extractProps';
 import { parseStories } from './buildManifest/parseStories';
 import { readMetadata } from './buildManifest/readMetadata';
 import { type ComponentManifest } from './buildManifest/types';
-import { log, logError, logSuccess } from './buildManifest/utils';
+import { resolveFromRoot } from './buildManifest/utils';
 
 const PACKAGE_NAME = '@frontify/fondue-components';
+const MANIFEST_DIR = resolveFromRoot('./manifests');
 
 const main = (): void => {
+    if (existsSync(MANIFEST_DIR)) {
+        rmSync(MANIFEST_DIR, { recursive: true, force: true });
+    }
+    mkdirSync(MANIFEST_DIR, { recursive: true });
+
     console.log('Discovering components...');
     const components = discoverComponents();
     console.log(`Found ${components.length} components.`);
@@ -22,9 +30,9 @@ const main = (): void => {
     const manifests: ComponentManifest[] = [];
 
     for (const component of components) {
-        log(`Processing ${component.name}...`);
+        console.log(`Processing ${component.name}...`);
 
-        // 1. Extract props + sub-components
+        // Extract props + sub-components
         let mainProps: ComponentManifest['props'] = [];
         let subComponents: ComponentManifest['subComponents'] = [];
         let typeDefinitions: ComponentManifest['typeDefinitions'] = {};
@@ -34,10 +42,10 @@ const main = (): void => {
             subComponents = result.subComponents;
             typeDefinitions = result.typeDefinitions;
         } catch (error) {
-            logError(`Props extraction failed for ${component.name}: ${(error as Error).message}`);
+            console.error(`Props extraction failed for ${component.name}: ${(error as Error).message}`);
         }
 
-        // 2. Parse stories
+        // Parse stories
         let examples: ComponentManifest['examples'] = [];
         let storiesStatus = '';
         try {
@@ -45,42 +53,42 @@ const main = (): void => {
             examples = storiesResult.examples;
             storiesStatus = storiesResult.status;
         } catch (error) {
-            logError(`Story parsing failed for ${component.name}: ${(error as Error).message}`);
+            console.error(`Story parsing failed for ${component.name}: ${(error as Error).message}`);
         }
 
-        // // 4. Read metadata
-        // const metadata = readMetadata(component.dirPath, component.name);
+        // Read metadata
+        const metadata = readMetadata(component.dirPath, component.name);
 
-        // // 5. Assemble manifest
-        // const manifest = assembleComponentManifest({
-        //     component,
-        //     mainProps,
-        //     subComponents,
-        //     examples,
-        //     description: metadata?.description ?? '',
-        //     status: storiesStatus || (metadata?.status ?? ''),
-        //     category: metadata?.category ?? '',
-        //     tags: metadata?.tags ?? [],
-        //     relatedComponents: metadata?.relatedComponents ?? [],
-        //     instructions: metadata?.instructions ?? '',
-        //     packageName: PACKAGE_NAME,
-        //     typeDefinitions,
-        // });
+        // Assemble manifest
+        const manifest = assembleComponentManifest({
+            component,
+            mainProps,
+            subComponents,
+            examples,
+            description: metadata?.description ?? '',
+            status: storiesStatus,
+            category: metadata?.category ?? '',
+            tags: metadata?.tags ?? [],
+            relatedComponents: metadata?.relatedComponents ?? [],
+            instructions: metadata?.instructions ?? '',
+            packageName: PACKAGE_NAME,
+            typeDefinitions,
+        });
 
-        // // 6. Write per-component manifest
-        // writeComponentManifest(manifest, component.dirPath);
-        // manifests.push(manifest);
+        // Write per-component manifest
+        writeComponentManifest(manifest, MANIFEST_DIR);
+        manifests.push(manifest);
     }
 
-    // // 7. Write global manifest
-    // writeGlobalManifest(manifests, PACKAGE_NAME);
+    // Write global manifest
+    writeGlobalManifest(manifests, PACKAGE_NAME, MANIFEST_DIR);
 
-    // logSuccess(`Done! ${manifests.length} components written to manifest.json`);
+    console.log(`Done! ${manifests.length} components written to manifest.json`);
 };
 
 try {
     main();
 } catch (error) {
-    logError(`Fatal error: ${(error as Error).message}`);
+    console.error(`Fatal error: ${(error as Error).message}`);
     process.exit(1);
 }

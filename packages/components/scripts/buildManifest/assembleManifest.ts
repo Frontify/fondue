@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { writeFileSync } from 'node:fs';
+import path from 'node:path';
 
 import {
     type ComponentManifest,
@@ -11,7 +12,6 @@ import {
     type PropInfo,
     type SubComponent,
 } from './types';
-import { resolveFromRoot } from './utils';
 
 export type AssembleInput = {
     component: DiscoveredComponent;
@@ -28,7 +28,7 @@ export type AssembleInput = {
     typeDefinitions: Record<string, string>;
 };
 
-export function assembleComponentManifest(input: AssembleInput): ComponentManifest {
+export const assembleComponentManifest = (input: AssembleInput): ComponentManifest => {
     return {
         name: input.component.name,
         description: input.description,
@@ -44,24 +44,24 @@ export function assembleComponentManifest(input: AssembleInput): ComponentManife
         instructions: input.instructions,
         typeDefinitions: input.typeDefinitions,
     };
-}
+};
 
-export function writeComponentManifest(manifest: ComponentManifest, dirPath: string): void {
-    const outputPath = resolveFromRoot(dirPath, `${manifest.name}.manifest.json`);
+export const writeComponentManifest = (manifest: ComponentManifest, dirPath: string): void => {
+    const outputPath = path.join(dirPath, `${manifest.name}.json`);
     writeFileSync(outputPath, JSON.stringify(manifest), 'utf-8');
-}
+};
 
-export function writeGlobalManifest(components: ComponentManifest[], packageName: string): void {
+export const writeGlobalManifest = (components: ComponentManifest[], packageName: string, dirPath: string): void => {
     const refs: Record<string, ComponentRef> = {};
-    for (const c of components) {
-        refs[c.name] = {
-            name: c.name,
-            description: c.description,
-            status: c.status,
-            category: c.category,
-            tags: c.tags,
-            subComponentNames: c.subComponents.map((s) => s.name),
-            manifestPath: `${c.filePath.replace(/\/[^/]+\.tsx?$/, '')}/${c.name}.manifest.json`,
+    for (const component of components) {
+        refs[component.name] = {
+            name: component.name,
+            description: component.description,
+            status: component.status,
+            category: component.category,
+            tags: component.tags,
+            subComponentNames: component.subComponents.map((subComponent) => subComponent.name),
+            manifestPath: path.join(dirPath, `${component.name}.json`),
         };
     }
 
@@ -72,6 +72,6 @@ export function writeGlobalManifest(components: ComponentManifest[], packageName
         components: refs,
     };
 
-    const outputPath = resolveFromRoot('manifest.json');
+    const outputPath = path.join(dirPath, 'manifest.json');
     writeFileSync(outputPath, JSON.stringify(global), 'utf-8');
-}
+};

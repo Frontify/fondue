@@ -20,7 +20,7 @@ type MetadataJson = {
     instructions?: string;
 };
 
-export function readMetadata(dirPath: string, componentName: string): MetadataResult | null {
+export const readMetadata = (dirPath: string, componentName: string): MetadataResult | null => {
     const metaFilePath = resolveFromRoot(dirPath, `${componentName}.metadata.json`);
 
     if (!existsSync(metaFilePath)) {
@@ -37,4 +37,4 @@ export function readMetadata(dirPath: string, componentName: string): MetadataRe
         relatedComponents: Array.isArray(data.relatedComponents) ? data.relatedComponents : [],
         instructions: data.instructions ?? '',
     };
-}
+};

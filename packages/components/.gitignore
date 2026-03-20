@@ -33,5 +33,4 @@ storybook-static
 /playwright/.cache/
 
 # Generated component manifests
-*.manifest.json
-/manifest.json
+/manifests

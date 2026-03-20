@@ -11,10 +11,10 @@ import {
     withCompilerOptions,
 } from 'react-docgen-typescript';
 
-import { getForwardRefInnerName, scanDisplayNames } from './extractProps/astDisplayNames';
-import { collectTypeDefinitions } from './extractProps/collectTypeDefinitions';
 import { type PropInfo, type SubComponent } from './types';
 import { resolveFromRoot } from './utils';
+import { getForwardRefInnerName, scanDisplayNames } from './utils/astDisplayNames';
+import { collectTypeDefinitions } from './utils/collectTypeDefinitions';
 
 let _parser: FileParser | null = null;
 
