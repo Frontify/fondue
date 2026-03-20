@@ -9,10 +9,6 @@ import { beforeAll, describe, expect, it } from 'vitest';
 
 import { parseStories } from '../parseStories';
 
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
 const TMP_DIR = join(tmpdir(), 'manifest-test-parseStories');
 
 beforeAll(() => {
@@ -24,10 +20,6 @@ function writeTempStory(name: string, content: string): string {
     writeFileSync(filePath, content, 'utf-8');
     return filePath;
 }
-
-// ---------------------------------------------------------------------------
-// Tests
-// ---------------------------------------------------------------------------
 
 describe('parseStories', () => {
     describe('edge cases', () => {

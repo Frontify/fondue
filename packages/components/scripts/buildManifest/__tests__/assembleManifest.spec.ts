@@ -18,10 +18,6 @@ import {
 } from '../assembleManifest';
 import { type ComponentManifest } from '../types';
 
-// ---------------------------------------------------------------------------
-// Fixtures
-// ---------------------------------------------------------------------------
-
 const baseComponent = {
     name: 'Button',
     filePath: 'src/components/Button/Button.tsx',
@@ -43,10 +39,6 @@ const baseInput: AssembleInput = {
     packageName: '@frontify/fondue-components',
     typeDefinitions: {},
 };
-
-// ---------------------------------------------------------------------------
-// assembleComponentManifest
-// ---------------------------------------------------------------------------
 
 describe('assembleComponentManifest', () => {
     it('sets name from the component', () => {
@@ -123,10 +115,6 @@ describe('assembleComponentManifest', () => {
     });
 });
 
-// ---------------------------------------------------------------------------
-// writeComponentManifest
-// ---------------------------------------------------------------------------
-
 describe('writeComponentManifest', () => {
     beforeEach(() => vi.clearAllMocks());
 
@@ -154,10 +142,6 @@ describe('writeComponentManifest', () => {
     });
 });
 
-// ---------------------------------------------------------------------------
-// writeGlobalManifest
-// ---------------------------------------------------------------------------
-
 // Helper: find the global manifest write call (exact filename "manifest.json", not "X.manifest.json")
 function findGlobalManifestCall() {
     return vi.mocked(writeFileSync).mock.calls.find(([p]) => /[/\\]manifest\.json$/.test(String(p)));
@@ -170,7 +154,7 @@ describe('writeGlobalManifest', () => {
         vi.mocked(writeFileSync).mockImplementation(() => {});
 
         const manifest = assembleComponentManifest(baseInput);
-        writeGlobalManifest([manifest], '@frontify/fondue-components');
+        writeGlobalManifest([manifest], '@frontify/fondue-components', 'src/components/Button');
 
         expect(findGlobalManifestCall()).toBeDefined();
     });
@@ -184,7 +168,7 @@ describe('writeGlobalManifest', () => {
             component: { ...baseComponent, name: 'Badge', filePath: 'src/components/Badge/Badge.tsx' },
             description: 'A badge',
         });
-        writeGlobalManifest([manifest1, manifest2], '@frontify/fondue-components');
+        writeGlobalManifest([manifest1, manifest2], '@frontify/fondue-components', 'src/components/Button');
 
         const call = findGlobalManifestCall();
         if (!call) {
@@ -203,7 +187,7 @@ describe('writeGlobalManifest', () => {
             ...baseInput,
             subComponents: [{ name: 'Button.Icon', props: [] }],
         });
-        writeGlobalManifest([manifest], '@frontify/fondue-components');
+        writeGlobalManifest([manifest], '@frontify/fondue-components', 'src/components/Button');
 
         const call2 = findGlobalManifestCall();
         if (!call2) {
@@ -218,14 +202,14 @@ describe('writeGlobalManifest', () => {
         expect(ref.category).toBe('Components');
         expect(ref.tags).toEqual(['interactive']);
         expect(ref.subComponentNames).toEqual(['Button.Icon']);
-        expect(ref.manifestPath).toContain('Button.manifest.json');
+        expect(ref.manifestPath).toContain('src/components/Button/Button.json');
     });
 
     it('includes schemaVersion and packageName in the global manifest', () => {
         vi.mocked(writeFileSync).mockImplementation(() => {});
 
         const manifest = assembleComponentManifest(baseInput);
-        writeGlobalManifest([manifest], '@frontify/fondue-components');
+        writeGlobalManifest([manifest], '@frontify/fondue-components', 'src/components/Button');
 
         const call3 = findGlobalManifestCall();
         if (!call3) {

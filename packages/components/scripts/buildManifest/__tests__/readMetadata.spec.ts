@@ -12,10 +12,6 @@ vi.mock('../utils', () => ({
 
 import { readMetadata } from '../readMetadata';
 
-// ---------------------------------------------------------------------------
-// Tests
-// ---------------------------------------------------------------------------
-
 describe('readMetadata', () => {
     beforeEach(() => {
         vi.mocked(existsSync).mockReset();

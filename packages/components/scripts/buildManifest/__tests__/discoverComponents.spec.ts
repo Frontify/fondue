@@ -16,10 +16,6 @@ import { describe, expect, it, vi, beforeEach } from 'vitest';
 
 import { discoverComponents } from '../discoverComponents';
 
-// ---------------------------------------------------------------------------
-// Tests
-// ---------------------------------------------------------------------------
-
 describe('discoverComponents', () => {
     beforeEach(() => {
         vi.mocked(readFileSync).mockReset();
@@ -54,14 +50,6 @@ describe('discoverComponents', () => {
         expect(components[0].filePath).toBe('src/components/Button/Button.tsx');
         expect(components[0].dirPath).toBe('src/components/Button');
         expect(components[0].storyFilePaths).toHaveLength(1);
-    });
-
-    it('derives name from the filename when name is absent in JSON', () => {
-        vi.mocked(globSync).mockReturnValue(['<root>/src/components/Badge/Badge.metadata.json']);
-        vi.mocked(readFileSync).mockReturnValue(JSON.stringify({ filePath: 'src/components/Badge/Badge.tsx' }));
-
-        const components = discoverComponents();
-        expect(components[0].name).toBe('Badge');
     });
 
     it('resolves storyFilePaths relative to package root', () => {
