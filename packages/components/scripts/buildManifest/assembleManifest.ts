@@ -47,8 +47,8 @@ export const assembleComponentManifest = (input: AssembleInput): ComponentManife
 };
 
 export const writeComponentManifest = (manifest: ComponentManifest, dirPath: string): void => {
-    const outputPath = path.join(dirPath, `${manifest.name}.json`);
-    writeFileSync(outputPath, JSON.stringify(manifest), 'utf-8');
+    const outputPath = path.join(dirPath, `${manifest.name}.manifest.json`);
+    writeFileSync(outputPath, JSON.stringify(manifest, null, 2), 'utf-8');
 };
 
 export const writeGlobalManifest = (components: ComponentManifest[], packageName: string, dirPath: string): void => {
@@ -61,7 +61,7 @@ export const writeGlobalManifest = (components: ComponentManifest[], packageName
             category: component.category,
             tags: component.tags,
             subComponentNames: component.subComponents.map((subComponent) => subComponent.name),
-            manifestPath: path.join(dirPath, `${component.name}.json`),
+            manifestPath: `${component.name}.manifest.json`,
         };
     }
 
@@ -73,5 +73,5 @@ export const writeGlobalManifest = (components: ComponentManifest[], packageName
     };
 
     const outputPath = path.join(dirPath, 'manifest.json');
-    writeFileSync(outputPath, JSON.stringify(global), 'utf-8');
+    writeFileSync(outputPath, JSON.stringify(global, null, 2), 'utf-8');
 };

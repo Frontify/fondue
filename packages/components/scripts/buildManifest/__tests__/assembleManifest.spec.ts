@@ -202,7 +202,7 @@ describe('writeGlobalManifest', () => {
         expect(ref.category).toBe('Components');
         expect(ref.tags).toEqual(['interactive']);
         expect(ref.subComponentNames).toEqual(['Button.Icon']);
-        expect(ref.manifestPath).toContain('src/components/Button/Button.json');
+        expect(ref.manifestPath).toBe('Button.manifest.json');
     });
 
     it('includes schemaVersion and packageName in the global manifest', () => {

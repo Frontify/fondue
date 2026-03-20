@@ -6,6 +6,7 @@ import {
     createProgram,
     EmitHint,
     forEachChild,
+    isInterfaceDeclaration,
     isTypeAliasDeclaration,
     JsxEmit,
     NewLineKind,
@@ -60,9 +61,11 @@ export const collectTypeDefinitions = (allProps: PropInfo[]): Record<string, str
     const srcRoot = resolveFromRoot('src');
     const printer = createPrinter({ newLine: NewLineKind.LineFeed });
     const result: Record<string, string> = {};
-    const secondPass = new Set<string>();
+    const resolved = new Set<string>();
+    let pending = new Set(typeNames);
 
-    const visitSourceFiles = (targets: Set<string>): void => {
+    const visitSourceFiles = (targets: Set<string>): Set<string> => {
+        const newlyFound = new Set<string>();
         for (const sourceFile of program.getSourceFiles()) {
             // Only resolve types declared in our own src/ — skips builtins, React, node_modules
             if (!sourceFile.fileName.startsWith(srcRoot)) {
@@ -72,10 +75,17 @@ export const collectTypeDefinitions = (allProps: PropInfo[]): Record<string, str
                 if (isTypeAliasDeclaration(node) && targets.has(node.name.text) && !result[node.name.text]) {
                     const text = printer.printNode(EmitHint.Unspecified, node.type, sourceFile);
                     result[node.name.text] = text;
-                    // Queue any new type names referenced in this definition
                     for (const name of extractTypeNamesFromString(text)) {
-                        if (!typeNames.has(name) && !result[name]) {
-                            secondPass.add(name);
+                        if (!resolved.has(name) && !result[name]) {
+                            newlyFound.add(name);
+                        }
+                    }
+                } else if (isInterfaceDeclaration(node) && targets.has(node.name.text) && !result[node.name.text]) {
+                    const text = printer.printNode(EmitHint.Unspecified, node, sourceFile);
+                    result[node.name.text] = text;
+                    for (const name of extractTypeNamesFromString(text)) {
+                        if (!resolved.has(name) && !result[name]) {
+                            newlyFound.add(name);
                         }
                     }
                 }
@@ -83,11 +93,16 @@ export const collectTypeDefinitions = (allProps: PropInfo[]): Record<string, str
             };
             forEachChild(sourceFile, visit);
         }
+        return newlyFound;
     };
 
-    visitSourceFiles(typeNames);
-    if (secondPass.size > 0) {
-        visitSourceFiles(secondPass);
+    const MAX_DEPTH = 10;
+    for (let depth = 0; depth < MAX_DEPTH && pending.size > 0; depth++) {
+        for (const name of pending) {
+            resolved.add(name);
+        }
+        const newlyFound = visitSourceFiles(pending);
+        pending = newlyFound;
     }
 
     return result;

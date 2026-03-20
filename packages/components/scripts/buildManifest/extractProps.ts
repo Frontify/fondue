@@ -10,10 +10,11 @@ import {
     type Props,
     withCompilerOptions,
 } from 'react-docgen-typescript';
+import { JsxEmit } from 'typescript';
 
 import { type PropInfo, type SubComponent } from './types';
 import { resolveFromRoot } from './utils';
-import { getForwardRefInnerName, scanDisplayNames } from './utils/astDisplayNames';
+import { getForwardRefInnerName, scanDisplayNames, type ScanResult } from './utils/astDisplayNames';
 import { collectTypeDefinitions } from './utils/collectTypeDefinitions';
 
 let _parser: FileParser | null = null;
@@ -22,7 +23,7 @@ const getParser = (): FileParser => {
     if (!_parser) {
         _parser = withCompilerOptions(
             {
-                jsx: 4,
+                jsx: JsxEmit.ReactJSX,
                 skipLibCheck: true,
                 noEmit: true,
                 resolveJsonModule: true,
@@ -75,19 +76,18 @@ const getPropsFromDoc = (propsRecord: Props): PropInfo[] => {
     });
 };
 
-const resolveDisplayNames = (docs: ComponentDoc[], file: string, displayNameMap?: Map<string, string>): void => {
-    // if no displayName map is provided, do nothing
-    if (displayNameMap === undefined) {
+const resolveDisplayNames = (docs: ComponentDoc[], scanResult?: ScanResult): void => {
+    if (scanResult === undefined) {
         return;
     }
     for (const doc of docs) {
-        let resolvedName = displayNameMap.get(doc.displayName);
+        let resolvedName = scanResult.displayNameMap.get(doc.displayName);
 
         // If reported displayName is not in the map, try looking through the forwardRef inner component
         if (!resolvedName) {
-            const innerName = getForwardRefInnerName(file, doc.displayName);
+            const innerName = getForwardRefInnerName(scanResult.sourceFile, doc.displayName);
             if (innerName) {
-                resolvedName = displayNameMap.get(innerName);
+                resolvedName = scanResult.displayNameMap.get(innerName);
             }
         }
 
@@ -99,13 +99,13 @@ const resolveDisplayNames = (docs: ComponentDoc[], file: string, displayNameMap?
 
 const parseFiles = (files: string[]): ComponentDoc[] => {
     const parser = getParser();
-    const displayNameMaps = new Map(files.map((file) => [file, scanDisplayNames(file)]));
+    const scanResults = new Map(files.map((file) => [file, scanDisplayNames(file)]));
     const allDocs: ComponentDoc[] = [];
 
     for (const file of files) {
         try {
             const docs = parser.parse(file);
-            resolveDisplayNames(docs, file, displayNameMaps.get(file));
+            resolveDisplayNames(docs, scanResults.get(file));
             allDocs.push(...docs);
         } catch (error) {
             console.warn(`Failed to parse ${path.relative(resolveFromRoot(), file)}: ${(error as Error).message}`);
@@ -152,11 +152,6 @@ export const extractProps = (componentName: string, dirPath: string): ExtractPro
         } else {
             firstNonSubProps ??= props;
         }
-    }
-
-    // Fallback: if no exact match for main component, use the first non-sub-component
-    if (mainProps.length === 0 && firstNonSubProps) {
-        mainProps.push(...firstNonSubProps);
     }
 
     const subComponents: SubComponent[] = Array.from(subComponentMap.entries()).map(([name, props]) => ({

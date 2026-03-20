@@ -85,6 +85,17 @@ describe('readMetadata', () => {
         expect(result?.relatedComponents).toEqual([]);
     });
 
+    it('returns null and warns on malformed JSON', () => {
+        vi.mocked(existsSync).mockReturnValue(true);
+        vi.mocked(readFileSync).mockReturnValue('NOT VALID JSON');
+
+        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        const result = readMetadata('src/components/Button', 'Button');
+        expect(result).toBeNull();
+        expect(warnSpy).toHaveBeenCalledOnce();
+        warnSpy.mockRestore();
+    });
+
     it('reads the file from the resolved path using componentName', () => {
         vi.mocked(existsSync).mockReturnValue(true);
         vi.mocked(readFileSync).mockReturnValue(JSON.stringify({}));

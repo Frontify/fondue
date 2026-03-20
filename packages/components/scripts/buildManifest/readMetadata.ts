@@ -27,8 +27,14 @@ export const readMetadata = (dirPath: string, componentName: string): MetadataRe
         return null;
     }
 
-    const raw = readFileSync(metaFilePath, 'utf-8');
-    const data = JSON.parse(raw) as MetadataJson;
+    let data: MetadataJson;
+    try {
+        const raw = readFileSync(metaFilePath, 'utf-8');
+        data = JSON.parse(raw) as MetadataJson;
+    } catch (error) {
+        console.warn(`Failed to parse ${metaFilePath}: ${(error as Error).message}`);
+        return null;
+    }
 
     return {
         description: data.description ?? '',

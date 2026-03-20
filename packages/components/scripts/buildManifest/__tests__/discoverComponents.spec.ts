@@ -1,7 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-// @vitest-environment node
-
 vi.mock('node:fs');
 vi.mock('glob');
 
@@ -52,6 +50,14 @@ describe('discoverComponents', () => {
         expect(components[0].storyFilePaths).toHaveLength(1);
     });
 
+    it('derives name from the filename when name is absent in JSON', () => {
+        vi.mocked(globSync).mockReturnValue(['<root>/src/components/Badge/Badge.metadata.json']);
+        vi.mocked(readFileSync).mockReturnValue(JSON.stringify({ filePath: 'src/components/Badge/Badge.tsx' }));
+
+        const components = discoverComponents();
+        expect(components[0].name).toBe('Badge');
+    });
+
     it('resolves storyFilePaths relative to package root', () => {
         vi.mocked(globSync).mockReturnValue(['<root>/src/components/Button/Button.metadata.json']);
         vi.mocked(readFileSync).mockReturnValue(
@@ -88,6 +94,17 @@ describe('discoverComponents', () => {
 
         const names = discoverComponents().map((c) => c.name);
         expect(names).toEqual(['Accordion', 'Badge', 'Tooltip']);
+    });
+
+    it('skips and warns on malformed JSON', () => {
+        vi.mocked(globSync).mockReturnValue(['<root>/src/components/Bad/Bad.metadata.json']);
+        vi.mocked(readFileSync).mockReturnValue('NOT VALID JSON');
+
+        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        const components = discoverComponents();
+        expect(components).toEqual([]);
+        expect(warnSpy).toHaveBeenCalledOnce();
+        warnSpy.mockRestore();
     });
 
     it('derives dirPath as the directory portion of filePath', () => {

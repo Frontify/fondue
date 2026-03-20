@@ -396,6 +396,96 @@ describe('parseStories', () => {
         });
     });
 
+    describe('inline export default meta', () => {
+        it('extracts component and status from export default { ... }', () => {
+            const file = writeTempStory(
+                'meta-inline-default',
+                `
+                export default {
+                    component: MyComp,
+                    parameters: { status: { type: 'released' } },
+                };
+                export const Default = {
+                    render: () => <MyComp />,
+                };
+            `,
+            );
+            const { status, examples } = parseStories([file]);
+            expect(status).toBe('released');
+            expect(examples).toHaveLength(1);
+        });
+
+        it('extracts args from inline export default', () => {
+            const file = writeTempStory(
+                'meta-inline-args',
+                `
+                export default {
+                    component: MyComp,
+                    args: { size: 'large' },
+                };
+                export const Default = {
+                    render: (args) => <MyComp {...args} />,
+                };
+            `,
+            );
+            const { examples } = parseStories([file]);
+            expect(examples[0].code).toContain("size='large'");
+        });
+    });
+
+    describe('skipped exports', () => {
+        it('skips exported meta variable in story exports', () => {
+            const file = writeTempStory(
+                'skip-export-meta',
+                `
+                export const meta = { component: MyComp };
+                export default meta;
+                export const Default = {
+                    render: () => <MyComp />,
+                };
+            `,
+            );
+            const { examples } = parseStories([file]);
+            expect(examples).toHaveLength(1);
+            expect(examples[0].name).toBe('Default');
+        });
+
+        it('skips non-object-literal story exports', () => {
+            const file = writeTempStory(
+                'skip-non-object',
+                `
+                const meta = { component: MyComp };
+                export default meta;
+                export const Template = (args) => <MyComp {...args} />;
+                export const Default = {
+                    render: () => <MyComp />,
+                };
+            `,
+            );
+            const { examples } = parseStories([file]);
+            expect(examples).toHaveLength(1);
+            expect(examples[0].name).toBe('Default');
+        });
+
+        it('ignores spread properties in story objects', () => {
+            const file = writeTempStory(
+                'spread-in-story',
+                `
+                const meta = { component: MyComp };
+                export default meta;
+                const base = { args: { size: 'lg' } };
+                export const Default = {
+                    ...base,
+                    render: () => <MyComp />,
+                };
+            `,
+            );
+            const { examples } = parseStories([file]);
+            expect(examples).toHaveLength(1);
+            expect(examples[0].code).toContain('<MyComp');
+        });
+    });
+
     describe('multiple story files', () => {
         it('accumulates examples from multiple files', () => {
             const file1 = writeTempStory(

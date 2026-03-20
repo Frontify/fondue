@@ -5,6 +5,7 @@ import {
     isNoSubstitutionTemplateLiteral,
     isObjectLiteralExpression,
     isPropertyAssignment,
+    isSpreadAssignment,
     isStringLiteral,
     SyntaxKind,
     type Expression,
@@ -25,6 +26,10 @@ export const extractArgsFromObject = (
 ): Record<string, string> => {
     const args: Record<string, string> = {};
     for (const property of objectExpression.properties) {
+        if (isSpreadAssignment(property)) {
+            console.warn(`Spread element in args object was skipped — only literal properties are extracted`);
+            continue;
+        }
         if (!isPropertyAssignment(property)) {
             continue;
         }

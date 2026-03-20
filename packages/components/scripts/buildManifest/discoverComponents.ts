@@ -9,10 +9,10 @@ import { type DiscoveredComponent } from './types';
 import { resolveFromRoot } from './utils';
 
 type MetadataJson = {
-    name: string;
-    filePath: string;
-    dirPath: string;
-    storyFilePaths: string[];
+    name?: string;
+    filePath?: string;
+    dirPath?: string;
+    storyFilePaths?: string[];
 };
 
 export const discoverComponents = (): DiscoveredComponent[] => {
@@ -20,16 +20,23 @@ export const discoverComponents = (): DiscoveredComponent[] => {
     const components: DiscoveredComponent[] = [];
 
     for (const metadataFilePath of metadataFiles) {
-        const data = JSON.parse(readFileSync(metadataFilePath, 'utf-8')) as MetadataJson;
+        let data: MetadataJson;
+        try {
+            data = JSON.parse(readFileSync(metadataFilePath, 'utf-8')) as MetadataJson;
+        } catch (error) {
+            console.warn(`Failed to parse ${metadataFilePath}: ${(error as Error).message}`);
+            continue;
+        }
 
         if (!data.filePath) {
             continue;
         }
 
+        const name = data.name || path.basename(data.filePath, path.extname(data.filePath));
         const dirPath = path.dirname(data.filePath);
         const storyFilePaths = (data.storyFilePaths ?? []).map((p) => resolveFromRoot(p));
 
-        components.push({ name: data.name, filePath: data.filePath, dirPath, storyFilePaths });
+        components.push({ name, filePath: data.filePath, dirPath, storyFilePaths });
     }
 
     return components.sort((a, b) => a.name.localeCompare(b.name));
