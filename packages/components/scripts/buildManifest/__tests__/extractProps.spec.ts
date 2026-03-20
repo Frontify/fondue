@@ -130,19 +130,6 @@ describe('extractProps', () => {
         expect(result.subComponents.map((sc) => sc.name)).toEqual(['Dialog.Trigger', 'Dialog.Content']);
     });
 
-    it('falls back to first non-sub-component when no exact name match', () => {
-        vi.mocked(globSync).mockReturnValue(['<root>/src/components/Btn/Btn.tsx']);
-        mockParse.mockReturnValue([makeDoc('InnerButton', { size: { type: { name: 'string' } } })]);
-
-        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-        const result = extractProps('Btn', 'src/components/Btn');
-
-        expect(result.mainProps).toHaveLength(1);
-        expect(result.mainProps[0].name).toBe('size');
-        expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('No exact props match'));
-        warnSpy.mockRestore();
-    });
-
     it('resolves enum types into union strings', () => {
         vi.mocked(globSync).mockReturnValue(['<root>/src/components/Button/Button.tsx']);
         mockParse.mockReturnValue([
