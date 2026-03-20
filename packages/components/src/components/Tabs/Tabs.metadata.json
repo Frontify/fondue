@@ -1,19 +1,10 @@
 {
-    "name": "Tabs",
-    "description": "A tabbed navigation component that switches between associated content panels. Use when content is divided into distinct sections that users switch between without leaving the page.",
     "category": "navigation",
-    "tags": [
-        "tabs",
-        "navigation",
-        "panel"
-    ],
-    "relatedComponents": [
-        "SegmentedControl",
-        "Accordion"
-    ],
-    "instructions": "Compose as Tabs.Root > Tabs.Tab (one per tab). Each Tabs.Tab contains a Tabs.Trigger (the tab label) and a Tabs.Content (the panel). Each Tabs.Tab requires a unique value prop. Use defaultActiveTab for uncontrolled or activeTab + onActiveTabChange for controlled. Use variant='pill' with withDivider=true when placing tabs inside a Dialog or other contained surface. Use SegmentedControl for view-mode toggles that don't show a content panel below.",
+    "description": "A tabbed navigation component that switches between associated content panels. Use when content is divided into distinct sections that users switch between without leaving the page.",
     "filePath": "src/components/Tabs/Tabs.tsx",
-    "storyFilePaths": [
-        "src/components/Tabs/Tabs.stories.tsx"
-    ]
+    "instructions": "Compose as Tabs.Root > Tabs.Tab (one per tab). Each Tabs.Tab contains a Tabs.Trigger (the tab label) and a Tabs.Content (the panel). Each Tabs.Tab requires a unique value prop. Use defaultActiveTab for uncontrolled or activeTab + onActiveTabChange for controlled. Use variant='pill' with withDivider=true when placing tabs inside a Dialog or other contained surface. Use SegmentedControl for view-mode toggles that don't show a content panel below.",
+    "name": "Tabs",
+    "relatedComponents": ["SegmentedControl", "Accordion"],
+    "storyFilePaths": ["src/components/Tabs/Tabs.stories.tsx"],
+    "tags": ["tabs", "navigation", "panel"]
 }

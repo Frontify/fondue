@@ -1,19 +1,10 @@
 {
-    "name": "Textarea",
-    "description": "A multi-line text input for collecting longer text content such as descriptions, comments, or messages.",
     "category": "input",
-    "tags": [
-        "textarea",
-        "form",
-        "input"
-    ],
-    "relatedComponents": [
-        "TextInput",
-        "EditableText"
-    ],
-    "instructions": "Use autosize to automatically grow the height as the user types. Use minRows to set the minimum visible height. Use Textarea.Root > Textarea.Slot for adding icon or action decorators on the left or right. Use TextInput for single-line input. Use EditableText for inline editing without a visible input border.",
+    "description": "A multi-line text input for collecting longer text content such as descriptions, comments, or messages.",
     "filePath": "src/components/Textarea/Textarea.tsx",
-    "storyFilePaths": [
-        "src/components/Textarea/Textarea.stories.tsx"
-    ]
+    "instructions": "Use autosize to automatically grow the height as the user types. Use minRows to set the minimum visible height. Use Textarea.Root > Textarea.Slot for adding icon or action decorators on the left or right. Use TextInput for single-line input. Use EditableText for inline editing without a visible input border.",
+    "name": "Textarea",
+    "relatedComponents": ["TextInput", "EditableText"],
+    "storyFilePaths": ["src/components/Textarea/Textarea.stories.tsx"],
+    "tags": ["textarea", "form", "input"]
 }

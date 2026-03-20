@@ -1,16 +1,10 @@
 {
-    "name": "Slider",
-    "description": "A range input for selecting a numerical value or range between a minimum and maximum. Use for settings like volume, opacity, price ranges, or any continuous numeric value.",
     "category": "input",
-    "tags": [
-        "slider",
-        "range",
-        "input"
-    ],
-    "relatedComponents": [],
-    "instructions": "Value is an array of numbers — use a single-element array for a single thumb, or two elements for a range slider. Use defaultValue for uncontrolled or value + onChange for controlled. onChange fires during drag; onCommit fires only when the user releases. Use minStepsBetweenThumbs to enforce a minimum gap in range sliders. Always provide aria-label or aria-labelledby for accessibility.",
+    "description": "A range input for selecting a numerical value or range between a minimum and maximum. Use for settings like volume, opacity, price ranges, or any continuous numeric value.",
     "filePath": "src/components/Slider/Slider.tsx",
-    "storyFilePaths": [
-        "src/components/Slider/Slider.stories.tsx"
-    ]
+    "instructions": "Value is an array of numbers — use a single-element array for a single thumb, or two elements for a range slider. Use defaultValue for uncontrolled or value + onChange for controlled. onChange fires during drag; onCommit fires only when the user releases. Use minStepsBetweenThumbs to enforce a minimum gap in range sliders. Always provide aria-label or aria-labelledby for accessibility.",
+    "name": "Slider",
+    "relatedComponents": [],
+    "storyFilePaths": ["src/components/Slider/Slider.stories.tsx"],
+    "tags": ["slider", "range", "input"]
 }

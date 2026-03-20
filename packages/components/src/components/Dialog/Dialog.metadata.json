@@ -1,19 +1,10 @@
 {
-    "name": "Dialog",
-    "description": "A modal overlay that interrupts the user to present important content or require a decision. Use for confirmations, forms, or detail views that need to be completed before continuing.",
     "category": "overlay",
-    "tags": [
-        "dialog",
-        "modal",
-        "overlay"
-    ],
-    "relatedComponents": [
-        "Flyout",
-        "Tooltip"
-    ],
-    "instructions": "Compose as Dialog.Root > Dialog.Trigger + Dialog.Content. Inside Dialog.Content use Dialog.Header, Dialog.Body, and Dialog.Footer for standard layout. Always include Dialog.Title (can be screenReaderOnly) for accessibility. Use Dialog.Description for additional context announced to screen readers. Wrap cancel buttons in Dialog.Close to auto-close on click. Use showUnderlay on Dialog.Content to dim the page behind the modal. Use Flyout for non-blocking contextual panels instead.",
+    "description": "A modal overlay that interrupts the user to present important content or require a decision. Use for confirmations, forms, or detail views that need to be completed before continuing.",
     "filePath": "src/components/Dialog/Dialog.tsx",
-    "storyFilePaths": [
-        "src/components/Dialog/Dialog.stories.tsx"
-    ]
+    "instructions": "Compose as Dialog.Root > Dialog.Trigger + Dialog.Content. Inside Dialog.Content use Dialog.Header, Dialog.Body, and Dialog.Footer for standard layout. Always include Dialog.Title (can be screenReaderOnly) for accessibility. Use Dialog.Description for additional context announced to screen readers. Wrap cancel buttons in Dialog.Close to auto-close on click. Use showUnderlay on Dialog.Content to dim the page behind the modal. Use Flyout for non-blocking contextual panels instead.",
+    "name": "Dialog",
+    "relatedComponents": ["Flyout", "Tooltip"],
+    "storyFilePaths": ["src/components/Dialog/Dialog.stories.tsx"],
+    "tags": ["dialog", "modal", "overlay"]
 }

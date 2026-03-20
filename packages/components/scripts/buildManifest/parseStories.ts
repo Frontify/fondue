@@ -1,9 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { existsSync, readFileSync } from 'node:fs';
+
 import ts from 'typescript';
 
-import type { Example } from './types';
+import { type Example } from './types';
 
 export type StoriesResult = {
     examples: Example[];
@@ -16,34 +17,30 @@ import { logWarn } from './utils';
 // ---------------------------------------------------------------------------
 
 function getStringValue(node: ts.Expression): string | null {
-    if (ts.isStringLiteral(node) || ts.isNoSubstitutionTemplateLiteral(node)) return node.text;
+    if (ts.isStringLiteral(node) || ts.isNoSubstitutionTemplateLiteral(node)) {
+        return node.text;
+    }
     return null;
 }
 
 /** Extract all key/value pairs from an object literal as raw source text */
-function extractArgsFromObject(
-    obj: ts.ObjectLiteralExpression,
-    sourceText: string,
-): Record<string, string> {
+function extractArgsFromObject(obj: ts.ObjectLiteralExpression, sourceText: string): Record<string, string> {
     const args: Record<string, string> = {};
     for (const prop of obj.properties) {
-        if (!ts.isPropertyAssignment(prop)) continue;
-        const key = ts.isIdentifier(prop.name)
-            ? prop.name.text
-            : ts.isStringLiteral(prop.name)
-              ? prop.name.text
-              : null;
-        if (!key) continue;
+        if (!ts.isPropertyAssignment(prop)) {
+            continue;
+        }
+        const key = ts.isIdentifier(prop.name) ? prop.name.text : ts.isStringLiteral(prop.name) ? prop.name.text : null;
+        if (!key) {
+            continue;
+        }
         args[key] = sourceText.slice(prop.initializer.pos, prop.initializer.end).trim();
     }
     return args;
 }
 
 /** Extract only the `args: { ... }` sub-object from a meta/story object literal */
-function extractMetaArgsOnly(
-    obj: ts.ObjectLiteralExpression,
-    sourceText: string,
-): Record<string, string> {
+function extractMetaArgsOnly(obj: ts.ObjectLiteralExpression, sourceText: string): Record<string, string> {
     for (const prop of obj.properties) {
         if (
             ts.isPropertyAssignment(prop) &&
@@ -59,11 +56,7 @@ function extractMetaArgsOnly(
 
 function findProp(obj: ts.ObjectLiteralExpression, name: string): ts.Expression | null {
     for (const prop of obj.properties) {
-        if (
-            ts.isPropertyAssignment(prop) &&
-            ts.isIdentifier(prop.name) &&
-            prop.name.text === name
-        ) {
+        if (ts.isPropertyAssignment(prop) && ts.isIdentifier(prop.name) && prop.name.text === name) {
             return prop.initializer;
         }
     }
@@ -72,46 +65,70 @@ function findProp(obj: ts.ObjectLiteralExpression, name: string): ts.Expression 
 
 /** Walk `parameters.status.type` to extract the component status string */
 function extractMetaStatus(parametersNode: ts.Expression): string {
-    if (!ts.isObjectLiteralExpression(parametersNode)) return '';
+    if (!ts.isObjectLiteralExpression(parametersNode)) {
+        return '';
+    }
     const status = findProp(parametersNode, 'status');
-    if (!status || !ts.isObjectLiteralExpression(status)) return '';
+    if (!status || !ts.isObjectLiteralExpression(status)) {
+        return '';
+    }
     const type = findProp(status, 'type');
-    if (!type) return '';
+    if (!type) {
+        return '';
+    }
     return getStringValue(type) ?? '';
 }
 
 /** Walk `parameters.docs.description.story` to extract a string */
 function extractDescription(parametersNode: ts.Expression, sourceText: string): string {
-    if (!ts.isObjectLiteralExpression(parametersNode)) return '';
+    if (!ts.isObjectLiteralExpression(parametersNode)) {
+        return '';
+    }
     const docs = findProp(parametersNode, 'docs');
-    if (!docs || !ts.isObjectLiteralExpression(docs)) return '';
+    if (!docs || !ts.isObjectLiteralExpression(docs)) {
+        return '';
+    }
     const desc = findProp(docs, 'description');
-    if (!desc || !ts.isObjectLiteralExpression(desc)) return '';
+    if (!desc || !ts.isObjectLiteralExpression(desc)) {
+        return '';
+    }
     const story = findProp(desc, 'story');
-    if (!story) return '';
+    if (!story) {
+        return '';
+    }
     return getStringValue(story) ?? '';
 }
 
 /** Walk `parameters.manifest.canonical` to extract a boolean */
 function extractIsCanonical(parametersNode: ts.Expression): boolean {
-    if (!ts.isObjectLiteralExpression(parametersNode)) return false;
+    if (!ts.isObjectLiteralExpression(parametersNode)) {
+        return false;
+    }
     const manifest = findProp(parametersNode, 'manifest');
-    if (!manifest || !ts.isObjectLiteralExpression(manifest)) return false;
+    if (!manifest || !ts.isObjectLiteralExpression(manifest)) {
+        return false;
+    }
     const canonical = findProp(manifest, 'canonical');
-    if (!canonical) return false;
+    if (!canonical) {
+        return false;
+    }
     return canonical.kind === ts.SyntaxKind.TrueKeyword;
 }
 
 /** Pull JSX out of an arrow / function expression body */
 function extractJsxFromRender(renderFn: ts.Expression, sourceText: string): string | null {
-    if (!ts.isArrowFunction(renderFn) && !ts.isFunctionExpression(renderFn)) return null;
+    if (!ts.isArrowFunction(renderFn) && !ts.isFunctionExpression(renderFn)) {
+        return null;
+    }
 
     const body = renderFn.body;
 
     // Expression body: (args) => (<JSX>) or (args) => <JSX>
     if (!ts.isBlock(body)) {
         let expr: ts.Expression = body;
-        if (ts.isParenthesizedExpression(expr)) expr = expr.expression;
+        if (ts.isParenthesizedExpression(expr)) {
+            expr = expr.expression;
+        }
         if (isJsxLike(expr)) {
             return sourceText.slice(expr.pos, expr.end).trim();
         }
@@ -120,9 +137,13 @@ function extractJsxFromRender(renderFn: ts.Expression, sourceText: string): stri
 
     // Block body: find return statement
     for (const stmt of body.statements) {
-        if (!ts.isReturnStatement(stmt) || !stmt.expression) continue;
+        if (!ts.isReturnStatement(stmt) || !stmt.expression) {
+            continue;
+        }
         let expr: ts.Expression = stmt.expression;
-        if (ts.isParenthesizedExpression(expr)) expr = expr.expression;
+        if (ts.isParenthesizedExpression(expr)) {
+            expr = expr.expression;
+        }
         return sourceText.slice(expr.pos, expr.end).trim();
     }
 
@@ -130,19 +151,19 @@ function extractJsxFromRender(renderFn: ts.Expression, sourceText: string): stri
 }
 
 function isJsxLike(node: ts.Node): boolean {
-    return (
-        ts.isJsxElement(node) ||
-        ts.isJsxSelfClosingElement(node) ||
-        ts.isJsxFragment(node)
-    );
+    return ts.isJsxElement(node) || ts.isJsxSelfClosingElement(node) || ts.isJsxFragment(node);
 }
 
 /** Serialise a merged args map to a JSX props string (excluding children/functions) */
 function serializeArgsAsProps(args: Record<string, string>): string {
     const props: string[] = [];
     for (const [key, val] of Object.entries(args)) {
-        if (key === 'children') continue;
-        if (val.startsWith('action(') || val.startsWith('() =>')) continue;
+        if (key === 'children') {
+            continue;
+        }
+        if (val.startsWith('action(') || val.startsWith('() =>')) {
+            continue;
+        }
         if (val === 'true') {
             props.push(key);
         } else if (val === 'false' || val === 'null' || val === 'undefined') {
@@ -158,16 +179,19 @@ function serializeArgsAsProps(args: Record<string, string>): string {
 
 /** Replace `{...args}` spreads in JSX with inlined props from the merged args map */
 function resolveArgsSpread(code: string, mergedArgs: Record<string, string>): string {
-    if (!code.includes('{...args}')) return code;
+    if (!code.includes('{...args}')) {
+        return code;
+    }
     const inlined = serializeArgsAsProps(mergedArgs);
-    return code.replace(/\{\.\.\.\s*args\s*\}/g, inlined).replace(/  +/g, ' ').trim();
+    return code
+        .replaceAll(/\{\.\.\.\s*args\s*\}/g, inlined)
+        .replaceAll(/  +/g, ' ')
+        .trim();
 }
 
 /** Clean up extracted code – replace action() stubs, normalise indent */
 function cleanCode(code: string): string {
-    return code
-        .replace(/action\(['"][^'"]*['"]\)/g, '() => {}')
-        .trim();
+    return code.replaceAll(/action\(['"][^'"]*['"]\)/g, '() => {}').trim();
 }
 
 /** Synthesise minimal JSX from merged args (for render-less stories) */
@@ -175,9 +199,13 @@ function synthesizeJsx(componentName: string, args: Record<string, string>): str
     const props: string[] = [];
 
     for (const [key, val] of Object.entries(args)) {
-        if (key === 'children') continue;
+        if (key === 'children') {
+            continue;
+        }
         // Skip action() and function values
-        if (val.startsWith('action(') || val.startsWith('() =>')) continue;
+        if (val.startsWith('action(') || val.startsWith('() =>')) {
+            continue;
+        }
         if (val === 'true') {
             props.push(key);
         } else if (val === 'false' || val === 'null' || val === 'undefined') {
@@ -189,11 +217,11 @@ function synthesizeJsx(componentName: string, args: Record<string, string>): str
         }
     }
 
-    const propsStr = props.length > 0 ? ' ' + props.join(' ') : '';
-    const children = args['children'];
+    const propsStr = props.length > 0 ? ` ${props.join(' ')}` : '';
+    const children = args.children;
 
     if (children) {
-        const cleanChildren = children.replace(/^['"]|['"]$/g, '');
+        const cleanChildren = children.replaceAll(/^['"]|['"]$/g, '');
         return `<${componentName}${propsStr}>\n  ${cleanChildren}\n</${componentName}>`;
     }
     return `<${componentName}${propsStr} />`;
@@ -208,7 +236,9 @@ export function parseStories(storyFilePaths: string[]): StoriesResult {
     let status = '';
 
     for (const filePath of storyFilePaths) {
-        if (!existsSync(filePath)) continue;
+        if (!existsSync(filePath)) {
+            continue;
+        }
 
         const sourceText = readFileSync(filePath, 'utf-8');
         const sourceFile = ts.createSourceFile(
@@ -237,7 +267,9 @@ export function parseStories(storyFilePaths: string[]): StoriesResult {
                     ) {
                         metaArgs = extractMetaArgsOnly(decl.initializer, sourceText);
                         for (const prop of decl.initializer.properties) {
-                            if (!ts.isPropertyAssignment(prop) || !ts.isIdentifier(prop.name)) continue;
+                            if (!ts.isPropertyAssignment(prop) || !ts.isIdentifier(prop.name)) {
+                                continue;
+                            }
                             if (prop.name.text === 'component' && ts.isIdentifier(prop.initializer)) {
                                 metaComponentName = prop.initializer.text;
                             }
@@ -253,7 +285,9 @@ export function parseStories(storyFilePaths: string[]): StoriesResult {
             if (ts.isExportAssignment(stmt) && !stmt.isExportEquals && ts.isObjectLiteralExpression(stmt.expression)) {
                 metaArgs = extractMetaArgsOnly(stmt.expression, sourceText);
                 for (const prop of stmt.expression.properties) {
-                    if (!ts.isPropertyAssignment(prop) || !ts.isIdentifier(prop.name)) continue;
+                    if (!ts.isPropertyAssignment(prop) || !ts.isIdentifier(prop.name)) {
+                        continue;
+                    }
                     if (prop.name.text === 'component' && ts.isIdentifier(prop.initializer)) {
                         metaComponentName = prop.initializer.text;
                     }
@@ -268,18 +302,26 @@ export function parseStories(storyFilePaths: string[]): StoriesResult {
         // Second pass: find named story exports
         // ----------------------------------------------------------------
         for (const stmt of sourceFile.statements) {
-            if (!ts.isVariableStatement(stmt)) continue;
-            const hasExport = stmt.modifiers?.some(
-                (m) => m.kind === ts.SyntaxKind.ExportKeyword,
-            );
-            if (!hasExport) continue;
+            if (!ts.isVariableStatement(stmt)) {
+                continue;
+            }
+            const hasExport = stmt.modifiers?.some((m) => m.kind === ts.SyntaxKind.ExportKeyword);
+            if (!hasExport) {
+                continue;
+            }
 
             for (const decl of stmt.declarationList.declarations) {
-                if (!ts.isIdentifier(decl.name) || !decl.initializer) continue;
+                if (!ts.isIdentifier(decl.name) || !decl.initializer) {
+                    continue;
+                }
                 // Skip re-exported meta
-                if (decl.name.text === 'meta') continue;
+                if (decl.name.text === 'meta') {
+                    continue;
+                }
                 // Must be an object literal (story object) – skip simple type aliases
-                if (!ts.isObjectLiteralExpression(decl.initializer)) continue;
+                if (!ts.isObjectLiteralExpression(decl.initializer)) {
+                    continue;
+                }
 
                 const exportName = decl.name.text;
                 const storyObj = decl.initializer;
@@ -291,12 +333,16 @@ export function parseStories(storyFilePaths: string[]): StoriesResult {
                 const storyArgs: Record<string, string> = {};
 
                 for (const prop of storyObj.properties) {
-                    if (!ts.isPropertyAssignment(prop) || !ts.isIdentifier(prop.name)) continue;
+                    if (!ts.isPropertyAssignment(prop) || !ts.isIdentifier(prop.name)) {
+                        continue;
+                    }
 
                     switch (prop.name.text) {
                         case 'name': {
                             const val = getStringValue(prop.initializer);
-                            if (val) storyName = val;
+                            if (val) {
+                                storyName = val;
+                            }
                             break;
                         }
                         case 'render': {

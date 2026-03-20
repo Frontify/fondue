@@ -1,19 +1,10 @@
 {
-    "name": "Tag",
-    "description": "An interactive chip label for representing metadata, filters, or user-selected values. Use when labels need to be removable, addable, or carry secondary content.",
     "category": "feedback",
-    "tags": [
-        "tag",
-        "badge",
-        "label"
-    ],
-    "relatedComponents": [
-        "Badge",
-        "Notice"
-    ],
-    "instructions": "Provide onDismiss to show a dismiss (×) button. Provide onAddClick to show an add (+) button. Use Tag.SecondaryContent for additional metadata displayed within the tag (can appear before or after main content). Use Tag.HoverContent to replace the tag's content with alternative content on hover. Use Badge instead for non-interactive status labels.",
+    "description": "An interactive chip label for representing metadata, filters, or user-selected values. Use when labels need to be removable, addable, or carry secondary content.",
     "filePath": "src/components/Tag/Tag.tsx",
-    "storyFilePaths": [
-        "src/components/Tag/Tag.stories.tsx"
-    ]
+    "instructions": "Provide onDismiss to show a dismiss (×) button. Provide onAddClick to show an add (+) button. Use Tag.SecondaryContent for additional metadata displayed within the tag (can appear before or after main content). Use Tag.HoverContent to replace the tag's content with alternative content on hover. Use Badge instead for non-interactive status labels.",
+    "name": "Tag",
+    "relatedComponents": ["Badge", "Notice"],
+    "storyFilePaths": ["src/components/Tag/Tag.stories.tsx"],
+    "tags": ["tag", "badge", "label"]
 }

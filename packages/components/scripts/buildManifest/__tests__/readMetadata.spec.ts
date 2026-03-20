@@ -9,6 +9,7 @@ vi.mock('../utils', () => ({
 }));
 
 import { existsSync, readFileSync } from 'node:fs';
+
 import { readMetadata } from '../readMetadata';
 
 // ---------------------------------------------------------------------------

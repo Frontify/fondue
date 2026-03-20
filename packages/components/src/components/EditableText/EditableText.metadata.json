@@ -1,19 +1,10 @@
 {
-    "name": "EditableText",
-    "description": "An inline text element that becomes editable on click. Use for in-place renaming or editing of labels without opening a separate input field.",
     "category": "input",
-    "tags": [
-        "editable",
-        "text",
-        "inline-edit"
-    ],
-    "relatedComponents": [
-        "TextInput",
-        "Textarea"
-    ],
-    "instructions": "onChange fires only when the value has changed, on blur or Enter key. Use asChild to wrap a custom element (e.g. a Heading) and make it editable — the child receives all editable props. Use hugWidth=false to make the component fill its container width. Trigger editing programmatically by calling focus() on a ref. Use TextInput for form fields with validation or labels.",
+    "description": "An inline text element that becomes editable on click. Use for in-place renaming or editing of labels without opening a separate input field.",
     "filePath": "src/components/EditableText/EditableText.tsx",
-    "storyFilePaths": [
-        "src/components/EditableText/EditableText.stories.tsx"
-    ]
+    "instructions": "onChange fires only when the value has changed, on blur or Enter key. Use asChild to wrap a custom element (e.g. a Heading) and make it editable — the child receives all editable props. Use hugWidth=false to make the component fill its container width. Trigger editing programmatically by calling focus() on a ref. Use TextInput for form fields with validation or labels.",
+    "name": "EditableText",
+    "relatedComponents": ["TextInput", "Textarea"],
+    "storyFilePaths": ["src/components/EditableText/EditableText.stories.tsx"],
+    "tags": ["editable", "text", "inline-edit"]
 }

@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import chalk from 'chalk';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+
+import chalk from 'chalk';
 
 export const PACKAGE_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 

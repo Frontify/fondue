@@ -2,14 +2,14 @@
 
 import { writeFileSync } from 'node:fs';
 
-import type {
-    ComponentManifest,
-    ComponentRef,
-    DiscoveredComponent,
-    Example,
-    GlobalManifest,
-    PropInfo,
-    SubComponent,
+import {
+    type ComponentManifest,
+    type ComponentRef,
+    type DiscoveredComponent,
+    type Example,
+    type GlobalManifest,
+    type PropInfo,
+    type SubComponent,
 } from './types';
 import { resolveFromRoot } from './utils';
 
@@ -51,10 +51,7 @@ export function writeComponentManifest(manifest: ComponentManifest, dirPath: str
     writeFileSync(outputPath, JSON.stringify(manifest), 'utf-8');
 }
 
-export function writeGlobalManifest(
-    components: ComponentManifest[],
-    packageName: string,
-): void {
+export function writeGlobalManifest(components: ComponentManifest[], packageName: string): void {
     const refs: Record<string, ComponentRef> = {};
     for (const c of components) {
         refs[c.name] = {

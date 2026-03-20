@@ -1,12 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import * as docgen from 'react-docgen-typescript';
-import { globSync } from 'glob';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
+
+import { globSync } from 'glob';
+import * as docgen from 'react-docgen-typescript';
 import ts from 'typescript';
 
-import type { PropInfo, SubComponent } from './types';
+import { type PropInfo, type SubComponent } from './types';
 import { resolveFromRoot, logWarn } from './utils';
 
 let _parser: docgen.FileParser | null = null;
@@ -34,7 +35,9 @@ function getParser(): docgen.FileParser {
                 shouldExtractLiteralValuesFromEnum: true,
                 shouldIncludePropTagMap: true,
                 propFilter: (prop) => {
-                    if (prop.name === 'className') return false;
+                    if (prop.name === 'className') {
+                        return false;
+                    }
                     if (prop.declarations && prop.declarations.length > 0) {
                         return prop.declarations.some((d) => !d.fileName.includes('node_modules'));
                     }
@@ -56,15 +59,29 @@ function scanDisplayNames(filePath: string): Map<string, string> {
     const map = new Map<string, string>();
 
     for (const stmt of sourceFile.statements) {
-        if (!ts.isExpressionStatement(stmt)) continue;
-        if (!ts.isBinaryExpression(stmt.expression)) continue;
+        if (!ts.isExpressionStatement(stmt)) {
+            continue;
+        }
+        if (!ts.isBinaryExpression(stmt.expression)) {
+            continue;
+        }
         const expr = stmt.expression;
-        if (expr.operatorToken.kind !== ts.SyntaxKind.EqualsToken) continue;
-        if (!ts.isPropertyAccessExpression(expr.left)) continue;
-        if (!ts.isIdentifier(expr.left.name) || expr.left.name.text !== 'displayName') continue;
+        if (expr.operatorToken.kind !== ts.SyntaxKind.EqualsToken) {
+            continue;
+        }
+        if (!ts.isPropertyAccessExpression(expr.left)) {
+            continue;
+        }
+        if (!ts.isIdentifier(expr.left.name) || expr.left.name.text !== 'displayName') {
+            continue;
+        }
         // Only simple: X.displayName = '...' (not X.Y.displayName)
-        if (!ts.isIdentifier(expr.left.expression)) continue;
-        if (!ts.isStringLiteral(expr.right)) continue;
+        if (!ts.isIdentifier(expr.left.expression)) {
+            continue;
+        }
+        if (!ts.isStringLiteral(expr.right)) {
+            continue;
+        }
         map.set(expr.left.expression.text, expr.right.text);
     }
 
@@ -80,22 +97,34 @@ function getForwardRefInnerName(filePath: string, forwardRefVarName: string): st
     const sourceFile = ts.createSourceFile(filePath, sourceText, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
 
     for (const stmt of sourceFile.statements) {
-        if (!ts.isVariableStatement(stmt)) continue;
+        if (!ts.isVariableStatement(stmt)) {
+            continue;
+        }
         for (const decl of stmt.declarationList.declarations) {
-            if (!ts.isIdentifier(decl.name) || decl.name.text !== forwardRefVarName) continue;
-            if (!decl.initializer) continue;
+            if (!ts.isIdentifier(decl.name) || decl.name.text !== forwardRefVarName) {
+                continue;
+            }
+            if (!decl.initializer) {
+                continue;
+            }
             // Handle: forwardRef<T, P>(InnerComp)
             const init = decl.initializer;
-            if (!ts.isCallExpression(init)) continue;
+            if (!ts.isCallExpression(init)) {
+                continue;
+            }
             const fnName = ts.isIdentifier(init.expression)
                 ? init.expression.text
                 : ts.isPropertyAccessExpression(init.expression) && ts.isIdentifier(init.expression.name)
                   ? init.expression.name.text
                   : null;
-            if (fnName !== 'forwardRef') continue;
+            if (fnName !== 'forwardRef') {
+                continue;
+            }
             // The argument to forwardRef is the inner component
             const arg = init.arguments[0];
-            if (arg && ts.isIdentifier(arg)) return arg.text;
+            if (arg && ts.isIdentifier(arg)) {
+                return arg.text;
+            }
         }
     }
     return null;
@@ -108,10 +137,7 @@ function getTypeProgram(): ts.Program {
             absolute: true,
         }).filter(
             (f) =>
-                !f.includes('.stories.') &&
-                !f.includes('.spec.') &&
-                !f.includes('.ct.') &&
-                !f.includes('/__tests__/'),
+                !f.includes('.stories.') && !f.includes('.spec.') && !f.includes('.ct.') && !f.includes('/__tests__/'),
         );
         _typeProgram = ts.createProgram(srcFiles, {
             jsx: ts.JsxEmit.ReactJSX,
@@ -135,7 +161,9 @@ function extractTypeNamesFromString(typeStr: string): string[] {
 
 function collectTypeDefinitions(allProps: PropInfo[]): Record<string, string> {
     const typeNames = new Set(allProps.flatMap((p) => extractTypeNamesFromString(p.type)));
-    if (typeNames.size === 0) return {};
+    if (typeNames.size === 0) {
+        return {};
+    }
 
     const program = getTypeProgram();
     const srcRoot = resolveFromRoot('src');
@@ -146,13 +174,11 @@ function collectTypeDefinitions(allProps: PropInfo[]): Record<string, string> {
     function visitSourceFiles(targets: Set<string>): void {
         for (const sourceFile of program.getSourceFiles()) {
             // Only resolve types declared in our own src/ — skips builtins, React, node_modules
-            if (!sourceFile.fileName.startsWith(srcRoot)) continue;
+            if (!sourceFile.fileName.startsWith(srcRoot)) {
+                continue;
+            }
             ts.forEachChild(sourceFile, function visit(node: ts.Node) {
-                if (
-                    ts.isTypeAliasDeclaration(node) &&
-                    targets.has(node.name.text) &&
-                    !result[node.name.text]
-                ) {
+                if (ts.isTypeAliasDeclaration(node) && targets.has(node.name.text) && !result[node.name.text]) {
                     const text = printer.printNode(ts.EmitHint.Unspecified, node.type, sourceFile);
                     result[node.name.text] = text;
                     // Queue any new type names referenced in this definition
@@ -168,7 +194,9 @@ function collectTypeDefinitions(allProps: PropInfo[]): Record<string, string> {
     }
 
     visitSourceFiles(typeNames);
-    if (secondPass.size > 0) visitSourceFiles(secondPass);
+    if (secondPass.size > 0) {
+        visitSourceFiles(secondPass);
+    }
 
     return result;
 }
@@ -205,11 +233,7 @@ export function extractProps(
 
     // Collect all .tsx files in the component directory tree (not tests/stories)
     const tsxFiles = globSync('**/*.tsx', { cwd: absoluteDir, absolute: true }).filter(
-        (f) =>
-            !f.includes('.stories.') &&
-            !f.includes('.ct.') &&
-            !f.includes('.spec.') &&
-            !f.includes('/__tests__/'),
+        (f) => !f.includes('.stories.') && !f.includes('.ct.') && !f.includes('.spec.') && !f.includes('/__tests__/'),
     );
 
     if (tsxFiles.length === 0) {
@@ -227,7 +251,7 @@ export function extractProps(
     for (const file of tsxFiles) {
         try {
             const docs = parser.parse(file);
-            const displayNameMap = fileDisplayNameMaps.get(file)!;
+            const displayNameMap = fileDisplayNameMaps.get(file);
 
             // Resolve actual displayNames for each doc
             for (const doc of docs) {
@@ -235,14 +259,18 @@ export function extractProps(
                 if (!resolvedName) {
                     // Try looking through the forwardRef inner component
                     const innerName = getForwardRefInnerName(file, doc.displayName);
-                    if (innerName) resolvedName = displayNameMap.get(innerName);
+                    if (innerName) {
+                        resolvedName = displayNameMap.get(innerName);
+                    }
                 }
-                if (resolvedName) doc.displayName = resolvedName;
+                if (resolvedName) {
+                    doc.displayName = resolvedName;
+                }
             }
 
             allDocs.push(...docs);
-        } catch (e) {
-            logWarn(`Failed to parse ${path.relative(resolveFromRoot(), file)}: ${(e as Error).message}`);
+        } catch (error) {
+            logWarn(`Failed to parse ${path.relative(resolveFromRoot(), file)}: ${(error as Error).message}`);
         }
     }
 

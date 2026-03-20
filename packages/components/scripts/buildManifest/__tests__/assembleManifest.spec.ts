@@ -10,9 +10,13 @@ vi.mock('../utils', () => ({
 
 import { writeFileSync } from 'node:fs';
 
-import { assembleComponentManifest, writeComponentManifest, writeGlobalManifest } from '../assembleManifest';
-import type { AssembleInput } from '../assembleManifest';
-import type { ComponentManifest } from '../types';
+import {
+    assembleComponentManifest,
+    writeComponentManifest,
+    writeGlobalManifest,
+    type AssembleInput,
+} from '../assembleManifest';
+import { type ComponentManifest } from '../types';
 
 // ---------------------------------------------------------------------------
 // Fixtures
@@ -182,7 +186,7 @@ describe('writeGlobalManifest', () => {
         });
         writeGlobalManifest([manifest1, manifest2], '@frontify/fondue-components');
 
-        const parsed = JSON.parse(String(findGlobalManifestCall()![1]));
+        const parsed = JSON.parse(String(findGlobalManifestCall()[1]));
         expect(parsed.components).toHaveProperty('Button');
         expect(parsed.components).toHaveProperty('Badge');
     });
@@ -196,8 +200,8 @@ describe('writeGlobalManifest', () => {
         });
         writeGlobalManifest([manifest], '@frontify/fondue-components');
 
-        const parsed = JSON.parse(String(findGlobalManifestCall()![1]));
-        const ref = parsed.components['Button'];
+        const parsed = JSON.parse(String(findGlobalManifestCall()[1]));
+        const ref = parsed.components.Button;
 
         expect(ref.name).toBe('Button');
         expect(ref.status).toBe('released');
@@ -213,7 +217,7 @@ describe('writeGlobalManifest', () => {
         const manifest = assembleComponentManifest(baseInput);
         writeGlobalManifest([manifest], '@frontify/fondue-components');
 
-        const parsed = JSON.parse(String(findGlobalManifestCall()![1]));
+        const parsed = JSON.parse(String(findGlobalManifestCall()[1]));
         expect(parsed.schemaVersion).toBeDefined();
         expect(parsed.packageName).toBe('@frontify/fondue-components');
     });
