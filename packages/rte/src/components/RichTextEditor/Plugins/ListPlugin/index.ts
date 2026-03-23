@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+export * from './ListBulletContext';
 export * from './ListItemContentMarkupElement';
 export * from './ListItemMarkupElement';
 export * from './ListPlugin';

@@ -7,6 +7,7 @@ import { type TDescendant, type TElement, isText } from '@udecode/slate';
 
 import { ELEMENT_CHECK_ITEM } from '@components/RichTextEditor/Plugins/CheckboxListPlugin/id';
 import {
+    LIST_BULLET_CONTAINER_CLASSES,
     LIST_ITEM_SPAN_CLASSES,
     getLicElementClassNames,
 } from '@components/RichTextEditor/Plugins/ListPlugin/ListItemContentMarkupElement';
@@ -33,32 +34,43 @@ import { type CSSPropertiesHover } from '../types';
 import { reactCssPropsToCss } from './reactCssPropsToCss';
 import { serializeLeafToHtml } from './serializeLeafToHtml';
 
-const getNestingLevels = (nodes: TDescendant[], type: string): number => {
-    let maxDepth = 0;
-
-    for (const node of nodes) {
-        let currentDepth = 0;
-        if (node.type === type) {
-            currentDepth = 1;
-        }
-        if (node.children) {
-            currentDepth += getNestingLevels(node.children as TDescendant[], type);
-        }
-        maxDepth = Math.max(maxDepth, currentDepth);
-    }
-
-    return maxDepth;
-};
-
-type NestingCount = {
-    [type: string]: number;
+type ListNestingDepth = {
+    [ELEMENT_OL]?: number;
+    [ELEMENT_UL]?: number;
 };
 
 type SerializeNodeToHtmlRecursiveOptions = {
     mappedMentionable?: MappedMentionableItems;
-    nestingCount?: NestingCount;
     orderedListStyles?: OrderedListLevelStyle[];
     unorderedListStyles?: UnorderedListLevelStyle[];
+    bulletHtml?: string;
+    listNestingDepth?: ListNestingDepth;
+};
+
+const getBulletHtml = (
+    listNode: TElement,
+    nestingLevel: number,
+    orderedListStyles?: OrderedListLevelStyle[],
+    unorderedListStyles?: UnorderedListLevelStyle[],
+): string => {
+    if (listNode.type === ELEMENT_UL) {
+        const ulStyles = unorderedListStyles ?? DEFAULT_UL_STYLES;
+        const levelStyle = ulStyles[nestingLevel % ulStyles.length];
+        const text = levelStyle.shape ?? "'\u2022'";
+        const color = levelStyle.color ?? 'currentColor';
+        const size = levelStyle.size ?? '1em';
+        return `<span class="${LIST_BULLET_CONTAINER_CLASSES}" style="--bullet-content: ${text}; --bullet-color: ${color}; --bullet-size: ${size};"></span>`;
+    }
+
+    if (listNode.type === ELEMENT_OL) {
+        const olStyles = orderedListStyles ?? DEFAULT_OL_STYLES;
+        const levelStyle = olStyles[nestingLevel % olStyles.length];
+        const counterType = levelStyle.counterType;
+        const color = levelStyle.color ?? 'currentColor';
+        return `<span class="${LIST_BULLET_CONTAINER_CLASSES}" style="--bullet-content: counter(list-counter, ${counterType}) '.'; --bullet-color: ${color};"></span>`;
+    }
+
+    return '';
 };
 
 export const serializeNodeToHtmlRecursive = (
@@ -66,26 +78,41 @@ export const serializeNodeToHtmlRecursive = (
     styles: Record<string, CSSPropertiesHover> | ButtonStylesType,
     {
         mappedMentionable,
-        nestingCount = {},
         orderedListStyles,
         unorderedListStyles,
+        bulletHtml: parentBulletHtml = '',
+        listNestingDepth = {},
     }: SerializeNodeToHtmlRecursiveOptions,
 ): string => {
     if (isText(node)) {
         return serializeLeafToHtml(node);
     }
 
-    const rootNestingCount = nestingCount[node.type] || getNestingLevels([node], node.type);
+    const isListContainer = node.type === ELEMENT_OL || node.type === ELEMENT_UL;
+
+    const currentListNestingDepth = { ...listNestingDepth };
+    if (isListContainer) {
+        const key = node.type as typeof ELEMENT_OL | typeof ELEMENT_UL;
+        currentListNestingDepth[key] = (currentListNestingDepth[key] ?? -1) + 1;
+    }
+
+    const nestingLevel = isListContainer
+        ? (currentListNestingDepth[node.type as typeof ELEMENT_OL | typeof ELEMENT_UL] ?? 0)
+        : 0;
+
     let children = '';
-    for (const element of node.children) {
+    for (let i = 0; i < node.children.length; i++) {
+        const element = node.children[i];
+        const bulletHtml = isListContainer
+            ? getBulletHtml(node, nestingLevel, orderedListStyles, unorderedListStyles)
+            : parentBulletHtml;
+
         children += serializeNodeToHtmlRecursive(element, styles, {
-            nestingCount: {
-                ...nestingCount,
-                [element.type as string]: rootNestingCount,
-            },
             mappedMentionable,
             orderedListStyles,
             unorderedListStyles,
+            bulletHtml,
+            listNestingDepth: currentListNestingDepth,
         });
     }
 
@@ -98,12 +125,10 @@ export const serializeNodeToHtmlRecursive = (
                     node.align as string | undefined,
                 ),
                 children,
-                rootNestingCount,
                 node,
                 mappedMentionable,
                 styles,
-                orderedListStyles,
-                unorderedListStyles,
+                bulletHtml: parentBulletHtml,
             }) ?? children
         );
     } catch {
@@ -115,12 +140,10 @@ export const serializeNodeToHtmlRecursive = (
 type Arguments = {
     classNames: string;
     children: string;
-    rootNestingCount: number;
     node: TElement;
     mappedMentionable?: MappedMentionableItems;
     styles: Record<string, CSSPropertiesHover>;
-    orderedListStyles?: OrderedListLevelStyle[];
-    unorderedListStyles?: UnorderedListLevelStyle[];
+    bulletHtml: string;
 };
 
 const MapNodeTypesToHtml: { [key: string]: ({ ...args }: Arguments) => string } = {
@@ -135,26 +158,14 @@ const MapNodeTypesToHtml: { [key: string]: ({ ...args }: Arguments) => string } 
     [TextStyles.quote]: (args) => getTextStyleHtml(TextStyles.quote, args, 'p'),
     [TextStyles.imageTitle]: (args) => getTextStyleHtml(TextStyles.imageTitle, args, 'p'),
     [TextStyles.imageCaption]: (args) => getTextStyleHtml(TextStyles.imageCaption, args, 'p'),
-    [ELEMENT_UL]: (args) => {
-        const nestingLevel = Math.max(args.rootNestingCount - getNestingLevels([args.node], ELEMENT_UL), 0);
-        const ulStyles = args.unorderedListStyles ?? DEFAULT_UL_STYLES;
-        const levelStyle = ulStyles[nestingLevel % ulStyles.length];
-        const style = `--bullet-character:${levelStyle.shape}; --bullet-color: ${levelStyle.color ?? 'currentColor'}; --bullet-size: ${levelStyle.size ?? '1em'};`;
-        return `<ul dir="auto" class="${UL_CLASSES} ${args.classNames}" style="${style}">${args.children}</ul>`;
-    },
-    [ELEMENT_OL]: ({ classNames, children, node, rootNestingCount, orderedListStyles }) => {
-        const nestingLevel = Math.max(rootNestingCount - getNestingLevels([node], ELEMENT_OL), 0);
-        const olStyles = orderedListStyles ?? DEFAULT_OL_STYLES;
-        const levelStyle = olStyles[nestingLevel % olStyles.length];
-        const style = `counter-reset: count; --counter-type: ${levelStyle.counterType}; --counter-color: ${levelStyle.color ?? 'currentColor'};`;
-        return `<ol dir="auto" class="${OL_CLASSES} ${classNames}" style="${style}">${children}</ol>`;
-    },
+    [ELEMENT_UL]: ({ classNames, children }) => `<ul dir="auto" class="${UL_CLASSES} ${classNames}">${children}</ul>`,
+    [ELEMENT_OL]: ({ classNames, children }) => `<ol dir="auto" class="${OL_CLASSES} ${classNames}">${children}</ol>`,
     [ELEMENT_LI]: ({ classNames, children, node, styles }) =>
         `<li dir="auto" class="${classNames} ${LI_CLASSNAMES}" style="${reactCssPropsToCss(
             getLiStyles(node, styles),
         )}">${children}</li>`,
-    [ELEMENT_LIC]: ({ classNames, children, node }) =>
-        `<p dir="auto" class="${classNames} ${getLicElementClassNames(node, false)}"><span class="${LIST_ITEM_SPAN_CLASSES}">${children}</span></p>`,
+    [ELEMENT_LIC]: ({ classNames, children, node, bulletHtml }) =>
+        `<p dir="auto" class="${classNames} ${getLicElementClassNames(node, false)}">${bulletHtml}<span class="${LIST_ITEM_SPAN_CLASSES}">${children}</span></p>`,
     [ELEMENT_LINK]: ({ node, children, classNames, styles }) => linkNode(node, children, classNames, styles),
     [ELEMENT_BUTTON]: ({ node, children, classNames, styles }) =>
         buttonNode(node, children, classNames, styles as ButtonStylesType),
