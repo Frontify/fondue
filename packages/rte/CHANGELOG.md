@@ -1,5 +1,15 @@
 # @frontify/fondue-rte
 
+## 0.1.2
+
+### Patch Changes
+
+- [#2673](https://github.com/Frontify/fondue/pull/2673) [`4e620ee`](https://github.com/Frontify/fondue/commit/4e620ee93572f1fc47859008a21a50bd96a53fe8) Thanks [@fulopdaniel](https://github.com/fulopdaniel)! - feat(RTE): replace pseudo list elements
+
+- Updated dependencies [[`b8744a7`](https://github.com/Frontify/fondue/commit/b8744a79da349bf9c34f25f826546bddc7678207), [`d9c4843`](https://github.com/Frontify/fondue/commit/d9c4843c9eae13e54a78654c8ce714f8d030c52d), [`253d60e`](https://github.com/Frontify/fondue/commit/253d60e13fc9f34d089b199ceeb06dea42e47453)]:
+    - @frontify/fondue-components@29.1.0
+    - @frontify/fondue-tokens@5.0.0
+
 ## 0.1.1
 
 ### Patch Changes
