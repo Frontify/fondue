@@ -77,22 +77,10 @@ describe('TextStylePlugin', () => {
     it('renders ordered list with correct list style types', () => {
         cy.mount(<RichTextEditorWithOrderedListStyles />);
 
-        cy.get('[contenteditable=true] ol').should(
-            'have.class',
-            "[&>li>p]:before:tw-content-[counter(count,var(--counter-type))_'._']",
-        );
-        cy.get('[contenteditable=true] ol ol').should(
-            'have.class',
-            "[&>li>p]:before:tw-content-[counter(count,var(--counter-type))_'._']",
-        );
-        cy.get('[contenteditable=true] ol ol ol').should(
-            'have.class',
-            "[&>li>p]:before:tw-content-[counter(count,var(--counter-type))_'._']",
-        );
-        cy.get('[contenteditable=true] ol ol ol ol').should(
-            'have.class',
-            "[&>li>p]:before:tw-content-[counter(count,var(--counter-type))_'._']",
-        );
+        cy.get('[contenteditable=true] ol').should('have.class', '[counter-reset:list-counter]');
+        cy.get('[contenteditable=true] ol ol').should('have.class', '[counter-reset:list-counter]');
+        cy.get('[contenteditable=true] ol ol ol').should('have.class', '[counter-reset:list-counter]');
+        cy.get('[contenteditable=true] ol ol ol ol').should('have.class', '[counter-reset:list-counter]');
     });
 
     it('renders an ordered list', () => {

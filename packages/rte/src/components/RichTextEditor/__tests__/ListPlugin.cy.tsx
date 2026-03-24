@@ -43,7 +43,7 @@ describe('List Plugin', () => {
         cy.get(firstListItemSelector).should(
             'have.attr',
             'style',
-            'font-size: 48px; font-style: normal; font-weight: 700; counter-increment: count 1;',
+            'font-size: 48px; font-style: normal; font-weight: 700; counter-increment: list-counter 1;',
         );
     });
 
@@ -58,12 +58,12 @@ describe('List Plugin', () => {
         cy.get('[contenteditable=true] li:first-child').should(
             'have.attr',
             'style',
-            'font-size: 14px; font-weight: normal; font-style: normal; counter-increment: count 1;',
+            'font-size: 14px; font-weight: normal; font-style: normal; counter-increment: list-counter 1;',
         );
         cy.get('[contenteditable=true] li:nth-child(2)').should(
             'have.attr',
             'style',
-            'font-size: 14px; font-weight: 600; font-style: normal; counter-increment: count 1;',
+            'font-size: 14px; font-weight: 600; font-style: normal; counter-increment: list-counter 1;',
         );
     });
 
