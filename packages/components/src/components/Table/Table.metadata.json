@@ -1,7 +1,6 @@
 {
     "category": "data",
     "description": "A structured data table for displaying rows and columns of information. Use when presenting tabular data that users need to scan, compare, or sort.",
-    "filePath": "src/components/Table/Table.tsx",
     "instructions": "Compose as Table.Root > Table.Header + Table.Body. Inside Table.Header use Table.HeaderCell for column headers. Inside Table.Body use Table.Row > Table.RowCell for data rows. Use Table.Caption for an accessible table title. Use OrderableList instead when rows need to be reordered by the user.",
     "name": "Table",
     "relatedComponents": ["OrderableList"],

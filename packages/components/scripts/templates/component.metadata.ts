@@ -5,7 +5,6 @@ import { type ComponentFileBuilderResponse } from '../types';
 export const Setup = (componentName: string): ComponentFileBuilderResponse => ({
     content: `{
   "name": "${componentName}",
-  "filePath": "src/components/${componentName}/${componentName}.tsx",
   "storyFilePaths": ["src/components/${componentName}/${componentName}.stories.tsx"],
   "description": "",
   "category": "",

@@ -1,7 +1,6 @@
 {
     "category": "input",
     "description": "A compact toggle control for switching between 2–5 mutually exclusive options. Use for view mode switches, layout toggles, or filter selections where all options should be visible simultaneously.",
-    "filePath": "src/components/SegmentedControl/SegmentedControl.tsx",
     "instructions": "Compose as SegmentedControl.Root > SegmentedControl.Item. Each item requires a unique value prop. Use defaultValue for uncontrolled usage or value + onValueChange for controlled. Use hugWidth=false to stretch to container width. Pair with a Label for accessibility. Use Tabs when switching also changes the visible content panel below. Use RadioList for longer option sets.",
     "name": "SegmentedControl",
     "relatedComponents": ["Tabs", "RadioList"],

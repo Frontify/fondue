@@ -1,7 +1,6 @@
 {
     "category": "typography",
     "description": "A form label that associates visible text with an input element for accessibility. Always use alongside form inputs like TextInput, Checkbox, Select, and Switch.",
-    "filePath": "src/components/Label/Label.tsx",
     "instructions": "Always provide htmlFor matching the input's id, or use id on the Label with aria-labelledby on the input. Use required prop to show an asterisk indicator. Use variant='strong' for emphasized labels. The Label automatically becomes visually disabled when its associated input is disabled — use data-label-ignore-disabled='true' on sibling containers (like action button groups) to prevent them from affecting the label state.",
     "name": "Label",
     "relatedComponents": ["Text", "Heading"],

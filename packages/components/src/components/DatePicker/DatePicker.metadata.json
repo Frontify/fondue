@@ -1,7 +1,6 @@
 {
     "category": "input",
     "description": "A date or date range picker with a calendar panel. Use when the user needs to select a specific date or date range.",
-    "filePath": "src/components/DatePicker/DatePicker.ts",
     "instructions": "DatePicker does not include its own trigger or popover — combine DatePicker.Input as the Flyout.Trigger and DatePicker (or DatePicker.Range) inside Flyout.Content for the standard pattern. Dates are represented as plain objects { year, month, day } — not JS Date objects. Use DatePicker.Range for range selection. Pass disabledDates to restrict selectable dates.",
     "name": "DatePicker",
     "relatedComponents": ["TextInput"],

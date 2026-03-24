@@ -1,7 +1,6 @@
 {
     "category": "utility",
     "description": "A root context provider that applies theming, text direction, and translations to all fondue components in its subtree. Required at the top level of any application using this component library.",
-    "filePath": "src/components/ThemeProvider/ThemeProvider.tsx",
     "instructions": "Wrap the entire application (or at minimum all fondue components) with ThemeProvider. Use theme='light' (default) or 'dark'. Use dir='rtl' for right-to-left language support. Provide a translations object from '@frontify/fondue/components/locales' or a custom Translations object for localized UI strings used by components. Use asChild to merge ThemeProvider onto an existing root element.",
     "name": "ThemeProvider",
     "relatedComponents": ["RouterProvider"],

@@ -1,7 +1,6 @@
 {
     "category": "layout",
     "description": "A general-purpose layout primitive for applying spacing, sizing, overflow, and positioning using design-system tokens. Use as a wrapper div or span when you need layout control without flexbox or grid.",
-    "filePath": "src/components/Box/Box.tsx",
     "instructions": "Spacing props (p, m, px, my, etc.) accept design token numbers or pixel strings. Use as='span' to render inline. Use Flex for flex layouts and Grid for grid layouts — Box is for simpler single-element sizing and spacing. All spacing props support responsive objects with breakpoint keys (base, xs, sm, md, lg, xl, 2xl).",
     "name": "Box",
     "relatedComponents": ["Flex", "Grid"],

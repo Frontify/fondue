@@ -1,7 +1,6 @@
 {
     "category": "feedback",
     "description": "An inline alert banner for displaying feedback messages such as errors, warnings, success confirmations, or informational notices.",
-    "filePath": "src/components/Notice/Notice.tsx",
     "instructions": "Use variant to set intent (default, highlight, positive, danger, warning). Use emphasis='strong' for high-visibility banners and 'weak' for subtle inline notices. Provide an icon ReactNode to add a leading icon. Provide an action ReactNode (typically a Button) for actionable notices. Provide onDismiss to show a dismiss button. Children is the message content.",
     "name": "Notice",
     "relatedComponents": ["Badge", "Tag"],

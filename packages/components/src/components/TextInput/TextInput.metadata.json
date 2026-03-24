@@ -1,7 +1,6 @@
 {
     "category": "input",
     "description": "A single-line text input field for collecting short text values. Use for names, emails, URLs, search queries, and other single-line form inputs.",
-    "filePath": "src/components/TextInput/TextInput.tsx",
     "instructions": "Use the simple TextInput for basic inputs, or compose TextInput.Root > TextInput.Slot for inputs with icon or button decorators. TextInput.Slot accepts name='left' or 'right'. Use status prop ('success', 'error', 'loading') to communicate validation state. Always pair with a Label for accessibility. Use Textarea for multi-line input.",
     "name": "TextInput",
     "relatedComponents": ["Textarea", "EditableText"],

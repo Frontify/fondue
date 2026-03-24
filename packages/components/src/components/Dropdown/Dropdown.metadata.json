@@ -1,7 +1,6 @@
 {
     "category": "overlay",
     "description": "A contextual action menu that opens relative to a trigger element. Use for lists of actions or navigation options that don't require value selection.",
-    "filePath": "src/components/Dropdown/Dropdown.tsx",
     "instructions": "Compose as Dropdown.Root > Dropdown.Trigger + Dropdown.Content > Dropdown.Item. Use Dropdown.Group to group related items — provide a heading prop for labeled groups. Use Dropdown.SubMenu > Dropdown.SubTrigger + Dropdown.SubContent for nested menus. Use Dropdown.Slot with name='left' or 'right' inside Dropdown.Item to add icon decorators. Use emphasis='danger' on Dropdown.Item for destructive actions. Use Select instead when users need to pick a value from a list.",
     "name": "Dropdown",
     "relatedComponents": ["Select", "Flyout"],
