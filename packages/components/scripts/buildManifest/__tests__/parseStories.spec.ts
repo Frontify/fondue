@@ -328,7 +328,7 @@ describe('parseStories', () => {
             expect(examples[0].name).toBe('SimpleSelect');
         });
 
-        it('uses the name property as storyName when present', () => {
+        it('uses the name property as the example name when present', () => {
             const file = writeTempStory(
                 'name-override',
                 `
@@ -341,11 +341,10 @@ describe('parseStories', () => {
             `,
             );
             const { examples } = parseStories([file]);
-            expect(examples[0].name).toBe('SimpleSelect');
-            expect(examples[0].storyName).toBe('Select');
+            expect(examples[0].name).toBe('Select');
         });
 
-        it('falls back to export name as storyName when name is absent', () => {
+        it('falls back to export name when name property is absent', () => {
             const file = writeTempStory(
                 'name-fallback',
                 `
@@ -357,7 +356,7 @@ describe('parseStories', () => {
             `,
             );
             const { examples } = parseStories([file]);
-            expect(examples[0].storyName).toBe('WithRender');
+            expect(examples[0].name).toBe('WithRender');
         });
     });
 

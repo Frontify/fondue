@@ -10,6 +10,18 @@ vi.mock('react-docgen-typescript', () => ({
 vi.mock('../utils', () => ({
     resolveFromRoot: (...segments: string[]) => ['<root>', ...segments].filter(Boolean).join('/'),
 }));
+vi.mock('typescript', async () => {
+    const actual = await vi.importActual<typeof import('typescript')>('typescript');
+    return {
+        ...actual,
+        default: {
+            ...actual,
+            sys: actual.sys,
+            getParsedCommandLineOfConfigFile: vi.fn().mockReturnValue({ options: {} }),
+            flattenDiagnosticMessageText: actual.flattenDiagnosticMessageText,
+        },
+    };
+});
 vi.mock('../utils/astDisplayNames', () => ({
     scanDisplayNames: vi.fn().mockReturnValue({ displayNameMap: new Map(), sourceFile: {} }),
     getForwardRefInnerName: vi.fn().mockReturnValue(null),

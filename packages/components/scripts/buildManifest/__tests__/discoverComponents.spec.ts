@@ -25,11 +25,18 @@ describe('discoverComponents', () => {
         expect(discoverComponents()).toEqual([]);
     });
 
-    it('skips metadata files that have no filePath', () => {
+    it('throws when name is missing from metadata', () => {
+        vi.mocked(globSync).mockReturnValue(['<root>/src/components/Button/Button.metadata.json']);
+        vi.mocked(readFileSync).mockReturnValue(JSON.stringify({ storyFilePaths: [] }));
+
+        expect(() => discoverComponents()).toThrow('Component name is required');
+    });
+
+    it('throws when storyFilePaths is missing from metadata', () => {
         vi.mocked(globSync).mockReturnValue(['<root>/src/components/Button/Button.metadata.json']);
         vi.mocked(readFileSync).mockReturnValue(JSON.stringify({ name: 'Button' }));
 
-        expect(discoverComponents()).toEqual([]);
+        expect(() => discoverComponents()).toThrow('Component storyFilePaths is required');
     });
 
     it('parses a valid metadata file into a DiscoveredComponent', () => {
@@ -37,7 +44,6 @@ describe('discoverComponents', () => {
         vi.mocked(readFileSync).mockReturnValue(
             JSON.stringify({
                 name: 'Button',
-                filePath: 'src/components/Button/Button.tsx',
                 storyFilePaths: ['src/components/Button/Button.stories.tsx'],
             }),
         );
@@ -45,38 +51,21 @@ describe('discoverComponents', () => {
         const components = discoverComponents();
         expect(components).toHaveLength(1);
         expect(components[0].name).toBe('Button');
-        expect(components[0].filePath).toBe('src/components/Button/Button.tsx');
-        expect(components[0].dirPath).toBe('src/components/Button');
+        expect(components[0].dirPath).toBe('<root>/src/components/Button');
         expect(components[0].storyFilePaths).toHaveLength(1);
-    });
-
-    it('derives name from the filename when name is absent in JSON', () => {
-        vi.mocked(globSync).mockReturnValue(['<root>/src/components/Badge/Badge.metadata.json']);
-        vi.mocked(readFileSync).mockReturnValue(JSON.stringify({ filePath: 'src/components/Badge/Badge.tsx' }));
-
-        const components = discoverComponents();
-        expect(components[0].name).toBe('Badge');
     });
 
     it('resolves storyFilePaths relative to package root', () => {
         vi.mocked(globSync).mockReturnValue(['<root>/src/components/Button/Button.metadata.json']);
         vi.mocked(readFileSync).mockReturnValue(
             JSON.stringify({
-                filePath: 'src/components/Button/Button.tsx',
+                name: 'Button',
                 storyFilePaths: ['src/components/Button/Button.stories.tsx'],
             }),
         );
 
         const components = discoverComponents();
         expect(components[0].storyFilePaths[0]).toContain('src/components/Button/Button.stories.tsx');
-    });
-
-    it('uses empty storyFilePaths when the field is absent', () => {
-        vi.mocked(globSync).mockReturnValue(['<root>/src/components/Button/Button.metadata.json']);
-        vi.mocked(readFileSync).mockReturnValue(JSON.stringify({ filePath: 'src/components/Button/Button.tsx' }));
-
-        const components = discoverComponents();
-        expect(components[0].storyFilePaths).toEqual([]);
     });
 
     it('returns components sorted alphabetically by name', () => {
@@ -86,11 +75,18 @@ describe('discoverComponents', () => {
             '<root>/src/components/Badge/Badge.metadata.json',
         ]);
         vi.mocked(readFileSync)
-            .mockReturnValueOnce(JSON.stringify({ name: 'Tooltip', filePath: 'src/components/Tooltip/Tooltip.tsx' }))
             .mockReturnValueOnce(
-                JSON.stringify({ name: 'Accordion', filePath: 'src/components/Accordion/Accordion.tsx' }),
+                JSON.stringify({ name: 'Tooltip', storyFilePaths: ['src/components/Tooltip/Tooltip.stories.tsx'] }),
             )
-            .mockReturnValueOnce(JSON.stringify({ name: 'Badge', filePath: 'src/components/Badge/Badge.tsx' }));
+            .mockReturnValueOnce(
+                JSON.stringify({
+                    name: 'Accordion',
+                    storyFilePaths: ['src/components/Accordion/Accordion.stories.tsx'],
+                }),
+            )
+            .mockReturnValueOnce(
+                JSON.stringify({ name: 'Badge', storyFilePaths: ['src/components/Badge/Badge.stories.tsx'] }),
+            );
 
         const names = discoverComponents().map((c) => c.name);
         expect(names).toEqual(['Accordion', 'Badge', 'Tooltip']);
@@ -107,11 +103,13 @@ describe('discoverComponents', () => {
         warnSpy.mockRestore();
     });
 
-    it('derives dirPath as the directory portion of filePath', () => {
+    it('derives dirPath from the metadata file directory', () => {
         vi.mocked(globSync).mockReturnValue(['<root>/src/components/Select/Select.metadata.json']);
-        vi.mocked(readFileSync).mockReturnValue(JSON.stringify({ filePath: 'src/components/Select/SelectSingle.tsx' }));
+        vi.mocked(readFileSync).mockReturnValue(
+            JSON.stringify({ name: 'Select', storyFilePaths: ['src/components/Select/Select.stories.tsx'] }),
+        );
 
         const components = discoverComponents();
-        expect(components[0].dirPath).toBe('src/components/Select');
+        expect(components[0].dirPath).toBe('<root>/src/components/Select');
     });
 });

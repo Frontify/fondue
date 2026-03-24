@@ -20,7 +20,6 @@ import { type ComponentManifest } from '../types';
 
 const baseComponent = {
     name: 'Button',
-    filePath: 'src/components/Button/Button.tsx',
     dirPath: 'src/components/Button',
     storyFilePaths: [],
 };
@@ -59,7 +58,6 @@ describe('assembleComponentManifest', () => {
         expect(manifest.tags).toEqual(['interactive']);
         expect(manifest.relatedComponents).toEqual(['Link']);
         expect(manifest.instructions).toBe('Use onPress, not onClick.');
-        expect(manifest.filePath).toBe('src/components/Button/Button.tsx');
         expect(manifest.typeDefinitions).toEqual({});
     });
 
@@ -97,7 +95,7 @@ describe('assembleComponentManifest', () => {
         const input: AssembleInput = {
             ...baseInput,
             examples: [
-                { name: 'Default', storyName: 'Default', description: '', code: '<Button />', isCanonical: true },
+                { name: 'Default', description: '', code: '<Button />', isCanonical: true },
             ],
         };
         const manifest = assembleComponentManifest(input);
@@ -165,7 +163,7 @@ describe('writeGlobalManifest', () => {
         const manifest1 = assembleComponentManifest(baseInput);
         const manifest2 = assembleComponentManifest({
             ...baseInput,
-            component: { ...baseComponent, name: 'Badge', filePath: 'src/components/Badge/Badge.tsx' },
+            component: { ...baseComponent, name: 'Badge' },
             description: 'A badge',
         });
         writeGlobalManifest([manifest1, manifest2], '@frontify/fondue-components', 'src/components/Button');
