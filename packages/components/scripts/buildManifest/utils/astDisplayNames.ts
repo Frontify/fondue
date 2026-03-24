@@ -16,6 +16,7 @@ import {
     ScriptKind,
     ScriptTarget,
     type SourceFile,
+    type Expression,
     SyntaxKind,
 } from 'typescript';
 
@@ -67,7 +68,7 @@ export const scanDisplayNames = (filePath: string): ScanResult => {
  * If the expression is a `forwardRef(X)` or `React.forwardRef(X)` call where X is an identifier,
  * return X's name. Otherwise return null.
  */
-const getForwardRefArgName = (expr: import('typescript').Expression): string | null => {
+const getForwardRefArgName = (expr: Expression): string | null => {
     if (!isCallExpression(expr)) {
         return null;
     }

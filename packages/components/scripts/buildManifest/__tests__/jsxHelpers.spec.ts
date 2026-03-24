@@ -1,8 +1,8 @@
 // @vitest-environment node
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { describe, expect, it } from 'vitest';
 import { createSourceFile, isVariableStatement, ScriptKind, ScriptTarget, type Expression } from 'typescript';
+import { describe, expect, it } from 'vitest';
 
 import {
     isJsxLike,
@@ -19,7 +19,7 @@ function parseExpression(code: string): Expression {
     if (!isVariableStatement(stmt)) {
         throw new Error('Expected variable statement');
     }
-    return stmt.declarationList.declarations[0].initializer!;
+    return stmt.declarationList.declarations[0].initializer;
 }
 
 function withSource(code: string): { expr: Expression; sourceText: string } {
@@ -29,7 +29,7 @@ function withSource(code: string): { expr: Expression; sourceText: string } {
     if (!isVariableStatement(stmt)) {
         throw new Error('Expected variable statement');
     }
-    return { expr: stmt.declarationList.declarations[0].initializer!, sourceText };
+    return { expr: stmt.declarationList.declarations[0].initializer, sourceText };
 }
 
 // ---------------------------------------------------------------------------

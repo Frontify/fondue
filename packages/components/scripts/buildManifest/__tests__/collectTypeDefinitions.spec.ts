@@ -2,9 +2,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 vi.mock('../utils', () => {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/consistent-type-imports
     const os = require('node:os') as typeof import('node:os');
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/consistent-type-imports
     const path = require('node:path') as typeof import('node:path');
     const root = path.join(os.tmpdir(), 'manifest-test-collectTypes');
     return {
@@ -70,15 +70,15 @@ describe('collectTypeDefinitions', () => {
     it('resolves type aliases', () => {
         const result = collectTypeDefinitions([makeProp('ButtonVariant')]);
         expect(result).toHaveProperty('ButtonVariant');
-        expect(result['ButtonVariant']).toContain('primary');
-        expect(result['ButtonVariant']).toContain('secondary');
+        expect(result.ButtonVariant).toContain('primary');
+        expect(result.ButtonVariant).toContain('secondary');
     });
 
     it('resolves interface declarations', () => {
         const result = collectTypeDefinitions([makeProp('ButtonStyle')]);
         expect(result).toHaveProperty('ButtonStyle');
-        expect(result['ButtonStyle']).toContain('color');
-        expect(result['ButtonStyle']).toContain('fontSize');
+        expect(result.ButtonStyle).toContain('color');
+        expect(result.ButtonStyle).toContain('fontSize');
     });
 
     it('resolves multiple types in one call', () => {

@@ -1,7 +1,6 @@
 // @vitest-environment node
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { describe, expect, it, vi } from 'vitest';
 import {
     createSourceFile,
     isVariableStatement,
@@ -10,6 +9,7 @@ import {
     type Expression,
     type ObjectLiteralExpression,
 } from 'typescript';
+import { describe, expect, it, vi } from 'vitest';
 
 import {
     getStringValue,
@@ -27,7 +27,7 @@ function parseExpression(code: string, kind = ScriptKind.TS): Expression {
     if (!isVariableStatement(stmt)) {
         throw new Error('Expected variable statement');
     }
-    return stmt.declarationList.declarations[0].initializer!;
+    return stmt.declarationList.declarations[0].initializer;
 }
 
 function parseObject(code: string): { obj: ObjectLiteralExpression; sourceText: string } {
@@ -112,7 +112,7 @@ describe('extractMetaArgsOnly', () => {
     });
 
     it('returns empty when no args property', () => {
-        const { obj, sourceText } = parseObject("{ component: Button }");
+        const { obj, sourceText } = parseObject('{ component: Button }');
         expect(extractMetaArgsOnly(obj, sourceText)).toEqual({});
     });
 
