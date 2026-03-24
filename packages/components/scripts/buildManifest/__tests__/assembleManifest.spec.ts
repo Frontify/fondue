@@ -94,9 +94,7 @@ describe('assembleComponentManifest', () => {
     it('includes examples passed in', () => {
         const input: AssembleInput = {
             ...baseInput,
-            examples: [
-                { name: 'Default', description: '', code: '<Button />', isCanonical: true },
-            ],
+            examples: [{ name: 'Default', description: '', code: '<Button />', isCanonical: true }],
         };
         const manifest = assembleComponentManifest(input);
         expect(manifest.examples).toHaveLength(1);

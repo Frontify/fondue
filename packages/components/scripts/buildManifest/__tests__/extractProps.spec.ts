@@ -11,7 +11,7 @@ vi.mock('../utils', () => ({
     resolveFromRoot: (...segments: string[]) => ['<root>', ...segments].filter(Boolean).join('/'),
 }));
 vi.mock('typescript', async () => {
-    const actual = await vi.importActual<typeof import('typescript')>('typescript');
+    const actual = await vi.importActual('typescript');
     return {
         ...actual,
         default: {
