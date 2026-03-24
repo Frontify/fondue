@@ -10,7 +10,7 @@ import {
     type Props,
     withCompilerOptions,
 } from 'react-docgen-typescript';
-import { JsxEmit } from 'typescript';
+import ts from 'typescript';
 
 import { type PropInfo, type SubComponent } from './types';
 import { resolveFromRoot } from './utils';
@@ -19,21 +19,29 @@ import { collectTypeDefinitions } from './utils/collectTypeDefinitions';
 
 let _parser: FileParser | null = null;
 
+const parseTsConfig = (): ts.CompilerOptions => {
+    const configPath = resolveFromRoot('tsconfig.json');
+    const host: ts.ParseConfigFileHost = {
+        ...ts.sys,
+        onUnRecoverableConfigFileDiagnostic: (diagnostic) => {
+            throw new Error(ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n'));
+        },
+    };
+    const parsed = ts.getParsedCommandLineOfConfigFile(configPath, {}, host);
+    if (!parsed) {
+        throw new Error(`Failed to parse ${configPath}`);
+    }
+    return parsed.options;
+};
+
 const getParser = (): FileParser => {
     if (!_parser) {
+        const compilerOptions = parseTsConfig();
         _parser = withCompilerOptions(
             {
-                jsx: JsxEmit.ReactJSX,
-                skipLibCheck: true,
-                noEmit: true,
-                resolveJsonModule: true,
-                strict: false,
-                allowSyntheticDefaultImports: true,
-                esModuleInterop: true,
+                ...compilerOptions,
                 baseUrl: resolveFromRoot(),
-                paths: {
-                    '#/*': ['./src/*'],
-                },
+                strict: false,
             },
             {
                 savePropValueAsString: true,
@@ -122,9 +130,7 @@ type ExtractPropsResult = {
 };
 
 export const extractProps = (componentName: string, dirPath: string): ExtractPropsResult => {
-    const absoluteDir = resolveFromRoot(dirPath);
-
-    const tsxFiles = globSync('**/*.{ts,tsx}', { cwd: absoluteDir, absolute: true }).filter(
+    const tsxFiles = globSync('**/*.{ts,tsx}', { cwd: dirPath, absolute: true }).filter(
         (fileName) =>
             !fileName.includes('.stories.') &&
             !fileName.includes('.ct.') &&

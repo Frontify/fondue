@@ -1,8 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { existsSync, readFileSync } from 'node:fs';
-
-import { resolveFromRoot } from './utils';
+import path from 'node:path';
 
 export type MetadataResult = {
     description: string;
@@ -21,7 +20,7 @@ type MetadataJson = {
 };
 
 export const readMetadata = (dirPath: string, componentName: string): MetadataResult | null => {
-    const metaFilePath = resolveFromRoot(dirPath, `${componentName}.metadata.json`);
+    const metaFilePath = path.join(dirPath, `${componentName}.metadata.json`);
 
     if (!existsSync(metaFilePath)) {
         return null;
