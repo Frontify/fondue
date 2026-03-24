@@ -116,10 +116,9 @@ export const parseStories = (storyFilePaths: string[]): StoriesResult => {
                     continue;
                 }
 
-                const exportName = declaration.name.text;
+                let exportName = declaration.name.text;
                 const storyObj = declaration.initializer;
 
-                let storyName = exportName;
                 let description = '';
                 let isCanonical = false;
                 let renderCode: string | null = null;
@@ -134,7 +133,7 @@ export const parseStories = (storyFilePaths: string[]): StoriesResult => {
                         case 'name': {
                             const nameValue = getStringValue(property.initializer);
                             if (nameValue) {
-                                storyName = nameValue;
+                                exportName = nameValue;
                             }
                             break;
                         }
@@ -169,7 +168,6 @@ export const parseStories = (storyFilePaths: string[]): StoriesResult => {
 
                 examples.push({
                     name: exportName,
-                    storyName,
                     description,
                     isCanonical,
                     code,

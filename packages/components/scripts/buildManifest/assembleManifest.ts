@@ -37,7 +37,6 @@ export const assembleComponentManifest = (input: AssembleInput): ComponentManife
         tags: input.tags,
         relatedComponents: input.relatedComponents,
         importStatement: `import { ${input.component.name} } from '${input.packageName}';`,
-        filePath: input.component.filePath,
         props: input.mainProps,
         subComponents: input.subComponents,
         examples: input.examples,

@@ -10,7 +10,6 @@ import { resolveFromRoot } from './utils';
 
 type MetadataJson = {
     name?: string;
-    filePath?: string;
     dirPath?: string;
     storyFilePaths?: string[];
 };
@@ -28,15 +27,17 @@ export const discoverComponents = (): DiscoveredComponent[] => {
             continue;
         }
 
-        if (!data.filePath) {
-            continue;
+        if (!data.name) {
+            throw new Error(`Component name is required in ${metadataFilePath}`);
+        }
+        if (!data.storyFilePaths) {
+            throw new Error(`Component storyFilePaths is required in ${metadataFilePath}`);
         }
 
-        const name = data.name || path.basename(data.filePath, path.extname(data.filePath));
-        const dirPath = path.dirname(data.filePath);
+        const dirPath = path.dirname(metadataFilePath);
         const storyFilePaths = (data.storyFilePaths ?? []).map((p) => resolveFromRoot(p));
 
-        components.push({ name, filePath: data.filePath, dirPath, storyFilePaths });
+        components.push({ name: data.name, dirPath, storyFilePaths });
     }
 
     return components.sort((a, b) => a.name.localeCompare(b.name));

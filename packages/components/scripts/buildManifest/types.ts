@@ -17,7 +17,6 @@ export type SubComponent = {
 
 export type Example = {
     name: string;
-    storyName: string;
     description: string;
     code: string;
     isCanonical: boolean;
@@ -31,7 +30,6 @@ export type ComponentManifest = {
     tags: string[];
     relatedComponents: string[];
     importStatement: string;
-    filePath: string;
     props: PropInfo[];
     subComponents: SubComponent[];
     examples: Example[];
@@ -58,7 +56,6 @@ export type GlobalManifest = {
 
 export type DiscoveredComponent = {
     name: string;
-    filePath: string;
     dirPath: string;
     storyFilePaths: string[];
 };
