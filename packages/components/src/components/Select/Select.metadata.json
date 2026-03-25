@@ -3,7 +3,7 @@
     "description": "A dropdown for selecting a single value from a list of options. Use Select.Combobox for searchable/filterable selection, and Select.Multi or Select.Combobox.Multiple for multi-value selection.",
     "instructions": "Use Select for simple single-value selection. Use Select.Combobox when users need to search or filter the options list. Use Select.Multi or Select.Combobox.Multiple for multi-value selection. Group options with Select.Group. Use Select.Slot to add icons to items. Use Dropdown instead when items trigger actions rather than selecting a value.",
     "name": "Select",
-    "relatedComponents": ["Dropdown", "RadioList"],
+    "relatedComponents": ["Dropdown", "RadioList", "SegmentedControl"],
     "storyFilePaths": ["src/components/Select/Select.stories.tsx"],
     "tags": ["select", "dropdown", "form"]
 }

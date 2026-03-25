@@ -1,6 +1,6 @@
 {
     "category": "feedback",
-    "description": "A small inline label for displaying status, counts, or metadata alongside other content. Use for non-interactive annotations like entry counts or status indicators.",
+    "description": "A small indicator used to highlight status, count, or contextual information. Use to convey concise data at a glance, and enhancing clarity without overwhelming the interface.",
     "instructions": "Use variant to control color semantics (default, positive, highlight, warning, negative). Use emphasis='weak' for a subtler appearance. Provide a status prop (string color or RgbaColor object) to show a colored dot. Provide onDismiss to show a dismiss button. Use Tag instead if the label needs to be removable or interactive in a form context.",
     "name": "Badge",
     "relatedComponents": ["Tag", "Notice"],

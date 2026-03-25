@@ -1,6 +1,6 @@
 {
     "category": "input",
-    "description": "A range input for selecting a numerical value or range between a minimum and maximum. Use for settings like volume, opacity, price ranges, or any continuous numeric value.",
+    "description": "A range input for selecting a numerical value or range between a minimum and maximum.",
     "instructions": "Value is an array of numbers — use a single-element array for a single thumb, or two elements for a range slider. Use defaultValue for uncontrolled or value + onChange for controlled. onChange fires during drag; onCommit fires only when the user releases. Use minStepsBetweenThumbs to enforce a minimum gap in range sliders. Always provide aria-label or aria-labelledby for accessibility.",
     "name": "Slider",
     "relatedComponents": [],

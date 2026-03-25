@@ -1,7 +1,7 @@
 {
     "category": "layout",
-    "description": "A set of collapsible sections where each item can be independently expanded or collapsed. Use when you need to progressively disclose content to reduce visual clutter.",
-    "instructions": "Always compose as Accordion.Root > Accordion.Item > Accordion.Header + Accordion.Content. Each Accordion.Item requires a unique string value prop. Use Accordion.Slot with name=\"action\" inside Accordion.Header to place action buttons (e.g. edit/delete) on the right side of the header. Use Accordion.Slot without a name for badge-style secondary content. Add divider prop to Accordion.Content to show a separator between header and content.",
+    "description": "A set of collapsible sections where each item can be independently expanded or collapsed. Use when you need to organize large amounts of information into digestible sections, conserving space and improve scannability.",
+    "instructions": "Always compose as Accordion.Root > Accordion.Item > Accordion.Header + Accordion.Content. Each Accordion.Item requires a unique string value prop. Use Accordion.Slot with name=\"action\" inside Accordion.Header to place action buttons (e.g. edit/delete) on the right side of the header. Use Accordion.Slot without a name for badge-style secondary content. Add divider prop to Accordion.Content to show a separator between header and content if necessary based on the layout needs.",
     "name": "Accordion",
     "relatedComponents": ["Tabs", "Section"],
     "storyFilePaths": ["src/components/Accordion/Accordion.stories.tsx"],
