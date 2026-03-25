@@ -45,6 +45,11 @@ const meta: Meta<typeof SelectSingle> = {
 export default meta;
 
 export const SimpleSelect: Story = {
+    parameters: {
+        manifest: {
+            canonical: true,
+        },
+    },
     name: 'Select',
     render: (args) => {
         return (

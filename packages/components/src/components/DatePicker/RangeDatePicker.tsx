@@ -33,5 +33,5 @@ export const RangeDatePicker = (
     );
 };
 
-RangeDatePicker.displayName = 'RangeDatePicker';
+RangeDatePicker.displayName = 'DatePicker.Range';
 export const ForwardedRefRangeDatePicker = forwardRef<HTMLDivElement, RangeDatePickerProps>(RangeDatePicker);

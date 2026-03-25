@@ -35,6 +35,11 @@ const meta: Meta<typeof SingleDatePicker> = {
 export default meta;
 
 export const SingleDate: Story = {
+    parameters: {
+        manifest: {
+            canonical: true,
+        },
+    },
     args: {},
 };
 

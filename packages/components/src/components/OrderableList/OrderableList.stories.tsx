@@ -32,6 +32,11 @@ const meta: Meta<typeof OrderableListRoot> = {
 export default meta;
 
 export const Default: Story = {
+    parameters: {
+        manifest: {
+            canonical: true,
+        },
+    },
     render: () => {
         const [order, setOrder] = useState(['1', '2', '3', '4', '5']);
 

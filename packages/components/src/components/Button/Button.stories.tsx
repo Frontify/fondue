@@ -41,7 +41,13 @@ export const Default: Story = {
     ),
 };
 
-export const TextLabelOnly: Story = {};
+export const TextLabelOnly: Story = {
+    parameters: {
+        manifest: {
+            canonical: true,
+        },
+    },
+};
 
 export const WithIcon: Story = {
     name: 'Icon Only',

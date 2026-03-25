@@ -24,7 +24,13 @@ const meta: Meta<typeof LoadingBar> = {
 
 export default meta;
 
-export const WithDefinedValue: Story = {};
+export const WithDefinedValue: Story = {
+    parameters: {
+        manifest: {
+            canonical: true,
+        },
+    },
+};
 
 export const Indeterminate: Story = {
     args: {

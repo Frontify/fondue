@@ -24,6 +24,11 @@ const meta: Meta<typeof Box> = {
 export default meta;
 
 export const Default: Story = {
+    parameters: {
+        manifest: {
+            canonical: true,
+        },
+    },
     render: (args) => {
         return (
             <Box {...args}>

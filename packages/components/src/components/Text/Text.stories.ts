@@ -55,6 +55,11 @@ const meta: Meta<typeof Text> = {
 export default meta;
 
 export const Default: Story = {
+    parameters: {
+        manifest: {
+            canonical: true,
+        },
+    },
     args: {
         children: 'Hello World',
     },

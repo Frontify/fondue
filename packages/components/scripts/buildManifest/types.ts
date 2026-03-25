@@ -1,0 +1,61 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+export type PropInfo = {
+    name: string;
+    type: string;
+    required: boolean;
+    defaultValue: string | null;
+    description: string;
+    deprecated: boolean;
+    deprecationMessage: string;
+};
+
+export type SubComponent = {
+    name: string;
+    props: PropInfo[];
+};
+
+export type Example = {
+    name: string;
+    description: string;
+    code: string;
+    isCanonical: boolean;
+};
+
+export type ComponentManifest = {
+    name: string;
+    description: string;
+    status: string;
+    category: string;
+    tags: string[];
+    relatedComponents: string[];
+    importStatement: string;
+    props: PropInfo[];
+    subComponents: SubComponent[];
+    examples: Example[];
+    instructions: string;
+    typeDefinitions: Record<string, string>;
+};
+
+export type ComponentRef = {
+    name: string;
+    description: string;
+    status: string;
+    category: string;
+    tags: string[];
+    subComponentNames: string[];
+    manifestPath: string;
+};
+
+export type GlobalManifest = {
+    schemaVersion: string;
+    packageName: string;
+    generatedAt: string;
+    components: Record<string, ComponentRef>;
+};
+
+export type DiscoveredComponent = {
+    name: string;
+    dirPath: string;
+    storyFilePaths: string[];
+};

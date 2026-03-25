@@ -83,6 +83,11 @@ export default meta;
 type Story = StoryObj<typeof Link>;
 
 export const Default: Story = {
+    parameters: {
+        manifest: {
+            canonical: true,
+        },
+    },
     args: {
         children: 'Hello Link',
         href: '/hello',
