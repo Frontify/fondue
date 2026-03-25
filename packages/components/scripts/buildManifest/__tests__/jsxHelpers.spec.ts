@@ -1,5 +1,6 @@
-// @vitest-environment node
 /* (c) Copyright Frontify Ltd., all rights reserved. */
+
+// @vitest-environment node
 
 import { createSourceFile, isVariableStatement, ScriptKind, ScriptTarget, type Expression } from 'typescript';
 import { describe, expect, it } from 'vitest';
@@ -32,10 +33,6 @@ function withSource(code: string): { expr: Expression; sourceText: string } {
     return { expr: stmt.declarationList.declarations[0].initializer, sourceText };
 }
 
-// ---------------------------------------------------------------------------
-// isJsxLike
-// ---------------------------------------------------------------------------
-
 describe('isJsxLike', () => {
     it('returns true for JSX elements', () => {
         expect(isJsxLike(parseExpression('<div></div>'))).toBe(true);
@@ -53,10 +50,6 @@ describe('isJsxLike', () => {
         expect(isJsxLike(parseExpression('42'))).toBe(false);
     });
 });
-
-// ---------------------------------------------------------------------------
-// extractJsxFromRender
-// ---------------------------------------------------------------------------
 
 describe('extractJsxFromRender', () => {
     it('returns null for non-function expressions', () => {
@@ -106,10 +99,6 @@ describe('extractJsxFromRender', () => {
         expect(extractJsxFromRender(expr, sourceText)).toContain('<div />');
     });
 });
-
-// ---------------------------------------------------------------------------
-// serializeArgsAsProps
-// ---------------------------------------------------------------------------
 
 describe('serializeArgsAsProps', () => {
     it('returns empty string for empty args', () => {
@@ -161,10 +150,6 @@ describe('serializeArgsAsProps', () => {
     });
 });
 
-// ---------------------------------------------------------------------------
-// resolveArgsSpread
-// ---------------------------------------------------------------------------
-
 describe('resolveArgsSpread', () => {
     it('returns code unchanged when no spread present', () => {
         expect(resolveArgsSpread('<Foo bar />', {})).toBe('<Foo bar />');
@@ -182,10 +167,6 @@ describe('resolveArgsSpread', () => {
     });
 });
 
-// ---------------------------------------------------------------------------
-// cleanCode
-// ---------------------------------------------------------------------------
-
 describe('cleanCode', () => {
     it('replaces action() with () => {}', () => {
         expect(cleanCode(`onClick={action('click')}`)).toBe('onClick={() => {}}');
@@ -201,10 +182,6 @@ describe('cleanCode', () => {
         expect(result).toContain('() => {}');
     });
 });
-
-// ---------------------------------------------------------------------------
-// synthesizeJsx
-// ---------------------------------------------------------------------------
 
 describe('synthesizeJsx', () => {
     it('creates self-closing element with no args', () => {

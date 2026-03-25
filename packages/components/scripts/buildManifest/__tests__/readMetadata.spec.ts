@@ -1,5 +1,6 @@
-// @vitest-environment node
 /* (c) Copyright Frontify Ltd., all rights reserved. */
+
+// @vitest-environment node
 
 vi.mock('node:fs');
 import { existsSync, readFileSync } from 'node:fs';

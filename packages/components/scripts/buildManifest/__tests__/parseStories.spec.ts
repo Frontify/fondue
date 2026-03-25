@@ -1,5 +1,6 @@
-// @vitest-environment node
 /* (c) Copyright Frontify Ltd., all rights reserved. */
+
+// @vitest-environment node
 
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';

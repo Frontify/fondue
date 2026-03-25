@@ -1,5 +1,6 @@
-// @vitest-environment node
 /* (c) Copyright Frontify Ltd., all rights reserved. */
+
+// @vitest-environment node
 
 import {
     createSourceFile,
@@ -35,10 +36,6 @@ function parseObject(code: string): { obj: ObjectLiteralExpression; sourceText: 
     return { obj: parseExpression(code) as ObjectLiteralExpression, sourceText };
 }
 
-// ---------------------------------------------------------------------------
-// getStringValue
-// ---------------------------------------------------------------------------
-
 describe('getStringValue', () => {
     it('returns text for string literals', () => {
         expect(getStringValue(parseExpression("'hello'"))).toBe('hello');
@@ -60,10 +57,6 @@ describe('getStringValue', () => {
         expect(getStringValue(parseExpression('myVar'))).toBeNull();
     });
 });
-
-// ---------------------------------------------------------------------------
-// extractArgsFromObject
-// ---------------------------------------------------------------------------
 
 describe('extractArgsFromObject', () => {
     it('extracts simple key-value pairs', () => {
@@ -100,10 +93,6 @@ describe('extractArgsFromObject', () => {
     });
 });
 
-// ---------------------------------------------------------------------------
-// extractMetaArgsOnly
-// ---------------------------------------------------------------------------
-
 describe('extractMetaArgsOnly', () => {
     it('extracts args sub-object', () => {
         const { obj, sourceText } = parseObject("{ args: { color: 'red' } }");
@@ -122,10 +111,6 @@ describe('extractMetaArgsOnly', () => {
     });
 });
 
-// ---------------------------------------------------------------------------
-// findProp
-// ---------------------------------------------------------------------------
-
 describe('findProp', () => {
     it('finds a named property', () => {
         const { obj } = parseObject("{ status: 'released' }");
@@ -143,10 +128,6 @@ describe('findProp', () => {
         expect(findProp(obj, 'status')).toBeNull();
     });
 });
-
-// ---------------------------------------------------------------------------
-// extractMetaStatus
-// ---------------------------------------------------------------------------
 
 describe('extractMetaStatus', () => {
     it('extracts status from parameters.status.type', () => {
@@ -173,10 +154,6 @@ describe('extractMetaStatus', () => {
         expect(extractMetaStatus(expr)).toBe('');
     });
 });
-
-// ---------------------------------------------------------------------------
-// extractDescription
-// ---------------------------------------------------------------------------
 
 describe('extractDescription', () => {
     it('extracts from parameters.docs.description.story', () => {
@@ -208,10 +185,6 @@ describe('extractDescription', () => {
         expect(extractDescription(parseExpression('{ docs: { description: { other: "x" } } }'))).toBe('');
     });
 });
-
-// ---------------------------------------------------------------------------
-// extractIsCanonical
-// ---------------------------------------------------------------------------
 
 describe('extractIsCanonical', () => {
     it('returns true when manifest.canonical is true', () => {

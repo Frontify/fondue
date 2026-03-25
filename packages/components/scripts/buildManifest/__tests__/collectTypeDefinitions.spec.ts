@@ -1,5 +1,6 @@
-// @vitest-environment node
 /* (c) Copyright Frontify Ltd., all rights reserved. */
+
+// @vitest-environment node
 
 vi.mock('../utils', () => {
     // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/consistent-type-imports
@@ -56,10 +57,6 @@ export type NestedType = {
         'utf-8',
     );
 });
-
-// ---------------------------------------------------------------------------
-// Tests
-// ---------------------------------------------------------------------------
 
 describe('collectTypeDefinitions', () => {
     it('returns empty object when no PascalCase types in props', () => {

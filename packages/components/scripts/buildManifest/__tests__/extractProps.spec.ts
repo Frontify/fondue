@@ -1,5 +1,6 @@
-// @vitest-environment node
 /* (c) Copyright Frontify Ltd., all rights reserved. */
+
+// @vitest-environment node
 
 const mockParse = vi.hoisted(() => vi.fn().mockReturnValue([]));
 
@@ -36,10 +37,6 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { extractProps } from '../extractProps';
 import { collectTypeDefinitions } from '../utils/collectTypeDefinitions';
 
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
 type MockDoc = {
     displayName: string;
     props: Record<
@@ -71,10 +68,6 @@ function makeDoc(displayName: string, props: Record<string, Partial<MockDoc['pro
     }
     return { displayName, props: fullProps };
 }
-
-// ---------------------------------------------------------------------------
-// Tests
-// ---------------------------------------------------------------------------
 
 describe('extractProps', () => {
     beforeEach(() => {

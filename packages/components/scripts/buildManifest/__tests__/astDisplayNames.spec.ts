@@ -1,5 +1,6 @@
-// @vitest-environment node
 /* (c) Copyright Frontify Ltd., all rights reserved. */
+
+// @vitest-environment node
 
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -20,10 +21,6 @@ function writeTempFile(name: string, content: string): string {
     writeFileSync(filePath, content, 'utf-8');
     return filePath;
 }
-
-// ---------------------------------------------------------------------------
-// scanDisplayNames
-// ---------------------------------------------------------------------------
 
 describe('scanDisplayNames', () => {
     it('returns empty map for file with no displayName assignments', () => {
@@ -121,10 +118,6 @@ describe('scanDisplayNames', () => {
         expect(sourceFile.statements.length).toBeGreaterThan(0);
     });
 });
-
-// ---------------------------------------------------------------------------
-// getForwardRefInnerName
-// ---------------------------------------------------------------------------
 
 describe('getForwardRefInnerName', () => {
     it('returns inner component name for forwardRef(InnerComp)', () => {

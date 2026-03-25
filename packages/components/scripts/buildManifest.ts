@@ -56,10 +56,8 @@ const main = (): void => {
             console.error(`Story parsing failed for ${component.name}: ${(error as Error).message}`);
         }
 
-        // Read metadata
         const metadata = readMetadata(component.dirPath, component.name);
 
-        // Assemble manifest
         const manifest = assembleComponentManifest({
             component,
             mainProps,
@@ -75,12 +73,10 @@ const main = (): void => {
             typeDefinitions,
         });
 
-        // Write per-component manifest
         writeComponentManifest(manifest, MANIFEST_DIR);
         manifests.push(manifest);
     }
 
-    // Write global manifest
     writeGlobalManifest(manifests, PACKAGE_NAME, MANIFEST_DIR);
 
     console.log(`Done! ${manifests.length} components written to manifest.json`);
