@@ -108,7 +108,7 @@ export const Default: Story = {
     },
 };
 
-export const SingleBannerImage: Story = {
+export const WithBadges: Story = {
     decorators: singleCardDecorators,
     render: () => {
         const [selected, setSelected] = useState(false);
@@ -153,7 +153,7 @@ export const SingleBannerImage: Story = {
     },
 };
 
-export const CollectionCard: Story = {
+export const SmallBannerWithImages: Story = {
     decorators: singleCardDecorators,
     render: () => {
         const [selected, setSelected] = useState(false);
@@ -183,7 +183,7 @@ export const CollectionCard: Story = {
     },
 };
 
-export const EmptyCollectionCard: Story = {
+export const SmallBannerWithIcon: Story = {
     decorators: singleCardDecorators,
     render: () => {
         const [selected, setSelected] = useState(false);
@@ -214,7 +214,7 @@ export const EmptyCollectionCard: Story = {
     },
 };
 
-export const FolderCard: Story = {
+export const BannerIconWithThumbnail: Story = {
     decorators: singleCardDecorators,
     render: () => {
         const [selected, setSelected] = useState(false);
@@ -247,7 +247,7 @@ export const FolderCard: Story = {
     },
 };
 
-export const BrandCard: Story = {
+export const WithThumbnailImage: Story = {
     decorators: singleCardDecorators,
     render: () => {
         const [selected, setSelected] = useState(false);
