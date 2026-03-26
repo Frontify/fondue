@@ -65,7 +65,7 @@
     //     <Button disabled>Decrement</Button>
     //   </TextInput.Slot>
     // </TextInput.Root>
-    
+
     // Check for disabled descendants, but NOT if they're inside a data-label-ignore-disabled container
     &:has(+ * :disabled):not(:has(+ * [data-label-ignore-disabled] :disabled)),
     &:has(~ :disabled):not(:has(~ [data-label-ignore-disabled] :disabled)) {
@@ -78,26 +78,6 @@
     button:disabled ~ & {
         color: var(--color-disabled-default);
         cursor: not-allowed;
-    }
-
-    // Required asterisk
-    &[data-required='true']::after {
-        content: '*';
-        display: flex;
-        margin-inline-start: calc(-1 * var(--spacing-x-small));
-        margin-top: -1px;
-        font-family: var(--typography-font-family-primary);
-        font-size: var(--typography-font-size-small);
-        font-weight: 500;
-        color: var(--color-error-default);
-    }
-
-    &[data-required='true']:hover::after {
-        color: var(--color-error-hover);
-    }
-
-    &::after {
-        display: none;
     }
 }
 

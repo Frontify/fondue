@@ -15,7 +15,10 @@ export type LabelProps = {
      */
     htmlFor: string;
     /**
-     * Add an asterisk to the label to indicate it is required
+     * Marks the Label as required
+     * Note: The Label does no longer render an asterisk.
+     *       Avoid using asterisks to indicate required fields.
+     *       Prefer marking optional fields instead.
      * @default false
      */
     required?: boolean;
