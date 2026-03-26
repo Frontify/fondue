@@ -18,13 +18,9 @@ const RouterContext = createContext<{
     navigate: (path: string) => void;
     useHref: (path: string) => string;
 }>({
-    navigate: () => {
-        throw new Error('RouterProvider: `navigate` function is not implemented');
-    },
+    navigate: () => {},
     // eslint-disable-next-line @eslint-react/no-unnecessary-use-prefix
-    useHref: () => {
-        throw new Error('RouterProvider: `useHref` function is not implemented');
-    },
+    useHref: (path: string) => path,
 });
 RouterContext.displayName = 'RouterContext';
 

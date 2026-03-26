@@ -5,13 +5,17 @@ import {
     Children,
     type ForwardedRef,
     isValidElement,
+    type MouseEvent,
     type MouseEventHandler,
     type ReactNode,
+    useCallback,
     useId,
     useMemo,
 } from 'react';
 
 import { useTranslation } from '#/hooks/useTranslation';
+
+import { useFondueRouter } from '../RouterProvider/RouterProvider';
 
 import { ForwardedRefCardAction } from './CardAction';
 import { CardContext } from './CardContext';
@@ -92,11 +96,24 @@ export const CardRoot = (
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     const { t } = useTranslation();
+    const { navigate, useHref } = useFondueRouter();
+    const resolvedHref = useHref(href ?? '');
+
     const isSelectable = !!onSelect;
     const isClickable = !!href;
     const showCheckbox = !!(href && onSelect);
     const generatedTitleId = useId();
     const titleId = `${generatedTitleId}-title`;
+
+    const handleLinkClick = useCallback(
+        (event: MouseEvent<HTMLAnchorElement>) => {
+            if (href && !event.metaKey && !event.ctrlKey && !event.shiftKey && event.button === 0) {
+                event.preventDefault();
+                navigate(href);
+            }
+        },
+        [href, navigate],
+    );
 
     const labelledby = ariaLabel ? undefined : titleId;
     const contextValue = useMemo(() => ({ titleId }), [titleId]);
@@ -134,7 +151,8 @@ export const CardRoot = (
                 {showLinkOverlay && (
                     <a
                         className={styles.overlay}
-                        href={href}
+                        href={resolvedHref}
+                        onClick={handleLinkClick}
                         aria-label={ariaLabel}
                         aria-labelledby={labelledby}
                         aria-describedby={ariaDescribedby}
