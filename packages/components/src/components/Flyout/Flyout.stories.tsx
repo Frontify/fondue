@@ -129,7 +129,13 @@ export const WithFocusableContent: Story = {
     },
 };
 
-export const WithHeaderAndFooter: Story = {};
+export const WithHeaderAndFooter: Story = {
+    parameters: {
+        manifest: {
+            canonical: true,
+        },
+    },
+};
 
 export const WithHeaderAndFooterAndScrollableContent: Story = {
     render: ({ ...args }) => {

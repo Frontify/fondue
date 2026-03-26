@@ -43,6 +43,11 @@ const meta: Meta<typeof DropdownRoot> = {
 export default meta;
 
 export const Default: Story = {
+    parameters: {
+        manifest: {
+            canonical: true,
+        },
+    },
     render: ({ ...args }) => (
         <Dropdown.Root {...args}>
             <Dropdown.Trigger>

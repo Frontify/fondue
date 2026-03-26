@@ -67,6 +67,11 @@ export const Required: Story = {
 };
 
 export const WithLabel: Story = {
+    parameters: {
+        manifest: {
+            canonical: true,
+        },
+    },
     render: (args) => (
         <>
             <Label id="label" htmlFor="switch" required={args.required}>

@@ -79,7 +79,13 @@ const meta: Meta<typeof RadioListRoot> = {
 };
 export default meta;
 
-export const Default: Story = {};
+export const Default: Story = {
+    parameters: {
+        manifest: {
+            canonical: true,
+        },
+    },
+};
 
 export const Disabled: Story = {
     args: {

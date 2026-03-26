@@ -1,0 +1,9 @@
+{
+    "category": "feedback",
+    "description": "An interactive chip label for representing metadata, filters, or user-selected values. Use when labels need to be removable, addable, or carry secondary content.",
+    "instructions": "Provide onDismiss to show a dismiss (×) button. Provide onAddClick to show an add (+) button. Use Tag.SecondaryContent for additional metadata displayed within the tag (can appear before or after main content). Use Tag.HoverContent to replace the tag's content with alternative content on hover.",
+    "name": "Tag",
+    "relatedComponents": ["Badge", "Notice"],
+    "storyFilePaths": ["src/components/Tag/Tag.stories.tsx"],
+    "tags": ["tag", "badge", "label"]
+}

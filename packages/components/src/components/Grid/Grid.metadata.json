@@ -1,0 +1,9 @@
+{
+    "category": "layout",
+    "description": "A CSS Grid layout container for two-dimensional arrangements of children in rows and columns. Use when content needs to align across both axes.",
+    "instructions": "The columns prop accepts CSS grid-template-columns values (e.g. 'repeat(3, 1fr)') or a number for equal-width columns. All layout props support responsive breakpoint objects. Use Flex for single-axis (row or column) layouts.",
+    "name": "Grid",
+    "relatedComponents": ["Box", "Flex"],
+    "storyFilePaths": ["src/components/Grid/Grid.stories.tsx"],
+    "tags": ["grid", "layout", "columns"]
+}

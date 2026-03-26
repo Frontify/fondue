@@ -107,6 +107,11 @@ const meta: Meta<typeof Slider> = {
 export default meta;
 
 export const SimpleSlider: Story = {
+    parameters: {
+        manifest: {
+            canonical: true,
+        },
+    },
     args: {
         name: 'Simple slider',
     },

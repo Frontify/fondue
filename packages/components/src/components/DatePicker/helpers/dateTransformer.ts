@@ -2,17 +2,17 @@
 
 import { type DateRange as InternalDayPickerDateRange } from 'react-day-picker';
 
-import { type DatePickerDate, type DatePickerDateRange } from '../types';
+import { type DisabledDatePickerDates, type DatePickerDate, type DatePickerDateRange } from '../types';
 
 export const transformDateToDatePickerDate = (date?: Date): DatePickerDate | undefined => {
     if (!date) {
         return undefined;
     }
     return {
-        year: date.getUTCFullYear(),
+        year: date.getFullYear(),
         // Month is 0-indexed in JavaScript, so we add 1 to get the correct month
-        month: date.getUTCMonth() + 1,
-        day: date.getUTCDate(),
+        month: date.getMonth() + 1,
+        day: date.getDate(),
     };
 };
 
@@ -21,7 +21,7 @@ export const transformDatePickerDateToDate = (datePickerDate?: DatePickerDate): 
         return undefined;
     }
     // Month is 0-indexed in JavaScript, so we subtract 1 to get the correct month
-    return new Date(Date.UTC(datePickerDate.year, datePickerDate.month - 1, datePickerDate.day));
+    return new Date(datePickerDate.year, datePickerDate.month - 1, datePickerDate.day);
 };
 
 export const transformPickerDateRangeToDateRange = (dateRange?: InternalDayPickerDateRange): DatePickerDateRange => {
@@ -48,4 +48,27 @@ export const transformDateRangeToPickerDateRange = (
         from: transformDatePickerDateToDate(dateRange.from),
         to: transformDatePickerDateToDate(dateRange.to),
     };
+};
+
+type DisabledDate = { before: Date } | { after: Date };
+
+export const transformDisabledDates = (
+    disabledDates?: DisabledDatePickerDates | DisabledDatePickerDates[],
+): DisabledDate[] | undefined => {
+    if (!disabledDates) {
+        return undefined;
+    }
+
+    const entries = Array.isArray(disabledDates) ? disabledDates : [disabledDates];
+
+    const transformedDisabledDates = entries.flatMap((entry): DisabledDate[] => {
+        if ('before' in entry) {
+            const date = transformDatePickerDateToDate(entry.before);
+            return date ? [{ before: date }] : [];
+        }
+        const date = transformDatePickerDateToDate(entry.after);
+        return date ? [{ after: date }] : [];
+    });
+
+    return transformedDisabledDates.length > 0 ? transformedDisabledDates : undefined;
 };

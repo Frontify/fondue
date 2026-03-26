@@ -1,0 +1,9 @@
+{
+    "category": "feedback",
+    "description": "A horizontal progress bar for showing determinate or indeterminate loading progress. Use for file uploads, multi-step processes, or any operation with measurable progress.",
+    "instructions": "Either aria-label or aria-labelledby is required for accessibility. Pass a numeric value for determinate progress (0 to max, default max=100). Omit value or pass null for indeterminate (animated) state. Use variant to communicate success or failure state. Use LoadingCircle when this layout pattern is not suitable.",
+    "name": "LoadingBar",
+    "relatedComponents": ["LoadingCircle"],
+    "storyFilePaths": [],
+    "tags": ["loading", "progress", "bar"]
+}

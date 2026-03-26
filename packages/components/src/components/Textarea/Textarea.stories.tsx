@@ -51,7 +51,13 @@ const meta: Meta<typeof TextareaRoot> = {
 
 export default meta;
 
-export const Default: Story = {};
+export const Default: Story = {
+    parameters: {
+        manifest: {
+            canonical: true,
+        },
+    },
+};
 
 export const WithDecoratorAndAutosize: Story = {
     args: {

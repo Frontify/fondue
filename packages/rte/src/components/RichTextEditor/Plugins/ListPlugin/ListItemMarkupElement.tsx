@@ -10,8 +10,7 @@ import { useRichTextEditorContext } from '@components/RichTextEditor/context';
 import { MarkupElement } from '../MarkupElement';
 import { TextStyles } from '../TextStylePlugin';
 
-export const LI_CLASSNAMES =
-    '[&>p]:before:tw-flex [&>p]:before:tw-justify-end [&>p]:before:tw-w-[1.2em] !tw-no-underline !tw-list-item [&>p]:before:tw-content-[var(--bullet-character)] [--parent-lh:1lh] [&>p]:before:tw-leading-[var(--parent-lh)]';
+export const LI_CLASSNAMES = '!tw-no-underline tw-flex tw-flex-col [--parent-lh:1lh]';
 
 export const ListItemMarkupElementNode = ({ attributes, children, element }: PlateRenderElementProps) => {
     const { styles } = useRichTextEditorContext();
@@ -31,7 +30,7 @@ export class ListItemMarkupElement extends MarkupElement {
 export const getLiStyles = (element: TElement, styles: Record<string, CSSProperties>): CSSProperties => {
     return {
         ...styles[getDeepestTextStyle(element) ?? TextStyles.p],
-        counterIncrement: 'count',
+        counterIncrement: 'list-counter',
     };
 };
 

@@ -11,5 +11,5 @@ export const DatePicker: typeof ForwardedRefSingleDatePicker & {
 } = ForwardedRefSingleDatePicker;
 DatePicker.Range = ForwardedRefRangeDatePicker;
 DatePicker.Input = ForwardedRefDatePickerInput;
-
+DatePicker.displayName = 'DatePicker';
 export type { DatePickerDate, DatePickerDateRange } from './types';

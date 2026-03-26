@@ -1,0 +1,9 @@
+{
+    "category": "utility",
+    "description": "A context provider that enables SPA client-side navigation for Link components. Required when using Link in a single-page application with a router like React Router or Next.js.",
+    "instructions": "Place RouterProvider near the root of your app, inside ThemeProvider. Provide navigate (a function that pushes a path to the router) and useHref (a function that resolves a path to a full URL). Without RouterProvider, Link components use standard anchor navigation.",
+    "name": "RouterProvider",
+    "relatedComponents": ["ThemeProvider"],
+    "storyFilePaths": [],
+    "tags": ["router", "navigation", "provider"]
+}

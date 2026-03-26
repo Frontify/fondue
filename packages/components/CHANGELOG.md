@@ -1,5 +1,31 @@
 # @frontify/fondue-components
 
+## 29.1.0
+
+### Minor Changes
+
+- [#2672](https://github.com/Frontify/fondue/pull/2672) [`b8744a7`](https://github.com/Frontify/fondue/commit/b8744a79da349bf9c34f25f826546bddc7678207) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: align prop types in DatePicker
+
+- [#2670](https://github.com/Frontify/fondue/pull/2670) [`d9c4843`](https://github.com/Frontify/fondue/commit/d9c4843c9eae13e54a78654c8ce714f8d030c52d) Thanks [@joelharkes](https://github.com/joelharkes)! - fixes date picker time zone issues
+
+### Patch Changes
+
+- [#2668](https://github.com/Frontify/fondue/pull/2668) [`253d60e`](https://github.com/Frontify/fondue/commit/253d60e13fc9f34d089b199ceeb06dea42e47453) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: fix text wrapping issue in datepicker input
+
+- Updated dependencies []:
+    - @frontify/fondue-tokens@5.0.0
+
+## 29.0.1
+
+### Patch Changes
+
+- [#2664](https://github.com/Frontify/fondue/pull/2664) [`d70403d`](https://github.com/Frontify/fondue/commit/d70403d07d7e4890666c4950c5f272b02c36953c) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: adjust datepicker box sizing and add missing exports
+
+- [#2667](https://github.com/Frontify/fondue/pull/2667) [`164a1fb`](https://github.com/Frontify/fondue/commit/164a1fb455d3d796fded75508fbd2eb203934dd1) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix(Badge): missing `-` in variable
+
+- Updated dependencies []:
+    - @frontify/fondue-tokens@5.0.0
+
 ## 29.0.0
 
 ### Minor Changes

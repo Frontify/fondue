@@ -25,6 +25,11 @@ const meta: Meta<typeof EditableText> = {
 export default meta;
 
 export const Default: Story = {
+    parameters: {
+        manifest: {
+            canonical: true,
+        },
+    },
     args: {
         children: 'Click to edit this text',
     },

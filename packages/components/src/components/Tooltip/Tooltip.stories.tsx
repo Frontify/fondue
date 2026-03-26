@@ -40,6 +40,11 @@ const meta: Meta<typeof TooltipRoot> = {
 export default meta;
 
 export const Default: Story = {
+    parameters: {
+        manifest: {
+            canonical: true,
+        },
+    },
     args: {},
 };
 

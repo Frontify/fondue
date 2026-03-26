@@ -31,6 +31,11 @@ const meta: Meta<typeof TabsRoot> = {
 };
 
 export const Default: Story = {
+    parameters: {
+        manifest: {
+            canonical: true,
+        },
+    },
     render: (args) => (
         <Tabs.Root {...args}>
             <Tabs.Tab value="first">

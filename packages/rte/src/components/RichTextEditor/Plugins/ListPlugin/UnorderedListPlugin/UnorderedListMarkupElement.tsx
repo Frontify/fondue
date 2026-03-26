@@ -3,14 +3,15 @@
 import { type PlateRenderLeafProps, useEditorRef } from '@udecode/plate-core';
 import { ELEMENT_UL } from '@udecode/plate-list';
 import { type TElement } from '@udecode/slate';
-import { type CSSProperties } from 'react';
+import { useMemo } from 'react';
 
 import { MarkupElement } from '../../MarkupElement';
+import { ListBulletContext } from '../ListBulletContext';
 import { DEFAULT_UL_STYLES, type UnorderedListLevelStyle } from '../types';
 import { getNestingLevel } from '../utils';
 
 export const UL_CLASSES =
-    'tw-list-none tw-pl-[10px] tw-mb-[10px] tw-ml-[15px] [&>li>p]:before:tw-whitespace-nowrap [&>li>p]:before:tw-px-2 [&>li>p]:before:tw-content-[var(--bullet-character)] [&>li>p]:before:tw-text-[color:var(--bullet-color)] [&>li>p]:before:tw-text-[length:var(--bullet-size)]';
+    'tw-list-none tw-pl-[10px] tw-mb-[10px] tw-ml-[15px] [li_&]:tw-mb-0 [counter-reset:list-counter]';
 
 export const createUnorderedListNode = (listStyles: UnorderedListLevelStyle[] = DEFAULT_UL_STYLES) => {
     const UnorderedListNode = ({ attributes, children, element }: PlateRenderLeafProps & { element: TElement }) => {
@@ -18,20 +19,22 @@ export const createUnorderedListNode = (listStyles: UnorderedListLevelStyle[] = 
         const nestingLevel = getNestingLevel(editor, element);
         const levelStyle = listStyles[nestingLevel % listStyles.length];
 
+        const bulletInfo = useMemo(
+            () => ({
+                type: 'ul' as const,
+                character: levelStyle.shape ?? "'\u2022'",
+                color: levelStyle.color ?? 'currentColor',
+                size: levelStyle.size ?? '1em',
+            }),
+            [levelStyle],
+        );
+
         return (
-            <ul
-                className={UL_CLASSES}
-                {...attributes}
-                style={
-                    {
-                        '--bullet-character': levelStyle.shape ?? "'\u2022'",
-                        '--bullet-color': levelStyle.color ?? 'currentColor',
-                        '--bullet-size': levelStyle.size ?? '1em',
-                    } as CSSProperties
-                }
-            >
-                {children}
-            </ul>
+            <ListBulletContext.Provider value={bulletInfo}>
+                <ul className={UL_CLASSES} {...attributes}>
+                    {children}
+                </ul>
+            </ListBulletContext.Provider>
         );
     };
     return UnorderedListNode;

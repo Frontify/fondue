@@ -128,6 +128,11 @@ const TABLE_DATA = [
 ];
 
 export const Basic: Story = {
+    parameters: {
+        manifest: {
+            canonical: true,
+        },
+    },
     render: ({ ...args }) => (
         <Table.Root {...args}>
             <Table.Header>

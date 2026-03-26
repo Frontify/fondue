@@ -36,6 +36,11 @@ const meta: Meta<typeof SegmentedControlRoot> = {
 export default meta;
 
 export const TextOnly: Story = {
+    parameters: {
+        manifest: {
+            canonical: true,
+        },
+    },
     render: (args) => (
         <SegmentedControl.Root {...args}>
             <SegmentedControl.Item value="first">First</SegmentedControl.Item>

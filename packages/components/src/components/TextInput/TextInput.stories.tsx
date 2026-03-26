@@ -41,7 +41,13 @@ const meta: Meta<typeof TextFieldRoot> = {
 };
 export default meta;
 
-export const Text: Story = {};
+export const Text: Story = {
+    parameters: {
+        manifest: {
+            canonical: true,
+        },
+    },
+};
 
 export const Password: Story = {
     args: {

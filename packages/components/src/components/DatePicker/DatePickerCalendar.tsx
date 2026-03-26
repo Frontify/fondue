@@ -18,7 +18,9 @@ import 'react-day-picker/style.css';
 import { Button } from '../Button/Button';
 import { useFondueTheme } from '../ThemeProvider/ThemeProvider';
 
+import { transformDisabledDates } from './helpers/dateTransformer';
 import styles from './styles/datePickerCalendar.module.scss';
+import { type DisabledDatePickerDates } from './types';
 
 type DatePickerCalendarSingleModeProps = {
     mode: 'single';
@@ -38,11 +40,9 @@ type DatePickerCalendarRangeModeProps = {
 
 type DatePickerCalendarModeProps = DatePickerCalendarSingleModeProps | DatePickerCalendarRangeModeProps;
 
-type DisabledDates = { before: Date } | { after: Date };
-
 export type DatePickerBaseProps = {
     /** The days to be disabled. */
-    disabledDates?: DisabledDates | DisabledDates[];
+    disabledDates?: DisabledDatePickerDates | DisabledDatePickerDates[];
     /** The test id applied to the wrapper and forwarded to DayPicker. */
     'data-test-id'?: string;
 };
@@ -56,6 +56,8 @@ export const DatePickerCalendar = forwardRef<HTMLDivElement, DatePickerCalendarP
             dir,
             translations: { dateLocale },
         } = useFondueTheme();
+
+        const transformedDisabledDates = useMemo(() => transformDisabledDates(disabledDates), [disabledDates]);
 
         const defaultMonth = useMemo(() => {
             if (modeProps.mode === 'single') {
@@ -72,10 +74,9 @@ export const DatePickerCalendar = forwardRef<HTMLDivElement, DatePickerCalendarP
                     locale={dateLocale}
                     components={getCustomComponents()}
                     showOutsideDays
-                    disabled={disabledDates}
+                    disabled={transformedDisabledDates}
                     defaultMonth={defaultMonth}
                     dir={dir}
-                    timeZone="UTC"
                     classNames={{
                         root: `${defaultClassNames.root} ${styles.root}`,
                         day: `${styles.day}`,
