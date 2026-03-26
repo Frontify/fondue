@@ -9,7 +9,7 @@ export const generateManifest = (availableTokens: { colors: Tokens; semantic: To
     const semanticTokens = getTokenObject(availableTokens.semantic, 'semantic');
     const utilitiesTokens = getTokenObject(availableTokens.utilities, 'utility');
 
-    console.log(colorTokens, semanticTokens, utilitiesTokens);
+    console.log(semanticTokens);
 
     return availableTokens;
 };
@@ -23,12 +23,38 @@ const getTokenObject = (tokenObject: Tokens, namePrefix: string): ResolvedToken[
     return Object.entries(tokenObject)
         .map(([key, value]) => {
             if (typeof value === 'object' && 'name' in value) {
-                return {
-                    name: `${namePrefix}.${key}`,
-                    value: value.value,
-                };
+                return parseTokenName(`${namePrefix}.${key}`);
             }
             return getTokenObject(value, `${namePrefix}.${key}`);
         })
         .flatMap((token) => token as ResolvedToken[]);
+};
+
+const parseTokenName = (tokenName: string) => {
+    const nameParts = tokenName.split('.');
+    const cssVariable = `var(--${nameParts.join('-')})`;
+
+    const type = nameParts[0];
+    nameParts.shift();
+
+    let usageContext = '';
+    if (nameParts[0] === 'charts' || nameParts[0] === 'container') {
+        usageContext = nameParts[0];
+        nameParts.shift();
+    }
+
+    const group = nameParts[0];
+    const variant = nameParts[1];
+
+    const tailwindClassName = `*-${usageContext ? `${usageContext}-` : ''}${group}${variant === 'default' ? '' : `-${variant}`}`;
+
+    return {
+        id: tokenName,
+        cssVariable,
+        tailwindClassName,
+        type,
+        group,
+        variant: variant?.startsWith('on-') ? 'contrast color' : variant,
+        usageContext,
+    };
 };
