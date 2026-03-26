@@ -9,7 +9,6 @@ import { Card } from '../Card';
 const CARD_TEST_ID = 'test-card';
 const CARD_TITLE_TEXT = 'Card Title';
 
-
 describe('Card Component', () => {
     it('should call onClick when action button is clicked', async () => {
         const handleClick = vi.fn();
@@ -293,5 +292,4 @@ describe('Card Component', () => {
         await userEvent.tab();
         expect(screen.getByRole('button', { name: 'Settings' })).toHaveFocus();
     });
-
 });
