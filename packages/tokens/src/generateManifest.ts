@@ -1,60 +1,143 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-type Tokens = {
-    [key: string]: Tokens;
-};
-
-export const generateManifest = (availableTokens: { colors: Tokens; semantic: Tokens; utilities: Tokens }) => {
-    const colorTokens = getTokenObject(availableTokens.colors, 'color');
-    const semanticTokens = getTokenObject(availableTokens.semantic, 'semantic');
-    const utilitiesTokens = getTokenObject(availableTokens.utilities, 'utility');
-
-    console.log(semanticTokens);
-
-    return availableTokens;
-};
-
-type ResolvedToken = {
+type TokenLeaf = {
     name: string;
+    type: string;
     value: string;
+    path?: string[];
 };
 
-const getTokenObject = (tokenObject: Tokens, namePrefix: string): ResolvedToken[] => {
-    return Object.entries(tokenObject)
-        .map(([key, value]) => {
-            if (typeof value === 'object' && 'name' in value) {
-                return parseTokenName(`${namePrefix}.${key}`);
-            }
-            return getTokenObject(value, `${namePrefix}.${key}`);
-        })
-        .flatMap((token) => token as ResolvedToken[]);
+type TokenTree = {
+    [key: string]: TokenTree | TokenLeaf;
 };
 
-const parseTokenName = (tokenName: string) => {
-    const nameParts = tokenName.split('.');
-    const cssVariable = `var(--${nameParts.join('-')})`;
+type ManifestToken = {
+    category: string;
+    cssVariable: string;
+    id: string;
+    keyPath: string[];
+    tailwindClass: string;
+};
 
-    const type = nameParts[0];
-    nameParts.shift();
+type UtilityProperty = {
+    cssVariable: string;
+    id: string;
+};
 
-    let usageContext = '';
-    if (nameParts[0] === 'charts' || nameParts[0] === 'container') {
-        usageContext = nameParts[0];
-        nameParts.shift();
+type ManifestUtility = {
+    id: string;
+    keyPath: string[];
+    properties: UtilityProperty[];
+    tailwindClass: string;
+};
+
+export type Manifest = {
+    tokens: ManifestToken[];
+    utilities: ManifestUtility[];
+};
+
+const isTokenLeaf = (value: unknown): value is TokenLeaf =>
+    typeof value === 'object' && value !== null && 'name' in value && 'type' in value && 'value' in value;
+
+const isCompositeToken = (value: unknown): boolean => {
+    if (typeof value !== 'object' || value === null) {
+        return false;
     }
+    const entries = Object.values(value);
+    return entries.length > 0 && entries.every((v) => isTokenLeaf(v));
+};
 
-    const group = nameParts[0];
-    const variant = nameParts[1];
+/**
+ * Maps a token name prefix to its tailwind utility name.
+ * `'*'` means the token is used across multiple utilities (e.g. colors → bg/text/border, spacing → m/p/h/w/gap).
+ * Ordered longest-prefix-first for correct matching.
+ */
+const TAILWIND_PREFIX_MAP: [string, string][] = [
+    ['typography-font-size-', 'text'],
+    ['typography-font-weight-', 'font'],
+    ['typography-font-family-', 'font'],
+    ['typography-letter-spacing-', 'tracking'],
+    ['typography-line-height-', 'leading'],
+    ['border-radius-', 'rounded'],
+    ['border-width-', 'border'],
+    ['shadow-', 'shadow'],
+    ['spacing-', '*'],
+    ['color-', '*'],
+];
 
-    const tailwindClassName = `*-${usageContext ? `${usageContext}-` : ''}${group}${variant === 'default' ? '' : `-${variant}`}`;
+const getLeafTailwindClass = (leaf: TokenLeaf): string => {
+    for (const [prefix, utility] of TAILWIND_PREFIX_MAP) {
+        if (leaf.name.startsWith(prefix)) {
+            const suffix = leaf.name
+                .slice(prefix.length)
+                .replace(/^default$/, '')
+                .replace(/-default$/, '');
+            return suffix ? `${utility}-${suffix}` : utility;
+        }
+    }
+    return leaf.name;
+};
 
-    return {
-        id: tokenName,
-        cssVariable,
-        tailwindClassName,
-        type,
-        group,
-        variant: variant?.startsWith('on-') ? 'contrast color' : variant,
-        usageContext,
-    };
+const getUtilityTailwindClass = (keyPath: string[]): string => {
+    // Skip category and first group key (e.g. "utilities", "text")
+    return keyPath.slice(2).join('-').replace('-default', '');
+};
+
+export const generateManifest = (availableTokens: Record<string, TokenTree>): Manifest => {
+    const { utilities: utilityTree, ...tokenCategories } = availableTokens;
+
+    const tokens = Object.entries(tokenCategories).flatMap(([category, tree]) =>
+        collectLeafTokens(tree, category, [category]),
+    );
+
+    const utilities = utilityTree ? collectUtilityTokens(utilityTree, ['utilities']) : [];
+
+    return { tokens, utilities };
+};
+
+const collectLeafTokens = (node: TokenTree, category: string, keyPath: string[]): ManifestToken[] => {
+    return Object.entries(node).flatMap(([key, value]) => {
+        const currentPath = [...keyPath, key];
+
+        if (isTokenLeaf(value)) {
+            return [
+                {
+                    category,
+                    cssVariable: `var(--${value.name})`,
+                    id: value.name,
+                    keyPath: currentPath,
+                    tailwindClass: getLeafTailwindClass(value),
+                },
+            ];
+        }
+
+        return collectLeafTokens(value, category, currentPath);
+    });
+};
+
+const collectUtilityTokens = (node: TokenTree, keyPath: string[]): ManifestUtility[] => {
+    return Object.entries(node).flatMap(([key, value]) => {
+        const currentPath = [...keyPath, key];
+
+        if (isCompositeToken(value)) {
+            const properties = Object.entries(value).map(([, propValue]) => {
+                const leaf = propValue as TokenLeaf;
+                return {
+                    cssVariable: `var(--${leaf.name})`,
+                    id: leaf.name,
+                };
+            });
+
+            return [
+                {
+                    id: currentPath.join('-'),
+                    keyPath: currentPath,
+                    properties,
+                    tailwindClass: getUtilityTailwindClass(currentPath),
+                },
+            ];
+        }
+
+        return collectUtilityTokens(value as TokenTree, currentPath);
+    });
 };
