@@ -14,7 +14,7 @@ import {
     IconTarget,
 } from '@frontify/fondue-icons';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { type ComponentType, useState } from 'react';
+import { useState } from 'react';
 
 import { Badge, Dropdown } from '#/index';
 
@@ -24,10 +24,8 @@ import {
     CardActionButton,
     CardBadges,
     CardBanner,
-    type CardBannerFit,
     CardBannerIcon,
     CardBannerImage,
-    type CardBannerSize,
     CardDescription,
     CardRoot,
     CardThumbnailIcon,
@@ -35,16 +33,11 @@ import {
     CardTitle,
 } from './Card';
 
-type PlaygroundArgs = {
-    bannerSize: CardBannerSize;
-    bannerFit: CardBannerFit;
-};
+type Story = StoryObj<typeof meta>;
 
-type Story = StoryObj<PlaygroundArgs>;
-
-const meta: Meta<PlaygroundArgs> = {
+const meta = {
     title: 'Components/Card',
-    component: CardRoot as ComponentType<PlaygroundArgs>,
+    component: CardRoot,
     tags: ['autodocs'],
     subcomponents: {
         'Card.Banner': CardBanner,
@@ -63,7 +56,7 @@ const meta: Meta<PlaygroundArgs> = {
             type: 'in_progress',
         },
     },
-};
+} satisfies Meta;
 export default meta;
 
 const singleCardDecorators: Story['decorators'] = [
@@ -74,13 +67,13 @@ const singleCardDecorators: Story['decorators'] = [
     ),
 ];
 
-const DefaultExample = ({ bannerSize, bannerFit }: PlaygroundArgs) => {
+const DefaultExample = () => {
     const [selected, setSelected] = useState(false);
 
     return (
         <Card.Root href="#" selected={selected} onSelect={() => setSelected((s) => !s)}>
-            <Card.Banner size={bannerSize}>
-                <Card.BannerImage src="https://picsum.photos/seed/card1/400/200" alt="Sample image" fit={bannerFit} />
+            <Card.Banner size="large">
+                <Card.BannerImage src="https://picsum.photos/seed/card1/400/200" alt="Sample image" fit="cover" />
             </Card.Banner>
 
             <Card.ThumbnailIcon>
@@ -114,26 +107,10 @@ const DefaultExample = ({ bannerSize, bannerFit }: PlaygroundArgs) => {
 
 export const Default: Story = {
     decorators: singleCardDecorators,
-    argTypes: {
-        bannerSize: {
-            control: { type: 'inline-radio' },
-            options: ['small', 'large'],
-            description: 'Height variant of the banner.',
-        },
-        bannerFit: {
-            control: { type: 'inline-radio' },
-            options: ['cover', 'contain'],
-            description: 'How the banner image fits within its container.',
-        },
-    },
-    args: {
-        bannerSize: 'large',
-        bannerFit: 'cover',
-    },
-    render: (args) => <DefaultExample {...args} />,
+    render: () => <DefaultExample />,
 };
 
-const AssetCardExample = () => {
+const SingleBannerImageExample = () => {
     const [selected, setSelected] = useState(false);
 
     return (
@@ -142,7 +119,7 @@ const AssetCardExample = () => {
                 <Card.BannerImage src="https://picsum.photos/seed/asset/300/300" alt="Asset preview" fit="contain" />
             </Card.Banner>
 
-            <Card.Title>[Asset name]</Card.Title>
+            <Card.Title>Single Banner Image</Card.Title>
             <Card.Description>No status · 36 assets</Card.Description>
             <Card.Badges>
                 <Badge variant="highlight" emphasis="weak">
@@ -171,9 +148,9 @@ const AssetCardExample = () => {
     );
 };
 
-export const AssetCard: Story = {
+export const SingleBannerImage: Story = {
     decorators: singleCardDecorators,
-    render: () => <AssetCardExample />,
+    render: () => <SingleBannerImageExample />,
 };
 
 const CollectionCardExample = () => {
@@ -308,12 +285,12 @@ export const BrandCard: Story = {
     render: () => <BrandCardExample />,
 };
 
-const MultipleBannerImagesExample = ({ bannerSize }: Pick<PlaygroundArgs, 'bannerSize'>) => {
+const MultipleBannerImagesExample = () => {
     const [selected, setSelected] = useState(false);
 
     return (
         <Card.Root href="#" selected={selected} onSelect={() => setSelected((s) => !s)}>
-            <Card.Banner size={bannerSize}>
+            <Card.Banner size="large">
                 <Card.BannerImage src="https://picsum.photos/seed/img1/200/200" alt="Image 1" />
                 <Card.BannerImage src="https://picsum.photos/seed/img2/200/200" alt="Image 2" />
                 <Card.BannerImage src="https://picsum.photos/seed/img3/200/200" alt="Image 3" />
@@ -337,18 +314,8 @@ const MultipleBannerImagesExample = ({ bannerSize }: Pick<PlaygroundArgs, 'banne
 };
 
 export const MultipleBannerImages: Story = {
-    args: {
-        bannerSize: 'large',
-    },
-    argTypes: {
-        bannerSize: {
-            control: { type: 'inline-radio' },
-            options: ['small', 'large'],
-            description: 'Height variant of the banner.',
-        },
-    },
     decorators: singleCardDecorators,
-    render: (args) => <MultipleBannerImagesExample {...args} />,
+    render: () => <MultipleBannerImagesExample />,
 };
 
 const WithoutBannerExample = () => {
