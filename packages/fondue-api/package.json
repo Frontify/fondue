@@ -1,0 +1,55 @@
+{
+    "name": "@frontify/fondue-api",
+    "type": "module",
+    "version": "0.1.0",
+    "description": "Programmatic API for querying the Fondue design system manifests",
+    "author": "Frontify Developers <developers@frontify.com>",
+    "homepage": "https://github.com/Frontify/fondue",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Frontify/fondue",
+        "directory": "packages/fondue-api"
+    },
+    "bugs": {
+        "url": "https://github.com/frontify/fondue/issues"
+    },
+    "sideEffects": false,
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/fondue-api.js"
+        }
+    },
+    "main": "./dist/fondue-api.js",
+    "types": "./dist/index.d.ts",
+    "files": [
+        "dist"
+    ],
+    "engines": {
+        "node": "^24"
+    },
+    "scripts": {
+        "build": "vite build",
+        "lint": "eslint .",
+        "lint:fix": "eslint --fix .",
+        "typecheck": "tsc --noEmit",
+        "test": "vitest run",
+        "test:watch": "vitest"
+    },
+    "publishConfig": {
+        "access": "public"
+    },
+    "devDependencies": {
+        "@frontify/eslint-config-react": "^1.0.8",
+        "@frontify/fondue-components": "workspace:^",
+        "@frontify/fondue-icons": "workspace:^",
+        "@frontify/fondue-tokens": "workspace:^",
+        "eslint": "^9.39.2",
+        "eslint-plugin-notice": "^1.0.0",
+        "prettier": "^3.8.1",
+        "typescript": "^5.9.3",
+        "vite": "^5.4.21",
+        "vite-plugin-dts": "^4.5.4",
+        "vitest": "^3.2.4"
+    }
+}

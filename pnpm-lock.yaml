@@ -664,6 +664,42 @@ importers:
         specifier: ^5.1.4
         version: 5.1.4(typescript@5.9.3)(vite@5.4.21(@types/node@24.10.9)(sass@1.97.3)(terser@5.31.1))
 
+  packages/fondue-api:
+    devDependencies:
+      '@frontify/eslint-config-react':
+        specifier: ^1.0.8
+        version: 1.0.11(@types/eslint@8.56.12)(eslint@9.39.2(jiti@2.6.1))(prettier@3.8.1)(react@18.3.1)(typescript@5.9.3)
+      '@frontify/fondue-components':
+        specifier: workspace:^
+        version: link:../components
+      '@frontify/fondue-icons':
+        specifier: workspace:^
+        version: link:../icons
+      '@frontify/fondue-tokens':
+        specifier: workspace:^
+        version: link:../tokens
+      eslint:
+        specifier: ^9.39.2
+        version: 9.39.2(jiti@2.6.1)
+      eslint-plugin-notice:
+        specifier: ^1.0.0
+        version: 1.0.0(eslint@9.39.2(jiti@2.6.1))
+      prettier:
+        specifier: ^3.8.1
+        version: 3.8.1
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+      vite:
+        specifier: ^5.4.21
+        version: 5.4.21(@types/node@24.11.0)(sass@1.97.3)(terser@5.31.1)
+      vite-plugin-dts:
+        specifier: ^4.5.4
+        version: 4.5.4(@types/node@24.11.0)(rollup@4.56.0)(typescript@5.9.3)(vite@5.4.21(@types/node@24.11.0)(sass@1.97.3)(terser@5.31.1))
+      vitest:
+        specifier: ^3.2.4
+        version: 3.2.4(@types/debug@4.1.12)(@types/node@24.11.0)(@vitest/ui@3.2.4)(happy-dom@20.3.4)(sass@1.97.3)(terser@5.31.1)
+
   packages/icons:
     dependencies:
       '@frontify/fondue-tokens':

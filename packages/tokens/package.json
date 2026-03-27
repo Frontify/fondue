@@ -32,10 +32,12 @@
         "./json/utilities": "./dist/json/utilities.json",
         "./legacy/tokens": "./dist/legacy/deprecatedBaseTokens.css",
         "./legacy/tailwind": "./dist/legacy/deprecatedTailwindConfig.ts",
-        "./legacy/tools/replaceLegacyTokens": "./tools/replaceLegacyTokens.ts"
+        "./legacy/tools/replaceLegacyTokens": "./tools/replaceLegacyTokens.ts",
+        "./manifest": "./manifest.json"
     },
     "files": [
-        "dist"
+        "dist",
+        "manifest.json"
     ],
     "scripts": {
         "build": "tsx src/buildTokens.ts && cp -r legacyTokens/* ./dist/legacy && mkdir -p ./dist/legacy/tools && cp -r tools/* ./dist/legacy/tools",

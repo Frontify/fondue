@@ -27,7 +27,8 @@
         "./manifests/*": "./manifests/*.json"
     },
     "files": [
-        "dist"
+        "dist",
+        "manifests"
     ],
     "engines": {
         "node": ">=18"

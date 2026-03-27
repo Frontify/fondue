@@ -8,7 +8,8 @@
         "npm": "<=0"
     },
     "scripts": {
-        "build": "pnpm build:charts && pnpm build:icons && pnpm build:components && pnpm build:rte && pnpm build:fondue",
+        "build": "pnpm build:charts && pnpm build:icons && pnpm build:components && pnpm build:fondue-api && pnpm build:rte && pnpm build:fondue",
+        "build:fondue-api": "pnpm --stream --filter {packages/fondue-api} build",
         "build:charts": "pnpm --stream --filter {packages/charts} build",
         "build:components": "pnpm --stream --filter {packages/components} build",
         "build:fondue": "pnpm --stream --filter {packages/fondue} build",
