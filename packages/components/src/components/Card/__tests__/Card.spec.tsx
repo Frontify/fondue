@@ -4,10 +4,21 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
+import { RouterProvider } from '../../RouterProvider/RouterProvider';
 import { Card } from '../Card';
 
 const CARD_TEST_ID = 'test-card';
 const CARD_TITLE_TEXT = 'Card Title';
+
+const navigateStub = vi.fn();
+const useHrefStub = (path: string) => path;
+
+const renderWithRouter = (ui: React.ReactNode) =>
+    render(
+        <RouterProvider navigate={navigateStub} useHref={useHrefStub}>
+            {ui}
+        </RouterProvider>,
+    );
 
 describe('Card Component', () => {
     it('should call onClick when action button is clicked', async () => {
@@ -26,7 +37,7 @@ describe('Card Component', () => {
     });
 
     it('should render an anchor overlay when href is provided', () => {
-        render(
+        renderWithRouter(
             <Card.Root href="/some-page">
                 <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
             </Card.Root>,
@@ -35,7 +46,7 @@ describe('Card Component', () => {
     });
 
     it('should set data-interactive to true when href is provided', () => {
-        render(
+        renderWithRouter(
             <Card.Root data-test-id={CARD_TEST_ID} href="/page">
                 <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
             </Card.Root>,
@@ -55,7 +66,7 @@ describe('Card Component', () => {
     });
 
     it('should set aria-current on anchor overlay when selected', () => {
-        render(
+        renderWithRouter(
             <Card.Root selected href="/page" onSelect={() => {}} aria-label="Go to page">
                 <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
             </Card.Root>,
@@ -66,7 +77,7 @@ describe('Card Component', () => {
 
     it('should render a checkbox when both href and onSelect are provided', () => {
         const handleClick = vi.fn();
-        render(
+        renderWithRouter(
             <Card.Root href="/page" onSelect={handleClick} aria-label="Go to page">
                 <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
             </Card.Root>,
@@ -77,7 +88,7 @@ describe('Card Component', () => {
 
     it('should call onSelect on the checkbox when both href and onSelect are provided', async () => {
         const handleClick = vi.fn();
-        render(
+        renderWithRouter(
             <Card.Root href="/page" onSelect={handleClick} aria-label="Go to page">
                 <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
             </Card.Root>,
@@ -87,7 +98,7 @@ describe('Card Component', () => {
     });
 
     it('should not render a checkbox when only href is provided', () => {
-        render(
+        renderWithRouter(
             <Card.Root href="/page" aria-label="Go to page">
                 <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
             </Card.Root>,
@@ -97,7 +108,7 @@ describe('Card Component', () => {
     });
 
     it('should render link overlay when not selected and both href and onClick are provided', () => {
-        render(
+        renderWithRouter(
             <Card.Root href="/page" onSelect={() => {}} selected={false} aria-label="Card">
                 <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
             </Card.Root>,
@@ -107,7 +118,7 @@ describe('Card Component', () => {
 
     it('should render button overlay when selected and both href and onClick are provided', () => {
         const handleClick = vi.fn();
-        render(
+        renderWithRouter(
             <Card.Root href="/page" onSelect={handleClick} selected aria-label="Card">
                 <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
             </Card.Root>,
@@ -119,7 +130,7 @@ describe('Card Component', () => {
 
     it('should call onSelect on the button overlay when card is selected', async () => {
         const handleClick = vi.fn();
-        render(
+        renderWithRouter(
             <Card.Root href="/page" onSelect={handleClick} selected aria-label="Card">
                 <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
             </Card.Root>,
@@ -129,7 +140,7 @@ describe('Card Component', () => {
     });
 
     it('should have data-selected true when selected with onSelect', () => {
-        render(
+        renderWithRouter(
             <Card.Root data-test-id={CARD_TEST_ID} href="/page" selected onSelect={() => {}}>
                 <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
             </Card.Root>,
@@ -138,7 +149,7 @@ describe('Card Component', () => {
     });
 
     it('should have data-selected false when not selected', () => {
-        render(
+        renderWithRouter(
             <Card.Root data-test-id={CARD_TEST_ID} href="/page" selected={false} onSelect={() => {}}>
                 <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
             </Card.Root>,
@@ -147,7 +158,7 @@ describe('Card Component', () => {
     });
 
     it('should set data-selectable to true when onSelect is provided', () => {
-        render(
+        renderWithRouter(
             <Card.Root data-test-id={CARD_TEST_ID} href="/page" onSelect={() => {}}>
                 <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
             </Card.Root>,
@@ -156,7 +167,7 @@ describe('Card Component', () => {
     });
 
     it('should set data-selectable to false when only href is provided', () => {
-        render(
+        renderWithRouter(
             <Card.Root data-test-id={CARD_TEST_ID} href="/page">
                 <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
             </Card.Root>,
@@ -174,7 +185,7 @@ describe('Card Component', () => {
     });
 
     it('should set data-interactive to true when href is provided with onSelect and selected', () => {
-        render(
+        renderWithRouter(
             <Card.Root data-test-id={CARD_TEST_ID} href="/page" onSelect={() => {}} selected>
                 <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
             </Card.Root>,
@@ -184,7 +195,7 @@ describe('Card Component', () => {
 
     it('should call onSelect when button overlay is activated via Enter key', async () => {
         const handleSelect = vi.fn();
-        render(
+        renderWithRouter(
             <Card.Root href="/page" onSelect={handleSelect} selected aria-label="Card">
                 <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
             </Card.Root>,
@@ -196,7 +207,7 @@ describe('Card Component', () => {
 
     it('should call onSelect when button overlay is activated via Space key', async () => {
         const handleSelect = vi.fn();
-        render(
+        renderWithRouter(
             <Card.Root href="/page" onSelect={handleSelect} selected aria-label="Card">
                 <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
             </Card.Root>,
@@ -208,7 +219,7 @@ describe('Card Component', () => {
 
     it('should call onSelect when checkbox is activated via Enter key', async () => {
         const handleSelect = vi.fn();
-        render(
+        renderWithRouter(
             <Card.Root href="/page" onSelect={handleSelect} aria-label="Card">
                 <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
             </Card.Root>,
@@ -276,7 +287,7 @@ describe('Card Component', () => {
 
     it('should allow tabbing through interactive elements', async () => {
         const handleSelect = vi.fn();
-        render(
+        renderWithRouter(
             <Card.Root href="/page" onSelect={handleSelect} aria-label="Card">
                 <Card.Action>
                     <Card.ActionButton aria-label="Settings">

@@ -96,8 +96,8 @@ export const CardRoot = (
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     const { t } = useTranslation();
-    const { navigate, useHref } = useFondueRouter();
-    const resolvedHref = useHref(href ?? '');
+    const { navigate, useHref: resolveHref } = useFondueRouter();
+    const resolvedHref = href ? resolveHref(href) : '';
 
     const isSelectable = !!onSelect;
     const isClickable = !!href;
