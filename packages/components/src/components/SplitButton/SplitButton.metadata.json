@@ -1,0 +1,9 @@
+{
+    "category": "input",
+    "description": "A combined primary action button with a secondary dropdown menu. Use when a main action has several related secondary options.",
+    "instructions": "Compose as SplitButton.Root > SplitButton.Content + SplitButton.Action. Place a Dropdown.Root inside SplitButton.Action with a SplitButton.ActionButton as the Dropdown.Trigger (use asChild). The emphasis and size on SplitButton.Root apply to both sections. Always provide aria-label on SplitButton.ActionButton describing what the secondary options are.",
+    "name": "SplitButton",
+    "relatedComponents": ["Button", "Dropdown"],
+    "storyFilePaths": ["src/components/SplitButton/SplitButton.stories.tsx"],
+    "tags": ["split-button", "button", "dropdown"]
+}

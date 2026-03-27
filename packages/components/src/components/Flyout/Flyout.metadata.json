@@ -1,0 +1,9 @@
+{
+    "category": "overlay",
+    "description": "An anchored popover panel that opens next to a trigger element without blocking page interaction. Use for contextual detail panels, pickers (color, date), and forms that don't require full-screen focus.",
+    "instructions": "Compose as Flyout.Root > Flyout.Trigger + Flyout.Content. Inside Flyout.Content use Flyout.Header, Flyout.Body, and Flyout.Footer for standard layout. Use Flyout.Body with scrollable prop for long content. Use showCloseButton on Flyout.Header to add a close button. Use Dialog instead when the action requires full-screen focus or blocks all background interaction.",
+    "name": "Flyout",
+    "relatedComponents": ["Dialog", "Dropdown", "Tooltip"],
+    "storyFilePaths": ["src/components/Flyout/Flyout.stories.tsx"],
+    "tags": ["flyout", "popover", "overlay"]
+}

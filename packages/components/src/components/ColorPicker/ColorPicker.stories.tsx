@@ -28,6 +28,11 @@ const meta: Meta<typeof ColorPickerRoot> = {
 export default meta;
 
 export const Default: Story = {
+    parameters: {
+        manifest: {
+            canonical: true,
+        },
+    },
     args: {
         currentColor: { red: 230, green: 100, blue: 50, alpha: 0.8 },
     },

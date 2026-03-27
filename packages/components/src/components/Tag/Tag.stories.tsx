@@ -30,6 +30,11 @@ const meta: Meta<typeof Tag> = {
 export default meta;
 
 export const LabelOnly: Story = {
+    parameters: {
+        manifest: {
+            canonical: true,
+        },
+    },
     render: (args) => <Tag {...args}>Text</Tag>,
 };
 

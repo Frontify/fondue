@@ -1,0 +1,9 @@
+{
+    "category": "input",
+    "description": "A group of radio buttons for single-choice selection from a list of options. Use when users must pick exactly one option from a small, visible set.",
+    "instructions": "Compose as RadioList.Root > RadioList.RadioButton. Each RadioList.RadioButton requires a unique value prop. Use RadioList.Root with asChild and a Flex container to customize the layout. Pair each RadioButton with a Label for accessibility. Use SegmentedControl for compact 2–5 option toggles inline with other controls. Use Select for longer option lists that should be hidden in a dropdown.",
+    "name": "RadioList",
+    "relatedComponents": ["Checkbox", "SegmentedControl", "Select"],
+    "storyFilePaths": ["src/components/RadioList/RadioList.stories.tsx"],
+    "tags": ["radio", "list", "form"]
+}

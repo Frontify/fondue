@@ -27,6 +27,11 @@ const meta: Meta<typeof Badge> = {
 export default meta;
 
 export const LabelOnly: Story = {
+    parameters: {
+        manifest: {
+            canonical: true,
+        },
+    },
     render: (args) => <Badge {...args}>Text</Badge>,
 };
 

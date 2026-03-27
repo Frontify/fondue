@@ -119,6 +119,11 @@ export const WithCloseButton: Story = {
 };
 
 export const WithFooter: Story = {
+    parameters: {
+        manifest: {
+            canonical: true,
+        },
+    },
     args: {
         children: 'I am a dialog content',
     },

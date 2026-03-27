@@ -1,0 +1,9 @@
+{
+    "category": "feedback",
+    "description": "A circular spinner for indicating loading or processing states. Use for inline or overlay loading indicators where a full progress bar is too large.",
+    "instructions": "Use variant='progress' (default) for ongoing loading, 'success' for completion, and 'danger' for failure. Size ranges from xx-small to large — match to the surrounding context. Use for inline or overlay loading indicators where a full progress bar is too large.",
+    "name": "LoadingCircle",
+    "relatedComponents": ["LoadingBar"],
+    "storyFilePaths": [],
+    "tags": ["loading", "spinner", "progress"]
+}

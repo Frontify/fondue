@@ -33,6 +33,11 @@ const meta: Meta<typeof Notice> = {
 export default meta;
 
 export const Default: Story = {
+    parameters: {
+        manifest: {
+            canonical: true,
+        },
+    },
     render: (args) => <Notice {...args}>Neutral message text</Notice>,
 };
 

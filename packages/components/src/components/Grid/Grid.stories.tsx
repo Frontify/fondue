@@ -34,6 +34,11 @@ const meta: Meta<typeof Grid> = {
 export default meta;
 
 export const Default: Story = {
+    parameters: {
+        manifest: {
+            canonical: true,
+        },
+    },
     render: (args) => {
         return (
             <Grid {...args}>

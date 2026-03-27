@@ -19,6 +19,11 @@ const meta: Meta<typeof Section> = {
 export default meta;
 
 export const Default: Story = {
+    parameters: {
+        manifest: {
+            canonical: true,
+        },
+    },
     args: {
         children: 'Hello World',
     },

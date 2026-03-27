@@ -1,0 +1,402 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+@use '../../../utilities/focusStyle.module.scss';
+@use '../../../utilities/sizeToken.module.scss';
+@use '../../../utilities/transitions.module.scss';
+
+// Mixin for card state variants (default, hover, selected, hover+selected)
+@mixin card-state(
+    $root-border-color: transparent,
+    $root-bg: null,
+    $box-shadow: none,
+    $banner-border-color: transparent,
+    $banner-border-radius: 0
+) {
+    border-color: $root-border-color;
+    box-shadow: $box-shadow;
+
+    @if $root-bg {
+        background-color: var(--color-#{$root-bg});
+    }
+
+    & .banner {
+        box-shadow: inset 0 0 0 1px $banner-border-color;
+        border-radius: $banner-border-radius;
+    }
+}
+
+// Shared styles for the selection checkbox and the visual-only selection indicator
+@mixin selection-mark {
+    position: absolute;
+    top: var(--spacing-medium);
+    left: var(--spacing-medium);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: sizeToken.get(5);
+    height: sizeToken.get(5);
+    border-radius: var(--border-radius-medium);
+}
+
+@mixin selection-mark-default {
+    border: var(--border-width-default) solid var(--color-line-mid);
+    background-color: var(--color-surface-default);
+    color: transparent;
+}
+
+@mixin selection-mark-selected {
+    border: none;
+    background-color: var(--color-primary-default);
+    color: var(--color-primary-on-primary);
+}
+
+.root {
+    position: relative;
+    min-width: sizeToken.get(60);
+    display: grid;
+    grid-template-areas:
+        'banner     banner   banner   banner'
+        'thumbnail  title        badges   actions'
+        'thumbnail  description  badges   actions';
+    grid-template-columns: auto 1fr auto auto;
+    grid-template-rows: auto minmax(calc(#{sizeToken.get(10)} / 2 + var(--spacing-small)), auto) minmax(calc(#{sizeToken.get(10)} / 2 + var(--spacing-small)), auto);
+    border-radius: var(--border-radius-large);
+    border: var(--border-width-default) solid transparent;
+    background-color: var(--color-surface-default);
+    overflow: hidden;
+    outline: none;
+    @include transitions.transition((background-color, border-color, box-shadow));
+
+    &:not(:has(> .banner)) {
+        background-color: var(--color-surface-dim);
+    }
+
+    // Default state
+    @include card-state(
+        $banner-border-color: var(--color-line-subtle),
+        $banner-border-radius: var(--border-radius-large)
+    );
+
+    // Interactive cards only
+    &[data-interactive='true'] {
+        cursor: pointer;
+
+        &:has(> .overlay:focus-visible) {
+            @include focusStyle.focus-outline-styles;
+        }
+
+        // Hover state (also when a dropdown is open inside the card)
+        &:hover,
+        &:has([data-state='open']) {
+            @include card-state(
+                $root-border-color: var(--color-line-subtle),
+                $root-bg: 'surface-hover'
+            );
+        }
+
+        // Selected state
+        &[data-selected='true'] {
+            @include card-state(
+                $root-border-color: var(--color-line-strong),
+                $root-bg: 'surface-dim',
+                $box-shadow: inset 0 0 0 1px var(--color-interactive-default)
+            );
+        }
+
+        // Hover + Selected state (also when a dropdown is open inside the card)
+        &[data-selected='true']:hover,
+        &[data-selected='true']:has([data-state='open']) {
+            @include card-state(
+                $root-border-color: var(--color-interactive-default),
+                $root-bg: 'surface-hover',
+                $box-shadow: inset 0 0 0 1px var(--color-interactive-default)
+            );
+        }
+    }
+}
+
+.overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    appearance: none;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    text-decoration: none;
+    color: transparent;
+}
+
+.checkbox {
+    @include selection-mark;
+    @include selection-mark-default;
+    z-index: 1;
+    padding: 0;
+    cursor: pointer;
+    outline: none;
+    opacity: 0;
+    @include transitions.transition((opacity, background-color, border-color, color));
+
+    .root[data-selectable='true']:hover &,
+    .root[data-selectable='true']:has([data-state='open']) &,
+    &:focus-visible {
+        opacity: 1;
+    }
+
+    .root[data-selectable='true'][data-selected='true'] & {
+        @include selection-mark-selected;
+        opacity: 1;
+    }
+
+    &:focus-visible {
+        outline: 4px solid var(--color-focus-default);
+    }
+}
+
+// Hide the visual-only selection indicator when an interactive checkbox is present
+.root:has(> .checkbox) > .banner .selectionIndicator {
+    display: none;
+}
+
+.banner {
+    grid-area: banner;
+    position: relative;
+    display: flex;
+    overflow: hidden;
+    background-color: var(--color-surface-dim);
+    pointer-events: none;
+    @include transitions.transition-colors;
+
+    .root[data-interactive='true']:hover &:has(> .bannerIcon),
+    .root[data-interactive='true']:has([data-state='open']) &:has(> .bannerIcon) {
+        background-color: var(--color-surface-hover);
+    }
+
+    &[data-size='small'] {
+        aspect-ratio: 9 / 4;
+    }
+
+    &[data-size='large'] {
+        aspect-ratio: 9 / 6;
+    }
+}
+
+.bannerImage {
+    flex: 1;
+    min-width: 0;
+    display: block;
+
+    & + & {
+        border-left: 1px solid var(--color-line-subtle);
+    }
+
+    &[data-fit='cover'] {
+        object-fit: cover;
+    }
+
+    &[data-fit='contain'] {
+        object-fit: contain;
+    }
+}
+
+.bannerIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    color: var(--color-secondary-default);
+    @include transitions.transition-colors;
+
+    > svg {
+        width: sizeToken.get(10);
+        height: sizeToken.get(10);
+    }
+
+    .root[data-interactive='true']:hover &,
+    .root[data-interactive='true']:has([data-state='open']) & {
+        color: var(--color-primary-default);
+    }
+
+    &[data-variant='primary'] {
+        color: var(--color-primary-default);
+    }
+
+    &[data-variant='warning'] {
+        color: var(--color-warning-default);
+
+        .root[data-interactive='true']:hover &,
+        .root[data-interactive='true']:has([data-state='open']) & {
+            color: var(--color-warning-hover);
+        }
+    }
+
+    &[data-variant='error'] {
+        color: var(--color-error-default);
+
+        .root[data-interactive='true']:hover &,
+        .root[data-interactive='true']:has([data-state='open']) & {
+            color: var(--color-error-hover);
+        }
+    }
+
+    &[data-variant='success'] {
+        color: var(--color-success-default);
+
+        .root[data-interactive='true']:hover &,
+        .root[data-interactive='true']:has([data-state='open']) & {
+            color: var(--color-success-hover);
+        }
+    }
+}
+
+.selectionIndicator {
+    @include selection-mark;
+    display: none;
+    pointer-events: none;
+
+    .root[data-selectable='true']:hover &,
+    .root[data-selectable='true']:has([data-state='open']) & {
+        @include selection-mark-default;
+        display: flex;
+    }
+
+    .root[data-selectable='true'][data-selected='true'] & {
+        @include selection-mark-selected;
+        display: flex;
+    }
+}
+
+.badges {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    gap: var(--spacing-xx-small);
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    pointer-events: none;
+
+    > * {
+        pointer-events: auto;
+    }
+
+    .root:has(> .banner) & {
+        position: absolute;
+        top: var(--spacing-medium);
+        right: var(--spacing-medium);
+    }
+
+    .root:not(:has(> .banner)) & {
+        grid-area: badges;
+        align-self: center;
+        padding: var(--spacing-small) 0;
+    }
+}
+
+.thumbnailImage,
+.thumbnailIcon {
+    grid-area: thumbnail;
+    width: sizeToken.get(10);
+    height: sizeToken.get(10);
+    border-radius: var(--border-radius-medium);
+    background-color: var(--color-surface-dim);
+    align-self: center;
+    margin: var(--spacing-small) 0 var(--spacing-small) var(--spacing-small);
+    pointer-events: none;
+
+    .root[data-interactive='true'][data-selected='true'] & {
+        background-color: var(--color-surface-default);
+    }
+}
+
+.thumbnailImage {
+    object-fit: contain;
+}
+
+.thumbnailIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    @include transitions.transition-colors;
+}
+
+.title {
+    grid-area: title;
+    padding: var(--spacing-small) var(--spacing-small) 0;
+    font-family: var(--typography-font-family-primary);
+    font-size: var(--typography-font-size-medium);
+    font-weight: var(--typography-font-weight-medium);
+    font-kerning: none;
+    line-height: var(--typography-line-height-tight);
+    color: var(--color-primary-default);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    align-self: end;
+    min-width: 0;
+    pointer-events: none;
+
+    .root:not(:has(> .description)) & {
+        grid-row: 2 / 4;
+        align-self: center;
+        padding-bottom: var(--spacing-small);
+    }
+}
+
+.description {
+    grid-area: description;
+    padding: var(--spacing-xx-small) var(--spacing-small) 0;
+    font-family: var(--typography-font-family-primary);
+    font-size: var(--typography-font-size-small);
+    font-weight: var(--typography-font-weight-regular);
+    font-kerning: none;
+    line-height: var(--typography-line-height-tight);
+    color: var(--color-secondary-default);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    align-self: start;
+    min-width: 0;
+    pointer-events: none;
+}
+
+.actions {
+    grid-area: actions;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    align-self: stretch;
+    gap: var(--spacing-xx-small);
+    padding: var(--spacing-small);
+}
+
+.action {
+    display: flex;
+    align-items: center;
+}
+
+.actionButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: sizeToken.get(6);
+    height: sizeToken.get(6);
+    border-radius: var(--border-radius-medium);
+    border: var(--border-width-default) solid transparent;
+    background: transparent;
+    cursor: pointer;
+    outline: none;
+    @include transitions.transition-colors;
+
+    &:hover,
+    &[data-state='open'] {
+        color: var(--color-primary-default);
+        background-color: var(--color-container-secondary-default);
+    }
+
+    &:focus-visible {
+        outline: 4px solid var(--color-focus-default);
+    }
+}

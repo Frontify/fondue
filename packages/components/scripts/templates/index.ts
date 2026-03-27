@@ -3,6 +3,7 @@
 import * as componentVisualTests from './__tests__/component.ct';
 import * as componentFunctionalTests from './__tests__/component.spec';
 import * as component from './component';
+import * as componentMetadata from './component.metadata';
 import * as componentStories from './component.stories';
 import * as componentStyles from './styles/componentStyles';
 
@@ -12,4 +13,5 @@ export default [
     componentFunctionalTests.Setup,
     componentVisualTests.Setup,
     componentStyles.Setup,
+    componentMetadata.Setup,
 ];

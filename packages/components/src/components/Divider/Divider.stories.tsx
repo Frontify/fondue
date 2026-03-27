@@ -31,6 +31,11 @@ const meta: Meta<typeof Divider> = {
 export default meta;
 
 export const Primary: Story = {
+    parameters: {
+        manifest: {
+            canonical: true,
+        },
+    },
     args: {},
 };
 

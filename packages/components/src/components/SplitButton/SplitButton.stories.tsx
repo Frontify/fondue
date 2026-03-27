@@ -32,6 +32,11 @@ const meta: Meta<typeof SplitButtonRoot> = {
 export default meta;
 
 export const Default: Story = {
+    parameters: {
+        manifest: {
+            canonical: true,
+        },
+    },
     render: (args) => (
         <SplitButton.Root {...args}>
             <SplitButton.Content onPress={action('primary-action')}>Primary Action</SplitButton.Content>

@@ -18,4 +18,10 @@ const meta: Meta<typeof LoadingCircle> = {
 
 export default meta;
 
-export const Default: Story = {};
+export const Default: Story = {
+    parameters: {
+        manifest: {
+            canonical: true,
+        },
+    },
+};
