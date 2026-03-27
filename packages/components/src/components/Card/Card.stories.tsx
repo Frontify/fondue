@@ -16,7 +16,9 @@ import {
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 
-import { Badge, Dropdown } from '#/index';
+import { Badge, Dropdown, Tooltip } from '#/index';
+
+import { RouterProvider } from '../RouterProvider/RouterProvider';
 
 import {
     Card,
@@ -53,9 +55,19 @@ const meta = {
     },
     parameters: {
         status: {
-            type: 'in_progress',
+            type: 'released',
         },
     },
+    decorators: [
+        (Story) => (
+            <RouterProvider
+                navigate={(path: string) => alert(`Navigate to: ${path}`)}
+                useHref={(path: string) => `/resolved${path}`}
+            >
+                <Story />
+            </RouterProvider>
+        ),
+    ],
 } satisfies Meta;
 export default meta;
 
@@ -129,12 +141,22 @@ export const WithBadges: Story = {
                     <Badge variant="highlight" emphasis="weak">
                         <IconSpeechBubbleEmpty size={20} /> 4
                     </Badge>
-                    <Badge emphasis="weak">
-                        <IconTarget size={20} />
-                    </Badge>
-                    <Badge variant="warning" emphasis="weak">
-                        <IconExclamationMarkTriangle size={20} />
-                    </Badge>
+                    <Tooltip.Root>
+                        <Tooltip.Trigger>
+                            <Badge emphasis="weak">
+                                <IconTarget size={20} />
+                            </Badge>
+                        </Tooltip.Trigger>
+                        <Tooltip.Content side="top">Target</Tooltip.Content>
+                    </Tooltip.Root>
+                    <Tooltip.Root>
+                        <Tooltip.Trigger>
+                            <Badge variant="warning" emphasis="weak">
+                                <IconExclamationMarkTriangle size={20} />
+                            </Badge>
+                        </Tooltip.Trigger>
+                        <Tooltip.Content side="top">Warning</Tooltip.Content>
+                    </Tooltip.Root>
                     <Badge variant="highlight">New</Badge>
                 </Card.Badges>
 

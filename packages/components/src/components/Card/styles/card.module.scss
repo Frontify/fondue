@@ -99,7 +99,7 @@
             @include card-state(
                 $root-border-color: var(--color-line-strong),
                 $root-bg: 'surface-dim',
-                $box-shadow: 0 0 0 1px var(--color-interactive-default)
+                $box-shadow: inset 0 0 0 1px var(--color-interactive-default)
             );
         }
 
@@ -109,7 +109,7 @@
             @include card-state(
                 $root-border-color: var(--color-interactive-default),
                 $root-bg: 'surface-hover',
-                $box-shadow: 0 0 0 1px var(--color-interactive-default)
+                $box-shadow: inset 0 0 0 1px var(--color-interactive-default)
             );
         }
     }
@@ -186,6 +186,10 @@
     flex: 1;
     min-width: 0;
     display: block;
+
+    & + & {
+        border-left: 1px solid var(--color-line-subtle);
+    }
 
     &[data-fit='cover'] {
         object-fit: cover;
@@ -265,11 +269,17 @@
 }
 
 .badges {
+    position: relative;
+    z-index: 1;
     display: flex;
     gap: var(--spacing-xx-small);
     flex-wrap: wrap;
     justify-content: flex-end;
     pointer-events: none;
+
+    > * {
+        pointer-events: auto;
+    }
 
     .root:has(> .banner) & {
         position: absolute;
@@ -336,7 +346,7 @@
 
 .description {
     grid-area: description;
-    padding: 0 var(--spacing-small);
+    padding: var(--spacing-xx-small) var(--spacing-small) 0;
     font-family: var(--typography-font-family-primary);
     font-size: var(--typography-font-size-small);
     font-weight: var(--typography-font-weight-regular);
