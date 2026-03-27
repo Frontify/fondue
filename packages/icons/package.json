@@ -36,8 +36,10 @@
     },
     "scripts": {
         "build": "pnpm build:generate-react-icons && vite build",
+        "build:manifest": "tsx scripts/buildManifest.ts",
         "build:download-new-icons": "dotenv tsx scripts/download_new_icons.ts",
         "build:generate-react-icons": "tsx scripts/generate_react_icons.ts",
+        "build:generate-manifest": "tsx scripts/generate_manifest.ts",
         "build:storybook": "storybook build",
         "storybook": "storybook dev -p 6007",
         "lint": "eslint .",
