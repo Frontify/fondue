@@ -34,7 +34,7 @@
         "node": ">=18"
     },
     "scripts": {
-        "build": "vite build",
+        "build": "vite build && pnpm build:manifest",
         "build:storybook": "storybook build",
         "install:playwright": "playwright install --with-deps",
         "lint": "eslint .",

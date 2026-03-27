@@ -97,7 +97,7 @@ export function getComponentDetailMap(): Map<string, ComponentDetail> {
     if (!componentDetailMap) {
         componentDetailMap = new Map();
         for (const mod of Object.values(componentDetailModules)) {
-            const detail = mod as ComponentDetail;
+            const detail = mod;
             componentDetailMap.set(detail.name.toLowerCase(), detail);
         }
     }

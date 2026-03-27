@@ -1,10 +1,8 @@
 {
     "compilerOptions": {
         "allowImportingTsExtensions": true,
-        "baseUrl": ".",
         "isolatedModules": true,
         "lib": ["ES2022"],
-        "types": ["vite/client"],
         "module": "ESNext",
         "moduleResolution": "bundler",
         "noEmit": true,
@@ -12,10 +10,14 @@
         "noUncheckedIndexedAccess": true,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
+        "paths": {
+            "*": ["./*"]
+        },
         "resolveJsonModule": true,
         "skipLibCheck": true,
         "strict": true,
         "target": "ES2022",
+        "types": ["vite/client"],
         "useDefineForClassFields": true
     },
     "include": ["src", "eslint.config.mjs"],

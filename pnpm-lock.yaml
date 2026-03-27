@@ -419,6 +419,9 @@ importers:
       '@floating-ui/dom':
         specifier: ^1.7.4
         version: 1.7.4
+      '@frontify/fondue-api':
+        specifier: workspace:^
+        version: link:../fondue-api
       '@frontify/fondue-charts':
         specifier: workspace:^
         version: link:../charts

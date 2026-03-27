@@ -1,0 +1,116 @@
+# AI API
+
+The `@frontify/fondue/api` package provides a programmatic TypeScript API for querying the Fondue design system — components, tokens, and icons.
+
+It serves as the stable contract for AI integrations (MCP servers, Claude skills, LLM-generated code) and any tooling that needs to introspect the design system.
+
+## Installation
+
+The API is available as a subexport of the main Fondue package.
+
+```shell
+npm i @frontify/fondue
+```
+
+```ts
+import { getComponent, searchTokens, listIcons } from '@frontify/fondue/api';
+```
+
+## Components
+
+### `listComponents()`
+
+Returns all component summaries (lightweight).
+
+```ts
+const components = listComponents();
+// [{ name: "Button", description: "...", status: "released", category: "input", tags: [...], subComponentNames: [] }, ...]
+```
+
+### `getComponent(name)`
+
+Returns full detail for a component including props, subcomponents, examples, and usage instructions. Case-insensitive.
+
+```ts
+const button = getComponent('Button');
+// { name, description, status, category, tags, relatedComponents, importStatement, props, subComponents, examples, instructions, typeDefinitions }
+```
+
+### `getComponentSummary(name)`
+
+Returns only the summary (no props/examples). Cheaper than `getComponent()`.
+
+### `searchComponents({ query, limit? })`
+
+Searches across name, description, tags, and category. Returns summaries.
+
+```ts
+const results = searchComponents({ query: 'toggle', limit: 5 });
+```
+
+### `getComponentsByCategory({ category, limit? })`
+
+Returns all components in a given category. Case-insensitive.
+
+**Categories:** `input`, `layout`, `overlay`, `feedback`, `typography`, `navigation`, `data`, `utility`
+
+## Tokens
+
+### `listTokenCategories()`
+
+Returns all distinct token category names.
+
+### `getToken(id)`
+
+Returns a token by its exact id.
+
+```ts
+const token = getToken('color-charts-dim-default');
+// { category, cssVariable, id, keyPath, tailwindClass, themeable, type, value }
+```
+
+### `getTokensByCategory({ category, limit? })`
+
+Returns all tokens in a given category.
+
+### `searchTokens({ query, limit? })`
+
+Searches across id, cssVariable, tailwindClass, and category.
+
+### `listUtilities()`
+
+Returns all utilities (composite tokens like typography styles).
+
+### `searchUtilities({ query, limit? })`
+
+Searches utilities by id and tailwindClass.
+
+## Icons
+
+### `listIcons({ limit? })`
+
+Returns all icons.
+
+### `getIcon(name)`
+
+Returns an icon by its kebab-case name. Case-insensitive.
+
+```ts
+const icon = getIcon('adobe-creative-cloud');
+// { name, componentName, exportName, importPath, filled, availableSizes, defaultSize, keywords }
+```
+
+### `getIconByExportName(exportName)`
+
+Returns an icon by its React export name, e.g. `"IconAdobeCreativeCloud"`. Case-insensitive.
+
+### `searchIcons({ query, limit? })`
+
+Searches across name, componentName, exportName, and keywords.
+
+## Design principles
+
+- **No throws** — lookups return `undefined`, collections return `[]`
+- **Two-tier components** — summaries for scanning, full detail for drill-down
+- **Case-insensitive** — all name lookups
+- **Deterministic search** — substring matching, no fuzzy logic

@@ -53,6 +53,11 @@
             "import": "./dist/index.es.js"
         },
         "./styles": "./dist/style.css",
+        "./api": {
+            "types": "./dist/packages/api/api.d.ts",
+            "require": "./dist/packages/api/fondue-api.umd.cjs",
+            "import": "./dist/packages/api/fondue-api.js"
+        },
         "./tokens/base": "./dist/packages/tokens/css/base.css",
         "./tokens/tailwind": "./dist/packages/tokens/tailwind/tailwind.config.js",
         "./legacyTokens/tailwind": "./dist/legacyTokens.tailwind.config.js",
@@ -77,7 +82,7 @@
         "node": ">=18"
     },
     "scripts": {
-        "build": "pnpm clean && pnpm build:library && pnpm build:styles-with-tw && pnpm build:package:components && pnpm build:package:icons && pnpm build:package:charts && pnpm build:package:tokens && pnpm build:package:rte && pnpm build:tools",
+        "build": "pnpm clean && pnpm build:library && pnpm build:styles-with-tw && pnpm build:package:components && pnpm build:package:icons && pnpm build:package:charts && pnpm build:package:tokens && pnpm build:package:rte && pnpm build:package:api && pnpm build:tools",
         "build:library": "vite build",
         "build:styles-with-tw": "postcss ./src/components/**/*.css --config src/components/postcss.config.cjs -o dist/styles-without-tailwind.css",
         "build:storybook": "storybook build",
@@ -86,6 +91,7 @@
         "build:package:charts": "vite build -c charts.vite.config.ts",
         "build:package:tokens": "vite build -c tokens.vite.config.ts",
         "build:package:rte": "vite build -c rte.vite.config.ts",
+        "build:package:api": "vite build -c api.vite.config.ts",
         "build:tools": "tsx scripts/detectDeprecatedExports/detectDeprecatedExports.ts tools/constants/fondueExports.json && vite build -c codemod.vite.config.ts && vite build -c internal-tools.vite.config.ts",
         "dev": "cross-env NODE_ENV=development pnpm dev:library",
         "dev:library": "vite build --emptyOutDir false --watch",
@@ -113,6 +119,7 @@
         "@frontify/fondue-components": "workspace:^",
         "@frontify/fondue-icons": "workspace:^",
         "@frontify/fondue-rte": "workspace:^",
+        "@frontify/fondue-api": "workspace:^",
         "@frontify/fondue-tokens": "workspace:^",
         "@popperjs/core": "^2.11.8",
         "@react-aria/accordion": "3.0.0-alpha.29",
