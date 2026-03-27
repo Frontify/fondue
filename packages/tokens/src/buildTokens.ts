@@ -4,6 +4,7 @@ import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { generateManifest } from './generateManifest';
 import { loadFigmaVariables } from './loadFigmaVariables';
 import { buildStyleDictionary } from './styleDictionary/buildStyleDictionary';
 import { type Config } from './types';
@@ -62,6 +63,9 @@ const buildTokens = async () => {
         semantic,
         utilities,
     };
+
+    const manifest = generateManifest(availableTokens);
+    await writeFile(path.resolve(CWD, '../manifest.json'), JSON.stringify(manifest, null, 2));
 
     await mkdir(path.resolve(CWD, '../dist/json'), { recursive: true });
     await writeFile(path.resolve(CWD, '../dist/json/all-tokens.json'), JSON.stringify(availableTokens, null, 2));
