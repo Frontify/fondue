@@ -1,5 +1,16 @@
 # @frontify/fondue-components
 
+## 29.2.0
+
+### Minor Changes
+
+- [#2647](https://github.com/Frontify/fondue/pull/2647) [`2ec59ab`](https://github.com/Frontify/fondue/commit/2ec59ab55830e3a8126a14de1e9acf3f49a4a408) Thanks [@mnoleto](https://github.com/mnoleto)! - feat: add `Card` component
+
+### Patch Changes
+
+- Updated dependencies []:
+    - @frontify/fondue-tokens@5.0.0
+
 ## 29.1.0
 
 ### Minor Changes
