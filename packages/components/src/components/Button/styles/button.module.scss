@@ -5,7 +5,19 @@
 @use '../../../utilities/sizeToken.module.scss';
 
 // Mixin for button variants
-@mixin variant($variant, $emphasis, $bg-default, $bg-hover, $bg-active, $text-color, $text-hover: null, $text-active: null, $icon-color: null, $icon-hover: null, $icon-active: null) {
+@mixin variant(
+    $variant,
+    $emphasis,
+    $bg-default,
+    $bg-hover,
+    $bg-active,
+    $text-color,
+    $text-hover: null,
+    $text-active: null,
+    $icon-color: null,
+    $icon-hover: null,
+    $icon-active: null
+) {
     &[data-variant='#{$variant}'][data-emphasis='#{$emphasis}']:not([disabled]) {
         background-color: var(--color-#{$bg-default});
 
@@ -78,7 +90,17 @@
 }
 
 // Mixin for weak emphasis variants (no default background)
-@mixin variant-weak($variant, $bg-hover, $bg-active, $text-color, $text-hover: null, $text-active: null, $icon-color: null, $icon-hover: null, $icon-active: null) {
+@mixin variant-weak(
+    $variant,
+    $bg-hover,
+    $bg-active,
+    $text-color,
+    $text-hover: null,
+    $text-active: null,
+    $icon-color: null,
+    $icon-hover: null,
+    $icon-active: null
+) {
     &[data-variant='#{$variant}'][data-emphasis='weak']:not([disabled]) {
         background-color: transparent;
 
@@ -175,7 +197,9 @@
     }
 
     // Default variant - default emphasis
-    @include variant('default', 'default',
+    @include variant(
+        'default',
+        'default',
         'container-secondary-default',
         'container-secondary-hover',
         'container-secondary-active',
@@ -185,7 +209,8 @@
     );
 
     // Default variant - weak emphasis
-    @include variant-weak('default',
+    @include variant-weak(
+        'default',
         'container-secondary-hover',
         'container-secondary-active',
         'primary-default',
@@ -194,7 +219,9 @@
     );
 
     // Default variant - strong emphasis
-    @include variant('default', 'strong',
+    @include variant(
+        'default',
+        'strong',
         'primary-default',
         'primary-hover',
         'primary-active',
@@ -204,7 +231,9 @@
     );
 
     // Positive variant - default emphasis
-    @include variant('positive', 'default',
+    @include variant(
+        'positive',
+        'default',
         'container-success-default',
         'container-success-hover',
         'container-success-active',
@@ -214,7 +243,8 @@
     );
 
     // Positive variant - weak emphasis
-    @include variant-weak('positive',
+    @include variant-weak(
+        'positive',
         'container-success-hover',
         'container-success-active',
         'success-default',
@@ -223,7 +253,9 @@
     );
 
     // Positive variant - strong emphasis
-    @include variant('positive', 'strong',
+    @include variant(
+        'positive',
+        'strong',
         'success-default',
         'success-hover',
         'success-active',
@@ -233,7 +265,9 @@
     );
 
     // Negative variant - default emphasis
-    @include variant('negative', 'default',
+    @include variant(
+        'negative',
+        'default',
         'container-error-default',
         'container-error-hover',
         'container-error-active',
@@ -246,7 +280,8 @@
     );
 
     // Negative variant - weak emphasis
-    @include variant-weak('negative',
+    @include variant-weak(
+        'negative',
         'container-error-hover',
         'container-error-active',
         'error-default',
@@ -255,7 +290,9 @@
     );
 
     // Negative variant - strong emphasis
-    @include variant('negative', 'strong',
+    @include variant(
+        'negative',
+        'strong',
         'error-default',
         'error-hover',
         'error-active',
@@ -265,7 +302,9 @@
     );
 
     // Danger variant - default emphasis
-    @include variant('danger', 'default',
+    @include variant(
+        'danger',
+        'default',
         'error-default',
         'error-hover',
         'error-active',
@@ -275,7 +314,9 @@
     );
 
     // Danger variant - weak emphasis
-    @include variant('danger', 'weak',
+    @include variant(
+        'danger',
+        'weak',
         'error-default',
         'error-hover',
         'error-active',
@@ -285,7 +326,9 @@
     );
 
     // Danger variant - strong emphasis
-    @include variant('danger', 'strong',
+    @include variant(
+        'danger',
+        'strong',
         'error-default',
         'error-hover',
         'error-active',
@@ -295,7 +338,9 @@
     );
 
     // Loud variant - default emphasis
-    @include variant('loud', 'default',
+    @include variant(
+        'loud',
+        'default',
         'container-highlight-default',
         'container-highlight-hover',
         'container-highlight-active',
@@ -356,7 +401,9 @@
     }
 
     // Loud variant - strong emphasis
-    @include variant('loud', 'strong',
+    @include variant(
+        'loud',
+        'strong',
         'highlight-default',
         'highlight-hover',
         'highlight-active',
@@ -425,6 +472,10 @@
         pointer-events: none;
         background-color: var(--color-container-disabled-default);
         color: var(--color-container-disabled-on-disabled-container);
+
+        &[data-emphasis='weak'] {
+            background-color: transparent;
+        }
 
         & svg {
             color: var(--color-container-disabled-on-disabled-container);
