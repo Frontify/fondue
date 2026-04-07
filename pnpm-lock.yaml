@@ -81,7 +81,7 @@ importers:
         version: 8.0.0(storybook@10.2.0(@testing-library/dom@10.4.1)(prettier@3.8.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
       '@frontify/eslint-config-react':
         specifier: ^1.0.8
-        version: 1.0.11(@types/eslint@8.56.12)(eslint@9.39.2(jiti@1.21.7))(prettier@3.8.1)(react@18.3.1)(typescript@5.9.3)
+        version: 1.0.11(@types/eslint@8.56.12)(eslint@9.39.2(jiti@2.6.1))(prettier@3.8.1)(react@18.3.1)(typescript@5.9.3)
       '@frontify/fondue-tokens':
         specifier: workspace:^
         version: link:../tokens
@@ -138,10 +138,10 @@ importers:
         version: 10.4.23(postcss@8.5.6)
       eslint:
         specifier: ^9.39.2
-        version: 9.39.2(jiti@1.21.7)
+        version: 9.39.2(jiti@2.6.1)
       eslint-plugin-notice:
         specifier: ^1.0.0
-        version: 1.0.0(eslint@9.39.2(jiti@1.21.7))
+        version: 1.0.0(eslint@9.39.2(jiti@2.6.1))
       happy-dom:
         specifier: ^20.3.4
         version: 20.3.4
@@ -174,7 +174,7 @@ importers:
         version: 4.5.4(@types/node@24.11.0)(rollup@4.56.0)(typescript@5.9.3)(vite@5.4.21(@types/node@24.11.0)(sass@1.97.3)(terser@5.31.1))
       vite-plugin-eslint:
         specifier: ^1.8.1
-        version: 1.8.1(eslint@9.39.2(jiti@1.21.7))(vite@5.4.21(@types/node@24.11.0)(sass@1.97.3)(terser@5.31.1))
+        version: 1.8.1(eslint@9.39.2(jiti@2.6.1))(vite@5.4.21(@types/node@24.11.0)(sass@1.97.3)(terser@5.31.1))
       vite-tsconfig-paths:
         specifier: ^5.1.4
         version: 5.1.4(typescript@5.9.3)(vite@5.4.21(@types/node@24.11.0)(sass@1.97.3)(terser@5.31.1))
@@ -190,6 +190,12 @@ importers:
       '@dnd-kit/react':
         specifier: ^0.3.2
         version: 0.3.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@headless-tree/core':
+        specifier: ^1.6.3
+        version: 1.6.3
+      '@headless-tree/react':
+        specifier: ^1.6.3
+        version: 1.6.3(@headless-tree/core@1.6.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@radix-ui/react-accordion':
         specifier: ^1.2.12
         version: 1.2.12(@types/react-dom@18.3.7(@types/react@18.3.28))(@types/react@18.3.28)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -268,7 +274,7 @@ importers:
         version: 8.0.0(storybook@10.2.0(@testing-library/dom@10.4.1)(prettier@3.8.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
       '@frontify/eslint-config-react':
         specifier: ^1.0.8
-        version: 1.0.11(@types/eslint@8.56.12)(eslint@9.39.2(jiti@2.6.1))(prettier@3.8.1)(react@18.3.1)(typescript@5.9.3)
+        version: 1.0.11(@types/eslint@8.56.12)(eslint@9.39.2(jiti@1.21.7))(prettier@3.8.1)(react@18.3.1)(typescript@5.9.3)
       '@frontify/fondue-icons':
         specifier: workspace:^
         version: link:../icons
@@ -277,7 +283,7 @@ importers:
         version: link:../tokens
       '@playwright/experimental-ct-react':
         specifier: ^1.57.0
-        version: 1.57.0(@types/node@24.10.9)(jiti@2.6.1)(sass@1.97.3)(terser@5.31.1)(tsx@4.21.0)(vite@5.4.21(@types/node@24.10.9)(sass@1.97.3)(terser@5.31.1))(yaml@2.8.2)
+        version: 1.57.0(@types/node@24.10.9)(jiti@1.21.7)(sass@1.97.3)(terser@5.31.1)(tsx@4.21.0)(vite@5.4.21(@types/node@24.10.9)(sass@1.97.3)(terser@5.31.1))(yaml@2.8.2)
       '@playwright/test':
         specifier: ^1.57.0
         version: 1.57.0
@@ -337,10 +343,10 @@ importers:
         version: 5.6.2
       eslint:
         specifier: ^9.39.2
-        version: 9.39.2(jiti@2.6.1)
+        version: 9.39.2(jiti@1.21.7)
       eslint-plugin-notice:
         specifier: ^1.0.0
-        version: 1.0.0(eslint@9.39.2(jiti@2.6.1))
+        version: 1.0.0(eslint@9.39.2(jiti@1.21.7))
       eslint-plugin-tailwindcss:
         specifier: ^3.18.2
         version: 3.18.2(tailwindcss@3.4.19(tsx@4.21.0)(yaml@2.8.2))
@@ -2955,6 +2961,16 @@ packages:
 
   '@hapi/topo@6.0.2':
     resolution: {integrity: sha512-KR3rD5inZbGMrHmgPxsJ9dbi6zEK+C3ZwUwTa+eMwWLz7oijWUTWD2pMSNNYJAU6Qq+65NkxXjqHr/7LM2Xkqg==}
+
+  '@headless-tree/core@1.6.3':
+    resolution: {integrity: sha512-en0EOaZfiCRF2B8DEnhGhSaUf3hVr9Bauye8G8aswPbHOKSyhJiN4bsczz1GvqF4Xb7Ga3LP0vLA6Zih7YLoyw==}
+
+  '@headless-tree/react@1.6.3':
+    resolution: {integrity: sha512-aiRwG6e2EPBSec9uLLy9GlTvAuCtSTouU30Nwcr5ZTsYjG/i7B/ouC8f8Zu4unzo/v1h5ztbemp+EH2TPTKh+g==}
+    peerDependencies:
+      '@headless-tree/core': '*'
+      react: '*'
+      react-dom: '*'
 
   '@humanfs/core@0.19.1':
     resolution: {integrity: sha512-5DyQ4+1JEUzejeK1JGICcideyfUbGixgS9jNgex5nqkW+cY7WZhxBigmieN5Qnw9ZosSNVC9KQKyb+GUaGyKUA==}
@@ -13569,6 +13585,14 @@ snapshots:
     dependencies:
       '@hapi/hoek': 11.0.7
 
+  '@headless-tree/core@1.6.3': {}
+
+  '@headless-tree/react@1.6.3(@headless-tree/core@1.6.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@headless-tree/core': 1.6.3
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+
   '@humanfs/core@0.19.1': {}
 
   '@humanfs/node@0.16.7':
@@ -14052,11 +14076,11 @@ snapshots:
 
   '@pkgr/core@0.2.9': {}
 
-  '@playwright/experimental-ct-core@1.57.0(@types/node@24.10.9)(jiti@2.6.1)(sass@1.97.3)(terser@5.31.1)(tsx@4.21.0)(yaml@2.8.2)':
+  '@playwright/experimental-ct-core@1.57.0(@types/node@24.10.9)(jiti@1.21.7)(sass@1.97.3)(terser@5.31.1)(tsx@4.21.0)(yaml@2.8.2)':
     dependencies:
       playwright: 1.57.0
       playwright-core: 1.57.0
-      vite: 6.4.1(@types/node@24.10.9)(jiti@2.6.1)(sass@1.97.3)(terser@5.31.1)(tsx@4.21.0)(yaml@2.8.2)
+      vite: 6.4.1(@types/node@24.10.9)(jiti@1.21.7)(sass@1.97.3)(terser@5.31.1)(tsx@4.21.0)(yaml@2.8.2)
     transitivePeerDependencies:
       - '@types/node'
       - jiti
@@ -14070,9 +14094,9 @@ snapshots:
       - tsx
       - yaml
 
-  '@playwright/experimental-ct-react@1.57.0(@types/node@24.10.9)(jiti@2.6.1)(sass@1.97.3)(terser@5.31.1)(tsx@4.21.0)(vite@5.4.21(@types/node@24.10.9)(sass@1.97.3)(terser@5.31.1))(yaml@2.8.2)':
+  '@playwright/experimental-ct-react@1.57.0(@types/node@24.10.9)(jiti@1.21.7)(sass@1.97.3)(terser@5.31.1)(tsx@4.21.0)(vite@5.4.21(@types/node@24.10.9)(sass@1.97.3)(terser@5.31.1))(yaml@2.8.2)':
     dependencies:
-      '@playwright/experimental-ct-core': 1.57.0(@types/node@24.10.9)(jiti@2.6.1)(sass@1.97.3)(terser@5.31.1)(tsx@4.21.0)(yaml@2.8.2)
+      '@playwright/experimental-ct-core': 1.57.0(@types/node@24.10.9)(jiti@1.21.7)(sass@1.97.3)(terser@5.31.1)(tsx@4.21.0)(yaml@2.8.2)
       '@vitejs/plugin-react': 4.7.0(vite@5.4.21(@types/node@24.10.9)(sass@1.97.3)(terser@5.31.1))
     transitivePeerDependencies:
       - '@types/node'
@@ -17548,7 +17572,7 @@ snapshots:
       std-env: 3.10.0
       test-exclude: 7.0.1
       tinyrainbow: 2.0.0
-      vitest: 3.2.4(@types/debug@4.1.12)(@types/node@24.11.0)(@vitest/ui@3.2.4)(happy-dom@20.3.4)(sass@1.97.3)(terser@5.31.1)
+      vitest: 3.2.4(@types/debug@4.1.12)(@types/node@24.10.9)(@vitest/ui@3.2.4)(happy-dom@20.3.4)(sass@1.97.3)(terser@5.31.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -17621,7 +17645,7 @@ snapshots:
       sirv: 3.0.2
       tinyglobby: 0.2.15
       tinyrainbow: 2.0.0
-      vitest: 3.2.4(@types/debug@4.1.12)(@types/node@24.11.0)(@vitest/ui@3.2.4)(happy-dom@20.3.4)(sass@1.97.3)(terser@5.31.1)
+      vitest: 3.2.4(@types/debug@4.1.12)(@types/node@24.10.9)(@vitest/ui@3.2.4)(happy-dom@20.3.4)(sass@1.97.3)(terser@5.31.1)
 
   '@vitest/utils@3.2.4':
     dependencies:
@@ -24083,11 +24107,11 @@ snapshots:
       - rollup
       - supports-color
 
-  vite-plugin-eslint@1.8.1(eslint@9.39.2(jiti@1.21.7))(vite@5.4.21(@types/node@24.11.0)(sass@1.97.3)(terser@5.31.1)):
+  vite-plugin-eslint@1.8.1(eslint@9.39.2(jiti@2.6.1))(vite@5.4.21(@types/node@24.11.0)(sass@1.97.3)(terser@5.31.1)):
     dependencies:
       '@rollup/pluginutils': 4.2.1
       '@types/eslint': 8.56.12
-      eslint: 9.39.2(jiti@1.21.7)
+      eslint: 9.39.2(jiti@2.6.1)
       rollup: 2.79.2
       vite: 5.4.21(@types/node@24.11.0)(sass@1.97.3)(terser@5.31.1)
 
@@ -24162,6 +24186,23 @@ snapshots:
       fsevents: 2.3.3
       sass: 1.97.3
       terser: 5.31.1
+
+  vite@6.4.1(@types/node@24.10.9)(jiti@1.21.7)(sass@1.97.3)(terser@5.31.1)(tsx@4.21.0)(yaml@2.8.2):
+    dependencies:
+      esbuild: 0.25.12
+      fdir: 6.5.0(picomatch@4.0.3)
+      picomatch: 4.0.3
+      postcss: 8.5.6
+      rollup: 4.56.0
+      tinyglobby: 0.2.15
+    optionalDependencies:
+      '@types/node': 24.10.9
+      fsevents: 2.3.3
+      jiti: 1.21.7
+      sass: 1.97.3
+      terser: 5.31.1
+      tsx: 4.21.0
+      yaml: 2.8.2
 
   vite@6.4.1(@types/node@24.10.9)(jiti@2.6.1)(sass@1.97.3)(terser@5.31.1)(tsx@4.21.0)(yaml@2.8.2):
     dependencies:
