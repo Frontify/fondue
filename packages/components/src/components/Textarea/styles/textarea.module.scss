@@ -24,8 +24,11 @@
     border: var(--border-width-default) solid var(--color-line-mid);
 
     & {
-        @include focusStyle.focus-outline;
         @include transitions.transition-colors;
+    }
+
+    &:has(textarea[data-show-focus-ring='true']) {
+        @include focusStyle.focus-outline-styles;
     }
 
     &:hover {
