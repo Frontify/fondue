@@ -8,12 +8,14 @@
 @mixin card-state(
     $root-border-color: transparent,
     $root-bg: null,
-    $box-shadow: none,
+    $inner-ring-color: transparent,
     $banner-border-color: transparent,
     $banner-border-radius: 0
 ) {
-    border-color: $root-border-color;
-    box-shadow: $box-shadow;
+    &::after {
+        outline-color: $root-border-color;
+        box-shadow: inset 0 0 0 calc(var(--border-width-default) + 1px) $inner-ring-color;
+    }
 
     @if $root-bg {
         background-color: var(--color-#{$root-bg});
@@ -61,11 +63,24 @@
     grid-template-columns: auto 1fr auto auto;
     grid-template-rows: auto minmax(calc(#{sizeToken.get(10)} / 2 + var(--spacing-small)), auto) minmax(calc(#{sizeToken.get(10)} / 2 + var(--spacing-small)), auto);
     border-radius: var(--border-radius-large);
-    border: var(--border-width-default) solid transparent;
+    border: none;
     background-color: var(--color-surface-default);
     overflow: hidden;
     outline: none;
-    @include transitions.transition((background-color, border-color, box-shadow));
+    @include transitions.transition((background-color, box-shadow));
+
+    &::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        outline: var(--border-width-default) solid transparent;
+        outline-offset: calc(-1 * var(--border-width-default));
+        box-shadow: inset 0 0 0 calc(var(--border-width-default) + 1px) transparent;
+        pointer-events: none;
+        z-index: 1;
+        @include transitions.transition((outline-color, box-shadow));
+    }
 
     &:not(:has(> .banner)) {
         background-color: var(--color-surface-dim);
@@ -99,7 +114,7 @@
             @include card-state(
                 $root-border-color: var(--color-line-strong),
                 $root-bg: 'surface-dim',
-                $box-shadow: inset 0 0 0 1px var(--color-interactive-default)
+                $inner-ring-color: var(--color-interactive-default)
             );
         }
 
@@ -109,7 +124,7 @@
             @include card-state(
                 $root-border-color: var(--color-interactive-default),
                 $root-bg: 'surface-hover',
-                $box-shadow: inset 0 0 0 1px var(--color-interactive-default)
+                $inner-ring-color: var(--color-interactive-default)
             );
         }
     }
