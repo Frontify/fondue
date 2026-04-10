@@ -33,6 +33,11 @@
         @include focusStyle.focus-outline;
     }
 
+    &:-moz-focusring {
+        outline: 2px solid transparent;
+        outline-offset: 2px;
+    }
+
     // Focus outline for nested inputs (e.g., inside CollapsibleBadges)
     &:has(input[data-show-focus-ring='true']:focus) {
         @include focusStyle.focus-outline-styles;
@@ -103,6 +108,11 @@
     line-height: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
+
+    &:-moz-focusring {
+        outline: 2px solid transparent;
+        outline-offset: 2px;
+    }
 }
 
 .input,
@@ -413,5 +423,10 @@
 
     &:disabled {
         color: var(--color-disabled-default);
+    }
+
+    &:-moz-focusring {
+        outline: 2px solid transparent;
+        outline-offset: 2px;
     }
 }
