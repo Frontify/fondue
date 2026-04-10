@@ -828,6 +828,34 @@ export const PreventCloseOnEscape: Story = {
     },
 };
 
+export const NotDismissable: Story = {
+    args: {
+        children: 'This dialog cannot be dismissed by pressing Escape or clicking outside the dialog.',
+    },
+    render: (args) => {
+        const [isDialogOpen, setIsDialogOpen] = useState(false);
+        return (
+            <Dialog.Root open={isDialogOpen} onOpenChange={setIsDialogOpen} dismissable={false}>
+                <Dialog.Trigger>
+                    <Button>Open dialog</Button>
+                </Dialog.Trigger>
+                <Dialog.Content {...args} showUnderlay>
+                    <Dialog.Header>
+                        <Dialog.Title>Non-dismissable dialog</Dialog.Title>
+                    </Dialog.Header>
+                    <Dialog.Body {...args} />
+                    <Dialog.Footer>
+                        <Dialog.Close>
+                            <Button emphasis="default">Cancel</Button>
+                        </Dialog.Close>
+                        <Button onPress={() => setIsDialogOpen(false)}>Submit</Button>
+                    </Dialog.Footer>
+                </Dialog.Content>
+            </Dialog.Root>
+        );
+    },
+};
+
 export const NestedDialogsWithEscapeKey: Story = {
     render: (args) => {
         const [outerEscapeCount, setOuterEscapeCount] = useState(0);
