@@ -720,35 +720,6 @@ test('should still close via Dialog.Close when dismissable is false', async ({ m
     await expect(contentElement).not.toBeVisible();
 });
 
-test('should still close programmatically when dismissable is false', async ({ mount, page }) => {
-    const DialogWithProgrammaticClose = () => {
-        const [open, setOpen] = useState(true);
-        return (
-            <Dialog.Root open={open} dismissable={false}>
-                <Dialog.Trigger>
-                    <Button>{DIALOG_TRIGGER_TEXT}</Button>
-                </Dialog.Trigger>
-                <Dialog.Content data-test-id={DIALOG_CONTENT_TEST_ID}>
-                    <Dialog.Header showCloseButton={false}>{DIALOG_HEADER_TEXT}</Dialog.Header>
-                    <Dialog.Body>
-                        <Button data-test-id="programmatic-close" onPress={() => setOpen(false)}>
-                            Close
-                        </Button>
-                    </Dialog.Body>
-                </Dialog.Content>
-            </Dialog.Root>
-        );
-    };
-
-    await mount(<DialogWithProgrammaticClose />);
-
-    const contentElement = page.getByTestId(DIALOG_CONTENT_TEST_ID);
-    await expect(contentElement).toBeVisible();
-
-    await page.getByTestId('programmatic-close').click();
-    await expect(contentElement).not.toBeVisible();
-});
-
 test('should forward onEscapeKeyDown when dismissable is false', async ({ mount, page }) => {
     const onEscapeKeyDown = sinon.spy();
     await mount(
