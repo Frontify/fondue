@@ -37,6 +37,12 @@ export type DialogRootProps = {
      * Event handler called when the `open` state changes
      */
     onOpenChange?: (open: boolean) => void;
+    /**
+     * Whether the dialog can be closed by clicking the underlay or pressing Escape.
+     * When set to `false`, the dialog can only be closed programmatically or via `Dialog.Close`.
+     * @default true
+     */
+    dismissable?: boolean;
     children?: ReactNode;
 };
 
@@ -154,13 +160,14 @@ export type DialogAnnouncementProps = {
 
 type DialogContextType = {
     isModal: boolean;
+    dismissable: boolean;
 };
 
-const DialogContext = createContext<DialogContextType>({ isModal: false });
+const DialogContext = createContext<DialogContextType>({ isModal: false, dismissable: true });
 DialogContext.displayName = 'DialogContext';
 
-export const DialogRoot = ({ children, modal, onOpenChange, open }: DialogRootProps) => {
-    const value = useMemo(() => ({ isModal: modal ?? false }), [modal]);
+export const DialogRoot = ({ children, modal, onOpenChange, open, dismissable = true }: DialogRootProps) => {
+    const value = useMemo(() => ({ isModal: modal ?? false, dismissable }), [modal, dismissable]);
 
     return (
         <DialogContext.Provider value={value}>
@@ -224,8 +231,22 @@ export const DialogContent = (
 ) => {
     const { theme, dir } = useFondueTheme();
     const contentRef = useRef<HTMLDivElement>(null);
+    const { dismissable } = useContext(DialogContext);
 
     useSyncRefs<HTMLDivElement>(contentRef, ref);
+
+    const handleEscapeKeyDown = (event: KeyboardEvent) => {
+        if (!dismissable) {
+            event.preventDefault();
+        }
+        onEscapeKeyDown?.(event);
+    };
+
+    const handleInteractOutside = (event: Event) => {
+        if (!dismissable) {
+            event.preventDefault();
+        }
+    };
 
     const handleOpenAutoFocus = (event: Event) => {
         event.preventDefault();
@@ -264,7 +285,8 @@ export const DialogContent = (
                         className={styles.content}
                         onFocus={addShowFocusRing}
                         onOpenAutoFocus={handleOpenAutoFocus}
-                        onEscapeKeyDown={onEscapeKeyDown}
+                        onEscapeKeyDown={handleEscapeKeyDown}
+                        onInteractOutside={handleInteractOutside}
                         data-dialog-padding={padding}
                         data-dialog-rounded={rounded}
                         data-test-id={dataTestId}
