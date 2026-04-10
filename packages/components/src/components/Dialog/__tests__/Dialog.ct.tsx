@@ -655,6 +655,92 @@ test('should close nested dropdown before dialog when escape is pressed', async 
     await expect(dialogContent).not.toBeVisible();
 });
 
+test('should not close on escape when dismissable is false', async ({ mount, page }) => {
+    await mount(
+        <Dialog.Root open dismissable={false}>
+            <Dialog.Trigger>
+                <Button>{DIALOG_TRIGGER_TEXT}</Button>
+            </Dialog.Trigger>
+            <Dialog.Content data-test-id={DIALOG_CONTENT_TEST_ID}>
+                <Dialog.Header>{DIALOG_HEADER_TEXT}</Dialog.Header>
+                <Dialog.Body>{DIALOG_BODY_TEXT}</Dialog.Body>
+            </Dialog.Content>
+        </Dialog.Root>,
+    );
+
+    const contentElement = page.getByTestId(DIALOG_CONTENT_TEST_ID);
+    await expect(contentElement).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(contentElement).toBeVisible();
+});
+
+test('should not close on underlay click when dismissable is false', async ({ mount, page }) => {
+    await mount(
+        <Dialog.Root open dismissable={false} modal>
+            <Dialog.Trigger>
+                <Button>{DIALOG_TRIGGER_TEXT}</Button>
+            </Dialog.Trigger>
+            <Dialog.Content data-test-id={DIALOG_CONTENT_TEST_ID} showUnderlay>
+                <Dialog.Header>{DIALOG_HEADER_TEXT}</Dialog.Header>
+                <Dialog.Body>{DIALOG_BODY_TEXT}</Dialog.Body>
+            </Dialog.Content>
+        </Dialog.Root>,
+    );
+
+    const contentElement = page.getByTestId(DIALOG_CONTENT_TEST_ID);
+    await expect(contentElement).toBeVisible();
+
+    // Click the underlay (outside the dialog content)
+    await page.mouse.click(10, 10);
+    await expect(contentElement).toBeVisible();
+});
+
+test('should still close via Dialog.Close when dismissable is false', async ({ mount, page }) => {
+    await mount(
+        <Dialog.Root dismissable={false}>
+            <Dialog.Trigger data-test-id={DIALOG_TRIGGER_TEST_ID}>
+                <Button>{DIALOG_TRIGGER_TEXT}</Button>
+            </Dialog.Trigger>
+            <Dialog.Content data-test-id={DIALOG_CONTENT_TEST_ID}>
+                <Dialog.Header data-test-id={DIALOG_HEADER_TEST_ID}>{DIALOG_HEADER_TEXT}</Dialog.Header>
+                <Dialog.Body>{DIALOG_BODY_TEXT}</Dialog.Body>
+            </Dialog.Content>
+        </Dialog.Root>,
+    );
+
+    const triggerElement = page.getByTestId(DIALOG_TRIGGER_TEST_ID);
+    const contentElement = page.getByTestId(DIALOG_CONTENT_TEST_ID);
+    const closeElement = page.getByTestId(DIALOG_HEADER_CLOSE_TEST_ID);
+
+    await triggerElement.click();
+    await expect(contentElement).toBeVisible();
+
+    await closeElement.click();
+    await expect(contentElement).not.toBeVisible();
+});
+
+test('should forward onEscapeKeyDown when dismissable is false', async ({ mount, page }) => {
+    const onEscapeKeyDown = sinon.spy();
+    await mount(
+        <Dialog.Root open dismissable={false}>
+            <Dialog.Trigger>
+                <Button>{DIALOG_TRIGGER_TEXT}</Button>
+            </Dialog.Trigger>
+            <Dialog.Content data-test-id={DIALOG_CONTENT_TEST_ID} onEscapeKeyDown={onEscapeKeyDown}>
+                <Dialog.Header>{DIALOG_HEADER_TEXT}</Dialog.Header>
+                <Dialog.Body>{DIALOG_BODY_TEXT}</Dialog.Body>
+            </Dialog.Content>
+        </Dialog.Root>,
+    );
+
+    const contentElement = page.getByTestId(DIALOG_CONTENT_TEST_ID);
+    await expect(contentElement).toBeVisible();
+    expect(onEscapeKeyDown.callCount).toBe(0);
+    await page.keyboard.press('Escape');
+    expect(onEscapeKeyDown.callCount).toBe(1);
+    await expect(contentElement).toBeVisible();
+});
+
 test('should close inner dialog before outer dialog when escape is pressed in nested dialogs', async ({
     mount,
     page,
