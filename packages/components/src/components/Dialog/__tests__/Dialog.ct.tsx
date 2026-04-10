@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { expect, test } from '@playwright/experimental-ct-react';
-import { useState } from 'react';
 import sinon from 'sinon';
 
 import { Button } from '#/components/Button/Button';
