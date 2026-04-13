@@ -61,6 +61,7 @@
     grid-template-columns: auto 1fr auto auto;
     grid-template-rows: auto minmax(calc(#{sizeToken.get(10)} / 2 + var(--spacing-small)), auto) minmax(calc(#{sizeToken.get(10)} / 2 + var(--spacing-small)), auto);
     border-radius: var(--border-radius-large);
+    box-sizing: border-box;
     border: var(--border-width-default) solid transparent;
     background-color: var(--color-surface-default);
     overflow: hidden;
