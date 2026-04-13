@@ -1,5 +1,23 @@
 # @frontify/fondue
 
+## 13.4.1
+
+### Patch Changes
+
+- [#2686](https://github.com/Frontify/fondue/pull/2686) [`3f56c07`](https://github.com/Frontify/fondue/commit/3f56c07edf7576961b8003ee1abf72ec16e6e2a9) Thanks [@mnoleto](https://github.com/mnoleto)! - fix(Card): prevent card from growing on hover/selection by setting box-sizing to border-box
+
+- [#2682](https://github.com/Frontify/fondue/pull/2682) [`93f063d`](https://github.com/Frontify/fondue/commit/93f063ddc6aa7558424d846cbd18a0312dac7ae9) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: remove background for disabled button with weak emphasis
+
+- [#2684](https://github.com/Frontify/fondue/pull/2684) [`2c85a6a`](https://github.com/Frontify/fondue/commit/2c85a6a3a1ec36336bfe3e91c10b9ef49ea5da36) Thanks [@syeo66](https://github.com/syeo66)! - fix(Select): Focus ring in firefox
+
+- [#2683](https://github.com/Frontify/fondue/pull/2683) [`c867d36`](https://github.com/Frontify/fondue/commit/c867d360aa1056a9fc30b9ffeb3553fa535b5875) Thanks [@syeo66](https://github.com/syeo66)! - fix(Textarea): (re-)enable focus ring in Textarea
+
+- Updated dependencies [[`3f56c07`](https://github.com/Frontify/fondue/commit/3f56c07edf7576961b8003ee1abf72ec16e6e2a9), [`93f063d`](https://github.com/Frontify/fondue/commit/93f063ddc6aa7558424d846cbd18a0312dac7ae9), [`2c85a6a`](https://github.com/Frontify/fondue/commit/2c85a6a3a1ec36336bfe3e91c10b9ef49ea5da36), [`653ee58`](https://github.com/Frontify/fondue/commit/653ee58dcb5d29f256c893b75fedc2b9cc432aec), [`c867d36`](https://github.com/Frontify/fondue/commit/c867d360aa1056a9fc30b9ffeb3553fa535b5875), [`bd66533`](https://github.com/Frontify/fondue/commit/bd665332fbae1bcd77aad9d885525dea3b3d75ee)]:
+    - @frontify/fondue-components@30.0.0
+    - @frontify/fondue-icons@0.26.0
+    - @frontify/fondue-tokens@5.0.0
+    - @frontify/fondue-rte@0.1.3
+
 ## 13.4.0
 
 ### Minor Changes
