@@ -312,13 +312,7 @@ describe('Card Component', () => {
     it('should not call onNavigate when the card is selected (overlay is a button)', async () => {
         const handleNavigate = vi.fn();
         renderWithRouter(
-            <Card.Root
-                href="/page"
-                onNavigate={handleNavigate}
-                onSelect={() => {}}
-                selected
-                aria-label="Card"
-            >
+            <Card.Root href="/page" onNavigate={handleNavigate} onSelect={() => {}} selected aria-label="Card">
                 <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
             </Card.Root>,
         );
@@ -329,11 +323,7 @@ describe('Card Component', () => {
     it('should not navigate when onNavigate calls preventDefault', async () => {
         navigateStub.mockClear();
         renderWithRouter(
-            <Card.Root
-                href="/page"
-                onNavigate={(event) => event.preventDefault()}
-                aria-label="Card"
-            >
+            <Card.Root href="/page" onNavigate={(event) => event.preventDefault()} aria-label="Card">
                 <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
             </Card.Root>,
         );
