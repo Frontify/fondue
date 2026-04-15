@@ -52,6 +52,13 @@ type CardRootInteractiveProps = {
      * ID of the element that describes the card (e.g. a subtitle element).
      */
     'aria-describedby'?: string;
+    /**
+     * Called when the user activates the card's link overlay, before navigation.
+     * Fires for plain clicks, modifier clicks (cmd/ctrl/shift/middle), and keyboard activation.
+     * Does not fire when the card is selected (the overlay becomes a button that calls `onSelect`).
+     * Useful for analytics/tracking. Call `event.preventDefault()` to cancel navigation.
+     */
+    onNavigate?: MouseEventHandler<HTMLAnchorElement>;
 };
 
 export type CardRootProps = CardRootBaseProps &
@@ -74,6 +81,7 @@ export type CardRootProps = CardRootBaseProps &
           })
         | {
               href?: never;
+              onNavigate?: never;
               onSelect?: never;
               selected?: never;
               'aria-label'?: never;
@@ -88,6 +96,7 @@ export const CardRoot = (
         'aria-describedby': ariaDescribedby,
         selected = false,
         href,
+        onNavigate,
         onSelect,
         onMouseEnter,
         onMouseLeave,
@@ -107,12 +116,16 @@ export const CardRoot = (
 
     const handleLinkClick = useCallback(
         (event: MouseEvent<HTMLAnchorElement>) => {
+            onNavigate?.(event);
+            if (event.defaultPrevented) {
+                return;
+            }
             if (href && !event.metaKey && !event.ctrlKey && !event.shiftKey && event.button === 0) {
                 event.preventDefault();
                 navigate(href);
             }
         },
-        [href, navigate],
+        [href, navigate, onNavigate],
     );
 
     const labelledby = ariaLabel ? undefined : titleId;
