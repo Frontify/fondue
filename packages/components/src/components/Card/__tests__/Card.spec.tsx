@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -283,6 +283,52 @@ describe('Card Component', () => {
         const title = screen.getByText(CARD_TITLE_TEXT);
         const actionsContainer = screen.getByTestId('fondue-card-actions');
         expect(actionsContainer).not.toContainElement(title);
+    });
+
+    it('should call onNavigate when the link overlay is clicked', async () => {
+        const handleNavigate = vi.fn();
+        renderWithRouter(
+            <Card.Root href="/page" onNavigate={handleNavigate} aria-label="Card">
+                <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
+            </Card.Root>,
+        );
+        await userEvent.click(screen.getByRole('link', { name: 'Card' }));
+        expect(handleNavigate).toHaveBeenCalledOnce();
+    });
+
+    it('should call onNavigate with a modifier click without triggering internal navigation', () => {
+        const handleNavigate = vi.fn();
+        navigateStub.mockClear();
+        renderWithRouter(
+            <Card.Root href="/page" onNavigate={handleNavigate} aria-label="Card">
+                <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
+            </Card.Root>,
+        );
+        fireEvent.click(screen.getByRole('link', { name: 'Card' }), { metaKey: true });
+        expect(handleNavigate).toHaveBeenCalledOnce();
+        expect(navigateStub).not.toHaveBeenCalled();
+    });
+
+    it('should not call onNavigate when the card is selected (overlay is a button)', async () => {
+        const handleNavigate = vi.fn();
+        renderWithRouter(
+            <Card.Root href="/page" onNavigate={handleNavigate} onSelect={() => {}} selected aria-label="Card">
+                <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
+            </Card.Root>,
+        );
+        await userEvent.click(screen.getByRole('button', { name: 'Card' }));
+        expect(handleNavigate).not.toHaveBeenCalled();
+    });
+
+    it('should not navigate when onNavigate calls preventDefault', async () => {
+        navigateStub.mockClear();
+        renderWithRouter(
+            <Card.Root href="/page" onNavigate={(event) => event.preventDefault()} aria-label="Card">
+                <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
+            </Card.Root>,
+        );
+        await userEvent.click(screen.getByRole('link', { name: 'Card' }));
+        expect(navigateStub).not.toHaveBeenCalled();
     });
 
     it('should allow tabbing through interactive elements', async () => {
