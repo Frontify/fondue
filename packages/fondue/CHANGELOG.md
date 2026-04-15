@@ -1,5 +1,15 @@
 # @frontify/fondue
 
+## 13.4.2
+
+### Patch Changes
+
+- [`f1e3083`](https://github.com/Frontify/fondue/commit/f1e3083355f9689bc1945d36d6fdf993c7baf90b) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: bump fondue-components internally
+
+- Updated dependencies [[`371c67a`](https://github.com/Frontify/fondue/commit/371c67a2bbf370ffb6cf821874cb40e062f42687)]:
+    - @frontify/fondue-components@30.1.0
+    - @frontify/fondue-tokens@5.0.0
+
 ## 13.4.1
 
 ### Patch Changes
