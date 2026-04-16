@@ -1,5 +1,16 @@
 # @frontify/fondue-components
 
+## 30.1.0
+
+### Minor Changes
+
+- [#2688](https://github.com/Frontify/fondue/pull/2688) [`371c67a`](https://github.com/Frontify/fondue/commit/371c67a2bbf370ffb6cf821874cb40e062f42687) Thanks [@mnoleto](https://github.com/mnoleto)! - feat(Card): add `onNavigate` prop to track link overlay activation for analytics
+
+### Patch Changes
+
+- Updated dependencies []:
+    - @frontify/fondue-tokens@5.0.0
+
 ## 30.0.0
 
 ### Minor Changes
