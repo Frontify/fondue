@@ -138,7 +138,8 @@
     &:disabled {
         color: var(--color-disabled-default);
     }
-    &:disabled ~ .slot {
+
+    &:disabled~.slot {
         color: var(--color-disabled-default);
     }
 }
@@ -163,10 +164,11 @@
     &[data-name='right'] {
         order: 0;
         margin-inline: 0px;
-        padding-inline-end: sizeToken.get(3);
+        padding-inline-end: 0px;
 
-        &:has(~ div[data-name='clear']) {
-            padding-inline-end: 0;
+        &>svg {
+            margin-inline-start: sizeToken.get(1);
+            margin-inline-end: sizeToken.get(1);
         }
     }
 
@@ -193,7 +195,7 @@
     justify-content: center;
     padding: 0 sizeToken.get(1);
 
-    button:not(:hover) > .clearIcon {
+    button:not(:hover)>.clearIcon {
         color: var(--color-secondary-default);
     }
 }
@@ -202,7 +204,12 @@
     display: flex;
     gap: sizeToken.get(1);
     padding-inline-start: 0;
-    padding-inline-end: sizeToken.get(3);
+    padding-inline-end: sizeToken.get(2);
+
+    &>svg {
+        margin-inline-start: sizeToken.get(1);
+        margin-inline-end: sizeToken.get(1);
+    }
 }
 
 .caret {
@@ -341,7 +348,7 @@
 }
 
 .group {
-    .item + & {
+    .item+& {
         border-top: var(--border-width-default) solid var(--color-line-mid);
         margin-bottom: 0.5rem;
     }
@@ -375,7 +382,7 @@
     min-width: 0;
     flex: 1;
 
-    .root > & {
+    .root>& {
         padding-inline-start: sizeToken.get(2);
     }
 }
