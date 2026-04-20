@@ -210,6 +210,11 @@
         margin-inline-start: sizeToken.get(1);
         margin-inline-end: sizeToken.get(1);
     }
+
+    &>button:has(.caret) {
+        padding-inline-start: sizeToken.get(1);
+        padding-inline-end: sizeToken.get(1);
+    }
 }
 
 .caret {
