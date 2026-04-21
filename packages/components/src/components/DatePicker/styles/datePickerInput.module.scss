@@ -19,7 +19,7 @@
     box-sizing: border-box;
 
     text-align: start;
-    color: var(--color-secondary-default);
+    color: var(--color-primary-default);
     background-color: var(--color-surface-default);
     border-radius: var(--border-radius-medium);
     border: var(--border-width-default) solid var(--color-line-mid);
@@ -30,7 +30,6 @@
 
     &:hover {
         border-color: var(--color-line-strong);
-        color: var(--color-secondary-default);
     }
 
     &:has(:focus-visible),
@@ -51,11 +50,11 @@
     &[data-disabled='true'] {
         border-color: var(--color-line-subtle);
         background-color: var(--color-container-disabled-default);
-        color: var(--color-disabled-default);
+        color: var(--color-container-disabled-on-disabled-container);
         cursor: default;
 
         .dateName {
-            color: var(--color-disabled-default);
+            color: var(--color-container-disabled-on-disabled-container);
         }
     }
 }
@@ -101,13 +100,9 @@
         pointer-events: all;
     }
 
-    button:not(:hover) .clearIcon {
-        color: var(--color-secondary-default) !important;
-    }
-
     .root:has(:disabled) button .clearIcon,
     .root[data-disabled='true'] button .clearIcon {
-        color: var(--color-disabled-default) !important;
+        color: var(--color-container-disabled-on-disabled-container) !important;
     }
 }
 
