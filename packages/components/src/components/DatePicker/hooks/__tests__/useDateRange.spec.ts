@@ -32,6 +32,15 @@ describe('useDateRange', () => {
 
             act(() => {
                 result.current.handleSelect(
+                    { from: new Date(Date.UTC(2025, 4, 1)), to: new Date(Date.UTC(2025, 4, 1)) },
+                    new Date(Date.UTC(2025, 4, 1)),
+                    {},
+                    {} as React.MouseEvent,
+                );
+            });
+
+            act(() => {
+                result.current.handleSelect(
                     { from: new Date(Date.UTC(2025, 4, 1)), to: new Date(Date.UTC(2025, 4, 10)) },
                     new Date(Date.UTC(2025, 4, 10)),
                     {},
@@ -47,9 +56,38 @@ describe('useDateRange', () => {
     });
 
     describe('controlled mode', () => {
-        it('should call onSelect callback when handleSelect is invoked with a valid range', () => {
+        it('should not call onSelect on the first click (start-date selection)', () => {
             const onSelect = vi.fn();
             const { result } = renderHook(() => useDateRange(undefined, onSelect));
+
+            act(() => {
+                result.current.handleSelect(
+                    { from: new Date(Date.UTC(2025, 0, 5)), to: new Date(Date.UTC(2025, 0, 5)) },
+                    new Date(Date.UTC(2025, 0, 5)),
+                    {},
+                    {} as React.MouseEvent,
+                );
+            });
+
+            expect(onSelect).not.toHaveBeenCalled();
+            expect(result.current.selectedDateRange).toStrictEqual({
+                from: new Date(Date.UTC(2025, 0, 5)),
+                to: new Date(Date.UTC(2025, 0, 5)),
+            });
+        });
+
+        it('should call onSelect only after the end-date has been selected', () => {
+            const onSelect = vi.fn();
+            const { result } = renderHook(() => useDateRange(undefined, onSelect));
+
+            act(() => {
+                result.current.handleSelect(
+                    { from: new Date(Date.UTC(2025, 0, 5)), to: new Date(Date.UTC(2025, 0, 5)) },
+                    new Date(Date.UTC(2025, 0, 5)),
+                    {},
+                    {} as React.MouseEvent,
+                );
+            });
 
             act(() => {
                 result.current.handleSelect(
@@ -60,9 +98,39 @@ describe('useDateRange', () => {
                 );
             });
 
+            expect(onSelect).toHaveBeenCalledTimes(1);
             expect(onSelect).toHaveBeenCalledWith({
                 from: { year: 2025, month: 1, day: 5 },
                 to: { year: 2025, month: 1, day: 25 },
+            });
+        });
+
+        it('should commit a same-day range when the end-date click repeats the start-date', () => {
+            const onSelect = vi.fn();
+            const { result } = renderHook(() => useDateRange(undefined, onSelect));
+
+            act(() => {
+                result.current.handleSelect(
+                    { from: new Date(Date.UTC(2025, 0, 5)), to: new Date(Date.UTC(2025, 0, 5)) },
+                    new Date(Date.UTC(2025, 0, 5)),
+                    {},
+                    {} as React.MouseEvent,
+                );
+            });
+
+            act(() => {
+                result.current.handleSelect(
+                    { from: new Date(Date.UTC(2025, 0, 5)), to: new Date(Date.UTC(2025, 0, 5)) },
+                    new Date(Date.UTC(2025, 0, 5)),
+                    {},
+                    {} as React.MouseEvent,
+                );
+            });
+
+            expect(onSelect).toHaveBeenCalledTimes(1);
+            expect(onSelect).toHaveBeenCalledWith({
+                from: { year: 2025, month: 1, day: 5 },
+                to: { year: 2025, month: 1, day: 5 },
             });
         });
 

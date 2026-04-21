@@ -7,6 +7,10 @@
     width: fit-content;
 }
 
+.root {
+    --rdp-nav_button-width: #{sizeToken.get(15)};
+}
+
 .root[dir='rtl'] {
     .toggleMonthButtonContainer {
         transform: rotate(180deg);
@@ -15,24 +19,28 @@
 
 .toggleMonthButtonContainer {
     position: absolute;
+    top: 0;
     height: var(--rdp-nav-height);
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-left: sizeToken.get(2);
-    margin-right: sizeToken.get(2);
+    gap: sizeToken.get(0.5);
+    padding-inline: sizeToken.get(1);
+}
+
+.previousMonthButtonContainer {
+    inset-inline-start: 0;
 }
 
 .nextMonthButtonContainer {
     inset-inline-end: 0;
-    top: 0;
 }
 
 .weekday {
     font-size: var(--typography-font-size-small);
     line-height: var(--typography-line-height-tight);
-    font-weight: var(--typography-font-weight-bold);
-    color: var(--color-container-secondary-on-secondary-container);
+    font-weight: var(--typography-font-weight-regular);
+    color: var(--color-secondary-default);
     height: sizeToken.get(6);
     width: sizeToken.get(9);
     display: flex;
@@ -59,17 +67,23 @@
     width: sizeToken.get(9);
     padding: 0;
 
-    &[data-today='true']:after {
-        content: '';
-        position: absolute;
-        top: sizeToken.get(0.5);
-        left: sizeToken.get(0.5);
-        width: sizeToken.get(8);
-        height: sizeToken.get(8);
-        border: 1px solid var(--color-primary-default);
-        border-radius: var(--border-radius-large);
-        pointer-events: none;
-        box-sizing: border-box;
+    &[data-today='true'] {
+        & .dayContent {
+            font-weight: var(--typography-font-weight-bold);
+        }
+
+        &:after {
+            content: '';
+            position: absolute;
+            bottom: sizeToken.get(1.5);
+            left: sizeToken.get(3.5);
+            width: sizeToken.get(2);
+            height: sizeToken.get(0.5);
+            border: 1px solid var(--text-color, var(--color-primary-default));
+            border-radius: 2px;
+            pointer-events: none;
+            box-sizing: border-box;
+        }
     }
 
     &.disabled {
@@ -136,9 +150,10 @@
 }
 
 .selected {
+    --text-color: var(--color-container-highlight-on-highlight-container);
     .dayButton > .dayContent {
         background-color: var(--color-container-highlight-active);
-        color: var(--color-container-highlight-on-highlight-container);
+        color: var(--text-color);
         width: sizeToken.get(8);
         margin-left: sizeToken.get(0.5);
         padding-left: 0;
@@ -149,10 +164,10 @@
 
 @mixin rangeStartDay {
     opacity: 1;
+    --text-color: var(--color-container-highlight-on-highlight-container);
     .dayButton > .dayContent {
         background-color: var(--color-container-highlight-active);
-        color: var(--color-container-highlight-on-highlight-container);
-
+        color: var(--text-color);
         border-top-right-radius: 0;
         border-bottom-right-radius: 0;
         border-top-left-radius: var(--border-radius-large);
@@ -167,10 +182,10 @@
 
 @mixin rangeEndDay {
     opacity: 1;
+    --text-color: var(--color-container-highlight-on-highlight-container);
     .dayButton > .dayContent {
         background-color: var(--color-container-highlight-active);
-        color: var(--color-container-highlight-on-highlight-container);
-
+        color: var(--text-color);
         border-top-left-radius: 0;
         border-bottom-left-radius: 0;
         border-top-right-radius: var(--border-radius-large);
@@ -185,10 +200,11 @@
 
 @mixin rangeMiddleDay {
     opacity: 1;
+    --text-color: var(--color-container-highlight-on-highlight-container);
     .dayButton > .dayContent {
+        color: var(--text-color);
         border-radius: 0;
         background-color: var(--color-container-highlight-default);
-        color: var(--color-container-highlight-on-highlight-container);
         margin-left: 0;
         padding-left: sizeToken.get(0.5);
         margin-right: 0;

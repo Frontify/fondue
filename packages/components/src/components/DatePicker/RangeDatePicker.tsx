@@ -16,8 +16,8 @@ export const RangeDatePicker = (
     { 'data-test-id': dataTestId, onChange, selected, ...props }: RangeDatePickerProps,
     ref: ForwardedRef<HTMLDivElement>,
 ): JSX.Element => {
-    const { selectedDateRange, handleSelect } = useDateRange(selected, onChange);
-    const { hoverModifiers } = useRangeHover(selectedDateRange);
+    const { selectedDateRange, handleSelect, isAwaitingEndDate } = useDateRange(selected, onChange);
+    const { hoverModifiers } = useRangeHover(isAwaitingEndDate ? selectedDateRange : undefined);
 
     return (
         <DatePickerCalendar

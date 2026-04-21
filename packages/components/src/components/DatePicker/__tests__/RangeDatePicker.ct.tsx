@@ -48,25 +48,39 @@ test.describe('RangeDatePicker', () => {
         expect(count).toBeGreaterThan(0);
     });
 
-    test('should call onChange when a day is clicked', async ({ mount }) => {
+    test('should call onChange only after both range ends have been clicked', async ({ mount }) => {
         const onChange = sinon.spy();
         const component = await mount(
             <DatePicker.Range data-test-id={RANGE_TEST_ID} selected={RANGE_SELECTION} onChange={onChange} />,
         );
         await component.getByText('20', { exact: true }).click();
+        expect(onChange.callCount).toBe(0);
+        await component.getByText('25', { exact: true }).click();
         expect(onChange.callCount).toBe(1);
     });
 
     test('should navigate to the next month', async ({ mount }) => {
         const component = await mount(<DatePicker.Range data-test-id={RANGE_TEST_ID} selected={RANGE_SELECTION} />);
-        await component.getByRole('button', { name: /next/i }).click();
+        await component.getByRole('button', { name: /next month/i }).click();
         await expect(component.getByText('April 2025')).toBeVisible();
     });
 
     test('should navigate to the previous month', async ({ mount }) => {
         const component = await mount(<DatePicker.Range data-test-id={RANGE_TEST_ID} selected={RANGE_SELECTION} />);
-        await component.getByRole('button', { name: /previous/i }).click();
+        await component.getByRole('button', { name: /previous month/i }).click();
         await expect(component.getByText('February 2025')).toBeVisible();
+    });
+
+    test('should navigate to the next year', async ({ mount }) => {
+        const component = await mount(<DatePicker.Range data-test-id={RANGE_TEST_ID} selected={RANGE_SELECTION} />);
+        await component.getByRole('button', { name: /next year/i }).click();
+        await expect(component.getByText('March 2026')).toBeVisible();
+    });
+
+    test('should navigate to the previous year', async ({ mount }) => {
+        const component = await mount(<DatePicker.Range data-test-id={RANGE_TEST_ID} selected={RANGE_SELECTION} />);
+        await component.getByRole('button', { name: /previous year/i }).click();
+        await expect(component.getByText('March 2024')).toBeVisible();
     });
 
     test('should render 7 weekday columns', async ({ mount }) => {
