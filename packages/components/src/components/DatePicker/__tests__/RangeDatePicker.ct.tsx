@@ -53,9 +53,9 @@ test.describe('RangeDatePicker', () => {
         const component = await mount(
             <DatePicker.Range data-test-id={RANGE_TEST_ID} selected={RANGE_SELECTION} onChange={onChange} />,
         );
-        await component.getByText('20', { exact: true }).click();
+        await component.getByRole('button', { name: /March 20th/ }).click();
         expect(onChange.callCount).toBe(0);
-        await component.getByText('25', { exact: true }).click();
+        await component.getByRole('button', { name: /March 25th/ }).click();
         expect(onChange.callCount).toBe(1);
     });
 
