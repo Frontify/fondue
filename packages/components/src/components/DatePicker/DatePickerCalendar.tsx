@@ -1,6 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconArrowLeft, IconArrowRight, IconCaretLeftDouble, IconCaretRightDouble } from '@frontify/fondue-icons';
+import {
+    IconArrowLeft,
+    IconArrowRight,
+    IconCaretLeft,
+    IconCaretLeftDouble,
+    IconCaretRight,
+    IconCaretRightDouble,
+} from '@frontify/fondue-icons';
 import { addYears, subYears } from 'date-fns';
 import { forwardRef, useEffect, useMemo, useRef } from 'react';
 import {
@@ -165,7 +172,7 @@ const getCustomComponents = (): Partial<CustomComponents> => ({
                         }
                     }}
                 >
-                    <IconArrowLeft size={16} />
+                    <IconCaretLeft size={16} />
                 </Button>
             </div>
         );
@@ -192,7 +199,7 @@ const getCustomComponents = (): Partial<CustomComponents> => ({
                         }
                     }}
                 >
-                    <IconArrowRight size={16} />
+                    <IconCaretRight size={16} />
                 </Button>
                 <Button
                     emphasis="weak"

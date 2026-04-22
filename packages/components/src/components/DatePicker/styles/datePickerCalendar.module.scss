@@ -9,6 +9,8 @@
 
 .root {
     --rdp-nav_button-width: #{sizeToken.get(15)};
+    --rdp-nav-height: #{sizeToken.get(6)};
+    margin-top: sizeToken.get(2);
 }
 
 .root[dir='rtl'] {
@@ -50,7 +52,11 @@
 
 .weekdays {
     display: flex;
+    align-items: center;
     width: 100%;
+    height: sizeToken.get(9);
+    margin-bottom: sizeToken.get(1);
+    margin-top: sizeToken.get(2);
 }
 
 .week {
