@@ -1,13 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import {
-    IconArrowLeft,
-    IconArrowRight,
-    IconCaretLeft,
-    IconCaretLeftDouble,
-    IconCaretRight,
-    IconCaretRightDouble,
-} from '@frontify/fondue-icons';
+import { IconCaretLeft, IconCaretLeftDouble, IconCaretRight, IconCaretRightDouble } from '@frontify/fondue-icons';
 import { addYears, subYears } from 'date-fns';
 import { forwardRef, useEffect, useMemo, useRef } from 'react';
 import {
