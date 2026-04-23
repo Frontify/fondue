@@ -113,6 +113,11 @@
                 $box-shadow: inset 0 0 0 1px var(--color-interactive-default)
             );
         }
+
+        // Pressed state (while actively clicking, via :active)
+        &:active {
+            background-color: var(--color-surface-active);
+        }
     }
 }
 
@@ -172,6 +177,10 @@
     .root[data-interactive='true']:hover &:has(> .bannerIcon),
     .root[data-interactive='true']:has([data-state='open']) &:has(> .bannerIcon) {
         background-color: var(--color-surface-hover);
+    }
+
+    .root[data-interactive='true']:active &:has(> .bannerIcon) {
+        background-color: var(--color-surface-active);
     }
 
     &[data-size='small'] {
