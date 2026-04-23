@@ -1,10 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconArrowLeft, IconArrowRight } from '@frontify/fondue-icons';
+import { IconCaretLeft, IconCaretLeftDouble, IconCaretRight, IconCaretRightDouble } from '@frontify/fondue-icons';
+import { addYears, subYears } from 'date-fns';
 import { forwardRef, useEffect, useMemo, useRef } from 'react';
 import {
     getDefaultClassNames,
     DayPicker,
+    useDayPicker,
     type PreviousMonthButtonProps,
     type NextMonthButtonProps,
     type OnSelectHandler,
@@ -123,7 +125,7 @@ const getCustomComponents = (): Partial<CustomComponents> => ({
                 onMouseLeave={onMouseLeave}
                 type="button"
             >
-                <div className={`${styles.dayContent} ${styles.button}`}>{day.date.getDate()}</div>
+                <div className={styles.dayContent}>{day.date.getDate()}</div>
             </button>
         );
     },
@@ -132,8 +134,25 @@ const getCustomComponents = (): Partial<CustomComponents> => ({
         'aria-label': ariaLabel,
         'aria-disabled': ariaDisabled,
     }: PreviousMonthButtonProps): JSX.Element => {
+        const { months, goToMonth, previousMonth } = useDayPicker();
+        const currentMonth = months[0]?.date;
+        const isYearDisabled = !previousMonth;
         return (
-            <div className={`${styles.toggleMonthButtonContainer} `}>
+            <div className={`${styles.toggleMonthButtonContainer} ${styles.previousMonthButtonContainer}`}>
+                <Button
+                    emphasis="weak"
+                    size="small"
+                    aspect="square"
+                    aria-label="Go to the Previous Year"
+                    aria-disabled={isYearDisabled}
+                    onPress={() => {
+                        if (currentMonth && !isYearDisabled) {
+                            goToMonth(subYears(currentMonth, 1));
+                        }
+                    }}
+                >
+                    <IconCaretLeftDouble size={16} />
+                </Button>
                 <Button
                     emphasis="weak"
                     size="small"
@@ -146,7 +165,7 @@ const getCustomComponents = (): Partial<CustomComponents> => ({
                         }
                     }}
                 >
-                    <IconArrowLeft size={16} />
+                    <IconCaretLeft size={16} />
                 </Button>
             </div>
         );
@@ -156,6 +175,9 @@ const getCustomComponents = (): Partial<CustomComponents> => ({
         'aria-label': ariaLabel,
         'aria-disabled': ariaDisabled,
     }: NextMonthButtonProps): JSX.Element => {
+        const { months, goToMonth, nextMonth } = useDayPicker();
+        const currentMonth = months[0]?.date;
+        const isYearDisabled = !nextMonth;
         return (
             <div className={`${styles.toggleMonthButtonContainer} ${styles.nextMonthButtonContainer}`}>
                 <Button
@@ -170,7 +192,21 @@ const getCustomComponents = (): Partial<CustomComponents> => ({
                         }
                     }}
                 >
-                    <IconArrowRight size={16} />
+                    <IconCaretRight size={16} />
+                </Button>
+                <Button
+                    emphasis="weak"
+                    size="small"
+                    aspect="square"
+                    aria-label="Go to the Next Year"
+                    aria-disabled={isYearDisabled}
+                    onPress={() => {
+                        if (currentMonth && !isYearDisabled) {
+                            goToMonth(addYears(currentMonth, 1));
+                        }
+                    }}
+                >
+                    <IconCaretRightDouble size={16} />
                 </Button>
             </div>
         );

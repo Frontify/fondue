@@ -59,7 +59,7 @@ test.describe('SingleDatePicker', () => {
         const component = await mount(
             <DatePicker data-test-id={DATE_PICKER_TEST_ID} selected={{ year: 2025, month: 3, day: 15 }} />,
         );
-        await component.getByRole('button', { name: /next/i }).click();
+        await component.getByRole('button', { name: /next month/i }).click();
         await expect(component.getByText('April 2025')).toBeVisible();
     });
 
@@ -67,8 +67,24 @@ test.describe('SingleDatePicker', () => {
         const component = await mount(
             <DatePicker data-test-id={DATE_PICKER_TEST_ID} selected={{ year: 2025, month: 3, day: 15 }} />,
         );
-        await component.getByRole('button', { name: /previous/i }).click();
+        await component.getByRole('button', { name: /previous month/i }).click();
         await expect(component.getByText('February 2025')).toBeVisible();
+    });
+
+    test('should navigate to the next year', async ({ mount }) => {
+        const component = await mount(
+            <DatePicker data-test-id={DATE_PICKER_TEST_ID} selected={{ year: 2025, month: 3, day: 15 }} />,
+        );
+        await component.getByRole('button', { name: /next year/i }).click();
+        await expect(component.getByText('March 2026')).toBeVisible();
+    });
+
+    test('should navigate to the previous year', async ({ mount }) => {
+        const component = await mount(
+            <DatePicker data-test-id={DATE_PICKER_TEST_ID} selected={{ year: 2025, month: 3, day: 15 }} />,
+        );
+        await component.getByRole('button', { name: /previous year/i }).click();
+        await expect(component.getByText('March 2024')).toBeVisible();
     });
 
     test('should render 7 weekday columns', async ({ mount }) => {
