@@ -9,6 +9,9 @@ import { dependencies as dependenciesMap, peerDependencies as peerDependenciesMa
 
 const peerDependencies = Object.keys(peerDependenciesMap);
 const dependencies = Object.keys(dependenciesMap);
+const externalPackages = [...dependencies, ...peerDependencies, 'react-dom/client', 'react/jsx-runtime'];
+
+const isExternal = (id: string) => externalPackages.some((pkg) => id === pkg || id.startsWith(`${pkg}/`));
 
 export const globals = {
     react: 'React',
@@ -39,7 +42,7 @@ export default defineConfig({
         sourcemap: true,
         minify: true,
         rollupOptions: {
-            external: [...dependencies, ...peerDependencies, 'react-dom/client', 'react/jsx-runtime'],
+            external: isExternal,
             output: [
                 {
                     name: 'FondueComponents',
