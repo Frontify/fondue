@@ -1,5 +1,24 @@
 # @frontify/fondue-components
 
+## 30.2.0
+
+### Minor Changes
+
+- [#2696](https://github.com/Frontify/fondue/pull/2696) [`b12a56f`](https://github.com/Frontify/fondue/commit/b12a56f7c69ca54bf4ae6684d28fee20d9601f6f) Thanks [@mnoleto](https://github.com/mnoleto)! - feat(Card): add pressed state that shifts the card and banner background to `surface-active` while the card is actively clicked
+
+### Patch Changes
+
+- [#2694](https://github.com/Frontify/fondue/pull/2694) [`5e09e6c`](https://github.com/Frontify/fondue/commit/5e09e6ce620c24027a273a6e92a93b88ef5bbee5) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: adress issues in date picker implementation
+
+- [#2691](https://github.com/Frontify/fondue/pull/2691) [`5612597`](https://github.com/Frontify/fondue/commit/56125971edc9114ead73d58e070e83d26af50a04) Thanks [@syeo66](https://github.com/syeo66)! - chore(Select): smaller distances between icons
+
+- [#2693](https://github.com/Frontify/fondue/pull/2693) [`37c5e3d`](https://github.com/Frontify/fondue/commit/37c5e3d4b949311ea182d340098683576e81ed0e) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: adjust icon color in date input & color input
+
+- [#2695](https://github.com/Frontify/fondue/pull/2695) [`a2f79ae`](https://github.com/Frontify/fondue/commit/a2f79ae5b8a6e5f20586cc93f3280285a3c597fe) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(`OrderableList`): not ordering when dragging and dropping
+
+- Updated dependencies []:
+    - @frontify/fondue-tokens@5.0.0
+
 ## 30.1.0
 
 ### Minor Changes

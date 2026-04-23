@@ -1,5 +1,15 @@
 # @frontify/fondue
 
+## 13.4.3
+
+### Patch Changes
+
+- [#2691](https://github.com/Frontify/fondue/pull/2691) [`5612597`](https://github.com/Frontify/fondue/commit/56125971edc9114ead73d58e070e83d26af50a04) Thanks [@syeo66](https://github.com/syeo66)! - chore(Select): smaller distances between icons
+
+- Updated dependencies [[`5e09e6c`](https://github.com/Frontify/fondue/commit/5e09e6ce620c24027a273a6e92a93b88ef5bbee5), [`5612597`](https://github.com/Frontify/fondue/commit/56125971edc9114ead73d58e070e83d26af50a04), [`b12a56f`](https://github.com/Frontify/fondue/commit/b12a56f7c69ca54bf4ae6684d28fee20d9601f6f), [`37c5e3d`](https://github.com/Frontify/fondue/commit/37c5e3d4b949311ea182d340098683576e81ed0e), [`a2f79ae`](https://github.com/Frontify/fondue/commit/a2f79ae5b8a6e5f20586cc93f3280285a3c597fe)]:
+    - @frontify/fondue-components@30.2.0
+    - @frontify/fondue-tokens@5.0.0
+
 ## 13.4.2
 
 ### Patch Changes
