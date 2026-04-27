@@ -29,6 +29,10 @@
     border: var(--border-width-default) solid var(--color-line-mid);
     cursor: pointer;
 
+    &:has(.input) {
+        cursor: default;
+    }
+
     & {
         @include focusStyle.focus-outline;
     }
@@ -139,7 +143,7 @@
         color: var(--color-disabled-default);
     }
 
-    &:disabled~.slot {
+    &:disabled ~ .slot {
         color: var(--color-disabled-default);
     }
 }
@@ -166,7 +170,7 @@
         margin-inline: 0px;
         padding-inline-end: 0px;
 
-        &>svg {
+        & > svg {
             margin-inline-start: sizeToken.get(1);
             margin-inline-end: sizeToken.get(1);
         }
@@ -195,7 +199,7 @@
     justify-content: center;
     padding: 0 sizeToken.get(1);
 
-    button:not(:hover)>.clearIcon {
+    button:not(:hover) > .clearIcon {
         color: var(--color-secondary-default);
     }
 }
@@ -206,12 +210,12 @@
     padding-inline-start: 0;
     padding-inline-end: sizeToken.get(2);
 
-    &>svg {
+    & > svg {
         margin-inline-start: sizeToken.get(1);
         margin-inline-end: sizeToken.get(1);
     }
 
-    &>button:has(.caret) {
+    & > button:has(.caret) {
         padding-inline-start: sizeToken.get(1);
         padding-inline-end: sizeToken.get(1);
     }
@@ -353,7 +357,7 @@
 }
 
 .group {
-    .item+& {
+    .item + & {
         border-top: var(--border-width-default) solid var(--color-line-mid);
         margin-bottom: 0.5rem;
     }
@@ -387,7 +391,7 @@
     min-width: 0;
     flex: 1;
 
-    .root>& {
+    .root > & {
         padding-inline-start: sizeToken.get(2);
     }
 }
