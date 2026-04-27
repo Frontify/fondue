@@ -218,6 +218,11 @@ const SelectBaseInput = (
                               'aria-label': 'aria-label' in props ? props['aria-label'] : undefined,
                               'aria-describedby': selectionDescription ? selectionDescriptionId : undefined,
                               ref: triggerRef,
+                              onKeyDown: (event) => {
+                                  if (event.metaKey || event.ctrlKey) {
+                                      Object.assign(event.nativeEvent, { preventDownshiftDefault: true });
+                                  }
+                              },
                           }))}
                 >
                     {selectionDescription ? (

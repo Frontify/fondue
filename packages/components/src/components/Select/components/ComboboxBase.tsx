@@ -312,6 +312,11 @@ const ComboboxBaseInput = (
                                     // eslint-disable-next-line react-hooks/refs
                                     {...getInputProps({
                                         ref: inputCallbackRef,
+                                        onKeyDown: (event: React.KeyboardEvent) => {
+                                            if (event.metaKey || event.ctrlKey) {
+                                                Object.assign(event.nativeEvent, { preventDownshiftDefault: true });
+                                            }
+                                        },
                                         'aria-label': 'aria-label' in props ? props['aria-label'] : undefined,
                                         // Remove auto-generated aria-labelledby if not explicitly provided
                                         'aria-labelledby':
@@ -333,6 +338,11 @@ const ComboboxBaseInput = (
                     ) : (
                         <input
                             {...getInputProps({
+                                onKeyDown: (event: React.KeyboardEvent) => {
+                                    if (event.metaKey || event.ctrlKey) {
+                                        Object.assign(event.nativeEvent, { preventDownshiftDefault: true });
+                                    }
+                                },
                                 'aria-label': 'aria-label' in props ? props['aria-label'] : undefined,
                                 // Remove auto-generated aria-labelledby if not explicitly provided
                                 'aria-labelledby':
