@@ -7,9 +7,7 @@ import tsConfigPaths from 'vite-tsconfig-paths';
 
 import { peerDependencies as peerDependenciesMap } from './package.json';
 
-const externalCandidates = [...Object.keys(peerDependenciesMap), 'react/jsx-runtime'];
-const isExternal = (id: string) =>
-    externalCandidates.some((pkg) => id === pkg || id.startsWith(`${pkg}/`));
+const peerDependencies = Object.keys(peerDependenciesMap);
 
 const globals = {
     react: 'React',
@@ -34,7 +32,7 @@ export default defineConfig({
         sourcemap: true,
         minify: true,
         rollupOptions: {
-            external: isExternal,
+            external: [...peerDependencies, 'react/jsx-runtime'],
             output: [
                 {
                     name: 'FondueIcons',
