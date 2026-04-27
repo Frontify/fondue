@@ -7,8 +7,14 @@ import tsConfigPaths from 'vite-tsconfig-paths';
 
 import { dependencies as dependenciesMap, peerDependencies as peerDependenciesMap } from './package.json';
 
-const peerDependencies = Object.keys(peerDependenciesMap);
-const dependencies = Object.keys(dependenciesMap);
+const externalCandidates = [
+    ...Object.keys(dependenciesMap),
+    ...Object.keys(peerDependenciesMap),
+    'react-dom/client',
+    'react/jsx-runtime',
+];
+const isExternal = (id: string) =>
+    externalCandidates.some((pkg) => id === pkg || id.startsWith(`${pkg}/`));
 
 export const globals = {
     react: 'React',
@@ -36,7 +42,7 @@ export default defineConfig({
         sourcemap: true,
         minify: true,
         rollupOptions: {
-            external: [...dependencies, ...peerDependencies, 'react-dom/client', 'react/jsx-runtime'],
+            external: isExternal,
             output: [
                 {
                     name: 'FondueRte',
