@@ -1,9 +1,5 @@
 ---
 "@frontify/fondue-components": patch
-"@frontify/fondue-charts": patch
-"@frontify/fondue": patch
-"@frontify/fondue-icons": patch
-"@frontify/fondue-rte": patch
 ---
 
-fix: externalize JS subpaths and inline stylesheet subpaths in library builds to fix `OrderableList` drag choreography in published consumers
+fix: externalize JS subpaths and inline stylesheet subpaths in the library build so `OrderableList` drag choreography works in published consumers
