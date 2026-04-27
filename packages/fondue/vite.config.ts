@@ -14,8 +14,7 @@ const externalCandidates = [
     'react-dom/client',
     'react/jsx-runtime',
 ];
-const isExternal = (id: string) =>
-    externalCandidates.some((pkg) => id === pkg || id.startsWith(`${pkg}/`));
+const isExternal = (id: string) => externalCandidates.some((pkg) => id === pkg || id.startsWith(`${pkg}/`));
 
 export const globals = {
     react: 'React',
