@@ -5,7 +5,6 @@ import * as RadixPopover from '@radix-ui/react-popover';
 import { useCombobox, useMultipleSelection } from 'downshift';
 import {
     forwardRef,
-    type KeyboardEvent,
     useCallback,
     useMemo,
     useRef,
@@ -313,7 +312,7 @@ const ComboboxBaseInput = (
                                     // eslint-disable-next-line react-hooks/refs
                                     {...getInputProps({
                                         ref: inputCallbackRef,
-                                        onKeyDown: (event: KeyboardEvent<HTMLInputElement>) => {
+                                        onKeyDown: (event) => {
                                             if (event.metaKey || event.ctrlKey) {
                                                 Object.assign(event.nativeEvent, { preventDownshiftDefault: true });
                                             }
