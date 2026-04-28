@@ -1,5 +1,11 @@
 # @frontify/fondue
 
+## 13.4.4
+
+### Patch Changes
+
+- [`0cca323`](https://github.com/Frontify/fondue/commit/0cca32351e7f4a00f2093130662b53d22b6baf8e) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update `@frontify/fondue-components` version
+
 ## 13.4.3
 
 ### Patch Changes
