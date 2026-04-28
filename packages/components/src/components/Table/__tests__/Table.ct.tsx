@@ -258,12 +258,18 @@ test('should handle all row states and interactions', async ({ mount }) => {
                     <Table.RowCell>Test</Table.RowCell>
                     <Table.RowCell>Test</Table.RowCell>
                 </Table.Row>
-                <Table.Row>
+                <Table.Row onClick={onClick}>
                     <Table.RowCell>Test</Table.RowCell>
                     <Table.RowCell>
                         <button type="button" onClick={onButtonClick}>
                             Test
                         </button>
+                    </Table.RowCell>
+                </Table.Row>
+                <Table.Row onClick={onClick}>
+                    <Table.RowCell>Test</Table.RowCell>
+                    <Table.RowCell>
+                        <input type="text"/>
                     </Table.RowCell>
                 </Table.Row>
             </Table.Body>
@@ -286,7 +292,15 @@ test('should handle all row states and interactions', async ({ mount }) => {
     const fourthRow = component.locator('tr').nth(3);
     const button = fourthRow.locator('button');
     await button.click();
+    sinon.assert.calledOnce(onClick);
     sinon.assert.calledOnce(onButtonClick);
+
+    const fifthRow = component.locator('tr').nth(4);
+    const input = fifthRow.locator('input');
+    await input.click();
+    await input.press('Space');
+    await input.press('Enter');
+    sinon.assert.calledOnce(onClick);
 });
 
 test('should handle all cell configurations', async ({ mount }) => {

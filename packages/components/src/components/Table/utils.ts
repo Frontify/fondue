@@ -31,7 +31,7 @@ export function handleKeyDown(event: KeyboardEvent<HTMLTableElement>) {
     }
 }
 
-const INTERACTIVE_ELEMENTS_LIST = [HTMLButtonElement, HTMLAnchorElement];
+const INTERACTIVE_ELEMENTS_LIST = [HTMLButtonElement, HTMLAnchorElement, HTMLInputElement];
 const INTERACTIVE_ROLES_LIST = ['button', 'link'];
 
 export function shouldIgnoreRowClick(event?: MouseEvent): boolean {
@@ -61,4 +61,8 @@ export function shouldIgnoreRowClick(event?: MouseEvent): boolean {
     }
 
     return false;
+}
+
+export function shouldIgnoreRowKeyDown(event: KeyboardEvent<HTMLTableRowElement>): boolean {
+    return event.target !== event.currentTarget;
 }
