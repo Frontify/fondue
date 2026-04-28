@@ -659,6 +659,7 @@ export const Interactive: Story = {
                     <Table.HeaderCell>Name</Table.HeaderCell>
                     <Table.HeaderCell>Invited by</Table.HeaderCell>
                     <Table.HeaderCell>Last seen</Table.HeaderCell>
+                    <Table.HeaderCell>Input</Table.HeaderCell>
                     <Table.HeaderCell>Action</Table.HeaderCell>
                 </Table.Row>
             </Table.Header>
@@ -675,6 +676,12 @@ export const Interactive: Story = {
                         </Table.RowCell>
                         <Table.RowCell>{user.invited}</Table.RowCell>
                         <Table.RowCell>{user.lastSeen}</Table.RowCell>
+                        <Table.RowCell>
+                            <TextInput
+                                onBlur={() => alert('Input clicked — this does NOT trigger row click')}
+                                placeholder="Neither Space nor Enter keydown should trigger a row click."
+                            />
+                        </Table.RowCell>
                         <Table.RowCell>
                             <Button onPress={() => alert('Button pressed — this does NOT trigger row click')}>
                                 <span>Press me</span>

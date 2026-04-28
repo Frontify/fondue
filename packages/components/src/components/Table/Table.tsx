@@ -24,7 +24,7 @@ import { Box } from '../Box/Box';
 import { LoadingCircle } from '../LoadingCircle/LoadingCircle';
 
 import styles from './styles/table.module.scss';
-import { handleKeyDown, shouldIgnoreRowClick } from './utils';
+import { handleKeyDown, shouldIgnoreRowClick, shouldIgnoreRowKeyDown } from './utils';
 
 type TableRootProps = {
     /**
@@ -403,7 +403,7 @@ export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(
         };
 
         const handleKeyDown = (event: KeyboardEvent<HTMLTableRowElement>) => {
-            if (!isInteractive) {
+            if (!isInteractive || shouldIgnoreRowKeyDown(event)) {
                 return;
             }
 

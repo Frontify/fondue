@@ -3,7 +3,7 @@
 import { type KeyboardEvent, type MouseEvent } from 'react';
 import { describe, it, expect, vi, beforeEach, test } from 'vitest';
 
-import { handleKeyDown, shouldIgnoreRowClick } from '../utils';
+import { handleKeyDown, shouldIgnoreRowClick, shouldIgnoreRowKeyDown } from '../utils';
 
 describe('handleKeyDown', () => {
     beforeEach(() => {
@@ -269,5 +269,23 @@ describe('shouldIgnoreRowClick', () => {
         const result = shouldIgnoreRowClick(fakeEvent);
 
         expect(result).toBe(true);
+    });
+});
+
+describe('shouldIgnoreRowKeyDown', () => {
+    it('should return false when target is the row itself', () => {
+        const row = document.createElement('tr');
+        const fakeEvent = { target: row, currentTarget: row } as unknown as KeyboardEvent<HTMLTableRowElement>;
+
+        expect(shouldIgnoreRowKeyDown(fakeEvent)).toBe(false);
+    });
+
+    it('should return true when target is an input inside the row', () => {
+        const row = document.createElement('tr');
+        const input = document.createElement('input');
+        row.appendChild(input);
+        const fakeEvent = { target: input, currentTarget: row } as unknown as KeyboardEvent<HTMLTableRowElement>;
+
+        expect(shouldIgnoreRowKeyDown(fakeEvent)).toBe(true);
     });
 });
