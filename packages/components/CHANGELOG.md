@@ -1,5 +1,20 @@
 # @frontify/fondue-components
 
+## 30.2.1
+
+### Patch Changes
+
+- [#2702](https://github.com/Frontify/fondue/pull/2702) [`a4edda1`](https://github.com/Frontify/fondue/commit/a4edda143cf458ca55b687a381f8ecf4b0e36d3e) Thanks [@mbgspcii](https://github.com/mbgspcii)! - fix: prevent input clicks and keydown events inside <Table.Row> from triggering row click
+
+- [#2698](https://github.com/Frontify/fondue/pull/2698) [`8fd789c`](https://github.com/Frontify/fondue/commit/8fd789c934f11973248b616e5f9f3ccb41105636) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: minor component adjustments
+
+- [#2703](https://github.com/Frontify/fondue/pull/2703) [`60c0a8f`](https://github.com/Frontify/fondue/commit/60c0a8f8586050bf027e921d881af4baed2aa33a) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add forwardRef to `ThemeProvider` to avoid an error to be thrown in Radix UIs `Presence` component
+
+- [#2701](https://github.com/Frontify/fondue/pull/2701) [`0a90eb3`](https://github.com/Frontify/fondue/commit/0a90eb3cd8c904454b3cebcd47cb9dff3a661f35) Thanks [@jcosta33](https://github.com/jcosta33)! - fix: externalize JS subpaths and inline stylesheet subpaths in the library build so `OrderableList` drag choreography works in published consumers
+
+- Updated dependencies []:
+    - @frontify/fondue-tokens@5.0.0
+
 ## 30.2.0
 
 ### Minor Changes
