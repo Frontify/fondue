@@ -1,0 +1,9 @@
+{
+  "name": "Tree",
+  "storyFilePaths": ["src/components/Tree/Tree.stories.tsx"],
+  "description": "",
+  "category": "",
+  "tags": [],
+  "relatedComponents": [],
+  "instructions": ""
+}
