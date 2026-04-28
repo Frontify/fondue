@@ -679,7 +679,7 @@ export const Interactive: Story = {
                         <Table.RowCell>
                             <TextInput
                                 onBlur={()=> alert('Input clicked — this does NOT trigger row click')}
-                                placeholder='Neither Space nor Enter keydown should trigger a row click.'
+                                placeholder="Neither Space nor Enter keydown should trigger a row click."
                             />
                         </Table.RowCell>
                         <Table.RowCell>

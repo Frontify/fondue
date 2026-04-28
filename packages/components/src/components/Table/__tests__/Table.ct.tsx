@@ -269,7 +269,7 @@ test('should handle all row states and interactions', async ({ mount }) => {
                 <Table.Row onClick={onClick}>
                     <Table.RowCell>Test</Table.RowCell>
                     <Table.RowCell>
-                        <input type="text"/>
+                        <input type="text" />
                     </Table.RowCell>
                 </Table.Row>
             </Table.Body>
