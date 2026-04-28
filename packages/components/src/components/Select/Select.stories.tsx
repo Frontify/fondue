@@ -8,7 +8,6 @@ import { action } from 'storybook/actions';
 import { Flex } from '#/components/Flex/Flex.tsx';
 
 import { Button } from '../Button/Button';
-import { ThemeProvider } from '../ThemeProvider/ThemeProvider';
 
 import { ComboboxMultiple } from './ComboboxMultiple';
 import { ComboboxSingle } from './ComboboxSingle';
