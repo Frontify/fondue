@@ -2,7 +2,7 @@
 
 import styles from '@frontify/fondue-tokens/themes';
 import { Slot } from '@radix-ui/react-slot';
-import { createContext, useContext, useMemo, type ReactNode } from 'react';
+import { createContext, type ForwardedRef, forwardRef, useContext, useMemo, type ReactNode } from 'react';
 
 import { enUS, type Translations } from '../../locales';
 
@@ -61,29 +61,30 @@ export const useFondueTheme = () => {
     };
 };
 
-export const ThemeProvider = ({
-    children,
-    theme = 'light',
-    dir = 'ltr',
-    translations = enUS,
-    asChild = false,
-}: ThemeProviderProps) => {
-    const Comp = asChild ? Slot : 'div';
+export const ThemeProvider = forwardRef<HTMLDivElement, ThemeProviderProps>(
+    (
+        { children, theme = 'light', dir = 'ltr', translations = enUS, asChild = false },
+        forwardedRef: ForwardedRef<HTMLDivElement>,
+    ) => {
+        const Comp = asChild ? Slot : 'div';
 
-    const contextValue = useMemo(
-        () => ({
-            theme,
-            dir,
-            translations,
-        }),
-        [dir, theme, translations],
-    );
+        const contextValue = useMemo(
+            () => ({
+                theme,
+                dir,
+                translations,
+            }),
+            [dir, theme, translations],
+        );
 
-    return (
-        <ThemeContext.Provider value={contextValue}>
-            <Comp dir={dir} className={`${styles[theme]} fondue-theme-provider`}>
-                {children}
-            </Comp>
-        </ThemeContext.Provider>
-    );
-};
+        return (
+            <ThemeContext.Provider value={contextValue}>
+                <Comp ref={forwardedRef} dir={dir} className={`${styles[theme]} fondue-theme-provider`}>
+                    {children}
+                </Comp>
+            </ThemeContext.Provider>
+        );
+    },
+);
+
+ThemeProvider.displayName = 'ThemeProvider';
