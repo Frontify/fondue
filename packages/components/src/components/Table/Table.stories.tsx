@@ -678,7 +678,7 @@ export const Interactive: Story = {
                         <Table.RowCell>{user.lastSeen}</Table.RowCell>
                         <Table.RowCell>
                             <TextInput
-                                onClick={()=> alert('Input clicked — this does NOT trigger row click')}
+                                onBlur={()=> alert('Input clicked — this does NOT trigger row click')}
                                 placeholder='Neither Space nor Enter keydown should trigger a row click.'
                             />
                         </Table.RowCell>
