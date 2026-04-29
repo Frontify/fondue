@@ -2,17 +2,7 @@
 
 import { syncDataLoaderFeature, selectionFeature, hotkeysCoreFeature } from '@headless-tree/core';
 import { useTree } from '@headless-tree/react';
-import {
-    Children,
-    createContext,
-    forwardRef,
-    isValidElement,
-    useContext,
-    useEffect,
-    useMemo,
-    useState,
-    type ReactNode,
-} from 'react';
+import { Children, createContext, forwardRef, isValidElement, useMemo, useState, type ReactNode } from 'react';
 
 import styles from './styles/tree.module.scss';
 
@@ -23,21 +13,6 @@ type Item = {
     isFolder?: boolean;
     isRed?: boolean;
     parentId?: string;
-};
-
-const items: Record<string, Item> = {
-    root: { name: 'Root', children: ['folder1', 'folder2'], isFolder: true },
-    folder1: { name: 'Folder 1', children: ['item1', 'item2'], isFolder: true },
-    folder2: {
-        name: 'Folder 2 (red)',
-        children: ['folder3'],
-        isFolder: true,
-        isRed: true,
-    },
-    folder3: { name: 'Folder 3', children: ['item3'], isFolder: true },
-    item1: { name: 'Item 1 (red)', isRed: true },
-    item2: { name: 'Item 2' },
-    item3: { name: 'Item 3' },
 };
 
 export type TreeContextProps = {
@@ -98,6 +73,7 @@ export const TreeRoot = ({ children }: TreeRootProps) => {
         getItemName: (item) => item.getItemData().name,
         isItemFolder: (item) => Boolean(item.getItemData().isFolder),
         dataLoader: {
+            
             getItem: (itemId) => items.find((item) => item.id === itemId) as Item,
             getChildren: (itemId) => items.find((item) => item.id === itemId)?.children ?? [],
         },
