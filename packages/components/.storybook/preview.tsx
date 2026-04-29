@@ -7,23 +7,24 @@ import { type Decorator, type Preview, type StoryContext } from '@storybook/reac
 import { type ComponentType } from 'react';
 
 import { Flex } from '../src/components/Flex/Flex';
+import { availableLocales } from '../src/locales';
 
 import DocumentationTemplate from './DocumentationTemplate.mdx';
 import { withTheme } from './components/StoryWithTheme';
 
 const ThemeProviderWrapper: Decorator = (Story: ComponentType, context: StoryContext) => {
-    const { direction = 'ltr', theme = 'light' } = context.globals;
+    const { direction = 'ltr', theme = 'light', locale = 'en-US' } = context.globals;
 
     if (theme === 'both') {
         return (
             <Flex direction="column">
-                {withTheme(Story, { label: 'Light theme', theme: 'light', direction })}
-                {withTheme(Story, { label: 'Dark theme', theme: 'dark', direction })}
+                {withTheme(Story, { label: 'Light theme', theme: 'light', direction, locale })}
+                {withTheme(Story, { label: 'Dark theme', theme: 'dark', direction, locale })}
             </Flex>
         );
     }
 
-    return withTheme(Story, { theme, direction });
+    return withTheme(Story, { theme, direction, locale });
 };
 
 const preview: Preview = {
@@ -60,6 +61,14 @@ const preview: Preview = {
             toolbar: {
                 icon: 'paragraph',
                 items: ['ltr', 'rtl'],
+                dynamicTitle: true,
+            },
+        },
+        locale: {
+            description: 'Locale for components',
+            toolbar: {
+                icon: 'globe',
+                items: availableLocales.map((locale) => ({ value: locale, title: locale })),
                 dynamicTitle: true,
             },
         },
