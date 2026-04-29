@@ -136,11 +136,11 @@ export const DropdownContent = (
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     const localRef = useRef<HTMLDivElement>(null);
-    const { theme, dir } = useFondueTheme();
+    const { theme, dir, locale } = useFondueTheme();
     const actualRef = ref || localRef;
     return (
         <RadixDropdown.Portal forceMount={forceMount || undefined}>
-            <ThemeProvider theme={theme} dir={dir}>
+            <ThemeProvider theme={theme} dir={dir} locale={locale}>
                 <RadixDropdown.Content
                     // @ts-expect-error - dir prop works at runtime but is not in the Radix UI type definition
                     dir={dir}
@@ -279,11 +279,11 @@ export const DropdownSubContent = (
     { children, 'data-test-id': dataTestId = 'fondue-dropdown-subcontent' }: DropdownSubContentProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
-    const { theme, dir } = useFondueTheme();
+    const { theme, dir, locale } = useFondueTheme();
 
     return (
         <RadixDropdown.Portal>
-            <ThemeProvider theme={theme} dir={dir}>
+            <ThemeProvider theme={theme} dir={dir} locale={locale}>
                 <RadixDropdown.SubContent
                     // @ts-expect-error - dir prop works at runtime but is not in the Radix UI type definition
                     dir={dir}

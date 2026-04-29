@@ -154,7 +154,7 @@ export const FlyoutContent = (
     }: FlyoutContentProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
-    const { theme, dir } = useFondueTheme();
+    const { theme, dir, locale } = useFondueTheme();
 
     const getAdjustedSide = (side?: 'top' | 'right' | 'bottom' | 'left') => {
         if (!side || dir === 'ltr') {
@@ -173,7 +173,7 @@ export const FlyoutContent = (
 
     return (
         <RadixPopover.Portal>
-            <ThemeProvider theme={theme} dir={dir}>
+            <ThemeProvider theme={theme} dir={dir} locale={locale}>
                 <div data-test-id="fondue-flyout-overlay" className={styles.overlay} />
                 <RadixPopover.Content
                     dir={dir}
