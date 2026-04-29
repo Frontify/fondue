@@ -12,6 +12,7 @@
     },
     "include": [
         "vite.config.ts",
+        "locales.vite.config.ts",
         "postcss.config.cjs",
         "package.json",
         "playwright.config.ts",
