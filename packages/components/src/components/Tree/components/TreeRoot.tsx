@@ -1,14 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { AssistiveTreeDescription } from '@headless-tree/react';
+import { IconCaretDown, IconCaretRight, IconDocument, IconFolder, IconGrabHandle } from '@frontify/fondue-icons';
 
 import { useTreeController } from '../hooks/useTreeController';
 import styles from '../styles/tree.module.scss';
 import { type Item, type TreeRootProps } from '../types';
 import { parseChildren } from '../utils/parseChildren';
 
-// Top-level tree component. Parses its JSX children into items, drives headless-tree's state,
-// and emits change events both per-item (onExpandChange / onSelectChange / onFocusChange) and globally (onChange).
 export const TreeRoot = ({ children, onChange }: TreeRootProps) => {
     const parsedChildren = parseChildren(children, 'root');
     const items: Item[] = [
@@ -26,25 +25,47 @@ export const TreeRoot = ({ children, onChange }: TreeRootProps) => {
     return (
         <div {...tree.getContainerProps()} className={styles.tree}>
             <AssistiveTreeDescription tree={tree} />
-            {tree.getItems().map((item) => (
-                <button
-                    key={item.getId()}
-                    type="button"
-                    {...item.getProps()}
-                    style={{ paddingLeft: `${item.getItemMeta().level * 20}px` }}
-                >
-                    <div
-                        className={styles.treeitem}
-                        data-focused={item.isFocused()}
-                        data-expanded={item.isExpanded()}
-                        data-selected={item.isSelected()}
-                        data-folder={item.isFolder()}
-                        data-drop={item.isDragTarget()}
-                    >
-                        {item.getItemName()}
-                    </div>
-                </button>
-            ))}
+            {tree.getItems().map((item) => {
+                const level = item.getItemMeta().level;
+                const isFolder = item.isFolder();
+                const isExpanded = item.isExpanded();
+                return (
+                    <button key={item.getId()} type="button" {...item.getProps()} className={styles.row}>
+                        {level > 0 && (
+                            <span className={styles.guides} aria-hidden>
+                                {Array.from({ length: level }).map((_, i) => (
+                                    <span key={i} className={styles.guide} />
+                                ))}
+                            </span>
+                        )}
+                        <div
+                            className={styles.item}
+                            data-focused={item.isFocused()}
+                            data-expanded={isExpanded}
+                            data-selected={item.isSelected()}
+                            data-folder={isFolder}
+                            data-drop={item.isDragTarget()}
+                        >
+                            <span className={styles.handle} aria-hidden>
+                                <IconGrabHandle size={16} />
+                            </span>
+                            <span className={styles.chevron} aria-hidden>
+                                {isFolder ? (
+                                    isExpanded ? (
+                                        <IconCaretDown size={12} />
+                                    ) : (
+                                        <IconCaretRight size={12} />
+                                    )
+                                ) : null}
+                            </span>
+                            <span className={styles.icon} aria-hidden>
+                                {isFolder ? <IconFolder size={16} /> : <IconDocument size={16} />}
+                            </span>
+                            <span className={styles.label}>{item.getItemName()}</span>
+                        </div>
+                    </button>
+                );
+            })}
             <div style={tree.getDragLineStyle()} className={styles.dragline} />
         </div>
     );
