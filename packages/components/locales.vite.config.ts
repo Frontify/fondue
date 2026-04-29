@@ -2,8 +2,8 @@
 
 import { resolve } from 'node:path';
 
-import dts from 'vite-plugin-dts';
 import { defineConfig } from 'vite';
+import dts from 'vite-plugin-dts';
 
 export default defineConfig({
     plugins: [dts({ outDir: 'dist/locales', entryRoot: 'src/locales', include: ['src/locales'] })],
