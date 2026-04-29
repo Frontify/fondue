@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { availableLocales } from '../../packages/components/src/locales';
+import { availableLocales } from '../../packages/components/src/locales/types';
 
 export const parameters = {
     options: {
