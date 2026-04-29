@@ -33,7 +33,7 @@
         "node": ">=18"
     },
     "scripts": {
-        "build": "vite build && vite build --config vite.config.locales.ts",
+        "build": "vite build && vite build --config locales.vite.config.ts",
         "build:storybook": "storybook build",
         "install:playwright": "playwright install --with-deps",
         "lint": "eslint .",
