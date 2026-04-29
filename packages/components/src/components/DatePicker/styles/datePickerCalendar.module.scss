@@ -11,6 +11,7 @@
     --rdp-nav_button-width: #{sizeToken.get(15)};
     --rdp-nav-height: #{sizeToken.get(6)};
     margin-top: sizeToken.get(2);
+    color: var(--color-primary-default);
 }
 
 .root[dir='rtl'] {
