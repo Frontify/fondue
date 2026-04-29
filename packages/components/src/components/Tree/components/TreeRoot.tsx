@@ -1,5 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { AssistiveTreeDescription } from '@headless-tree/react';
+
 import { useTreeController } from '../hooks/useTreeController';
 import styles from '../styles/tree.module.scss';
 import { type Item, type TreeRootProps } from '../types';
@@ -23,6 +25,7 @@ export const TreeRoot = ({ children, onChange }: TreeRootProps) => {
 
     return (
         <div {...tree.getContainerProps()} className={styles.tree}>
+            <AssistiveTreeDescription tree={tree} />
             {tree.getItems().map((item) => (
                 <button
                     key={item.getId()}
@@ -36,11 +39,13 @@ export const TreeRoot = ({ children, onChange }: TreeRootProps) => {
                         data-expanded={item.isExpanded()}
                         data-selected={item.isSelected()}
                         data-folder={item.isFolder()}
+                        data-drop={item.isDragTarget()}
                     >
                         {item.getItemName()}
                     </div>
                 </button>
             ))}
+            <div style={tree.getDragLineStyle()} className={styles.dragline} />
         </div>
     );
 };

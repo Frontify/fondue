@@ -4,11 +4,16 @@ import {
     syncDataLoaderFeature,
     selectionFeature,
     hotkeysCoreFeature,
+    dragAndDropFeature,
+    keyboardDragAndDropFeature,
+    isOrderedDragTarget,
+    type DragTarget,
+    type ItemInstance,
     type TreeInstance,
     type Updater,
 } from '@headless-tree/core';
 import { useTree } from '@headless-tree/react';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { type Item, type TreeChangeState } from '../types';
 import { assembleTreeState, type FlatTreeState } from '../utils/assembleTreeState';
@@ -81,10 +86,59 @@ export const useTreeController = ({ items, onChange }: UseTreeControllerOptions)
         emit({ ...treeState, focusedItem: nextFocused ?? undefined });
     };
 
-    return useTree<Item>({
+    const onDrop = (draggedItems: ItemInstance<Item>[], target: DragTarget<Item>) => {
+        const draggedIds = draggedItems.map((item) => item.getId());
+
+        const cloned: Item[] = items.map((item) => ({
+            ...item,
+            children: item.children ? [...item.children] : undefined,
+        }));
+        const clonedById = new Map(cloned.map((item) => [item.id, item]));
+
+        for (const id of draggedIds) {
+            const item = clonedById.get(id);
+            const parent = item?.parentId ? clonedById.get(item.parentId) : undefined;
+            if (parent?.children) {
+                parent.children = parent.children.filter((c) => c !== id);
+            }
+        }
+
+        const targetParentId = target.item.getId();
+        const targetParent = clonedById.get(targetParentId);
+        if (!targetParent) {
+            return;
+        }
+        if (!targetParent.children) {
+            targetParent.children = [];
+        }
+
+        const insertIndex = isOrderedDragTarget(target) ? target.insertionIndex : targetParent.children.length;
+        targetParent.children = [
+            ...targetParent.children.slice(0, insertIndex),
+            ...draggedIds,
+            ...targetParent.children.slice(insertIndex),
+        ];
+
+        for (const id of draggedIds) {
+            const item = clonedById.get(id);
+            if (item) {
+                item.parentId = targetParentId;
+            }
+        }
+
+        onChange?.(assembleTreeState(cloned, treeState, 'root'));
+    };
+
+    const structureKey = items
+        .map((item) => `${item.id}:${item.parentId ?? ''}>${(item.children ?? []).join(',')}`)
+        .join('|');
+
+    const tree = useTree<Item>({
         rootItemId: 'root',
         getItemName: (item) => item.getItemData().name,
         isItemFolder: (item) => Boolean(item.getItemData().isFolder),
+        canReorder: true,
+        onDrop,
         dataLoader: {
             getItem: (itemId) => items.find((item) => item.id === itemId) as Item,
             getChildren: (itemId) => items.find((item) => item.id === itemId)?.children ?? [],
@@ -94,6 +148,19 @@ export const useTreeController = ({ items, onChange }: UseTreeControllerOptions)
         setSelectedItems,
         setFocusedItem,
         indent: 20,
-        features: [syncDataLoaderFeature, selectionFeature, hotkeysCoreFeature],
+        features: [
+            syncDataLoaderFeature,
+            selectionFeature,
+            hotkeysCoreFeature,
+            dragAndDropFeature,
+            keyboardDragAndDropFeature,
+        ],
     });
+
+    useEffect(() => {
+        tree.rebuildTree();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [structureKey]);
+
+    return tree;
 };
