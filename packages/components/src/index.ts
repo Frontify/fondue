@@ -41,3 +41,4 @@ export { TextInput } from './components/TextInput/TextInput';
 export { Textarea } from './components/Textarea/Textarea';
 export { ThemeContext, ThemeProvider, useFondueTheme } from './components/ThemeProvider/ThemeProvider';
 export { Tooltip } from './components/Tooltip/Tooltip';
+export * from './locales';

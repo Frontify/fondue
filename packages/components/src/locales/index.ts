@@ -14,7 +14,7 @@ import { ptPT } from './pt-PT';
 
 export { deCH, deDE, enUS, esES, frCH, frFR, itCH, itIT, nlNL, plPL, ptPT };
 
-export { type Translations } from './types';
+export { type LocaleConfig } from './types';
 
 export const availableLocales = [
     'en-US',
@@ -30,4 +30,4 @@ export const availableLocales = [
     'pl-PL',
 ] as const;
 
-export type Locale = (typeof availableLocales)[number];
+export type LocaleIdentifier = (typeof availableLocales)[number];

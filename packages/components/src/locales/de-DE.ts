@@ -2,7 +2,7 @@
 
 import { de as dateLocale } from 'date-fns/locale';
 
-import { type Translations } from './types';
+import { type LocaleConfig } from './types';
 
 const translations = {
     Badge_dismiss: '${label} schließen',
@@ -33,7 +33,7 @@ const translations = {
     Table_sortDescending: 'Absteigend sortieren',
 };
 
-export const deDE: Translations = {
+export const deDE: LocaleConfig = {
     translationStrings: translations,
     dateLocale,
 };

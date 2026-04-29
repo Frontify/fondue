@@ -4,7 +4,8 @@ import { type Locale } from 'date-fns';
 
 import { type enUS } from './en-US';
 
-export type Translations = {
-    translationStrings: typeof enUS.translationStrings;
+export type TranslationStrings = typeof enUS.translationStrings;
+export type LocaleConfig = {
+    translationStrings: TranslationStrings;
     dateLocale: Locale;
 };
