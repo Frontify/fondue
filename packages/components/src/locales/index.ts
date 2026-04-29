@@ -13,21 +13,3 @@ import { plPL } from './pl-PL';
 import { ptPT } from './pt-PT';
 
 export { deCH, deDE, enUS, esES, frCH, frFR, itCH, itIT, nlNL, plPL, ptPT };
-
-export { type LocaleConfig } from './types';
-
-export const availableLocales = [
-    'en-US',
-    'de-DE',
-    'de-CH',
-    'fr-FR',
-    'fr-CH',
-    'it-IT',
-    'it-CH',
-    'es-ES',
-    'pt-PT',
-    'nl-NL',
-    'pl-PL',
-] as const;
-
-export type LocaleIdentifier = (typeof availableLocales)[number];

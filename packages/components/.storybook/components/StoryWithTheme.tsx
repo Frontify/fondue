@@ -2,7 +2,8 @@
 
 import { type ComponentProps, type ComponentType } from 'react';
 
-import { deCH, deDE, enUS, esES, frCH, frFR, itCH, itIT, nlNL, plPL, ptPT, type LocaleIdentifier } from '#/locales';
+import { deCH, deDE, enUS, esES, frCH, frFR, itCH, itIT, nlNL, plPL, ptPT } from '#/locales';
+import { type LocaleIdentifier } from '#/locales/types';
 
 import { ThemeProvider } from '../../src/components/ThemeProvider/ThemeProvider';
 

@@ -4,7 +4,8 @@ import styles from '@frontify/fondue-tokens/themes';
 import { Slot } from '@radix-ui/react-slot';
 import { createContext, type ForwardedRef, forwardRef, useContext, useMemo, type ReactNode } from 'react';
 
-import { enUS, type LocaleConfig } from '../../locales';
+import { enUS } from '../../locales';
+import { type LocaleConfig } from '../../locales/types';
 
 type AvailableTheme = keyof typeof styles;
 
@@ -26,12 +27,12 @@ type ThemeProviderProps = {
     translations?: LocaleConfig;
     /**
      * Locale object to use for component strings.
-     * Import from '@frontify/fondue/components/locales' or provide your own.
+     * Import from '@frontify/fondue/locales' or provide your own.
      * Must be a complete LocaleConfig object.
      * @default "enUS"
      * @example
      * ```tsx
-     * import { deDE } from '@frontify/fondue/components/locales';
+     * import { deDE } from '@frontify/fondue/locales';
      * <ThemeProvider locale={deDE}>...</ThemeProvider>
      * ```
      */

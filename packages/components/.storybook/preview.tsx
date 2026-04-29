@@ -7,7 +7,7 @@ import { type Decorator, type Preview, type StoryContext } from '@storybook/reac
 import { type ComponentType } from 'react';
 
 import { Flex } from '../src/components/Flex/Flex';
-import { availableLocales } from '../src/locales';
+import { availableLocales } from '../src/locales/types';
 
 import DocumentationTemplate from './DocumentationTemplate.mdx';
 import { withTheme } from './components/StoryWithTheme';

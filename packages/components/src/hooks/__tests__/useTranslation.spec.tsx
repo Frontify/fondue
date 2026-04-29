@@ -4,12 +4,12 @@ import { render, type RenderOptions } from '@testing-library/react';
 import { type ReactElement, type ReactNode } from 'react';
 import { describe, expect, it } from 'vitest';
 
+import { type TranslationStrings, type LocaleConfig } from '#/locales/types';
+
 import { ThemeProvider } from '../../components/ThemeProvider/ThemeProvider';
-import { type LocaleConfig } from '../../locales';
 import { deDE } from '../../locales/de-DE';
 import { enUS } from '../../locales/en-US';
 import { useTranslation } from '../useTranslation';
-import { TranslationStrings } from '#/locales/types';
 
 // Test component that uses the translation hook
 const TestComponent = ({
