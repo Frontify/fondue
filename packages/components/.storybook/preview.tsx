@@ -75,6 +75,8 @@ const preview: Preview = {
     },
     initialGlobals: {
         theme: 'light',
+        locale: 'en-US',
+        direction: 'ltr',
     },
     parameters: {
         layout: 'fullscreen',
