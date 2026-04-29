@@ -6,3 +6,9 @@
     gap: 10px;
     align-items: flex-start;
 }
+
+.treeitem {
+    &[data-folder='true'] {
+        font-weight: bold;
+    }
+}
