@@ -108,6 +108,14 @@ export type DropdownContentProps = {
      * Event handler called when the escape key is pressed.
      */
     onEscapeKeyDown?: (event: KeyboardEvent) => void;
+    /**
+     * Event handler called when focus is about to be moved back to the trigger after the dropdown closes.
+     * Call `event.preventDefault()` to suppress the trigger restore for this particular close — useful
+     * when focus needs to be redirected per close path rather than uniformly (for example, restoring on
+     * Escape but redirecting elsewhere on item selection). Fires after `preventTriggerFocusOnClose` is
+     * applied.
+     */
+    onCloseAutoFocus?: (event: Event) => void;
 };
 
 const SPACING_MAP: Record<DropdownSpacing, number> = {
@@ -131,6 +139,7 @@ export const DropdownContent = (
         viewportCollisionPadding = 'compact',
         forceMount = false,
         onEscapeKeyDown,
+        onCloseAutoFocus,
         'data-test-id': dataTestId = 'fondue-dropdown-content',
     }: DropdownContentProps,
     ref: ForwardedRef<HTMLDivElement>,
@@ -186,6 +195,7 @@ export const DropdownContent = (
                         if (preventTriggerFocusOnClose) {
                             event.preventDefault();
                         }
+                        onCloseAutoFocus?.(event);
                     }}
                     forceMount={forceMount || undefined}
                 >
