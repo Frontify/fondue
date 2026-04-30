@@ -58,7 +58,7 @@ const config: StorybookConfig = {
                 },
                 current: {
                     title: 'Components',
-                    url: 'http://localhost:6006',
+                    url: 'http://localhost:6006/',
                     type: 'auto-inject',
                     expanded: true,
                 },

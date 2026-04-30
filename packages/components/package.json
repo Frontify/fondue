@@ -20,6 +20,10 @@
             "import": "./dist/fondue-components.js"
         },
         "./styles": "./dist/style.css",
+        "./locales": {
+            "types": "./dist/locales/index.d.ts",
+            "import": "./dist/locales/index.js"
+        },
         "./locales/*": {
             "types": "./dist/locales/*.d.ts",
             "import": "./dist/locales/*.js"
@@ -33,7 +37,7 @@
         "node": ">=18"
     },
     "scripts": {
-        "build": "vite build",
+        "build": "vite build && vite build --config locales.vite.config.ts",
         "build:storybook": "storybook build",
         "install:playwright": "playwright install --with-deps",
         "lint": "eslint .",

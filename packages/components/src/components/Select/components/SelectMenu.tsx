@@ -96,7 +96,7 @@ export const SelectMenu = ({
         spacious: 24,
     };
 
-    const { theme, dir } = useFondueTheme();
+    const { theme, dir, locale } = useFondueTheme();
 
     const getAdjustedSide = (side: 'left' | 'right' | 'bottom' | 'top') => {
         if (dir === 'ltr') {
@@ -115,7 +115,7 @@ export const SelectMenu = ({
 
     return (
         <RadixPopover.Portal>
-            <ThemeProvider theme={theme} dir={dir}>
+            <ThemeProvider theme={theme} dir={dir} locale={locale}>
                 <RadixPopover.Content
                     dir={dir}
                     align={align}

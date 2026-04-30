@@ -2,7 +2,7 @@
 
 import { nl as dateLocale } from 'date-fns/locale';
 
-import { type Translations } from './types';
+import { type LocaleConfig } from './types';
 
 const translations = {
     Badge_dismiss: 'Sluit ${label}',
@@ -33,7 +33,7 @@ const translations = {
     Table_sortDescending: 'Sorteer aflopend',
 };
 
-export const nlNL: Translations = {
+export const nlNL: LocaleConfig = {
     translationStrings: translations,
     dateLocale,
 };

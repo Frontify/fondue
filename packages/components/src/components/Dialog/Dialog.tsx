@@ -229,7 +229,7 @@ export const DialogContent = (
     }: DialogContentProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
-    const { theme, dir } = useFondueTheme();
+    const { theme, dir, locale } = useFondueTheme();
     const contentRef = useRef<HTMLDivElement>(null);
     const { dismissable } = useContext(DialogContext);
 
@@ -271,7 +271,7 @@ export const DialogContent = (
 
     return (
         <RadixDialog.Portal>
-            <ThemeProvider theme={theme} dir={dir}>
+            <ThemeProvider theme={theme} dir={dir} locale={locale}>
                 <DialogUnderlay showUnderlay={showUnderlay}>
                     <RadixDialog.Content
                         style={

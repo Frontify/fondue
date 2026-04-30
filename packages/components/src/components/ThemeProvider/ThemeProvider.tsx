@@ -4,7 +4,8 @@ import styles from '@frontify/fondue-tokens/themes';
 import { Slot } from '@radix-ui/react-slot';
 import { createContext, type ForwardedRef, forwardRef, useContext, useMemo, type ReactNode } from 'react';
 
-import { enUS, type Translations } from '../../locales';
+import { enUS } from '../../locales';
+import { type LocaleConfig } from '../../locales/types';
 
 type AvailableTheme = keyof typeof styles;
 
@@ -21,17 +22,21 @@ type ThemeProviderProps = {
      */
     dir?: 'ltr' | 'rtl';
     /**
-     * Translations object to use for component strings.
-     * Import from '@frontify/fondue/components/locales' or provide your own.
-     * Must be a complete Translations object.
+     * @deprecated Use `locale` instead.
+     */
+    translations?: LocaleConfig;
+    /**
+     * Locale object to use for component strings.
+     * Import from '@frontify/fondue/locales' or provide your own.
+     * Must be a complete LocaleConfig object.
      * @default "enUS"
      * @example
      * ```tsx
-     * import { deDE } from '@frontify/fondue/components/locales';
-     * <ThemeProvider translations={deDE}>...</ThemeProvider>
+     * import { deDE } from '@frontify/fondue/locales';
+     * <ThemeProvider locale={deDE}>...</ThemeProvider>
      * ```
      */
-    translations?: Translations;
+    locale?: LocaleConfig;
     /**
      * Change the default rendered element for the one passed as a child, merging their props and behavior.
      * @default false
@@ -42,13 +47,13 @@ type ThemeProviderProps = {
 type ThemeContextValue = {
     theme: AvailableTheme;
     dir: 'ltr' | 'rtl';
-    translations: Translations;
+    locale: LocaleConfig;
 };
 
 export const ThemeContext = createContext<ThemeContextValue>({
     theme: 'light',
     dir: 'ltr',
-    translations: enUS,
+    locale: enUS,
 });
 ThemeContext.displayName = 'ThemeContext';
 
@@ -63,7 +68,7 @@ export const useFondueTheme = () => {
 
 export const ThemeProvider = forwardRef<HTMLDivElement, ThemeProviderProps>(
     (
-        { children, theme = 'light', dir = 'ltr', translations = enUS, asChild = false },
+        { children, theme = 'light', dir = 'ltr', translations = enUS, locale, asChild = false },
         forwardedRef: ForwardedRef<HTMLDivElement>,
     ) => {
         const Comp = asChild ? Slot : 'div';
@@ -72,9 +77,9 @@ export const ThemeProvider = forwardRef<HTMLDivElement, ThemeProviderProps>(
             () => ({
                 theme,
                 dir,
-                translations,
+                locale: locale ? locale : translations,
             }),
-            [dir, theme, translations],
+            [dir, theme, locale, translations],
         );
 
         return (

@@ -1,0 +1,139 @@
+import { Canvas, Controls, Source, Title } from '@storybook/addon-docs/blocks';
+
+import * as ThemeProviderStories from './ThemeProvider.stories';
+
+
+
+<Title />
+
+`ThemeProvider` is the root context provider for Fondue. It applies the theme, text direction
+and the locale to its subtree. The locale drives both built-in component strings (e.g. dialog
+close labels, table sort labels) and date formatting in the `DatePicker` (month names,
+weekday labels, first day of week) via its bundled `date-fns` locale.
+
+Wrap your app (or at least every Fondue component you
+render) with a single `ThemeProvider`.
+
+<br />
+## Preview
+<Canvas of={ThemeProviderStories.LightTheme} sourceState="shown" />
+
+<br />
+## API
+<Controls />
+
+<br />
+## Theme and direction
+Switch between the built-in `light` and `dark` themes via the `theme` prop, and flip layout for
+right-to-left languages with `dir="rtl"`. The provider renders a `dir` attribute on its root
+element, so descendant components flip their layout automatically.
+
+<Canvas of={ThemeProviderStories.DarkTheme} />
+<Canvas of={ThemeProviderStories.RightToLeft} />
+
+<br />
+## Locales
+Locales live in a separate entrypoint so they don't ship with the main components bundle.
+
+Available locales: `en-US`, `de-DE`, `de-CH`, `fr-FR`, `fr-CH`, `it-IT`, `it-CH`, `es-ES`,
+`pt-PT`, `nl-NL`, `pl-PL`.
+
+Default: `enUS`
+
+<br />
+### Static usage
+Import the locale by name and pass it to the `locale` prop. Modern bundlers tree-shake the
+unused locales at build time, so static usage is already cheap.
+
+<Source
+    code={`import { ThemeProvider } from '@frontify/fondue-components';
+import { deDE } from '@frontify/fondue-components/locales';
+
+<ThemeProvider locale={deDE}>
+    <App />
+</ThemeProvider>;`}
+    language="tsx"
+/>
+
+<Canvas of={ThemeProviderStories.WithLocale} />
+
+<br />
+### Lazy-loading a locale
+If you only know the user's locale at runtime (e.g. from `navigator.language` or a stored user
+preference) and want to load it on demand, use a dynamic `import()`. Render with the default
+locale first, then swap once the chosen locale resolves. Each locale ships as its own async
+chunk, so users only download the one they actually use.
+
+
+
+<br />
+#### webpack and rspack
+webpack and rspack honor the `webpackExports` magic comment, which tree-shakes a dynamic
+import down to the named exports you actually read. Combined with the published re-export
+barrel, this produces the same per-locale chunking from the single `./locales` entrypoint.
+
+<Source
+    code={`const { deDE } = await import(
+    /* webpackExports: ["deDE"] */
+    /* webpackChunkName: "fondue-locale-de-DE" */
+    '@frontify/fondue-components/locales'
+);`}
+    language="tsx"
+/>
+
+Magic-comment values must be string literals, so a runtime-driven loader still needs one
+branch per supported locale:
+
+<Source
+    code={`import type { LocaleConfig, LocaleIdentifier } from '@frontify/fondue-components/locales/types';
+
+async function loadLocale(id: LocaleIdentifier): Promise<LocaleConfig> {
+    switch (id) {
+        case 'de-DE':
+            return (await import(/* webpackExports: ["deDE"] */ '@frontify/fondue-components/locales')).deDE;
+        case 'fr-FR':
+            return (await import(/* webpackExports: ["frFR"] */ '@frontify/fondue-components/locales')).frFR;
+        // ...one case per supported locale
+    }
+}`}
+    language="tsx"
+/>
+
+<br />
+#### Vite, esbuild, Rollup, and other modern bundlers
+Use the per-locale subpath exports. Each subpath resolves to a separate file in the published
+package, so bundlers emit one chunk per locale automatically.
+
+<Source
+    code={`import { useEffect, useState } from 'react';
+import { ThemeProvider } from '@frontify/fondue-components';
+import { enUS } from '@frontify/fondue-components/locales/en-US';
+import type { LocaleConfig } from '@frontify/fondue-components/locales/types';
+
+const loaders: Record<string, () => Promise<LocaleConfig>> = {
+    'de-DE': () => import('@frontify/fondue-components/locales/de-DE').then((m) => m.deDE),
+    'fr-FR': () => import('@frontify/fondue-components/locales/fr-FR').then((m) => m.frFR),
+    // ...add only the locales your app supports
+};
+
+export function LocalizedApp({ children, language }: { children: React.ReactNode; language: string }) {
+    const [locale, setLocale] = useState<LocaleConfig>(enUS);
+
+    useEffect(() => {
+        const load = loaders[language];
+        if (!load) return;
+        let cancelled = false;
+        load().then((next) => {
+            if (!cancelled) setLocale(next);
+        });
+        return () => {
+            cancelled = true;
+        };
+    }, [language]);
+
+    return <ThemeProvider locale={locale}>{children}</ThemeProvider>;
+}`}
+    language="tsx"
+/>
+
+

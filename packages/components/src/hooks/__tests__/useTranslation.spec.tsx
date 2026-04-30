@@ -4,8 +4,9 @@ import { render, type RenderOptions } from '@testing-library/react';
 import { type ReactElement, type ReactNode } from 'react';
 import { describe, expect, it } from 'vitest';
 
+import { type TranslationStrings, type LocaleConfig } from '#/locales/types';
+
 import { ThemeProvider } from '../../components/ThemeProvider/ThemeProvider';
-import { type Translations } from '../../locales';
 import { deDE } from '../../locales/de-DE';
 import { enUS } from '../../locales/en-US';
 import { useTranslation } from '../useTranslation';
@@ -15,7 +16,7 @@ const TestComponent = ({
     translationKey,
     variables,
 }: {
-    translationKey: keyof Translations['translationStrings'];
+    translationKey: keyof TranslationStrings;
     variables?: Record<string, string>;
 }) => {
     const { t } = useTranslation();
@@ -26,13 +27,9 @@ const TestComponent = ({
 const DefaultWrapper = ({ children }: { children: ReactNode }) => <ThemeProvider>{children}</ThemeProvider>;
 
 // Custom render function that allows passing custom translations
-const renderWithTranslations = (
-    ui: ReactElement,
-    translations?: Translations,
-    options?: Omit<RenderOptions, 'wrapper'>,
-) => {
+const renderWithTranslations = (ui: ReactElement, locale?: LocaleConfig, options?: Omit<RenderOptions, 'wrapper'>) => {
     const Wrapper = ({ children }: { children: ReactNode }) => (
-        <ThemeProvider translations={translations}>{children}</ThemeProvider>
+        <ThemeProvider locale={locale}>{children}</ThemeProvider>
     );
     return render(ui, { wrapper: Wrapper, ...options });
 };
@@ -75,7 +72,7 @@ describe('useTranslation', () => {
 
         it('returns the key as fallback when translation is not found', () => {
             const { getByTestId } = render(
-                <TestComponent translationKey={'Nonexistent_key' as keyof Translations['translationStrings']} />,
+                <TestComponent translationKey={'Nonexistent_key' as keyof TranslationStrings} />,
                 {
                     wrapper: DefaultWrapper,
                 },
@@ -135,7 +132,7 @@ describe('useTranslation', () => {
     describe('dynamic translation keys', () => {
         it('translates all keys defined in the English locale', () => {
             // Collect all translation keys from the flat enUS object
-            const keys = Object.keys(enUS.translationStrings) as Array<keyof Translations['translationStrings']>;
+            const keys = Object.keys(enUS.translationStrings) as Array<keyof TranslationStrings>;
 
             // Test that all keys can be translated
             for (const key of keys) {
