@@ -172,7 +172,7 @@ export const TextareaRoot = (
     };
 
     useEffect(() => {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
+        // eslint-disable-next-line @eslint-react/set-state-in-effect
         setValue(inputValue ?? defaultValue ?? '');
     }, [defaultValue, inputValue]);
 

@@ -362,7 +362,7 @@ export const Overflow: Story = {
     render: ({ ...args }) => (
         <>
             {Array.from({ length: 4 }).map((_, index) => (
-                <Dropdown.Root {...args} key={index}>
+                <Dropdown.Root key={index} {...args}>
                     <Dropdown.Trigger>
                         <Button variant="loud">Trigger 1</Button>
                     </Dropdown.Trigger>

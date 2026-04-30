@@ -100,6 +100,8 @@ export default defineConfig(
         files: ['**/*.stories.tsx'],
         rules: {
             'react-hooks/rules-of-hooks': 'off',
+            '@eslint-react/rules-of-hooks': 'off',
+            '@eslint-react/component-hook-factories': 'off',
             '@eslint-react/hooks-extra/prefer-use-state-lazy-initialization': 'off',
             '@eslint-community/eslint-comments/disable-enable-pair': 'off',
         },
