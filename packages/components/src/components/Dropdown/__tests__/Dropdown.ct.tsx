@@ -715,11 +715,7 @@ test('should forward aria-keyshortcuts to the underlying menuitem', async ({ mou
                 <Button data-test-id={DROPDOWN_TRIGGER_TEST_ID}>Trigger</Button>
             </Dropdown.Trigger>
             <Dropdown.Content data-test-id={DROPDOWN_CONTENT_TEST_ID}>
-                <Dropdown.Item
-                    data-test-id={DROPDOWN_ITEM_TEST_ID}
-                    aria-keyshortcuts="Meta+E"
-                    onSelect={() => {}}
-                >
+                <Dropdown.Item data-test-id={DROPDOWN_ITEM_TEST_ID} aria-keyshortcuts="Meta+E" onSelect={() => {}}>
                     Edit
                     <Dropdown.Shortcut>⌘ + E</Dropdown.Shortcut>
                 </Dropdown.Item>
