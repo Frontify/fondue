@@ -21,6 +21,8 @@ export default defineConfig(
             'playwright/',
             'node_modules/',
             'debug-storybook.log',
+            '**/*.md',
+            '**/*.mdx',
             '**/*.mdx/**.ts',
             '**/*.mdx/**.tsx',
             '**/*.md/**.ts',
@@ -78,7 +80,7 @@ export default defineConfig(
             'unicorn/prefer-dom-node-text-content': 'warn',
 
             // React rules
-            '@eslint-react/dom/no-missing-button-type': 'warn',
+            '@eslint-react/dom-no-missing-button-type': 'warn',
 
             // Typescript rules
             '@typescript-eslint/no-explicit-any': 'warn',
