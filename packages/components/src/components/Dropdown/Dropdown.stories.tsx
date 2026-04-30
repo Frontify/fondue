@@ -469,6 +469,26 @@ export const OnEscapeKeyDown: Story = {
     ),
 };
 
+export const OnCloseAutoFocus: Story = {
+    render: ({ ...args }) => (
+        <Dropdown.Root {...args}>
+            <Dropdown.Trigger>
+                <Button>Trigger</Button>
+            </Dropdown.Trigger>
+            <Dropdown.Content
+                onCloseAutoFocus={(event) => {
+                    event.preventDefault();
+                    alert('Trigger focus restoration was suppressed.');
+                }}
+            >
+                <Dropdown.Item onSelect={() => {}}>Item 1</Dropdown.Item>
+                <Dropdown.Item onSelect={() => {}}>Item 2</Dropdown.Item>
+                <Dropdown.Item onSelect={() => {}}>Item 3</Dropdown.Item>
+            </Dropdown.Content>
+        </Dropdown.Root>
+    ),
+};
+
 export const PreventCloseOnEscape: Story = {
     render: ({ ...args }) => (
         <Dropdown.Root {...args}>
