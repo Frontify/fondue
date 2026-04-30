@@ -1,5 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { useDndContext, useDndMonitor } from '@dnd-kit/core';
+import { type AnimateLayoutChanges, useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { noop } from 'lodash-es';
+import { Children, type MouseEvent, memo, useCallback, useEffect, useMemo, useRef, forwardRef } from 'react';
+
 import {
     type RegisterNodeChildrenPayload,
     type TreeDragEndEvent,
@@ -14,14 +20,9 @@ import {
     TreeItemSpacingClassMap,
     type TreeItemStyling,
 } from '@components/Tree/types';
-import { useDndContext, useDndMonitor } from '@dnd-kit/core';
-import { type AnimateLayoutChanges, useSortable } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
 import { useDebounce } from '@hooks/useDebounce';
 import { FOCUS_VISIBLE_STYLE, PARENT_FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
-import { noop } from 'lodash-es';
-import { Children, type MouseEvent, memo, useCallback, useEffect, useMemo, useRef, forwardRef } from 'react';
 
 import { EXPAND_ONHOVER_DELAY, INDENTATION_WIDTH } from '../helpers';
 import { removeFragmentsAndEnrichChildren, useDeepCompareEffect } from '../utils';
