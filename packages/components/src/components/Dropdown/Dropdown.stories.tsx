@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconIcon } from '@frontify/fondue-icons';
+import { IconArrowMove, IconIcon, IconPen, IconPlus } from '@frontify/fondue-icons';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 
@@ -13,6 +13,7 @@ import {
     DropdownGroup,
     DropdownItem,
     DropdownRoot,
+    DropdownShortcut,
     DropdownSubContent,
     DropdownSubMenu,
     DropdownSubTrigger,
@@ -31,6 +32,7 @@ const meta: Meta<typeof DropdownRoot> = {
         'Dropdown.SubMenu': DropdownSubMenu,
         'Dropdown.SubTrigger': DropdownSubTrigger,
         'Dropdown.SubContent': DropdownSubContent,
+        'Dropdown.Shortcut': DropdownShortcut,
     },
     tags: ['autodocs'],
     parameters: {
@@ -245,6 +247,45 @@ export const OverflowingText: Story = {
                 </Dropdown.SubMenu>
                 <Dropdown.Item onSelect={() => {}}>Item 5</Dropdown.Item>
                 <Dropdown.Item onSelect={() => {}}>Item 6</Dropdown.Item>
+            </Dropdown.Content>
+        </Dropdown.Root>
+    ),
+};
+
+export const KeyboardShortcut: Story = {
+    render: ({ ...args }) => (
+        <Dropdown.Root {...args}>
+            <Dropdown.Trigger>
+                <Button>Trigger</Button>
+            </Dropdown.Trigger>
+            <Dropdown.Content aria-label="Item actions">
+                <Dropdown.Item onSelect={() => {}} aria-keyshortcuts="Meta+E">
+                    <Dropdown.Slot name="left">
+                        <IconPen size={16} />
+                    </Dropdown.Slot>
+                    Edit
+                    <Dropdown.Shortcut>⌘ + E</Dropdown.Shortcut>
+                </Dropdown.Item>
+                <Dropdown.Item onSelect={() => {}}>
+                    <Dropdown.Slot name="left">
+                        <IconArrowMove size={16} />
+                    </Dropdown.Slot>
+                    Move
+                </Dropdown.Item>
+                <Dropdown.Item onSelect={() => {}} aria-keyshortcuts="Meta+N">
+                    <Dropdown.Slot name="left">
+                        <IconPlus size={16} />
+                    </Dropdown.Slot>
+                    Add
+                    <Dropdown.Shortcut>⌘ + N</Dropdown.Shortcut>
+                </Dropdown.Item>
+                <Dropdown.Item onSelect={() => {}} emphasis="danger" aria-keyshortcuts="Backspace">
+                    <Dropdown.Slot name="left">
+                        <IconIcon size={16} />
+                    </Dropdown.Slot>
+                    Delete
+                    <Dropdown.Shortcut>⌫</Dropdown.Shortcut>
+                </Dropdown.Item>
             </Dropdown.Content>
         </Dropdown.Root>
     ),

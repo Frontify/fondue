@@ -4,6 +4,8 @@ import { IconCaretRight } from '@frontify/fondue-icons';
 import * as RadixDropdown from '@radix-ui/react-dropdown-menu';
 import { Children, forwardRef, useMemo, useRef, type ForwardedRef, type ReactNode } from 'react';
 
+import { type CommonAriaProps } from '#/helpers/aria';
+
 import { ThemeProvider, useFondueTheme } from '../ThemeProvider/ThemeProvider';
 
 import { useProcessedChildren } from './hooks/useProcessedChildren';
@@ -116,7 +118,7 @@ export type DropdownContentProps = {
      * applied.
      */
     onCloseAutoFocus?: (event: Event) => void;
-};
+} & CommonAriaProps;
 
 const SPACING_MAP: Record<DropdownSpacing, number> = {
     compact: 8,
@@ -141,6 +143,7 @@ export const DropdownContent = (
         onEscapeKeyDown,
         onCloseAutoFocus,
         'data-test-id': dataTestId = 'fondue-dropdown-content',
+        ...ariaProps
     }: DropdownContentProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
@@ -161,6 +164,7 @@ export const DropdownContent = (
                     data-test-id={dataTestId}
                     ref={actualRef}
                     onEscapeKeyDown={onEscapeKeyDown}
+                    {...ariaProps}
                     onPointerDownOutside={(event) => {
                         if (!forceMount) {
                             return;
@@ -283,10 +287,10 @@ DropdownSubTrigger.displayName = 'Dropdown.SubTrigger';
 export type DropdownSubContentProps = {
     children: ReactNode;
     'data-test-id'?: string;
-};
+} & CommonAriaProps;
 
 export const DropdownSubContent = (
-    { children, 'data-test-id': dataTestId = 'fondue-dropdown-subcontent' }: DropdownSubContentProps,
+    { children, 'data-test-id': dataTestId = 'fondue-dropdown-subcontent', ...ariaProps }: DropdownSubContentProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     const { theme, dir } = useFondueTheme();
@@ -300,6 +304,7 @@ export const DropdownSubContent = (
                     className={styles.subContent}
                     data-test-id={dataTestId}
                     ref={ref}
+                    {...ariaProps}
                 >
                     {children}
                 </RadixDropdown.SubContent>
@@ -334,7 +339,7 @@ export type DropdownItemProps = {
      */
     asChild?: boolean;
     'data-test-id'?: string;
-};
+} & CommonAriaProps;
 
 export const DropdownItem = (
     {
@@ -398,6 +403,20 @@ export const DropdownSlot = (
 };
 DropdownSlot.displayName = 'Dropdown.Slot';
 
+export type DropdownShortcutProps = { children: ReactNode; 'data-test-id'?: string };
+
+export const DropdownShortcut = (
+    { children, 'data-test-id': dataTestId = 'fondue-dropdown-shortcut' }: DropdownShortcutProps,
+    ref: ForwardedRef<HTMLElement>,
+) => {
+    return (
+        <kbd className={styles.shortcut} data-test-id={dataTestId} ref={ref}>
+            {children}
+        </kbd>
+    );
+};
+DropdownShortcut.displayName = 'Dropdown.Shortcut';
+
 const ForwardedRefDropdownTrigger = forwardRef<HTMLButtonElement, DropdownTriggerProps>(DropdownTrigger);
 const ForwardedRefDropdownContent = forwardRef<HTMLDivElement, DropdownContentProps>(DropdownContent);
 const ForwardedRefDropdownGroup = forwardRef<HTMLDivElement, DropdownGroupProps>(DropdownGroup);
@@ -405,6 +424,7 @@ const ForwardedRefDropdownSubTrigger = forwardRef<HTMLDivElement, DropdownSubTri
 const ForwardedRefDropdownSubContent = forwardRef<HTMLDivElement, DropdownSubContentProps>(DropdownSubContent);
 const ForwardedRefDropdownItem = forwardRef<HTMLDivElement, DropdownItemProps>(DropdownItem);
 const ForwardedRefDropdownSlot = forwardRef<HTMLDivElement, DropdownSlotProps>(DropdownSlot);
+const ForwardedRefDropdownShortcut = forwardRef<HTMLElement, DropdownShortcutProps>(DropdownShortcut);
 
 export const Dropdown = {
     Root: DropdownRoot,
@@ -416,4 +436,5 @@ export const Dropdown = {
     SubContent: ForwardedRefDropdownSubContent,
     Item: ForwardedRefDropdownItem,
     Slot: ForwardedRefDropdownSlot,
+    Shortcut: ForwardedRefDropdownShortcut,
 };
