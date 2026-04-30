@@ -51,32 +51,38 @@ export type AccordionRootProps = {
     onValueChange?: (value: string[]) => void;
 };
 
-export const AccordionRoot = ({
-    'data-test-id': dataTestId = 'fondue-accordion',
-    border = true,
-    children,
-    defaultValue,
-    disabled,
-    value,
-    padding = 'large',
-    onValueChange,
-}: AccordionRootProps) => {
-    return (
-        <RadixAccordion.Root
-            className={styles.root}
-            data-test-id={dataTestId}
-            defaultValue={defaultValue}
-            disabled={disabled}
-            type="multiple"
-            value={value}
-            data-border={border}
-            data-accordion-padding={padding}
-            onValueChange={onValueChange}
-        >
-            {children}
-        </RadixAccordion.Root>
-    );
-};
+export const AccordionRoot = forwardRef<HTMLDivElement, AccordionRootProps>(
+    (
+        {
+            'data-test-id': dataTestId = 'fondue-accordion',
+            border = true,
+            children,
+            defaultValue,
+            disabled,
+            value,
+            padding = 'large',
+            onValueChange,
+        }: AccordionRootProps,
+        ref: ForwardedRef<HTMLDivElement>,
+    ) => {
+        return (
+            <RadixAccordion.Root
+                ref={ref}
+                className={styles.root}
+                data-test-id={dataTestId}
+                defaultValue={defaultValue}
+                disabled={disabled}
+                type="multiple"
+                value={value}
+                data-border={border}
+                data-accordion-padding={padding}
+                onValueChange={onValueChange}
+            >
+                {children}
+            </RadixAccordion.Root>
+        );
+    },
+);
 AccordionRoot.displayName = 'Accordion.Root';
 
 export type AccordionItemProps = {
@@ -97,29 +103,30 @@ export type AccordionItemProps = {
     value: string;
 };
 
-export const AccordionItem = ({
-    'data-test-id': dataTestId = 'fondue-accordion-item',
-    children,
-    disabled,
-    value,
-}: AccordionItemProps) => {
-    return (
-        <RadixAccordion.Item
-            className={styles.accordionItem}
-            value={value}
-            onPointerDown={(event) => {
-                event.currentTarget.dataset.showFocusRing = 'false';
-            }}
-            onBlur={(event) => {
-                event.currentTarget.dataset.showFocusRing = 'true';
-            }}
-            disabled={disabled}
-            data-test-id={dataTestId}
-        >
-            {children}
-        </RadixAccordion.Item>
-    );
-};
+export const AccordionItem = forwardRef<HTMLDivElement, AccordionItemProps>(
+    (
+        { 'data-test-id': dataTestId = 'fondue-accordion-item', children, disabled, value }: AccordionItemProps,
+        ref: ForwardedRef<HTMLDivElement>,
+    ) => {
+        return (
+            <RadixAccordion.Item
+                ref={ref}
+                className={styles.accordionItem}
+                value={value}
+                onPointerDown={(event) => {
+                    event.currentTarget.dataset.showFocusRing = 'false';
+                }}
+                onBlur={(event) => {
+                    event.currentTarget.dataset.showFocusRing = 'true';
+                }}
+                disabled={disabled}
+                data-test-id={dataTestId}
+            >
+                {children}
+            </RadixAccordion.Item>
+        );
+    },
+);
 AccordionItem.displayName = 'Accordion.Item';
 
 export type AccordionHeaderProps = {
@@ -139,38 +146,38 @@ export type AccordionHeaderProps = {
     children?: ReactNode;
 };
 
-export const AccordionHeader = ({
-    'data-test-id': dataTestId = 'fondue-accordion-header',
-    asChild,
-    onClick,
-    children,
-}: AccordionHeaderProps) => {
-    const { slots, triggerContent } = useMemo(
-        () =>
-            Children.toArray(children).reduce<{ slots: ReactNode[]; triggerContent: ReactNode[] }>(
-                (acc, child) => {
-                    if (isValidElement<AccordionSlotProps>(child) && child.type === ForwardedRefAccordionSlot) {
-                        acc.slots.push(child);
-                    } else {
-                        acc.triggerContent.push(child);
-                    }
-                    return acc;
-                },
-                { slots: [], triggerContent: [] },
-            ),
-        [children],
-    );
+export const AccordionHeader = forwardRef<HTMLHeadingElement, AccordionHeaderProps>(
+    (
+        { 'data-test-id': dataTestId = 'fondue-accordion-header', asChild, onClick, children }: AccordionHeaderProps,
+        ref: ForwardedRef<HTMLHeadingElement>,
+    ) => {
+        const { slots, triggerContent } = useMemo(
+            () =>
+                Children.toArray(children).reduce<{ slots: ReactNode[]; triggerContent: ReactNode[] }>(
+                    (acc, child) => {
+                        if (isValidElement<AccordionSlotProps>(child) && child.type === ForwardedRefAccordionSlot) {
+                            acc.slots.push(child);
+                        } else {
+                            acc.triggerContent.push(child);
+                        }
+                        return acc;
+                    },
+                    { slots: [], triggerContent: [] },
+                ),
+            [children],
+        );
 
-    return (
-        <RadixAccordion.Header asChild={asChild} className={styles.accordionHeader} onClick={onClick}>
-            <RadixAccordion.Trigger className={styles.accordionTrigger} data-test-id={dataTestId}>
-                <div className={styles.accordionTriggerContent}>{triggerContent}</div>
-                <IconCaretDown className={styles.accordionCaret} size="16" />
-            </RadixAccordion.Trigger>
-            {slots}
-        </RadixAccordion.Header>
-    );
-};
+        return (
+            <RadixAccordion.Header ref={ref} asChild={asChild} className={styles.accordionHeader} onClick={onClick}>
+                <RadixAccordion.Trigger className={styles.accordionTrigger} data-test-id={dataTestId}>
+                    <div className={styles.accordionTriggerContent}>{triggerContent}</div>
+                    <IconCaretDown className={styles.accordionCaret} size="16" />
+                </RadixAccordion.Trigger>
+                {slots}
+            </RadixAccordion.Header>
+        );
+    },
+);
 AccordionHeader.displayName = 'Accordion.Header';
 
 type AccordionContentProps = {
@@ -194,27 +201,33 @@ type AccordionContentProps = {
     padding?: AccordionPadding;
 };
 
-export const AccordionContent = ({
-    'data-test-id': dataTestId = 'collapsible-wrap',
-    children,
-    divider = false,
-    onClick,
-    padding,
-}: AccordionContentProps) => {
-    return (
-        <RadixAccordion.Content
-            className={styles.accordionContent}
-            onClick={onClick}
-            data-test-id={dataTestId}
-            data-item-padding={padding}
-            data-item-divider={divider}
-        >
-            <div className={styles.accordionContentText} data-test-id={`inner-${dataTestId}`}>
-                {children}
-            </div>
-        </RadixAccordion.Content>
-    );
-};
+export const AccordionContent = forwardRef<HTMLDivElement, AccordionContentProps>(
+    (
+        {
+            'data-test-id': dataTestId = 'collapsible-wrap',
+            children,
+            divider = false,
+            onClick,
+            padding,
+        }: AccordionContentProps,
+        ref: ForwardedRef<HTMLDivElement>,
+    ) => {
+        return (
+            <RadixAccordion.Content
+                ref={ref}
+                className={styles.accordionContent}
+                onClick={onClick}
+                data-test-id={dataTestId}
+                data-item-padding={padding}
+                data-item-divider={divider}
+            >
+                <div className={styles.accordionContentText} data-test-id={`inner-${dataTestId}`}>
+                    {children}
+                </div>
+            </RadixAccordion.Content>
+        );
+    },
+);
 AccordionContent.displayName = 'Accordion.Content';
 
 export type AccordionSlotProps = {
@@ -223,19 +236,21 @@ export type AccordionSlotProps = {
     'data-test-id'?: string;
 };
 
-export const AccordionSlot = (
-    { children, name, 'data-test-id': dataTestId = 'fondue-accordion-slot' }: AccordionSlotProps,
-    ref: ForwardedRef<HTMLDivElement>,
-) => {
-    return (
-        <div data-name={name} className={styles.accordionSlot} data-test-id={dataTestId} ref={ref}>
-            {children}
-        </div>
-    );
-};
+export const AccordionSlot = forwardRef<HTMLDivElement, AccordionSlotProps>(
+    (
+        { children, name, 'data-test-id': dataTestId = 'fondue-accordion-slot' }: AccordionSlotProps,
+        ref: ForwardedRef<HTMLDivElement>,
+    ) => {
+        return (
+            <div data-name={name} className={styles.accordionSlot} data-test-id={dataTestId} ref={ref}>
+                {children}
+            </div>
+        );
+    },
+);
 AccordionSlot.displayName = 'Accordion.Slot';
 
-const ForwardedRefAccordionSlot = forwardRef<HTMLDivElement, AccordionSlotProps>(AccordionSlot);
+const ForwardedRefAccordionSlot = AccordionSlot;
 
 /**
  * @deprecated Use `Accordion.Header` instead.

@@ -240,7 +240,7 @@ TabsContent.displayName = 'Tabs.Content';
 
 export const Tabs = {
     Root: forwardRef<HTMLDivElement, TabsRootProps>(TabsRoot),
-    Tab: forwardRef<HTMLDivElement, TabsTabProps>(TabsTab),
+    Tab: TabsTab,
     Trigger: forwardRef<HTMLButtonElement, TabsTriggerProps>(TabsTrigger),
     Content: forwardRef<HTMLDivElement, TabsContentProps>(TabsContent),
 };
