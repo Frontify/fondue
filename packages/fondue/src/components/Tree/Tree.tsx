@@ -385,7 +385,7 @@ export const Tree = memo(
             offset: offset ?? 0,
         });
 
-        // eslint-disable-next-line react-hooks/refs
+        // eslint-disable-next-line @eslint-react/refs
         const coordinateGetter = useMemo(() => sortableTreeKeyboardCoordinates(sensorContext), [sensorContext]);
         const activationConstraint = sensorsActivationConstraint({ dragHandlerPosition, enableDragDelay });
 

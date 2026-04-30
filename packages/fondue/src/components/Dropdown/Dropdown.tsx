@@ -137,6 +137,7 @@ export const Dropdown = ({
         if (activeItemId !== state.selectedKey) {
             state.setSelectedKey(activeItemId as string);
         }
+        // eslint-disable-next-line @eslint-react/exhaustive-deps
     }, [activeItemId]);
 
     const { maxHeight } = useDropdownAutoHeight(triggerRef, { isOpen, autoResize });
@@ -169,7 +170,7 @@ export const Dropdown = ({
         'Bottom-Start': 'bottom-start',
         'Bottom-End': 'bottom-end',
     };
-    // eslint-disable-next-line react-hooks/refs
+    // eslint-disable-next-line @eslint-react/refs
     const popperInstance = usePopper(triggerRef?.current, dropdownRef.current, {
         placement: placementMap[`${position}-${alignment}`],
         strategy: 'fixed',
@@ -231,13 +232,13 @@ export const Dropdown = ({
                         ref={dropdownRef}
                         style={{
                             ...popperInstance.styles.popper,
-                            // eslint-disable-next-line react-hooks/refs
+                            // eslint-disable-next-line @eslint-react/refs
                             width: triggerRef.current?.getBoundingClientRect().width,
                             minWidth: 'fit-content',
                         }}
+                        key="content"
                         {...popperInstance.attributes.popper}
                         className="tw-absolute tw-p-0 tw-shadow tw-list-none tw-m-0 tw-z-[120000] tw-min-w-full tw-overflow-hidden"
-                        key="content"
                     >
                         <FocusScope restoreFocus>
                             <div

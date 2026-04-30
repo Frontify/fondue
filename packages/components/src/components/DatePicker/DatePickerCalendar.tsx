@@ -106,6 +106,7 @@ export const DatePickerCalendar = forwardRef<HTMLDivElement, DatePickerCalendarP
 DatePickerCalendar.displayName = 'DatePickerCalendar';
 
 const getCustomComponents = (): Partial<CustomComponents> => ({
+    // eslint-disable-next-line @eslint-react/component-hook-factories
     DayButton: ({ day, modifiers, onClick, onMouseEnter, onMouseLeave, ...props }: DayButtonProps): JSX.Element => {
         const buttonRef = useRef<HTMLButtonElement>(null);
 
@@ -129,6 +130,7 @@ const getCustomComponents = (): Partial<CustomComponents> => ({
             </button>
         );
     },
+    // eslint-disable-next-line @eslint-react/component-hook-factories
     PreviousMonthButton: ({
         onClick,
         'aria-label': ariaLabel,
@@ -170,6 +172,7 @@ const getCustomComponents = (): Partial<CustomComponents> => ({
             </div>
         );
     },
+    // eslint-disable-next-line @eslint-react/component-hook-factories
     NextMonthButton: ({
         onClick,
         'aria-label': ariaLabel,

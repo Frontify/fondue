@@ -134,13 +134,15 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
     };
 
     useEffect(() => {
-        inputRef?.current?.addEventListener('keyup', tabFocusListener);
-        inputRef?.current?.addEventListener('blur', blurListener);
+        const node = inputRef?.current;
+        node?.addEventListener('keyup', tabFocusListener);
+        node?.addEventListener('blur', blurListener);
 
         return () => {
-            inputRef?.current?.removeEventListener('keyup', tabFocusListener);
-            inputRef?.current?.removeEventListener('blur', blurListener);
+            node?.removeEventListener('keyup', tabFocusListener);
+            node?.removeEventListener('blur', blurListener);
         };
+        // eslint-disable-next-line @eslint-react/exhaustive-deps
     }, []);
 
     const { inputProps } = useCheckbox(
@@ -194,7 +196,7 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
         if ((!label && !helperText) || hideLabel) {
             return;
         }
-        // eslint-disable-next-line react-hooks/set-state-in-effect
+        // eslint-disable-next-line @eslint-react/set-state-in-effect
         checkOverflowing();
 
         window.removeEventListener('resize', checkOverflowing);

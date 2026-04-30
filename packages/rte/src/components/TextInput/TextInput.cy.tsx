@@ -30,7 +30,7 @@ const StatefulInput = (props: TextInputProps): ReactElement => {
     const [input, setInput] = useState<string>('');
 
     useEffect(() => {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
+        // eslint-disable-next-line @eslint-react/set-state-in-effect
         setInput(props.value ?? '');
     }, [props.value]);
 

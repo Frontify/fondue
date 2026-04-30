@@ -91,7 +91,7 @@ export const Default: StoryFn<FormFieldProps> = (args) => {
     const [currentValue, setCurrentValue] = useState<string>('');
     const handleChange = (value: string) => {
         const numValue = parseFloat(value);
-        // eslint-disable-next-line react-hooks/immutability
+        // eslint-disable-next-line @eslint-react/immutability
         args.error = !Number.isNaN(numValue) && numValue < 0;
         setCurrentValue(value);
     };
@@ -143,7 +143,7 @@ export const WithError: StoryFn<FormFieldProps> = (args) => {
     const handleChange = (value: string) => {
         if (value.length > 0) {
             setCurrentValue(value);
-            // eslint-disable-next-line react-hooks/immutability
+            // eslint-disable-next-line @eslint-react/immutability
             args.error = !/^a+$/.test(value);
         } else {
             setCurrentValue('');

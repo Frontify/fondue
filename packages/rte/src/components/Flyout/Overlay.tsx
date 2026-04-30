@@ -73,7 +73,7 @@ const OverlayComponent: ForwardRefRenderFunction<HTMLDivElement, OverlayProps> =
                             </div>
                             <div className="tw-inline-flex tw-gap-2 tw-flex-wrap">
                                 {badges.map((badgeProps, index) => (
-                                    <Badge {...badgeProps} key={`flyout-badge-${index}`} />
+                                    <Badge key={`flyout-badge-${index}`} {...badgeProps} />
                                 ))}
                             </div>
                         </div>
