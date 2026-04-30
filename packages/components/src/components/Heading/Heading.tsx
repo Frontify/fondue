@@ -2,9 +2,9 @@
 
 import { type ForwardedRef, forwardRef, type ReactNode } from 'react';
 
-import { type CommonAriaProps } from '#/helpers/aria';
-
 import styles from './styles/heading.module.scss';
+
+import { type CommonAriaProps } from '#/helpers/aria';
 
 type HeadingWeight = 'default' | 'strong';
 type HeadingSize = 'medium' | 'large' | 'x-large' | 'xx-large';
@@ -68,7 +68,7 @@ export const Heading = forwardRef(
                 aria-expanded={ariaExpanded}
                 aria-haspopup={ariaHasPopup}
                 data-test-id={dataTestId}
-                ref={ref}
+                ref={ref as ForwardedRef<HTMLHeadingElement>}
                 {...props}
             >
                 {children}
