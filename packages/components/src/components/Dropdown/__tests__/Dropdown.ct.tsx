@@ -16,6 +16,7 @@ const DROPDOWN_SUB_TRIGGER_TEST_ID = 'fondue-dropdown-sub-trigger';
 const DROPDOWN_SUB_CONTENT_TEST_ID = 'fondue-dropdown-sub-content';
 const DROPDOWN_ITEM_TEST_ID = 'fondue-dropdown-item';
 const DROPDOWN_ICON_TEST_ID = 'fondue-dropdown-icon';
+const DROPDOWN_SHORTCUT_TEST_ID = 'fondue-dropdown-shortcut';
 
 test('should render without error', async ({ mount, page }) => {
     const component = await mount(
@@ -678,4 +679,106 @@ test('should call onEscapeKeyDown when escape is pressed', async ({ mount, page 
     await page.keyboard.press('Escape');
     await expect(page.getByTestId(DROPDOWN_CONTENT_TEST_ID)).not.toBeVisible();
     expect(onEscapeKeyDown.callCount).toBe(1);
+});
+
+test('should render Dropdown.Shortcut as a kbd element inside the item', async ({ mount, page }) => {
+    const component = await mount(
+        <Dropdown.Root>
+            <Dropdown.Trigger>
+                <Button data-test-id={DROPDOWN_TRIGGER_TEST_ID}>Trigger</Button>
+            </Dropdown.Trigger>
+            <Dropdown.Content data-test-id={DROPDOWN_CONTENT_TEST_ID}>
+                <Dropdown.Item data-test-id={DROPDOWN_ITEM_TEST_ID} onSelect={() => {}}>
+                    Edit
+                    <Dropdown.Shortcut data-test-id={DROPDOWN_SHORTCUT_TEST_ID}>K + E</Dropdown.Shortcut>
+                </Dropdown.Item>
+            </Dropdown.Content>
+        </Dropdown.Root>,
+    );
+
+    await expect(component).toBeVisible();
+    await page.getByTestId(DROPDOWN_TRIGGER_TEST_ID).click();
+    await expect(page.getByTestId(DROPDOWN_CONTENT_TEST_ID)).toBeVisible();
+
+    const shortcut = page.getByTestId(DROPDOWN_SHORTCUT_TEST_ID);
+    await expect(shortcut).toBeVisible();
+    await expect(shortcut).toHaveText('K + E');
+    expect(await shortcut.evaluate((node) => node.tagName)).toBe('KBD');
+    // The shortcut must live inside the menuitem so it contributes to its accessible name
+    await expect(page.getByTestId(DROPDOWN_ITEM_TEST_ID).getByTestId(DROPDOWN_SHORTCUT_TEST_ID)).toBeVisible();
+});
+
+test('should forward aria-keyshortcuts to the underlying menuitem', async ({ mount, page }) => {
+    const component = await mount(
+        <Dropdown.Root>
+            <Dropdown.Trigger>
+                <Button data-test-id={DROPDOWN_TRIGGER_TEST_ID}>Trigger</Button>
+            </Dropdown.Trigger>
+            <Dropdown.Content data-test-id={DROPDOWN_CONTENT_TEST_ID}>
+                <Dropdown.Item
+                    data-test-id={DROPDOWN_ITEM_TEST_ID}
+                    aria-keyshortcuts="Meta+E"
+                    onSelect={() => {}}
+                >
+                    Edit
+                    <Dropdown.Shortcut>⌘ + E</Dropdown.Shortcut>
+                </Dropdown.Item>
+            </Dropdown.Content>
+        </Dropdown.Root>,
+    );
+
+    await expect(component).toBeVisible();
+    await page.getByTestId(DROPDOWN_TRIGGER_TEST_ID).click();
+    await expect(page.getByTestId(DROPDOWN_CONTENT_TEST_ID)).toBeVisible();
+
+    await expect(page.getByTestId(DROPDOWN_ITEM_TEST_ID)).toHaveAttribute('aria-keyshortcuts', 'Meta+E');
+});
+
+test('should forward aria-label onto Dropdown.Content', async ({ mount, page }) => {
+    const component = await mount(
+        <Dropdown.Root>
+            <Dropdown.Trigger>
+                <Button data-test-id={DROPDOWN_TRIGGER_TEST_ID}>Trigger</Button>
+            </Dropdown.Trigger>
+            <Dropdown.Content data-test-id={DROPDOWN_CONTENT_TEST_ID} aria-label="Item actions">
+                <Dropdown.Item onSelect={() => {}}>Item 1</Dropdown.Item>
+            </Dropdown.Content>
+        </Dropdown.Root>,
+    );
+
+    await expect(component).toBeVisible();
+    await page.getByTestId(DROPDOWN_TRIGGER_TEST_ID).click();
+
+    const content = page.getByTestId(DROPDOWN_CONTENT_TEST_ID);
+    await expect(content).toBeVisible();
+    await expect(content).toHaveAttribute('aria-label', 'Item actions');
+    await expect(page.getByRole('menu', { name: 'Item actions' })).toBeVisible();
+});
+
+test('should forward aria-label onto Dropdown.SubContent', async ({ mount, page }) => {
+    const component = await mount(
+        <Dropdown.Root>
+            <Dropdown.Trigger>
+                <Button data-test-id={DROPDOWN_TRIGGER_TEST_ID}>Trigger</Button>
+            </Dropdown.Trigger>
+            <Dropdown.Content data-test-id={DROPDOWN_CONTENT_TEST_ID}>
+                <Dropdown.SubMenu>
+                    <Dropdown.SubTrigger data-test-id={DROPDOWN_SUB_TRIGGER_TEST_ID}>More</Dropdown.SubTrigger>
+                    <Dropdown.SubContent data-test-id={DROPDOWN_SUB_CONTENT_TEST_ID} aria-label="Nested actions">
+                        <Dropdown.Item onSelect={() => {}}>Nested item</Dropdown.Item>
+                    </Dropdown.SubContent>
+                </Dropdown.SubMenu>
+            </Dropdown.Content>
+        </Dropdown.Root>,
+    );
+
+    await expect(component).toBeVisible();
+    await page.getByTestId(DROPDOWN_TRIGGER_TEST_ID).focus();
+    await page.keyboard.press('Enter');
+    await expect(page.getByTestId(DROPDOWN_CONTENT_TEST_ID)).toBeVisible();
+    await page.locator(':focus').press('ArrowRight');
+
+    const subContent = page.getByTestId(DROPDOWN_SUB_CONTENT_TEST_ID);
+    await expect(subContent).toBeVisible();
+    await expect(subContent).toHaveAttribute('aria-label', 'Nested actions');
 });
