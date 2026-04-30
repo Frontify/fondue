@@ -12,6 +12,7 @@ import {
     type TreeItemProps,
     TreeItemShadowClassMap,
     TreeItemSpacingClassMap,
+    type TreeItemStyling,
 } from '@components/Tree/types';
 import { useDndContext, useDndMonitor } from '@dnd-kit/core';
 import { type AnimateLayoutChanges, useSortable } from '@dnd-kit/sortable';
@@ -298,7 +299,7 @@ export const TreeItem = memo(
                 }
             }, [isActive, isExpanded, isParentActive, enrichedChildren, id]);
 
-            const itemStyleProps = useMemo(() => {
+            const itemStyleProps = useMemo<Required<TreeItemStyling>>(() => {
                 return {
                     spacingY: 'none',
                     contentHight: 'single-line',

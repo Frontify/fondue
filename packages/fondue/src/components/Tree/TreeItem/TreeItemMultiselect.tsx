@@ -5,7 +5,11 @@ import { Children, type MouseEvent, memo, useCallback, useEffect, useMemo, useRe
 
 import { Checkbox, CheckboxEmphasis, CheckboxSize, CheckboxState } from '@components/Checkbox/Checkbox';
 import { Container } from '@components/Container/Container';
-import { type RegisterNodeChildrenPayload, type TreeItemMultiselectProps } from '@components/Tree/types';
+import {
+    type RegisterNodeChildrenPayload,
+    type TreeItemMultiselectProps,
+    type TreeItemStyling,
+} from '@components/Tree/types';
 
 import { INDENTATION_WIDTH, getMultiselectCheckBoxState } from '../helpers';
 import {
@@ -101,7 +105,7 @@ export const TreeItemMultiselect = memo(
             registerNodeChildren?.({ id, children: enrichedChildren });
         }, [isExpanded, enrichedChildren, id]);
 
-        const itemStyleProps = useMemo(() => {
+        const itemStyleProps = useMemo<Required<TreeItemStyling>>(() => {
             return {
                 spacingY: 'none',
                 contentHight: 'single-line',
