@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconArrowMove, IconIcon, IconPen, IconPlus } from '@frontify/fondue-icons';
+import { IconArrowMove, IconIcon, IconPen, IconPlus, IconTrashBin } from '@frontify/fondue-icons';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 
@@ -258,7 +258,7 @@ export const KeyboardShortcut: Story = {
             <Dropdown.Trigger>
                 <Button>Trigger</Button>
             </Dropdown.Trigger>
-            <Dropdown.Content aria-label="Item actions">
+            <Dropdown.Content>
                 <Dropdown.Item onSelect={() => {}} aria-keyshortcuts="Meta+E">
                     <Dropdown.Slot name="left">
                         <IconPen size={16} />
@@ -281,7 +281,7 @@ export const KeyboardShortcut: Story = {
                 </Dropdown.Item>
                 <Dropdown.Item onSelect={() => {}} emphasis="danger" aria-keyshortcuts="Backspace">
                     <Dropdown.Slot name="left">
-                        <IconIcon size={16} />
+                        <IconTrashBin size={16} />
                     </Dropdown.Slot>
                     Delete
                     <Dropdown.Shortcut>⌫</Dropdown.Shortcut>

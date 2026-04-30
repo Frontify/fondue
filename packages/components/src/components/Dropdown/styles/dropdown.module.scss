@@ -110,7 +110,7 @@
         color: var(--color-disabled-default);
     }
 
-    span {
+    > span {
         width: 100%;
         overflow: hidden;
         white-space: nowrap;
@@ -195,7 +195,4 @@
         margin-inline-start: 0;
     }
 
-    & ~ .subMenuIndicator {
-        margin-inline-start: sizeToken.get(1.5);
-    }
 }

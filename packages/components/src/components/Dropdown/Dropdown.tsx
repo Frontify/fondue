@@ -74,6 +74,7 @@ DropdownTrigger.displayName = 'Dropdown.Trigger';
 
 type DropdownSpacing = 'compact' | 'comfortable' | 'spacious';
 type DropdownViewportCollisionPadding = 'compact' | 'spacious';
+type DropdownItemAriaProps = Omit<CommonAriaProps, 'role' | 'aria-expanded' | 'aria-haspopup'>;
 export type DropdownContentProps = {
     children?: ReactNode;
     'data-test-id'?: string;
@@ -118,7 +119,7 @@ export type DropdownContentProps = {
      * applied.
      */
     onCloseAutoFocus?: (event: Event) => void;
-} & CommonAriaProps;
+};
 
 const SPACING_MAP: Record<DropdownSpacing, number> = {
     compact: 8,
@@ -143,7 +144,6 @@ export const DropdownContent = (
         onEscapeKeyDown,
         onCloseAutoFocus,
         'data-test-id': dataTestId = 'fondue-dropdown-content',
-        ...ariaProps
     }: DropdownContentProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
@@ -164,7 +164,6 @@ export const DropdownContent = (
                     data-test-id={dataTestId}
                     ref={actualRef}
                     onEscapeKeyDown={onEscapeKeyDown}
-                    {...ariaProps}
                     onPointerDownOutside={(event) => {
                         if (!forceMount) {
                             return;
@@ -287,10 +286,10 @@ DropdownSubTrigger.displayName = 'Dropdown.SubTrigger';
 export type DropdownSubContentProps = {
     children: ReactNode;
     'data-test-id'?: string;
-} & CommonAriaProps;
+};
 
 export const DropdownSubContent = (
-    { children, 'data-test-id': dataTestId = 'fondue-dropdown-subcontent', ...ariaProps }: DropdownSubContentProps,
+    { children, 'data-test-id': dataTestId = 'fondue-dropdown-subcontent' }: DropdownSubContentProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     const { theme, dir } = useFondueTheme();
@@ -304,7 +303,6 @@ export const DropdownSubContent = (
                     className={styles.subContent}
                     data-test-id={dataTestId}
                     ref={ref}
-                    {...ariaProps}
                 >
                     {children}
                 </RadixDropdown.SubContent>
@@ -339,7 +337,7 @@ export type DropdownItemProps = {
      */
     asChild?: boolean;
     'data-test-id'?: string;
-} & CommonAriaProps;
+} & DropdownItemAriaProps;
 
 export const DropdownItem = (
     {
@@ -403,14 +401,26 @@ export const DropdownSlot = (
 };
 DropdownSlot.displayName = 'Dropdown.Slot';
 
-export type DropdownShortcutProps = { children: ReactNode; 'data-test-id'?: string };
+export type DropdownShortcutProps = Pick<CommonAriaProps, 'aria-hidden'> & {
+    /**
+     * The visible keyboard shortcut label. Use this only as a visual hint next to an action.
+     * Register the actual key binding in the consuming application and expose the canonical
+     * chord via `aria-keyshortcuts` on the corresponding `Dropdown.Item`.
+     */
+    children: ReactNode;
+    'data-test-id'?: string;
+};
 
 export const DropdownShortcut = (
-    { children, 'data-test-id': dataTestId = 'fondue-dropdown-shortcut' }: DropdownShortcutProps,
+    {
+        children,
+        'aria-hidden': ariaHidden = true,
+        'data-test-id': dataTestId = 'fondue-dropdown-shortcut',
+    }: DropdownShortcutProps,
     ref: ForwardedRef<HTMLElement>,
 ) => {
     return (
-        <kbd className={styles.shortcut} data-test-id={dataTestId} ref={ref}>
+        <kbd aria-hidden={ariaHidden} className={styles.shortcut} data-test-id={dataTestId} ref={ref}>
             {children}
         </kbd>
     );
