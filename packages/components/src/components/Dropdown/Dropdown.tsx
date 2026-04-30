@@ -4,6 +4,8 @@ import { IconCaretRight } from '@frontify/fondue-icons';
 import * as RadixDropdown from '@radix-ui/react-dropdown-menu';
 import { Children, forwardRef, useMemo, useRef, type ForwardedRef, type ReactNode } from 'react';
 
+import { type CommonAriaProps } from '#/helpers/aria';
+
 import { ThemeProvider, useFondueTheme } from '../ThemeProvider/ThemeProvider';
 
 import { useProcessedChildren } from './hooks/useProcessedChildren';
@@ -72,6 +74,7 @@ DropdownTrigger.displayName = 'Dropdown.Trigger';
 
 type DropdownSpacing = 'compact' | 'comfortable' | 'spacious';
 type DropdownViewportCollisionPadding = 'compact' | 'spacious';
+type DropdownItemAriaProps = Omit<CommonAriaProps, 'role' | 'aria-expanded' | 'aria-haspopup'>;
 export type DropdownContentProps = {
     children?: ReactNode;
     'data-test-id'?: string;
@@ -333,7 +336,7 @@ export type DropdownItemProps = {
      */
     asChild?: boolean;
     'data-test-id'?: string;
-};
+} & DropdownItemAriaProps;
 
 export const DropdownItem = (
     {
@@ -396,6 +399,27 @@ export const DropdownSlot = (
 };
 DropdownSlot.displayName = 'Dropdown.Slot';
 
+export type DropdownShortcutProps = Pick<CommonAriaProps, 'aria-hidden'> & {
+    children: ReactNode;
+    'data-test-id'?: string;
+};
+
+export const DropdownShortcut = (
+    {
+        children,
+        'aria-hidden': ariaHidden = true,
+        'data-test-id': dataTestId = 'fondue-dropdown-shortcut',
+    }: DropdownShortcutProps,
+    ref: ForwardedRef<HTMLElement>,
+) => {
+    return (
+        <kbd aria-hidden={ariaHidden} className={styles.shortcut} data-test-id={dataTestId} ref={ref}>
+            {children}
+        </kbd>
+    );
+};
+DropdownShortcut.displayName = 'Dropdown.Shortcut';
+
 const ForwardedRefDropdownTrigger = forwardRef<HTMLButtonElement, DropdownTriggerProps>(DropdownTrigger);
 const ForwardedRefDropdownContent = forwardRef<HTMLDivElement, DropdownContentProps>(DropdownContent);
 const ForwardedRefDropdownGroup = forwardRef<HTMLDivElement, DropdownGroupProps>(DropdownGroup);
@@ -403,6 +427,7 @@ const ForwardedRefDropdownSubTrigger = forwardRef<HTMLDivElement, DropdownSubTri
 const ForwardedRefDropdownSubContent = forwardRef<HTMLDivElement, DropdownSubContentProps>(DropdownSubContent);
 const ForwardedRefDropdownItem = forwardRef<HTMLDivElement, DropdownItemProps>(DropdownItem);
 const ForwardedRefDropdownSlot = forwardRef<HTMLDivElement, DropdownSlotProps>(DropdownSlot);
+const ForwardedRefDropdownShortcut = forwardRef<HTMLElement, DropdownShortcutProps>(DropdownShortcut);
 
 export const Dropdown = {
     Root: DropdownRoot,
@@ -414,4 +439,5 @@ export const Dropdown = {
     SubContent: ForwardedRefDropdownSubContent,
     Item: ForwardedRefDropdownItem,
     Slot: ForwardedRefDropdownSlot,
+    Shortcut: ForwardedRefDropdownShortcut,
 };

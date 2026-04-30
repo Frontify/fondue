@@ -16,6 +16,7 @@ const DROPDOWN_SUB_TRIGGER_TEST_ID = 'fondue-dropdown-sub-trigger';
 const DROPDOWN_SUB_CONTENT_TEST_ID = 'fondue-dropdown-sub-content';
 const DROPDOWN_ITEM_TEST_ID = 'fondue-dropdown-item';
 const DROPDOWN_ICON_TEST_ID = 'fondue-dropdown-icon';
+const DROPDOWN_SHORTCUT_TEST_ID = 'fondue-dropdown-shortcut';
 
 test('should render without error', async ({ mount, page }) => {
     const component = await mount(
@@ -676,4 +677,80 @@ test('should call onEscapeKeyDown when escape is pressed', async ({ mount, page 
     await page.keyboard.press('Escape');
     await expect(page.getByTestId(DROPDOWN_CONTENT_TEST_ID)).not.toBeVisible();
     expect(onEscapeKeyDown.callCount).toBe(1);
+});
+
+test('should render Dropdown.Shortcut as a kbd element inside the item', async ({ mount, page }) => {
+    const component = await mount(
+        <Dropdown.Root>
+            <Dropdown.Trigger>
+                <Button data-test-id={DROPDOWN_TRIGGER_TEST_ID}>Trigger</Button>
+            </Dropdown.Trigger>
+            <Dropdown.Content data-test-id={DROPDOWN_CONTENT_TEST_ID}>
+                <Dropdown.Item data-test-id={DROPDOWN_ITEM_TEST_ID} onSelect={() => {}}>
+                    Edit
+                    <Dropdown.Shortcut data-test-id={DROPDOWN_SHORTCUT_TEST_ID}>K + E</Dropdown.Shortcut>
+                </Dropdown.Item>
+            </Dropdown.Content>
+        </Dropdown.Root>,
+    );
+
+    await expect(component).toBeVisible();
+    await page.getByTestId(DROPDOWN_TRIGGER_TEST_ID).click();
+    await expect(page.getByTestId(DROPDOWN_CONTENT_TEST_ID)).toBeVisible();
+
+    const shortcut = page.getByTestId(DROPDOWN_SHORTCUT_TEST_ID);
+    await expect(shortcut).toBeVisible();
+    await expect(shortcut).toHaveText('K + E');
+    await expect(shortcut).toHaveJSProperty('tagName', 'KBD');
+    await expect(shortcut).toHaveAttribute('aria-hidden', 'true');
+    await expect(page.getByTestId(DROPDOWN_ITEM_TEST_ID).getByTestId(DROPDOWN_SHORTCUT_TEST_ID)).toBeVisible();
+    await expect(page.getByTestId(DROPDOWN_ITEM_TEST_ID)).toHaveAccessibleName('Edit');
+});
+
+test('should forward aria-keyshortcuts to the underlying menuitem', async ({ mount, page }) => {
+    const component = await mount(
+        <Dropdown.Root>
+            <Dropdown.Trigger>
+                <Button data-test-id={DROPDOWN_TRIGGER_TEST_ID}>Trigger</Button>
+            </Dropdown.Trigger>
+            <Dropdown.Content data-test-id={DROPDOWN_CONTENT_TEST_ID}>
+                <Dropdown.Item data-test-id={DROPDOWN_ITEM_TEST_ID} aria-keyshortcuts="Meta+E" onSelect={() => {}}>
+                    Edit
+                    <Dropdown.Shortcut>⌘ + E</Dropdown.Shortcut>
+                </Dropdown.Item>
+            </Dropdown.Content>
+        </Dropdown.Root>,
+    );
+
+    await expect(component).toBeVisible();
+    await page.getByTestId(DROPDOWN_TRIGGER_TEST_ID).click();
+    await expect(page.getByTestId(DROPDOWN_CONTENT_TEST_ID)).toBeVisible();
+
+    await expect(page.getByTestId(DROPDOWN_ITEM_TEST_ID)).toHaveAttribute('aria-keyshortcuts', 'Meta+E');
+});
+
+test('should keep the shortcut adjacent to a right slot', async ({ mount, page }) => {
+    const component = await mount(
+        <Dropdown.Root>
+            <Dropdown.Trigger>
+                <Button data-test-id={DROPDOWN_TRIGGER_TEST_ID}>Trigger</Button>
+            </Dropdown.Trigger>
+            <Dropdown.Content data-test-id={DROPDOWN_CONTENT_TEST_ID}>
+                <Dropdown.Item onSelect={() => {}}>
+                    Share
+                    <Dropdown.Slot name="right" data-test-id="dropdown-right-slot">
+                        <IconCaretDown size={16} />
+                    </Dropdown.Slot>
+                    <Dropdown.Shortcut data-test-id={DROPDOWN_SHORTCUT_TEST_ID}>S</Dropdown.Shortcut>
+                </Dropdown.Item>
+            </Dropdown.Content>
+        </Dropdown.Root>,
+    );
+
+    await expect(component).toBeVisible();
+    await page.getByTestId(DROPDOWN_TRIGGER_TEST_ID).click();
+    await expect(page.getByTestId(DROPDOWN_CONTENT_TEST_ID)).toBeVisible();
+
+    await expect(page.getByTestId('dropdown-right-slot')).toBeVisible();
+    await expect(page.getByTestId(DROPDOWN_SHORTCUT_TEST_ID)).toHaveCSS('margin-inline-start', '0px');
 });
