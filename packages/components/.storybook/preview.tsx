@@ -82,7 +82,7 @@ const preview: Preview = {
         layout: 'fullscreen',
         options: {
             storySort: {
-                order: ['Tokens', 'Utilities', 'Typography', 'Layout', 'Components'],
+                order: ['Tokens', 'Typography', 'Layout', 'Components', 'Utilities'],
                 method: 'alphabetical',
             },
         },
