@@ -71,6 +71,7 @@ const renderIconNode = (iconNode: IconNode, iconName: string): ReturnType<typeof
 
 export const createFondueIcon = (iconName: string, iconNode: IconNode): FondueIcon => {
     const Component = forwardRef<SVGSVGElement, FondueIconProps>(
+        // eslint-disable-next-line @eslint-react/component-hook-factories
         ({ color = 'currentColor', size = 24, className = '', children, ...rest }, ref) => {
             return createElement(
                 'svg',
