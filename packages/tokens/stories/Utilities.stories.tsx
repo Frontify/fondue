@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Flex } from '@frontify/fondue-components';
-import utilities from '@frontify/fondue-tokens/json/utilities';
 import { type Meta, type StoryFn } from '@storybook/react-vite';
+
+import utilities from '@frontify/fondue-tokens/json/utilities';
 
 import { customUtilities } from '../src/static/customUtilities';
 

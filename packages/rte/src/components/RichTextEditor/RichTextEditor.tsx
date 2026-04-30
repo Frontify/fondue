@@ -72,7 +72,6 @@ export const RichTextEditor = ({
             columnGap,
             outline: 'none',
         }),
-        // eslint-disable-next-line react-hooks/preserve-manual-memoization
         [columns, columnGap],
     );
 

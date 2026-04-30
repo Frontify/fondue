@@ -8,7 +8,7 @@ import { TreeItem } from '@components/Tree/TreeItem/TreeItem';
 import { type OnTreeDropCallback } from '@components/Tree/types';
 import { type DraggableItem } from '@utilities/dnd/types';
 
-import { type OrderableListItem, type OrderableListItemStyle, type OrderableListProps } from './types';
+import { type OrderableListItem, type OrderableListProps } from './types';
 
 const listItemsCompareFn = <T extends object>(itemA: OrderableListItem<T>, itemB: OrderableListItem<T>): number => {
     if (itemA.sort === null && itemB.sort === null) {
@@ -56,7 +56,7 @@ export const OrderableList = <T extends object>({
         // sort the incoming items
         const itemsClone = [...items];
         itemsClone.sort(listItemsCompareFn);
-        // eslint-disable-next-line react-hooks/set-state-in-effect
+        // eslint-disable-next-line @eslint-react/set-state-in-effect
         setItemsState(itemsClone);
     }, [items]);
 
@@ -74,7 +74,7 @@ export const OrderableList = <T extends object>({
             borderStyle: 'solid',
             activeColorStyle: 'soft',
             ...itemStyle,
-        } as OrderableListItemStyle;
+        };
     }, [itemStyle]);
 
     return (

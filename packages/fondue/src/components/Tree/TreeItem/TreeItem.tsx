@@ -18,7 +18,6 @@ import {
     type TreeItemProps,
     TreeItemShadowClassMap,
     TreeItemSpacingClassMap,
-    type TreeItemStyling,
 } from '@components/Tree/types';
 import { useDebounce } from '@hooks/useDebounce';
 import { FOCUS_VISIBLE_STYLE, PARENT_FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
@@ -310,7 +309,7 @@ export const TreeItem = memo(
                     borderStyle: 'none',
                     activeColorStyle: 'neutral',
                     ...itemStyle,
-                } as TreeItemStyling;
+                };
             }, [itemStyle]);
 
             const styling = TreeItemColorsClassMap[itemStyleProps.activeColorStyle ?? 'neutral'];
@@ -418,9 +417,9 @@ export const TreeItem = memo(
 
             return (
                 <li
+                    key={id}
                     {...itemHandlerProps}
                     id={id}
-                    key={id}
                     tabIndex={0}
                     role="treeitem"
                     style={liStyle}

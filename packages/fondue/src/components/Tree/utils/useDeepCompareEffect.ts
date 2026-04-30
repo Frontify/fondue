@@ -25,6 +25,6 @@ export const useDeepCompareEffect = (effect: EffectCallback, deps: unknown[]): v
     }
 
     // Intended eslint disable, it doesn't pick ref.current as dependencies array
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line @eslint-react/exhaustive-deps
     useEffect(effect, ref.current);
 };

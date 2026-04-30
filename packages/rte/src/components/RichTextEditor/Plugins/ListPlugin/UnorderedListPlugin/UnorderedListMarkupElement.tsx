@@ -14,6 +14,7 @@ export const UL_CLASSES =
     'tw-list-none tw-pl-[10px] tw-mb-[10px] tw-ml-[15px] [li_&]:tw-mb-0 [counter-reset:list-counter]';
 
 export const createUnorderedListNode = (listStyles: UnorderedListLevelStyle[] = DEFAULT_UL_STYLES) => {
+    // eslint-disable-next-line @eslint-react/component-hook-factories
     const UnorderedListNode = ({ attributes, children, element }: PlateRenderLeafProps & { element: TElement }) => {
         const editor = useEditorRef();
         const nestingLevel = getNestingLevel(editor, element);
