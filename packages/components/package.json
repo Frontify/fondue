@@ -24,6 +24,10 @@
             "types": "./dist/locales/index.d.ts",
             "import": "./dist/locales/index.js"
         },
+        "./locales/*": {
+            "types": "./dist/locales/*.d.ts",
+            "import": "./dist/locales/*.js"
+        },
         "./manifests/*": "./manifests/*.json"
     },
     "files": [

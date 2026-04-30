@@ -30,10 +30,13 @@
             "import": "./dist/packages/components/fondue-components.js"
         },
         "./components/styles": "./dist/packages/components/style.css",
-        "./locales": {
-            "types": "./dist/packages/locales/locales.d.ts",
-            "require": "./dist/packages/locales/fondue-locales.umd.cjs",
-            "import": "./dist/packages/locales/fondue-locales.js"
+        "./components/locales": {
+            "types": "./dist/packages/locales/index.d.ts",
+            "import": "./dist/packages/locales/index.js"
+        },
+        "./components/locales/*": {
+            "types": "./dist/packages/locales/*.d.ts",
+            "import": "./dist/packages/locales/*.js"
         },
         "./icons": {
             "types": "./dist/packages/icons/icons.d.ts",
@@ -87,7 +90,7 @@
         "build:styles-with-tw": "postcss ./src/components/**/*.css --config src/components/postcss.config.cjs -o dist/styles-without-tailwind.css",
         "build:storybook": "storybook build",
         "build:package:components": "vite build -c components.vite.config.ts",
-        "build:package:locales": "vite build -c locales.vite.config.ts",
+        "build:package:locales": "tsx scripts/copyLocales.ts",
         "build:package:icons": "vite build -c icons.vite.config.ts",
         "build:package:charts": "vite build -c charts.vite.config.ts",
         "build:package:tokens": "vite build -c tokens.vite.config.ts",
