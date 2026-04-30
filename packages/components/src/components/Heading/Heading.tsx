@@ -2,9 +2,9 @@
 
 import { type ForwardedRef, forwardRef, type ReactNode } from 'react';
 
-import styles from './styles/heading.module.scss';
-
 import { type CommonAriaProps } from '#/helpers/aria';
+
+import styles from './styles/heading.module.scss';
 
 type HeadingWeight = 'default' | 'strong';
 type HeadingSize = 'medium' | 'large' | 'x-large' | 'xx-large';

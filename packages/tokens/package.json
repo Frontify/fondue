@@ -57,7 +57,7 @@
         "react": "^18.3.1"
     },
     "devDependencies": {
-        "@frontify/eslint-config-react": "^1.0.8",
+        "@frontify/eslint-config-react": "^1.0.15",
         "@frontify/fondue-components": "workspace:*",
         "@frontify/fondue-icons": "workspace:*",
         "@storybook/addon-a11y": "^10.2.0",
