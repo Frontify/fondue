@@ -37,14 +37,14 @@ const Template: StoryFn<AssetInputProps & { onItemClick: () => void }> = (args) 
     if (args?.actions) {
         for (const block of args.actions) {
             for (const item of block.menuItems) {
-                // eslint-disable-next-line react-hooks/immutability
+                // eslint-disable-next-line @eslint-react/immutability
                 item.onClick = args.onItemClick;
             }
         }
     }
 
     if (args.isLoading && args.assets) {
-        // eslint-disable-next-line react-hooks/immutability
+        // eslint-disable-next-line @eslint-react/immutability
         args.assets = undefined;
     }
 

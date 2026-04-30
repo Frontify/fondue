@@ -300,7 +300,7 @@ export const TreeItem = memo(
                 }
             }, [isActive, isExpanded, isParentActive, enrichedChildren, id]);
 
-            const itemStyleProps = useMemo(() => {
+            const itemStyleProps = useMemo<Required<TreeItemStyling>>(() => {
                 return {
                     spacingY: 'none',
                     contentHight: 'single-line',
@@ -310,7 +310,7 @@ export const TreeItem = memo(
                     borderStyle: 'none',
                     activeColorStyle: 'neutral',
                     ...itemStyle,
-                } as TreeItemStyling;
+                };
             }, [itemStyle]);
 
             const styling = TreeItemColorsClassMap[itemStyleProps.activeColorStyle ?? 'neutral'];
@@ -418,9 +418,9 @@ export const TreeItem = memo(
 
             return (
                 <li
+                    key={id}
                     {...itemHandlerProps}
                     id={id}
-                    key={id}
                     tabIndex={0}
                     role="treeitem"
                     style={liStyle}

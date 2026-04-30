@@ -58,7 +58,7 @@ export const useMenuKeyboardNavigation = (
         }
 
         if (!itemsElements && focusableItems.length > 0) {
-            // eslint-disable-next-line react-hooks/set-state-in-effect
+            // eslint-disable-next-line @eslint-react/set-state-in-effect
             setItemsElements(focusableItems);
         }
     }, [isMenuOpened, menuContainerRef, itemsElements, handleKeyDown, focusableElementsSelector]);
@@ -75,7 +75,7 @@ export const useMenuKeyboardNavigation = (
 
     useEffect(() => {
         if (!isMenuOpened) {
-            // eslint-disable-next-line react-hooks/set-state-in-effect
+            // eslint-disable-next-line @eslint-react/set-state-in-effect
             setItemsElements(undefined);
             setMenuKeyboardNavigationAction('');
         }

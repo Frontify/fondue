@@ -109,7 +109,7 @@ export const TokenCollectionOverview = ({
                                 ) : (
                                     <Flex direction="column" gap={8}>
                                         <TokenCollectionOverview
-                                            tokens={value as Tokens}
+                                            tokens={value}
                                             parentKeys={[...parentKeys, key]}
                                             tokenPreview={tokenPreview}
                                             getClassName={getClassName}

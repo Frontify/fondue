@@ -135,8 +135,8 @@ export const TabsRoot = (
                     <RadixTabs.List ref={triggerListRef} data-size={size} className={styles.triggerList}>
                         {triggers.map((trigger) => (
                             <RadixTabs.Trigger
-                                {...trigger.props}
                                 key={trigger.value}
+                                {...trigger.props}
                                 value={trigger.value}
                                 disabled={trigger.disabled}
                                 className={styles.trigger}
@@ -157,10 +157,10 @@ export const TabsRoot = (
                         <Dropdown.Content align="end" data-test-id="overflow-items-dropdown-content">
                             {triggersOutOfView.map((trigger) => (
                                 <Dropdown.Item
+                                    key={trigger.value}
                                     {...trigger.props}
                                     disabled={trigger.disabled}
                                     onSelect={() => handleSetActiveTab(trigger.value)}
-                                    key={trigger.value}
                                 >
                                     {trigger.element}
                                 </Dropdown.Item>
@@ -215,7 +215,7 @@ export const TabsTrigger = ({ children, ...props }: TabsTriggerProps, ref: Forwa
             previousElement: previousElement.current,
         });
         previousElement.current = children;
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line @eslint-react/exhaustive-deps
     }, [children]);
 
     return null;

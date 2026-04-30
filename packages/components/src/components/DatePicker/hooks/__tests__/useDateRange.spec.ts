@@ -152,7 +152,7 @@ describe('useDateRange', () => {
 
         it('should reflect updated selected prop on rerender', () => {
             const { result, rerender } = renderHook(({ selected }) => useDateRange(selected), {
-                initialProps: { selected: MARCH_RANGE as typeof MARCH_RANGE | undefined },
+                initialProps: { selected: MARCH_RANGE },
             });
 
             expect(result.current.selectedDateRange).toStrictEqual({

@@ -59,7 +59,7 @@ export default {
 } as Meta<BreadcrumbsProps>;
 
 const Template: StoryFn<BreadcrumbsProps> = (args: BreadcrumbsProps) => (
-    <Breadcrumbs {...args} key={JSON.stringify(args)} />
+    <Breadcrumbs key={JSON.stringify(args)} {...args} />
 );
 
 export const WithoutLinkOrAction = Template.bind({});

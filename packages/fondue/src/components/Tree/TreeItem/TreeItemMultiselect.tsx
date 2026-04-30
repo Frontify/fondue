@@ -105,7 +105,7 @@ export const TreeItemMultiselect = memo(
             registerNodeChildren?.({ id, children: enrichedChildren });
         }, [isExpanded, enrichedChildren, id]);
 
-        const itemStyleProps = useMemo(() => {
+        const itemStyleProps = useMemo<Required<TreeItemStyling>>(() => {
             return {
                 spacingY: 'none',
                 contentHight: 'single-line',
@@ -115,7 +115,7 @@ export const TreeItemMultiselect = memo(
                 borderStyle: 'none',
                 activeColorStyle: 'neutral',
                 ...itemStyle,
-            } as TreeItemStyling;
+            };
         }, [itemStyle]);
 
         const { liClassName, backgroundClassName } = useMemo(() => {
