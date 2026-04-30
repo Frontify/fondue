@@ -1,11 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { useId } from '@react-aria/utils';
+import { useEffect, useMemo, useState } from 'react';
+
 import { Tree } from '@components/Tree/Tree';
 import { TreeItem } from '@components/Tree/TreeItem/TreeItem';
 import { type OnTreeDropCallback, type TreeItemStyling } from '@components/Tree/types';
-import { useId } from '@react-aria/utils';
 import { type DraggableItem } from '@utilities/dnd/types';
-import { useEffect, useMemo, useState } from 'react';
 
 import { type OrderableListItem, type OrderableListProps } from './types';
 
