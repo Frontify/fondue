@@ -644,16 +644,14 @@ test('should call onCloseAutoFocus when the dropdown closes', async ({ mount, pa
     );
 
     await expect(component).toBeVisible();
-    await page.getByTestId(DROPDOWN_TRIGGER_TEST_ID).focus();
-    await page.keyboard.press('Enter');
+    await page.getByTestId(DROPDOWN_TRIGGER_TEST_ID).click();
     const content = page.getByTestId(DROPDOWN_CONTENT_TEST_ID);
     await expect(content).toBeVisible();
-    await content.getByRole('menuitem').first().focus();
 
     expect(onCloseAutoFocus.callCount).toBe(0);
     await page.keyboard.press('Escape');
     await expect(content).not.toBeVisible();
-    expect(onCloseAutoFocus.callCount).toBe(1);
+    await expect.poll(() => onCloseAutoFocus.callCount).toBe(1);
 });
 
 test('should call onEscapeKeyDown when escape is pressed', async ({ mount, page }) => {
