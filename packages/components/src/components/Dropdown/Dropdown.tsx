@@ -402,11 +402,6 @@ export const DropdownSlot = (
 DropdownSlot.displayName = 'Dropdown.Slot';
 
 export type DropdownShortcutProps = Pick<CommonAriaProps, 'aria-hidden'> & {
-    /**
-     * The visible keyboard shortcut label. Use this only as a visual hint next to an action.
-     * Register the actual key binding in the consuming application and expose the canonical
-     * chord via `aria-keyshortcuts` on the corresponding `Dropdown.Item`.
-     */
     children: ReactNode;
     'data-test-id'?: string;
 };
