@@ -1,5 +1,15 @@
 # @frontify/fondue
 
+## 13.4.5
+
+### Patch Changes
+
+- [#2707](https://github.com/Frontify/fondue/pull/2707) [`992bbae`](https://github.com/Frontify/fondue/commit/992bbae0b71da4b073a6918253b044a44efe9d29) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - refactor: remove unused `forwardRef` from `Tabs.Tab` and add `forwardRef` in `Accordion`
+
+- Updated dependencies [[`6c6f7b3`](https://github.com/Frontify/fondue/commit/6c6f7b3143f7ee7323eadd0ddabef1c806dfa528), [`620ecf3`](https://github.com/Frontify/fondue/commit/620ecf332801fbbb3c29c3a6ad86fee7d3ec98b7), [`aa34763`](https://github.com/Frontify/fondue/commit/aa347635032749139726ba1ffd242fa0a3b2ed7a), [`992bbae`](https://github.com/Frontify/fondue/commit/992bbae0b71da4b073a6918253b044a44efe9d29), [`b04aff2`](https://github.com/Frontify/fondue/commit/b04aff28f1a7482438326839d35810759543589f), [`7be99ca`](https://github.com/Frontify/fondue/commit/7be99cac8dff538d7c7ff75008fc4e3568c69e58)]:
+    - @frontify/fondue-components@30.3.0
+    - @frontify/fondue-tokens@5.0.0
+
 ## 13.4.4
 
 ### Patch Changes
