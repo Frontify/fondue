@@ -40,7 +40,7 @@
         &[data-has-horizontal-overflow='true'] {
             .headerCell:first-child,
             .rowCell:first-child {
-                border-inline-end: 1px solid var(--line-color);
+                border-inline-end: 1px solid var(--color-line-subtle);
             }
         }
     }
@@ -58,7 +58,7 @@
         &[data-has-horizontal-overflow='true'] {
             .headerCell:first-child,
             .rowCell:first-child {
-                border-inline-end: 1px solid var(--line-color);
+                border-inline-end: 1px solid var(--color-line-subtle);
             }
         }
     }
@@ -75,7 +75,7 @@
         &[data-has-horizontal-overflow='true'] {
             .headerCell:last-child,
             .rowCell:last-child {
-                border-inline-start: 1px solid var(--line-color);
+                border-inline-start: 1px solid var(--color-line-subtle);
             }
         }
     }
