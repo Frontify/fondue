@@ -1,5 +1,26 @@
 # @frontify/fondue-components
 
+## 30.3.0
+
+### Minor Changes
+
+- [#2705](https://github.com/Frontify/fondue/pull/2705) [`aa34763`](https://github.com/Frontify/fondue/commit/aa347635032749139726ba1ffd242fa0a3b2ed7a) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: allow locale configuration in ThemeProvider component
+
+- [#2710](https://github.com/Frontify/fondue/pull/2710) [`7be99ca`](https://github.com/Frontify/fondue/commit/7be99cac8dff538d7c7ff75008fc4e3568c69e58) Thanks [@jcosta33](https://github.com/jcosta33)! - feat(`Dropdown`): add `Dropdown.Shortcut` & improve a11y
+
+### Patch Changes
+
+- [#2712](https://github.com/Frontify/fondue/pull/2712) [`6c6f7b3`](https://github.com/Frontify/fondue/commit/6c6f7b3143f7ee7323eadd0ddabef1c806dfa528) Thanks [@peter-tudosa](https://github.com/peter-tudosa)! - fix(Table): sticky column border color should be the same as the other borders
+
+- [#2711](https://github.com/Frontify/fondue/pull/2711) [`620ecf3`](https://github.com/Frontify/fondue/commit/620ecf332801fbbb3c29c3a6ad86fee7d3ec98b7) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: use padding-inline instead of text-indent, as it causes a bug in firefox 151
+
+- [#2707](https://github.com/Frontify/fondue/pull/2707) [`992bbae`](https://github.com/Frontify/fondue/commit/992bbae0b71da4b073a6918253b044a44efe9d29) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - refactor: remove unused `forwardRef` from `Tabs.Tab` and add `forwardRef` in `Accordion`
+
+- [#2706](https://github.com/Frontify/fondue/pull/2706) [`b04aff2`](https://github.com/Frontify/fondue/commit/b04aff28f1a7482438326839d35810759543589f) Thanks [@LeoBakerHytch](https://github.com/LeoBakerHytch)! - Expose onCloseAutoFocus on Dropdown.Content
+
+- Updated dependencies []:
+    - @frontify/fondue-tokens@5.0.0
+
 ## 30.2.1
 
 ### Patch Changes
