@@ -46,6 +46,12 @@ export type AccordionRootProps = {
      */
     padding?: AccordionPadding;
     /**
+     * When `true`, each `Accordion.Header` becomes sticky and pins to the top of the nearest
+     * scrolling ancestor (e.g. a `ScrollArea`) while its item is in view.
+     * @default false
+     */
+    sticky?: boolean;
+    /**
      * Callback function that is called when the value of the accordion changes.
      */
     onValueChange?: (value: string[]) => void;
@@ -61,6 +67,7 @@ export const AccordionRoot = forwardRef<HTMLDivElement, AccordionRootProps>(
             disabled,
             value,
             padding = 'large',
+            sticky = false,
             onValueChange,
         }: AccordionRootProps,
         ref: ForwardedRef<HTMLDivElement>,
@@ -76,6 +83,7 @@ export const AccordionRoot = forwardRef<HTMLDivElement, AccordionRootProps>(
                 value={value}
                 data-border={border}
                 data-accordion-padding={padding}
+                data-sticky={sticky}
                 onValueChange={onValueChange}
             >
                 {children}
