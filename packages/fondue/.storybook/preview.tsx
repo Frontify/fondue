@@ -2,6 +2,7 @@
 
 import '@frontify/fondue-tokens/legacy/tokens';
 import '@frontify/fondue-tokens/styles';
+import '@frontify/fondue-components/styles';
 
 import { Decorator } from '@storybook/react-vite';
 import '../src/styles.css';

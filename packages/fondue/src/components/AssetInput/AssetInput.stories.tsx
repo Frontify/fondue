@@ -1,10 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconCrop, IconCross, IconEye, IconEyeOff, IconLockClosed, IconLockOpen } from '@frontify/fondue-icons';
 import { type Meta, type StoryFn } from '@storybook/react-vite';
+import { useState } from 'react';
 
 import { AssetInput, type AssetInputProps, AssetInputSize } from './AssetInput';
 import { assetInputActions } from './asset-input-actions';
 import { EXAMPLE_IMAGES, MIXED_ASSETS } from './example-assets';
+import { type AssetInputMenuBlock, AssetInputMenuItemStyle, AssetInputMenuSwitchItemType } from './types';
 
 /**
  ### *Legacy component warning*
@@ -115,6 +118,63 @@ export const Icon = Template.bind({});
 Icon.args = {
     assets: [MIXED_ASSETS[2]],
     actions: assetInputActions,
+};
+
+const ImageWithSwitchRender = () => {
+    const [locked, setLocked] = useState(false);
+    const [previewVisible, setPreviewVisible] = useState(true);
+
+    const actions: AssetInputMenuBlock[] = [
+        {
+            id: 'toggles',
+            ariaLabel: 'Toggles',
+            menuItems: [
+                {
+                    id: 'lock',
+                    title: locked ? 'Unlock asset' : 'Lock asset',
+                    decorator: locked ? <IconLockClosed /> : <IconLockOpen />,
+                    type: 'switch',
+                    initialValue: locked,
+                    onClick: (value: boolean) => setLocked(value),
+                } as AssetInputMenuSwitchItemType,
+                {
+                    id: 'preview',
+                    title: previewVisible ? 'Hide preview' : 'Show preview',
+                    decorator: previewVisible ? <IconEye /> : <IconEyeOff />,
+                    type: 'switch',
+                    initialValue: previewVisible,
+                    onClick: (value: boolean) => setPreviewVisible(value),
+                } as AssetInputMenuSwitchItemType,
+            ],
+        },
+        {
+            id: 'actions',
+            ariaLabel: 'Actions',
+            menuItems: [
+                {
+                    id: 'crop',
+                    title: 'Crop / Resize',
+                    decorator: <IconCrop />,
+                    onClick: () => undefined,
+                },
+                {
+                    id: 'remove',
+                    title: 'Remove',
+                    style: AssetInputMenuItemStyle.Danger,
+                    decorator: <IconCross />,
+                    onClick: () => undefined,
+                },
+            ],
+        },
+    ];
+
+    return <AssetInput assets={[EXAMPLE_IMAGES[0]]} actions={actions} size={AssetInputSize.Small} />;
+};
+
+export const ImageWithSwitch: StoryFn<AssetInputProps> = () => <ImageWithSwitchRender />;
+
+ImageWithSwitch.parameters = {
+    controls: { disable: true },
 };
 
 const multiAssetInputArgTypes = {
