@@ -1,7 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import '@frontify/fondue-components/styles';
-
 import { Dropdown } from '@frontify/fondue-components';
 import { IconCaretDown } from '@frontify/fondue-icons';
 import { useFocusRing } from '@react-aria/focus';
