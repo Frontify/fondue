@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { AssetInput, type AssetInputProps, AssetInputSize } from './AssetInput';
 import { assetInputActions } from './asset-input-actions';
 import { EXAMPLE_IMAGES, MIXED_ASSETS } from './example-assets';
-import { type AssetInputMenuBlock, AssetInputMenuItemStyle, AssetInputMenuSwitchItemType } from './types';
+import { type AssetInputMenuBlock, AssetInputMenuItemStyle, type AssetInputMenuSwitchItemType } from './types';
 
 /**
  ### *Legacy component warning*
