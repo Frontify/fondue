@@ -39,7 +39,7 @@ type ThemeProviderProps = {
     locale?: LocaleConfig;
     /**
      * Additional class name to apply to the theme provider, used to scope styles to a specific component or section of the application.
-     * The class will be propagated to components' portal targets.
+     * The class is propagated to portaled content (e.g. Dropdown, Tooltip, Dialog) so scoped styles are still applied.
      * @default ""
      */
     scopeClassName?: string;
