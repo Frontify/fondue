@@ -9,7 +9,6 @@ import {
     isValidElement,
     useCallback,
     useContext,
-    useEffect,
     useMemo,
     useRef,
     type ForwardedRef,
@@ -20,7 +19,6 @@ import {
 import styles from './styles/accordion.module.scss';
 
 type AccordionRootContextValue = {
-    sticky: boolean;
     registerItem: (value: string, element: HTMLDivElement | null) => void;
 };
 
@@ -49,11 +47,28 @@ const restoreScrollForClosingItem = (itemEl: HTMLElement) => {
     const containerRect = scrollContainer.getBoundingClientRect();
     const delta = itemRect.top - containerRect.top;
 
-    // Only adjust if the item is scrolled above (or exactly at) the top of the
-    // scroll container — i.e. its header is currently pinned in sticky state.
-    if (delta < 0) {
-        scrollContainer.scrollTo({ top: scrollContainer.scrollTop + delta, behavior: 'smooth' });
+    if (delta >= 0) {
+        return;
     }
+
+    const contentEl = itemEl.querySelector<HTMLElement>(`:scope > .${styles.accordionContent}`);
+    const startHeight = contentEl?.offsetHeight ?? 0;
+
+    if (!contentEl || startHeight === 0) {
+        scrollContainer.scrollTop = scrollContainer.scrollTop + delta;
+        return;
+    }
+
+    const startTop = scrollContainer.scrollTop;
+    const step = () => {
+        const currentHeight = contentEl.offsetHeight;
+        const progress = Math.min(Math.max(1 - currentHeight / startHeight, 0), 1);
+        scrollContainer.scrollTop = startTop + delta * progress;
+        if (currentHeight > 0 && progress < 1) {
+            requestAnimationFrame(step);
+        }
+    };
+    requestAnimationFrame(step);
 };
 
 type AccordionPadding = 'none' | 'small' | 'medium' | 'large';
@@ -115,7 +130,7 @@ export const AccordionRoot = forwardRef<HTMLDivElement, AccordionRootProps>(
         ref: ForwardedRef<HTMLDivElement>,
     ) => {
         const itemsRef = useRef<Map<string, HTMLDivElement>>(new Map());
-        const previousValueRef = useRef<string[]>(value ?? defaultValue ?? []);
+        const uncontrolledValueRef = useRef<string[]>(defaultValue ?? []);
 
         const registerItem = useCallback((itemValue: string, element: HTMLDivElement | null) => {
             if (element) {
@@ -125,38 +140,32 @@ export const AccordionRoot = forwardRef<HTMLDivElement, AccordionRootProps>(
             }
         }, []);
 
-        const contextValue = useMemo<AccordionRootContextValue>(
-            () => ({ sticky, registerItem }),
-            [sticky, registerItem],
-        );
+        const contextValue = useMemo<AccordionRootContextValue>(() => ({ registerItem }), [registerItem]);
 
-        const handleValueChange = (newValue: string[]) => {
-            if (sticky) {
-                const previous = previousValueRef.current;
-                for (const closedValue of previous) {
-                    if (newValue.includes(closedValue)) {
-                        continue;
-                    }
+        const handleValueChange = useCallback(
+            (newValue: string[]) => {
+                if (sticky) {
+                    const previous = value ?? uncontrolledValueRef.current;
+                    for (const closedValue of previous) {
+                        if (newValue.includes(closedValue)) {
+                            continue;
+                        }
 
-                    const itemEl = itemsRef.current.get(closedValue);
+                        const itemEl = itemsRef.current.get(closedValue);
 
-                    if (itemEl) {
-                        restoreScrollForClosingItem(itemEl);
+                        if (itemEl) {
+                            restoreScrollForClosingItem(itemEl);
+                        }
                     }
                 }
-            }
 
-            if (value === undefined) {
-                previousValueRef.current = newValue;
-            }
-            onValueChange?.(newValue);
-        };
-
-        useEffect(() => {
-            if (value !== undefined) {
-                previousValueRef.current = value;
-            }
-        }, [value]);
+                if (value === undefined) {
+                    uncontrolledValueRef.current = newValue;
+                }
+                onValueChange?.(newValue);
+            },
+            [sticky, value, onValueChange],
+        );
 
         return (
             <AccordionRootContext.Provider value={contextValue}>
