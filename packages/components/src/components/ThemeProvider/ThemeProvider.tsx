@@ -38,6 +38,12 @@ type ThemeProviderProps = {
      */
     locale?: LocaleConfig;
     /**
+     * Additional class name to apply to the theme provider, used to scope styles to a specific component or section of the application.
+     * The class will be propagated to components' portal targets.
+     * @default ""
+     */
+    scopeClassName?: string;
+    /**
      * Change the default rendered element for the one passed as a child, merging their props and behavior.
      * @default false
      */
@@ -48,12 +54,14 @@ type ThemeContextValue = {
     theme: AvailableTheme;
     dir: 'ltr' | 'rtl';
     locale: LocaleConfig;
+    scopeClassName: string;
 };
 
 export const ThemeContext = createContext<ThemeContextValue>({
     theme: 'light',
     dir: 'ltr',
     locale: enUS,
+    scopeClassName: '',
 });
 ThemeContext.displayName = 'ThemeContext';
 
@@ -68,23 +76,32 @@ export const useFondueTheme = () => {
 
 export const ThemeProvider = forwardRef<HTMLDivElement, ThemeProviderProps>(
     (
-        { children, theme = 'light', dir = 'ltr', translations = enUS, locale, asChild = false },
+        { children, theme, dir, translations, locale, scopeClassName, asChild = false },
         forwardedRef: ForwardedRef<HTMLDivElement>,
     ) => {
         const Comp = asChild ? Slot : 'div';
 
+        const existingContext = useFondueTheme();
+
         const contextValue = useMemo(
             () => ({
-                theme,
-                dir,
-                locale: locale ? locale : translations,
+                theme: theme ?? existingContext.theme,
+                dir: dir ?? existingContext.dir,
+                locale: locale ?? translations ?? existingContext.locale,
+                scopeClassName: scopeClassName ?? existingContext.scopeClassName,
             }),
-            [dir, theme, locale, translations],
+            [dir, theme, locale, translations, scopeClassName, existingContext],
         );
 
         return (
             <ThemeContext.Provider value={contextValue}>
-                <Comp ref={forwardedRef} dir={dir} className={`${styles[theme]} fondue-theme-provider`}>
+                <Comp
+                    ref={forwardedRef}
+                    dir={contextValue.dir}
+                    className={['fondue-theme-provider', styles[contextValue.theme], contextValue.scopeClassName].join(
+                        ' ',
+                    )}
+                >
                     {children}
                 </Comp>
             </ThemeContext.Provider>
