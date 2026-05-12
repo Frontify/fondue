@@ -4,15 +4,72 @@ import { IconCaretDown } from '@frontify/fondue-icons';
 import * as RadixAccordion from '@radix-ui/react-accordion';
 import {
     Children,
+    createContext,
     forwardRef,
     isValidElement,
+    useCallback,
+    useContext,
     useMemo,
+    useRef,
     type ForwardedRef,
     type MouseEventHandler,
     type ReactNode,
 } from 'react';
 
 import styles from './styles/accordion.module.scss';
+
+type AccordionRootContextValue = {
+    registerItem: (value: string, element: HTMLDivElement | null) => void;
+};
+
+const AccordionRootContext = createContext<AccordionRootContextValue | null>(null);
+AccordionRootContext.displayName = 'AccordionRootContext';
+
+const findScrollableAncestor = (element: HTMLElement): HTMLElement | null => {
+    let current: HTMLElement | null = element.parentElement;
+    while (current) {
+        const { overflowY } = window.getComputedStyle(current);
+        if ((overflowY === 'auto' || overflowY === 'scroll') && current.scrollHeight > current.clientHeight) {
+            return current;
+        }
+        current = current.parentElement;
+    }
+    return null;
+};
+
+const restoreScrollForClosingItem = (itemEl: HTMLElement) => {
+    const scrollContainer = findScrollableAncestor(itemEl);
+    if (!scrollContainer) {
+        return;
+    }
+
+    const itemRect = itemEl.getBoundingClientRect();
+    const containerRect = scrollContainer.getBoundingClientRect();
+    const delta = itemRect.top - containerRect.top;
+
+    if (delta >= 0) {
+        return;
+    }
+
+    const contentEl = itemEl.querySelector<HTMLElement>(`:scope > .${styles.accordionContent}`);
+    const startHeight = contentEl?.offsetHeight ?? 0;
+
+    if (!contentEl || startHeight === 0) {
+        scrollContainer.scrollTop = scrollContainer.scrollTop + delta;
+        return;
+    }
+
+    const startTop = scrollContainer.scrollTop;
+    const step = () => {
+        const currentHeight = contentEl.offsetHeight;
+        const progress = Math.min(Math.max(1 - currentHeight / startHeight, 0), 1);
+        scrollContainer.scrollTop = startTop + delta * progress;
+        if (currentHeight > 0 && progress < 1) {
+            requestAnimationFrame(step);
+        }
+    };
+    requestAnimationFrame(step);
+};
 
 type AccordionPadding = 'none' | 'small' | 'medium' | 'large';
 
@@ -46,6 +103,12 @@ export type AccordionRootProps = {
      */
     padding?: AccordionPadding;
     /**
+     * When `true`, each `Accordion.Header` becomes sticky and pins to the top of the nearest
+     * scrolling ancestor (e.g. a `ScrollArea`) while its item is in view.
+     * @default false
+     */
+    sticky?: boolean;
+    /**
      * Callback function that is called when the value of the accordion changes.
      */
     onValueChange?: (value: string[]) => void;
@@ -61,25 +124,67 @@ export const AccordionRoot = forwardRef<HTMLDivElement, AccordionRootProps>(
             disabled,
             value,
             padding = 'large',
+            sticky = false,
             onValueChange,
         }: AccordionRootProps,
         ref: ForwardedRef<HTMLDivElement>,
     ) => {
+        const itemsRef = useRef<Map<string, HTMLDivElement>>(new Map());
+        const uncontrolledValueRef = useRef<string[]>(defaultValue ?? []);
+
+        const registerItem = useCallback((itemValue: string, element: HTMLDivElement | null) => {
+            if (element) {
+                itemsRef.current.set(itemValue, element);
+            } else {
+                itemsRef.current.delete(itemValue);
+            }
+        }, []);
+
+        const contextValue = useMemo<AccordionRootContextValue>(() => ({ registerItem }), [registerItem]);
+
+        const handleValueChange = useCallback(
+            (newValue: string[]) => {
+                if (sticky) {
+                    const previous = value ?? uncontrolledValueRef.current;
+                    for (const closedValue of previous) {
+                        if (newValue.includes(closedValue)) {
+                            continue;
+                        }
+
+                        const itemEl = itemsRef.current.get(closedValue);
+
+                        if (itemEl) {
+                            restoreScrollForClosingItem(itemEl);
+                        }
+                    }
+                }
+
+                if (value === undefined) {
+                    uncontrolledValueRef.current = newValue;
+                }
+                onValueChange?.(newValue);
+            },
+            [sticky, value, onValueChange],
+        );
+
         return (
-            <RadixAccordion.Root
-                ref={ref}
-                className={styles.root}
-                data-test-id={dataTestId}
-                defaultValue={defaultValue}
-                disabled={disabled}
-                type="multiple"
-                value={value}
-                data-border={border}
-                data-accordion-padding={padding}
-                onValueChange={onValueChange}
-            >
-                {children}
-            </RadixAccordion.Root>
+            <AccordionRootContext.Provider value={contextValue}>
+                <RadixAccordion.Root
+                    ref={ref}
+                    className={styles.root}
+                    data-test-id={dataTestId}
+                    defaultValue={defaultValue}
+                    disabled={disabled}
+                    type="multiple"
+                    value={value}
+                    data-border={border}
+                    data-accordion-padding={padding}
+                    data-sticky={sticky}
+                    onValueChange={handleValueChange}
+                >
+                    {children}
+                </RadixAccordion.Root>
+            </AccordionRootContext.Provider>
         );
     },
 );
@@ -108,9 +213,24 @@ export const AccordionItem = forwardRef<HTMLDivElement, AccordionItemProps>(
         { 'data-test-id': dataTestId = 'fondue-accordion-item', children, disabled, value }: AccordionItemProps,
         ref: ForwardedRef<HTMLDivElement>,
     ) => {
+        const rootContext = useContext(AccordionRootContext);
+        const registerItem = rootContext?.registerItem;
+
+        const setRefs = useCallback(
+            (element: HTMLDivElement | null) => {
+                registerItem?.(value, element);
+                if (typeof ref === 'function') {
+                    ref(element);
+                } else if (ref) {
+                    ref.current = element;
+                }
+            },
+            [registerItem, ref, value],
+        );
+
         return (
             <RadixAccordion.Item
-                ref={ref}
+                ref={setRefs}
                 className={styles.accordionItem}
                 value={value}
                 onPointerDown={(event) => {
