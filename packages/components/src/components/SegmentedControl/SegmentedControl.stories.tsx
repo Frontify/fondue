@@ -80,13 +80,13 @@ export const WithTooltip: Story = {
 export const IconOnly: Story = {
     render: (args) => (
         <SegmentedControl.Root {...args}>
-            <SegmentedControl.Item value="first">
+            <SegmentedControl.Item value="first" iconOnly>
                 <IconIcon size={20} />
             </SegmentedControl.Item>
-            <SegmentedControl.Item value="second">
+            <SegmentedControl.Item value="second" iconOnly>
                 <IconIcon size={20} />
             </SegmentedControl.Item>
-            <SegmentedControl.Item value="third">
+            <SegmentedControl.Item value="third" iconOnly>
                 <IconIcon size={20} />
             </SegmentedControl.Item>
         </SegmentedControl.Root>
