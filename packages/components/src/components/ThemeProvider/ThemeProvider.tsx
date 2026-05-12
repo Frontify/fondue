@@ -42,7 +42,7 @@ type ThemeProviderProps = {
      * The class is propagated to portaled content (e.g. Dropdown, Tooltip, Dialog) so scoped styles are still applied.
      * @default ""
      */
-    scopeClassName?: string;
+    className?: string;
     /**
      * Change the default rendered element for the one passed as a child, merging their props and behavior.
      * @default false
@@ -54,14 +54,14 @@ type ThemeContextValue = {
     theme: AvailableTheme;
     dir: 'ltr' | 'rtl';
     locale: LocaleConfig;
-    scopeClassName: string;
+    className: string;
 };
 
 export const ThemeContext = createContext<ThemeContextValue>({
     theme: 'light',
     dir: 'ltr',
     locale: enUS,
-    scopeClassName: '',
+    className: '',
 });
 ThemeContext.displayName = 'ThemeContext';
 
@@ -76,7 +76,7 @@ export const useFondueTheme = () => {
 
 export const ThemeProvider = forwardRef<HTMLDivElement, ThemeProviderProps>(
     (
-        { children, theme, dir, translations, locale, scopeClassName, asChild = false },
+        { children, theme, dir, translations, locale, className, asChild = false },
         forwardedRef: ForwardedRef<HTMLDivElement>,
     ) => {
         const Comp = asChild ? Slot : 'div';
@@ -88,9 +88,9 @@ export const ThemeProvider = forwardRef<HTMLDivElement, ThemeProviderProps>(
                 theme: theme ?? existingContext.theme,
                 dir: dir ?? existingContext.dir,
                 locale: locale ?? translations ?? existingContext.locale,
-                scopeClassName: scopeClassName ?? existingContext.scopeClassName,
+                className: className ?? existingContext.className,
             }),
-            [dir, theme, locale, translations, scopeClassName, existingContext],
+            [dir, theme, locale, translations, className, existingContext],
         );
 
         return (
@@ -98,9 +98,7 @@ export const ThemeProvider = forwardRef<HTMLDivElement, ThemeProviderProps>(
                 <Comp
                     ref={forwardedRef}
                     dir={contextValue.dir}
-                    className={['fondue-theme-provider', styles[contextValue.theme], contextValue.scopeClassName].join(
-                        ' ',
-                    )}
+                    className={['fondue-theme-provider', styles[contextValue.theme], contextValue.className].join(' ')}
                 >
                     {children}
                 </Comp>

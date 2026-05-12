@@ -7,14 +7,14 @@ import { deDE, enUS, frFR } from '../../../locales';
 import { ThemeProvider, useFondueTheme } from '../ThemeProvider';
 
 const ContextProbe = ({ id }: { id: string }) => {
-    const { theme, dir, locale, styleScopeClassNames } = useFondueTheme();
+    const { theme, dir, locale, className } = useFondueTheme();
     return (
         <div
             data-test-id={id}
             data-theme={theme}
             data-dir={dir}
             data-locale={locale.translationStrings.Dialog_close}
-            data-scope={styleScopeClassNames.join(' ')}
+            data-scope={className}
         />
     );
 };
@@ -36,7 +36,7 @@ describe('ThemeProvider context inheritance', () => {
 
     it('applies all explicitly provided props', () => {
         render(
-            <ThemeProvider theme="dark" dir="rtl" locale={deDE} scopingClassName="my-scope">
+            <ThemeProvider theme="dark" dir="rtl" locale={deDE} className="my-scope">
                 <ContextProbe id="probe" />
             </ThemeProvider>,
         );
@@ -50,7 +50,7 @@ describe('ThemeProvider context inheritance', () => {
 
     it('inherits all values from the parent provider when no props are provided', () => {
         render(
-            <ThemeProvider theme="dark" dir="rtl" locale={deDE} scopingClassName="parent-scope">
+            <ThemeProvider theme="dark" dir="rtl" locale={deDE} className="parent-scope">
                 <ThemeProvider>
                     <ContextProbe id="probe" />
                 </ThemeProvider>
@@ -66,7 +66,7 @@ describe('ThemeProvider context inheritance', () => {
 
     it('only overrides values explicitly set on the nested provider', () => {
         render(
-            <ThemeProvider theme="dark" dir="rtl" locale={deDE} scopingClassName="parent-scope">
+            <ThemeProvider theme="dark" dir="rtl" locale={deDE} className="parent-scope">
                 <ThemeProvider theme="light">
                     <ContextProbe id="probe" />
                 </ThemeProvider>
@@ -82,7 +82,7 @@ describe('ThemeProvider context inheritance', () => {
 
     it('merges overrides across multiple levels of nesting', () => {
         render(
-            <ThemeProvider theme="dark" dir="rtl" locale={deDE} scopingClassName="outer-scope">
+            <ThemeProvider theme="dark" dir="rtl" locale={deDE} className="outer-scope">
                 <ThemeProvider locale={frFR}>
                     <ThemeProvider dir="ltr">
                         <ContextProbe id="probe" />
@@ -122,7 +122,7 @@ describe('ThemeProvider context inheritance', () => {
 
     it('renders the parent className alongside the inherited scope on a nested provider', () => {
         const { container } = render(
-            <ThemeProvider theme="dark" scopingClassName="parent-scope">
+            <ThemeProvider theme="dark" className="parent-scope">
                 <ThemeProvider>
                     <span data-test-id="child" />
                 </ThemeProvider>
