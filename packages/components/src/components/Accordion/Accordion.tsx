@@ -4,15 +4,57 @@ import { IconCaretDown } from '@frontify/fondue-icons';
 import * as RadixAccordion from '@radix-ui/react-accordion';
 import {
     Children,
+    createContext,
     forwardRef,
     isValidElement,
+    useCallback,
+    useContext,
+    useEffect,
     useMemo,
+    useRef,
     type ForwardedRef,
     type MouseEventHandler,
     type ReactNode,
 } from 'react';
 
 import styles from './styles/accordion.module.scss';
+
+type AccordionRootContextValue = {
+    sticky: boolean;
+    registerItem: (value: string, element: HTMLDivElement | null) => void;
+};
+
+const AccordionRootContext = createContext<AccordionRootContextValue | null>(null);
+AccordionRootContext.displayName = 'AccordionRootContext';
+
+const findScrollableAncestor = (element: HTMLElement): HTMLElement | null => {
+    let current: HTMLElement | null = element.parentElement;
+    while (current) {
+        const { overflowY } = window.getComputedStyle(current);
+        if ((overflowY === 'auto' || overflowY === 'scroll') && current.scrollHeight > current.clientHeight) {
+            return current;
+        }
+        current = current.parentElement;
+    }
+    return null;
+};
+
+const restoreScrollForClosingItem = (itemEl: HTMLElement) => {
+    const scrollContainer = findScrollableAncestor(itemEl);
+    if (!scrollContainer) {
+        return;
+    }
+
+    const itemRect = itemEl.getBoundingClientRect();
+    const containerRect = scrollContainer.getBoundingClientRect();
+    const delta = itemRect.top - containerRect.top;
+
+    // Only adjust if the item is scrolled above (or exactly at) the top of the
+    // scroll container — i.e. its header is currently pinned in sticky state.
+    if (delta < 0) {
+        scrollContainer.scrollTo({ top: scrollContainer.scrollTop + delta, behavior: 'smooth' });
+    }
+};
 
 type AccordionPadding = 'none' | 'small' | 'medium' | 'large';
 
@@ -72,22 +114,68 @@ export const AccordionRoot = forwardRef<HTMLDivElement, AccordionRootProps>(
         }: AccordionRootProps,
         ref: ForwardedRef<HTMLDivElement>,
     ) => {
+        const itemsRef = useRef<Map<string, HTMLDivElement>>(new Map());
+        const previousValueRef = useRef<string[]>(value ?? defaultValue ?? []);
+
+        const registerItem = useCallback((itemValue: string, element: HTMLDivElement | null) => {
+            if (element) {
+                itemsRef.current.set(itemValue, element);
+            } else {
+                itemsRef.current.delete(itemValue);
+            }
+        }, []);
+
+        const contextValue = useMemo<AccordionRootContextValue>(
+            () => ({ sticky, registerItem }),
+            [sticky, registerItem],
+        );
+
+        const handleValueChange = (newValue: string[]) => {
+            if (sticky) {
+                const previous = previousValueRef.current;
+                for (const closedValue of previous) {
+                    if (newValue.includes(closedValue)) {
+                        continue;
+                    }
+
+                    const itemEl = itemsRef.current.get(closedValue);
+
+                    if (itemEl) {
+                        restoreScrollForClosingItem(itemEl);
+                    }
+                }
+            }
+
+            if (value === undefined) {
+                previousValueRef.current = newValue;
+            }
+            onValueChange?.(newValue);
+        };
+
+        useEffect(() => {
+            if (value !== undefined) {
+                previousValueRef.current = value;
+            }
+        }, [value]);
+
         return (
-            <RadixAccordion.Root
-                ref={ref}
-                className={styles.root}
-                data-test-id={dataTestId}
-                defaultValue={defaultValue}
-                disabled={disabled}
-                type="multiple"
-                value={value}
-                data-border={border}
-                data-accordion-padding={padding}
-                data-sticky={sticky}
-                onValueChange={onValueChange}
-            >
-                {children}
-            </RadixAccordion.Root>
+            <AccordionRootContext.Provider value={contextValue}>
+                <RadixAccordion.Root
+                    ref={ref}
+                    className={styles.root}
+                    data-test-id={dataTestId}
+                    defaultValue={defaultValue}
+                    disabled={disabled}
+                    type="multiple"
+                    value={value}
+                    data-border={border}
+                    data-accordion-padding={padding}
+                    data-sticky={sticky}
+                    onValueChange={handleValueChange}
+                >
+                    {children}
+                </RadixAccordion.Root>
+            </AccordionRootContext.Provider>
         );
     },
 );
@@ -116,9 +204,24 @@ export const AccordionItem = forwardRef<HTMLDivElement, AccordionItemProps>(
         { 'data-test-id': dataTestId = 'fondue-accordion-item', children, disabled, value }: AccordionItemProps,
         ref: ForwardedRef<HTMLDivElement>,
     ) => {
+        const rootContext = useContext(AccordionRootContext);
+        const registerItem = rootContext?.registerItem;
+
+        const setRefs = useCallback(
+            (element: HTMLDivElement | null) => {
+                registerItem?.(value, element);
+                if (typeof ref === 'function') {
+                    ref(element);
+                } else if (ref) {
+                    ref.current = element;
+                }
+            },
+            [registerItem, ref, value],
+        );
+
         return (
             <RadixAccordion.Item
-                ref={ref}
+                ref={setRefs}
                 className={styles.accordionItem}
                 value={value}
                 onPointerDown={(event) => {
