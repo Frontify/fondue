@@ -88,6 +88,7 @@
         "autoprefixer": "^10.5.0",
         "eslint": "^9.39.2",
         "eslint-plugin-notice": "^1.0.0",
+        "eslint-plugin-tailwindcss": "^3.18.2",
         "happy-dom": "^20.9.0",
         "postcss": "^8.5.14",
         "prettier": "^3.8.1",

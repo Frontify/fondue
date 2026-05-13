@@ -138,6 +138,9 @@ importers:
       eslint-plugin-notice:
         specifier: ^1.0.0
         version: 1.0.0(eslint@9.39.2(jiti@1.21.7))
+      eslint-plugin-tailwindcss:
+        specifier: ^3.18.2
+        version: 3.18.3(tailwindcss@3.4.19(tsx@4.21.0)(yaml@2.9.0))
       happy-dom:
         specifier: ^20.9.0
         version: 20.9.0
@@ -605,6 +608,9 @@ importers:
       eslint-plugin-notice:
         specifier: ^1.0.0
         version: 1.0.0(eslint@9.39.2(jiti@2.6.1))
+      eslint-plugin-tailwindcss:
+        specifier: ^3.18.2
+        version: 3.18.3(tailwindcss@3.4.19(tsx@4.21.0)(yaml@2.9.0))
       fast-glob:
         specifier: ^3.3.3
         version: 3.3.3
@@ -714,6 +720,9 @@ importers:
       eslint-plugin-notice:
         specifier: ^1.0.0
         version: 1.0.0(eslint@9.39.2(jiti@2.6.1))
+      eslint-plugin-tailwindcss:
+        specifier: ^3.18.2
+        version: 3.18.3(tailwindcss@3.4.19(tsx@4.21.0)(yaml@2.9.0))
       figma-api:
         specifier: ^1.12.0
         version: 1.12.0
@@ -1081,6 +1090,9 @@ importers:
       eslint-plugin-notice:
         specifier: ^1.0.0
         version: 1.0.0(eslint@9.39.2(jiti@2.6.1))
+      eslint-plugin-tailwindcss:
+        specifier: ^3.18.2
+        version: 3.18.3(tailwindcss@3.4.19(tsx@4.21.0)(yaml@2.9.0))
       fast-glob:
         specifier: ^3.3.3
         version: 3.3.3
@@ -1187,6 +1199,9 @@ importers:
       eslint-plugin-notice:
         specifier: ^1.0.0
         version: 1.0.0(eslint@9.39.2(jiti@2.6.1))
+      eslint-plugin-tailwindcss:
+        specifier: ^3.18.2
+        version: 3.18.3(tailwindcss@3.4.19(tsx@4.21.0)(yaml@2.9.0))
       prettier:
         specifier: ^3.7.4
         version: 3.8.3
