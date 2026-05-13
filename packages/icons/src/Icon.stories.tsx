@@ -82,6 +82,7 @@ const IconsGallery = ({ iconName, updateArgs }: IconsGalleryProps) => {
 export const Default: Story = {
     name: 'Icons',
     render: () => {
+        // eslint-disable-next-line @eslint-react/rules-of-hooks -- Storybook preview hook, not a React hook
         const [{ iconName }, updateArgs] = useArgs<{ iconName: string }>();
         return <IconsGallery iconName={iconName} updateArgs={updateArgs} />;
     },
