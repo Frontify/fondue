@@ -3,6 +3,7 @@
 import './styles.scss';
 
 export { Accordion } from './components/Accordion/Accordion';
+export { AssetInput } from './components/AssetInput/AssetInput';
 export { Badge } from './components/Badge/Badge';
 export { Box } from './components/Box/Box';
 export { Button } from './components/Button/Button';

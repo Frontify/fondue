@@ -1,0 +1,9 @@
+{
+    "category": "input",
+    "description": "A compound input for selecting, uploading and displaying assets.",
+    "instructions": "Use AssetInput.Placeholder for the empty state, composing AssetInput.UploadInput and/or AssetInput.BrowseInput. Use AssetInput.Root for the filled state, composing AssetInput.Preview (with one or more AssetInput.PreviewImage/AssetInput.PreviewIcon/AssetInput.PreviewLoading), AssetInput.Title, and one or more AssetInput.Metadata items. Control the open state with isOpen and onPress on AssetInput.Root, typically to toggle an attached Dropdown for asset operations.",
+    "name": "AssetInput",
+    "relatedComponents": [],
+    "storyFilePaths": ["src/components/AssetInput/AssetInput.stories.tsx"],
+    "tags": ["asset", "upload", "file", "input", "form"]
+}
