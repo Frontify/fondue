@@ -24,7 +24,6 @@ export const BlurObserver = ({
         }
     }, [isFloatingLinkModalOpen, hideExternalFloatingModals, editorRef]);
 
-    // eslint-disable-next-line @eslint-react/no-unnecessary-use-callback
     const collapseEverything = useCallback(() => {
         collapseFloatingModals();
         editorRef.deselect();

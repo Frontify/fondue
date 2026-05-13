@@ -329,7 +329,6 @@ describe('RichTextEditor Component', () => {
         });
     });
 
-    // eslint-disable-next-line @eslint-react/component-hook-factories
     const RichTextEditorWithTextStyles = ({ value }: { value?: string }) => {
         const pluginsWithColumns = new PluginComposer();
         pluginsWithColumns.setPlugin([new TextStylePlugin({ textStyles: TextStylePlugins })]);
@@ -384,7 +383,6 @@ describe('RichTextEditor Component', () => {
         });
     });
 
-    // eslint-disable-next-line @eslint-react/component-hook-factories
     const RichTextEditorWithTwoColumns = ({ value }: { value?: string }) => {
         const [initialValue, setInitialValue] = useState(value);
 
@@ -407,7 +405,6 @@ describe('RichTextEditor Component', () => {
         );
     };
 
-    // eslint-disable-next-line @eslint-react/component-hook-factories
     const RichTextEditorWithCustomColumnClasses = ({ value }: { value?: string }) => {
         const [initialValue, setInitialValue] = useState(value);
 
