@@ -1,13 +1,16 @@
 packages:
-  - packages/*
-  - storybook-docs
+    - packages/*
+    - storybook-docs
 
-onlyBuiltDependencies:
-  - '@bundled-es-modules/glob'
-  - '@parcel/watcher'
-  - cypress
-  - esbuild
-  - style-dictionary
-  - unrs-resolver
+allowBuilds:
+    "@bundled-es-modules/glob": true
+    "@parcel/watcher": true
+    cypress: true
+    esbuild: true
+    style-dictionary: true
+    unrs-resolver: true
 
-prefer-workspace-packages: true
+blockExoticSubdeps: true
+minimumReleaseAge: 1440
+minimumReleaseAgeExclude:
+    - "@frontify/*"
