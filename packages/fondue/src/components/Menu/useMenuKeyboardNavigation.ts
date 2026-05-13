@@ -14,7 +14,6 @@ export const useMenuKeyboardNavigation = (
     const [itemsElements, setItemsElements] = useState<NodeList>();
     const [menuKeyboardNavigationAction, setMenuKeyboardNavigationAction] = useState('');
 
-    // eslint-disable-next-line @eslint-react/no-unnecessary-use-callback
     const handleKeyDown = useCallback(
         (event: KeyboardEvent) => {
             if (!itemsElements || !['Tab', 'ArrowDown', 'ArrowUp', 'Escape'].includes(event.key)) {

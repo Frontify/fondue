@@ -179,7 +179,6 @@ const CheckboxComponent: ForwardRefRenderFunction<HTMLInputElement, CheckboxProp
                   : 'tw-border tw-border-line-xx-strong',
           ]);
 
-    // eslint-disable-next-line @eslint-react/no-unnecessary-use-callback
     const checkOverflowing = useCallback(() => {
         if (labelContainer.current) {
             setIsLabelOverflowing(labelContainer.current?.scrollWidth > labelContainer.current?.clientWidth);

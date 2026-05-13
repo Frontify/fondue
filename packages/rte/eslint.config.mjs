@@ -4,9 +4,8 @@
 
 // @ts-expect-error No types available
 import frontifyConfig from '@frontify/eslint-config-react';
+import headerPlugin from '@tony.ganchev/eslint-plugin-header';
 import { defineConfig } from 'eslint/config';
-// @ts-expect-error No types available
-import noticePlugin from 'eslint-plugin-notice';
 // @ts-expect-error No types available
 import tailwindcssPlugin from 'eslint-plugin-tailwindcss';
 
@@ -25,19 +24,21 @@ export default defineConfig(
             },
         },
         plugins: {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            notice: noticePlugin,
+            '@tony.ganchev': headerPlugin,
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             tailwindcss: tailwindcssPlugin,
         },
         rules: {
             // Copyright header rules
-            'notice/notice': [
+            '@tony.ganchev/header': [
                 'error',
                 {
-                    template: '/* (c) Copyright Frontify Ltd., all rights reserved. */\n\n',
-                    messages: {
-                        whenFailedToMatch: 'No Frontify copyright header set.',
+                    header: {
+                        commentType: 'block',
+                        lines: [' (c) Copyright Frontify Ltd., all rights reserved. '],
+                    },
+                    trailingEmptyLines: {
+                        minimum: 2,
                     },
                 },
             ],
@@ -79,7 +80,6 @@ export default defineConfig(
         rules: {
             'react-hooks/rules-of-hooks': 'off',
             '@eslint-react/rules-of-hooks': 'off',
-            '@eslint-react/component-hook-factories': 'off',
             '@eslint-react/hooks-extra/prefer-use-state-lazy-initialization': 'off',
             '@eslint-community/eslint-comments/disable-enable-pair': 'off',
         },
