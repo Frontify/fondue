@@ -1,5 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { forwardRef } from 'react';
+
 import { AssetInputBrowseInput } from './AssetInputBrowseInput';
 import { AssetInputMetadata } from './AssetInputMetadata';
 import { AssetInputPlaceholder } from './AssetInputPlaceholder';
@@ -17,7 +19,7 @@ export const AssetInput = {
     Placeholder: AssetInputPlaceholder,
     UploadInput: AssetInputUploadInput,
     BrowseInput: AssetInputBrowseInput,
-    Root: AssetInputRoot,
+    Root: forwardRef<HTMLButtonElement, AssetInputRootProps>(AssetInputRoot),
     Preview: AssetInputPreview,
     PreviewImage: AssetInputPreviewImage,
     PreviewIcon: AssetInputPreviewIcon,
