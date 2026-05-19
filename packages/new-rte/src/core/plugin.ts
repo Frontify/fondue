@@ -29,7 +29,7 @@ export type PluginSchema = {
 };
 
 export type BlockSpec = {
-    type: FrontifyBlock['type'] | string;
+    type: string;
     render: ComponentType<RenderBlockProps>;
     attrs?: Record<string, BlockAttrSpec>;
 };
@@ -45,7 +45,7 @@ export type InlineSpec = {
 };
 
 export type MarkSpec = {
-    key: keyof FrontifyText | string;
+    key: string;
     render: ComponentType<RenderMarkProps>;
 };
 

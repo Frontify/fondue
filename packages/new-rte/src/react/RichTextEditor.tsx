@@ -1,12 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { EditorState } from 'prosemirror-state';
-import { EditorView } from 'prosemirror-view';
 import { type ReactNode, useEffect, useMemo, useReducer, useRef } from 'react';
 
-import { buildPlugins, buildSchema, createEditorControlApi, documentToPm, pmToDocument } from '#/adapter/prosemirror';
+import { buildSchema, createEditor, type EditorHandle } from '#/adapter/prosemirror';
 import { type FrontifyDocument } from '#/core/document';
-import { type EditorControlApi, createPluginEventBus } from '#/core/editor-api';
+import { type EditorControlApi } from '#/core/editor-api';
 import { type FondueRtePlugin } from '#/core/plugin';
 
 import { Toolbar } from './Toolbar';
@@ -36,15 +34,15 @@ export const RichTextEditor = ({
     autoFocus = false,
 }: RichTextEditorProps): ReactNode => {
     const containerRef = useRef<HTMLDivElement | null>(null);
-    const viewRef = useRef<EditorView | null>(null);
+    const handleRef = useRef<EditorHandle | null>(null);
     const apiRef = useRef<EditorControlApi | null>(null);
-    const lastEmittedRef = useRef<FrontifyDocument | undefined>(value);
     const onChangeRef = useRef(onChange);
     onChangeRef.current = onChange;
 
     const [, force] = useReducer((count: number) => count + 1, 0);
 
     const pluginsKey = plugins.map((p) => p.id).join('|');
+    // eslint-disable-next-line @eslint-react/exhaustive-deps
     const schema = useMemo(() => buildSchema(plugins), [pluginsKey]);
 
     useEffect(() => {
@@ -53,65 +51,40 @@ export const RichTextEditor = ({
             return;
         }
 
-        const initialDoc = value ?? EMPTY_DOC;
-        const pmDoc = documentToPm(initialDoc, schema);
-
-        const view: EditorView = new EditorView(container, {
-            state: EditorState.create({
-                doc: pmDoc,
-                plugins: buildPlugins({
-                    plugins,
-                    getApi: () => {
-                        if (!apiRef.current) {
-                            throw new Error('Editor API accessed before it was initialised.');
-                        }
-                        return apiRef.current;
-                    },
-                }),
-            }),
-            editable: () => !readonly,
-            dispatchTransaction(transaction) {
-                const newState = view.state.apply(transaction);
-                view.updateState(newState);
-                if (transaction.docChanged) {
-                    const nextDoc = pmToDocument(newState.doc);
-                    lastEmittedRef.current = nextDoc;
-                    onChangeRef.current?.(nextDoc);
-                }
+        const handle = createEditor({
+            container,
+            initialDoc: value ?? EMPTY_DOC,
+            plugins,
+            schema,
+            readonly,
+            autoFocus,
+            onDocChange: (doc) => {
+                onChangeRef.current?.(doc);
+            },
+            onStateChange: () => {
                 force();
             },
         });
-        viewRef.current = view;
-        apiRef.current = createEditorControlApi({
-            getView: () => viewRef.current,
-            schema,
-            events: createPluginEventBus(),
-        });
-
-        if (autoFocus) {
-            view.focus();
-        }
+        handleRef.current = handle;
+        apiRef.current = handle.getApi();
         force();
 
         return () => {
-            view.destroy();
-            viewRef.current = null;
+            handle.destroy();
+            handleRef.current = null;
             apiRef.current = null;
         };
+        // Intentional: re-create editor only when schema/plugins/readonly change.
+        // eslint-disable-next-line @eslint-react/exhaustive-deps
     }, [schema, pluginsKey, readonly]);
 
+    // Push externally-driven doc updates into the editor.
     useEffect(() => {
-        const view = viewRef.current;
-        if (!view || !value) {
+        if (!value) {
             return;
         }
-        if (value === lastEmittedRef.current) {
-            return;
-        }
-        const pmDoc = documentToPm(value, schema);
-        const tr = view.state.tr.replaceWith(0, view.state.doc.content.size, pmDoc.content);
-        view.dispatch(tr);
-    }, [value, schema]);
+        handleRef.current?.updateExternalDoc(value);
+    }, [value]);
 
     const api = apiRef.current;
 

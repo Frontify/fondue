@@ -97,8 +97,8 @@ const inlineFromPm = (node: PmNode): FrontifyInline | null => {
     }
     if (node.type.name === 'link') {
         const children: FrontifyText[] = [];
-        for (const child of node) {
-            const c = inlineFromPm(child);
+        for (let i = 0; i < node.childCount; i++) {
+            const c = inlineFromPm(node.child(i));
             if (c && 'text' in c) {
                 children.push(c);
             }
@@ -126,8 +126,8 @@ const inlineFromPm = (node: PmNode): FrontifyInline | null => {
 const blockFromPm = (node: PmNode): FrontifyBlock => {
     const align = (node.attrs.align as FrontifyBlock['align' & keyof FrontifyBlock]) ?? undefined;
     const children: FrontifyInline[] = [];
-    for (const child of node) {
-        const inline = inlineFromPm(child);
+    for (let i = 0; i < node.childCount; i++) {
+        const inline = inlineFromPm(node.child(i));
         if (inline) {
             children.push(inline);
         }
@@ -153,8 +153,8 @@ const blockFromPm = (node: PmNode): FrontifyBlock => {
 
 export const pmToDocument = (node: PmNode): FrontifyDocument => {
     const blocks: FrontifyBlock[] = [];
-    for (const child of node) {
-        blocks.push(blockFromPm(child));
+    for (let i = 0; i < node.childCount; i++) {
+        blocks.push(blockFromPm(node.child(i)));
     }
     return { version: 1, blocks };
 };
