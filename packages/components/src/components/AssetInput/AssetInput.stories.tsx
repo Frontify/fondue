@@ -26,6 +26,7 @@ const meta = {
         PreviewLoading: AssetInput.PreviewLoading,
         Title: AssetInput.Title,
         Metadata: AssetInput.Metadata,
+        MetadataItem: AssetInput.MetadataItem,
     },
     argTypes: {
         acceptFileType: {
@@ -101,13 +102,15 @@ export const AssetInputRoot: Story = {
                 </AssetInput.Preview>
                 <AssetInput.Title>foo1</AssetInput.Title>
                 <AssetInput.Metadata>
-                    <Flex align="center" gap={0.5}>
-                        <IconArrowCircleUp size="16" />
-                        Uploaded
-                    </Flex>
+                    <AssetInput.MetadataItem>
+                        <Flex align="center" gap={0.5}>
+                            <IconArrowCircleUp size="16" />
+                            Uploaded
+                        </Flex>
+                    </AssetInput.MetadataItem>
+                    <AssetInput.MetadataItem>JPG</AssetInput.MetadataItem>
+                    <AssetInput.MetadataItem>2000 bytes</AssetInput.MetadataItem>
                 </AssetInput.Metadata>
-                <AssetInput.Metadata>JPG</AssetInput.Metadata>
-                <AssetInput.Metadata>2000 bytes</AssetInput.Metadata>
             </AssetInput.Root>
         );
     },
@@ -129,13 +132,15 @@ export const AssetInputRootIcon: Story = {
                 </AssetInput.Preview>
                 <AssetInput.Title>foo1</AssetInput.Title>
                 <AssetInput.Metadata>
-                    <Flex align="center" gap={0.5}>
-                        <IconArrowCircleUp size="16" />
-                        Uploaded
-                    </Flex>
+                    <AssetInput.MetadataItem>
+                        <Flex align="center" gap={0.5}>
+                            <IconArrowCircleUp size="16" />
+                            Uploaded
+                        </Flex>
+                    </AssetInput.MetadataItem>
+                    <AssetInput.MetadataItem>JPG</AssetInput.MetadataItem>
+                    <AssetInput.MetadataItem>2000 bytes</AssetInput.MetadataItem>
                 </AssetInput.Metadata>
-                <AssetInput.Metadata>JPG</AssetInput.Metadata>
-                <AssetInput.Metadata>2000 bytes</AssetInput.Metadata>
             </AssetInput.Root>
         );
     },
@@ -155,13 +160,15 @@ export const AssetInputRootLoading: Story = {
                 </AssetInput.Preview>
                 <AssetInput.Title>foo1</AssetInput.Title>
                 <AssetInput.Metadata>
-                    <Flex align="center" gap={0.5}>
-                        <IconArrowCircleUp size="16" />
-                        Uploaded
-                    </Flex>
+                    <AssetInput.MetadataItem>
+                        <Flex align="center" gap={0.5}>
+                            <IconArrowCircleUp size="16" />
+                            Uploaded
+                        </Flex>
+                    </AssetInput.MetadataItem>
+                    <AssetInput.MetadataItem>JPG</AssetInput.MetadataItem>
+                    <AssetInput.MetadataItem>2000 bytes</AssetInput.MetadataItem>
                 </AssetInput.Metadata>
-                <AssetInput.Metadata>JPG</AssetInput.Metadata>
-                <AssetInput.Metadata>2000 bytes</AssetInput.Metadata>
             </AssetInput.Root>
         );
     },
@@ -185,7 +192,9 @@ export const AssetInputRootMultipleImages: Story = {
                     <AssetInput.PreviewLoading />
                 </AssetInput.Preview>
                 <AssetInput.Title>3 assets</AssetInput.Title>
-                <AssetInput.Metadata>2 locations</AssetInput.Metadata>
+                <AssetInput.Metadata>
+                    <AssetInput.MetadataItem>2 locations</AssetInput.MetadataItem>
+                </AssetInput.Metadata>
             </AssetInput.Root>
         );
     },
@@ -207,13 +216,15 @@ export const AssetInputAsDropdownTrigger: Story = {
                         </AssetInput.Preview>
                         <AssetInput.Title>foo1</AssetInput.Title>
                         <AssetInput.Metadata>
-                            <Flex align="center" gap={0.5}>
-                                <IconArrowCircleUp size="16" />
-                                Uploaded
-                            </Flex>
+                            <AssetInput.MetadataItem>
+                                <Flex align="center" gap={0.5}>
+                                    <IconArrowCircleUp size="16" />
+                                    Uploaded
+                                </Flex>
+                            </AssetInput.MetadataItem>
+                            <AssetInput.MetadataItem>JPG</AssetInput.MetadataItem>
+                            <AssetInput.MetadataItem>2000 bytes</AssetInput.MetadataItem>
                         </AssetInput.Metadata>
-                        <AssetInput.Metadata>JPG</AssetInput.Metadata>
-                        <AssetInput.Metadata>2000 bytes</AssetInput.Metadata>
                     </AssetInput.Root>
                 </Dropdown.Trigger>
                 <Dropdown.Content align="start">

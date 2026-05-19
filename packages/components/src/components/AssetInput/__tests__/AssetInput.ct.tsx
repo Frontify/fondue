@@ -86,13 +86,15 @@ for (const orientation of ['horizontal', 'vertical'] as const) {
                 </AssetInput.Preview>
                 <AssetInput.Title>foo1</AssetInput.Title>
                 <AssetInput.Metadata>
-                    <Flex align="center" gap={0.5}>
-                        <IconArrowCircleUp size="16" />
-                        Uploaded
-                    </Flex>
+                    <AssetInput.MetadataItem>
+                        <Flex align="center" gap={0.5}>
+                            <IconArrowCircleUp size="16" />
+                            Uploaded
+                        </Flex>
+                    </AssetInput.MetadataItem>
+                    <AssetInput.MetadataItem>JPG</AssetInput.MetadataItem>
+                    <AssetInput.MetadataItem>2000 bytes</AssetInput.MetadataItem>
                 </AssetInput.Metadata>
-                <AssetInput.Metadata>JPG</AssetInput.Metadata>
-                <AssetInput.Metadata>2000 bytes</AssetInput.Metadata>
             </AssetInput.Root>,
         );
         const root = wrapper.getByRole('button', { name: /foo1/ });
@@ -116,9 +118,11 @@ for (const orientation of ['horizontal', 'vertical'] as const) {
                     </AssetInput.PreviewIcon>
                 </AssetInput.Preview>
                 <AssetInput.Title>foo1</AssetInput.Title>
-                <AssetInput.Metadata>Uploaded</AssetInput.Metadata>
-                <AssetInput.Metadata>JPG</AssetInput.Metadata>
-                <AssetInput.Metadata>2000 bytes</AssetInput.Metadata>
+                <AssetInput.Metadata>
+                    <AssetInput.MetadataItem>Uploaded</AssetInput.MetadataItem>
+                    <AssetInput.MetadataItem>JPG</AssetInput.MetadataItem>
+                    <AssetInput.MetadataItem>2000 bytes</AssetInput.MetadataItem>
+                </AssetInput.Metadata>
             </AssetInput.Root>,
         );
         const root = wrapper.getByRole('button', { name: /foo1/ });
@@ -141,13 +145,15 @@ for (const orientation of ['horizontal', 'vertical'] as const) {
                 </AssetInput.Preview>
                 <AssetInput.Title>foo1</AssetInput.Title>
                 <AssetInput.Metadata>
-                    <Flex align="center" gap={0.5}>
-                        <IconArrowCircleUp size="16" />
-                        Uploaded
-                    </Flex>
+                    <AssetInput.MetadataItem>
+                        <Flex align="center" gap={0.5}>
+                            <IconArrowCircleUp size="16" />
+                            Uploaded
+                        </Flex>
+                    </AssetInput.MetadataItem>
+                    <AssetInput.MetadataItem>JPG</AssetInput.MetadataItem>
+                    <AssetInput.MetadataItem>2000 bytes</AssetInput.MetadataItem>
                 </AssetInput.Metadata>
-                <AssetInput.Metadata>JPG</AssetInput.Metadata>
-                <AssetInput.Metadata>2000 bytes</AssetInput.Metadata>
             </AssetInput.Root>,
         );
         const root = wrapper.getByRole('button', { name: /foo1/ });
@@ -170,7 +176,9 @@ for (const orientation of ['horizontal', 'vertical'] as const) {
                     <AssetInput.PreviewLoading />
                 </AssetInput.Preview>
                 <AssetInput.Title>3 assets</AssetInput.Title>
-                <AssetInput.Metadata>2 locations</AssetInput.Metadata>
+                <AssetInput.Metadata>
+                    <AssetInput.MetadataItem>2 locations</AssetInput.MetadataItem>
+                </AssetInput.Metadata>
             </AssetInput.Root>,
         );
         const root = wrapper.getByRole('button', { name: /3 assets/ });

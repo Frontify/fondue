@@ -4,6 +4,7 @@ import { forwardRef } from 'react';
 
 import { AssetInputBrowseInput } from './AssetInputBrowseInput';
 import { AssetInputMetadata } from './AssetInputMetadata';
+import { AssetInputMetadataItem } from './AssetInputMetadataItem';
 import { AssetInputPlaceholder } from './AssetInputPlaceholder';
 import { AssetInputPreview } from './AssetInputPreview';
 import { AssetInputPreviewIcon } from './AssetInputPreviewIcon';
@@ -25,5 +26,6 @@ export const AssetInput = {
     PreviewIcon: AssetInputPreviewIcon,
     Title: AssetInputTitle,
     Metadata: AssetInputMetadata,
+    MetadataItem: AssetInputMetadataItem,
     PreviewLoading: AssetInputPreviewLoading,
 };
