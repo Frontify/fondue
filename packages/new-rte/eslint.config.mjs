@@ -77,4 +77,23 @@ export default defineConfig(
             '@eslint-community/eslint-comments/disable-enable-pair': 'off',
         },
     },
+    {
+        // Engine (ProseMirror) imports are confined to src/adapter/** by design.
+        files: ['src/**/*.{ts,tsx}'],
+        ignores: ['src/adapter/**'],
+        rules: {
+            'no-restricted-imports': [
+                'error',
+                {
+                    patterns: [
+                        {
+                            group: ['prosemirror-*'],
+                            message:
+                                'ProseMirror imports are forbidden outside src/adapter/. Use the FondueRtePlugin + EditorControlApi seam instead.',
+                        },
+                    ],
+                },
+            ],
+        },
+    },
 );
