@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconArrowCircleUp } from '@frontify/fondue-icons';
-import { ChangeEvent, useRef } from 'react';
+import { type ChangeEvent, useRef } from 'react';
 
 import { useTranslation } from '#/hooks/useTranslation';
 
