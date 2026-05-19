@@ -4,7 +4,7 @@ import { LoadingCircle, type LoadingCircleProps } from '../LoadingCircle/Loading
 
 import styles from './styles/asset-input.module.scss';
 
-type AssetInputPreviewLoadingProps = {
+export type AssetInputPreviewLoadingProps = {
     size?: LoadingCircleProps['size'];
 };
 

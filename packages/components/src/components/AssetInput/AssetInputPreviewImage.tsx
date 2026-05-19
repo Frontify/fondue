@@ -2,7 +2,7 @@
 
 import styles from './styles/asset-input.module.scss';
 
-type AssetInputPreviewImageProps = {
+export type AssetInputPreviewImageProps = {
     src: string;
     alt?: string;
 };

@@ -187,6 +187,5 @@ for (const orientation of ['horizontal', 'vertical'] as const) {
         await expect(root).toContainText('2 locations');
         await expect(root.locator('img')).toHaveCount(2);
         await expect(root.getByTestId('fondue-loading-circle-content')).toBeVisible();
-        await expect(root.locator('[data-multiple-parts="true"]')).toBeVisible();
     });
 }

@@ -4,7 +4,7 @@ import { type ReactNode } from 'react';
 
 import styles from './styles/asset-input.module.scss';
 
-type AssetInputPreviewIconProps = {
+export type AssetInputPreviewIconProps = {
     children: ReactNode;
 };
 
