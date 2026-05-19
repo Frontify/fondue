@@ -35,8 +35,8 @@ const baselineParagraph = (): PmNodeSpec => ({
     ],
     toDOM: (node) => {
         const align = node.attrs.align as string | null;
-        const attrs: Record<string, string> = align ? { style: `text-align:${align}` } : {};
-        return ['p', attrs, 0] satisfies DOMOutputSpec;
+        const style = ['margin:0', align ? `text-align:${align}` : ''].filter(Boolean).join(';');
+        return ['p', { style }, 0] satisfies DOMOutputSpec;
     },
 });
 

@@ -28,6 +28,7 @@ export type CreateEditorArgs = {
     readonly?: boolean;
     autoFocus?: boolean;
     events?: PluginEventBus;
+    editorClass?: string;
 };
 
 export const createEditor = ({
@@ -40,6 +41,7 @@ export const createEditor = ({
     readonly = false,
     autoFocus = false,
     events,
+    editorClass,
 }: CreateEditorArgs): EditorHandle => {
     const pluginEvents = events ?? createPluginEventBus();
     let api: EditorControlApi | null = null;
@@ -47,7 +49,13 @@ export const createEditor = ({
     const pmDoc = documentToPm(initialDoc, schema);
     let lastEmitted: FrontifyDocument = initialDoc;
 
+    const viewAttrs: Record<string, string> = {};
+    if (editorClass) {
+        viewAttrs.class = editorClass;
+    }
+
     const view: EditorView = new EditorView(container, {
+        attributes: viewAttrs,
         state: EditorState.create({
             doc: pmDoc,
             plugins: buildPlugins({

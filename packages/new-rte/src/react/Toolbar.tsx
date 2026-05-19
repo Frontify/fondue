@@ -17,10 +17,10 @@ export const Toolbar = ({ api, plugins, position = 'top' }: ToolbarProps): React
             role="toolbar"
             style={{
                 display: 'flex',
-                gap: 8,
-                padding: 8,
-                borderBottom: '1px solid #ddd',
-                background: '#fafafa',
+                gap: 4,
+                padding: '6px 8px',
+                borderBottom: '1px solid #e5e7eb',
+                background: '#f9fafb',
                 alignItems: 'center',
             }}
         >

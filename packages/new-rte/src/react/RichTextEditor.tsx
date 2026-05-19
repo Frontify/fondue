@@ -24,6 +24,19 @@ const EMPTY_DOC: FrontifyDocument = {
     blocks: [{ type: 'paragraph', children: [{ text: '' }] }],
 };
 
+const EDITOR_CSS = `
+.fondue-rte {
+    outline: none;
+    padding: 10px 12px;
+    min-height: 80px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #111;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    cursor: text;
+}
+`;
+
 export const RichTextEditor = ({
     id,
     value,
@@ -58,6 +71,7 @@ export const RichTextEditor = ({
             schema,
             readonly,
             autoFocus,
+            editorClass: 'fondue-rte',
             onDocChange: (doc) => {
                 onChangeRef.current?.(doc);
             },
@@ -89,17 +103,22 @@ export const RichTextEditor = ({
     const api = apiRef.current;
 
     return (
-        <div id={id} data-editor-id={id} style={{ border: '1px solid #ccc', borderRadius: 4, background: '#fff' }}>
-            {!readonly && api ? <Toolbar api={api} plugins={plugins} position="top" /> : null}
+        <>
+            <style>{EDITOR_CSS}</style>
             <div
-                ref={containerRef}
-                data-placeholder={placeholder}
+                id={id}
+                data-editor-id={id}
                 style={{
-                    padding: 12,
-                    minHeight: 160,
-                    outline: 'none',
+                    border: '1px solid #d1d5db',
+                    borderRadius: 6,
+                    background: '#fff',
+                    boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
+                    overflow: 'hidden',
                 }}
-            />
-        </div>
+            >
+                {!readonly && api ? <Toolbar api={api} plugins={plugins} position="top" /> : null}
+                <div ref={containerRef} data-placeholder={placeholder} />
+            </div>
+        </>
     );
 };

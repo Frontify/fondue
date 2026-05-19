@@ -5,6 +5,13 @@ import { type FondueRtePlugin } from '#/core/plugin';
 
 type HeadingTag = 'h1' | 'h2' | 'h3' | 'h4';
 
+const HEADING_STYLES: Record<1 | 2 | 3 | 4, React.CSSProperties> = {
+    1: { fontSize: '1.6em', fontWeight: 700, lineHeight: 1.3, margin: 0 },
+    2: { fontSize: '1.3em', fontWeight: 700, lineHeight: 1.3, margin: 0 },
+    3: { fontSize: '1.1em', fontWeight: 600, lineHeight: 1.3, margin: 0 },
+    4: { fontSize: '1em', fontWeight: 600, lineHeight: 1.3, margin: 0 },
+};
+
 export const HeadingPlugin: FondueRtePlugin = {
     id: 'heading',
     label: 'Heading',
@@ -18,7 +25,11 @@ export const HeadingPlugin: FondueRtePlugin = {
                 render: ({ node, children, attributes }) => {
                     const heading = node as HeadingBlock;
                     const Tag = `h${heading.level}` as HeadingTag;
-                    return <Tag {...attributes}>{children}</Tag>;
+                    return (
+                        <Tag {...attributes} style={HEADING_STYLES[heading.level]}>
+                            {children}
+                        </Tag>
+                    );
                 },
             },
         ],
@@ -41,10 +52,14 @@ export const HeadingPlugin: FondueRtePlugin = {
                         }
                     }}
                     style={{
-                        padding: '4px 8px',
-                        border: '1px solid #ccc',
+                        fontSize: 13,
+                        padding: '3px 6px',
+                        border: '1px solid #d1d5db',
                         borderRadius: 4,
-                        background: '#fff',
+                        background: 'transparent',
+                        color: '#374151',
+                        fontFamily: 'inherit',
+                        cursor: 'pointer',
                     }}
                 >
                     <option value={0}>Paragraph</option>

@@ -23,11 +23,15 @@ export const BoldPlugin: FondueRtePlugin = {
                 onClick={() => api.toggleMark('bold')}
                 style={{
                     fontWeight: 700,
-                    padding: '4px 10px',
-                    border: '1px solid #ccc',
-                    background: api.isMarkActive('bold') ? '#e6e6e6' : '#fff',
+                    fontSize: 13,
+                    lineHeight: 1,
+                    padding: '3px 8px',
+                    border: '1px solid #d1d5db',
+                    background: api.isMarkActive('bold') ? '#e5e7eb' : 'transparent',
                     cursor: 'pointer',
                     borderRadius: 4,
+                    color: '#374151',
+                    fontFamily: 'inherit',
                 }}
             >
                 B
