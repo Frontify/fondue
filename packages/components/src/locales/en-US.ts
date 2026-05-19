@@ -3,6 +3,8 @@
 import { enUS as dateLocale } from 'date-fns/locale';
 
 const translations = {
+    AssetInput_browse: 'Browse',
+    AssetInput_upload: 'Upload',
     Badge_dismiss: 'Dismiss ${label}',
     Card_deselect: 'Deselect',
     Card_select: 'Select',

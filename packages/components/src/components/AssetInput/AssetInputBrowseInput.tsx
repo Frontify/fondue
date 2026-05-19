@@ -2,6 +2,8 @@
 
 import { IconImageStack } from '@frontify/fondue-icons';
 
+import { useTranslation } from '#/hooks/useTranslation';
+
 import { Button } from '../Button/Button';
 
 type AssetInputBrowseInputProps = {
@@ -9,10 +11,12 @@ type AssetInputBrowseInputProps = {
 };
 
 export const AssetInputBrowseInput = ({ onBrowse }: AssetInputBrowseInputProps) => {
+    const { t } = useTranslation();
+
     return (
         <Button onPress={onBrowse} emphasis="weak" hugWidth={false}>
             <IconImageStack size={20} />
-            Browse
+            {t('AssetInput_browse')}
         </Button>
     );
 };

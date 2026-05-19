@@ -3,6 +3,8 @@
 import { IconArrowCircleUp } from '@frontify/fondue-icons';
 import { useCallback, useId, useRef } from 'react';
 
+import { useTranslation } from '#/hooks/useTranslation';
+
 import { Button } from '../Button/Button';
 
 type AssetInputUploadInputProps = {
@@ -18,6 +20,7 @@ export const AssetInputUploadInput = ({
 }: AssetInputUploadInputProps) => {
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const id = useId();
+    const { t } = useTranslation();
     const openFileUploadDialog = useCallback(() => {
         if (fileInputRef.current) {
             fileInputRef.current.click();
@@ -28,7 +31,7 @@ export const AssetInputUploadInput = ({
         <>
             <Button onPress={openFileUploadDialog} emphasis="weak" hugWidth={false}>
                 <IconArrowCircleUp size={20} />
-                Upload
+                {t('AssetInput_upload')}
             </Button>
 
             <input
