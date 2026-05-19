@@ -1,0 +1,27 @@
+{
+    "compilerOptions": {
+        "allowImportingTsExtensions": true,
+        "baseUrl": ".",
+        "isolatedModules": true,
+        "jsx": "react-jsx",
+        "lib": ["ES2021", "DOM", "DOM.Iterable"],
+        "module": "ESNext",
+        "moduleResolution": "bundler",
+        "noEmit": true,
+        "noFallthroughCasesInSwitch": true,
+        "noUncheckedIndexedAccess": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "paths": {
+            "#/*": ["./src/*"],
+            "#storybook/*": [".storybook/*"]
+        },
+        "resolveJsonModule": true,
+        "skipLibCheck": true,
+        "strict": true,
+        "target": "ES2021",
+        "useDefineForClassFields": true
+    },
+    "include": [".storybook/**/*", "src"],
+    "references": [{ "path": "./tsconfig.node.json" }]
+}

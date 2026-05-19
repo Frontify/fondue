@@ -1,0 +1,67 @@
+{
+    "name": "@frontify/fondue-new-rte",
+    "type": "module",
+    "version": "0.0.0",
+    "private": true,
+    "description": "Revamped Rich Text Editor for the Fondue design system",
+    "author": "Frontify Developers <developers@frontify.com>",
+    "homepage": "https://github.com/Frontify/fondue",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Frontify/fondue",
+        "directory": "packages/new-rte"
+    },
+    "bugs": {
+        "url": "https://github.com/frontify/fondue/issues"
+    },
+    "publishConfig": {
+        "access": "public"
+    },
+    "sideEffects": false,
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/fondue-new-rte.js"
+        },
+        "./styles": "./dist/style.css"
+    },
+    "files": [
+        "dist"
+    ],
+    "engines": {
+        "node": ">=18"
+    },
+    "scripts": {
+        "build": "vite build",
+        "build:storybook": "storybook build",
+        "lint": "eslint .",
+        "lint:fix": "eslint --fix .",
+        "storybook": "storybook dev -p 6012",
+        "typecheck": "tsc --noEmit"
+    },
+    "peerDependencies": {
+        "react": "^18",
+        "react-dom": "^18"
+    },
+    "devDependencies": {
+        "@frontify/eslint-config-react": "^1.0.15",
+        "@storybook/addon-a11y": "^10.2.0",
+        "@storybook/addon-docs": "^10.2.0",
+        "@storybook/addon-links": "^10.2.0",
+        "@storybook/react-vite": "^10.2.0",
+        "@types/node": "^24.10.9",
+        "@types/react": "^18.3.27",
+        "@types/react-dom": "^18.3.7",
+        "@vitejs/plugin-react": "^5.1.2",
+        "eslint": "^9.39.2",
+        "eslint-plugin-notice": "^1.0.0",
+        "prettier": "^3.8.1",
+        "react": "^18.3.1",
+        "react-dom": "^18.3.1",
+        "storybook": "^10.2.0",
+        "typescript": "^5.9.3",
+        "vite": "^5.4.21",
+        "vite-plugin-dts": "^4.5.4",
+        "vite-tsconfig-paths": "^5.1.4"
+    }
+}
