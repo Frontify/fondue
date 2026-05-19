@@ -1,73 +1,73 @@
 name: Generate Tokens
 
 on:
-    workflow_dispatch:
-    schedule:
-        - cron: "0 0 * * 1"
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * 1"
 
 jobs:
-    generate-tokens:
-        runs-on: ubuntu-latest
+  generate-tokens:
+    runs-on: ubuntu-latest
 
-        permissions:
-            contents: write
-            pull-requests: write
+    permissions:
+      contents: write
+      pull-requests: write
 
-        steps:
-            - name: Checkout default branch
-              uses: actions/checkout@v6
+    steps:
+      - name: Checkout default branch
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-            - name: Use pnpm
-              uses: pnpm/action-setup@v4.2.0
-              with:
-                  run_install: false
+      - name: Use pnpm
+        uses: pnpm/action-setup@0e279bb959325dab635dd2c09392533439d90093 # v6.0.8
+        with:
+          run_install: false
 
-            - name: Use Node.js
-              uses: actions/setup-node@v6
-              with:
-                  node-version-file: ".nvmrc"
-                  cache: "pnpm"
+      - name: Use Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version-file: ".nvmrc"
+          cache: "pnpm"
 
-            - name: Install npm dependencies
-              run: pnpm i --frozen-lockfile
+      - name: Install npm dependencies
+        run: pnpm i --frozen-lockfile
 
-            - name: Build tokens
-              env:
-                  FIGMA_ACCESS_TOKEN: ${{ secrets.FIGMA_ACCESS_TOKEN }}
-              run: pnpm build:tokens
+      - name: Build tokens
+        env:
+          FIGMA_ACCESS_TOKEN: ${{ secrets.FIGMA_ACCESS_TOKEN }}
+        run: pnpm build:tokens
 
-            - name: Check for changes
-              id: git_diff
-              run: |
-                  if git diff --quiet; then
-                    echo "No changes detected after building tokens."
-                    echo "changed=false" >> $GITHUB_OUTPUT
-                  else
-                    echo "Changes detected after building tokens."
-                    echo "changed=true" >> $GITHUB_OUTPUT
-                  fi
+      - name: Check for changes
+        id: git_diff
+        run: |
+          if git diff --quiet; then
+            echo "No changes detected after building tokens."
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "Changes detected after building tokens."
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
 
-            - name: Create changeset
-              if: steps.git_diff.outputs.changed == 'true'
-              working-directory: ./fondue
-              run: |
-                  git config user.name "github-actions[bot]"
-                  git config user.email "github-actions[bot]@users.noreply.github.com"
-                  mkdir -p .changeset
-                  echo -e "---\n'@frontify/fondue-tokens': patch\n---\n\nUpdated Tokens from Figma" > .changeset/automated-tokens.md
-                  git add .changeset/automated-tokens.md
+      - name: Create changeset
+        if: steps.git_diff.outputs.changed == 'true'
+        working-directory: ./fondue
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          mkdir -p .changeset
+          echo -e "---\n'@frontify/fondue-tokens': patch\n---\n\nUpdated Tokens from Figma" > .changeset/automated-tokens.md
+          git add .changeset/automated-tokens.md
 
-            - name: Create Pull Request
-              if: steps.git_diff.outputs.changed == 'true'
-              uses: peter-evans/create-pull-request@v6
-              with:
-                  token: ${{ secrets.GITHUB_TOKEN }}
-                  commit-message: "chore(tokens): update design tokens"
-                  title: "chore(tokens): Update design tokens"
-                  body: |
-                      This PR updates the design tokens based on the latest changes.
+      - name: Create Pull Request
+        if: steps.git_diff.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore(tokens): update design tokens"
+          title: "chore(tokens): Update design tokens"
+          body: |
+            This PR updates the design tokens based on the latest changes.
 
-                      This is an automated PR.
-                  branch: chore/tokens/update-generated-tokens
-                  labels: automated pr, fondue
-                  signoff: true
+            This is an automated PR.
+          branch: chore/tokens/update-generated-tokens
+          labels: automated pr, fondue
+          signoff: true
