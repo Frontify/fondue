@@ -51,6 +51,12 @@ type TableRootProps = {
      */
     gutter?: CSSProperties['borderSpacing'];
     /**
+     * Background color used by sticky parts (header, first column, last column).
+     *
+     * Accepts any CSS color value or token (e.g., `'#000'`, `'var(--color-surface-dim)'`)
+     */
+    stickyBackgroundColor?: CSSProperties['backgroundColor'];
+    /**
      * Whether header should stick to the top when scrolling
      * @deprecated Use `Table.Header sticky` prop instead. For sticky columns, use `Table.Body firstColumnSticky` or `lastColumnSticky` props
      */
@@ -65,7 +71,19 @@ type TableRootProps = {
     Pick<AriaAttributes, 'aria-multiselectable'>;
 
 export const TableRoot = forwardRef<HTMLTableElement, TableRootProps>(
-    ({ layout = 'auto', fontSize = 'medium', gutter = '0px', sticky, noBorder = false, children, ...props }, ref) => {
+    (
+        {
+            layout = 'auto',
+            fontSize = 'medium',
+            gutter = '0px',
+            stickyBackgroundColor,
+            sticky,
+            noBorder = false,
+            children,
+            ...props
+        },
+        ref,
+    ) => {
         const tableRef = useRef<HTMLTableElement>(null);
         const [hasHorizontalOverflow, setHasHorizontalOverflow] = useState(false);
 
@@ -110,10 +128,12 @@ export const TableRoot = forwardRef<HTMLTableElement, TableRootProps>(
             <table
                 ref={tableRef}
                 className={styles.table}
-                style={{
-                    // @ts-expect-error CSS custom properties are not in CSSProperties type
-                    '--table-gutter': gutter,
-                }}
+                style={
+                    {
+                        '--table-gutter': gutter,
+                        '--table-sticky-background-color': stickyBackgroundColor,
+                    } as CSSProperties
+                }
                 data-layout={layout}
                 data-font-size={fontSize}
                 data-sticky-header={legacyStickyHeader}

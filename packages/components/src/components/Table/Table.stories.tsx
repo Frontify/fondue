@@ -651,6 +651,55 @@ export const StickyAllDirections: Story = {
     ),
 };
 
+export const StickyWithCustomBackground: Story = {
+    name: 'Sticky With Custom Background Color',
+    args: {
+        stickyBackgroundColor: 'var(--color-surface-dim)',
+    },
+    render: ({ ...args }) => (
+        <Table.Root {...args}>
+            <Table.Header sticky>
+                <Table.Row>
+                    <Table.HeaderCell>Name</Table.HeaderCell>
+                    <Table.HeaderCell>Invited by</Table.HeaderCell>
+                    <Table.HeaderCell>Last seen</Table.HeaderCell>
+                    <Table.HeaderCell>Initial login</Table.HeaderCell>
+                    <Table.HeaderCell>Last login</Table.HeaderCell>
+                    <Table.HeaderCell>Actions</Table.HeaderCell>
+                </Table.Row>
+            </Table.Header>
+            <Table.Body firstColumnSticky lastColumnSticky>
+                {[...TABLE_DATA, ...TABLE_DATA, ...TABLE_DATA].map((user, index) => (
+                    <Table.Row key={`${user.email}-${index}`}>
+                        <Table.RowCell>
+                            <div className="tw-flex tw-items-center tw-gap-2">
+                                <div>
+                                    <div className="tw-font-medium">{user.name}</div>
+                                    <div className="tw-text-small tw-text-primary-on-primary">{user.email}</div>
+                                </div>
+                            </div>
+                        </Table.RowCell>
+                        <Table.RowCell>{user.invited}</Table.RowCell>
+                        <Table.RowCell>{user.lastSeen}</Table.RowCell>
+                        <Table.RowCell>{user.initialLogin}</Table.RowCell>
+                        <Table.RowCell>{user.lastLogin}</Table.RowCell>
+                        <Table.RowCell>
+                            <Flex gap="0.25rem">
+                                <Button size="small" aspect="square" emphasis="weak">
+                                    <IconPen size={16} />
+                                </Button>
+                                <Button variant="danger" size="small" aspect="square" emphasis="weak">
+                                    <IconTrashBin size={16} />
+                                </Button>
+                            </Flex>
+                        </Table.RowCell>
+                    </Table.Row>
+                ))}
+            </Table.Body>
+        </Table.Root>
+    ),
+};
+
 export const Interactive: Story = {
     render: ({ ...args }) => (
         <Table.Root {...args}>

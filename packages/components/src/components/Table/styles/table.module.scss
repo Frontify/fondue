@@ -13,7 +13,7 @@
     $sticky-base: (
         position: sticky,
         z-index: 1,
-        background-color: var(--color-surface-default),
+        background-color: var(--table-sticky-background-color, var(--color-surface-default)),
     );
 
     // Legacy support for deprecated data-sticky-header attribute
@@ -125,16 +125,7 @@
         position: sticky;
         top: 0;
         z-index: 2;
-        background-color: var(--color-surface-default);
-    }
-}
-
-.header {
-    &[data-sticky='true'] {
-        position: sticky;
-        top: 0;
-        z-index: 2;
-        background-color: var(--color-surface-default);
+        background-color: var(--table-sticky-background-color, var(--color-surface-default));
     }
 }
 
