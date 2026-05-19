@@ -1,47 +1,46 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconArrowCircleUp } from '@frontify/fondue-icons';
-import { useCallback, useId, useRef } from 'react';
+import { ChangeEvent, useRef } from 'react';
 
 import { useTranslation } from '#/hooks/useTranslation';
 
 import { Button } from '../Button/Button';
 
-type AssetInputUploadInputProps = {
+export type AssetInputUploadInputProps = {
     acceptFileType?: string;
     allowMultiple?: boolean;
-    onFileChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    onSelect: (event: ChangeEvent<HTMLInputElement>) => void;
 };
 
 export const AssetInputUploadInput = ({
     acceptFileType,
     allowMultiple = false,
-    onFileChange,
+    onSelect,
 }: AssetInputUploadInputProps) => {
     const fileInputRef = useRef<HTMLInputElement | null>(null);
-    const id = useId();
     const { t } = useTranslation();
-    const openFileUploadDialog = useCallback(() => {
+
+    const openFileUploadDialog = () => {
         if (fileInputRef.current) {
             fileInputRef.current.click();
         }
-    }, [fileInputRef]);
+    };
 
     return (
         <>
-            <Button onPress={openFileUploadDialog} emphasis="weak" hugWidth={false}>
+            <Button onPress={openFileUploadDialog} emphasis="weak" hugWidth={false} data-asset-input-action="upload">
                 <IconArrowCircleUp size={20} />
                 {t('AssetInput_upload')}
             </Button>
 
             <input
                 style={{ display: 'none' }}
-                id={id}
                 ref={fileInputRef}
                 type="file"
                 accept={acceptFileType}
                 multiple={allowMultiple}
-                onChange={onFileChange}
+                onChange={onSelect}
             />
         </>
     );

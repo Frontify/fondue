@@ -6,7 +6,7 @@ import { useTranslation } from '#/hooks/useTranslation';
 
 import { Button } from '../Button/Button';
 
-type AssetInputBrowseInputProps = {
+export type AssetInputBrowseInputProps = {
     onBrowse: () => void;
 };
 
@@ -14,7 +14,7 @@ export const AssetInputBrowseInput = ({ onBrowse }: AssetInputBrowseInputProps) 
     const { t } = useTranslation();
 
     return (
-        <Button onPress={onBrowse} emphasis="weak" hugWidth={false}>
+        <Button onPress={onBrowse} emphasis="weak" hugWidth={false} data-asset-input-action="browse">
             <IconImageStack size={20} />
             {t('AssetInput_browse')}
         </Button>

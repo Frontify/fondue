@@ -57,7 +57,7 @@ export const Placeholder: Story = {
     },
     render: ({ acceptFileType }) => (
         <AssetInput.Placeholder>
-            <AssetInput.UploadInput acceptFileType={acceptFileType} onFileChange={action('onFileChange')} />
+            <AssetInput.UploadInput acceptFileType={acceptFileType} onSelect={action('onFileChange')} />
             <AssetInput.BrowseInput onBrowse={action('onBrowse')} />
         </AssetInput.Placeholder>
     ),
@@ -70,7 +70,7 @@ export const PlaceholderOnlyUpload: Story = {
     },
     render: ({ acceptFileType }) => (
         <AssetInput.Placeholder>
-            <AssetInput.UploadInput acceptFileType={acceptFileType} onFileChange={action('onFileChange')} />
+            <AssetInput.UploadInput acceptFileType={acceptFileType} onSelect={action('onFileChange')} />
         </AssetInput.Placeholder>
     ),
 };

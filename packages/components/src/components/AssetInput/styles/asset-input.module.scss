@@ -139,11 +139,24 @@
 .placeholder {
     border: var(--border-width-default) dashed var(--color-line-subtle);
     border-radius: var(--border-radius-medium);
-}
 
-.separator {
-    width: var(--border-width-default);
-    background-color: var(--color-line-subtle);
+    [data-asset-input-action='upload'] {
+        order: 0;
+    }
+
+    [data-asset-input-action='browse'] {
+        order: 1;
+    }
+
+    &:has([data-asset-input-action='upload']) [data-asset-input-action='browse']::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        height: 100%;
+        left: calc(-1 * #{sizeToken.get(1)});
+        width: var(--border-width-default);
+        background-color: var(--color-line-subtle);
+    }
 }
 
 .mainContainer {

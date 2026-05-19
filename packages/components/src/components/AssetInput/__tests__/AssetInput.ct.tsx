@@ -15,7 +15,7 @@ test('should render placeholder with upload and browse actions', async ({ mount 
     const onFileChange = sinon.spy();
     const wrapper = await mount(
         <AssetInput.Placeholder>
-            <AssetInput.UploadInput acceptFileType="image/*" onFileChange={onFileChange} />
+            <AssetInput.UploadInput acceptFileType="image/*" onSelect={onFileChange} />
             <AssetInput.BrowseInput onBrowse={onBrowse} />
         </AssetInput.Placeholder>,
     );
@@ -36,7 +36,7 @@ test('should render placeholder with upload and browse actions', async ({ mount 
 test('should render placeholder with upload only', async ({ mount }) => {
     const wrapper = await mount(
         <AssetInput.Placeholder>
-            <AssetInput.UploadInput acceptFileType="image/*" onFileChange={() => {}} />
+            <AssetInput.UploadInput acceptFileType="image/*" onSelect={() => {}} />
         </AssetInput.Placeholder>,
     );
     await expect(wrapper.getByRole('button', { name: /Upload/i })).toBeVisible();
