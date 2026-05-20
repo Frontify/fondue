@@ -1,433 +1,442 @@
 # @frontify/fondue-icons
 
+## 0.26.1
+
+### Patch Changes
+
+-   [#2725](https://github.com/Frontify/fondue/pull/2725) [`b3e7022`](https://github.com/Frontify/fondue/commit/b3e70226b652adea0881099e19dae320e33e7e4f) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
+
+-   Updated dependencies [[`b3e7022`](https://github.com/Frontify/fondue/commit/b3e70226b652adea0881099e19dae320e33e7e4f)]:
+    -   @frontify/fondue-tokens@5.0.1
+
 ## 0.26.0
 
 ### Minor Changes
 
-- [#2680](https://github.com/Frontify/fondue/pull/2680) [`bd66533`](https://github.com/Frontify/fondue/commit/bd665332fbae1bcd77aad9d885525dea3b3d75ee) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
+-   [#2680](https://github.com/Frontify/fondue/pull/2680) [`bd66533`](https://github.com/Frontify/fondue/commit/bd665332fbae1bcd77aad9d885525dea3b3d75ee) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
 
 ### Patch Changes
 
-- Updated dependencies []:
-    - @frontify/fondue-tokens@5.0.0
+-   Updated dependencies []:
+    -   @frontify/fondue-tokens@5.0.0
 
 ## 0.25.0
 
 ### Minor Changes
 
-- [#2654](https://github.com/Frontify/fondue/pull/2654) [`4794c76`](https://github.com/Frontify/fondue/commit/4794c762088e99a3a8da5160c4a9cb21e32019f4) Thanks [@noahwaldner](https://github.com/noahwaldner)! - chore: update icons
+-   [#2654](https://github.com/Frontify/fondue/pull/2654) [`4794c76`](https://github.com/Frontify/fondue/commit/4794c762088e99a3a8da5160c4a9cb21e32019f4) Thanks [@noahwaldner](https://github.com/noahwaldner)! - chore: update icons
 
-- [#2661](https://github.com/Frontify/fondue/pull/2661) [`dab4cef`](https://github.com/Frontify/fondue/commit/dab4cef3c76d71b115142fc465b3259ce5e3e97b) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
+-   [#2661](https://github.com/Frontify/fondue/pull/2661) [`dab4cef`](https://github.com/Frontify/fondue/commit/dab4cef3c76d71b115142fc465b3259ce5e3e97b) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
 
 ### Patch Changes
 
-- Updated dependencies []:
-    - @frontify/fondue-tokens@5.0.0
+-   Updated dependencies []:
+    -   @frontify/fondue-tokens@5.0.0
 
 ## 0.24.1
 
 ### Patch Changes
 
-- [`80d58b0`](https://github.com/Frontify/fondue/commit/80d58b07a7026cda8b47299558e07ada953afdb9) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update fondue export json
+-   [`80d58b0`](https://github.com/Frontify/fondue/commit/80d58b07a7026cda8b47299558e07ada953afdb9) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update fondue export json
 
-- Updated dependencies []:
-    - @frontify/fondue-tokens@5.0.0
+-   Updated dependencies []:
+    -   @frontify/fondue-tokens@5.0.0
 
 ## 0.24.0
 
 ### Minor Changes
 
-- [#2571](https://github.com/Frontify/fondue/pull/2571) [`0509788`](https://github.com/Frontify/fondue/commit/050978884da4e1c654f1a2d8cbb36f49950bcaa3) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
+-   [#2571](https://github.com/Frontify/fondue/pull/2571) [`0509788`](https://github.com/Frontify/fondue/commit/050978884da4e1c654f1a2d8cbb36f49950bcaa3) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
 
 ### Patch Changes
 
-- Updated dependencies []:
-    - @frontify/fondue-tokens@5.0.0
+-   Updated dependencies []:
+    -   @frontify/fondue-tokens@5.0.0
 
 ## 0.23.0
 
 ### Minor Changes
 
-- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - chore: fondue release candidate
+-   [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - chore: fondue release candidate
 
-- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: upgrade `@types/react`and adjust legacy `TooltipIcon` to work with new icons
+-   [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: upgrade `@types/react`and adjust legacy `TooltipIcon` to work with new icons
 
-- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - chore: release all packages
+-   [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - chore: release all packages
 
-- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: bump versions after merging main
+-   [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: bump versions after merging main
 
-- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: bump versions
+-   [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: bump versions
 
-- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: overhauled token generation and switched to new token set
+-   [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: overhauled token generation and switched to new token set
 
-- [#2549](https://github.com/Frontify/fondue/pull/2549) [`eb292a2`](https://github.com/Frontify/fondue/commit/eb292a255c4b8459f3ca0e06d5fbfcd3d155ca4b) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
+-   [#2549](https://github.com/Frontify/fondue/pull/2549) [`eb292a2`](https://github.com/Frontify/fondue/commit/eb292a255c4b8459f3ca0e06d5fbfcd3d155ca4b) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
 
-- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: downgrade immer to fix issue with hotkeys
+-   [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: downgrade immer to fix issue with hotkeys
 
 ### Patch Changes
 
-- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - chore: update dependencies
+-   [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - chore: update dependencies
 
-- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - chore: merge main into v13
+-   [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - chore: merge main into v13
 
-- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - chore: update dependencies
+-   [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - chore: update dependencies
 
-- [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - chore: update dependencies
+-   [#2610](https://github.com/Frontify/fondue/pull/2610) [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669) Thanks [@noahwaldner](https://github.com/noahwaldner)! - chore: update dependencies
 
-- Updated dependencies [[`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669)]:
-    - @frontify/fondue-tokens@5.0.0
+-   Updated dependencies [[`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669), [`b4e77b9`](https://github.com/Frontify/fondue/commit/b4e77b9aed5c78aecdeb2de98e9634dc9951f669)]:
+    -   @frontify/fondue-tokens@5.0.0
 
 ## 0.23.0-rc.5
 
 ### Patch Changes
 
-- [#2609](https://github.com/Frontify/fondue/pull/2609) [`0ab6e64`](https://github.com/Frontify/fondue/commit/0ab6e64e3bdf1198f89f7d946c44cad003185d2a) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
+-   [#2609](https://github.com/Frontify/fondue/pull/2609) [`0ab6e64`](https://github.com/Frontify/fondue/commit/0ab6e64e3bdf1198f89f7d946c44cad003185d2a) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
 
-- Updated dependencies [[`7952ccf`](https://github.com/Frontify/fondue/commit/7952ccf0083efddcbf3ff453430981d18da2fb3b), [`0ab6e64`](https://github.com/Frontify/fondue/commit/0ab6e64e3bdf1198f89f7d946c44cad003185d2a)]:
-    - @frontify/fondue-tokens@5.0.0-rc.6
+-   Updated dependencies [[`7952ccf`](https://github.com/Frontify/fondue/commit/7952ccf0083efddcbf3ff453430981d18da2fb3b), [`0ab6e64`](https://github.com/Frontify/fondue/commit/0ab6e64e3bdf1198f89f7d946c44cad003185d2a)]:
+    -   @frontify/fondue-tokens@5.0.0-rc.6
 
 ## 0.23.0-rc.4
 
 ### Minor Changes
 
-- [#2596](https://github.com/Frontify/fondue/pull/2596) [`f62de74`](https://github.com/Frontify/fondue/commit/f62de743188570ce7fe3cb1b9e3a00f2823e7354) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: downgrade immer to fix issue with hotkeys
+-   [#2596](https://github.com/Frontify/fondue/pull/2596) [`f62de74`](https://github.com/Frontify/fondue/commit/f62de743188570ce7fe3cb1b9e3a00f2823e7354) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: downgrade immer to fix issue with hotkeys
 
 ### Patch Changes
 
-- Updated dependencies [[`f62de74`](https://github.com/Frontify/fondue/commit/f62de743188570ce7fe3cb1b9e3a00f2823e7354)]:
-    - @frontify/fondue-tokens@5.0.0-rc.5
+-   Updated dependencies [[`f62de74`](https://github.com/Frontify/fondue/commit/f62de743188570ce7fe3cb1b9e3a00f2823e7354)]:
+    -   @frontify/fondue-tokens@5.0.0-rc.5
 
 ## 0.23.0-rc.3
 
 ### Minor Changes
 
-- [#2594](https://github.com/Frontify/fondue/pull/2594) [`049e77d`](https://github.com/Frontify/fondue/commit/049e77df0875a20fd00ec4c570a9f02b0252d874) Thanks [@github-actions](https://github.com/apps/github-actions)! - chore: release all packages
+-   [#2594](https://github.com/Frontify/fondue/pull/2594) [`049e77d`](https://github.com/Frontify/fondue/commit/049e77df0875a20fd00ec4c570a9f02b0252d874) Thanks [@github-actions](https://github.com/apps/github-actions)! - chore: release all packages
 
 ### Patch Changes
 
-- Updated dependencies [[`049e77d`](https://github.com/Frontify/fondue/commit/049e77df0875a20fd00ec4c570a9f02b0252d874)]:
-    - @frontify/fondue-tokens@5.0.0-rc.4
+-   Updated dependencies [[`049e77d`](https://github.com/Frontify/fondue/commit/049e77df0875a20fd00ec4c570a9f02b0252d874)]:
+    -   @frontify/fondue-tokens@5.0.0-rc.4
 
 ## 0.23.0-rc.2
 
 ### Minor Changes
 
-- [#2583](https://github.com/Frontify/fondue/pull/2583) [`0b953d7`](https://github.com/Frontify/fondue/commit/0b953d7e0098cefc60a845fd67e0b8d46fb5098c) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: upgrade `@types/react`and adjust legacy `TooltipIcon` to work with new icons
+-   [#2583](https://github.com/Frontify/fondue/pull/2583) [`0b953d7`](https://github.com/Frontify/fondue/commit/0b953d7e0098cefc60a845fd67e0b8d46fb5098c) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: upgrade `@types/react`and adjust legacy `TooltipIcon` to work with new icons
 
 ### Patch Changes
 
-- Updated dependencies [[`0b953d7`](https://github.com/Frontify/fondue/commit/0b953d7e0098cefc60a845fd67e0b8d46fb5098c)]:
-    - @frontify/fondue-tokens@5.0.0-rc.3
+-   Updated dependencies [[`0b953d7`](https://github.com/Frontify/fondue/commit/0b953d7e0098cefc60a845fd67e0b8d46fb5098c)]:
+    -   @frontify/fondue-tokens@5.0.0-rc.3
 
 ## 0.23.0-rc.1
 
 ### Minor Changes
 
-- [#2549](https://github.com/Frontify/fondue/pull/2549) [`eb292a2`](https://github.com/Frontify/fondue/commit/eb292a255c4b8459f3ca0e06d5fbfcd3d155ca4b) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
+-   [#2549](https://github.com/Frontify/fondue/pull/2549) [`eb292a2`](https://github.com/Frontify/fondue/commit/eb292a255c4b8459f3ca0e06d5fbfcd3d155ca4b) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
 
 ### Patch Changes
 
-- Updated dependencies []:
-    - @frontify/fondue-tokens@5.0.0-rc.2
+-   Updated dependencies []:
+    -   @frontify/fondue-tokens@5.0.0-rc.2
 
 ## 0.23.0-rc.0
 
 ### Minor Changes
 
-- [`9033c88`](https://github.com/Frontify/fondue/commit/9033c886f71d43c3a051ef7bccca6e63f5af1e0d) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: bump versions after merging main
+-   [`9033c88`](https://github.com/Frontify/fondue/commit/9033c886f71d43c3a051ef7bccca6e63f5af1e0d) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: bump versions after merging main
 
 ### Patch Changes
 
-- Updated dependencies []:
-    - @frontify/fondue-tokens@5.0.0-rc.2
+-   Updated dependencies []:
+    -   @frontify/fondue-tokens@5.0.0-rc.2
 
 ## 0.22.0
 
 ### Minor Changes
 
-- [#2523](https://github.com/Frontify/fondue/pull/2523) [`38bcce6`](https://github.com/Frontify/fondue/commit/38bcce66a2eb78c98570906a3ef81bd2c4e645a8) Thanks [@syeo66](https://github.com/syeo66)! - feat: add xx-small icon sizes
+-   [#2523](https://github.com/Frontify/fondue/pull/2523) [`38bcce6`](https://github.com/Frontify/fondue/commit/38bcce66a2eb78c98570906a3ef81bd2c4e645a8) Thanks [@syeo66](https://github.com/syeo66)! - feat: add xx-small icon sizes
 
-- [#2522](https://github.com/Frontify/fondue/pull/2522) [`3613743`](https://github.com/Frontify/fondue/commit/3613743fbc6dbf43c26f49d802389780b0b8d1d5) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
+-   [#2522](https://github.com/Frontify/fondue/pull/2522) [`3613743`](https://github.com/Frontify/fondue/commit/3613743fbc6dbf43c26f49d802389780b0b8d1d5) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
 
 ### Patch Changes
 
-- [#2524](https://github.com/Frontify/fondue/pull/2524) [`737f0de`](https://github.com/Frontify/fondue/commit/737f0de29d5b5f2dbca1937c24026137089d3d29) Thanks [@syeo66](https://github.com/syeo66)! - fix: enforce currentColors in svg when forced-colors=active
+-   [#2524](https://github.com/Frontify/fondue/pull/2524) [`737f0de`](https://github.com/Frontify/fondue/commit/737f0de29d5b5f2dbca1937c24026137089d3d29) Thanks [@syeo66](https://github.com/syeo66)! - fix: enforce currentColors in svg when forced-colors=active
 
 ## 0.22.0-rc.1
 
 ### Minor Changes
 
-- [#2523](https://github.com/Frontify/fondue/pull/2523) [`38bcce6`](https://github.com/Frontify/fondue/commit/38bcce66a2eb78c98570906a3ef81bd2c4e645a8) Thanks [@syeo66](https://github.com/syeo66)! - feat: add xx-small icon sizes
+-   [#2523](https://github.com/Frontify/fondue/pull/2523) [`38bcce6`](https://github.com/Frontify/fondue/commit/38bcce66a2eb78c98570906a3ef81bd2c4e645a8) Thanks [@syeo66](https://github.com/syeo66)! - feat: add xx-small icon sizes
 
-- [#2522](https://github.com/Frontify/fondue/pull/2522) [`3613743`](https://github.com/Frontify/fondue/commit/3613743fbc6dbf43c26f49d802389780b0b8d1d5) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
+-   [#2522](https://github.com/Frontify/fondue/pull/2522) [`3613743`](https://github.com/Frontify/fondue/commit/3613743fbc6dbf43c26f49d802389780b0b8d1d5) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
 
 ### Patch Changes
 
-- [#2524](https://github.com/Frontify/fondue/pull/2524) [`737f0de`](https://github.com/Frontify/fondue/commit/737f0de29d5b5f2dbca1937c24026137089d3d29) Thanks [@syeo66](https://github.com/syeo66)! - fix: enforce currentColors in svg when forced-colors=active
+-   [#2524](https://github.com/Frontify/fondue/pull/2524) [`737f0de`](https://github.com/Frontify/fondue/commit/737f0de29d5b5f2dbca1937c24026137089d3d29) Thanks [@syeo66](https://github.com/syeo66)! - fix: enforce currentColors in svg when forced-colors=active
 
-- Updated dependencies []:
-    - @frontify/fondue-tokens@5.0.0-rc.2
+-   Updated dependencies []:
+    -   @frontify/fondue-tokens@5.0.0-rc.2
 
 ## 0.22.0-rc.0
 
 ### Minor Changes
 
-- [`e2e133e`](https://github.com/Frontify/fondue/commit/e2e133e56d7f60866bfd8f0f2d82553325d16599) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: bump versions
+-   [`e2e133e`](https://github.com/Frontify/fondue/commit/e2e133e56d7f60866bfd8f0f2d82553325d16599) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: bump versions
 
 ## 0.21.0
 
 ### Minor Changes
 
-- [#2506](https://github.com/Frontify/fondue/pull/2506) [`077b7b7`](https://github.com/Frontify/fondue/commit/077b7b7cd967aaf82000f3c76b6da33926b8163a) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
+-   [#2506](https://github.com/Frontify/fondue/pull/2506) [`077b7b7`](https://github.com/Frontify/fondue/commit/077b7b7cd967aaf82000f3c76b6da33926b8163a) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
 
-- [#2507](https://github.com/Frontify/fondue/pull/2507) [`8cd5c6d`](https://github.com/Frontify/fondue/commit/8cd5c6d8142721293e1708b74ccf5c16b41675ce) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
+-   [#2507](https://github.com/Frontify/fondue/pull/2507) [`8cd5c6d`](https://github.com/Frontify/fondue/commit/8cd5c6d8142721293e1708b74ccf5c16b41675ce) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
 
-- [#2512](https://github.com/Frontify/fondue/pull/2512) [`bd5c4ee`](https://github.com/Frontify/fondue/commit/bd5c4ee6b2d3a2adcdbcc928208df061031764b4) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
+-   [#2512](https://github.com/Frontify/fondue/pull/2512) [`bd5c4ee`](https://github.com/Frontify/fondue/commit/bd5c4ee6b2d3a2adcdbcc928208df061031764b4) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
 
-- [#2512](https://github.com/Frontify/fondue/pull/2512) [`bd5c4ee`](https://github.com/Frontify/fondue/commit/bd5c4ee6b2d3a2adcdbcc928208df061031764b4) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
+-   [#2512](https://github.com/Frontify/fondue/pull/2512) [`bd5c4ee`](https://github.com/Frontify/fondue/commit/bd5c4ee6b2d3a2adcdbcc928208df061031764b4) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
 
 ## 0.21.0-rc.1
 
 ### Patch Changes
 
-- [#2492](https://github.com/Frontify/fondue/pull/2492) [`f5785d1`](https://github.com/Frontify/fondue/commit/f5785d1155c4b295573cd8fbdb88114b1ecaef1e) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
+-   [#2492](https://github.com/Frontify/fondue/pull/2492) [`f5785d1`](https://github.com/Frontify/fondue/commit/f5785d1155c4b295573cd8fbdb88114b1ecaef1e) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
 
-- [`06016db`](https://github.com/Frontify/fondue/commit/06016db7131d2611dad9b88115e80c9fe9d2051e) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: merge main into v13
+-   [`06016db`](https://github.com/Frontify/fondue/commit/06016db7131d2611dad9b88115e80c9fe9d2051e) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: merge main into v13
 
 ## 0.20.1
 
 ### Patch Changes
 
-- [#2489](https://github.com/Frontify/fondue/pull/2489) [`8e261ee`](https://github.com/Frontify/fondue/commit/8e261ee93694bf5ad67e65775c5a990620c3db42) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
+-   [#2489](https://github.com/Frontify/fondue/pull/2489) [`8e261ee`](https://github.com/Frontify/fondue/commit/8e261ee93694bf5ad67e65775c5a990620c3db42) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
 
 ## 0.20.0
 
 ### Minor Changes
 
-- [#2456](https://github.com/Frontify/fondue/pull/2456) [`f4cb7aa`](https://github.com/Frontify/fondue/commit/f4cb7aa5c98a134187452fe9cef327c69c5b57a5) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
+-   [#2456](https://github.com/Frontify/fondue/pull/2456) [`f4cb7aa`](https://github.com/Frontify/fondue/commit/f4cb7aa5c98a134187452fe9cef327c69c5b57a5) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
 
 ## 0.19.0
 
 ### Minor Changes
 
-- [#2448](https://github.com/Frontify/fondue/pull/2448) [`d04e30d`](https://github.com/Frontify/fondue/commit/d04e30d490c859aa52ba29a4c5fc5745e2d9e85b) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
+-   [#2448](https://github.com/Frontify/fondue/pull/2448) [`d04e30d`](https://github.com/Frontify/fondue/commit/d04e30d490c859aa52ba29a4c5fc5745e2d9e85b) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
 
 ## 0.18.0
 
 ### Minor Changes
 
-- [#2441](https://github.com/Frontify/fondue/pull/2441) [`d868114`](https://github.com/Frontify/fondue/commit/d86811431bb12264faf431cf1a38a1f22b75c6d9) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
+-   [#2441](https://github.com/Frontify/fondue/pull/2441) [`d868114`](https://github.com/Frontify/fondue/commit/d86811431bb12264faf431cf1a38a1f22b75c6d9) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
 
 ## 0.18.0-rc.0
 
 ### Minor Changes
 
-- chore: fondue release candidate
+-   chore: fondue release candidate
 
 ## 0.18.0-beta.1
 
 ### Patch Changes
 
-- [#2394](https://github.com/Frontify/fondue/pull/2394) [`6e7dd18`](https://github.com/Frontify/fondue/commit/6e7dd18ce96b8680409f9099e7dc57e1dea9ae8e) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
+-   [#2394](https://github.com/Frontify/fondue/pull/2394) [`6e7dd18`](https://github.com/Frontify/fondue/commit/6e7dd18ce96b8680409f9099e7dc57e1dea9ae8e) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
 
 ## 0.18.0-beta.0
 
 ### Minor Changes
 
-- [#2302](https://github.com/Frontify/fondue/pull/2302) [`d010cb5`](https://github.com/Frontify/fondue/commit/d010cb53242c9d9e9112bb369a9af975189ba36a) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: overhauled token generation and switched to new token set
+-   [#2302](https://github.com/Frontify/fondue/pull/2302) [`d010cb5`](https://github.com/Frontify/fondue/commit/d010cb53242c9d9e9112bb369a9af975189ba36a) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: overhauled token generation and switched to new token set
 
 ## 0.17.1
 
 ### Patch Changes
 
-- [#2377](https://github.com/Frontify/fondue/pull/2377) [`b8331f6`](https://github.com/Frontify/fondue/commit/b8331f6c0ef3bedd7e2d4ac0575ca069d75734d0) Thanks [@jcosta33](https://github.com/jcosta33)! - chore: dep updates and linting
+-   [#2377](https://github.com/Frontify/fondue/pull/2377) [`b8331f6`](https://github.com/Frontify/fondue/commit/b8331f6c0ef3bedd7e2d4ac0575ca069d75734d0) Thanks [@jcosta33](https://github.com/jcosta33)! - chore: dep updates and linting
 
-- [#2393](https://github.com/Frontify/fondue/pull/2393) [`ac3f322`](https://github.com/Frontify/fondue/commit/ac3f322dc5490b98c4785720e879a5bef434467f) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
+-   [#2393](https://github.com/Frontify/fondue/pull/2393) [`ac3f322`](https://github.com/Frontify/fondue/commit/ac3f322dc5490b98c4785720e879a5bef434467f) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
 
 ## 0.17.0
 
 ### Minor Changes
 
-- [#2329](https://github.com/Frontify/fondue/pull/2329) [`4d45cf0`](https://github.com/Frontify/fondue/commit/4d45cf0656a9409cf3adb69be71427748d88dbdb) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
+-   [#2329](https://github.com/Frontify/fondue/pull/2329) [`4d45cf0`](https://github.com/Frontify/fondue/commit/4d45cf0656a9409cf3adb69be71427748d88dbdb) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
 
 ## 0.16.0
 
 ### Minor Changes
 
-- [#2319](https://github.com/Frontify/fondue/pull/2319) [`5e7ec6c`](https://github.com/Frontify/fondue/commit/5e7ec6c997fe023ee425b51e6d1a4011bedb40af) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
+-   [#2319](https://github.com/Frontify/fondue/pull/2319) [`5e7ec6c`](https://github.com/Frontify/fondue/commit/5e7ec6c997fe023ee425b51e6d1a4011bedb40af) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
 
 ## 0.15.2
 
 ### Patch Changes
 
-- [#2289](https://github.com/Frontify/fondue/pull/2289) [`055ef67`](https://github.com/Frontify/fondue/commit/055ef676bd3a5d01f3243f732b4f80e18bd9085f) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies and revert `vite`
+-   [#2289](https://github.com/Frontify/fondue/pull/2289) [`055ef67`](https://github.com/Frontify/fondue/commit/055ef676bd3a5d01f3243f732b4f80e18bd9085f) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies and revert `vite`
 
 ## 0.15.1
 
 ### Patch Changes
 
-- [#2278](https://github.com/Frontify/fondue/pull/2278) [`a2d5f2f`](https://github.com/Frontify/fondue/commit/a2d5f2fb5488e82ea60d5d3a2aadc25401f60ab0) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - chore: update deps
+-   [#2278](https://github.com/Frontify/fondue/pull/2278) [`a2d5f2f`](https://github.com/Frontify/fondue/commit/a2d5f2fb5488e82ea60d5d3a2aadc25401f60ab0) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - chore: update deps
 
 ## 0.15.0
 
 ### Minor Changes
 
-- [#2263](https://github.com/Frontify/fondue/pull/2263) [`1508973`](https://github.com/Frontify/fondue/commit/1508973f3732c60d14b862c391bfdf3f05e71f36) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
+-   [#2263](https://github.com/Frontify/fondue/pull/2263) [`1508973`](https://github.com/Frontify/fondue/commit/1508973f3732c60d14b862c391bfdf3f05e71f36) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
 
 ## 0.14.0
 
 ### Minor Changes
 
-- [#2216](https://github.com/Frontify/fondue/pull/2216) [`b99c161`](https://github.com/Frontify/fondue/commit/b99c16153c21ccba30cc55baca3e1da77e200bd1) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
+-   [#2216](https://github.com/Frontify/fondue/pull/2216) [`b99c161`](https://github.com/Frontify/fondue/commit/b99c16153c21ccba30cc55baca3e1da77e200bd1) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
 
 ## 0.13.1
 
 ### Patch Changes
 
-- [#2223](https://github.com/Frontify/fondue/pull/2223) [`f88df50`](https://github.com/Frontify/fondue/commit/f88df50506925b4efc7595112e22bb004d0be2b0) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - feat: use diatype as primary font
+-   [#2223](https://github.com/Frontify/fondue/pull/2223) [`f88df50`](https://github.com/Frontify/fondue/commit/f88df50506925b4efc7595112e22bb004d0be2b0) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - feat: use diatype as primary font
 
 ## 0.13.0
 
 ### Minor Changes
 
-- [#2199](https://github.com/Frontify/fondue/pull/2199) [`dec28ee`](https://github.com/Frontify/fondue/commit/dec28eeb5d2a0510bfd0dfa8a513e7e058213728) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
+-   [#2199](https://github.com/Frontify/fondue/pull/2199) [`dec28ee`](https://github.com/Frontify/fondue/commit/dec28eeb5d2a0510bfd0dfa8a513e7e058213728) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
 
 ## 0.12.0
 
 ### Minor Changes
 
-- [#2176](https://github.com/Frontify/fondue/pull/2176) [`a9cf31d`](https://github.com/Frontify/fondue/commit/a9cf31da8d374525e69f01eec5340d8114669795) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
+-   [#2176](https://github.com/Frontify/fondue/pull/2176) [`a9cf31d`](https://github.com/Frontify/fondue/commit/a9cf31da8d374525e69f01eec5340d8114669795) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
 
 ### Patch Changes
 
-- [#2177](https://github.com/Frontify/fondue/pull/2177) [`1a34562`](https://github.com/Frontify/fondue/commit/1a34562cd30c6c317d147c29ef52d90094d19f12) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
+-   [#2177](https://github.com/Frontify/fondue/pull/2177) [`1a34562`](https://github.com/Frontify/fondue/commit/1a34562cd30c6c317d147c29ef52d90094d19f12) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
 
 ## 0.11.0
 
 ### Minor Changes
 
-- [#2157](https://github.com/Frontify/fondue/pull/2157) [`596c352`](https://github.com/Frontify/fondue/commit/596c352705547e0fe27c2b9e1b2f5079305eb776) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
+-   [#2157](https://github.com/Frontify/fondue/pull/2157) [`596c352`](https://github.com/Frontify/fondue/commit/596c352705547e0fe27c2b9e1b2f5079305eb776) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
 
 ## 0.10.0
 
 ### Minor Changes
 
-- [#2149](https://github.com/Frontify/fondue/pull/2149) [`ead020f`](https://github.com/Frontify/fondue/commit/ead020fcf3e7762f4b654230389961844f685da1) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
+-   [#2149](https://github.com/Frontify/fondue/pull/2149) [`ead020f`](https://github.com/Frontify/fondue/commit/ead020fcf3e7762f4b654230389961844f685da1) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
 
 ## 0.9.0
 
 ### Minor Changes
 
-- [#2133](https://github.com/Frontify/fondue/pull/2133) [`17c9f47`](https://github.com/Frontify/fondue/commit/17c9f47e02782391bb29efb870dc1c21ad4b0af0) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
+-   [#2133](https://github.com/Frontify/fondue/pull/2133) [`17c9f47`](https://github.com/Frontify/fondue/commit/17c9f47e02782391bb29efb870dc1c21ad4b0af0) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
 
 ## 0.8.0
 
 ### Minor Changes
 
-- [#2123](https://github.com/Frontify/fondue/pull/2123) [`871ced0`](https://github.com/Frontify/fondue/commit/871ced040402f79db43cd72b948e4acb85be8aa3) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
+-   [#2123](https://github.com/Frontify/fondue/pull/2123) [`871ced0`](https://github.com/Frontify/fondue/commit/871ced040402f79db43cd72b948e4acb85be8aa3) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
 
 ## 0.7.0
 
 ### Minor Changes
 
-- [#2118](https://github.com/Frontify/fondue/pull/2118) [`a60445e`](https://github.com/Frontify/fondue/commit/a60445e3cfc5fa8d2a9bd9bb13435e4b9295b624) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
+-   [#2118](https://github.com/Frontify/fondue/pull/2118) [`a60445e`](https://github.com/Frontify/fondue/commit/a60445e3cfc5fa8d2a9bd9bb13435e4b9295b624) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
 
 ## 0.6.0
 
 ### Minor Changes
 
-- [#2097](https://github.com/Frontify/fondue/pull/2097) [`f4be8c1`](https://github.com/Frontify/fondue/commit/f4be8c152f50063e0bb8eaf9e4efc4b47acb05af) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
+-   [#2097](https://github.com/Frontify/fondue/pull/2097) [`f4be8c1`](https://github.com/Frontify/fondue/commit/f4be8c152f50063e0bb8eaf9e4efc4b47acb05af) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
 
 ## 0.5.1
 
 ### Patch Changes
 
-- [#2085](https://github.com/Frontify/fondue/pull/2085) [`7c39542`](https://github.com/Frontify/fondue/commit/7c39542df14f8c3cb3db82197f1405504caf9dfa) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - chore: update dependencies
+-   [#2085](https://github.com/Frontify/fondue/pull/2085) [`7c39542`](https://github.com/Frontify/fondue/commit/7c39542df14f8c3cb3db82197f1405504caf9dfa) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - chore: update dependencies
 
-- [#2089](https://github.com/Frontify/fondue/pull/2089) [`064db3d`](https://github.com/Frontify/fondue/commit/064db3d1e4bdb9a2df2516bd618c2488eb554223) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update more deps
+-   [#2089](https://github.com/Frontify/fondue/pull/2089) [`064db3d`](https://github.com/Frontify/fondue/commit/064db3d1e4bdb9a2df2516bd618c2488eb554223) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update more deps
 
 ## 0.5.0
 
 ### Minor Changes
 
-- [#2071](https://github.com/Frontify/fondue/pull/2071) [`24d6c3e`](https://github.com/Frontify/fondue/commit/24d6c3e4b2cc04f25d20f579e5e69140d9523e7c) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
+-   [#2071](https://github.com/Frontify/fondue/pull/2071) [`24d6c3e`](https://github.com/Frontify/fondue/commit/24d6c3e4b2cc04f25d20f579e5e69140d9523e7c) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
 
-- [#2076](https://github.com/Frontify/fondue/pull/2076) [`a76912c`](https://github.com/Frontify/fondue/commit/a76912c7568408643f92cb8d36dc00a8e8629062) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
+-   [#2076](https://github.com/Frontify/fondue/pull/2076) [`a76912c`](https://github.com/Frontify/fondue/commit/a76912c7568408643f92cb8d36dc00a8e8629062) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
 
 ## 0.4.3
 
 ### Patch Changes
 
-- [`31e06eb`](https://github.com/Frontify/fondue/commit/31e06ebf538762c66507ffe1b3daf9da5388a360) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - feat: add Market and Wand icons
+-   [`31e06eb`](https://github.com/Frontify/fondue/commit/31e06ebf538762c66507ffe1b3daf9da5388a360) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - feat: add Market and Wand icons
 
 ## 0.4.2
 
 ### Patch Changes
 
-- [#2033](https://github.com/Frontify/fondue/pull/2033) [`48a6604`](https://github.com/Frontify/fondue/commit/48a660495177a065126c7ab1d700175cc7104961) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
+-   [#2033](https://github.com/Frontify/fondue/pull/2033) [`48a6604`](https://github.com/Frontify/fondue/commit/48a660495177a065126c7ab1d700175cc7104961) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
 
 ## 0.4.1
 
 ### Patch Changes
 
-- [#2022](https://github.com/Frontify/fondue/pull/2022) [`3db4385`](https://github.com/Frontify/fondue/commit/3db4385c2e3f92f2cd4cce12d3d6c8abaad4b326) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - chore: update dependencies
+-   [#2022](https://github.com/Frontify/fondue/pull/2022) [`3db4385`](https://github.com/Frontify/fondue/commit/3db4385c2e3f92f2cd4cce12d3d6c8abaad4b326) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - chore: update dependencies
 
 ## 0.4.0
 
 ### Minor Changes
 
-- [#1980](https://github.com/Frontify/fondue/pull/1980) [`4fee458`](https://github.com/Frontify/fondue/commit/4fee458a540102197f7cc5bc9079198b8ac656e2) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add new icons from figma
+-   [#1980](https://github.com/Frontify/fondue/pull/1980) [`4fee458`](https://github.com/Frontify/fondue/commit/4fee458a540102197f7cc5bc9079198b8ac656e2) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add new icons from figma
 
 ## 0.3.0
 
 ### Minor Changes
 
-- [#1970](https://github.com/Frontify/fondue/pull/1970) [`c502760`](https://github.com/Frontify/fondue/commit/c5027602c21c0c5a0861879b9d0896e7f5627a5f) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - fix: remove empty aria-labelledby from `accordion`, add aria-hidden to `icons`
+-   [#1970](https://github.com/Frontify/fondue/pull/1970) [`c502760`](https://github.com/Frontify/fondue/commit/c5027602c21c0c5a0861879b9d0896e7f5627a5f) Thanks [@jose-costa-frontify](https://github.com/jose-costa-frontify)! - fix: remove empty aria-labelledby from `accordion`, add aria-hidden to `icons`
 
 ### Patch Changes
 
-- [#1968](https://github.com/Frontify/fondue/pull/1968) [`032dfff`](https://github.com/Frontify/fondue/commit/032dfffb1b7eed0dafbb6e12f7aa16a74f34b2a6) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
+-   [#1968](https://github.com/Frontify/fondue/pull/1968) [`032dfff`](https://github.com/Frontify/fondue/commit/032dfffb1b7eed0dafbb6e12f7aa16a74f34b2a6) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
 
 ## 0.2.5
 
 ### Patch Changes
 
-- [#1957](https://github.com/Frontify/fondue/pull/1957) [`6e96909`](https://github.com/Frontify/fondue/commit/6e96909c6dd8626b567372da6b0051f1b17e736a) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
+-   [#1957](https://github.com/Frontify/fondue/pull/1957) [`6e96909`](https://github.com/Frontify/fondue/commit/6e96909c6dd8626b567372da6b0051f1b17e736a) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: update dependencies
 
 ## 0.2.4
 
 ### Patch Changes
 
-- [#1951](https://github.com/Frontify/fondue/pull/1951) [`077dfdc`](https://github.com/Frontify/fondue/commit/077dfdcb08e3efaa281d80df8e1e7005b2051384) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix: prevent `lodash-es` from being bundled
+-   [#1951](https://github.com/Frontify/fondue/pull/1951) [`077dfdc`](https://github.com/Frontify/fondue/commit/077dfdcb08e3efaa281d80df8e1e7005b2051384) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix: prevent `lodash-es` from being bundled
 
 ## 0.2.3
 
 ### Patch Changes
 
-- [#1949](https://github.com/Frontify/fondue/pull/1949) [`8e9e866`](https://github.com/Frontify/fondue/commit/8e9e866a908f3ee8996c985b8a20ed4a77d31cf4) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix: mark `lodash-es` as external and import treeshaked file
+-   [#1949](https://github.com/Frontify/fondue/pull/1949) [`8e9e866`](https://github.com/Frontify/fondue/commit/8e9e866a908f3ee8996c985b8a20ed4a77d31cf4) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix: mark `lodash-es` as external and import treeshaked file
 
 ## 0.2.2
 
 ### Patch Changes
 
-- [#1922](https://github.com/Frontify/fondue/pull/1922) [`3690a68`](https://github.com/Frontify/fondue/commit/3690a6830f220aeb0216c3aa3c5ab6ddfb4520cf) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: bump dependencies
+-   [#1922](https://github.com/Frontify/fondue/pull/1922) [`3690a68`](https://github.com/Frontify/fondue/commit/3690a6830f220aeb0216c3aa3c5ab6ddfb4520cf) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - chore: bump dependencies
 
 ## 0.2.1
 
 ### Patch Changes
 
-- [#1822](https://github.com/Frontify/fondue/pull/1822) [`3470a6a`](https://github.com/Frontify/fondue/commit/3470a6a9671d39fc40c0939bc48df0e8f49bdeeb) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix: add missing dependencies to `external`
+-   [#1822](https://github.com/Frontify/fondue/pull/1822) [`3470a6a`](https://github.com/Frontify/fondue/commit/3470a6a9671d39fc40c0939bc48df0e8f49bdeeb) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix: add missing dependencies to `external`
 
-- [#1822](https://github.com/Frontify/fondue/pull/1822) [`3470a6a`](https://github.com/Frontify/fondue/commit/3470a6a9671d39fc40c0939bc48df0e8f49bdeeb) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - refactor: replace `lodash` by `lodash-es`
+-   [#1822](https://github.com/Frontify/fondue/pull/1822) [`3470a6a`](https://github.com/Frontify/fondue/commit/3470a6a9671d39fc40c0939bc48df0e8f49bdeeb) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - refactor: replace `lodash` by `lodash-es`
 
 ## 0.2.0
 
 ### Minor Changes
 
-- [#1807](https://github.com/Frontify/fondue/pull/1807) [`fc35a50`](https://github.com/Frontify/fondue/commit/fc35a509e641604eaf2a4b644c573929c3440be3) Thanks [@noahwaldner](https://github.com/noahwaldner)! - refactor: Finalized Monorepo transition, added subexport for new components, added contribution guidelines and readme
+-   [#1807](https://github.com/Frontify/fondue/pull/1807) [`fc35a50`](https://github.com/Frontify/fondue/commit/fc35a509e641604eaf2a4b644c573929c3440be3) Thanks [@noahwaldner](https://github.com/noahwaldner)! - refactor: Finalized Monorepo transition, added subexport for new components, added contribution guidelines and readme
 
 ### Patch Changes
 
-- [#1798](https://github.com/Frontify/fondue/pull/1798) [`99c8cea`](https://github.com/Frontify/fondue/commit/99c8cea49a6148206c127ebde6f559e17f5980bf) Thanks [@noahwaldner](https://github.com/noahwaldner)! - refactor: refactored button approach to size/variants
+-   [#1798](https://github.com/Frontify/fondue/pull/1798) [`99c8cea`](https://github.com/Frontify/fondue/commit/99c8cea49a6148206c127ebde6f559e17f5980bf) Thanks [@noahwaldner](https://github.com/noahwaldner)! - refactor: refactored button approach to size/variants
 
-- [#1806](https://github.com/Frontify/fondue/pull/1806) [`246dfb8`](https://github.com/Frontify/fondue/commit/246dfb8112b68341de8cfd25a71cf3729848395d) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add packages sub-export to `@frontify/fondue`
+-   [#1806](https://github.com/Frontify/fondue/pull/1806) [`246dfb8`](https://github.com/Frontify/fondue/commit/246dfb8112b68341de8cfd25a71cf3729848395d) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add packages sub-export to `@frontify/fondue`

@@ -97,15 +97,15 @@ export const IconAndText: Story = {
     render: (args) => (
         <SegmentedControl.Root {...args}>
             <SegmentedControl.Item value="first">
-                <IconIcon size={20} />
+                <IconIcon size={16} />
                 First
             </SegmentedControl.Item>
             <SegmentedControl.Item value="second">
-                <IconIcon size={20} />
+                <IconIcon size={16} />
                 Second
             </SegmentedControl.Item>
             <SegmentedControl.Item value="third">
-                <IconIcon size={20} />
+                <IconIcon size={16} />
                 Third
             </SegmentedControl.Item>
         </SegmentedControl.Root>
@@ -124,15 +124,15 @@ export const Disabled: Story = {
     render: (args) => (
         <SegmentedControl.Root {...args}>
             <SegmentedControl.Item value="first">
-                <IconIcon size={20} />
+                <IconIcon size={16} />
                 First
             </SegmentedControl.Item>
             <SegmentedControl.Item value="second">
-                <IconIcon size={20} />
+                <IconIcon size={16} />
                 Second
             </SegmentedControl.Item>
             <SegmentedControl.Item value="third">
-                <IconIcon size={20} />
+                <IconIcon size={16} />
                 Third
             </SegmentedControl.Item>
         </SegmentedControl.Root>

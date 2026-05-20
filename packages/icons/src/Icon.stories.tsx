@@ -25,9 +25,12 @@ export default meta;
 const tooltipStyle =
     'before:tw-content-[attr(data-tooltip-text)] before:tw-absolute before:tw-opacity-0 before:tw-left-2/4 before:-tw-translate-x-2/4 before:tw-top-full before:-tw-mt-1 before:tw-px-2 before:tw-py-1 before:tw-whitespace-nowrap before:tw-text-xs before:tw-rounded before:tw-text-center hover:before:tw-block focus-within:before:tw-block before:tw-bg-box-neutral-inverse before:tw-z-10 before:tw-text-white hover:before:tw-opacity-100 focus-within:before:tw-opacity-100 before:tw-transition-opacity motion-reduce:before:tw-transition-none';
 
-const IconsGallery = () => {
-    const [{ iconName }, updateArgs] = useArgs<{ iconName: string }>();
+type IconsGalleryProps = {
+    iconName: string;
+    updateArgs: (args: Partial<{ iconName: string }>) => void;
+};
 
+const IconsGallery = ({ iconName, updateArgs }: IconsGalleryProps) => {
     const handleSearchInput = (event: FormEvent) => {
         updateArgs({ iconName: (event.target as HTMLInputElement).value });
     };
@@ -78,5 +81,9 @@ const IconsGallery = () => {
 
 export const Default: Story = {
     name: 'Icons',
-    render: () => <IconsGallery />,
+    render: () => {
+        // eslint-disable-next-line @eslint-react/rules-of-hooks -- Storybook preview hook, not a React hook
+        const [{ iconName }, updateArgs] = useArgs<{ iconName: string }>();
+        return <IconsGallery iconName={iconName} updateArgs={updateArgs} />;
+    },
 };
