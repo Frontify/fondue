@@ -1,7 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import './styles.scss';
-
 export { Accordion } from './components/Accordion/Accordion';
 export { Badge } from './components/Badge/Badge';
 export { Box } from './components/Box/Box';

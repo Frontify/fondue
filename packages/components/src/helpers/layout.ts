@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type screens } from '../../tailwind.config';
+import { type screens } from './screens';
 
 export type Breakpoint = keyof typeof screens;
 
