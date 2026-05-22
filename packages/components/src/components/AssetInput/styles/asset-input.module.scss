@@ -42,6 +42,24 @@
             'preview title    caret'
             'preview metadata caret';
 
+        &:not(:has(.metadata)) {
+            grid-template-rows: auto;
+            grid-template-areas: 'preview title caret';
+
+            .title {
+                align-self: center;
+            }
+        }
+
+        &:not(:has(.title)) {
+            grid-template-rows: auto;
+            grid-template-areas: 'preview metadata caret';
+
+            .metadata {
+                align-self: center;
+            }
+        }
+
         &:has(.preview > :nth-child(2)) {
             .title {
                 font-size: var(--typography-font-size-large);
@@ -67,6 +85,28 @@
             'preview  preview'
             'title    caret'
             'metadata caret';
+
+        &:not(:has(.metadata)) {
+            grid-template-rows: auto auto;
+            grid-template-areas:
+                'preview preview'
+                'title   caret';
+
+            .title {
+                align-self: center;
+            }
+        }
+
+        &:not(:has(.title)) {
+            grid-template-rows: auto auto;
+            grid-template-areas:
+                'preview  preview'
+                'metadata caret';
+
+            .metadata {
+                align-self: center;
+            }
+        }
 
         .preview {
             height: sizeToken.get(32);
@@ -146,6 +186,9 @@
     padding-left: sizeToken.get(4);
     padding-right: sizeToken.get(4);
     align-self: end;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .metadata {
