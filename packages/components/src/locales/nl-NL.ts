@@ -5,6 +5,8 @@ import { nl as dateLocale } from 'date-fns/locale';
 import { type LocaleConfig } from './types';
 
 const translations = {
+    AssetInput_browse: 'Bladeren',
+    AssetInput_upload: 'Uploaden',
     Badge_dismiss: 'Sluit ${label}',
     Card_deselect: 'Deselecteren',
     Card_select: 'Selecteren',
