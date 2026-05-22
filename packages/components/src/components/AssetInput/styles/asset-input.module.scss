@@ -199,6 +199,7 @@
 .placeholder {
     border: var(--border-width-default) dashed var(--color-line-subtle);
     border-radius: var(--border-radius-medium);
+    position: relative;
 
     [data-asset-input-action='upload'] {
         order: 0;
