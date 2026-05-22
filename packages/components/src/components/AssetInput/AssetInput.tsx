@@ -27,5 +27,5 @@ export const AssetInput = {
     Title: forwardRef<HTMLSpanElement, AssetInputTitleProps>(AssetInputTitle),
     Metadata: forwardRef<HTMLDivElement, AssetInputMetadataProps>(AssetInputMetadata),
     MetadataItem: forwardRef<HTMLSpanElement, AssetInputMetadataItemProps>(AssetInputMetadataItem),
-    PreviewLoading: forwardRef<HTMLDivElement, {}>(AssetInputPreviewLoading),
+    PreviewLoading: forwardRef<HTMLDivElement>(AssetInputPreviewLoading),
 };
