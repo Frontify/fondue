@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconArrowCircleUp } from '@frontify/fondue-icons';
-import { type ChangeEvent, useRef } from 'react';
+import { type ChangeEvent, type ForwardedRef, useRef } from 'react';
 
 import { useTranslation } from '#/hooks/useTranslation';
 
@@ -13,11 +13,10 @@ export type AssetInputUploadInputProps = {
     onSelect: (event: ChangeEvent<HTMLInputElement>) => void;
 };
 
-export const AssetInputUploadInput = ({
-    acceptFileType,
-    allowMultiple = false,
-    onSelect,
-}: AssetInputUploadInputProps) => {
+export const AssetInputUploadInput = (
+    { acceptFileType, allowMultiple = false, onSelect }: AssetInputUploadInputProps,
+    ref: ForwardedRef<HTMLButtonElement>,
+) => {
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const { t } = useTranslation();
 
@@ -29,7 +28,13 @@ export const AssetInputUploadInput = ({
 
     return (
         <>
-            <Button onPress={openFileUploadDialog} emphasis="weak" hugWidth={false} data-asset-input-action="upload">
+            <Button
+                ref={ref}
+                onPress={openFileUploadDialog}
+                emphasis="weak"
+                hugWidth={false}
+                data-asset-input-action="upload"
+            >
                 <IconArrowCircleUp size={20} />
                 {t('AssetInput_upload')}
             </Button>
@@ -45,3 +50,4 @@ export const AssetInputUploadInput = ({
         </>
     );
 };
+AssetInputUploadInput.displayName = 'AssetInput.UploadInput';

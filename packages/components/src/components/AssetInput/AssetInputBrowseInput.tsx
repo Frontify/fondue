@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconImageStack } from '@frontify/fondue-icons';
+import { type ForwardedRef } from 'react';
 
 import { useTranslation } from '#/hooks/useTranslation';
 
@@ -10,13 +11,17 @@ export type AssetInputBrowseInputProps = {
     onBrowse: () => void;
 };
 
-export const AssetInputBrowseInput = ({ onBrowse }: AssetInputBrowseInputProps) => {
+export const AssetInputBrowseInput = (
+    { onBrowse }: AssetInputBrowseInputProps,
+    ref: ForwardedRef<HTMLButtonElement>,
+) => {
     const { t } = useTranslation();
 
     return (
-        <Button onPress={onBrowse} emphasis="weak" hugWidth={false} data-asset-input-action="browse">
+        <Button ref={ref} onPress={onBrowse} emphasis="weak" hugWidth={false} data-asset-input-action="browse">
             <IconImageStack size={20} />
             {t('AssetInput_browse')}
         </Button>
     );
 };
+AssetInputBrowseInput.displayName = 'AssetInput.BrowseInput';

@@ -1,13 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ReactNode } from 'react';
+import { type ForwardedRef, type ReactNode } from 'react';
 
 import styles from './styles/asset-input.module.scss';
 
-type AssetInputTitleProps = {
+export type AssetInputTitleProps = {
     children: ReactNode;
 };
 
-export const AssetInputTitle = ({ children }: AssetInputTitleProps) => {
-    return <span className={styles.title}>{children}</span>;
+export const AssetInputTitle = ({ children }: AssetInputTitleProps, ref: ForwardedRef<HTMLSpanElement>) => {
+    return (
+        <span ref={ref} className={styles.title}>
+            {children}
+        </span>
+    );
 };
+AssetInputTitle.displayName = 'AssetInput.Title';

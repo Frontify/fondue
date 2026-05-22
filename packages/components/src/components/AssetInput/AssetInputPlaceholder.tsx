@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ReactElement } from 'react';
+import { type ForwardedRef, type ReactElement } from 'react';
 
 import { Flex } from '../Flex/Flex';
 
@@ -14,12 +14,16 @@ export type AssetInputPlaceholderProps = {
     children: AssetInputAction | [AssetInputAction, AssetInputAction];
 };
 
-export const AssetInputPlaceholder = ({ children }: AssetInputPlaceholderProps) => {
+export const AssetInputPlaceholder = (
+    { children }: AssetInputPlaceholderProps,
+    ref: ForwardedRef<HTMLDivElement>,
+) => {
     return (
-        <div className={styles.placeholder}>
+        <div ref={ref} className={styles.placeholder}>
             <Flex gap={2} height="100%" p={3}>
                 {children}
             </Flex>
         </div>
     );
 };
+AssetInputPlaceholder.displayName = 'AssetInput.Placeholder';

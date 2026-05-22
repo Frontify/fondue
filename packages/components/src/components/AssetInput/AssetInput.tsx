@@ -2,30 +2,30 @@
 
 import { forwardRef } from 'react';
 
-import { AssetInputBrowseInput } from './AssetInputBrowseInput';
-import { AssetInputMetadata } from './AssetInputMetadata';
-import { AssetInputMetadataItem } from './AssetInputMetadataItem';
-import { AssetInputPlaceholder } from './AssetInputPlaceholder';
-import { AssetInputPreview } from './AssetInputPreview';
-import { AssetInputPreviewIcon } from './AssetInputPreviewIcon';
-import { AssetInputPreviewImage } from './AssetInputPreviewImage';
-import { AssetInputPreviewLoading } from './AssetInputPreviewLoading';
+import { AssetInputBrowseInput, type AssetInputBrowseInputProps } from './AssetInputBrowseInput';
+import { AssetInputMetadata, type AssetInputMetadataProps } from './AssetInputMetadata';
+import { AssetInputMetadataItem, type AssetInputMetadataItemProps } from './AssetInputMetadataItem';
+import { AssetInputPlaceholder, type AssetInputPlaceholderProps } from './AssetInputPlaceholder';
+import { AssetInputPreview, type AssetInputPreviewProps } from './AssetInputPreview';
+import { AssetInputPreviewIcon, type AssetInputPreviewIconProps } from './AssetInputPreviewIcon';
+import { AssetInputPreviewImage, type AssetInputPreviewImageProps } from './AssetInputPreviewImage';
+import { AssetInputPreviewLoading, type AssetInputPreviewLoadingProps } from './AssetInputPreviewLoading';
 import { AssetInputRoot, type AssetInputRootProps } from './AssetInputRoot';
-import { AssetInputTitle } from './AssetInputTitle';
-import { AssetInputUploadInput } from './AssetInputUploadInput';
+import { AssetInputTitle, type AssetInputTitleProps } from './AssetInputTitle';
+import { AssetInputUploadInput, type AssetInputUploadInputProps } from './AssetInputUploadInput';
 
 export type { AssetInputRootProps };
 
 export const AssetInput = {
-    Placeholder: AssetInputPlaceholder,
-    UploadInput: AssetInputUploadInput,
-    BrowseInput: AssetInputBrowseInput,
+    Placeholder: forwardRef<HTMLDivElement, AssetInputPlaceholderProps>(AssetInputPlaceholder),
+    UploadInput: forwardRef<HTMLButtonElement, AssetInputUploadInputProps>(AssetInputUploadInput),
+    BrowseInput: forwardRef<HTMLButtonElement, AssetInputBrowseInputProps>(AssetInputBrowseInput),
     Root: forwardRef<HTMLButtonElement, AssetInputRootProps>(AssetInputRoot),
-    Preview: AssetInputPreview,
-    PreviewImage: AssetInputPreviewImage,
-    PreviewIcon: AssetInputPreviewIcon,
-    Title: AssetInputTitle,
-    Metadata: AssetInputMetadata,
-    MetadataItem: AssetInputMetadataItem,
-    PreviewLoading: AssetInputPreviewLoading,
+    Preview: forwardRef<HTMLDivElement, AssetInputPreviewProps>(AssetInputPreview),
+    PreviewImage: forwardRef<HTMLImageElement, AssetInputPreviewImageProps>(AssetInputPreviewImage),
+    PreviewIcon: forwardRef<HTMLDivElement, AssetInputPreviewIconProps>(AssetInputPreviewIcon),
+    Title: forwardRef<HTMLSpanElement, AssetInputTitleProps>(AssetInputTitle),
+    Metadata: forwardRef<HTMLDivElement, AssetInputMetadataProps>(AssetInputMetadata),
+    MetadataItem: forwardRef<HTMLSpanElement, AssetInputMetadataItemProps>(AssetInputMetadataItem),
+    PreviewLoading: forwardRef<HTMLDivElement, AssetInputPreviewLoadingProps>(AssetInputPreviewLoading),
 };
