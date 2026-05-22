@@ -13,6 +13,14 @@ export const AssetInputPreviewImage = (
     { src, alt = '' }: AssetInputPreviewImageProps,
     ref: ForwardedRef<HTMLImageElement>,
 ) => {
-    return <img ref={ref} src={src} alt={alt} className={styles.previewImage} />;
+    return (
+        <img
+            ref={ref}
+            src={src}
+            alt={alt}
+            className={styles.previewImage}
+            data-test-id="fondue-asset-input-preview-slot"
+        />
+    );
 };
 AssetInputPreviewImage.displayName = 'AssetInput.PreviewImage';

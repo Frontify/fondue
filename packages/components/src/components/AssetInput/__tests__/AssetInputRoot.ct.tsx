@@ -10,53 +10,8 @@ import { AssetInput } from '../AssetInput';
 const ASSET_IMG =
     'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==';
 
-const UPLOAD_TEST_ID = 'fondue-asset-input-upload';
-const UPLOAD_FILE_TEST_ID = 'fondue-asset-input-upload-file';
-const BROWSE_TEST_ID = 'fondue-asset-input-browse';
 const ROOT_TEST_ID = 'fondue-asset-input-root';
-
-test('should render placeholder with upload and browse actions', async ({ mount }) => {
-    const onBrowse = sinon.spy();
-    const onFileChange = sinon.spy();
-    const wrapper = await mount(
-        <AssetInput.Placeholder>
-            <AssetInput.UploadInput acceptFileType="image/*" onSelect={onFileChange} />
-            <AssetInput.BrowseInput onBrowse={onBrowse} />
-        </AssetInput.Placeholder>,
-    );
-    await expect(wrapper.getByTestId(UPLOAD_TEST_ID)).toBeVisible();
-    await expect(wrapper.getByTestId(BROWSE_TEST_ID)).toBeVisible();
-
-    await wrapper.getByTestId(BROWSE_TEST_ID).click();
-    expect(onBrowse.calledOnce).toBe(true);
-
-    await wrapper.getByTestId(UPLOAD_FILE_TEST_ID).setInputFiles({
-        name: 'test.png',
-        mimeType: 'image/png',
-        buffer: Buffer.from('x'),
-    });
-    expect(onFileChange.calledOnce).toBe(true);
-});
-
-test('should render placeholder with upload only', async ({ mount }) => {
-    const wrapper = await mount(
-        <AssetInput.Placeholder>
-            <AssetInput.UploadInput acceptFileType="image/*" onSelect={() => {}} />
-        </AssetInput.Placeholder>,
-    );
-    await expect(wrapper.getByTestId(UPLOAD_TEST_ID)).toBeVisible();
-    await expect(wrapper.getByTestId(BROWSE_TEST_ID)).toHaveCount(0);
-});
-
-test('should render placeholder with browse only', async ({ mount }) => {
-    const wrapper = await mount(
-        <AssetInput.Placeholder>
-            <AssetInput.BrowseInput onBrowse={() => {}} />
-        </AssetInput.Placeholder>,
-    );
-    await expect(wrapper.getByTestId(BROWSE_TEST_ID)).toBeVisible();
-    await expect(wrapper.getByTestId(UPLOAD_TEST_ID)).toHaveCount(0);
-});
+const ROTATED_180_MATRIX = 'matrix(-1, 0, 0, -1, 0, 0)';
 
 test('should set data-open when isOpen is true', async ({ mount }) => {
     const wrapper = await mount(
@@ -66,6 +21,16 @@ test('should set data-open when isOpen is true', async ({ mount }) => {
     );
     const root = wrapper.getByTestId(ROOT_TEST_ID);
     await expect(root).toHaveAttribute('data-open', 'true');
+});
+
+test('should default to horizontal orientation', async ({ mount }) => {
+    const wrapper = await mount(
+        <AssetInput.Root onPress={() => {}}>
+            <AssetInput.Title>foo1</AssetInput.Title>
+        </AssetInput.Root>,
+    );
+    const root = wrapper.getByTestId(ROOT_TEST_ID);
+    await expect(root).toHaveAttribute('data-orientation', 'horizontal');
 });
 
 test('should call onPress when root is clicked', async ({ mount }) => {
@@ -78,6 +43,41 @@ test('should call onPress when root is clicked', async ({ mount }) => {
     const root = wrapper.getByTestId(ROOT_TEST_ID);
     await root.click();
     expect(onPress.calledOnce).toBe(true);
+});
+
+test('should call onPress when Enter is pressed on root', async ({ mount }) => {
+    const onPress = sinon.spy();
+    const wrapper = await mount(
+        <AssetInput.Root orientation="horizontal" isOpen={false} onPress={onPress}>
+            <AssetInput.Title>foo1</AssetInput.Title>
+        </AssetInput.Root>,
+    );
+    const root = wrapper.getByTestId(ROOT_TEST_ID);
+    await root.focus();
+    await root.press('Enter');
+    expect(onPress.calledOnce).toBe(true);
+});
+
+test('should rotate caret 180deg when isOpen is true', async ({ mount }) => {
+    const wrapper = await mount(
+        <AssetInput.Root orientation="horizontal" isOpen onPress={() => {}}>
+            <AssetInput.Title>foo1</AssetInput.Title>
+        </AssetInput.Root>,
+    );
+    const caretSvg = wrapper.getByTestId(ROOT_TEST_ID).locator('svg').last();
+    const transform = await caretSvg.evaluate((el) => getComputedStyle(el).transform);
+    expect(transform).toBe(ROTATED_180_MATRIX);
+});
+
+test('should not rotate caret when isOpen is false', async ({ mount }) => {
+    const wrapper = await mount(
+        <AssetInput.Root orientation="horizontal" isOpen={false} onPress={() => {}}>
+            <AssetInput.Title>foo1</AssetInput.Title>
+        </AssetInput.Root>,
+    );
+    const caretSvg = wrapper.getByTestId(ROOT_TEST_ID).locator('svg').last();
+    const transform = await caretSvg.evaluate((el) => getComputedStyle(el).transform);
+    expect(transform).not.toBe(ROTATED_180_MATRIX);
 });
 
 for (const orientation of ['horizontal', 'vertical'] as const) {

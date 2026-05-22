@@ -151,8 +151,8 @@
 
     &:has(> :nth-child(2)) {
         display: grid;
-        grid-template-columns: sizeToken.get(11) sizeToken.get(11);
-        grid-template-rows: sizeToken.get(11) sizeToken.get(11);
+        grid-template-columns: sizeToken.get(7) sizeToken.get(7);
+        grid-template-rows: sizeToken.get(7) sizeToken.get(7);
         gap: sizeToken.get(0.5);
 
         .previewImage {

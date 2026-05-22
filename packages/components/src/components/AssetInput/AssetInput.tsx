@@ -9,7 +9,7 @@ import { AssetInputPlaceholder, type AssetInputPlaceholderProps } from './AssetI
 import { AssetInputPreview, type AssetInputPreviewProps } from './AssetInputPreview';
 import { AssetInputPreviewIcon, type AssetInputPreviewIconProps } from './AssetInputPreviewIcon';
 import { AssetInputPreviewImage, type AssetInputPreviewImageProps } from './AssetInputPreviewImage';
-import { AssetInputPreviewLoading, type AssetInputPreviewLoadingProps } from './AssetInputPreviewLoading';
+import { AssetInputPreviewLoading } from './AssetInputPreviewLoading';
 import { AssetInputRoot, type AssetInputRootProps } from './AssetInputRoot';
 import { AssetInputTitle, type AssetInputTitleProps } from './AssetInputTitle';
 import { AssetInputUploadInput, type AssetInputUploadInputProps } from './AssetInputUploadInput';
@@ -27,5 +27,5 @@ export const AssetInput = {
     Title: forwardRef<HTMLSpanElement, AssetInputTitleProps>(AssetInputTitle),
     Metadata: forwardRef<HTMLDivElement, AssetInputMetadataProps>(AssetInputMetadata),
     MetadataItem: forwardRef<HTMLSpanElement, AssetInputMetadataItemProps>(AssetInputMetadataItem),
-    PreviewLoading: forwardRef<HTMLDivElement, AssetInputPreviewLoadingProps>(AssetInputPreviewLoading),
+    PreviewLoading: forwardRef<HTMLDivElement, {}>(AssetInputPreviewLoading),
 };

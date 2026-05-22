@@ -10,7 +10,7 @@ export type AssetInputPreviewIconProps = {
 
 export const AssetInputPreviewIcon = ({ children }: AssetInputPreviewIconProps, ref: ForwardedRef<HTMLDivElement>) => {
     return (
-        <div ref={ref} className={styles.previewIcon}>
+        <div ref={ref} className={styles.previewIcon} data-test-id="fondue-asset-input-preview-slot">
             {children}
         </div>
     );
