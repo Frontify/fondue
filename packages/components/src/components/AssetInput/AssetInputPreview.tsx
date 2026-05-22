@@ -8,6 +8,7 @@ import { type AssetInputPreviewLoadingProps } from './AssetInputPreviewLoading';
 import styles from './styles/asset-input.module.scss';
 
 const MAX_PREVIEW_PARTS = 4;
+const PREVIEW_SLOT_IDS = ['preview-slot-0', 'preview-slot-1', 'preview-slot-2', 'preview-slot-3'] as const;
 
 type AssetInputPreviewPart = ReactElement<
     AssetInputPreviewImageProps | AssetInputPreviewIconProps | AssetInputPreviewLoadingProps
@@ -19,14 +20,14 @@ export type AssetInputPreviewProps = {
 
 export const AssetInputPreview = ({ children }: AssetInputPreviewProps, ref: ForwardedRef<HTMLDivElement>) => {
     const parts = Children.toArray(children).slice(0, MAX_PREVIEW_PARTS);
-    const emptySlotCount = parts.length > 1 ? MAX_PREVIEW_PARTS - parts.length : 0;
 
     return (
         <div ref={ref} className={styles.preview}>
             {parts}
-            {Array.from({ length: emptySlotCount }, (_, index) => (
-                <div className={styles.previewSlot} key={`empty-${index}`} />
-            ))}
+            {parts.length > 1 &&
+                PREVIEW_SLOT_IDS.slice(parts.length, MAX_PREVIEW_PARTS).map((slotId) => (
+                    <div className={styles.previewSlot} key={slotId} />
+                ))}
         </div>
     );
 };
