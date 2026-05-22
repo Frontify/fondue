@@ -8,10 +8,7 @@ export type AssetInputPreviewIconProps = {
     children: ReactNode;
 };
 
-export const AssetInputPreviewIcon = (
-    { children }: AssetInputPreviewIconProps,
-    ref: ForwardedRef<HTMLDivElement>,
-) => {
+export const AssetInputPreviewIcon = ({ children }: AssetInputPreviewIconProps, ref: ForwardedRef<HTMLDivElement>) => {
     return (
         <div ref={ref} className={styles.previewIcon}>
             {children}

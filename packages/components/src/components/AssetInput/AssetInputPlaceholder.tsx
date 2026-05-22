@@ -14,10 +14,7 @@ export type AssetInputPlaceholderProps = {
     children: AssetInputAction | [AssetInputAction, AssetInputAction];
 };
 
-export const AssetInputPlaceholder = (
-    { children }: AssetInputPlaceholderProps,
-    ref: ForwardedRef<HTMLDivElement>,
-) => {
+export const AssetInputPlaceholder = ({ children }: AssetInputPlaceholderProps, ref: ForwardedRef<HTMLDivElement>) => {
     return (
         <div ref={ref} className={styles.placeholder}>
             <Flex gap={2} height="100%" p={3}>

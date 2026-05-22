@@ -8,6 +8,7 @@ import styles from './styles/asset-input.module.scss';
 export type AssetInputOrientation = 'horizontal' | 'vertical';
 
 export type AssetInputRootProps = {
+    'data-test-id'?: string;
     children: ReactNode;
     orientation?: AssetInputOrientation;
     isOpen?: boolean;
@@ -15,7 +16,14 @@ export type AssetInputRootProps = {
 };
 
 export const AssetInputRoot = (
-    { children, orientation = 'horizontal', isOpen = false, onPress, ...props }: AssetInputRootProps,
+    {
+        'data-test-id': dataTestId = 'fondue-asset-input-root',
+        children,
+        orientation = 'horizontal',
+        isOpen = false,
+        onPress,
+        ...props
+    }: AssetInputRootProps,
     ref: ForwardedRef<HTMLButtonElement>,
 ) => {
     return (
@@ -24,6 +32,7 @@ export const AssetInputRoot = (
             type="button"
             data-open={isOpen}
             data-orientation={orientation}
+            data-test-id={dataTestId}
             className={styles.root}
             onClick={onPress}
             {...props}

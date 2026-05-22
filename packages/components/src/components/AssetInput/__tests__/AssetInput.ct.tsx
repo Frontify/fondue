@@ -10,6 +10,11 @@ import { AssetInput } from '../AssetInput';
 const ASSET_IMG =
     'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==';
 
+const UPLOAD_TEST_ID = 'fondue-asset-input-upload';
+const UPLOAD_FILE_TEST_ID = 'fondue-asset-input-upload-file';
+const BROWSE_TEST_ID = 'fondue-asset-input-browse';
+const ROOT_TEST_ID = 'fondue-asset-input-root';
+
 test('should render placeholder with upload and browse actions', async ({ mount }) => {
     const onBrowse = sinon.spy();
     const onFileChange = sinon.spy();
@@ -19,13 +24,13 @@ test('should render placeholder with upload and browse actions', async ({ mount 
             <AssetInput.BrowseInput onBrowse={onBrowse} />
         </AssetInput.Placeholder>,
     );
-    await expect(wrapper.getByRole('button', { name: /Upload/i })).toBeVisible();
-    await expect(wrapper.getByRole('button', { name: /Browse/i })).toBeVisible();
+    await expect(wrapper.getByTestId(UPLOAD_TEST_ID)).toBeVisible();
+    await expect(wrapper.getByTestId(BROWSE_TEST_ID)).toBeVisible();
 
-    await wrapper.getByRole('button', { name: /Browse/i }).click();
+    await wrapper.getByTestId(BROWSE_TEST_ID).click();
     expect(onBrowse.calledOnce).toBe(true);
 
-    await wrapper.locator('input[type="file"]').setInputFiles({
+    await wrapper.getByTestId(UPLOAD_FILE_TEST_ID).setInputFiles({
         name: 'test.png',
         mimeType: 'image/png',
         buffer: Buffer.from('x'),
@@ -39,8 +44,8 @@ test('should render placeholder with upload only', async ({ mount }) => {
             <AssetInput.UploadInput acceptFileType="image/*" onSelect={() => {}} />
         </AssetInput.Placeholder>,
     );
-    await expect(wrapper.getByRole('button', { name: /Upload/i })).toBeVisible();
-    await expect(wrapper.getByRole('button', { name: /Browse/i })).toHaveCount(0);
+    await expect(wrapper.getByTestId(UPLOAD_TEST_ID)).toBeVisible();
+    await expect(wrapper.getByTestId(BROWSE_TEST_ID)).toHaveCount(0);
 });
 
 test('should render placeholder with browse only', async ({ mount }) => {
@@ -49,8 +54,8 @@ test('should render placeholder with browse only', async ({ mount }) => {
             <AssetInput.BrowseInput onBrowse={() => {}} />
         </AssetInput.Placeholder>,
     );
-    await expect(wrapper.getByRole('button', { name: /Browse/i })).toBeVisible();
-    await expect(wrapper.getByRole('button', { name: /Upload/i })).toHaveCount(0);
+    await expect(wrapper.getByTestId(BROWSE_TEST_ID)).toBeVisible();
+    await expect(wrapper.getByTestId(UPLOAD_TEST_ID)).toHaveCount(0);
 });
 
 test('should set data-open when isOpen is true', async ({ mount }) => {
@@ -59,7 +64,7 @@ test('should set data-open when isOpen is true', async ({ mount }) => {
             <AssetInput.Title>foo1</AssetInput.Title>
         </AssetInput.Root>,
     );
-    const root = wrapper.getByRole('button');
+    const root = wrapper.getByTestId(ROOT_TEST_ID);
     await expect(root).toHaveAttribute('data-open', 'true');
 });
 
@@ -70,7 +75,7 @@ test('should call onPress when root is clicked', async ({ mount }) => {
             <AssetInput.Title>foo1</AssetInput.Title>
         </AssetInput.Root>,
     );
-    const root = wrapper.getByRole('button');
+    const root = wrapper.getByTestId(ROOT_TEST_ID);
     await root.click();
     expect(onPress.calledOnce).toBe(true);
 });
@@ -97,7 +102,7 @@ for (const orientation of ['horizontal', 'vertical'] as const) {
                 </AssetInput.Metadata>
             </AssetInput.Root>,
         );
-        const root = wrapper.getByRole('button', { name: /foo1/ });
+        const root = wrapper.getByTestId(ROOT_TEST_ID);
         await expect(root).toBeVisible();
         await expect(root).toHaveAttribute('data-orientation', orientation);
         await expect(root).toHaveAttribute('data-open', 'false');
@@ -125,7 +130,7 @@ for (const orientation of ['horizontal', 'vertical'] as const) {
                 </AssetInput.Metadata>
             </AssetInput.Root>,
         );
-        const root = wrapper.getByRole('button', { name: /foo1/ });
+        const root = wrapper.getByTestId(ROOT_TEST_ID);
         await expect(root).toBeVisible();
         await expect(root).toHaveAttribute('data-orientation', orientation);
         await expect(root).toContainText('Uploaded');
@@ -156,7 +161,7 @@ for (const orientation of ['horizontal', 'vertical'] as const) {
                 </AssetInput.Metadata>
             </AssetInput.Root>,
         );
-        const root = wrapper.getByRole('button', { name: /foo1/ });
+        const root = wrapper.getByTestId(ROOT_TEST_ID);
         await expect(root).toBeVisible();
         await expect(root).toHaveAttribute('data-orientation', orientation);
         await expect(root.getByTestId('fondue-loading-circle-content')).toBeVisible();
@@ -181,7 +186,7 @@ for (const orientation of ['horizontal', 'vertical'] as const) {
                 </AssetInput.Metadata>
             </AssetInput.Root>,
         );
-        const root = wrapper.getByRole('button', { name: /3 assets/ });
+        const root = wrapper.getByTestId(ROOT_TEST_ID);
         await expect(root).toBeVisible();
         await expect(root).toHaveAttribute('data-orientation', orientation);
         await expect(root).toContainText('2 locations');

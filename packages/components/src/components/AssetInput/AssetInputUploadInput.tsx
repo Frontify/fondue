@@ -8,13 +8,19 @@ import { useTranslation } from '#/hooks/useTranslation';
 import { Button } from '../Button/Button';
 
 export type AssetInputUploadInputProps = {
+    'data-test-id'?: string;
     acceptFileType?: string;
     allowMultiple?: boolean;
     onSelect: (event: ChangeEvent<HTMLInputElement>) => void;
 };
 
 export const AssetInputUploadInput = (
-    { acceptFileType, allowMultiple = false, onSelect }: AssetInputUploadInputProps,
+    {
+        'data-test-id': dataTestId = 'fondue-asset-input-upload',
+        acceptFileType,
+        allowMultiple = false,
+        onSelect,
+    }: AssetInputUploadInputProps,
     ref: ForwardedRef<HTMLButtonElement>,
 ) => {
     const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -34,6 +40,7 @@ export const AssetInputUploadInput = (
                 emphasis="weak"
                 hugWidth={false}
                 data-asset-input-action="upload"
+                data-test-id={dataTestId}
             >
                 <IconArrowCircleUp size={20} />
                 {t('AssetInput_upload')}
@@ -46,6 +53,7 @@ export const AssetInputUploadInput = (
                 accept={acceptFileType}
                 multiple={allowMultiple}
                 onChange={onSelect}
+                data-test-id={`${dataTestId}-file`}
             />
         </>
     );
