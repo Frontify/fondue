@@ -6,6 +6,9 @@ import { type Manifest, type TokenTree } from './manifest/types';
 
 export type { Manifest } from './manifest/types';
 
+const PACKAGE_NAME = '@frontify/fondue/tokens';
+const SCHEMA_VERSION = '1.0.0';
+
 export const generateManifest = (availableTokens: Record<string, TokenTree>): Manifest => {
     const { utilities: utilityTree, ...tokenCategories } = availableTokens;
 
@@ -15,5 +18,11 @@ export const generateManifest = (availableTokens: Record<string, TokenTree>): Ma
 
     const utilities = utilityTree ? collectUtilities(utilityTree, ['utilities']) : [];
 
-    return { tokens, utilities };
+    return {
+        schemaVersion: SCHEMA_VERSION,
+        packageName: PACKAGE_NAME,
+        generatedAt: new Date().toISOString(),
+        tokens,
+        utilities,
+    };
 };
