@@ -1,0 +1,17 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+.stack {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.bar {
+    overflow: hidden;
+    border-radius: 6px;
+    width: 100%;
+    position: relative;
+    display: flex;
+    height: 0.75rem;
+    background-color: var(--color-container-secondary-hover);
+}

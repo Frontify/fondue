@@ -5,6 +5,8 @@ import { useCallback, useContext, useState } from 'react';
 
 import { type MarkLineProps } from '@components/LineChart';
 
+import styles from './MarkLine.module.scss';
+
 type RectSize = {
     width: number;
     height: number;
@@ -64,7 +66,7 @@ export const MarkLine = ({ value, name }: MarkLineProps) => {
                 ref={textRef}
                 strokeWidth={0}
                 fill={'var(--color-secondary-default)'}
-                className="tw-text-x-small tw-font-bold tw-font-primary"
+                className={styles.label}
             >
                 {name}
             </text>

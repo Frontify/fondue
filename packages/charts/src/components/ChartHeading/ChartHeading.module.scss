@@ -1,0 +1,28 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+.root {
+    margin-block: 0.5rem 1.25rem;
+}
+
+.titleRow {
+    display: flex;
+    align-items: center;
+}
+
+.title {
+    margin-right: 0.375rem;
+    font-family: var(--typography-font-family-primary);
+    font-size: var(--typography-font-size-large);
+    font-weight: var(--typography-font-weight-medium);
+    color: var(--color-primary-default);
+}
+
+.descriptionWrapper {
+    margin-top: 0.875rem;
+}
+
+.description {
+    font-family: var(--typography-font-family-primary);
+    font-size: var(--typography-font-size-small);
+    color: var(--color-secondary-default);
+}

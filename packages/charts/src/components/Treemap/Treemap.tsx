@@ -16,6 +16,8 @@ import {
 } from '@components/Treemap/types';
 import { Legend } from '@components/common/components';
 
+import styles from './Treemap.module.scss';
+
 export const Treemap = ({
     data,
     childSumLabel,
@@ -48,7 +50,7 @@ export const Treemap = ({
     const legendNames = legendItems?.map((item) => item.label);
 
     return (
-        <div className="tw-w-full tw-h-full tw-flex tw-flex-col tw-gap-6 tw-select-none tw-touch-none">
+        <div className={styles.root}>
             {legendNames && legendNames.length > 0 && (
                 <Legend
                     names={legendNames}
@@ -56,7 +58,7 @@ export const Treemap = ({
                     colorAccessor={(index: number) => colorAccessor(legendItems?.[index]?.color)}
                 />
             )}
-            <div ref={wrapperRef} className="tw-w-full tw-h-full">
+            <div ref={wrapperRef} className={styles.chartWrapper}>
                 <svg width={width} height={height} ref={containerRef}>
                     <VisxTreemap<HierarchyNode<TreemapDataPoint | TreemapDataPointGroup>>
                         top={0}

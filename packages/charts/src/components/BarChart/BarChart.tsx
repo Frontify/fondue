@@ -13,6 +13,7 @@ import { type ValueFormatter } from '@components/common/types';
 import { BASE_COLORS } from '@theme/consts';
 import { createTheme } from '@theme/createTheme';
 
+import styles from './BarChart.module.scss';
 import { Axes, Bars } from './components';
 import { type BarChartProps } from './types';
 
@@ -52,7 +53,7 @@ export const BarChart = <DataPointDetails extends Record<string, any> | void = v
     });
 
     return (
-        <div className="tw-flex tw-flex-col tw-gap-6">
+        <div className={styles.root}>
             {!hideLegend && legendPosition === 'top' && (
                 <Legend style="rectangle" names={series.map((series) => series.name)} />
             )}

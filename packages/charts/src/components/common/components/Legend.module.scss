@@ -1,0 +1,48 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+.root {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    align-self: flex-start;
+}
+
+.item {
+    display: flex;
+}
+
+.label {
+    font-family: var(--typography-font-family-primary);
+    font-size: var(--typography-font-size-small);
+    color: var(--color-primary-default);
+}
+
+.colorBox {
+    align-self: center;
+    margin-right: 0.5rem;
+    display: inline-block;
+}
+
+.shape-line {
+    width: 3rem;
+    height: 2px;
+    border-radius: 0;
+}
+
+.shape-rectangle {
+    width: 3rem;
+    height: 0.75rem;
+    border-radius: 0;
+}
+
+.shape-circle {
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 9999px;
+}
+
+.shape-square {
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 1px;
+}

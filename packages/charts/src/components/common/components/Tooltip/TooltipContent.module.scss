@@ -1,0 +1,71 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+.root {
+    background-color: var(--color-primary-default);
+    color: var(--color-primary-on-primary);
+    padding: 0.75rem;
+    border-radius: var(--border-radius-medium);
+    border: 1px solid var(--color-primary-default);
+    max-width: 260px;
+    word-break: break-all;
+}
+
+.imageWrapper {
+    margin: -0.25rem;
+}
+
+.image {
+    height: 7rem;
+    object-fit: cover;
+    margin-bottom: 1.25rem;
+    width: 100%;
+}
+
+.body {
+    padding-bottom: 0;
+
+    &.withTitle {
+        padding-bottom: 0.75rem;
+    }
+}
+
+.title {
+    font-size: var(--typography-font-size-small);
+    color: var(--color-primary-on-primary);
+    font-weight: var(--typography-font-weight-bold);
+}
+
+.type {
+    font-size: var(--typography-font-size-small);
+    color: var(--color-primary-on-primary);
+    padding-bottom: 0.5rem;
+}
+
+.description {
+    color: var(--color-primary-on-primary);
+    font-size: var(--typography-font-size-x-small);
+}
+
+.descriptionLine {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.item {
+    font-size: var(--typography-font-size-small);
+    color: var(--color-primary-on-primary);
+}
+
+.itemDot {
+    display: inline-block;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    margin-right: 0.25rem;
+}
+
+.itemValue {
+    font-size: var(--typography-font-size-small);
+    font-weight: var(--typography-font-weight-bold);
+}

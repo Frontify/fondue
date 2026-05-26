@@ -9,6 +9,7 @@ import { useResponsiveChart } from '@components/PieChart/hooks/useResponsiveChar
 import { Legend } from '@components/common/components';
 import { colorAccessorByIndex } from '@components/common/helpers';
 
+import styles from './PieChart.module.scss';
 import { Arc } from './components';
 import { type Padding, type PieChartDatum, type PieChartProps } from './types';
 
@@ -31,10 +32,7 @@ export const PieChart = ({
     const sortedPieData = shouldSortData ? pieData.sort((a, b) => b.value - a.value) : pieData;
 
     return (
-        <div
-            ref={containerRef}
-            className="tw-w-full tw-h-full tw-flex tw-flex-col tw-items-center tw-gap-8 md:tw-gap-6"
-        >
+        <div ref={containerRef} className={styles.root}>
             <svg width={width} height={height}>
                 <Group top={center[1]} left={center[0]}>
                     <Pie
