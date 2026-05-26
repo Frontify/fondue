@@ -20,6 +20,7 @@ export default defineConfig(
             'playwright/',
             'node_modules/',
             'debug-storybook.log',
+            'manifests/',
             '**/*.md',
             '**/*.mdx',
             '**/*.mdx/**.ts',
