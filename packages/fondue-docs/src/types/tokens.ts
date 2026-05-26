@@ -6,36 +6,36 @@ export type TokenValueType = 'color' | 'float' | 'shadow' | 'string';
 /** A single design token. Underlying raw data — what `TokenNode.toJSON()` returns. */
 export interface Token {
     /** Logical token id, e.g. "color-charts-primary-default". */
-    id: string;
-    category: string;
-    type: TokenValueType;
+    readonly id: string;
+    readonly category: string;
+    readonly type: TokenValueType;
     /** Hierarchical path matching the source token tree, e.g. ["colors","charts","primary","default"]. */
-    keyPath: readonly string[];
+    readonly keyPath: readonly string[];
     /** Raw token value (often a `var(--token)` reference or a literal). */
-    value: string;
+    readonly value: string;
     /** Inline form of the css variable reference, e.g. "var(--color-charts-primary-default)". */
-    cssVariable: string;
+    readonly cssVariable: string;
     /** Tailwind utility class that produces this token, when applicable. */
-    tailwindClass: string;
+    readonly tailwindClass: string;
     /** Whether the token participates in theme switching. */
-    themeable: boolean;
+    readonly themeable: boolean;
 }
 
 /** A composed utility (e.g. a typography utility class) made up of multiple token properties. */
 export interface TokenUtility {
-    id: string;
-    keyPath: readonly string[];
-    properties: readonly TokenUtilityProperty[];
-    tailwindClass: string;
-    themeable: boolean;
+    readonly id: string;
+    readonly keyPath: readonly string[];
+    readonly properties: readonly TokenUtilityProperty[];
+    readonly tailwindClass: string;
+    readonly themeable: boolean;
 }
 
 /** A single property inside a token utility. */
 export interface TokenUtilityProperty {
-    id: string;
-    type: TokenValueType;
-    value: string;
-    cssVariable: string;
+    readonly id: string;
+    readonly type: TokenValueType;
+    readonly value: string;
+    readonly cssVariable: string;
 }
 
 /** Filter options for `tokens.where(...)`. All clauses are AND-combined. */

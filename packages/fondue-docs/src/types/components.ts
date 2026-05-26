@@ -2,45 +2,45 @@
 
 /** A documented prop on a Fondue component. */
 export interface ComponentProp {
-    name: string;
-    type: string;
-    required: boolean;
-    defaultValue: string | null;
-    description: string;
-    deprecated: boolean;
-    deprecationMessage: string;
+    readonly name: string;
+    readonly type: string;
+    readonly required: boolean;
+    readonly defaultValue: string | null;
+    readonly description: string;
+    readonly deprecated: boolean;
+    readonly deprecationMessage: string;
 }
 
 /** A sub-component (e.g. `Dialog.Header`) and its prop surface. */
 export interface ComponentSubComponent {
-    name: string;
-    props: readonly ComponentProp[];
+    readonly name: string;
+    readonly props: readonly ComponentProp[];
 }
 
 /** A code example for a component, sourced from its stories. */
 export interface ComponentExample {
-    name: string;
-    description: string;
-    code: string;
+    readonly name: string;
+    readonly description: string;
+    readonly code: string;
     /** Whether this example represents the canonical/recommended usage. */
-    isCanonical: boolean;
+    readonly isCanonical: boolean;
 }
 
 /** Underlying raw data for a component — what `ComponentNode.toJSON()` returns. */
 export interface ComponentDetails {
-    name: string;
-    description: string;
-    status: string;
-    category: string;
-    tags: readonly string[];
-    subComponentNames: readonly string[];
-    relatedComponents: readonly string[];
-    importStatement: string;
-    instructions: string;
-    props: readonly ComponentProp[];
-    subComponents: readonly ComponentSubComponent[];
-    examples: readonly ComponentExample[];
-    typeDefinitions: Readonly<Record<string, string>>;
+    readonly name: string;
+    readonly description: string;
+    readonly status: string;
+    readonly category: string;
+    readonly tags: readonly string[];
+    readonly subComponentNames: readonly string[];
+    readonly relatedComponents: readonly string[];
+    readonly importStatement: string;
+    readonly instructions: string;
+    readonly props: readonly ComponentProp[];
+    readonly subComponents: readonly ComponentSubComponent[];
+    readonly examples: readonly ComponentExample[];
+    readonly typeDefinitions: Readonly<Record<string, string>>;
 }
 
 /** Filter options for `components.where(...)`. All clauses are AND-combined. */
