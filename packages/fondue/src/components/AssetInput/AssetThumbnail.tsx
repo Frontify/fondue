@@ -26,6 +26,9 @@ const getIconSizeClassNames = (size: AssetInputSize, isMultiAsset: boolean) => {
     }
 };
 
+/**
+ * @deprecated Use `AssetInput` from `@frontify/fondue/components` instead.
+ */
 export const AssetThumbnail = ({
     asset,
     size,
