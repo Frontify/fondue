@@ -12,6 +12,9 @@ import { type MultiAssetPreviewProps } from './MultiAssetPreview';
 const isImageAsset = (asset: AssetType): asset is ImageAsset & LibrarySource =>
     asset.type === 'image' || asset.type === 'logo';
 
+/**
+ * @deprecated Use `AssetInput` from `@frontify/fondue/components` instead.
+ */
 export const SelectedAssetsThumbnail = ({ assets }: Pick<MultiAssetPreviewProps, 'assets'>): ReactElement => {
     const assetslength = assets.length;
     const previewAssets = assets.slice(0, 4);
