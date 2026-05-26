@@ -5,6 +5,8 @@ import { pt as dateLocale } from 'date-fns/locale';
 import { type LocaleConfig } from './types';
 
 const translations = {
+    AssetInput_browse: 'Procurar',
+    AssetInput_upload: 'Carregar',
     Badge_dismiss: 'Fechar ${label}',
     Card_deselect: 'Desselecionar',
     Card_select: 'Selecionar',
