@@ -4,6 +4,9 @@ import { IconIcon } from '@frontify/fondue-icons';
 
 import { type AssetType } from './AssetInput';
 
+/**
+ * @deprecated Use `AssetInput` from `@frontify/fondue/components` instead.
+ */
 export const EXAMPLE_IMAGES: AssetType[] = [
     {
         name: 'foo1',
@@ -51,6 +54,9 @@ export const EXAMPLE_IMAGES: AssetType[] = [
     },
 ];
 
+/**
+ * @deprecated Use `AssetInput` from `@frontify/fondue/components` instead.
+ */
 export const MIXED_ASSETS: AssetType[] = [
     ...EXAMPLE_IMAGES.slice(0, 2),
     {

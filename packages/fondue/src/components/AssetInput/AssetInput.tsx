@@ -17,6 +17,9 @@ type BaseAsset = {
     name: string;
 };
 
+/**
+ * @deprecated Use `AssetInput` from `@frontify/fondue/components` instead.
+ */
 export type ImageAsset = {
     type: 'image' | 'logo';
     name: string;
@@ -45,14 +48,27 @@ type IconAsset = BaseAsset & {
     size?: undefined;
 };
 
+/**
+ * @deprecated Use `AssetInput` from `@frontify/fondue/components` instead.
+ */
 export type UploadSource = { source: 'upload'; sourceName?: undefined };
+
+/**
+ * @deprecated Use `AssetInput` from `@frontify/fondue/components` instead.
+ */
 export type LibrarySource = { source: 'library'; sourceName: string };
 
+/**
+ * @deprecated Use `AssetInput` from `@frontify/fondue/components` instead.
+ */
 export enum AssetInputSize {
     Small = 'Small',
     Large = 'Large',
 }
 
+/**
+ * @deprecated Use `AssetInput` from `@frontify/fondue/components` instead.
+ */
 export type AssetType =
     | (ImageAsset & UploadSource)
     | (ImageAsset & LibrarySource)
@@ -61,6 +77,9 @@ export type AssetType =
     | (OtherAsset & UploadSource)
     | (OtherAsset & LibrarySource);
 
+/**
+ * @deprecated Use `AssetInput` from `@frontify/fondue/components` instead.
+ */
 export type AssetInputProps = {
     assets?: AssetType[];
     size: AssetInputSize;
@@ -75,6 +94,9 @@ export type AssetInputProps = {
     acceptFileType?: string;
 };
 
+/**
+ * @deprecated Use `AssetInput` from `@frontify/fondue/components` instead.
+ */
 export const AssetInput = ({
     assets = [],
     numberOfLocations = 1,
