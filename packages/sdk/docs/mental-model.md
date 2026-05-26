@@ -1,22 +1,25 @@
 # Mental model
 
-The API is a small **graph** with two top-level entry points:
+The API is a small **graph** with three top-level entry points:
 
 - `components` — the components domain (includes icons)
 - `tokens` — the tokens domain (plus a `tokens.utilities` sub-domain)
+- `guides` — the prose-guide corpus (markdown bodies); a flat leaf domain
+  with no graph edges
 
-Both are **queryable**. They contain **nodes**. Some methods give you back
-a single node or a queryable facet; others give you back a plain array.
-Knowing which is which is most of what you need to learn.
+All three are **queryable**. They contain **nodes** (or, in `guides`'
+case, plain `Guide` records). Some methods give you back a single node or
+a queryable facet; others give you back a plain array. Knowing which is
+which is most of what you need to learn.
 
 ## The three shapes you'll meet
 
 ### 1. Domains and facets (queryable)
 
-A **domain** is one of `components`, `tokens`, `tokens.utilities`. A **facet**
-is a single named grouping inside a domain — for example
-`components.category('input')`, `components.tag('cta')`,
-`tokens.type('color')`.
+A **domain** is one of `components`, `tokens`, `tokens.utilities`, or
+`guides`. A **facet** is a single named grouping inside a domain — for
+example `components.category('input')`, `components.tag('cta')`,
+`tokens.type('color')`. (`guides` is a leaf domain — no facets.)
 
 Both expose the same query surface:
 
@@ -150,11 +153,27 @@ components.category('icon').size; // 381
 components.get('IconAdobeCreativeCloud'); // the React component
 ```
 
+## Guides as a leaf domain
+
+`guides` follows the same query surface as the other domains, but its
+entries (`Guide`) are plain records — no graph methods, no facets, no
+`toJSON()`. Each guide has `id`, `title`, and `content` (raw markdown).
+
+```ts
+guides.list().map((g) => g.title);
+guides.get('getting-started')?.content; // raw markdown body
+guides.where({ text: 'tailwind' });
+```
+
+The prose comes from the same `packages/sdk/guides/*.md` files the
+Storybook docs site renders, so an MCP server or agent reads exactly
+what humans see.
+
 ## Construction & lifetime
 
-The two singletons (`components`, `tokens`) are built once at module load
-from bundled JSON. They are immutable and process-lifetime. No I/O is
-performed; nothing is async.
+The three singletons (`components`, `tokens`, `guides`) are built once at
+module load from bundled JSON. They are immutable and process-lifetime.
+No I/O is performed; nothing is async.
 
 `list()` returns a cached array (O(1)). `get`/`has` are O(1) map lookups.
 `where` is O(N). Facet helpers (`categories`, `tags`, …) re-sort on each

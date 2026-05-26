@@ -47,6 +47,7 @@
         "@frontify/eslint-config-react": "^1.0.16",
         "@frontify/fondue-components": "workspace:*",
         "@frontify/fondue-icons": "workspace:*",
+        "@frontify/fondue-sdk": "workspace:*",
         "@frontify/fondue-tokens": "workspace:*",
         "@tony.ganchev/eslint-plugin-header": "^3.4.4",
         "@types/node": "^24.10.9",

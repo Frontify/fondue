@@ -222,6 +222,53 @@ const siblings = primary?.category().list() ?? [];
 tokens.utilities.where({ keyPathStartsWith: 'utilities.text' }).map((u) => u.tailwindClass);
 ```
 
+## Guides
+
+### "List every guide with title and id"
+
+```ts
+import { guides } from '@frontify/fondue/sdk';
+
+guides.list().map((g) => ({ id: g.id, title: g.title }));
+// → [
+//     { id: 'contributing',    title: 'How to contribute' },
+//     { id: 'getting-started', title: 'Getting started' },
+//     { id: 'upgrading',       title: 'Upgrading to Fondue v13' },
+//   ]
+```
+
+### "Get a guide's raw markdown"
+
+```ts
+const intro = guides.get('getting-started');
+intro?.content; // '# Getting started\n\nWelcome to Fondue, …'
+```
+
+### "Search across all prose"
+
+```ts
+guides.where({ text: 'tailwind' }).map((g) => g.id);
+// → ['getting-started', 'upgrading']
+```
+
+### "Drop the corpus into a system prompt"
+
+```ts
+const systemContext = guides
+    .list()
+    .map((g) => `## ${g.title}\n\n${g.content}`)
+    .join('\n\n');
+```
+
+### "Render a guide with a markdown renderer"
+
+```ts
+import { marked } from 'marked';
+import { guides } from '@frontify/fondue/sdk';
+
+const html = marked.parse(guides.get('contributing')?.content ?? '');
+```
+
 ## Serialization
 
 ### "Dump the whole graph as JSON"
@@ -232,6 +279,7 @@ JSON.stringify(
         components: components.list(),
         tokens: tokens.list(),
         utilities: tokens.utilities.list(),
+        guides: guides.list(),
     },
     null,
     2,

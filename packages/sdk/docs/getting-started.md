@@ -97,6 +97,29 @@ tokens.where({ category: 'colors', themeable: true });
 tokens.utilities.where({ keyPathStartsWith: 'utilities.text' });
 ```
 
+## Guides
+
+The SDK also exposes the **same prose guides the Storybook docs site renders**
+— installation, contribution, upgrade notes — as raw markdown. Agents can
+ingest them with the same `list/get/has/where/size` interface.
+
+```ts
+import { guides } from '@frontify/fondue/sdk';
+
+guides.list().map((g) => g.title);
+// → ['How to contribute', 'Getting started', 'Upgrading to Fondue v13']
+
+const intro = guides.get('getting-started');
+intro?.title; // 'Getting started'
+intro?.content; // raw markdown body, starting with '# Getting started'
+
+guides.where({ text: 'tailwind' }).map((g) => g.id);
+// → ['getting-started', 'upgrading']
+```
+
+Use `Guide.content` to feed an LLM, render with your own markdown renderer,
+or grep across the corpus.
+
 ## Where to go next
 
 - [Mental model](./mental-model.md) — what's a node, what's a facet, what's

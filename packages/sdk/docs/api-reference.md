@@ -6,13 +6,14 @@ method, with edge cases.
 ## Module exports
 
 ```ts
-import { components, tokens } from '@frontify/fondue/sdk';
+import { components, guides, tokens } from '@frontify/fondue/sdk';
 ```
 
-| Symbol       | Kind  | Description               |
-| ------------ | ----- | ------------------------- |
-| `components` | value | The components query API. |
-| `tokens`     | value | The tokens query API.     |
+| Symbol       | Kind  | Description                                          |
+| ------------ | ----- | ---------------------------------------------------- |
+| `components` | value | The components query API.                            |
+| `tokens`     | value | The tokens query API.                                |
+| `guides`     | value | Prose guides bundled with the SDK (markdown bodies). |
 
 All other identifiers exposed from the package are TypeScript **types**
 (see [Types](#types)). The package has no default export.
@@ -32,8 +33,8 @@ All other identifiers exposed from the package are TypeScript **types**
 
 ## Common query surface
 
-`components`, `tokens`, `tokens.utilities`, and every facet node implement
-the same five members:
+`components`, `tokens`, `tokens.utilities`, `guides`, and every facet node
+implement the same five members:
 
 | Member          | Returns                              | Throws |
 | --------------- | ------------------------------------ | ------ |
@@ -133,6 +134,42 @@ interface TokenUtilitiesApi {
 `classes()` returns the distinct `tailwindClass` values across all
 utilities, sorted.
 
+## `guides`
+
+The prose guides bundled with the SDK — installation, contribution,
+upgrade notes — surfaced as queryable markdown. Same source the Storybook
+docs site renders; this is how an MCP server or agent reads them.
+
+```ts
+interface GuidesApi {
+    list(): readonly Guide[];
+    get(id: string): Guide | undefined;
+    has(id: string): boolean;
+    where(filter: GuideFilter): readonly Guide[];
+    readonly size: number;
+}
+```
+
+`Guide` is a **leaf** — no graph methods, just three string fields.
+
+```ts
+interface Guide {
+    /** Slug derived from the source filename, e.g. "getting-started". */
+    readonly id: string;
+    /** Title extracted from the first `# Title` line of the markdown. */
+    readonly title: string;
+    /** Raw markdown body, including the leading `# Title`. */
+    readonly content: string;
+}
+```
+
+Use cases:
+
+- Feed `content` into an LLM as system-prompt context.
+- Pipe through a markdown renderer (`marked`, `markdown-it`, `<Markdown>`
+  from `@storybook/addon-docs/blocks`).
+- Grep across the corpus with `where({ text: 'tailwind' })`.
+
 ## Filters
 
 Filters are plain objects. **All clauses AND-combine.** Array-valued
@@ -188,6 +225,17 @@ interface TokenUtilityFilter {
 ```
 
 Same semantics as `TokenFilter` for the clauses present.
+
+### `GuideFilter`
+
+```ts
+interface GuideFilter {
+    text?: string;
+}
+```
+
+`text` is a case-insensitive substring match against the guide's `id`,
+`title`, and `content`.
 
 ## Nodes
 
@@ -378,10 +426,12 @@ import type {
     TokenNode,
     TokenFacetNode,
     TokenUtilityNode,
+    Guide,
     // Filters
     ComponentFilter,
     TokenFilter,
     TokenUtilityFilter,
+    GuideFilter,
     // Embedded scalars
     ComponentProp,
     ComponentExample,

@@ -1168,6 +1168,9 @@ importers:
       '@frontify/fondue-icons':
         specifier: workspace:*
         version: link:../icons
+      '@frontify/fondue-sdk':
+        specifier: workspace:*
+        version: 'link:'
       '@frontify/fondue-tokens':
         specifier: workspace:*
         version: link:../tokens
@@ -1274,6 +1277,9 @@ importers:
 
   storybook-docs:
     dependencies:
+      '@frontify/fondue-sdk':
+        specifier: workspace:^
+        version: link:../packages/sdk
       react:
         specifier: ^18.3.1
         version: 18.3.1

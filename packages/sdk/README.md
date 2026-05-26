@@ -1,9 +1,9 @@
 # @frontify/fondue-sdk
 
-A Node API for inspecting Frontify Fondue — components, icons, and tokens —
-exposed as a **navigable graph**. Data is baked in at build time, so the
-runtime is synchronous, has zero file I/O, and ships with no peer
-dependencies.
+A Node API for inspecting Frontify Fondue — components, icons, tokens, and
+prose guides — exposed as a **navigable graph**. Data is baked in at build
+time, so the runtime is synchronous, has zero file I/O, and ships with no
+peer dependencies.
 
 Designed for MCP servers, CLI generators, documentation pipelines, AI
 agents, and anything else that needs machine-readable knowledge of the
@@ -27,7 +27,7 @@ components, icons, or tokens.
 ## 30-second tour
 
 ```ts
-import { components, tokens } from '@frontify/fondue/sdk';
+import { components, guides, tokens } from '@frontify/fondue/sdk';
 
 // Look up by id
 const button = components.get('Button');
@@ -48,16 +48,21 @@ tokens.where({ category: 'colors', themeable: true });
 // Icons live in the components graph under category: 'icon'
 components.where({ category: 'icon' }); // all icons as ComponentNodes
 components.get('IconAdobeCreativeCloud'); // { category: 'icon', … }
+
+// Prose guides — the same content the Storybook docs site renders
+guides.list().map((g) => g.title); // ['Getting started', 'How to contribute', 'Upgrading to Fondue v13']
+guides.get('getting-started')?.content; // raw markdown body
 ```
 
 ## What's in the bundle
 
-| Domain          | Notes                                                                 |
-| --------------- | --------------------------------------------------------------------- |
-| Components      | All Fondue library components, with props, sub-components, examples   |
-| Icons           | Surfaced inside the components graph under `category: 'icon'`         |
-| Tokens          | Design tokens with their key path, css variable, tailwind class       |
-| Token utilities | Composed utilities (typography classes etc.) under `tokens.utilities` |
+| Domain          | Notes                                                                       |
+| --------------- | --------------------------------------------------------------------------- |
+| Components      | All Fondue library components, with props, sub-components, examples         |
+| Icons           | Surfaced inside the components graph under `category: 'icon'`               |
+| Tokens          | Design tokens with their key path, css variable, tailwind class             |
+| Token utilities | Composed utilities (typography classes etc.) under `tokens.utilities`       |
+| Guides          | Prose guides as raw markdown — the same source the Storybook docs site uses |
 
 Live counts and a browsable catalog are rendered server-side from this
 package in the Fondue Storybook under
@@ -69,8 +74,9 @@ package in the Fondue Storybook under
 | ------------ | ------------------------------------------------------------- |
 | `components` | Component query API (includes icons under `category: 'icon'`) |
 | `tokens`     | Token query API, with a `tokens.utilities` sub-domain         |
+| `guides`     | Prose guides bundled with the SDK (markdown content)          |
 
-Both domains and all their **facet nodes** (categories, tags, statuses,
+Every domain and all their **facet nodes** (categories, tags, statuses,
 types) implement the same query surface:
 
 | Member          | Returns                              |

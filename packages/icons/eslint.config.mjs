@@ -22,6 +22,7 @@ export default defineConfig(
             '**/*.mdx/**.tsx',
             '**/*.md/**.ts',
             '**/*.md/**.tsx',
+            'manifest.json',
         ],
     },
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
