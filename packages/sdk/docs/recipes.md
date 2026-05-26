@@ -3,7 +3,7 @@
 Copy-paste solutions for common tasks. All snippets assume:
 
 ```ts
-import { components, tokens } from '@frontify/fondue/docs';
+import { components, tokens } from '@frontify/fondue/sdk';
 ```
 
 ## Search

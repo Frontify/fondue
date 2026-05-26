@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 /**
- * Build-time data generation for @frontify/fondue-docs.
+ * Build-time data generation for @frontify/fondue-sdk.
  *
  * Reads the manifests exported by the upstream @frontify/fondue-* packages
  * and emits a single TypeScript module that vite will bundle. Icons are

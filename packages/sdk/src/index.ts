@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 /**
- * @frontify/fondue-docs — Node API for reading Frontify Fondue docs data
- * (components and tokens) as a navigable graph. Icons live in the components
- * graph under `category: 'icon'`.
+ * @frontify/fondue-sdk — machine-readable SDK for Frontify Fondue. Exposes
+ * components, icons, and tokens as a navigable graph. Icons live in the
+ * components graph under `category: 'icon'`.
  *
- *   import { components, tokens } from '@frontify/fondue-docs';
+ *   import { components, tokens } from '@frontify/fondue/sdk';
  *
  *   components.get('Button').category().list();   // all input components
  *   components.where({ category: 'icon' });       // all icons

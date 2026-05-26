@@ -12,7 +12,7 @@ internally.
 ## Hello, Fondue
 
 ```ts
-import { components, tokens } from '@frontify/fondue/docs';
+import { components, tokens } from '@frontify/fondue/sdk';
 
 console.log(`${components.size} components, ${tokens.size} tokens`);
 // → 419 components, 113 tokens

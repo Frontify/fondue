@@ -1,13 +1,13 @@
 {
-    "name": "@frontify/fondue-docs",
+    "name": "@frontify/fondue-sdk",
     "type": "module",
     "version": "0.1.0",
-    "description": "Node API for inspecting Frontify Fondue docs data (components, icons, tokens). Data is baked into the package at build time; designed for MCP servers, CLI tools, and other integrations.",
+    "description": "Machine-readable SDK for Frontify Fondue — components, icons, tokens — exposed as a navigable graph. Designed for MCP servers, CLI tools, AI agents, and other integrations.",
     "homepage": "https://github.com/Frontify/fondue",
     "repository": {
         "type": "git",
         "url": "https://github.com/Frontify/fondue",
-        "directory": "packages/fondue-docs"
+        "directory": "packages/sdk"
     },
     "bugs": {
         "url": "https://github.com/frontify/fondue/issues"
@@ -18,7 +18,7 @@
     "keywords": [
         "frontify",
         "fondue",
-        "docs",
+        "sdk",
         "design-system",
         "mcp",
         "cli"
@@ -26,7 +26,7 @@
     "exports": {
         ".": {
             "types": "./dist/index.d.ts",
-            "import": "./dist/fondue-docs.js"
+            "import": "./dist/fondue-sdk.js"
         }
     },
     "files": [

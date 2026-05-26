@@ -17,7 +17,7 @@ export default defineConfig({
         lib: {
             entry: './src/index.ts',
             formats: ['es'],
-            fileName: () => 'fondue-docs.js',
+            fileName: () => 'fondue-sdk.js',
         },
         rollupOptions: {
             external: (id) => nodeBuiltins.has(id) || id.startsWith('node:'),

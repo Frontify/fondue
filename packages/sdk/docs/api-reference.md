@@ -1,12 +1,12 @@
 # API reference
 
-The formal contract for `@frontify/fondue/docs`. Every export, type, and
+The formal contract for `@frontify/fondue/sdk`. Every export, type, and
 method, with edge cases.
 
 ## Module exports
 
 ```ts
-import { components, tokens } from '@frontify/fondue/docs';
+import { components, tokens } from '@frontify/fondue/sdk';
 ```
 
 | Symbol       | Kind  | Description               |
@@ -388,7 +388,7 @@ import type {
     ComponentSubComponent,
     TokenUtilityProperty,
     TokenValueType,
-} from '@frontify/fondue/docs';
+} from '@frontify/fondue/sdk';
 ```
 
 `ComponentDetails`, `Token`, and `TokenUtility` (toJSON return shapes) are

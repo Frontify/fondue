@@ -1,3 +1,3 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export * from '@frontify/fondue-docs';
+export * from '@frontify/fondue-sdk';
