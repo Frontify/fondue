@@ -43,6 +43,9 @@ jobs:
       - name: Build Fondue RTE
         run: pnpm build:rte
 
+      - name: Build Fondue Tokens
+        run: pnpm build:tokens
+
       - name: Build Fondue SDK
         run: pnpm build:sdk
 
@@ -83,6 +86,9 @@ jobs:
 
       - name: Build Fondue RTE
         run: pnpm build:rte
+
+      - name: Build Fondue Tokens
+        run: pnpm build:tokens
 
       - name: Build Fondue SDK
         run: pnpm build:sdk
