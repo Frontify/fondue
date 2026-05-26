@@ -54,6 +54,10 @@
             "import": "./dist/packages/rte/fondue-rte.js"
         },
         "./rte/styles": "./dist/packages/rte/style.css",
+        "./docs": {
+            "types": "./dist/packages/docs/fondue-docs.d.ts",
+            "import": "./dist/packages/docs/fondue-docs.js"
+        },
         "./charts/styles": "./dist/packages/charts/style.css",
         ".": {
             "types": "./dist/index.d.ts",
@@ -85,7 +89,7 @@
         "node": ">=18"
     },
     "scripts": {
-        "build": "pnpm clean && pnpm build:library && pnpm build:styles-with-tw && pnpm build:package:components && pnpm build:package:locales && pnpm build:package:icons && pnpm build:package:charts && pnpm build:package:tokens && pnpm build:package:rte && pnpm build:tools",
+        "build": "pnpm clean && pnpm build:library && pnpm build:styles-with-tw && pnpm build:package:components && pnpm build:package:locales && pnpm build:package:icons && pnpm build:package:charts && pnpm build:package:tokens && pnpm build:package:rte && pnpm build:package:docs && pnpm build:tools",
         "build:library": "vite build",
         "build:styles-with-tw": "postcss ./src/components/**/*.css --config src/components/postcss.config.cjs -o dist/styles-without-tailwind.css",
         "build:storybook": "storybook build",
@@ -95,6 +99,7 @@
         "build:package:charts": "vite build -c charts.vite.config.ts",
         "build:package:tokens": "vite build -c tokens.vite.config.ts",
         "build:package:rte": "vite build -c rte.vite.config.ts",
+        "build:package:docs": "vite build -c docs.vite.config.ts",
         "build:tools": "tsx scripts/detectDeprecatedExports/detectDeprecatedExports.ts tools/constants/fondueExports.json && vite build -c codemod.vite.config.ts && vite build -c internal-tools.vite.config.ts",
         "dev": "cross-env NODE_ENV=development pnpm dev:library",
         "dev:library": "vite build --emptyOutDir false --watch",
@@ -120,6 +125,7 @@
         "@floating-ui/dom": "^1.7.6",
         "@frontify/fondue-charts": "workspace:^",
         "@frontify/fondue-components": "workspace:^",
+        "@frontify/fondue-docs": "workspace:^",
         "@frontify/fondue-icons": "workspace:^",
         "@frontify/fondue-rte": "workspace:^",
         "@frontify/fondue-tokens": "workspace:^",
