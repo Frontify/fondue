@@ -48,6 +48,9 @@ jobs:
       - name: Build Fondue RTE
         run: pnpm build:rte
 
+      - name: Build Fondue SDK
+        run: pnpm build:sdk
+
       - name: Lint code
         run: pnpm --stream --filter {packages/fondue} --filter {packages/components} --filter {packages/icons} --filter {packages/rte} lint
 
@@ -85,6 +88,9 @@ jobs:
 
       - name: Build Fondue RTE
         run: pnpm build:rte
+
+      - name: Build Fondue SDK
+        run: pnpm build:sdk
 
       - name: Typecheck code
         run: pnpm --stream --filter {packages/fondue} --filter {packages/components} --filter {packages/icons} --filter {packages/rte} typecheck
