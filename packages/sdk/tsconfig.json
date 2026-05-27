@@ -20,6 +20,6 @@
         "target": "ES2021",
         "useDefineForClassFields": true
     },
-    "include": ["src"],
+    "include": ["src", "cli.ts", "adapters", "globals.d.ts"],
     "references": [{ "path": "./tsconfig.node.json" }]
 }
