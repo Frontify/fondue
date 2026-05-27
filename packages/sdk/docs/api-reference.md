@@ -63,8 +63,6 @@ interface ComponentsApi {
     category(name: string): ComponentFacetNode | undefined;
     tags(): readonly ComponentFacetNode[];
     tag(name: string): ComponentFacetNode | undefined;
-    statuses(): readonly ComponentFacetNode[];
-    status(name: string): ComponentFacetNode | undefined;
 }
 ```
 
@@ -74,8 +72,9 @@ interface ComponentsApi {
 | `category(name)` | Single facet, or `undefined`        |                                          |
 | `tags()`         | All tag facets, sorted by name      |                                          |
 | `tag(name)`      | Single tag facet, or `undefined`    |                                          |
-| `statuses()`     | All status facets, sorted by name   | Empty-string status (icons) is omitted   |
-| `status(name)`   | Single status facet, or `undefined` |                                          |
+
+Filter by status via `components.where({ status })` — `status` is a
+readonly string on each node, not a facet.
 
 ### Icons in the components graph
 
@@ -468,7 +467,7 @@ All other methods return `undefined` for missing lookups — they never throw.
 | `facet.list()`                                       | O(M) over the facet's member count              |
 | `facet.get(id)`                                      | O(1)                                            |
 | `facet.where(filter)`                                | O(M)                                            |
-| `categories()` / `tags()` / `statuses()` / `types()` | O(F log F) — sorts on each call. Cache if hot.  |
+| `categories()` / `tags()` / `types()`                | O(F log F) — sorts on each call. Cache if hot.  |
 
 ## Stability
 

@@ -170,14 +170,6 @@ describe('buildComponentsApi', () => {
             expect(api.category('missing')).toBeUndefined();
         });
 
-        it('statuses() returns all statuses sorted by name', () => {
-            expect(api.statuses().map((s) => s.name)).toEqual(['experimental', 'released']);
-        });
-
-        it('status() returns a single facet by name', () => {
-            expect(api.status('released')?.size).toBe(3);
-        });
-
         it('tags() returns all tags sorted by name', () => {
             expect(api.tags().map((t) => t.name)).toEqual(['action', 'anchor', 'date', 'form', 'icon']);
         });
@@ -202,7 +194,6 @@ describe('buildComponentsApi', () => {
             expect(api.list()).toEqual([]);
             expect(api.categories()).toEqual([]);
             expect(api.tags()).toEqual([]);
-            expect(api.statuses()).toEqual([]);
             expect(api.where({ text: 'foo' })).toEqual([]);
         });
     });

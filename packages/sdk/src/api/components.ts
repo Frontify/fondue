@@ -21,8 +21,6 @@ export interface ComponentsApi {
     category(name: string): ComponentFacetNode | undefined;
     tags(): readonly ComponentFacetNode[];
     tag(name: string): ComponentFacetNode | undefined;
-    statuses(): readonly ComponentFacetNode[];
-    status(name: string): ComponentFacetNode | undefined;
 }
 
 const matches = (raw: ComponentDetails, filter: ComponentFilter): boolean => {
@@ -46,14 +44,10 @@ const matches = (raw: ComponentDetails, filter: ComponentFilter): boolean => {
 
 export const buildComponentsApi = (raws: readonly ComponentDetails[]): ComponentsApi => {
     const categoryMembers = new Map<string, string[]>();
-    const statusMembers = new Map<string, string[]>();
     const tagMembers = new Map<string, string[]>();
     for (const raw of raws) {
         if (raw.category) {
             pushToMultiMap(categoryMembers, raw.category, raw.name);
-        }
-        if (raw.status) {
-            pushToMultiMap(statusMembers, raw.status, raw.name);
         }
         for (const tag of raw.tags) {
             pushToMultiMap(tagMembers, tag, raw.name);
@@ -69,7 +63,6 @@ export const buildComponentsApi = (raws: readonly ComponentDetails[]): Component
         new Map(Array.from(memberships, ([name, ids]) => [name, makeFacet(name, ids, resolve, matchNode)]));
 
     const categories = facets(categoryMembers);
-    const statuses = facets(statusMembers);
     const tags = facets(tagMembers);
 
     for (const raw of raws) {
@@ -110,7 +103,5 @@ export const buildComponentsApi = (raws: readonly ComponentDetails[]): Component
         category: (name) => categories.get(name),
         tags: () => sortedByName(tags.values()),
         tag: (name) => tags.get(name),
-        statuses: () => sortedByName(statuses.values()),
-        status: (name) => statuses.get(name),
     };
 };

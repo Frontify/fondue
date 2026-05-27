@@ -76,7 +76,7 @@ A `TokenNode` is analogous: `category()`, `type()`, and scalar fields like
 ### 3. Plain arrays
 
 Anything that's already plural — `list()`, `where()`, `related()`,
-`tags()`, `categories()`, `statuses()`, `types()` — returns a
+`tags()`, `categories()`, `types()` — returns a
 **`readonly Array<…>`**. Use native array methods on these:
 
 ```ts
@@ -91,7 +91,7 @@ button.subComponents.flatMap((sc) => sc.props);
 | You can call query methods on… | Returned by                                                                                                                  |
 | ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
 | The domain itself              | `components`, `tokens`, `tokens.utilities`                                                                                   |
-| A single facet by name         | `components.category(name)`, `components.tag(name)`, `components.status(name)`, `tokens.category(name)`, `tokens.type(name)` |
+| A single facet by name         | `components.category(name)`, `components.tag(name)`, `tokens.category(name)`, `tokens.type(name)`                            |
 | A facet from a node            | `node.category()`, `node.type()`                                                                                             |
 
 All of these work:

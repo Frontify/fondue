@@ -320,7 +320,6 @@ for (const c of components.list()) {
 ```ts
 const facetGroups = [
     { kind: 'category', facets: components.categories() },
-    { kind: 'status', facets: components.statuses() },
     { kind: 'tag', facets: components.tags() },
 ];
 
