@@ -54,7 +54,7 @@ const realComponents = Object.values(componentsIndex.components).map((entry) => 
 const iconComponents = icons.icons.map((icon) => ({
     name: icon.componentName,
     description: icon.description,
-    status: '',
+    status: 'released',
     category: 'icon',
     tags: icon.tags,
     subComponentNames: [],
