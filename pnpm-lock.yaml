@@ -77,7 +77,7 @@ importers:
         version: 8.1.0(storybook@10.3.6(@testing-library/dom@10.4.1)(prettier@3.8.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
       '@frontify/eslint-config-react':
         specifier: ^1.0.16
-        version: 1.0.16(@types/eslint@8.56.12)(@typescript-eslint/utils@8.59.3(eslint@10.3.0(jiti@2.6.1))(typescript@5.9.3))(eslint@10.3.0(jiti@2.6.1))(prettier@3.8.3)(react@18.3.1)(typescript@5.9.3)
+        version: 1.0.16(@types/eslint@8.56.12)(@typescript-eslint/utils@8.59.3(eslint@10.3.0(jiti@1.21.7))(typescript@5.9.3))(eslint@10.3.0(jiti@1.21.7))(prettier@3.8.3)(react@18.3.1)(typescript@5.9.3)
       '@frontify/fondue-tokens':
         specifier: workspace:^
         version: link:../tokens
@@ -101,7 +101,7 @@ importers:
         version: 16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@18.3.7(@types/react@18.3.28))(@types/react@18.3.28)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tony.ganchev/eslint-plugin-header':
         specifier: ^3.4.4
-        version: 3.4.4(eslint@10.3.0(jiti@2.6.1))
+        version: 3.4.4(eslint@10.3.0(jiti@1.21.7))
       '@types/d3-hierarchy':
         specifier: ^3.1.7
         version: 3.1.7
@@ -137,7 +137,7 @@ importers:
         version: 10.5.0(postcss@8.5.14)
       eslint:
         specifier: ^10.3.0
-        version: 10.3.0(jiti@2.6.1)
+        version: 10.3.0(jiti@1.21.7)
       eslint-plugin-tailwindcss:
         specifier: ^3.18.2
         version: 3.18.3(tailwindcss@3.4.19(tsx@4.21.0)(yaml@2.9.0))
@@ -173,7 +173,7 @@ importers:
         version: 4.5.4(@types/node@24.10.9)(rollup@4.60.3)(typescript@5.9.3)(vite@5.4.21(@types/node@24.10.9)(sass@1.99.0))
       vite-plugin-eslint:
         specifier: ^1.8.1
-        version: 1.8.1(eslint@10.3.0(jiti@2.6.1))(vite@5.4.21(@types/node@24.10.9)(sass@1.99.0))
+        version: 1.8.1(eslint@10.3.0(jiti@1.21.7))(vite@5.4.21(@types/node@24.10.9)(sass@1.99.0))
       vite-tsconfig-paths:
         specifier: ^5.1.4
         version: 5.1.4(typescript@5.9.3)(vite@5.4.21(@types/node@24.10.9)(sass@1.99.0))
@@ -252,12 +252,6 @@ importers:
       react-day-picker:
         specifier: ^9.13.1
         version: 9.13.1(react@18.3.1)
-      tailwind-merge:
-        specifier: ^2.6.0
-        version: 2.6.0
-      tailwind-variants:
-        specifier: ^0.3.1
-        version: 0.3.1(tailwindcss@3.4.19(tsx@4.21.0)(yaml@2.9.0))
     devDependencies:
       '@babel/core':
         specifier: ^7.29.0
@@ -556,7 +550,7 @@ importers:
         version: 8.1.0(storybook@10.3.6(@testing-library/dom@10.4.1)(prettier@3.8.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
       '@frontify/eslint-config-react':
         specifier: ^1.0.16
-        version: 1.0.16(@types/eslint@8.56.12)(@typescript-eslint/utils@8.59.3(eslint@10.3.0(jiti@1.21.7))(typescript@5.9.3))(eslint@10.3.0(jiti@1.21.7))(prettier@3.8.3)(react@18.3.1)(typescript@5.9.3)
+        version: 1.0.16(@types/eslint@8.56.12)(@typescript-eslint/utils@8.59.3(eslint@10.3.0(jiti@2.6.1))(typescript@5.9.3))(eslint@10.3.0(jiti@2.6.1))(prettier@3.8.3)(react@18.3.1)(typescript@5.9.3)
       '@storybook/addon-a11y':
         specifier: ^10.3.6
         version: 10.3.6(storybook@10.3.6(@testing-library/dom@10.4.1)(prettier@3.8.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
@@ -571,7 +565,7 @@ importers:
         version: 10.3.6(esbuild@0.27.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.60.3)(storybook@10.3.6(@testing-library/dom@10.4.1)(prettier@3.8.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.9.3)(vite@5.4.21(@types/node@24.10.9)(sass@1.99.0))
       '@tony.ganchev/eslint-plugin-header':
         specifier: ^3.4.4
-        version: 3.4.4(eslint@10.3.0(jiti@1.21.7))
+        version: 3.4.4(eslint@10.3.0(jiti@2.6.1))
       '@types/jscodeshift':
         specifier: ^17.3.0
         version: 17.3.0
@@ -607,7 +601,7 @@ importers:
         version: 10.1.0
       eslint:
         specifier: ^10.3.0
-        version: 10.3.0(jiti@1.21.7)
+        version: 10.3.0(jiti@2.6.1)
       eslint-plugin-tailwindcss:
         specifier: ^3.18.2
         version: 3.18.3(tailwindcss@3.4.19(tsx@4.21.0)(yaml@2.9.0))
@@ -622,7 +616,7 @@ importers:
         version: 8.5.14
       postcss-cli:
         specifier: ^11.0.1
-        version: 11.0.1(jiti@1.21.7)(postcss@8.5.14)(tsx@4.21.0)
+        version: 11.0.1(jiti@2.6.1)(postcss@8.5.14)(tsx@4.21.0)
       postcss-import:
         specifier: ^16.1.1
         version: 16.1.1(postcss@8.5.14)
@@ -9148,18 +9142,6 @@ packages:
     resolution: {integrity: sha512-KpzUHkH1ug1sq4394SLJX38ZtpeTiqQ1RVyFTTSY2XuHsNSTWUkRo108KmyyrMWdDbQrLYkSHaNKj/a3bmA4sQ==}
     peerDependencies:
       tailwindcss: ^3.3.0 || ^4.0.0 || ^4.0.0-beta
-
-  tailwind-merge@2.5.4:
-    resolution: {integrity: sha512-0q8cfZHMu9nuYP/b5Shb7Y7Sh1B7Nnl5GqNr1U+n2p6+mybvRtayrQ+0042Z5byvTA8ihjlP8Odo8/VnHbZu4Q==}
-
-  tailwind-merge@2.6.0:
-    resolution: {integrity: sha512-P+Vu1qXfzediirmHOC3xKGAYeZtPcV9g76X+xg2FD4tYgR71ewMA35Y3sCz3zhiN/dwefRpJX0yBcgwi1fXNQA==}
-
-  tailwind-variants@0.3.1:
-    resolution: {integrity: sha512-krn67M3FpPwElg4FsZrOQd0U26o7UDH/QOkK8RNaiCCrr052f6YJPBUfNKnPo/s/xRzNPtv1Mldlxsg8Tb46BQ==}
-    engines: {node: '>=16.x', pnpm: '>=7.x'}
-    peerDependencies:
-      tailwindcss: '*'
 
   tailwindcss@3.4.19:
     resolution: {integrity: sha512-3ofp+LL8E+pK/JuPLPggVAIaEuhvIz4qNcf3nA1Xn2o/7fb7s/TYpHhwGDv1ZU3PkBluUVaF8PyCHcm48cKLWQ==}
@@ -18658,24 +18640,6 @@ snapshots:
 
   possible-typed-array-names@1.1.0: {}
 
-  postcss-cli@11.0.1(jiti@1.21.7)(postcss@8.5.14)(tsx@4.21.0):
-    dependencies:
-      chokidar: 3.6.0
-      dependency-graph: 1.0.0
-      fs-extra: 11.3.3
-      picocolors: 1.1.1
-      postcss: 8.5.14
-      postcss-load-config: 5.1.0(jiti@1.21.7)(postcss@8.5.14)(tsx@4.21.0)
-      postcss-reporter: 7.1.0(postcss@8.5.14)
-      pretty-hrtime: 1.0.3
-      read-cache: 1.0.0
-      slash: 5.1.0
-      tinyglobby: 0.2.15
-      yargs: 17.7.2
-    transitivePeerDependencies:
-      - jiti
-      - tsx
-
   postcss-cli@11.0.1(jiti@2.6.1)(postcss@8.5.14)(tsx@4.21.0):
     dependencies:
       chokidar: 3.6.0
@@ -18712,15 +18676,6 @@ snapshots:
     dependencies:
       camelcase-css: 2.0.1
       postcss: 8.5.14
-
-  postcss-load-config@5.1.0(jiti@1.21.7)(postcss@8.5.14)(tsx@4.21.0):
-    dependencies:
-      lilconfig: 3.1.3
-      yaml: 2.8.2
-    optionalDependencies:
-      jiti: 1.21.7
-      postcss: 8.5.14
-      tsx: 4.21.0
 
   postcss-load-config@5.1.0(jiti@2.6.1)(postcss@8.5.14)(tsx@4.21.0):
     dependencies:
@@ -19619,15 +19574,6 @@ snapshots:
       local-pkg: 1.1.2
       tailwindcss: 3.4.19(tsx@4.21.0)(yaml@2.9.0)
 
-  tailwind-merge@2.5.4: {}
-
-  tailwind-merge@2.6.0: {}
-
-  tailwind-variants@0.3.1(tailwindcss@3.4.19(tsx@4.21.0)(yaml@2.9.0)):
-    dependencies:
-      tailwind-merge: 2.5.4
-      tailwindcss: 3.4.19(tsx@4.21.0)(yaml@2.9.0)
-
   tailwindcss@3.4.19(tsx@4.21.0)(yaml@2.9.0):
     dependencies:
       '@alloc/quick-lru': 5.2.0
@@ -20143,11 +20089,11 @@ snapshots:
       - rollup
       - supports-color
 
-  vite-plugin-eslint@1.8.1(eslint@10.3.0(jiti@2.6.1))(vite@5.4.21(@types/node@24.10.9)(sass@1.99.0)):
+  vite-plugin-eslint@1.8.1(eslint@10.3.0(jiti@1.21.7))(vite@5.4.21(@types/node@24.10.9)(sass@1.99.0)):
     dependencies:
       '@rollup/pluginutils': 4.2.1
       '@types/eslint': 8.56.12
-      eslint: 10.3.0(jiti@2.6.1)
+      eslint: 10.3.0(jiti@1.21.7)
       rollup: 2.79.2
       vite: 5.4.21(@types/node@24.10.9)(sass@1.99.0)
 
