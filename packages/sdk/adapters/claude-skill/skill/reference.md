@@ -1,7 +1,3 @@
-# Fondue SDK — agent reference
-
-Formal contract for `@frontify/fondue/sdk`. Load this when the patterns in `SKILL.md` don't expose what you need — for example, when you're generating code that imports the SDK directly, or when you need to verify a filter clause name or method signature.
-
 ## Contents
 
 - [Exports](#exports) — the three singletons and the shared `QueryApi` shape
@@ -23,9 +19,9 @@ Three singletons. Each has the same query surface; each returns its own node typ
 ```ts
 interface QueryApi<Node, Filter> {
     list(): readonly Node[];
-    get(id: string): Node | undefined;          // never throws; returns undefined for unknown ids
+    get(id: string): Node | undefined; // never throws; returns undefined for unknown ids
     has(id: string): boolean;
-    where(filter: Filter): readonly Node[];     // AND-combined; array-valued clauses OR within
+    where(filter: Filter): readonly Node[]; // AND-combined; array-valued clauses OR within
     readonly size: number;
 }
 ```
@@ -45,12 +41,12 @@ components: QueryApi<ComponentNode, ComponentFilter> & {
 
 ### `ComponentFilter`
 
-| Clause | Type | Notes |
-| ------ | ---- | ----- |
-| `category` | `string \| readonly string[]` | OR within array |
-| `status` | `string \| readonly string[]` | OR within array |
-| `tag` | `string \| readonly string[]` | Matches if component carries any tag in the array |
-| `text` | `string` | Case-insensitive substring across name, description, category, tags |
+| Clause     | Type                          | Notes                                                               |
+| ---------- | ----------------------------- | ------------------------------------------------------------------- |
+| `category` | `string \| readonly string[]` | OR within array                                                     |
+| `status`   | `string \| readonly string[]` | OR within array                                                     |
+| `tag`      | `string \| readonly string[]` | Matches if component carries any tag in the array                   |
+| `text`     | `string`                      | Case-insensitive substring across name, description, category, tags |
 
 All clauses AND-combine.
 
@@ -61,18 +57,18 @@ interface ComponentNode {
     // scalar fields
     name: string;
     description: string;
-    status: string;             // '' for icons
+    status: string; // '' for icons
     importStatement: string;
-    instructions: string;        // hand-written usage notes, often empty
+    instructions: string; // hand-written usage notes, often empty
     props: readonly ComponentProp[];
     subComponents: readonly ComponentSubComponent[];
     examples: readonly ComponentExample[];
     typeDefinitions: Readonly<Record<string, string>>;
 
     // graph edges (methods)
-    category(): ComponentFacetNode;          // throws on data inconsistency only
+    category(): ComponentFacetNode; // throws on data inconsistency only
     tags(): readonly ComponentFacetNode[];
-    related(): readonly ComponentNode[];     // unknown names silently skipped
+    related(): readonly ComponentNode[]; // unknown names silently skipped
     toJSON(): ComponentDetails;
 }
 
@@ -90,11 +86,11 @@ interface ComponentExample {
     name: string;
     description: string;
     code: string;
-    isCanonical: boolean;        // there is at most one canonical example per component
+    isCanonical: boolean; // there is at most one canonical example per component
 }
 
 interface ComponentSubComponent {
-    name: string;                // e.g. 'Dialog.Header'
+    name: string; // e.g. 'Dialog.Header'
     props: readonly ComponentProp[];
 }
 ```
@@ -102,6 +98,7 @@ interface ComponentSubComponent {
 ### Icons
 
 Icons are components with `category: 'icon'`. They have:
+
 - empty `status`, empty `props`, empty `related()`, empty `subComponents`
 - a non-empty `importStatement` (e.g. `import { IconAdobeCreativeCloud } from '@frontify/fondue/icons';`)
 - tags (e.g. `'arrow'`, `'brand'`)
@@ -124,24 +121,24 @@ type TokenValueType = 'color' | 'float' | 'shadow' | 'string';
 
 ### `TokenFilter`
 
-| Clause | Type | Notes |
-| ------ | ---- | ----- |
-| `category` | `string \| readonly string[]` | e.g. `'colors'`, `'sizes'` |
-| `type` | `TokenValueType \| readonly TokenValueType[]` | |
-| `themeable` | `boolean` | |
-| `keyPathStartsWith` | `string` | Dot-joined keyPath prefix, e.g. `'colors.charts'` |
-| `text` | `string` | Case-insensitive against id, tailwindClass, keyPath |
+| Clause              | Type                                          | Notes                                               |
+| ------------------- | --------------------------------------------- | --------------------------------------------------- |
+| `category`          | `string \| readonly string[]`                 | e.g. `'colors'`, `'sizes'`                          |
+| `type`              | `TokenValueType \| readonly TokenValueType[]` |                                                     |
+| `themeable`         | `boolean`                                     |                                                     |
+| `keyPathStartsWith` | `string`                                      | Dot-joined keyPath prefix, e.g. `'colors.charts'`   |
+| `text`              | `string`                                      | Case-insensitive against id, tailwindClass, keyPath |
 
 ### `TokenNode`
 
 ```ts
 interface TokenNode {
-    id: string;                         // e.g. 'color-charts-primary-default'
-    value: string;                      // often `var(--token)` or a literal
-    cssVariable: string;                // 'var(--color-charts-primary-default)'
-    tailwindClass: string;              // e.g. '*-charts-primary'
+    id: string; // e.g. 'color-charts-primary-default'
+    value: string; // often `var(--token)` or a literal
+    cssVariable: string; // 'var(--color-charts-primary-default)'
+    tailwindClass: string; // e.g. '*-charts-primary'
     themeable: boolean;
-    keyPath: readonly string[];          // ['colors','charts','primary','default']
+    keyPath: readonly string[]; // ['colors','charts','primary','default']
 
     category(): TokenFacetNode;
     type(): TokenFacetNode;
@@ -162,13 +159,13 @@ No `categories()` / `types()` on utilities — they're a leaf domain.
 ```ts
 interface TokenUtilityFilter {
     themeable?: boolean;
-    keyPathStartsWith?: string;          // typography utilities live under 'utilities.text'
+    keyPathStartsWith?: string; // typography utilities live under 'utilities.text'
     text?: string;
 }
 
 interface TokenUtilityNode {
     id: string;
-    tailwindClass: string;               // e.g. 'tw-body-large-strong'
+    tailwindClass: string; // e.g. 'tw-body-large-strong'
     themeable: boolean;
     keyPath: readonly string[];
     properties: readonly TokenUtilityProperty[];
@@ -188,13 +185,13 @@ interface TokenUtilityProperty {
 guides: QueryApi<Guide, GuideFilter>;
 
 interface Guide {
-    id: string;                          // slug from filename, e.g. 'getting-started'
-    title: string;                       // extracted from the first `# Title` line
-    content: string;                     // raw markdown body, includes the leading `# Title`
+    id: string; // slug from filename, e.g. 'getting-started'
+    title: string; // extracted from the first `# Title` line
+    content: string; // raw markdown body, includes the leading `# Title`
 }
 
 interface GuideFilter {
-    text?: string;                       // case-insensitive against id, title, content
+    text?: string; // case-insensitive against id, title, content
 }
 ```
 
@@ -218,9 +215,9 @@ interface FacetNode<Node, Filter> {
 Reach a facet via the domain's accessor or via a node's edge:
 
 ```ts
-components.category('input');                         // facet
-components.tag('cta');                                // facet
-components.get('Button')?.category();                 // facet from a node
+components.category('input'); // facet
+components.tag('cta'); // facet
+components.get('Button')?.category(); // facet from a node
 tokens.category('colors')?.where({ themeable: true });
 ```
 
