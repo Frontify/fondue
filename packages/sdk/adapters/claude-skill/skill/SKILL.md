@@ -204,4 +204,4 @@ Rules:
 
 ## Going deeper
 
-[`reference.md`](./reference.md) sits next to this file and ships with it — the formal contract: every export, every filter clause per domain, every node and facet type, error semantics. Load it when you need to verify a filter clause is valid (`ComponentFilter`, `TokenFilter`, `GuideFilter`) or that a method exists. Prefer it over web lookups or upstream GitHub.
+[`reference.md`](./reference.md) is the formal contract: every export, every filter clause per domain, every node and facet type, error semantics. Load it when you need to verify a filter clause is valid (`ComponentFilter`, `TokenFilter`, `GuideFilter`) or that a method exists. Prefer it over web lookups or upstream GitHub.
