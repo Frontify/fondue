@@ -52,6 +52,7 @@ interface ComponentNode {
     // Scalars
     readonly name: string;
     readonly description: string;
+    readonly status: string;
     readonly importStatement: string;
     readonly instructions: string;
     readonly props: readonly ComponentProp[];
@@ -61,7 +62,6 @@ interface ComponentNode {
 
     // Graph edges
     category(): ComponentFacetNode;
-    status(): ComponentFacetNode;
     tags(): readonly ComponentFacetNode[];
     related(): readonly ComponentNode[];
 
@@ -92,7 +92,7 @@ button.subComponents.flatMap((sc) => sc.props);
 | ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
 | The domain itself              | `components`, `tokens`, `tokens.utilities`                                                                                   |
 | A single facet by name         | `components.category(name)`, `components.tag(name)`, `components.status(name)`, `tokens.category(name)`, `tokens.type(name)` |
-| A facet from a node            | `node.category()`, `node.status()`, `node.type()`                                                                            |
+| A facet from a node            | `node.category()`, `node.type()`                                                                                             |
 
 All of these work:
 

@@ -107,7 +107,6 @@ See [Mental model](./docs/mental-model.md) for the full picture and
 - Pure Node API; no React, no DOM, no peer dependencies.
 - Node 18+, ESM only.
 - Synchronous — all data is bundled at build time.
-- ~70 KB gzipped.
 
 ## Versioning
 

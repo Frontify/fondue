@@ -61,6 +61,7 @@ export interface ComponentFilter {
 export interface ComponentNode {
     readonly name: string;
     readonly description: string;
+    readonly status: string;
     readonly importStatement: string;
     readonly instructions: string;
     readonly props: readonly ComponentProp[];
@@ -69,7 +70,6 @@ export interface ComponentNode {
     readonly typeDefinitions: Readonly<Record<string, string>>;
 
     category(): ComponentFacetNode;
-    status(): ComponentFacetNode;
     tags(): readonly ComponentFacetNode[];
     /** Components cross-referenced via `relatedComponents`. Unknown names are skipped. */
     related(): readonly ComponentNode[];

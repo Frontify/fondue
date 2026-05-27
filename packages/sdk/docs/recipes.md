@@ -308,12 +308,12 @@ const manifest = components.list().map((c) => ({
 ```ts
 const byStatus: Record<string, string[]> = {};
 for (const c of components.list()) {
-    const status = c.category().name === 'icon' ? 'icon' : c.status().name;
+    const status = c.category().name === 'icon' ? 'icon' : c.status || 'unknown';
     (byStatus[status] ??= []).push(c.name);
 }
 ```
 
-(Icons have no `status()` — guard with a category check first.)
+(Icons carry an empty `status` — guard with a category check or fallback.)
 
 ### "Iterate every facet of every kind"
 

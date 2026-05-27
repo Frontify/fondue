@@ -136,9 +136,9 @@ describe('buildComponentsApi', () => {
             expect(category?.list().map((n) => n.name)).toEqual(['Button', 'SplitButton']);
         });
 
-        it('resolves status() to a facet', () => {
-            expect(api.get('Button')?.status().name).toBe('released');
-            expect(api.get('CalendarIcon')?.status().name).toBe('experimental');
+        it('exposes status as a string property', () => {
+            expect(api.get('Button')?.status).toBe('released');
+            expect(api.get('CalendarIcon')?.status).toBe('experimental');
         });
 
         it('resolves tags() to facet nodes, in raw order', () => {

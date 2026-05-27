@@ -86,7 +86,7 @@ becomes a `ComponentNode` with:
 | ----------------- | -------------------------------------------------------------------- |
 | `name`            | The React component name (`'IconAdobeCreativeCloud'`)                |
 | `category()`      | The synthetic `'icon'` facet                                         |
-| `status()`        | **Throws** — icons carry an empty status, don't call this            |
+| `status`          | `''` — icons don't participate in the component release lifecycle    |
 | `tags()`          | The icon's tags                                                      |
 | `importStatement` | `"import { IconAdobeCreativeCloud } from '@frontify/fondue/icons';"` |
 | `examples`        | Icon stories                                                         |
@@ -245,6 +245,7 @@ interface GuideFilter {
 interface ComponentNode {
     readonly name: string;
     readonly description: string;
+    readonly status: string;
     readonly importStatement: string;
     readonly instructions: string;
     readonly props: readonly ComponentProp[];
@@ -253,7 +254,6 @@ interface ComponentNode {
     readonly typeDefinitions: Readonly<Record<string, string>>;
 
     category(): ComponentFacetNode;
-    status(): ComponentFacetNode;
     tags(): readonly ComponentFacetNode[];
     related(): readonly ComponentNode[];
 
@@ -263,12 +263,11 @@ interface ComponentNode {
 
 **Edge semantics**:
 
-| Method       | Behaviour on unresolvable reference                                                                               |
-| ------------ | ----------------------------------------------------------------------------------------------------------------- |
-| `category()` | Throws `Error('Unknown category "<x>" on "<name>"')`. Should never happen against released data.                  |
-| `status()`   | Throws if status is empty (icons) or unknown. Check `category().name !== 'icon'` first if you're iterating icons. |
-| `tags()`     | Silently filters out unknown tag references                                                                       |
-| `related()`  | Silently filters out names that don't resolve to a known component                                                |
+| Method       | Behaviour on unresolvable reference                                                              |
+| ------------ | ------------------------------------------------------------------------------------------------ |
+| `category()` | Throws `Error('Unknown category "<x>" on "<name>"')`. Should never happen against released data. |
+| `tags()`     | Silently filters out unknown tag references                                                      |
+| `related()`  | Silently filters out names that don't resolve to a known component                               |
 
 ### `TokenNode`
 
@@ -450,10 +449,10 @@ not re-exported. If you need to type them explicitly, use
 Runtime errors are not part of the normal flow. They indicate a programmer
 error (e.g. a typo) or — rarely — corrupt bundled data:
 
-| Source                                   | When                                                                                                                                  |
-| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| `ComponentNode.category()` / `.status()` | The referenced facet isn't in the data. Only `.status()` can hit this in practice (it throws on icons because their status is empty). |
-| `TokenNode.category()` / `.type()`       | The referenced facet isn't in the data. Should never happen against released data.                                                    |
+| Source                             | When                                                                               |
+| ---------------------------------- | ---------------------------------------------------------------------------------- |
+| `ComponentNode.category()`         | The referenced facet isn't in the data. Should never happen against released data. |
+| `TokenNode.category()` / `.type()` | The referenced facet isn't in the data. Should never happen against released data. |
 
 All other methods return `undefined` for missing lookups — they never throw.
 

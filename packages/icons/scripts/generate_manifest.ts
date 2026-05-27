@@ -53,12 +53,12 @@ const deriveTags = (name: string): string[] => {
     return name.split('-').filter((part) => part.length > 0);
 };
 
-const buildExamples = (exportName: string, defaultSize: number): IconExample[] => {
+const buildExamples = (componentName: string, defaultSize: number): IconExample[] => {
     return [
         {
             name: 'Default',
-            description: `Default usage of ${exportName} at size ${defaultSize}.`,
-            code: `import { ${exportName} } from '${PACKAGE_NAME}';\n\n<${exportName} size={${defaultSize}} />`,
+            description: `Default usage of ${componentName} at size ${defaultSize}.`,
+            code: `import { ${componentName} } from '${PACKAGE_NAME}';\n\n<${componentName} size={${defaultSize}} />`,
             isCanonical: true,
         },
     ];

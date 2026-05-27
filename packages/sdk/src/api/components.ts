@@ -76,6 +76,7 @@ export const buildComponentsApi = (raws: readonly ComponentDetails[]): Component
         nodes.set(raw.name, {
             name: raw.name,
             description: raw.description,
+            status: raw.status,
             importStatement: raw.importStatement,
             instructions: raw.instructions,
             props: raw.props,
@@ -86,13 +87,6 @@ export const buildComponentsApi = (raws: readonly ComponentDetails[]): Component
                 const node = categories.get(raw.category);
                 if (!node) {
                     throw new Error(`Unknown category "${raw.category}" on "${raw.name}"`);
-                }
-                return node;
-            },
-            status: () => {
-                const node = statuses.get(raw.status);
-                if (!node) {
-                    throw new Error(`Unknown status "${raw.status}" on "${raw.name}"`);
                 }
                 return node;
             },
