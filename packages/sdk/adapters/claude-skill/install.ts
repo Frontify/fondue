@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { copyFileSync, existsSync, mkdirSync, rmSync } from 'node:fs';
+import { copyFileSync, existsSync, mkdirSync, readdirSync, rmSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { fail, log } from '../io';
@@ -9,11 +9,11 @@ import { type AdapterOptions } from '../types';
 import {
     CONSUMER_PACKAGE,
     FONDUE_VERSION,
-    SKILL_FILES,
     SKILL_NAME,
     SKILL_SOURCE_DIR,
     readStamp,
     scopeOf,
+    stampPathFor,
     targetDirFor,
     writeStamp,
 } from './shared';
@@ -28,21 +28,32 @@ import {
 export const install = (options: AdapterOptions): void => {
     const scope = scopeOf(options);
     const target = targetDirFor(scope);
+    const stampPath = stampPathFor(scope);
 
-    for (const name of SKILL_FILES) {
-        if (!existsSync(join(SKILL_SOURCE_DIR, name))) {
-            fail(`Bundled skill file missing: ${name}. Reinstall ${CONSUMER_PACKAGE}.`);
-        }
+    // Discover skill files at install time so additions to `skill/` flow
+    // through without an allowlist to keep in sync. The build copies the
+    // whole tree; we just enumerate it here.
+    if (!existsSync(SKILL_SOURCE_DIR)) {
+        fail(`Bundled skill directory missing at ${SKILL_SOURCE_DIR}. Reinstall ${CONSUMER_PACKAGE}.`);
+    }
+    const files = readdirSync(SKILL_SOURCE_DIR).filter((name) => statSync(join(SKILL_SOURCE_DIR, name)).isFile());
+    if (!files.includes('SKILL.md')) {
+        fail(`Bundled skill is missing SKILL.md. Reinstall ${CONSUMER_PACKAGE}.`);
     }
 
     let previousVersion: string | null = null;
 
     if (existsSync(target)) {
-        const stamped = readStamp(target);
-        if (stamped) {
+        const read = readStamp(stampPath);
+        if (read.status === 'ok') {
             // Our install — refresh in place. No flag needed; this is the "update" case.
-            previousVersion = stamped.version;
-        } else if (!options.force) {
+            previousVersion = read.stamp.version;
+        } else if (read.status === 'corrupted' && !options.force) {
+            fail(
+                `Stamp file at ${stampPath} is unreadable (${read.error}). ` +
+                    'Inspect it, or pass --force to overwrite both the stamp and the skill.',
+            );
+        } else if (read.status === 'missing' && !options.force) {
             fail(
                 `${target} exists and was not installed by this CLI. ` +
                     'Remove it manually, or pass --force to overwrite.',
@@ -52,15 +63,15 @@ export const install = (options: AdapterOptions): void => {
     }
 
     mkdirSync(target, { recursive: true });
-    for (const name of SKILL_FILES) {
+    for (const name of files) {
         copyFileSync(join(SKILL_SOURCE_DIR, name), join(target, name));
     }
-    writeStamp(target, scope);
+    writeStamp(stampPath, scope);
 
     if (previousVersion === null) {
         log(`Installed Fondue Claude Code skill (${CONSUMER_PACKAGE}@${FONDUE_VERSION}) → ${target}`);
     } else if (previousVersion === FONDUE_VERSION) {
-        log(`Refreshed Fondue Claude Code skill (${CONSUMER_PACKAGE}@${FONDUE_VERSION}, unchanged) → ${target}`);
+        log(`Refreshed Fondue Claude Code skill at ${CONSUMER_PACKAGE}@${FONDUE_VERSION} → ${target}`);
     } else {
         log(
             `Updated Fondue Claude Code skill (${CONSUMER_PACKAGE}@${previousVersion} → @${FONDUE_VERSION}) → ${target}`,

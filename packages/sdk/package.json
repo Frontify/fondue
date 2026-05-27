@@ -27,8 +27,7 @@
         ".": {
             "types": "./dist/index.d.ts",
             "import": "./dist/fondue-sdk.js"
-        },
-        "./cli": "./cli.ts"
+        }
     },
     "files": [
         "dist"
