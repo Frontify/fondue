@@ -252,12 +252,6 @@ importers:
       react-day-picker:
         specifier: ^9.13.1
         version: 9.13.1(react@18.3.1)
-      tailwind-merge:
-        specifier: ^2.6.0
-        version: 2.6.0
-      tailwind-variants:
-        specifier: ^0.3.1
-        version: 0.3.1(tailwindcss@3.4.19(tsx@4.21.0)(yaml@2.9.0))
     devDependencies:
       '@babel/core':
         specifier: ^7.29.0
@@ -9199,18 +9193,6 @@ packages:
     resolution: {integrity: sha512-KpzUHkH1ug1sq4394SLJX38ZtpeTiqQ1RVyFTTSY2XuHsNSTWUkRo108KmyyrMWdDbQrLYkSHaNKj/a3bmA4sQ==}
     peerDependencies:
       tailwindcss: ^3.3.0 || ^4.0.0 || ^4.0.0-beta
-
-  tailwind-merge@2.5.4:
-    resolution: {integrity: sha512-0q8cfZHMu9nuYP/b5Shb7Y7Sh1B7Nnl5GqNr1U+n2p6+mybvRtayrQ+0042Z5byvTA8ihjlP8Odo8/VnHbZu4Q==}
-
-  tailwind-merge@2.6.0:
-    resolution: {integrity: sha512-P+Vu1qXfzediirmHOC3xKGAYeZtPcV9g76X+xg2FD4tYgR71ewMA35Y3sCz3zhiN/dwefRpJX0yBcgwi1fXNQA==}
-
-  tailwind-variants@0.3.1:
-    resolution: {integrity: sha512-krn67M3FpPwElg4FsZrOQd0U26o7UDH/QOkK8RNaiCCrr052f6YJPBUfNKnPo/s/xRzNPtv1Mldlxsg8Tb46BQ==}
-    engines: {node: '>=16.x', pnpm: '>=7.x'}
-    peerDependencies:
-      tailwindcss: '*'
 
   tailwindcss@3.4.19:
     resolution: {integrity: sha512-3ofp+LL8E+pK/JuPLPggVAIaEuhvIz4qNcf3nA1Xn2o/7fb7s/TYpHhwGDv1ZU3PkBluUVaF8PyCHcm48cKLWQ==}
@@ -19641,15 +19623,6 @@ snapshots:
       enhanced-resolve: 5.21.3
       jiti: 2.6.1
       local-pkg: 1.1.2
-      tailwindcss: 3.4.19(tsx@4.21.0)(yaml@2.9.0)
-
-  tailwind-merge@2.5.4: {}
-
-  tailwind-merge@2.6.0: {}
-
-  tailwind-variants@0.3.1(tailwindcss@3.4.19(tsx@4.21.0)(yaml@2.9.0)):
-    dependencies:
-      tailwind-merge: 2.5.4
       tailwindcss: 3.4.19(tsx@4.21.0)(yaml@2.9.0)
 
   tailwindcss@3.4.19(tsx@4.21.0)(yaml@2.9.0):
