@@ -4,6 +4,7 @@ import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { generateManifest } from './generateManifest';
 import { loadFigmaVariables } from './loadFigmaVariables';
 import { buildStyleDictionary } from './styleDictionary/buildStyleDictionary';
 import { type Config } from './types';
@@ -68,6 +69,9 @@ const buildTokens = async () => {
     await writeFile(path.resolve(CWD, '../dist/json/colors.json'), JSON.stringify(colors, null, 2));
     await writeFile(path.resolve(CWD, '../dist/json/semantic.json'), JSON.stringify(semantic, null, 2));
     await writeFile(path.resolve(CWD, '../dist/json/utilities.json'), JSON.stringify(utilities, null, 2));
+
+    const manifest = generateManifest(availableTokens);
+    await writeFile(path.resolve(CWD, '../dist/manifest.json'), JSON.stringify(manifest, null, 2));
 
     await mkdir(path.resolve(CWD, '../dist/themes'), { recursive: true });
     await writeFile(path.resolve(CWD, '../dist/themes/themes.module.css'), themeStyles);
