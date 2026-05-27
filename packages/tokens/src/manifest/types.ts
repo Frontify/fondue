@@ -38,9 +38,7 @@ export type ManifestUtility = {
 };
 
 export type Manifest = {
-    schemaVersion: string;
     packageName: string;
-    generatedAt: string;
     tokens: ManifestToken[];
     utilities: ManifestUtility[];
 };

@@ -12,7 +12,6 @@ const currentDir = getCurrentDirPath(import.meta.url);
 const ICONS_DIR = resolve(currentDir, '../icons');
 const OUTPUT_PATH = resolve(currentDir, '../dist/manifest.json');
 const PACKAGE_NAME = '@frontify/fondue/icons';
-const SCHEMA_VERSION = '1.0.0';
 
 const AVAILABLE_SIZES = [12, 16, 20, 24, 32] as const;
 
@@ -38,9 +37,7 @@ type IconEntry = {
 };
 
 type IconManifest = {
-    schemaVersion: string;
     packageName: string;
-    generatedAt: string;
     sizes: readonly number[];
     icons: IconEntry[];
 };
@@ -99,9 +96,7 @@ const buildExamples = (exportName: string, defaultSize: number): IconExample[] =
     icons.sort((a, b) => a.name.localeCompare(b.name));
 
     const manifest: IconManifest = {
-        schemaVersion: SCHEMA_VERSION,
         packageName: PACKAGE_NAME,
-        generatedAt: new Date().toISOString(),
         sizes: AVAILABLE_SIZES,
         icons,
     };

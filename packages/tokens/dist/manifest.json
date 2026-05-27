@@ -1,7 +1,5 @@
 {
-  "schemaVersion": "1.0.0",
   "packageName": "@frontify/fondue/tokens",
-  "generatedAt": "2026-05-27T07:19:15.318Z",
   "tokens": [
     {
       "category": "colors",
