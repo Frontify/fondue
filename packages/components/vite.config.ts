@@ -46,7 +46,7 @@ export default defineConfig({
     plugins: [
         react(),
         tsConfigPaths(),
-        dts({ insertTypesEntry: true, rollupTypes: true, exclude: ['**/*.stories.tsx'] }),
+        dts({ insertTypesEntry: true, rollupTypes: true, exclude: ['**/*.stories.tsx', '.storybook/**'] }),
         externalizeJsDeps(),
     ],
     css: {
