@@ -42,6 +42,7 @@
         "tokens.vite.config.ts",
         "codemod.vite.config.ts",
         "internal-tools.vite.config.ts",
+        "sdk-cli.vite.config.ts",
         "legacyTokens",
         "tools"
     ],

@@ -79,7 +79,8 @@
     "types": "dist/index.d.ts",
     "bin": {
         "codemod": "./dist/tools/codemod/index.js",
-        "internal": "./dist/tools/internal/index.js"
+        "internal": "./dist/tools/internal/index.js",
+        "fondue": "./dist/tools/sdk-cli/index.js"
     },
     "files": [
         "dist",
@@ -100,7 +101,7 @@
         "build:package:tokens": "vite build -c tokens.vite.config.ts",
         "build:package:rte": "vite build -c rte.vite.config.ts",
         "build:package:sdk": "vite build -c sdk.vite.config.ts",
-        "build:tools": "tsx scripts/detectDeprecatedExports/detectDeprecatedExports.ts tools/constants/fondueExports.json && vite build -c codemod.vite.config.ts && vite build -c internal-tools.vite.config.ts",
+        "build:tools": "tsx scripts/detectDeprecatedExports/detectDeprecatedExports.ts tools/constants/fondueExports.json && vite build -c codemod.vite.config.ts && vite build -c internal-tools.vite.config.ts && vite build -c sdk-cli.vite.config.ts",
         "dev": "cross-env NODE_ENV=development pnpm dev:library",
         "dev:library": "vite build --emptyOutDir false --watch",
         "clean": "rimraf dist",
