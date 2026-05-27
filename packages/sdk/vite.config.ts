@@ -9,10 +9,10 @@ import tsConfigPaths from 'vite-tsconfig-paths';
 const nodeBuiltins = new Set([...builtinModules, ...builtinModules.map((m) => `node:${m}`)]);
 
 export default defineConfig({
-    plugins: [tsConfigPaths(), dts({ entryRoot: 'src', insertTypesEntry: true, exclude: ['**/*.test.ts'] })],
+    plugins: [tsConfigPaths(), dts({ entryRoot: 'src', rollupTypes: true, exclude: ['**/*.test.ts'] })],
     build: {
         target: 'node18',
-        sourcemap: true,
+        sourcemap: false,
         minify: false,
         lib: {
             entry: './src/index.ts',
