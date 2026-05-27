@@ -1,6 +1,6 @@
 ---
 name: fondue
-description: Queries the locally installed `@frontify/fondue/sdk` to surface accurate Fondue component names, props, design tokens, utility classes, and setup guides — pinned to the version the project depends on. Use when picking a Fondue component (button, dialog, dropdown, tabs, …), finding a design token or utility class, or setting up the `@frontify/fondue` package.
+description: Queries the locally installed `@frontify/fondue/sdk` to surface accurate Fondue component metadata. ALWAYS use when picking a Fondue component (button, dialog, dropdown, tabs, …), finding a design token or utility class, or setting up the `@frontify/fondue` package.
 allowed-tools: Bash(node *)
 ---
 
