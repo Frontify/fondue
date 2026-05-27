@@ -11,7 +11,7 @@ import tailwindcssPlugin from 'eslint-plugin-tailwindcss';
 
 export default defineConfig(
     {
-        ignores: ['tmp/', 'dist/', 'node_modules/', 'availableTokens.json', '**/*.md', '**/*.mdx', 'manifest.json'],
+        ignores: ['tmp/', 'dist/', 'node_modules/', 'availableTokens.json', '**/*.md', '**/*.mdx'],
     },
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     frontifyConfig,

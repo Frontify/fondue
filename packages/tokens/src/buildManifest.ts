@@ -9,7 +9,7 @@ import { type TokenTree } from './manifest/types';
 
 const CWD = path.dirname(fileURLToPath(import.meta.url));
 const ALL_TOKENS_PATH = path.resolve(CWD, '../dist/json/all-tokens.json');
-const MANIFEST_PATH = path.resolve(CWD, '../manifest.json');
+const MANIFEST_PATH = path.resolve(CWD, '../dist/manifest.json');
 
 export const buildManifest = async () => {
     const availableTokens = JSON.parse(await readFile(ALL_TOKENS_PATH, 'utf-8')) as Record<string, TokenTree>;

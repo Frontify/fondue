@@ -28,7 +28,7 @@
             "types": "./dist/locales/*.d.ts",
             "import": "./dist/locales/*.js"
         },
-        "./manifests/*": "./manifests/*.json"
+        "./manifests/*": "./dist/manifests/*.json"
     },
     "files": [
         "dist"

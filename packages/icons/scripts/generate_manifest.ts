@@ -10,7 +10,7 @@ import { getCurrentDirPath, getFileInDirectoryByExtension } from './utilities/fi
 const currentDir = getCurrentDirPath(import.meta.url);
 
 const ICONS_DIR = resolve(currentDir, '../icons');
-const OUTPUT_PATH = resolve(currentDir, '../manifest.json');
+const OUTPUT_PATH = resolve(currentDir, '../dist/manifest.json');
 const PACKAGE_NAME = '@frontify/fondue/icons';
 const SCHEMA_VERSION = '1.0.0';
 
