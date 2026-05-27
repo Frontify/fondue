@@ -1,5 +1,18 @@
 # @frontify/fondue-components
 
+## 30.5.0
+
+### Minor Changes
+
+-   [#2722](https://github.com/Frontify/fondue/pull/2722) [`70612d4`](https://github.com/Frontify/fondue/commit/70612d4b59b7bf1a684b941a9e9477cb77247bc4) Thanks [@syeo66](https://github.com/syeo66)! - feat(SegmentedControl): allow square display for icon items
+
+### Patch Changes
+
+-   [#2726](https://github.com/Frontify/fondue/pull/2726) [`7d61c92`](https://github.com/Frontify/fondue/commit/7d61c92f53d159cd91eb7e785d81f9712928ba6b) Thanks [@fulopdaniel](https://github.com/fulopdaniel)! - feat(AssetInput): add AssetInput component
+
+-   Updated dependencies []:
+    -   @frontify/fondue-tokens@5.0.1
+
 ## 30.4.0
 
 ### Minor Changes
