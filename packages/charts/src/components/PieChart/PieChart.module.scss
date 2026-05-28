@@ -6,9 +6,9 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 2rem;
+    gap: var(--spacing-x-large);
 
     @media (min-width: 768px) {
-        gap: 1.5rem;
+        gap: var(--spacing-large);
     }
 }

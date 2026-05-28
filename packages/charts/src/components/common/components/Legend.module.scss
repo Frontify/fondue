@@ -1,9 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+@use '../../../utilities/sizeToken.module.scss';
+@use '../../../utilities/text.module.scss';
+
 .root {
     display: flex;
     flex-wrap: wrap;
-    gap: 1.5rem;
+    gap: var(--spacing-large);
     align-self: flex-start;
 }
 
@@ -12,37 +15,37 @@
 }
 
 .label {
-    font-family: var(--typography-font-family-primary);
-    font-size: var(--typography-font-size-small);
+    @include text.body-small;
+
     color: var(--color-primary-default);
 }
 
 .colorBox {
     align-self: center;
-    margin-right: 0.5rem;
+    margin-right: var(--spacing-x-small);
     display: inline-block;
 }
 
 .shape-line {
-    width: 3rem;
+    width: sizeToken.get(12);
     height: 2px;
     border-radius: 0;
 }
 
 .shape-rectangle {
-    width: 3rem;
-    height: 0.75rem;
+    width: sizeToken.get(12);
+    height: sizeToken.get(3);
     border-radius: 0;
 }
 
 .shape-circle {
-    width: 0.75rem;
-    height: 0.75rem;
+    width: sizeToken.get(3);
+    height: sizeToken.get(3);
     border-radius: 9999px;
 }
 
 .shape-square {
-    width: 0.75rem;
-    height: 0.75rem;
+    width: sizeToken.get(3);
+    height: sizeToken.get(3);
     border-radius: 1px;
 }

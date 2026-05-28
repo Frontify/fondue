@@ -1,23 +1,26 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+@use '../../../../utilities/sizeToken.module.scss';
+@use '../../../../utilities/text.module.scss';
+
 .root {
     background-color: var(--color-primary-default);
     color: var(--color-primary-on-primary);
-    padding: 0.75rem;
+    padding: var(--spacing-small);
     border-radius: var(--border-radius-medium);
     border: 1px solid var(--color-primary-default);
-    max-width: 260px;
+    max-width: sizeToken.get(65);
     word-break: break-all;
 }
 
 .imageWrapper {
-    margin: -0.25rem;
+    margin: -#{sizeToken.get(1)};
 }
 
 .image {
-    height: 7rem;
+    height: sizeToken.get(28);
     object-fit: cover;
-    margin-bottom: 1.25rem;
+    margin-bottom: sizeToken.get(5);
     width: 100%;
 }
 
@@ -25,25 +28,27 @@
     padding-bottom: 0;
 
     &.withTitle {
-        padding-bottom: 0.75rem;
+        padding-bottom: var(--spacing-small);
     }
 }
 
 .title {
-    font-size: var(--typography-font-size-small);
+    @include text.body-small-x-strong;
+
     color: var(--color-primary-on-primary);
-    font-weight: var(--typography-font-weight-bold);
 }
 
 .type {
-    font-size: var(--typography-font-size-small);
+    @include text.body-small;
+
     color: var(--color-primary-on-primary);
-    padding-bottom: 0.5rem;
+    padding-bottom: var(--spacing-x-small);
 }
 
 .description {
+    @include text.body-x-small;
+
     color: var(--color-primary-on-primary);
-    font-size: var(--typography-font-size-x-small);
 }
 
 .descriptionLine {
@@ -53,19 +58,19 @@
 }
 
 .item {
-    font-size: var(--typography-font-size-small);
+    @include text.body-small;
+
     color: var(--color-primary-on-primary);
 }
 
 .itemDot {
     display: inline-block;
-    width: 0.5rem;
-    height: 0.5rem;
+    width: sizeToken.get(2);
+    height: sizeToken.get(2);
     border-radius: 9999px;
-    margin-right: 0.25rem;
+    margin-right: var(--spacing-xx-small);
 }
 
 .itemValue {
-    font-size: var(--typography-font-size-small);
-    font-weight: var(--typography-font-weight-bold);
+    @include text.body-small-x-strong;
 }

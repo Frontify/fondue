@@ -1,17 +1,19 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+@use '../../utilities/sizeToken.module.scss';
+
 .stack {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: var(--spacing-large);
 }
 
 .bar {
     overflow: hidden;
-    border-radius: 6px;
+    border-radius: sizeToken.get(1.5);
     width: 100%;
     position: relative;
     display: flex;
-    height: 0.75rem;
+    height: sizeToken.get(3);
     background-color: var(--color-container-secondary-hover);
 }

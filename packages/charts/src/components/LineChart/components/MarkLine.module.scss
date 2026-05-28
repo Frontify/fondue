@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+@use '../../../utilities/text.module.scss';
+
 .label {
-    font-size: var(--typography-font-size-x-small);
-    font-weight: var(--typography-font-weight-bold);
-    font-family: var(--typography-font-family-primary);
+    @include text.body-x-small-x-strong;
 }
