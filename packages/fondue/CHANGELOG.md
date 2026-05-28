@@ -1,5 +1,22 @@
 # @frontify/fondue
 
+## 13.6.0
+
+### Minor Changes
+
+-   [#2735](https://github.com/Frontify/fondue/pull/2735) [`ec9720e`](https://github.com/Frontify/fondue/commit/ec9720e81bf8dcbae59b98a02e5eb463936e2923) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add fondue sdk package
+
+### Patch Changes
+
+-   [#2734](https://github.com/Frontify/fondue/pull/2734) [`694887d`](https://github.com/Frontify/fondue/commit/694887dd63c319434d76cbdc3333d86b0be0e7aa) Thanks [@noahwaldner](https://github.com/noahwaldner)! - chore: migrate the charts package to use scss instead of tailwind
+
+-   Updated dependencies [[`694887d`](https://github.com/Frontify/fondue/commit/694887dd63c319434d76cbdc3333d86b0be0e7aa), [`4c2894f`](https://github.com/Frontify/fondue/commit/4c2894f2bfdf147e0a32b7bd084607e0f5bc27e9), [`ec9720e`](https://github.com/Frontify/fondue/commit/ec9720e81bf8dcbae59b98a02e5eb463936e2923)]:
+    -   @frontify/fondue-charts@7.1.0
+    -   @frontify/fondue-components@30.6.0
+    -   @frontify/fondue-tokens@5.0.2
+    -   @frontify/fondue-icons@0.26.2
+    -   @frontify/fondue-sdk@0.1.1
+
 ## 13.5.1
 
 ### Patch Changes
