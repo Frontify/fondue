@@ -1,8 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-@use "sass:list";
-@use "sass:map";
-@use "sass:meta";
+@use 'sass:list';
 $screens: (
     base: 0px,
     xs: 390px,
@@ -43,6 +41,22 @@ $layoutProperties: (
     min-height,
     max-height
 );
+
+@mixin register-properties($additional-properties: ()) {
+    @each $property in $additional-properties {
+        @property --#{$property} {
+            syntax: '*';
+            inherits: false;
+        }
+
+        @each $breakpoint, $_min-width in $screens {
+            @property --#{$breakpoint}-#{$property} {
+                syntax: '*';
+                inherits: false;
+            }
+        }
+    }
+}
 
 @mixin responsive-properties($additional-properties: ()) {
     @each $property in $additional-properties {
@@ -219,39 +233,6 @@ $layoutProperties: (
         }
         @if list.index($additional-properties, 'justify-items') {
             justify-items: var(--#{$breakpoint}-justify-items-computed);
-        }
-    }
-}
-
-/**
- * Apply default values for a property for all breakpoints if the value isn't a list or set the default value per breakpoint if you pass a list.
- */
-@mixin responsive-default-value($property, $value) {
-    @if meta.type-of($value) == map {
-        @each $breakpoint, $_value in $screens {
-            $value-at-breakpoint: map.get($value, $breakpoint);
-
-            @if ($value-at-breakpoint == null) {
-                @error 'Value for "#{$property}" at breakpoint "#{$breakpoint}" is not defined.';
-            }
-
-            & {
-                --#{$breakpoint}-#{$property}: $value-at-breakpoint;
-            }
-
-            @if $breakpoint == base {
-                --#{$property}: $value-at-breakpoint;
-            }
-        }
-    } @else {
-        & {
-            --#{$property}: #{$value};
-        }
-
-        @each $breakpoint, $min-width in $screens {
-            & {
-                --#{$breakpoint}-#{$property}: var(--#{$breakpoint}-#{$property}, #{$value});
-            }
         }
     }
 }
