@@ -1,0 +1,51 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+@use '../../../utilities/sizeToken.module.scss';
+@use '../../../utilities/text.module.scss';
+
+.root {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-large);
+    align-self: flex-start;
+}
+
+.item {
+    display: flex;
+}
+
+.label {
+    @include text.body-small;
+
+    color: var(--color-primary-default);
+}
+
+.colorBox {
+    align-self: center;
+    margin-right: var(--spacing-x-small);
+    display: inline-block;
+}
+
+.shape-line {
+    width: sizeToken.get(12);
+    height: 2px;
+    border-radius: 0;
+}
+
+.shape-rectangle {
+    width: sizeToken.get(12);
+    height: sizeToken.get(3);
+    border-radius: 0;
+}
+
+.shape-circle {
+    width: sizeToken.get(3);
+    height: sizeToken.get(3);
+    border-radius: 9999px;
+}
+
+.shape-square {
+    width: sizeToken.get(3);
+    height: sizeToken.get(3);
+    border-radius: 1px;
+}

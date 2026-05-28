@@ -1,0 +1,30 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+@use '../../utilities/sizeToken.module.scss';
+@use '../../utilities/text.module.scss';
+
+.root {
+    margin-block: sizeToken.get(2) sizeToken.get(5);
+}
+
+.titleRow {
+    display: flex;
+    align-items: center;
+}
+
+.title {
+    @include text.heading-large;
+
+    margin-right: sizeToken.get(1.5);
+    color: var(--color-primary-default);
+}
+
+.descriptionWrapper {
+    margin-top: sizeToken.get(3.5);
+}
+
+.description {
+    @include text.body-small;
+
+    color: var(--color-secondary-default);
+}
