@@ -1,5 +1,16 @@
 # @frontify/fondue-charts
 
+## 7.1.0
+
+### Minor Changes
+
+-   [#2734](https://github.com/Frontify/fondue/pull/2734) [`694887d`](https://github.com/Frontify/fondue/commit/694887dd63c319434d76cbdc3333d86b0be0e7aa) Thanks [@noahwaldner](https://github.com/noahwaldner)! - chore: migrate the charts package to use scss instead of tailwind
+
+### Patch Changes
+
+-   Updated dependencies [[`ec9720e`](https://github.com/Frontify/fondue/commit/ec9720e81bf8dcbae59b98a02e5eb463936e2923)]:
+    -   @frontify/fondue-tokens@5.0.2
+
 ## 7.0.1
 
 ### Patch Changes

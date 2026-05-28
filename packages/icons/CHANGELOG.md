@@ -1,5 +1,14 @@
 # @frontify/fondue-icons
 
+## 0.26.2
+
+### Patch Changes
+
+-   [#2735](https://github.com/Frontify/fondue/pull/2735) [`ec9720e`](https://github.com/Frontify/fondue/commit/ec9720e81bf8dcbae59b98a02e5eb463936e2923) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add fondue sdk package
+
+-   Updated dependencies [[`ec9720e`](https://github.com/Frontify/fondue/commit/ec9720e81bf8dcbae59b98a02e5eb463936e2923)]:
+    -   @frontify/fondue-tokens@5.0.2
+
 ## 0.26.1
 
 ### Patch Changes
