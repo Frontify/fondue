@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { screens } from '../../tailwind.config';
+import { screens } from './screens';
 
 type Breakpoint = keyof typeof screens | 'base';
 const breakpoints = Object.keys(screens);

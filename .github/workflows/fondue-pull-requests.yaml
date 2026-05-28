@@ -48,8 +48,11 @@ jobs:
       - name: Build Fondue RTE
         run: pnpm build:rte
 
+      - name: Build Fondue SDK
+        run: pnpm build:sdk
+
       - name: Lint code
-        run: pnpm --stream --filter {packages/fondue} --filter {packages/components} --filter {packages/icons} --filter {packages/rte} lint
+        run: pnpm --stream --filter {packages/fondue} --filter {packages/components} --filter {packages/icons} --filter {packages/rte} --filter {packages/sdk} lint
 
   typecheck:
     name: Typecheck
@@ -86,8 +89,11 @@ jobs:
       - name: Build Fondue RTE
         run: pnpm build:rte
 
+      - name: Build Fondue SDK
+        run: pnpm build:sdk
+
       - name: Typecheck code
-        run: pnpm --stream --filter {packages/fondue} --filter {packages/components} --filter {packages/icons} --filter {packages/rte} typecheck
+        run: pnpm --stream --filter {packages/fondue} --filter {packages/components} --filter {packages/icons} --filter {packages/rte} --filter {packages/sdk} typecheck
 
   rte-component-tests:
     name: RTE Component Tests
@@ -168,3 +174,29 @@ jobs:
 
       - name: Playwright tests
         run: pnpm --stream --filter {packages/components} test:components:ci
+
+  sdk-tests:
+    name: SDK Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout current commit
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Use pnpm
+        uses: pnpm/action-setup@0e279bb959325dab635dd2c09392533439d90093 # v6.0.8
+        with:
+          run_install: false
+
+      - name: Use Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version-file: ".nvmrc"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Unit test
+        run: pnpm --stream --filter {packages/sdk} test

@@ -1,5 +1,5 @@
 ---
-"@frontify/fondue-charts": patch
+"@frontify/fondue-components": minor
 ---
 
-chore(charts): migrate component styles from Tailwind to SCSS modules; Tailwind is no longer included in the published bundle (still available for Storybook stories and tests).
+fix: remove unused tailwind styles from bundle

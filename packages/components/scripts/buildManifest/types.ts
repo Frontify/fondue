@@ -48,9 +48,7 @@ export type ComponentRef = {
 };
 
 export type GlobalManifest = {
-    schemaVersion: string;
     packageName: string;
-    generatedAt: string;
     components: Record<string, ComponentRef>;
 };
 
