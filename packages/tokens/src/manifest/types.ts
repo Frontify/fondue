@@ -38,6 +38,7 @@ export type ManifestUtility = {
 };
 
 export type Manifest = {
+    packageName: string;
     tokens: ManifestToken[];
     utilities: ManifestUtility[];
 };

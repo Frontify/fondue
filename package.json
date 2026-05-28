@@ -8,15 +8,16 @@
         "npm": "<=0"
     },
     "scripts": {
-        "build": "pnpm build:charts && pnpm build:icons && pnpm build:components && pnpm build:rte && pnpm build:fondue",
+        "build": "pnpm build:charts && pnpm build:icons && pnpm build:components && pnpm build:rte && pnpm build:sdk && pnpm build:fondue",
         "build:charts": "pnpm --stream --filter {packages/charts} build",
         "build:components": "pnpm --stream --filter {packages/components} build",
+        "build:sdk": "pnpm --stream --filter {packages/sdk} build",
         "build:fondue": "pnpm --stream --filter {packages/fondue} build",
         "build:icons": "pnpm --stream --filter {packages/icons} build",
         "build:rte": "pnpm --stream --filter {packages/rte} build",
         "build:tokens": "pnpm --stream --filter {packages/tokens} build",
         "build:storybook": "pnpm build && pnpm build:storybook:packages && pnpm build:storybook:main",
-        "build:storybook:main": "pnpm --stream --filter {storybook-docs} build:storybook",
+        "build:storybook:main": "pnpm build:icons && pnpm build:components && pnpm build:sdk && pnpm --stream --filter {storybook-docs} build:storybook",
         "build:storybook:icons": "pnpm build:icons && pnpm --stream --filter {packages/icons} build:storybook",
         "build:storybook:components": "pnpm build:icons && pnpm --stream --filter {packages/components} build:storybook",
         "build:storybook:fondue": "pnpm build:icons && pnpm --stream --filter {packages/fondue} build:storybook",

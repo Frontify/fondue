@@ -54,6 +54,10 @@
             "import": "./dist/packages/rte/fondue-rte.js"
         },
         "./rte/styles": "./dist/packages/rte/style.css",
+        "./sdk": {
+            "types": "./dist/packages/sdk/fondue-sdk.d.ts",
+            "import": "./dist/packages/sdk/fondue-sdk.js"
+        },
         "./charts/styles": "./dist/packages/charts/style.css",
         ".": {
             "types": "./dist/index.d.ts",
@@ -75,7 +79,8 @@
     "types": "dist/index.d.ts",
     "bin": {
         "codemod": "./dist/tools/codemod/index.js",
-        "internal": "./dist/tools/internal/index.js"
+        "internal": "./dist/tools/internal/index.js",
+        "fondue": "./dist/tools/sdk-cli/index.js"
     },
     "files": [
         "dist",
@@ -85,7 +90,7 @@
         "node": ">=18"
     },
     "scripts": {
-        "build": "pnpm clean && pnpm build:library && pnpm build:styles-with-tw && pnpm build:package:components && pnpm build:package:locales && pnpm build:package:icons && pnpm build:package:charts && pnpm build:package:tokens && pnpm build:package:rte && pnpm build:tools",
+        "build": "pnpm clean && pnpm build:library && pnpm build:styles-with-tw && pnpm build:package:components && pnpm build:package:locales && pnpm build:package:icons && pnpm build:package:charts && pnpm build:package:tokens && pnpm build:package:rte && pnpm build:package:sdk && pnpm build:tools",
         "build:library": "vite build",
         "build:styles-with-tw": "postcss ./src/components/**/*.css --config src/components/postcss.config.cjs -o dist/styles-without-tailwind.css",
         "build:storybook": "storybook build",
@@ -95,7 +100,8 @@
         "build:package:charts": "vite build -c charts.vite.config.ts",
         "build:package:tokens": "vite build -c tokens.vite.config.ts",
         "build:package:rte": "vite build -c rte.vite.config.ts",
-        "build:tools": "tsx scripts/detectDeprecatedExports/detectDeprecatedExports.ts tools/constants/fondueExports.json && vite build -c codemod.vite.config.ts && vite build -c internal-tools.vite.config.ts",
+        "build:package:sdk": "vite build -c sdk.vite.config.ts",
+        "build:tools": "tsx scripts/detectDeprecatedExports/detectDeprecatedExports.ts tools/constants/fondueExports.json && vite build -c codemod.vite.config.ts && vite build -c internal-tools.vite.config.ts && vite build -c sdk-cli.vite.config.ts",
         "dev": "cross-env NODE_ENV=development pnpm dev:library",
         "dev:library": "vite build --emptyOutDir false --watch",
         "clean": "rimraf dist",
@@ -122,6 +128,7 @@
         "@frontify/fondue-components": "workspace:^",
         "@frontify/fondue-icons": "workspace:^",
         "@frontify/fondue-rte": "workspace:^",
+        "@frontify/fondue-sdk": "workspace:^",
         "@frontify/fondue-tokens": "workspace:^",
         "@popperjs/core": "^2.11.8",
         "@react-aria/accordion": "3.0.0-alpha.37",
