@@ -80,7 +80,7 @@
     "bin": {
         "codemod": "./dist/tools/codemod/index.js",
         "internal": "./dist/tools/internal/index.js",
-        "fondue": "./dist/tools/sdk-cli/index.js"
+        "sdk": "./dist/tools/sdk-cli/index.js"
     },
     "files": [
         "dist",
