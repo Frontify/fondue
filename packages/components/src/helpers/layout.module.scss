@@ -48,9 +48,17 @@ $layoutProperties: (
             syntax: '*';
             inherits: false;
         }
+        @property --#{$property}-computed {
+            syntax: '*';
+            inherits: false;
+        }
 
         @each $breakpoint, $_min-width in $screens {
             @property --#{$breakpoint}-#{$property} {
+                syntax: '*';
+                inherits: false;
+            }
+            @property --#{$breakpoint}-#{$property}-computed {
                 syntax: '*';
                 inherits: false;
             }
