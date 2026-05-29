@@ -279,8 +279,8 @@ test.describe('OrderableList', () => {
                 </OrderableList.Root>,
             );
 
-            const item = component.locator(`[data-test-id="${ITEM_TEST_ID}"]`);
-            await expect(item).toHaveCSS('opacity', '0.5');
+            const content = component.locator(`[data-test-id="${ITEM_TEST_ID}"] > div[tabindex="0"]`);
+            await expect(content).toHaveCSS('opacity', '0.5');
         });
 
         test('should not be draggable from content area when disabled', async ({ mount, page }) => {

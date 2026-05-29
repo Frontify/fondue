@@ -39,6 +39,10 @@
         .actions {
             padding: var(--spacing-x-small) var(--spacing-small);
         }
+
+        .actions:has(+ .dragHandle) {
+            padding-right: 0;
+        }
     }
     &[data-padding='none'] {
         .content,
@@ -66,8 +70,13 @@
     }
 
     &[data-disabled] {
-        opacity: 0.5;
         cursor: default;
+
+        .content,
+        .actions,
+        .dragHandle {
+            opacity: 0.5;
+        }
 
         .handle {
             cursor: default;
