@@ -1,5 +1,14 @@
 # @frontify/fondue-components
 
+## 30.6.1
+
+### Patch Changes
+
+-   [#2740](https://github.com/Frontify/fondue/pull/2740) [`fb4968f`](https://github.com/Frontify/fondue/commit/fb4968fbaabcd57eb715bdea235db9c5d9e5c0d1) Thanks [@syeo66](https://github.com/syeo66)! - chore(OrderableList): adjust gap between icon and handle; no opacity on disabled border
+
+-   Updated dependencies []:
+    -   @frontify/fondue-tokens@5.0.2
+
 ## 30.6.0
 
 ### Minor Changes
