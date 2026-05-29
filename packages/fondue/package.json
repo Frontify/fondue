@@ -55,7 +55,7 @@
         },
         "./rte/styles": "./dist/packages/rte/style.css",
         "./sdk": {
-            "types": "./dist/packages/sdk/fondue-sdk.d.ts",
+            "types": "./dist/packages/sdk/sdk.d.ts",
             "import": "./dist/packages/sdk/fondue-sdk.js"
         },
         "./charts/styles": "./dist/packages/charts/style.css",
