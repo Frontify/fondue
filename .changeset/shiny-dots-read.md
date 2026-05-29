@@ -3,4 +3,4 @@
 "@frontify/fondue": patch
 ---
 
-chore: adjust gap between icon and handle; no opacity on disabled border
+chore(OrderableList): adjust gap between icon and handle; no opacity on disabled border
