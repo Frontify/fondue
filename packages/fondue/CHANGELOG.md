@@ -1,5 +1,16 @@
 # @frontify/fondue
 
+## 13.6.1
+
+### Patch Changes
+
+-   [#2740](https://github.com/Frontify/fondue/pull/2740) [`fb4968f`](https://github.com/Frontify/fondue/commit/fb4968fbaabcd57eb715bdea235db9c5d9e5c0d1) Thanks [@syeo66](https://github.com/syeo66)! - chore(OrderableList): adjust gap between icon and handle; no opacity on disabled border
+
+-   [#2743](https://github.com/Frontify/fondue/pull/2743) [`4b1f8b8`](https://github.com/Frontify/fondue/commit/4b1f8b8d359019bd76e5853b4846059388004733) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: adjust path to sdk type file
+
+-   Updated dependencies [[`fb4968f`](https://github.com/Frontify/fondue/commit/fb4968fbaabcd57eb715bdea235db9c5d9e5c0d1)]:
+    -   @frontify/fondue-components@30.6.1
+
 ## 13.6.0
 
 ### Minor Changes
