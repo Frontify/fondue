@@ -6,15 +6,12 @@
 $properties: (display);
 $allProperties: list.join($properties, layout.$layoutProperties);
 
+@include layout.register-properties($allProperties);
+
 .root {
     box-sizing: border-box;
 
     @include layout.responsive-properties($allProperties);
 
-    // Default values
-    @each $property in $allProperties {
-        @include layout.responsive-default-value($property, initial);
-    }
-
-    @include layout.responsive-default-value(display, block);
+    --display: block;
 }
