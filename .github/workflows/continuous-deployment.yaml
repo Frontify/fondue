@@ -7,29 +7,21 @@ on:
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
+permissions:
+  contents: read
+
 jobs:
-  lint:
-    name: Lint
+  lint-typecheck:
+    name: Lint & Typecheck
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
     steps:
-      - name: Checkout default branch
+      - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - name: Use pnpm
-        uses: pnpm/action-setup@0e279bb959325dab635dd2c09392533439d90093 # v6.0.8
-        with:
-          run_install: false
-
-      - name: Use Node.js
-        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
-        with:
-          node-version-file: ".nvmrc"
-          cache: "pnpm"
-
-      - name: Install npm dependencies
-        run: pnpm i --frozen-lockfile
+      - name: Setup
+        uses: ./.github/actions/setup
 
       - name: Build Fondue Icons
         run: pnpm build:icons
@@ -49,82 +41,27 @@ jobs:
       - name: Lint code
         run: pnpm lint
 
-  typecheck:
-    name: Typecheck
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-
-    steps:
-      - name: Checkout default branch
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-
-      - name: Use pnpm
-        uses: pnpm/action-setup@0e279bb959325dab635dd2c09392533439d90093 # v6.0.8
-        with:
-          run_install: false
-
-      - name: Use Node.js
-        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
-        with:
-          node-version-file: ".nvmrc"
-          cache: "pnpm"
-
-      - name: Install npm dependencies
-        run: pnpm i --frozen-lockfile
-
-      - name: Build Fondue Icons
-        run: pnpm build:icons
-
-      - name: Build Fondue Charts
-        run: pnpm build:charts
-
-      - name: Build Fondue Components
-        run: pnpm build:components
-
-      - name: Build Fondue RTE
-        run: pnpm build:rte
-
-      - name: Build Fondue SDK
-        run: pnpm build:sdk
-
       - name: Typecheck code
         run: pnpm typecheck
 
   rte-component-tests:
-    name: RTE Component Tests
+    name: RTE Component Tests (shard ${{ matrix.shard }}/${{ strategy.job-total }})
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
+
     steps:
-      - name: Checkout current commit
+      - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - name: Use Node.js
-        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+      - name: Setup
+        uses: ./.github/actions/setup
         with:
-          node-version-file: ".nvmrc"
-
-      - name: Use pnpm
-        uses: pnpm/action-setup@0e279bb959325dab635dd2c09392533439d90093 # v6.0.8
-        with:
-          run_install: false
-
-      - name: Get pnpm store directory
-        id: pnpm-cache
-        run: echo "pnpm_cache_dir=$(pnpm store path)" >> $GITHUB_OUTPUT
-
-      - name: Setup pnpm cache
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
-        id: npm_cache
-        with:
-          path: |
-            ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
-            ~/.cache/Cypress
-          key: pnpm-with-cypress-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: pnpm-with-cypress-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+          cypress-cache: "true"
 
       - name: Build Fondue Icons
         run: pnpm build:icons
@@ -133,30 +70,23 @@ jobs:
         run: pnpm build:components
 
       - name: Component Tests
-        run: pnpm run --stream --filter {packages/rte} test
+        uses: ./.github/actions/cypress-shard
+        with:
+          package: packages/rte
+          shard: ${{ matrix.shard }}
+          total: ${{ strategy.job-total }}
 
-  component-tests:
-    name: Component Tests
+  component-unit-tests:
+    name: Component Unit Tests
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 10
 
     steps:
-      - name: Checkout current commit
+      - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - name: Use pnpm
-        uses: pnpm/action-setup@0e279bb959325dab635dd2c09392533439d90093 # v6.0.8
-        with:
-          run_install: false
-
-      - name: Use Node.js
-        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
-        with:
-          node-version-file: ".nvmrc"
-          cache: "pnpm"
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - name: Setup
+        uses: ./.github/actions/setup
 
       - name: Build Fondue icons
         run: pnpm build:icons
@@ -164,18 +94,40 @@ jobs:
       - name: Unit test
         run: pnpm --stream --filter {packages/components} test
 
+  component-tests:
+    name: Component Tests (shard ${{ matrix.shard }}/${{ strategy.job-total }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          playwright-cache: "true"
+
+      - name: Build Fondue icons
+        run: pnpm build:icons
+
       - name: Install Playwright browsers
         run: pnpm --stream --filter {packages/components} install:playwright
 
       - name: Playwright tests
-        run: pnpm --stream --filter {packages/components} test:components:ci
+        run: pnpm --filter {packages/components} exec playwright test --shard=${{ matrix.shard }}/${{ strategy.job-total }}
 
   publish:
     name: Publish
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
-    needs: [lint, typecheck, component-tests]
+    needs: [lint-typecheck, component-unit-tests, component-tests]
 
     permissions:
       contents: write # to create release (changesets/action)
@@ -183,26 +135,15 @@ jobs:
       id-token: write # to authenticate with npm registry via OIDC
 
     steps:
-      - name: Checkout default branch
+      - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - name: Use pnpm
-        uses: pnpm/action-setup@0e279bb959325dab635dd2c09392533439d90093 # v6.0.8
-        with:
-          run_install: false
-
-      - name: Use Node.js
-        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
-        with:
-          node-version-file: ".nvmrc"
-          cache: "pnpm"
-
-      - name: Install npm dependencies
-        run: pnpm i --frozen-lockfile
+      - name: Setup
+        uses: ./.github/actions/setup
 
       - name: Create release PR or publish to npm
         id: changesets
-        uses: changesets/action@v1
+        uses: changesets/action@d94a5c301145045a0960133674e003b265942a22 # v1.8.0
         with:
           commit: "chore: release packages"
           title: "chore: release packages"
