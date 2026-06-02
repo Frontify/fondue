@@ -143,7 +143,7 @@ jobs:
 
       - name: Create release PR or publish to npm
         id: changesets
-        uses: changesets/action@d94a5c301145045a0960133674e003b265942a22 # v1.8.0
+        uses: changesets/action@63a615b9cd06ba9a3e6d13796c7fbcb080a60a0b # v1.8.0
         with:
           commit: "chore: release packages"
           title: "chore: release packages"
