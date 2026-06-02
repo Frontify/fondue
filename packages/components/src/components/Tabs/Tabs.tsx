@@ -14,8 +14,6 @@ import {
     type ReactNode,
 } from 'react';
 
-import { useControllableState } from '#/hooks/useControllableState';
-
 import { Button } from '../Button/Button';
 import { Dropdown } from '../Dropdown/Dropdown';
 import { useFondueTheme } from '../ThemeProvider/ThemeProvider';
@@ -23,6 +21,8 @@ import { useFondueTheme } from '../ThemeProvider/ThemeProvider';
 import { useTabTriggers } from './hooks/useTabTriggers';
 import styles from './styles/tabs.module.scss';
 import { type TabTrigger } from './types';
+
+import { useControllableState } from '#/hooks/useControllableState';
 
 export type TabsRootProps = {
     id?: string;
@@ -142,7 +142,10 @@ export const TabsRoot = (
                                 className={styles.trigger}
                                 ref={trigger.ref}
                             >
-                                {trigger.element}
+                                <span className={styles.triggerLabel}>
+                                    <span className={styles.triggerLabelActive}>{trigger.element}</span>
+                                    <span className={styles.triggerLabelInactive}>{trigger.element}</span>
+                                </span>
                             </RadixTabs.Trigger>
                         ))}
                     </RadixTabs.List>

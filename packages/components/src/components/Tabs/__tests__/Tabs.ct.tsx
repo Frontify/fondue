@@ -54,8 +54,9 @@ test('should rerender when the trigger content changes', async ({ mount }) => {
         </Tabs.Root>,
     );
     const component = wrapper.getByTestId(TABS_ROOT_TEST_ID);
-    await expect(component.getByText('First Tab')).toBeVisible();
-    await expect(component.getByText('Swapped Tab')).not.toBeVisible();
+    const firstTrigger = component.getByTestId(FIRST_TAB_TRIGGER_TEST_ID);
+    await expect(firstTrigger).toContainText('First Tab');
+    await expect(firstTrigger).not.toContainText('Swapped Tab');
 
     await wrapper.update(
         <Tabs.Root data-test-id={TABS_ROOT_TEST_ID}>
@@ -69,8 +70,8 @@ test('should rerender when the trigger content changes', async ({ mount }) => {
             </Tabs.Tab>
         </Tabs.Root>,
     );
-    await expect(component.getByText('First Tab')).not.toBeVisible();
-    await expect(component.getByText('Swapped Tab')).toBeVisible();
+    await expect(firstTrigger).not.toContainText('First Tab');
+    await expect(firstTrigger).toContainText('Swapped Tab');
 });
 
 test('should render with default tab active', async ({ mount }) => {
