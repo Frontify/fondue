@@ -86,6 +86,8 @@ jobs:
     steps:
       - name: Setup
         uses: ./.github/actions/setup
+        with:
+          playwright-cache: "true"
 
       - name: Build Fondue icons
         run: pnpm build:icons

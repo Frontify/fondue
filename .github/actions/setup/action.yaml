@@ -6,6 +6,10 @@ inputs:
     description: When 'true', also restore the Cypress binary cache.
     required: false
     default: "false"
+  playwright-cache:
+    description: When 'true', also restore the Playwright browser cache.
+    required: false
+    default: "false"
 
 runs:
   using: composite
@@ -31,6 +35,14 @@ runs:
         path: ~/.cache/Cypress
         key: cypress-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
         restore-keys: cypress-${{ runner.os }}-
+
+    - name: Cache Playwright browsers
+      if: inputs.playwright-cache == 'true'
+      uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+      with:
+        path: ~/.cache/ms-playwright
+        key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+        restore-keys: playwright-${{ runner.os }}-
 
     - name: Install dependencies
       shell: bash
