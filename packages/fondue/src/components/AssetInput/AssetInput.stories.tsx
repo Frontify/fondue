@@ -2,8 +2,8 @@
 
 import { type Meta, type StoryFn } from '@storybook/react-vite';
 
-import { AssetInput, type AssetInputProps, AssetInputSize } from './AssetInput';
 import { assetInputActions } from './asset-input-actions';
+import { AssetInput, type AssetInputProps, AssetInputSize } from './AssetInput';
 import { EXAMPLE_IMAGES, MIXED_ASSETS } from './example-assets';
 
 /**

@@ -1,7 +1,6 @@
 {
     "compilerOptions": {
         "allowJs": true,
-        "baseUrl": ".",
         "esModuleInterop": true,
         "jsx": "react-jsx",
         "lib": ["dom", "dom.iterable", "esnext"],
@@ -23,10 +22,16 @@
         "target": "esnext",
         "types": ["vite/client", "node"]
     },
-    "exclude": ["node_modules", "dist"],
+    "exclude": [
+        "node_modules",
+        "dist",
+        "src/foundation/Icon/Generated",
+        "src/foundation/Icon/IconEnum.ts"
+    ],
     "include": [
         ".storybook",
-        "eslint.config.mjs",
+        "oxlint.config.ts",
+        "oxfmt.config.ts",
         "postcss.config.cjs",
         "src",
         "scripts",
@@ -37,7 +42,6 @@
         "icons.vite.config.ts",
         "rte.vite.config.ts",
         "sdk.vite.config.ts",
-        "tailwind.config.js",
         "legacyComponents.tailwind.config.ts",
         "tokens.vite.config.ts",
         "codemod.vite.config.ts",

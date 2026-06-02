@@ -4,9 +4,9 @@ import { type Active, type Collision, type Over, type Translate } from '@dnd-kit
 import { type useSortable } from '@dnd-kit/sortable';
 import { type MutableRefObject, type ReactElement, type ReactNode } from 'react';
 
+import { type Projection } from './helpers';
 import { type InternalTreeItemProps } from './TreeItem';
 import { type Overlay } from './TreeItem/TreeItemOverlay';
-import { type Projection } from './helpers';
 
 export type SensorContext = MutableRefObject<{
     nodes: ReactElement[];

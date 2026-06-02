@@ -2,8 +2,8 @@
 
 import { useContext } from 'react';
 
-import { TreeContext } from '../TreeContext';
 import { convertToPartialSelectedId } from '../helpers';
+import { TreeContext } from '../TreeContext';
 
 export const useMultiselectTreeItem = (id: string) => {
     const { treeState } = useContext(TreeContext);
