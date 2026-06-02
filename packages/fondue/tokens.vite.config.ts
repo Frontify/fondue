@@ -3,6 +3,8 @@
 import { defineConfig } from 'vite';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 
+import { cssTypesPlugin } from './scripts/cssTypesPlugin';
+
 export default defineConfig({
     plugins: [
         viteStaticCopy({
@@ -13,6 +15,7 @@ export default defineConfig({
                 },
             ],
         }),
+        cssTypesPlugin(),
     ],
     build: {
         lib: {
