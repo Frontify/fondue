@@ -143,7 +143,9 @@ export const TabsRoot = (
                                 ref={trigger.ref}
                             >
                                 <span className={styles.triggerLabel}>
-                                    <span className={styles.triggerLabelActive}>{trigger.element}</span>
+                                    <span className={styles.triggerLabelActive} aria-hidden="true">
+                                        {trigger.element}
+                                    </span>
                                     <span className={styles.triggerLabelInactive}>{trigger.element}</span>
                                 </span>
                             </RadixTabs.Trigger>
