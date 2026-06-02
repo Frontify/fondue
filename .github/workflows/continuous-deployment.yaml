@@ -42,9 +42,14 @@ jobs:
         run: pnpm typecheck
 
   rte-component-tests:
-    name: RTE Component Tests
+    name: RTE Component Tests (shard ${{ matrix.shard }}/${{ strategy.job-total }})
     runs-on: ubuntu-latest
     timeout-minutes: 10
+
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3]
 
     steps:
       - name: Checkout
@@ -62,7 +67,11 @@ jobs:
         run: pnpm build:components
 
       - name: Component Tests
-        run: pnpm run --stream --filter {packages/rte} test
+        uses: ./.github/actions/cypress-shard
+        with:
+          package: packages/rte
+          shard: ${{ matrix.shard }}
+          total: ${{ strategy.job-total }}
 
   component-unit-tests:
     name: Component Unit Tests
