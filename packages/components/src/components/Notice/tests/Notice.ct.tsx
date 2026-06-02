@@ -114,6 +114,22 @@ test('should apply large size', async ({ mount }) => {
     await expect(notice).toHaveAttribute('data-size', 'large');
 });
 
+test('should apply center alignContent by default', async ({ mount }) => {
+    const component = await mount(<Notice data-test-id="notice-root">{NOTICE_TEXT}</Notice>);
+    const notice = component.getByTestId('notice-root');
+    await expect(notice).toHaveAttribute('data-align-content', 'center');
+});
+
+test('should apply top alignContent', async ({ mount }) => {
+    const component = await mount(
+        <Notice data-test-id="notice-root" alignContent="top">
+            {NOTICE_TEXT}
+        </Notice>,
+    );
+    const notice = component.getByTestId('notice-root');
+    await expect(notice).toHaveAttribute('data-align-content', 'top');
+});
+
 test('should render icon when provided', async ({ mount }) => {
     const component = await mount(<Notice icon={<IconInfo data-testid="test-icon" size="16" />}>{NOTICE_TEXT}</Notice>);
     await expect(component.locator('svg')).toBeVisible();
