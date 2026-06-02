@@ -108,7 +108,7 @@ jobs:
         run: pnpm --stream --filter {packages/components} install:playwright
 
       - name: Playwright tests
-        run: pnpm --filter {packages/components} run test:components:ci -- --shard=${{ matrix.shard }}/${{ strategy.job-total }}
+        run: pnpm --filter {packages/components} exec playwright test --shard=${{ matrix.shard }}/${{ strategy.job-total }}
 
   publish:
     name: Publish
