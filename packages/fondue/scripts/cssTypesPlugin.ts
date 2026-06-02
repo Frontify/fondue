@@ -2,8 +2,9 @@
 
 import { writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
+
 import fg from 'fast-glob';
-import type { Plugin } from 'vite';
+import { type Plugin } from 'vite';
 
 export function cssTypesPlugin(): Plugin {
     let outDir = '';
