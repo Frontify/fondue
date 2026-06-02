@@ -14,3 +14,10 @@ blockExoticSubdeps: true
 minimumReleaseAge: 1440
 minimumReleaseAgeExclude:
     - "@frontify/*"
+
+publicHoistPattern:
+    - "*eslint*"
+    - "*prettier*"
+    - "*tailwind*"
+
+confirmModulesPurge: false

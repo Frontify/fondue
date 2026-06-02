@@ -17,6 +17,6 @@
         "package.json",
         "playwright.config.ts",
         "scripts",
-        "eslint.config.mjs"
+        "oxlint.config.ts"
     ]
 }

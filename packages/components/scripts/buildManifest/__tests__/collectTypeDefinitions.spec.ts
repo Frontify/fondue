@@ -3,9 +3,9 @@
 // @vitest-environment node
 
 vi.mock('../utils', () => {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/consistent-type-imports
+    // oxlint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/consistent-type-imports
     const os = require('node:os') as typeof import('node:os');
-    // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/consistent-type-imports
+    // oxlint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/consistent-type-imports
     const path = require('node:path') as typeof import('node:path');
     const root = path.join(os.tmpdir(), 'manifest-test-collectTypes');
     return {
