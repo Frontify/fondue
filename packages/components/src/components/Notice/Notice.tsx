@@ -13,6 +13,8 @@ type NoticeEmphasis = 'default' | 'strong' | 'weak';
 
 type NoticeSize = 'medium' | 'large';
 
+type NoticeAlignContent = 'center' | 'top';
+
 export type NoticeProps = {
     /**
      * @default 'default'
@@ -26,6 +28,11 @@ export type NoticeProps = {
      * @default 'medium'
      */
     size?: NoticeSize;
+    /**
+     * Vertical alignment of the notice's contents
+     * @default 'center'
+     */
+    alignContent?: NoticeAlignContent;
     /**
      * Leading icon element
      */
@@ -62,6 +69,7 @@ export const Notice = ({
     variant = 'default',
     emphasis = 'default',
     size = 'medium',
+    alignContent = 'center',
     icon,
     action,
     onDismiss,
@@ -76,6 +84,7 @@ export const Notice = ({
             data-variant={variant}
             data-emphasis={emphasis}
             data-size={size}
+            data-align-content={alignContent}
             data-test-id={dataTestId}
             className={[styles.root, className].filter(Boolean).join(' ')}
             role="status"
