@@ -1,7 +1,6 @@
 {
     "compilerOptions": {
         "allowImportingTsExtensions": true,
-        "baseUrl": ".",
         "isolatedModules": true,
         "jsx": "react-jsx",
         "lib": ["ESNext", "DOM", "DOM.Iterable"],

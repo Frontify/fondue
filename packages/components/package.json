@@ -119,7 +119,7 @@
         "eslint-plugin-tailwindcss": "^3.18.2",
         "glob": "^13.0.6",
         "happy-dom": "^20.9.0",
-        "oxfmt": "^0.53.0",
+        "oxfmt": "^0.52.0",
         "oxlint": "^1.67.0",
         "oxlint-tsgolint": "^0.23.0",
         "postcss": "^8.5.14",

@@ -5,8 +5,8 @@ import { type ReactNode } from 'react';
 
 import { GroupLabel } from '../GroupLabel';
 
-import { UtilityPreviewCard } from './UtilityPreviewCard';
 import { type Utility, type UtilityCollection, type UtilityProperty } from './types';
+import { UtilityPreviewCard } from './UtilityPreviewCard';
 
 const isUtilityPropertyGroup = (value: object): value is { [key: string]: UtilityProperty } => {
     return Object.values(value).every(
