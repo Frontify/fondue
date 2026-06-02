@@ -29,7 +29,10 @@
             "require": "./dist/packages/components/fondue-components.umd.cjs",
             "import": "./dist/packages/components/fondue-components.js"
         },
-        "./components/styles": "./dist/packages/components/style.css",
+        "./components/styles": {
+            "types": "./dist/packages/components/style.css.d.ts",
+            "default": "./dist/packages/components/style.css"
+        },
         "./components/locales": {
             "types": "./dist/packages/locales/index.d.ts",
             "import": "./dist/packages/locales/index.js"
@@ -53,22 +56,37 @@
             "require": "./dist/packages/rte/fondue-rte.umd.cjs",
             "import": "./dist/packages/rte/fondue-rte.js"
         },
-        "./rte/styles": "./dist/packages/rte/style.css",
+        "./rte/styles": {
+            "types": "./dist/packages/rte/style.css.d.ts",
+            "default": "./dist/packages/rte/style.css"
+        },
         "./sdk": {
             "types": "./dist/packages/sdk/sdk.d.ts",
             "import": "./dist/packages/sdk/fondue-sdk.js"
         },
-        "./charts/styles": "./dist/packages/charts/style.css",
+        "./charts/styles": {
+            "types": "./dist/packages/charts/style.css.d.ts",
+            "default": "./dist/packages/charts/style.css"
+        },
         ".": {
             "types": "./dist/index.d.ts",
             "require": "./dist/index.umd.js",
             "import": "./dist/index.es.js"
         },
-        "./styles": "./dist/style.css",
-        "./tokens/base": "./dist/packages/tokens/css/base.css",
+        "./styles": {
+            "types": "./dist/style.css.d.ts",
+            "default": "./dist/style.css"
+        },
+        "./tokens/base": {
+            "types": "./dist/packages/tokens/css/base.css.d.ts",
+            "default": "./dist/packages/tokens/css/base.css"
+        },
         "./tokens/tailwind": "./dist/packages/tokens/tailwind/tailwind.config.js",
         "./legacyTokens/tailwind": "./dist/legacyTokens.tailwind.config.js",
-        "./legacyTokens/base": "./dist/packages/tokens/css/deprecatedBaseTokens.css",
+        "./legacyTokens/base": {
+            "types": "./dist/packages/tokens/css/deprecatedBaseTokens.css.d.ts",
+            "default": "./dist/packages/tokens/css/deprecatedBaseTokens.css"
+        },
         "./legacyTokens/tools/replaceLegacyTokens": "./dist/packages/tokens/legacy/tools/replaceLegacyTokens.ts",
         "./dist/*": "./dist/*"
     },
