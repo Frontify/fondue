@@ -7,7 +7,7 @@
         "lib": ["ESNext"],
         "module": "ESNext",
         "moduleResolution": "Bundler",
-        "outDir": "./node_modules/.cache/tsconfig-node",
+        "outDir": "./dist/tsconfig-node",
         "resolveJsonModule": true,
         "target": "ESNext"
     },
