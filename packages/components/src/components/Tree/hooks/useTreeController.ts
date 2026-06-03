@@ -54,7 +54,7 @@ export const useTreeController = ({ items, onChange }: UseTreeControllerOptions)
     // headless-tree sees "new state" every render and triggers an infinite loop.
     const treeState = useMemo<FlatTreeState>(
         () => ({ expandedItems, selectedItems, focusedItem }),
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+
         [expandedItems.join('|'), selectedItems.join('|'), focusedItem],
     );
 

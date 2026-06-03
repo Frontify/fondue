@@ -53,13 +53,12 @@ $accent: #7c5cff;
 
 .guide {
     width: var(--tree-indent);
-    border-right: 1px dashed var(--color-line-subtle, rgb(0 0 0 / 15%));
 }
 
 .item {
     flex: 1;
     display: grid;
-    grid-template-columns: auto auto auto 1fr;
+    grid-template-columns: auto auto auto auto 1fr;
     align-items: center;
     column-gap: 6px;
     padding: 0 8px 0 4px;
@@ -72,6 +71,12 @@ $accent: #7c5cff;
 
     &[data-selected='true'] {
         background-color: var(--color-container-secondary-hover, rgb(0 0 0 / 6%));
+    }
+
+    &[data-active='true'] {
+        background-color: var(--color-box-selected-default, var(--tree-accent));
+        color: var(--color-box-selected-inverse, #fff);
+        font-weight: var(--typography-font-weight-medium, 500);
     }
 
     &[data-drop='true'] {
@@ -87,7 +92,7 @@ $accent: #7c5cff;
     width: 16px;
     height: 16px;
     color: var(--color-secondary-default, rgb(0 0 0 / 45%));
-    opacity: 0;
+    opacity: 1;
     cursor: grab;
 
     .row:hover &,
@@ -124,6 +129,10 @@ $accent: #7c5cff;
 
     .item[data-folder='true'] & {
         font-weight: var(--typography-font-weight-medium, 500);
+    }
+
+    .item[data-active='true'] & {
+        color: inherit;
     }
 }
 

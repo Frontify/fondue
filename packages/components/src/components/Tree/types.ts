@@ -14,6 +14,12 @@ export type Item = {
     onSelectChange?: (isSelected: boolean) => void;
     isFocused?: boolean;
     onFocusChange?: (isFocused: boolean) => void;
+    /**
+     * Marks this item as the currently active one (e.g. the active route when
+     * the Tree is used as a navigation menu). Purely declarative — the consumer
+     * owns the value and toggles it (typically in response to a route change).
+     */
+    isActive?: boolean;
 };
 
 export type TreeNodeState = {
@@ -23,6 +29,7 @@ export type TreeNodeState = {
     isExpanded?: boolean;
     isSelected?: boolean;
     isFocused?: boolean;
+    isActive?: boolean;
     children?: TreeNodeState[];
 };
 
@@ -31,6 +38,13 @@ export type TreeChangeState = TreeNodeState[];
 export type TreeRootProps = {
     children: ReactNode;
     onChange?: (state: TreeChangeState) => void;
+    /**
+     * Renders a checkbox in each row that toggles `isSelected` additively. Folder
+     * checkboxes show an indeterminate state when only some leaf descendants are
+     * selected and cascade-toggle their descendants on click.
+     * @default false
+     */
+    multiSelect?: boolean;
 };
 
 export type TreeItemProps = {
@@ -40,6 +54,7 @@ export type TreeItemProps = {
     onSelectChange?: (isSelected: boolean) => void;
     isFocused?: boolean;
     onFocusChange?: (isFocused: boolean) => void;
+    isActive?: boolean;
 };
 
 export type TreeFolderProps = {
@@ -52,4 +67,5 @@ export type TreeFolderProps = {
     onSelectChange?: (isSelected: boolean) => void;
     isFocused?: boolean;
     onFocusChange?: (isFocused: boolean) => void;
+    isActive?: boolean;
 };

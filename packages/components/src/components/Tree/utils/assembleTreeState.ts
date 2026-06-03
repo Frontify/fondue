@@ -21,6 +21,7 @@ export const assembleTreeState = (items: Item[], state: FlatTreeState, parentId:
             isFolder: Boolean(item.isFolder),
             isSelected: state.selectedItems.includes(item.id),
             isFocused: state.focusedItem === item.id,
+            isActive: Boolean(item.isActive),
         };
         if (item.isFolder) {
             node.isExpanded = state.expandedItems.includes(item.id);

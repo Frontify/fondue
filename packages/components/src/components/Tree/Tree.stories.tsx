@@ -56,11 +56,11 @@ const initialNodes: TreeChangeState = [
 const renderNodes = (nodes: TreeChangeState): ReactNode =>
     nodes.map((node) =>
         node.isFolder ? (
-            <Tree.Folder key={node.id} id={node.id} name={node.name} isExpanded={node.isExpanded}>
+            <Tree.Folder key={node.id} {...node}>
                 {renderNodes(node.children ?? [])}
             </Tree.Folder>
         ) : (
-            <Tree.Item key={node.id} id={node.id}>
+            <Tree.Item key={node.id} {...node}>
                 {node.name}
             </Tree.Item>
         ),
@@ -73,9 +73,19 @@ export const Default: Story = {
     render: () => {
         const [nodes, setNodes] = useState<TreeChangeState>(initialNodes);
 
+        console.log(nodes);
+
         return (
             <div style={{ display: 'flex', gap: 24 }}>
-                <Tree.Root onChange={setNodes}>{renderNodes(nodes)}</Tree.Root>
+                <Tree.Root
+                    onChange={(state) => {
+                        console.log('state', state);
+
+                        setNodes(state);
+                    }}
+                >
+                    {renderNodes(nodes)}
+                </Tree.Root>
                 <pre style={{ fontSize: 12 }}>{JSON.stringify(nodes, null, 2)}</pre>
             </div>
         );

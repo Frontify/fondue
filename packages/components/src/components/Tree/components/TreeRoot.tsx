@@ -1,7 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { AssistiveTreeDescription } from '@headless-tree/react';
 import { IconCaretDown, IconCaretRight, IconDocument, IconFolder, IconGrabHandle } from '@frontify/fondue-icons';
+import { AssistiveTreeDescription } from '@headless-tree/react';
+
+import { Checkbox } from '#/components/Checkbox/Checkbox';
 
 import { useTreeController } from '../hooks/useTreeController';
 import styles from '../styles/tree.module.scss';
@@ -20,7 +22,12 @@ export const TreeRoot = ({ children, onChange }: TreeRootProps) => {
         ...parsedChildren,
     ];
 
-    const tree = useTreeController({ items, onChange });
+    const tree = useTreeController({
+        items,
+        onChange: (state) => {
+            onChange?.(state);
+        },
+    });
 
     return (
         <div {...tree.getContainerProps()} className={styles.tree}>
@@ -29,26 +36,41 @@ export const TreeRoot = ({ children, onChange }: TreeRootProps) => {
                 const level = item.getItemMeta().level;
                 const isFolder = item.isFolder();
                 const isExpanded = item.isExpanded();
+                const isSelected = item.isSelected();
+                const isActive = Boolean(item.getItemData().isActive);
                 return (
-                    <button key={item.getId()} type="button" {...item.getProps()} className={styles.row}>
-                        {level > 0 && (
-                            <span className={styles.guides} aria-hidden>
-                                {Array.from({ length: level }).map((_, i) => (
-                                    <span key={i} className={styles.guide} />
-                                ))}
-                            </span>
-                        )}
+                    <button
+                        key={item.getId()}
+                        type="button"
+                        {...item.getProps()}
+                        className={styles.row}
+                        aria-current={isActive ? 'page' : undefined}
+                    >
                         <div
                             className={styles.item}
                             data-focused={item.isFocused()}
                             data-expanded={isExpanded}
-                            data-selected={item.isSelected()}
+                            data-selected={isSelected}
                             data-folder={isFolder}
                             data-drop={item.isDragTarget()}
+                            data-active={isActive}
                         >
                             <span className={styles.handle} aria-hidden>
                                 <IconGrabHandle size={16} />
                             </span>
+                            <Checkbox
+                                value={isSelected}
+                                onChange={(event) => {
+                                    item.select();
+                                }}
+                            />
+                            {level > 1 && (
+                                <span className={styles.guides} aria-hidden>
+                                    {Array.from({ length: level - 1 }).map((_, i) => (
+                                        <span key={i} className={styles.guide} />
+                                    ))}
+                                </span>
+                            )}
                             <span className={styles.chevron} aria-hidden>
                                 {isFolder ? (
                                     isExpanded ? (
