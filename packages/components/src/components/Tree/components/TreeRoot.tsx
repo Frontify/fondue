@@ -3,6 +3,8 @@
 import { AssistiveTreeDescription } from '@headless-tree/react';
 import { useId, useMemo, type ReactNode } from 'react';
 
+import { useTranslation } from '#/hooks/useTranslation';
+
 import { useTreeController } from '../hooks/useTreeController';
 import styles from '../styles/tree.module.scss';
 import { type TreeChangeState } from '../types';
@@ -31,6 +33,7 @@ export type TreeRootProps = {
 };
 
 export const TreeRoot = ({ children, onChange, multiSelect = false, reorderable = false }: TreeRootProps) => {
+    const { t } = useTranslation();
     const reorderHintId = useId();
     const items = useMemo(() => parseChildren(children), [children]);
     const tree = useTreeController({ items, onChange, reorderable });
@@ -39,8 +42,7 @@ export const TreeRoot = ({ children, onChange, multiSelect = false, reorderable 
         <div {...tree.getContainerProps()} className={styles.tree}>
             {reorderable && (
                 <span id={reorderHintId} className={styles.srOnly}>
-                    To reorder, press Control plus Shift plus D to start moving this item, then arrow up or down to
-                    position it, Enter to drop, or Escape to cancel.
+                    {t('Tree_reorderHint')}
                 </span>
             )}
             <AssistiveTreeDescription tree={tree} />

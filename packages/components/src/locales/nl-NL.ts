@@ -33,6 +33,8 @@ const translations = {
     Table_sortByAscending: 'Sorteer op ${column} oplopend',
     Table_sortByDescending: 'Sorteer op ${column} aflopend',
     Table_sortDescending: 'Sorteer aflopend',
+    Tree_reorderHint:
+        'Om te herordenen, druk op Control plus Shift plus D om dit item te verplaatsen, daarna Pijl omhoog of omlaag om het te positioneren, Enter om los te laten of Escape om te annuleren.',
 };
 
 export const nlNL: LocaleConfig = {
