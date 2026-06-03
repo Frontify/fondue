@@ -32,6 +32,9 @@ export const TreeRoot = ({ children, onChange, multiSelect = false, reorderable 
         },
         reorderable,
     });
+    const dragLineData = reorderable ? tree.getDragLineData() : null;
+
+    console.log(dragLineData);
 
     return (
         <div {...tree.getContainerProps()} className={styles.tree}>
@@ -91,13 +94,12 @@ export const TreeRoot = ({ children, onChange, multiSelect = false, reorderable 
                                     ref={checkboxProps.ref as ForwardedRef<HTMLButtonElement>}
                                 />
                             )}
-                            {level > 1 && (
-                                <span className={styles.guides} aria-hidden>
-                                    {Array.from({ length: level - 1 }).map((_, i) => (
-                                        <span key={i} className={styles.guide} />
-                                    ))}
-                                </span>
-                            )}
+                            <span
+                                style={{
+                                    width: `calc(${Math.max(0, level)} * 1rem + 4px)`,
+                                }}
+                                aria-hidden
+                            />
                             <span className={styles.chevron} aria-hidden>
                                 {isFolder ? (
                                     isExpanded ? (
@@ -115,7 +117,16 @@ export const TreeRoot = ({ children, onChange, multiSelect = false, reorderable 
                     </button>
                 );
             })}
-            {reorderable && <div style={tree.getDragLineStyle()} className={styles.dragline} />}
+            {reorderable && (
+                <div
+                    style={{
+                        width: dragLineData?.width,
+                        left: 0,
+                        top: dragLineData?.top,
+                    }}
+                    className={styles.dragline}
+                />
+            )}
         </div>
     );
 };

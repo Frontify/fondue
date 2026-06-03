@@ -1,12 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
+@use '../../../utilities/sizeToken.module.scss';
 
-$indent: 20px;
-$accent: #7c5cff;
 
 .tree {
-    --tree-indent: #{$indent};
-    --tree-accent: #{$accent};
-
+    --tree-accent: var(--color-highlight-default);
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: stretch;
@@ -23,8 +21,7 @@ $accent: #7c5cff;
     display: flex;
     align-items: center;
     width: 100%;
-    height: 32px;
-    padding: 0;
+    padding: sizeToken.get(0.5) 0 sizeToken.get(0.5) 0;
     border: 0;
     background: transparent;
     border-radius: var(--border-radius-medium);
@@ -34,42 +31,23 @@ $accent: #7c5cff;
     font: inherit;
     outline: none;
 
-    &:hover .item:not([data-active='true']) {
-        background-color: var(--color-surface-hover);
-    }
-
-    &:has(.item[data-active='true']) {
-        background-color: var(--color-surface-active);
-    }
-
-
-    &:focus-visible .item {
-        outline: 2px solid var(--tree-accent);
-        outline-offset: -2px;
-    }
-}
-
-.guides {
-    position: relative;
-    flex: 0 0 auto;
-    display: flex;
-    align-self: stretch;
-}
-
-.guide {
-    width: var(--tree-indent);
 }
 
 .item {
     flex: 1;
     display: grid;
-    grid-template-columns: auto auto auto auto 1fr;
+    grid-template-columns: auto auto auto auto auto 1fr;
     align-items: center;
     column-gap: 6px;
-    padding: 0 8px 0 4px;
-    height: 100%;
+    padding-top: 0;
+    padding-right: 8px;
+    padding-bottom: 0;
+    height: sizeToken.get(8);
+    /* padding-left is set inline per-row based on depth, so omit it from the shorthand */
     border-radius: var(--border-radius-medium);
-    border: 1px solid transparent;
+    border-width: var(--border-width-large);
+    border-style: solid;
+    border-color: transparent;
     transition:
         background-color 0.12s ease,
         border-color 0.12s ease;
@@ -78,6 +56,14 @@ $accent: #7c5cff;
     &[data-drop='true'] {
         border-color: var(--tree-accent);
         background-color: transparent;
+    }
+
+    &:not([data-active='true']):hover {
+        background-color: var(--color-surface-hover);
+    }
+
+    &[data-active='true'] {
+        background-color: var(--color-surface-active);
     }
 }
 
@@ -139,6 +125,13 @@ $accent: #7c5cff;
     background-color: var(--tree-accent);
     pointer-events: none;
     z-index: 1;
+    /* Smooths sub-pixel jitter and brief gaps between drag-target updates so the
+       line doesn't visibly flicker as it tracks the cursor. */
+    transition:
+        top 0.08s ease-out,
+        left 0.08s ease-out,
+        width 0.08s ease-out;
+    will-change: top, left, width;
 }
 
 .srOnly {

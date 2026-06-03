@@ -164,7 +164,7 @@ export const useTreeController = ({
         setFocusedItem,
         canCheckFolders: true,
         propagateCheckedState: true,
-        indent: 20,
+        indent: 1,
         features: [
             syncDataLoaderFeature,
             checkboxesFeature,
