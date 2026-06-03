@@ -4,7 +4,7 @@ import { type Item, type TreeChangeState, type TreeNodeState } from '../types';
 
 type FlatTreeState = {
     expandedItems: string[];
-    selectedItems: string[];
+    checkedItems: string[];
     focusedItem?: string;
 };
 
@@ -19,8 +19,7 @@ export const assembleTreeState = (items: Item[], state: FlatTreeState, parentId:
             id: item.id,
             name: item.name,
             isFolder: Boolean(item.isFolder),
-            isSelected: state.selectedItems.includes(item.id),
-            isFocused: state.focusedItem === item.id,
+            isSelected: state.checkedItems.includes(item.id),
             isActive: Boolean(item.isActive),
         };
         if (item.isFolder) {

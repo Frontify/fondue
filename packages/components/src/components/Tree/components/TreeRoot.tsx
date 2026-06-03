@@ -1,7 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconCaretDown, IconCaretRight, IconDocument, IconFolder, IconGrabHandle } from '@frontify/fondue-icons';
+import { CheckedState } from '@headless-tree/core';
 import { AssistiveTreeDescription } from '@headless-tree/react';
+import { type FormEvent, type ChangeEventHandler, type FormEventHandler, type ForwardedRef } from 'react';
 
 import { Checkbox } from '#/components/Checkbox/Checkbox';
 
@@ -10,7 +12,7 @@ import styles from '../styles/tree.module.scss';
 import { type Item, type TreeRootProps } from '../types';
 import { parseChildren } from '../utils/parseChildren';
 
-export const TreeRoot = ({ children, onChange }: TreeRootProps) => {
+export const TreeRoot = ({ children, onChange, multiSelect = false, reorderable = false }: TreeRootProps) => {
     const parsedChildren = parseChildren(children, 'root');
     const items: Item[] = [
         {
@@ -27,6 +29,7 @@ export const TreeRoot = ({ children, onChange }: TreeRootProps) => {
         onChange: (state) => {
             onChange?.(state);
         },
+        reorderable,
     });
 
     return (
@@ -36,8 +39,18 @@ export const TreeRoot = ({ children, onChange }: TreeRootProps) => {
                 const level = item.getItemMeta().level;
                 const isFolder = item.isFolder();
                 const isExpanded = item.isExpanded();
-                const isSelected = item.isSelected();
+                const checkedState = item.getCheckedState();
+                const checkboxValue: boolean | 'indeterminate' =
+                    checkedState === CheckedState.Indeterminate
+                        ? 'indeterminate'
+                        : checkedState === CheckedState.Checked;
                 const isActive = Boolean(item.getItemData().isActive);
+
+                const checkboxProps = multiSelect ? item.getCheckboxProps() : {};
+                const headlessCheckboxOnChange = checkboxProps.onChange as
+                    | FormEventHandler<HTMLButtonElement>
+                    | undefined;
+
                 return (
                     <button
                         key={item.getId()}
@@ -50,20 +63,26 @@ export const TreeRoot = ({ children, onChange }: TreeRootProps) => {
                             className={styles.item}
                             data-focused={item.isFocused()}
                             data-expanded={isExpanded}
-                            data-selected={isSelected}
+                            data-selected={checkedState === CheckedState.Checked}
                             data-folder={isFolder}
-                            data-drop={item.isDragTarget()}
+                            data-drop={reorderable && item.isDragTarget()}
                             data-active={isActive}
                         >
-                            <span className={styles.handle} aria-hidden>
-                                <IconGrabHandle size={16} />
-                            </span>
-                            <Checkbox
-                                value={isSelected}
-                                onChange={(event) => {
-                                    item.select();
-                                }}
-                            />
+                            {reorderable && (
+                                <span className={styles.handle} aria-hidden>
+                                    <IconGrabHandle size={16} />
+                                </span>
+                            )}
+                            {multiSelect && (
+                                <Checkbox
+                                    value={checkboxValue}
+                                    onChange={(event) => {
+                                        event.stopPropagation();
+                                        headlessCheckboxOnChange?.(event);
+                                    }}
+                                    ref={checkboxProps.ref as ForwardedRef<HTMLButtonElement>}
+                                />
+                            )}
                             {level > 1 && (
                                 <span className={styles.guides} aria-hidden>
                                     {Array.from({ length: level - 1 }).map((_, i) => (
@@ -88,7 +107,7 @@ export const TreeRoot = ({ children, onChange }: TreeRootProps) => {
                     </button>
                 );
             })}
-            <div style={tree.getDragLineStyle()} className={styles.dragline} />
+            {reorderable && <div style={tree.getDragLineStyle()} className={styles.dragline} />}
         </div>
     );
 };

@@ -34,9 +34,14 @@ $accent: #7c5cff;
     font: inherit;
     outline: none;
 
-    &:hover .item:not([data-selected='true']) {
-        background-color: var(--color-container-secondary-hover, rgb(0 0 0 / 4%));
+    &:hover .item:not([data-active='true']) {
+        background-color: var(--color-surface-hover);
     }
+
+    &:has(.item[data-active='true']) {
+        background-color: var(--color-surface-active);
+    }
+
 
     &:focus-visible .item {
         outline: 2px solid var(--tree-accent);
@@ -69,15 +74,6 @@ $accent: #7c5cff;
         background-color 0.12s ease,
         border-color 0.12s ease;
 
-    &[data-selected='true'] {
-        background-color: var(--color-container-secondary-hover, rgb(0 0 0 / 6%));
-    }
-
-    &[data-active='true'] {
-        background-color: var(--color-box-selected-default, var(--tree-accent));
-        color: var(--color-box-selected-inverse, #fff);
-        font-weight: var(--typography-font-weight-medium, 500);
-    }
 
     &[data-drop='true'] {
         border-color: var(--tree-accent);

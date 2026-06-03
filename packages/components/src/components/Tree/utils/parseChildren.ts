@@ -18,7 +18,7 @@ export const parseChildren = (children: ReactNode, parentId: string = 'root'): I
             return acc;
         }
         if (isTreeItemElement(child)) {
-            const { id, children: name, isSelected, onSelectChange, isFocused, onFocusChange, isActive } = child.props;
+            const { id, children: name, isSelected, onSelectChange, isActive } = child.props;
             acc.push({
                 id,
                 name: typeof name === 'string' ? name : '',
@@ -26,8 +26,6 @@ export const parseChildren = (children: ReactNode, parentId: string = 'root'): I
                 parentId,
                 isSelected,
                 onSelectChange,
-                isFocused,
-                onFocusChange,
                 isActive,
             });
         }
@@ -40,8 +38,6 @@ export const parseChildren = (children: ReactNode, parentId: string = 'root'): I
                 onExpandChange,
                 isSelected,
                 onSelectChange,
-                isFocused,
-                onFocusChange,
                 isActive,
             } = child.props;
             const parsedChildren = parseChildren(folderChildren, id);
@@ -55,8 +51,6 @@ export const parseChildren = (children: ReactNode, parentId: string = 'root'): I
                 onExpandChange,
                 isSelected,
                 onSelectChange,
-                isFocused,
-                onFocusChange,
                 isActive,
             });
             for (const descendant of parsedChildren) {
