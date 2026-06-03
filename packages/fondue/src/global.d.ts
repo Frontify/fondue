@@ -32,3 +32,6 @@ declare module '@frontify/fondue-tokens' {
 }
 
 declare module '@frontify/fondue-tokens/tailwind';
+declare module '@frontify/fondue-charts/styles';
+declare module '@frontify/fondue-components/styles';
+declare module '@frontify/fondue-rte/styles';

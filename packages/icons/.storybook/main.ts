@@ -1,8 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type StorybookConfig } from '@storybook/react-vite';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+
+import { type StorybookConfig } from '@storybook/react-vite';
 
 const getAbsolutePath = (packageName: string): string => {
     return dirname(fileURLToPath(import.meta.resolve(packageName)));

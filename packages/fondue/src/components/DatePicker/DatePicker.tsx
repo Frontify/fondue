@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import './styles.css';
-
 import { offset, shift } from '@floating-ui/dom';
 import { IconCaretLeft, IconCaretLeftDouble, IconCaretRight, IconCaretRightDouble } from '@frontify/fondue-icons';
 import { format, getYear } from 'date-fns';

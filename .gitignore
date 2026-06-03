@@ -2,6 +2,9 @@
 node_modules
 .idea
 .vscode
+!/.vscode/
+/.vscode/*
+!/.vscode/settings.json
 
 *storybook.log
 

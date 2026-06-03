@@ -2,5 +2,6 @@
 
 /// <reference types="vite/client" />
 
+declare module '@frontify/fondue-components/styles';
 declare module '@frontify/fondue-tokens/styles';
-declare module '@frontify/fondue-tokens/legacy/tokens';
+declare module '*.css';

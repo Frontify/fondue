@@ -13,7 +13,7 @@ export const OrderableListItemContent = forwardRef<HTMLDivElement, { children: R
 
     if (!onSelect) {
         return (
-            // eslint-disable-next-line jsx-a11y-x/no-noninteractive-tabindex
+            // oxlint-disable-next-line jsx-a11y-x/no-noninteractive-tabindex
             <div className={styles.content} ref={ref} tabIndex={hasHandle ? 0 : undefined}>
                 {children}
             </div>
