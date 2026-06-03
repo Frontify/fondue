@@ -3,7 +3,7 @@
 import { type PlateRenderElementProps } from '@udecode/plate-core';
 import { ELEMENT_LIC } from '@udecode/plate-list';
 import { type TElement } from '@udecode/slate';
-import { type CSSProperties, useContext } from 'react';
+import { useContext } from 'react';
 
 import { merge } from '@utilities/merge';
 
@@ -43,7 +43,7 @@ const ListBullet = () => {
         style['--bullet-color'] = bulletInfo.color;
     }
 
-    return <span contentEditable={false} className={LIST_BULLET_CONTAINER_CLASSES} style={style as CSSProperties} />;
+    return <span contentEditable={false} className={LIST_BULLET_CONTAINER_CLASSES} style={style} />;
 };
 
 export const ListItemContentMarkupElementNode = ({ attributes, children, element }: PlateRenderElementProps) => {

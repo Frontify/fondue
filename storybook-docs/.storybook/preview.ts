@@ -1,5 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { availableLocales } from '../../packages/components/src/locales/types';
+
 export const parameters = {
     options: {
         storySort: {
@@ -79,8 +81,18 @@ export const globalTypes = {
             dynamicTitle: true,
         },
     },
+    locale: {
+        description: 'Locale for components',
+        toolbar: {
+            icon: 'globe',
+            items: availableLocales.map((locale) => ({ value: locale, title: locale })),
+            dynamicTitle: true,
+        },
+    },
 };
 
 export const initialGlobals = {
     theme: 'light',
+    locale: 'en-US',
+    direction: 'ltr',
 };

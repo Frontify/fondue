@@ -36,11 +36,13 @@
         "charts.vite.config.ts",
         "icons.vite.config.ts",
         "rte.vite.config.ts",
+        "sdk.vite.config.ts",
         "tailwind.config.js",
         "legacyComponents.tailwind.config.ts",
         "tokens.vite.config.ts",
         "codemod.vite.config.ts",
         "internal-tools.vite.config.ts",
+        "sdk-cli.vite.config.ts",
         "legacyTokens",
         "tools"
     ],

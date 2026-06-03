@@ -135,14 +135,19 @@ export const TabsRoot = (
                     <RadixTabs.List ref={triggerListRef} data-size={size} className={styles.triggerList}>
                         {triggers.map((trigger) => (
                             <RadixTabs.Trigger
-                                {...trigger.props}
                                 key={trigger.value}
+                                {...trigger.props}
                                 value={trigger.value}
                                 disabled={trigger.disabled}
                                 className={styles.trigger}
                                 ref={trigger.ref}
                             >
-                                {trigger.element}
+                                <span className={styles.triggerLabel}>
+                                    <span className={styles.triggerLabelActive} aria-hidden="true">
+                                        {trigger.element}
+                                    </span>
+                                    <span className={styles.triggerLabelInactive}>{trigger.element}</span>
+                                </span>
                             </RadixTabs.Trigger>
                         ))}
                     </RadixTabs.List>
@@ -157,10 +162,10 @@ export const TabsRoot = (
                         <Dropdown.Content align="end" data-test-id="overflow-items-dropdown-content">
                             {triggersOutOfView.map((trigger) => (
                                 <Dropdown.Item
+                                    key={trigger.value}
                                     {...trigger.props}
                                     disabled={trigger.disabled}
                                     onSelect={() => handleSetActiveTab(trigger.value)}
-                                    key={trigger.value}
                                 >
                                     {trigger.element}
                                 </Dropdown.Item>
@@ -215,7 +220,7 @@ export const TabsTrigger = ({ children, ...props }: TabsTriggerProps, ref: Forwa
             previousElement: previousElement.current,
         });
         previousElement.current = children;
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line @eslint-react/exhaustive-deps
     }, [children]);
 
     return null;
@@ -240,7 +245,7 @@ TabsContent.displayName = 'Tabs.Content';
 
 export const Tabs = {
     Root: forwardRef<HTMLDivElement, TabsRootProps>(TabsRoot),
-    Tab: forwardRef<HTMLDivElement, TabsTabProps>(TabsTab),
+    Tab: TabsTab,
     Trigger: forwardRef<HTMLButtonElement, TabsTriggerProps>(TabsTrigger),
     Content: forwardRef<HTMLDivElement, TabsContentProps>(TabsContent),
 };

@@ -390,7 +390,6 @@ export const alignedValues = [
     },
 ];
 
-/* eslint-disable no-irregular-whitespace */
 export const htmlValue = `
         <p dir="auto" class="tw-break-words" style="font-size: 14px; font-style: normal; font-weight: normal;">
             <span style="color: rgba(255, 20, 73, 0.5)">
@@ -441,7 +440,6 @@ export const htmlValue = `
         <blockquote>Quote</blockquote>
         <a class="btn btn-primary" contenteditable="false" href="https://smartive.ch/" data-design="primary">﻿<span contenteditable="false">Test</span>﻿</a>
     `;
-/* eslint-enable no-irregular-whitespace */
 
 export const checkboxValue = [
     {

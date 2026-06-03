@@ -89,7 +89,7 @@ export const TooltipContent = (
     }: TooltipContentProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
-    const { theme, dir } = useFondueTheme();
+    const { dir } = useFondueTheme();
 
     const getAdjustedSide = (side?: 'top' | 'right' | 'bottom' | 'left') => {
         if (!side || dir === 'ltr') {
@@ -108,7 +108,7 @@ export const TooltipContent = (
 
     return (
         <RadixTooltip.Portal>
-            <ThemeProvider theme={theme} dir={dir}>
+            <ThemeProvider>
                 <RadixTooltip.Content
                     dir={dir}
                     data-test-id={dataTestId}

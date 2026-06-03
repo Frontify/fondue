@@ -8,10 +8,10 @@ import { EXAMPLE_IMAGES, MIXED_ASSETS } from './example-assets';
 
 /**
  ### *Legacy component warning*
- #### This is a unmaintained legacy component. It will be deprecated and replaced with a new component in an upcoming release.
+ #### This is a deprecated component. It will be removed in the next major version.
  */
 export default {
-    title: 'Legacy Components/Asset Input',
+    title: 'Deprecated/Asset Input',
     component: AssetInput,
     tags: ['autodocs'],
     argTypes: {
@@ -37,14 +37,14 @@ const Template: StoryFn<AssetInputProps & { onItemClick: () => void }> = (args) 
     if (args?.actions) {
         for (const block of args.actions) {
             for (const item of block.menuItems) {
-                // eslint-disable-next-line react-hooks/immutability
+                // eslint-disable-next-line @eslint-react/immutability
                 item.onClick = args.onItemClick;
             }
         }
     }
 
     if (args.isLoading && args.assets) {
-        // eslint-disable-next-line react-hooks/immutability
+        // eslint-disable-next-line @eslint-react/immutability
         args.assets = undefined;
     }
 

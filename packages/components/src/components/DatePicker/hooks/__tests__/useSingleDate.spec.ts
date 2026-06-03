@@ -54,9 +54,7 @@ describe('useSingleDate', () => {
         it('should reflect updated selected prop on rerender', () => {
             const { result, rerender } = renderHook(({ selected }) => useSingleDate(selected), {
                 initialProps: {
-                    selected: { year: 2025, month: 1, day: 1 } as
-                        | { year: number; month: number; day: number }
-                        | undefined,
+                    selected: { year: 2025, month: 1, day: 1 },
                 },
             });
 

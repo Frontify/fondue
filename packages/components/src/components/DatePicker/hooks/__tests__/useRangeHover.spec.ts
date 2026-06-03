@@ -66,7 +66,7 @@ describe('useRangeHover', () => {
         const to = new Date(Date.UTC(2025, 2, 10));
 
         const { result, rerender } = renderHook(({ range }) => useRangeHover(range), {
-            initialProps: { range: { from, to } as { from: Date; to: Date } | undefined },
+            initialProps: { range: { from, to } },
         });
 
         expect(result.current.hoverModifiers.hoverSelected).toStrictEqual(from);

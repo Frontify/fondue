@@ -789,14 +789,14 @@ test('should close inner dialog before outer dialog when escape is pressed in ne
     await expect(innerDialogContent).toBeVisible();
 
     // First escape should close the inner dialog
-    await page.keyboard.press('Escape');
-    expect(innerOnEscapeKeyDown.callCount).toBe(1);
-    expect(outerOnEscapeKeyDown.callCount).toBe(0);
+    await innerDialogContent.press('Escape');
     await expect(innerDialogContent).not.toBeVisible();
     await expect(outerDialogContent).toBeVisible();
+    await expect.poll(() => innerOnEscapeKeyDown.callCount).toBe(1);
+    expect(outerOnEscapeKeyDown.callCount).toBe(0);
 
     // Second escape should close the outer dialog
-    await page.keyboard.press('Escape');
-    expect(outerOnEscapeKeyDown.callCount).toBe(1);
+    await outerDialogContent.press('Escape');
     await expect(outerDialogContent).not.toBeVisible();
+    await expect.poll(() => outerOnEscapeKeyDown.callCount).toBe(1);
 });

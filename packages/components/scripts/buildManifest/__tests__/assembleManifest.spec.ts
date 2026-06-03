@@ -201,7 +201,7 @@ describe('writeGlobalManifest', () => {
         expect(ref.manifestPath).toBe('Button.manifest.json');
     });
 
-    it('includes schemaVersion and packageName in the global manifest', () => {
+    it('includes packageName in the global manifest', () => {
         vi.mocked(writeFileSync).mockImplementation(() => {});
 
         const manifest = assembleComponentManifest(baseInput);
@@ -213,7 +213,6 @@ describe('writeGlobalManifest', () => {
         }
         const content3 = call3[1];
         const parsed = JSON.parse(typeof content3 === 'string' ? content3 : JSON.stringify(content3));
-        expect(parsed.schemaVersion).toBeDefined();
         expect(parsed.packageName).toBe('@frontify/fondue-components');
     });
 });

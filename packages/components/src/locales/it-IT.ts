@@ -2,9 +2,11 @@
 
 import { it as dateLocale } from 'date-fns/locale';
 
-import { type Translations } from './types';
+import { type LocaleConfig } from './types';
 
 const translations = {
+    AssetInput_browse: 'Sfoglia',
+    AssetInput_upload: 'Carica',
     Badge_dismiss: 'Chiudi ${label}',
     Card_deselect: 'Deseleziona',
     Card_select: 'Seleziona',
@@ -33,7 +35,7 @@ const translations = {
     Table_sortDescending: 'Ordina decrescente',
 };
 
-export const itIT: Translations = {
+export const itIT: LocaleConfig = {
     translationStrings: translations,
     dateLocale,
 };

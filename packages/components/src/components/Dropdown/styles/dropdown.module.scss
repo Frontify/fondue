@@ -64,7 +64,7 @@
         transition: none;
     }
 
-    &:not([data-show-focus-ring="false"]) {
+    &:not([data-show-focus-ring='false']) {
         @include focusStyle.focus-outline;
     }
 
@@ -110,7 +110,7 @@
         color: var(--color-disabled-default);
     }
 
-    span {
+    > span {
         width: 100%;
         overflow: hidden;
         white-space: nowrap;
@@ -128,8 +128,8 @@
 }
 
 .group {
-    .item~&,
-    .group~& {
+    .item ~ &,
+    .group ~ & {
         border-top: var(--border-width-default) solid var(--color-line-subtle);
     }
 
@@ -165,18 +165,34 @@
         order: 1;
         margin-inline-start: auto;
 
-        &~.subMenuIndicator {
+        & ~ .subMenuIndicator {
             margin-inline-start: sizeToken.get(1.5);
         }
     }
 
     // 2 slots without any name should be implicitly ordered
-    &:not([data-name='right'])~.slot:not([data-name='left']) {
+    &:not([data-name='right']) ~ .slot:not([data-name='left']) {
         order: 1;
         margin-inline-start: auto;
 
-        &~.subMenuIndicator {
+        & ~ .subMenuIndicator {
             margin-inline-start: 0;
         }
     }
+}
+
+.shortcut {
+    flex-shrink: 0;
+    order: 1;
+    margin-inline-start: auto;
+    color: var(--color-secondary-default);
+    font-family: inherit;
+    font-size: var(--text-body-small-default-font-size);
+    line-height: var(--text-body-small-default-line-height);
+
+    // When a right slot is also present, the shortcut sits next to it instead of pushing against the edge alone
+    .slot[data-name='right'] ~ & {
+        margin-inline-start: 0;
+    }
+
 }

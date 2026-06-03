@@ -179,7 +179,7 @@ const ComboboxBaseInput = (
         inputValue,
     } = useCombobox<SelectItem>({
         items,
-        selectedItem: multiple ? null : (getItemByValue(selectedItemValues[0]) as SelectItem | null | undefined),
+        selectedItem: multiple ? null : getItemByValue(selectedItemValues[0]),
         defaultHighlightedIndex: 0,
         toggleButtonId: id,
         // Only set labelId if aria-labelledby is explicitly provided, otherwise downshift generates an orphan ID
@@ -252,7 +252,7 @@ const ComboboxBaseInput = (
     const hasError = valueInvalid || !!asyncItemStatus.error || status === 'error';
 
     const handleDismissBadge = (value: string, preventFocusRing: boolean): void => {
-        const item = getItemByValue(value) as SelectItem | undefined;
+        const item = getItemByValue(value);
         if (item) {
             removeSelectedItem(item);
             onItemSelect(value);
@@ -309,7 +309,6 @@ const ComboboxBaseInput = (
                                 selectedCount={selectedItemValues.length}
                             >
                                 <input
-                                    // eslint-disable-next-line react-hooks/refs
                                     {...getInputProps({
                                         ref: inputCallbackRef,
                                         onKeyDown: (event) => {

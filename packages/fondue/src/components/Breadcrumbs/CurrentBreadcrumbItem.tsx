@@ -28,6 +28,7 @@ export const CurrentBreadcrumbItem = ({
     'data-test-id': dataTestId = 'breadcrumb',
 }: CurrentBreadcrumbItemProps): ReactElement => {
     const ref = useRef(null);
+    // eslint-disable-next-line @eslint-react/static-components
     const Element = getItemElementType(link, onClick);
     const isInteractive = Element !== 'span';
     const { itemProps } = useBreadcrumbItem(
@@ -65,13 +66,13 @@ export const CurrentBreadcrumbItem = ({
             ])}
             data-test-id={`${dataTestId}-item`}
         >
-            {/* eslint-disable-next-line react-hooks/static-components */}
+            {/* eslint-disable-next-line @eslint-react/static-components */}
             <Element ref={ref} {...props} className={classNames}>
                 {decorator}
                 {label}
             </Element>
             {badges?.map(({ children: badge, ...props }, index) => (
-                <Badge {...props} key={`breadcrumb-badge-${index}`}>
+                <Badge key={`breadcrumb-badge-${index}`} {...props}>
                     {badge}
                 </Badge>
             ))}

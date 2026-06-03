@@ -85,7 +85,6 @@ const TagRoot = forwardRef<HTMLButtonElement | HTMLDivElement, TagProps>(
         let extractedHoverContent: ReactNode = null;
         const processedChildren = Children.map(children, (child) => {
             if (isValidElement(child) && child.type === TagHoverContent) {
-                // eslint-disable-next-line react-hooks/immutability
                 extractedHoverContent = child.props.children;
                 return null;
             }

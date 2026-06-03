@@ -1,90 +1,60 @@
 name: Fondue Charts CI
 
 on:
-    pull_request:
-        paths:
-            - packages/charts/**
+  pull_request:
+    paths:
+      - packages/charts/**
 
 # Ensures that only one workflow per branch will run at a time.
 concurrency:
-    group: ${{ github.workflow }}-${{ github.ref }}
-    cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
 
 jobs:
-    lint:
-        name: Lint
-        runs-on: ubuntu-latest
-        timeout-minutes: 10
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
 
-        steps:
-            - name: Checkout default branch
-              uses: actions/checkout@v4
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-            - name: Use pnpm
-              uses: pnpm/action-setup@v3
-              with:
-                  run_install: false
+      - name: Setup
+        uses: ./.github/actions/setup
 
-            - name: Use Node.js
-              uses: actions/setup-node@v4
-              with:
-                  node-version-file: ".nvmrc"
-                  cache: "pnpm"
+      - name: Lint code
+        run: pnpm --stream --filter {packages/charts} lint
 
-            - name: Install npm dependencies
-              run: pnpm i --frozen-lockfile
+  typecheck:
+    name: Typecheck
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
 
-            - name: Lint code
-              run: pnpm --stream --filter {packages/charts} lint
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-    typecheck:
-        name: Typecheck
-        runs-on: ubuntu-latest
-        timeout-minutes: 10
+      - name: Setup
+        uses: ./.github/actions/setup
 
-        steps:
-            - name: Checkout default branch
-              uses: actions/checkout@v4
+      - name: Typecheck code
+        run: pnpm --stream --filter {packages/charts} typecheck
 
-            - name: Use pnpm
-              uses: pnpm/action-setup@v3
-              with:
-                  run_install: false
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
 
-            - name: Use Node.js
-              uses: actions/setup-node@v4
-              with:
-                  node-version-file: ".nvmrc"
-                  cache: "pnpm"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-            - name: Install npm dependencies
-              run: pnpm i --frozen-lockfile
+      - name: Setup
+        uses: ./.github/actions/setup
 
-            - name: Typecheck code
-              run: pnpm --stream --filter {packages/charts} typecheck
-
-    unit-tests:
-        name: Unit Tests
-        runs-on: ubuntu-latest
-        timeout-minutes: 10
-
-        steps:
-            - name: Checkout current commit
-              uses: actions/checkout@v4
-
-            - name: Use pnpm
-              uses: pnpm/action-setup@v3
-              with:
-                  run_install: false
-
-            - name: Use Node.js
-              uses: actions/setup-node@v4
-              with:
-                  node-version-file: ".nvmrc"
-                  cache: "pnpm"
-
-            - name: Install dependencies
-              run: pnpm install --frozen-lockfile
-
-            - name: Unit tests
-              run: pnpm --stream --filter {packages/charts} test
+      - name: Unit tests
+        run: pnpm --stream --filter {packages/charts} test

@@ -289,7 +289,6 @@ export const LegacyTooltip = ({
         setIsOpen(shouldPreventTooltipOpening ? false : open);
     }, [open, shouldPreventTooltipOpening]);
 
-    // eslint-disable-next-line @eslint-react/no-unnecessary-use-callback
     const listenForEsc = useCallback(
         (event: KeyboardEvent) => {
             if (isOpen && event.key === 'Escape') {
@@ -304,7 +303,7 @@ export const LegacyTooltip = ({
             popperInstance.update();
         }
 
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line @eslint-react/exhaustive-deps
     }, [isOpen]);
 
     useEffect(() => {

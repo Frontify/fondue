@@ -1,0 +1,76 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+@use '../../../../utilities/sizeToken.module.scss';
+@use '../../../../utilities/text.module.scss';
+
+.root {
+    background-color: var(--color-primary-default);
+    color: var(--color-primary-on-primary);
+    padding: var(--spacing-small);
+    border-radius: var(--border-radius-medium);
+    border: 1px solid var(--color-primary-default);
+    max-width: sizeToken.get(65);
+    word-break: break-all;
+}
+
+.imageWrapper {
+    margin: -#{sizeToken.get(1)};
+}
+
+.image {
+    height: sizeToken.get(28);
+    object-fit: cover;
+    margin-bottom: sizeToken.get(5);
+    width: 100%;
+}
+
+.body {
+    padding-bottom: 0;
+
+    &.withTitle {
+        padding-bottom: var(--spacing-small);
+    }
+}
+
+.title {
+    @include text.body-small-x-strong;
+
+    color: var(--color-primary-on-primary);
+}
+
+.type {
+    @include text.body-small;
+
+    color: var(--color-primary-on-primary);
+    padding-bottom: var(--spacing-x-small);
+}
+
+.description {
+    @include text.body-x-small;
+
+    color: var(--color-primary-on-primary);
+}
+
+.descriptionLine {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.item {
+    @include text.body-small;
+
+    color: var(--color-primary-on-primary);
+}
+
+.itemDot {
+    display: inline-block;
+    width: sizeToken.get(2);
+    height: sizeToken.get(2);
+    border-radius: 9999px;
+    margin-right: var(--spacing-xx-small);
+}
+
+.itemValue {
+    @include text.body-small-x-strong;
+}

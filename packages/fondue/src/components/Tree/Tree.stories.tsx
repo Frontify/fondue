@@ -151,10 +151,10 @@ const renderCustomTreeItem = ({ id, onDrop, ...treeItem }: TreeItemMock) => {
 const renderTreeItemLabel = ({ nodes, onDrop, ignoreItemDoubleClick, expandOnSelect, ...treeItem }: TreeItemMock) => {
     return (
         <TreeItem
+            key={treeItem.id}
             {...treeItem}
             ignoreItemDoubleClick={ignoreItemDoubleClick}
             expandOnSelect={expandOnSelect}
-            key={treeItem.id}
             onDrop={onDrop ?? action('onDrop')}
         >
             {nodes?.map((node) =>
@@ -175,8 +175,8 @@ const renderTreeItemComponent = ({ nodes, label, numChildNodes, onDrop, ...treeI
     const showCaret = numChildNodes !== undefined ? !!numChildNodes : nodesLength > 0;
     return (
         <TreeItem
-            {...treeItem}
             key={treeItem.id}
+            {...treeItem}
             contentComponent={<TreeItemContentComponent title={label || 'NO TITLE'} />}
             onDrop={onDrop ?? action('onDrop')}
             showCaret={showCaret}

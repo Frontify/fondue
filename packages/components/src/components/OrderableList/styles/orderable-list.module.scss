@@ -12,7 +12,7 @@
     }
 
     &[data-spacing='tight'] {
-        gap: var(--spacing-xx-small);
+        gap: var(--spacing-x-small);
     }
     &[data-spacing='compact'] {
         gap: var(--spacing-small);
@@ -38,6 +38,10 @@
         .content,
         .actions {
             padding: var(--spacing-x-small) var(--spacing-small);
+        }
+
+        .actions:has(+ .dragHandle) {
+            padding-right: 0;
         }
     }
     &[data-padding='none'] {
@@ -66,8 +70,13 @@
     }
 
     &[data-disabled] {
-        opacity: 0.5;
         cursor: default;
+
+        .content,
+        .actions,
+        .dragHandle {
+            opacity: 0.5;
+        }
 
         .handle {
             cursor: default;

@@ -4,9 +4,8 @@
 
 // @ts-expect-error No types available
 import frontifyConfig from '@frontify/eslint-config-react';
+import headerPlugin from '@tony.ganchev/eslint-plugin-header';
 import { defineConfig } from 'eslint/config';
-// @ts-expect-error No types available
-import noticePlugin from 'eslint-plugin-notice';
 
 export default defineConfig(
     {
@@ -30,17 +29,19 @@ export default defineConfig(
             },
         },
         plugins: {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            notice: noticePlugin,
+            '@tony.ganchev': headerPlugin,
         },
         rules: {
             // Copyright header rules
-            'notice/notice': [
+            '@tony.ganchev/header': [
                 'error',
                 {
-                    template: '/* (c) Copyright Frontify Ltd., all rights reserved. */\n\n',
-                    messages: {
-                        whenFailedToMatch: 'No Frontify copyright header set.',
+                    header: {
+                        commentType: 'block',
+                        lines: [' (c) Copyright Frontify Ltd., all rights reserved. '],
+                    },
+                    trailingEmptyLines: {
+                        minimum: 2,
                     },
                 },
             ],

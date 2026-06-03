@@ -149,7 +149,6 @@ export const Flyout = ({
 
     const triggerComponent =
         typeof trigger === 'function' ? (
-            // eslint-disable-next-line react-hooks/refs
             trigger(combinedTriggerProps, triggerRef, { isFocusVisible, isPressed })
         ) : (
             <div

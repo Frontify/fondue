@@ -1,209 +1,156 @@
 name: Continuous Deployment
 
 on:
-    push:
-        branches:
-            - main
+  push:
+    branches:
+      - main
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
+permissions:
+  contents: read
+
 jobs:
-    lint:
-        name: Lint
-        runs-on: ubuntu-latest
-        timeout-minutes: 10
+  lint-typecheck:
+    name: Lint & Typecheck
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
 
-        steps:
-            - name: Checkout default branch
-              uses: actions/checkout@v6
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-            - name: Use pnpm
-              uses: pnpm/action-setup@v4.2.0
-              with:
-                  run_install: false
+      - name: Setup
+        uses: ./.github/actions/setup
 
-            - name: Use Node.js
-              uses: actions/setup-node@v6
-              with:
-                  node-version-file: ".nvmrc"
-                  cache: "pnpm"
+      - name: Build Fondue Icons
+        run: pnpm build:icons
 
-            - name: Install npm dependencies
-              run: pnpm i --frozen-lockfile
+      - name: Build Fondue Charts
+        run: pnpm build:charts
 
-            - name: Build Fondue Icons
-              run: pnpm build:icons
+      - name: Build Fondue Components
+        run: pnpm build:components
 
-            - name: Build Fondue Charts
-              run: pnpm build:charts
+      - name: Build Fondue RTE
+        run: pnpm build:rte
 
-            - name: Build Fondue Components
-              run: pnpm build:components
+      - name: Build Fondue SDK
+        run: pnpm build:sdk
 
-            - name: Build Fondue RTE
-              run: pnpm build:rte
+      - name: Lint code
+        run: pnpm lint
 
-            - name: Lint code
-              run: pnpm lint
+      - name: Typecheck code
+        run: pnpm typecheck
 
-    typecheck:
-        name: Typecheck
-        runs-on: ubuntu-latest
-        timeout-minutes: 10
+  rte-component-tests:
+    name: RTE Component Tests (shard ${{ matrix.shard }}/${{ strategy.job-total }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
 
-        steps:
-            - name: Checkout default branch
-              uses: actions/checkout@v6
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
 
-            - name: Use pnpm
-              uses: pnpm/action-setup@v4.2.0
-              with:
-                  run_install: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-            - name: Use Node.js
-              uses: actions/setup-node@v6
-              with:
-                  node-version-file: ".nvmrc"
-                  cache: "pnpm"
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          cypress-cache: "true"
 
-            - name: Install npm dependencies
-              run: pnpm i --frozen-lockfile
+      - name: Build Fondue Icons
+        run: pnpm build:icons
 
-            - name: Build Fondue Icons
-              run: pnpm build:icons
+      - name: Build Fondue Components
+        run: pnpm build:components
 
-            - name: Build Fondue Charts
-              run: pnpm build:charts
+      - name: Component Tests
+        uses: ./.github/actions/cypress-shard
+        with:
+          package: packages/rte
+          shard: ${{ matrix.shard }}
+          total: ${{ strategy.job-total }}
 
-            - name: Build Fondue Components
-              run: pnpm build:components
+  component-unit-tests:
+    name: Component Unit Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
 
-            - name: Build Fondue RTE
-              run: pnpm build:rte
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-            - name: Typecheck code
-              run: pnpm typecheck
+      - name: Setup
+        uses: ./.github/actions/setup
 
-    rte-component-tests:
-        name: RTE Component Tests
-        runs-on: ubuntu-latest
-        timeout-minutes: 10
+      - name: Build Fondue icons
+        run: pnpm build:icons
 
-        steps:
-            - name: Checkout current commit
-              uses: actions/checkout@v4
+      - name: Unit test
+        run: pnpm --stream --filter {packages/components} test
 
-            - name: Use Node.js
-              uses: actions/setup-node@v4
-              with:
-                  node-version-file: ".nvmrc"
+  component-tests:
+    name: Component Tests (shard ${{ matrix.shard }}/${{ strategy.job-total }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
 
-            - name: Use pnpm
-              uses: pnpm/action-setup@v3
-              with:
-                  run_install: false
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
 
-            - name: Get pnpm store directory
-              id: pnpm-cache
-              run: echo "pnpm_cache_dir=$(pnpm store path)" >> $GITHUB_OUTPUT
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-            - name: Setup pnpm cache
-              uses: actions/cache@v4
-              id: npm_cache
-              with:
-                  path: |
-                      ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
-                      ~/.cache/Cypress
-                  key: pnpm-with-cypress-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
-                  restore-keys: pnpm-with-cypress-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          playwright-cache: "true"
 
-            - name: Install dependencies
-              run: pnpm install --frozen-lockfile
+      - name: Build Fondue icons
+        run: pnpm build:icons
 
-            - name: Build Fondue Icons
-              run: pnpm build:icons
+      - name: Install Playwright browsers
+        run: pnpm --stream --filter {packages/components} install:playwright
 
-            - name: Build Fondue Components
-              run: pnpm build:components
+      - name: Playwright tests
+        run: pnpm --filter {packages/components} exec playwright test --shard=${{ matrix.shard }}/${{ strategy.job-total }}
 
-            - name: Component Tests
-              run: pnpm run --stream --filter {packages/rte} test
+  publish:
+    name: Publish
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
 
-    component-tests:
-        name: Component Tests
-        runs-on: ubuntu-latest
-        timeout-minutes: 25
+    needs: [lint-typecheck, component-unit-tests, component-tests]
 
-        steps:
-            - name: Checkout current commit
-              uses: actions/checkout@v6
+    permissions:
+      contents: write # to create release (changesets/action)
+      pull-requests: write # to create pull request (changesets/action)
+      id-token: write # to authenticate with npm registry via OIDC
 
-            - name: Use pnpm
-              uses: pnpm/action-setup@v4.2.0
-              with:
-                  run_install: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-            - name: Use Node.js
-              uses: actions/setup-node@v6
-              with:
-                  node-version-file: ".nvmrc"
-                  cache: "pnpm"
+      - name: Setup
+        uses: ./.github/actions/setup
 
-            - name: Install dependencies
-              run: pnpm install --frozen-lockfile
-
-            - name: Build Fondue icons
-              run: pnpm build:icons
-
-            - name: Unit test
-              run: pnpm --stream --filter {packages/components} test
-
-            - name: Install Playwright browsers
-              run: pnpm --stream --filter {packages/components} install:playwright
-
-            - name: Playwright tests
-              run: pnpm --stream --filter {packages/components} test:components:ci
-
-    publish:
-        name: Publish
-        runs-on: ubuntu-latest
-        timeout-minutes: 10
-
-        needs: [lint, typecheck, component-tests]
-
-        permissions:
-            contents: write # to create release (changesets/action)
-            pull-requests: write # to create pull request (changesets/action)
-            id-token: write # to authenticate with npm registry via OIDC
-
-        steps:
-            - name: Checkout default branch
-              uses: actions/checkout@v6
-
-            - name: Use pnpm
-              uses: pnpm/action-setup@v4.2.0
-              with:
-                  run_install: false
-
-            - name: Use Node.js
-              uses: actions/setup-node@v6
-              with:
-                  node-version-file: ".nvmrc"
-                  cache: "pnpm"
-
-            - name: Install npm dependencies
-              run: pnpm i --frozen-lockfile
-
-            - name: Create release PR or publish to npm
-              id: changesets
-              uses: changesets/action@v1
-              with:
-                  commit: "chore: release packages"
-                  title: "chore: release packages"
-                  createGithubReleases: true
-                  publish: pnpm release
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  NPM_CONFIG_PROVENANCE: true
-                  # Use OIDC for npm authentication instead of NPM_TOKEN
-                  NPM_TOKEN: "" # https://github.com/changesets/changesets/issues/1152#issuecomment-3190884868
+      - name: Create release PR or publish to npm
+        id: changesets
+        uses: changesets/action@63a615b9cd06ba9a3e6d13796c7fbcb080a60a0b # v1.8.0
+        with:
+          commit: "chore: release packages"
+          title: "chore: release packages"
+          createGithubReleases: true
+          publish: pnpm release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_CONFIG_PROVENANCE: true
+          # Use OIDC for npm authentication instead of NPM_TOKEN
+          NPM_TOKEN: "" # https://github.com/changesets/changesets/issues/1152#issuecomment-3190884868

@@ -70,7 +70,7 @@ const ChecklistItem = ({ checkbox, state, forwardedRef }: ChecklistItemProps) =>
 
     useEffect(() => {
         if (checkState === CheckboxState.Mixed && !isSelected) {
-            // eslint-disable-next-line react-hooks/set-state-in-effect
+            // eslint-disable-next-line @eslint-react/set-state-in-effect
             setCheckState(CheckboxState.Mixed);
         } else {
             setCheckState(isSelected ? CheckboxState.Checked : CheckboxState.Unchecked);
@@ -186,7 +186,7 @@ export const Checklist = ({
             ])}
             ref={listContainerRef}
         >
-            {/* eslint-disable-next-line react-hooks/refs */}
+            {/* eslint-disable-next-line @eslint-react/refs */}
             {checkboxes.map((checkbox, index) => (
                 <div
                     key={checkbox.value}

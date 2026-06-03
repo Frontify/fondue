@@ -24,7 +24,7 @@ export const useBandTicks = (horizontal: boolean, updateBandTicks: Dispatch<SetS
                 ticks = ticks.filter((_, index) => index % 2 === 0);
                 pxPerTick = chartSize / ticks.length;
             }
-            // eslint-disable-next-line react-hooks/set-state-in-effect
+            // eslint-disable-next-line @eslint-react/set-state-in-effect
             setFilteredTicks(ticks);
             updateBandTicks(ticks);
         }

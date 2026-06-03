@@ -27,7 +27,7 @@ export default {
         backgrounds: false,
         outline: false,
         measure: false,
-        experimentalComponentsManifest: true,
+        componentsManifest: true,
         experimentalCodeExamples: true,
     },
     docs: {

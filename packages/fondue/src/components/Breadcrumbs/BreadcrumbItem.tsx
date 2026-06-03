@@ -48,6 +48,7 @@ export const BreadcrumbItem = ({
 }: BreadcrumbItemProps): ReactElement => {
     const ref = useRef(null);
 
+    // eslint-disable-next-line @eslint-react/static-components
     const Element = getItemElementType(link, onClick);
     const isInteractive = Element !== 'span';
 
@@ -85,7 +86,7 @@ export const BreadcrumbItem = ({
             data-test-id={`${dataTestId}-item`}
         >
             {children ?? (
-                // eslint-disable-next-line react-hooks/static-components
+                // eslint-disable-next-line @eslint-react/static-components
                 <Element ref={ref} {...props} className={classNames}>
                     {decorator}
                     {label}

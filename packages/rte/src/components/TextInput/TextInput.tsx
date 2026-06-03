@@ -230,7 +230,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
 
         useEffect(() => {
             if (typeof obfuscated === 'boolean') {
-                // eslint-disable-next-line react-hooks/set-state-in-effect
+                // eslint-disable-next-line @eslint-react/set-state-in-effect
                 setIsObfuscated(obfuscated);
             }
         }, [obfuscated]);

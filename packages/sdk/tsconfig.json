@@ -1,0 +1,25 @@
+{
+    "compilerOptions": {
+        "allowImportingTsExtensions": true,
+        "isolatedModules": true,
+        "jsx": "react-jsx",
+        "lib": ["ES2021", "DOM", "DOM.Iterable"],
+        "module": "ESNext",
+        "moduleResolution": "bundler",
+        "noEmit": true,
+        "noFallthroughCasesInSwitch": true,
+        "noUncheckedIndexedAccess": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "paths": {
+            "#/*": ["./src/*"]
+        },
+        "resolveJsonModule": true,
+        "skipLibCheck": true,
+        "strict": true,
+        "target": "ES2021",
+        "useDefineForClassFields": true
+    },
+    "include": ["src", "cli.ts", "adapters", "globals.d.ts"],
+    "references": [{ "path": "./tsconfig.node.json" }]
+}

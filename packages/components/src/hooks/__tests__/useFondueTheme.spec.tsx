@@ -8,12 +8,12 @@ import { ThemeProvider, useFondueTheme } from '../../components/ThemeProvider/Th
 
 // Test component that uses the theme hook
 const TestComponent = () => {
-    const { theme, dir, translations } = useFondueTheme();
+    const { theme, dir, locale } = useFondueTheme();
     return (
         <div>
             <div data-test-id="theme">{theme}</div>
             <div data-test-id="dir">{dir}</div>
-            <div data-test-id="translations">{translations.translationStrings.Dialog_close}</div>
+            <div data-test-id="translations">{locale.translationStrings.Dialog_close}</div>
         </div>
     );
 };

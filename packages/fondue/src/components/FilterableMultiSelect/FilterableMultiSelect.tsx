@@ -173,7 +173,7 @@ export const FilterableMultiSelect = ({
     };
 
     useEffect(() => {
-        setMultiSelectMenuRef(multiSelectRef?.current as HTMLDivElement);
+        setMultiSelectMenuRef(multiSelectRef?.current);
     }, []);
 
     useEffect(() => {
@@ -243,7 +243,7 @@ export const FilterableMultiSelect = ({
         };
 
         updatePopper().catch(console.error);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line @eslint-react/exhaustive-deps
     }, [activeItemKeys]);
 
     return (

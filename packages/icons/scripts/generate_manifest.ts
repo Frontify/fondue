@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { readdirSync, writeFileSync } from 'node:fs';
 import { basename, resolve } from 'node:path';
 
 import { camelCase, upperFirst } from 'lodash-es';
@@ -8,30 +8,38 @@ import { camelCase, upperFirst } from 'lodash-es';
 import { getCurrentDirPath, getFileInDirectoryByExtension } from './utilities/file';
 
 const currentDir = getCurrentDirPath(import.meta.url);
-const packageJson = JSON.parse(readFileSync(resolve(currentDir, '../package.json'), 'utf-8'));
 
 const ICONS_DIR = resolve(currentDir, '../icons');
-const OUTPUT_PATH = resolve(currentDir, '../manifest.json');
-const IMPORT_PATH = packageJson.name as string;
+const OUTPUT_PATH = resolve(currentDir, '../dist/manifest.json');
+const PACKAGE_NAME = '@frontify/fondue/icons';
 
 const AVAILABLE_SIZES = [12, 16, 20, 24, 32] as const;
 
 type IconSize = (typeof AVAILABLE_SIZES)[number];
 
-type IconManifest = {
-    sizes: readonly number[];
-    icons: IconEntry[];
+type IconExample = {
+    name: string;
+    description: string;
+    code: string;
+    isCanonical: boolean;
 };
 
 type IconEntry = {
     name: string;
+    description: string;
     componentName: string;
-    exportName: string;
-    importPath: string;
+    importStatement: string;
     filled: boolean;
     availableSizes: IconSize[];
     defaultSize: number;
-    keywords: string[];
+    tags: string[];
+    examples: IconExample[];
+};
+
+type IconManifest = {
+    packageName: string;
+    sizes: readonly number[];
+    icons: IconEntry[];
 };
 
 const getAvailableSizes = (iconDir: string, iconBaseName: string, filled: boolean): IconSize[] => {
@@ -41,8 +49,19 @@ const getAvailableSizes = (iconDir: string, iconBaseName: string, filled: boolea
     return AVAILABLE_SIZES.filter((size) => files.includes(`${iconBaseName}-${size}${suffix}`));
 };
 
-const deriveKeywords = (name: string): string[] => {
+const deriveTags = (name: string): string[] => {
     return name.split('-').filter((part) => part.length > 0);
+};
+
+const buildExamples = (componentName: string, defaultSize: number): IconExample[] => {
+    return [
+        {
+            name: 'Default',
+            description: `Default usage of ${componentName} at size ${defaultSize}.`,
+            code: `import { ${componentName} } from '${PACKAGE_NAME}';\n\n<${componentName} size={${defaultSize}} />`,
+            isCanonical: true,
+        },
+    ];
 };
 
 (() => {
@@ -55,26 +74,29 @@ const deriveKeywords = (name: string): string[] => {
         const iconName = basename(pathWithoutSize, '.svg');
         const filled = svgFilePath.endsWith('-24-filled.svg');
         const baseIconName = filled ? iconName.replace(/-filled$/, '') : iconName;
-        const componentName = upperFirst(camelCase(iconName));
+        const componentName = `Icon${upperFirst(camelCase(iconName))}`;
         const iconDir = svgFilePath.split('/')[0];
 
         const availableSizes = getAvailableSizes(iconDir, baseIconName, filled);
+        const defaultSize = 24;
 
         return {
             name: iconName,
+            description: '',
             componentName,
-            exportName: `Icon${componentName}`,
-            importPath: IMPORT_PATH,
+            importStatement: `import { ${componentName} } from '${PACKAGE_NAME}';`,
             filled,
             availableSizes,
-            defaultSize: 24,
-            keywords: deriveKeywords(iconName),
+            defaultSize,
+            tags: deriveTags(iconName),
+            examples: buildExamples(componentName, defaultSize),
         };
     });
 
     icons.sort((a, b) => a.name.localeCompare(b.name));
 
     const manifest: IconManifest = {
+        packageName: PACKAGE_NAME,
         sizes: AVAILABLE_SIZES,
         icons,
     };

@@ -12,6 +12,7 @@ import { transformDomainToStorageDomain } from '@components/common/helpers/trans
 import { useMargin } from '@components/common/hooks';
 import { createTheme } from '@theme/createTheme';
 
+import styles from './AreaStackChart.module.scss';
 import { AreaStack } from './components/AreaStack';
 import { GridRows } from './components/GridRows';
 import { type AreaStackChartProps } from './types';
@@ -50,7 +51,7 @@ export const AreaStackChart = ({
     });
 
     return (
-        <div className="tw-flex tw-flex-col tw-gap-6">
+        <div className={styles.root}>
             {!hideLegend && legendPosition === LEGEND_POSITION_TOP && (
                 <Legend names={series.map((series) => series.name)} style="line" />
             )}

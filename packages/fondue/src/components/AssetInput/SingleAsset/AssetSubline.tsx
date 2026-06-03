@@ -10,6 +10,9 @@ import { type SelectedAssetProps } from './SelectedAsset';
 type AssetSublineProps = Pick<AssetInputProps, 'isLoading' | 'hideSize' | 'hideExtension'> &
     Pick<SelectedAssetProps, 'asset'>;
 
+/**
+ * @deprecated Use `AssetInput` from `@frontify/fondue/components` instead.
+ */
 export const AssetSubline = ({
     asset,
     isLoading = false,

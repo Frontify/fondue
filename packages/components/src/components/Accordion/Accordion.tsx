@@ -4,15 +4,72 @@ import { IconCaretDown } from '@frontify/fondue-icons';
 import * as RadixAccordion from '@radix-ui/react-accordion';
 import {
     Children,
+    createContext,
     forwardRef,
     isValidElement,
+    useCallback,
+    useContext,
     useMemo,
+    useRef,
     type ForwardedRef,
     type MouseEventHandler,
     type ReactNode,
 } from 'react';
 
 import styles from './styles/accordion.module.scss';
+
+type AccordionRootContextValue = {
+    registerItem: (value: string, element: HTMLDivElement | null) => void;
+};
+
+const AccordionRootContext = createContext<AccordionRootContextValue | null>(null);
+AccordionRootContext.displayName = 'AccordionRootContext';
+
+const findScrollableAncestor = (element: HTMLElement): HTMLElement | null => {
+    let current: HTMLElement | null = element.parentElement;
+    while (current) {
+        const { overflowY } = window.getComputedStyle(current);
+        if ((overflowY === 'auto' || overflowY === 'scroll') && current.scrollHeight > current.clientHeight) {
+            return current;
+        }
+        current = current.parentElement;
+    }
+    return null;
+};
+
+const restoreScrollForClosingItem = (itemEl: HTMLElement) => {
+    const scrollContainer = findScrollableAncestor(itemEl);
+    if (!scrollContainer) {
+        return;
+    }
+
+    const itemRect = itemEl.getBoundingClientRect();
+    const containerRect = scrollContainer.getBoundingClientRect();
+    const delta = itemRect.top - containerRect.top;
+
+    if (delta >= 0) {
+        return;
+    }
+
+    const contentEl = itemEl.querySelector<HTMLElement>(`:scope > .${styles.accordionContent}`);
+    const startHeight = contentEl?.offsetHeight ?? 0;
+
+    if (!contentEl || startHeight === 0) {
+        scrollContainer.scrollTop = scrollContainer.scrollTop + delta;
+        return;
+    }
+
+    const startTop = scrollContainer.scrollTop;
+    const step = () => {
+        const currentHeight = contentEl.offsetHeight;
+        const progress = Math.min(Math.max(1 - currentHeight / startHeight, 0), 1);
+        scrollContainer.scrollTop = startTop + delta * progress;
+        if (currentHeight > 0 && progress < 1) {
+            requestAnimationFrame(step);
+        }
+    };
+    requestAnimationFrame(step);
+};
 
 type AccordionPadding = 'none' | 'small' | 'medium' | 'large';
 
@@ -46,37 +103,91 @@ export type AccordionRootProps = {
      */
     padding?: AccordionPadding;
     /**
+     * When `true`, each `Accordion.Header` becomes sticky and pins to the top of the nearest
+     * scrolling ancestor (e.g. a `ScrollArea`) while its item is in view.
+     * @default false
+     */
+    sticky?: boolean;
+    /**
      * Callback function that is called when the value of the accordion changes.
      */
     onValueChange?: (value: string[]) => void;
 };
 
-export const AccordionRoot = ({
-    'data-test-id': dataTestId = 'fondue-accordion',
-    border = true,
-    children,
-    defaultValue,
-    disabled,
-    value,
-    padding = 'large',
-    onValueChange,
-}: AccordionRootProps) => {
-    return (
-        <RadixAccordion.Root
-            className={styles.root}
-            data-test-id={dataTestId}
-            defaultValue={defaultValue}
-            disabled={disabled}
-            type="multiple"
-            value={value}
-            data-border={border}
-            data-accordion-padding={padding}
-            onValueChange={onValueChange}
-        >
-            {children}
-        </RadixAccordion.Root>
-    );
-};
+export const AccordionRoot = forwardRef<HTMLDivElement, AccordionRootProps>(
+    (
+        {
+            'data-test-id': dataTestId = 'fondue-accordion',
+            border = true,
+            children,
+            defaultValue,
+            disabled,
+            value,
+            padding = 'large',
+            sticky = false,
+            onValueChange,
+        }: AccordionRootProps,
+        ref: ForwardedRef<HTMLDivElement>,
+    ) => {
+        const itemsRef = useRef<Map<string, HTMLDivElement>>(new Map());
+        const uncontrolledValueRef = useRef<string[]>(defaultValue ?? []);
+
+        const registerItem = useCallback((itemValue: string, element: HTMLDivElement | null) => {
+            if (element) {
+                itemsRef.current.set(itemValue, element);
+            } else {
+                itemsRef.current.delete(itemValue);
+            }
+        }, []);
+
+        const contextValue = useMemo<AccordionRootContextValue>(() => ({ registerItem }), [registerItem]);
+
+        const handleValueChange = useCallback(
+            (newValue: string[]) => {
+                if (sticky) {
+                    const previous = value ?? uncontrolledValueRef.current;
+                    for (const closedValue of previous) {
+                        if (newValue.includes(closedValue)) {
+                            continue;
+                        }
+
+                        const itemEl = itemsRef.current.get(closedValue);
+
+                        if (itemEl) {
+                            restoreScrollForClosingItem(itemEl);
+                        }
+                    }
+                }
+
+                if (value === undefined) {
+                    uncontrolledValueRef.current = newValue;
+                }
+                onValueChange?.(newValue);
+            },
+            [sticky, value, onValueChange],
+        );
+
+        return (
+            <AccordionRootContext.Provider value={contextValue}>
+                <RadixAccordion.Root
+                    ref={ref}
+                    className={styles.root}
+                    data-test-id={dataTestId}
+                    defaultValue={defaultValue}
+                    disabled={disabled}
+                    type="multiple"
+                    value={value}
+                    data-border={border}
+                    data-accordion-padding={padding}
+                    data-sticky={sticky}
+                    onValueChange={handleValueChange}
+                >
+                    {children}
+                </RadixAccordion.Root>
+            </AccordionRootContext.Provider>
+        );
+    },
+);
 AccordionRoot.displayName = 'Accordion.Root';
 
 export type AccordionItemProps = {
@@ -97,29 +208,45 @@ export type AccordionItemProps = {
     value: string;
 };
 
-export const AccordionItem = ({
-    'data-test-id': dataTestId = 'fondue-accordion-item',
-    children,
-    disabled,
-    value,
-}: AccordionItemProps) => {
-    return (
-        <RadixAccordion.Item
-            className={styles.accordionItem}
-            value={value}
-            onPointerDown={(event) => {
-                event.currentTarget.dataset.showFocusRing = 'false';
-            }}
-            onBlur={(event) => {
-                event.currentTarget.dataset.showFocusRing = 'true';
-            }}
-            disabled={disabled}
-            data-test-id={dataTestId}
-        >
-            {children}
-        </RadixAccordion.Item>
-    );
-};
+export const AccordionItem = forwardRef<HTMLDivElement, AccordionItemProps>(
+    (
+        { 'data-test-id': dataTestId = 'fondue-accordion-item', children, disabled, value }: AccordionItemProps,
+        ref: ForwardedRef<HTMLDivElement>,
+    ) => {
+        const rootContext = useContext(AccordionRootContext);
+        const registerItem = rootContext?.registerItem;
+
+        const setRefs = useCallback(
+            (element: HTMLDivElement | null) => {
+                registerItem?.(value, element);
+                if (typeof ref === 'function') {
+                    ref(element);
+                } else if (ref) {
+                    ref.current = element;
+                }
+            },
+            [registerItem, ref, value],
+        );
+
+        return (
+            <RadixAccordion.Item
+                ref={setRefs}
+                className={styles.accordionItem}
+                value={value}
+                onPointerDown={(event) => {
+                    event.currentTarget.dataset.showFocusRing = 'false';
+                }}
+                onBlur={(event) => {
+                    event.currentTarget.dataset.showFocusRing = 'true';
+                }}
+                disabled={disabled}
+                data-test-id={dataTestId}
+            >
+                {children}
+            </RadixAccordion.Item>
+        );
+    },
+);
 AccordionItem.displayName = 'Accordion.Item';
 
 export type AccordionHeaderProps = {
@@ -139,38 +266,38 @@ export type AccordionHeaderProps = {
     children?: ReactNode;
 };
 
-export const AccordionHeader = ({
-    'data-test-id': dataTestId = 'fondue-accordion-header',
-    asChild,
-    onClick,
-    children,
-}: AccordionHeaderProps) => {
-    const { slots, triggerContent } = useMemo(
-        () =>
-            Children.toArray(children).reduce<{ slots: ReactNode[]; triggerContent: ReactNode[] }>(
-                (acc, child) => {
-                    if (isValidElement<AccordionSlotProps>(child) && child.type === ForwardedRefAccordionSlot) {
-                        acc.slots.push(child);
-                    } else {
-                        acc.triggerContent.push(child);
-                    }
-                    return acc;
-                },
-                { slots: [], triggerContent: [] },
-            ),
-        [children],
-    );
+export const AccordionHeader = forwardRef<HTMLHeadingElement, AccordionHeaderProps>(
+    (
+        { 'data-test-id': dataTestId = 'fondue-accordion-header', asChild, onClick, children }: AccordionHeaderProps,
+        ref: ForwardedRef<HTMLHeadingElement>,
+    ) => {
+        const { slots, triggerContent } = useMemo(
+            () =>
+                Children.toArray(children).reduce<{ slots: ReactNode[]; triggerContent: ReactNode[] }>(
+                    (acc, child) => {
+                        if (isValidElement<AccordionSlotProps>(child) && child.type === ForwardedRefAccordionSlot) {
+                            acc.slots.push(child);
+                        } else {
+                            acc.triggerContent.push(child);
+                        }
+                        return acc;
+                    },
+                    { slots: [], triggerContent: [] },
+                ),
+            [children],
+        );
 
-    return (
-        <RadixAccordion.Header asChild={asChild} className={styles.accordionHeader} onClick={onClick}>
-            <RadixAccordion.Trigger className={styles.accordionTrigger} data-test-id={dataTestId}>
-                <div className={styles.accordionTriggerContent}>{triggerContent}</div>
-                <IconCaretDown className={styles.accordionCaret} size="16" />
-            </RadixAccordion.Trigger>
-            {slots}
-        </RadixAccordion.Header>
-    );
-};
+        return (
+            <RadixAccordion.Header ref={ref} asChild={asChild} className={styles.accordionHeader} onClick={onClick}>
+                <RadixAccordion.Trigger className={styles.accordionTrigger} data-test-id={dataTestId}>
+                    <div className={styles.accordionTriggerContent}>{triggerContent}</div>
+                    <IconCaretDown className={styles.accordionCaret} size="16" />
+                </RadixAccordion.Trigger>
+                {slots}
+            </RadixAccordion.Header>
+        );
+    },
+);
 AccordionHeader.displayName = 'Accordion.Header';
 
 type AccordionContentProps = {
@@ -194,27 +321,33 @@ type AccordionContentProps = {
     padding?: AccordionPadding;
 };
 
-export const AccordionContent = ({
-    'data-test-id': dataTestId = 'collapsible-wrap',
-    children,
-    divider = false,
-    onClick,
-    padding,
-}: AccordionContentProps) => {
-    return (
-        <RadixAccordion.Content
-            className={styles.accordionContent}
-            onClick={onClick}
-            data-test-id={dataTestId}
-            data-item-padding={padding}
-            data-item-divider={divider}
-        >
-            <div className={styles.accordionContentText} data-test-id={`inner-${dataTestId}`}>
-                {children}
-            </div>
-        </RadixAccordion.Content>
-    );
-};
+export const AccordionContent = forwardRef<HTMLDivElement, AccordionContentProps>(
+    (
+        {
+            'data-test-id': dataTestId = 'collapsible-wrap',
+            children,
+            divider = false,
+            onClick,
+            padding,
+        }: AccordionContentProps,
+        ref: ForwardedRef<HTMLDivElement>,
+    ) => {
+        return (
+            <RadixAccordion.Content
+                ref={ref}
+                className={styles.accordionContent}
+                onClick={onClick}
+                data-test-id={dataTestId}
+                data-item-padding={padding}
+                data-item-divider={divider}
+            >
+                <div className={styles.accordionContentText} data-test-id={`inner-${dataTestId}`}>
+                    {children}
+                </div>
+            </RadixAccordion.Content>
+        );
+    },
+);
 AccordionContent.displayName = 'Accordion.Content';
 
 export type AccordionSlotProps = {
@@ -223,19 +356,21 @@ export type AccordionSlotProps = {
     'data-test-id'?: string;
 };
 
-export const AccordionSlot = (
-    { children, name, 'data-test-id': dataTestId = 'fondue-accordion-slot' }: AccordionSlotProps,
-    ref: ForwardedRef<HTMLDivElement>,
-) => {
-    return (
-        <div data-name={name} className={styles.accordionSlot} data-test-id={dataTestId} ref={ref}>
-            {children}
-        </div>
-    );
-};
+export const AccordionSlot = forwardRef<HTMLDivElement, AccordionSlotProps>(
+    (
+        { children, name, 'data-test-id': dataTestId = 'fondue-accordion-slot' }: AccordionSlotProps,
+        ref: ForwardedRef<HTMLDivElement>,
+    ) => {
+        return (
+            <div data-name={name} className={styles.accordionSlot} data-test-id={dataTestId} ref={ref}>
+                {children}
+            </div>
+        );
+    },
+);
 AccordionSlot.displayName = 'Accordion.Slot';
 
-const ForwardedRefAccordionSlot = forwardRef<HTMLDivElement, AccordionSlotProps>(AccordionSlot);
+const ForwardedRefAccordionSlot = AccordionSlot;
 
 /**
  * @deprecated Use `Accordion.Header` instead.

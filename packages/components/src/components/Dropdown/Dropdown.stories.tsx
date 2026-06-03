@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconIcon } from '@frontify/fondue-icons';
+import { IconArrowMove, IconIcon, IconPen, IconPlus, IconTrashBin } from '@frontify/fondue-icons';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 
@@ -13,6 +13,7 @@ import {
     DropdownGroup,
     DropdownItem,
     DropdownRoot,
+    DropdownShortcut,
     DropdownSubContent,
     DropdownSubMenu,
     DropdownSubTrigger,
@@ -31,6 +32,7 @@ const meta: Meta<typeof DropdownRoot> = {
         'Dropdown.SubMenu': DropdownSubMenu,
         'Dropdown.SubTrigger': DropdownSubTrigger,
         'Dropdown.SubContent': DropdownSubContent,
+        'Dropdown.Shortcut': DropdownShortcut,
     },
     tags: ['autodocs'],
     parameters: {
@@ -250,6 +252,45 @@ export const OverflowingText: Story = {
     ),
 };
 
+export const KeyboardShortcut: Story = {
+    render: ({ ...args }) => (
+        <Dropdown.Root {...args}>
+            <Dropdown.Trigger>
+                <Button>Trigger</Button>
+            </Dropdown.Trigger>
+            <Dropdown.Content>
+                <Dropdown.Item onSelect={() => {}} aria-keyshortcuts="Meta+E">
+                    <Dropdown.Slot name="left">
+                        <IconPen size={16} />
+                    </Dropdown.Slot>
+                    Edit
+                    <Dropdown.Shortcut>⌘ + E</Dropdown.Shortcut>
+                </Dropdown.Item>
+                <Dropdown.Item onSelect={() => {}}>
+                    <Dropdown.Slot name="left">
+                        <IconArrowMove size={16} />
+                    </Dropdown.Slot>
+                    Move
+                </Dropdown.Item>
+                <Dropdown.Item onSelect={() => {}} aria-keyshortcuts="Meta+N">
+                    <Dropdown.Slot name="left">
+                        <IconPlus size={16} />
+                    </Dropdown.Slot>
+                    Add
+                    <Dropdown.Shortcut>⌘ + N</Dropdown.Shortcut>
+                </Dropdown.Item>
+                <Dropdown.Item onSelect={() => {}} emphasis="danger" aria-keyshortcuts="Backspace">
+                    <Dropdown.Slot name="left">
+                        <IconTrashBin size={16} />
+                    </Dropdown.Slot>
+                    Delete
+                    <Dropdown.Shortcut>⌫</Dropdown.Shortcut>
+                </Dropdown.Item>
+            </Dropdown.Content>
+        </Dropdown.Root>
+    ),
+};
+
 export const Decorator: Story = {
     render: ({ ...args }) => (
         <Dropdown.Root {...args}>
@@ -362,7 +403,7 @@ export const Overflow: Story = {
     render: ({ ...args }) => (
         <>
             {Array.from({ length: 4 }).map((_, index) => (
-                <Dropdown.Root {...args} key={index}>
+                <Dropdown.Root key={index} {...args}>
                     <Dropdown.Trigger>
                         <Button variant="loud">Trigger 1</Button>
                     </Dropdown.Trigger>
@@ -459,6 +500,26 @@ export const OnEscapeKeyDown: Story = {
             <Dropdown.Content
                 onEscapeKeyDown={() => {
                     alert('Escape key was pressed!');
+                }}
+            >
+                <Dropdown.Item onSelect={() => {}}>Item 1</Dropdown.Item>
+                <Dropdown.Item onSelect={() => {}}>Item 2</Dropdown.Item>
+                <Dropdown.Item onSelect={() => {}}>Item 3</Dropdown.Item>
+            </Dropdown.Content>
+        </Dropdown.Root>
+    ),
+};
+
+export const OnCloseAutoFocus: Story = {
+    render: ({ ...args }) => (
+        <Dropdown.Root {...args}>
+            <Dropdown.Trigger>
+                <Button>Trigger</Button>
+            </Dropdown.Trigger>
+            <Dropdown.Content
+                onCloseAutoFocus={(event) => {
+                    event.preventDefault();
+                    alert('Trigger focus restoration was suppressed.');
                 }}
             >
                 <Dropdown.Item onSelect={() => {}}>Item 1</Dropdown.Item>

@@ -5,6 +5,9 @@ import { IconArrowCircleUp, IconArrowOutExternal, IconCrop, IconCross, IconImage
 import { type ActionMenuBlock } from '@components/ActionMenu/ActionMenu';
 import { MenuItemStyle } from '@components/MenuItem/types';
 
+/**
+ * @deprecated Use `AssetInput` from `@frontify/fondue/components` instead.
+ */
 export const assetInputActions = [
     {
         id: 'block1',

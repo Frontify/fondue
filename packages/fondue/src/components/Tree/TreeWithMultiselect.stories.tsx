@@ -137,8 +137,8 @@ const renderTreeItemComponent = (
 
     return (
         <TreeItemMultiselect
-            {...treeItem}
             key={treeItem.id}
+            {...treeItem}
             contentComponent={<TreeItemContentComponent title={label || 'NO TITLE'} />}
             onSelect={onSelect}
             showCaret={showCaret}
@@ -153,7 +153,7 @@ export const MultiselectWithBasicItem = ({ ...args }: TreeProps) => {
     const [treeItems, setTreeItems] = useState<TreeItemMockMultiselect[]>([]);
 
     useEffect(() => {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
+        // eslint-disable-next-line @eslint-react/set-state-in-effect
         setTreeItems(treeItemsMockMultiselect);
     }, []);
 

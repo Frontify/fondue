@@ -70,6 +70,7 @@ export const Tooltip = ({
     stackingGlyphs = false,
 }: TooltipProps) => {
     const tooltipContext = useContext(TooltipContext) as TooltipContextType<LineChartDataPoint | BarChartDataPoint>;
+    // eslint-disable-next-line @eslint-react/static-components
     const { containerRef, TooltipInPortal } = useTooltipInPortal({
         scroll: true,
     });
@@ -137,6 +138,7 @@ export const Tooltip = ({
             )}
 
             {tooltipContext?.tooltipOpen && tooltipContext?.tooltipData && (
+                // eslint-disable-next-line @eslint-react/static-components
                 <TooltipInPortal left={tooltipLeft} top={tooltipTop} applyPositionStyle unstyled>
                     <TooltipContent
                         title={getHeadingFromDatum(

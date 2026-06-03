@@ -1,0 +1,63 @@
+{
+    "name": "@frontify/fondue-sdk",
+    "type": "module",
+    "version": "0.1.1",
+    "description": "Machine-readable SDK for Frontify Fondue — components, icons, tokens — exposed as a navigable graph. Designed for MCP servers, CLI tools, AI agents, and other integrations.",
+    "homepage": "https://github.com/Frontify/fondue",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Frontify/fondue",
+        "directory": "packages/sdk"
+    },
+    "bugs": {
+        "url": "https://github.com/frontify/fondue/issues"
+    },
+    "publishConfig": {
+        "access": "public"
+    },
+    "keywords": [
+        "frontify",
+        "fondue",
+        "sdk",
+        "design-system",
+        "mcp",
+        "cli"
+    ],
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/fondue-sdk.js"
+        }
+    },
+    "files": [
+        "dist"
+    ],
+    "engines": {
+        "node": ">=18"
+    },
+    "scripts": {
+        "build": "pnpm build:data && vite build",
+        "build:data": "tsx scripts/generateData.ts",
+        "lint": "eslint .",
+        "lint:fix": "eslint --fix .",
+        "typecheck": "pnpm build:data && tsc --noEmit",
+        "test": "vitest run"
+    },
+    "devDependencies": {
+        "@frontify/eslint-config-react": "^1.0.16",
+        "@frontify/fondue-components": "workspace:*",
+        "@frontify/fondue-icons": "workspace:*",
+        "@frontify/fondue-tokens": "workspace:*",
+        "@tony.ganchev/eslint-plugin-header": "^3.4.4",
+        "@types/node": "^24.10.9",
+        "commander": "^14.0.3",
+        "eslint": "^10.3.0",
+        "prettier": "^3.8.3",
+        "tsx": "^4.21.0",
+        "typescript": "^5.9.3",
+        "vite": "^5.4.21",
+        "vite-plugin-dts": "^4.5.4",
+        "vite-tsconfig-paths": "^5.1.4",
+        "vitest": "^3.2.4"
+    }
+}

@@ -1,0 +1,14 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+.root {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-x-large);
+
+    @media (min-width: 768px) {
+        gap: var(--spacing-large);
+    }
+}

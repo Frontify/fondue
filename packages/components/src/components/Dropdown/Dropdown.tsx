@@ -4,6 +4,8 @@ import { IconCaretRight } from '@frontify/fondue-icons';
 import * as RadixDropdown from '@radix-ui/react-dropdown-menu';
 import { Children, forwardRef, useMemo, useRef, type ForwardedRef, type ReactNode } from 'react';
 
+import { type CommonAriaProps } from '#/helpers/aria';
+
 import { ThemeProvider, useFondueTheme } from '../ThemeProvider/ThemeProvider';
 
 import { useProcessedChildren } from './hooks/useProcessedChildren';
@@ -72,6 +74,7 @@ DropdownTrigger.displayName = 'Dropdown.Trigger';
 
 type DropdownSpacing = 'compact' | 'comfortable' | 'spacious';
 type DropdownViewportCollisionPadding = 'compact' | 'spacious';
+type DropdownItemAriaProps = Omit<CommonAriaProps, 'role' | 'aria-expanded' | 'aria-haspopup'>;
 export type DropdownContentProps = {
     children?: ReactNode;
     'data-test-id'?: string;
@@ -108,6 +111,14 @@ export type DropdownContentProps = {
      * Event handler called when the escape key is pressed.
      */
     onEscapeKeyDown?: (event: KeyboardEvent) => void;
+    /**
+     * Event handler called when focus is about to be moved back to the trigger after the dropdown closes.
+     * Call `event.preventDefault()` to suppress the trigger restore for this particular close — useful
+     * when focus needs to be redirected per close path rather than uniformly (for example, restoring on
+     * Escape but redirecting elsewhere on item selection). Fires after `preventTriggerFocusOnClose` is
+     * applied.
+     */
+    onCloseAutoFocus?: (event: Event) => void;
 };
 
 const SPACING_MAP: Record<DropdownSpacing, number> = {
@@ -131,16 +142,17 @@ export const DropdownContent = (
         viewportCollisionPadding = 'compact',
         forceMount = false,
         onEscapeKeyDown,
+        onCloseAutoFocus,
         'data-test-id': dataTestId = 'fondue-dropdown-content',
     }: DropdownContentProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     const localRef = useRef<HTMLDivElement>(null);
-    const { theme, dir } = useFondueTheme();
+    const { dir } = useFondueTheme();
     const actualRef = ref || localRef;
     return (
         <RadixDropdown.Portal forceMount={forceMount || undefined}>
-            <ThemeProvider theme={theme} dir={dir}>
+            <ThemeProvider>
                 <RadixDropdown.Content
                     // @ts-expect-error - dir prop works at runtime but is not in the Radix UI type definition
                     dir={dir}
@@ -186,6 +198,7 @@ export const DropdownContent = (
                         if (preventTriggerFocusOnClose) {
                             event.preventDefault();
                         }
+                        onCloseAutoFocus?.(event);
                     }}
                     forceMount={forceMount || undefined}
                 >
@@ -246,7 +259,6 @@ export const DropdownSubTrigger = (
     return (
         <RadixDropdown.SubTrigger
             className={styles.subTrigger}
-            // eslint-disable-next-line react-hooks/refs
             data-show-focus-ring={wasMouseInteracted.current}
             data-test-id={dataTestId}
             ref={ref}
@@ -279,11 +291,11 @@ export const DropdownSubContent = (
     { children, 'data-test-id': dataTestId = 'fondue-dropdown-subcontent' }: DropdownSubContentProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
-    const { theme, dir } = useFondueTheme();
+    const { dir } = useFondueTheme();
 
     return (
         <RadixDropdown.Portal>
-            <ThemeProvider theme={theme} dir={dir}>
+            <ThemeProvider>
                 <RadixDropdown.SubContent
                     // @ts-expect-error - dir prop works at runtime but is not in the Radix UI type definition
                     dir={dir}
@@ -324,7 +336,7 @@ export type DropdownItemProps = {
      */
     asChild?: boolean;
     'data-test-id'?: string;
-};
+} & DropdownItemAriaProps;
 
 export const DropdownItem = (
     {
@@ -352,7 +364,6 @@ export const DropdownItem = (
             ref={ref}
             disabled={disabled}
             asChild={asChild}
-            // eslint-disable-next-line react-hooks/refs
             data-show-focus-ring={wasMouseInteracted.current}
             onMouseEnter={() => {
                 wasMouseInteracted.current = true;
@@ -388,6 +399,27 @@ export const DropdownSlot = (
 };
 DropdownSlot.displayName = 'Dropdown.Slot';
 
+export type DropdownShortcutProps = Pick<CommonAriaProps, 'aria-hidden'> & {
+    children: ReactNode;
+    'data-test-id'?: string;
+};
+
+export const DropdownShortcut = (
+    {
+        children,
+        'aria-hidden': ariaHidden = true,
+        'data-test-id': dataTestId = 'fondue-dropdown-shortcut',
+    }: DropdownShortcutProps,
+    ref: ForwardedRef<HTMLElement>,
+) => {
+    return (
+        <kbd aria-hidden={ariaHidden} className={styles.shortcut} data-test-id={dataTestId} ref={ref}>
+            {children}
+        </kbd>
+    );
+};
+DropdownShortcut.displayName = 'Dropdown.Shortcut';
+
 const ForwardedRefDropdownTrigger = forwardRef<HTMLButtonElement, DropdownTriggerProps>(DropdownTrigger);
 const ForwardedRefDropdownContent = forwardRef<HTMLDivElement, DropdownContentProps>(DropdownContent);
 const ForwardedRefDropdownGroup = forwardRef<HTMLDivElement, DropdownGroupProps>(DropdownGroup);
@@ -395,6 +427,7 @@ const ForwardedRefDropdownSubTrigger = forwardRef<HTMLDivElement, DropdownSubTri
 const ForwardedRefDropdownSubContent = forwardRef<HTMLDivElement, DropdownSubContentProps>(DropdownSubContent);
 const ForwardedRefDropdownItem = forwardRef<HTMLDivElement, DropdownItemProps>(DropdownItem);
 const ForwardedRefDropdownSlot = forwardRef<HTMLDivElement, DropdownSlotProps>(DropdownSlot);
+const ForwardedRefDropdownShortcut = forwardRef<HTMLElement, DropdownShortcutProps>(DropdownShortcut);
 
 export const Dropdown = {
     Root: DropdownRoot,
@@ -406,4 +439,5 @@ export const Dropdown = {
     SubContent: ForwardedRefDropdownSubContent,
     Item: ForwardedRefDropdownItem,
     Slot: ForwardedRefDropdownSlot,
+    Shortcut: ForwardedRefDropdownShortcut,
 };

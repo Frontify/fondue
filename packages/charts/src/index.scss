@@ -1,0 +1,47 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+:root {
+    --fc-base-color: var(--color-surface-default);
+
+    --fc-primary-base-color: var(--color-charts-primary-default);
+    --fc-secondary-base-color: var(--color-charts-secondary-default);
+    --fc-tertiary-base-color: var(--color-charts-tertiary-default);
+    --fc-backfilled-base-color: var(--color-container-secondary-on-secondary-container);
+    --fc-negative-base-color: var(--color-error-default);
+
+    --fc-primary-hover-color: var(--color-charts-primary-hover);
+    --fc-secondary-hover-color: var(--color-charts-secondary-hover);
+    --fc-tertiary-hover-color: var(--color-charts-tertiary-hover);
+
+    --fc-primary-weak-color: var(--color-charts-primary-subtle);
+    --fc-secondary-weak-color: var(--color-charts-secondary-subtle);
+    --fc-tertiary-weak-color: var(--color-charts-tertiary-subtle);
+    --fc-backfilled-weak-color: rgba(250, 250, 250, 0.3);
+    --fc-negative-weak-color: rgba(254, 142, 163, 0.1);
+
+    --fc-tick-stroke-color: var(--color-line-strong);
+
+    --fc-axis-x-color: var(--color-line-strong);
+    --fc-axis-y-color: 'transparent';
+    --fc-grid-stroke-color: var(--color-line-mid);
+    --fc-tooltip-crosshair-stroke-color: var(--color-line-mid);
+    --fc-tooltip-crosshair-stroke-color-weak: rgba(8, 8, 8, 0.05);
+
+    --fc-font-family: var(--typography-font-family-primary);
+
+    --fc-font-color-default: var(--color-primary-default);
+    --fc-font-color-weak: var(--color-secondary-default);
+}
+
+/**
+ * Safari produces visual artifacts on the tooltip glyph unless its
+ * containing svg element has a fixed size specified
+ */
+.visx-tooltip-glyph svg {
+    width: 6px;
+    height: 6px;
+}
+
+.bar-chart-cursor-pointer svg rect {
+    cursor: pointer;
+}

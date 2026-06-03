@@ -1,8 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import './styles.scss';
-
 export { Accordion } from './components/Accordion/Accordion';
+export { AssetInput } from './components/AssetInput/AssetInput';
 export { Badge } from './components/Badge/Badge';
 export { Box } from './components/Box/Box';
 export { Button } from './components/Button/Button';
@@ -41,3 +40,4 @@ export { TextInput } from './components/TextInput/TextInput';
 export { Textarea } from './components/Textarea/Textarea';
 export { ThemeContext, ThemeProvider, useFondueTheme } from './components/ThemeProvider/ThemeProvider';
 export { Tooltip } from './components/Tooltip/Tooltip';
+export { type LocaleConfig, availableLocales, type LocaleIdentifier, type TranslationStrings } from './locales/types';

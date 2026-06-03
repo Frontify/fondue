@@ -4,7 +4,8 @@ import styles from '@frontify/fondue-tokens/themes';
 import { Slot } from '@radix-ui/react-slot';
 import { createContext, type ForwardedRef, forwardRef, useContext, useMemo, type ReactNode } from 'react';
 
-import { enUS, type Translations } from '../../locales';
+import { enUS } from '../../locales';
+import { type LocaleConfig } from '../../locales/types';
 
 type AvailableTheme = keyof typeof styles;
 
@@ -21,17 +22,27 @@ type ThemeProviderProps = {
      */
     dir?: 'ltr' | 'rtl';
     /**
-     * Translations object to use for component strings.
-     * Import from '@frontify/fondue/components/locales' or provide your own.
-     * Must be a complete Translations object.
+     * @deprecated Use `locale` instead.
+     */
+    translations?: LocaleConfig;
+    /**
+     * Locale object to use for component strings.
+     * Import from '@frontify/fondue/locales' or provide your own.
+     * Must be a complete LocaleConfig object.
      * @default "enUS"
      * @example
      * ```tsx
-     * import { deDE } from '@frontify/fondue/components/locales';
-     * <ThemeProvider translations={deDE}>...</ThemeProvider>
+     * import { deDE } from '@frontify/fondue/locales';
+     * <ThemeProvider locale={deDE}>...</ThemeProvider>
      * ```
      */
-    translations?: Translations;
+    locale?: LocaleConfig;
+    /**
+     * Additional class name to apply to the theme provider, used to scope styles to a specific component or section of the application.
+     * The class is propagated to portaled content (e.g. Dropdown, Tooltip, Dialog) so scoped styles are still applied.
+     * @default ""
+     */
+    className?: string;
     /**
      * Change the default rendered element for the one passed as a child, merging their props and behavior.
      * @default false
@@ -42,13 +53,15 @@ type ThemeProviderProps = {
 type ThemeContextValue = {
     theme: AvailableTheme;
     dir: 'ltr' | 'rtl';
-    translations: Translations;
+    locale: LocaleConfig;
+    className: string;
 };
 
 export const ThemeContext = createContext<ThemeContextValue>({
     theme: 'light',
     dir: 'ltr',
-    translations: enUS,
+    locale: enUS,
+    className: '',
 });
 ThemeContext.displayName = 'ThemeContext';
 
@@ -63,23 +76,30 @@ export const useFondueTheme = () => {
 
 export const ThemeProvider = forwardRef<HTMLDivElement, ThemeProviderProps>(
     (
-        { children, theme = 'light', dir = 'ltr', translations = enUS, asChild = false },
+        { children, theme, dir, translations, locale, className, asChild = false },
         forwardedRef: ForwardedRef<HTMLDivElement>,
     ) => {
         const Comp = asChild ? Slot : 'div';
 
+        const existingContext = useFondueTheme();
+
         const contextValue = useMemo(
             () => ({
-                theme,
-                dir,
-                translations,
+                theme: theme ?? existingContext.theme,
+                dir: dir ?? existingContext.dir,
+                locale: locale ?? translations ?? existingContext.locale,
+                className: className ?? existingContext.className,
             }),
-            [dir, theme, translations],
+            [dir, theme, locale, translations, className, existingContext],
         );
 
         return (
             <ThemeContext.Provider value={contextValue}>
-                <Comp ref={forwardedRef} dir={dir} className={`${styles[theme]} fondue-theme-provider`}>
+                <Comp
+                    ref={forwardedRef}
+                    dir={contextValue.dir}
+                    className={['fondue-theme-provider', styles[contextValue.theme], contextValue.className].join(' ')}
+                >
                     {children}
                 </Comp>
             </ThemeContext.Provider>

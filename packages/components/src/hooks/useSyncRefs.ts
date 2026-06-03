@@ -29,6 +29,6 @@ export const useSyncRefs = <TElement = HTMLElement>(
 ) => {
     useEffect(() => {
         syncRefs<TElement>(localRef, forwardedRef);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line @eslint-react/exhaustive-deps
     }, [localRef]);
 };

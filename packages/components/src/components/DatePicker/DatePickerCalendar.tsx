@@ -56,7 +56,7 @@ export const DatePickerCalendar = forwardRef<HTMLDivElement, DatePickerCalendarP
         const defaultClassNames = getDefaultClassNames();
         const {
             dir,
-            translations: { dateLocale },
+            locale: { dateLocale },
         } = useFondueTheme();
 
         const transformedDisabledDates = useMemo(() => transformDisabledDates(disabledDates), [disabledDates]);

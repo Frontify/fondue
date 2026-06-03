@@ -73,7 +73,7 @@ const Template: StoryFn<DatePickerProps> = (args: DatePickerProps) => {
             variant="single"
             startDate={null}
             endDate={null}
-            value={selectedDate as Date}
+            value={selectedDate}
             onChange={(date) => setSelectedDate(date)}
         />
     );
@@ -92,7 +92,7 @@ const TemplateWithFormControl: StoryFn<DatePickerProps> = (args: DatePickerProps
                             variant="single"
                             startDate={null}
                             endDate={null}
-                            value={selectedDate as Date}
+                            value={selectedDate}
                             onChange={(date) => setSelectedDate(date)}
                         />
                     </FormControl>
@@ -225,7 +225,7 @@ const WithWrapperDiv: StoryFn<DatePickerProps> = (args: DatePickerProps) => {
                 variant="single"
                 startDate={null}
                 endDate={null}
-                value={selectedDate as Date}
+                value={selectedDate}
                 onChange={(date) => setSelectedDate(date)}
             />
         </div>

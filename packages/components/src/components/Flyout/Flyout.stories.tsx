@@ -359,7 +359,7 @@ export const Overflow: Story = {
     render: ({ ...args }) => (
         <>
             {Array.from({ length: 4 }).map((_, index) => (
-                <Flyout.Root {...args} key={index}>
+                <Flyout.Root key={index} {...args}>
                     <Flyout.Trigger>
                         <Button>Trigger {index}</Button>
                     </Flyout.Trigger>

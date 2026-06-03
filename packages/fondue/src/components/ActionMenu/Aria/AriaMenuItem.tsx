@@ -56,7 +56,7 @@ const useSwitch = (isSwitch: boolean, initialValue: boolean) => {
             const toggleSwitch = () => setSwitchValue(!switchValue);
             const switchComponent = <Switch size="small" mode={switchValue ? 'on' : 'off'} />;
 
-            // eslint-disable-next-line react-hooks/set-state-in-effect
+            // eslint-disable-next-line @eslint-react/set-state-in-effect
             setSwitchObject({
                 switchComponent,
                 switchValue,

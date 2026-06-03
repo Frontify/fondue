@@ -1,170 +1,146 @@
 name: Fondue CI
 
 on:
-    pull_request:
-        paths:
-            - packages/**
-            - .npmrc
-            - .nvmrc
-            - package.json
-            - pnpm-lock.yaml
-            - pnpm-workspace.yaml
+  pull_request:
+    paths:
+      - packages/**
+      - .npmrc
+      - .nvmrc
+      - package.json
+      - pnpm-lock.yaml
+      - pnpm-workspace.yaml
 
 # Ensures that only one workflow per branch will run at a time.
 concurrency:
-    group: ${{ github.workflow }}-${{ github.ref }}
-    cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
 
 jobs:
-    lint:
-        name: Lint
-        runs-on: ubuntu-latest
-        timeout-minutes: 10
+  lint-typecheck:
+    name: Lint & Typecheck
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
 
-        steps:
-            - name: Checkout default branch
-              uses: actions/checkout@v4
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-            - name: Use pnpm
-              uses: pnpm/action-setup@v3
-              with:
-                  run_install: false
+      - name: Setup
+        uses: ./.github/actions/setup
 
-            - name: Use Node.js
-              uses: actions/setup-node@v4
-              with:
-                  node-version-file: ".nvmrc"
-                  cache: "pnpm"
+      - name: Build Fondue Icons
+        run: pnpm build:icons
 
-            - name: Install npm dependencies
-              run: pnpm i --frozen-lockfile
+      - name: Build Fondue Charts
+        run: pnpm build:charts
 
-            - name: Build Fondue icons
-              run: pnpm build:icons
+      - name: Build Fondue Components
+        run: pnpm build:components
 
-            - name: Build Fondue Components
-              run: pnpm build:components
+      - name: Build Fondue RTE
+        run: pnpm build:rte
 
-            - name: Build Fondue RTE
-              run: pnpm build:rte
+      - name: Build Fondue SDK
+        run: pnpm build:sdk
 
-            - name: Lint code
-              run: pnpm --stream --filter {packages/fondue} --filter {packages/components} --filter {packages/icons} --filter {packages/rte} lint
+      - name: Lint code
+        run: pnpm --stream --filter {packages/fondue} --filter {packages/components} --filter {packages/icons} --filter {packages/rte} --filter {packages/sdk} lint
 
-    typecheck:
-        name: Typecheck
-        runs-on: ubuntu-latest
-        timeout-minutes: 10
+      - name: Typecheck code
+        run: pnpm --stream --filter {packages/fondue} --filter {packages/components} --filter {packages/icons} --filter {packages/rte} --filter {packages/sdk} typecheck
 
-        steps:
-            - name: Checkout default branch
-              uses: actions/checkout@v4
+  rte-component-tests:
+    name: RTE Component Tests (shard ${{ matrix.shard }}/${{ strategy.job-total }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
 
-            - name: Use pnpm
-              uses: pnpm/action-setup@v3
-              with:
-                  run_install: false
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
 
-            - name: Use Node.js
-              uses: actions/setup-node@v4
-              with:
-                  node-version-file: ".nvmrc"
-                  cache: "pnpm"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-            - name: Install npm dependencies
-              run: pnpm i --frozen-lockfile
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          cypress-cache: "true"
 
-            - name: Build Fondue icons
-              run: pnpm build:icons
+      - name: Build Fondue Icons
+        run: pnpm build:icons
 
-            - name: Build Fondue Charts
-              run: pnpm build:charts
+      - name: Build Fondue Components
+        run: pnpm build:components
 
-            - name: Build Fondue Components
-              run: pnpm build:components
+      - name: Component Tests
+        uses: ./.github/actions/cypress-shard
+        with:
+          package: packages/rte
+          shard: ${{ matrix.shard }}
+          total: ${{ strategy.job-total }}
 
-            - name: Build Fondue RTE
-              run: pnpm build:rte
+  component-unit-tests:
+    name: Component Unit Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
 
-            - name: Typecheck code
-              run: pnpm --stream --filter {packages/fondue} --filter {packages/components} --filter {packages/icons} --filter {packages/rte} typecheck
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-    rte-component-tests:
-        name: RTE Component Tests
-        runs-on: ubuntu-latest
-        timeout-minutes: 10
+      - name: Setup
+        uses: ./.github/actions/setup
 
-        steps:
-            - name: Checkout current commit
-              uses: actions/checkout@v4
+      - name: Build Fondue icons
+        run: pnpm build:icons
 
-            - name: Use Node.js
-              uses: actions/setup-node@v4
-              with:
-                  node-version-file: ".nvmrc"
+      - name: Unit test
+        run: pnpm --stream --filter {packages/components} test
 
-            - name: Use pnpm
-              uses: pnpm/action-setup@v3
-              with:
-                  run_install: false
+  component-tests:
+    name: Component Tests (shard ${{ matrix.shard }}/${{ strategy.job-total }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
 
-            - name: Get pnpm store directory
-              id: pnpm-cache
-              run: echo "pnpm_cache_dir=$(pnpm store path)" >> $GITHUB_OUTPUT
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
 
-            - name: Setup pnpm cache
-              uses: actions/cache@v4
-              id: npm_cache
-              with:
-                  path: |
-                      ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
-                      ~/.cache/Cypress
-                  key: pnpm-with-cypress-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
-                  restore-keys: pnpm-with-cypress-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-            - name: Install dependencies
-              run: pnpm install --frozen-lockfile
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          playwright-cache: "true"
 
-            - name: Build Fondue Icons
-              run: pnpm build:icons
+      - name: Build Fondue icons
+        run: pnpm build:icons
 
-            - name: Build Fondue Components
-              run: pnpm build:components
+      - name: Install Playwright browsers
+        run: pnpm --stream --filter {packages/components} install:playwright
 
-            - name: Component Tests
-              run: pnpm run --stream --filter {packages/rte} test
+      - name: Playwright tests
+        run: pnpm --filter {packages/components} exec playwright test --shard=${{ matrix.shard }}/${{ strategy.job-total }}
 
-    component-tests:
-        name: Component Tests
-        runs-on: ubuntu-latest
-        timeout-minutes: 25
+  sdk-tests:
+    name: SDK Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
 
-        steps:
-            - name: Checkout current commit
-              uses: actions/checkout@v4
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-            - name: Use pnpm
-              uses: pnpm/action-setup@v3
-              with:
-                  run_install: false
+      - name: Setup
+        uses: ./.github/actions/setup
 
-            - name: Use Node.js
-              uses: actions/setup-node@v4
-              with:
-                  node-version-file: ".nvmrc"
-                  cache: "pnpm"
-
-            - name: Install dependencies
-              run: pnpm install --frozen-lockfile
-
-            - name: Build Fondue Icons
-              run: pnpm build:icons
-
-            - name: Unit test
-              run: pnpm --stream --filter {packages/components} test
-
-            - name: Install Playwright browsers
-              run: pnpm --stream --filter {packages/components} install:playwright
-
-            - name: Playwright tests
-              run: pnpm --stream --filter {packages/components} test:components:ci
+      - name: Unit test
+        run: pnpm --stream --filter {packages/sdk} test

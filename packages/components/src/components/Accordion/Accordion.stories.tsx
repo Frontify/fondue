@@ -5,7 +5,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { action } from 'storybook/actions';
 
-import { Badge, Button, ColorPicker, Dropdown, Flex, Flyout } from '#/index';
+import { Badge, Button, ColorPicker, Dropdown, Flex, Flyout, ScrollArea } from '#/index';
 
 import { Accordion, AccordionContent, AccordionHeader, AccordionItem, AccordionRoot } from './Accordion';
 
@@ -220,6 +220,84 @@ export const Default: Story = {
                     </Accordion.Content>
                 </Accordion.Item>
             </Accordion.Root>
+        );
+    },
+};
+
+export const InScrollArea: Story = {
+    args: {
+        sticky: true,
+        defaultValue: ['accordion-test-0', 'accordion-test-1', 'accordion-test-2'],
+    },
+    render: (args) => {
+        return (
+            <ScrollArea maxHeight={300} maxWidth={600}>
+                <Accordion.Root {...args}>
+                    <Accordion.Item value="accordion-test-0">
+                        <Accordion.Header>
+                            <Flex gap={2} align="center">
+                                <IconIcon size="20" />
+                                Item with icon
+                            </Flex>
+                        </Accordion.Header>
+                        <Accordion.Content divider>
+                            Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
+                            invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam
+                            et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est
+                            Lorem ipsum dolor sit amet.
+                        </Accordion.Content>
+                    </Accordion.Item>
+
+                    <Accordion.Item value="accordion-test-1">
+                        <Accordion.Header>
+                            With action slot
+                            <Accordion.Slot name="action">
+                                <Button size="small" emphasis="default">
+                                    Click Me
+                                </Button>
+                            </Accordion.Slot>
+                        </Accordion.Header>
+                        <Accordion.Content>
+                            Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
+                            invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam
+                            et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est
+                            Lorem ipsum dolor sit amet.
+                        </Accordion.Content>
+                    </Accordion.Item>
+
+                    <Accordion.Item value="accordion-test-2">
+                        <Accordion.Header>Item three</Accordion.Header>
+                        <Accordion.Content>
+                            Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
+                            invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
+                        </Accordion.Content>
+                    </Accordion.Item>
+
+                    <Accordion.Item value="accordion-test-3">
+                        <Accordion.Header>Item four</Accordion.Header>
+                        <Accordion.Content>
+                            Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
+                            invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
+                        </Accordion.Content>
+                    </Accordion.Item>
+
+                    <Accordion.Item value="accordion-test-4">
+                        <Accordion.Header>Item five</Accordion.Header>
+                        <Accordion.Content>
+                            Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
+                            invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
+                        </Accordion.Content>
+                    </Accordion.Item>
+
+                    <Accordion.Item value="accordion-test-5">
+                        <Accordion.Header>Item six</Accordion.Header>
+                        <Accordion.Content>
+                            Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
+                            invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
+                        </Accordion.Content>
+                    </Accordion.Item>
+                </Accordion.Root>
+            </ScrollArea>
         );
     },
 };

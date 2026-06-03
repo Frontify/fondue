@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ElementType, type ForwardedRef, forwardRef, type ReactNode } from 'react';
+import { type ForwardedRef, forwardRef, type ReactNode } from 'react';
 
 import { type CommonAriaProps } from '#/helpers/aria';
 
@@ -31,7 +31,7 @@ type HeadingElementType<TTag extends TagType> = TTag extends 'span'
 export const Heading = forwardRef(
     (
         {
-            as: Tag = 'span' as ElementType,
+            as: Tag = 'span',
             children,
             className,
             color = 'default',
@@ -68,7 +68,7 @@ export const Heading = forwardRef(
                 aria-expanded={ariaExpanded}
                 aria-haspopup={ariaHasPopup}
                 data-test-id={dataTestId}
-                ref={ref}
+                ref={ref as ForwardedRef<HTMLHeadingElement>}
                 {...props}
             >
                 {children}

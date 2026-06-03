@@ -22,7 +22,7 @@ import { ThemeContext } from '../components/ThemeProvider/ThemeProvider';
  */
 export const useTranslation = () => {
     const {
-        translations: { translationStrings: translations },
+        locale: { translationStrings: translations },
     } = useContext(ThemeContext);
 
     /**

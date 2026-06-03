@@ -4,7 +4,8 @@ import '@frontify/fondue-tokens/legacy/tokens';
 import '@frontify/fondue-tokens/styles';
 import { Decorator, StoryContext, type Preview } from '@storybook/react-vite';
 import { ComponentType } from 'react';
-import '../src/index.css';
+import '../src/index.scss';
+import './tailwind.css';
 import { withTheme } from './components/StoryWithTheme';
 import DocumentationTemplate from './DocumentationTemplate.mdx';
 
