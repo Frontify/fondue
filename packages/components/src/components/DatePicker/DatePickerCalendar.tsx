@@ -93,8 +93,6 @@ export const DatePickerCalendar = forwardRef<HTMLDivElement, DatePickerCalendarP
                         range_middle: `${styles.selectedMiddle}`,
                         disabled: `${styles.disabled}`,
                         outside: `${styles.outside}`,
-                        month: `${defaultClassNames.month} ${styles.month}`,
-                        weeks: `${defaultClassNames.weeks} ${styles.weeks}`,
                         month_grid: `${defaultClassNames.month_grid} ${styles.monthGrid}`,
                     }}
                     {...modeProps}

@@ -20,16 +20,22 @@
     }
 }
 
+.monthGrid {
+    margin-left: auto;
+    margin-right: auto;
+}
+
 .captionLabel {
     display: inline-grid;
     justify-items: center;
+    align-items: center;
+    height: var(--rdp-nav-height);
     color: var(--color-primary-default);
     font-family: var(--typography-font-family-primary);
     font-weight: var(--typography-font-weight-medium);
-    line-height: var(--typography-line-height-wide);
+    line-height: 1;
     letter-spacing: var(--typography-letter-spacing-default);
     font-size: var(--typography-font-size-large);
-
 }
 
 .captionLabel > * {
