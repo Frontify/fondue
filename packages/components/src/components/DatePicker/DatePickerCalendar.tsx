@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconCaretLeft, IconCaretLeftDouble, IconCaretRight, IconCaretRightDouble } from '@frontify/fondue-icons';
-import { addYears, subYears } from 'date-fns';
+import { addYears, format, subYears } from 'date-fns';
 import { forwardRef, useEffect, useMemo, useRef } from 'react';
 import {
     getDefaultClassNames,
@@ -14,6 +14,7 @@ import {
     type CustomComponents,
     type Matcher,
     type DayButtonProps,
+    type CaptionLabelProps,
 } from 'react-day-picker';
 import 'react-day-picker/style.css';
 
@@ -79,6 +80,7 @@ export const DatePickerCalendar = forwardRef<HTMLDivElement, DatePickerCalendarP
                     disabled={transformedDisabledDates}
                     defaultMonth={defaultMonth}
                     dir={dir}
+                    fixedWeeks
                     classNames={{
                         root: `${defaultClassNames.root} ${styles.root}`,
                         day: `${styles.day}`,
@@ -91,6 +93,9 @@ export const DatePickerCalendar = forwardRef<HTMLDivElement, DatePickerCalendarP
                         range_middle: `${styles.selectedMiddle}`,
                         disabled: `${styles.disabled}`,
                         outside: `${styles.outside}`,
+                        month: `${defaultClassNames.month} ${styles.month}`,
+                        weeks: `${defaultClassNames.weeks} ${styles.weeks}`,
+                        month_grid: `${defaultClassNames.month_grid} ${styles.monthGrid}`,
                     }}
                     {...modeProps}
                     modifiersClassNames={{
@@ -106,6 +111,33 @@ export const DatePickerCalendar = forwardRef<HTMLDivElement, DatePickerCalendarP
 DatePickerCalendar.displayName = 'DatePickerCalendar';
 
 const getCustomComponents = (): Partial<CustomComponents> => ({
+    CaptionLabel: ({ children }: CaptionLabelProps): JSX.Element => {
+        const { months } = useDayPicker();
+        const {
+            locale: { dateLocale },
+        } = useFondueTheme();
+        const year = months[0]?.date.getFullYear();
+
+        const ghostLabels = useMemo(() => {
+            if (year === undefined) {
+                return [];
+            }
+            return Array.from({ length: 12 }, (_, monthIndex) =>
+                format(new Date(year, monthIndex, 1), 'LLLL y', { locale: dateLocale }),
+            );
+        }, [year, dateLocale]);
+
+        return (
+            <span className={styles.captionLabel}>
+                <span>{children}</span>
+                {ghostLabels.map((label) => (
+                    <span key={label} aria-hidden="true" className={styles.captionLabelGhost}>
+                        {label}
+                    </span>
+                ))}
+            </span>
+        );
+    },
     DayButton: ({ day, modifiers, onClick, onMouseEnter, onMouseLeave, ...props }: DayButtonProps): JSX.Element => {
         const buttonRef = useRef<HTMLButtonElement>(null);
 

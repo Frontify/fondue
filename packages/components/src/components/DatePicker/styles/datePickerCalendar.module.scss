@@ -20,6 +20,28 @@
     }
 }
 
+.captionLabel {
+    display: inline-grid;
+    justify-items: center;
+    color: var(--color-primary-default);
+    font-family: var(--typography-font-family-primary);
+    font-weight: var(--typography-font-weight-medium);
+    line-height: var(--typography-line-height-wide);
+    letter-spacing: var(--typography-letter-spacing-default);
+    font-size: var(--typography-font-size-large);
+
+}
+
+.captionLabel > * {
+    grid-area: 1 / 1;
+    white-space: nowrap;
+}
+
+.captionLabelGhost {
+    visibility: hidden;
+    pointer-events: none;
+}
+
 .toggleMonthButtonContainer {
     position: absolute;
     top: 0;
