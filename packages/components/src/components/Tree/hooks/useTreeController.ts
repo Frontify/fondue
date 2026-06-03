@@ -56,7 +56,12 @@ export const useTreeController = ({
     const checkedItems = items.filter((item) => item.isSelected).map((item) => item.id);
     // Focus is tracked internally only — headless-tree's TreeFeatureDef requires it in state
     // for keyboard navigation, but consumers don't see it via onChange or the public types.
-    const [focusedItem, setInternalFocusedItem] = useState<string | undefined>(undefined);
+    // Initialized to the first non-root item so that item gets `tabIndex=0` on mount —
+    // otherwise the roving tabindex pattern leaves every row at `-1` and the tree is
+    // skipped by Tab, blocking keyboard navigation.
+    const [focusedItem, setInternalFocusedItem] = useState<string | undefined>(
+        () => items.find((item) => item.id !== 'root')?.id,
+    );
     // Memoized so the reference is stable across renders unless content changes — otherwise
     // headless-tree sees "new state" every render and triggers an infinite loop.
     const treeState = useMemo<FlatTreeState>(

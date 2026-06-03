@@ -3,7 +3,7 @@
 import { IconCaretDown, IconCaretRight, IconDocument, IconFolder, IconGrabHandle } from '@frontify/fondue-icons';
 import { CheckedState } from '@headless-tree/core';
 import { AssistiveTreeDescription } from '@headless-tree/react';
-import { type FormEvent, type ChangeEventHandler, type FormEventHandler, type ForwardedRef } from 'react';
+import { useId, type FormEventHandler, type ForwardedRef } from 'react';
 
 import { Checkbox } from '#/components/Checkbox/Checkbox';
 
@@ -13,6 +13,7 @@ import { type Item, type TreeRootProps } from '../types';
 import { parseChildren } from '../utils/parseChildren';
 
 export const TreeRoot = ({ children, onChange, multiSelect = false, reorderable = false }: TreeRootProps) => {
+    const reorderHintId = useId();
     const parsedChildren = parseChildren(children, 'root');
     const items: Item[] = [
         {
@@ -34,6 +35,12 @@ export const TreeRoot = ({ children, onChange, multiSelect = false, reorderable 
 
     return (
         <div {...tree.getContainerProps()} className={styles.tree}>
+            {reorderable && (
+                <span id={reorderHintId} className={styles.srOnly}>
+                    To reorder, press Control plus Shift plus D to start moving this item, then arrow up or down to
+                    position it, Enter to drop, or Escape to cancel.
+                </span>
+            )}
             <AssistiveTreeDescription tree={tree} />
             {tree.getItems().map((item) => {
                 const level = item.getItemMeta().level;
@@ -58,6 +65,7 @@ export const TreeRoot = ({ children, onChange, multiSelect = false, reorderable 
                         {...item.getProps()}
                         className={styles.row}
                         aria-current={isActive ? 'page' : undefined}
+                        aria-describedby={reorderable ? reorderHintId : undefined}
                     >
                         <div
                             className={styles.item}
