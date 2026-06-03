@@ -12,6 +12,11 @@ export type FlatTreeState = {
  * Rebuilds the hierarchical `TreeChangeState` emitted to `onChange` from the flat item
  * list plus the current selection/expansion state. `parent.children` is the single source
  * of truth for child ordering; orphaned ids are dropped silently.
+ *
+ * `isSelected` is a leaf-only fact in our model — `checkedItems` only ever contains leaf
+ * ids. For folders we derive `isSelected = every leaf descendant is checked`, so consumers
+ * can read the emitted state to know whether a folder is fully selected without walking
+ * its children themselves.
  */
 export const assembleTreeState = (
     items: readonly TreeItemData[],
@@ -27,20 +32,28 @@ export const assembleTreeState = (
         if (!item) {
             return null;
         }
-        const node: TreeNodeState = {
+        if (item.isFolder) {
+            const children = (item.children ?? [])
+                .map(buildNode)
+                .filter((child): child is TreeNodeState => child !== null);
+            const hasChildren = children.length > 0;
+            return {
+                id: item.id,
+                name: item.name,
+                isFolder: true,
+                isExpanded: expanded.has(item.id),
+                isSelected: hasChildren && children.every((child) => child.isSelected),
+                isActive: Boolean(item.isActive),
+                children,
+            };
+        }
+        return {
             id: item.id,
             name: item.name,
-            isFolder: Boolean(item.isFolder),
+            isFolder: false,
             isSelected: checked.has(item.id),
             isActive: Boolean(item.isActive),
         };
-        if (item.isFolder) {
-            node.isExpanded = expanded.has(item.id);
-            node.children = (item.children ?? [])
-                .map(buildNode)
-                .filter((child): child is TreeNodeState => child !== null);
-        }
-        return node;
     };
 
     const root = byId.get(rootId);

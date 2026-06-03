@@ -61,8 +61,10 @@ export const useTreeController = ({
         () => itemsWithRoot.filter((item) => item.isExpanded).map((item) => item.id),
         [itemsWithRoot],
     );
+    // Only leaves can be in `checkedItems`. Folders are always derived from descendants via
+    // `getCheckedState` — see the comment on `canCheckFolders` below.
     const checkedItems = useMemo(
-        () => itemsWithRoot.filter((item) => item.isSelected).map((item) => item.id),
+        () => itemsWithRoot.filter((item) => item.isSelected && !item.isFolder).map((item) => item.id),
         [itemsWithRoot],
     );
 
@@ -136,6 +138,16 @@ export const useTreeController = ({
         const currentChildren = targetParent.children ?? [];
         const insertIndex = isOrderedDragTarget(target) ? target.insertionIndex : currentChildren.length;
         const next = moveItems(itemsWithRoot, draggedIds, targetParentId, insertIndex);
+
+        const nextChildren = next.find((item) => item.id === targetParentId)?.children ?? [];
+        for (const draggedId of draggedIds) {
+            const item = itemsById.get(draggedId);
+            const index = nextChildren.indexOf(draggedId);
+            if (item?.onMove && index !== -1) {
+                item.onMove({ parentId: targetParentId, index });
+            }
+        }
+
         onChange?.(assembleTreeState(next, treeState, ROOT_ID));
     };
 
@@ -153,9 +165,16 @@ export const useTreeController = ({
         setExpandedItems,
         setCheckedItems,
         setFocusedItem,
-        canCheckFolders: true,
+        // Folders are derived from their descendants — never put into `checkedItems` themselves.
+        // With `canCheckFolders: true` and propagation on, checking a folder pushes the folder
+        // id into `checkedItems`, after which `getCheckedState` short-circuits to `"checked"` and
+        // unchecking a descendant leaves the ancestor stuck — never showing indeterminate again.
+        canCheckFolders: false,
         propagateCheckedState: true,
-        indent: 1,
+        // Pixels per indent level — matches the 1rem step used by `.indent` in tree.module.scss.
+        // Headless-tree uses this both for `getDragLineData`'s leftOffset (so the dragline
+        // visually communicates the drop depth) and for hit-testing reparent gestures.
+        indent: 16,
         features: [
             syncDataLoaderFeature,
             checkboxesFeature,

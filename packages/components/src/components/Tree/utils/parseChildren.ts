@@ -22,7 +22,7 @@ export const parseChildren = (children: ReactNode, parentId: string = 'root'): T
             continue;
         }
         if (isTreeItemElement(child)) {
-            const { id, label, isSelected, onSelectChange, isActive } = child.props;
+            const { id, label, isSelected, onSelectChange, isActive, onClick, onMove } = child.props;
             result.push({
                 id,
                 name: label,
@@ -31,6 +31,8 @@ export const parseChildren = (children: ReactNode, parentId: string = 'root'): T
                 isSelected,
                 onSelectChange,
                 isActive,
+                onClick,
+                onMove,
             });
             continue;
         }
@@ -44,6 +46,8 @@ export const parseChildren = (children: ReactNode, parentId: string = 'root'): T
                 isSelected,
                 onSelectChange,
                 isActive,
+                onClick,
+                onMove,
             } = child.props;
             const descendants = parseChildren(nested, id);
             const directChildIds = descendants.filter((item) => item.parentId === id).map((item) => item.id);
@@ -58,6 +62,8 @@ export const parseChildren = (children: ReactNode, parentId: string = 'root'): T
                 isSelected,
                 onSelectChange,
                 isActive,
+                onClick,
+                onMove,
             });
             result.push(...descendants);
         }

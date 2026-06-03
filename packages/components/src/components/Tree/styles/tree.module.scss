@@ -11,8 +11,7 @@
     position: relative;
     min-height: 40px;
     padding: 0;
-    border-radius: var(--border-radius-medium);
-    background-color: var(--color-surface-default);
+
     font-family: var(--typography-font-family-default, inherit);
 }
 
@@ -38,11 +37,12 @@
     display: grid;
     grid-template-columns: auto auto auto auto auto 1fr;
     align-items: center;
-    column-gap: 6px;
-    padding: 0 8px 0 0;
+    column-gap: sizeToken.get(1);
+    padding: 0 sizeToken.get(2) 0 sizeToken.get(2);
     height: sizeToken.get(8);
     border-radius: var(--border-radius-medium);
     border-width: var(--border-width-large);
+    background-color: var(--color-surface-default);
     border-style: solid;
     border-color: transparent;
     transition:
@@ -51,7 +51,6 @@
 
     &[data-drop='true'] {
         border-color: var(--tree-accent);
-        background-color: transparent;
     }
 
     &:not([data-active='true']):hover {

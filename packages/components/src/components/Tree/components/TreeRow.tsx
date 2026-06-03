@@ -2,7 +2,13 @@
 
 import { IconDocument, IconFolder, IconGrabHandle } from '@frontify/fondue-icons';
 import { CheckedState, type ItemInstance } from '@headless-tree/core';
-import { type CSSProperties, type FormEventHandler, type ForwardedRef } from 'react';
+import {
+    type CSSProperties,
+    type FormEventHandler,
+    type ForwardedRef,
+    type MouseEvent,
+    type MouseEventHandler,
+} from 'react';
 
 import styles from '../styles/tree.module.scss';
 import { type TreeItemData } from '../types';
@@ -22,7 +28,8 @@ export const TreeRow = ({ item, multiSelect, reorderable, reorderHintId }: TreeR
     const isFolder = item.isFolder();
     const isExpanded = item.isExpanded();
     const checkedState = item.getCheckedState();
-    const isActive = Boolean(item.getItemData().isActive);
+    const data = item.getItemData();
+    const isActive = Boolean(data.isActive);
 
     const checkboxProps = multiSelect
         ? (item.getCheckboxProps() as {
@@ -31,10 +38,20 @@ export const TreeRow = ({ item, multiSelect, reorderable, reorderHintId }: TreeR
           })
         : null;
 
+    const { onClick: headlessOnClick, ...headlessRest } = item.getProps() as {
+        onClick?: MouseEventHandler<HTMLButtonElement>;
+        [key: string]: unknown;
+    };
+    const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
+        headlessOnClick?.(event);
+        data.onClick?.(event);
+    };
+
     return (
         <button
             type="button"
-            {...item.getProps()}
+            {...headlessRest}
+            onClick={handleClick}
             className={styles.row}
             aria-current={isActive ? 'page' : undefined}
             aria-describedby={reorderable ? reorderHintId : undefined}
