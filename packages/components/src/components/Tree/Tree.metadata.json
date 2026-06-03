@@ -1,9 +1,9 @@
 {
-  "name": "Tree",
-  "storyFilePaths": ["src/components/Tree/Tree.stories.tsx"],
-  "description": "",
-  "category": "",
-  "tags": [],
-  "relatedComponents": [],
-  "instructions": ""
+    "category": "navigation",
+    "description": "A hierarchical list of items and nested folders. Supports keyboard navigation, optional multi-select with cascading folder checkboxes, optional drag-and-drop reordering, and an active-item state for navigation use cases.",
+    "instructions": "Compose with Tree.Root wrapping Tree.Item leaves and Tree.Folder nodes. Each item and folder needs a stable `id` and a `label`. Pass `multiSelect` to render checkboxes and cascade selection across folders, and `reorderable` to enable drag-and-drop. State is controlled: render from the latest `TreeChangeState` and persist it from `onChange`. Use `isActive` to highlight the current item when the Tree drives navigation.",
+    "name": "Tree",
+    "relatedComponents": ["Accordion", "OrderableList", "Dropdown"],
+    "storyFilePaths": ["src/components/Tree/Tree.stories.tsx"],
+    "tags": ["tree", "navigation", "hierarchy", "folder"]
 }

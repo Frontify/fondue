@@ -1,15 +1,27 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type Item, type TreeChangeState, type TreeNodeState } from '../types';
+import { type TreeChangeState, type TreeItemData, type TreeNodeState } from '../types';
 
-type FlatTreeState = {
+export type FlatTreeState = {
     expandedItems: string[];
     checkedItems: string[];
     focusedItem?: string;
 };
 
-export const assembleTreeState = (items: Item[], state: FlatTreeState, parentId: string): TreeChangeState => {
+/**
+ * Rebuilds the hierarchical `TreeChangeState` emitted to `onChange` from the flat item
+ * list plus the current selection/expansion state. `parent.children` is the single source
+ * of truth for child ordering; orphaned ids are dropped silently.
+ */
+export const assembleTreeState = (
+    items: readonly TreeItemData[],
+    state: FlatTreeState,
+    rootId: string,
+): TreeChangeState => {
     const byId = new Map(items.map((item) => [item.id, item]));
+    const expanded = new Set(state.expandedItems);
+    const checked = new Set(state.checkedItems);
+
     const buildNode = (id: string): TreeNodeState | null => {
         const item = byId.get(id);
         if (!item) {
@@ -19,11 +31,11 @@ export const assembleTreeState = (items: Item[], state: FlatTreeState, parentId:
             id: item.id,
             name: item.name,
             isFolder: Boolean(item.isFolder),
-            isSelected: state.checkedItems.includes(item.id),
+            isSelected: checked.has(item.id),
             isActive: Boolean(item.isActive),
         };
         if (item.isFolder) {
-            node.isExpanded = state.expandedItems.includes(item.id);
+            node.isExpanded = expanded.has(item.id);
             node.children = (item.children ?? [])
                 .map(buildNode)
                 .filter((child): child is TreeNodeState => child !== null);
@@ -31,11 +43,6 @@ export const assembleTreeState = (items: Item[], state: FlatTreeState, parentId:
         return node;
     };
 
-    const parent = byId.get(parentId);
-    const childIds = parent?.children ?? items.filter((item) => item.parentId === parentId).map((item) => item.id);
-    return childIds
-        .map(buildNode)
-        .filter((child): child is TreeNodeState => child !== null);
+    const root = byId.get(rootId);
+    return (root?.children ?? []).map(buildNode).filter((child): child is TreeNodeState => child !== null);
 };
-
-export type { FlatTreeState };

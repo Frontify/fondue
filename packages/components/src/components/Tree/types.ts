@@ -2,35 +2,37 @@
 
 import { type ReactNode } from 'react';
 
-export type Item = {
-    id: string;
-    name: string;
-    children?: string[];
-    isFolder?: boolean;
-    parentId?: string;
-    isExpanded?: boolean;
-    onExpandChange?: (isExpanded: boolean) => void;
-    isSelected?: boolean;
-    onSelectChange?: (isSelected: boolean) => void;
-    /**
-     * Marks this item as the currently active one (e.g. the active route when
-     * the Tree is used as a navigation menu). Purely declarative — the consumer
-     * owns the value and toggles it (typically in response to a route change).
-     */
-    isActive?: boolean;
-};
-
-export type TreeNodeState = {
+type TreeNodeBase = {
     id: string;
     name: string;
     isFolder: boolean;
     isExpanded?: boolean;
     isSelected?: boolean;
     isActive?: boolean;
+};
+
+export type TreeNodeState = TreeNodeBase & {
     children?: TreeNodeState[];
 };
 
 export type TreeChangeState = TreeNodeState[];
+
+/**
+ * Internal flat representation consumed by the headless-tree data loader. Built from JSX
+ * by `parseChildren`; not part of the public API.
+ */
+export type TreeItemData = {
+    id: string;
+    name: string;
+    isFolder: boolean;
+    parentId?: string;
+    children?: string[];
+    isExpanded?: boolean;
+    onExpandChange?: (isExpanded: boolean) => void;
+    isSelected?: boolean;
+    onSelectChange?: (isSelected: boolean) => void;
+    isActive?: boolean;
+};
 
 export type TreeRootProps = {
     children: ReactNode;
@@ -51,17 +53,22 @@ export type TreeRootProps = {
 };
 
 export type TreeItemProps = {
-    children: ReactNode;
     id: string;
+    label: string;
     isSelected?: boolean;
     onSelectChange?: (isSelected: boolean) => void;
+    /**
+     * Marks this item as the currently active one (e.g. the active route when
+     * the Tree is used as a navigation menu). Purely declarative — the consumer
+     * owns the value and toggles it (typically in response to a route change).
+     */
     isActive?: boolean;
 };
 
 export type TreeFolderProps = {
     children: ReactNode;
     id: string;
-    name: string;
+    label: string;
     isExpanded?: boolean;
     onExpandChange?: (isExpanded: boolean) => void;
     isSelected?: boolean;
