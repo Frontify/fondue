@@ -6,6 +6,8 @@ import { defineConfig } from '@frontify/oxfmt-config';
 export default defineConfig({
     internalPatterns: [],
     trailingComma: 'all',
+    arrowParens: 'always',
+    endOfLine: 'lf',
     overrides: [
         {
             files: ['tsconfig.json', 'tsconfig.*.json'],

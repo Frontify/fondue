@@ -12,6 +12,8 @@ const internalPatterns = Object.keys(tsconfig.compilerOptions.paths ?? {}).map(
 export default defineConfig({
     internalPatterns,
     trailingComma: "all",
+    arrowParens: "always",
+    endOfLine: "lf",
     overrides: [
         {
             files: ["tsconfig.json", "tsconfig.*.json"],
