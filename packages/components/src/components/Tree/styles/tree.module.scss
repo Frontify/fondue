@@ -143,8 +143,11 @@
 }
 
 .loadingItem {
+    /* Mirrors `.item`'s grid so the label aligns with real row labels regardless
+       of whether multiSelect or reorderable columns are active. */
     flex: 1;
-    display: flex;
+    display: grid;
+    grid-template-columns: auto auto auto auto auto 1fr;
     align-items: center;
     column-gap: sizeToken.get(1);
     padding: 0 sizeToken.get(2) 0 sizeToken.get(2);

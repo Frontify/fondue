@@ -108,12 +108,24 @@ export const TreeRoot = ({ children, onChange, multiSelect = false, reorderable 
                         reorderHintId={reorderHintId}
                     />
                     {loadingInsertions.byIndex.get(index)?.map((placeholder) => (
-                        <TreeLoadingRow key={placeholder.key} level={placeholder.level} label={placeholder.label} />
+                        <TreeLoadingRow
+                            key={placeholder.key}
+                            level={placeholder.level}
+                            label={placeholder.label}
+                            multiSelect={multiSelect}
+                            reorderable={reorderable}
+                        />
                     ))}
                 </Fragment>
             ))}
             {loadingInsertions.rootLoading?.map((placeholder) => (
-                <TreeLoadingRow key={placeholder.key} level={placeholder.level} label={placeholder.label} />
+                <TreeLoadingRow
+                    key={placeholder.key}
+                    level={placeholder.level}
+                    label={placeholder.label}
+                    multiSelect={multiSelect}
+                    reorderable={reorderable}
+                />
             ))}
             {reorderable && <TreeDragLine data={isNoopDrop(tree) ? null : tree.getDragLineData()} />}
         </div>
