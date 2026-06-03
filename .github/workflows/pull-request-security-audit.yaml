@@ -6,6 +6,9 @@ on:
     paths:
       - "pnpm-lock.yaml"
 
+permissions:
+  contents: read
+
 jobs:
   audit:
     name: NPM packages
