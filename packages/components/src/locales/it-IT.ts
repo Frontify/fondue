@@ -33,6 +33,7 @@ const translations = {
     Table_sortByAscending: 'Ordina per ${column} crescente',
     Table_sortByDescending: 'Ordina per ${column} decrescente',
     Table_sortDescending: 'Ordina decrescente',
+    Tree_loading: 'Caricamento…',
     Tree_reorderHint:
         'Per riordinare, premi Ctrl più Maiusc più D per iniziare a spostare questo elemento, quindi Freccia su o giù per posizionarlo, Invio per rilasciarlo o Escape per annullare.',
 };

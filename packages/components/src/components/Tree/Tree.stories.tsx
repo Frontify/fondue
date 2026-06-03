@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { useState, type ReactNode } from 'react';
+import { useCallback, useState, type ReactNode } from 'react';
 import { action } from 'storybook/actions';
 
-import { Tree, TreeFolder, TreeItem, type TreeRoot, type TreeChangeState } from './Tree';
+import { Tree, TreeFolder, TreeItem, TreeLoading, type TreeRoot, type TreeChangeState } from './Tree';
 
 type Story = StoryObj<typeof TreeRoot>;
 
@@ -14,6 +14,7 @@ const meta: Meta<typeof TreeRoot> = {
     subcomponents: {
         'Tree.Item': TreeItem,
         'Tree.Folder': TreeFolder,
+        'Tree.Loading': TreeLoading,
     },
     tags: ['autodocs'],
     parameters: {
@@ -424,6 +425,112 @@ export const WithPerItemHandlers: Story = {
                 </Tree.Folder>
             </Tree.Root>
         );
+    },
+};
+
+type LazyChildren =
+    | { status: 'idle' }
+    | { status: 'loading' }
+    | { status: 'loaded'; children: Array<{ id: string; name: string; isFolder: boolean }> };
+
+const lazyRootNodes: Array<{ id: string; name: string; isFolder: boolean }> = [
+    { id: 'documents', name: 'Documents', isFolder: true },
+    { id: 'pictures', name: 'Pictures', isFolder: true },
+    { id: 'downloads', name: 'Downloads', isFolder: true },
+    { id: 'README.md', name: 'README.md', isFolder: false },
+];
+
+const lazyChildrenByParent: Record<string, Array<{ id: string; name: string; isFolder: boolean }>> = {
+    documents: [
+        { id: 'documents/reports', name: 'reports', isFolder: true },
+        { id: 'documents/invoice.pdf', name: 'invoice.pdf', isFolder: false },
+        { id: 'documents/notes.txt', name: 'notes.txt', isFolder: false },
+    ],
+    pictures: [
+        { id: 'pictures/vacation', name: 'vacation', isFolder: true },
+        { id: 'pictures/avatar.png', name: 'avatar.png', isFolder: false },
+    ],
+    downloads: [
+        { id: 'downloads/installer.dmg', name: 'installer.dmg', isFolder: false },
+        { id: 'downloads/archive.zip', name: 'archive.zip', isFolder: false },
+    ],
+    'documents/reports': [
+        { id: 'documents/reports/q1.pdf', name: 'q1.pdf', isFolder: false },
+        { id: 'documents/reports/q2.pdf', name: 'q2.pdf', isFolder: false },
+    ],
+    'pictures/vacation': [
+        { id: 'pictures/vacation/beach.jpg', name: 'beach.jpg', isFolder: false },
+        { id: 'pictures/vacation/sunset.jpg', name: 'sunset.jpg', isFolder: false },
+    ],
+};
+
+const fetchLazyChildren = (parentId: string): Promise<Array<{ id: string; name: string; isFolder: boolean }>> =>
+    new Promise((resolve) => {
+        setTimeout(() => resolve(lazyChildrenByParent[parentId] ?? []), 600);
+    });
+
+export const LazyLoading: Story = {
+    parameters: {
+        docs: {
+            description: {
+                story:
+                    'Children of a folder can be fetched on demand: keep the folder rendered with no children initially, ' +
+                    'and on `onExpandChange` fetch the data and re-render with the new children. Render `<Tree.Loading />` ' +
+                    'as the only child while the request is in flight — it shows a non-interactive placeholder row that sits ' +
+                    'outside drag-and-drop, multi-select counts, and keyboard navigation. Once loaded, children are cached so ' +
+                    'subsequent collapse/expand cycles do not refetch.',
+            },
+        },
+    },
+    render: (args) => {
+        const [expandedIds, setExpandedIds] = useState<Set<string>>(() => new Set());
+        const [childrenByParent, setChildrenByParent] = useState<Record<string, LazyChildren>>({});
+
+        const loadChildren = useCallback(async (parentId: string) => {
+            setChildrenByParent((prev) => ({ ...prev, [parentId]: { status: 'loading' } }));
+            const children = await fetchLazyChildren(parentId);
+            setChildrenByParent((prev) => ({ ...prev, [parentId]: { status: 'loaded', children } }));
+        }, []);
+
+        const handleExpandChange = useCallback(
+            (id: string, isExpanded: boolean) => {
+                setExpandedIds((prev) => {
+                    const next = new Set(prev);
+                    if (isExpanded) {
+                        next.add(id);
+                    } else {
+                        next.delete(id);
+                    }
+                    return next;
+                });
+                if (isExpanded && !childrenByParent[id]) {
+                    loadChildren(id).catch(() => {});
+                }
+            },
+            [childrenByParent, loadChildren],
+        );
+
+        const renderLazyNodes = (nodes: Array<{ id: string; name: string; isFolder: boolean }>): ReactNode =>
+            nodes.map((node) => {
+                if (!node.isFolder) {
+                    return <Tree.Item key={node.id} id={node.id} label={node.name} />;
+                }
+                const entry = childrenByParent[node.id];
+                return (
+                    <Tree.Folder
+                        key={node.id}
+                        id={node.id}
+                        label={node.name}
+                        isExpanded={expandedIds.has(node.id)}
+                        onExpandChange={(isExpanded) => handleExpandChange(node.id, isExpanded)}
+                    >
+                        {entry?.status === 'loading' && <Tree.Loading />}
+                        {entry?.status === 'loaded' && renderLazyNodes(entry.children)}
+                    </Tree.Folder>
+                );
+            });
+
+        return <Tree.Root {...args}>{renderLazyNodes(lazyRootNodes)}</Tree.Root>;
     },
 };
 

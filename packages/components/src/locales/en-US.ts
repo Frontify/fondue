@@ -31,6 +31,7 @@ const translations = {
     Table_sortByAscending: 'Sort by ${column} ascending',
     Table_sortByDescending: 'Sort by ${column} descending',
     Table_sortDescending: 'Sort descending',
+    Tree_loading: 'Loading…',
     Tree_reorderHint:
         'To reorder, press Control plus Shift plus D to start moving this item, then arrow up or down to position it, Enter to drop, or Escape to cancel.',
 };
