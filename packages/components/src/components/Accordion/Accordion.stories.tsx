@@ -104,7 +104,7 @@ export const Default: Story = {
                             Item with icon
                         </Flex>
                     </Accordion.Header>
-                    <Accordion.Content divider>
+                    <Accordion.Content>
                         Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt
                         ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo
                         dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor
@@ -121,7 +121,7 @@ export const Default: Story = {
                             </Button>
                         </Accordion.Slot>
                     </Accordion.Header>
-                    <Accordion.Content>
+                    <Accordion.Content divider>
                         Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt
                         ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo
                         dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor
@@ -240,7 +240,7 @@ export const InScrollArea: Story = {
                                 Item with icon
                             </Flex>
                         </Accordion.Header>
-                        <Accordion.Content divider>
+                        <Accordion.Content>
                             Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
                             invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam
                             et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est
