@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 @use '../../../utilities/sizeToken.module.scss';
+@use '../../../utilities/focusStyle.module.scss';
 
 
 .tree {
@@ -30,6 +31,13 @@
     font: inherit;
     outline: none;
 
+    &:focus-visible {
+        z-index: 1;
+
+        .item {
+            @include focusStyle.focus-outline-styles;
+        }
+    }
 }
 
 .item {

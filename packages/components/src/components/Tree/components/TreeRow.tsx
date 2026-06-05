@@ -6,6 +6,7 @@ import {
     type CSSProperties,
     type FormEventHandler,
     type ForwardedRef,
+    type KeyboardEvent,
     type MouseEvent,
     type MouseEventHandler,
 } from 'react';
@@ -39,19 +40,44 @@ export const TreeRow = ({ item, multiSelect, reorderable, reorderHintId }: TreeR
         : null;
 
     const { onClick: headlessOnClick, ...headlessRest } = item.getProps() as {
-        onClick?: MouseEventHandler<HTMLButtonElement>;
+        onClick?: MouseEventHandler<HTMLDivElement>;
         [key: string]: unknown;
     };
-    const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
+    const handleClick = (event: MouseEvent<HTMLDivElement>) => {
         headlessOnClick?.(event);
         data.onClick?.(event);
     };
 
+    // The row is a div (not a button) so nested interactive controls — checkbox today,
+    // overflow menu / inline actions tomorrow — remain valid HTML and stay keyboard
+    // accessible. We re-implement native button activation here: Enter and Space on the
+    // row fire the same click handler so primaryAction (focus + expand) still runs.
+    // `event.target !== event.currentTarget` skips events that bubbled from nested
+    // controls, e.g. Space on the checkbox.
+    const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+        if (event.target !== event.currentTarget) {
+            return;
+        }
+        if (event.key !== 'Enter' && event.key !== ' ') {
+            return;
+        }
+        event.preventDefault();
+        event.currentTarget.click();
+    };
+
     return (
-        <button
-            type="button"
+        <div
             {...headlessRest}
             onClick={handleClick}
+            onKeyDown={handleKeyDown}
+            // Tabbing into a row moves DOM focus but doesn't tell headless-tree which item
+            // is active, so the next arrow-key press would navigate from the row that was
+            // focused *before* tabbing. Syncing on focus keeps internal state aligned.
+            onFocus={() => item.setFocused()}
+            // Override headless-tree's roving tabindex: every row is part of the document tab
+            // sequence so Tab walks row → checkbox → next row → next checkbox. Arrow-key
+            // navigation between rows still works via headless-tree's hotkeys.
+            tabIndex={0}
             className={styles.row}
             aria-current={isActive ? 'page' : undefined}
             aria-describedby={reorderable ? reorderHintId : undefined}
@@ -79,6 +105,6 @@ export const TreeRow = ({ item, multiSelect, reorderable, reorderHintId }: TreeR
                 </span>
                 <span className={styles.label}>{item.getItemName()}</span>
             </div>
-        </button>
+        </div>
     );
 };

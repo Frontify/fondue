@@ -45,7 +45,7 @@ type TreeRowSharedProps = {
      * focused row). For folders this fires alongside the expand-toggle that the click
      * also triggers.
      */
-    onClick?: MouseEventHandler<HTMLButtonElement>;
+    onClick?: MouseEventHandler<HTMLDivElement>;
     /** Fires after this item is repositioned via drag-and-drop. */
     onMove?: (info: TreeMoveInfo) => void;
 };
@@ -91,6 +91,6 @@ export type TreeItemData = {
     isSelected?: boolean;
     onSelectChange?: (isSelected: boolean) => void;
     isActive?: boolean;
-    onClick?: MouseEventHandler<HTMLButtonElement>;
+    onClick?: MouseEventHandler<HTMLDivElement>;
     onMove?: (info: TreeMoveInfo) => void;
 };
