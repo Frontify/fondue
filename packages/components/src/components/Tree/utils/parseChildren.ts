@@ -80,6 +80,7 @@ export const parseChildren = (children: ReactNode, parentId: string = 'root'): P
                 isActive,
                 onClick,
                 onMove,
+                tags,
                 children: itemChildren,
             } = child.props;
             const { action } = extractItemAction(itemChildren);
@@ -94,6 +95,7 @@ export const parseChildren = (children: ReactNode, parentId: string = 'root'): P
                 onClick,
                 onMove,
                 actions: action,
+                tags,
             });
             continue;
         }
@@ -109,6 +111,8 @@ export const parseChildren = (children: ReactNode, parentId: string = 'root'): P
                 isActive,
                 onClick,
                 onMove,
+                tags,
+                accepts,
             } = child.props;
             const { action, rest } = extractItemAction(nested);
             const descendants = parseChildren(rest, id);
@@ -129,6 +133,8 @@ export const parseChildren = (children: ReactNode, parentId: string = 'root'): P
                 actions: action,
                 isLoading: descendants.parentIsLoading,
                 loadingLabel: descendants.parentLoadingLabel,
+                tags,
+                accepts,
             });
             items.push(...descendants.items);
         }

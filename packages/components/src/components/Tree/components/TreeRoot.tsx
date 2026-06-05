@@ -6,7 +6,7 @@ import { useTranslation } from '#/hooks/useTranslation';
 
 import { useTreeController } from '../hooks/useTreeController';
 import styles from '../styles/tree.module.scss';
-import { type TreeChangeState } from '../types';
+import { type TreeChangeState, type TreeDropCandidate } from '../types';
 import { isNoopDrop } from '../utils/isNoopDrop';
 import { computeLoadingInsertions } from '../utils/loadingPlaceholders';
 import { parseChildren } from '../utils/parseChildren';
@@ -31,9 +31,16 @@ export type TreeRootProps = {
      * @default false
      */
     reorderable?: boolean;
+    /**
+     * Predicate gating drops onto the top level of the tree. Same semantics as
+     * `accepts` on `<Tree.Folder>`: return `false` to suppress the drop indicator,
+     * show the "no-drop" cursor, and prevent `onMove` / `onChange` from firing.
+     * When omitted, the root accepts anything.
+     */
+    accepts?: (items: TreeDropCandidate[]) => boolean;
 };
 
-export const TreeRoot = ({ children, onChange, multiSelect = false, reorderable = false }: TreeRootProps) => {
+export const TreeRoot = ({ children, onChange, multiSelect = false, reorderable = false, accepts }: TreeRootProps) => {
     const { t } = useTranslation();
     const rowHintId = useId();
     const {
@@ -41,7 +48,7 @@ export const TreeRoot = ({ children, onChange, multiSelect = false, reorderable 
         parentIsLoading: rootIsLoading,
         parentLoadingLabel: rootLoadingLabel,
     } = useMemo(() => parseChildren(children), [children]);
-    const tree = useTreeController({ items, onChange, reorderable });
+    const tree = useTreeController({ items, onChange, reorderable, rootAccepts: accepts });
 
     const visibleItems = tree.getItems();
     const loadingInsertions = useMemo(

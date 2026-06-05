@@ -13,6 +13,7 @@ export { TreeFolder } from './components/TreeFolder';
 export { TreeLoading } from './components/TreeLoading';
 export type {
     TreeChangeState,
+    TreeDropCandidate,
     TreeFolderProps,
     TreeItemActionProps,
     TreeItemProps,

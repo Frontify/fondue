@@ -29,6 +29,20 @@ export type TreeNodeState = TreeNodeBase & {
 
 export type TreeChangeState = TreeNodeState[];
 
+/**
+ * One dragged row passed to a folder's (or the root's) `accepts` predicate. Carries
+ * only what's needed to decide whether the drop should be allowed — identity for
+ * special-casing and the row's `tags` for tag-based rules. The full hierarchical
+ * shape is intentionally not exposed; consumers can look up richer state themselves
+ * via `id` if they need it.
+ */
+export type TreeDropCandidate = {
+    id: string;
+    label: string;
+    isFolder: boolean;
+    tags: string[];
+};
+
 type TreeRowSharedProps = {
     id: string;
     label: string;
@@ -48,6 +62,13 @@ type TreeRowSharedProps = {
     onClick?: MouseEventHandler<HTMLDivElement>;
     /** Fires after this item is repositioned via drag-and-drop. */
     onMove?: (info: TreeMoveInfo) => void;
+    /**
+     * Arbitrary consumer-defined labels attached to this row. Passed to a target
+     * folder's (or the root's) `accepts` predicate so drop rules can be expressed
+     * in terms of tags (e.g. only allow rows tagged `image` into an `images/`
+     * folder). Has no built-in visual effect.
+     */
+    tags?: string[];
 };
 
 export type TreeItemProps = TreeRowSharedProps & {
@@ -66,6 +87,15 @@ export type TreeFolderProps = TreeRowSharedProps & {
     children: ReactNode;
     isExpanded?: boolean;
     onExpandChange?: (isExpanded: boolean) => void;
+    /**
+     * Predicate called during drag to decide whether the candidate items can be
+     * dropped into this folder. Returning `false` suppresses the drop indicator,
+     * shows the browser's "no-drop" cursor, and prevents `onMove` / `onChange`
+     * from firing. Called with every dragged item in a multi-item drag — return
+     * `true` only if all of them are welcome. When omitted, the folder accepts
+     * anything (current default).
+     */
+    accepts?: (items: TreeDropCandidate[]) => boolean;
 };
 
 export type TreeItemActionProps = {
@@ -100,4 +130,6 @@ export type TreeItemData = {
     actions?: ReactNode;
     isLoading?: boolean;
     loadingLabel?: string;
+    tags?: string[];
+    accepts?: (items: TreeDropCandidate[]) => boolean;
 };

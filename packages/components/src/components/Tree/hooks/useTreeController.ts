@@ -15,7 +15,7 @@ import {
 import { useTree } from '@headless-tree/react';
 import { useEffect, useMemo, useState } from 'react';
 
-import { type TreeChangeState, type TreeItemData } from '../types';
+import { type TreeChangeState, type TreeDropCandidate, type TreeItemData } from '../types';
 import { assembleTreeState, type FlatTreeState } from '../utils/assembleTreeState';
 import { diffSelection } from '../utils/diffSelection';
 import { getStructureKey } from '../utils/getStructureKey';
@@ -28,6 +28,7 @@ type UseTreeControllerOptions = {
     items: TreeItemData[];
     onChange?: (state: TreeChangeState) => void;
     reorderable?: boolean;
+    rootAccepts?: (items: TreeDropCandidate[]) => boolean;
 };
 
 const resolveUpdater = <T>(updater: Updater<T>, prev: T): T =>
@@ -37,10 +38,12 @@ export const useTreeController = ({
     items,
     onChange,
     reorderable = false,
+    rootAccepts,
 }: UseTreeControllerOptions): TreeInstance<TreeItemData> => {
     // Headless-tree requires a root item; build it here so the consumer never sees
     // it and `assembleTreeState` can use `parent.children` as the single source of
-    // truth for ordering.
+    // truth for ordering. The optional `accepts` predicate is attached here too so
+    // `canDrop` can look it up uniformly for root and nested folders.
     const itemsWithRoot = useMemo<TreeItemData[]>(
         () => [
             {
@@ -48,10 +51,11 @@ export const useTreeController = ({
                 name: ROOT_NAME,
                 isFolder: true,
                 children: items.filter((item) => !item.parentId || item.parentId === ROOT_ID).map((item) => item.id),
+                accepts: rootAccepts,
             },
             ...items,
         ],
-        [items],
+        [items, rootAccepts],
     );
 
     const structureKey = useMemo(() => getStructureKey(itemsWithRoot), [itemsWithRoot]);
@@ -128,6 +132,52 @@ export const useTreeController = ({
         setInternalFocusedItem(next);
     };
 
+    const toCandidate = (item: ItemInstance<TreeItemData>): TreeDropCandidate => {
+        const data = item.getItemData();
+        return {
+            id: data.id,
+            label: data.name,
+            isFolder: data.isFolder,
+            tags: data.tags ?? [],
+        };
+    };
+
+    const canDrop = (draggedItems: ItemInstance<TreeItemData>[], target: DragTarget<TreeItemData>) => {
+        // `target.item` is the prospective parent: the folder (or root) being dropped INTO
+        // for unordered targets, or the container of the insertion slot for ordered targets.
+        // A non-folder target.item means the user is dropping directly onto a leaf item, which
+        // we never allow — items don't have children.
+        const targetData = itemsById.get(target.item.getId());
+        if (!targetData?.isFolder) {
+            return false;
+        }
+        const candidates = draggedItems.map(toCandidate);
+        // Bypass-loophole guard: at outer indent immediately below an expanded folder's
+        // header, headless-tree resolves the target to "after that folder at the parent
+        // level" — visually it sits inside the folder's body. If the folder itself would
+        // reject the items, also reject here so the user can't sneak past its `accepts`
+        // by clipping the boundary. Only fires when the folder has visible children
+        // (otherwise there's no visual overlap to disambiguate).
+        if (isOrderedDragTarget(target)) {
+            const siblings = targetData.children ?? [];
+            const aboveId = siblings[target.insertionIndex - 1];
+            const above = aboveId ? itemsById.get(aboveId) : undefined;
+            if (
+                above?.isFolder &&
+                above.isExpanded &&
+                (above.children?.length ?? 0) > 0 &&
+                above.accepts &&
+                !above.accepts(candidates)
+            ) {
+                return false;
+            }
+        }
+        if (!targetData.accepts) {
+            return true;
+        }
+        return targetData.accepts(candidates);
+    };
+
     const onDrop = (draggedItems: ItemInstance<TreeItemData>[], target: DragTarget<TreeItemData>) => {
         const draggedIds = draggedItems.map((item) => item.getId());
         const targetParentId = target.item.getId();
@@ -156,6 +206,7 @@ export const useTreeController = ({
         getItemName: (item) => item.getItemData().name,
         isItemFolder: (item) => Boolean(item.getItemData().isFolder),
         canReorder: reorderable,
+        canDrop: reorderable ? canDrop : undefined,
         onDrop: reorderable ? onDrop : undefined,
         dataLoader: {
             getItem: (itemId) => itemsById.get(itemId) as TreeItemData,

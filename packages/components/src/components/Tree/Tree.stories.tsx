@@ -600,6 +600,123 @@ export const WithItemActions: Story = {
     },
 };
 
+type TaggedNode = TreeChangeState[number] & {
+    tags?: string[];
+    children?: TaggedNode[];
+};
+
+const restrictedDropNodes: TaggedNode[] = [
+    {
+        id: 'images',
+        name: 'Images',
+        isFolder: true,
+        isExpanded: true,
+        children: [
+            { id: 'beach.jpg', name: 'beach.jpg', isFolder: false, tags: ['image'] },
+            { id: 'avatar.png', name: 'avatar.png', isFolder: false, tags: ['image'] },
+        ],
+    },
+    {
+        id: 'documents',
+        name: 'Documents',
+        isFolder: true,
+        isExpanded: true,
+        children: [
+            { id: 'invoice.pdf', name: 'invoice.pdf', isFolder: false, tags: ['document'] },
+            { id: 'notes.txt', name: 'notes.txt', isFolder: false, tags: ['document'] },
+        ],
+    },
+    {
+        id: 'mixed',
+        name: 'Mixed bin (accepts anything)',
+        isFolder: true,
+        isExpanded: true,
+        children: [{ id: 'archive.zip', name: 'archive.zip', isFolder: false, tags: ['archive'] }],
+    },
+    { id: 'sunset.jpg', name: 'sunset.jpg', isFolder: false, tags: ['image'] },
+    { id: 'readme.md', name: 'readme.md', isFolder: false, tags: ['document'] },
+];
+
+export const RestrictedDrops: Story = {
+    args: {
+        reorderable: true,
+    },
+    parameters: {
+        docs: {
+            description: {
+                story:
+                    'Each row carries `tags`, and `<Tree.Folder>` / `<Tree.Root>` can provide an `accepts` ' +
+                    'predicate to gate drops. When `accepts` returns `false`, the drag indicator is hidden, ' +
+                    'the cursor shows "no-drop", and the drop is blocked before `onMove` / `onChange` fire. ' +
+                    'Here `Images` only accepts rows tagged `image`, `Documents` only accepts `document`, ' +
+                    'and the root rejects bare archive files (try dragging `archive.zip` to the top level).',
+            },
+        },
+    },
+    render: (args) => {
+        const [nodes, setNodes] = useState<TreeChangeState>(restrictedDropNodes);
+
+        // Tags are intrinsic to each row, so we look them up by id from the original
+        // definition rather than threading them through `TreeChangeState` (which has
+        // no tag field on purpose — consumers own that data).
+        const tagsById = (() => {
+            const map = new Map<string, string[]>();
+            const walk = (list: TaggedNode[]) => {
+                for (const node of list) {
+                    if (node.tags) {
+                        map.set(node.id, node.tags);
+                    }
+                    if (node.children) {
+                        walk(node.children);
+                    }
+                }
+            };
+            walk(restrictedDropNodes);
+            return map;
+        })();
+
+        const onlyTagged = (tag: string) => (items: { tags: string[] }[]) =>
+            items.every((item) => item.tags.includes(tag));
+
+        const renderTagged = (list: TreeChangeState): ReactNode =>
+            list.map((node) =>
+                node.isFolder ? (
+                    <Tree.Folder
+                        key={node.id}
+                        id={node.id}
+                        label={node.name}
+                        isExpanded={node.isExpanded}
+                        tags={tagsById.get(node.id)}
+                        accepts={
+                            node.id === 'images'
+                                ? onlyTagged('image')
+                                : node.id === 'documents'
+                                  ? onlyTagged('document')
+                                  : undefined
+                        }
+                    >
+                        {renderTagged(node.children ?? [])}
+                    </Tree.Folder>
+                ) : (
+                    <Tree.Item key={node.id} id={node.id} label={node.name} tags={tagsById.get(node.id)} />
+                ),
+            );
+
+        return (
+            <Tree.Root
+                {...args}
+                accepts={(items) => items.every((item) => !item.tags.includes('archive'))}
+                onChange={(state) => {
+                    args.onChange?.(state);
+                    setNodes(state);
+                }}
+            >
+                {renderTagged(nodes)}
+            </Tree.Root>
+        );
+    },
+};
+
 export const StateInspector: Story = {
     args: {
         multiSelect: true,
