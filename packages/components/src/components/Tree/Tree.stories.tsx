@@ -833,6 +833,34 @@ export const WithPerItemHandlers: Story = {
     },
     render: (args) => {
         const [nodes, setNodes] = useState<TreeChangeState>(multiSelectReorderableNodes);
+        const renderWithHandlers = (list: TreeChangeState): ReactNode =>
+            list.map((node) =>
+                node.isFolder ? (
+                    <Tree.Folder
+                        key={node.id}
+                        id={node.id}
+                        label={node.name}
+                        isExpanded={node.isExpanded}
+                        isSelected={node.isSelected}
+                        onClick={action(`${node.name} onClick`)}
+                        onExpandChange={action(`${node.name} onExpandChange`)}
+                        onSelectChange={action(`${node.name} onSelectChange`)}
+                        onMove={action(`${node.name} onMove`)}
+                    >
+                        {renderWithHandlers(node.children ?? [])}
+                    </Tree.Folder>
+                ) : (
+                    <Tree.Item
+                        key={node.id}
+                        id={node.id}
+                        label={node.name}
+                        isSelected={node.isSelected}
+                        onClick={action(`${node.name} onClick`)}
+                        onSelectChange={action(`${node.name} onSelectChange`)}
+                        onMove={action(`${node.name} onMove`)}
+                    />
+                ),
+            );
         return (
             <Tree.Root
                 {...args}
@@ -841,36 +869,7 @@ export const WithPerItemHandlers: Story = {
                     setNodes(state);
                 }}
             >
-                <Tree.Item
-                    id="1"
-                    label="Item 1"
-                    isSelected={nodes.find((node) => node.id === '1')?.isSelected}
-                    onClick={action('Item 1 onClick')}
-                    onSelectChange={action('Item 1 onSelectChange')}
-                    onMove={action('Item 1 onMove')}
-                />
-                <Tree.Folder
-                    id="a"
-                    label="Folder a"
-                    isExpanded={nodes.find((node) => node.id === 'a')?.isExpanded}
-                    isSelected={nodes.find((node) => node.id === 'a')?.isSelected}
-                    onClick={action('Folder a onClick')}
-                    onExpandChange={action('Folder a onExpandChange')}
-                    onSelectChange={action('Folder a onSelectChange')}
-                    onMove={action('Folder a onMove')}
-                >
-                    {(nodes.find((node) => node.id === 'a')?.children ?? []).map((child) => (
-                        <Tree.Item
-                            key={child.id}
-                            id={child.id}
-                            label={child.name}
-                            isSelected={child.isSelected}
-                            onClick={action(`${child.name} onClick`)}
-                            onSelectChange={action(`${child.name} onSelectChange`)}
-                            onMove={action(`${child.name} onMove`)}
-                        />
-                    ))}
-                </Tree.Folder>
+                {renderWithHandlers(nodes)}
             </Tree.Root>
         );
     },
