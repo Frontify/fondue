@@ -50,12 +50,26 @@ type TreeRowSharedProps = {
     onMove?: (info: TreeMoveInfo) => void;
 };
 
-export type TreeItemProps = TreeRowSharedProps;
+export type TreeItemProps = TreeRowSharedProps & {
+    /**
+     * Accepts `<Tree.ItemAction>` to render trailing controls (e.g. an action button
+     * or overflow menu) at the end of the row.
+     */
+    children?: ReactNode;
+};
 
 export type TreeFolderProps = TreeRowSharedProps & {
+    /**
+     * Nested rows (`<Tree.Item>` / `<Tree.Folder>` / `<Tree.Loading>`) plus an optional
+     * `<Tree.ItemAction>` that renders at the end of the folder's own row.
+     */
     children: ReactNode;
     isExpanded?: boolean;
     onExpandChange?: (isExpanded: boolean) => void;
+};
+
+export type TreeItemActionProps = {
+    children: ReactNode;
 };
 
 export type TreeLoadingProps = {
@@ -83,6 +97,7 @@ export type TreeItemData = {
     isActive?: boolean;
     onClick?: MouseEventHandler<HTMLDivElement>;
     onMove?: (info: TreeMoveInfo) => void;
+    actions?: ReactNode;
     isLoading?: boolean;
     loadingLabel?: string;
 };

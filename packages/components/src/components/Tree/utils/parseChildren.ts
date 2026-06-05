@@ -2,7 +2,13 @@
 
 import { Children, isValidElement, type ReactElement, type ReactNode } from 'react';
 
-import { type TreeFolderProps, type TreeItemData, type TreeItemProps, type TreeLoadingProps } from '../types';
+import {
+    type TreeFolderProps,
+    type TreeItemActionProps,
+    type TreeItemData,
+    type TreeItemProps,
+    type TreeLoadingProps,
+} from '../types';
 
 export type ParsedChildren = {
     items: TreeItemData[];
@@ -23,6 +29,27 @@ const isTreeFolderElement = (element: ReactElement): element is ReactElement<Tre
 
 const isTreeLoadingElement = (element: ReactElement): element is ReactElement<TreeLoadingProps> =>
     (element.type as { displayName?: string })?.displayName === 'Tree.Loading';
+
+const isTreeItemActionElement = (element: ReactElement): element is ReactElement<TreeItemActionProps> =>
+    (element.type as { displayName?: string })?.displayName === 'Tree.ItemAction';
+
+/**
+ * Pulls a single `<Tree.ItemAction>` out of an item/folder's JSX children. Returns the
+ * action's rendered content (so the row can render it directly) and the remaining
+ * children, which for folders are the nested rows.
+ */
+const extractItemAction = (children: ReactNode): { action: ReactNode; rest: ReactNode[] } => {
+    let action: ReactNode = undefined;
+    const rest: ReactNode[] = [];
+    for (const child of Children.toArray(children)) {
+        if (isValidElement(child) && isTreeItemActionElement(child)) {
+            action = child.props.children;
+            continue;
+        }
+        rest.push(child);
+    }
+    return { action, rest };
+};
 
 /**
  * Walks the JSX children of <Tree.Root> and produces a flat TreeItemData[] for headless-tree's
@@ -45,7 +72,17 @@ export const parseChildren = (children: ReactNode, parentId: string = 'root'): P
             continue;
         }
         if (isTreeItemElement(child)) {
-            const { id, label, isSelected, onSelectChange, isActive, onClick, onMove } = child.props;
+            const {
+                id,
+                label,
+                isSelected,
+                onSelectChange,
+                isActive,
+                onClick,
+                onMove,
+                children: itemChildren,
+            } = child.props;
+            const { action } = extractItemAction(itemChildren);
             items.push({
                 id,
                 name: label,
@@ -56,6 +93,7 @@ export const parseChildren = (children: ReactNode, parentId: string = 'root'): P
                 isActive,
                 onClick,
                 onMove,
+                actions: action,
             });
             continue;
         }
@@ -72,7 +110,8 @@ export const parseChildren = (children: ReactNode, parentId: string = 'root'): P
                 onClick,
                 onMove,
             } = child.props;
-            const descendants = parseChildren(nested, id);
+            const { action, rest } = extractItemAction(nested);
+            const descendants = parseChildren(rest, id);
             const directChildIds = descendants.items.filter((item) => item.parentId === id).map((item) => item.id);
             items.push({
                 id,
@@ -87,6 +126,7 @@ export const parseChildren = (children: ReactNode, parentId: string = 'root'): P
                 isActive,
                 onClick,
                 onMove,
+                actions: action,
                 isLoading: descendants.parentIsLoading,
                 loadingLabel: descendants.parentLoadingLabel,
             });

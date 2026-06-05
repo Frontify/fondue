@@ -1,10 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { IconDotsHorizontal, IconTrashBin } from '@frontify/fondue-icons';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useCallback, useState, type ReactNode } from 'react';
 import { action } from 'storybook/actions';
 
-import { Tree, TreeFolder, TreeItem, TreeLoading, type TreeRoot, type TreeChangeState } from './Tree';
+import { Button } from '#/index';
+
+import { Tree, TreeFolder, TreeItem, TreeItemAction, TreeLoading, type TreeRoot, type TreeChangeState } from './Tree';
 
 type Story = StoryObj<typeof TreeRoot>;
 
@@ -14,6 +17,7 @@ const meta: Meta<typeof TreeRoot> = {
     subcomponents: {
         'Tree.Item': TreeItem,
         'Tree.Folder': TreeFolder,
+        'Tree.ItemAction': TreeItemAction,
         'Tree.Loading': TreeLoading,
     },
     tags: ['autodocs'],
@@ -531,6 +535,68 @@ export const LazyLoading: Story = {
             });
 
         return <Tree.Root {...args}>{renderLazyNodes(lazyRootNodes)}</Tree.Root>;
+    },
+};
+
+export const WithItemActions: Story = {
+    parameters: {
+        docs: {
+            description: {
+                story:
+                    'Render trailing controls on any row by nesting `<Tree.ItemAction>` inside a ' +
+                    '`<Tree.Item>` or `<Tree.Folder>`. Clicks inside the action slot do not bubble to ' +
+                    "the row, so the action button can fire without also triggering the row's " +
+                    '`onClick` or expand-toggle.',
+            },
+        },
+    },
+    render: (args) => {
+        const [nodes, setNodes] = useState<TreeChangeState>(defaultNodes);
+        const renderActionNodes = (treeNodes: TreeChangeState): ReactNode =>
+            treeNodes.map((node) =>
+                node.isFolder ? (
+                    <Tree.Folder
+                        key={node.id}
+                        id={node.id}
+                        label={node.name}
+                        isExpanded={node.isExpanded}
+                        isSelected={node.isSelected}
+                        isActive={node.isActive}
+                    >
+                        <Tree.ItemAction>
+                            <Button aspect="square" emphasis="default" size="small" onPress={action('Folder action')}>
+                                <IconDotsHorizontal size={16} />
+                            </Button>
+                        </Tree.ItemAction>
+                        {renderActionNodes(node.children ?? [])}
+                    </Tree.Folder>
+                ) : (
+                    <Tree.Item
+                        key={node.id}
+                        id={node.id}
+                        label={node.name}
+                        isSelected={node.isSelected}
+                        isActive={node.isActive}
+                    >
+                        <Tree.ItemAction>
+                            <Button aspect="square" emphasis="default" size="small" onPress={action('Item delete')}>
+                                <IconTrashBin size={16} />
+                            </Button>
+                        </Tree.ItemAction>
+                    </Tree.Item>
+                ),
+            );
+        return (
+            <Tree.Root
+                {...args}
+                onChange={(state) => {
+                    args.onChange?.(state);
+                    setNodes(state);
+                }}
+            >
+                {renderActionNodes(nodes)}
+            </Tree.Root>
+        );
     },
 };
 

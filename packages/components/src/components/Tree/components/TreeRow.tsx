@@ -75,6 +75,12 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId }: TreeRowProps
         event.currentTarget.click();
     };
 
+    // Stop clicks inside the actions slot from bubbling to the row's click handler;
+    // otherwise pressing an action button would also select / expand the row.
+    const handleActionsClick = (event: MouseEvent<HTMLDivElement>) => {
+        event.stopPropagation();
+    };
+
     return (
         // `role="treeitem"` and `tabIndex` come from `headlessProps` (provided by headless-tree)
         // — the lint rule can't see them statically. We also override headless-tree's default
@@ -116,6 +122,12 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId }: TreeRowProps
                     {isFolder ? <IconFolder size={16} /> : <IconDocument size={16} />}
                 </span>
                 <span className={styles.label}>{item.getItemName()}</span>
+                {data.actions !== undefined && data.actions !== null ? (
+                    // eslint-disable-next-line jsx-a11y-x/click-events-have-key-events, jsx-a11y-x/no-static-element-interactions
+                    <div className={styles.actions} onClick={handleActionsClick}>
+                        {data.actions}
+                    </div>
+                ) : null}
             </div>
         </div>
     );

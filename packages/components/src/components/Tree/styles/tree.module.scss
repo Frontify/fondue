@@ -42,8 +42,7 @@
 
 .item {
     flex: 1;
-    display: grid;
-    grid-template-columns: auto auto auto auto auto 1fr;
+    display: flex;
     align-items: center;
     column-gap: sizeToken.get(1);
     padding: 0 sizeToken.get(2) 0 sizeToken.get(2);
@@ -104,6 +103,10 @@
 }
 
 .label {
+    /* Fill remaining row space so the actions slot is pushed to the right edge, and
+       allow shrinking below `min-content` so long labels truncate cleanly. */
+    flex: 1;
+    min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -118,6 +121,12 @@
     .item[data-active='true'] & {
         color: inherit;
     }
+}
+
+.actions {
+    display: inline-flex;
+    align-items: center;
+    gap: sizeToken.get(1);
 }
 
 .dragline {
@@ -145,11 +154,10 @@
 }
 
 .loadingItem {
-    /* Mirrors `.item`'s grid so the label aligns with real row labels regardless
+    /* Mirrors `.item`'s flex layout so the label aligns with real row labels regardless
        of whether multiSelect or reorderable columns are active. */
     flex: 1;
-    display: grid;
-    grid-template-columns: auto auto auto auto auto 1fr;
+    display: flex;
     align-items: center;
     column-gap: sizeToken.get(1);
     padding: 0 sizeToken.get(2) 0 sizeToken.get(2);
@@ -165,6 +173,8 @@
 }
 
 .loadingLabel {
+    flex: 1;
+    min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
