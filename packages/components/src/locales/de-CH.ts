@@ -33,9 +33,9 @@ const translations = {
     Table_sortByAscending: 'Nach ${column} aufsteigend sortieren',
     Table_sortByDescending: 'Nach ${column} absteigend sortieren',
     Table_sortDescending: 'Absteigend sortieren',
+    Tree_checkboxHint: 'Auswählbar, Tab drücken, um das Kontrollkästchen zu fokussieren.',
     Tree_loading: 'Wird geladen…',
-    Tree_reorderHint:
-        'Zum Umordnen drücken Sie Strg plus Umschalt plus D, um das Element zu bewegen, dann Pfeil nach oben oder unten zum Positionieren, Eingabe zum Ablegen oder Escape zum Abbrechen.',
+    Tree_reorderHint: 'Strg Umschalt D zum Verschieben drücken.',
 };
 
 export const deCH: LocaleConfig = {

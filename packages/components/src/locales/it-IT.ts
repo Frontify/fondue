@@ -33,9 +33,9 @@ const translations = {
     Table_sortByAscending: 'Ordina per ${column} crescente',
     Table_sortByDescending: 'Ordina per ${column} decrescente',
     Table_sortDescending: 'Ordina decrescente',
+    Tree_checkboxHint: 'Selezionabile, premi Tab per mettere a fuoco la casella.',
     Tree_loading: 'Caricamento…',
-    Tree_reorderHint:
-        'Per riordinare, premi Ctrl più Maiusc più D per iniziare a spostare questo elemento, quindi Freccia su o giù per posizionarlo, Invio per rilasciarlo o Escape per annullare.',
+    Tree_reorderHint: 'Premi Ctrl Maiusc D per spostare.',
 };
 
 export const itIT: LocaleConfig = {

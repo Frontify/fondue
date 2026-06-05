@@ -21,16 +21,15 @@ type TreeRowProps = {
     item: ItemInstance<TreeItemData>;
     multiSelect: boolean;
     reorderable: boolean;
-    reorderHintId: string;
+    hintId?: string;
 };
 
-export const TreeRow = ({ item, multiSelect, reorderable, reorderHintId }: TreeRowProps) => {
+export const TreeRow = ({ item, multiSelect, reorderable, hintId }: TreeRowProps) => {
     const level = item.getItemMeta().level;
     const isFolder = item.isFolder();
     const isExpanded = item.isExpanded();
     const checkedState = item.getCheckedState();
     const data = item.getItemData();
-    const isActive = Boolean(data.isActive);
 
     const checkboxProps = multiSelect
         ? (item.getCheckboxProps() as {
@@ -39,8 +38,17 @@ export const TreeRow = ({ item, multiSelect, reorderable, reorderHintId }: TreeR
           })
         : null;
 
-    const { onClick: headlessOnClick, ...headlessRest } = item.getProps() as {
+    // Strip headless-tree's default `aria-selected` out of the spread so we can drive it
+    // from `data.isSelected` below. Every row needs an explicit value: a treeitem with no
+    // `aria-selected` (or `"true"`) is announced as "selected" by VoiceOver, so unselected
+    // and non-selectable rows both need an explicit `"false"`.
+    const {
+        onClick: headlessOnClick,
+        'aria-selected': _ariaSelected,
+        ...headlessRest
+    } = item.getProps() as {
         onClick?: MouseEventHandler<HTMLDivElement>;
+        'aria-selected'?: string;
         [key: string]: unknown;
     };
     const handleClick = (event: MouseEvent<HTMLDivElement>) => {
@@ -65,39 +73,64 @@ export const TreeRow = ({ item, multiSelect, reorderable, reorderHintId }: TreeR
         event.currentTarget.click();
     };
 
+    console.log('headlessRest', headlessRest);
+
     return (
+        // `role="treeitem"` and `tabIndex` come from `headlessRest` (provided by headless-tree)
+        // — the lint rule can't see them statically.
+        // eslint-disable-next-line jsx-a11y-x/no-static-element-interactions
         <div
             {...headlessRest}
             onClick={handleClick}
             onKeyDown={handleKeyDown}
-            // Tabbing into a row moves DOM focus but doesn't tell headless-tree which item
-            // is active, so the next arrow-key press would navigate from the row that was
-            // focused *before* tabbing. Syncing on focus keeps internal state aligned.
-            onFocus={() => item.setFocused()}
-            // Override headless-tree's roving tabindex: every row is part of the document tab
-            // sequence so Tab walks row → checkbox → next row → next checkbox. Arrow-key
-            // navigation between rows still works via headless-tree's hotkeys.
-            tabIndex={0}
             className={styles.row}
-            aria-current={isActive ? 'page' : undefined}
-            aria-describedby={reorderable ? reorderHintId : undefined}
+            aria-describedby={hintId}
+            aria-selected={data.isSelected ? 'true' : 'false'}
+            aria-checked={
+                multiSelect
+                    ? checkedState === CheckedState.Checked
+                        ? 'true'
+                        : checkedState === CheckedState.Indeterminate
+                          ? 'mixed'
+                          : 'false'
+                    : undefined
+            }
+            // aria-current={isActive ? 'page' : undefined}
+            // aria-describedby={reorderable ? reorderHintId : undefined}
+            // aria-checked={
+            //     multiSelect
+            //         ? checkedState === CheckedState.Checked
+            //             ? 'true'
+            //             : checkedState === CheckedState.Indeterminate
+            //               ? 'mixed'
+            //               : 'false'
+            //         : undefined
+            // }
         >
             <div
                 className={styles.item}
                 style={{ '--tree-row-level': Math.max(0, level) } as CSSProperties}
-                data-focused={item.isFocused()}
-                data-expanded={isExpanded}
-                data-selected={checkedState === CheckedState.Checked}
-                data-folder={isFolder}
-                data-drop={reorderable && item.isDragTarget()}
-                data-active={isActive}
+                aria-checked="false"
+                aria-selected="false"
+                // data-focused={item.isFocused()}
+                // data-expanded={isExpanded}
+                // // data-selected={checkedState === CheckedState.Checked}
+                // data-folder={isFolder}
+                // data-drop={reorderable && item.isDragTarget()}
+                // data-active={isActive}
             >
                 {reorderable && (
                     <span className={styles.handle} aria-hidden>
                         <IconGrabHandle size={16} />
                     </span>
                 )}
-                {checkboxProps && <TreeRowCheckbox checkedState={checkedState} headlessProps={checkboxProps} />}
+                {checkboxProps && (
+                    <TreeRowCheckbox
+                        checkedState={checkedState}
+                        isFocused={item.isFocused()}
+                        headlessProps={checkboxProps}
+                    />
+                )}
                 <span className={styles.indent} aria-hidden />
                 <TreeRowChevron isFolder={isFolder} isExpanded={isExpanded} />
                 <span className={styles.icon} aria-hidden>

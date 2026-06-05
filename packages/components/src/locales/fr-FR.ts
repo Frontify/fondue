@@ -33,9 +33,9 @@ const translations = {
     Table_sortByAscending: 'Trier par ${column} croissant',
     Table_sortByDescending: 'Trier par ${column} décroissant',
     Table_sortDescending: 'Trier par ordre décroissant',
+    Tree_checkboxHint: 'Sélectionnable, appuyez sur Tab pour mettre la case à cocher au focus.',
     Tree_loading: 'Chargement…',
-    Tree_reorderHint:
-        'Pour réorganiser, appuyez sur Contrôle plus Maj plus D pour commencer à déplacer cet élément, puis Flèche haut ou bas pour le positionner, Entrée pour le déposer, ou Échap pour annuler.',
+    Tree_reorderHint: 'Appuyez sur Contrôle Maj D pour déplacer.',
 };
 
 export const frFR: LocaleConfig = {

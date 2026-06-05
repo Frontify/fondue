@@ -67,16 +67,6 @@ export type TreeLoadingProps = {
 };
 
 /**
- * Internal representation of a `Tree.Loading` placeholder. Tracked separately from
- * `TreeItemData` because loading rows must NOT participate in headless-tree state —
- * doing so would let them count toward folder check propagation, drag targets, and
- * keyboard navigation.
- */
-export type TreeLoadingEntry = {
-    label?: string;
-};
-
-/**
  * Internal flat representation consumed by the headless-tree data loader. Built from JSX
  * by `parseChildren`; not part of the public API.
  */
@@ -93,4 +83,6 @@ export type TreeItemData = {
     isActive?: boolean;
     onClick?: MouseEventHandler<HTMLDivElement>;
     onMove?: (info: TreeMoveInfo) => void;
+    isLoading?: boolean;
+    loadingLabel?: string;
 };

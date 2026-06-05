@@ -2,21 +2,17 @@
 
 import { Children, isValidElement, type ReactElement, type ReactNode } from 'react';
 
-import {
-    type TreeFolderProps,
-    type TreeItemData,
-    type TreeItemProps,
-    type TreeLoadingEntry,
-    type TreeLoadingProps,
-} from '../types';
+import { type TreeFolderProps, type TreeItemData, type TreeItemProps, type TreeLoadingProps } from '../types';
 
 export type ParsedChildren = {
     items: TreeItemData[];
     /**
-     * Loading placeholders keyed by their parent id (`'root'` for top-level). They
-     * are kept out of `items` so headless-tree never sees them — see TreeLoadingEntry.
+     * `<Tree.Loading>` info for the parent context being parsed. Folder recursions fold
+     * this into the folder's own `TreeItemData`; the top-level call exposes it to
+     * `TreeRoot` so the root-level loading row can be rendered.
      */
-    loadingByParent: Map<string, TreeLoadingEntry[]>;
+    parentIsLoading: boolean;
+    parentLoadingLabel: string | undefined;
 };
 
 const isTreeItemElement = (element: ReactElement): element is ReactElement<TreeItemProps> =>
@@ -28,29 +24,24 @@ const isTreeFolderElement = (element: ReactElement): element is ReactElement<Tre
 const isTreeLoadingElement = (element: ReactElement): element is ReactElement<TreeLoadingProps> =>
     (element.type as { displayName?: string })?.displayName === 'Tree.Loading';
 
-const appendLoading = (map: Map<string, TreeLoadingEntry[]>, parentId: string, entry: TreeLoadingEntry) => {
-    const existing = map.get(parentId);
-    if (existing) {
-        existing.push(entry);
-    } else {
-        map.set(parentId, [entry]);
-    }
-};
-
 /**
  * Walks the JSX children of <Tree.Root> and produces a flat TreeItemData[] for headless-tree's
- * dataLoader, plus a map of `Tree.Loading` placeholders keyed by their parent id. Components
- * are matched by displayName (not identity) so HMR component swaps don't break the tree.
+ * dataLoader. A `<Tree.Loading>` child sets `isLoading`/`loadingLabel` on the parent folder
+ * (or, at the top level, surfaces via `parentIsLoading`/`parentLoadingLabel` for TreeRoot to
+ * render the root loading row). Components are matched by displayName (not identity) so HMR
+ * component swaps don't break the tree.
  */
 export const parseChildren = (children: ReactNode, parentId: string = 'root'): ParsedChildren => {
     const items: TreeItemData[] = [];
-    const loadingByParent = new Map<string, TreeLoadingEntry[]>();
+    let parentIsLoading = false;
+    let parentLoadingLabel: string | undefined;
     for (const child of Children.toArray(children)) {
         if (!isValidElement(child)) {
             continue;
         }
         if (isTreeLoadingElement(child)) {
-            appendLoading(loadingByParent, parentId, { label: child.props.label });
+            parentIsLoading = true;
+            parentLoadingLabel = child.props.label;
             continue;
         }
         if (isTreeItemElement(child)) {
@@ -96,14 +87,11 @@ export const parseChildren = (children: ReactNode, parentId: string = 'root'): P
                 isActive,
                 onClick,
                 onMove,
+                isLoading: descendants.parentIsLoading,
+                loadingLabel: descendants.parentLoadingLabel,
             });
             items.push(...descendants.items);
-            for (const [nestedParentId, entries] of descendants.loadingByParent) {
-                for (const entry of entries) {
-                    appendLoading(loadingByParent, nestedParentId, entry);
-                }
-            }
         }
     }
-    return { items, loadingByParent };
+    return { items, parentIsLoading, parentLoadingLabel };
 };
