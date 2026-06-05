@@ -82,13 +82,7 @@
     width: 16px;
     height: 16px;
     color: var(--color-secondary-default, rgb(0 0 0 / 45%));
-    opacity: 1;
     cursor: grab;
-
-    .row:hover &,
-    .row[data-dragging='true'] & {
-        opacity: 1;
-    }
 }
 
 .chevron {

@@ -24,6 +24,16 @@ type TreeRowProps = {
     hintId?: string;
 };
 
+const ariaCheckedFor = (state: CheckedState): 'true' | 'false' | 'mixed' => {
+    if (state === CheckedState.Checked) {
+        return 'true';
+    }
+    if (state === CheckedState.Indeterminate) {
+        return 'mixed';
+    }
+    return 'false';
+};
+
 export const TreeRow = ({ item, multiSelect, reorderable, hintId }: TreeRowProps) => {
     const level = item.getItemMeta().level;
     const isFolder = item.isFolder();
@@ -38,21 +48,13 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId }: TreeRowProps
           })
         : null;
 
-    // Strip headless-tree's default `aria-selected` out of the spread so we can drive it
-    // from `data.isSelected` below. Every row needs an explicit value: a treeitem with no
-    // `aria-selected` (or `"true"`) is announced as "selected" by VoiceOver, so unselected
-    // and non-selectable rows both need an explicit `"false"`.
-    const {
-        onClick: headlessOnClick,
-        'aria-selected': _ariaSelected,
-        ...headlessRest
-    } = item.getProps() as {
+    const headlessProps = item.getProps() as {
         onClick?: MouseEventHandler<HTMLDivElement>;
-        'aria-selected'?: string;
         [key: string]: unknown;
     };
+
     const handleClick = (event: MouseEvent<HTMLDivElement>) => {
-        headlessOnClick?.(event);
+        headlessProps.onClick?.(event);
         data.onClick?.(event);
     };
 
@@ -73,51 +75,28 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId }: TreeRowProps
         event.currentTarget.click();
     };
 
-    console.log('headlessRest', headlessRest);
-
     return (
-        // `role="treeitem"` and `tabIndex` come from `headlessRest` (provided by headless-tree)
-        // — the lint rule can't see them statically.
+        // `role="treeitem"` and `tabIndex` come from `headlessProps` (provided by headless-tree)
+        // — the lint rule can't see them statically. We also override headless-tree's default
+        // `aria-selected` below: a treeitem with no `aria-selected` (or `"true"`) is announced
+        // as "selected" by VoiceOver, so every row needs an explicit "true"/"false".
         // eslint-disable-next-line jsx-a11y-x/no-static-element-interactions
         <div
-            {...headlessRest}
+            {...headlessProps}
             onClick={handleClick}
             onKeyDown={handleKeyDown}
             className={styles.row}
             aria-describedby={hintId}
             aria-selected={data.isSelected ? 'true' : 'false'}
-            aria-checked={
-                multiSelect
-                    ? checkedState === CheckedState.Checked
-                        ? 'true'
-                        : checkedState === CheckedState.Indeterminate
-                          ? 'mixed'
-                          : 'false'
-                    : undefined
-            }
-            // aria-current={isActive ? 'page' : undefined}
-            // aria-describedby={reorderable ? reorderHintId : undefined}
-            // aria-checked={
-            //     multiSelect
-            //         ? checkedState === CheckedState.Checked
-            //             ? 'true'
-            //             : checkedState === CheckedState.Indeterminate
-            //               ? 'mixed'
-            //               : 'false'
-            //         : undefined
-            // }
+            aria-checked={multiSelect ? ariaCheckedFor(checkedState) : undefined}
+            aria-current={data.isActive ? 'page' : undefined}
         >
             <div
                 className={styles.item}
                 style={{ '--tree-row-level': Math.max(0, level) } as CSSProperties}
-                aria-checked="false"
-                aria-selected="false"
-                // data-focused={item.isFocused()}
-                // data-expanded={isExpanded}
-                // // data-selected={checkedState === CheckedState.Checked}
-                // data-folder={isFolder}
-                // data-drop={reorderable && item.isDragTarget()}
-                // data-active={isActive}
+                data-folder={isFolder}
+                data-active={data.isActive}
+                data-drop={reorderable && item.isDragTarget()}
             >
                 {reorderable && (
                     <span className={styles.handle} aria-hidden>

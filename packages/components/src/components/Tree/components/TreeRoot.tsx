@@ -55,7 +55,6 @@ export const TreeRoot = ({ children, onChange, multiSelect = false, reorderable 
 
     return (
         <div {...tree.getContainerProps()} className={styles.tree}>
-            {/* <AssistiveTreeDescription tree={tree} /> */}
             {rowHint && (
                 <span id={rowHintId} className={styles.srOnly}>
                     {rowHint}
