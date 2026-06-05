@@ -23,7 +23,7 @@ const meta: Meta<typeof TreeRoot> = {
     tags: ['autodocs'],
     parameters: {
         status: {
-            type: 'in_progress',
+            type: 'beta',
         },
     },
     args: {
@@ -55,6 +55,8 @@ const renderNodes = (nodes: TreeChangeState): ReactNode =>
             />
         ),
     );
+
+// ─── Foundations ──────────────────────────────────────────────────────────────
 
 const defaultNodes: TreeChangeState = [
     { id: '1', name: 'Item 1', isFolder: false },
@@ -177,6 +179,43 @@ export const NestedFolders: Story = {
     },
 };
 
+// ─── Selection ────────────────────────────────────────────────────────────────
+
+const singleSelectNodes: TreeChangeState = [
+    { id: '1', name: 'Item 1', isFolder: false },
+    { id: '2', name: 'Item 2', isFolder: false, isSelected: true },
+    { id: '3', name: 'Item 3', isFolder: false },
+];
+
+export const SingleSelectAriaSelected: Story = {
+    parameters: {
+        docs: {
+            description: {
+                story:
+                    'Without `multiSelect`, the Tree has no built-in selection UI — but `isSelected` on a row ' +
+                    'still drives `aria-selected="true"` on its `treeitem`, so consumers can wire row clicks to ' +
+                    'their own single-select state and have the right accessibility semantics out of the box.',
+            },
+        },
+    },
+    render: (args) => {
+        const [selectedId, setSelectedId] = useState<string>('2');
+        return (
+            <Tree.Root {...args}>
+                {singleSelectNodes.map((node) => (
+                    <Tree.Item
+                        key={node.id}
+                        id={node.id}
+                        label={node.name}
+                        isSelected={node.id === selectedId}
+                        onClick={() => setSelectedId(node.id)}
+                    />
+                ))}
+            </Tree.Root>
+        );
+    },
+};
+
 const multiSelectNodes: TreeChangeState = [
     {
         id: 'a',
@@ -221,6 +260,8 @@ export const MultiSelect: Story = {
         );
     },
 };
+
+// ─── Drag and drop ────────────────────────────────────────────────────────────
 
 const reorderableNodes: TreeChangeState = [
     { id: '1', name: 'Item 1', isFolder: false },
@@ -267,6 +308,7 @@ export const Reorderable: Story = {
     },
 };
 
+// Shared by MultiSelectAndReorderable, WithPerItemHandlers, and StateInspector.
 const multiSelectReorderableNodes: TreeChangeState = [
     { id: '1', name: 'Item 1', isFolder: false },
     {
@@ -318,283 +360,6 @@ export const MultiSelectAndReorderable: Story = {
                 }}
             >
                 {renderNodes(nodes)}
-            </Tree.Root>
-        );
-    },
-};
-
-const navigationNodes: TreeChangeState = [
-    { id: 'home', name: 'Home', isFolder: false },
-    {
-        id: 'projects',
-        name: 'Projects',
-        isFolder: true,
-        isExpanded: true,
-        children: [
-            { id: 'projects/alpha', name: 'Alpha', isFolder: false },
-            { id: 'projects/beta', name: 'Beta', isFolder: false },
-            { id: 'projects/gamma', name: 'Gamma', isFolder: false },
-        ],
-    },
-    { id: 'settings', name: 'Settings', isFolder: false },
-];
-
-const renderNavigationNodes = (nodes: TreeChangeState, activeId: string, onSelect: (id: string) => void): ReactNode =>
-    nodes.map((node) =>
-        node.isFolder ? (
-            <Tree.Folder
-                key={node.id}
-                id={node.id}
-                label={node.name}
-                isExpanded={node.isExpanded}
-                isActive={node.id === activeId}
-                onClick={() => onSelect(node.id)}
-            >
-                {renderNavigationNodes(node.children ?? [], activeId, onSelect)}
-            </Tree.Folder>
-        ) : (
-            <Tree.Item
-                key={node.id}
-                id={node.id}
-                label={node.name}
-                isActive={node.id === activeId}
-                onClick={() => onSelect(node.id)}
-            />
-        ),
-    );
-
-export const AsNavigation: Story = {
-    render: (args) => {
-        const [nodes, setNodes] = useState<TreeChangeState>(navigationNodes);
-        const [activeId, setActiveId] = useState<string>('projects/alpha');
-
-        return (
-            <Tree.Root
-                {...args}
-                onChange={(state) => {
-                    args.onChange?.(state);
-                    setNodes(state);
-                }}
-            >
-                {renderNavigationNodes(nodes, activeId, setActiveId)}
-            </Tree.Root>
-        );
-    },
-};
-
-export const WithPerItemHandlers: Story = {
-    args: {
-        multiSelect: true,
-        reorderable: true,
-    },
-    render: (args) => {
-        const [nodes, setNodes] = useState<TreeChangeState>(multiSelectReorderableNodes);
-        return (
-            <Tree.Root
-                {...args}
-                onChange={(state) => {
-                    args.onChange?.(state);
-                    setNodes(state);
-                }}
-            >
-                <Tree.Item
-                    id="1"
-                    label="Item 1"
-                    isSelected={nodes.find((node) => node.id === '1')?.isSelected}
-                    onClick={action('Item 1 onClick')}
-                    onSelectChange={action('Item 1 onSelectChange')}
-                    onMove={action('Item 1 onMove')}
-                />
-                <Tree.Folder
-                    id="a"
-                    label="Folder a"
-                    isExpanded={nodes.find((node) => node.id === 'a')?.isExpanded}
-                    isSelected={nodes.find((node) => node.id === 'a')?.isSelected}
-                    onClick={action('Folder a onClick')}
-                    onExpandChange={action('Folder a onExpandChange')}
-                    onSelectChange={action('Folder a onSelectChange')}
-                    onMove={action('Folder a onMove')}
-                >
-                    {(nodes.find((node) => node.id === 'a')?.children ?? []).map((child) => (
-                        <Tree.Item
-                            key={child.id}
-                            id={child.id}
-                            label={child.name}
-                            isSelected={child.isSelected}
-                            onClick={action(`${child.name} onClick`)}
-                            onSelectChange={action(`${child.name} onSelectChange`)}
-                            onMove={action(`${child.name} onMove`)}
-                        />
-                    ))}
-                </Tree.Folder>
-            </Tree.Root>
-        );
-    },
-};
-
-type LazyChildren =
-    | { status: 'idle' }
-    | { status: 'loading' }
-    | { status: 'loaded'; children: Array<{ id: string; name: string; isFolder: boolean }> };
-
-const lazyRootNodes: Array<{ id: string; name: string; isFolder: boolean }> = [
-    { id: 'documents', name: 'Documents', isFolder: true },
-    { id: 'pictures', name: 'Pictures', isFolder: true },
-    { id: 'downloads', name: 'Downloads', isFolder: true },
-    { id: 'README.md', name: 'README.md', isFolder: false },
-];
-
-const lazyChildrenByParent: Record<string, Array<{ id: string; name: string; isFolder: boolean }>> = {
-    documents: [
-        { id: 'documents/reports', name: 'reports', isFolder: true },
-        { id: 'documents/invoice.pdf', name: 'invoice.pdf', isFolder: false },
-        { id: 'documents/notes.txt', name: 'notes.txt', isFolder: false },
-    ],
-    pictures: [
-        { id: 'pictures/vacation', name: 'vacation', isFolder: true },
-        { id: 'pictures/avatar.png', name: 'avatar.png', isFolder: false },
-    ],
-    downloads: [
-        { id: 'downloads/installer.dmg', name: 'installer.dmg', isFolder: false },
-        { id: 'downloads/archive.zip', name: 'archive.zip', isFolder: false },
-    ],
-    'documents/reports': [
-        { id: 'documents/reports/q1.pdf', name: 'q1.pdf', isFolder: false },
-        { id: 'documents/reports/q2.pdf', name: 'q2.pdf', isFolder: false },
-    ],
-    'pictures/vacation': [
-        { id: 'pictures/vacation/beach.jpg', name: 'beach.jpg', isFolder: false },
-        { id: 'pictures/vacation/sunset.jpg', name: 'sunset.jpg', isFolder: false },
-    ],
-};
-
-const fetchLazyChildren = (parentId: string): Promise<Array<{ id: string; name: string; isFolder: boolean }>> =>
-    new Promise((resolve) => {
-        setTimeout(() => resolve(lazyChildrenByParent[parentId] ?? []), 600);
-    });
-
-export const LazyLoading: Story = {
-    parameters: {
-        docs: {
-            description: {
-                story:
-                    'Children of a folder can be fetched on demand: keep the folder rendered with no children initially, ' +
-                    'and on `onExpandChange` fetch the data and re-render with the new children. Render `<Tree.Loading />` ' +
-                    'as the only child while the request is in flight — it shows a non-interactive placeholder row that sits ' +
-                    'outside drag-and-drop, multi-select counts, and keyboard navigation. Once loaded, children are cached so ' +
-                    'subsequent collapse/expand cycles do not refetch.',
-            },
-        },
-    },
-    render: (args) => {
-        const [expandedIds, setExpandedIds] = useState<Set<string>>(() => new Set());
-        const [childrenByParent, setChildrenByParent] = useState<Record<string, LazyChildren>>({});
-
-        const loadChildren = useCallback(async (parentId: string) => {
-            setChildrenByParent((prev) => ({ ...prev, [parentId]: { status: 'loading' } }));
-            const children = await fetchLazyChildren(parentId);
-            setChildrenByParent((prev) => ({ ...prev, [parentId]: { status: 'loaded', children } }));
-        }, []);
-
-        const handleExpandChange = useCallback(
-            (id: string, isExpanded: boolean) => {
-                setExpandedIds((prev) => {
-                    const next = new Set(prev);
-                    if (isExpanded) {
-                        next.add(id);
-                    } else {
-                        next.delete(id);
-                    }
-                    return next;
-                });
-                if (isExpanded && !childrenByParent[id]) {
-                    loadChildren(id).catch(() => {});
-                }
-            },
-            [childrenByParent, loadChildren],
-        );
-
-        const renderLazyNodes = (nodes: Array<{ id: string; name: string; isFolder: boolean }>): ReactNode =>
-            nodes.map((node) => {
-                if (!node.isFolder) {
-                    return <Tree.Item key={node.id} id={node.id} label={node.name} />;
-                }
-                const entry = childrenByParent[node.id];
-                return (
-                    <Tree.Folder
-                        key={node.id}
-                        id={node.id}
-                        label={node.name}
-                        isExpanded={expandedIds.has(node.id)}
-                        onExpandChange={(isExpanded) => handleExpandChange(node.id, isExpanded)}
-                    >
-                        {entry?.status === 'loading' && <Tree.Loading />}
-                        {entry?.status === 'loaded' && renderLazyNodes(entry.children)}
-                    </Tree.Folder>
-                );
-            });
-
-        return <Tree.Root {...args}>{renderLazyNodes(lazyRootNodes)}</Tree.Root>;
-    },
-};
-
-export const WithItemActions: Story = {
-    parameters: {
-        docs: {
-            description: {
-                story:
-                    'Render trailing controls on any row by nesting `<Tree.ItemAction>` inside a ' +
-                    '`<Tree.Item>` or `<Tree.Folder>`. Clicks inside the action slot do not bubble to ' +
-                    "the row, so the action button can fire without also triggering the row's " +
-                    '`onClick` or expand-toggle.',
-            },
-        },
-    },
-    render: (args) => {
-        const [nodes, setNodes] = useState<TreeChangeState>(defaultNodes);
-        const renderActionNodes = (treeNodes: TreeChangeState): ReactNode =>
-            treeNodes.map((node) =>
-                node.isFolder ? (
-                    <Tree.Folder
-                        key={node.id}
-                        id={node.id}
-                        label={node.name}
-                        isExpanded={node.isExpanded}
-                        isSelected={node.isSelected}
-                        isActive={node.isActive}
-                    >
-                        <Tree.ItemAction>
-                            <Button aspect="square" emphasis="default" size="small" onPress={action('Folder action')}>
-                                <IconDotsHorizontal size={16} />
-                            </Button>
-                        </Tree.ItemAction>
-                        {renderActionNodes(node.children ?? [])}
-                    </Tree.Folder>
-                ) : (
-                    <Tree.Item
-                        key={node.id}
-                        id={node.id}
-                        label={node.name}
-                        isSelected={node.isSelected}
-                        isActive={node.isActive}
-                    >
-                        <Tree.ItemAction>
-                            <Button aspect="square" emphasis="default" size="small" onPress={action('Item delete')}>
-                                <IconTrashBin size={16} />
-                            </Button>
-                        </Tree.ItemAction>
-                    </Tree.Item>
-                ),
-            );
-        return (
-            <Tree.Root
-                {...args}
-                onChange={(state) => {
-                    args.onChange?.(state);
-                    setNodes(state);
-                }}
-            >
-                {renderActionNodes(nodes)}
             </Tree.Root>
         );
     },
@@ -712,6 +477,400 @@ export const RestrictedDrops: Story = {
                 }}
             >
                 {renderTagged(nodes)}
+            </Tree.Root>
+        );
+    },
+};
+
+// ─── Trailing actions and navigation ──────────────────────────────────────────
+
+export const WithItemActions: Story = {
+    parameters: {
+        docs: {
+            description: {
+                story:
+                    'Render trailing controls on any row by nesting `<Tree.ItemAction>` inside a ' +
+                    '`<Tree.Item>` or `<Tree.Folder>`. Clicks inside the action slot do not bubble to ' +
+                    "the row, so the action button can fire without also triggering the row's " +
+                    '`onClick` or expand-toggle.',
+            },
+        },
+    },
+    render: (args) => {
+        const [nodes, setNodes] = useState<TreeChangeState>(defaultNodes);
+        const renderActionNodes = (treeNodes: TreeChangeState): ReactNode =>
+            treeNodes.map((node) =>
+                node.isFolder ? (
+                    <Tree.Folder
+                        key={node.id}
+                        id={node.id}
+                        label={node.name}
+                        isExpanded={node.isExpanded}
+                        isSelected={node.isSelected}
+                        isActive={node.isActive}
+                    >
+                        <Tree.ItemAction>
+                            <Button aspect="square" emphasis="default" size="small" onPress={action('Folder action')}>
+                                <IconDotsHorizontal size={16} />
+                            </Button>
+                        </Tree.ItemAction>
+                        {renderActionNodes(node.children ?? [])}
+                    </Tree.Folder>
+                ) : (
+                    <Tree.Item
+                        key={node.id}
+                        id={node.id}
+                        label={node.name}
+                        isSelected={node.isSelected}
+                        isActive={node.isActive}
+                    >
+                        <Tree.ItemAction>
+                            <Button aspect="square" emphasis="default" size="small" onPress={action('Item delete')}>
+                                <IconTrashBin size={16} />
+                            </Button>
+                        </Tree.ItemAction>
+                    </Tree.Item>
+                ),
+            );
+        return (
+            <Tree.Root
+                {...args}
+                onChange={(state) => {
+                    args.onChange?.(state);
+                    setNodes(state);
+                }}
+            >
+                {renderActionNodes(nodes)}
+            </Tree.Root>
+        );
+    },
+};
+
+const navigationNodes: TreeChangeState = [
+    { id: 'home', name: 'Home', isFolder: false },
+    {
+        id: 'projects',
+        name: 'Projects',
+        isFolder: true,
+        isExpanded: true,
+        children: [
+            { id: 'projects/alpha', name: 'Alpha', isFolder: false },
+            { id: 'projects/beta', name: 'Beta', isFolder: false },
+            { id: 'projects/gamma', name: 'Gamma', isFolder: false },
+        ],
+    },
+    { id: 'settings', name: 'Settings', isFolder: false },
+];
+
+const renderNavigationNodes = (nodes: TreeChangeState, activeId: string, onSelect: (id: string) => void): ReactNode =>
+    nodes.map((node) =>
+        node.isFolder ? (
+            <Tree.Folder
+                key={node.id}
+                id={node.id}
+                label={node.name}
+                isExpanded={node.isExpanded}
+                isActive={node.id === activeId}
+                onClick={() => onSelect(node.id)}
+            >
+                {renderNavigationNodes(node.children ?? [], activeId, onSelect)}
+            </Tree.Folder>
+        ) : (
+            <Tree.Item
+                key={node.id}
+                id={node.id}
+                label={node.name}
+                isActive={node.id === activeId}
+                onClick={() => onSelect(node.id)}
+            />
+        ),
+    );
+
+export const AsNavigation: Story = {
+    render: (args) => {
+        const [nodes, setNodes] = useState<TreeChangeState>(navigationNodes);
+        const [activeId, setActiveId] = useState<string>('projects/alpha');
+
+        return (
+            <Tree.Root
+                {...args}
+                onChange={(state) => {
+                    args.onChange?.(state);
+                    setNodes(state);
+                }}
+            >
+                {renderNavigationNodes(nodes, activeId, setActiveId)}
+            </Tree.Root>
+        );
+    },
+};
+
+// ─── Async and data states ────────────────────────────────────────────────────
+
+export const Empty: Story = {
+    parameters: {
+        docs: {
+            description: {
+                story:
+                    '`<Tree.Root>` renders an empty container when given no children. The container keeps its ' +
+                    'minimum height so the layout does not collapse, but no rows are produced.',
+            },
+        },
+    },
+    render: (args) => <Tree.Root {...args} />,
+};
+
+export const InitialLoading: Story = {
+    parameters: {
+        docs: {
+            description: {
+                story:
+                    'When the entire top-level tree is being fetched, render `<Tree.Loading />` as a direct ' +
+                    'child of `<Tree.Root>`. It appears at the bottom of the (empty) list while data is in ' +
+                    'flight, then is replaced by real rows once the fetch resolves.',
+            },
+        },
+    },
+    render: (args) => {
+        const [nodes, setNodes] = useState<TreeChangeState | null>(null);
+
+        const startLoad = useCallback(() => {
+            setNodes(null);
+            setTimeout(() => setNodes(defaultNodes), 800);
+        }, []);
+
+        return (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                <div>
+                    <Button emphasis="default" onPress={startLoad}>
+                        Reload top-level
+                    </Button>
+                </div>
+                <Tree.Root
+                    {...args}
+                    onChange={(state) => {
+                        args.onChange?.(state);
+                        setNodes(state);
+                    }}
+                >
+                    {nodes === null ? <Tree.Loading /> : renderNodes(nodes)}
+                </Tree.Root>
+            </div>
+        );
+    },
+};
+
+type LazyChildren =
+    | { status: 'idle' }
+    | { status: 'loading' }
+    | { status: 'loaded'; children: Array<{ id: string; name: string; isFolder: boolean }> };
+
+const lazyRootNodes: Array<{ id: string; name: string; isFolder: boolean }> = [
+    { id: 'documents', name: 'Documents', isFolder: true },
+    { id: 'pictures', name: 'Pictures', isFolder: true },
+    { id: 'downloads', name: 'Downloads', isFolder: true },
+    { id: 'README.md', name: 'README.md', isFolder: false },
+];
+
+const lazyChildrenByParent: Record<string, Array<{ id: string; name: string; isFolder: boolean }>> = {
+    documents: [
+        { id: 'documents/reports', name: 'reports', isFolder: true },
+        { id: 'documents/invoice.pdf', name: 'invoice.pdf', isFolder: false },
+        { id: 'documents/notes.txt', name: 'notes.txt', isFolder: false },
+    ],
+    pictures: [
+        { id: 'pictures/vacation', name: 'vacation', isFolder: true },
+        { id: 'pictures/avatar.png', name: 'avatar.png', isFolder: false },
+    ],
+    downloads: [
+        { id: 'downloads/installer.dmg', name: 'installer.dmg', isFolder: false },
+        { id: 'downloads/archive.zip', name: 'archive.zip', isFolder: false },
+    ],
+    'documents/reports': [
+        { id: 'documents/reports/q1.pdf', name: 'q1.pdf', isFolder: false },
+        { id: 'documents/reports/q2.pdf', name: 'q2.pdf', isFolder: false },
+    ],
+    'pictures/vacation': [
+        { id: 'pictures/vacation/beach.jpg', name: 'beach.jpg', isFolder: false },
+        { id: 'pictures/vacation/sunset.jpg', name: 'sunset.jpg', isFolder: false },
+    ],
+};
+
+const fetchLazyChildren = (parentId: string): Promise<Array<{ id: string; name: string; isFolder: boolean }>> =>
+    new Promise((resolve) => {
+        setTimeout(() => resolve(lazyChildrenByParent[parentId] ?? []), 600);
+    });
+
+export const LazyLoading: Story = {
+    parameters: {
+        docs: {
+            description: {
+                story:
+                    'Children of a folder can be fetched on demand: keep the folder rendered with no children initially, ' +
+                    'and on `onExpandChange` fetch the data and re-render with the new children. Render `<Tree.Loading />` ' +
+                    'as the only child while the request is in flight — it shows a non-interactive placeholder row that sits ' +
+                    'outside drag-and-drop, multi-select counts, and keyboard navigation. Once loaded, children are cached so ' +
+                    'subsequent collapse/expand cycles do not refetch.',
+            },
+        },
+    },
+    render: (args) => {
+        const [expandedIds, setExpandedIds] = useState<Set<string>>(() => new Set());
+        const [childrenByParent, setChildrenByParent] = useState<Record<string, LazyChildren>>({});
+
+        const loadChildren = useCallback(async (parentId: string) => {
+            setChildrenByParent((prev) => ({ ...prev, [parentId]: { status: 'loading' } }));
+            const children = await fetchLazyChildren(parentId);
+            setChildrenByParent((prev) => ({ ...prev, [parentId]: { status: 'loaded', children } }));
+        }, []);
+
+        const handleExpandChange = useCallback(
+            (id: string, isExpanded: boolean) => {
+                setExpandedIds((prev) => {
+                    const next = new Set(prev);
+                    if (isExpanded) {
+                        next.add(id);
+                    } else {
+                        next.delete(id);
+                    }
+                    return next;
+                });
+                if (isExpanded && !childrenByParent[id]) {
+                    loadChildren(id).catch(() => {});
+                }
+            },
+            [childrenByParent, loadChildren],
+        );
+
+        const renderLazyNodes = (nodes: Array<{ id: string; name: string; isFolder: boolean }>): ReactNode =>
+            nodes.map((node) => {
+                if (!node.isFolder) {
+                    return <Tree.Item key={node.id} id={node.id} label={node.name} />;
+                }
+                const entry = childrenByParent[node.id];
+                return (
+                    <Tree.Folder
+                        key={node.id}
+                        id={node.id}
+                        label={node.name}
+                        isExpanded={expandedIds.has(node.id)}
+                        onExpandChange={(isExpanded) => handleExpandChange(node.id, isExpanded)}
+                    >
+                        {entry?.status === 'loading' && <Tree.Loading />}
+                        {entry?.status === 'loaded' && renderLazyNodes(entry.children)}
+                    </Tree.Folder>
+                );
+            });
+
+        return <Tree.Root {...args}>{renderLazyNodes(lazyRootNodes)}</Tree.Root>;
+    },
+};
+
+const loadMoreInitialChildren: Array<{ id: string; name: string }> = [
+    { id: 'reports/q1.pdf', name: 'q1.pdf' },
+    { id: 'reports/q2.pdf', name: 'q2.pdf' },
+    { id: 'reports/q3.pdf', name: 'q3.pdf' },
+];
+
+const loadMoreNextPage: Array<{ id: string; name: string }> = [
+    { id: 'reports/q4.pdf', name: 'q4.pdf' },
+    { id: 'reports/2023-summary.pdf', name: '2023-summary.pdf' },
+];
+
+export const LoadMore: Story = {
+    parameters: {
+        docs: {
+            description: {
+                story:
+                    'When a folder has more children than have been loaded so far, render the loaded rows ' +
+                    'followed by `<Tree.Loading />` as the last child. The loading row is placed after the last ' +
+                    'visible descendant, which models incremental fetch (infinite scroll, paginated "load more") ' +
+                    'without disturbing the loaded rows above it.',
+            },
+        },
+    },
+    render: (args) => {
+        const [children, setChildren] = useState(loadMoreInitialChildren);
+        const [status, setStatus] = useState<'idle' | 'loading' | 'done'>('idle');
+
+        const loadNextPage = useCallback(() => {
+            if (status !== 'idle') {
+                return;
+            }
+            setStatus('loading');
+            setTimeout(() => {
+                setChildren((prev) => [...prev, ...loadMoreNextPage]);
+                setStatus('done');
+            }, 800);
+        }, [status]);
+
+        return (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                <div>
+                    <Button emphasis="default" onPress={loadNextPage}>
+                        Load more
+                    </Button>
+                </div>
+                <Tree.Root {...args}>
+                    <Tree.Folder id="reports" label="Reports" isExpanded>
+                        {children.map((child) => (
+                            <Tree.Item key={child.id} id={child.id} label={child.name} />
+                        ))}
+                        {status === 'loading' && <Tree.Loading />}
+                    </Tree.Folder>
+                </Tree.Root>
+            </div>
+        );
+    },
+};
+
+// ─── Inspection and advanced wiring ───────────────────────────────────────────
+
+export const WithPerItemHandlers: Story = {
+    args: {
+        multiSelect: true,
+        reorderable: true,
+    },
+    render: (args) => {
+        const [nodes, setNodes] = useState<TreeChangeState>(multiSelectReorderableNodes);
+        return (
+            <Tree.Root
+                {...args}
+                onChange={(state) => {
+                    args.onChange?.(state);
+                    setNodes(state);
+                }}
+            >
+                <Tree.Item
+                    id="1"
+                    label="Item 1"
+                    isSelected={nodes.find((node) => node.id === '1')?.isSelected}
+                    onClick={action('Item 1 onClick')}
+                    onSelectChange={action('Item 1 onSelectChange')}
+                    onMove={action('Item 1 onMove')}
+                />
+                <Tree.Folder
+                    id="a"
+                    label="Folder a"
+                    isExpanded={nodes.find((node) => node.id === 'a')?.isExpanded}
+                    isSelected={nodes.find((node) => node.id === 'a')?.isSelected}
+                    onClick={action('Folder a onClick')}
+                    onExpandChange={action('Folder a onExpandChange')}
+                    onSelectChange={action('Folder a onSelectChange')}
+                    onMove={action('Folder a onMove')}
+                >
+                    {(nodes.find((node) => node.id === 'a')?.children ?? []).map((child) => (
+                        <Tree.Item
+                            key={child.id}
+                            id={child.id}
+                            label={child.name}
+                            isSelected={child.isSelected}
+                            onClick={action(`${child.name} onClick`)}
+                            onSelectChange={action(`${child.name} onSelectChange`)}
+                            onMove={action(`${child.name} onMove`)}
+                        />
+                    ))}
+                </Tree.Folder>
             </Tree.Root>
         );
     },
