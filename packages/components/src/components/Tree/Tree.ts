@@ -17,7 +17,6 @@ export type {
     TreeFolderProps,
     TreeItemActionProps,
     TreeItemProps,
-    TreeLoadingProps,
     TreeMoveInfo,
     TreeNodeState,
 } from './types';

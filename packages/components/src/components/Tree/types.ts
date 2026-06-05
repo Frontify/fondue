@@ -102,14 +102,6 @@ export type TreeItemActionProps = {
     children: ReactNode;
 };
 
-export type TreeLoadingProps = {
-    /**
-     * Text shown next to the spinner. Defaults to the translated "Loading…" string.
-     * Useful when a more specific message ("Loading reports…") communicates better.
-     */
-    label?: string;
-};
-
 /**
  * Internal flat representation consumed by the headless-tree data loader. Built from JSX
  * by `parseChildren`; not part of the public API.
@@ -129,7 +121,6 @@ export type TreeItemData = {
     onMove?: (info: TreeMoveInfo) => void;
     actions?: ReactNode;
     isLoading?: boolean;
-    loadingLabel?: string;
     tags?: string[];
     accepts?: (items: TreeDropCandidate[]) => boolean;
 };

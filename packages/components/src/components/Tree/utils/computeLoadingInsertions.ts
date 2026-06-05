@@ -4,7 +4,7 @@ import { type ItemInstance } from '@headless-tree/core';
 
 import { type TreeItemData } from '../types';
 
-export type LoadingPlaceholder = { level: number; label?: string; key: string };
+export type LoadingPlaceholder = { level: number; key: string };
 
 export type LoadingInsertions = {
     byIndex: Map<number, LoadingPlaceholder>;
@@ -20,7 +20,6 @@ export type LoadingInsertions = {
 export const computeLoadingInsertions = (
     visibleItems: Array<ItemInstance<TreeItemData>>,
     rootIsLoading: boolean,
-    rootLoadingLabel: string | undefined,
 ): LoadingInsertions => {
     const byIndex = new Map<number, LoadingPlaceholder>();
     for (let parentIndex = 0; parentIndex < visibleItems.length; parentIndex++) {
@@ -50,14 +49,11 @@ export const computeLoadingInsertions = (
         }
         byIndex.set(lastDescendantIndex, {
             level: parentLevel + 1,
-            label: data.loadingLabel,
             key: `${parent.getId()}__loading`,
         });
     }
 
-    const rootLoading: LoadingPlaceholder | null = rootIsLoading
-        ? { level: 0, label: rootLoadingLabel, key: '__root_loading' }
-        : null;
+    const rootLoading: LoadingPlaceholder | null = rootIsLoading ? { level: 0, key: '__root_loading' } : null;
 
     return { byIndex, rootLoading };
 };

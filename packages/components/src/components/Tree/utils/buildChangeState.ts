@@ -2,6 +2,7 @@
 
 import { type TreeChangeState, type TreeItemData, type TreeNodeState } from '../types';
 
+/** Flat state mirror of the headless-tree internal model. */
 export type FlatTreeState = {
     expandedItems: string[];
     checkedItems: string[];
@@ -18,7 +19,7 @@ export type FlatTreeState = {
  * can read the emitted state to know whether a folder is fully selected without walking
  * its children themselves.
  */
-export const assembleTreeState = (
+export const buildChangeState = (
     items: readonly TreeItemData[],
     state: FlatTreeState,
     rootId: string,

@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconDocument, IconFolder, IconGrabHandle } from '@frontify/fondue-icons';
-import { CheckedState, type ItemInstance } from '@headless-tree/core';
+import { type ItemInstance } from '@headless-tree/core';
 import {
     type CSSProperties,
     type FormEventHandler,
@@ -13,6 +13,7 @@ import {
 
 import styles from '../styles/tree.module.scss';
 import { type TreeItemData } from '../types';
+import { ariaCheckedFor } from '../utils/ariaCheckedFor';
 
 import { TreeRowCheckbox } from './TreeRowCheckbox';
 import { TreeRowChevron } from './TreeRowChevron';
@@ -22,16 +23,6 @@ type TreeRowProps = {
     multiSelect: boolean;
     reorderable: boolean;
     hintId?: string;
-};
-
-const ariaCheckedFor = (state: CheckedState): 'true' | 'false' | 'mixed' => {
-    if (state === CheckedState.Checked) {
-        return 'true';
-    }
-    if (state === CheckedState.Indeterminate) {
-        return 'mixed';
-    }
-    return 'false';
 };
 
 export const TreeRow = ({ item, multiSelect, reorderable, hintId }: TreeRowProps) => {

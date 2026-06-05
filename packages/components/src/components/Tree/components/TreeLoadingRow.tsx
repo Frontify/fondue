@@ -9,12 +9,11 @@ import styles from '../styles/tree.module.scss';
 
 type TreeLoadingRowProps = {
     level: number;
-    label?: string;
     multiSelect: boolean;
     reorderable: boolean;
 };
 
-export const TreeLoadingRow = ({ level, label, multiSelect, reorderable }: TreeLoadingRowProps) => {
+export const TreeLoadingRow = ({ level, multiSelect, reorderable }: TreeLoadingRowProps) => {
     const { t } = useTranslation();
     return (
         <div className={styles.loadingRow} aria-live="polite" aria-busy="true">
@@ -27,7 +26,7 @@ export const TreeLoadingRow = ({ level, label, multiSelect, reorderable }: TreeL
                 <span className={styles.spinner} aria-hidden>
                     <LoadingCircle size="xx-small" />
                 </span>
-                <span className={styles.loadingLabel}>{label ?? t('Tree_loading')}</span>
+                <span className={styles.loadingLabel}>{t('Tree_loading')}</span>
             </div>
         </div>
     );

@@ -2,36 +2,29 @@
 
 import { Children, isValidElement, type ReactElement, type ReactNode } from 'react';
 
-import {
-    type TreeFolderProps,
-    type TreeItemActionProps,
-    type TreeItemData,
-    type TreeItemProps,
-    type TreeLoadingProps,
-} from '../types';
+import { ROOT_ID } from '../constants';
+import { type TreeFolderProps, type TreeItemActionProps, type TreeItemData, type TreeItemProps } from '../types';
 
 export type ParsedChildren = {
     items: TreeItemData[];
     /**
-     * `<Tree.Loading>` info for the parent context being parsed. Folder recursions fold
-     * this into the folder's own `TreeItemData`; the top-level call exposes it to
-     * `TreeRoot` so the root-level loading row can be rendered.
+     * `true` when a `<Tree.Loading>` child appears in the parent context being parsed.
+     * Folder recursions fold this into the folder's own `TreeItemData.isLoading`; the
+     * top-level call exposes it via `parentIsLoading` so `TreeRoot` can render the
+     * root-level loading row.
      */
     parentIsLoading: boolean;
-    parentLoadingLabel: string | undefined;
 };
 
-const isTreeItemElement = (element: ReactElement): element is ReactElement<TreeItemProps> =>
-    (element.type as { displayName?: string })?.displayName === 'Tree.Item';
+const hasDisplayName =
+    <Props>(displayName: string) =>
+    (element: ReactElement): element is ReactElement<Props> =>
+        (element.type as { displayName?: string })?.displayName === displayName;
 
-const isTreeFolderElement = (element: ReactElement): element is ReactElement<TreeFolderProps> =>
-    (element.type as { displayName?: string })?.displayName === 'Tree.Folder';
-
-const isTreeLoadingElement = (element: ReactElement): element is ReactElement<TreeLoadingProps> =>
-    (element.type as { displayName?: string })?.displayName === 'Tree.Loading';
-
-const isTreeItemActionElement = (element: ReactElement): element is ReactElement<TreeItemActionProps> =>
-    (element.type as { displayName?: string })?.displayName === 'Tree.ItemAction';
+const isTreeItemElement = hasDisplayName<TreeItemProps>('Tree.Item');
+const isTreeFolderElement = hasDisplayName<TreeFolderProps>('Tree.Folder');
+const isTreeLoadingElement = hasDisplayName<Record<string, never>>('Tree.Loading');
+const isTreeItemActionElement = hasDisplayName<TreeItemActionProps>('Tree.ItemAction');
 
 /**
  * Pulls a single `<Tree.ItemAction>` out of an item/folder's JSX children. Returns the
@@ -51,93 +44,82 @@ const extractItemAction = (children: ReactNode): { action: ReactNode; rest: Reac
     return { action, rest };
 };
 
+const toItemData = (props: TreeItemProps, parentId: string): TreeItemData => {
+    const { action } = extractItemAction(props.children);
+    return {
+        id: props.id,
+        name: props.label,
+        isFolder: false,
+        parentId,
+        isSelected: props.isSelected,
+        onSelectChange: props.onSelectChange,
+        isActive: props.isActive,
+        onClick: props.onClick,
+        onMove: props.onMove,
+        actions: action,
+        tags: props.tags,
+    };
+};
+
+type FolderParse = {
+    folder: TreeItemData;
+    descendants: TreeItemData[];
+};
+
+const toFolderData = (props: TreeFolderProps, parentId: string): FolderParse => {
+    const { action, rest } = extractItemAction(props.children);
+    const nested = parseChildren(rest, props.id);
+    return {
+        folder: {
+            id: props.id,
+            name: props.label,
+            isFolder: true,
+            parentId,
+            children: nested.items.filter((item) => item.parentId === props.id).map((item) => item.id),
+            isExpanded: props.isExpanded,
+            onExpandChange: props.onExpandChange,
+            isSelected: props.isSelected,
+            onSelectChange: props.onSelectChange,
+            isActive: props.isActive,
+            onClick: props.onClick,
+            onMove: props.onMove,
+            actions: action,
+            isLoading: nested.parentIsLoading,
+            tags: props.tags,
+            accepts: props.accepts,
+        },
+        descendants: nested.items,
+    };
+};
+
 /**
- * Walks the JSX children of <Tree.Root> and produces a flat TreeItemData[] for headless-tree's
- * dataLoader. A `<Tree.Loading>` child sets `isLoading`/`loadingLabel` on the parent folder
- * (or, at the top level, surfaces via `parentIsLoading`/`parentLoadingLabel` for TreeRoot to
- * render the root loading row). Components are matched by displayName (not identity) so HMR
- * component swaps don't break the tree.
+ * Walks the JSX children of `<Tree.Root>` and produces a flat `TreeItemData[]` for
+ * headless-tree's data loader. A `<Tree.Loading>` child sets `isLoading` on the
+ * surrounding folder (or surfaces via `parentIsLoading` at the top level for `TreeRoot`
+ * to render the root loading row). Components are matched by `displayName` — not
+ * identity — so HMR component swaps don't break the tree.
  */
-export const parseChildren = (children: ReactNode, parentId: string = 'root'): ParsedChildren => {
+export const parseChildren = (children: ReactNode, parentId: string = ROOT_ID): ParsedChildren => {
     const items: TreeItemData[] = [];
     let parentIsLoading = false;
-    let parentLoadingLabel: string | undefined;
+
     for (const child of Children.toArray(children)) {
         if (!isValidElement(child)) {
             continue;
         }
         if (isTreeLoadingElement(child)) {
             parentIsLoading = true;
-            parentLoadingLabel = child.props.label;
             continue;
         }
         if (isTreeItemElement(child)) {
-            const {
-                id,
-                label,
-                isSelected,
-                onSelectChange,
-                isActive,
-                onClick,
-                onMove,
-                tags,
-                children: itemChildren,
-            } = child.props;
-            const { action } = extractItemAction(itemChildren);
-            items.push({
-                id,
-                name: label,
-                isFolder: false,
-                parentId,
-                isSelected,
-                onSelectChange,
-                isActive,
-                onClick,
-                onMove,
-                actions: action,
-                tags,
-            });
+            items.push(toItemData(child.props, parentId));
             continue;
         }
         if (isTreeFolderElement(child)) {
-            const {
-                id,
-                label,
-                children: nested,
-                isExpanded,
-                onExpandChange,
-                isSelected,
-                onSelectChange,
-                isActive,
-                onClick,
-                onMove,
-                tags,
-                accepts,
-            } = child.props;
-            const { action, rest } = extractItemAction(nested);
-            const descendants = parseChildren(rest, id);
-            const directChildIds = descendants.items.filter((item) => item.parentId === id).map((item) => item.id);
-            items.push({
-                id,
-                name: label,
-                isFolder: true,
-                parentId,
-                children: directChildIds,
-                isExpanded,
-                onExpandChange,
-                isSelected,
-                onSelectChange,
-                isActive,
-                onClick,
-                onMove,
-                actions: action,
-                isLoading: descendants.parentIsLoading,
-                loadingLabel: descendants.parentLoadingLabel,
-                tags,
-                accepts,
-            });
-            items.push(...descendants.items);
+            const { folder, descendants } = toFolderData(child.props, parentId);
+            items.push(folder, ...descendants);
         }
     }
-    return { items, parentIsLoading, parentLoadingLabel };
+
+    return { items, parentIsLoading };
 };

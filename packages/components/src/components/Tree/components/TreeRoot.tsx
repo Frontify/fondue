@@ -7,8 +7,8 @@ import { useTranslation } from '#/hooks/useTranslation';
 import { useTreeController } from '../hooks/useTreeController';
 import styles from '../styles/tree.module.scss';
 import { type TreeChangeState, type TreeDropCandidate } from '../types';
+import { computeLoadingInsertions } from '../utils/computeLoadingInsertions';
 import { isNoopDrop } from '../utils/isNoopDrop';
-import { computeLoadingInsertions } from '../utils/loadingPlaceholders';
 import { parseChildren } from '../utils/parseChildren';
 
 import { TreeDragLine } from './TreeDragLine';
@@ -43,17 +43,13 @@ export type TreeRootProps = {
 export const TreeRoot = ({ children, onChange, multiSelect = false, reorderable = false, accepts }: TreeRootProps) => {
     const { t } = useTranslation();
     const rowHintId = useId();
-    const {
-        items,
-        parentIsLoading: rootIsLoading,
-        parentLoadingLabel: rootLoadingLabel,
-    } = useMemo(() => parseChildren(children), [children]);
+    const { items, parentIsLoading: rootIsLoading } = useMemo(() => parseChildren(children), [children]);
     const tree = useTreeController({ items, onChange, reorderable, rootAccepts: accepts });
 
     const visibleItems = tree.getItems();
     const loadingInsertions = useMemo(
-        () => computeLoadingInsertions(visibleItems, rootIsLoading, rootLoadingLabel),
-        [visibleItems, rootIsLoading, rootLoadingLabel],
+        () => computeLoadingInsertions(visibleItems, rootIsLoading),
+        [visibleItems, rootIsLoading],
     );
 
     const rowHint = [multiSelect && t('Tree_checkboxHint'), reorderable && t('Tree_reorderHint')]
@@ -80,7 +76,6 @@ export const TreeRoot = ({ children, onChange, multiSelect = false, reorderable 
                         {loadingPlaceholder && (
                             <TreeLoadingRow
                                 level={loadingPlaceholder.level}
-                                label={loadingPlaceholder.label}
                                 multiSelect={multiSelect}
                                 reorderable={reorderable}
                             />
@@ -91,7 +86,6 @@ export const TreeRoot = ({ children, onChange, multiSelect = false, reorderable 
             {loadingInsertions.rootLoading && (
                 <TreeLoadingRow
                     level={loadingInsertions.rootLoading.level}
-                    label={loadingInsertions.rootLoading.label}
                     multiSelect={multiSelect}
                     reorderable={reorderable}
                 />
