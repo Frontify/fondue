@@ -20,8 +20,8 @@ import {
     treeItemsMockMultiseclect as treeItemsMockMultiselect,
 } from '@components/Tree/utils';
 
-import { TreeItemMultiselect } from './TreeItem/TreeItemMultiselect';
 import { getNewSelectedItems } from './helpers';
+import { TreeItemMultiselect } from './TreeItem/TreeItemMultiselect';
 
 /**
  ### *Legacy component warning*

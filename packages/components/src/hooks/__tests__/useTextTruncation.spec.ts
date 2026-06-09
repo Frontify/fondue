@@ -17,7 +17,7 @@ describe('useTextTruncation', () => {
         mockRef = { current: mockElement };
 
         global.ResizeObserver = vi.fn().mockImplementation((callback) => {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+            // oxlint-disable-next-line @typescript-eslint/no-unsafe-assignment
             resizeCallback = callback;
             return {
                 observe: vi.fn(),

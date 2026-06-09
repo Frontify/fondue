@@ -30,7 +30,7 @@ test.describe('RangeDatePicker', () => {
 
     test('should display the month caption for the selected range', async ({ mount }) => {
         const component = await mount(<DatePicker.Range data-test-id={RANGE_TEST_ID} selected={RANGE_SELECTION} />);
-        await expect(component.getByText('March 2025')).toBeVisible();
+        await expect(component.getByText('March 2025').filter({ visible: true })).toBeVisible();
     });
 
     test('should highlight range start and end days', async ({ mount }) => {
@@ -48,39 +48,47 @@ test.describe('RangeDatePicker', () => {
         expect(count).toBeGreaterThan(0);
     });
 
-    test('should call onChange only after both range ends have been clicked', async ({ mount }) => {
+    test('should call onChange on each click when editing a range', async ({ mount }) => {
         const onChange = sinon.spy();
         const component = await mount(
             <DatePicker.Range data-test-id={RANGE_TEST_ID} selected={RANGE_SELECTION} onChange={onChange} />,
         );
-        await component.getByRole('button', { name: /March 20th/ }).click();
-        expect(onChange.callCount).toBe(0);
-        await component.getByRole('button', { name: /March 25th/ }).click();
+        await component.getByRole('button', { name: /March 3rd/ }).click();
         expect(onChange.callCount).toBe(1);
+        expect(onChange.lastCall.firstArg).toEqual({
+            from: { year: 2025, month: 3, day: 3 },
+            to: { year: 2025, month: 3, day: 15 },
+        });
+        await component.getByRole('button', { name: /March 25th/ }).click();
+        expect(onChange.callCount).toBe(2);
+        expect(onChange.lastCall.firstArg).toEqual({
+            from: { year: 2025, month: 3, day: 3 },
+            to: { year: 2025, month: 3, day: 25 },
+        });
     });
 
     test('should navigate to the next month', async ({ mount }) => {
         const component = await mount(<DatePicker.Range data-test-id={RANGE_TEST_ID} selected={RANGE_SELECTION} />);
         await component.getByRole('button', { name: /next month/i }).click();
-        await expect(component.getByText('April 2025')).toBeVisible();
+        await expect(component.getByText('April 2025').filter({ visible: true })).toBeVisible();
     });
 
     test('should navigate to the previous month', async ({ mount }) => {
         const component = await mount(<DatePicker.Range data-test-id={RANGE_TEST_ID} selected={RANGE_SELECTION} />);
         await component.getByRole('button', { name: /previous month/i }).click();
-        await expect(component.getByText('February 2025')).toBeVisible();
+        await expect(component.getByText('February 2025').filter({ visible: true })).toBeVisible();
     });
 
     test('should navigate to the next year', async ({ mount }) => {
         const component = await mount(<DatePicker.Range data-test-id={RANGE_TEST_ID} selected={RANGE_SELECTION} />);
         await component.getByRole('button', { name: /next year/i }).click();
-        await expect(component.getByText('March 2026')).toBeVisible();
+        await expect(component.getByText('March 2026').filter({ visible: true })).toBeVisible();
     });
 
     test('should navigate to the previous year', async ({ mount }) => {
         const component = await mount(<DatePicker.Range data-test-id={RANGE_TEST_ID} selected={RANGE_SELECTION} />);
         await component.getByRole('button', { name: /previous year/i }).click();
-        await expect(component.getByText('March 2024')).toBeVisible();
+        await expect(component.getByText('March 2024').filter({ visible: true })).toBeVisible();
     });
 
     test('should render 7 weekday columns', async ({ mount }) => {

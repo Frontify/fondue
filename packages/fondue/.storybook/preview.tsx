@@ -2,9 +2,10 @@
 
 import '@frontify/fondue-tokens/legacy/tokens';
 import '@frontify/fondue-tokens/styles';
-
 import { Decorator } from '@storybook/react-vite';
+
 import '../src/styles.css';
+
 import { dark, light } from './frontifyTheme';
 
 export const withTheme: Decorator = (Story, context) => {

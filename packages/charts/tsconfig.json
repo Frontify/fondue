@@ -1,7 +1,6 @@
 {
     "compilerOptions": {
         "allowImportingTsExtensions": true,
-        "baseUrl": ".",
         "isolatedModules": true,
         "jsx": "react-jsx",
         "lib": ["ES2022", "DOM", "DOM.Iterable"],
@@ -22,6 +21,6 @@
         "target": "ES2022",
         "useDefineForClassFields": true
     },
-    "include": [".storybook/**/*", "src", "eslint.config.mjs", "postcss.config.cjs"],
+    "include": [".storybook/**/*", "src", "postcss.config.cjs"],
     "references": [{ "path": "./tsconfig.node.json" }]
 }

@@ -8,13 +8,11 @@ import { type DatePickerDateRange } from '../types';
 
 export const useDateRange = (selected: DatePickerDateRange, onSelect?: (dateRange: DatePickerDateRange) => void) => {
     const [internalSelectedDateRange, setInternalSelectedDateRange] = useState<DatePickerDateRange>(selected);
-    const [isAwaitingEndDate, setIsAwaitingEndDate] = useState(false);
     const [prevSelected, setPrevSelected] = useState<DatePickerDateRange | undefined>(selected);
 
     if (prevSelected !== selected) {
         setPrevSelected(selected);
         setInternalSelectedDateRange(selected);
-        setIsAwaitingEndDate(false);
     }
 
     const selectedDateRange = useMemo(() => {
@@ -28,19 +26,17 @@ export const useDateRange = (selected: DatePickerDateRange, onSelect?: (dateRang
             return;
         }
 
+        const hasExistingSelection = internalSelectedDateRange !== undefined;
+
         setInternalSelectedDateRange(dateRange);
 
-        if (isAwaitingEndDate) {
-            setIsAwaitingEndDate(false);
+        if (hasExistingSelection) {
             onSelect?.(dateRange);
-        } else {
-            setIsAwaitingEndDate(true);
         }
     };
 
     return {
         selectedDateRange,
         handleSelect,
-        isAwaitingEndDate,
     };
 };

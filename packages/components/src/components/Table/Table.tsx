@@ -124,7 +124,7 @@ export const TableRoot = forwardRef<HTMLTableElement, TableRootProps>(
         }, [children]);
 
         return (
-            // eslint-disable-next-line jsx-a11y-x/no-noninteractive-element-interactions
+            // oxlint-disable-next-line jsx-a11y-x/no-noninteractive-element-interactions
             <table
                 ref={tableRef}
                 className={styles.table}

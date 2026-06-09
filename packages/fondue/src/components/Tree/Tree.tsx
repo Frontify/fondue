@@ -45,10 +45,6 @@ import {
     type TreeStateAction,
 } from '@components/Tree/types';
 
-import { TreeContext, type TreeContextProps } from './TreeContext';
-import { type InternalTreeItemProps, TreeItemOverlay } from './TreeItem';
-import { type InternalTreeItemMultiSelectProps } from './TreeItem/TreeItemMultiselect';
-import { type Overlay } from './TreeItem/TreeItemOverlay';
 import {
     ROOT_ID,
     currentNodesChanged,
@@ -66,6 +62,10 @@ import {
     shouldUpdateTreeState,
     updateNodeWithNewChildren,
 } from './helpers';
+import { TreeContext, type TreeContextProps } from './TreeContext';
+import { type InternalTreeItemProps, TreeItemOverlay } from './TreeItem';
+import { type InternalTreeItemMultiSelectProps } from './TreeItem/TreeItemMultiselect';
+import { type Overlay } from './TreeItem/TreeItemOverlay';
 import {
     recursivelyRemoveFragmentsAndEnrichChildren,
     sortableTreeKeyboardCoordinates,

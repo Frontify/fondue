@@ -70,6 +70,9 @@
         top: 0;
         z-index: 1;
         background-color: var(--color-surface-default);
+    }
+
+    .accordionItem[data-stuck='true'] & {
         box-shadow: 0 1px 0 var(--color-line-subtle);
     }
 }
@@ -141,14 +144,6 @@
 
     &[data-item-divider='true'] > div {
         border-top: var(--border-width-default) solid var(--color-line-subtle);
-        padding-top: var(--accordion-vertical-padding);
-    }
-
-    .root[data-sticky='true'] &[data-item-divider='true'] > div {
-        border-top-color: transparent;
-    }
-
-    .root[data-sticky='true'] & > div {
         padding-top: var(--accordion-vertical-padding);
     }
 }

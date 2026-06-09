@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type Format } from 'node_modules/style-dictionary/types/Format';
 import { propertyFormatNames } from 'style-dictionary/enums';
+import { type Format } from 'style-dictionary/types';
 import { formattedVariables } from 'style-dictionary/utils';
 
 export const orderedVariables: Format = {

@@ -9,12 +9,15 @@ import {
     isValidElement,
     useCallback,
     useContext,
+    useEffect,
     useMemo,
     useRef,
     type ForwardedRef,
     type MouseEventHandler,
     type ReactNode,
 } from 'react';
+
+import { useSyncRefs } from '#/hooks/useSyncRefs';
 
 import styles from './styles/accordion.module.scss';
 
@@ -127,10 +130,61 @@ export const AccordionRoot = forwardRef<HTMLDivElement, AccordionRootProps>(
             sticky = false,
             onValueChange,
         }: AccordionRootProps,
-        ref: ForwardedRef<HTMLDivElement>,
+        forwardedRef: ForwardedRef<HTMLDivElement>,
     ) => {
+        const rootRef = useRef<HTMLDivElement>(null);
+        useSyncRefs(rootRef, forwardedRef);
+
         const itemsRef = useRef<Map<string, HTMLDivElement>>(new Map());
         const uncontrolledValueRef = useRef<string[]>(defaultValue ?? []);
+
+        useEffect(() => {
+            const rootElement = rootRef.current;
+            if (!sticky || !rootElement) {
+                return;
+            }
+
+            const items = itemsRef.current;
+            let scrollContainer: HTMLElement | null = null;
+
+            let frame = 0;
+            const updateStuckItems = () => {
+                frame = 0;
+                scrollContainer = scrollContainer ?? findScrollableAncestor(rootElement);
+                const containerTop = scrollContainer?.getBoundingClientRect().top ?? 0;
+
+                for (const itemElement of items.values()) {
+                    const { top, bottom } = itemElement.getBoundingClientRect();
+                    // strictly below the container top, so a header resting at the top
+                    // before any scroll has happened does not count as stuck
+                    itemElement.dataset.stuck = String(top < containerTop && bottom > containerTop);
+                }
+            };
+
+            updateStuckItems();
+
+            const requestUpdate = () => {
+                if (frame === 0) {
+                    frame = requestAnimationFrame(updateStuckItems);
+                }
+            };
+
+            // capture phase, since scroll events of nested containers do not bubble
+            window.addEventListener('scroll', requestUpdate, { capture: true, passive: true });
+
+            // open/close animations move the items without scrolling
+            const resizeObserver = new ResizeObserver(requestUpdate);
+            resizeObserver.observe(rootElement);
+
+            return () => {
+                cancelAnimationFrame(frame);
+                window.removeEventListener('scroll', requestUpdate, { capture: true });
+                resizeObserver.disconnect();
+                for (const itemElement of items.values()) {
+                    delete itemElement.dataset.stuck;
+                }
+            };
+        }, [sticky]);
 
         const registerItem = useCallback((itemValue: string, element: HTMLDivElement | null) => {
             if (element) {
@@ -170,7 +224,7 @@ export const AccordionRoot = forwardRef<HTMLDivElement, AccordionRootProps>(
         return (
             <AccordionRootContext.Provider value={contextValue}>
                 <RadixAccordion.Root
-                    ref={ref}
+                    ref={rootRef}
                     className={styles.root}
                     data-test-id={dataTestId}
                     defaultValue={defaultValue}
