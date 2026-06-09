@@ -48,15 +48,23 @@ test.describe('RangeDatePicker', () => {
         expect(count).toBeGreaterThan(0);
     });
 
-    test('should call onChange only after both range ends have been clicked', async ({ mount }) => {
+    test('should call onChange on each click when editing a range', async ({ mount }) => {
         const onChange = sinon.spy();
         const component = await mount(
             <DatePicker.Range data-test-id={RANGE_TEST_ID} selected={RANGE_SELECTION} onChange={onChange} />,
         );
-        await component.getByRole('button', { name: /March 20th/ }).click();
-        expect(onChange.callCount).toBe(0);
-        await component.getByRole('button', { name: /March 25th/ }).click();
+        await component.getByRole('button', { name: /March 3rd/ }).click();
         expect(onChange.callCount).toBe(1);
+        expect(onChange.lastCall.firstArg).toEqual({
+            from: { year: 2025, month: 3, day: 3 },
+            to: { year: 2025, month: 3, day: 15 },
+        });
+        await component.getByRole('button', { name: /March 25th/ }).click();
+        expect(onChange.callCount).toBe(2);
+        expect(onChange.lastCall.firstArg).toEqual({
+            from: { year: 2025, month: 3, day: 3 },
+            to: { year: 2025, month: 3, day: 25 },
+        });
     });
 
     test('should navigate to the next month', async ({ mount }) => {
