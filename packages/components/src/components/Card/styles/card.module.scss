@@ -223,8 +223,9 @@
         background-color: var(--color-surface-active);
     }
 
+    // 3:1 so that a banner split into 3 equal-width images yields square images.
     &[data-size='small'] {
-        aspect-ratio: 9 / 4;
+        aspect-ratio: 3 / 1;
     }
 
     &[data-size='large'] {

@@ -185,6 +185,7 @@ export const SmallBannerWithImages: Story = {
                 <Card.Banner size="small">
                     <Card.BannerImage src="https://picsum.photos/seed/col1/300/200" alt="Image 1" />
                     <Card.BannerImage src="https://picsum.photos/seed/col2/300/200" alt="Image 2" />
+                    <Card.BannerImage src="https://picsum.photos/seed/col3/300/200" alt="Image 3" />
                 </Card.Banner>
 
                 <Card.Title>[Collection name]</Card.Title>
