@@ -1,4 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
+
 // @vitest-environment happy-dom
 
 import { act, renderHook } from '@testing-library/react';
