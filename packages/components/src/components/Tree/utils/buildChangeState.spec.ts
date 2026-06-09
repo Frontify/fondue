@@ -81,4 +81,15 @@ describe('buildChangeState', () => {
         expect(result[0]?.isActive).toBe(true);
         expect(result[1]?.isActive).toBe(true);
     });
+
+    it('echoes tags back on both leaves and folders', () => {
+        const items: TreeItemData[] = [
+            { id: ROOT_ID, name: 'Root', isFolder: true, children: ['a', 'folder'] },
+            { id: 'a', name: 'A', isFolder: false, parentId: ROOT_ID, tags: ['image'] },
+            { id: 'folder', name: 'Folder', isFolder: true, parentId: ROOT_ID, tags: ['bin'], children: [] },
+        ];
+        const result = buildChangeState(items, emptyState, ROOT_ID);
+        expect(result[0]?.tags).toEqual(['image']);
+        expect(result[1]?.tags).toEqual(['bin']);
+    });
 });

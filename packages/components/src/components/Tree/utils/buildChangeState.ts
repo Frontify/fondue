@@ -45,6 +45,7 @@ export const buildChangeState = (
                 isExpanded: expanded.has(item.id),
                 isSelected: hasChildren && children.every((child) => child.isSelected),
                 isActive: Boolean(item.isActive),
+                tags: item.tags,
                 children,
             };
         }
@@ -54,6 +55,7 @@ export const buildChangeState = (
             isFolder: false,
             isSelected: checked.has(item.id),
             isActive: Boolean(item.isActive),
+            tags: item.tags,
         };
     };
 

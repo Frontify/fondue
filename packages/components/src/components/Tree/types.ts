@@ -21,6 +21,13 @@ type TreeNodeBase = {
     isExpanded?: boolean;
     isSelected?: boolean;
     isActive?: boolean;
+    /**
+     * Echoes back the `tags` the consumer attached to this row. Intrinsic per-row
+     * metadata (e.g. used by `accepts` drop predicates) — included here so consumers
+     * can re-render straight from `TreeChangeState` without maintaining a parallel
+     * id→tags lookup.
+     */
+    tags?: string[];
 };
 
 export type TreeNodeState = TreeNodeBase & {
