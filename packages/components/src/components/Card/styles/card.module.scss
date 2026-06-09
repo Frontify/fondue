@@ -5,13 +5,6 @@
 @use '../../../utilities/transitions.module.scss';
 
 // Mixin for card state variants (default, hover, selected, hover+selected).
-//
-// Both the whole-card border and the banner border are drawn as inset box-shadows
-// on `::after` overlays (see `.root::after` / `.banner::after`). Drawing them inset
-// at the same position keeps the border on the inside of the card: it never changes
-// the card's outer size and the top/side segment does not move between states, so on
-// hover the border simply extends down around the rest of the card. The overlays also
-// paint above the banner image, so the banner border stays visible with or without one.
 @mixin card-state(
     $card-border-color: transparent,
     $root-bg: null,
@@ -84,8 +77,6 @@
     outline: none;
     @include transitions.transition((background-color));
 
-    // Whole-card border overlay. Painted above the banner/image and flush with the card's
-    // edge so it shares the banner border's position — no size change, no halo around it.
     &::after {
         content: '';
         position: absolute;
@@ -202,8 +193,6 @@
     pointer-events: none;
     @include transitions.transition-colors;
 
-    // Banner border overlay. Painted above the image (and inheriting the banner radius)
-    // so the border stays visible whether or not the banner has an image.
     &::after {
         content: '';
         position: absolute;
@@ -223,7 +212,6 @@
         background-color: var(--color-surface-active);
     }
 
-    // 3:1 so that a banner split into 3 equal-width images yields square images.
     &[data-size='small'] {
         aspect-ratio: 3 / 1;
     }
