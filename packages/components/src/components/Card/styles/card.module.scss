@@ -4,24 +4,41 @@
 @use '../../../utilities/sizeToken.module.scss';
 @use '../../../utilities/transitions.module.scss';
 
-// Mixin for card state variants (default, hover, selected, hover+selected)
+// Mixin for card state variants (default, hover, selected, hover+selected).
+//
+// Both the whole-card border and the banner border are drawn as inset box-shadows
+// on `::after` overlays (see `.root::after` / `.banner::after`). Drawing them inset
+// at the same position keeps the border on the inside of the card: it never changes
+// the card's outer size and the top/side segment does not move between states, so on
+// hover the border simply extends down around the rest of the card. The overlays also
+// paint above the banner image, so the banner border stays visible with or without one.
 @mixin card-state(
-    $root-border-color: transparent,
+    $card-border-color: transparent,
     $root-bg: null,
-    $box-shadow: none,
+    $card-ring: null,
     $banner-border-color: transparent,
     $banner-border-radius: 0
 ) {
-    border-color: $root-border-color;
-    box-shadow: $box-shadow;
-
     @if $root-bg {
         background-color: var(--color-#{$root-bg});
     }
 
+    &::after {
+        @if $card-ring {
+            box-shadow:
+                inset 0 0 0 1px $card-border-color,
+                $card-ring;
+        } @else {
+            box-shadow: inset 0 0 0 1px $card-border-color;
+        }
+    }
+
     & .banner {
-        box-shadow: inset 0 0 0 1px $banner-border-color;
         border-radius: $banner-border-radius;
+    }
+
+    & .banner::after {
+        box-shadow: inset 0 0 0 1px $banner-border-color;
     }
 }
 
@@ -62,11 +79,22 @@
     grid-template-rows: auto minmax(calc(#{sizeToken.get(10)} / 2 + var(--spacing-small)), auto) minmax(calc(#{sizeToken.get(10)} / 2 + var(--spacing-small)), auto);
     border-radius: var(--border-radius-large);
     box-sizing: border-box;
-    border: var(--border-width-default) solid transparent;
     background-color: var(--color-surface-default);
     overflow: hidden;
     outline: none;
-    @include transitions.transition((background-color, border-color, box-shadow));
+    @include transitions.transition((background-color));
+
+    // Whole-card border overlay. Painted above the banner/image and flush with the card's
+    // edge so it shares the banner border's position — no size change, no halo around it.
+    &::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+        border-radius: inherit;
+        pointer-events: none;
+        @include transitions.transition-box-shadow;
+    }
 
     &:not(:has(> .banner)) {
         background-color: var(--color-surface-dim);
@@ -90,7 +118,7 @@
         &:hover,
         &:has([data-state='open']) {
             @include card-state(
-                $root-border-color: var(--color-line-subtle),
+                $card-border-color: var(--color-line-subtle),
                 $root-bg: 'surface-hover'
             );
         }
@@ -98,9 +126,9 @@
         // Selected state
         &[data-selected='true'] {
             @include card-state(
-                $root-border-color: var(--color-line-strong),
+                $card-border-color: var(--color-line-strong),
                 $root-bg: 'surface-dim',
-                $box-shadow: inset 0 0 0 1px var(--color-interactive-default)
+                $card-ring: inset 0 0 0 2px var(--color-interactive-default)
             );
         }
 
@@ -108,9 +136,9 @@
         &[data-selected='true']:hover,
         &[data-selected='true']:has([data-state='open']) {
             @include card-state(
-                $root-border-color: var(--color-interactive-default),
+                $card-border-color: var(--color-interactive-default),
                 $root-bg: 'surface-hover',
-                $box-shadow: inset 0 0 0 1px var(--color-interactive-default)
+                $card-ring: inset 0 0 0 2px var(--color-interactive-default)
             );
         }
 
@@ -173,6 +201,18 @@
     background-color: var(--color-surface-dim);
     pointer-events: none;
     @include transitions.transition-colors;
+
+    // Banner border overlay. Painted above the image (and inheriting the banner radius)
+    // so the border stays visible whether or not the banner has an image.
+    &::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        border-radius: inherit;
+        pointer-events: none;
+        @include transitions.transition-box-shadow;
+    }
 
     .root[data-interactive='true']:hover &:has(> .bannerIcon),
     .root[data-interactive='true']:has([data-state='open']) &:has(> .bannerIcon) {
