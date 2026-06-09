@@ -60,11 +60,11 @@
         border-color: var(--tree-accent);
     }
 
-    &:not([data-active='true']):hover {
+    &:not([data-selected='true']):hover {
         background-color: var(--color-surface-hover);
     }
 
-    &[data-active='true'] {
+    &[data-selected='true'] {
         background-color: var(--color-surface-active);
     }
 }
@@ -118,7 +118,7 @@
         font-weight: var(--typography-font-weight-medium);
     }
 
-    .item[data-active='true'] & {
+    .item[data-selected='true'] & {
         color: inherit;
     }
 }

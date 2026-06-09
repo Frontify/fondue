@@ -71,15 +71,25 @@ describe('buildChangeState', () => {
         expect(result).toEqual([]);
     });
 
-    it('preserves isActive on both leaves and folders', () => {
-        const items: TreeItemData[] = [
-            { id: ROOT_ID, name: 'Root', isFolder: true, children: ['a', 'folder'] },
-            { id: 'a', name: 'A', isFolder: false, parentId: ROOT_ID, isActive: true },
-            { id: 'folder', name: 'Folder', isFolder: true, parentId: ROOT_ID, isActive: true, children: [] },
-        ];
-        const result = buildChangeState(items, emptyState, ROOT_ID);
-        expect(result[0]?.isActive).toBe(true);
-        expect(result[1]?.isActive).toBe(true);
+    it('reflects selectedItems on leaves and folders (single-select)', () => {
+        const result = buildChangeState(
+            flatItems,
+            { ...emptyState, selectedItems: ['folder'] },
+            ROOT_ID,
+        );
+        expect(result[0]?.isSelected).toBe(false);
+        expect(result[1]?.isSelected).toBe(true);
+
+        const leafSelected = buildChangeState(
+            flatItems,
+            { ...emptyState, selectedItems: ['f1'] },
+            ROOT_ID,
+        );
+        const folder = leafSelected[1];
+        const leaves = folder?.isFolder ? folder.children : undefined;
+        expect(leaves?.[0]?.isSelected).toBe(true);
+        expect(leaves?.[1]?.isSelected).toBe(false);
+        expect(folder?.isSelected).toBe(false);
     });
 
     it('echoes tags back on both leaves and folders', () => {

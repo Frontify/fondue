@@ -44,7 +44,7 @@ export const TreeRoot = ({ children, onChange, multiSelect = false, reorderable 
     const { t } = useTranslation();
     const rowHintId = useId();
     const { items, parentIsLoading: rootIsLoading } = useMemo(() => parseChildren(children), [children]);
-    const tree = useTreeController({ items, onChange, reorderable, rootAccepts: accepts });
+    const tree = useTreeController({ items, onChange, multiSelect, reorderable, rootAccepts: accepts });
 
     const visibleItems = tree.getItems();
     const loadingInsertions = useMemo(

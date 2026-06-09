@@ -60,7 +60,7 @@ describe('useTreeController', () => {
 
     it('emits onChange with the assembled state when a checkbox toggles', () => {
         const onChange = vi.fn<(state: TreeChangeState) => void>();
-        const { result } = renderHook(() => useTreeController({ items: baseItems, onChange }));
+        const { result } = renderHook(() => useTreeController({ items: baseItems, onChange, multiSelect: true }));
 
         act(() => {
             // Directly drive the checkbox state via the tree's setter — equivalent to a click,
@@ -72,5 +72,39 @@ describe('useTreeController', () => {
         const last = onChange.mock.calls[onChange.mock.calls.length - 1]?.[0] ?? [];
         expect(last.find((node) => node.id === '1')?.isSelected).toBe(true);
         expect(last.find((node) => node.id === '2')?.isSelected).toBe(false);
+    });
+
+    it('moves single-select state and fires onSelectChange diffs', () => {
+        const onChange = vi.fn<(state: TreeChangeState) => void>();
+        const onSelectA = vi.fn();
+        const onSelectB = vi.fn();
+        const items: TreeItemData[] = [
+            { id: '1', name: 'One', isFolder: false, parentId: ROOT_ID, isSelected: true, onSelectChange: onSelectA },
+            { id: '2', name: 'Two', isFolder: false, parentId: ROOT_ID, onSelectChange: onSelectB },
+        ];
+        const { result } = renderHook(() => useTreeController({ items, onChange }));
+
+        act(() => {
+            result.current.setSelectedItems(['2']);
+        });
+
+        const last = onChange.mock.calls[onChange.mock.calls.length - 1]?.[0] ?? [];
+        expect(last.find((node) => node.id === '1')?.isSelected).toBe(false);
+        expect(last.find((node) => node.id === '2')?.isSelected).toBe(true);
+        expect(onSelectA).toHaveBeenCalledWith(false);
+        expect(onSelectB).toHaveBeenCalledWith(true);
+    });
+
+    it('pins single-select to the last id even when the setter receives multiple', () => {
+        const onChange = vi.fn<(state: TreeChangeState) => void>();
+        const { result } = renderHook(() => useTreeController({ items: baseItems, onChange }));
+
+        act(() => {
+            result.current.setSelectedItems(['1', '2']);
+        });
+
+        const last = onChange.mock.calls[onChange.mock.calls.length - 1]?.[0] ?? [];
+        expect(last.find((node) => node.id === '1')?.isSelected).toBe(false);
+        expect(last.find((node) => node.id === '2')?.isSelected).toBe(true);
     });
 });

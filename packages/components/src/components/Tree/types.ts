@@ -20,7 +20,6 @@ type TreeNodeBase = {
     isFolder: boolean;
     isExpanded?: boolean;
     isSelected?: boolean;
-    isActive?: boolean;
     /**
      * Echoes back the `tags` the consumer attached to this row. Intrinsic per-row
      * metadata (e.g. used by `accepts` drop predicates) — included here so consumers
@@ -53,14 +52,15 @@ export type TreeDropCandidate = {
 type TreeRowSharedProps = {
     id: string;
     label: string;
+    /**
+     * Marks the row as selected. With `<Tree.Root multiSelect>` this checks the row's
+     * checkbox; without `multiSelect` it highlights the row's background. Always
+     * sets `aria-selected="true"` on the row. The Tree tracks single-select state
+     * internally, so consumers can simply read it back from `onChange` instead of
+     * keeping a parallel `selectedId`.
+     */
     isSelected?: boolean;
     onSelectChange?: (isSelected: boolean) => void;
-    /**
-     * Marks this item as the currently active one (e.g. the active route when
-     * the Tree is used as a navigation menu). Purely declarative — the consumer
-     * owns the value and toggles it (typically in response to a route change).
-     */
-    isActive?: boolean;
     /**
      * Fires when the row is activated by mouse click or keyboard (Enter / Space on a
      * focused row). For folders this fires alongside the expand-toggle that the click
@@ -123,7 +123,6 @@ export type TreeItemData = {
     onExpandChange?: (isExpanded: boolean) => void;
     isSelected?: boolean;
     onSelectChange?: (isSelected: boolean) => void;
-    isActive?: boolean;
     onClick?: MouseEventHandler<HTMLDivElement>;
     onMove?: (info: TreeMoveInfo) => void;
     actions?: ReactNode;

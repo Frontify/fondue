@@ -13,18 +13,11 @@ const renderNodes = (nodes: TreeChangeState): ReactNode =>
                 label={node.name}
                 isExpanded={node.isExpanded}
                 isSelected={node.isSelected}
-                isActive={node.isActive}
             >
                 {renderNodes(node.children ?? [])}
             </Tree.Folder>
         ) : (
-            <Tree.Item
-                key={node.id}
-                id={node.id}
-                label={node.name}
-                isSelected={node.isSelected}
-                isActive={node.isActive}
-            />
+            <Tree.Item key={node.id} id={node.id} label={node.name} isSelected={node.isSelected} />
         ),
     );
 

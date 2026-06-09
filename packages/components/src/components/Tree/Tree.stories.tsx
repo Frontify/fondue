@@ -8,7 +8,6 @@ import { action } from 'storybook/actions';
 import { Button } from '#/index';
 
 import {
-  Tree,
     Tree,
     TreeFolder,
     TreeItem,
@@ -180,35 +179,35 @@ export const NestedFolders: Story = {
     },
 };
 
-export const SingleSelectAriaSelected: Story = {
+export const SingleSelect: Story = {
     parameters: {
         docs: {
             description: {
                 story:
-                    'Without `multiSelect`, the Tree has no built-in selection UI — but `isSelected` on a row ' +
-                    'still drives `aria-selected="true"` on its `treeitem`, so consumers can wire row clicks to ' +
-                    'their own single-select state and have the right accessibility semantics out of the box.',
+                    'Without `multiSelect`, clicking a row selects it: the Tree tracks single-select state ' +
+                    'internally, highlights the selected row, and emits the new `isSelected` flag via ' +
+                    '`onChange`. Consumers re-render straight from that state — no parallel `selectedId` ' +
+                    'needed — and `aria-selected="true"` follows the highlight for screen readers.',
             },
         },
     },
     render: (args) => {
-        const [selectedId, setSelectedId] = useState<string>('2');
-        const items = [
-            { id: '1', label: 'Item 1' },
-            { id: '2', label: 'Item 2' },
-            { id: '3', label: 'Item 3' },
-        ];
+        const [nodes, setNodes] = useState<TreeChangeState>([
+            { id: '1', name: 'Item 1', isFolder: false },
+            { id: '2', name: 'Item 2', isFolder: false, isSelected: true },
+            { id: '3', name: 'Item 3', isFolder: false },
+        ]);
 
         return (
-            <Tree.Root {...args}>
-                {items.map((item) => (
-                    <Tree.Item
-                        key={item.id}
-                        id={item.id}
-                        label={item.label}
-                        isSelected={item.id === selectedId}
-                        onClick={() => setSelectedId(item.id)}
-                    />
+            <Tree.Root
+                {...args}
+                onChange={(state) => {
+                    args.onChange?.(state);
+                    setNodes(state);
+                }}
+            >
+                {nodes.map((n) => (
+                    <Tree.Item key={n.id} id={n.id} label={n.name} isSelected={n.isSelected} />
                 ))}
             </Tree.Root>
         );
@@ -548,35 +547,21 @@ export const AsNavigation: Story = {
                 isFolder: true,
                 isExpanded: true,
                 children: [
-                    { id: 'projects/alpha', name: 'Alpha', isFolder: false },
+                    { id: 'projects/alpha', name: 'Alpha', isFolder: false, isSelected: true },
                     { id: 'projects/beta', name: 'Beta', isFolder: false },
                     { id: 'projects/gamma', name: 'Gamma', isFolder: false },
                 ],
             },
             { id: 'settings', name: 'Settings', isFolder: false },
         ]);
-        const [activeId, setActiveId] = useState<string>('projects/alpha');
 
         const renderNode = (n: TreeNodeState): ReactNode =>
             n.isFolder ? (
-                <Tree.Folder
-                    key={n.id}
-                    id={n.id}
-                    label={n.name}
-                    isExpanded={n.isExpanded}
-                    isActive={n.id === activeId}
-                    onClick={() => setActiveId(n.id)}
-                >
+                <Tree.Folder key={n.id} id={n.id} label={n.name} isExpanded={n.isExpanded} isSelected={n.isSelected}>
                     {n.children?.map(renderNode)}
                 </Tree.Folder>
             ) : (
-                <Tree.Item
-                    key={n.id}
-                    id={n.id}
-                    label={n.name}
-                    isActive={n.id === activeId}
-                    onClick={() => setActiveId(n.id)}
-                />
+                <Tree.Item key={n.id} id={n.id} label={n.name} isSelected={n.isSelected} />
             );
 
         return (

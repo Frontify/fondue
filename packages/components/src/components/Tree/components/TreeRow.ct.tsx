@@ -69,4 +69,23 @@ test.describe('TreeRow', () => {
         );
         await expect(component.locator('[data-folder="true"]')).toHaveCount(1);
     });
+
+    test('marks a selected row with data-selected="true" in single-select mode', async ({ mount }) => {
+        const component = await mount(
+            <Tree.Root>
+                <Tree.Item id="1" label="Selected" isSelected />
+                <Tree.Item id="2" label="Other" />
+            </Tree.Root>,
+        );
+        await expect(component.locator('[data-selected="true"]')).toHaveCount(1);
+    });
+
+    test('does not set data-selected in multi-select mode (checkbox is the cue)', async ({ mount }) => {
+        const component = await mount(
+            <Tree.Root multiSelect>
+                <Tree.Item id="1" label="Checked" isSelected />
+            </Tree.Root>,
+        );
+        await expect(component.locator('[data-selected="true"]')).toHaveCount(0);
+    });
 });

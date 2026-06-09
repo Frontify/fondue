@@ -17,12 +17,11 @@ describe('getStructureKey', () => {
         expect(getStructureKey(items)).toBe(getStructureKey(items));
     });
 
-    it('ignores per-node state (isExpanded / isSelected / isActive)', () => {
+    it('ignores per-node state (isExpanded / isSelected)', () => {
         const withState: TreeItemData[] = items.map((item) => ({
             ...item,
             isExpanded: true,
             isSelected: true,
-            isActive: true,
         }));
         expect(getStructureKey(withState)).toBe(getStructureKey(items));
     });

@@ -43,15 +43,24 @@ test.describe('TreeRoot rendering', () => {
         await expect(component.getByRole('treeitem', { name: /VisibleChild/ })).toBeVisible();
     });
 
-    test('marks an active item with aria-current="page"', async ({ mount }) => {
+    test('moves the selected highlight to the clicked row in single-select mode', async ({ mount }) => {
         const component = await mount(
-            <Tree.Root>
-                <Tree.Item id="1" label="Active" isActive />
-                <Tree.Item id="2" label="Other" />
-            </Tree.Root>,
+            <TestHarness
+                initial={[
+                    { id: '1', name: 'First', isFolder: false, isSelected: true },
+                    { id: '2', name: 'Second', isFolder: false },
+                ]}
+            />,
         );
-        await expect(component.getByRole('treeitem', { name: /Active/ })).toHaveAttribute('aria-current', 'page');
-        await expect(component.getByRole('treeitem', { name: /Other/ })).not.toHaveAttribute('aria-current', 'page');
+
+        const first = component.getByRole('treeitem', { name: /First/ });
+        const second = component.getByRole('treeitem', { name: /Second/ });
+        await expect(first).toHaveAttribute('aria-selected', 'true');
+        await expect(second).toHaveAttribute('aria-selected', 'false');
+
+        await second.click();
+        await expect(first).toHaveAttribute('aria-selected', 'false');
+        await expect(second).toHaveAttribute('aria-selected', 'true');
     });
 });
 

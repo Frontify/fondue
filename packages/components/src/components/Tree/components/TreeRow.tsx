@@ -86,13 +86,12 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId }: TreeRowProps
             aria-describedby={hintId}
             aria-selected={data.isSelected ? 'true' : 'false'}
             aria-checked={multiSelect ? ariaCheckedFor(checkedState) : undefined}
-            aria-current={data.isActive ? 'page' : undefined}
         >
             <div
                 className={styles.item}
                 style={{ '--tree-row-level': Math.max(0, level) } as CSSProperties}
                 data-folder={isFolder}
-                data-active={data.isActive}
+                data-selected={!multiSelect && data.isSelected ? 'true' : undefined}
                 data-drop={reorderable && item.isDragTarget()}
             >
                 {reorderable && (

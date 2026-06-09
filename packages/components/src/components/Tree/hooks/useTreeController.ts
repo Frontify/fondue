@@ -5,6 +5,7 @@ import {
     dragAndDropFeature,
     hotkeysCoreFeature,
     keyboardDragAndDropFeature,
+    selectionFeature,
     syncDataLoaderFeature,
     type TreeInstance,
     type Updater,
@@ -23,6 +24,7 @@ import { getStructureKey } from '../utils/getStructureKey';
 type UseTreeControllerOptions = {
     items: TreeItemData[];
     onChange?: (state: TreeChangeState) => void;
+    multiSelect?: boolean;
     reorderable?: boolean;
     rootAccepts?: (items: TreeDropCandidate[]) => boolean;
 };
@@ -38,6 +40,11 @@ const resolveUpdater = <T>(updater: Updater<T>, prev: T): T =>
  * - Folders are excluded from `checkedItems`; their checked state is derived from
  *   descendants. Pushing a folder id into `checkedItems` would make `getCheckedState`
  *   short-circuit and leave ancestors stuck on "checked" after unchecking a child.
+ * - `isSelected` is one prop on the consumer side but is fanned out to two
+ *   headless-tree features depending on mode: `checkboxesFeature` in multi-select,
+ *   `selectionFeature` in single-select. The single-select setter pins to a single
+ *   id so the feature's modifier hotkeys (Shift/Ctrl-click, Ctrl+A) can't escalate
+ *   into multi-selection.
  * - Headless-tree batches multiple setter calls inside a single user event (e.g. a
  *   row click triggers both setSelectedItems and setFocusedItem). Each setter must
  *   build on the previous one's changes, so a shared `pendingState` is threaded
@@ -49,6 +56,7 @@ const resolveUpdater = <T>(updater: Updater<T>, prev: T): T =>
 export const useTreeController = ({
     items,
     onChange,
+    multiSelect = false,
     reorderable = false,
     rootAccepts,
 }: UseTreeControllerOptions): TreeInstance<TreeItemData> => {
@@ -74,8 +82,18 @@ export const useTreeController = ({
         [itemsWithRoot],
     );
     const checkedItems = useMemo(
-        () => itemsWithRoot.filter((item) => item.isSelected && !item.isFolder).map((item) => item.id),
-        [itemsWithRoot],
+        () =>
+            multiSelect
+                ? itemsWithRoot.filter((item) => item.isSelected && !item.isFolder).map((item) => item.id)
+                : [],
+        [itemsWithRoot, multiSelect],
+    );
+    const selectedItems = useMemo(
+        () =>
+            multiSelect
+                ? []
+                : itemsWithRoot.filter((item) => item.isSelected && item.id !== ROOT_ID).map((item) => item.id),
+        [itemsWithRoot, multiSelect],
     );
 
     // Focus is tracked internally only — headless-tree's TreeFeatureDef requires it in
@@ -85,8 +103,8 @@ export const useTreeController = ({
     const [internalFocusedItem, setInternalFocusedItem] = useState<string | undefined>(() => items[0]?.id);
 
     const treeState = useMemo<FlatTreeState>(
-        () => ({ expandedItems, checkedItems, focusedItem: internalFocusedItem }),
-        [expandedItems, checkedItems, internalFocusedItem],
+        () => ({ expandedItems, checkedItems, selectedItems, focusedItem: internalFocusedItem }),
+        [expandedItems, checkedItems, selectedItems, internalFocusedItem],
     );
 
     let pendingState: FlatTreeState = treeState;
@@ -127,6 +145,18 @@ export const useTreeController = ({
         emit({ ...pendingState, checkedItems: nextChecked });
     };
 
+    // Single-select pin: `selectionFeature` accepts Shift/Ctrl modifier clicks and
+    // Ctrl+A to multi-select, but in this controller's single-select mode we always
+    // collapse to the most recently selected id. The default plain-click handler in
+    // `selectionFeature` already sets the array to `[itemId]`, so this guard only
+    // affects modifier-driven escalations.
+    const setSelectedItems = (updater: Updater<string[]>) => {
+        const resolved = resolveUpdater(updater, pendingState.selectedItems ?? []);
+        const nextSelected = resolved.slice(-1);
+        fireDiff(pendingState.selectedItems ?? [], nextSelected, (item) => item.onSelectChange);
+        emit({ ...pendingState, selectedItems: nextSelected });
+    };
+
     const setFocusedItem = (updater: Updater<string | null>) => {
         const next = resolveUpdater(updater, pendingState.focusedItem ?? null) ?? undefined;
         pendingState = { ...pendingState, focusedItem: next };
@@ -153,6 +183,7 @@ export const useTreeController = ({
         state: treeState,
         setExpandedItems,
         setCheckedItems,
+        setSelectedItems: multiSelect ? undefined : setSelectedItems,
         setFocusedItem,
         canCheckFolders: false,
         propagateCheckedState: true,
@@ -161,6 +192,7 @@ export const useTreeController = ({
             syncDataLoaderFeature,
             checkboxesFeature,
             hotkeysCoreFeature,
+            ...(multiSelect ? [] : [selectionFeature]),
             ...(reorderable ? [dragAndDropFeature, keyboardDragAndDropFeature] : []),
         ],
     });
