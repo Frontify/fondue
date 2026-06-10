@@ -1,17 +1,20 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconDotsHorizontal, IconTrashBin } from '@frontify/fondue-icons';
+import { IconDocument, IconDotsHorizontal, IconFolder, IconPen, IconTrashBin } from '@frontify/fondue-icons';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState, type ReactNode } from 'react';
 import { action } from 'storybook/actions';
 
-import { Button } from '#/index';
+import { Button, Dropdown } from '#/index';
 
 import {
     Tree,
+    TreeAction,
     TreeFolder,
+    TreeFolderHeader,
+    TreeIcon,
     TreeItem,
-    TreeItemAction,
+    TreeLabel,
     TreeLoading,
     type TreeRoot,
     type TreeChangeState,
@@ -26,7 +29,10 @@ const meta: Meta<typeof TreeRoot> = {
     subcomponents: {
         'Tree.Item': TreeItem,
         'Tree.Folder': TreeFolder,
-        'Tree.ItemAction': TreeItemAction,
+        'Tree.FolderHeader': TreeFolderHeader,
+        'Tree.Label': TreeLabel,
+        'Tree.Icon': TreeIcon,
+        'Tree.Action': TreeAction,
         'Tree.Loading': TreeLoading,
     },
     tags: ['autodocs'],
@@ -74,11 +80,22 @@ export const Default: Story = {
 
         const renderNode = (n: TreeNodeState): ReactNode =>
             n.isFolder ? (
-                <Tree.Folder key={n.id} id={n.id} label={n.name} isExpanded={n.isExpanded}>
+                <Tree.Folder key={n.id} id={n.id} isExpanded={n.isExpanded}>
+                    <Tree.FolderHeader>
+                        <Tree.Icon>
+                            <IconFolder size={16} />
+                        </Tree.Icon>
+                        <Tree.Label>{n.name}</Tree.Label>
+                    </Tree.FolderHeader>
                     {n.children?.map(renderNode)}
                 </Tree.Folder>
             ) : (
-                <Tree.Item key={n.id} id={n.id} label={n.name} />
+                <Tree.Item key={n.id} id={n.id}>
+                    <Tree.Icon>
+                        <IconDocument size={16} />
+                    </Tree.Icon>
+                    <Tree.Label>{n.name}</Tree.Label>
+                </Tree.Item>
             );
 
         return (
@@ -90,31 +107,6 @@ export const Default: Story = {
                 }}
             >
                 {nodes.map(renderNode)}
-            </Tree.Root>
-        );
-    },
-};
-
-export const FlatList: Story = {
-    render: (args) => {
-        const [nodes, setNodes] = useState<TreeChangeState>([
-            { id: '1', name: 'Item 1', isFolder: false },
-            { id: '2', name: 'Item 2', isFolder: false },
-            { id: '3', name: 'Item 3', isFolder: false },
-            { id: '4', name: 'Item 4', isFolder: false },
-        ]);
-
-        return (
-            <Tree.Root
-                {...args}
-                onChange={(state) => {
-                    args.onChange?.(state);
-                    setNodes(state);
-                }}
-            >
-                {nodes.map((n) => (
-                    <Tree.Item key={n.id} id={n.id} label={n.name} />
-                ))}
             </Tree.Root>
         );
     },
@@ -158,11 +150,22 @@ export const NestedFolders: Story = {
 
         const renderNode = (n: TreeNodeState): ReactNode =>
             n.isFolder ? (
-                <Tree.Folder key={n.id} id={n.id} label={n.name} isExpanded={n.isExpanded}>
+                <Tree.Folder key={n.id} id={n.id} isExpanded={n.isExpanded}>
+                    <Tree.FolderHeader>
+                        <Tree.Icon>
+                            <IconFolder size={16} />
+                        </Tree.Icon>
+                        <Tree.Label>{n.name}</Tree.Label>
+                    </Tree.FolderHeader>
                     {n.children?.map(renderNode)}
                 </Tree.Folder>
             ) : (
-                <Tree.Item key={n.id} id={n.id} label={n.name} />
+                <Tree.Item key={n.id} id={n.id}>
+                    <Tree.Icon>
+                        <IconDocument size={16} />
+                    </Tree.Icon>
+                    <Tree.Label>{n.name}</Tree.Label>
+                </Tree.Item>
             );
 
         return (
@@ -207,7 +210,12 @@ export const SingleSelect: Story = {
                 }}
             >
                 {nodes.map((n) => (
-                    <Tree.Item key={n.id} id={n.id} label={n.name} isSelected={n.isSelected} />
+                    <Tree.Item key={n.id} id={n.id} isSelected={n.isSelected}>
+                        <Tree.Icon>
+                            <IconDocument size={16} />
+                        </Tree.Icon>
+                        <Tree.Label>{n.name}</Tree.Label>
+                    </Tree.Item>
                 ))}
             </Tree.Root>
         );
@@ -246,11 +254,22 @@ export const MultiSelect: Story = {
 
         const renderNode = (n: TreeNodeState): ReactNode =>
             n.isFolder ? (
-                <Tree.Folder key={n.id} id={n.id} label={n.name} isExpanded={n.isExpanded} isSelected={n.isSelected}>
+                <Tree.Folder key={n.id} id={n.id} isExpanded={n.isExpanded} isSelected={n.isSelected}>
+                    <Tree.FolderHeader>
+                        <Tree.Icon>
+                            <IconFolder size={16} />
+                        </Tree.Icon>
+                        <Tree.Label>{n.name}</Tree.Label>
+                    </Tree.FolderHeader>
                     {n.children?.map(renderNode)}
                 </Tree.Folder>
             ) : (
-                <Tree.Item key={n.id} id={n.id} label={n.name} isSelected={n.isSelected} />
+                <Tree.Item key={n.id} id={n.id} isSelected={n.isSelected}>
+                    <Tree.Icon>
+                        <IconDocument size={16} />
+                    </Tree.Icon>
+                    <Tree.Label>{n.name}</Tree.Label>
+                </Tree.Item>
             );
 
         return (
@@ -299,11 +318,22 @@ export const Reorderable: Story = {
 
         const renderNode = (n: TreeNodeState): ReactNode =>
             n.isFolder ? (
-                <Tree.Folder key={n.id} id={n.id} label={n.name} isExpanded={n.isExpanded}>
+                <Tree.Folder key={n.id} id={n.id} isExpanded={n.isExpanded}>
+                    <Tree.FolderHeader>
+                        <Tree.Icon>
+                            <IconFolder size={16} />
+                        </Tree.Icon>
+                        <Tree.Label>{n.name}</Tree.Label>
+                    </Tree.FolderHeader>
                     {n.children?.map(renderNode)}
                 </Tree.Folder>
             ) : (
-                <Tree.Item key={n.id} id={n.id} label={n.name} />
+                <Tree.Item key={n.id} id={n.id}>
+                    <Tree.Icon>
+                        <IconDocument size={16} />
+                    </Tree.Icon>
+                    <Tree.Label>{n.name}</Tree.Label>
+                </Tree.Item>
             );
 
         return (
@@ -363,11 +393,22 @@ export const MultiSelectAndReorderable: Story = {
 
         const renderNode = (n: TreeNodeState): ReactNode =>
             n.isFolder ? (
-                <Tree.Folder key={n.id} id={n.id} label={n.name} isExpanded={n.isExpanded} isSelected={n.isSelected}>
+                <Tree.Folder key={n.id} id={n.id} isExpanded={n.isExpanded} isSelected={n.isSelected}>
+                    <Tree.FolderHeader>
+                        <Tree.Icon>
+                            <IconFolder size={16} />
+                        </Tree.Icon>
+                        <Tree.Label>{n.name}</Tree.Label>
+                    </Tree.FolderHeader>
                     {n.children?.map(renderNode)}
                 </Tree.Folder>
             ) : (
-                <Tree.Item key={n.id} id={n.id} label={n.name} isSelected={n.isSelected} />
+                <Tree.Item key={n.id} id={n.id} isSelected={n.isSelected}>
+                    <Tree.Icon>
+                        <IconDocument size={16} />
+                    </Tree.Icon>
+                    <Tree.Label>{n.name}</Tree.Label>
+                </Tree.Item>
             );
 
         return (
@@ -443,15 +484,25 @@ export const RestrictedDrops: Story = {
                 <Tree.Folder
                     key={n.id}
                     id={n.id}
-                    label={n.name}
                     isExpanded={n.isExpanded}
                     tags={n.tags}
                     accepts={acceptsByFolder[n.id]}
                 >
+                    <Tree.FolderHeader>
+                        <Tree.Icon>
+                            <IconFolder size={16} />
+                        </Tree.Icon>
+                        <Tree.Label>{n.name}</Tree.Label>
+                    </Tree.FolderHeader>
                     {n.children?.map(renderNode)}
                 </Tree.Folder>
             ) : (
-                <Tree.Item key={n.id} id={n.id} label={n.name} tags={n.tags} />
+                <Tree.Item key={n.id} id={n.id} tags={n.tags}>
+                    <Tree.Icon>
+                        <IconDocument size={16} />
+                    </Tree.Icon>
+                    <Tree.Label>{n.name}</Tree.Label>
+                </Tree.Item>
             );
 
         return (
@@ -474,9 +525,9 @@ export const WithItemActions: Story = {
         docs: {
             description: {
                 story:
-                    'Render trailing controls on any row by nesting `<Tree.ItemAction>` inside a ' +
-                    '`<Tree.Item>` or `<Tree.Folder>`. Clicks inside the action slot do not bubble to ' +
-                    "the row, so the action button can fire without also triggering the row's " +
+                    'Render trailing controls on any row by nesting `<Tree.Action>` inside a ' +
+                    "`<Tree.Item>` or a folder's `<Tree.FolderHeader>`. Clicks inside the action slot " +
+                    "do not bubble to the row, so the action button can fire without also triggering the row's " +
                     '`onClick` or expand-toggle.',
             },
         },
@@ -497,28 +548,38 @@ export const WithItemActions: Story = {
         ]);
 
         const folderAction = (
-            <Tree.ItemAction>
+            <Tree.Action>
                 <Button aspect="square" emphasis="default" size="small" onPress={action('Folder action')}>
                     <IconDotsHorizontal size={16} />
                 </Button>
-            </Tree.ItemAction>
+            </Tree.Action>
         );
         const itemAction = (
-            <Tree.ItemAction>
+            <Tree.Action>
                 <Button aspect="square" emphasis="default" size="small" onPress={action('Item delete')}>
                     <IconTrashBin size={16} />
                 </Button>
-            </Tree.ItemAction>
+            </Tree.Action>
         );
 
         const renderNode = (n: TreeNodeState): ReactNode =>
             n.isFolder ? (
-                <Tree.Folder key={n.id} id={n.id} label={n.name} isExpanded={n.isExpanded}>
-                    {folderAction}
+                <Tree.Folder key={n.id} id={n.id} isExpanded={n.isExpanded}>
+                    <Tree.FolderHeader>
+                        <Tree.Icon>
+                            <IconFolder size={16} />
+                        </Tree.Icon>
+                        <Tree.Label>{n.name}</Tree.Label>
+                        {folderAction}
+                    </Tree.FolderHeader>
                     {n.children?.map(renderNode)}
                 </Tree.Folder>
             ) : (
-                <Tree.Item key={n.id} id={n.id} label={n.name}>
+                <Tree.Item key={n.id} id={n.id}>
+                    <Tree.Icon>
+                        <IconDocument size={16} />
+                    </Tree.Icon>
+                    <Tree.Label>{n.name}</Tree.Label>
                     {itemAction}
                 </Tree.Item>
             );
@@ -537,118 +598,99 @@ export const WithItemActions: Story = {
     },
 };
 
-export const AsNavigation: Story = {
+export const Renaming: Story = {
+    parameters: {
+        docs: {
+            description: {
+                story:
+                    'Renaming is controlled through the `isRenaming` prop — here flipped by the "Rename" ' +
+                    "option in each row's `<Tree.Action>` overflow `Dropdown`. While `isRenaming` is `true` (and the row has " +
+                    'an `onRename` handler), the label becomes an inline text input. Enter or clicking ' +
+                    'away commits: the row fires `onRename` with the new name and the root fires `onChange` ' +
+                    'with the updated `name`, so re-rendering from either source applies the rename. Escape ' +
+                    'cancels. Either way `onRenamingChange(false)` fires so the consumer can clear its flag.',
+            },
+        },
+    },
     render: (args) => {
         const [nodes, setNodes] = useState<TreeChangeState>([
-            { id: 'home', name: 'Home', isFolder: false },
             {
-                id: 'projects',
-                name: 'Projects',
+                id: 'assets',
+                name: 'Assets',
                 isFolder: true,
                 isExpanded: true,
                 children: [
-                    { id: 'projects/alpha', name: 'Alpha', isFolder: false, isSelected: true },
-                    { id: 'projects/beta', name: 'Beta', isFolder: false },
-                    { id: 'projects/gamma', name: 'Gamma', isFolder: false },
+                    { id: 'logo', name: 'Logo.svg', isFolder: false },
+                    { id: 'hero', name: 'Hero.png', isFolder: false },
                 ],
             },
-            { id: 'settings', name: 'Settings', isFolder: false },
+            { id: 'readme', name: 'README.md', isFolder: false },
         ]);
+        const [renamingId, setRenamingId] = useState<string | null>(null);
+
+        const renameProps = (n: TreeNodeState) => ({
+            isRenaming: renamingId === n.id,
+            onRenamingChange: (isRenaming: boolean) => setRenamingId(isRenaming ? n.id : null),
+            onRename: (newName: string) => {
+                action('onRename')(n.id, newName);
+            },
+        });
+        const renameAction = (n: TreeNodeState) => (
+            <Tree.Action>
+                <Dropdown.Root>
+                    <Dropdown.Trigger>
+                        <Button aspect="square" emphasis="default" size="small">
+                            <IconDotsHorizontal size={16} />
+                        </Button>
+                    </Dropdown.Trigger>
+                    {/* `preventTriggerFocusOnClose` keeps the closing menu from re-focusing the
+                        trigger button, which would steal focus from the rename input. */}
+                    <Dropdown.Content preventTriggerFocusOnClose>
+                        <Dropdown.Item onSelect={() => setRenamingId(n.id)}>
+                            Rename
+                            <Dropdown.Slot name="left">
+                                <IconPen size={16} />
+                            </Dropdown.Slot>
+                        </Dropdown.Item>
+                    </Dropdown.Content>
+                </Dropdown.Root>
+            </Tree.Action>
+        );
 
         const renderNode = (n: TreeNodeState): ReactNode =>
             n.isFolder ? (
-                <Tree.Folder key={n.id} id={n.id} label={n.name} isExpanded={n.isExpanded} isSelected={n.isSelected}>
+                <Tree.Folder key={n.id} id={n.id} isExpanded={n.isExpanded} {...renameProps(n)}>
+                    <Tree.FolderHeader>
+                        <Tree.Icon>
+                            <IconFolder size={16} />
+                        </Tree.Icon>
+                        <Tree.Label>{n.name}</Tree.Label>
+                        {renameAction(n)}
+                    </Tree.FolderHeader>
                     {n.children?.map(renderNode)}
                 </Tree.Folder>
             ) : (
-                <Tree.Item key={n.id} id={n.id} label={n.name} isSelected={n.isSelected} />
+                <Tree.Item key={n.id} id={n.id} {...renameProps(n)}>
+                    <Tree.Icon>
+                        <IconDocument size={16} />
+                    </Tree.Icon>
+                    <Tree.Label>{n.name}</Tree.Label>
+                    {renameAction(n)}
+                </Tree.Item>
             );
 
         return (
             <Tree.Root
                 {...args}
                 onChange={(state) => {
+                    // A committed rename arrives here with the new `name` already set, so
+                    // re-rendering from `onChange` is all it takes to apply it.
                     args.onChange?.(state);
                     setNodes(state);
                 }}
             >
                 {nodes.map(renderNode)}
             </Tree.Root>
-        );
-    },
-};
-
-export const Empty: Story = {
-    parameters: {
-        docs: {
-            description: {
-                story:
-                    '`<Tree.Root>` renders an empty container when given no children. The container keeps its ' +
-                    'minimum height so the layout does not collapse, but no rows are produced.',
-            },
-        },
-    },
-    render: (args) => <Tree.Root {...args} />,
-};
-
-export const InitialLoading: Story = {
-    parameters: {
-        docs: {
-            description: {
-                story:
-                    'When the entire top-level tree is being fetched, render `<Tree.Loading />` as a direct ' +
-                    'child of `<Tree.Root>`. It appears at the bottom of the (empty) list while data is in ' +
-                    'flight, then is replaced by real rows once the fetch resolves.',
-            },
-        },
-    },
-    render: (args) => {
-        const initialNodes: TreeChangeState = [
-            { id: '1', name: 'Item 1', isFolder: false },
-            {
-                id: 'a',
-                name: 'Folder a',
-                isFolder: true,
-                isExpanded: true,
-                children: [
-                    { id: 'a1', name: 'Item a1', isFolder: false },
-                    { id: 'a2', name: 'Item a2', isFolder: false },
-                ],
-            },
-        ];
-        const [nodes, setNodes] = useState<TreeChangeState | null>(null);
-
-        const startLoad = () => {
-            setNodes(null);
-            setTimeout(() => setNodes(initialNodes), 800);
-        };
-
-        const renderNode = (n: TreeNodeState): ReactNode =>
-            n.isFolder ? (
-                <Tree.Folder key={n.id} id={n.id} label={n.name} isExpanded={n.isExpanded}>
-                    {n.children?.map(renderNode)}
-                </Tree.Folder>
-            ) : (
-                <Tree.Item key={n.id} id={n.id} label={n.name} />
-            );
-
-        return (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                <div>
-                    <Button emphasis="default" onPress={startLoad}>
-                        Reload top-level
-                    </Button>
-                </div>
-                <Tree.Root
-                    {...args}
-                    onChange={(state) => {
-                        args.onChange?.(state);
-                        setNodes(state);
-                    }}
-                >
-                    {nodes === null ? <Tree.Loading /> : nodes.map(renderNode)}
-                </Tree.Root>
-            </div>
         );
     },
 };
@@ -727,17 +769,29 @@ export const LazyLoading: Story = {
 
         const renderNode = (n: LazyNode): ReactNode => {
             if (!n.isFolder) {
-                return <Tree.Item key={n.id} id={n.id} label={n.name} />;
+                return (
+                    <Tree.Item key={n.id} id={n.id}>
+                        <Tree.Icon>
+                            <IconDocument size={16} />
+                        </Tree.Icon>
+                        <Tree.Label>{n.name}</Tree.Label>
+                    </Tree.Item>
+                );
             }
             const entry = childrenState[n.id];
             return (
                 <Tree.Folder
                     key={n.id}
                     id={n.id}
-                    label={n.name}
                     isExpanded={expandedIds.has(n.id)}
                     onExpandChange={(isExpanded) => handleExpand(n.id, isExpanded)}
                 >
+                    <Tree.FolderHeader>
+                        <Tree.Icon>
+                            <IconFolder size={16} />
+                        </Tree.Icon>
+                        <Tree.Label>{n.name}</Tree.Label>
+                    </Tree.FolderHeader>
                     {entry?.status === 'loading' && <Tree.Loading />}
                     {entry?.status === 'loaded' && entry.children.map(renderNode)}
                 </Tree.Folder>
@@ -793,9 +847,20 @@ export const LoadMore: Story = {
                     </Button>
                 </div>
                 <Tree.Root {...args}>
-                    <Tree.Folder id="reports" label="Reports" isExpanded>
+                    <Tree.Folder id="reports" isExpanded>
+                        <Tree.FolderHeader>
+                            <Tree.Icon>
+                                <IconFolder size={16} />
+                            </Tree.Icon>
+                            <Tree.Label>Reports</Tree.Label>
+                        </Tree.FolderHeader>
                         {children.map((child) => (
-                            <Tree.Item key={child.id} id={child.id} label={child.name} />
+                            <Tree.Item key={child.id} id={child.id}>
+                                <Tree.Icon>
+                                    <IconDocument size={16} />
+                                </Tree.Icon>
+                                <Tree.Label>{child.name}</Tree.Label>
+                            </Tree.Item>
                         ))}
                         {status === 'loading' && <Tree.Loading />}
                     </Tree.Folder>
@@ -840,7 +905,6 @@ export const WithPerItemHandlers: Story = {
                 <Tree.Folder
                     key={n.id}
                     id={n.id}
-                    label={n.name}
                     isExpanded={n.isExpanded}
                     isSelected={n.isSelected}
                     onClick={action(`${n.name} onClick`)}
@@ -848,18 +912,28 @@ export const WithPerItemHandlers: Story = {
                     onSelectChange={action(`${n.name} onSelectChange`)}
                     onMove={action(`${n.name} onMove`)}
                 >
+                    <Tree.FolderHeader>
+                        <Tree.Icon>
+                            <IconFolder size={16} />
+                        </Tree.Icon>
+                        <Tree.Label>{n.name}</Tree.Label>
+                    </Tree.FolderHeader>
                     {n.children?.map(renderNode)}
                 </Tree.Folder>
             ) : (
                 <Tree.Item
                     key={n.id}
                     id={n.id}
-                    label={n.name}
                     isSelected={n.isSelected}
                     onClick={action(`${n.name} onClick`)}
                     onSelectChange={action(`${n.name} onSelectChange`)}
                     onMove={action(`${n.name} onMove`)}
-                />
+                >
+                    <Tree.Icon>
+                        <IconDocument size={16} />
+                    </Tree.Icon>
+                    <Tree.Label>{n.name}</Tree.Label>
+                </Tree.Item>
             );
 
         return (

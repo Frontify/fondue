@@ -51,7 +51,6 @@ export type TreeDropCandidate = {
 
 type TreeRowSharedProps = {
     id: string;
-    label: string;
     /**
      * Marks the row as selected. With `<Tree.Root multiSelect>` this checks the row's
      * checkbox; without `multiSelect` it highlights the row's background. Always
@@ -61,6 +60,22 @@ type TreeRowSharedProps = {
      */
     isSelected?: boolean;
     onSelectChange?: (isSelected: boolean) => void;
+    /**
+     * Switches the row's label to an inline text input for renaming. Fully controlled:
+     * renaming can only be started through this prop (typically from a 'Rename' entry
+     * in a `<Tree.Action>` overflow menu). Enter or clicking away commits the edit,
+     * Escape cancels it; either way `onRenamingChange(false)` fires so the consumer
+     * can reset the flag.
+     */
+    isRenaming?: boolean;
+    onRenamingChange?: (isRenaming: boolean) => void;
+    /**
+     * Fires when an inline rename is committed with a changed, non-empty name. The
+     * global `Tree.Root` `onChange` is also emitted with the row's new `name`. The
+     * Tree never stores the name itself — re-render with the updated `<Tree.Label>`
+     * to apply it.
+     */
+    onRename?: (newName: string) => void;
     /**
      * Fires when the row is activated by mouse click or keyboard (Enter / Space on a
      * focused row). For folders this fires alongside the expand-toggle that the click
@@ -80,16 +95,18 @@ type TreeRowSharedProps = {
 
 export type TreeItemProps = TreeRowSharedProps & {
     /**
-     * Accepts `<Tree.ItemAction>` to render trailing controls (e.g. an action button
-     * or overflow menu) at the end of the row.
+     * Row anatomy parts: `<Tree.Label>` (required — the row's text), an optional
+     * `<Tree.Icon>` rendered before the label (rows have no icon otherwise), and an
+     * optional `<Tree.Action>` rendering trailing controls (e.g. an overflow menu).
      */
-    children?: ReactNode;
+    children: ReactNode;
 };
 
 export type TreeFolderProps = TreeRowSharedProps & {
     /**
-     * Nested rows (`<Tree.Item>` / `<Tree.Folder>` / `<Tree.Loading>`) plus an optional
-     * `<Tree.ItemAction>` that renders at the end of the folder's own row.
+     * A `<Tree.FolderHeader>` declaring the folder's own row (its `<Tree.Label>`,
+     * optional `<Tree.Icon>` and `<Tree.Action>`), followed by the nested rows
+     * (`<Tree.Item>` / `<Tree.Folder>` / `<Tree.Loading>`).
      */
     children: ReactNode;
     isExpanded?: boolean;
@@ -105,7 +122,23 @@ export type TreeFolderProps = TreeRowSharedProps & {
     accepts?: (items: TreeDropCandidate[]) => boolean;
 };
 
-export type TreeItemActionProps = {
+export type TreeActionProps = {
+    children: ReactNode;
+};
+
+export type TreeIconProps = {
+    children: ReactNode;
+};
+
+export type TreeLabelProps = {
+    /**
+     * Plain text only: the label doubles as the row's accessible name, the `name`
+     * reported through `onChange`, and the initial value of the rename input.
+     */
+    children: string;
+};
+
+export type TreeFolderHeaderProps = {
     children: ReactNode;
 };
 
@@ -123,8 +156,12 @@ export type TreeItemData = {
     onExpandChange?: (isExpanded: boolean) => void;
     isSelected?: boolean;
     onSelectChange?: (isSelected: boolean) => void;
+    isRenaming?: boolean;
+    onRenamingChange?: (isRenaming: boolean) => void;
+    onRename?: (newName: string) => void;
     onClick?: MouseEventHandler<HTMLDivElement>;
     onMove?: (info: TreeMoveInfo) => void;
+    icon?: ReactNode;
     actions?: ReactNode;
     isLoading?: boolean;
     tags?: string[];

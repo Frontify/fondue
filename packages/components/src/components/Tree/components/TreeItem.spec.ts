@@ -12,7 +12,7 @@ import { TreeItem } from './TreeItem';
 
 describe('TreeItem', () => {
     it('renders null', () => {
-        expect(TreeItem({ id: 'x', label: 'X' })).toBe(null);
+        expect(TreeItem({ id: 'x', children: 'X' })).toBe(null);
     });
 
     it('declares displayName="Tree.Item"', () => {

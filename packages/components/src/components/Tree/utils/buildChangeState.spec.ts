@@ -72,19 +72,11 @@ describe('buildChangeState', () => {
     });
 
     it('reflects selectedItems on leaves and folders (single-select)', () => {
-        const result = buildChangeState(
-            flatItems,
-            { ...emptyState, selectedItems: ['folder'] },
-            ROOT_ID,
-        );
+        const result = buildChangeState(flatItems, { ...emptyState, selectedItems: ['folder'] }, ROOT_ID);
         expect(result[0]?.isSelected).toBe(false);
         expect(result[1]?.isSelected).toBe(true);
 
-        const leafSelected = buildChangeState(
-            flatItems,
-            { ...emptyState, selectedItems: ['f1'] },
-            ROOT_ID,
-        );
+        const leafSelected = buildChangeState(flatItems, { ...emptyState, selectedItems: ['f1'] }, ROOT_ID);
         const folder = leafSelected[1];
         const leaves = folder?.isFolder ? folder.children : undefined;
         expect(leaves?.[0]?.isSelected).toBe(true);

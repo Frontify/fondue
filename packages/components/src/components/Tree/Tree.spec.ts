@@ -2,7 +2,17 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { Tree, TreeFolder, TreeItem, TreeItemAction, TreeLoading, TreeRoot } from './Tree';
+import {
+    Tree,
+    TreeAction,
+    TreeFolder,
+    TreeFolderHeader,
+    TreeIcon,
+    TreeItem,
+    TreeLabel,
+    TreeLoading,
+    TreeRoot,
+} from './Tree';
 
 /**
  * The Tree namespace is the public API surface. This test pins it: any accidental rename
@@ -11,12 +21,15 @@ import { Tree, TreeFolder, TreeItem, TreeItemAction, TreeLoading, TreeRoot } fro
  */
 
 describe('Tree namespace', () => {
-    it('exposes Root / Item / Folder / ItemAction / Loading on the namespace', () => {
+    it('exposes Root / Item / Folder / FolderHeader / Icon / Label / Action / Loading on the namespace', () => {
         expect(Tree).toEqual({
             Root: TreeRoot,
             Item: TreeItem,
-            ItemAction: TreeItemAction,
             Folder: TreeFolder,
+            FolderHeader: TreeFolderHeader,
+            Icon: TreeIcon,
+            Label: TreeLabel,
+            Action: TreeAction,
             Loading: TreeLoading,
         });
     });
@@ -25,7 +38,10 @@ describe('Tree namespace', () => {
         expect(Tree.Root).toBe(TreeRoot);
         expect(Tree.Item).toBe(TreeItem);
         expect(Tree.Folder).toBe(TreeFolder);
-        expect(Tree.ItemAction).toBe(TreeItemAction);
+        expect(Tree.FolderHeader).toBe(TreeFolderHeader);
+        expect(Tree.Icon).toBe(TreeIcon);
+        expect(Tree.Label).toBe(TreeLabel);
+        expect(Tree.Action).toBe(TreeAction);
         expect(Tree.Loading).toBe(TreeLoading);
     });
 });

@@ -108,3 +108,137 @@ describe('useTreeController', () => {
         expect(last.find((node) => node.id === '2')?.isSelected).toBe(true);
     });
 });
+
+describe('useTreeController renaming', () => {
+    const renameItems = (overrides?: Partial<TreeItemData>): TreeItemData[] => [
+        { id: '1', name: 'One', isFolder: false, parentId: ROOT_ID, onRename: vi.fn(), ...overrides },
+        { id: '2', name: 'Two', isFolder: false, parentId: ROOT_ID },
+    ];
+
+    const typeRenameValue = (tree: ReturnType<typeof useTreeController>, value: string) => {
+        // Drive the rename input's controlled onChange the way the DOM input would.
+        const inputProps = tree.getItemInstance('1').getRenameInputProps() as {
+            onChange: (event: { target: { value: string } }) => void;
+        };
+        inputProps.onChange({ target: { value } });
+    };
+
+    it('enters rename mode when an item with onRename mounts with isRenaming', () => {
+        const items = renameItems({ isRenaming: true });
+        const { result } = renderHook(() => useTreeController({ items }));
+
+        expect(result.current.isRenamingItem()).toBe(true);
+        expect(result.current.getRenamingItem()?.getId()).toBe('1');
+        expect(result.current.getRenamingValue()).toBe('One');
+    });
+
+    it('does not enter rename mode without an onRename handler', () => {
+        const items = renameItems({ isRenaming: true, onRename: undefined });
+        const { result } = renderHook(() => useTreeController({ items }));
+
+        expect(result.current.isRenamingItem()).toBe(false);
+    });
+
+    it('enters rename mode when isRenaming flips on a later render', () => {
+        const { result, rerender } = renderHook(({ items }) => useTreeController({ items }), {
+            initialProps: { items: renameItems() },
+        });
+        expect(result.current.isRenamingItem()).toBe(false);
+
+        rerender({ items: renameItems({ isRenaming: true }) });
+        expect(result.current.isRenamingItem()).toBe(true);
+    });
+
+    it('commits a changed name: fires onRename, onRenamingChange(false), and onChange with the new name', () => {
+        const onChange = vi.fn<(state: TreeChangeState) => void>();
+        const onRename = vi.fn();
+        const onRenamingChange = vi.fn();
+        const items = renameItems({ isRenaming: true, onRename, onRenamingChange });
+        const { result } = renderHook(() => useTreeController({ items, onChange }));
+
+        act(() => {
+            typeRenameValue(result.current, 'Renamed');
+        });
+        act(() => {
+            result.current.completeRenaming();
+        });
+
+        expect(onRename).toHaveBeenCalledExactlyOnceWith('Renamed');
+        // Starts are never echoed (the consumer set isRenaming itself) — only the end.
+        expect(onRenamingChange).toHaveBeenCalledExactlyOnceWith(false);
+        expect(result.current.isRenamingItem()).toBe(false);
+        const last = onChange.mock.calls[onChange.mock.calls.length - 1]?.[0] ?? [];
+        expect(last.find((node) => node.id === '1')?.name).toBe('Renamed');
+        expect(last.find((node) => node.id === '2')?.name).toBe('Two');
+    });
+
+    it('trims the committed name', () => {
+        const onRename = vi.fn();
+        const items = renameItems({ isRenaming: true, onRename });
+        const { result } = renderHook(() => useTreeController({ items }));
+
+        act(() => {
+            typeRenameValue(result.current, '  Renamed  ');
+        });
+        act(() => {
+            result.current.completeRenaming();
+        });
+
+        expect(onRename).toHaveBeenCalledExactlyOnceWith('Renamed');
+    });
+
+    it('treats unchanged and empty names as no-ops (no onRename, no onChange)', () => {
+        for (const value of ['One', '   ', ''] as const) {
+            const onChange = vi.fn<(state: TreeChangeState) => void>();
+            const onRename = vi.fn();
+            const items = renameItems({ isRenaming: true, onRename });
+            const { result } = renderHook(() => useTreeController({ items, onChange }));
+
+            act(() => {
+                typeRenameValue(result.current, value);
+            });
+            act(() => {
+                result.current.completeRenaming();
+            });
+
+            expect(onRename).not.toHaveBeenCalled();
+            expect(onChange).not.toHaveBeenCalled();
+            // The rename session still ends.
+            expect(result.current.isRenamingItem()).toBe(false);
+        }
+    });
+
+    it('aborting fires onRenamingChange(false) without onRename', () => {
+        const onRename = vi.fn();
+        const onRenamingChange = vi.fn();
+        const items = renameItems({ isRenaming: true, onRename, onRenamingChange });
+        const { result } = renderHook(() => useTreeController({ items }));
+
+        act(() => {
+            typeRenameValue(result.current, 'Discarded');
+        });
+        act(() => {
+            result.current.abortRenaming();
+        });
+
+        expect(onRename).not.toHaveBeenCalled();
+        expect(onRenamingChange).toHaveBeenCalledWith(false);
+        expect(result.current.isRenamingItem()).toBe(false);
+    });
+
+    it('does not re-enter rename mode when the prop is still true after the tree ended the rename', () => {
+        const items = renameItems({ isRenaming: true });
+        const { result, rerender } = renderHook(({ items: current }) => useTreeController({ items: current }), {
+            initialProps: { items },
+        });
+
+        act(() => {
+            result.current.abortRenaming();
+        });
+        expect(result.current.isRenamingItem()).toBe(false);
+
+        // Consumer re-renders without having cleared its flag yet — must stay ended.
+        rerender({ items: renameItems({ isRenaming: true }) });
+        expect(result.current.isRenamingItem()).toBe(false);
+    });
+});

@@ -35,6 +35,7 @@ const translations = {
     Table_sortDescending: 'Ordenar descendente',
     Tree_checkboxHint: 'Selecionável, prima Tab para focar a caixa de seleção.',
     Tree_loading: 'A carregar…',
+    Tree_renameInputLabel: 'Novo nome',
     Tree_reorderHint: 'Prima Control Shift D para mover.',
 };
 

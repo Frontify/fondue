@@ -2,7 +2,6 @@
 @use '../../../utilities/sizeToken.module.scss';
 @use '../../../utilities/focusStyle.module.scss';
 
-
 .tree {
     --tree-accent: var(--color-highlight-default);
     width: 100%;
@@ -21,7 +20,7 @@
     display: flex;
     align-items: center;
     width: 100%;
-    padding: sizeToken.get(0.5) 0 sizeToken.get(0.5) 0;
+    padding: sizeToken.get(0.25) 0 sizeToken.get(0.25) 0;
     border: 0;
     background: transparent;
     border-radius: var(--border-radius-medium);
@@ -31,11 +30,21 @@
     font: inherit;
     outline: none;
 
-    &:focus-visible {
+    /* `data-show-focus-ring='false'` (same convention as `focusStyle` / `TextInput`) is
+       set by TreeRow when a rename ends: the renaming feature refocuses the row
+       programmatically, which the browser counts as keyboard focus, but the user never
+       navigated here — no ring. Cleared again on blur. */
+    &:focus-visible:not([data-show-focus-ring='false']) {
         z-index: 1;
 
         .item {
-            @include focusStyle.focus-outline-styles;
+            // use custom outline styles instead of the default focus-outline mixin to customize the focus offset
+
+            outline-style: none;
+            transition-property: box-shadow;
+            transition-duration: 0ms;
+
+            box-shadow: 0 0 0 4px var(--color-focus-default);
         }
     }
 }
@@ -90,7 +99,7 @@
     justify-content: center;
     width: 16px;
     height: 16px;
-    color: var(--color-secondary-default);
+    color: var(--color-primary-default);
 }
 
 .icon {
@@ -99,7 +108,7 @@
     justify-content: center;
     width: 18px;
     height: 18px;
-    color: var(--color-secondary-default);
+    color: var(--color-primary-default);
 }
 
 .label {
@@ -114,10 +123,6 @@
     line-height: var(--typography-line-height-tight);
     color: var(--color-primary-default);
 
-    .item[data-folder='true'] & {
-        font-weight: var(--typography-font-weight-medium);
-    }
-
     .item[data-selected='true'] & {
         color: inherit;
     }
@@ -127,6 +132,26 @@
     display: inline-flex;
     align-items: center;
     gap: sizeToken.get(1);
+}
+
+.renameInput {
+    /* Takes the label's place in the row flex layout (same flex/min-width so trailing
+       actions stay put). */
+    flex: 1;
+    min-width: 0;
+
+    /* Shrinks the TextInput to the row scale: label typography so the text doesn't
+       shift, and a height that fits the 32px row. Nesting out-ranks TextInput's own
+       single-class selectors regardless of stylesheet injection order. */
+    .renameTextInput {
+        height: sizeToken.get(6);
+        font-size: var(--typography-font-size-small);
+        line-height: var(--typography-line-height-tight);
+
+        input {
+            padding-inline: sizeToken.get(1);
+        }
+    }
 }
 
 .dragline {

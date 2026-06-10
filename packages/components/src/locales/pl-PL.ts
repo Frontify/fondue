@@ -35,6 +35,7 @@ const translations = {
     Table_sortDescending: 'Sortuj malejąco',
     Tree_checkboxHint: 'Wybierane, naciśnij Tab, aby skupić się na polu wyboru.',
     Tree_loading: 'Ładowanie…',
+    Tree_renameInputLabel: 'Nowa nazwa',
     Tree_reorderHint: 'Naciśnij Control Shift D, aby przenieść.',
 };
 

@@ -1,9 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconDocument, IconFolder, IconGrabHandle } from '@frontify/fondue-icons';
+import { IconGrabHandle } from '@frontify/fondue-icons';
 import { type ItemInstance } from '@headless-tree/core';
 import {
+    useEffect,
+    useRef,
     type CSSProperties,
+    type FocusEvent,
+    type FocusEventHandler,
     type FormEventHandler,
     type ForwardedRef,
     type KeyboardEvent,
@@ -17,6 +21,7 @@ import { ariaCheckedFor } from '../utils/ariaCheckedFor';
 
 import { TreeRowCheckbox } from './TreeRowCheckbox';
 import { TreeRowChevron } from './TreeRowChevron';
+import { TreeRowRenameInput } from './TreeRowRenameInput';
 
 type TreeRowProps = {
     item: ItemInstance<TreeItemData>;
@@ -41,12 +46,48 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId }: TreeRowProps
 
     const headlessProps = item.getProps() as {
         onClick?: MouseEventHandler<HTMLDivElement>;
+        onBlur?: FocusEventHandler<HTMLDivElement>;
         [key: string]: unknown;
     };
 
     const handleClick = (event: MouseEvent<HTMLDivElement>) => {
         headlessProps.onClick?.(event);
         data.onClick?.(event);
+    };
+
+    // When a rename ends via Enter/Escape, the renaming feature programmatically
+    // refocuses the row. The browser treats that focus as keyboard-driven (it follows
+    // the keypress), so `:focus-visible` would draw the row's focus ring even though the
+    // user never navigated to the row. Mark the row on the renaming→not-renaming
+    // transition to suppress that one ring (same `data-show-focus-ring` convention as
+    // `focusStyle` / `TextInput`); the mark is cleared on blur so real keyboard
+    // navigation back to the row shows the ring again. Renames ended by blur never get
+    // the focus restore (see `TreeRowRenameInput`), leaving the mark on a row that is
+    // not focused — the timeout (outlasting the restore's 500ms poll window) drops it so
+    // it cannot eat a later genuine focus ring.
+    const isRenaming = item.isRenaming();
+    const wasRenamingRef = useRef(isRenaming);
+    useEffect(() => {
+        const wasRenaming = wasRenamingRef.current;
+        wasRenamingRef.current = isRenaming;
+        const element = item.getElement();
+        if (!wasRenaming || isRenaming || !element) {
+            return;
+        }
+        element.setAttribute('data-show-focus-ring', 'false');
+        const timer = window.setTimeout(() => {
+            if (document.activeElement !== element) {
+                element.removeAttribute('data-show-focus-ring');
+            }
+        }, 600);
+        return () => window.clearTimeout(timer);
+    }, [isRenaming, item]);
+
+    const handleBlur = (event: FocusEvent<HTMLDivElement>) => {
+        if (event.target === event.currentTarget) {
+            event.currentTarget.removeAttribute('data-show-focus-ring');
+        }
+        headlessProps.onBlur?.(event);
     };
 
     // The row is a div (not a button) so nested interactive controls — checkbox today,
@@ -82,6 +123,7 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId }: TreeRowProps
             {...headlessProps}
             onClick={handleClick}
             onKeyDown={handleKeyDown}
+            onBlur={handleBlur}
             className={styles.row}
             aria-describedby={hintId}
             aria-selected={data.isSelected ? 'true' : 'false'}
@@ -108,10 +150,16 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId }: TreeRowProps
                 )}
                 <span className={styles.indent} aria-hidden />
                 <TreeRowChevron isFolder={isFolder} isExpanded={isExpanded} />
-                <span className={styles.icon} aria-hidden>
-                    {isFolder ? <IconFolder size={16} /> : <IconDocument size={16} />}
-                </span>
-                <span className={styles.label}>{item.getItemName()}</span>
+                {data.icon !== undefined && data.icon !== null && (
+                    <span className={styles.icon} aria-hidden>
+                        {data.icon}
+                    </span>
+                )}
+                {item.isRenaming() ? (
+                    <TreeRowRenameInput item={item} />
+                ) : (
+                    <span className={styles.label}>{item.getItemName()}</span>
+                )}
                 {data.actions !== undefined && data.actions !== null ? (
                     // eslint-disable-next-line jsx-a11y-x/click-events-have-key-events, jsx-a11y-x/no-static-element-interactions
                     <div className={styles.actions} onClick={handleActionsClick}>

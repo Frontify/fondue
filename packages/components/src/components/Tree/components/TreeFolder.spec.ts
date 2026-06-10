@@ -6,7 +6,7 @@ import { TreeFolder } from './TreeFolder';
 
 describe('TreeFolder', () => {
     it('renders null', () => {
-        expect(TreeFolder({ id: 'f', label: 'Folder', children: null })).toBe(null);
+        expect(TreeFolder({ id: 'f', children: null })).toBe(null);
     });
 
     it('declares displayName="Tree.Folder"', () => {

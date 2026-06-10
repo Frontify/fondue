@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { AssistiveTreeDescription } from '@headless-tree/react';
 import { Fragment, useId, useMemo, type ReactNode } from 'react';
 
 import { useTranslation } from '#/hooks/useTranslation';
@@ -63,6 +64,7 @@ export const TreeRoot = ({ children, onChange, multiSelect = false, reorderable 
                     {rowHint}
                 </span>
             )}
+            <AssistiveTreeDescription tree={tree} />
             {visibleItems.map((item, index) => {
                 const loadingPlaceholder = loadingInsertions.byIndex.get(index);
                 return (

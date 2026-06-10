@@ -33,6 +33,7 @@ const translations = {
     Table_sortDescending: 'Sort descending',
     Tree_checkboxHint: 'Selectable, press Tab to focus the checkbox.',
     Tree_loading: 'Loading…',
+    Tree_renameInputLabel: 'New name',
     Tree_reorderHint: 'Press Control Shift D to move.',
 };
 
