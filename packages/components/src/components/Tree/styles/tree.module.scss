@@ -156,11 +156,28 @@
 
 .dragline {
     position: absolute;
+    /* Starts under the chevron of the folder being dropped into. A level-L row's chevron
+       sits at 36px + L × 16px (item padding 8 + handle 16 + gap 4 + indent base 4 + gap 4),
+       and the target folder is one level above the drop level carried by
+       `--tree-drag-line-indent` (drop level × 16px) → 20px + drop level × 16px. */
+    left: calc(var(--tree-drag-line-indent, 0px) + 20px);
+    right: 0;
     height: 2px;
     margin-top: -1px;
     background-color: var(--tree-accent);
     pointer-events: none;
     z-index: 1;
+
+    /* The checkbox column (16px + 4px gap) shifts the chevron right in multi-select. */
+    &[data-multi-select='true'] {
+        left: calc(var(--tree-drag-line-indent, 0px) + 40px);
+    }
+
+    /* Root-level drops have no target folder to align with — span the full tree width.
+       Declared last so it also overrides the multi-select shift. */
+    &[data-root-drop='true'] {
+        left: 0;
+    }
     /* Smooths sub-pixel jitter and brief gaps between drag-target updates so the
        line doesn't visibly flicker as it tracks the cursor. */
     transition:

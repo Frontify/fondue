@@ -92,7 +92,9 @@ export const TreeRoot = ({ children, onChange, multiSelect = false, reorderable 
                     reorderable={reorderable}
                 />
             )}
-            {reorderable && <TreeDragLine data={isNoopDrop(tree) ? null : tree.getDragLineData()} />}
+            {reorderable && (
+                <TreeDragLine data={isNoopDrop(tree) ? null : tree.getDragLineData()} multiSelect={multiSelect} />
+            )}
         </div>
     );
 };
