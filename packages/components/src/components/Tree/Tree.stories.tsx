@@ -223,6 +223,18 @@ export const SingleSelect: Story = {
 };
 
 export const MultiSelect: Story = {
+    parameters: {
+        docs: {
+            description: {
+                story:
+                    'With `multiSelect`, every row gets a checkbox. Folder checkboxes are derived from their ' +
+                    'leaf descendants — a folder cannot be checked on its own — and `onChange` reports that ' +
+                    "derived state as `isSelected`: `true` (all leaves checked), `'indeterminate'` (some), or " +
+                    "`false` (none). A folder's `isSelected` prop is ignored in this mode; the type accepts " +
+                    "`'indeterminate'` only so the `onChange` state can be passed straight back into props.",
+            },
+        },
+    },
     args: {
         multiSelect: true,
     },

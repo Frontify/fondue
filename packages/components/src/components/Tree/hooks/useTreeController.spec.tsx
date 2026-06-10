@@ -95,6 +95,19 @@ describe('useTreeController', () => {
         expect(onSelectB).toHaveBeenCalledWith(true);
     });
 
+    it("ignores 'indeterminate' as an isSelected input in both modes", () => {
+        const items: TreeItemData[] = [
+            { id: 'folder', name: 'Folder', isFolder: true, parentId: ROOT_ID, isSelected: 'indeterminate' },
+            { id: '1', name: 'One', isFolder: false, parentId: 'folder', isSelected: 'indeterminate' },
+        ];
+
+        const multi = renderHook(() => useTreeController({ items, multiSelect: true }));
+        expect(multi.result.current.getState().checkedItems).toEqual([]);
+
+        const single = renderHook(() => useTreeController({ items }));
+        expect(single.result.current.getState().selectedItems).toEqual([]);
+    });
+
     it('pins single-select to the last id even when the setter receives multiple', () => {
         const onChange = vi.fn<(state: TreeChangeState) => void>();
         const { result } = renderHook(() => useTreeController({ items: baseItems, onChange }));

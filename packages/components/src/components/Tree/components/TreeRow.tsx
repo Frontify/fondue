@@ -126,14 +126,14 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId }: TreeRowProps
             onBlur={handleBlur}
             className={styles.row}
             aria-describedby={hintId}
-            aria-selected={data.isSelected ? 'true' : 'false'}
+            aria-selected={data.isSelected === true ? 'true' : 'false'}
             aria-checked={multiSelect ? ariaCheckedFor(checkedState) : undefined}
         >
             <div
                 className={styles.item}
                 style={{ '--tree-row-level': Math.max(0, level) } as CSSProperties}
                 data-folder={isFolder}
-                data-selected={!multiSelect && data.isSelected ? 'true' : undefined}
+                data-selected={!multiSelect && data.isSelected === true ? 'true' : undefined}
                 data-drop={reorderable && item.isDragTarget()}
             >
                 {reorderable && (

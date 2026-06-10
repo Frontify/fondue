@@ -143,7 +143,7 @@ test.describe('TreeRoot multi-select', () => {
     });
 
     test('emits onChange with toggled isSelected', async ({ mount }) => {
-        const onChange: Array<{ id: string; isSelected?: boolean }[]> = [];
+        const onChange: Array<{ id: string; isSelected?: boolean | 'indeterminate' }[]> = [];
         const component = await mount(
             <TestHarness
                 multiSelect
@@ -162,6 +162,41 @@ test.describe('TreeRoot multi-select', () => {
         const last = onChange[onChange.length - 1] ?? [];
         expect(last.find((node) => node.id === '1')?.isSelected).toBe(true);
         expect(last.find((node) => node.id === '2')?.isSelected).toBe(false);
+    });
+
+    test("emits onChange with 'indeterminate' on a partially checked folder", async ({ mount }) => {
+        const folderStates: Array<boolean | 'indeterminate' | undefined> = [];
+        const component = await mount(
+            <TestHarness
+                multiSelect
+                initial={[
+                    {
+                        id: 'f',
+                        name: 'Folder',
+                        isFolder: true,
+                        isExpanded: true,
+                        children: [
+                            { id: 'a', name: 'A', isFolder: false },
+                            { id: 'b', name: 'B', isFolder: false },
+                        ],
+                    },
+                ]}
+                onChange={(state) => {
+                    folderStates.push(state.find((node) => node.id === 'f')?.isSelected);
+                }}
+            />,
+        );
+
+        const checkboxes = component.getByRole('checkbox');
+        // Check one of the folder's two leaves: the folder renders mixed and is reported as such.
+        await checkboxes.nth(1).click();
+        await expect(checkboxes.first()).toHaveAttribute('aria-checked', 'mixed');
+        expect(folderStates[folderStates.length - 1]).toBe('indeterminate');
+
+        // Checking the second leaf completes the set: the folder is reported as selected.
+        await checkboxes.nth(2).click();
+        await expect(checkboxes.first()).toHaveAttribute('aria-checked', 'true');
+        expect(folderStates[folderStates.length - 1]).toBe(true);
     });
 
     test('folder checkbox cascades to descendants', async ({ mount }) => {

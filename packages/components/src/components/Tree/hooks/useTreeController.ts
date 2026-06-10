@@ -87,16 +87,20 @@ export const useTreeController = ({
         () => itemsWithRoot.filter((item) => item.isExpanded).map((item) => item.id),
         [itemsWithRoot],
     );
+    // `isSelected === true` deliberately: a round-tripped 'indeterminate' is derived
+    // folder output, never an input, and must not count as checked/selected.
     const checkedItems = useMemo(
         () =>
-            multiSelect ? itemsWithRoot.filter((item) => item.isSelected && !item.isFolder).map((item) => item.id) : [],
+            multiSelect
+                ? itemsWithRoot.filter((item) => item.isSelected === true && !item.isFolder).map((item) => item.id)
+                : [],
         [itemsWithRoot, multiSelect],
     );
     const selectedItems = useMemo(
         () =>
             multiSelect
                 ? []
-                : itemsWithRoot.filter((item) => item.isSelected && item.id !== ROOT_ID).map((item) => item.id),
+                : itemsWithRoot.filter((item) => item.isSelected === true && item.id !== ROOT_ID).map((item) => item.id),
         [itemsWithRoot, multiSelect],
     );
 
