@@ -349,6 +349,74 @@ test.describe('TreeRoot item actions', () => {
     });
 });
 
+test.describe('TreeRoot item decorators', () => {
+    test('renders <Tree.Decorator> content after the label', async ({ mount }) => {
+        const component = await mount(
+            <Tree.Root>
+                <Tree.Item id="1">
+                    <Tree.Label>Row</Tree.Label>
+                    <Tree.Decorator>
+                        <span data-test-id="row-decorator">hidden</span>
+                    </Tree.Decorator>
+                </Tree.Item>
+            </Tree.Root>,
+        );
+        await expect(component.getByTestId('row-decorator')).toBeVisible();
+    });
+
+    test('renders <Tree.Decorator> from a folder header', async ({ mount }) => {
+        const component = await mount(
+            <Tree.Root>
+                <Tree.Folder id="f">
+                    <Tree.FolderHeader>
+                        <Tree.Label>Folder</Tree.Label>
+                        <Tree.Decorator>
+                            <span data-test-id="folder-decorator">hidden</span>
+                        </Tree.Decorator>
+                    </Tree.FolderHeader>
+                    <Tree.Item id="x">
+                        <Tree.Label>X</Tree.Label>
+                    </Tree.Item>
+                </Tree.Folder>
+            </Tree.Root>,
+        );
+        await expect(component.getByTestId('folder-decorator')).toBeVisible();
+    });
+
+    test('bubbles clicks from the decorator to the row (unlike actions)', async ({ mount }) => {
+        let rowClicks = 0;
+        const component = await mount(
+            <Tree.Root>
+                <Tree.Item id="1" onClick={() => (rowClicks += 1)}>
+                    <Tree.Label>Row</Tree.Label>
+                    <Tree.Decorator>
+                        <span data-test-id="row-decorator">hidden</span>
+                    </Tree.Decorator>
+                </Tree.Item>
+            </Tree.Root>,
+        );
+
+        await component.getByTestId('row-decorator').click();
+        expect(rowClicks).toBe(1);
+    });
+
+    test('hides the decorator while the row is renaming', async ({ mount }) => {
+        const component = await mount(
+            <Tree.Root>
+                <Tree.Item id="1" isRenaming onRename={() => {}}>
+                    <Tree.Label>Row</Tree.Label>
+                    <Tree.Decorator>
+                        <span data-test-id="row-decorator">hidden</span>
+                    </Tree.Decorator>
+                </Tree.Item>
+            </Tree.Root>,
+        );
+
+        await expect(component.getByRole('textbox')).toBeVisible();
+        await expect(component.getByTestId('row-decorator')).toBeHidden();
+    });
+});
+
 test.describe('TreeRoot renaming', () => {
     const initial = [
         { id: '1', name: 'First', isFolder: false },

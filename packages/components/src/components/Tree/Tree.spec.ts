@@ -5,6 +5,7 @@ import { describe, expect, it } from 'vitest';
 import {
     Tree,
     TreeAction,
+    TreeDecorator,
     TreeFolder,
     TreeFolderHeader,
     TreeIcon,
@@ -21,7 +22,7 @@ import {
  */
 
 describe('Tree namespace', () => {
-    it('exposes Root / Item / Folder / FolderHeader / Icon / Label / Action / Loading on the namespace', () => {
+    it('exposes Root / Item / Folder / FolderHeader / Icon / Label / Decorator / Action / Loading on the namespace', () => {
         expect(Tree).toEqual({
             Root: TreeRoot,
             Item: TreeItem,
@@ -29,6 +30,7 @@ describe('Tree namespace', () => {
             FolderHeader: TreeFolderHeader,
             Icon: TreeIcon,
             Label: TreeLabel,
+            Decorator: TreeDecorator,
             Action: TreeAction,
             Loading: TreeLoading,
         });
@@ -41,6 +43,7 @@ describe('Tree namespace', () => {
         expect(Tree.FolderHeader).toBe(TreeFolderHeader);
         expect(Tree.Icon).toBe(TreeIcon);
         expect(Tree.Label).toBe(TreeLabel);
+        expect(Tree.Decorator).toBe(TreeDecorator);
         expect(Tree.Action).toBe(TreeAction);
         expect(Tree.Loading).toBe(TreeLoading);
     });

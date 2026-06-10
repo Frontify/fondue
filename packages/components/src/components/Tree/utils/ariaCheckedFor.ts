@@ -1,17 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { CheckedState } from '@headless-tree/core';
+import { type RowCheckedState } from './computeCheckedStates';
 
 /**
- * Maps headless-tree's `CheckedState` enum onto the `aria-checked` attribute. VoiceOver
- * requires the literal strings — passing `true`/`false` booleans silently broadcasts
- * "selected" instead of the intended checkbox state.
+ * Maps a row's checked state onto `aria-checked`. VoiceOver needs the literal strings —
+ * booleans silently announce "selected" instead of the checkbox state.
  */
-export const ariaCheckedFor = (state: CheckedState): 'true' | 'false' | 'mixed' => {
-    if (state === CheckedState.Checked) {
+export const ariaCheckedFor = (state: RowCheckedState): 'true' | 'false' | 'mixed' => {
+    if (state === true) {
         return 'true';
     }
-    if (state === CheckedState.Indeterminate) {
+    if (state === 'indeterminate') {
         return 'mixed';
     }
     return 'false';

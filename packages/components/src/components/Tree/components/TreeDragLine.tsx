@@ -18,12 +18,9 @@ export const TreeDragLine = ({ data, multiSelect }: TreeDragLineProps) => {
     if (!data) {
         return null;
     }
-    // `left` is the drop level × INDENT_STEP_PX (headless-tree's `indent` config). It is
-    // handed to the stylesheet as a custom property — `.dragline` adds the fixed row
-    // prefix (handle, optional checkbox) so the line starts under the chevron of the
-    // folder it drops into. Root-level drops (level 0, no target folder) get no indent at
-    // all and read as a tree-wide line. The line stretches to the tree's right edge;
-    // headless-tree's `width` is ignored since rows are full-width anyway.
+    // `left` is drop level × INDENT_STEP_PX, handed to `.dragline` as a custom property;
+    // the stylesheet adds the fixed row prefix so the line starts under the target
+    // folder's chevron. Root-level drops (left 0) get no indent and read tree-wide.
     return (
         <div
             className={styles.dragline}

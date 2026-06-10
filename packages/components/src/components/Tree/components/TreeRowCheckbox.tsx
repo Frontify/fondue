@@ -1,9 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { CheckedState } from '@headless-tree/core';
 import { useEffect, useRef, type FormEventHandler, type ForwardedRef } from 'react';
 
 import { Checkbox } from '#/components/Checkbox/Checkbox';
+
+import { type RowCheckedState } from '../utils/computeCheckedStates';
 
 type CheckboxProps = {
     onChange?: FormEventHandler<HTMLButtonElement>;
@@ -11,14 +12,14 @@ type CheckboxProps = {
 };
 
 type TreeRowCheckboxProps = {
-    checkedState: CheckedState;
+    checkedState: RowCheckedState;
     isFocused: boolean;
+    isDisabled?: boolean;
     headlessProps: CheckboxProps;
 };
 
-export const TreeRowCheckbox = ({ checkedState, isFocused, headlessProps }: TreeRowCheckboxProps) => {
-    const value: boolean | 'indeterminate' =
-        checkedState === CheckedState.Indeterminate ? 'indeterminate' : checkedState === CheckedState.Checked;
+export const TreeRowCheckbox = ({ checkedState, isFocused, isDisabled, headlessProps }: TreeRowCheckboxProps) => {
+    const value: boolean | 'indeterminate' = checkedState;
 
     const elementRef = useRef<HTMLButtonElement | null>(null);
 
@@ -32,10 +33,8 @@ export const TreeRowCheckbox = ({ checkedState, isFocused, headlessProps }: Tree
         }
     };
 
-    // Mirror headless-tree's roving tabindex onto the row's checkbox: only the checkbox
-    // inside the focused row is in the tab order. Without this every Checkbox keeps its
-    // native tabIndex=0, so Tab leaks straight from the focused row's checkbox into the
-    // next row's checkbox instead of leaving the tree.
+    // Mirror the roving tabindex: only the focused row's checkbox is tabbable, otherwise
+    // Tab leaks from checkbox to checkbox instead of leaving the tree.
     useEffect(() => {
         if (elementRef.current) {
             elementRef.current.tabIndex = isFocused ? 0 : -1;
@@ -45,9 +44,9 @@ export const TreeRowCheckbox = ({ checkedState, isFocused, headlessProps }: Tree
     return (
         <Checkbox
             value={value}
+            disabled={isDisabled}
             onChange={(event) => {
-                // The whole row also handles clicks (selection/expansion); stop the bubble so
-                // checking a box doesn't simultaneously fire the row's select handler.
+                // Don't let the click also fire the row's select/expand handler.
                 event.stopPropagation();
                 headlessProps.onChange?.(event);
             }}

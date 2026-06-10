@@ -13,7 +13,7 @@ type TreeNodeBase = {
     name: string;
     isFolder: boolean;
     isExpanded?: boolean;
-    /** `'indeterminate'` is reported on folders in multi-select mode when only some leaf descendants are checked. */
+    /** `'indeterminate'` appears on folders in multi-select when only some descendant units are checked. */
     isSelected?: boolean | 'indeterminate';
     /** Echoes back the `tags` attached to this row. */
     tags?: string[];
@@ -37,8 +37,12 @@ type TreeRowSharedProps = {
     id: string;
     /**
      * Selects the row: checks its checkbox (`multiSelect`) or highlights it (single-select).
-     * In multi-select mode a folder's `isSelected` is ignored — folder selection is derived
-     * from its contents and reported via `onChange` (`'indeterminate'` is output-only).
+     * In multi-select mode a folder's `isSelected` is honored only while it has no loaded
+     * children (empty, or collapsed while lazy-loading) — then it is checkable as its own
+     * entity and counts as one unit toward its ancestors. Once children are present the
+     * prop is ignored and folder state is derived (`'indeterminate'` is output-only).
+     * When the children of a checked folder load, the consumer has to carry the selected
+     * state over to the new items by passing `isSelected` to all of them.
      */
     isSelected?: boolean | 'indeterminate';
     onSelectChange?: (isSelected: boolean) => void;
@@ -59,10 +63,17 @@ type TreeRowSharedProps = {
     onMove?: (info: TreeMoveInfo) => void;
     /** Consumer-defined labels passed to `accepts` drop predicates. No visual effect. */
     tags?: string[];
+    /**
+     * Freezes the row at its prop-driven state: no selecting/checking (not even via a
+     * folder cascade), dragging, renaming, dropping into, or `onClick`. Folders stay
+     * expandable and their descendants remain interactive. The frozen state still counts
+     * toward ancestors' checkbox state.
+     */
+    isDisabled?: boolean;
 };
 
 export type TreeItemProps = TreeRowSharedProps & {
-    /** `<Tree.Label>` (required), plus an optional `<Tree.Icon>` and `<Tree.Action>`. */
+    /** `<Tree.Label>` (required), plus an optional `<Tree.Icon>`, `<Tree.Decorator>` and `<Tree.Action>`. */
     children: ReactNode;
 };
 
@@ -79,6 +90,14 @@ export type TreeFolderProps = TreeRowSharedProps & {
 };
 
 export type TreeActionProps = {
+    children: ReactNode;
+};
+
+/**
+ * Passive decorators (badges, status icons) hugging the label text. Clicks bubble to
+ * the row — interactive controls belong in `<Tree.Action>`. Hidden while renaming.
+ */
+export type TreeDecoratorProps = {
     children: ReactNode;
 };
 
@@ -115,8 +134,10 @@ export type TreeItemData = {
     onClick?: MouseEventHandler<HTMLDivElement>;
     onMove?: (info: TreeMoveInfo) => void;
     icon?: ReactNode;
+    decorator?: ReactNode;
     actions?: ReactNode;
     isLoading?: boolean;
     tags?: string[];
     accepts?: (items: TreeDropCandidate[]) => boolean;
+    isDisabled?: boolean;
 };

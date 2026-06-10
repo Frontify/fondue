@@ -185,6 +185,23 @@ describe('parseChildren', () => {
         expect(result.items[0]).toMatchObject({ isRenaming: true, onRenamingChange, onRename });
     });
 
+    it('forwards isDisabled on items and folders', () => {
+        const result = parseChildren([
+            <TreeItem key="1" id="1" isDisabled>
+                <TreeLabel>One</TreeLabel>
+            </TreeItem>,
+            <TreeFolder key="f" id="f" isDisabled>
+                <TreeFolderHeader>
+                    <TreeLabel>Folder</TreeLabel>
+                </TreeFolderHeader>
+                {item('a', 'A')}
+            </TreeFolder>,
+        ]);
+        expect(result.items.find((entry) => entry.id === '1')?.isDisabled).toBe(true);
+        expect(result.items.find((entry) => entry.id === 'f')?.isDisabled).toBe(true);
+        expect(result.items.find((entry) => entry.id === 'a')?.isDisabled).toBeUndefined();
+    });
+
     it('ignores non-Tree children', () => {
         const result = parseChildren([
             <div key="div">not-a-tree-node</div>,

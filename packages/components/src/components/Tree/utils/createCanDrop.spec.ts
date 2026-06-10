@@ -98,6 +98,35 @@ describe('createCanDrop', () => {
         expect(canDrop([makeDragged(draggedLeaf)], makeOrderedTarget('parent', 1))).toBe(false);
     });
 
+    it('rejects drops into a disabled folder even without an `accepts` predicate', () => {
+        const canDrop = createCanDrop({
+            itemsById: indexById([
+                { id: 'folder', name: 'Folder', isFolder: true, children: [], isDisabled: true },
+                draggedLeaf,
+            ]),
+        });
+        expect(canDrop([makeDragged(draggedLeaf)], makeUnorderedTarget('folder'))).toBe(false);
+    });
+
+    it('rejects via the bypass guard when the expanded folder above is disabled', () => {
+        const canDrop = createCanDrop({
+            itemsById: indexById([
+                { id: 'parent', name: 'Parent', isFolder: true, children: ['frozen'] },
+                {
+                    id: 'frozen',
+                    name: 'Frozen',
+                    isFolder: true,
+                    isExpanded: true,
+                    isDisabled: true,
+                    children: ['frozen-child'],
+                },
+                { id: 'frozen-child', name: 'FC', isFolder: false, parentId: 'frozen' },
+                draggedLeaf,
+            ]),
+        });
+        expect(canDrop([makeDragged(draggedLeaf)], makeOrderedTarget('parent', 1))).toBe(false);
+    });
+
     it('does not engage the bypass guard when the folder above is empty', () => {
         const canDrop = createCanDrop({
             itemsById: indexById([

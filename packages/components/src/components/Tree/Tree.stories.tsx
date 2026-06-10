@@ -1,15 +1,23 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconDocument, IconDotsHorizontal, IconFolder, IconPen, IconTrashBin } from '@frontify/fondue-icons';
+import {
+    IconDocument,
+    IconDotsHorizontal,
+    IconEyeOff,
+    IconFolder,
+    IconPen,
+    IconTrashBin,
+} from '@frontify/fondue-icons';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState, type ReactNode } from 'react';
 import { action } from 'storybook/actions';
 
-import { Button, Dropdown } from '#/index';
+import { Badge, Button, Dropdown } from '#/index';
 
 import {
     Tree,
     TreeAction,
+    TreeDecorator,
     TreeFolder,
     TreeFolderHeader,
     TreeIcon,
@@ -32,6 +40,7 @@ const meta: Meta<typeof TreeRoot> = {
         'Tree.FolderHeader': TreeFolderHeader,
         'Tree.Label': TreeLabel,
         'Tree.Icon': TreeIcon,
+        'Tree.Decorator': TreeDecorator,
         'Tree.Action': TreeAction,
         'Tree.Loading': TreeLoading,
     },
@@ -227,11 +236,13 @@ export const MultiSelect: Story = {
         docs: {
             description: {
                 story:
-                    'With `multiSelect`, every row gets a checkbox. Folder checkboxes are derived from their ' +
-                    'leaf descendants — a folder cannot be checked on its own — and `onChange` reports that ' +
-                    "derived state as `isSelected`: `true` (all leaves checked), `'indeterminate'` (some), or " +
-                    "`false` (none). A folder's `isSelected` prop is ignored in this mode; the type accepts " +
-                    "`'indeterminate'` only so the `onChange` state can be passed straight back into props.",
+                    'With `multiSelect`, every row gets a checkbox. The checkbox of a folder with children is ' +
+                    'derived from its descendant units and cascade-toggles them — such a folder cannot be checked ' +
+                    'on its own and its `isSelected` prop is ignored. `onChange` reports the derived state as ' +
+                    "`isSelected`: `true` (all units checked), `'indeterminate'` (some), or `false` (none); the " +
+                    "prop type accepts `'indeterminate'` only so the `onChange` state can be passed straight back " +
+                    'into props. Only folders with no loaded children (empty or lazy-loading) are checkable as ' +
+                    'their own entity — see the MultiSelectLazyLoading story.',
             },
         },
     },
@@ -610,6 +621,83 @@ export const WithItemActions: Story = {
     },
 };
 
+export const WithDecorators: Story = {
+    parameters: {
+        docs: {
+            description: {
+                story:
+                    'Render passive badges or status icons right after the label by nesting `<Tree.Decorator>` ' +
+                    "inside a `<Tree.Item>` or a folder's `<Tree.FolderHeader>`. Unlike `<Tree.Action>` (right-aligned, " +
+                    'click-isolated), the decorator hugs the label text and clicks inside it activate the row, so it is ' +
+                    'meant for non-interactive content such as a "hidden" badge.',
+            },
+        },
+    },
+    render: (args) => {
+        const [nodes, setNodes] = useState<TreeChangeState>([
+            { id: '1', name: 'Home', isFolder: false },
+            {
+                id: 'a',
+                name: 'Document group',
+                isFolder: true,
+                isExpanded: true,
+                children: [
+                    { id: 'a1', name: 'Page', isFolder: false },
+                    { id: 'a2', name: 'Hidden page', isFolder: false },
+                ],
+            },
+        ]);
+
+        const hiddenBadge = (
+            <Tree.Decorator>
+                <Badge emphasis="weak" size="small" aria-label="Hidden">
+                    <IconEyeOff size={12} />
+                </Badge>
+            </Tree.Decorator>
+        );
+        const hiddenIds = new Set(['1', 'a2', 'a']);
+
+        const renderNode = (n: TreeNodeState): ReactNode =>
+            n.isFolder ? (
+                <Tree.Folder key={n.id} id={n.id} isExpanded={n.isExpanded}>
+                    <Tree.FolderHeader>
+                        <Tree.Icon>
+                            <IconFolder size={16} />
+                        </Tree.Icon>
+                        <Tree.Label>{n.name}</Tree.Label>
+                        {hiddenIds.has(n.id) && hiddenBadge}
+                        <Tree.Action>
+                            <Button aspect="square" emphasis="default" size="small" onPress={action('Folder action')}>
+                                <IconDotsHorizontal size={16} />
+                            </Button>
+                        </Tree.Action>
+                    </Tree.FolderHeader>
+                    {n.children?.map(renderNode)}
+                </Tree.Folder>
+            ) : (
+                <Tree.Item key={n.id} id={n.id}>
+                    <Tree.Icon>
+                        <IconDocument size={16} />
+                    </Tree.Icon>
+                    <Tree.Label>{n.name}</Tree.Label>
+                    {hiddenIds.has(n.id) && hiddenBadge}
+                </Tree.Item>
+            );
+
+        return (
+            <Tree.Root
+                {...args}
+                onChange={(state) => {
+                    args.onChange?.(state);
+                    setNodes(state);
+                }}
+            >
+                {nodes.map(renderNode)}
+            </Tree.Root>
+        );
+    },
+};
+
 export const Renaming: Story = {
     parameters: {
         docs: {
@@ -620,7 +708,9 @@ export const Renaming: Story = {
                     'an `onRename` handler), the label becomes an inline text input. Enter or clicking ' +
                     'away commits: the row fires `onRename` with the new name and the root fires `onChange` ' +
                     'with the updated `name`, so re-rendering from either source applies the rename. Escape ' +
-                    'cancels. Either way `onRenamingChange(false)` fires so the consumer can clear its flag.',
+                    'cancels. Either way `onRenamingChange(false)` fires so the consumer can clear its flag. ' +
+                    'A `<Tree.Decorator>` (here on Logo.svg) is hidden while its row renames, so the input ' +
+                    'spans the full width up to the actions slot.',
             },
         },
     },
@@ -687,6 +777,13 @@ export const Renaming: Story = {
                         <IconDocument size={16} />
                     </Tree.Icon>
                     <Tree.Label>{n.name}</Tree.Label>
+                    {n.id === 'logo' && (
+                        <Tree.Decorator>
+                            <Badge emphasis="weak" size="small" aria-label="Hidden">
+                                <IconEyeOff size={12} />
+                            </Badge>
+                        </Tree.Decorator>
+                    )}
                     {renameAction(n)}
                 </Tree.Item>
             );
@@ -814,6 +911,150 @@ export const LazyLoading: Story = {
     },
 };
 
+export const MultiSelectLazyLoading: Story = {
+    parameters: {
+        docs: {
+            description: {
+                story:
+                    'Multi-select combined with lazy loading: a folder with no loaded children — collapsed while ' +
+                    'its contents are still unfetched, or simply empty — is checkable as its own entity. Its checkbox ' +
+                    'checks the folder itself instead of cascading into unknown contents, `onSelectChange` fires on the ' +
+                    'folder, and it counts as one unit toward its ancestors (a parent of checked collapsed folders reads ' +
+                    'checked). Once children are loaded, the consumer has to carry the selected state over to the ' +
+                    'new items by passing `isSelected` to all of them (here done in the fetch callback) — from then ' +
+                    "on the folder's checkbox derives from its contents again and its own `isSelected` is ignored.",
+            },
+        },
+    },
+    args: {
+        multiSelect: true,
+    },
+    render: (args) => {
+        type LazyNode = { id: string; name: string; isFolder: boolean };
+        type ChildrenState = { status: 'loading' } | { status: 'loaded'; children: LazyNode[] };
+
+        const rootNodes: LazyNode[] = [
+            { id: 'documents', name: 'Documents', isFolder: true },
+            { id: 'pictures', name: 'Pictures', isFolder: true },
+            { id: 'archive', name: 'Archive (empty)', isFolder: true },
+            { id: 'README.md', name: 'README.md', isFolder: false },
+        ];
+        const childrenByParent: Record<string, LazyNode[]> = {
+            documents: [
+                { id: 'documents/reports', name: 'reports', isFolder: true },
+                { id: 'documents/invoice.pdf', name: 'invoice.pdf', isFolder: false },
+                { id: 'documents/notes.txt', name: 'notes.txt', isFolder: false },
+            ],
+            pictures: [
+                { id: 'pictures/vacation', name: 'vacation', isFolder: true },
+                { id: 'pictures/avatar.png', name: 'avatar.png', isFolder: false },
+            ],
+            'documents/reports': [
+                { id: 'documents/reports/q1.pdf', name: 'q1.pdf', isFolder: false },
+                { id: 'documents/reports/q2.pdf', name: 'q2.pdf', isFolder: false },
+            ],
+            'pictures/vacation': [
+                { id: 'pictures/vacation/beach.jpg', name: 'beach.jpg', isFolder: false },
+                { id: 'pictures/vacation/sunset.jpg', name: 'sunset.jpg', isFolder: false },
+            ],
+        };
+        const fetchChildren = (parentId: string): Promise<LazyNode[]> =>
+            new Promise((resolve) => {
+                setTimeout(() => resolve(childrenByParent[parentId] ?? []), 600);
+            });
+
+        const [expandedIds, setExpandedIds] = useState<Set<string>>(() => new Set());
+        const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set());
+        const [childrenState, setChildrenState] = useState<Record<string, ChildrenState>>({});
+
+        const handleSelect = (id: string, isSelected: boolean) => {
+            setSelectedIds((prev) => {
+                const next = new Set(prev);
+                if (isSelected) {
+                    next.add(id);
+                } else {
+                    next.delete(id);
+                }
+                return next;
+            });
+        };
+
+        const handleExpand = (id: string, isExpanded: boolean) => {
+            setExpandedIds((prev) => {
+                const next = new Set(prev);
+                if (isExpanded) {
+                    next.add(id);
+                } else {
+                    next.delete(id);
+                }
+                return next;
+            });
+            if (isExpanded && !childrenState[id]) {
+                setChildrenState((prev) => ({ ...prev, [id]: { status: 'loading' } }));
+                fetchChildren(id)
+                    .then((children) => {
+                        setChildrenState((prev) => ({ ...prev, [id]: { status: 'loaded', children } }));
+                        // The consumer has to carry a checked folder's state over to the
+                        // newly loaded items by passing `isSelected` to all of them —
+                        // from now on the folder derives from its contents.
+                        setSelectedIds((prev) => {
+                            if (!prev.has(id)) {
+                                return prev;
+                            }
+                            const next = new Set(prev);
+                            for (const child of children) {
+                                next.add(child.id);
+                            }
+                            return next;
+                        });
+                        return children;
+                    })
+                    .catch(() => {});
+            }
+        };
+
+        const renderNode = (n: LazyNode): ReactNode => {
+            if (!n.isFolder) {
+                return (
+                    <Tree.Item
+                        key={n.id}
+                        id={n.id}
+                        isSelected={selectedIds.has(n.id)}
+                        onSelectChange={(isSelected) => handleSelect(n.id, isSelected)}
+                    >
+                        <Tree.Icon>
+                            <IconDocument size={16} />
+                        </Tree.Icon>
+                        <Tree.Label>{n.name}</Tree.Label>
+                    </Tree.Item>
+                );
+            }
+            const entry = childrenState[n.id];
+            return (
+                <Tree.Folder
+                    key={n.id}
+                    id={n.id}
+                    isExpanded={expandedIds.has(n.id)}
+                    onExpandChange={(isExpanded) => handleExpand(n.id, isExpanded)}
+                    isSelected={selectedIds.has(n.id)}
+                    onSelectChange={(isSelected) => handleSelect(n.id, isSelected)}
+                >
+                    <Tree.FolderHeader>
+                        <Tree.Icon>
+                            <IconFolder size={16} />
+                        </Tree.Icon>
+                        <Tree.Label>{n.name}</Tree.Label>
+                    </Tree.FolderHeader>
+                    {entry?.status === 'loading' && <Tree.Loading />}
+                    {entry?.status === 'loaded' && entry.children.map(renderNode)}
+                </Tree.Folder>
+            );
+        };
+
+        return <Tree.Root {...args}>{rootNodes.map(renderNode)}</Tree.Root>;
+    },
+};
+
 export const LoadMore: Story = {
     parameters: {
         docs: {
@@ -878,6 +1119,102 @@ export const LoadMore: Story = {
                     </Tree.Folder>
                 </Tree.Root>
             </div>
+        );
+    },
+};
+
+export const DisabledRows: Story = {
+    parameters: {
+        docs: {
+            description: {
+                story:
+                    '`isDisabled` freezes a row at its prop-driven state: its checkbox cannot be toggled — ' +
+                    'not even by checking an ancestor folder — it cannot be dragged or take the selection, ' +
+                    'and drops into a disabled folder are rejected. The frozen state still counts toward ' +
+                    "folder checkboxes, so a folder holding a disabled-unchecked leaf caps at 'indeterminate'. " +
+                    'Disabled folders stay expandable, and only their own row is frozen — their children ' +
+                    'remain interactive unless disabled themselves.',
+            },
+        },
+    },
+    args: {
+        multiSelect: true,
+        reorderable: true,
+    },
+    render: (args) => {
+        const [nodes, setNodes] = useState<TreeChangeState>([
+            {
+                id: 'a',
+                name: 'Folder a',
+                isFolder: true,
+                isExpanded: true,
+                children: [
+                    { id: 'a1', name: 'Item a1 (disabled)', isFolder: false, tags: ['disabled'] },
+                    {
+                        id: 'a2',
+                        name: 'Item a2 (disabled, checked)',
+                        isFolder: false,
+                        isSelected: true,
+                        tags: ['disabled'],
+                    },
+                    { id: 'a3', name: 'Item a3', isFolder: false },
+                ],
+            },
+            {
+                id: 'b',
+                name: 'Folder b (disabled)',
+                isFolder: true,
+                isExpanded: true,
+                tags: ['disabled'],
+                children: [
+                    { id: 'b1', name: 'Item b1', isFolder: false },
+                    { id: 'b2', name: 'Item b2', isFolder: false },
+                ],
+            },
+            { id: 'c', name: 'Item c', isFolder: false },
+        ]);
+
+        // The disabled flag is consumer state; this story round-trips it through `tags`
+        // purely so the controlled re-render keeps it.
+        const isDisabled = (n: TreeNodeState) => n.tags?.includes('disabled');
+
+        const renderNode = (n: TreeNodeState): ReactNode =>
+            n.isFolder ? (
+                <Tree.Folder
+                    key={n.id}
+                    id={n.id}
+                    isExpanded={n.isExpanded}
+                    isSelected={n.isSelected}
+                    isDisabled={isDisabled(n)}
+                    tags={n.tags}
+                >
+                    <Tree.FolderHeader>
+                        <Tree.Icon>
+                            <IconFolder size={16} />
+                        </Tree.Icon>
+                        <Tree.Label>{n.name}</Tree.Label>
+                    </Tree.FolderHeader>
+                    {n.children?.map(renderNode)}
+                </Tree.Folder>
+            ) : (
+                <Tree.Item key={n.id} id={n.id} isSelected={n.isSelected} isDisabled={isDisabled(n)} tags={n.tags}>
+                    <Tree.Icon>
+                        <IconDocument size={16} />
+                    </Tree.Icon>
+                    <Tree.Label>{n.name}</Tree.Label>
+                </Tree.Item>
+            );
+
+        return (
+            <Tree.Root
+                {...args}
+                onChange={(state) => {
+                    args.onChange?.(state);
+                    setNodes(state);
+                }}
+            >
+                {nodes.map(renderNode)}
+            </Tree.Root>
         );
     },
 };
