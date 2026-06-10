@@ -9,8 +9,12 @@ type TreeRowChevronProps = {
     isExpanded: boolean;
 };
 
+const ChevronIcon = ({ isExpanded }: { isExpanded: boolean }) => {
+    return isExpanded ? <IconCaretDown size={12} /> : <IconCaretRight size={12} />;
+};
+
 export const TreeRowChevron = ({ isFolder, isExpanded }: TreeRowChevronProps) => (
     <span className={styles.chevron} aria-hidden>
-        {isFolder ? isExpanded ? <IconCaretDown size={12} /> : <IconCaretRight size={12} /> : null}
+        {isFolder ? <ChevronIcon isExpanded={isExpanded} /> : null}
     </span>
 );
