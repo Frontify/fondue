@@ -1,9 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 /**
- * Compares two id lists and returns the entries that were added or removed.
- * Used to fan a single batched setter call out into per-item `onSelectChange`
- * / `onExpandChange` callbacks.
+ * Diffs two id lists into added/removed — used to fan a batched setter call out into
+ * per-item `onSelectChange`/`onExpandChange` callbacks.
  */
 export const diffSelection = (
     prev: readonly string[],

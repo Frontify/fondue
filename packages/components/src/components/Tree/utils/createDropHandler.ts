@@ -16,12 +16,9 @@ type DropHandlerDeps = {
 };
 
 /**
- * Builds the `onDrop` handler passed to headless-tree. Computes the next flat items array
- * via `moveItems`, fires each dragged item's own `onMove` with its new position, and
- * emits the assembled `TreeChangeState` via `onChange`.
- *
- * The handler is a no-op when the resolved target parent doesn't exist in the current
- * items map (defensive: shouldn't happen, but keeps the handler safe under racy updates).
+ * Builds headless-tree's `onDrop` handler: computes the next flat items via `moveItems`,
+ * fires each dragged item's `onMove` with its new position, and emits `onChange`.
+ * No-op when the target parent is missing (defensive against racy updates).
  */
 export const createDropHandler =
     ({ items, itemsById, treeState, rootId, onChange }: DropHandlerDeps) =>

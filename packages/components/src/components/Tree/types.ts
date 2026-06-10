@@ -13,7 +13,7 @@ type TreeNodeBase = {
     name: string;
     isFolder: boolean;
     isExpanded?: boolean;
-    /** `'indeterminate'` is reported on folders in multi-select mode when only some leaf descendants are checked. */
+    /** `'indeterminate'` appears on folders in multi-select when only some descendant units are checked. */
     isSelected?: boolean | 'indeterminate';
     /** Echoes back the `tags` attached to this row. */
     tags?: string[];
@@ -37,8 +37,12 @@ type TreeRowSharedProps = {
     id: string;
     /**
      * Selects the row: checks its checkbox (`multiSelect`) or highlights it (single-select).
-     * In multi-select mode a folder's `isSelected` is ignored — folder selection is derived
-     * from its contents and reported via `onChange` (`'indeterminate'` is output-only).
+     * In multi-select mode a folder's `isSelected` is honored only while it has no loaded
+     * children (empty, or collapsed while lazy-loading) — then it is checkable as its own
+     * entity and counts as one unit toward its ancestors. Once children are present the
+     * prop is ignored and folder state is derived (`'indeterminate'` is output-only).
+     * When the children of a checked folder load, the consumer has to carry the selected
+     * state over to the new items by passing `isSelected` to all of them.
      */
     isSelected?: boolean | 'indeterminate';
     onSelectChange?: (isSelected: boolean) => void;
@@ -60,12 +64,10 @@ type TreeRowSharedProps = {
     /** Consumer-defined labels passed to `accepts` drop predicates. No visual effect. */
     tags?: string[];
     /**
-     * Freezes the row at its prop-driven state: it can't be selected/checked (not even
-     * by a folder cascade), dragged, renamed, or dropped into, and `onClick` is
-     * suppressed. Folders stay expandable and only their own row is frozen — descendants
-     * remain interactive unless disabled themselves. The frozen state still counts
-     * toward ancestor folders' checkbox state, so a folder holding a disabled-unchecked
-     * leaf shows 'indeterminate' once its other leaves are checked.
+     * Freezes the row at its prop-driven state: no selecting/checking (not even via a
+     * folder cascade), dragging, renaming, dropping into, or `onClick`. Folders stay
+     * expandable and their descendants remain interactive. The frozen state still counts
+     * toward ancestors' checkbox state.
      */
     isDisabled?: boolean;
 };
@@ -92,9 +94,8 @@ export type TreeActionProps = {
 };
 
 /**
- * Passive decorators (badges, status icons) rendered right after the label, hugging the
- * text. Clicks inside it bubble to the row (activating it) — interactive controls belong
- * in `<Tree.Action>` instead. Hidden while the row is renaming.
+ * Passive decorators (badges, status icons) hugging the label text. Clicks bubble to
+ * the row — interactive controls belong in `<Tree.Action>`. Hidden while renaming.
  */
 export type TreeDecoratorProps = {
     children: ReactNode;

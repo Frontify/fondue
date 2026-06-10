@@ -78,4 +78,57 @@ test.describe('TreeRowCheckbox', () => {
 
         await expect(component.getByRole('treeitem', { name: /Folder/ })).toHaveAttribute('aria-checked', 'true');
     });
+
+    test('checking a folder with no loaded children fires its own onSelectChange', async ({ mount }) => {
+        const calls: boolean[] = [];
+        const component = await mount(
+            <Tree.Root multiSelect>
+                <Tree.Folder id="lazy" onSelectChange={(isSelected) => calls.push(isSelected)}>
+                    <Tree.FolderHeader>
+                        <Tree.Label>Lazy</Tree.Label>
+                    </Tree.FolderHeader>
+                    <Tree.Loading />
+                </Tree.Folder>
+            </Tree.Root>,
+        );
+
+        await component.getByRole('checkbox').click();
+        expect(calls).toEqual([true]);
+    });
+
+    test('a checked folder with no loaded children reports aria-checked="true"', async ({ mount }) => {
+        const component = await mount(
+            <Tree.Root multiSelect>
+                <Tree.Folder id="lazy" isSelected>
+                    <Tree.FolderHeader>
+                        <Tree.Label>Lazy</Tree.Label>
+                    </Tree.FolderHeader>
+                </Tree.Folder>
+            </Tree.Root>,
+        );
+
+        await expect(component.getByRole('treeitem', { name: /Lazy/ })).toHaveAttribute('aria-checked', 'true');
+    });
+
+    test('a checked collapsed subfolder counts toward its ancestor aria-checked="mixed"', async ({ mount }) => {
+        const component = await mount(
+            <Tree.Root multiSelect>
+                <Tree.Folder id="group" isExpanded>
+                    <Tree.FolderHeader>
+                        <Tree.Label>Group</Tree.Label>
+                    </Tree.FolderHeader>
+                    <Tree.Folder id="doc" isSelected>
+                        <Tree.FolderHeader>
+                            <Tree.Label>Doc</Tree.Label>
+                        </Tree.FolderHeader>
+                    </Tree.Folder>
+                    <Tree.Item id="a">
+                        <Tree.Label>A</Tree.Label>
+                    </Tree.Item>
+                </Tree.Folder>
+            </Tree.Root>,
+        );
+
+        await expect(component.getByRole('treeitem', { name: /Group/ })).toHaveAttribute('aria-checked', 'mixed');
+    });
 });

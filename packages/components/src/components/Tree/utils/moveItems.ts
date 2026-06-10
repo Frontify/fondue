@@ -3,10 +3,8 @@
 import { type TreeItemData } from '../types';
 
 /**
- * Returns a new `items` array with `draggedIds` removed from their original parents
- * and inserted under `targetParentId` at `insertIndex`. Pure: never mutates inputs.
- *
- * If the target parent does not exist, returns the original `items` unchanged.
+ * Returns a new `items` array with `draggedIds` re-homed under `targetParentId` at
+ * `insertIndex`. Pure; returns `items` unchanged when the target parent is missing.
  */
 export const moveItems = (
     items: TreeItemData[],

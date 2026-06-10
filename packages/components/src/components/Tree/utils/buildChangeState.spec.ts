@@ -74,14 +74,28 @@ describe('buildChangeState', () => {
         expect(result[0]?.isSelected).toBe(false);
     });
 
-    it('ignores empty subfolders when deriving an ancestor folder state (checkbox parity)', () => {
+    it('counts leafless subfolders as units when deriving an ancestor folder state', () => {
         const items: TreeItemData[] = [
             { id: ROOT_ID, name: 'Root', isFolder: true, children: ['folder'] },
             { id: 'folder', name: 'Folder', isFolder: true, parentId: ROOT_ID, children: ['empty', 'f1'] },
             { id: 'empty', name: 'Empty', isFolder: true, parentId: 'folder', children: [] },
             { id: 'f1', name: 'F1', isFolder: false, parentId: 'folder' },
         ];
-        const result = buildChangeState(items, { ...emptyState, checkedItems: ['f1'] }, ROOT_ID);
+        // The empty subfolder is its own checkable unit: unchecked it holds the ancestor
+        // at 'indeterminate'; checked alongside the leaf the ancestor reads fully checked.
+        const partial = buildChangeState(items, { ...emptyState, checkedItems: ['f1'] }, ROOT_ID);
+        expect(partial[0]?.isSelected).toBe('indeterminate');
+
+        const full = buildChangeState(items, { ...emptyState, checkedItems: ['f1', 'empty'] }, ROOT_ID);
+        expect(full[0]?.isSelected).toBe(true);
+    });
+
+    it('reports a checked leafless folder as selected (checkable entity)', () => {
+        const items: TreeItemData[] = [
+            { id: ROOT_ID, name: 'Root', isFolder: true, children: ['lazy'] },
+            { id: 'lazy', name: 'Lazy', isFolder: true, parentId: ROOT_ID, children: [], isLoading: true },
+        ];
+        const result = buildChangeState(items, { ...emptyState, checkedItems: ['lazy'] }, ROOT_ID);
         expect(result[0]?.isSelected).toBe(true);
     });
 

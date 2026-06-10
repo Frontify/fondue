@@ -236,11 +236,13 @@ export const MultiSelect: Story = {
         docs: {
             description: {
                 story:
-                    'With `multiSelect`, every row gets a checkbox. Folder checkboxes are derived from their ' +
-                    'leaf descendants — a folder cannot be checked on its own — and `onChange` reports that ' +
-                    "derived state as `isSelected`: `true` (all leaves checked), `'indeterminate'` (some), or " +
-                    "`false` (none). A folder's `isSelected` prop is ignored in this mode; the type accepts " +
-                    "`'indeterminate'` only so the `onChange` state can be passed straight back into props.",
+                    'With `multiSelect`, every row gets a checkbox. The checkbox of a folder with children is ' +
+                    'derived from its descendant units and cascade-toggles them — such a folder cannot be checked ' +
+                    'on its own and its `isSelected` prop is ignored. `onChange` reports the derived state as ' +
+                    "`isSelected`: `true` (all units checked), `'indeterminate'` (some), or `false` (none); the " +
+                    "prop type accepts `'indeterminate'` only so the `onChange` state can be passed straight back " +
+                    'into props. Only folders with no loaded children (empty or lazy-loading) are checkable as ' +
+                    'their own entity — see the MultiSelectLazyLoading story.',
             },
         },
     },
@@ -892,6 +894,150 @@ export const LazyLoading: Story = {
                     id={n.id}
                     isExpanded={expandedIds.has(n.id)}
                     onExpandChange={(isExpanded) => handleExpand(n.id, isExpanded)}
+                >
+                    <Tree.FolderHeader>
+                        <Tree.Icon>
+                            <IconFolder size={16} />
+                        </Tree.Icon>
+                        <Tree.Label>{n.name}</Tree.Label>
+                    </Tree.FolderHeader>
+                    {entry?.status === 'loading' && <Tree.Loading />}
+                    {entry?.status === 'loaded' && entry.children.map(renderNode)}
+                </Tree.Folder>
+            );
+        };
+
+        return <Tree.Root {...args}>{rootNodes.map(renderNode)}</Tree.Root>;
+    },
+};
+
+export const MultiSelectLazyLoading: Story = {
+    parameters: {
+        docs: {
+            description: {
+                story:
+                    'Multi-select combined with lazy loading: a folder with no loaded children — collapsed while ' +
+                    'its contents are still unfetched, or simply empty — is checkable as its own entity. Its checkbox ' +
+                    'checks the folder itself instead of cascading into unknown contents, `onSelectChange` fires on the ' +
+                    'folder, and it counts as one unit toward its ancestors (a parent of checked collapsed folders reads ' +
+                    'checked). Once children are loaded, the consumer has to carry the selected state over to the ' +
+                    'new items by passing `isSelected` to all of them (here done in the fetch callback) — from then ' +
+                    "on the folder's checkbox derives from its contents again and its own `isSelected` is ignored.",
+            },
+        },
+    },
+    args: {
+        multiSelect: true,
+    },
+    render: (args) => {
+        type LazyNode = { id: string; name: string; isFolder: boolean };
+        type ChildrenState = { status: 'loading' } | { status: 'loaded'; children: LazyNode[] };
+
+        const rootNodes: LazyNode[] = [
+            { id: 'documents', name: 'Documents', isFolder: true },
+            { id: 'pictures', name: 'Pictures', isFolder: true },
+            { id: 'archive', name: 'Archive (empty)', isFolder: true },
+            { id: 'README.md', name: 'README.md', isFolder: false },
+        ];
+        const childrenByParent: Record<string, LazyNode[]> = {
+            documents: [
+                { id: 'documents/reports', name: 'reports', isFolder: true },
+                { id: 'documents/invoice.pdf', name: 'invoice.pdf', isFolder: false },
+                { id: 'documents/notes.txt', name: 'notes.txt', isFolder: false },
+            ],
+            pictures: [
+                { id: 'pictures/vacation', name: 'vacation', isFolder: true },
+                { id: 'pictures/avatar.png', name: 'avatar.png', isFolder: false },
+            ],
+            'documents/reports': [
+                { id: 'documents/reports/q1.pdf', name: 'q1.pdf', isFolder: false },
+                { id: 'documents/reports/q2.pdf', name: 'q2.pdf', isFolder: false },
+            ],
+            'pictures/vacation': [
+                { id: 'pictures/vacation/beach.jpg', name: 'beach.jpg', isFolder: false },
+                { id: 'pictures/vacation/sunset.jpg', name: 'sunset.jpg', isFolder: false },
+            ],
+        };
+        const fetchChildren = (parentId: string): Promise<LazyNode[]> =>
+            new Promise((resolve) => {
+                setTimeout(() => resolve(childrenByParent[parentId] ?? []), 600);
+            });
+
+        const [expandedIds, setExpandedIds] = useState<Set<string>>(() => new Set());
+        const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set());
+        const [childrenState, setChildrenState] = useState<Record<string, ChildrenState>>({});
+
+        const handleSelect = (id: string, isSelected: boolean) => {
+            setSelectedIds((prev) => {
+                const next = new Set(prev);
+                if (isSelected) {
+                    next.add(id);
+                } else {
+                    next.delete(id);
+                }
+                return next;
+            });
+        };
+
+        const handleExpand = (id: string, isExpanded: boolean) => {
+            setExpandedIds((prev) => {
+                const next = new Set(prev);
+                if (isExpanded) {
+                    next.add(id);
+                } else {
+                    next.delete(id);
+                }
+                return next;
+            });
+            if (isExpanded && !childrenState[id]) {
+                setChildrenState((prev) => ({ ...prev, [id]: { status: 'loading' } }));
+                fetchChildren(id)
+                    .then((children) => {
+                        setChildrenState((prev) => ({ ...prev, [id]: { status: 'loaded', children } }));
+                        // The consumer has to carry a checked folder's state over to the
+                        // newly loaded items by passing `isSelected` to all of them —
+                        // from now on the folder derives from its contents.
+                        setSelectedIds((prev) => {
+                            if (!prev.has(id)) {
+                                return prev;
+                            }
+                            const next = new Set(prev);
+                            for (const child of children) {
+                                next.add(child.id);
+                            }
+                            return next;
+                        });
+                        return children;
+                    })
+                    .catch(() => {});
+            }
+        };
+
+        const renderNode = (n: LazyNode): ReactNode => {
+            if (!n.isFolder) {
+                return (
+                    <Tree.Item
+                        key={n.id}
+                        id={n.id}
+                        isSelected={selectedIds.has(n.id)}
+                        onSelectChange={(isSelected) => handleSelect(n.id, isSelected)}
+                    >
+                        <Tree.Icon>
+                            <IconDocument size={16} />
+                        </Tree.Icon>
+                        <Tree.Label>{n.name}</Tree.Label>
+                    </Tree.Item>
+                );
+            }
+            const entry = childrenState[n.id];
+            return (
+                <Tree.Folder
+                    key={n.id}
+                    id={n.id}
+                    isExpanded={expandedIds.has(n.id)}
+                    onExpandChange={(isExpanded) => handleExpand(n.id, isExpanded)}
+                    isSelected={selectedIds.has(n.id)}
+                    onSelectChange={(isSelected) => handleSelect(n.id, isSelected)}
                 >
                     <Tree.FolderHeader>
                         <Tree.Icon>

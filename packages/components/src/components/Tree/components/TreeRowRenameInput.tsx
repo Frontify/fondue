@@ -14,12 +14,10 @@ type TreeRowRenameInputProps = {
 };
 
 /**
- * The inline `TextInput` swapped in for the row label while `item.isRenaming()`, resized
- * via the `renameInput` styles to fit the 32px row. `EditableText` is not an option: its
- * contentEditable lifecycle conflicts with headless-tree's controlled value/onChange
- * props. Enter and Escape are handled by the renaming feature's hotkeys on the tree
- * container; blur is overridden from the feature's default (abort) to commit, matching
- * Finder/Explorer and `EditableText`.
+ * Inline `TextInput` swapped in for the row label while renaming (`EditableText`'s
+ * contentEditable lifecycle conflicts with headless-tree's controlled props). Enter and
+ * Escape are handled by the feature's hotkeys; blur is overridden from abort to commit,
+ * matching Finder/Explorer.
  */
 export const TreeRowRenameInput = ({ item }: TreeRowRenameInputProps) => {
     const { t } = useTranslation();
@@ -28,13 +26,10 @@ export const TreeRowRenameInput = ({ item }: TreeRowRenameInputProps) => {
         onChange: ChangeEventHandler<HTMLInputElement>;
     };
 
-    // Focus and select-all once on mount (instead of the feature's focus-only ref
-    // callback, which re-fires on every render and would fight the user's caret). A
-    // *layout* effect on purpose: a rename often starts from a closing overlay (the row
-    // action's Dropdown), whose teardown drops DOM focus to `document.body`. A passive
-    // effect runs after paint, so focus would observably sit on the page root for a
-    // moment and screen readers would announce that instead of the rename field; the
-    // layout effect re-focuses synchronously in the same commit, before paint.
+    // Focus and select-all once on mount (the feature's own ref callback re-fires every
+    // render and would fight the caret). A *layout* effect: a rename often starts from a
+    // closing overlay whose teardown drops focus to `document.body`; re-focusing must
+    // happen before paint or screen readers announce the page root instead.
     const inputRef = useRef<HTMLInputElement>(null);
     useLayoutEffect(() => {
         const input = inputRef.current;
@@ -43,27 +38,22 @@ export const TreeRowRenameInput = ({ item }: TreeRowRenameInputProps) => {
         }
         input.focus();
         input.select();
-        // `TextInput` treats non-click focus as keyboard navigation and shows its focus
-        // ring; the programmatic focus above is neither, so suppress the ring the same
-        // way `TextInput`'s own mousedown handler does.
+        // Suppress the focus ring `TextInput` shows for non-click (assumed keyboard) focus.
         input.dataset.showFocusRing = 'false';
     }, []);
 
-    // Keep clicks (caret placement, text selection) from bubbling into the row's
-    // select/expand handler. `TextInput` exposes no `onClick`, hence the wrapper.
+    // Keep caret/selection clicks from bubbling into the row's select/expand handler
+    // (`TextInput` exposes no `onClick`, hence the wrapper).
     const handleClick = (event: MouseEvent<HTMLDivElement>) => {
         event.stopPropagation();
     };
 
-    // Blur commits, but `completeRenaming()` ends with a focus restore that would steal
-    // focus back to the row even when the user just moved on (e.g. clicked outside the
-    // tree). Restore only when focus stays inside the tree (clicking another row);
-    // otherwise replicate the feature's commit — fire `onRename`, clear the renaming
-    // state (which also echoes `onRenamingChange(false)`) — without touching DOM focus.
+    // Blur commits, but `completeRenaming()`'s focus restore would steal focus back to
+    // the row when the user moved on. Restore only when focus stays inside the tree;
+    // otherwise replicate the commit without touching DOM focus.
     const handleBlur = (event: FocusEvent<HTMLInputElement>) => {
         const tree = item.getTree();
-        // A blur can still fire while the rename is already completed (Enter handled it
-        // first); committing again here would fire a second `onRename`.
+        // Enter may have completed the rename already; committing again would double-fire.
         if (!item.isRenaming()) {
             return;
         }

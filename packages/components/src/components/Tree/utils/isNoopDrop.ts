@@ -5,13 +5,9 @@ import { isOrderedDragTarget, type TreeInstance } from '@headless-tree/core';
 import { type TreeItemData } from '../types';
 
 /**
- * Returns `true` when the current drag target would land the dragged items at their
- * existing position — no parent change and no index change. Used to hide the drop
- * indicator while the cursor is just above or below the row being dragged, where
- * releasing wouldn't actually move anything.
- *
- * Only single-item drags are checked; multi-item drags conservatively return `false`
- * (the indicator stays visible).
+ * `true` when the drop would land the dragged item at its existing position — used to
+ * hide the drop indicator where releasing wouldn't move anything. Only single-item
+ * drags are checked; multi-item drags conservatively return `false`.
  */
 export const isNoopDrop = (tree: TreeInstance<TreeItemData>): boolean => {
     const target = tree.getDragTarget();

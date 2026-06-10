@@ -19,19 +19,12 @@ type CanDropDeps = {
 };
 
 /**
- * Builds the `canDrop` predicate passed to headless-tree's drag-and-drop feature. Two
- * rules combine here:
+ * Builds headless-tree's `canDrop` predicate: leaves and disabled folders reject all
+ * drops; otherwise the target folder's `accepts` (if any) must approve every dragged item.
  *
- * 1. Drops onto a leaf item are always rejected — items don't have children.
- * 2. Disabled folders reject all drops — their contents are frozen.
- * 3. The target folder's `accepts` predicate (if any) must approve every dragged item.
- *
- * Bypass-loophole guard: at the outer indent immediately below an expanded folder's
- * header, headless-tree resolves the target to "after that folder at the parent level"
- * — visually it sits inside the folder's body. If the folder above would reject the
- * items, we also reject here so users can't sneak past its `accepts` by clipping the
- * boundary. Only fires when the folder has visible children (otherwise there's no
- * visual overlap to disambiguate).
+ * Bypass guard: "after an expanded folder at the parent level" visually overlaps that
+ * folder's body, so if the folder above (with visible children) would reject the items,
+ * reject here too — its `accepts` can't be skirted by clipping the boundary.
  */
 export const createCanDrop =
     ({ itemsById }: CanDropDeps) =>

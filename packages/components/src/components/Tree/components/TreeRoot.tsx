@@ -8,6 +8,7 @@ import { useTranslation } from '#/hooks/useTranslation';
 import { useTreeController } from '../hooks/useTreeController';
 import styles from '../styles/tree.module.scss';
 import { type TreeChangeState, type TreeDropCandidate } from '../types';
+import { computeCheckedStates, getCheckedUnitIds } from '../utils/computeCheckedStates';
 import { computeLoadingInsertions } from '../utils/computeLoadingInsertions';
 import { isNoopDrop } from '../utils/isNoopDrop';
 import { parseChildren } from '../utils/parseChildren';
@@ -18,11 +19,14 @@ import { TreeRow } from './TreeRow';
 
 export type TreeRootProps = {
     children: ReactNode;
+    /** Fires with the full tree state, at most once per user interaction. */
     onChange?: (state: TreeChangeState) => void;
     /**
-     * Renders a checkbox in each row for multi-selection. Folder checkboxes show an
-     * indeterminate state when some descendants are checked and cascade-toggle their
-     * descendants on click.
+     * Renders a checkbox in each row. Folder checkboxes derive from their descendants
+     * (indeterminate when partially checked) and cascade-toggle them on click. A folder
+     * with no loaded children is checkable as its own entity via `isSelected`; when its
+     * children load, the consumer has to carry the selected state over to the new items
+     * by passing `isSelected` to all of them.
      * @default false
      */
     multiSelect?: boolean;
@@ -33,10 +37,9 @@ export type TreeRootProps = {
      */
     reorderable?: boolean;
     /**
-     * Predicate gating drops onto the top level of the tree. Same semantics as
-     * `accepts` on `<Tree.Folder>`: return `false` to suppress the drop indicator,
-     * show the "no-drop" cursor, and prevent `onMove` / `onChange` from firing.
-     * When omitted, the root accepts anything.
+     * Gates drops onto the top level — same semantics as `accepts` on `<Tree.Folder>`.
+     * Returning `false` suppresses the drop indicator and prevents `onMove`/`onChange`.
+     * Omitted = the root accepts anything.
      */
     accepts?: (items: TreeDropCandidate[]) => boolean;
 };
@@ -51,6 +54,13 @@ export const TreeRoot = ({ children, onChange, multiSelect = false, reorderable 
     const loadingInsertions = useMemo(
         () => computeLoadingInsertions(visibleItems, rootIsLoading),
         [visibleItems, rootIsLoading],
+    );
+
+    // Shared derivation (not headless-tree's leaf-only `getCheckedState`) so leafless
+    // folders and their ancestors render the same state that `onChange` reports.
+    const checkedStates = useMemo(
+        () => (multiSelect ? computeCheckedStates(items, new Set(getCheckedUnitIds(items))) : undefined),
+        [multiSelect, items],
     );
 
     const rowHint = [multiSelect && t('Tree_checkboxHint'), reorderable && t('Tree_reorderHint')]
@@ -74,6 +84,7 @@ export const TreeRoot = ({ children, onChange, multiSelect = false, reorderable 
                             multiSelect={multiSelect}
                             reorderable={reorderable}
                             hintId={rowHint ? rowHintId : undefined}
+                            checkedState={checkedStates?.get(item.getId()) ?? false}
                         />
                         {loadingPlaceholder && (
                             <TreeLoadingRow
