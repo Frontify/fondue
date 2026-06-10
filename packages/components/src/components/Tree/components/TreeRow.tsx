@@ -50,9 +50,14 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId }: TreeRowProps
         [key: string]: unknown;
     };
 
+    // Disabled rows keep the headless click handler — it carries focus and folder
+    // expansion, which stay available — but drop the consumer's `onClick`. Selection is
+    // blocked separately in the controller's setters, so this is the only gate needed here.
     const handleClick = (event: MouseEvent<HTMLDivElement>) => {
         headlessProps.onClick?.(event);
-        data.onClick?.(event);
+        if (!data.isDisabled) {
+            data.onClick?.(event);
+        }
     };
 
     // When a rename ends via Enter/Escape, the renaming feature programmatically
@@ -128,6 +133,7 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId }: TreeRowProps
             aria-describedby={hintId}
             aria-selected={data.isSelected === true ? 'true' : 'false'}
             aria-checked={multiSelect ? ariaCheckedFor(checkedState) : undefined}
+            aria-disabled={data.isDisabled ? 'true' : undefined}
         >
             <div
                 className={styles.item}
@@ -135,6 +141,7 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId }: TreeRowProps
                 data-folder={isFolder}
                 data-selected={!multiSelect && data.isSelected === true ? 'true' : undefined}
                 data-drop={reorderable && item.isDragTarget()}
+                data-disabled={data.isDisabled ? 'true' : undefined}
             >
                 {reorderable && (
                     <span className={styles.handle} aria-hidden>
@@ -145,6 +152,7 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId }: TreeRowProps
                     <TreeRowCheckbox
                         checkedState={checkedState}
                         isFocused={item.isFocused()}
+                        isDisabled={data.isDisabled}
                         headlessProps={checkboxProps}
                     />
                 )}
@@ -158,7 +166,16 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId }: TreeRowProps
                 {item.isRenaming() ? (
                     <TreeRowRenameInput item={item} />
                 ) : (
-                    <span className={styles.label}>{item.getItemName()}</span>
+                    // The group (not the label) fills the remaining row space: the label
+                    // shrinks/truncates inside it while the decorator hugs the text, and
+                    // the rename input swaps in for the whole group so it always gets the
+                    // full width up to the actions slot.
+                    <span className={styles.labelGroup}>
+                        <span className={styles.label}>{item.getItemName()}</span>
+                        {data.decorator !== undefined && data.decorator !== null && (
+                            <span className={styles.decorator}>{data.decorator}</span>
+                        )}
+                    </span>
                 )}
                 {data.actions !== undefined && data.actions !== null ? (
                     // eslint-disable-next-line jsx-a11y-x/click-events-have-key-events, jsx-a11y-x/no-static-element-interactions
