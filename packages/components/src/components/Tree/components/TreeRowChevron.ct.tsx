@@ -15,38 +15,51 @@ test.describe('TreeRowChevron', () => {
     test('a leaf renders no chevron glyph (svg)', async ({ mount }) => {
         const component = await mount(
             <Tree.Root>
-                <Tree.Item id="1" label="Leaf" />
+                <Tree.Item id="1">
+                    <Tree.Label>Leaf</Tree.Label>
+                </Tree.Item>
             </Tree.Root>,
         );
-        // The folder + caret-down/right glyphs each render as an svg child. A leaf row
-        // still has the document icon svg but no caret svg in the chevron slot.
+        // Rows have no icons unless a <Tree.Icon> is passed, so the only possible svg
+        // is the caret glyph — and leaves render none.
         const row = component.getByRole('treeitem', { name: /Leaf/ });
-        // Document icon is present; chevron column is empty.
-        await expect(row.locator('svg')).toHaveCount(1);
+        await expect(row.locator('svg')).toHaveCount(0);
     });
 
     test('a collapsed folder renders the right-caret', async ({ mount }) => {
         const component = await mount(
             <Tree.Root>
-                <Tree.Folder id="f" label="Folder">
-                    <Tree.Item id="x" label="X" />
+                <Tree.Folder id="f">
+                    <Tree.FolderHeader>
+                        <Tree.Label>Folder</Tree.Label>
+                    </Tree.FolderHeader>
+                    <Tree.Item id="x">
+                        <Tree.Label>X</Tree.Label>
+                    </Tree.Item>
                 </Tree.Folder>
             </Tree.Root>,
         );
-        // Folder row contains caret-right + folder-icon = 2 svgs.
+        // The caret is the folder row's only svg.
         const row = component.getByRole('treeitem', { name: /Folder/ });
-        await expect(row.locator('svg')).toHaveCount(2);
+        await expect(row.locator('svg')).toHaveCount(1);
+        await expect(row.locator('svg')).toHaveAttribute('data-test-id', 'fondue-icons-caret-right');
     });
 
     test('an expanded folder renders the down-caret', async ({ mount }) => {
         const component = await mount(
             <Tree.Root>
-                <Tree.Folder id="f" label="Folder" isExpanded>
-                    <Tree.Item id="x" label="X" />
+                <Tree.Folder id="f" isExpanded>
+                    <Tree.FolderHeader>
+                        <Tree.Label>Folder</Tree.Label>
+                    </Tree.FolderHeader>
+                    <Tree.Item id="x">
+                        <Tree.Label>X</Tree.Label>
+                    </Tree.Item>
                 </Tree.Folder>
             </Tree.Root>,
         );
         const row = component.getByRole('treeitem', { name: /Folder/ });
-        await expect(row.locator('svg')).toHaveCount(2);
+        await expect(row.locator('svg')).toHaveCount(1);
+        await expect(row.locator('svg')).toHaveAttribute('data-test-id', 'fondue-icons-caret-down');
     });
 });

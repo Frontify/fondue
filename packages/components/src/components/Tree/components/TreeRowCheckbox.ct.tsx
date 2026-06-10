@@ -14,8 +14,12 @@ test.describe('TreeRowCheckbox', () => {
     test('renders one checkbox per row in multi-select mode', async ({ mount }) => {
         const component = await mount(
             <Tree.Root multiSelect>
-                <Tree.Item id="1" label="One" />
-                <Tree.Item id="2" label="Two" />
+                <Tree.Item id="1">
+                    <Tree.Label>One</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="2">
+                    <Tree.Label>Two</Tree.Label>
+                </Tree.Item>
             </Tree.Root>,
         );
         await expect(component.getByRole('checkbox')).toHaveCount(2);
@@ -25,7 +29,9 @@ test.describe('TreeRowCheckbox', () => {
         let rowClicks = 0;
         const component = await mount(
             <Tree.Root multiSelect>
-                <Tree.Item id="1" label="Row" onClick={() => (rowClicks += 1)} />
+                <Tree.Item id="1" onClick={() => (rowClicks += 1)}>
+                    <Tree.Label>Row</Tree.Label>
+                </Tree.Item>
             </Tree.Root>,
         );
 
@@ -36,9 +42,16 @@ test.describe('TreeRowCheckbox', () => {
     test('a folder whose descendants are partially selected reports aria-checked="mixed"', async ({ mount }) => {
         const component = await mount(
             <Tree.Root multiSelect>
-                <Tree.Folder id="f" label="Folder" isExpanded>
-                    <Tree.Item id="a" label="A" isSelected />
-                    <Tree.Item id="b" label="B" />
+                <Tree.Folder id="f" isExpanded>
+                    <Tree.FolderHeader>
+                        <Tree.Label>Folder</Tree.Label>
+                    </Tree.FolderHeader>
+                    <Tree.Item id="a" isSelected>
+                        <Tree.Label>A</Tree.Label>
+                    </Tree.Item>
+                    <Tree.Item id="b">
+                        <Tree.Label>B</Tree.Label>
+                    </Tree.Item>
                 </Tree.Folder>
             </Tree.Root>,
         );
@@ -49,9 +62,16 @@ test.describe('TreeRowCheckbox', () => {
     test('a folder whose descendants are all selected reports aria-checked="true"', async ({ mount }) => {
         const component = await mount(
             <Tree.Root multiSelect>
-                <Tree.Folder id="f" label="Folder" isExpanded>
-                    <Tree.Item id="a" label="A" isSelected />
-                    <Tree.Item id="b" label="B" isSelected />
+                <Tree.Folder id="f" isExpanded>
+                    <Tree.FolderHeader>
+                        <Tree.Label>Folder</Tree.Label>
+                    </Tree.FolderHeader>
+                    <Tree.Item id="a" isSelected>
+                        <Tree.Label>A</Tree.Label>
+                    </Tree.Item>
+                    <Tree.Item id="b" isSelected>
+                        <Tree.Label>B</Tree.Label>
+                    </Tree.Item>
                 </Tree.Folder>
             </Tree.Root>,
         );

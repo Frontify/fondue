@@ -5,13 +5,14 @@ import {
     dragAndDropFeature,
     hotkeysCoreFeature,
     keyboardDragAndDropFeature,
+    renamingFeature,
     selectionFeature,
     syncDataLoaderFeature,
     type TreeInstance,
     type Updater,
 } from '@headless-tree/core';
 import { useTree } from '@headless-tree/react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { INDENT_STEP_PX, ROOT_ID, ROOT_NAME } from '../constants';
 import { type TreeChangeState, type TreeDropCandidate, type TreeItemData } from '../types';
@@ -52,6 +53,11 @@ const resolveUpdater = <T>(updater: Updater<T>, prev: T): T =>
  *   React hasn't re-rendered yet.
  * - Per-item `onSelectChange` / `onExpandChange` callbacks are fanned out from
  *   batched setter calls via a diff against the previous flat state.
+ * - Inline renaming is consumer-controlled: the `isRenaming` prop is the only entry
+ *   point (the feature's F2 hotkey is disabled), edge-synced into the feature so the
+ *   tree can still end a rename (Enter/blur/Escape) on its own. Committing fires the
+ *   item's `onRename` and the global `onChange` with the new name patched in — the
+ *   Tree never stores names itself.
  */
 export const useTreeController = ({
     items,
@@ -81,10 +87,12 @@ export const useTreeController = ({
         () => itemsWithRoot.filter((item) => item.isExpanded).map((item) => item.id),
         [itemsWithRoot],
     );
+    // `isSelected === true` deliberately: a round-tripped 'indeterminate' is derived
+    // folder output, never an input, and must not count as checked/selected.
     const checkedItems = useMemo(
         () =>
             multiSelect
-                ? itemsWithRoot.filter((item) => item.isSelected && !item.isFolder).map((item) => item.id)
+                ? itemsWithRoot.filter((item) => item.isSelected === true && !item.isFolder).map((item) => item.id)
                 : [],
         [itemsWithRoot, multiSelect],
     );
@@ -92,7 +100,7 @@ export const useTreeController = ({
         () =>
             multiSelect
                 ? []
-                : itemsWithRoot.filter((item) => item.isSelected && item.id !== ROOT_ID).map((item) => item.id),
+                : itemsWithRoot.filter((item) => item.isSelected === true && item.id !== ROOT_ID).map((item) => item.id),
         [itemsWithRoot, multiSelect],
     );
 
@@ -101,6 +109,13 @@ export const useTreeController = ({
     // to the first non-root item so the row gets `tabIndex=0` on mount; without it, the
     // roving tabindex pattern leaves every row at `-1` and the tree is skipped by Tab.
     const [internalFocusedItem, setInternalFocusedItem] = useState<string | undefined>(() => items[0]?.id);
+
+    // Renaming is *started* exclusively by the consumer's `isRenaming` prop (no hotkey,
+    // no double-click), but *ended* by the tree (Enter/blur commit, Escape abort), which
+    // must take effect before the consumer re-renders with the prop cleared. The internal
+    // state is therefore the source of truth and the prop is edge-synced into it below.
+    const [renamingItem, setRenamingItem] = useState<string | null>(null);
+    const [renamingValue, setRenamingValue] = useState<string>('');
 
     const treeState = useMemo<FlatTreeState>(
         () => ({ expandedItems, checkedItems, selectedItems, focusedItem: internalFocusedItem }),
@@ -163,6 +178,34 @@ export const useTreeController = ({
         setInternalFocusedItem(next);
     };
 
+    // Fires `onRenamingChange(false)` only for the item whose rename session ends.
+    // Starts are never echoed: the consumer's `isRenaming` prop is the only way to
+    // start a rename, so an `onRenamingChange(true)` would just repeat what the
+    // consumer already knows — mirroring how prop-driven isExpanded/isSelected
+    // changes don't fire their change callbacks either.
+    const handleSetRenamingItem = (updater: Updater<string | null | undefined>) => {
+        const next = resolveUpdater(updater, renamingItem) ?? null;
+        if (next !== renamingItem && renamingItem) {
+            itemsById.get(renamingItem)?.onRenamingChange?.(false);
+        }
+        setRenamingItem(next);
+    };
+
+    // Commit handler for the renaming feature. Renames never touch the Tree's own
+    // state (the name lives in the consumer's `<Tree.Label>`), so this only notifies:
+    // the item's `onRename` plus the global `onChange` with the new name patched in —
+    // same pattern as `createDropHandler`. Unchanged or empty names are a no-op.
+    const handleRename = (item: { getId: () => string }, value: string) => {
+        const data = itemsById.get(item.getId());
+        const nextName = value.trim();
+        if (!data || nextName === '' || nextName === data.name) {
+            return;
+        }
+        data.onRename?.(nextName);
+        const nextItems = itemsWithRoot.map((entry) => (entry.id === data.id ? { ...entry, name: nextName } : entry));
+        onChange?.(buildChangeState(nextItems, pendingState, ROOT_ID));
+    };
+
     const canDrop = useMemo(() => createCanDrop({ itemsById }), [itemsById]);
     const onDrop = useMemo(
         () => createDropHandler({ items: itemsWithRoot, itemsById, treeState, rootId: ROOT_ID, onChange }),
@@ -180,11 +223,23 @@ export const useTreeController = ({
             getItem: (itemId) => itemsById.get(itemId) as TreeItemData,
             getChildren: (itemId) => itemsById.get(itemId)?.children ?? [],
         },
-        state: treeState,
+        state: { ...treeState, renamingItem, renamingValue },
         setExpandedItems,
         setCheckedItems,
         setSelectedItems: multiSelect ? undefined : setSelectedItems,
         setFocusedItem,
+        setRenamingItem: handleSetRenamingItem,
+        setRenamingValue: (updater) => setRenamingValue((prev) => resolveUpdater(updater, prev) ?? ''),
+        canRename: (item) => Boolean(item.getItemData().onRename),
+        onRename: handleRename,
+        // Renaming is consumer-controlled via the `isRenaming` prop only; suppress the
+        // feature's built-in F2 hotkey so the tree can't start a rename on its own.
+        // `hotkey` must be repeated: the matcher reads the raw override entry (not a
+        // preset-merged one), and an entry without `hotkey` throws during matching,
+        // breaking every later hotkey in the list — including Enter-to-commit.
+        hotkeys: {
+            renameItem: { hotkey: 'F2', isEnabled: () => false },
+        },
         canCheckFolders: false,
         propagateCheckedState: true,
         indent: INDENT_STEP_PX,
@@ -194,6 +249,7 @@ export const useTreeController = ({
             hotkeysCoreFeature,
             ...(multiSelect ? [] : [selectionFeature]),
             ...(reorderable ? [dragAndDropFeature, keyboardDragAndDropFeature] : []),
+            renamingFeature,
         ],
     });
 
@@ -201,6 +257,36 @@ export const useTreeController = ({
         tree.rebuildTree();
         // eslint-disable-next-line @eslint-react/exhaustive-deps
     }, [structureKey]);
+
+    // Edge-sync the consumer's `isRenaming` prop into the renaming feature: react only
+    // to prop *transitions* (tracked via ref), not to every render. The tree itself ends
+    // renames (commit/abort) before the consumer clears the prop, so a still-`true` prop
+    // with no active rename must not re-enter rename mode.
+    const propRenamingItem = useMemo(() => items.find((item) => item.isRenaming)?.id ?? null, [items]);
+    const lastPropRenamingItemRef = useRef<string | null>(null);
+    useEffect(() => {
+        if (propRenamingItem === lastPropRenamingItemRef.current) {
+            return;
+        }
+        lastPropRenamingItemRef.current = propRenamingItem;
+        if (propRenamingItem) {
+            // Gated by `canRename` so items without `onRename` are a no-op, matching
+            // `startRenaming`'s own guard.
+            const instance = tree.getItemInstance(propRenamingItem);
+            if (instance?.canRename()) {
+                // The renaming feature ends every rename (Enter, Escape, blur) by moving
+                // DOM focus back to the tree's focused item. A rename started from a row
+                // action never focused its row (action clicks don't bubble to the row),
+                // so without this the focused item would still be the mount-time default
+                // — the first row — and focus would jump there on commit.
+                instance.setFocused();
+                instance.startRenaming();
+            }
+        } else if (tree.isRenamingItem()) {
+            tree.abortRenaming();
+        }
+        // eslint-disable-next-line @eslint-react/exhaustive-deps
+    }, [propRenamingItem]);
 
     return tree;
 };

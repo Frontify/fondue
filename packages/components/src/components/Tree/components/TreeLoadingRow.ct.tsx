@@ -35,7 +35,10 @@ test.describe('TreeLoadingRow', () => {
     test('renders inside an expanded folder when nested', async ({ mount }) => {
         const component = await mount(
             <Tree.Root>
-                <Tree.Folder id="f" label="Folder" isExpanded>
+                <Tree.Folder id="f" isExpanded>
+                    <Tree.FolderHeader>
+                        <Tree.Label>Folder</Tree.Label>
+                    </Tree.FolderHeader>
                     <Tree.Loading />
                 </Tree.Folder>
             </Tree.Root>,
@@ -46,7 +49,10 @@ test.describe('TreeLoadingRow', () => {
     test('is omitted when the surrounding folder is collapsed', async ({ mount }) => {
         const component = await mount(
             <Tree.Root>
-                <Tree.Folder id="f" label="Folder">
+                <Tree.Folder id="f">
+                    <Tree.FolderHeader>
+                        <Tree.Label>Folder</Tree.Label>
+                    </Tree.FolderHeader>
                     <Tree.Loading />
                 </Tree.Folder>
             </Tree.Root>,

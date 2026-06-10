@@ -16,11 +16,13 @@ export type FlatTreeState = {
  * of truth for child ordering; orphaned ids are dropped silently.
  *
  * `isSelected` collapses two feature paths into one consumer-facing flag:
- * - In multi-select mode, `checkedItems` carries leaf checkbox state. A folder is
- *   reported as selected when every leaf descendant is checked, so consumers can react
- *   to "folder fully selected" without walking children themselves.
+ * - In multi-select mode, `checkedItems` carries leaf checkbox state. Folder state is
+ *   derived from *leaf descendants*, mirroring headless-tree's `getCheckedState` (which
+ *   drives the rendered checkbox): `true` when every leaf is checked, `'indeterminate'`
+ *   when only some are, `false` otherwise. Empty folders are `false` and contribute no
+ *   leaves to their ancestors — so they never block an ancestor's "all checked".
  * - In single-select mode, `selectedItems` carries the single highlighted row (folder
- *   or leaf). It feeds directly into `isSelected`.
+ *   or leaf). It feeds directly into `isSelected`; `'indeterminate'` never occurs.
  *
  * The two paths are mutually exclusive at the feature level (the controller only wires
  * the selection feature when `multiSelect` is off), so an OR is enough.
@@ -35,36 +37,56 @@ export const buildChangeState = (
     const checked = new Set(state.checkedItems);
     const selected = new Set(state.selectedItems ?? []);
 
-    const buildNode = (id: string): TreeNodeState | null => {
+    type BuiltNode = { node: TreeNodeState; leafCount: number; checkedLeafCount: number };
+
+    const buildNode = (id: string): BuiltNode | null => {
         const item = byId.get(id);
         if (!item) {
             return null;
         }
         if (item.isFolder) {
-            const children = (item.children ?? [])
+            const builtChildren = (item.children ?? [])
                 .map(buildNode)
-                .filter((child): child is TreeNodeState => child !== null);
-            const hasChildren = children.length > 0;
-            const allLeavesChecked = hasChildren && children.every((child) => child.isSelected);
+                .filter((child): child is BuiltNode => child !== null);
+            const leafCount = builtChildren.reduce((sum, child) => sum + child.leafCount, 0);
+            const checkedLeafCount = builtChildren.reduce((sum, child) => sum + child.checkedLeafCount, 0);
+            const allLeavesChecked = leafCount > 0 && checkedLeafCount === leafCount;
+            const someLeavesChecked = checkedLeafCount > 0 && !allLeavesChecked;
+            let isSelected: boolean | 'indeterminate' = allLeavesChecked || selected.has(item.id);
+            if (!isSelected && someLeavesChecked) {
+                isSelected = 'indeterminate';
+            }
             return {
-                id: item.id,
-                name: item.name,
-                isFolder: true,
-                isExpanded: expanded.has(item.id),
-                isSelected: allLeavesChecked || selected.has(item.id),
-                tags: item.tags,
-                children,
+                node: {
+                    id: item.id,
+                    name: item.name,
+                    isFolder: true,
+                    isExpanded: expanded.has(item.id),
+                    isSelected,
+                    tags: item.tags,
+                    children: builtChildren.map((child) => child.node),
+                },
+                leafCount,
+                checkedLeafCount,
             };
         }
+        const isChecked = checked.has(item.id);
         return {
-            id: item.id,
-            name: item.name,
-            isFolder: false,
-            isSelected: checked.has(item.id) || selected.has(item.id),
-            tags: item.tags,
+            node: {
+                id: item.id,
+                name: item.name,
+                isFolder: false,
+                isSelected: isChecked || selected.has(item.id),
+                tags: item.tags,
+            },
+            leafCount: 1,
+            checkedLeafCount: isChecked ? 1 : 0,
         };
     };
 
     const root = byId.get(rootId);
-    return (root?.children ?? []).map(buildNode).filter((child): child is TreeNodeState => child !== null);
+    return (root?.children ?? [])
+        .map(buildNode)
+        .filter((child): child is BuiltNode => child !== null)
+        .map((child) => child.node);
 };

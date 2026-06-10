@@ -35,6 +35,7 @@ const translations = {
     Table_sortDescending: 'Sorteer aflopend',
     Tree_checkboxHint: 'Selecteerbaar, druk op Tab om het selectievakje te focussen.',
     Tree_loading: 'Bezig met laden…',
+    Tree_renameInputLabel: 'Nieuwe naam',
     Tree_reorderHint: 'Druk op Control Shift D om te verplaatsen.',
 };
 

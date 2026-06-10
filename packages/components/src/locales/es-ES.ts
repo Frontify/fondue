@@ -35,6 +35,7 @@ const translations = {
     Table_sortDescending: 'Ordenar descendente',
     Tree_checkboxHint: 'Seleccionable, presione Tab para enfocar la casilla.',
     Tree_loading: 'Cargando…',
+    Tree_renameInputLabel: 'Nuevo nombre',
     Tree_reorderHint: 'Presione Control Mayús D para mover.',
 };
 

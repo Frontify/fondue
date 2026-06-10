@@ -43,9 +43,26 @@ describe('buildChangeState', () => {
     it('derives folder isSelected as "every leaf checked"', () => {
         const allChecked = buildChangeState(flatItems, { ...emptyState, checkedItems: ['f1', 'f2'] }, ROOT_ID);
         expect(allChecked[1]?.isSelected).toBe(true);
+    });
 
+    it("reports 'indeterminate' on a folder when only some leaves are checked", () => {
         const someChecked = buildChangeState(flatItems, { ...emptyState, checkedItems: ['f1'] }, ROOT_ID);
-        expect(someChecked[1]?.isSelected).toBe(false);
+        expect(someChecked[1]?.isSelected).toBe('indeterminate');
+    });
+
+    it("propagates 'indeterminate' to ancestors of a partially checked nested folder", () => {
+        const items: TreeItemData[] = [
+            { id: ROOT_ID, name: 'Root', isFolder: true, children: ['outer'] },
+            { id: 'outer', name: 'Outer', isFolder: true, parentId: ROOT_ID, children: ['inner', 'leaf'] },
+            { id: 'inner', name: 'Inner', isFolder: true, parentId: 'outer', children: ['i1', 'i2'] },
+            { id: 'i1', name: 'I1', isFolder: false, parentId: 'inner' },
+            { id: 'i2', name: 'I2', isFolder: false, parentId: 'inner' },
+            { id: 'leaf', name: 'Leaf', isFolder: false, parentId: 'outer' },
+        ];
+        const result = buildChangeState(items, { ...emptyState, checkedItems: ['i1'] }, ROOT_ID);
+        const outer = result[0];
+        expect(outer?.isSelected).toBe('indeterminate');
+        expect(outer?.children?.[0]?.isSelected).toBe('indeterminate');
     });
 
     it('marks an empty folder as not selected even when there are no leaves', () => {
@@ -55,6 +72,17 @@ describe('buildChangeState', () => {
         ];
         const result = buildChangeState(items, emptyState, ROOT_ID);
         expect(result[0]?.isSelected).toBe(false);
+    });
+
+    it('ignores empty subfolders when deriving an ancestor folder state (checkbox parity)', () => {
+        const items: TreeItemData[] = [
+            { id: ROOT_ID, name: 'Root', isFolder: true, children: ['folder'] },
+            { id: 'folder', name: 'Folder', isFolder: true, parentId: ROOT_ID, children: ['empty', 'f1'] },
+            { id: 'empty', name: 'Empty', isFolder: true, parentId: 'folder', children: [] },
+            { id: 'f1', name: 'F1', isFolder: false, parentId: 'folder' },
+        ];
+        const result = buildChangeState(items, { ...emptyState, checkedItems: ['f1'] }, ROOT_ID);
+        expect(result[0]?.isSelected).toBe(true);
     });
 
     it('drops orphan ids referenced by parent.children silently', () => {
@@ -72,23 +100,16 @@ describe('buildChangeState', () => {
     });
 
     it('reflects selectedItems on leaves and folders (single-select)', () => {
-        const result = buildChangeState(
-            flatItems,
-            { ...emptyState, selectedItems: ['folder'] },
-            ROOT_ID,
-        );
+        const result = buildChangeState(flatItems, { ...emptyState, selectedItems: ['folder'] }, ROOT_ID);
         expect(result[0]?.isSelected).toBe(false);
         expect(result[1]?.isSelected).toBe(true);
 
-        const leafSelected = buildChangeState(
-            flatItems,
-            { ...emptyState, selectedItems: ['f1'] },
-            ROOT_ID,
-        );
+        const leafSelected = buildChangeState(flatItems, { ...emptyState, selectedItems: ['f1'] }, ROOT_ID);
         const folder = leafSelected[1];
         const leaves = folder?.isFolder ? folder.children : undefined;
         expect(leaves?.[0]?.isSelected).toBe(true);
         expect(leaves?.[1]?.isSelected).toBe(false);
+        // Single-select never derives folder state from contents — strictly false, not 'indeterminate'.
         expect(folder?.isSelected).toBe(false);
     });
 
