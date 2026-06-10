@@ -4,24 +4,35 @@
 @use '../../../utilities/sizeToken.module.scss';
 @use '../../../utilities/transitions.module.scss';
 
-// Mixin for card state variants (default, hover, selected, hover+selected)
-@mixin card-state(
-    $root-border-color: transparent,
-    $root-bg: null,
-    $box-shadow: none,
-    $banner-border-color: transparent,
-    $banner-border-radius: 0
-) {
-    border-color: $root-border-color;
-    box-shadow: $box-shadow;
+// Border overlay shared by the whole card and the banner. Painted above the
+// banner/image so the border stays visible over an image; its box-shadow is set per
+// state in card-state.
+@mixin border-overlay($z-index) {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: $z-index;
+    border-radius: inherit;
+    pointer-events: none;
+    @include transitions.transition-box-shadow;
+}
 
+// Mixin for card state variants (default, hover, selected, hover+selected).
+@mixin card-state($card-shadow: none, $root-bg: null, $banner-shadow: none, $banner-radius: 0) {
     @if $root-bg {
         background-color: var(--color-#{$root-bg});
     }
 
+    &::after {
+        box-shadow: $card-shadow;
+    }
+
     & .banner {
-        box-shadow: inset 0 0 0 1px $banner-border-color;
-        border-radius: $banner-border-radius;
+        border-radius: $banner-radius;
+    }
+
+    & .banner::after {
+        box-shadow: $banner-shadow;
     }
 }
 
@@ -62,11 +73,14 @@
     grid-template-rows: auto minmax(calc(#{sizeToken.get(10)} / 2 + var(--spacing-small)), auto) minmax(calc(#{sizeToken.get(10)} / 2 + var(--spacing-small)), auto);
     border-radius: var(--border-radius-large);
     box-sizing: border-box;
-    border: var(--border-width-default) solid transparent;
     background-color: var(--color-surface-default);
     overflow: hidden;
     outline: none;
-    @include transitions.transition((background-color, border-color, box-shadow));
+    @include transitions.transition((background-color));
+
+    &::after {
+        @include border-overlay($z-index: 2);
+    }
 
     &:not(:has(> .banner)) {
         background-color: var(--color-surface-dim);
@@ -74,8 +88,8 @@
 
     // Default state
     @include card-state(
-        $banner-border-color: var(--color-line-subtle),
-        $banner-border-radius: var(--border-radius-large)
+        $banner-shadow: inset 0 0 0 1px var(--color-line-subtle),
+        $banner-radius: var(--border-radius-large)
     );
 
     // Interactive cards only
@@ -90,7 +104,7 @@
         &:hover,
         &:has([data-state='open']) {
             @include card-state(
-                $root-border-color: var(--color-line-subtle),
+                $card-shadow: inset 0 0 0 1px var(--color-line-subtle),
                 $root-bg: 'surface-hover'
             );
         }
@@ -98,9 +112,8 @@
         // Selected state
         &[data-selected='true'] {
             @include card-state(
-                $root-border-color: var(--color-line-strong),
-                $root-bg: 'surface-dim',
-                $box-shadow: inset 0 0 0 1px var(--color-interactive-default)
+                $card-shadow: (inset 0 0 0 1px var(--color-line-strong), inset 0 0 0 2px var(--color-interactive-default)),
+                $root-bg: 'surface-dim'
             );
         }
 
@@ -108,9 +121,8 @@
         &[data-selected='true']:hover,
         &[data-selected='true']:has([data-state='open']) {
             @include card-state(
-                $root-border-color: var(--color-interactive-default),
-                $root-bg: 'surface-hover',
-                $box-shadow: inset 0 0 0 1px var(--color-interactive-default)
+                $card-shadow: (inset 0 0 0 1px var(--color-interactive-default), inset 0 0 0 2px var(--color-interactive-default)),
+                $root-bg: 'surface-hover'
             );
         }
 
@@ -174,6 +186,10 @@
     pointer-events: none;
     @include transitions.transition-colors;
 
+    &::after {
+        @include border-overlay($z-index: 1);
+    }
+
     .root[data-interactive='true']:hover &:has(> .bannerIcon),
     .root[data-interactive='true']:has([data-state='open']) &:has(> .bannerIcon) {
         background-color: var(--color-surface-hover);
@@ -184,7 +200,7 @@
     }
 
     &[data-size='small'] {
-        aspect-ratio: 9 / 4;
+        aspect-ratio: 3 / 1;
     }
 
     &[data-size='large'] {
