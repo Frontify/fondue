@@ -255,3 +255,148 @@ describe('useTreeController renaming', () => {
         expect(result.current.isRenamingItem()).toBe(false);
     });
 });
+
+describe('useTreeController disabled rows', () => {
+    it('keeps a disabled leaf unchecked when a folder cascade tries to check it', () => {
+        const onChange = vi.fn<(state: TreeChangeState) => void>();
+        const onSelectDisabled = vi.fn();
+        const items: TreeItemData[] = [
+            { id: 'folder', name: 'Folder', isFolder: true, parentId: ROOT_ID, children: ['a', 'b'] },
+            {
+                id: 'a',
+                name: 'A',
+                isFolder: false,
+                parentId: 'folder',
+                isDisabled: true,
+                onSelectChange: onSelectDisabled,
+            },
+            { id: 'b', name: 'B', isFolder: false, parentId: 'folder' },
+        ];
+        const { result } = renderHook(() => useTreeController({ items, onChange, multiSelect: true }));
+
+        act(() => {
+            // What headless-tree's folder cascade emits: every leaf descendant.
+            result.current.setCheckedItems(['a', 'b']);
+        });
+
+        const last = onChange.mock.calls[onChange.mock.calls.length - 1]?.[0] ?? [];
+        const folder = last.find((node) => node.id === 'folder');
+        expect(folder?.children?.find((node) => node.id === 'a')?.isSelected).toBe(false);
+        expect(folder?.children?.find((node) => node.id === 'b')?.isSelected).toBe(true);
+        // The frozen leaf still counts toward the folder's derived state.
+        expect(folder?.isSelected).toBe('indeterminate');
+        expect(onSelectDisabled).not.toHaveBeenCalled();
+    });
+
+    it('keeps a disabled checked leaf checked when a cascade tries to uncheck it', () => {
+        const onChange = vi.fn<(state: TreeChangeState) => void>();
+        const onSelectDisabled = vi.fn();
+        const items: TreeItemData[] = [
+            { id: 'folder', name: 'Folder', isFolder: true, parentId: ROOT_ID, children: ['a', 'b'] },
+            {
+                id: 'a',
+                name: 'A',
+                isFolder: false,
+                parentId: 'folder',
+                isDisabled: true,
+                isSelected: true,
+                onSelectChange: onSelectDisabled,
+            },
+            { id: 'b', name: 'B', isFolder: false, parentId: 'folder', isSelected: true },
+        ];
+        const { result } = renderHook(() => useTreeController({ items, onChange, multiSelect: true }));
+
+        act(() => {
+            result.current.setCheckedItems([]);
+        });
+
+        const last = onChange.mock.calls[onChange.mock.calls.length - 1]?.[0] ?? [];
+        const folder = last.find((node) => node.id === 'folder');
+        expect(folder?.children?.find((node) => node.id === 'a')?.isSelected).toBe(true);
+        expect(folder?.children?.find((node) => node.id === 'b')?.isSelected).toBe(false);
+        expect(folder?.isSelected).toBe('indeterminate');
+        expect(onSelectDisabled).not.toHaveBeenCalled();
+    });
+
+    it('keeps the current single-select highlight when a disabled row is clicked', () => {
+        const onChange = vi.fn<(state: TreeChangeState) => void>();
+        const onSelectDisabled = vi.fn();
+        const items: TreeItemData[] = [
+            { id: '1', name: 'One', isFolder: false, parentId: ROOT_ID, isSelected: true },
+            {
+                id: '2',
+                name: 'Two',
+                isFolder: false,
+                parentId: ROOT_ID,
+                isDisabled: true,
+                onSelectChange: onSelectDisabled,
+            },
+        ];
+        const { result } = renderHook(() => useTreeController({ items, onChange }));
+
+        act(() => {
+            // What selectionFeature emits for a plain click on row '2'.
+            result.current.setSelectedItems(['2']);
+        });
+
+        const last = onChange.mock.calls[onChange.mock.calls.length - 1]?.[0] ?? [];
+        expect(last.find((node) => node.id === '1')?.isSelected).toBe(true);
+        expect(last.find((node) => node.id === '2')?.isSelected).toBe(false);
+        expect(onSelectDisabled).not.toHaveBeenCalled();
+    });
+
+    it('skips disabled ids when single-select receives multiple (Ctrl+A)', () => {
+        const onChange = vi.fn<(state: TreeChangeState) => void>();
+        const items: TreeItemData[] = [
+            { id: '1', name: 'One', isFolder: false, parentId: ROOT_ID },
+            { id: '2', name: 'Two', isFolder: false, parentId: ROOT_ID, isDisabled: true },
+        ];
+        const { result } = renderHook(() => useTreeController({ items, onChange }));
+
+        act(() => {
+            result.current.setSelectedItems(['1', '2']);
+        });
+
+        const last = onChange.mock.calls[onChange.mock.calls.length - 1]?.[0] ?? [];
+        expect(last.find((node) => node.id === '1')?.isSelected).toBe(true);
+        expect(last.find((node) => node.id === '2')?.isSelected).toBe(false);
+    });
+
+    it('does not allow renaming a disabled row even with an onRename handler', () => {
+        const items: TreeItemData[] = [
+            { id: '1', name: 'One', isFolder: false, parentId: ROOT_ID, onRename: vi.fn(), isDisabled: true },
+        ];
+        const { result } = renderHook(() => useTreeController({ items }));
+
+        expect(result.current.getItemInstance('1').canRename()).toBe(false);
+    });
+
+    it('does not enter rename mode when isRenaming is set on a disabled row', () => {
+        const items: TreeItemData[] = [
+            {
+                id: '1',
+                name: 'One',
+                isFolder: false,
+                parentId: ROOT_ID,
+                onRename: vi.fn(),
+                isRenaming: true,
+                isDisabled: true,
+            },
+        ];
+        const { result } = renderHook(() => useTreeController({ items }));
+
+        expect(result.current.isRenamingItem()).toBe(false);
+    });
+
+    it('rejects dragging disabled rows via canDrag when reorderable', () => {
+        const items: TreeItemData[] = [
+            { id: '1', name: 'One', isFolder: false, parentId: ROOT_ID, isDisabled: true },
+            { id: '2', name: 'Two', isFolder: false, parentId: ROOT_ID },
+        ];
+        const { result } = renderHook(() => useTreeController({ items, reorderable: true }));
+
+        const canDrag = result.current.getConfig().canDrag;
+        expect(canDrag?.([result.current.getItemInstance('1')])).toBe(false);
+        expect(canDrag?.([result.current.getItemInstance('2')])).toBe(true);
+    });
+});

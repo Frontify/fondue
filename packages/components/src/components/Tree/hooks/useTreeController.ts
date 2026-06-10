@@ -53,6 +53,11 @@ const resolveUpdater = <T>(updater: Updater<T>, prev: T): T =>
  *   React hasn't re-rendered yet.
  * - Per-item `onSelectChange` / `onExpandChange` callbacks are fanned out from
  *   batched setter calls via a diff against the previous flat state.
+ * - Disabled rows are frozen at their prop-driven state: the checked/selected setters
+ *   revert any change to a disabled id, so folder cascades skip them and their
+ *   `onSelectChange` never fires, and `canDrag`/`canRename` reject them. Their frozen
+ *   state still counts toward ancestors' derived checkbox state — a folder holding a
+ *   disabled-unchecked leaf caps at 'indeterminate'.
  * - Inline renaming is consumer-controlled: the `isRenaming` prop is the only entry
  *   point (the feature's F2 hotkey is disabled), edge-synced into the feature so the
  *   tree can still end a rename (Enter/blur/Escape) on its own. Committing fires the
@@ -83,6 +88,11 @@ export const useTreeController = ({
     const itemsById = useMemo(() => new Map(itemsWithRoot.map((item) => [item.id, item])), [itemsWithRoot]);
     const structureKey = useMemo(() => getStructureKey(itemsWithRoot), [itemsWithRoot]);
 
+    const disabledIds = useMemo(
+        () => new Set(itemsWithRoot.filter((item) => item.isDisabled).map((item) => item.id)),
+        [itemsWithRoot],
+    );
+
     const expandedItems = useMemo(
         () => itemsWithRoot.filter((item) => item.isExpanded).map((item) => item.id),
         [itemsWithRoot],
@@ -100,7 +110,9 @@ export const useTreeController = ({
         () =>
             multiSelect
                 ? []
-                : itemsWithRoot.filter((item) => item.isSelected === true && item.id !== ROOT_ID).map((item) => item.id),
+                : itemsWithRoot
+                      .filter((item) => item.isSelected === true && item.id !== ROOT_ID)
+                      .map((item) => item.id),
         [itemsWithRoot, multiSelect],
     );
 
@@ -154,8 +166,19 @@ export const useTreeController = ({
         emit({ ...pendingState, expandedItems: nextExpanded });
     };
 
+    // Disabled freeze: a disabled id's membership in `checkedItems` never changes from
+    // interaction — newly added disabled ids are dropped and removed ones re-added. This
+    // catches every path, including folder cascades (headless-tree's setChecked/
+    // setUnchecked propagate to all descendants), and keeps `fireDiff` from echoing
+    // `onSelectChange` for rows the user can't touch.
     const setCheckedItems = (updater: Updater<string[]>) => {
-        const nextChecked = resolveUpdater(updater, pendingState.checkedItems);
+        const resolved = resolveUpdater(updater, pendingState.checkedItems);
+        const resolvedSet = new Set(resolved);
+        const prevChecked = new Set(pendingState.checkedItems);
+        const nextChecked = [
+            ...resolved.filter((id) => !disabledIds.has(id) || prevChecked.has(id)),
+            ...pendingState.checkedItems.filter((id) => disabledIds.has(id) && !resolvedSet.has(id)),
+        ];
         fireDiff(pendingState.checkedItems, nextChecked, (item) => item.onSelectChange);
         emit({ ...pendingState, checkedItems: nextChecked });
     };
@@ -167,7 +190,11 @@ export const useTreeController = ({
     // affects modifier-driven escalations.
     const setSelectedItems = (updater: Updater<string[]>) => {
         const resolved = resolveUpdater(updater, pendingState.selectedItems ?? []);
-        const nextSelected = resolved.slice(-1);
+        // Disabled rows can't take the selection; clicking one keeps the current
+        // highlight instead of clearing it.
+        const allowed = resolved.filter((id) => !disabledIds.has(id));
+        const nextSelected =
+            resolved.length > 0 && allowed.length === 0 ? (pendingState.selectedItems ?? []) : allowed.slice(-1);
         fireDiff(pendingState.selectedItems ?? [], nextSelected, (item) => item.onSelectChange);
         emit({ ...pendingState, selectedItems: nextSelected });
     };
@@ -217,6 +244,7 @@ export const useTreeController = ({
         getItemName: (item) => item.getItemData().name,
         isItemFolder: (item) => Boolean(item.getItemData().isFolder),
         canReorder: reorderable,
+        canDrag: reorderable ? (items) => items.every((item) => !item.getItemData().isDisabled) : undefined,
         canDrop: reorderable ? canDrop : undefined,
         onDrop: reorderable ? onDrop : undefined,
         dataLoader: {
@@ -230,7 +258,7 @@ export const useTreeController = ({
         setFocusedItem,
         setRenamingItem: handleSetRenamingItem,
         setRenamingValue: (updater) => setRenamingValue((prev) => resolveUpdater(updater, prev) ?? ''),
-        canRename: (item) => Boolean(item.getItemData().onRename),
+        canRename: (item) => Boolean(item.getItemData().onRename) && !item.getItemData().isDisabled,
         onRename: handleRename,
         // Renaming is consumer-controlled via the `isRenaming` prop only; suppress the
         // feature's built-in F2 hotkey so the tree can't start a rename on its own.

@@ -59,10 +59,19 @@ type TreeRowSharedProps = {
     onMove?: (info: TreeMoveInfo) => void;
     /** Consumer-defined labels passed to `accepts` drop predicates. No visual effect. */
     tags?: string[];
+    /**
+     * Freezes the row at its prop-driven state: it can't be selected/checked (not even
+     * by a folder cascade), dragged, renamed, or dropped into, and `onClick` is
+     * suppressed. Folders stay expandable and only their own row is frozen — descendants
+     * remain interactive unless disabled themselves. The frozen state still counts
+     * toward ancestor folders' checkbox state, so a folder holding a disabled-unchecked
+     * leaf shows 'indeterminate' once its other leaves are checked.
+     */
+    isDisabled?: boolean;
 };
 
 export type TreeItemProps = TreeRowSharedProps & {
-    /** `<Tree.Label>` (required), plus an optional `<Tree.Icon>` and `<Tree.Action>`. */
+    /** `<Tree.Label>` (required), plus an optional `<Tree.Icon>`, `<Tree.Decorator>` and `<Tree.Action>`. */
     children: ReactNode;
 };
 
@@ -79,6 +88,15 @@ export type TreeFolderProps = TreeRowSharedProps & {
 };
 
 export type TreeActionProps = {
+    children: ReactNode;
+};
+
+/**
+ * Passive decorators (badges, status icons) rendered right after the label, hugging the
+ * text. Clicks inside it bubble to the row (activating it) — interactive controls belong
+ * in `<Tree.Action>` instead. Hidden while the row is renaming.
+ */
+export type TreeDecoratorProps = {
     children: ReactNode;
 };
 
@@ -115,8 +133,10 @@ export type TreeItemData = {
     onClick?: MouseEventHandler<HTMLDivElement>;
     onMove?: (info: TreeMoveInfo) => void;
     icon?: ReactNode;
+    decorator?: ReactNode;
     actions?: ReactNode;
     isLoading?: boolean;
     tags?: string[];
     accepts?: (items: TreeDropCandidate[]) => boolean;
+    isDisabled?: boolean;
 };

@@ -23,7 +23,8 @@ type CanDropDeps = {
  * rules combine here:
  *
  * 1. Drops onto a leaf item are always rejected — items don't have children.
- * 2. The target folder's `accepts` predicate (if any) must approve every dragged item.
+ * 2. Disabled folders reject all drops — their contents are frozen.
+ * 3. The target folder's `accepts` predicate (if any) must approve every dragged item.
  *
  * Bypass-loophole guard: at the outer indent immediately below an expanded folder's
  * header, headless-tree resolves the target to "after that folder at the parent level"
@@ -36,7 +37,7 @@ export const createCanDrop =
     ({ itemsById }: CanDropDeps) =>
     (draggedItems: ItemInstance<TreeItemData>[], target: DragTarget<TreeItemData>): boolean => {
         const targetData = itemsById.get(target.item.getId());
-        if (!targetData?.isFolder) {
+        if (!targetData?.isFolder || targetData.isDisabled) {
             return false;
         }
 
@@ -47,7 +48,7 @@ export const createCanDrop =
             const aboveId = siblings[target.insertionIndex - 1];
             const above = aboveId ? itemsById.get(aboveId) : undefined;
             const aboveHasVisibleChildren = above?.isFolder && above.isExpanded && (above.children?.length ?? 0) > 0;
-            if (aboveHasVisibleChildren && above?.accepts && !above.accepts(candidates)) {
+            if (aboveHasVisibleChildren && (above?.isDisabled || (above?.accepts && !above.accepts(candidates)))) {
                 return false;
             }
         }

@@ -76,6 +76,27 @@
     &[data-selected='true'] {
         background-color: var(--color-surface-active);
     }
+
+    /* Disabled rows: dimmed content, no hover affordance. Folders remain expandable,
+       but the whole row greys out to read as disabled. */
+    &[data-disabled='true'] {
+        cursor: default;
+
+        &:not([data-selected='true']):hover {
+            background-color: var(--color-surface-default);
+        }
+
+        .chevron,
+        .icon,
+        .label {
+            color: var(--color-disabled-default);
+        }
+
+        .handle {
+            color: var(--color-disabled-default);
+            cursor: default;
+        }
+    }
 }
 
 .indent {
@@ -111,10 +132,22 @@
     color: var(--color-primary-default);
 }
 
-.label {
-    /* Fill remaining row space so the actions slot is pushed to the right edge, and
-       allow shrinking below `min-content` so long labels truncate cleanly. */
+.labelGroup {
+    /* Fill remaining row space so the actions slot is pushed to the right edge; the
+       label and decorator inside lay out at their natural width, keeping the decorator
+       hugging the label text. The gap is wider than the row's 4px rhythm so the
+       decorator reads as a separate badge rather than part of the label. */
     flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    column-gap: sizeToken.get(2);
+}
+
+.label {
+    /* Allow shrinking below `min-content` so long labels truncate cleanly while the
+       decorator stays fully visible. */
+    flex: 0 1 auto;
     min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -126,6 +159,14 @@
     .item[data-selected='true'] & {
         color: inherit;
     }
+}
+
+.decorator {
+    /* Never shrink: when space runs out the label truncates instead. */
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: sizeToken.get(1);
 }
 
 .actions {

@@ -13,10 +13,11 @@ type CheckboxProps = {
 type TreeRowCheckboxProps = {
     checkedState: CheckedState;
     isFocused: boolean;
+    isDisabled?: boolean;
     headlessProps: CheckboxProps;
 };
 
-export const TreeRowCheckbox = ({ checkedState, isFocused, headlessProps }: TreeRowCheckboxProps) => {
+export const TreeRowCheckbox = ({ checkedState, isFocused, isDisabled, headlessProps }: TreeRowCheckboxProps) => {
     const value: boolean | 'indeterminate' =
         checkedState === CheckedState.Indeterminate ? 'indeterminate' : checkedState === CheckedState.Checked;
 
@@ -45,6 +46,7 @@ export const TreeRowCheckbox = ({ checkedState, isFocused, headlessProps }: Tree
     return (
         <Checkbox
             value={value}
+            disabled={isDisabled}
             onChange={(event) => {
                 // The whole row also handles clicks (selection/expansion); stop the bubble so
                 // checking a box doesn't simultaneously fire the row's select handler.
