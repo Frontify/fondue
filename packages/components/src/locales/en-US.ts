@@ -31,6 +31,9 @@ const translations = {
     Table_sortByAscending: 'Sort by ${column} ascending',
     Table_sortByDescending: 'Sort by ${column} descending',
     Table_sortDescending: 'Sort descending',
+    Tree_checkboxHint: 'Selectable, press Tab to focus the checkbox.',
+    Tree_loading: 'Loading…',
+    Tree_reorderHint: 'Press Control Shift D to move.',
 };
 
 export const enUS = {

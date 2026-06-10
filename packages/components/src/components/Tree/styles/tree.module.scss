@@ -1,0 +1,197 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+@use '../../../utilities/sizeToken.module.scss';
+@use '../../../utilities/focusStyle.module.scss';
+
+
+.tree {
+    --tree-accent: var(--color-highlight-default);
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    position: relative;
+    min-height: 40px;
+    padding: 0;
+
+    font-family: var(--typography-font-family-default);
+}
+
+.row {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: sizeToken.get(0.5) 0 sizeToken.get(0.5) 0;
+    border: 0;
+    background: transparent;
+    border-radius: var(--border-radius-medium);
+    cursor: pointer;
+    color: var(--color-primary-default);
+    text-align: left;
+    font: inherit;
+    outline: none;
+
+    &:focus-visible {
+        z-index: 1;
+
+        .item {
+            @include focusStyle.focus-outline-styles;
+        }
+    }
+}
+
+.item {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    column-gap: sizeToken.get(1);
+    padding: 0 sizeToken.get(2) 0 sizeToken.get(2);
+    height: sizeToken.get(8);
+    border-radius: var(--border-radius-medium);
+    border-width: var(--border-width-large);
+    background-color: var(--color-surface-default);
+    border-style: solid;
+    border-color: transparent;
+    transition:
+        background-color 0.12s ease,
+        border-color 0.12s ease;
+
+    &[data-drop='true'] {
+        border-color: var(--tree-accent);
+    }
+
+    &:not([data-selected='true']):hover {
+        background-color: var(--color-surface-hover);
+    }
+
+    &[data-selected='true'] {
+        background-color: var(--color-surface-active);
+    }
+}
+
+.indent {
+    /* Depth is provided as a CSS custom property on `.item` so the math stays in CSS. */
+    width: calc(var(--tree-row-level) * 1rem + 4px);
+}
+
+.handle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    color: var(--color-secondary-default);
+    cursor: grab;
+}
+
+.chevron {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    color: var(--color-secondary-default);
+}
+
+.icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    color: var(--color-secondary-default);
+}
+
+.label {
+    /* Fill remaining row space so the actions slot is pushed to the right edge, and
+       allow shrinking below `min-content` so long labels truncate cleanly. */
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: var(--typography-font-size-small);
+    line-height: var(--typography-line-height-tight);
+    color: var(--color-primary-default);
+
+    .item[data-folder='true'] & {
+        font-weight: var(--typography-font-weight-medium);
+    }
+
+    .item[data-selected='true'] & {
+        color: inherit;
+    }
+}
+
+.actions {
+    display: inline-flex;
+    align-items: center;
+    gap: sizeToken.get(1);
+}
+
+.dragline {
+    position: absolute;
+    height: 2px;
+    margin-top: -1px;
+    background-color: var(--tree-accent);
+    pointer-events: none;
+    z-index: 1;
+    /* Smooths sub-pixel jitter and brief gaps between drag-target updates so the
+       line doesn't visibly flicker as it tracks the cursor. */
+    transition:
+        top 0.08s ease-out,
+        left 0.08s ease-out,
+        width 0.08s ease-out;
+    will-change: top, left, width;
+}
+
+.loadingRow {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: sizeToken.get(0.5) 0 sizeToken.get(0.5) 0;
+}
+
+.loadingItem {
+    /* Mirrors `.item`'s flex layout so the label aligns with real row labels regardless
+       of whether multiSelect or reorderable columns are active. */
+    flex: 1;
+    display: flex;
+    align-items: center;
+    column-gap: sizeToken.get(1);
+    padding: 0 sizeToken.get(2) 0 sizeToken.get(2);
+    height: sizeToken.get(8);
+}
+
+.spinner {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+}
+
+.loadingLabel {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: var(--typography-font-size-small);
+    line-height: var(--typography-line-height-tight);
+    color: var(--color-secondary-default);
+    font-style: italic;
+}
+
+.srOnly {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+}

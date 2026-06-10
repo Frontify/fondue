@@ -33,6 +33,9 @@ const translations = {
     Table_sortByAscending: 'Ordenar por ${column} ascendente',
     Table_sortByDescending: 'Ordenar por ${column} descendente',
     Table_sortDescending: 'Ordenar descendente',
+    Tree_checkboxHint: 'Selecionável, prima Tab para focar a caixa de seleção.',
+    Tree_loading: 'A carregar…',
+    Tree_reorderHint: 'Prima Control Shift D para mover.',
 };
 
 export const ptPT: LocaleConfig = {
