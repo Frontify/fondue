@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { expect, type Locator, test } from '@playwright/experimental-ct-react';
+import { expect, test } from '@playwright/experimental-ct-react';
+import { type Locator } from '@playwright/test';
 
 import { RouterProvider } from '../../RouterProvider/RouterProvider';
 import { Card } from '../Card';
