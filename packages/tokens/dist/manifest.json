@@ -1160,6 +1160,20 @@
     },
     {
       "category": "semantic",
+      "cssVariable": "var(--border-radius-xx-large)",
+      "id": "border-radius-xx-large",
+      "keyPath": [
+        "semantic",
+        "border-radius",
+        "xx-large"
+      ],
+      "tailwindClass": "rounded-xx-large",
+      "themeable": false,
+      "type": "float",
+      "value": "var(--border-radius-xx-large)"
+    },
+    {
+      "category": "semantic",
       "cssVariable": "var(--border-width-default)",
       "id": "border-width-default",
       "keyPath": [
