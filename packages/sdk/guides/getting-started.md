@@ -20,7 +20,7 @@ yarn add @frontify/fondue
 You can browse all available components in the Storybook instance of the [Fondue design system](https://fondue-components.frontify.com).
 This Storybook contains all components from all subpackages in the Fondue monorepo. Each component will have a badge in the top bar indicating its current lifecycle state.
 
-For the designers, the documentation is available in the [Fondue design system documentation](https://weare.frontify.com/document/1266?#/using-fondue) on Weare.
+For the designers, the documentation is available in the [Fondue design system documentation](https://fondue.frontify.com/).
 
 ## Setup
 
