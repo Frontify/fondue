@@ -357,6 +357,22 @@ describe('Card Component', () => {
         expect(image.dataset.fit).toBe('contain');
     });
 
+    it('should forward arbitrary data-* attributes on Card.Action', () => {
+        render(
+            <Card.Root>
+                <Card.Action data-test-id="action" data-intercom-tour-selector="set-action-button">
+                    <Card.ActionButton aria-label="Settings">
+                        <svg />
+                    </Card.ActionButton>
+                </Card.Action>
+            </Card.Root>,
+        );
+        expect(screen.getByTestId('action')).toHaveAttribute(
+            'data-intercom-tour-selector',
+            'set-action-button',
+        );
+    });
+
     it('should merge a forwarded className onto the root element', () => {
         render(
             <Card.Root data-test-id={CARD_TEST_ID} className="group custom-class">
