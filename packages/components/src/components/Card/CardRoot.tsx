@@ -24,6 +24,12 @@ import styles from './styles/card.module.scss';
 type CardRootBaseProps = {
     'data-test-id'?: string;
     /**
+     * Additional class name(s) merged onto the card's root element. Useful for
+     * layout hooks such as Tailwind's `group` (e.g. to drive `group-hover:`
+     * styles on descendants). Merged after the internal styles.
+     */
+    className?: string;
+    /**
      * Called when the pointer enters the card.
      */
     onMouseEnter?: MouseEventHandler<HTMLDivElement>;
@@ -94,6 +100,7 @@ export const CardRoot = (
         'data-test-id': dataTestId = 'fondue-card',
         'aria-label': ariaLabel,
         'aria-describedby': ariaDescribedby,
+        className = '',
         selected = false,
         href,
         onNavigate,
@@ -152,7 +159,7 @@ export const CardRoot = (
     return (
         <div
             ref={ref}
-            className={styles.root}
+            className={[styles.root, className].filter(Boolean).join(' ')}
             data-test-id={dataTestId}
             data-interactive={isClickable}
             data-selectable={isSelectable}

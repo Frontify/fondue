@@ -357,6 +357,19 @@ describe('Card Component', () => {
         expect(image.dataset.fit).toBe('contain');
     });
 
+    it('should merge a forwarded className onto the root element', () => {
+        render(
+            <Card.Root data-test-id={CARD_TEST_ID} className="group custom-class">
+                <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
+            </Card.Root>,
+        );
+        const root = screen.getByTestId(CARD_TEST_ID);
+        expect(root).toHaveClass('group');
+        expect(root).toHaveClass('custom-class');
+        // Internal styles are preserved alongside the forwarded class.
+        expect(root.className.split(' ').length).toBeGreaterThan(2);
+    });
+
     it('should not set a data-tone on the banner by default', () => {
         render(
             <Card.Root>
