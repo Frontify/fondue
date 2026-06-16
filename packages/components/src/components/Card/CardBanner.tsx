@@ -7,6 +7,31 @@ import styles from './styles/card.module.scss';
 
 export type CardBannerSize = 'small' | 'large';
 export type CardBannerFit = 'cover' | 'contain';
+/**
+ * Inner padding applied to a banner image, giving the preview breathing room
+ * inside the banner (e.g. logo or icon libraries).
+ *
+ * - `none` – no padding (default)
+ * - `small` – 12px
+ * - `medium` – 24px
+ * - `large` – 32px
+ */
+export type CardBannerImagePadding = 'none' | 'small' | 'medium' | 'large';
+
+/**
+ * Background tone of the banner.
+ *
+ * - `dim` – pins `surface-dim` (the resting default) and opts out of the
+ *   implicit hover/active background shift that otherwise kicks in when a
+ *   `Card.BannerIcon` is nested.
+ * - `active` – pins `surface-active`.
+ * - `inverted` – near-black background (`primary-default`) with a white icon,
+ *   for states like a folder drop target.
+ *
+ * When omitted, the banner keeps its legacy behavior: `surface-dim` at rest,
+ * shifting to hover/active surfaces on interaction when a `Card.BannerIcon` is present.
+ */
+export type CardBannerTone = 'dim' | 'active' | 'inverted';
 
 export type CardBannerProps = {
     'data-test-id'?: string;
@@ -15,15 +40,21 @@ export type CardBannerProps = {
      * @default 'large'
      */
     size?: CardBannerSize;
+    /**
+     * Pins the banner background, overriding the implicit hover/active shift
+     * applied when a `Card.BannerIcon` is nested. Leave unset to keep the
+     * default behavior.
+     */
+    tone?: CardBannerTone;
     children?: ReactNode;
 };
 
 export const CardBanner = (
-    { 'data-test-id': dataTestId = 'fondue-card-banner', size = 'large', children }: CardBannerProps,
+    { 'data-test-id': dataTestId = 'fondue-card-banner', size = 'large', tone, children }: CardBannerProps,
     ref: ForwardedRef<HTMLDivElement>,
 ) => {
     return (
-        <div ref={ref} className={styles.banner} data-test-id={dataTestId} data-size={size}>
+        <div ref={ref} className={styles.banner} data-test-id={dataTestId} data-size={size} data-tone={tone}>
             {children}
             <div
                 className={styles.selectionIndicator}
@@ -53,14 +84,35 @@ export type CardBannerImageProps = {
      * @default 'cover'
      */
     fit?: CardBannerFit;
+    /**
+     * Inner padding between the image and the banner edges, giving the preview
+     * breathing room (e.g. logo or icon libraries). Pairs best with `fit="contain"`,
+     * which lets the padded image scale down without cropping.
+     * @default 'none'
+     */
+    padding?: CardBannerImagePadding;
 };
 
 export const CardBannerImage = (
-    { 'data-test-id': dataTestId = 'fondue-card-banner-image', src, alt = '', fit = 'cover' }: CardBannerImageProps,
+    {
+        'data-test-id': dataTestId = 'fondue-card-banner-image',
+        src,
+        alt = '',
+        fit = 'cover',
+        padding = 'none',
+    }: CardBannerImageProps,
     ref: ForwardedRef<HTMLImageElement>,
 ) => {
     return (
-        <img ref={ref} className={styles.bannerImage} data-test-id={dataTestId} data-fit={fit} src={src} alt={alt} />
+        <img
+            ref={ref}
+            className={styles.bannerImage}
+            data-test-id={dataTestId}
+            data-fit={fit}
+            data-padding={padding}
+            src={src}
+            alt={alt}
+        />
     );
 };
 CardBannerImage.displayName = 'Card.BannerImage';

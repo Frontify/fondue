@@ -175,6 +175,36 @@ export const WithBadges: Story = {
     },
 };
 
+export const BannerImageWithPadding: Story = {
+    decorators: singleCardDecorators,
+    render: () => {
+        const [selected, setSelected] = useState(false);
+
+        return (
+            <Card.Root href="#" selected={selected} onSelect={() => setSelected((s) => !s)}>
+                <Card.Banner>
+                    {/* Padding gives a logo/icon preview breathing room. Pairs with fit="contain". */}
+                    <Card.BannerImage
+                        src="https://picsum.photos/seed/logo-lib/200/200"
+                        alt="Logo preview"
+                        fit="contain"
+                        padding="medium"
+                    />
+                </Card.Banner>
+
+                <Card.Title>[Logo asset]</Card.Title>
+                <Card.Description>SVG · 24px padding</Card.Description>
+
+                <Card.Action>
+                    <Card.ActionButton aria-label="More actions">
+                        <IconDotsVertical size={20} />
+                    </Card.ActionButton>
+                </Card.Action>
+            </Card.Root>
+        );
+    },
+};
+
 export const SmallBannerWithImages: Story = {
     decorators: singleCardDecorators,
     render: () => {
@@ -227,6 +257,60 @@ export const SmallBannerWithIcon: Story = {
                         <IconCog size={20} />
                     </Card.ActionButton>
                 </Card.Action>
+                <Card.Action>
+                    <Card.ActionButton aria-label="More actions">
+                        <IconDotsVertical size={20} />
+                    </Card.ActionButton>
+                </Card.Action>
+            </Card.Root>
+        );
+    },
+};
+
+export const BannerToneInverted: Story = {
+    decorators: singleCardDecorators,
+    render: () => {
+        const [selected, setSelected] = useState(false);
+
+        return (
+            <Card.Root href="#" selected={selected} onSelect={() => setSelected((s) => !s)}>
+                {/* tone="inverted" renders the drop-target state: dark banner + white icon. */}
+                <Card.Banner tone="inverted">
+                    <Card.BannerIcon>
+                        <IconFolder size={32} />
+                    </Card.BannerIcon>
+                </Card.Banner>
+
+                <Card.Title>[Drop files here]</Card.Title>
+                <Card.Description>Release to move into folder</Card.Description>
+
+                <Card.Action>
+                    <Card.ActionButton aria-label="More actions">
+                        <IconDotsVertical size={20} />
+                    </Card.ActionButton>
+                </Card.Action>
+            </Card.Root>
+        );
+    },
+};
+
+export const BannerToneDim: Story = {
+    decorators: singleCardDecorators,
+    render: () => {
+        const [selected, setSelected] = useState(false);
+
+        return (
+            <Card.Root href="#" selected={selected} onSelect={() => setSelected((s) => !s)}>
+                {/* tone="dim" pins surface-dim, opting out of the implicit hover/active shift. */}
+                <Card.Banner tone="dim">
+                    <Card.BannerIcon>
+                        <IconImageStack size={32} />
+                    </Card.BannerIcon>
+                </Card.Banner>
+
+                <Card.Title>[Collection name]</Card.Title>
+                <Card.Description>Background stays dim on hover</Card.Description>
+
                 <Card.Action>
                     <Card.ActionButton aria-label="More actions">
                         <IconDotsVertical size={20} />
