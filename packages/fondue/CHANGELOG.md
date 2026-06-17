@@ -1,5 +1,16 @@
 # @frontify/fondue
 
+## 13.6.3
+
+### Patch Changes
+
+- [#2768](https://github.com/Frontify/fondue/pull/2768) [`cf5c6df`](https://github.com/Frontify/fondue/commit/cf5c6df9b95a4b106c91b2259ac205c996a1314c) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add new border-radius token
+
+- Updated dependencies [[`cf5c6df`](https://github.com/Frontify/fondue/commit/cf5c6df9b95a4b106c91b2259ac205c996a1314c), [`4a95e4a`](https://github.com/Frontify/fondue/commit/4a95e4a814533ad5f823a88a4a9308d7766992c1)]:
+  - @frontify/fondue-tokens@5.0.4
+  - @frontify/fondue-sdk@0.1.2
+  - @frontify/fondue-components@30.7.1
+
 ## 13.6.2
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @frontify/fondue-tokens
 
+## 5.0.4
+
+### Patch Changes
+
+- [#2768](https://github.com/Frontify/fondue/pull/2768) [`cf5c6df`](https://github.com/Frontify/fondue/commit/cf5c6df9b95a4b106c91b2259ac205c996a1314c) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add new border-radius token
+
 ## 5.0.3
 
 ### Patch Changes
