@@ -24,14 +24,13 @@ export type CardBannerImagePadding = 'none' | 'small' | 'medium' | 'large';
  * - `dim` – pins `surface-dim` (the resting default) and opts out of the
  *   implicit hover/active background shift that otherwise kicks in when a
  *   `Card.BannerIcon` is nested.
- * - `active` – pins `surface-active`.
  * - `inverted` – near-black background (`primary-default`) with a white icon,
  *   for states like a folder drop target.
  *
  * When omitted, the banner keeps its legacy behavior: `surface-dim` at rest,
  * shifting to hover/active surfaces on interaction when a `Card.BannerIcon` is present.
  */
-export type CardBannerTone = 'dim' | 'active' | 'inverted';
+export type CardBannerTone = 'dim' | 'inverted';
 
 export type CardBannerProps = {
     'data-test-id'?: string;

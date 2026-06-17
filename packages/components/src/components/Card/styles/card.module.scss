@@ -207,10 +207,6 @@
         background-color: var(--color-surface-dim);
     }
 
-    &[data-tone='active'] {
-        background-color: var(--color-surface-active);
-    }
-
     &[data-tone='inverted'] {
         background-color: var(--color-primary-default);
     }
