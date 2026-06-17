@@ -1,5 +1,11 @@
 # @frontify/fondue
 
+## 13.6.4
+
+### Patch Changes
+
+- [`ef3033f`](https://github.com/Frontify/fondue/commit/ef3033f078914c60e02cba8033a2674a9ed215ac) Thanks [@syeo66](https://github.com/syeo66)! - chore: bump fondue version
+
 ## 13.6.3
 
 ### Patch Changes
