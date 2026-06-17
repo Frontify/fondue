@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import {
+    IconArrowAlignDown,
     IconCog,
     IconDotsVertical,
     IconExclamationMarkTriangle,
@@ -33,6 +34,8 @@ import {
     CardThumbnailIcon,
     CardThumbnailImage,
     CardTitle,
+    type CardBannerFit,
+    type CardBannerImagePadding,
 } from './Card';
 
 type Story = StoryObj<typeof meta>;
@@ -78,6 +81,15 @@ const singleCardDecorators: Story['decorators'] = [
         </div>
     ),
 ];
+
+// Inline SVG used as an <img> source, so the padding story shows breathing room
+// around a logo-like graphic (a logo/icon library preview) without a network request.
+const LOGO_ICON_DATA_URI = `data:image/svg+xml,${encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#4c43d6"><path d="M12 2 3 7v10l9 5 9-5V7zm0 2.31L18.18 8 12 11.69 5.82 8zM5 9.7l6 3.58v6.32l-6-3.33zm14 0v6.57l-6 3.33v-6.32z"/></svg>',
+)}`;
+
+// The padding story exposes interactive controls for `padding` and `fit`.
+type BannerImagePaddingControls = { padding: CardBannerImagePadding; fit: CardBannerFit };
 
 export const Default: Story = {
     decorators: singleCardDecorators,
@@ -175,25 +187,43 @@ export const WithBadges: Story = {
     },
 };
 
-export const BannerImageWithPadding: Story = {
-    decorators: singleCardDecorators,
-    render: () => {
+export const BannerImageWithPadding: StoryObj<BannerImagePaddingControls> = {
+    decorators: [
+        (Story) => (
+            <div style={{ width: 280 }}>
+                <Story />
+            </div>
+        ),
+    ],
+    args: {
+        padding: 'medium',
+        fit: 'contain',
+    },
+    argTypes: {
+        padding: {
+            control: 'select',
+            options: ['none', 'small', 'medium', 'large'],
+            description: 'Inner padding between the image and the banner edges (small 12px, medium 24px, large 32px).',
+        },
+        fit: {
+            control: 'inline-radio',
+            options: ['cover', 'contain'],
+            description: 'How the image fits the banner. Padding pairs best with `contain`.',
+        },
+    },
+    render: ({ padding, fit }) => {
         const [selected, setSelected] = useState(false);
 
         return (
             <Card.Root href="#" selected={selected} onSelect={() => setSelected((s) => !s)}>
                 <Card.Banner>
-                    {/* Padding gives a logo/icon preview breathing room. Pairs with fit="contain". */}
-                    <Card.BannerImage
-                        src="https://picsum.photos/seed/logo-lib/200/200"
-                        alt="Logo preview"
-                        fit="contain"
-                        padding="medium"
-                    />
+                    {/* Padding gives a logo/icon preview breathing room. Pairs with fit="contain".
+                        Use the Controls panel to change `padding` and `fit` live. */}
+                    <Card.BannerImage src={LOGO_ICON_DATA_URI} alt="Logo preview" fit={fit} padding={padding} />
                 </Card.Banner>
 
                 <Card.Title>[Logo asset]</Card.Title>
-                <Card.Description>SVG · 24px padding</Card.Description>
+                <Card.Description>{`padding="${padding}" · fit="${fit}"`}</Card.Description>
 
                 <Card.Action>
                     <Card.ActionButton aria-label="More actions">
@@ -274,10 +304,11 @@ export const BannerToneInverted: Story = {
 
         return (
             <Card.Root href="#" selected={selected} onSelect={() => setSelected((s) => !s)}>
-                {/* tone="inverted" renders the drop-target state: dark banner + white icon. */}
+                {/* tone="inverted" renders the drop-target state: dark banner + white icon.
+                    The icon inherits the white (on-primary) color automatically. */}
                 <Card.Banner tone="inverted">
                     <Card.BannerIcon>
-                        <IconFolder size={32} />
+                        <IconArrowAlignDown size={32} />
                     </Card.BannerIcon>
                 </Card.Banner>
 
@@ -295,28 +326,67 @@ export const BannerToneInverted: Story = {
 };
 
 export const BannerToneDim: Story = {
-    decorators: singleCardDecorators,
+    name: 'BannerTone dim (hover to compare)',
+    parameters: {
+        docs: {
+            description: {
+                story:
+                    'The effect of `tone="dim"` only shows on hover. A tone-less banner that contains a ' +
+                    '`Card.BannerIcon` brightens to `surface-hover` when the interactive card is hovered; ' +
+                    '`tone="dim"` pins `surface-dim` and opts out of that shift. Hover each card to compare.',
+            },
+        },
+    },
     render: () => {
-        const [selected, setSelected] = useState(false);
+        const [selectedDefault, setSelectedDefault] = useState(false);
+        const [selectedDim, setSelectedDim] = useState(false);
 
         return (
-            <Card.Root href="#" selected={selected} onSelect={() => setSelected((s) => !s)}>
-                {/* tone="dim" pins surface-dim, opting out of the implicit hover/active shift. */}
-                <Card.Banner tone="dim">
-                    <Card.BannerIcon>
-                        <IconImageStack size={32} />
-                    </Card.BannerIcon>
-                </Card.Banner>
+            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                <div style={{ width: 280 }}>
+                    <Card.Root
+                        href="#"
+                        selected={selectedDefault}
+                        onSelect={() => setSelectedDefault((s) => !s)}
+                    >
+                        {/* No tone: the banner background brightens on hover. */}
+                        <Card.Banner>
+                            <Card.BannerIcon>
+                                <IconImageStack size={32} />
+                            </Card.BannerIcon>
+                        </Card.Banner>
 
-                <Card.Title>[Collection name]</Card.Title>
-                <Card.Description>Background stays dim on hover</Card.Description>
+                        <Card.Title>Default (no tone)</Card.Title>
+                        <Card.Description>Hover → banner brightens</Card.Description>
 
-                <Card.Action>
-                    <Card.ActionButton aria-label="More actions">
-                        <IconDotsVertical size={20} />
-                    </Card.ActionButton>
-                </Card.Action>
-            </Card.Root>
+                        <Card.Action>
+                            <Card.ActionButton aria-label="More actions">
+                                <IconDotsVertical size={20} />
+                            </Card.ActionButton>
+                        </Card.Action>
+                    </Card.Root>
+                </div>
+
+                <div style={{ width: 280 }}>
+                    <Card.Root href="#" selected={selectedDim} onSelect={() => setSelectedDim((s) => !s)}>
+                        {/* tone="dim" pins surface-dim, opting out of the implicit hover/active shift. */}
+                        <Card.Banner tone="dim">
+                            <Card.BannerIcon>
+                                <IconImageStack size={32} />
+                            </Card.BannerIcon>
+                        </Card.Banner>
+
+                        <Card.Title>tone=&quot;dim&quot;</Card.Title>
+                        <Card.Description>Hover → banner stays dim</Card.Description>
+
+                        <Card.Action>
+                            <Card.ActionButton aria-label="More actions">
+                                <IconDotsVertical size={20} />
+                            </Card.ActionButton>
+                        </Card.Action>
+                    </Card.Root>
+                </div>
+            </div>
         );
     },
 };
