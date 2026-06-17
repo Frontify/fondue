@@ -1,7 +1,7 @@
 {
     "name": "@frontify/fondue-sdk",
     "type": "module",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "description": "Machine-readable SDK for Frontify Fondue — components, icons, tokens — exposed as a navigable graph. Designed for MCP servers, CLI tools, AI agents, and other integrations.",
     "homepage": "https://github.com/Frontify/fondue",
     "repository": {
