@@ -190,13 +190,25 @@
         @include border-overlay($z-index: 1);
     }
 
-    .root[data-interactive='true']:hover &:has(> .bannerIcon),
-    .root[data-interactive='true']:has([data-state='open']) &:has(> .bannerIcon) {
+    // Implicit hover/active shift when a BannerIcon is nested. Skipped once a
+    // `tone` is set (data-tone present), so consumers can pin the background.
+    .root[data-interactive='true']:hover &:not([data-tone]):has(> .bannerIcon),
+    .root[data-interactive='true']:has([data-state='open']) &:not([data-tone]):has(> .bannerIcon) {
         background-color: var(--color-surface-hover);
     }
 
-    .root[data-interactive='true']:active &:has(> .bannerIcon) {
+    .root[data-interactive='true']:active &:not([data-tone]):has(> .bannerIcon) {
         background-color: var(--color-surface-active);
+    }
+
+    // Explicit background tones. These pin the background and (for `inverted`)
+    // flip the nested icon color — see the .bannerIcon rules below.
+    &[data-tone='dim'] {
+        background-color: var(--color-surface-dim);
+    }
+
+    &[data-tone='inverted'] {
+        background-color: var(--color-primary-default);
     }
 
     &[data-size='small'] {
@@ -212,6 +224,7 @@
     flex: 1;
     min-width: 0;
     display: block;
+    box-sizing: border-box;
 
     & + & {
         border-left: 1px solid var(--color-line-subtle);
@@ -223,6 +236,21 @@
 
     &[data-fit='contain'] {
         object-fit: contain;
+    }
+
+    // Inner padding tokens. Mapped by value to the design spec
+    // (small 12px, medium 24px, large 32px), not by matching spacing-token names
+    // (--spacing-medium is 16px). Pairs best with data-fit='contain'.
+    &[data-padding='small'] {
+        padding: var(--spacing-small);
+    }
+
+    &[data-padding='medium'] {
+        padding: var(--spacing-large);
+    }
+
+    &[data-padding='large'] {
+        padding: var(--spacing-x-large);
     }
 }
 
@@ -243,6 +271,14 @@
     .root[data-interactive='true']:hover &,
     .root[data-interactive='true']:has([data-state='open']) & {
         color: var(--color-primary-default);
+    }
+
+    // Inverted banner tone forces a white icon on the dark background, winning
+    // over the hover and semantic-variant colors below.
+    .banner[data-tone='inverted'] &,
+    .root[data-interactive='true']:hover .banner[data-tone='inverted'] &,
+    .root[data-interactive='true']:has([data-state='open']) .banner[data-tone='inverted'] & {
+        color: var(--color-primary-on-primary);
     }
 
     &[data-variant='primary'] {

@@ -16,9 +16,11 @@ import {
     type CardBannerFit,
     type CardBannerIconProps,
     type CardBannerIconVariant,
+    type CardBannerImagePadding,
     type CardBannerImageProps,
     type CardBannerProps,
     type CardBannerSize,
+    type CardBannerTone,
 } from './CardBanner';
 import {
     CardBadges,
@@ -56,9 +58,11 @@ export type {
     CardBannerFit,
     CardBannerIconProps,
     CardBannerIconVariant,
+    CardBannerImagePadding,
     CardBannerImageProps,
     CardBannerProps,
     CardBannerSize,
+    CardBannerTone,
     CardDescriptionProps,
     CardRootProps,
     CardThumbnailIconProps,

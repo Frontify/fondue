@@ -331,6 +331,87 @@ describe('Card Component', () => {
         expect(navigateStub).not.toHaveBeenCalled();
     });
 
+    it('should default the banner image to no padding and cover fit', () => {
+        render(
+            <Card.Root>
+                <Card.Banner>
+                    <Card.BannerImage data-test-id="img" src="/a.png" alt="A" />
+                </Card.Banner>
+            </Card.Root>,
+        );
+        const image = screen.getByTestId('img');
+        expect(image.dataset.padding).toBe('none');
+        expect(image.dataset.fit).toBe('cover');
+    });
+
+    it('should expose the padding and fit on the banner image as data attributes', () => {
+        render(
+            <Card.Root>
+                <Card.Banner>
+                    <Card.BannerImage data-test-id="img" src="/a.png" alt="A" fit="contain" padding="medium" />
+                </Card.Banner>
+            </Card.Root>,
+        );
+        const image = screen.getByTestId('img');
+        expect(image.dataset.padding).toBe('medium');
+        expect(image.dataset.fit).toBe('contain');
+    });
+
+    it('should forward arbitrary data-* attributes on Card.Action', () => {
+        render(
+            <Card.Root>
+                <Card.Action data-test-id="action" data-intercom-tour-selector="set-action-button">
+                    <Card.ActionButton aria-label="Settings">
+                        <svg />
+                    </Card.ActionButton>
+                </Card.Action>
+            </Card.Root>,
+        );
+        expect(screen.getByTestId('action')).toHaveAttribute(
+            'data-intercom-tour-selector',
+            'set-action-button',
+        );
+    });
+
+    it('should merge a forwarded className onto the root element', () => {
+        render(
+            <Card.Root data-test-id={CARD_TEST_ID} className="group custom-class">
+                <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
+            </Card.Root>,
+        );
+        const root = screen.getByTestId(CARD_TEST_ID);
+        expect(root).toHaveClass('group');
+        expect(root).toHaveClass('custom-class');
+        // Internal styles are preserved alongside the forwarded class.
+        expect(root.className.split(' ').length).toBeGreaterThan(2);
+    });
+
+    it('should not set a data-tone on the banner by default', () => {
+        render(
+            <Card.Root>
+                <Card.Banner data-test-id="banner">
+                    <Card.BannerIcon>
+                        <svg />
+                    </Card.BannerIcon>
+                </Card.Banner>
+            </Card.Root>,
+        );
+        expect(screen.getByTestId('banner').dataset.tone).toBeUndefined();
+    });
+
+    it('should expose the banner tone as a data attribute when set', () => {
+        render(
+            <Card.Root>
+                <Card.Banner data-test-id="banner" tone="inverted">
+                    <Card.BannerIcon>
+                        <svg />
+                    </Card.BannerIcon>
+                </Card.Banner>
+            </Card.Root>,
+        );
+        expect(screen.getByTestId('banner').dataset.tone).toBe('inverted');
+    });
+
     it('should allow tabbing through interactive elements', async () => {
         const handleSelect = vi.fn();
         renderWithRouter(
