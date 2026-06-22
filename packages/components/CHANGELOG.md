@@ -1,5 +1,42 @@
 # @frontify/fondue-components
 
+## 30.8.0
+
+### Minor Changes
+
+- [#2769](https://github.com/Frontify/fondue/pull/2769) [`a75f700`](https://github.com/Frontify/fondue/commit/a75f70073774d8814c31423cf7c83356959e7159) Thanks [@mnoleto](https://github.com/mnoleto)! - feat(Card.Action): forward arbitrary `data-*` attributes
+
+  `Card.Action` now spreads unknown props (notably `data-*` attributes, e.g. an
+  analytics or onboarding-tour selector) onto the rendered element, so consumers
+  no longer need an extra wrapper to carry them.
+
+- [#2769](https://github.com/Frontify/fondue/pull/2769) [`a75f700`](https://github.com/Frontify/fondue/commit/a75f70073774d8814c31423cf7c83356959e7159) Thanks [@mnoleto](https://github.com/mnoleto)! - feat(Card.BannerImage): add a `padding` prop
+
+  `Card.BannerImage` now accepts `padding="none" | "small" | "medium" | "large"`
+  (none by default; small 12px, medium 24px, large 32px). Padding is applied
+  inside the banner and pairs best with `fit="contain"`, giving previews such as
+  logos or icons breathing room without dropping out of the component. Backward
+  compatible — existing images default to `none`.
+
+- [#2769](https://github.com/Frontify/fondue/pull/2769) [`a75f700`](https://github.com/Frontify/fondue/commit/a75f70073774d8814c31423cf7c83356959e7159) Thanks [@mnoleto](https://github.com/mnoleto)! - feat(Card.Banner): add a `tone` prop
+
+  `Card.Banner` now accepts `tone="dim" | "inverted"`. `inverted` renders the dark
+  drop-target state (near-black background, white icon), while `dim` pins the
+  background and opts out of the implicit hover/active background shift that
+  otherwise applies when a `Card.BannerIcon` is nested. Leaving `tone` unset
+  preserves the previous behavior, so existing consumers are unaffected.
+
+- [#2769](https://github.com/Frontify/fondue/pull/2769) [`a75f700`](https://github.com/Frontify/fondue/commit/a75f70073774d8814c31423cf7c83356959e7159) Thanks [@mnoleto](https://github.com/mnoleto)! - feat(Card.Root): forward `className`
+
+  `Card.Root` now forwards a `className` onto its root element, merged after the
+  internal styles. This enables layout hooks such as Tailwind's `group` (e.g. to
+  drive `group-hover:` styles on descendants) without an extra wrapper element.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @frontify/fondue-tokens@5.0.4
+
 ## 30.7.1
 
 ### Patch Changes

@@ -1,5 +1,14 @@
 # @frontify/fondue
 
+## 13.6.5
+
+### Patch Changes
+
+- [`de40e53`](https://github.com/Frontify/fondue/commit/de40e5334b69b0af8d4e6665ea4e5691defe6f4b) Thanks [@syeo66](https://github.com/syeo66)! - chore: bump patch version
+
+- Updated dependencies [[`a75f700`](https://github.com/Frontify/fondue/commit/a75f70073774d8814c31423cf7c83356959e7159), [`a75f700`](https://github.com/Frontify/fondue/commit/a75f70073774d8814c31423cf7c83356959e7159), [`a75f700`](https://github.com/Frontify/fondue/commit/a75f70073774d8814c31423cf7c83356959e7159), [`a75f700`](https://github.com/Frontify/fondue/commit/a75f70073774d8814c31423cf7c83356959e7159)]:
+  - @frontify/fondue-components@30.8.0
+
 ## 13.6.4
 
 ### Patch Changes
