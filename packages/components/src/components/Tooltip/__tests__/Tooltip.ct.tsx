@@ -373,3 +373,28 @@ test('should submit form when clicking TooltipTrigger with a Button type submit 
     await trigger.click();
     expect(onSubmit.callCount).toBe(1);
 });
+
+test('should close when the pointer enters an iframe', async ({ mount, page }) => {
+    const component = await mount(
+        <Tooltip.Root enterDelay={0}>
+            <Tooltip.Trigger data-test-id={TOOLTIP_TRIGGER_TEST_ID}>
+                <Button>Hover over me!</Button>
+            </Tooltip.Trigger>
+            <Tooltip.Content data-test-id={TOOLTIP_CONTENT_TEST_ID}>{TOOLTIP_TEXT}</Tooltip.Content>
+        </Tooltip.Root>,
+    );
+    const tooltipContent = page.getByTestId(TOOLTIP_CONTENT_TEST_ID);
+    await expect(component).toBeVisible();
+    await component.getByTestId(TOOLTIP_TRIGGER_TEST_ID).hover();
+    await expect(tooltipContent).toBeVisible();
+
+    // Simulate the pointer entering an iframe: the parent document receives a `pointerover`
+    // event targeting the iframe element and then stops receiving further pointer events.
+    await page.evaluate(() => {
+        const iframe = document.createElement('iframe');
+        document.body.append(iframe);
+        iframe.dispatchEvent(new PointerEvent('pointerover', { bubbles: true }));
+    });
+
+    await expect(tooltipContent).toBeHidden();
+});
