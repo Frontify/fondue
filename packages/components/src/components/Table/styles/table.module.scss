@@ -128,9 +128,8 @@
         background-color: var(--table-sticky-background-color, var(--color-surface-default));
     }
 
-    // Visually hide the header while keeping it in the accessibility tree so screen
-    // readers still announce the column headers. Avoids `display: none` / `visibility:
-    // hidden`, which would remove the header from the accessibility tree.
+    // Visually hide the header while keeping it in the accessibility tree
+    // so screen readers still announce the column headers.
     &[data-hidden='true'] {
         position: absolute;
         width: 1px;
@@ -138,9 +137,6 @@
         padding: 0;
         margin: -1px;
         overflow: hidden;
-        // `clip-path` is the modern technique; `clip` is kept as a fallback for older engines.
-        // Non-zero (1px) dimensions are intentional: zero dimensions with `overflow: hidden`
-        // can drop the element from the accessibility tree.
         clip: rect(0, 0, 0, 0);
         clip-path: inset(50%);
         white-space: nowrap;
