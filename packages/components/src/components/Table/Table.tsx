@@ -165,15 +165,30 @@ type TableHeaderProps = {
      * @default false
      */
     sticky?: boolean;
+    /**
+     * Whether the header should be visually hidden while remaining accessible to screen readers.
+     *
+     * Unlike not rendering the header (or using `display: none`), the header stays in the
+     * accessibility tree, so screen readers still announce the column headers for each cell.
+     * @default false
+     */
+    hidden?: boolean;
     children: ReactNode;
     'aria-label'?: string;
     'aria-busy'?: boolean;
 };
 
 export const TableHeader = forwardRef<HTMLTableSectionElement, TableHeaderProps>(
-    ({ sticky = false, children, 'aria-label': ariaLabel, 'aria-busy': ariaBusy }, ref) => {
+    ({ sticky = false, hidden = false, children, 'aria-label': ariaLabel, 'aria-busy': ariaBusy }, ref) => {
         return (
-            <thead ref={ref} className={styles.header} data-sticky={sticky} aria-label={ariaLabel} aria-busy={ariaBusy}>
+            <thead
+                ref={ref}
+                className={styles.header}
+                data-sticky={sticky}
+                data-hidden={hidden}
+                aria-label={ariaLabel}
+                aria-busy={ariaBusy}
+            >
                 {children}
             </thead>
         );
