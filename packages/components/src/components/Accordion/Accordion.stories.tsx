@@ -24,7 +24,13 @@ const meta: Meta<typeof AccordionRoot> = {
             type: 'released',
         },
     },
-    args: {},
+    args: {
+        variant: 'default',
+        border: true,
+        padding: 'large',
+        disabled: false,
+        sticky: false,
+    },
 };
 export default meta;
 
@@ -227,8 +233,6 @@ export const Default: Story = {
 export const WithPillVariant: Story = {
     args: {
         variant: 'pill',
-        border: false,
-        defaultValue: ['accordion-test-0'],
         padding: 'small',
     },
     render: (args) => {
