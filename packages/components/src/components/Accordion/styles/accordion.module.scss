@@ -40,8 +40,8 @@
         border: none;
 
         &[data-accordion-padding='none'] {
-            --pill-header-vertical-padding: var(--spacing-x-small);
-            --pill-header-horizontal-padding: var(--spacing-small);
+            --accordion-vertical-padding: var(--spacing-x-small);
+            --accordion-horizontal-padding: var(--spacing-small);
         }
 
         .accordionItem:not(:last-child) {
