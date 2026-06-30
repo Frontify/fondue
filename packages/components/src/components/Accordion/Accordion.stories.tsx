@@ -24,7 +24,13 @@ const meta: Meta<typeof AccordionRoot> = {
             type: 'released',
         },
     },
-    args: {},
+    args: {
+        variant: 'default',
+        border: true,
+        padding: 'large',
+        disabled: false,
+        sticky: false,
+    },
 };
 export default meta;
 
@@ -217,6 +223,63 @@ export const Default: Story = {
                         ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo
                         dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor
                         sit amet.
+                    </Accordion.Content>
+                </Accordion.Item>
+            </Accordion.Root>
+        );
+    },
+};
+
+export const WithPillVariant: Story = {
+    args: {
+        variant: 'pill',
+        padding: 'small',
+    },
+    render: (args) => {
+        return (
+            <Accordion.Root {...args}>
+                <Accordion.Item value="accordion-test-0">
+                    <Accordion.Header>
+                        <Flex gap={2} align="center">
+                            <IconIcon size="20" />
+                            Item with icon
+                        </Flex>
+                    </Accordion.Header>
+                    <Accordion.Content>
+                        Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt
+                        ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo
+                        dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor
+                        sit amet.
+                    </Accordion.Content>
+                </Accordion.Item>
+
+                <Accordion.Item value="accordion-test-1">
+                    <Accordion.Header>
+                        With action slot
+                        <Accordion.Slot name="action">
+                            <Flex gap={1}>
+                                <Button size="small" emphasis="weak" aspect="square">
+                                    <IconPen size={16} />
+                                </Button>
+                                <Button size="small" emphasis="weak" aspect="square">
+                                    <IconTrashBin size={16} />
+                                </Button>
+                            </Flex>
+                        </Accordion.Slot>
+                    </Accordion.Header>
+                    <Accordion.Content>
+                        Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt
+                        ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo
+                        dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor
+                        sit amet.
+                    </Accordion.Content>
+                </Accordion.Item>
+
+                <Accordion.Item value="accordion-test-2" disabled>
+                    <Accordion.Header>Disabled item</Accordion.Header>
+                    <Accordion.Content>
+                        Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt
+                        ut labore et dolore magna aliquyam erat, sed diam voluptua.
                     </Accordion.Content>
                 </Accordion.Item>
             </Accordion.Root>

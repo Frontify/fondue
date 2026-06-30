@@ -106,6 +106,11 @@ export type AccordionRootProps = {
      */
     padding?: AccordionPadding;
     /**
+     * Select the used variant
+     * @default 'default'
+     */
+    variant?: 'default' | 'pill';
+    /**
      * When `true`, each `Accordion.Header` becomes sticky and pins to the top of the nearest
      * scrolling ancestor (e.g. a `ScrollArea`) while its item is in view.
      * @default false
@@ -127,6 +132,7 @@ export const AccordionRoot = forwardRef<HTMLDivElement, AccordionRootProps>(
             disabled,
             value,
             padding = 'large',
+            variant = 'default',
             sticky = false,
             onValueChange,
         }: AccordionRootProps,
@@ -233,6 +239,7 @@ export const AccordionRoot = forwardRef<HTMLDivElement, AccordionRootProps>(
                     value={value}
                     data-border={border}
                     data-accordion-padding={padding}
+                    data-accordion-variant={variant}
                     data-sticky={sticky}
                     onValueChange={handleValueChange}
                 >
