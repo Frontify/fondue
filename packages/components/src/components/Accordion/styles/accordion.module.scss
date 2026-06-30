@@ -66,6 +66,10 @@
             padding-inline-end: var(--pill-header-horizontal-padding);
         }
 
+        .accordionContent > div {
+            padding-top: var(--accordion-vertical-padding);
+        }
+
         .accordionTrigger {
             color: var(--color-secondary-default);
             padding: var(--pill-header-vertical-padding) var(--pill-header-horizontal-padding);
