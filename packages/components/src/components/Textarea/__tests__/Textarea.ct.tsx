@@ -120,6 +120,41 @@ test('autosize functionality', async ({ mount }) => {
     await expect(component).toHaveAttribute('data-autosize', 'true');
 });
 
+test('render resize handle when resizable', async ({ mount }) => {
+    const wrapper = await mount(<Textarea data-test-id={TEXTAREA_TEST_ID} resizable />);
+    await expect(wrapper.getByTestId(`${TEXTAREA_TEST_ID}-resize-handle`)).toBeVisible();
+});
+
+test('no resize handle when not resizable', async ({ mount }) => {
+    const wrapper = await mount(<Textarea data-test-id={TEXTAREA_TEST_ID} />);
+    await expect(wrapper.getByTestId(`${TEXTAREA_TEST_ID}-resize-handle`)).toHaveCount(0);
+});
+
+test('no resize handle when disabled', async ({ mount }) => {
+    const wrapper = await mount(<Textarea data-test-id={TEXTAREA_TEST_ID} resizable disabled />);
+    await expect(wrapper.getByTestId(`${TEXTAREA_TEST_ID}-resize-handle`)).toHaveCount(0);
+});
+
+test('dragging the resize handle changes the textarea height', async ({ mount, page }) => {
+    const wrapper = await mount(<Textarea data-test-id={TEXTAREA_TEST_ID} resizable />);
+    const textarea = wrapper.getByTestId(TEXTAREA_TEST_ID).locator('textarea');
+    const handle = wrapper.getByTestId(`${TEXTAREA_TEST_ID}-resize-handle`);
+
+    const startHeight = (await textarea.boundingBox())?.height ?? 0;
+    const handleBox = await handle.boundingBox();
+    if (!handleBox) {
+        throw new Error('resize handle not found');
+    }
+
+    await page.mouse.move(handleBox.x + handleBox.width / 2, handleBox.y + handleBox.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(handleBox.x + handleBox.width / 2, handleBox.y + handleBox.height / 2 + 80, { steps: 5 });
+    await page.mouse.up();
+
+    const endHeight = (await textarea.boundingBox())?.height ?? 0;
+    expect(endHeight).toBeGreaterThan(startHeight);
+});
+
 test('focus management', async ({ mount }) => {
     const onFocus = sinon.spy();
     const wrapper = await mount(<Textarea data-test-id={TEXTAREA_TEST_ID} focusOnMount onFocus={onFocus} />);

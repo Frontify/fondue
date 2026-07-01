@@ -59,6 +59,24 @@
     &[data-disabled='true'] {
         cursor: not-allowed;
     }
+
+}
+
+.resizeHandle {
+    position: absolute;
+    right: 2px;
+    bottom: 2px;
+    width: 12px;
+    height: 12px;
+    cursor: ns-resize;
+    touch-action: none;
+    background-color: var(--color-line-mid);
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10'%3E%3Cline x1='9' y1='1' x2='1' y2='9' stroke='black' stroke-width='1'/%3E%3Cline x1='9' y1='5' x2='5' y2='9' stroke='black' stroke-width='1'/%3E%3C/svg%3E");
+    mask-repeat: no-repeat;
+    mask-position: bottom right;
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10'%3E%3Cline x1='9' y1='1' x2='1' y2='9' stroke='black' stroke-width='1'/%3E%3Cline x1='9' y1='5' x2='5' y2='9' stroke='black' stroke-width='1'/%3E%3C/svg%3E");
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: bottom right;
 }
 
 .textareaWrapper {
@@ -103,13 +121,11 @@
     padding-top: sizeToken.get(2);
     padding-bottom: sizeToken.get(2);
     border-radius: calc(var(--border-radius-medium) - var(--border-width-default));
+    box-sizing: border-box;
+    // Always `none`: the resize interaction is driven by a custom handle
     resize: none;
     outline: 2px solid transparent;
     outline-offset: 2px;
-
-    [data-resizable='true'] & {
-        resize: vertical;
-    }
 
     [data-clearable='true'] & {
         padding-right: sizeToken.get(9);
