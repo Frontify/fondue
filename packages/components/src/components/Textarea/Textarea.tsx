@@ -299,7 +299,7 @@ export const TextareaRoot = (
                     ))}
                     {clearable && (
                         <button className={styles.toolsButton} onClick={clear} disabled={disabled || readOnly}>
-                            <IconCross size={20} fill="currentColor" />
+                            <IconCross size={16} fill="currentColor" />
                         </button>
                     )}
                 </div>

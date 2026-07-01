@@ -140,7 +140,8 @@ test('dragging the resize handle changes the textarea height', async ({ mount, p
     const textarea = wrapper.getByTestId(TEXTAREA_TEST_ID).locator('textarea');
     const handle = wrapper.getByTestId(`${TEXTAREA_TEST_ID}-resize-handle`);
 
-    const startHeight = (await textarea.boundingBox())?.height ?? 0;
+    const startBox = await textarea.boundingBox();
+    const startHeight = startBox?.height ?? 0;
     const handleBox = await handle.boundingBox();
     if (!handleBox) {
         throw new Error('resize handle not found');
@@ -151,7 +152,8 @@ test('dragging the resize handle changes the textarea height', async ({ mount, p
     await page.mouse.move(handleBox.x + handleBox.width / 2, handleBox.y + handleBox.height / 2 + 80, { steps: 5 });
     await page.mouse.up();
 
-    const endHeight = (await textarea.boundingBox())?.height ?? 0;
+    const endBox = await textarea.boundingBox();
+    const endHeight = endBox?.height ?? 0;
     expect(endHeight).toBeGreaterThan(startHeight);
 });
 
