@@ -59,6 +59,24 @@
     &[data-disabled='true'] {
         cursor: not-allowed;
     }
+
+}
+
+.resizeHandle {
+    position: absolute;
+    right: 2px;
+    bottom: 2px;
+    width: 12px;
+    height: 12px;
+    cursor: ns-resize;
+    touch-action: none;
+    background-color: var(--color-line-mid);
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10'%3E%3Cline x1='9' y1='1' x2='1' y2='9' stroke='black' stroke-width='1'/%3E%3Cline x1='9' y1='5' x2='5' y2='9' stroke='black' stroke-width='1'/%3E%3C/svg%3E");
+    mask-repeat: no-repeat;
+    mask-position: bottom right;
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10'%3E%3Cline x1='9' y1='1' x2='1' y2='9' stroke='black' stroke-width='1'/%3E%3Cline x1='9' y1='5' x2='5' y2='9' stroke='black' stroke-width='1'/%3E%3C/svg%3E");
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: bottom right;
 }
 
 .textareaWrapper {
@@ -81,8 +99,8 @@
     content: attr(data-replicated-value) " ";
     white-space: pre-wrap;
     visibility: hidden;
-    padding-left: sizeToken.get(3);
-    padding-right: sizeToken.get(3);
+    padding-inline-start: sizeToken.get(3);
+    padding-inline-end: sizeToken.get(3);
     padding-top: sizeToken.get(2);
     padding-bottom: sizeToken.get(2);
     font: inherit;
@@ -98,21 +116,19 @@
     display: flex;
     align-items: center;
     text-align: inherit;
-    padding-left: sizeToken.get(3);
-    padding-right: sizeToken.get(3);
+    padding-inline-start: sizeToken.get(3);
+    padding-inline-end: sizeToken.get(3);
     padding-top: sizeToken.get(2);
     padding-bottom: sizeToken.get(2);
     border-radius: calc(var(--border-radius-medium) - var(--border-width-default));
+    box-sizing: border-box;
+    // Always `none`: the resize interaction is driven by a custom handle
     resize: none;
     outline: 2px solid transparent;
     outline-offset: 2px;
 
-    [data-resizable='true'] & {
-        resize: vertical;
-    }
-
     [data-clearable='true'] & {
-        padding-right: sizeToken.get(9);
+        padding-inline-end: sizeToken.get(9);
     }
 
     &::placeholder {
@@ -124,20 +140,20 @@
         outline-offset: 2px;
     }
 
-    // Remove border-radius and padding on the left if there's a left-side decorator or slot
+    // Remove border-radius and padding on the inline-start if there's a start-side decorator or slot
     [data-has-decorator="true"] &,
     .root:has(.slot:not([data-name='right'])) & {
-        padding-left: 0;
-        border-top-left-radius: 0px;
-        border-bottom-left-radius: 0px;
+        padding-inline-start: 0;
+        border-start-start-radius: 0px;
+        border-end-start-radius: 0px;
     }
 
-    // Remove border-radius and padding on the right if there's a right-side slot or tools
+    // Remove border-radius and padding on the inline-end if there's an end-side slot or tools
     [data-has-tools="true"] &,
     .root:has(.slot[data-name='right']) & {
-        padding-right: 0;
-        border-top-right-radius: 0;
-        border-bottom-right-radius: 0;
+        padding-inline-end: 0;
+        border-start-end-radius: 0;
+        border-end-end-radius: 0;
     }
 
     // Readonly styles
@@ -175,11 +191,12 @@
 }
 
 .tools:not(:empty) {
-    padding-right: sizeToken.get(2);
-    padding-left: sizeToken.get(2);
+    padding-inline-end: sizeToken.get(1);
+    padding-inline-start: sizeToken.get(2);
+    padding-top: sizeToken.get(2);
     display: flex;
     gap: sizeToken.get(1);
-    align-items: center;
+    align-items: flex-start;
     order: 1;
 
     >* {
@@ -214,6 +231,7 @@
 .toolsButton {
     background-color: var(--color-surface-default);
     border-radius: var(--border-radius-medium);
+    color: var(--color-secondary-default);
 
     & {
         @include focusStyle.focus-outline;
