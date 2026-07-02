@@ -1,5 +1,28 @@
 # @frontify/fondue-components
 
+## 30.9.0
+
+### Minor Changes
+
+- [#2775](https://github.com/Frontify/fondue/pull/2775) [`cd2aaab`](https://github.com/Frontify/fondue/commit/cd2aaab95bad74dae36fddccbd5012ab1fe4c5b7) Thanks [@syeo66](https://github.com/syeo66)! - feat(Accordion): add pill variant
+
+### Patch Changes
+
+- [#2773](https://github.com/Frontify/fondue/pull/2773) [`97fd796`](https://github.com/Frontify/fondue/commit/97fd796443b8b91d5579c4c4e8081273b1d05b82) Thanks [@syeo66](https://github.com/syeo66)! - feat(Table): add 'hidden' prop to table header
+
+- [#2777](https://github.com/Frontify/fondue/pull/2777) [`1a5388e`](https://github.com/Frontify/fondue/commit/1a5388ec424cd7b6e647979de11cd01cdceaa67f) Thanks [@syeo66](https://github.com/syeo66)! - refactor(Textarea): replace resize handle with a custom element and adjust clearble icon position
+
+- [#2772](https://github.com/Frontify/fondue/pull/2772) [`7588386`](https://github.com/Frontify/fondue/commit/7588386aa01bc5cb81e57c162dca22c85601f9b2) Thanks [@syeo66](https://github.com/syeo66)! - fix(Tooltip): close when the pointer enters an iframe
+
+  The tooltip could get stuck open when moving the pointer from the trigger or
+  its content into an iframe (e.g. a platform app), because the parent document
+  stops receiving pointer events and Radix never fires the close. The tooltip now
+  closes when the pointer enters an iframe or when an iframe gains focus, working
+  around [radix-ui/primitives#3394](https://github.com/radix-ui/primitives/issues/3394).
+
+- Updated dependencies []:
+  - @frontify/fondue-tokens@5.0.4
+
 ## 30.8.0
 
 ### Minor Changes

@@ -1,5 +1,14 @@
 # @frontify/fondue-rte
 
+## 0.1.6
+
+### Patch Changes
+
+- [#2778](https://github.com/Frontify/fondue/pull/2778) [`ee7a008`](https://github.com/Frontify/fondue/commit/ee7a008b3a99b3970905fd45e7058cb9d36670fa) Thanks [@fulopdaniel](https://github.com/fulopdaniel)! - fix(rte): prevent list numbers from being clipped in Safari
+
+- Updated dependencies [[`97fd796`](https://github.com/Frontify/fondue/commit/97fd796443b8b91d5579c4c4e8081273b1d05b82), [`1a5388e`](https://github.com/Frontify/fondue/commit/1a5388ec424cd7b6e647979de11cd01cdceaa67f), [`cd2aaab`](https://github.com/Frontify/fondue/commit/cd2aaab95bad74dae36fddccbd5012ab1fe4c5b7), [`7588386`](https://github.com/Frontify/fondue/commit/7588386aa01bc5cb81e57c162dca22c85601f9b2)]:
+  - @frontify/fondue-components@30.9.0
+
 ## 0.1.5
 
 ### Patch Changes
