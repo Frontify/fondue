@@ -1,5 +1,21 @@
 # @frontify/fondue
 
+## 13.7.0
+
+### Minor Changes
+
+- [#2775](https://github.com/Frontify/fondue/pull/2775) [`cd2aaab`](https://github.com/Frontify/fondue/commit/cd2aaab95bad74dae36fddccbd5012ab1fe4c5b7) Thanks [@syeo66](https://github.com/syeo66)! - feat(Accordion): add pill variant
+
+### Patch Changes
+
+- [#2773](https://github.com/Frontify/fondue/pull/2773) [`97fd796`](https://github.com/Frontify/fondue/commit/97fd796443b8b91d5579c4c4e8081273b1d05b82) Thanks [@syeo66](https://github.com/syeo66)! - feat(Table): add 'hidden' prop to table header
+
+- [#2777](https://github.com/Frontify/fondue/pull/2777) [`1a5388e`](https://github.com/Frontify/fondue/commit/1a5388ec424cd7b6e647979de11cd01cdceaa67f) Thanks [@syeo66](https://github.com/syeo66)! - refactor(Textarea): replace resize handle with a custom element and adjust clearble icon position
+
+- Updated dependencies [[`97fd796`](https://github.com/Frontify/fondue/commit/97fd796443b8b91d5579c4c4e8081273b1d05b82), [`1a5388e`](https://github.com/Frontify/fondue/commit/1a5388ec424cd7b6e647979de11cd01cdceaa67f), [`cd2aaab`](https://github.com/Frontify/fondue/commit/cd2aaab95bad74dae36fddccbd5012ab1fe4c5b7), [`ee7a008`](https://github.com/Frontify/fondue/commit/ee7a008b3a99b3970905fd45e7058cb9d36670fa), [`7588386`](https://github.com/Frontify/fondue/commit/7588386aa01bc5cb81e57c162dca22c85601f9b2)]:
+  - @frontify/fondue-components@30.9.0
+  - @frontify/fondue-rte@0.1.6
+
 ## 13.6.5
 
 ### Patch Changes
