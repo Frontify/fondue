@@ -28,6 +28,7 @@ type UseTreeControllerOptions = {
     onChange?: (state: TreeChangeState) => void;
     multiSelect?: boolean;
     reorderable?: boolean;
+    countDisabledInFolderState?: boolean;
     rootAccepts?: (items: TreeDropCandidate[]) => boolean;
 };
 
@@ -63,6 +64,7 @@ export const useTreeController = ({
     onChange,
     multiSelect = false,
     reorderable = false,
+    countDisabledInFolderState = false,
     rootAccepts,
 }: UseTreeControllerOptions): TreeInstance<TreeItemData> => {
     const itemsWithRoot = useMemo<TreeItemData[]>(
@@ -142,7 +144,7 @@ export const useTreeController = ({
                 sameIds(pendingState.checkedItems, treeState.checkedItems) &&
                 sameIds(pendingState.selectedItems ?? [], treeState.selectedItems ?? []);
             if (!isUnchanged) {
-                onChange?.(buildChangeState(itemsWithRoot, pendingState, ROOT_ID));
+                onChange?.(buildChangeState(itemsWithRoot, pendingState, ROOT_ID, { countDisabledInFolderState }));
             }
         });
     };
@@ -232,13 +234,21 @@ export const useTreeController = ({
         }
         data.onRename?.(nextName);
         const nextItems = itemsWithRoot.map((entry) => (entry.id === data.id ? { ...entry, name: nextName } : entry));
-        onChange?.(buildChangeState(nextItems, pendingState, ROOT_ID));
+        onChange?.(buildChangeState(nextItems, pendingState, ROOT_ID, { countDisabledInFolderState }));
     };
 
     const canDrop = useMemo(() => createCanDrop({ itemsById }), [itemsById]);
     const onDrop = useMemo(
-        () => createDropHandler({ items: itemsWithRoot, itemsById, treeState, rootId: ROOT_ID, onChange }),
-        [itemsWithRoot, itemsById, treeState, onChange],
+        () =>
+            createDropHandler({
+                items: itemsWithRoot,
+                itemsById,
+                treeState,
+                rootId: ROOT_ID,
+                onChange,
+                countDisabledInFolderState,
+            }),
+        [itemsWithRoot, itemsById, treeState, onChange, countDisabledInFolderState],
     );
 
     const tree = useTree<TreeItemData>({
