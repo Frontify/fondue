@@ -23,6 +23,12 @@ export const getCheckedUnitIds = (items: readonly TreeItemData[]): string[] =>
  * some. Single source of truth for `TreeRoot`'s rendering and `buildChangeState`'s
  * report, so checkboxes and the `onChange` payload can never disagree (headless-tree's
  * own `getCheckedState` counts only leaves and would render leafless folders unchecked).
+ *
+ * A childless folder may also carry an explicit `isSelected: 'indeterminate'` from props
+ * to restore a partial selection whose descendants have not loaded yet. That is a
+ * display-only state: a live `checked` membership always wins, and once children load the
+ * folder derives from them like any other. A childless indeterminate folder counts as a
+ * partial unit, so every ancestor reads `'indeterminate'` and none can reach fully-checked.
  */
 export const computeCheckedStates = (
     items: readonly TreeItemData[],
@@ -31,7 +37,7 @@ export const computeCheckedStates = (
     const byId = new Map(items.map((item) => [item.id, item]));
     const states = new Map<string, RowCheckedState>();
 
-    type UnitCount = { units: number; checkedUnits: number };
+    type UnitCount = { units: number; checkedUnits: number; hasIndeterminate: boolean };
     const counts = new Map<string, UnitCount>();
 
     const visit = (id: string): UnitCount => {
@@ -42,22 +48,32 @@ export const computeCheckedStates = (
         const item = byId.get(id);
         if (!item) {
             // Orphan ids in parent.children contribute nothing.
-            return { units: 0, checkedUnits: 0 };
+            return { units: 0, checkedUnits: 0, hasIndeterminate: false };
         }
         let count: UnitCount;
         if (isCheckableUnit(item)) {
             const isChecked = checkedIds.has(id);
-            count = { units: 1, checkedUnits: isChecked ? 1 : 0 };
-            states.set(id, isChecked);
+            // Only a childless folder honors an explicit indeterminate; leaves are binary.
+            const isIndeterminate = !isChecked && item.isFolder === true && item.isSelected === 'indeterminate';
+            count = { units: 1, checkedUnits: isChecked ? 1 : 0, hasIndeterminate: isIndeterminate };
+            states.set(id, isChecked ? true : isIndeterminate ? 'indeterminate' : false);
         } else {
-            count = { units: 0, checkedUnits: 0 };
+            count = { units: 0, checkedUnits: 0, hasIndeterminate: false };
             for (const childId of item.children ?? []) {
                 const childCount = visit(childId);
                 count.units += childCount.units;
                 count.checkedUnits += childCount.checkedUnits;
+                count.hasIndeterminate ||= childCount.hasIndeterminate;
             }
-            const allChecked = count.units > 0 && count.checkedUnits === count.units;
-            states.set(id, allChecked ? true : count.checkedUnits > 0 ? 'indeterminate' : false);
+            const allChecked = count.units > 0 && count.checkedUnits === count.units && !count.hasIndeterminate;
+            const isPartial = count.checkedUnits > 0 || count.hasIndeterminate;
+            if (allChecked) {
+                states.set(id, true);
+            } else if (isPartial) {
+                states.set(id, 'indeterminate');
+            } else {
+                states.set(id, false);
+            }
         }
         counts.set(id, count);
         return count;
