@@ -109,6 +109,26 @@ test('renders scrollbars only when content overflows (and it does)', async ({ mo
     await expect(horizontalScrollbar).toBeVisible();
 });
 
+test('wraps long unbreakable text instead of overflowing horizontally', async ({ mount }) => {
+    const longUrl = `https://example.com/${'a'.repeat(200)}`;
+    const wrapper = await mount(
+        <ScrollArea maxHeight="300px" maxWidth="300px" data-test-id={SCROLLAREA_ROOT_TEST_ID}>
+            <p style={{ overflowWrap: 'break-word' }} data-test-id="long-text">
+                {longUrl}
+            </p>
+        </ScrollArea>,
+    );
+    const viewport = wrapper.getByTestId(SCROLLAREA_VIEWPORT_TEST_ID);
+
+    const { scrollWidth, clientWidth } = await viewport.evaluate((element) => ({
+        scrollWidth: element.scrollWidth,
+        clientWidth: element.clientWidth,
+    }));
+
+    // A break-enabled paragraph must wrap to the viewport width, not widen it (long words/URLs).
+    expect(scrollWidth).toBeLessThanOrEqual(clientWidth + 1);
+});
+
 test('renders scrollbars only when scrolling', async ({ mount }) => {
     const wrapper = await mount(
         <ScrollArea type="scroll" maxHeight="300px" maxWidth="300px" data-test-id={SCROLLAREA_ROOT_TEST_ID}>
