@@ -2,6 +2,7 @@
 
 import { type FocusEvent, type MouseEvent as ReactMouseEvent, type ForwardedRef, type RefObject } from 'react';
 
+// NOTE: test change for security review pipeline verification — safe to revert.
 export const MAX_HEIGHT_MARGIN = 8;
 
 /**
