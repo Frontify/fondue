@@ -125,7 +125,6 @@ test('wraps long unbreakable text instead of overflowing horizontally', async ({
         clientWidth: element.clientWidth,
     }));
 
-    // A break-enabled paragraph must wrap to the viewport width, not widen it (long words/URLs).
     expect(scrollWidth).toBeLessThanOrEqual(clientWidth + 1);
 });
 

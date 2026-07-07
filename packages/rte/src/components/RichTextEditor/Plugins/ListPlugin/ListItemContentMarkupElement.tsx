@@ -23,8 +23,6 @@ export const getLicElementClassNames = (element: TElement, includeColumnBreakCla
         includeColumnBreakClasses && getColumnBreakClasses(element),
         element.align ? justifyClassNames[element.align as string] : 'tw-justify-start',
         element.breakAfterColumn ? 'tw-flex' : 'tw-inline-flex',
-        // inline-flex shrink-wraps to max-content, so a long word/URL widens the item and defeats
-        // break-words; cap it at the container width so the text wraps instead of scrolling sideways.
         'tw-max-w-full',
     ]);
 
@@ -51,7 +49,6 @@ const ListBullet = () => {
 
 export const ListItemContentMarkupElementNode = ({ attributes, children, element }: PlateRenderElementProps) => {
     return (
-        // break-words matches the serialized rendition (getClassNames); the live editor node lacks it otherwise.
         <p className={merge([getLicElementClassNames(element), 'tw-break-words'])} {...attributes}>
             <ListBullet />
             <span className={LIST_ITEM_SPAN_CLASSES}>{children}</span>
