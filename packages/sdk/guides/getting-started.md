@@ -1,6 +1,5 @@
 # Getting started
 
-
 Welcome to Fondue, the design system for the [Frontify](https://frontify.com) ecosystem.
 
 ## Installation
@@ -29,18 +28,15 @@ For the designers, the documentation is available in the [Fondue design system d
 Import the base tokens and the default theme styles at the root of your application.
 
 ```tsx
-import "@frontify/fondue/tokens/base";
+import '@frontify/fondue/tokens/base';
 
 export const App = () => {
-    return (
-        <div>
-            {/* Your application */}
-        </div>
-    );
+    return <div>{/* Your application */}</div>;
 };
 ```
 
 #### Importing component styles
+
 The component styles are imported separately from the component itself. This allows you to import the styles only once in your application, instead of importing them with every usage.
 
 ```tsx
@@ -61,7 +57,7 @@ import '@frontify/fondue/rte/styles';
 
 Due to licensing restrictions, we cannot provide the fonts in the package. You therefore need to define the font faces in your application.
 
-The primary font used is `Diatype`. To use it in your application, you need to define the font face in your application.
+The fonts used are `Diatype` and `Cranny`. To use it in your application, you need to define the font face in your application.
 
 ```css
 @font-face {
@@ -70,10 +66,16 @@ The primary font used is `Diatype`. To use it in your application, you need to d
     src: url(YOUR_FONT_URL) format('woff');
 }
 
-/* If you work for Frontify and need access to Diatype, reach out to the frontend platform team */
+@font-face {
+    font-family: Cranny;
+    font-weight: 1 999;
+    src: url(YOUR_FONT_URL) format('woff');
+}
+
+/* If you work for Frontify and need access to Diatype or Cranny, reach out to the frontend platform team */
 ```
 
-For cases where developers do not have access to Diatype, the tokens specify a fallback font `Geist`.
+For cases where developers do not have access to Diatype or Cranny, the tokens specify a fallback font `Geist`.
 You can download the font from the Geist [GitHub repository](https://github.com/vercel/geist-font/releases).
 
 ```css
@@ -99,14 +101,15 @@ export default {
         //your content config
     ],
 };
-
 ```
 
 #### Using themes (optional)
+
 We utilize a provider component to allow for theming and providing the correct tokens to the components.
 
 To use the provider, in addition to the base tokens, you need to wrap your application in the `ThemeProvider` component.
 The `ThemeProvider` will provide the correct tokens to the components based on the theme you provide. The currently available themes are `light` and `dark`.
+
 ```tsx
 import "@frontify/fondue/tokens/base";
 import { ThemeProvider } "@frontify/fondue/components";
@@ -117,7 +120,9 @@ const App = () => (
     </ThemeProvider>
 );
 ```
+
 The `ThemeProvider` supports nesting to specify a theme for a specific set of components, the closest provider will be used.
+
 ```tsx
 <ThemeProvider theme="light">
     <ComponentUsingLightTheme />
@@ -149,7 +154,6 @@ import { Button } from '@frontify/fondue';
 const App = () => <Button>Click Me</Button>;
 ```
 
-
 ### Style tokens
 
 Explore the available tokens in [Storybook](/story/current_tokens)
@@ -159,12 +163,11 @@ Explore the available tokens in [Storybook](/story/current_tokens)
 When using tailwind, all tokens are available as classes.
 
 ```tsx
-<div className="tw-bg-primary-default tw-text-primary-on-primary">
-    ...
-</div>
+<div className="tw-bg-primary-default tw-text-primary-on-primary">...</div>
 ```
 
 #### Using CSS variables
+
 All style tokens are available as css variables. When using the `ThemeProvider`, the tokens will be provided to the components based on the theme you provide.
 
 ```css
@@ -192,14 +195,12 @@ Use with caution, as these utilities are purely for styling purposes and do not 
 </span>
 ```
 
-
-
 ## Contributing
 
 See [Contribution guidelines](CONTRIBUTING.md) for contributing and local development help.
 
 ## Important links
 
--   [Storybook](https://fondue-components.frontify.com) – Storybook for previewing Fondue components
--   [Fondue documentation](https://weare.frontify.com/document/1266?#/using-fondue) – Documentation for the Fondue design system
--   [Tailwind](https://tailwindcss.com/docs) – Utility-first CSS framework used in Fondue
+- [Storybook](https://fondue-components.frontify.com) – Storybook for previewing Fondue components
+- [Fondue documentation](https://weare.frontify.com/document/1266?#/using-fondue) – Documentation for the Fondue design system
+- [Tailwind](https://tailwindcss.com/docs) – Utility-first CSS framework used in Fondue
