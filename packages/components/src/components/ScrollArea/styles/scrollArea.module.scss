@@ -16,12 +16,8 @@
     height: 100%;
     box-sizing: border-box;
 
-    /* Radix wraps the viewport children in an inline `display: table; min-width: 100%` element that
-       shrink-wraps to max-content. That widens the region to fit the longest unbreakable token, so
-       `overflow-wrap`/`word-break` on descendants never engages and long words/URLs scroll sideways
-       instead of wrapping. Forcing the wrapper to block caps it at the viewport width so text wraps;
-       genuinely-wide content (fixed-width media, nowrap) still overflows and scrolls. `!important`
-       is required to beat Radix's inline style. */
+    /* Radix sets this viewport wrapper to inline `display: table`, which shrink-wraps to the widest
+       token and stops descendants wrapping; force block (via !important to beat the inline style). */
     > div {
         display: block !important;
     }
