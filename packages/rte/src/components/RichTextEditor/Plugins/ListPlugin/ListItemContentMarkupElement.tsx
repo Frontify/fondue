@@ -23,7 +23,6 @@ export const getLicElementClassNames = (element: TElement, includeColumnBreakCla
         includeColumnBreakClasses && getColumnBreakClasses(element),
         element.align ? justifyClassNames[element.align as string] : 'tw-justify-start',
         element.breakAfterColumn ? 'tw-flex' : 'tw-inline-flex',
-        'tw-max-w-full',
     ]);
 
 const ListBullet = () => {
@@ -49,7 +48,7 @@ const ListBullet = () => {
 
 export const ListItemContentMarkupElementNode = ({ attributes, children, element }: PlateRenderElementProps) => {
     return (
-        <p className={merge([getLicElementClassNames(element), 'tw-break-words'])} {...attributes}>
+        <p className={merge([getLicElementClassNames(element), '[overflow-wrap:anywhere]'])} {...attributes}>
             <ListBullet />
             <span className={LIST_ITEM_SPAN_CLASSES}>{children}</span>
         </p>

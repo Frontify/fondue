@@ -70,7 +70,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
         const result = serializeNodeToHtmlRecursive(node, defaultStyles, {});
 
         expect(result).to.be.equal(
-            `<ol dir="auto" class="${OL_CLASSES} tw-break-words"><li dir="auto" class="tw-break-words !tw-no-underline tw-flex tw-flex-col [--parent-lh:1lh]" style="font-size: 14px; font-style: normal; font-weight: normal; counter-increment: list-counter;"><p dir="auto" class="tw-break-words tw-justify-start tw-inline-flex tw-max-w-full"><span class="${LIST_BULLET_CONTAINER_CLASSES}" style="--bullet-content: counter(list-counter, decimal) '.'; --bullet-color: currentColor;"></span><span class="${LIST_ITEM_SPAN_CLASSES}">First item</span></p></li><li dir="auto" class="tw-break-words !tw-no-underline tw-flex tw-flex-col [--parent-lh:1lh]" style="font-size: 14px; font-style: normal; font-weight: normal; counter-increment: list-counter;"><p dir="auto" class="tw-break-words tw-justify-start tw-inline-flex tw-max-w-full"><span class="${LIST_BULLET_CONTAINER_CLASSES}" style="--bullet-content: counter(list-counter, decimal) '.'; --bullet-color: currentColor;"></span><span class="${LIST_ITEM_SPAN_CLASSES}">Second item</span></p></li></ol>`,
+            `<ol dir="auto" class="${OL_CLASSES} [overflow-wrap:anywhere]"><li dir="auto" class="[overflow-wrap:anywhere] !tw-no-underline tw-flex tw-flex-col [--parent-lh:1lh]" style="font-size: 14px; font-style: normal; font-weight: normal; counter-increment: list-counter;"><p dir="auto" class="[overflow-wrap:anywhere] tw-justify-start tw-inline-flex"><span class="${LIST_BULLET_CONTAINER_CLASSES}" style="--bullet-content: counter(list-counter, decimal) '.'; --bullet-color: currentColor;"></span><span class="${LIST_ITEM_SPAN_CLASSES}">First item</span></p></li><li dir="auto" class="[overflow-wrap:anywhere] !tw-no-underline tw-flex tw-flex-col [--parent-lh:1lh]" style="font-size: 14px; font-style: normal; font-weight: normal; counter-increment: list-counter;"><p dir="auto" class="[overflow-wrap:anywhere] tw-justify-start tw-inline-flex"><span class="${LIST_BULLET_CONTAINER_CLASSES}" style="--bullet-content: counter(list-counter, decimal) '.'; --bullet-color: currentColor;"></span><span class="${LIST_ITEM_SPAN_CLASSES}">Second item</span></p></li></ol>`,
         );
     });
 
@@ -102,7 +102,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
         const result = serializeNodeToHtmlRecursive(node, defaultStyles, {});
 
         expect(result).to.be.equal(
-            `<ol dir="auto" class="${OL_CLASSES} tw-break-words"><li dir="auto" class="tw-break-words !tw-no-underline tw-flex tw-flex-col [--parent-lh:1lh]" style="font-size: 14px; font-style: normal; font-weight: normal; counter-increment: list-counter;"><p dir="auto" class="tw-break-words tw-break-after-column tw-break-inside-avoid-column tw-justify-start tw-flex tw-max-w-full"><span class="${LIST_BULLET_CONTAINER_CLASSES}" style="--bullet-content: counter(list-counter, decimal) '.'; --bullet-color: currentColor;"></span><span class="${LIST_ITEM_SPAN_CLASSES}">First item</span></p></li><li dir="auto" class="tw-break-words !tw-no-underline tw-flex tw-flex-col [--parent-lh:1lh]" style="font-size: 14px; font-style: normal; font-weight: normal; counter-increment: list-counter;"><p dir="auto" class="tw-break-words tw-justify-start tw-inline-flex tw-max-w-full"><span class="${LIST_BULLET_CONTAINER_CLASSES}" style="--bullet-content: counter(list-counter, decimal) '.'; --bullet-color: currentColor;"></span><span class="${LIST_ITEM_SPAN_CLASSES}">Second item</span></p></li></ol>`,
+            `<ol dir="auto" class="${OL_CLASSES} [overflow-wrap:anywhere]"><li dir="auto" class="[overflow-wrap:anywhere] !tw-no-underline tw-flex tw-flex-col [--parent-lh:1lh]" style="font-size: 14px; font-style: normal; font-weight: normal; counter-increment: list-counter;"><p dir="auto" class="[overflow-wrap:anywhere] tw-break-after-column tw-break-inside-avoid-column tw-justify-start tw-flex"><span class="${LIST_BULLET_CONTAINER_CLASSES}" style="--bullet-content: counter(list-counter, decimal) '.'; --bullet-color: currentColor;"></span><span class="${LIST_ITEM_SPAN_CLASSES}">First item</span></p></li><li dir="auto" class="[overflow-wrap:anywhere] !tw-no-underline tw-flex tw-flex-col [--parent-lh:1lh]" style="font-size: 14px; font-style: normal; font-weight: normal; counter-increment: list-counter;"><p dir="auto" class="[overflow-wrap:anywhere] tw-justify-start tw-inline-flex"><span class="${LIST_BULLET_CONTAINER_CLASSES}" style="--bullet-content: counter(list-counter, decimal) '.'; --bullet-color: currentColor;"></span><span class="${LIST_ITEM_SPAN_CLASSES}">Second item</span></p></li></ol>`,
         );
     });
 
@@ -192,7 +192,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
         const result = serializeNodeToHtmlRecursive(node, defaultStyles, {});
 
         expect(result).to.be.equal(
-            `<ul dir="auto" class="${UL_CLASSES} tw-break-words"><li dir="auto" class="tw-break-words !tw-no-underline tw-flex tw-flex-col [--parent-lh:1lh]" style="font-size: 14px; font-style: normal; font-weight: normal; counter-increment: list-counter;"><p dir="auto" class="tw-break-words tw-justify-start tw-inline-flex tw-max-w-full"><span class="${LIST_BULLET_CONTAINER_CLASSES}" style="--bullet-content: '\u2022'; --bullet-color: currentColor; --bullet-size: 1em;"></span><span class="${LIST_ITEM_SPAN_CLASSES}">This comes first.</span></p></li></ul>`,
+            `<ul dir="auto" class="${UL_CLASSES} [overflow-wrap:anywhere]"><li dir="auto" class="[overflow-wrap:anywhere] !tw-no-underline tw-flex tw-flex-col [--parent-lh:1lh]" style="font-size: 14px; font-style: normal; font-weight: normal; counter-increment: list-counter;"><p dir="auto" class="[overflow-wrap:anywhere] tw-justify-start tw-inline-flex"><span class="${LIST_BULLET_CONTAINER_CLASSES}" style="--bullet-content: '\u2022'; --bullet-color: currentColor; --bullet-size: 1em;"></span><span class="${LIST_ITEM_SPAN_CLASSES}">This comes first.</span></p></li></ul>`,
         );
     });
 
@@ -418,7 +418,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
         const result = serializeNodeToHtmlRecursive(node, defaultStyles, {});
 
         expect(result).to.be.equal(
-            '<p dir="auto" class="tw-break-words" style="font-size: 14px; font-style: normal; font-weight: normal;"><a dir="auto" class="tw-break-words" style="font-size: 14px; font-style: normal; color: rgba(182, 10, 227, 1); text-decoration: underline; cursor: pointer;" target="_self" href="https://frontify.com">This is a Link.</a></p>',
+            '<p dir="auto" class="[overflow-wrap:anywhere]" style="font-size: 14px; font-style: normal; font-weight: normal;"><a dir="auto" class="[overflow-wrap:anywhere]" style="font-size: 14px; font-style: normal; color: rgba(182, 10, 227, 1); text-decoration: underline; cursor: pointer;" target="_self" href="https://frontify.com">This is a Link.</a></p>',
         );
     });
 
@@ -592,7 +592,7 @@ describe('serializeNodeToHtmlRecursive()', () => {
         const result = serializeNodeToHtmlRecursive(node, defaultStyles, {});
 
         expect(result).to.be.equal(
-            '<p dir="auto" class="tw-break-words" style="font-size: 14px; font-style: normal; font-weight: normal;">This is &#xFEFF;.</p>',
+            '<p dir="auto" class="[overflow-wrap:anywhere]" style="font-size: 14px; font-style: normal; font-weight: normal;">This is &#xFEFF;.</p>',
         );
     });
 });
