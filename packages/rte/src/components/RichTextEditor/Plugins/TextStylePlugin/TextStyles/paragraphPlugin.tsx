@@ -29,7 +29,7 @@ export class ParagraphPlugin extends Plugin {
     }
 }
 
-export const PARAGRAPH_CLASSES = 'tw-m-0 tw-px-0 tw-py-0 tw-break-words';
+export const PARAGRAPH_CLASSES = 'tw-m-0 tw-px-0 tw-py-0 [overflow-wrap:anywhere]';
 
 export const ParagraphMarkupElementNode = ({ element, attributes, children, styles }: TextStyleRenderElementProps) => {
     const align = element.align as string;

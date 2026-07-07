@@ -16,12 +16,6 @@
     height: 100%;
     box-sizing: border-box;
 
-    /* Radix sets this viewport wrapper to inline `display: table`, which shrink-wraps to the widest
-       token and stops descendants wrapping; force block (via !important to beat the inline style). */
-    > div {
-        display: block !important;
-    }
-
     &[data-scroll-padding='tight'] {
         padding: sizeToken.get(2);
     }
