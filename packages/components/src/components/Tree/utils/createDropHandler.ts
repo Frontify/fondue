@@ -13,6 +13,7 @@ type DropHandlerDeps = {
     treeState: FlatTreeState;
     rootId: string;
     onChange?: (state: TreeChangeState) => void;
+    countDisabledInFolderState?: boolean;
 };
 
 /**
@@ -21,7 +22,7 @@ type DropHandlerDeps = {
  * No-op when the target parent is missing (defensive against racy updates).
  */
 export const createDropHandler =
-    ({ items, itemsById, treeState, rootId, onChange }: DropHandlerDeps) =>
+    ({ items, itemsById, treeState, rootId, onChange, countDisabledInFolderState = false }: DropHandlerDeps) =>
     (draggedItems: ItemInstance<TreeItemData>[], target: DragTarget<TreeItemData>): void => {
         const targetParentId = target.item.getId();
         const targetParent = itemsById.get(targetParentId);
@@ -43,5 +44,5 @@ export const createDropHandler =
             }
         }
 
-        onChange?.(buildChangeState(nextItems, treeState, rootId));
+        onChange?.(buildChangeState(nextItems, treeState, rootId, { countDisabledInFolderState }));
     };

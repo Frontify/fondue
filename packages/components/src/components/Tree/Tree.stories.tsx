@@ -1279,10 +1279,12 @@ export const DisabledRows: Story = {
                 story:
                     '`isDisabled` freezes a row at its prop-driven state: its checkbox cannot be toggled — ' +
                     'not even by checking an ancestor folder — it cannot be dragged or take the selection, ' +
-                    'and drops into a disabled folder are rejected. The frozen state still counts toward ' +
-                    "folder checkboxes, so a folder holding a disabled-unchecked leaf caps at 'indeterminate'. " +
-                    'Disabled folders stay expandable, and only their own row is frozen — their children ' +
-                    'remain interactive unless disabled themselves.',
+                    'and drops into a disabled folder are rejected. A folder derives its checkbox from its ' +
+                    'selectable descendants only, so a disabled leaf never blocks it: the folder reads ' +
+                    "'checked' once every enabled leaf is checked and its checkbox can always be toggled back " +
+                    'off. Set `countDisabledInFolderState` to keep disabled descendants counting instead, so ' +
+                    "such a folder caps at 'indeterminate'. Disabled folders stay expandable, and only their " +
+                    'own row is frozen, so their children remain interactive unless disabled themselves.',
             },
         },
     },
