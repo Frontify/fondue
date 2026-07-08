@@ -65,13 +65,9 @@ const needsCheckerResolution = (node: Node): boolean => {
     if (isTypeQueryNode(node) || isMappedTypeNode(node)) {
         return true;
     }
-    let found = false;
-    forEachChild(node, (child) => {
-        if (!found && needsCheckerResolution(child)) {
-            found = true;
-        }
-    });
-    return found;
+    // forEachChild short-circuits on the first truthy callback result, so this stops descending as
+    // soon as a match is found and returns `true`; otherwise it returns `undefined`.
+    return forEachChild(node, needsCheckerResolution) ?? false;
 };
 
 export const collectTypeDefinitions = (allProps: PropInfo[]): Record<string, string> => {
