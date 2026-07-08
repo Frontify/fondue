@@ -38,15 +38,6 @@ const getObject = ({
     }, {});
 };
 
-const breakpointAbbreviations: Record<string, string> = {
-    'x-small': 'xs',
-    small: 'sm',
-    medium: 'md',
-    large: 'lg',
-    'x-large': 'xl',
-    'xx-large': '2xl',
-};
-
 const getTheme = (dictionary: Dictionary) => {
     const tokens = dictionary.allTokens;
 
@@ -115,12 +106,10 @@ const getTheme = (dictionary: Dictionary) => {
             identifier: ['shadow'],
             tokens,
         }),
-        screens: Object.entries(
-            getObject({
-                identifier: ['breakpoint'],
-                tokens,
-            }),
-        ).map(([name, value]) => [breakpointAbbreviations[name] ?? name, value]),
+        screens: getObject({
+            identifier: ['breakpoint'],
+            tokens,
+        }),
 
         extend: {
             spacing: getObject({

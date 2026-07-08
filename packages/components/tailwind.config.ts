@@ -3,8 +3,6 @@
 import frontifyTailwindConfig from '@frontify/fondue-tokens/tailwind';
 import { type Config } from 'tailwindcss';
 
-import { screens } from './src/helpers/screens';
-
 export default {
     prefix: 'tw-',
     presets: [frontifyTailwindConfig],
@@ -33,6 +31,5 @@ export default {
                 'left-right': '0% 50%',
             },
         },
-        screens,
     },
 } satisfies Config;

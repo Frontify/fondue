@@ -1202,87 +1202,87 @@
     },
     {
       "category": "semantic",
-      "cssVariable": "var(--breakpoint-large)",
-      "id": "breakpoint-large",
+      "cssVariable": "var(--breakpoint-2xl)",
+      "id": "breakpoint-2xl",
       "keyPath": [
         "semantic",
         "breakpoint",
-        "large"
+        "2xl"
       ],
-      "tailwindClass": "breakpoint-large",
+      "tailwindClass": "breakpoint-2xl",
       "themeable": false,
       "type": "float",
-      "value": "var(--breakpoint-large)"
+      "value": "1536px"
     },
     {
       "category": "semantic",
-      "cssVariable": "var(--breakpoint-medium)",
-      "id": "breakpoint-medium",
+      "cssVariable": "var(--breakpoint-lg)",
+      "id": "breakpoint-lg",
       "keyPath": [
         "semantic",
         "breakpoint",
-        "medium"
+        "lg"
       ],
-      "tailwindClass": "breakpoint-medium",
+      "tailwindClass": "breakpoint-lg",
       "themeable": false,
       "type": "float",
-      "value": "var(--breakpoint-medium)"
+      "value": "1024px"
     },
     {
       "category": "semantic",
-      "cssVariable": "var(--breakpoint-small)",
-      "id": "breakpoint-small",
+      "cssVariable": "var(--breakpoint-md)",
+      "id": "breakpoint-md",
       "keyPath": [
         "semantic",
         "breakpoint",
-        "small"
+        "md"
       ],
-      "tailwindClass": "breakpoint-small",
+      "tailwindClass": "breakpoint-md",
       "themeable": false,
       "type": "float",
-      "value": "var(--breakpoint-small)"
+      "value": "768px"
     },
     {
       "category": "semantic",
-      "cssVariable": "var(--breakpoint-x-large)",
-      "id": "breakpoint-x-large",
+      "cssVariable": "var(--breakpoint-sm)",
+      "id": "breakpoint-sm",
       "keyPath": [
         "semantic",
         "breakpoint",
-        "x-large"
+        "sm"
       ],
-      "tailwindClass": "breakpoint-x-large",
+      "tailwindClass": "breakpoint-sm",
       "themeable": false,
       "type": "float",
-      "value": "var(--breakpoint-x-large)"
+      "value": "600px"
     },
     {
       "category": "semantic",
-      "cssVariable": "var(--breakpoint-x-small)",
-      "id": "breakpoint-x-small",
+      "cssVariable": "var(--breakpoint-xl)",
+      "id": "breakpoint-xl",
       "keyPath": [
         "semantic",
         "breakpoint",
-        "x-small"
+        "xl"
       ],
-      "tailwindClass": "breakpoint-x-small",
+      "tailwindClass": "breakpoint-xl",
       "themeable": false,
       "type": "float",
-      "value": "var(--breakpoint-x-small)"
+      "value": "1280px"
     },
     {
       "category": "semantic",
-      "cssVariable": "var(--breakpoint-xx-large)",
-      "id": "breakpoint-xx-large",
+      "cssVariable": "var(--breakpoint-xs)",
+      "id": "breakpoint-xs",
       "keyPath": [
         "semantic",
         "breakpoint",
-        "xx-large"
+        "xs"
       ],
-      "tailwindClass": "breakpoint-xx-large",
+      "tailwindClass": "breakpoint-xs",
       "themeable": false,
       "type": "float",
-      "value": "var(--breakpoint-xx-large)"
+      "value": "390px"
     },
     {
       "category": "semantic",

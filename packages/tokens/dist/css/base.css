@@ -6,12 +6,12 @@
   --border-radius-xx-large: 1rem;
   --border-width-default: 1px;
   --border-width-large: 2px;
-  --breakpoint-large: 1024px;
-  --breakpoint-medium: 768px;
-  --breakpoint-small: 600px;
-  --breakpoint-x-large: 1280px;
-  --breakpoint-x-small: 390px;
-  --breakpoint-xx-large: 1536px;
+  --breakpoint-2xl: 1536px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-md: 768px;
+  --breakpoint-sm: 600px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-xs: 390px;
   --color-charts-dim-default: rgba(248, 248, 245, 1);
   --color-charts-missing-default: rgba(213, 214, 214, 1);
   --color-charts-negative-default: rgba(237, 122, 115, 1);

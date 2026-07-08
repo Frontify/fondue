@@ -1004,64 +1004,64 @@
       }
     },
     "breakpoint": {
-      "large": {
-        "name": "breakpoint-large",
+      "2xl": {
+        "name": "breakpoint-2xl",
         "type": "float",
-        "value": "var(--breakpoint-large)",
+        "value": "1536px",
         "path": [
           "default",
           "breakpoint",
-          "large"
+          "2xl"
         ]
       },
-      "medium": {
-        "name": "breakpoint-medium",
+      "lg": {
+        "name": "breakpoint-lg",
         "type": "float",
-        "value": "var(--breakpoint-medium)",
+        "value": "1024px",
         "path": [
           "default",
           "breakpoint",
-          "medium"
+          "lg"
         ]
       },
-      "small": {
-        "name": "breakpoint-small",
+      "md": {
+        "name": "breakpoint-md",
         "type": "float",
-        "value": "var(--breakpoint-small)",
+        "value": "768px",
         "path": [
           "default",
           "breakpoint",
-          "small"
+          "md"
         ]
       },
-      "x-large": {
-        "name": "breakpoint-x-large",
+      "sm": {
+        "name": "breakpoint-sm",
         "type": "float",
-        "value": "var(--breakpoint-x-large)",
+        "value": "600px",
         "path": [
           "default",
           "breakpoint",
-          "x-large"
+          "sm"
         ]
       },
-      "x-small": {
-        "name": "breakpoint-x-small",
+      "xl": {
+        "name": "breakpoint-xl",
         "type": "float",
-        "value": "var(--breakpoint-x-small)",
+        "value": "1280px",
         "path": [
           "default",
           "breakpoint",
-          "x-small"
+          "xl"
         ]
       },
-      "xx-large": {
-        "name": "breakpoint-xx-large",
+      "xs": {
+        "name": "breakpoint-xs",
         "type": "float",
-        "value": "var(--breakpoint-xx-large)",
+        "value": "390px",
         "path": [
           "default",
           "breakpoint",
-          "xx-large"
+          "xs"
         ]
       }
     },

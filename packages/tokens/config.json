@@ -22,7 +22,8 @@
             },
             {
                 "collection": "VariableCollectionId:419:1502",
-                "path": ["breakpoint"]
+                "path": ["breakpoint"],
+                "resolve": true
             }
         ],
         "semantic": [

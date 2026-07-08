@@ -36,7 +36,7 @@ const getComputedVariables = (
     excludeTokens: Config['excludeTokens'],
 ) => {
     const selectedCollections = Object.entries(config).reduce<
-        { collection: string; path?: string[]; tokenType: string }[]
+        { collection: string; path?: string[]; tokenType: string; resolve?: boolean }[]
     >((acc, [tokenType, selector]) => {
         return [
             ...acc,
@@ -100,7 +100,7 @@ const getComputedVariables = (
 
     const assembledVariables = Object.entries(variables).reduce<AssembledVariable[]>((acc, [variableId, variable]) => {
         for (const modeId of Object.keys(variable.valuesByMode)) {
-            for (const { collection, path, tokenType } of selectedCollections) {
+            for (const { collection, path, tokenType, resolve } of selectedCollections) {
                 if (collection === variable.variableCollectionId) {
                     const tokenPath = path ? variable.name.split('/') : [];
 
@@ -122,6 +122,7 @@ const getComputedVariables = (
                                     collections[variable.variableCollectionId]?.name.replace(' ', '-').toLowerCase() ||
                                     '',
                                 type: tokenType.toLowerCase(),
+                                resolve: resolve ?? false,
                                 theme: modes[modeId]?.toLowerCase() || '',
                             },
                         });

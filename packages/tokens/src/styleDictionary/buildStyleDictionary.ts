@@ -103,7 +103,7 @@ StyleDictionary.registerTransform({
     transitive: true,
     name: 'tailwind/nameToCSSVariable',
     filter: (token) => {
-        return token.attributes?.type !== 'utility';
+        return token.attributes?.type !== 'utility' && !token.attributes?.resolve;
     },
     transform: (token) => {
         return `var(--${token.name.replaceAll('/', '-').replaceAll(' ', '-')})`;
