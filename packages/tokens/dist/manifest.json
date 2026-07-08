@@ -1202,6 +1202,90 @@
     },
     {
       "category": "semantic",
+      "cssVariable": "var(--breakpoint-large)",
+      "id": "breakpoint-large",
+      "keyPath": [
+        "semantic",
+        "breakpoint",
+        "large"
+      ],
+      "tailwindClass": "breakpoint-large",
+      "themeable": false,
+      "type": "float",
+      "value": "var(--breakpoint-large)"
+    },
+    {
+      "category": "semantic",
+      "cssVariable": "var(--breakpoint-medium)",
+      "id": "breakpoint-medium",
+      "keyPath": [
+        "semantic",
+        "breakpoint",
+        "medium"
+      ],
+      "tailwindClass": "breakpoint-medium",
+      "themeable": false,
+      "type": "float",
+      "value": "var(--breakpoint-medium)"
+    },
+    {
+      "category": "semantic",
+      "cssVariable": "var(--breakpoint-small)",
+      "id": "breakpoint-small",
+      "keyPath": [
+        "semantic",
+        "breakpoint",
+        "small"
+      ],
+      "tailwindClass": "breakpoint-small",
+      "themeable": false,
+      "type": "float",
+      "value": "var(--breakpoint-small)"
+    },
+    {
+      "category": "semantic",
+      "cssVariable": "var(--breakpoint-x-large)",
+      "id": "breakpoint-x-large",
+      "keyPath": [
+        "semantic",
+        "breakpoint",
+        "x-large"
+      ],
+      "tailwindClass": "breakpoint-x-large",
+      "themeable": false,
+      "type": "float",
+      "value": "var(--breakpoint-x-large)"
+    },
+    {
+      "category": "semantic",
+      "cssVariable": "var(--breakpoint-x-small)",
+      "id": "breakpoint-x-small",
+      "keyPath": [
+        "semantic",
+        "breakpoint",
+        "x-small"
+      ],
+      "tailwindClass": "breakpoint-x-small",
+      "themeable": false,
+      "type": "float",
+      "value": "var(--breakpoint-x-small)"
+    },
+    {
+      "category": "semantic",
+      "cssVariable": "var(--breakpoint-xx-large)",
+      "id": "breakpoint-xx-large",
+      "keyPath": [
+        "semantic",
+        "breakpoint",
+        "xx-large"
+      ],
+      "tailwindClass": "breakpoint-xx-large",
+      "themeable": false,
+      "type": "float",
+      "value": "var(--breakpoint-xx-large)"
+    },
+    {
+      "category": "semantic",
       "cssVariable": "var(--shadow-big)",
       "id": "shadow-big",
       "keyPath": [

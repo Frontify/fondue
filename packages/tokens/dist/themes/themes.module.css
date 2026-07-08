@@ -6,6 +6,12 @@
   --border-radius-xx-large: 1rem;
   --border-width-default: 1px;
   --border-width-large: 2px;
+  --breakpoint-large: 1024px;
+  --breakpoint-medium: 768px;
+  --breakpoint-small: 600px;
+  --breakpoint-x-large: 1280px;
+  --breakpoint-x-small: 390px;
+  --breakpoint-xx-large: 1536px;
   --color-error-00: rgba(255, 255, 255, 1);
   --color-error-05: rgba(254, 236, 235, 1);
   --color-error-10: rgba(253, 219, 218, 1);

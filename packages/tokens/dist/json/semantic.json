@@ -73,6 +73,68 @@
       ]
     }
   },
+  "breakpoint": {
+    "large": {
+      "name": "breakpoint-large",
+      "type": "float",
+      "value": "var(--breakpoint-large)",
+      "path": [
+        "default",
+        "breakpoint",
+        "large"
+      ]
+    },
+    "medium": {
+      "name": "breakpoint-medium",
+      "type": "float",
+      "value": "var(--breakpoint-medium)",
+      "path": [
+        "default",
+        "breakpoint",
+        "medium"
+      ]
+    },
+    "small": {
+      "name": "breakpoint-small",
+      "type": "float",
+      "value": "var(--breakpoint-small)",
+      "path": [
+        "default",
+        "breakpoint",
+        "small"
+      ]
+    },
+    "x-large": {
+      "name": "breakpoint-x-large",
+      "type": "float",
+      "value": "var(--breakpoint-x-large)",
+      "path": [
+        "default",
+        "breakpoint",
+        "x-large"
+      ]
+    },
+    "x-small": {
+      "name": "breakpoint-x-small",
+      "type": "float",
+      "value": "var(--breakpoint-x-small)",
+      "path": [
+        "default",
+        "breakpoint",
+        "x-small"
+      ]
+    },
+    "xx-large": {
+      "name": "breakpoint-xx-large",
+      "type": "float",
+      "value": "var(--breakpoint-xx-large)",
+      "path": [
+        "default",
+        "breakpoint",
+        "xx-large"
+      ]
+    }
+  },
   "shadow": {
     "big": {
       "name": "shadow-big",
