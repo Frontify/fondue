@@ -167,8 +167,10 @@ export const buildStyleDictionary = (config: Config) => {
                     {
                         filter: (token) => {
                             return (
-                                token.attributes?.type !== 'theme' ||
-                                (token.attributes?.type === 'theme' && token.attributes?.theme === config.defaultTheme)
+                                (token.attributes?.type !== 'theme' ||
+                                    (token.attributes?.type === 'theme' &&
+                                        token.attributes?.theme === config.defaultTheme)) &&
+                                !token.attributes?.resolve
                             );
                         },
                         destination: 'css/base.css',
