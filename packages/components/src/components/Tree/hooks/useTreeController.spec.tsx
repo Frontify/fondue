@@ -322,8 +322,9 @@ describe('useTreeController disabled rows', () => {
         const folder = last.find((node) => node.id === 'folder');
         expect(folder?.children?.find((node) => node.id === 'a')?.isSelected).toBe(false);
         expect(folder?.children?.find((node) => node.id === 'b')?.isSelected).toBe(true);
-        // The frozen leaf still counts toward the folder's derived state.
-        expect(folder?.isSelected).toBe('indeterminate');
+        // The disabled leaf is excluded from the folder's totals, so with its only
+        // selectable child checked the folder reads fully checked.
+        expect(folder?.isSelected).toBe(true);
         expect(onSelectDisabled).not.toHaveBeenCalled();
     });
 
@@ -353,7 +354,7 @@ describe('useTreeController disabled rows', () => {
         const folder = last.find((node) => node.id === 'folder');
         expect(folder?.children?.find((node) => node.id === 'a')?.isSelected).toBe(true);
         expect(folder?.children?.find((node) => node.id === 'b')?.isSelected).toBe(false);
-        expect(folder?.isSelected).toBe('indeterminate');
+        expect(folder?.isSelected).toBe(false);
         expect(onSelectDisabled).not.toHaveBeenCalled();
     });
 
@@ -545,6 +546,6 @@ describe('useTreeController leafless folders', () => {
 
         expect(onSelectDisabled).not.toHaveBeenCalled();
         const last = onChange.mock.calls[onChange.mock.calls.length - 1]?.[0] ?? [];
-        expect(last.find((node) => node.id === 'group')?.isSelected).toBe('indeterminate');
+        expect(last.find((node) => node.id === 'group')?.isSelected).toBe(true);
     });
 });

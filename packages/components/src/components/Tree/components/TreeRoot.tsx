@@ -38,18 +38,41 @@ export type TreeRootProps = {
      */
     reorderable?: boolean;
     /**
-     * Gates drops onto the top level — same semantics as `accepts` on `<Tree.Folder>`.
+     * Controls whether disabled descendants count toward a folder's checkbox state. By
+     * default they are excluded, so a folder reads `'checked'` once all of its selectable
+     * descendants are checked and its checkbox can always be toggled back off. Set this to
+     * keep disabled descendants counting, so a folder with an unchecked disabled
+     * descendant stays at `'indeterminate'` and cannot be fully checked.
+     * @default false
+     */
+    countDisabledInFolderState?: boolean;
+    /**
+     * Gates drops onto the top level, same semantics as `accepts` on `<Tree.Folder>`.
      * Returning `false` suppresses the drop indicator and prevents `onMove`/`onChange`.
      * Omitted = the root accepts anything.
      */
     accepts?: (items: TreeDropCandidate[]) => boolean;
 };
 
-export const TreeRoot = ({ children, onChange, multiSelect = false, reorderable = false, accepts }: TreeRootProps) => {
+export const TreeRoot = ({
+    children,
+    onChange,
+    multiSelect = false,
+    reorderable = false,
+    countDisabledInFolderState = false,
+    accepts,
+}: TreeRootProps) => {
     const { t } = useTranslation();
     const rowHintId = useId();
     const { items, parentIsLoading: rootIsLoading } = useMemo(() => parseChildren(children), [children]);
-    const tree = useTreeController({ items, onChange, multiSelect, reorderable, rootAccepts: accepts });
+    const tree = useTreeController({
+        items,
+        onChange,
+        multiSelect,
+        reorderable,
+        countDisabledInFolderState,
+        rootAccepts: accepts,
+    });
 
     const visibleItems = tree.getItems();
     const loadingInsertions = useMemo(
@@ -60,8 +83,11 @@ export const TreeRoot = ({ children, onChange, multiSelect = false, reorderable 
     // Shared derivation (not headless-tree's leaf-only `getCheckedState`) so leafless
     // folders and their ancestors render the same state that `onChange` reports.
     const checkedStates = useMemo(
-        () => (multiSelect ? computeCheckedStates(items, new Set(getCheckedUnitIds(items))) : undefined),
-        [multiSelect, items],
+        () =>
+            multiSelect
+                ? computeCheckedStates(items, new Set(getCheckedUnitIds(items)), { countDisabledInFolderState })
+                : undefined,
+        [multiSelect, items, countDisabledInFolderState],
     );
 
     const rowHint = [multiSelect && t('Tree_checkboxHint'), reorderable && t('Tree_reorderHint')]
