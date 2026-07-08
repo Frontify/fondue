@@ -1342,6 +1342,21 @@
     },
     {
       "category": "semantic",
+      "cssVariable": "var(--typography-font-family-display)",
+      "id": "typography-font-family-display",
+      "keyPath": [
+        "semantic",
+        "typography",
+        "font-family",
+        "display"
+      ],
+      "tailwindClass": "font-display",
+      "themeable": false,
+      "type": "string",
+      "value": "var(--typography-font-family-display)"
+    },
+    {
+      "category": "semantic",
       "cssVariable": "var(--typography-font-family-monospace)",
       "id": "typography-font-family-monospace",
       "keyPath": [
@@ -1477,6 +1492,51 @@
     },
     {
       "category": "semantic",
+      "cssVariable": "var(--typography-font-size-xxx-large)",
+      "id": "typography-font-size-xxx-large",
+      "keyPath": [
+        "semantic",
+        "typography",
+        "font-size",
+        "xxx-large"
+      ],
+      "tailwindClass": "text-xxx-large",
+      "themeable": false,
+      "type": "float",
+      "value": "var(--typography-font-size-xxx-large)"
+    },
+    {
+      "category": "semantic",
+      "cssVariable": "var(--typography-font-size-xxxx-large)",
+      "id": "typography-font-size-xxxx-large",
+      "keyPath": [
+        "semantic",
+        "typography",
+        "font-size",
+        "xxxx-large"
+      ],
+      "tailwindClass": "text-xxxx-large",
+      "themeable": false,
+      "type": "float",
+      "value": "var(--typography-font-size-xxxx-large)"
+    },
+    {
+      "category": "semantic",
+      "cssVariable": "var(--typography-font-size-xxxxx-large)",
+      "id": "typography-font-size-xxxxx-large",
+      "keyPath": [
+        "semantic",
+        "typography",
+        "font-size",
+        "xxxxx-large"
+      ],
+      "tailwindClass": "text-xxxxx-large",
+      "themeable": false,
+      "type": "float",
+      "value": "var(--typography-font-size-xxxxx-large)"
+    },
+    {
+      "category": "semantic",
       "cssVariable": "var(--typography-font-weight-bold)",
       "id": "typography-font-weight-bold",
       "keyPath": [
@@ -1489,6 +1549,21 @@
       "themeable": false,
       "type": "float",
       "value": "var(--typography-font-weight-bold)"
+    },
+    {
+      "category": "semantic",
+      "cssVariable": "var(--typography-font-weight-light)",
+      "id": "typography-font-weight-light",
+      "keyPath": [
+        "semantic",
+        "typography",
+        "font-weight",
+        "light"
+      ],
+      "tailwindClass": "font-light",
+      "themeable": false,
+      "type": "float",
+      "value": "var(--typography-font-weight-light)"
     },
     {
       "category": "semantic",
@@ -1552,6 +1627,21 @@
     },
     {
       "category": "semantic",
+      "cssVariable": "var(--typography-line-height-expansive)",
+      "id": "typography-line-height-expansive",
+      "keyPath": [
+        "semantic",
+        "typography",
+        "line-height",
+        "expansive"
+      ],
+      "tailwindClass": "leading-expansive",
+      "themeable": false,
+      "type": "float",
+      "value": "var(--typography-line-height-expansive)"
+    },
+    {
+      "category": "semantic",
       "cssVariable": "var(--typography-line-height-extra-loose)",
       "id": "typography-line-height-extra-loose",
       "keyPath": [
@@ -1594,6 +1684,36 @@
       "themeable": false,
       "type": "float",
       "value": "var(--typography-line-height-medium)"
+    },
+    {
+      "category": "semantic",
+      "cssVariable": "var(--typography-line-height-spacious)",
+      "id": "typography-line-height-spacious",
+      "keyPath": [
+        "semantic",
+        "typography",
+        "line-height",
+        "spacious"
+      ],
+      "tailwindClass": "leading-spacious",
+      "themeable": false,
+      "type": "float",
+      "value": "var(--typography-line-height-spacious)"
+    },
+    {
+      "category": "semantic",
+      "cssVariable": "var(--typography-line-height-sprawling)",
+      "id": "typography-line-height-sprawling",
+      "keyPath": [
+        "semantic",
+        "typography",
+        "line-height",
+        "sprawling"
+      ],
+      "tailwindClass": "leading-sprawling",
+      "themeable": false,
+      "type": "float",
+      "value": "var(--typography-line-height-sprawling)"
     },
     {
       "category": "semantic",
@@ -2255,6 +2375,406 @@
         }
       ],
       "tailwindClass": "body-x-small-x-strong",
+      "themeable": false
+    },
+    {
+      "id": "utilities-text-display-large-default",
+      "keyPath": [
+        "utilities",
+        "text",
+        "display",
+        "large",
+        "default"
+      ],
+      "properties": [
+        {
+          "cssVariable": "var(--text-display-large-default-font-family)",
+          "id": "text-display-large-default-font-family",
+          "type": "string",
+          "value": "ref_typography/font-family/display"
+        },
+        {
+          "cssVariable": "var(--text-display-large-default-font-size)",
+          "id": "text-display-large-default-font-size",
+          "type": "float",
+          "value": "ref_typography/font-size/xxx-large"
+        },
+        {
+          "cssVariable": "var(--text-display-large-default-font-weight)",
+          "id": "text-display-large-default-font-weight",
+          "type": "float",
+          "value": "ref_typography/font-weight/regular"
+        },
+        {
+          "cssVariable": "var(--text-display-large-default-letter-casing)",
+          "id": "text-display-large-default-letter-casing",
+          "type": "string",
+          "value": "ref_typography/text-transform/default"
+        },
+        {
+          "cssVariable": "var(--text-display-large-default-letter-spacing)",
+          "id": "text-display-large-default-letter-spacing",
+          "type": "float",
+          "value": "ref_typography/letter-spacing/default"
+        },
+        {
+          "cssVariable": "var(--text-display-large-default-line-height)",
+          "id": "text-display-large-default-line-height",
+          "type": "float",
+          "value": "ref_typography/line-height/spacious"
+        }
+      ],
+      "tailwindClass": "display-large",
+      "themeable": false
+    },
+    {
+      "id": "utilities-text-display-large-light",
+      "keyPath": [
+        "utilities",
+        "text",
+        "display",
+        "large",
+        "light"
+      ],
+      "properties": [
+        {
+          "cssVariable": "var(--text-display-large-light-font-family)",
+          "id": "text-display-large-light-font-family",
+          "type": "string",
+          "value": "ref_typography/font-family/display"
+        },
+        {
+          "cssVariable": "var(--text-display-large-light-font-size)",
+          "id": "text-display-large-light-font-size",
+          "type": "float",
+          "value": "ref_typography/font-size/xxx-large"
+        },
+        {
+          "cssVariable": "var(--text-display-large-light-font-weight)",
+          "id": "text-display-large-light-font-weight",
+          "type": "float",
+          "value": "ref_typography/font-weight/light"
+        },
+        {
+          "cssVariable": "var(--text-display-large-light-letter-casing)",
+          "id": "text-display-large-light-letter-casing",
+          "type": "string",
+          "value": "ref_typography/text-transform/default"
+        },
+        {
+          "cssVariable": "var(--text-display-large-light-letter-spacing)",
+          "id": "text-display-large-light-letter-spacing",
+          "type": "float",
+          "value": "ref_typography/letter-spacing/default"
+        },
+        {
+          "cssVariable": "var(--text-display-large-light-line-height)",
+          "id": "text-display-large-light-line-height",
+          "type": "float",
+          "value": "ref_typography/line-height/spacious"
+        }
+      ],
+      "tailwindClass": "display-large-light",
+      "themeable": false
+    },
+    {
+      "id": "utilities-text-display-medium-default",
+      "keyPath": [
+        "utilities",
+        "text",
+        "display",
+        "medium",
+        "default"
+      ],
+      "properties": [
+        {
+          "cssVariable": "var(--text-display-medium-default-font-family)",
+          "id": "text-display-medium-default-font-family",
+          "type": "string",
+          "value": "ref_typography/font-family/display"
+        },
+        {
+          "cssVariable": "var(--text-display-medium-default-font-size)",
+          "id": "text-display-medium-default-font-size",
+          "type": "float",
+          "value": "ref_typography/font-size/xx-large"
+        },
+        {
+          "cssVariable": "var(--text-display-medium-default-font-weight)",
+          "id": "text-display-medium-default-font-weight",
+          "type": "float",
+          "value": "ref_typography/font-weight/regular"
+        },
+        {
+          "cssVariable": "var(--text-display-medium-default-letter-casing)",
+          "id": "text-display-medium-default-letter-casing",
+          "type": "string",
+          "value": "ref_typography/text-transform/default"
+        },
+        {
+          "cssVariable": "var(--text-display-medium-default-letter-spacing)",
+          "id": "text-display-medium-default-letter-spacing",
+          "type": "float",
+          "value": "ref_typography/letter-spacing/default"
+        },
+        {
+          "cssVariable": "var(--text-display-medium-default-line-height)",
+          "id": "text-display-medium-default-line-height",
+          "type": "float",
+          "value": "ref_typography/line-height/extra loose"
+        }
+      ],
+      "tailwindClass": "display-medium",
+      "themeable": false
+    },
+    {
+      "id": "utilities-text-display-medium-light",
+      "keyPath": [
+        "utilities",
+        "text",
+        "display",
+        "medium",
+        "light"
+      ],
+      "properties": [
+        {
+          "cssVariable": "var(--text-display-medium-light-font-family)",
+          "id": "text-display-medium-light-font-family",
+          "type": "string",
+          "value": "ref_typography/font-family/display"
+        },
+        {
+          "cssVariable": "var(--text-display-medium-light-font-size)",
+          "id": "text-display-medium-light-font-size",
+          "type": "float",
+          "value": "ref_typography/font-size/xx-large"
+        },
+        {
+          "cssVariable": "var(--text-display-medium-light-font-weight)",
+          "id": "text-display-medium-light-font-weight",
+          "type": "float",
+          "value": "ref_typography/font-weight/light"
+        },
+        {
+          "cssVariable": "var(--text-display-medium-light-letter-casing)",
+          "id": "text-display-medium-light-letter-casing",
+          "type": "string",
+          "value": "ref_typography/text-transform/default"
+        },
+        {
+          "cssVariable": "var(--text-display-medium-light-letter-spacing)",
+          "id": "text-display-medium-light-letter-spacing",
+          "type": "float",
+          "value": "ref_typography/letter-spacing/default"
+        },
+        {
+          "cssVariable": "var(--text-display-medium-light-line-height)",
+          "id": "text-display-medium-light-line-height",
+          "type": "float",
+          "value": "ref_typography/line-height/extra loose"
+        }
+      ],
+      "tailwindClass": "display-medium-light",
+      "themeable": false
+    },
+    {
+      "id": "utilities-text-display-x-large-default",
+      "keyPath": [
+        "utilities",
+        "text",
+        "display",
+        "x-large",
+        "default"
+      ],
+      "properties": [
+        {
+          "cssVariable": "var(--text-display-x-large-default-font-family)",
+          "id": "text-display-x-large-default-font-family",
+          "type": "string",
+          "value": "ref_typography/font-family/display"
+        },
+        {
+          "cssVariable": "var(--text-display-x-large-default-font-size)",
+          "id": "text-display-x-large-default-font-size",
+          "type": "float",
+          "value": "ref_typography/font-size/xxxx-large"
+        },
+        {
+          "cssVariable": "var(--text-display-x-large-default-font-weight)",
+          "id": "text-display-x-large-default-font-weight",
+          "type": "float",
+          "value": "ref_typography/font-weight/regular"
+        },
+        {
+          "cssVariable": "var(--text-display-x-large-default-letter-casing)",
+          "id": "text-display-x-large-default-letter-casing",
+          "type": "string",
+          "value": "ref_typography/text-transform/default"
+        },
+        {
+          "cssVariable": "var(--text-display-x-large-default-letter-spacing)",
+          "id": "text-display-x-large-default-letter-spacing",
+          "type": "float",
+          "value": "ref_typography/letter-spacing/default"
+        },
+        {
+          "cssVariable": "var(--text-display-x-large-default-line-height)",
+          "id": "text-display-x-large-default-line-height",
+          "type": "float",
+          "value": "ref_typography/line-height/expansive"
+        }
+      ],
+      "tailwindClass": "display-x-large",
+      "themeable": false
+    },
+    {
+      "id": "utilities-text-display-x-large-light",
+      "keyPath": [
+        "utilities",
+        "text",
+        "display",
+        "x-large",
+        "light"
+      ],
+      "properties": [
+        {
+          "cssVariable": "var(--text-display-x-large-light-font-family)",
+          "id": "text-display-x-large-light-font-family",
+          "type": "string",
+          "value": "ref_typography/font-family/display"
+        },
+        {
+          "cssVariable": "var(--text-display-x-large-light-font-size)",
+          "id": "text-display-x-large-light-font-size",
+          "type": "float",
+          "value": "ref_typography/font-size/xxxx-large"
+        },
+        {
+          "cssVariable": "var(--text-display-x-large-light-font-weight)",
+          "id": "text-display-x-large-light-font-weight",
+          "type": "float",
+          "value": "ref_typography/font-weight/light"
+        },
+        {
+          "cssVariable": "var(--text-display-x-large-light-letter-casing)",
+          "id": "text-display-x-large-light-letter-casing",
+          "type": "string",
+          "value": "ref_typography/text-transform/default"
+        },
+        {
+          "cssVariable": "var(--text-display-x-large-light-letter-spacing)",
+          "id": "text-display-x-large-light-letter-spacing",
+          "type": "float",
+          "value": "ref_typography/letter-spacing/default"
+        },
+        {
+          "cssVariable": "var(--text-display-x-large-light-line-height)",
+          "id": "text-display-x-large-light-line-height",
+          "type": "float",
+          "value": "ref_typography/line-height/expansive"
+        }
+      ],
+      "tailwindClass": "display-x-large-light",
+      "themeable": false
+    },
+    {
+      "id": "utilities-text-display-xx-large-default",
+      "keyPath": [
+        "utilities",
+        "text",
+        "display",
+        "xx-large",
+        "default"
+      ],
+      "properties": [
+        {
+          "cssVariable": "var(--text-display-xx-large-default-font-family)",
+          "id": "text-display-xx-large-default-font-family",
+          "type": "string",
+          "value": "ref_typography/font-family/display"
+        },
+        {
+          "cssVariable": "var(--text-display-xx-large-default-font-size)",
+          "id": "text-display-xx-large-default-font-size",
+          "type": "float",
+          "value": "ref_typography/font-size/xxxxx-large"
+        },
+        {
+          "cssVariable": "var(--text-display-xx-large-default-font-weight)",
+          "id": "text-display-xx-large-default-font-weight",
+          "type": "float",
+          "value": "ref_typography/font-weight/regular"
+        },
+        {
+          "cssVariable": "var(--text-display-xx-large-default-letter-casing)",
+          "id": "text-display-xx-large-default-letter-casing",
+          "type": "string",
+          "value": "ref_typography/text-transform/default"
+        },
+        {
+          "cssVariable": "var(--text-display-xx-large-default-letter-spacing)",
+          "id": "text-display-xx-large-default-letter-spacing",
+          "type": "float",
+          "value": "ref_typography/letter-spacing/default"
+        },
+        {
+          "cssVariable": "var(--text-display-xx-large-default-line-height)",
+          "id": "text-display-xx-large-default-line-height",
+          "type": "float",
+          "value": "ref_typography/line-height/sprawling"
+        }
+      ],
+      "tailwindClass": "display-xx-large",
+      "themeable": false
+    },
+    {
+      "id": "utilities-text-display-xx-large-light",
+      "keyPath": [
+        "utilities",
+        "text",
+        "display",
+        "xx-large",
+        "light"
+      ],
+      "properties": [
+        {
+          "cssVariable": "var(--text-display-xx-large-light-font-family)",
+          "id": "text-display-xx-large-light-font-family",
+          "type": "string",
+          "value": "ref_typography/font-family/display"
+        },
+        {
+          "cssVariable": "var(--text-display-xx-large-light-font-size)",
+          "id": "text-display-xx-large-light-font-size",
+          "type": "float",
+          "value": "ref_typography/font-size/xxxxx-large"
+        },
+        {
+          "cssVariable": "var(--text-display-xx-large-light-font-weight)",
+          "id": "text-display-xx-large-light-font-weight",
+          "type": "float",
+          "value": "ref_typography/font-weight/light"
+        },
+        {
+          "cssVariable": "var(--text-display-xx-large-light-letter-casing)",
+          "id": "text-display-xx-large-light-letter-casing",
+          "type": "string",
+          "value": "ref_typography/text-transform/default"
+        },
+        {
+          "cssVariable": "var(--text-display-xx-large-light-letter-spacing)",
+          "id": "text-display-xx-large-light-letter-spacing",
+          "type": "float",
+          "value": "ref_typography/letter-spacing/default"
+        },
+        {
+          "cssVariable": "var(--text-display-xx-large-light-line-height)",
+          "id": "text-display-xx-large-light-line-height",
+          "type": "float",
+          "value": "ref_typography/line-height/sprawling"
+        }
+      ],
+      "tailwindClass": "display-xx-large-light",
       "themeable": false
     },
     {
