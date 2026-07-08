@@ -155,4 +155,46 @@ describe('computeCheckedStates', () => {
             );
         });
     });
+
+    it('renders a childless folder with explicit indeterminate as mixed', () => {
+        const items = [folder('empty', ROOT_ID, [], { isSelected: 'indeterminate' as const })];
+        expect(computeCheckedStates(items, new Set()).get('empty')).toBe('indeterminate');
+    });
+
+    it('lets a live checked membership win over an explicit indeterminate', () => {
+        const items = [folder('empty', ROOT_ID, [], { isSelected: 'indeterminate' as const })];
+        expect(computeCheckedStates(items, new Set(['empty'])).get('empty')).toBe(true);
+    });
+
+    it('ignores explicit indeterminate on a leaf', () => {
+        const items = [leaf('a', ROOT_ID, { isSelected: 'indeterminate' as const })];
+        expect(computeCheckedStates(items, new Set()).get('a')).toBe(false);
+    });
+
+    it('ignores explicit indeterminate once the folder has children', () => {
+        const items = [folder('f', ROOT_ID, ['a'], { isSelected: 'indeterminate' as const }), leaf('a', 'f')];
+        expect(computeCheckedStates(items, new Set()).get('f')).toBe(false);
+        expect(computeCheckedStates(items, new Set(['a'])).get('f')).toBe(true);
+    });
+
+    it('bubbles a childless indeterminate folder up to every ancestor', () => {
+        const items = [
+            folder('group', ROOT_ID, ['branch']),
+            folder('branch', 'group', ['empty']),
+            folder('empty', 'branch', [], { isSelected: 'indeterminate' as const }),
+        ];
+        const states = computeCheckedStates(items, new Set());
+        expect(states.get('empty')).toBe('indeterminate');
+        expect(states.get('branch')).toBe('indeterminate');
+        expect(states.get('group')).toBe('indeterminate');
+    });
+
+    it('blocks an ancestor "all checked" while a childless sibling stays indeterminate', () => {
+        const items = [
+            folder('f', ROOT_ID, ['empty', 'a']),
+            folder('empty', 'f', [], { isSelected: 'indeterminate' as const }),
+            leaf('a', 'f'),
+        ];
+        expect(computeCheckedStates(items, new Set(['a'])).get('f')).toBe('indeterminate');
+    });
 });

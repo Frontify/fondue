@@ -24,9 +24,10 @@ export type TreeRootProps = {
     /**
      * Renders a checkbox in each row. Folder checkboxes derive from their descendants
      * (indeterminate when partially checked) and cascade-toggle them on click. A folder
-     * with no loaded children is checkable as its own entity via `isSelected`; when its
-     * children load, the consumer has to carry the selected state over to the new items
-     * by passing `isSelected` to all of them.
+     * with no loaded children is checkable as its own entity via `isSelected`, including
+     * an explicit `'indeterminate'` to restore a partial selection before its descendants
+     * load. When its children load, the consumer has to carry the selected state over to
+     * the new items by passing `isSelected` to all of them.
      * @default false
      */
     multiSelect?: boolean;

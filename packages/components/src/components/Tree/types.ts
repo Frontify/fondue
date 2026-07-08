@@ -39,10 +39,12 @@ type TreeRowSharedProps = {
      * Selects the row: checks its checkbox (`multiSelect`) or highlights it (single-select).
      * In multi-select mode a folder's `isSelected` is honored only while it has no loaded
      * children (empty, or collapsed while lazy-loading) — then it is checkable as its own
-     * entity and counts as one unit toward its ancestors. Once children are present the
-     * prop is ignored and folder state is derived (`'indeterminate'` is output-only).
-     * When the children of a checked folder load, the consumer has to carry the selected
-     * state over to the new items by passing `isSelected` to all of them.
+     * entity and counts as one unit toward its ancestors. A childless folder also accepts
+     * an explicit `'indeterminate'` to restore a partial selection before its descendants
+     * load; the first click checks it. Once children are present the prop is ignored and
+     * folder state is derived (a derived `'indeterminate'` is output-only). When the
+     * children of a selected folder load, the consumer has to carry the selected state
+     * over to the new items by passing `isSelected` to all of them.
      */
     isSelected?: boolean | 'indeterminate';
     onSelectChange?: (isSelected: boolean) => void;
