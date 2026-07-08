@@ -68,7 +68,7 @@ StyleDictionary.registerTransform({
     transitive: true,
     name: 'value/convertValueToPx',
     filter: (token: TransformedToken) => {
-        const remTokens = ['border-width', 'letter-spacing'];
+        const remTokens = ['border-width', 'letter-spacing', 'breakpoint'];
         return typeof token.value === 'number' && remTokens.some((remToken) => token.path.includes(remToken));
     },
     transform: (token: Token) => {
