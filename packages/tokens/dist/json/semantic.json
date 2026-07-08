@@ -179,6 +179,17 @@
   },
   "typography": {
     "font-family": {
+      "display": {
+        "name": "typography-font-family-display",
+        "type": "string",
+        "value": "var(--typography-font-family-display)",
+        "path": [
+          "default",
+          "typography",
+          "font-family",
+          "display"
+        ]
+      },
       "monospace": {
         "name": "typography-font-family-monospace",
         "type": "string",
@@ -279,6 +290,39 @@
           "font-size",
           "xx-small"
         ]
+      },
+      "xxx-large": {
+        "name": "typography-font-size-xxx-large",
+        "type": "float",
+        "value": "var(--typography-font-size-xxx-large)",
+        "path": [
+          "default",
+          "typography",
+          "font-size",
+          "xxx-large"
+        ]
+      },
+      "xxxx-large": {
+        "name": "typography-font-size-xxxx-large",
+        "type": "float",
+        "value": "var(--typography-font-size-xxxx-large)",
+        "path": [
+          "default",
+          "typography",
+          "font-size",
+          "xxxx-large"
+        ]
+      },
+      "xxxxx-large": {
+        "name": "typography-font-size-xxxxx-large",
+        "type": "float",
+        "value": "var(--typography-font-size-xxxxx-large)",
+        "path": [
+          "default",
+          "typography",
+          "font-size",
+          "xxxxx-large"
+        ]
       }
     },
     "font-weight": {
@@ -291,6 +335,17 @@
           "typography",
           "font-weight",
           "bold"
+        ]
+      },
+      "light": {
+        "name": "typography-font-weight-light",
+        "type": "float",
+        "value": "var(--typography-font-weight-light)",
+        "path": [
+          "default",
+          "typography",
+          "font-weight",
+          "light"
         ]
       },
       "medium": {
@@ -341,6 +396,17 @@
       }
     },
     "line-height": {
+      "expansive": {
+        "name": "typography-line-height-expansive",
+        "type": "float",
+        "value": "var(--typography-line-height-expansive)",
+        "path": [
+          "default",
+          "typography",
+          "line-height",
+          "expansive"
+        ]
+      },
       "extra-loose": {
         "name": "typography-line-height-extra-loose",
         "type": "float",
@@ -372,6 +438,28 @@
           "typography",
           "line-height",
           "medium"
+        ]
+      },
+      "spacious": {
+        "name": "typography-line-height-spacious",
+        "type": "float",
+        "value": "var(--typography-line-height-spacious)",
+        "path": [
+          "default",
+          "typography",
+          "line-height",
+          "spacious"
+        ]
+      },
+      "sprawling": {
+        "name": "typography-line-height-sprawling",
+        "type": "float",
+        "value": "var(--typography-line-height-sprawling)",
+        "path": [
+          "default",
+          "typography",
+          "line-height",
+          "sprawling"
         ]
       },
       "tight": {
