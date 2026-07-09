@@ -1,5 +1,11 @@
 # @frontify/fondue-sdk
 
+## 0.1.3
+
+### Patch Changes
+
+- [#2783](https://github.com/Frontify/fondue/pull/2783) [`6631e8a`](https://github.com/Frontify/fondue/commit/6631e8ab1b639fcd60de23760a6437c1086baa2c) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add new font family tokens
+
 ## 0.1.2
 
 ### Patch Changes

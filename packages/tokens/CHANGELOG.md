@@ -1,5 +1,15 @@
 # @frontify/fondue-tokens
 
+## 5.0.5
+
+### Patch Changes
+
+- [#2783](https://github.com/Frontify/fondue/pull/2783) [`6631e8a`](https://github.com/Frontify/fondue/commit/6631e8ab1b639fcd60de23760a6437c1086baa2c) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add new font family tokens
+
+- [#2785](https://github.com/Frontify/fondue/pull/2785) [`ee0a8f2`](https://github.com/Frontify/fondue/commit/ee0a8f240ed9ce0c48f9f2e79418c3c1155d453f) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add breakpoints as tokens
+
+- [#2788](https://github.com/Frontify/fondue/pull/2788) [`1bd2892`](https://github.com/Frontify/fondue/commit/1bd28924f96325435924dd461057bbf5c6caa8f7) Thanks [@syeo66](https://github.com/syeo66)! - chore: fix type misalignment
+
 ## 5.0.4
 
 ### Patch Changes
