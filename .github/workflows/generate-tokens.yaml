@@ -52,7 +52,6 @@ jobs:
 
       - name: Create changeset
         if: steps.git_diff.outputs.changed == 'true'
-        working-directory: ./fondue
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"

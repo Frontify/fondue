@@ -1,47 +1,52 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { usePreviewConfig } from '../components/PreviewConfigContext';
-import { type Token } from '../components/Tokens/types';
+import { type GetClassNameProps, type Token } from '../components/Tokens/types';
 
-export const getSemanticTokenClassName = ({ name, path }: Token) => {
+export const getSemanticTokenClassName = ({ prefix, token }: GetClassNameProps) => {
+    const { name, path } = token;
     if (path.includes('font-family')) {
-        return `${name.replace('typography-font-family-', 'font-').replace('-default', '')}`;
+        return `${prefix}${name.replace('typography-font-family-', 'font-').replace('-default', '')}`;
     }
 
     if (path.includes('font-weight')) {
-        return `${name.replace('typography-font-weight-', 'font-').replace('-default', '')}`;
+        return `${prefix}${name.replace('typography-font-weight-', 'font-').replace('-default', '')}`;
     }
 
     if (path.includes('font-size')) {
-        return `${name.replace('typography-font-size-', 'text-').replace('-default', '')}`;
+        return `${prefix}${name.replace('typography-font-size-', 'text-').replace('-default', '')}`;
     }
 
     if (path.includes('letter-spacing')) {
-        return `${name.replace('typography-letter-spacing-', 'tracking-').replace('-default', '')}`;
+        return `${prefix}${name.replace('typography-letter-spacing-', 'tracking-').replace('-default', '')}`;
     }
 
     if (path.includes('line-height')) {
-        return `${name.replace('typography-line-height-', 'leading-').replace('-default', '')}`;
+        return `${prefix}${name.replace('typography-line-height-', 'leading-').replace('-default', '')}`;
     }
 
     if (path.includes('text-transform')) {
-        return `${name.replace('typography-text-transform-', '').replace('default', 'normal-case')}`;
+        return `${prefix}${name.replace('typography-text-transform-', '').replace('default', 'normal-case')}`;
     }
 
     if (path.includes('spacing')) {
-        return `${name.replace('spacing-', '*-').replace('-default', '')}`;
+        return `${prefix}${name.replace('spacing-', '*-').replace('-default', '')}`;
     }
 
     if (path.includes('border-radius')) {
-        return `${name.replace('border-radius-', 'rounded-').replace('-default', '')}`;
+        return `${prefix}${name.replace('border-radius-', 'rounded-').replace('-default', '')}`;
     }
 
     if (path.includes('border-width')) {
-        return `${name.replace('border-width-', 'border-').replace('-default', '')}`;
+        return `${prefix}${name.replace('border-width-', 'border-').replace('-default', '')}`;
+    }
+
+    if (path.includes('breakpoint')) {
+        return `${name.replace('breakpoint-', '')}:${prefix}*`;
     }
 
     if (path.includes('shadow')) {
-        return `${name.replace('-default', '')}`;
+        return `${prefix}${name.replace('-default', '')}`;
     }
 
     return '';
@@ -143,6 +148,14 @@ export const SemanticTokenPreview = ({ value, path }: Token) => {
         return (
             <div className="tw-flex tw-items-center tw-justify-center tw-h-full tw-w-full">
                 <div style={{ boxShadow: value }} className="tw-h-10 tw-w-10 "></div>
+            </div>
+        );
+    }
+
+    if (path.includes('breakpoint')) {
+        return (
+            <div className="tw-flex tw-items-center tw-justify-center tw-h-full tw-w-full">
+                <pre>{value}</pre>
             </div>
         );
     }

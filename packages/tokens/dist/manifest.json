@@ -1202,6 +1202,90 @@
     },
     {
       "category": "semantic",
+      "cssVariable": "var(--breakpoint-2xl)",
+      "id": "breakpoint-2xl",
+      "keyPath": [
+        "semantic",
+        "breakpoint",
+        "2xl"
+      ],
+      "tailwindClass": "breakpoint-2xl",
+      "themeable": false,
+      "type": "float",
+      "value": "1536px"
+    },
+    {
+      "category": "semantic",
+      "cssVariable": "var(--breakpoint-lg)",
+      "id": "breakpoint-lg",
+      "keyPath": [
+        "semantic",
+        "breakpoint",
+        "lg"
+      ],
+      "tailwindClass": "breakpoint-lg",
+      "themeable": false,
+      "type": "float",
+      "value": "1024px"
+    },
+    {
+      "category": "semantic",
+      "cssVariable": "var(--breakpoint-md)",
+      "id": "breakpoint-md",
+      "keyPath": [
+        "semantic",
+        "breakpoint",
+        "md"
+      ],
+      "tailwindClass": "breakpoint-md",
+      "themeable": false,
+      "type": "float",
+      "value": "768px"
+    },
+    {
+      "category": "semantic",
+      "cssVariable": "var(--breakpoint-sm)",
+      "id": "breakpoint-sm",
+      "keyPath": [
+        "semantic",
+        "breakpoint",
+        "sm"
+      ],
+      "tailwindClass": "breakpoint-sm",
+      "themeable": false,
+      "type": "float",
+      "value": "600px"
+    },
+    {
+      "category": "semantic",
+      "cssVariable": "var(--breakpoint-xl)",
+      "id": "breakpoint-xl",
+      "keyPath": [
+        "semantic",
+        "breakpoint",
+        "xl"
+      ],
+      "tailwindClass": "breakpoint-xl",
+      "themeable": false,
+      "type": "float",
+      "value": "1280px"
+    },
+    {
+      "category": "semantic",
+      "cssVariable": "var(--breakpoint-xs)",
+      "id": "breakpoint-xs",
+      "keyPath": [
+        "semantic",
+        "breakpoint",
+        "xs"
+      ],
+      "tailwindClass": "breakpoint-xs",
+      "themeable": false,
+      "type": "float",
+      "value": "390px"
+    },
+    {
+      "category": "semantic",
       "cssVariable": "var(--shadow-big)",
       "id": "shadow-big",
       "keyPath": [

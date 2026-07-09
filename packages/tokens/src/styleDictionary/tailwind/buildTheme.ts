@@ -106,6 +106,10 @@ const getTheme = (dictionary: Dictionary) => {
             identifier: ['shadow'],
             tokens,
         }),
+        screens: getObject({
+            identifier: ['breakpoint'],
+            tokens,
+        }),
 
         extend: {
             spacing: getObject({

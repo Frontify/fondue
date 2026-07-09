@@ -10,7 +10,8 @@ import { type TokenPreview } from './types';
 
 export const TokenPreviewCard = ({ identifier, value, name, path, tokenPreview, getClassName }: TokenPreview) => {
     const { tailwindPrefix } = usePreviewConfig();
-    const tailwindIdentifier = getClassName?.({ identifier, value, name, path });
+    const tailwindIdentifier = getClassName?.({ prefix: tailwindPrefix, token: { identifier, value, name, path } });
+    const shouldShowCSS = value.includes('var(--') || value.includes('calc(');
     return (
         <div
             id={name}
@@ -42,7 +43,6 @@ export const TokenPreviewCard = ({ identifier, value, name, path, tokenPreview, 
                                     <span className="tw-body-small-x-strong tw-text-primary">Tailwind</span>
                                     <div className="tw-flex tw-items-center tw-justify-between tw-gap-2 tw-bg-container-secondary tw-p-2 tw-rounded-medium">
                                         <span className="tw-text-xx-small tw-font-monospace tw-text-primary">
-                                            {tailwindPrefix}
                                             {tailwindIdentifier}
                                         </span>
                                         <Button
@@ -57,22 +57,24 @@ export const TokenPreviewCard = ({ identifier, value, name, path, tokenPreview, 
                                         </Button>
                                     </div>
                                 </Flex>
-                                <Flex direction="column" gap={2}>
-                                    <span className="tw-body-small-x-strong tw-text-primary">CSS</span>
-                                    <div className="tw-flex tw-items-center tw-justify-between tw-gap-2 tw-bg-container-secondary tw-p-2 tw-rounded-medium">
-                                        <span className="tw-text-xx-small tw-font-monospace tw-text-primary">
-                                            {value}
-                                        </span>
-                                        <Button
-                                            emphasis="default"
-                                            size="small"
-                                            aspect="square"
-                                            onPress={() => navigator.clipboard.writeText(value)}
-                                        >
-                                            <IconClipboard size={16} />
-                                        </Button>
-                                    </div>
-                                </Flex>
+                                {shouldShowCSS && (
+                                    <Flex direction="column" gap={2}>
+                                        <span className="tw-body-small-x-strong tw-text-primary">CSS</span>
+                                        <div className="tw-flex tw-items-center tw-justify-between tw-gap-2 tw-bg-container-secondary tw-p-2 tw-rounded-medium">
+                                            <span className="tw-text-xx-small tw-font-monospace tw-text-primary">
+                                                {value}
+                                            </span>
+                                            <Button
+                                                emphasis="default"
+                                                size="small"
+                                                aspect="square"
+                                                onPress={() => navigator.clipboard.writeText(value)}
+                                            >
+                                                <IconClipboard size={16} />
+                                            </Button>
+                                        </div>
+                                    </Flex>
+                                )}
                             </Flex>
                         </Flyout.Body>
                     </Flyout.Content>

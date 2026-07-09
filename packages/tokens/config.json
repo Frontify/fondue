@@ -19,6 +19,11 @@
             {
                 "collection": "VariableCollectionId:419:1502",
                 "path": ["spacing"]
+            },
+            {
+                "collection": "VariableCollectionId:419:1502",
+                "path": ["breakpoint"],
+                "resolve": true
             }
         ],
         "semantic": [

@@ -73,6 +73,68 @@
       ]
     }
   },
+  "breakpoint": {
+    "2xl": {
+      "name": "breakpoint-2xl",
+      "type": "float",
+      "value": "1536px",
+      "path": [
+        "default",
+        "breakpoint",
+        "2xl"
+      ]
+    },
+    "lg": {
+      "name": "breakpoint-lg",
+      "type": "float",
+      "value": "1024px",
+      "path": [
+        "default",
+        "breakpoint",
+        "lg"
+      ]
+    },
+    "md": {
+      "name": "breakpoint-md",
+      "type": "float",
+      "value": "768px",
+      "path": [
+        "default",
+        "breakpoint",
+        "md"
+      ]
+    },
+    "sm": {
+      "name": "breakpoint-sm",
+      "type": "float",
+      "value": "600px",
+      "path": [
+        "default",
+        "breakpoint",
+        "sm"
+      ]
+    },
+    "xl": {
+      "name": "breakpoint-xl",
+      "type": "float",
+      "value": "1280px",
+      "path": [
+        "default",
+        "breakpoint",
+        "xl"
+      ]
+    },
+    "xs": {
+      "name": "breakpoint-xs",
+      "type": "float",
+      "value": "390px",
+      "path": [
+        "default",
+        "breakpoint",
+        "xs"
+      ]
+    }
+  },
   "shadow": {
     "big": {
       "name": "shadow-big",

@@ -76,6 +76,7 @@ export type AssembledVariable = {
     attributes: {
         collection: string;
         type: string;
+        resolve: boolean;
         theme: string;
     };
 };

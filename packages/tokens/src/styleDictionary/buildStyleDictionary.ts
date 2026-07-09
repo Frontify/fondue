@@ -68,7 +68,7 @@ StyleDictionary.registerTransform({
     transitive: true,
     name: 'value/convertValueToPx',
     filter: (token: TransformedToken) => {
-        const remTokens = ['border-width', 'letter-spacing'];
+        const remTokens = ['border-width', 'letter-spacing', 'breakpoint'];
         return typeof token.value === 'number' && remTokens.some((remToken) => token.path.includes(remToken));
     },
     transform: (token: Token) => {
@@ -103,7 +103,7 @@ StyleDictionary.registerTransform({
     transitive: true,
     name: 'tailwind/nameToCSSVariable',
     filter: (token) => {
-        return token.attributes?.type !== 'utility';
+        return token.attributes?.type !== 'utility' && !token.attributes?.resolve;
     },
     transform: (token) => {
         return `var(--${token.name.replaceAll('/', '-').replaceAll(' ', '-')})`;
@@ -167,8 +167,10 @@ export const buildStyleDictionary = (config: Config) => {
                     {
                         filter: (token) => {
                             return (
-                                token.attributes?.type !== 'theme' ||
-                                (token.attributes?.type === 'theme' && token.attributes?.theme === config.defaultTheme)
+                                (token.attributes?.type !== 'theme' ||
+                                    (token.attributes?.type === 'theme' &&
+                                        token.attributes?.theme === config.defaultTheme)) &&
+                                !token.attributes?.resolve
                             );
                         },
                         destination: 'css/base.css',
