@@ -1,5 +1,20 @@
 # @frontify/fondue-components
 
+## 30.9.1
+
+### Patch Changes
+
+- [#2780](https://github.com/Frontify/fondue/pull/2780) [`6a49b0b`](https://github.com/Frontify/fondue/commit/6a49b0bfe42b0af7b0a53e11c28d196dcd37eaa2) Thanks [@syeo66](https://github.com/syeo66)! - feat(Tree): allow an indeterminate checkbox on a collapsed, not-yet-loaded folder
+
+- [#2779](https://github.com/Frontify/fondue/pull/2779) [`6b2b0f6`](https://github.com/Frontify/fondue/commit/6b2b0f6243accd8059d54c9c78c734183ce2ab2e) Thanks [@syeo66](https://github.com/syeo66)! - feat(Tree): change the default behavior of folder selection with disabled items
+
+- [#2785](https://github.com/Frontify/fondue/pull/2785) [`ee0a8f2`](https://github.com/Frontify/fondue/commit/ee0a8f240ed9ce0c48f9f2e79418c3c1155d453f) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add breakpoints as tokens
+
+- [#2784](https://github.com/Frontify/fondue/pull/2784) [`dda0b97`](https://github.com/Frontify/fondue/commit/dda0b97f639d8dd1876c24fd58fa1e80a4c71cf6) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: properly resolve type defintions in manifest files
+
+- Updated dependencies [[`6631e8a`](https://github.com/Frontify/fondue/commit/6631e8ab1b639fcd60de23760a6437c1086baa2c), [`ee0a8f2`](https://github.com/Frontify/fondue/commit/ee0a8f240ed9ce0c48f9f2e79418c3c1155d453f), [`1bd2892`](https://github.com/Frontify/fondue/commit/1bd28924f96325435924dd461057bbf5c6caa8f7)]:
+  - @frontify/fondue-tokens@5.0.5
+
 ## 30.9.0
 
 ### Minor Changes
