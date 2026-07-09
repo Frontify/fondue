@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import tokens from '@frontify/fondue-tokens/json/semantic';
+import type tokens from '@frontify/fondue-tokens/json/semantic';
 
 export type Breakpoint = keyof (typeof tokens)['breakpoint'];
 
