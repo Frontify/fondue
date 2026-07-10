@@ -11,6 +11,7 @@
         "dim",
         "default"
       ],
+      "output": "variable",
       "tailwindClass": "*-charts-dim",
       "themeable": true,
       "type": "color",
@@ -26,6 +27,7 @@
         "missing",
         "default"
       ],
+      "output": "variable",
       "tailwindClass": "*-charts-missing",
       "themeable": true,
       "type": "color",
@@ -41,6 +43,7 @@
         "negative",
         "default"
       ],
+      "output": "variable",
       "tailwindClass": "*-charts-negative",
       "themeable": true,
       "type": "color",
@@ -56,6 +59,7 @@
         "negative",
         "hover"
       ],
+      "output": "variable",
       "tailwindClass": "*-charts-negative-hover",
       "themeable": true,
       "type": "color",
@@ -71,6 +75,7 @@
         "negative",
         "subtle"
       ],
+      "output": "variable",
       "tailwindClass": "*-charts-negative-subtle",
       "themeable": true,
       "type": "color",
@@ -86,6 +91,7 @@
         "primary",
         "default"
       ],
+      "output": "variable",
       "tailwindClass": "*-charts-primary",
       "themeable": true,
       "type": "color",
@@ -101,6 +107,7 @@
         "primary",
         "hover"
       ],
+      "output": "variable",
       "tailwindClass": "*-charts-primary-hover",
       "themeable": true,
       "type": "color",
@@ -116,6 +123,7 @@
         "primary",
         "subtle"
       ],
+      "output": "variable",
       "tailwindClass": "*-charts-primary-subtle",
       "themeable": true,
       "type": "color",
@@ -131,6 +139,7 @@
         "secondary",
         "default"
       ],
+      "output": "variable",
       "tailwindClass": "*-charts-secondary",
       "themeable": true,
       "type": "color",
@@ -146,6 +155,7 @@
         "secondary",
         "hover"
       ],
+      "output": "variable",
       "tailwindClass": "*-charts-secondary-hover",
       "themeable": true,
       "type": "color",
@@ -161,6 +171,7 @@
         "secondary",
         "subtle"
       ],
+      "output": "variable",
       "tailwindClass": "*-charts-secondary-subtle",
       "themeable": true,
       "type": "color",
@@ -176,6 +187,7 @@
         "tertiary",
         "default"
       ],
+      "output": "variable",
       "tailwindClass": "*-charts-tertiary",
       "themeable": true,
       "type": "color",
@@ -191,6 +203,7 @@
         "tertiary",
         "hover"
       ],
+      "output": "variable",
       "tailwindClass": "*-charts-tertiary-hover",
       "themeable": true,
       "type": "color",
@@ -206,6 +219,7 @@
         "tertiary",
         "subtle"
       ],
+      "output": "variable",
       "tailwindClass": "*-charts-tertiary-subtle",
       "themeable": true,
       "type": "color",
@@ -221,6 +235,7 @@
         "disabled",
         "default"
       ],
+      "output": "variable",
       "tailwindClass": "*-container-disabled",
       "themeable": true,
       "type": "color",
@@ -236,6 +251,7 @@
         "disabled",
         "on-disabled-container"
       ],
+      "output": "variable",
       "tailwindClass": "*-container-disabled-on-disabled-container",
       "themeable": true,
       "type": "color",
@@ -251,6 +267,7 @@
         "error",
         "active"
       ],
+      "output": "variable",
       "tailwindClass": "*-container-error-active",
       "themeable": true,
       "type": "color",
@@ -266,6 +283,7 @@
         "error",
         "default"
       ],
+      "output": "variable",
       "tailwindClass": "*-container-error",
       "themeable": true,
       "type": "color",
@@ -281,6 +299,7 @@
         "error",
         "hover"
       ],
+      "output": "variable",
       "tailwindClass": "*-container-error-hover",
       "themeable": true,
       "type": "color",
@@ -296,6 +315,7 @@
         "error",
         "on-error-container"
       ],
+      "output": "variable",
       "tailwindClass": "*-container-error-on-error-container",
       "themeable": true,
       "type": "color",
@@ -311,6 +331,7 @@
         "highlight",
         "active"
       ],
+      "output": "variable",
       "tailwindClass": "*-container-highlight-active",
       "themeable": true,
       "type": "color",
@@ -326,6 +347,7 @@
         "highlight",
         "default"
       ],
+      "output": "variable",
       "tailwindClass": "*-container-highlight",
       "themeable": true,
       "type": "color",
@@ -341,6 +363,7 @@
         "highlight",
         "hover"
       ],
+      "output": "variable",
       "tailwindClass": "*-container-highlight-hover",
       "themeable": true,
       "type": "color",
@@ -356,6 +379,7 @@
         "highlight",
         "on-highlight-container"
       ],
+      "output": "variable",
       "tailwindClass": "*-container-highlight-on-highlight-container",
       "themeable": true,
       "type": "color",
@@ -371,6 +395,7 @@
         "secondary",
         "active"
       ],
+      "output": "variable",
       "tailwindClass": "*-container-secondary-active",
       "themeable": true,
       "type": "color",
@@ -386,6 +411,7 @@
         "secondary",
         "default"
       ],
+      "output": "variable",
       "tailwindClass": "*-container-secondary",
       "themeable": true,
       "type": "color",
@@ -401,6 +427,7 @@
         "secondary",
         "hover"
       ],
+      "output": "variable",
       "tailwindClass": "*-container-secondary-hover",
       "themeable": true,
       "type": "color",
@@ -416,6 +443,7 @@
         "secondary",
         "on-secondary-container"
       ],
+      "output": "variable",
       "tailwindClass": "*-container-secondary-on-secondary-container",
       "themeable": true,
       "type": "color",
@@ -431,6 +459,7 @@
         "secondary",
         "on-secondary-container-variant"
       ],
+      "output": "variable",
       "tailwindClass": "*-container-secondary-on-secondary-container-variant",
       "themeable": true,
       "type": "color",
@@ -446,6 +475,7 @@
         "success",
         "active"
       ],
+      "output": "variable",
       "tailwindClass": "*-container-success-active",
       "themeable": true,
       "type": "color",
@@ -461,6 +491,7 @@
         "success",
         "default"
       ],
+      "output": "variable",
       "tailwindClass": "*-container-success",
       "themeable": true,
       "type": "color",
@@ -476,6 +507,7 @@
         "success",
         "hover"
       ],
+      "output": "variable",
       "tailwindClass": "*-container-success-hover",
       "themeable": true,
       "type": "color",
@@ -491,6 +523,7 @@
         "success",
         "on-success-container"
       ],
+      "output": "variable",
       "tailwindClass": "*-container-success-on-success-container",
       "themeable": true,
       "type": "color",
@@ -506,6 +539,7 @@
         "warning",
         "active"
       ],
+      "output": "variable",
       "tailwindClass": "*-container-warning-active",
       "themeable": true,
       "type": "color",
@@ -521,6 +555,7 @@
         "warning",
         "default"
       ],
+      "output": "variable",
       "tailwindClass": "*-container-warning",
       "themeable": true,
       "type": "color",
@@ -536,6 +571,7 @@
         "warning",
         "hover"
       ],
+      "output": "variable",
       "tailwindClass": "*-container-warning-hover",
       "themeable": true,
       "type": "color",
@@ -551,6 +587,7 @@
         "warning",
         "on-warning-container"
       ],
+      "output": "variable",
       "tailwindClass": "*-container-warning-on-warning-container",
       "themeable": true,
       "type": "color",
@@ -565,6 +602,7 @@
         "disabled",
         "default"
       ],
+      "output": "variable",
       "tailwindClass": "*-disabled",
       "themeable": true,
       "type": "color",
@@ -579,6 +617,7 @@
         "disabled",
         "on-disabled"
       ],
+      "output": "variable",
       "tailwindClass": "*-disabled-on-disabled",
       "themeable": true,
       "type": "color",
@@ -593,6 +632,7 @@
         "error",
         "active"
       ],
+      "output": "variable",
       "tailwindClass": "*-error-active",
       "themeable": true,
       "type": "color",
@@ -607,6 +647,7 @@
         "error",
         "default"
       ],
+      "output": "variable",
       "tailwindClass": "*-error",
       "themeable": true,
       "type": "color",
@@ -621,6 +662,7 @@
         "error",
         "hover"
       ],
+      "output": "variable",
       "tailwindClass": "*-error-hover",
       "themeable": true,
       "type": "color",
@@ -635,6 +677,7 @@
         "error",
         "on-error"
       ],
+      "output": "variable",
       "tailwindClass": "*-error-on-error",
       "themeable": true,
       "type": "color",
@@ -649,6 +692,7 @@
         "focus",
         "contrast"
       ],
+      "output": "variable",
       "tailwindClass": "*-focus-contrast",
       "themeable": true,
       "type": "color",
@@ -663,6 +707,7 @@
         "focus",
         "default"
       ],
+      "output": "variable",
       "tailwindClass": "*-focus",
       "themeable": true,
       "type": "color",
@@ -677,6 +722,7 @@
         "highlight",
         "active"
       ],
+      "output": "variable",
       "tailwindClass": "*-highlight-active",
       "themeable": true,
       "type": "color",
@@ -691,6 +737,7 @@
         "highlight",
         "default"
       ],
+      "output": "variable",
       "tailwindClass": "*-highlight",
       "themeable": true,
       "type": "color",
@@ -705,6 +752,7 @@
         "highlight",
         "hover"
       ],
+      "output": "variable",
       "tailwindClass": "*-highlight-hover",
       "themeable": true,
       "type": "color",
@@ -719,6 +767,7 @@
         "highlight",
         "on-highlight"
       ],
+      "output": "variable",
       "tailwindClass": "*-highlight-on-highlight",
       "themeable": true,
       "type": "color",
@@ -733,6 +782,7 @@
         "line",
         "mid"
       ],
+      "output": "variable",
       "tailwindClass": "*-line-mid",
       "themeable": true,
       "type": "color",
@@ -747,6 +797,7 @@
         "line",
         "strong"
       ],
+      "output": "variable",
       "tailwindClass": "*-line-strong",
       "themeable": true,
       "type": "color",
@@ -761,6 +812,7 @@
         "line",
         "subtle"
       ],
+      "output": "variable",
       "tailwindClass": "*-line-subtle",
       "themeable": true,
       "type": "color",
@@ -775,6 +827,7 @@
         "low-contrast",
         "default"
       ],
+      "output": "variable",
       "tailwindClass": "*-low-contrast",
       "themeable": true,
       "type": "color",
@@ -789,6 +842,7 @@
         "overlay",
         "default"
       ],
+      "output": "variable",
       "tailwindClass": "*-overlay",
       "themeable": true,
       "type": "color",
@@ -803,6 +857,7 @@
         "primary",
         "active"
       ],
+      "output": "variable",
       "tailwindClass": "*-primary-active",
       "themeable": true,
       "type": "color",
@@ -817,6 +872,7 @@
         "primary",
         "default"
       ],
+      "output": "variable",
       "tailwindClass": "*-primary",
       "themeable": true,
       "type": "color",
@@ -831,6 +887,7 @@
         "primary",
         "hover"
       ],
+      "output": "variable",
       "tailwindClass": "*-primary-hover",
       "themeable": true,
       "type": "color",
@@ -845,6 +902,7 @@
         "primary",
         "on-primary"
       ],
+      "output": "variable",
       "tailwindClass": "*-primary-on-primary",
       "themeable": true,
       "type": "color",
@@ -859,6 +917,7 @@
         "primary",
         "on-primary-variant"
       ],
+      "output": "variable",
       "tailwindClass": "*-primary-on-primary-variant",
       "themeable": true,
       "type": "color",
@@ -873,6 +932,7 @@
         "secondary",
         "active"
       ],
+      "output": "variable",
       "tailwindClass": "*-secondary-active",
       "themeable": true,
       "type": "color",
@@ -887,6 +947,7 @@
         "secondary",
         "default"
       ],
+      "output": "variable",
       "tailwindClass": "*-secondary",
       "themeable": true,
       "type": "color",
@@ -901,6 +962,7 @@
         "secondary",
         "hover"
       ],
+      "output": "variable",
       "tailwindClass": "*-secondary-hover",
       "themeable": true,
       "type": "color",
@@ -915,6 +977,7 @@
         "secondary",
         "on-secondary"
       ],
+      "output": "variable",
       "tailwindClass": "*-secondary-on-secondary",
       "themeable": true,
       "type": "color",
@@ -929,6 +992,7 @@
         "shadow",
         "default"
       ],
+      "output": "variable",
       "tailwindClass": "*-shadow",
       "themeable": true,
       "type": "color",
@@ -943,6 +1007,7 @@
         "success",
         "active"
       ],
+      "output": "variable",
       "tailwindClass": "*-success-active",
       "themeable": true,
       "type": "color",
@@ -957,6 +1022,7 @@
         "success",
         "default"
       ],
+      "output": "variable",
       "tailwindClass": "*-success",
       "themeable": true,
       "type": "color",
@@ -971,6 +1037,7 @@
         "success",
         "hover"
       ],
+      "output": "variable",
       "tailwindClass": "*-success-hover",
       "themeable": true,
       "type": "color",
@@ -985,6 +1052,7 @@
         "success",
         "on-success"
       ],
+      "output": "variable",
       "tailwindClass": "*-success-on-success",
       "themeable": true,
       "type": "color",
@@ -999,6 +1067,7 @@
         "surface",
         "active"
       ],
+      "output": "variable",
       "tailwindClass": "*-surface-active",
       "themeable": true,
       "type": "color",
@@ -1013,6 +1082,7 @@
         "surface",
         "default"
       ],
+      "output": "variable",
       "tailwindClass": "*-surface",
       "themeable": true,
       "type": "color",
@@ -1027,6 +1097,7 @@
         "surface",
         "dim"
       ],
+      "output": "variable",
       "tailwindClass": "*-surface-dim",
       "themeable": true,
       "type": "color",
@@ -1041,6 +1112,7 @@
         "surface",
         "hover"
       ],
+      "output": "variable",
       "tailwindClass": "*-surface-hover",
       "themeable": true,
       "type": "color",
@@ -1055,6 +1127,7 @@
         "warning",
         "active"
       ],
+      "output": "variable",
       "tailwindClass": "*-warning-active",
       "themeable": true,
       "type": "color",
@@ -1069,6 +1142,7 @@
         "warning",
         "default"
       ],
+      "output": "variable",
       "tailwindClass": "*-warning",
       "themeable": true,
       "type": "color",
@@ -1083,6 +1157,7 @@
         "warning",
         "hover"
       ],
+      "output": "variable",
       "tailwindClass": "*-warning-hover",
       "themeable": true,
       "type": "color",
@@ -1097,6 +1172,7 @@
         "warning",
         "on-warning"
       ],
+      "output": "variable",
       "tailwindClass": "*-warning-on-warning",
       "themeable": true,
       "type": "color",
@@ -1111,6 +1187,7 @@
         "border-radius",
         "large"
       ],
+      "output": "variable",
       "tailwindClass": "rounded-large",
       "themeable": false,
       "type": "float",
@@ -1125,6 +1202,7 @@
         "border-radius",
         "medium"
       ],
+      "output": "variable",
       "tailwindClass": "rounded-medium",
       "themeable": false,
       "type": "float",
@@ -1139,6 +1217,7 @@
         "border-radius",
         "small"
       ],
+      "output": "variable",
       "tailwindClass": "rounded-small",
       "themeable": false,
       "type": "float",
@@ -1153,6 +1232,7 @@
         "border-radius",
         "x-large"
       ],
+      "output": "variable",
       "tailwindClass": "rounded-x-large",
       "themeable": false,
       "type": "float",
@@ -1167,6 +1247,7 @@
         "border-radius",
         "xx-large"
       ],
+      "output": "variable",
       "tailwindClass": "rounded-xx-large",
       "themeable": false,
       "type": "float",
@@ -1181,6 +1262,7 @@
         "border-width",
         "default"
       ],
+      "output": "variable",
       "tailwindClass": "border",
       "themeable": false,
       "type": "float",
@@ -1195,6 +1277,7 @@
         "border-width",
         "large"
       ],
+      "output": "variable",
       "tailwindClass": "border-large",
       "themeable": false,
       "type": "float",
@@ -1202,84 +1285,90 @@
     },
     {
       "category": "semantic",
-      "cssVariable": "var(--breakpoint-2xl)",
+      "cssVariable": null,
       "id": "breakpoint-2xl",
       "keyPath": [
         "semantic",
         "breakpoint",
         "2xl"
       ],
-      "tailwindClass": "breakpoint-2xl",
+      "output": "value",
+      "tailwindClass": "2xl:",
       "themeable": false,
       "type": "float",
       "value": "1536px"
     },
     {
       "category": "semantic",
-      "cssVariable": "var(--breakpoint-lg)",
+      "cssVariable": null,
       "id": "breakpoint-lg",
       "keyPath": [
         "semantic",
         "breakpoint",
         "lg"
       ],
-      "tailwindClass": "breakpoint-lg",
+      "output": "value",
+      "tailwindClass": "lg:",
       "themeable": false,
       "type": "float",
       "value": "1024px"
     },
     {
       "category": "semantic",
-      "cssVariable": "var(--breakpoint-md)",
+      "cssVariable": null,
       "id": "breakpoint-md",
       "keyPath": [
         "semantic",
         "breakpoint",
         "md"
       ],
-      "tailwindClass": "breakpoint-md",
+      "output": "value",
+      "tailwindClass": "md:",
       "themeable": false,
       "type": "float",
       "value": "768px"
     },
     {
       "category": "semantic",
-      "cssVariable": "var(--breakpoint-sm)",
+      "cssVariable": null,
       "id": "breakpoint-sm",
       "keyPath": [
         "semantic",
         "breakpoint",
         "sm"
       ],
-      "tailwindClass": "breakpoint-sm",
+      "output": "value",
+      "tailwindClass": "sm:",
       "themeable": false,
       "type": "float",
       "value": "600px"
     },
     {
       "category": "semantic",
-      "cssVariable": "var(--breakpoint-xl)",
+      "cssVariable": null,
       "id": "breakpoint-xl",
       "keyPath": [
         "semantic",
         "breakpoint",
         "xl"
       ],
-      "tailwindClass": "breakpoint-xl",
+      "output": "value",
+      "tailwindClass": "xl:",
       "themeable": false,
       "type": "float",
       "value": "1280px"
     },
     {
       "category": "semantic",
-      "cssVariable": "var(--breakpoint-xs)",
+      "cssVariable": null,
       "id": "breakpoint-xs",
       "keyPath": [
         "semantic",
         "breakpoint",
         "xs"
       ],
-      "tailwindClass": "breakpoint-xs",
+      "output": "value",
+      "tailwindClass": "xs:",
       "themeable": false,
       "type": "float",
       "value": "390px"
@@ -1293,6 +1382,7 @@
         "shadow",
         "big"
       ],
+      "output": "variable",
       "tailwindClass": "shadow-big",
       "themeable": true,
       "type": "shadow",
@@ -1307,6 +1397,7 @@
         "shadow",
         "default"
       ],
+      "output": "variable",
       "tailwindClass": "shadow",
       "themeable": true,
       "type": "shadow",
@@ -1321,6 +1412,7 @@
         "shadow",
         "mid"
       ],
+      "output": "variable",
       "tailwindClass": "shadow-mid",
       "themeable": true,
       "type": "shadow",
@@ -1335,6 +1427,7 @@
         "spacing",
         "large"
       ],
+      "output": "variable",
       "tailwindClass": "*-large",
       "themeable": false,
       "type": "float",
@@ -1349,6 +1442,7 @@
         "spacing",
         "medium"
       ],
+      "output": "variable",
       "tailwindClass": "*-medium",
       "themeable": false,
       "type": "float",
@@ -1363,6 +1457,7 @@
         "spacing",
         "small"
       ],
+      "output": "variable",
       "tailwindClass": "*-small",
       "themeable": false,
       "type": "float",
@@ -1377,6 +1472,7 @@
         "spacing",
         "x-large"
       ],
+      "output": "variable",
       "tailwindClass": "*-x-large",
       "themeable": false,
       "type": "float",
@@ -1391,6 +1487,7 @@
         "spacing",
         "x-small"
       ],
+      "output": "variable",
       "tailwindClass": "*-x-small",
       "themeable": false,
       "type": "float",
@@ -1405,6 +1502,7 @@
         "spacing",
         "xx-large"
       ],
+      "output": "variable",
       "tailwindClass": "*-xx-large",
       "themeable": false,
       "type": "float",
@@ -1419,6 +1517,7 @@
         "spacing",
         "xx-small"
       ],
+      "output": "variable",
       "tailwindClass": "*-xx-small",
       "themeable": false,
       "type": "float",
@@ -1434,6 +1533,7 @@
         "font-family",
         "display"
       ],
+      "output": "variable",
       "tailwindClass": "font-display",
       "themeable": false,
       "type": "string",
@@ -1449,6 +1549,7 @@
         "font-family",
         "monospace"
       ],
+      "output": "variable",
       "tailwindClass": "font-monospace",
       "themeable": false,
       "type": "string",
@@ -1464,6 +1565,7 @@
         "font-family",
         "primary"
       ],
+      "output": "variable",
       "tailwindClass": "font-primary",
       "themeable": false,
       "type": "string",
@@ -1479,6 +1581,7 @@
         "font-size",
         "large"
       ],
+      "output": "variable",
       "tailwindClass": "text-large",
       "themeable": false,
       "type": "float",
@@ -1494,6 +1597,7 @@
         "font-size",
         "medium"
       ],
+      "output": "variable",
       "tailwindClass": "text-medium",
       "themeable": false,
       "type": "float",
@@ -1509,6 +1613,7 @@
         "font-size",
         "small"
       ],
+      "output": "variable",
       "tailwindClass": "text-small",
       "themeable": false,
       "type": "float",
@@ -1524,6 +1629,7 @@
         "font-size",
         "x-large"
       ],
+      "output": "variable",
       "tailwindClass": "text-x-large",
       "themeable": false,
       "type": "float",
@@ -1539,6 +1645,7 @@
         "font-size",
         "x-small"
       ],
+      "output": "variable",
       "tailwindClass": "text-x-small",
       "themeable": false,
       "type": "float",
@@ -1554,6 +1661,7 @@
         "font-size",
         "xx-large"
       ],
+      "output": "variable",
       "tailwindClass": "text-xx-large",
       "themeable": false,
       "type": "float",
@@ -1569,6 +1677,7 @@
         "font-size",
         "xx-small"
       ],
+      "output": "variable",
       "tailwindClass": "text-xx-small",
       "themeable": false,
       "type": "float",
@@ -1584,6 +1693,7 @@
         "font-size",
         "xxx-large"
       ],
+      "output": "variable",
       "tailwindClass": "text-xxx-large",
       "themeable": false,
       "type": "float",
@@ -1599,6 +1709,7 @@
         "font-size",
         "xxxx-large"
       ],
+      "output": "variable",
       "tailwindClass": "text-xxxx-large",
       "themeable": false,
       "type": "float",
@@ -1614,6 +1725,7 @@
         "font-size",
         "xxxxx-large"
       ],
+      "output": "variable",
       "tailwindClass": "text-xxxxx-large",
       "themeable": false,
       "type": "float",
@@ -1629,6 +1741,7 @@
         "font-weight",
         "bold"
       ],
+      "output": "variable",
       "tailwindClass": "font-bold",
       "themeable": false,
       "type": "float",
@@ -1644,6 +1757,7 @@
         "font-weight",
         "light"
       ],
+      "output": "variable",
       "tailwindClass": "font-light",
       "themeable": false,
       "type": "float",
@@ -1659,6 +1773,7 @@
         "font-weight",
         "medium"
       ],
+      "output": "variable",
       "tailwindClass": "font-medium",
       "themeable": false,
       "type": "float",
@@ -1674,6 +1789,7 @@
         "font-weight",
         "regular"
       ],
+      "output": "variable",
       "tailwindClass": "font-regular",
       "themeable": false,
       "type": "float",
@@ -1689,6 +1805,7 @@
         "letter-spacing",
         "default"
       ],
+      "output": "variable",
       "tailwindClass": "tracking",
       "themeable": false,
       "type": "float",
@@ -1704,6 +1821,7 @@
         "letter-spacing",
         "wide"
       ],
+      "output": "variable",
       "tailwindClass": "tracking-wide",
       "themeable": false,
       "type": "float",
@@ -1719,6 +1837,7 @@
         "line-height",
         "expansive"
       ],
+      "output": "variable",
       "tailwindClass": "leading-expansive",
       "themeable": false,
       "type": "float",
@@ -1734,6 +1853,7 @@
         "line-height",
         "extra-loose"
       ],
+      "output": "variable",
       "tailwindClass": "leading-extra-loose",
       "themeable": false,
       "type": "float",
@@ -1749,6 +1869,7 @@
         "line-height",
         "loose"
       ],
+      "output": "variable",
       "tailwindClass": "leading-loose",
       "themeable": false,
       "type": "float",
@@ -1764,6 +1885,7 @@
         "line-height",
         "medium"
       ],
+      "output": "variable",
       "tailwindClass": "leading-medium",
       "themeable": false,
       "type": "float",
@@ -1779,6 +1901,7 @@
         "line-height",
         "spacious"
       ],
+      "output": "variable",
       "tailwindClass": "leading-spacious",
       "themeable": false,
       "type": "float",
@@ -1794,6 +1917,7 @@
         "line-height",
         "sprawling"
       ],
+      "output": "variable",
       "tailwindClass": "leading-sprawling",
       "themeable": false,
       "type": "float",
@@ -1809,6 +1933,7 @@
         "line-height",
         "tight"
       ],
+      "output": "variable",
       "tailwindClass": "leading-tight",
       "themeable": false,
       "type": "float",
@@ -1824,6 +1949,7 @@
         "line-height",
         "wide"
       ],
+      "output": "variable",
       "tailwindClass": "leading-wide",
       "themeable": false,
       "type": "float",
@@ -1839,6 +1965,7 @@
         "text-transform",
         "default"
       ],
+      "output": "variable",
       "tailwindClass": "typography-text-transform-default",
       "themeable": false,
       "type": "string",
@@ -1854,6 +1981,7 @@
         "text-transform",
         "uppercase"
       ],
+      "output": "variable",
       "tailwindClass": "typography-text-transform-uppercase",
       "themeable": false,
       "type": "string",

@@ -5,6 +5,7 @@ import { type TokenLeaf } from './types';
 /**
  * Maps a token name prefix to its tailwind utility name.
  * `'*'` means the token is used across multiple utilities (e.g. colors -> bg/text/border, spacing -> m/p/h/w/gap).
+ * `':'` means the token is a screen variant prefix (e.g. breakpoints -> `md:`), not a utility class.
  * Ordered longest-prefix-first for correct matching.
  */
 const TAILWIND_PREFIX_MAP: [string, string][] = [
@@ -15,6 +16,7 @@ const TAILWIND_PREFIX_MAP: [string, string][] = [
     ['typography-line-height-', 'leading'],
     ['border-radius-', 'rounded'],
     ['border-width-', 'border'],
+    ['breakpoint-', ':'],
     ['shadow-', 'shadow'],
     ['spacing-', '*'],
     ['color-', '*'],
@@ -27,6 +29,9 @@ export const getTokenTailwindClass = (leaf: TokenLeaf): string => {
                 .slice(prefix.length)
                 .replace(/^default$/, '')
                 .replace(/-default$/, '');
+            if (utility === ':') {
+                return `${suffix}:`;
+            }
             return suffix ? `${utility}-${suffix}` : utility;
         }
     }

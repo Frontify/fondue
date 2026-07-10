@@ -53,26 +53,12 @@ StyleDictionary.registerTransform({
 StyleDictionary.registerTransform({
     type: 'value',
     transitive: true,
-    name: 'value/convertPxToRem',
+    name: 'value/applyUnit',
     filter: (token: TransformedToken) => {
-        const remTokens = ['font-size', 'line-height', 'border-radius', 'spacing'];
-        return typeof token.value === 'number' && remTokens.some((remToken) => token.path.includes(remToken));
+        return typeof token.value === 'number' && Boolean(token.attributes?.unit);
     },
     transform: (token: Token) => {
-        return `${token.value / 16}rem`;
-    },
-});
-
-StyleDictionary.registerTransform({
-    type: 'value',
-    transitive: true,
-    name: 'value/convertValueToPx',
-    filter: (token: TransformedToken) => {
-        const remTokens = ['border-width', 'letter-spacing', 'breakpoint'];
-        return typeof token.value === 'number' && remTokens.some((remToken) => token.path.includes(remToken));
-    },
-    transform: (token: Token) => {
-        return `${token.value}px`;
+        return token.attributes?.unit === 'rem' ? `${token.value / 16}rem` : `${token.value}px`;
     },
 });
 
@@ -98,12 +84,15 @@ StyleDictionary.registerTransform({
     },
 });
 
+// value-output tokens (e.g. breakpoints) are inlined as raw values because CSS variables are invalid in media queries
+const emitsCssVariable = (token: Token) => token.output !== 'value';
+
 StyleDictionary.registerTransform({
     type: 'value',
     transitive: true,
     name: 'tailwind/nameToCSSVariable',
     filter: (token) => {
-        return token.attributes?.type !== 'utility' && !token.attributes?.resolve;
+        return token.attributes?.type !== 'utility' && emitsCssVariable(token);
     },
     transform: (token) => {
         return `var(--${token.name.replaceAll('/', '-').replaceAll(' ', '-')})`;
@@ -160,8 +149,7 @@ export const buildStyleDictionary = (config: Config) => {
                     'figma/shadowToMatrix',
                     'name/kebabWithoutThemeName',
                     'value/refToCSSVariable',
-                    'value/convertPxToRem',
-                    'value/convertValueToPx',
+                    'value/applyUnit',
                 ],
                 files: [
                     {
@@ -170,7 +158,7 @@ export const buildStyleDictionary = (config: Config) => {
                                 (token.attributes?.type !== 'theme' ||
                                     (token.attributes?.type === 'theme' &&
                                         token.attributes?.theme === config.defaultTheme)) &&
-                                !token.attributes?.resolve
+                                emitsCssVariable(token)
                             );
                         },
                         destination: 'css/base.css',
@@ -190,13 +178,15 @@ export const buildStyleDictionary = (config: Config) => {
                     'figma/shadowToMatrix',
                     'name/kebabWithoutThemeName',
                     'value/refToCSSVariable',
-                    'value/convertPxToRem',
-                    'value/convertValueToPx',
+                    'value/applyUnit',
                 ],
                 files: [
                     {
                         filter: (token) => {
-                            return token.attributes?.type === 'base' || token.attributes?.type === 'utility';
+                            return (
+                                (token.attributes?.type === 'base' || token.attributes?.type === 'utility') &&
+                                emitsCssVariable(token)
+                            );
                         },
                         destination: 'base.css',
                         options: {
@@ -230,8 +220,7 @@ export const buildStyleDictionary = (config: Config) => {
                     'figma/shadowToMatrix',
                     'name/kebabWithoutThemeName',
                     'tailwind/nameToCSSVariable',
-                    'value/convertPxToRem',
-                    'value/convertValueToPx',
+                    'value/applyUnit',
                 ],
                 files: [
                     ...config.themes.map((theme) => ({
@@ -287,8 +276,7 @@ export const buildStyleDictionary = (config: Config) => {
                     'figma/shadowToMatrix',
                     'tailwind/nameToCSSVariable',
                     'value/refToCSSVariable',
-                    'value/convertPxToRem',
-                    'value/convertValueToPx',
+                    'value/applyUnit',
                 ],
                 files: [
                     {
