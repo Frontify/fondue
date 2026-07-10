@@ -1,10 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconDocument } from '@frontify/fondue-icons';
-import { type Meta, type StoryFn } from '@storybook/react-vite';
-import { memo, useEffect, useMemo, useState } from 'react';
-import { action } from 'storybook/actions';
-
 import { Container } from '@components/Container/Container';
 import {
     TreeItem,
@@ -24,13 +19,17 @@ import {
     useDynamicNavigationMock,
     useNavigationWithLazyLoadedItemsMock,
 } from '@components/Tree/utils';
+import { IconDocument } from '@frontify/fondue-icons';
+import { type Meta, type StoryFn } from '@storybook/react-vite';
+import { memo, useEffect, useMemo, useState } from 'react';
+import { action } from 'storybook/actions';
 
 /**
  ### *Legacy component warning*
  #### This is a unmaintained legacy component. It will be deprecated and replaced with a new component in an upcoming release.
  */
 export default {
-    title: 'Legacy Components/Tree',
+    title: 'Legacy Components/Deprecated/Tree',
     component: TreeView,
     tags: ['autodocs'],
     args: {
@@ -47,6 +46,11 @@ export default {
         borderWidth: 'none',
         borderStyle: 'none',
         activeColorStyle: 'neutral',
+    },
+    parameters: {
+        status: {
+            type: 'deprecated',
+        },
     },
     argTypes: {
         draggable: {
