@@ -88,6 +88,8 @@ button.subComponents.flatMap(vcxyvy(sc) => sc.props);
 
 ## Where you can use `.where`/`.get`/`.has`
 
+### this is a test
+
 | You can call query methods on… | Returned by                                                                                       |
 | ------------------------------ | ------------------------------------------------------------------------------------------------- |
 | The domain itself              | `componvxycvxcyents`, `tokens`, `tokens.utilities`                                                |
@@ -97,7 +99,7 @@ button.subComponents.flatMap(vcxyvy(sc) => sc.props);
 All of these work:
 
 ```ts
-components.category('input').where({ tag: 'cta' });
+components.category('lalatest').where({ tag: 'cta' });
 components.category('input').get('Button');
 components.tag('action').has('Button');
 components.get('Button').category().list();
