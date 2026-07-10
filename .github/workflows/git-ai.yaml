@@ -64,20 +64,25 @@ jobs:
             echo "### 🤖 AI attribution — PR #${PR_NUMBER}"
             echo ""
             echo "$stats" | jq -r '
-              (.ai_additions // 0) as $ai
-              | (.human_additions // 0) as $human
-              | ($ai + $human) as $total
+              (.range_stats // {}) as $r
+              | (.authorship_stats // {}) as $a
+              | ($r.ai_additions // 0) as $ai
+              | ($r.human_additions // 0) as $human
+              | ($r.unknown_additions // 0) as $unknown
+              | ($ai + $human + $unknown) as $total
               | "| Metric | Value |",
                 "| --- | --- |",
                 "| AI-authored lines | \($ai) |",
                 "| Human-authored lines | \($human) |",
+                "| Unattributed lines | \($unknown) |",
                 "| AI share of additions | \(if $total > 0 then ((100 * $ai / $total) | round | tostring) + "%" else "n/a" end) |",
-                "| AI lines accepted | \(.ai_accepted // 0) |",
-                "| Diff lines added / deleted | \(.git_diff_added_lines // 0) / \(.git_diff_deleted_lines // 0) |"
+                "| AI lines accepted | \($r.ai_accepted // 0) |",
+                "| Diff lines added / deleted | \($r.git_diff_added_lines // 0) / \($r.git_diff_deleted_lines // 0) |",
+                "| Commits with attribution | \($a.commits_with_authorship // 0) / \($a.total_commits // 0) |"
             '
             echo ""
             echo "$stats" | jq -r '
-              (.tool_model_breakdown // {}) as $tools
+              (.range_stats.tool_model_breakdown // {}) as $tools
               | if ($tools | length) > 0 then
                   "#### By tool and model",
                   "",
