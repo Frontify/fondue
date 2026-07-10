@@ -11,7 +11,7 @@ import { EXAMPLE_IMAGES, MIXED_ASSETS } from './example-assets';
  #### This is a deprecated component. It will be removed in the next major version.
  */
 export default {
-    title: 'Deprecated/Asset Input',
+    title: 'Legacy Components/Deprecated/Asset Input',
     component: AssetInput,
     tags: ['autodocs'],
     argTypes: {
