@@ -33,3 +33,57 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git-ai ci github run
+      # git-ai stores attribution as git notes, so we clone fresh, fetch the
+      # notes refs plus the PR head ref (which outlives branch deletion), and
+      # render `git-ai stats` for the PR's commit range into the job summary.
+      - name: AI attribution stats
+        if: always() && steps.run-git-ai.outcome != 'skipped'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          clone_dir="$RUNNER_TEMP/git-ai-stats"
+          git clone --quiet "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "$clone_dir"
+          cd "$clone_dir"
+          git fetch --quiet origin \
+            "+refs/pull/${PR_NUMBER}/head:refs/git-ai-stats/pr-head" \
+            "+refs/notes/*:refs/notes/*"
+
+          if ! stats="$(git-ai stats "${BASE_SHA}..${HEAD_SHA}" --json)"; then
+            echo "### 🤖 AI attribution — PR #${PR_NUMBER}" >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "No git-ai attribution data found for \`${BASE_SHA}..${HEAD_SHA}\`." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          echo "$stats"
+
+          {
+            echo "### 🤖 AI attribution — PR #${PR_NUMBER}"
+            echo ""
+            echo "$stats" | jq -r '
+              (.ai_additions // 0) as $ai
+              | (.human_additions // 0) as $human
+              | ($ai + $human) as $total
+              | "| Metric | Value |",
+                "| --- | --- |",
+                "| AI-authored lines | \($ai) |",
+                "| Human-authored lines | \($human) |",
+                "| AI share of additions | \(if $total > 0 then ((100 * $ai / $total) | round | tostring) + "%" else "n/a" end) |",
+                "| AI lines accepted | \(.ai_accepted // 0) |",
+                "| Diff lines added / deleted | \(.git_diff_added_lines // 0) / \(.git_diff_deleted_lines // 0) |"
+            '
+            echo ""
+            echo "$stats" | jq -r '
+              (.tool_model_breakdown // {}) as $tools
+              | if ($tools | length) > 0 then
+                  "#### By tool and model",
+                  "",
+                  "| Tool / model | AI additions | Accepted |",
+                  "| --- | --- | --- |",
+                  ($tools | to_entries[] | "| \(.key) | \(.value.ai_additions // 0) | \(.value.ai_accepted // 0) |")
+                else empty end
+            '
+          } >> "$GITHUB_STEP_SUMMARY"
