@@ -12,6 +12,7 @@ import {
     type FigmaVariableCollections,
     type FigmaVariables,
     type FigmaVariableValue,
+    type TokenSelector,
 } from './types';
 
 const fetchFigmaVariables = async (fileKey: Config['figmaFileKey']) => {
@@ -35,21 +36,23 @@ const getComputedVariables = (
     config: Config['tokenTypes'],
     excludeTokens: Config['excludeTokens'],
 ) => {
-    const selectedCollections = Object.entries(config).reduce<
-        { collection: string; path?: string[]; tokenType: string; resolve?: boolean }[]
-    >((acc, [tokenType, selector]) => {
-        return [
-            ...acc,
-            ...selector.map((selector) => ({
-                ...selector,
-                tokenType,
-            })),
-        ];
-    }, []);
+    const selectedCollections = Object.entries(config).reduce<(TokenSelector & { tokenType: string })[]>(
+        (acc, [tokenType, selector]) => {
+            return [
+                ...acc,
+                ...selector.map((selector) => ({
+                    ...selector,
+                    tokenType,
+                })),
+            ];
+        },
+        [],
+    );
 
     const getVariableValueRecursive = (
         variableId: string,
         modeId: string,
+        resolveAliases = false,
     ): { name: string | null; value: FigmaVariableValue | null } => {
         const variable = variables[variableId];
         if (variable === undefined) {
@@ -77,6 +80,12 @@ const getComputedVariables = (
             'type' in variableValue &&
             variableValue.type === 'VARIABLE_ALIAS'
         ) {
+            if (resolveAliases) {
+                return {
+                    name: variable.name,
+                    value: getVariableValueRecursive(variableValue.id, modeId, true).value,
+                };
+            }
             return {
                 name: variable.name,
                 value: `ref_${getVariableValueRecursive(variableValue.id, modeId).name?.toLowerCase()}`,
@@ -99,36 +108,46 @@ const getComputedVariables = (
     }, {});
 
     const assembledVariables = Object.entries(variables).reduce<AssembledVariable[]>((acc, [variableId, variable]) => {
-        for (const modeId of Object.keys(variable.valuesByMode)) {
-            for (const { collection, path, tokenType, resolve } of selectedCollections) {
-                if (collection === variable.variableCollectionId) {
-                    const tokenPath = path ? variable.name.split('/') : [];
+        if (
+            variable.deletedButReferenced ||
+            excludeTokens.some((excludeToken) => variable.name.match(new RegExp(excludeToken, 'gm')))
+        ) {
+            return acc;
+        }
 
-                    if (
-                        !variable.deletedButReferenced &&
-                        !excludeTokens.some((excludeToken) => variable.name.match(new RegExp(excludeToken, 'gm'))) &&
-                        (!path ||
-                            (path &&
-                                path.every(
-                                    (segment, index) => tokenPath[index]?.toLowerCase() === segment.toLowerCase(),
-                                )))
-                    ) {
-                        acc.push({
-                            name: variable.name.toLowerCase(),
-                            type: variable.resolvedType.toLowerCase(),
-                            value: getVariableValueRecursive(variableId, modeId).value,
-                            attributes: {
-                                collection:
-                                    collections[variable.variableCollectionId]?.name.replace(' ', '-').toLowerCase() ||
-                                    '',
-                                type: tokenType.toLowerCase(),
-                                resolve: resolve ?? false,
-                                theme: modes[modeId]?.toLowerCase() || '',
-                            },
-                        });
-                    }
-                }
-            }
+        const tokenPath = variable.name.split('/');
+        // most specific selector (longest matching path) wins
+        const selector = selectedCollections
+            .filter(
+                ({ collection, path }) =>
+                    collection === variable.variableCollectionId &&
+                    (!path ||
+                        path.every((segment, index) => tokenPath[index]?.toLowerCase() === segment.toLowerCase())),
+            )
+            .sort((a, b) => (b.path?.length ?? 0) - (a.path?.length ?? 0))[0];
+
+        if (!selector) {
+            return acc;
+        }
+
+        const name = tokenPath
+            .map((part) => part.toLowerCase())
+            .map((part) => selector.rename?.[part] ?? part)
+            .join('/');
+
+        for (const modeId of Object.keys(variable.valuesByMode)) {
+            acc.push({
+                name,
+                type: variable.resolvedType.toLowerCase(),
+                value: getVariableValueRecursive(variableId, modeId, selector.output === 'value').value,
+                ...(selector.output === 'value' && { output: 'value' as const }),
+                attributes: {
+                    collection: collections[variable.variableCollectionId]?.name.replace(' ', '-').toLowerCase() || '',
+                    type: selector.tokenType.toLowerCase(),
+                    theme: modes[modeId]?.toLowerCase() || '',
+                    ...(selector.unit && { unit: selector.unit }),
+                },
+            });
         }
         return acc;
     }, []);

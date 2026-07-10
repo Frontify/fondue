@@ -76,6 +76,7 @@
   "breakpoint": {
     "2xl": {
       "name": "breakpoint-2xl",
+      "output": "value",
       "type": "float",
       "value": "1536px",
       "path": [
@@ -86,6 +87,7 @@
     },
     "lg": {
       "name": "breakpoint-lg",
+      "output": "value",
       "type": "float",
       "value": "1024px",
       "path": [
@@ -96,6 +98,7 @@
     },
     "md": {
       "name": "breakpoint-md",
+      "output": "value",
       "type": "float",
       "value": "768px",
       "path": [
@@ -106,6 +109,7 @@
     },
     "sm": {
       "name": "breakpoint-sm",
+      "output": "value",
       "type": "float",
       "value": "600px",
       "path": [
@@ -116,6 +120,7 @@
     },
     "xl": {
       "name": "breakpoint-xl",
+      "output": "value",
       "type": "float",
       "value": "1280px",
       "path": [
@@ -126,6 +131,7 @@
     },
     "xs": {
       "name": "breakpoint-xs",
+      "output": "value",
       "type": "float",
       "value": "390px",
       "path": [

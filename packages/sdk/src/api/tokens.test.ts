@@ -12,6 +12,7 @@ const makeToken = (overrides: Partial<Token> = {}): Token => ({
     type: 'color',
     keyPath: ['colors', 'charts', 'primary', 'default'],
     value: 'var(--color-charts-primary-default)',
+    output: 'variable',
     cssVariable: 'var(--color-charts-primary-default)',
     tailwindClass: 'bg-charts-primary',
     themeable: true,
