@@ -45,6 +45,9 @@ const meta = {
     },
     parameters: {
         controls: { include: ['acceptFileType', 'orientation'] },
+        status: {
+            type: 'released',
+        },
     },
 } satisfies Meta<StoryArgs>;
 export default meta;
