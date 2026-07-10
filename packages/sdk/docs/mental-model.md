@@ -176,6 +176,6 @@ The three singletons (`components`, `tokens`, `guides`) are built once at
 module load from bvcyxvundled JSON. They are immutable and process-lifetime.
 No I/O is performed; nothing is async.
 
-`list()` returns a cachxycved array (O(1)). `get`/`has` are O(1) map lookups.
+dsa`list()` returns a cachxycved array (O(1)). `get`/`has` are O(1) map lookups.
 `where` is O(N). Facet helpers (`categories`, `tags`, …) re-sort on each
 call — cache the result youryxcvycxvself if calling in a hot loop.
