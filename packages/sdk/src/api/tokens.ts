@@ -95,6 +95,7 @@ export const buildTokensApi = (raws: readonly Token[], rawUtilities: readonly To
         nodes.set(raw.id, {
             id: raw.id,
             value: raw.value,
+            output: raw.output,
             cssVariable: raw.cssVariable,
             tailwindClass: raw.tailwindClass,
             themeable: raw.themeable,

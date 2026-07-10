@@ -3,6 +3,13 @@
 /** The set of underlying primitive types a token value may have. */
 export type TokenValueType = 'color' | 'float' | 'shadow' | 'string';
 
+/**
+ * How a token is consumed: 'variable' tokens are backed by a CSS custom property
+ * (use `cssVariable`), 'value' tokens are inlined literals with no CSS variable
+ * (e.g. breakpoints — use `value` directly).
+ */
+export type TokenOutput = 'variable' | 'value';
+
 /** A single design token. Underlying raw data — what `TokenNode.toJSON()` returns. */
 export interface Token {
     /** Logical token id, e.g. "color-charts-primary-default". */
@@ -13,8 +20,10 @@ export interface Token {
     readonly keyPath: readonly string[];
     /** Raw token value (often a `var(--token)` reference or a literal). */
     readonly value: string;
-    /** Inline form of the css variable reference, e.g. "var(--color-charts-primary-default)". */
-    readonly cssVariable: string;
+    /** How the token is consumed — via `cssVariable` or via the literal `value`. */
+    readonly output: TokenOutput;
+    /** Inline form of the css variable reference, e.g. "var(--color-charts-primary-default)". Null for 'value'-output tokens. */
+    readonly cssVariable: string | null;
     /** Tailwind utility class that produces this token, when applicable. */
     readonly tailwindClass: string;
     /** Whether the token participates in theme switching. */
@@ -62,7 +71,8 @@ export interface TokenUtilityFilter {
 export interface TokenNode {
     readonly id: string;
     readonly value: string;
-    readonly cssVariable: string;
+    readonly output: TokenOutput;
+    readonly cssVariable: string | null;
     readonly tailwindClass: string;
     readonly themeable: boolean;
     readonly keyPath: readonly string[];
