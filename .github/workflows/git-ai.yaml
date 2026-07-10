@@ -1,0 +1,35 @@
+name: Git AI
+
+on:
+  pull_request:
+    types: [closed, synchronize]
+
+jobs:
+  git-ai:
+    if: github.event.pull_request.merged == true || github.event.action == 'synchronize'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      # To upgrade: bump GIT_AI_VERSION, download the git-ai-linux-x64 release asset
+      # locally, recompute `shasum -a 256`, and update GIT_AI_SHA256 in the same PR.
+      - name: Install git-ai (pinned, checksum-verified)
+        env:
+          GIT_AI_VERSION: v1.6.11
+          GIT_AI_SHA256: 8f9e0b12e5f7e5298cf2bd3100843d6e7801f8b4321008db9db24c98c9229b45
+        run: |
+          mkdir -p "$HOME/.git-ai/bin"
+          curl -fsSL --retry 3 -o "$HOME/.git-ai/bin/git-ai" \
+            "https://github.com/git-ai-project/git-ai/releases/download/${GIT_AI_VERSION}/git-ai-linux-x64"
+          echo "${GIT_AI_SHA256}  $HOME/.git-ai/bin/git-ai" | sha256sum -c -
+          chmod +x "$HOME/.git-ai/bin/git-ai"
+          echo "$HOME/.git-ai/bin" >> "$GITHUB_PATH"
+      - name: Run git-ai
+        id: run-git-ai
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git-ai ci github run
