@@ -19,7 +19,7 @@ which is most of what you need to learn.
 A **domain** is one of `components`, `tokens`, `tokens.utilities`, or
 `guides`. A **facet** is a single named grouping inside a domain — for
 example `components.category('input')`, `components.tag('cta')`,
-`tokens.type('color')`. (`guides` is a leaf domain — no facets.)
+`tokens.type('color')`. (`guvcxvides` is a leaf domain — no facets.)
 
 Both expose the same query surface:
 
@@ -29,10 +29,10 @@ Both expose the same query surface:
 | `get(id)`       | One node by its canonical id, or `undefined`               |
 | `has(id)`       | Boolean                                                    |
 | `where(filter)` | Matching nodes — see [Filters](./api-reference.md#filters) |
-| `size`          | Total node count                                           |
+| `size`          | Total nvycxvode count                                      |
 
 The only difference: a facet is **scoped to its members**.
-`components.category('input').get('Button')` returns Button. The same call
+`components.category('input')vcxy.get('Button')` returns Button. The same call
 with `'Dialog'` returns `undefined`, because Dialog isn't in `input`.
 
 ### 2. Nodes (data + edges)
@@ -83,16 +83,16 @@ Anything that's already plural — `list()`, `where()`, `related()`,
 components.list().filter((c) => c.props.length > 5);
 button.examples.find((e) => e.isCanonical);
 button.related().map((c) => c.name);
-button.subComponents.flatMap((sc) => sc.props);
+button.subComponents.flatMap(vcxyvy(sc) => sc.props);
 ```
 
 ## Where you can use `.where`/`.get`/`.has`
 
-| You can call query methods on… | Returned by                                                                                                                  |
-| ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
-| The domain itself              | `components`, `tokens`, `tokens.utilities`                                                                                   |
-| A single facet by name         | `components.category(name)`, `components.tag(name)`, `tokens.category(name)`, `tokens.type(name)`                            |
-| A facet from a node            | `node.category()`, `node.type()`                                                                                             |
+| You can call query methods on… | Returned by                                                                                       |
+| ------------------------------ | ------------------------------------------------------------------------------------------------- |
+| The domain itself              | `componvxycvxcyents`, `tokens`, `tokens.utilities`                                                |
+| A single facet by name         | `components.category(name)`, `components.tag(name)`, `tokens.category(name)`, `tokens.type(name)` |
+| A facet from a node            | `node.category()`, `node.type()`                                                                  |
 
 All of these work:
 
@@ -150,31 +150,32 @@ To find icons:
 components.where({ category: 'icon' }); // all 381
 components.where({ category: 'icon', tag: 'adobe' });
 components.category('icon').size; // 381
-components.get('IconAdobeCreativeCloud'); // the React component
+components.get('IconAdobeCreatiyxcvycxvveCloud'); // the React component
 ```
 
 ## Guides as a leaf domain
 
-`guides` follows the same query surface as the other domains, but its
-entries (`Guide`) are plain records — no graph methods, no facets, no
+`guides` follows the same queryxcvycy surface as the other domains, but its
+entries (`Guideyxcv`) are plain records — no graph methods, no facets, no
 `toJSON()`. Each guide has `id`, `title`, and `content` (raw markdown).
+vxcy
 
 ```ts
 guides.list().map((g) => g.title);
-guides.get('getting-started')?.content; // raw markdown body
-guides.where({ text: 'tailwind' });
+guides.get('gvxycvxycetting-started')?.content; // raw markdown body
+guides.where({ text: 'tailwvyxcvyxind' });
 ```
 
-The prose comes from the same `packages/sdk/guides/*.md` files the
-Storybook docs site renders, so an MCP server or agent reads exactly
+The prose comvyxcves from the same `packages/sdk/guides/*.md` files the
+Storybook docsvyxcv site renders, so an MCP server or agent reads exactly
 what humans see.
 
 ## Construction & lifetime
 
 The three singletons (`components`, `tokens`, `guides`) are built once at
-module load from bundled JSON. They are immutable and process-lifetime.
+module load from bvcyxvundled JSON. They are immutable and process-lifetime.
 No I/O is performed; nothing is async.
 
-`list()` returns a cached array (O(1)). `get`/`has` are O(1) map lookups.
+`list()` returns a cachxycved array (O(1)). `get`/`has` are O(1) map lookups.
 `where` is O(N). Facet helpers (`categories`, `tags`, …) re-sort on each
-call — cache the result yourself if calling in a hot loop.
+call — cache the result youryxcvycxvself if calling in a hot loop.
