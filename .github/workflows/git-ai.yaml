@@ -49,8 +49,11 @@ jobs:
           git clone --quiet "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "$clone_dir"
           cd "$clone_dir"
           git fetch --quiet origin \
-            "+refs/pull/${PR_NUMBER}/head:refs/git-ai-stats/pr-head" \
+            "+refs/pull/${PR_NUMBER}/head:refs/heads/git-ai-stats-pr-head" \
             "+refs/notes/*:refs/notes/*"
+          # git-ai resolves range reachability against the checked-out branch, so
+          # switch onto the PR head (unmerged PRs aren't reachable from main).
+          git checkout --quiet git-ai-stats-pr-head
 
           if ! stats="$(git-ai stats "${BASE_SHA}..${HEAD_SHA}" --json)"; then
             echo "### 🤖 AI attribution — PR #${PR_NUMBER}" >> "$GITHUB_STEP_SUMMARY"
