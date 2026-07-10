@@ -51,27 +51,48 @@ jobs:
           git fetch --quiet origin \
             "+refs/pull/${PR_NUMBER}/head:refs/heads/git-ai-stats-pr-head" \
             "+refs/notes/*:refs/notes/*"
-          # git-ai resolves range reachability against the checked-out branch, so
-          # switch onto the PR head (unmerged PRs aren't reachable from main).
           git checkout --quiet git-ai-stats-pr-head
 
-          if ! stats="$(git-ai stats "${BASE_SHA}..${HEAD_SHA}" --json)"; then
+          # git-ai's range form (`stats A..B`) does NOT attribute human authorship in
+          # v1.6.11 — it buckets human-authored lines into `unknown_additions`. The
+          # per-commit form (`stats <sha>`) reads each commit's authorship note
+          # correctly, so we sum per-commit stats across the PR's commits instead.
+          # Caveat: a line edited in N commits is counted N times, so these totals can
+          # slightly exceed the net PR diff. Revisit if a newer git-ai fixes the range
+          # form's human attribution, in which case a single `stats A..B` would do.
+          stats="$(git rev-list "${BASE_SHA}..${HEAD_SHA}" \
+            | while read -r sha; do git-ai stats "$sha" --json 2>/dev/null || true; done \
+            | jq -s '
+              reduce .[] as $c (
+                {human:0, unknown:0, ai:0, ai_accepted:0, added:0, deleted:0, commits:0, tools:{}};
+                .human        += ($c.human_additions // 0)
+                | .unknown    += ($c.unknown_additions // 0)
+                | .ai         += ($c.ai_additions // 0)
+                | .ai_accepted += ($c.ai_accepted // 0)
+                | .added      += ($c.git_diff_added_lines // 0)
+                | .deleted    += ($c.git_diff_deleted_lines // 0)
+                | .commits    += 1
+                | .tools      += (reduce (($c.tool_model_breakdown // {}) | to_entries[]) as $t
+                    (.tools;
+                      .[$t.key].ai_additions = ((.[$t.key].ai_additions // 0) + ($t.value.ai_additions // 0))
+                      | .[$t.key].ai_accepted = ((.[$t.key].ai_accepted // 0) + ($t.value.ai_accepted // 0))))
+              )')"
+          echo "$stats"
+
+          if [ "$(echo "$stats" | jq '(.human // 0) + (.ai // 0) + (.unknown // 0)')" -eq 0 ]; then
             echo "### 🤖 AI attribution — PR #${PR_NUMBER}" >> "$GITHUB_STEP_SUMMARY"
             echo "" >> "$GITHUB_STEP_SUMMARY"
             echo "No git-ai attribution data found for \`${BASE_SHA}..${HEAD_SHA}\`." >> "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
-          echo "$stats"
 
           {
             echo "### 🤖 AI attribution — PR #${PR_NUMBER}"
             echo ""
             echo "$stats" | jq -r '
-              (.range_stats // {}) as $r
-              | (.authorship_stats // {}) as $a
-              | ($r.ai_additions // 0) as $ai
-              | ($r.human_additions // 0) as $human
-              | ($r.unknown_additions // 0) as $unknown
+              (.ai // 0) as $ai
+              | (.human // 0) as $human
+              | (.unknown // 0) as $unknown
               | ($ai + $human + $unknown) as $total
               | "| Metric | Value |",
                 "| --- | --- |",
@@ -79,13 +100,15 @@ jobs:
                 "| Human-authored lines | \($human) |",
                 "| Unattributed lines | \($unknown) |",
                 "| AI share of additions | \(if $total > 0 then ((100 * $ai / $total) | round | tostring) + "%" else "n/a" end) |",
-                "| AI lines accepted | \($r.ai_accepted // 0) |",
-                "| Diff lines added / deleted | \($r.git_diff_added_lines // 0) / \($r.git_diff_deleted_lines // 0) |",
-                "| Commits with attribution | \($a.commits_with_authorship // 0) / \($a.total_commits // 0) |"
+                "| AI lines accepted | \(.ai_accepted // 0) |",
+                "| Diff lines added / deleted | \(.added // 0) / \(.deleted // 0) |",
+                "| Commits counted | \(.commits // 0) |"
             '
             echo ""
+            echo "_Attribution is summed per commit; a line edited in several commits is counted once per commit, so totals may slightly exceed the net PR diff._"
+            echo ""
             echo "$stats" | jq -r '
-              (.range_stats.tool_model_breakdown // {}) as $tools
+              (.tools // {}) as $tools
               | if ($tools | length) > 0 then
                   "#### By tool and model",
                   "",
