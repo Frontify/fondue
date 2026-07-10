@@ -6,6 +6,19 @@ Copy-paste solutions for common tasks. All snippets assume:
 import { components, tokens } from '@frontify/fondue/sdk';
 ```
 
+## Contents
+
+- [Search](#search)
+- [Listing & enumeration](#listing--enumeration)
+- [Walking the graph](#walking-the-graph)
+- [Working with props](#working-with-props)
+- [Sub-components](#sub-components)
+- [Examples](#examples)
+- [Tokens](#tokens)
+- [Guides](#guides)
+- [Serialization](#serialization)
+- [Iteration patterns](#iteration-patterns)
+
 ## Search
 
 ### "Find anything matching a free-text query"
