@@ -1,11 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { forwardRef, useState } from 'react';
+import { forwardRef, useState, type ReactNode } from 'react';
 
 import { Button } from '../Button/Button';
 import { Flex } from '../Flex/Flex';
 import { Flyout } from '../Flyout/Flyout';
+import { Label } from '../Label/Label';
 import { ScrollArea } from '../ScrollArea/ScrollArea';
 import { Tabs } from '../Tabs/Tabs';
 import { TextInput } from '../TextInput/TextInput';
@@ -1059,6 +1060,139 @@ export const WithTabsInContent: Story = {
                         <Dialog.Close>
                             <Button>Close</Button>
                         </Dialog.Close>
+                    </Dialog.Footer>
+                </Dialog.Content>
+            </Dialog.Root>
+        );
+    },
+};
+
+type WizardStep = {
+    name: string;
+    content: ReactNode;
+};
+
+const wizardSteps: WizardStep[] = [
+    {
+        name: 'Project details',
+        content: (
+            <Flex direction="column" gap="16px">
+                <Flex direction="column" gap="4px">
+                    <Label htmlFor="wizard-project-name">Project name</Label>
+                    <TextInput id="wizard-project-name" placeholder="My project" />
+                </Flex>
+                <Flex direction="column" gap="4px">
+                    <Label htmlFor="wizard-project-description">Description</Label>
+                    <TextInput id="wizard-project-description" placeholder="What is this project about?" />
+                </Flex>
+            </Flex>
+        ),
+    },
+    {
+        name: 'Invite members',
+        content: (
+            <Flex direction="column" gap="16px">
+                <Flex direction="column" gap="4px">
+                    <Label htmlFor="wizard-invite-email">Email address</Label>
+                    <TextInput id="wizard-invite-email" placeholder="colleague@example.com" />
+                </Flex>
+                <p>Invited members will receive an email invitation.</p>
+            </Flex>
+        ),
+    },
+    {
+        name: 'Summary',
+        content: <p>Review your settings and click Finish to create the project.</p>,
+    },
+];
+
+export const WizardDialog: Story = {
+    render: (args) => {
+        const [isOpen, setIsOpen] = useState(false);
+        const [currentStep, setCurrentStep] = useState(0);
+        const activeStep = wizardSteps[currentStep];
+        const isFirstStep = currentStep === 0;
+        const isLastStep = currentStep === wizardSteps.length - 1;
+
+        const handleOpenChange = (open: boolean) => {
+            if (open) {
+                // Resetting on open instead of close keeps the last step visible during the exit animation.
+                setCurrentStep(0);
+            }
+            setIsOpen(open);
+        };
+
+        const handleBack = () => setCurrentStep((step) => step - 1);
+
+        const handleContinue = () => {
+            if (isLastStep) {
+                setIsOpen(false);
+            } else {
+                setCurrentStep((step) => step + 1);
+            }
+        };
+
+        return (
+            <Dialog.Root open={isOpen} onOpenChange={handleOpenChange}>
+                <Dialog.Trigger>
+                    <Button>Open dialog</Button>
+                </Dialog.Trigger>
+                <Dialog.Content {...args} minWidth="min(640px, 95vw)">
+                    <Dialog.Header>
+                        <Dialog.Title>Title</Dialog.Title>
+                    </Dialog.Header>
+                    <Dialog.Body>
+                        <Flex direction="column" gap="8px">
+                            <Flex gap="8px" aria-hidden>
+                                {wizardSteps.map((step, index) => (
+                                    <div
+                                        key={step.name}
+                                        data-completed={index <= currentStep}
+                                        className="tw-h-1 tw-flex-1 tw-rounded-full tw-bg-line-subtle data-[completed=true]:tw-bg-line-strong"
+                                    />
+                                ))}
+                            </Flex>
+                            {/* role="status" announces step changes to screen readers */}
+                            <div role="status" className="tw-flex tw-items-center tw-justify-between">
+                                <span className="tw-font-medium">{activeStep?.name}</span>
+                                <span className="tw-text-secondary tw-text-small">
+                                    Step {currentStep + 1} of {wizardSteps.length}
+                                </span>
+                            </div>
+                            {/* The slide padding and the compensating negative margin reserve room for focus
+                                rings, which would otherwise be clipped by the overflow-hidden boundary. */}
+                            <div className="tw-overflow-hidden -tw-mx-2">
+                                <div
+                                    className="tw-flex motion-safe:tw-transition-transform motion-safe:tw-duration-300 motion-safe:tw-ease-in-out"
+                                    style={{ transform: `translateX(-${currentStep * 100}%)` }}
+                                >
+                                    {wizardSteps.map((step, index) => (
+                                        <div
+                                            key={step.name}
+                                            className="tw-w-full tw-flex-shrink-0 tw-px-2 tw-py-4"
+                                            aria-hidden={index !== currentStep}
+                                            // @ts-expect-error `inert` keeps off-screen slides unfocusable; it is only typed from @types/react 19 onwards
+                                            inert={index !== currentStep ? '' : undefined}
+                                        >
+                                            {step.content}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </Flex>
+                    </Dialog.Body>
+                    <Dialog.Footer>
+                        {!isFirstStep && (
+                            <div className="tw-mr-auto">
+                                <Button emphasis="default" onPress={handleBack}>
+                                    Back
+                                </Button>
+                            </div>
+                        )}
+                        <Dialog.Close>
+                            <Button emphasis="default">Cancel</Button>
+                        </Dialog.Close>
+                        <Button onPress={handleContinue}>{isLastStep ? 'Finish' : 'Continue'}</Button>
                     </Dialog.Footer>
                 </Dialog.Content>
             </Dialog.Root>
