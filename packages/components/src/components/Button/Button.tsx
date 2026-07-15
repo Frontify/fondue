@@ -60,6 +60,7 @@ export type ButtonProps = {
     'aria-describedby'?: string;
     'data-test-id'?: string;
     className?: string;
+    tabIndex?: number;
 };
 
 export const Button = forwardRef<HTMLButtonElement | null, ButtonProps>(
