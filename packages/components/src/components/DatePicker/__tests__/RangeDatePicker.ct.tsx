@@ -96,4 +96,71 @@ test.describe('RangeDatePicker', () => {
         const weekdays = component.locator('th');
         await expect(weekdays).toHaveCount(7);
     });
+
+    test('should disable the next-month button at maxMonth', async ({ mount }) => {
+        const component = await mount(
+            <DatePicker.Range
+                data-test-id={RANGE_TEST_ID}
+                selected={RANGE_SELECTION}
+                maxMonth={{ year: 2025, month: 3, day: 15 }}
+            />,
+        );
+        const nextMonthButton = component.getByRole('button', { name: /next month/i });
+        await expect(nextMonthButton).toHaveAttribute('aria-disabled', 'true');
+    });
+
+    test('should not navigate past maxMonth when clicking the next-month button', async ({ mount }) => {
+        const component = await mount(
+            <DatePicker.Range
+                data-test-id={RANGE_TEST_ID}
+                selected={RANGE_SELECTION}
+                maxMonth={{ year: 2025, month: 3, day: 15 }}
+            />,
+        );
+        await component.getByRole('button', { name: /next month/i }).click({ force: true });
+        await expect(component.getByText('March 2025').filter({ visible: true })).toBeVisible();
+        await expect(component.getByText('April 2025').filter({ visible: true })).toBeHidden();
+    });
+
+    test('should remove the next-month button from the tab order at maxMonth', async ({ mount }) => {
+        const component = await mount(
+            <DatePicker.Range
+                data-test-id={RANGE_TEST_ID}
+                selected={RANGE_SELECTION}
+                maxMonth={{ year: 2025, month: 3, day: 15 }}
+            />,
+        );
+        await expect(component.getByRole('button', { name: /next month/i })).toHaveAttribute('tabindex', '-1');
+        await expect(component.getByRole('button', { name: /next year/i })).toHaveAttribute('tabindex', '-1');
+    });
+
+    test('should keep the next-month button enabled before maxMonth', async ({ mount }) => {
+        const component = await mount(
+            <DatePicker.Range
+                data-test-id={RANGE_TEST_ID}
+                selected={RANGE_SELECTION}
+                maxMonth={{ year: 2025, month: 4, day: 15 }}
+            />,
+        );
+        const nextMonthButton = component.getByRole('button', { name: /next month/i });
+        await expect(nextMonthButton).not.toHaveAttribute('aria-disabled', 'true');
+        await expect(nextMonthButton).not.toHaveAttribute('tabindex', '-1');
+        await nextMonthButton.click();
+        await expect(component.getByText('April 2025').filter({ visible: true })).toBeVisible();
+    });
+
+    test('should disable the previous-month button at minMonth', async ({ mount }) => {
+        const component = await mount(
+            <DatePicker.Range
+                data-test-id={RANGE_TEST_ID}
+                selected={RANGE_SELECTION}
+                minMonth={{ year: 2025, month: 3, day: 1 }}
+            />,
+        );
+        const previousMonthButton = component.getByRole('button', { name: /previous month/i });
+        await expect(previousMonthButton).toHaveAttribute('aria-disabled', 'true');
+        await previousMonthButton.click({ force: true });
+        await expect(component.getByText('March 2025').filter({ visible: true })).toBeVisible();
+        await expect(component.getByText('February 2025').filter({ visible: true })).toBeHidden();
+    });
 });

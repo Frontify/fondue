@@ -59,6 +59,11 @@
     padding-inline: sizeToken.get(1);
 }
 
+.toggleMonthButtonContainer button[aria-disabled='true'] {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 .previousMonthButtonContainer {
     inset-inline-start: 0;
 }
