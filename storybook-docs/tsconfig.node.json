@@ -5,10 +5,10 @@
         "baseUrl": ".",
         "composite": true,
         "lib": ["ESNext"],
-        "module": "ESNext",
-        "moduleResolution": "Node",
+        "module": "NodeNext",
+        "moduleResolution": "NodeNext",
         "resolveJsonModule": true,
         "target": "ESNext"
     },
-    "include": ["eslint.config.mjs", "package.json"]
+    "include": ["eslint.config.mjs", "scripts/**/*", "package.json"]
 }

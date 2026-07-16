@@ -3,85 +3,46 @@
 /**
  * Build-time data generation for @frontify/fondue-sdk.
  *
- * Reads the manifests exported by the upstream @frontify/fondue-* packages
- * and emits a single TypeScript module that vite will bundle. Icons are
- * synthesized into the components list here so the runtime API has only
- * one entity kind to deal with.
+ * The generators in scripts/generate/ read the manifests exported by the
+ * upstream @frontify/fondue-* packages, and this script emits the TypeScript
+ * modules that vite will bundle:
+ *
+ *   - src/__generated__/data.ts    — the full data snapshot
+ *   - src/__generated__/unions.ts  — literal unions derived from the data
+ *     (statuses, categories) so typos in filters fail at compile time.
+ *
+ * The whole snapshot is validated — the build fails on missing
+ * statuses/categories, dangling cross-references, or duplicate ids, so the
+ * runtime never has to.
  */
 
-import { mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
-import { createRequire } from 'node:module';
-import { basename, dirname, join } from 'node:path';
+import { mkdirSync, writeFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-interface ComponentIndexEntry {
-    name: string;
-    description: string;
-    status: string;
-    category: string;
-    tags: string[];
-    subComponentNames: string[];
-    manifestPath: string;
-}
+import { generateComponents } from './generate/components';
+import { generateGuides } from './generate/guides';
+import { generateTokens } from './generate/tokens';
 
-interface IconEntry {
-    name: string;
-    description: string;
-    componentName: string;
-    importStatement: string;
-    filled: boolean;
-    availableSizes: number[];
-    defaultSize: number;
-    tags: string[];
-    examples: unknown[];
-}
-
-const require = createRequire(import.meta.url);
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-const componentsIndex = require('@frontify/fondue-components/manifests/manifest') as {
-    components: Record<string, ComponentIndexEntry>;
-};
-const icons = require('@frontify/fondue-icons/manifest.json') as { icons: IconEntry[] };
-const tokens = require('@frontify/fondue-tokens/manifest.json') as { tokens: unknown[]; utilities?: unknown[] };
+const { components, realCount, iconCount, errors: componentErrors } = generateComponents();
+const { tokens, tokenUtilities, errors: tokenErrors } = generateTokens();
+const { guides, errors: guideErrors } = generateGuides();
 
-const realComponents = Object.values(componentsIndex.components).map((entry) => {
-    const stem = entry.manifestPath.replace(/\.json$/i, '');
-    const detail = require(`@frontify/fondue-components/manifests/${stem}`) as Record<string, unknown>;
-    return { ...detail, subComponentNames: entry.subComponentNames };
-});
+// ─── Validation ─────────────────────────────────────────────────────────────
+// Fail the build on inconsistent data so the runtime can rely on it.
 
-const iconComponents = icons.icons.map((icon) => ({
-    name: icon.componentName,
-    description: icon.description,
-    status: 'released',
-    category: 'icon',
-    tags: icon.tags,
-    subComponentNames: [],
-    relatedComponents: [],
-    importStatement: icon.importStatement,
-    instructions: '',
-    props: [],
-    subComponents: [],
-    examples: icon.examples,
-    typeDefinitions: {},
-}));
+const errors = [...componentErrors, ...tokenErrors, ...guideErrors];
+if (errors.length > 0) {
+    console.error(`✗ Data validation failed with ${errors.length} error(s):`);
+    for (const error of errors) {
+        console.error(`  - ${error}`);
+    }
+    process.exit(1);
+}
 
-const components = [...realComponents, ...iconComponents];
-
-const guidesDir = join(__dirname, '../guides');
-const titleFromMarkdown = (md: string, fallback: string): string => {
-    const match = /^#\s+(.+)$/m.exec(md);
-    return match ? match[1].trim() : fallback;
-};
-const guides = readdirSync(guidesDir)
-    .filter((file) => file.endsWith('.md'))
-    .sort()
-    .map((file) => {
-        const id = basename(file, '.md');
-        const content = readFileSync(join(guidesDir, file), 'utf8');
-        return { id, title: titleFromMarkdown(content, id), content };
-    });
+// ─── Emission ───────────────────────────────────────────────────────────────
 
 const stringify = (value: unknown): string => JSON.stringify(value, null, 4);
 
@@ -104,7 +65,7 @@ export const guides: readonly Guide[] = ${stringify(guides)};
 );
 
 console.log(
-    `✓ ${realComponents.length} components + ${iconComponents.length} icons, ` +
-        `${tokens.tokens.length} tokens, ${tokens.utilities?.length ?? 0} utilities, ` +
+    `✓ ${realCount} components + ${iconCount} icons, ` +
+        `${tokens.length} tokens, ${tokenUtilities.length} utilities, ` +
         `${guides.length} guides`,
 );
