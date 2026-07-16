@@ -58,13 +58,22 @@ describe('matchesKeyPathPrefix', () => {
         expect(matchesKeyPathPrefix(['colors'], '')).toBe(true);
     });
 
-    it('matches against the dot-joined keyPath', () => {
+    it('matches whole segments of the keyPath', () => {
         expect(matchesKeyPathPrefix(['colors', 'charts', 'primary'], 'colors.charts')).toBe(true);
         expect(matchesKeyPathPrefix(['colors', 'charts'], 'colors.charts')).toBe(true);
     });
 
     it('does not match when the prefix diverges', () => {
         expect(matchesKeyPathPrefix(['colors', 'charts'], 'colors.text')).toBe(false);
+    });
+
+    it('is segment-aware — a partial segment does not match', () => {
+        expect(matchesKeyPathPrefix(['colors', 'charts'], 'colors.chart')).toBe(false);
+        expect(matchesKeyPathPrefix(['colors', 'charts'], 'colo')).toBe(false);
+    });
+
+    it('does not match when the prefix is longer than the keyPath', () => {
+        expect(matchesKeyPathPrefix(['colors'], 'colors.charts')).toBe(false);
     });
 
     it('returns false for an empty keyPath when a real prefix is given', () => {

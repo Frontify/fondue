@@ -1,30 +1,27 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type TokenCategory } from '../__generated__/unions';
+
 /** The set of underlying primitive types a token value may have. */
 export type TokenValueType = 'color' | 'float' | 'shadow' | 'string';
-
-/**
- * How a token is consumed: 'variable' tokens are backed by a CSS custom property
- * (use `cssVariable`), 'value' tokens are inlined literals with no CSS variable
- * (e.g. breakpoints — use `value` directly).
- */
-export type TokenOutput = 'variable' | 'value';
 
 /** A single design token. Underlying raw data — what `TokenNode.toJSON()` returns. */
 export interface Token {
     /** Logical token id, e.g. "color-charts-primary-default". */
     readonly id: string;
-    readonly category: string;
+    readonly category: TokenCategory;
     readonly type: TokenValueType;
     /** Hierarchical path matching the source token tree, e.g. ["colors","charts","primary","default"]. */
     readonly keyPath: readonly string[];
     /** Raw token value (often a `var(--token)` reference or a literal). */
     readonly value: string;
-    /** How the token is consumed — via `cssVariable` or via the literal `value`. */
-    readonly output: TokenOutput;
-    /** Inline form of the css variable reference, e.g. "var(--color-charts-primary-default)". Null for 'value'-output tokens. */
+    /** Inline form of the css variable reference, e.g. "var(--color-charts-primary-default)". Null for tokens that are inlined literals with no CSS variable (e.g. breakpoints) — use `value` directly for those. */
     readonly cssVariable: string | null;
-    /** Tailwind utility class that produces this token, when applicable. */
+    /**
+     * Tailwind utility class that produces this token. Always present. A leading
+     * `*` is a placeholder for the utility prefix — `"*-charts-dim"` means the
+     * token is reachable as `bg-charts-dim`, `text-charts-dim`, `border-charts-dim`, ….
+     */
     readonly tailwindClass: string;
     /** Whether the token participates in theme switching. */
     readonly themeable: boolean;
@@ -49,7 +46,7 @@ export interface TokenUtilityProperty {
 
 /** Filter options for `tokens.where(...)`. All clauses are AND-combined. */
 export interface TokenFilter {
-    category?: string | readonly string[];
+    category?: TokenCategory | readonly TokenCategory[];
     type?: TokenValueType | readonly TokenValueType[];
     themeable?: boolean;
     /** Match against the start of the dot-joined keyPath, e.g. "colors.charts". */
@@ -71,7 +68,6 @@ export interface TokenUtilityFilter {
 export interface TokenNode {
     readonly id: string;
     readonly value: string;
-    readonly output: TokenOutput;
     readonly cssVariable: string | null;
     readonly tailwindClass: string;
     readonly themeable: boolean;

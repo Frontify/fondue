@@ -2,6 +2,7 @@
 
 import { describe, expect, it } from 'vitest';
 
+import { type TokenCategory } from '../__generated__/unions';
 import { type Token, type TokenUtility } from '../types/tokens';
 
 import { buildTokensApi } from './tokens';
@@ -12,7 +13,6 @@ const makeToken = (overrides: Partial<Token> = {}): Token => ({
     type: 'color',
     keyPath: ['colors', 'charts', 'primary', 'default'],
     value: 'var(--color-charts-primary-default)',
-    output: 'variable',
     cssVariable: 'var(--color-charts-primary-default)',
     tailwindClass: 'bg-charts-primary',
     themeable: true,
@@ -47,7 +47,7 @@ const tokens: readonly Token[] = [
     }),
     makeToken({
         id: 'spacing-md',
-        category: 'spacing',
+        category: 'semantic',
         type: 'float',
         keyPath: ['spacing', 'md'],
         tailwindClass: 'p-md',
@@ -55,7 +55,7 @@ const tokens: readonly Token[] = [
     }),
     makeToken({
         id: 'shadow-elevation-1',
-        category: 'shadows',
+        category: 'semantic',
         type: 'shadow',
         keyPath: ['shadows', 'elevation', '1'],
         tailwindClass: 'shadow-1',
@@ -125,8 +125,8 @@ describe('buildTokensApi', () => {
             ]);
         });
 
-        it('filters by multiple categories', () => {
-            expect(api.where({ category: ['spacing', 'shadows'] }).map((t) => t.id)).toEqual([
+        it('filters by an array of categories (OR within the clause)', () => {
+            expect(api.where({ category: ['semantic'] }).map((t) => t.id)).toEqual([
                 'spacing-md',
                 'shadow-elevation-1',
             ]);
@@ -202,7 +202,7 @@ describe('buildTokensApi', () => {
             expect(node?.toJSON()).toEqual(
                 expect.objectContaining({
                     id: 'spacing-md',
-                    category: 'spacing',
+                    category: 'semantic',
                     type: 'float',
                 }),
             );
@@ -213,12 +213,12 @@ describe('buildTokensApi', () => {
         const api = buildTokensApi(tokens, utilities);
 
         it('categories() returns facets sorted by name', () => {
-            expect(api.categories().map((c) => c.name)).toEqual(['colors', 'shadows', 'spacing']);
+            expect(api.categories().map((c) => c.name)).toEqual(['colors', 'semantic']);
         });
 
         it('category() returns a single facet by name', () => {
             expect(api.category('colors')?.size).toBe(2);
-            expect(api.category('unknown')).toBeUndefined();
+            expect(api.category('unknown' as TokenCategory)).toBeUndefined();
         });
 
         it('types() returns facets sorted by name', () => {

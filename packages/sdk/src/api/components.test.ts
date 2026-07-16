@@ -2,20 +2,20 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { type ComponentDetails } from '../types/components';
+import { type ComponentDetails, type ComponentNode } from '../types/components';
 
 import { buildComponentsApi } from './components';
 
 const makeComponent = (overrides: Partial<ComponentDetails> = {}): ComponentDetails => ({
+    id: overrides.name ?? 'Sample',
     name: 'Sample',
     description: 'A sample component.',
     status: 'released',
     category: 'input',
     tags: ['form'],
-    subComponentNames: [],
     relatedComponents: [],
     importStatement: "import { Sample } from '@frontify/fondue/components';",
-    instructions: '',
+    instructions: null,
     props: [],
     subComponents: [],
     examples: [],
@@ -52,7 +52,7 @@ const fixtures: readonly ComponentDetails[] = [
         name: 'CalendarIcon',
         description: 'A calendar glyph.',
         category: 'icon',
-        status: 'experimental',
+        status: 'beta',
         tags: ['icon', 'date'],
         relatedComponents: [],
     }),
@@ -72,6 +72,10 @@ describe('buildComponentsApi', () => {
 
         it('gets a component by name', () => {
             expect(api.get('Button')?.name).toBe('Button');
+        });
+
+        it('exposes id, identical to name', () => {
+            expect(api.get('Button')?.id).toBe('Button');
         });
 
         it('returns undefined for unknown names', () => {
@@ -100,7 +104,7 @@ describe('buildComponentsApi', () => {
         });
 
         it('filters by status', () => {
-            expect(api.where({ status: 'experimental' }).map((n) => n.name)).toEqual(['CalendarIcon']);
+            expect(api.where({ status: 'beta' }).map((n) => n.name)).toEqual(['CalendarIcon']);
         });
 
         it('filters by tag — matches when any tag overlaps', () => {
@@ -118,7 +122,7 @@ describe('buildComponentsApi', () => {
         });
 
         it('returns no matches when clauses cannot be satisfied together', () => {
-            expect(api.where({ category: 'input', status: 'experimental' })).toEqual([]);
+            expect(api.where({ category: 'input', status: 'beta' })).toEqual([]);
         });
 
         it('returns all components for an empty filter', () => {
@@ -138,7 +142,7 @@ describe('buildComponentsApi', () => {
 
         it('exposes status as a string property', () => {
             expect(api.get('Button')?.status).toBe('released');
-            expect(api.get('CalendarIcon')?.status).toBe('experimental');
+            expect(api.get('CalendarIcon')?.status).toBe('beta');
         });
 
         it('resolves tags() to facet nodes, in raw order', () => {
@@ -167,7 +171,21 @@ describe('buildComponentsApi', () => {
 
         it('category() returns a single facet by name', () => {
             expect(api.category('input')?.size).toBe(2);
-            expect(api.category('missing')).toBeUndefined();
+            expect(api.category('overlay')).toBeUndefined();
+        });
+
+        it('statuses() returns all statuses sorted by name', () => {
+            expect(api.statuses().map((s) => s.name)).toEqual(['beta', 'released']);
+        });
+
+        it('status() returns a single facet scoped to its members', () => {
+            expect(
+                api
+                    .status('released')
+                    ?.list()
+                    .map((n) => n.name),
+            ).toEqual(['Button', 'SplitButton', 'Link']);
+            expect(api.status('beta')?.size).toBe(1);
         });
 
         it('tags() returns all tags sorted by name', () => {
@@ -184,6 +202,22 @@ describe('buildComponentsApi', () => {
             expect(inputCategory?.where({ tag: 'action' }).map((n) => n.name)).toEqual(['Button']);
             // Link is in 'navigation', so the inputs facet should not see it.
             expect(inputCategory?.has('Link')).toBe(false);
+        });
+    });
+
+    describe('immutability', () => {
+        const api = buildComponentsApi(fixtures);
+
+        it('freezes the collections returned by list()', () => {
+            expect(Object.isFrozen(api.list())).toBe(true);
+            expect(() => (api.list() as ComponentNode[]).push({} as ComponentNode)).toThrow();
+        });
+
+        it('freezes nodes and their raw data', () => {
+            const button = api.get('Button');
+            expect(Object.isFrozen(button)).toBe(true);
+            expect(Object.isFrozen(button?.toJSON())).toBe(true);
+            expect(Object.isFrozen(button?.toJSON().tags)).toBe(true);
         });
     });
 

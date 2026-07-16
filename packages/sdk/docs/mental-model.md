@@ -50,11 +50,12 @@ A `ComponentNode` looks like:
 ```ts
 interface ComponentNode {
     // Scalars
+    readonly id: string; // canonical id — every entity type carries one; equals `name` for components
     readonly name: string;
     readonly description: string;
-    readonly status: string;
+    readonly status: ComponentStatus; // 'beta' | 'released'
     readonly importStatement: string;
-    readonly instructions: string;
+    readonly instructions: string | null;
     readonly props: readonly ComponentProp[];
     readonly subComponents: readonly ComponentSubComponent[];
     readonly examples: readonly ComponentExample[];
@@ -72,6 +73,15 @@ interface ComponentNode {
 
 A `TokenNode` is analogous: `category()`, `type()`, and scalar fields like
 `value`, `cssVariable`, `tailwindClass`.
+
+**Node vs. `toJSON()` — a deliberate asymmetry.** Attributes that are graph
+edges exist on the node **only as methods** (`category()`, `tags()`,
+`related()`), while the raw payload behind `toJSON()` carries them as plain
+strings (`category`, `tags`, `relatedComponents`). So to read a category
+_name_ off a node, go through the edge — `node.category().name` — or drop
+to the raw record with `node.toJSON().category`. `JSON.stringify(node)`
+serializes the raw record, which is why the JSON output has string fields
+the typed node surface doesn't.
 
 ### 3. Plain arrays
 
@@ -91,7 +101,7 @@ button.subComponents.flatMap((sc) => sc.props);
 | You can call query methods on… | Returned by                                                                                                                  |
 | ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
 | The domain itself              | `components`, `tokens`, `tokens.utilities`                                                                                   |
-| A single facet by name         | `components.category(name)`, `components.tag(name)`, `tokens.category(name)`, `tokens.type(name)`                            |
+| A single facet by name         | `components.category(name)`, `components.status(name)`, `components.tag(name)`, `tokens.category(name)`, `tokens.type(name)` |
 | A facet from a node            | `node.category()`, `node.type()`                                                                                             |
 
 All of these work:
@@ -132,17 +142,17 @@ navigate to a single facet — e.g. `array[0].category()` or
 Icons are surfaced inside the components domain rather than as their own
 top-level export. Each icon is a `ComponentNode` with:
 
-| Field             | Value                                                                   |
-| ----------------- | ----------------------------------------------------------------------- |
-| `name`            | The React component name (`'IconAdobeCreativeCloud'`)                   |
-| `category()`      | The synthetic `'icon'` facet                                            |
-| `status()`        | Throws — icons have no status; check `category().name === 'icon'` first |
-| `tags()`          | The icon's tags as `ComponentFacetNode`s                                |
-| `importStatement` | `"import { IconAdobeCreativeCloud } from '@frontify/fondue/icons';"`    |
-| `examples`        | Icon stories                                                            |
-| `props`           | Empty array                                                             |
-| `subComponents`   | Empty array                                                             |
-| `related()`       | Empty array                                                             |
+| Field             | Value                                                                |
+| ----------------- | -------------------------------------------------------------------- |
+| `name`            | The React component name (`'IconAdobeCreativeCloud'`)                |
+| `category()`      | The synthetic `'icon'` facet                                         |
+| `status`          | `'released'` — bundled icons ship as released                        |
+| `tags()`          | The icon's tags as `ComponentFacetNode`s                             |
+| `importStatement` | `"import { IconAdobeCreativeCloud } from '@frontify/fondue/icons';"` |
+| `examples`        | Icon stories                                                         |
+| `props`           | Empty array                                                          |
+| `subComponents`   | Empty array                                                          |
+| `related()`       | Empty array                                                          |
 
 To find icons:
 
@@ -172,7 +182,9 @@ what humans see.
 ## Construction & lifetime
 
 The three singletons (`components`, `tokens`, `guides`) are built once at
-module load from bundled JSON. They are immutable and process-lifetime.
+module load from bundled JSON. They are immutable and process-lifetime —
+nodes, raw payloads, and the arrays returned by `list()` are deeply frozen,
+so accidental mutation throws instead of corrupting shared state.
 No I/O is performed; nothing is async.
 
 `list()` returns a cached array (O(1)). `get`/`has` are O(1) map lookups.

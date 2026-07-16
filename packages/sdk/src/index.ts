@@ -37,6 +37,7 @@ export const guides = buildGuidesApi(rawGuides);
 
 // ─── Public types ───────────────────────────────────────────────────────────
 
+export type { ComponentCategory, ComponentStatus, TokenCategory } from './__generated__/unions';
 export type {
     ComponentExample,
     ComponentFacetNode,
