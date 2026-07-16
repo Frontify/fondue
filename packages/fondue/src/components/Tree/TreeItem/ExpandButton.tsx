@@ -5,11 +5,17 @@ import { type ButtonHTMLAttributes, type DetailedHTMLProps } from 'react';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export type ExpandButtonProps = DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement> & {
     expanded?: boolean;
     active?: boolean;
 };
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export const ExpandButton = ({ active, onClick, expanded, disabled, className, ...otherProps }: ExpandButtonProps) => {
     return (
         <button

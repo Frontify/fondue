@@ -7,18 +7,30 @@ import { type InternalTreeItemProps } from '../TreeItem';
 
 import { getReactNodeIdsInFlatArray, getReactNodesInFlatArray, removeReactNodesFromFlatArray } from './nodes';
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export const shouldUpdateTreeState = (event: globalThis.KeyboardEvent, multiselect: boolean) => {
     return multiselect && (event.key === 'Meta' || event.ctrlKey);
 };
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export const findIndexById = (nodes: ReactElement<InternalTreeItemProps>[], id: string) => {
     return nodes.findIndex((node) => node.props.id === id);
 };
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export const getNodeChildrenIds = (nodes: ReactElement<InternalTreeItemProps>[], id: string) => {
     return nodes.filter((node) => node.props.parentId === id).map((node) => node.props.id);
 };
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export const updateNodeWithNewChildren = (
     nodes: ReactElement<InternalTreeItemProps>[],
     parentId: string,
@@ -34,6 +46,9 @@ export const updateNodeWithNewChildren = (
     return [...cleanNodes.slice(0, parentIndex + 1), ...children, ...cleanNodes.slice(parentIndex + 1)];
 };
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export const getCurrentChildrenForNewNodesIfExpanded = (
     currentNodes: ReactElement[],
     expandedIds: Set<string>,
@@ -55,6 +70,9 @@ export const getCurrentChildrenForNewNodesIfExpanded = (
     return updatedTreeNode;
 };
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export const currentNodesChanged = (
     currentChildrenIds: string[],
     currentNodes: ReactElement<InternalTreeItemProps>[],

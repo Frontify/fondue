@@ -33,6 +33,8 @@ type EnrichedProps = {
  * const flattenedAndEnriched = flattenAndEnrichChildren(children, enrichedProps);
  *
  * @returns {ReactElement[]} Array with the three child elements from the example, each with the `parentId` and `level` props added.
+ *
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
  */
 export const removeFragmentsAndEnrichChildren = (children?: ReactNode, enrichedProps?: EnrichedProps) => {
     const result: ReactElement[] = [];
@@ -50,6 +52,9 @@ export const removeFragmentsAndEnrichChildren = (children?: ReactNode, enrichedP
     return result.filter(Boolean);
 };
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export const recursivelyRemoveFragmentsAndEnrichChildren = (
     children?: ReactNode,
     enrichedProps?: EnrichedProps,
