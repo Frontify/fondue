@@ -35,8 +35,12 @@ guessing component names, props, or tokens. Install it with the
 npx skills add frontify/fondue/packages/sdk
 ```
 
-The skill queries the Fondue version installed in your project, so it
-never goes stale — no reinstall needed when you upgrade Fondue.
+The skill queries the Fondue version installed in your project, so its
+answers always reflect the exact version you depend on. The skill's own
+instructions, however, are a snapshot of the SDK's query API at install
+time — as Fondue progresses they can fall behind (or describe APIs your
+older Fondue doesn't have yet). The skill states which version it was
+authored against; re-run the install command above to refresh it.
 
 ## 30-second tour
 

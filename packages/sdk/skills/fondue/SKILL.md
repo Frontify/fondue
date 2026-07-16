@@ -10,6 +10,8 @@ Use `@frontify/fondue/sdk` as the source of truth for every Fondue question. Nev
 
 **Runs against the project's locally installed Fondue.** Invoke `node` from the project root (or a subdirectory) so `@frontify/fondue` resolves from `node_modules` — results reflect the exact version this project depends on, not the version the skill was authored against.
 
+> Authored against `@frontify/fondue@13.7.2`. If the project's installed version differs, this document may be out of sync — trust what the SDK actually returns over anything written here.
+
 ## Verify the SDK is available
 
 ```bash
