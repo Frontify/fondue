@@ -1,10 +1,10 @@
 ---
-'@frontify/fondue-sdk': major
+'@frontify/fondue-sdk': minor
 '@frontify/fondue-components': patch
 '@frontify/fondue': patch
 ---
 
-Fondue SDK 1.0 — freeze the public contract:
+Harden the Fondue SDK contract ahead of the 1.0 release (still prerelease, 0.x):
 
 - **Component `status` is now always set.** The manifest parser understands `const meta = { … } satisfies Meta<…>` story files, the six components whose stories weren't wired up (`LoadingBar`, `LoadingCircle`, `RouterProvider`, `Section`, `Text`, `ThemeProvider`) now expose their Storybook status, and icons are bundled as `'released'`.
 - **Data-derived literal unions.** `status`, `category`, and token `category` are typed as `ComponentStatus`, `ComponentCategory`, and `TokenCategory` (exported), so a typo in a filter fails at compile time instead of silently matching nothing.

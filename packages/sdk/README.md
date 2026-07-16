@@ -57,13 +57,13 @@ guides.get('getting-started')?.content; // raw markdown body
 
 ## What's in the bundle
 
-| Domain          | Notes                                                                            |
-| --------------- | -------------------------------------------------------------------------------- |
-| Components      | All Fondue library components, with props, sub-components, examples              |
-| Icons           | Surfaced inside the components graph under `category: 'icon'`                    |
-| Tokens          | Design tokens with their key path, css variable, tailwind class                  |
-| Token utilities | Composed utilities (typography classes etc.) under `tokens.utilities`            |
-| Guides          | Prose guides as raw markdown — the same source the Storybook docs site uses      |
+| Domain          | Notes                                                                       |
+| --------------- | --------------------------------------------------------------------------- |
+| Components      | All Fondue library components, with props, sub-components, examples         |
+| Icons           | Surfaced inside the components graph under `category: 'icon'`               |
+| Tokens          | Design tokens with their key path, css variable, tailwind class             |
+| Token utilities | Composed utilities (typography classes etc.) under `tokens.utilities`       |
+| Guides          | Prose guides as raw markdown — the same source the Storybook docs site uses |
 
 Token coverage is **deliberately curated**: the `colors` category carries
 the consumable color tokens, and `semantic` carries spacing, border-radius,
