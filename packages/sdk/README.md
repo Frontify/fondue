@@ -24,6 +24,24 @@ No peer dependencies, no extra installs. Each release pins a specific
 snapshot of the Fondue data; upgrade the package to pick up newer
 components, icons, or tokens.
 
+### Agent skill
+
+The package ships an [agent skill](./skills/fondue/SKILL.md) that teaches
+coding agents (Claude Code, Cursor, Codex, …) to query the SDK instead of
+guessing component names, props, or tokens. Install it with the
+[skills CLI](https://github.com/vercel-labs/skills):
+
+```sh
+npx skills add frontify/fondue/packages/sdk
+```
+
+The skill queries the Fondue version installed in your project, so its
+answers always reflect the exact version you depend on. The skill's own
+instructions, however, are a snapshot of the SDK's query API at install
+time — as Fondue progresses they can fall behind (or describe APIs your
+older Fondue doesn't have yet). The skill states which version it was
+authored against; re-run the install command above to refresh it.
+
 ## 30-second tour
 
 ```ts
