@@ -51,6 +51,7 @@
         "HelperPosition",
         "INDENTATION_WIDTH",
         "ImageAsset",
+        "InputLabelProps",
         "InternalTreeItemMultiSelectProps",
         "InternalTreeItemProps",
         "Item",
@@ -79,6 +80,7 @@
         "Palette",
         "PatternDesign",
         "PatternScale",
+        "PatternScaleOrigin",
         "PatternTheme",
         "Projection",
         "ProjectionArgs",
@@ -148,6 +150,7 @@
         "getSelectedChildrenItems",
         "getSelectedTreeItem",
         "getTreeNodesWithoutElements",
+        "getVerticalPositioning",
         "handleKeyDownEvent",
         "removePartialFlagSelectedId",
         "removeReactNodesFromFlatArray",
@@ -161,14 +164,5 @@
         "useMobileDetection",
         "useTreeItem"
     ],
-    "active": [
-        "CollapsibleWrap",
-        "FilterableMultiSelect",
-        "InputLabelProps",
-        "LegacyTextarea",
-        "MultiSelect",
-        "OrderableList",
-        "PatternScaleOrigin",
-        "getVerticalPositioning"
-    ]
+    "active": []
 }
