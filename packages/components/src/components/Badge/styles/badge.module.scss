@@ -34,6 +34,7 @@
 
 .root {
     font-size: var(--typography-font-size-small);
+    font-weight: var(--typography-font-weight-regular);
     line-height: var(--typography-line-height-tight);
     padding-block: var(--spacing-xx-small);
     padding-inline: var(--spacing-x-small);
@@ -114,26 +115,26 @@
         color: CanvasText !important;
 
         // Use different border styles to distinguish variants
-        &[data-variant="default"] {
+        &[data-variant='default'] {
             border-style: solid;
         }
 
-        &[data-variant="positive"] {
+        &[data-variant='positive'] {
             border-style: solid;
             border-color: LinkText;
         }
 
-        &[data-variant="highlight"] {
+        &[data-variant='highlight'] {
             border-style: double;
             border-color: Highlight;
         }
 
-        &[data-variant="warning"] {
+        &[data-variant='warning'] {
             border-style: dashed;
             border-color: CanvasText;
         }
 
-        &[data-variant="negative"] {
+        &[data-variant='negative'] {
             border-style: solid;
             border-width: 3px;
             border-color: CanvasText;
@@ -146,7 +147,7 @@
             border-color: HighlightText;
         }
 
-        &[data-disabled="true"] {
+        &[data-disabled='true'] {
             border-color: GrayText;
             border-style: solid;
             color: GrayText !important;
