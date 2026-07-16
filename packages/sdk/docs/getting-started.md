@@ -126,4 +126,3 @@ or grep across the corpus.
   a plain array. Read this once and the rest of the API clicks.
 - [API reference](./api-reference.md) — every method and type.
 - [Recipes](./recipes.md) — copy-paste snippets for real tasks.
-- [Adapters](./adapters.md) — MCP servers, CLI tools, LLM context.
