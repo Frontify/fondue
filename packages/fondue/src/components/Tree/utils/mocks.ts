@@ -4,6 +4,9 @@ import { useEffect, useState } from 'react';
 
 import { type TreeItemMultiselectProps, type TreeItemProps } from '../types';
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export type TreeItemMock = TreeItemMultiselectProps &
     TreeItemProps & {
         id: string;
@@ -11,6 +14,9 @@ export type TreeItemMock = TreeItemMultiselectProps &
         numChildNodes?: number;
     };
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export type TreeItemMockMultiselect = TreeItemMultiselectProps & {
     id: string;
     nodes?: TreeItemMockMultiselect[];
@@ -109,6 +115,9 @@ const testGroupMock: TreeItemMock[] = [
     },
 ];
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export const treeItemsMock: TreeItemMock[] = [
     {
         id: '1',
@@ -139,6 +148,9 @@ export const treeItemsMock: TreeItemMock[] = [
     },
 ];
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export const treeItemsMockMultiseclect: TreeItemMockMultiselect[] = [
     {
         id: '1',
@@ -176,6 +188,9 @@ const reducer = (nodes: TreeItemMock[], expandedIds: string[] = []): TreeItemMoc
     });
 };
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export const useDynamicNavigationMock = (expandedIds: string[]) => {
     const [nodes, setNodes] = useState<TreeItemMock[]>([]);
 
@@ -188,6 +203,9 @@ export const useDynamicNavigationMock = (expandedIds: string[]) => {
     return [nodes, setNodes];
 };
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export const useNavigationWithLazyLoadedItemsMock = (id?: string, isExpanded = false, isRoot = false) => {
     const [nodes, setNodes] = useState<TreeItemMock[]>([]);
 

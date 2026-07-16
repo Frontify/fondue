@@ -15,6 +15,9 @@ const directions: string[] = [KeyboardCode.Down, KeyboardCode.Right, KeyboardCod
 
 const horizontal: string[] = [KeyboardCode.Left, KeyboardCode.Right];
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export const sortableTreeKeyboardCoordinates: (context: SensorContext) => KeyboardCoordinateGetter =
     (context) =>
     (event, { currentCoordinates, context: { active, over, collisionRect, droppableRects, droppableContainers } }) => {
