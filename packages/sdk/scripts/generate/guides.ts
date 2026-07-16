@@ -3,9 +3,9 @@
 /**
  * Loads the markdown guides bundled with the SDK from packages/sdk/guides,
  * including nested directories. The id is the path relative to the guides dir
- * without the `.md` extension; the title is the same slug with dashes replaced
- * by spaces and the first letter uppercased, e.g. guides/getting-started/installation.md →
- * id "getting-started/installation", title "Getting started/installation".
+ * without the `.md` extension, e.g. guides/getting-started/installation.md →
+ * id "getting-started/installation". The title is extracted from the first
+ * `# Title` line of the markdown, falling back to the id.
  */
 
 import { readFileSync, readdirSync } from 'node:fs';
@@ -22,6 +22,11 @@ export interface SdkGuide {
 
 const guidesDir = join(dirname(fileURLToPath(import.meta.url)), '../../guides');
 
+const titleFromMarkdown = (md: string, fallback: string): string => {
+    const match = /^#\s+(.+)$/m.exec(md);
+    return match ? match[1].trim() : fallback;
+};
+
 export interface GeneratedGuides {
     guides: SdkGuide[];
     errors: string[];
@@ -33,9 +38,8 @@ export const generateGuides = (): GeneratedGuides => {
         .sort()
         .map((file): SdkGuide => {
             const slug = file.split(sep).join('/').replace(/\.md$/, '');
-            const title = slug.replaceAll('-', ' ').replace(/^./, (char) => char.toUpperCase());
             const content = readFileSync(join(guidesDir, file), 'utf8');
-            return { id: slug, title, content };
+            return { id: slug, title: titleFromMarkdown(content, slug), content };
         });
 
     return {

@@ -51,7 +51,7 @@ import { components, guides, tokens } from '@frontify/fondue/sdk';
 const button = components.get('Button');
 
 // Read scalar data
-button?.props.length; // 14
+button?.props.length; // 15
 button?.examples.find((e) => e.isCanonical)?.code; // "<Button …>…"
 
 // Walk the graph
@@ -60,6 +60,7 @@ button?.related().map((c) => c.name); // ['SplitButton', 'Link']
 
 // Query
 components.where({ category: 'input', status: 'released' });
+components.status('beta')?.list();
 components.tag('cta')?.list();
 tokens.where({ category: 'colors', themeable: true });
 
@@ -81,6 +82,13 @@ guides.get('getting-started')?.content; // raw markdown body
 | Tokens          | Design tokens with their key path, css variable, tailwind class             |
 | Token utilities | Composed utilities (typography classes etc.) under `tokens.utilities`       |
 | Guides          | Prose guides as raw markdown — the same source the Storybook docs site uses |
+
+Token coverage is **deliberately curated**: the `colors` category carries
+the consumable color tokens, and `semantic` carries spacing, border-radius,
+border-width, shadows, breakpoints, and typography primitives. Raw color
+scales (e.g. `--color-error-40`) and other internal foundations are not
+exposed — compose from the semantic tokens instead. Typography is consumed
+through `tokens.utilities` classes rather than raw font tokens.
 
 Live counts and a browsable catalog are rendered server-side from this
 package in the Fondue Storybook under
@@ -123,11 +131,16 @@ See [Mental model](./docs/mental-model.md) for the full picture and
 ## Runtime
 
 - Pure Node API; no React, no DOM, no peer dependencies.
-- Node 18+, ESM only.
+- Node 20+, ESM only.
 - Synchronous — all data is bundled at build time.
 
 ## Versioning
 
-The umbrella package version is the contract version. Patch / minor releases
-add fields, new methods, and refreshed bundled data. Major releases are
-required for any rename or removal in the public surface.
+The **`@frontify/fondue-sdk` version is the contract version** and follows
+semver: patch / minor releases add fields, new methods, and refreshed
+bundled data; major releases are required for any rename or removal in the
+public surface. The `@frontify/fondue` umbrella pins an exact SDK version
+and re-exports it at `@frontify/fondue/sdk` — the umbrella import is the
+canonical path for application code, while installing `@frontify/fondue-sdk`
+directly is supported for dependency-free tooling (MCP servers, CLIs) that
+doesn't want the React packages.

@@ -26,14 +26,14 @@ export const makeFacet = <TName extends string, TNode, TFilter>(
     const memberSet = new Set(memberIds);
     const list = (): readonly TNode[] => memberIds.map(resolveNode).filter((n): n is TNode => n !== undefined);
 
-    return {
+    return Object.freeze({
         name,
         list,
-        get: (id) => (memberSet.has(id) ? resolveNode(id) : undefined),
-        has: (id) => memberSet.has(id),
-        where: (filter) => list().filter((node) => matchesFilter(node, filter)),
+        get: (id: string) => (memberSet.has(id) ? resolveNode(id) : undefined),
+        has: (id: string) => memberSet.has(id),
+        where: (filter: TFilter) => list().filter((node) => matchesFilter(node, filter)),
         get size() {
             return memberIds.length;
         },
-    };
+    });
 };

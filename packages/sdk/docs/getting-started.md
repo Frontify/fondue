@@ -15,10 +15,10 @@ internally.
 import { components, tokens } from '@frontify/fondue/sdk';
 
 console.log(`${components.size} components, ${tokens.size} tokens`);
-// → 419 components, 113 tokens
+// → 421 components, 128 tokens
 ```
 
-That count of 419 is 38 library components + 381 icons. Icons live in the
+That count of 421 is 40 library components + 381 icons. Icons live in the
 **components** graph under `category: 'icon'`. See
 [Mental model](./mental-model.md#icons-as-components) for why.
 
@@ -30,7 +30,7 @@ const button = components.get('Button');
 button?.name; // 'Button'
 button?.description; // 'A clickable action element for…'
 button?.importStatement; // "import { Button } from '@frontify/fondue/components';"
-button?.props.length; // 14
+button?.props.length; // 15
 ```
 
 `get` returns `undefined` for unknown ids — it never throws. The `?.`
@@ -41,7 +41,7 @@ operator is a comfortable fit.
 ```ts
 components.where({ category: 'input' });
 components.where({ category: 'input', tag: 'cta' });
-components.where({ text: 'dropdown' }); // fuzzy match
+components.where({ text: 'dropdown' }); // case-insensitive substring match
 ```
 
 All clauses are **AND-combined**. Array-valued clauses are **OR within the

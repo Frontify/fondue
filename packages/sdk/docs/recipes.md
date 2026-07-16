@@ -53,7 +53,7 @@ for (const cat of components.categories()) {
 // → data: 2
 //   feedback: 5
 //   icon: 381
-//   input: 13
+//   input: 14
 //   layout: 7
 //   …
 ```
@@ -308,18 +308,30 @@ const manifest = components.list().map((c) => ({
 ```ts
 const byStatus: Record<string, string[]> = {};
 for (const c of components.list()) {
-    const status = c.category().name === 'icon' ? 'icon' : c.status || 'unknown';
-    (byStatus[status] ??= []).push(c.name);
+    (byStatus[c.status] ??= []).push(c.name);
 }
 ```
 
-(Icons carry an empty `status` — guard with a category check or fallback.)
+Or lean on the status facets directly:
+
+```ts
+for (const status of components.statuses()) {
+    console.log(`${status.name}: ${status.size}`);
+}
+// → beta: 2
+//   released: 419
+```
+
+(Icons are bundled as `'released'` — exclude them with
+`components.status('released')?.where({ category: [...] })` or a
+`category().name !== 'icon'` check if you only want library components.)
 
 ### "Iterate every facet of every kind"
 
 ```ts
 const facetGroups = [
     { kind: 'category', facets: components.categories() },
+    { kind: 'status', facets: components.statuses() },
     { kind: 'tag', facets: components.tags() },
 ];
 

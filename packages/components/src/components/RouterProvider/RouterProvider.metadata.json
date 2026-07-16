@@ -4,6 +4,8 @@
     "instructions": "Place RouterProvider near the root of your app, inside ThemeProvider. Provide navigate (a function that pushes a path to the router) and useHref (a function that resolves a path to a full URL). Without RouterProvider, Link components use standard anchor navigation.",
     "name": "RouterProvider",
     "relatedComponents": ["ThemeProvider"],
-    "storyFilePaths": [],
+    "storyFilePaths": [
+        "src/components/RouterProvider/RouterProvider.stories.tsx"
+    ],
     "tags": ["router", "navigation", "provider"]
 }

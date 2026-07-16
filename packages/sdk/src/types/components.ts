@@ -1,5 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type ComponentCategory, type ComponentStatus } from '../__generated__/unions';
+
 /** A documented prop on a Fondue component. */
 export interface ComponentProp {
     readonly name: string;
@@ -8,7 +10,8 @@ export interface ComponentProp {
     readonly defaultValue: string | null;
     readonly description: string;
     readonly deprecated: boolean;
-    readonly deprecationMessage: string;
+    /** Migration guidance for deprecated props. Null when the prop is not deprecated. */
+    readonly deprecationMessage: string | null;
 }
 
 /** A sub-component (e.g. `Dialog.Header`) and its prop surface. */
@@ -28,15 +31,17 @@ export interface ComponentExample {
 
 /** Underlying raw data for a component — what `ComponentNode.toJSON()` returns. */
 export interface ComponentDetails {
+    /** Canonical id — identical to `name` for components. Every SDK entity carries an `id`. */
+    readonly id: string;
     readonly name: string;
     readonly description: string;
-    readonly status: string;
-    readonly category: string;
+    readonly status: ComponentStatus;
+    readonly category: ComponentCategory;
     readonly tags: readonly string[];
-    readonly subComponentNames: readonly string[];
     readonly relatedComponents: readonly string[];
     readonly importStatement: string;
-    readonly instructions: string;
+    /** Usage guidance for the component. Null when none is documented. */
+    readonly instructions: string | null;
     readonly props: readonly ComponentProp[];
     readonly subComponents: readonly ComponentSubComponent[];
     readonly examples: readonly ComponentExample[];
@@ -46,9 +51,9 @@ export interface ComponentDetails {
 /** Filter options for `components.where(...)`. All clauses are AND-combined. */
 export interface ComponentFilter {
     /** Only include components whose category equals one of the given values. */
-    category?: string | readonly string[];
+    category?: ComponentCategory | readonly ComponentCategory[];
     /** Only include components whose status equals one of the given values. */
-    status?: string | readonly string[];
+    status?: ComponentStatus | readonly ComponentStatus[];
     /** Only include components carrying at least one of the given tags. */
     tag?: string | readonly string[];
     /** Free-text match against name, description, tags, and category (case-insensitive). */
@@ -59,11 +64,14 @@ export interface ComponentFilter {
 
 /** A Fondue component. Scalar fields are the data; methods walk the graph. */
 export interface ComponentNode {
+    /** Canonical id — identical to `name` for components. Every SDK entity carries an `id`. */
+    readonly id: string;
     readonly name: string;
     readonly description: string;
-    readonly status: string;
+    readonly status: ComponentStatus;
     readonly importStatement: string;
-    readonly instructions: string;
+    /** Usage guidance for the component. Null when none is documented. */
+    readonly instructions: string | null;
     readonly props: readonly ComponentProp[];
     readonly subComponents: readonly ComponentSubComponent[];
     readonly examples: readonly ComponentExample[];

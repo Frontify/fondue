@@ -4,6 +4,6 @@
     "instructions": "Use the as prop to control the HTML element (span by default, also p, li, label, etc.). Use size (x-small to large) and weight (default, strong, x-strong) to set typography. Use color for semantic text colors. Use boxColor when the text appears inside a colored container and needs a contextual color. Use Heading for h1–h6 heading elements.",
     "name": "Text",
     "relatedComponents": ["Heading", "Label"],
-    "storyFilePaths": [],
+    "storyFilePaths": ["src/components/Text/Text.stories.ts"],
     "tags": ["text", "paragraph", "typography"]
 }
