@@ -146,7 +146,7 @@ EOF
 
 **Recommendation shape** — when you suggest a component, output: the name, what it's for, the import statement, and the canonical example. If the use case isn't a clean match, list 2–3 candidates with their categories and let the user pick.
 
-**Icons** live in the components graph under `category: 'icon'`. They have empty `status`, empty `props`, empty `related()` — don't probe those fields. Find them with:
+**Icons** live in the components graph under `category: 'icon'`. They carry `status: 'released'` but have empty `props`, empty `related()`, and `instructions: null` — don't probe those fields. Find them with:
 
 ```ts
 components.where({ category: 'icon', tag: 'arrow' });
@@ -197,7 +197,7 @@ Rules:
 | Calling `.where()` / `.get()` on the array returned by `list()` / `where()` | Arrays are arrays. Use native `.filter` / `.find`, or navigate back to a facet to query. |
 | Assuming a component exists ("there must be a `Combobox`") | `components.has('Combobox')` first, or `components.where({ text: 'combobox' })` |
 | Hardcoding a hex / px value in custom code | `tokens.where({ text: '<intent>' })` — most "obvious" values have a token |
-| Treating icons like normal components, reading `status` / `props` | Detect with `node.category().name === 'icon'`. Icons have empty `status`, `props`, `related`. |
+| Treating icons like normal components, reading `props` / `instructions` | Detect with `node.category().name === 'icon'`. Icons have empty `props`, `related`, and null `instructions`. |
 | Importing `Button` from the wrong path | `components.get('Button')?.importStatement` is authoritative |
 | Suggesting setup steps from memory | `guides.get('getting-started')?.content` — always the live text |
 | `console.log(node)` instead of `JSON.stringify` | Facet methods serialize as `[Function]`; always stringify before logging |

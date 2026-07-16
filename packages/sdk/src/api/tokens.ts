@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type TokenCategory } from '../__generated__/unions';
 import {
     type Token,
     type TokenFacetNode,
@@ -12,6 +13,7 @@ import {
 } from '../types/tokens';
 import { pushToMultiMap, sortedByName } from '../utils/collections';
 import { matchesKeyPathPrefix, textIncludes, toArray } from '../utils/filters';
+import { deepFreeze } from '../utils/freeze';
 import { makeFacet } from '../utils/makeFacet';
 
 export interface TokensApi {
@@ -22,7 +24,7 @@ export interface TokensApi {
     readonly size: number;
 
     categories(): readonly TokenFacetNode[];
-    category(name: string): TokenFacetNode | undefined;
+    category(name: TokenCategory): TokenFacetNode | undefined;
     types(): readonly TokenFacetNode[];
     type(name: TokenValueType): TokenFacetNode | undefined;
 
@@ -73,6 +75,9 @@ const matchesUtility = (raw: TokenUtility, filter: TokenUtilityFilter): boolean 
 };
 
 export const buildTokensApi = (raws: readonly Token[], rawUtilities: readonly TokenUtility[]): TokensApi => {
+    deepFreeze(raws);
+    deepFreeze(rawUtilities);
+
     const categoryMembers = new Map<string, string[]>();
     const typeMembers = new Map<TokenValueType, string[]>();
     for (const raw of raws) {
@@ -92,73 +97,73 @@ export const buildTokensApi = (raws: readonly Token[], rawUtilities: readonly To
     );
 
     for (const raw of raws) {
-        nodes.set(raw.id, {
-            id: raw.id,
-            value: raw.value,
-            output: raw.output,
-            cssVariable: raw.cssVariable,
-            tailwindClass: raw.tailwindClass,
-            themeable: raw.themeable,
-            keyPath: raw.keyPath,
-            category: () => {
-                const node = categories.get(raw.category);
-                if (!node) {
-                    throw new Error(`Unknown category "${raw.category}" on token "${raw.id}"`);
-                }
-                return node;
-            },
-            type: () => {
-                const node = types.get(raw.type);
-                if (!node) {
-                    throw new Error(`Unknown type "${raw.type}" on token "${raw.id}"`);
-                }
-                return node;
-            },
-            toJSON: () => raw,
-        });
+        nodes.set(
+            raw.id,
+            Object.freeze({
+                id: raw.id,
+                value: raw.value,
+                cssVariable: raw.cssVariable,
+                tailwindClass: raw.tailwindClass,
+                themeable: raw.themeable,
+                keyPath: raw.keyPath,
+                category: () => {
+                    const node = categories.get(raw.category);
+                    if (!node) {
+                        throw new Error(`Unknown category "${raw.category}" on token "${raw.id}"`);
+                    }
+                    return node;
+                },
+                type: () => {
+                    const node = types.get(raw.type);
+                    if (!node) {
+                        throw new Error(`Unknown type "${raw.type}" on token "${raw.id}"`);
+                    }
+                    return node;
+                },
+                toJSON: () => raw,
+            }),
+        );
     }
 
     const utilityNodes = new Map<string, TokenUtilityNode>(
         rawUtilities.map((raw) => [
             raw.id,
-            {
+            Object.freeze({
                 id: raw.id,
                 tailwindClass: raw.tailwindClass,
                 themeable: raw.themeable,
                 keyPath: raw.keyPath,
                 properties: raw.properties,
                 toJSON: () => raw,
-            },
+            }),
         ]),
     );
 
-    const allTokens = Array.from(nodes.values());
-    const allUtilities = Array.from(utilityNodes.values());
+    const allTokens = Object.freeze(Array.from(nodes.values()));
+    const allUtilities = Object.freeze(Array.from(utilityNodes.values()));
 
-    return {
+    return Object.freeze({
         list: () => allTokens,
-        get: (id) => nodes.get(id),
-        has: (id) => nodes.has(id),
-        where: (f) => allTokens.filter((n) => matchNode(n, f)),
+        get: (id: string) => nodes.get(id),
+        has: (id: string) => nodes.has(id),
+        where: (f: TokenFilter) => allTokens.filter((n) => matchNode(n, f)),
         get size() {
             return allTokens.length;
         },
         categories: () => sortedByName(categories.values()),
-        category: (name) => categories.get(name),
+        category: (name: TokenCategory) => categories.get(name),
         types: () => sortedByName(types.values()),
-        type: (name) => types.get(name),
-        utilities: {
+        type: (name: TokenValueType) => types.get(name),
+        utilities: Object.freeze({
             list: () => allUtilities,
-            get: (id) => utilityNodes.get(id),
-            has: (id) => utilityNodes.has(id),
-            where: (f) => allUtilities.filter((n) => matchesUtility(n.toJSON(), f)),
+            get: (id: string) => utilityNodes.get(id),
+            has: (id: string) => utilityNodes.has(id),
+            where: (f: TokenUtilityFilter) => allUtilities.filter((n) => matchesUtility(n.toJSON(), f)),
             get size() {
                 return allUtilities.length;
             },
             classes: () =>
-                Array.from(new Set(allUtilities.map((n) => n.tailwindClass).filter(Boolean))).sort((a, b) =>
-                    a.localeCompare(b),
-                ),
-        },
-    };
+                Array.from(new Set(allUtilities.map((n) => n.tailwindClass))).sort((a, b) => a.localeCompare(b, 'en')),
+        }),
+    });
 };

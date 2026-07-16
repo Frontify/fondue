@@ -33,7 +33,7 @@ import { components, guides, tokens } from '@frontify/fondue/sdk';
 const button = components.get('Button');
 
 // Read scalar data
-button?.props.length; // 14
+button?.props.length; // 15
 button?.examples.find((e) => e.isCanonical)?.code; // "<Button …>…"
 
 // Walk the graph
@@ -42,6 +42,7 @@ button?.related().map((c) => c.name); // ['SplitButton', 'Link']
 
 // Query
 components.where({ category: 'input', status: 'released' });
+components.status('beta')?.list();
 components.tag('cta')?.list();
 tokens.where({ category: 'colors', themeable: true });
 

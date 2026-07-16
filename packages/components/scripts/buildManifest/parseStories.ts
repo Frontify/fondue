@@ -4,14 +4,17 @@ import { existsSync, readFileSync } from 'node:fs';
 
 import {
     createSourceFile,
+    isAsExpression,
     isExportAssignment,
     isIdentifier,
     isObjectLiteralExpression,
     isPropertyAssignment,
+    isSatisfiesExpression,
     isVariableStatement,
     ScriptKind,
     ScriptTarget,
     SyntaxKind,
+    type Expression,
 } from 'typescript';
 
 import { type Example } from './types';
@@ -28,6 +31,15 @@ import {
 export type StoriesResult = {
     examples: Example[];
     status: string;
+};
+
+/** Strip `satisfies Meta<…>` / `as Meta<…>` wrappers so the object literal underneath is visible. */
+const unwrapExpression = (expression: Expression): Expression => {
+    let current = expression;
+    while (isSatisfiesExpression(current) || isAsExpression(current)) {
+        current = current.expression;
+    }
+    return current;
 };
 
 export const parseStories = (storyFilePaths: string[]): StoriesResult => {
@@ -47,17 +59,18 @@ export const parseStories = (storyFilePaths: string[]): StoriesResult => {
 
         // First pass: find meta (const meta = { ... }; export default meta;)
         for (const statement of sourceFile.statements) {
-            // Handle: const meta: Meta<...> = { ... }
+            // Handle: const meta: Meta<...> = { ... } (also `= { ... } satisfies Meta<...>`)
             if (isVariableStatement(statement)) {
                 for (const declaration of statement.declarationList.declarations) {
+                    const initializer = declaration.initializer && unwrapExpression(declaration.initializer);
                     if (
                         isIdentifier(declaration.name) &&
                         declaration.name.text === 'meta' &&
-                        declaration.initializer &&
-                        isObjectLiteralExpression(declaration.initializer)
+                        initializer &&
+                        isObjectLiteralExpression(initializer)
                     ) {
-                        metaArgs = extractMetaArgsOnly(declaration.initializer, sourceText);
-                        for (const property of declaration.initializer.properties) {
+                        metaArgs = extractMetaArgsOnly(initializer, sourceText);
+                        for (const property of initializer.properties) {
                             if (!isPropertyAssignment(property) || !isIdentifier(property.name)) {
                                 continue;
                             }
@@ -72,14 +85,16 @@ export const parseStories = (storyFilePaths: string[]): StoriesResult => {
                 }
             }
 
-            // Handle: export default { ... }
+            // Handle: export default { ... } (also `export default { ... } satisfies Meta<...>`)
+            const defaultExport = isExportAssignment(statement) ? unwrapExpression(statement.expression) : undefined;
             if (
                 isExportAssignment(statement) &&
                 !statement.isExportEquals &&
-                isObjectLiteralExpression(statement.expression)
+                defaultExport &&
+                isObjectLiteralExpression(defaultExport)
             ) {
-                metaArgs = extractMetaArgsOnly(statement.expression, sourceText);
-                for (const property of statement.expression.properties) {
+                metaArgs = extractMetaArgsOnly(defaultExport, sourceText);
+                for (const property of defaultExport.properties) {
                     if (!isPropertyAssignment(property) || !isIdentifier(property.name)) {
                         continue;
                     }
@@ -112,12 +127,13 @@ export const parseStories = (storyFilePaths: string[]): StoriesResult => {
                     continue;
                 }
                 // Must be an object literal (story object) – skip simple type aliases
-                if (!isObjectLiteralExpression(declaration.initializer)) {
+                const storyInitializer = unwrapExpression(declaration.initializer);
+                if (!isObjectLiteralExpression(storyInitializer)) {
                     continue;
                 }
 
                 let exportName = declaration.name.text;
-                const storyObj = declaration.initializer;
+                const storyObj = storyInitializer;
 
                 let description = '';
                 let isCanonical = false;

@@ -52,9 +52,9 @@ interface ComponentNode {
     // Scalars
     readonly name: string;
     readonly description: string;
-    readonly status: string;
+    readonly status: ComponentStatus; // 'beta' | 'released'
     readonly importStatement: string;
-    readonly instructions: string;
+    readonly instructions: string | null;
     readonly props: readonly ComponentProp[];
     readonly subComponents: readonly ComponentSubComponent[];
     readonly examples: readonly ComponentExample[];
@@ -91,7 +91,7 @@ button.subComponents.flatMap((sc) => sc.props);
 | You can call query methods on… | Returned by                                                                                                                  |
 | ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
 | The domain itself              | `components`, `tokens`, `tokens.utilities`                                                                                   |
-| A single facet by name         | `components.category(name)`, `components.tag(name)`, `tokens.category(name)`, `tokens.type(name)`                            |
+| A single facet by name         | `components.category(name)`, `components.status(name)`, `components.tag(name)`, `tokens.category(name)`, `tokens.type(name)` |
 | A facet from a node            | `node.category()`, `node.type()`                                                                                             |
 
 All of these work:
@@ -136,7 +136,7 @@ top-level export. Each icon is a `ComponentNode` with:
 | ----------------- | ----------------------------------------------------------------------- |
 | `name`            | The React component name (`'IconAdobeCreativeCloud'`)                   |
 | `category()`      | The synthetic `'icon'` facet                                            |
-| `status()`        | Throws — icons have no status; check `category().name === 'icon'` first |
+| `status`          | `'released'` — bundled icons ship as released                           |
 | `tags()`          | The icon's tags as `ComponentFacetNode`s                                |
 | `importStatement` | `"import { IconAdobeCreativeCloud } from '@frontify/fondue/icons';"`    |
 | `examples`        | Icon stories                                                            |
@@ -172,7 +172,9 @@ what humans see.
 ## Construction & lifetime
 
 The three singletons (`components`, `tokens`, `guides`) are built once at
-module load from bundled JSON. They are immutable and process-lifetime.
+module load from bundled JSON. They are immutable and process-lifetime —
+nodes, raw payloads, and the arrays returned by `list()` are deeply frozen,
+so accidental mutation throws instead of corrupting shared state.
 No I/O is performed; nothing is async.
 
 `list()` returns a cached array (O(1)). `get`/`has` are O(1) map lookups.

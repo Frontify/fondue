@@ -33,20 +33,28 @@ Plain arrays returned from `list()` / `where()` / `node.related()` are arrays â€
 ```ts
 components: QueryApi<ComponentNode, ComponentFilter> & {
     categories(): readonly ComponentFacetNode[];
-    category(name: string): ComponentFacetNode | undefined;
+    category(name: ComponentCategory): ComponentFacetNode | undefined;
+    statuses(): readonly ComponentFacetNode[];
+    status(name: ComponentStatus): ComponentFacetNode | undefined;
     tags(): readonly ComponentFacetNode[];
     tag(name: string): ComponentFacetNode | undefined;
 };
+
+// Literal unions derived from the bundled data:
+type ComponentStatus = 'beta' | 'released';
+type ComponentCategory =
+    | 'data' | 'feedback' | 'icon' | 'input' | 'layout'
+    | 'navigation' | 'overlay' | 'typography' | 'utility';
 ```
 
 ### `ComponentFilter`
 
-| Clause     | Type                          | Notes                                                               |
-| ---------- | ----------------------------- | ------------------------------------------------------------------- |
-| `category` | `string \| readonly string[]` | OR within array                                                     |
-| `status`   | `string \| readonly string[]` | OR within array                                                     |
-| `tag`      | `string \| readonly string[]` | Matches if component carries any tag in the array                   |
-| `text`     | `string`                      | Case-insensitive substring across name, description, category, tags |
+| Clause     | Type                                                | Notes                                                               |
+| ---------- | --------------------------------------------------- | ------------------------------------------------------------------- |
+| `category` | `ComponentCategory \| readonly ComponentCategory[]` | OR within array                                                     |
+| `status`   | `ComponentStatus \| readonly ComponentStatus[]`     | OR within array                                                     |
+| `tag`      | `string \| readonly string[]`                       | Matches if component carries any tag in the array                   |
+| `text`     | `string`                                            | Case-insensitive substring across name, description, category, tags |
 
 All clauses AND-combine.
 
@@ -57,9 +65,9 @@ interface ComponentNode {
     // scalar fields
     name: string;
     description: string;
-    status: string; // '' for icons
+    status: ComponentStatus;
     importStatement: string;
-    instructions: string; // hand-written usage notes, often empty
+    instructions: string | null; // hand-written usage notes; null when none exist
     props: readonly ComponentProp[];
     subComponents: readonly ComponentSubComponent[];
     examples: readonly ComponentExample[];
@@ -79,7 +87,7 @@ interface ComponentProp {
     defaultValue: string | null;
     description: string;
     deprecated: boolean;
-    deprecationMessage: string;
+    deprecationMessage: string | null; // null when not deprecated
 }
 
 interface ComponentExample {
@@ -99,7 +107,7 @@ interface ComponentSubComponent {
 
 Icons are components with `category: 'icon'`. They have:
 
-- empty `status`, empty `props`, empty `related()`, empty `subComponents`
+- `status: 'released'`, `instructions: null`, empty `props`, empty `related()`, empty `subComponents`
 - a non-empty `importStatement` (e.g. `import { IconAdobeCreativeCloud } from '@frontify/fondue/icons';`)
 - tags (e.g. `'arrow'`, `'brand'`)
 
@@ -110,20 +118,21 @@ Filter to icons with `components.where({ category: 'icon' })`. Detect at the nod
 ```ts
 tokens: QueryApi<TokenNode, TokenFilter> & {
     categories(): readonly TokenFacetNode[];
-    category(name: string): TokenFacetNode | undefined;
+    category(name: TokenCategory): TokenFacetNode | undefined;
     types(): readonly TokenFacetNode[];
     type(name: TokenValueType): TokenFacetNode | undefined;
     utilities: TokenUtilitiesApi;
 };
 
 type TokenValueType = 'color' | 'float' | 'shadow' | 'string';
+type TokenCategory = 'colors' | 'semantic'; // literal union derived from the bundled data
 ```
 
 ### `TokenFilter`
 
 | Clause              | Type                                          | Notes                                               |
 | ------------------- | --------------------------------------------- | --------------------------------------------------- |
-| `category`          | `string \| readonly string[]`                 | e.g. `'colors'`, `'sizes'`                          |
+| `category`          | `TokenCategory \| readonly TokenCategory[]`   | e.g. `'colors'`, `'semantic'`                       |
 | `type`              | `TokenValueType \| readonly TokenValueType[]` |                                                     |
 | `themeable`         | `boolean`                                     |                                                     |
 | `keyPathStartsWith` | `string`                                      | Dot-joined keyPath prefix, e.g. `'colors.charts'`   |
@@ -135,7 +144,7 @@ type TokenValueType = 'color' | 'float' | 'shadow' | 'string';
 interface TokenNode {
     id: string; // e.g. 'color-charts-primary-default'
     value: string; // often `var(--token)` or a literal
-    cssVariable: string; // 'var(--color-charts-primary-default)'
+    cssVariable: string | null; // 'var(--color-charts-primary-default)'; null for inlined literals (e.g. breakpoints)
     tailwindClass: string; // e.g. '*-charts-primary'
     themeable: boolean;
     keyPath: readonly string[]; // ['colors','charts','primary','default']
@@ -233,3 +242,4 @@ tokens.category('colors')?.where({ themeable: true });
 - Synchronous, zero file I/O.
 - Pure ES module; Node 18+.
 - No peer dependencies, no React, no DOM.
+- All data is deeply frozen â€” mutating nodes or `list()` results throws a `TypeError`.
