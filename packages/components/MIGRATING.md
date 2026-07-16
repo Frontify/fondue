@@ -74,6 +74,9 @@ This document describes the changes that you need to make to your code to migrat
         - [Tooltip](#tooltip)
             - [Old](#tooltip-old)
             - [New](#tooltip-new)
+        - [Tree](#tree)
+            - [Old](#tree-old)
+            - [New](#tree-new)
 
 ## Components
 
@@ -1835,3 +1838,137 @@ Changes:
     </Tooltip.Content>
 </Tooltip.Root>
 ```
+
+### Tree
+
+Changes:
+
+- **Component structure** now uses explicit subcomponents:
+    - `Tree.Root` wraps the whole tree
+    - `Tree.Item` for leaf rows and `Tree.Folder` for rows with nested children (folders are no longer nested `TreeItem`s)
+    - `Tree.FolderHeader` wraps the folder's own row content, followed by its nested rows
+    - `Tree.Label` for the row text (plain text only, doubles as the accessible name)
+    - `Tree.Icon` for the row icon
+    - `Tree.Decorator` for passive decorators (badges, status icons) next to the label
+    - `Tree.Action` for interactive controls (buttons, dropdowns) on the row
+    - `Tree.Loading` for a loading placeholder row while lazy-loading children
+
+- **Content composition** replaces the `label` and `contentComponent` props:
+    - Use `Tree.Label` for the text and compose `Tree.Icon`, `Tree.Decorator` and `Tree.Action` next to it instead of passing a custom `contentComponent`.
+
+- **State management** changed:
+    - The `selectedIds` / `expandedIds` arrays on the root have been replaced by `isSelected` / `isExpanded` props on the individual rows.
+    - The `onSelect`, `onExpand` and `onShrink` callbacks have been replaced by `onSelectChange` (per row) and `onExpandChange` (per folder).
+    - A new `onChange` callback on `Tree.Root` fires with the full tree state (`TreeChangeState`) after every user interaction, so the state can be stored and passed straight back into props.
+    - `multiselect` has been renamed to `multiSelect`. Folder checkboxes are now derived from their descendants (indeterminate when partially checked) and cascade-toggle them on click.
+
+- **Drag and drop** changed:
+    - `draggable` has been renamed to `reorderable` on `Tree.Root`.
+    - The `onDrop` callback (`{ id, parentId, sort, contentComponent }`) has been replaced by `onMove` on the individual rows, which receives a `TreeMoveInfo` (`{ parentId, index }`, with `'root'` as `parentId` for top-level drops). The new position is also reflected in `onChange`.
+    - The string-based `type` / `accepts` matching (`'itemA, itemA-within, itemA-deeper'`) has been replaced by an `accepts` predicate on `Tree.Folder` (and `Tree.Root` for the top level) that receives the dragged rows as `TreeDropCandidate[]`. Use the new `tags` prop on rows to label them for these predicates.
+    - `dragHandlerPosition`, `enableDragDelay`, `showDragHandlerOnHoverOnly` and `showContentWhileDragging` have been removed without replacement.
+
+- **Removed properties**:
+    - `id` on the root (ids are only needed per row)
+    - `itemStyle` (with `spacingY`, `contentHight`, `shadow`, `borderRadius`, `borderWidth`, `borderStyle`, `activeColorStyle`) in favor of built-in styling
+    - `expandable`, `showCaret` (the caret is derived from whether the row is a folder)
+    - `ignoreItemDoubleClick`, `expandOnSelect`, `levelConstraint`
+
+- **New features**:
+    - Inline renaming via `isRenaming` / `onRenamingChange` / `onRename` on rows
+    - `isDisabled` on rows to freeze them at their prop-driven state
+    - `onClick` on rows, fired on click or keyboard activation (Enter / Space)
+    - `countDisabledInFolderState` on `Tree.Root` to control whether disabled descendants count toward a folder's checkbox state
+    - Built-in keyboard navigation and screen reader announcements
+
+#### Old
+
+```tsx
+const [selectedIds, setSelectedIds] = useState<string[]>([]);
+const [expandedIds, setExpandedIds] = useState<string[]>(['a']);
+
+<Tree
+    id="my-tree"
+    draggable
+    selectedIds={selectedIds}
+    expandedIds={expandedIds}
+    dragHandlerPosition="left"
+    itemStyle={{ contentHight: 'single-line', activeColorStyle: 'neutral' }}
+    onSelect={(id) => setSelectedIds([id])}
+    onExpand={(id) => setExpandedIds([...expandedIds, id])}
+    onShrink={(id) => setExpandedIds(expandedIds.filter((expandedId) => expandedId !== id))}
+>
+    <TreeItem id="1" label="Item 1" onDrop={handleDrop} />
+    <TreeItem id="a" label="Folder a" type="folder" accepts="item, item-within" onDrop={handleDrop}>
+        <TreeItem id="a1" label="Item a1" type="item" onDrop={handleDrop} />
+        <TreeItem id="a2" contentComponent={<CustomContent title="Item a2" />} type="item" onDrop={handleDrop} />
+    </TreeItem>
+</Tree>;
+```
+
+#### New
+
+```tsx
+const [nodes, setNodes] = useState<TreeChangeState>([
+    { id: '1', name: 'Item 1', isFolder: false },
+    {
+        id: 'a',
+        name: 'Folder a',
+        isFolder: true,
+        isExpanded: true,
+        children: [
+            { id: 'a1', name: 'Item a1', isFolder: false },
+            { id: 'a2', name: 'Item a2', isFolder: false },
+        ],
+    },
+]);
+
+const renderNode = (node: TreeNodeState): ReactNode =>
+    node.isFolder ? (
+        <Tree.Folder
+            key={node.id}
+            id={node.id}
+            isExpanded={node.isExpanded}
+            isSelected={node.isSelected}
+            accepts={(items) => items.every((item) => !item.isFolder)}
+        >
+            <Tree.FolderHeader>
+                <Tree.Icon>
+                    <IconFolder size={16} />
+                </Tree.Icon>
+                <Tree.Label>{node.name}</Tree.Label>
+            </Tree.FolderHeader>
+            {node.children?.map(renderNode)}
+        </Tree.Folder>
+    ) : (
+        <Tree.Item key={node.id} id={node.id} isSelected={node.isSelected}>
+            <Tree.Icon>
+                <IconDocument size={16} />
+            </Tree.Icon>
+            <Tree.Label>{node.name}</Tree.Label>
+            <Tree.Decorator>
+                <Badge>New</Badge>
+            </Tree.Decorator>
+            <Tree.Action>
+                <Button aspect="square" emphasis="default" size="small">
+                    <IconDotsHorizontal size={16} />
+                </Button>
+            </Tree.Action>
+        </Tree.Item>
+    );
+
+<Tree.Root reorderable onChange={setNodes}>
+    {nodes.map(renderNode)}
+</Tree.Root>;
+```
+
+#### Upgrade Steps:
+
+1. Replace `import { Tree, TreeItem } from '@frontify/fondue'` with `import { Tree } from '@frontify/fondue/components'`
+2. Wrap the tree in `Tree.Root` and convert each `TreeItem` to `Tree.Item` (leaf) or `Tree.Folder` with a `Tree.FolderHeader` (nested)
+3. Replace `label` / `contentComponent` with composition using `Tree.Label`, `Tree.Icon`, `Tree.Decorator` and `Tree.Action`
+4. Replace `selectedIds` / `expandedIds` and `onSelect` / `onExpand` / `onShrink` with per-row `isSelected` / `isExpanded` props and `onSelectChange` / `onExpandChange` callbacks, or store the full state from `onChange`
+5. Replace `draggable` with `reorderable` on `Tree.Root`
+6. Replace `onDrop` with `onMove` on the individual rows (receives `{ parentId, index }`)
+7. Replace the string-based `type` / `accepts` matching with `tags` on rows and an `accepts` predicate on `Tree.Folder` / `Tree.Root`
+8. Remove the `itemStyle`, `dragHandlerPosition`, `enableDragDelay`, `showDragHandlerOnHoverOnly` and `showContentWhileDragging` props

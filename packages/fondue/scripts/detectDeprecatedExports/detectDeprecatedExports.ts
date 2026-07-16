@@ -17,6 +17,9 @@ const options = {
     parser: 'tsx',
     basePath: __dirname,
     extensions: 'ts,tsx,js,jsx',
+    // Story exports often shadow the component name (e.g. `export const MultiSelect: StoryFn`)
+    // and would be reported as active exports.
+    ignorePattern: ['**/*.stories.*', '**/*.spec.*', '**/*.ct.*'],
 };
 
 if (!outputPath) {

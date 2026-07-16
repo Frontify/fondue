@@ -8,6 +8,9 @@ import { merge } from '@utilities/merge';
 import { INDENTATION_WIDTH } from '../helpers';
 import { type DragHandlerPosition } from '../types';
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export type Overlay = {
     id: string;
     label?: string;
@@ -19,6 +22,9 @@ export type Overlay = {
     showContentWhileDragging: boolean;
 };
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export const TreeItemOverlay = ({
     id,
     label,

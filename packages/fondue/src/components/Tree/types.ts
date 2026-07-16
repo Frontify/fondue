@@ -8,11 +8,17 @@ import { type Projection } from './helpers';
 import { type InternalTreeItemProps } from './TreeItem';
 import { type Overlay } from './TreeItem/TreeItemOverlay';
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export type SensorContext = MutableRefObject<{
     nodes: ReactElement[];
     offset: number;
 }>;
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export type TreeNodeWithoutElements = {
     id: string;
     level: number;
@@ -21,11 +27,26 @@ export type TreeNodeWithoutElements = {
     nodes: TreeNodeWithoutElements[];
 };
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export type OnSelectCallback = (id: string, ignoreRemoveSelected?: boolean, nodes?: TreeNodeWithoutElements[]) => void;
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export type OnSelectInternalCallback = (id: string, ignoreRemoveSelected?: boolean) => void;
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export type OnExpandCallback = (id: string) => void;
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export type OnShrinkCallback = (id: string) => void;
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export type OnTreeDropCallback = (args: {
     id: string;
     parentId: Nullable<string>;
@@ -34,10 +55,19 @@ export type OnTreeDropCallback = (args: {
     parentType?: string;
 }) => void;
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export type DragHandlerPosition = 'left' | 'right' | 'none';
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export type TreeItemPropsSizing = 'none' | 'x-small' | 'small' | 'medium' | 'large' | 'x-large';
 type TreeItemContentFit = 'content-fit' | 'single-line';
 type TreeItemBorderStyle = 'solid' | 'dashed' | 'dotted' | 'none';
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export type TreeItemColors = 'neutral' | 'soft' | 'none';
 type TreeItemColorStyles = {
     textColor: string;
@@ -49,6 +79,9 @@ type TreeItemColorStyles = {
     selectedDragHanlderTextColor: string;
 };
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export const TreeItemSpacingClassMap: Record<TreeItemPropsSizing, string> = {
     none: 'tw-my-0',
     'x-small': 'tw-my-0.5',
@@ -58,6 +91,9 @@ export const TreeItemSpacingClassMap: Record<TreeItemPropsSizing, string> = {
     'x-large': 'tw-my-2.5',
 };
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export const TreeItemShadowClassMap: Record<TreeItemPropsSizing, string> = {
     none: 'tw-shadow-none',
     'x-small': 'tw-shadow-sm',
@@ -67,6 +103,9 @@ export const TreeItemShadowClassMap: Record<TreeItemPropsSizing, string> = {
     'x-large': 'tw-shadow-xl',
 };
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export const TreeItemBorderRadiusClassMap: Record<TreeItemPropsSizing, string> = {
     none: 'tw-rounded-none',
     'x-small': 'tw-rounded-sm',
@@ -76,6 +115,9 @@ export const TreeItemBorderRadiusClassMap: Record<TreeItemPropsSizing, string> =
     'x-large': 'tw-rounded-xl',
 };
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export const TreeItemBorderClassMap: Record<Exclude<TreeItemPropsSizing, 'x-large'>, string> = {
     none: 'tw-border-0',
     'x-small': 'tw-border',
@@ -84,6 +126,9 @@ export const TreeItemBorderClassMap: Record<Exclude<TreeItemPropsSizing, 'x-larg
     large: 'tw-border-8',
 };
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export const TreeItemBorderStyleClassMap: Record<TreeItemBorderStyle, string> = {
     none: 'tw-border-none',
     solid: 'tw-border-solid',
@@ -91,6 +136,9 @@ export const TreeItemBorderStyleClassMap: Record<TreeItemBorderStyle, string> = 
     dashed: 'tw-border-dashed',
 };
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export const TreeItemColorsClassMap: Record<TreeItemColors, TreeItemColorStyles> = {
     none: {
         textColor: '',
@@ -121,6 +169,9 @@ export const TreeItemColorsClassMap: Record<TreeItemColors, TreeItemColorStyles>
     },
 };
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export type TreeItemStyling = {
     spacingY?: TreeItemPropsSizing;
     contentHight?: TreeItemContentFit;
@@ -131,6 +182,9 @@ export type TreeItemStyling = {
     activeColorStyle?: TreeItemColors;
 };
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export type TreeProps = {
     id: string;
     draggable?: boolean;
@@ -182,20 +236,35 @@ type TreeItemBaseProps = {
     levelConstraint?: Nullable<number>;
 };
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export type TreeItemWithLabelProps = {
     label?: string;
     contentComponent?: never;
 } & TreeItemBaseProps;
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export type TreeItemWithContentComponentProps = {
     label?: never;
     contentComponent?: ReactNode;
 } & TreeItemBaseProps;
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export type SortableProps = Partial<ReturnType<typeof useSortable>>;
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export type TreeItemProps = SortableProps & (TreeItemWithLabelProps | TreeItemWithContentComponentProps);
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export type TreeItemMultiselectProps = Omit<
     TreeItemProps,
     | 'type'
@@ -213,8 +282,14 @@ export type TreeItemMultiselectProps = Omit<
     onBeforeUnregisterChildren?: (id: string, nodes: TreeNodeWithoutElements[]) => void;
 };
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export type SortableTreeItemProps = TreeItemProps;
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export type TreeItemState = {
     parentId?: string;
     childrenIds?: string[];
@@ -222,6 +297,9 @@ export type TreeItemState = {
     domElement?: HTMLElement;
 };
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export type TreeState = {
     selectedIds: Set<string>;
     expandedIds: Set<string>;
@@ -232,6 +310,9 @@ export type TreeState = {
     projection: Nullable<Projection>;
 };
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export type TreeStateAction =
     | { type: 'REPLACE_STATE'; payload: TreeState }
     | { type: 'REGISTER_OVERLAY_ITEM'; payload: Overlay }
@@ -248,15 +329,27 @@ export type TreeStateAction =
     | { type: 'REGISTER_ROOT_NODES'; payload: ReactElement<InternalTreeItemProps>[] }
     | { type: 'REGISTER_NODES'; payload: ReactElement<InternalTreeItemProps>[] };
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export type RegisterNodeChildrenPayload = Extract<TreeStateAction, { type: 'REGISTER_NODE_CHILDREN' }>['payload'];
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export type CollisionPosition = Nullable<'before' | 'within' | 'after'>;
 
 // dnd-kit type overrides
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export type TreeActive = Omit<Active, 'id'> & {
     id: string;
 };
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export type TreeOver = Omit<Over, 'id'> & {
     id: string;
 };
@@ -273,12 +366,30 @@ type TreeDragEvent = {
     over: TreeOver | null;
 };
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export type TreeDragStartEvent = Pick<TreeDragEvent, 'active'>;
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export type TreeDragMoveEvent = TreeDragEvent;
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export type TreeDragOverEvent = TreeDragMoveEvent;
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export type TreeDragEndEvent = TreeDragEvent;
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export type TreeDragCancelEvent = TreeDragEndEvent;
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export type TreeAnnouncements = {
     onDragStart({ active }: Pick<TreeDragEvent, 'active'>): string | undefined;
     onDragMove?({ active, over }: TreeDragEvent): string | undefined;

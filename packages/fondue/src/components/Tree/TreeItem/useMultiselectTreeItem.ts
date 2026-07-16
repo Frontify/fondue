@@ -5,6 +5,9 @@ import { useContext } from 'react';
 import { convertToPartialSelectedId } from '../helpers';
 import { TreeContext } from '../TreeContext';
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export const useMultiselectTreeItem = (id: string) => {
     const { treeState } = useContext(TreeContext);
 
