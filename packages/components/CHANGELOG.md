@@ -1,5 +1,17 @@
 # @frontify/fondue-components
 
+## 31.0.0
+
+### Minor Changes
+
+- [#2796](https://github.com/Frontify/fondue/pull/2796) [`08f8b59`](https://github.com/Frontify/fondue/commit/08f8b593c631d6ea851269fc91665b327bbaa2ee) Thanks [@syeo66](https://github.com/syeo66)! - feat(DatePicker): allow setting min and max month
+
+### Patch Changes
+
+- Updated dependencies [[`a9efb33`](https://github.com/Frontify/fondue/commit/a9efb338b6c90e45bd091833e8c018c80fcf9f23), [`f11475e`](https://github.com/Frontify/fondue/commit/f11475ede100f764b527cca4db9ea3b65f6fd100), [`4532ec4`](https://github.com/Frontify/fondue/commit/4532ec49cbf613d63a3313a1e82031ab782900e2)]:
+  - @frontify/fondue-tokens@5.1.0
+  - @frontify/fondue-icons@0.27.0
+
 ## 30.9.1
 
 ### Patch Changes
