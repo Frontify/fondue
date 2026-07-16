@@ -80,6 +80,7 @@ export const buildComponentsApi = (raws: readonly ComponentDetails[]): Component
         nodes.set(
             raw.name,
             Object.freeze({
+                id: raw.id,
                 name: raw.name,
                 description: raw.description,
                 status: raw.status,

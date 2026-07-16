@@ -95,12 +95,12 @@ interface SdkProp extends Omit<RawProp, 'deprecationMessage'> {
 }
 
 interface SdkComponent {
+    id: string;
     name: string;
     description: string;
     status: string;
     category: string;
     tags: string[];
-    subComponentNames: string[];
     relatedComponents: string[];
     importStatement: string;
     instructions: string | null;
@@ -109,6 +109,9 @@ interface SdkComponent {
     examples: unknown[];
     typeDefinitions: Record<string, string>;
 }
+
+/** The normalized token shape emitted into data.ts (drops the build-system `output` field). */
+type SdkToken = Omit<RawToken, 'output'>;
 
 const require = createRequire(import.meta.url);
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -134,12 +137,12 @@ const realComponents = Object.values(componentsIndex.components).map((entry): Sd
     const stem = entry.manifestPath.replace(/\.json$/i, '');
     const detail = require(`@frontify/fondue-components/manifests/${stem}`) as RawComponentDetail;
     return {
+        id: detail.name,
         name: detail.name,
         description: detail.description,
         status: detail.status,
         category: detail.category,
         tags: detail.tags,
-        subComponentNames: entry.subComponentNames,
         relatedComponents: detail.relatedComponents,
         importStatement: detail.importStatement,
         instructions: detail.instructions || null,
@@ -152,12 +155,12 @@ const realComponents = Object.values(componentsIndex.components).map((entry): Sd
 
 const iconComponents = icons.icons.map(
     (icon): SdkComponent => ({
+        id: icon.componentName,
         name: icon.componentName,
         description: icon.description,
         status: 'released',
         category: 'icon',
         tags: icon.tags,
-        subComponentNames: [],
         relatedComponents: [],
         importStatement: icon.importStatement,
         instructions: null,
@@ -169,10 +172,13 @@ const iconComponents = icons.icons.map(
 );
 
 const components = [...realComponents, ...iconComponents];
+
+const errors: string[] = [];
+
 // `output` is a build-system concern — consumers only need `cssVariable`'s
 // nullability (null ⇢ inlined literal). Validate against it below, but strip
 // it from the published data.
-const tokens = tokensManifest.tokens.map(({ output: _output, ...token }) => token);
+const tokens = tokensManifest.tokens.map(({ output: _output, ...token }): SdkToken => token);
 const tokenUtilities = tokensManifest.utilities ?? [];
 
 const guidesDir = join(__dirname, '../guides');
@@ -191,8 +197,6 @@ const guides = readdirSync(guidesDir)
 
 // ─── Validation ─────────────────────────────────────────────────────────────
 // Fail the build on inconsistent data so the runtime can rely on it.
-
-const errors: string[] = [];
 
 const requireUnique = (kind: string, ids: readonly string[]): void => {
     const seen = new Set<string>();

@@ -7,12 +7,12 @@ import { type ComponentDetails, type ComponentNode } from '../types/components';
 import { buildComponentsApi } from './components';
 
 const makeComponent = (overrides: Partial<ComponentDetails> = {}): ComponentDetails => ({
+    id: overrides.name ?? 'Sample',
     name: 'Sample',
     description: 'A sample component.',
     status: 'released',
     category: 'input',
     tags: ['form'],
-    subComponentNames: [],
     relatedComponents: [],
     importStatement: "import { Sample } from '@frontify/fondue/components';",
     instructions: null,
@@ -72,6 +72,10 @@ describe('buildComponentsApi', () => {
 
         it('gets a component by name', () => {
             expect(api.get('Button')?.name).toBe('Button');
+        });
+
+        it('exposes id, identical to name', () => {
+            expect(api.get('Button')?.id).toBe('Button');
         });
 
         it('returns undefined for unknown names', () => {

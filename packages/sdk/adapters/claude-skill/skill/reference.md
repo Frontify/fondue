@@ -63,6 +63,7 @@ All clauses AND-combine.
 ```ts
 interface ComponentNode {
     // scalar fields
+    id: string; // identical to `name` for components
     name: string;
     description: string;
     status: ComponentStatus;
@@ -143,9 +144,9 @@ type TokenCategory = 'colors' | 'semantic'; // literal union derived from the bu
 ```ts
 interface TokenNode {
     id: string; // e.g. 'color-charts-primary-default'
-    value: string; // often `var(--token)` or a literal
+    value: string; // often `var(--token)` or a literal — never a resolved color; actual values are theme/brand-dependent at runtime
     cssVariable: string | null; // 'var(--color-charts-primary-default)'; null for inlined literals (e.g. breakpoints)
-    tailwindClass: string; // e.g. '*-charts-primary'
+    tailwindClass: string; // '*-charts-primary' — a leading '*' is a placeholder for the utility prefix (bg-, text-, border-, …)
     themeable: boolean;
     keyPath: readonly string[]; // ['colors','charts','primary','default']
 
@@ -240,6 +241,6 @@ tokens.category('colors')?.where({ themeable: true });
 ## Runtime guarantees
 
 - Synchronous, zero file I/O.
-- Pure ES module; Node 18+.
+- Pure ES module; Node 20+.
 - No peer dependencies, no React, no DOM.
 - All data is deeply frozen — mutating nodes or `list()` results throws a `TypeError`.

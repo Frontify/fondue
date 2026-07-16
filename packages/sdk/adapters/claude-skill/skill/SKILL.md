@@ -31,10 +31,10 @@ import { components, tokens, guides } from '@frontify/fondue/sdk';
 
 // Same shape on each domain:
 components.list();
-components.get('Button');             // ComponentNode | undefined (never throws)
-components.has('Button');             // boolean
+components.get('Button'); // ComponentNode | undefined (never throws)
+components.has('Button'); // boolean
 components.where({ text: 'dropdown' });
-components.size;                      // number
+components.size; // number
 ```
 
 `where(filter)` clauses AND-combine; array-valued clauses OR within the clause. `get` and `where` never throw; missing ids return `undefined` / `[]`.
@@ -43,10 +43,10 @@ Nodes have **scalar fields** (read as properties) and **graph edges** (call as m
 
 ```ts
 const button = components.get('Button');
-button?.importStatement;              // scalar
-button?.props;                        // scalar (array)
-button?.category();                   // edge → ComponentFacetNode { name, list, where, … }
-button?.related();                    // edge → ComponentNode[]
+button?.importStatement; // scalar
+button?.props; // scalar (array)
+button?.category(); // edge → ComponentFacetNode { name, list, where, … }
+button?.related(); // edge → ComponentNode[]
 ```
 
 ### Running queries from Claude
@@ -154,6 +154,7 @@ components.get('IconAdobeCreativeCloud')?.importStatement;
 ```
 
 When nothing matches:
+
 - Try a related tag — `components.tags().map((t) => t.name)` lists every tag.
 - Look at the closest hit's `related()`.
 - If there truly is no component for the use case, say so. Don't recommend hand-rolling something Fondue already provides, but don't invent a component name either.
@@ -163,7 +164,7 @@ When nothing matches:
 Two layers exist:
 
 - `tokens` — atomic design tokens (colors, sizes, shadows, strings). Each has a CSS variable and a Tailwind class.
-- `tokens.utilities` — composed Tailwind utilities (typography classes like `tw-body-large-strong`) bundling multiple token references.
+- `tokens.utilities` — composed Tailwind utilities (typography classes like `body-large-strong`) bundling multiple token references.
 
 ```ts
 tokens.where({ text: 'primary' });
@@ -171,17 +172,18 @@ tokens.where({ category: 'colors', themeable: true });
 tokens.where({ keyPathStartsWith: 'colors.text' });
 tokens.type('color')?.where({ themeable: true });
 
-const t = tokens.get('color-text-weak');
-t?.value;              // 'var(--color-text-weak)'
-t?.cssVariable;        // '--color-text-weak'
-t?.tailwindClass;      // 'tw-text-weak'
-t?.themeable;          // true
+const t = tokens.get('color-charts-primary-default');
+t?.value; // 'var(--color-charts-primary-default)' — a reference, never a resolved color
+t?.cssVariable; // 'var(--color-charts-primary-default)'
+t?.tailwindClass; // '*-charts-primary' — '*' stands in for the utility prefix (bg-, text-, border-, …)
+t?.themeable; // true
 
 // Typography: always use the utility class, not raw font tokens
 tokens.utilities.where({ keyPathStartsWith: 'utilities.text' });
 ```
 
 Rules:
+
 - Prefer `themeable: true` tokens for any user-facing surface so dark mode and theming work out of the box.
 - Prefer the Tailwind class when the project uses `@frontify/fondue/tokens/tailwind`; prefer the CSS variable otherwise.
 - For typography, recommend the **utility class** — not raw font-size / line-height / weight tokens.
@@ -192,15 +194,15 @@ Rules:
 
 ## Common pitfalls
 
-| Mistake | Fix |
-| ------- | --- |
-| Calling `.where()` / `.get()` on the array returned by `list()` / `where()` | Arrays are arrays. Use native `.filter` / `.find`, or navigate back to a facet to query. |
-| Assuming a component exists ("there must be a `Combobox`") | `components.has('Combobox')` first, or `components.where({ text: 'combobox' })` |
-| Hardcoding a hex / px value in custom code | `tokens.where({ text: '<intent>' })` — most "obvious" values have a token |
-| Treating icons like normal components, reading `props` / `instructions` | Detect with `node.category().name === 'icon'`. Icons have empty `props`, `related`, and null `instructions`. |
-| Importing `Button` from the wrong path | `components.get('Button')?.importStatement` is authoritative |
-| Suggesting setup steps from memory | `guides.get('getting-started')?.content` — always the live text |
-| `console.log(node)` instead of `JSON.stringify` | Facet methods serialize as `[Function]`; always stringify before logging |
+| Mistake                                                                     | Fix                                                                                                          |
+| --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| Calling `.where()` / `.get()` on the array returned by `list()` / `where()` | Arrays are arrays. Use native `.filter` / `.find`, or navigate back to a facet to query.                     |
+| Assuming a component exists ("there must be a `Combobox`")                  | `components.has('Combobox')` first, or `components.where({ text: 'combobox' })`                              |
+| Hardcoding a hex / px value in custom code                                  | `tokens.where({ text: '<intent>' })` — most "obvious" values have a token                                    |
+| Treating icons like normal components, reading `props` / `instructions`     | Detect with `node.category().name === 'icon'`. Icons have empty `props`, `related`, and null `instructions`. |
+| Importing `Button` from the wrong path                                      | `components.get('Button')?.importStatement` is authoritative                                                 |
+| Suggesting setup steps from memory                                          | `guides.get('getting-started')?.content` — always the live text                                              |
+| `console.log(node)` instead of `JSON.stringify`                             | Facet methods serialize as `[Function]`; always stringify before logging                                     |
 
 ## Going deeper
 

@@ -17,7 +17,11 @@ export interface Token {
     readonly value: string;
     /** Inline form of the css variable reference, e.g. "var(--color-charts-primary-default)". Null for tokens that are inlined literals with no CSS variable (e.g. breakpoints) — use `value` directly for those. */
     readonly cssVariable: string | null;
-    /** Tailwind utility class that produces this token. Always present. */
+    /**
+     * Tailwind utility class that produces this token. Always present. A leading
+     * `*` is a placeholder for the utility prefix — `"*-charts-dim"` means the
+     * token is reachable as `bg-charts-dim`, `text-charts-dim`, `border-charts-dim`, ….
+     */
     readonly tailwindClass: string;
     /** Whether the token participates in theme switching. */
     readonly themeable: boolean;

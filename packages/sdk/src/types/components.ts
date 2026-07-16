@@ -31,12 +31,13 @@ export interface ComponentExample {
 
 /** Underlying raw data for a component — what `ComponentNode.toJSON()` returns. */
 export interface ComponentDetails {
+    /** Canonical id — identical to `name` for components. Every SDK entity carries an `id`. */
+    readonly id: string;
     readonly name: string;
     readonly description: string;
     readonly status: ComponentStatus;
     readonly category: ComponentCategory;
     readonly tags: readonly string[];
-    readonly subComponentNames: readonly string[];
     readonly relatedComponents: readonly string[];
     readonly importStatement: string;
     /** Usage guidance for the component. Null when none is documented. */
@@ -63,6 +64,8 @@ export interface ComponentFilter {
 
 /** A Fondue component. Scalar fields are the data; methods walk the graph. */
 export interface ComponentNode {
+    /** Canonical id — identical to `name` for components. Every SDK entity carries an `id`. */
+    readonly id: string;
     readonly name: string;
     readonly description: string;
     readonly status: ComponentStatus;

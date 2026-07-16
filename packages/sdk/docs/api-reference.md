@@ -20,11 +20,12 @@ All other identifiers exposed from the package are TypeScript **types**
 
 ## Conventions
 
-- Identifiers are case-sensitive. Component names use `PascalCase`
-  (`'Button'`); icons are reachable by their React name
-  (`'IconAdobeCreativeCloud'`); token and utility ids use the kebab-style
-  ids emitted by the Fondue tokens build
-  (`'color-charts-primary-default'`).
+- Every entity carries a canonical **`id`** — the key that `get(id)` /
+  `has(id)` accept. For components the id **is** the PascalCase name
+  (`'Button'`, `'IconAdobeCreativeCloud'`); token and utility ids use the
+  kebab-style ids emitted by the Fondue tokens build
+  (`'color-charts-primary-default'`); guide ids are filename slugs.
+  Identifiers are case-sensitive.
 - All collection returns are `readonly`, and the shared data is deeply
   **frozen** at build time — mutating a node, a `toJSON()` payload, or the
   array returned by `list()` throws a `TypeError`.
@@ -93,19 +94,20 @@ work.
 Icons are folded into the components domain at build time. Each icon
 becomes a `ComponentNode` with:
 
-| Field             | Value                                                                |
-| ----------------- | -------------------------------------------------------------------- |
-| `name`            | The React component name (`'IconAdobeCreativeCloud'`)                |
-| `category()`      | The synthetic `'icon'` facet                                         |
-| `status`          | `'released'` — bundled icons ship as released                        |
-| `tags()`          | The icon's tags                                                      |
-| `importStatement` | `"import { IconAdobeCreativeCloud } from '@frontify/fondue/icons';"` |
-| `examples`        | Icon stories                                                         |
-| `props`           | `[]`                                                                 |
-| `subComponents`   | `[]`                                                                 |
-| `related()`       | `[]`                                                                 |
-| `instructions`    | `null`                                                               |
-| `typeDefinitions` | `{}`                                                                 |
+| Field             | Value                                                                                  |
+| ----------------- | -------------------------------------------------------------------------------------- |
+| `name`            | The React component name (`'IconAdobeCreativeCloud'`)                                  |
+| `description`     | `''` — icons carry no prose, so `where({ text })` matches icons via name and tags only |
+| `category()`      | The synthetic `'icon'` facet                                                           |
+| `status`          | `'released'` — bundled icons ship as released                                          |
+| `tags()`          | The icon's tags                                                                        |
+| `importStatement` | `"import { IconAdobeCreativeCloud } from '@frontify/fondue/icons';"`                   |
+| `examples`        | Icon stories                                                                           |
+| `props`           | `[]`                                                                                   |
+| `subComponents`   | `[]`                                                                                   |
+| `related()`       | `[]`                                                                                   |
+| `instructions`    | `null`                                                                                 |
+| `typeDefinitions` | `{}`                                                                                   |
 
 Detect an icon with `node.category().name === 'icon'`.
 
@@ -187,6 +189,15 @@ Filters are plain objects. **All clauses AND-combine.** Array-valued
 clauses are **OR within the clause**. Omitted clauses are ignored.
 Empty filter (`{}`) is equivalent to `list()`.
 
+Edge cases, pinned down:
+
+- An **empty array** clause (`{ category: [] }`) is an OR over zero options —
+  it matches **nothing**. Omit the clause (or pass `undefined`) to ignore it.
+- `text: ''` is treated as an omitted clause — it matches everything.
+- `keyPathStartsWith` is **segment-aware**: `'colors.chart'` does **not**
+  match the keyPath `['colors', 'charts', …]`; every dot-separated segment
+  must equal a whole keyPath segment.
+
 ### `ComponentFilter`
 
 ```ts
@@ -222,7 +233,7 @@ interface TokenFilter {
 | `category`          | The token's `category` (a `TokenCategory` literal)                               |
 | `type`              | The token's `type` (`'color' \| 'float' \| 'shadow' \| 'string'`)                |
 | `themeable`         | Exact boolean match                                                              |
-| `keyPathStartsWith` | Dot-joined keyPath starts with this prefix (e.g. `'colors.charts'`)              |
+| `keyPathStartsWith` | Leading keyPath segments equal the dot-separated prefix (e.g. `'colors.charts'`) |
 | `text`              | Case-insensitive substring in `id`, `tailwindClass`, or the dot-joined `keyPath` |
 
 ### `TokenUtilityFilter`
@@ -254,6 +265,7 @@ interface GuideFilter {
 
 ```ts
 interface ComponentNode {
+    readonly id: string; // identical to `name` for components
     readonly name: string;
     readonly description: string;
     readonly status: ComponentStatus;
@@ -298,9 +310,19 @@ interface TokenNode {
 }
 ```
 
+Token values are exposed **by reference, not resolved**: `value` is usually
+a `var(--…)` string, and the actual rendered value is theme- and
+brand-dependent at runtime. Consume tokens through `cssVariable` or
+`tailwindClass`.
+
 `cssVariable` is `null` for tokens that are inlined literals with no CSS
 custom property behind them (e.g. breakpoints) — read `value` directly for
 those.
+
+`tailwindClass` values that start with `*` are **prefix placeholders**: a
+color token's class `'*-charts-dim'` is usable as `bg-charts-dim`,
+`text-charts-dim`, `border-charts-dim`, and so on. Classes without a `*`
+are concrete, single utilities.
 
 `category()` and `type()` throw the same way `ComponentNode.category()`
 does — programmer errors against an inconsistent data bundle.
@@ -370,6 +392,10 @@ interface ComponentSubComponent {
     props: readonly ComponentProp[];
 }
 
+// Sub-components are not addressable at the top level —
+// components.get('Dialog.Header') is undefined. Reach them through the
+// parent: components.get('Dialog')?.subComponents.
+
 interface ComponentExample {
     name: string;
     description: string;
@@ -410,12 +436,12 @@ imports.
 
 ```ts
 interface ComponentDetails {
+    id: string; // identical to `name`
     name: string;
     description: string;
     status: ComponentStatus;
     category: ComponentCategory;
     tags: readonly string[];
-    subComponentNames: readonly string[];
     relatedComponents: readonly string[];
     importStatement: string;
     instructions: string | null;
@@ -492,34 +518,40 @@ All other methods return `undefined` for missing lookups — they never throw.
 
 ## Complexity
 
-| Operation                                            | Complexity                                      |
-| ---------------------------------------------------- | ----------------------------------------------- |
-| Module load                                          | O(C + T + U) over components, tokens, utilities |
-| `domain.list()`                                      | O(1) — returns the cached array                 |
-| `domain.get(id)`                                     | O(1) — map lookup                               |
-| `domain.has(id)`                                     | O(1)                                            |
-| `domain.where(filter)`                               | O(N) over the domain                            |
-| `facet.list()`                                       | O(M) over the facet's member count              |
-| `facet.get(id)`                                      | O(1)                                            |
-| `facet.where(filter)`                                | O(M)                                            |
-| `categories()` / `tags()` / `types()`                | O(F log F) — sorts on each call. Cache if hot.  |
+| Operation                             | Complexity                                      |
+| ------------------------------------- | ----------------------------------------------- |
+| Module load                           | O(C + T + U) over components, tokens, utilities |
+| `domain.list()`                       | O(1) — returns the cached array                 |
+| `domain.get(id)`                      | O(1) — map lookup                               |
+| `domain.has(id)`                      | O(1)                                            |
+| `domain.where(filter)`                | O(N) over the domain                            |
+| `facet.list()`                        | O(M) over the facet's member count              |
+| `facet.get(id)`                       | O(1)                                            |
+| `facet.where(filter)`                 | O(M)                                            |
+| `categories()` / `tags()` / `types()` | O(F log F) — sorts on each call. Cache if hot.  |
 
 ## Stability
 
-The package version is the contract version.
+The **`@frontify/fondue-sdk` package version is the contract version**, and
+it follows semver. The `@frontify/fondue` umbrella pins an exact SDK
+version and re-exports it at `@frontify/fondue/sdk` — installing the
+umbrella therefore also pins the SDK contract.
 
 - **Patch / minor** may add optional fields, new methods, new entries to
   the bundled data, and tighten unspecified behaviour.
 - **Major** is required to rename or remove any exported symbol, field,
   method, or filter clause, or to change the runtime contract (sync ↔
   async, error semantics, etc.).
+- The data-derived literal unions (`ComponentStatus`, `ComponentCategory`,
+  `TokenCategory`) widen or narrow as the bundled data evolves — a
+  **minor** release may add union members; removing one is **major**.
 - The bundled data refreshes with every release. **Don't rely on specific
   component / icon / token names existing** unless you pin the package
   version.
 
 ## Runtime
 
-- Node 18+, ESM only.
+- Node 20+, ESM only.
 - No peer dependencies, no runtime file I/O.
-- Bundle size: ~800 KB unminified / ~70 KB gzipped, dominated by the
+- Bundle size: ~900 KB unminified / ~80 KB gzipped, dominated by the
   bundled JSON.
