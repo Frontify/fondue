@@ -49,7 +49,7 @@ button?.category();                   // edge → ComponentFacetNode { name, lis
 button?.related();                    // edge → ComponentNode[]
 ```
 
-### Running queries from Claude
+### Running queries from the agent
 
 For one-liners, use `node -e`:
 
