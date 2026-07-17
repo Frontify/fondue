@@ -12,6 +12,7 @@ export default defineConfig(
         ignores: [
             'storybook-static/',
             'node_modules/',
+            'stories/guides/',
             '**/*.mdx/**.ts',
             '**/*.mdx/**.tsx',
             '**/*.md/**.ts',

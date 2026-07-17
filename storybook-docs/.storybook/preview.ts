@@ -5,7 +5,14 @@ import { availableLocales } from '../../packages/components/src/locales/types';
 export const parameters = {
     options: {
         storySort: {
-            order: ['Tokens', 'Foundation', 'Layout', 'Typography', 'Components'],
+            order: [
+                'Getting started',
+                ['Installation', 'Setup'],
+                'Usage',
+                ['Components', 'Styling'],
+                'Development',
+                ['Contributing', 'Upgrading'],
+            ],
         },
     },
     layout: 'fullscreen',
