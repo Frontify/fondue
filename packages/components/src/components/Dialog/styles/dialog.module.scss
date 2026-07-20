@@ -34,6 +34,13 @@
         }
     }
 
+    &[data-dialog-size='fullscreen'] {
+        max-height: calc(100vh - 2rem);
+        height: calc(100vh - 2rem);
+        max-width: calc(100vw - 2rem);
+        width: calc(100vw - 2rem);
+    }
+
     &:has([data-dialog-layout-component]) {
         display: grid;
     }
@@ -44,10 +51,14 @@
     }
 
     &[data-dialog-rounded='true'] {
-        border-radius: var(--border-radius-large);
+        border-radius: var(--border-radius-x-large);
     }
+    --header-divider-padding: #{sizeToken.get(0)};
+    --footer-divider-padding: #{sizeToken.get(0)};
 
     &[data-dialog-padding='tight'] {
+        --header-divider-padding: #{sizeToken.get(2)};
+        --footer-divider-padding: #{sizeToken.get(2)};
         .header,
         .footer,
         .body {
@@ -56,6 +67,8 @@
     }
 
     &[data-dialog-padding='compact'] {
+        --header-divider-padding: #{sizeToken.get(4)};
+        --footer-divider-padding: #{sizeToken.get(4)};
         .header,
         .footer {
             padding: sizeToken.get(4);
@@ -68,6 +81,8 @@
     }
 
     &[data-dialog-padding='comfortable'] {
+        --header-divider-padding: #{sizeToken.get(6)};
+        --footer-divider-padding: #{sizeToken.get(6)};
         .header,
         .footer {
             padding: sizeToken.get(6);
@@ -80,6 +95,9 @@
     }
 
     &[data-dialog-padding='spacious'] {
+        --header-divider-padding: #{sizeToken.get(10)};
+        --footer-divider-padding: #{sizeToken.get(10)};
+
         .header,
         .footer {
             padding: sizeToken.get(10);
@@ -99,29 +117,42 @@
         font-weight: var(--typography-font-weight-medium);
         grid-row: 2;
         grid-column: 1;
+        position: relative;
 
-        &[data-show-border='true'] {
-            border-block-end: var(--border-width-default) solid var(--color-line-subtle);
+        &[data-show-border='true']::after {
+            content: '';
+            display: block;
+            position: absolute;
+            height: 0;
+            bottom: 0;
+            left: var(--header-divider-padding);
+            right: var(--header-divider-padding);
+            border-top: var(--border-width-default) solid var(--color-line-subtle);
         }
 
         &[data-dialog-header-padding='none'] {
             padding: sizeToken.get(0);
+            --header-divider-padding: #{sizeToken.get(0)};
         }
 
         &[data-dialog-header-padding='tight'] {
             padding: sizeToken.get(2);
+            --header-divider-padding: #{sizeToken.get(2)};
         }
 
         &[data-dialog-header-padding='compact'] {
             padding: sizeToken.get(4);
+            --header-divider-padding: #{sizeToken.get(4)};
         }
 
         &[data-dialog-header-padding='comfortable'] {
             padding: sizeToken.get(6);
+            --header-divider-padding: #{sizeToken.get(6)};
         }
 
         &[data-dialog-header-padding='spacious'] {
             padding: sizeToken.get(10);
+            --header-divider-padding: #{sizeToken.get(10)};
         }
 
         & {
@@ -190,29 +221,42 @@
         font-weight: var(--font-weight-medium);
         grid-row: 4;
         grid-column: 1;
+        position: relative;
 
         &[data-dialog-footer-padding='none'] {
             padding: sizeToken.get(0);
+            --footer-divider-padding: #{sizeToken.get(0)};
         }
 
         &[data-dialog-footer-padding='tight'] {
             padding: sizeToken.get(2);
+            --footer-divider-padding: #{sizeToken.get(2)};
         }
 
         &[data-dialog-footer-padding='compact'] {
             padding: sizeToken.get(4);
+            --footer-divider-padding: #{sizeToken.get(4)};
         }
 
         &[data-dialog-footer-padding='comfortable'] {
             padding: sizeToken.get(6);
+            --footer-divider-padding: #{sizeToken.get(6)};
         }
 
         &[data-dialog-footer-padding='spacious'] {
             padding: sizeToken.get(10);
+            --footer-divider-padding: #{sizeToken.get(10)};
         }
 
-        &[data-show-border='true'] {
-            border-block-start: var(--border-width-default) solid var(--color-line-subtle);
+        &[data-show-border='true']::before {
+            content: '';
+            display: block;
+            position: absolute;
+            height: 0;
+            top: 0;
+            left: var(--footer-divider-padding);
+            right: var(--footer-divider-padding);
+            border-top: var(--border-width-default) solid var(--color-line-subtle);
         }
 
         & {
