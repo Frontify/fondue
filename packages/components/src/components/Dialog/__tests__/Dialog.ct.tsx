@@ -422,8 +422,14 @@ test('should render borders on footer and header by default', async ({ mount, pa
     );
     const headerElement = page.getByTestId(DIALOG_HEADER_TEST_ID);
     const footerElement = page.getByTestId(DIALOG_FOOTER_TEST_ID);
-    await expect(headerElement).toHaveCSS('border-bottom-width', '1px');
-    await expect(footerElement).toHaveCSS('border-top-width', '1px');
+    const headerBorderWidth = await headerElement.evaluate(
+        (element) => getComputedStyle(element, '::after').borderTopWidth,
+    );
+    const footerBorderWidth = await footerElement.evaluate(
+        (element) => getComputedStyle(element, '::before').borderTopWidth,
+    );
+    expect(headerBorderWidth).toBe('1px');
+    expect(footerBorderWidth).toBe('1px');
 });
 
 test('should not render borders when showBorder is false', async ({ mount, page }) => {
