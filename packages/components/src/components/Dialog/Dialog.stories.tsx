@@ -337,6 +337,31 @@ export const WithFocusableContent: Story = {
     },
 };
 
+export const Fullscreen: Story = {
+    args: {
+        size: 'fullscreen',
+    },
+    render: (args) => {
+        return (
+            <Dialog.Root>
+                <Dialog.Trigger>
+                    <Button>Open dialog</Button>
+                </Dialog.Trigger>
+                <Dialog.Content {...args}>
+                    <Dialog.Header>
+                        <Dialog.Title>Header</Dialog.Title>
+                    </Dialog.Header>
+                    <Dialog.Body>None</Dialog.Body>
+                    <Dialog.Footer>
+                        <Button emphasis="default">Cancel</Button>
+                        <Button>Submit</Button>
+                    </Dialog.Footer>
+                </Dialog.Content>
+            </Dialog.Root>
+        );
+    },
+};
+
 export const WithNoPadding: Story = {
     render: (args) => {
         return (

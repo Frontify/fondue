@@ -18,6 +18,7 @@ import { useSyncRefs } from '#/hooks/useSyncRefs';
 import { useTranslation } from '#/hooks/useTranslation';
 import { addAutoFocusAttribute, addShowFocusRing } from '#/utilities/domUtilities';
 
+import { Button } from '../Button/Button';
 import { ThemeProvider, useFondueTheme } from '../ThemeProvider/ThemeProvider';
 
 import styles from './styles/dialog.module.scss';
@@ -62,7 +63,11 @@ export type DialogContentProps = {
      * @default "center"
      */
     verticalAlign?: 'top' | 'center';
-
+    /**
+     * Whether the dialog should be fit or fullscreen
+     * @default "fit"
+     */
+    size?: 'fit' | 'fullscreen';
     /**
      * Define a maximum width for the dialog
      * @default "800px"
@@ -221,6 +226,7 @@ export const DialogContent = (
         minHeight = '200px',
         padding = 'compact',
         verticalAlign = 'center',
+        size = 'fit',
         'data-test-id': dataTestId = 'fondue-dialog-content',
         showUnderlay = false,
         rounded = true,
@@ -290,6 +296,7 @@ export const DialogContent = (
                         data-dialog-padding={padding}
                         data-dialog-rounded={rounded}
                         data-test-id={dataTestId}
+                        data-dialog-size={size}
                         data-dialog-vertical-align={verticalAlign}
                         dir={dir}
                     >
@@ -332,7 +339,9 @@ export const DialogHeader = (
                     aria-label={t('Dialog_close')}
                     {...closeProps}
                 >
-                    <IconCross size={20} />
+                    <Button emphasis="weak" size="small" aspect="square">
+                        <IconCross size={16} />
+                    </Button>
                 </RadixDialog.Close>
             )}
         </div>
