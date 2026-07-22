@@ -45,6 +45,28 @@ describe('Card Component', () => {
         expect(screen.getByRole('link')).toHaveAttribute('href', '/some-page');
     });
 
+    it('should pass target and rel to the anchor overlay', () => {
+        renderWithRouter(
+            <Card.Root href="/some-page" target="_blank" rel="noopener noreferrer" aria-label="Open page">
+                <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
+            </Card.Root>,
+        );
+        const link = screen.getByRole('link', { name: 'Open page' });
+        expect(link).toHaveAttribute('target', '_blank');
+        expect(link).toHaveAttribute('rel', 'noopener noreferrer');
+    });
+
+    it('should not use client-side navigation when target is not _self', async () => {
+        navigateStub.mockClear();
+        renderWithRouter(
+            <Card.Root href="/page" target="_blank" aria-label="Card">
+                <Card.Title>{CARD_TITLE_TEXT}</Card.Title>
+            </Card.Root>,
+        );
+        await userEvent.click(screen.getByRole('link', { name: 'Card' }));
+        expect(navigateStub).not.toHaveBeenCalled();
+    });
+
     it('should set data-interactive to true when href is provided', () => {
         renderWithRouter(
             <Card.Root data-test-id={CARD_TEST_ID} href="/page">
