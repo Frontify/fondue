@@ -100,11 +100,6 @@
     & > button:has(.clearIcon) {
         pointer-events: all;
     }
-
-    .root:has(:disabled) button .clearIcon,
-    .root[data-disabled='true'] button .clearIcon {
-        color: var(--color-container-disabled-on-disabled-container) !important;
-    }
 }
 
 .clear {

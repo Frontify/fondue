@@ -11,10 +11,10 @@ import { Button } from '../Button/Button';
 
 import { ComboboxMultiple } from './ComboboxMultiple';
 import { ComboboxSingle } from './ComboboxSingle';
-import { SelectMultiple } from './SelectMultiple';
-import { SelectSingle } from './SelectSingle';
 import { SelectItem, SelectItemGroup } from './components/SelectItem';
 import { SelectSlot } from './components/SelectSlot';
+import { SelectMultiple } from './SelectMultiple';
+import { SelectSingle } from './SelectSingle';
 
 import { Select } from './index';
 
@@ -230,13 +230,11 @@ export const WithDecorator: Story = {
 export const Clearable: Story = {
     args: {
         placeholder: 'Select an item',
+        defaultValue: 'test1',
     },
     render: (args) => {
         return (
             <Select {...args}>
-                <Select.Slot name="right">
-                    <IconIcon size={16} />
-                </Select.Slot>
                 <Select.Slot name="clear" />
                 <Select.Slot name="menu">
                     <Select.Item value="test1">Test1</Select.Item>
@@ -261,9 +259,6 @@ export const CustomClearElement: Story = {
                     </Button>
                 </Select.Slot>
                 <Select.Slot name="left">
-                    <IconIcon size={16} />
-                </Select.Slot>
-                <Select.Slot name="right">
                     <IconIcon size={16} />
                 </Select.Slot>
                 <Select.Slot name="menu">
