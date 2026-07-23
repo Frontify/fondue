@@ -1,5 +1,18 @@
 # @frontify/fondue-icons
 
+## 0.27.0
+
+### Minor Changes
+
+- [#2727](https://github.com/Frontify/fondue/pull/2727) [`f11475e`](https://github.com/Frontify/fondue/commit/f11475ede100f764b527cca4db9ea3b65f6fd100) Thanks [@github-actions](https://github.com/apps/github-actions)! - feat: update icons
+
+- [#2794](https://github.com/Frontify/fondue/pull/2794) [`4532ec4`](https://github.com/Frontify/fondue/commit/4532ec49cbf613d63a3313a1e82031ab782900e2) Thanks [@fondue-release-bot](https://github.com/apps/fondue-release-bot)! - feat: update icons
+
+### Patch Changes
+
+- Updated dependencies [[`a9efb33`](https://github.com/Frontify/fondue/commit/a9efb338b6c90e45bd091833e8c018c80fcf9f23)]:
+  - @frontify/fondue-tokens@5.1.0
+
 ## 0.26.3
 
 ### Patch Changes

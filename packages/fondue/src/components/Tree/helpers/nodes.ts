@@ -6,6 +6,9 @@ import { type TreeNodeWithoutElements, type TreeState } from '../types';
 
 import { ROOT_ID } from './constants';
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export const removeReactNodesFromFlatArray = (tree: ReactElement[], nodeIds: string[]): ReactElement[] => {
     // Create a set of the node IDs to remove for faster lookup
     const nodesToRemove = new Set(nodeIds);
@@ -14,6 +17,9 @@ export const removeReactNodesFromFlatArray = (tree: ReactElement[], nodeIds: str
     return tree.filter((node) => !nodesToRemove.has(node.props.id));
 };
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export const getReactNodeIdsInFlatArray = (tree: ReactElement[], startingNodeId: string): string[] => {
     const nodeIds: string[] = [];
 
@@ -39,6 +45,9 @@ export const getReactNodeIdsInFlatArray = (tree: ReactElement[], startingNodeId:
     return nodeIds;
 };
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export const getReactNodesInFlatArray = (tree: ReactElement[], startingNodeId: string): ReactElement[] => {
     const nodes: ReactElement[] = [];
 
@@ -64,6 +73,9 @@ export const getReactNodesInFlatArray = (tree: ReactElement[], startingNodeId: s
     return nodes;
 };
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export const getNodesToRender = (rootNodes: TreeState['rootNodes'], expandedIds: TreeState['expandedIds']) => {
     const nodesToRender: { id: string; node: ReactElement }[] = [];
     for (const node of rootNodes) {
@@ -79,6 +91,9 @@ export const getNodesToRender = (rootNodes: TreeState['rootNodes'], expandedIds:
     return nodesToRender.map((n) => n.node);
 };
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export const extractNodeFromElement = (node: ReactElement): TreeNodeWithoutElements => ({
     id: node.props.id,
     level: node.props.level,
@@ -87,6 +102,9 @@ export const extractNodeFromElement = (node: ReactElement): TreeNodeWithoutEleme
     nodes: [],
 });
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export const getTreeNodesWithoutElements = (
     nodes: ReactElement[] = [],
     parentId = '__ROOT__',

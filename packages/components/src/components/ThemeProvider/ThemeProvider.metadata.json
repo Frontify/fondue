@@ -4,6 +4,8 @@
     "instructions": "Wrap the entire application (or at minimum all fondue components) with ThemeProvider. Use theme='light' (default) or 'dark'. Use dir='rtl' for right-to-left language support. Provide a translations object from '@frontify/fondue/components/locales' or a custom Translations object for localized UI strings used by components. Use asChild to merge ThemeProvider onto an existing root element.",
     "name": "ThemeProvider",
     "relatedComponents": ["RouterProvider"],
-    "storyFilePaths": [],
+    "storyFilePaths": [
+        "src/components/ThemeProvider/ThemeProvider.stories.tsx"
+    ],
     "tags": ["theme", "provider", "context"]
 }

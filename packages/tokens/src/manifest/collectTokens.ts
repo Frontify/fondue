@@ -9,12 +9,14 @@ export const collectTokens = (node: TokenTree, category: string, keyPath: string
         const currentPath = [...keyPath, key];
 
         if (isTokenLeaf(value)) {
+            const output = value.output === 'value' ? 'value' : 'variable';
             return [
                 {
                     category,
-                    cssVariable: `var(--${value.name})`,
+                    cssVariable: output === 'value' ? null : `var(--${value.name})`,
                     id: value.name,
                     keyPath: currentPath,
+                    output,
                     tailwindClass: getTokenTailwindClass(value),
                     themeable: category === 'colors' || value.type === 'shadow',
                     type: value.type,

@@ -1,5 +1,25 @@
 # @frontify/fondue-tokens
 
+## 5.1.0
+
+### Minor Changes
+
+- [#2789](https://github.com/Frontify/fondue/pull/2789) [`a9efb33`](https://github.com/Frontify/fondue/commit/a9efb338b6c90e45bd091833e8c018c80fcf9f23) Thanks [@noahwaldner](https://github.com/noahwaldner)! - Handle value-output tokens (breakpoints) as a first-class concept instead of one-off exceptions:
+  - Breakpoint keys are renamed from Figma names to Tailwind-conventional names: `x-small`/`small`/`medium`/`large`/`x-large`/`xx-large` → `xs`/`sm`/`md`/`lg`/`xl`/`2xl`. This affects Tailwind `screens` variants (`sm:` instead of `small:`), keys in `semantic.json`, and ids in `manifest.json`.
+  - `--breakpoint-*` CSS variables are no longer emitted into `themes.module.css` (they were never valid to consume — CSS variables cannot be used in media queries).
+  - In `manifest.json`, every token now carries an `output` field (`'variable' | 'value'`). Value-output tokens have `cssVariable: null` (previously a non-existent variable reference) and their `value` holds the literal to use (e.g. `768px`); breakpoints report their Tailwind screen variant (e.g. `md:`) instead of a non-existent utility class.
+  - Unit conversion (`px`/`rem`) is now declared per token group in `config.json` instead of hardcoded token-name lists.
+
+## 5.0.5
+
+### Patch Changes
+
+- [#2783](https://github.com/Frontify/fondue/pull/2783) [`6631e8a`](https://github.com/Frontify/fondue/commit/6631e8ab1b639fcd60de23760a6437c1086baa2c) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add new font family tokens
+
+- [#2785](https://github.com/Frontify/fondue/pull/2785) [`ee0a8f2`](https://github.com/Frontify/fondue/commit/ee0a8f240ed9ce0c48f9f2e79418c3c1155d453f) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add breakpoints as tokens
+
+- [#2788](https://github.com/Frontify/fondue/pull/2788) [`1bd2892`](https://github.com/Frontify/fondue/commit/1bd28924f96325435924dd461057bbf5c6caa8f7) Thanks [@syeo66](https://github.com/syeo66)! - chore: fix type misalignment
+
 ## 5.0.4
 
 ### Patch Changes

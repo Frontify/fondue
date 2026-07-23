@@ -28,6 +28,15 @@ export const Default: Story = {
     },
 };
 
+export const Clearable: Story = {
+    args: {
+        currentColor: { red: 230, green: 100, blue: 50, alpha: 0.8, name: 'custom-color' },
+    },
+    render: (args) => {
+        return <ColorPicker.Input {...args} onClear={() => {}} />;
+    },
+};
+
 export const Empty: Story = {
     args: {},
     render: (args) => {
@@ -38,6 +47,6 @@ export const Empty: Story = {
 export const Disabled: Story = {
     args: {},
     render: (args) => {
-        return <ColorPicker.Input {...args} disabled onClear={() => {}} />;
+        return <ColorPicker.Input {...args} disabled />;
     },
 };

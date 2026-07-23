@@ -9,16 +9,48 @@
                 "collection": "VariableCollectionId:80:1510"
             },
             {
-                "collection": "VariableCollectionId:419:1502",
-                "path": ["border-radius"]
+                "collection": "VariableCollectionId:80:1510",
+                "path": ["typography", "font-size"],
+                "unit": "rem"
+            },
+            {
+                "collection": "VariableCollectionId:80:1510",
+                "path": ["typography", "line-height"],
+                "unit": "rem"
+            },
+            {
+                "collection": "VariableCollectionId:80:1510",
+                "path": ["typography", "letter-spacing"],
+                "unit": "px"
             },
             {
                 "collection": "VariableCollectionId:419:1502",
-                "path": ["border-width"]
+                "path": ["border-radius"],
+                "unit": "rem"
             },
             {
                 "collection": "VariableCollectionId:419:1502",
-                "path": ["spacing"]
+                "path": ["border-width"],
+                "unit": "px"
+            },
+            {
+                "collection": "VariableCollectionId:419:1502",
+                "path": ["spacing"],
+                "unit": "rem"
+            },
+            {
+                "collection": "VariableCollectionId:419:1502",
+                "path": ["breakpoint"],
+                "output": "value",
+                "unit": "px",
+                "rename": {
+                    "x-small": "xs",
+                    "small": "sm",
+                    "medium": "md",
+                    "large": "lg",
+                    "x-large": "xl",
+                    "xx-large": "2xl"
+                }
             }
         ],
         "semantic": [

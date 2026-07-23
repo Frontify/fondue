@@ -24,6 +24,24 @@ No peer dependencies, no extra installs. Each release pins a specific
 snapshot of the Fondue data; upgrade the package to pick up newer
 components, icons, or tokens.
 
+### Agent skill
+
+The package ships an [agent skill](./skills/fondue/SKILL.md) that teaches
+coding agents (Claude Code, Cursor, Codex, …) to query the SDK instead of
+guessing component names, props, or tokens. Install it with the
+[skills CLI](https://github.com/vercel-labs/skills):
+
+```sh
+npx skills add frontify/fondue/packages/sdk
+```
+
+The skill queries the Fondue version installed in your project, so its
+answers always reflect the exact version you depend on. The skill's own
+instructions, however, are a snapshot of the SDK's query API at install
+time — as Fondue progresses they can fall behind (or describe APIs your
+older Fondue doesn't have yet). The skill states which version it was
+authored against; re-run the install command above to refresh it.
+
 ## 30-second tour
 
 ```ts
@@ -33,7 +51,7 @@ import { components, guides, tokens } from '@frontify/fondue/sdk';
 const button = components.get('Button');
 
 // Read scalar data
-button?.props.length; // 14
+button?.props.length; // 15
 button?.examples.find((e) => e.isCanonical)?.code; // "<Button …>…"
 
 // Walk the graph
@@ -42,6 +60,7 @@ button?.related().map((c) => c.name); // ['SplitButton', 'Link']
 
 // Query
 components.where({ category: 'input', status: 'released' });
+components.status('beta')?.list();
 components.tag('cta')?.list();
 tokens.where({ category: 'colors', themeable: true });
 
@@ -63,6 +82,13 @@ guides.get('getting-started')?.content; // raw markdown body
 | Tokens          | Design tokens with their key path, css variable, tailwind class             |
 | Token utilities | Composed utilities (typography classes etc.) under `tokens.utilities`       |
 | Guides          | Prose guides as raw markdown — the same source the Storybook docs site uses |
+
+Token coverage is **deliberately curated**: the `colors` category carries
+the consumable color tokens, and `semantic` carries spacing, border-radius,
+border-width, shadows, breakpoints, and typography primitives. Raw color
+scales (e.g. `--color-error-40`) and other internal foundations are not
+exposed — compose from the semantic tokens instead. Typography is consumed
+through `tokens.utilities` classes rather than raw font tokens.
 
 Live counts and a browsable catalog are rendered server-side from this
 package in the Fondue Storybook under
@@ -105,11 +131,16 @@ See [Mental model](./docs/mental-model.md) for the full picture and
 ## Runtime
 
 - Pure Node API; no React, no DOM, no peer dependencies.
-- Node 18+, ESM only.
+- Node 20+, ESM only.
 - Synchronous — all data is bundled at build time.
 
 ## Versioning
 
-The umbrella package version is the contract version. Patch / minor releases
-add fields, new methods, and refreshed bundled data. Major releases are
-required for any rename or removal in the public surface.
+The **`@frontify/fondue-sdk` version is the contract version** and follows
+semver: patch / minor releases add fields, new methods, and refreshed
+bundled data; major releases are required for any rename or removal in the
+public surface. The `@frontify/fondue` umbrella pins an exact SDK version
+and re-exports it at `@frontify/fondue/sdk` — the umbrella import is the
+canonical path for application code, while installing `@frontify/fondue-sdk`
+directly is supported for dependency-free tooling (MCP servers, CLIs) that
+doesn't want the React packages.

@@ -16,10 +16,15 @@ export const textIncludes = (text: string, candidates: readonly (string | undefi
     return candidates.some((candidate) => candidate?.toLowerCase().includes(lower));
 };
 
-/** True if `prefix` is undefined, or the dot-joined keyPath starts with it. */
+/**
+ * True if `prefix` is undefined, or every dot-separated segment of it equals
+ * the corresponding keyPath segment. Matching is segment-aware: the prefix
+ * "colors.chart" does NOT match the keyPath ["colors", "charts", …].
+ */
 export const matchesKeyPathPrefix = (keyPath: readonly string[], prefix: string | undefined): boolean => {
     if (!prefix) {
         return true;
     }
-    return keyPath.join('.').startsWith(prefix);
+    const segments = prefix.split('.');
+    return segments.length <= keyPath.length && segments.every((segment, index) => keyPath[index] === segment);
 };

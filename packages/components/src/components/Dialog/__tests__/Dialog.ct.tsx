@@ -422,8 +422,14 @@ test('should render borders on footer and header by default', async ({ mount, pa
     );
     const headerElement = page.getByTestId(DIALOG_HEADER_TEST_ID);
     const footerElement = page.getByTestId(DIALOG_FOOTER_TEST_ID);
-    await expect(headerElement).toHaveCSS('border-bottom-width', '1px');
-    await expect(footerElement).toHaveCSS('border-top-width', '1px');
+    const headerBorderWidth = await headerElement.evaluate(
+        (element) => getComputedStyle(element, '::after').borderTopWidth,
+    );
+    const footerBorderWidth = await footerElement.evaluate(
+        (element) => getComputedStyle(element, '::before').borderTopWidth,
+    );
+    expect(headerBorderWidth).toBe('1px');
+    expect(footerBorderWidth).toBe('1px');
 });
 
 test('should not render borders when showBorder is false', async ({ mount, page }) => {
@@ -470,6 +476,46 @@ test('should have its content to expand to max width set by user', async ({ moun
     const contentElement = page.getByTestId(DIALOG_CONTENT_TEST_ID);
     await expect(contentElement).toHaveCSS('max-width', '810px');
     await expect(contentElement).toHaveCSS('width', '810px');
+});
+
+test('should render fit size by default', async ({ mount, page }) => {
+    await mount(
+        <Dialog.Root open>
+            <Dialog.Trigger>
+                <Button>{DIALOG_TRIGGER_TEXT}</Button>
+            </Dialog.Trigger>
+            <Dialog.Content data-test-id={DIALOG_CONTENT_TEST_ID}>
+                <Dialog.Header data-test-id={DIALOG_HEADER_TEST_ID}>{DIALOG_HEADER_TEXT}</Dialog.Header>
+                <Dialog.Body data-test-id={DIALOG_BODY_TEST_ID}>{DIALOG_BODY_TEXT}</Dialog.Body>
+            </Dialog.Content>
+        </Dialog.Root>,
+    );
+    const contentElement = page.getByTestId(DIALOG_CONTENT_TEST_ID);
+    await expect(contentElement).toHaveAttribute('data-dialog-size', 'fit');
+});
+
+test('should render fullscreen size', async ({ mount, page }) => {
+    await mount(
+        <Dialog.Root open>
+            <Dialog.Trigger>
+                <Button>{DIALOG_TRIGGER_TEXT}</Button>
+            </Dialog.Trigger>
+            <Dialog.Content size="fullscreen" data-test-id={DIALOG_CONTENT_TEST_ID}>
+                <Dialog.Header data-test-id={DIALOG_HEADER_TEST_ID}>{DIALOG_HEADER_TEXT}</Dialog.Header>
+                <Dialog.Body data-test-id={DIALOG_BODY_TEST_ID}>{DIALOG_BODY_TEXT}</Dialog.Body>
+            </Dialog.Content>
+        </Dialog.Root>,
+    );
+    const contentElement = page.getByTestId(DIALOG_CONTENT_TEST_ID);
+    await expect(contentElement).toHaveAttribute('data-dialog-size', 'fullscreen');
+
+    // Fullscreen expands the dialog to the viewport minus a 2rem (32px) inset.
+    const viewport = page.viewportSize();
+    expect(viewport).not.toBeNull();
+    if (viewport) {
+        await expect(contentElement).toHaveCSS('width', `${viewport.width - 32}px`);
+        await expect(contentElement).toHaveCSS('height', `${viewport.height - 32}px`);
+    }
 });
 
 test('should focus first input in body when dialog opens', async ({ mount, page }) => {

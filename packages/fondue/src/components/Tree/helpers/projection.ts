@@ -6,6 +6,9 @@ import { type ReactElement } from 'react';
 import { INDENTATION_WIDTH, ROOT_ID } from '../helpers';
 import { type InternalTreeItemProps } from '../TreeItem';
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export type ProjectionArgs = {
     nodes: ReactElement<InternalTreeItemProps>[];
     activeId: string;
@@ -13,6 +16,9 @@ export type ProjectionArgs = {
     dragOffset: number;
 };
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export type Projection = {
     depth: number;
     maxDepth: number;
@@ -58,6 +64,9 @@ const calculateMinDepth = (previousNode: ReactElement, nextNode: ReactElement) =
     }
 };
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export const getProjection = ({ nodes, activeId, overId, dragOffset }: ProjectionArgs): Projection => {
     const overNodeIndex = nodes.findIndex(({ props }) => props.id === overId);
     const activeNodeIndex = nodes.findIndex(({ props }) => props.id === activeId);

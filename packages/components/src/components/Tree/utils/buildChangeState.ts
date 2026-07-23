@@ -2,7 +2,7 @@
 
 import { type TreeChangeState, type TreeItemData, type TreeNodeState } from '../types';
 
-import { computeCheckedStates } from './computeCheckedStates';
+import { computeCheckedStates, type ComputeCheckedStatesOptions } from './computeCheckedStates';
 
 /** Flat state mirror of the headless-tree internal model. */
 export type FlatTreeState = {
@@ -25,11 +25,12 @@ export const buildChangeState = (
     items: readonly TreeItemData[],
     state: FlatTreeState,
     rootId: string,
+    options: ComputeCheckedStatesOptions = {},
 ): TreeChangeState => {
     const byId = new Map(items.map((item) => [item.id, item]));
     const expanded = new Set(state.expandedItems);
     const selected = new Set(state.selectedItems ?? []);
-    const checkedStates = computeCheckedStates(items, new Set(state.checkedItems));
+    const checkedStates = computeCheckedStates(items, new Set(state.checkedItems), options);
 
     const buildNode = (id: string): TreeNodeState | null => {
         const item = byId.get(id);

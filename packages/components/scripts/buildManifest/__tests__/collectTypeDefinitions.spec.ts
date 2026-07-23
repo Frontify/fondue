@@ -53,6 +53,16 @@ export interface ButtonStyle {
 export type NestedType = {
     variant: ButtonVariant;
 };
+
+export const breakpoints = {
+    sm: '600px',
+    md: '768px',
+    lg: '1024px',
+};
+
+export type Breakpoint = keyof typeof breakpoints;
+
+export type Responsive<TValue> = { [key in Breakpoint]?: TValue } | TValue;
 `,
         'utf-8',
     );
@@ -89,6 +99,28 @@ describe('collectTypeDefinitions', () => {
         expect(result).toHaveProperty('NestedType');
         // NestedType references ButtonVariant, which should be resolved transitively
         expect(result).toHaveProperty('ButtonVariant');
+    });
+
+    it('resolves `keyof typeof` value queries to their literal keys', () => {
+        const result = collectTypeDefinitions([makeProp('Breakpoint')]);
+        expect(result).toHaveProperty('Breakpoint');
+        // The printer would emit `keyof typeof breakpoints` verbatim; the checker resolves the literals.
+        expect(result.Breakpoint).not.toContain('typeof');
+        expect(result.Breakpoint).toBe('"sm" | "md" | "lg"');
+    });
+
+    it('expands mapped types and declares generic type parameters in the key', () => {
+        const result = collectTypeDefinitions([makeProp('Responsive<string>')]);
+        // Generic parameters are surfaced in the key so `TValue` is not a dangling reference.
+        expect(result).toHaveProperty('Responsive<TValue>');
+        const definition = result['Responsive<TValue>'];
+        // The printer would emit `[key in Breakpoint]?: TValue` verbatim; the checker expands it.
+        expect(definition).not.toContain('key in');
+        expect(definition).toContain('sm?');
+        expect(definition).toContain('md?');
+        expect(definition).toContain('lg?');
+        // The type parameter is not itself chased as a resolvable type.
+        expect(result).not.toHaveProperty('TValue');
     });
 
     it('does not include types that are not found in source', () => {

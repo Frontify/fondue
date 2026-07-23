@@ -4,11 +4,12 @@
     "version": "0.0.2",
     "private": true,
     "scripts": {
-        "storybook": "storybook dev -p 6010",
-        "build:storybook": "storybook build",
+        "generate:guides": "node ./scripts/generateGuideStories.mjs",
+        "storybook": "pnpm generate:guides && storybook dev -p 6010",
+        "build:storybook": "pnpm generate:guides && storybook build",
         "lint": "eslint .",
         "lint:fix": "eslint --fix .",
-        "typecheck": "tsc --noEmit"
+        "typecheck": "pnpm generate:guides && tsc --noEmit"
     },
     "dependencies": {
         "@frontify/fondue-sdk": "workspace:^",

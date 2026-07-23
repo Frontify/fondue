@@ -55,6 +55,7 @@ export const ColorPickerInput = (
 ) => {
     const { t } = useTranslation();
     const colorName = currentColor?.name ?? (currentColor ? getColorWithName(currentColor, 'RGBA').name : '');
+    const hasValue = currentColor?.red !== undefined;
     return (
         <div id={id} className={styles.root} ref={forwardedRef} data-test-id={dataTestId}>
             <button
@@ -65,7 +66,7 @@ export const ColorPickerInput = (
                 type="button"
                 data-color-input-select
             >
-                {currentColor?.red !== undefined ? (
+                {hasValue ? (
                     <div
                         aria-hidden
                         className={styles.colorIndicator}
@@ -81,7 +82,7 @@ export const ColorPickerInput = (
                 <span className={styles.colorName}>{colorName}</span>
             </button>
             <div className={styles.actions}>
-                {onClear && (
+                {hasValue && onClear && !disabled && (
                     <Button onPress={onClear} disabled={disabled} size="small" emphasis="weak" aspect="square">
                         <IconCross className={styles.clearIcon} size={16} />
                     </Button>

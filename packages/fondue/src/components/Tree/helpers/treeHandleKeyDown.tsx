@@ -7,6 +7,9 @@ import { type TreeState } from '../types';
 
 import { ROOT_ID } from './constants';
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export const handleKeyDownEvent = (
     event: KeyboardEvent<HTMLUListElement>,
     expandedIds: TreeState['expandedIds'],

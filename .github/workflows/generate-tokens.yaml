@@ -17,8 +17,19 @@ jobs:
       pull-requests: write
 
     steps:
+      - name: Generate app token
+        id: app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          app-id: ${{ secrets.FONDUE_RELEASE_BOT_CLIENT_ID }}
+          private-key: ${{ secrets.FONDUE_RELEASE_BOT_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
+
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          token: ${{ steps.app-token.outputs.token }}
 
       - name: Setup
         uses: ./.github/actions/setup
@@ -41,7 +52,6 @@ jobs:
 
       - name: Create changeset
         if: steps.git_diff.outputs.changed == 'true'
-        working-directory: ./fondue
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -53,7 +63,7 @@ jobs:
         if: steps.git_diff.outputs.changed == 'true'
         uses: peter-evans/create-pull-request@c5a7806660adbe173f04e3e038b0ccdcd758773c # v6.1.0
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ steps.app-token.outputs.token }}
           commit-message: "chore(tokens): update design tokens"
           title: "chore(tokens): Update design tokens"
           body: |

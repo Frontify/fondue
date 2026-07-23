@@ -13,6 +13,9 @@ import {
     type TreeItemStyling,
 } from '../types';
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export const getMultiselectLiClassName = (itemStyleProps: TreeItemStyling, isDisabled: boolean) => {
     const styling = TreeItemColorsClassMap[itemStyleProps.activeColorStyle ?? 'neutral'];
     return merge([
@@ -23,6 +26,9 @@ export const getMultiselectLiClassName = (itemStyleProps: TreeItemStyling, isDis
     ]);
 };
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export const getMultiselectBackgroundClassName = (
     itemStyleProps: TreeItemStyling,
     isSelected: boolean,
@@ -39,6 +45,9 @@ export const getMultiselectBackgroundClassName = (
     ]);
 };
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export const getMultiselectContainerClassName = (itemStyleProps: TreeItemStyling) => {
     const containerBorder =
         itemStyleProps.borderWidth !== 'none'

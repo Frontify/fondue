@@ -21,9 +21,9 @@ import 'react-day-picker/style.css';
 import { Button } from '../Button/Button';
 import { useFondueTheme } from '../ThemeProvider/ThemeProvider';
 
-import { transformDisabledDates } from './helpers/dateTransformer';
+import { transformDatePickerDateToDate, transformDisabledDates } from './helpers/dateTransformer';
 import styles from './styles/datePickerCalendar.module.scss';
-import { type DisabledDatePickerDates } from './types';
+import { type DatePickerDate, type DisabledDatePickerDates } from './types';
 
 type DatePickerCalendarSingleModeProps = {
     mode: 'single';
@@ -46,6 +46,10 @@ type DatePickerCalendarModeProps = DatePickerCalendarSingleModeProps | DatePicke
 export type DatePickerBaseProps = {
     /** The days to be disabled. */
     disabledDates?: DisabledDatePickerDates | DisabledDatePickerDates[];
+    /** The earliest month the user can navigate to. Disables backward navigation once reached. */
+    minMonth?: DatePickerDate;
+    /** The latest month the user can navigate to. Disables forward navigation once reached. */
+    maxMonth?: DatePickerDate;
     /** The test id applied to the wrapper and forwarded to DayPicker. */
     'data-test-id'?: string;
 };
@@ -53,7 +57,10 @@ export type DatePickerBaseProps = {
 type DatePickerCalendarProps = DatePickerBaseProps & DatePickerCalendarModeProps;
 
 export const DatePickerCalendar = forwardRef<HTMLDivElement, DatePickerCalendarProps>(
-    ({ 'data-test-id': dataTestId = 'fondue-date-picker-calendar', disabledDates, ...modeProps }, ref): JSX.Element => {
+    (
+        { 'data-test-id': dataTestId = 'fondue-date-picker-calendar', disabledDates, minMonth, maxMonth, ...modeProps },
+        ref,
+    ): JSX.Element => {
         const defaultClassNames = getDefaultClassNames();
         const {
             dir,
@@ -61,6 +68,8 @@ export const DatePickerCalendar = forwardRef<HTMLDivElement, DatePickerCalendarP
         } = useFondueTheme();
 
         const transformedDisabledDates = useMemo(() => transformDisabledDates(disabledDates), [disabledDates]);
+        const startMonth = useMemo(() => transformDatePickerDateToDate(minMonth), [minMonth]);
+        const endMonth = useMemo(() => transformDatePickerDateToDate(maxMonth), [maxMonth]);
 
         const defaultMonth = useMemo(() => {
             if (modeProps.mode === 'single') {
@@ -78,6 +87,8 @@ export const DatePickerCalendar = forwardRef<HTMLDivElement, DatePickerCalendarP
                     components={getCustomComponents()}
                     showOutsideDays
                     disabled={transformedDisabledDates}
+                    startMonth={startMonth}
+                    endMonth={endMonth}
                     defaultMonth={defaultMonth}
                     dir={dir}
                     fixedWeeks
@@ -175,6 +186,7 @@ const getCustomComponents = (): Partial<CustomComponents> => ({
                     aspect="square"
                     aria-label="Go to the Previous Year"
                     aria-disabled={isYearDisabled}
+                    tabIndex={isYearDisabled ? -1 : undefined}
                     onPress={() => {
                         if (currentMonth && !isYearDisabled) {
                             goToMonth(subYears(currentMonth, 1));
@@ -189,6 +201,7 @@ const getCustomComponents = (): Partial<CustomComponents> => ({
                     aspect="square"
                     aria-label={ariaLabel}
                     aria-disabled={ariaDisabled}
+                    tabIndex={ariaDisabled ? -1 : undefined}
                     onPress={(event) => {
                         if (event) {
                             onClick?.(event);
@@ -216,6 +229,7 @@ const getCustomComponents = (): Partial<CustomComponents> => ({
                     aspect="square"
                     aria-label={ariaLabel}
                     aria-disabled={ariaDisabled}
+                    tabIndex={ariaDisabled ? -1 : undefined}
                     onPress={(event) => {
                         if (event) {
                             onClick?.(event);
@@ -230,6 +244,7 @@ const getCustomComponents = (): Partial<CustomComponents> => ({
                     aspect="square"
                     aria-label="Go to the Next Year"
                     aria-disabled={isYearDisabled}
+                    tabIndex={isYearDisabled ? -1 : undefined}
                     onPress={() => {
                         if (currentMonth && !isYearDisabled) {
                             goToMonth(addYears(currentMonth, 1));

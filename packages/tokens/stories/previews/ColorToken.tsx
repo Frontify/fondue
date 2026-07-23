@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type Token } from '../components/Tokens/types';
+import { type GetClassNameProps, type Token } from '../components/Tokens/types';
 
-export const getColorTokenClassName = ({ name }: Token) => {
-    return `*-${name.replace('color-', '').replace('-default', '')}`;
+export const getColorTokenClassName = ({ token }: GetClassNameProps) => {
+    return `*-${token.name.replace('color-', '').replace('-default', '')}`;
 };
 
 export const ColorTokenPreview = ({ value }: Token) => {

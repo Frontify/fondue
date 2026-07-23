@@ -352,7 +352,7 @@ test('should render right slot', async ({ mount, page }) => {
 
 test('should render custom clear slot', async ({ mount, page }) => {
     const wrapper = await mount(
-        <Select aria-label="test" data-test-id={SELECT_TEST_ID} placeholder={PLACEHOLDER_TEXT}>
+        <Select aria-label="test" data-test-id={SELECT_TEST_ID} placeholder={PLACEHOLDER_TEXT} defaultValue="test1">
             <Select.Slot data-test-id={SLOT_CLEAR_TEST_ID} name="clear">
                 <div>Clear Slot</div>
             </Select.Slot>

@@ -4,6 +4,6 @@
     "instructions": "Functionally identical to Box but renders a <section> element. Supports all the same spacing, sizing, and positioning props as Box. Provide aria-label or aria-labelledby to identify the section to screen readers when no visible heading is present.",
     "name": "Section",
     "relatedComponents": ["Accordion", "Box"],
-    "storyFilePaths": [],
+    "storyFilePaths": ["src/components/Section/Section.stories.ts"],
     "tags": ["section", "container", "layout"]
 }

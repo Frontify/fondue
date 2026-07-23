@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type ComponentCategory, type ComponentStatus } from '../__generated__/unions';
 import {
     type ComponentDetails,
     type ComponentFacetNode,
@@ -8,6 +9,7 @@ import {
 } from '../types/components';
 import { pushToMultiMap, sortedByName } from '../utils/collections';
 import { textIncludes, toArray } from '../utils/filters';
+import { deepFreeze } from '../utils/freeze';
 import { makeFacet } from '../utils/makeFacet';
 
 export interface ComponentsApi {
@@ -18,7 +20,9 @@ export interface ComponentsApi {
     readonly size: number;
 
     categories(): readonly ComponentFacetNode[];
-    category(name: string): ComponentFacetNode | undefined;
+    category(name: ComponentCategory): ComponentFacetNode | undefined;
+    statuses(): readonly ComponentFacetNode[];
+    status(name: ComponentStatus): ComponentFacetNode | undefined;
     tags(): readonly ComponentFacetNode[];
     tag(name: string): ComponentFacetNode | undefined;
 }
@@ -43,11 +47,17 @@ const matches = (raw: ComponentDetails, filter: ComponentFilter): boolean => {
 };
 
 export const buildComponentsApi = (raws: readonly ComponentDetails[]): ComponentsApi => {
+    deepFreeze(raws);
+
     const categoryMembers = new Map<string, string[]>();
+    const statusMembers = new Map<string, string[]>();
     const tagMembers = new Map<string, string[]>();
     for (const raw of raws) {
         if (raw.category) {
             pushToMultiMap(categoryMembers, raw.category, raw.name);
+        }
+        if (raw.status) {
+            pushToMultiMap(statusMembers, raw.status, raw.name);
         }
         for (const tag of raw.tags) {
             pushToMultiMap(tagMembers, tag, raw.name);
@@ -63,45 +73,52 @@ export const buildComponentsApi = (raws: readonly ComponentDetails[]): Component
         new Map(Array.from(memberships, ([name, ids]) => [name, makeFacet(name, ids, resolve, matchNode)]));
 
     const categories = facets(categoryMembers);
+    const statuses = facets(statusMembers);
     const tags = facets(tagMembers);
 
     for (const raw of raws) {
-        nodes.set(raw.name, {
-            name: raw.name,
-            description: raw.description,
-            status: raw.status,
-            importStatement: raw.importStatement,
-            instructions: raw.instructions,
-            props: raw.props,
-            subComponents: raw.subComponents,
-            examples: raw.examples,
-            typeDefinitions: raw.typeDefinitions,
-            category: () => {
-                const node = categories.get(raw.category);
-                if (!node) {
-                    throw new Error(`Unknown category "${raw.category}" on "${raw.name}"`);
-                }
-                return node;
-            },
-            tags: () => raw.tags.map((t) => tags.get(t)).filter((n): n is ComponentFacetNode => !!n),
-            related: () => raw.relatedComponents.map(resolve).filter((n): n is ComponentNode => !!n),
-            toJSON: () => raw,
-        });
+        nodes.set(
+            raw.name,
+            Object.freeze({
+                id: raw.id,
+                name: raw.name,
+                description: raw.description,
+                status: raw.status,
+                importStatement: raw.importStatement,
+                instructions: raw.instructions,
+                props: raw.props,
+                subComponents: raw.subComponents,
+                examples: raw.examples,
+                typeDefinitions: raw.typeDefinitions,
+                category: () => {
+                    const node = categories.get(raw.category);
+                    if (!node) {
+                        throw new Error(`Unknown category "${raw.category}" on "${raw.name}"`);
+                    }
+                    return node;
+                },
+                tags: () => raw.tags.map((t) => tags.get(t)).filter((n): n is ComponentFacetNode => !!n),
+                related: () => raw.relatedComponents.map(resolve).filter((n): n is ComponentNode => !!n),
+                toJSON: () => raw,
+            }),
+        );
     }
 
-    const all = Array.from(nodes.values());
+    const all = Object.freeze(Array.from(nodes.values()));
 
-    return {
+    return Object.freeze({
         list: () => all,
-        get: (name) => nodes.get(name),
-        has: (name) => nodes.has(name),
-        where: (f) => all.filter((n) => matchNode(n, f)),
+        get: (name: string) => nodes.get(name),
+        has: (name: string) => nodes.has(name),
+        where: (f: ComponentFilter) => all.filter((n) => matchNode(n, f)),
         get size() {
             return all.length;
         },
         categories: () => sortedByName(categories.values()),
-        category: (name) => categories.get(name),
+        category: (name: ComponentCategory) => categories.get(name),
+        statuses: () => sortedByName(statuses.values()),
+        status: (name: ComponentStatus) => statuses.get(name),
         tags: () => sortedByName(tags.values()),
-        tag: (name) => tags.get(name),
-    };
+        tag: (name: string) => tags.get(name),
+    });
 };

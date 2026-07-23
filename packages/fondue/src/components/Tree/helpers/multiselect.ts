@@ -6,6 +6,9 @@ import { type TreeItemMultiselectProps } from '../types';
 
 import { ROOT_ID } from './constants';
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export type TreeItemMultiselectWithNodes = TreeItemMultiselectProps & {
     id: string;
     parentId: string;
@@ -15,6 +18,9 @@ export type TreeItemMultiselectWithNodes = TreeItemMultiselectProps & {
     onSelect?: (id: string) => void;
 };
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export const getMultiselectCheckBoxState = (isSelected: boolean, isPartialSelected: boolean) => {
     let theCheckboxState = CheckboxState.Unchecked;
     if (isSelected) {
@@ -26,6 +32,9 @@ export const getMultiselectCheckBoxState = (isSelected: boolean, isPartialSelect
     return theCheckboxState;
 };
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export const getSelectedChildrenItems = (
     tree: TreeItemMultiselectWithNodes[],
     selectedIds: string[],
@@ -40,6 +49,9 @@ export const getSelectedChildrenItems = (
         .map((item) => item.id);
 };
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export const getSelectedTreeItem = (
     tree: TreeItemMultiselectWithNodes[],
     id: string,
@@ -59,6 +71,9 @@ export const getSelectedTreeItem = (
     return null;
 };
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export const getParentSelectedTreeItem = (
     tree: TreeItemMultiselectWithNodes[],
     id: string,
@@ -78,6 +93,9 @@ export const getParentSelectedTreeItem = (
     return null;
 };
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export const addSelectedItemsFromSelection = (
     treeItems: TreeItemMultiselectWithNodes[],
     id: string,
@@ -129,6 +147,9 @@ export const addSelectedItemsFromSelection = (
     return newSelectedItems;
 };
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export const fixParentSelectionState = (parent: TreeItemMultiselectWithNodes, newSelectedItems: string[]) => {
     const parentExtendedId = getExtendedId(parent);
     const isParentSelected = newSelectedItems.includes(parentExtendedId);
@@ -157,6 +178,9 @@ export const fixParentSelectionState = (parent: TreeItemMultiselectWithNodes, ne
     return newSelectedItems;
 };
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export const cleanOrphanSelectedIds = (selectIds: string[]) => {
     const orphans: string[] = [];
     let newSelectedIds: string[] = selectIds;
@@ -184,19 +208,37 @@ export const cleanOrphanSelectedIds = (selectIds: string[]) => {
     return newSelectedIds;
 };
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export const convertToPartialSelectedId = (ids: string[]) => ids.map((id) => `*${id}`);
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export const removePartialFlagSelectedId = (ids: string[]) => ids.map((id) => id.replace(/^\*/, ''));
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export const getExtendedId = (item: TreeItemMultiselectWithNodes) => item.extendedId ?? `${item.parentId}/${item.id}`;
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export const removeSelectedIds = (ids: string[], idsToRemove: string[], partial: boolean): string[] => {
     idsToRemove = partial ? convertToPartialSelectedId(idsToRemove) : idsToRemove;
     return [...new Set(idsToRemove.length > 0 ? ids.filter((itemId: string) => !idsToRemove.includes(itemId)) : ids)];
 };
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export const addSelectedIds = (ids: string[], idsToAdd: string[], partial: boolean) => {
     idsToAdd = (partial ? convertToPartialSelectedId(idsToAdd) : idsToAdd).filter((id) => id !== '');
     return [...new Set(idsToAdd.length > 0 ? [...ids, ...idsToAdd] : ids)];
 };
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export const getNewSelectedItems = (
     id: string,
     selectedIds: string[],

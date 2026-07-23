@@ -1055,6 +1055,155 @@ export const MultiSelectLazyLoading: Story = {
     },
 };
 
+export const MultiSelectLazyLoadingPartialRestore: Story = {
+    parameters: {
+        docs: {
+            description: {
+                story:
+                    'Restoring a partial selection onto a collapsed, not-yet-loaded folder. Storage says only ' +
+                    '`Page 01` inside the still-collapsed `Documents` folder is selected, so the consumer seeds the ' +
+                    "childless folder with `isSelected='indeterminate'` and its checkbox renders mixed before any " +
+                    'child is fetched. Expanding it loads the children, the consumer carries the stored selection onto ' +
+                    'them and drops the placeholder, and from then on the folder derives the same mixed state from its ' +
+                    'contents (re-collapsing keeps it). The first click on the placeholder folder checks it.',
+            },
+        },
+    },
+    args: {
+        multiSelect: true,
+    },
+    render: (args) => {
+        type LazyNode = { id: string; name: string; isFolder: boolean };
+        type ChildrenState = { status: 'loading' } | { status: 'loaded'; children: LazyNode[] };
+
+        const rootNodes: LazyNode[] = [
+            { id: 'documents', name: 'Documents', isFolder: true },
+            { id: 'README.md', name: 'README.md', isFolder: false },
+        ];
+        const childrenByParent: Record<string, LazyNode[]> = {
+            documents: [
+                { id: 'documents/page-01', name: 'Page 01', isFolder: false },
+                { id: 'documents/page-02', name: 'Page 02', isFolder: false },
+            ],
+        };
+        // Persisted partial selection: only Page 01 is selected inside the still-collapsed
+        // Documents folder. The consumer knows this before the children load.
+        const storedSelection: Record<string, string[]> = {
+            documents: ['documents/page-01'],
+        };
+        const fetchChildren = (parentId: string): Promise<LazyNode[]> =>
+            new Promise((resolve) => {
+                setTimeout(() => resolve(childrenByParent[parentId] ?? []), 600);
+            });
+
+        const [expandedIds, setExpandedIds] = useState<Set<string>>(() => new Set());
+        const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set());
+        // Collapsed folders whose stored selection is partial and not loaded yet: shown
+        // indeterminate until their children arrive and take over the derivation.
+        const [partialFolderIds, setPartialFolderIds] = useState<Set<string>>(() => new Set(['documents']));
+        const [childrenState, setChildrenState] = useState<Record<string, ChildrenState>>({});
+
+        const handleSelect = (id: string, isSelected: boolean) => {
+            setSelectedIds((prev) => {
+                const next = new Set(prev);
+                if (isSelected) {
+                    next.add(id);
+                } else {
+                    next.delete(id);
+                }
+                return next;
+            });
+            // A click on the placeholder folder resolves its indeterminate into a real state.
+            setPartialFolderIds((prev) => {
+                if (!prev.has(id)) {
+                    return prev;
+                }
+                const next = new Set(prev);
+                next.delete(id);
+                return next;
+            });
+        };
+
+        const handleExpand = (id: string, isExpanded: boolean) => {
+            setExpandedIds((prev) => {
+                const next = new Set(prev);
+                if (isExpanded) {
+                    next.add(id);
+                } else {
+                    next.delete(id);
+                }
+                return next;
+            });
+            if (isExpanded && !childrenState[id]) {
+                setChildrenState((prev) => ({ ...prev, [id]: { status: 'loading' } }));
+                fetchChildren(id)
+                    .then((children) => {
+                        setChildrenState((prev) => ({ ...prev, [id]: { status: 'loaded', children } }));
+                        // Carry the stored partial selection onto the loaded children, then
+                        // drop the placeholder so the folder derives from its contents.
+                        const restored = storedSelection[id] ?? [];
+                        if (restored.length > 0) {
+                            setSelectedIds((prev) => new Set([...prev, ...restored]));
+                        }
+                        setPartialFolderIds((prev) => {
+                            if (!prev.has(id)) {
+                                return prev;
+                            }
+                            const next = new Set(prev);
+                            next.delete(id);
+                            return next;
+                        });
+                        return children;
+                    })
+                    .catch(() => {});
+            }
+        };
+
+        const folderSelectedState = (id: string): boolean | 'indeterminate' =>
+            partialFolderIds.has(id) ? 'indeterminate' : selectedIds.has(id);
+
+        const renderNode = (n: LazyNode): ReactNode => {
+            if (!n.isFolder) {
+                return (
+                    <Tree.Item
+                        key={n.id}
+                        id={n.id}
+                        isSelected={selectedIds.has(n.id)}
+                        onSelectChange={(isSelected) => handleSelect(n.id, isSelected)}
+                    >
+                        <Tree.Icon>
+                            <IconDocument size={16} />
+                        </Tree.Icon>
+                        <Tree.Label>{n.name}</Tree.Label>
+                    </Tree.Item>
+                );
+            }
+            const entry = childrenState[n.id];
+            return (
+                <Tree.Folder
+                    key={n.id}
+                    id={n.id}
+                    isExpanded={expandedIds.has(n.id)}
+                    onExpandChange={(isExpanded) => handleExpand(n.id, isExpanded)}
+                    isSelected={folderSelectedState(n.id)}
+                    onSelectChange={(isSelected) => handleSelect(n.id, isSelected)}
+                >
+                    <Tree.FolderHeader>
+                        <Tree.Icon>
+                            <IconFolder size={16} />
+                        </Tree.Icon>
+                        <Tree.Label>{n.name}</Tree.Label>
+                    </Tree.FolderHeader>
+                    {entry?.status === 'loading' && <Tree.Loading />}
+                    {entry?.status === 'loaded' && entry.children.map(renderNode)}
+                </Tree.Folder>
+            );
+        };
+
+        return <Tree.Root {...args}>{rootNodes.map(renderNode)}</Tree.Root>;
+    },
+};
+
 export const LoadMore: Story = {
     parameters: {
         docs: {
@@ -1130,10 +1279,12 @@ export const DisabledRows: Story = {
                 story:
                     '`isDisabled` freezes a row at its prop-driven state: its checkbox cannot be toggled — ' +
                     'not even by checking an ancestor folder — it cannot be dragged or take the selection, ' +
-                    'and drops into a disabled folder are rejected. The frozen state still counts toward ' +
-                    "folder checkboxes, so a folder holding a disabled-unchecked leaf caps at 'indeterminate'. " +
-                    'Disabled folders stay expandable, and only their own row is frozen — their children ' +
-                    'remain interactive unless disabled themselves.',
+                    'and drops into a disabled folder are rejected. A folder derives its checkbox from its ' +
+                    'selectable descendants only, so a disabled leaf never blocks it: the folder reads ' +
+                    "'checked' once every enabled leaf is checked and its checkbox can always be toggled back " +
+                    'off. Set `countDisabledInFolderState` to keep disabled descendants counting instead, so ' +
+                    "such a folder caps at 'indeterminate'. Disabled folders stay expandable, and only their " +
+                    'own row is frozen, so their children remain interactive unless disabled themselves.',
             },
         },
     },

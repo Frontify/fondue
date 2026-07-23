@@ -1,5 +1,79 @@
 # @frontify/fondue
 
+## 13.7.4
+
+### Patch Changes
+
+- [#2803](https://github.com/Frontify/fondue/pull/2803) [`1617bbc`](https://github.com/Frontify/fondue/commit/1617bbcfa0727d5a4c33109408fe5b902946c6ec) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: adjust dialog component styling
+
+- [#2807](https://github.com/Frontify/fondue/pull/2807) [`b889bc1`](https://github.com/Frontify/fondue/commit/b889bc1377f530571b27a56e0ea676db5996c5fb) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - feat(Card): allow for `target` and `rel`
+
+- [#2808](https://github.com/Frontify/fondue/pull/2808) [`2dbaebf`](https://github.com/Frontify/fondue/commit/2dbaebfb9c66fd1cb629c1116abe64def2a42e15) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: adress minor styling issues
+
+- Updated dependencies [[`1617bbc`](https://github.com/Frontify/fondue/commit/1617bbcfa0727d5a4c33109408fe5b902946c6ec), [`b889bc1`](https://github.com/Frontify/fondue/commit/b889bc1377f530571b27a56e0ea676db5996c5fb), [`2dbaebf`](https://github.com/Frontify/fondue/commit/2dbaebfb9c66fd1cb629c1116abe64def2a42e15)]:
+  - @frontify/fondue-components@31.1.0
+
+## 13.7.3
+
+### Patch Changes
+
+- [#2797](https://github.com/Frontify/fondue/pull/2797) [`19809e5`](https://github.com/Frontify/fondue/commit/19809e5b23969b72dffa637e946bb5cce30f748e) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - Pin the `Badge` text to the regular font weight so it no longer inherits a bold weight from an ancestor with `font-weight: bold`.
+
+- [#2802](https://github.com/Frontify/fondue/pull/2802) [`24f103b`](https://github.com/Frontify/fondue/commit/24f103bc8990839922922123256d3a5727cd9524) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: split up the guides into smaller files
+
+- [#2799](https://github.com/Frontify/fondue/pull/2799) [`033ffae`](https://github.com/Frontify/fondue/commit/033ffae60a7a23306638570a83083ec00bea8d74) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: remove custom skill install script
+
+- [#2801](https://github.com/Frontify/fondue/pull/2801) [`a086574`](https://github.com/Frontify/fondue/commit/a086574a656be667b17f780fca44abf769ad6e37) Thanks [@noahwaldner](https://github.com/noahwaldner)! - Harden the Fondue SDK contract ahead of the 1.0 release (still prerelease, 0.x):
+  - **Component `status` is now always set.** The manifest parser understands `const meta = { … } satisfies Meta<…>` story files, the six components whose stories weren't wired up (`LoadingBar`, `LoadingCircle`, `RouterProvider`, `Section`, `Text`, `ThemeProvider`) now expose their Storybook status, and icons are bundled as `'released'`.
+  - **Data-derived literal unions.** `status`, `category`, and token `category` are typed as `ComponentStatus`, `ComponentCategory`, and `TokenCategory` (exported), so a typo in a filter fails at compile time instead of silently matching nothing.
+  - **New `components.statuses()` / `components.status(name)` facet accessors**, mirroring categories and tags.
+  - **Uniform identity.** Every entity now carries a canonical `id`; for components it equals `name`. The redundant `ComponentDetails.subComponentNames` was dropped (use `subComponents[].name`).
+  - **`null` for not-applicable fields.** `ComponentNode.instructions` and `ComponentProp.deprecationMessage` are `string | null` instead of sometimes-empty strings; `Token.cssVariable` is `string | null` for inlined-literal tokens.
+  - **Segment-aware `keyPathStartsWith`.** The prefix `'colors.chart'` no longer matches `colors.charts.*`; filter edge cases (empty-array clauses, empty `text`) are now documented behavior.
+  - **Deep-frozen data.** Nodes, `toJSON()` payloads, and the arrays returned by `list()` are frozen — mutating shared SDK state now throws instead of silently corrupting other consumers.
+  - **Build-time data validation.** The SDK build fails on missing statuses/categories, dangling `relatedComponents` references, duplicate ids, and token/cssVariable inconsistencies.
+  - **Packaging:** `sideEffects: false`, engines bumped to Node 20+, and the `*`-prefix `tailwindClass` placeholder convention is documented.
+
+- [#2800](https://github.com/Frontify/fondue/pull/2800) [`a5ceef1`](https://github.com/Frontify/fondue/commit/a5ceef1fa4e8aca69650f88b9a8720d9a583ffeb) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add deprecation notices to legacy components
+
+- Updated dependencies [[`19809e5`](https://github.com/Frontify/fondue/commit/19809e5b23969b72dffa637e946bb5cce30f748e), [`24f103b`](https://github.com/Frontify/fondue/commit/24f103bc8990839922922123256d3a5727cd9524), [`033ffae`](https://github.com/Frontify/fondue/commit/033ffae60a7a23306638570a83083ec00bea8d74), [`a086574`](https://github.com/Frontify/fondue/commit/a086574a656be667b17f780fca44abf769ad6e37), [`a5ceef1`](https://github.com/Frontify/fondue/commit/a5ceef1fa4e8aca69650f88b9a8720d9a583ffeb)]:
+  - @frontify/fondue-components@31.0.1
+  - @frontify/fondue-sdk@0.2.0
+
+## 13.7.2
+
+### Patch Changes
+
+- [#2796](https://github.com/Frontify/fondue/pull/2796) [`08f8b59`](https://github.com/Frontify/fondue/commit/08f8b593c631d6ea851269fc91665b327bbaa2ee) Thanks [@syeo66](https://github.com/syeo66)! - feat(DatePicker): allow setting min and max month
+
+- Updated dependencies [[`a9efb33`](https://github.com/Frontify/fondue/commit/a9efb338b6c90e45bd091833e8c018c80fcf9f23), [`08f8b59`](https://github.com/Frontify/fondue/commit/08f8b593c631d6ea851269fc91665b327bbaa2ee), [`f11475e`](https://github.com/Frontify/fondue/commit/f11475ede100f764b527cca4db9ea3b65f6fd100), [`4532ec4`](https://github.com/Frontify/fondue/commit/4532ec49cbf613d63a3313a1e82031ab782900e2)]:
+  - @frontify/fondue-tokens@5.1.0
+  - @frontify/fondue-components@31.0.0
+  - @frontify/fondue-icons@0.27.0
+  - @frontify/fondue-charts@8.0.0
+  - @frontify/fondue-rte@0.1.7
+
+## 13.7.1
+
+### Patch Changes
+
+- [#2780](https://github.com/Frontify/fondue/pull/2780) [`6a49b0b`](https://github.com/Frontify/fondue/commit/6a49b0bfe42b0af7b0a53e11c28d196dcd37eaa2) Thanks [@syeo66](https://github.com/syeo66)! - feat(Tree): allow an indeterminate checkbox on a collapsed, not-yet-loaded folder
+
+- [#2783](https://github.com/Frontify/fondue/pull/2783) [`6631e8a`](https://github.com/Frontify/fondue/commit/6631e8ab1b639fcd60de23760a6437c1086baa2c) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add new font family tokens
+
+- [#2779](https://github.com/Frontify/fondue/pull/2779) [`6b2b0f6`](https://github.com/Frontify/fondue/commit/6b2b0f6243accd8059d54c9c78c734183ce2ab2e) Thanks [@syeo66](https://github.com/syeo66)! - feat(Tree): change the default behavior of folder selection with disabled items
+
+- [#2785](https://github.com/Frontify/fondue/pull/2785) [`ee0a8f2`](https://github.com/Frontify/fondue/commit/ee0a8f240ed9ce0c48f9f2e79418c3c1155d453f) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: add breakpoints as tokens
+
+- [#2788](https://github.com/Frontify/fondue/pull/2788) [`1bd2892`](https://github.com/Frontify/fondue/commit/1bd28924f96325435924dd461057bbf5c6caa8f7) Thanks [@syeo66](https://github.com/syeo66)! - chore: fix type misalignment
+
+- [#2784](https://github.com/Frontify/fondue/pull/2784) [`dda0b97`](https://github.com/Frontify/fondue/commit/dda0b97f639d8dd1876c24fd58fa1e80a4c71cf6) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: properly resolve type defintions in manifest files
+
+- Updated dependencies [[`6a49b0b`](https://github.com/Frontify/fondue/commit/6a49b0bfe42b0af7b0a53e11c28d196dcd37eaa2), [`6631e8a`](https://github.com/Frontify/fondue/commit/6631e8ab1b639fcd60de23760a6437c1086baa2c), [`6b2b0f6`](https://github.com/Frontify/fondue/commit/6b2b0f6243accd8059d54c9c78c734183ce2ab2e), [`ee0a8f2`](https://github.com/Frontify/fondue/commit/ee0a8f240ed9ce0c48f9f2e79418c3c1155d453f), [`1bd2892`](https://github.com/Frontify/fondue/commit/1bd28924f96325435924dd461057bbf5c6caa8f7), [`dda0b97`](https://github.com/Frontify/fondue/commit/dda0b97f639d8dd1876c24fd58fa1e80a4c71cf6)]:
+  - @frontify/fondue-components@30.9.1
+  - @frontify/fondue-tokens@5.0.5
+  - @frontify/fondue-sdk@0.1.3
+
 ## 13.7.0
 
 ### Minor Changes
