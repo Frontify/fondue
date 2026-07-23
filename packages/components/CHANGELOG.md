@@ -1,5 +1,20 @@
 # @frontify/fondue-components
 
+## 31.1.0
+
+### Minor Changes
+
+- [#2803](https://github.com/Frontify/fondue/pull/2803) [`1617bbc`](https://github.com/Frontify/fondue/commit/1617bbcfa0727d5a4c33109408fe5b902946c6ec) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: adjust dialog component styling
+
+- [#2808](https://github.com/Frontify/fondue/pull/2808) [`2dbaebf`](https://github.com/Frontify/fondue/commit/2dbaebfb9c66fd1cb629c1116abe64def2a42e15) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: adress minor styling issues
+
+### Patch Changes
+
+- [#2807](https://github.com/Frontify/fondue/pull/2807) [`b889bc1`](https://github.com/Frontify/fondue/commit/b889bc1377f530571b27a56e0ea676db5996c5fb) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - feat(Card): allow for `target` and `rel`
+
+- Updated dependencies []:
+  - @frontify/fondue-tokens@5.1.0
+
 ## 31.0.1
 
 ### Patch Changes
