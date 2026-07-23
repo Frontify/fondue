@@ -173,6 +173,34 @@ export const WithCustomLayout: Story = {
     },
 };
 
+// Story body is extracted into a named component so `useId` runs inside a React component.
+const SelectableCardsDemo = ({ value, disabled }: { value?: string; disabled?: boolean }) => {
+    const id = useId();
+
+    const idOption1 = `${id}-option-1`;
+    const idOption2 = `${id}-option-2`;
+
+    return (
+        <RadioList.Root orientation="horizontal" value={value} disabled={disabled} asChild>
+            <Flex gap={4}>
+                <RadioList.RadioButton id={idOption1} value="apples" asChild>
+                    <button type="button" className={styles.card}>
+                        <span className={styles.cardTitle}>Apples</span>
+                        <span className={styles.cardMessage}>Crisp and sweet, perfect for a quick snack.</span>
+                    </button>
+                </RadioList.RadioButton>
+
+                <RadioList.RadioButton id={idOption2} value="oranges" asChild>
+                    <button type="button" className={styles.card}>
+                        <span className={styles.cardTitle}>Oranges</span>
+                        <span className={styles.cardMessage}>Juicy and tangy, packed with vitamin C.</span>
+                    </button>
+                </RadioList.RadioButton>
+            </Flex>
+        </RadioList.Root>
+    );
+};
+
 /**
  * Pass `asChild` to a `RadioButton` to render your own element as the radio itself, instead of the default
  * dot indicator. The element receives the radio role, checked state, roving tab order, and arrow-key navigation
@@ -180,30 +208,5 @@ export const WithCustomLayout: Story = {
  * Use the `data-state="checked"` attribute the primitive sets to style the selected card.
  */
 export const AsSelectableCards: Story = {
-    render: (args) => {
-        const id = useId();
-
-        const idOption1 = `${id}-option-1`;
-        const idOption2 = `${id}-option-2`;
-
-        return (
-            <RadioList.Root orientation="horizontal" value={args.value} disabled={args.disabled} asChild>
-                <Flex gap={4}>
-                    <RadioList.RadioButton id={idOption1} value="apples" asChild>
-                        <button type="button" className={styles.card}>
-                            <span className={styles.cardTitle}>Apples</span>
-                            <span className={styles.cardMessage}>Crisp and sweet, perfect for a quick snack.</span>
-                        </button>
-                    </RadioList.RadioButton>
-
-                    <RadioList.RadioButton id={idOption2} value="oranges" asChild>
-                        <button type="button" className={styles.card}>
-                            <span className={styles.cardTitle}>Oranges</span>
-                            <span className={styles.cardMessage}>Juicy and tangy, packed with vitamin C.</span>
-                        </button>
-                    </RadioList.RadioButton>
-                </Flex>
-            </RadioList.Root>
-        );
-    },
+    render: (args) => <SelectableCardsDemo value={args.value} disabled={args.disabled} />,
 };
