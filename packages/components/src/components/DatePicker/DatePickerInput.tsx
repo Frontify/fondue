@@ -73,7 +73,7 @@ export const DatePickerInput = (
                 )}
             </button>
             <div className={styles.actions}>
-                {onClear && (
+                {onClear && Boolean(selected) && !disabled && (
                     <Button onPress={onClear} disabled={disabled} size="small" emphasis="weak" aspect="square">
                         <IconCross className={styles.clearIcon} size={16} />
                     </Button>

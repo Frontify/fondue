@@ -62,6 +62,11 @@
         background-color: var(--color-container-disabled-default);
         color: var(--color-disabled-default);
         cursor: default;
+
+        .caret,
+        .caret:hover {
+            color: var(--color-container-disabled-on-disabled-container);
+        }
     }
 
     &[data-status='success'] {
@@ -227,14 +232,14 @@
     width: sizeToken.get(4);
     align-items: center;
     justify-content: center;
-    color: var(--color-secondary-default);
+    color: var(--color-primary-default);
 
     & {
         @include transitions.transition-transform;
     }
 
     &:hover {
-        color: var(--color-secondary-hover);
+        color: var(--color-primary-hover);
     }
 
     div[role='combobox'][aria-expanded='true'] &,

@@ -5,6 +5,7 @@
 
 .root {
     width: 100%;
+    height: sizeToken.get(9);
     position: relative;
     display: flex;
     justify-content: start;
@@ -83,7 +84,7 @@
     flex-grow: 1;
     min-width: 0;
     padding-inline: sizeToken.get(3);
-    height: sizeToken.get(9);
+    height: 100%;
     outline: none;
     overflow: hidden;
 }
@@ -98,11 +99,6 @@
 
     & > button:has(.clearIcon) {
         pointer-events: all;
-    }
-
-    .root:has(:disabled) button .clearIcon,
-    .root[data-disabled='true'] button .clearIcon {
-        color: var(--color-container-disabled-on-disabled-container) !important;
     }
 }
 

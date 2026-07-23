@@ -371,17 +371,7 @@ export const WithNoPadding: Story = {
                 </Dialog.Trigger>
                 <Dialog.Content {...args}>
                     <Dialog.Header padding="none">
-                        <Flex justify="space-between" align="center" width="100%" pr="1rem">
-                            <Dialog.Title>Header</Dialog.Title>
-                            <Button
-                                emphasis="default"
-                                onPress={() => {
-                                    alert('Button in the header clicked');
-                                }}
-                            >
-                                Button in the header
-                            </Button>
-                        </Flex>
+                        <Dialog.Title>Header</Dialog.Title>
                     </Dialog.Header>
                     <Dialog.Body padding="none">None</Dialog.Body>
                     <Dialog.Footer padding="none">
@@ -403,17 +393,7 @@ export const WithTightPadding: Story = {
                 </Dialog.Trigger>
                 <Dialog.Content {...args}>
                     <Dialog.Header padding="tight">
-                        <Flex justify="space-between" align="center" width="100%" pr="1rem">
-                            <Dialog.Title>Header</Dialog.Title>
-                            <Button
-                                emphasis="default"
-                                onPress={() => {
-                                    alert('Button in the header clicked');
-                                }}
-                            >
-                                Button in the header
-                            </Button>
-                        </Flex>
+                        <Dialog.Title>Header</Dialog.Title>
                     </Dialog.Header>
                     <Dialog.Body padding="tight">Tight</Dialog.Body>
                     <Dialog.Footer padding="tight">
@@ -435,17 +415,7 @@ export const WithCompactPadding: Story = {
                 </Dialog.Trigger>
                 <Dialog.Content {...args}>
                     <Dialog.Header padding="compact">
-                        <Flex justify="space-between" align="center" width="100%" pr="1rem">
-                            <Dialog.Title>Header</Dialog.Title>
-                            <Button
-                                emphasis="default"
-                                onPress={() => {
-                                    alert('Button in the header clicked');
-                                }}
-                            >
-                                Button in the header
-                            </Button>
-                        </Flex>
+                        <Dialog.Title>Header</Dialog.Title>
                     </Dialog.Header>
                     <Dialog.Body padding="compact">Compact</Dialog.Body>
                     <Dialog.Footer padding="compact">
@@ -467,17 +437,7 @@ export const WithComfortablePadding: Story = {
                 </Dialog.Trigger>
                 <Dialog.Content {...args}>
                     <Dialog.Header padding="comfortable">
-                        <Flex justify="space-between" align="center" width="100%" pr="1rem">
-                            <Dialog.Title>Header</Dialog.Title>
-                            <Button
-                                emphasis="default"
-                                onPress={() => {
-                                    alert('Button in the header clicked');
-                                }}
-                            >
-                                Button in the header
-                            </Button>
-                        </Flex>
+                        <Dialog.Title>Header</Dialog.Title>
                     </Dialog.Header>
                     <Dialog.Body padding="comfortable">Confortable</Dialog.Body>
                     <Dialog.Footer padding="comfortable">
@@ -499,17 +459,7 @@ export const WithSpaciousPadding: Story = {
                 </Dialog.Trigger>
                 <Dialog.Content {...args}>
                     <Dialog.Header padding="spacious">
-                        <Flex justify="space-between" align="center" width="100%" pr="1rem">
-                            <Dialog.Title>Header</Dialog.Title>
-                            <Button
-                                emphasis="default"
-                                onPress={() => {
-                                    alert('Button in the header clicked');
-                                }}
-                            >
-                                Button in the header
-                            </Button>
-                        </Flex>
+                        <Dialog.Title>Header</Dialog.Title>
                     </Dialog.Header>
                     <Dialog.Body padding="spacious">Spacious</Dialog.Body>
                     <Dialog.Footer padding="spacious">
