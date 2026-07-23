@@ -185,4 +185,47 @@ describe('RadioList component', () => {
 
         expect(container.querySelector('.custom-wrapper')).toBeInTheDocument();
     });
+
+    it('should render custom children in place of the default indicator dot', () => {
+        render(
+            <RadioList.Root>
+                <RadioList.RadioButton id="option-1" value="1" data-test-id="option-1">
+                    <span data-test-id="custom-content">Custom content</span>
+                </RadioList.RadioButton>
+            </RadioList.Root>,
+        );
+
+        expect(screen.getByTestId('custom-content')).toBeInTheDocument();
+        expect(screen.getByTestId('option-1')).toHaveAttribute('role', 'radio');
+    });
+
+    it('should render a custom element as the radio when a RadioButton is asChild', async () => {
+        const onValueChange = vi.fn();
+        render(
+            <RadioList.Root onValueChange={onValueChange}>
+                <RadioList.RadioButton id="option-1" value="1" asChild>
+                    <button type="button" data-test-id="card-1">
+                        Card 1
+                    </button>
+                </RadioList.RadioButton>
+                <RadioList.RadioButton id="option-2" value="2" asChild>
+                    <button type="button" data-test-id="card-2">
+                        Card 2
+                    </button>
+                </RadioList.RadioButton>
+            </RadioList.Root>,
+        );
+
+        const card1 = screen.getByTestId('card-1');
+        const card2 = screen.getByTestId('card-2');
+
+        expect(card1).toHaveAttribute('role', 'radio');
+        expect(card2).toHaveAttribute('role', 'radio');
+
+        await userEvent.click(card2);
+
+        expect(onValueChange).toHaveBeenCalledWith('2');
+        expect(card2).toBeChecked();
+        expect(card1).not.toBeChecked();
+    });
 });

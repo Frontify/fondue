@@ -76,6 +76,9 @@ const RadioListRadioButton = ({
     disabled,
     value,
     id,
+    asChild,
+    children,
+    className,
     'data-test-id': dataTestId,
     ...restProps
 }: RadioListRadioButtonProps) => {
@@ -89,7 +92,8 @@ const RadioListRadioButton = ({
                 }
             }}
             aria-readonly={readOnly}
-            className={styles.item}
+            asChild={asChild}
+            className={[asChild ? undefined : styles.item, className].filter(Boolean).join(' ') || undefined}
             data-readonly={readOnly}
             data-test-id={dataTestId}
             disabled={disabled}
@@ -97,7 +101,7 @@ const RadioListRadioButton = ({
             value={value}
             {...restProps}
         >
-            <RadioGroupPrimitve.Indicator className={styles.indicator} />
+            {children ?? <RadioGroupPrimitve.Indicator className={styles.indicator} />}
         </RadioGroupPrimitve.Item>
     );
 };

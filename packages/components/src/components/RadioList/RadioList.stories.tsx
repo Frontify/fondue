@@ -9,6 +9,7 @@ import { Label } from '../Label/Label';
 import { Tooltip } from '../Tooltip/Tooltip';
 
 import { RadioList, RadioListRoot } from './RadioList';
+import styles from './styles/radiolist.stories.module.scss';
 
 type Story = StoryObj<typeof RadioListRoot>;
 const meta: Meta<typeof RadioListRoot> = {
@@ -166,6 +167,41 @@ export const WithCustomLayout: Story = {
                             Option 3
                         </Label>
                     </Flex>
+                </Flex>
+            </RadioList.Root>
+        );
+    },
+};
+
+/**
+ * Pass `asChild` to a `RadioButton` to render your own element as the radio itself, instead of the default
+ * dot indicator. The element receives the radio role, checked state, roving tab order, and arrow-key navigation
+ * from the underlying primitive, so a group of large selectable cards behaves exactly like a native radio group.
+ * Use the `data-state="checked"` attribute the primitive sets to style the selected card.
+ */
+export const AsSelectableCards: Story = {
+    render: (args) => {
+        const id = useId();
+
+        const idOption1 = `${id}-option-1`;
+        const idOption2 = `${id}-option-2`;
+
+        return (
+            <RadioList.Root orientation="horizontal" value={args.value} disabled={args.disabled} asChild>
+                <Flex gap={4}>
+                    <RadioList.RadioButton id={idOption1} value="apples" asChild>
+                        <button type="button" className={styles.card}>
+                            <span className={styles.cardTitle}>Apples</span>
+                            <span className={styles.cardMessage}>Crisp and sweet, perfect for a quick snack.</span>
+                        </button>
+                    </RadioList.RadioButton>
+
+                    <RadioList.RadioButton id={idOption2} value="oranges" asChild>
+                        <button type="button" className={styles.card}>
+                            <span className={styles.cardTitle}>Oranges</span>
+                            <span className={styles.cardMessage}>Juicy and tangy, packed with vitamin C.</span>
+                        </button>
+                    </RadioList.RadioButton>
                 </Flex>
             </RadioList.Root>
         );
