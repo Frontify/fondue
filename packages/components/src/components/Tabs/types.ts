@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type HTMLAttributes, type ReactNode, type RefObject } from 'react';
+import { type HTMLAttributes, type ReactNode } from 'react';
 
 export type TabTrigger = {
-    ref?: RefObject<HTMLButtonElement>;
+    ref?: { current: HTMLButtonElement | null };
     element: ReactNode;
     previousElement?: ReactNode;
     props: HTMLAttributes<HTMLButtonElement>;

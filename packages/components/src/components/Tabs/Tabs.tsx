@@ -208,7 +208,7 @@ export const TabsTrigger = ({ children, ...props }: TabsTriggerProps, ref: Forwa
     const { addTrigger } = useContext(TabTriggerContext);
 
     const localRef = useRef<HTMLButtonElement>(null);
-    const previousElement = useRef<ReactNode>();
+    const previousElement = useRef<ReactNode>(undefined);
 
     useEffect(() => {
         addTrigger({

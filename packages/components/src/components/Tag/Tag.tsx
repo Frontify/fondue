@@ -84,7 +84,7 @@ const TagRoot = forwardRef<HTMLButtonElement | HTMLDivElement, TagProps>(
         // Extract hover content from slots
         let extractedHoverContent: ReactNode = null;
         const processedChildren = Children.map(children, (child) => {
-            if (isValidElement(child) && child.type === TagHoverContent) {
+            if (isValidElement<{ children?: ReactNode }>(child) && child.type === TagHoverContent) {
                 extractedHoverContent = child.props.children;
                 return null;
             }
@@ -162,11 +162,10 @@ const TagMainContent = forwardRef<HTMLButtonElement | HTMLDivElement, TagMainCon
         // Process children to handle secondary content slots in their natural position
         let secondaryIndex = 0;
         const processedChildren = Children.map(children, (child) => {
-            if (isValidElement(child) && child.type === TagSecondaryContent) {
+            if (isValidElement<{ children?: ReactNode }>(child) && child.type === TagSecondaryContent) {
                 const currentIndex = secondaryIndex++;
                 return (
                     <div className={styles.secondaryContent} key={`secondary-${currentIndex}`}>
-                        {/* eslint-disable-next-line @typescript-eslint/no-unsafe-member-access */}
                         {child.props.children}
                     </div>
                 );

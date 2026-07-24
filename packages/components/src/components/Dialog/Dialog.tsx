@@ -5,6 +5,7 @@ import * as RadixDialog from '@radix-ui/react-dialog';
 import {
     createContext,
     forwardRef,
+    isValidElement,
     useContext,
     useMemo,
     useRef,
@@ -416,7 +417,7 @@ export const DialogTitle = ({ children, asChild, screenReaderOnly = false }: Dia
         // When using asChild with screenReaderOnly, apply className to the child
         return (
             <RadixDialog.Title asChild>
-                {typeof children === 'object' && children && 'props' in children
+                {isValidElement<{ className?: string }>(children)
                     ? {
                           ...children,
                           props: {
@@ -446,7 +447,7 @@ export const DialogDescription = ({ children, asChild, screenReaderOnly = false 
         // When using asChild with screenReaderOnly, apply className to the child
         return (
             <RadixDialog.Description asChild>
-                {typeof children === 'object' && children && 'props' in children
+                {isValidElement<{ className?: string }>(children)
                     ? {
                           ...children,
                           props: {

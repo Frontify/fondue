@@ -337,6 +337,9 @@ importers:
       '@types/react':
         specifier: ^18.3.27
         version: 18.3.28
+      '@types/react-dom':
+        specifier: ^18.3.7
+        version: 18.3.7(@types/react@18.3.28)
       '@types/sinon':
         specifier: ^21.0.1
         version: 21.0.1
@@ -1263,10 +1266,6 @@ importers:
         version: 3.2.4(@types/debug@4.1.12)(@types/node@24.10.9)(@vitest/ui@3.2.4)(happy-dom@20.9.0)(sass@1.99.0)(supports-color@8.1.1)
 
   packages/tokens:
-    dependencies:
-      react:
-        specifier: ^18.3.1
-        version: 18.3.1
     devDependencies:
       '@frontify/fondue-components':
         specifier: workspace:*
@@ -1325,6 +1324,9 @@ importers:
       oxlint-tsgolint:
         specifier: ^0.23.0
         version: 0.23.0
+      react:
+        specifier: ^18.3.1
+        version: 18.3.1
       react-dom:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)

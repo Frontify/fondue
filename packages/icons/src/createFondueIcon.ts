@@ -1,20 +1,74 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import {
-    createElement,
-    forwardRef,
-    type ForwardRefExoticComponent,
-    type ReactSVG,
-    type RefAttributes,
-    type SVGProps,
-} from 'react';
+import { createElement, forwardRef, type ForwardRefExoticComponent, type RefAttributes, type SVGProps } from 'react';
 
 import { defaultAttributes } from './constants';
 import styles from './icons.module.scss';
 import { htmlKeysToJsxKeys } from './utilities/jsxKeyFormat';
 import { kebabCase } from './utilities/stringCasing';
 
-export type IconNode = [elementName: keyof ReactSVG, attrs: Record<string, string>, children?: IconNode][];
+// Mirrors `SVGElementType` from @types/react@19, defined locally so the emitted
+// declarations stay compatible with both @types/react@18 and @types/react@19.
+// Because the type is exported we cannot use the modern SVGElementTagName type directly
+// When the icon pipeline is refactored we can remove this type and use the modern SVGElementTagName type directly.
+export type SVGElementTagName =
+    | 'animate'
+    | 'circle'
+    | 'clipPath'
+    | 'defs'
+    | 'desc'
+    | 'ellipse'
+    | 'feBlend'
+    | 'feColorMatrix'
+    | 'feComponentTransfer'
+    | 'feComposite'
+    | 'feConvolveMatrix'
+    | 'feDiffuseLighting'
+    | 'feDisplacementMap'
+    | 'feDistantLight'
+    | 'feDropShadow'
+    | 'feFlood'
+    | 'feFuncA'
+    | 'feFuncB'
+    | 'feFuncG'
+    | 'feFuncR'
+    | 'feGaussianBlur'
+    | 'feImage'
+    | 'feMerge'
+    | 'feMergeNode'
+    | 'feMorphology'
+    | 'feOffset'
+    | 'fePointLight'
+    | 'feSpecularLighting'
+    | 'feSpotLight'
+    | 'feTile'
+    | 'feTurbulence'
+    | 'filter'
+    | 'foreignObject'
+    | 'g'
+    | 'image'
+    | 'line'
+    | 'linearGradient'
+    | 'marker'
+    | 'mask'
+    | 'metadata'
+    | 'path'
+    | 'pattern'
+    | 'polygon'
+    | 'polyline'
+    | 'radialGradient'
+    | 'rect'
+    | 'stop'
+    | 'svg'
+    | 'switch'
+    | 'symbol'
+    | 'text'
+    | 'textPath'
+    | 'tspan'
+    | 'use'
+    | 'view';
+
+export type IconNode = [elementName: SVGElementTagName, attrs: Record<string, string>, children?: IconNode][];
 
 export type SVGAttributes = Partial<SVGProps<SVGSVGElement>>;
 type ComponentAttributes = RefAttributes<SVGSVGElement> & SVGAttributes;
