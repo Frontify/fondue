@@ -63,4 +63,6 @@ jobs:
       - name: Typecheck
         run: |
           pnpm --stream --filter {packages/icons} --filter {packages/tokens} typecheck
-          pnpm --filter {packages/components} exec tsgo -p tsconfig.react19.json --noEmit
+          echo "packages/components typecheck (tsconfig.react19.json, stories excluded)"
+          pnpm --fail-if-no-match --filter {packages/components} exec tsgo -p tsconfig.react19.json --noEmit
+          echo "packages/components typecheck: Done"
