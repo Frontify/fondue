@@ -1,0 +1,60 @@
+# The workspace develops against React 18. This workflow re-installs with React 19
+# (runtime + types) forced via pnpm overrides and re-runs the typecheck for the
+# packages being prepared for React 19 support, so the preparation work cannot
+# silently regress before the actual peer-range bump.
+#
+# Story files are excluded for components (see packages/components/tsconfig.react19.json):
+# they reference raw render components for react-docgen and only typecheck against
+# @types/react@18. Packages still limited to React 18 (rte, fondue, charts) are not
+# exercised here.
+name: React 19 Compatibility
+
+on:
+  pull_request:
+    paths:
+      - packages/**
+      - .npmrc
+      - .nvmrc
+      - package.json
+      - pnpm-lock.yaml
+      - pnpm-workspace.yaml
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  typecheck:
+    name: Typecheck against React 19
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Setup
+        uses: ./.github/actions/setup
+
+      - name: Override React to v19
+        run: |
+          cat >> pnpm-workspace.yaml <<'EOF'
+
+          overrides:
+              react: ^19.0.0
+              react-dom: ^19.0.0
+              "@types/react": ^19.0.0
+              "@types/react-dom": ^19.0.0
+          EOF
+          pnpm install --no-frozen-lockfile
+
+      - name: Build Fondue Icons
+        run: pnpm build:icons
+
+      - name: Typecheck
+        run: |
+          pnpm --stream --filter {packages/icons} --filter {packages/tokens} typecheck
+          pnpm --filter {packages/components} exec tsgo -p tsconfig.react19.json --noEmit
