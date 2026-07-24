@@ -51,8 +51,14 @@ jobs:
           EOF
           pnpm install --no-frozen-lockfile
 
+      # The dist types of icons and components are consumed by the other
+      # packages' typechecks (components imports fondue-icons, the tokens
+      # Storybook stories import fondue-components).
       - name: Build Fondue Icons
         run: pnpm build:icons
+
+      - name: Build Fondue Components
+        run: pnpm build:components
 
       - name: Typecheck
         run: |
