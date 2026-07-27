@@ -11,4 +11,9 @@
     @media (min-width: 768px) {
         gap: var(--spacing-large);
     }
+
+    /* SVG elements get the browser focus ring on plain :focus (not :focus-visible), so mouse clicks would paint it */
+    path[tabindex]:focus:not(:focus-visible) {
+        outline: none;
+    }
 }
