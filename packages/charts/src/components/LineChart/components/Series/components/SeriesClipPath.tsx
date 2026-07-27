@@ -13,33 +13,30 @@ type SeriesClipPathProps = {
 export const SeriesClipPath = ({ highlightNegativeValues }: SeriesClipPathProps) => {
     const dataContext = useContext(DataContext);
     const { xScale, yScale } = dataContext;
-    const xScaleRange = [Number(xScale?.range()[0] ?? 0), Number(xScale?.range()[1] ?? 0)];
-    const yScaleRange = [Number(yScale?.range()[0] ?? 0), Number(yScale?.range()[1] ?? 0)];
+    const [xStart = 0, xEnd = 0] = (xScale?.range() ?? []).map(Number);
+    const [yBottom = 0, yTop = 0] = (yScale?.range() ?? []).map(Number);
     const y0 = Number(yScale?.(0) ?? 0);
 
-    // @ts-expect-error Wrong typing in the original code
-    const rectWidth = xScaleRange[1] - xScaleRange[0];
-    // @ts-expect-error Wrong typing in the original code
-    const rectHeight = yScaleRange[0] - yScaleRange[1];
+    // clamp to 0: scales are degenerate on the first, unmeasured render
+    const rectWidth = Math.max(0, xEnd - xStart);
+    const rectHeight = Math.max(0, yBottom - yTop);
 
     return (
         <defs>
             <clipPath id={POSITIVE_CLIP_PATH_ID}>
                 <rect
-                    x={xScaleRange[0]}
-                    y={yScaleRange[1]}
+                    x={xStart}
+                    y={yTop}
                     width={rectWidth}
-                    // @ts-expect-error Wrong typing in the original code
-                    height={highlightNegativeValues ? y0 - yScaleRange[1] : rectHeight}
+                    height={highlightNegativeValues ? Math.max(0, y0 - yTop) : rectHeight}
                 />
             </clipPath>
             <clipPath id={NEGATIVE_CLIP_PATH_ID}>
                 <rect
-                    x={xScaleRange[0]}
+                    x={xStart}
                     y={y0}
                     width={rectWidth}
-                    // @ts-expect-error Wrong typing in the original code
-                    height={highlightNegativeValues ? yScaleRange[0] - y0 : 0}
+                    height={highlightNegativeValues ? Math.max(0, yBottom - y0) : 0}
                 />
             </clipPath>
         </defs>
