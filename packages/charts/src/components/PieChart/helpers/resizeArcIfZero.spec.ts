@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type PieArcDatum } from '@visx/shape/lib/shapes/Pie';
+import { type PieArcDatum } from 'd3-shape';
 import { describe, expect, it } from 'vitest';
 
 import { type PieChartDatum } from '@components/PieChart';
