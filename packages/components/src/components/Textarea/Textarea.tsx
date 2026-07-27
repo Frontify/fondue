@@ -347,7 +347,7 @@ const ForwardedRefTextareaRoot = forwardRef<HTMLTextAreaElement, TextareaProps>(
 const ForwardedRefTextareaSlot = forwardRef<HTMLDivElement, TextareaSlotProps>(TextareaSlot);
 
 // @ts-expect-error We support both single component (without slots) and compound components (with slots)
-export const Textarea: typeof TextareaRoot & {
+export const Textarea: typeof ForwardedRefTextareaRoot & {
     Root: typeof ForwardedRefTextareaRoot;
     Slot: typeof ForwardedRefTextareaSlot;
 } = ForwardedRefTextareaRoot;

@@ -18,7 +18,10 @@ const getOverflowingTriggers = (triggers: TabTrigger[], triggerListElement: HTML
     });
 };
 
-const moveActiveIndicator = (triggerListElement: HTMLDivElement, activeIndicatorRef: RefObject<HTMLSpanElement>) => {
+const moveActiveIndicator = (
+    triggerListElement: HTMLDivElement,
+    activeIndicatorRef: RefObject<HTMLSpanElement | null>,
+) => {
     const activeIndicatorElement = activeIndicatorRef.current;
     const activeTriggerElement = triggerListElement?.querySelector('[data-state="active"]');
 
@@ -72,8 +75,10 @@ export const useTabTriggers = ({
 }: {
     activeTab?: string;
 }): {
-    triggerListRef: RefObject<HTMLDivElement>;
-    activeIndicatorRef: RefObject<HTMLSpanElement>;
+    // Structural ref types so the annotation is valid for both @types/react@18
+    // (useRef returns MutableRefObject) and @types/react@19 (RefObject<T | null>).
+    triggerListRef: { current: HTMLDivElement | null };
+    activeIndicatorRef: { current: HTMLSpanElement | null };
     triggers: TabTrigger[];
     triggersOutOfView: TabTrigger[];
     addTrigger: (trigger: TabTrigger) => void;

@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { forwardRef, type ForwardedRef } from 'react';
+import { forwardRef, type ReactElement, type ForwardedRef } from 'react';
 
 import { type DatePickerBaseProps, DatePickerCalendar } from './DatePickerCalendar';
 import { useDateRange } from './hooks/useDateRange';
@@ -15,7 +15,7 @@ type RangeDatePickerProps = {
 export const RangeDatePicker = (
     { 'data-test-id': dataTestId, onChange, selected, ...props }: RangeDatePickerProps,
     ref: ForwardedRef<HTMLDivElement>,
-): JSX.Element => {
+): ReactElement => {
     const { selectedDateRange, handleSelect } = useDateRange(selected, onChange);
     const { hoverModifiers } = useRangeHover(selectedDateRange);
 

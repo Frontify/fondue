@@ -2,7 +2,7 @@
 
 import { IconCaretLeft, IconCaretLeftDouble, IconCaretRight, IconCaretRightDouble } from '@frontify/fondue-icons';
 import { addYears, format, subYears } from 'date-fns';
-import { forwardRef, useEffect, useMemo, useRef } from 'react';
+import { forwardRef, type ReactElement, useEffect, useMemo, useRef } from 'react';
 import {
     getDefaultClassNames,
     DayPicker,
@@ -60,7 +60,7 @@ export const DatePickerCalendar = forwardRef<HTMLDivElement, DatePickerCalendarP
     (
         { 'data-test-id': dataTestId = 'fondue-date-picker-calendar', disabledDates, minMonth, maxMonth, ...modeProps },
         ref,
-    ): JSX.Element => {
+    ): ReactElement => {
         const defaultClassNames = getDefaultClassNames();
         const {
             dir,
@@ -120,7 +120,7 @@ export const DatePickerCalendar = forwardRef<HTMLDivElement, DatePickerCalendarP
 DatePickerCalendar.displayName = 'DatePickerCalendar';
 
 const getCustomComponents = (): Partial<CustomComponents> => ({
-    CaptionLabel: ({ children }: CaptionLabelProps): JSX.Element => {
+    CaptionLabel: ({ children }: CaptionLabelProps): ReactElement => {
         const { months } = useDayPicker();
         const {
             locale: { dateLocale },
@@ -147,7 +147,7 @@ const getCustomComponents = (): Partial<CustomComponents> => ({
             </span>
         );
     },
-    DayButton: ({ day, modifiers, onClick, onMouseEnter, onMouseLeave, ...props }: DayButtonProps): JSX.Element => {
+    DayButton: ({ day, modifiers, onClick, onMouseEnter, onMouseLeave, ...props }: DayButtonProps): ReactElement => {
         const buttonRef = useRef<HTMLButtonElement>(null);
 
         useEffect(() => {
@@ -174,7 +174,7 @@ const getCustomComponents = (): Partial<CustomComponents> => ({
         onClick,
         'aria-label': ariaLabel,
         'aria-disabled': ariaDisabled,
-    }: PreviousMonthButtonProps): JSX.Element => {
+    }: PreviousMonthButtonProps): ReactElement => {
         const { months, goToMonth, previousMonth } = useDayPicker();
         const currentMonth = months[0]?.date;
         const isYearDisabled = !previousMonth;
@@ -217,7 +217,7 @@ const getCustomComponents = (): Partial<CustomComponents> => ({
         onClick,
         'aria-label': ariaLabel,
         'aria-disabled': ariaDisabled,
-    }: NextMonthButtonProps): JSX.Element => {
+    }: NextMonthButtonProps): ReactElement => {
         const { months, goToMonth, nextMonth } = useDayPicker();
         const currentMonth = months[0]?.date;
         const isYearDisabled = !nextMonth;

@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { forwardRef, type ForwardedRef } from 'react';
+import { forwardRef, type ReactElement, type ForwardedRef } from 'react';
 
 import { type DatePickerBaseProps, DatePickerCalendar } from './DatePickerCalendar';
 import { useSingleDate } from './hooks/useSingleDate';
@@ -14,7 +14,7 @@ type SingleDatePickerProps = {
 export const SingleDatePicker = (
     { 'data-test-id': dataTestId, onChange, selected, ...props }: SingleDatePickerProps,
     ref: ForwardedRef<HTMLDivElement>,
-): JSX.Element => {
+): ReactElement => {
     const { selectedDate, handleSelect } = useSingleDate(selected, onChange);
     return (
         <DatePickerCalendar

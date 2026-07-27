@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ForwardedRef, forwardRef, type ReactNode } from 'react';
+import { type ForwardedRef, forwardRef, type ReactElement, type ReactNode } from 'react';
 
 import { type CommonAriaProps } from '#/helpers/aria';
 
@@ -77,6 +77,6 @@ export const Heading = forwardRef(
     },
 ) as (<TTag extends TagType = 'span'>(
     props: HeadingProps<TTag> & { ref?: ForwardedRef<HeadingElementType<TTag>> },
-) => JSX.Element) & { displayName: string };
+) => ReactElement) & { displayName: string };
 
 Heading.displayName = 'Heading';

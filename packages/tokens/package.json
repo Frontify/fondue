@@ -55,9 +55,6 @@
     "peerDependencies": {
         "tailwindcss": "^3.4.17"
     },
-    "dependencies": {
-        "react": "^18.3.1"
-    },
     "devDependencies": {
         "@frontify/fondue-components": "workspace:*",
         "@frontify/fondue-icons": "workspace:*",

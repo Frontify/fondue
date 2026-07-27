@@ -1,6 +1,12 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ReactNode, forwardRef, type ForwardedRef, type HTMLAttributeAnchorTarget } from 'react';
+import {
+    type ReactNode,
+    forwardRef,
+    type ForwardedRef,
+    type HTMLAttributeAnchorTarget,
+    type ReactElement,
+} from 'react';
 
 import { type CommonAriaProps } from '#/helpers/aria';
 
@@ -115,6 +121,6 @@ export const Text = forwardRef(
     ),
 ) as (<TTag extends TagType = 'span'>(
     props: TextProps<TTag> & { ref?: ForwardedRef<TextElementType<TTag>> },
-) => JSX.Element) & { displayName: string };
+) => ReactElement) & { displayName: string };
 
 Text.displayName = 'FondueText';
