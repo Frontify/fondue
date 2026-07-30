@@ -120,6 +120,20 @@ test('autosize functionality', async ({ mount }) => {
     await expect(component).toHaveAttribute('data-autosize', 'true');
 });
 
+test('autosize does not overflow its container on a long word without spaces', async ({ mount }) => {
+    const longWord = 'Helloeveryoneandwelcometomyveryverylongwordthatissolongthatitwillprobablyoverflowthecontainer';
+    const wrapper = await mount(
+        <div style={{ width: '200px' }}>
+            <Textarea data-test-id={`${TEXTAREA_TEST_ID}-long-word`} autosize value={longWord} />
+            <Textarea data-test-id={`${TEXTAREA_TEST_ID}-single-line`} autosize value="short" />
+        </div>,
+    );
+    const longWordComponent = wrapper.getByTestId(`${TEXTAREA_TEST_ID}-long-word`);
+    const wrappedBox = await longWordComponent.boundingBox();
+    const singleLineBox = await wrapper.getByTestId(`${TEXTAREA_TEST_ID}-single-line`).boundingBox();
+    expect(wrappedBox?.height ?? 0).toBeGreaterThan(singleLineBox?.height ?? 0);
+});
+
 test('render resize handle when resizable', async ({ mount }) => {
     const wrapper = await mount(<Textarea data-test-id={TEXTAREA_TEST_ID} resizable />);
     await expect(wrapper.getByTestId(`${TEXTAREA_TEST_ID}-resize-handle`)).toBeVisible();

@@ -98,6 +98,7 @@
 .root[data-autosize='true'] .textareaWrapper::after {
     content: attr(data-replicated-value) " ";
     white-space: pre-wrap;
+    overflow-wrap: anywhere;
     visibility: hidden;
     padding-inline-start: sizeToken.get(3);
     padding-inline-end: sizeToken.get(3);
