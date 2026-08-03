@@ -4,6 +4,48 @@
 @use '../../../utilities/transitions.module.scss';
 @use '../../../utilities/sizeToken.module.scss';
 
+// Icon colors for a variant, applied from within the variant's own selector
+@mixin icon-colors($text-color, $text-hover, $text-active, $icon-color, $icon-hover, $icon-active) {
+    & svg {
+        @if $icon-color {
+            color: var(--color-#{$icon-color});
+        } @else {
+            color: var(--color-#{$text-color});
+        }
+
+        line-height: 0;
+    }
+
+    @if $icon-hover {
+        &:hover svg {
+            color: var(--color-#{$icon-hover});
+        }
+    } @else if $text-hover {
+        &:hover svg {
+            color: var(--color-#{$text-hover});
+        }
+    }
+
+    @if $icon-active {
+        &:active svg {
+            color: var(--color-#{$icon-active});
+        }
+    } @else if $text-active {
+        &:active svg {
+            color: var(--color-#{$text-active});
+        }
+    }
+
+    // Forced colors mode support
+    @media (forced-colors: active) {
+        & svg,
+        &:hover svg,
+        &:active svg {
+            color: CanvasText;
+        }
+    }
+}
+
 // Mixin for button variants
 @mixin variant(
     $variant,
@@ -44,48 +86,7 @@
         }
 
         // Icon styles
-        & svg {
-            @if $icon-color {
-                color: var(--color-#{$icon-color});
-            } @else {
-                color: var(--color-#{$text-color});
-            }
-
-            @if $icon-hover {
-                .root:hover & {
-                    color: var(--color-#{$icon-hover});
-                }
-            } @else if $text-hover {
-                .root:hover & {
-                    color: var(--color-#{$text-hover});
-                }
-            }
-
-            @if $icon-active {
-                .root:active & {
-                    color: var(--color-#{$icon-active});
-                }
-            } @else if $text-active {
-                .root:active & {
-                    color: var(--color-#{$text-active});
-                }
-            }
-
-            line-height: 0;
-
-            // Forced colors mode support
-            @media (forced-colors: active) {
-                color: CanvasText;
-
-                .root:hover & {
-                    color: CanvasText;
-                }
-
-                .root:active & {
-                    color: CanvasText;
-                }
-            }
-        }
+        @include icon-colors($text-color, $text-hover, $text-active, $icon-color, $icon-hover, $icon-active);
     }
 }
 
@@ -127,48 +128,7 @@
         }
 
         // Icon styles
-        & svg {
-            @if $icon-color {
-                color: var(--color-#{$icon-color});
-            } @else {
-                color: var(--color-#{$text-color});
-            }
-
-            @if $icon-hover {
-                .root:hover & {
-                    color: var(--color-#{$icon-hover});
-                }
-            } @else if $text-hover {
-                .root:hover & {
-                    color: var(--color-#{$text-hover});
-                }
-            }
-
-            @if $icon-active {
-                .root:active & {
-                    color: var(--color-#{$icon-active});
-                }
-            } @else if $text-active {
-                .root:active & {
-                    color: var(--color-#{$text-active});
-                }
-            }
-
-            line-height: 0;
-
-            // Forced colors mode support
-            @media (forced-colors: active) {
-                color: CanvasText;
-
-                .root:hover & {
-                    color: CanvasText;
-                }
-
-                .root:active & {
-                    color: CanvasText;
-                }
-            }
-        }
+        @include icon-colors($text-color, $text-hover, $text-active, $icon-color, $icon-hover, $icon-active);
     }
 }
 
@@ -239,7 +199,7 @@
         'container-success-active',
         'container-success-on-success-container',
         'container-success-on-success-container',
-        'container-success-on-success-container-pressed'
+        'container-success-on-success-container'
     );
 
     // Positive variant - weak emphasis
@@ -273,10 +233,7 @@
         'container-error-active',
         'container-error-on-error-container',
         'container-error-on-error-container',
-        'container-error-on-error-container',
-        'container-error-on-error-container',
-        'button-negative-icon-hover',
-        'button-negative-icon-pressed'
+        'container-error-on-error-container'
     );
 
     // Negative variant - weak emphasis
@@ -372,32 +329,14 @@
             color: var(--color-container-highlight-on-highlight-container);
         }
 
-        & svg {
-            color: var(--color-highlight-default);
-
-            .root:hover & {
-                color: var(--color-container-highlight-on-highlight-container);
-            }
-
-            .root:active & {
-                color: var(--color-container-highlight-on-highlight-container);
-            }
-
-            line-height: 0;
-
-            // Forced colors mode support
-            @media (forced-colors: active) {
-                color: CanvasText;
-
-                .root:hover & {
-                    color: CanvasText;
-                }
-
-                .root:active & {
-                    color: CanvasText;
-                }
-            }
-        }
+        @include icon-colors(
+            'highlight-default',
+            'container-highlight-on-highlight-container',
+            'container-highlight-on-highlight-container',
+            null,
+            null,
+            null
+        );
     }
 
     // Loud variant - strong emphasis
