@@ -50,14 +50,14 @@
         "@frontify/fondue-icons": "workspace:*",
         "@frontify/fondue-tokens": "workspace:*",
         "@tony.ganchev/eslint-plugin-header": "^3.4.4",
-        "@types/node": "^24.10.9",
-        "eslint": "^10.3.0",
-        "prettier": "^3.8.3",
-        "tsx": "^4.21.0",
+        "@types/node": "^24.13.3",
+        "eslint": "^10.8.0",
+        "prettier": "^3.9.6",
+        "tsx": "^4.23.5",
         "typescript": "^5.9.3",
         "vite": "^5.4.21",
         "vite-plugin-dts": "^4.5.4",
         "vite-tsconfig-paths": "^5.1.4",
-        "vitest": "^3.2.4"
+        "vitest": "^3.2.7"
     }
 }
