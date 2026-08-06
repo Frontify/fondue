@@ -98,3 +98,12 @@ test.describe('Responsiveness (lg)', () => {
         await expect(component).toHaveCSS('padding', '100px');
     });
 });
+
+test('should render lang on the root element', async ({ mount }) => {
+    const wrapper = await mount(
+        <Flex data-test-id="flex-root" lang="fr-CH">
+            {FLEX_TEXT}
+        </Flex>,
+    );
+    await expect(wrapper.getByTestId('flex-root')).toHaveAttribute('lang', 'fr-CH');
+});

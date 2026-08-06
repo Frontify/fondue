@@ -155,3 +155,12 @@ test.describe('Responsiveness (lg)', () => {
         await expect(component).toHaveCSS('grid-template-rows', '24px 24px 24px');
     });
 });
+
+test('should render lang on the root element', async ({ mount }) => {
+    const wrapper = await mount(
+        <Grid data-test-id="grid-root" lang="fr-CH">
+            {GRID_TEXT}
+        </Grid>,
+    );
+    await expect(wrapper.getByTestId('grid-root')).toHaveAttribute('lang', 'fr-CH');
+});

@@ -15,7 +15,7 @@ import {
 } from 'react';
 
 import { LoadingCircle } from '#/components/LoadingCircle/LoadingCircle.tsx';
-import { type CommonAriaProps } from '#/helpers/aria';
+import { type CommonAriaProps, type CommonGlobalProps } from '#/helpers/aria';
 import { useTranslation } from '#/hooks/useTranslation';
 
 import { useBadgeItems } from '../hooks/useBadgeItems';
@@ -85,7 +85,8 @@ export type ComboboxSharedProps = {
      * Event handler called when the escape key is pressed
      */
     onEscapeKeyDown?: (event: KeyboardEvent) => void;
-} & CommonAriaProps;
+} & CommonAriaProps &
+    CommonGlobalProps;
 
 type ComboboxBaseProps = ComboboxSharedProps & {
     /**
@@ -123,6 +124,7 @@ const ComboboxBaseInput = (
         getAsyncItems,
         onEscapeKeyDown,
         multiple,
+        lang,
         ...props
     }: ComboboxBaseProps,
     forwardedRef: ForwardedRef<HTMLDivElement>,
@@ -325,6 +327,7 @@ const ComboboxBaseInput = (
                                         'aria-describedby': selectionDescription ? selectionDescriptionId : undefined,
                                     })}
                                     data-test-id={dataTestId}
+                                    lang={lang}
                                     placeholder={selectedItemValues.length === 0 ? placeholder : ''}
                                     className={styles.multiSelectInput}
                                     disabled={disabled}
@@ -350,6 +353,7 @@ const ComboboxBaseInput = (
                                         : undefined,
                             })}
                             data-test-id={dataTestId}
+                            lang={lang}
                             placeholder={placeholder}
                             className={styles.input}
                             disabled={disabled}

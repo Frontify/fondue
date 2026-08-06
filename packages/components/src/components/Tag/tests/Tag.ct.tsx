@@ -99,3 +99,12 @@ test('should render correct cross icon size', async ({ mount }) => {
     const icon = await component.locator('svg').getAttribute('width');
     expect(icon).toBe('16');
 });
+
+test('should render lang on the element holding the content', async ({ mount }) => {
+    const wrapper = await mount(
+        <Tag data-test-id="tag-root" lang="fr-CH">
+            {TAG_TEXT}
+        </Tag>,
+    );
+    await expect(wrapper.getByTestId('tag-root')).toHaveAttribute('lang', 'fr-CH');
+});

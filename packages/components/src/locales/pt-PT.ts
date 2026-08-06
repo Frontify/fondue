@@ -42,4 +42,5 @@ const translations = {
 export const ptPT: LocaleConfig = {
     translationStrings: translations,
     dateLocale,
+    lang: 'pt-PT',
 };

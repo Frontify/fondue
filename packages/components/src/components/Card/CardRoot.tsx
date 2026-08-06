@@ -13,6 +13,7 @@ import {
     useMemo,
 } from 'react';
 
+import { type CommonGlobalProps } from '#/helpers/aria';
 import { useTranslation } from '#/hooks/useTranslation';
 
 import { useFondueRouter } from '../RouterProvider/RouterProvider';
@@ -21,7 +22,7 @@ import { ForwardedRefCardAction } from './CardAction';
 import { CardContext } from './CardContext';
 import styles from './styles/card.module.scss';
 
-type CardRootBaseProps = {
+type CardRootBaseProps = CommonGlobalProps & {
     'data-test-id'?: string;
     /**
      * Additional class name(s) merged onto the card's root element. Useful for
@@ -114,6 +115,7 @@ export const CardRoot = (
         'aria-label': ariaLabel,
         'aria-describedby': ariaDescribedby,
         className = '',
+        lang,
         selected = false,
         href,
         target,
@@ -184,6 +186,7 @@ export const CardRoot = (
             ref={ref}
             className={[styles.root, className].filter(Boolean).join(' ')}
             data-test-id={dataTestId}
+            lang={lang}
             data-interactive={isClickable}
             data-selectable={isSelectable}
             data-selected={isSelectable && selected}
