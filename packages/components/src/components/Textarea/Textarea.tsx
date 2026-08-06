@@ -17,6 +17,7 @@ import {
     type SyntheticEvent,
 } from 'react';
 
+import { type CommonGlobalProps } from '#/helpers/aria';
 import { useSyncRefs } from '#/hooks/useSyncRefs';
 
 import styles from './styles/textarea.module.scss';
@@ -32,7 +33,7 @@ export type ExtraAction = {
 
 type Status = 'default' | 'loading' | 'success' | 'error';
 
-type TextareaProps = {
+type TextareaProps = CommonGlobalProps & {
     /**
      * The id of the textarea
      */

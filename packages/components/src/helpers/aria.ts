@@ -24,3 +24,16 @@ export type CommonAriaProps = Pick<
 > & {
     role?: AriaRole;
 };
+
+/**
+ * Global HTML attributes with accessibility semantics that are not part of ARIA.
+ *
+ * `lang` is exposed so consumers can satisfy WCAG 3.1.2 (Language of Parts) when a
+ * component renders content in a different language than the surrounding document.
+ */
+export type CommonGlobalProps = {
+    /**
+     * language tag describing the language of the element's content, for example `fr-CH`.
+     */
+    lang?: string;
+};

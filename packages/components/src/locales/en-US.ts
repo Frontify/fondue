@@ -40,4 +40,5 @@ const translations = {
 export const enUS = {
     translationStrings: translations,
     dateLocale,
+    lang: 'en-US',
 };

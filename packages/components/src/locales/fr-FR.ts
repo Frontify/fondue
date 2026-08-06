@@ -42,4 +42,5 @@ const translations = {
 export const frFR: LocaleConfig = {
     translationStrings: translations,
     dateLocale,
+    lang: 'fr-FR',
 };

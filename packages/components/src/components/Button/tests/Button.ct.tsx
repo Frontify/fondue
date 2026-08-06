@@ -70,3 +70,12 @@ test('should render in positive medium with an icon and text.', async ({ mount }
     await expect(component).toHaveText(BUTTON_TEXT);
     await expect(component.locator('data-test-id=fondue-icon-icon')).toBeVisible();
 });
+
+test('should render lang on the button element', async ({ mount }) => {
+    const wrapper = await mount(
+        <Button data-test-id="button-root" lang="fr-CH">
+            {BUTTON_TEXT}
+        </Button>,
+    );
+    await expect(wrapper.getByTestId('button-root')).toHaveAttribute('lang', 'fr-CH');
+});

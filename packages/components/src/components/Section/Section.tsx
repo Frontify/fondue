@@ -2,7 +2,7 @@
 
 import { forwardRef, type ReactNode } from 'react';
 
-import { type CommonAriaProps } from '#/helpers/aria';
+import { type CommonAriaProps, type CommonGlobalProps } from '#/helpers/aria';
 import { type Responsive, type LayoutComponentProps } from '#/helpers/layout';
 import { propsToCssVariables } from '#/helpers/propsToCssVariables';
 
@@ -17,7 +17,8 @@ export type SectionProps = LayoutComponentProps & {
 
     children?: ReactNode;
     'data-test-id'?: string;
-} & CommonAriaProps;
+} & CommonAriaProps &
+    CommonGlobalProps;
 
 export const Section = forwardRef<HTMLDivElement, SectionProps>(
     (
@@ -31,6 +32,7 @@ export const Section = forwardRef<HTMLDivElement, SectionProps>(
             'aria-labelledby': ariaLabelledBy,
             'aria-expanded': ariaExpanded,
             'aria-haspopup': ariaHasPopup,
+            lang,
             ...props
         },
         ref,
@@ -47,6 +49,7 @@ export const Section = forwardRef<HTMLDivElement, SectionProps>(
                 aria-labelledby={ariaLabelledBy}
                 aria-expanded={ariaExpanded}
                 aria-haspopup={ariaHasPopup}
+                lang={lang}
                 ref={ref}
             >
                 {children}

@@ -42,4 +42,5 @@ const translations = {
 export const deDE: LocaleConfig = {
     translationStrings: translations,
     dateLocale,
+    lang: 'de-DE',
 };

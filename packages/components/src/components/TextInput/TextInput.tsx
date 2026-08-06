@@ -12,11 +12,13 @@ import {
     type SyntheticEvent,
 } from 'react';
 
+import { type CommonGlobalProps } from '#/helpers/aria';
+
 import { LoadingCircle } from '../LoadingCircle/LoadingCircle';
 
 import styles from './styles/text.module.scss';
 
-export type TextInputProps = {
+export type TextInputProps = CommonGlobalProps & {
     id?: string;
     name?: string;
     /**

@@ -8,7 +8,7 @@ import {
     type ReactElement,
 } from 'react';
 
-import { type CommonAriaProps } from '#/helpers/aria';
+import { type CommonAriaProps, type CommonGlobalProps } from '#/helpers/aria';
 
 import styles from './styles/text.module.scss';
 
@@ -20,6 +20,7 @@ type BoxColor = 'neutral' | 'selected' | 'disabled' | 'positive' | 'negative' | 
 type TagType = 'a' | 'abbr' | 'address' | 'em' | 'label' | 'li' | 'span' | 'strong' | 'time' | 'p';
 
 export type TextProps<TTag extends TagType = 'span'> = CommonAriaProps &
+    CommonGlobalProps &
     TagProps<TTag> & {
         /**
          * Id of the element

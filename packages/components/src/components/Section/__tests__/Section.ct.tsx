@@ -68,3 +68,12 @@ test('should render with size tokens', async ({ mount }) => {
     await expect(component).toHaveCSS('right', '56px');
     await expect(component).toHaveCSS('left', '52px');
 });
+
+test('should render lang on the root element', async ({ mount }) => {
+    const wrapper = await mount(
+        <Section data-test-id="section-root" lang="fr-CH">
+            {SECTION_TEXT}
+        </Section>,
+    );
+    await expect(wrapper.getByTestId('section-root')).toHaveAttribute('lang', 'fr-CH');
+});

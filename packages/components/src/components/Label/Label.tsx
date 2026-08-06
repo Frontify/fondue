@@ -3,11 +3,13 @@
 import * as LabelPrimitive from '@radix-ui/react-label';
 import { type ForwardedRef, forwardRef, type MouseEventHandler, type ReactNode, useRef, useLayoutEffect } from 'react';
 
+import { type CommonGlobalProps } from '#/helpers/aria';
+
 import styles from './styles/label.module.scss';
 
 type LabelVariant = 'default' | 'strong';
 
-export type LabelProps = {
+export type LabelProps = CommonGlobalProps & {
     id?: string;
     children: ReactNode;
     /**

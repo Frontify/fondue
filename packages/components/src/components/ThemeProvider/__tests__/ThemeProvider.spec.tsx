@@ -7,13 +7,14 @@ import { deDE, enUS, frFR } from '../../../locales';
 import { ThemeProvider, useFondueTheme } from '../ThemeProvider';
 
 const ContextProbe = ({ id }: { id: string }) => {
-    const { theme, dir, locale, className } = useFondueTheme();
+    const { theme, dir, locale, lang, className } = useFondueTheme();
     return (
         <div
             data-test-id={id}
             data-theme={theme}
             data-dir={dir}
             data-locale={locale.translationStrings.Dialog_close}
+            data-lang={lang}
             data-scope={className}
         />
     );
@@ -133,5 +134,54 @@ describe('ThemeProvider context inheritance', () => {
         expect(providers).toHaveLength(2);
         // The nested provider should re-apply the inherited scope class on its DOM node
         expect(providers[1]?.className).toContain('parent-scope');
+    });
+});
+
+describe('ThemeProvider language', () => {
+    it('does not set a lang attribute when no locale or lang is provided', () => {
+        const { container } = render(
+            <ThemeProvider>
+                <ContextProbe id="probe" />
+            </ThemeProvider>,
+        );
+
+        expect(container.querySelector('.fondue-theme-provider')?.hasAttribute('lang')).toBe(false);
+        expect(screen.getByTestId('probe').dataset.lang).toBeUndefined();
+    });
+
+    it('derives the lang attribute from the provided locale', () => {
+        const { container } = render(
+            <ThemeProvider locale={deDE}>
+                <ContextProbe id="probe" />
+            </ThemeProvider>,
+        );
+
+        expect(container.querySelector('.fondue-theme-provider')?.getAttribute('lang')).toBe('de-DE');
+        expect(screen.getByTestId('probe').dataset.lang).toBe('de-DE');
+    });
+
+    it('prefers an explicit lang over the locale', () => {
+        const { container } = render(
+            <ThemeProvider locale={deDE} lang="de-CH">
+                <ContextProbe id="probe" />
+            </ThemeProvider>,
+        );
+
+        expect(container.querySelector('.fondue-theme-provider')?.getAttribute('lang')).toBe('de-CH');
+        expect(screen.getByTestId('probe').dataset.lang).toBe('de-CH');
+    });
+
+    it('inherits the lang on nested providers, as used by portaled content', () => {
+        const { container } = render(
+            <ThemeProvider locale={frFR}>
+                <ThemeProvider>
+                    <ContextProbe id="probe" />
+                </ThemeProvider>
+            </ThemeProvider>,
+        );
+
+        const providers = container.querySelectorAll('.fondue-theme-provider');
+        expect(providers[1]?.getAttribute('lang')).toBe('fr-FR');
+        expect(screen.getByTestId('probe').dataset.lang).toBe('fr-FR');
     });
 });

@@ -3,6 +3,7 @@
 import { IconCross } from '@frontify/fondue-icons';
 import { type MouseEvent, type ReactNode } from 'react';
 
+import { type CommonGlobalProps } from '#/helpers/aria';
 import { useTranslation } from '#/hooks/useTranslation';
 
 import styles from './styles/notice.module.scss';
@@ -15,7 +16,7 @@ type NoticeSize = 'medium' | 'large';
 
 type NoticeAlignContent = 'center' | 'top';
 
-export type NoticeProps = {
+export type NoticeProps = CommonGlobalProps & {
     /**
      * @default 'default'
      */
@@ -72,6 +73,7 @@ export const Notice = ({
     alignContent = 'center',
     icon,
     action,
+    lang,
     onDismiss,
     className = '',
     children,
@@ -91,7 +93,9 @@ export const Notice = ({
             aria-live="polite"
         >
             {icon ? <div className={styles.icon}>{icon}</div> : null}
-            <div className={styles.content}>{children}</div>
+            <div className={styles.content} lang={lang}>
+                {children}
+            </div>
             {action ? <div className={styles.action}>{action}</div> : null}
             {onDismiss ? (
                 <button

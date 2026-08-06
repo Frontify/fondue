@@ -361,3 +361,8 @@ test('should render with custom aria-label and verify accessibility', async ({ m
     await expect(dismissButton).toBeVisible();
     await expect(dismissButton).toHaveAttribute('type', 'button');
 });
+
+test('should render lang on the content element', async ({ mount }) => {
+    const component = await mount(<Notice lang="fr-CH">{NOTICE_TEXT}</Notice>);
+    await expect(component.locator('[lang="fr-CH"]')).toContainText(NOTICE_TEXT);
+});
