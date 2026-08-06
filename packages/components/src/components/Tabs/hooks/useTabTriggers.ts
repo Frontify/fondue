@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type RefObject, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { type RefObject, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 import { type TabTrigger } from '../types';
 
@@ -140,17 +140,19 @@ export const useTabTriggers = ({
         }
     }, [triggers, triggerListRef, activeIndicatorRef]);
 
-    const addTrigger = (trigger: TabTrigger) => {
-        if (!trigger.previousElement) {
-            setTriggers((prev) => [...prev, trigger]);
-        }
-
+    const addTrigger = useCallback((trigger: TabTrigger) => {
         setTriggers((prev) => {
-            const index = prev.findIndex((element) => element.element === trigger.previousElement);
-            prev[index] = trigger;
-            return [...prev];
+            const index = prev.findIndex((element) => element.value === trigger.value);
+
+            if (index === -1) {
+                return [...prev, trigger];
+            }
+
+            const next = [...prev];
+            next[index] = trigger;
+            return next;
         });
-    };
+    }, []);
 
     return {
         triggerListRef,

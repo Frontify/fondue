@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { action } from 'storybook/actions';
 
 import { Badge } from '../Badge/Badge';
+import { Button } from '../Button/Button';
 
 import { Tabs, TabsContent, TabsRoot, TabsTab, TabsTrigger } from './Tabs';
 
@@ -179,6 +180,45 @@ export const DisabledTabs: Story = {
             </Tabs.Tab>
         </Tabs.Root>
     ),
+};
+
+export const DynamicallyDisabledTabs: Story = {
+    render: (args) => {
+        const [isSecondTabDisabled, setIsSecondTabDisabled] = useState(false);
+        return (
+            <div className="tw-flex tw-flex-col tw-gap-4">
+                <Button onPress={() => setIsSecondTabDisabled((isDisabled) => !isDisabled)}>
+                    {isSecondTabDisabled ? 'Enable' : 'Disable'} second tab
+                </Button>
+                <Tabs.Root {...args}>
+                    <Tabs.Tab value="first">
+                        <Tabs.Trigger>First Tab</Tabs.Trigger>
+                        <Tabs.Content>
+                            <b>First Content</b>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+                            labore et dolore magna aliqua.
+                        </Tabs.Content>
+                    </Tabs.Tab>
+                    <Tabs.Tab value="second" disabled={isSecondTabDisabled}>
+                        <Tabs.Trigger>Second Tab</Tabs.Trigger>
+                        <Tabs.Content>
+                            <b>Second Content</b>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+                            labore et dolore magna aliqua.
+                        </Tabs.Content>
+                    </Tabs.Tab>
+                    <Tabs.Tab value="third">
+                        <Tabs.Trigger>Third Tab</Tabs.Trigger>
+                        <Tabs.Content>
+                            <b>Third Content</b>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+                            labore et dolore magna aliqua.
+                        </Tabs.Content>
+                    </Tabs.Tab>
+                </Tabs.Root>
+            </div>
+        );
+    },
 };
 
 export const WithDecorator: Story = {
