@@ -2,16 +2,15 @@
 
 import { Fragment, type ReactNode } from 'react';
 
-import { type EditorControlApi } from '#/core/editor-api';
-import { type FondueRtePlugin, type ToolbarPosition } from '#/core/plugin';
+import { type EditorControlApi } from '../core/editor-api';
+import { type FondueRtePlugin } from '../core/plugin';
 
 export type ToolbarProps = {
     api: EditorControlApi;
     plugins: FondueRtePlugin[];
-    position?: ToolbarPosition;
 };
 
-export const Toolbar = ({ api, plugins, position = 'top' }: ToolbarProps): ReactNode => {
+export const Toolbar = ({ api, plugins }: ToolbarProps): ReactNode => {
     return (
         <div
             role="toolbar"
@@ -24,12 +23,9 @@ export const Toolbar = ({ api, plugins, position = 'top' }: ToolbarProps): React
                 alignItems: 'center',
             }}
         >
-            {plugins.map((plugin) => {
-                if (!plugin.toolbar || !plugin.toolbar.positions.includes(position)) {
-                    return null;
-                }
-                return <Fragment key={plugin.id}>{plugin.toolbar.render(api)}</Fragment>;
-            })}
+            {plugins.map((plugin) =>
+                plugin.toolbar ? <Fragment key={plugin.id}>{plugin.toolbar(api)}</Fragment> : null,
+            )}
         </div>
     );
 };

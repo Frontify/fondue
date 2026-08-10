@@ -1,22 +1,19 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ReactNode, useEffect, useMemo, useReducer, useRef } from 'react';
+import { type ReactNode, useEffect, useReducer, useRef } from 'react';
 
-import { buildSchema, createEditor, type EditorHandle } from '#/adapter/prosemirror';
-import { type FrontifyDocument } from '#/core/document';
-import { type EditorControlApi } from '#/core/editor-api';
-import { type FondueRtePlugin } from '#/core/plugin';
+import { type FrontifyDocument } from '../core/document';
+import { type EditorControlApi } from '../core/editor-api';
+import { type FondueRtePlugin } from '../core/plugin';
+import { createEditor, type EditorHandle } from '../prosemirror';
 
 import { Toolbar } from './Toolbar';
 
 export type RichTextEditorProps = {
-    id?: string;
     value?: FrontifyDocument;
     onChange?: (value: FrontifyDocument) => void;
-    plugins: FondueRtePlugin[];
-    placeholder?: string;
-    readonly?: boolean;
-    autoFocus?: boolean;
+    /** The plugins to mount, in toolbar order (e.g. `defaultPlugins`, extended or reduced as needed). */
+    plugins?: FondueRtePlugin[];
 };
 
 const EMPTY_DOC: FrontifyDocument = {
@@ -37,15 +34,15 @@ const EDITOR_CSS = `
 }
 `;
 
-export const RichTextEditor = ({
-    id,
-    value,
-    onChange,
-    plugins,
-    placeholder,
-    readonly = false,
-    autoFocus = false,
-}: RichTextEditorProps): ReactNode => {
+/** Plugin styles are plain CSS; scope them to the editor via native CSS nesting. */
+const scopedPluginStyles = (plugins: FondueRtePlugin[]): string =>
+    plugins
+        .filter((plugin) => plugin.styles)
+        .map((plugin) => `.fondue-rte {\n${plugin.styles ?? ''}\n}`)
+        .join('\n');
+
+export const RichTextEditor = ({ value, onChange, plugins }: RichTextEditorProps): ReactNode => {
+    const allPlugins = plugins ?? [];
     const containerRef = useRef<HTMLDivElement | null>(null);
     const handleRef = useRef<EditorHandle | null>(null);
     const apiRef = useRef<EditorControlApi | null>(null);
@@ -54,9 +51,7 @@ export const RichTextEditor = ({
 
     const [, force] = useReducer((count: number) => count + 1, 0);
 
-    const pluginsKey = plugins.map((p) => p.id).join('|');
-    // eslint-disable-next-line @eslint-react/exhaustive-deps
-    const schema = useMemo(() => buildSchema(plugins), [pluginsKey]);
+    const pluginsKey = allPlugins.map((p) => p.id).join('|');
 
     useEffect(() => {
         const container = containerRef.current;
@@ -67,10 +62,7 @@ export const RichTextEditor = ({
         const handle = createEditor({
             container,
             initialDoc: value ?? EMPTY_DOC,
-            plugins,
-            schema,
-            readonly,
-            autoFocus,
+            plugins: allPlugins,
             editorClass: 'fondue-rte',
             onDocChange: (doc) => {
                 onChangeRef.current?.(doc);
@@ -88,9 +80,9 @@ export const RichTextEditor = ({
             handleRef.current = null;
             apiRef.current = null;
         };
-        // Intentional: re-create editor only when schema/plugins/readonly change.
+        // Intentional: re-create the editor only when the plugin set changes.
         // eslint-disable-next-line @eslint-react/exhaustive-deps
-    }, [schema, pluginsKey, readonly]);
+    }, [pluginsKey]);
 
     // Push externally-driven doc updates into the editor.
     useEffect(() => {
@@ -104,10 +96,8 @@ export const RichTextEditor = ({
 
     return (
         <>
-            <style>{EDITOR_CSS}</style>
+            <style>{EDITOR_CSS + scopedPluginStyles(allPlugins)}</style>
             <div
-                id={id}
-                data-editor-id={id}
                 style={{
                     border: '1px solid #d1d5db',
                     borderRadius: 6,
@@ -116,8 +106,8 @@ export const RichTextEditor = ({
                     overflow: 'hidden',
                 }}
             >
-                {!readonly && api ? <Toolbar api={api} plugins={plugins} position="top" /> : null}
-                <div ref={containerRef} data-placeholder={placeholder} />
+                {api && allPlugins.some((plugin) => plugin.toolbar) ? <Toolbar api={api} plugins={allPlugins} /> : null}
+                <div ref={containerRef} />
             </div>
         </>
     );

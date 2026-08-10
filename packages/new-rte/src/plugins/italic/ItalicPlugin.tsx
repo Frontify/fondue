@@ -3,42 +3,42 @@
 import { type FondueRtePlugin } from '#/RichTextEditor';
 
 /** The flag this plugin sets on text nodes. */
-export type BoldMark = {
-    bold?: boolean;
+export type ItalicMark = {
+    italic?: boolean;
 };
 
-export const BoldPlugin: FondueRtePlugin = {
-    id: 'bold',
+export const ItalicPlugin: FondueRtePlugin = {
+    id: 'italic',
     schema: {
         marks: [
             {
-                key: 'bold',
-                render: ({ children }) => <strong>{children}</strong>,
-                parseRules: [{ tag: 'b' }],
+                key: 'italic',
+                render: ({ children }) => <em>{children}</em>,
+                parseRules: [{ tag: 'i' }],
             },
         ],
     },
     toolbar: (api) => (
         <button
             type="button"
-            aria-pressed={api.isMarkActive('bold')}
+            aria-pressed={api.isMarkActive('italic')}
             onMouseDown={(event) => event.preventDefault()}
-            onClick={() => api.toggleMark('bold')}
+            onClick={() => api.toggleMark('italic')}
             style={{
-                fontWeight: 700,
+                fontStyle: 'italic',
                 fontSize: 13,
                 lineHeight: 1,
                 padding: '3px 8px',
                 border: '1px solid #d1d5db',
-                background: api.isMarkActive('bold') ? '#e5e7eb' : 'transparent',
+                background: api.isMarkActive('italic') ? '#e5e7eb' : 'transparent',
                 cursor: 'pointer',
                 borderRadius: 4,
                 color: '#374151',
                 fontFamily: 'inherit',
             }}
         >
-            B
+            I
         </button>
     ),
-    hotkeys: { 'Mod-b': (api) => api.toggleMark('bold') },
+    hotkeys: { 'Mod-i': (api) => api.toggleMark('italic') },
 };
