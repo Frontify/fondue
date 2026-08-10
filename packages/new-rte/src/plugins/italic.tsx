@@ -1,0 +1,27 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+import { type RtePlugin } from '#/RichTextEditor';
+
+import { ToolbarButton } from './ToolbarButton';
+
+/** The flag this plugin sets on text nodes. */
+export type ItalicMark = {
+    italic?: boolean;
+};
+
+export const ItalicPlugin: RtePlugin = {
+    id: 'italic',
+    schema: {
+        marks: [{ key: 'italic', render: ({ children }) => <em>{children}</em>, parseRules: [{ tag: 'i' }] }],
+    },
+    toolbar: (api) => (
+        <ToolbarButton
+            active={api.isMarkActive('italic')}
+            onClick={() => api.toggleMark('italic')}
+            style={{ fontStyle: 'italic' }}
+        >
+            I
+        </ToolbarButton>
+    ),
+    hotkeys: { 'Mod-i': (api) => api.toggleMark('italic') },
+};

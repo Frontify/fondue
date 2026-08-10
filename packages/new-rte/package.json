@@ -21,9 +21,8 @@
     "exports": {
         ".": {
             "types": "./dist/index.d.ts",
-            "import": "./dist/fondue-new-rte.js"
-        },
-        "./styles": "./dist/style.css"
+            "import": "./dist/rte.js"
+        }
     },
     "files": [
         "dist"

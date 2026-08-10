@@ -48,7 +48,8 @@ export default defineConfig({
     build: {
         lib: {
             entry: './src/index.ts',
-            name: 'FondueNewRte',
+            name: 'Rte',
+            fileName: 'rte',
             formats: ['es'],
         },
         sourcemap: true,
@@ -56,7 +57,7 @@ export default defineConfig({
         rollupOptions: {
             output: [
                 {
-                    name: 'FondueNewRte',
+                    name: 'Rte',
                     format: 'es',
                     preserveModules: true,
                     preserveModulesRoot: 'src',

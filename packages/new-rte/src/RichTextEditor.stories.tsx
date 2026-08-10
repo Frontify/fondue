@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { type ReactNode, useState } from 'react';
+import { useState } from 'react';
 
 // Stories import only the package public API — the consumer-plugin stories
 // below double as proof that the plugin contract is open: they define a
@@ -9,13 +9,12 @@ import { type ReactNode, useState } from 'react';
 // without touching the package.
 import {
     BoldPlugin,
-    createDocument,
     defaultPlugins,
-    type FondueRtePlugin,
-    type FrontifyBlockNode,
-    type FrontifyDocument,
-    type FrontifyInlineElementNode,
-    type FrontifyInlineNode,
+    type RteBlock,
+    type RteDocument,
+    type RteInlineNode,
+    type RtePlugin,
+    type RteText,
     ItalicPlugin,
     LinkPlugin,
     RichTextEditor,
@@ -27,36 +26,18 @@ const SAMPLE_IMAGE = `data:image/svg+xml,${encodeURIComponent(
 )}`;
 
 /**
- * Story chrome is styled with the Fondue Tailwind preset (`tw-` prefix, token-backed
+ * Story chrome is styled with the `@frontify/fondue-tokens` Tailwind preset (`tw-` prefix, token-backed
  * utilities). The package itself ships plain CSS — Tailwind is Storybook-only here.
  */
+const LAYOUT = 'tw-grid tw-grid-cols-2 tw-content-start tw-gap-4 tw-p-4 tw-font-primary';
+const JSON_PANEL =
+    'tw-m-0 tw-min-h-[200px] tw-overflow-auto tw-rounded tw-bg-surface-dim tw-p-3 tw-font-monospace tw-text-x-small tw-leading-medium';
+
 const toolbarButtonClasses = (active: boolean): string =>
     [
         'tw-body-small tw-rounded tw-border tw-border-line-strong tw-px-2 tw-py-1 tw-text-secondary tw-cursor-pointer',
         active ? 'tw-bg-container-secondary' : 'tw-bg-transparent',
     ].join(' ');
-
-/** Editor + live document JSON, side by side. */
-const Demo = ({
-    plugins,
-    initial,
-    header,
-}: {
-    plugins: FondueRtePlugin[];
-    initial: FrontifyDocument;
-    header?: (doc: FrontifyDocument, setDoc: (doc: FrontifyDocument) => void) => ReactNode;
-}): ReactNode => {
-    const [doc, setDoc] = useState(initial);
-    return (
-        <div className="tw-grid tw-grid-cols-2 tw-content-start tw-gap-4 tw-p-4 tw-font-primary">
-            {header ? <div className="tw-col-span-full tw-flex tw-gap-2">{header(doc, setDoc)}</div> : null}
-            <RichTextEditor value={doc} onChange={setDoc} plugins={plugins} />
-            <pre className="tw-m-0 tw-min-h-[200px] tw-overflow-auto tw-rounded tw-bg-surface-dim tw-p-3 tw-font-monospace tw-text-x-small tw-leading-medium">
-                {JSON.stringify(doc, null, 2)}
-            </pre>
-        </div>
-    );
-};
 
 const meta: Meta<typeof RichTextEditor> = {
     title: 'RTE v2 / Spike',
@@ -70,12 +51,18 @@ type Story = StoryObj<typeof RichTextEditor>;
 // Editor configurations
 // ---------------------------------------------------------------------------
 
-/** Every built-in plugin: marks, value marks, blocks, and a void block. */
+/**
+ * Every built-in plugin: marks, value marks, blocks, and a void block.
+ *
+ * `useState<RteDocument>` is the only type annotation an app needs: it
+ * checks the document literal (block types, their attrs, and the mark keys on
+ * every text node) and types `onChange` on the way back out.
+ */
 export const AllPlugins: Story = {
-    render: () => (
-        <Demo
-            plugins={defaultPlugins}
-            initial={createDocument([
+    render: () => {
+        const [doc, setDoc] = useState<RteDocument>({
+            version: 1,
+            blocks: [
                 { type: 'heading', level: 2, children: [{ text: 'A heading — switch levels in the style dropdown' }] },
                 {
                     type: 'paragraph',
@@ -85,67 +72,92 @@ export const AllPlugins: Story = {
                         { text: ' (⌘B), ' },
                         { text: 'italic', italic: true },
                         { text: ' (⌘I), or a ' },
-                        { text: 'link', link: { href: 'https://frontify.com' } },
+                        { text: 'link', link: { href: 'https://example.com' } },
                         { text: '.' },
                     ],
                 },
                 { type: 'quote', children: [{ text: 'A quote block — toggle with the ❝ button.' }] },
                 { type: 'image', src: SAMPLE_IMAGE, alt: 'Sample image block' },
-            ])}
-        />
-    ),
+            ],
+        });
+
+        return (
+            <div className={LAYOUT}>
+                <RichTextEditor value={doc} onChange={setDoc} plugins={defaultPlugins} />
+                <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
+            </div>
+        );
+    },
 };
 
 /** No plugins at all: a plain-paragraph editor. No toolbar renders. */
 export const PlainText: Story = {
-    render: () => (
-        <Demo
-            plugins={[]}
-            initial={createDocument([
-                { type: 'paragraph', children: [{ text: 'Just paragraphs. No plugins, no toolbar, no marks.' }] },
-            ])}
-        />
-    ),
+    render: () => {
+        const [doc, setDoc] = useState<RteDocument>({
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'Just paragraphs. No plugins, no toolbar, no marks.' }] }],
+        });
+
+        return (
+            <div className={LAYOUT}>
+                <RichTextEditor value={doc} onChange={setDoc} plugins={[]} />
+                <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
+            </div>
+        );
+    },
 };
 
 /** A reduced configuration: inline formatting only, no block types — a comment box. */
 export const CommentBox: Story = {
-    render: () => (
-        <Demo
-            plugins={[BoldPlugin, ItalicPlugin, LinkPlugin]}
-            initial={createDocument([
+    render: () => {
+        const [doc, setDoc] = useState<RteDocument>({
+            version: 1,
+            blocks: [
                 {
                     type: 'paragraph',
                     children: [{ text: 'Marks only — headings, quotes, and images are not mounted here.' }],
                 },
-            ])}
-        />
-    ),
+            ],
+        });
+
+        return (
+            <div className={LAYOUT}>
+                <RichTextEditor value={doc} onChange={setDoc} plugins={[BoldPlugin, ItalicPlugin, LinkPlugin]} />
+                <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
+            </div>
+        );
+    },
 };
 
-/** The document is controlled from outside: load and clear replace the editor content via the value prop. */
+/**
+ * The document is controlled from outside: the buttons replace the editor
+ * content through the `value` prop. The literals they pass need no annotation
+ * — `setDoc` supplies the type.
+ */
 export const ControlledValue: Story = {
-    render: () => (
-        <Demo
-            plugins={defaultPlugins}
-            initial={createDocument([
-                { type: 'paragraph', children: [{ text: 'Use the buttons above to replace this content.' }] },
-            ])}
-            header={(_doc, setDoc) => (
-                <>
+    render: () => {
+        const [doc, setDoc] = useState<RteDocument>({
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'Use the buttons above to replace this content.' }] }],
+        });
+
+        return (
+            <div className={LAYOUT}>
+                <div className="tw-col-span-full tw-flex tw-gap-2">
                     <button
                         type="button"
                         className={toolbarButtonClasses(false)}
                         onClick={() =>
-                            setDoc(
-                                createDocument([
+                            setDoc({
+                                version: 1,
+                                blocks: [
                                     { type: 'heading', level: 2, children: [{ text: 'Loaded document' }] },
                                     {
                                         type: 'paragraph',
                                         children: [{ text: 'This content was set from outside the editor.' }],
                                     },
-                                ]),
-                            )
+                                ],
+                            })
                         }
                     >
                         Load sample
@@ -153,43 +165,60 @@ export const ControlledValue: Story = {
                     <button
                         type="button"
                         className={toolbarButtonClasses(false)}
-                        onClick={() => setDoc(createDocument([{ type: 'paragraph', children: [{ text: '' }] }]))}
+                        onClick={() =>
+                            setDoc({ version: 1, blocks: [{ type: 'paragraph', children: [{ text: '' }] }] })
+                        }
                     >
                         Clear
                     </button>
-                </>
-            )}
-        />
-    ),
+                </div>
+                <RichTextEditor value={doc} onChange={setDoc} plugins={defaultPlugins} />
+                <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
+            </div>
+        );
+    },
 };
 
 /** Two independent editors with different configurations on one page. */
 export const TwoEditors: Story = {
-    render: () => (
-        <div className="tw-grid">
-            <Demo
-                plugins={defaultPlugins}
-                initial={createDocument([
-                    { type: 'heading', level: 3, children: [{ text: 'Full editor' }] },
-                    { type: 'paragraph', children: [{ text: 'All plugins mounted.' }] },
-                ])}
-            />
-            <Demo
-                plugins={[BoldPlugin]}
-                initial={createDocument([
-                    { type: 'paragraph', children: [{ text: 'Bold-only editor — instances are independent.' }] },
-                ])}
-            />
-        </div>
-    ),
+    render: () => {
+        const [fullDoc, setFullDoc] = useState<RteDocument>({
+            version: 1,
+            blocks: [
+                { type: 'heading', level: 3, children: [{ text: 'Full editor' }] },
+                { type: 'paragraph', children: [{ text: 'All plugins mounted.' }] },
+            ],
+        });
+        const [boldDoc, setBoldDoc] = useState<RteDocument>({
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: 'Bold-only editor — instances are independent.' }] }],
+        });
+
+        return (
+            <div className="tw-grid">
+                <div className={LAYOUT}>
+                    <RichTextEditor value={fullDoc} onChange={setFullDoc} plugins={defaultPlugins} />
+                    <pre className={JSON_PANEL}>{JSON.stringify(fullDoc, null, 2)}</pre>
+                </div>
+                <div className={LAYOUT}>
+                    <RichTextEditor value={boldDoc} onChange={setBoldDoc} plugins={[BoldPlugin]} />
+                    <pre className={JSON_PANEL}>{JSON.stringify(boldDoc, null, 2)}</pre>
+                </div>
+            </div>
+        );
+    },
 };
 
 // ---------------------------------------------------------------------------
 // Consumer plugins — defined here, not in the package
 // ---------------------------------------------------------------------------
 
-/** A consumer-defined mark. */
-const HighlightPlugin: FondueRtePlugin = {
+/** A consumer-defined mark, plus the type its plugin writes on text nodes. */
+type HighlightMark = {
+    highlight?: boolean;
+};
+
+const HighlightPlugin: RtePlugin = {
     id: 'highlight',
     schema: {
         marks: [{ key: 'highlight', render: ({ children }) => <mark>{children}</mark> }],
@@ -211,11 +240,15 @@ const HighlightPlugin: FondueRtePlugin = {
     styles: 'mark { background: #fde68a; border-radius: 2px; }',
 };
 
+/**
+ * The type juggling a consumer plugin costs: one type argument naming the
+ * extra mark. Everything the shipped plugins contribute stays checked.
+ */
 export const ConsumerMark: Story = {
-    render: () => (
-        <Demo
-            plugins={[BoldPlugin, HighlightPlugin]}
-            initial={createDocument([
+    render: () => {
+        const [doc, setDoc] = useState<RteDocument<RteBlock<RteText & HighlightMark>>>({
+            version: 1,
+            blocks: [
                 {
                     type: 'paragraph',
                     children: [
@@ -226,30 +259,32 @@ export const ConsumerMark: Story = {
                         },
                     ],
                 },
-            ])}
-        />
-    ),
+            ],
+        });
+
+        return (
+            <div className={LAYOUT}>
+                <RichTextEditor value={doc} onChange={setDoc} plugins={[BoldPlugin, HighlightPlugin]} />
+                <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
+            </div>
+        );
+    },
 };
 
 /** A consumer-defined block type, following the shipped QuoteBlock pattern. */
 type CalloutBlock = {
     type: 'callout';
-    children: FrontifyInlineNode[];
+    children: RteInlineNode[];
 };
 
-const isCalloutBlock = (node: FrontifyBlockNode): node is CalloutBlock => node.type === 'callout';
-
-const CalloutPlugin: FondueRtePlugin = {
+const CalloutPlugin: RtePlugin = {
     id: 'callout',
     schema: {
         blocks: [
             {
                 type: 'callout',
-                render: ({ children, attributes }) => (
-                    <aside
-                        {...attributes}
-                        className="tw-m-0 tw-rounded-medium tw-border tw-border-warning tw-bg-container-warning tw-px-3 tw-py-2"
-                    >
+                render: ({ children }) => (
+                    <aside className="tw-m-0 tw-rounded-medium tw-border tw-border-warning tw-bg-container-warning tw-px-3 tw-py-2">
                         {children}
                     </aside>
                 ),
@@ -258,8 +293,7 @@ const CalloutPlugin: FondueRtePlugin = {
         ],
     },
     toolbar: (api) => {
-        const current = api.getCurrentBlock();
-        const active = current !== null && isCalloutBlock(current);
+        const active = api.getCurrentBlock()?.type === 'callout';
         return (
             <button
                 type="button"
@@ -274,11 +308,12 @@ const CalloutPlugin: FondueRtePlugin = {
     },
 };
 
+/** An extra block type joins the official union in the same type argument. */
 export const ConsumerBlock: Story = {
-    render: () => (
-        <Demo
-            plugins={[BoldPlugin, CalloutPlugin]}
-            initial={createDocument<CalloutBlock>([
+    render: () => {
+        const [doc, setDoc] = useState<RteDocument<RteBlock | CalloutBlock>>({
+            version: 1,
+            blocks: [
                 {
                     type: 'paragraph',
                     children: [{ text: 'A consumer-defined block type: hit 💡 to toggle a callout.' }],
@@ -287,9 +322,16 @@ export const ConsumerBlock: Story = {
                     type: 'callout',
                     children: [{ text: 'This callout block comes from a plugin defined in the story file.' }],
                 },
-            ])}
-        />
-    ),
+            ],
+        });
+
+        return (
+            <div className={LAYOUT}>
+                <RichTextEditor value={doc} onChange={setDoc} plugins={[BoldPlugin, CalloutPlugin]} />
+                <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
+            </div>
+        );
+    },
 };
 
 /** A consumer-defined void inline element. */
@@ -299,9 +341,7 @@ type MentionInline = {
     label: string;
 };
 
-const isMention = (node: FrontifyInlineElementNode): node is MentionInline => node.type === 'mention';
-
-const MentionPlugin: FondueRtePlugin = {
+const MentionPlugin: RtePlugin = {
     id: 'mention',
     schema: {
         inlines: [
@@ -311,16 +351,16 @@ const MentionPlugin: FondueRtePlugin = {
                     id: { parseFromDomAttribute: 'data-mention-id' },
                     label: { parseFromDomAttribute: 'data-mention-label' },
                 },
-                render: ({ node, attributes }) => {
-                    const mention = isMention(node) ? node : null;
+                render: ({ node }) => {
+                    // A render function knows what it declared, so it reads its own inline type.
+                    const mention = node as MentionInline;
                     return (
                         <span
-                            {...attributes}
-                            data-mention-id={mention?.id}
-                            data-mention-label={mention?.label}
+                            data-mention-id={mention.id}
+                            data-mention-label={mention.label}
                             className="tw-rounded-small tw-bg-container-highlight tw-px-1 tw-font-medium tw-text-container-highlight-on-highlight-container"
                         >
-                            @{mention?.label}
+                            @{mention.label}
                         </span>
                     );
                 },
@@ -336,7 +376,7 @@ const MentionPlugin: FondueRtePlugin = {
                 // Spike-level UX; a real implementation opens a user picker on `@`.
                 const label = window.prompt('Mention who?');
                 if (label) {
-                    api.insertInline('mention', { id: label.toLowerCase(), label });
+                    api.insert('mention', { id: label.toLowerCase(), label });
                 }
             }}
             className={toolbarButtonClasses(false)}
@@ -346,11 +386,12 @@ const MentionPlugin: FondueRtePlugin = {
     ),
 };
 
+/** A consumer inline element widens the same parameter as a consumer mark. */
 export const ConsumerInline: Story = {
-    render: () => (
-        <Demo
-            plugins={[...defaultPlugins, MentionPlugin]}
-            initial={createDocument([
+    render: () => {
+        const [doc, setDoc] = useState<RteDocument<RteBlock<MentionInline>>>({
+            version: 1,
+            blocks: [
                 {
                     type: 'paragraph',
                     children: [
@@ -359,7 +400,14 @@ export const ConsumerInline: Story = {
                         { text: ' about the review — or insert your own mention with the @ button.' },
                     ],
                 },
-            ])}
-        />
-    ),
+            ],
+        });
+
+        return (
+            <div className={LAYOUT}>
+                <RichTextEditor value={doc} onChange={setDoc} plugins={[...defaultPlugins, MentionPlugin]} />
+                <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
+            </div>
+        );
+    },
 };

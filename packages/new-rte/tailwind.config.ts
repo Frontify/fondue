@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import frontifyTailwindConfig from '@frontify/fondue-tokens/tailwind';
+import tokensTailwindPreset from '@frontify/fondue-tokens/tailwind';
 import { type Config } from 'tailwindcss';
 
 /**
@@ -9,6 +9,6 @@ import { type Config } from 'tailwindcss';
  */
 export default {
     prefix: 'tw-',
-    presets: [frontifyTailwindConfig],
+    presets: [tokensTailwindPreset],
     content: ['./src/**/*.{ts,tsx}', './.storybook/**/*.{ts,tsx}'],
 } satisfies Config;
