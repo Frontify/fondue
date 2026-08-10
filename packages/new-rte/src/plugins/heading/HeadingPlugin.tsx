@@ -1,6 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type FondueRtePlugin, type FrontifyBlockNode, type FrontifyInlineNode } from '#/RichTextEditor';
+import { Select } from '@frontify/fondue-components';
+import { type ReactNode } from 'react';
+
+import {
+    type EditorControlApi,
+    type FondueRtePlugin,
+    type FrontifyBlockNode,
+    type FrontifyInlineNode,
+} from '#/RichTextEditor';
 
 /** The block type this plugin adds. Part of the assembled FrontifyBlock union at the package root. */
 export type HeadingBlock = {
@@ -20,6 +28,52 @@ const HEADING_STYLES: Record<1 | 2 | 3, React.CSSProperties> = {
 };
 
 const LEVELS = [1, 2, 3] as const;
+
+/** The Select value standing for "not a heading" — the block type we fall back to. */
+const PARAGRAPH_VALUE = 'paragraph';
+
+const OPTIONS: { value: string; label: string }[] = [
+    { value: PARAGRAPH_VALUE, label: 'Paragraph' },
+    ...LEVELS.map((level) => ({ value: String(level), label: `Heading ${level}` })),
+];
+
+/**
+ * The heading-level dropdown. A component rather than inline JSX so it can
+ * hold hooks later; its value is derived from the document on every render
+ * (the toolbar re-renders on every editor state change), so the Select is
+ * fully controlled by the editor, never by local state.
+ */
+const HeadingSelect = ({ api }: { api: EditorControlApi }): ReactNode => {
+    const currentBlock = api.getCurrentBlock();
+    const value = currentBlock !== null && isHeadingBlock(currentBlock) ? String(currentBlock.level) : PARAGRAPH_VALUE;
+
+    const handleSelect = (selected: string | null): void => {
+        if (selected === null) {
+            return;
+        }
+
+        if (selected === PARAGRAPH_VALUE) {
+            api.setBlockType('paragraph');
+        } else {
+            api.setBlockType('heading', { level: Number(selected) });
+        }
+
+        // The menu is a popover: as it closes it hands focus back to its own
+        // trigger, which would undo the focus setBlockType already restored.
+        // Re-focus on the next frame so the caret ends up in the editor.
+        requestAnimationFrame(() => api.focus());
+    };
+
+    return (
+        <Select aria-label="Text style" value={value} onSelect={handleSelect}>
+            {OPTIONS.map((option) => (
+                <Select.Item key={option.value} value={option.value}>
+                    {option.label}
+                </Select.Item>
+            ))}
+        </Select>
+    );
+};
 
 export const HeadingPlugin: FondueRtePlugin = {
     id: 'heading',
@@ -41,36 +95,5 @@ export const HeadingPlugin: FondueRtePlugin = {
             },
         ],
     },
-    toolbar: (api) => (
-        <>
-            {LEVELS.map((level) => {
-                const active = api.isBlockActive('heading', { level });
-                return (
-                    <button
-                        key={level}
-                        type="button"
-                        aria-pressed={active}
-                        onMouseDown={(event) => event.preventDefault()}
-                        onClick={() =>
-                            active ? api.setBlockType('paragraph') : api.setBlockType('heading', { level })
-                        }
-                        style={{
-                            fontWeight: 600,
-                            fontSize: 13,
-                            lineHeight: 1,
-                            padding: '3px 8px',
-                            border: '1px solid #d1d5db',
-                            background: active ? '#e5e7eb' : 'transparent',
-                            cursor: 'pointer',
-                            borderRadius: 4,
-                            color: '#374151',
-                            fontFamily: 'inherit',
-                        }}
-                    >
-                        H{level}
-                    </button>
-                );
-            })}
-        </>
-    ),
+    toolbar: (api) => <HeadingSelect api={api} />,
 };

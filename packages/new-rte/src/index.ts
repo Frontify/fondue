@@ -1,5 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import '@frontify/fondue-components/styles';
+import '@frontify/fondue-tokens/styles';
 import { type BoldMark } from './plugins/bold';
 import { type HeadingBlock } from './plugins/heading';
 import { type ImageBlock } from './plugins/image';

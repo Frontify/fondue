@@ -26,17 +26,15 @@ const SAMPLE_IMAGE = `data:image/svg+xml,${encodeURIComponent(
     '<svg xmlns="http://www.w3.org/2000/svg" width="320" height="80"><rect width="320" height="80" rx="8" fill="#7c3aed"/><text x="160" y="48" font-family="sans-serif" font-size="20" fill="#fff" text-anchor="middle">image block</text></svg>',
 )}`;
 
-const toolbarButtonStyle = (active: boolean): React.CSSProperties => ({
-    fontSize: 13,
-    lineHeight: 1,
-    padding: '3px 8px',
-    border: '1px solid #d1d5db',
-    background: active ? '#fde68a' : 'transparent',
-    cursor: 'pointer',
-    borderRadius: 4,
-    color: '#374151',
-    fontFamily: 'inherit',
-});
+/**
+ * Story chrome is styled with the Fondue Tailwind preset (`tw-` prefix, token-backed
+ * utilities). The package itself ships plain CSS — Tailwind is Storybook-only here.
+ */
+const toolbarButtonClasses = (active: boolean): string =>
+    [
+        'tw-body-small tw-rounded tw-border tw-border-line-strong tw-px-2 tw-py-1 tw-text-secondary tw-cursor-pointer',
+        active ? 'tw-bg-container-secondary' : 'tw-bg-transparent',
+    ].join(' ');
 
 /** Editor + live document JSON, side by side. */
 const Demo = ({
@@ -50,31 +48,10 @@ const Demo = ({
 }): ReactNode => {
     const [doc, setDoc] = useState(initial);
     return (
-        <div
-            style={{
-                display: 'grid',
-                gridTemplateColumns: '1fr 1fr',
-                gap: 16,
-                padding: 16,
-                boxSizing: 'border-box',
-                fontFamily: 'system-ui, -apple-system, sans-serif',
-                alignContent: 'start',
-            }}
-        >
-            {header ? <div style={{ gridColumn: '1 / -1', display: 'flex', gap: 8 }}>{header(doc, setDoc)}</div> : null}
+        <div className="tw-grid tw-grid-cols-2 tw-content-start tw-gap-4 tw-p-4 tw-font-primary">
+            {header ? <div className="tw-col-span-full tw-flex tw-gap-2">{header(doc, setDoc)}</div> : null}
             <RichTextEditor value={doc} onChange={setDoc} plugins={plugins} />
-            <pre
-                style={{
-                    background: '#f4f4f4',
-                    padding: 12,
-                    margin: 0,
-                    overflow: 'auto',
-                    fontSize: 12,
-                    lineHeight: 1.4,
-                    borderRadius: 4,
-                    minHeight: 200,
-                }}
-            >
+            <pre className="tw-m-0 tw-min-h-[200px] tw-overflow-auto tw-rounded tw-bg-surface-dim tw-p-3 tw-font-monospace tw-text-x-small tw-leading-medium">
                 {JSON.stringify(doc, null, 2)}
             </pre>
         </div>
@@ -99,7 +76,7 @@ export const AllPlugins: Story = {
         <Demo
             plugins={defaultPlugins}
             initial={createDocument([
-                { type: 'heading', level: 2, children: [{ text: 'A heading — toggle levels with H1/H2/H3' }] },
+                { type: 'heading', level: 2, children: [{ text: 'A heading — switch levels in the style dropdown' }] },
                 {
                     type: 'paragraph',
                     children: [
@@ -158,6 +135,7 @@ export const ControlledValue: Story = {
                 <>
                     <button
                         type="button"
+                        className={toolbarButtonClasses(false)}
                         onClick={() =>
                             setDoc(
                                 createDocument([
@@ -174,6 +152,7 @@ export const ControlledValue: Story = {
                     </button>
                     <button
                         type="button"
+                        className={toolbarButtonClasses(false)}
                         onClick={() => setDoc(createDocument([{ type: 'paragraph', children: [{ text: '' }] }]))}
                     >
                         Clear
@@ -187,7 +166,7 @@ export const ControlledValue: Story = {
 /** Two independent editors with different configurations on one page. */
 export const TwoEditors: Story = {
     render: () => (
-        <div style={{ display: 'grid', gap: 0 }}>
+        <div className="tw-grid">
             <Demo
                 plugins={defaultPlugins}
                 initial={createDocument([
@@ -221,12 +200,14 @@ const HighlightPlugin: FondueRtePlugin = {
             aria-pressed={api.isMarkActive('highlight')}
             onMouseDown={(event) => event.preventDefault()}
             onClick={() => api.toggleMark('highlight')}
-            style={toolbarButtonStyle(api.isMarkActive('highlight'))}
+            className={toolbarButtonClasses(api.isMarkActive('highlight'))}
         >
             Highlight
         </button>
     ),
     hotkeys: { 'Mod-h': (api) => api.toggleMark('highlight') },
+    // Plain CSS on purpose: this is the plugin `styles` contract, which the
+    // editor scopes to its own content — Tailwind never reaches in here.
     styles: 'mark { background: #fde68a; border-radius: 2px; }',
 };
 
@@ -267,13 +248,7 @@ const CalloutPlugin: FondueRtePlugin = {
                 render: ({ children, attributes }) => (
                     <aside
                         {...attributes}
-                        style={{
-                            margin: 0,
-                            padding: '8px 12px',
-                            background: '#fffbeb',
-                            border: '1px solid #fcd34d',
-                            borderRadius: 6,
-                        }}
+                        className="tw-m-0 tw-rounded-medium tw-border tw-border-warning tw-bg-container-warning tw-px-3 tw-py-2"
                     >
                         {children}
                     </aside>
@@ -291,7 +266,7 @@ const CalloutPlugin: FondueRtePlugin = {
                 aria-pressed={active}
                 onMouseDown={(event) => event.preventDefault()}
                 onClick={() => (active ? api.setBlockType('paragraph') : api.setBlockType('callout'))}
-                style={toolbarButtonStyle(active)}
+                className={toolbarButtonClasses(active)}
             >
                 💡
             </button>
@@ -343,13 +318,7 @@ const MentionPlugin: FondueRtePlugin = {
                             {...attributes}
                             data-mention-id={mention?.id}
                             data-mention-label={mention?.label}
-                            style={{
-                                background: '#ede9fe',
-                                color: '#6d28d9',
-                                borderRadius: 4,
-                                padding: '0 4px',
-                                fontWeight: 500,
-                            }}
+                            className="tw-rounded-small tw-bg-container-highlight tw-px-1 tw-font-medium tw-text-container-highlight-on-highlight-container"
                         >
                             @{mention?.label}
                         </span>
@@ -370,7 +339,7 @@ const MentionPlugin: FondueRtePlugin = {
                     api.insertInline('mention', { id: label.toLowerCase(), label });
                 }
             }}
-            style={toolbarButtonStyle(false)}
+            className={toolbarButtonClasses(false)}
         >
             @
         </button>
