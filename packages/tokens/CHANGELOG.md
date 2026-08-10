@@ -1,5 +1,11 @@
 # @frontify/fondue-tokens
 
+## 5.1.1
+
+### Patch Changes
+
+- [#2810](https://github.com/Frontify/fondue/pull/2810) [`84272da`](https://github.com/Frontify/fondue/commit/84272dab09bc8d13941c81d073145b81dcb871ea) Thanks [@noahwaldner](https://github.com/noahwaldner)! - chore: prepare for react 19 compatibility
+
 ## 5.1.0
 
 ### Minor Changes

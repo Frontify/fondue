@@ -1,5 +1,14 @@
 # @frontify/fondue-charts
 
+## 8.0.1
+
+### Patch Changes
+
+- [#2812](https://github.com/Frontify/fondue/pull/2812) [`8d06f91`](https://github.com/Frontify/fondue/commit/8d06f91aa7ab63edd2bff2a2c8dcd98dded4213d) Thanks [@joseazevedo88](https://github.com/joseazevedo88)! - Bump `@visx/*` dependencies to v4 and add an explicit `@react-spring/web` v10 dependency, making the chart internals compatible with React 19 (the package's own peer range is unchanged). Also fixes a transient invalid negative-height clip-path rect on LineChart's first render (console error on mount), and PieChart arcs no longer show a focus ring on mouse click (keyboard focus still does).
+
+- Updated dependencies [[`84272da`](https://github.com/Frontify/fondue/commit/84272dab09bc8d13941c81d073145b81dcb871ea)]:
+  - @frontify/fondue-tokens@5.1.1
+
 ## 8.0.0
 
 ### Patch Changes
