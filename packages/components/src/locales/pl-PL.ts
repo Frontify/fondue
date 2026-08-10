@@ -42,4 +42,5 @@ const translations = {
 export const plPL: LocaleConfig = {
     translationStrings: translations,
     dateLocale,
+    lang: 'pl-PL',
 };

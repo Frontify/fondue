@@ -2,6 +2,8 @@
 
 import { forwardRef, type ForwardedRef, type MouseEvent, type ReactNode } from 'react';
 
+import { type CommonGlobalProps } from '#/helpers/aria';
+
 import styles from './styles/button.module.scss';
 
 type ButtonRounding = 'medium' | 'full';
@@ -16,7 +18,7 @@ type ButtonEmphasis = 'default' | 'weak' | 'strong';
 
 type ButtonAspect = 'default' | 'square';
 
-export type ButtonProps = {
+export type ButtonProps = CommonGlobalProps & {
     /**
      * @default "button"
      */

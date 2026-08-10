@@ -398,3 +398,18 @@ test('should close when the pointer enters an iframe', async ({ mount, page }) =
 
     await expect(tooltipContent).toBeHidden();
 });
+
+test('should render lang on the tooltip content', async ({ mount, page }) => {
+    const component = await mount(
+        <Tooltip.Root>
+            <Tooltip.Trigger data-test-id={TOOLTIP_TRIGGER_TEST_ID}>
+                <Button>Hover over me!</Button>
+            </Tooltip.Trigger>
+            <Tooltip.Content data-test-id={TOOLTIP_CONTENT_TEST_ID} lang="fr-CH">
+                {TOOLTIP_TEXT}
+            </Tooltip.Content>
+        </Tooltip.Root>,
+    );
+    await component.getByTestId(TOOLTIP_TRIGGER_TEST_ID).hover();
+    await expect(page.getByTestId(TOOLTIP_CONTENT_TEST_ID)).toHaveAttribute('lang', 'fr-CH');
+});

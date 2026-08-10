@@ -124,3 +124,12 @@ test('should keep regular font weight when wrapped in a bold ancestor', async ({
     const fontWeight = await component.evaluate((element) => getComputedStyle(element).fontWeight);
     expect(fontWeight).toBe('400');
 });
+
+test('should render lang on the badge element', async ({ mount }) => {
+    const wrapper = await mount(
+        <Badge data-test-id="badge-root" lang="fr-CH">
+            {BADGE_TEXT}
+        </Badge>,
+    );
+    await expect(wrapper.getByTestId('badge-root')).toHaveAttribute('lang', 'fr-CH');
+});

@@ -38,6 +38,16 @@ type ThemeProviderProps = {
      */
     locale?: LocaleConfig;
     /**
+     * language tag applied as `lang` on the theme provider root and inherited by portaled content.
+     * Defaults to the `lang` of the `locale` when one is passed to this provider, otherwise the
+     * language of the closest parent provider is kept.
+     * @example
+     * ```tsx
+     * <ThemeProvider lang="fr-CH">...</ThemeProvider>
+     * ```
+     */
+    lang?: string;
+    /**
      * Additional class name to apply to the theme provider, used to scope styles to a specific component or section of the application.
      * The class is propagated to portaled content (e.g. Dropdown, Tooltip, Dialog) so scoped styles are still applied.
      * @default ""
@@ -54,6 +64,7 @@ type ThemeContextValue = {
     theme: AvailableTheme;
     dir: 'ltr' | 'rtl';
     locale: LocaleConfig;
+    lang?: string;
     className: string;
 };
 
@@ -61,6 +72,7 @@ export const ThemeContext = createContext<ThemeContextValue>({
     theme: 'light',
     dir: 'ltr',
     locale: enUS,
+    lang: undefined,
     className: '',
 });
 ThemeContext.displayName = 'ThemeContext';
@@ -76,7 +88,7 @@ export const useFondueTheme = () => {
 
 export const ThemeProvider = forwardRef<HTMLDivElement, ThemeProviderProps>(
     (
-        { children, theme, dir, translations, locale, className, asChild = false },
+        { children, theme, dir, translations, locale, lang, className, asChild = false },
         forwardedRef: ForwardedRef<HTMLDivElement>,
     ) => {
         const Comp = asChild ? Slot : 'div';
@@ -88,9 +100,10 @@ export const ThemeProvider = forwardRef<HTMLDivElement, ThemeProviderProps>(
                 theme: theme ?? existingContext.theme,
                 dir: dir ?? existingContext.dir,
                 locale: locale ?? translations ?? existingContext.locale,
+                lang: lang ?? (locale ?? translations)?.lang ?? existingContext.lang,
                 className: className ?? existingContext.className,
             }),
-            [dir, theme, locale, translations, className, existingContext],
+            [dir, theme, locale, translations, lang, className, existingContext],
         );
 
         return (
@@ -98,6 +111,7 @@ export const ThemeProvider = forwardRef<HTMLDivElement, ThemeProviderProps>(
                 <Comp
                     ref={forwardedRef}
                     dir={contextValue.dir}
+                    lang={contextValue.lang}
                     className={['fondue-theme-provider', styles[contextValue.theme], contextValue.className].join(' ')}
                 >
                     {children}

@@ -3,6 +3,7 @@
 import * as RadixTooltip from '@radix-ui/react-tooltip';
 import { forwardRef, useEffect, type ForwardedRef, type ReactElement, type ReactNode } from 'react';
 
+import { type CommonGlobalProps } from '#/helpers/aria';
 import { useControllableState } from '#/hooks/useControllableState';
 
 import { ThemeProvider, useFondueTheme } from '../ThemeProvider/ThemeProvider';
@@ -103,7 +104,7 @@ export const TooltipTrigger = (
 };
 TooltipTrigger.displayName = 'Tooltip.Trigger';
 
-export type TooltipContentProps = {
+export type TooltipContentProps = CommonGlobalProps & {
     /**
      * @default "spacious"
      */
@@ -122,6 +123,7 @@ export const TooltipContent = (
     {
         children,
         className,
+        lang,
         maxWidth,
         'data-test-id': dataTestId = 'fondue-tooltip-content',
         padding = 'spacious',
@@ -153,6 +155,7 @@ export const TooltipContent = (
                     dir={dir}
                     data-test-id={dataTestId}
                     data-tooltip-spacing={padding}
+                    lang={lang}
                     className={[styles.root, className].filter(Boolean).join(' ')}
                     style={{ maxWidth }}
                     collisionPadding={16}

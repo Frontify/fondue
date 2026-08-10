@@ -179,3 +179,15 @@ test('focus management', async ({ mount }) => {
     await expect(component.locator('textarea')).toBeFocused();
     expect(onFocus.calledOnce).toBe(true);
 });
+
+test('render lang on the textarea element', async ({ mount }) => {
+    const wrapper = await mount(<Textarea data-test-id={TEXTAREA_TEST_ID} lang="fr-CH" />);
+    const component = wrapper.getByTestId(TEXTAREA_TEST_ID);
+    await expect(component.locator('textarea')).toHaveAttribute('lang', 'fr-CH');
+});
+
+test('render without lang on the textarea element when not provided', async ({ mount }) => {
+    const wrapper = await mount(<Textarea data-test-id={TEXTAREA_TEST_ID} />);
+    const component = wrapper.getByTestId(TEXTAREA_TEST_ID);
+    await expect(component.locator('textarea')).not.toHaveAttribute('lang');
+});

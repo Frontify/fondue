@@ -172,3 +172,15 @@ test('render border and no focus ring when mouse focused', async ({ mount, page 
     await expect(input).toHaveCSS(...FOCUS_BORDER_CSS);
     await expect(input).not.toHaveCSS(...FOCUS_OUTLINE_CSS);
 });
+
+test('render lang on the input element', async ({ mount }) => {
+    const wrapper = await mount(<TextInput data-test-id={TEXT_INPUT_TEST_ID} lang="fr-CH" />);
+    const component = wrapper.getByTestId(TEXT_INPUT_TEST_ID);
+    await expect(component.locator('input')).toHaveAttribute('lang', 'fr-CH');
+});
+
+test('render without lang on the input element when not provided', async ({ mount }) => {
+    const wrapper = await mount(<TextInput data-test-id={TEXT_INPUT_TEST_ID} />);
+    const component = wrapper.getByTestId(TEXT_INPUT_TEST_ID);
+    await expect(component.locator('input')).not.toHaveAttribute('lang');
+});

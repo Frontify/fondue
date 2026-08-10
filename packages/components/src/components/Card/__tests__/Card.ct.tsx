@@ -173,3 +173,12 @@ test('should still shift an un-toned banner background on hover', async ({ mount
         .poll(() => banner.evaluate((element) => getComputedStyle(element).backgroundColor))
         .toBe(expectedHover);
 });
+
+test('should render lang on the card root', async ({ mount }) => {
+    const wrapper = await mount(
+        <Card.Root data-test-id={CARD_TEST_ID} lang="fr-CH">
+            <Card.Title>Card title</Card.Title>
+        </Card.Root>,
+    );
+    await expect(wrapper.getByTestId(CARD_TEST_ID)).toHaveAttribute('lang', 'fr-CH');
+});

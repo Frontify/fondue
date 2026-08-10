@@ -3,6 +3,8 @@
 import { IconCross, IconPlus } from '@frontify/fondue-icons';
 import { Children, forwardRef, isValidElement, useState, type MouseEvent, type ReactNode } from 'react';
 
+import { type CommonGlobalProps } from '#/helpers/aria';
+
 import styles from './styles/tag.module.scss';
 
 type TagStyle = 'default' | 'highlight';
@@ -11,7 +13,7 @@ type TagEmphasis = 'strong' | 'weak';
 
 type TagSize = 'default' | 'small';
 
-type TagProps = {
+type TagProps = CommonGlobalProps & {
     /**
      * @default 'strong'
      */
@@ -70,6 +72,7 @@ const TagRoot = forwardRef<HTMLButtonElement | HTMLDivElement, TagProps>(
             children,
             disabled = false,
             emphasis = 'strong',
+            lang,
             onAddClick,
             onClick,
             onDismiss,
@@ -110,6 +113,7 @@ const TagRoot = forwardRef<HTMLButtonElement | HTMLDivElement, TagProps>(
                     disabled={disabled}
                     hoverContent={extractedHoverContent}
                     isHover={isHover}
+                    lang={lang}
                     onClick={onClick}
                     onMouseEnter={() => setIsHover(true)}
                     onMouseLeave={() => setIsHover(false)}
@@ -130,7 +134,7 @@ const TagRoot = forwardRef<HTMLButtonElement | HTMLDivElement, TagProps>(
 );
 TagRoot.displayName = 'Tag';
 
-type TagMainContentProps = {
+type TagMainContentProps = CommonGlobalProps & {
     'aria-label'?: string;
     'data-test-id'?: string;
     children: ReactNode;
@@ -152,6 +156,7 @@ const TagMainContent = forwardRef<HTMLButtonElement | HTMLDivElement, TagMainCon
             disabled = false,
             hoverContent,
             isHover = false,
+            lang,
             onClick,
             onMouseEnter,
             onMouseLeave,
@@ -189,6 +194,7 @@ const TagMainContent = forwardRef<HTMLButtonElement | HTMLDivElement, TagMainCon
                     type="button"
                     aria-label={ariaLabel}
                     title={title}
+                    lang={lang}
                     className={styles.mainContent}
                     onClick={disabled ? undefined : onClick}
                     onMouseEnter={onMouseEnter}
@@ -205,6 +211,7 @@ const TagMainContent = forwardRef<HTMLButtonElement | HTMLDivElement, TagMainCon
             <div
                 ref={ref as React.Ref<HTMLDivElement>}
                 className={styles.mainContent}
+                lang={lang}
                 onMouseEnter={onMouseEnter}
                 onMouseLeave={onMouseLeave}
                 data-test-id={dataTestId}

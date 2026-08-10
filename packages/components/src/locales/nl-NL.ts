@@ -42,4 +42,5 @@ const translations = {
 export const nlNL: LocaleConfig = {
     translationStrings: translations,
     dateLocale,
+    lang: 'nl-NL',
 };

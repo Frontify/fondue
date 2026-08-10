@@ -202,3 +202,8 @@ test('should switch asChild heading to textbox role on focus', async ({ mount, p
     await heading.focus();
     await expect(heading).toHaveAttribute('role', 'textbox');
 });
+
+test('should render lang on the editable element', async ({ mount }) => {
+    const component = await mount(<EditableText lang="fr-CH">{EDITABLE_TEXT_TEXT}</EditableText>);
+    await expect(component.getByText(EDITABLE_TEXT_TEXT)).toHaveAttribute('lang', 'fr-CH');
+});

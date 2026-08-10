@@ -2,7 +2,7 @@
 
 import { forwardRef, type ReactNode } from 'react';
 
-import { type CommonAriaProps } from '#/helpers/aria';
+import { type CommonAriaProps, type CommonGlobalProps } from '#/helpers/aria';
 import { type Responsive, type SizeValue, type LayoutComponentProps } from '#/helpers/layout';
 import { propsToCssVariables } from '#/helpers/propsToCssVariables';
 
@@ -55,7 +55,8 @@ export type GridProps = LayoutComponentProps & {
 
     children?: ReactNode;
     'data-test-id'?: string;
-} & CommonAriaProps;
+} & CommonAriaProps &
+    CommonGlobalProps;
 
 export const Grid = forwardRef<HTMLDivElement, GridProps>(
     (
@@ -70,6 +71,7 @@ export const Grid = forwardRef<HTMLDivElement, GridProps>(
             'aria-labelledby': ariaLabelledBy,
             'aria-expanded': ariaExpanded,
             'aria-haspopup': ariaHasPopup,
+            lang,
             ...props
         },
         ref,
@@ -86,6 +88,7 @@ export const Grid = forwardRef<HTMLDivElement, GridProps>(
                 aria-labelledby={ariaLabelledBy}
                 aria-expanded={ariaExpanded}
                 aria-haspopup={ariaHasPopup}
+                lang={lang}
                 ref={ref}
             >
                 {children}

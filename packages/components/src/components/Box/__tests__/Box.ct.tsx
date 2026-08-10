@@ -105,3 +105,12 @@ test.describe('Responsiveness (lg)', () => {
         await expect(component).toHaveCSS('margin', '120px');
     });
 });
+
+test('should render lang on the root element', async ({ mount }) => {
+    const wrapper = await mount(
+        <Box data-test-id="box-root" lang="fr-CH">
+            {BOX_TEXT}
+        </Box>,
+    );
+    await expect(wrapper.getByTestId('box-root')).toHaveAttribute('lang', 'fr-CH');
+});

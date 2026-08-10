@@ -42,4 +42,5 @@ const translations = {
 export const itIT: LocaleConfig = {
     translationStrings: translations,
     dateLocale,
+    lang: 'it-IT',
 };

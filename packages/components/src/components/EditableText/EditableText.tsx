@@ -3,9 +3,11 @@
 import { Slot } from '@radix-ui/react-slot';
 import { type ReactNode, forwardRef, useRef, useState } from 'react';
 
+import { type CommonGlobalProps } from '#/helpers/aria';
+
 import styles from './styles/editable-text.module.scss';
 
-export type EditableTextProps = {
+export type EditableTextProps = CommonGlobalProps & {
     /**
      * Callback fired with the plain text value when editing is confirmed (on blur or Enter).
      * Only fires if the value has actually changed.
@@ -37,6 +39,7 @@ export const EditableText = forwardRef<HTMLElement, EditableTextProps>(
             hugWidth = true,
             'aria-label': ariaLabel,
             children,
+            lang,
             'data-test-id': dataTestId = 'fondue-editable-text',
         },
         forwardedRef,
@@ -94,6 +97,7 @@ export const EditableText = forwardRef<HTMLElement, EditableTextProps>(
                 <TextElement
                     ref={forwardedRef}
                     className={styles.text}
+                    lang={lang}
                     contentEditable={isEditing ? 'plaintext-only' : undefined}
                     suppressContentEditableWarning
                     tabIndex={0}

@@ -42,4 +42,5 @@ const translations = {
 export const esES: LocaleConfig = {
     translationStrings: translations,
     dateLocale,
+    lang: 'es-ES',
 };
