@@ -19,7 +19,7 @@ import { useEffect, type RefObject } from 'react';
  * });
  * ```
  */
-export const useTextTruncation = (ref: RefObject<HTMLElement>) => {
+export const useTextTruncation = (ref: RefObject<HTMLElement | null>) => {
     useEffect(() => {
         if (!ref.current) {
             return;

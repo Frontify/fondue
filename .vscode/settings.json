@@ -1,0 +1,8 @@
+{
+    "oxc.enable": true,
+    "oxc.typeAware": true,
+    "oxc.fmt.configPath": "packages/components/oxfmt.config.ts",
+    "editor.defaultFormatter": "oxc.oxc-vscode",
+    "editor.formatOnSave": true,
+    "typescript.experimental.useTsgo": true
+}

@@ -16,7 +16,7 @@ import { ListBulletContext } from './ListBulletContext';
 export const LIST_ITEM_SPAN_CLASSES = 'tw-w-auto tw-min-w-[10px]';
 
 export const LIST_BULLET_CONTAINER_CLASSES =
-    'tw-relative tw-flex tw-items-center tw-justify-center tw-select-none tw-w-[var(--parent-lh)] tw-h-[var(--parent-lh)] tw-shrink-0 before:tw-content-[var(--bullet-content)] before:tw-absolute before:[color:var(--bullet-color)] before:[font-size:var(--bullet-size)]';
+    'tw-relative tw-flex tw-items-center tw-justify-center tw-select-none tw-w-[var(--parent-lh)] tw-h-[var(--parent-lh)] tw-shrink-0 before:tw-content-[var(--bullet-content)] before:tw-absolute before:[color:var(--bullet-color)] before:[font-size:var(--bullet-size)] before:[line-height:1]';
 
 export const getLicElementClassNames = (element: TElement, includeColumnBreakClasses = true) =>
     merge([

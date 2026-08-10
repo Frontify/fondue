@@ -2,11 +2,12 @@
     "compilerOptions": {
         "allowJs": true,
         "allowSyntheticDefaultImports": true,
-        "baseUrl": ".",
         "composite": true,
+        "emitDeclarationOnly": true,
         "lib": ["ESNext"],
         "module": "ESNext",
-        "moduleResolution": "Node",
+        "moduleResolution": "Bundler",
+        "outDir": "./dist/tsconfig-node",
         "resolveJsonModule": true,
         "target": "ESNext"
     },
@@ -14,7 +15,7 @@
         "scripts",
         "postcss.config.cjs",
         "vite.config.ts",
-        "eslint.config.mjs",
+        "oxlint.config.ts",
         "tailwind.config.ts",
         "package.json"
     ]

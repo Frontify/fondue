@@ -1,0 +1,10 @@
+{
+    // Used by the react-19-compat workflow. Storybook story files intentionally
+    // reference the raw two-argument render components (e.g. `CheckboxComponent`)
+    // because react-docgen only attaches prop documentation to those named
+    // exports — but @types/react@19 no longer accepts two-argument functions as
+    // components, so stories only typecheck against @types/react@18. Stories are
+    // dev-only and never shipped, so the React 19 check covers everything else.
+    "extends": "./tsconfig.json",
+    "exclude": ["**/*.stories.tsx"]
+}

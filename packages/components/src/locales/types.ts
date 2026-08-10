@@ -8,6 +8,7 @@ export type TranslationStrings = typeof enUS.translationStrings;
 export type LocaleConfig = {
     translationStrings: TranslationStrings;
     dateLocale: Locale;
+    lang?: string;
 };
 
 export const availableLocales = [

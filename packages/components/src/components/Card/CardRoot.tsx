@@ -13,6 +13,7 @@ import {
     useMemo,
 } from 'react';
 
+import { type CommonGlobalProps } from '#/helpers/aria';
 import { useTranslation } from '#/hooks/useTranslation';
 
 import { useFondueRouter } from '../RouterProvider/RouterProvider';
@@ -21,8 +22,14 @@ import { ForwardedRefCardAction } from './CardAction';
 import { CardContext } from './CardContext';
 import styles from './styles/card.module.scss';
 
-type CardRootBaseProps = {
+type CardRootBaseProps = CommonGlobalProps & {
     'data-test-id'?: string;
+    /**
+     * Additional class name(s) merged onto the card's root element. Useful for
+     * layout hooks such as Tailwind's `group` (e.g. to drive `group-hover:`
+     * styles on descendants). Merged after the internal styles.
+     */
+    className?: string;
     /**
      * Called when the pointer enters the card.
      */
@@ -44,6 +51,17 @@ type CardRootInteractiveProps = {
      * surface fires `onSelect` instead (e.g. to deselect).
      */
     href: string;
+    /**
+     * The target attribute for the link overlay.
+     * Use `target="_blank"` with `rel="noopener noreferrer"` for external links.
+     *
+     * @default '_self'
+     */
+    target?: string;
+    /**
+     * The rel attribute for the link overlay.
+     */
+    rel?: string;
     /**
      * Accessible label for the card's clickable overlay.
      */
@@ -84,6 +102,8 @@ export type CardRootProps = CardRootBaseProps &
               onNavigate?: never;
               onSelect?: never;
               selected?: never;
+              target?: never;
+              rel?: never;
               'aria-label'?: never;
               'aria-describedby'?: never;
           }
@@ -94,8 +114,12 @@ export const CardRoot = (
         'data-test-id': dataTestId = 'fondue-card',
         'aria-label': ariaLabel,
         'aria-describedby': ariaDescribedby,
+        className = '',
+        lang,
         selected = false,
         href,
+        target,
+        rel,
         onNavigate,
         onSelect,
         onMouseEnter,
@@ -120,12 +144,20 @@ export const CardRoot = (
             if (event.defaultPrevented) {
                 return;
             }
-            if (href && !event.metaKey && !event.ctrlKey && !event.shiftKey && event.button === 0) {
+            const useClientNavigation = !target || target === '_self';
+            if (
+                href &&
+                useClientNavigation &&
+                !event.metaKey &&
+                !event.ctrlKey &&
+                !event.shiftKey &&
+                event.button === 0
+            ) {
                 event.preventDefault();
                 navigate(href);
             }
         },
-        [href, navigate, onNavigate],
+        [href, navigate, onNavigate, target],
     );
 
     const labelledby = ariaLabel ? undefined : titleId;
@@ -152,8 +184,9 @@ export const CardRoot = (
     return (
         <div
             ref={ref}
-            className={styles.root}
+            className={[styles.root, className].filter(Boolean).join(' ')}
             data-test-id={dataTestId}
+            lang={lang}
             data-interactive={isClickable}
             data-selectable={isSelectable}
             data-selected={isSelectable && selected}
@@ -165,6 +198,8 @@ export const CardRoot = (
                     <a
                         className={styles.overlay}
                         href={resolvedHref}
+                        target={target}
+                        rel={rel}
                         onClick={handleLinkClick}
                         aria-label={ariaLabel}
                         aria-labelledby={labelledby}

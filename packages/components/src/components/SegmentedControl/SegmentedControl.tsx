@@ -79,20 +79,29 @@ SegmentedControlRoot.displayName = 'SegmentedControl.Root';
 type SegmentedControlItemProps = {
     children: ReactNode;
     value: string;
+    /**
+     * Render the item as a square, sized to match the control's height. Intended for
+     * icon-only content. For the active-indicator animation to look correct, apply this
+     * prop consistently to every item in the control.
+     * @default false
+     */
+    iconOnly?: boolean;
 };
 
 export const SegmentedControlItem = (
-    { children, ...itemProps }: SegmentedControlItemProps,
+    { children, iconOnly, ...itemProps }: SegmentedControlItemProps,
     ref: ForwardedRef<HTMLButtonElement>,
 ) => (
-    <ToggleGroupPrimitive.Item ref={ref} {...itemProps} className={styles.item} asChild={false}>
-        {/* Separator */}
+    <ToggleGroupPrimitive.Item
+        ref={ref}
+        {...itemProps}
+        className={styles.item}
+        asChild={false}
+        data-icon-only={iconOnly}
+    >
         <span className={styles.separator} />
         <span className={styles.itemLabel}>
-            {/* Active children */}
             <span className={styles.itemLabelActive}>{children}</span>
-
-            {/* Inactive children */}
             <span className={styles.itemLabelInactive}>{children}</span>
         </span>
     </ToggleGroupPrimitive.Item>

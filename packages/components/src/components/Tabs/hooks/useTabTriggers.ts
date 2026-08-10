@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type RefObject, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { type RefObject, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 import { type TabTrigger } from '../types';
 
@@ -18,7 +18,10 @@ const getOverflowingTriggers = (triggers: TabTrigger[], triggerListElement: HTML
     });
 };
 
-const moveActiveIndicator = (triggerListElement: HTMLDivElement, activeIndicatorRef: RefObject<HTMLSpanElement>) => {
+const moveActiveIndicator = (
+    triggerListElement: HTMLDivElement,
+    activeIndicatorRef: RefObject<HTMLSpanElement | null>,
+) => {
     const activeIndicatorElement = activeIndicatorRef.current;
     const activeTriggerElement = triggerListElement?.querySelector('[data-state="active"]');
 
@@ -72,8 +75,10 @@ export const useTabTriggers = ({
 }: {
     activeTab?: string;
 }): {
-    triggerListRef: RefObject<HTMLDivElement>;
-    activeIndicatorRef: RefObject<HTMLSpanElement>;
+    // Structural ref types so the annotation is valid for both @types/react@18
+    // (useRef returns MutableRefObject) and @types/react@19 (RefObject<T | null>).
+    triggerListRef: { current: HTMLDivElement | null };
+    activeIndicatorRef: { current: HTMLSpanElement | null };
     triggers: TabTrigger[];
     triggersOutOfView: TabTrigger[];
     addTrigger: (trigger: TabTrigger) => void;
@@ -135,17 +140,19 @@ export const useTabTriggers = ({
         }
     }, [triggers, triggerListRef, activeIndicatorRef]);
 
-    const addTrigger = (trigger: TabTrigger) => {
-        if (!trigger.previousElement) {
-            setTriggers((prev) => [...prev, trigger]);
-        }
-
+    const addTrigger = useCallback((trigger: TabTrigger) => {
         setTriggers((prev) => {
-            const index = prev.findIndex((element) => element.element === trigger.previousElement);
-            prev[index] = trigger;
-            return [...prev];
+            const index = prev.findIndex((element) => element.value === trigger.value);
+
+            if (index === -1) {
+                return [...prev, trigger];
+            }
+
+            const next = [...prev];
+            next[index] = trigger;
+            return next;
         });
-    };
+    }, []);
 
     return {
         triggerListRef,

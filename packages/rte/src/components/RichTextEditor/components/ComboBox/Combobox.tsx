@@ -53,7 +53,7 @@ export function ComboboxContent(props: ComboboxContentProps) {
 
     return (
         <Popover.Root open>
-            <Popover.PopoverAnchor virtualRef={createVirtualRef(editor, targetRange ?? undefined)} />
+            <Popover.PopoverAnchor virtualRef={createVirtualRef(editor, editor.selection ?? targetRange ?? undefined)} />
 
             <Popover.Portal container={portalElement}>
                 <Popover.Content

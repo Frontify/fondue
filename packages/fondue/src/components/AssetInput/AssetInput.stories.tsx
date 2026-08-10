@@ -2,16 +2,16 @@
 
 import { type Meta, type StoryFn } from '@storybook/react-vite';
 
-import { AssetInput, type AssetInputProps, AssetInputSize } from './AssetInput';
 import { assetInputActions } from './asset-input-actions';
+import { AssetInput, type AssetInputProps, AssetInputSize } from './AssetInput';
 import { EXAMPLE_IMAGES, MIXED_ASSETS } from './example-assets';
 
 /**
  ### *Legacy component warning*
- #### This is a unmaintained legacy component. It will be deprecated and replaced with a new component in an upcoming release.
+ #### This is a deprecated component. It will be removed in the next major version.
  */
 export default {
-    title: 'Legacy Components/Asset Input',
+    title: 'Legacy Components/Deprecated/Asset Input',
     component: AssetInput,
     tags: ['autodocs'],
     argTypes: {

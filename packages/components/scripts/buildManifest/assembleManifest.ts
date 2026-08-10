@@ -65,9 +65,7 @@ export const writeGlobalManifest = (components: ComponentManifest[], packageName
     }
 
     const global: GlobalManifest = {
-        schemaVersion: '1.0.0',
         packageName,
-        generatedAt: new Date().toISOString(),
         components: refs,
     };
 

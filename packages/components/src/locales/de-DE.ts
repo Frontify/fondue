@@ -5,6 +5,8 @@ import { de as dateLocale } from 'date-fns/locale';
 import { type LocaleConfig } from './types';
 
 const translations = {
+    AssetInput_browse: 'Durchsuchen',
+    AssetInput_upload: 'Hochladen',
     Badge_dismiss: '${label} schließen',
     Card_deselect: 'Abwählen',
     Card_select: 'Auswählen',
@@ -31,9 +33,14 @@ const translations = {
     Table_sortByAscending: 'Nach ${column} aufsteigend sortieren',
     Table_sortByDescending: 'Nach ${column} absteigend sortieren',
     Table_sortDescending: 'Absteigend sortieren',
+    Tree_checkboxHint: 'Auswählbar, Tab drücken, um das Kontrollkästchen zu fokussieren.',
+    Tree_loading: 'Wird geladen…',
+    Tree_renameInputLabel: 'Neuer Name',
+    Tree_reorderHint: 'Strg Umschalt D zum Verschieben drücken.',
 };
 
 export const deDE: LocaleConfig = {
     translationStrings: translations,
     dateLocale,
+    lang: 'de-DE',
 };

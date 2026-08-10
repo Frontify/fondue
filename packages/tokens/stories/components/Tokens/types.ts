@@ -13,7 +13,12 @@ export type Token = {
     identifier: string;
 };
 
+export type GetClassNameProps = {
+    prefix: string;
+    token: Token;
+};
+
 export type TokenPreview = Token & {
     tokenPreview: (props: Token) => ReactNode;
-    getClassName: (props: Token) => string;
+    getClassName: (props: GetClassNameProps) => string;
 };

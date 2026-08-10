@@ -8,6 +8,7 @@ import { getLinearScaleTicks } from '@components/common/helpers/getLinearScaleTi
 import { useMargin } from '@components/common/hooks';
 import { createTheme } from '@theme/createTheme';
 
+import styles from './LineChart.module.scss';
 import { Axes, MarkLine, Series } from './components';
 import { createBackfilledSeries, getAreaFillColors } from './helpers';
 import { type LineChartProps } from './types';
@@ -40,7 +41,7 @@ export const LineChart = ({
     });
 
     return (
-        <div className="tw-flex tw-flex-col tw-gap-6">
+        <div className={styles.root}>
             {!hideLegend && legendPosition === 'top' && (
                 <Legend names={series.map((series) => series.name)} style={'line'} />
             )}

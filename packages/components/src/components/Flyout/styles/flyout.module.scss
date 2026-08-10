@@ -102,6 +102,10 @@
         padding-block: sizeToken.get(10);
         padding-inline: sizeToken.get(10);
     }
+
+    .headerContent {
+        flex-grow: 1;
+    }
 }
 
 .body {

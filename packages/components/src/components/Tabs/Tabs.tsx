@@ -142,7 +142,12 @@ export const TabsRoot = (
                                 className={styles.trigger}
                                 ref={trigger.ref}
                             >
-                                {trigger.element}
+                                <span className={styles.triggerLabel}>
+                                    <span className={styles.triggerLabelActive} aria-hidden="true">
+                                        {trigger.element}
+                                    </span>
+                                    <span className={styles.triggerLabelInactive}>{trigger.element}</span>
+                                </span>
                             </RadixTabs.Trigger>
                         ))}
                     </RadixTabs.List>
@@ -203,7 +208,6 @@ export const TabsTrigger = ({ children, ...props }: TabsTriggerProps, ref: Forwa
     const { addTrigger } = useContext(TabTriggerContext);
 
     const localRef = useRef<HTMLButtonElement>(null);
-    const previousElement = useRef<ReactNode>();
 
     useEffect(() => {
         addTrigger({
@@ -212,11 +216,9 @@ export const TabsTrigger = ({ children, ...props }: TabsTriggerProps, ref: Forwa
             disabled,
             props,
             element: children,
-            previousElement: previousElement.current,
         });
-        previousElement.current = children;
         // eslint-disable-next-line @eslint-react/exhaustive-deps
-    }, [children]);
+    }, [children, disabled, value, addTrigger]);
 
     return null;
 };

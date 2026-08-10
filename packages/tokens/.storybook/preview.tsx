@@ -2,12 +2,12 @@
 
 import { type Decorator, type Preview, type StoryContext } from '@storybook/react-vite';
 import { type ComponentType } from 'react';
-
 import '@frontify/fondue-components/styles';
 import '@frontify/fondue-tokens/styles';
-import styles from '../dist/themes/themes.module.css';
-import './styles.css';
 
+import styles from '../dist/themes/themes.module.css';
+
+import './styles.css';
 import { withTheme } from './components/StoryWithTheme';
 
 const ThemeProviderWrapper: Decorator = (Story: ComponentType, context: StoryContext) => {

@@ -24,7 +24,7 @@ import { syncRefs } from '#/utilities/domUtilities';
  * ```
  */
 export const useSyncRefs = <TElement = HTMLElement>(
-    localRef: RefObject<TElement>,
+    localRef: RefObject<TElement | null>,
     forwardedRef: ForwardedRef<TElement>,
 ) => {
     useEffect(() => {

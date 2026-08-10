@@ -15,7 +15,7 @@ import { type ComponentManifest } from './buildManifest/types';
 import { resolveFromRoot } from './buildManifest/utils';
 
 const PACKAGE_NAME = '@frontify/fondue/components';
-const MANIFEST_DIR = resolveFromRoot('./manifests');
+const MANIFEST_DIR = resolveFromRoot('./dist/manifests');
 
 const main = (): void => {
     if (existsSync(MANIFEST_DIR)) {

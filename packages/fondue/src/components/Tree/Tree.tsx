@@ -45,10 +45,6 @@ import {
     type TreeStateAction,
 } from '@components/Tree/types';
 
-import { TreeContext, type TreeContextProps } from './TreeContext';
-import { type InternalTreeItemProps, TreeItemOverlay } from './TreeItem';
-import { type InternalTreeItemMultiSelectProps } from './TreeItem/TreeItemMultiselect';
-import { type Overlay } from './TreeItem/TreeItemOverlay';
 import {
     ROOT_ID,
     currentNodesChanged,
@@ -66,6 +62,10 @@ import {
     shouldUpdateTreeState,
     updateNodeWithNewChildren,
 } from './helpers';
+import { TreeContext, type TreeContextProps } from './TreeContext';
+import { type InternalTreeItemProps, TreeItemOverlay } from './TreeItem';
+import { type InternalTreeItemMultiSelectProps } from './TreeItem/TreeItemMultiselect';
+import { type Overlay } from './TreeItem/TreeItemOverlay';
 import {
     recursivelyRemoveFragmentsAndEnrichChildren,
     sortableTreeKeyboardCoordinates,
@@ -192,6 +192,9 @@ const reducer = produce((draft: TreeState, action: TreeStateAction) => {
     }
 });
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export const Tree = memo(
     ({
         id,

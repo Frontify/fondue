@@ -120,6 +120,57 @@ test('autosize functionality', async ({ mount }) => {
     await expect(component).toHaveAttribute('data-autosize', 'true');
 });
 
+test('autosize does not overflow its container on a long word without spaces', async ({ mount }) => {
+    const longWord = 'Helloeveryoneandwelcometomyveryverylongwordthatissolongthatitwillprobablyoverflowthecontainer';
+    const wrapper = await mount(
+        <div style={{ width: '200px' }}>
+            <Textarea data-test-id={`${TEXTAREA_TEST_ID}-long-word`} autosize value={longWord} />
+            <Textarea data-test-id={`${TEXTAREA_TEST_ID}-single-line`} autosize value="short" />
+        </div>,
+    );
+    const longWordComponent = wrapper.getByTestId(`${TEXTAREA_TEST_ID}-long-word`);
+    const wrappedBox = await longWordComponent.boundingBox();
+    const singleLineBox = await wrapper.getByTestId(`${TEXTAREA_TEST_ID}-single-line`).boundingBox();
+    expect(wrappedBox?.height ?? 0).toBeGreaterThan(singleLineBox?.height ?? 0);
+});
+
+test('render resize handle when resizable', async ({ mount }) => {
+    const wrapper = await mount(<Textarea data-test-id={TEXTAREA_TEST_ID} resizable />);
+    await expect(wrapper.getByTestId(`${TEXTAREA_TEST_ID}-resize-handle`)).toBeVisible();
+});
+
+test('no resize handle when not resizable', async ({ mount }) => {
+    const wrapper = await mount(<Textarea data-test-id={TEXTAREA_TEST_ID} />);
+    await expect(wrapper.getByTestId(`${TEXTAREA_TEST_ID}-resize-handle`)).toHaveCount(0);
+});
+
+test('no resize handle when disabled', async ({ mount }) => {
+    const wrapper = await mount(<Textarea data-test-id={TEXTAREA_TEST_ID} resizable disabled />);
+    await expect(wrapper.getByTestId(`${TEXTAREA_TEST_ID}-resize-handle`)).toHaveCount(0);
+});
+
+test('dragging the resize handle changes the textarea height', async ({ mount, page }) => {
+    const wrapper = await mount(<Textarea data-test-id={TEXTAREA_TEST_ID} resizable />);
+    const textarea = wrapper.getByTestId(TEXTAREA_TEST_ID).locator('textarea');
+    const handle = wrapper.getByTestId(`${TEXTAREA_TEST_ID}-resize-handle`);
+
+    const startBox = await textarea.boundingBox();
+    const startHeight = startBox?.height ?? 0;
+    const handleBox = await handle.boundingBox();
+    if (!handleBox) {
+        throw new Error('resize handle not found');
+    }
+
+    await page.mouse.move(handleBox.x + handleBox.width / 2, handleBox.y + handleBox.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(handleBox.x + handleBox.width / 2, handleBox.y + handleBox.height / 2 + 80, { steps: 5 });
+    await page.mouse.up();
+
+    const endBox = await textarea.boundingBox();
+    const endHeight = endBox?.height ?? 0;
+    expect(endHeight).toBeGreaterThan(startHeight);
+});
+
 test('focus management', async ({ mount }) => {
     const onFocus = sinon.spy();
     const wrapper = await mount(<Textarea data-test-id={TEXTAREA_TEST_ID} focusOnMount onFocus={onFocus} />);
@@ -127,4 +178,16 @@ test('focus management', async ({ mount }) => {
 
     await expect(component.locator('textarea')).toBeFocused();
     expect(onFocus.calledOnce).toBe(true);
+});
+
+test('render lang on the textarea element', async ({ mount }) => {
+    const wrapper = await mount(<Textarea data-test-id={TEXTAREA_TEST_ID} lang="fr-CH" />);
+    const component = wrapper.getByTestId(TEXTAREA_TEST_ID);
+    await expect(component.locator('textarea')).toHaveAttribute('lang', 'fr-CH');
+});
+
+test('render without lang on the textarea element when not provided', async ({ mount }) => {
+    const wrapper = await mount(<Textarea data-test-id={TEXTAREA_TEST_ID} />);
+    const component = wrapper.getByTestId(TEXTAREA_TEST_ID);
+    await expect(component.locator('textarea')).not.toHaveAttribute('lang');
 });

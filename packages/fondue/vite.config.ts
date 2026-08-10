@@ -7,6 +7,7 @@ import { viteStaticCopy } from 'vite-plugin-static-copy';
 import tsConfigPaths from 'vite-tsconfig-paths';
 
 import { dependencies as dependenciesMap, peerDependencies as peerDependenciesMap } from './package.json';
+import { cssTypesPlugin } from './scripts/cssTypesPlugin';
 
 const peerDependencies = Object.keys(peerDependenciesMap);
 const dependencies = Object.keys(dependenciesMap);
@@ -36,6 +37,7 @@ export default defineConfig({
                 },
             ],
         }),
+        cssTypesPlugin(),
     ],
     build: {
         lib: {

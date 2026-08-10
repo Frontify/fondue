@@ -3,8 +3,13 @@
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 
+import { cssTypesPlugin } from './scripts/cssTypesPlugin';
+
 export default defineConfig({
-    plugins: [dts({ insertTypesEntry: true, exclude: ['**/*.stories.tsx'], include: 'src/subpackages/components.ts' })],
+    plugins: [
+        dts({ insertTypesEntry: true, exclude: ['**/*.stories.tsx'], include: 'src/subpackages/components.ts' }),
+        cssTypesPlugin(),
+    ],
     build: {
         lib: {
             entry: 'src/subpackages/components.ts',

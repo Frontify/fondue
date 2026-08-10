@@ -29,6 +29,65 @@
     &[data-sticky='true'] {
         isolation: isolate;
     }
+
+    &[data-accordion-variant='pill'] {
+        --pill-header-vertical-padding: var(--accordion-vertical-padding);
+        --pill-header-horizontal-padding: var(--accordion-horizontal-padding);
+
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-x-small);
+        border: none;
+
+        &[data-accordion-padding='none'] {
+            --accordion-vertical-padding: var(--spacing-x-small);
+            --accordion-horizontal-padding: var(--spacing-small);
+        }
+
+        .accordionItem:not(:last-child) {
+            border-bottom: none;
+        }
+
+        .accordionHeader {
+            border-radius: var(--border-radius-large);
+            background-color: var(--color-surface-dim);
+            transition: background-color 150ms ease;
+        }
+
+        .accordionItem:not([data-disabled]) .accordionHeader:hover {
+            background-color: var(--color-surface-hover);
+        }
+
+        .accordionItem[data-state='open'] .accordionHeader {
+            background-color: var(--color-surface-active);
+        }
+
+        .accordionSlot[data-name='action'] {
+            padding-inline-end: var(--pill-header-horizontal-padding);
+        }
+
+        .accordionContent > div {
+            padding-top: var(--accordion-vertical-padding);
+        }
+
+        .accordionTrigger {
+            color: var(--color-secondary-default);
+            padding: var(--pill-header-vertical-padding) var(--pill-header-horizontal-padding);
+            transition: color 150ms ease;
+
+            &:hover {
+                color: var(--color-secondary-hover);
+            }
+
+            &[data-state='open'] {
+                color: var(--color-secondary-active);
+            }
+
+            &[data-disabled] {
+                color: var(--color-disabled-default);
+            }
+        }
+    }
 }
 
 .accordionItem {
@@ -70,6 +129,9 @@
         top: 0;
         z-index: 1;
         background-color: var(--color-surface-default);
+    }
+
+    .accordionItem[data-stuck='true'] & {
         box-shadow: 0 1px 0 var(--color-line-subtle);
     }
 }
@@ -141,14 +203,6 @@
 
     &[data-item-divider='true'] > div {
         border-top: var(--border-width-default) solid var(--color-line-subtle);
-        padding-top: var(--accordion-vertical-padding);
-    }
-
-    .root[data-sticky='true'] &[data-item-divider='true'] > div {
-        border-top-color: transparent;
-    }
-
-    .root[data-sticky='true'] & > div {
         padding-top: var(--accordion-vertical-padding);
     }
 }

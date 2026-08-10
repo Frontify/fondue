@@ -1,0 +1,200 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+import { describe, expect, it } from 'vitest';
+
+import { ROOT_ID } from '../constants';
+import { type TreeItemData } from '../types';
+
+import { computeCheckedStates, getCheckedUnitIds, isCheckableUnit } from './computeCheckedStates';
+
+const leaf = (id: string, parentId: string, extra: Partial<TreeItemData> = {}): TreeItemData => ({
+    id,
+    name: id,
+    isFolder: false,
+    parentId,
+    ...extra,
+});
+
+const folder = (id: string, parentId: string, children: string[], extra: Partial<TreeItemData> = {}): TreeItemData => ({
+    id,
+    name: id,
+    isFolder: true,
+    parentId,
+    children,
+    ...extra,
+});
+
+describe('isCheckableUnit', () => {
+    it('treats leaves as units', () => {
+        expect(isCheckableUnit(leaf('a', ROOT_ID))).toBe(true);
+    });
+
+    it('treats folders without loaded children as units', () => {
+        expect(isCheckableUnit(folder('f', ROOT_ID, []))).toBe(true);
+        expect(isCheckableUnit({ id: 'f', name: 'f', isFolder: true })).toBe(true);
+    });
+
+    it('does not treat folders with children as units', () => {
+        expect(isCheckableUnit(folder('f', ROOT_ID, ['a']))).toBe(false);
+    });
+});
+
+describe('getCheckedUnitIds', () => {
+    it('collects leaves and leafless folders with isSelected true', () => {
+        const items = [
+            leaf('a', ROOT_ID, { isSelected: true }),
+            folder('empty', ROOT_ID, [], { isSelected: true }),
+            folder('full', ROOT_ID, ['b'], { isSelected: true }),
+            leaf('b', 'full'),
+        ];
+        expect(getCheckedUnitIds(items)).toEqual(['a', 'empty']);
+    });
+
+    it("ignores 'indeterminate' as an input", () => {
+        const items = [folder('empty', ROOT_ID, [], { isSelected: 'indeterminate' as const })];
+        expect(getCheckedUnitIds(items)).toEqual([]);
+    });
+});
+
+describe('computeCheckedStates', () => {
+    it('reports unit membership for leaves', () => {
+        const items = [leaf('a', ROOT_ID), leaf('b', ROOT_ID)];
+        const states = computeCheckedStates(items, new Set(['a']));
+        expect(states.get('a')).toBe(true);
+        expect(states.get('b')).toBe(false);
+    });
+
+    it('reports a checked leafless folder as checked', () => {
+        const items = [folder('empty', ROOT_ID, [])];
+        expect(computeCheckedStates(items, new Set(['empty'])).get('empty')).toBe(true);
+        expect(computeCheckedStates(items, new Set()).get('empty')).toBe(false);
+    });
+
+    it('derives folder state from leaf units', () => {
+        const items = [folder('f', ROOT_ID, ['a', 'b']), leaf('a', 'f'), leaf('b', 'f')];
+        expect(computeCheckedStates(items, new Set(['a', 'b'])).get('f')).toBe(true);
+        expect(computeCheckedStates(items, new Set(['a'])).get('f')).toBe('indeterminate');
+        expect(computeCheckedStates(items, new Set()).get('f')).toBe(false);
+    });
+
+    it('counts checked leafless folders as units toward ancestors', () => {
+        const items = [
+            folder('group', ROOT_ID, ['doc1', 'doc2']),
+            folder('doc1', 'group', []),
+            folder('doc2', 'group', []),
+        ];
+        expect(computeCheckedStates(items, new Set(['doc1'])).get('group')).toBe('indeterminate');
+        expect(computeCheckedStates(items, new Set(['doc1', 'doc2'])).get('group')).toBe(true);
+    });
+
+    it('lets an unchecked leafless folder block an ancestor "all checked"', () => {
+        const items = [folder('f', ROOT_ID, ['empty', 'a']), folder('empty', 'f', []), leaf('a', 'f')];
+        expect(computeCheckedStates(items, new Set(['a'])).get('f')).toBe('indeterminate');
+    });
+
+    it('marks a folder with only orphan children as unchecked', () => {
+        const items = [folder('f', ROOT_ID, ['missing'])];
+        expect(computeCheckedStates(items, new Set()).get('f')).toBe(false);
+    });
+
+    it('derives folder state from selectable descendants only, ignoring disabled leaves', () => {
+        const items = [
+            folder('f', ROOT_ID, ['a', 'b']),
+            leaf('a', 'f', { isDisabled: true }),
+            leaf('b', 'f'),
+        ];
+        expect(computeCheckedStates(items, new Set(['b'])).get('f')).toBe(true);
+        expect(computeCheckedStates(items, new Set()).get('f')).toBe(false);
+    });
+
+    it('does not let a checked disabled leaf hold a folder at indeterminate', () => {
+        const items = [
+            folder('f', ROOT_ID, ['a', 'b']),
+            leaf('a', 'f', { isDisabled: true, isSelected: true }),
+            leaf('b', 'f'),
+        ];
+        expect(computeCheckedStates(items, new Set(['a'])).get('f')).toBe(false);
+        expect(computeCheckedStates(items, new Set(['a', 'b'])).get('f')).toBe(true);
+    });
+
+    it('reports a disabled leaf with its own frozen membership', () => {
+        const items = [folder('f', ROOT_ID, ['a']), leaf('a', 'f', { isDisabled: true })];
+        const states = computeCheckedStates(items, new Set(['a']));
+        expect(states.get('a')).toBe(true);
+    });
+
+    it('marks a folder whose children are all disabled as unchecked', () => {
+        const items = [
+            folder('f', ROOT_ID, ['a', 'b']),
+            leaf('a', 'f', { isDisabled: true, isSelected: true }),
+            leaf('b', 'f', { isDisabled: true }),
+        ];
+        expect(computeCheckedStates(items, new Set(['a'])).get('f')).toBe(false);
+    });
+
+    describe('with countDisabledInFolderState', () => {
+        it('counts disabled leaves toward the folder, capping it at indeterminate', () => {
+            const items = [
+                folder('f', ROOT_ID, ['a', 'b']),
+                leaf('a', 'f', { isDisabled: true }),
+                leaf('b', 'f'),
+            ];
+            expect(computeCheckedStates(items, new Set(['b']), { countDisabledInFolderState: true }).get('f')).toBe(
+                'indeterminate',
+            );
+        });
+
+        it('reads the folder as checked once the disabled leaf is also checked', () => {
+            const items = [
+                folder('f', ROOT_ID, ['a', 'b']),
+                leaf('a', 'f', { isDisabled: true, isSelected: true }),
+                leaf('b', 'f'),
+            ];
+            expect(computeCheckedStates(items, new Set(['a', 'b']), { countDisabledInFolderState: true }).get('f')).toBe(
+                true,
+            );
+        });
+    });
+
+    it('renders a childless folder with explicit indeterminate as mixed', () => {
+        const items = [folder('empty', ROOT_ID, [], { isSelected: 'indeterminate' as const })];
+        expect(computeCheckedStates(items, new Set()).get('empty')).toBe('indeterminate');
+    });
+
+    it('lets a live checked membership win over an explicit indeterminate', () => {
+        const items = [folder('empty', ROOT_ID, [], { isSelected: 'indeterminate' as const })];
+        expect(computeCheckedStates(items, new Set(['empty'])).get('empty')).toBe(true);
+    });
+
+    it('ignores explicit indeterminate on a leaf', () => {
+        const items = [leaf('a', ROOT_ID, { isSelected: 'indeterminate' as const })];
+        expect(computeCheckedStates(items, new Set()).get('a')).toBe(false);
+    });
+
+    it('ignores explicit indeterminate once the folder has children', () => {
+        const items = [folder('f', ROOT_ID, ['a'], { isSelected: 'indeterminate' as const }), leaf('a', 'f')];
+        expect(computeCheckedStates(items, new Set()).get('f')).toBe(false);
+        expect(computeCheckedStates(items, new Set(['a'])).get('f')).toBe(true);
+    });
+
+    it('bubbles a childless indeterminate folder up to every ancestor', () => {
+        const items = [
+            folder('group', ROOT_ID, ['branch']),
+            folder('branch', 'group', ['empty']),
+            folder('empty', 'branch', [], { isSelected: 'indeterminate' as const }),
+        ];
+        const states = computeCheckedStates(items, new Set());
+        expect(states.get('empty')).toBe('indeterminate');
+        expect(states.get('branch')).toBe('indeterminate');
+        expect(states.get('group')).toBe('indeterminate');
+    });
+
+    it('blocks an ancestor "all checked" while a childless sibling stays indeterminate', () => {
+        const items = [
+            folder('f', ROOT_ID, ['empty', 'a']),
+            folder('empty', 'f', [], { isSelected: 'indeterminate' as const }),
+            leaf('a', 'f'),
+        ];
+        expect(computeCheckedStates(items, new Set(['a'])).get('f')).toBe('indeterminate');
+    });
+});

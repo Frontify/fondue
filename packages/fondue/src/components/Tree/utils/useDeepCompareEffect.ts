@@ -5,6 +5,9 @@ import isEqual from 'react-fast-compare';
 
 const isPrimitive = (val: unknown): boolean => val !== Object(val);
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export const useDeepCompareEffect = (effect: EffectCallback, deps: unknown[]): void => {
     if (process.env.NODE_ENV !== 'production') {
         if (!deps || deps.length === 0) {

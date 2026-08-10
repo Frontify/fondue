@@ -18,7 +18,7 @@ const getSubpackageURL = (subpackage: string): string => {
 };
 
 const config: StorybookConfig = {
-    stories: ['../stories/**/*.mdx'],
+    stories: ['../stories/**/*.mdx', '../stories/**/*.stories.@(ts|tsx)'],
     addons: [
         '@storybook/addon-links',
         '@storybook/addon-a11y',

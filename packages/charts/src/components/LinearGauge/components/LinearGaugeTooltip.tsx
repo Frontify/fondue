@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type TooltipInPortalProps } from '@visx/tooltip/lib/hooks/useTooltipInPortal';
+import { type TooltipInPortalProps } from '@visx/tooltip';
 import { type FC } from 'react';
 
 import { TOOLTIP_OFFSET } from '@components/Treemap/components/TreemapTooltip/constants';

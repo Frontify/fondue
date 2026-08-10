@@ -5,6 +5,8 @@ import { nl as dateLocale } from 'date-fns/locale';
 import { type LocaleConfig } from './types';
 
 const translations = {
+    AssetInput_browse: 'Bladeren',
+    AssetInput_upload: 'Uploaden',
     Badge_dismiss: 'Sluit ${label}',
     Card_deselect: 'Deselecteren',
     Card_select: 'Selecteren',
@@ -31,9 +33,14 @@ const translations = {
     Table_sortByAscending: 'Sorteer op ${column} oplopend',
     Table_sortByDescending: 'Sorteer op ${column} aflopend',
     Table_sortDescending: 'Sorteer aflopend',
+    Tree_checkboxHint: 'Selecteerbaar, druk op Tab om het selectievakje te focussen.',
+    Tree_loading: 'Bezig met laden…',
+    Tree_renameInputLabel: 'Nieuwe naam',
+    Tree_reorderHint: 'Druk op Control Shift D om te verplaatsen.',
 };
 
 export const nlNL: LocaleConfig = {
     translationStrings: translations,
     dateLocale,
+    lang: 'nl-NL',
 };

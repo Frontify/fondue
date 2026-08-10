@@ -5,6 +5,8 @@ import { fr as dateLocale } from 'date-fns/locale';
 import { type LocaleConfig } from './types';
 
 const translations = {
+    AssetInput_browse: 'Parcourir',
+    AssetInput_upload: 'Téléverser',
     Badge_dismiss: 'Fermer ${label}',
     Card_deselect: 'Désélectionner',
     Card_select: 'Sélectionner',
@@ -31,9 +33,14 @@ const translations = {
     Table_sortByAscending: 'Trier par ${column} croissant',
     Table_sortByDescending: 'Trier par ${column} décroissant',
     Table_sortDescending: 'Trier par ordre décroissant',
+    Tree_checkboxHint: 'Sélectionnable, appuyez sur Tab pour mettre la case à cocher au focus.',
+    Tree_loading: 'Chargement…',
+    Tree_renameInputLabel: 'Nouveau nom',
+    Tree_reorderHint: 'Appuyez sur Contrôle Maj D pour déplacer.',
 };
 
 export const frCH: LocaleConfig = {
     translationStrings: translations,
     dateLocale,
+    lang: 'fr-CH',
 };

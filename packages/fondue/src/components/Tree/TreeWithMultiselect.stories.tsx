@@ -1,9 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { IconDocument } from '@frontify/fondue-icons';
-import { type Meta } from '@storybook/react-vite';
-import { useEffect, useState } from 'react';
-
 import { Container } from '@components/Container/Container';
 import {
     TreeItemBorderClassMap,
@@ -19,20 +15,26 @@ import {
     type TreeItemMockMultiselect,
     treeItemsMockMultiseclect as treeItemsMockMultiselect,
 } from '@components/Tree/utils';
+import { IconDocument } from '@frontify/fondue-icons';
+import { type Meta } from '@storybook/react-vite';
+import { useEffect, useState } from 'react';
 
-import { TreeItemMultiselect } from './TreeItem/TreeItemMultiselect';
 import { getNewSelectedItems } from './helpers';
+import { TreeItemMultiselect } from './TreeItem/TreeItemMultiselect';
 
 /**
  ### *Legacy component warning*
  #### This is a unmaintained legacy component. It will be deprecated and replaced with a new component in an upcoming release.
  */
 export default {
-    title: 'Legacy Components/Tree/Multiselect',
+    title: 'Legacy Components/Deprecated/Tree/Multiselect',
     component: TreeView,
     tags: ['autodocs'],
     parameters: {
         controls: { expanded: true },
+        status: {
+            type: 'deprecated',
+        },
     },
     args: {
         id: 'storybook-tree',

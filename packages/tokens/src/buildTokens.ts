@@ -64,14 +64,14 @@ const buildTokens = async () => {
         utilities,
     };
 
-    const manifest = generateManifest(availableTokens);
-    await writeFile(path.resolve(CWD, '../manifest.json'), JSON.stringify(manifest, null, 2));
-
     await mkdir(path.resolve(CWD, '../dist/json'), { recursive: true });
     await writeFile(path.resolve(CWD, '../dist/json/all-tokens.json'), JSON.stringify(availableTokens, null, 2));
     await writeFile(path.resolve(CWD, '../dist/json/colors.json'), JSON.stringify(colors, null, 2));
     await writeFile(path.resolve(CWD, '../dist/json/semantic.json'), JSON.stringify(semantic, null, 2));
     await writeFile(path.resolve(CWD, '../dist/json/utilities.json'), JSON.stringify(utilities, null, 2));
+
+    const manifest = generateManifest(availableTokens);
+    await writeFile(path.resolve(CWD, '../dist/manifest.json'), JSON.stringify(manifest, null, 2));
 
     await mkdir(path.resolve(CWD, '../dist/themes'), { recursive: true });
     await writeFile(path.resolve(CWD, '../dist/themes/themes.module.css'), themeStyles);

@@ -456,7 +456,7 @@ test('should display correct clearIcon colors in different hover states', async 
     await clearButton.hover();
     const clearButtonHoveredColor = await clearIcon.evaluate((el) => getComputedStyle(el).getPropertyValue('color'));
     console.log(clearButtonHoveredColor);
-    expect(clearButtonHoveredColor).toBe('rgb(17, 17, 16)');
+    expect(clearButtonHoveredColor).toBe('rgb(53, 53, 51)');
 });
 
 test('should strip leading # when typing hex value', async ({ mount }) => {

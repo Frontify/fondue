@@ -32,3 +32,5 @@ declare module '@frontify/fondue-tokens' {
 }
 
 declare module '@frontify/fondue-tokens/tailwind';
+declare module '@frontify/fondue-tokens/styles';
+declare module '@frontify/fondue-tokens/legacy/tokens';

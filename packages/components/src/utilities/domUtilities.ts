@@ -64,7 +64,10 @@ export function isElementVisible(element: HTMLElement) {
  * @param {RefObject<HTMLDivElement>} localRef - The local React reference to an HTMLDivElement.
  * @param {ForwardedRef<HTMLDivElement>} forwardedRef - The ref forwarded from a parent component.
  */
-export function syncRefs<TElement = HTMLElement>(localRef: RefObject<TElement>, forwardedRef: ForwardedRef<TElement>) {
+export function syncRefs<TElement = HTMLElement>(
+    localRef: RefObject<TElement | null>,
+    forwardedRef: ForwardedRef<TElement>,
+) {
     if (!forwardedRef) {
         return;
     }

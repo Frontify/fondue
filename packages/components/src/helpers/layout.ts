@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type screens } from '../../tailwind.config';
+import type tokens from '@frontify/fondue-tokens/json/semantic';
 
-export type Breakpoint = keyof typeof screens;
+export type Breakpoint = keyof (typeof tokens)['breakpoint'];
 
 export type Responsive<TValue> = ({ [key in Breakpoint]?: TValue } & { base?: TValue }) | TValue;
 

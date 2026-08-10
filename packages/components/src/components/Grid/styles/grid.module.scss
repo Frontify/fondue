@@ -17,19 +17,16 @@ $properties: (
 
 $allProperties: list.join($properties, layout.$layoutProperties);
 
+@include layout.register-properties($allProperties);
+
 .root {
     box-sizing: border-box;
 
     @include layout.responsive-properties($allProperties);
 
-    // Default values
-    @each $property in $allProperties {
-        @include layout.responsive-default-value($property, initial);
-    }
-
-    @include layout.responsive-default-value(display, grid);
-    @include layout.responsive-default-value(align-items, stretch);
-    @include layout.responsive-default-value(justify-items, start);
-    @include layout.responsive-default-value(grid-template-columns, minmax(0, 1fr));
-    @include layout.responsive-default-value(grid-template-rows, none);
+    --display: grid;
+    --align-items: stretch;
+    --justify-items: start;
+    --grid-template-columns: minmax(0, 1fr);
+    --grid-template-rows: none;
 }

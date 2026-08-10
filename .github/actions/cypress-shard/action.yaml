@@ -1,0 +1,35 @@
+name: Cypress shard
+description: Run a round-robin shard of a package's Cypress component tests.
+
+inputs:
+  package:
+    description: Workspace path of the package containing the cypress specs (e.g. 'packages/rte').
+    required: true
+  shard:
+    description: 1-based index of the current shard.
+    required: true
+  total:
+    description: Total number of shards.
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Run shard
+      shell: bash
+      working-directory: ${{ inputs.package }}
+      env:
+        SHARD: ${{ inputs.shard }}
+        TOTAL: ${{ inputs.total }}
+      run: |
+        SPECS=$(find ./src -type f \( -name "*.cy.ts" -o -name "*.cy.tsx" -o -name "*.spec.ts" -o -name "*.spec.tsx" \) \
+          | sort \
+          | awk -v s="$SHARD" -v t="$TOTAL" 'NR % t == (s - 1) {print}' \
+          | paste -sd, -)
+        if [ -z "$SPECS" ]; then
+          echo "No specs assigned to shard $SHARD/$TOTAL"
+          exit 0
+        fi
+        echo "Shard $SHARD/$TOTAL specs:"
+        echo "$SPECS" | tr ',' '\n'
+        pnpm exec cypress run --component --spec "$SPECS"

@@ -166,6 +166,21 @@ export const SizeLarge: Story = {
     ),
 };
 
+export const AlignContentTop: Story = {
+    args: { alignContent: 'top', onDismiss: action('onDismiss') },
+    render: (args) => (
+        <Notice {...args} icon={<IconInfo size="16" />}>
+            This is a notice with much longer content to demonstrate top alignment. The icon, action, and dismiss button
+            stay aligned to the top of the notice while the message text wraps across multiple lines. Long content is
+            used to demonstrate how the component handles text wrapping. Lorem ipsum dolor sit amet, consectetur
+            adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+            quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
+            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
+            cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+        </Notice>
+    ),
+};
+
 export const AllVariants: Story = {
     render: (args) => (
         <div className="tw-flex tw-flex-col tw-gap-4">

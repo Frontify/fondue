@@ -1,7 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type PieArcDatum } from '@visx/shape/lib/shapes/Pie';
-import { type Arc } from 'd3-shape';
+import { type Arc, type PieArcDatum } from 'd3-shape';
 import { useState } from 'react';
 
 import { type PieChartDatum } from '@components/PieChart';

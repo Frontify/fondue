@@ -29,6 +29,9 @@ type AnnouncementArgs = {
     >;
 };
 
+/**
+ * @deprecated Please use updated Tree component from `@frontify/fondue/components` instead. Also check {@link https://github.com/Frontify/fondue/blob/main/packages/components/MIGRATING.md#tree the migration guide}.
+ */
 export const getAnnouncements = (
     treeState: TreeState,
     currentPosition: AnnouncementArgs['currentPosition'],

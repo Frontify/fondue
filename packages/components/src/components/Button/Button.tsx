@@ -2,6 +2,8 @@
 
 import { forwardRef, type ForwardedRef, type MouseEvent, type ReactNode } from 'react';
 
+import { type CommonGlobalProps } from '#/helpers/aria';
+
 import styles from './styles/button.module.scss';
 
 type ButtonRounding = 'medium' | 'full';
@@ -16,7 +18,7 @@ type ButtonEmphasis = 'default' | 'weak' | 'strong';
 
 type ButtonAspect = 'default' | 'square';
 
-export type ButtonProps = {
+export type ButtonProps = CommonGlobalProps & {
     /**
      * @default "button"
      */
@@ -60,6 +62,7 @@ export type ButtonProps = {
     'aria-describedby'?: string;
     'data-test-id'?: string;
     className?: string;
+    tabIndex?: number;
 };
 
 export const Button = forwardRef<HTMLButtonElement | null, ButtonProps>(
@@ -97,7 +100,7 @@ export const Button = forwardRef<HTMLButtonElement | null, ButtonProps>(
                 {...props}
                 onClick={(event) => {
                     // @ts-expect-error - Allows other components who use Button as a trigger to pass an action
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+                    // oxlint-disable-next-line @typescript-eslint/no-unsafe-call
                     props.onClick?.(event);
                     onPress?.(event);
                 }}

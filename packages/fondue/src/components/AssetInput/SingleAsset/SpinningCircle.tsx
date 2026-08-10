@@ -6,6 +6,9 @@ import { merge } from '@utilities/merge';
 
 import { type AssetInputProps, AssetInputSize } from '../AssetInput';
 
+/**
+ * @deprecated Use `AssetInput` from `@frontify/fondue/components` instead.
+ */
 export const SpinningCircle = ({ size }: Pick<AssetInputProps, 'size'>): ReactElement => (
     <svg
         className={merge(['tw-animate-spin', size === AssetInputSize.Large ? 'tw-w-16 tw-h-16' : 'tw-w-5 tw-h-5'])}

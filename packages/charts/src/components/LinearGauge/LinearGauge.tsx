@@ -8,6 +8,8 @@ import { type LinearGaugeSection } from '@components/LinearGauge/types';
 import { Legend } from '@components/common/components';
 import { colorAccessorByIndex } from '@components/common/helpers';
 
+import styles from './LinearGauge.module.scss';
+
 export type LinearGaugeProps = { sections: LinearGaugeSection[] } & (
     | { totalLabel: string; totalValue: string }
     | { totalLabel?: never; totalValue?: never }
@@ -55,12 +57,12 @@ export const LinearGauge = ({ sections, totalLabel, totalValue }: LinearGaugePro
 
     return (
         <div ref={containerRef}>
-            <div className="tw-flex tw-flex-col tw-gap-6">
+            <div className={styles.stack}>
                 <Legend names={legendNames} style="square" />
                 <div
                     onPointerMove={(event) => handlePointerMove(event)}
                     onPointerLeave={handlePointerLeave}
-                    className="tw-overflow-hidden tw-rounded-[6px] tw-w-full tw-relative tw-flex tw-h-3 tw-bg-container-secondary-hover"
+                    className={styles.bar}
                 >
                     {sections.map((section, index) => (
                         <Section key={section.name} index={index} percentage={section.percentage} />

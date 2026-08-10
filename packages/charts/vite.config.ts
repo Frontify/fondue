@@ -23,6 +23,13 @@ export default defineConfig({
         tsConfigPaths(),
         dts({ insertTypesEntry: true, rollupTypes: true, exclude: ['**/*.stories.tsx'] }),
     ],
+    css: {
+        preprocessorOptions: {
+            scss: {
+                api: 'modern-compiler',
+            },
+        },
+    },
     build: {
         lib: {
             entry: './src/index.ts',

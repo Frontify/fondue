@@ -12,11 +12,13 @@ import {
     type SyntheticEvent,
 } from 'react';
 
+import { type CommonGlobalProps } from '#/helpers/aria';
+
 import { LoadingCircle } from '../LoadingCircle/LoadingCircle';
 
 import styles from './styles/text.module.scss';
 
-export type TextInputProps = {
+export type TextInputProps = CommonGlobalProps & {
     id?: string;
     name?: string;
     /**
@@ -205,7 +207,7 @@ TextFieldSlot.displayName = 'TextField.Slot';
 const ForwardedRefTextFieldRoot = forwardRef<HTMLInputElement, TextInputProps>(TextFieldRoot);
 const ForwardedRefTextFieldSlot = forwardRef<HTMLDivElement, TextFieldSlotProps>(TextFieldSlot);
 // @ts-expect-error We support both single component (without slots) and compound components (with slots)
-export const TextInput: typeof TextFieldRoot & {
+export const TextInput: typeof ForwardedRefTextFieldRoot & {
     Root: typeof ForwardedRefTextFieldRoot;
     Slot: typeof ForwardedRefTextFieldSlot;
 } = ForwardedRefTextFieldRoot;

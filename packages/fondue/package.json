@@ -1,7 +1,7 @@
 {
     "name": "@frontify/fondue",
     "type": "module",
-    "version": "13.5.0",
+    "version": "13.7.4",
     "description": "Design system of Frontify",
     "author": "Frontify Developers <developers@frontify.com>",
     "homepage": "https://github.com/Frontify/fondue",
@@ -29,7 +29,10 @@
             "require": "./dist/packages/components/fondue-components.umd.cjs",
             "import": "./dist/packages/components/fondue-components.js"
         },
-        "./components/styles": "./dist/packages/components/style.css",
+        "./components/styles": {
+            "types": "./dist/packages/components/style.css.d.ts",
+            "default": "./dist/packages/components/style.css"
+        },
         "./components/locales": {
             "types": "./dist/packages/locales/index.d.ts",
             "import": "./dist/packages/locales/index.js"
@@ -53,18 +56,37 @@
             "require": "./dist/packages/rte/fondue-rte.umd.cjs",
             "import": "./dist/packages/rte/fondue-rte.js"
         },
-        "./rte/styles": "./dist/packages/rte/style.css",
-        "./charts/styles": "./dist/packages/charts/style.css",
+        "./rte/styles": {
+            "types": "./dist/packages/rte/style.css.d.ts",
+            "default": "./dist/packages/rte/style.css"
+        },
+        "./sdk": {
+            "types": "./dist/packages/sdk/sdk.d.ts",
+            "import": "./dist/packages/sdk/fondue-sdk.js"
+        },
+        "./charts/styles": {
+            "types": "./dist/packages/charts/style.css.d.ts",
+            "default": "./dist/packages/charts/style.css"
+        },
         ".": {
             "types": "./dist/index.d.ts",
             "require": "./dist/index.umd.js",
             "import": "./dist/index.es.js"
         },
-        "./styles": "./dist/style.css",
-        "./tokens/base": "./dist/packages/tokens/css/base.css",
+        "./styles": {
+            "types": "./dist/style.css.d.ts",
+            "default": "./dist/style.css"
+        },
+        "./tokens/base": {
+            "types": "./dist/packages/tokens/css/base.css.d.ts",
+            "default": "./dist/packages/tokens/css/base.css"
+        },
         "./tokens/tailwind": "./dist/packages/tokens/tailwind/tailwind.config.js",
         "./legacyTokens/tailwind": "./dist/legacyTokens.tailwind.config.js",
-        "./legacyTokens/base": "./dist/packages/tokens/css/deprecatedBaseTokens.css",
+        "./legacyTokens/base": {
+            "types": "./dist/packages/tokens/css/deprecatedBaseTokens.css.d.ts",
+            "default": "./dist/packages/tokens/css/deprecatedBaseTokens.css"
+        },
         "./legacyTokens/tools/replaceLegacyTokens": "./dist/packages/tokens/legacy/tools/replaceLegacyTokens.ts",
         "./dist/*": "./dist/*"
     },
@@ -85,7 +107,7 @@
         "node": ">=18"
     },
     "scripts": {
-        "build": "pnpm clean && pnpm build:library && pnpm build:styles-with-tw && pnpm build:package:components && pnpm build:package:locales && pnpm build:package:icons && pnpm build:package:charts && pnpm build:package:tokens && pnpm build:package:rte && pnpm build:tools",
+        "build": "pnpm clean && pnpm build:library && pnpm build:styles-with-tw && pnpm build:package:components && pnpm build:package:locales && pnpm build:package:icons && pnpm build:package:charts && pnpm build:package:tokens && pnpm build:package:rte && pnpm build:package:sdk && pnpm build:tools",
         "build:library": "vite build",
         "build:styles-with-tw": "postcss ./src/components/**/*.css --config src/components/postcss.config.cjs -o dist/styles-without-tailwind.css",
         "build:storybook": "storybook build",
@@ -95,13 +117,16 @@
         "build:package:charts": "vite build -c charts.vite.config.ts",
         "build:package:tokens": "vite build -c tokens.vite.config.ts",
         "build:package:rte": "vite build -c rte.vite.config.ts",
+        "build:package:sdk": "vite build -c sdk.vite.config.ts",
         "build:tools": "tsx scripts/detectDeprecatedExports/detectDeprecatedExports.ts tools/constants/fondueExports.json && vite build -c codemod.vite.config.ts && vite build -c internal-tools.vite.config.ts",
         "dev": "cross-env NODE_ENV=development pnpm dev:library",
         "dev:library": "vite build --emptyOutDir false --watch",
         "clean": "rimraf dist",
-        "lint": "eslint .",
-        "lint:fix": "eslint --fix .",
-        "typecheck": "tsc --noEmit",
+        "format": "oxfmt",
+        "format:check": "oxfmt --check",
+        "lint": "oxlint",
+        "lint:fix": "oxlint --fix",
+        "typecheck": "tsgo --noEmit",
         "storybook": "storybook dev -p 6009",
         "ci": "pnpm install --frozen-lockfile",
         "knip": "knip",
@@ -122,6 +147,7 @@
         "@frontify/fondue-components": "workspace:^",
         "@frontify/fondue-icons": "workspace:^",
         "@frontify/fondue-rte": "workspace:^",
+        "@frontify/fondue-sdk": "workspace:^",
         "@frontify/fondue-tokens": "workspace:^",
         "@popperjs/core": "^2.11.8",
         "@react-aria/accordion": "3.0.0-alpha.37",
@@ -165,8 +191,10 @@
     "devDependencies": {
         "@babel/core": "^7.29.0",
         "@etchteam/storybook-addon-status": "^8.1.0",
-        "@frontify/eslint-config-react": "^1.0.16",
         "@frontify/fondue-icons": "workspace:^",
+        "@frontify/oxfmt-config": "^0.0.2",
+        "@frontify/oxlint-config-basic": "^0.0.2",
+        "@frontify/oxlint-config-react": "^0.0.2",
         "@storybook/addon-a11y": "^10.3.6",
         "@storybook/addon-docs": "^10.3.6",
         "@storybook/addon-links": "^10.3.6",
@@ -179,18 +207,20 @@
         "@types/react-datepicker": "^6.2.0",
         "@types/react-dom": "^18.3.7",
         "@types/react-is": "^18.3.1",
+        "@typescript/native-preview": "7.0.0-dev.20260421.2",
         "@vitejs/plugin-react": "^5.1.2",
         "autoprefixer": "^10.5.0",
         "chalk": "^5.6.2",
         "cross-env": "^10.1.0",
-        "eslint": "^10.3.0",
         "eslint-plugin-tailwindcss": "^3.18.2",
         "fast-glob": "^3.3.3",
         "knip": "^5.82.1",
+        "oxfmt": "^0.52.0",
+        "oxlint": "^1.67.0",
+        "oxlint-tsgolint": "^0.23.0",
         "postcss": "^8.5.14",
         "postcss-cli": "^11.0.1",
         "postcss-import": "^16.1.1",
-        "prettier": "^3.8.3",
         "react": "^18.3.1",
         "react-dom": "^18.3.1",
         "rimraf": "^6.1.3",

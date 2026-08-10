@@ -245,7 +245,9 @@ const SelectBaseInput = (
                         <span className={styles.selectedValue}>{singleSelectValue}</span>
                     )}
                     {inputSlots}
-                    {clearButton ? <ClearButton onClear={handleClear}>{clearButton}</ClearButton> : null}
+                    {clearButton && selectedItemValues.length > 0 && !disabled ? (
+                        <ClearButton onClear={handleClear}>{clearButton}</ClearButton>
+                    ) : null}
                     <div className={styles.icons}>
                         <IconCaretDown size={16} className={styles.caret} />
                         <StatusIcons status={status} hasError={hasError} dataTestId={dataTestId} />

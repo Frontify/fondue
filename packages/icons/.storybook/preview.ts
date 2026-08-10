@@ -2,8 +2,9 @@
 
 import '@frontify/fondue-tokens/styles';
 import 'tailwindcss/tailwind.css';
-import type { Preview } from '@storybook/react-vite';
 import DocumentationTemplate from './DocumentationTemplate.mdx';
+
+import type { Preview } from '@storybook/react-vite';
 
 const preview: Preview = {
     parameters: {

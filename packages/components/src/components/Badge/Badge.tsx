@@ -3,6 +3,7 @@
 import { IconCross } from '@frontify/fondue-icons';
 import { type MouseEvent, type ReactNode } from 'react';
 
+import { type CommonGlobalProps } from '#/helpers/aria';
 import { useTranslation } from '#/hooks/useTranslation';
 
 import { BadgeStatus, type BadgeStatusProps } from './BadgeStatus';
@@ -14,7 +15,7 @@ type BadgeEmphasis = 'strong' | 'weak';
 
 type BadgeSize = 'default' | 'small';
 
-type BadgeProps = {
+type BadgeProps = CommonGlobalProps & {
     /**
      * @default 'strong'
      */
@@ -55,6 +56,7 @@ export const Badge = ({
     children,
     disabled = false,
     emphasis = 'strong',
+    lang,
     onClick,
     onDismiss,
     size = 'default',
@@ -74,6 +76,7 @@ export const Badge = ({
         'data-test-id': dataTestId,
         'data-variant': variant,
         className: styles.root,
+        lang,
         title,
     };
 

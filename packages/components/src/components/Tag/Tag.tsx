@@ -3,6 +3,8 @@
 import { IconCross, IconPlus } from '@frontify/fondue-icons';
 import { Children, forwardRef, isValidElement, useState, type MouseEvent, type ReactNode } from 'react';
 
+import { type CommonGlobalProps } from '#/helpers/aria';
+
 import styles from './styles/tag.module.scss';
 
 type TagStyle = 'default' | 'highlight';
@@ -11,7 +13,7 @@ type TagEmphasis = 'strong' | 'weak';
 
 type TagSize = 'default' | 'small';
 
-type TagProps = {
+type TagProps = CommonGlobalProps & {
     /**
      * @default 'strong'
      */
@@ -70,6 +72,7 @@ const TagRoot = forwardRef<HTMLButtonElement | HTMLDivElement, TagProps>(
             children,
             disabled = false,
             emphasis = 'strong',
+            lang,
             onAddClick,
             onClick,
             onDismiss,
@@ -84,7 +87,7 @@ const TagRoot = forwardRef<HTMLButtonElement | HTMLDivElement, TagProps>(
         // Extract hover content from slots
         let extractedHoverContent: ReactNode = null;
         const processedChildren = Children.map(children, (child) => {
-            if (isValidElement(child) && child.type === TagHoverContent) {
+            if (isValidElement<{ children?: ReactNode }>(child) && child.type === TagHoverContent) {
                 extractedHoverContent = child.props.children;
                 return null;
             }
@@ -110,6 +113,7 @@ const TagRoot = forwardRef<HTMLButtonElement | HTMLDivElement, TagProps>(
                     disabled={disabled}
                     hoverContent={extractedHoverContent}
                     isHover={isHover}
+                    lang={lang}
                     onClick={onClick}
                     onMouseEnter={() => setIsHover(true)}
                     onMouseLeave={() => setIsHover(false)}
@@ -130,7 +134,7 @@ const TagRoot = forwardRef<HTMLButtonElement | HTMLDivElement, TagProps>(
 );
 TagRoot.displayName = 'Tag';
 
-type TagMainContentProps = {
+type TagMainContentProps = CommonGlobalProps & {
     'aria-label'?: string;
     'data-test-id'?: string;
     children: ReactNode;
@@ -152,6 +156,7 @@ const TagMainContent = forwardRef<HTMLButtonElement | HTMLDivElement, TagMainCon
             disabled = false,
             hoverContent,
             isHover = false,
+            lang,
             onClick,
             onMouseEnter,
             onMouseLeave,
@@ -162,11 +167,10 @@ const TagMainContent = forwardRef<HTMLButtonElement | HTMLDivElement, TagMainCon
         // Process children to handle secondary content slots in their natural position
         let secondaryIndex = 0;
         const processedChildren = Children.map(children, (child) => {
-            if (isValidElement(child) && child.type === TagSecondaryContent) {
+            if (isValidElement<{ children?: ReactNode }>(child) && child.type === TagSecondaryContent) {
                 const currentIndex = secondaryIndex++;
                 return (
                     <div className={styles.secondaryContent} key={`secondary-${currentIndex}`}>
-                        {/* eslint-disable-next-line @typescript-eslint/no-unsafe-member-access */}
                         {child.props.children}
                     </div>
                 );
@@ -190,6 +194,7 @@ const TagMainContent = forwardRef<HTMLButtonElement | HTMLDivElement, TagMainCon
                     type="button"
                     aria-label={ariaLabel}
                     title={title}
+                    lang={lang}
                     className={styles.mainContent}
                     onClick={disabled ? undefined : onClick}
                     onMouseEnter={onMouseEnter}
@@ -206,6 +211,7 @@ const TagMainContent = forwardRef<HTMLButtonElement | HTMLDivElement, TagMainCon
             <div
                 ref={ref as React.Ref<HTMLDivElement>}
                 className={styles.mainContent}
+                lang={lang}
                 onMouseEnter={onMouseEnter}
                 onMouseLeave={onMouseLeave}
                 data-test-id={dataTestId}

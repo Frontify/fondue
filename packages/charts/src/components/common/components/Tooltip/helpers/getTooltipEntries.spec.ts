@@ -1,11 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type TooltipDatum } from '@visx/xychart/lib/types/tooltip';
 import { describe, expect, it, vi } from 'vitest';
 
 import { type LineChartDataPoint } from '@components/LineChart';
 
-import { getTooltipEntries } from './getTooltipEntries';
+import { getTooltipEntries, type TooltipDatum } from './getTooltipEntries';
 
 describe('getTooltipEntries', () => {
     it('returns the expected data', () => {

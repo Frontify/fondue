@@ -1,7 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import * as RadixTooltip from '@radix-ui/react-tooltip';
-import { forwardRef, type ForwardedRef, type ReactElement, type ReactNode } from 'react';
+import { forwardRef, useEffect, type ForwardedRef, type ReactElement, type ReactNode } from 'react';
+
+import { type CommonGlobalProps } from '#/helpers/aria';
+import { useControllableState } from '#/hooks/useControllableState';
 
 import { ThemeProvider, useFondueTheme } from '../ThemeProvider/ThemeProvider';
 
@@ -25,9 +28,47 @@ export type TooltipRootProps = {
 };
 
 export const TooltipRoot = ({ children, enterDelay = 700, open, onOpenChange }: TooltipRootProps) => {
+    const [isOpen, setIsOpen] = useControllableState({
+        prop: open,
+        defaultProp: false,
+        onChange: onOpenChange,
+    });
+
+    // Workaround for https://github.com/radix-ui/primitives/issues/3394:
+    // When the pointer moves from the trigger or tooltip content into an iframe (e.g. a platform
+    // app), the parent document stops receiving pointer events, so Radix never closes the tooltip
+    // and it stays "stuck". We detect the pointer entering an iframe (the last event the parent
+    // document receives is a `pointerover` targeting the iframe element) and the iframe gaining
+    // focus (which blurs the parent window) and close the tooltip ourselves in those cases.
+    useEffect(() => {
+        if (!isOpen) {
+            return;
+        }
+
+        const handlePointerOver = (event: PointerEvent) => {
+            if (event.target instanceof HTMLIFrameElement) {
+                setIsOpen(false);
+            }
+        };
+
+        const handleWindowBlur = () => {
+            if (document.activeElement instanceof HTMLIFrameElement) {
+                setIsOpen(false);
+            }
+        };
+
+        document.addEventListener('pointerover', handlePointerOver);
+        window.addEventListener('blur', handleWindowBlur);
+
+        return () => {
+            document.removeEventListener('pointerover', handlePointerOver);
+            window.removeEventListener('blur', handleWindowBlur);
+        };
+    }, [isOpen, setIsOpen]);
+
     return (
         <RadixTooltip.Provider>
-            <RadixTooltip.Root delayDuration={enterDelay} open={open} onOpenChange={onOpenChange}>
+            <RadixTooltip.Root delayDuration={enterDelay} open={isOpen} onOpenChange={setIsOpen}>
                 {children}
             </RadixTooltip.Root>
         </RadixTooltip.Provider>
@@ -63,7 +104,7 @@ export const TooltipTrigger = (
 };
 TooltipTrigger.displayName = 'Tooltip.Trigger';
 
-export type TooltipContentProps = {
+export type TooltipContentProps = CommonGlobalProps & {
     /**
      * @default "spacious"
      */
@@ -82,6 +123,7 @@ export const TooltipContent = (
     {
         children,
         className,
+        lang,
         maxWidth,
         'data-test-id': dataTestId = 'fondue-tooltip-content',
         padding = 'spacious',
@@ -113,6 +155,7 @@ export const TooltipContent = (
                     dir={dir}
                     data-test-id={dataTestId}
                     data-tooltip-spacing={padding}
+                    lang={lang}
                     className={[styles.root, className].filter(Boolean).join(' ')}
                     style={{ maxWidth }}
                     collisionPadding={16}

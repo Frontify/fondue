@@ -98,6 +98,26 @@ export const DisabledDatesAfter: Story = {
     },
 };
 
+export const MaxMonth: Story = {
+    args: {
+        selected: { year: 2026, month: 3, day: 19 },
+        maxMonth: { year: 2026, month: 3, day: 19 },
+    },
+    render: (args) => {
+        return <DatePicker {...args} />;
+    },
+};
+
+export const MinMonth: Story = {
+    args: {
+        selected: { year: 2026, month: 3, day: 19 },
+        minMonth: { year: 2026, month: 3, day: 1 },
+    },
+    render: (args) => {
+        return <DatePicker {...args} />;
+    },
+};
+
 export const InFlyout: Story = {
     args: {},
     render: () => {

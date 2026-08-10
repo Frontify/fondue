@@ -4,8 +4,8 @@ import { useCallback, useEffect, useRef, useState, type PointerEvent, type React
 
 import { type PopperPlacement } from '@components/Popper/types';
 import { useClickOutside } from '@hooks/useClickOutside';
-import { Overlay } from '@utilities/dialogs/Overlay';
 import { Z_INDEX_TOOLTIP } from '@utilities/dialogs/constants';
+import { Overlay } from '@utilities/dialogs/Overlay';
 import { checkIfContainInteractiveElements } from '@utilities/elements';
 import { FOCUS_VISIBLE_STYLE } from '@utilities/focusStyle';
 import { merge } from '@utilities/merge';

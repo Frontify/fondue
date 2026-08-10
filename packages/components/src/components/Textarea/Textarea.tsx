@@ -11,11 +11,13 @@ import {
     type FocusEventHandler,
     type ForwardedRef,
     type KeyboardEventHandler,
+    type PointerEventHandler,
     type ReactElement,
     type ReactNode,
     type SyntheticEvent,
 } from 'react';
 
+import { type CommonGlobalProps } from '#/helpers/aria';
 import { useSyncRefs } from '#/hooks/useSyncRefs';
 
 import styles from './styles/textarea.module.scss';
@@ -31,7 +33,7 @@ export type ExtraAction = {
 
 type Status = 'default' | 'loading' | 'success' | 'error';
 
-type TextareaProps = {
+type TextareaProps = CommonGlobalProps & {
     /**
      * The id of the textarea
      */
@@ -153,6 +155,9 @@ export const TextareaRoot = (
 ) => {
     const ref = useRef<HTMLTextAreaElement>(null);
     const wasClicked = useRef(false);
+    const resizeState = useRef<{ startY: number; startHeight: number; minHeight: number; pointerId: number } | null>(
+        null,
+    );
 
     useSyncRefs<HTMLTextAreaElement>(ref, forwardedRef);
 
@@ -162,6 +167,44 @@ export const TextareaRoot = (
 
     const clear = () => {
         setValue('');
+    };
+
+    const handleResizeStart: PointerEventHandler<HTMLDivElement> = (event) => {
+        const textarea = ref.current;
+        if (!textarea) {
+            return;
+        }
+        event.preventDefault();
+        event.currentTarget.setPointerCapture?.(event.pointerId);
+
+        const computed = getComputedStyle(textarea);
+        const lineHeight = parseFloat(computed.lineHeight) || 0;
+        const paddingY = parseFloat(computed.paddingTop) + parseFloat(computed.paddingBottom);
+        const borderY = parseFloat(computed.borderTopWidth) + parseFloat(computed.borderBottomWidth);
+
+        resizeState.current = {
+            startY: event.clientY,
+            startHeight: textarea.offsetHeight,
+            minHeight: lineHeight * rows + paddingY + borderY,
+            pointerId: event.pointerId,
+        };
+    };
+
+    const handleResizeMove: PointerEventHandler<HTMLDivElement> = (event) => {
+        const textarea = ref.current;
+        const state = resizeState.current;
+        if (!textarea || !state) {
+            return;
+        }
+        const newHeight = Math.max(state.minHeight, state.startHeight + event.clientY - state.startY);
+        textarea.style.height = `${newHeight}px`;
+    };
+
+    const handleResizeEnd: PointerEventHandler<HTMLDivElement> = (event) => {
+        if (resizeState.current) {
+            event.currentTarget.releasePointerCapture?.(resizeState.current.pointerId);
+            resizeState.current = null;
+        }
     };
 
     const handleKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = (event) => {
@@ -257,10 +300,20 @@ export const TextareaRoot = (
                     ))}
                     {clearable && (
                         <button className={styles.toolsButton} onClick={clear} disabled={disabled || readOnly}>
-                            <IconCross size={20} fill="currentColor" />
+                            <IconCross size={16} fill="currentColor" />
                         </button>
                     )}
                 </div>
+            )}
+            {resizable && !disabled && (
+                <div
+                    className={styles.resizeHandle}
+                    data-test-id={`${dataTestId}-resize-handle`}
+                    onPointerDown={handleResizeStart}
+                    onPointerMove={handleResizeMove}
+                    onPointerUp={handleResizeEnd}
+                    aria-hidden="true"
+                />
             )}
             {children}
         </div>
@@ -295,7 +348,7 @@ const ForwardedRefTextareaRoot = forwardRef<HTMLTextAreaElement, TextareaProps>(
 const ForwardedRefTextareaSlot = forwardRef<HTMLDivElement, TextareaSlotProps>(TextareaSlot);
 
 // @ts-expect-error We support both single component (without slots) and compound components (with slots)
-export const Textarea: typeof TextareaRoot & {
+export const Textarea: typeof ForwardedRefTextareaRoot & {
     Root: typeof ForwardedRefTextareaRoot;
     Slot: typeof ForwardedRefTextareaSlot;
 } = ForwardedRefTextareaRoot;

@@ -1,0 +1,7 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+@use '../../../utilities/text.module.scss';
+
+.label {
+    @include text.body-x-small-x-strong;
+}

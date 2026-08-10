@@ -1,12 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type TooltipDatum } from '@visx/xychart/lib/types/tooltip';
-
 import { type BarChartDataPoint } from '@components/BarChart';
 import { type LineChartDataPoint } from '@components/LineChart';
 import { getDataPointValue } from '@components/common/components/Tooltip/helpers/getDataPointValue';
 import { isNoDataKey } from '@components/common/components/Tooltip/helpers/isNoDataKey';
 import { type ValueFormatter } from '@components/common/types';
+
+export type TooltipDatum<Datum extends object> = {
+    key: string;
+    index: number;
+    datum: Datum;
+};
 
 export const getTooltipEntries = (
     missingValueLabel: string,

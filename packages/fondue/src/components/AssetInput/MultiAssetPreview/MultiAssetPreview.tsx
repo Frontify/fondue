@@ -13,12 +13,18 @@ import { type AssetType } from '../AssetInput';
 
 import { SelectedAssetsThumbnail } from './SelectedAssetsThumbnail';
 
+/**
+ * @deprecated Use `AssetInput` from `@frontify/fondue/components` instead.
+ */
 export type MultiAssetPreviewProps = {
     numberOfLocations: number;
     assets: AssetType[];
     onClick: () => void;
 };
 
+/**
+ * @deprecated Use `AssetInput` from `@frontify/fondue/components` instead.
+ */
 export const MultiAssetPreview = ({ numberOfLocations, assets, onClick }: MultiAssetPreviewProps): ReactElement => {
     const buttonRef = useRef<HTMLButtonElement | null>(null);
     const { buttonProps } = useButton({ onPress: onClick }, buttonRef);

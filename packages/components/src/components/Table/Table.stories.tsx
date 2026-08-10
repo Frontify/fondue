@@ -188,6 +188,30 @@ export const Basic: Story = {
     ),
 };
 
+export const HiddenHeader: Story = {
+    name: 'Hidden header (accessible)',
+    render: ({ ...args }) => (
+        <Table.Root {...args}>
+            <Table.Header hidden>
+                <Table.Row>
+                    <Table.HeaderCell>Name</Table.HeaderCell>
+                    <Table.HeaderCell>Role</Table.HeaderCell>
+                    <Table.HeaderCell>Last Seen</Table.HeaderCell>
+                </Table.Row>
+            </Table.Header>
+            <Table.Body>
+                {TABLE_DATA.map((user) => (
+                    <Table.Row key={user.id}>
+                        <Table.RowCell>{user.name}</Table.RowCell>
+                        <Table.RowCell>{user.role}</Table.RowCell>
+                        <Table.RowCell>{user.lastSeen}</Table.RowCell>
+                    </Table.Row>
+                ))}
+            </Table.Body>
+        </Table.Root>
+    ),
+};
+
 export const SmallText: Story = {
     render: ({ ...args }) => (
         <Table.Root {...args} fontSize="small">

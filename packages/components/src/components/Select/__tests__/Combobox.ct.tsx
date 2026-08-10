@@ -593,3 +593,14 @@ test('should handle state with default value set to first item', async ({ mount,
     expect(onSelectChange.callCount).toBe(1);
     expect(onSelectChange.calledWith('test1')).toBe(true);
 });
+
+test('should render lang on the combobox input', async ({ mount }) => {
+    const component = await mount(
+        <Select.Combobox data-test-id={SELECT_TEST_ID} aria-label="Fruits" lang="fr-CH">
+            <Select.Slot name="menu">
+                <Select.Item value={ITEM_LABEL1}>{ITEM_TEXT1}</Select.Item>
+            </Select.Slot>
+        </Select.Combobox>,
+    );
+    await expect(component.getByTestId(SELECT_TEST_ID)).toHaveAttribute('lang', 'fr-CH');
+});

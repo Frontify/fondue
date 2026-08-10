@@ -21,6 +21,9 @@ import { AssetThumbnail } from '../AssetThumbnail';
 import { AssetSubline } from './AssetSubline';
 import { SpinningCircle } from './SpinningCircle';
 
+/**
+ * @deprecated Use `AssetInput` from `@frontify/fondue/components` instead.
+ */
 export type SelectedAssetProps = Pick<
     AssetInputProps,
     'actions' | 'isLoading' | 'size' | 'hideSize' | 'hideExtension'

@@ -3,6 +3,7 @@
 import { IconCross } from '@frontify/fondue-icons';
 import { type MouseEvent, type ReactNode } from 'react';
 
+import { type CommonGlobalProps } from '#/helpers/aria';
 import { useTranslation } from '#/hooks/useTranslation';
 
 import styles from './styles/notice.module.scss';
@@ -13,7 +14,9 @@ type NoticeEmphasis = 'default' | 'strong' | 'weak';
 
 type NoticeSize = 'medium' | 'large';
 
-export type NoticeProps = {
+type NoticeAlignContent = 'center' | 'top';
+
+export type NoticeProps = CommonGlobalProps & {
     /**
      * @default 'default'
      */
@@ -26,6 +29,11 @@ export type NoticeProps = {
      * @default 'medium'
      */
     size?: NoticeSize;
+    /**
+     * Vertical alignment of the notice's contents
+     * @default 'center'
+     */
+    alignContent?: NoticeAlignContent;
     /**
      * Leading icon element
      */
@@ -62,8 +70,10 @@ export const Notice = ({
     variant = 'default',
     emphasis = 'default',
     size = 'medium',
+    alignContent = 'center',
     icon,
     action,
+    lang,
     onDismiss,
     className = '',
     children,
@@ -76,13 +86,16 @@ export const Notice = ({
             data-variant={variant}
             data-emphasis={emphasis}
             data-size={size}
+            data-align-content={alignContent}
             data-test-id={dataTestId}
             className={[styles.root, className].filter(Boolean).join(' ')}
             role="status"
             aria-live="polite"
         >
             {icon ? <div className={styles.icon}>{icon}</div> : null}
-            <div className={styles.content}>{children}</div>
+            <div className={styles.content} lang={lang}>
+                {children}
+            </div>
             {action ? <div className={styles.action}>{action}</div> : null}
             {onDismiss ? (
                 <button

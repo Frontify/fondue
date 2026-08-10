@@ -2,6 +2,8 @@
 
 import { forwardRef, type ReactNode, type MouseEvent, useCallback } from 'react';
 
+import { type CommonGlobalProps } from '#/helpers/aria';
+
 import { useFondueRouter } from '../RouterProvider/RouterProvider';
 
 import styles from './styles/link.module.scss';
@@ -13,7 +15,7 @@ type LinkOnContainerColor = 'secondary' | 'disabled' | 'error' | 'success' | 'wa
 type LinkWrap = 'wrap' | 'nowrap';
 type LinkUnderline = 'auto' | 'always' | 'hover' | 'none';
 
-export type LinkProps = {
+export type LinkProps = CommonGlobalProps & {
     children?: ReactNode;
     /**
      * The link to navigate to when clicked

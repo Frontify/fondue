@@ -56,7 +56,27 @@ describe('useDateRange', () => {
     });
 
     describe('controlled mode', () => {
-        it('should not call onSelect on the first click (start-date selection)', () => {
+        it('should propagate the moved start to onSelect on the first click when editing an existing range', () => {
+            const onSelect = vi.fn();
+            const { result } = renderHook(() => useDateRange(MARCH_RANGE, onSelect));
+
+            act(() => {
+                result.current.handleSelect(
+                    { from: new Date(Date.UTC(2025, 1, 20)), to: new Date(Date.UTC(2025, 2, 15)) },
+                    new Date(Date.UTC(2025, 1, 20)),
+                    {},
+                    {} as React.MouseEvent,
+                );
+            });
+
+            expect(onSelect).toHaveBeenCalledTimes(1);
+            expect(onSelect).toHaveBeenCalledWith({
+                from: { year: 2025, month: 2, day: 20 },
+                to: { year: 2025, month: 3, day: 15 },
+            });
+        });
+
+        it('should defer onSelect until a fresh range is completed', () => {
             const onSelect = vi.fn();
             const { result } = renderHook(() => useDateRange(undefined, onSelect));
 
@@ -70,24 +90,6 @@ describe('useDateRange', () => {
             });
 
             expect(onSelect).not.toHaveBeenCalled();
-            expect(result.current.selectedDateRange).toStrictEqual({
-                from: new Date(Date.UTC(2025, 0, 5)),
-                to: new Date(Date.UTC(2025, 0, 5)),
-            });
-        });
-
-        it('should call onSelect only after the end-date has been selected', () => {
-            const onSelect = vi.fn();
-            const { result } = renderHook(() => useDateRange(undefined, onSelect));
-
-            act(() => {
-                result.current.handleSelect(
-                    { from: new Date(Date.UTC(2025, 0, 5)), to: new Date(Date.UTC(2025, 0, 5)) },
-                    new Date(Date.UTC(2025, 0, 5)),
-                    {},
-                    {} as React.MouseEvent,
-                );
-            });
 
             act(() => {
                 result.current.handleSelect(
@@ -105,7 +107,7 @@ describe('useDateRange', () => {
             });
         });
 
-        it('should commit a same-day range when the end-date click repeats the start-date', () => {
+        it('should report a same-day range when the start day is clicked twice', () => {
             const onSelect = vi.fn();
             const { result } = renderHook(() => useDateRange(undefined, onSelect));
 

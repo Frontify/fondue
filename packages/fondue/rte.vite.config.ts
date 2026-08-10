@@ -3,12 +3,15 @@
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 
+import { cssTypesPlugin } from './scripts/cssTypesPlugin';
+
 export default defineConfig({
     plugins: [
         dts({
             tsconfigPath: './tsconfig.rte.json',
             insertTypesEntry: true,
         }),
+        cssTypesPlugin(),
     ],
     build: {
         lib: {

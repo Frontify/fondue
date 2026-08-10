@@ -113,3 +113,23 @@ test('should render correct cross icon size', async ({ mount }) => {
     const icon = await component.locator('svg').getAttribute('width');
     expect(icon).toBe('12');
 });
+
+test('should keep regular font weight when wrapped in a bold ancestor', async ({ mount }) => {
+    const wrapper = await mount(
+        <div style={{ fontWeight: 'bold' }}>
+            <Badge data-test-id="badge-root">{BADGE_TEXT}</Badge>
+        </div>,
+    );
+    const component = wrapper.getByTestId('badge-root');
+    const fontWeight = await component.evaluate((element) => getComputedStyle(element).fontWeight);
+    expect(fontWeight).toBe('400');
+});
+
+test('should render lang on the badge element', async ({ mount }) => {
+    const wrapper = await mount(
+        <Badge data-test-id="badge-root" lang="fr-CH">
+            {BADGE_TEXT}
+        </Badge>,
+    );
+    await expect(wrapper.getByTestId('badge-root')).toHaveAttribute('lang', 'fr-CH');
+});

@@ -110,7 +110,7 @@ export const InFlyout: Story = {
                 </Flyout.Trigger>
                 <Flyout.Content maxWidth="600px">
                     <Flyout.Body>
-                        <div className="tw-p-2 md:tw-w-[450px]">
+                        <div className="tw-p-2 tw-w-full sm:tw-w-[450px]">
                             <ColorPicker.Root
                                 currentFormat={currentFormat}
                                 currentColor={currentColor}

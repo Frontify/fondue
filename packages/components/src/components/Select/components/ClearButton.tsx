@@ -19,7 +19,13 @@ export const ClearButton = ({ children, onClear }: ClearButtonProps): ReactNode 
     };
 
     return (
-        <RadixSlot onClick={handleClick} className={styles.clear} role="button" aria-label="Clear selection">
+        <RadixSlot
+            onClick={handleClick}
+            className={styles.clear}
+            role="button"
+            tabIndex={0}
+            aria-label="Clear selection"
+        >
             {children}
         </RadixSlot>
     );

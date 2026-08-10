@@ -114,6 +114,22 @@ test('should apply large size', async ({ mount }) => {
     await expect(notice).toHaveAttribute('data-size', 'large');
 });
 
+test('should apply center alignContent by default', async ({ mount }) => {
+    const component = await mount(<Notice data-test-id="notice-root">{NOTICE_TEXT}</Notice>);
+    const notice = component.getByTestId('notice-root');
+    await expect(notice).toHaveAttribute('data-align-content', 'center');
+});
+
+test('should apply top alignContent', async ({ mount }) => {
+    const component = await mount(
+        <Notice data-test-id="notice-root" alignContent="top">
+            {NOTICE_TEXT}
+        </Notice>,
+    );
+    const notice = component.getByTestId('notice-root');
+    await expect(notice).toHaveAttribute('data-align-content', 'top');
+});
+
 test('should render icon when provided', async ({ mount }) => {
     const component = await mount(<Notice icon={<IconInfo data-testid="test-icon" size="16" />}>{NOTICE_TEXT}</Notice>);
     await expect(component.locator('svg')).toBeVisible();
@@ -344,4 +360,9 @@ test('should render with custom aria-label and verify accessibility', async ({ m
     const dismissButton = component.locator(`button[aria-label="${customLabel}"]`);
     await expect(dismissButton).toBeVisible();
     await expect(dismissButton).toHaveAttribute('type', 'button');
+});
+
+test('should render lang on the content element', async ({ mount }) => {
+    const component = await mount(<Notice lang="fr-CH">{NOTICE_TEXT}</Notice>);
+    await expect(component.locator('[lang="fr-CH"]')).toContainText(NOTICE_TEXT);
 });

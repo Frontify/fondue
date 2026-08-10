@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ForwardedRef, forwardRef, type ReactNode } from 'react';
+import { type ForwardedRef, forwardRef, type ReactElement, type ReactNode } from 'react';
 
-import { type CommonAriaProps } from '#/helpers/aria';
+import { type CommonAriaProps, type CommonGlobalProps } from '#/helpers/aria';
 
 import styles from './styles/heading.module.scss';
 
@@ -12,7 +12,7 @@ type HeadingColor = 'default' | 'weak' | 'x-weak' | 'disabled' | 'negative' | 'p
 
 type TagType = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'span' | 'p';
 
-export type HeadingProps<TTag extends TagType = 'span'> = CommonAriaProps & {
+export type HeadingProps<TTag extends TagType = 'span'> = CommonAriaProps & CommonGlobalProps & {
     'data-test-id'?: string;
     as?: TTag;
     children?: ReactNode;
@@ -77,6 +77,6 @@ export const Heading = forwardRef(
     },
 ) as (<TTag extends TagType = 'span'>(
     props: HeadingProps<TTag> & { ref?: ForwardedRef<HeadingElementType<TTag>> },
-) => JSX.Element) & { displayName: string };
+) => ReactElement) & { displayName: string };
 
 Heading.displayName = 'Heading';

@@ -54,8 +54,9 @@ test('should rerender when the trigger content changes', async ({ mount }) => {
         </Tabs.Root>,
     );
     const component = wrapper.getByTestId(TABS_ROOT_TEST_ID);
-    await expect(component.getByText('First Tab')).toBeVisible();
-    await expect(component.getByText('Swapped Tab')).not.toBeVisible();
+    const firstTrigger = component.getByTestId(FIRST_TAB_TRIGGER_TEST_ID);
+    await expect(firstTrigger).toContainText('First Tab');
+    await expect(firstTrigger).not.toContainText('Swapped Tab');
 
     await wrapper.update(
         <Tabs.Root data-test-id={TABS_ROOT_TEST_ID}>
@@ -69,8 +70,8 @@ test('should rerender when the trigger content changes', async ({ mount }) => {
             </Tabs.Tab>
         </Tabs.Root>,
     );
-    await expect(component.getByText('First Tab')).not.toBeVisible();
-    await expect(component.getByText('Swapped Tab')).toBeVisible();
+    await expect(firstTrigger).not.toContainText('First Tab');
+    await expect(firstTrigger).toContainText('Swapped Tab');
 });
 
 test('should render with default tab active', async ({ mount }) => {
@@ -236,6 +237,64 @@ test('should not allow disabled tab to be selected', async ({ mount }) => {
     await expect(component.getByTestId(FIRST_TAB_CONTENT_TEST_ID)).not.toBeVisible();
     await expect(component.getByTestId(SECOND_TAB_CONTENT_TEST_ID)).not.toBeVisible();
     await expect(component.getByTestId(THIRD_TAB_CONTENT_TEST_ID)).toBeVisible();
+});
+
+test('should update the disabled state after the initial render', async ({ mount }) => {
+    const wrapper = await mount(
+        <Tabs.Root data-test-id={TABS_ROOT_TEST_ID}>
+            <Tabs.Tab value="first">
+                <Tabs.Trigger data-test-id={FIRST_TAB_TRIGGER_TEST_ID}>First Tab</Tabs.Trigger>
+                <Tabs.Content data-test-id={FIRST_TAB_CONTENT_TEST_ID}>First Content</Tabs.Content>
+            </Tabs.Tab>
+            <Tabs.Tab value="second">
+                <Tabs.Trigger data-test-id={SECOND_TAB_TRIGGER_TEST_ID}>Second Tab</Tabs.Trigger>
+                <Tabs.Content data-test-id={SECOND_TAB_CONTENT_TEST_ID}>Second Content</Tabs.Content>
+            </Tabs.Tab>
+        </Tabs.Root>,
+    );
+    const component = wrapper.getByTestId(TABS_ROOT_TEST_ID);
+
+    await expect(component.getByTestId(SECOND_TAB_TRIGGER_TEST_ID)).not.toBeDisabled();
+
+    await wrapper.update(
+        <Tabs.Root data-test-id={TABS_ROOT_TEST_ID}>
+            <Tabs.Tab value="first">
+                <Tabs.Trigger data-test-id={FIRST_TAB_TRIGGER_TEST_ID}>First Tab</Tabs.Trigger>
+                <Tabs.Content data-test-id={FIRST_TAB_CONTENT_TEST_ID}>First Content</Tabs.Content>
+            </Tabs.Tab>
+            <Tabs.Tab value="second" disabled>
+                <Tabs.Trigger data-test-id={SECOND_TAB_TRIGGER_TEST_ID}>Second Tab</Tabs.Trigger>
+                <Tabs.Content data-test-id={SECOND_TAB_CONTENT_TEST_ID}>Second Content</Tabs.Content>
+            </Tabs.Tab>
+        </Tabs.Root>,
+    );
+
+    await expect(component.getByTestId(SECOND_TAB_TRIGGER_TEST_ID)).toBeDisabled();
+
+    await component.getByTestId(SECOND_TAB_TRIGGER_TEST_ID).click({ force: true });
+
+    await expect(component.getByTestId(FIRST_TAB_TRIGGER_TEST_ID)).toHaveAttribute('data-state', 'active');
+    await expect(component.getByTestId(SECOND_TAB_CONTENT_TEST_ID)).not.toBeVisible();
+
+    await wrapper.update(
+        <Tabs.Root data-test-id={TABS_ROOT_TEST_ID}>
+            <Tabs.Tab value="first">
+                <Tabs.Trigger data-test-id={FIRST_TAB_TRIGGER_TEST_ID}>First Tab</Tabs.Trigger>
+                <Tabs.Content data-test-id={FIRST_TAB_CONTENT_TEST_ID}>First Content</Tabs.Content>
+            </Tabs.Tab>
+            <Tabs.Tab value="second">
+                <Tabs.Trigger data-test-id={SECOND_TAB_TRIGGER_TEST_ID}>Second Tab</Tabs.Trigger>
+                <Tabs.Content data-test-id={SECOND_TAB_CONTENT_TEST_ID}>Second Content</Tabs.Content>
+            </Tabs.Tab>
+        </Tabs.Root>,
+    );
+
+    await expect(component.getByTestId(SECOND_TAB_TRIGGER_TEST_ID)).not.toBeDisabled();
+
+    await component.getByTestId(SECOND_TAB_TRIGGER_TEST_ID).click();
+
+    await expect(component.getByTestId(SECOND_TAB_TRIGGER_TEST_ID)).toHaveAttribute('data-state', 'active');
+    await expect(component.getByTestId(SECOND_TAB_CONTENT_TEST_ID)).toBeVisible();
 });
 
 test('should allow looping when switching tabs with keyboard', async ({ mount, page }) => {

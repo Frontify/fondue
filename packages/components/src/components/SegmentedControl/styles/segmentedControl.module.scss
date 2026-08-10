@@ -49,6 +49,14 @@ $radius-without-border: calc(var(--border-radius-medium) - var(--border-width-de
     user-select: none;
     min-width: 0;
 
+    &[data-icon-only='true'] {
+        aspect-ratio: 1;
+    }
+
+    &[data-icon-only='true'] .itemLabel {
+        padding-inline: 0;
+    }
+
     // Hover on unselected items but not when disabled
     &[aria-checked='false']:enabled:hover:not(:focus-visible) {
         background-color: var(--color-surface-hover);

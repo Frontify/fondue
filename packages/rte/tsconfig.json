@@ -1,7 +1,6 @@
 {
     "compilerOptions": {
         "allowJs": true,
-        "baseUrl": ".",
         "esModuleInterop": true,
         "jsx": "react-jsx",
         "lib": ["dom", "dom.iterable", "esnext"],
@@ -26,7 +25,7 @@
     "exclude": ["node_modules", "dist"],
     "include": [
         ".storybook",
-        "eslint.config.mjs",
+        "oxlint.config.ts",
         "postcss.config.cjs",
         "cypress.config.ts",
         "src",

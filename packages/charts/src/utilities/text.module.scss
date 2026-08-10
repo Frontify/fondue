@@ -1,0 +1,31 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+@mixin body-small {
+    font-family: var(--typography-font-family-primary);
+    font-size: var(--typography-font-size-small);
+    font-weight: var(--typography-font-weight-regular);
+}
+
+@mixin body-small-x-strong {
+    font-family: var(--typography-font-family-primary);
+    font-size: var(--typography-font-size-small);
+    font-weight: var(--typography-font-weight-bold);
+}
+
+@mixin body-x-small {
+    font-family: var(--typography-font-family-primary);
+    font-size: var(--typography-font-size-x-small);
+    font-weight: var(--typography-font-weight-regular);
+}
+
+@mixin body-x-small-x-strong {
+    font-family: var(--typography-font-family-primary);
+    font-size: var(--typography-font-size-x-small);
+    font-weight: var(--typography-font-weight-bold);
+}
+
+@mixin heading-large {
+    font-family: var(--typography-font-family-primary);
+    font-size: var(--typography-font-size-large);
+    font-weight: var(--typography-font-weight-medium);
+}

@@ -3,7 +3,7 @@
 import { type ComponentProps, type ComponentType } from 'react';
 
 import { deCH, deDE, enUS, esES, frCH, frFR, itCH, itIT, nlNL, plPL, ptPT } from '#/locales';
-import { type LocaleIdentifier } from '#/locales/types';
+import { type LocaleConfig, type LocaleIdentifier } from '#/locales/types';
 
 import { ThemeProvider } from '../../src/components/ThemeProvider/ThemeProvider';
 
@@ -15,7 +15,7 @@ type WithThemeOptions = {
 };
 
 export const withTheme = (Story: ComponentType, options: WithThemeOptions) => {
-    let locale = enUS;
+    let locale: LocaleConfig = enUS;
 
     switch (options.locale) {
         case 'de-DE':

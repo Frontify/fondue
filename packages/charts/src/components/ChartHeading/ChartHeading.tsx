@@ -2,6 +2,8 @@
 
 import { type ReactNode } from 'react';
 
+import styles from './ChartHeading.module.scss';
+
 export type ChartHeadingProps = {
     title: ReactNode | string;
     description?: string;
@@ -9,14 +11,14 @@ export type ChartHeadingProps = {
 };
 export const ChartHeading = ({ title, description, icon }: ChartHeadingProps) => {
     return (
-        <div className="tw-mb-5 tw-mt-2">
-            <div className="tw-flex tw-items-center">
-                <span className="tw-mr-1.5 tw-font-primary tw-text-large tw-text-primary tw-font-medium">{title}</span>
+        <div className={styles.root}>
+            <div className={styles.titleRow}>
+                <span className={styles.title}>{title}</span>
                 {icon}
             </div>
             {description && (
-                <div className="tw-mt-3.5">
-                    <span className="tw-font-primary tw-text-small tw-text-secondary">{description}</span>
+                <div className={styles.descriptionWrapper}>
+                    <span className={styles.description}>{description}</span>
                 </div>
             )}
         </div>

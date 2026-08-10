@@ -6,13 +6,13 @@ import { type ReactNode } from 'react';
 import { GroupLabel } from '../GroupLabel';
 
 import { TokenPreviewCard } from './TokenPreviewCard';
-import { type Token, type Tokens } from './types';
+import { type GetClassNameProps, type Token, type Tokens } from './types';
 
 type TokenCollectionOverviewProps = {
     tokens: unknown;
     parentKeys?: string[];
     tokenPreview: (props: Token) => ReactNode;
-    getClassName: (props: Token) => string;
+    getClassName: (props: GetClassNameProps) => string;
 };
 
 const order = [

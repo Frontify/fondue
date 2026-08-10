@@ -39,6 +39,16 @@
         "border-radius",
         "x-large"
       ]
+    },
+    "xx-large": {
+      "name": "border-radius-xx-large",
+      "type": "float",
+      "value": "var(--border-radius-xx-large)",
+      "path": [
+        "default",
+        "border-radius",
+        "xx-large"
+      ]
     }
   },
   "border-width": {
@@ -60,6 +70,74 @@
         "default",
         "border-width",
         "large"
+      ]
+    }
+  },
+  "breakpoint": {
+    "2xl": {
+      "name": "breakpoint-2xl",
+      "output": "value",
+      "type": "float",
+      "value": "1536px",
+      "path": [
+        "default",
+        "breakpoint",
+        "2xl"
+      ]
+    },
+    "lg": {
+      "name": "breakpoint-lg",
+      "output": "value",
+      "type": "float",
+      "value": "1024px",
+      "path": [
+        "default",
+        "breakpoint",
+        "lg"
+      ]
+    },
+    "md": {
+      "name": "breakpoint-md",
+      "output": "value",
+      "type": "float",
+      "value": "768px",
+      "path": [
+        "default",
+        "breakpoint",
+        "md"
+      ]
+    },
+    "sm": {
+      "name": "breakpoint-sm",
+      "output": "value",
+      "type": "float",
+      "value": "600px",
+      "path": [
+        "default",
+        "breakpoint",
+        "sm"
+      ]
+    },
+    "xl": {
+      "name": "breakpoint-xl",
+      "output": "value",
+      "type": "float",
+      "value": "1280px",
+      "path": [
+        "default",
+        "breakpoint",
+        "xl"
+      ]
+    },
+    "xs": {
+      "name": "breakpoint-xs",
+      "output": "value",
+      "type": "float",
+      "value": "390px",
+      "path": [
+        "default",
+        "breakpoint",
+        "xs"
       ]
     }
   },
@@ -169,6 +247,17 @@
   },
   "typography": {
     "font-family": {
+      "display": {
+        "name": "typography-font-family-display",
+        "type": "string",
+        "value": "var(--typography-font-family-display)",
+        "path": [
+          "default",
+          "typography",
+          "font-family",
+          "display"
+        ]
+      },
       "monospace": {
         "name": "typography-font-family-monospace",
         "type": "string",
@@ -269,6 +358,39 @@
           "font-size",
           "xx-small"
         ]
+      },
+      "xxx-large": {
+        "name": "typography-font-size-xxx-large",
+        "type": "float",
+        "value": "var(--typography-font-size-xxx-large)",
+        "path": [
+          "default",
+          "typography",
+          "font-size",
+          "xxx-large"
+        ]
+      },
+      "xxxx-large": {
+        "name": "typography-font-size-xxxx-large",
+        "type": "float",
+        "value": "var(--typography-font-size-xxxx-large)",
+        "path": [
+          "default",
+          "typography",
+          "font-size",
+          "xxxx-large"
+        ]
+      },
+      "xxxxx-large": {
+        "name": "typography-font-size-xxxxx-large",
+        "type": "float",
+        "value": "var(--typography-font-size-xxxxx-large)",
+        "path": [
+          "default",
+          "typography",
+          "font-size",
+          "xxxxx-large"
+        ]
       }
     },
     "font-weight": {
@@ -281,6 +403,17 @@
           "typography",
           "font-weight",
           "bold"
+        ]
+      },
+      "light": {
+        "name": "typography-font-weight-light",
+        "type": "float",
+        "value": "var(--typography-font-weight-light)",
+        "path": [
+          "default",
+          "typography",
+          "font-weight",
+          "light"
         ]
       },
       "medium": {
@@ -331,6 +464,17 @@
       }
     },
     "line-height": {
+      "expansive": {
+        "name": "typography-line-height-expansive",
+        "type": "float",
+        "value": "var(--typography-line-height-expansive)",
+        "path": [
+          "default",
+          "typography",
+          "line-height",
+          "expansive"
+        ]
+      },
       "extra-loose": {
         "name": "typography-line-height-extra-loose",
         "type": "float",
@@ -362,6 +506,28 @@
           "typography",
           "line-height",
           "medium"
+        ]
+      },
+      "spacious": {
+        "name": "typography-line-height-spacious",
+        "type": "float",
+        "value": "var(--typography-line-height-spacious)",
+        "path": [
+          "default",
+          "typography",
+          "line-height",
+          "spacious"
+        ]
+      },
+      "sprawling": {
+        "name": "typography-line-height-sprawling",
+        "type": "float",
+        "value": "var(--typography-line-height-sprawling)",
+        "path": [
+          "default",
+          "typography",
+          "line-height",
+          "sprawling"
         ]
       },
       "tight": {
