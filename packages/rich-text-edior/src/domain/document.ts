@@ -36,7 +36,12 @@ export type RteBlockNode = {
     children?: RteInlineNode[] | RteBlockNode[];
 };
 
-/** The baseline block every editor has; the default for empty documents and Enter-key splits. */
+/**
+ * The baseline block every editor has; the default for empty documents and
+ * Enter-key splits. Its type name is `PARAGRAPH` in `vocabulary.ts`, which is
+ * what code reaches for — the literal is written out here only because a type
+ * cannot reference a constant.
+ */
 export type ParagraphBlock = {
     type: 'paragraph';
     children: RteInlineNode[];

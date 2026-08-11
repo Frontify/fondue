@@ -3,7 +3,7 @@
 import { createElement, type ReactNode } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 
-import { type BlockAttributeSpec } from '../types';
+import { type BlockAttributeSpec } from '#/domain';
 
 /**
  * Rendering: plugins declare how things look as React functions, the engine

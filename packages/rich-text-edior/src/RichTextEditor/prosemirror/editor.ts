@@ -3,7 +3,7 @@
 import { EditorState, TextSelection } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
-import { type EditorControlApi, type RteDocumentOf, type RtePlugin } from '../types';
+import { type EditorControlApi, type RteDocumentOf, type RtePlugin } from '#/domain';
 
 import { createApi } from './api';
 import { documentToPm, pmToDocument } from './document';

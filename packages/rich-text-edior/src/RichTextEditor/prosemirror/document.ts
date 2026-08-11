@@ -2,7 +2,7 @@
 
 import { type Node as PmNode, type NodeType as PmNodeType, type Schema } from 'prosemirror-model';
 
-import { type RteBlockNode, type RteDocumentOf, type RteInlineNode } from '../types';
+import { type RteBlockNode, type RteDocumentOf, type RteInlineNode } from '#/domain';
 
 /**
  * The document boundary: RTE format ↔ engine format. The only place either

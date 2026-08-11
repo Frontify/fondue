@@ -4,7 +4,7 @@ import { setBlockType as pmSetBlockType } from 'prosemirror-commands';
 import { type Schema } from 'prosemirror-model';
 import { type EditorView } from 'prosemirror-view';
 
-import { type EditorControlApi } from '../../types';
+import { type EditorControlApi } from '#/domain';
 
 /**
  * The block half of the control API: block types and the attributes on them.

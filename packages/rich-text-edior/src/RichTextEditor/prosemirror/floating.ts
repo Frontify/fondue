@@ -3,7 +3,7 @@
 import { type Schema } from 'prosemirror-model';
 import { type EditorView } from 'prosemirror-view';
 
-import { type FloatingAnchor, type RtePlugin } from '../types';
+import { type FloatingAnchor, type RtePlugin } from '#/domain';
 
 import { findMarkRange } from './queries';
 import { type TriggerController } from './triggers';

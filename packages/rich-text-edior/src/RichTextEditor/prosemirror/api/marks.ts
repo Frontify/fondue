@@ -5,7 +5,7 @@ import { type Schema } from 'prosemirror-model';
 import { TextSelection } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 
-import { type EditorControlApi } from '../../types';
+import { type EditorControlApi } from '#/domain';
 import { definedAttrs } from '../document';
 import { findMarkRange } from '../queries';
 

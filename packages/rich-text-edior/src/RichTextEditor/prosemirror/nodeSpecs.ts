@@ -2,7 +2,7 @@
 
 import { type MarkSpec as PmMarkSpec, type NodeSpec as PmNodeSpec } from 'prosemirror-model';
 
-import { type BlockAttributeSpec, type BlockSpec, type InlineSpec, type MarkSpec } from '../types';
+import { type BlockAttributeSpec, type BlockSpec, type InlineSpec, type MarkSpec } from '#/domain';
 
 import { pmAttrs, pmInjectedAttrs, pmParseDom } from './attributes';
 import { CONTENT_SLOT, injectedDeclarations, probeCachedBy, withRootStyle } from './render';

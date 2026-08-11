@@ -2,7 +2,7 @@
 
 import { type EditorView } from 'prosemirror-view';
 
-import { type EditorControlApi } from '../../types';
+import { type EditorControlApi } from '#/domain';
 import { type SchemaBundle } from '../schema';
 
 import { createBlockApi } from './blocks';

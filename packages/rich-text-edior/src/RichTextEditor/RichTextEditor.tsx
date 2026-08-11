@@ -4,14 +4,14 @@ import { type CSSProperties, type ReactNode } from 'react';
 
 import { FloatingLayer } from './components/FloatingLayer';
 import { FloatingToolbar } from './components/FloatingToolbar';
-import { Toolbar } from './components/Toolbar';
+import { Toolbar, type ToolbarPlacement } from './components/Toolbar';
 import { classNames } from './helpers/classNames';
 import { useEditorHandle } from './hooks/useEditorHandle';
 import { useFloating } from './hooks/useFloating';
 import { useFocusWithin } from './hooks/useFocusWithin';
 import { useSelectionRect } from './hooks/useSelectionRect';
 import styles from './richTextEditor.module.scss';
-import { type RteBlockNode, type RteDocumentOf, type RtePlugin, type ToolbarPlacement } from './types';
+import { type RteBlockNode, type RteDocumentOf, type RtePlugin } from '#/domain';
 
 /**
  * `TBlock` is the document's block union. The editor itself is agnostic, so it

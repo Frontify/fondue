@@ -3,7 +3,7 @@
 import { type EditorState, Plugin as PmPlugin, PluginKey } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 
-import { type RtePlugin } from '../types';
+import { type RtePlugin } from '#/domain';
 
 /**
  * Trigger tracking: which declared trigger character the caret is typing after,

@@ -5,7 +5,7 @@ import { history, redo, undo } from 'prosemirror-history';
 import { keymap } from 'prosemirror-keymap';
 import { type Command, type Plugin as PmPlugin } from 'prosemirror-state';
 
-import { type EditorControlApi, type RtePlugin } from '../types';
+import { type EditorControlApi, type RtePlugin } from '#/domain';
 
 import { buildInputRules } from './inputRules';
 import { type SchemaBundle } from './schema';

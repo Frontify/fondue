@@ -2,7 +2,7 @@
 
 import { type MarkSpec as PmMarkSpec, type NodeSpec as PmNodeSpec, Schema } from 'prosemirror-model';
 
-import { type RtePlugin } from '../types';
+import { PARAGRAPH, type RtePlugin } from '#/domain';
 
 import { pmInjectedAttrs, pmParseDom } from './attributes';
 import { blockNodeSpec, inlineNodeSpec, markNodeSpec } from './nodeSpecs';
@@ -40,14 +40,14 @@ export const buildSchema = (plugins: RtePlugin[]): SchemaBundle => {
 
     const itemTypeByList = collectLists(blockSpecs);
     const itemTypes = new Set(itemTypeByList.values());
-    const known = new Set(['paragraph', ...blockSpecs.map((spec) => spec.type)]);
+    const known = new Set([PARAGRAPH, ...blockSpecs.map((spec) => spec.type)]);
 
     // Node insertion order matters: the first node matching the doc's
     // `block+` content is the default block type (empty documents, Enter-key
     // splits) — the paragraph baseline stays first.
     const nodes: Record<string, PmNodeSpec> = {
         doc: { content: 'block+' },
-        paragraph: {
+        [PARAGRAPH]: {
             content: 'inline*',
             group: 'block',
             attrs: pmInjectedAttrs(injected),

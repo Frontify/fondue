@@ -4,7 +4,7 @@ import { InputRule, inputRules, textblockTypeInputRule, wrappingInputRule } from
 import { type Schema } from 'prosemirror-model';
 import { type Plugin as PmPlugin } from 'prosemirror-state';
 
-import { type RteInputRule, type RtePlugin } from '../types';
+import { type RteInputRule, type RtePlugin } from '#/domain';
 
 /**
  * Declared input rules → the engine's typing-rewrite machinery.

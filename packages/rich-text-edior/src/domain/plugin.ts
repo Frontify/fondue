@@ -2,7 +2,7 @@
 
 import { type KeyboardEvent, type ReactNode } from 'react';
 
-import { type EditorControlApi } from './api';
+import { type EditorControlApi } from './commands';
 import { type BlockAttributeSpec, type BlockSpec, type InlineSpec, type MarkSpec } from './schema';
 
 /**
@@ -70,17 +70,6 @@ export type RtePlugin = {
      */
     contentProperties?: Record<string, string>;
 };
-
-/**
- * Where the plugins' toolbar is drawn. Not a plugin's decision — a plugin
- * contributes controls and never learns where they end up — but it is the same
- * subject, so it lives next to `RtePlugin.toolbar`.
- *
- * - `'floating'` — a detached bar hovering above the editor, overlaying whatever
- *   is up there rather than taking a row of the page for itself.
- * - `'top'` — a strip inside the editor's frame, above the text.
- */
-export type ToolbarPlacement = 'floating' | 'top';
 
 /**
  * A text pattern rewritten while typing. Declared, not implemented: the

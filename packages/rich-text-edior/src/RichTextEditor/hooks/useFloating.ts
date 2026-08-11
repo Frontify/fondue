@@ -3,7 +3,7 @@
 import { type KeyboardEvent, type ReactNode, useRef } from 'react';
 
 import { type EditorHandle, type FloatingRect } from '../prosemirror';
-import { type FloatingContext, type FloatingKeyHandler, type RtePlugin } from '../types';
+import { type FloatingContext, type FloatingKeyHandler, type RtePlugin } from '#/domain';
 
 /**
  * The host half of floating UI: turns the anchored placements the engine reports

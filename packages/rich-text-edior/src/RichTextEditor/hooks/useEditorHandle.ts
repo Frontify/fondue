@@ -5,18 +5,13 @@ import { type MutableRefObject, useEffect, useReducer, useRef } from 'react';
 import { classNames } from '../helpers/classNames';
 import { createEditor, type EditorHandle } from '../prosemirror';
 import styles from '../richTextEditor.module.scss';
-import { type RteDocumentOf, type RtePlugin } from '../types';
+import { emptyDocument, type RteDocumentOf, type RtePlugin } from '#/domain';
 
 /**
  * Owns the live editor: creates it once per plugin set, carries later prop
  * changes into it, and re-renders the component whenever the editor state moves
  * — the toolbar and the panels read their state straight off the handle.
  */
-
-const EMPTY_DOC: RteDocumentOf = {
-    version: 1,
-    blocks: [{ type: 'paragraph', children: [{ text: '' }] }],
-};
 
 type UseEditorHandleOptions = {
     plugins: RtePlugin[];
@@ -69,7 +64,7 @@ export const useEditorHandle = ({
 
         const handle = createEditor({
             container,
-            initialDoc: value ?? EMPTY_DOC,
+            initialDoc: value ?? emptyDocument(),
             plugins,
             readOnly: initialRef.current.readOnly,
             placeholder: initialRef.current.placeholder,

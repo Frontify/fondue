@@ -2,7 +2,7 @@
 
 import { type TagParseRule } from 'prosemirror-model';
 
-import { type AttributeSpec, type BlockAttributeSpec, type ParseRule } from '../types';
+import { type AttributeSpec, type BlockAttributeSpec, type ParseRule } from '#/domain';
 
 /**
  * Declared attributes → the engine's attribute and paste-parsing configuration.

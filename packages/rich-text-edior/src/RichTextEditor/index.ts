@@ -28,4 +28,6 @@ export {
     type RteInlineNode,
     type RtePlugin,
     type RteSelectionSnapshot,
-} from './types';
+    TOGGLE_ATTRIBUTE,
+    toggles,
+} from '#/domain';

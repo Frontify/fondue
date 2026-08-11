@@ -4,7 +4,18 @@ import { Fragment, type MouseEvent, type ReactNode } from 'react';
 
 import { classNames } from '../helpers/classNames';
 import styles from '../richTextEditor.module.scss';
-import { type EditorControlApi, type RtePlugin, type ToolbarPlacement } from '../types';
+import { type EditorControlApi, type RtePlugin } from '#/domain';
+
+/**
+ * Where the plugins' toolbar is drawn. A presentation choice the host makes for
+ * the whole editor, which is why it is a prop and not part of the plugin
+ * contract: a plugin contributes controls and never learns where they end up.
+ *
+ * - `'floating'` — a detached bar hovering above the editor, overlaying whatever
+ *   is up there rather than taking a row of the page for itself.
+ * - `'top'` — a strip inside the editor's frame, above the text.
+ */
+export type ToolbarPlacement = 'floating' | 'top';
 
 /**
  * A click that lands on the toolbar but misses a control would still move focus,
