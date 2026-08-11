@@ -3,7 +3,6 @@
 export {
     bulletListPlugin,
     numberedListPlugin,
-    NESTABLE_LISTS,
     type BulletListBlock,
     type ListItemBlock,
     type NumberedListBlock,

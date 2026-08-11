@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type RtePlugin } from '#/RichTextEditor';
+import { type RtePlugin } from '#/domain';
 
 import { TextStyleSelect } from './components/TextStyleSelect';
 import {

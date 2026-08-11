@@ -41,6 +41,7 @@ export const buildSchema = (plugins: RtePlugin[], renderProbe: RenderProbe): Sch
 
     const itemTypeByList = collectLists(blockSpecs);
     const itemTypes = new Set(itemTypeByList.values());
+    const lists = new Set(itemTypeByList.keys());
     const known = new Set([PARAGRAPH, ...blockSpecs.map((spec) => spec.type)]);
 
     // Node insertion order matters: the first node matching the doc's
@@ -64,6 +65,7 @@ export const buildSchema = (plugins: RtePlugin[], renderProbe: RenderProbe): Sch
                 injected,
                 isListItem: itemTypes.has(block.type),
                 known,
+                lists,
                 renderProbe,
             });
         }

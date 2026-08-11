@@ -2,7 +2,7 @@
 
 import { IconSpeechBubbleQuote } from '@frontify/fondue-icons';
 
-import { type RteInlineNode, type RtePlugin } from '#/RichTextEditor';
+import { type RteInlineNode, type RtePlugin } from '#/domain';
 
 import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
 

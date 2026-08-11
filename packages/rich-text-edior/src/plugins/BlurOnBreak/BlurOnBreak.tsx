@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type RtePlugin } from '#/RichTextEditor';
+import { type RtePlugin } from '#/domain';
 
 /**
  * Enter commits instead of adding a paragraph — what a single-line editor (a

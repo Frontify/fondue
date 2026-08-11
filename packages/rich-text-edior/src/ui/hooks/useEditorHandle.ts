@@ -2,12 +2,12 @@
 
 import { type MutableRefObject, useEffect, useReducer, useRef } from 'react';
 
+import { createEditor } from '#/adapters/prosemirror';
 import { reactRenderProbe } from '#/adapters/reactProbe/probe';
 import { emptyDocument, type RteDocumentOf, type RtePlugin } from '#/domain';
 import { type EditorHandle } from '#/ports';
 
 import { classNames } from '../helpers/classNames';
-import { createEditor } from '../prosemirror';
 import styles from '../richTextEditor.module.scss';
 
 /**

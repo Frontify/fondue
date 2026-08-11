@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type RteBlockNode, type RteInlineNode } from '#/RichTextEditor';
+import { type RteBlockNode, type RteInlineNode } from '#/domain';
 
 import styles from '../textStyle.module.scss';
 

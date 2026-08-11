@@ -3,7 +3,7 @@
 import { Select } from '@frontify/fondue-components';
 import { type ReactNode } from 'react';
 
-import { type EditorControlApi } from '#/RichTextEditor';
+import { type EditorControlApi } from '#/domain';
 
 import { findPreset, isTextStyle, labelOf, PARAGRAPH, type TextStyleOption } from '../helpers/presets';
 

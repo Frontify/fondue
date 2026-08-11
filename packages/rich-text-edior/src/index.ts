@@ -2,6 +2,7 @@
 
 import { type ReactNode } from 'react';
 
+import { type ParagraphBlock, type RteBlockNode, type RteDocumentOf, type RteInlineNode } from './domain';
 import { type AlignAttribute } from './plugins/Align';
 import { type BoldMark } from './plugins/Bold';
 import { type CheckItemBlock, type CheckListBlock } from './plugins/CheckList';
@@ -21,17 +22,13 @@ import { type SuperscriptMark } from './plugins/Superscript';
 import { type TextStyleBlock } from './plugins/TextStyle';
 import { type UnderlineMark } from './plugins/Underline';
 import {
-    type ParagraphBlock,
-    type RteBlockNode,
-    type RteDocumentOf,
-    type RteInlineNode,
     RichTextEditor as StructuralRichTextEditor,
     type RichTextEditorProps as StructuralRichTextEditorProps,
-} from './RichTextEditor';
+} from './ui';
 
 /**
- * The package's public API: the editor surface (src/RichTextEditor) plus the
- * built-in plugins and the official document format assembled from them.
+ * The package's public API, and the composition root: the editor component, the
+ * built-in plugins, and the official document format assembled from them.
  *
  * The types are tuned for the common case — an app using the shipped plugins —
  * so `RteDocument` means "a document made of the blocks and marks that ship
@@ -56,7 +53,7 @@ export {
     type RteInlineNode,
     type RtePlugin,
     type RteSelectionSnapshot,
-} from './RichTextEditor';
+} from './domain';
 
 // The built-in plugins. Every one is a function, whether or not it takes options;
 // compose your own list, or start from `defaultPlugins`, which bundles the

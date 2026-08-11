@@ -2,7 +2,7 @@
 
 import { type MouseEvent } from 'react';
 
-import { type EditorControlApi } from '#/RichTextEditor';
+import { type EditorControlApi } from '#/domain';
 
 /** Both halves of a link plus its flag, as the editing UI works with them. */
 export type LinkDraft = { href: string; text: string; openInNewTab: boolean };

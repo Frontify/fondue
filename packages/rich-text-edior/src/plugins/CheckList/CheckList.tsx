@@ -2,9 +2,8 @@
 
 import { IconListCheck } from '@frontify/fondue-icons';
 
-import { type RteBlockNode, type RtePlugin } from '#/RichTextEditor';
+import { ANY_LIST, PARAGRAPH, type RteBlockNode, type RtePlugin } from '#/domain';
 
-import { NESTABLE_LISTS } from '../List';
 import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
 
 import styles from './checkList.module.scss';
@@ -45,7 +44,7 @@ export const checkListPlugin = (): RtePlugin => ({
             {
                 type: 'checkItem',
                 content: 'blocks',
-                contains: ['paragraph', ...NESTABLE_LISTS],
+                contains: [PARAGRAPH, ANY_LIST],
                 attributes: { checked: { default: false } },
                 render: ({ node, children }) => {
                     // A render function knows what it declared, so it reads its own block type.

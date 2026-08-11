@@ -2,7 +2,7 @@
 
 import { type ReactNode, useEffect, useState } from 'react';
 
-import { type EditorControlApi, type FloatingContext } from '#/RichTextEditor';
+import { type EditorControlApi, type FloatingContext } from '#/domain';
 
 import styles from './combobox.module.scss';
 

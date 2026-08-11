@@ -2,7 +2,7 @@
 
 import { type MarkSpec as PmMarkSpec, type NodeSpec as PmNodeSpec } from 'prosemirror-model';
 
-import { type BlockAttributeSpec, type BlockSpec, type InlineSpec, type MarkSpec } from '#/domain';
+import { ANY_LIST, type BlockAttributeSpec, type BlockSpec, type InlineSpec, type MarkSpec } from '#/domain';
 import { CONTENT_SLOT, type RenderProbe } from '#/ports';
 
 import { pmAttrs, pmInjectedAttrs, pmParseDom } from './attributes';
@@ -17,16 +17,20 @@ import { injectedDeclarations, probeCachedBy, withRootStyle } from './domSpec';
  * declared. The first `contains` entry ends up first in the expression, which
  * is what makes it the type a newly created container is filled with.
  */
-const pmContent = (spec: BlockSpec, known: Set<string>): string | undefined => {
+const pmContent = (spec: BlockSpec, known: Set<string>, lists: Set<string>): string | undefined => {
     if (spec.isVoid) {
         return undefined;
     }
     if (spec.content !== 'blocks') {
         return 'inline*';
     }
-    // A container may name block types from plugins that are not mounted — a
-    // list item nesting a check list. Those simply drop out of the grammar.
-    const contains = (spec.contains ?? []).filter((type) => known.has(type));
+    // ANY_LIST stands for whatever lists are mounted, so an item can allow
+    // nesting without naming the plugins that provide it. A container may also
+    // name a type from a plugin that is not mounted; those drop out of the
+    // grammar, and the order of what remains is kept — the first entry is what a
+    // new container is filled with.
+    const expanded = (spec.contains ?? []).flatMap((type) => (type === ANY_LIST ? [...lists] : [type]));
+    const contains = [...new Set(expanded)].filter((type) => known.has(type));
     if (contains.length === 0) {
         throw new Error(
             `Block "${spec.type}" declares content: 'blocks' but none of its \`contains\` types are registered.`,
@@ -41,11 +45,15 @@ export const blockNodeSpec = (
         injected,
         isListItem,
         known,
+        lists,
         renderProbe,
     }: {
         injected: readonly BlockAttributeSpec[];
         isListItem: boolean;
+        /** Every block type the mounted plugins declare, plus the paragraph baseline. */
         known: Set<string>;
+        /** Those of them that are lists, for expanding `ANY_LIST`. */
+        lists: Set<string>;
         renderProbe: RenderProbe;
     },
 ): PmNodeSpec => {
@@ -58,7 +66,7 @@ export const blockNodeSpec = (
     );
 
     return {
-        content: pmContent(spec, known),
+        content: pmContent(spec, known, lists),
         atom: isVoid,
         // Paragraph is the neutral block, everything else means something —
         // "this text is a caption", "this text is quoted". Saying so is what

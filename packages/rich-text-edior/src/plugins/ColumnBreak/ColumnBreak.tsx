@@ -2,7 +2,7 @@
 
 import { IconTextColumnBreak } from '@frontify/fondue-icons';
 
-import { type RtePlugin } from '#/RichTextEditor';
+import { type RtePlugin } from '#/domain';
 
 import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
 

@@ -54,7 +54,12 @@ export type BlockSpec = {
     /**
      * With `content: 'blocks'`, the block types allowed inside. The first entry
      * is what a newly created block gets filled with, so put the text-bearing
-     * one first (`['paragraph', 'bulletList']` for a list item).
+     * one first (`[PARAGRAPH, ANY_LIST]` for a list item).
+     *
+     * A type named here that no mounted plugin declares simply drops out. Use
+     * `ANY_LIST` for "whatever lists are mounted": a list item has to say that
+     * lists may nest inside it, and it cannot know which ones exist — least of
+     * all one written after it.
      */
     contains?: readonly string[];
     /**

@@ -2,7 +2,7 @@
 
 import { IconListBullet, IconListNumbers, type FondueIcon } from '@frontify/fondue-icons';
 
-import { type RteBlockNode, type RtePlugin } from '#/RichTextEditor';
+import { ANY_LIST, PARAGRAPH, type RteBlockNode, type RtePlugin } from '#/domain';
 
 import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
 
@@ -13,8 +13,8 @@ import styles from './list.module.scss';
  * holds blocks — a paragraph for its text, plus any list nested under it.
  *
  * Both list types share the item, so mounting either one (or both) works; the
- * item's `contains` names every list that could nest inside it and the editor
- * drops the ones that are not mounted.
+ * item allows `ANY_LIST` inside it, so whatever lists are mounted nest — this one
+ * included, and a list a consumer wrote just as well.
  */
 export type ListItemBlock<TContent extends RteBlockNode = RteBlockNode> = {
     type: 'listItem';
@@ -30,9 +30,6 @@ export type NumberedListBlock<TItem extends RteBlockNode = RteBlockNode> = {
     type: 'numberedList';
     children: TItem[];
 };
-
-/** Every list a list item may nest, whether or not their plugins are mounted. */
-export const NESTABLE_LISTS = ['bulletList', 'numberedList', 'checkList'];
 
 /**
  * The two list plugins differ only in their type, tag, icon and marker style, so
@@ -76,7 +73,7 @@ const listPlugin = ({
                 type: 'listItem',
                 content: 'blocks',
                 // The paragraph comes first: it is what a new item is filled with.
-                contains: ['paragraph', ...NESTABLE_LISTS],
+                contains: [PARAGRAPH, ANY_LIST],
                 render: ({ children }) => <li className={styles.item}>{children}</li>,
                 parseRules: [{ tag: 'li' }],
             },

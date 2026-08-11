@@ -3,7 +3,7 @@
 import { Button } from '@frontify/fondue-components';
 import { type ReactNode, useState } from 'react';
 
-import { type EditorControlApi } from '#/RichTextEditor';
+import { type EditorControlApi } from '#/domain';
 
 import { draftFrom, keepSelection, type LinkDraft, type LinkRun } from '../helpers/draft';
 

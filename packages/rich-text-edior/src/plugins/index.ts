@@ -22,9 +22,9 @@ import { underlinePlugin } from './Underline';
 /**
  * One folder per plugin, plus `shared/` for what plugins are built *out of*
  * rather than what they are — currently the toolbar button they all use. Nothing
- * under `shared/` is a plugin, and it plays by the same rules as one: the editor
- * is only reachable through its surface (`#/RichTextEditor`). UI only one plugin
- * needs stays with that plugin (Mention's picker, Link's panel).
+ * under `shared/` is a plugin, and it plays by the same rules as one: the only
+ * thing it may reach for is the domain (`#/domain`). UI only one plugin needs
+ * stays with that plugin (Mention's picker, Link's panel).
  *
  * Convenience bundle of the built-in plugins that need no configuration, in
  * toolbar order. Nothing is mounted automatically — pass these (or a subset) to

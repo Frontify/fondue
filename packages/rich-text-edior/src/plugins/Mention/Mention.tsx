@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type RtePlugin } from '#/RichTextEditor';
+import { type RtePlugin } from '#/domain';
 
 import { Combobox } from './components/Combobox';
 import styles from './mention.module.scss';

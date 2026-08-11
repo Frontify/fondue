@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type RtePlugin } from '#/RichTextEditor';
+import { type RtePlugin } from '#/domain';
 
 import { LinkFlyout } from './components/LinkFlyout';
 import { LinkPanel } from './components/LinkPanel';

@@ -8,7 +8,7 @@ import {
     IconTextAlignmentRight,
 } from '@frontify/fondue-icons';
 
-import { type RteBlockNode, type RtePlugin } from '#/RichTextEditor';
+import { type RteBlockNode, type RtePlugin } from '#/domain';
 
 import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
 
