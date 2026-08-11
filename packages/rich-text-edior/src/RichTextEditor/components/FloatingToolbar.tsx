@@ -2,8 +2,9 @@
 
 import { type ReactNode, useLayoutEffect, useRef, useState } from 'react';
 
+import { type FloatingRect } from '#/ports';
+
 import { classNames } from '../helpers/classNames';
-import { type FloatingRect } from '../prosemirror';
 import styles from '../richTextEditor.module.scss';
 
 /** How close to the viewport edge the bar may come before it is pushed back in. */

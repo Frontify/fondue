@@ -2,9 +2,10 @@
 
 import { Fragment, type MouseEvent, type ReactNode } from 'react';
 
+import { type EditorControlApi, type RtePlugin } from '#/domain';
+
 import { classNames } from '../helpers/classNames';
 import styles from '../richTextEditor.module.scss';
-import { type EditorControlApi, type RtePlugin } from '#/domain';
 
 /**
  * Where the plugins' toolbar is drawn. A presentation choice the host makes for

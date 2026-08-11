@@ -2,15 +2,22 @@
 
 import { type MutableRefObject, useEffect, useReducer, useRef } from 'react';
 
-import { classNames } from '../helpers/classNames';
-import { createEditor, type EditorHandle } from '../prosemirror';
-import styles from '../richTextEditor.module.scss';
+import { reactRenderProbe } from '#/adapters/reactProbe/probe';
 import { emptyDocument, type RteDocumentOf, type RtePlugin } from '#/domain';
+import { type EditorHandle } from '#/ports';
+
+import { classNames } from '../helpers/classNames';
+import { createEditor } from '../prosemirror';
+import styles from '../richTextEditor.module.scss';
 
 /**
  * Owns the live editor: creates it once per plugin set, carries later prop
  * changes into it, and re-renders the component whenever the editor state moves
  * — the toolbar and the panels read their state straight off the handle.
+ *
+ * This is where the implementations behind the ports are chosen — the engine and
+ * the render probe — and the only place that does: everything else in the shell
+ * goes through the `EditorHandle` it returns.
  */
 
 type UseEditorHandleOptions = {
@@ -70,6 +77,7 @@ export const useEditorHandle = ({
             placeholder: initialRef.current.placeholder,
             contentClassName,
             placeholderClassName: classNames(styles.placeholder),
+            probe: reactRenderProbe,
             onDocChange: (doc) => onDocChangeRef.current(doc),
             onStateChange: force,
             onBlur: (doc) => onBlurRef.current(doc),

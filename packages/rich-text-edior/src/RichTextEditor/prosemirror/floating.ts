@@ -4,6 +4,7 @@ import { type Schema } from 'prosemirror-model';
 import { type EditorView } from 'prosemirror-view';
 
 import { type FloatingAnchor, type RtePlugin } from '#/domain';
+import { type FloatingPlacement, type FloatingRect } from '#/ports';
 
 import { findMarkRange } from './queries';
 import { type TriggerController } from './triggers';
@@ -13,16 +14,6 @@ import { type TriggerController } from './triggers';
  * turn a document position into a box, which is the whole reason floating UI is
  * declared rather than positioned by the plugin itself.
  */
-
-/** A box in viewport coordinates. */
-export type FloatingRect = { left: number; top: number; width: number; height: number };
-
-export type FloatingPlacement = {
-    pluginId: string;
-    rect: FloatingRect;
-    /** For a `{ trigger }` anchor: what has been typed after it. Empty for the others. */
-    query: string;
-};
 
 type DeclaredFloating = { pluginId: string; anchor: FloatingAnchor };
 

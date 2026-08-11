@@ -3,9 +3,10 @@
 import { type MarkSpec as PmMarkSpec, type NodeSpec as PmNodeSpec } from 'prosemirror-model';
 
 import { type BlockAttributeSpec, type BlockSpec, type InlineSpec, type MarkSpec } from '#/domain';
+import { CONTENT_SLOT, type RenderProbe } from '#/ports';
 
 import { pmAttrs, pmInjectedAttrs, pmParseDom } from './attributes';
-import { CONTENT_SLOT, injectedDeclarations, probeCachedBy, withRootStyle } from './render';
+import { injectedDeclarations, probeCachedBy, withRootStyle } from './domSpec';
 
 /**
  * One declared block, inline or mark → the engine's spec for it.
@@ -40,13 +41,19 @@ export const blockNodeSpec = (
         injected,
         isListItem,
         known,
-    }: { injected: readonly BlockAttributeSpec[]; isListItem: boolean; known: Set<string> },
+        renderProbe,
+    }: {
+        injected: readonly BlockAttributeSpec[];
+        isListItem: boolean;
+        known: Set<string>;
+        renderProbe: RenderProbe;
+    },
 ): PmNodeSpec => {
     const isVoid = spec.isVoid ?? false;
     const carriesInjected = !isVoid && spec.content !== 'blocks';
     const injectedHere = carriesInjected ? injected : [];
     const ownAttrNames = Object.keys(spec.attributes ?? {});
-    const probe = probeCachedBy((attrs) =>
+    const probe = probeCachedBy(renderProbe, (attrs) =>
         spec.render({ node: { type: spec.type, ...attrs }, children: CONTENT_SLOT }),
     );
 
@@ -75,8 +82,8 @@ export const blockNodeSpec = (
     };
 };
 
-export const inlineNodeSpec = (spec: InlineSpec): PmNodeSpec => {
-    const probe = probeCachedBy((attrs) => spec.render({ node: { type: spec.type, ...attrs } }));
+export const inlineNodeSpec = (spec: InlineSpec, renderProbe: RenderProbe): PmNodeSpec => {
+    const probe = probeCachedBy(renderProbe, (attrs) => spec.render({ node: { type: spec.type, ...attrs } }));
 
     return {
         group: 'inline',
@@ -88,9 +95,9 @@ export const inlineNodeSpec = (spec: InlineSpec): PmNodeSpec => {
     };
 };
 
-export const markNodeSpec = (spec: MarkSpec): PmMarkSpec => {
+export const markNodeSpec = (spec: MarkSpec, renderProbe: RenderProbe): PmMarkSpec => {
     const attrs = pmAttrs(spec.attributes);
-    const probe = probeCachedBy((value) => spec.render({ children: CONTENT_SLOT, value }));
+    const probe = probeCachedBy(renderProbe, (value) => spec.render({ children: CONTENT_SLOT, value }));
     // The element the mark renders (probed with default values) is always
     // recognized when parsing; parseRules add more.
     const defaults = Object.fromEntries(Object.entries(attrs).map(([name, attr]) => [name, attr.default]));

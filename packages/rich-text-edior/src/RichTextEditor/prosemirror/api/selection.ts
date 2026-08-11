@@ -5,6 +5,7 @@ import { type EditorState, TextSelection } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 
 import { type EditorControlApi, type RteBlockNode, type RteSelectionSnapshot } from '#/domain';
+
 import { definedAttrs, shallowBlockFromPm } from '../document';
 
 /**

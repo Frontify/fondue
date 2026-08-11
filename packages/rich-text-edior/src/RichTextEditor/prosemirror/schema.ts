@@ -3,10 +3,11 @@
 import { type MarkSpec as PmMarkSpec, type NodeSpec as PmNodeSpec, Schema } from 'prosemirror-model';
 
 import { PARAGRAPH, type RtePlugin } from '#/domain';
+import { type RenderProbe } from '#/ports';
 
 import { pmInjectedAttrs, pmParseDom } from './attributes';
+import { injectedDeclarations, withExtraStyle } from './domSpec';
 import { blockNodeSpec, inlineNodeSpec, markNodeSpec } from './nodeSpecs';
-import { injectedDeclarations, withExtraStyle } from './render';
 
 /**
  * The mounted plugin set → one engine schema.
@@ -34,7 +35,7 @@ const collectLists = (blocks: readonly { type: string; isList?: boolean; contain
     return itemTypeByList;
 };
 
-export const buildSchema = (plugins: RtePlugin[]): SchemaBundle => {
+export const buildSchema = (plugins: RtePlugin[], renderProbe: RenderProbe): SchemaBundle => {
     const blockSpecs = plugins.flatMap((plugin) => [...(plugin.schema?.blocks ?? [])]);
     const injected = plugins.flatMap((plugin) => [...(plugin.schema?.blockAttributes ?? [])]);
 
@@ -59,10 +60,15 @@ export const buildSchema = (plugins: RtePlugin[]): SchemaBundle => {
 
     for (const plugin of plugins) {
         for (const block of plugin.schema?.blocks ?? []) {
-            nodes[block.type] = blockNodeSpec(block, { injected, isListItem: itemTypes.has(block.type), known });
+            nodes[block.type] = blockNodeSpec(block, {
+                injected,
+                isListItem: itemTypes.has(block.type),
+                known,
+                renderProbe,
+            });
         }
         for (const inline of plugin.schema?.inlines ?? []) {
-            nodes[inline.type] = inlineNodeSpec(inline);
+            nodes[inline.type] = inlineNodeSpec(inline, renderProbe);
         }
     }
 
@@ -76,7 +82,7 @@ export const buildSchema = (plugins: RtePlugin[]): SchemaBundle => {
 
     const marks: Record<string, PmMarkSpec> = {};
     for (const { mark } of markSpecs) {
-        marks[mark.key] = markNodeSpec(mark);
+        marks[mark.key] = markNodeSpec(mark, renderProbe);
     }
 
     return { schema: new Schema({ nodes, marks }), itemTypeByList };

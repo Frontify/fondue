@@ -2,7 +2,7 @@
 
 import { useEffect, useReducer } from 'react';
 
-import { type EditorHandle, type FloatingRect } from '../prosemirror';
+import { type EditorHandle, type FloatingRect } from '#/ports';
 
 /**
  * Where the selection sits on screen, for UI that hangs over it. Read during

@@ -3,78 +3,24 @@
 import { EditorState, TextSelection } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
-import { type EditorControlApi, type RteDocumentOf, type RtePlugin } from '#/domain';
+import { type EditorControlApi, TOGGLE_ATTRIBUTE } from '#/domain';
+import { type CreateEditor } from '#/ports';
 
 import { createApi } from './api';
 import { documentToPm, pmToDocument } from './document';
 import { buildEnginePlugins } from './enginePlugins';
-import {
-    createFloatingLocator,
-    type FloatingPlacement,
-    type FloatingRect,
-    createSelectionRectReader,
-} from './floating';
+import { createFloatingLocator, createSelectionRectReader } from './floating';
 import { placeholderPlugin } from './placeholder';
-import { TOGGLE_ATTRIBUTE } from './render';
 import { buildSchema } from './schema';
 import { createTriggerController } from './triggers';
 
 /**
  * The live editor: builds the engine from the plugin set, hosts the view, and
- * hands back the handle the React component drives it through.
+ * hands back the handle the React component drives it through. This is the
+ * ProseMirror implementation of `CreateEditor`.
  */
 
-export type EditorOptions = {
-    container: HTMLElement;
-    initialDoc: RteDocumentOf;
-    plugins: RtePlugin[];
-    /** Starting value; change it later through `setReadOnly`. */
-    readOnly: boolean;
-    /** Starting value; change it later through `setPlaceholder`. */
-    placeholder: string;
-    /**
-     * Classes for the editable element. Styling belongs to the editor, so the
-     * adapter is only told what to stamp on — the editor's own content class
-     * plus whatever the mounted plugins contribute.
-     */
-    contentClassName: string;
-    /** Class the placeholder decoration carries. */
-    placeholderClassName: string;
-    onDocChange: (doc: RteDocumentOf) => void;
-    onStateChange: () => void;
-    /** The editable element lost focus. Handed the current document, so a caller can commit it. */
-    onBlur: (doc: RteDocumentOf) => void;
-};
-
-export type EditorHandle = {
-    api: EditorControlApi;
-    /** Replace the content with an externally-set document (the controlled `value`). */
-    setDoc(doc: RteDocumentOf): void;
-    /** Turn editing off or back on, keeping the content, the selection and the undo history. */
-    setReadOnly(readOnly: boolean): void;
-    /** Change the text shown while the document is empty. Empty string means none. */
-    setPlaceholder(placeholder: string): void;
-    /**
-     * Where each declared piece of floating UI hangs, in mount order. One whose
-     * anchor is not currently in the document is simply absent from the list.
-     */
-    floating: {
-        placements(): FloatingPlacement[];
-        /**
-         * The box around the selected text, for the editor's own floating UI —
-         * the toolbar, when it is the one hanging over the selection. Null while
-         * nothing is selected.
-         */
-        selectionRect(): FloatingRect | null;
-        /** Delete the open trigger and its query, so a choice can take their place. */
-        clearQuery(): void;
-        /** Close the open trigger until the caret moves on (Escape). */
-        dismiss(): void;
-    };
-    destroy(): void;
-};
-
-export const createEditor = ({
+export const createEditor: CreateEditor = ({
     container,
     initialDoc,
     plugins,
@@ -82,11 +28,12 @@ export const createEditor = ({
     placeholder,
     contentClassName,
     placeholderClassName,
+    probe,
     onDocChange,
     onStateChange,
     onBlur,
-}: EditorOptions): EditorHandle => {
-    const bundle = buildSchema(plugins);
+}) => {
+    const bundle = buildSchema(plugins, probe);
     const { schema } = bundle;
     // Hotkeys are wired before the view (and hence the api) exists, so they
     // reach it through a thunk that only runs once the editor is live.

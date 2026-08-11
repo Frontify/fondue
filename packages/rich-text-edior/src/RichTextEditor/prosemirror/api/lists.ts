@@ -6,6 +6,7 @@ import { type Command } from 'prosemirror-state';
 import { type EditorView } from 'prosemirror-view';
 
 import { type EditorControlApi } from '#/domain';
+
 import { mapChildren } from '../document';
 import { findItemType, findList } from '../queries';
 import { type SchemaBundle } from '../schema';
