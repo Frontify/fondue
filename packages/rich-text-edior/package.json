@@ -47,6 +47,7 @@
     },
     "dependencies": {
         "@frontify/fondue-components": "workspace:*",
+        "@frontify/fondue-icons": "workspace:*",
         "@frontify/fondue-tokens": "workspace:*",
         "prosemirror-commands": "^1.7.1",
         "prosemirror-history": "^1.5.0",

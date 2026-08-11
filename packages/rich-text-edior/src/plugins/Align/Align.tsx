@@ -1,6 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type RteBlockNode, type RtePlugin } from '#/RichTextEditor';
+import {
+    type FondueIcon,
+    IconTextAlignmentCentre,
+    IconTextAlignmentJustify,
+    IconTextAlignmentLeft,
+    IconTextAlignmentRight,
+} from '@frontify/fondue-icons';
+
+import { definePlugin, type RteBlockNode } from '#/RichTextEditor';
 
 import { ToolbarButton } from '../ToolbarButton/ToolbarButton';
 
@@ -13,14 +21,14 @@ export type AlignAttribute = {
     align?: 'left' | 'center' | 'right' | 'justify';
 };
 
-const ALIGNMENTS: { value: NonNullable<AlignAttribute['align']>; label: string; title: string }[] = [
-    { value: 'left', label: '⇤', title: 'Align left' },
-    { value: 'center', label: '↔', title: 'Align center' },
-    { value: 'right', label: '⇥', title: 'Align right' },
-    { value: 'justify', label: '☰', title: 'Justify' },
+const ALIGNMENTS: { value: NonNullable<AlignAttribute['align']>; icon: FondueIcon; title: string }[] = [
+    { value: 'left', icon: IconTextAlignmentLeft, title: 'Align left' },
+    { value: 'center', icon: IconTextAlignmentCentre, title: 'Align center' },
+    { value: 'right', icon: IconTextAlignmentRight, title: 'Align right' },
+    { value: 'justify', icon: IconTextAlignmentJustify, title: 'Justify' },
 ];
 
-export const AlignPlugin: RtePlugin = {
+export const AlignPlugin = definePlugin(() => ({
     id: 'align',
     schema: {
         blockAttributes: [
@@ -33,7 +41,7 @@ export const AlignPlugin: RtePlugin = {
     },
     toolbar: (api) => (
         <>
-            {ALIGNMENTS.map(({ value, label, title }) => {
+            {ALIGNMENTS.map(({ value, icon: Icon, title }) => {
                 // The current block carries the attribute this plugin injected,
                 // which the structural node type does not know about.
                 const current = api.getCurrentBlock() as (RteBlockNode & AlignAttribute) | null;
@@ -47,10 +55,10 @@ export const AlignPlugin: RtePlugin = {
                         // goes back to inheriting the editor's direction.
                         onClick={() => api.updateBlockAttributes({ align: active ? null : value })}
                     >
-                        {label}
+                        <Icon size={16} />
                     </ToolbarButton>
                 );
             })}
         </>
     ),
-};
+}));

@@ -117,6 +117,11 @@ export type RtePlugin = {
     /** A caret-anchored picker opened by a trigger character (a mention's `@`, an emoji's `:`). */
     combobox?: ComboboxSpec;
     /**
+     * UI shown under the content it is about rather than up in the toolbar —
+     * what a link puts below itself when the caret lands in one.
+     */
+    panel?: PanelSpec;
+    /**
      * A class for the editable element itself, for a feature that styles the
      * content as a whole rather than nodes it renders — the column layout.
      */
@@ -302,6 +307,34 @@ export type ComboboxSpec = {
     onSelect: (item: ComboboxItem, api: EditorControlApi) => void;
 };
 
+/**
+ * A plugin's content-anchored UI. The split is the same one the combobox makes,
+ * for the same reason: only the editor can turn a document position into a place
+ * on screen, and only the plugin knows what to put there. So the plugin returns
+ * content and nothing else — the editor puts it in a flyout under whatever it is
+ * about, and takes it away again when the selection moves on.
+ *
+ * `render` runs on every editor state change, so it reads what to show straight
+ * off the API rather than tracking the editor itself.
+ */
+export type PanelSpec = {
+    /**
+     * What the panel hangs under. `'selection'` follows the caret; naming a mark
+     * anchors it to the whole run of that mark around the selection instead — a
+     * link's panel stays put while the caret moves inside the link, and there is
+     * no anchor at all while the selection is outside one.
+     */
+    anchorTo?: 'selection' | { mark: string };
+    /**
+     * What to show, or null for "not now" — which is how a plugin narrows the
+     * anchor further (a link shows its panel only for a caret sitting in one,
+     * not for a selection dragged across it). Returning null has to happen
+     * *here* rather than inside a component: it is what tells the editor there
+     * is no flyout to open.
+     */
+    render: (api: EditorControlApi) => ReactNode;
+};
+
 // ---------------------------------------------------------------------------
 // The control API
 // ---------------------------------------------------------------------------
@@ -321,6 +354,19 @@ export type EditorControlApi = {
      * what plugin UI needs to show the current value instead of just on/off.
      */
     getMarkValue(key: string): Record<string, unknown> | null;
+    /**
+     * The whole run of a mark around the selection — what it carries and what it
+     * covers — or null when the mark is not there. The read-only half of
+     * `selectMark`, and the reason it exists: plugin UI opened on a caret can
+     * read the link it sits in without turning that caret into a selection.
+     *
+     * Unlike `getMarkValue` it is about the run rather than the point, so a
+     * caret at either *edge* of a link still finds it. That is what UI attached
+     * to a link needs, because clicking the end of a word is where a caret
+     * routinely lands — while `getMarkValue`, which answers "what would typing
+     * here carry", correctly says nothing there.
+     */
+    getMarkRun(key: string): { value: Record<string, unknown>; text: string } | null;
     /** Strip every mark from the selection — the formatting half of "reset formatting". */
     removeAllMarks(): void;
     /**

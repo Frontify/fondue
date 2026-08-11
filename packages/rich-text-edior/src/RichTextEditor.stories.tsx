@@ -8,7 +8,7 @@ import { useState } from 'react';
 // that are its own rather than a plugin's.
 import {
     BoldPlugin,
-    createMentionPlugin,
+    MentionPlugin,
     defaultPlugins,
     EmojiPlugin,
     ItalicPlugin,
@@ -18,7 +18,7 @@ import {
     RichTextEditor,
 } from './index';
 
-/** Who can be mentioned is the app's business, which is why the mention plugin is a factory. */
+/** Who can be mentioned is the app's business, which is why the mention plugin requires it as an option. */
 const MENTIONABLE: MentionItem[] = [
     { id: 'jane', label: 'Jane Doe', hint: 'jane@example.com' },
     { id: 'john', label: 'John Smith', hint: 'john@example.com' },
@@ -275,11 +275,11 @@ export const CommentBox: Story = {
                     value={doc}
                     onChange={setDoc}
                     plugins={[
-                        BoldPlugin,
-                        ItalicPlugin,
-                        LinkPlugin,
-                        EmojiPlugin,
-                        createMentionPlugin({ items: MENTIONABLE }),
+                        new BoldPlugin(),
+                        new ItalicPlugin(),
+                        new LinkPlugin(),
+                        new EmojiPlugin(),
+                        new MentionPlugin({ items: MENTIONABLE }),
                     ]}
                 />
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
@@ -310,7 +310,7 @@ export const TwoEditors: Story = {
                     <pre className={JSON_PANEL}>{JSON.stringify(fullDoc, null, 2)}</pre>
                 </div>
                 <div className={LAYOUT}>
-                    <RichTextEditor value={boldDoc} onChange={setBoldDoc} plugins={[BoldPlugin]} />
+                    <RichTextEditor value={boldDoc} onChange={setBoldDoc} plugins={[new BoldPlugin()]} />
                     <pre className={JSON_PANEL}>{JSON.stringify(boldDoc, null, 2)}</pre>
                 </div>
             </div>

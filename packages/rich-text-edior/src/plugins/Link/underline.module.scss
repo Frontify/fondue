@@ -1,0 +1,11 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+/**
+ * The line under a link, wherever it is drawn from — the anchor in the document,
+ * and the target the panel reads out. Mixins only, so `@use`-ing this from both
+ * emits no CSS of its own and neither copy owns the offset.
+ */
+@mixin underline {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}

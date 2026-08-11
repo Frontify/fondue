@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { Flyout } from '@frontify/fondue-components';
 import {
     type CSSProperties,
     Fragment,
@@ -144,6 +145,16 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     const handle = handleRef.current;
     const api = handle?.api;
 
+    // Plugin UI that belongs against the content rather than in the toolbar (the
+    // panel under a link): the plugin supplies content, the editor puts it in a
+    // flyout under what it is about. `render` is called here, not below, so a
+    // plugin that has nothing to say costs nothing at all.
+    const panels = (readOnly ? [] : (handle?.panels() ?? [])).flatMap((anchor) => {
+        const panel = api ? plugins.find((plugin) => plugin.id === anchor.pluginId)?.panel : undefined;
+        const content = panel && api ? panel.render(api) : null;
+        return content === null || content === undefined ? [] : [{ ...anchor, content }];
+    });
+
     // A trigger character opened a plugin's picker: the editor owns the list and
     // the keyboard, the plugin owns the items and what selecting one does.
     const combobox = handle?.combobox.active() ?? null;
@@ -214,6 +225,29 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
                 ) : null}
                 <div ref={containerRef} />
             </div>
+            {panels.map((panel) => (
+                // Open for as long as it is rendered at all: a panel belongs to
+                // the selection, so moving the caret off what it is about — not
+                // clicking away from it — is what takes it away.
+                <Flyout.Root key={panel.pluginId} open>
+                    <Flyout.Trigger>
+                        {/*
+                         * Not a control, just the box the flyout hangs off: an
+                         * invisible stand-in traced over the content the panel
+                         * is about, letting no clicks through to it.
+                         */}
+                        <span aria-hidden className={styles.panelAnchor} style={panel.rect} />
+                    </Flyout.Trigger>
+                    <Flyout.Content
+                        padding="compact"
+                        // The caret stays where it is: it is what the panel is
+                        // about, and any field inside takes focus for itself.
+                        onOpenAutoFocus={(event) => event.preventDefault()}
+                    >
+                        <Flyout.Body>{panel.content}</Flyout.Body>
+                    </Flyout.Content>
+                </Flyout.Root>
+            ))}
             {combobox && items.length > 0 ? (
                 <ul
                     role="listbox"

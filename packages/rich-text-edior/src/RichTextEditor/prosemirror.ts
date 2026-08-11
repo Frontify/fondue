@@ -6,6 +6,7 @@ import { InputRule, inputRules, textblockTypeInputRule, wrappingInputRule } from
 import { keymap } from 'prosemirror-keymap';
 import {
     type MarkSpec as PmMarkSpec,
+    type MarkType as PmMarkType,
     type Node as PmNode,
     type NodeSpec as PmNodeSpec,
     type NodeType as PmNodeType,
@@ -630,6 +631,17 @@ const comboboxPlugin = (triggers: { pluginId: string; trigger: string }[]): PmPl
     });
 
 // ---------------------------------------------------------------------------
+// Panels: what a plugin's content-anchored UI hangs under
+// ---------------------------------------------------------------------------
+
+/** Where one plugin's panel currently belongs on screen. */
+export type PanelAnchor = {
+    pluginId: string;
+    /** The box the anchored content occupies, in viewport coordinates. */
+    rect: { left: number; top: number; width: number; height: number };
+};
+
+// ---------------------------------------------------------------------------
 // The editor
 // ---------------------------------------------------------------------------
 
@@ -643,6 +655,42 @@ const findList = (state: EditorState, itemTypeByList: Map<string, string>): { no
         }
     }
     return null;
+};
+
+/**
+ * The stretch of text around the selection start that carries a mark, or null
+ * when the mark is not there. Adjacent text nodes may be split by other marks,
+ * so a run is a stretch of consecutive children rather than a single node —
+ * which is what makes a partly-bold link still count as one link.
+ */
+const findMarkRange = (state: EditorState, markType: PmMarkType): { from: number; to: number } | null => {
+    const { $from } = state.selection;
+    const block = $from.parent;
+    if (!block.isTextblock) {
+        return null;
+    }
+    let position = $from.start();
+    let runFrom: number | null = null;
+    let runTo = position;
+    let range: { from: number; to: number } | null = null;
+    const closeRun = (): void => {
+        if (runFrom !== null && $from.pos >= runFrom && $from.pos <= runTo) {
+            range = { from: runFrom, to: runTo };
+        }
+        runFrom = null;
+    };
+    for (let index = 0; index < block.childCount; index++) {
+        const child = block.child(index);
+        if (markType.isInSet(child.marks)) {
+            runFrom ??= position;
+            runTo = position + child.nodeSize;
+        } else {
+            closeRun();
+        }
+        position += child.nodeSize;
+    }
+    closeRun();
+    return range;
 };
 
 /** The item type of the innermost list the selection sits in — what the list commands need. */
@@ -700,6 +748,23 @@ const createApi = (view: EditorView, { schema, itemTypeByList }: SchemaBundle): 
             });
             return found;
         },
+        getMarkRun(key) {
+            const markType = schema.marks[key];
+            const range = markType ? findMarkRange(view.state, markType) : null;
+            if (!markType || range === null) {
+                return null;
+            }
+            // The run starts at a text node carrying the mark, so its attributes
+            // are the run's — the whole point of a run being one stretch.
+            const first = view.state.doc.resolve(range.from).nodeAfter;
+            const mark = first ? markType.isInSet(first.marks) : null;
+            return {
+                value: mark ? definedAttrs(mark.attrs) : {},
+                // Void nodes in between contribute nothing, so what comes back
+                // is what the user can actually read — as with getSelectedText.
+                text: view.state.doc.textBetween(range.from, range.to, ' '),
+            };
+        },
         removeAllMarks() {
             const { from, to, empty } = view.state.selection;
             const transaction = empty ? view.state.tr.setStoredMarks([]) : view.state.tr.removeMark(from, to, null);
@@ -715,38 +780,11 @@ const createApi = (view: EditorView, { schema, itemTypeByList }: SchemaBundle): 
             if (!empty) {
                 return Boolean(markType.isInSet($from.marks()));
             }
-            // Walk the caret's own text block, gathering the runs of children
-            // that carry the mark, and keep the one the caret sits in. Adjacent
-            // text nodes may be split by other marks, so a run is a stretch of
-            // consecutive children rather than a single node.
-            const block = $from.parent;
-            let position = $from.start();
-            let runFrom: number | null = null;
-            let runTo = position;
-            let range: { from: number; to: number } | null = null;
-            const closeRun = (): void => {
-                if (runFrom !== null && $from.pos >= runFrom && $from.pos <= runTo) {
-                    range = { from: runFrom, to: runTo };
-                }
-                runFrom = null;
-            };
-            for (let index = 0; index < block.childCount; index++) {
-                const child = block.child(index);
-                if (markType.isInSet(child.marks)) {
-                    runFrom ??= position;
-                    runTo = position + child.nodeSize;
-                } else {
-                    closeRun();
-                }
-                position += child.nodeSize;
-            }
-            closeRun();
-
+            const range = findMarkRange(view.state, markType);
             if (range === null) {
                 return false;
             }
-            const { from, to } = range;
-            view.dispatch(view.state.tr.setSelection(TextSelection.create(view.state.doc, from, to)));
+            view.dispatch(view.state.tr.setSelection(TextSelection.create(view.state.doc, range.from, range.to)));
             return true;
         },
         setBlockType(type, attrs) {
@@ -968,6 +1006,11 @@ export type EditorHandle = {
     setReadOnly(readOnly: boolean): void;
     /** Change the text shown while the document is empty. Empty string means none. */
     setPlaceholder(placeholder: string): void;
+    /**
+     * Where each mounted plugin's panel hangs, in mount order. A plugin whose
+     * anchor is nowhere near the selection is simply absent from the list.
+     */
+    panels(): PanelAnchor[];
     /** The caret-anchored picker, if a plugin's trigger is currently open. */
     combobox: {
         active(): ActiveCombobox | null;
@@ -1068,8 +1111,41 @@ export const createEditor = ({
 
     const tracked = (): ComboboxTracked | null => comboboxKey.getState(view.state)?.tracked ?? null;
 
+    const panelSpecs = plugins.flatMap((plugin) =>
+        plugin.panel ? [{ pluginId: plugin.id, anchorTo: plugin.panel.anchorTo ?? ('selection' as const) }] : [],
+    );
+
     return {
         api,
+        panels() {
+            return panelSpecs.flatMap(({ pluginId, anchorTo }) => {
+                const { from, to } = view.state.selection;
+                const markType = anchorTo === 'selection' ? null : schema.marks[anchorTo.mark];
+                const range =
+                    anchorTo === 'selection' ? { from, to } : markType ? findMarkRange(view.state, markType) : null;
+                if (range === null) {
+                    return [];
+                }
+                // The box around both ends of what the panel is about. A link
+                // that wraps across lines spans both of them, which is the
+                // honest answer: it is one link, and it is that tall.
+                const start = view.coordsAtPos(range.from);
+                const end = view.coordsAtPos(range.to);
+                const left = Math.min(start.left, end.left);
+                const top = Math.min(start.top, end.top);
+                return [
+                    {
+                        pluginId,
+                        rect: {
+                            left,
+                            top,
+                            width: Math.max(start.right, end.right) - left,
+                            height: Math.max(start.bottom, end.bottom) - top,
+                        },
+                    },
+                ];
+            });
+        },
         setDoc(doc) {
             if (doc !== lastEmitted) {
                 const { content } = documentToPm(doc, schema);

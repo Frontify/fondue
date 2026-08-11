@@ -6,11 +6,13 @@
  * and it is the same set the package root re-exports — so anything a shipped
  * plugin does, an external plugin author can do too.
  *
- * The spec types (BlockSpec, MarkSpec, InlineSpec, AttributeSpec, ParseRule)
- * stay unexported on purpose: they are only ever written inside an RtePlugin
- * literal, where they are contextually typed.
+ * The spec types (BlockSpec, MarkSpec, InlineSpec, AttributeSpec, ParseRule,
+ * ComboboxSpec, PanelSpec) stay unexported on purpose: they are only ever
+ * written inside the RtePlugin literal a `definePlugin` builder returns, where
+ * they are contextually typed.
  */
 
+export { definePlugin } from './definePlugin';
 export { RichTextEditor, type RichTextEditorProps } from './RichTextEditor';
 export {
     type EditorControlApi,

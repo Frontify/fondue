@@ -9,12 +9,3 @@
     font-size: 0.9em;
     font-family: var(--typography-font-family-monospace);
 }
-
-/**
- * The toolbar button's `</>` shows what it does. The class is doubled to outrank
- * the font Fondue's Button sets on itself, whichever order the two stylesheets
- * happen to land in.
- */
-.label.label {
-    font-family: var(--typography-font-family-monospace);
-}

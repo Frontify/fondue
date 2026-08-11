@@ -1,6 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type RteInlineNode, type RtePlugin } from '#/RichTextEditor';
+import { IconSpeechBubbleQuote } from '@frontify/fondue-icons';
+
+import { definePlugin, type RteInlineNode } from '#/RichTextEditor';
 
 import { ToolbarButton } from '../ToolbarButton/ToolbarButton';
 
@@ -12,7 +14,7 @@ export type QuoteBlock = {
     children: RteInlineNode[];
 };
 
-export const QuotePlugin: RtePlugin = {
+export const QuotePlugin = definePlugin(() => ({
     id: 'quote',
     schema: {
         blocks: [
@@ -26,9 +28,13 @@ export const QuotePlugin: RtePlugin = {
     toolbar: (api) => {
         const active = api.isBlockActive('quote');
         return (
-            <ToolbarButton active={active} onClick={() => api.setBlockType(active ? 'paragraph' : 'quote')}>
-                ❝
+            <ToolbarButton
+                title="Quote"
+                active={active}
+                onClick={() => api.setBlockType(active ? 'paragraph' : 'quote')}
+            >
+                <IconSpeechBubbleQuote size={16} />
             </ToolbarButton>
         );
     },
-};
+}));

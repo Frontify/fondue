@@ -1,6 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type RtePlugin } from '#/RichTextEditor';
+import { IconCode } from '@frontify/fondue-icons';
+
+import { definePlugin } from '#/RichTextEditor';
 
 import { ToolbarButton } from '../ToolbarButton/ToolbarButton';
 
@@ -11,19 +13,15 @@ export type CodeMark = {
     code?: boolean;
 };
 
-export const CodePlugin: RtePlugin = {
+export const CodePlugin = definePlugin(() => ({
     id: 'code',
     schema: {
         marks: [{ key: 'code', render: ({ children }) => <code className={styles.code}>{children}</code> }],
     },
     toolbar: (api) => (
-        <ToolbarButton
-            active={api.isMarkActive('code')}
-            onClick={() => api.toggleMark('code')}
-            className={styles.label}
-        >
-            {'</>'}
+        <ToolbarButton title="Code" active={api.isMarkActive('code')} onClick={() => api.toggleMark('code')}>
+            <IconCode size={16} />
         </ToolbarButton>
     ),
     hotkeys: { 'Mod-e': (api) => api.toggleMark('code') },
-};
+}));

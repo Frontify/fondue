@@ -1,17 +1,17 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type RtePlugin } from '#/RichTextEditor';
+import { IconTextFormatStrikethrough } from '@frontify/fondue-icons';
+
+import { definePlugin } from '#/RichTextEditor';
 
 import { ToolbarButton } from '../ToolbarButton/ToolbarButton';
-
-import styles from './strikethrough.module.scss';
 
 /** The flag this plugin sets on text nodes. */
 export type StrikethroughMark = {
     strikethrough?: boolean;
 };
 
-export const StrikethroughPlugin: RtePlugin = {
+export const StrikethroughPlugin = definePlugin(() => ({
     id: 'strikethrough',
     schema: {
         marks: [
@@ -24,12 +24,12 @@ export const StrikethroughPlugin: RtePlugin = {
     },
     toolbar: (api) => (
         <ToolbarButton
+            title="Strikethrough"
             active={api.isMarkActive('strikethrough')}
             onClick={() => api.toggleMark('strikethrough')}
-            className={styles.label}
         >
-            S
+            <IconTextFormatStrikethrough size={16} />
         </ToolbarButton>
     ),
     hotkeys: { 'Mod-Shift-x': (api) => api.toggleMark('strikethrough') },
-};
+}));

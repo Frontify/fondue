@@ -59,6 +59,18 @@
     }
 }
 
+/**
+ * The stand-in a plugin's panel hangs off: an invisible copy of the box the
+ * content it is about occupies, which is what puts the flyout under the whole
+ * link rather than under the caret in it. Nothing is drawn, and it takes no
+ * clicks, so the text underneath stays reachable.
+ */
+.panelAnchor {
+    position: fixed;
+    display: block;
+    pointer-events: none;
+}
+
 /** The caret-anchored picker. Its position is inline — it follows the caret. */
 .combobox {
     position: fixed;

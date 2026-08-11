@@ -1,6 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type EditorControlApi, type RtePlugin } from '#/RichTextEditor';
+import { IconEraser } from '@frontify/fondue-icons';
+
+import { definePlugin, type EditorControlApi } from '#/RichTextEditor';
 
 import { ToolbarButton } from '../ToolbarButton/ToolbarButton';
 
@@ -18,11 +20,11 @@ const reset = (api: EditorControlApi): void => {
     api.updateBlockAttributes({ align: null });
 };
 
-export const ResetFormattingPlugin: RtePlugin = {
+export const ResetFormattingPlugin = definePlugin(() => ({
     id: 'reset-formatting',
     toolbar: (api) => (
         <ToolbarButton title="Reset formatting" onClick={() => reset(api)}>
-            T̶x̶
+            <IconEraser size={16} />
         </ToolbarButton>
     ),
-};
+}));

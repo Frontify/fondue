@@ -1,6 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type RtePlugin } from '#/RichTextEditor';
+import { IconSubscript } from '@frontify/fondue-icons';
+
+import { definePlugin } from '#/RichTextEditor';
 
 import { ToolbarButton } from '../ToolbarButton/ToolbarButton';
 
@@ -9,15 +11,19 @@ export type SubscriptMark = {
     subscript?: boolean;
 };
 
-export const SubscriptPlugin: RtePlugin = {
+export const SubscriptPlugin = definePlugin(() => ({
     id: 'subscript',
     schema: {
         marks: [{ key: 'subscript', render: ({ children }) => <sub>{children}</sub> }],
     },
     toolbar: (api) => (
-        <ToolbarButton active={api.isMarkActive('subscript')} onClick={() => api.toggleMark('subscript')}>
-            X₂
+        <ToolbarButton
+            title="Subscript"
+            active={api.isMarkActive('subscript')}
+            onClick={() => api.toggleMark('subscript')}
+        >
+            <IconSubscript size={16} />
         </ToolbarButton>
     ),
     hotkeys: { 'Mod-,': (api) => api.toggleMark('subscript') },
-};
+}));

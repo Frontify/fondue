@@ -1,0 +1,22 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+/**
+ * The toolbar dropdown's box. Wide enough for "Image caption", the longest
+ * option, and fixed so the control keeps its size instead of stretching across
+ * the toolbar.
+ */
+.control {
+    flex: none;
+    width: 140px;
+}
+
+/**
+ * A dropdown row, which draws its option in the style that option applies. The
+ * preset classes size themselves in `em` against the surrounding text, so the
+ * row is a scaled-down preview of what the block will look like.
+ */
+.preview {
+    display: block;
+    padding-block: 2px;
+    line-height: 1.3;
+}

@@ -1,6 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type RteBlockNode, type RtePlugin } from '#/RichTextEditor';
+import { IconListBullet, IconListNumbers, type FondueIcon } from '@frontify/fondue-icons';
+
+import { definePlugin, type RteBlockNode, type RtePlugin } from '#/RichTextEditor';
 
 import { ToolbarButton } from '../ToolbarButton/ToolbarButton';
 
@@ -33,21 +35,23 @@ export type NumberedListBlock<TItem extends RteBlockNode = RteBlockNode> = {
 export const NESTABLE_LISTS = ['bulletList', 'numberedList', 'checkList'];
 
 /**
- * The item is declared by whichever list plugin is mounted — the editor keys
- * blocks by type, so declaring it twice is the same as declaring it once.
+ * The two list plugins differ only in their type, tag, icon and marker style, so
+ * they share one declaration. The item is declared by whichever of them is
+ * mounted — the editor keys blocks by type, so declaring it twice is the same as
+ * declaring it once.
  */
-const createListPlugin = ({
+const listPlugin = ({
     id,
     type,
     tag,
-    label,
+    icon: Icon,
     title,
     className,
 }: {
     id: string;
     type: 'bulletList' | 'numberedList';
     tag: 'ul' | 'ol';
-    label: string;
+    icon: FondueIcon;
     title: string;
     /** The list's own class; the marker per nesting level hangs off it. */
     className: string | undefined;
@@ -80,7 +84,7 @@ const createListPlugin = ({
     },
     toolbar: (api) => (
         <ToolbarButton active={api.isBlockActive(type)} title={title} onClick={() => api.toggleList(type)}>
-            {label}
+            <Icon size={16} />
         </ToolbarButton>
     ),
     // Enter, Tab and Shift-Tab only mean something inside a list; outside one
@@ -92,20 +96,24 @@ const createListPlugin = ({
     },
 });
 
-export const BulletListPlugin: RtePlugin = createListPlugin({
-    id: 'bullet-list',
-    type: 'bulletList',
-    tag: 'ul',
-    label: '• ―',
-    title: 'Bulleted list',
-    className: styles.bulletList,
-});
+export const BulletListPlugin = definePlugin(() =>
+    listPlugin({
+        id: 'bullet-list',
+        type: 'bulletList',
+        tag: 'ul',
+        icon: IconListBullet,
+        title: 'Bulleted list',
+        className: styles.bulletList,
+    }),
+);
 
-export const NumberedListPlugin: RtePlugin = createListPlugin({
-    id: 'numbered-list',
-    type: 'numberedList',
-    tag: 'ol',
-    label: '1. ―',
-    title: 'Numbered list',
-    className: styles.numberedList,
-});
+export const NumberedListPlugin = definePlugin(() =>
+    listPlugin({
+        id: 'numbered-list',
+        type: 'numberedList',
+        tag: 'ol',
+        icon: IconListNumbers,
+        title: 'Numbered list',
+        className: styles.numberedList,
+    }),
+);

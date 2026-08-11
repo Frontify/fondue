@@ -1,8 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type RteBlockNode, type RtePlugin } from '#/RichTextEditor';
+import { IconListCheck } from '@frontify/fondue-icons';
 
-import { NESTABLE_LISTS } from '../List/List';
+import { definePlugin, type RteBlockNode } from '#/RichTextEditor';
+
+import { NESTABLE_LISTS } from '../List';
 import { ToolbarButton } from '../ToolbarButton/ToolbarButton';
 
 import styles from './checkList.module.scss';
@@ -24,7 +26,7 @@ export type CheckListBlock<TItem extends RteBlockNode = RteBlockNode> = {
     children: TItem[];
 };
 
-export const CheckListPlugin: RtePlugin = {
+export const CheckListPlugin = definePlugin(() => ({
     id: 'check-list',
     schema: {
         blocks: [
@@ -78,7 +80,7 @@ export const CheckListPlugin: RtePlugin = {
             title="To-do list"
             onClick={() => api.toggleList('checkList')}
         >
-            ☑ ―
+            <IconListCheck size={16} />
         </ToolbarButton>
     ),
     hotkeys: {
@@ -86,4 +88,4 @@ export const CheckListPlugin: RtePlugin = {
         Tab: (api) => api.indentListItem(),
         'Shift-Tab': (api) => api.outdentListItem(),
     },
-};
+}));

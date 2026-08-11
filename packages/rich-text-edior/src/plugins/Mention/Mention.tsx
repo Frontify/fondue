@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type RtePlugin } from '#/RichTextEditor';
+import { definePlugin } from '#/RichTextEditor';
 
 import styles from './mention.module.scss';
 
@@ -18,19 +18,18 @@ export type MentionItem = {
     hint?: string;
 };
 
-/**
- * Typing `@` opens a picker at the caret; choosing an entry inserts a mention
- * element. The candidates come from the app, so this is a factory: whom you can
- * mention is not something the package can know.
- */
-export const createMentionPlugin = ({
-    items,
-    trigger = '@',
-}: {
+export type MentionPluginOptions = {
     items: readonly MentionItem[];
     /** The character that opens the picker. `@` unless the app needs something else. */
     trigger?: string;
-}): RtePlugin => ({
+};
+
+/**
+ * Typing `@` opens a picker at the caret; choosing an entry inserts a mention
+ * element. The candidates come from the app, so they are a required option:
+ * whom you can mention is not something the package can know.
+ */
+export const MentionPlugin = definePlugin(({ items, trigger = '@' }: MentionPluginOptions) => ({
     id: 'mention',
     schema: {
         inlines: [
@@ -70,4 +69,4 @@ export const createMentionPlugin = ({
             api.insertText(' ');
         },
     },
-});
+}));

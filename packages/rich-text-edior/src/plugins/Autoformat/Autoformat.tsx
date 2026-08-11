@@ -1,13 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type RtePlugin } from '#/RichTextEditor';
+import { definePlugin } from '#/RichTextEditor';
 
 /**
  * Markdown shortcuts and typography, applied while typing. Every rule is a
  * declaration the editor matches — this plugin has no schema and no UI, and
  * rules naming a mark, block or list that is not mounted simply never fire.
  */
-export const AutoformatPlugin: RtePlugin = {
+export const AutoformatPlugin = definePlugin(() => ({
     id: 'autoformat',
     inputRules: [
         // Marks. Longer delimiters are tried first, so `**bold**` never reads as italic.
@@ -49,4 +49,4 @@ export const AutoformatPlugin: RtePlugin = {
         { kind: 'quotes', match: '"', open: '“', close: '”' },
         { kind: 'quotes', match: "'", open: '‘', close: '’' },
     ],
-};
+}));

@@ -1,0 +1,34 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+/**
+ * The form's own layout. Plugin UI is plain React, styled the same way — and it
+ * carries its own width, since it is shown both in a flyout sized for it and in
+ * the panel, which is sized by whatever it is given.
+ */
+.fields {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 240px;
+}
+
+/** A label sitting on its own line above its input. */
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.newTab {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: var(--typography-font-size-small);
+}
+
+/** The form ends in its buttons, wherever it is being shown. */
+.formActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}

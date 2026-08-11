@@ -1,6 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type RtePlugin } from '#/RichTextEditor';
+import { IconTextColumnBreak } from '@frontify/fondue-icons';
+
+import { definePlugin } from '#/RichTextEditor';
 
 import { ToolbarButton } from '../ToolbarButton/ToolbarButton';
 
@@ -11,15 +13,19 @@ export type ColumnBreakBlock = {
     type: 'columnBreak';
 };
 
+export type ColumnBreakPluginOptions = {
+    /** How many columns the content is laid out in. */
+    columns?: number;
+    /** The gap between them — a CSS length, or a number of pixels. */
+    gap?: string | number;
+};
+
 /**
  * Lays the content out in columns and lets the author say where each one ends.
- * Configurable, so it is a factory rather than a plain object: the column count
- * belongs to the editor instance, not to the document.
+ * The column count belongs to the editor instance rather than to the document,
+ * which is why it is an option.
  */
-export const createColumnBreakPlugin = ({
-    columns = 2,
-    gap = 'normal',
-}: { columns?: number; gap?: string | number } = {}): RtePlugin => ({
+export const ColumnBreakPlugin = definePlugin(({ columns = 2, gap = 'normal' }: ColumnBreakPluginOptions = {}) => ({
     id: 'column-break',
     schema: {
         blocks: [
@@ -33,14 +39,14 @@ export const createColumnBreakPlugin = ({
     },
     toolbar: (api) => (
         <ToolbarButton title="Column break" onClick={() => api.insert('columnBreak')}>
-            ⇥|
+            <IconTextColumnBreak size={16} />
         </ToolbarButton>
     ),
     // The layout belongs to the content as a whole, so it goes on the editable
-    // element; the arguments reach the stylesheet as custom properties.
+    // element; the options reach the stylesheet as custom properties.
     contentClassName: styles.columns,
     contentProperties: {
         '--rte-columns': String(columns),
         '--rte-column-gap': typeof gap === 'number' ? `${gap}px` : gap,
     },
-});
+}));

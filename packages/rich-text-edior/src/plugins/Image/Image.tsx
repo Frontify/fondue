@@ -1,6 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type RtePlugin } from '#/RichTextEditor';
+import { IconImage } from '@frontify/fondue-icons';
+
+import { definePlugin } from '#/RichTextEditor';
 
 import { ToolbarButton } from '../ToolbarButton/ToolbarButton';
 
@@ -13,7 +15,7 @@ export type ImageBlock = {
     alt?: string;
 };
 
-export const ImagePlugin: RtePlugin = {
+export const ImagePlugin = definePlugin(() => ({
     id: 'image',
     schema: {
         blocks: [
@@ -35,6 +37,7 @@ export const ImagePlugin: RtePlugin = {
     },
     toolbar: (api) => (
         <ToolbarButton
+            title="Image"
             onClick={() => {
                 // Spike-level UX; a real implementation opens an asset picker.
                 const src = window.prompt('Image URL');
@@ -43,7 +46,7 @@ export const ImagePlugin: RtePlugin = {
                 }
             }}
         >
-            🖼
+            <IconImage size={16} />
         </ToolbarButton>
     ),
-};
+}));

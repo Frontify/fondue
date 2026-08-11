@@ -10,18 +10,17 @@ type ToolbarButtonProps = {
     disabled?: boolean;
     onClick?: () => void;
     /**
-     * A class from the plugin's own SCSS module, for a button whose label needs
-     * to show what it does (bold weight on "B", underline on "Link").
+     * Names the button and gives it its tooltip. Required, because every label is
+     * an icon: an icon carries no accessible name of its own, so without this
+     * there is nothing for a screen reader to announce.
      */
-    className?: string;
-    /** Names a button whose label is only a symbol; also its tooltip. */
-    title?: string;
+    title: string;
     /**
      * Anything else lands on the button. This is what lets the button be used as
      * a `Flyout.Trigger`: the flyout clones it with its own handler and its
      * `aria-expanded`/`data-state` attributes, and they have to reach the DOM.
      */
-} & Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'onClick' | 'className' | 'title' | 'children'>;
+} & Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'onClick' | 'title' | 'children'>;
 
 /**
  * Shared chrome for the built-in toolbar buttons: Fondue's `Button` in its
@@ -32,7 +31,7 @@ type ToolbarButtonProps = {
  * Takes a ref because a flyout trigger has to be able to anchor to it.
  */
 export const ToolbarButton = forwardRef<HTMLButtonElement, ToolbarButtonProps>(function ToolbarButton(
-    { children, active, disabled, onClick, className, title, ...rest },
+    { children, active, disabled, onClick, title, ...rest },
     ref,
 ): ReactNode {
     // Fondue's Button declares only the props it acts on and spreads the rest
@@ -61,9 +60,8 @@ export const ToolbarButton = forwardRef<HTMLButtonElement, ToolbarButtonProps>(f
             emphasis={active === true ? 'default' : 'weak'}
             disabled={disabled}
             title={title}
-            aria-label={title ?? rest['aria-label']}
+            aria-label={title}
             onPress={onClick}
-            className={className}
         >
             {children}
         </Button>
