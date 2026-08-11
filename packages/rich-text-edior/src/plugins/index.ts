@@ -5,7 +5,6 @@ import { autoformatPlugin } from './Autoformat';
 import { boldPlugin } from './Bold';
 import { checkListPlugin } from './CheckList';
 import { codePlugin } from './Code';
-import { emojiPlugin } from './Emoji';
 import { fontColorPlugin } from './FontColor';
 import { imagePlugin } from './Image';
 import { italicPlugin } from './Italic';
@@ -22,10 +21,10 @@ import { underlinePlugin } from './Underline';
 
 /**
  * One folder per plugin, plus `shared/` for what plugins are built *out of*
- * rather than what they are: the toolbar button they all use, and the combobox
- * that any trigger-anchored plugin can drop into its `floating`. Nothing under
- * `shared/` is a plugin, and it plays by the same rules as one — the editor is
- * only reachable through its surface (`#/RichTextEditor`).
+ * rather than what they are — currently the toolbar button they all use. Nothing
+ * under `shared/` is a plugin, and it plays by the same rules as one: the editor
+ * is only reachable through its surface (`#/RichTextEditor`). UI only one plugin
+ * needs stays with that plugin (Mention's picker, Link's panel).
  *
  * Convenience bundle of the built-in plugins that need no configuration, in
  * toolbar order. Nothing is mounted automatically — pass these (or a subset) to
@@ -53,7 +52,6 @@ export const defaultPlugins = [
     checkListPlugin(),
     quotePlugin(),
     imagePlugin(),
-    emojiPlugin(),
     resetFormattingPlugin(),
     // No toolbar of their own: a keybinding and a set of typing rules.
     softBreakPlugin(),

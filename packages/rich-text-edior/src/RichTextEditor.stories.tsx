@@ -10,7 +10,6 @@ import {
     boldPlugin,
     mentionPlugin,
     defaultPlugins,
-    emojiPlugin,
     italicPlugin,
     linkPlugin,
     type MentionItem,
@@ -274,13 +273,7 @@ export const CommentBox: Story = {
                 <RichTextEditor
                     value={doc}
                     onChange={setDoc}
-                    plugins={[
-                        boldPlugin(),
-                        italicPlugin(),
-                        linkPlugin(),
-                        emojiPlugin(),
-                        mentionPlugin({ items: MENTIONABLE }),
-                    ]}
+                    plugins={[boldPlugin(), italicPlugin(), linkPlugin(), mentionPlugin({ items: MENTIONABLE })]}
                 />
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>

@@ -44,7 +44,11 @@ export type EditorControlApi = {
     isBlockActive(type: string, attrs?: Record<string, unknown>): boolean;
     /** Set attributes on every block the selection touches — how alignment is applied. */
     updateBlockAttributes(attrs: Record<string, unknown>): void;
-    /** Insert a node at the selection — how void blocks (images) and inline elements (mentions) get added. */
+    /**
+     * Insert a node at the selection — how void blocks (images) and inline
+     * elements (mentions) get added. A selected node is replaced by it, and the
+     * caret ends up after what was inserted.
+     */
     insert(type: string, attrs?: Record<string, unknown>): void;
     /** Insert plain text at the selection, marks and all — what a combobox choice usually comes down to. */
     insertText(text: string): void;

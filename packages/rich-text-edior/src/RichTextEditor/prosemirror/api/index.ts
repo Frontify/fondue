@@ -8,6 +8,7 @@ import { type SchemaBundle } from '../schema';
 import { createBlockApi } from './blocks';
 import { createListApi } from './lists';
 import { createMarkApi } from './marks';
+import { createNodeApi } from './nodes';
 import { createTextApi } from './text';
 
 /**
@@ -18,6 +19,7 @@ import { createTextApi } from './text';
 export const createApi = (view: EditorView, bundle: SchemaBundle): EditorControlApi => ({
     ...createMarkApi(view, bundle.schema),
     ...createBlockApi(view, bundle.schema),
+    ...createNodeApi(view, bundle.schema),
     ...createListApi(view, bundle),
     ...createTextApi(view),
 });

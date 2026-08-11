@@ -57,10 +57,6 @@ export {
     type RtePlugin,
 } from './RichTextEditor';
 
-// Floating UI a plugin can reuse rather than build: the picker every trigger
-// (`@`, `:`) shows, ready to drop into a plugin's `floating`.
-export { comboboxFloating, type ComboboxItem } from './plugins/shared/Combobox/comboboxFloating';
-
 // The built-in plugins. Every one is a function, whether or not it takes options;
 // compose your own list, or start from `defaultPlugins`, which bundles the
 // zero-configuration ones in toolbar order. Nothing is mounted automatically —
@@ -73,7 +69,6 @@ export { boldPlugin } from './plugins/Bold';
 export { checkListPlugin } from './plugins/CheckList';
 export { codePlugin } from './plugins/Code';
 export { columnBreakPlugin, type ColumnBreakPluginOptions } from './plugins/ColumnBreak';
-export { emojiPlugin } from './plugins/Emoji';
 export { fontColorPlugin } from './plugins/FontColor';
 export { imagePlugin } from './plugins/Image';
 export { italicPlugin } from './plugins/Italic';

@@ -12,9 +12,9 @@
  * unexported.
  *
  * The two floating types are exported because floating UI outgrows the literal:
- * its content is a component of its own (`FloatingContext` types the props), and
- * a reusable piece of it is a function returning a `FloatingSpec` — which is
- * exactly what `comboboxFloating` is.
+ * its content is a component of its own, whose props `FloatingContext` types
+ * (Mention's picker, Link's panel), and a piece of it shared between plugins is a
+ * function returning a `FloatingSpec`.
  */
 
 export { RichTextEditor, type RichTextEditorProps } from './RichTextEditor';

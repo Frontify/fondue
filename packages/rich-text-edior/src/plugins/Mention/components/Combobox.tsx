@@ -2,11 +2,11 @@
 
 import { type ReactNode, useEffect, useState } from 'react';
 
-import { type FloatingContext } from '#/RichTextEditor';
+import { type EditorControlApi, type FloatingContext } from '#/RichTextEditor';
 
 import styles from './combobox.module.scss';
 
-/** One choice in a combobox. `hint` is the secondary text — an emoji glyph, a user's email. */
+/** One choice in the picker. `hint` is the secondary text — a user's email, a group's kind. */
 export type ComboboxItem = {
     id: string;
     label: string;
@@ -14,15 +14,15 @@ export type ComboboxItem = {
 };
 
 /**
- * The list a trigger-anchored plugin shows: the choices for what has been typed,
- * driven from the keyboard while the caret stays in the editor.
+ * The list of choices for what has been typed after the trigger, driven from the
+ * keyboard while the caret stays in the editor.
  *
- * Plugin-side on purpose. The editor knows only that some content hangs at the
- * trigger and wants the keys; what a choice looks like and what picking one does
- * belongs to whoever declared the trigger.
+ * Plugin-side on purpose. The editor knows only that some content hangs at an
+ * anchor and wants the arrow keys; what a choice looks like and what picking one
+ * does belongs to whoever declared the anchor.
  */
 export const Combobox = ({
-    context: { api, query, clearQuery, close, onKeys },
+    context,
     items,
     label,
     onSelect,
@@ -30,10 +30,13 @@ export const Combobox = ({
     context: FloatingContext;
     /** Already filtered for the query, already capped. */
     items: readonly ComboboxItem[];
-    /** What the list is called, e.g. `@ suggestions`. */
+    /** What the list is called, for screen readers. */
     label: string;
-    onSelect: (item: ComboboxItem, api: FloatingContext['api']) => void;
+    /** Insert the choice. The trigger and its query are gone from the document by then. */
+    onSelect: (item: ComboboxItem, api: EditorControlApi) => void;
 }): ReactNode => {
+    const { api, query, clearQuery, close, onKeys } = context;
+
     // Tagged with the query it belongs to: a new query means a new list, so the
     // highlight falls back to the top without an effect having to reset it.
     const [highlighted, setHighlighted] = useState({ query, index: 0 });

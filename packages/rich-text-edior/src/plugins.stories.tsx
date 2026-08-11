@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { useState } from 'react';
+import { type ReactNode, useEffect, useState } from 'react';
 
 // Stories import only the package public API — the consumer-plugin stories at
 // the bottom double as proof that the plugin contract is open: they define a
@@ -20,9 +20,7 @@ import {
     checkListPlugin,
     codePlugin,
     columnBreakPlugin,
-    comboboxFloating,
     defaultPlugins,
-    emojiPlugin,
     fontColorPlugin,
     imagePlugin,
     italicPlugin,
@@ -33,6 +31,7 @@ import {
     quotePlugin,
     resetFormattingPlugin,
     type RteBlock,
+    type FloatingContext,
     type RteDocument,
     type RteInlineNode,
     type RtePlugin,
@@ -547,26 +546,6 @@ export const CheckList: Story = {
 // Comboboxes
 // ---------------------------------------------------------------------------
 
-/** Typing `:` opens the picker at the caret; the emoji button opens the same one. */
-export const Emoji: Story = {
-    render: () => {
-        const [doc, setDoc] = useState<RteDocument>({
-            version: 1,
-            blocks: [{ type: 'paragraph', children: [{ text: '' }] }],
-        });
-
-        return (
-            <div className={LAYOUT}>
-                <p className={HINT}>
-                    Type <code>:</code> and then a name — <code>:tha</code> finds &quot;thanks&quot;.
-                </p>
-                <RichTextEditor value={doc} onChange={setDoc} plugins={[emojiPlugin()]} />
-                <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
-            </div>
-        );
-    },
-};
-
 /**
  * Whom you can mention is not something the package can know, so the
  * candidates (and the trigger character) come from the app.
@@ -590,7 +569,8 @@ export const Mention: Story = {
         return (
             <div className={LAYOUT}>
                 <p className={HINT}>
-                    Type <code>@</code> to open the picker. A mention is a void inline element, so it deletes as one.
+                    Type <code>@</code> to open the picker. A mention is a void inline element: clicking one puts the
+                    caret after it, and it deletes as one.
                 </p>
                 <RichTextEditor value={doc} onChange={setDoc} plugins={[mentionPlugin({ items: MENTIONABLE })]} />
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
@@ -768,7 +748,7 @@ export const ColumnBreak: Story = {
 
 /**
  * Every built-in plugin: marks, value marks, blocks, lists, a void block, and
- * the two comboboxes (`@` for mentions, `:` for emoji).
+ * the mention combobox (`@`).
  */
 export const AllPlugins: Story = {
     render: () => {
@@ -848,8 +828,8 @@ export const AllPlugins: Story = {
         return (
             <div className={LAYOUT}>
                 <p className={HINT}>
-                    Type <code>@</code> to mention someone, <code>:</code> for emoji, <code>## </code> for a heading,
-                    <code> - </code> for a list, <code>**bold**</code> for a mark.
+                    Type <code>@</code> to mention someone, <code>## </code> for a heading, <code> - </code> for a list,{' '}
+                    <code>**bold**</code> for a mark.
                 </p>
                 <RichTextEditor value={doc} onChange={setDoc} plugins={ALL_PLUGINS} />
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
@@ -1006,6 +986,69 @@ const EMBEDS = [
     { id: 'sheet', label: 'Spreadsheet', hint: '📊' },
 ];
 
+/**
+ * A consumer-written picker, to show what the floating contract gives an external
+ * plugin: the editor anchors this at the trigger and hands over the keys through
+ * `onKeys`; the list, the highlight and what picking one does are all local.
+ */
+const EmbedPicker = ({ context }: { context: FloatingContext }): ReactNode => {
+    const { api, query, clearQuery, close, onKeys } = context;
+    const found = EMBEDS.filter((embed) => embed.label.toLowerCase().includes(query.toLowerCase()));
+    // Tagged with its query, so a new list starts at the top on its own.
+    const [highlighted, setHighlighted] = useState({ query, index: 0 });
+    const active = highlighted.query === query ? Math.min(highlighted.index, found.length - 1) : 0;
+
+    const choose = (item: (typeof EMBEDS)[number]): void => {
+        clearQuery();
+        api.insert('embed', { provider: item.id });
+        api.insertText(' ');
+    };
+
+    useEffect(() =>
+        onKeys((event) => {
+            if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+                const step = event.key === 'ArrowDown' ? 1 : found.length - 1;
+                setHighlighted({ query, index: (active + step) % found.length });
+                return true;
+            }
+            if (event.key === 'Enter' || event.key === 'Tab') {
+                const item = found[active];
+                if (item) {
+                    choose(item);
+                }
+                return true;
+            }
+            if (event.key === 'Escape') {
+                close();
+                return true;
+            }
+            return false;
+        }),
+    );
+
+    return (
+        <ul role="listbox" aria-label="Embed suggestions" className="tw-m-0 tw-list-none tw-p-0 tw-text-body-small">
+            {found.map((item, index) => (
+                <li key={item.id} role="option" aria-selected={index === active}>
+                    <button
+                        type="button"
+                        // Never take the selection away from the editor.
+                        onMouseDown={(event) => event.preventDefault()}
+                        onClick={() => choose(item)}
+                        onMouseEnter={() => setHighlighted({ query, index })}
+                        className={`tw-flex tw-w-full tw-gap-2 tw-rounded-small tw-px-2 tw-py-1 tw-text-left ${
+                            index === active ? 'tw-bg-container-selected' : 'tw-bg-transparent'
+                        }`}
+                    >
+                        <span aria-hidden>{item.hint}</span>
+                        <span>{item.label}</span>
+                    </button>
+                </li>
+            ))}
+        </ul>
+    );
+};
+
 const embedPlugin = (): RtePlugin => ({
     id: 'embed',
     schema: {
@@ -1029,17 +1072,7 @@ const embedPlugin = (): RtePlugin => ({
             },
         ],
     },
-    floating: [
-        comboboxFloating({
-            trigger: '/',
-            label: 'Embed suggestions',
-            items: (query) => EMBEDS.filter((embed) => embed.label.toLowerCase().includes(query.toLowerCase())),
-            onSelect: (item, api) => {
-                api.insert('embed', { provider: item.id });
-                api.insertText(' ');
-            },
-        }),
-    ],
+    floating: [{ anchor: { trigger: '/' }, render: (context) => <EmbedPicker context={context} /> }],
 });
 
 /** A consumer inline element widens the same parameter as a consumer mark. */

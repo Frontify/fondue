@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { EditorState } from 'prosemirror-state';
+import { EditorState, TextSelection } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
 import { type EditorControlApi, type RteDocumentOf, type RtePlugin } from '../types';
@@ -105,18 +105,28 @@ export const createEditor = ({
                 return false;
             },
         },
-        // A rendered element may declare itself a toggle for one of its own
-        // boolean attributes — the checkbox in a check list item.
         handleClickOn(_view, _pos, node, nodePos, event) {
+            // A rendered element may declare itself a toggle for one of its own
+            // boolean attributes — the checkbox in a check list item.
             const target = event.target as HTMLElement | null;
             const name = target?.closest?.(`[${TOGGLE_ATTRIBUTE}]`)?.getAttribute(TOGGLE_ATTRIBUTE);
-            if (!name || !(name in node.attrs)) {
-                return false;
+            if (name && name in node.attrs) {
+                view.dispatch(
+                    view.state.tr.setNodeMarkup(nodePos, undefined, { ...node.attrs, [name]: !node.attrs[name] }),
+                );
+                return true;
             }
-            view.dispatch(
-                view.state.tr.setNodeMarkup(nodePos, undefined, { ...node.attrs, [name]: !node.attrs[name] }),
-            );
-            return true;
+            // A void INLINE element (a mention) is a character, not something to
+            // select: clicking it puts the caret after it, so there is a caret to
+            // see and typing simply continues. Void blocks (images) keep the
+            // engine's own behaviour, where selecting the thing is the point.
+            if (node.isInline && node.isAtom) {
+                view.dispatch(
+                    view.state.tr.setSelection(TextSelection.create(view.state.doc, nodePos + node.nodeSize)),
+                );
+                return true;
+            }
+            return false;
         },
         dispatchTransaction(transaction) {
             view.updateState(view.state.apply(transaction));

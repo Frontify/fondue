@@ -7,10 +7,10 @@ import { type EditorView } from 'prosemirror-view';
 import { type EditorControlApi } from '../../types';
 import { shallowBlockFromPm } from '../document';
 
-/** The block half of the control API: types, attributes, and inserting nodes. */
+/** The block half of the control API: block types and the attributes on them. */
 export type BlockApi = Pick<
     EditorControlApi,
-    'setBlockType' | 'isBlockActive' | 'updateBlockAttributes' | 'insert' | 'getCurrentBlock'
+    'setBlockType' | 'isBlockActive' | 'updateBlockAttributes' | 'getCurrentBlock'
 >;
 
 export const createBlockApi = (view: EditorView, schema: Schema): BlockApi => ({
@@ -45,13 +45,6 @@ export const createBlockApi = (view: EditorView, schema: Schema): BlockApi => ({
             view.dispatch(transaction);
         }
         view.focus();
-    },
-    insert(type, attrs) {
-        const nodeType = schema.nodes[type];
-        if (nodeType) {
-            view.dispatch(view.state.tr.replaceSelectionWith(nodeType.create(attrs)));
-            view.focus();
-        }
     },
     getCurrentBlock() {
         const { $from } = view.state.selection;
