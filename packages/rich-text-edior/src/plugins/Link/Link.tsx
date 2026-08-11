@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { definePlugin } from '#/RichTextEditor';
+import { type RtePlugin } from '#/RichTextEditor';
 
 import { LinkFlyout } from './components/LinkFlyout';
 import { LinkPanel } from './components/LinkPanel';
@@ -15,7 +15,7 @@ export type LinkMark = {
     link?: { href: string; openInNewTab?: true };
 };
 
-export const LinkPlugin = definePlugin(() => ({
+export const linkPlugin = (): RtePlugin => ({
     id: 'link',
     schema: {
         marks: [
@@ -45,16 +45,19 @@ export const LinkPlugin = definePlugin(() => ({
         ],
     },
     toolbar: (api) => <LinkFlyout api={api} />,
-    panel: {
-        // The whole link, not the caret in it: the panel stays put while the
-        // caret moves through the text it is about.
-        anchorTo: { mark: 'link' },
-        // Only for a caret *in* a link. A selection dragged across one means the
-        // user is picking text to format, which is the toolbar's job — and it is
-        // also what the toolbar's own flyout leaves behind while it is open.
-        render: (api) => {
-            const run = api.getMarkRun('link');
-            return run && api.isSelectionCollapsed() ? <LinkPanel api={api} run={run} /> : null;
+    floating: [
+        {
+            // The whole link, not the caret in it: the panel stays put while the
+            // caret moves through the text it is about.
+            anchor: { mark: 'link' },
+            // Only for a caret *in* a link. A selection dragged across one means
+            // the user is picking text to format, which is the toolbar's job —
+            // and it is also what the toolbar's own flyout leaves behind while
+            // it is open.
+            render: ({ api }) => {
+                const run = api.getMarkRun('link');
+                return run && api.isSelectionCollapsed() ? <LinkPanel api={api} run={run} /> : null;
+            },
         },
-    },
-}));
+    ],
+});

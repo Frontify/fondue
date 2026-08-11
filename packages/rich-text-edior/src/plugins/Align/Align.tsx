@@ -8,9 +8,9 @@ import {
     IconTextAlignmentRight,
 } from '@frontify/fondue-icons';
 
-import { definePlugin, type RteBlockNode } from '#/RichTextEditor';
+import { type RteBlockNode, type RtePlugin } from '#/RichTextEditor';
 
-import { ToolbarButton } from '../ToolbarButton/ToolbarButton';
+import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
 
 /**
  * Alignment is an attribute on every text block rather than a block type of its
@@ -28,7 +28,7 @@ const ALIGNMENTS: { value: NonNullable<AlignAttribute['align']>; icon: FondueIco
     { value: 'justify', icon: IconTextAlignmentJustify, title: 'Justify' },
 ];
 
-export const AlignPlugin = definePlugin(() => ({
+export const alignPlugin = (): RtePlugin => ({
     id: 'align',
     schema: {
         blockAttributes: [
@@ -61,4 +61,4 @@ export const AlignPlugin = definePlugin(() => ({
             })}
         </>
     ),
-}));
+});

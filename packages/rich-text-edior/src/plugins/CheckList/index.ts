@@ -1,3 +1,3 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export { CheckListPlugin, type CheckItemBlock, type CheckListBlock } from './CheckList';
+export { checkListPlugin, type CheckItemBlock, type CheckListBlock } from './CheckList';

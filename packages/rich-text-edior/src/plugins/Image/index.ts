@@ -1,3 +1,3 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export { ImagePlugin, type ImageBlock } from './Image';
+export { imagePlugin, type ImageBlock } from './Image';

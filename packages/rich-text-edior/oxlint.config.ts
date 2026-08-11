@@ -48,9 +48,9 @@ export default defineConfig({
             },
         },
         {
-            // Engine (ProseMirror) imports are confined to one file by design.
+            // Engine (ProseMirror) imports are confined to one folder by design.
             files: ['src/**/*.{ts,tsx}'],
-            excludeFiles: ['src/RichTextEditor/prosemirror.ts'],
+            excludeFiles: ['src/RichTextEditor/prosemirror/**/*.{ts,tsx}'],
             rules: {
                 'no-restricted-imports': [
                     'error',
@@ -59,7 +59,7 @@ export default defineConfig({
                             {
                                 group: ['prosemirror-*'],
                                 message:
-                                    'ProseMirror imports are forbidden outside src/RichTextEditor/prosemirror.ts. Use the RtePlugin + EditorControlApi seam instead.',
+                                    'ProseMirror imports are forbidden outside src/RichTextEditor/prosemirror/. Use the RtePlugin + EditorControlApi seam instead.',
                             },
                         ],
                     },
@@ -79,7 +79,7 @@ export default defineConfig({
                             {
                                 group: ['prosemirror-*'],
                                 message:
-                                    'ProseMirror imports are forbidden outside src/RichTextEditor/prosemirror.ts. Use the RtePlugin + EditorControlApi seam instead.',
+                                    'ProseMirror imports are forbidden outside src/RichTextEditor/prosemirror/. Use the RtePlugin + EditorControlApi seam instead.',
                             },
                             {
                                 group: ['#/RichTextEditor/**', '#/index', '**/RichTextEditor/**'],
@@ -102,7 +102,7 @@ export default defineConfig({
                             {
                                 group: ['prosemirror-*'],
                                 message:
-                                    'ProseMirror imports are forbidden outside src/RichTextEditor/prosemirror.ts. Use the RtePlugin + EditorControlApi seam instead.',
+                                    'ProseMirror imports are forbidden outside src/RichTextEditor/prosemirror/. Use the RtePlugin + EditorControlApi seam instead.',
                             },
                             {
                                 group: [

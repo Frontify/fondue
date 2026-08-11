@@ -2,16 +2,16 @@
 
 import { IconTextFormatBold } from '@frontify/fondue-icons';
 
-import { definePlugin } from '#/RichTextEditor';
+import { type RtePlugin } from '#/RichTextEditor';
 
-import { ToolbarButton } from '../ToolbarButton/ToolbarButton';
+import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
 
 /** The flag this plugin sets on text nodes. */
 export type BoldMark = {
     bold?: boolean;
 };
 
-export const BoldPlugin = definePlugin(() => ({
+export const boldPlugin = (): RtePlugin => ({
     id: 'bold',
     schema: {
         marks: [{ key: 'bold', render: ({ children }) => <strong>{children}</strong>, parseRules: [{ tag: 'b' }] }],
@@ -22,4 +22,4 @@ export const BoldPlugin = definePlugin(() => ({
         </ToolbarButton>
     ),
     hotkeys: { 'Mod-b': (api) => api.toggleMark('bold') },
-}));
+});

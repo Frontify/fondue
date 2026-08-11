@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 // The editor's own chrome. Everything a plugin renders is styled by that
-// plugin's module instead — this file owns the frame, the toolbar strip, the
-// editable surface and the combobox.
+// plugin's module instead — this file owns the frame, the toolbar strip and the
+// editable surface.
 
 .frame {
     overflow: hidden;
@@ -60,50 +60,13 @@
 }
 
 /**
- * The stand-in a plugin's panel hangs off: an invisible copy of the box the
+ * The stand-in a plugin's floating UI hangs off: an invisible copy of the box the
  * content it is about occupies, which is what puts the flyout under the whole
  * link rather than under the caret in it. Nothing is drawn, and it takes no
  * clicks, so the text underneath stays reachable.
  */
-.panelAnchor {
+.floatingAnchor {
     position: fixed;
     display: block;
     pointer-events: none;
-}
-
-/** The caret-anchored picker. Its position is inline — it follows the caret. */
-.combobox {
-    position: fixed;
-    z-index: 20;
-    min-width: 180px;
-    max-height: 240px;
-    margin: 0;
-    padding: 4px;
-    overflow-y: auto;
-    list-style: none;
-    border: var(--border-width-default) solid var(--color-line-mid);
-    border-radius: var(--border-radius-medium);
-    background: var(--color-surface-default);
-    box-shadow: var(--shadow-mid);
-    font-family: var(--typography-font-family-primary);
-    font-size: var(--typography-font-size-small);
-}
-
-.option {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    width: 100%;
-    padding: 4px 8px;
-    border: none;
-    border-radius: var(--border-radius-medium);
-    background: transparent;
-    color: var(--color-primary-default);
-    font: inherit;
-    text-align: left;
-    cursor: pointer;
-}
-
-.optionActive {
-    background: var(--color-container-secondary-default);
 }

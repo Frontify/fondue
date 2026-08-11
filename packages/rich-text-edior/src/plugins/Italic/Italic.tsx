@@ -2,16 +2,16 @@
 
 import { IconTextFormatItalic } from '@frontify/fondue-icons';
 
-import { definePlugin } from '#/RichTextEditor';
+import { type RtePlugin } from '#/RichTextEditor';
 
-import { ToolbarButton } from '../ToolbarButton/ToolbarButton';
+import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
 
 /** The flag this plugin sets on text nodes. */
 export type ItalicMark = {
     italic?: boolean;
 };
 
-export const ItalicPlugin = definePlugin(() => ({
+export const italicPlugin = (): RtePlugin => ({
     id: 'italic',
     schema: {
         marks: [{ key: 'italic', render: ({ children }) => <em>{children}</em>, parseRules: [{ tag: 'i' }] }],
@@ -22,4 +22,4 @@ export const ItalicPlugin = definePlugin(() => ({
         </ToolbarButton>
     ),
     hotkeys: { 'Mod-i': (api) => api.toggleMark('italic') },
-}));
+});

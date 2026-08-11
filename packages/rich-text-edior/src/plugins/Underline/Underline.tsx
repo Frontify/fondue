@@ -2,16 +2,16 @@
 
 import { IconTextFormatUnderline } from '@frontify/fondue-icons';
 
-import { definePlugin } from '#/RichTextEditor';
+import { type RtePlugin } from '#/RichTextEditor';
 
-import { ToolbarButton } from '../ToolbarButton/ToolbarButton';
+import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
 
 /** The flag this plugin sets on text nodes. */
 export type UnderlineMark = {
     underline?: boolean;
 };
 
-export const UnderlinePlugin = definePlugin(() => ({
+export const underlinePlugin = (): RtePlugin => ({
     id: 'underline',
     schema: {
         marks: [{ key: 'underline', render: ({ children }) => <u>{children}</u> }],
@@ -26,4 +26,4 @@ export const UnderlinePlugin = definePlugin(() => ({
         </ToolbarButton>
     ),
     hotkeys: { 'Mod-u': (api) => api.toggleMark('underline') },
-}));
+});

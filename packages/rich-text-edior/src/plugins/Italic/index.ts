@@ -1,3 +1,3 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export { ItalicPlugin, type ItalicMark } from './Italic';
+export { italicPlugin, type ItalicMark } from './Italic';

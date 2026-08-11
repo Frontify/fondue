@@ -2,16 +2,16 @@
 
 import { IconSubscript } from '@frontify/fondue-icons';
 
-import { definePlugin } from '#/RichTextEditor';
+import { type RtePlugin } from '#/RichTextEditor';
 
-import { ToolbarButton } from '../ToolbarButton/ToolbarButton';
+import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
 
 /** The flag this plugin sets on text nodes. */
 export type SubscriptMark = {
     subscript?: boolean;
 };
 
-export const SubscriptPlugin = definePlugin(() => ({
+export const subscriptPlugin = (): RtePlugin => ({
     id: 'subscript',
     schema: {
         marks: [{ key: 'subscript', render: ({ children }) => <sub>{children}</sub> }],
@@ -26,4 +26,4 @@ export const SubscriptPlugin = definePlugin(() => ({
         </ToolbarButton>
     ),
     hotkeys: { 'Mod-,': (api) => api.toggleMark('subscript') },
-}));
+});

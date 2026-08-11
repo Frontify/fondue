@@ -2,16 +2,16 @@
 
 import { IconSuperscript } from '@frontify/fondue-icons';
 
-import { definePlugin } from '#/RichTextEditor';
+import { type RtePlugin } from '#/RichTextEditor';
 
-import { ToolbarButton } from '../ToolbarButton/ToolbarButton';
+import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
 
 /** The flag this plugin sets on text nodes. */
 export type SuperscriptMark = {
     superscript?: boolean;
 };
 
-export const SuperscriptPlugin = definePlugin(() => ({
+export const superscriptPlugin = (): RtePlugin => ({
     id: 'superscript',
     schema: {
         marks: [{ key: 'superscript', render: ({ children }) => <sup>{children}</sup> }],
@@ -26,4 +26,4 @@ export const SuperscriptPlugin = definePlugin(() => ({
         </ToolbarButton>
     ),
     hotkeys: { 'Mod-.': (api) => api.toggleMark('superscript') },
-}));
+});

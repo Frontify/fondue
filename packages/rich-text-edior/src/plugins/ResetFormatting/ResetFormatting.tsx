@@ -2,9 +2,9 @@
 
 import { IconEraser } from '@frontify/fondue-icons';
 
-import { definePlugin, type EditorControlApi } from '#/RichTextEditor';
+import { type EditorControlApi, type RtePlugin } from '#/RichTextEditor';
 
-import { ToolbarButton } from '../ToolbarButton/ToolbarButton';
+import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
 
 /**
  * Puts the selection back to plain text: marks gone, block type back to
@@ -20,11 +20,11 @@ const reset = (api: EditorControlApi): void => {
     api.updateBlockAttributes({ align: null });
 };
 
-export const ResetFormattingPlugin = definePlugin(() => ({
+export const resetFormattingPlugin = (): RtePlugin => ({
     id: 'reset-formatting',
     toolbar: (api) => (
         <ToolbarButton title="Reset formatting" onClick={() => reset(api)}>
             <IconEraser size={16} />
         </ToolbarButton>
     ),
-}));
+});

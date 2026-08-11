@@ -45,44 +45,49 @@ import {
  * its own node type with a cast, the way the shipped plugins do.
  */
 
-// The plugin contract — everything needed to write a plugin. `definePlugin` is
-// how one is declared: it turns the declaration into something mounted with
-// `new`, the same way every built-in below is.
+// The plugin contract — everything needed to write a plugin. A plugin is a
+// function returning an `RtePlugin`, which is also how every built-in below is
+// written: `boldPlugin()`, `mentionPlugin({ items })`.
 export {
-    definePlugin,
     type EditorControlApi,
+    type FloatingContext,
+    type FloatingSpec,
     type RteBlockNode,
     type RteInlineNode,
     type RtePlugin,
 } from './RichTextEditor';
 
-// The built-in plugins. Every one is mounted with `new`, whether or not it takes
-// options; compose your own list, or start from `defaultPlugins`, which bundles
-// the zero-configuration ones in toolbar order. Nothing is mounted automatically
-// — the `plugins` prop is the complete, explicit list.
+// Floating UI a plugin can reuse rather than build: the picker every trigger
+// (`@`, `:`) shows, ready to drop into a plugin's `floating`.
+export { comboboxFloating, type ComboboxItem } from './plugins/shared/Combobox/comboboxFloating';
+
+// The built-in plugins. Every one is a function, whether or not it takes options;
+// compose your own list, or start from `defaultPlugins`, which bundles the
+// zero-configuration ones in toolbar order. Nothing is mounted automatically —
+// the `plugins` prop is the complete, explicit list.
 export { defaultPlugins } from './plugins';
-export { AlignPlugin } from './plugins/Align';
-export { AutoformatPlugin } from './plugins/Autoformat';
-export { BlurOnBreakPlugin } from './plugins/BlurOnBreak';
-export { BoldPlugin } from './plugins/Bold';
-export { CheckListPlugin } from './plugins/CheckList';
-export { CodePlugin } from './plugins/Code';
-export { ColumnBreakPlugin, type ColumnBreakPluginOptions } from './plugins/ColumnBreak';
-export { EmojiPlugin } from './plugins/Emoji';
-export { FontColorPlugin } from './plugins/FontColor';
-export { ImagePlugin } from './plugins/Image';
-export { ItalicPlugin } from './plugins/Italic';
-export { LinkPlugin } from './plugins/Link';
-export { BulletListPlugin, NumberedListPlugin } from './plugins/List';
-export { MentionPlugin, type MentionItem, type MentionPluginOptions } from './plugins/Mention';
-export { QuotePlugin } from './plugins/Quote';
-export { ResetFormattingPlugin } from './plugins/ResetFormatting';
-export { SoftBreakPlugin } from './plugins/SoftBreak';
-export { StrikethroughPlugin } from './plugins/Strikethrough';
-export { SubscriptPlugin } from './plugins/Subscript';
-export { SuperscriptPlugin } from './plugins/Superscript';
-export { TextStylePlugin, type TextStyleOption, type TextStylePluginOptions } from './plugins/TextStyle';
-export { UnderlinePlugin } from './plugins/Underline';
+export { alignPlugin } from './plugins/Align';
+export { autoformatPlugin } from './plugins/Autoformat';
+export { blurOnBreakPlugin } from './plugins/BlurOnBreak';
+export { boldPlugin } from './plugins/Bold';
+export { checkListPlugin } from './plugins/CheckList';
+export { codePlugin } from './plugins/Code';
+export { columnBreakPlugin, type ColumnBreakPluginOptions } from './plugins/ColumnBreak';
+export { emojiPlugin } from './plugins/Emoji';
+export { fontColorPlugin } from './plugins/FontColor';
+export { imagePlugin } from './plugins/Image';
+export { italicPlugin } from './plugins/Italic';
+export { linkPlugin } from './plugins/Link';
+export { bulletListPlugin, numberedListPlugin } from './plugins/List';
+export { mentionPlugin, type MentionItem, type MentionPluginOptions } from './plugins/Mention';
+export { quotePlugin } from './plugins/Quote';
+export { resetFormattingPlugin } from './plugins/ResetFormatting';
+export { softBreakPlugin } from './plugins/SoftBreak';
+export { strikethroughPlugin } from './plugins/Strikethrough';
+export { subscriptPlugin } from './plugins/Subscript';
+export { superscriptPlugin } from './plugins/Superscript';
+export { textStylePlugin, type TextStyleOption, type TextStylePluginOptions } from './plugins/TextStyle';
+export { underlinePlugin } from './plugins/Underline';
 
 // ---------------------------------------------------------------------------
 // The official RTE document format

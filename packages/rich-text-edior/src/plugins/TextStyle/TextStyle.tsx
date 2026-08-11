@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { definePlugin } from '#/RichTextEditor';
+import { type RtePlugin } from '#/RichTextEditor';
 
 import { TextStyleSelect } from './components/TextStyleSelect';
 import {
@@ -29,7 +29,7 @@ export type TextStylePluginOptions = {
  * Rendering is not restricted the same way, so a document written by a
  * differently configured editor still displays as it was authored.
  */
-export const TextStylePlugin = definePlugin(({ styles: options = ALL_TEXT_STYLES }: TextStylePluginOptions = {}) => {
+export const textStylePlugin = ({ styles: options = ALL_TEXT_STYLES }: TextStylePluginOptions = {}): RtePlugin => {
     const offered = presetsFor(options);
 
     return {
@@ -61,4 +61,4 @@ export const TextStylePlugin = definePlugin(({ styles: options = ALL_TEXT_STYLES
         },
         toolbar: (api) => <TextStyleSelect api={api} options={options} />,
     };
-});
+};

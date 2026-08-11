@@ -1,3 +1,3 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export { BlurOnBreakPlugin } from './BlurOnBreak';
+export { blurOnBreakPlugin } from './BlurOnBreak';

@@ -7,12 +7,12 @@ import { useState } from 'react';
 // file (`plugins.stories.tsx`); this one is about the editor itself — the props
 // that are its own rather than a plugin's.
 import {
-    BoldPlugin,
-    MentionPlugin,
+    boldPlugin,
+    mentionPlugin,
     defaultPlugins,
-    EmojiPlugin,
-    ItalicPlugin,
-    LinkPlugin,
+    emojiPlugin,
+    italicPlugin,
+    linkPlugin,
     type MentionItem,
     type RteDocument,
     RichTextEditor,
@@ -275,11 +275,11 @@ export const CommentBox: Story = {
                     value={doc}
                     onChange={setDoc}
                     plugins={[
-                        new BoldPlugin(),
-                        new ItalicPlugin(),
-                        new LinkPlugin(),
-                        new EmojiPlugin(),
-                        new MentionPlugin({ items: MENTIONABLE }),
+                        boldPlugin(),
+                        italicPlugin(),
+                        linkPlugin(),
+                        emojiPlugin(),
+                        mentionPlugin({ items: MENTIONABLE }),
                     ]}
                 />
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
@@ -310,7 +310,7 @@ export const TwoEditors: Story = {
                     <pre className={JSON_PANEL}>{JSON.stringify(fullDoc, null, 2)}</pre>
                 </div>
                 <div className={LAYOUT}>
-                    <RichTextEditor value={boldDoc} onChange={setBoldDoc} plugins={[new BoldPlugin()]} />
+                    <RichTextEditor value={boldDoc} onChange={setBoldDoc} plugins={[boldPlugin()]} />
                     <pre className={JSON_PANEL}>{JSON.stringify(boldDoc, null, 2)}</pre>
                 </div>
             </div>

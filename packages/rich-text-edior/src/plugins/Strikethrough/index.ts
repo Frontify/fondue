@@ -1,3 +1,3 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export { StrikethroughPlugin, type StrikethroughMark } from './Strikethrough';
+export { strikethroughPlugin, type StrikethroughMark } from './Strikethrough';

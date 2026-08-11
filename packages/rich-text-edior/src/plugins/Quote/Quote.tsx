@@ -2,9 +2,9 @@
 
 import { IconSpeechBubbleQuote } from '@frontify/fondue-icons';
 
-import { definePlugin, type RteInlineNode } from '#/RichTextEditor';
+import { type RteInlineNode, type RtePlugin } from '#/RichTextEditor';
 
-import { ToolbarButton } from '../ToolbarButton/ToolbarButton';
+import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
 
 import styles from './quote.module.scss';
 
@@ -14,7 +14,7 @@ export type QuoteBlock = {
     children: RteInlineNode[];
 };
 
-export const QuotePlugin = definePlugin(() => ({
+export const quotePlugin = (): RtePlugin => ({
     id: 'quote',
     schema: {
         blocks: [
@@ -37,4 +37,4 @@ export const QuotePlugin = definePlugin(() => ({
             </ToolbarButton>
         );
     },
-}));
+});

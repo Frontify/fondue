@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { definePlugin } from '#/RichTextEditor';
+import { type RtePlugin } from '#/RichTextEditor';
 
 import { ColorSelect } from './components/ColorSelect';
 
@@ -9,7 +9,7 @@ export type FontColorMark = {
     fontColor?: { color: string };
 };
 
-export const FontColorPlugin = definePlugin(() => ({
+export const fontColorPlugin = (): RtePlugin => ({
     id: 'font-color',
     schema: {
         marks: [
@@ -25,4 +25,4 @@ export const FontColorPlugin = definePlugin(() => ({
         ],
     },
     toolbar: (api) => <ColorSelect api={api} />,
-}));
+});

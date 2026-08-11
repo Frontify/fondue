@@ -1,3 +1,3 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-export { AutoformatPlugin } from './Autoformat';
+export { autoformatPlugin } from './Autoformat';

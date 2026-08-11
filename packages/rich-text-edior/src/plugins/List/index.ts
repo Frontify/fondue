@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 export {
-    BulletListPlugin,
-    NumberedListPlugin,
+    bulletListPlugin,
+    numberedListPlugin,
     NESTABLE_LISTS,
     type BulletListBlock,
     type ListItemBlock,

@@ -2,9 +2,9 @@
 
 import { IconCode } from '@frontify/fondue-icons';
 
-import { definePlugin } from '#/RichTextEditor';
+import { type RtePlugin } from '#/RichTextEditor';
 
-import { ToolbarButton } from '../ToolbarButton/ToolbarButton';
+import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
 
 import styles from './code.module.scss';
 
@@ -13,7 +13,7 @@ export type CodeMark = {
     code?: boolean;
 };
 
-export const CodePlugin = definePlugin(() => ({
+export const codePlugin = (): RtePlugin => ({
     id: 'code',
     schema: {
         marks: [{ key: 'code', render: ({ children }) => <code className={styles.code}>{children}</code> }],
@@ -24,4 +24,4 @@ export const CodePlugin = definePlugin(() => ({
         </ToolbarButton>
     ),
     hotkeys: { 'Mod-e': (api) => api.toggleMark('code') },
-}));
+});

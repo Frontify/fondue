@@ -2,10 +2,10 @@
 
 import { IconListCheck } from '@frontify/fondue-icons';
 
-import { definePlugin, type RteBlockNode } from '#/RichTextEditor';
+import { type RteBlockNode, type RtePlugin } from '#/RichTextEditor';
 
 import { NESTABLE_LISTS } from '../List';
-import { ToolbarButton } from '../ToolbarButton/ToolbarButton';
+import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
 
 import styles from './checkList.module.scss';
 
@@ -26,7 +26,7 @@ export type CheckListBlock<TItem extends RteBlockNode = RteBlockNode> = {
     children: TItem[];
 };
 
-export const CheckListPlugin = definePlugin(() => ({
+export const checkListPlugin = (): RtePlugin => ({
     id: 'check-list',
     schema: {
         blocks: [
@@ -88,4 +88,4 @@ export const CheckListPlugin = definePlugin(() => ({
         Tab: (api) => api.indentListItem(),
         'Shift-Tab': (api) => api.outdentListItem(),
     },
-}));
+});

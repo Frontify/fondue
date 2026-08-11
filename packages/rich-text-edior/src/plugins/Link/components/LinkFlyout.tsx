@@ -6,7 +6,7 @@ import { type ReactNode, useState } from 'react';
 
 import { type EditorControlApi } from '#/RichTextEditor';
 
-import { ToolbarButton } from '../../ToolbarButton/ToolbarButton';
+import { ToolbarButton } from '../../shared/ToolbarButton/ToolbarButton';
 import { type LinkDraft, readSelection } from '../helpers/draft';
 
 import { LinkForm } from './LinkForm';

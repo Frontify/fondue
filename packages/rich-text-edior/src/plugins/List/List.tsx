@@ -2,9 +2,9 @@
 
 import { IconListBullet, IconListNumbers, type FondueIcon } from '@frontify/fondue-icons';
 
-import { definePlugin, type RteBlockNode, type RtePlugin } from '#/RichTextEditor';
+import { type RteBlockNode, type RtePlugin } from '#/RichTextEditor';
 
-import { ToolbarButton } from '../ToolbarButton/ToolbarButton';
+import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
 
 import styles from './list.module.scss';
 
@@ -96,7 +96,7 @@ const listPlugin = ({
     },
 });
 
-export const BulletListPlugin = definePlugin(() =>
+export const bulletListPlugin = (): RtePlugin =>
     listPlugin({
         id: 'bullet-list',
         type: 'bulletList',
@@ -104,10 +104,9 @@ export const BulletListPlugin = definePlugin(() =>
         icon: IconListBullet,
         title: 'Bulleted list',
         className: styles.bulletList,
-    }),
-);
+    });
 
-export const NumberedListPlugin = definePlugin(() =>
+export const numberedListPlugin = (): RtePlugin =>
     listPlugin({
         id: 'numbered-list',
         type: 'numberedList',
@@ -115,5 +114,4 @@ export const NumberedListPlugin = definePlugin(() =>
         icon: IconListNumbers,
         title: 'Numbered list',
         className: styles.numberedList,
-    }),
-);
+    });

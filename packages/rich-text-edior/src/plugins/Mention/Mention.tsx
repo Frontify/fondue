@@ -1,6 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { definePlugin } from '#/RichTextEditor';
+import { type RtePlugin } from '#/RichTextEditor';
+
+import { comboboxFloating } from '../shared/Combobox/comboboxFloating';
 
 import styles from './mention.module.scss';
 
@@ -29,7 +31,7 @@ export type MentionPluginOptions = {
  * element. The candidates come from the app, so they are a required option:
  * whom you can mention is not something the package can know.
  */
-export const MentionPlugin = definePlugin(({ items, trigger = '@' }: MentionPluginOptions) => ({
+export const mentionPlugin = ({ items, trigger = '@' }: MentionPluginOptions): RtePlugin => ({
     id: 'mention',
     schema: {
         inlines: [
@@ -57,16 +59,19 @@ export const MentionPlugin = definePlugin(({ items, trigger = '@' }: MentionPlug
             },
         ],
     },
-    combobox: {
-        trigger,
-        items: (query) => {
-            const needle = query.toLowerCase();
-            return items.filter((item) => item.label.toLowerCase().includes(needle));
-        },
-        onSelect: (item, api) => {
-            api.insert('mention', { id: item.id, label: item.label });
-            // A space after the mention, so typing continues outside it.
-            api.insertText(' ');
-        },
-    },
-}));
+    floating: [
+        comboboxFloating({
+            trigger,
+            label: `${trigger} suggestions`,
+            items: (query) => {
+                const needle = query.toLowerCase();
+                return items.filter((item) => item.label.toLowerCase().includes(needle));
+            },
+            onSelect: (item, api) => {
+                api.insert('mention', { id: item.id, label: item.label });
+                // A space after the mention, so typing continues outside it.
+                api.insertText(' ');
+            },
+        }),
+    ],
+});

@@ -2,9 +2,9 @@
 
 import { IconTextColumnBreak } from '@frontify/fondue-icons';
 
-import { definePlugin } from '#/RichTextEditor';
+import { type RtePlugin } from '#/RichTextEditor';
 
-import { ToolbarButton } from '../ToolbarButton/ToolbarButton';
+import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
 
 import styles from './columnBreak.module.scss';
 
@@ -25,7 +25,7 @@ export type ColumnBreakPluginOptions = {
  * The column count belongs to the editor instance rather than to the document,
  * which is why it is an option.
  */
-export const ColumnBreakPlugin = definePlugin(({ columns = 2, gap = 'normal' }: ColumnBreakPluginOptions = {}) => ({
+export const columnBreakPlugin = ({ columns = 2, gap = 'normal' }: ColumnBreakPluginOptions = {}): RtePlugin => ({
     id: 'column-break',
     schema: {
         blocks: [
@@ -49,4 +49,4 @@ export const ColumnBreakPlugin = definePlugin(({ columns = 2, gap = 'normal' }: 
         '--rte-columns': String(columns),
         '--rte-column-gap': typeof gap === 'number' ? `${gap}px` : gap,
     },
-}));
+});

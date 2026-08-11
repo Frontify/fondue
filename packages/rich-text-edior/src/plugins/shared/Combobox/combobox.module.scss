@@ -1,0 +1,34 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+// The picker's list. Where it sits is the editor's business — it hangs in a
+// flyout under the trigger — so there is no positioning here.
+
+.list {
+    min-width: 180px;
+    max-height: 240px;
+    margin: 0;
+    padding: 0;
+    overflow-y: auto;
+    list-style: none;
+    font-family: var(--typography-font-family-primary);
+    font-size: var(--typography-font-size-small);
+}
+
+.option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 4px 8px;
+    border: none;
+    border-radius: var(--border-radius-medium);
+    background: transparent;
+    color: var(--color-primary-default);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.optionActive {
+    background: var(--color-container-secondary-default);
+}

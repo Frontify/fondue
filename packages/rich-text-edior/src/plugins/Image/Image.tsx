@@ -2,9 +2,9 @@
 
 import { IconImage } from '@frontify/fondue-icons';
 
-import { definePlugin } from '#/RichTextEditor';
+import { type RtePlugin } from '#/RichTextEditor';
 
-import { ToolbarButton } from '../ToolbarButton/ToolbarButton';
+import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
 
 import styles from './image.module.scss';
 
@@ -15,7 +15,7 @@ export type ImageBlock = {
     alt?: string;
 };
 
-export const ImagePlugin = definePlugin(() => ({
+export const imagePlugin = (): RtePlugin => ({
     id: 'image',
     schema: {
         blocks: [
@@ -49,4 +49,4 @@ export const ImagePlugin = definePlugin(() => ({
             <IconImage size={16} />
         </ToolbarButton>
     ),
-}));
+});
