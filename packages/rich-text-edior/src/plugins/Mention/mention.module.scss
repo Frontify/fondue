@@ -1,0 +1,9 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+.mention {
+    padding: 0 3px;
+    border-radius: var(--border-radius-small);
+    background: var(--color-container-highlight-default);
+    color: var(--color-container-highlight-on-highlight-container);
+    font-weight: var(--typography-font-weight-medium);
+}

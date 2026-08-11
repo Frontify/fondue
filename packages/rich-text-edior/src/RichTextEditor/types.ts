@@ -81,10 +81,14 @@ export type RteInlineElementNode = {
 
 /**
  * A feature described in engine-agnostic terms. A plugin is a plain object:
- * it declares what exists (schema), how it looks (render, styles), and how to
- * interact with it (toolbar, hotkeys, input rules, combobox) — and never
- * executes anything itself; runtime effects go through the EditorControlApi it
- * is handed.
+ * it declares what exists (schema), how it looks (render), and how to interact
+ * with it (toolbar, hotkeys, input rules, combobox) — and never executes
+ * anything itself; runtime effects go through the EditorControlApi it is handed.
+ *
+ * Styling is not part of this contract: a plugin's render function puts its own
+ * SCSS-module class on the elements it returns, which is also how its toolbar UI
+ * is styled. The two fields below are the exception — a feature that lays out
+ * the *whole* content has nothing of its own to hang a class on.
  */
 export type RtePlugin = {
     id: string;
@@ -113,10 +117,15 @@ export type RtePlugin = {
     /** A caret-anchored picker opened by a trigger character (a mention's `@`, an emoji's `:`). */
     combobox?: ComboboxSpec;
     /**
-     * CSS for this plugin's rendered output. Selectors are plain
-     * (`blockquote { … }`) — the editor scopes them to its own content.
+     * A class for the editable element itself, for a feature that styles the
+     * content as a whole rather than nodes it renders — the column layout.
      */
-    styles?: string;
+    contentClassName?: string;
+    /**
+     * Custom properties set alongside it, which is how a value configured on the
+     * plugin reaches its stylesheet: `{ '--rte-columns': '3' }`.
+     */
+    contentProperties?: Record<string, string>;
 };
 
 /**
@@ -145,7 +154,7 @@ export type AttributeSpec = {
 export type ParseRule = {
     /** Element that is recognized, e.g. `h2` or `b`. */
     tag: string;
-    /** Attribute values this element implies, e.g. `{ level: 2 }` for `h2`. */
+    /** Attribute values this element implies, e.g. `{ style: 'heading2' }` for `h2`. */
     attributes?: Record<string, unknown>;
 };
 
@@ -185,7 +194,7 @@ export type BlockSpec = {
      * an otherwise declarative render stays interactive.
      */
     render: (props: { node: RteBlockNode; children: ReactNode }) => ReactNode;
-    /** How pasted HTML becomes this block, e.g. `[{ tag: 'h2', attributes: { level: 2 } }]`. */
+    /** How pasted HTML becomes this block, e.g. `[{ tag: 'h2', attributes: { style: 'heading2' } }]`. */
     parseRules?: readonly ParseRule[];
 };
 
@@ -220,6 +229,18 @@ export type MarkSpec = {
     render: (props: { children: ReactNode; value: Record<string, unknown> }) => ReactNode;
     /** Additional rules for recognizing pasted HTML, e.g. `[{ tag: 'b' }]` for bold. */
     parseRules?: readonly ParseRule[];
+    /**
+     * Where this mark sits when marks nest on the same text: lower wraps
+     * higher, and marks that tie keep the order their plugins were passed in.
+     * Defaults to `0`, which is what a mark whose element is only a box for
+     * its own styling wants.
+     *
+     * It matters when one mark's styling is read off the element another mark
+     * draws: a text decoration takes the colour of the element that draws it
+     * and descendants cannot change it, so the colour mark declares a lower
+     * number to wrap underline and strikethrough rather than sit inside them.
+     */
+    nesting?: number;
 };
 
 /**
@@ -318,6 +339,14 @@ export type EditorControlApi = {
     insert(type: string, attrs?: Record<string, unknown>): void;
     /** Insert plain text at the selection, marks and all — what a combobox choice usually comes down to. */
     insertText(text: string): void;
+    /** The plain text the selection covers, empty when it is collapsed — what plugin UI prefills a text field with. */
+    getSelectedText(): string;
+    /**
+     * Replace the selection with text and leave that text selected, so a mark
+     * command right after applies to exactly it — how the link flyout attaches
+     * a link to text that was typed in it rather than selected in the editor.
+     */
+    replaceSelectionWithText(text: string): void;
     /** The block the selection starts in — type and attributes only, no children. For toolbar state. */
     getCurrentBlock(): RteBlockNode | null;
 

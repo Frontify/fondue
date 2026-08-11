@@ -1,28 +1,25 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import '@frontify/fondue-components/styles';
-import '@frontify/fondue-tokens/styles';
 import { type ReactNode } from 'react';
 
-import { type AlignAttribute } from './plugins/align';
-import { type BoldMark } from './plugins/bold';
-import { type CheckItemBlock, type CheckListBlock } from './plugins/checkList';
-import { type CodeMark } from './plugins/code';
-import { type ColumnBreakBlock } from './plugins/columnBreak';
-import { type FontColorMark } from './plugins/fontColor';
-import { type HeadingBlock } from './plugins/heading';
-import { type ImageBlock } from './plugins/image';
-import { type ItalicMark } from './plugins/italic';
-import { type LinkMark } from './plugins/link';
-import { type BulletListBlock, type ListItemBlock, type NumberedListBlock } from './plugins/list';
-import { type MentionInline } from './plugins/mention';
-import { type QuoteBlock } from './plugins/quote';
-import { type BreakInline } from './plugins/softBreak';
-import { type StrikethroughMark } from './plugins/strikethrough';
-import { type SubscriptMark } from './plugins/subscript';
-import { type SuperscriptMark } from './plugins/superscript';
-import { type TextStyleBlock } from './plugins/textStyle';
-import { type UnderlineMark } from './plugins/underline';
+import { type AlignAttribute } from './plugins/Align/Align';
+import { type BoldMark } from './plugins/Bold/Bold';
+import { type CheckItemBlock, type CheckListBlock } from './plugins/CheckList/CheckList';
+import { type CodeMark } from './plugins/Code/Code';
+import { type ColumnBreakBlock } from './plugins/ColumnBreak/ColumnBreak';
+import { type FontColorMark } from './plugins/FontColor/FontColor';
+import { type ImageBlock } from './plugins/Image/Image';
+import { type ItalicMark } from './plugins/Italic/Italic';
+import { type LinkMark } from './plugins/Link/Link';
+import { type BulletListBlock, type ListItemBlock, type NumberedListBlock } from './plugins/List/List';
+import { type MentionInline } from './plugins/Mention/Mention';
+import { type QuoteBlock } from './plugins/Quote/Quote';
+import { type BreakInline } from './plugins/SoftBreak/SoftBreak';
+import { type StrikethroughMark } from './plugins/Strikethrough/Strikethrough';
+import { type SubscriptMark } from './plugins/Subscript/Subscript';
+import { type SuperscriptMark } from './plugins/Superscript/Superscript';
+import { type TextStyleBlock } from './plugins/TextStyle/TextStyle';
+import { type UnderlineMark } from './plugins/Underline/Underline';
 import {
     type ParagraphBlock,
     type RteBlockNode,
@@ -55,29 +52,28 @@ export { type EditorControlApi, type RteBlockNode, type RteInlineNode, type RteP
 // zero-configuration ones in toolbar order. Nothing is mounted automatically —
 // the `plugins` prop is the complete, explicit list.
 export { defaultPlugins } from './plugins';
-export { AlignPlugin } from './plugins/align';
-export { AutoformatPlugin } from './plugins/autoformat';
-export { BlurOnBreakPlugin } from './plugins/blurOnBreak';
-export { BoldPlugin } from './plugins/bold';
-export { CheckListPlugin } from './plugins/checkList';
-export { CodePlugin } from './plugins/code';
-export { createColumnBreakPlugin } from './plugins/columnBreak';
-export { EmojiPlugin } from './plugins/emoji';
-export { FontColorPlugin } from './plugins/fontColor';
-export { HeadingPlugin } from './plugins/heading';
-export { ImagePlugin } from './plugins/image';
-export { ItalicPlugin } from './plugins/italic';
-export { LinkPlugin } from './plugins/link';
-export { BulletListPlugin, NumberedListPlugin } from './plugins/list';
-export { createMentionPlugin, type MentionItem } from './plugins/mention';
-export { QuotePlugin } from './plugins/quote';
-export { ResetFormattingPlugin } from './plugins/resetFormatting';
-export { SoftBreakPlugin } from './plugins/softBreak';
-export { StrikethroughPlugin } from './plugins/strikethrough';
-export { SubscriptPlugin } from './plugins/subscript';
-export { SuperscriptPlugin } from './plugins/superscript';
-export { TextStylePlugin } from './plugins/textStyle';
-export { UnderlinePlugin } from './plugins/underline';
+export { AlignPlugin } from './plugins/Align/Align';
+export { AutoformatPlugin } from './plugins/Autoformat/Autoformat';
+export { BlurOnBreakPlugin } from './plugins/BlurOnBreak/BlurOnBreak';
+export { BoldPlugin } from './plugins/Bold/Bold';
+export { CheckListPlugin } from './plugins/CheckList/CheckList';
+export { CodePlugin } from './plugins/Code/Code';
+export { createColumnBreakPlugin } from './plugins/ColumnBreak/ColumnBreak';
+export { EmojiPlugin } from './plugins/Emoji/Emoji';
+export { FontColorPlugin } from './plugins/FontColor/FontColor';
+export { ImagePlugin } from './plugins/Image/Image';
+export { ItalicPlugin } from './plugins/Italic/Italic';
+export { LinkPlugin } from './plugins/Link/Link';
+export { BulletListPlugin, NumberedListPlugin } from './plugins/List/List';
+export { createMentionPlugin, type MentionItem } from './plugins/Mention/Mention';
+export { QuotePlugin } from './plugins/Quote/Quote';
+export { ResetFormattingPlugin } from './plugins/ResetFormatting/ResetFormatting';
+export { SoftBreakPlugin } from './plugins/SoftBreak/SoftBreak';
+export { StrikethroughPlugin } from './plugins/Strikethrough/Strikethrough';
+export { SubscriptPlugin } from './plugins/Subscript/Subscript';
+export { SuperscriptPlugin } from './plugins/Superscript/Superscript';
+export { createTextStylePlugin, TextStylePlugin, type TextStyleOption } from './plugins/TextStyle/TextStyle';
+export { UnderlinePlugin } from './plugins/Underline/Underline';
 
 // ---------------------------------------------------------------------------
 // The official RTE document format
@@ -167,7 +163,7 @@ type OfficialList<TExtraInline extends RteInlineNode> =
  * or `EmbedInline` for an extra inline element.
  */
 export type RteBlock<TExtraInline extends RteInlineNode = never> =
-    | WithOfficialChildren<ParagraphBlock | HeadingBlock | QuoteBlock | TextStyleBlock, TExtraInline>
+    | WithOfficialChildren<ParagraphBlock | QuoteBlock | TextStyleBlock, TExtraInline>
     | ImageBlock
     | ColumnBreakBlock
     | OfficialList<TExtraInline>;
@@ -179,7 +175,7 @@ export type RteBlock<TExtraInline extends RteInlineNode = never> =
  * ```ts
  * const doc: RteDocument = {
  *     version: 1,
- *     blocks: [{ type: 'heading', level: 2, children: [{ text: 'Title' }] }],
+ *     blocks: [{ type: 'textStyle', style: 'heading2', children: [{ text: 'Title' }] }],
  * };
  * ```
  *

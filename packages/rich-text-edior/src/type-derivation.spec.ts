@@ -10,7 +10,7 @@ import { type RteBlock, type RteDocument, type RteInlineNode, type RteText } fro
 const doc: RteDocument = {
     version: 1,
     blocks: [
-        { type: 'heading', level: 2, children: [{ text: 'x', bold: true }] },
+        { type: 'textStyle', style: 'heading2', children: [{ text: 'x', bold: true }] },
         { type: 'image', src: 'https://example.com/pic.png' },
     ],
 };
@@ -20,8 +20,8 @@ const doc: RteDocument = {
 const badBlock: RteDocument = { version: 1, blocks: [{ type: 'nope', children: [] }] };
 
 // prettier-ignore
-// @ts-expect-error heading levels beyond 1|2|3|4 must be rejected
-const badLevel: RteDocument = { version: 1, blocks: [{ type: 'heading', level: 5, children: [] }] };
+// @ts-expect-error headings are a text style now, so the old block type must be rejected
+const legacyHeading: RteDocument = { version: 1, blocks: [{ type: 'heading', level: 2, children: [] }] };
 
 // Nesting: a list holds items, an item holds a paragraph and any nested list
 const nestedList: RteDocument = {
@@ -62,8 +62,8 @@ const listMarkTypo: RteDocument = { version: 1, blocks: [{ type: 'bulletList', c
 const listHoldsBlocks: RteDocument = { version: 1, blocks: [{ type: 'bulletList', children: [{ type: 'paragraph', children: [] }] }] };
 
 // prettier-ignore
-// @ts-expect-error text style variants are closed
-const variantTypo: RteDocument = { version: 1, blocks: [{ type: 'textStyle', variant: 'custom9', children: [] }] };
+// @ts-expect-error text style names are closed, headings included
+const styleTypo: RteDocument = { version: 1, blocks: [{ type: 'textStyle', style: 'heading5', children: [] }] };
 
 // prettier-ignore
 // @ts-expect-error alignment values are closed
@@ -114,11 +114,11 @@ const consumerBlock: RteDocument<RteBlock | CalloutBlock> = {
 export const __typeAssertions = [
     doc,
     badBlock,
-    badLevel,
+    legacyHeading,
     nestedList,
     listMarkTypo,
     listHoldsBlocks,
-    variantTypo,
+    styleTypo,
     alignTypo,
     shippedInlines,
     markTypo,

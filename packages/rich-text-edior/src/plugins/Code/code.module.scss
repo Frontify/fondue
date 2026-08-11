@@ -1,0 +1,20 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+/** Inline code inside the document. */
+.code {
+    padding: 0 3px;
+    border-radius: var(--border-radius-small);
+    background: var(--color-container-secondary-default);
+    // Relative, so code inside a heading stays proportional to it.
+    font-size: 0.9em;
+    font-family: var(--typography-font-family-monospace);
+}
+
+/**
+ * The toolbar button's `</>` shows what it does. The class is doubled to outrank
+ * the font Fondue's Button sets on itself, whichever order the two stylesheets
+ * happen to land in.
+ */
+.label.label {
+    font-family: var(--typography-font-family-monospace);
+}

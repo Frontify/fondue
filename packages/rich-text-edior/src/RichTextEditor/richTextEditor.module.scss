@@ -1,0 +1,97 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+// The editor's own chrome. Everything a plugin renders is styled by that
+// plugin's module instead — this file owns the frame, the toolbar strip, the
+// editable surface and the combobox.
+
+.frame {
+    overflow: hidden;
+    border: var(--border-width-default) solid var(--color-line-mid);
+    border-radius: var(--border-radius-medium);
+    background: var(--color-surface-default);
+    box-shadow: var(--shadow-default);
+}
+
+.toolbar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 6px 8px;
+    border-bottom: var(--border-width-default) solid var(--color-line-subtle);
+    background: var(--color-surface-dim);
+}
+
+/**
+ * The editable element itself. The whitespace rules are not cosmetic: without
+ * `pre-wrap` the browser turns a typed trailing space into a non-breaking one,
+ * which stops it from being read back as a space — and every typing rule that
+ * ends in a space (`## `, `- `) silently never fires.
+ */
+.content {
+    position: relative;
+    min-height: 80px;
+    padding: 10px 12px;
+    outline: none;
+    color: var(--color-primary-default);
+    font-family: var(--typography-font-family-primary);
+    font-size: var(--typography-font-size-medium);
+    // A ratio rather than a token: the content's own typography (headings, text
+    // style presets) is sized in `em`, so its leading has to scale with it.
+    line-height: 1.6;
+    font-variant-ligatures: none;
+    white-space: pre-wrap;
+    white-space: break-spaces;
+    word-wrap: break-word;
+    cursor: text;
+
+    /**
+     * The placeholder decoration sits on the empty block, so its text starts
+     * exactly where typing will. Floating keeps it out of the caret's way and
+     * the zero height keeps it from claiming a line of its own.
+     */
+    .placeholder::before {
+        content: attr(data-placeholder);
+        float: left;
+        height: 0;
+        color: var(--color-secondary-default);
+        pointer-events: none;
+    }
+}
+
+/** The caret-anchored picker. Its position is inline — it follows the caret. */
+.combobox {
+    position: fixed;
+    z-index: 20;
+    min-width: 180px;
+    max-height: 240px;
+    margin: 0;
+    padding: 4px;
+    overflow-y: auto;
+    list-style: none;
+    border: var(--border-width-default) solid var(--color-line-mid);
+    border-radius: var(--border-radius-medium);
+    background: var(--color-surface-default);
+    box-shadow: var(--shadow-mid);
+    font-family: var(--typography-font-family-primary);
+    font-size: var(--typography-font-size-small);
+}
+
+.option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 4px 8px;
+    border: none;
+    border-radius: var(--border-radius-medium);
+    background: transparent;
+    color: var(--color-primary-default);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.optionActive {
+    background: var(--color-container-secondary-default);
+}

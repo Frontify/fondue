@@ -1,8 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Fragment, type KeyboardEvent, type ReactNode, useEffect, useReducer, useRef, useState } from 'react';
+import {
+    type CSSProperties,
+    Fragment,
+    type KeyboardEvent,
+    type ReactNode,
+    useEffect,
+    useReducer,
+    useRef,
+    useState,
+} from 'react';
 
-import { createEditor, EDITOR_CLASS, type EditorHandle, PLACEHOLDER_CLASS } from './prosemirror';
+import { createEditor, type EditorHandle } from './prosemirror';
+import styles from './richTextEditor.module.scss';
 import { type ComboboxItem, type RteBlockNode, type RteDocumentOf, type RtePlugin } from './types';
 
 /**
@@ -43,41 +53,11 @@ const EMPTY_DOC: RteDocumentOf = {
 const COMBOBOX_LIMIT = 8;
 
 /**
- * The editable element's own CSS. The whitespace rules are not cosmetic: without
- * `pre-wrap` the browser turns a typed trailing space into a non-breaking one,
- * which stops it from being read back as a space — and every typing rule that
- * ends in a space (`## `, `- `) silently never fires.
+ * Joins the class names that are actually set. Also the one place that turns a
+ * CSS-module lookup into a plain string — every one of them is typed as possibly
+ * missing.
  */
-const EDITOR_CSS = `
-.${EDITOR_CLASS} {
-    position: relative;
-    outline: none;
-    padding: 10px 12px;
-    min-height: 80px;
-    font-size: 14px;
-    line-height: 1.6;
-    color: #111;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    cursor: text;
-    white-space: pre-wrap;
-    white-space: break-spaces;
-    word-wrap: break-word;
-    font-variant-ligatures: none;
-}
-
-/*
- * The placeholder decoration sits on the empty block, so its text starts
- * exactly where typing will. Floating keeps it out of the caret's way and the
- * zero height keeps it from claiming a line of its own.
- */
-.${EDITOR_CLASS} .${PLACEHOLDER_CLASS}::before {
-    content: attr(data-placeholder);
-    float: left;
-    height: 0;
-    pointer-events: none;
-    color: #9ca3af;
-}
-`;
+const classNames = (...names: (string | false | undefined)[]): string => names.filter(Boolean).join(' ');
 
 export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     value,
@@ -107,6 +87,10 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
 
     const pluginsKey = plugins.map((plugin) => plugin.id).join('|');
 
+    // A plugin that lays out the whole content (columns) styles the editable
+    // element rather than anything it renders itself.
+    const contentClassName = classNames(styles.content, ...plugins.map((plugin) => plugin.contentClassName));
+
     useEffect(() => {
         const container = containerRef.current;
         if (!container) {
@@ -119,6 +103,8 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
             plugins,
             readOnly: initialRef.current.readOnly,
             placeholder: initialRef.current.placeholder,
+            contentClassName,
+            placeholderClassName: classNames(styles.placeholder),
             onDocChange: (doc) => {
                 // The engine emits the structural form; it is only as narrow
                 // as the mounted plugin set, which the caller declared via TBlock.
@@ -204,37 +190,23 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
         event.stopPropagation();
     };
 
-    // Plugin styles are plain CSS; scoping them here keeps them off the toolbar.
-    const pluginStyles = plugins.flatMap((plugin) =>
-        plugin.styles ? [`.${EDITOR_CLASS} {\n${plugin.styles}\n}`] : [],
+    // Custom properties a plugin sets for the whole content (a column count).
+    // They sit on the wrapper, which re-renders — so a changed value applies
+    // without the editor being rebuilt — and inherit into the editable element.
+    const contentProperties = Object.fromEntries(
+        plugins.flatMap((plugin) => Object.entries(plugin.contentProperties ?? {})),
     );
 
     return (
         <>
-            <style>{[EDITOR_CSS, ...pluginStyles].join('\n')}</style>
             <div
                 onKeyDownCapture={handleKeyDownCapture}
-                style={{
-                    border: '1px solid #d1d5db',
-                    borderRadius: 6,
-                    background: '#fff',
-                    boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
-                    overflow: 'hidden',
-                }}
+                className={styles.frame}
+                // Custom properties are not part of React's CSSProperties.
+                style={contentProperties as CSSProperties}
             >
                 {api && !readOnly && plugins.some((plugin) => plugin.toolbar) ? (
-                    <div
-                        role="toolbar"
-                        style={{
-                            display: 'flex',
-                            flexWrap: 'wrap',
-                            gap: 4,
-                            padding: '6px 8px',
-                            borderBottom: '1px solid #e5e7eb',
-                            background: '#f9fafb',
-                            alignItems: 'center',
-                        }}
-                    >
+                    <div role="toolbar" className={styles.toolbar}>
                         {plugins.map((plugin) =>
                             plugin.toolbar ? <Fragment key={plugin.id}>{plugin.toolbar(api)}</Fragment> : null,
                         )}
@@ -246,24 +218,10 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
                 <ul
                     role="listbox"
                     aria-label={`${combobox.trigger} suggestions`}
-                    style={{
-                        position: 'fixed',
-                        left: combobox.coords.left,
-                        top: combobox.coords.bottom + 4,
-                        zIndex: 20,
-                        margin: 0,
-                        padding: 4,
-                        listStyle: 'none',
-                        minWidth: 180,
-                        maxHeight: 240,
-                        overflowY: 'auto',
-                        background: '#fff',
-                        border: '1px solid #d1d5db',
-                        borderRadius: 6,
-                        boxShadow: '0 4px 12px rgba(0,0,0,0.12)',
-                        fontSize: 13,
-                        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-                    }}
+                    className={styles.combobox}
+                    // The one thing that cannot live in the stylesheet: the list
+                    // is anchored to the caret.
+                    style={{ left: combobox.coords.left, top: combobox.coords.bottom + 4 }}
                 >
                     {items.map((item, index) => (
                         <li key={item.id} role="option" aria-selected={index === activeIndex}>
@@ -273,20 +231,7 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
                                 onMouseDown={(event) => event.preventDefault()}
                                 onClick={() => choose(item)}
                                 onMouseEnter={() => moveHighlight(index)}
-                                style={{
-                                    display: 'flex',
-                                    gap: 8,
-                                    width: '100%',
-                                    alignItems: 'center',
-                                    padding: '4px 8px',
-                                    border: 'none',
-                                    borderRadius: 4,
-                                    textAlign: 'left',
-                                    font: 'inherit',
-                                    color: '#111',
-                                    cursor: 'pointer',
-                                    background: index === activeIndex ? '#e5e7eb' : 'transparent',
-                                }}
+                                className={classNames(styles.option, index === activeIndex && styles.optionActive)}
                             >
                                 {item.hint ? <span aria-hidden>{item.hint}</span> : null}
                                 <span>{item.label}</span>

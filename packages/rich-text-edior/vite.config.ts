@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import react from '@vitejs/plugin-react';
+import autoprefixer from 'autoprefixer';
 import { type Plugin, defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 import tsConfigPaths from 'vite-tsconfig-paths';
@@ -45,6 +46,23 @@ export default defineConfig({
         dts({ insertTypesEntry: true, rollupTypes: true, exclude: ['**/*.stories.tsx'] }),
         externalizeJsDeps(),
     ],
+    /**
+     * The whole package is styled with SCSS modules, which end up in a single
+     * `dist/style.css` consumers import via `@frontify/fondue-rich-text-editor/styles`.
+     *
+     * PostCSS is declared inline — and deliberately without Tailwind — so no
+     * `postcss.config.*` can be picked up and no utility CSS can reach the
+     * bundle. Tailwind is a Storybook-only concern and is added there, in
+     * `.storybook/main.ts`.
+     */
+    css: {
+        postcss: { plugins: [autoprefixer()] },
+        preprocessorOptions: {
+            scss: {
+                api: 'modern-compiler',
+            },
+        },
+    },
     build: {
         lib: {
             entry: './src/index.ts',

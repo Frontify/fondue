@@ -1,0 +1,55 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+/** The line under a link, wherever it is drawn from. */
+@mixin underline {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+/**
+ * A stylesheet rule rather than an inline style on the anchor, so an explicit
+ * font colour still wins: that mark writes `color` inline, and inline beats a
+ * stylesheet whichever way round the two marks nest.
+ */
+.link {
+    color: var(--color-highlight-default);
+    cursor: pointer;
+
+    @include underline;
+
+    /**
+     * A run that sets its own colour (the font-colour mark) draws the line
+     * itself: the anchor's line takes the anchor's colour and nothing inside it
+     * can change that. At the same offset it lands on top of the anchor's,
+     * which is what makes the underline follow the colour of its own text.
+     */
+    [style*='color'] {
+        @include underline;
+    }
+}
+
+/** The toolbar button's label shows what it does. */
+.label {
+    text-decoration: underline;
+}
+
+/** The flyout's own layout. Plugin UI is plain React, styled the same way. */
+.fields {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/** A label sitting on its own line above its input. */
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.newTab {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: var(--typography-font-size-small);
+}

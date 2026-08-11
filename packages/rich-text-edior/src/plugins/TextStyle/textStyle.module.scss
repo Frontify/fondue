@@ -1,0 +1,102 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+/**
+ * The toolbar dropdown's box. Wide enough for "Image caption", the longest
+ * option, and fixed so the control keeps its size instead of stretching across
+ * the toolbar.
+ */
+.control {
+    flex: none;
+    width: 140px;
+}
+
+/**
+ * A dropdown row, which draws its option in the style that option applies. The
+ * preset classes size themselves in `em` against the surrounding text, so the
+ * row is a scaled-down preview of what the block will look like.
+ */
+.preview {
+    display: block;
+    padding-block: 2px;
+    line-height: 1.3;
+}
+
+// Every preset: the heading scale plus the ones legacy kept beside it. Sizes are
+// relative to the editor's content font, so the whole scale follows whatever the
+// host sets. The shared declarations are a mixin rather than a second class, so a
+// block's style is one lookup in the render function.
+@mixin preset {
+    margin: 0;
+}
+
+@mixin heading {
+    @include preset;
+
+    line-height: 1.3;
+}
+
+.heading1 {
+    @include heading;
+
+    font-size: 1.6em;
+    font-weight: var(--typography-font-weight-bold);
+}
+
+.heading2 {
+    @include heading;
+
+    font-size: 1.3em;
+    font-weight: var(--typography-font-weight-bold);
+}
+
+.heading3 {
+    @include heading;
+
+    font-size: 1.1em;
+    font-weight: var(--typography-font-weight-medium);
+}
+
+.heading4 {
+    @include heading;
+
+    font-size: 1em;
+    font-weight: var(--typography-font-weight-medium);
+}
+
+.custom1 {
+    @include preset;
+
+    font-size: 1.05em;
+    font-weight: var(--typography-font-weight-medium);
+    letter-spacing: 0.02em;
+}
+
+.custom2 {
+    @include preset;
+
+    color: var(--color-secondary-default);
+    font-size: 1em;
+    font-style: italic;
+}
+
+.custom3 {
+    @include preset;
+
+    font-size: 0.9em;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.imageTitle {
+    @include preset;
+
+    font-size: 1.05em;
+    font-weight: var(--typography-font-weight-bold);
+}
+
+.imageCaption {
+    @include preset;
+
+    color: var(--color-secondary-default);
+    font-size: 0.85em;
+}

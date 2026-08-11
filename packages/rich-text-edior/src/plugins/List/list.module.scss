@@ -1,0 +1,42 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+@mixin list {
+    margin: 0;
+    padding-left: 1.5em;
+}
+
+// The marker changes with the nesting depth, the way legacy configured it per
+// level. A list nested in a list of the *other* type starts over at its own
+// first level, which is what the tag-based selectors did too.
+.bulletList {
+    @include list;
+
+    list-style-type: disc;
+
+    .bulletList {
+        list-style-type: circle;
+
+        .bulletList {
+            list-style-type: square;
+        }
+    }
+}
+
+.numberedList {
+    @include list;
+
+    list-style-type: decimal;
+
+    .numberedList {
+        list-style-type: lower-alpha;
+
+        .numberedList {
+            list-style-type: lower-roman;
+        }
+    }
+}
+
+/** An item holds blocks, so its text sits in a paragraph that must not add space. */
+.item > p {
+    margin: 0;
+}

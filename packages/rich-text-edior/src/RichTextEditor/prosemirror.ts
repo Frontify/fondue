@@ -39,17 +39,6 @@ import {
  * documents at the boundary, and implements the EditorControlApi.
  */
 
-/** Class on the editable element; plugin styles and the editor's own CSS are scoped to it. */
-export const EDITOR_CLASS = 'rte';
-
-/**
- * Class the placeholder decoration puts on the one empty block, carrying the
- * text in `data-placeholder` for CSS to draw. A decoration rather than an
- * overlay so it sits inside the block and inherits its box — the placeholder
- * lines up with where typing will actually start, whatever the block's margins.
- */
-export const PLACEHOLDER_CLASS = 'rte-placeholder';
-
 /** Attribute a rendered element uses to make itself a click-toggle for a boolean attribute. */
 const TOGGLE_ATTRIBUTE = 'data-rte-toggle';
 
@@ -329,9 +318,18 @@ const buildSchema = (plugins: RtePlugin[]): SchemaBundle => {
         for (const inline of plugin.schema?.inlines ?? []) {
             nodes[inline.type] = inlineNodeSpec(inline);
         }
-        for (const mark of plugin.schema?.marks ?? []) {
-            marks[mark.key] = markPmSpec(mark);
-        }
+    }
+
+    // Marks nest in the order they are declared — the first wraps the rest —
+    // so their order here is what a mark's `nesting` asks for, rather than the
+    // order the editor happened to be given its plugins in.
+    const markSpecs = plugins
+        .flatMap((plugin) => [...(plugin.schema?.marks ?? [])])
+        .map((mark, index) => ({ mark, index }))
+        .sort((left, right) => (left.mark.nesting ?? 0) - (right.mark.nesting ?? 0) || left.index - right.index);
+
+    for (const { mark } of markSpecs) {
+        marks[mark.key] = markPmSpec(mark);
     }
 
     return { schema: new Schema({ nodes, marks }), itemTypeByList };
@@ -794,6 +792,24 @@ const createApi = (view: EditorView, { schema, itemTypeByList }: SchemaBundle): 
             view.dispatch(view.state.tr.insertText(text));
             view.focus();
         },
+        getSelectedText() {
+            const { from, to, empty } = view.state.selection;
+            // Void nodes in between (a mention, a line break) contribute
+            // nothing, so what comes back is what the user can actually read.
+            return empty ? '' : view.state.doc.textBetween(from, to, ' ');
+        },
+        replaceSelectionWithText(text) {
+            if (text === '') {
+                return;
+            }
+            const { from, to } = view.state.selection;
+            // Positions count text in the same units as a JS string, so the end
+            // of the inserted run is simply `from` plus its length.
+            const transaction = view.state.tr.insertText(text, from, to);
+            transaction.setSelection(TextSelection.create(transaction.doc, from, from + text.length));
+            view.dispatch(transaction);
+            view.focus();
+        },
         getCurrentBlock() {
             const { $from } = view.state.selection;
             for (let depth = $from.depth; depth >= 0; depth--) {
@@ -919,8 +935,13 @@ const isEmptyDoc = (doc: PmNode): boolean =>
 /**
  * Draws the placeholder, reading the current text through a thunk so changing
  * the prop does not mean re-creating the editor.
+ *
+ * A decoration on the empty block rather than an overlay, so it sits inside the
+ * block and inherits its box — the placeholder lines up with where typing will
+ * actually start, whatever the block's margins. The text rides along in
+ * `data-placeholder` for the stylesheet to draw.
  */
-const placeholderPlugin = (getPlaceholder: () => string): PmPlugin =>
+const placeholderPlugin = (getPlaceholder: () => string, className: string): PmPlugin =>
     new PmPlugin({
         props: {
             decorations(state) {
@@ -931,7 +952,7 @@ const placeholderPlugin = (getPlaceholder: () => string): PmPlugin =>
                 }
                 return DecorationSet.create(state.doc, [
                     Decoration.node(0, block.nodeSize, {
-                        class: PLACEHOLDER_CLASS,
+                        class: className,
                         'data-placeholder': placeholder,
                     }),
                 ]);
@@ -964,6 +985,8 @@ export const createEditor = ({
     plugins,
     readOnly,
     placeholder,
+    contentClassName,
+    placeholderClassName,
     onDocChange,
     onStateChange,
     onBlur,
@@ -975,6 +998,14 @@ export const createEditor = ({
     readOnly: boolean;
     /** Starting value; change it later through `setPlaceholder`. */
     placeholder: string;
+    /**
+     * Classes for the editable element. Styling belongs to the editor, so the
+     * adapter is only told what to stamp on — the editor's own content class
+     * plus whatever the mounted plugins contribute.
+     */
+    contentClassName: string;
+    /** Class the placeholder decoration carries. */
+    placeholderClassName: string;
     onDocChange: (doc: RteDocumentOf) => void;
     onStateChange: () => void;
     /** The editable element lost focus. Handed the current document, so a caller can commit it. */
@@ -994,11 +1025,14 @@ export const createEditor = ({
     const refresh = (): void => view.setProps({});
 
     const view: EditorView = new EditorView(container, {
-        attributes: { class: EDITOR_CLASS },
+        attributes: { class: contentClassName },
         editable: () => !readOnlyNow,
         state: EditorState.create({
             doc: documentToPm(initialDoc, schema),
-            plugins: [...buildPmPlugins(plugins, bundle, () => api), placeholderPlugin(() => placeholderNow)],
+            plugins: [
+                ...buildPmPlugins(plugins, bundle, () => api),
+                placeholderPlugin(() => placeholderNow, placeholderClassName),
+            ],
         }),
         handleDOMEvents: {
             blur: () => {

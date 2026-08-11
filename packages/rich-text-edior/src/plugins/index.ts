@@ -1,25 +1,24 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { AlignPlugin } from './align';
-import { AutoformatPlugin } from './autoformat';
-import { BoldPlugin } from './bold';
-import { CheckListPlugin } from './checkList';
-import { CodePlugin } from './code';
-import { EmojiPlugin } from './emoji';
-import { FontColorPlugin } from './fontColor';
-import { HeadingPlugin } from './heading';
-import { ImagePlugin } from './image';
-import { ItalicPlugin } from './italic';
-import { LinkPlugin } from './link';
-import { BulletListPlugin, NumberedListPlugin } from './list';
-import { QuotePlugin } from './quote';
-import { ResetFormattingPlugin } from './resetFormatting';
-import { SoftBreakPlugin } from './softBreak';
-import { StrikethroughPlugin } from './strikethrough';
-import { SubscriptPlugin } from './subscript';
-import { SuperscriptPlugin } from './superscript';
-import { TextStylePlugin } from './textStyle';
-import { UnderlinePlugin } from './underline';
+import { AlignPlugin } from './Align/Align';
+import { AutoformatPlugin } from './Autoformat/Autoformat';
+import { BoldPlugin } from './Bold/Bold';
+import { CheckListPlugin } from './CheckList/CheckList';
+import { CodePlugin } from './Code/Code';
+import { EmojiPlugin } from './Emoji/Emoji';
+import { FontColorPlugin } from './FontColor/FontColor';
+import { ImagePlugin } from './Image/Image';
+import { ItalicPlugin } from './Italic/Italic';
+import { LinkPlugin } from './Link/Link';
+import { BulletListPlugin, NumberedListPlugin } from './List/List';
+import { QuotePlugin } from './Quote/Quote';
+import { ResetFormattingPlugin } from './ResetFormatting/ResetFormatting';
+import { SoftBreakPlugin } from './SoftBreak/SoftBreak';
+import { StrikethroughPlugin } from './Strikethrough/Strikethrough';
+import { SubscriptPlugin } from './Subscript/Subscript';
+import { SuperscriptPlugin } from './Superscript/Superscript';
+import { TextStylePlugin } from './TextStyle/TextStyle';
+import { UnderlinePlugin } from './Underline/Underline';
 
 /**
  * Convenience bundle of the built-in plugins that need no configuration, in
@@ -32,7 +31,6 @@ import { UnderlinePlugin } from './underline';
  * `BlurOnBreakPlugin` (makes Enter commit instead of adding a paragraph).
  */
 export const defaultPlugins = [
-    HeadingPlugin,
     TextStylePlugin,
     BoldPlugin,
     ItalicPlugin,

@@ -1,0 +1,19 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+/**
+ * Goes on the editable element itself — the layout is the content's, not one
+ * block's. The values come from the plugin's arguments, which reach CSS as
+ * custom properties on the wrapper.
+ */
+.columns {
+    columns: var(--rte-columns, 1);
+    column-gap: var(--rte-column-gap, normal);
+}
+
+/** The break itself: a hairline the author can see, taking up no space. */
+.break {
+    height: 0;
+    margin: 6px 0;
+    border-top: 1px dashed var(--color-line-mid);
+    break-after: column;
+}
