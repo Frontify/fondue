@@ -9,52 +9,26 @@ import { type EditorControlApi } from '../../types';
 import { definedAttrs } from '../document';
 import { findMarkRange } from '../queries';
 
-/** The mark half of the control API: toggling, reading values, and selecting runs. */
-export type MarkApi = Pick<
-    EditorControlApi,
-    'toggleMark' | 'isMarkActive' | 'getMarkValue' | 'getMarkRun' | 'removeAllMarks' | 'selectMark'
->;
-
-export const createMarkApi = (view: EditorView, schema: Schema): MarkApi => ({
-    toggleMark(key, value) {
+/**
+ * The mark half of the control API: toggling, and the run around the selection.
+ * Whether a mark is *on* is not here — that is one field of the selection
+ * snapshot, along with everything else plugin UI reads.
+ */
+export const createMarkApi = (view: EditorView, schema: Schema): EditorControlApi['marks'] => ({
+    toggle(key, value) {
         const markType = schema.marks[key];
         if (markType) {
             pmToggleMark(markType, value)(view.state, view.dispatch);
             view.focus();
         }
     },
-    isMarkActive(key) {
-        const markType = schema.marks[key];
-        if (!markType) {
-            return false;
-        }
-        const { from, to, empty, $from } = view.state.selection;
-        return empty
-            ? Boolean(markType.isInSet(view.state.storedMarks ?? $from.marks()))
-            : view.state.doc.rangeHasMark(from, to, markType);
+    removeAll() {
+        const { from, to, empty } = view.state.selection;
+        const transaction = empty ? view.state.tr.setStoredMarks([]) : view.state.tr.removeMark(from, to, null);
+        view.dispatch(transaction);
+        view.focus();
     },
-    getMarkValue(key) {
-        const markType = schema.marks[key];
-        if (!markType) {
-            return null;
-        }
-        const { $from, from, to, empty } = view.state.selection;
-        if (empty) {
-            const mark = markType.isInSet(view.state.storedMarks ?? $from.marks());
-            return mark ? definedAttrs(mark.attrs) : null;
-        }
-        let found: Record<string, unknown> | null = null;
-        view.state.doc.nodesBetween(from, to, (node) => {
-            if (found === null && node.isText) {
-                const mark = markType.isInSet(node.marks);
-                if (mark) {
-                    found = definedAttrs(mark.attrs);
-                }
-            }
-        });
-        return found;
-    },
-    getMarkRun(key) {
+    getRun(key) {
         const markType = schema.marks[key];
         const range = markType ? findMarkRange(view.state, markType) : null;
         if (!markType || range === null) {
@@ -67,17 +41,11 @@ export const createMarkApi = (view: EditorView, schema: Schema): MarkApi => ({
         return {
             value: mark ? definedAttrs(mark.attrs) : {},
             // Void nodes in between contribute nothing, so what comes back
-            // is what the user can actually read — as with getSelectedText.
+            // is what the user can actually read — as with the snapshot's text.
             text: view.state.doc.textBetween(range.from, range.to, ' '),
         };
     },
-    removeAllMarks() {
-        const { from, to, empty } = view.state.selection;
-        const transaction = empty ? view.state.tr.setStoredMarks([]) : view.state.tr.removeMark(from, to, null);
-        view.dispatch(transaction);
-        view.focus();
-    },
-    selectMark(key) {
+    select(key) {
         const markType = schema.marks[key];
         if (!markType) {
             return false;

@@ -76,16 +76,16 @@ export const checkListPlugin = (): RtePlugin => ({
     },
     toolbar: (api) => (
         <ToolbarButton
-            active={api.isBlockActive('checkList')}
+            active={api.selection.get().blocks.some((block) => block.type === 'checkList')}
             title="To-do list"
-            onClick={() => api.toggleList('checkList')}
+            onClick={() => api.lists.toggle('checkList')}
         >
             <IconListCheck size={16} />
         </ToolbarButton>
     ),
     hotkeys: {
-        Enter: (api) => api.splitListItem() || api.outdentListItem(),
-        Tab: (api) => api.indentListItem(),
-        'Shift-Tab': (api) => api.outdentListItem(),
+        Enter: (api) => api.lists.split() || api.lists.outdent(),
+        Tab: (api) => api.lists.indent(),
+        'Shift-Tab': (api) => api.lists.outdent(),
     },
 });

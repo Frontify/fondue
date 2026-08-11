@@ -19,11 +19,11 @@ export const subscriptPlugin = (): RtePlugin => ({
     toolbar: (api) => (
         <ToolbarButton
             title="Subscript"
-            active={api.isMarkActive('subscript')}
-            onClick={() => api.toggleMark('subscript')}
+            active={'subscript' in api.selection.get().marks}
+            onClick={() => api.marks.toggle('subscript')}
         >
             <IconSubscript size={16} />
         </ToolbarButton>
     ),
-    hotkeys: { 'Mod-,': (api) => api.toggleMark('subscript') },
+    hotkeys: { 'Mod-,': (api) => api.marks.toggle('subscript') },
 });

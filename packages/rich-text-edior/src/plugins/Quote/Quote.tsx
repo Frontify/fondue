@@ -26,12 +26,14 @@ export const quotePlugin = (): RtePlugin => ({
         ],
     },
     toolbar: (api) => {
-        const active = api.isBlockActive('quote');
+        // A quote holds text, so it is the block the selection is in — never one
+        // wrapped around it.
+        const active = api.selection.get().block?.type === 'quote';
         return (
             <ToolbarButton
                 title="Quote"
                 active={active}
-                onClick={() => api.setBlockType(active ? 'paragraph' : 'quote')}
+                onClick={() => api.blocks.setType(active ? 'paragraph' : 'quote')}
             >
                 <IconSpeechBubbleQuote size={16} />
             </ToolbarButton>

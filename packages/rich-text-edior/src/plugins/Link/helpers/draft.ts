@@ -23,8 +23,9 @@ export const draftFrom = (value: Record<string, unknown> | null, text: string): 
  * dispatches, so it belongs in an event handler, never in a render.
  */
 export const readSelection = (api: EditorControlApi): LinkDraft => {
-    api.selectMark('link');
-    return draftFrom(api.getMarkValue('link'), api.getSelectedText());
+    api.marks.select('link');
+    const selection = api.selection.get();
+    return draftFrom(selection.marks.link ?? null, selection.text);
 };
 
 /**

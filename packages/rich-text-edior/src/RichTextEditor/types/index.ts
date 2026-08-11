@@ -7,7 +7,7 @@
  * only place these are translated into engine terms.
  */
 
-export { type EditorControlApi } from './api';
+export { type EditorControlApi, type RteSelectionSnapshot } from './api';
 export {
     type ParagraphBlock,
     type RteBlockNode,

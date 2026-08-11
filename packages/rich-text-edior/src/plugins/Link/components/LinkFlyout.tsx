@@ -16,7 +16,7 @@ import { LinkForm } from './LinkForm';
  * text into a link (or for reaching a link from the keyboard).
  */
 export const LinkFlyout = ({ api }: { api: EditorControlApi }): ReactNode => {
-    const active = api.isMarkActive('link');
+    const active = 'link' in api.selection.get().marks;
     // The draft is both the form's starting point and whether it is open at all:
     // there is no such thing as an open form without one.
     const [draft, setDraft] = useState<LinkDraft | null>(null);

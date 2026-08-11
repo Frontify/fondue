@@ -39,26 +39,28 @@ export const alignPlugin = (): RtePlugin => ({
             },
         ],
     },
-    toolbar: (api) => (
-        <>
-            {ALIGNMENTS.map(({ value, icon: Icon, title }) => {
-                // The current block carries the attribute this plugin injected,
-                // which the structural node type does not know about.
-                const current = api.getCurrentBlock() as (RteBlockNode & AlignAttribute) | null;
-                const active = current?.align === value;
-                return (
-                    <ToolbarButton
-                        key={value}
-                        active={active}
-                        title={title}
-                        // Clicking the active alignment clears it, so the block
-                        // goes back to inheriting the editor's direction.
-                        onClick={() => api.updateBlockAttributes({ align: active ? null : value })}
-                    >
-                        <Icon size={16} />
-                    </ToolbarButton>
-                );
-            })}
-        </>
-    ),
+    toolbar: (api) => {
+        // The block the selection is in carries the attribute this plugin
+        // injected, which the structural node type does not know about.
+        const current = api.selection.get().block as (RteBlockNode & AlignAttribute) | null;
+        return (
+            <>
+                {ALIGNMENTS.map(({ value, icon: Icon, title }) => {
+                    const active = current?.align === value;
+                    return (
+                        <ToolbarButton
+                            key={value}
+                            active={active}
+                            title={title}
+                            // Clicking the active alignment clears it, so the block
+                            // goes back to inheriting the editor's direction.
+                            onClick={() => api.blocks.updateAttributes({ align: active ? null : value })}
+                        >
+                            <Icon size={16} />
+                        </ToolbarButton>
+                    );
+                })}
+            </>
+        );
+    },
 });

@@ -25,11 +25,11 @@ export const strikethroughPlugin = (): RtePlugin => ({
     toolbar: (api) => (
         <ToolbarButton
             title="Strikethrough"
-            active={api.isMarkActive('strikethrough')}
-            onClick={() => api.toggleMark('strikethrough')}
+            active={'strikethrough' in api.selection.get().marks}
+            onClick={() => api.marks.toggle('strikethrough')}
         >
             <IconTextFormatStrikethrough size={16} />
         </ToolbarButton>
     ),
-    hotkeys: { 'Mod-Shift-x': (api) => api.toggleMark('strikethrough') },
+    hotkeys: { 'Mod-Shift-x': (api) => api.marks.toggle('strikethrough') },
 });

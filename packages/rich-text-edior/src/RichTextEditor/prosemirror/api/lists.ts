@@ -15,12 +15,10 @@ import { type SchemaBundle } from '../schema';
  * type is, comes from the schema bundle — plugins declared it with `isList`, so
  * nothing here takes an item type as an argument.
  */
-export type ListApi = Pick<
-    EditorControlApi,
-    'toggleList' | 'indentListItem' | 'outdentListItem' | 'splitListItem' | 'unwrapLists'
->;
-
-export const createListApi = (view: EditorView, { schema, itemTypeByList }: SchemaBundle): ListApi => {
+export const createListApi = (
+    view: EditorView,
+    { schema, itemTypeByList }: SchemaBundle,
+): EditorControlApi['lists'] => {
     /** Run one of the engine's list commands against the item type in scope. */
     const runListCommand = (command: (itemType: PmNodeType) => Command): boolean => {
         const itemType = findItemType(view.state, itemTypeByList, schema);
@@ -31,7 +29,7 @@ export const createListApi = (view: EditorView, { schema, itemTypeByList }: Sche
     };
 
     return {
-        toggleList(type) {
+        toggle(type) {
             const listType = schema.nodes[type];
             const itemName = itemTypeByList.get(type);
             const itemType = itemName ? schema.nodes[itemName] : undefined;
@@ -58,10 +56,10 @@ export const createListApi = (view: EditorView, { schema, itemTypeByList }: Sche
             }
             view.focus();
         },
-        indentListItem: () => runListCommand(sinkListItem),
-        outdentListItem: () => runListCommand(liftListItem),
-        splitListItem: () => runListCommand(pmSplitListItem),
-        unwrapLists() {
+        indent: () => runListCommand(sinkListItem),
+        outdent: () => runListCommand(liftListItem),
+        split: () => runListCommand(pmSplitListItem),
+        unwrapAll() {
             const { from, to } = view.state.selection;
             const lists: { node: PmNode; pos: number }[] = [];
             view.state.doc.nodesBetween(from, to, (node, pos) => {

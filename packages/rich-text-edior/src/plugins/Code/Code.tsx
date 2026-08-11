@@ -19,9 +19,13 @@ export const codePlugin = (): RtePlugin => ({
         marks: [{ key: 'code', render: ({ children }) => <code className={styles.code}>{children}</code> }],
     },
     toolbar: (api) => (
-        <ToolbarButton title="Code" active={api.isMarkActive('code')} onClick={() => api.toggleMark('code')}>
+        <ToolbarButton
+            title="Code"
+            active={'code' in api.selection.get().marks}
+            onClick={() => api.marks.toggle('code')}
+        >
             <IconCode size={16} />
         </ToolbarButton>
     ),
-    hotkeys: { 'Mod-e': (api) => api.toggleMark('code') },
+    hotkeys: { 'Mod-e': (api) => api.marks.toggle('code') },
 });

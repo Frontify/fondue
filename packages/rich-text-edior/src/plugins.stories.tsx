@@ -290,7 +290,7 @@ export const Code: Story = {
             blocks: [
                 {
                     type: 'paragraph',
-                    children: [{ text: 'Call ' }, { text: 'toggleMark()', code: true }, { text: ' (⌘E).' }],
+                    children: [{ text: 'Call ' }, { text: 'marks.toggle()', code: true }, { text: ' (⌘E).' }],
                 },
             ],
         });
@@ -863,18 +863,21 @@ const highlightPlugin = (): RtePlugin => ({
             },
         ],
     },
-    toolbar: (api) => (
-        <button
-            type="button"
-            aria-pressed={api.isMarkActive('highlight')}
-            onMouseDown={(event) => event.preventDefault()}
-            onClick={() => api.toggleMark('highlight')}
-            className={toolbarButtonClasses(api.isMarkActive('highlight'))}
-        >
-            Highlight
-        </button>
-    ),
-    hotkeys: { 'Mod-h': (api) => api.toggleMark('highlight') },
+    toolbar: (api) => {
+        const active = 'highlight' in api.selection.get().marks;
+        return (
+            <button
+                type="button"
+                aria-pressed={active}
+                onMouseDown={(event) => event.preventDefault()}
+                onClick={() => api.marks.toggle('highlight')}
+                className={toolbarButtonClasses(active)}
+            >
+                Highlight
+            </button>
+        );
+    },
+    hotkeys: { 'Mod-h': (api) => api.marks.toggle('highlight') },
 });
 
 /**
@@ -930,13 +933,13 @@ const calloutPlugin = (): RtePlugin => ({
         ],
     },
     toolbar: (api) => {
-        const active = api.getCurrentBlock()?.type === 'callout';
+        const active = api.selection.get().block?.type === 'callout';
         return (
             <button
                 type="button"
                 aria-pressed={active}
                 onMouseDown={(event) => event.preventDefault()}
-                onClick={() => (active ? api.setBlockType('paragraph') : api.setBlockType('callout'))}
+                onClick={() => (active ? api.blocks.setType('paragraph') : api.blocks.setType('callout'))}
                 className={toolbarButtonClasses(active)}
             >
                 💡

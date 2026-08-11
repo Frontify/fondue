@@ -21,7 +21,7 @@ export const TextStyleSelect = ({
     api: EditorControlApi;
     options: readonly TextStyleOption[];
 }): ReactNode => {
-    const currentBlock = api.getCurrentBlock();
+    const currentBlock = api.selection.get().block;
     // A stored document may carry a style this editor was not configured with —
     // it still renders, but the dropdown can only show what it offers, so
     // anything else reads as the paragraph baseline.
@@ -32,12 +32,12 @@ export const TextStyleSelect = ({
             return;
         }
         if (selected === PARAGRAPH) {
-            api.setBlockType(PARAGRAPH);
+            api.blocks.setType(PARAGRAPH);
         } else {
-            api.setBlockType('textStyle', { style: selected });
+            api.blocks.setType('textStyle', { style: selected });
         }
         // The menu hands focus back to its own trigger as it closes, which would
-        // undo the focus setBlockType already restored.
+        // undo the focus setType already restored.
         requestAnimationFrame(() => api.focus());
     };
 

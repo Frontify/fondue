@@ -44,8 +44,8 @@ export const LinkPanel = ({ api, run }: { api: EditorControlApi; run: LinkRun })
                     onPress={() => {
                         // The caret is somewhere in the link; the whole run has
                         // to be selected for the mark to come off all of it.
-                        api.selectMark('link');
-                        api.toggleMark('link');
+                        api.marks.select('link');
+                        api.marks.toggle('link');
                     }}
                 >
                     Remove

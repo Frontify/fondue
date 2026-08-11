@@ -19,11 +19,11 @@ export const underlinePlugin = (): RtePlugin => ({
     toolbar: (api) => (
         <ToolbarButton
             title="Underline"
-            active={api.isMarkActive('underline')}
-            onClick={() => api.toggleMark('underline')}
+            active={'underline' in api.selection.get().marks}
+            onClick={() => api.marks.toggle('underline')}
         >
             <IconTextFormatUnderline size={16} />
         </ToolbarButton>
     ),
-    hotkeys: { 'Mod-u': (api) => api.toggleMark('underline') },
+    hotkeys: { 'Mod-u': (api) => api.marks.toggle('underline') },
 });

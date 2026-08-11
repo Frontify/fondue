@@ -23,15 +23,18 @@ const markInputRule = (delimiter: string, markName: string, schema: Schema): Inp
     // itself, or typing `**bold**` fires the italic rule on `**bold*` first.
     const pattern = new RegExp(`(?:^|[^${firstChar}])${escaped}([^${firstChar}]+)${escaped}$`);
 
-    return new InputRule(pattern, (state, match, _start, end) => {
+    return new InputRule(pattern, (state, match, start, end) => {
         const content = match[1];
         const markType = schema.marks[markName];
         if (!content || !markType) {
             return null;
         }
         // The match may include that preceding character; the rewrite starts
-        // at the opening delimiter.
-        const from = end - (delimiter.length * 2 + content.length);
+        // at the opening delimiter. It has to be derived from `start`, because
+        // `end` is where the just-typed character will land — the closing
+        // delimiter is still one character short in the document.
+        const leading = match[0].length - (delimiter.length * 2 + content.length);
+        const from = start + leading;
         return state.tr
             .delete(from, end)
             .insertText(content, from)

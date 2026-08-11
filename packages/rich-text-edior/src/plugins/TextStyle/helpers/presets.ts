@@ -76,5 +76,5 @@ export const parseRuleFor = ({ name, tag }: Preset) => ({
     attributes: { style: name },
 });
 
-/** `getCurrentBlock()` returns the structural node; narrowing it makes `style` readable. */
+/** The selection snapshot's `block` is the structural node; narrowing it makes `style` readable. */
 export const isTextStyle = (block: RteBlockNode | null): block is TextStyleBlock => block?.type === 'textStyle';

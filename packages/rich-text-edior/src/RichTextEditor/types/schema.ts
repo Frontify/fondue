@@ -59,7 +59,7 @@ export type BlockSpec = {
     contains?: readonly string[];
     /**
      * True for a list: a container whose `contains` names its item type. It is
-     * what makes the list commands (`toggleList`, `indentListItem`, …) work on
+     * what makes the list commands (`lists.toggle`, `lists.indent`, …) work on
      * this block — they read the item type from here rather than being told.
      */
     isList?: boolean;

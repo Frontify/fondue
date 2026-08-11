@@ -12,12 +12,12 @@ import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
  * own — it only drives the control API.
  */
 const reset = (api: EditorControlApi): void => {
-    api.removeAllMarks();
+    api.marks.removeAll();
     // Lists first: a block type change inside a list item would leave the item
     // (and its bullet) behind.
-    api.unwrapLists();
-    api.setBlockType('paragraph');
-    api.updateBlockAttributes({ align: null });
+    api.lists.unwrapAll();
+    api.blocks.setType('paragraph');
+    api.blocks.updateAttributes({ align: null });
 };
 
 export const resetFormattingPlugin = (): RtePlugin => ({

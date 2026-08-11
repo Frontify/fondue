@@ -19,11 +19,11 @@ export const superscriptPlugin = (): RtePlugin => ({
     toolbar: (api) => (
         <ToolbarButton
             title="Superscript"
-            active={api.isMarkActive('superscript')}
-            onClick={() => api.toggleMark('superscript')}
+            active={'superscript' in api.selection.get().marks}
+            onClick={() => api.marks.toggle('superscript')}
         >
             <IconSuperscript size={16} />
         </ToolbarButton>
     ),
-    hotkeys: { 'Mod-.': (api) => api.toggleMark('superscript') },
+    hotkeys: { 'Mod-.': (api) => api.marks.toggle('superscript') },
 });

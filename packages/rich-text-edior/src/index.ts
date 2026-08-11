@@ -55,6 +55,7 @@ export {
     type RteBlockNode,
     type RteInlineNode,
     type RtePlugin,
+    type RteSelectionSnapshot,
 } from './RichTextEditor';
 
 // The built-in plugins. Every one is a function, whether or not it takes options;

@@ -83,16 +83,22 @@ const listPlugin = ({
         ],
     },
     toolbar: (api) => (
-        <ToolbarButton active={api.isBlockActive(type)} title={title} onClick={() => api.toggleList(type)}>
+        <ToolbarButton
+            // The list wraps the item that holds the text, so it is somewhere
+            // above the block the caret is in rather than that block itself.
+            active={api.selection.get().blocks.some((block) => block.type === type)}
+            title={title}
+            onClick={() => api.lists.toggle(type)}
+        >
             <Icon size={16} />
         </ToolbarButton>
     ),
     // Enter, Tab and Shift-Tab only mean something inside a list; outside one
     // these report "not handled" and the editor's own bindings take over.
     hotkeys: {
-        Enter: (api) => api.splitListItem() || api.outdentListItem(),
-        Tab: (api) => api.indentListItem(),
-        'Shift-Tab': (api) => api.outdentListItem(),
+        Enter: (api) => api.lists.split() || api.lists.outdent(),
+        Tab: (api) => api.lists.indent(),
+        'Shift-Tab': (api) => api.lists.outdent(),
     },
 });
 

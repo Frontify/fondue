@@ -5,33 +5,21 @@ import { type Schema } from 'prosemirror-model';
 import { type EditorView } from 'prosemirror-view';
 
 import { type EditorControlApi } from '../../types';
-import { shallowBlockFromPm } from '../document';
 
-/** The block half of the control API: block types and the attributes on them. */
-export type BlockApi = Pick<
-    EditorControlApi,
-    'setBlockType' | 'isBlockActive' | 'updateBlockAttributes' | 'getCurrentBlock'
->;
-
-export const createBlockApi = (view: EditorView, schema: Schema): BlockApi => ({
-    setBlockType(type, attrs) {
+/**
+ * The block half of the control API: block types and the attributes on them.
+ * Which block the selection is in is not here — plugins read that off the
+ * selection snapshot and compare it themselves.
+ */
+export const createBlockApi = (view: EditorView, schema: Schema): EditorControlApi['blocks'] => ({
+    setType(type, attrs) {
         const nodeType = schema.nodes[type];
         if (nodeType) {
             pmSetBlockType(nodeType, attrs ?? {})(view.state, view.dispatch);
             view.focus();
         }
     },
-    isBlockActive(type, attrs) {
-        const { $from } = view.state.selection;
-        for (let depth = $from.depth; depth >= 0; depth--) {
-            const node = $from.node(depth);
-            if (node.type.name === type) {
-                return !attrs || Object.entries(attrs).every(([name, value]) => node.attrs[name] === value);
-            }
-        }
-        return false;
-    },
-    updateBlockAttributes(attrs) {
+    updateAttributes(attrs) {
         const { from, to } = view.state.selection;
         const transaction = view.state.tr;
         view.state.doc.nodesBetween(from, to, (node, pos) => {
@@ -45,17 +33,5 @@ export const createBlockApi = (view: EditorView, schema: Schema): BlockApi => ({
             view.dispatch(transaction);
         }
         view.focus();
-    },
-    getCurrentBlock() {
-        const { $from } = view.state.selection;
-        for (let depth = $from.depth; depth >= 0; depth--) {
-            const node = $from.node(depth);
-            if (node.type.spec.group === 'block') {
-                return shallowBlockFromPm(node);
-            }
-        }
-        // A selected void block (image): the selection sits at doc level.
-        const after = $from.nodeAfter;
-        return after && after.type.spec.group === 'block' ? shallowBlockFromPm(after) : null;
     },
 });

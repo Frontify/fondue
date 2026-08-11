@@ -55,8 +55,8 @@ export const linkPlugin = (): RtePlugin => ({
             // and it is also what the toolbar's own flyout leaves behind while
             // it is open.
             render: ({ api }) => {
-                const run = api.getMarkRun('link');
-                return run && api.isSelectionCollapsed() ? <LinkPanel api={api} run={run} /> : null;
+                const run = api.marks.getRun('link');
+                return run && api.selection.get().isCollapsed ? <LinkPanel api={api} run={run} /> : null;
             },
         },
     ],

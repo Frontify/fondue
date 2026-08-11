@@ -17,9 +17,13 @@ export const boldPlugin = (): RtePlugin => ({
         marks: [{ key: 'bold', render: ({ children }) => <strong>{children}</strong>, parseRules: [{ tag: 'b' }] }],
     },
     toolbar: (api) => (
-        <ToolbarButton title="Bold" active={api.isMarkActive('bold')} onClick={() => api.toggleMark('bold')}>
+        <ToolbarButton
+            title="Bold"
+            active={'bold' in api.selection.get().marks}
+            onClick={() => api.marks.toggle('bold')}
+        >
             <IconTextFormatBold size={16} />
         </ToolbarButton>
     ),
-    hotkeys: { 'Mod-b': (api) => api.toggleMark('bold') },
+    hotkeys: { 'Mod-b': (api) => api.marks.toggle('bold') },
 });

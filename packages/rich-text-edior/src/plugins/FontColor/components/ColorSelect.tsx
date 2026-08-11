@@ -10,11 +10,12 @@ import { COLORS, DEFAULT } from '../helpers/colors';
 import styles from './colorSelect.module.scss';
 
 /**
- * The colour dropdown. Its value comes from the document (`getMarkValue`), so
- * the control shows what the selection actually carries rather than local state.
+ * The colour dropdown. Its value comes from the document (the selection
+ * snapshot), so the control shows what the selection actually carries rather
+ * than local state.
  */
 export const ColorSelect = ({ api }: { api: EditorControlApi }): ReactNode => {
-    const current = api.getMarkValue('fontColor')?.color;
+    const current = api.selection.get().marks.fontColor?.color;
 
     const handleSelect = (selected: string | null): void => {
         if (selected === null) {
@@ -22,11 +23,11 @@ export const ColorSelect = ({ api }: { api: EditorControlApi }): ReactNode => {
         }
         // A value-carrying mark has to be cleared before it can be re-set:
         // toggling on top of an existing colour would only remove it.
-        if (api.isMarkActive('fontColor')) {
-            api.toggleMark('fontColor');
+        if ('fontColor' in api.selection.get().marks) {
+            api.marks.toggle('fontColor');
         }
         if (selected !== DEFAULT) {
-            api.toggleMark('fontColor', { color: selected });
+            api.marks.toggle('fontColor', { color: selected });
         }
         requestAnimationFrame(() => api.focus());
     };

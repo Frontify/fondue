@@ -27,4 +27,5 @@ export {
     type RteDocumentOf,
     type RteInlineNode,
     type RtePlugin,
+    type RteSelectionSnapshot,
 } from './types';

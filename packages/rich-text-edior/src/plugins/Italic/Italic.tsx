@@ -17,9 +17,13 @@ export const italicPlugin = (): RtePlugin => ({
         marks: [{ key: 'italic', render: ({ children }) => <em>{children}</em>, parseRules: [{ tag: 'i' }] }],
     },
     toolbar: (api) => (
-        <ToolbarButton title="Italic" active={api.isMarkActive('italic')} onClick={() => api.toggleMark('italic')}>
+        <ToolbarButton
+            title="Italic"
+            active={'italic' in api.selection.get().marks}
+            onClick={() => api.marks.toggle('italic')}
+        >
             <IconTextFormatItalic size={16} />
         </ToolbarButton>
     ),
-    hotkeys: { 'Mod-i': (api) => api.toggleMark('italic') },
+    hotkeys: { 'Mod-i': (api) => api.marks.toggle('italic') },
 });

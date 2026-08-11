@@ -57,26 +57,26 @@ export const LinkForm = ({
         // Everything below acts on the selection, so it has to be the link:
         // opened on a caret there is nothing selected yet, and opened from the
         // toolbar this is what already happened and does nothing.
-        api.selectMark('link');
+        api.marks.select('link');
         // Writing the text puts it in the selection, so the mark below lands on
         // exactly it — the same path whether it was typed here or in the editor.
         // Only when it changed: rewriting it would flatten anything else the
         // selection carries (bold inside it, a mention next to it).
         if (text !== initial.text) {
-            api.replaceSelectionWithText(text);
+            api.selection.replaceWithText(text);
         }
         // A value-carrying mark has to be cleared before it can be re-set:
         // toggling on top of an existing link would only remove it.
-        if (api.isMarkActive('link')) {
-            api.toggleMark('link');
+        if ('link' in api.selection.get().marks) {
+            api.marks.toggle('link');
         }
-        api.toggleMark('link', openInNewTab ? { href, openInNewTab: true } : { href });
+        api.marks.toggle('link', openInNewTab ? { href, openInNewTab: true } : { href });
         onDone();
     };
 
     const remove = (): void => {
-        api.selectMark('link');
-        api.toggleMark('link');
+        api.marks.select('link');
+        api.marks.toggle('link');
         onDone();
     };
 
