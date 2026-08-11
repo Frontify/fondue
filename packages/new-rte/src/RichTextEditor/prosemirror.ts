@@ -2,21 +2,25 @@
 
 import { baseKeymap, setBlockType as pmSetBlockType, toggleMark as pmToggleMark } from 'prosemirror-commands';
 import { history, redo, undo } from 'prosemirror-history';
+import { InputRule, inputRules, textblockTypeInputRule, wrappingInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
 import {
     type MarkSpec as PmMarkSpec,
     type Node as PmNode,
     type NodeSpec as PmNodeSpec,
+    type NodeType as PmNodeType,
     Schema,
     type TagParseRule,
 } from 'prosemirror-model';
-import { type Command, EditorState, type Plugin } from 'prosemirror-state';
+import { liftListItem, sinkListItem, splitListItem as pmSplitListItem, wrapInList } from 'prosemirror-schema-list';
+import { type Command, EditorState, Plugin as PmPlugin, PluginKey } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 import { createElement, type ReactNode } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 
 import {
     type AttributeSpec,
+    type BlockAttributeSpec,
     type BlockSpec,
     type EditorControlApi,
     type InlineSpec,
@@ -25,6 +29,7 @@ import {
     type RteBlockNode,
     type RteDocumentOf,
     type RteInlineNode,
+    type RteInputRule,
     type RtePlugin,
 } from './types';
 
@@ -37,6 +42,9 @@ import {
 /** Class on the editable element; plugin styles and the editor's own CSS are scoped to it. */
 export const EDITOR_CLASS = 'rte';
 
+/** Attribute a rendered element uses to make itself a click-toggle for a boolean attribute. */
+const TOGGLE_ATTRIBUTE = 'data-rte-toggle';
+
 // ---------------------------------------------------------------------------
 // Rendering: React render functions → tag + DOM attributes
 // ---------------------------------------------------------------------------
@@ -44,30 +52,55 @@ export const EDITOR_CLASS = 'rte';
 /** Stands in for the editable content slot while probing. */
 const SENTINEL = ' RTE_HOLE ';
 
+/** The engine's DOM description: a tag, its attributes, and children — `0` marking the content slot. */
+type DomChild = string | 0 | DomElement;
+type DomElement = [string, Record<string, string>, ...DomChild[]];
+
+/** The root element's tag and attributes, plus the whole tree the render produced. */
 type ProbedDom = {
     tag: string;
     attrs: Record<string, string>;
-    /** Text the element renders itself (a void inline's visible label). */
-    text: string;
+    element: DomElement;
 };
 
 /**
- * Plugins declare rendering as React functions; the engine needs a tag plus
- * DOM attributes. Bridge: render the function statically and read the
- * outermost element. Limitation (accepted): only a single root element
- * survives — no nested wrappers.
+ * Turn one rendered node into the engine's description of it. The text holding
+ * the sentinel becomes the content slot; the engine requires that slot to be
+ * the only thing inside its element, so text rendered beside it is dropped.
+ */
+const toDomChild = (node: ChildNode): DomChild | null => {
+    if (node.nodeType === node.TEXT_NODE) {
+        const text = node.textContent ?? '';
+        if (text.includes(SENTINEL)) {
+            return 0;
+        }
+        return text === '' ? null : text;
+    }
+    if (node.nodeType !== node.ELEMENT_NODE) {
+        return null;
+    }
+    const element = node as Element;
+    return [
+        element.tagName.toLowerCase(),
+        Object.fromEntries(Array.from(element.attributes, (attr) => [attr.name, attr.value])),
+        ...Array.from(element.childNodes, toDomChild).filter((child): child is DomChild => child !== null),
+    ];
+};
+
+/**
+ * Plugins declare rendering as React functions; the engine needs a DOM
+ * description. Bridge: render the function statically and walk the result.
+ * Nested elements survive (a check item's checkbox beside its text), the one
+ * rule being that the children slot is alone inside its element.
  */
 const probeDom = (render: () => ReactNode): ProbedDom => {
     const markup = renderToStaticMarkup(createElement(render));
-    const element = new DOMParser().parseFromString(markup, 'text/html').body.firstElementChild;
-    if (!element) {
+    const root = new DOMParser().parseFromString(markup, 'text/html').body.firstElementChild;
+    if (!root) {
         throw new Error(`A plugin render function produced no element. Output was: ${markup}`);
     }
-    return {
-        tag: element.tagName.toLowerCase(),
-        attrs: Object.fromEntries(Array.from(element.attributes, (attr) => [attr.name, attr.value])),
-        text: element.textContent ?? '',
-    };
+    const element = toDomChild(root) as DomElement;
+    return { tag: element[0], attrs: element[1], element };
 };
 
 /** `toDOM` runs on every render, probing renders React — so cache per attribute set. */
@@ -84,6 +117,34 @@ const probeCachedBy = (render: (attrs: Record<string, unknown>) => ReactNode) =>
     };
 };
 
+/** Injected block attributes contribute CSS, which has to join whatever the render function already set. */
+const withExtraStyle = (attrs: Record<string, string>, declarations: string[]): Record<string, string> => {
+    if (declarations.length === 0) {
+        return attrs;
+    }
+    const style = [attrs.style, ...declarations].filter(Boolean).join('; ');
+    return { ...attrs, style };
+};
+
+/**
+ * The CSS a node's injected attributes add. Their values are strings by
+ * contract (`toStyle` takes one), so anything else counts as unset.
+ */
+const injectedDeclarations = (attrs: Record<string, unknown>, injected: readonly BlockAttributeSpec[]): string[] =>
+    injected.flatMap((attribute) => {
+        const value: unknown = attrs[attribute.name];
+        return typeof value === 'string' && value !== '' ? [attribute.toStyle(value)] : [];
+    });
+
+/** Injected CSS lands on the outermost element the plugin rendered. */
+const withRootStyle = (element: DomElement, declarations: string[]): DomElement => {
+    if (declarations.length === 0) {
+        return element;
+    }
+    const [tag, attrs, ...children] = element;
+    return [tag, withExtraStyle(attrs, declarations), ...children];
+};
+
 // ---------------------------------------------------------------------------
 // Schema: plugin specs → engine schema
 // ---------------------------------------------------------------------------
@@ -94,37 +155,92 @@ const pmAttrs = (attributes: Record<string, AttributeSpec> = {}): Record<string,
         Object.entries(attributes).map(([name, attribute]) => [name, { default: attribute.default ?? null }]),
     );
 
-/** Rules for recognizing pasted HTML: the tag, the attributes it implies, and any read off the element. */
-const pmParseDom = (attributes: Record<string, AttributeSpec>, rules: readonly ParseRule[]): TagParseRule[] => {
+const pmInjectedAttrs = (injected: readonly BlockAttributeSpec[]): Record<string, { default: unknown }> =>
+    Object.fromEntries(injected.map((attribute) => [attribute.name, { default: attribute.default ?? null }]));
+
+/** Rules for recognizing pasted HTML: the tag, the attributes it implies, and any read off the element or its style. */
+const pmParseDom = (
+    attributes: Record<string, AttributeSpec>,
+    rules: readonly ParseRule[],
+    injected: readonly BlockAttributeSpec[] = [],
+): TagParseRule[] => {
     const domAttributeNames = Object.entries(attributes)
         .filter(([, attribute]) => attribute.parseFromDomAttribute)
         .map(([name, attribute]): [string, string] => [
             name,
             typeof attribute.parseFromDomAttribute === 'string' ? attribute.parseFromDomAttribute : name,
         ]);
+    const styleNames: [string, string][] = [
+        ...Object.entries(attributes)
+            .filter(([, attribute]) => attribute.parseFromStyle)
+            .map(([name, attribute]): [string, string] => [name, attribute.parseFromStyle as string]),
+        ...injected
+            .filter((attribute) => attribute.parseFromStyle)
+            .map((attribute): [string, string] => [attribute.name, attribute.parseFromStyle as string]),
+    ];
 
     return rules.map(({ tag, attributes: implied }) => ({
         tag,
         getAttrs: (element: HTMLElement) => ({
             ...Object.fromEntries(domAttributeNames.map(([name, domName]) => [name, element.getAttribute(domName)])),
+            ...Object.fromEntries(
+                styleNames.map(([name, property]) => [name, element.style.getPropertyValue(property) || null]),
+            ),
             ...implied,
         }),
     }));
 };
 
-const blockNodeSpec = (spec: BlockSpec): PmNodeSpec => {
+/**
+ * What the engine allows inside a block: text, or the block types a container
+ * declared. The first `contains` entry ends up first in the expression, which
+ * is what makes it the type a newly created container is filled with.
+ */
+const pmContent = (spec: BlockSpec, known: Set<string>): string | undefined => {
+    if (spec.isVoid) {
+        return undefined;
+    }
+    if (spec.content !== 'blocks') {
+        return 'inline*';
+    }
+    // A container may name block types from plugins that are not mounted — a
+    // list item nesting a check list. Those simply drop out of the grammar.
+    const contains = (spec.contains ?? []).filter((type) => known.has(type));
+    if (contains.length === 0) {
+        throw new Error(
+            `Block "${spec.type}" declares content: 'blocks' but none of its \`contains\` types are registered.`,
+        );
+    }
+    return contains.length === 1 ? `${contains[0]}+` : `(${contains.join(' | ')})+`;
+};
+
+const blockNodeSpec = (
+    spec: BlockSpec,
+    {
+        injected,
+        isListItem,
+        known,
+    }: { injected: readonly BlockAttributeSpec[]; isListItem: boolean; known: Set<string> },
+): PmNodeSpec => {
     const isVoid = spec.isVoid ?? false;
+    const carriesInjected = !isVoid && spec.content !== 'blocks';
+    const injectedHere = carriesInjected ? injected : [];
+    const ownAttrNames = Object.keys(spec.attributes ?? {});
     const probe = probeCachedBy((attrs) => spec.render({ node: { type: spec.type, ...attrs }, children: SENTINEL }));
 
     return {
-        content: isVoid ? undefined : 'inline*',
+        content: pmContent(spec, known),
         atom: isVoid,
-        group: 'block',
-        attrs: pmAttrs(spec.attributes),
-        parseDOM: pmParseDom(spec.attributes ?? {}, spec.parseRules ?? []),
+        // A list item is only ever reached through its list, so it deliberately
+        // stays out of the `block` group the document accepts at top level.
+        ...(isListItem ? {} : { group: 'block' }),
+        attrs: { ...pmAttrs(spec.attributes), ...pmInjectedAttrs(injectedHere) },
+        parseDOM: pmParseDom(spec.attributes ?? {}, spec.parseRules ?? [], injectedHere),
         toDOM: (node) => {
-            const { tag, attrs } = probe(node.attrs);
-            return isVoid ? [tag, attrs] : [tag, attrs, 0];
+            // The render function only knows the attributes it declared; the
+            // injected ones become CSS on the element it produced.
+            const { element } = probe(Object.fromEntries(ownAttrNames.map((name) => [name, node.attrs[name]])));
+            return withRootStyle(element, injectedDeclarations(node.attrs, injectedHere));
         },
     };
 };
@@ -138,10 +254,7 @@ const inlineNodeSpec = (spec: InlineSpec): PmNodeSpec => {
         atom: true,
         attrs: pmAttrs(spec.attributes),
         parseDOM: pmParseDom(spec.attributes ?? {}, spec.parseRules ?? []),
-        toDOM: (node) => {
-            const { tag, attrs, text } = probe(node.attrs);
-            return text === '' ? [tag, attrs] : [tag, attrs, text];
-        },
+        toDOM: (node) => probe(node.attrs).element,
     };
 };
 
@@ -157,27 +270,53 @@ const markPmSpec = (spec: MarkSpec): PmMarkSpec => {
         // Value-carrying marks (links) should not extend when typing at their edge.
         inclusive: Object.keys(attrs).length === 0,
         parseDOM: pmParseDom(spec.attributes ?? {}, [{ tag: probe(defaults).tag }, ...(spec.parseRules ?? [])]),
-        toDOM: (mark) => {
-            const { tag, attrs: domAttrs } = probe(mark.attrs);
-            return [tag, domAttrs, 0];
-        },
+        toDOM: (mark) => probe(mark.attrs).element,
     };
 };
 
-const buildSchema = (plugins: RtePlugin[]): Schema => {
+/**
+ * The schema plus what the list commands need to know about it: which block is
+ * a list, and which of its `contains` types is the item. Plugins declare it
+ * with `isList`, so the API can stay free of item-type arguments.
+ */
+type SchemaBundle = {
+    schema: Schema;
+    itemTypeByList: Map<string, string>;
+};
+
+const buildSchema = (plugins: RtePlugin[]): SchemaBundle => {
+    const blockSpecs = plugins.flatMap((plugin) => [...(plugin.schema?.blocks ?? [])]);
+    const injected = plugins.flatMap((plugin) => [...(plugin.schema?.blockAttributes ?? [])]);
+
+    const itemTypeByList = new Map<string, string>();
+    for (const spec of blockSpecs) {
+        const item = spec.isList ? spec.contains?.[0] : undefined;
+        if (item) {
+            itemTypeByList.set(spec.type, item);
+        }
+    }
+    const itemTypes = new Set(itemTypeByList.values());
+    const known = new Set(['paragraph', ...blockSpecs.map((spec) => spec.type)]);
+
     // Node insertion order matters: the first node matching the doc's
     // `block+` content is the default block type (empty documents, Enter-key
     // splits) — the paragraph baseline stays first.
     const nodes: Record<string, PmNodeSpec> = {
         doc: { content: 'block+' },
-        paragraph: { content: 'inline*', group: 'block', parseDOM: [{ tag: 'p' }], toDOM: () => ['p', 0] },
+        paragraph: {
+            content: 'inline*',
+            group: 'block',
+            attrs: pmInjectedAttrs(injected),
+            parseDOM: pmParseDom({}, [{ tag: 'p' }], injected),
+            toDOM: (node) => ['p', withExtraStyle({}, injectedDeclarations(node.attrs, injected)), 0],
+        },
         text: { group: 'inline' },
     };
     const marks: Record<string, PmMarkSpec> = {};
 
     for (const plugin of plugins) {
         for (const block of plugin.schema?.blocks ?? []) {
-            nodes[block.type] = blockNodeSpec(block);
+            nodes[block.type] = blockNodeSpec(block, { injected, isListItem: itemTypes.has(block.type), known });
         }
         for (const inline of plugin.schema?.inlines ?? []) {
             nodes[inline.type] = inlineNodeSpec(inline);
@@ -187,7 +326,7 @@ const buildSchema = (plugins: RtePlugin[]): Schema => {
         }
     }
 
-    return new Schema({ nodes, marks });
+    return { schema: new Schema({ nodes, marks }), itemTypeByList };
 };
 
 // ---------------------------------------------------------------------------
@@ -246,6 +385,24 @@ const inlinesToPm = (children: RteInlineNode[], schema: Schema): PmNode[] => {
     return nodes;
 };
 
+/**
+ * A block's children are inlines or blocks depending on what the block type
+ * declared — the schema decides, so the document format needs no marker.
+ */
+const childrenToPm = (nodeType: PmNodeType, children: RteInlineNode[] | RteBlockNode[], schema: Schema): PmNode[] =>
+    nodeType.isTextblock
+        ? inlinesToPm(children as RteInlineNode[], schema)
+        : (children as RteBlockNode[]).map((child) => blockToPm(child, schema));
+
+const blockToPm = (block: RteBlockNode, schema: Schema): PmNode => {
+    const nodeType = schema.nodes[block.type];
+    if (!nodeType) {
+        throw new Error(`Unknown block type "${block.type}". Did you forget to register a plugin?`);
+    }
+    const attrs = declaredAttrs(block as Record<string, unknown>, nodeType.spec.attrs);
+    return nodeType.create(attrs, block.children ? childrenToPm(nodeType, block.children, schema) : []);
+};
+
 const documentToPm = (doc: RteDocumentOf, schema: Schema): PmNode => {
     const docType = schema.nodes.doc;
     if (!docType) {
@@ -253,14 +410,7 @@ const documentToPm = (doc: RteDocumentOf, schema: Schema): PmNode => {
     }
     return docType.create(
         null,
-        doc.blocks.map((block) => {
-            const nodeType = schema.nodes[block.type];
-            if (!nodeType) {
-                throw new Error(`Unknown block type "${block.type}". Did you forget to register a plugin?`);
-            }
-            const attrs = declaredAttrs(block as Record<string, unknown>, nodeType.spec.attrs);
-            return nodeType.create(attrs, block.children ? inlinesToPm(block.children, schema) : []);
-        }),
+        doc.blocks.map((block) => blockToPm(block, schema)),
     );
 };
 
@@ -276,100 +426,433 @@ const inlineFromPm = (child: PmNode): RteInlineNode => {
     return text as RteInlineNode;
 };
 
+const blockFromPm = (node: PmNode): RteBlockNode => {
+    const block: Record<string, unknown> = { type: node.type.name, ...definedAttrs(node.attrs) };
+    if (node.isTextblock) {
+        block.children = mapChildren(node, inlineFromPm);
+    } else if (!node.isAtom) {
+        block.children = mapChildren(node, blockFromPm);
+    }
+    return block as unknown as RteBlockNode;
+};
+
 const pmToDocument = (doc: PmNode): RteDocumentOf => ({
     version: 1,
-    blocks: mapChildren(doc, (blockNode) => {
-        const block: Record<string, unknown> = { type: blockNode.type.name, ...definedAttrs(blockNode.attrs) };
-        if (!blockNode.isAtom) {
-            block.children = mapChildren(blockNode, inlineFromPm);
-        }
-        return block as unknown as RteBlockNode;
-    }),
+    blocks: mapChildren(doc, blockFromPm),
 });
+
+/** Type and attributes only — what the toolbar needs, without dragging the subtree along. */
+const shallowBlockFromPm = (node: PmNode): RteBlockNode =>
+    ({ type: node.type.name, ...definedAttrs(node.attrs) }) as unknown as RteBlockNode;
+
+// ---------------------------------------------------------------------------
+// Input rules: declarations → engine rules
+// ---------------------------------------------------------------------------
+
+const escapeForRegExp = (text: string): string => text.replaceAll(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+/**
+ * `**bold**` → a bold mark over `bold`. Written here rather than taken from the
+ * engine, which ships block and text rules but no mark rule.
+ */
+const markInputRule = (delimiter: string, markName: string, schema: Schema): InputRule => {
+    const escaped = escapeForRegExp(delimiter);
+    const firstChar = escapeForRegExp(delimiter.charAt(0));
+    // The character before the opening delimiter must not be the delimiter
+    // itself, or typing `**bold**` fires the italic rule on `**bold*` first.
+    const pattern = new RegExp(`(?:^|[^${firstChar}])${escaped}([^${firstChar}]+)${escaped}$`);
+
+    return new InputRule(pattern, (state, match, _start, end) => {
+        const content = match[1];
+        const markType = schema.marks[markName];
+        if (!content || !markType) {
+            return null;
+        }
+        // The match may include that preceding character; the rewrite starts
+        // at the opening delimiter.
+        const from = end - (delimiter.length * 2 + content.length);
+        return state.tr
+            .delete(from, end)
+            .insertText(content, from)
+            .addMark(from, from + content.length, markType.create())
+            .removeStoredMark(markType);
+    });
+};
+
+/** `"` opens or closes depending on what precedes it — the one rule that has to look back. */
+const quotesInputRule = (match: string, open: string, close: string): InputRule =>
+    new InputRule(new RegExp(`${escapeForRegExp(match)}$`), (state, _match, start, end) => {
+        const before = start > 0 ? state.doc.textBetween(start - 1, start) : '';
+        const opens = before === '' || /[\s([{<'"“‘]/.test(before);
+        return state.tr.insertText(opens ? open : close, start, end);
+    });
+
+const buildInputRules = (plugins: RtePlugin[], schema: Schema, itemTypeByList: Map<string, string>): PmPlugin[] => {
+    const rules: InputRule[] = [];
+
+    const add = (rule: RteInputRule): void => {
+        switch (rule.kind) {
+            case 'text':
+                rules.push(new InputRule(new RegExp(`${escapeForRegExp(rule.match)}$`), rule.replaceWith));
+                return;
+            case 'quotes':
+                rules.push(quotesInputRule(rule.match, rule.open, rule.close));
+                return;
+            case 'mark':
+                rules.push(markInputRule(rule.delimiter, rule.key, schema));
+                return;
+            case 'block': {
+                const nodeType = schema.nodes[rule.block];
+                if (nodeType) {
+                    rules.push(
+                        textblockTypeInputRule(
+                            new RegExp(`^${escapeForRegExp(rule.match)}$`),
+                            nodeType,
+                            rule.attributes ?? null,
+                        ),
+                    );
+                }
+                return;
+            }
+            case 'list': {
+                const listType = schema.nodes[rule.list];
+                if (listType && itemTypeByList.has(rule.list)) {
+                    rules.push(wrappingInputRule(new RegExp(`^${escapeForRegExp(rule.match)}$`), listType));
+                }
+                return;
+            }
+        }
+    };
+
+    const declared = plugins.flatMap((plugin) => [...(plugin.inputRules ?? [])]);
+    // Longer mark delimiters have to be tried first, or `**bold**` is read as an
+    // italic `*` wrapping `*bold*`. Everything else keeps its declared order.
+    const markRules = declared
+        .filter((rule) => rule.kind === 'mark')
+        .sort((left, right) => right.delimiter.length - left.delimiter.length);
+    for (const rule of [...markRules, ...declared.filter((rule) => rule.kind !== 'mark')]) {
+        add(rule);
+    }
+
+    return rules.length > 0 ? [inputRules({ rules })] : [];
+};
+
+// ---------------------------------------------------------------------------
+// Combobox: trigger tracking
+// ---------------------------------------------------------------------------
+
+/** What the host needs to render a picker: which plugin owns it, what was typed, and where. */
+export type ActiveCombobox = {
+    pluginId: string;
+    trigger: string;
+    query: string;
+    /** Viewport coordinates of the trigger character. */
+    coords: { left: number; top: number; bottom: number };
+};
+
+type ComboboxTracked = {
+    pluginId: string;
+    trigger: string;
+    query: string;
+    from: number;
+    to: number;
+};
+
+type ComboboxPluginState = {
+    tracked: ComboboxTracked | null;
+    /** Where a picker was dismissed, so it stays closed until the caret moves on. */
+    dismissedFrom: number | null;
+};
+
+const comboboxKey = new PluginKey<ComboboxPluginState>('rte-combobox');
+const DISMISS = 'dismiss';
+
+/** A trigger only counts at the start of a word, and only while the query has no spaces. */
+const trackCombobox = (
+    state: EditorState,
+    triggers: { pluginId: string; trigger: string }[],
+): ComboboxTracked | null => {
+    const { selection } = state;
+    if (!selection.empty) {
+        return null;
+    }
+    const { $from } = selection;
+    if (!$from.parent.isTextblock) {
+        return null;
+    }
+    // Inline atoms count as one character each, so text offsets stay aligned
+    // with document positions.
+    const textBefore = $from.parent.textBetween(0, $from.parentOffset, undefined, '￼');
+
+    let best: ComboboxTracked | null = null;
+    let bestIndex = -1;
+    for (const { pluginId, trigger } of triggers) {
+        const index = textBefore.lastIndexOf(trigger);
+        if (index === -1 || index < bestIndex) {
+            continue;
+        }
+        const query = textBefore.slice(index + trigger.length);
+        if (/\s/.test(query)) {
+            continue;
+        }
+        const before = index === 0 ? '' : textBefore.charAt(index - 1);
+        if (before !== '' && !/[\s([]/.test(before)) {
+            continue;
+        }
+        bestIndex = index;
+        best = { pluginId, trigger, query, from: $from.start() + index, to: $from.pos };
+    }
+    return best;
+};
+
+const comboboxPlugin = (triggers: { pluginId: string; trigger: string }[]): PmPlugin<ComboboxPluginState> =>
+    new PmPlugin<ComboboxPluginState>({
+        key: comboboxKey,
+        state: {
+            init: () => ({ tracked: null, dismissedFrom: null }),
+            apply: (transaction, previous, _oldState, newState) => {
+                const tracked = trackCombobox(newState, triggers);
+                if (transaction.getMeta(comboboxKey) === DISMISS) {
+                    return { tracked: null, dismissedFrom: tracked?.from ?? null };
+                }
+                if (tracked && tracked.from === previous.dismissedFrom) {
+                    return { tracked: null, dismissedFrom: previous.dismissedFrom };
+                }
+                return { tracked, dismissedFrom: null };
+            },
+        },
+    });
 
 // ---------------------------------------------------------------------------
 // The editor
 // ---------------------------------------------------------------------------
 
-const blockFromPm = (node: PmNode): RteBlockNode =>
-    ({ type: node.type.name, ...definedAttrs(node.attrs) }) as unknown as RteBlockNode;
-
-const createApi = (view: EditorView, schema: Schema): EditorControlApi => ({
-    toggleMark(key, value) {
-        const markType = schema.marks[key];
-        if (markType) {
-            pmToggleMark(markType, value)(view.state, view.dispatch);
-            view.focus();
-        }
-    },
-    isMarkActive(key) {
-        const markType = schema.marks[key];
-        if (!markType) {
-            return false;
-        }
-        const { from, to, empty, $from } = view.state.selection;
-        return empty
-            ? Boolean(markType.isInSet(view.state.storedMarks ?? $from.marks()))
-            : view.state.doc.rangeHasMark(from, to, markType);
-    },
-    setBlockType(type, attrs) {
-        const nodeType = schema.nodes[type];
-        if (nodeType) {
-            pmSetBlockType(nodeType, attrs ?? {})(view.state, view.dispatch);
-            view.focus();
-        }
-    },
-    isBlockActive(type, attrs) {
-        const { $from } = view.state.selection;
-        for (let depth = $from.depth; depth >= 0; depth--) {
-            const node = $from.node(depth);
-            if (node.type.name === type) {
-                return !attrs || Object.entries(attrs).every(([name, value]) => node.attrs[name] === value);
-            }
-        }
-        return false;
-    },
-    insert(type, attrs) {
-        const nodeType = schema.nodes[type];
-        if (nodeType) {
-            view.dispatch(view.state.tr.replaceSelectionWith(nodeType.create(attrs)));
-            view.focus();
-        }
-    },
-    getCurrentBlock() {
-        const { $from } = view.state.selection;
-        for (let depth = $from.depth; depth >= 0; depth--) {
-            const node = $from.node(depth);
-            if (node.type.spec.group === 'block') {
-                return blockFromPm(node);
-            }
-        }
-        // A selected void block (image): the selection sits at doc level.
-        const after = $from.nodeAfter;
-        return after && after.type.spec.group === 'block' ? blockFromPm(after) : null;
-    },
-    isSelectionCollapsed() {
-        return view.state.selection.empty;
-    },
-    focus() {
-        view.focus();
-    },
-});
-
-const buildPmPlugins = (plugins: RtePlugin[], getApi: () => EditorControlApi): Plugin[] => {
-    const hotkeys: Record<string, Command> = {};
-    for (const plugin of plugins) {
-        for (const [keys, command] of Object.entries(plugin.hotkeys ?? {})) {
-            hotkeys[keys] = () => {
-                command(getApi());
-                return true;
-            };
+/** The innermost ancestor that is a list of items, with the position it sits at. */
+const findList = (state: EditorState, itemTypeByList: Map<string, string>): { node: PmNode; pos: number } | null => {
+    const { $from } = state.selection;
+    for (let depth = $from.depth; depth > 0; depth--) {
+        const node = $from.node(depth);
+        if (itemTypeByList.has(node.type.name)) {
+            return { node, pos: $from.before(depth) };
         }
     }
+    return null;
+};
+
+/** The item type of the innermost list the selection sits in — what the list commands need. */
+const findItemType = (state: EditorState, itemTypeByList: Map<string, string>, schema: Schema): PmNodeType | null => {
+    const list = findList(state, itemTypeByList);
+    const itemName = list ? itemTypeByList.get(list.node.type.name) : undefined;
+    return (itemName ? schema.nodes[itemName] : undefined) ?? null;
+};
+
+const createApi = (view: EditorView, { schema, itemTypeByList }: SchemaBundle): EditorControlApi => {
+    const runListCommand = (command: (itemType: PmNodeType) => Command): boolean => {
+        const itemType = findItemType(view.state, itemTypeByList, schema);
+        if (!itemType) {
+            return false;
+        }
+        return command(itemType)(view.state, view.dispatch, view);
+    };
+
+    return {
+        toggleMark(key, value) {
+            const markType = schema.marks[key];
+            if (markType) {
+                pmToggleMark(markType, value)(view.state, view.dispatch);
+                view.focus();
+            }
+        },
+        isMarkActive(key) {
+            const markType = schema.marks[key];
+            if (!markType) {
+                return false;
+            }
+            const { from, to, empty, $from } = view.state.selection;
+            return empty
+                ? Boolean(markType.isInSet(view.state.storedMarks ?? $from.marks()))
+                : view.state.doc.rangeHasMark(from, to, markType);
+        },
+        getMarkValue(key) {
+            const markType = schema.marks[key];
+            if (!markType) {
+                return null;
+            }
+            const { $from, from, to, empty } = view.state.selection;
+            if (empty) {
+                const mark = markType.isInSet(view.state.storedMarks ?? $from.marks());
+                return mark ? definedAttrs(mark.attrs) : null;
+            }
+            let found: Record<string, unknown> | null = null;
+            view.state.doc.nodesBetween(from, to, (node) => {
+                if (found === null && node.isText) {
+                    const mark = markType.isInSet(node.marks);
+                    if (mark) {
+                        found = definedAttrs(mark.attrs);
+                    }
+                }
+            });
+            return found;
+        },
+        removeAllMarks() {
+            const { from, to, empty } = view.state.selection;
+            const transaction = empty ? view.state.tr.setStoredMarks([]) : view.state.tr.removeMark(from, to, null);
+            view.dispatch(transaction);
+            view.focus();
+        },
+        setBlockType(type, attrs) {
+            const nodeType = schema.nodes[type];
+            if (nodeType) {
+                pmSetBlockType(nodeType, attrs ?? {})(view.state, view.dispatch);
+                view.focus();
+            }
+        },
+        isBlockActive(type, attrs) {
+            const { $from } = view.state.selection;
+            for (let depth = $from.depth; depth >= 0; depth--) {
+                const node = $from.node(depth);
+                if (node.type.name === type) {
+                    return !attrs || Object.entries(attrs).every(([name, value]) => node.attrs[name] === value);
+                }
+            }
+            return false;
+        },
+        updateBlockAttributes(attrs) {
+            const { from, to } = view.state.selection;
+            const transaction = view.state.tr;
+            view.state.doc.nodesBetween(from, to, (node, pos) => {
+                if (node.isTextblock) {
+                    // Attributes a node type never declared are ignored by the
+                    // engine, so this is safe across mixed selections.
+                    transaction.setNodeMarkup(pos, undefined, { ...node.attrs, ...attrs });
+                }
+            });
+            if (transaction.docChanged) {
+                view.dispatch(transaction);
+            }
+            view.focus();
+        },
+        insert(type, attrs) {
+            const nodeType = schema.nodes[type];
+            if (nodeType) {
+                view.dispatch(view.state.tr.replaceSelectionWith(nodeType.create(attrs)));
+                view.focus();
+            }
+        },
+        insertText(text) {
+            view.dispatch(view.state.tr.insertText(text));
+            view.focus();
+        },
+        getCurrentBlock() {
+            const { $from } = view.state.selection;
+            for (let depth = $from.depth; depth >= 0; depth--) {
+                const node = $from.node(depth);
+                if (node.type.spec.group === 'block') {
+                    return shallowBlockFromPm(node);
+                }
+            }
+            // A selected void block (image): the selection sits at doc level.
+            const after = $from.nodeAfter;
+            return after && after.type.spec.group === 'block' ? shallowBlockFromPm(after) : null;
+        },
+        toggleList(type) {
+            const listType = schema.nodes[type];
+            const itemName = itemTypeByList.get(type);
+            const itemType = itemName ? schema.nodes[itemName] : undefined;
+            if (!listType || !itemType) {
+                return;
+            }
+            const current = findList(view.state, itemTypeByList);
+
+            if (!current) {
+                wrapInList(listType)(view.state, view.dispatch);
+            } else if (current.node.type === listType) {
+                runListCommand(liftListItem);
+            } else {
+                // Switching list type converts in place. It has to happen in a
+                // single step: a check list holding bullet items (or the other
+                // way round) is invalid content, so two steps would throw.
+                const converted = listType.create(
+                    current.node.attrs,
+                    mapChildren(current.node, (item) =>
+                        item.type === itemType ? item : itemType.create(item.attrs, item.content),
+                    ),
+                );
+                view.dispatch(view.state.tr.replaceWith(current.pos, current.pos + current.node.nodeSize, converted));
+            }
+            view.focus();
+        },
+        indentListItem: () => runListCommand(sinkListItem),
+        outdentListItem: () => runListCommand(liftListItem),
+        splitListItem: () => runListCommand(pmSplitListItem),
+        unwrapLists() {
+            const { from, to } = view.state.selection;
+            const lists: { node: PmNode; pos: number }[] = [];
+            view.state.doc.nodesBetween(from, to, (node, pos) => {
+                if (!itemTypeByList.has(node.type.name)) {
+                    return true;
+                }
+                // Outermost lists only: their nested ones come along below.
+                lists.push({ node, pos });
+                return false;
+            });
+            if (lists.length === 0) {
+                return false;
+            }
+
+            const transaction = view.state.tr;
+            const contentOf = (list: PmNode): PmNode[] =>
+                mapChildren(list, (item) =>
+                    mapChildren(item, (child) => (itemTypeByList.has(child.type.name) ? contentOf(child) : [child])),
+                ).flat(2);
+            // From the end backwards, so the earlier positions stay valid.
+            for (const { node, pos } of [...lists].reverse()) {
+                transaction.replaceWith(pos, pos + node.nodeSize, contentOf(node));
+            }
+            view.dispatch(transaction);
+            view.focus();
+            return true;
+        },
+        isSelectionCollapsed() {
+            return view.state.selection.empty;
+        },
+        focus() {
+            view.focus();
+        },
+        blur() {
+            view.dom.blur();
+        },
+    };
+};
+
+const buildPmPlugins = (plugins: RtePlugin[], bundle: SchemaBundle, getApi: () => EditorControlApi): PmPlugin[] => {
+    // More than one plugin may bind the same key; they run in mount order until
+    // one reports that it handled it.
+    const hotkeys = new Map<string, Array<(api: EditorControlApi) => boolean | void>>();
+    for (const plugin of plugins) {
+        for (const [keys, command] of Object.entries(plugin.hotkeys ?? {})) {
+            const handlers = hotkeys.get(keys) ?? [];
+            handlers.push(command);
+            hotkeys.set(keys, handlers);
+        }
+    }
+    const keyCommands: Record<string, Command> = Object.fromEntries(
+        Array.from(hotkeys, ([keys, handlers]): [string, Command] => [
+            keys,
+            () => handlers.some((handler) => handler(getApi()) !== false),
+        ]),
+    );
+
+    const triggers = plugins.flatMap((plugin) =>
+        plugin.combobox ? [{ pluginId: plugin.id, trigger: plugin.combobox.trigger }] : [],
+    );
+
     return [
         history(),
         keymap({ 'Mod-z': undo, 'Mod-y': redo, 'Mod-Shift-z': redo }),
-        keymap(hotkeys),
+        keymap(keyCommands),
+        ...buildInputRules(plugins, bundle.schema, bundle.itemTypeByList),
+        ...(triggers.length > 0 ? [comboboxPlugin(triggers)] : []),
         keymap(baseKeymap),
     ];
 };
@@ -378,6 +861,14 @@ export type EditorHandle = {
     api: EditorControlApi;
     /** Replace the content with an externally-set document (the controlled `value`). */
     setDoc(doc: RteDocumentOf): void;
+    /** The caret-anchored picker, if a plugin's trigger is currently open. */
+    combobox: {
+        active(): ActiveCombobox | null;
+        /** Remove the trigger and its query, so the plugin can insert its choice in their place. */
+        clear(): void;
+        /** Close without touching the text (Escape). */
+        dismiss(): void;
+    };
     destroy(): void;
 };
 
@@ -394,7 +885,8 @@ export const createEditor = ({
     onDocChange: (doc: RteDocumentOf) => void;
     onStateChange: () => void;
 }): EditorHandle => {
-    const schema = buildSchema(plugins);
+    const bundle = buildSchema(plugins);
+    const { schema } = bundle;
     // Hotkeys are wired before the view (and hence the api) exists, so they
     // reach it through a thunk that only runs once the editor is live.
     let api!: EditorControlApi;
@@ -404,8 +896,21 @@ export const createEditor = ({
         attributes: { class: EDITOR_CLASS },
         state: EditorState.create({
             doc: documentToPm(initialDoc, schema),
-            plugins: buildPmPlugins(plugins, () => api),
+            plugins: buildPmPlugins(plugins, bundle, () => api),
         }),
+        // A rendered element may declare itself a toggle for one of its own
+        // boolean attributes — the checkbox in a check list item.
+        handleClickOn(_view, _pos, node, nodePos, event) {
+            const target = event.target as HTMLElement | null;
+            const name = target?.closest?.(`[${TOGGLE_ATTRIBUTE}]`)?.getAttribute(TOGGLE_ATTRIBUTE);
+            if (!name || !(name in node.attrs)) {
+                return false;
+            }
+            view.dispatch(
+                view.state.tr.setNodeMarkup(nodePos, undefined, { ...node.attrs, [name]: !node.attrs[name] }),
+            );
+            return true;
+        },
         dispatchTransaction(transaction) {
             view.updateState(view.state.apply(transaction));
             if (transaction.docChanged) {
@@ -416,7 +921,9 @@ export const createEditor = ({
         },
     });
 
-    api = createApi(view, schema);
+    api = createApi(view, bundle);
+
+    const tracked = (): ComboboxTracked | null => comboboxKey.getState(view.state)?.tracked ?? null;
 
     return {
         api,
@@ -425,6 +932,30 @@ export const createEditor = ({
                 const { content } = documentToPm(doc, schema);
                 view.dispatch(view.state.tr.replaceWith(0, view.state.doc.content.size, content));
             }
+        },
+        combobox: {
+            active() {
+                const open = tracked();
+                if (!open) {
+                    return null;
+                }
+                const { left, top, bottom } = view.coordsAtPos(open.from);
+                return {
+                    pluginId: open.pluginId,
+                    trigger: open.trigger,
+                    query: open.query,
+                    coords: { left, top, bottom },
+                };
+            },
+            clear() {
+                const open = tracked();
+                if (open) {
+                    view.dispatch(view.state.tr.delete(open.from, open.to));
+                }
+            },
+            dismiss() {
+                view.dispatch(view.state.tr.setMeta(comboboxKey, DISMISS));
+            },
         },
         destroy() {
             view.destroy();

@@ -20,8 +20,66 @@ const doc: RteDocument = {
 const badBlock: RteDocument = { version: 1, blocks: [{ type: 'nope', children: [] }] };
 
 // prettier-ignore
-// @ts-expect-error heading levels beyond 1|2|3 must be rejected
+// @ts-expect-error heading levels beyond 1|2|3|4 must be rejected
 const badLevel: RteDocument = { version: 1, blocks: [{ type: 'heading', level: 5, children: [] }] };
+
+// Nesting: a list holds items, an item holds a paragraph and any nested list
+const nestedList: RteDocument = {
+    version: 1,
+    blocks: [
+        {
+            type: 'bulletList',
+            children: [
+                {
+                    type: 'listItem',
+                    children: [
+                        { type: 'paragraph', children: [{ text: 'one', bold: true }] },
+                        {
+                            type: 'numberedList',
+                            children: [
+                                { type: 'listItem', children: [{ type: 'paragraph', children: [{ text: 'nested' }] }] },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        },
+        {
+            type: 'checkList',
+            children: [
+                { type: 'checkItem', checked: true, children: [{ type: 'paragraph', children: [{ text: 'done' }] }] },
+            ],
+        },
+    ],
+};
+
+// prettier-ignore
+// @ts-expect-error the closed inline union reaches into list items too
+const listMarkTypo: RteDocument = { version: 1, blocks: [{ type: 'bulletList', children: [{ type: 'listItem', children: [{ type: 'paragraph', children: [{ text: 'x', bod: true }] }] }] }] };
+
+// prettier-ignore
+// @ts-expect-error a list may only contain its own item type
+const listHoldsBlocks: RteDocument = { version: 1, blocks: [{ type: 'bulletList', children: [{ type: 'paragraph', children: [] }] }] };
+
+// prettier-ignore
+// @ts-expect-error text style variants are closed
+const variantTypo: RteDocument = { version: 1, blocks: [{ type: 'textStyle', variant: 'custom9', children: [] }] };
+
+// prettier-ignore
+// @ts-expect-error alignment values are closed
+const alignTypo: RteDocument = { version: 1, blocks: [{ type: 'paragraph', align: 'middle', children: [] }] };
+
+// Alignment and the shipped void inlines are part of the official format — no type argument
+const shippedInlines: RteDocument = {
+    version: 1,
+    blocks: [
+        {
+            type: 'paragraph',
+            align: 'center',
+            children: [{ text: 'Ask ' }, { type: 'mention', id: 'jane', label: 'Jane' }, { type: 'break' }],
+        },
+    ],
+};
 
 // prettier-ignore
 // @ts-expect-error mark keys are closed: a typo must not pass
@@ -57,6 +115,12 @@ export const __typeAssertions = [
     doc,
     badBlock,
     badLevel,
+    nestedList,
+    listMarkTypo,
+    listHoldsBlocks,
+    variantTypo,
+    alignTypo,
+    shippedInlines,
     markTypo,
     linkAsBoolean,
     narrowed,

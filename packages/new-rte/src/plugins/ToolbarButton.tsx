@@ -13,6 +13,7 @@ export const ToolbarButton = ({
     disabled,
     onClick,
     style,
+    title,
 }: {
     children: ReactNode;
     /** Omit for buttons that are actions rather than toggles — it drives `aria-pressed`. */
@@ -20,10 +21,14 @@ export const ToolbarButton = ({
     disabled?: boolean;
     onClick: () => void;
     style?: CSSProperties;
+    /** Names a button whose label is only a symbol; also its tooltip. */
+    title?: string;
 }): ReactNode => (
     <button
         type="button"
         aria-pressed={active}
+        aria-label={title}
+        title={title}
         disabled={disabled}
         // Never take the selection away from the editor.
         onMouseDown={(event) => event.preventDefault()}

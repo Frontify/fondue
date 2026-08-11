@@ -8,16 +8,17 @@ import { type EditorControlApi, type RteBlockNode, type RteInlineNode, type RteP
 /** The block type this plugin adds. Part of the assembled RteBlock union at the package root. */
 export type HeadingBlock = {
     type: 'heading';
-    level: 1 | 2 | 3;
+    level: 1 | 2 | 3 | 4;
     children: RteInlineNode[];
 };
 
-const LEVELS: HeadingBlock['level'][] = [1, 2, 3];
+const LEVELS: HeadingBlock['level'][] = [1, 2, 3, 4];
 
 const STYLES: Record<HeadingBlock['level'], CSSProperties> = {
     1: { fontSize: '1.6em', fontWeight: 700, lineHeight: 1.3, margin: 0 },
     2: { fontSize: '1.3em', fontWeight: 700, lineHeight: 1.3, margin: 0 },
     3: { fontSize: '1.1em', fontWeight: 600, lineHeight: 1.3, margin: 0 },
+    4: { fontSize: '1em', fontWeight: 600, lineHeight: 1.3, margin: 0 },
 };
 
 /** The Select value standing for "not a heading" — the block type we fall back to. */
