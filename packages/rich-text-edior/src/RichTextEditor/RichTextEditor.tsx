@@ -3,12 +3,15 @@
 import { type CSSProperties, type ReactNode } from 'react';
 
 import { FloatingLayer } from './components/FloatingLayer';
+import { FloatingToolbar } from './components/FloatingToolbar';
 import { Toolbar } from './components/Toolbar';
 import { classNames } from './helpers/classNames';
 import { useEditorHandle } from './hooks/useEditorHandle';
 import { useFloating } from './hooks/useFloating';
+import { useFocusWithin } from './hooks/useFocusWithin';
+import { useSelectionRect } from './hooks/useSelectionRect';
 import styles from './richTextEditor.module.scss';
-import { type RteBlockNode, type RteDocumentOf, type RtePlugin } from './types';
+import { type RteBlockNode, type RteDocumentOf, type RtePlugin, type ToolbarPlacement } from './types';
 
 /**
  * `TBlock` is the document's block union. The editor itself is agnostic, so it
@@ -22,6 +25,21 @@ export type RichTextEditorProps<TBlock extends RteBlockNode = RteBlockNode> = {
     onChange?: (value: RteDocumentOf<TBlock>) => void;
     /** The plugins to mount, in toolbar order (e.g. `defaultPlugins`, extended or reduced as needed). */
     plugins?: RtePlugin[];
+    /**
+     * Where the toolbar goes.
+     *
+     * `'floating'` hangs it over the selected text and shows it only while there
+     * is a selection to act on, so the frame holds nothing but the content and
+     * the controls are wherever the reader is working — including in an editor
+     * far taller than the window, where a bar fixed to the top would have
+     * scrolled out of sight.
+     *
+     * `'top'` puts it inside the frame as a strip above the content, where it is
+     * part of the editor's own box and always there.
+     *
+     * @default 'floating'
+     */
+    toolbarPlacement?: ToolbarPlacement;
     /**
      * Show the content without allowing edits. The toolbar goes away with it —
      * there is nothing it could do.
@@ -50,16 +68,19 @@ export type RichTextEditorProps<TBlock extends RteBlockNode = RteBlockNode> = {
 };
 
 /**
- * The editor: a frame holding the plugins' toolbar and the editable element, plus
- * the floating layer for plugin UI that hangs over the content.
+ * The editor: a frame around the editable element, the plugins' toolbar either
+ * inside it or hanging over the selection, and the floating layer for plugin UI
+ * that hangs over the content.
  *
- * Everything stateful sits in the two hooks: `useEditorHandle` owns the live
- * editor, `useFloating` owns the floating UI and its keyboard.
+ * Everything stateful sits in the hooks: `useEditorHandle` owns the live editor,
+ * `useFloating` owns plugin floating UI and its keyboard, and the two small ones
+ * answer where the selection is and whether the editor is being worked in.
  */
 export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     value,
     onChange,
     plugins = [],
+    toolbarPlacement = 'floating',
     readonly: readOnly = false,
     showEditor = true,
     placeholder = '',
@@ -76,8 +97,20 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
         onBlur: (doc) => onBlur?.(doc as RteDocumentOf<TBlock>),
     });
     const floating = useFloating({ handle, plugins, enabled: !readOnly });
+    // A floating toolbar is shown for as long as the editor is being worked in,
+    // which is not the same as the editable element having focus: reaching into a
+    // dropdown in the toolbar takes focus out of the text, and the bar holding it
+    // cannot go away underneath it.
+    const { focusWithin, focusProps } = useFocusWithin();
 
     const api = handle?.api;
+    const toolbarFloats = toolbarPlacement === 'floating';
+    const toolbar =
+        api && !readOnly && showEditor ? <Toolbar plugins={plugins} api={api} placement={toolbarPlacement} /> : null;
+    // The box the floating bar hangs over, and null whenever it is not the one
+    // showing: nothing is selected, the toolbar is a strip in the frame instead,
+    // or the editor is not being worked in at all.
+    const selectionRect = useSelectionRect({ handle, enabled: toolbarFloats && toolbar !== null && focusWithin });
 
     // Custom properties a plugin sets for the whole content (a column count).
     // They sit on the wrapper, which re-renders — so a changed value applies
@@ -88,14 +121,26 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
 
     return (
         <>
+            {/*
+             * The wrapper is where focus and keys are watched for the whole editor,
+             * toolbar included. It lays out as nothing at all (`display: contents`),
+             * so the frame is still the box a page positions and sizes.
+             */}
             <div
                 onKeyDownCapture={floating.onKeyDownCapture}
-                className={classNames(styles.frame, !showEditor && styles.contentOnly)}
-                // Custom properties are not part of React's CSSProperties.
+                {...focusProps}
+                className={styles.root}
+                // Custom properties are not part of React's CSSProperties. They
+                // sit here rather than on the frame so they reach the toolbar too.
                 style={contentProperties as CSSProperties}
             >
-                {api && !readOnly && showEditor ? <Toolbar plugins={plugins} api={api} /> : null}
-                <div ref={containerRef} />
+                {toolbarFloats && selectionRect !== null ? (
+                    <FloatingToolbar rect={selectionRect}>{toolbar}</FloatingToolbar>
+                ) : null}
+                <div className={classNames(styles.frame, !showEditor && styles.contentOnly)}>
+                    {toolbarFloats ? null : toolbar}
+                    <div ref={containerRef} />
+                </div>
             </div>
             <FloatingLayer surfaces={floating.surfaces} />
         </>

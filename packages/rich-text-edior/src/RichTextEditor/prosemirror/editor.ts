@@ -8,7 +8,12 @@ import { type EditorControlApi, type RteDocumentOf, type RtePlugin } from '../ty
 import { createApi } from './api';
 import { documentToPm, pmToDocument } from './document';
 import { buildEnginePlugins } from './enginePlugins';
-import { createFloatingLocator, type FloatingPlacement } from './floating';
+import {
+    createFloatingLocator,
+    type FloatingPlacement,
+    type FloatingRect,
+    createSelectionRectReader,
+} from './floating';
 import { placeholderPlugin } from './placeholder';
 import { TOGGLE_ATTRIBUTE } from './render';
 import { buildSchema } from './schema';
@@ -55,6 +60,12 @@ export type EditorHandle = {
      */
     floating: {
         placements(): FloatingPlacement[];
+        /**
+         * The box around the selected text, for the editor's own floating UI —
+         * the toolbar, when it is the one hanging over the selection. Null while
+         * nothing is selected.
+         */
+        selectionRect(): FloatingRect | null;
         /** Delete the open trigger and its query, so a choice can take their place. */
         clearQuery(): void;
         /** Close the open trigger until the caret moves on (Escape). */
@@ -145,6 +156,7 @@ export const createEditor = ({
         api,
         floating: {
             placements: createFloatingLocator(view, plugins, schema, triggers),
+            selectionRect: createSelectionRectReader(view),
             clearQuery: triggers.clear,
             dismiss: triggers.dismiss,
         },

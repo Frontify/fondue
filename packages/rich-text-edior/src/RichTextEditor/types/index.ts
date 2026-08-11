@@ -23,6 +23,7 @@ export {
     type FloatingSpec,
     type RteInputRule,
     type RtePlugin,
+    type ToolbarPlacement,
 } from './plugin';
 export {
     type AttributeSpec,

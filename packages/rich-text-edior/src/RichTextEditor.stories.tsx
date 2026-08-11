@@ -117,6 +117,55 @@ export const Placeholder: Story = {
     },
 };
 
+/**
+ * `toolbarPlacement` decides where the controls live.
+ *
+ * The default, `'floating'`, hangs them over the selected text and shows them only
+ * while there is a selection: select a few words to see the bar, and note that it
+ * follows the text as the page scrolls rather than staying where it started.
+ *
+ * `'top'` puts them inside the frame as a strip above the content, part of the
+ * editor's own box and always there — what a field in a dense form wants, where a
+ * bar over the text would cover what is being read.
+ */
+export const ToolbarPlacement: Story = {
+    render: () => {
+        const [doc, setDoc] = useState<RteDocument>({
+            version: 1,
+            blocks: [
+                {
+                    type: 'paragraph',
+                    children: [{ text: 'Select a few of these words and the floating toolbar appears over them.' }],
+                },
+                {
+                    type: 'paragraph',
+                    children: [{ text: 'Switch the placement with the button above to compare the two.' }],
+                },
+            ],
+        });
+        const [floating, setFloating] = useState(true);
+
+        return (
+            <div className={LAYOUT}>
+                <div className="tw-flex tw-flex-col tw-items-start tw-gap-2">
+                    <button type="button" className={buttonClasses(floating)} onClick={() => setFloating(!floating)}>
+                        toolbarPlacement: {floating ? 'floating' : 'top'}
+                    </button>
+                    <div className="tw-w-full">
+                        <RichTextEditor
+                            value={doc}
+                            onChange={setDoc}
+                            plugins={defaultPlugins}
+                            toolbarPlacement={floating ? 'floating' : 'top'}
+                        />
+                    </div>
+                </div>
+                <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
+            </div>
+        );
+    },
+};
+
 /** `readonly` shows the content without allowing edits — the toolbar goes with it. */
 export const Readonly: Story = {
     render: () => {

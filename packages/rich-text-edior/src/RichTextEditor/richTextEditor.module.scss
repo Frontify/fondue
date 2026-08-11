@@ -4,6 +4,16 @@
 // plugin's module instead — this file owns the frame, the toolbar strip and the
 // editable surface.
 
+/**
+ * Wraps the frame and, when the toolbar floats, the bar over the selection —
+ * which is what gives the editor one element to watch focus and keys on. It draws
+ * nothing and takes part in no layout: `display: contents` leaves the frame as the
+ * box its container positions and sizes, exactly as if this element were not here.
+ */
+.root {
+    display: contents;
+}
+
 .frame {
     overflow: hidden;
     border: var(--border-width-default) solid var(--color-line-mid);
@@ -32,14 +42,53 @@
     }
 }
 
+/** The controls themselves, wherever the bar holding them ends up. */
 .toolbar {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
     gap: var(--spacing-xx-small);
     padding: var(--spacing-x-small);
+}
+
+/** A strip inside the frame, divided from the content it sits above. */
+.toolbarTop {
     border-bottom: var(--border-width-default) solid var(--color-line-subtle);
     background: var(--color-surface-dim);
+}
+
+/**
+ * The bar lifted off the editor and hung over the selected text. Fixed rather than
+ * absolute because the box it is given is in viewport coordinates — the editor
+ * reports where the text is *on screen*, which is the only thing that stays true
+ * whichever container the editor happens to be scrolling inside.
+ *
+ * `width: max-content` keeps it as wide as its controls rather than stretching to
+ * the text it hangs over, and the cap is what makes it wrap instead of leaving the
+ * window.
+ */
+.floatingToolbar {
+    position: fixed;
+    z-index: 1;
+    max-width: calc(100vw - var(--spacing-medium) * 2);
+    width: max-content;
+    border: var(--border-width-default) solid var(--color-line-mid);
+    border-radius: var(--border-radius-medium);
+    background: var(--color-surface-default);
+    box-shadow: var(--shadow-mid);
+}
+
+/**
+ * The two sides, as a transform: the component supplies one anchor point — the top
+ * of the selection, or its bottom — and the shift off it lives here with the gap
+ * it leaves, so flipping is a class swap rather than a second measurement.
+ */
+.floatingAbove {
+    transform: translate(-50%, calc(-100% - var(--spacing-xx-small)));
+}
+
+.floatingBelow {
+    transform: translate(-50%, var(--spacing-xx-small));
 }
 
 /**

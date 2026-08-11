@@ -72,6 +72,17 @@ export type RtePlugin = {
 };
 
 /**
+ * Where the plugins' toolbar is drawn. Not a plugin's decision — a plugin
+ * contributes controls and never learns where they end up — but it is the same
+ * subject, so it lives next to `RtePlugin.toolbar`.
+ *
+ * - `'floating'` — a detached bar hovering above the editor, overlaying whatever
+ *   is up there rather than taking a row of the page for itself.
+ * - `'top'` — a strip inside the editor's frame, above the text.
+ */
+export type ToolbarPlacement = 'floating' | 'top';
+
+/**
  * A text pattern rewritten while typing. Declared, not implemented: the
  * adapter owns the matching, so a plugin never touches the engine's input
  * machinery.
