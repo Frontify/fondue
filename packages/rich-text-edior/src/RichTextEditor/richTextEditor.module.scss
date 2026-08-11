@@ -12,12 +12,32 @@
     box-shadow: var(--shadow-default);
 }
 
+/**
+ * The frame with its chrome taken away, leaving the content on its own — what
+ * `showEditor={false}` renders. Everything dropped here is the editor *telling
+ * the reader it is an editor*: the box it draws around itself and the inset that
+ * keeps typing off the border. The content's own styling (its typography, and
+ * whatever the plugins draw) is untouched, so it looks like the text it is.
+ */
+.contentOnly {
+    overflow: visible;
+    border: none;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+
+    .content {
+        min-height: 0;
+        padding: 0;
+    }
+}
+
 .toolbar {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    gap: 4px;
-    padding: 6px 8px;
+    gap: var(--spacing-xx-small);
+    padding: var(--spacing-x-small);
     border-bottom: var(--border-width-default) solid var(--color-line-subtle);
     background: var(--color-surface-dim);
 }
@@ -31,7 +51,7 @@
 .content {
     position: relative;
     min-height: 80px;
-    padding: 10px 12px;
+    padding: var(--spacing-x-small) var(--spacing-small);
     outline: none;
     color: var(--color-primary-default);
     font-family: var(--typography-font-family-primary);
@@ -44,6 +64,30 @@
     white-space: break-spaces;
     word-wrap: break-word;
     cursor: text;
+
+    /**
+     * A void block (an image) is selected whole rather than as a run of text,
+     * and the engine marks it with nothing but a class — the ring that makes it
+     * look selected lives in ProseMirror's own stylesheet, which this package
+     * deliberately never imports. Without these two rules clicking an image did
+     * nothing visible, so it read as unselectable and there was no way to tell
+     * what a copy was about to take: `hideselection` drops the native text
+     * selection and caret that would otherwise still be showing elsewhere.
+     */
+    :global(.ProseMirror-selectednode) {
+        outline: var(--border-width-large) solid var(--color-focus-default);
+        // A literal, not `--border-width-default`: this is the gap between the
+        // ring and the image, which is not a border width.
+        outline-offset: 1px;
+    }
+
+    &:global(.ProseMirror-hideselection) {
+        caret-color: transparent;
+
+        *::selection {
+            background: transparent;
+        }
+    }
 
     /**
      * The placeholder decoration sits on the empty block, so its text starts

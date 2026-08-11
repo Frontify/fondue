@@ -15,7 +15,7 @@ import { type FloatingContext, type FloatingKeyHandler, type RtePlugin } from '.
  */
 
 export type FloatingSurface = {
-    /** Stable per declared piece of floating UI — also what its key handler is stored under. */
+    /** The declaring plugin's id — also what its key handler is stored under. */
     key: string;
     rect: FloatingRect;
     content: ReactNode;
@@ -42,11 +42,11 @@ export const useFloating = ({
     const placements = enabled && handle ? handle.floating.placements() : [];
 
     const surfaces = placements.flatMap((placement): FloatingSurface[] => {
-        const spec = plugins.find((plugin) => plugin.id === placement.pluginId)?.floating?.[placement.specIndex];
+        const spec = plugins.find((plugin) => plugin.id === placement.pluginId)?.floating;
         if (!spec || !handle) {
             return [];
         }
-        const key = `${placement.pluginId}:${placement.specIndex}`;
+        const key = placement.pluginId;
         const context: FloatingContext = {
             api: handle.api,
             query: placement.query,

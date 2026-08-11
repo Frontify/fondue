@@ -51,6 +51,8 @@
 
     font-size: 1.05em;
     font-weight: var(--typography-font-weight-medium);
+    // `em` rather than `--typography-letter-spacing-*`: those tokens are
+    // absolute px, and a preset's tracking has to scale with its own size.
     letter-spacing: 0.02em;
 }
 
@@ -67,7 +69,7 @@
 
     font-size: 0.9em;
     letter-spacing: 0.08em;
-    text-transform: uppercase;
+    text-transform: var(--typography-text-transform-uppercase);
 }
 
 .imageTitle {

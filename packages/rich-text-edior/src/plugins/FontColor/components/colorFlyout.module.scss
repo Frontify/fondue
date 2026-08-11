@@ -1,0 +1,28 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+/**
+ * The button's label: the icon with the current colour under it, the way a
+ * font-colour control is normally read.
+ */
+.trigger {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+/** Empty while nothing is set — the element stays, so the icon does not shift. */
+.swatch {
+    width: 16px;
+    height: 3px;
+    border-radius: var(--border-radius-small);
+}
+
+/**
+ * The picker's box. It lays itself out against the width it is given, so this
+ * is what decides whether its inputs sit in one row or stack.
+ */
+.picker {
+    width: 100%;
+    min-width: 260px;
+}

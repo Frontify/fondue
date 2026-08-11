@@ -53,6 +53,14 @@ export const blockNodeSpec = (
     return {
         content: pmContent(spec, known),
         atom: isVoid,
+        // Paragraph is the neutral block, everything else means something —
+        // "this text is a caption", "this text is quoted". Saying so is what
+        // makes pasted content keep the block it was copied out of instead of
+        // dissolving into whatever block it lands in: the engine treats the
+        // sides of such a block as a boundary editing does not cross. Lists are
+        // left out, the way the engine's own list schema leaves them out; there
+        // the boundary that matters belongs to the item, not to the list.
+        ...(isVoid || spec.isList === true ? {} : { defining: true }),
         // A list item is only ever reached through its list, so it deliberately
         // stays out of the `block` group the document accepts at top level.
         ...(isListItem ? {} : { group: 'block' }),

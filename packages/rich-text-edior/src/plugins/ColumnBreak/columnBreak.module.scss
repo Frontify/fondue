@@ -13,7 +13,7 @@
 /** The break itself: a hairline the author can see, taking up no space. */
 .break {
     height: 0;
-    margin: 6px 0;
-    border-top: 1px dashed var(--color-line-mid);
+    margin: var(--spacing-xx-small) 0;
+    border-top: var(--border-width-default) dashed var(--color-line-mid);
     break-after: column;
 }

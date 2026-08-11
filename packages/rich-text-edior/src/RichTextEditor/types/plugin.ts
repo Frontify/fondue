@@ -55,10 +55,10 @@ export type RtePlugin = {
     inputRules?: readonly RteInputRule[];
     /**
      * UI floating over the content rather than sitting in the toolbar: the panel
-     * under a link, the picker at a typed `@`. One mechanism for all of it — see
-     * `FloatingSpec`. A plugin may declare more than one.
+     * under a link, the picker at a typed `@`. One anchor per plugin, and one
+     * mechanism for all of it — see `FloatingSpec`.
      */
-    floating?: readonly FloatingSpec[];
+    floating?: FloatingSpec;
     /**
      * A class for the editable element itself, for a feature that styles the
      * content as a whole rather than nodes it renders — the column layout.

@@ -8,21 +8,24 @@
 .fields {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: var(--spacing-small);
     width: 240px;
+    // Portaled out of the editor's frame like the panel: the fields are Fondue
+    // components that carry their own font, but the checkbox's label is not.
+    font-family: var(--typography-font-family-primary);
 }
 
 /** A label sitting on its own line above its input. */
 .field {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: var(--spacing-xx-small);
 }
 
 .newTab {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--spacing-x-small);
     font-size: var(--typography-font-size-small);
 }
 
@@ -30,5 +33,5 @@
 .formActions {
     display: flex;
     justify-content: flex-end;
-    gap: 8px;
+    gap: var(--spacing-x-small);
 }

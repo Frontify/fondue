@@ -6,8 +6,11 @@
 .panel {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--spacing-x-small);
     max-width: 320px;
+    // The panel is portaled out of the editor's frame, so it inherits nothing
+    // from the content — the target below is raw text and has to be told.
+    font-family: var(--typography-font-family-primary);
     font-size: var(--typography-font-size-small);
 }
 
@@ -26,5 +29,5 @@
 .panelActions {
     display: flex;
     flex-shrink: 0;
-    gap: 2px;
+    gap: var(--spacing-xx-small);
 }

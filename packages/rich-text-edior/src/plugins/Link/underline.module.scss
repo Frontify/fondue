@@ -7,5 +7,7 @@
  */
 @mixin underline {
     text-decoration: underline;
+    // A literal: the offset is the gap between the glyphs and the line, which no
+    // token category covers.
     text-underline-offset: 2px;
 }

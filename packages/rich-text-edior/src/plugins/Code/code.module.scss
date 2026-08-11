@@ -2,7 +2,7 @@
 
 /** Inline code inside the document. */
 .code {
-    padding: 0 3px;
+    padding: 0 var(--spacing-xx-small);
     border-radius: var(--border-radius-small);
     background: var(--color-container-secondary-default);
     // Relative, so code inside a heading stays proportional to it.

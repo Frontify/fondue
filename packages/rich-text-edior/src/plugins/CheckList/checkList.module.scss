@@ -9,7 +9,7 @@
 .item {
     display: flex;
     align-items: baseline;
-    gap: 8px;
+    gap: var(--spacing-x-small);
 
     // Checked items are struck through, which is state on the item and styling
     // on its content — hence the nested selector rather than a second class.

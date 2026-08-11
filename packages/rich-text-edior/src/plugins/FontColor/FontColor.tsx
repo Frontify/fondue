@@ -2,7 +2,7 @@
 
 import { type RtePlugin } from '#/RichTextEditor';
 
-import { ColorSelect } from './components/ColorSelect';
+import { ColorFlyout } from './components/ColorFlyout';
 
 /** The value this plugin sets on text nodes. */
 export type FontColorMark = {
@@ -24,5 +24,5 @@ export const fontColorPlugin = (): RtePlugin => ({
             },
         ],
     },
-    toolbar: (api) => <ColorSelect api={api} />,
+    toolbar: (api) => <ColorFlyout api={api} />,
 });

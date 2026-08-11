@@ -41,10 +41,10 @@ const DISMISS = 'dismiss';
 /** Every trigger character the mounted plugins anchor floating UI to, without duplicates. */
 export const declaredTriggers = (plugins: RtePlugin[]): string[] => [
     ...new Set(
-        plugins.flatMap((plugin) =>
-            (plugin.floating ?? []).flatMap((spec) =>
-                typeof spec.anchor === 'object' && 'trigger' in spec.anchor ? [spec.anchor.trigger] : [],
-            ),
+        plugins.flatMap(({ floating }) =>
+            floating && typeof floating.anchor === 'object' && 'trigger' in floating.anchor
+                ? [floating.anchor.trigger]
+                : [],
         ),
     ),
 ];

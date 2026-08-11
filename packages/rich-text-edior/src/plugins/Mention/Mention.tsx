@@ -66,31 +66,27 @@ export const mentionPlugin = ({ items, trigger = '@' }: MentionPluginOptions): R
             },
         ],
     },
-    floating: [
-        {
-            // Typed at the start of a word, the trigger opens the picker; what
-            // follows it is the query.
-            anchor: { trigger },
-            render: (context) => {
-                const needle = context.query.toLowerCase();
-                const found = items
-                    .filter((item) => item.label.toLowerCase().includes(needle))
-                    .slice(0, COMBOBOX_LIMIT);
-                // Nothing to offer means no picker at all, so what was typed
-                // stays ordinary text.
-                return found.length === 0 ? null : (
-                    <Combobox
-                        context={context}
-                        items={found}
-                        label={`${trigger} suggestions`}
-                        onSelect={(item, api) => {
-                            api.insert('mention', { id: item.id, label: item.label });
-                            // A space after the mention, so typing continues outside it.
-                            api.insertText(' ');
-                        }}
-                    />
-                );
-            },
+    floating: {
+        // Typed at the start of a word, the trigger opens the picker; what
+        // follows it is the query.
+        anchor: { trigger },
+        render: (context) => {
+            const needle = context.query.toLowerCase();
+            const found = items.filter((item) => item.label.toLowerCase().includes(needle)).slice(0, COMBOBOX_LIMIT);
+            // Nothing to offer means no picker at all, so what was typed
+            // stays ordinary text.
+            return found.length === 0 ? null : (
+                <Combobox
+                    context={context}
+                    items={found}
+                    label={`${trigger} suggestions`}
+                    onSelect={(item, api) => {
+                        api.insert('mention', { id: item.id, label: item.label });
+                        // A space after the mention, so typing continues outside it.
+                        api.insertText(' ');
+                    }}
+                />
+            );
         },
-    ],
+    },
 });

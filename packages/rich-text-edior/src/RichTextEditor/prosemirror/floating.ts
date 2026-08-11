@@ -19,20 +19,16 @@ export type FloatingRect = { left: number; top: number; width: number; height: n
 
 export type FloatingPlacement = {
     pluginId: string;
-    /** Index in the plugin's `floating` array — a plugin may declare more than one. */
-    specIndex: number;
     rect: FloatingRect;
     /** For a `{ trigger }` anchor: what has been typed after it. Empty for the others. */
     query: string;
 };
 
-type DeclaredFloating = { pluginId: string; specIndex: number; anchor: FloatingAnchor };
+type DeclaredFloating = { pluginId: string; anchor: FloatingAnchor };
 
 /** What the mounted plugins declared, in mount order. */
 const declaredFloating = (plugins: RtePlugin[]): DeclaredFloating[] =>
-    plugins.flatMap((plugin) =>
-        (plugin.floating ?? []).map((spec, specIndex) => ({ pluginId: plugin.id, specIndex, anchor: spec.anchor })),
-    );
+    plugins.flatMap((plugin) => (plugin.floating ? [{ pluginId: plugin.id, anchor: plugin.floating.anchor }] : []));
 
 export const createFloatingLocator = (
     view: EditorView,
@@ -78,10 +74,8 @@ export const createFloatingLocator = (
     };
 
     return () =>
-        declared.flatMap(({ pluginId, specIndex, anchor }) => {
+        declared.flatMap(({ pluginId, anchor }) => {
             const range = anchorRange(anchor);
-            return range === null
-                ? []
-                : [{ pluginId, specIndex, query: range.query, rect: rectBetween(range.from, range.to) }];
+            return range === null ? [] : [{ pluginId, query: range.query, rect: rectBetween(range.from, range.to) }];
         });
 };

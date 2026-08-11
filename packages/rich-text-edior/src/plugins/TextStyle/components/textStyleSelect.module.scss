@@ -17,6 +17,9 @@
  */
 .preview {
     display: block;
-    padding-block: 2px;
+    padding-block: var(--spacing-xx-small);
+    // The menu is portaled out of the editor's frame, and a preview only reads as
+    // one if it is drawn in the same font as the block it stands for.
+    font-family: var(--typography-font-family-primary);
     line-height: 1.3;
 }

@@ -2,7 +2,7 @@
 
 .quote {
     margin: 0;
-    padding-left: 12px;
-    border-left: 3px solid var(--color-line-strong);
+    padding-left: var(--spacing-small);
+    border-left: var(--border-width-large) solid var(--color-line-strong);
     color: var(--color-secondary-default);
 }

@@ -45,19 +45,17 @@ export const linkPlugin = (): RtePlugin => ({
         ],
     },
     toolbar: (api) => <LinkFlyout api={api} />,
-    floating: [
-        {
-            // The whole link, not the caret in it: the panel stays put while the
-            // caret moves through the text it is about.
-            anchor: { mark: 'link' },
-            // Only for a caret *in* a link. A selection dragged across one means
-            // the user is picking text to format, which is the toolbar's job —
-            // and it is also what the toolbar's own flyout leaves behind while
-            // it is open.
-            render: ({ api }) => {
-                const run = api.marks.getRun('link');
-                return run && api.selection.get().isCollapsed ? <LinkPanel api={api} run={run} /> : null;
-            },
+    floating: {
+        // The whole link, not the caret in it: the panel stays put while the
+        // caret moves through the text it is about.
+        anchor: { mark: 'link' },
+        // Only for a caret *in* a link. A selection dragged across one means
+        // the user is picking text to format, which is the toolbar's job —
+        // and it is also what the toolbar's own flyout leaves behind while
+        // it is open.
+        render: ({ api }) => {
+            const run = api.marks.getRun('link');
+            return run && api.selection.get().isCollapsed ? <LinkPanel api={api} run={run} /> : null;
         },
-    ],
+    },
 });

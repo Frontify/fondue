@@ -4,6 +4,7 @@ import { type CSSProperties, type ReactNode } from 'react';
 
 import { FloatingLayer } from './components/FloatingLayer';
 import { Toolbar } from './components/Toolbar';
+import { classNames } from './helpers/classNames';
 import { useEditorHandle } from './hooks/useEditorHandle';
 import { useFloating } from './hooks/useFloating';
 import styles from './richTextEditor.module.scss';
@@ -26,6 +27,16 @@ export type RichTextEditorProps<TBlock extends RteBlockNode = RteBlockNode> = {
      * there is nothing it could do.
      */
     readonly?: boolean;
+    /**
+     * Draw the editor's chrome — the border, the background and the toolbar.
+     * Turn it off and only the content is rendered, with none of the inset the
+     * editable surface otherwise carries: the pairing for `readonly`, where the
+     * document is being displayed rather than worked on and a box around it
+     * would be a promise the editor cannot keep.
+     *
+     * @default true
+     */
+    showEditor?: boolean;
     /** Shown while the document is empty. */
     placeholder?: string;
     /**
@@ -50,6 +61,7 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     onChange,
     plugins = [],
     readonly: readOnly = false,
+    showEditor = true,
     placeholder = '',
     onBlur,
 }: RichTextEditorProps<TBlock>): ReactNode => {
@@ -78,11 +90,11 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
         <>
             <div
                 onKeyDownCapture={floating.onKeyDownCapture}
-                className={styles.frame}
+                className={classNames(styles.frame, !showEditor && styles.contentOnly)}
                 // Custom properties are not part of React's CSSProperties.
                 style={contentProperties as CSSProperties}
             >
-                {api && !readOnly ? <Toolbar plugins={plugins} api={api} /> : null}
+                {api && !readOnly && showEditor ? <Toolbar plugins={plugins} api={api} /> : null}
                 <div ref={containerRef} />
             </div>
             <FloatingLayer surfaces={floating.surfaces} />

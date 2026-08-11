@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 .mention {
-    padding: 0 3px;
+    padding: 0 var(--spacing-xx-small);
     border-radius: var(--border-radius-small);
     background: var(--color-container-highlight-default);
     color: var(--color-container-highlight-on-highlight-container);

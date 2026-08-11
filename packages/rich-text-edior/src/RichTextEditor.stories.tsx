@@ -153,6 +153,75 @@ export const Readonly: Story = {
 };
 
 /**
+ * `showEditor={false}` drops the editor's chrome — border, background, toolbar
+ * and the inset around the text — so the document is rendered as plain content.
+ * Its pairing is `readonly`: together they display a document without ever
+ * looking like a field. Toggle them independently to see which does what.
+ */
+export const ContentOnly: Story = {
+    render: () => {
+        const [doc, setDoc] = useState<RteDocument>({
+            version: 1,
+            blocks: [
+                { type: 'textStyle', style: 'heading3', children: [{ text: 'Just the content' }] },
+                {
+                    type: 'paragraph',
+                    children: [
+                        { text: 'No border, no background, no toolbar — the ' },
+                        { text: 'content', bold: true },
+                        { text: ' sits in the page as if it were written there.' },
+                    ],
+                },
+                {
+                    type: 'bulletList',
+                    children: [
+                        {
+                            type: 'listItem',
+                            children: [{ type: 'paragraph', children: [{ text: 'Plugin styling is untouched' }] }],
+                        },
+                    ],
+                },
+            ],
+        });
+        const [showEditor, setShowEditor] = useState(false);
+        const [readonly, setReadonly] = useState(true);
+
+        return (
+            <div className={LAYOUT}>
+                <div className="tw-flex tw-flex-col tw-items-start tw-gap-2">
+                    <div className="tw-flex tw-gap-2">
+                        <button
+                            type="button"
+                            className={buttonClasses(showEditor)}
+                            onClick={() => setShowEditor(!showEditor)}
+                        >
+                            showEditor: {String(showEditor)}
+                        </button>
+                        <button
+                            type="button"
+                            className={buttonClasses(readonly)}
+                            onClick={() => setReadonly(!readonly)}
+                        >
+                            readonly: {String(readonly)}
+                        </button>
+                    </div>
+                    <div className="tw-w-full">
+                        <RichTextEditor
+                            value={doc}
+                            onChange={setDoc}
+                            plugins={defaultPlugins}
+                            showEditor={showEditor}
+                            readonly={readonly}
+                        />
+                    </div>
+                </div>
+                <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
+            </div>
+        );
+    },
+};
+
+/**
  * `onBlur` hands over the document as it stood when focus left — the hook to
  * commit on, when saving on every keystroke would be too much.
  *

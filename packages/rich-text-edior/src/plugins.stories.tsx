@@ -1075,7 +1075,7 @@ const embedPlugin = (): RtePlugin => ({
             },
         ],
     },
-    floating: [{ anchor: { trigger: '/' }, render: (context) => <EmbedPicker context={context} /> }],
+    floating: { anchor: { trigger: '/' }, render: (context) => <EmbedPicker context={context} /> },
 });
 
 /** A consumer inline element widens the same parameter as a consumer mark. */

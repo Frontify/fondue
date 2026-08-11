@@ -17,9 +17,9 @@
 .option {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--spacing-x-small);
     width: 100%;
-    padding: 4px 8px;
+    padding: var(--spacing-xx-small) var(--spacing-x-small);
     border: none;
     border-radius: var(--border-radius-medium);
     background: transparent;
