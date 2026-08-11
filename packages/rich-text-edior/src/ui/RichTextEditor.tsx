@@ -92,6 +92,10 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
         value,
         readOnly,
         placeholder,
+        // A plugin that lays out the whole content (columns) styles the editable
+        // element rather than anything it renders itself.
+        contentClassName: classNames(styles.content, ...plugins.map((plugin) => plugin.contentClassName)),
+        placeholderClassName: classNames(styles.placeholder),
         // The engine emits the structural form; it is only as narrow as the
         // mounted plugin set, which the caller declared via TBlock.
         onDocChange: (doc) => onChange?.(doc as RteDocumentOf<TBlock>),

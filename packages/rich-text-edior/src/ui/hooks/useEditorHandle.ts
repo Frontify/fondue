@@ -7,17 +7,19 @@ import { reactRenderProbe } from '#/adapters/reactProbe/probe';
 import { emptyDocument, type RteDocumentOf, type RtePlugin } from '#/domain';
 import { type EditorHandle } from '#/ports';
 
-import { classNames } from '../helpers/classNames';
-import styles from '../richTextEditor.module.scss';
-
 /**
- * Owns the live editor: creates it once per plugin set, carries later prop
- * changes into it, and re-renders the component whenever the editor state moves
- * — the toolbar and the panels read their state straight off the handle.
+ * Owns the live editor and nothing else: creates it once per plugin set, carries
+ * later prop changes into it, and re-renders the component whenever the editor
+ * state moves — the toolbar and the panels read their state straight off the
+ * handle.
  *
- * This is where the implementations behind the ports are chosen — the engine and
- * the render probe — and the only place that does: everything else in the shell
- * goes through the `EditorHandle` it returns.
+ * This is also where the implementations behind the ports are chosen — the engine
+ * and the render probe — and the only place that does: everything else in the
+ * shell goes through the `EditorHandle` it returns.
+ *
+ * The class names arrive ready-made. Which classes the editable element carries
+ * is a styling decision, and styling belongs to the component that owns the
+ * stylesheet.
  */
 
 type UseEditorHandleOptions = {
@@ -25,6 +27,10 @@ type UseEditorHandleOptions = {
     value: RteDocumentOf | undefined;
     readOnly: boolean;
     placeholder: string;
+    /** Classes for the editable element: the editor's own plus the plugins'. */
+    contentClassName: string;
+    /** Class the placeholder decoration carries. */
+    placeholderClassName: string;
     onDocChange: (doc: RteDocumentOf) => void;
     onBlur: (doc: RteDocumentOf) => void;
 };
@@ -34,6 +40,8 @@ export const useEditorHandle = ({
     value,
     readOnly,
     placeholder,
+    contentClassName,
+    placeholderClassName,
     onDocChange,
     onBlur,
 }: UseEditorHandleOptions): {
@@ -59,10 +67,6 @@ export const useEditorHandle = ({
 
     const pluginsKey = plugins.map((plugin) => plugin.id).join('|');
 
-    // A plugin that lays out the whole content (columns) styles the editable
-    // element rather than anything it renders itself.
-    const contentClassName = classNames(styles.content, ...plugins.map((plugin) => plugin.contentClassName));
-
     useEffect(() => {
         const container = containerRef.current;
         if (!container) {
@@ -76,7 +80,7 @@ export const useEditorHandle = ({
             readOnly: initialRef.current.readOnly,
             placeholder: initialRef.current.placeholder,
             contentClassName,
-            placeholderClassName: classNames(styles.placeholder),
+            placeholderClassName,
             probe: reactRenderProbe,
             onDocChange: (doc) => onDocChangeRef.current(doc),
             onStateChange: force,
