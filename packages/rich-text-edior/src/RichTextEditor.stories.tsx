@@ -63,7 +63,7 @@ const toolbarButtonClasses = (active: boolean): string =>
     ].join(' ');
 
 const meta: Meta<typeof RichTextEditor> = {
-    title: 'RTE v2 / Spike',
+    title: 'Rich Text Editor',
     component: RichTextEditor,
 };
 export default meta;
@@ -210,6 +210,59 @@ export const CommentBox: Story = {
                     ]}
                 />
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
+            </div>
+        );
+    },
+};
+
+/**
+ * The props that are about the editor rather than its content: `placeholder`
+ * (drawn on the empty document, where typing will start), `readonly` (content
+ * without a toolbar) and `onBlur` (the document as it stood when focus left).
+ *
+ * Note that opening the link flyout takes focus out of the editable element, so
+ * it commits too — plugin UI is outside the editor as far as the DOM is
+ * concerned.
+ */
+export const PlaceholderReadonlyAndBlur: Story = {
+    render: () => {
+        const [doc, setDoc] = useState<RteDocument>({
+            version: 1,
+            blocks: [{ type: 'paragraph', children: [{ text: '' }] }],
+        });
+        const [readonly, setReadonly] = useState(false);
+        const [committed, setCommitted] = useState<RteDocument | null>(null);
+
+        return (
+            <div className={LAYOUT}>
+                <p className={HINT}>
+                    Starts empty, so the placeholder shows. Type, then click away — the panel on the right only updates
+                    on blur. Toggling readonly keeps the content and the selection, and takes the toolbar away.
+                </p>
+                <div className="tw-flex tw-flex-col tw-items-start tw-gap-2">
+                    <button
+                        type="button"
+                        className={toolbarButtonClasses(readonly)}
+                        onClick={() => setReadonly(!readonly)}
+                    >
+                        readonly: {String(readonly)}
+                    </button>
+                    <div className="tw-w-full">
+                        <RichTextEditor
+                            value={doc}
+                            onChange={setDoc}
+                            onBlur={setCommitted}
+                            plugins={defaultPlugins}
+                            placeholder="Write something…"
+                            readonly={readonly}
+                        />
+                    </div>
+                </div>
+                <pre className={JSON_PANEL}>
+                    {committed === null
+                        ? 'Nothing committed yet — type, then click outside the editor.'
+                        : JSON.stringify(committed, null, 2)}
+                </pre>
             </div>
         );
     },

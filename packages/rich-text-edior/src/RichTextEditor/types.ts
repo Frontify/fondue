@@ -302,6 +302,13 @@ export type EditorControlApi = {
     getMarkValue(key: string): Record<string, unknown> | null;
     /** Strip every mark from the selection — the formatting half of "reset formatting". */
     removeAllMarks(): void;
+    /**
+     * Grow the selection to cover the whole run of a mark around the caret, so
+     * a collapsed caret inside a link can be edited or removed as a unit. Left
+     * alone when the selection is already a range — that is what the user meant.
+     * Returns false when the mark is not at the caret.
+     */
+    selectMark(key: string): boolean;
 
     setBlockType(type: string, attrs?: Record<string, unknown>): void;
     isBlockActive(type: string, attrs?: Record<string, unknown>): boolean;

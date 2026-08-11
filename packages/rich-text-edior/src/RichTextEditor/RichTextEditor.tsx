@@ -2,7 +2,7 @@
 
 import { Fragment, type KeyboardEvent, type ReactNode, useEffect, useReducer, useRef, useState } from 'react';
 
-import { createEditor, EDITOR_CLASS, type EditorHandle } from './prosemirror';
+import { createEditor, EDITOR_CLASS, type EditorHandle, PLACEHOLDER_CLASS } from './prosemirror';
 import { type ComboboxItem, type RteBlockNode, type RteDocumentOf, type RtePlugin } from './types';
 
 /**
@@ -17,6 +17,21 @@ export type RichTextEditorProps<TBlock extends RteBlockNode = RteBlockNode> = {
     onChange?: (value: RteDocumentOf<TBlock>) => void;
     /** The plugins to mount, in toolbar order (e.g. `defaultPlugins`, extended or reduced as needed). */
     plugins?: RtePlugin[];
+    /**
+     * Show the content without allowing edits. The toolbar goes away with it —
+     * there is nothing it could do.
+     */
+    readonly?: boolean;
+    /** Shown while the document is empty. */
+    placeholder?: string;
+    /**
+     * The editor lost focus, handed the document as it now stands — the hook to
+     * commit on, when saving on every keystroke would be too much.
+     *
+     * Fires whenever focus leaves the editable element, which includes focus
+     * moving into plugin UI that takes it (the link flyout's fields).
+     */
+    onBlur?: (value: RteDocumentOf<TBlock>) => void;
 };
 
 const EMPTY_DOC: RteDocumentOf = {
@@ -49,17 +64,38 @@ const EDITOR_CSS = `
     word-wrap: break-word;
     font-variant-ligatures: none;
 }
+
+/*
+ * The placeholder decoration sits on the empty block, so its text starts
+ * exactly where typing will. Floating keeps it out of the caret's way and the
+ * zero height keeps it from claiming a line of its own.
+ */
+.${EDITOR_CLASS} .${PLACEHOLDER_CLASS}::before {
+    content: attr(data-placeholder);
+    float: left;
+    height: 0;
+    pointer-events: none;
+    color: #9ca3af;
+}
 `;
 
 export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     value,
     onChange,
     plugins = [],
+    readonly: readOnly = false,
+    placeholder = '',
+    onBlur,
 }: RichTextEditorProps<TBlock>): ReactNode => {
     const containerRef = useRef<HTMLDivElement | null>(null);
     const handleRef = useRef<EditorHandle | null>(null);
     const onChangeRef = useRef(onChange);
     onChangeRef.current = onChange;
+    const onBlurRef = useRef(onBlur);
+    onBlurRef.current = onBlur;
+    // The editor is created once per plugin set, so these reach it as starting
+    // values; the effects below carry every later change.
+    const initialRef = useRef({ readOnly, placeholder });
 
     // The toolbar reads its state straight off the editor, so it has to
     // re-render whenever the editor state changes.
@@ -81,12 +117,17 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
             container,
             initialDoc: value ?? EMPTY_DOC,
             plugins,
+            readOnly: initialRef.current.readOnly,
+            placeholder: initialRef.current.placeholder,
             onDocChange: (doc) => {
                 // The engine emits the structural form; it is only as narrow
                 // as the mounted plugin set, which the caller declared via TBlock.
                 onChangeRef.current?.(doc as RteDocumentOf<TBlock>);
             },
             onStateChange: force,
+            onBlur: (doc) => {
+                onBlurRef.current?.(doc as RteDocumentOf<TBlock>);
+            },
         });
         handleRef.current = handle;
         force();
@@ -105,6 +146,14 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
             handleRef.current?.setDoc(value);
         }
     }, [value]);
+
+    useEffect(() => {
+        handleRef.current?.setReadOnly(readOnly);
+    }, [readOnly]);
+
+    useEffect(() => {
+        handleRef.current?.setPlaceholder(placeholder);
+    }, [placeholder]);
 
     const handle = handleRef.current;
     const api = handle?.api;
@@ -173,7 +222,7 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
                     overflow: 'hidden',
                 }}
             >
-                {api && plugins.some((plugin) => plugin.toolbar) ? (
+                {api && !readOnly && plugins.some((plugin) => plugin.toolbar) ? (
                     <div
                         role="toolbar"
                         style={{

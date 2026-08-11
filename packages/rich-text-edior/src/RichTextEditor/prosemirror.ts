@@ -13,8 +13,8 @@ import {
     type TagParseRule,
 } from 'prosemirror-model';
 import { liftListItem, sinkListItem, splitListItem as pmSplitListItem, wrapInList } from 'prosemirror-schema-list';
-import { type Command, EditorState, Plugin as PmPlugin, PluginKey } from 'prosemirror-state';
-import { EditorView } from 'prosemirror-view';
+import { type Command, EditorState, Plugin as PmPlugin, PluginKey, TextSelection } from 'prosemirror-state';
+import { Decoration, DecorationSet, EditorView } from 'prosemirror-view';
 import { createElement, type ReactNode } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 
@@ -41,6 +41,14 @@ import {
 
 /** Class on the editable element; plugin styles and the editor's own CSS are scoped to it. */
 export const EDITOR_CLASS = 'rte';
+
+/**
+ * Class the placeholder decoration puts on the one empty block, carrying the
+ * text in `data-placeholder` for CSS to draw. A decoration rather than an
+ * overlay so it sits inside the block and inherits its box — the placeholder
+ * lines up with where typing will actually start, whatever the block's margins.
+ */
+export const PLACEHOLDER_CLASS = 'rte-placeholder';
 
 /** Attribute a rendered element uses to make itself a click-toggle for a boolean attribute. */
 const TOGGLE_ATTRIBUTE = 'data-rte-toggle';
@@ -700,6 +708,49 @@ const createApi = (view: EditorView, { schema, itemTypeByList }: SchemaBundle): 
             view.dispatch(transaction);
             view.focus();
         },
+        selectMark(key) {
+            const markType = schema.marks[key];
+            if (!markType) {
+                return false;
+            }
+            const { $from, empty } = view.state.selection;
+            if (!empty) {
+                return Boolean(markType.isInSet($from.marks()));
+            }
+            // Walk the caret's own text block, gathering the runs of children
+            // that carry the mark, and keep the one the caret sits in. Adjacent
+            // text nodes may be split by other marks, so a run is a stretch of
+            // consecutive children rather than a single node.
+            const block = $from.parent;
+            let position = $from.start();
+            let runFrom: number | null = null;
+            let runTo = position;
+            let range: { from: number; to: number } | null = null;
+            const closeRun = (): void => {
+                if (runFrom !== null && $from.pos >= runFrom && $from.pos <= runTo) {
+                    range = { from: runFrom, to: runTo };
+                }
+                runFrom = null;
+            };
+            for (let index = 0; index < block.childCount; index++) {
+                const child = block.child(index);
+                if (markType.isInSet(child.marks)) {
+                    runFrom ??= position;
+                    runTo = position + child.nodeSize;
+                } else {
+                    closeRun();
+                }
+                position += child.nodeSize;
+            }
+            closeRun();
+
+            if (range === null) {
+                return false;
+            }
+            const { from, to } = range;
+            view.dispatch(view.state.tr.setSelection(TextSelection.create(view.state.doc, from, to)));
+            return true;
+        },
         setBlockType(type, attrs) {
             const nodeType = schema.nodes[type];
             if (nodeType) {
@@ -857,10 +908,45 @@ const buildPmPlugins = (plugins: RtePlugin[], bundle: SchemaBundle, getApi: () =
     ];
 };
 
+/**
+ * "Nothing has been typed yet": a single empty text block. Deliberately not
+ * "no text anywhere" — a document holding an empty paragraph *and* an image is
+ * not something a placeholder should talk over.
+ */
+const isEmptyDoc = (doc: PmNode): boolean =>
+    doc.childCount === 1 && doc.firstChild !== null && doc.firstChild.isTextblock && doc.firstChild.content.size === 0;
+
+/**
+ * Draws the placeholder, reading the current text through a thunk so changing
+ * the prop does not mean re-creating the editor.
+ */
+const placeholderPlugin = (getPlaceholder: () => string): PmPlugin =>
+    new PmPlugin({
+        props: {
+            decorations(state) {
+                const placeholder = getPlaceholder();
+                const block = state.doc.firstChild;
+                if (!placeholder || block === null || !isEmptyDoc(state.doc)) {
+                    return null;
+                }
+                return DecorationSet.create(state.doc, [
+                    Decoration.node(0, block.nodeSize, {
+                        class: PLACEHOLDER_CLASS,
+                        'data-placeholder': placeholder,
+                    }),
+                ]);
+            },
+        },
+    });
+
 export type EditorHandle = {
     api: EditorControlApi;
     /** Replace the content with an externally-set document (the controlled `value`). */
     setDoc(doc: RteDocumentOf): void;
+    /** Turn editing off or back on, keeping the content, the selection and the undo history. */
+    setReadOnly(readOnly: boolean): void;
+    /** Change the text shown while the document is empty. Empty string means none. */
+    setPlaceholder(placeholder: string): void;
     /** The caret-anchored picker, if a plugin's trigger is currently open. */
     combobox: {
         active(): ActiveCombobox | null;
@@ -876,14 +962,23 @@ export const createEditor = ({
     container,
     initialDoc,
     plugins,
+    readOnly,
+    placeholder,
     onDocChange,
     onStateChange,
+    onBlur,
 }: {
     container: HTMLElement;
     initialDoc: RteDocumentOf;
     plugins: RtePlugin[];
+    /** Starting value; change it later through `setReadOnly`. */
+    readOnly: boolean;
+    /** Starting value; change it later through `setPlaceholder`. */
+    placeholder: string;
     onDocChange: (doc: RteDocumentOf) => void;
     onStateChange: () => void;
+    /** The editable element lost focus. Handed the current document, so a caller can commit it. */
+    onBlur: (doc: RteDocumentOf) => void;
 }): EditorHandle => {
     const bundle = buildSchema(plugins);
     const { schema } = bundle;
@@ -891,13 +986,27 @@ export const createEditor = ({
     // reach it through a thunk that only runs once the editor is live.
     let api!: EditorControlApi;
     let lastEmitted = initialDoc;
+    // Both are read through thunks below, so changing one is a prop update
+    // rather than a rebuild — the selection and the undo history survive.
+    let readOnlyNow = readOnly;
+    let placeholderNow = placeholder;
+    /** Ask the view to re-read the thunks above and redraw. */
+    const refresh = (): void => view.setProps({});
 
     const view: EditorView = new EditorView(container, {
         attributes: { class: EDITOR_CLASS },
+        editable: () => !readOnlyNow,
         state: EditorState.create({
             doc: documentToPm(initialDoc, schema),
-            plugins: buildPmPlugins(plugins, bundle, () => api),
+            plugins: [...buildPmPlugins(plugins, bundle, () => api), placeholderPlugin(() => placeholderNow)],
         }),
+        handleDOMEvents: {
+            blur: () => {
+                onBlur(pmToDocument(view.state.doc));
+                // Never claim the event: the browser still has to move focus.
+                return false;
+            },
+        },
         // A rendered element may declare itself a toggle for one of its own
         // boolean attributes — the checkbox in a check list item.
         handleClickOn(_view, _pos, node, nodePos, event) {
@@ -932,6 +1041,14 @@ export const createEditor = ({
                 const { content } = documentToPm(doc, schema);
                 view.dispatch(view.state.tr.replaceWith(0, view.state.doc.content.size, content));
             }
+        },
+        setReadOnly(next) {
+            readOnlyNow = next;
+            refresh();
+        },
+        setPlaceholder(next) {
+            placeholderNow = next;
+            refresh();
         },
         combobox: {
             active() {
