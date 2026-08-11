@@ -2,7 +2,7 @@
 
 import { IconListCheck } from '@frontify/fondue-icons';
 
-import { ANY_LIST, PARAGRAPH, type RteBlockNode, type RtePlugin } from '#/domain';
+import { ANY_LIST, PARAGRAPH, type RteBlockNode, type RtePlugin, toggles } from '#/domain';
 
 import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
 
@@ -57,7 +57,7 @@ export const checkListPlugin = (): RtePlugin => ({
                                 checked={checked}
                                 readOnly
                                 contentEditable={false}
-                                data-rte-toggle="checked"
+                                {...toggles('checked')}
                                 className={styles.checkbox}
                             />
                             <span className={styles.label}>{children}</span>

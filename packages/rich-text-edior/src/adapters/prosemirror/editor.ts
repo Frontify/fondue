@@ -7,6 +7,7 @@ import { type EditorControlApi, TOGGLE_ATTRIBUTE } from '#/domain';
 import { type CreateEditor } from '#/ports';
 
 import { createApi } from './api';
+import './engine.scss';
 import { documentToPm, pmToDocument } from './document';
 import { buildEnginePlugins } from './enginePlugins';
 import { createFloatingLocator, createSelectionRectReader } from './floating';

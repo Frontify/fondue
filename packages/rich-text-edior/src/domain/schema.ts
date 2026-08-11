@@ -77,9 +77,9 @@ export type BlockSpec = {
      * the editable content slot, must be the only thing inside its own element.
      * This is the single source of rendering truth; copy/paste derives from it.
      *
-     * An element carrying `data-rte-toggle="<attribute>"` (a checkbox) flips
-     * that boolean attribute when clicked, which is how a void control inside
-     * an otherwise declarative render stays interactive.
+     * An element spreading `toggles('<attribute>')` (a checkbox) flips that
+     * boolean attribute when clicked, which is how a void control inside an
+     * otherwise declarative render stays interactive.
      */
     render: (props: { node: RteBlockNode; children: ReactNode }) => ReactNode;
     /** How pasted HTML becomes this block, e.g. `[{ tag: 'h2', attributes: { style: 'heading2' } }]`. */

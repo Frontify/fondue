@@ -1,0 +1,34 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+/**
+ * The part of ProseMirror's own stylesheet this editor needs. That stylesheet is
+ * deliberately never imported — it carries far more than this — so the two rules
+ * that are load-bearing are declared here instead, scoped the way ProseMirror
+ * scopes its own: on the classes it puts on the editable element.
+ *
+ * This file is the only stylesheet naming an engine class, which is why it sits
+ * with the adapter rather than with the editor's own chrome. Swapping the engine
+ * replaces it along with everything else in this folder.
+ *
+ * A void block (an image) is selected whole rather than as a run of text, and the
+ * engine marks it with nothing but a class. Without these rules clicking an image
+ * did nothing visible, so it read as unselectable and there was no way to tell
+ * what a copy was about to take. `hideselection` — which the engine adds only
+ * while a whole node is selected — drops the native caret and text highlight that
+ * would otherwise still be showing elsewhere.
+ */
+
+.ProseMirror-selectednode {
+    outline: var(--border-width-large) solid var(--color-focus-default);
+    // A literal, not `--border-width-default`: this is the gap between the ring
+    // and the image, which is not a border width.
+    outline-offset: 1px;
+}
+
+.ProseMirror.ProseMirror-hideselection {
+    caret-color: transparent;
+
+    *::selection {
+        background: transparent;
+    }
+}

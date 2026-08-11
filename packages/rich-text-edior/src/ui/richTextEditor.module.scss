@@ -115,30 +115,6 @@
     cursor: text;
 
     /**
-     * A void block (an image) is selected whole rather than as a run of text,
-     * and the engine marks it with nothing but a class — the ring that makes it
-     * look selected lives in ProseMirror's own stylesheet, which this package
-     * deliberately never imports. Without these two rules clicking an image did
-     * nothing visible, so it read as unselectable and there was no way to tell
-     * what a copy was about to take: `hideselection` drops the native text
-     * selection and caret that would otherwise still be showing elsewhere.
-     */
-    :global(.ProseMirror-selectednode) {
-        outline: var(--border-width-large) solid var(--color-focus-default);
-        // A literal, not `--border-width-default`: this is the gap between the
-        // ring and the image, which is not a border width.
-        outline-offset: 1px;
-    }
-
-    &:global(.ProseMirror-hideselection) {
-        caret-color: transparent;
-
-        *::selection {
-            background: transparent;
-        }
-    }
-
-    /**
      * The placeholder decoration sits on the empty block, so its text starts
      * exactly where typing will. Floating keeps it out of the caret's way and
      * the zero height keeps it from claiming a line of its own.
