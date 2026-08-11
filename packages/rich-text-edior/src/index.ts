@@ -30,6 +30,17 @@ import {
  * The package's public API, and the composition root: the editor component, the
  * built-in plugins, and the official document format assembled from them.
  *
+ * The layers behind it, innermost first — each may import the ones above it and
+ * none of the ones below, which the linter enforces:
+ *
+ * - `domain/`    what a document, a plugin and the editing commands are
+ * - `ports/`     how a live editor is driven, and how a render becomes DOM
+ * - `adapters/`  `prosemirror/` implements the engine, `reactProbe/` the render
+ * - `ui/`        the React shell driving it; its hooks are the application logic
+ * - `plugins/`   the features, each written against `domain/` alone
+ *
+ * Swapping the engine means writing one more `CreateEditor` and nothing else.
+ *
  * The types are tuned for the common case — an app using the shipped plugins —
  * so `RteDocument` means "a document made of the blocks and marks that ship
  * with this editor" and needs no type arguments. Consumer plugins widen the
