@@ -32,4 +32,5 @@ export const strikethroughPlugin = (): RtePlugin => ({
         </ToolbarButton>
     ),
     hotkeys: { 'Mod-Shift-x': (api) => api.marks.toggle('strikethrough') },
+    inputRules: [{ kind: 'mark', key: 'strikethrough', delimiter: '~~' }],
 });

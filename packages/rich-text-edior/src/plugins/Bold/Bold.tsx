@@ -26,4 +26,5 @@ export const boldPlugin = (): RtePlugin => ({
         </ToolbarButton>
     ),
     hotkeys: { 'Mod-b': (api) => api.marks.toggle('bold') },
+    inputRules: [{ kind: 'mark', key: 'bold', delimiter: '**' }],
 });

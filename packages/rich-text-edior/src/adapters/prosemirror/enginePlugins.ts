@@ -38,17 +38,39 @@ const buildKeyCommands = (plugins: RtePlugin[], getApi: () => EditorControlApi):
     );
 };
 
+/**
+ * Enter, Tab and Shift-Tab inside a list. These are not a plugin's keys: the
+ * behaviour belongs to being in a list at all, and the commands driving it are
+ * the editor's own. A list plugin declares that it *is* a list (`isList`) and
+ * gets them — including a list a consumer wrote — instead of every list plugin
+ * repeating the same three bindings.
+ *
+ * All three report "not handled" outside a list, so the baseline below takes
+ * over there.
+ */
+const listKeyCommands = (getApi: () => EditorControlApi): Record<string, Command> => ({
+    // The engine's own split deliberately refuses on an empty item at the top
+    // level, leaving it to be lifted out of the list instead.
+    Enter: () => getApi().lists.split() || getApi().lists.outdent(),
+    Tab: () => getApi().lists.indent(),
+    'Shift-Tab': () => getApi().lists.outdent(),
+});
+
 export const buildEnginePlugins = (
     plugins: RtePlugin[],
     bundle: SchemaBundle,
     getApi: () => EditorControlApi,
 ): PmPlugin[] => {
     const triggers = declaredTriggers(plugins);
+    const hasLists = bundle.itemTypeByList.size > 0;
 
     return [
         history(),
         keymap({ 'Mod-z': undo, 'Mod-y': redo, 'Mod-Shift-z': redo }),
+        // A plugin's own keys come first, so one may take a key the list
+        // behaviour would otherwise claim (blurOnBreak takes Enter).
         keymap(buildKeyCommands(plugins, getApi)),
+        ...(hasLists ? [keymap(listKeyCommands(getApi))] : []),
         ...buildInputRules(plugins, bundle.schema, bundle.itemTypeByList),
         ...(triggers.length > 0 ? [triggerPlugin(triggers)] : []),
         keymap(baseKeymap),

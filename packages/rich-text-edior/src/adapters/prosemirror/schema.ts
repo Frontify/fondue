@@ -2,7 +2,7 @@
 
 import { type MarkSpec as PmMarkSpec, type NodeSpec as PmNodeSpec, Schema } from 'prosemirror-model';
 
-import { PARAGRAPH, type RtePlugin } from '#/domain';
+import { type BlockAttributeSpec, PARAGRAPH, type RtePlugin } from '#/domain';
 import { type RenderProbe } from '#/ports';
 
 import { pmInjectedAttrs, pmParseDom } from './attributes';
@@ -21,6 +21,8 @@ import { blockNodeSpec, inlineNodeSpec, markNodeSpec } from './nodeSpecs';
 export type SchemaBundle = {
     schema: Schema;
     itemTypeByList: Map<string, string>;
+    /** Attributes plugins add to every text block, for resetting them generically. */
+    blockAttributes: readonly BlockAttributeSpec[];
 };
 
 /** Which block is a list, and what its item type is called. */
@@ -87,5 +89,5 @@ export const buildSchema = (plugins: RtePlugin[], renderProbe: RenderProbe): Sch
         marks[mark.key] = markNodeSpec(mark, renderProbe);
     }
 
-    return { schema: new Schema({ nodes, marks }), itemTypeByList };
+    return { schema: new Schema({ nodes, marks }), itemTypeByList, blockAttributes: injected };
 };

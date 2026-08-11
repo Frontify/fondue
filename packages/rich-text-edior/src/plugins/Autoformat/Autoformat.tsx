@@ -3,35 +3,17 @@
 import { type RtePlugin } from '#/domain';
 
 /**
- * Markdown shortcuts and typography, applied while typing. Every rule is a
- * declaration the editor matches — this plugin has no schema and no UI, and
- * rules naming a mark, block or list that is not mounted simply never fire.
+ * Typography applied while typing: punctuation, symbols and curly quotes. Every
+ * rule is a declaration the editor matches — this plugin has no schema and no UI.
+ *
+ * The markdown shortcuts are not here. `**bold**` belongs to the bold plugin the
+ * same way its toolbar button and its `Mod-b` do, so each feature declares its
+ * own shortcut and this plugin is left with the rules that name no feature at
+ * all.
  */
 export const autoformatPlugin = (): RtePlugin => ({
     id: 'autoformat',
     inputRules: [
-        // Marks. Longer delimiters are tried first, so `**bold**` never reads as italic.
-        { kind: 'mark', key: 'bold', delimiter: '**' },
-        { kind: 'mark', key: 'strikethrough', delimiter: '~~' },
-        { kind: 'mark', key: 'italic', delimiter: '*' },
-        { kind: 'mark', key: 'underline', delimiter: '_' },
-        { kind: 'mark', key: 'code', delimiter: '`' },
-
-        // Blocks.
-        { kind: 'block', match: '# ', block: 'textStyle', attributes: { style: 'heading1' } },
-        { kind: 'block', match: '## ', block: 'textStyle', attributes: { style: 'heading2' } },
-        { kind: 'block', match: '### ', block: 'textStyle', attributes: { style: 'heading3' } },
-        { kind: 'block', match: '#### ', block: 'textStyle', attributes: { style: 'heading4' } },
-        { kind: 'block', match: '> ', block: 'quote' },
-
-        // Lists.
-        { kind: 'list', match: '- ', list: 'bulletList' },
-        { kind: 'list', match: '* ', list: 'bulletList' },
-        { kind: 'list', match: '1. ', list: 'numberedList' },
-        { kind: 'list', match: '1) ', list: 'numberedList' },
-        { kind: 'list', match: '[] ', list: 'checkList' },
-
-        // Punctuation and symbols.
         { kind: 'text', match: '...', replaceWith: '…' },
         { kind: 'text', match: '--', replaceWith: '—' },
         { kind: 'text', match: '->', replaceWith: '→' },

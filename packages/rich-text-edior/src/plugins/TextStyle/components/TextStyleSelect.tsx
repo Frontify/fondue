@@ -3,9 +3,9 @@
 import { Select } from '@frontify/fondue-components';
 import { type ReactNode } from 'react';
 
-import { type EditorControlApi } from '#/domain';
+import { type EditorControlApi, PARAGRAPH } from '#/domain';
 
-import { findPreset, isTextStyle, labelOf, PARAGRAPH, type TextStyleOption } from '../helpers/presets';
+import { findPreset, isTextStyle, labelOf, type TextStyleOption } from '../helpers/presets';
 
 import styles from './textStyleSelect.module.scss';
 

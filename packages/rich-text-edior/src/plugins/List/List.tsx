@@ -44,6 +44,7 @@ const listPlugin = ({
     icon: Icon,
     title,
     className,
+    markdown,
 }: {
     id: string;
     type: 'bulletList' | 'numberedList';
@@ -52,6 +53,8 @@ const listPlugin = ({
     title: string;
     /** The list's own class; the marker per nesting level hangs off it. */
     className: string | undefined;
+    /** What starts this list when typed at the beginning of a line. */
+    markdown: readonly string[];
 }): RtePlugin => ({
     id,
     schema: {
@@ -90,13 +93,7 @@ const listPlugin = ({
             <Icon size={16} />
         </ToolbarButton>
     ),
-    // Enter, Tab and Shift-Tab only mean something inside a list; outside one
-    // these report "not handled" and the editor's own bindings take over.
-    hotkeys: {
-        Enter: (api) => api.lists.split() || api.lists.outdent(),
-        Tab: (api) => api.lists.indent(),
-        'Shift-Tab': (api) => api.lists.outdent(),
-    },
+    inputRules: markdown.map((match) => ({ kind: 'list', match, list: type })),
 });
 
 export const bulletListPlugin = (): RtePlugin =>
@@ -107,6 +104,7 @@ export const bulletListPlugin = (): RtePlugin =>
         icon: IconListBullet,
         title: 'Bulleted list',
         className: styles.bulletList,
+        markdown: ['- ', '* '],
     });
 
 export const numberedListPlugin = (): RtePlugin =>
@@ -117,4 +115,5 @@ export const numberedListPlugin = (): RtePlugin =>
         icon: IconListNumbers,
         title: 'Numbered list',
         className: styles.numberedList,
+        markdown: ['1. ', '1) '],
     });

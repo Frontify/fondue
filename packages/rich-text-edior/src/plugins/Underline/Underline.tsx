@@ -26,4 +26,5 @@ export const underlinePlugin = (): RtePlugin => ({
         </ToolbarButton>
     ),
     hotkeys: { 'Mod-u': (api) => api.marks.toggle('underline') },
+    inputRules: [{ kind: 'mark', key: 'underline', delimiter: '_' }],
 });

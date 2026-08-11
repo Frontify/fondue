@@ -2,7 +2,7 @@
 
 import { IconSpeechBubbleQuote } from '@frontify/fondue-icons';
 
-import { type RteInlineNode, type RtePlugin } from '#/domain';
+import { PARAGRAPH, type RteInlineNode, type RtePlugin } from '#/domain';
 
 import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
 
@@ -33,10 +33,11 @@ export const quotePlugin = (): RtePlugin => ({
             <ToolbarButton
                 title="Quote"
                 active={active}
-                onClick={() => api.blocks.setType(active ? 'paragraph' : 'quote')}
+                onClick={() => api.blocks.setType(active ? PARAGRAPH : 'quote')}
             >
                 <IconSpeechBubbleQuote size={16} />
             </ToolbarButton>
         );
     },
+    inputRules: [{ kind: 'block', match: '> ', block: 'quote' }],
 });

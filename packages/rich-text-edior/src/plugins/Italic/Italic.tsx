@@ -26,4 +26,5 @@ export const italicPlugin = (): RtePlugin => ({
         </ToolbarButton>
     ),
     hotkeys: { 'Mod-i': (api) => api.marks.toggle('italic') },
+    inputRules: [{ kind: 'mark', key: 'italic', delimiter: '*' }],
 });

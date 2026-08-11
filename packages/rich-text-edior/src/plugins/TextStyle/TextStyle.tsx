@@ -7,6 +7,7 @@ import {
     ALL_TEXT_STYLES,
     findPreset,
     FIRST_PRESET,
+    markdownRuleFor,
     parseRuleFor,
     presetsFor,
     type TextStyleBlock,
@@ -60,5 +61,7 @@ export const textStylePlugin = ({ styles: options = ALL_TEXT_STYLES }: TextStyle
             ],
         },
         toolbar: (api) => <TextStyleSelect api={api} options={options} />,
+        // `# ` through `#### `, for the headings this editor offers.
+        inputRules: offered.flatMap(markdownRuleFor),
     };
 };

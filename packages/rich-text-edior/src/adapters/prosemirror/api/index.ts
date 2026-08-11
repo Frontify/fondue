@@ -23,7 +23,7 @@ import { createSelectionApi } from './selection';
 export const createApi = (view: EditorView, bundle: SchemaBundle): EditorControlApi => ({
     selection: createSelectionApi(view),
     marks: createMarkApi(view, bundle.schema),
-    blocks: createBlockApi(view, bundle.schema),
+    blocks: createBlockApi(view, bundle),
     lists: createListApi(view, bundle),
 
     insert(type, attrs) {

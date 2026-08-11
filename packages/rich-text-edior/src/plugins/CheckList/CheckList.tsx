@@ -82,9 +82,5 @@ export const checkListPlugin = (): RtePlugin => ({
             <IconListCheck size={16} />
         </ToolbarButton>
     ),
-    hotkeys: {
-        Enter: (api) => api.lists.split() || api.lists.outdent(),
-        Tab: (api) => api.lists.indent(),
-        'Shift-Tab': (api) => api.lists.outdent(),
-    },
+    inputRules: [{ kind: 'list', match: '[] ', list: 'checkList' }],
 });

@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type RteBlockNode, type RteInlineNode } from '#/domain';
+import { PARAGRAPH, type RteBlockNode, type RteInlineNode, type RteInputRule } from '#/domain';
 
 import styles from '../textStyle.module.scss';
 
@@ -49,9 +49,6 @@ export type TextStyleBlock = {
  */
 export type TextStyleOption = 'paragraph' | TextStyleName;
 
-/** The Select value standing for "not a preset" — the block type we fall back to. */
-export const PARAGRAPH = 'paragraph';
-
 /** Every option, in dropdown order: what the host gets by naming none. */
 export const ALL_TEXT_STYLES: readonly TextStyleOption[] = [PARAGRAPH, ...PRESETS.map((preset) => preset.name)];
 
@@ -65,6 +62,24 @@ export const labelOf = (option: TextStyleOption): string => findPreset(option)?.
 /** The presets an editor was configured with, in the order they were given. */
 export const presetsFor = (options: readonly TextStyleOption[]): Preset[] =>
     options.map(findPreset).filter((preset): preset is Preset => preset !== undefined);
+
+/**
+ * The markdown shortcut for a preset, for those that have one: `## ` for a
+ * level-2 heading. Derived from the tag rather than listed, so it follows the
+ * presets an editor was actually configured with — an editor not offering
+ * `heading2` does not turn `## ` into one either.
+ */
+export const markdownRuleFor = ({ name, tag }: Preset): RteInputRule[] =>
+    /^h[1-6]$/.test(tag)
+        ? [
+              {
+                  kind: 'block',
+                  match: `${'#'.repeat(Number(tag.slice(1)))} `,
+                  block: 'textStyle',
+                  attributes: { style: name },
+              },
+          ]
+        : [];
 
 /**
  * How a preset is recognized in pasted HTML. A heading is claimed by its bare

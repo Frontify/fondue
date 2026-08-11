@@ -28,4 +28,5 @@ export const codePlugin = (): RtePlugin => ({
         </ToolbarButton>
     ),
     hotkeys: { 'Mod-e': (api) => api.marks.toggle('code') },
+    inputRules: [{ kind: 'mark', key: 'code', delimiter: '`' }],
 });

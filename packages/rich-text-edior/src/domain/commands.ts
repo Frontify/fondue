@@ -94,6 +94,13 @@ export type EditorControlApi = {
         setType(type: string, attrs?: Record<string, unknown>): void;
         /** Set attributes on every block the selection touches — how alignment is applied. */
         updateAttributes(attrs: Record<string, unknown>): void;
+        /**
+         * Put every attribute that a plugin adds to *all* text blocks
+         * (`schema.blockAttributes` — alignment) back to its default, across the
+         * selection. What "reset formatting" needs for the block half, without
+         * having to know which plugins contributed what.
+         */
+        resetAttributes(): void;
     };
 
     lists: {
