@@ -5,7 +5,7 @@ import * as RadixPopover from '@radix-ui/react-popover';
 import { useSelect } from 'downshift';
 import { forwardRef, useCallback, useMemo, useRef, useState, type ForwardedRef, type ReactNode } from 'react';
 
-import { type CommonAriaProps } from '#/helpers/aria';
+import { mergeAriaIds, type CommonAriaProps } from '#/helpers/aria';
 
 import { useBadgeItems } from '../hooks/useBadgeItems';
 import { useFocusRing } from '../hooks/useFocusRing';
@@ -215,7 +215,11 @@ const SelectBaseInput = (
                         ? {}
                         : getToggleButtonProps({
                               'aria-label': 'aria-label' in props ? props['aria-label'] : undefined,
-                              'aria-describedby': selectionDescription ? selectionDescriptionId : undefined,
+                              'aria-describedby': mergeAriaIds(
+                                  selectionDescription && selectionDescriptionId,
+                                  props['aria-describedby'],
+                              ),
+                              'aria-invalid': hasError || undefined,
                               ref: triggerRef,
                               onKeyDown: (event) => {
                                   if (event.metaKey || event.ctrlKey) {
