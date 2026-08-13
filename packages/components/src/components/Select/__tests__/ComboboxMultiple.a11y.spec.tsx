@@ -104,6 +104,33 @@ describe('ComboboxMultiple - Accessibility', () => {
             expect(input).not.toHaveAttribute('aria-describedby');
         });
 
+        it('keeps a caller provided aria-describedby alongside the selection description', () => {
+            render(
+                <>
+                    <Select.Combobox.Multiple
+                        aria-label="Fruit picker"
+                        value={['apple']}
+                        aria-describedby="fruit-error"
+                    >
+                        <Select.Slot name="menu">
+                            <Select.Item value="apple">Apple</Select.Item>
+                        </Select.Slot>
+                    </Select.Combobox.Multiple>
+                    <span id="fruit-error">Please pick at least two fruits</span>
+                </>,
+            );
+
+            const input = screen.getByRole('combobox');
+            expect(input.getAttribute('aria-describedby')?.split(' ')).toContain('fruit-error');
+            expect(input).toHaveAccessibleDescription('1 selected: Apple Please pick at least two fruits');
+        });
+
+        it('sets aria-invalid when the status is error', () => {
+            renderMultiCombobox({ 'aria-label': 'Fruit picker', status: 'error' });
+
+            expect(screen.getByRole('combobox')).toHaveAttribute('aria-invalid', 'true');
+        });
+
         it('sets aria-autocomplete="list" on the input', () => {
             renderMultiCombobox({ 'aria-label': 'Fruit picker' });
 

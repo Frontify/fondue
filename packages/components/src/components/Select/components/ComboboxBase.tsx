@@ -15,7 +15,7 @@ import {
 } from 'react';
 
 import { LoadingCircle } from '#/components/LoadingCircle/LoadingCircle.tsx';
-import { type CommonAriaProps, type CommonGlobalProps } from '#/helpers/aria';
+import { mergeAriaIds, type CommonAriaProps, type CommonGlobalProps } from '#/helpers/aria';
 import { useTranslation } from '#/hooks/useTranslation';
 
 import { useBadgeItems } from '../hooks/useBadgeItems';
@@ -251,7 +251,8 @@ const ComboboxBaseInput = (
         return !getAsyncItems && !items.find((item) => item.label.toLowerCase().includes(inputValue.toLowerCase()));
     }, [inputValue, items, getAsyncItems, multiple]);
 
-    const hasError = valueInvalid || !!asyncItemStatus.error || status === 'error';
+    const hasStatusError = status === 'error';
+    const hasError = valueInvalid || !!asyncItemStatus.error || hasStatusError;
 
     const handleDismissBadge = (value: string, preventFocusRing: boolean): void => {
         const item = getItemByValue(value);
@@ -324,7 +325,11 @@ const ComboboxBaseInput = (
                                             'aria-labelledby' in props && props['aria-labelledby']
                                                 ? props['aria-labelledby']
                                                 : undefined,
-                                        'aria-describedby': selectionDescription ? selectionDescriptionId : undefined,
+                                        'aria-describedby': mergeAriaIds(
+                                            selectionDescription && selectionDescriptionId,
+                                            props['aria-describedby'],
+                                        ),
+                                        'aria-invalid': hasStatusError || undefined,
                                     })}
                                     data-test-id={dataTestId}
                                     lang={lang}
@@ -351,6 +356,8 @@ const ComboboxBaseInput = (
                                     'aria-labelledby' in props && props['aria-labelledby']
                                         ? props['aria-labelledby']
                                         : undefined,
+                                'aria-describedby': props['aria-describedby'],
+                                'aria-invalid': hasStatusError || undefined,
                             })}
                             data-test-id={dataTestId}
                             lang={lang}
