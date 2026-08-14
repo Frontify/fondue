@@ -3,25 +3,53 @@
 import { EditorState, TextSelection } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
-import { type EditorControlApi, TOGGLE_ATTRIBUTE } from '#/domain';
-import { type CreateEditor } from '#/ports';
+import { type EditorControlApi, type RteDocumentOf, type RtePlugin, TOGGLE_ATTRIBUTE } from '#/domain';
+import { type EditorHandle } from '#/ports';
 
 import { createControlApi } from './live/controlApi';
 import { toEngineDocument, toRteDocument } from './live/documentConversion';
 import { createFloatingLocator, createSelectionRectReader, createTriggerController } from './live/floating';
 import { placeholderPlugin } from './live/placeholder';
 import { keystrokePipeline } from './setup/keystrokes';
-import { buildSchema } from './setup/schema';
+import { type SchemaBundle } from './setup/schema';
 // The two engine stylesheet rules the editor needs. Imported for its side
 // effect.
 import './engine.scss';
 
 /**
- * The orchestrator, and the only file spanning both phases: it runs the
- * `setup/` work once, mounts the view, and wires the `live/` parts into the
- * handle the React shell drives the editor through. This is the ProseMirror
- * implementation of `CreateEditor`.
+ * The editing half of the engine: everything that only matters once a document
+ * is being changed rather than read. It is a module of its own because it is the
+ * expensive one — the view, the state, the commands and the history — and
+ * `mount.ts` fetches it only when something is actually going to be edited.
+ *
+ * It takes the schema rather than building one: `mount.ts` has already drawn the
+ * document from it, and building a second would be the one way the two could
+ * come to disagree.
  */
+
+/** The live editor, as the thing that mounted it drives it. */
+export type LiveEditor = {
+    handle: EditorHandle;
+    setDoc(doc: RteDocumentOf): void;
+    setReadOnly(readOnly: boolean): void;
+    setPlaceholder(placeholder: string): void;
+    destroy(): void;
+};
+
+export type EditingOptions = {
+    container: HTMLElement;
+    bundle: SchemaBundle;
+    features: RtePlugin[];
+    /** What is on screen, and what the host and the editor already agree on. */
+    doc: RteDocumentOf;
+    readOnly: boolean;
+    placeholder: string;
+    contentClassName: string;
+    placeholderClassName: string;
+    onDocChange: (doc: RteDocumentOf) => void;
+    onStateChange: () => void;
+    onBlur: (doc: RteDocumentOf) => void;
+};
 
 /**
  * Marks a transaction as carrying a document the host set (the controlled
@@ -30,23 +58,19 @@ import './engine.scss';
  * and undo should not take it back.
  */
 const HOST_DOC = 'rte-host-doc';
-export const createEditor: CreateEditor = ({
+export const startEditing = ({
     container,
-    initialDoc,
-    plugins: features,
+    bundle,
+    features,
+    doc: initialDoc,
     readOnly,
     placeholder,
     contentClassName,
     placeholderClassName,
-    probe,
     onDocChange,
     onStateChange,
     onBlur,
-}) => {
-    // Setup — runs once. Everything here is fixed for the editor's life, which
-    // is why a changed feature set means a new editor rather than a
-    // reconfigured one.
-    const bundle = buildSchema(features, probe);
+}: EditingOptions): LiveEditor => {
     const { schema } = bundle;
 
     /**
@@ -141,14 +165,16 @@ export const createEditor: CreateEditor = ({
     const refresh = (): void => view.setProps({});
 
     return {
-        api,
-        // The editor's own chrome asks for this; the plugins' floating UI goes
-        // through `floating` below. See EditorHandle in ports/editorEngine.ts.
-        selectionRect: createSelectionRectReader(view),
-        floating: {
-            placements: createFloatingLocator(view, features, schema, triggers),
-            clearQuery: triggers.clear,
-            dismiss: triggers.dismiss,
+        handle: {
+            api,
+            // The editor's own chrome asks for this; the plugins' floating UI
+            // goes through `floating`. See EditorHandle in ports/editorEngine.ts.
+            selectionRect: createSelectionRectReader(view),
+            floating: {
+                placements: createFloatingLocator(view, features, schema, triggers),
+                clearQuery: triggers.clear,
+                dismiss: triggers.dismiss,
+            },
         },
         setDoc(doc) {
             // The document we and the host already agree on, handed back: the

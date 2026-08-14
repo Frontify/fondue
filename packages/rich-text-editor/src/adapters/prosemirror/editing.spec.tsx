@@ -4,9 +4,9 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { reactRenderProbe } from '#/adapters/reactProbe/renderProbe';
 import { emptyDocument, PARAGRAPH, type RteDocumentOf, type RtePlugin } from '#/domain';
-import { type EditorHandle } from '#/ports';
 
-import { createEditor } from './editor';
+import { startEditing } from './editing';
+import { buildSchema } from './setup/schema';
 
 /**
  * The controlled-`value` protocol: a host hands back the document it was given,
@@ -28,27 +28,28 @@ const paragraph = (text: string): RteDocumentOf => ({
     blocks: [{ type: PARAGRAPH, children: [{ text }] }],
 });
 
-const mounted: EditorHandle[] = [];
+const mounted: { destroy(): void }[] = [];
 
 const mount = (initialDoc: RteDocumentOf) => {
     const container = window.document.createElement('div');
     window.document.body.append(container);
     const onDocChange = vi.fn<(doc: RteDocumentOf) => void>();
 
-    const handle = createEditor({
+    const live = startEditing({
         container,
-        initialDoc,
-        plugins,
+        bundle: buildSchema(plugins, reactRenderProbe),
+        features: plugins,
+        doc: initialDoc,
         readOnly: false,
         placeholder: '',
         contentClassName: 'content',
         placeholderClassName: 'placeholder',
-        probe: reactRenderProbe,
         onDocChange,
         onStateChange: () => {},
         onBlur: () => {},
     });
-    mounted.push(handle);
+    mounted.push(live);
+    const handle = { ...live.handle, setDoc: live.setDoc };
 
     /** The document as the host would now be holding it, or null if never told. */
     const stored = (): RteDocumentOf | null => {
@@ -59,8 +60,8 @@ const mount = (initialDoc: RteDocumentOf) => {
 };
 
 afterEach(() => {
-    for (const handle of mounted.splice(0)) {
-        handle.destroy();
+    for (const live of mounted.splice(0)) {
+        live.destroy();
     }
     window.document.body.replaceChildren();
 });

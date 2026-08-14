@@ -15,7 +15,7 @@ import {
     type MentionItem,
     type RteDocument,
     RichTextEditor,
-} from './index';
+} from '../index';
 
 /** Who can be mentioned is the app's business, which is why the mention plugin requires it as an option. */
 const MENTIONABLE: MentionItem[] = [

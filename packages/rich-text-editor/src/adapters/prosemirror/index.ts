@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 /**
- * The engine adapter: the ProseMirror implementation of the `CreateEditor`
+ * The engine adapter: the ProseMirror implementation of the `MountDocument`
  * port. This folder is the only place that knows ProseMirror exists (enforced
  * by the linter).
  *
@@ -14,11 +14,19 @@
  *   in it has ever seen an `EditorView`.
  * - `live/` closes over the mounted view and runs on every keystroke and every
  *   read. Nothing in it works without a living editor.
- * `editor.ts` spans both, which is why it sits outside either. They meet in
- * `setup/keystrokes.ts`: setup assembles the pipeline, live is what it runs.
+ * `mount.ts` and `editing.ts` span both, which is why they sit outside either.
+ * They meet in `setup/keystrokes.ts`: setup assembles the pipeline, live is what
+ * it runs.
+ *
+ * TWO HALVES, which answers "what does this cost". `mount.ts` shows a document
+ * and is imported; `editing.ts` makes one editable and is FETCHED, the first
+ * time something is going to be edited. A readonly editor never fetches it. The
+ * halves share the schema `mount.ts` builds, so the drawn document and the
+ * editable one are the same markup rather than two that ought to match.
  *
  * Reading order:
- * - `editor.ts`                  — the orchestrator: setup once, mount, then wire the live parts into the handle
+ * - `mount.ts`                   — a document on screen: the schema, the serializer, and when the other half is sent for
+ * - `editing.ts`                 — the orchestrator of the live editor: mount the view, then wire the live parts into the handle
  * - `setup/schema.ts`            — the mounted features → one engine schema, plus what the commands need to know about it
  * - `setup/pasteRules.ts`        — how pasted HTML is recognized as one of our blocks or marks
  * - `setup/keystrokes.ts`        — what happens when a key is pressed, as one ordered pipeline
@@ -29,4 +37,4 @@
  * - `live/placeholder.ts`        — the text shown while nothing has been typed
  */
 
-export { createEditor } from './editor';
+export { mountDocument } from './mount';

@@ -30,7 +30,7 @@ export type FloatingPlacement = {
     measure(): FloatingRect;
 };
 
-export type EditorOptions = {
+export type MountOptions = {
     container: HTMLElement;
     initialDoc: RteDocumentOf;
     plugins: RtePlugin[];
@@ -55,16 +55,22 @@ export type EditorOptions = {
     onStateChange: () => void;
     /** The editable element lost focus. Handed the current document, so a caller can commit it. */
     onBlur: (doc: RteDocumentOf) => void;
+    /**
+     * The document became editable, or stopped being — see `MountedDocument`.
+     * Everything that can only be done to a live editor arrives this way rather
+     * than being returned, because whether there is one is not known at mount.
+     */
+    onEditable: (handle: EditorHandle | null) => void;
 };
 
+/**
+ * What a live editor offers over a drawn one: the commands, and where things are
+ * on screen. Everything a document needs whether or not it is being edited —
+ * setting it, the placeholder, taking it down — is on `MountedDocument`, so the
+ * shell says those the same way in both cases.
+ */
 export type EditorHandle = {
     api: EditorControlApi;
-    /** Replace the content with an externally-set document (the controlled `value`). */
-    setDoc(doc: RteDocumentOf): void;
-    /** Turn editing off or back on, keeping the content, the selection and the undo history. */
-    setReadOnly(readOnly: boolean): void;
-    /** Change the text shown while the document is empty. Empty string means none. */
-    setPlaceholder(placeholder: string): void;
     /**
      * The box around the selected text, or null while nothing is selected. For
      * the editor's OWN chrome — the toolbar, when the host placed it over the
@@ -86,11 +92,35 @@ export type EditorHandle = {
         /** Close the open trigger until the caret moves on (Escape). */
         dismiss(): void;
     };
+};
+
+/**
+ * A document on screen. It starts merely drawn and becomes editable when it has
+ * to — which is not the same moment, because making a document editable costs
+ * far more than showing one and a reader should not wait for it to read.
+ *
+ * The two are one object rather than two, and one contract rather than two,
+ * because they are one document in one container: the schema is built once and
+ * both draw from it, so what is shown before the editor arrives and what
+ * replaces it cannot disagree. `readOnly` is the switch — an editor that is
+ * never editable never pays for the editing half at all.
+ */
+export type MountedDocument = {
+    /** Replace the content with an externally-set document (the controlled `value`). */
+    setDoc(doc: RteDocumentOf): void;
+    /**
+     * Turn editing off or back on. Turning it on is what fetches the editing
+     * half, so this is the one call here that finishes later; the handle arrives
+     * through `onEditable`.
+     */
+    setReadOnly(readOnly: boolean): void;
+    /** Change the text shown while the document is empty. Empty string means none. */
+    setPlaceholder(placeholder: string): void;
     destroy(): void;
 };
 
 /**
- * What an engine adapter implements: build a live editor over a container and
- * hand back the handle the React shell drives it through.
+ * What an engine adapter implements: put a document in a container, ready to
+ * become editable.
  */
-export type CreateEditor = (options: EditorOptions) => EditorHandle;
+export type MountDocument = (options: MountOptions) => MountedDocument;
