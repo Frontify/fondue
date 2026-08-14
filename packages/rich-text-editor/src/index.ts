@@ -9,7 +9,6 @@ import { type CheckItemBlock, type CheckListBlock } from './plugins/CheckList';
 import { type CodeMark } from './plugins/Code';
 import { type ColumnBreakBlock } from './plugins/ColumnBreak';
 import { type FontColorMark } from './plugins/FontColor';
-import { type ImageBlock } from './plugins/Image';
 import { type ItalicMark } from './plugins/Italic';
 import { type LinkMark } from './plugins/Link';
 import { type BulletListBlock, type ListItemBlock, type NumberedListBlock } from './plugins/List';
@@ -79,7 +78,6 @@ export { checkListPlugin } from './plugins/CheckList';
 export { codePlugin } from './plugins/Code';
 export { columnBreakPlugin, type ColumnBreakPluginOptions } from './plugins/ColumnBreak';
 export { fontColorPlugin } from './plugins/FontColor';
-export { imagePlugin } from './plugins/Image';
 export { italicPlugin } from './plugins/Italic';
 export { linkPlugin } from './plugins/Link';
 export { bulletListPlugin, numberedListPlugin } from './plugins/List';
@@ -182,7 +180,6 @@ type OfficialList<TExtraInline extends RteInlineNode> =
  */
 export type RteBlock<TExtraInline extends RteInlineNode = never> =
     | WithOfficialChildren<ParagraphBlock | QuoteBlock | TextStyleBlock, TExtraInline>
-    | ImageBlock
     | ColumnBreakBlock
     | OfficialList<TExtraInline>;
 

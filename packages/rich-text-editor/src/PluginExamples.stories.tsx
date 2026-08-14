@@ -22,7 +22,6 @@ import {
     columnBreakPlugin,
     defaultPlugins,
     fontColorPlugin,
-    imagePlugin,
     italicPlugin,
     linkPlugin,
     type MentionItem,
@@ -44,11 +43,6 @@ import {
     textStylePlugin,
     underlinePlugin,
 } from './index';
-
-// A self-contained SVG so the stories need no network.
-const SAMPLE_IMAGE = `data:image/svg+xml,${encodeURIComponent(
-    '<svg xmlns="http://www.w3.org/2000/svg" width="320" height="80"><rect width="320" height="80" rx="8" fill="#7c3aed"/><text x="160" y="48" font-family="sans-serif" font-size="20" fill="#fff" text-anchor="middle">image block</text></svg>',
-)}`;
 
 /** Who can be mentioned is the app's business, which is why the mention plugin requires it as an option. */
 const MENTIONABLE: MentionItem[] = [
@@ -159,27 +153,6 @@ export const Quote: Story = {
         return (
             <div className={LAYOUT}>
                 <RichTextEditor value={doc} onChange={setDoc} plugins={[quotePlugin()]} />
-                <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
-            </div>
-        );
-    },
-};
-
-/** A void block: no text children, everything lives in attributes. */
-export const Image: Story = {
-    render: () => {
-        const [doc, setDoc] = useState<RteDocument>({
-            version: 1,
-            blocks: [
-                { type: 'paragraph', children: [{ text: 'The image button asks for a URL and inserts a block.' }] },
-                { type: 'image', src: SAMPLE_IMAGE, alt: 'Sample image block' },
-            ],
-        });
-
-        return (
-            <div className={LAYOUT}>
-                <p className={HINT}>Spike-level UX: a real implementation opens an asset picker.</p>
-                <RichTextEditor value={doc} onChange={setDoc} plugins={[imagePlugin()]} />
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
         );
@@ -821,7 +794,6 @@ export const AllPlugins: Story = {
                 },
                 { type: 'quote', children: [{ text: 'A quote block — toggle with the quote button.' }] },
                 { type: 'textStyle', style: 'imageCaption', children: [{ text: 'An image caption text style.' }] },
-                { type: 'image', src: SAMPLE_IMAGE, alt: 'Sample image block' },
             ],
         });
 

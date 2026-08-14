@@ -6,7 +6,6 @@ import { boldPlugin } from './Bold';
 import { checkListPlugin } from './CheckList';
 import { codePlugin } from './Code';
 import { fontColorPlugin } from './FontColor';
-import { imagePlugin } from './Image';
 import { italicPlugin } from './Italic';
 import { linkPlugin } from './Link';
 import { bulletListPlugin, numberedListPlugin } from './List';
@@ -51,7 +50,6 @@ export const defaultPlugins = [
     numberedListPlugin(),
     checkListPlugin(),
     quotePlugin(),
-    imagePlugin(),
     resetFormattingPlugin(),
     // No toolbar of their own: a keybinding and a set of typing rules.
     softBreakPlugin(),

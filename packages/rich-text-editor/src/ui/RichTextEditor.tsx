@@ -7,7 +7,6 @@ import { type RteBlockNode, type RteDocumentOf, type RtePlugin } from '#/domain'
 import { FloatingLayer } from './components/FloatingLayer';
 import { FloatingToolbar } from './components/FloatingToolbar';
 import { Toolbar, type ToolbarPlacement } from './components/Toolbar';
-import { classNames } from './helpers/classNames';
 import { useEditorHandle } from './hooks/useEditorHandle';
 import { useFloating } from './hooks/useFloating';
 import { useFocusWithin } from './hooks/useFocusWithin';
@@ -93,9 +92,12 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
         readOnly,
         placeholder,
         // A plugin that lays out the whole content (columns) styles the editable
-        // element rather than anything it renders itself.
-        contentClassName: classNames(styles.content, ...plugins.map((plugin) => plugin.contentClassName)),
-        placeholderClassName: classNames(styles.placeholder),
+        // element rather than anything it renders itself. Every CSS-module lookup
+        // is typed as possibly missing, which is what the filter is for.
+        contentClassName: [styles.content, ...plugins.map((plugin) => plugin.contentClassName)]
+            .filter(Boolean)
+            .join(' '),
+        placeholderClassName: styles.placeholder ?? '',
         // The engine emits the structural form; it is only as narrow as the
         // mounted plugin set, which the caller declared via TBlock.
         onDocChange: (doc) => onChange?.(doc as RteDocumentOf<TBlock>),
@@ -142,7 +144,8 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
                 {toolbarFloats && selectionRect !== null ? (
                     <FloatingToolbar rect={selectionRect}>{toolbar}</FloatingToolbar>
                 ) : null}
-                <div className={classNames(styles.frame, !showEditor && styles.contentOnly)}>
+                {/* Whether the editor draws itself as one, for the stylesheet to read. */}
+                <div className={styles.frame} data-chrome={String(showEditor)}>
                     {toolbarFloats ? null : toolbar}
                     <div ref={containerRef} />
                 </div>

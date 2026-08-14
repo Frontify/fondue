@@ -4,7 +4,6 @@ import { Fragment, type MouseEvent, type ReactNode } from 'react';
 
 import { type EditorControlApi, type RtePlugin } from '#/domain';
 
-import { classNames } from '../helpers/classNames';
 import styles from '../richTextEditor.module.scss';
 
 /**
@@ -52,7 +51,10 @@ export const Toolbar = ({
             // stop of its own.
             tabIndex={-1}
             onMouseDown={keepSelection}
-            className={classNames(styles.toolbar, placement === 'top' && styles.toolbarTop)}
+            className={styles.toolbar}
+            // Where the bar ended up, for the stylesheet to read: the strip in the
+            // frame draws itself as one, the floating bar is its own surface.
+            data-placement={placement}
         >
             {plugins.map((plugin) =>
                 plugin.toolbar ? <Fragment key={plugin.id}>{plugin.toolbar(api)}</Fragment> : null,

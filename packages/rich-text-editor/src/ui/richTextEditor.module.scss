@@ -20,25 +20,25 @@
     border-radius: var(--border-radius-medium);
     background: var(--color-surface-default);
     box-shadow: var(--shadow-default);
-}
 
-/**
- * The frame with its chrome taken away, leaving the content on its own — what
- * `showEditor={false}` renders. Everything dropped here is the editor *telling
- * the reader it is an editor*: the box it draws around itself and the inset that
- * keeps typing off the border. The content's own styling (its typography, and
- * whatever the plugins draw) is untouched, so it looks like the text it is.
- */
-.contentOnly {
-    overflow: visible;
-    border: none;
-    border-radius: 0;
-    background: none;
-    box-shadow: none;
+    /**
+     * The frame with its chrome taken away, leaving the content on its own — what
+     * `showEditor={false}` renders. Everything dropped here is the editor *telling
+     * the reader it is an editor*: the box it draws around itself and the inset that
+     * keeps typing off the border. The content's own styling (its typography, and
+     * whatever the plugins draw) is untouched, so it looks like the text it is.
+     */
+    &[data-chrome='false'] {
+        overflow: visible;
+        border: none;
+        border-radius: 0;
+        background: none;
+        box-shadow: none;
 
-    .content {
-        min-height: 0;
-        padding: 0;
+        .content {
+            min-height: 0;
+            padding: 0;
+        }
     }
 }
 
@@ -49,12 +49,12 @@
     flex-wrap: wrap;
     gap: var(--spacing-xx-small);
     padding: var(--spacing-x-small);
-}
 
-/** A strip inside the frame, divided from the content it sits above. */
-.toolbarTop {
-    border-bottom: var(--border-width-default) solid var(--color-line-subtle);
-    background: var(--color-surface-dim);
+    /** A strip inside the frame, divided from the content it sits above. */
+    &[data-placement='top'] {
+        border-bottom: var(--border-width-default) solid var(--color-line-subtle);
+        background: var(--color-surface-dim);
+    }
 }
 
 /**
@@ -76,19 +76,19 @@
     border-radius: var(--border-radius-medium);
     background: var(--color-surface-default);
     box-shadow: var(--shadow-mid);
-}
 
-/**
- * The two sides, as a transform: the component supplies one anchor point — the top
- * of the selection, or its bottom — and the shift off it lives here with the gap
- * it leaves, so flipping is a class swap rather than a second measurement.
- */
-.floatingAbove {
-    transform: translate(-50%, calc(-100% - var(--spacing-xx-small)));
-}
+    /**
+     * The two sides, as a transform: the component supplies one anchor point — the top
+     * of the selection, or its bottom — and the shift off it lives here with the gap
+     * it leaves, so flipping is a changed attribute rather than a second measurement.
+     */
+    &[data-side='above'] {
+        transform: translate(-50%, calc(-100% - var(--spacing-xx-small)));
+    }
 
-.floatingBelow {
-    transform: translate(-50%, var(--spacing-xx-small));
+    &[data-side='below'] {
+        transform: translate(-50%, var(--spacing-xx-small));
+    }
 }
 
 /**

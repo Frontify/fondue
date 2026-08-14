@@ -4,7 +4,6 @@ import { type ReactNode, useLayoutEffect, useRef, useState } from 'react';
 
 import { type FloatingRect } from '#/ports';
 
-import { classNames } from '../helpers/classNames';
 import styles from '../richTextEditor.module.scss';
 
 /** How close to the viewport edge the bar may come before it is pushed back in. */
@@ -57,7 +56,10 @@ export const FloatingToolbar = ({ rect, children }: { rect: FloatingRect; childr
     return (
         <div
             ref={barRef}
-            className={classNames(styles.floatingToolbar, above ? styles.floatingAbove : styles.floatingBelow)}
+            className={styles.floatingToolbar}
+            // Which side of the selection the anchor point below is on. The shift
+            // off it is the stylesheet's, so only one of the two is measured here.
+            data-side={above ? 'above' : 'below'}
             style={{ left, top: above ? rect.top : rect.top + rect.height }}
         >
             {children}
