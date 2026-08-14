@@ -1,12 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { DOMSerializer } from 'prosemirror-model';
-
 import { type RteDocumentOf } from '#/domain';
 import { type MountDocument } from '#/ports';
 
+import { createDrawing } from './draw';
 import { type LiveEditor } from './editing';
-import { toEngineDocument } from './live/documentConversion';
 import { buildSchema } from './setup/schema';
 
 /**
@@ -21,46 +19,11 @@ import { buildSchema } from './setup/schema';
  * stays readonly.
  *
  * The split is safe to make invisible because both halves draw from the schema
- * built HERE, once. The serializer below is the one the editable view uses on
- * the same `toDOM`, so what the reader sees now and what replaces it are the
- * same markup — including for a plugin nobody here has seen, whose React render
- * is only pure if the author made it so.
+ * built HERE, once, and the drawing itself is `draw.ts` — the serializer the
+ * editable view uses, on the same `toDOM`. So what the reader sees now and what
+ * replaces it are the same markup, including for a plugin nobody here has seen,
+ * whose React render is only pure if the author made it so.
  */
-
-/**
- * Elements that cannot hold anything, so an empty one is not an empty block.
- * Everything else the serializer leaves empty is a text block with nothing typed
- * in it yet.
- */
-const VOID_TAG = new Set([
-    'AREA',
-    'BASE',
-    'BR',
-    'COL',
-    'EMBED',
-    'HR',
-    'IMG',
-    'INPUT',
-    'LINK',
-    'META',
-    'SOURCE',
-    'TRACK',
-    'WBR',
-]);
-
-/**
- * The one thing the editable element gets from the view rather than from the
- * serializer: an empty text block is held open with a `<br>`. Without it such a
- * block has no height, so a document with a blank line in it would grow by one
- * the moment the editor took over — and the swap has to move nothing.
- */
-const holdEmptyBlocksOpen = (host: HTMLElement): void => {
-    for (const element of host.querySelectorAll('*')) {
-        if (element.childNodes.length === 0 && !VOID_TAG.has(element.tagName)) {
-            element.append(host.ownerDocument.createElement('br'));
-        }
-    }
-};
 
 export const mountDocument: MountDocument = ({
     container,
@@ -79,7 +42,7 @@ export const mountDocument: MountDocument = ({
     // Runs once, and is what both halves are built on: a changed feature set
     // means a new mounting rather than a reconfigured one.
     const bundle = buildSchema(features, probe);
-    const serializer = DOMSerializer.fromSchema(bundle.schema);
+    const draw = createDrawing(bundle.schema, container.ownerDocument);
 
     /** What is on screen, and what a live editor would open with. */
     const current = { doc: initialDoc, readOnly, placeholder };
@@ -96,9 +59,7 @@ export const mountDocument: MountDocument = ({
     let destroyed = false;
 
     const drawDocument = (): void => {
-        const node = toEngineDocument(current.doc, bundle.schema);
-        content.replaceChildren(serializer.serializeFragment(node.content));
-        holdEmptyBlocksOpen(content);
+        const node = draw(content, current.doc);
 
         // The placeholder is a decoration on the empty block, so it is only
         // there while there is nothing in the document at all. Set before the

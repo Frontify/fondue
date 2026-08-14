@@ -24,6 +24,11 @@ import {
  *
  * Swapping the engine means writing one more `CreateEditor` and nothing else.
  *
+ * `serializeToHtml.ts` sits beside this file for the same reason `documentFormat.ts`
+ * does — choosing the engine and the probe that draw a document is the
+ * composition root's job, and it is the second place (after the editor's own
+ * hook) where that choice is made.
+ *
  * `documentFormat.ts` sits beside this file rather than in a layer: closing the
  * open document skeleton over the blocks and marks that actually ship is the
  * composition root's job, and it is the only other file allowed to know the
@@ -82,6 +87,11 @@ export { underlinePlugin } from './plugins/Underline';
 // `RteDocument<RteBlock | CalloutBlock>` for an extra block,
 // `RteBlock<RteText & HighlightMark>` for an extra mark.
 export { type RteBlock, type RteDocument, type RteText } from './documentFormat';
+
+// The document as HTML, for the places a document goes that the editor does not
+// — an email, a page rendered on a server. It draws with the plugins it is
+// given, through the same serializer a mounted editor draws with.
+export { serializeToHtml, type SerializeToHtmlOptions } from './serializeToHtml';
 
 /**
  * The editor is generic over its block union with the *official* one as the
