@@ -59,17 +59,20 @@ export type EditorHandle = {
     /** Change the text shown while the document is empty. Empty string means none. */
     setPlaceholder(placeholder: string): void;
     /**
-     * Where each declared piece of floating UI hangs, in mount order. One whose
+     * The box around the selected text, or null while nothing is selected. For the
+     * editor's OWN chrome — the toolbar, when the host placed it over the
+     * selection. Deliberately not under `floating` below: that is the plugins'
+     * mechanism, and a plugin wanting the same box declares an `anchor:
+     * 'selection'` and gets it as a placement instead.
+     */
+    selectionRect(): FloatingRect | null;
+    /**
+     * The plugins' floating UI: where each declared piece hangs, in mount order,
+     * plus control over the trigger one of them may be anchored to. A piece whose
      * anchor is not currently in the document is simply absent from the list.
      */
     floating: {
         placements(): FloatingPlacement[];
-        /**
-         * The box around the selected text, for the editor's own floating UI —
-         * the toolbar, when it is the one hanging over the selection. Null while
-         * nothing is selected.
-         */
-        selectionRect(): FloatingRect | null;
         /** Delete the open trigger and its query, so a choice can take their place. */
         clearQuery(): void;
         /** Close the open trigger until the caret moves on (Escape). */

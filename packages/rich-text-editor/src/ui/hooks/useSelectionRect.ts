@@ -38,5 +38,7 @@ export const useSelectionRect = ({
         };
     }, [enabled]);
 
-    return enabled && handle ? handle.floating.selectionRect() : null;
+    // `handle.selectionRect()`, not `handle.floating.*`: this box is for the
+    // editor's own chrome. The plugins' mechanism is `useFloating`.
+    return enabled && handle ? handle.selectionRect() : null;
 };

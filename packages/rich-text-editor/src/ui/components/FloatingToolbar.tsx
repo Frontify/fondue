@@ -19,6 +19,10 @@ const VIEWPORT_MARGIN = 8;
  * whether it fits above, and how far in from the edge it has to sit. Watched
  * rather than read once: the bar's width follows what is in it (a longer style
  * name in the dropdown), and its height jumps the moment the controls wrap.
+ *
+ * This is the editor's OWN chrome that happens to float, positioned from
+ * `handle.selectionRect()`. It is not the plugins' floating mechanism — that is
+ * `FloatingLayer.tsx`, fed by `handle.floating.placements()`.
  */
 export const FloatingToolbar = ({ rect, children }: { rect: FloatingRect; children: ReactNode }): ReactNode => {
     const barRef = useRef<HTMLDivElement | null>(null);

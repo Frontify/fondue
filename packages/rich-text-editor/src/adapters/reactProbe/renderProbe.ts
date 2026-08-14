@@ -51,5 +51,5 @@ export const reactRenderProbe: RenderProbe = (render: () => ReactNode): ProbedDo
         throw new Error(`A plugin render function produced no element. Output was: ${markup}`);
     }
     const element = toDomChild(root) as DomElement;
-    return { tag: element[0], attrs: element[1], element };
+    return { tag: element[0], element };
 };

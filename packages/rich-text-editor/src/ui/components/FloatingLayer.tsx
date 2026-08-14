@@ -9,6 +9,12 @@ import styles from '../richTextEditor.module.scss';
 /**
  * Every open piece of plugin UI, each in a flyout hanging under the content it is
  * about — the panel below a link, the picker below a typed `@`.
+ *
+ * "Floating UI" in the domain sense means exactly this: what a PLUGIN declares
+ * with a `FloatingSpec`, reaching here as a placement from
+ * `handle.floating.placements()`. The floating TOOLBAR (`FloatingToolbar.tsx`) is
+ * a different mechanism — the editor's own chrome, positioned from
+ * `handle.selectionRect()` — that only shares the word.
  */
 export const FloatingLayer = ({ surfaces }: { surfaces: FloatingSurface[] }): ReactNode => (
     <>

@@ -3,7 +3,7 @@
 import { type MutableRefObject, useEffect, useReducer, useRef } from 'react';
 
 import { createEditor } from '#/adapters/prosemirror';
-import { reactRenderProbe } from '#/adapters/reactProbe/probe';
+import { reactRenderProbe } from '#/adapters/reactProbe/renderProbe';
 import { emptyDocument, type RteDocumentOf, type RtePlugin } from '#/domain';
 import { type EditorHandle } from '#/ports';
 

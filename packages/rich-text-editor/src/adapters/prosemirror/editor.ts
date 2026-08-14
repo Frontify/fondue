@@ -126,9 +126,11 @@ export const createEditor: CreateEditor = ({
 
     return {
         api,
+        // The editor's own chrome asks for this; the plugins' floating UI goes
+        // through `floating` below. See EditorHandle in ports/editorEngine.ts.
+        selectionRect: createSelectionRectReader(view),
         floating: {
             placements: createFloatingLocator(view, features, schema, triggers),
-            selectionRect: createSelectionRectReader(view),
             clearQuery: triggers.clear,
             dismiss: triggers.dismiss,
         },

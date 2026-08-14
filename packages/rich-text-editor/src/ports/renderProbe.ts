@@ -18,10 +18,13 @@ export type DomChild = string | 0 | DomElement;
  */
 export type DomElement = [string, Record<string, string>, ...DomChild[]];
 
-/** The root element's tag and attributes, plus the whole tree the render produced. */
+/**
+ * What a probed render is worth knowing: the whole tree it produced, plus the root
+ * tag on its own — a mark is recognized when pasting by the tag it renders, and
+ * asking for that should not mean indexing into the tuple.
+ */
 export type ProbedDom = {
     tag: string;
-    attrs: Record<string, string>;
     element: DomElement;
 };
 
