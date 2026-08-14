@@ -14,9 +14,12 @@ import {
     type TextStyleOption,
 } from './helpers/presets';
 
-export type { TextStyleBlock, TextStyleName, TextStyleOption } from './helpers/presets';
+// The block this plugin contributes; the package root assembles it into the
+// official document union. Its options type stays local — the object literal at
+// the call site is contextually typed, so nothing outside needs to name it.
+export type { TextStyleBlock } from './helpers/presets';
 
-export type TextStylePluginOptions = {
+type TextStylePluginOptions = {
     /** The styles the dropdown offers, in order. Include `'paragraph'` for the option that clears one. */
     styles?: readonly TextStyleOption[];
 };

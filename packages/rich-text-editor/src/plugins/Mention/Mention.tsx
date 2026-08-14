@@ -22,7 +22,7 @@ export type MentionItem = {
 /** How many candidates are offered at once. */
 const COMBOBOX_LIMIT = 8;
 
-export type MentionPluginOptions = {
+type MentionPluginOptions = {
     items: readonly MentionItem[];
     /** The character that opens the picker. `@` unless the app needs something else. */
     trigger?: string;

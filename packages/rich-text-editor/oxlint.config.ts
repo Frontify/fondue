@@ -266,6 +266,7 @@ export default defineConfig({
                                     '#/ui',
                                     '#/ui/**',
                                     './plugins/**',
+                                    './documentFormat',
                                 ],
                                 message: 'Stories may only import the package public API (./index).',
                             },

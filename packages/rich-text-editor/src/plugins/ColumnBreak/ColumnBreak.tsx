@@ -13,7 +13,7 @@ export type ColumnBreakBlock = {
     type: 'columnBreak';
 };
 
-export type ColumnBreakPluginOptions = {
+type ColumnBreakPluginOptions = {
     /** How many columns the content is laid out in. */
     columns?: number;
     /** The gap between them — a CSS length, or a number of pixels. */

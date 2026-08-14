@@ -11,7 +11,8 @@ const doc: RteDocument = {
     version: 1,
     blocks: [
         { type: 'textStyle', style: 'heading2', children: [{ text: 'x', bold: true }] },
-        { type: 'image', src: 'https://example.com/pic.png' },
+        // A block with no children at all still belongs in the union.
+        { type: 'columnBreak' },
     ],
 };
 
@@ -90,7 +91,7 @@ const markTypo: RteDocument = { version: 1, blocks: [{ type: 'paragraph', childr
 const linkAsBoolean: RteText = { text: 'x', link: true };
 
 // Blocks are a discriminated union: no type guard needed to narrow
-const narrowed = (block: RteBlock): string => (block.type === 'image' ? block.src : block.type);
+const narrowed = (block: RteBlock): string => (block.type === 'textStyle' ? block.style : block.type);
 
 // Consumer plugins widen the parameters — the only place type arguments appear
 type HighlightMark = { highlight?: boolean };

@@ -11,9 +11,13 @@
  * and the few names and attributes the core itself depends on in `vocabulary.ts`
  * and `protocol.ts`.
  *
- * This is also the surface a plugin may import (enforced by the linter), and the
- * same set the package root re-exports — so anything a shipped plugin does, an
- * external plugin author can do too.
+ * This is the surface a plugin may import, enforced by the linter. The package
+ * root re-exports the four types an external author cannot write a plugin
+ * without naming — the declaration, the control API, the floating context and
+ * the inline node — and nothing else from here: the rest is contextually typed
+ * inside the `RtePlugin` literal, and the constants are conveniences a shipped
+ * plugin uses in place of a string literal. So an external plugin is written
+ * the same way a shipped one is; it just spells `'paragraph'` out.
  */
 
 export { type EditorControlApi, type RteSelectionSnapshot } from './commands';
