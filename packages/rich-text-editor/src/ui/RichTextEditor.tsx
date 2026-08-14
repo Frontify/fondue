@@ -23,7 +23,22 @@ import styles from './richTextEditor.module.scss';
 export type RichTextEditorProps<TBlock extends RteBlockNode = RteBlockNode> = {
     value?: RteDocumentOf<TBlock>;
     onChange?: (value: RteDocumentOf<TBlock>) => void;
-    /** The plugins to mount, in toolbar order (e.g. `defaultPlugins`, extended or reduced as needed). */
+    /**
+     * The plugins to mount, in toolbar order (e.g. `defaultPlugins`, extended or
+     * reduced as needed).
+     *
+     * Mount-time configuration: the editor is built once per plugin set and reads
+     * the schema, the hotkeys and the typing rules off it then. Changing which
+     * plugins are in the list builds a new editor; changing an option *inside* one
+     * (a different `items` for the mention picker) does not reach the editor that
+     * is already running, so drive that from a `key` on the editor if it has to
+     * change while mounted.
+     *
+     * Worth building once, at module level, if a page holds many editors: the
+     * expensive part of mounting is turning each plugin's `render` into a
+     * description the engine can draw, and editors handed the same plugin objects
+     * share that work instead of repeating it apiece.
+     */
     plugins?: RtePlugin[];
     /**
      * Where the toolbar goes.

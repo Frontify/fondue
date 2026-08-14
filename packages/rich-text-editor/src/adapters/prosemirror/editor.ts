@@ -22,6 +22,14 @@ import './engine.scss';
  * React shell drives the editor through. This is the ProseMirror implementation
  * of `CreateEditor`.
  */
+
+/**
+ * Marks a transaction as carrying a document the host set (the controlled
+ * `value`) rather than an edit made in the editor. Two things read it, and both
+ * are about the difference between the two: the change is not reported back to
+ * whoever made it, and it is not something undo should take back.
+ */
+const HOST_DOC = 'rte-host-doc';
 export const createEditor: CreateEditor = ({
     container,
     initialDoc,
@@ -59,8 +67,13 @@ export const createEditor: CreateEditor = ({
     let api!: EditorControlApi;
     const getApi = (): EditorControlApi => api;
 
-    /** The last document handed out, so an echo of our own change is not applied again. */
-    let lastEmitted = initialDoc;
+    /**
+     * The document the host and the editor last agreed on: what was handed out
+     * through `onDocChange`, or what was last set through `setDoc`. Both write it,
+     * so an echo of either — the same object coming back the other way — is
+     * recognized by identity alone, without a document being converted to compare.
+     */
+    let agreedDoc = initialDoc;
 
     // -----------------------------------------------------------------------
     // Mount
@@ -107,9 +120,15 @@ export const createEditor: CreateEditor = ({
         },
         dispatchTransaction(transaction) {
             view.updateState(view.state.apply(transaction));
-            if (transaction.docChanged) {
-                lastEmitted = toRteDocument(view.state.doc);
-                onDocChange(lastEmitted);
+            // A document the host set is not news to the host. Reporting it back is
+            // what turns a controlled `value` into a loop: the host stores what it
+            // already had, and a store that re-creates references on the way
+            // through hands it back as a new document to set, for as long as the
+            // page is open. `setDoc` records the agreement itself, holding the
+            // host's own object rather than a conversion of it.
+            if (transaction.docChanged && transaction.getMeta(HOST_DOC) !== true) {
+                agreedDoc = toRteDocument(view.state.doc);
+                onDocChange(agreedDoc);
             }
             onStateChange();
         },
@@ -135,10 +154,50 @@ export const createEditor: CreateEditor = ({
             dismiss: triggers.dismiss,
         },
         setDoc(doc) {
-            if (doc !== lastEmitted) {
-                const { content } = toEngineDocument(doc, schema);
-                view.dispatch(view.state.tr.replaceWith(0, view.state.doc.content.size, content));
+            // The document we and the host already agree on, handed back: the
+            // ordinary shape of a controlled editor, and worth answering before
+            // anything is converted.
+            if (doc === agreedDoc) {
+                return;
             }
+            const next = toEngineDocument(doc, schema);
+            // Everything else is compared by what it says rather than by which
+            // object says it. A host whose store re-creates references — a round
+            // trip through the server, a `JSON.parse`, a store that normalizes
+            // what it is given — hands back an equal document under a new
+            // identity after every keystroke, and replacing the content for that
+            // would take the caret away from someone in the middle of typing.
+            if (next.eq(view.state.doc)) {
+                agreedDoc = doc;
+                return;
+            }
+
+            const { from, to } = view.state.selection;
+            const transaction = view.state.tr.replaceWith(0, view.state.doc.content.size, next.content);
+            // Put the selection back. Replacing the whole content leaves every
+            // position in it pointing at the same place, so the caret would
+            // otherwise collapse to the start of what arrived. The new document
+            // may be shorter than where the caret was, hence the clamp, and
+            // `between` moves what it is given to the nearest position text can
+            // actually occupy.
+            const end = transaction.doc.content.size;
+            transaction.setSelection(
+                TextSelection.between(
+                    transaction.doc.resolve(Math.min(from, end)),
+                    transaction.doc.resolve(Math.min(to, end)),
+                ),
+            );
+            transaction.setMeta(HOST_DOC, true);
+            // Undo takes back what the user did. An update the host pushed in is
+            // not that, and leaving it in the history means Mod-z reverts to a
+            // document the host has never heard of — which it would then set
+            // again.
+            transaction.setMeta('addToHistory', false);
+            view.dispatch(transaction);
+            // Hold the host's own object rather than a conversion of the content it
+            // produced: it is what the next call will be handing back, so it is
+            // what makes that call a comparison of two references.
+            agreedDoc = doc;
         },
         setReadOnly(next) {
             current.readOnly = next;

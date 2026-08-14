@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 // Stories import only the package public API. The plugins have their own story
 // file (`plugins.stories.tsx`); this one is about the editor itself — the props
@@ -394,6 +394,68 @@ export const CommentBox: Story = {
                     plugins={[boldPlugin(), italicPlugin(), linkPlugin(), mentionPlugin({ items: MENTIONABLE })]}
                 />
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
+            </div>
+        );
+    },
+};
+
+/** How many editors a page is expected to hold at the top of the range. */
+const MANY = 30;
+
+/** Fixed identities for a list that never reorders. */
+const MANY_KEYS = Array.from({ length: MANY }, (_, index) => `editor-${index + 1}`);
+
+/**
+ * The load case this editor is built for: a page of editors, all live at once.
+ *
+ * Two things are worth watching here rather than reading about. Mounting is timed
+ * and reported above, because that is the cost that lands in one block on first
+ * paint. And typing in any one of them should feel exactly as it does in the
+ * `Default` story: the engine owns the content DOM, so a keystroke redraws the
+ * text it changed and nothing else — the other twenty-nine editors do no work for
+ * it, and neither does React.
+ *
+ * `defaultPlugins` is imported rather than built per editor, which is what lets
+ * all thirty share one set of probed renders instead of repeating them thirty
+ * times. Worth copying in an app that mounts many: build the plugin array once, at
+ * module level, rather than inside the component.
+ */
+export const ManyEditors: Story = {
+    render: () => {
+        const [docs, setDocs] = useState<RteDocument[]>(() =>
+            Array.from(
+                { length: MANY },
+                (_, index): RteDocument => ({
+                    version: 1,
+                    blocks: [{ type: 'paragraph', children: [{ text: `Editor ${index + 1} — type here.` }] }],
+                }),
+            ),
+        );
+        const startedAtRef = useRef(performance.now());
+        const [mountedIn, setMountedIn] = useState<number | null>(null);
+
+        useEffect(() => {
+            // A child's effects run before its parent's, so every editor below is
+            // already live by the time this one does.
+            setMountedIn(performance.now() - startedAtRef.current);
+        }, []);
+
+        return (
+            <div className="tw-grid tw-gap-4 tw-p-4 tw-font-primary">
+                <p className={HINT}>
+                    {MANY} editors, each with its own document.
+                    {mountedIn === null ? '' : ` Mounted in ${Math.round(mountedIn)}ms.`}
+                </p>
+                {docs.map((doc, index) => (
+                    <RichTextEditor
+                        key={MANY_KEYS[index]}
+                        value={doc}
+                        onChange={(next) =>
+                            setDocs((previous) => previous.map((held, at) => (at === index ? next : held)))
+                        }
+                        plugins={defaultPlugins}
+                    />
+                ))}
             </div>
         );
     },

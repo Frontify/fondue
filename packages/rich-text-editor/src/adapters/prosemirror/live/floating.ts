@@ -221,8 +221,12 @@ export const createFloatingLocator = (
     return () =>
         declared.flatMap(({ pluginId, anchor }) => {
             const range = anchorRange(anchor);
+            // The range is resolved here and measured only if asked for: finding
+            // out *whether* there is an anchor is reading the document, while
+            // finding out where it is on screen is a layout. See
+            // `FloatingPlacement.measure`.
             return range === null
                 ? []
-                : [{ pluginId, query: range.query, rect: rectBetween(view, range.from, range.to) }];
+                : [{ pluginId, query: range.query, measure: () => rectBetween(view, range.from, range.to) }];
         });
 };

@@ -15,6 +15,14 @@ import { type EditorHandle, type FloatingRect } from '#/ports';
  * Scroll is listened for in the capture phase because a scroll event does not
  * bubble: the page is not always what moved, and the editor may well be inside a
  * container of its own.
+ *
+ * Both listeners are throttled to a frame and marked passive, which is about the
+ * one thing scrolling cannot afford. A scroll fires far faster than the screen
+ * refreshes, and re-reading the box for every one of those events would put a
+ * layout and a re-render into the middle of a gesture the browser is trying to
+ * keep smooth — there is no point computing a position twice before it is drawn
+ * once. Passive says the same thing to the browser: this handler will never call
+ * `preventDefault`, so scrolling need not wait for it.
  */
 export const useSelectionRect = ({
     handle,
@@ -30,11 +38,25 @@ export const useSelectionRect = ({
         if (!enabled) {
             return;
         }
-        window.addEventListener('scroll', follow, true);
-        window.addEventListener('resize', follow);
+        let frame: number | null = null;
+        const followNextFrame = (): void => {
+            if (frame !== null) {
+                return;
+            }
+            frame = requestAnimationFrame(() => {
+                frame = null;
+                follow();
+            });
+        };
+
+        window.addEventListener('scroll', followNextFrame, { capture: true, passive: true });
+        window.addEventListener('resize', followNextFrame, { passive: true });
         return () => {
-            window.removeEventListener('scroll', follow, true);
-            window.removeEventListener('resize', follow);
+            if (frame !== null) {
+                cancelAnimationFrame(frame);
+            }
+            window.removeEventListener('scroll', followNextFrame, true);
+            window.removeEventListener('resize', followNextFrame);
         };
     }, [enabled]);
 

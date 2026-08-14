@@ -17,9 +17,19 @@ export type FloatingRect = { left: number; top: number; width: number; height: n
 /** Where one plugin's declared floating UI currently belongs on screen. */
 export type FloatingPlacement = {
     pluginId: string;
-    rect: FloatingRect;
     /** For a `{ trigger }` anchor: what has been typed after it. Empty for the others. */
     query: string;
+    /**
+     * The box it hangs at, in viewport coordinates.
+     *
+     * A call rather than a field, because turning a document position into a box
+     * means asking the browser to lay the page out, and that is the one thing here
+     * expensive enough to be worth not doing. A plugin decides whether to draw
+     * anything *after* seeing the placement — a picker whose query matches nothing
+     * draws nothing — so measuring every placement up front spends a layout on
+     * every anchor that exists rather than on every one that shows.
+     */
+    measure(): FloatingRect;
 };
 
 export type EditorOptions = {

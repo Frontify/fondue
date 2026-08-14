@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type MarkSpec as PmMarkSpec, type NodeSpec as PmNodeSpec, Schema } from 'prosemirror-model';
+import { type MarkSpec as PmMarkSpec, type NodeSpec as PmNodeSpec, Schema, type TagParseRule } from 'prosemirror-model';
 import { type ReactNode } from 'react';
 
 import {
@@ -76,15 +76,64 @@ const injectedAttrDefaults = (injected: readonly BlockAttributeSpec[]): Record<s
 // is caching and merging in the CSS that injected attributes (alignment) add.
 // ---------------------------------------------------------------------------
 
-/** `toDOM` runs on every render and probing renders React — so cache per attribute set. */
-const probeCachedBy = (probe: RenderProbe, render: (attrs: Record<string, unknown>) => ReactNode) => {
-    const cache = new Map<string, ProbedDom>();
+/**
+ * Probed renders, remembered per attribute set — `toDOM` runs every time the
+ * engine draws a node, and probing renders React and reads the result back, which
+ * is the most expensive thing in this file by a wide margin.
+ *
+ * The cache belongs to the DECLARATION rather than to the editor built from it,
+ * which is what makes a page of editors affordable: twenty editors mounted over
+ * the same plugin objects — a `defaultPlugins` evaluated once, as a module-level
+ * array is — probe once between them instead of twenty times. Declarations built
+ * fresh per editor still work; they simply have nothing to share, which is why
+ * building the plugin array once is worth suggesting to a host that mounts many.
+ *
+ * Keyed on the probe as well, since a different probe is entitled to describe the
+ * same render differently.
+ */
+const probeCaches = new WeakMap<RenderProbe, WeakMap<object, Map<string, ProbedDom>>>();
+
+/**
+ * How many attribute sets one declaration remembers. A mark or block whose
+ * attributes come from a small vocabulary (a text style, an alignment, a bare
+ * `bold`) sits far below this. The ones that do not — a link's href, a mention's
+ * id — are why there is a limit at all: without one, a cache that now outlives
+ * every editor would keep an entry per distinct link a session ever drew.
+ */
+const PROBE_CACHE_LIMIT = 128;
+
+const probeCachedBy = (
+    probe: RenderProbe,
+    /** What the cache hangs off: the plugin's own spec object. */
+    declaration: object,
+    render: (attrs: Record<string, unknown>) => ReactNode,
+) => {
+    let byDeclaration = probeCaches.get(probe);
+    if (!byDeclaration) {
+        byDeclaration = new WeakMap<object, Map<string, ProbedDom>>();
+        probeCaches.set(probe, byDeclaration);
+    }
+    let cache = byDeclaration.get(declaration);
+    if (!cache) {
+        cache = new Map<string, ProbedDom>();
+        byDeclaration.set(declaration, cache);
+    }
+    const remembered = cache;
+
     return (attrs: Record<string, unknown>): ProbedDom => {
         const key = JSON.stringify(attrs);
-        let probed = cache.get(key);
+        let probed = remembered.get(key);
         if (!probed) {
             probed = probe(() => render(attrs));
-            cache.set(key, probed);
+            if (remembered.size >= PROBE_CACHE_LIMIT) {
+                // A Map iterates in insertion order, so the first key is the one
+                // that has been there longest.
+                const oldest = remembered.keys().next().value;
+                if (oldest !== undefined) {
+                    remembered.delete(oldest);
+                }
+            }
+            remembered.set(key, probed);
         }
         return probed;
     };
@@ -173,7 +222,7 @@ const blockNodeSpec = (
     const carriesInjected = !isVoid && spec.content !== 'blocks';
     const injectedHere = carriesInjected ? injected : [];
     const ownAttrNames = Object.keys(spec.attributes ?? {});
-    const probe = probeCachedBy(renderProbe, (attrs) =>
+    const probe = probeCachedBy(renderProbe, spec, (attrs) =>
         spec.render({ node: { type: spec.type, ...attrs }, children: CONTENT_SLOT }),
     );
 
@@ -204,7 +253,7 @@ const blockNodeSpec = (
 };
 
 const inlineNodeSpec = (spec: InlineSpec, renderProbe: RenderProbe): PmNodeSpec => {
-    const probe = probeCachedBy(renderProbe, (attrs) => spec.render({ node: { type: spec.type, ...attrs } }));
+    const probe = probeCachedBy(renderProbe, spec, (attrs) => spec.render({ node: { type: spec.type, ...attrs } }));
 
     return {
         group: 'inline',
@@ -218,16 +267,35 @@ const inlineNodeSpec = (spec: InlineSpec, renderProbe: RenderProbe): PmNodeSpec 
 
 const markNodeSpec = (spec: MarkSpec, renderProbe: RenderProbe): PmMarkSpec => {
     const attrs = attrDefaults(spec.attributes);
-    const probe = probeCachedBy(renderProbe, (value) => spec.render({ children: CONTENT_SLOT, value }));
-    // The element the mark renders (probed with default values) is always
-    // recognized when parsing; parseRules add more.
-    const defaults = Object.fromEntries(Object.entries(attrs).map(([name, attr]) => [name, attr.default]));
+    const probe = probeCachedBy(renderProbe, spec, (value) => spec.render({ children: CONTENT_SLOT, value }));
+    let parseDOM: TagParseRule[] | undefined;
 
     return {
         attrs,
         // Value-carrying marks (links) should not extend when typing at their edge.
         inclusive: Object.keys(attrs).length === 0,
-        parseDOM: pasteRules(spec.attributes ?? {}, [{ tag: probe(defaults).tag }, ...(spec.parseRules ?? [])]),
+        /**
+         * The element the mark renders is always recognized when parsing, which
+         * means probing it to learn its tag — and probing renders React.
+         *
+         * Built on first read rather than at mount, which is the only reason this
+         * is a getter. The engine reads it when it first has HTML to make sense of
+         * (a paste, or the DOM read after typing) and remembers the parser it
+         * builds; doing it eagerly instead means every mark of every mounted
+         * editor renders React before anyone has typed, to be ready for a paste
+         * that may never come. It is the whole mount cost of a schema, and a page
+         * holding twenty editors pays it twenty times over.
+         */
+        get parseDOM(): TagParseRule[] {
+            parseDOM ??= pasteRules(spec.attributes ?? {}, [
+                {
+                    tag: probe(Object.fromEntries(Object.entries(attrs).map(([name, attr]) => [name, attr.default])))
+                        .tag,
+                },
+                ...(spec.parseRules ?? []),
+            ]);
+            return parseDOM;
+        },
         toDOM: (mark) => probe(mark.attrs).element,
     };
 };

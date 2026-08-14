@@ -60,7 +60,14 @@ export const useFloating = ({
         // Rendered here, in the body: a plugin that has nothing to say returns
         // null and costs nothing at all.
         const content = spec.render(context);
-        return content === null || content === undefined ? [] : [{ key, rect: placement.rect, content }];
+        if (content === null || content === undefined) {
+            return [];
+        }
+        // Measured only now that there is something to place. Asking where the
+        // anchor is on screen forces the browser to lay the page out, and this is
+        // the one path where that happens on every editor state change — so it
+        // waits until the plugin has committed to drawing something.
+        return [{ key, rect: placement.measure(), content }];
     });
 
     const onKeyDownCapture = (event: KeyboardEvent<HTMLElement>): void => {

@@ -110,30 +110,73 @@ export const toEngineDocument = (doc: RteDocumentOf, schema: Schema): PmNode => 
 
 // ---------------------------------------------------------------------------
 // Engine → RTE format
+//
+// This direction runs on every keystroke, over the whole document, and the
+// document is the one thing here with no bound on its size. What makes that
+// affordable is a property of the engine's nodes: they are immutable, and an
+// edit rebuilds only the nodes on the path it touched, leaving every other one
+// the same object as before. So a conversion remembered against the node it came
+// from is a conversion done once per node that ever existed, and the walk below
+// costs what actually changed rather than what the document holds.
+//
+// Two things follow, both worth knowing at the boundary:
+//
+// - The documents handed to `onChange` SHARE their unchanged parts. That is the
+//   good half: a host memoizing on a block holds still while another block is
+//   edited, the way it would for any persistent tree.
+// - So what comes out must not be mutated. Already true of anything reached
+//   through the editor's callbacks, and now load-bearing.
 // ---------------------------------------------------------------------------
 
+/** Keyed on the engine node, so entries go away exactly when it does. */
+const convertedInlines = new WeakMap<PmNode, RteInlineNode>();
+const convertedBlocks = new WeakMap<PmNode, RteBlockNode>();
+
 const inlineFromEngine = (child: PmNode): RteInlineNode => {
-    if (!child.isText) {
-        return { type: child.type.name, ...definedAttrs(child.attrs) };
+    const remembered = convertedInlines.get(child);
+    if (remembered !== undefined) {
+        return remembered;
     }
-    const text: Record<string, unknown> = { text: child.text ?? '' };
-    for (const mark of child.marks) {
-        const carriesValue = Object.keys(mark.type.spec.attrs ?? {}).length > 0;
-        text[mark.type.name] = carriesValue ? definedAttrs(mark.attrs) : true;
+
+    let converted: RteInlineNode;
+    if (child.isText) {
+        const text: Record<string, unknown> = { text: child.text ?? '' };
+        for (const mark of child.marks) {
+            const carriesValue = Object.keys(mark.type.spec.attrs ?? {}).length > 0;
+            text[mark.type.name] = carriesValue ? definedAttrs(mark.attrs) : true;
+        }
+        converted = text as RteInlineNode;
+    } else {
+        converted = { type: child.type.name, ...definedAttrs(child.attrs) };
     }
-    return text as RteInlineNode;
+
+    convertedInlines.set(child, converted);
+    return converted;
 };
 
 const blockFromEngine = (node: PmNode): RteBlockNode => {
+    const remembered = convertedBlocks.get(node);
+    if (remembered !== undefined) {
+        return remembered;
+    }
+
     const block: Record<string, unknown> = { type: node.type.name, ...definedAttrs(node.attrs) };
     if (node.isTextblock) {
         block.children = mapChildren(node, inlineFromEngine);
     } else if (!node.isAtom) {
         block.children = mapChildren(node, blockFromEngine);
     }
-    return block as unknown as RteBlockNode;
+
+    const converted = block as unknown as RteBlockNode;
+    convertedBlocks.set(node, converted);
+    return converted;
 };
 
+/**
+ * The document itself is built fresh every time, unlike the blocks in it: a new
+ * document is precisely what a host is being told about, and it is what makes the
+ * `value` it holds a new value.
+ */
 export const toRteDocument = (doc: PmNode): RteDocumentOf => ({
     version: 1,
     blocks: mapChildren(doc, blockFromEngine),

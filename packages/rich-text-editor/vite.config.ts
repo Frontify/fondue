@@ -2,9 +2,10 @@
 
 import react from '@vitejs/plugin-react';
 import autoprefixer from 'autoprefixer';
-import { type Plugin, defineConfig } from 'vite';
+import { type Plugin } from 'vite';
 import dts from 'vite-plugin-dts';
 import tsConfigPaths from 'vite-tsconfig-paths';
+import { configDefaults, defineConfig } from 'vitest/config';
 
 import { peerDependencies as peerDependenciesMap } from './package.json';
 
@@ -62,6 +63,18 @@ export default defineConfig({
                 api: 'modern-compiler',
             },
         },
+    },
+    /**
+     * The engine hosts a `contenteditable`, so the tests that drive one need a DOM
+     * — `happy-dom` rather than a browser, since nothing here is about layout.
+     *
+     * `type-derivation.spec.ts` is deliberately excluded: it asserts at compile
+     * time and `tsgo --noEmit` is its runner (see its header), so it holds no test
+     * suite for this one to find.
+     */
+    test: {
+        environment: 'happy-dom',
+        exclude: [...configDefaults.exclude, 'src/type-derivation.spec.ts'],
     },
     build: {
         lib: {
