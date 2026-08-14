@@ -6,25 +6,26 @@ import { EditorView } from 'prosemirror-view';
 import { type EditorControlApi, TOGGLE_ATTRIBUTE } from '#/domain';
 import { type CreateEditor } from '#/ports';
 
-import { createApi } from './api';
+import { createControlApi } from './live/controlApi';
+import { toEngineDocument, toRteDocument } from './live/documentConversion';
+import { createFloatingLocator, createSelectionRectReader, createTriggerController } from './live/floating';
+import { placeholderPlugin } from './live/placeholder';
+import { keystrokePipeline } from './setup/keystrokes';
+import { buildSchema } from './setup/schema';
+// The two engine stylesheet rules the editor needs. Imported for its side effect
+// — there is nothing to bind.
 import './engine.scss';
-import { documentToPm, pmToDocument } from './document';
-import { buildEnginePlugins } from './enginePlugins';
-import { createFloatingLocator, createSelectionRectReader } from './floating';
-import { placeholderPlugin } from './placeholder';
-import { buildSchema } from './schema';
-import { createTriggerController } from './triggers';
 
 /**
- * The live editor: builds the engine from the plugin set, hosts the view, and
- * hands back the handle the React component drives it through. This is the
- * ProseMirror implementation of `CreateEditor`.
+ * The orchestrator, and the only file spanning both phases: it runs the `setup/`
+ * work once, mounts the view, and wires the `live/` parts into the handle the
+ * React shell drives the editor through. This is the ProseMirror implementation
+ * of `CreateEditor`.
  */
-
 export const createEditor: CreateEditor = ({
     container,
     initialDoc,
-    plugins,
+    plugins: features,
     readOnly,
     placeholder,
     contentClassName,
@@ -34,32 +35,49 @@ export const createEditor: CreateEditor = ({
     onStateChange,
     onBlur,
 }) => {
-    const bundle = buildSchema(plugins, probe);
+    // -----------------------------------------------------------------------
+    // Setup — runs once. Everything here is fixed for the editor's life, which
+    // is why a changed feature set means a new editor rather than a reconfigured
+    // one.
+    // -----------------------------------------------------------------------
+    const bundle = buildSchema(features, probe);
     const { schema } = bundle;
-    // Hotkeys are wired before the view (and hence the api) exists, so they
-    // reach it through a thunk that only runs once the editor is live.
-    let api!: EditorControlApi;
-    let lastEmitted = initialDoc;
-    // Both are read through thunks below, so changing one is a prop update
-    // rather than a rebuild — the selection and the undo history survive.
-    let readOnlyNow = readOnly;
-    let placeholderNow = placeholder;
-    /** Ask the view to re-read the thunks above and redraw. */
-    const refresh = (): void => view.setProps({});
 
+    /**
+     * The props that can change without rebuilding. Both are read through thunks
+     * below, so setting one is a prop update — the selection and the undo history
+     * survive it.
+     */
+    const current = { readOnly, placeholder };
+
+    /**
+     * Late binding, and the one piece of ordering that matters here: the keystroke
+     * pipeline is assembled before the view exists, but the control API needs the
+     * view. So key handlers reach it through this thunk, which is only ever called
+     * once the editor is live and `api` is assigned.
+     */
+    let api!: EditorControlApi;
+    const getApi = (): EditorControlApi => api;
+
+    /** The last document handed out, so an echo of our own change is not applied again. */
+    let lastEmitted = initialDoc;
+
+    // -----------------------------------------------------------------------
+    // Mount
+    // -----------------------------------------------------------------------
     const view: EditorView = new EditorView(container, {
         attributes: { class: contentClassName },
-        editable: () => !readOnlyNow,
+        editable: () => !current.readOnly,
         state: EditorState.create({
-            doc: documentToPm(initialDoc, schema),
+            doc: toEngineDocument(initialDoc, schema),
             plugins: [
-                ...buildEnginePlugins(plugins, bundle, () => api),
-                placeholderPlugin(() => placeholderNow, placeholderClassName),
+                ...keystrokePipeline(features, bundle, getApi),
+                placeholderPlugin(() => current.placeholder, placeholderClassName),
             ],
         }),
         handleDOMEvents: {
             blur: () => {
-                onBlur(pmToDocument(view.state.doc));
+                onBlur(toRteDocument(view.state.doc));
                 // Never claim the event: the browser still has to move focus.
                 return false;
             },
@@ -90,36 +108,42 @@ export const createEditor: CreateEditor = ({
         dispatchTransaction(transaction) {
             view.updateState(view.state.apply(transaction));
             if (transaction.docChanged) {
-                lastEmitted = pmToDocument(view.state.doc);
+                lastEmitted = toRteDocument(view.state.doc);
                 onDocChange(lastEmitted);
             }
             onStateChange();
         },
     });
 
-    api = createApi(view, bundle);
+    // -----------------------------------------------------------------------
+    // The live handle — everything below needs the mounted view
+    // -----------------------------------------------------------------------
+    api = createControlApi(view, bundle);
     const triggers = createTriggerController(view);
+
+    /** Ask the view to re-read the thunks over `current` and redraw. */
+    const refresh = (): void => view.setProps({});
 
     return {
         api,
         floating: {
-            placements: createFloatingLocator(view, plugins, schema, triggers),
+            placements: createFloatingLocator(view, features, schema, triggers),
             selectionRect: createSelectionRectReader(view),
             clearQuery: triggers.clear,
             dismiss: triggers.dismiss,
         },
         setDoc(doc) {
             if (doc !== lastEmitted) {
-                const { content } = documentToPm(doc, schema);
+                const { content } = toEngineDocument(doc, schema);
                 view.dispatch(view.state.tr.replaceWith(0, view.state.doc.content.size, content));
             }
         },
         setReadOnly(next) {
-            readOnlyNow = next;
+            current.readOnly = next;
             refresh();
         },
         setPlaceholder(next) {
-            placeholderNow = next;
+            current.placeholder = next;
             refresh();
         },
         destroy() {
