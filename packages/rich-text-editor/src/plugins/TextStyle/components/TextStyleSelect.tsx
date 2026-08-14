@@ -22,8 +22,8 @@ export const TextStyleSelect = ({
     options: readonly TextStyleOption[];
 }): ReactNode => {
     const currentBlock = api.selection.get().block;
-    // A stored document may carry a style this editor was not configured with —
-    // it still renders, but the dropdown can only show what it offers, so
+    // A stored document may carry a style this editor was not configured with.
+    // It still renders, but the dropdown can only show what it offers, so
     // anything else reads as the paragraph baseline.
     const current = isTextStyle(currentBlock) && options.includes(currentBlock.style) ? currentBlock.style : PARAGRAPH;
 
@@ -36,21 +36,21 @@ export const TextStyleSelect = ({
         } else {
             api.blocks.setType('textStyle', { style: selected });
         }
-        // The menu hands focus back to its own trigger as it closes, which would
-        // undo the focus setType already restored.
+        // The menu hands focus back to its own trigger as it closes, which
+        // would undo the focus setType already restored.
         requestAnimationFrame(() => api.focus());
     };
 
     return (
-        // A Select fills its container, and in the toolbar's flex row that means
-        // the whole width — so the plugin gives it a box to fill.
+        // A Select fills its container, and in the toolbar's flex row that
+        // means the whole width — so the plugin gives it a box to fill.
         <div className={styles.control}>
             <Select aria-label="Text style" value={current} onSelect={handleSelect}>
                 {options.map((option) => (
-                    // Each row is drawn in the style it applies, so the menu is a
-                    // preview of the scale. The trigger keeps the plain label
-                    // (`showStringValue`, on by default) — styling that too would
-                    // change the toolbar's height with every selection.
+                    // Each row is drawn in the style it applies, so the menu
+                    // previews the scale. The trigger keeps the plain label
+                    // (`showStringValue`, on by default): styling that too
+                    // would change the toolbar's height with every selection.
                     <Select.Item key={option} value={option} label={labelOf(option)}>
                         <span className={styles.preview}>
                             <span className={findPreset(option)?.className}>{labelOf(option)}</span>

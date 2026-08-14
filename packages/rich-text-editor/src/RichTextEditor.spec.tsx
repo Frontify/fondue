@@ -4,9 +4,8 @@ import { act, type ReactNode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-// Driven through the package's public API, the way a host does: what is being
-// tested is the conversation between a host and a mounted editor, and the props
-// are the whole of it.
+// Driven through the package's public API, the way a host does: the props are
+// the whole conversation between a host and a mounted editor.
 import { defaultPlugins, RichTextEditor, type RteDocument } from './index';
 
 declare global {
@@ -85,9 +84,9 @@ describe('pasting', () => {
                 '<a href="https://example.com">a link</a> in it.</p>',
         );
 
-        // The rules that recognized all of this are built the first time the engine
-        // has HTML to read rather than at mount (see setup/schema.ts). This is what
-        // says they are still the right rules when that moment comes.
+        // The rules that recognized all of this are built the first time the
+        // engine has HTML to read rather than at mount (see setup/schema.ts);
+        // this says they are still the right rules by then.
         const emitted = JSON.stringify(stored());
         expect(emitted).toContain('"style":"heading2"');
         expect(emitted).toContain('"bold":true');
@@ -133,15 +132,14 @@ describe('a `value` set from outside', () => {
         const doc = paragraph('settled');
         const { rerender } = mount(() => <RichTextEditor value={doc} onChange={onChange} plugins={defaultPlugins} />);
 
-        // A host that normalizes what it stores, or whose value went through the
-        // server and a `JSON.parse` on the way back: the same content, a new object
-        // on every render.
+        // A host that normalizes what it stores, or whose value went through a
+        // `JSON.parse`: the same content, a new object on every render.
         for (let round = 0; round < 5; round++) {
             rerender(<RichTextEditor value={structuredClone(doc)} onChange={onChange} plugins={defaultPlugins} />);
         }
 
-        // Nothing to replace and nothing to report. Reporting here is what makes a
-        // controlled editor loop for as long as the page is open.
+        // Nothing to replace and nothing to report; reporting here is what
+        // would make a controlled editor loop.
         expect(onChange).not.toHaveBeenCalled();
     });
 });
@@ -167,8 +165,8 @@ describe('a page of editors', () => {
         expect(container.textContent).toContain('editor 0');
         expect(container.textContent).toContain(`editor ${COUNT - 1}`);
 
-        // One editor's change re-renders the whole page, which hands all thirty a
-        // value again. Twenty-nine of them are being handed what they already have.
+        // One editor's change re-renders the whole page, handing all thirty a
+        // value again — twenty-nine of them what they already have.
         rerender(page(docs.map((doc, index) => (index === 0 ? paragraph('edited') : doc))));
 
         expect(container.textContent).toContain('edited');

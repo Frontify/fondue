@@ -3,25 +3,22 @@
 import { type ReactNode } from 'react';
 
 /**
- * Plugins declare how things look as React render functions; an engine hosting a
- * contenteditable wants a static description of the DOM to build. This is the
- * contract between the two, so that neither side has to know the other: the
- * React shell supplies an implementation, the engine adapter only calls it.
+ * Plugins declare how things look as React render functions; an engine hosting
+ * a contenteditable wants a static description of the DOM to build. This is the
+ * contract between the two: the React shell supplies an implementation, the
+ * engine adapter only calls it.
  */
 
 /** A child of a described element: text, the content slot (`0`), or another element. */
 export type DomChild = string | 0 | DomElement;
 
-/**
- * A static description of one element: its tag, its attributes, and its children,
- * with `0` marking the single slot the editable content goes into.
- */
+/** One element: its tag, its attributes, then its children. */
 export type DomElement = [string, Record<string, string>, ...DomChild[]];
 
 /**
- * What a probed render is worth knowing: the whole tree it produced, plus the root
- * tag on its own — a mark is recognized when pasting by the tag it renders, and
- * asking for that should not mean indexing into the tuple.
+ * What a probed render is worth knowing: the whole tree it produced, plus the
+ * root tag on its own — a mark is recognized when pasting by the tag it
+ * renders.
  */
 export type ProbedDom = {
     tag: string;
@@ -29,10 +26,10 @@ export type ProbedDom = {
 };
 
 /**
- * Passed to a render function as its `children`, and recognized again in what the
- * render produced. The slot must be the only thing inside its own element —
- * content with siblings has nowhere to go, and a probe says so rather than
- * quietly dropping what cannot be placed.
+ * Passed to a render function as its `children`, and recognized again in what
+ * the render produced. The slot must be the only thing inside its own element:
+ * content with siblings has nowhere to go, and a probe throws rather than
+ * quietly dropping it.
  */
 export const CONTENT_SLOT = ' RTE_HOLE ';
 

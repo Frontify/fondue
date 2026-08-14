@@ -8,17 +8,17 @@ import { emptyDocument, type RteDocumentOf, type RtePlugin } from '#/domain';
 import { type EditorHandle } from '#/ports';
 
 /**
- * Owns the live editor and nothing else: creates it once per plugin set, carries
- * later prop changes into it, and re-renders the component whenever the editor
- * state moves — the toolbar and the panels read their state straight off the
- * handle.
+ * Owns the live editor and nothing else: creates it once per plugin set,
+ * carries later prop changes into it, and re-renders the component whenever the
+ * editor state moves — the toolbar and the panels read their state straight off
+ * the handle.
  *
- * This is also where the implementations behind the ports are chosen — the engine
- * and the render probe — and the only place that does: everything else in the
- * shell goes through the `EditorHandle` it returns.
+ * The only place that chooses the implementations behind the ports — the engine
+ * and the render probe. Everything else in the shell goes through the
+ * `EditorHandle` this returns.
  *
- * The class names arrive ready-made. Which classes the editable element carries
- * is a styling decision, and styling belongs to the component that owns the
+ * Class names arrive ready-made: which classes the editable element carries is
+ * a styling decision, and styling belongs to the component owning the
  * stylesheet.
  */
 
@@ -57,12 +57,12 @@ export const useEditorHandle = ({
     onDocChangeRef.current = onDocChange;
     const onBlurRef = useRef(onBlur);
     onBlurRef.current = onBlur;
-    // The editor is created once per plugin set, so these reach it as starting
+    // The editor is created once per plugin set, so these are only its starting
     // values; the effects below carry every later change.
     const initialRef = useRef({ readOnly, placeholder });
 
-    // The toolbar reads its state straight off the editor, so it has to
-    // re-render whenever the editor state changes.
+    // The toolbar reads its state off the editor, so a state change has to
+    // re-render the component.
     const [, force] = useReducer((count: number) => count + 1, 0);
 
     const pluginsKey = plugins.map((plugin) => plugin.id).join('|');
@@ -97,7 +97,7 @@ export const useEditorHandle = ({
         // eslint-disable-next-line @eslint-react/exhaustive-deps
     }, [pluginsKey]);
 
-    // Push externally-driven doc updates into the editor.
+    // Externally-driven doc updates.
     useEffect(() => {
         if (value) {
             handleRef.current?.setDoc(value);

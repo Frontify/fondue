@@ -5,17 +5,15 @@ import { type Node as PmNode, type NodeType as PmNodeType, type Schema } from 'p
 import { type RteBlockNode, type RteDocumentOf, type RteInlineNode, type StoredMarkValue } from '#/domain';
 
 /**
- * The document boundary: RTE format ↔ engine format. The only place either shape
- * is read structurally — everything else works on one side or the other.
+ * The document boundary: RTE format ↔ engine format. The only place either
+ * shape is read structurally — everything else works on one side or the other.
  *
  * Both directions run while the editor is live: inbound when a new `value` prop
  * arrives, outbound on every keystroke that changes the document (see
  * `dispatchTransaction` in editor.ts).
  */
 
-// ---------------------------------------------------------------------------
 // Reading engine nodes — shared by both directions, and by the control API
-// ---------------------------------------------------------------------------
 
 /** ProseMirror nodes are not iterable — children have to be indexed. */
 export const mapChildren = <TResult>(node: PmNode, map: (child: PmNode) => TResult): TResult[] => {
@@ -45,9 +43,7 @@ const declaredAttrs = (
             .map((name) => [name, node[name]]),
     );
 
-// ---------------------------------------------------------------------------
 // RTE format → engine
-// ---------------------------------------------------------------------------
 
 const inlinesToEngine = (children: RteInlineNode[], schema: Schema): PmNode[] => {
     const nodes: PmNode[] = [];
@@ -108,25 +104,20 @@ export const toEngineDocument = (doc: RteDocumentOf, schema: Schema): PmNode => 
     );
 };
 
-// ---------------------------------------------------------------------------
 // Engine → RTE format
 //
-// This direction runs on every keystroke, over the whole document, and the
-// document is the one thing here with no bound on its size. What makes that
-// affordable is a property of the engine's nodes: they are immutable, and an
-// edit rebuilds only the nodes on the path it touched, leaving every other one
-// the same object as before. So a conversion remembered against the node it came
-// from is a conversion done once per node that ever existed, and the walk below
-// costs what actually changed rather than what the document holds.
+// This direction runs on every keystroke, over a document with no bound on its
+// size. What makes that affordable: the engine's nodes are immutable, and an
+// edit rebuilds only the nodes on the path it touched. So conversions
+// remembered against the node they came from happen once per node that ever
+// existed, and the walk below costs what changed rather than what the document
+// holds.
 //
-// Two things follow, both worth knowing at the boundary:
+// Two consequences at the boundary:
 //
-// - The documents handed to `onChange` SHARE their unchanged parts. That is the
-//   good half: a host memoizing on a block holds still while another block is
-//   edited, the way it would for any persistent tree.
-// - So what comes out must not be mutated. Already true of anything reached
-//   through the editor's callbacks, and now load-bearing.
-// ---------------------------------------------------------------------------
+// - The documents handed to `onChange` SHARE their unchanged parts, so a host
+//   memoizing on a block holds still while another block is edited.
+// - What comes out must therefore not be mutated.
 
 /** Keyed on the engine node, so entries go away exactly when it does. */
 const convertedInlines = new WeakMap<PmNode, RteInlineNode>();
@@ -174,8 +165,7 @@ const blockFromEngine = (node: PmNode): RteBlockNode => {
 
 /**
  * The document itself is built fresh every time, unlike the blocks in it: a new
- * document is precisely what a host is being told about, and it is what makes the
- * `value` it holds a new value.
+ * object is what tells a host its `value` changed.
  */
 export const toRteDocument = (doc: PmNode): RteDocumentOf => ({
     version: 1,

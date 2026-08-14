@@ -10,19 +10,16 @@ import { type EditorHandle, type FloatingRect } from '#/ports';
  * state change, so the box is recomputed exactly when the selection can have
  * moved.
  *
- * Scrolling and resizing move the text without the editor state changing at all,
- * and neither would re-render on its own — which is what the listeners are for.
- * Scroll is listened for in the capture phase because a scroll event does not
- * bubble: the page is not always what moved, and the editor may well be inside a
- * container of its own.
+ * Scrolling and resizing move the text without changing editor state, and
+ * neither re-renders on its own — hence the listeners. Scroll is listened for
+ * in the capture phase because scroll events do not bubble, and the editor may
+ * sit in a scrolling container of its own rather than on the page.
  *
- * Both listeners are throttled to a frame and marked passive, which is about the
- * one thing scrolling cannot afford. A scroll fires far faster than the screen
- * refreshes, and re-reading the box for every one of those events would put a
- * layout and a re-render into the middle of a gesture the browser is trying to
- * keep smooth — there is no point computing a position twice before it is drawn
- * once. Passive says the same thing to the browser: this handler will never call
- * `preventDefault`, so scrolling need not wait for it.
+ * Both listeners are throttled to a frame and passive. A scroll fires far
+ * faster than the screen refreshes, so re-reading the box for every event would
+ * put a layout and a re-render into the middle of a gesture; passive tells the
+ * browser the handler never calls `preventDefault`, so scrolling need not wait
+ * for it.
  */
 export const useSelectionRect = ({
     handle,
@@ -60,7 +57,7 @@ export const useSelectionRect = ({
         };
     }, [enabled]);
 
-    // `handle.selectionRect()`, not `handle.floating.*`: this box is for the
-    // editor's own chrome. The plugins' mechanism is `useFloating`.
+    // `selectionRect()`, not `handle.floating.*`: this box is for the editor's
+    // own chrome. The plugins' mechanism is `useFloating`.
     return enabled && handle ? handle.selectionRect() : null;
 };

@@ -11,17 +11,16 @@ const VIEWPORT_MARGIN = 8;
 
 /**
  * The bar hung over the selection: fixed to the viewport at the box the editor
- * reports for the selected text, centred on it, above it where there is room and
- * below it where there is not.
+ * reports for the selected text, centred on it, above it where there is room
+ * and below it where there is not.
  *
- * Its own size is measured rather than assumed, because both decisions need it —
+ * Its own size is measured rather than assumed, because both decisions need it:
  * whether it fits above, and how far in from the edge it has to sit. Watched
- * rather than read once: the bar's width follows what is in it (a longer style
- * name in the dropdown), and its height jumps the moment the controls wrap.
+ * rather than read once, since its width follows what is in it (a longer style
+ * name in the dropdown) and its height jumps the moment the controls wrap.
  *
- * This is the editor's OWN chrome that happens to float, positioned from
- * `handle.selectionRect()`. It is not the plugins' floating mechanism — that is
- * `FloatingLayer.tsx`, fed by `handle.floating.placements()`.
+ * The editor's OWN chrome, positioned from `handle.selectionRect()` — not the
+ * plugins' floating mechanism, which is `FloatingLayer.tsx`.
  */
 export const FloatingToolbar = ({ rect, children }: { rect: FloatingRect; children: ReactNode }): ReactNode => {
     const barRef = useRef<HTMLDivElement | null>(null);
@@ -32,8 +31,8 @@ export const FloatingToolbar = ({ rect, children }: { rect: FloatingRect; childr
         if (!bar) {
             return;
         }
-        // The entry's own `contentRect` is the content box, which is not what is
-        // being placed — the border and the padding are part of the bar.
+        // The entry's own `contentRect` is the content box; the border and
+        // padding are part of the bar being placed.
         const observer = new ResizeObserver(() => {
             const { width, height } = bar.getBoundingClientRect();
             setSize((previous) =>
@@ -57,8 +56,8 @@ export const FloatingToolbar = ({ rect, children }: { rect: FloatingRect; childr
         <div
             ref={barRef}
             className={styles.floatingToolbar}
-            // Which side of the selection the anchor point below is on. The shift
-            // off it is the stylesheet's, so only one of the two is measured here.
+            // Which side of the selection the anchor point below is on; the
+            // shift off it belongs to the stylesheet.
             data-side={above ? 'above' : 'below'}
             style={{ left, top: above ? rect.top : rect.top + rect.height }}
         >

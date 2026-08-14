@@ -8,19 +8,19 @@ import styles from '../richTextEditor.module.scss';
 
 /**
  * Where the plugins' toolbar is drawn. A presentation choice the host makes for
- * the whole editor, which is why it is a prop and not part of the plugin
- * contract: a plugin contributes controls and never learns where they end up.
+ * the whole editor, so it is a prop rather than part of the plugin contract: a
+ * plugin contributes controls and never learns where they end up.
  *
- * - `'floating'` — a detached bar hovering above the editor, overlaying whatever
- *   is up there rather than taking a row of the page for itself.
+ * - `'floating'` — a detached bar hovering above the editor, overlaying whatever is
+ *   up there rather than taking a row of the page for itself.
  * - `'top'` — a strip inside the editor's frame, above the text.
  */
 export type ToolbarPlacement = 'floating' | 'top';
 
 /**
- * A click that lands on the toolbar but misses a control would still move focus,
- * and with it take away the selection every control is about to act on. The
- * controls keep their own clicks — each already decides what to do with them.
+ * A click landing on the toolbar but missing a control would still move focus,
+ * and with it the selection every control is about to act on. The controls keep
+ * their own clicks.
  */
 const keepSelection = (event: MouseEvent<HTMLDivElement>): void => {
     if (!(event.target as HTMLElement).closest('button, input, [role="combobox"]')) {
@@ -46,14 +46,12 @@ export const Toolbar = ({
     return (
         <div
             role="toolbar"
-            // Reachable only in code, never by tabbing: the controls inside are
-            // what a keyboard moves between, and the strip holding them is not a
-            // stop of its own.
+            // Reachable only in code, never by tabbing: a keyboard moves
+            // between the controls inside, not to the strip holding them.
             tabIndex={-1}
             onMouseDown={keepSelection}
             className={styles.toolbar}
-            // Where the bar ended up, for the stylesheet to read: the strip in the
-            // frame draws itself as one, the floating bar is its own surface.
+            // Where the bar ended up, for the stylesheet to read.
             data-placement={placement}
         >
             {plugins.map((plugin) =>

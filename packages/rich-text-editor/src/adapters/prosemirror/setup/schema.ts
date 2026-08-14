@@ -22,30 +22,28 @@ import { pasteRules } from './pasteRules';
  * immutable afterwards, which is why changing the feature set means building a
  * new editor rather than reconfiguring this one.
  *
- * Read top to bottom. It is one story in four parts: what a declared attribute
- * becomes, how a feature's React `render` becomes DOM the engine can use, how one
- * declared block/inline/mark becomes one engine spec, and finally how all of them
- * are assembled.
+ * Read top to bottom: what a declared attribute becomes, how a feature's React
+ * `render` becomes DOM the engine can use, how one declared block/inline/mark
+ * becomes one engine spec, and how all of them are assembled.
  *
  * Four invariants live here, each marked at the line that carries it:
  *
  * (1) The paragraph baseline is declared FIRST. The first node matching the
  *     document's `block+` content is the engine's default block type — what an
  *     empty document holds and what pressing Enter creates.
- * (2) Marks are declared in NESTING order, not mount order. The first-declared
- *     mark wraps the rest, so `nesting` decides the order here instead of the
- *     order the editor happened to be handed its features in.
- * (3) Every content block except paragraph and lists is `defining`. That is what
- *     makes pasted content keep the block it was copied out of.
- * (4) A list item stays OUT of the `block` group. It is only ever reached through
- *     its list — which is also why the selection snapshot's `block` is the
+ * (2) Marks are declared in NESTING order, not mount order, since the
+ *     first-declared mark wraps the rest.
+ * (3) Every content block except paragraph and lists is `defining`, which makes
+ *     pasted content keep the block it was copied out of.
+ * (4) A list item stays OUT of the `block` group; it is only ever reached
+ *     through its list. That is also why the selection snapshot's `block` is the
  *     paragraph inside an item rather than the item itself.
  */
 
 /**
  * The schema plus what the list commands need to know about it: which block is
- * a list, and which of its `contains` types is the item. Features declare it
- * with `isList`, so the API can stay free of item-type arguments.
+ * a list, and which of its `contains` types is the item. Collected from
+ * `isList`, so the API can stay free of item-type arguments.
  */
 export type SchemaBundle = {
     schema: Schema;
@@ -54,9 +52,7 @@ export type SchemaBundle = {
     blockAttributes: readonly BlockAttributeSpec[];
 };
 
-// ---------------------------------------------------------------------------
 // Declared attributes → engine attributes
-// ---------------------------------------------------------------------------
 
 /** Attributes are always optional in the engine; an absent value round-trips as missing. */
 const attrDefaults = (attributes: Record<string, AttributeSpec> = {}): Record<string, { default: unknown }> =>
@@ -67,38 +63,35 @@ const attrDefaults = (attributes: Record<string, AttributeSpec> = {}): Record<st
 const injectedAttrDefaults = (injected: readonly BlockAttributeSpec[]): Record<string, { default: unknown }> =>
     Object.fromEntries(injected.map((attribute) => [attribute.name, { default: attribute.default ?? null }]));
 
-// ---------------------------------------------------------------------------
 // Rendering: probe caching, and the CSS injected block attributes contribute
 //
 // A feature renders with React, but the engine wants a DOM description. The
-// probe bridges that (see ports/renderProbe.ts) and hands back exactly the shape
-// ProseMirror's `toDOM` returns, so there is nothing to translate — what is left
-// is caching and merging in the CSS that injected attributes (alignment) add.
-// ---------------------------------------------------------------------------
+// probe bridges that (see ports/renderProbe.ts) and hands back exactly the
+// shape ProseMirror's `toDOM` returns, so nothing needs translating. What is
+// left is caching, and merging in the CSS that injected attributes (alignment)
+// add.
 
 /**
- * Probed renders, remembered per attribute set — `toDOM` runs every time the
- * engine draws a node, and probing renders React and reads the result back, which
- * is the most expensive thing in this file by a wide margin.
+ * Probed renders, remembered per attribute set. `toDOM` runs every time the
+ * engine draws a node, and probing renders React and reads the result back — by
+ * far the most expensive thing in this file.
  *
- * The cache belongs to the DECLARATION rather than to the editor built from it,
- * which is what makes a page of editors affordable: twenty editors mounted over
- * the same plugin objects — a `defaultPlugins` evaluated once, as a module-level
- * array is — probe once between them instead of twenty times. Declarations built
- * fresh per editor still work; they simply have nothing to share, which is why
- * building the plugin array once is worth suggesting to a host that mounts many.
+ * The cache belongs to the DECLARATION, not to the editor built from it, so
+ * editors mounted over the same plugin objects (a module-level
+ * `defaultPlugins`) probe once between them instead of once each. Plugin arrays
+ * built fresh per editor still work; they simply have nothing to share.
  *
- * Keyed on the probe as well, since a different probe is entitled to describe the
- * same render differently.
+ * Keyed on the probe too, since a different probe may describe the same render
+ * differently.
  */
 const probeCaches = new WeakMap<RenderProbe, WeakMap<object, Map<string, ProbedDom>>>();
 
 /**
- * How many attribute sets one declaration remembers. A mark or block whose
- * attributes come from a small vocabulary (a text style, an alignment, a bare
- * `bold`) sits far below this. The ones that do not — a link's href, a mention's
- * id — are why there is a limit at all: without one, a cache that now outlives
- * every editor would keep an entry per distinct link a session ever drew.
+ * How many attribute sets one declaration remembers. Attributes from a small
+ * vocabulary (a text style, an alignment, a bare `bold`) stay far below this.
+ * The open-ended ones — a link's href, a mention's id — are why there is a
+ * limit: without one, a cache that outlives every editor would keep an entry
+ * per distinct link a session ever drew.
  */
 const PROBE_CACHE_LIMIT = 128;
 
@@ -126,8 +119,8 @@ const probeCachedBy = (
         if (!probed) {
             probed = probe(() => render(attrs));
             if (remembered.size >= PROBE_CACHE_LIMIT) {
-                // A Map iterates in insertion order, so the first key is the one
-                // that has been there longest.
+                // A Map iterates in insertion order, so the first key is the
+                // one that has been there longest.
                 const oldest = remembered.keys().next().value;
                 if (oldest !== undefined) {
                     remembered.delete(oldest);
@@ -150,9 +143,9 @@ const withExtraStyle = (attrs: Record<string, string>, declarations: string[]): 
 
 /**
  * The CSS a node's injected attributes add. Their values are strings by
- * contract, and null while unset (`BlockAttributeSpec.default`) — which is what
- * the read below says, and the one place the engine's untyped attribute bag is
- * given that type.
+ * contract and null while unset (`BlockAttributeSpec.default`), which is what
+ * the cast below says — the one place the engine's untyped attribute bag is
+ * given a type.
  */
 const injectedDeclarations = (attrs: Record<string, unknown>, injected: readonly BlockAttributeSpec[]): string[] =>
     injected.flatMap((attribute) => {
@@ -169,14 +162,12 @@ const withRootStyle = (element: DomElement, declarations: string[]): DomElement 
     return [tag, withExtraStyle(attrs, declarations), ...children];
 };
 
-// ---------------------------------------------------------------------------
 // One declared block, inline or mark → the engine's spec for it
-// ---------------------------------------------------------------------------
 
 /**
  * What the engine allows inside a block: text, or the block types a container
- * declared. The first `contains` entry ends up first in the expression, which
- * is what makes it the type a newly created container is filled with.
+ * declared. The first `contains` entry ends up first in the expression, and so
+ * becomes the type a newly created container is filled with.
  */
 const contentExpression = (spec: BlockSpec, known: Set<string>, lists: Set<string>): string | undefined => {
     if (spec.isVoid) {
@@ -185,11 +176,8 @@ const contentExpression = (spec: BlockSpec, known: Set<string>, lists: Set<strin
     if (spec.content !== 'blocks') {
         return 'inline*';
     }
-    // ANY_LIST stands for whatever lists are mounted, so an item can allow
-    // nesting without naming the features that provide it. A container may also
-    // name a type from a feature that is not mounted; those drop out of the
-    // grammar, and the order of what remains is kept — the first entry is what a
-    // new container is filled with.
+    // ANY_LIST expands to whatever lists are mounted. Types from features that
+    // are not mounted drop out; the order of what remains is kept.
     const expanded = (spec.contains ?? []).flatMap((type) => (type === ANY_LIST ? [...lists] : [type]));
     const contains = [...new Set(expanded)].filter((type) => known.has(type));
     if (contains.length === 0) {
@@ -229,17 +217,17 @@ const blockNodeSpec = (
     return {
         content: contentExpression(spec, known, lists),
         atom: isVoid,
-        // invariant (3): paragraph is the neutral block, everything else means
-        // something — "this text is a caption", "this text is quoted". Saying so
-        // is what makes pasted content keep the block it was copied out of
-        // instead of dissolving into whatever block it lands in: the engine
-        // treats the sides of such a block as a boundary editing does not cross.
-        // Lists are left out, the way the engine's own list schema leaves them
-        // out; there the boundary that matters belongs to the item, not the list.
+        // invariant (3): paragraph is the neutral block; everything else means
+        // something ("this text is a caption", "this text is quoted").
+        // `defining` makes the engine treat such a block's sides as a boundary
+        // editing does not cross, so pasted content keeps the block it was
+        // copied out of instead of dissolving into whatever block it lands in.
+        // Lists are left out, as in the engine's own list schema: there the
+        // boundary that matters belongs to the item.
         ...(isVoid || spec.isList === true ? {} : { defining: true }),
-        // invariant (4): a list item is only ever reached through its list, so it
-        // deliberately stays out of the `block` group the document accepts at top
-        // level.
+        // invariant (4): a list item is only ever reached through its list, so
+        // it deliberately stays out of the `block` group the document accepts
+        // at top level.
         ...(isListItem ? {} : { group: 'block' }),
         attrs: { ...attrDefaults(spec.attributes), ...injectedAttrDefaults(injectedHere) },
         parseDOM: pasteRules(spec.attributes ?? {}, spec.parseRules ?? [], injectedHere),
@@ -272,19 +260,18 @@ const markNodeSpec = (spec: MarkSpec, renderProbe: RenderProbe): PmMarkSpec => {
 
     return {
         attrs,
-        // Value-carrying marks (links) should not extend when typing at their edge.
+        // Value-carrying marks (links) should not extend when typing at their
+        // edge.
         inclusive: Object.keys(attrs).length === 0,
         /**
          * The element the mark renders is always recognized when parsing, which
          * means probing it to learn its tag — and probing renders React.
          *
-         * Built on first read rather than at mount, which is the only reason this
-         * is a getter. The engine reads it when it first has HTML to make sense of
-         * (a paste, or the DOM read after typing) and remembers the parser it
-         * builds; doing it eagerly instead means every mark of every mounted
-         * editor renders React before anyone has typed, to be ready for a paste
-         * that may never come. It is the whole mount cost of a schema, and a page
-         * holding twenty editors pays it twenty times over.
+         * A getter so that happens on first read rather than at mount. The
+         * engine reads it when it first has HTML to make sense of (a paste, or
+         * the DOM read after typing) and remembers the parser it builds. Doing
+         * it eagerly would render React for every mark of every mounted editor
+         * before anyone has typed, ready for a paste that may never come.
          */
         get parseDOM(): TagParseRule[] {
             parseDOM ??= pasteRules(spec.attributes ?? {}, [
@@ -300,9 +287,7 @@ const markNodeSpec = (spec: MarkSpec, renderProbe: RenderProbe): PmMarkSpec => {
     };
 };
 
-// ---------------------------------------------------------------------------
 // All of them together → the schema
-// ---------------------------------------------------------------------------
 
 /** Which block is a list, and what its item type is called. */
 const collectLists = (blocks: readonly { type: string; isList?: boolean; contains?: readonly string[] }[]) => {

@@ -14,9 +14,8 @@ import { findMarkRange } from './controlApi';
  * selection toolbar.
  *
  * A feature declares what its UI is *about* (`floating.anchor`) and renders the
- * contents; it never positions anything. That division exists because only the
- * engine can turn a document position into a box on screen, and it is what keeps
- * feature UI free of engine knowledge.
+ * contents; it never positions anything, because only the engine can turn a
+ * document position into a box on screen.
  *
  * Three sections, in the order the work happens on every keystroke:
  * 1. Trigger tracking — the one anchor kind that needs state: is the caret typing
@@ -25,12 +24,10 @@ import { findMarkRange } from './controlApi';
  * 3. Anchors — each declared anchor resolved to a range, then to a placement.
  */
 
-// ---------------------------------------------------------------------------
 // 1. Trigger tracking
 //
-// Generic on purpose: the editor knows nothing about what a feature does with a
-// trigger, only that a stretch of text after it is "the query".
-// ---------------------------------------------------------------------------
+// Generic on purpose: the editor only knows that the text after a trigger
+// character is "the query", never what a feature does with it.
 
 export type TrackedTrigger = {
     trigger: string;
@@ -108,7 +105,8 @@ const trackTrigger = (state: EditorState, triggers: string[]): TrackedTrigger | 
 /**
  * Keeps the tracked trigger up to date as an engine plugin, so it is recomputed
  * once per transaction rather than on every read. Registered by
- * `setup/keystrokes.ts`, and only when some feature actually declared a trigger.
+ * `setup/keystrokes.ts`, and only when some feature actually declared a
+ * trigger.
  */
 export const triggerTrackingPlugin = (triggers: string[]): PmPlugin<TriggerState> =>
     new PmPlugin<TriggerState>({
@@ -145,14 +143,12 @@ export const createTriggerController = (view: EditorView): TriggerController => 
     };
 };
 
-// ---------------------------------------------------------------------------
 // 2. Geometry: a document range → a box on screen
-// ---------------------------------------------------------------------------
 
 /**
- * The box around both ends of a range, in viewport coordinates. Content that
- * wraps across lines spans both of them, which is the honest answer: a link is
- * one link, and it is that tall.
+ * The box around both ends of a range, in viewport coordinates. A range that
+ * wraps across lines gets a box spanning both — a link is one link, however it
+ * is laid out.
  */
 const rectBetween = (view: EditorView, from: number, to: number): FloatingRect => {
     const start = view.coordsAtPos(from);
@@ -168,11 +164,11 @@ const rectBetween = (view: EditorView, from: number, to: number): FloatingRect =
 };
 
 /**
- * The box around what is selected, or null when nothing is. This one is for the
- * editor's own selection toolbar rather than for a feature's declared UI.
+ * The box around what is selected, or null when nothing is. For the editor's
+ * own selection toolbar rather than for a feature's declared UI.
  *
- * A collapsed caret counts as nothing: it selects no text, and a toolbar hanging
- * over it would be following the typing around with no reason to be there.
+ * A collapsed caret counts as nothing selected, so a toolbar over the selection
+ * does not follow the typing around.
  */
 export const createSelectionRectReader =
     (view: EditorView): (() => FloatingRect | null) =>
@@ -181,9 +177,7 @@ export const createSelectionRectReader =
         return empty ? null : rectBetween(view, from, to);
     };
 
-// ---------------------------------------------------------------------------
 // 3. Anchors: what each declared piece of floating UI is about, right now
-// ---------------------------------------------------------------------------
 
 type DeclaredFloating = { pluginId: string; anchor: FloatingAnchor };
 
@@ -221,9 +215,8 @@ export const createFloatingLocator = (
     return () =>
         declared.flatMap(({ pluginId, anchor }) => {
             const range = anchorRange(anchor);
-            // The range is resolved here and measured only if asked for: finding
-            // out *whether* there is an anchor is reading the document, while
-            // finding out where it is on screen is a layout. See
+            // Resolved here, measured only if asked for: whether there is an
+            // anchor is a document read, where it is on screen is a layout. See
             // `FloatingPlacement.measure`.
             return range === null
                 ? []

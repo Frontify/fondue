@@ -11,10 +11,10 @@ import { toHref } from '../helpers/href';
 import styles from './linkForm.module.scss';
 
 /**
- * The two halves of a link — the text it reads as, and the target it points at
- * — and what to do with them. Opened on a snapshot of the selection rather than
- * reading it as it goes, so it is mounted fresh each time and always starts on
- * what the document actually says.
+ * The two halves of a link — the text it reads as and the target it points at —
+ * and what to do with them. Opened on a snapshot of the selection rather than
+ * reading it as it goes, so it is mounted fresh each time and starts on what
+ * the document says.
  *
  * With nothing selected there is nothing to fill the text with, so it is typed
  * here instead and the link is created out of it.
@@ -55,13 +55,13 @@ export const LinkForm = ({
             return;
         }
         // Everything below acts on the selection, so it has to be the link:
-        // opened on a caret there is nothing selected yet, and opened from the
-        // toolbar this is what already happened and does nothing.
+        // opened on a caret nothing is selected yet, and opened from the
+        // toolbar this has already happened and does nothing.
         api.marks.select('link');
         // Writing the text puts it in the selection, so the mark below lands on
-        // exactly it — the same path whether it was typed here or in the editor.
-        // Only when it changed: rewriting it would flatten anything else the
-        // selection carries (bold inside it, a mention next to it).
+        // exactly it, whether it was typed here or in the editor. Only when it
+        // changed: rewriting would flatten anything else the selection carries
+        // (bold inside it, a mention next to it).
         if (text !== initial.text) {
             api.selection.replaceWithText(text);
         }

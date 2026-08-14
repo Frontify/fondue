@@ -18,9 +18,8 @@ const RGB_COLOR = /^rgba?\(([^)]+)\)$/;
  * pasted `style` attribute to.
  *
  * Anything else — a named colour, `hsl()` — reads as no colour, and the picker
- * opens on its own default rather than on the text's. Reading those would mean
- * asking the browser to resolve them, which is a document away from a helper
- * that otherwise only does arithmetic.
+ * opens on its own default rather than on the text's. Resolving those would
+ * mean asking the browser, which this helper deliberately does not do.
  */
 export const parseCssColor = (css: string | undefined): RgbaColor | undefined => {
     if (css === undefined) {
@@ -58,9 +57,8 @@ export const parseCssColor = (css: string | undefined): RgbaColor | undefined =>
 };
 
 /**
- * The picker's colour as CSS. Hex while it is opaque, which is the shorter and
- * more familiar of the two, and `rgba()` as soon as it is not — hex alpha is
- * not understood everywhere the editor's HTML ends up.
+ * The picker's colour as CSS. Hex while it is opaque, `rgba()` as soon as it is
+ * not: hex alpha is not understood everywhere the editor's HTML ends up.
  */
 export const toCssColor = ({ red, green, blue, alpha = 1 }: RgbaColor): string => {
     const channels = [red, green, blue].map((channel) => Math.round(channel));

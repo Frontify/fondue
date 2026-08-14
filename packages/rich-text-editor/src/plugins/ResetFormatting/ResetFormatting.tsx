@@ -8,8 +8,8 @@ import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
 
 /**
  * Puts the selection back to plain text: marks gone, block type back to
- * paragraph, alignment cleared, and lists unwrapped. It owns no schema of its
- * own — it only drives the control API.
+ * paragraph, alignment cleared, lists unwrapped. No schema of its own — it only
+ * drives the control API.
  */
 const reset = (api: EditorControlApi): void => {
     api.marks.removeAll();
@@ -17,8 +17,8 @@ const reset = (api: EditorControlApi): void => {
     // (and its bullet) behind.
     api.lists.unwrapAll();
     api.blocks.setType(PARAGRAPH);
-    // Whatever attributes plugins add to every block — alignment today — go back
-    // to their defaults. Naming them here would be this plugin knowing another's.
+    // Whatever attributes plugins add to every block — alignment today — go
+    // back to their defaults, without this plugin having to name another's.
     api.blocks.resetAttributes();
 };
 

@@ -24,48 +24,43 @@ export type RichTextEditorProps<TBlock extends RteBlockNode = RteBlockNode> = {
     value?: RteDocumentOf<TBlock>;
     onChange?: (value: RteDocumentOf<TBlock>) => void;
     /**
-     * The plugins to mount, in toolbar order (e.g. `defaultPlugins`, extended or
-     * reduced as needed).
+     * The plugins to mount, in toolbar order (e.g. `defaultPlugins`, extended
+     * or reduced as needed).
      *
-     * Mount-time configuration: the editor is built once per plugin set and reads
-     * the schema, the hotkeys and the typing rules off it then. Changing which
-     * plugins are in the list builds a new editor; changing an option *inside* one
-     * (a different `items` for the mention picker) does not reach the editor that
-     * is already running, so drive that from a `key` on the editor if it has to
-     * change while mounted.
+     * Mount-time configuration: the editor is built once per plugin set and
+     * reads the schema, the hotkeys and the typing rules off it then. Changing
+     * which plugins are in the list builds a new editor; changing an option
+     * *inside* one (a different `items` for the mention picker) does not reach
+     * the editor that is already running, so drive that from a `key` on the
+     * editor instead.
      *
-     * Worth building once, at module level, if a page holds many editors: the
-     * expensive part of mounting is turning each plugin's `render` into a
-     * description the engine can draw, and editors handed the same plugin objects
-     * share that work instead of repeating it apiece.
+     * Worth building once at module level if a page holds many editors:
+     * mounting turns each plugin's `render` into a description the engine can
+     * draw, and editors handed the same plugin objects share that work.
      */
     plugins?: RtePlugin[];
     /**
      * Where the toolbar goes.
      *
-     * `'floating'` hangs it over the selected text and shows it only while there
-     * is a selection to act on, so the frame holds nothing but the content and
-     * the controls are wherever the reader is working — including in an editor
-     * far taller than the window, where a bar fixed to the top would have
-     * scrolled out of sight.
+     * `'floating'` hangs it over the selected text and shows it only while
+     * there is a selection to act on, so the frame holds nothing but the
+     * content and the controls are wherever the reader is working — including
+     * in an editor taller than the window, where a bar fixed to the top would
+     * have scrolled away.
      *
-     * `'top'` puts it inside the frame as a strip above the content, where it is
-     * part of the editor's own box and always there.
+     * `'top'` puts it inside the frame as a strip above the content, part of
+     * the editor's own box and always there.
      *
      * @default 'floating'
      */
     toolbarPlacement?: ToolbarPlacement;
-    /**
-     * Show the content without allowing edits. The toolbar goes away with it —
-     * there is nothing it could do.
-     */
+    /** Show the content without allowing edits. The toolbar goes away with it. */
     readonly?: boolean;
     /**
      * Draw the editor's chrome — the border, the background and the toolbar.
-     * Turn it off and only the content is rendered, with none of the inset the
-     * editable surface otherwise carries: the pairing for `readonly`, where the
-     * document is being displayed rather than worked on and a box around it
-     * would be a promise the editor cannot keep.
+     * Turn it off and only the content is rendered, without the inset the
+     * editable surface otherwise carries. The pairing for `readonly`, where the
+     * document is being displayed rather than worked on.
      *
      * @default true
      */
@@ -74,10 +69,9 @@ export type RichTextEditorProps<TBlock extends RteBlockNode = RteBlockNode> = {
     placeholder?: string;
     /**
      * The editor lost focus, handed the document as it now stands — the hook to
-     * commit on, when saving on every keystroke would be too much.
-     *
-     * Fires whenever focus leaves the editable element, which includes focus
-     * moving into plugin UI that takes it (the link flyout's fields).
+     * commit on, when saving on every keystroke would be too much. Fires
+     * whenever focus leaves the editable element, including focus moving into
+     * plugin UI that takes it (the link flyout's fields).
      */
     onBlur?: (value: RteDocumentOf<TBlock>) => void;
 };
@@ -87,9 +81,10 @@ export type RichTextEditorProps<TBlock extends RteBlockNode = RteBlockNode> = {
  * inside it or hanging over the selection, and the floating layer for plugin UI
  * that hangs over the content.
  *
- * Everything stateful sits in the hooks: `useEditorHandle` owns the live editor,
- * `useFloating` owns plugin floating UI and its keyboard, and the two small ones
- * answer where the selection is and whether the editor is being worked in.
+ * Everything stateful sits in the hooks: `useEditorHandle` owns the live
+ * editor, `useFloating` owns plugin floating UI and its keyboard, and the two
+ * small ones answer where the selection is and whether the editor is being
+ * worked in.
  */
 export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     value,
@@ -106,9 +101,9 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
         value,
         readOnly,
         placeholder,
-        // A plugin that lays out the whole content (columns) styles the editable
-        // element rather than anything it renders itself. Every CSS-module lookup
-        // is typed as possibly missing, which is what the filter is for.
+        // A plugin that lays out the whole content (columns) styles the
+        // editable element rather than anything it renders. CSS-module lookups
+        // are typed as possibly missing, hence the filter.
         contentClassName: [styles.content, ...plugins.map((plugin) => plugin.contentClassName)]
             .filter(Boolean)
             .join(' '),
@@ -119,24 +114,24 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
         onBlur: (doc) => onBlur?.(doc as RteDocumentOf<TBlock>),
     });
     const floating = useFloating({ handle, plugins, enabled: !readOnly });
-    // A floating toolbar is shown for as long as the editor is being worked in,
-    // which is not the same as the editable element having focus: reaching into a
-    // dropdown in the toolbar takes focus out of the text, and the bar holding it
-    // cannot go away underneath it.
+    // A floating toolbar shows for as long as the editor is being worked in,
+    // which is not the same as the editable element having focus: reaching into
+    // a dropdown in the toolbar takes focus out of the text, and the bar cannot
+    // go away underneath it.
     const { focusWithin, focusProps } = useFocusWithin();
 
     const api = handle?.api;
     const toolbarFloats = toolbarPlacement === 'floating';
     const toolbar =
         api && !readOnly && showEditor ? <Toolbar plugins={plugins} api={api} placement={toolbarPlacement} /> : null;
-    // The box the floating bar hangs over, and null whenever it is not the one
-    // showing: nothing is selected, the toolbar is a strip in the frame instead,
-    // or the editor is not being worked in at all.
+    // The box the floating bar hangs over; null whenever it is not the one
+    // showing — nothing selected, the toolbar is a strip in the frame, or the
+    // editor is not being worked in.
     const selectionRect = useSelectionRect({ handle, enabled: toolbarFloats && toolbar !== null && focusWithin });
 
     // Custom properties a plugin sets for the whole content (a column count).
     // They sit on the wrapper, which re-renders — so a changed value applies
-    // without the editor being rebuilt — and inherit into the editable element.
+    // without rebuilding the editor — and inherit into the editable element.
     const contentProperties = Object.fromEntries(
         plugins.flatMap((plugin) => Object.entries(plugin.contentProperties ?? {})),
     );
@@ -144,22 +139,23 @@ export const RichTextEditor = <TBlock extends RteBlockNode = RteBlockNode>({
     return (
         <>
             {/*
-             * The wrapper is where focus and keys are watched for the whole editor,
-             * toolbar included. It lays out as nothing at all (`display: contents`),
-             * so the frame is still the box a page positions and sizes.
+             * Focus and keys are watched here, for the whole editor including
+             * the toolbar. It lays out as nothing (`display: contents`), so the
+             * frame is still the box a page positions and sizes.
              */}
             <div
                 onKeyDownCapture={floating.onKeyDownCapture}
                 {...focusProps}
                 className={styles.root}
                 // Custom properties are not part of React's CSSProperties. They
-                // sit here rather than on the frame so they reach the toolbar too.
+                // sit here rather than on the frame so they reach the toolbar
+                // too.
                 style={contentProperties as CSSProperties}
             >
                 {toolbarFloats && selectionRect !== null ? (
                     <FloatingToolbar rect={selectionRect}>{toolbar}</FloatingToolbar>
                 ) : null}
-                {/* Whether the editor draws itself as one, for the stylesheet to read. */}
+                {/* Whether the chrome is drawn, for the stylesheet to read. */}
                 <div className={styles.frame} data-chrome={String(showEditor)}>
                     {toolbarFloats ? null : toolbar}
                     <div ref={containerRef} />

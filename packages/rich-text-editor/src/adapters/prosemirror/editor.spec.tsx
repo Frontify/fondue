@@ -9,13 +9,12 @@ import { type EditorHandle } from '#/ports';
 import { createEditor } from './editor';
 
 /**
- * The controlled-`value` protocol, which is the one part of the editor a host can
- * break without writing anything wrong: it hands back what it was given, and what
- * happens then decides whether the editor is usable at all.
+ * The controlled-`value` protocol: a host hands back the document it was given,
+ * and what happens then decides whether the editor is usable at all. The one
+ * part a host can break without writing anything wrong.
  *
- * Everything here drives the handle rather than the keyboard. What is being tested
- * is the conversation between the host and the editor, and typing is only one of
- * the ways the editor's half of it starts.
+ * Everything here drives the handle rather than the keyboard, because what is
+ * being tested is the conversation between the host and the editor.
  */
 const plugins: RtePlugin[] = [
     { id: 'bold', schema: { marks: [{ key: 'bold', render: ({ children }) => <strong>{children}</strong> }] } },
@@ -72,9 +71,8 @@ describe('a document set by the host', () => {
 
         handle.setDoc(paragraph('from the host'));
 
-        // Reporting it back is what starts the loop: the host stores what it
-        // already had, and a store that re-creates references on the way through
-        // hands it back as something new to set, for as long as the page is open.
+        // Reporting it back is what would start a loop — see `agreedDoc` in
+        // editor.ts.
         expect(onDocChange).not.toHaveBeenCalled();
     });
 
@@ -82,9 +80,8 @@ describe('a document set by the host', () => {
         const doc = paragraph('settled');
         const { handle, onDocChange } = mount(doc);
 
-        // The shape of a host that normalizes, or of one whose value went through
-        // the server and a `JSON.parse` on the way back: equal content, a new
-        // object every time.
+        // The shape of a host that normalizes what it stores, or whose value
+        // went through a `JSON.parse`: equal content, a new object every time.
         handle.setDoc(structuredClone(doc));
 
         expect(onDocChange).not.toHaveBeenCalled();
@@ -95,8 +92,7 @@ describe('a document set by the host', () => {
         handle.api.insertText('typed');
         expect(onDocChange).toHaveBeenCalledTimes(1);
 
-        // A controlled host storing every change and passing it back down, which is
-        // what `value`/`onChange` means.
+        // A controlled host: it stores every change and passes it back down.
         const held = stored();
         onDocChange.mockClear();
         handle.setDoc(held as RteDocumentOf);
@@ -111,13 +107,14 @@ describe('a document set by the host', () => {
         // Typing puts the caret after what was typed — two characters in.
         handle.api.insertText('XY');
 
-        // A genuine change from the host, which does have to replace the content.
+        // A genuine change from the host, which does have to replace the
+        // content.
         handle.setDoc(paragraph('123456'));
         onDocChange.mockClear();
         handle.api.insertText('|');
 
-        // Where the caret was, not where replacing the content would have left it
-        // (either end of the new document).
+        // Where the caret was, not where replacing the whole content would have
+        // left it (either end of the new document).
         expect(stored()).toEqual(paragraph('12|3456'));
         expect(onDocChange).toHaveBeenCalledTimes(1);
     });
@@ -128,8 +125,7 @@ describe('a document set by the host', () => {
         handle.setDoc(paragraph('host'));
         handle.api.insertText('!');
 
-        // The silence above is only about the host's own update. The editor has not
-        // stopped talking.
+        // The silence above was only about the host's own update.
         expect(stored()).toEqual(paragraph('!host'));
     });
 });
@@ -141,9 +137,9 @@ describe('floating placements', () => {
         const [placement] = handle.floating.placements();
 
         expect(placement?.pluginId).toBe('panel');
-        // Measuring forces the browser to lay the page out, so it waits until a
-        // plugin has said it will draw something. This environment has no layout at
-        // all, which is why asking for placements has to be safe on its own.
+        // Measuring forces a layout, so it waits until a plugin says it will
+        // draw something. This environment has no layout at all, so asking for
+        // placements has to be safe on its own.
         expect(typeof placement?.measure).toBe('function');
     });
 });

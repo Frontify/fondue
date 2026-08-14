@@ -15,16 +15,15 @@ import styles from './colorFlyout.module.scss';
 /**
  * The colour control: a button carrying the selection's colour, and the picker
  * hung off it. What it shows comes from the document (the selection snapshot),
- * so the button says what the selection actually carries rather than what was
- * last picked in it.
+ * so the button says what the selection carries rather than what was last
+ * picked in it.
  *
- * The picked colour reaches the document on save rather than as it is dragged
- * around the gradient: a colour is chosen by sweeping through dozens of them,
+ * The picked colour reaches the document on save rather than while it is
+ * dragged around the gradient: choosing a colour sweeps through dozens of them,
  * and none of those belong in the undo history.
  */
 export const ColorFlyout = ({ api }: { api: EditorControlApi }): ReactNode => {
-    // The snapshot's marks are untyped, the way every mark key is; this plugin
-    // knows what its own carries.
+    // The snapshot's marks are untyped; this plugin knows what its own carries.
     const value = api.selection.get().marks.fontColor as Partial<FontColorValue> | undefined;
     const current = parseCssColor(value?.color);
     const [open, setOpen] = useState(false);

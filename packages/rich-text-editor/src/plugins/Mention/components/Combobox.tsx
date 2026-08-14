@@ -14,12 +14,12 @@ export type ComboboxItem = {
 };
 
 /**
- * The list of choices for what has been typed after the trigger, driven from the
- * keyboard while the caret stays in the editor.
+ * The list of choices for what has been typed after the trigger, driven from
+ * the keyboard while the caret stays in the editor.
  *
- * Plugin-side on purpose. The editor knows only that some content hangs at an
- * anchor and wants the arrow keys; what a choice looks like and what picking one
- * does belongs to whoever declared the anchor.
+ * Plugin-side on purpose: the editor knows only that some content hangs at an
+ * anchor and wants the arrow keys. What a choice looks like, and what picking
+ * one does, belongs to whoever declared the anchor.
  */
 export const Combobox = ({
     context,
@@ -54,8 +54,8 @@ export const Combobox = ({
         onSelect(item, api);
     };
 
-    // Deliberately re-registered on every render: the handler closes over the
-    // current list and highlight, and registering replaces the previous one.
+    // Re-registered on every render: the handler closes over the current list
+    // and highlight, and registering replaces the previous one.
     useEffect(() =>
         onKeys((event) => {
             switch (event.key) {

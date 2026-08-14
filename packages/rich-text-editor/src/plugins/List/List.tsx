@@ -12,9 +12,9 @@ import styles from './list.module.scss';
  * Lists are the one place the document nests: a list holds items, and an item
  * holds blocks — a paragraph for its text, plus any list nested under it.
  *
- * Both list types share the item, so mounting either one (or both) works; the
- * item allows `ANY_LIST` inside it, so whatever lists are mounted nest — this one
- * included, and a list a consumer wrote just as well.
+ * Both list types share the item, so mounting either or both works. The item
+ * allows `ANY_LIST` inside it, so whatever lists are mounted may nest — a list
+ * a consumer wrote included.
  */
 export type ListItemBlock<TContent extends RteBlockNode = RteBlockNode> = {
     type: 'listItem';
@@ -32,9 +32,9 @@ export type NumberedListBlock<TItem extends RteBlockNode = RteBlockNode> = {
 };
 
 /**
- * The two list plugins differ only in their type, tag, icon and marker style, so
- * they share one declaration. The item is declared by whichever of them is
- * mounted — the editor keys blocks by type, so declaring it twice is the same as
+ * The two list plugins differ only in type, tag, icon and marker style, so they
+ * share one declaration. The item is declared by whichever of them is mounted;
+ * the editor keys blocks by type, so declaring it twice is the same as
  * declaring it once.
  */
 const listPlugin = ({
@@ -75,7 +75,8 @@ const listPlugin = ({
             {
                 type: 'listItem',
                 content: 'blocks',
-                // The paragraph comes first: it is what a new item is filled with.
+                // The paragraph comes first: it is what a new item is filled
+                // with.
                 contains: [PARAGRAPH, ANY_LIST],
                 render: ({ children }) => <li className={styles.item}>{children}</li>,
                 parseRules: [{ tag: 'li' }],
@@ -84,8 +85,8 @@ const listPlugin = ({
     },
     toolbar: (api) => (
         <ToolbarButton
-            // The list wraps the item that holds the text, so it is somewhere
-            // above the block the caret is in rather than that block itself.
+            // The list wraps the item holding the text, so it is above the
+            // block the caret is in rather than being that block.
             active={api.selection.get().blocks.some((block) => block.type === type)}
             title={title}
             onClick={() => api.lists.toggle(type)}

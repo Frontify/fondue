@@ -25,8 +25,9 @@ const MENTIONABLE: MentionItem[] = [
 ];
 
 /**
- * Story chrome is styled with the `@frontify/fondue-tokens` Tailwind preset (`tw-` prefix, token-backed
- * utilities). The package itself ships plain CSS — Tailwind is Storybook-only here.
+ * Story chrome is styled with the `@frontify/fondue-tokens` Tailwind preset
+ * (`tw-` prefix, token-backed utilities). The package itself ships plain CSS —
+ * Tailwind is Storybook-only here.
  */
 const LAYOUT = 'tw-grid tw-grid-cols-2 tw-content-start tw-gap-4 tw-p-4 tw-font-primary';
 const JSON_PANEL =
@@ -120,13 +121,13 @@ export const Placeholder: Story = {
 /**
  * `toolbarPlacement` decides where the controls live.
  *
- * The default, `'floating'`, hangs them over the selected text and shows them only
- * while there is a selection: select a few words to see the bar, and note that it
- * follows the text as the page scrolls rather than staying where it started.
+ * The default, `'floating'`, hangs them over the selected text and shows them
+ * only while there is a selection: select a few words to see the bar, and note
+ * that it follows the text as the page scrolls.
  *
- * `'top'` puts them inside the frame as a strip above the content, part of the
- * editor's own box and always there — what a field in a dense form wants, where a
- * bar over the text would cover what is being read.
+ * `'top'` puts them inside the frame as a strip above the content, always there
+ * — what a field in a dense form wants, where a bar over the text would cover
+ * what is being read.
  */
 export const ToolbarPlacement: Story = {
     render: () => {
@@ -204,8 +205,8 @@ export const Readonly: Story = {
 /**
  * `showEditor={false}` drops the editor's chrome — border, background, toolbar
  * and the inset around the text — so the document is rendered as plain content.
- * Its pairing is `readonly`: together they display a document without ever
- * looking like a field. Toggle them independently to see which does what.
+ * Paired with `readonly` it displays a document without looking like a field.
+ * Toggle them independently to see which does what.
  */
 export const ContentOnly: Story = {
     render: () => {
@@ -272,11 +273,9 @@ export const ContentOnly: Story = {
 
 /**
  * `onBlur` hands over the document as it stood when focus left — the hook to
- * commit on, when saving on every keystroke would be too much.
- *
- * Note that opening the link flyout takes focus out of the editable element, so
- * it commits too: plugin UI is outside the editor as far as the DOM is
- * concerned.
+ * commit on, when saving on every keystroke would be too much. Note that
+ * opening the link flyout commits too: plugin UI is outside the editable
+ * element as far as the DOM is concerned.
  */
 export const CommitOnBlur: Story = {
     render: () => {
@@ -408,17 +407,15 @@ const MANY_KEYS = Array.from({ length: MANY }, (_, index) => `editor-${index + 1
 /**
  * The load case this editor is built for: a page of editors, all live at once.
  *
- * Two things are worth watching here rather than reading about. Mounting is timed
- * and reported above, because that is the cost that lands in one block on first
- * paint. And typing in any one of them should feel exactly as it does in the
- * `Default` story: the engine owns the content DOM, so a keystroke redraws the
- * text it changed and nothing else — the other twenty-nine editors do no work for
- * it, and neither does React.
+ * Two things to watch. Mounting is timed and reported above, because that is
+ * the cost that lands in one block on first paint. And typing in any one of
+ * them should feel exactly as it does in the `Default` story: the engine owns
+ * the content DOM, so a keystroke redraws the text it changed and nothing else.
  *
- * `defaultPlugins` is imported rather than built per editor, which is what lets
- * all thirty share one set of probed renders instead of repeating them thirty
- * times. Worth copying in an app that mounts many: build the plugin array once, at
- * module level, rather than inside the component.
+ * `defaultPlugins` is imported rather than built per editor, so all thirty
+ * share one set of probed renders. Worth copying in an app that mounts many:
+ * build the plugin array once, at module level, rather than inside the
+ * component.
  */
 export const ManyEditors: Story = {
     render: () => {
@@ -435,8 +432,8 @@ export const ManyEditors: Story = {
         const [mountedIn, setMountedIn] = useState<number | null>(null);
 
         useEffect(() => {
-            // A child's effects run before its parent's, so every editor below is
-            // already live by the time this one does.
+            // A child's effects run before its parent's, so every editor below
+            // is already live by the time this one does.
             setMountedIn(performance.now() - startedAtRef.current);
         }, []);
 

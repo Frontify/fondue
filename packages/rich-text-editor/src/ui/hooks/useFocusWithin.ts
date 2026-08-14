@@ -7,13 +7,13 @@ import { type FocusEventHandler, useEffect, useRef, useState } from 'react';
  * flyout one of them opens.
  *
  * Built on React's focus events rather than `:focus-within` or a `contains`
- * check, because that last case is a portal: a flyout's content is somewhere
- * else entirely in the DOM while still being a child in the component tree, and
- * React events travel the component tree.
+ * check, because a flyout is a portal: its content sits elsewhere in the DOM
+ * while still being a child in the component tree, and React events travel that
+ * tree.
  *
- * Focus moving from one element inside to another fires the blur before the next
- * focus, so the answer is settled a tick later rather than the moment it is
- * asked: without that, every click inside would read as a departure.
+ * Focus moving from one element inside to another fires the blur before the
+ * next focus, so the answer settles a tick later — otherwise every click inside
+ * would read as a departure.
  */
 export const useFocusWithin = (): {
     focusWithin: boolean;

@@ -4,12 +4,11 @@ import { type RtePlugin } from '#/domain';
 
 /**
  * Typography applied while typing: punctuation, symbols and curly quotes. Every
- * rule is a declaration the editor matches — this plugin has no schema and no UI.
+ * rule is a declaration the editor matches — no schema, no UI.
  *
- * The markdown shortcuts are not here. `**bold**` belongs to the bold plugin the
- * same way its toolbar button and its `Mod-b` do, so each feature declares its
- * own shortcut and this plugin is left with the rules that name no feature at
- * all.
+ * The markdown shortcuts are not here: `**bold**` belongs to the bold plugin,
+ * the way its toolbar button and its `Mod-b` do. What is left here are the
+ * rules that name no feature at all.
  */
 export const autoformatPlugin = (): RtePlugin => ({
     id: 'autoformat',

@@ -19,20 +19,18 @@ import { textStylePlugin } from './TextStyle';
 import { underlinePlugin } from './Underline';
 
 /**
- * One folder per plugin, plus `shared/` for what plugins are built *out of*
- * rather than what they are — currently the toolbar button they all use. Nothing
- * under `shared/` is a plugin, and it plays by the same rules as one: the only
- * thing it may reach for is the domain (`#/domain`). UI only one plugin needs
- * stays with that plugin (Mention's picker, Link's panel).
+ * One folder per plugin, plus `shared/` for what plugins are built *out of* —
+ * the toolbar button they all use. Nothing under `shared/` is a plugin, and it
+ * plays by the same rules as one: it may reach for the domain (`#/domain`) and
+ * nothing else. UI only one plugin needs stays with that plugin (Mention's
+ * picker, Link's panel).
  *
- * Convenience bundle of the built-in plugins that need no configuration, in
- * toolbar order. Nothing is mounted automatically — pass these (or a subset) to
- * RichTextEditor.
- *
- * Left out on purpose, because they change the editor's behaviour or need
- * arguments: `mentionPlugin` (needs the mentionable items), `columnBreakPlugin`
- * (lays the content out in columns) and `blurOnBreakPlugin` (makes Enter commit
- * instead of adding a paragraph).
+ * `defaultPlugins` bundles the built-ins that need no configuration, in toolbar
+ * order. Nothing is mounted automatically — pass these, or a subset, to
+ * RichTextEditor. Left out on purpose, because they need arguments or change
+ * the editor's behaviour: `mentionPlugin` (needs the mentionable items),
+ * `columnBreakPlugin` (lays the content out in columns) and `blurOnBreakPlugin`
+ * (makes Enter commit instead of adding a paragraph).
  */
 export const defaultPlugins = [
     textStylePlugin(),

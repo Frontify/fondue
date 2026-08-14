@@ -25,7 +25,7 @@ const plugins: RtePlugin[] = [
                 {
                     key: 'link',
                     attributes: { href: {} },
-                    // A render function reads its own value, the way a real plugin does.
+                    // A render function reads back the value it declared.
                     render: ({ children, value }) => <a href={(value as { href?: string }).href}>{children}</a>,
                 },
             ],
@@ -118,9 +118,9 @@ describe('the document boundary', () => {
 
     it('drops the empty text run an empty document is written with', () => {
         // The engine has no empty text node to put it in, so it comes back as a
-        // paragraph with no children. Asserted rather than fixed: both forms mean
-        // the same empty paragraph, and both are accepted going in — but a caller
-        // comparing what it sent against what it got back should know.
+        // paragraph with no children. Asserted rather than fixed: both forms
+        // mean the same empty paragraph, and both are accepted going in — but a
+        // caller comparing what it sent against what it got back should know.
         expect(toRteDocument(toEngineDocument(emptyDocument(), schema))).toEqual({
             version: 1,
             blocks: [{ type: PARAGRAPH, children: [] }],
@@ -135,9 +135,10 @@ describe('the document boundary', () => {
         const after = toRteDocument(state.apply(state.tr.insertText('!', 1)).doc);
 
         expect(after.blocks[0]).not.toBe(before.blocks[0]);
-        // The engine left these alone, so the conversion does too — which is what
-        // keeps the per-keystroke cost proportional to the edit rather than to the
-        // document, and what lets a host memoize on a block it was handed.
+        // The engine left these alone, so the conversion does too — which is
+        // what keeps the per-keystroke cost proportional to the edit rather
+        // than to the document, and what lets a host memoize on a block it was
+        // handed.
         expect(after.blocks[1]).toBe(before.blocks[1]);
         expect(after.blocks[2]).toBe(before.blocks[2]);
     });

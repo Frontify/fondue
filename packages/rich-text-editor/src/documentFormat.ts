@@ -23,27 +23,26 @@ import { type UnderlineMark } from './plugins/Underline';
  * The official RTE document format: the wire format of a document written by
  * *these* plugins, assembled from the fragment each one declares.
  *
- * It sits beside `index.ts` rather than under any layer because assembling it is
- * the composition root's job and nothing else's — it is the one place that knows
- * the shipped plugin list, which is why it may import from `plugins/` at all.
- * The editor below it never sees this file: `ui/` and the adapters work in the
- * open `RteDocumentOf`/`RteBlockNode` skeleton from `domain/`, and closing that
- * skeleton over what ships is purely a type-level act, with no runtime part.
+ * It sits beside `index.ts` rather than under a layer because it is the one
+ * file besides the composition root that may know the shipped plugin list,
+ * which is why it may import from `plugins/`. The editor below never sees it:
+ * `ui/` and the adapters work in the open `RteDocumentOf`/`RteBlockNode`
+ * skeleton from `domain/`, and closing that skeleton is purely type-level, with
+ * no runtime part.
  *
- * Three of the types here are exported from the package; the rest are the
- * machinery that builds them and stay private. What that machinery is *for*: the
- * plugin-facing types are open (a text node takes any mark key, a block takes
- * any children) because the editor must host documents from plugins it has never
- * heard of. An app authoring a document wants the opposite — `bod: true` should
- * not compile. So every plugin-declared fragment is closed over here, three
- * levels deep into nested lists, and the result is what `RichTextEditor` reads
- * and emits. `type-derivation.spec.ts` is where that is asserted.
+ * Why the machinery below exists: the plugin-facing types are open (a text node
+ * takes any mark key, a block any children) because the editor must host
+ * documents from plugins it has never heard of. An app authoring a document
+ * wants the opposite — `bod: true` should not compile. So every plugin-declared
+ * fragment is closed over here, three levels deep into nested lists, and the
+ * result is what `RichTextEditor` reads and emits. Three of these types are
+ * exported; the rest are private machinery. `type-derivation.spec.ts` asserts
+ * all of it.
  */
 
 /**
- * A text run as the shipped plugins write it: the marks that exist, and nothing
- * else. Closed on purpose — `{ text: 'x', bod: true }` is a compile error,
- * which the open text node behind the plugin contract cannot catch.
+ * A text run as the shipped plugins write it: the marks that exist and nothing
+ * else. Closed on purpose, so `{ text: 'x', bod: true }` is a compile error.
  */
 export type RteText = { text: string } & BoldMark &
     ItalicMark &
@@ -57,9 +56,9 @@ export type RteText = { text: string } & BoldMark &
 
 /**
  * What may sit inside a text block: a text run, or one of the void inline
- * elements the shipped plugins contribute. Both of those are closed types, so
- * they do not weaken the excess-property check that catches mark typos — the
- * open `RteInlineElementNode` behind the plugin contract would.
+ * elements the shipped plugins contribute. Both are closed types, so they keep
+ * the excess-property check that catches mark typos; the open
+ * `RteInlineElementNode` behind the plugin contract would weaken it.
  */
 type OfficialInline<TExtraInline extends RteInlineNode> = RteText | BreakInline | MentionInline | TExtraInline;
 
@@ -79,13 +78,14 @@ type WithOfficialChildren<TBlock, TExtraInline extends RteInlineNode> = TBlock e
 /**
  * Lists are where the document nests, so their types are assembled rather than
  * mapped: a list holds items, an item holds a paragraph and any list nested
- * under it. Written out this way, a mark typo three levels deep is still caught.
+ * under it. Written out this way, a mark typo three levels deep is still
+ * caught.
  *
- * Each level is an interface extending the plugin's own type. That is what makes
- * the recursion legal — a chain of *aliases* referring back to itself is
+ * Each level is an interface extending the plugin's own type, which is what
+ * makes the recursion legal: a chain of *aliases* referring back to itself is
  * circular, while an interface's members resolve lazily.
  */
-/* eslint-disable typescript/no-empty-object-type -- the empty body IS the mechanism: an interface extending the plugin's type is how the recursion below stays legal. */
+/* eslint-disable typescript/no-empty-object-type -- the empty body IS the mechanism: an interface extending the plugin's type is how the recursion stays legal. */
 interface OfficialListItem<TExtraInline extends RteInlineNode> extends ListItemBlock<
     OfficialItemContent<TExtraInline>
 > {}
@@ -114,10 +114,10 @@ type OfficialList<TExtraInline extends RteInlineNode> =
 
 /**
  * The official RTE block union: every block type the built-in plugins produce,
- * with strictly typed children. Apps, serializers, and backend code should
+ * with strictly typed children. Apps, serializers and backend code should
  * consume THIS, not the structural `RteBlockNode`. Extending it is a
- * wire-format change and should be a deliberate act, made in the same PR that
- * ships the plugin implementing the new type.
+ * wire-format change, and belongs in the same PR as the plugin implementing the
+ * new type.
  *
  * `TExtraInline` is the escape hatch for consumer plugins that contribute a
  * mark or an inline element: pass `RteText & HighlightMark` for an extra mark,

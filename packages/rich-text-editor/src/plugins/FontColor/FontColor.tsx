@@ -22,12 +22,12 @@ export const fontColorPlugin = (): RtePlugin => ({
                 key: 'fontColor',
                 attributes: { color: { parseFromStyle: 'color' } },
                 // Underline and strikethrough draw their line in the colour of
-                // their own element, which a descendant cannot change — so the
-                // colour has to be set on an element that wraps them.
+                // their own element, which a descendant cannot change, so the
+                // colour has to be set on an element wrapping them.
                 nesting: -1,
                 render: ({ value, children }) => {
-                    // A render function knows what it declared, so it reads its own
-                    // value. Partial: a pasted span without a colour leaves it unset.
+                    // A render function reads back the value it declared.
+                    // Partial: a pasted span without a colour leaves it unset.
                     const { color } = value as Partial<FontColorValue>;
                     return <span style={{ color }}>{children}</span>;
                 },

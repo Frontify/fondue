@@ -7,8 +7,7 @@ import { type RenderProbe } from './renderProbe';
 /**
  * The editor engine as a contract: what the React shell drives, and what an
  * engine adapter has to provide. Both sides depend on this file and neither on
- * the other, which is what makes swapping the engine a matter of writing one
- * more `CreateEditor`.
+ * the other.
  */
 
 /** A box in viewport coordinates. */
@@ -22,11 +21,10 @@ export type FloatingPlacement = {
     /**
      * The box it hangs at, in viewport coordinates.
      *
-     * A call rather than a field, because turning a document position into a box
-     * means asking the browser to lay the page out, and that is the one thing here
-     * expensive enough to be worth not doing. A plugin decides whether to draw
-     * anything *after* seeing the placement — a picker whose query matches nothing
-     * draws nothing — so measuring every placement up front spends a layout on
+     * A call rather than a field, because turning a document position into a
+     * box forces the browser to lay the page out. A plugin decides whether to
+     * draw anything *after* seeing the placement — a picker whose query matches
+     * nothing draws nothing — so measuring up front would spend a layout on
      * every anchor that exists rather than on every one that shows.
      */
     measure(): FloatingRect;
@@ -49,9 +47,8 @@ export type EditorOptions = {
     /** Class the placeholder decoration carries. */
     placeholderClassName: string;
     /**
-     * How a plugin's React render function becomes a DOM description. Injected
-     * rather than reached for, so that hosting a document and rendering React are
-     * separate concerns: the engine adapter never depends on a React renderer.
+     * How a plugin's React render function becomes a DOM description. Injected,
+     * so the engine adapter never depends on a React renderer.
      */
     probe: RenderProbe;
     onDocChange: (doc: RteDocumentOf) => void;
@@ -69,17 +66,18 @@ export type EditorHandle = {
     /** Change the text shown while the document is empty. Empty string means none. */
     setPlaceholder(placeholder: string): void;
     /**
-     * The box around the selected text, or null while nothing is selected. For the
-     * editor's OWN chrome — the toolbar, when the host placed it over the
+     * The box around the selected text, or null while nothing is selected. For
+     * the editor's OWN chrome — the toolbar, when the host placed it over the
      * selection. Deliberately not under `floating` below: that is the plugins'
-     * mechanism, and a plugin wanting the same box declares an `anchor:
-     * 'selection'` and gets it as a placement instead.
+     * mechanism, and a plugin wanting the same box declares an `anchor` of
+     * `'selection'` and gets it as a placement instead.
      */
     selectionRect(): FloatingRect | null;
     /**
-     * The plugins' floating UI: where each declared piece hangs, in mount order,
-     * plus control over the trigger one of them may be anchored to. A piece whose
-     * anchor is not currently in the document is simply absent from the list.
+     * The plugins' floating UI: where each declared piece hangs, in mount
+     * order, plus control over the trigger one of them may be anchored to. A
+     * piece whose anchor is not currently in the document is absent from the
+     * list.
      */
     floating: {
         placements(): FloatingPlacement[];

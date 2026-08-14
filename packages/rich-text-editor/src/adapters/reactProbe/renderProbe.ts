@@ -7,16 +7,16 @@ import { CONTENT_SLOT, type DomChild, type DomElement, type ProbedDom, type Rend
 
 /**
  * The `RenderProbe` implemented by rendering React to markup and reading the
- * result back. This is the only module that renders React outside the component
- * tree, which is why it is an adapter of its own rather than a helper inside the
- * engine: hosting a document and rendering React are separate jobs, and a
- * different way of doing this one (a DOM-free renderer, say) is a new file here.
+ * result back. The only module that renders React outside the component tree,
+ * and an adapter of its own rather than a helper inside the engine: hosting a
+ * document and rendering React are separate jobs, and another way of doing this
+ * one (a DOM-free renderer, say) would be a new file here.
  */
 
 /**
  * Turn one rendered node into a static description of it. The text holding the
- * sentinel becomes the content slot; anything beside that slot is a mistake the
- * caller has to see, since the content would have nowhere to go.
+ * sentinel becomes the content slot; anything beside that slot throws, since
+ * the editable content would have nowhere to go.
  */
 const toDomChild = (node: ChildNode): DomChild | null => {
     if (node.nodeType === node.TEXT_NODE) {

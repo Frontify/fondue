@@ -7,29 +7,27 @@ import { type RteBlockNode, type RteInlineElementNode } from './document';
 /**
  * What a plugin declares *exists*: blocks, inline elements, marks, and the
  * attributes every text block carries. All declarative — the adapter turns
- * these into engine schema, and rendering is the single source of truth that
- * copy/paste derives from.
+ * these into engine schema, and copy/paste is derived from the render
+ * functions.
  */
 
 /**
- * Declaration of one piece of data a block, inline, or mark carries. Stored
- * flat on the document node; rendering writes it out itself, so the only
- * parse-side concern is reading it back from HTML.
+ * One piece of data a block, inline or mark carries, stored flat on the
+ * document node. Rendering writes it out; the fields below only say how to read
+ * it back from pasted HTML.
  */
 export type AttributeSpec = {
     /** Value when the attribute is absent. */
     default?: unknown;
     /**
-     * The DOM attribute this one is read back from when parsing pasted HTML —
-     * `href: { parseFromDomAttribute: 'href' }` for a link, or a differently
-     * named one (`id: { parseFromDomAttribute: 'data-mention-id' }`). Named in
-     * full rather than flagged, so there is one kind of value to read.
+     * The DOM attribute to read this one back from when parsing pasted HTML:
+     * `href: { parseFromDomAttribute: 'href' }`, or a differently named one
+     * (`id: { parseFromDomAttribute: 'data-mention-id' }`).
      */
     parseFromDomAttribute?: string;
     /**
-     * Read this attribute back from a CSS property when parsing pasted HTML —
-     * e.g. `color` for a font-color mark, whose value lives in the style
-     * attribute rather than in one of its own.
+     * Read it back from a CSS property instead, for a value that lives in the
+     * style attribute — `color` for a font-color mark.
      */
     parseFromStyle?: string;
 };
@@ -57,30 +55,29 @@ export type BlockSpec = {
      * is what a newly created block gets filled with, so put the text-bearing
      * one first (`[PARAGRAPH, ANY_LIST]` for a list item).
      *
-     * A type named here that no mounted plugin declares simply drops out. Use
-     * `ANY_LIST` for "whatever lists are mounted": a list item has to say that
-     * lists may nest inside it, and it cannot know which ones exist — least of
-     * all one written after it.
+     * A type named here that no mounted plugin declares drops out. `ANY_LIST`
+     * stands for "whatever lists are mounted" — a list item has to allow lists
+     * inside it without being able to name ones written after it.
      */
     contains?: readonly string[];
     /**
-     * True for a list: a container whose `contains` names its item type. It is
-     * what makes the list commands (`lists.toggle`, `lists.indent`, …) work on
-     * this block — they read the item type from here rather than being told.
+     * True for a list: a container whose first `contains` entry is its item
+     * type. The list commands (`lists.toggle`, `lists.indent`, …) read that
+     * item type from here, so declaring this is all a list plugin has to do.
      */
     isList?: boolean;
     /** True for blocks without editable text (e.g. images); void blocks have no `children`. */
     isVoid?: boolean;
     /**
-     * How the block looks: a React render function whose markup becomes the
-     * engine's description of the block. Nested elements are kept — a check
-     * item can draw a checkbox beside its text — under one rule: `children`,
-     * the editable content slot, must be the only thing inside its own element.
-     * This is the single source of rendering truth; copy/paste derives from it.
+     * How the block looks. The markup becomes the engine's description of the
+     * block, and copy/paste is derived from it. Nested elements are kept — a
+     * check item can draw a checkbox beside its text — under one rule:
+     * `children`, the editable content slot, must be the only thing inside its
+     * own element.
      *
-     * An element spreading `toggles('<attribute>')` (a checkbox) flips that
-     * boolean attribute when clicked, which is how a void control inside an
-     * otherwise declarative render stays interactive.
+     * An element spreading `toggles('<attribute>')` flips that boolean
+     * attribute when clicked, which is how a checkbox stays interactive inside
+     * an otherwise declarative render.
      */
     render: (props: { node: RteBlockNode; children: ReactNode }) => ReactNode;
     /** How pasted HTML becomes this block, e.g. `[{ tag: 'h2', attributes: { style: 'heading2' } }]`. */
@@ -93,9 +90,9 @@ export type InlineSpec = {
     /** The data this inline carries — a mention's `id` and `label`. */
     attributes?: Record<string, AttributeSpec>;
     /**
-     * How the inline looks. Inline elements are void: there is no children
-     * slot, visible content (`@{label}`) is rendered from the attributes, and
-     * nested elements are kept as rendered.
+     * How the inline looks. Inline elements are void: no children slot, visible
+     * content (`@{label}`) is rendered from the attributes, and nested elements
+     * are kept as rendered.
      */
     render: (props: { node: RteInlineElementNode }) => ReactNode;
     /** How pasted HTML becomes this inline, e.g. `[{ tag: 'span[data-mention-id]' }]`. */
@@ -112,31 +109,31 @@ export type MarkSpec = {
      */
     attributes?: Record<string, AttributeSpec>;
     /**
-     * How the mark looks: a single element wrapping `children`. That element
-     * is also recognized when parsing pasted HTML.
+     * How the mark looks: a single element wrapping `children`. That element is
+     * also recognized when parsing pasted HTML.
      */
     render: (props: { children: ReactNode; value: Record<string, unknown> }) => ReactNode;
     /** Additional rules for recognizing pasted HTML, e.g. `[{ tag: 'b' }]` for bold. */
     parseRules?: readonly ParseRule[];
     /**
      * Where this mark sits when marks nest on the same text: lower wraps
-     * higher, and marks that tie keep the order their plugins were passed in.
-     * Defaults to `0`, which is what a mark whose element is only a box for
-     * its own styling wants.
+     * higher, ties keep the order their plugins were passed in. Defaults to
+     * `0`, which suits a mark whose element is only a box for its own styling.
      *
      * It matters when one mark's styling is read off the element another mark
-     * draws: a text decoration takes the colour of the element that draws it
-     * and descendants cannot change it, so the colour mark declares a lower
-     * number to wrap underline and strikethrough rather than sit inside them.
+     * draws: a text decoration takes the colour of the element drawing it and
+     * descendants cannot override it, so the colour mark declares a lower
+     * number to wrap underline and strikethrough instead of sitting inside
+     * them.
      */
     nesting?: number;
 };
 
 /**
  * An attribute every text block carries, contributed by one plugin but applied
- * across block types. It affects the block's appearance through CSS rather than
- * through the owning plugin's render function, which is what lets alignment
- * work on blocks the align plugin knows nothing about.
+ * across block types. It styles the block through CSS instead of the owning
+ * plugin's render function, which is what lets alignment work on blocks the
+ * align plugin knows nothing about.
  */
 export type BlockAttributeSpec = {
     /** Attribute name stored on block nodes, e.g. `align`. */

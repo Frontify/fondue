@@ -17,8 +17,8 @@ import { LinkForm } from './LinkForm';
  */
 export const LinkFlyout = ({ api }: { api: EditorControlApi }): ReactNode => {
     const active = 'link' in api.selection.get().marks;
-    // The draft is both the form's starting point and whether it is open at all:
-    // there is no such thing as an open form without one.
+    // The draft is both the form's starting point and whether it is open at
+    // all: there is no such thing as an open form without one.
     const [draft, setDraft] = useState<LinkDraft | null>(null);
     const title = active ? 'Edit link' : 'Add link';
 

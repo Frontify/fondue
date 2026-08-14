@@ -13,18 +13,17 @@ import { definedAttrs, shallowBlock } from './documentConversion';
 import { createListApi } from './lists';
 
 /**
- * The `EditorControlApi`: the one seam a feature drives the editor through. Every
- * method closes over the live view, so a feature always reads and writes the
- * current state — there is nothing to keep in sync.
+ * The `EditorControlApi`: the one seam a feature drives the editor through.
+ * Every method closes over the live view, so a feature always reads and writes
+ * the current state — there is nothing to keep in sync.
  *
  * Read top to bottom: the read side first (the snapshot all feature UI renders
- * from), then the writes, grouped by what they act on. Lists are the exception
- * and live in `./lists.ts`, which owns the concept end to end.
+ * from), then the writes, grouped by what they act on. Lists are the exception,
+ * and live in `./lists.ts`.
  */
 
-// ---------------------------------------------------------------------------
-// The read side: one snapshot of the selection, which all feature UI renders from
-// ---------------------------------------------------------------------------
+// The read side: one snapshot of the selection, which all feature UI renders
+// from
 
 /** The marks a caret would type with, or every mark a range carries. */
 const marksAt = (state: EditorState): Record<string, Record<string, unknown>> => {
@@ -66,9 +65,8 @@ const blocksAt = (state: EditorState): Pick<RteSelectionSnapshot, 'block' | 'blo
         const shallow = shallowBlock(node);
         blocks.push(shallow);
         // The innermost node the document accepts as a block. A list item is
-        // deliberately out of that group (invariant (4) in setup/schema.ts),
-        // which is what makes `block` the paragraph inside an item rather than
-        // the item itself.
+        // deliberately out of that group (invariant (4) in setup/schema.ts), so
+        // `block` is the paragraph inside an item rather than the item itself.
         if (block === null && node.type.spec.group === 'block') {
             block = shallow;
         }
@@ -89,8 +87,8 @@ const snapshotOf = (state: EditorState): RteSelectionSnapshot => {
     const { from, to, empty } = state.selection;
     return {
         isCollapsed: empty,
-        // Void nodes in between (a mention, a line break) contribute nothing, so
-        // what comes back is what the user can actually read.
+        // Void nodes in between (a mention, a line break) contribute nothing,
+        // so what comes back is what the user can actually read.
         text: empty ? '' : state.doc.textBetween(from, to, ' '),
         ...blocksAt(state),
         marks: marksAt(state),
@@ -98,9 +96,9 @@ const snapshotOf = (state: EditorState): RteSelectionSnapshot => {
 };
 
 const createSelectionApi = (view: EditorView): EditorControlApi['selection'] => {
-    // Every feature's UI reads the snapshot and they all read the same one, so it
-    // is built once per editor state. Keying on the state itself is what makes
-    // that safe: the engine's state is immutable, so a new one is a new identity.
+    // Every feature's UI reads the same snapshot, so it is built once per
+    // editor state. Keying on the state is safe because the engine's state is
+    // immutable: a new state is a new identity.
     let cached: { state: EditorState; snapshot: RteSelectionSnapshot } | null = null;
 
     return {
@@ -115,8 +113,8 @@ const createSelectionApi = (view: EditorView): EditorControlApi['selection'] => 
                 return;
             }
             const { from, to } = view.state.selection;
-            // Positions count text in the same units as a JS string, so the end
-            // of the inserted run is simply `from` plus its length.
+            // Positions count text in the same units as a JS string, so the run
+            // ends at `from` plus its length.
             const transaction = view.state.tr.insertText(text, from, to);
             transaction.setSelection(TextSelection.create(transaction.doc, from, from + text.length));
             view.dispatch(transaction);
@@ -125,21 +123,18 @@ const createSelectionApi = (view: EditorView): EditorControlApi['selection'] => 
     };
 };
 
-// ---------------------------------------------------------------------------
 // Marks
 //
-// Note what is NOT here: a mark applied by typing `**bold**` never comes through
-// this api. Of the three ways bold can be switched on — toolbar button, hotkey,
-// markdown shortcut — the first two call `toggle` below and the third builds its
-// transaction directly, because the engine's input-rule machinery owns the undo
-// grouping there. See the header of setup/keystrokes.ts.
-// ---------------------------------------------------------------------------
+// Note what is NOT here: a mark applied by typing `**bold**` never comes
+// through this api. The toolbar button and the hotkey call `toggle` below; the
+// markdown shortcut builds its own transaction. See the header of
+// setup/keystrokes.ts.
 
 /**
  * The stretch of text around the selection start that carries a mark, or null
- * when the mark is not there. Adjacent text nodes may be split by other marks,
- * so a run is a stretch of consecutive children rather than a single node —
- * which is what makes a partly-bold link still count as one link.
+ * when the mark is not there. A run is a stretch of consecutive children rather
+ * than a single node, because other marks may split the text — so a partly-bold
+ * link still counts as one link.
  *
  * Exported because floating UI anchored to a mark is positioned over its run.
  */
@@ -173,10 +168,7 @@ export const findMarkRange = (state: EditorState, markType: PmMarkType): { from:
     return range;
 };
 
-/**
- * Whether a mark is *on* is not here — that is one field of the selection
- * snapshot, along with everything else feature UI reads.
- */
+/** Whether a mark is *on* is not here: that is a field of the selection snapshot. */
 const createMarkApi = (view: EditorView, schema: Schema): EditorControlApi['marks'] => ({
     toggle(key, value) {
         const markType = schema.marks[key];
@@ -198,13 +190,13 @@ const createMarkApi = (view: EditorView, schema: Schema): EditorControlApi['mark
             return null;
         }
         // The run starts at a text node carrying the mark, so its attributes
-        // are the run's — the whole point of a run being one stretch.
+        // are the run's.
         const first = view.state.doc.resolve(range.from).nodeAfter;
         const mark = first ? markType.isInSet(first.marks) : null;
         return {
             value: mark ? definedAttrs(mark.attrs) : {},
-            // Void nodes in between contribute nothing, so what comes back
-            // is what the user can actually read — as with the snapshot's text.
+            // Void nodes in between contribute nothing, as with the snapshot's
+            // text.
             text: view.state.doc.textBetween(range.from, range.to, ' '),
         };
     },
@@ -226,13 +218,11 @@ const createMarkApi = (view: EditorView, schema: Schema): EditorControlApi['mark
     },
 });
 
-// ---------------------------------------------------------------------------
 // Blocks
-// ---------------------------------------------------------------------------
 
 /**
- * Block types and the attributes on them. Which block the selection is in is not
- * here — features read that off the selection snapshot and compare it themselves.
+ * Block types and the attributes on them. Which block the selection is in is
+ * not here: features read that off the selection snapshot.
  */
 const createBlockApi = (view: EditorView, bundle: SchemaBundle): EditorControlApi['blocks'] => {
     const { schema, blockAttributes } = bundle;
@@ -264,8 +254,9 @@ const createBlockApi = (view: EditorView, bundle: SchemaBundle): EditorControlAp
         },
         updateAttributes: applyToTextBlocks,
         resetAttributes() {
-            // Generic on purpose: whichever attributes features inject into every
-            // text block are the ones reset, so nothing here names `align`.
+            // Generic on purpose: whichever attributes features inject into
+            // every text block are the ones reset, so nothing here names
+            // `align`.
             applyToTextBlocks(
                 Object.fromEntries(blockAttributes.map((attribute) => [attribute.name, attribute.default ?? null])),
             );
@@ -273,15 +264,9 @@ const createBlockApi = (view: EditorView, bundle: SchemaBundle): EditorControlAp
     };
 };
 
-// ---------------------------------------------------------------------------
 // The whole api
-// ---------------------------------------------------------------------------
 
-/**
- * The four members that stay flat are the ones acting on the editor as a whole
- * rather than on one kind of thing in it, so there is no part for them to belong
- * to — and each is one call.
- */
+/** The flat members act on the editor as a whole rather than on one kind of thing in it. */
 export const createControlApi = (view: EditorView, bundle: SchemaBundle): EditorControlApi => ({
     selection: createSelectionApi(view),
     marks: createMarkApi(view, bundle.schema),

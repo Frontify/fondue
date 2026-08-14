@@ -1,8 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 /**
- * Compile-time assertions for the document types.
- * `tsc --noEmit` is the test runner: an unused @ts-expect-error fails the build.
+ * Compile-time assertions for the document types. `tsc --noEmit` is the test
+ * runner: an unused @ts-expect-error fails the build.
  */
 import { type RteBlock, type RteDocument, type RteInlineNode, type RteText } from './index';
 
@@ -70,7 +70,8 @@ const styleTypo: RteDocument = { version: 1, blocks: [{ type: 'textStyle', style
 // @ts-expect-error alignment values are closed
 const alignTypo: RteDocument = { version: 1, blocks: [{ type: 'paragraph', align: 'middle', children: [] }] };
 
-// Alignment and the shipped void inlines are part of the official format — no type argument
+// Alignment and the shipped void inlines are part of the official format — no
+// type argument
 const shippedInlines: RteDocument = {
     version: 1,
     blocks: [

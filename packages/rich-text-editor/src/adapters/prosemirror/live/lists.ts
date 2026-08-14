@@ -15,22 +15,19 @@ import { mapChildren } from './documentConversion';
  * Lists, all in one place: which list the caret is in, the commands that edit
  * one, and the three keys that only mean something inside one.
  *
- * Lists are the editor's most cross-cutting concept, so this file exists to keep
- * them from being smeared across the folder. Two pieces still live elsewhere,
- * because they belong to a phase rather than to lists:
+ * Two pieces live elsewhere, because they belong to a phase rather than to
+ * lists:
  *
  * - WHICH blocks are lists is decided at mount, in `setup/schema.ts`: a feature
  *   declares `isList` and names its item type in `contains`, and the schema hands
- *   the result over as `SchemaBundle.itemTypeByList`. Nothing here takes an item
- *   type as an argument because of that.
+ *   the result over as `SchemaBundle.itemTypeByList`. That is why nothing here
+ *   takes an item type as an argument.
  * - WHERE the list keys sit relative to a feature's own hotkeys is a precedence
- *   question, so it is answered in `setup/keystrokes.ts`. This file only says
- *   what the keys do.
+ *   question, answered in `setup/keystrokes.ts`. This file only says what the keys
+ *   do.
  */
 
-// ---------------------------------------------------------------------------
 // Where the caret is
-// ---------------------------------------------------------------------------
 
 /** The innermost ancestor that is a list of items, with the position it sits at. */
 export const findList = (
@@ -58,9 +55,7 @@ export const findItemType = (
     return (itemName ? schema.nodes[itemName] : undefined) ?? null;
 };
 
-// ---------------------------------------------------------------------------
 // The list half of the control API
-// ---------------------------------------------------------------------------
 
 export const createListApi = (
     view: EditorView,
@@ -137,19 +132,16 @@ export const createListApi = (
     };
 };
 
-// ---------------------------------------------------------------------------
 // The keys that only mean something inside a list
-// ---------------------------------------------------------------------------
 
 /**
- * Enter, Tab and Shift-Tab inside a list. These are not one feature's keys: the
- * behaviour belongs to being in a list at all, and the commands driving it are
- * the editor's own. A feature declares that it *is* a list (`isList`) and gets
- * them — including a list a consumer wrote — instead of every list feature
- * repeating the same three bindings.
+ * Enter, Tab and Shift-Tab inside a list. Not one feature's keys: the behaviour
+ * belongs to being in a list at all, so any feature declaring `isList` gets
+ * them — a list a consumer wrote included — instead of every list repeating the
+ * same three bindings.
  *
- * All three report "not handled" outside a list, so the engine's baseline keymap
- * takes over there.
+ * All three report "not handled" outside a list, so the engine's baseline
+ * keymap takes over there.
  */
 export const listKeys = (getApi: () => EditorControlApi): Record<string, Command> => ({
     // The engine's own split deliberately refuses on an empty item at the top

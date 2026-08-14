@@ -6,12 +6,13 @@ import { type FloatingContext, type FloatingKeyHandler, type RtePlugin } from '#
 import { type EditorHandle, type FloatingRect } from '#/ports';
 
 /**
- * The host half of floating UI: turns the anchored placements the engine reports
- * into rendered content, and routes the keyboard to whichever piece is open.
+ * The host half of floating UI: turns the anchored placements the engine
+ * reports into rendered content, and routes the keyboard to whichever piece is
+ * open.
  *
  * Everything about *what* is shown belongs to the plugin. This hook only knows
- * that content has a box, that it may want keys, and that it may decline to show
- * itself at all.
+ * that content has a box, that it may want keys, and that it may decline to
+ * show itself.
  */
 
 export type FloatingSurface = {
@@ -35,8 +36,8 @@ export const useFloating = ({
     /** Captured on the wrapper, so keys a picker takes never reach the editor. */
     onKeyDownCapture: (event: KeyboardEvent<HTMLElement>) => void;
 } => {
-    // Registered from inside the floating content (via `onKeys`), so the handler
-    // is always the one belonging to the render that is on screen.
+    // Registered from inside the floating content (via `onKeys`), so the
+    // handler is always the one belonging to the render that is on screen.
     const handlersRef = useRef(new Map<string, FloatingKeyHandler>());
 
     const placements = enabled && handle ? handle.floating.placements() : [];
@@ -57,16 +58,15 @@ export const useFloating = ({
                 return () => handlersRef.current.delete(key);
             },
         };
-        // Rendered here, in the body: a plugin that has nothing to say returns
-        // null and costs nothing at all.
+        // Rendered here, in the body, so a plugin with nothing to say returns
+        // null and costs nothing.
         const content = spec.render(context);
         if (content === null || content === undefined) {
             return [];
         }
-        // Measured only now that there is something to place. Asking where the
-        // anchor is on screen forces the browser to lay the page out, and this is
-        // the one path where that happens on every editor state change — so it
-        // waits until the plugin has committed to drawing something.
+        // Measured only now that there is something to place: asking where the
+        // anchor is on screen forces a layout, and this runs on every editor
+        // state change.
         return [{ key, rect: placement.measure(), content }];
     });
 

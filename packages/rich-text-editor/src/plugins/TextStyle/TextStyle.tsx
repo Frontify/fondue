@@ -15,7 +15,7 @@ import {
 } from './helpers/presets';
 
 // The block this plugin contributes; the package root assembles it into the
-// official document union. Its options type stays local — the object literal at
+// official document union. Its options type stays local: the object literal at
 // the call site is contextually typed, so nothing outside needs to name it.
 export type { TextStyleBlock } from './helpers/presets';
 
@@ -25,10 +25,10 @@ type TextStylePluginOptions = {
 };
 
 /**
- * Which styles an editor offers is a product decision — a comment box wants none
- * of them, a page editor wants all — so it is an option. `styles` is the
- * dropdown, in the order given, and it is also what pasted HTML may become: an
- * editor that does not offer `heading3` turns a pasted `h3` into a paragraph.
+ * Which styles an editor offers is a product decision — a comment box wants
+ * none, a page editor wants all — so it is an option. `styles` is the dropdown,
+ * in the order given, and it is also what pasted HTML may become: an editor
+ * that does not offer `heading3` turns a pasted `h3` into a paragraph.
  *
  * Rendering is not restricted the same way, so a document written by a
  * differently configured editor still displays as it was authored.
@@ -42,11 +42,12 @@ export const textStylePlugin = ({ styles: options = ALL_TEXT_STYLES }: TextStyle
             blocks: [
                 {
                     type: 'textStyle',
-                    // Only reached by a node that arrives without one; every path
-                    // that sets the attribute names a style.
+                    // Only reached by a node that arrives without one; every
+                    // path that sets the attribute names a style.
                     attributes: { style: { default: offered[0]?.name ?? FIRST_PRESET } },
                     render: ({ node, children }) => {
-                        // A render function knows what it declared, so it reads its own block type.
+                        // A render function reads back the block type it
+                        // declared.
                         const { style } = node as TextStyleBlock;
                         const preset = findPreset(style);
                         if (preset === undefined) {

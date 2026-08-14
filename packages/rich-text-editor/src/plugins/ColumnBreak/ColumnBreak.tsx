@@ -23,7 +23,7 @@ type ColumnBreakPluginOptions = {
 /**
  * Lays the content out in columns and lets the author say where each one ends.
  * The column count belongs to the editor instance rather than to the document,
- * which is why it is an option.
+ * so it is an option rather than something stored.
  */
 export const columnBreakPlugin = ({ columns = 2, gap = 'normal' }: ColumnBreakPluginOptions = {}): RtePlugin => ({
     id: 'column-break',

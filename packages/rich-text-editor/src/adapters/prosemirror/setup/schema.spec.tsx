@@ -8,13 +8,12 @@ import { type RtePlugin } from '#/domain';
 import { buildSchema } from './schema';
 
 /**
- * These are about WHEN a render is probed, which is the one cost in the schema
- * build worth caring about: probing renders React and reads the markup back, and
- * a page mounting twenty editors pays for whatever the build asks of it twenty
- * times over.
+ * These are about WHEN a render is probed, the one cost in the schema build
+ * worth caring about: probing renders React and reads the markup back, and
+ * every mounted editor pays for whatever the build asks of it.
  *
- * The plugin objects are declared once, at module level, the way a host is meant
- * to declare them — the sharing tested at the bottom is what that buys.
+ * The plugin objects are declared once, at module level, the way a host is
+ * meant to declare them — the sharing tested at the bottom is what that buys.
  */
 const plugins: RtePlugin[] = [
     {
@@ -30,7 +29,7 @@ const plugins: RtePlugin[] = [
                 {
                     key: 'link',
                     attributes: { href: { parseFromDomAttribute: 'href' } },
-                    // A render function reads its own value, the way a real plugin does.
+                    // A render function reads back the value it declared.
                     render: ({ children, value }) => <a href={(value as { href?: string }).href}>{children}</a>,
                 },
             ],
@@ -44,9 +43,9 @@ describe('buildSchema', () => {
 
         buildSchema(plugins, probe);
 
-        // Every probe a mark needs is for recognizing pasted HTML, and nothing has
-        // been pasted. A mounted editor that has not been typed in or pasted into
-        // should not have rendered a thing.
+        // Every probe a mark needs is for recognizing pasted HTML, and nothing
+        // has been pasted. A mounted editor that has not been typed in or
+        // pasted into should not have rendered a thing.
         expect(probe).not.toHaveBeenCalled();
     });
 
@@ -71,10 +70,10 @@ describe('buildSchema', () => {
         const first = buildSchema(plugins, probe);
         const second = buildSchema(plugins, probe);
 
-        // The cache hangs off the declaration rather than off the editor, which is
-        // what makes a page of editors over one `defaultPlugins` array cheap: the
-        // second one asks the same question and is answered from what the first
-        // already worked out.
+        // The cache hangs off the declaration rather than off the editor, which
+        // is what makes a page of editors over one `defaultPlugins` array
+        // cheap: the second one asks the same question and is answered from
+        // what the first already worked out.
         expect(first.schema.marks.link?.spec.parseDOM).toBeDefined();
         expect(second.schema.marks.link?.spec.parseDOM).toBeDefined();
         expect(probe).toHaveBeenCalledTimes(1);

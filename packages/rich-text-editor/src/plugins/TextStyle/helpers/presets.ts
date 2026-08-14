@@ -10,13 +10,13 @@ import styles from '../textStyle.module.scss';
  * used around images).
  *
  * Headings and text styles used to be two plugins with two block types, but
- * picking one is the same act as picking the other — so they are a single block
+ * picking one is the same act as picking the other, so they are a single block
  * type carrying a `style`, offered by a single dropdown.
  *
  * The table is the source of truth for both halves of the plugin: the style
  * union is derived from it, it says how each style renders (`tag` plus its
- * class) and reads (`label`), and the block's render function and the dropdown's
- * preview rows draw from the same place. Order here is order in the dropdown.
+ * class) and reads (`label`), and both the block's render function and the
+ * dropdown's preview rows draw from it. Order here is order in the dropdown.
  */
 const PRESETS = [
     { name: 'heading1', label: 'Heading 1', tag: 'h1', className: styles.heading1 },
@@ -44,8 +44,8 @@ export type TextStyleBlock = {
 
 /**
  * What the dropdown may offer. `paragraph` is the editor's own baseline block
- * rather than a preset — picking it is how a style is cleared — which is why it
- * sits outside `TextStyleName`.
+ * rather than a preset — picking it is how a style is cleared — so it sits
+ * outside `TextStyleName`.
  */
 export type TextStyleOption = 'paragraph' | TextStyleName;
 
@@ -72,10 +72,10 @@ const MARKDOWN_PREFIX: Partial<Record<Preset['tag'], string>> = {
 };
 
 /**
- * The markdown shortcut for a preset, for those that have one: `## ` for a
- * level-2 heading. Keyed by the tag rather than listed per preset, so it follows
- * the presets an editor was actually configured with — an editor not offering
- * `heading2` does not turn `## ` into one either.
+ * The markdown shortcut for a preset that has one: `## ` for a level-2 heading.
+ * Keyed by the tag rather than listed per preset, so it follows the presets an
+ * editor was configured with — one not offering `heading2` does not turn `## `
+ * into one either.
  */
 export const markdownRuleFor = ({ name, tag }: Preset): RteInputRule[] => {
     const match = MARKDOWN_PREFIX[tag];
@@ -84,8 +84,8 @@ export const markdownRuleFor = ({ name, tag }: Preset): RteInputRule[] => {
 
 /**
  * How a preset is recognized in pasted HTML. A heading is claimed by its bare
- * tag, so an `h2` from anywhere lands as one; a preset renders as a paragraph
- * and is told apart by the attribute it wrote.
+ * tag, so an `h2` from anywhere lands as one; a preset rendering as a paragraph
+ * is told apart by the attribute it wrote.
  */
 export const parseRuleFor = ({ name, tag }: Preset) => ({
     tag: tag === 'p' ? `p[data-text-style=${name}]` : tag,

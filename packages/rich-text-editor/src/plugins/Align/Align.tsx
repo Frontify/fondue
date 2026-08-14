@@ -15,7 +15,7 @@ import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
 /**
  * Alignment is an attribute on every text block rather than a block type of its
  * own, so it applies to paragraphs, headings, quotes and list items alike —
- * including block types this plugin knows nothing about.
+ * block types this plugin knows nothing about included.
  */
 export type AlignAttribute = {
     align?: 'left' | 'center' | 'right' | 'justify';
@@ -41,7 +41,7 @@ export const alignPlugin = (): RtePlugin => ({
     },
     toolbar: (api) => {
         // The block the selection is in carries the attribute this plugin
-        // injected, which the structural node type does not know about.
+        // added, which the structural node type does not know about.
         const current = api.selection.get().block as (RteBlockNode & AlignAttribute) | null;
         return (
             <>
@@ -52,8 +52,8 @@ export const alignPlugin = (): RtePlugin => ({
                             key={value}
                             active={active}
                             title={title}
-                            // Clicking the active alignment clears it, so the block
-                            // goes back to inheriting the editor's direction.
+                            // Clicking the active alignment clears it, so the
+                            // block inherits the editor's direction again.
                             onClick={() => api.blocks.updateAttributes({ align: active ? null : value })}
                         >
                             <Icon size={16} />

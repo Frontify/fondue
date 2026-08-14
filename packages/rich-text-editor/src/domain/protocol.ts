@@ -1,10 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 /**
- * Attributes that mean something to the editor when they appear on what a plugin
- * renders. They are part of the contract rather than a plugin's own markup, so
- * they are declared here instead of written out at both ends — a misspelled
- * protocol attribute fails silently, which is the worst way for one to fail.
+ * Attributes that mean something to the editor when they appear on what a
+ * plugin renders. Declared here rather than written out at both ends, because a
+ * misspelled one fails silently.
  */
 
 /**

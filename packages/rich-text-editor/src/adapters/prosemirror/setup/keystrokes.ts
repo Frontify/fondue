@@ -37,27 +37,21 @@ import { type SchemaBundle } from './schema';
  * (1) The array order below IS the precedence. Reordering it changes which
  *     feature gets a key, so keep it matched to the list above.
  * (2) A feature's hotkeys come before the list keys, so a feature may take a key
- *     the list behaviour would otherwise claim — this is what lets `blurOnBreak`
- *     have Enter.
+ *     the list behaviour would otherwise claim — how `blurOnBreak` gets Enter.
  * (3) Longer mark delimiters are tried first, or `**bold**` is read as an italic
  *     `*` wrapping `*bold*`.
  *
- * Worth knowing, because it is the one place the seam leaks: a mark can be
- * applied three ways, and only two of them go through `EditorControlApi`. The
- * toolbar button and the hotkey both call `api.marks.toggle`; typing `**bold**`
- * hits `markInputRule` below, which builds its transaction directly. That is
- * deliberate — the engine's input-rule machinery owns undo grouping, so a rewrite
- * has to be one transaction it controls.
+ * One place the seam leaks, worth knowing: a mark can be applied three ways and
+ * only two go through `EditorControlApi`. The toolbar button and the hotkey
+ * both call `api.marks.toggle`; typing `**bold**` hits `markInputRule` below,
+ * which builds its transaction directly. Deliberate — the engine's input-rule
+ * machinery owns undo grouping, so a rewrite has to be one transaction it
+ * controls.
  */
 
-// ---------------------------------------------------------------------------
 // (2) A feature's own hotkeys
-// ---------------------------------------------------------------------------
 
-/**
- * More than one feature may bind the same key; they run in mount order until one
- * reports that it handled it (returning `false` means "not mine").
- */
+/** Handlers for the same key run in mount order until one returns anything but `false`. */
 const featureHotkeys = (features: RtePlugin[], getApi: () => EditorControlApi): Record<string, Command> => {
     const hotkeys = new Map<string, Array<(api: EditorControlApi) => boolean | void>>();
     for (const feature of features) {
@@ -76,13 +70,11 @@ const featureHotkeys = (features: RtePlugin[], getApi: () => EditorControlApi): 
     );
 };
 
-// ---------------------------------------------------------------------------
 // (4) Typing rewrites
 //
 // A feature declares these (`inputRules`) rather than writing them, so the
-// matching stays in one place — and a rule naming a mark or block no mounted
-// feature provides simply drops out.
-// ---------------------------------------------------------------------------
+// matching stays in one place. A rule naming a mark or block no mounted feature
+// provides drops out.
 
 const escapeForRegExp = (text: string): string => text.replaceAll(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
@@ -170,17 +162,14 @@ const typingRewrites = (features: RtePlugin[], schema: Schema, itemTypeByList: M
     return rules.length > 0 ? [inputRules({ rules })] : [];
 };
 
-// ---------------------------------------------------------------------------
 // The pipeline
-// ---------------------------------------------------------------------------
 
 /**
  * Everything above, in the order the engine consults it — the numbers match the
  * six steps in this file's header, and invariant (1) says to keep them matched.
  *
- * `getApi` is a thunk because the pipeline is built before the view exists, and
- * the control API needs the view. It is only ever called from a key handler, by
- * which time the editor is live. See editor.ts.
+ * `getApi` is a thunk because this runs before the view exists (see editor.ts);
+ * it is only ever called from a key handler, by which time the editor is live.
  */
 export const keystrokePipeline = (
     features: RtePlugin[],

@@ -47,9 +47,10 @@ export const checkListPlugin = (): RtePlugin => ({
                 contains: [PARAGRAPH, ANY_LIST],
                 attributes: { checked: { default: false } },
                 render: ({ node, children }) => {
-                    // A render function knows what it declared, so it reads its own block type.
+                    // A render function reads back the block type it declared.
                     const item = node as CheckItemBlock;
-                    // An unset attribute reads as null, so `true` is the only "on".
+                    // An unset attribute reads as null, so `true` is the only
+                    // "on".
                     const checked = item.checked === true;
                     return (
                         <li data-checked={String(checked)} className={styles.item}>
@@ -65,8 +66,9 @@ export const checkListPlugin = (): RtePlugin => ({
                         </li>
                     );
                 },
-                // The state is read from the attribute value rather than off the
-                // element, so it comes back as a boolean instead of a string.
+                // The state is read from the attribute value rather than off
+                // the element, so it comes back as a boolean rather than a
+                // string.
                 parseRules: [
                     { tag: 'li[data-checked=true]', attributes: { checked: true } },
                     { tag: 'li[data-checked=false]', attributes: { checked: false } },

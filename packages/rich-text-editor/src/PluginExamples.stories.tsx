@@ -3,13 +3,13 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { type ReactNode, useEffect, useState } from 'react';
 
-// Stories import only the package public API — the consumer-plugin stories at
+// Stories import only the package public API. The consumer-plugin stories at
 // the bottom double as proof that the plugin contract is open: they define a
 // custom mark (Highlight), block (Callout) and inline element (Embed) without
 // touching the package.
 //
 // One story per plugin, each mounting that plugin alone, so what a plugin
-// contributes on its own is visible; the ones that need company to do anything
+// contributes on its own is visible. The ones that need company to do anything
 // (autoformat, reset formatting) say so.
 import {
     alignPlugin,
@@ -57,8 +57,9 @@ const MENTIONABLE: MentionItem[] = [
 const ALL_PLUGINS: RtePlugin[] = [...defaultPlugins, mentionPlugin({ items: MENTIONABLE })];
 
 /**
- * Story chrome is styled with the `@frontify/fondue-tokens` Tailwind preset (`tw-` prefix, token-backed
- * utilities). The package itself ships plain CSS — Tailwind is Storybook-only here.
+ * Story chrome is styled with the `@frontify/fondue-tokens` Tailwind preset
+ * (`tw-` prefix, token-backed utilities). The package itself ships plain CSS —
+ * Tailwind is Storybook-only here.
  */
 const LAYOUT = 'tw-grid tw-grid-cols-2 tw-content-start tw-gap-4 tw-p-4 tw-font-primary';
 const JSON_PANEL =
@@ -79,9 +80,7 @@ export default meta;
 
 type Story = StoryObj<typeof RichTextEditor>;
 
-// ---------------------------------------------------------------------------
 // Block types
-// ---------------------------------------------------------------------------
 
 /**
  * Every typography preset as one block type carrying a `style`: the heading
@@ -111,10 +110,10 @@ export const TextStyle: Story = {
 };
 
 /**
- * Which styles an editor offers is the host's call, so it is a constructor option.
- * This one offers two heading levels and nothing else — and because the offered
- * set is also what pasted HTML may become, an `h1` pasted in here lands as a
- * paragraph rather than as a heading the dropdown cannot show.
+ * Which styles an editor offers is the host's call, so it is a constructor
+ * option. This one offers two heading levels and nothing else — and because the
+ * offered set is also what pasted HTML may become, an `h1` pasted in here lands
+ * as a paragraph rather than as a heading the dropdown cannot show.
  */
 export const TextStyleSubset: Story = {
     render: () => {
@@ -159,9 +158,7 @@ export const Quote: Story = {
     },
 };
 
-// ---------------------------------------------------------------------------
 // Marks
-// ---------------------------------------------------------------------------
 
 /** ⌘B, or the toolbar button. */
 export const Bold: Story = {
@@ -377,9 +374,7 @@ export const Link: Story = {
     },
 };
 
-// ---------------------------------------------------------------------------
 // Block attributes
-// ---------------------------------------------------------------------------
 
 /**
  * Alignment is an attribute on every text block rather than a block type, so it
@@ -406,9 +401,7 @@ export const Align: Story = {
     },
 };
 
-// ---------------------------------------------------------------------------
 // Lists
-// ---------------------------------------------------------------------------
 
 /** Enter splits an item, Tab nests it, Shift-Tab lifts it. */
 export const BulletList: Story = {
@@ -515,9 +508,7 @@ export const CheckList: Story = {
     },
 };
 
-// ---------------------------------------------------------------------------
 // Comboboxes
-// ---------------------------------------------------------------------------
 
 /**
  * Whom you can mention is not something the package can know, so the
@@ -552,14 +543,12 @@ export const Mention: Story = {
     },
 };
 
-// ---------------------------------------------------------------------------
 // Plugins without a schema of their own
-// ---------------------------------------------------------------------------
 
 /**
  * Typing shortcuts only: markdown prefixes, wrapping delimiters and typography.
- * A rule naming a mark, block or list that is not mounted simply never fires, so
- * this story mounts the plugins its rules target.
+ * A rule naming a mark, block or list that is not mounted simply never fires,
+ * so this story mounts the plugins its rules target.
  */
 export const Autoformat: Story = {
     render: () => {
@@ -719,9 +708,7 @@ export const ColumnBreak: Story = {
     },
 };
 
-// ---------------------------------------------------------------------------
 // Everything at once
-// ---------------------------------------------------------------------------
 
 /**
  * Every built-in plugin: marks, value marks, blocks, lists, a void block, and
@@ -814,9 +801,7 @@ export const AllPlugins: Story = {
     },
 };
 
-// ---------------------------------------------------------------------------
 // Consumer plugins — defined here, not in the package
-// ---------------------------------------------------------------------------
 
 /** A consumer-defined mark, plus the type its plugin writes on text nodes. */
 type HighlightMark = {
@@ -857,8 +842,8 @@ const highlightPlugin = (): RtePlugin => ({
 });
 
 /**
- * The type juggling a consumer plugin costs: one type argument naming the
- * extra mark. Everything the shipped plugins contribute stays checked.
+ * The type juggling a consumer plugin costs: one type argument naming the extra
+ * mark. Everything the shipped plugins contribute stays checked.
  */
 export const ConsumerMark: Story = {
     render: () => {
@@ -966,9 +951,10 @@ const EMBEDS = [
 ];
 
 /**
- * A consumer-written picker, to show what the floating contract gives an external
- * plugin: the editor anchors this at the trigger and hands over the keys through
- * `onKeys`; the list, the highlight and what picking one does are all local.
+ * A consumer-written picker, showing what the floating contract gives an
+ * external plugin: the editor anchors it at the trigger and hands over the keys
+ * through `onKeys`, while the list, the highlight and what picking one does
+ * stay local.
  */
 const EmbedPicker = ({ context }: { context: FloatingContext }): ReactNode => {
     const { api, query, clearQuery, close, onKeys } = context;
@@ -1036,7 +1022,7 @@ const embedPlugin = (): RtePlugin => ({
                 type: 'embed',
                 attributes: { provider: { parseFromDomAttribute: 'data-embed' } },
                 render: ({ node }) => {
-                    // A render function knows what it declared, so it reads its own inline type.
+                    // A render function reads back the inline type it declared.
                     const embed = node as EmbedInline;
                     return (
                         <span

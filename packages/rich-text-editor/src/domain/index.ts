@@ -2,22 +2,20 @@
 
 /**
  * The domain: every contract the editor is built on, and nothing that knows how
- * any of it is carried out. It imports from no other layer — the ports, the
- * adapters, the React shell and the plugins all import from here, which is what
- * makes an engine swap a rewrite of one adapter folder.
+ * any of it is carried out. It imports from no other layer; the ports, the
+ * adapters, the React shell and the plugins all import from here.
  *
- * The document format lives in `document.ts`, what a plugin declares in
- * `schema.ts` and `plugin.ts`, the verbs a plugin acts through in `commands.ts`,
- * and the few names and attributes the core itself depends on in `vocabulary.ts`
- * and `protocol.ts`.
+ * - `document.ts`   — the document format
+ * - `schema.ts`     — what a plugin declares exists
+ * - `plugin.ts`     — the plugin object itself, its keys and its floating UI
+ * - `commands.ts`   — the verbs a plugin acts through
+ * - `vocabulary.ts`, `protocol.ts` — the few names the core itself depends on
  *
  * This is the surface a plugin may import, enforced by the linter. The package
- * root re-exports the four types an external author cannot write a plugin
- * without naming — the declaration, the control API, the floating context and
- * the inline node — and nothing else from here: the rest is contextually typed
- * inside the `RtePlugin` literal, and the constants are conveniences a shipped
- * plugin uses in place of a string literal. So an external plugin is written
- * the same way a shipped one is; it just spells `'paragraph'` out.
+ * root re-exports only the four types an external plugin author has to name;
+ * the rest is contextually typed inside the `RtePlugin` literal, and the
+ * constants are conveniences a shipped plugin uses in place of a string
+ * literal.
  */
 
 export { type EditorControlApi, type RteSelectionSnapshot } from './commands';

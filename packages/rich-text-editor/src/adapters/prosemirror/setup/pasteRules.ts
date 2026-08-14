@@ -23,7 +23,7 @@ import { type AttributeSpec, type BlockAttributeSpec, type ParseRule } from '#/d
  * Which rule claims an element when more than one matches it. A qualified
  * selector (`p[data-text-style=imageCaption]`, `ul[data-check-list]`) describes
  * exactly what one feature wrote; a bare tag is a fallback for anything of that
- * shape. So the qualified one has to win — see invariant (1).
+ * shape — so the qualified one wins. See invariant (1).
  */
 const qualifiedPriority = (tag: string): number | undefined => (/[[.#:]/.test(tag) ? 60 : undefined);
 
@@ -34,7 +34,7 @@ export const pasteRules = (
     injected: readonly BlockAttributeSpec[] = [],
 ): TagParseRule[] => {
     // flatMap rather than filter-then-map: dropping the absent ones in the same
-    // step is what keeps the present ones typed as the strings they are.
+    // step keeps the present ones typed as the strings they are.
     const domAttributeNames = Object.entries(attributes).flatMap(([name, attribute]): [string, string][] =>
         attribute.parseFromDomAttribute ? [[name, attribute.parseFromDomAttribute]] : [],
     );
