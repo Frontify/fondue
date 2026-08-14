@@ -215,7 +215,7 @@ const createMarkApi = (view: EditorView, schema: Schema): EditorControlApi['mark
         }
         const { $from, empty } = view.state.selection;
         if (!empty) {
-            return Boolean(markType.isInSet($from.marks()));
+            return markType.isInSet($from.marks()) !== undefined;
         }
         const range = findMarkRange(view.state, markType);
         if (range === null) {

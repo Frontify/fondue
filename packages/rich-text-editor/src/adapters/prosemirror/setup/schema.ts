@@ -101,12 +101,14 @@ const withExtraStyle = (attrs: Record<string, string>, declarations: string[]): 
 
 /**
  * The CSS a node's injected attributes add. Their values are strings by
- * contract (`toStyle` takes one), so anything else counts as unset.
+ * contract, and null while unset (`BlockAttributeSpec.default`) — which is what
+ * the read below says, and the one place the engine's untyped attribute bag is
+ * given that type.
  */
 const injectedDeclarations = (attrs: Record<string, unknown>, injected: readonly BlockAttributeSpec[]): string[] =>
     injected.flatMap((attribute) => {
-        const value: unknown = attrs[attribute.name];
-        return typeof value === 'string' && value !== '' ? [attribute.toStyle(value)] : [];
+        const value = attrs[attribute.name] as string | null | undefined;
+        return value ? [attribute.toStyle(value)] : [];
     });
 
 /** Injected CSS lands on the outermost element the feature rendered. */

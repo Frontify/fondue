@@ -8,9 +8,9 @@ import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
 
 import styles from './code.module.scss';
 
-/** The flag this plugin sets on text nodes. */
+/** The flag this plugin sets on text nodes: present means on, and `true` is the only value it takes. */
 export type CodeMark = {
-    code?: boolean;
+    code?: true;
 };
 
 export const codePlugin = (): RtePlugin => ({

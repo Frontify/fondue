@@ -16,8 +16,8 @@ export type ColumnBreakBlock = {
 type ColumnBreakPluginOptions = {
     /** How many columns the content is laid out in. */
     columns?: number;
-    /** The gap between them — a CSS length, or a number of pixels. */
-    gap?: string | number;
+    /** The gap between them, as a CSS length: `'24px'`, `'2rem'`, `'normal'`. */
+    gap?: string;
 };
 
 /**
@@ -47,6 +47,6 @@ export const columnBreakPlugin = ({ columns = 2, gap = 'normal' }: ColumnBreakPl
     contentClassName: styles.columns,
     contentProperties: {
         '--rte-columns': String(columns),
-        '--rte-column-gap': typeof gap === 'number' ? `${gap}px` : gap,
+        '--rte-column-gap': gap,
     },
 });

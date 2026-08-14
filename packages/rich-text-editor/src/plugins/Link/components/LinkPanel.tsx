@@ -17,7 +17,7 @@ import styles from './linkPanel.module.scss';
  */
 export const LinkPanel = ({ api, run }: { api: EditorControlApi; run: LinkRun }): ReactNode => {
     const [draft, setDraft] = useState<LinkDraft | null>(null);
-    const href = typeof run.value.href === 'string' ? run.value.href : '';
+    const href = run.value.href ?? '';
 
     if (draft !== null) {
         return <LinkForm api={api} initial={draft} existing onDone={() => setDraft(null)} />;

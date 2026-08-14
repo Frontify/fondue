@@ -4,14 +4,25 @@ import { type MouseEvent } from 'react';
 
 import { type EditorControlApi } from '#/domain';
 
+/**
+ * What a link carries in the document. `openInNewTab` is stored only when it is
+ * on — its attribute defaults to null, which is dropped on the way in, so an
+ * ordinary link stays `{ link: { href } }`.
+ */
+export type LinkValue = { href: string; openInNewTab?: true };
+
 /** Both halves of a link plus its flag, as the editing UI works with them. */
 export type LinkDraft = { href: string; text: string; openInNewTab: boolean };
 
-/** The whole run of the link mark around the selection: what the panel is about. */
-export type LinkRun = { value: Record<string, unknown>; text: string };
+/**
+ * The whole run of the link mark around the selection: what the panel is about.
+ * Partial, because what a link *carries* is not what it was declared with — a
+ * pasted `<a>` with no href leaves it unset, and an unset attribute is absent.
+ */
+export type LinkRun = { value: Partial<LinkValue>; text: string };
 
-export const draftFrom = (value: Record<string, unknown> | null, text: string): LinkDraft => ({
-    href: typeof value?.href === 'string' ? value.href : '',
+export const draftFrom = (value: Partial<LinkValue> | null, text: string): LinkDraft => ({
+    href: value?.href ?? '',
     openInNewTab: value?.openInNewTab === true,
     text,
 });
@@ -25,7 +36,10 @@ export const draftFrom = (value: Record<string, unknown> | null, text: string): 
 export const readSelection = (api: EditorControlApi): LinkDraft => {
     api.marks.select('link');
     const selection = api.selection.get();
-    return draftFrom(selection.marks.link ?? null, selection.text);
+    // The snapshot's marks are untyped, the way every mark key is; this plugin
+    // knows what its own carries.
+    const value = (selection.marks.link ?? null) as Partial<LinkValue> | null;
+    return draftFrom(value, selection.text);
 };
 
 /**

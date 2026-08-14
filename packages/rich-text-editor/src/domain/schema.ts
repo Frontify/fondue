@@ -20,11 +20,12 @@ export type AttributeSpec = {
     /** Value when the attribute is absent. */
     default?: unknown;
     /**
-     * Read this attribute back from a DOM attribute when parsing pasted HTML
-     * — e.g. an image's `src`. Pass a string when the DOM attribute is named
-     * differently (`id: { parseFromDomAttribute: 'data-mention-id' }`).
+     * The DOM attribute this one is read back from when parsing pasted HTML —
+     * `href: { parseFromDomAttribute: 'href' }` for a link, or a differently
+     * named one (`id: { parseFromDomAttribute: 'data-mention-id' }`). Named in
+     * full rather than flagged, so there is one kind of value to read.
      */
-    parseFromDomAttribute?: boolean | string;
+    parseFromDomAttribute?: string;
     /**
      * Read this attribute back from a CSS property when parsing pasted HTML —
      * e.g. `color` for a font-color mark, whose value lives in the style
@@ -140,8 +141,8 @@ export type MarkSpec = {
 export type BlockAttributeSpec = {
     /** Attribute name stored on block nodes, e.g. `align`. */
     name: string;
-    /** Value when the attribute is absent. */
-    default?: unknown;
+    /** Value when the attribute is absent. A string, like every value here. */
+    default?: string;
     /**
      * The CSS a value applies to the block element, e.g. `text-align: center`.
      * Values are strings — clear the attribute by setting it to null.

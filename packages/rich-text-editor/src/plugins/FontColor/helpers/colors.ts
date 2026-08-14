@@ -22,8 +22,8 @@ const RGB_COLOR = /^rgba?\(([^)]+)\)$/;
  * asking the browser to resolve them, which is a document away from a helper
  * that otherwise only does arithmetic.
  */
-export const parseCssColor = (css: unknown): RgbaColor | undefined => {
-    if (typeof css !== 'string') {
+export const parseCssColor = (css: string | undefined): RgbaColor | undefined => {
+    if (css === undefined) {
         return undefined;
     }
     const value = css.trim();

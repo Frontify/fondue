@@ -49,7 +49,8 @@ export const checkListPlugin = (): RtePlugin => ({
                 render: ({ node, children }) => {
                     // A render function knows what it declared, so it reads its own block type.
                     const item = node as CheckItemBlock;
-                    const checked = Boolean(item.checked);
+                    // An unset attribute reads as null, so `true` is the only "on".
+                    const checked = item.checked === true;
                     return (
                         <li data-checked={String(checked)} className={styles.item}>
                             <input

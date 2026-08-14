@@ -708,7 +708,11 @@ export const ColumnBreak: Story = {
         return (
             <div className={LAYOUT}>
                 <p className={HINT}>The column-break button inserts a break where the caret is.</p>
-                <RichTextEditor value={doc} onChange={setDoc} plugins={[columnBreakPlugin({ columns: 2, gap: 24 })]} />
+                <RichTextEditor
+                    value={doc}
+                    onChange={setDoc}
+                    plugins={[columnBreakPlugin({ columns: 2, gap: '24px' })]}
+                />
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
         );

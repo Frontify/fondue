@@ -2,7 +2,7 @@
 
 import { type Node as PmNode, type NodeType as PmNodeType, type Schema } from 'prosemirror-model';
 
-import { type RteBlockNode, type RteDocumentOf, type RteInlineNode } from '#/domain';
+import { type RteBlockNode, type RteDocumentOf, type RteInlineNode, type StoredMarkValue } from '#/domain';
 
 /**
  * The document boundary: RTE format ↔ engine format. The only place either shape
@@ -52,22 +52,24 @@ const declaredAttrs = (
 const inlinesToEngine = (children: RteInlineNode[], schema: Schema): PmNode[] => {
     const nodes: PmNode[] = [];
     for (const child of children) {
-        // Text nodes carry `text`, inline elements carry `type`. Both shapes
-        // are open, so the check has to be on the value, not on the key.
-        if (typeof child.text === 'string') {
+        // Text nodes carry `text`, inline elements carry `type`, and each says
+        // the other is absent — so reading one discriminates the union.
+        if (child.text !== undefined) {
             if (child.text === '') {
                 continue;
             }
             const marks = Object.entries(schema.marks)
-                .filter(([key]) => Boolean(child[key]))
+                .filter(([key]) => child[key] !== undefined)
                 .map(([key, markType]) => {
-                    const value = child[key];
-                    return markType.create(typeof value === 'object' && value !== null ? value : undefined);
+                    // A mark is stored as `true` when it carries nothing and as
+                    // its attributes when it does — see `StoredMarkValue`.
+                    const value = child[key] as StoredMarkValue;
+                    return markType.create(value === true ? undefined : value);
                 });
             nodes.push(schema.text(child.text, marks));
             continue;
         }
-        const type = String(child.type);
+        const { type } = child;
         const nodeType = schema.nodes[type];
         if (!nodeType) {
             throw new Error(`Unknown inline type "${type}". Did you forget to register a plugin?`);

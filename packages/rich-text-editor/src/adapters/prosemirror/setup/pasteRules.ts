@@ -33,19 +33,18 @@ export const pasteRules = (
     rules: readonly ParseRule[],
     injected: readonly BlockAttributeSpec[] = [],
 ): TagParseRule[] => {
-    const domAttributeNames = Object.entries(attributes)
-        .filter(([, attribute]) => attribute.parseFromDomAttribute)
-        .map(([name, attribute]): [string, string] => [
-            name,
-            typeof attribute.parseFromDomAttribute === 'string' ? attribute.parseFromDomAttribute : name,
-        ]);
+    // flatMap rather than filter-then-map: dropping the absent ones in the same
+    // step is what keeps the present ones typed as the strings they are.
+    const domAttributeNames = Object.entries(attributes).flatMap(([name, attribute]): [string, string][] =>
+        attribute.parseFromDomAttribute ? [[name, attribute.parseFromDomAttribute]] : [],
+    );
     const styleNames: [string, string][] = [
-        ...Object.entries(attributes)
-            .filter(([, attribute]) => attribute.parseFromStyle)
-            .map(([name, attribute]): [string, string] => [name, attribute.parseFromStyle as string]),
-        ...injected
-            .filter((attribute) => attribute.parseFromStyle)
-            .map((attribute): [string, string] => [attribute.name, attribute.parseFromStyle as string]),
+        ...Object.entries(attributes).flatMap(([name, attribute]): [string, string][] =>
+            attribute.parseFromStyle ? [[name, attribute.parseFromStyle]] : [],
+        ),
+        ...injected.flatMap((attribute): [string, string][] =>
+            attribute.parseFromStyle ? [[attribute.name, attribute.parseFromStyle]] : [],
+        ),
     ];
 
     return rules.map(({ tag, attributes: implied }) => ({

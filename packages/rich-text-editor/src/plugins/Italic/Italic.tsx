@@ -6,9 +6,9 @@ import { type RtePlugin } from '#/domain';
 
 import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
 
-/** The flag this plugin sets on text nodes. */
+/** The flag this plugin sets on text nodes: present means on, and `true` is the only value it takes. */
 export type ItalicMark = {
-    italic?: boolean;
+    italic?: true;
 };
 
 export const italicPlugin = (): RtePlugin => ({

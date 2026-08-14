@@ -7,6 +7,7 @@ import { type ReactNode, useState } from 'react';
 import { type EditorControlApi } from '#/domain';
 
 import { ToolbarButton } from '../../shared/ToolbarButton/ToolbarButton';
+import { type FontColorValue } from '../FontColor';
 import { parseCssColor, type RgbaColor, toCssColor } from '../helpers/colors';
 
 import styles from './colorFlyout.module.scss';
@@ -22,7 +23,10 @@ import styles from './colorFlyout.module.scss';
  * and none of those belong in the undo history.
  */
 export const ColorFlyout = ({ api }: { api: EditorControlApi }): ReactNode => {
-    const current = parseCssColor(api.selection.get().marks.fontColor?.color);
+    // The snapshot's marks are untyped, the way every mark key is; this plugin
+    // knows what its own carries.
+    const value = api.selection.get().marks.fontColor as Partial<FontColorValue> | undefined;
+    const current = parseCssColor(value?.color);
     const [open, setOpen] = useState(false);
     const [draft, setDraft] = useState<RgbaColor | undefined>(undefined);
 

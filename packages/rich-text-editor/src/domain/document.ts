@@ -52,23 +52,42 @@ export type RteInlineNode = RteTextNode | RteInlineElementNode;
 
 /**
  * A text leaf. Marks live flat on the node, keyed by the mark key a plugin
- * registered: plain marks as booleans (`bold: true`), value-carrying marks as
- * objects (`link: { href }`). The index signature makes the format open — a
+ * registered: a plain mark as `true` (`bold: true`), a value-carrying one as its
+ * attributes (`link: { href }`). Presence is what turns a mark on — there is no
+ * `false`, an absent key is off. The index signature makes the format open — a
  * stored document may carry marks from plugins this build doesn't know.
  * Authoring goes through the package root's closed `RteText`, which lists the
  * marks that actually ship, so typos in mark keys are caught.
  */
 export type RteTextNode = {
     text: string;
+    /** Never present — it is what tells this apart from an inline element. */
+    type?: undefined;
     [mark: string]: unknown;
 };
+
+/**
+ * What a mark key holds on a text node: `true` for a mark that carries nothing,
+ * its attributes for one that does. Written out because the two are told apart
+ * by the value rather than by the key, and the document boundary has to pick one.
+ */
+export type StoredMarkValue = true | Record<string, unknown>;
 
 /**
  * A void inline element (e.g. a mention): no text content of its own, data
  * lives flat in attributes. Discriminated from text nodes by having `type`
  * instead of `text`, and open for the same reason.
+ *
+ * Both members spell the absent half out as `?: undefined`. That is what makes
+ * the discrimination real for the compiler as well as on paper: the index
+ * signatures would otherwise let `text` and `type` be "possibly present" on
+ * either member, so neither `in` nor a plain property read narrows. The cost is
+ * that no mark may be named `type` and no attribute `text`, which is a naming
+ * rule worth having anyway.
  */
 export type RteInlineElementNode = {
     type: string;
+    /** Never present — see `RteTextNode`. */
+    text?: undefined;
     [attribute: string]: unknown;
 };

@@ -63,7 +63,7 @@ const DISMISS = 'dismiss';
 export const declaredTriggers = (features: RtePlugin[]): string[] => [
     ...new Set(
         features.flatMap(({ floating }) =>
-            floating && typeof floating.anchor === 'object' && 'trigger' in floating.anchor
+            floating && floating.anchor !== 'selection' && 'trigger' in floating.anchor
                 ? [floating.anchor.trigger]
                 : [],
         ),

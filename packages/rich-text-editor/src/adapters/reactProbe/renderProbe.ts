@@ -30,7 +30,7 @@ const toDomChild = (node: ChildNode): DomChild | null => {
         return null;
     }
     const element = node as Element;
-    const children = Array.from(element.childNodes, toDomChild).filter((child): child is DomChild => child !== null);
+    const children = Array.from(element.childNodes, toDomChild).filter((child) => child !== null);
     if (children.length > 1 && children.includes(0)) {
         throw new Error(
             `A plugin renders <${element.tagName.toLowerCase()}> with the children slot next to other content. ` +

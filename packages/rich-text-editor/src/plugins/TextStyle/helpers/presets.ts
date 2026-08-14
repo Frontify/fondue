@@ -61,25 +61,26 @@ export const labelOf = (option: TextStyleOption): string => findPreset(option)?.
 
 /** The presets an editor was configured with, in the order they were given. */
 export const presetsFor = (options: readonly TextStyleOption[]): Preset[] =>
-    options.map(findPreset).filter((preset): preset is Preset => preset !== undefined);
+    options.map(findPreset).filter((preset) => preset !== undefined);
+
+/** The `#` prefix each heading tag answers to; the presets rendering as `p` have none. */
+const MARKDOWN_PREFIX: Partial<Record<Preset['tag'], string>> = {
+    h1: '# ',
+    h2: '## ',
+    h3: '### ',
+    h4: '#### ',
+};
 
 /**
  * The markdown shortcut for a preset, for those that have one: `## ` for a
- * level-2 heading. Derived from the tag rather than listed, so it follows the
- * presets an editor was actually configured with — an editor not offering
+ * level-2 heading. Keyed by the tag rather than listed per preset, so it follows
+ * the presets an editor was actually configured with — an editor not offering
  * `heading2` does not turn `## ` into one either.
  */
-export const markdownRuleFor = ({ name, tag }: Preset): RteInputRule[] =>
-    /^h[1-6]$/.test(tag)
-        ? [
-              {
-                  kind: 'block',
-                  match: `${'#'.repeat(Number(tag.slice(1)))} `,
-                  block: 'textStyle',
-                  attributes: { style: name },
-              },
-          ]
-        : [];
+export const markdownRuleFor = ({ name, tag }: Preset): RteInputRule[] => {
+    const match = MARKDOWN_PREFIX[tag];
+    return match === undefined ? [] : [{ kind: 'block', match, block: 'textStyle', attributes: { style: name } }];
+};
 
 /**
  * How a preset is recognized in pasted HTML. A heading is claimed by its bare

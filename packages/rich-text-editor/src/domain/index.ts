@@ -28,6 +28,7 @@ export {
     type RteInlineElementNode,
     type RteInlineNode,
     type RteTextNode,
+    type StoredMarkValue,
 } from './document';
 export {
     type FloatingAnchor,
