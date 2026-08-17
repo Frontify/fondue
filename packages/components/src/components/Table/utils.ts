@@ -30,11 +30,10 @@ export function handleKeyDown(event: KeyboardEvent<HTMLTableElement>) {
         nextRow.focus();
     }
 }
-
-const INTERACTIVE_ELEMENTS_LIST = [HTMLButtonElement, HTMLAnchorElement, HTMLInputElement];
 const INTERACTIVE_ROLES_LIST = ['button', 'link'];
 
 export function shouldIgnoreRowClick(event?: MouseEvent): boolean {
+    const INTERACTIVE_ELEMENTS_LIST = [HTMLButtonElement, HTMLAnchorElement, HTMLInputElement];
     if (!event) {
         return false;
     }

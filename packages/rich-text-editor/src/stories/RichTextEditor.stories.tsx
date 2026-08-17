@@ -15,6 +15,7 @@ import {
     type MentionItem,
     type RteDocument,
     RichTextEditor,
+    RichTextRenderer,
 } from '../index';
 
 /** Who can be mentioned is the app's business, which is why the mention plugin requires it as an option. */
@@ -161,6 +162,36 @@ export const ToolbarPlacement: Story = {
                         />
                     </div>
                 </div>
+                <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
+            </div>
+        );
+    },
+};
+
+/**
+ * `RichTextRenderer` draws a stored document with no editing engine — what a
+ * published page or an SSR pass wants. Same `plugins` list as the editor.
+ */
+export const Renderer: Story = {
+    render: () => {
+        const doc: RteDocument = {
+            version: 1,
+            blocks: [
+                { type: 'textStyle', style: 'heading2', children: [{ text: 'Rendered, not edited' }] },
+                {
+                    type: 'paragraph',
+                    children: [
+                        { text: 'This is ' },
+                        { text: 'RichTextRenderer', bold: true },
+                        { text: ' — JSON to React, no ProseMirror.' },
+                    ],
+                },
+            ],
+        };
+
+        return (
+            <div className={LAYOUT}>
+                <RichTextRenderer value={doc} plugins={defaultPlugins} />
                 <pre className={JSON_PANEL}>{JSON.stringify(doc, null, 2)}</pre>
             </div>
         );

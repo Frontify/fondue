@@ -2,7 +2,7 @@
 
 import { IconSubscript } from '@frontify/fondue-icons';
 
-import { type RtePlugin } from '#/domain';
+import { type RtePlugin } from '#/core';
 
 import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
 
@@ -13,9 +13,14 @@ export type SubscriptMark = {
 
 export const subscriptPlugin = (): RtePlugin => ({
     id: 'subscript',
-    schema: {
-        marks: [{ key: 'subscript', render: ({ children }) => <sub>{children}</sub> }],
-    },
+    schema: [
+        {
+            kind: 'mark',
+            type: 'subscript',
+            toDom: () => ({ tag: 'sub', children: true }),
+            renderComponent: ({ children }) => <sub>{children}</sub>,
+        },
+    ],
     toolbar: (api) => (
         <ToolbarButton
             title="Subscript"

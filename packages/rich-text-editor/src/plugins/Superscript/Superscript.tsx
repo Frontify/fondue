@@ -2,7 +2,7 @@
 
 import { IconSuperscript } from '@frontify/fondue-icons';
 
-import { type RtePlugin } from '#/domain';
+import { type RtePlugin } from '#/core';
 
 import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
 
@@ -13,9 +13,14 @@ export type SuperscriptMark = {
 
 export const superscriptPlugin = (): RtePlugin => ({
     id: 'superscript',
-    schema: {
-        marks: [{ key: 'superscript', render: ({ children }) => <sup>{children}</sup> }],
-    },
+    schema: [
+        {
+            kind: 'mark',
+            type: 'superscript',
+            toDom: () => ({ tag: 'sup', children: true }),
+            renderComponent: ({ children }) => <sup>{children}</sup>,
+        },
+    ],
     toolbar: (api) => (
         <ToolbarButton
             title="Superscript"

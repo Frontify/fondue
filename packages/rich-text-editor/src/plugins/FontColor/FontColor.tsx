@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type RtePlugin } from '#/domain';
+import { type RtePlugin } from '#/core';
 
 import { ColorFlyout } from './components/ColorFlyout';
 
@@ -16,23 +16,28 @@ export type FontColorMark = {
 
 export const fontColorPlugin = (): RtePlugin => ({
     id: 'font-color',
-    schema: {
-        marks: [
-            {
-                key: 'fontColor',
-                attributes: { color: { parseFromStyle: 'color' } },
-                // Underline and strikethrough draw their line in the colour of
-                // their own element, which a descendant cannot change, so the
-                // colour has to be set on an element wrapping them.
-                nesting: -1,
-                render: ({ value, children }) => {
-                    // A render function reads back the value it declared.
-                    // Partial: a pasted span without a colour leaves it unset.
-                    const { color } = value as Partial<FontColorValue>;
-                    return <span style={{ color }}>{children}</span>;
-                },
+    schema: [
+        {
+            kind: 'mark',
+            type: 'fontColor',
+            attributes: { color: { parseFromStyle: 'color' } },
+            // Underline and strikethrough draw their line in the colour of
+            // their own element, which a descendant cannot change, so the
+            // colour has to be set on an element wrapping them.
+            nesting: -1,
+            toDom: (attrs) => {
+                const { color } = attrs as Partial<FontColorValue>;
+                return {
+                    tag: 'span',
+                    attrs: color ? { style: `color: ${color}` } : undefined,
+                    children: true,
+                };
             },
-        ],
-    },
+            renderComponent: ({ value, children }) => {
+                const { color } = value as Partial<FontColorValue>;
+                return <span style={{ color }}>{children}</span>;
+            },
+        },
+    ],
     toolbar: (api) => <ColorFlyout api={api} />,
 });

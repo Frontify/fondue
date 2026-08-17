@@ -2,7 +2,7 @@
 
 import { IconTextFormatItalic } from '@frontify/fondue-icons';
 
-import { type RtePlugin } from '#/domain';
+import { type RtePlugin } from '#/core';
 
 import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
 
@@ -13,9 +13,15 @@ export type ItalicMark = {
 
 export const italicPlugin = (): RtePlugin => ({
     id: 'italic',
-    schema: {
-        marks: [{ key: 'italic', render: ({ children }) => <em>{children}</em>, parseRules: [{ tag: 'i' }] }],
-    },
+    schema: [
+        {
+            kind: 'mark',
+            type: 'italic',
+            toDom: () => ({ tag: 'em', children: true }),
+            renderComponent: ({ children }) => <em>{children}</em>,
+            parseRules: [{ tag: 'i' }],
+        },
+    ],
     toolbar: (api) => (
         <ToolbarButton
             title="Italic"

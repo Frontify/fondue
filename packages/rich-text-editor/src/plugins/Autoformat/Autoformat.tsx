@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type RtePlugin } from '#/domain';
+import { type RtePlugin } from '#/core';
 
 /**
  * Typography applied while typing: punctuation, symbols and curly quotes. Every

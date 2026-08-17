@@ -2,7 +2,7 @@
 
 import { type ReactNode, useEffect, useState } from 'react';
 
-import { type EditorControlApi, type FloatingContext } from '#/domain';
+import { type AutocompleteContext, type EditorControlApi } from '#/core';
 
 import styles from './combobox.module.scss';
 
@@ -27,7 +27,7 @@ export const Combobox = ({
     label,
     onSelect,
 }: {
-    context: FloatingContext;
+    context: AutocompleteContext;
     /** Already filtered for the query, already capped. */
     items: readonly ComboboxItem[];
     /** What the list is called, for screen readers. */

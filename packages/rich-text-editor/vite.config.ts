@@ -73,7 +73,7 @@ export default defineConfig({
      * suite for this one to find.
      */
     test: {
-        environment: 'happy-dom',
+        environment: 'node',
         exclude: [...configDefaults.exclude, 'src/type-derivation.spec.ts'],
     },
     build: {

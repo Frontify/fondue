@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type RtePlugin } from '#/domain';
+import { type RtePlugin } from '#/core';
 
 import { Combobox } from './components/Combobox';
 import styles from './mention.module.scss';
@@ -40,37 +40,43 @@ type MentionPluginOptions = {
  */
 export const mentionPlugin = ({ items, trigger = '@' }: MentionPluginOptions): RtePlugin => ({
     id: 'mention',
-    schema: {
-        inlines: [
-            {
-                type: 'mention',
-                attributes: {
-                    id: { parseFromDomAttribute: 'data-mention-id' },
-                    label: { parseFromDomAttribute: 'data-mention-label' },
-                },
-                render: ({ node }) => {
-                    // A render function reads back the inline type it declared.
-                    const mention = node as MentionInline;
-                    return (
-                        <span
-                            data-mention-id={mention.id}
-                            data-mention-label={mention.label}
-                            className={styles.mention}
-                        >
-                            {trigger}
-                            {mention.label}
-                        </span>
-                    );
-                },
-                parseRules: [{ tag: 'span[data-mention-id]' }],
+    schema: [
+        {
+            kind: 'inline',
+            type: 'mention',
+            attributes: {
+                id: { parseFromDomAttribute: 'data-mention-id' },
+                label: { parseFromDomAttribute: 'data-mention-label' },
             },
-        ],
-    },
-    floating: {
-        // Typed at the start of a word, the trigger opens the picker; what
-        // follows it is the query.
-        anchor: { trigger },
-        render: (context) => {
+            toDom: (attrs) => {
+                const mention = attrs as Partial<MentionInline>;
+                const id = typeof mention.id === 'string' ? mention.id : '';
+                const label = typeof mention.label === 'string' ? mention.label : '';
+                return {
+                    tag: 'span',
+                    attrs: {
+                        'data-mention-id': id,
+                        'data-mention-label': label,
+                        class: styles.mention ?? '',
+                    },
+                    children: `${trigger}${label}`,
+                };
+            },
+            renderComponent: ({ node }) => {
+                const mention = node as MentionInline;
+                return (
+                    <span data-mention-id={mention.id} data-mention-label={mention.label} className={styles.mention}>
+                        {trigger}
+                        {mention.label}
+                    </span>
+                );
+            },
+            parseRules: [{ tag: 'span[data-mention-id]' }],
+        },
+    ],
+    autocomplete: {
+        trigger,
+        component: (context) => {
             const needle = context.query.toLowerCase();
             const found = items.filter((item) => item.label.toLowerCase().includes(needle)).slice(0, COMBOBOX_LIMIT);
             // Nothing to offer means no picker, so what was typed stays

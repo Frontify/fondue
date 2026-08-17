@@ -2,7 +2,7 @@
 
 import { IconListBullet, IconListNumbers, type FondueIcon } from '@frontify/fondue-icons';
 
-import { ANY_LIST, PARAGRAPH, type RteBlockNode, type RtePlugin } from '#/domain';
+import { ANY_LIST, PARAGRAPH, type RteBlockNode, type RtePlugin } from '#/core';
 
 import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
 
@@ -57,32 +57,24 @@ const listPlugin = ({
     markdown: readonly string[];
 }): RtePlugin => ({
     id,
-    schema: {
-        blocks: [
-            {
-                type,
-                isList: true,
-                content: 'blocks',
-                contains: ['listItem'],
-                render: ({ children }) =>
-                    tag === 'ul' ? (
-                        <ul className={className}>{children}</ul>
-                    ) : (
-                        <ol className={className}>{children}</ol>
-                    ),
-                parseRules: [{ tag }],
-            },
-            {
-                type: 'listItem',
-                content: 'blocks',
-                // The paragraph comes first: it is what a new item is filled
-                // with.
-                contains: [PARAGRAPH, ANY_LIST],
-                render: ({ children }) => <li className={styles.item}>{children}</li>,
-                parseRules: [{ tag: 'li' }],
-            },
-        ],
-    },
+    schema: [
+        {
+            kind: 'block',
+            type,
+            children: { items: 'listItem' },
+            toDom: () => ({ tag, attrs: className ? { class: className } : undefined, children: true }),
+            renderComponent: ({ children }) =>
+                tag === 'ul' ? <ul className={className}>{children}</ul> : <ol className={className}>{children}</ol>,
+        },
+        {
+            kind: 'block',
+            type: 'listItem',
+            // The paragraph comes first: it is what a new item is filled with.
+            children: { blocks: [PARAGRAPH, ANY_LIST] },
+            toDom: () => ({ tag: 'li', attrs: { class: styles.item ?? '' }, children: true }),
+            renderComponent: ({ children }) => <li className={styles.item}>{children}</li>,
+        },
+    ],
     toolbar: (api) => (
         <ToolbarButton
             // The list wraps the item holding the text, so it is above the
@@ -94,7 +86,7 @@ const listPlugin = ({
             <Icon size={16} />
         </ToolbarButton>
     ),
-    inputRules: markdown.map((match) => ({ kind: 'list', match, list: type })),
+    inputRules: markdown.map((match) => ({ kind: 'list' as const, match, list: type })),
 });
 
 export const bulletListPlugin = (): RtePlugin =>

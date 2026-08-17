@@ -2,7 +2,7 @@
 
 import { type MouseEvent } from 'react';
 
-import { type EditorControlApi } from '#/domain';
+import { type EditorControlApi } from '#/core';
 
 /**
  * What a link carries in the document. `openInNewTab` is stored only when it is

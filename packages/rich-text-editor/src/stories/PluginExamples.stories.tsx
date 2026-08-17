@@ -29,12 +29,11 @@ import {
     numberedListPlugin,
     quotePlugin,
     resetFormattingPlugin,
-    type RteBlock,
-    type FloatingContext,
+    type AutocompleteContext,
     type RteDocument,
+    type RteDocumentWith,
     type RteInlineNode,
     type RtePlugin,
-    type RteText,
     RichTextEditor,
     softBreakPlugin,
     strikethroughPlugin,
@@ -810,20 +809,18 @@ type HighlightMark = {
 
 const highlightPlugin = (): RtePlugin => ({
     id: 'highlight',
-    schema: {
-        marks: [
-            {
-                key: 'highlight',
-                // A plugin styles what it renders. The shipped plugins use SCSS
-                // modules; a story is free to use the Tailwind it already has.
-                render: ({ children }) => (
-                    <mark className="tw-rounded-small tw-bg-container-warning tw-text-container-warning-on-warning-container">
-                        {children}
-                    </mark>
-                ),
-            },
-        ],
-    },
+    schema: [
+        {
+            kind: 'mark',
+            type: 'highlight',
+            toDom: () => ({ tag: 'mark', children: true }),
+            renderComponent: ({ children }) => (
+                <mark className="tw-rounded-small tw-bg-container-warning tw-text-container-warning-on-warning-container">
+                    {children}
+                </mark>
+            ),
+        },
+    ],
     toolbar: (api) => {
         const active = 'highlight' in api.selection.get().marks;
         return (
@@ -847,7 +844,7 @@ const highlightPlugin = (): RtePlugin => ({
  */
 export const ConsumerMark: Story = {
     render: () => {
-        const [doc, setDoc] = useState<RteDocument<RteBlock<RteText & HighlightMark>>>({
+        const [doc, setDoc] = useState<RteDocumentWith<{ mark: HighlightMark }>>({
             version: 1,
             blocks: [
                 {
@@ -880,19 +877,20 @@ type CalloutBlock = {
 
 const calloutPlugin = (): RtePlugin => ({
     id: 'callout',
-    schema: {
-        blocks: [
-            {
-                type: 'callout',
-                render: ({ children }) => (
-                    <aside className="tw-m-0 tw-rounded-medium tw-border tw-border-warning tw-bg-container-warning tw-px-3 tw-py-2">
-                        {children}
-                    </aside>
-                ),
-                parseRules: [{ tag: 'aside' }],
-            },
-        ],
-    },
+    schema: [
+        {
+            kind: 'block',
+            type: 'callout',
+            children: 'text',
+            toDom: () => ({ tag: 'aside', children: true }),
+            renderComponent: ({ children }) => (
+                <aside className="tw-m-0 tw-rounded-medium tw-border tw-border-warning tw-bg-container-warning tw-px-3 tw-py-2">
+                    {children}
+                </aside>
+            ),
+            parseRules: [{ tag: 'aside' }],
+        },
+    ],
     toolbar: (api) => {
         const active = api.selection.get().block?.type === 'callout';
         return (
@@ -912,7 +910,7 @@ const calloutPlugin = (): RtePlugin => ({
 /** An extra block type joins the official union in the same type argument. */
 export const ConsumerBlock: Story = {
     render: () => {
-        const [doc, setDoc] = useState<RteDocument<RteBlock | CalloutBlock>>({
+        const [doc, setDoc] = useState<RteDocumentWith<{ block: CalloutBlock }>>({
             version: 1,
             blocks: [
                 {
@@ -956,7 +954,7 @@ const EMBEDS = [
  * through `onKeys`, while the list, the highlight and what picking one does
  * stay local.
  */
-const EmbedPicker = ({ context }: { context: FloatingContext }): ReactNode => {
+const EmbedPicker = ({ context }: { context: AutocompleteContext }): ReactNode => {
     const { api, query, clearQuery, close, onKeys } = context;
     const found = EMBEDS.filter((embed) => embed.label.toLowerCase().includes(query.toLowerCase()));
     // Tagged with its query, so a new list starts at the top on its own.
@@ -1016,34 +1014,40 @@ const EmbedPicker = ({ context }: { context: FloatingContext }): ReactNode => {
 
 const embedPlugin = (): RtePlugin => ({
     id: 'embed',
-    schema: {
-        inlines: [
-            {
-                type: 'embed',
-                attributes: { provider: { parseFromDomAttribute: 'data-embed' } },
-                render: ({ node }) => {
-                    // A render function reads back the inline type it declared.
-                    const embed = node as EmbedInline;
-                    return (
-                        <span
-                            data-embed={embed.provider}
-                            className="tw-rounded-small tw-bg-container-highlight tw-px-1 tw-font-medium tw-text-container-highlight-on-highlight-container"
-                        >
-                            {`▤ ${embed.provider}`}
-                        </span>
-                    );
-                },
-                parseRules: [{ tag: 'span[data-embed]' }],
+    schema: [
+        {
+            kind: 'inline',
+            type: 'embed',
+            attributes: { provider: { parseFromDomAttribute: 'data-embed' } },
+            toDom: (attrs) => {
+                const provider = typeof attrs.provider === 'string' ? attrs.provider : '';
+                return {
+                    tag: 'span',
+                    attrs: { 'data-embed': provider },
+                    children: `▤ ${provider}`,
+                };
             },
-        ],
-    },
-    floating: { anchor: { trigger: '/' }, render: (context) => <EmbedPicker context={context} /> },
+            renderComponent: ({ node }) => {
+                const embed = node as EmbedInline;
+                return (
+                    <span
+                        data-embed={embed.provider}
+                        className="tw-rounded-small tw-bg-container-highlight tw-px-1 tw-font-medium tw-text-container-highlight-on-highlight-container"
+                    >
+                        {`▤ ${embed.provider}`}
+                    </span>
+                );
+            },
+            parseRules: [{ tag: 'span[data-embed]' }],
+        },
+    ],
+    autocomplete: { trigger: '/', component: (context) => <EmbedPicker context={context} /> },
 });
 
 /** A consumer inline element widens the same parameter as a consumer mark. */
 export const ConsumerInline: Story = {
     render: () => {
-        const [doc, setDoc] = useState<RteDocument<RteBlock<EmbedInline>>>({
+        const [doc, setDoc] = useState<RteDocumentWith<{ inline: EmbedInline }>>({
             version: 1,
             blocks: [
                 {

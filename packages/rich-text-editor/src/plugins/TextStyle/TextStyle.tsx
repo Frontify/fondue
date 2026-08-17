@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type RtePlugin } from '#/domain';
+import { type RtePlugin } from '#/core';
 
 import { TextStyleSelect } from './components/TextStyleSelect';
 import {
@@ -38,32 +38,45 @@ export const textStylePlugin = ({ styles: options = ALL_TEXT_STYLES }: TextStyle
 
     return {
         id: 'text-style',
-        schema: {
-            blocks: [
-                {
-                    type: 'textStyle',
-                    // Only reached by a node that arrives without one; every
-                    // path that sets the attribute names a style.
-                    attributes: { style: { default: offered[0]?.name ?? FIRST_PRESET } },
-                    render: ({ node, children }) => {
-                        // A render function reads back the block type it
-                        // declared.
-                        const { style } = node as TextStyleBlock;
-                        const preset = findPreset(style);
-                        if (preset === undefined) {
-                            return <p>{children}</p>;
-                        }
-                        const Tag = preset.tag;
-                        return (
-                            <Tag className={preset.className} {...(Tag === 'p' ? { 'data-text-style': style } : {})}>
-                                {children}
-                            </Tag>
-                        );
-                    },
-                    parseRules: offered.map(parseRuleFor),
+        schema: [
+            {
+                kind: 'block',
+                type: 'textStyle',
+                children: 'text',
+                // Only reached by a node that arrives without one; every
+                // path that sets the attribute names a style.
+                attributes: { style: { default: offered[0]?.name ?? FIRST_PRESET } },
+                toDom: (attrs) => {
+                    const style = typeof attrs.style === 'string' ? attrs.style : '';
+                    const preset = findPreset(style);
+                    if (preset === undefined) {
+                        return { tag: 'p', children: true };
+                    }
+                    return {
+                        tag: preset.tag,
+                        attrs: {
+                            class: preset.className ?? '',
+                            ...(preset.tag === 'p' ? { 'data-text-style': preset.name } : {}),
+                        },
+                        children: true,
+                    };
                 },
-            ],
-        },
+                renderComponent: ({ node, children }) => {
+                    const { style } = node as TextStyleBlock;
+                    const preset = findPreset(style);
+                    if (preset === undefined) {
+                        return <p>{children}</p>;
+                    }
+                    const Tag = preset.tag;
+                    return (
+                        <Tag className={preset.className} {...(Tag === 'p' ? { 'data-text-style': style } : {})}>
+                            {children}
+                        </Tag>
+                    );
+                },
+                parseRules: offered.map(parseRuleFor),
+            },
+        ],
         toolbar: (api) => <TextStyleSelect api={api} options={options} />,
         // `# ` through `#### `, for the headings this editor offers.
         inputRules: offered.flatMap(markdownRuleFor),

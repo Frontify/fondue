@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { PARAGRAPH, type RteBlockNode, type RteInlineNode, type RteInputRule } from '#/domain';
+import { PARAGRAPH, type RteBlockNode, type RteInlineNode, type RteInputRule } from '#/core';
 
 import styles from '../textStyle.module.scss';
 

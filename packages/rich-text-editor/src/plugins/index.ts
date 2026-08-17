@@ -21,9 +21,9 @@ import { underlinePlugin } from './Underline';
 /**
  * One folder per plugin, plus `shared/` for what plugins are built *out of* —
  * the toolbar button they all use. Nothing under `shared/` is a plugin, and it
- * plays by the same rules as one: it may reach for the domain (`#/domain`) and
+ * plays by the same rules as one: it may reach for the core (`#/core`) and
  * nothing else. UI only one plugin needs stays with that plugin (Mention's
- * picker, Link's panel).
+ * picker, Link's flyout).
  *
  * `defaultPlugins` bundles the built-ins that need no configuration, in toolbar
  * order. Nothing is mounted automatically — pass these, or a subset, to

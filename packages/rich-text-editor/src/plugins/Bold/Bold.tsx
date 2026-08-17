@@ -2,7 +2,7 @@
 
 import { IconTextFormatBold } from '@frontify/fondue-icons';
 
-import { type RtePlugin } from '#/domain';
+import { type RtePlugin } from '#/core';
 
 import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
 
@@ -13,9 +13,15 @@ export type BoldMark = {
 
 export const boldPlugin = (): RtePlugin => ({
     id: 'bold',
-    schema: {
-        marks: [{ key: 'bold', render: ({ children }) => <strong>{children}</strong>, parseRules: [{ tag: 'b' }] }],
-    },
+    schema: [
+        {
+            kind: 'mark',
+            type: 'bold',
+            toDom: () => ({ tag: 'strong', children: true }),
+            renderComponent: ({ children }) => <strong>{children}</strong>,
+            parseRules: [{ tag: 'b' }],
+        },
+    ],
     toolbar: (api) => (
         <ToolbarButton
             title="Bold"

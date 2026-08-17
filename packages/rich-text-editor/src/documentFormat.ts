@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ParagraphBlock, type RteBlockNode, type RteDocumentOf, type RteInlineNode } from './domain';
+import { type ParagraphBlock, type RteBlockNode, type RteDocumentOf, type RteInlineNode } from './core';
 import { type AlignAttribute } from './plugins/Align';
 import { type BoldMark } from './plugins/Bold';
 import { type CheckItemBlock, type CheckListBlock } from './plugins/CheckList';
@@ -26,8 +26,8 @@ import { type UnderlineMark } from './plugins/Underline';
  * It sits beside `index.ts` rather than under a layer because it is the one
  * file besides the composition root that may know the shipped plugin list,
  * which is why it may import from `plugins/`. The editor below never sees it:
- * `ui/` and the adapters work in the open `RteDocumentOf`/`RteBlockNode`
- * skeleton from `domain/`, and closing that skeleton is purely type-level, with
+ * `editor/` and the renderer work in the open `RteDocumentOf`/`RteBlockNode`
+ * skeleton from `core/`, and closing that skeleton is purely type-level, with
  * no runtime part.
  *
  * Why the machinery below exists: the plugin-facing types are open (a text node
@@ -140,6 +140,33 @@ export type RteBlock<TExtraInline extends RteInlineNode = never> =
  * ```
  *
  * Consumer plugins widen the union once, here:
- * `RteDocument<RteBlock | CalloutBlock>`.
+ * `RteDocument<RteBlock | CalloutBlock>`. Prefer `RteDocumentWith` for marks,
+ * blocks and inlines named as such.
  */
 export type RteDocument<TBlock extends RteBlockNode = RteBlock> = RteDocumentOf<TBlock>;
+
+type ExtraMarks<TExtra> = [Extract<TExtra, { mark: unknown }>] extends [never]
+    ? unknown
+    : Extract<TExtra, { mark: unknown }>['mark'];
+
+type ExtraBlocks<TExtra> = [Extract<TExtra, { block: unknown }>] extends [never]
+    ? never
+    : Extract<TExtra, { block: unknown }>['block'];
+
+type ExtraInlines<TExtra> = [Extract<TExtra, { inline: unknown }>] extends [never]
+    ? never
+    : Extract<TExtra, { inline: unknown }>['inline'];
+
+/**
+ * Widen the official document by the fragments a consumer plugin adds, named
+ * as such rather than nested in `RteDocument<RteBlock<…>>`:
+ *
+ * ```ts
+ * type Doc = RteDocumentWith<{ mark: HighlightMark }>;
+ * type Doc = RteDocumentWith<{ block: CalloutBlock }>;
+ * type Doc = RteDocumentWith<{ inline: EmbedInline }>;
+ * type Doc = RteDocumentWith<{ mark: HighlightMark } | { block: CalloutBlock }>;
+ * ```
+ */
+export type RteDocumentWith<TExtra extends { mark: object } | { block: RteBlockNode } | { inline: RteInlineNode }> =
+    RteDocument<ExtraBlocks<TExtra> | RteBlock<(RteText & ExtraMarks<TExtra>) | ExtraInlines<TExtra>>>;

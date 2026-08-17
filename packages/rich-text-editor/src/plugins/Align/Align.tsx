@@ -8,7 +8,7 @@ import {
     IconTextAlignmentRight,
 } from '@frontify/fondue-icons';
 
-import { type RteBlockNode, type RtePlugin } from '#/domain';
+import { type RteBlockNode, type RtePlugin } from '#/core';
 
 import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
 
@@ -30,15 +30,14 @@ const ALIGNMENTS: { value: NonNullable<AlignAttribute['align']>; icon: FondueIco
 
 export const alignPlugin = (): RtePlugin => ({
     id: 'align',
-    schema: {
-        blockAttributes: [
-            {
-                name: 'align',
-                toStyle: (value) => `text-align: ${value}`,
-                parseFromStyle: 'text-align',
-            },
-        ],
-    },
+    schema: [
+        {
+            kind: 'attribute',
+            type: 'align',
+            toStyle: (value) => `text-align: ${value}`,
+            parseFromStyle: 'text-align',
+        },
+    ],
     toolbar: (api) => {
         // The block the selection is in carries the attribute this plugin
         // added, which the structural node type does not know about.

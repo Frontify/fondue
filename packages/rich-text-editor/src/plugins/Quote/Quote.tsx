@@ -2,7 +2,7 @@
 
 import { IconSpeechBubbleQuote } from '@frontify/fondue-icons';
 
-import { PARAGRAPH, type RteInlineNode, type RtePlugin } from '#/domain';
+import { PARAGRAPH, type RteInlineNode, type RtePlugin } from '#/core';
 
 import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
 
@@ -16,15 +16,15 @@ export type QuoteBlock = {
 
 export const quotePlugin = (): RtePlugin => ({
     id: 'quote',
-    schema: {
-        blocks: [
-            {
-                type: 'quote',
-                render: ({ children }) => <blockquote className={styles.quote}>{children}</blockquote>,
-                parseRules: [{ tag: 'blockquote' }],
-            },
-        ],
-    },
+    schema: [
+        {
+            kind: 'block',
+            type: 'quote',
+            children: 'text',
+            toDom: () => ({ tag: 'blockquote', attrs: { class: styles.quote ?? '' }, children: true }),
+            renderComponent: ({ children }) => <blockquote className={styles.quote}>{children}</blockquote>,
+        },
+    ],
     toolbar: (api) => {
         // A quote holds text, so it is the block the selection is in — never
         // one wrapped around it.

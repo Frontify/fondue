@@ -2,7 +2,7 @@
 
 import { IconEraser } from '@frontify/fondue-icons';
 
-import { type EditorControlApi, PARAGRAPH, type RtePlugin } from '#/domain';
+import { type EditorControlApi, PARAGRAPH, type RtePlugin } from '#/core';
 
 import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
 

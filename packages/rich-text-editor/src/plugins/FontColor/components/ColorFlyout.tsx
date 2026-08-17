@@ -4,7 +4,7 @@ import { Button, ColorPicker, Flyout } from '@frontify/fondue-components';
 import { IconDroplet } from '@frontify/fondue-icons';
 import { type ReactNode, useState } from 'react';
 
-import { type EditorControlApi } from '#/domain';
+import { type EditorControlApi } from '#/core';
 
 import { ToolbarButton } from '../../shared/ToolbarButton/ToolbarButton';
 import { type FontColorValue } from '../FontColor';

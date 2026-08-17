@@ -4,7 +4,7 @@ import { Flyout } from '@frontify/fondue-components';
 import { IconLink } from '@frontify/fondue-icons';
 import { type ReactNode, useState } from 'react';
 
-import { type EditorControlApi } from '#/domain';
+import { type EditorControlApi } from '#/core';
 
 import { ToolbarButton } from '../../shared/ToolbarButton/ToolbarButton';
 import { type LinkDraft, readSelection } from '../helpers/draft';

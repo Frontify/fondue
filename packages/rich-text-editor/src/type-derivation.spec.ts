@@ -4,7 +4,7 @@
  * Compile-time assertions for the document types. `tsc --noEmit` is the test
  * runner: an unused @ts-expect-error fails the build.
  */
-import { type RteBlock, type RteDocument, type RteInlineNode, type RteText } from './index';
+import { type RteBlock, type RteDocument, type RteDocumentWith, type RteInlineNode, type RteText } from './index';
 
 // The shipped case: one annotation, everything checked
 const doc: RteDocument = {
@@ -113,6 +113,22 @@ const consumerBlock: RteDocument<RteBlock | CalloutBlock> = {
     blocks: [{ type: 'callout', children: [{ text: 'x' }] }],
 };
 
+const withMark: RteDocumentWith<{ mark: HighlightMark }> = {
+    version: 1,
+    blocks: [{ type: 'paragraph', children: [{ text: 'x', highlight: true }] }],
+};
+
+const withBlock: RteDocumentWith<{ block: CalloutBlock }> = {
+    version: 1,
+    blocks: [{ type: 'callout', children: [{ text: 'x' }] }],
+};
+
+type EmbedInline = { type: 'embed'; provider: string };
+const withInline: RteDocumentWith<{ inline: EmbedInline }> = {
+    version: 1,
+    blocks: [{ type: 'paragraph', children: [{ text: 'See ' }, { type: 'embed', provider: 'figma' }] }],
+};
+
 export const __typeAssertions = [
     doc,
     badBlock,
@@ -129,4 +145,7 @@ export const __typeAssertions = [
     consumerMark,
     consumerInline,
     consumerBlock,
+    withMark,
+    withBlock,
+    withInline,
 ];

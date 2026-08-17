@@ -2,7 +2,7 @@
 
 import { IconTextColumnBreak } from '@frontify/fondue-icons';
 
-import { type RtePlugin } from '#/domain';
+import { type RtePlugin } from '#/core';
 
 import { ToolbarButton } from '../shared/ToolbarButton/ToolbarButton';
 
@@ -27,16 +27,15 @@ type ColumnBreakPluginOptions = {
  */
 export const columnBreakPlugin = ({ columns = 2, gap = 'normal' }: ColumnBreakPluginOptions = {}): RtePlugin => ({
     id: 'column-break',
-    schema: {
-        blocks: [
-            {
-                type: 'columnBreak',
-                isVoid: true,
-                render: () => <div data-column-break="" className={styles.break} />,
-                parseRules: [{ tag: 'div[data-column-break]' }],
-            },
-        ],
-    },
+    schema: [
+        {
+            kind: 'block',
+            type: 'columnBreak',
+            toDom: () => ({ tag: 'div', attrs: { 'data-column-break': '', class: styles.break ?? '' } }),
+            renderComponent: () => <div data-column-break="" className={styles.break} />,
+            parseRules: [{ tag: 'div[data-column-break]' }],
+        },
+    ],
     toolbar: (api) => (
         <ToolbarButton title="Column break" onClick={() => api.insert('columnBreak')}>
             <IconTextColumnBreak size={16} />

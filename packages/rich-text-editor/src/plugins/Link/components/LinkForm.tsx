@@ -3,7 +3,7 @@
 import { Button, Checkbox, Label, TextInput } from '@frontify/fondue-components';
 import { type KeyboardEvent, type ReactNode, useEffect, useId, useRef, useState } from 'react';
 
-import { type EditorControlApi } from '#/domain';
+import { type EditorControlApi } from '#/core';
 
 import { type LinkDraft } from '../helpers/draft';
 import { toHref } from '../helpers/href';
