@@ -5,7 +5,6 @@ import {
     type BlockDefinition,
     type InlineDefinition,
     type MarkDefinition,
-    type ParseRule,
     type RtePlugin,
 } from './plugin';
 
@@ -61,22 +60,4 @@ export const buildPluginRegistry = (plugins: readonly RtePlugin[]): PluginRegist
     }
 
     return { blocks, inlines, marks, attributes, itemTypeByList };
-};
-
-/**
- * Parse rules for a declaration: the `toDom` tag is always recognized, then any
- * extra `parseRules` the plugin named. A qualified selector outranks a bare tag
- * so `ul[data-check-list]` wins over `ul`.
- */
-export const parseRulesFor = (toDomTag: string, extra: readonly ParseRule[] = []): readonly ParseRule[] => {
-    const seen = new Set<string>();
-    const rules: ParseRule[] = [];
-    for (const rule of [{ tag: toDomTag }, ...extra]) {
-        if (seen.has(rule.tag)) {
-            continue;
-        }
-        seen.add(rule.tag);
-        rules.push(rule);
-    }
-    return rules;
 };

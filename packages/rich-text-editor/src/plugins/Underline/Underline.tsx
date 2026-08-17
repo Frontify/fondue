@@ -19,6 +19,7 @@ export const underlinePlugin = (): RtePlugin => ({
             type: 'underline',
             toDom: () => ({ tag: 'u', children: true }),
             renderComponent: ({ children }) => <u>{children}</u>,
+            parseRules: [{ tag: 'u' }],
         },
     ],
     toolbar: (api) => (

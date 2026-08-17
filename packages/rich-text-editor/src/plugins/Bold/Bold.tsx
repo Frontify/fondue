@@ -19,7 +19,7 @@ export const boldPlugin = (): RtePlugin => ({
             type: 'bold',
             toDom: () => ({ tag: 'strong', children: true }),
             renderComponent: ({ children }) => <strong>{children}</strong>,
-            parseRules: [{ tag: 'b' }],
+            parseRules: [{ tag: 'strong' }, { tag: 'b' }],
         },
     ],
     toolbar: (api) => (

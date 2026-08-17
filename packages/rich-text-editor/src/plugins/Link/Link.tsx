@@ -52,6 +52,7 @@ export const linkPlugin = (): RtePlugin => ({
                     </a>
                 );
             },
+            parseRules: [{ tag: 'a' }],
         },
     ],
     toolbar: (api) => <LinkFlyout api={api} />,

@@ -19,6 +19,7 @@ export const subscriptPlugin = (): RtePlugin => ({
             type: 'subscript',
             toDom: () => ({ tag: 'sub', children: true }),
             renderComponent: ({ children }) => <sub>{children}</sub>,
+            parseRules: [{ tag: 'sub' }],
         },
     ],
     toolbar: (api) => (

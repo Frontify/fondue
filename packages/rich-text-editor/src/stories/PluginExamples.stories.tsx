@@ -819,6 +819,7 @@ const highlightPlugin = (): RtePlugin => ({
                     {children}
                 </mark>
             ),
+            parseRules: [{ tag: 'mark' }],
         },
     ],
     toolbar: (api) => {

@@ -19,6 +19,7 @@ export const softBreakPlugin = (): RtePlugin => ({
             type: 'break',
             toDom: () => ({ tag: 'br' }),
             renderComponent: () => <br />,
+            parseRules: [{ tag: 'br' }],
         },
     ],
     hotkeys: { 'Shift-Enter': (api) => api.insert('break') },

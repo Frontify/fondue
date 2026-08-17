@@ -11,7 +11,6 @@ import {
     type MarkDefinition,
     PARAGRAPH,
     buildPluginRegistry,
-    parseRulesFor,
     type RtePlugin,
 } from '#/core';
 
@@ -103,7 +102,6 @@ const blockNodeSpec = (
     const carriesInjected = spec.children === 'text';
     const injectedHere = carriesInjected ? injected : [];
     const ownAttrNames = Object.keys(spec.attributes ?? {});
-    const parseTag = spec.toDom({}).tag;
 
     return {
         content: contentExpression(spec, known, lists),
@@ -111,7 +109,7 @@ const blockNodeSpec = (
         ...(isVoid || isList ? {} : { defining: true }),
         ...(isListItem ? {} : { group: 'block' }),
         attrs: { ...attrDefaults(spec.attributes), ...injectedAttrDefaults(injectedHere) },
-        parseDOM: pasteRules(spec.attributes ?? {}, parseRulesFor(parseTag, spec.parseRules), injectedHere),
+        parseDOM: pasteRules(spec.attributes ?? {}, spec.parseRules, injectedHere),
         toDOM: (node) => {
             const own = Object.fromEntries(ownAttrNames.map((name) => [name, node.attrs[name]]));
             return withRootStyle(htmlSpecToDom(spec.toDom(own)), injectedDeclarations(node.attrs, injectedHere));
@@ -119,25 +117,21 @@ const blockNodeSpec = (
     };
 };
 
-const inlineNodeSpec = (spec: InlineDefinition): PmNodeSpec => {
-    const parseTag = spec.toDom({}).tag;
-    return {
-        group: 'inline',
-        inline: true,
-        atom: true,
-        attrs: attrDefaults(spec.attributes),
-        parseDOM: pasteRules(spec.attributes ?? {}, parseRulesFor(parseTag, spec.parseRules)),
-        toDOM: (node) => htmlSpecToDom(spec.toDom(node.attrs)),
-    };
-};
+const inlineNodeSpec = (spec: InlineDefinition): PmNodeSpec => ({
+    group: 'inline',
+    inline: true,
+    atom: true,
+    attrs: attrDefaults(spec.attributes),
+    parseDOM: pasteRules(spec.attributes ?? {}, spec.parseRules),
+    toDOM: (node) => htmlSpecToDom(spec.toDom(node.attrs)),
+});
 
 const markNodeSpec = (spec: MarkDefinition): PmMarkSpec => {
     const attrs = attrDefaults(spec.attributes);
-    const parseTag = spec.toDom({}).tag;
     return {
         attrs,
         inclusive: Object.keys(attrs).length === 0,
-        parseDOM: pasteRules(spec.attributes ?? {}, parseRulesFor(parseTag, spec.parseRules)),
+        parseDOM: pasteRules(spec.attributes ?? {}, spec.parseRules),
         toDOM: (mark) => htmlSpecToDom(spec.toDom(mark.attrs)),
     };
 };

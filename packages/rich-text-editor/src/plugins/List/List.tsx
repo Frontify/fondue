@@ -65,6 +65,7 @@ const listPlugin = ({
             toDom: () => ({ tag, attrs: className ? { class: className } : undefined, children: true }),
             renderComponent: ({ children }) =>
                 tag === 'ul' ? <ul className={className}>{children}</ul> : <ol className={className}>{children}</ol>,
+            parseRules: [{ tag }],
         },
         {
             kind: 'block',
@@ -73,6 +74,7 @@ const listPlugin = ({
             children: { blocks: [PARAGRAPH, ANY_LIST] },
             toDom: () => ({ tag: 'li', attrs: { class: styles.item ?? '' }, children: true }),
             renderComponent: ({ children }) => <li className={styles.item}>{children}</li>,
+            parseRules: [{ tag: 'li' }],
         },
     ],
     toolbar: (api) => (

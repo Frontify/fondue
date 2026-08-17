@@ -21,6 +21,7 @@ const plugins: RtePlugin[] = [
                 type: 'bold',
                 toDom: () => ({ tag: 'strong', children: true }),
                 renderComponent: ({ children }) => <strong>{children}</strong>,
+                parseRules: [{ tag: 'strong' }],
             },
         ],
     },

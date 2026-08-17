@@ -23,6 +23,7 @@ export const quotePlugin = (): RtePlugin => ({
             children: 'text',
             toDom: () => ({ tag: 'blockquote', attrs: { class: styles.quote ?? '' }, children: true }),
             renderComponent: ({ children }) => <blockquote className={styles.quote}>{children}</blockquote>,
+            parseRules: [{ tag: 'blockquote' }],
         },
     ],
     toolbar: (api) => {

@@ -19,7 +19,7 @@ export const italicPlugin = (): RtePlugin => ({
             type: 'italic',
             toDom: () => ({ tag: 'em', children: true }),
             renderComponent: ({ children }) => <em>{children}</em>,
-            parseRules: [{ tag: 'i' }],
+            parseRules: [{ tag: 'em' }, { tag: 'i' }],
         },
     ],
     toolbar: (api) => (

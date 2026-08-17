@@ -37,6 +37,7 @@ export const fontColorPlugin = (): RtePlugin => ({
                 const { color } = value as Partial<FontColorValue>;
                 return <span style={{ color }}>{children}</span>;
             },
+            parseRules: [{ tag: 'span' }],
         },
     ],
     toolbar: (api) => <ColorFlyout api={api} />,

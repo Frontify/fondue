@@ -17,7 +17,7 @@ const plugins: RtePlugin[] = [
                 type: 'bold',
                 toDom: () => ({ tag: 'strong', children: true }),
                 renderComponent: ({ children }) => <strong>{children}</strong>,
-                parseRules: [{ tag: 'b' }],
+                parseRules: [{ tag: 'strong' }, { tag: 'b' }],
             },
         ],
     },
@@ -34,6 +34,7 @@ const plugins: RtePlugin[] = [
                     children: true,
                 }),
                 renderComponent: ({ children, value }) => <a href={(value as { href?: string }).href}>{children}</a>,
+                parseRules: [{ tag: 'a' }],
             },
         ],
     },
@@ -46,13 +47,14 @@ const plugins: RtePlugin[] = [
                 children: 'text',
                 toDom: () => ({ tag: 'blockquote', children: true }),
                 renderComponent: ({ children }) => <blockquote>{children}</blockquote>,
+                parseRules: [{ tag: 'blockquote' }],
             },
         ],
     },
 ];
 
 describe('buildSchema', () => {
-    it('recognizes the toDom tag plus extra parseRules', () => {
+    it('uses the declared parseRules', () => {
         const { schema } = buildSchema(plugins);
 
         expect(schema.marks.bold?.spec.parseDOM?.map((rule) => rule.tag)).toEqual(['strong', 'b']);
@@ -81,6 +83,7 @@ describe('buildSchema', () => {
                         children: { items: 'listItem' },
                         toDom: () => ({ tag: 'ul', children: true }),
                         renderComponent: ({ children }) => <ul>{children}</ul>,
+                        parseRules: [{ tag: 'ul' }],
                     },
                     {
                         kind: 'block',
@@ -88,6 +91,7 @@ describe('buildSchema', () => {
                         children: { blocks: ['paragraph'] },
                         toDom: () => ({ tag: 'li', children: true }),
                         renderComponent: ({ children }) => <li>{children}</li>,
+                        parseRules: [{ tag: 'li' }],
                     },
                 ],
             },

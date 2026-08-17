@@ -19,7 +19,7 @@ export const strikethroughPlugin = (): RtePlugin => ({
             type: 'strikethrough',
             toDom: () => ({ tag: 's', children: true }),
             renderComponent: ({ children }) => <s>{children}</s>,
-            parseRules: [{ tag: 'del' }, { tag: 'strike' }],
+            parseRules: [{ tag: 's' }, { tag: 'del' }, { tag: 'strike' }],
         },
     ],
     toolbar: (api) => (

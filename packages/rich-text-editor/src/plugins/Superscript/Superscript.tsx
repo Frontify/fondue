@@ -19,6 +19,7 @@ export const superscriptPlugin = (): RtePlugin => ({
             type: 'superscript',
             toDom: () => ({ tag: 'sup', children: true }),
             renderComponent: ({ children }) => <sup>{children}</sup>,
+            parseRules: [{ tag: 'sup' }],
         },
     ],
     toolbar: (api) => (

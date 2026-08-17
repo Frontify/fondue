@@ -77,7 +77,7 @@ export type AttributeSpec = {
     parseFromStyle?: string;
 };
 
-/** One rule for recognizing pasted HTML. */
+/** One rule for recognizing pasted HTML. Required on every block, inline and mark. */
 export type ParseRule = {
     /** Element that is recognized, e.g. `h2` or `b`. */
     tag: string;
@@ -116,7 +116,8 @@ export type BlockDefinition = {
         children?: ReactNode;
         updateAttributes: (attrs: Record<string, unknown>) => void;
     }) => ReactNode;
-    parseRules?: readonly ParseRule[];
+    /** How pasted HTML becomes this block. Always listed — nothing is inferred from `toDom`. */
+    parseRules: readonly ParseRule[];
 };
 
 export type InlineDefinition = {
@@ -126,7 +127,8 @@ export type InlineDefinition = {
     toDom: (attrs: Record<string, unknown>) => HtmlSpec;
     renderComponent: (props: { node: RteInlineElementNode }) => ReactNode;
     editorComponent?: (props: { node: RteInlineElementNode }) => ReactNode;
-    parseRules?: readonly ParseRule[];
+    /** How pasted HTML becomes this inline. Always listed — nothing is inferred from `toDom`. */
+    parseRules: readonly ParseRule[];
 };
 
 export type MarkDefinition = {
@@ -141,7 +143,8 @@ export type MarkDefinition = {
     nesting?: number;
     toDom: (attrs: Record<string, unknown>) => HtmlSpec;
     renderComponent: (props: { children: ReactNode; value: Record<string, unknown> }) => ReactNode;
-    parseRules?: readonly ParseRule[];
+    /** How pasted HTML becomes this mark. Always listed — nothing is inferred from `toDom`. */
+    parseRules: readonly ParseRule[];
 };
 
 /**

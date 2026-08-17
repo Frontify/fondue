@@ -32,7 +32,6 @@ export {
 export {
     buildPluginRegistry,
     type PluginRegistry,
-    parseRulesFor,
     unknownBlockType,
     unknownInlineType,
     unknownMarkType,

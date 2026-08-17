@@ -21,6 +21,7 @@ export const codePlugin = (): RtePlugin => ({
             type: 'code',
             toDom: () => ({ tag: 'code', attrs: { class: styles.code ?? '' }, children: true }),
             renderComponent: ({ children }) => <code className={styles.code}>{children}</code>,
+            parseRules: [{ tag: 'code' }],
         },
     ],
     toolbar: (api) => (
