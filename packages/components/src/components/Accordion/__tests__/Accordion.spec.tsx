@@ -43,4 +43,55 @@ describe('Accordion Component', () => {
         );
         expect(screen.getByTestId(ACCORDION_TEST_ID)).toHaveAttribute('data-accordion-variant', 'pill');
     });
+
+    it('should default stickyBackground to false', () => {
+        render(
+            <Accordion.Root data-test-id={ACCORDION_TEST_ID} variant="pill" sticky>
+                <Accordion.Item value="1">
+                    <Accordion.Header>{ACCORDION_TEXT}</Accordion.Header>
+                </Accordion.Item>
+            </Accordion.Root>,
+        );
+        expect(screen.getByTestId(ACCORDION_TEST_ID)).toHaveAttribute('data-sticky-background', 'false');
+    });
+
+    it('should apply stickyBackground when enabled', () => {
+        render(
+            <Accordion.Root data-test-id={ACCORDION_TEST_ID} variant="pill" sticky stickyBackground>
+                <Accordion.Item value="1">
+                    <Accordion.Header>{ACCORDION_TEXT}</Accordion.Header>
+                </Accordion.Item>
+            </Accordion.Root>,
+        );
+        expect(screen.getByTestId(ACCORDION_TEST_ID)).toHaveAttribute('data-sticky-background', 'true');
+    });
+
+    it('should default caretAlignment to inline and mark headers without slots', () => {
+        render(
+            <Accordion.Root data-test-id={ACCORDION_TEST_ID}>
+                <Accordion.Item value="1">
+                    <Accordion.Header>{ACCORDION_TEXT}</Accordion.Header>
+                </Accordion.Item>
+            </Accordion.Root>,
+        );
+        const trigger = screen.getByTestId('fondue-accordion-header');
+        expect(trigger).toHaveAttribute('data-caret-alignment', 'inline');
+        expect(trigger).toHaveAttribute('data-has-slots', 'false');
+    });
+
+    it('should mark headers that render slots as having slots', () => {
+        render(
+            <Accordion.Root data-test-id={ACCORDION_TEST_ID} caretAlignment="end">
+                <Accordion.Item value="1">
+                    <Accordion.Header>
+                        {ACCORDION_TEXT}
+                        <Accordion.Slot>slot content</Accordion.Slot>
+                    </Accordion.Header>
+                </Accordion.Item>
+            </Accordion.Root>,
+        );
+        const trigger = screen.getByTestId('fondue-accordion-header');
+        expect(trigger).toHaveAttribute('data-caret-alignment', 'end');
+        expect(trigger).toHaveAttribute('data-has-slots', 'true');
+    });
 });

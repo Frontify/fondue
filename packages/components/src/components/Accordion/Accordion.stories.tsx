@@ -287,6 +287,63 @@ export const WithPillVariant: Story = {
     },
 };
 
+export const WithStickyPillVariant: Story = {
+    args: {
+        variant: 'pill',
+        padding: 'small',
+        sticky: true,
+        stickyBackground: true,
+        caretAlignment: 'end',
+        defaultValue: ['accordion-test-0', 'accordion-test-1', 'accordion-test-2'],
+    },
+    render: (args) => {
+        return (
+            <ScrollArea maxHeight={300} maxWidth={600}>
+                <Accordion.Root {...args}>
+                    <Accordion.Item value="accordion-test-0">
+                        <Accordion.Header>Item without slots, caret pinned to the end</Accordion.Header>
+                        <Accordion.Content>
+                            Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
+                            invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
+                        </Accordion.Content>
+                    </Accordion.Item>
+
+                    <Accordion.Item value="accordion-test-1">
+                        <Accordion.Header>
+                            With action slot, caret stays inline
+                            <Accordion.Slot name="action">
+                                <Button size="small" emphasis="default">
+                                    Click Me
+                                </Button>
+                            </Accordion.Slot>
+                        </Accordion.Header>
+                        <Accordion.Content>
+                            Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
+                            invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
+                        </Accordion.Content>
+                    </Accordion.Item>
+
+                    <Accordion.Item value="accordion-test-2">
+                        <Accordion.Header>Item three</Accordion.Header>
+                        <Accordion.Content>
+                            Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
+                            invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
+                        </Accordion.Content>
+                    </Accordion.Item>
+
+                    <Accordion.Item value="accordion-test-3">
+                        <Accordion.Header>Item four</Accordion.Header>
+                        <Accordion.Content>
+                            Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
+                            invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
+                        </Accordion.Content>
+                    </Accordion.Item>
+                </Accordion.Root>
+            </ScrollArea>
+        );
+    },
+};
+
 export const InScrollArea: Story = {
     args: {
         sticky: true,

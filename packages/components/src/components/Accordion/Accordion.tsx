@@ -23,6 +23,7 @@ import styles from './styles/accordion.module.scss';
 
 type AccordionRootContextValue = {
     registerItem: (value: string, element: HTMLDivElement | null) => void;
+    caretAlignment: AccordionCaretAlignment;
 };
 
 const AccordionRootContext = createContext<AccordionRootContextValue | null>(null);
@@ -76,6 +77,8 @@ const restoreScrollForClosingItem = (itemEl: HTMLElement) => {
 
 type AccordionPadding = 'none' | 'small' | 'medium' | 'large';
 
+type AccordionCaretAlignment = 'inline' | 'end';
+
 export type AccordionRootProps = {
     'data-test-id'?: string;
     /**
@@ -117,6 +120,20 @@ export type AccordionRootProps = {
      */
     sticky?: boolean;
     /**
+     * When `true` and `variant` is `'pill'`, a sticky header keeps its pill background
+     * (including hover/active states) instead of switching to the default surface background.
+     * Has no effect when `sticky` is `false` or `variant` is `'default'`.
+     * @default false
+     */
+    stickyBackground?: boolean;
+    /**
+     * Controls where the caret icon sits within `Accordion.Header`. `'end'` pushes the caret
+     * to the far right of the header, but only for headers that render no `Accordion.Slot`.
+     * Headers with slots are unaffected.
+     * @default 'inline'
+     */
+    caretAlignment?: AccordionCaretAlignment;
+    /**
      * Callback function that is called when the value of the accordion changes.
      */
     onValueChange?: (value: string[]) => void;
@@ -134,6 +151,8 @@ export const AccordionRoot = forwardRef<HTMLDivElement, AccordionRootProps>(
             padding = 'large',
             variant = 'default',
             sticky = false,
+            stickyBackground = false,
+            caretAlignment = 'inline',
             onValueChange,
         }: AccordionRootProps,
         forwardedRef: ForwardedRef<HTMLDivElement>,
@@ -200,7 +219,10 @@ export const AccordionRoot = forwardRef<HTMLDivElement, AccordionRootProps>(
             }
         }, []);
 
-        const contextValue = useMemo<AccordionRootContextValue>(() => ({ registerItem }), [registerItem]);
+        const contextValue = useMemo<AccordionRootContextValue>(
+            () => ({ registerItem, caretAlignment }),
+            [registerItem, caretAlignment],
+        );
 
         const handleValueChange = useCallback(
             (newValue: string[]) => {
@@ -241,6 +263,7 @@ export const AccordionRoot = forwardRef<HTMLDivElement, AccordionRootProps>(
                     data-accordion-padding={padding}
                     data-accordion-variant={variant}
                     data-sticky={sticky}
+                    data-sticky-background={stickyBackground}
                     onValueChange={handleValueChange}
                 >
                     {children}
@@ -332,6 +355,9 @@ export const AccordionHeader = forwardRef<HTMLHeadingElement, AccordionHeaderPro
         { 'data-test-id': dataTestId = 'fondue-accordion-header', asChild, onClick, children }: AccordionHeaderProps,
         ref: ForwardedRef<HTMLHeadingElement>,
     ) => {
+        const rootContext = useContext(AccordionRootContext);
+        const caretAlignment = rootContext?.caretAlignment ?? 'inline';
+
         const { slots, triggerContent } = useMemo(
             () =>
                 Children.toArray(children).reduce<{ slots: ReactNode[]; triggerContent: ReactNode[] }>(
@@ -350,7 +376,12 @@ export const AccordionHeader = forwardRef<HTMLHeadingElement, AccordionHeaderPro
 
         return (
             <RadixAccordion.Header ref={ref} asChild={asChild} className={styles.accordionHeader} onClick={onClick}>
-                <RadixAccordion.Trigger className={styles.accordionTrigger} data-test-id={dataTestId}>
+                <RadixAccordion.Trigger
+                    className={styles.accordionTrigger}
+                    data-test-id={dataTestId}
+                    data-caret-alignment={caretAlignment}
+                    data-has-slots={slots.length > 0}
+                >
                     <div className={styles.accordionTriggerContent}>{triggerContent}</div>
                     <IconCaretDown className={styles.accordionCaret} size="16" />
                 </RadixAccordion.Trigger>
