@@ -66,7 +66,7 @@ describe('Accordion Component', () => {
         expect(screen.getByTestId(ACCORDION_TEST_ID)).toHaveAttribute('data-sticky-background', 'true');
     });
 
-    it('should default caretAlignment to inline and mark headers without slots', () => {
+    it('should default caretAlignment to inline', () => {
         render(
             <Accordion.Root data-test-id={ACCORDION_TEST_ID}>
                 <Accordion.Item value="1">
@@ -74,12 +74,10 @@ describe('Accordion Component', () => {
                 </Accordion.Item>
             </Accordion.Root>,
         );
-        const trigger = screen.getByTestId('fondue-accordion-header');
-        expect(trigger).toHaveAttribute('data-caret-alignment', 'inline');
-        expect(trigger).toHaveAttribute('data-has-slots', 'false');
+        expect(screen.getByTestId('fondue-accordion-header')).toHaveAttribute('data-caret-alignment', 'inline');
     });
 
-    it('should mark headers that render slots as having slots', () => {
+    it('should apply caretAlignment to headers regardless of whether they render slots', () => {
         render(
             <Accordion.Root data-test-id={ACCORDION_TEST_ID} caretAlignment="end">
                 <Accordion.Item value="1">
@@ -90,8 +88,6 @@ describe('Accordion Component', () => {
                 </Accordion.Item>
             </Accordion.Root>,
         );
-        const trigger = screen.getByTestId('fondue-accordion-header');
-        expect(trigger).toHaveAttribute('data-caret-alignment', 'end');
-        expect(trigger).toHaveAttribute('data-has-slots', 'true');
+        expect(screen.getByTestId('fondue-accordion-header')).toHaveAttribute('data-caret-alignment', 'end');
     });
 });

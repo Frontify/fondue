@@ -143,9 +143,9 @@
         box-shadow: 0 1px 0 var(--color-line-subtle);
     }
 
-    &:has(.accordionTrigger[data-caret-alignment='end'][data-has-slots='false']) {
-        grid-template-columns: 1fr max-content;
-        grid-template-areas: "content caret";
+    &:has(.accordionTrigger[data-caret-alignment='end']) {
+        grid-template-columns: auto 1fr max-content max-content;
+        grid-template-areas: "content slot actions caret";
     }
 }
 
@@ -161,10 +161,6 @@
     text-align: start;
     width: 100%;
     padding: var(--accordion-vertical-padding) var(--accordion-horizontal-padding);
-
-    &[data-caret-alignment='end'][data-has-slots='false'] {
-        grid-column: 1 / 3;
-    }
 
     &[data-state='open'],
     &:hover {

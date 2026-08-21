@@ -310,7 +310,7 @@ export const WithStickyPillVariant: Story = {
 
                     <Accordion.Item value="accordion-test-1">
                         <Accordion.Header>
-                            With action slot, caret stays inline
+                            With action slot, caret still pinned to the end
                             <Accordion.Slot name="action">
                                 <Button size="small" emphasis="default">
                                     Click Me

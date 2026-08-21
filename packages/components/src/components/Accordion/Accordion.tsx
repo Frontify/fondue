@@ -128,8 +128,7 @@ export type AccordionRootProps = {
     stickyBackground?: boolean;
     /**
      * Controls where the caret icon sits within `Accordion.Header`. `'end'` pushes the caret
-     * to the far right of the header, but only for headers that render no `Accordion.Slot`.
-     * Headers with slots are unaffected.
+     * to the far right of the header, after any `Accordion.Slot` content.
      * @default 'inline'
      */
     caretAlignment?: AccordionCaretAlignment;
@@ -380,7 +379,6 @@ export const AccordionHeader = forwardRef<HTMLHeadingElement, AccordionHeaderPro
                     className={styles.accordionTrigger}
                     data-test-id={dataTestId}
                     data-caret-alignment={caretAlignment}
-                    data-has-slots={slots.length > 0}
                 >
                     <div className={styles.accordionTriggerContent}>{triggerContent}</div>
                     <IconCaretDown className={styles.accordionCaret} size="16" />
