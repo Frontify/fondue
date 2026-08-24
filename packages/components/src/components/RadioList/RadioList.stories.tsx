@@ -6,6 +6,7 @@ import { useId } from 'react';
 
 import { Flex } from '../Flex/Flex';
 import { Label } from '../Label/Label';
+import { Text } from '../Text/Text';
 import { Tooltip } from '../Tooltip/Tooltip';
 
 import { RadioList, RadioListRoot } from './RadioList';
@@ -131,6 +132,43 @@ export const WithoutLabels: Story = {
                 <RadioList.RadioButton id={idOption2} value="2" />
                 <RadioList.RadioButton id={idOption3} value="3" />
             </RadioList.Root>
+        );
+    },
+};
+
+export const WithGroupLabelAndDescription: Story = {
+    render: (args) => {
+        const id = useId();
+
+        const idGroupLabel = `${id}-group-label`;
+        const idGroupDescription = `${id}-group-description`;
+        const idOption1 = `${id}-option-1`;
+        const idOption2 = `${id}-option-2`;
+
+        return (
+            <Flex direction="column" gap={2}>
+                <Text id={idGroupLabel} weight="strong" size="small">
+                    Visibility
+                </Text>
+
+                {/* The root renders a `role="radiogroup"`, which `label for` cannot name, so the
+                    group label and description are associated through the aria attributes. */}
+                <RadioList.Root {...args} aria-labelledby={idGroupLabel} aria-describedby={idGroupDescription}>
+                    <RadioList.RadioButton id={idOption1} value="1" />
+                    <Label htmlFor={idOption1} required={args.required}>
+                        Everyone
+                    </Label>
+
+                    <RadioList.RadioButton id={idOption2} value="2" />
+                    <Label htmlFor={idOption2} required={args.required}>
+                        Only me
+                    </Label>
+                </RadioList.Root>
+
+                <Text id={idGroupDescription} size="small" color="weak">
+                    Hint text associated with the group through `aria-describedby`.
+                </Text>
+            </Flex>
         );
     },
 };

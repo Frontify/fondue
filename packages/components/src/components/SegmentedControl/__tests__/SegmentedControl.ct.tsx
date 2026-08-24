@@ -131,6 +131,76 @@ test('should render full width', async ({ mount }) => {
     expect(boundingBox?.width).toBe(550);
 });
 
+test('should name the group with `aria-label`', async ({ mount }) => {
+    const component = await mount(
+        <SegmentedControl.Root
+            data-test-id={SEGMENTED_CONTROL_TEST_ID}
+            defaultValue="first"
+            aria-label="Text alignment"
+        >
+            <SegmentedControl.Item value="first">First</SegmentedControl.Item>
+            <SegmentedControl.Item value="second">Second</SegmentedControl.Item>
+        </SegmentedControl.Root>,
+    );
+
+    await expect(component.getByRole('radiogroup')).toHaveAccessibleName('Text alignment');
+});
+
+test('should name the group with `aria-labelledby`', async ({ mount }) => {
+    const component = await mount(
+        <div>
+            <span id="alignment-label">Text alignment</span>
+
+            <SegmentedControl.Root
+                data-test-id={SEGMENTED_CONTROL_TEST_ID}
+                defaultValue="first"
+                aria-labelledby="alignment-label"
+            >
+                <SegmentedControl.Item value="first">First</SegmentedControl.Item>
+                <SegmentedControl.Item value="second">Second</SegmentedControl.Item>
+            </SegmentedControl.Root>
+        </div>,
+    );
+
+    await expect(component.getByRole('radiogroup')).toHaveAccessibleName('Text alignment');
+});
+
+test('should describe the group with `aria-describedby`', async ({ mount }) => {
+    const component = await mount(
+        <div>
+            <SegmentedControl.Root
+                data-test-id={SEGMENTED_CONTROL_TEST_ID}
+                defaultValue="first"
+                aria-label="Text alignment"
+                aria-describedby="alignment-hint"
+            >
+                <SegmentedControl.Item value="first">First</SegmentedControl.Item>
+                <SegmentedControl.Item value="second">Second</SegmentedControl.Item>
+            </SegmentedControl.Root>
+
+            <span id="alignment-hint">Applies to the whole paragraph</span>
+        </div>,
+    );
+
+    await expect(component.getByRole('radiogroup')).toHaveAccessibleDescription('Applies to the whole paragraph');
+});
+
+test('should forward `id` to the group', async ({ mount }) => {
+    const component = await mount(
+        <SegmentedControl.Root
+            data-test-id={SEGMENTED_CONTROL_TEST_ID}
+            defaultValue="first"
+            id="alignment-control"
+            aria-label="Text alignment"
+        >
+            <SegmentedControl.Item value="first">First</SegmentedControl.Item>
+            <SegmentedControl.Item value="second">Second</SegmentedControl.Item>
+        </SegmentedControl.Root>,
+    );
+
+    await expect(component.getByTestId(SEGMENTED_CONTROL_TEST_ID)).toHaveAttribute('id', 'alignment-control');
+});
+
 test('should work with enum values', async ({ mount }) => {
     // Define an enum for testing generic type functionality
     const enum TabOptions {

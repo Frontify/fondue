@@ -4,39 +4,48 @@ import * as RadioGroupPrimitve from '@radix-ui/react-radio-group';
 import { type ReactNode } from 'react';
 
 import { useFondueTheme } from '#/components/ThemeProvider/ThemeProvider';
+import { type OptionalCommonAriaAttrs } from '#/utilities/types';
 
 import styles from './styles/radiolist.module.scss';
 
-type RadioListRootProps = {
+export type RadioListRootProps = {
     asChild?: boolean;
     children?: ReactNode;
     className?: string;
     disabled?: boolean;
     emphasis?: 'default' | 'highlight';
+    id?: string;
     onValueChange?: (value: string) => void;
     orientation?: 'vertical' | 'horizontal';
     readOnly?: boolean;
     required?: boolean;
     value?: string;
     'data-test-id'?: string;
-};
+} & OptionalCommonAriaAttrs;
 export const RadioListRoot = ({
     asChild,
     children,
     className,
     disabled,
     emphasis = 'default',
+    id,
     onValueChange,
     orientation,
     readOnly,
     required,
     value,
     'data-test-id': dataTestId,
+    'aria-label': ariaLabel,
+    'aria-labelledby': ariaLabelledby,
+    'aria-describedby': ariaDescribedby,
 }: RadioListRootProps) => {
     const { dir } = useFondueTheme();
 
     return (
         <RadioGroupPrimitve.Root
+            aria-describedby={ariaDescribedby}
+            aria-label={ariaLabel}
+            aria-labelledby={ariaLabelledby}
             aria-readonly={readOnly}
             asChild={asChild}
             className={[className, asChild ? undefined : styles.root].filter(Boolean).join(' ')}
@@ -45,6 +54,7 @@ export const RadioListRoot = ({
             data-test-id={dataTestId}
             dir={dir}
             disabled={disabled}
+            id={id}
             onValueChange={onValueChange}
             orientation={orientation}
             required={required}

@@ -12,3 +12,5 @@ export type AriaLabelAttrs = Pick<AriaAttributes, 'aria-label'> & Pick<AriaAttri
 export type AtLeastOneAriaLabelAttr = AtLeastOneAttr<AriaLabelAttrs>;
 
 export type CommonAriaAttrs = Pick<AriaAttributes, 'aria-describedby'> & AtLeastOneAriaLabelAttr;
+
+export type OptionalCommonAriaAttrs = Pick<AriaAttributes, 'aria-describedby'> & AriaLabelAttrs;
