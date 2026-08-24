@@ -4,6 +4,7 @@ import * as ToggleGroupPrimitive from '@radix-ui/react-toggle-group';
 import { forwardRef, type ForwardedRef, type ReactElement, type ReactNode } from 'react';
 
 import { useControllableState } from '#/hooks/useControllableState';
+import { type OptionalCommonAriaAttrs } from '#/utilities/types';
 
 import styles from './styles/segmentedControl.module.scss';
 
@@ -33,7 +34,8 @@ export type SegmentedControlRootProps<TValue extends string = string> = {
      * @default true
      */
     hugWidth?: boolean;
-};
+    'data-test-id'?: string;
+} & OptionalCommonAriaAttrs;
 
 export const SegmentedControlRoot = <TValue extends string = string>(
     {
