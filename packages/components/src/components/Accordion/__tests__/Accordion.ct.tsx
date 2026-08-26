@@ -393,4 +393,20 @@ test.describe('Accordion Component', () => {
         await expect(componentSmall.locator(ACCORDION_ITEM_TRIGGER_ID)).toHaveCSS('padding-top', '0px');
         await expect(componentSmall.locator(ACCORDION_ITEM_TRIGGER_ID)).toHaveCSS('padding-bottom', '0px');
     });
+
+    test('keeps the pill variant header background when the accordion is also sticky', async ({ mount }) => {
+        const component = await mount(
+            <Accordion.Root variant="pill" sticky>
+                <Accordion.Item value="1">
+                    <Accordion.Header>Header Content</Accordion.Header>
+                    <Accordion.Content>Content</Accordion.Content>
+                </Accordion.Item>
+            </Accordion.Root>,
+        );
+
+        const header = component.getByRole('heading', { name: 'Header Content' });
+
+        await expect(header).toHaveCSS('background-color', 'rgb(248, 248, 245)');
+        await expect(header).not.toHaveCSS('background-color', 'rgb(255, 255, 255)');
+    });
 });
