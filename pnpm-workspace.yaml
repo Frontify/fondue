@@ -1,23 +1,25 @@
 packages:
-    - packages/*
-    - storybook-docs
+  - packages/*
+  - storybook-docs
 
 allowBuilds:
-    "@bundled-es-modules/glob": true
-    "@parcel/watcher": true
-    cypress: true
-    esbuild: true
-    style-dictionary: true
-    unrs-resolver: true
+  "@bundled-es-modules/glob": true
+  "@parcel/watcher": true
+  cypress: true
+  esbuild: true
+  style-dictionary: true
+  unrs-resolver: true
 
 blockExoticSubdeps: true
 minimumReleaseAge: 1440
 minimumReleaseAgeExclude:
-    - "@frontify/*"
+  - "@frontify/*"
+  # Renovate security update: style-dictionary@5.4.4
+  - style-dictionary@5.4.4
 
 publicHoistPattern:
-    - "*eslint*"
-    - "*prettier*"
-    - "*tailwind*"
+  - "*eslint*"
+  - "*prettier*"
+  - "*tailwind*"
 
 confirmModulesPurge: false
