@@ -154,7 +154,7 @@
     padding: var(--accordion-vertical-padding) var(--accordion-horizontal-padding);
 
     &[data-state='open'],
-    &:hover {
+    &:not([data-disabled]):hover {
         color: var(--color-primary-default);
     }
 
