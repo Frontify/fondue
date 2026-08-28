@@ -1,5 +1,16 @@
 # @frontify/fondue-components
 
+## 32.0.1
+
+### Patch Changes
+
+- [#2829](https://github.com/Frontify/fondue/pull/2829) [`611afc2`](https://github.com/Frontify/fondue/commit/611afc25cd5ed6051e61ce6965b054cbd211b659) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat: minor style adjustments in card component
+
+- [#2828](https://github.com/Frontify/fondue/pull/2828) [`e151937`](https://github.com/Frontify/fondue/commit/e15193701148d060c9ba307fdc2b2d123a7051c1) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: adjust styling to have background when sticky and pill are combined
+
+- Updated dependencies []:
+  - @frontify/fondue-tokens@5.1.1
+
 ## 32.0.0
 
 ### Patch Changes
