@@ -1,5 +1,11 @@
 # @frontify/fondue-sdk
 
+## 0.2.1
+
+### Patch Changes
+
+- [#2831](https://github.com/Frontify/fondue/pull/2831) [`9fd6a43`](https://github.com/Frontify/fondue/commit/9fd6a436b253530d1b7782a358ccccfaad1ecc05) Thanks [@noahwaldner](https://github.com/noahwaldner)! - pathc: update vite version to 6.x to patch cve
+
 ## 0.2.0
 
 ### Minor Changes
