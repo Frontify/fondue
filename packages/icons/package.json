@@ -57,6 +57,7 @@
     "devDependencies": {
         "@babel/core": "^7.29.7",
         "@etchteam/storybook-addon-status": "^8.1.0",
+        "@figma/rest-api-spec": "^0.42.0",
         "@frontify/oxfmt-config": "^0.0.2",
         "@frontify/oxlint-config-basic": "^0.0.2",
         "@frontify/oxlint-config-react": "^0.0.2",
@@ -74,7 +75,7 @@
         "autoprefixer": "^10.5.4",
         "dotenv-cli": "^11.0.0",
         "eslint-plugin-tailwindcss": "^3.18.3",
-        "figma-api": "^1.12.0",
+        "figma-api": "^2.2.1-beta",
         "fuzzysort": "^4.0.0",
         "lodash-es": "^4.18.1",
         "oxfmt": "^0.52.0",

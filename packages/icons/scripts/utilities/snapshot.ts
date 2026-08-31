@@ -3,9 +3,9 @@
 import { createHash } from 'node:crypto';
 import { readFileSync, writeFileSync } from 'node:fs';
 
-import { SNAPSHOT_FILE_PATH } from '../config';
+import { type SubcanvasNode } from '@figma/rest-api-spec';
 
-import type * as Figma from 'figma-api';
+import { SNAPSHOT_FILE_PATH } from '../config';
 
 const savedSnapshot = readFileSync(SNAPSHOT_FILE_PATH, {
     encoding: 'utf8',
@@ -15,12 +15,12 @@ const sha256Checksum = (value: string) => {
     return createHash('sha256').update(value, 'utf8').digest('hex');
 };
 
-export const saveSnapshot = (content: Figma.Node<keyof Figma.NodeTypes>[]): void => {
+export const saveSnapshot = (content: SubcanvasNode[]): void => {
     const fileContent = JSON.stringify(content);
     writeFileSync(SNAPSHOT_FILE_PATH, fileContent);
 };
 
-export const didComponentChange = (componentSetNode: Figma.Node<keyof Figma.NodeTypes>): boolean => {
+export const didComponentChange = (componentSetNode: SubcanvasNode): boolean => {
     if (!savedSnapshot) {
         return false;
     }

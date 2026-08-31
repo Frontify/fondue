@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import type * as Figma from 'figma-api';
+import { type SubcanvasNode } from '@figma/rest-api-spec';
 
 /**
  * Takes any array of Figma SceneNodes and returns a flat array of all
@@ -9,10 +9,8 @@ import type * as Figma from 'figma-api';
  * Note that it is returning the full document node, which
  * contains all children, styles etc.
  */
-export const getComponentSetNodes = (
-    sceneNodes: Figma.Node<keyof Figma.NodeTypes>[],
-): Figma.Node<keyof Figma.NodeTypes>[] => {
-    const matches: Figma.Node<keyof Figma.NodeTypes>[] = [];
+export const getComponentSetNodes = (sceneNodes: SubcanvasNode[]): SubcanvasNode[] => {
+    const matches: SubcanvasNode[] = [];
 
     if (!Array.isArray(sceneNodes)) {
         return matches;
@@ -36,7 +34,7 @@ export const getComponentSetNodes = (
  * Takes a component, and returns an array of key-value pairs
  * extracted from its name
  */
-export const getComponentProperties = (component: Figma.Node<keyof Figma.NodeTypes>) => {
+export const getComponentProperties = (component: SubcanvasNode) => {
     const pairs = component.name.split(',');
     const properties: { key: string; value: string }[] = [];
 

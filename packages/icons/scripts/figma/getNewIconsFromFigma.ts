@@ -2,7 +2,7 @@
 
 import { existsSync } from 'node:fs';
 
-import * as Figma from 'figma-api';
+import { type SubcanvasNode } from '@figma/rest-api-spec';
 import { kebabCase } from 'lodash-es';
 
 import {
@@ -16,7 +16,9 @@ import { didComponentChange, saveSnapshot } from '../utilities/snapshot';
 
 import { getComponentProperties, getComponentSetNodes } from './document';
 
-const getVariantName = (componentNode: Figma.Node<keyof Figma.NodeTypes>) => {
+import type * as Figma from 'figma-api';
+
+const getVariantName = (componentNode: SubcanvasNode) => {
     const properties = getComponentProperties(componentNode);
 
     let size = '';
@@ -47,13 +49,13 @@ export const getNewIconsFromFigma = async ({
 }) => {
     const icons: Record<string, { name: string; fileName: string; imageUrl: null }> = {};
 
-    const file = await api.getFileNodes(fileId, [frameId]);
+    const file = await api.getFileNodes({ file_key: fileId }, { ids: frameId });
 
     const nodes = file.nodes;
 
-    const frame = nodes[FIGMA_ICON_FRAME_ID as unknown as keyof typeof nodes]?.document;
+    const frame = nodes[FIGMA_ICON_FRAME_ID]?.document;
 
-    if (!frame || !Figma.isNodeType(frame, 'FRAME')) {
+    if (!frame || frame.type !== 'FRAME') {
         throw new Error('The frame was not found in the Figma file or the node type is not a frame.');
     }
 
