@@ -231,7 +231,7 @@ export const buildStyleDictionary = (config: Config) => {
                         options: {
                             showFileHeader: false,
                             stripMeta: {
-                                strip: ['attributes', 'filePath', 'isSource', 'original'],
+                                strip: ['attributes', 'filePath', 'isSource', 'original', 'key'],
                             },
                         },
                         format: 'json',
@@ -247,7 +247,7 @@ export const buildStyleDictionary = (config: Config) => {
                         options: {
                             showFileHeader: false,
                             stripMeta: {
-                                strip: ['attributes', 'filePath', 'isSource', 'original'],
+                                strip: ['attributes', 'filePath', 'isSource', 'original', 'key'],
                             },
                         },
                         format: 'json',
@@ -260,7 +260,7 @@ export const buildStyleDictionary = (config: Config) => {
                         options: {
                             showFileHeader: false,
                             stripMeta: {
-                                strip: ['attributes', 'filePath', 'isSource', 'original', 'path'],
+                                strip: ['attributes', 'filePath', 'isSource', 'original', 'path', 'key'],
                             },
                         },
                         format: 'json',
