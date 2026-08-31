@@ -1,5 +1,16 @@
 # @frontify/fondue-icons
 
+## 0.28.1
+
+### Patch Changes
+
+- [#2834](https://github.com/Frontify/fondue/pull/2834) [`c75ce34`](https://github.com/Frontify/fondue/commit/c75ce342ae4bbdb3ba6f390c1f7bb09ac99809de) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: bump iconify-tools to adress cve in sub dependency
+
+- [#2831](https://github.com/Frontify/fondue/pull/2831) [`9fd6a43`](https://github.com/Frontify/fondue/commit/9fd6a436b253530d1b7782a358ccccfaad1ecc05) Thanks [@noahwaldner](https://github.com/noahwaldner)! - pathc: update vite version to 6.x to patch cve
+
+- Updated dependencies [[`507b2ca`](https://github.com/Frontify/fondue/commit/507b2ca71658aa4b03d7f8fb8e74e8c71c554772)]:
+  - @frontify/fondue-tokens@5.1.2
+
 ## 0.28.0
 
 ### Minor Changes
