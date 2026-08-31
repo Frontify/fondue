@@ -1,5 +1,14 @@
 # @frontify/fondue-charts
 
+## 8.0.2
+
+### Patch Changes
+
+- [#2831](https://github.com/Frontify/fondue/pull/2831) [`9fd6a43`](https://github.com/Frontify/fondue/commit/9fd6a436b253530d1b7782a358ccccfaad1ecc05) Thanks [@noahwaldner](https://github.com/noahwaldner)! - pathc: update vite version to 6.x to patch cve
+
+- Updated dependencies [[`507b2ca`](https://github.com/Frontify/fondue/commit/507b2ca71658aa4b03d7f8fb8e74e8c71c554772)]:
+  - @frontify/fondue-tokens@5.1.2
+
 ## 8.0.1
 
 ### Patch Changes

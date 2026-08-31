@@ -1,5 +1,11 @@
 # @frontify/fondue-tokens
 
+## 5.1.2
+
+### Patch Changes
+
+- [#2832](https://github.com/Frontify/fondue/pull/2832) [`507b2ca`](https://github.com/Frontify/fondue/commit/507b2ca71658aa4b03d7f8fb8e74e8c71c554772) Thanks [@noahwaldner](https://github.com/noahwaldner)! - pathc: upgrade style-dictionary to patch cve
+
 ## 5.1.1
 
 ### Patch Changes
