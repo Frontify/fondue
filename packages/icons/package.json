@@ -60,7 +60,7 @@
         "@frontify/oxfmt-config": "^0.0.2",
         "@frontify/oxlint-config-basic": "^0.0.2",
         "@frontify/oxlint-config-react": "^0.0.2",
-        "@iconify/tools": "^4.2.0",
+        "@iconify/tools": "^5.0.14",
         "@storybook/addon-a11y": "^10.5.7",
         "@storybook/addon-docs": "^10.5.7",
         "@storybook/addon-links": "^10.5.7",
