@@ -1,0 +1,37 @@
+packages/components/src/components/DatePicker/DatePickerInput.tsx
+  h_2139c5e5c94509 76
+packages/components/src/components/Select/components/SelectBase.tsx
+  h_2139c5e5c94509 248
+  s_d139ed32990c48::t_d5dd49ba2a2320 249-250
+packages/components/src/components/ColorPicker/ColorPickerInput.stories.tsx
+  h_2139c5e5c94509 31-39
+packages/components/src/components/ColorPicker/ColorPicker.stories.tsx
+  h_2139c5e5c94509 113
+packages/components/src/components/Select/Select.stories.tsx
+  h_2139c5e5c94509 16-17,233
+packages/components/src/components/Select/styles/select.module.scss
+  h_2139c5e5c94509 65-69,235,242
+packages/components/src/components/ColorPicker/ColorPickerInput.tsx
+  h_2139c5e5c94509 58,69,85
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "414e8bfc8bbc68ee89aeed8b05933c7d326d0ead",
+  "prompts": {},
+  "humans": {
+    "h_2139c5e5c94509": {
+      "author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  },
+  "sessions": {
+    "s_d139ed32990c48": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "bb4619e9-8cfc-41e0-b3d0-4c2becfc012a",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}
