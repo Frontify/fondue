@@ -723,6 +723,9 @@ importers:
       '@etchteam/storybook-addon-status':
         specifier: ^8.1.0
         version: 8.1.0(storybook@10.5.7(@types/react@18.3.31)(prettier@3.9.6)(react@18.3.1))
+      '@figma/rest-api-spec':
+        specifier: ^0.42.0
+        version: 0.42.0
       '@frontify/oxfmt-config':
         specifier: ^0.0.2
         version: 0.0.2(oxfmt@0.52.0)
@@ -775,8 +778,8 @@ importers:
         specifier: ^3.18.3
         version: 3.18.3(tailwindcss@3.4.19(tsx@4.23.11)(yaml@2.9.0))
       figma-api:
-        specifier: ^1.12.0
-        version: 1.12.0
+        specifier: ^2.2.1-beta
+        version: 2.2.1-beta
       fuzzysort:
         specifier: ^4.0.0
         version: 4.0.0
@@ -2662,6 +2665,9 @@ packages:
     resolution: {integrity: sha512-jKEoBJwGO4uab3L4hNEjxlve1eBvyCf6FmTQYpxbMnEohciSYt3aT2iVtraNQD7E46IrcaR5CF5ykS1MfXNfyw==}
     peerDependencies:
       storybook: ^10.0.0
+
+  '@figma/rest-api-spec@0.42.0':
+    resolution: {integrity: sha512-rx/44oRn3wFrSznwPev71KR/91RW/BNpKu4I5Z3cTpU2z6Zv/zhJwfeYmJGg4Tu2goQXoQrzv3UjNq1Ep6LcYQ==}
 
   '@floating-ui/core@1.8.0':
     resolution: {integrity: sha512-0CIZ5itps/8x7BG8dEIhs53BvCUH2PCoogtakwRTut+Arm58sJooJ0AuZhLw2HJYIR5cMLNPBSS728sPho2khQ==}
@@ -6014,9 +6020,6 @@ packages:
     resolution: {integrity: sha512-BASOg+YwO2C+346x3LZOeoovTIoTrRqEsqMa6fmfAV0P+U9mFr9NsyOEpiYvFjbc64NMrSswhV50WdXzdb/Z5A==}
     engines: {node: '>=4'}
 
-  axios@0.27.2:
-    resolution: {integrity: sha512-t+yRIyySRTp/wua5xEr+z1q60QmLq8ABsS5O9Me1AsE5dfKqgnCFzwiCZZ/cGNd1lq4/7akDWMxdhVlucjmnOQ==}
-
   axios@1.19.0:
     resolution: {integrity: sha512-ht/iuYZXEjFxLH/Hkezgd7m6JKlHHXEUSneaDz8uZe1Gj5QZtCnpyDsckvAiEnT89OEbCLmnte4R4sn7P0EKFw==}
 
@@ -7161,8 +7164,8 @@ packages:
     engines: {node: '>= 17.0.0'}
     hasBin: true
 
-  figma-api@1.12.0:
-    resolution: {integrity: sha512-iRxy967LXJpkZUawXbxU2GVRVRZ1m5y7ZdBTxC2RcyUJc5fcUrrV4TqIQiFFaepLNF7jUmCZ7wnb8WjXVIiEDA==}
+  figma-api@2.2.1-beta:
+    resolution: {integrity: sha512-gK/8/O0fj+kqJglJHzVVktXo299aYt2NHXpIrQ0mlb2N+CqK1npqhdqUss51QXTafUdMA4MJqwCBZMsxQuff+Q==}
 
   figures@3.2.0:
     resolution: {integrity: sha512-yaduQFRKLXYOGgEn6AZau90j3ggSOyiqXU0F9JZfeXYhNa+Jk4X+s45A2zg5jns87GAFa34BBm2kXw4XpNcbdg==}
@@ -11840,6 +11843,8 @@ snapshots:
       lodash: 4.18.1
       storybook: 10.5.7(@types/react@18.3.31)(prettier@3.9.6)(react@18.3.1)
 
+  '@figma/rest-api-spec@0.42.0': {}
+
   '@floating-ui/core@1.8.0':
     dependencies:
       '@floating-ui/utils': 0.2.12
@@ -15546,13 +15551,6 @@ snapshots:
 
   axe-core@4.11.1: {}
 
-  axios@0.27.2:
-    dependencies:
-      follow-redirects: 1.16.0
-      form-data: 4.0.6
-    transitivePeerDependencies:
-      - debug
-
   axios@1.19.0(supports-color@8.1.1):
     dependencies:
       follow-redirects: 1.16.0
@@ -16997,12 +16995,13 @@ snapshots:
     dependencies:
       commander: 14.0.3
 
-  figma-api@1.12.0:
+  figma-api@2.2.1-beta:
     dependencies:
-      '@types/node': 22.20.1
-      axios: 0.27.2
+      '@figma/rest-api-spec': 0.42.0
+      axios: 1.19.0(supports-color@8.1.1)
     transitivePeerDependencies:
       - debug
+      - supports-color
 
   figures@3.2.0:
     dependencies:
