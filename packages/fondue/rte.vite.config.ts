@@ -18,6 +18,7 @@ export default defineConfig({
             entry: 'src/subpackages/rte.ts',
             name: 'FondueRte',
             fileName: 'fondue-rte',
+            cssFileName: 'style',
         },
         rollupOptions: {
             external: ['@frontify/fondue-rte'],

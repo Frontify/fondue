@@ -25,7 +25,10 @@ const externalizeJsDeps = (): Plugin => ({
         if (!matchesExternalCandidate(id)) {
             return null;
         }
-        const resolved = await this.resolve(id, importer, { ...options, skipSelf: true });
+        const resolved = await this.resolve(id, importer, {
+            ...options,
+            skipSelf: true,
+        });
 
         if (resolved && STYLE_FILE.test(resolved.id)) {
             return resolved;
@@ -46,7 +49,11 @@ export default defineConfig({
     plugins: [
         react(),
         tsConfigPaths(),
-        dts({ insertTypesEntry: true, rollupTypes: true, exclude: ['**/*.stories.tsx', '.storybook/**'] }),
+        dts({
+            insertTypesEntry: true,
+            rollupTypes: true,
+            exclude: ['**/*.stories.tsx', '.storybook/**'],
+        }),
         externalizeJsDeps(),
     ],
     css: {
@@ -61,6 +68,7 @@ export default defineConfig({
             entry: './src/index.ts',
             name: 'FondueComponents',
             formats: ['es'],
+            cssFileName: 'style',
         },
         sourcemap: true,
         minify: true,
