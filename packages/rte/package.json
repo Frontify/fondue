@@ -175,7 +175,7 @@
         "chalk": "^6.0.0",
         "concat": "^1.0.3",
         "cross-env": "^10.1.0",
-        "cypress": "^14.5.4",
+        "cypress": "^15.21.1",
         "cypress-real-events": "^1.15.0",
         "esbuild": "^0.28.2",
         "eslint-plugin-tailwindcss": "^3.18.3",
