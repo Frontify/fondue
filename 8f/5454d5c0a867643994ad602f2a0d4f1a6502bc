@@ -1,0 +1,59 @@
+packages/rich-text-edior/src/plugins/Italic/Italic.tsx
+  s_935f2ee3f678c2::t_d73958b195cdd0 29
+packages/rich-text-edior/src/plugins/Underline/Underline.tsx
+  s_935f2ee3f678c2::t_d73958b195cdd0 29
+packages/rich-text-edior/src/adapters/prosemirror/api/blocks.ts
+  s_935f2ee3f678c2::t_1bfd0776678ece 8-9,15-19,33-50
+packages/rich-text-edior/src/adapters/prosemirror/enginePlugins.ts
+  s_935f2ee3f678c2::t_dbec3906b503d1 41-58,65,70-71,73
+packages/rich-text-edior/src/domain/commands.ts
+  s_935f2ee3f678c2::t_c08606bcbd1cac 97-103
+packages/rich-text-edior/src/plugins/CheckList/CheckList.tsx
+  s_935f2ee3f678c2::t_4b40309ca5e712 85
+packages/rich-text-edior/src/plugins/List/List.tsx
+  s_935f2ee3f678c2::t_4b40309ca5e712 47,56-57,96,107,118
+packages/rich-text-edior/src/adapters/prosemirror/api/index.ts
+  s_935f2ee3f678c2::t_1bfd0776678ece 26
+packages/rich-text-edior/src/plugins/Quote/Quote.tsx
+  s_935f2ee3f678c2::t_08b528c5dd63a5 5,36,42
+packages/rich-text-edior/src/plugins/Code/Code.tsx
+  s_935f2ee3f678c2::t_d73958b195cdd0 31
+packages/rich-text-edior/src/adapters/prosemirror/schema.ts
+  s_935f2ee3f678c2::t_1bfd0776678ece 5,24-25,92
+packages/rich-text-edior/src/plugins/TextStyle/helpers/presets.ts
+  s_935f2ee3f678c2::t_08b528c5dd63a5 3,66-73,75,79
+  s_935f2ee3f678c2::t_9d3b54747c0655 74,76-78,80-83
+packages/rich-text-edior/src/plugins/Autoformat/Autoformat.tsx
+  s_935f2ee3f678c2::t_89036c7fd7b97c 6-12
+packages/rich-text-edior/src/plugins/TextStyle/components/TextStyleSelect.tsx
+  s_935f2ee3f678c2::t_1651f796e5f3da 6,8
+packages/rich-text-edior/src/plugins/Strikethrough/Strikethrough.tsx
+  s_935f2ee3f678c2::t_d73958b195cdd0 35
+packages/rich-text-edior/src/plugins/ResetFormatting/ResetFormatting.tsx
+  s_935f2ee3f678c2::t_1bfd0776678ece 5,19-22
+packages/rich-text-edior/src/plugins/TextStyle/TextStyle.tsx
+  s_935f2ee3f678c2::t_08b528c5dd63a5 10,64-65
+packages/rich-text-edior/src/plugins/Bold/Bold.tsx
+  s_935f2ee3f678c2::t_d73958b195cdd0 29
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "8f5454d5c0a867643994ad602f2a0d4f1a6502bc",
+  "prompts": {},
+  "humans": {
+    "h_2139c5e5c94509": {
+      "author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  },
+  "sessions": {
+    "s_935f2ee3f678c2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e91df161-b427-4aab-9538-43b52a6f0323",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}
