@@ -1,5 +1,15 @@
 # @frontify/fondue
 
+## 13.7.9
+
+### Patch Changes
+
+- [#2839](https://github.com/Frontify/fondue/pull/2839) [`3033a66`](https://github.com/Frontify/fondue/commit/3033a66836b8bd8f01c971f26e7d6c553e306240) Thanks [@syeo66](https://github.com/syeo66)! - fix(SegmentedControl): prevent Firefox from collapsing icon only widths
+
+- Updated dependencies [[`3033a66`](https://github.com/Frontify/fondue/commit/3033a66836b8bd8f01c971f26e7d6c553e306240), [`65b05b3`](https://github.com/Frontify/fondue/commit/65b05b323bcd2d6ae6b087eba513e170010a0fdd)]:
+  - @frontify/fondue-components@32.0.3
+  - @frontify/fondue-icons@0.28.2
+
 ## 13.7.8
 
 ### Patch Changes
