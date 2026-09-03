@@ -1,5 +1,11 @@
 # @frontify/fondue-icons
 
+## 0.28.2
+
+### Patch Changes
+
+- [#2835](https://github.com/Frontify/fondue/pull/2835) [`65b05b3`](https://github.com/Frontify/fondue/commit/65b05b323bcd2d6ae6b087eba513e170010a0fdd) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: bump dependency versions
+
 ## 0.28.1
 
 ### Patch Changes
