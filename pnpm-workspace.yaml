@@ -21,3 +21,6 @@ publicHoistPattern:
     - "*tailwind*"
 
 confirmModulesPurge: false
+
+patchedDependencies:
+    "@radix-ui/react-scroll-area@1.2.18": patches/@radix-ui__react-scroll-area@1.2.18.patch
