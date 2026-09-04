@@ -1,5 +1,16 @@
 # @frontify/fondue
 
+## 13.7.10
+
+### Patch Changes
+
+- [#2842](https://github.com/Frontify/fondue/pull/2842) [`2a8b2c8`](https://github.com/Frontify/fondue/commit/2a8b2c8339e83f80d034c9781e39b8c209c066b0) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: missing title attribute on table header
+
+- [#2841](https://github.com/Frontify/fondue/pull/2841) [`b5b8684`](https://github.com/Frontify/fondue/commit/b5b8684aebbe36535bc8aec99ec5505bf88f2604) Thanks [@noahwaldner](https://github.com/noahwaldner)! - fix: add patch for radix scrollarea to avoid bug during minification
+
+- Updated dependencies [[`2a8b2c8`](https://github.com/Frontify/fondue/commit/2a8b2c8339e83f80d034c9781e39b8c209c066b0), [`b5b8684`](https://github.com/Frontify/fondue/commit/b5b8684aebbe36535bc8aec99ec5505bf88f2604)]:
+  - @frontify/fondue-components@32.0.4
+
 ## 13.7.9
 
 ### Patch Changes
