@@ -1,0 +1,37 @@
+packages/components/src/components/Button/Button.stories.tsx
+  c3cd51adfb952135 74-75
+  86f3672e2aa1422b 70-73
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.19",
+  "base_commit_sha": "e5892049cc8e855746812832d5377d52b37826c9",
+  "prompts": {
+    "86f3672e2aa1422b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1da634fe-3f5d-4ef2-9067-6af1df6f1095",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>",
+      "messages": [],
+      "total_additions": 13,
+      "total_deletions": 0,
+      "accepted_lines": 10,
+      "overriden_lines": 0
+    },
+    "c3cd51adfb952135": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "103ee23f-25d5-4ed9-b666-bbb3c08c32b1",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>",
+      "messages": [],
+      "total_additions": 5,
+      "total_deletions": 12,
+      "accepted_lines": 5,
+      "overriden_lines": 0
+    }
+  }
+}

@@ -1,0 +1,26 @@
+.zed/settings.json
+  s_ee7d2274533ab4::t_5809122bbaf628 2-8
+  s_ee7d2274533ab4::t_65cc74cb206b70 1,9
+  s_ee7d2274533ab4::t_53030d9b0cf6d8 10-12
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "3265c16045a804d2da4f777716a1e993c7854c9d",
+  "prompts": {},
+  "humans": {
+    "h_2139c5e5c94509": {
+      "author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  },
+  "sessions": {
+    "s_ee7d2274533ab4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b627ab06-ef13-48ca-b19d-de85c1351d8c",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}
