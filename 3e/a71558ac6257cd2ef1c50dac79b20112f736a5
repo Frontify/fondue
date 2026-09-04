@@ -1,0 +1,102 @@
+packages/new-rte/tailwind.config.ts
+  s_205e7f084166b1::t_5e0796b5228416 3,12
+packages/new-rte/src/plugins/bold.tsx
+  s_a678f3d06cbff5::t_33bc937cc7904e 3-5,12,15,18-19,21,24
+packages/new-rte/src/plugins/italic.tsx
+  s_a678f3d06cbff5::t_b7e4d21ae65dab 3-5,12,15,18-19,21,24
+packages/new-rte/src/index.ts
+  s_205e7f084166b1::t_31bed0f7858672 116-119
+  s_a678f3d06cbff5::t_869bad1a086272 26-35,38-39,41-43,45-50,57-59,61-64,66,72,75,79-83,86-87,112-114
+  s_205e7f084166b1::t_0dc2c3ffc099a6 15-17,74,89,99,106,108
+  s_03fe8782e59764::t_1b15554d3835f4 5-6,18-19,23-25,51-52,54-56,65,67-71,73,76-78,84-85,88,90-92,95-98,100-105,111
+  s_205e7f084166b1::t_5e0796b5228416 53
+  s_03fe8782e59764::t_bd917a491ab6fa 60
+packages/new-rte/src/plugins/link.tsx
+  s_a678f3d06cbff5::t_adf1ddc49ae6f0 3-5,12,19,26-28,40,43
+packages/new-rte/src/RichTextEditor/index.ts
+  s_205e7f084166b1::t_0dc2c3ffc099a6 18,20
+  s_a678f3d06cbff5::t_fc76d6e8a00866 4-11,14,16,19,21-22
+packages/new-rte/oxlint.config.ts
+  s_a678f3d06cbff5::t_3e17b73b4b286f 51,53
+  s_a678f3d06cbff5::t_2a659f51aa71e0 62,82,105
+packages/new-rte/src/RichTextEditor/prosemirror.ts
+  s_a678f3d06cbff5::t_3798614396afd3 224-226,239-240,242
+  s_a678f3d06cbff5::t_9440e1a07fe065 11,13,15-16,21,24-29,40-71,73-76,78,80-81,85-92,96-117,123-124,133,139-140,148-167,169-170,173,193-197,199-210,215-222,231,233,236,244,246,249,261,267-269,271-274,276,279-295,300-302,311-313,317-319,332,334-336,344,349,359,378-380,390-396,398-400,404,407,410,412,422-428
+  s_a678f3d06cbff5::t_a1d9a8d483851b 37-38
+  s_a678f3d06cbff5::t_33e8dd9e864016 93-95,198,211-214
+packages/new-rte/src/type-derivation.spec.ts
+  s_205e7f084166b1::t_0dc2c3ffc099a6 7,10,20,24,28,32,35,39,45,50-51
+  s_03fe8782e59764::t_5deddd6c69a61c 9,11-16,18,22,26-27,30,33-34,36-38,40-44,46-49,52-54,56-66
+packages/new-rte/src/plugins/quote.tsx
+  s_a678f3d06cbff5::t_3199e57be6d5e8 3,5-7,10,13,19-20,31,33
+packages/new-rte/src/RichTextEditor/types.ts
+  s_a678f3d06cbff5::t_84c040b5da4295 5-76,80-82,84,103-107,112-114,130,132,136-137,139-140,147,150-151,153,168-169,171-172,176-199
+packages/new-rte/package.json
+  s_205e7f084166b1::t_bf0b15aeb1cc3a 24
+  s_a678f3d06cbff5::t_057e9cf3f29c68 25
+packages/new-rte/src/RichTextEditor/RichTextEditor.tsx
+  s_a678f3d06cbff5::t_55f44b1d5befa1 3-17,19,22,28,40-44,50-51,54,65,67-69,71,86-87,91-92,99,109-125
+  s_a678f3d06cbff5::t_33e8dd9e864016 93-95
+packages/new-rte/src/plugins/image.tsx
+  s_a678f3d06cbff5::t_02500022ca16e4 3-5,14,22-23,25-26,28,35,40,45
+packages/new-rte/src/plugins/heading.tsx
+  s_a678f3d06cbff5::t_1f3ef0f57fee73 15
+  s_a678f3d06cbff5::t_95c7bbe0ea61f4 62
+  s_a678f3d06cbff5::t_4ef10d42bf33d8 4,6,8,12,17,24,26-27,30-33,55-61,68,75-79
+  s_a678f3d06cbff5::t_3a7ba65ea8fdb8 42-43
+packages/new-rte/vite.config.ts
+  s_205e7f084166b1::t_5e0796b5228416 51,60
+  s_205e7f084166b1::t_d17b2b4a2f468e 52
+packages/new-rte/src/plugins/ToolbarButton.tsx
+  s_a678f3d06cbff5::t_7a1c62cedd75fc 3,5-47
+packages/new-rte/src/RichTextEditor.stories.tsx
+  s_205e7f084166b1::t_0dc2c3ffc099a6 13-15,17,57,63,96,113,139,185,192,221,249,277,280,314,344,392
+  s_a678f3d06cbff5::t_50900696b23719 286-287,296
+  s_a678f3d06cbff5::t_eaac003c79ec22 354-356,359-360,363
+  s_a678f3d06cbff5::t_4162f4dd9cbf85 379
+  s_205e7f084166b1::t_5e0796b5228416 29,75
+  s_03fe8782e59764::t_e6114eb9fbc7b4 243,245-246,262,264
+  s_03fe8782e59764::t_c96bc6559c6dda 4,32-35,55-56,58-59,62,64-65,81-82,84-90,95,97-107,112,114-115,120-121,123-129,132-136,138,140-146,174-179,184,186-191,193-209,216,244,248,250-251,263,265-271,311,313,315-316,325-334,389,391,393-394,403-412
+  s_03fe8782e59764::t_051291e64cb2f8 54,60,83,122,151-153,159-160,168-170
+  s_a678f3d06cbff5::t_85691df7a44304 16
+  s_03fe8782e59764::t_5ce3069ad31bc7 217-220
+packages/new-rte/dist/index.d.ts
+  s_a678f3d06cbff5::t_47435b6691d576 3-8,12-14,19,22,24,28-29,31-35,40,44,50,53-55,58,63-66,72-73,76,79,82,88,90,93,96-97,99-101,107,111,114,120,122,132-133,135-139,144,146,150,157-158,160,163-165,167-186,189-210,213-247,250-258,260-312,315-326
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "3ea71558ac6257cd2ef1c50dac79b20112f736a5",
+  "prompts": {},
+  "humans": {
+    "h_2139c5e5c94509": {
+      "author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  },
+  "sessions": {
+    "s_03fe8782e59764": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d383ca88-fff3-4699-a668-d780b85ff6c4",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    },
+    "s_205e7f084166b1": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "26ee55f0-4505-498e-9b19-edc4cb1ff6a8",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    },
+    "s_a678f3d06cbff5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a6ba691b-4304-476b-853c-786d35c775f9",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}
