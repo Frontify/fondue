@@ -1,0 +1,34 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+@use 'sass:map';
+
+/*
+ * Stacking order for portaled overlays.
+ *
+ * Every overlay in this package portals to `document.body`, and the outermost node of
+ * each portal is a `position: static` ThemeProvider wrapper -- which cannot carry a
+ * z-index. The value therefore belongs on the positioned element inside the portal:
+ * the `Dialog` underlay, or the Radix `Content` class for popper-based overlays (Radix
+ * copies the content's computed z-index onto `[data-radix-popper-content-wrapper]`).
+ *
+ * `dialog` has to clear host page content. Without a value here it lands at `auto` and
+ * loses to literally any positioned sibling carrying `z-index: 1`.
+ *
+ * `popover` covers Dropdown, Flyout, Select and Tooltip. These can be opened from
+ * inside a Dialog, so they must stay above it -- do not lower them below `dialog`.
+ *
+ * Keep this in sync with the RichTextEditor's own scale in
+ * `packages/rte/src/components/RichTextEditor/helpers/zIndexLayers.ts`.
+ */
+$layers: (
+    dialog: 20,
+    popover: 30,
+);
+
+@function get($layer) {
+    @if not map.has-key($layers, $layer) {
+        @error "Unknown z-index layer `#{$layer}`. Known layers: #{map.keys($layers)}.";
+    }
+
+    @return map.get($layers, $layer);
+}

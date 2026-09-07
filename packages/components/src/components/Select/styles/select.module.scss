@@ -5,6 +5,7 @@
 @use '../../../utilities/transitions.module.scss';
 @use '../../../utilities/mediaQuery.module.scss';
 @use '../../../utilities/shadow.module.scss';
+@use '../../../utilities/zIndex.module.scss';
 
 .root {
     position: relative;
@@ -283,7 +284,7 @@
 }
 
 .portal {
-    z-index: 30;
+    z-index: zIndex.get(popover);
 
     &[data-side='bottom'] {
         margin-block-start: sizeToken.get(2);

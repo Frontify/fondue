@@ -6,5 +6,4 @@ export const zIndexLayers = {
     textStyleDropdown: 52,
     combobox: 100,
     emojiPopover: 100,
-    floatingModal: 1000,
 };

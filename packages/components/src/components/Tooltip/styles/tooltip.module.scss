@@ -2,8 +2,10 @@
 
 @use '../../../utilities/sizeToken.module.scss';
 @use '../../../utilities/text.module.scss';
+@use '../../../utilities/zIndex.module.scss';
 
 .root {
+    z-index: zIndex.get(popover);
     background-color: var(--color-primary-default);
     color: var(--color-primary-on-primary);
     border-radius: var(--border-radius-medium);

@@ -4,6 +4,7 @@
 @use '../../../utilities/focusStyle.module.scss';
 @use '../../../utilities/transitions.module.scss';
 @use '../../../utilities/mediaQuery.module.scss';
+@use '../../../utilities/zIndex.module.scss';
 
 .content {
     display: block;
@@ -270,6 +271,7 @@
 .underlay {
     position: fixed;
     inset: 0;
+    z-index: zIndex.get(dialog);
     background-color: rgb(from var(--color-primary-default) r g b / 0);
     pointer-events: auto;
 

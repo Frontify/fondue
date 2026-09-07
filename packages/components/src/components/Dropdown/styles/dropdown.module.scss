@@ -5,10 +5,12 @@
 @use '../../../utilities/mediaQuery.module.scss';
 @use '../../../utilities/shadow.module.scss';
 @use '../../../utilities/focusStyle.module.scss';
+@use '../../../utilities/zIndex.module.scss';
 
 .content,
 .subContent {
     display: block;
+    z-index: zIndex.get(popover);
     border-radius: var(--border-radius-medium);
     background-color: var(--color-surface-default);
     border: var(--border-width-default) solid var(--color-line-subtle);

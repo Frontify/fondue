@@ -4,8 +4,10 @@
 @use '../../../utilities/sizeToken.module.scss';
 @use '../../../utilities/shadow.module.scss';
 @use '../../../utilities/focusStyle.module.scss';
+@use '../../../utilities/zIndex.module.scss';
 
 .root {
+    z-index: zIndex.get(popover);
     display: flex;
     flex-direction: column;
     background-color: var(--color-surface-default);
@@ -60,6 +62,7 @@
 .overlay {
     content: '';
     position: fixed;
+    z-index: zIndex.get(popover);
     top: 0;
     left: 0;
     width: 100dvw;
