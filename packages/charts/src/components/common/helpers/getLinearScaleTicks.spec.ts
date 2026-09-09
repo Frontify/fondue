@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type Mock, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { getLinearScaleTicks } from '@components/common/helpers/getLinearScaleTicks';
 
@@ -22,7 +22,7 @@ const getTicksWithEqualSteps = ({ domain }: { domain: [number, number] }) => {
 };
 
 describe('getLinearScaleTicks', () => {
-    let createScaleMock: Mock<() => any>;
+    let createScaleMock: ReturnType<typeof vi.mocked<typeof import('@visx/scale').createScale>>;
     beforeEach(async () => {
         const { createScale } = await import('@visx/scale');
         vi.mocked(createScale).mockImplementation(getTicksWithEqualSteps as any);
