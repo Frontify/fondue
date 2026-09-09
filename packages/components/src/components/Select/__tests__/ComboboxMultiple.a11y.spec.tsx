@@ -413,10 +413,10 @@ describe('ComboboxMultiple - Accessibility', () => {
             expect(getOption('Cherry')).toHaveAttribute('aria-checked', 'false');
         });
 
-        it('describes the input as mixed, which is its only channel for the visible label', () => {
-            renderMultiCombobox({ 'aria-label': 'Fruits', value: [], indeterminateValues: ['banana'] });
+        it('describes the partially applied count, which the badge alone would not announce', () => {
+            renderMultiCombobox({ 'aria-label': 'Fruits', value: [], indeterminateValues: ['banana', 'cherry'] });
 
-            expect(screen.getByRole('combobox')).toHaveAccessibleDescription('Mixed');
+            expect(screen.getByRole('combobox')).toHaveAccessibleDescription('2 mixed');
         });
     });
 });

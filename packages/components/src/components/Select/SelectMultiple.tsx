@@ -20,7 +20,7 @@ export type SelectMultipleProps = SelectSharedProps & {
     defaultValue?: string[];
     /**
      * Values that apply to only some of the records being edited. Those options render a dash
-     * instead of a checkmark and the trigger shows "Mixed" instead of the selection badges.
+     * instead of a checkmark and the trigger gains a "2 mixed" badge next to the selection badges.
      *
      * Purely visual: never part of the selection, never reported by `onSelect`. Selecting one
      * applies it to every record and it does not return to the partial state when switched off

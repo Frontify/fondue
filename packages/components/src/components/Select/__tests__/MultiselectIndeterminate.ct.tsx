@@ -98,21 +98,53 @@ test('swap the dash for a checkmark when a partially applied item is clicked', a
     await expect(partialItem.getByTestId(DASH_TEST_ID)).toBeHidden();
 });
 
-test('render the mixed label instead of the selection badges', async ({ mount }) => {
+test('render the mixed count badge next to the selection badges', async ({ mount }) => {
     const wrapper = await mount(
         <SelectMultiple
             aria-label="test"
             data-test-id={SELECT_TEST_ID}
             value={['selected']}
-            indeterminateValues={['partial']}
+            indeterminateValues={['partial', 'other-partial']}
         >
             <Select.Slot name="menu">
                 <Select.Item value="selected">Selected item</Select.Item>
                 <Select.Item value="partial">Partial item</Select.Item>
+                <Select.Item value="other-partial">Other partial item</Select.Item>
             </Select.Slot>
         </SelectMultiple>,
     );
 
-    await expect(wrapper.getByTestId(MIXED_VALUE_TEST_ID)).toHaveText('Mixed');
-    await expect(wrapper.getByTestId('badge')).toBeHidden();
+    await expect(wrapper.getByTestId(MIXED_VALUE_TEST_ID)).toHaveText('2 mixed');
+    await expect(wrapper.getByTestId('badge')).toHaveText('Selected item');
+});
+
+test('keep the mixed badge inside the field when the selection badges collapse', async ({ mount }) => {
+    const wrapper = await mount(
+        <div style={{ width: 240 }}>
+            <SelectMultiple
+                aria-label="test"
+                data-test-id={SELECT_TEST_ID}
+                value={['first', 'second', 'third']}
+                indeterminateValues={['partial']}
+            >
+                <Select.Slot name="menu">
+                    <Select.Item value="first">A long first value</Select.Item>
+                    <Select.Item value="second">A long second value</Select.Item>
+                    <Select.Item value="third">A long third value</Select.Item>
+                    <Select.Item value="partial">Partial item</Select.Item>
+                </Select.Slot>
+            </SelectMultiple>
+        </div>,
+    );
+
+    // The badges collapsed, so an overflow badge stands in for the hidden ones.
+    await expect(wrapper.getByText(/^\+\d+$/)).toBeVisible();
+
+    // `toBeVisible` does not catch clipping by an ancestor's `overflow: hidden`, so compare the
+    // boxes: the mixed badge must sit inside the field even once the badges have taken their space.
+    const mixedBox = await wrapper.getByTestId(MIXED_VALUE_TEST_ID).boundingBox();
+    const fieldBox = await wrapper.getByTestId(SELECT_TEST_ID).boundingBox();
+    expect(mixedBox).not.toBeNull();
+    expect(fieldBox).not.toBeNull();
+    expect(mixedBox!.x + mixedBox!.width).toBeLessThanOrEqual(fieldBox!.x + fieldBox!.width);
 });

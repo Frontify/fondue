@@ -24,7 +24,7 @@ type CollapsibleBadgesProps = {
     children?: ReactNode;
     /** Total number of selected items (for screen reader announcements). */
     selectedCount?: number;
-    /** When set, replaces the badges. Used when some values are only partially applied. */
+    /** When set, adds a non-dismissable badge for the values that are only partially applied. */
     mixedLabel?: string;
 };
 
@@ -33,9 +33,13 @@ const calculateVisibleCount = (
     badgeElements: Map<string, HTMLDivElement>,
     items: BadgeItem[],
     hasInputSlot: boolean,
+    mixedBadgeWidth: number,
 ): number => {
     const containerWidth = container.offsetWidth;
     let usedWidth = hasInputSlot ? INPUT_MIN_WIDTH + BADGE_GAP : 0;
+    if (mixedBadgeWidth > 0) {
+        usedWidth += mixedBadgeWidth + BADGE_GAP;
+    }
     let count = 0;
 
     for (const item of items) {
@@ -57,7 +61,9 @@ const calculateVisibleCount = (
         count++;
     }
 
-    return Math.max(1, count);
+    // One badge always stays visible so the field never looks empty — unless a mixed badge is
+    // already holding that ground, in which case the overflow badge can stand in for all of them
+    return Math.max(mixedBadgeWidth > 0 ? 0 : 1, count);
 };
 
 export const CollapsibleBadges = ({
@@ -72,6 +78,7 @@ export const CollapsibleBadges = ({
     const wasClickedRef = useRef(false);
     const containerRef = useRef<HTMLDivElement>(null);
     const badgeElementsRef = useRef<Map<string, HTMLDivElement>>(new Map());
+    const mixedBadgeRef = useRef<HTMLDivElement>(null);
     const [visibleCount, setVisibleCount] = useState(items.length);
     const hasChildren = children !== undefined;
     const isMixed = mixedLabel !== undefined;
@@ -87,7 +94,16 @@ export const CollapsibleBadges = ({
                 setVisibleCount(0);
                 return;
             }
-            setVisibleCount(calculateVisibleCount(container, badgeElementsRef.current, items, hasChildren));
+            setVisibleCount(
+                calculateVisibleCount(
+                    container,
+                    badgeElementsRef.current,
+                    items,
+                    hasChildren,
+                    // The mixed badge always stays visible, so the selection badges collapse around it
+                    mixedBadgeRef.current?.offsetWidth ?? 0,
+                ),
+            );
         };
 
         const observer = new ResizeObserver(recalculate);
@@ -95,13 +111,13 @@ export const CollapsibleBadges = ({
         return (): void => {
             observer.disconnect();
         };
-    }, [items, hasChildren]);
+    }, [items, hasChildren, mixedLabel]);
 
     if (items.length === 0 && !children && !isMixed) {
         return placeholder;
     }
 
-    const overflowCount = isMixed ? 0 : items.length - visibleCount;
+    const overflowCount = items.length - visibleCount;
 
     const getSelectedCountText = (count: number): string => {
         if (count === 1) {
@@ -119,47 +135,41 @@ export const CollapsibleBadges = ({
                 {getSelectedCountText(selectedCount)}
             </span>
             {children}
-            {isMixed ? (
-                <span className={styles.mixedValue} data-test-id="fondue-select-mixed-value">
-                    {mixedLabel}
-                </span>
-            ) : (
-                items.map((item, index) => (
-                    <div
-                        key={item.value}
-                        ref={(element): void => {
-                            if (element) {
-                                badgeElementsRef.current.set(item.value, element);
-                            } else {
-                                badgeElementsRef.current.delete(item.value);
-                            }
-                        }}
-                        role="presentation"
-                        className={styles.badgeWrapper}
-                        data-visible={index < visibleCount}
-                        onKeyDown={(event: KeyboardEvent<HTMLDivElement>): void => {
-                            if (event.key === 'Enter' || event.key === ' ') {
-                                event.stopPropagation();
-                            }
-                        }}
-                        onMouseDown={(): void => {
-                            wasClickedRef.current = true;
+            {items.map((item, index) => (
+                <div
+                    key={item.value}
+                    ref={(element): void => {
+                        if (element) {
+                            badgeElementsRef.current.set(item.value, element);
+                        } else {
+                            badgeElementsRef.current.delete(item.value);
+                        }
+                    }}
+                    role="presentation"
+                    className={styles.badgeWrapper}
+                    data-visible={index < visibleCount}
+                    onKeyDown={(event: KeyboardEvent<HTMLDivElement>): void => {
+                        if (event.key === 'Enter' || event.key === ' ') {
+                            event.stopPropagation();
+                        }
+                    }}
+                    onMouseDown={(): void => {
+                        wasClickedRef.current = true;
+                    }}
+                >
+                    <Badge
+                        emphasis="weak"
+                        aria-label={typeof item.displayValue === 'string' ? item.displayValue : item.value}
+                        onDismiss={(event) => {
+                            event.stopPropagation();
+                            onDismiss(item.value, wasClickedRef.current);
+                            wasClickedRef.current = false;
                         }}
                     >
-                        <Badge
-                            emphasis="weak"
-                            aria-label={typeof item.displayValue === 'string' ? item.displayValue : item.value}
-                            onDismiss={(event) => {
-                                event.stopPropagation();
-                                onDismiss(item.value, wasClickedRef.current);
-                                wasClickedRef.current = false;
-                            }}
-                        >
-                            {item.displayValue}
-                        </Badge>
-                    </div>
-                ))
-            )}
+                        {item.displayValue}
+                    </Badge>
+                </div>
+            ))}
             {overflowCount > 0 && (
                 <div
                     className={styles.badgeWrapper}
@@ -167,6 +177,13 @@ export const CollapsibleBadges = ({
                 >
                     <Badge emphasis="weak" aria-hidden="true">
                         +{overflowCount}
+                    </Badge>
+                </div>
+            )}
+            {isMixed && (
+                <div ref={mixedBadgeRef} className={styles.badgeWrapper}>
+                    <Badge emphasis="weak" data-test-id="fondue-select-mixed-value">
+                        {mixedLabel}
                     </Badge>
                 </div>
             )}

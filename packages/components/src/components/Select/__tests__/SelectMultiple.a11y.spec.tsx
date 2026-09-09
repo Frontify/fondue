@@ -469,10 +469,10 @@ describe('SelectMultiple - Accessibility', () => {
             expect(getOption('Banana')).not.toHaveAttribute('aria-checked');
         });
 
-        it('describes the trigger as mixed instead of listing the selection', () => {
-            renderMultiSelect({ 'aria-label': 'Fruits', value: ['apple'], indeterminateValues: ['banana'] });
+        it('describes the selection and the partially applied count, as the trigger shows both', () => {
+            renderMultiSelect({ 'aria-label': 'Fruits', value: ['apple'], indeterminateValues: ['banana', 'cherry'] });
 
-            expect(screen.getByRole('combobox')).toHaveAccessibleDescription('Mixed');
+            expect(screen.getByRole('combobox')).toHaveAccessibleDescription('1 selected: Apple, 2 mixed');
         });
     });
 });

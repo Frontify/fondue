@@ -225,11 +225,11 @@ describe('ComboboxMultiple', () => {
     });
 
     describe('indeterminate values', () => {
-        it('shows the mixed label instead of the selection badges', () => {
-            renderMultiCombobox({ value: ['apple'], indeterminateValues: ['banana'] });
+        it('counts the partially applied values in a badge next to the selection badges', () => {
+            renderMultiCombobox({ value: ['apple'], indeterminateValues: ['banana', 'cherry'] });
 
-            expect(screen.getByTestId('fondue-select-mixed-value')).toHaveTextContent('Mixed');
-            expect(screen.queryAllByTestId('badge')).toHaveLength(0);
+            expect(screen.getByTestId('fondue-select-mixed-value')).toHaveTextContent('2 mixed');
+            expect(screen.getByTestId('badge')).toHaveTextContent('Apple');
         });
 
         it('keeps the input usable while showing the mixed label', async () => {

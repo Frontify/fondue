@@ -215,11 +215,11 @@ describe('SelectMultiple', () => {
             expect(getOptionRow('Cherry')).toHaveAttribute('data-indeterminate', 'true');
         });
 
-        it('shows the mixed label instead of the selection badges', () => {
-            renderMultiSelect({ value: ['apple'], indeterminateValues: ['banana'] });
+        it('counts the partially applied values in a badge next to the selection badges', () => {
+            renderMultiSelect({ value: ['apple'], indeterminateValues: ['banana', 'cherry'] });
 
-            expect(screen.getByTestId('fondue-select-mixed-value')).toHaveTextContent('Mixed');
-            expect(screen.queryAllByTestId('badge')).toHaveLength(0);
+            expect(screen.getByTestId('fondue-select-mixed-value')).toHaveTextContent('2 mixed');
+            expect(getDismissableBadges().map((badge) => badge.textContent)).toEqual(['Apple']);
         });
 
         it('is not empty when only partially applied values are present', () => {

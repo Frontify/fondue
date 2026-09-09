@@ -140,7 +140,7 @@ const SelectBaseInput = (
         multiple,
         selectedItemValues,
         getItemByValue,
-        hasIndeterminateValues,
+        indeterminateItemValues.length,
     );
     const badgeItems = useBadgeItems(selectedItemValues, getItemByValue);
 
@@ -252,7 +252,11 @@ const SelectBaseInput = (
                             <CollapsibleBadges
                                 items={badgeItems}
                                 placeholder={placeholder}
-                                mixedLabel={hasIndeterminateValues ? t('Select_mixedValues') : undefined}
+                                mixedLabel={
+                                    hasIndeterminateValues
+                                        ? t('Select_mixedCount', { count: indeterminateItemValues.length.toString() })
+                                        : undefined
+                                }
                                 onDismiss={(value) => {
                                     handleItemSelect(value);
                                     internalRef.current?.focus();

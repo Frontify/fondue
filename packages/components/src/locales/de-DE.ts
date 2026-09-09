@@ -24,7 +24,7 @@ const translations = {
     Select_additionalItemsSelected: '${count} weitere Elemente ausgewählt',
     Select_clear: 'Eingabe löschen',
     Select_error: 'Fehler',
-    Select_mixedValues: 'Gemischt',
+    Select_mixedCount: '${count} gemischt',
     Select_multipleItemsSelected: '${count} Elemente ausgewählt',
     Select_selectedCount: '${count} ausgewählt: ${items}',
     Select_singleItemSelected: '1 Element ausgewählt',

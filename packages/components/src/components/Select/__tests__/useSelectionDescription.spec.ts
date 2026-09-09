@@ -85,16 +85,22 @@ describe('useSelectionDescription', () => {
     });
 
     describe('indeterminate values', () => {
-        it('describes the selection as mixed, ignoring the selected count', () => {
+        it('appends the partially applied count to the selection', () => {
             const items = {
                 a: { value: 'a', label: 'Alpha' },
                 b: { value: 'b', label: 'Beta' },
             };
             const { result } = renderHook(() =>
-                useSelectionDescription(true, ['a', 'b'], createGetItemByValue(items), true),
+                useSelectionDescription(true, ['a', 'b'], createGetItemByValue(items), 3),
             );
 
-            expect(result.current.selectionDescription).toBe('Mixed');
+            expect(result.current.selectionDescription).toBe('2 selected: Alpha, Beta, 3 mixed');
+        });
+
+        it('describes the partially applied count alone when nothing is selected', () => {
+            const { result } = renderHook(() => useSelectionDescription(true, [], createGetItemByValue({}), 3));
+
+            expect(result.current.selectionDescription).toBe('3 mixed');
         });
     });
 });

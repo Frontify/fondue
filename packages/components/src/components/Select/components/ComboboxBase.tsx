@@ -150,7 +150,7 @@ const ComboboxBaseInput = (
         multiple,
         selectedItemValues,
         getItemByValue,
-        hasIndeterminateValues,
+        indeterminateItemValues.length,
     );
     const badgeItems = useBadgeItems(selectedItemValues, getItemByValue);
 
@@ -322,7 +322,11 @@ const ComboboxBaseInput = (
                                 items={badgeItems}
                                 onDismiss={handleDismissBadge}
                                 selectedCount={selectedItemValues.length}
-                                mixedLabel={hasIndeterminateValues ? t('Select_mixedValues') : undefined}
+                                mixedLabel={
+                                    hasIndeterminateValues
+                                        ? t('Select_mixedCount', { count: indeterminateItemValues.length.toString() })
+                                        : undefined
+                                }
                             >
                                 <input
                                     {...getInputProps({
