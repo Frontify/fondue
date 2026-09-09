@@ -43,6 +43,7 @@ describe('useRotatedLabel', () => {
 
     afterEach(() => {
         vi.restoreAllMocks();
+        vi.clearAllMocks();
     });
 
     it('returns 360 when horizontal', () => {

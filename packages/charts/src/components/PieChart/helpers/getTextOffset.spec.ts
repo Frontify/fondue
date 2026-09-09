@@ -23,6 +23,7 @@ describe('getTextOffset', () => {
     });
     afterEach(() => {
         vi.restoreAllMocks();
+        vi.clearAllMocks();
     });
     it('returns expected offset title only', () => {
         const result = getTextOffset(true, false, false);

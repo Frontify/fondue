@@ -16,12 +16,12 @@ describe('useSingleDate', () => {
         it('should return a Date for the initial selected value', () => {
             const { result } = renderHook(() => useSingleDate({ year: 2025, month: 3, day: 15 }));
 
-            expect(result.current.selectedDate).toStrictEqual(new Date(Date.UTC(2025, 2, 15)));
+            expect(result.current.selectedDate).toStrictEqual(new Date(2025, 2, 15));
         });
 
         it('should update internal state when handleSelect is called', () => {
             const { result } = renderHook(() => useSingleDate());
-            const newDate = new Date(Date.UTC(2025, 5, 10));
+            const newDate = new Date(2025, 5, 10);
 
             act(() => {
                 result.current.handleSelect(newDate, newDate, {}, {} as React.MouseEvent);
@@ -36,13 +36,13 @@ describe('useSingleDate', () => {
             const selected = { year: 2025, month: 1, day: 1 };
             const { result } = renderHook(() => useSingleDate(selected));
 
-            expect(result.current.selectedDate).toStrictEqual(new Date(Date.UTC(2025, 0, 1)));
+            expect(result.current.selectedDate).toStrictEqual(new Date(2025, 0, 1));
         });
 
         it('should call onSelect callback when handleSelect is invoked', () => {
             const onSelect = vi.fn();
             const { result } = renderHook(() => useSingleDate(undefined, onSelect));
-            const newDate = new Date(Date.UTC(2025, 7, 20));
+            const newDate = new Date(2025, 7, 20);
 
             act(() => {
                 result.current.handleSelect(newDate, newDate, {}, {} as React.MouseEvent);
@@ -58,11 +58,11 @@ describe('useSingleDate', () => {
                 },
             });
 
-            expect(result.current.selectedDate).toStrictEqual(new Date(Date.UTC(2025, 0, 1)));
+            expect(result.current.selectedDate).toStrictEqual(new Date(2025, 0, 1));
 
             rerender({ selected: { year: 2025, month: 6, day: 15 } });
 
-            expect(result.current.selectedDate).toStrictEqual(new Date(Date.UTC(2025, 5, 15)));
+            expect(result.current.selectedDate).toStrictEqual(new Date(2025, 5, 15));
         });
     });
 });

@@ -32,7 +32,7 @@ describe('handleKeyDown', () => {
     it('moves focus to previous row when ArrowUp is pressed', () => {
         const rows = document.querySelectorAll('tr');
         const currentRow = rows[2];
-        const previousRow = rows[1];
+        const previousRow = rows[1]!;
 
         currentRow?.focus();
 
@@ -51,7 +51,7 @@ describe('handleKeyDown', () => {
     it('moves focus to next row when ArrowDown is pressed', () => {
         const rows = document.querySelectorAll('tr');
         const currentRow = rows[1];
-        const nextRow = rows[2];
+        const nextRow = rows[2]!;
 
         currentRow?.focus();
 
@@ -70,7 +70,7 @@ describe('handleKeyDown', () => {
     it('allows navigation between header and body rows', () => {
         const rows = document.querySelectorAll('tr');
         const headerRow = rows[0];
-        const firstBodyRow = rows[1];
+        const firstBodyRow = rows[1]!;
 
         headerRow?.focus();
 
