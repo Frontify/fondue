@@ -58,6 +58,6 @@
         "vite": "^6.4.3",
         "vite-plugin-dts": "^4.5.4",
         "vite-tsconfig-paths": "^5.1.4",
-        "vitest": "^3.2.7"
+        "vitest": "^5.0.0"
     }
 }
