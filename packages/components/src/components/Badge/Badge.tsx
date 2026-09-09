@@ -130,9 +130,11 @@ export const Badge = ({
 
 Badge.displayName = 'Badge';
 
+// The label needs its own element to truncate: `text-overflow` has no effect on the anonymous flex
+// item that bare children would form.
 const BadgeContent = ({ children, status }: { children: ReactNode; status?: BadgeStatusProps['status'] }) => (
     <>
         {status && <BadgeStatus status={status} />}
-        {children}
+        <span className={styles.label}>{children}</span>
     </>
 );

@@ -409,14 +409,21 @@
     }
 }
 
+// Shrinks so a long label truncates rather than being clipped by the container. Everything shrinks
+// in proportion to its width, so the longest label gives up the most space.
 .badgeWrapper {
-    flex-shrink: 0;
+    min-width: 0;
 
     &[data-visible='false'] {
         visibility: hidden;
         position: absolute;
         pointer-events: none;
     }
+}
+
+// "+2" is already a summary and only a few characters wide, so it keeps its size
+.overflowBadgeWrapper {
+    flex-shrink: 0;
 }
 
 .srOnly {
