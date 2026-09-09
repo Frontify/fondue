@@ -1,0 +1,14 @@
+packages/components/src/components/Accordion/styles/accordion.module.scss
+  h_2139c5e5c94509 157
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.24",
+  "base_commit_sha": "b98234027743f8d170f2aed2c54e4715b6bdab0e",
+  "prompts": {},
+  "humans": {
+    "h_2139c5e5c94509": {
+      "author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}

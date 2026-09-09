@@ -1,0 +1,53 @@
+packages/rich-text-edior/src/plugins/index.ts
+  s_7bac6e4813496e::t_cee026b7ee4195 24-27
+packages/rich-text-edior/src/RichTextEditor/prosemirror/editor.ts
+  s_7bac6e4813496e::t_f39dbbdf81f47b 3,109-110,113-127,129
+packages/rich-text-edior/src/RichTextEditor/prosemirror/api/index.ts
+  s_7bac6e4813496e::t_340375ccf267fd 11,22
+packages/rich-text-edior/src/plugins/Mention/components/Combobox.tsx
+  s_7bac6e4813496e::t_7ca3c7cd85085c 5,9,17-18,20-22,25,33,35-36,38-39
+packages/rich-text-edior/src/RichTextEditor/prosemirror/api/blocks.ts
+  s_7bac6e4813496e::t_340375ccf267fd 10,13
+packages/rich-text-edior/src/RichTextEditor/prosemirror/api/nodes.ts
+  s_7bac6e4813496e::t_89f8aace2d380a 6,8-9
+  s_7bac6e4813496e::t_7905a95c4af364 3-4,11-17
+  s_7bac6e4813496e::t_779a7323a20f3f 5
+  s_7bac6e4813496e::t_e657048275947c 7
+  s_7bac6e4813496e::t_763a86cfe90b42 10
+  s_7bac6e4813496e::t_f296aa31f3ee27 18-19
+packages/rich-text-edior/src/RichTextEditor/index.ts
+  s_7bac6e4813496e::t_d6b5049e9bfe24 15-17
+packages/rich-text-edior/src/RichTextEditor.stories.tsx
+  s_7bac6e4813496e::t_2d62de3f623c90 276
+packages/rich-text-edior/src/plugins.stories.tsx
+  s_7bac6e4813496e::t_e209796e8a1f8e 572-573
+  s_7bac6e4813496e::t_d6b5049e9bfe24 4,34,989-1051,1075
+  s_7bac6e4813496e::t_2d62de3f623c90 751,831-832
+packages/rich-text-edior/src/RichTextEditor/types/api.ts
+  s_7bac6e4813496e::t_5cb3b795cfd547 47-51
+packages/rich-text-edior/src/plugins/Mention/Mention.tsx
+  s_7bac6e4813496e::t_e209796e8a1f8e 36-39
+  s_7bac6e4813496e::t_cee026b7ee4195 5,22-24,70-92,94
+  s_7bac6e4813496e::t_9d1133e2f9de50 35
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "cb0d11ec00eb60f7b0a2934efb5029c56016c643",
+  "prompts": {},
+  "humans": {
+    "h_2139c5e5c94509": {
+      "author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  },
+  "sessions": {
+    "s_7bac6e4813496e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "38ebf483-66b5-4540-95d5-8dca5a442534",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}
