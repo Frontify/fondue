@@ -18,6 +18,15 @@ export type ComboboxMultipleProps = ComboboxSharedProps & {
      * The default value of the combobox component. Used for uncontrolled usages
      */
     defaultValue?: string[];
+    /**
+     * Values that apply to only some of the records being edited. Those options render a dash
+     * instead of a checkmark and the input shows "Mixed" instead of the selection badges.
+     *
+     * Purely visual: never part of the selection, never reported by `onSelect`. Selecting one
+     * applies it to every record and it does not return to the partial state when switched off
+     * again. Pass a different set to describe a different group of records.
+     */
+    indeterminateValues?: string[];
 };
 
 const ComboboxMultipleInput = (

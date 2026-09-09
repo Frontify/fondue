@@ -223,4 +223,45 @@ describe('ComboboxMultiple', () => {
             expect(onSelect).toHaveBeenCalled();
         });
     });
+
+    describe('indeterminate values', () => {
+        it('shows the mixed label instead of the selection badges', () => {
+            renderMultiCombobox({ value: ['apple'], indeterminateValues: ['banana'] });
+
+            expect(screen.getByTestId('fondue-select-mixed-value')).toHaveTextContent('Mixed');
+            expect(screen.queryAllByTestId('badge')).toHaveLength(0);
+        });
+
+        it('keeps the input usable while showing the mixed label', async () => {
+            const user = userEvent.setup();
+            renderMultiCombobox({ value: [], indeterminateValues: ['banana'] });
+
+            const input = screen.getByRole('combobox');
+            await user.type(input, 'ban');
+
+            expect(input).toHaveValue('ban');
+            expect(screen.getByTestId('fondue-select-mixed-value')).toBeInTheDocument();
+        });
+
+        it('does not show the placeholder while showing the mixed label', () => {
+            renderMultiCombobox({ value: [], indeterminateValues: ['banana'], placeholder: 'Search fruits...' });
+
+            expect(screen.queryByPlaceholderText('Search fruits...')).not.toBeInTheDocument();
+        });
+
+        it('leaves a partially applied option unselected on the second click instead of restoring the dash', async () => {
+            const user = userEvent.setup();
+            renderMultiCombobox({ defaultValue: [], indeterminateValues: ['banana'] });
+
+            await user.click(screen.getByRole('combobox'));
+            await user.click(getMenuOption('Banana'));
+            await user.click(getMenuOption('Banana'));
+
+            const option = screen.getByRole('option', { name: 'Banana' });
+            expect(option).toHaveAttribute('data-selected', 'false');
+            expect(option).not.toHaveAttribute('data-indeterminate');
+            // Nothing is partially applied any more, so the label goes back to the badges.
+            expect(screen.queryByTestId('fondue-select-mixed-value')).not.toBeInTheDocument();
+        });
+    });
 });

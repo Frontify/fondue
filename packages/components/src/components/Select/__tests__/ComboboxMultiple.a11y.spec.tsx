@@ -398,4 +398,25 @@ describe('ComboboxMultiple - Accessibility', () => {
             expect(clearButton).toHaveAttribute('aria-label', 'Clear selection');
         });
     });
+
+    describe('indeterminate values', () => {
+        const getOption = (name: string): HTMLElement => screen.getByRole('option', { name });
+
+        it('exposes the mixed state through aria-checked', async () => {
+            const user = userEvent.setup();
+            renderMultiCombobox({ 'aria-label': 'Fruits', value: ['apple'], indeterminateValues: ['banana'] });
+
+            await user.click(screen.getByRole('combobox'));
+
+            expect(getOption('Banana')).toHaveAttribute('aria-checked', 'mixed');
+            expect(getOption('Apple')).toHaveAttribute('aria-checked', 'true');
+            expect(getOption('Cherry')).toHaveAttribute('aria-checked', 'false');
+        });
+
+        it('describes the input as mixed, which is its only channel for the visible label', () => {
+            renderMultiCombobox({ 'aria-label': 'Fruits', value: [], indeterminateValues: ['banana'] });
+
+            expect(screen.getByRole('combobox')).toHaveAccessibleDescription('Mixed');
+        });
+    });
 });

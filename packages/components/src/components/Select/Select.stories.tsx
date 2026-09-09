@@ -119,6 +119,48 @@ export const MultipleCombobox: Story = {
     },
 };
 
+export const MultipleSelectWithMixedValues: StoryObj<typeof SelectMultiple> = {
+    name: 'Select Multiple (mixed values)',
+    render: () => {
+        const [selectedValues, setSelectedValues] = useState<string[]>(['brand']);
+
+        return (
+            <Select.Multiple
+                placeholder="Select tags"
+                value={selectedValues}
+                indeterminateValues={['campaign', 'social']}
+                onSelect={(values) => setSelectedValues(values ?? [])}
+            >
+                <Select.Item value="brand">Brand</Select.Item>
+                <Select.Item value="campaign">Campaign</Select.Item>
+                <Select.Item value="social">Social</Select.Item>
+                <Select.Item value="print">Print</Select.Item>
+            </Select.Multiple>
+        );
+    },
+};
+
+export const ComboboxMultipleWithMixedValues: StoryObj<typeof ComboboxMultiple> = {
+    name: 'Combobox Multiple (mixed values)',
+    render: () => {
+        const [selectedValues, setSelectedValues] = useState<string[]>(['apple']);
+
+        return (
+            <Select.Combobox.Multiple
+                placeholder="Search and select items"
+                value={selectedValues}
+                indeterminateValues={['banana', 'cherry']}
+                onSelect={(values) => setSelectedValues(values ?? [])}
+            >
+                <Select.Item value="apple">Apple</Select.Item>
+                <Select.Item value="banana">Banana</Select.Item>
+                <Select.Item value="cherry">Cherry</Select.Item>
+                <Select.Item value="date">Date</Select.Item>
+            </Select.Combobox.Multiple>
+        );
+    },
+};
+
 export const ComboboxWithAsyncItems: StoryObj<typeof Select.Combobox> = {
     args: {
         placeholder: 'Select an item',

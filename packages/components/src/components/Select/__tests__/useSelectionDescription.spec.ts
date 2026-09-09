@@ -83,4 +83,18 @@ describe('useSelectionDescription', () => {
 
         expect(result.current.selectionDescription).toBe('2 selected: Alpha, missing');
     });
+
+    describe('indeterminate values', () => {
+        it('describes the selection as mixed, ignoring the selected count', () => {
+            const items = {
+                a: { value: 'a', label: 'Alpha' },
+                b: { value: 'b', label: 'Beta' },
+            };
+            const { result } = renderHook(() =>
+                useSelectionDescription(true, ['a', 'b'], createGetItemByValue(items), true),
+            );
+
+            expect(result.current.selectionDescription).toBe('Mixed');
+        });
+    });
 });

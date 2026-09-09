@@ -96,4 +96,34 @@ describe('CollapsibleBadges', () => {
         expect(onDismiss).toHaveBeenCalledWith('a', true);
         expect(outerClick).not.toHaveBeenCalled();
     });
+
+    describe('mixedLabel', () => {
+        it('renders the label instead of the badges', () => {
+            render(<CollapsibleBadges items={defaultItems} onDismiss={vi.fn()} mixedLabel="Mixed" />);
+
+            expect(screen.getByTestId('fondue-select-mixed-value')).toHaveTextContent('Mixed');
+            expect(screen.queryByText('Alpha')).not.toBeInTheDocument();
+            expect(screen.queryAllByTestId('badge')).toHaveLength(0);
+        });
+
+        it('renders the label instead of the placeholder when there is nothing else to show', () => {
+            render(
+                <CollapsibleBadges items={[]} placeholder="Pick something" onDismiss={vi.fn()} mixedLabel="Mixed" />,
+            );
+
+            expect(screen.getByTestId('fondue-select-mixed-value')).toBeInTheDocument();
+            expect(screen.queryByText('Pick something')).not.toBeInTheDocument();
+        });
+
+        it('still renders children so a combobox input survives', () => {
+            render(
+                <CollapsibleBadges items={defaultItems} onDismiss={vi.fn()} mixedLabel="Mixed">
+                    <input aria-label="Filter" />
+                </CollapsibleBadges>,
+            );
+
+            expect(screen.getByLabelText('Filter')).toBeInTheDocument();
+            expect(screen.getByTestId('fondue-select-mixed-value')).toBeInTheDocument();
+        });
+    });
 });

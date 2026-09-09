@@ -24,6 +24,8 @@ type CollapsibleBadgesProps = {
     children?: ReactNode;
     /** Total number of selected items (for screen reader announcements). */
     selectedCount?: number;
+    /** When set, replaces the badges. Used when some values are only partially applied. */
+    mixedLabel?: string;
 };
 
 const calculateVisibleCount = (
@@ -64,6 +66,7 @@ export const CollapsibleBadges = ({
     onDismiss,
     children,
     selectedCount = 0,
+    mixedLabel,
 }: CollapsibleBadgesProps): ReactNode => {
     const { t } = useTranslation();
     const wasClickedRef = useRef(false);
@@ -71,6 +74,7 @@ export const CollapsibleBadges = ({
     const badgeElementsRef = useRef<Map<string, HTMLDivElement>>(new Map());
     const [visibleCount, setVisibleCount] = useState(items.length);
     const hasChildren = children !== undefined;
+    const isMixed = mixedLabel !== undefined;
 
     useEffect(() => {
         const container = containerRef.current;
@@ -93,11 +97,11 @@ export const CollapsibleBadges = ({
         };
     }, [items, hasChildren]);
 
-    if (items.length === 0 && !children) {
+    if (items.length === 0 && !children && !isMixed) {
         return placeholder;
     }
 
-    const overflowCount = items.length - visibleCount;
+    const overflowCount = isMixed ? 0 : items.length - visibleCount;
 
     const getSelectedCountText = (count: number): string => {
         if (count === 1) {
@@ -115,41 +119,47 @@ export const CollapsibleBadges = ({
                 {getSelectedCountText(selectedCount)}
             </span>
             {children}
-            {items.map((item, index) => (
-                <div
-                    key={item.value}
-                    ref={(element): void => {
-                        if (element) {
-                            badgeElementsRef.current.set(item.value, element);
-                        } else {
-                            badgeElementsRef.current.delete(item.value);
-                        }
-                    }}
-                    role="presentation"
-                    className={styles.badgeWrapper}
-                    data-visible={index < visibleCount}
-                    onKeyDown={(event: KeyboardEvent<HTMLDivElement>): void => {
-                        if (event.key === 'Enter' || event.key === ' ') {
-                            event.stopPropagation();
-                        }
-                    }}
-                    onMouseDown={(): void => {
-                        wasClickedRef.current = true;
-                    }}
-                >
-                    <Badge
-                        emphasis="weak"
-                        aria-label={typeof item.displayValue === 'string' ? item.displayValue : item.value}
-                        onDismiss={(event) => {
-                            event.stopPropagation();
-                            onDismiss(item.value, wasClickedRef.current);
-                            wasClickedRef.current = false;
+            {isMixed ? (
+                <span className={styles.mixedValue} data-test-id="fondue-select-mixed-value">
+                    {mixedLabel}
+                </span>
+            ) : (
+                items.map((item, index) => (
+                    <div
+                        key={item.value}
+                        ref={(element): void => {
+                            if (element) {
+                                badgeElementsRef.current.set(item.value, element);
+                            } else {
+                                badgeElementsRef.current.delete(item.value);
+                            }
+                        }}
+                        role="presentation"
+                        className={styles.badgeWrapper}
+                        data-visible={index < visibleCount}
+                        onKeyDown={(event: KeyboardEvent<HTMLDivElement>): void => {
+                            if (event.key === 'Enter' || event.key === ' ') {
+                                event.stopPropagation();
+                            }
+                        }}
+                        onMouseDown={(): void => {
+                            wasClickedRef.current = true;
                         }}
                     >
-                        {item.displayValue}
-                    </Badge>
-                </div>
-            ))}
+                        <Badge
+                            emphasis="weak"
+                            aria-label={typeof item.displayValue === 'string' ? item.displayValue : item.value}
+                            onDismiss={(event) => {
+                                event.stopPropagation();
+                                onDismiss(item.value, wasClickedRef.current);
+                                wasClickedRef.current = false;
+                            }}
+                        >
+                            {item.displayValue}
+                        </Badge>
+                    </div>
+                ))
+            )}
             {overflowCount > 0 && (
                 <div
                     className={styles.badgeWrapper}

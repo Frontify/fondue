@@ -162,4 +162,91 @@ describe('SelectMultiple', () => {
             expect(onSelect).toHaveBeenCalledWith([]);
         });
     });
+
+    describe('indeterminate values', () => {
+        const getOptionRow = (name: string): HTMLElement => screen.getByRole('option', { name });
+
+        it('marks partially applied options as indeterminate', async () => {
+            const user = userEvent.setup();
+            renderMultiSelect({ value: ['apple'], indeterminateValues: ['banana'] });
+
+            await user.click(screen.getByRole('combobox'));
+
+            expect(getOptionRow('Banana')).toHaveAttribute('data-indeterminate', 'true');
+            expect(getOptionRow('Apple')).toHaveAttribute('data-indeterminate', 'false');
+            expect(getOptionRow('Cherry')).toHaveAttribute('data-indeterminate', 'false');
+        });
+
+        it('does not add the indeterminate attribute when no values are partially applied', async () => {
+            const user = userEvent.setup();
+            renderMultiSelect({ value: ['apple'] });
+
+            await user.click(screen.getByRole('combobox'));
+
+            expect(getOptionRow('Apple')).not.toHaveAttribute('data-indeterminate');
+        });
+
+        it('selects a partially applied option on the first click', async () => {
+            const onSelect = vi.fn();
+            const user = userEvent.setup();
+            renderMultiSelect({ defaultValue: [], indeterminateValues: ['banana', 'cherry'], onSelect });
+
+            await user.click(screen.getByRole('combobox'));
+            await user.click(getMenuOption('Banana'));
+
+            expect(onSelect).toHaveBeenCalledWith(['banana']);
+            expect(getOptionRow('Banana')).toHaveAttribute('data-selected', 'true');
+            expect(getOptionRow('Banana')).toHaveAttribute('data-indeterminate', 'false');
+        });
+
+        it('deselects a partially applied option on the second click without restoring the dash', async () => {
+            const onSelect = vi.fn();
+            const user = userEvent.setup();
+            renderMultiSelect({ defaultValue: [], indeterminateValues: ['banana', 'cherry'], onSelect });
+
+            await user.click(screen.getByRole('combobox'));
+            await user.click(getMenuOption('Banana'));
+            await user.click(getMenuOption('Banana'));
+
+            expect(onSelect).toHaveBeenLastCalledWith([]);
+            expect(getOptionRow('Banana')).toHaveAttribute('data-selected', 'false');
+            expect(getOptionRow('Banana')).toHaveAttribute('data-indeterminate', 'false');
+            // Cherry is untouched, so the menu is still in the partially applied state.
+            expect(getOptionRow('Cherry')).toHaveAttribute('data-indeterminate', 'true');
+        });
+
+        it('shows the mixed label instead of the selection badges', () => {
+            renderMultiSelect({ value: ['apple'], indeterminateValues: ['banana'] });
+
+            expect(screen.getByTestId('fondue-select-mixed-value')).toHaveTextContent('Mixed');
+            expect(screen.queryAllByTestId('badge')).toHaveLength(0);
+        });
+
+        it('is not empty when only partially applied values are present', () => {
+            renderMultiSelect({ value: [], indeterminateValues: ['banana'] });
+
+            expect(screen.getByRole('combobox')).toHaveAttribute('data-empty', 'false');
+            expect(screen.getByRole('combobox')).toHaveAttribute('data-mixed', 'true');
+        });
+
+        it('drops the mixed label when the clear button is clicked', async () => {
+            const user = userEvent.setup();
+
+            render(
+                <Select.Multiple aria-label="Test multiselect" defaultValue={[]} indeterminateValues={['banana']}>
+                    <Select.Slot name="menu">
+                        <Select.Item value="apple">Apple</Select.Item>
+                        <Select.Item value="banana">Banana</Select.Item>
+                    </Select.Slot>
+                    <Select.Slot name="clear">
+                        <button type="button">Clear all</button>
+                    </Select.Slot>
+                </Select.Multiple>,
+            );
+
+            await user.click(screen.getByText('Clear all'));
+
+            expect(screen.queryByTestId('fondue-select-mixed-value')).not.toBeInTheDocument();
+        });
+    });
 });

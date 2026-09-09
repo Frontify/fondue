@@ -20,6 +20,7 @@ import { useTranslation } from '#/hooks/useTranslation';
 
 import { useBadgeItems } from '../hooks/useBadgeItems';
 import { useFocusRing } from '../hooks/useFocusRing';
+import { useIndeterminateValues } from '../hooks/useIndeterminateValues';
 import { useSelectData, type AsyncItemsFetcher } from '../hooks/useSelectData';
 import { useSelectionDescription } from '../hooks/useSelectionDescription';
 import styles from '../styles/select.module.scss';
@@ -94,6 +95,11 @@ type ComboboxBaseProps = ComboboxSharedProps & {
      */
     selectedItemValues: string[];
     /**
+     * @internal
+     * Item values that are only partially applied. Only supplied by the multiple variant.
+     */
+    indeterminateValues?: string[];
+    /**
      * Callback fired when an item is selected or deselected
      */
     onItemSelect: (value?: string) => void;
@@ -111,6 +117,7 @@ const ComboboxBaseInput = (
     {
         children,
         selectedItemValues,
+        indeterminateValues,
         onItemSelect,
         onClear,
         placeholder = '',
@@ -137,10 +144,13 @@ const ComboboxBaseInput = (
     const { inputSlots, menuSlots, items, filterText, clearButton, getItemByValue, setFilterText, asyncItemStatus } =
         useSelectData(children, getAsyncItems);
     const { wasClickedRef, onMouseDown, onFocus, onBlur } = useFocusRing();
+    const { indeterminateItemValues, hasIndeterminateValues, handleItemSelect, clearIndeterminate } =
+        useIndeterminateValues(indeterminateValues, selectedItemValues, onItemSelect);
     const { selectionDescriptionId, selectionDescription } = useSelectionDescription(
         multiple,
         selectedItemValues,
         getItemByValue,
+        hasIndeterminateValues,
     );
     const badgeItems = useBadgeItems(selectedItemValues, getItemByValue);
 
@@ -160,7 +170,7 @@ const ComboboxBaseInput = (
                       if (type === useMultipleSelection.stateChangeTypes.SelectedItemKeyDownBackspace) {
                           const removedItem = selectedItems.find((item) => !newSelectedItems?.includes(item));
                           if (removedItem) {
-                              onItemSelect(removedItem.value);
+                              handleItemSelect(removedItem.value);
                           }
                       }
                   },
@@ -188,7 +198,7 @@ const ComboboxBaseInput = (
         ...('aria-labelledby' in props && props['aria-labelledby'] ? { labelId: props['aria-labelledby'] } : {}),
         onSelectedItemChange: ({ selectedItem }) => {
             if (selectedItem) {
-                onItemSelect(selectedItem.value);
+                handleItemSelect(selectedItem.value);
             }
             if (multiple) {
                 setFilterText('');
@@ -235,7 +245,7 @@ const ComboboxBaseInput = (
                             state.selectedItem &&
                             changes.selectedItem.value === state.selectedItem.value
                         ) {
-                            onItemSelect(changes.selectedItem.value);
+                            handleItemSelect(changes.selectedItem.value);
                         }
                         break;
                 }
@@ -258,7 +268,7 @@ const ComboboxBaseInput = (
         const item = getItemByValue(value);
         if (item) {
             removeSelectedItem(item);
-            onItemSelect(value);
+            handleItemSelect(value);
             if (inputRef.current) {
                 inputRef.current.focus();
                 if (preventFocusRing) {
@@ -269,6 +279,7 @@ const ComboboxBaseInput = (
     };
 
     const handleClear = (): void => {
+        clearIndeterminate();
         onClear();
         reset();
     };
@@ -298,7 +309,8 @@ const ComboboxBaseInput = (
                     className={styles.root}
                     data-status={hasError ? 'error' : status}
                     data-disabled={disabled}
-                    data-empty={selectedItemValues.length === 0}
+                    data-empty={selectedItemValues.length === 0 && !hasIndeterminateValues}
+                    data-mixed={hasIndeterminateValues || undefined}
                 >
                     {multiple ? (
                         <>
@@ -310,6 +322,7 @@ const ComboboxBaseInput = (
                                 items={badgeItems}
                                 onDismiss={handleDismissBadge}
                                 selectedCount={selectedItemValues.length}
+                                mixedLabel={hasIndeterminateValues ? t('Select_mixedValues') : undefined}
                             >
                                 <input
                                     {...getInputProps({
@@ -333,7 +346,9 @@ const ComboboxBaseInput = (
                                     })}
                                     data-test-id={dataTestId}
                                     lang={lang}
-                                    placeholder={selectedItemValues.length === 0 ? placeholder : ''}
+                                    placeholder={
+                                        selectedItemValues.length === 0 && !hasIndeterminateValues ? placeholder : ''
+                                    }
                                     className={styles.multiSelectInput}
                                     disabled={disabled}
                                     onMouseDown={onMouseDown}
@@ -401,6 +416,7 @@ const ComboboxBaseInput = (
                 getMenuProps={getMenuProps}
                 getItemProps={getItemProps}
                 selectedItemValues={selectedItemValues}
+                indeterminateItemValues={indeterminateItemValues}
                 hasInteractedSinceOpening={hasInteractedSinceOpening}
                 viewportCollisionPadding={viewportCollisionPadding}
                 onEscapeKeyDown={onEscapeKeyDown}

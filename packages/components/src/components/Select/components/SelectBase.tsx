@@ -6,9 +6,11 @@ import { useSelect } from 'downshift';
 import { forwardRef, useCallback, useMemo, useRef, useState, type ForwardedRef, type ReactNode } from 'react';
 
 import { mergeAriaIds, type CommonAriaProps } from '#/helpers/aria';
+import { useTranslation } from '#/hooks/useTranslation';
 
 import { useBadgeItems } from '../hooks/useBadgeItems';
 import { useFocusRing } from '../hooks/useFocusRing';
+import { useIndeterminateValues } from '../hooks/useIndeterminateValues';
 import { useSelectData } from '../hooks/useSelectData';
 import { useSelectionDescription } from '../hooks/useSelectionDescription';
 import styles from '../styles/select.module.scss';
@@ -77,6 +79,11 @@ type SelectBaseProps = SelectSharedProps & {
      */
     selectedItemValues: string[];
     /**
+     * @internal
+     * Item values that are only partially applied. Only supplied by the multiple variant.
+     */
+    indeterminateValues?: string[];
+    /**
      * Callback fired when an item is selected or deselected
      */
     onItemSelect: (value?: string) => void;
@@ -94,6 +101,7 @@ const SelectBaseInput = (
     {
         children,
         selectedItemValues,
+        indeterminateValues,
         onItemSelect,
         onClear,
         placeholder = '',
@@ -123,12 +131,16 @@ const SelectBaseInput = (
         },
         [forwardedRef],
     );
+    const { t } = useTranslation();
     const { inputSlots, menuSlots, items, clearButton, getItemByValue } = useSelectData(children);
     const { onMouseDown, onFocus, onBlur } = useFocusRing();
+    const { indeterminateItemValues, hasIndeterminateValues, handleItemSelect, clearIndeterminate } =
+        useIndeterminateValues(indeterminateValues, selectedItemValues, onItemSelect);
     const { selectionDescriptionId, selectionDescription } = useSelectionDescription(
         multiple,
         selectedItemValues,
         getItemByValue,
+        hasIndeterminateValues,
     );
     const badgeItems = useBadgeItems(selectedItemValues, getItemByValue);
 
@@ -161,7 +173,7 @@ const SelectBaseInput = (
             setHasInteractedSinceOpening(true);
         },
         onSelectedItemChange: ({ selectedItem }) => {
-            onItemSelect(selectedItem?.value);
+            handleItemSelect(selectedItem?.value);
         },
         itemToString: (item) => (item ? item.label : ''),
         ...(multiple
@@ -192,6 +204,7 @@ const SelectBaseInput = (
     const hasError = status === 'error';
 
     const handleClear = (): void => {
+        clearIndeterminate();
         onClear();
         reset();
     };
@@ -209,7 +222,8 @@ const SelectBaseInput = (
                     className={styles.root}
                     data-status={hasError ? 'error' : status}
                     data-disabled={disabled}
-                    data-empty={selectedItemValues.length === 0}
+                    data-empty={selectedItemValues.length === 0 && !hasIndeterminateValues}
+                    data-mixed={hasIndeterminateValues || undefined}
                     data-test-id={dataTestId}
                     {...(disabled
                         ? {}
@@ -238,8 +252,9 @@ const SelectBaseInput = (
                             <CollapsibleBadges
                                 items={badgeItems}
                                 placeholder={placeholder}
+                                mixedLabel={hasIndeterminateValues ? t('Select_mixedValues') : undefined}
                                 onDismiss={(value) => {
-                                    onItemSelect(value);
+                                    handleItemSelect(value);
                                     internalRef.current?.focus();
                                 }}
                                 selectedCount={selectedItemValues.length}
@@ -249,7 +264,7 @@ const SelectBaseInput = (
                         <span className={styles.selectedValue}>{singleSelectValue}</span>
                     )}
                     {inputSlots}
-                    {clearButton && selectedItemValues.length > 0 && !disabled ? (
+                    {clearButton && (selectedItemValues.length > 0 || hasIndeterminateValues) && !disabled ? (
                         <ClearButton onClear={handleClear}>{clearButton}</ClearButton>
                     ) : null}
                     <div className={styles.icons}>
@@ -266,6 +281,7 @@ const SelectBaseInput = (
                 getMenuProps={getMenuProps}
                 getItemProps={getItemProps}
                 selectedItemValues={selectedItemValues}
+                indeterminateItemValues={indeterminateItemValues}
                 hasInteractedSinceOpening={hasInteractedSinceOpening}
                 viewportCollisionPadding={viewportCollisionPadding}
                 onEscapeKeyDown={onEscapeKeyDown}

@@ -20,12 +20,22 @@ export const useSelectionDescription = (
     isMultiple: boolean,
     selectedItemValues: string[],
     getItemByValue: (value?: string) => SelectItemLike | undefined,
+    hasIndeterminateValues: boolean = false,
 ): SelectionDescription => {
     const { t } = useTranslation();
     const selectionDescriptionId = useId();
 
     const selectionDescription = useMemo((): string => {
-        if (!isMultiple || selectedItemValues.length === 0) {
+        if (!isMultiple) {
+            return '';
+        }
+        // While any value is only partially applied the trigger shows a single "Mixed" label instead
+        // of the individual values, so the description matches what is on screen rather than
+        // announcing a count the user cannot see.
+        if (hasIndeterminateValues) {
+            return t('Select_mixedValues');
+        }
+        if (selectedItemValues.length === 0) {
             return '';
         }
         const labels = selectedItemValues
@@ -35,7 +45,7 @@ export const useSelectionDescription = (
             })
             .join(', ');
         return t('Select_selectedCount', { count: selectedItemValues.length.toString(), items: labels });
-    }, [isMultiple, selectedItemValues, getItemByValue, t]);
+    }, [isMultiple, selectedItemValues, getItemByValue, hasIndeterminateValues, t]);
 
     return { selectionDescriptionId, selectionDescription };
 };

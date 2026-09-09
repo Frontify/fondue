@@ -58,6 +58,11 @@ export type SelectMenuProps = {
     selectedItemValues?: string[];
     /**
      * @internal
+     * Item values that are only partially applied. Rendered with a dash instead of a checkmark.
+     */
+    indeterminateItemValues?: string[];
+    /**
+     * @internal
      * A boolean to indicate if highlighted item was changed since opening the menu.
      * This is used to determine the style of the selected/highlighted item.
      */
@@ -83,10 +88,13 @@ export const SelectMenu = ({
     align,
     side,
     selectedItemValues,
+    indeterminateItemValues,
     hasInteractedSinceOpening,
     viewportCollisionPadding = 'compact',
     onEscapeKeyDown,
 }: SelectMenuProps) => {
+    const hasIndeterminateValues = (indeterminateItemValues?.length ?? 0) > 0;
+
     const handleOnOpenAutoFocus = (event: Event) => {
         event.preventDefault();
     };
@@ -154,12 +162,28 @@ export const SelectMenu = ({
                                         });
 
                                         const isSelected = selectedItemValues?.includes(optionData.value);
+                                        const isIndeterminate =
+                                            !isSelected && Boolean(indeterminateItemValues?.includes(optionData.value));
+                                        // `aria-selected` has no mixed value, so the tri-state
+                                        // `aria-checked` carries it. Set on every option once any is
+                                        // partial: an absent `aria-checked` would read as "not
+                                        // checkable" rather than "unchecked".
+                                        const ariaChecked = hasIndeterminateValues
+                                            ? isIndeterminate
+                                                ? 'mixed'
+                                                : Boolean(isSelected)
+                                            : undefined;
 
                                         return (
                                             <RadixSlot
                                                 className={styles.item}
                                                 data-highlighted={highlightedIndex === index}
                                                 data-selected={isSelected}
+                                                // Omitted while unused, so menus with no partial
+                                                // values keep their existing markup
+                                                data-indeterminate={
+                                                    hasIndeterminateValues ? isIndeterminate : undefined
+                                                }
                                                 key={child.props.value}
                                                 // Workaround for the issue where the onClick event is not fired on touch devices because of portal usage
                                                 onTouchStart={(event) => {
@@ -169,6 +193,7 @@ export const SelectMenu = ({
                                                 }}
                                                 {...itemProps}
                                                 aria-selected={isSelected}
+                                                aria-checked={ariaChecked}
                                             >
                                                 {child}
                                             </RadixSlot>
