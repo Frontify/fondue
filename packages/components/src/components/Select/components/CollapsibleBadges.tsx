@@ -28,19 +28,31 @@ type CollapsibleBadgesProps = {
     indeterminateCount?: number;
 };
 
-const calculateVisibleCount = (
+type BadgeLayout = {
+    /** How many selection badges are shown. The rest collapse into a count. */
+    visibleCount: number;
+    /** Whether even the counts do not fit, so a single "Mixed" badge stands in for everything. */
+    isMixedOnly: boolean;
+};
+
+type SummaryBadges = {
+    selectedCount: HTMLDivElement | null;
+    mixedCount: HTMLDivElement | null;
+};
+
+const calculateLayout = (
     container: HTMLDivElement,
     badges: HTMLDivElement[],
-    mixedBadge: HTMLDivElement | null,
+    summary: SummaryBadges,
     hasInputSlot: boolean,
-): number => {
+): BadgeLayout => {
     const containerWidth = container.offsetWidth;
+    // Each fixed element carries the gap that follows it
+    const inputWidth = hasInputSlot ? INPUT_MIN_WIDTH + BADGE_GAP : 0;
+    const mixedCountWidth = summary.mixedCount ? summary.mixedCount.offsetWidth + BADGE_GAP : 0;
 
-    // The input and the mixed badge always stay visible, so the selection badges collapse around them
-    let usedWidth = hasInputSlot ? INPUT_MIN_WIDTH + BADGE_GAP : 0;
-    if (mixedBadge) {
-        usedWidth += mixedBadge.offsetWidth + BADGE_GAP;
-    }
+    // The input and the mixed count stay visible, so the selection badges collapse around them
+    let usedWidth = inputWidth + mixedCountWidth;
     let count = 0;
 
     for (const badge of badges) {
@@ -57,9 +69,16 @@ const calculateVisibleCount = (
         count++;
     }
 
-    // One badge always stays visible so the field never looks empty — unless the mixed badge already
-    // does that, in which case the overflow badge can stand in for all of them
-    return Math.max(mixedBadge ? 0 : 1, count);
+    if (count > 0) {
+        return { visibleCount: count, isMixedOnly: false };
+    }
+
+    // Not a single selection badge fits, so the counts stand in for them. When even those are too
+    // wide, a lone "Mixed" badge is all that is left to show.
+    const selectedCountWidth = summary.selectedCount ? summary.selectedCount.offsetWidth + BADGE_GAP : 0;
+    // The last element has no gap after it
+    const summaryWidth = inputWidth + selectedCountWidth + mixedCountWidth - BADGE_GAP;
+    return { visibleCount: 0, isMixedOnly: summary.mixedCount !== null && summaryWidth > containerWidth };
 };
 
 export const CollapsibleBadges = ({
@@ -74,8 +93,9 @@ export const CollapsibleBadges = ({
     const wasClickedRef = useRef(false);
     const containerRef = useRef<HTMLDivElement>(null);
     const badgeElementsRef = useRef<Map<string, HTMLDivElement>>(new Map());
-    const mixedBadgeRef = useRef<HTMLDivElement>(null);
-    const [visibleCount, setVisibleCount] = useState(items.length);
+    const selectedCountRef = useRef<HTMLDivElement>(null);
+    const mixedCountRef = useRef<HTMLDivElement>(null);
+    const [layout, setLayout] = useState<BadgeLayout>({ visibleCount: items.length, isMixedOnly: false });
     const hasChildren = children !== undefined;
     const hasIndeterminate = indeterminateCount > 0;
 
@@ -86,14 +106,11 @@ export const CollapsibleBadges = ({
         }
 
         const recalculate = (): void => {
-            if (items.length === 0) {
-                setVisibleCount(0);
-                return;
-            }
             const badges = items
                 .map((item) => badgeElementsRef.current.get(item.value))
                 .filter((element) => element !== undefined);
-            setVisibleCount(calculateVisibleCount(container, badges, mixedBadgeRef.current, hasChildren));
+            const summary = { selectedCount: selectedCountRef.current, mixedCount: mixedCountRef.current };
+            setLayout(calculateLayout(container, badges, summary, hasChildren));
         };
 
         const observer = new ResizeObserver(recalculate);
@@ -107,7 +124,10 @@ export const CollapsibleBadges = ({
         return placeholder;
     }
 
+    const { visibleCount, isMixedOnly } = layout;
     const overflowCount = items.length - visibleCount;
+    // Once no selection badge is left, the counts take over from the "+N" badge
+    const showsCounts = visibleCount === 0 && !isMixedOnly;
 
     const getSelectedCountText = (count: number): string => {
         if (count === 1) {
@@ -160,7 +180,7 @@ export const CollapsibleBadges = ({
                     </Badge>
                 </div>
             ))}
-            {overflowCount > 0 && (
+            {visibleCount > 0 && overflowCount > 0 && (
                 <div
                     className={styles.badgeWrapper}
                     aria-label={t('Select_additionalItemsSelected', { count: overflowCount.toString() })}
@@ -170,10 +190,25 @@ export const CollapsibleBadges = ({
                     </Badge>
                 </div>
             )}
+            {/* The counts are also rendered while hidden, so the layout can measure them before they are needed */}
+            {items.length > 0 && (
+                <div ref={selectedCountRef} className={styles.badgeWrapper} data-visible={showsCounts}>
+                    <Badge emphasis="weak" data-test-id="fondue-select-selected-count">
+                        {t('Select_selectedItemsCount', { count: items.length.toString() })}
+                    </Badge>
+                </div>
+            )}
             {hasIndeterminate && (
-                <div ref={mixedBadgeRef} className={styles.badgeWrapper}>
-                    <Badge emphasis="weak" data-test-id="fondue-select-mixed-value">
+                <div ref={mixedCountRef} className={styles.badgeWrapper} data-visible={!isMixedOnly}>
+                    <Badge emphasis="weak" data-test-id="fondue-select-mixed-count">
                         {t('Select_mixedCount', { count: indeterminateCount.toString() })}
+                    </Badge>
+                </div>
+            )}
+            {isMixedOnly && (
+                <div className={styles.badgeWrapper}>
+                    <Badge emphasis="weak" data-test-id="fondue-select-mixed">
+                        {t('Select_mixed')}
                     </Badge>
                 </div>
             )}

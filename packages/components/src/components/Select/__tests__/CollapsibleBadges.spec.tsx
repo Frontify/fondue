@@ -101,14 +101,14 @@ describe('CollapsibleBadges', () => {
         it('adds a badge for the count while keeping the selection badges', () => {
             render(<CollapsibleBadges items={defaultItems} onDismiss={vi.fn()} indeterminateCount={2} />);
 
-            expect(screen.getByTestId('fondue-select-mixed-value')).toHaveTextContent('2 mixed');
+            expect(screen.getByTestId('fondue-select-mixed-count')).toHaveTextContent('2 mixed');
             expect(screen.getByText('Alpha')).toBeInTheDocument();
         });
 
         it('is not dismissable, unlike the selection badges', () => {
             render(<CollapsibleBadges items={defaultItems} onDismiss={vi.fn()} indeterminateCount={2} />);
 
-            expect(screen.getByTestId('fondue-select-mixed-value')).toHaveAttribute('data-dismissable', 'false');
+            expect(screen.getByTestId('fondue-select-mixed-count')).toHaveAttribute('data-dismissable', 'false');
         });
 
         it('renders the badge instead of the placeholder when there is nothing else to show', () => {
@@ -121,7 +121,7 @@ describe('CollapsibleBadges', () => {
                 />,
             );
 
-            expect(screen.getByTestId('fondue-select-mixed-value')).toBeInTheDocument();
+            expect(screen.getByTestId('fondue-select-mixed-count')).toBeInTheDocument();
             expect(screen.queryByText('Pick something')).not.toBeInTheDocument();
         });
 
@@ -133,7 +133,7 @@ describe('CollapsibleBadges', () => {
             );
 
             expect(screen.getByLabelText('Filter')).toBeInTheDocument();
-            expect(screen.getByTestId('fondue-select-mixed-value')).toBeInTheDocument();
+            expect(screen.getByTestId('fondue-select-mixed-count')).toBeInTheDocument();
         });
     });
 });

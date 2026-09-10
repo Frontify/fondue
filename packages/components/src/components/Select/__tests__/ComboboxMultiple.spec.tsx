@@ -228,7 +228,7 @@ describe('ComboboxMultiple', () => {
         it('counts the partially applied values in a badge next to the selection badges', () => {
             renderMultiCombobox({ value: ['apple'], indeterminateValues: ['banana', 'cherry'] });
 
-            expect(screen.getByTestId('fondue-select-mixed-value')).toHaveTextContent('2 mixed');
+            expect(screen.getByTestId('fondue-select-mixed-count')).toHaveTextContent('2 mixed');
             expect(screen.getByTestId('badge')).toHaveTextContent('Apple');
         });
 
@@ -240,7 +240,7 @@ describe('ComboboxMultiple', () => {
             await user.type(input, 'ban');
 
             expect(input).toHaveValue('ban');
-            expect(screen.getByTestId('fondue-select-mixed-value')).toBeInTheDocument();
+            expect(screen.getByTestId('fondue-select-mixed-count')).toBeInTheDocument();
         });
 
         it('does not show the placeholder while showing the mixed label', () => {
@@ -261,7 +261,7 @@ describe('ComboboxMultiple', () => {
             expect(option).toHaveAttribute('data-selected', 'false');
             expect(option).toHaveAttribute('data-indeterminate', 'false');
             // Nothing is partially applied any more, so the label goes back to the badges.
-            expect(screen.queryByTestId('fondue-select-mixed-value')).not.toBeInTheDocument();
+            expect(screen.queryByTestId('fondue-select-mixed-count')).not.toBeInTheDocument();
         });
     });
 });

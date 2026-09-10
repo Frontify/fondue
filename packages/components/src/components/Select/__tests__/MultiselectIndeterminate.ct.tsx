@@ -12,7 +12,9 @@ const SELECT_TEST_ID = 'test-multiselect';
 const SELECTED_ITEM_TEST_ID = 'test-item-selected';
 const PARTIAL_ITEM_TEST_ID = 'test-item-partial';
 const PLAIN_ITEM_TEST_ID = 'test-item-plain';
-const MIXED_VALUE_TEST_ID = 'fondue-select-mixed-value';
+const MIXED_VALUE_TEST_ID = 'fondue-select-mixed-count';
+const MIXED_TEST_ID = 'fondue-select-mixed';
+const SELECTED_COUNT_TEST_ID = 'fondue-select-selected-count';
 const CHECKMARK_TEST_ID = 'fondue-icons-check-mark';
 const DASH_TEST_ID = 'fondue-icons-minus';
 
@@ -120,7 +122,7 @@ test('render the mixed count badge next to the selection badges', async ({ mount
 
 test('keep the mixed badge inside the field when the selection badges collapse', async ({ mount }) => {
     const wrapper = await mount(
-        <div style={{ width: 240 }}>
+        <div style={{ width: 300 }}>
             <SelectMultiple
                 aria-label="test"
                 data-test-id={SELECT_TEST_ID}
@@ -143,6 +145,85 @@ test('keep the mixed badge inside the field when the selection badges collapse',
     // `toBeVisible` does not catch clipping by an ancestor's `overflow: hidden`, so compare the
     // boxes: the mixed badge must sit inside the field even once the badges have taken their space.
     const mixedBox = await wrapper.getByTestId(MIXED_VALUE_TEST_ID).boundingBox();
+    const fieldBox = await wrapper.getByTestId(SELECT_TEST_ID).boundingBox();
+    expect(mixedBox).not.toBeNull();
+    expect(fieldBox).not.toBeNull();
+    expect(mixedBox!.x + mixedBox!.width).toBeLessThanOrEqual(fieldBox!.x + fieldBox!.width);
+});
+
+test('replace the "+N" badge with a count once no selection badge fits', async ({ mount }) => {
+    const wrapper = await mount(
+        <div style={{ width: 150 }}>
+            <SelectMultiple aria-label="test" data-test-id={SELECT_TEST_ID} value={['first', 'second', 'third']}>
+                <Select.Slot name="menu">
+                    <Select.Item value="first">A long first value</Select.Item>
+                    <Select.Item value="second">A long second value</Select.Item>
+                    <Select.Item value="third">A long third value</Select.Item>
+                </Select.Slot>
+            </SelectMultiple>
+        </div>,
+    );
+
+    await expect(wrapper.getByTestId(SELECTED_COUNT_TEST_ID)).toBeVisible();
+    await expect(wrapper.getByTestId(SELECTED_COUNT_TEST_ID)).toHaveText('3 selected');
+    await expect(wrapper.getByText(/^\+\d+$/)).toHaveCount(0);
+    for (const badge of await wrapper.getByTestId('badge').all()) {
+        await expect(badge).toBeHidden();
+    }
+});
+
+test('show both counts once no selection badge fits next to the mixed count', async ({ mount }) => {
+    const wrapper = await mount(
+        <div style={{ width: 200 }}>
+            <SelectMultiple
+                aria-label="test"
+                data-test-id={SELECT_TEST_ID}
+                value={['first', 'second', 'third']}
+                indeterminateValues={['partial']}
+            >
+                <Select.Slot name="menu">
+                    <Select.Item value="first">A long first value</Select.Item>
+                    <Select.Item value="second">A long second value</Select.Item>
+                    <Select.Item value="third">A long third value</Select.Item>
+                    <Select.Item value="partial">Partial item</Select.Item>
+                </Select.Slot>
+            </SelectMultiple>
+        </div>,
+    );
+
+    await expect(wrapper.getByTestId(SELECTED_COUNT_TEST_ID)).toHaveText('3 selected');
+    await expect(wrapper.getByTestId(SELECTED_COUNT_TEST_ID)).toBeVisible();
+    await expect(wrapper.getByTestId(MIXED_VALUE_TEST_ID)).toHaveText('1 mixed');
+    await expect(wrapper.getByTestId(MIXED_VALUE_TEST_ID)).toBeVisible();
+    await expect(wrapper.getByTestId(MIXED_TEST_ID)).toHaveCount(0);
+});
+
+test('collapse everything into a single "Mixed" badge once even the counts do not fit', async ({ mount }) => {
+    const wrapper = await mount(
+        <div style={{ width: 110 }}>
+            <SelectMultiple
+                aria-label="test"
+                data-test-id={SELECT_TEST_ID}
+                value={['first', 'second', 'third']}
+                indeterminateValues={['partial']}
+            >
+                <Select.Slot name="menu">
+                    <Select.Item value="first">A long first value</Select.Item>
+                    <Select.Item value="second">A long second value</Select.Item>
+                    <Select.Item value="third">A long third value</Select.Item>
+                    <Select.Item value="partial">Partial item</Select.Item>
+                </Select.Slot>
+            </SelectMultiple>
+        </div>,
+    );
+
+    const mixedBadge = wrapper.getByTestId(MIXED_TEST_ID);
+    await expect(mixedBadge).toHaveText('Mixed');
+    await expect(mixedBadge).toBeVisible();
+    await expect(wrapper.getByTestId(SELECTED_COUNT_TEST_ID)).toBeHidden();
+    await expect(wrapper.getByTestId(MIXED_VALUE_TEST_ID)).toBeHidden();
+
+    const mixedBox = await mixedBadge.boundingBox();
     const fieldBox = await wrapper.getByTestId(SELECT_TEST_ID).boundingBox();
     expect(mixedBox).not.toBeNull();
     expect(fieldBox).not.toBeNull();

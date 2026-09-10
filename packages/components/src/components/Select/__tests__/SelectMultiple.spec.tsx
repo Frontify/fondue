@@ -209,7 +209,7 @@ describe('SelectMultiple', () => {
         it('counts the partially applied values in a badge next to the selection badges', () => {
             renderMultiSelect({ value: ['apple'], indeterminateValues: ['banana', 'cherry'] });
 
-            expect(screen.getByTestId('fondue-select-mixed-value')).toHaveTextContent('2 mixed');
+            expect(screen.getByTestId('fondue-select-mixed-count')).toHaveTextContent('2 mixed');
             expect(getDismissableBadges().map((badge) => badge.textContent)).toEqual(['Apple']);
         });
 
@@ -236,7 +236,7 @@ describe('SelectMultiple', () => {
 
             await user.click(screen.getByText('Clear all'));
 
-            expect(screen.queryByTestId('fondue-select-mixed-value')).not.toBeInTheDocument();
+            expect(screen.queryByTestId('fondue-select-mixed-count')).not.toBeInTheDocument();
         });
     });
 });
