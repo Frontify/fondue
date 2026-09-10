@@ -12,16 +12,13 @@
     "bugs": {
         "url": "https://github.com/frontify/fondue/issues"
     },
-    "publishConfig": {
-        "access": "public"
-    },
     "keywords": [
-        "frontify",
-        "fondue",
-        "sdk",
+        "agent-skill",
         "design-system",
+        "fondue",
+        "frontify",
         "mcp",
-        "agent-skill"
+        "sdk"
     ],
     "sideEffects": false,
     "exports": {
@@ -33,6 +30,9 @@
     "files": [
         "dist"
     ],
+    "publishConfig": {
+        "access": "public"
+    },
     "engines": {
         "node": ">=20"
     },
