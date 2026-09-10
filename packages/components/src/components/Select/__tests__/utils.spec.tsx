@@ -6,7 +6,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { Select } from '#/components/Select';
 import { type SelectItemProps } from '#/components/Select/components/SelectItem';
 
-import { getSelectOptionValue, isReactLeaf, recursiveMap } from '../utils';
+import { getIndeterminateItemValues, getSelectOptionValue, isReactLeaf, recursiveMap } from '../utils';
 
 describe('getSelectOptionValue', () => {
     it('returns correct value and label for basic item', () => {
@@ -117,5 +117,15 @@ describe('recursiveMap', () => {
             return child;
         });
         expect(mockCounter).toHaveBeenCalledTimes(6);
+    });
+});
+
+describe('getIndeterminateItemValues', () => {
+    it('returns no values when none are provided', () => {
+        expect(getIndeterminateItemValues(undefined, ['a'])).toEqual([]);
+    });
+
+    it('leaves out values that are selected, as those apply to every record', () => {
+        expect(getIndeterminateItemValues(['a', 'b'], ['a'])).toEqual(['b']);
     });
 });

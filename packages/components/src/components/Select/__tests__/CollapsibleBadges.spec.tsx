@@ -96,4 +96,44 @@ describe('CollapsibleBadges', () => {
         expect(onDismiss).toHaveBeenCalledWith('a', true);
         expect(outerClick).not.toHaveBeenCalled();
     });
+
+    describe('indeterminateCount', () => {
+        it('adds a badge for the count while keeping the selection badges', () => {
+            render(<CollapsibleBadges items={defaultItems} onDismiss={vi.fn()} indeterminateCount={2} />);
+
+            expect(screen.getByTestId('fondue-select-mixed-count')).toHaveTextContent('2 mixed');
+            expect(screen.getByText('Alpha')).toBeInTheDocument();
+        });
+
+        it('is not dismissable, unlike the selection badges', () => {
+            render(<CollapsibleBadges items={defaultItems} onDismiss={vi.fn()} indeterminateCount={2} />);
+
+            expect(screen.getByTestId('fondue-select-mixed-count')).toHaveAttribute('data-dismissable', 'false');
+        });
+
+        it('renders the badge instead of the placeholder when there is nothing else to show', () => {
+            render(
+                <CollapsibleBadges
+                    items={[]}
+                    placeholder="Pick something"
+                    onDismiss={vi.fn()}
+                    indeterminateCount={2}
+                />,
+            );
+
+            expect(screen.getByTestId('fondue-select-mixed-count')).toBeInTheDocument();
+            expect(screen.queryByText('Pick something')).not.toBeInTheDocument();
+        });
+
+        it('still renders children so a combobox input survives', () => {
+            render(
+                <CollapsibleBadges items={defaultItems} onDismiss={vi.fn()} indeterminateCount={2}>
+                    <input aria-label="Filter" />
+                </CollapsibleBadges>,
+            );
+
+            expect(screen.getByLabelText('Filter')).toBeInTheDocument();
+            expect(screen.getByTestId('fondue-select-mixed-count')).toBeInTheDocument();
+        });
+    });
 });

@@ -12,6 +12,7 @@ import { useFocusRing } from '../hooks/useFocusRing';
 import { useSelectData } from '../hooks/useSelectData';
 import { useSelectionDescription } from '../hooks/useSelectionDescription';
 import styles from '../styles/select.module.scss';
+import { getIndeterminateItemValues } from '../utils';
 
 import { ClearButton } from './ClearButton';
 import { CollapsibleBadges } from './CollapsibleBadges';
@@ -77,6 +78,11 @@ type SelectBaseProps = SelectSharedProps & {
      */
     selectedItemValues: string[];
     /**
+     * @internal
+     * Item values that are only partially applied. Only supplied by the multiple variant.
+     */
+    indeterminateValues?: string[];
+    /**
      * Callback fired when an item is selected or deselected
      */
     onItemSelect: (value?: string) => void;
@@ -94,6 +100,7 @@ const SelectBaseInput = (
     {
         children,
         selectedItemValues,
+        indeterminateValues,
         onItemSelect,
         onClear,
         placeholder = '',
@@ -125,10 +132,13 @@ const SelectBaseInput = (
     );
     const { inputSlots, menuSlots, items, clearButton, getItemByValue } = useSelectData(children);
     const { onMouseDown, onFocus, onBlur } = useFocusRing();
+    const indeterminateItemValues = getIndeterminateItemValues(indeterminateValues, selectedItemValues);
+    const hasIndeterminateValues = indeterminateItemValues.length > 0;
     const { selectionDescriptionId, selectionDescription } = useSelectionDescription(
         multiple,
         selectedItemValues,
         getItemByValue,
+        indeterminateItemValues.length,
     );
     const badgeItems = useBadgeItems(selectedItemValues, getItemByValue);
 
@@ -209,7 +219,7 @@ const SelectBaseInput = (
                     className={styles.root}
                     data-status={hasError ? 'error' : status}
                     data-disabled={disabled}
-                    data-empty={selectedItemValues.length === 0}
+                    data-empty={selectedItemValues.length === 0 && !hasIndeterminateValues}
                     data-test-id={dataTestId}
                     {...(disabled
                         ? {}
@@ -238,6 +248,7 @@ const SelectBaseInput = (
                             <CollapsibleBadges
                                 items={badgeItems}
                                 placeholder={placeholder}
+                                indeterminateCount={indeterminateItemValues.length}
                                 onDismiss={(value) => {
                                     onItemSelect(value);
                                     internalRef.current?.focus();
@@ -249,7 +260,7 @@ const SelectBaseInput = (
                         <span className={styles.selectedValue}>{singleSelectValue}</span>
                     )}
                     {inputSlots}
-                    {clearButton && selectedItemValues.length > 0 && !disabled ? (
+                    {clearButton && (selectedItemValues.length > 0 || hasIndeterminateValues) && !disabled ? (
                         <ClearButton onClear={handleClear}>{clearButton}</ClearButton>
                     ) : null}
                     <div className={styles.icons}>
@@ -266,6 +277,7 @@ const SelectBaseInput = (
                 getMenuProps={getMenuProps}
                 getItemProps={getItemProps}
                 selectedItemValues={selectedItemValues}
+                indeterminateItemValues={indeterminateItemValues}
                 hasInteractedSinceOpening={hasInteractedSinceOpening}
                 viewportCollisionPadding={viewportCollisionPadding}
                 onEscapeKeyDown={onEscapeKeyDown}

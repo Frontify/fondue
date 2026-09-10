@@ -341,8 +341,15 @@
         }
     }
 
-    .menu[data-has-interacted='false'] &[data-selected='true']:not(:hover),
-    &[data-selected='true'][data-highlighted='false'] {
+    &[data-indeterminate='true'] {
+        .indeterminateIcon {
+            display: block;
+        }
+    }
+
+    // A partially applied item carries a value too, so it gets the same background as a selected one
+    .menu[data-has-interacted='false'] &:is([data-selected='true'], [data-indeterminate='true']):not(:hover),
+    &:is([data-selected='true'], [data-indeterminate='true'])[data-highlighted='false'] {
         background-color: var(--color-surface-active);
     }
 
@@ -355,7 +362,8 @@
     }
 }
 
-.checkmarkIcon {
+.checkmarkIcon,
+.indeterminateIcon {
     width: sizeToken.get(4);
     height: sizeToken.get(4);
     display: none;

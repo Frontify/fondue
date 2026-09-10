@@ -18,6 +18,15 @@ export type SelectMultipleProps = SelectSharedProps & {
      * The default value of the select component. Used for uncontrolled usages
      */
     defaultValue?: string[];
+    /**
+     * Values that apply to only some of the records being edited. Those options render a dash
+     * instead of a checkmark and the trigger gains a "2 mixed" badge next to the selection badges.
+     *
+     * Purely visual: never part of the selection, never reported by `onSelect`. Selecting one
+     * applies it to every record, so remove it from this list in `onSelect`; otherwise the dash
+     * returns as soon as it is deselected again.
+     */
+    indeterminateValues?: string[];
 };
 
 const SelectMultipleInput = (
