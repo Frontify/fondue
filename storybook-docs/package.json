@@ -1,8 +1,8 @@
 {
     "name": "@frontify/fondue-storybook-docs",
+    "type": "module",
     "version": "0.0.2",
     "private": true,
-    "type": "module",
     "scripts": {
         "generate:guides": "node ./scripts/generateGuideStories.mjs",
         "storybook": "pnpm generate:guides && storybook dev -p 6010",
