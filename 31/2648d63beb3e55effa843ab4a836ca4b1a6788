@@ -1,0 +1,19 @@
+packages/sdk/docs/getting-started.md
+  s_3fd05d1d6b6af5::t_d91945f4df2f03 9,20-21,34,44,50,97-98,114,118-119
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.11",
+  "base_commit_sha": "312648d63beb3e55effa843ab4a836ca4b1a6788",
+  "prompts": {},
+  "sessions": {
+    "s_3fd05d1d6b6af5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1d8915cb-57b2-4f3a-94d3-d6487061f7da",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}
