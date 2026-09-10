@@ -20,10 +20,10 @@ import { useTranslation } from '#/hooks/useTranslation';
 
 import { useBadgeItems } from '../hooks/useBadgeItems';
 import { useFocusRing } from '../hooks/useFocusRing';
-import { useIndeterminateValues } from '../hooks/useIndeterminateValues';
 import { useSelectData, type AsyncItemsFetcher } from '../hooks/useSelectData';
 import { useSelectionDescription } from '../hooks/useSelectionDescription';
 import styles from '../styles/select.module.scss';
+import { getIndeterminateItemValues } from '../utils';
 
 import { ClearButton } from './ClearButton';
 import { CollapsibleBadges } from './CollapsibleBadges';
@@ -144,8 +144,8 @@ const ComboboxBaseInput = (
     const { inputSlots, menuSlots, items, filterText, clearButton, getItemByValue, setFilterText, asyncItemStatus } =
         useSelectData(children, getAsyncItems);
     const { wasClickedRef, onMouseDown, onFocus, onBlur } = useFocusRing();
-    const { indeterminateItemValues, hasIndeterminateValues, handleItemSelect, clearIndeterminate } =
-        useIndeterminateValues(indeterminateValues, selectedItemValues, onItemSelect);
+    const indeterminateItemValues = getIndeterminateItemValues(indeterminateValues, selectedItemValues);
+    const hasIndeterminateValues = indeterminateItemValues.length > 0;
     const { selectionDescriptionId, selectionDescription } = useSelectionDescription(
         multiple,
         selectedItemValues,
@@ -170,7 +170,7 @@ const ComboboxBaseInput = (
                       if (type === useMultipleSelection.stateChangeTypes.SelectedItemKeyDownBackspace) {
                           const removedItem = selectedItems.find((item) => !newSelectedItems?.includes(item));
                           if (removedItem) {
-                              handleItemSelect(removedItem.value);
+                              onItemSelect(removedItem.value);
                           }
                       }
                   },
@@ -198,7 +198,7 @@ const ComboboxBaseInput = (
         ...('aria-labelledby' in props && props['aria-labelledby'] ? { labelId: props['aria-labelledby'] } : {}),
         onSelectedItemChange: ({ selectedItem }) => {
             if (selectedItem) {
-                handleItemSelect(selectedItem.value);
+                onItemSelect(selectedItem.value);
             }
             if (multiple) {
                 setFilterText('');
@@ -245,7 +245,7 @@ const ComboboxBaseInput = (
                             state.selectedItem &&
                             changes.selectedItem.value === state.selectedItem.value
                         ) {
-                            handleItemSelect(changes.selectedItem.value);
+                            onItemSelect(changes.selectedItem.value);
                         }
                         break;
                 }
@@ -268,7 +268,7 @@ const ComboboxBaseInput = (
         const item = getItemByValue(value);
         if (item) {
             removeSelectedItem(item);
-            handleItemSelect(value);
+            onItemSelect(value);
             if (inputRef.current) {
                 inputRef.current.focus();
                 if (preventFocusRing) {
@@ -279,7 +279,6 @@ const ComboboxBaseInput = (
     };
 
     const handleClear = (): void => {
-        clearIndeterminate();
         onClear();
         reset();
     };

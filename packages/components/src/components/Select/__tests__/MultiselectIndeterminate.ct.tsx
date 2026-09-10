@@ -93,11 +93,11 @@ test('swap the dash for a checkmark when a partially applied item is clicked', a
     await expect(partialItem.getByTestId(DASH_TEST_ID)).toBeHidden();
     expect(onSelectChange.calledWith(['partial'])).toBe(true);
 
-    // Switching it off again must not bring the dash back.
+    // Still listed as partially applied, so switching it off brings the dash back
     await partialItem.dispatchEvent('click');
 
     await expect(partialItem.getByTestId(CHECKMARK_TEST_ID)).toBeHidden();
-    await expect(partialItem.getByTestId(DASH_TEST_ID)).toBeHidden();
+    await expect(partialItem.getByTestId(DASH_TEST_ID)).toBeVisible();
 });
 
 test('render the mixed count badge next to the selection badges', async ({ mount }) => {

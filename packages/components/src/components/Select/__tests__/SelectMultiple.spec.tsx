@@ -190,10 +190,10 @@ describe('SelectMultiple', () => {
             expect(getOptionRow('Banana')).toHaveAttribute('data-indeterminate', 'false');
         });
 
-        it('deselects a partially applied option on the second click without restoring the dash', async () => {
+        it('shows the dash again after deselecting while the consumer still lists the value', async () => {
             const onSelect = vi.fn();
             const user = userEvent.setup();
-            renderMultiSelect({ defaultValue: [], indeterminateValues: ['banana', 'cherry'], onSelect });
+            renderMultiSelect({ defaultValue: [], indeterminateValues: ['banana'], onSelect });
 
             await user.click(screen.getByRole('combobox'));
             await user.click(getMenuOption('Banana'));
@@ -201,9 +201,8 @@ describe('SelectMultiple', () => {
 
             expect(onSelect).toHaveBeenLastCalledWith([]);
             expect(getOptionRow('Banana')).toHaveAttribute('data-selected', 'false');
-            expect(getOptionRow('Banana')).toHaveAttribute('data-indeterminate', 'false');
-            // Cherry is untouched, so the menu is still in the partially applied state.
-            expect(getOptionRow('Cherry')).toHaveAttribute('data-indeterminate', 'true');
+            // Dropping a value the user has touched is the consumer's job
+            expect(getOptionRow('Banana')).toHaveAttribute('data-indeterminate', 'true');
         });
 
         it('counts the partially applied values in a badge next to the selection badges', () => {
@@ -217,26 +216,6 @@ describe('SelectMultiple', () => {
             renderMultiSelect({ value: [], indeterminateValues: ['banana'] });
 
             expect(screen.getByRole('combobox')).toHaveAttribute('data-empty', 'false');
-        });
-
-        it('drops the mixed label when the clear button is clicked', async () => {
-            const user = userEvent.setup();
-
-            render(
-                <Select.Multiple aria-label="Test multiselect" defaultValue={[]} indeterminateValues={['banana']}>
-                    <Select.Slot name="menu">
-                        <Select.Item value="apple">Apple</Select.Item>
-                        <Select.Item value="banana">Banana</Select.Item>
-                    </Select.Slot>
-                    <Select.Slot name="clear">
-                        <button type="button">Clear all</button>
-                    </Select.Slot>
-                </Select.Multiple>,
-            );
-
-            await user.click(screen.getByText('Clear all'));
-
-            expect(screen.queryByTestId('fondue-select-mixed-count')).not.toBeInTheDocument();
         });
     });
 });

@@ -9,10 +9,10 @@ import { mergeAriaIds, type CommonAriaProps } from '#/helpers/aria';
 
 import { useBadgeItems } from '../hooks/useBadgeItems';
 import { useFocusRing } from '../hooks/useFocusRing';
-import { useIndeterminateValues } from '../hooks/useIndeterminateValues';
 import { useSelectData } from '../hooks/useSelectData';
 import { useSelectionDescription } from '../hooks/useSelectionDescription';
 import styles from '../styles/select.module.scss';
+import { getIndeterminateItemValues } from '../utils';
 
 import { ClearButton } from './ClearButton';
 import { CollapsibleBadges } from './CollapsibleBadges';
@@ -132,8 +132,8 @@ const SelectBaseInput = (
     );
     const { inputSlots, menuSlots, items, clearButton, getItemByValue } = useSelectData(children);
     const { onMouseDown, onFocus, onBlur } = useFocusRing();
-    const { indeterminateItemValues, hasIndeterminateValues, handleItemSelect, clearIndeterminate } =
-        useIndeterminateValues(indeterminateValues, selectedItemValues, onItemSelect);
+    const indeterminateItemValues = getIndeterminateItemValues(indeterminateValues, selectedItemValues);
+    const hasIndeterminateValues = indeterminateItemValues.length > 0;
     const { selectionDescriptionId, selectionDescription } = useSelectionDescription(
         multiple,
         selectedItemValues,
@@ -171,7 +171,7 @@ const SelectBaseInput = (
             setHasInteractedSinceOpening(true);
         },
         onSelectedItemChange: ({ selectedItem }) => {
-            handleItemSelect(selectedItem?.value);
+            onItemSelect(selectedItem?.value);
         },
         itemToString: (item) => (item ? item.label : ''),
         ...(multiple
@@ -202,7 +202,6 @@ const SelectBaseInput = (
     const hasError = status === 'error';
 
     const handleClear = (): void => {
-        clearIndeterminate();
         onClear();
         reset();
     };
@@ -251,7 +250,7 @@ const SelectBaseInput = (
                                 placeholder={placeholder}
                                 indeterminateCount={indeterminateItemValues.length}
                                 onDismiss={(value) => {
-                                    handleItemSelect(value);
+                                    onItemSelect(value);
                                     internalRef.current?.focus();
                                 }}
                                 selectedCount={selectedItemValues.length}

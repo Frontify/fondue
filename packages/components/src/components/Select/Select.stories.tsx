@@ -123,13 +123,18 @@ export const MultipleSelectWithMixedValues: StoryObj<typeof SelectMultiple> = {
     name: 'Select Multiple (mixed values)',
     render: () => {
         const [selectedValues, setSelectedValues] = useState<string[]>(['brand']);
+        const [indeterminateValues, setIndeterminateValues] = useState<string[]>(['campaign', 'social']);
 
         return (
             <Select.Multiple
                 placeholder="Select tags"
                 value={selectedValues}
-                indeterminateValues={['campaign', 'social']}
-                onSelect={(values) => setSelectedValues(values ?? [])}
+                indeterminateValues={indeterminateValues}
+                onSelect={(values) => {
+                    setSelectedValues(values ?? []);
+                    // A value the user has touched applies to every record now, so it stops being mixed
+                    setIndeterminateValues((current) => current.filter((value) => !values?.includes(value)));
+                }}
             >
                 <Select.Item value="brand">Brand</Select.Item>
                 <Select.Item value="campaign">Campaign</Select.Item>
@@ -144,13 +149,18 @@ export const ComboboxMultipleWithMixedValues: StoryObj<typeof ComboboxMultiple> 
     name: 'Combobox Multiple (mixed values)',
     render: () => {
         const [selectedValues, setSelectedValues] = useState<string[]>(['apple']);
+        const [indeterminateValues, setIndeterminateValues] = useState<string[]>(['banana', 'cherry']);
 
         return (
             <Select.Combobox.Multiple
                 placeholder="Search and select items"
                 value={selectedValues}
-                indeterminateValues={['banana', 'cherry']}
-                onSelect={(values) => setSelectedValues(values ?? [])}
+                indeterminateValues={indeterminateValues}
+                onSelect={(values) => {
+                    setSelectedValues(values ?? []);
+                    // A value the user has touched applies to every record now, so it stops being mixed
+                    setIndeterminateValues((current) => current.filter((value) => !values?.includes(value)));
+                }}
             >
                 <Select.Item value="apple">Apple</Select.Item>
                 <Select.Item value="banana">Banana</Select.Item>

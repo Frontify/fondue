@@ -249,7 +249,7 @@ describe('ComboboxMultiple', () => {
             expect(screen.queryByPlaceholderText('Search fruits...')).not.toBeInTheDocument();
         });
 
-        it('leaves a partially applied option unselected on the second click instead of restoring the dash', async () => {
+        it('shows the dash again after deselecting while the consumer still lists the value', async () => {
             const user = userEvent.setup();
             renderMultiCombobox({ defaultValue: [], indeterminateValues: ['banana'] });
 
@@ -259,9 +259,9 @@ describe('ComboboxMultiple', () => {
 
             const option = screen.getByRole('option', { name: 'Banana' });
             expect(option).toHaveAttribute('data-selected', 'false');
-            expect(option).toHaveAttribute('data-indeterminate', 'false');
-            // Nothing is partially applied any more, so the label goes back to the badges.
-            expect(screen.queryByTestId('fondue-select-mixed-count')).not.toBeInTheDocument();
+            // Dropping a value the user has touched is the consumer's job
+            expect(option).toHaveAttribute('data-indeterminate', 'true');
+            expect(screen.getByTestId('fondue-select-mixed-count')).toHaveTextContent('1 mixed');
         });
     });
 });

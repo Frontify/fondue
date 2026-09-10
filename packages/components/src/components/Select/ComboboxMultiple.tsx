@@ -23,8 +23,8 @@ export type ComboboxMultipleProps = ComboboxSharedProps & {
      * instead of a checkmark and the input gains a "2 mixed" badge next to the selection badges.
      *
      * Purely visual: never part of the selection, never reported by `onSelect`. Selecting one
-     * applies it to every record and it does not return to the partial state when switched off
-     * again. Pass a different set to describe a different group of records.
+     * applies it to every record, so remove it from this list in `onSelect`; otherwise the dash
+     * returns as soon as it is deselected again.
      */
     indeterminateValues?: string[];
 };

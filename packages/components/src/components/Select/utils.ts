@@ -129,3 +129,13 @@ export const recursiveMap = (
         subElementCount: itemCounter,
     };
 };
+
+/**
+ * The values rendered with a dash. A value that applies to every record cannot also be partially
+ * applied, so anything selected is left out. Indeterminate values are purely visual: once the user
+ * acts on one, it is the consumer's job to remove it from `indeterminateValues`.
+ */
+export const getIndeterminateItemValues = (
+    indeterminateValues: string[] | undefined,
+    selectedItemValues: string[],
+): string[] => (indeterminateValues ?? []).filter((value) => !selectedItemValues.includes(value));
