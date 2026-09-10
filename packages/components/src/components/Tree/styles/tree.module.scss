@@ -58,7 +58,6 @@
     height: sizeToken.get(8);
     border-radius: var(--border-radius-medium);
     border-width: var(--border-width-large);
-    background-color: var(--color-surface-default);
     border-style: solid;
     border-color: transparent;
     transition:
@@ -156,7 +155,7 @@
     line-height: var(--typography-line-height-tight);
     color: var(--color-primary-default);
 
-    .item[data-selected='true'] & {
+    .item[data-selected='true']:not([data-disabled='true']) & {
         color: inherit;
     }
 }
