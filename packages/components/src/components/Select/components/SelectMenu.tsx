@@ -168,22 +168,17 @@ export const SelectMenu = ({
                                         // `aria-checked` carries it. Set on every option once any is
                                         // partial: an absent `aria-checked` would read as "not
                                         // checkable" rather than "unchecked".
-                                        const ariaChecked = hasIndeterminateValues
-                                            ? isIndeterminate
-                                                ? 'mixed'
-                                                : Boolean(isSelected)
-                                            : undefined;
+                                        let ariaChecked: boolean | 'mixed' | undefined;
+                                        if (hasIndeterminateValues) {
+                                            ariaChecked = isIndeterminate ? 'mixed' : Boolean(isSelected);
+                                        }
 
                                         return (
                                             <RadixSlot
                                                 className={styles.item}
                                                 data-highlighted={highlightedIndex === index}
                                                 data-selected={isSelected}
-                                                // Omitted while unused, so menus with no partial
-                                                // values keep their existing markup
-                                                data-indeterminate={
-                                                    hasIndeterminateValues ? isIndeterminate : undefined
-                                                }
+                                                data-indeterminate={isIndeterminate}
                                                 key={child.props.value}
                                                 // Workaround for the issue where the onClick event is not fired on touch devices because of portal usage
                                                 onTouchStart={(event) => {

@@ -24,46 +24,30 @@ type CollapsibleBadgesProps = {
     children?: ReactNode;
     /** Total number of selected items (for screen reader announcements). */
     selectedCount?: number;
-    /** When set, adds a non-dismissable badge for the values that are only partially applied. */
-    mixedLabel?: string;
+    /** Number of partially applied values. Above zero, a non-dismissable "N mixed" badge follows the selection badges. */
+    indeterminateCount?: number;
 };
 
 const calculateVisibleCount = (
     container: HTMLDivElement,
-    badgeElements: Map<string, HTMLDivElement>,
-    items: BadgeItem[],
-    hasInputSlot: boolean,
+    badges: HTMLDivElement[],
     mixedBadge: HTMLDivElement | null,
+    hasInputSlot: boolean,
 ): number => {
-    // Badges shrink to truncate long labels, so their rendered width is not their natural one.
-    // Shrinking is switched off for the single synchronous reflow this measurement needs and
-    // restored before the browser paints, so the decision below is made on natural widths.
-    const measured = mixedBadge ? [...badgeElements.values(), mixedBadge] : [...badgeElements.values()];
-    for (const element of measured) {
-        element.style.flexShrink = '0';
-    }
-    const naturalWidths = new Map([...badgeElements].map(([value, element]) => [value, element.offsetWidth]));
-    const mixedBadgeWidth = mixedBadge?.offsetWidth ?? 0;
-    for (const element of measured) {
-        element.style.flexShrink = '';
-    }
-
     const containerWidth = container.offsetWidth;
+
+    // The input and the mixed badge always stay visible, so the selection badges collapse around them
     let usedWidth = hasInputSlot ? INPUT_MIN_WIDTH + BADGE_GAP : 0;
-    if (mixedBadgeWidth > 0) {
-        usedWidth += mixedBadgeWidth + BADGE_GAP;
+    if (mixedBadge) {
+        usedWidth += mixedBadge.offsetWidth + BADGE_GAP;
     }
     let count = 0;
 
-    for (const item of items) {
-        const badgeWidth = naturalWidths.get(item.value);
-        if (badgeWidth === undefined) {
-            continue;
-        }
-
+    for (const badge of badges) {
+        const badgeWidth = badge.offsetWidth;
         const widthWithGap = count > 0 ? badgeWidth + BADGE_GAP : badgeWidth;
-        const hasMoreAfterThis = items.length - count - 1 > 0;
-        const reservedWidth = hasMoreAfterThis ? OVERFLOW_BADGE_MIN_WIDTH + BADGE_GAP : 0;
+        const isLast = count === badges.length - 1;
+        const reservedWidth = isLast ? 0 : OVERFLOW_BADGE_MIN_WIDTH + BADGE_GAP;
 
         if (usedWidth + widthWithGap + reservedWidth > containerWidth) {
             break;
@@ -73,9 +57,9 @@ const calculateVisibleCount = (
         count++;
     }
 
-    // One badge always stays visible so the field never looks empty — unless a mixed badge is
-    // already holding that ground, in which case the overflow badge can stand in for all of them
-    return Math.max(mixedBadgeWidth > 0 ? 0 : 1, count);
+    // One badge always stays visible so the field never looks empty — unless the mixed badge already
+    // does that, in which case the overflow badge can stand in for all of them
+    return Math.max(mixedBadge ? 0 : 1, count);
 };
 
 export const CollapsibleBadges = ({
@@ -84,7 +68,7 @@ export const CollapsibleBadges = ({
     onDismiss,
     children,
     selectedCount = 0,
-    mixedLabel,
+    indeterminateCount = 0,
 }: CollapsibleBadgesProps): ReactNode => {
     const { t } = useTranslation();
     const wasClickedRef = useRef(false);
@@ -93,7 +77,7 @@ export const CollapsibleBadges = ({
     const mixedBadgeRef = useRef<HTMLDivElement>(null);
     const [visibleCount, setVisibleCount] = useState(items.length);
     const hasChildren = children !== undefined;
-    const isMixed = mixedLabel !== undefined;
+    const hasIndeterminate = indeterminateCount > 0;
 
     useEffect(() => {
         const container = containerRef.current;
@@ -106,10 +90,10 @@ export const CollapsibleBadges = ({
                 setVisibleCount(0);
                 return;
             }
-            // The mixed badge always stays visible, so the selection badges collapse around it
-            setVisibleCount(
-                calculateVisibleCount(container, badgeElementsRef.current, items, hasChildren, mixedBadgeRef.current),
-            );
+            const badges = items
+                .map((item) => badgeElementsRef.current.get(item.value))
+                .filter((element) => element !== undefined);
+            setVisibleCount(calculateVisibleCount(container, badges, mixedBadgeRef.current, hasChildren));
         };
 
         const observer = new ResizeObserver(recalculate);
@@ -117,9 +101,9 @@ export const CollapsibleBadges = ({
         return (): void => {
             observer.disconnect();
         };
-    }, [items, hasChildren, mixedLabel]);
+    }, [items, hasChildren, indeterminateCount]);
 
-    if (items.length === 0 && !children && !isMixed) {
+    if (items.length === 0 && !children && !hasIndeterminate) {
         return placeholder;
     }
 
@@ -178,7 +162,7 @@ export const CollapsibleBadges = ({
             ))}
             {overflowCount > 0 && (
                 <div
-                    className={`${styles.badgeWrapper} ${styles.overflowBadgeWrapper}`}
+                    className={styles.badgeWrapper}
                     aria-label={t('Select_additionalItemsSelected', { count: overflowCount.toString() })}
                 >
                     <Badge emphasis="weak" aria-hidden="true">
@@ -186,10 +170,10 @@ export const CollapsibleBadges = ({
                     </Badge>
                 </div>
             )}
-            {isMixed && (
+            {hasIndeterminate && (
                 <div ref={mixedBadgeRef} className={styles.badgeWrapper}>
                     <Badge emphasis="weak" data-test-id="fondue-select-mixed-value">
-                        {mixedLabel}
+                        {t('Select_mixedCount', { count: indeterminateCount.toString() })}
                     </Badge>
                 </div>
             )}

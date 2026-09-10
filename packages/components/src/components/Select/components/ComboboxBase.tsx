@@ -310,7 +310,6 @@ const ComboboxBaseInput = (
                     data-status={hasError ? 'error' : status}
                     data-disabled={disabled}
                     data-empty={selectedItemValues.length === 0 && !hasIndeterminateValues}
-                    data-mixed={hasIndeterminateValues || undefined}
                 >
                     {multiple ? (
                         <>
@@ -322,11 +321,7 @@ const ComboboxBaseInput = (
                                 items={badgeItems}
                                 onDismiss={handleDismissBadge}
                                 selectedCount={selectedItemValues.length}
-                                mixedLabel={
-                                    hasIndeterminateValues
-                                        ? t('Select_mixedCount', { count: indeterminateItemValues.length.toString() })
-                                        : undefined
-                                }
+                                indeterminateCount={indeterminateItemValues.length}
                             >
                                 <input
                                     {...getInputProps({

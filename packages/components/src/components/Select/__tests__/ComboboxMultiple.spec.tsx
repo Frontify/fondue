@@ -259,7 +259,7 @@ describe('ComboboxMultiple', () => {
 
             const option = screen.getByRole('option', { name: 'Banana' });
             expect(option).toHaveAttribute('data-selected', 'false');
-            expect(option).not.toHaveAttribute('data-indeterminate');
+            expect(option).toHaveAttribute('data-indeterminate', 'false');
             // Nothing is partially applied any more, so the label goes back to the badges.
             expect(screen.queryByTestId('fondue-select-mixed-value')).not.toBeInTheDocument();
         });

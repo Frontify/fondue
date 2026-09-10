@@ -20,7 +20,7 @@ export const useSelectionDescription = (
     isMultiple: boolean,
     selectedItemValues: string[],
     getItemByValue: (value?: string) => SelectItemLike | undefined,
-    indeterminateCount: number = 0,
+    indeterminateCount = 0,
 ): SelectionDescription => {
     const { t } = useTranslation();
     const selectionDescriptionId = useId();

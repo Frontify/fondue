@@ -177,15 +177,6 @@ describe('SelectMultiple', () => {
             expect(getOptionRow('Cherry')).toHaveAttribute('data-indeterminate', 'false');
         });
 
-        it('does not add the indeterminate attribute when no values are partially applied', async () => {
-            const user = userEvent.setup();
-            renderMultiSelect({ value: ['apple'] });
-
-            await user.click(screen.getByRole('combobox'));
-
-            expect(getOptionRow('Apple')).not.toHaveAttribute('data-indeterminate');
-        });
-
         it('selects a partially applied option on the first click', async () => {
             const onSelect = vi.fn();
             const user = userEvent.setup();
@@ -226,7 +217,6 @@ describe('SelectMultiple', () => {
             renderMultiSelect({ value: [], indeterminateValues: ['banana'] });
 
             expect(screen.getByRole('combobox')).toHaveAttribute('data-empty', 'false');
-            expect(screen.getByRole('combobox')).toHaveAttribute('data-mixed', 'true');
         });
 
         it('drops the mixed label when the clear button is clicked', async () => {

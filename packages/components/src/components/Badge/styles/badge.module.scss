@@ -48,9 +48,6 @@
     align-items: center;
     white-space: nowrap;
     min-height: 1rem;
-    // Never wider than whatever contains it, so a long label truncates instead of overflowing
-    max-width: 100%;
-    min-width: 0;
 
     @include variant(default, primary, secondary);
     @include variant(positive, success);
@@ -90,12 +87,6 @@
     @include focusStyle.focus-outline;
 }
 
-.label {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    min-width: 0;
-}
-
 .dismiss {
     padding: 0;
     margin: 0;
@@ -105,8 +96,6 @@
     background: transparent;
     color: inherit;
     border-radius: 0.25rem;
-    // Holds its size while the label truncates
-    flex-shrink: 0;
 
     @include focusStyle.focus-outline;
 }

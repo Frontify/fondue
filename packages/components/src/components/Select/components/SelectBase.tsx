@@ -6,7 +6,6 @@ import { useSelect } from 'downshift';
 import { forwardRef, useCallback, useMemo, useRef, useState, type ForwardedRef, type ReactNode } from 'react';
 
 import { mergeAriaIds, type CommonAriaProps } from '#/helpers/aria';
-import { useTranslation } from '#/hooks/useTranslation';
 
 import { useBadgeItems } from '../hooks/useBadgeItems';
 import { useFocusRing } from '../hooks/useFocusRing';
@@ -131,7 +130,6 @@ const SelectBaseInput = (
         },
         [forwardedRef],
     );
-    const { t } = useTranslation();
     const { inputSlots, menuSlots, items, clearButton, getItemByValue } = useSelectData(children);
     const { onMouseDown, onFocus, onBlur } = useFocusRing();
     const { indeterminateItemValues, hasIndeterminateValues, handleItemSelect, clearIndeterminate } =
@@ -223,7 +221,6 @@ const SelectBaseInput = (
                     data-status={hasError ? 'error' : status}
                     data-disabled={disabled}
                     data-empty={selectedItemValues.length === 0 && !hasIndeterminateValues}
-                    data-mixed={hasIndeterminateValues || undefined}
                     data-test-id={dataTestId}
                     {...(disabled
                         ? {}
@@ -252,11 +249,7 @@ const SelectBaseInput = (
                             <CollapsibleBadges
                                 items={badgeItems}
                                 placeholder={placeholder}
-                                mixedLabel={
-                                    hasIndeterminateValues
-                                        ? t('Select_mixedCount', { count: indeterminateItemValues.length.toString() })
-                                        : undefined
-                                }
+                                indeterminateCount={indeterminateItemValues.length}
                                 onDismiss={(value) => {
                                     handleItemSelect(value);
                                     internalRef.current?.focus();

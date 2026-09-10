@@ -97,23 +97,28 @@ describe('CollapsibleBadges', () => {
         expect(outerClick).not.toHaveBeenCalled();
     });
 
-    describe('mixedLabel', () => {
-        it('adds a badge for the label while keeping the selection badges', () => {
-            render(<CollapsibleBadges items={defaultItems} onDismiss={vi.fn()} mixedLabel="2 mixed" />);
+    describe('indeterminateCount', () => {
+        it('adds a badge for the count while keeping the selection badges', () => {
+            render(<CollapsibleBadges items={defaultItems} onDismiss={vi.fn()} indeterminateCount={2} />);
 
             expect(screen.getByTestId('fondue-select-mixed-value')).toHaveTextContent('2 mixed');
             expect(screen.getByText('Alpha')).toBeInTheDocument();
         });
 
         it('is not dismissable, unlike the selection badges', () => {
-            render(<CollapsibleBadges items={defaultItems} onDismiss={vi.fn()} mixedLabel="2 mixed" />);
+            render(<CollapsibleBadges items={defaultItems} onDismiss={vi.fn()} indeterminateCount={2} />);
 
             expect(screen.getByTestId('fondue-select-mixed-value')).toHaveAttribute('data-dismissable', 'false');
         });
 
-        it('renders the label instead of the placeholder when there is nothing else to show', () => {
+        it('renders the badge instead of the placeholder when there is nothing else to show', () => {
             render(
-                <CollapsibleBadges items={[]} placeholder="Pick something" onDismiss={vi.fn()} mixedLabel="2 mixed" />,
+                <CollapsibleBadges
+                    items={[]}
+                    placeholder="Pick something"
+                    onDismiss={vi.fn()}
+                    indeterminateCount={2}
+                />,
             );
 
             expect(screen.getByTestId('fondue-select-mixed-value')).toBeInTheDocument();
@@ -122,7 +127,7 @@ describe('CollapsibleBadges', () => {
 
         it('still renders children so a combobox input survives', () => {
             render(
-                <CollapsibleBadges items={defaultItems} onDismiss={vi.fn()} mixedLabel="2 mixed">
+                <CollapsibleBadges items={defaultItems} onDismiss={vi.fn()} indeterminateCount={2}>
                     <input aria-label="Filter" />
                 </CollapsibleBadges>,
             );
