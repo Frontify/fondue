@@ -66,7 +66,12 @@ export type Responsive<TValue> = { [key in Breakpoint]?: TValue } | TValue;
 `,
         'utf-8',
     );
-});
+
+    // Building the underlying TypeScript `Program` (parsing lib.d.ts, etc.) is slow on cold
+    // start, especially on CI runners. Pay that cost here, under beforeAll's own timeout,
+    // instead of letting it land inside whichever test happens to trigger it first.
+    collectTypeDefinitions([makeProp('ButtonVariant')]);
+}, 30_000);
 
 describe('collectTypeDefinitions', () => {
     it('returns empty object when no PascalCase types in props', () => {
