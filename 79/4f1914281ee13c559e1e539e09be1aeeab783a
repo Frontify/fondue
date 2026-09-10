@@ -1,0 +1,24 @@
+packages/rich-text-edior/src/index.ts
+  s_935f2ee3f678c2::t_f9e45998b27f7a 33-43
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "794f1914281ee13c559e1e539e09be1aeeab783a",
+  "prompts": {},
+  "humans": {
+    "h_2139c5e5c94509": {
+      "author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  },
+  "sessions": {
+    "s_935f2ee3f678c2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e91df161-b427-4aab-9538-43b52a6f0323",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}

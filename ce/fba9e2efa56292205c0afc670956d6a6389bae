@@ -1,0 +1,23 @@
+packages/components/src/components/Table/__tests__/Table.ct.tsx
+  s_3551980dbe13e5::t_1386621c9165ca 460-487
+packages/components/src/components/Table/Table.tsx
+  s_3551980dbe13e5::t_499279541e74c4 281,284
+  s_3551980dbe13e5::t_63c5ef263baf1f 324-326
+  s_3551980dbe13e5::t_501e481abea2ac 341-343
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "cefba9e2efa56292205c0afc670956d6a6389bae",
+  "prompts": {},
+  "sessions": {
+    "s_3551980dbe13e5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "44790a35-f064-4e39-9ced-1df197b68fd9",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}

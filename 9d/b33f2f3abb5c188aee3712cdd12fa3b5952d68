@@ -1,0 +1,76 @@
+packages/rich-text-editor/src/stories/PluginExamples.stories.tsx
+  s_eea7233cdf2070::t_651e82cb508aa8 822
+packages/rich-text-editor/src/plugins/List/List.tsx
+  s_eea7233cdf2070::t_6ad62aad71795f 68
+  s_eea7233cdf2070::t_debc90326dbb36 77
+packages/rich-text-editor/src/plugins/Italic/Italic.tsx
+  s_eea7233cdf2070::t_0d01f850077fc8 22
+packages/rich-text-editor/src/plugins/FontColor/FontColor.tsx
+  s_eea7233cdf2070::t_8a8b5384d27eab 40
+packages/rich-text-editor/src/core/plugin.ts
+  s_eea7233cdf2070::t_e00a1690299224 119-120
+  s_eea7233cdf2070::t_7a19e8291a16d6 130-131
+  s_eea7233cdf2070::t_49e6a9716a3990 80
+  s_eea7233cdf2070::t_6b2381680be064 146-147
+packages/rich-text-editor/src/editor/engines/prosemirror/documentConversion.spec.tsx
+  s_eea7233cdf2070::t_d926c569bc0b38 57
+  s_eea7233cdf2070::t_fbab47ac4020aa 94
+  s_eea7233cdf2070::t_f2273a58209537 26
+  s_eea7233cdf2070::t_ea7282bcb6d82a 73
+  s_eea7233cdf2070::t_e62d4378e4eecc 86
+  s_eea7233cdf2070::t_ad476070557428 43
+packages/rich-text-editor/src/plugins/Link/Link.tsx
+  s_eea7233cdf2070::t_29a548db2b7cbc 55
+packages/rich-text-editor/src/plugins/Underline/Underline.tsx
+  s_eea7233cdf2070::t_629dfb3852bbfa 22
+packages/rich-text-editor/src/editor/engines/prosemirror/schema.spec.tsx
+  s_eea7233cdf2070::t_86bac5e9f4e849 94
+  s_eea7233cdf2070::t_a4d92cbedebc31 50
+  s_eea7233cdf2070::t_c11c3590234c58 37
+  s_eea7233cdf2070::t_e37d6264462712 86
+  s_eea7233cdf2070::t_6014d62573a042 20
+  s_eea7233cdf2070::t_01460d1b5d7d01 57
+packages/rich-text-editor/src/plugins/Strikethrough/Strikethrough.tsx
+  s_eea7233cdf2070::t_c11d1d6b3beda4 22
+packages/rich-text-editor/src/plugins/SoftBreak/SoftBreak.tsx
+  s_eea7233cdf2070::t_74c5944b3af027 22
+packages/rich-text-editor/src/plugins/Bold/Bold.tsx
+  s_eea7233cdf2070::t_ef4831841c50c4 22
+packages/rich-text-editor/src/editor/engines/prosemirror/editing.spec.tsx
+  s_eea7233cdf2070::t_f233bcb9964cd2 24
+packages/rich-text-editor/src/serializeToHtml.node.spec.tsx
+  s_eea7233cdf2070::t_3a6295998dd14e 38
+  s_eea7233cdf2070::t_371d461b6eaa4d 25
+packages/rich-text-editor/src/plugins/Superscript/Superscript.tsx
+  s_eea7233cdf2070::t_123da6140341a6 22
+packages/rich-text-editor/src/plugins/Quote/Quote.tsx
+  s_eea7233cdf2070::t_0492318a4f7969 26
+packages/rich-text-editor/src/editor/engines/prosemirror/schema.ts
+  s_eea7233cdf2070::t_b35ac1d5350d48 112
+  s_eea7233cdf2070::t_724ae607b49eff 120-127,134
+packages/rich-text-editor/src/plugins/Code/Code.tsx
+  s_eea7233cdf2070::t_1ccec3e55a665f 24
+packages/rich-text-editor/src/plugins/Subscript/Subscript.tsx
+  s_eea7233cdf2070::t_21c4304ff0d27d 22
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "9db33f2f3abb5c188aee3712cdd12fa3b5952d68",
+  "prompts": {},
+  "humans": {
+    "h_2139c5e5c94509": {
+      "author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  },
+  "sessions": {
+    "s_eea7233cdf2070": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "b826dcba-b7fd-4362-b8ed-840cb31f9dd1",
+        "model": "default"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}

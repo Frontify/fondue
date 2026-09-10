@@ -1,0 +1,140 @@
+packages/components/src/components/LoadingBar/LoadingBar.metadata.json
+  s_1b4cb72f14f783::t_9aa1067d486151 7
+packages/components/scripts/buildManifest/parseStories.ts
+  s_1b4cb72f14f783::t_9aa1067d486151 7,12,17,36-44,62,65,69-70,72-73,88-89,93-94,96-97,130-131,136
+packages/components/src/components/RouterProvider/RouterProvider.stories.tsx
+  s_1b4cb72f14f783::t_9284f625cfbf2f 22
+  s_1b4cb72f14f783::t_2af7d3115a1c5d 19-21
+  s_1b4cb72f14f783::t_7dd31a29f2aa54 23-25
+  s_1b4cb72f14f783::t_64b5111c42bf5a 1-18,26-40
+packages/components/src/components/Text/Text.metadata.json
+  s_1b4cb72f14f783::t_9aa1067d486151 7
+packages/components/src/components/LoadingCircle/LoadingCircle.metadata.json
+  s_1b4cb72f14f783::t_9aa1067d486151 7
+packages/components/src/components/Section/Section.metadata.json
+  s_1b4cb72f14f783::t_9aa1067d486151 7
+packages/components/src/components/ThemeProvider/ThemeProvider.metadata.json
+  s_1b4cb72f14f783::t_9aa1067d486151 7-9
+packages/components/src/components/RouterProvider/RouterProvider.metadata.json
+  s_1b4cb72f14f783::t_9aa1067d486151 7-9
+packages/sdk/skills/fondue/SKILL.md
+  s_d35bedffdfdb73::t_d3c754a2720a07 151
+  s_1b4cb72f14f783::t_a8e036a6c65802 178
+  s_1b4cb72f14f783::t_4c6e3fb2c79c11 169
+  s_1b4cb72f14f783::t_ef735a9d9dcc5d 177
+  s_1b4cb72f14f783::t_817aa42e8bac0d 36-37,39,48-51,159,179-181,188,199-207
+packages/sdk/docs/getting-started.md
+  s_1b4cb72f14f783::t_a9857c0e247945 18,21,33,44
+packages/sdk/src/api/components.test.ts
+  s_1b4cb72f14f783::t_012cf313aec37e 5,18,55,107,125,145,174-188,208-223
+  s_1b4cb72f14f783::t_0ff95b5132c046 10
+  s_1b4cb72f14f783::t_725ae21afda211 77-80
+packages/sdk/tsconfig.node.tsbuildinfo
+  s_1b4cb72f14f783::t_530b8a9c49cb75 1
+.changeset/sdk-contract-hardening.md
+  s_1b4cb72f14f783::t_3dc6a1ed71871d 1-6,8-11,13,15-16
+  s_1b4cb72f14f783::t_4fd46a114b4fc9 12,14,17
+  s_1b4cb72f14f783::t_9a16e741ae83e7 2,7
+packages/sdk/README.md
+  s_1b4cb72f14f783::t_a135870c0d4bd7 54,63
+  s_1b4cb72f14f783::t_54f9ae835dfdbf 134,139-146
+  s_1b4cb72f14f783::t_e0db20131e0473 85-91
+  s_1b4cb72f14f783::t_5849b6d3154f7f 78-84
+packages/sdk/skills/fondue/reference.md
+  s_d35bedffdfdb73::t_0a788aa40af085 36-38,42-47,52-57,69,71,91,111,122,129,136,148,246
+  s_1b4cb72f14f783::t_d8e7423645d041 149
+  s_1b4cb72f14f783::t_2c369e4d622ae3 66
+  s_1b4cb72f14f783::t_89295e98c45cfc 244
+  s_1b4cb72f14f783::t_fe50c035e48859 147
+packages/sdk/docs/api-reference.md
+  s_1b4cb72f14f783::t_d202b140c9ff55 29-37,71-73,83-84,88-90,205-206,214-215,223,233,271,273,301,318-321,387,414-428,442-443,447,456,460,496-499
+  s_1b4cb72f14f783::t_fa89d2fb1da3c9 23-28
+  s_1b4cb72f14f783::t_1f3b6b1c1e5686 439
+  s_1b4cb72f14f783::t_64dfd8463588ab 236
+  s_1b4cb72f14f783::t_9364685a1ef769 313-316
+  s_1b4cb72f14f783::t_c046476d74f231 535-538,545-547,554,556
+  s_1b4cb72f14f783::t_173318bb25debc 268
+  s_1b4cb72f14f783::t_4eefeab63fe8bd 317,322-325
+  s_1b4cb72f14f783::t_817aa42e8bac0d 97-99,101-110,521-531
+  s_1b4cb72f14f783::t_95220de46dc4a3 395-398
+  s_1b4cb72f14f783::t_4f14f77be2b273 192-200
+  s_1b4cb72f14f783::t_d0f455cac70677 100
+  s_1b4cb72f14f783::t_e7f5b74315990f 326
+packages/sdk/docs/mental-model.md
+  s_1b4cb72f14f783::t_c89082f8a386be 56,58,104,185-187
+  s_1b4cb72f14f783::t_817aa42e8bac0d 81,145-155
+  s_1b4cb72f14f783::t_c2e0d57b9cd07d 53
+  s_1b4cb72f14f783::t_77fe7f7be2a0ee 77-80,82-84
+  s_1b4cb72f14f783::t_e0c2c4bc87362d 85
+packages/sdk/docs/recipes.md
+  s_1b4cb72f14f783::t_2080f36dd71aae 56,311,315-327,334
+packages/sdk/scripts/generateData.ts
+  s_1b4cb72f14f783::t_caa8e639b08b97 7-17,35-59,72-97,99-103,104-112,123-126,128-136,138-139,141-145,146-153,156-157,159-163,164-172,178-180,182,198-200,201-276,279-303,305,314-315,322
+  s_1b4cb72f14f783::t_3429435529ef6d 98
+  s_1b4cb72f14f783::t_6b1329edf97067 140,158
+  s_1b4cb72f14f783::t_8ce3115d198b3d 181
+  s_1b4cb72f14f783::t_3a737e227833e3 175-177
+  s_1b4cb72f14f783::t_f83528cf871786 113-114
+  s_1b4cb72f14f783::t_ca7f5cc7f2a47e 115
+packages/sdk/src/api/components.ts
+  s_1b4cb72f14f783::t_0f07fc980576a7 3,12,23-25,50-51,53,59-61,76,80-82,84-104,107,109,111-113,118-120,122-123
+  s_1b4cb72f14f783::t_cc7716ecb9991c 83
+packages/sdk/src/api/guides.ts
+  s_1b4cb72f14f783::t_79a4487891e1ce 5,23,26,28-30,34
+packages/sdk/src/api/tokens.test.ts
+  s_1b4cb72f14f783::t_51ced5acee7b68 5,50,58,128-129,205,216,221
+packages/sdk/src/api/tokens.ts
+  s_1b4cb72f14f783::t_4b08c8d829f268 3,16,27,78-80,100-125,131,138,142-143,145,147-149,154,156-157,159-161,166-168
+packages/sdk/src/index.ts
+  s_1b4cb72f14f783::t_ca9f2d72dbe503 40
+packages/sdk/src/types/components.ts
+  s_1b4cb72f14f783::t_31db9e0688b4b4 3-4,13-14,38-39,43-44,54,56,71,73-74
+  s_1b4cb72f14f783::t_cf32d7a764f438 67-68
+  s_1b4cb72f14f783::t_1b3ff4eec59ac2 34-35
+packages/sdk/src/types/tokens.ts
+  s_1b4cb72f14f783::t_b7a9c6e7781f74 3-4,12,18,49
+  s_1b4cb72f14f783::t_2b9f1d7de7dc29 20-24
+packages/sdk/src/utils/freeze.ts
+  s_1b4cb72f14f783::t_b311447dbf54fb 1-17
+packages/sdk/src/utils/makeFacet.ts
+  s_1b4cb72f14f783::t_10d741303a0f08 29,32-34,38
+packages/sdk/package.json
+  s_1b4cb72f14f783::t_931084b6b2300b 26
+  s_1b4cb72f14f783::t_14e2ce134137d1 37
+packages/sdk/src/utils/filters.ts
+  s_1b4cb72f14f783::t_395a4f86999580 19-23,28-29
+packages/sdk/src/utils/collections.ts
+  s_1b4cb72f14f783::t_ba07fabc786a54 5,7
+packages/sdk/src/utils/filters.test.ts
+  s_1b4cb72f14f783::t_996d3197a11403 61,70-77
+  s_1b4cb72f14f783::t_d4365594b7d766 78
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "a086574a656be667b17f780fca44abf769ad6e37",
+  "prompts": {},
+  "humans": {
+    "h_2139c5e5c94509": {
+      "author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  },
+  "sessions": {
+    "s_1b4cb72f14f783": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "23286c54-2204-457f-b5c1-369a06d17011",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    },
+    "s_d35bedffdfdb73": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c8889b5a-1944-4e24-829d-bbce859830bf",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}
