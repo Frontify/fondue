@@ -1,7 +1,17 @@
 {
     "name": "@frontify/fondue-sdk",
+    "type": "module",
     "version": "0.2.1",
     "description": "Machine-readable SDK for Frontify Fondue — components, icons, tokens — exposed as a navigable graph. Designed for MCP servers, CLI tools, AI agents, and other integrations.",
+    "homepage": "https://github.com/Frontify/fondue",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Frontify/fondue",
+        "directory": "packages/sdk"
+    },
+    "bugs": {
+        "url": "https://github.com/frontify/fondue/issues"
+    },
     "keywords": [
         "agent-skill",
         "design-system",
@@ -10,19 +20,6 @@
         "mcp",
         "sdk"
     ],
-    "homepage": "https://github.com/Frontify/fondue",
-    "bugs": {
-        "url": "https://github.com/frontify/fondue/issues"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/Frontify/fondue",
-        "directory": "packages/sdk"
-    },
-    "files": [
-        "dist"
-    ],
-    "type": "module",
     "sideEffects": false,
     "exports": {
         ".": {
@@ -30,8 +27,14 @@
             "import": "./dist/fondue-sdk.js"
         }
     },
+    "files": [
+        "dist"
+    ],
     "publishConfig": {
         "access": "public"
+    },
+    "engines": {
+        "node": ">=20"
     },
     "scripts": {
         "build": "pnpm build:data && vite build",
@@ -56,8 +59,5 @@
         "vite-plugin-dts": "^4.5.4",
         "vite-tsconfig-paths": "^5.1.4",
         "vitest": "^5.0.0"
-    },
-    "engines": {
-        "node": ">=20"
     }
 }
