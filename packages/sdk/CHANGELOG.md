@@ -1,5 +1,21 @@
 # @frontify/fondue-sdk
 
+## 0.2.2
+
+### Patch Changes
+
+- [#2847](https://github.com/Frontify/fondue/pull/2847) [`bab07c2`](https://github.com/Frontify/fondue/commit/bab07c2f5b12c0f39e82107f0cf52a05e2d9a0f2) Thanks [@noahwaldner](https://github.com/noahwaldner)! - feat(Select): add indeterminate values to the multi-select variants
+
+    `Select.Multi` and `Select.Combobox.Multiple` accept `indeterminateValues` for values that apply to
+    only some of the records being edited. Those options render a dash instead of a checkmark and the
+    field gains a "2 mixed" badge next to the selection badges.
+
+    The prop is purely visual and never reported by `onSelect`. Once the user selects such a value,
+    remove it from `indeterminateValues`; otherwise the dash returns as soon as it is deselected again.
+
+    In a narrow field the selection badges collapse into a "3 selected" badge instead of a lone clipped
+    badge, and into a single "Mixed" badge when not even the counts fit next to each other.
+
 ## 0.2.1
 
 ### Patch Changes
