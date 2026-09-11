@@ -24,10 +24,26 @@ export type ParsedChildren = {
     parentIsLoading: boolean;
 };
 
+const TREE_DISPLAY_NAMES = new Set([
+    'Tree.Item',
+    'Tree.Folder',
+    'Tree.Loading',
+    'Tree.Action',
+    'Tree.Decorator',
+    'Tree.Icon',
+    'Tree.Label',
+    'Tree.FolderHeader',
+]);
+
+const getDisplayName = (element: ReactElement): string | undefined =>
+    (element.type as { displayName?: string })?.displayName;
+
 const hasDisplayName =
     <Props>(displayName: string) =>
-    (element: ReactElement): element is ReactElement<Props> =>
-        (element.type as { displayName?: string })?.displayName === displayName;
+    (node: ReactNode): node is ReactElement<Props> =>
+        isValidElement(node) && getDisplayName(node) === displayName;
+
+const isTreeElement = (element: ReactElement): boolean => TREE_DISPLAY_NAMES.has(getDisplayName(element) ?? '');
 
 const isTreeItemElement = hasDisplayName<TreeItemProps>('Tree.Item');
 const isTreeFolderElement = hasDisplayName<TreeFolderProps>('Tree.Folder');
@@ -37,6 +53,26 @@ const isTreeDecoratorElement = hasDisplayName<TreeDecoratorProps>('Tree.Decorato
 const isTreeIconElement = hasDisplayName<TreeIconProps>('Tree.Icon');
 const isTreeLabelElement = hasDisplayName<TreeLabelProps>('Tree.Label');
 const isTreeFolderHeaderElement = hasDisplayName<TreeFolderHeaderProps>('Tree.FolderHeader');
+
+/**
+ * Flattens `children` into the nodes the Tree cares about. Tree elements and
+ * non-element nodes are kept as-is; every other element — a fragment, a DOM wrapper, a
+ * context provider, any component receiving rows as `children` — is replaced by its own
+ * `children`, recursively, so rows don't have to be direct children of their parent.
+ * Wrappers are never rendered; only their nesting is seen through. A component that
+ * *renders* Tree elements from its body cannot be seen — the parse runs before render.
+ */
+const flattenTreeChildren = (children: ReactNode): ReactNode[] => {
+    const flat: ReactNode[] = [];
+    for (const child of Children.toArray(children)) {
+        if (isValidElement<{ children?: ReactNode }>(child) && !isTreeElement(child)) {
+            flat.push(...flattenTreeChildren(child.props.children));
+            continue;
+        }
+        flat.push(child);
+    }
+    return flat;
+};
 
 type RowParts = {
     /** Text from `<Tree.Label>`; empty string when the part is missing. */
@@ -58,11 +94,7 @@ const extractRowParts = (children: ReactNode): RowParts => {
     let decorator: ReactNode = undefined;
     let action: ReactNode = undefined;
     const rest: ReactNode[] = [];
-    for (const child of Children.toArray(children)) {
-        if (!isValidElement(child)) {
-            rest.push(child);
-            continue;
-        }
+    for (const child of flattenTreeChildren(children)) {
         if (isTreeLabelElement(child)) {
             name = child.props.children;
             continue;
@@ -117,11 +149,10 @@ type FolderParse = {
 
 const toFolderData = (props: TreeFolderProps, parentId: string): FolderParse => {
     // Row parts live in `<Tree.FolderHeader>`; everything else is nested rows.
-    const headerElement = Children.toArray(props.children).filter(isValidElement).find(isTreeFolderHeaderElement);
+    const nodes = flattenTreeChildren(props.children);
+    const headerElement = nodes.find(isTreeFolderHeaderElement);
     const { name, icon, decorator, action } = extractRowParts(headerElement?.props.children);
-    const rows = Children.toArray(props.children).filter(
-        (child) => !(isValidElement(child) && isTreeFolderHeaderElement(child)),
-    );
+    const rows = nodes.filter((node) => !isTreeFolderHeaderElement(node));
     const nested = parseChildren(rows, props.id);
     return {
         folder: {
@@ -143,19 +174,17 @@ const toFolderData = (props: TreeFolderProps, parentId: string): FolderParse => 
 
 /**
  * Walks the JSX children of `<Tree.Root>` into a flat `TreeItemData[]` for headless-
- * tree's data loader. Anatomy parts sit directly inside `<Tree.Item>`, or inside
+ * tree's data loader. Anatomy parts sit inside `<Tree.Item>`, or inside
  * `<Tree.FolderHeader>` for a folder's own row; `<Tree.Loading>` marks its context
- * loading. Components are matched by `displayName` — not identity — so HMR swaps
- * don't break the tree.
+ * loading. Rows and parts may be nested in fragments or wrapper elements — see
+ * `flattenTreeChildren`. Components are matched by `displayName` — not identity — so
+ * HMR swaps don't break the tree.
  */
 export const parseChildren = (children: ReactNode, parentId: string = ROOT_ID): ParsedChildren => {
     const items: TreeItemData[] = [];
     let parentIsLoading = false;
 
-    for (const child of Children.toArray(children)) {
-        if (!isValidElement(child)) {
-            continue;
-        }
+    for (const child of flattenTreeChildren(children)) {
         if (isTreeLoadingElement(child)) {
             parentIsLoading = true;
             continue;

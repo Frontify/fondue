@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { createContext, Fragment, type ReactNode } from 'react';
 import { describe, expect, it } from 'vitest';
 
 import { TreeAction } from '../components/TreeAction';
@@ -28,8 +29,18 @@ describe('parseChildren', () => {
     it('parses a flat list of items with the root parent id by default', () => {
         const result = parseChildren([item('1', 'One'), item('2', 'Two')]);
         expect(result.items).toHaveLength(2);
-        expect(result.items[0]).toMatchObject({ id: '1', name: 'One', isFolder: false, parentId: 'root' });
-        expect(result.items[1]).toMatchObject({ id: '2', name: 'Two', isFolder: false, parentId: 'root' });
+        expect(result.items[0]).toMatchObject({
+            id: '1',
+            name: 'One',
+            isFolder: false,
+            parentId: 'root',
+        });
+        expect(result.items[1]).toMatchObject({
+            id: '2',
+            name: 'Two',
+            isFolder: false,
+            parentId: 'root',
+        });
     });
 
     it('uses the provided parentId for items', () => {
@@ -48,7 +59,11 @@ describe('parseChildren', () => {
             </TreeFolder>,
         );
         const folder = result.items.find((entry) => entry.id === 'f');
-        expect(folder).toMatchObject({ isFolder: true, parentId: 'root', name: 'Folder' });
+        expect(folder).toMatchObject({
+            isFolder: true,
+            parentId: 'root',
+            name: 'Folder',
+        });
         expect(folder?.children).toEqual(['a', 'b']);
         // Descendants are appended to the same flat list.
         expect(result.items.map((entry) => entry.id)).toEqual(['f', 'a', 'b']);
@@ -182,7 +197,11 @@ describe('parseChildren', () => {
                 <TreeLabel>One</TreeLabel>
             </TreeItem>,
         );
-        expect(result.items[0]).toMatchObject({ isRenaming: true, onRenamingChange, onRename });
+        expect(result.items[0]).toMatchObject({
+            isRenaming: true,
+            onRenamingChange,
+            onRename,
+        });
     });
 
     it('forwards isDisabled on items and folders', () => {
@@ -212,5 +231,121 @@ describe('parseChildren', () => {
             false,
         ]);
         expect(result.items.map((entry) => entry.id)).toEqual(['1']);
+    });
+});
+
+const Passthrough = ({ children }: { children: ReactNode }) => children;
+
+const RendersItemFromBody = ({ id }: { id: string }) => (
+    <TreeItem id={id}>
+        <TreeLabel>{id}</TreeLabel>
+    </TreeItem>
+);
+
+describe('parseChildren — indirect children', () => {
+    it('finds rows inside a Fragment', () => {
+        const result = parseChildren(
+            <>
+                {item('1', 'One')}
+                {item('2', 'Two')}
+            </>,
+        );
+        expect(result.items.map((entry) => entry.id)).toEqual(['1', '2']);
+        expect(result.items.every((entry) => entry.parentId === 'root')).toBe(true);
+    });
+
+    it('finds rows behind DOM wrappers, context providers and passthrough components, in order', () => {
+        const Context = createContext<string | null>(null);
+        const result = parseChildren([
+            item('1', 'One'),
+            <div key="wrap">
+                {item('2', 'Two')}
+                <Context.Provider value="x">
+                    <Passthrough>{item('3', 'Three')}</Passthrough>
+                </Context.Provider>
+            </div>,
+            item('4', 'Four'),
+        ]);
+        expect(result.items.map((entry) => entry.id)).toEqual(['1', '2', '3', '4']);
+    });
+
+    it('records wrapped rows inside a folder as that folder’s direct children', () => {
+        const result = parseChildren(
+            <TreeFolder id="f">
+                <TreeFolderHeader>
+                    <TreeLabel>Folder</TreeLabel>
+                </TreeFolderHeader>
+                <>
+                    {item('a', 'A')}
+                    <div>{item('b', 'B')}</div>
+                </>
+            </TreeFolder>,
+        );
+        const folder = result.items.find((entry) => entry.id === 'f');
+        expect(folder?.children).toEqual(['a', 'b']);
+        expect(result.items.find((entry) => entry.id === 'b')?.parentId).toBe('f');
+    });
+
+    it('finds a wrapped TreeFolderHeader and wrapped row parts', () => {
+        const result = parseChildren([
+            <TreeFolder key="f" id="f">
+                <section>
+                    <TreeFolderHeader>
+                        <div>
+                            <TreeIcon>
+                                <span>icon</span>
+                            </TreeIcon>
+                            <TreeLabel>Folder</TreeLabel>
+                        </div>
+                    </TreeFolderHeader>
+                </section>
+                {item('a', 'A')}
+            </TreeFolder>,
+            <TreeItem key="1" id="1">
+                <Passthrough>
+                    <TreeLabel>One</TreeLabel>
+                </Passthrough>
+            </TreeItem>,
+        ]);
+        const folder = result.items.find((entry) => entry.id === 'f');
+        expect(folder?.name).toBe('Folder');
+        expect(folder?.icon).toBeTruthy();
+        expect(folder?.children).toEqual(['a']);
+        expect(result.items.find((entry) => entry.id === '1')?.name).toBe('One');
+    });
+
+    it('honors a wrapped TreeLoading', () => {
+        const result = parseChildren([
+            <TreeFolder key="f" id="f">
+                <TreeFolderHeader>
+                    <TreeLabel>Folder</TreeLabel>
+                </TreeFolderHeader>
+                <div>
+                    <TreeLoading />
+                </div>
+            </TreeFolder>,
+            <Fragment key="loading">
+                {item('1', 'One')}
+                <TreeLoading />
+            </Fragment>,
+        ]);
+        expect(result.items.find((entry) => entry.id === 'f')?.isLoading).toBe(true);
+        expect(result.parentIsLoading).toBe(true);
+        expect(result.items.map((entry) => entry.id)).toEqual(['f', '1']);
+    });
+
+    it('does not look inside Tree parts for rows', () => {
+        const result = parseChildren(
+            <TreeItem id="1">
+                <TreeLabel>One</TreeLabel>
+                <TreeAction>{item('nested', 'Nested')}</TreeAction>
+            </TreeItem>,
+        );
+        expect(result.items.map((entry) => entry.id)).toEqual(['1']);
+    });
+
+    it('cannot see rows a component renders from its own body (parse runs before render)', () => {
+        const result = parseChildren(<RendersItemFromBody id="1" />);
+        expect(result.items).toEqual([]);
     });
 });

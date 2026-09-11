@@ -64,7 +64,12 @@ test.describe('TreeRoot rendering', () => {
         const component = await mount(
             <TestHarness
                 initial={[
-                    { id: '1', name: 'First', isFolder: false, isSelected: true },
+                    {
+                        id: '1',
+                        name: 'First',
+                        isFolder: false,
+                        isSelected: true,
+                    },
                     { id: '2', name: 'Second', isFolder: false },
                 ]}
             />,
@@ -152,7 +157,12 @@ test.describe('TreeRoot multi-select', () => {
                     { id: '2', name: 'Two', isFolder: false },
                 ]}
                 onChange={(state) => {
-                    onChange.push(state.map((node) => ({ id: node.id, isSelected: node.isSelected })));
+                    onChange.push(
+                        state.map((node) => ({
+                            id: node.id,
+                            isSelected: node.isSelected,
+                        })),
+                    );
                 }}
             />,
         );
@@ -593,5 +603,39 @@ test.describe('TreeRoot accepts predicate', () => {
             </Tree.Root>,
         );
         await expect(component.getByRole('treeitem', { name: /Row/ })).toBeVisible();
+    });
+});
+
+test.describe('TreeRoot indirect children', () => {
+    test('renders rows nested in fragments and wrapper elements', async ({ mount }) => {
+        const component = await mount(
+            <Tree.Root>
+                <>
+                    <Tree.Item id="1">
+                        <Tree.Label>Alpha</Tree.Label>
+                    </Tree.Item>
+                    <div>
+                        <Tree.Folder id="f" isExpanded>
+                            <Tree.FolderHeader>
+                                <Tree.Label>Folder</Tree.Label>
+                            </Tree.FolderHeader>
+                            <>
+                                <Tree.Item id="2">
+                                    <Tree.Label>Beta</Tree.Label>
+                                </Tree.Item>
+                                <Tree.Item id="3">
+                                    <Tree.Label>Gamma</Tree.Label>
+                                </Tree.Item>
+                            </>
+                        </Tree.Folder>
+                    </div>
+                </>
+            </Tree.Root>,
+        );
+
+        await expect(component.getByRole('treeitem')).toHaveCount(4);
+        await expect(component.getByRole('treeitem', { name: /Alpha/ })).toBeVisible();
+        await expect(component.getByRole('treeitem', { name: /Beta/ })).toBeVisible();
+        await expect(component.getByRole('treeitem', { name: /Gamma/ })).toBeVisible();
     });
 });

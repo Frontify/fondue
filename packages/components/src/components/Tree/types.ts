@@ -75,12 +75,18 @@ type TreeRowSharedProps = {
 };
 
 export type TreeItemProps = TreeRowSharedProps & {
-    /** `<Tree.Label>` (required), plus an optional `<Tree.Icon>`, `<Tree.Decorator>` and `<Tree.Action>`. */
+    /**
+     * `<Tree.Label>` (required), plus an optional `<Tree.Icon>`, `<Tree.Decorator>` and
+     * `<Tree.Action>`. Parts may sit inside fragments or wrapper elements.
+     */
     children: ReactNode;
 };
 
 export type TreeFolderProps = TreeRowSharedProps & {
-    /** A `<Tree.FolderHeader>` for the folder's own row, followed by its nested rows. */
+    /**
+     * A `<Tree.FolderHeader>` for the folder's own row, followed by its nested rows.
+     * Rows may sit inside fragments or wrapper elements; see `TreeRootProps.children`.
+     */
     children: ReactNode;
     isExpanded?: boolean;
     onExpandChange?: (isExpanded: boolean) => void;

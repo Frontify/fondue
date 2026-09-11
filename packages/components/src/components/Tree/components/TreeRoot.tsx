@@ -18,6 +18,13 @@ import { TreeLoadingRow } from './TreeLoadingRow';
 import { TreeRow } from './TreeRow';
 
 export type TreeRootProps = {
+    /**
+     * `<Tree.Item>` and `<Tree.Folder>` rows. They don't have to be direct children:
+     * fragments, DOM elements, context providers and components that receive rows as
+     * `children` are seen through (and never rendered — the Tree draws its own rows).
+     * A component that renders a row from its own body is not detected, since rows are
+     * collected from the JSX before it renders.
+     */
     children: ReactNode;
     /** Fires with the full tree state, at most once per user interaction. */
     onChange?: (state: TreeChangeState) => void;
