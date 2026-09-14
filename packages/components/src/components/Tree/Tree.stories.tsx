@@ -5,6 +5,7 @@ import {
     IconDotsHorizontal,
     IconEyeOff,
     IconFolder,
+    IconLockClosed,
     IconPen,
     IconTrashBin,
 } from '@frontify/fondue-icons';
@@ -14,6 +15,8 @@ import { action } from 'storybook/actions';
 
 import { Badge, Button, Dropdown } from '#/index';
 
+import { LazyLoadedMultiSelect } from './LazyLoadedMultiSelect/LazyLoadedMultiSelect';
+import { fetchChildren } from './LazyLoadedMultiSelect/mockApi';
 import {
     Tree,
     TreeAction,
@@ -1202,6 +1205,53 @@ export const MultiSelectLazyLoadingPartialRestore: Story = {
 
         return <Tree.Root {...args}>{rootNodes.map(renderNode)}</Tree.Root>;
     },
+};
+
+export const MultiSelectLazyLoadingComposed: Story = {
+    parameters: {
+        docs: {
+            description: {
+                story:
+                    'A reusable lazy-loaded multi-select, see the `LazyLoadedMultiSelect/` folder. The consumer ' +
+                    'supplies `loadChildren(parentId)` (called with `null` for the top level, then once per folder on ' +
+                    'first expansion) and the row parts via `renderIcon` / `renderDecorator` / `renderAction`; the ' +
+                    'component owns loading, `<Tree.Loading />` rows, cascading, and carrying a decision taken on a ' +
+                    'collapsed folder over to its children once they arrive. Per-row changes are reported through ' +
+                    "`onSelectChange`, the full state through the Tree's `onChange`.\n\n" +
+                    'Because `Tree.Root` parses its rows from JSX before rendering, a row cannot be a React component ' +
+                    'with its own hooks. Internally each row is a closure that owns its state and renders its own ' +
+                    '`<Tree.Folder>` / `<Tree.Item>`; the root only re-renders on change and computes nothing.\n\n' +
+                    "Folders carry the server's summary in `isSelected` (`true` / `'indeterminate'` / omitted) so a " +
+                    'collapsed folder renders correctly before its contents load. `indeterminate` folders (`Documents`, ' +
+                    '`Reports`) load their children eagerly, even nested and even while collapsed, so the mixed state is ' +
+                    'backed by real rows from the start; the others are checked / unchecked placeholders until ' +
+                    'expanded.\n\n' +
+                    '**Disabled children and unloaded folders.** A folder whose children are not loaded cannot know ' +
+                    'that one of them is disabled, so the client cannot decide alone whether such a folder may read ' +
+                    '"checked". The component resolves this the way Ant Design, MUI X and the Tree\'s default do: ' +
+                    'disabled descendants are excluded from the derivation, `checked` means "all *selectable* contents ' +
+                    'are selected", and the server\'s `true` uses the same definition — so `Pictures` reads checked ' +
+                    'before and after loading although `logo.svg` (locked) stays unchecked. Toggle ' +
+                    '`countDisabledInFolderState` in the controls to see the alternative: the client definition changes ' +
+                    'to "every child", the server\'s summary no longer matches, and `Pictures` flips from checked to ' +
+                    'indeterminate once its children load. With that mode the server has to report such folders as ' +
+                    "`'indeterminate'` (or the client has to load a folder before allowing it to be checked).",
+            },
+        },
+    },
+    args: {
+        multiSelect: true,
+    },
+    render: ({ multiSelect: _multiSelect, ...args }) => (
+        <LazyLoadedMultiSelect
+            {...args}
+            loadChildren={fetchChildren}
+            renderIcon={(node) => (node.isFolder ? <IconFolder size={16} /> : <IconDocument size={16} />)}
+            renderDecorator={(node) => (node.isDisabled ? <IconLockClosed size={12} /> : null)}
+            onSelectChange={action('onSelectChange')}
+            onLoadError={action('onLoadError')}
+        />
+    ),
 };
 
 export const LoadMore: Story = {
