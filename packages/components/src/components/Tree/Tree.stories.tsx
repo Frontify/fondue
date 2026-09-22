@@ -1376,7 +1376,7 @@ export const NonDraggableRows: Story = {
             description: {
                 story:
                     '`isDraggable={false}` keeps a row in place: it shows no drag handle and cannot be ' +
-                    'picked up, by pointer or keyboard. Everything else stays available — clicking, ' +
+                    'picked up, by pointer or keyboard. Everything else stays available: clicking, ' +
                     'selecting, renaming, expanding a folder, and dropping other rows into it.',
             },
         },
