@@ -2,7 +2,7 @@
 
 import { expect, test } from '@playwright/experimental-ct-react';
 
-import { Tree } from '../Tree';
+import { Tree, type TreeChangeState } from '../Tree';
 
 import { TestHarness } from './testutils/TestHarness';
 
@@ -593,5 +593,61 @@ test.describe('TreeRoot accepts predicate', () => {
             </Tree.Root>,
         );
         await expect(component.getByRole('treeitem', { name: /Row/ })).toBeVisible();
+    });
+});
+
+test.describe('TreeRoot drag below the last child', () => {
+    test('drops a handle-started drag below the last child of a folder', async ({ mount, page }) => {
+        const states: TreeChangeState[] = [];
+        const component = await mount(
+            <TestHarness
+                reorderable
+                initial={[
+                    {
+                        id: 'A',
+                        name: 'A',
+                        isFolder: true,
+                        isExpanded: true,
+                        children: [
+                            { id: 'a1', name: 'a1', isFolder: false },
+                            { id: 'a2', name: 'a2', isFolder: false },
+                        ],
+                    },
+                    { id: 'B', name: 'B', isFolder: false },
+                ]}
+                onChange={(state) => states.push(state)}
+            />,
+        );
+
+        const handleBox = await component
+            .getByRole('treeitem', { name: /a1/ })
+            .locator('span[class*="handle"]')
+            .boundingBox();
+        const targetBox = await component.getByRole('treeitem', { name: /a2/ }).boundingBox();
+        if (handleBox === null || targetBox === null) {
+            throw new Error('the dragged row and its drop target were not both laid out');
+        }
+
+        // Grab the handle's left edge and keep that x for the whole drag: those are the
+        // pixels headless-tree reads as a reparent when they fall left of level * 16px.
+        const dragX = handleBox.x + 1;
+        const startY = handleBox.y + handleBox.height / 2;
+        const dropY = targetBox.y + targetBox.height * 0.9;
+        await page.mouse.move(dragX, startY);
+        await page.mouse.down();
+        await page.mouse.move(dragX, startY + 4, { steps: 4 });
+        await page.mouse.move(dragX, dropY, { steps: 10 });
+        await page.mouse.move(dragX, dropY, { steps: 2 });
+        await page.mouse.up();
+
+        const childOrder = () => {
+            const last = states[states.length - 1] ?? [];
+            const folder = last.find((node) => node.id === 'A');
+            return (folder?.children ?? []).map((node) => node.id);
+        };
+        await expect.poll(childOrder).toEqual(['a2', 'a1']);
+
+        const rootOrder = (states[states.length - 1] ?? []).map((node) => node.id);
+        expect(rootOrder).toEqual(['A', 'B']);
     });
 });

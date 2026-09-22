@@ -60,3 +60,32 @@ test.describe('TreeLoadingRow', () => {
         await expect(component.getByText('Loading', { exact: false })).toHaveCount(0);
     });
 });
+
+test.describe('TreeLoadingRow alignment', () => {
+    test('mirrors the real row column order: indent, then handle, then chevron', async ({ mount }) => {
+        const component = await mount(
+            <Tree.Root multiSelect reorderable>
+                <Tree.Folder id="f" isExpanded>
+                    <Tree.FolderHeader>
+                        <Tree.Label>Folder</Tree.Label>
+                    </Tree.FolderHeader>
+                    <Tree.Item id="1">
+                        <Tree.Label>Sibling</Tree.Label>
+                    </Tree.Item>
+                    <Tree.Loading />
+                </Tree.Folder>
+            </Tree.Root>,
+        );
+
+        const loadingRow = component.locator('[aria-busy="true"]');
+        const indentBox = await loadingRow.locator('span[class*="indent"]').boundingBox();
+        const handleBox = await loadingRow.locator('span[class*="handle"]').boundingBox();
+        const chevronBox = await loadingRow.locator('span[class*="chevron"]').boundingBox();
+        if (indentBox === null || handleBox === null || chevronBox === null) {
+            throw new Error('the loading row did not render all of its placeholder columns');
+        }
+
+        expect(handleBox.x).toBeGreaterThan(indentBox.x + indentBox.width);
+        expect(chevronBox.x).toBeGreaterThan(handleBox.x + handleBox.width);
+    });
+});

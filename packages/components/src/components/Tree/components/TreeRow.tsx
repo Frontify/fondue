@@ -123,6 +123,10 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId, checkedState }
         event.currentTarget.click();
     };
 
+    // Spread (not a `draggable` prop): passing `undefined` would drop headless-tree's own
+    // `draggable={true}` from the spread above and disable dragging for every row.
+    const dragOverrideProps = data.isDraggable === false ? { draggable: false } : {};
+
     // Keep action clicks from bubbling into the row's select/expand handler.
     const handleActionsClick = (event: MouseEvent<HTMLDivElement>) => {
         event.stopPropagation();
@@ -143,6 +147,7 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId, checkedState }
             aria-selected={data.isSelected === true ? 'true' : 'false'}
             aria-checked={multiSelect ? ariaCheckedFor(checkedState) : undefined}
             aria-disabled={data.isDisabled ? 'true' : undefined}
+            {...dragOverrideProps}
         >
             <div
                 className={styles.item}
@@ -152,11 +157,6 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId, checkedState }
                 data-drop={reorderable && item.isDragTarget()}
                 data-disabled={data.isDisabled ? 'true' : undefined}
             >
-                {reorderable && (
-                    <span className={styles.handle} aria-hidden>
-                        <IconGrabHandle size={16} />
-                    </span>
-                )}
                 {checkboxProps && (
                     <TreeRowCheckbox
                         checkedState={checkedState}
@@ -166,6 +166,19 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId, checkedState }
                     />
                 )}
                 <span className={styles.indent} aria-hidden />
+                {/* Sits right of the indent: inside it, a handle-started drag over a
+                    folder's last child stays in headless-tree's reparent zone (x < level * indent). */}
+                {reorderable && (
+                    // The span stays even when the row cannot be dragged, so the columns
+                    // of every row keep lining up.
+                    <span
+                        className={styles.handle}
+                        data-hidden={data.isDraggable === false ? 'true' : undefined}
+                        aria-hidden
+                    >
+                        {data.isDraggable === false ? null : <IconGrabHandle size={16} />}
+                    </span>
+                )}
                 <TreeRowChevron isFolder={isFolder} isExpanded={isExpanded} />
                 {data.icon !== undefined && data.icon !== null && (
                     <span className={styles.icon} aria-hidden>

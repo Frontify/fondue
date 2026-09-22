@@ -135,6 +135,42 @@ test.describe('TreeRow', () => {
     });
 });
 
+test.describe('TreeRow non-draggable rows', () => {
+    test('marks a row with isDraggable={false} as draggable="false" and drops its grab handle', async ({ mount }) => {
+        const component = await mount(
+            <Tree.Root reorderable>
+                <Tree.Item id="1" isDraggable={false}>
+                    <Tree.Label>Fixed</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="2">
+                    <Tree.Label>Movable</Tree.Label>
+                </Tree.Item>
+            </Tree.Root>,
+        );
+
+        const fixedRow = component.getByRole('treeitem', { name: /Fixed/ });
+        await expect(fixedRow).toHaveAttribute('draggable', 'false');
+        const handle = fixedRow.locator('[data-hidden="true"]');
+        await expect(handle).toHaveCount(1);
+        await expect(handle.locator('svg')).toHaveCount(0);
+        await expect(component.getByRole('treeitem', { name: /Movable/ })).toHaveAttribute('draggable', 'true');
+    });
+
+    test('still fires onClick on a row with isDraggable={false}', async ({ mount }) => {
+        let clicks = 0;
+        const component = await mount(
+            <Tree.Root reorderable>
+                <Tree.Item id="1" isDraggable={false} onClick={() => (clicks += 1)}>
+                    <Tree.Label>Fixed</Tree.Label>
+                </Tree.Item>
+            </Tree.Root>,
+        );
+
+        await component.getByRole('treeitem', { name: /Fixed/ }).click();
+        expect(clicks).toBe(1);
+    });
+});
+
 test.describe('TreeRow renaming', () => {
     test('swaps the label for a focused text input while isRenaming', async ({ mount }) => {
         const component = await mount(
@@ -175,5 +211,53 @@ test.describe('TreeRow renaming', () => {
         await row.focus();
         await row.press('F2');
         await expect(component.getByRole('textbox')).toHaveCount(0);
+    });
+});
+
+test.describe('TreeRow column order', () => {
+    const nestedTree = (
+        <Tree.Root reorderable>
+            <Tree.Folder id="outer" isExpanded>
+                <Tree.FolderHeader>
+                    <Tree.Label>Outer</Tree.Label>
+                </Tree.FolderHeader>
+                <Tree.Folder id="inner" isExpanded>
+                    <Tree.FolderHeader>
+                        <Tree.Label>Inner</Tree.Label>
+                    </Tree.FolderHeader>
+                    <Tree.Item id="leaf">
+                        <Tree.Label>Leaf</Tree.Label>
+                    </Tree.Item>
+                </Tree.Folder>
+            </Tree.Folder>
+        </Tree.Root>
+    );
+
+    test('renders the grab handle to the right of the indent', async ({ mount }) => {
+        const component = await mount(nestedTree);
+
+        const row = component.getByRole('treeitem', { name: /Inner/ });
+        const handleBox = await row.locator('span[class*="handle"]').boundingBox();
+        const indentBox = await row.locator('[class*="indent"]').boundingBox();
+        if (handleBox === null || indentBox === null) {
+            throw new Error('the level-1 row did not render both an indent and a handle');
+        }
+
+        expect(handleBox.x).toBeGreaterThan(indentBox.x + indentBox.width);
+    });
+
+    test('keeps the handle outside the reparent zone of its level', async ({ mount }) => {
+        const component = await mount(nestedTree);
+
+        // headless-tree reparents a drop whose x is below `level * INDENT_STEP_PX` (16px),
+        // so a level-2 handle has to start at 32px or more from the row's left edge.
+        const row = component.getByRole('treeitem', { name: /Leaf/ });
+        const handleBox = await row.locator('span[class*="handle"]').boundingBox();
+        const rowBox = await row.boundingBox();
+        if (handleBox === null || rowBox === null) {
+            throw new Error('the level-2 row did not render a handle');
+        }
+
+        expect(handleBox.x - rowBox.x).toBeGreaterThanOrEqual(2 * 16);
     });
 });
