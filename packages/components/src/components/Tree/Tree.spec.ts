@@ -36,9 +36,6 @@ import {
  * silent breaking change.
  */
 
-// Pins the package entry point too: these types are part of the public API, so a
-// dropped re-export from `src/index.ts` fails the type check here.
-// Every Tree type re-exported from `src/index.ts` is pinned below.
 const dropCandidate: TreeDropCandidate = { id: '1', label: 'One', isFolder: false, tags: [] };
 const moveInfo: TreeMoveInfo = { parentId: 'root', index: 0 };
 

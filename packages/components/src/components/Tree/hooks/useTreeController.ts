@@ -17,11 +17,14 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { INDENT_STEP_PX, ROOT_ID, ROOT_NAME } from '../constants';
 import { type TreeChangeState, type TreeDropCandidate, type TreeItemData } from '../types';
 import { buildChangeState, type FlatTreeState } from '../utils/buildChangeState';
+import { canDragItems } from '../utils/canDragItems';
 import { getCheckedUnitIds, isCheckableUnit } from '../utils/computeCheckedStates';
 import { createCanDrop } from '../utils/createCanDrop';
 import { createDropHandler } from '../utils/createDropHandler';
 import { diffSelection } from '../utils/diffSelection';
+import { findSurvivingNeighbour } from '../utils/findSurvivingNeighbour';
 import { getStructureKey } from '../utils/getStructureKey';
+import { startDragHotkey } from '../utils/startDragHotkey';
 
 type UseTreeControllerOptions = {
     items: TreeItemData[];
@@ -34,32 +37,6 @@ type UseTreeControllerOptions = {
 
 const resolveUpdater = <T>(updater: Updater<T>, prev: T): T =>
     typeof updater === 'function' ? (updater as (old: T) => T)(prev) : updater;
-
-/**
- * Picks the row that inherits focus when the focused one is removed: the first survivor
- * below its old position, else the closest survivor above it, else the first row left.
- */
-const findSurvivingNeighbour = (
-    previousIds: readonly string[],
-    focusedId: string,
-    survivingIds: readonly string[],
-): string | undefined => {
-    const survivors = new Set(survivingIds);
-    const previousIndex = previousIds.indexOf(focusedId);
-    for (let index = previousIndex + 1; index < previousIds.length; index++) {
-        const candidate = previousIds[index];
-        if (candidate !== undefined && survivors.has(candidate)) {
-            return candidate;
-        }
-    }
-    for (let index = previousIndex - 1; index >= 0; index--) {
-        const candidate = previousIds[index];
-        if (candidate !== undefined && survivors.has(candidate)) {
-            return candidate;
-        }
-    }
-    return survivingIds[0];
-};
 
 /**
  * Wraps headless-tree's `useTree` with this component's conventions:
@@ -282,10 +259,7 @@ export const useTreeController = ({
         getItemName: (item) => item.getItemData().name,
         isItemFolder: (item) => Boolean(item.getItemData().isFolder),
         canReorder: reorderable,
-        canDrag: reorderable
-            ? (items) =>
-                  items.every((item) => !item.getItemData().isDisabled && item.getItemData().isDraggable !== false)
-            : undefined,
+        canDrag: reorderable ? canDragItems : undefined,
         canDrop: reorderable ? canDrop : undefined,
         onDrop: reorderable ? onDrop : undefined,
         dataLoader: {
@@ -306,32 +280,8 @@ export const useTreeController = ({
         // matching and breaks every later hotkey, including Enter-to-commit.
         hotkeys: {
             renameItem: { hotkey: 'F2', isEnabled: () => false },
-            // Fixed rows can still be selected, and the feature's own handler drags the
-            // whole selection plus the focused row, so one fixed row in that set would make
-            // `canDrag` reject every other row's keyboard drag. Drop them from the set here.
-            ...(reorderable
-                ? {
-                      startDrag: {
-                          hotkey: 'Control+Shift+KeyD',
-                          preventDefault: true,
-                          isEnabled: (tree: TreeInstance<TreeItemData>) => !tree.getState().dnd,
-                          handler: (_: unknown, tree: TreeInstance<TreeItemData>) => {
-                              const selectedItems = tree.getSelectedItems?.() ?? [tree.getFocusedItem()];
-                              const focusedItem = tree.getFocusedItem();
-                              const candidates = selectedItems.includes(focusedItem)
-                                  ? selectedItems
-                                  : [...selectedItems, focusedItem];
-                              const draggableItems = candidates.filter(
-                                  (item) => item.getItemData().isDraggable !== false,
-                              );
-                              if (draggableItems.length === 0) {
-                                  return;
-                              }
-                              tree.startKeyboardDrag(draggableItems);
-                          },
-                      },
-                  }
-                : {}),
+            // The feature's own handler drags the selection plus the focused row; a fixed row there fails canDrag.
+            ...(reorderable ? { startDrag: startDragHotkey } : {}),
         },
         // Lets cascades include folder ids — the only path for a leafless folder's own
         // id into `checkedItems`. Other folder ids are filtered out in `setCheckedItems`.
@@ -353,13 +303,7 @@ export const useTreeController = ({
         // eslint-disable-next-line @eslint-react/exhaustive-deps
     }, [structureKey]);
 
-    // headless-tree's roving tabindex leaves no row with `tabIndex=0` once the focused id
-    // is gone or was never seeded (a tree mounted empty, e.g. showing only `<Tree.Loading>`),
-    // so the tree would drop out of the Tab order until a row is clicked. Candidates come
-    // from the rendered rows, not `items`: that list also holds descendants of collapsed
-    // folders, which headless-tree does not render and so can never receive focus.
-    // Expansion is a dependency too: collapsing a folder by prop removes its rendered
-    // children without changing the structure key.
+    // Keeps one rendered row at tabIndex 0 after the focused row is removed, or hidden by a prop collapse.
     const previousItemIdsRef = useRef<string[]>(items.map((item) => item.id));
     useEffect(() => {
         const previousItemIds = previousItemIdsRef.current;
@@ -368,11 +312,7 @@ export const useTreeController = ({
         if (internalFocusedItem !== undefined && visibleItemIds.includes(internalFocusedItem)) {
             return;
         }
-        const nextFocusedItem =
-            internalFocusedItem === undefined
-                ? visibleItemIds[0]
-                : findSurvivingNeighbour(previousItemIds, internalFocusedItem, visibleItemIds);
-        // Reconciling after the structure changed costs one extra render, same trade-off as Textarea.
+        const nextFocusedItem = findSurvivingNeighbour(previousItemIds, internalFocusedItem, visibleItemIds);
         // eslint-disable-next-line @eslint-react/set-state-in-effect
         setInternalFocusedItem(nextFocusedItem);
         // eslint-disable-next-line @eslint-react/exhaustive-deps

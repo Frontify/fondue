@@ -296,8 +296,7 @@ test.describe('TreeRow column order', () => {
     test('keeps the handle outside the reparent zone of its level', async ({ mount }) => {
         const component = await mount(nestedTree);
 
-        // headless-tree reparents a drop whose x is below `level * INDENT_STEP_PX` (16px),
-        // so a level-2 handle has to start at 32px or more from the row's left edge.
+        // 32px: level 2 times INDENT_STEP_PX, the reparent boundary headless-tree uses.
         const row = component.getByRole('treeitem', { name: /Leaf/ });
         const handleBox = await row.locator('span[class*="handle"]').boundingBox();
         const rowBox = await row.boundingBox();

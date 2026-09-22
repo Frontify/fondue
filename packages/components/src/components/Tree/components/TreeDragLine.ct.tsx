@@ -38,10 +38,7 @@ test.describe('TreeDragLine', () => {
         await expect(line).toHaveCSS('left', '0px');
     });
 
-    test('aligns the line with the chevron of the target folder', async ({ mount }) => {
-        // headless-tree's `left` is drop level * INDENT_STEP_PX (16px), so a drop two
-        // levels deep yields 32px. The stylesheet adds 22px so the line starts under the
-        // target folder's chevron (at 38px + folder level * 16px).
+    test('aligns the line with the target chevron: 32px drop level plus the 22px chevron offset', async ({ mount }) => {
         const component = await mount(<TreeDragLine data={{ top: 42, left: 32 }} multiSelect={false} />);
         const line = component.locator('[aria-hidden="true"]');
         await expect(line).toHaveCSS('left', '54px');
@@ -50,8 +47,6 @@ test.describe('TreeDragLine', () => {
     });
 
     test('shifts the line by the checkbox column in multi-select mode', async ({ mount }) => {
-        // multiSelect renders a 16px checkbox + 4px gap before the indent, moving the
-        // chevron column, and with it the line, 20px further right.
         const component = await mount(<TreeDragLine data={{ top: 42, left: 32 }} multiSelect={true} />);
         const line = component.locator('[aria-hidden="true"]');
         await expect(line).toHaveCSS('left', '74px');

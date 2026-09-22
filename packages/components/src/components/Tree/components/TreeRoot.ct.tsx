@@ -635,8 +635,6 @@ test.describe('TreeRoot drag below the last child', () => {
             throw new Error('the dragged row and its drop target were not both laid out');
         }
 
-        // Grab the handle's left edge and keep that x for the whole drag: those are the
-        // pixels headless-tree reads as a reparent when they fall left of level * 16px.
         const dragX = handleBox.x + 1;
         const startY = handleBox.y + handleBox.height / 2;
         const dropY = targetBox.y + targetBox.height * 0.9;

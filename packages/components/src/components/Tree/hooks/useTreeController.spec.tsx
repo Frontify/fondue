@@ -23,8 +23,6 @@ const baseItems: TreeItemData[] = [
     { id: '2', name: 'Two', isFolder: false, parentId: ROOT_ID },
 ];
 
-// Drives the keyboard-drag hotkey (Control+Shift+D) through the tree's own config,
-// the same entry point the hotkey matcher uses.
 const startDrag = (tree: TreeInstance<TreeItemData>) => {
     const handler = tree.getConfig().hotkeys?.startDrag?.handler;
     handler?.(new KeyboardEvent('keydown'), tree);
@@ -490,10 +488,6 @@ describe('useTreeController non-draggable rows', () => {
     });
 });
 
-/**
- * Focus is internal state: when the focused row disappears from `items`, headless-tree's
- * roving tabindex would leave no row with `tabIndex=0`, so focus moves to a neighbour.
- */
 describe('useTreeController focus pruning', () => {
     const threeItems: TreeItemData[] = [
         { id: '1', name: 'One', isFolder: false, parentId: ROOT_ID },
@@ -573,7 +567,7 @@ describe('useTreeController focus pruning', () => {
         expect(result.current.getItemInstance('c1').isFocused()).toBe(false);
     });
 
-    it('moves focus off a child whose folder collapses by prop', () => {
+    it('moves focus to the next surviving row when its folder collapses by prop', () => {
         const items: TreeItemData[] = [
             {
                 id: 'f',
@@ -598,7 +592,6 @@ describe('useTreeController focus pruning', () => {
             items: [{ ...items[0], isExpanded: false }, items[1], items[2]] as TreeItemData[],
         });
 
-        // Next surviving neighbour after 'c1' in the previous id order is 'y'.
         expect(result.current.getItemInstance('y').isFocused()).toBe(true);
         expect(result.current.getItems().some((item) => item.getId() === 'c1')).toBe(false);
     });

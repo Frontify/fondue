@@ -49,6 +49,7 @@ export const TreeRow = ({
     const isFolder = item.isFolder();
     const isExpanded = item.isExpanded();
     const data = item.getItemData();
+    const isDraggable = data.isDraggable !== false;
 
     // Toggle from the shared derived state, not headless-tree's `toggleCheckedState` —
     // its leaf-only derivation would make a checked group of leafless folders
@@ -131,17 +132,14 @@ export const TreeRow = ({
         event.currentTarget.click();
     };
 
-    // Spread (not a `draggable` prop): passing `undefined` would drop headless-tree's own
-    // `draggable={true}` from the spread above and disable dragging for every row.
-    const dragOverrideProps = data.isDraggable === false ? { draggable: false } : {};
+    // An override prop, not `draggable={undefined}`: that would erase headless-tree's own `draggable={true}`.
+    const rowProps = isDraggable ? headlessProps : { ...headlessProps, draggable: false };
 
-    // Only the hints that apply to this row: a row that cannot be dragged must not be
-    // announced with the keyboard-reorder shortcut.
     const hintIds: string[] = [];
     if (checkboxHintId !== undefined) {
         hintIds.push(checkboxHintId);
     }
-    if (reorderHintId !== undefined && data.isDraggable !== false) {
+    if (reorderHintId !== undefined && isDraggable) {
         hintIds.push(reorderHintId);
     }
 
@@ -156,7 +154,7 @@ export const TreeRow = ({
         // it as "selected", so every row needs an explicit "true"/"false".
         // eslint-disable-next-line jsx-a11y-x/no-static-element-interactions
         <div
-            {...headlessProps}
+            {...rowProps}
             onClick={handleClick}
             onKeyDown={handleKeyDown}
             onBlur={handleBlur}
@@ -165,7 +163,6 @@ export const TreeRow = ({
             aria-selected={data.isSelected === true ? 'true' : 'false'}
             aria-checked={multiSelect ? ariaCheckedFor(checkedState) : undefined}
             aria-disabled={data.isDisabled ? 'true' : undefined}
-            {...dragOverrideProps}
         >
             <div
                 className={styles.item}
@@ -184,17 +181,10 @@ export const TreeRow = ({
                     />
                 )}
                 <span className={styles.indent} aria-hidden />
-                {/* Sits right of the indent: inside it, a handle-started drag over a
-                    folder's last child stays in headless-tree's reparent zone (x < level * indent). */}
+                {/* After the indent: a handle drag then starts outside the reparent zone (x < level * indent). */}
                 {reorderable && (
-                    // The span stays even when the row cannot be dragged, so the columns
-                    // of every row keep lining up.
-                    <span
-                        className={styles.handle}
-                        data-hidden={data.isDraggable === false ? 'true' : undefined}
-                        aria-hidden
-                    >
-                        {data.isDraggable === false ? null : <IconGrabHandle size={16} />}
+                    <span className={styles.handle} data-hidden={isDraggable ? undefined : 'true'} aria-hidden>
+                        {isDraggable ? <IconGrabHandle size={16} /> : null}
                     </span>
                 )}
                 <TreeRowChevron isFolder={isFolder} isExpanded={isExpanded} />
