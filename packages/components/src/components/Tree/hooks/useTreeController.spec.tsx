@@ -510,6 +510,32 @@ describe('useTreeController focus pruning', () => {
         expect(() => rerender({ items: [] })).not.toThrow();
         expect(result.current.getItems()).toHaveLength(0);
     });
+
+    it('does not hand focus to a hidden descendant of a collapsed folder', () => {
+        const items: TreeItemData[] = [
+            {
+                id: 'f',
+                name: 'F',
+                isFolder: true,
+                parentId: ROOT_ID,
+                isExpanded: false,
+                children: ['c1'],
+            },
+            { id: 'c1', name: 'C1', isFolder: false, parentId: 'f' },
+            { id: 'x', name: 'X', isFolder: false, parentId: ROOT_ID },
+        ];
+
+        const { result, rerender } = renderHook(({ items }) => useTreeController({ items }), {
+            initialProps: { items },
+        });
+
+        act(() => result.current.getItemInstance('x').setFocused());
+
+        rerender({ items: items.filter((item) => item.id !== 'x') });
+
+        expect(result.current.getItems().some((item) => item.isFocused())).toBe(true);
+        expect(result.current.getItemInstance('c1').isFocused()).toBe(false);
+    });
 });
 
 /**

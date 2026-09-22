@@ -329,19 +329,21 @@ export const useTreeController = ({
 
     // headless-tree's roving tabindex leaves no row with `tabIndex=0` once the focused id
     // is gone or was never seeded (a tree mounted empty, e.g. showing only `<Tree.Loading>`),
-    // so the tree would drop out of the Tab order until a row is clicked.
+    // so the tree would drop out of the Tab order until a row is clicked. Candidates come
+    // from the rendered rows, not `items`: that list also holds descendants of collapsed
+    // folders, which headless-tree does not render and so can never receive focus.
     const previousItemIdsRef = useRef<string[]>(items.map((item) => item.id));
     useEffect(() => {
         const previousItemIds = previousItemIdsRef.current;
-        const itemIds = items.map((item) => item.id);
-        previousItemIdsRef.current = itemIds;
+        previousItemIdsRef.current = items.map((item) => item.id);
         if (internalFocusedItem !== undefined && itemsById.has(internalFocusedItem)) {
             return;
         }
+        const visibleItemIds = tree.getItems().map((item) => item.getId());
         const nextFocusedItem =
             internalFocusedItem === undefined
-                ? itemIds[0]
-                : findSurvivingNeighbour(previousItemIds, internalFocusedItem, itemIds);
+                ? visibleItemIds[0]
+                : findSurvivingNeighbour(previousItemIds, internalFocusedItem, visibleItemIds);
         // Reconciling after the structure changed costs one extra render, same trade-off as Textarea.
         // eslint-disable-next-line @eslint-react/set-state-in-effect
         setInternalFocusedItem(nextFocusedItem);
