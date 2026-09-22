@@ -72,6 +72,12 @@ type TreeRowSharedProps = {
      * toward ancestors' checkbox state.
      */
     isDisabled?: boolean;
+    /**
+     * Set to `false` to keep the row in place: no drag handle is shown and drag-and-drop
+     * skips it. Everything else (click, select, rename, expand, dropping into a folder)
+     * keeps working. Default `true`.
+     */
+    isDraggable?: boolean;
 };
 
 export type TreeItemProps = TreeRowSharedProps & {
@@ -142,4 +148,10 @@ export type TreeItemData = {
     tags?: string[];
     accepts?: (items: TreeDropCandidate[]) => boolean;
     isDisabled?: boolean;
+    /**
+     * Set to `false` to keep the row in place: no drag handle is shown and drag-and-drop
+     * skips it. Everything else (click, select, rename, expand, dropping into a folder)
+     * keeps working. Default `true`.
+     */
+    isDraggable?: boolean;
 };

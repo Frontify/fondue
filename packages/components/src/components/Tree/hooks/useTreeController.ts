@@ -36,6 +36,32 @@ const resolveUpdater = <T>(updater: Updater<T>, prev: T): T =>
     typeof updater === 'function' ? (updater as (old: T) => T)(prev) : updater;
 
 /**
+ * Picks the row that inherits focus when the focused one is removed: the first survivor
+ * below its old position, else the closest survivor above it, else the first row left.
+ */
+const findSurvivingNeighbour = (
+    previousIds: readonly string[],
+    focusedId: string,
+    survivingIds: readonly string[],
+): string | undefined => {
+    const survivors = new Set(survivingIds);
+    const previousIndex = previousIds.indexOf(focusedId);
+    for (let index = previousIndex + 1; index < previousIds.length; index++) {
+        const candidate = previousIds[index];
+        if (candidate !== undefined && survivors.has(candidate)) {
+            return candidate;
+        }
+    }
+    for (let index = previousIndex - 1; index >= 0; index--) {
+        const candidate = previousIds[index];
+        if (candidate !== undefined && survivors.has(candidate)) {
+            return candidate;
+        }
+    }
+    return survivingIds[0];
+};
+
+/**
  * Wraps headless-tree's `useTree` with this component's conventions:
  *
  * - A synthetic root is injected; `parent.children` is the source of truth for order.
@@ -256,7 +282,10 @@ export const useTreeController = ({
         getItemName: (item) => item.getItemData().name,
         isItemFolder: (item) => Boolean(item.getItemData().isFolder),
         canReorder: reorderable,
-        canDrag: reorderable ? (items) => items.every((item) => !item.getItemData().isDisabled) : undefined,
+        canDrag: reorderable
+            ? (items) =>
+                  items.every((item) => !item.getItemData().isDisabled && item.getItemData().isDraggable !== false)
+            : undefined,
         canDrop: reorderable ? canDrop : undefined,
         onDrop: reorderable ? onDrop : undefined,
         dataLoader: {
@@ -295,6 +324,27 @@ export const useTreeController = ({
 
     useEffect(() => {
         tree.rebuildTree();
+        // eslint-disable-next-line @eslint-react/exhaustive-deps
+    }, [structureKey]);
+
+    // headless-tree's roving tabindex leaves no row with `tabIndex=0` once the focused id
+    // is gone or was never seeded (a tree mounted empty, e.g. showing only `<Tree.Loading>`),
+    // so the tree would drop out of the Tab order until a row is clicked.
+    const previousItemIdsRef = useRef<string[]>(items.map((item) => item.id));
+    useEffect(() => {
+        const previousItemIds = previousItemIdsRef.current;
+        const itemIds = items.map((item) => item.id);
+        previousItemIdsRef.current = itemIds;
+        if (internalFocusedItem !== undefined && itemsById.has(internalFocusedItem)) {
+            return;
+        }
+        const nextFocusedItem =
+            internalFocusedItem === undefined
+                ? itemIds[0]
+                : findSurvivingNeighbour(previousItemIds, internalFocusedItem, itemIds);
+        // Reconciling after the structure changed costs one extra render, same trade-off as Textarea.
+        // eslint-disable-next-line @eslint-react/set-state-in-effect
+        setInternalFocusedItem(nextFocusedItem);
         // eslint-disable-next-line @eslint-react/exhaustive-deps
     }, [structureKey]);
 

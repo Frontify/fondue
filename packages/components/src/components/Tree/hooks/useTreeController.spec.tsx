@@ -440,6 +440,78 @@ describe('useTreeController disabled rows', () => {
     });
 });
 
+describe('useTreeController non-draggable rows', () => {
+    it('rejects dragging rows with isDraggable: false via canDrag when reorderable', () => {
+        const items: TreeItemData[] = [
+            { id: '1', name: 'One', isFolder: false, parentId: ROOT_ID, isDraggable: false },
+            { id: '2', name: 'Two', isFolder: false, parentId: ROOT_ID },
+        ];
+        const { result } = renderHook(() => useTreeController({ items, reorderable: true }));
+
+        const canDrag = result.current.getConfig().canDrag;
+        expect(canDrag?.([result.current.getItemInstance('1')])).toBe(false);
+        expect(canDrag?.([result.current.getItemInstance('2')])).toBe(true);
+    });
+});
+
+/**
+ * Focus is internal state: when the focused row disappears from `items`, headless-tree's
+ * roving tabindex would leave no row with `tabIndex=0`, so focus moves to a neighbour.
+ */
+describe('useTreeController focus pruning', () => {
+    const threeItems: TreeItemData[] = [
+        { id: '1', name: 'One', isFolder: false, parentId: ROOT_ID },
+        { id: '2', name: 'Two', isFolder: false, parentId: ROOT_ID },
+        { id: '3', name: 'Three', isFolder: false, parentId: ROOT_ID },
+    ];
+
+    it('moves focus to the next surviving row when the focused row is removed', () => {
+        const { result, rerender } = renderHook(({ items }) => useTreeController({ items }), {
+            initialProps: { items: threeItems },
+        });
+
+        act(() => result.current.getItemInstance('2').setFocused());
+        expect(result.current.getItemInstance('2').isFocused()).toBe(true);
+
+        rerender({ items: threeItems.filter((item) => item.id !== '2') });
+
+        expect(result.current.getItemInstance('3').isFocused()).toBe(true);
+    });
+
+    it('falls back to the previous row when the focused last row is removed', () => {
+        const { result, rerender } = renderHook(({ items }) => useTreeController({ items }), {
+            initialProps: { items: threeItems },
+        });
+
+        act(() => result.current.getItemInstance('3').setFocused());
+
+        rerender({ items: threeItems.filter((item) => item.id !== '3') });
+
+        expect(result.current.getItemInstance('2').isFocused()).toBe(true);
+    });
+
+    it('focuses the first row when rows arrive after mounting empty', () => {
+        const { result, rerender } = renderHook(({ items }) => useTreeController({ items }), {
+            initialProps: { items: [] as TreeItemData[] },
+        });
+
+        rerender({ items: threeItems });
+
+        expect(result.current.getItemInstance('1').isFocused()).toBe(true);
+    });
+
+    it('survives removing every row while one is focused', () => {
+        const { result, rerender } = renderHook(({ items }) => useTreeController({ items }), {
+            initialProps: { items: threeItems },
+        });
+
+        act(() => result.current.getItemInstance('1').setFocused());
+
+        expect(() => rerender({ items: [] })).not.toThrow();
+        expect(result.current.getItems()).toHaveLength(0);
+    });
+});
+
 /**
  * Folders with no loaded children — empty, or collapsed while their contents lazy-load —
  * are checkable as their own entity: their `isSelected` prop feeds `checkedItems` and

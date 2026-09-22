@@ -2,6 +2,8 @@
 
 import { describe, expect, it } from 'vitest';
 
+import { type TreeDropCandidate, type TreeMoveInfo } from '../../index';
+
 import {
     Tree,
     TreeAction,
@@ -21,6 +23,11 @@ import {
  * silent breaking change.
  */
 
+// Pins the package entry point too: these types are part of the public API, so a
+// dropped re-export from `src/index.ts` fails the type check here.
+const dropCandidate: TreeDropCandidate = { id: '1', label: 'One', isFolder: false, tags: [] };
+const moveInfo: TreeMoveInfo = { parentId: 'root', index: 0 };
+
 describe('Tree namespace', () => {
     it('exposes Root / Item / Folder / FolderHeader / Icon / Label / Decorator / Action / Loading on the namespace', () => {
         expect(Tree).toEqual({
@@ -34,6 +41,11 @@ describe('Tree namespace', () => {
             Action: TreeAction,
             Loading: TreeLoading,
         });
+    });
+
+    it('re-exports the Tree prop and callback types from the package entry', () => {
+        expect(dropCandidate.id).toBe('1');
+        expect(moveInfo.parentId).toBe('root');
     });
 
     it('aliases each namespace key to the same component as the named export', () => {
