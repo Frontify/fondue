@@ -332,14 +332,16 @@ export const useTreeController = ({
     // so the tree would drop out of the Tab order until a row is clicked. Candidates come
     // from the rendered rows, not `items`: that list also holds descendants of collapsed
     // folders, which headless-tree does not render and so can never receive focus.
+    // Expansion is a dependency too: collapsing a folder by prop removes its rendered
+    // children without changing the structure key.
     const previousItemIdsRef = useRef<string[]>(items.map((item) => item.id));
     useEffect(() => {
         const previousItemIds = previousItemIdsRef.current;
         previousItemIdsRef.current = items.map((item) => item.id);
-        if (internalFocusedItem !== undefined && itemsById.has(internalFocusedItem)) {
+        const visibleItemIds = tree.getItems().map((item) => item.getId());
+        if (internalFocusedItem !== undefined && visibleItemIds.includes(internalFocusedItem)) {
             return;
         }
-        const visibleItemIds = tree.getItems().map((item) => item.getId());
         const nextFocusedItem =
             internalFocusedItem === undefined
                 ? visibleItemIds[0]
@@ -348,7 +350,7 @@ export const useTreeController = ({
         // eslint-disable-next-line @eslint-react/set-state-in-effect
         setInternalFocusedItem(nextFocusedItem);
         // eslint-disable-next-line @eslint-react/exhaustive-deps
-    }, [structureKey]);
+    }, [structureKey, expandedItems]);
 
     // Edge-sync the `isRenaming` prop: react to transitions only (tracked via ref). The
     // tree ends renames before the consumer clears the prop, so a still-`true` prop with

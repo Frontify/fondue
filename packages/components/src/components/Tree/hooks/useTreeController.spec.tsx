@@ -536,6 +536,36 @@ describe('useTreeController focus pruning', () => {
         expect(result.current.getItems().some((item) => item.isFocused())).toBe(true);
         expect(result.current.getItemInstance('c1').isFocused()).toBe(false);
     });
+
+    it('moves focus off a child whose folder collapses by prop', () => {
+        const items: TreeItemData[] = [
+            {
+                id: 'f',
+                name: 'F',
+                isFolder: true,
+                parentId: ROOT_ID,
+                isExpanded: true,
+                children: ['c1'],
+            },
+            { id: 'c1', name: 'C1', isFolder: false, parentId: 'f' },
+            { id: 'y', name: 'Y', isFolder: false, parentId: ROOT_ID },
+        ];
+
+        const { result, rerender } = renderHook(({ items }) => useTreeController({ items }), {
+            initialProps: { items },
+        });
+
+        act(() => result.current.getItemInstance('c1').setFocused());
+        expect(result.current.getItemInstance('c1').isFocused()).toBe(true);
+
+        rerender({
+            items: [{ ...items[0], isExpanded: false }, items[1], items[2]] as TreeItemData[],
+        });
+
+        // Next surviving neighbour after 'c1' in the previous id order is 'y'.
+        expect(result.current.getItemInstance('y').isFocused()).toBe(true);
+        expect(result.current.getItems().some((item) => item.getId() === 'c1')).toBe(false);
+    });
 });
 
 /**
