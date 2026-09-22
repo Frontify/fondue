@@ -2,6 +2,7 @@
 
 // @vitest-environment happy-dom
 
+import { type TreeInstance } from '@headless-tree/core';
 import { act, renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -21,6 +22,13 @@ const baseItems: TreeItemData[] = [
     { id: '1', name: 'One', isFolder: false, parentId: ROOT_ID },
     { id: '2', name: 'Two', isFolder: false, parentId: ROOT_ID },
 ];
+
+// Drives the keyboard-drag hotkey (Control+Shift+D) through the tree's own config,
+// the same entry point the hotkey matcher uses.
+const startDrag = (tree: TreeInstance<TreeItemData>) => {
+    const handler = tree.getConfig().hotkeys?.startDrag?.handler;
+    handler?.(new KeyboardEvent('keydown'), tree);
+};
 
 // `onChange` flushes in a microtask; run the interaction and await the flush.
 const interact = (callback: () => void) =>
@@ -451,6 +459,34 @@ describe('useTreeController non-draggable rows', () => {
         const canDrag = result.current.getConfig().canDrag;
         expect(canDrag?.([result.current.getItemInstance('1')])).toBe(false);
         expect(canDrag?.([result.current.getItemInstance('2')])).toBe(true);
+    });
+
+    it('keyboard-drags only the draggable rows when a fixed row is selected', () => {
+        const items: TreeItemData[] = [
+            { id: 'a', name: 'A', isFolder: false, parentId: ROOT_ID, isDraggable: false, isSelected: true },
+            { id: 'b', name: 'B', isFolder: false, parentId: ROOT_ID },
+            { id: 'c', name: 'C', isFolder: false, parentId: ROOT_ID },
+        ];
+        const { result } = renderHook(() => useTreeController({ items, reorderable: true }));
+
+        act(() => result.current.getItemInstance('b').setFocused());
+        act(() => startDrag(result.current));
+
+        const draggedIds = result.current.getState().dnd?.draggedItems?.map((item) => item.getId());
+        expect(draggedIds).toEqual(['b']);
+    });
+
+    it('starts no keyboard drag when the only candidate is a fixed row', () => {
+        const items: TreeItemData[] = [
+            { id: 'a', name: 'A', isFolder: false, parentId: ROOT_ID, isDraggable: false, isSelected: true },
+            { id: 'b', name: 'B', isFolder: false, parentId: ROOT_ID },
+        ];
+        const { result } = renderHook(() => useTreeController({ items, reorderable: true }));
+
+        act(() => result.current.getItemInstance('a').setFocused());
+        act(() => startDrag(result.current));
+
+        expect(result.current.getState().dnd).toBeUndefined();
     });
 });
 

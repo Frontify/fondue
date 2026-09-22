@@ -306,6 +306,32 @@ export const useTreeController = ({
         // matching and breaks every later hotkey, including Enter-to-commit.
         hotkeys: {
             renameItem: { hotkey: 'F2', isEnabled: () => false },
+            // Fixed rows can still be selected, and the feature's own handler drags the
+            // whole selection plus the focused row, so one fixed row in that set would make
+            // `canDrag` reject every other row's keyboard drag. Drop them from the set here.
+            ...(reorderable
+                ? {
+                      startDrag: {
+                          hotkey: 'Control+Shift+KeyD',
+                          preventDefault: true,
+                          isEnabled: (tree: TreeInstance<TreeItemData>) => !tree.getState().dnd,
+                          handler: (_: unknown, tree: TreeInstance<TreeItemData>) => {
+                              const selectedItems = tree.getSelectedItems?.() ?? [tree.getFocusedItem()];
+                              const focusedItem = tree.getFocusedItem();
+                              const candidates = selectedItems.includes(focusedItem)
+                                  ? selectedItems
+                                  : [...selectedItems, focusedItem];
+                              const draggableItems = candidates.filter(
+                                  (item) => item.getItemData().isDraggable !== false,
+                              );
+                              if (draggableItems.length === 0) {
+                                  return;
+                              }
+                              tree.startKeyboardDrag(draggableItems);
+                          },
+                      },
+                  }
+                : {}),
         },
         // Lets cascades include folder ids — the only path for a leafless folder's own
         // id into `checkedItems`. Other folder ids are filtered out in `setCheckedItems`.

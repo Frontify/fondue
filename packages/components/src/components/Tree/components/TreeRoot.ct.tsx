@@ -566,7 +566,7 @@ test.describe('TreeRoot reorderable mode', () => {
         await expect(reorderable.locator('[draggable="true"]')).toHaveCount(1);
     });
 
-    test('exposes a screen-reader hint announcing checkbox / reorder shortcuts', async ({ mount }) => {
+    test('exposes separate screen-reader hints announcing checkbox / reorder shortcuts', async ({ mount }) => {
         const component = await mount(
             <Tree.Root multiSelect reorderable>
                 <Tree.Item id="1">
@@ -576,10 +576,17 @@ test.describe('TreeRoot reorderable mode', () => {
         );
 
         const row = component.getByRole('treeitem', { name: /Row/ });
-        const hintId = await row.getAttribute('aria-describedby');
-        expect(hintId).toBeTruthy();
-        const hint = component.locator(`[id="${hintId ?? ''}"]`);
-        await expect(hint).toBeAttached();
+        const hintIds = ((await row.getAttribute('aria-describedby')) ?? '').split(' ').filter(Boolean);
+        expect(hintIds).toHaveLength(2);
+        const hintTexts = await Promise.all(
+            hintIds.map(async (id) => {
+                const hint = component.locator(`[id="${id}"]`);
+                await expect(hint).toBeAttached();
+                return (await hint.textContent()) ?? '';
+            }),
+        );
+        expect(hintTexts.join(' ')).toContain('press Tab to focus the checkbox');
+        expect(hintTexts.join(' ')).toContain('Press Control Shift D to move');
     });
 });
 

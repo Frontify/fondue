@@ -28,7 +28,8 @@ type TreeRowProps = {
     item: ItemInstance<TreeItemData>;
     multiSelect: boolean;
     reorderable: boolean;
-    hintId?: string;
+    checkboxHintId?: string;
+    reorderHintId?: string;
     /**
      * Derived via `computeCheckedStates` in `TreeRoot` — not headless-tree's leaf-only
      * `getCheckedState`, which would render leafless folders and their ancestors unchecked.
@@ -36,7 +37,14 @@ type TreeRowProps = {
     checkedState: RowCheckedState;
 };
 
-export const TreeRow = ({ item, multiSelect, reorderable, hintId, checkedState }: TreeRowProps) => {
+export const TreeRow = ({
+    item,
+    multiSelect,
+    reorderable,
+    checkboxHintId,
+    reorderHintId,
+    checkedState,
+}: TreeRowProps) => {
     const level = item.getItemMeta().level;
     const isFolder = item.isFolder();
     const isExpanded = item.isExpanded();
@@ -127,6 +135,16 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId, checkedState }
     // `draggable={true}` from the spread above and disable dragging for every row.
     const dragOverrideProps = data.isDraggable === false ? { draggable: false } : {};
 
+    // Only the hints that apply to this row: a row that cannot be dragged must not be
+    // announced with the keyboard-reorder shortcut.
+    const hintIds: string[] = [];
+    if (checkboxHintId !== undefined) {
+        hintIds.push(checkboxHintId);
+    }
+    if (reorderHintId !== undefined && data.isDraggable !== false) {
+        hintIds.push(reorderHintId);
+    }
+
     // Keep action clicks from bubbling into the row's select/expand handler.
     const handleActionsClick = (event: MouseEvent<HTMLDivElement>) => {
         event.stopPropagation();
@@ -143,7 +161,7 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId, checkedState }
             onKeyDown={handleKeyDown}
             onBlur={handleBlur}
             className={styles.row}
-            aria-describedby={hintId}
+            aria-describedby={hintIds.length > 0 ? hintIds.join(' ') : undefined}
             aria-selected={data.isSelected === true ? 'true' : 'false'}
             aria-checked={multiSelect ? ariaCheckedFor(checkedState) : undefined}
             aria-disabled={data.isDisabled ? 'true' : undefined}
