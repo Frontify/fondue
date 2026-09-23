@@ -28,7 +28,8 @@ type TreeRowProps = {
     item: ItemInstance<TreeItemData>;
     multiSelect: boolean;
     reorderable: boolean;
-    hintId?: string;
+    checkboxHintId?: string;
+    reorderHintId?: string;
     /**
      * Derived via `computeCheckedStates` in `TreeRoot` — not headless-tree's leaf-only
      * `getCheckedState`, which would render leafless folders and their ancestors unchecked.
@@ -36,11 +37,19 @@ type TreeRowProps = {
     checkedState: RowCheckedState;
 };
 
-export const TreeRow = ({ item, multiSelect, reorderable, hintId, checkedState }: TreeRowProps) => {
+export const TreeRow = ({
+    item,
+    multiSelect,
+    reorderable,
+    checkboxHintId,
+    reorderHintId,
+    checkedState,
+}: TreeRowProps) => {
     const level = item.getItemMeta().level;
     const isFolder = item.isFolder();
     const isExpanded = item.isExpanded();
     const data = item.getItemData();
+    const isDraggable = data.isDraggable !== false;
 
     // Toggle from the shared derived state, not headless-tree's `toggleCheckedState` —
     // its leaf-only derivation would make a checked group of leafless folders
@@ -123,6 +132,17 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId, checkedState }
         event.currentTarget.click();
     };
 
+    // An override prop, not `draggable={undefined}`: that would erase headless-tree's own `draggable={true}`.
+    const rowProps = isDraggable ? headlessProps : { ...headlessProps, draggable: false };
+
+    const hintIds: string[] = [];
+    if (checkboxHintId !== undefined) {
+        hintIds.push(checkboxHintId);
+    }
+    if (reorderHintId !== undefined && isDraggable) {
+        hintIds.push(reorderHintId);
+    }
+
     // Keep action clicks from bubbling into the row's select/expand handler.
     const handleActionsClick = (event: MouseEvent<HTMLDivElement>) => {
         event.stopPropagation();
@@ -134,12 +154,12 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId, checkedState }
         // it as "selected", so every row needs an explicit "true"/"false".
         // eslint-disable-next-line jsx-a11y-x/no-static-element-interactions
         <div
-            {...headlessProps}
+            {...rowProps}
             onClick={handleClick}
             onKeyDown={handleKeyDown}
             onBlur={handleBlur}
             className={styles.row}
-            aria-describedby={hintId}
+            aria-describedby={hintIds.length > 0 ? hintIds.join(' ') : undefined}
             aria-selected={data.isSelected === true ? 'true' : 'false'}
             aria-checked={multiSelect ? ariaCheckedFor(checkedState) : undefined}
             aria-disabled={data.isDisabled ? 'true' : undefined}
@@ -153,8 +173,8 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId, checkedState }
                 data-disabled={data.isDisabled ? 'true' : undefined}
             >
                 {reorderable && (
-                    <span className={styles.handle} aria-hidden>
-                        <IconGrabHandle size={16} />
+                    <span className={styles.handle} data-hidden={isDraggable ? undefined : 'true'} aria-hidden>
+                        {isDraggable ? <IconGrabHandle size={16} /> : null}
                     </span>
                 )}
                 {checkboxProps && (

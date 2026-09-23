@@ -17,11 +17,13 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { INDENT_STEP_PX, ROOT_ID, ROOT_NAME } from '../constants';
 import { type TreeChangeState, type TreeDropCandidate, type TreeItemData } from '../types';
 import { buildChangeState, type FlatTreeState } from '../utils/buildChangeState';
+import { canDragItems } from '../utils/canDragItems';
 import { getCheckedUnitIds, isCheckableUnit } from '../utils/computeCheckedStates';
 import { createCanDrop } from '../utils/createCanDrop';
 import { createDropHandler } from '../utils/createDropHandler';
 import { diffSelection } from '../utils/diffSelection';
 import { getStructureKey } from '../utils/getStructureKey';
+import { startDragHotkey } from '../utils/startDragHotkey';
 
 type UseTreeControllerOptions = {
     items: TreeItemData[];
@@ -256,7 +258,7 @@ export const useTreeController = ({
         getItemName: (item) => item.getItemData().name,
         isItemFolder: (item) => Boolean(item.getItemData().isFolder),
         canReorder: reorderable,
-        canDrag: reorderable ? (items) => items.every((item) => !item.getItemData().isDisabled) : undefined,
+        canDrag: reorderable ? canDragItems : undefined,
         canDrop: reorderable ? canDrop : undefined,
         onDrop: reorderable ? onDrop : undefined,
         dataLoader: {
@@ -277,6 +279,8 @@ export const useTreeController = ({
         // matching and breaks every later hotkey, including Enter-to-commit.
         hotkeys: {
             renameItem: { hotkey: 'F2', isEnabled: () => false },
+            // The feature's own handler drags the selection plus the focused row; a fixed row there fails canDrag.
+            ...(reorderable ? { startDrag: startDragHotkey } : {}),
         },
         // Lets cascades include folder ids — the only path for a leafless folder's own
         // id into `checkedItems`. Other folder ids are filtered out in `setCheckedItems`.

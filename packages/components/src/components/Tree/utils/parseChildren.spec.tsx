@@ -202,6 +202,23 @@ describe('parseChildren', () => {
         expect(result.items.find((entry) => entry.id === 'a')?.isDisabled).toBeUndefined();
     });
 
+    it('forwards isDraggable on items and folders', () => {
+        const result = parseChildren([
+            <TreeItem key="1" id="1" isDraggable={false}>
+                <TreeLabel>One</TreeLabel>
+            </TreeItem>,
+            <TreeFolder key="f" id="f" isDraggable={false}>
+                <TreeFolderHeader>
+                    <TreeLabel>Folder</TreeLabel>
+                </TreeFolderHeader>
+                {item('a', 'A')}
+            </TreeFolder>,
+        ]);
+        expect(result.items.find((entry) => entry.id === '1')?.isDraggable).toBe(false);
+        expect(result.items.find((entry) => entry.id === 'f')?.isDraggable).toBe(false);
+        expect(result.items.find((entry) => entry.id === 'a')?.isDraggable).toBeUndefined();
+    });
+
     it('ignores non-Tree children', () => {
         const result = parseChildren([
             <div key="div">not-a-tree-node</div>,
