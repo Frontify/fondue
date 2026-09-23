@@ -1,5 +1,16 @@
 # @frontify/fondue
 
+## 13.8.0
+
+### Minor Changes
+
+- [#2853](https://github.com/Frontify/fondue/pull/2853) [`b3f18e2`](https://github.com/Frontify/fondue/commit/b3f18e25aed00ee5b27fc348ac8256abacc04a25) Thanks [@jcosta33](https://github.com/jcosta33)! - feat(Tree): export the Tree prop and callback types (`TreeDropCandidate`, `TreeMoveInfo`, `TreeRootProps` and the rest) from the package entry
+
+### Patch Changes
+
+- Updated dependencies [[`b3f18e2`](https://github.com/Frontify/fondue/commit/b3f18e25aed00ee5b27fc348ac8256abacc04a25)]:
+  - @frontify/fondue-components@32.2.0
+
 ## 13.7.10
 
 ### Patch Changes
