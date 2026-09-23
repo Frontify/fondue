@@ -1,0 +1,19 @@
+packages/components/src/components/Dialog/__tests__/Dialog.ct.tsx
+  s_f2eddc1837ce5d::t_2404b427cfd6e3 475-514
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "e6321ac9be3ea9fd6fe92343a7a7dd915f02ad5c",
+  "prompts": {},
+  "sessions": {
+    "s_f2eddc1837ce5d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "43283dc6-d12c-4b15-9cda-53e09df37ee1",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}

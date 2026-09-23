@@ -1,0 +1,32 @@
+packages/components/src/components/ScrollArea/ScrollArea.stories.tsx
+  s_67a0ac323f5228::t_5292d518546b83 331,336-345,349
+  s_67a0ac323f5228::t_7d364d1dc7dfd3 366
+  s_67a0ac323f5228::t_f29d3c6e2b52bb 302-330,332-335,346-348,350-365
+  s_67a0ac323f5228::t_c859d9d4ad0804 4
+  s_67a0ac323f5228::t_df7130c64365ff 5-6
+pnpm-workspace.yaml
+  s_67a0ac323f5228::t_2b227913864ef4 24-25
+  s_67a0ac323f5228::t_a15f6b615f28c0 26
+patches/@radix-ui__react-scroll-area@1.2.18.patch
+  s_67a0ac323f5228::t_2b227913864ef4 1-46
+pnpm-lock.yaml
+  s_67a0ac323f5228::t_6c0be99d592891 7-9,242,12947
+packages/components/src/components/ScrollArea/ScrollArea.tsx
+  s_67a0ac323f5228::t_2a74f76ba6df3b 70
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "47d0e1ae3d5b21bd647a8a86d9e176ac16d70c3b",
+  "prompts": {},
+  "sessions": {
+    "s_67a0ac323f5228": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7b2fa01b-43ba-4a9c-a3c0-d2267fd9c802",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}

@@ -1,0 +1,14 @@
+packages/sdk/scripts/generateData.ts
+  h_2139c5e5c94509 6-16,19-20,23-25,29-31,33-34,36-43,45,68-69
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "cf447f7a1ff607a661e3cf0826dd8b0330e423da",
+  "prompts": {},
+  "humans": {
+    "h_2139c5e5c94509": {
+      "author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}

@@ -1,0 +1,39 @@
+packages/components/src/components/Badge/Badge.tsx
+  s_fbbc580b74bf80::t_bd7ee3dcadde7e 136
+packages/components/src/components/Select/__tests__/CollapsibleBadges.spec.tsx
+  s_fbbc580b74bf80::t_b0058aed6682c9 100-102,109,114,130
+  s_fbbc580b74bf80::t_c0563ae46e2706 116-121
+packages/components/src/components/Select/components/SelectBase.tsx
+  s_fbbc580b74bf80::t_b0058aed6682c9 252
+packages/components/src/components/Select/components/ComboboxBase.tsx
+  s_fbbc580b74bf80::t_b0058aed6682c9 324
+packages/components/src/components/Select/hooks/useIndeterminateValues.ts
+  s_fbbc580b74bf80::t_b0058aed6682c9 20-21,25,29-30,33,35,39,45-46,51
+packages/components/src/components/Select/hooks/useSelectionDescription.ts
+  s_fbbc580b74bf80::t_b0058aed6682c9 23
+packages/components/src/components/Select/components/SelectMenu.tsx
+  s_fbbc580b74bf80::t_b0058aed6682c9 171-174,181
+packages/components/src/components/Select/components/CollapsibleBadges.tsx
+  s_fbbc580b74bf80::t_fd80e2b643f39d 42,46-47,49,165
+  s_fbbc580b74bf80::t_b0058aed6682c9 27-28,33,35,38-39,41,50,60-62,71,80,93-96,104,106,173,176
+packages/components/src/components/Select/styles/select.module.scss
+  s_fbbc580b74bf80::t_fd80e2b643f39d 413
+packages/components/src/components/Select/__tests__/ComboboxMultiple.spec.tsx
+  s_fbbc580b74bf80::t_b0058aed6682c9 262
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "9a99e6946f76d10ba2d13f68ac0027bfe85e472b",
+  "prompts": {},
+  "sessions": {
+    "s_fbbc580b74bf80": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "531792a9-9c10-420f-a827-63acef15ca4a",
+        "model": "claude-fable-5-1"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}

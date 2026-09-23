@@ -1,0 +1,39 @@
+packages/components/src/components/Dialog/Dialog.stories.tsx
+  h_2139c5e5c94509 340-364
+packages/components/src/components/Dialog/styles/dialog.module.scss
+  s_b2c4ba7f18eba4::t_6af22417e6be6c 135
+  s_b2c4ba7f18eba4::t_397de0b5478cdd 140
+  s_b2c4ba7f18eba4::t_1977f535ab666e 56-57
+  s_b2c4ba7f18eba4::t_f730e4a2ba42ef 150
+  s_b2c4ba7f18eba4::t_bc955b96605a62 124-129
+  s_b2c4ba7f18eba4::t_a128a1d99cafeb 84-85
+  s_b2c4ba7f18eba4::t_5176c111d383f0 145
+  s_b2c4ba7f18eba4::t_9832c460158326 155
+  h_2139c5e5c94509 37-41,54,100,120,122-123,130,224,228,233,238,243,248,251-259
+  s_b2c4ba7f18eba4::t_5d8d99f9f56e7f 60-61
+  s_b2c4ba7f18eba4::t_274223da22f530 70-71
+  s_b2c4ba7f18eba4::t_0b91929ebce8f5 98-99
+packages/components/src/components/Dialog/Dialog.tsx
+  h_2139c5e5c94509 21,66-70,229,299,342-344
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "fe82a23071e670f72a0c226883c39bc42860bd4c",
+  "prompts": {},
+  "humans": {
+    "h_2139c5e5c94509": {
+      "author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  },
+  "sessions": {
+    "s_b2c4ba7f18eba4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6675a78e-5c48-45c8-a0ea-139f6d8c2b3f",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}

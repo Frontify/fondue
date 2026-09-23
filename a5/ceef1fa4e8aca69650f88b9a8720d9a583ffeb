@@ -1,0 +1,89 @@
+packages/fondue/src/components/Tree/helpers/nodes.ts
+  s_d35bedffdfdb73::t_5970de2fc14b8d 9-11,20-22,48-50,76-78,94-96,105-107
+packages/fondue/src/components/Tree/helpers/constants.ts
+  s_d35bedffdfdb73::t_5970de2fc14b8d 3-5,7-9,11-13
+packages/fondue/src/components/Tree/helpers/reducer.ts
+  s_d35bedffdfdb73::t_5970de2fc14b8d 10-12,17-19,24-26,31-33,49-51,73-75
+packages/fondue/src/components/Tree/utils/mocks.ts
+  s_d35bedffdfdb73::t_5970de2fc14b8d 7-9,17-19,118-120,151-153,191-193,206-208
+packages/fondue/src/components/Tree/helpers/multiselectTreeItemstyling.ts
+  s_d35bedffdfdb73::t_5970de2fc14b8d 16-18,29-31,48-50
+packages/fondue/src/components/Tree/utils/removeFragmentsAndEnrichChildren.ts
+  s_d35bedffdfdb73::t_5970de2fc14b8d 55-57
+  s_d35bedffdfdb73::t_a4c982cc539eeb 36-37
+packages/fondue/src/components/Tree/TreeItem/DragHandle.tsx
+  s_d35bedffdfdb73::t_5970de2fc14b8d 11-13,20-22
+packages/fondue/src/components/Tree/TreeItem/TreeItemMultiselect.tsx
+  s_d35bedffdfdb73::t_8a8bccdae1c8d3 37-40
+  s_d35bedffdfdb73::t_5970de2fc14b8d 43-45
+packages/fondue/src/components/Tree/TreeContext.ts
+  s_d35bedffdfdb73::t_5970de2fc14b8d 7-9,17-19
+packages/fondue/src/components/Tree/helpers/multiselect.ts
+  s_d35bedffdfdb73::t_5970de2fc14b8d 9-11,21-23,35-37,52-54,74-76,96-98,150-152,181-183,211-213,215-217,219-221,224-226,231-233,239-241
+packages/fondue/src/components/Tree/utils/useDeepCompareEffect.ts
+  s_d35bedffdfdb73::t_5970de2fc14b8d 8-10
+packages/fondue/src/components/Tree/utils/keyboardCoordinates.ts
+  s_d35bedffdfdb73::t_5970de2fc14b8d 18-20
+packages/fondue/src/components/Tree/helpers/treeHandleKeyDown.tsx
+  s_d35bedffdfdb73::t_5970de2fc14b8d 10-12
+packages/fondue/src/components/Tree/TreeItem/ExpandButton.tsx
+  s_d35bedffdfdb73::t_5970de2fc14b8d 8-10,16-18
+packages/fondue/src/components/Tree/helpers/projection.ts
+  s_d35bedffdfdb73::t_5970de2fc14b8d 9-11,19-21,67-69
+packages/fondue/src/components/Tree/helpers/getMovementAnnouncements.ts
+  s_d35bedffdfdb73::t_5970de2fc14b8d 32-34
+packages/fondue/src/components/Tree/TreeItem/useMultiselectTreeItem.ts
+  s_d35bedffdfdb73::t_5970de2fc14b8d 8-10
+packages/fondue/src/components/Tree/helpers/sensorsActivationConstraint.tsx
+  s_d35bedffdfdb73::t_5970de2fc14b8d 15-17
+packages/fondue/src/components/Tree/TreeItem/TreeItem.tsx
+  s_d35bedffdfdb73::t_68b12452c2ae91 54-57
+  s_d35bedffdfdb73::t_5970de2fc14b8d 60-62
+packages/fondue/src/components/Tree/TreeItem/useTreeItem.ts
+  s_d35bedffdfdb73::t_5970de2fc14b8d 7-9
+packages/components/MIGRATING.md
+  s_d35bedffdfdb73::t_dd54450d0f676b 1841-1974
+  s_d35bedffdfdb73::t_11d61d3d54c5de 77-79
+packages/fondue/src/components/Tree/TreeItem/TreeItemOverlay.tsx
+  s_d35bedffdfdb73::t_5970de2fc14b8d 11-13,25-27
+packages/fondue/src/components/Tree/types.ts
+  s_d35bedffdfdb73::t_5970de2fc14b8d 11-13,19-21,30-32,34-36,38-40,43-45,47-49,58-60,62-64,68-70,82-84,94-96,106-108,118-120,129-131,139-141,172-174,185-187,239-241,247-249,255-257,260-262,265-267,285-287,290-292,300-302,313-315,332-334,337-339,343-345,350-352,369-371,373-375,377-379,381-383,385-387,390-392
+packages/fondue/tools/constants/fondueExports.json
+  s_1b4cb72f14f783::t_33cfff7660bd6d 24,29-32,36-37,52,55-56,71-75,88,90,94-97,129-130,161-164,166
+  s_d35bedffdfdb73::t_03687cd07db0e2 167
+  s_d35bedffdfdb73::t_dd865e0a7be140 54,83,153
+packages/fondue/src/foundation/Pattern/PatternScaleOrigin.ts
+  s_d35bedffdfdb73::t_554070b979816e 3-5
+packages/fondue/src/components/Flyout/helpers/getVerticalPositioning.ts
+  s_d35bedffdfdb73::t_d099f21b86cbcc 5-7
+packages/fondue/scripts/detectDeprecatedExports/detectDeprecatedExports.ts
+  s_d35bedffdfdb73::t_159d53502396ce 20-22
+packages/fondue/src/components/InputLabel/InputLabel.tsx
+  s_d35bedffdfdb73::t_1b160ff20a8b72 17
+.changeset/tiny-buttons-guess.md
+  s_1b4cb72f14f783::t_7d68eeabb73a8a 1-6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "a5ceef1fa4e8aca69650f88b9a8720d9a583ffeb",
+  "prompts": {},
+  "sessions": {
+    "s_1b4cb72f14f783": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "23286c54-2204-457f-b5c1-369a06d17011",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    },
+    "s_d35bedffdfdb73": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c8889b5a-1944-4e24-829d-bbce859830bf",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}

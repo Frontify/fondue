@@ -1,0 +1,30 @@
+packages/sdk/src/types/tokens.ts
+  s_146a486642b257::t_903b83f5f7f7b1 23-26
+  s_146a486642b257::t_736d36730f9b9d 6-12
+  s_146a486642b257::t_fc75d74d87a79b 74-75
+packages/sdk/src/api/tokens.ts
+  s_146a486642b257::t_62d511094b8d43 98
+packages/sdk/src/api/tokens.test.ts
+  s_146a486642b257::t_3f397623134318 15
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.11",
+  "base_commit_sha": "28dd7f7c826aed48b8cd603d1d372a3fd0f9c884",
+  "prompts": {},
+  "humans": {
+    "h_2139c5e5c94509": {
+      "author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  },
+  "sessions": {
+    "s_146a486642b257": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7cf06235-bf9c-432f-8bfa-83513cfe6de7",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}

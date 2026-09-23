@@ -1,0 +1,70 @@
+packages/rich-text-editor/src/adapters/prosemirror/setup/schema.ts
+  s_47b7c111b16296::t_03f8525ccf0045 3,79-122,125,128-136,225,256,270-271,277-298
+packages/rich-text-editor/src/ports/editorEngine.ts
+  s_47b7c111b16296::t_03f8525ccf0045 22-32
+packages/rich-text-editor/src/adapters/prosemirror/editor.spec.tsx
+  s_47b7c111b16296::t_d6ba1ade8a031f 1-54,59-149
+  s_47b7c111b16296::t_c8c362d49c2ecf 55-58
+packages/rich-text-editor/src/ui/RichTextEditor.tsx
+  s_47b7c111b16296::t_c3a4b893ac46aa 26-41
+packages/rich-text-editor/src/RichTextEditor.spec.tsx
+  s_47b7c111b16296::t_920b71a31fa345 134,140
+  s_47b7c111b16296::t_c80d07870d01a1 1-133,135-139,141-177
+packages/rich-text-editor/src/adapters/prosemirror/setup/schema.spec.tsx
+  s_47b7c111b16296::t_9c32ecb7469254 33-34
+  s_47b7c111b16296::t_ac9387250fc578 75-79
+  s_47b7c111b16296::t_1987629e50c530 1-32,35-74,80-82
+packages/rich-text-editor/src/adapters/prosemirror/live/floating.ts
+  s_47b7c111b16296::t_03f8525ccf0045 224-227,230
+packages/rich-text-editor/src/RichTextEditor.stories.tsx
+  s_47b7c111b16296::t_0466c777569e58 4
+  s_47b7c111b16296::t_cd58b2ea76471e 405-407
+  s_47b7c111b16296::t_43dbedeffcd302 451
+  s_47b7c111b16296::t_637a04841b065f 402-404,408-433,435-439,441-450,452-463
+  s_47b7c111b16296::t_244be349f9304b 434,440
+packages/rich-text-editor/src/adapters/prosemirror/editor.ts
+  s_47b7c111b16296::t_03f8525ccf0045 25-32,70-76,130,157-172,174-196,200
+  s_47b7c111b16296::t_a4225e0a1186cd 123-129,131
+  s_47b7c111b16296::t_0d7290790aa0a6 197-199
+packages/rich-text-editor/src/adapters/prosemirror/live/documentConversion.spec.tsx
+  s_47b7c111b16296::t_04fd0f189af7dd 28-29
+  s_47b7c111b16296::t_4bbed7e733fbb4 1-23,32-48,52-102,106-161
+  s_47b7c111b16296::t_9d6423e9062b3f 24-27,30-31
+  s_47b7c111b16296::t_cb82cce46f133c 49-51,103-105
+packages/rich-text-editor/package.json
+  s_47b7c111b16296::t_ba8dd460224d2c 77
+  s_47b7c111b16296::t_78e16f3b4dfce9 90-91
+  s_47b7c111b16296::t_8ff3b134f6d0c9 42-43
+packages/rich-text-editor/src/ui/hooks/useSelectionRect.ts
+  s_47b7c111b16296::t_03f8525ccf0045 18-25,41-53,55-59
+packages/rich-text-editor/src/ui/hooks/useFloating.ts
+  s_47b7c111b16296::t_03f8525ccf0045 63-70
+packages/rich-text-editor/src/adapters/prosemirror/live/documentConversion.ts
+  s_47b7c111b16296::t_03f8525ccf0045 113-128,131-134,136-138,140-150,152-154,158-162,169-172,175-179
+packages/rich-text-editor/vite.config.ts
+  s_47b7c111b16296::t_efcbed985235de 5,8
+  s_47b7c111b16296::t_db38f967ff5130 67-78
+pnpm-lock.yaml
+  s_47b7c111b16296::t_b7439eacf76bbc 77,191,194,197,279,423,426,429,586,706,712,722,821,827,870,904-906,942,945-948,1177,1339,1345,1384,1387,1390,1487,11042,11075,11084,11137,11150,11163,11170,11213,11216,11222,11243,11252,11261,11321,11329,11334,11343,11351,11359,11365,11374,11378,11383,11388,11393,11398,11403,11408,11413,11418,11423,11428,11433,11438,11443,11448,11453,11458,11463,11468,11473,11478,11484,11489,11498,11507,11512,11517,11525,11533,11545,11551,11559,11565,11570,11575,11580,11585,11591,11599,11608,11613,11618,11623,11628,11636,11644,11652,11662,11670,11676,11681,11686,11691,11702,11710,11715,11723,11728,11736,11745,11750,11755,11760,11765,11770,11775,11783,11788,11793,11798,11809,11814,11820,11826,11833,11919,11926,11933,11944,11967,12673,12682,13087,13089,15347,15351,15355,15359,15363,15367,15371,15375,15379,15391,15406,15781,16527,16539,16551,16576,16625,16865,16870,16878,16886,18146,18155,19033,19055,20653,21822,21840,21876,21923,21946
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "d6daf6e7c9264d44e2236b1f88a0686e92602b8e",
+  "prompts": {},
+  "humans": {
+    "h_2139c5e5c94509": {
+      "author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  },
+  "sessions": {
+    "s_47b7c111b16296": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "65cca686-b467-4a42-a04e-9ded0432559b",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}

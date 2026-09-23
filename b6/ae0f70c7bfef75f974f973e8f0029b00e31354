@@ -1,0 +1,16 @@
+.changeset/honest-tips-raise.md
+  h_2139c5e5c94509 1-6
+packages/components/src/components/Tree/styles/tree.module.scss
+  h_2139c5e5c94509 158
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "b6ae0f70c7bfef75f974f973e8f0029b00e31354",
+  "prompts": {},
+  "humans": {
+    "h_2139c5e5c94509": {
+      "author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}
