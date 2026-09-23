@@ -59,9 +59,7 @@ test.describe('TreeLoadingRow', () => {
         );
         await expect(component.getByText('Loading', { exact: false })).toHaveCount(0);
     });
-});
 
-test.describe('TreeLoadingRow alignment', () => {
     test('mirrors the real row column order: indent, then handle, then chevron', async ({ mount }) => {
         const component = await mount(
             <Tree.Root multiSelect reorderable>

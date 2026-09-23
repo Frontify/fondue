@@ -581,22 +581,7 @@ test.describe('TreeRoot reorderable mode', () => {
         const hint = component.locator(`[id="${hintId ?? ''}"]`);
         await expect(hint).toBeAttached();
     });
-});
 
-test.describe('TreeRoot accepts predicate', () => {
-    test('mounts without crashing when a custom root `accepts` predicate is provided', async ({ mount }) => {
-        const component = await mount(
-            <Tree.Root reorderable accepts={() => false}>
-                <Tree.Item id="1">
-                    <Tree.Label>Row</Tree.Label>
-                </Tree.Item>
-            </Tree.Root>,
-        );
-        await expect(component.getByRole('treeitem', { name: /Row/ })).toBeVisible();
-    });
-});
-
-test.describe('TreeRoot drag below the last child', () => {
     test('drops a handle-started drag below the last child of a folder', async ({ mount, page }) => {
         const states: TreeChangeState[] = [];
         const component = await mount(
@@ -647,5 +632,18 @@ test.describe('TreeRoot drag below the last child', () => {
 
         const rootOrder = (states[states.length - 1] ?? []).map((node) => node.id);
         expect(rootOrder).toEqual(['A', 'B']);
+    });
+});
+
+test.describe('TreeRoot accepts predicate', () => {
+    test('mounts without crashing when a custom root `accepts` predicate is provided', async ({ mount }) => {
+        const component = await mount(
+            <Tree.Root reorderable accepts={() => false}>
+                <Tree.Item id="1">
+                    <Tree.Label>Row</Tree.Label>
+                </Tree.Item>
+            </Tree.Root>,
+        );
+        await expect(component.getByRole('treeitem', { name: /Row/ })).toBeVisible();
     });
 });
