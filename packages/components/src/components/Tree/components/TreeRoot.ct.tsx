@@ -79,6 +79,68 @@ test.describe('TreeRoot rendering', () => {
         await expect(first).toHaveAttribute('aria-selected', 'false');
         await expect(second).toHaveAttribute('aria-selected', 'true');
     });
+
+    test('moves DOM focus to the next row when the focused row is removed', async ({ mount }) => {
+        const component = await mount(
+            <Tree.Root>
+                <Tree.Item id="1">
+                    <Tree.Label>First</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="2">
+                    <Tree.Label>Second</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="3">
+                    <Tree.Label>Third</Tree.Label>
+                </Tree.Item>
+            </Tree.Root>,
+        );
+
+        await component.getByRole('treeitem', { name: /Second/ }).click();
+        await component.update(
+            <Tree.Root>
+                <Tree.Item id="1">
+                    <Tree.Label>First</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="3">
+                    <Tree.Label>Third</Tree.Label>
+                </Tree.Item>
+            </Tree.Root>,
+        );
+
+        await expect(component.getByRole('treeitem', { name: /Third/ })).toBeFocused();
+    });
+
+    test('leaves DOM focus outside the tree when the focused row is removed', async ({ mount }) => {
+        const component = await mount(
+            <div>
+                <button type="button">Outside</button>
+                <Tree.Root>
+                    <Tree.Item id="1">
+                        <Tree.Label>First</Tree.Label>
+                    </Tree.Item>
+                    <Tree.Item id="2">
+                        <Tree.Label>Second</Tree.Label>
+                    </Tree.Item>
+                </Tree.Root>
+            </div>,
+        );
+
+        const outside = component.getByRole('button', { name: 'Outside' });
+        await outside.focus();
+        await component.update(
+            <div>
+                <button type="button">Outside</button>
+                <Tree.Root>
+                    <Tree.Item id="2">
+                        <Tree.Label>Second</Tree.Label>
+                    </Tree.Item>
+                </Tree.Root>
+            </div>,
+        );
+
+        await expect(component.getByRole('treeitem', { name: /Second/ })).toHaveAttribute('tabindex', '0');
+        await expect(outside).toBeFocused();
+    });
 });
 
 test.describe('TreeRoot row click', () => {

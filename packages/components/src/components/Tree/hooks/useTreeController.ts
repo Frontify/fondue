@@ -12,7 +12,7 @@ import {
     type Updater,
 } from '@headless-tree/core';
 import { useTree } from '@headless-tree/react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, type RefObject } from 'react';
 
 import { INDENT_STEP_PX, ROOT_ID, ROOT_NAME } from '../constants';
 import { type TreeChangeState, type TreeDropCandidate, type TreeItemData } from '../types';
@@ -31,6 +31,7 @@ type UseTreeControllerOptions = {
     reorderable?: boolean;
     countDisabledInFolderState?: boolean;
     rootAccepts?: (items: TreeDropCandidate[]) => boolean;
+    hasFocusWithinRef?: RefObject<boolean>;
 };
 
 const resolveUpdater = <T>(updater: Updater<T>, prev: T): T =>
@@ -67,6 +68,7 @@ export const useTreeController = ({
     reorderable = false,
     countDisabledInFolderState = false,
     rootAccepts,
+    hasFocusWithinRef,
 }: UseTreeControllerOptions): TreeInstance<TreeItemData> => {
     const itemsWithRoot = useMemo<TreeItemData[]>(
         () => [
@@ -311,6 +313,9 @@ export const useTreeController = ({
         const nextFocusedItem = findSurvivingNeighbour(previousItemIds, internalFocusedItem, visibleItemIds);
         // eslint-disable-next-line @eslint-react/set-state-in-effect
         setInternalFocusedItem(nextFocusedItem);
+        if (nextFocusedItem !== undefined && hasFocusWithinRef?.current) {
+            tree.getItemInstance(nextFocusedItem)?.getElement()?.focus();
+        }
         // eslint-disable-next-line @eslint-react/exhaustive-deps
     }, [structureKey, expandedItems]);
 
