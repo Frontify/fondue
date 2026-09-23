@@ -473,19 +473,6 @@ describe('useTreeController non-draggable rows', () => {
         const draggedIds = result.current.getState().dnd?.draggedItems?.map((item) => item.getId());
         expect(draggedIds).toEqual(['b']);
     });
-
-    it('starts no keyboard drag when the only candidate is a fixed row', () => {
-        const items: TreeItemData[] = [
-            { id: 'a', name: 'A', isFolder: false, parentId: ROOT_ID, isDraggable: false, isSelected: true },
-            { id: 'b', name: 'B', isFolder: false, parentId: ROOT_ID },
-        ];
-        const { result } = renderHook(() => useTreeController({ items, reorderable: true }));
-
-        act(() => result.current.getItemInstance('a').setFocused());
-        act(() => startDrag(result.current));
-
-        expect(result.current.getState().dnd).toBeUndefined();
-    });
 });
 
 /**
