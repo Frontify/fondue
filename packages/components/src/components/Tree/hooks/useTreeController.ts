@@ -279,7 +279,7 @@ export const useTreeController = ({
         // matching and breaks every later hotkey, including Enter-to-commit.
         hotkeys: {
             renameItem: { hotkey: 'F2', isEnabled: () => false },
-            // The feature's own handler drags the selection plus the focused row; a fixed row there fails canDrag.
+            // Same set as a pointer drag: the selection if it holds the focused row, else that row; canDrag then rejects fixed rows.
             ...(reorderable ? { startDrag: startDragHotkey } : {}),
         },
         // Lets cascades include folder ids — the only path for a leafless folder's own

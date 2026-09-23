@@ -459,7 +459,7 @@ describe('useTreeController non-draggable rows', () => {
         expect(canDrag?.([result.current.getItemInstance('2')])).toBe(true);
     });
 
-    it('keyboard-drags only the draggable rows when a fixed row is selected', () => {
+    it('keyboard-drags the focused row alone when a fixed row is selected elsewhere', () => {
         const items: TreeItemData[] = [
             { id: 'a', name: 'A', isFolder: false, parentId: ROOT_ID, isDraggable: false, isSelected: true },
             { id: 'b', name: 'B', isFolder: false, parentId: ROOT_ID },
@@ -472,6 +472,19 @@ describe('useTreeController non-draggable rows', () => {
 
         const draggedIds = result.current.getState().dnd?.draggedItems?.map((item) => item.getId());
         expect(draggedIds).toEqual(['b']);
+    });
+
+    it('starts no keyboard drag when the selection holding the focused row includes a fixed row', () => {
+        const items: TreeItemData[] = [
+            { id: 'a', name: 'A', isFolder: false, parentId: ROOT_ID, isDraggable: false, isSelected: true },
+            { id: 'b', name: 'B', isFolder: false, parentId: ROOT_ID, isSelected: true },
+        ];
+        const { result } = renderHook(() => useTreeController({ items, reorderable: true }));
+
+        act(() => result.current.getItemInstance('b').setFocused());
+        act(() => startDrag(result.current));
+
+        expect(result.current.getState().dnd).toBeUndefined();
     });
 });
 

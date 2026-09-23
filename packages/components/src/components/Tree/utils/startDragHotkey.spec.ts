@@ -29,21 +29,17 @@ const startDrag = (selectedItems: ItemInstance<TreeItemData>[], focusedItem: Ite
 };
 
 describe('startDragHotkey', () => {
-    it('drags the selection plus the focused item', () => {
-        expect(startDrag([makeItem('a')], makeItem('b')).draggedIds).toEqual(['a', 'b']);
+    it('drags the selection when the focused item is in it', () => {
+        const focused = makeItem('b');
+        expect(startDrag([makeItem('a'), focused], focused).draggedIds).toEqual(['a', 'b']);
     });
 
-    it('lists an already selected focused item once', () => {
-        const focused = makeItem('a');
-        expect(startDrag([focused], focused).draggedIds).toEqual(['a']);
+    it('drags only the focused item when it is not selected', () => {
+        expect(startDrag([makeItem('a')], makeItem('b')).draggedIds).toEqual(['b']);
     });
 
-    it('drops items with isDraggable false from the dragged set', () => {
-        expect(startDrag([makeItem('a', false)], makeItem('b')).draggedIds).toEqual(['b']);
-    });
-
-    it('starts no drag when every candidate has isDraggable false', () => {
+    it('passes a selected fixed row through unchanged (canDrag decides)', () => {
         const focused = makeItem('a', false);
-        expect(startDrag([focused], focused).wasCalled).toBe(false);
+        expect(startDrag([focused], focused).draggedIds).toEqual(['a']);
     });
 });

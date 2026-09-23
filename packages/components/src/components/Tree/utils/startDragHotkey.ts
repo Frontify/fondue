@@ -9,12 +9,12 @@ export const startDragHotkey: HotkeyConfig<TreeItemData> = {
     preventDefault: true,
     isEnabled: (tree) => !tree.getState().dnd,
     handler: (_event, tree) => {
-        const candidates = new Set(tree.getSelectedItems?.() ?? [tree.getFocusedItem()]);
-        candidates.add(tree.getFocusedItem());
-        const draggableItems = [...candidates].filter((item) => item.getItemData().isDraggable !== false);
-        if (draggableItems.length === 0) {
-            return;
+        const focused = tree.getFocusedItem();
+        const selected = tree.getSelectedItems?.() ?? [];
+        if (selected.includes(focused)) {
+            tree.startKeyboardDrag(selected);
+        } else {
+            tree.startKeyboardDrag([focused]);
         }
-        tree.startKeyboardDrag(draggableItems);
     },
 };
