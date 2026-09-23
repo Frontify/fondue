@@ -488,6 +488,115 @@ describe('useTreeController non-draggable rows', () => {
     });
 });
 
+describe('useTreeController focus pruning', () => {
+    const threeItems: TreeItemData[] = [
+        { id: '1', name: 'One', isFolder: false, parentId: ROOT_ID },
+        { id: '2', name: 'Two', isFolder: false, parentId: ROOT_ID },
+        { id: '3', name: 'Three', isFolder: false, parentId: ROOT_ID },
+    ];
+
+    it('moves focus to the next surviving row when the focused row is removed', () => {
+        const { result, rerender } = renderHook(({ items }) => useTreeController({ items }), {
+            initialProps: { items: threeItems },
+        });
+
+        act(() => result.current.getItemInstance('2').setFocused());
+        expect(result.current.getItemInstance('2').isFocused()).toBe(true);
+
+        rerender({ items: threeItems.filter((item) => item.id !== '2') });
+
+        expect(result.current.getItemInstance('3').isFocused()).toBe(true);
+    });
+
+    it('falls back to the previous row when the focused last row is removed', () => {
+        const { result, rerender } = renderHook(({ items }) => useTreeController({ items }), {
+            initialProps: { items: threeItems },
+        });
+
+        act(() => result.current.getItemInstance('3').setFocused());
+
+        rerender({ items: threeItems.filter((item) => item.id !== '3') });
+
+        expect(result.current.getItemInstance('2').isFocused()).toBe(true);
+    });
+
+    it('focuses the first row when rows arrive after mounting empty', () => {
+        const { result, rerender } = renderHook(({ items }) => useTreeController({ items }), {
+            initialProps: { items: [] as TreeItemData[] },
+        });
+
+        rerender({ items: threeItems });
+
+        expect(result.current.getItemInstance('1').isFocused()).toBe(true);
+    });
+
+    it('survives removing every row while one is focused', () => {
+        const { result, rerender } = renderHook(({ items }) => useTreeController({ items }), {
+            initialProps: { items: threeItems },
+        });
+
+        act(() => result.current.getItemInstance('1').setFocused());
+
+        expect(() => rerender({ items: [] })).not.toThrow();
+        expect(result.current.getItems()).toHaveLength(0);
+    });
+
+    it('does not hand focus to a hidden descendant of a collapsed folder', () => {
+        const items: TreeItemData[] = [
+            {
+                id: 'f',
+                name: 'F',
+                isFolder: true,
+                parentId: ROOT_ID,
+                isExpanded: false,
+                children: ['c1'],
+            },
+            { id: 'c1', name: 'C1', isFolder: false, parentId: 'f' },
+            { id: 'x', name: 'X', isFolder: false, parentId: ROOT_ID },
+        ];
+
+        const { result, rerender } = renderHook(({ items }) => useTreeController({ items }), {
+            initialProps: { items },
+        });
+
+        act(() => result.current.getItemInstance('x').setFocused());
+
+        rerender({ items: items.filter((item) => item.id !== 'x') });
+
+        expect(result.current.getItems().some((item) => item.isFocused())).toBe(true);
+        expect(result.current.getItemInstance('c1').isFocused()).toBe(false);
+    });
+
+    it('moves focus to the next surviving row when its folder collapses by prop', () => {
+        const items: TreeItemData[] = [
+            {
+                id: 'f',
+                name: 'F',
+                isFolder: true,
+                parentId: ROOT_ID,
+                isExpanded: true,
+                children: ['c1'],
+            },
+            { id: 'c1', name: 'C1', isFolder: false, parentId: 'f' },
+            { id: 'y', name: 'Y', isFolder: false, parentId: ROOT_ID },
+        ];
+
+        const { result, rerender } = renderHook(({ items }) => useTreeController({ items }), {
+            initialProps: { items },
+        });
+
+        act(() => result.current.getItemInstance('c1').setFocused());
+        expect(result.current.getItemInstance('c1').isFocused()).toBe(true);
+
+        rerender({
+            items: [{ ...items[0], isExpanded: false }, items[1], items[2]] as TreeItemData[],
+        });
+
+        expect(result.current.getItemInstance('y').isFocused()).toBe(true);
+        expect(result.current.getItems().some((item) => item.getId() === 'c1')).toBe(false);
+    });
+});
+
 /**
  * Folders with no loaded children — empty, or collapsed while their contents lazy-load —
  * are checkable as their own entity: their `isSelected` prop feeds `checkedItems` and

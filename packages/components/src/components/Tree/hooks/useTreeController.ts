@@ -22,6 +22,7 @@ import { getCheckedUnitIds, isCheckableUnit } from '../utils/computeCheckedState
 import { createCanDrop } from '../utils/createCanDrop';
 import { createDropHandler } from '../utils/createDropHandler';
 import { diffSelection } from '../utils/diffSelection';
+import { findSurvivingNeighbour } from '../utils/findSurvivingNeighbour';
 import { getStructureKey } from '../utils/getStructureKey';
 import { startDragHotkey } from '../utils/startDragHotkey';
 
@@ -301,6 +302,21 @@ export const useTreeController = ({
         tree.rebuildTree();
         // eslint-disable-next-line @eslint-react/exhaustive-deps
     }, [structureKey]);
+
+    // Keeps one rendered row at tabIndex 0 after the focused row is removed, or hidden by a prop collapse.
+    const previousItemIdsRef = useRef<string[]>(items.map((item) => item.id));
+    useEffect(() => {
+        const previousItemIds = previousItemIdsRef.current;
+        previousItemIdsRef.current = items.map((item) => item.id);
+        const visibleItemIds = tree.getItems().map((item) => item.getId());
+        if (internalFocusedItem !== undefined && visibleItemIds.includes(internalFocusedItem)) {
+            return;
+        }
+        const nextFocusedItem = findSurvivingNeighbour(previousItemIds, internalFocusedItem, visibleItemIds);
+        // eslint-disable-next-line @eslint-react/set-state-in-effect
+        setInternalFocusedItem(nextFocusedItem);
+        // eslint-disable-next-line @eslint-react/exhaustive-deps
+    }, [structureKey, expandedItems]);
 
     // Edge-sync the `isRenaming` prop: react to transitions only (tracked via ref). The
     // tree ends renames before the consumer clears the prop, so a still-`true` prop with
