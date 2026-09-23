@@ -152,11 +152,6 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId, checkedState }
                 data-drop={reorderable && item.isDragTarget()}
                 data-disabled={data.isDisabled ? 'true' : undefined}
             >
-                {reorderable && (
-                    <span className={styles.handle} aria-hidden>
-                        <IconGrabHandle size={16} />
-                    </span>
-                )}
                 {checkboxProps && (
                     <TreeRowCheckbox
                         checkedState={checkedState}
@@ -166,6 +161,12 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId, checkedState }
                     />
                 )}
                 <span className={styles.indent} aria-hidden />
+                {/* After the indent: a handle drag then starts outside the reparent zone (x < level * indent). */}
+                {reorderable && (
+                    <span className={styles.handle} aria-hidden>
+                        <IconGrabHandle size={16} />
+                    </span>
+                )}
                 <TreeRowChevron isFolder={isFolder} isExpanded={isExpanded} />
                 {data.icon !== undefined && data.icon !== null && (
                     <span className={styles.icon} aria-hidden>

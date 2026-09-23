@@ -177,3 +177,50 @@ test.describe('TreeRow renaming', () => {
         await expect(component.getByRole('textbox')).toHaveCount(0);
     });
 });
+
+test.describe('TreeRow column order', () => {
+    const nestedTree = (
+        <Tree.Root reorderable>
+            <Tree.Folder id="outer" isExpanded>
+                <Tree.FolderHeader>
+                    <Tree.Label>Outer</Tree.Label>
+                </Tree.FolderHeader>
+                <Tree.Folder id="inner" isExpanded>
+                    <Tree.FolderHeader>
+                        <Tree.Label>Inner</Tree.Label>
+                    </Tree.FolderHeader>
+                    <Tree.Item id="leaf">
+                        <Tree.Label>Leaf</Tree.Label>
+                    </Tree.Item>
+                </Tree.Folder>
+            </Tree.Folder>
+        </Tree.Root>
+    );
+
+    test('renders the grab handle to the right of the indent', async ({ mount }) => {
+        const component = await mount(nestedTree);
+
+        const row = component.getByRole('treeitem', { name: /Inner/ });
+        const handleBox = await row.locator('span[class*="handle"]').boundingBox();
+        const indentBox = await row.locator('[class*="indent"]').boundingBox();
+        if (handleBox === null || indentBox === null) {
+            throw new Error('the level-1 row did not render both an indent and a handle');
+        }
+
+        expect(handleBox.x).toBeGreaterThan(indentBox.x + indentBox.width);
+    });
+
+    test('keeps the handle outside the reparent zone of its level', async ({ mount }) => {
+        const component = await mount(nestedTree);
+
+        // 32px: level 2 times INDENT_STEP_PX, the reparent boundary headless-tree uses.
+        const row = component.getByRole('treeitem', { name: /Leaf/ });
+        const handleBox = await row.locator('span[class*="handle"]').boundingBox();
+        const rowBox = await row.boundingBox();
+        if (handleBox === null || rowBox === null) {
+            throw new Error('the level-2 row did not render a handle');
+        }
+
+        expect(handleBox.x - rowBox.x).toBeGreaterThanOrEqual(2 * 16);
+    });
+});
