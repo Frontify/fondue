@@ -60,3 +60,40 @@ test.describe('TreeLoadingRow', () => {
         await expect(component.getByText('Loading', { exact: false })).toHaveCount(0);
     });
 });
+
+test.describe('TreeLoadingRow alignment', () => {
+    test("lines its chevron slot up with a real row's chevron", async ({ mount }) => {
+        const component = await mount(
+            <Tree.Root multiSelect reorderable>
+                <Tree.Folder id="f" isExpanded>
+                    <Tree.FolderHeader>
+                        <Tree.Label>Folder</Tree.Label>
+                    </Tree.FolderHeader>
+                    <Tree.Item id="1">
+                        <Tree.Label>Sibling</Tree.Label>
+                    </Tree.Item>
+                    <Tree.Loading />
+                </Tree.Folder>
+            </Tree.Root>,
+        );
+
+        const realRow = component.locator('[role="treeitem"]').filter({ hasText: 'Sibling' });
+        const loadingRow = component.locator('[aria-busy="true"]');
+
+        const realChevronBox = await realRow.locator('span[class*="chevron"]').boundingBox();
+        const loadingChevronBox = await loadingRow.locator('span[class*="chevron"]').boundingBox();
+        const realIndentBox = await realRow.locator('span[class*="indent"]').boundingBox();
+        const loadingIndentBox = await loadingRow.locator('span[class*="indent"]').boundingBox();
+        if (
+            realChevronBox === null ||
+            loadingChevronBox === null ||
+            realIndentBox === null ||
+            loadingIndentBox === null
+        ) {
+            throw new Error('the row did not render all of its placeholder columns');
+        }
+
+        expect(Math.abs(realChevronBox.x - loadingChevronBox.x)).toBeLessThan(0.5);
+        expect(Math.abs(realIndentBox.x - loadingIndentBox.x)).toBeLessThan(0.5);
+    });
+});
