@@ -1003,9 +1003,8 @@ test.describe('TreeRoot reorderable mode', () => {
             .locator('span[class*="handle"]')
             .boundingBox();
         const xBox = await component.getByRole('treeitem', { name: /^X$/ }).boundingBox();
-        const pBox = await component.getByRole('treeitem', { name: /^P$/ }).boundingBox();
         const aBox = await component.getByRole('treeitem', { name: /^A$/ }).boundingBox();
-        if (handleBox === null || xBox === null || pBox === null || aBox === null) {
+        if (handleBox === null || xBox === null || aBox === null) {
             throw new Error('the dragged row and the drop targets were not all laid out');
         }
 
@@ -1018,11 +1017,14 @@ test.describe('TreeRoot reorderable mode', () => {
         await page.mouse.move(xBox.x + xBox.width / 2, xBox.y + xBox.height * 0.9, { steps: 10 });
         await expect(component.locator('div[class*="dragline"]')).toBeVisible();
 
-        // Rejected: A's own `accepts` blocks it; walking through P first settles reliably on A as the drop target.
-        await page.mouse.move(pBox.x + pBox.width / 2, pBox.y + pBox.height / 2, { steps: 10 });
-        await page.mouse.move(aBox.x + aBox.width / 2, aBox.y + aBox.height / 2, { steps: 10 });
+        // Rejected: A's own `accepts` blocks it. A dispatched dragover fires no dragleave, whose timer would otherwise clear the stale target by chance.
+        const dataTransfer = await page.evaluateHandle(() => new DataTransfer());
+        await component.getByRole('treeitem', { name: /^A$/ }).dispatchEvent('dragover', {
+            clientX: aBox.x + aBox.width / 2,
+            clientY: aBox.y + aBox.height / 2,
+            dataTransfer,
+        });
         await expect(component.locator('div[class*="dragline"]')).toBeHidden();
-        // headless-tree's dnd state doesn't update on a rejected canDrop, so a stale highlight from X must not survive either.
         await expect(component.locator('[class*="item"][data-drop="true"]')).toHaveCount(0);
 
         await page.mouse.up();

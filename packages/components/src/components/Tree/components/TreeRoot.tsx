@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { AssistiveTreeDescription } from '@headless-tree/react';
-import { Fragment, useId, useMemo, useState, type DragEventHandler, type ReactNode } from 'react';
+import { Fragment, useId, useMemo, useState, type ReactNode } from 'react';
 
 import { useTranslation } from '#/hooks/useTranslation';
 
@@ -67,8 +67,6 @@ export const TreeRoot = ({
     const reorderHintId = useId();
     const { items, parentIsLoading: rootIsLoading } = useMemo(() => parseChildren(children), [children]);
     const [hasFocusWithin, setHasFocusWithin] = useState(false);
-    // headless-tree doesn't re-render on a rejected canDrop, so each row's onDragOver drives this instead.
-    const [isDropRejected, setIsDropRejected] = useState(false);
     const tree = useTreeController({
         items,
         onChange,
@@ -95,25 +93,10 @@ export const TreeRoot = ({
         [multiSelect, items, countDisabledInFolderState],
     );
 
-    const containerProps = tree.getContainerProps() as {
-        onDragEnd?: DragEventHandler<HTMLDivElement>;
-        onDrop?: DragEventHandler<HTMLDivElement>;
-        [key: string]: unknown;
-    };
-
     return (
         <div
-            {...containerProps}
+            {...tree.getContainerProps()}
             className={styles.tree}
-            // A stale rejection must not survive past the drag it belongs to.
-            onDragEnd={(event) => {
-                containerProps.onDragEnd?.(event);
-                setIsDropRejected(false);
-            }}
-            onDrop={(event) => {
-                containerProps.onDrop?.(event);
-                setIsDropRejected(false);
-            }}
             onFocus={() => setHasFocusWithin(true)}
             onBlur={(event) => setHasFocusWithin(event.currentTarget.contains(event.relatedTarget))}
         >
@@ -139,8 +122,6 @@ export const TreeRoot = ({
                             checkboxHintId={multiSelect ? checkboxHintId : undefined}
                             reorderHintId={reorderable ? reorderHintId : undefined}
                             checkedState={checkedStates?.get(item.getId()) ?? false}
-                            isDropRejected={isDropRejected}
-                            onDropRejectedChange={reorderable ? setIsDropRejected : undefined}
                         />
                         {loadingPlaceholder && (
                             <TreeLoadingRow
@@ -160,10 +141,7 @@ export const TreeRoot = ({
                 />
             )}
             {reorderable && (
-                <TreeDragLine
-                    data={isNoopDrop(tree) || isDropRejected ? null : tree.getDragLineData()}
-                    multiSelect={multiSelect}
-                />
+                <TreeDragLine data={isNoopDrop(tree) ? null : tree.getDragLineData()} multiSelect={multiSelect} />
             )}
         </div>
     );

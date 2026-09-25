@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { IconGrabHandle } from '@frontify/fondue-icons';
-import { type DndDataRef, type ItemInstance } from '@headless-tree/core';
+import { type ItemInstance } from '@headless-tree/core';
 import {
     useEffect,
     useRef,
@@ -37,10 +37,6 @@ type TreeRowProps = {
      * `getCheckedState`, which would render leafless folders and their ancestors unchecked.
      */
     checkedState: RowCheckedState;
-    /** Hides a stale `isDragTarget()` highlight while the hovered position is rejected. */
-    isDropRejected?: boolean;
-    /** Fires on every drag-over, so the drag line can hide the instant the hovered position is rejected. */
-    onDropRejectedChange?: (isRejected: boolean) => void;
 };
 
 export const TreeRow = ({
@@ -50,8 +46,6 @@ export const TreeRow = ({
     checkboxHintId,
     reorderHintId,
     checkedState,
-    isDropRejected = false,
-    onDropRejectedChange,
 }: TreeRowProps) => {
     const level = item.getItemMeta().level;
     const isFolder = item.isFolder();
@@ -127,17 +121,13 @@ export const TreeRow = ({
         headlessProps.onBlur?.(event);
     };
 
-    // headless-tree's dnd state doesn't update on a rejected canDrop, so read the data ref to trigger our own re-render.
+    // headless-tree keeps the last allowed target when a position is rejected (no preventDefault), so the line and highlight would lie.
     const handleDragOver = (event: DragEvent<HTMLDivElement>) => {
         headlessProps.onDragOver?.(event);
-        const lastAllowDrop = item.getTree().getDataRef<DndDataRef>().current.lastAllowDrop;
-        const draggedItems = item.getTree().getState().dnd?.draggedItems;
-        // A foreign drag (no items dragged in this tree) never registers as a rejection here.
-        if (draggedItems === undefined || draggedItems.length === 0) {
-            onDropRejectedChange?.(false);
-            return;
+        const tree = item.getTree();
+        if (!event.defaultPrevented && tree.getDragTarget() !== null) {
+            tree.applySubStateUpdate('dnd', (state) => ({ ...state, dragTarget: undefined }));
         }
-        onDropRejectedChange?.(lastAllowDrop === false);
     };
 
     // The row is a div (nested interactive controls must stay valid HTML), so Enter and
@@ -193,7 +183,7 @@ export const TreeRow = ({
                 style={{ '--tree-row-level': Math.max(0, level) } as CSSProperties}
                 data-folder={isFolder}
                 data-selected={!multiSelect && data.isSelected === true ? 'true' : undefined}
-                data-drop={reorderable && item.isDragTarget() && !isDropRejected}
+                data-drop={reorderable && item.isDragTarget()}
                 data-disabled={data.isDisabled ? 'true' : undefined}
             >
                 {reorderable && (
