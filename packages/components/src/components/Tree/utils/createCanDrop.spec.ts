@@ -73,16 +73,21 @@ describe('createCanDrop', () => {
         expect(canDrop([makeDragged(draggedLeaf)], makeUnorderedTarget('folder'))).toBe(false);
     });
 
-    it('rejects when an expanded folder above the insertion point would reject (bypass guard)', () => {
-        // siblings of the target = [restrictedFolder, ...]; insertionIndex = 1 → "above" is restrictedFolder.
+    it('rejects drops into a disabled folder even without an `accepts` predicate', () => {
         const canDrop = createCanDrop({
             itemsById: indexById([
-                {
-                    id: 'parent',
-                    name: 'Parent',
-                    isFolder: true,
-                    children: ['restricted'],
-                },
+                { id: 'folder', name: 'Folder', isFolder: true, children: [], isDisabled: true },
+                draggedLeaf,
+            ]),
+        });
+        expect(canDrop([makeDragged(draggedLeaf)], makeUnorderedTarget('folder'))).toBe(false);
+    });
+
+    it('allows an ordered drop right after an expanded, rejecting folder', () => {
+        // siblings of "parent" = [restricted, ...]; insertionIndex 1 sits right after it.
+        const canDrop = createCanDrop({
+            itemsById: indexById([
+                { id: 'parent', name: 'Parent', isFolder: true, children: ['restricted'] },
                 {
                     id: 'restricted',
                     name: 'Restricted',
@@ -95,54 +100,45 @@ describe('createCanDrop', () => {
                 draggedLeaf,
             ]),
         });
-        expect(canDrop([makeDragged(draggedLeaf)], makeOrderedTarget('parent', 1))).toBe(false);
+        expect(canDrop([makeDragged(draggedLeaf)], makeOrderedTarget('parent', 1))).toBe(true);
     });
 
-    it('rejects drops into a disabled folder even without an `accepts` predicate', () => {
+    it('allows an ordered drop right before an expanded, rejecting folder', () => {
+        // siblings of "parent" = [restricted, ...]; insertionIndex 0 sits right before it.
         const canDrop = createCanDrop({
             itemsById: indexById([
-                { id: 'folder', name: 'Folder', isFolder: true, children: [], isDisabled: true },
-                draggedLeaf,
-            ]),
-        });
-        expect(canDrop([makeDragged(draggedLeaf)], makeUnorderedTarget('folder'))).toBe(false);
-    });
-
-    it('rejects via the bypass guard when the expanded folder above is disabled', () => {
-        const canDrop = createCanDrop({
-            itemsById: indexById([
-                { id: 'parent', name: 'Parent', isFolder: true, children: ['frozen'] },
+                { id: 'parent', name: 'Parent', isFolder: true, children: ['restricted'] },
                 {
-                    id: 'frozen',
-                    name: 'Frozen',
+                    id: 'restricted',
+                    name: 'Restricted',
                     isFolder: true,
                     isExpanded: true,
-                    isDisabled: true,
-                    children: ['frozen-child'],
-                },
-                { id: 'frozen-child', name: 'FC', isFolder: false, parentId: 'frozen' },
-                draggedLeaf,
-            ]),
-        });
-        expect(canDrop([makeDragged(draggedLeaf)], makeOrderedTarget('parent', 1))).toBe(false);
-    });
-
-    it('does not engage the bypass guard when the folder above is empty', () => {
-        const canDrop = createCanDrop({
-            itemsById: indexById([
-                { id: 'parent', name: 'Parent', isFolder: true, children: ['empty'] },
-                {
-                    id: 'empty',
-                    name: 'Empty',
-                    isFolder: true,
-                    isExpanded: true,
-                    children: [],
+                    children: ['restricted-child'],
                     accepts: () => false,
                 },
+                { id: 'restricted-child', name: 'RC', isFolder: false, parentId: 'restricted' },
                 draggedLeaf,
             ]),
         });
-        // No visible overlap → guard is inert; parent has no accepts → defaults to true.
-        expect(canDrop([makeDragged(draggedLeaf)], makeOrderedTarget('parent', 1))).toBe(true);
+        expect(canDrop([makeDragged(draggedLeaf)], makeOrderedTarget('parent', 0))).toBe(true);
+    });
+
+    it('still rejects an unordered drop into the rejecting folder itself', () => {
+        const canDrop = createCanDrop({
+            itemsById: indexById([
+                { id: 'parent', name: 'Parent', isFolder: true, children: ['restricted'] },
+                {
+                    id: 'restricted',
+                    name: 'Restricted',
+                    isFolder: true,
+                    isExpanded: true,
+                    children: ['restricted-child'],
+                    accepts: () => false,
+                },
+                { id: 'restricted-child', name: 'RC', isFolder: false, parentId: 'restricted' },
+                draggedLeaf,
+            ]),
+        });
+        expect(canDrop([makeDragged(draggedLeaf)], makeUnorderedTarget('restricted'))).toBe(false);
     });
 });

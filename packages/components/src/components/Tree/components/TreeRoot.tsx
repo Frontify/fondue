@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { AssistiveTreeDescription } from '@headless-tree/react';
-import { Fragment, useId, useMemo, useRef, type ReactNode } from 'react';
+import { Fragment, useId, useMemo, useRef, useState, type DragEventHandler, type ReactNode } from 'react';
 
 import { useTranslation } from '#/hooks/useTranslation';
 
@@ -68,6 +68,8 @@ export const TreeRoot = ({
     const { items, parentIsLoading: rootIsLoading } = useMemo(() => parseChildren(children), [children]);
     // React drops the blur fired while it removes the focused row, so this stays true through a removal.
     const hasFocusWithinRef = useRef(false);
+    // headless-tree doesn't re-render on a rejected canDrop, so each row's onDragOver drives this instead.
+    const [isDropRejected, setIsDropRejected] = useState(false);
     const tree = useTreeController({
         items,
         onChange,
@@ -94,10 +96,25 @@ export const TreeRoot = ({
         [multiSelect, items, countDisabledInFolderState],
     );
 
+    const containerProps = tree.getContainerProps() as {
+        onDragEnd?: DragEventHandler<HTMLDivElement>;
+        onDrop?: DragEventHandler<HTMLDivElement>;
+        [key: string]: unknown;
+    };
+
     return (
         <div
-            {...tree.getContainerProps()}
+            {...containerProps}
             className={styles.tree}
+            // A stale rejection must not survive past the drag it belongs to.
+            onDragEnd={(event) => {
+                containerProps.onDragEnd?.(event);
+                setIsDropRejected(false);
+            }}
+            onDrop={(event) => {
+                containerProps.onDrop?.(event);
+                setIsDropRejected(false);
+            }}
             onFocus={(event) => {
                 // React bubbles portal events through the component tree, not the DOM tree: ignore focus that did not land inside this DOM subtree.
                 if (!event.currentTarget.contains(event.target as Node)) {
@@ -157,6 +174,8 @@ export const TreeRoot = ({
                             checkboxHintId={multiSelect ? checkboxHintId : undefined}
                             reorderHintId={reorderable ? reorderHintId : undefined}
                             checkedState={checkedStates?.get(item.getId()) ?? false}
+                            isDropRejected={isDropRejected}
+                            onDropRejectedChange={reorderable ? setIsDropRejected : undefined}
                         />
                         {loadingPlaceholder && (
                             <TreeLoadingRow
@@ -176,7 +195,10 @@ export const TreeRoot = ({
                 />
             )}
             {reorderable && (
-                <TreeDragLine data={isNoopDrop(tree) ? null : tree.getDragLineData()} multiSelect={multiSelect} />
+                <TreeDragLine
+                    data={isNoopDrop(tree) || isDropRejected ? null : tree.getDragLineData()}
+                    multiSelect={multiSelect}
+                />
             )}
         </div>
     );
