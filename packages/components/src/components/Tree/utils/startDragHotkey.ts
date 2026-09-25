@@ -6,7 +6,6 @@ import { type TreeItemData } from '../types';
 
 export const startDragHotkey: HotkeyConfig<TreeItemData> = {
     hotkey: 'Control+Shift+KeyD',
-    preventDefault: true,
     isEnabled: (tree) => !tree.getState().dnd,
     handler: (_event, tree) => {
         const focused = tree.getFocusedItem();

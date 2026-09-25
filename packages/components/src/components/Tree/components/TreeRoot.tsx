@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { AssistiveTreeDescription } from '@headless-tree/react';
-import { Fragment, useId, useMemo, useRef, useState, type DragEventHandler, type ReactNode } from 'react';
+import { Fragment, useId, useMemo, useState, type DragEventHandler, type ReactNode } from 'react';
 
 import { useTranslation } from '#/hooks/useTranslation';
 
@@ -66,8 +66,7 @@ export const TreeRoot = ({
     const checkboxHintId = useId();
     const reorderHintId = useId();
     const { items, parentIsLoading: rootIsLoading } = useMemo(() => parseChildren(children), [children]);
-    // React drops the blur fired while it removes the focused row, so this stays true through a removal.
-    const hasFocusWithinRef = useRef(false);
+    const [hasFocusWithin, setHasFocusWithin] = useState(false);
     // headless-tree doesn't re-render on a rejected canDrop, so each row's onDragOver drives this instead.
     const [isDropRejected, setIsDropRejected] = useState(false);
     const tree = useTreeController({
@@ -77,7 +76,7 @@ export const TreeRoot = ({
         reorderable,
         countDisabledInFolderState,
         rootAccepts: accepts,
-        hasFocusWithinRef,
+        hasFocusWithin,
     });
 
     const visibleItems = tree.getItems();
@@ -115,42 +114,8 @@ export const TreeRoot = ({
                 containerProps.onDrop?.(event);
                 setIsDropRejected(false);
             }}
-            onFocus={(event) => {
-                // React bubbles portal events through the component tree, not the DOM tree: ignore focus that did not land inside this DOM subtree.
-                if (!event.currentTarget.contains(event.target as Node)) {
-                    return;
-                }
-                const wasOutside = !hasFocusWithinRef.current;
-                hasFocusWithinRef.current = true;
-                // The browser can put DOM focus back on a row with no Tab in between (a window
-                // refocus, a portal menu closing back to its trigger): follow that row.
-                if (!wasOutside) {
-                    return;
-                }
-                const rowElement = (event.target as HTMLElement).closest('[role="treeitem"]');
-                if (rowElement === null) {
-                    return;
-                }
-                tree.getItems()
-                    .find((item) => item.getElement() === rowElement)
-                    ?.setFocused();
-            }}
-            onBlur={(event) => {
-                // Same portal-bubbling concern as onFocus above: ignore blur that did not originate inside this DOM subtree.
-                if (!event.currentTarget.contains(event.target as Node)) {
-                    return;
-                }
-                const stillWithin = event.currentTarget.contains(event.relatedTarget);
-                hasFocusWithinRef.current = stillWithin;
-                // WAI-ARIA APG: once focus actually leaves, the next Tab-in must land back
-                // on the selected row, not wherever the user last clicked or arrowed to.
-                if (!stillWithin && !multiSelect) {
-                    const selected = tree.getItems().find((item) => item.isSelected());
-                    if (selected !== undefined) {
-                        selected.setFocused();
-                    }
-                }
-            }}
+            onFocus={() => setHasFocusWithin(true)}
+            onBlur={(event) => setHasFocusWithin(event.currentTarget.contains(event.relatedTarget))}
         >
             {multiSelect && (
                 <span id={checkboxHintId} className={styles.srOnly}>
