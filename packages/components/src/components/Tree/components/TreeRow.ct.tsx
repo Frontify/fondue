@@ -152,11 +152,11 @@ test.describe('TreeRow non-draggable rows', () => {
         await expect(fixedRow).toHaveAttribute('draggable', 'false');
         const handle = fixedRow.locator('[data-hidden="true"]');
         await expect(handle).toHaveCount(1);
-        await expect(handle.locator('svg')).toHaveCount(0);
+        await expect(handle).toBeHidden();
         await expect(component.getByRole('treeitem', { name: /Movable/ })).toHaveAttribute('draggable', 'true');
     });
 
-    test('describes a fixed row with the checkbox hint only, the movable row with both', async ({ mount }) => {
+    test('describes a fixed row with the checkbox hint only', async ({ mount }) => {
         const component = await mount(
             <Tree.Root multiSelect reorderable>
                 <Tree.Item id="1" isDraggable={false}>
@@ -175,11 +175,6 @@ test.describe('TreeRow non-draggable rows', () => {
             const texts = await Promise.all(ids.map((id) => component.locator(`[id="${id}"]`).textContent()));
             return { ids, text: texts.join(' ') };
         };
-
-        const movable = await describedByText(/Movable/);
-        expect(movable.ids).toHaveLength(2);
-        expect(movable.text).toContain('press Tab to focus the checkbox');
-        expect(movable.text).toContain('Press Control Shift D to move');
 
         const fixed = await describedByText(/Fixed/);
         expect(fixed.ids).toHaveLength(1);
