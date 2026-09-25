@@ -17,7 +17,6 @@ import { useEffect, useMemo, useRef, useState, type RefObject } from 'react';
 import { INDENT_STEP_PX, ROOT_ID, ROOT_NAME } from '../constants';
 import { type TreeChangeState, type TreeDropCandidate, type TreeItemData } from '../types';
 import { buildChangeState, type FlatTreeState } from '../utils/buildChangeState';
-import { canDragItems } from '../utils/canDragItems';
 import { getCheckedUnitIds, isCheckableUnit } from '../utils/computeCheckedStates';
 import { createCanDrop } from '../utils/createCanDrop';
 import { createDropHandler } from '../utils/createDropHandler';
@@ -261,7 +260,10 @@ export const useTreeController = ({
         getItemName: (item) => item.getItemData().name,
         isItemFolder: (item) => Boolean(item.getItemData().isFolder),
         canReorder: reorderable,
-        canDrag: reorderable ? canDragItems : undefined,
+        canDrag: reorderable
+            ? (items) =>
+                  items.every((item) => !item.getItemData().isDisabled && item.getItemData().isDraggable !== false)
+            : undefined,
         canDrop: reorderable ? canDrop : undefined,
         onDrop: reorderable ? onDrop : undefined,
         dataLoader: {

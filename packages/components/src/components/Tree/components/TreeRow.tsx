@@ -174,7 +174,7 @@ export const TreeRow = ({
             >
                 {reorderable && (
                     <span className={styles.handle} data-hidden={isDraggable ? undefined : 'true'} aria-hidden>
-                        {isDraggable ? <IconGrabHandle size={16} /> : null}
+                        <IconGrabHandle size={16} />
                     </span>
                 )}
                 {checkboxProps && (
