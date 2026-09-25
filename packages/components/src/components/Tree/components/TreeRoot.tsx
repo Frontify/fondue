@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { AssistiveTreeDescription } from '@headless-tree/react';
-import { Fragment, useId, useMemo, useRef, type ReactNode } from 'react';
+import { Fragment, useId, useMemo, type ReactNode } from 'react';
 
 import { useTranslation } from '#/hooks/useTranslation';
 
@@ -65,8 +65,6 @@ export const TreeRoot = ({
     const { t } = useTranslation();
     const rowHintId = useId();
     const { items, parentIsLoading: rootIsLoading } = useMemo(() => parseChildren(children), [children]);
-    // React drops the blur fired while it removes the focused row, so this stays true through a removal.
-    const hasFocusWithinRef = useRef(false);
     const tree = useTreeController({
         items,
         onChange,
@@ -74,7 +72,6 @@ export const TreeRoot = ({
         reorderable,
         countDisabledInFolderState,
         rootAccepts: accepts,
-        hasFocusWithinRef,
     });
 
     const visibleItems = tree.getItems();
@@ -98,16 +95,7 @@ export const TreeRoot = ({
         .join(' ');
 
     return (
-        <div
-            {...tree.getContainerProps()}
-            className={styles.tree}
-            onFocus={() => {
-                hasFocusWithinRef.current = true;
-            }}
-            onBlur={(event) => {
-                hasFocusWithinRef.current = event.currentTarget.contains(event.relatedTarget);
-            }}
-        >
+        <div {...tree.getContainerProps()} className={styles.tree}>
             {rowHint && (
                 <span id={rowHintId} className={styles.srOnly}>
                     {rowHint}
