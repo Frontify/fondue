@@ -197,9 +197,9 @@
 .dragline {
     position: absolute;
     /* Starts under the chevron of the folder being dropped into. A level-L row's chevron
-       sits at 38px + L * 16px (item border 2 + padding 8 + handle 16 + gap 4 + indent base 4
-       + gap 4), and the target folder is one level above the drop level carried by
-       `--tree-drag-line-indent` (drop level * 16px), so 22px + drop level * 16px. */
+       sits at 38px + L × 16px (item border 2 + padding 8 + handle 16 + gap 4 + indent base 4 + gap 4),
+       and the target folder is one level above the drop level carried by
+       `--tree-drag-line-indent` (drop level × 16px) → 22px + drop level × 16px. */
     left: calc(var(--tree-drag-line-indent, 0px) + 22px);
     right: 0;
     height: 2px;
@@ -237,8 +237,7 @@
 
 .loadingItem {
     /* Mirrors `.item`'s flex layout so the label aligns with real row labels regardless
-       of whether multiSelect or reorderable columns are active. The transparent border
-       mirrors `.item`'s so both rows share one x origin. */
+       of whether multiSelect or reorderable columns are active. */
     flex: 1;
     display: flex;
     align-items: center;
