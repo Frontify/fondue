@@ -465,7 +465,8 @@ describe('useTreeController non-draggable rows', () => {
             { id: 'b', name: 'B', isFolder: false, parentId: ROOT_ID },
             { id: 'c', name: 'C', isFolder: false, parentId: ROOT_ID },
         ];
-        const { result } = renderHook(() => useTreeController({ items, reorderable: true }));
+        // A keyboard drag needs DOM focus in the tree; without it the tab stop would follow the selected fixed row.
+        const { result } = renderHook(() => useTreeController({ items, reorderable: true, hasFocusWithin: true }));
 
         act(() => result.current.getItemInstance('b').setFocused());
         act(() => startDrag(result.current));
@@ -630,19 +631,19 @@ describe('useTreeController focus follows selection', () => {
     });
 
     it('does not follow a selection prop change while the tree has DOM focus', () => {
-        const hasFocusWithinRef = { current: false };
         const items: TreeItemData[] = [
             { id: '1', name: 'One', isFolder: false, parentId: ROOT_ID },
             { id: '2', name: 'Two', isFolder: false, parentId: ROOT_ID },
         ];
-        const { result, rerender } = renderHook(({ items }) => useTreeController({ items, hasFocusWithinRef }), {
-            initialProps: { items },
-        });
+        const { result, rerender } = renderHook(
+            ({ items, hasFocusWithin }) => useTreeController({ items, hasFocusWithin }),
+            { initialProps: { items, hasFocusWithin: false } },
+        );
 
         act(() => result.current.getItemInstance('1').setFocused());
-        hasFocusWithinRef.current = true;
 
         rerender({
+            hasFocusWithin: true,
             items: [
                 { id: '1', name: 'One', isFolder: false, parentId: ROOT_ID },
                 { id: '2', name: 'Two', isFolder: false, parentId: ROOT_ID, isSelected: true },

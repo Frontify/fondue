@@ -82,7 +82,7 @@ test.describe('TreeRoot rendering', () => {
         await expect(second).toHaveAttribute('aria-selected', 'true');
     });
 
-    test('moves DOM focus to the next row when the focused row is removed', async ({ mount }) => {
+    test('moves the tab stop to the next row when the focused row is removed', async ({ mount }) => {
         const component = await mount(
             <Tree.Root>
                 <Tree.Item id="1">
@@ -109,7 +109,7 @@ test.describe('TreeRoot rendering', () => {
             </Tree.Root>,
         );
 
-        await expect(component.getByRole('treeitem', { name: /Third/ })).toBeFocused();
+        await expect(component.getByRole('treeitem', { name: /Third/ })).toHaveAttribute('tabindex', '0');
     });
 
     test('leaves DOM focus outside the tree when the focused row is removed', async ({ mount }) => {

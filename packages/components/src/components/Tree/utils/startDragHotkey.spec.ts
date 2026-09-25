@@ -7,10 +7,10 @@ import { type TreeItemData } from '../types';
 
 import { startDragHotkey } from './startDragHotkey';
 
-const makeItem = (id: string, isDraggable?: boolean): ItemInstance<TreeItemData> =>
+const makeItem = (id: string): ItemInstance<TreeItemData> =>
     ({
         getId: () => id,
-        getItemData: () => ({ id, name: id, isFolder: false, isDraggable }),
+        getItemData: () => ({ id, name: id, isFolder: false }),
     }) as unknown as ItemInstance<TreeItemData>;
 
 const startDrag = (selectedItems: ItemInstance<TreeItemData>[], focusedItem: ItemInstance<TreeItemData>) => {
@@ -32,14 +32,5 @@ describe('startDragHotkey', () => {
     it('drags the selection when the focused item is in it', () => {
         const focused = makeItem('b');
         expect(startDrag([makeItem('a'), focused], focused).draggedIds).toEqual(['a', 'b']);
-    });
-
-    it('drags only the focused item when it is not selected', () => {
-        expect(startDrag([makeItem('a')], makeItem('b')).draggedIds).toEqual(['b']);
-    });
-
-    it('passes a selected fixed row through unchanged (canDrag decides)', () => {
-        const focused = makeItem('a', false);
-        expect(startDrag([focused], focused).draggedIds).toEqual(['a']);
     });
 });

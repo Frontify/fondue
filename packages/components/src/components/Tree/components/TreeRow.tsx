@@ -158,6 +158,7 @@ export const TreeRow = ({
             onClick={handleClick}
             onKeyDown={handleKeyDown}
             onBlur={handleBlur}
+            onFocus={() => item.setFocused()}
             className={styles.row}
             aria-describedby={hintIds.length > 0 ? hintIds.join(' ') : undefined}
             aria-selected={data.isSelected === true ? 'true' : 'false'}
@@ -174,7 +175,7 @@ export const TreeRow = ({
             >
                 {reorderable && (
                     <span className={styles.handle} data-hidden={isDraggable ? undefined : 'true'} aria-hidden>
-                        {isDraggable ? <IconGrabHandle size={16} /> : null}
+                        <IconGrabHandle size={16} />
                     </span>
                 )}
                 {checkboxProps && (
