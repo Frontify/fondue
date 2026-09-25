@@ -327,7 +327,7 @@ export const useTreeController = ({
     }, [structureKey, expandedItems]);
 
     // WAI-ARIA APG roving tab stop: while the tree has no DOM focus, the tab stop follows
-    // the first visible selected row. Skipped once focus is inside — a selection prop
+    // the first visible selected row. Skipped once focus is inside: a selection prop
     // change (e.g. the consumer's own state syncing back) must never yank the tab stop
     // out from under a row the user is arrowing through.
     useEffect(() => {

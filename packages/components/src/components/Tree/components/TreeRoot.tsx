@@ -98,8 +98,21 @@ export const TreeRoot = ({
         <div
             {...tree.getContainerProps()}
             className={styles.tree}
-            onFocus={() => {
+            onFocus={(event) => {
+                const wasOutside = !hasFocusWithinRef.current;
                 hasFocusWithinRef.current = true;
+                // The browser can put DOM focus back on a row with no Tab in between (a window
+                // refocus, a portal menu closing back to its trigger): follow that row.
+                if (!wasOutside) {
+                    return;
+                }
+                const rowElement = (event.target as HTMLElement).closest('[role="treeitem"]');
+                if (rowElement === null) {
+                    return;
+                }
+                tree.getItems()
+                    .find((item) => item.getElement() === rowElement)
+                    ?.setFocused();
             }}
             onBlur={(event) => {
                 const stillWithin = event.currentTarget.contains(event.relatedTarget);

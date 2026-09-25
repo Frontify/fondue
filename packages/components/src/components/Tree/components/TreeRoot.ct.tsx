@@ -320,6 +320,44 @@ test.describe('TreeRoot rendering', () => {
         await page.keyboard.press('Shift+Tab');
         await expect(component.getByRole('treeitem', { name: /B/ })).toBeFocused();
     });
+
+    test('a same-row DOM blur/focus round trip does not desync ArrowDown from the visibly focused row', async ({
+        mount,
+        page,
+    }) => {
+        const component = await mount(
+            <Tree.Root>
+                <Tree.Item id="0" isSelected>
+                    <Tree.Label>Row0</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="1">
+                    <Tree.Label>Row1</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="2">
+                    <Tree.Label>Row2</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="3">
+                    <Tree.Label>Row3</Tree.Label>
+                </Tree.Item>
+            </Tree.Root>,
+        );
+
+        await component.getByRole('treeitem', { name: /Row0/ }).click();
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('ArrowDown');
+        await expect(component.getByRole('treeitem', { name: /Row2/ })).toBeFocused();
+
+        // No Tab in between: the window losing and regaining focus (or a browser
+        // extension stealing focus) fires this same blur/focus pair on the same row.
+        await page.evaluate(() => {
+            const element = document.activeElement as HTMLElement | null;
+            element?.blur();
+            element?.focus();
+        });
+
+        await page.keyboard.press('ArrowDown');
+        await expect(component.getByRole('treeitem', { name: /Row3/ })).toBeFocused();
+    });
 });
 
 test.describe('TreeRoot row click', () => {
@@ -723,6 +761,30 @@ test.describe('TreeRoot renaming', () => {
         // focus was not pulled back into the tree.
         await page.waitForTimeout(600);
         await expect(component.getByRole('treeitem', { name: /Outside/ })).not.toBeFocused();
+    });
+
+    test('clicking outside while renaming a non-selected row does not pull focus to the selected row', async ({
+        mount,
+        page,
+    }) => {
+        const component = await mount(
+            <TestHarness
+                renameable
+                initial={[
+                    { id: '1', name: 'First', isFolder: false, isSelected: true },
+                    { id: '2', name: 'Second', isFolder: false },
+                ]}
+                onRename={() => {}}
+            />,
+        );
+
+        await component.getByRole('button', { name: 'Rename Second' }).click();
+        await component.getByRole('textbox').fill('Renamed');
+        await page.mouse.click(5, 400);
+
+        await expect(component.getByRole('textbox')).toHaveCount(0);
+        await page.waitForTimeout(600);
+        await expect(component.getByRole('treeitem', { name: /First/ })).not.toBeFocused();
     });
 
     test('onChange carries the new name on commit', async ({ mount }) => {
