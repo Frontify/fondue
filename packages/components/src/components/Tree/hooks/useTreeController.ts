@@ -12,7 +12,7 @@ import {
     type Updater,
 } from '@headless-tree/core';
 import { useTree } from '@headless-tree/react';
-import { useEffect, useMemo, useRef, useState, type RefObject } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { INDENT_STEP_PX, ROOT_ID, ROOT_NAME } from '../constants';
 import { type TreeChangeState, type TreeDropCandidate, type TreeItemData } from '../types';
@@ -21,7 +21,6 @@ import { getCheckedUnitIds, isCheckableUnit } from '../utils/computeCheckedState
 import { createCanDrop } from '../utils/createCanDrop';
 import { createDropHandler } from '../utils/createDropHandler';
 import { diffSelection } from '../utils/diffSelection';
-import { findSurvivingNeighbour } from '../utils/findSurvivingNeighbour';
 import { getStructureKey } from '../utils/getStructureKey';
 import { startDragHotkey } from '../utils/startDragHotkey';
 
@@ -32,7 +31,6 @@ type UseTreeControllerOptions = {
     reorderable?: boolean;
     countDisabledInFolderState?: boolean;
     rootAccepts?: (items: TreeDropCandidate[]) => boolean;
-    hasFocusWithinRef?: RefObject<boolean>;
 };
 
 const resolveUpdater = <T>(updater: Updater<T>, prev: T): T =>
@@ -69,7 +67,6 @@ export const useTreeController = ({
     reorderable = false,
     countDisabledInFolderState = false,
     rootAccepts,
-    hasFocusWithinRef,
 }: UseTreeControllerOptions): TreeInstance<TreeItemData> => {
     const itemsWithRoot = useMemo<TreeItemData[]>(
         () => [
@@ -115,6 +112,7 @@ export const useTreeController = ({
     // Focus is internal-only (not in `onChange`), seeded to the first item so one row
     // gets `tabIndex=0` — otherwise the roving tabindex leaves the tree unreachable by Tab.
     const [internalFocusedItem, setInternalFocusedItem] = useState<string | undefined>(() => items[0]?.id);
+    const [previousItems, setPreviousItems] = useState(items);
 
     // Renames are started by the `isRenaming` prop but ended by the tree, which must take
     // effect before the consumer clears the prop — so internal state is the source of
@@ -270,7 +268,7 @@ export const useTreeController = ({
             getItem: (itemId) => itemsById.get(itemId) as TreeItemData,
             getChildren: (itemId) => itemsById.get(itemId)?.children ?? [],
         },
-        state: { ...treeState, renamingItem, renamingValue },
+        state: { ...treeState, focusedItem: internalFocusedItem ?? null, renamingItem, renamingValue },
         setExpandedItems,
         setCheckedItems,
         setSelectedItems: multiSelect ? undefined : setSelectedItems,
@@ -302,28 +300,23 @@ export const useTreeController = ({
         ],
     });
 
+    // Moves focus off a removed or collapsed-away row to its next visible neighbour, else the previous; `null` state then falls back to the first row.
+    if (previousItems !== items) {
+        setPreviousItems(items);
+        const isVisible = (id: string) => tree.getItemInstance(id).getItemMeta().index >= 0;
+        if (internalFocusedItem !== undefined && !isVisible(internalFocusedItem)) {
+            const previousIds = previousItems.map((item) => item.id);
+            const focusedIndex = previousIds.indexOf(internalFocusedItem);
+            const nextVisible = previousIds.slice(focusedIndex + 1).find(isVisible);
+            const previousVisible = previousIds.slice(0, focusedIndex).reverse().find(isVisible);
+            setInternalFocusedItem(nextVisible ?? previousVisible);
+        }
+    }
+
     useEffect(() => {
         tree.rebuildTree();
         // eslint-disable-next-line @eslint-react/exhaustive-deps
     }, [structureKey]);
-
-    // Keeps one rendered row at tabIndex 0 after the focused row is removed, or hidden by a prop collapse.
-    const previousItemIdsRef = useRef<string[]>(items.map((item) => item.id));
-    useEffect(() => {
-        const previousItemIds = previousItemIdsRef.current;
-        previousItemIdsRef.current = items.map((item) => item.id);
-        const visibleItemIds = tree.getItems().map((item) => item.getId());
-        if (internalFocusedItem !== undefined && visibleItemIds.includes(internalFocusedItem)) {
-            return;
-        }
-        const nextFocusedItem = findSurvivingNeighbour(previousItemIds, internalFocusedItem, visibleItemIds);
-        // eslint-disable-next-line @eslint-react/set-state-in-effect
-        setInternalFocusedItem(nextFocusedItem);
-        if (nextFocusedItem !== undefined && hasFocusWithinRef?.current) {
-            tree.getItemInstance(nextFocusedItem)?.getElement()?.focus();
-        }
-        // eslint-disable-next-line @eslint-react/exhaustive-deps
-    }, [structureKey, expandedItems]);
 
     // Edge-sync the `isRenaming` prop: react to transitions only (tracked via ref). The
     // tree ends renames before the consumer clears the prop, so a still-`true` prop with
