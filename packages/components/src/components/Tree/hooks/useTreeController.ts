@@ -52,6 +52,8 @@ const resolveUpdater = <T>(updater: Updater<T>, prev: T): T =>
  * - `isSelected` maps to `checkboxesFeature` (multi-select) or `selectionFeature`
  *   (single-select); the single-select setter pins to one id so modifier hotkeys
  *   can't escalate into multi-selection.
+ * - The roving tab stop follows the first visible selected row while the tree has no DOM
+ *   focus (per the WAI-ARIA APG tree pattern); it stops following once focus moves inside.
  * - Setters batched within one user event thread a shared `pendingState` (React hasn't
  *   re-rendered between them), and their emits coalesce into a single microtask flush —
  *   `onChange` fires at most once per interaction, and never for no-op interactions.
@@ -115,6 +117,7 @@ export const useTreeController = ({
 
     // Focus is internal-only (not in `onChange`), seeded to the first item so one row
     // gets `tabIndex=0` — otherwise the roving tabindex leaves the tree unreachable by Tab.
+    // The effect below immediately corrects this to the first visible selected row, if any.
     const [internalFocusedItem, setInternalFocusedItem] = useState<string | undefined>(() => items[0]?.id);
 
     // Renames are started by the `isRenaming` prop but ended by the tree, which must take
@@ -322,6 +325,23 @@ export const useTreeController = ({
         }
         // eslint-disable-next-line @eslint-react/exhaustive-deps
     }, [structureKey, expandedItems]);
+
+    // WAI-ARIA APG roving tab stop: while the tree has no DOM focus, the tab stop follows
+    // the first visible selected row. Skipped once focus is inside — a selection prop
+    // change (e.g. the consumer's own state syncing back) must never yank the tab stop
+    // out from under a row the user is arrowing through.
+    useEffect(() => {
+        if (hasFocusWithinRef?.current) {
+            return;
+        }
+        const visibleSelected = tree.getItems().find((item) => selectedItems.includes(item.getId()));
+        if (visibleSelected === undefined || visibleSelected.getId() === internalFocusedItem) {
+            return;
+        }
+        // eslint-disable-next-line @eslint-react/set-state-in-effect
+        setInternalFocusedItem(visibleSelected.getId());
+        // eslint-disable-next-line @eslint-react/exhaustive-deps
+    }, [selectedItems, expandedItems, structureKey]);
 
     // Edge-sync the `isRenaming` prop: react to transitions only (tracked via ref). The
     // tree ends renames before the consumer clears the prop, so a still-`true` prop with

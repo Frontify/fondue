@@ -102,7 +102,16 @@ export const TreeRoot = ({
                 hasFocusWithinRef.current = true;
             }}
             onBlur={(event) => {
-                hasFocusWithinRef.current = event.currentTarget.contains(event.relatedTarget);
+                const stillWithin = event.currentTarget.contains(event.relatedTarget);
+                hasFocusWithinRef.current = stillWithin;
+                // WAI-ARIA APG: once focus actually leaves, the next Tab-in must land back
+                // on the selected row, not wherever the user last clicked or arrowed to.
+                if (!stillWithin && !multiSelect) {
+                    const selected = tree.getItems().find((item) => item.isSelected());
+                    if (selected !== undefined) {
+                        selected.setFocused();
+                    }
+                }
             }}
         >
             {multiSelect && (

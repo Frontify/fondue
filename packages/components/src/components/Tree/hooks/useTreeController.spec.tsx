@@ -597,6 +597,73 @@ describe('useTreeController focus pruning', () => {
     });
 });
 
+describe('useTreeController focus follows selection', () => {
+    it('seeds the focused item to the first visible selected row at mount', () => {
+        const items: TreeItemData[] = [
+            { id: '1', name: 'One', isFolder: false, parentId: ROOT_ID },
+            { id: '2', name: 'Two', isFolder: false, parentId: ROOT_ID },
+            { id: '3', name: 'Three', isFolder: false, parentId: ROOT_ID, isSelected: true },
+        ];
+        const { result } = renderHook(() => useTreeController({ items }));
+
+        expect(result.current.getItemInstance('3').isFocused()).toBe(true);
+    });
+
+    it('follows a selection prop change while the tree has no DOM focus', () => {
+        const items: TreeItemData[] = [
+            { id: '1', name: 'One', isFolder: false, parentId: ROOT_ID, isSelected: true },
+            { id: '2', name: 'Two', isFolder: false, parentId: ROOT_ID },
+        ];
+        const { result, rerender } = renderHook(({ items }) => useTreeController({ items }), {
+            initialProps: { items },
+        });
+        expect(result.current.getItemInstance('1').isFocused()).toBe(true);
+
+        rerender({
+            items: [
+                { id: '1', name: 'One', isFolder: false, parentId: ROOT_ID },
+                { id: '2', name: 'Two', isFolder: false, parentId: ROOT_ID, isSelected: true },
+            ],
+        });
+
+        expect(result.current.getItemInstance('2').isFocused()).toBe(true);
+    });
+
+    it('does not follow a selection prop change while the tree has DOM focus', () => {
+        const hasFocusWithinRef = { current: false };
+        const items: TreeItemData[] = [
+            { id: '1', name: 'One', isFolder: false, parentId: ROOT_ID },
+            { id: '2', name: 'Two', isFolder: false, parentId: ROOT_ID },
+        ];
+        const { result, rerender } = renderHook(({ items }) => useTreeController({ items, hasFocusWithinRef }), {
+            initialProps: { items },
+        });
+
+        act(() => result.current.getItemInstance('1').setFocused());
+        hasFocusWithinRef.current = true;
+
+        rerender({
+            items: [
+                { id: '1', name: 'One', isFolder: false, parentId: ROOT_ID },
+                { id: '2', name: 'Two', isFolder: false, parentId: ROOT_ID, isSelected: true },
+            ],
+        });
+
+        expect(result.current.getItemInstance('1').isFocused()).toBe(true);
+    });
+
+    it('does not hand the tab stop to a selected row hidden in a collapsed folder', () => {
+        const items: TreeItemData[] = [
+            { id: '1', name: 'One', isFolder: false, parentId: ROOT_ID },
+            { id: 'f', name: 'F', isFolder: true, parentId: ROOT_ID, isExpanded: false, children: ['hidden'] },
+            { id: 'hidden', name: 'Hidden', isFolder: false, parentId: 'f', isSelected: true },
+        ];
+        const { result } = renderHook(() => useTreeController({ items }));
+
+        expect(result.current.getItemInstance('1').isFocused()).toBe(true);
+    });
+});
+
 /**
  * Folders with no loaded children — empty, or collapsed while their contents lazy-load —
  * are checkable as their own entity: their `isSelected` prop feeds `checkedItems` and
