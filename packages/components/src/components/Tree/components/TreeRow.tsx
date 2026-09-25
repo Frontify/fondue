@@ -6,6 +6,8 @@ import {
     useEffect,
     useRef,
     type CSSProperties,
+    type DragEvent,
+    type DragEventHandler,
     type FocusEvent,
     type FocusEventHandler,
     type FormEventHandler,
@@ -75,6 +77,7 @@ export const TreeRow = ({
     const headlessProps = item.getProps() as {
         onClick?: MouseEventHandler<HTMLDivElement>;
         onBlur?: FocusEventHandler<HTMLDivElement>;
+        onDragOver?: DragEventHandler<HTMLDivElement>;
         [key: string]: unknown;
     };
 
@@ -118,6 +121,15 @@ export const TreeRow = ({
         headlessProps.onBlur?.(event);
     };
 
+    // headless-tree keeps the last allowed target when a position is rejected (no preventDefault), so the line and highlight would lie.
+    const handleDragOver = (event: DragEvent<HTMLDivElement>) => {
+        headlessProps.onDragOver?.(event);
+        const tree = item.getTree();
+        if (!event.defaultPrevented && tree.getDragTarget() !== null) {
+            tree.applySubStateUpdate('dnd', (state) => ({ ...state, dragTarget: undefined }));
+        }
+    };
+
     // The row is a div (nested interactive controls must stay valid HTML), so Enter and
     // Space re-implement button activation. The target check skips events bubbling from
     // nested controls, e.g. Space on the checkbox.
@@ -158,6 +170,7 @@ export const TreeRow = ({
             onClick={handleClick}
             onKeyDown={handleKeyDown}
             onBlur={handleBlur}
+            onDragOver={handleDragOver}
             onFocus={() => item.setFocused()}
             className={styles.row}
             aria-describedby={hintIds.length > 0 ? hintIds.join(' ') : undefined}
