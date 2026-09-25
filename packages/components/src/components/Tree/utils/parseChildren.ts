@@ -96,6 +96,7 @@ const sharedRowData = (props: TreeItemProps | TreeFolderProps, parentId: string)
     onMove: props.onMove,
     tags: props.tags,
     isDisabled: props.isDisabled,
+    isDraggable: props.isDraggable,
 });
 
 const toItemData = (props: TreeItemProps, parentId: string): TreeItemData => {

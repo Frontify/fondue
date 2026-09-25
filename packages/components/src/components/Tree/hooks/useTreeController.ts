@@ -22,6 +22,7 @@ import { createCanDrop } from '../utils/createCanDrop';
 import { createDropHandler } from '../utils/createDropHandler';
 import { diffSelection } from '../utils/diffSelection';
 import { getStructureKey } from '../utils/getStructureKey';
+import { startDragHotkey } from '../utils/startDragHotkey';
 
 type UseTreeControllerOptions = {
     items: TreeItemData[];
@@ -256,7 +257,10 @@ export const useTreeController = ({
         getItemName: (item) => item.getItemData().name,
         isItemFolder: (item) => Boolean(item.getItemData().isFolder),
         canReorder: reorderable,
-        canDrag: reorderable ? (items) => items.every((item) => !item.getItemData().isDisabled) : undefined,
+        canDrag: reorderable
+            ? (items) =>
+                  items.every((item) => !item.getItemData().isDisabled && item.getItemData().isDraggable !== false)
+            : undefined,
         canDrop: reorderable ? canDrop : undefined,
         onDrop: reorderable ? onDrop : undefined,
         dataLoader: {
@@ -277,6 +281,8 @@ export const useTreeController = ({
         // matching and breaks every later hotkey, including Enter-to-commit.
         hotkeys: {
             renameItem: { hotkey: 'F2', isEnabled: () => false },
+            // Same set as a pointer drag: the selection if it holds the focused row, else that row; canDrag then rejects fixed rows.
+            ...(reorderable ? { startDrag: startDragHotkey } : {}),
         },
         // Lets cascades include folder ids — the only path for a leafless folder's own
         // id into `checkedItems`. Other folder ids are filtered out in `setCheckedItems`.

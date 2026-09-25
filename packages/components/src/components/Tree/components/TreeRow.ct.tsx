@@ -135,6 +135,84 @@ test.describe('TreeRow', () => {
     });
 });
 
+test.describe('TreeRow non-draggable rows', () => {
+    test('marks a row with isDraggable={false} as draggable="false" and drops its grab handle', async ({ mount }) => {
+        const component = await mount(
+            <Tree.Root reorderable>
+                <Tree.Item id="1" isDraggable={false}>
+                    <Tree.Label>Fixed</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="2">
+                    <Tree.Label>Movable</Tree.Label>
+                </Tree.Item>
+            </Tree.Root>,
+        );
+
+        const fixedRow = component.getByRole('treeitem', { name: /Fixed/ });
+        await expect(fixedRow).toHaveAttribute('draggable', 'false');
+        const handle = fixedRow.locator('[data-hidden="true"]');
+        await expect(handle).toHaveCount(1);
+        await expect(handle).toBeHidden();
+        await expect(component.getByRole('treeitem', { name: /Movable/ })).toHaveAttribute('draggable', 'true');
+    });
+
+    test('describes a fixed row with the checkbox hint only', async ({ mount }) => {
+        const component = await mount(
+            <Tree.Root multiSelect reorderable>
+                <Tree.Item id="1" isDraggable={false}>
+                    <Tree.Label>Fixed</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="2">
+                    <Tree.Label>Movable</Tree.Label>
+                </Tree.Item>
+            </Tree.Root>,
+        );
+
+        const describedByText = async (name: RegExp) => {
+            const ids = ((await component.getByRole('treeitem', { name }).getAttribute('aria-describedby')) ?? '')
+                .split(' ')
+                .filter(Boolean);
+            const texts = await Promise.all(ids.map((id) => component.locator(`[id="${id}"]`).textContent()));
+            return { ids, text: texts.join(' ') };
+        };
+
+        const fixed = await describedByText(/Fixed/);
+        expect(fixed.ids).toHaveLength(1);
+        expect(fixed.text).toContain('press Tab to focus the checkbox');
+        expect(fixed.text).not.toContain('Press Control Shift D to move');
+    });
+
+    test('leaves a fixed row undescribed in a reorderable single-select tree', async ({ mount }) => {
+        const component = await mount(
+            <Tree.Root reorderable>
+                <Tree.Item id="1" isDraggable={false}>
+                    <Tree.Label>Fixed</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="2">
+                    <Tree.Label>Movable</Tree.Label>
+                </Tree.Item>
+            </Tree.Root>,
+        );
+
+        await expect(component.getByRole('treeitem', { name: /Fixed/ })).not.toHaveAttribute('aria-describedby');
+        await expect(component.getByRole('treeitem', { name: /Movable/ })).toHaveAttribute('aria-describedby', /.+/);
+    });
+
+    test('still fires onClick on a row with isDraggable={false}', async ({ mount }) => {
+        let clicks = 0;
+        const component = await mount(
+            <Tree.Root reorderable>
+                <Tree.Item id="1" isDraggable={false} onClick={() => (clicks += 1)}>
+                    <Tree.Label>Fixed</Tree.Label>
+                </Tree.Item>
+            </Tree.Root>,
+        );
+
+        await component.getByRole('treeitem', { name: /Fixed/ }).click();
+        expect(clicks).toBe(1);
+    });
+});
+
 test.describe('TreeRow renaming', () => {
     test('swaps the label for a focused text input while isRenaming', async ({ mount }) => {
         const component = await mount(

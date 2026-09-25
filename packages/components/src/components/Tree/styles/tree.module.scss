@@ -113,6 +113,10 @@
     cursor: grab;
 }
 
+.handle[data-hidden='true'] {
+    visibility: hidden;
+}
+
 .chevron {
     display: inline-flex;
     align-items: center;
