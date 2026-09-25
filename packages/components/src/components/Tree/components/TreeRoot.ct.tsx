@@ -2,6 +2,8 @@
 
 import { expect, test } from '@playwright/experimental-ct-react';
 
+import { Dropdown } from '#/index';
+
 import { Tree } from '../Tree';
 
 import { TestHarness } from './testutils/TestHarness';
@@ -357,6 +359,52 @@ test.describe('TreeRoot rendering', () => {
 
         await page.keyboard.press('ArrowDown');
         await expect(component.getByRole('treeitem', { name: /Row3/ })).toBeFocused();
+    });
+
+    test('Escape closing a portalled Dropdown does not desync ArrowDown from the row that regains focus', async ({
+        mount,
+        page,
+    }) => {
+        const component = await mount(
+            <Tree.Root>
+                <Tree.Item id="1" isSelected>
+                    <Tree.Label>Row1</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="2">
+                    <Tree.Label>Row2</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="3">
+                    <Tree.Label>Row3</Tree.Label>
+                    <Tree.Action>
+                        <Dropdown.Root>
+                            <Dropdown.Trigger>
+                                <button type="button">Row3 actions</button>
+                            </Dropdown.Trigger>
+                            <Dropdown.Content>
+                                <Dropdown.Item onSelect={() => {}}>Do thing</Dropdown.Item>
+                            </Dropdown.Content>
+                        </Dropdown.Root>
+                    </Tree.Action>
+                </Tree.Item>
+                <Tree.Item id="4">
+                    <Tree.Label>Row4</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="5">
+                    <Tree.Label>Row5</Tree.Label>
+                </Tree.Item>
+            </Tree.Root>,
+        );
+
+        await component.getByRole('button', { name: 'Row3 actions' }).click();
+        // The menu portals to `document.body`, outside `component`'s scoped locator.
+        await expect(page.getByRole('menuitem', { name: 'Do thing' })).toBeVisible();
+
+        // Default Radix behaviour: Escape returns focus to the trigger, i.e. row 3.
+        await page.keyboard.press('Escape');
+        await expect(component.getByRole('button', { name: 'Row3 actions' })).toBeFocused();
+
+        await page.keyboard.press('ArrowDown');
+        await expect(component.getByRole('treeitem', { name: /Row4/ })).toBeFocused();
     });
 });
 

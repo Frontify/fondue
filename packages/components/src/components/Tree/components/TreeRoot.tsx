@@ -99,6 +99,10 @@ export const TreeRoot = ({
             {...tree.getContainerProps()}
             className={styles.tree}
             onFocus={(event) => {
+                // React bubbles portal events through the component tree, not the DOM tree: ignore focus that did not land inside this DOM subtree.
+                if (!event.currentTarget.contains(event.target as Node)) {
+                    return;
+                }
                 const wasOutside = !hasFocusWithinRef.current;
                 hasFocusWithinRef.current = true;
                 // The browser can put DOM focus back on a row with no Tab in between (a window
@@ -115,6 +119,10 @@ export const TreeRoot = ({
                     ?.setFocused();
             }}
             onBlur={(event) => {
+                // Same portal-bubbling concern as onFocus above: ignore blur that did not originate inside this DOM subtree.
+                if (!event.currentTarget.contains(event.target as Node)) {
+                    return;
+                }
                 const stillWithin = event.currentTarget.contains(event.relatedTarget);
                 hasFocusWithinRef.current = stillWithin;
                 // WAI-ARIA APG: once focus actually leaves, the next Tab-in must land back
