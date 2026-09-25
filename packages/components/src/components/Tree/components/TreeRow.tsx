@@ -158,6 +158,7 @@ export const TreeRow = ({
             onClick={handleClick}
             onKeyDown={handleKeyDown}
             onBlur={handleBlur}
+            onFocus={() => item.setFocused()}
             className={styles.row}
             aria-describedby={hintIds.length > 0 ? hintIds.join(' ') : undefined}
             aria-selected={data.isSelected === true ? 'true' : 'false'}

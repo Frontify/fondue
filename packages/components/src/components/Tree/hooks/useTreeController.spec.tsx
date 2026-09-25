@@ -465,7 +465,8 @@ describe('useTreeController non-draggable rows', () => {
             { id: 'b', name: 'B', isFolder: false, parentId: ROOT_ID },
             { id: 'c', name: 'C', isFolder: false, parentId: ROOT_ID },
         ];
-        const { result } = renderHook(() => useTreeController({ items, reorderable: true }));
+        // A keyboard drag needs DOM focus in the tree; without it the tab stop would follow the selected fixed row.
+        const { result } = renderHook(() => useTreeController({ items, reorderable: true, hasFocusWithin: true }));
 
         act(() => result.current.getItemInstance('b').setFocused());
         act(() => startDrag(result.current));
@@ -594,6 +595,73 @@ describe('useTreeController focus pruning', () => {
 
         expect(result.current.getItemInstance('y').isFocused()).toBe(true);
         expect(result.current.getItems().some((item) => item.getId() === 'c1')).toBe(false);
+    });
+});
+
+describe('useTreeController focus follows selection', () => {
+    it('seeds the focused item to the first visible selected row at mount', () => {
+        const items: TreeItemData[] = [
+            { id: '1', name: 'One', isFolder: false, parentId: ROOT_ID },
+            { id: '2', name: 'Two', isFolder: false, parentId: ROOT_ID },
+            { id: '3', name: 'Three', isFolder: false, parentId: ROOT_ID, isSelected: true },
+        ];
+        const { result } = renderHook(() => useTreeController({ items }));
+
+        expect(result.current.getItemInstance('3').isFocused()).toBe(true);
+    });
+
+    it('follows a selection prop change while the tree has no DOM focus', () => {
+        const items: TreeItemData[] = [
+            { id: '1', name: 'One', isFolder: false, parentId: ROOT_ID, isSelected: true },
+            { id: '2', name: 'Two', isFolder: false, parentId: ROOT_ID },
+        ];
+        const { result, rerender } = renderHook(({ items }) => useTreeController({ items }), {
+            initialProps: { items },
+        });
+        expect(result.current.getItemInstance('1').isFocused()).toBe(true);
+
+        rerender({
+            items: [
+                { id: '1', name: 'One', isFolder: false, parentId: ROOT_ID },
+                { id: '2', name: 'Two', isFolder: false, parentId: ROOT_ID, isSelected: true },
+            ],
+        });
+
+        expect(result.current.getItemInstance('2').isFocused()).toBe(true);
+    });
+
+    it('does not follow a selection prop change while the tree has DOM focus', () => {
+        const items: TreeItemData[] = [
+            { id: '1', name: 'One', isFolder: false, parentId: ROOT_ID },
+            { id: '2', name: 'Two', isFolder: false, parentId: ROOT_ID },
+        ];
+        const { result, rerender } = renderHook(
+            ({ items, hasFocusWithin }) => useTreeController({ items, hasFocusWithin }),
+            { initialProps: { items, hasFocusWithin: false } },
+        );
+
+        act(() => result.current.getItemInstance('1').setFocused());
+
+        rerender({
+            hasFocusWithin: true,
+            items: [
+                { id: '1', name: 'One', isFolder: false, parentId: ROOT_ID },
+                { id: '2', name: 'Two', isFolder: false, parentId: ROOT_ID, isSelected: true },
+            ],
+        });
+
+        expect(result.current.getItemInstance('1').isFocused()).toBe(true);
+    });
+
+    it('does not hand the tab stop to a selected row hidden in a collapsed folder', () => {
+        const items: TreeItemData[] = [
+            { id: '1', name: 'One', isFolder: false, parentId: ROOT_ID },
+            { id: 'f', name: 'F', isFolder: true, parentId: ROOT_ID, isExpanded: false, children: ['hidden'] },
+            { id: 'hidden', name: 'Hidden', isFolder: false, parentId: 'f', isSelected: true },
+        ];
+        const { result } = renderHook(() => useTreeController({ items }));
+
+        expect(result.current.getItemInstance('1').isFocused()).toBe(true);
     });
 });
 

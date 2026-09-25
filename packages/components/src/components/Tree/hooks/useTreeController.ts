@@ -31,6 +31,7 @@ type UseTreeControllerOptions = {
     reorderable?: boolean;
     countDisabledInFolderState?: boolean;
     rootAccepts?: (items: TreeDropCandidate[]) => boolean;
+    hasFocusWithin?: boolean;
 };
 
 const resolveUpdater = <T>(updater: Updater<T>, prev: T): T =>
@@ -49,6 +50,8 @@ const resolveUpdater = <T>(updater: Updater<T>, prev: T): T =>
  * - `isSelected` maps to `checkboxesFeature` (multi-select) or `selectionFeature`
  *   (single-select); the single-select setter pins to one id so modifier hotkeys
  *   can't escalate into multi-selection.
+ * - The roving tab stop follows the first visible selected row while the tree has no DOM
+ *   focus (per the WAI-ARIA APG tree pattern); it stops following once focus moves inside.
  * - Setters batched within one user event thread a shared `pendingState` (React hasn't
  *   re-rendered between them), and their emits coalesce into a single microtask flush —
  *   `onChange` fires at most once per interaction, and never for no-op interactions.
@@ -67,6 +70,7 @@ export const useTreeController = ({
     reorderable = false,
     countDisabledInFolderState = false,
     rootAccepts,
+    hasFocusWithin = false,
 }: UseTreeControllerOptions): TreeInstance<TreeItemData> => {
     const itemsWithRoot = useMemo<TreeItemData[]>(
         () => [
@@ -301,15 +305,23 @@ export const useTreeController = ({
     });
 
     // Moves focus off a removed or collapsed-away row to its next visible neighbour, else the previous; `null` state then falls back to the first row.
+    const isVisible = (id: string) => tree.getItemInstance(id).getItemMeta().index >= 0;
     if (previousItems !== items) {
         setPreviousItems(items);
-        const isVisible = (id: string) => tree.getItemInstance(id).getItemMeta().index >= 0;
         if (internalFocusedItem !== undefined && !isVisible(internalFocusedItem)) {
             const previousIds = previousItems.map((item) => item.id);
             const focusedIndex = previousIds.indexOf(internalFocusedItem);
             const nextVisible = previousIds.slice(focusedIndex + 1).find(isVisible);
             const previousVisible = previousIds.slice(0, focusedIndex).reverse().find(isVisible);
             setInternalFocusedItem(nextVisible ?? previousVisible);
+        }
+    }
+
+    // Only while focus is outside: a selection prop change must never move the tab stop off the row the user is arrowing through.
+    if (!hasFocusWithin) {
+        const visibleSelectedItem = selectedItems.find(isVisible);
+        if (visibleSelectedItem !== undefined && visibleSelectedItem !== internalFocusedItem) {
+            setInternalFocusedItem(visibleSelectedItem);
         }
     }
 

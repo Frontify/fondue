@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { AssistiveTreeDescription } from '@headless-tree/react';
-import { Fragment, useId, useMemo, type ReactNode } from 'react';
+import { Fragment, useId, useMemo, useState, type ReactNode } from 'react';
 
 import { useTranslation } from '#/hooks/useTranslation';
 
@@ -66,6 +66,7 @@ export const TreeRoot = ({
     const checkboxHintId = useId();
     const reorderHintId = useId();
     const { items, parentIsLoading: rootIsLoading } = useMemo(() => parseChildren(children), [children]);
+    const [hasFocusWithin, setHasFocusWithin] = useState(false);
     const tree = useTreeController({
         items,
         onChange,
@@ -73,6 +74,7 @@ export const TreeRoot = ({
         reorderable,
         countDisabledInFolderState,
         rootAccepts: accepts,
+        hasFocusWithin,
     });
 
     const visibleItems = tree.getItems();
@@ -92,7 +94,12 @@ export const TreeRoot = ({
     );
 
     return (
-        <div {...tree.getContainerProps()} className={styles.tree}>
+        <div
+            {...tree.getContainerProps()}
+            className={styles.tree}
+            onFocus={() => setHasFocusWithin(true)}
+            onBlur={(event) => setHasFocusWithin(event.currentTarget.contains(event.relatedTarget))}
+        >
             {multiSelect && (
                 <span id={checkboxHintId} className={styles.srOnly}>
                     {t('Tree_checkboxHint')}
