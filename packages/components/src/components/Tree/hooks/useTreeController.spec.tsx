@@ -461,17 +461,18 @@ describe('useTreeController keyboard drag', () => {
         expect(result.current.getState().dnd?.draggedItems?.map((item) => item.getId())).toEqual(['b']);
     });
 
-    it('drags the selection when it holds the focused row', () => {
+    it('drags the whole selection when it holds the focused row', () => {
         const items: TreeItemData[] = [
             { id: 'a', name: 'A', isFolder: false, parentId: ROOT_ID, isSelected: true },
             { id: 'b', name: 'B', isFolder: false, parentId: ROOT_ID },
+            { id: 'c', name: 'C', isFolder: false, parentId: ROOT_ID, isSelected: true },
         ];
         const { result } = renderHook(() => useTreeController({ items, reorderable: true }));
 
         act(() => result.current.getItemInstance('a').setFocused());
         act(() => startDrag(result.current));
 
-        expect(result.current.getState().dnd?.draggedItems?.map((item) => item.getId())).toEqual(['a']);
+        expect(result.current.getState().dnd?.draggedItems?.map((item) => item.getId())).toEqual(['a', 'c']);
     });
 });
 
