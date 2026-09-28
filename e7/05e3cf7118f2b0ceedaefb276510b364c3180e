@@ -1,0 +1,14 @@
+packages/components/src/components/Button/styles/button.module.scss
+  h_72595612499821 202
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.20",
+  "base_commit_sha": "e705e3cf7118f2b0ceedaefb276510b364c3180e",
+  "prompts": {},
+  "humans": {
+    "h_72595612499821": {
+      "author": "Red Ochsenbein <red.ochsenbein@frontify.com>"
+    }
+  }
+}

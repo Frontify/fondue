@@ -1,0 +1,39 @@
+packages/charts/src/components/BarChart/components/hooks/useRotatedLabel.spec.tsx
+  s_61b389a91669d8::t_74e21356c4ef16 46
+packages/charts/package.json
+  s_61b389a91669d8::t_66a4f53158d457 93-94,111
+packages/components/package.json
+  s_61b389a91669d8::t_66a4f53158d457 109-110,133
+packages/components/src/hooks/__tests__/useTextTruncation.spec.ts
+  s_61b389a91669d8::t_e0bf8479ae3864 80-86
+  s_61b389a91669d8::t_425e899dec6fad 19
+packages/components/src/components/DatePicker/hooks/__tests__/useSingleDate.spec.ts
+  s_61b389a91669d8::t_f078b87d3ebef2 19,24,39,45,61,65
+packages/components/scripts/buildManifest/__tests__/discoverComponents.spec.ts
+  s_61b389a91669d8::t_11404c6878a97c 3-6
+  s_61b389a91669d8::t_126b837a5f2026 7
+packages/sdk/package.json
+  s_61b389a91669d8::t_66a4f53158d457 61
+packages/components/src/components/DatePicker/hooks/__tests__/useDateRange.spec.ts
+  s_61b389a91669d8::t_f078b87d3ebef2 25-26,35-36,44-45,52-53,65-66,85-86,96-97,116-117,125-126,145-146,161-162,173-174
+packages/charts/src/components/PieChart/helpers/getTextOffset.spec.ts
+  s_61b389a91669d8::t_45f4cf3dbfdd4e 26
+pnpm-lock.yaml
+  s_61b389a91669d8::t_ae987cb2cdfb6d 145-146,148-149,199-200,359-360,362-363,431-432,1046,1274-1275,5726-5727,5729-5730,5738-5744,5746-5747,5750,5760-5761,5766-5767,5769-5770,5772,5777-5778,5960-5961,6160-6163,6782-6783,7065-7066,7678-7680,7884-7888,9268-9269,9460-9462,9483-9486,9900-9902,9906-9913,9916,9920,9924-9932,15081,15084-15091,15101-15103,15105,15107,15109-15110,15112,15116,15118-15119,15121,15129,15131,15137,15139,15141-15142,15146-15147,15155,15157-15159,15338,15342,15547-15548,16152,16751,17295,17297,17518-17522,17555,17561,17648,17679,18128,19017,19020,19320,19565,19580-19581,20060,20063-20068,20070-20072,20078-20079,20084,20087-20092,20094-20096,20102-20103
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "213d13be7a8a649c9eb8e6f8f28cffb72c8cb160",
+  "prompts": {},
+  "sessions": {
+    "s_61b389a91669d8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1a8b814d-8f00-4b42-b011-e89956ece47f",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}
