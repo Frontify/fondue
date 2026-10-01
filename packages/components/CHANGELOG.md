@@ -1,5 +1,20 @@
 # @frontify/fondue-components
 
+## 32.2.0
+
+### Minor Changes
+
+- [#2853](https://github.com/Frontify/fondue/pull/2853) [`b3f18e2`](https://github.com/Frontify/fondue/commit/b3f18e25aed00ee5b27fc348ac8256abacc04a25) Thanks [@jcosta33](https://github.com/jcosta33)! - feat(Tree): export the Tree prop and callback types (`TreeDropCandidate`, `TreeMoveInfo`, `TreeRootProps` and the rest) from the package entry
+
+### Patch Changes
+
+- [#2863](https://github.com/Frontify/fondue/pull/2863) [`1ba4166`](https://github.com/Frontify/fondue/commit/1ba4166cafcf628a32b412be17c2d568cfa93570) Thanks [@syeo66](https://github.com/syeo66)! - feat(Select.Multiple): respect disable state in badges
+
+- [#2855](https://github.com/Frontify/fondue/pull/2855) [`4fda25c`](https://github.com/Frontify/fondue/commit/4fda25c441c8d123fff4022f8ecfc15cfef931e6) Thanks [@jcosta33](https://github.com/jcosta33)! - fix(Tree): give the loading row the same transparent border as real rows and start the drop line under the target chevron, both were 2px off
+
+- Updated dependencies []:
+  - @frontify/fondue-tokens@5.1.2
+
 ## 32.1.0
 
 ### Minor Changes
