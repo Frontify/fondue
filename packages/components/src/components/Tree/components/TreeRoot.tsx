@@ -76,12 +76,17 @@ export const TreeRoot = ({
 
     // React drops the blur fired while it removes the focused row, so this stays true through a removal.
     const hasFocusWithinRef = useRef(false);
-    const focusedItemId = tree.getState().focusedItem;
+    // Runs every commit: a removed row can take focus with it while the tab stop stays on another row.
     useEffect(() => {
-        if (hasFocusWithinRef.current && document.activeElement === document.body) {
-            tree.getFocusedItem().getElement()?.focus();
+        if (!hasFocusWithinRef.current || document.activeElement !== document.body) {
+            return;
         }
-    }, [focusedItemId, tree]);
+        if (tree.getItems().length === 0) {
+            hasFocusWithinRef.current = false;
+            return;
+        }
+        tree.getFocusedItem().getElement()?.focus();
+    });
 
     const visibleItems = tree.getItems();
     const loadingInsertions = useMemo(
