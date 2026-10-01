@@ -256,7 +256,10 @@ export const useTreeController = ({
         getItemName: (item) => item.getItemData().name,
         isItemFolder: (item) => Boolean(item.getItemData().isFolder),
         canReorder: reorderable,
-        canDrag: reorderable ? (items) => items.every((item) => !item.getItemData().isDisabled) : undefined,
+        canDrag: reorderable
+            ? (items) =>
+                  items.every((item) => !item.getItemData().isDisabled && item.getItemData().isDraggable !== false)
+            : undefined,
         canDrop: reorderable ? canDrop : undefined,
         onDrop: reorderable ? onDrop : undefined,
         dataLoader: {

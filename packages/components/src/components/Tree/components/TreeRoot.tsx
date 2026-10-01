@@ -63,7 +63,8 @@ export const TreeRoot = ({
     accepts,
 }: TreeRootProps) => {
     const { t } = useTranslation();
-    const rowHintId = useId();
+    const checkboxHintId = useId();
+    const reorderHintId = useId();
     const { items, parentIsLoading: rootIsLoading } = useMemo(() => parseChildren(children), [children]);
     const tree = useTreeController({
         items,
@@ -90,15 +91,16 @@ export const TreeRoot = ({
         [multiSelect, items, countDisabledInFolderState],
     );
 
-    const rowHint = [multiSelect && t('Tree_checkboxHint'), reorderable && t('Tree_reorderHint')]
-        .filter(Boolean)
-        .join(' ');
-
     return (
         <div {...tree.getContainerProps()} className={styles.tree}>
-            {rowHint && (
-                <span id={rowHintId} className={styles.srOnly}>
-                    {rowHint}
+            {multiSelect && (
+                <span id={checkboxHintId} className={styles.srOnly}>
+                    {t('Tree_checkboxHint')}
+                </span>
+            )}
+            {reorderable && (
+                <span id={reorderHintId} className={styles.srOnly}>
+                    {t('Tree_reorderHint')}
                 </span>
             )}
             <AssistiveTreeDescription tree={tree} />
@@ -110,7 +112,8 @@ export const TreeRoot = ({
                             item={item}
                             multiSelect={multiSelect}
                             reorderable={reorderable}
-                            hintId={rowHint ? rowHintId : undefined}
+                            checkboxHintId={multiSelect ? checkboxHintId : undefined}
+                            reorderHintId={reorderable ? reorderHintId : undefined}
                             checkedState={checkedStates?.get(item.getId()) ?? false}
                         />
                         {loadingPlaceholder && (

@@ -1370,6 +1370,76 @@ export const DisabledRows: Story = {
     },
 };
 
+export const NonDraggableRows: Story = {
+    parameters: {
+        docs: {
+            description: {
+                story:
+                    '`isDraggable={false}` keeps a row in place: it shows no drag handle and cannot be ' +
+                    'picked up, by pointer or keyboard. A drag whose rows include it does not start. ' +
+                    'Everything else stays available: clicking, selecting, renaming, expanding a folder, ' +
+                    'and dropping other rows into it.',
+            },
+        },
+    },
+    args: {
+        reorderable: true,
+    },
+    render: (args) => {
+        const [nodes, setNodes] = useState<TreeChangeState>([
+            {
+                id: 'a',
+                name: 'Folder a (fixed)',
+                isFolder: true,
+                isExpanded: true,
+                tags: ['fixed'],
+                children: [
+                    { id: 'a1', name: 'Item a1', isFolder: false },
+                    { id: 'a2', name: 'Item a2 (fixed)', isFolder: false, tags: ['fixed'] },
+                ],
+            },
+            { id: 'b', name: 'Item b', isFolder: false },
+            { id: 'c', name: 'Item c', isFolder: false },
+        ]);
+
+        // The fixed flag is consumer state; this story round-trips it through `tags`
+        // purely so the controlled re-render keeps it.
+        const isDraggable = (n: TreeNodeState) => !n.tags?.includes('fixed');
+
+        const renderNode = (n: TreeNodeState): ReactNode =>
+            n.isFolder ? (
+                <Tree.Folder key={n.id} id={n.id} isExpanded={n.isExpanded} isDraggable={isDraggable(n)} tags={n.tags}>
+                    <Tree.FolderHeader>
+                        <Tree.Icon>
+                            <IconFolder size={16} />
+                        </Tree.Icon>
+                        <Tree.Label>{n.name}</Tree.Label>
+                    </Tree.FolderHeader>
+                    {n.children?.map(renderNode)}
+                </Tree.Folder>
+            ) : (
+                <Tree.Item key={n.id} id={n.id} isDraggable={isDraggable(n)} tags={n.tags}>
+                    <Tree.Icon>
+                        <IconDocument size={16} />
+                    </Tree.Icon>
+                    <Tree.Label>{n.name}</Tree.Label>
+                </Tree.Item>
+            );
+
+        return (
+            <Tree.Root
+                {...args}
+                onChange={(state) => {
+                    args.onChange?.(state);
+                    setNodes(state);
+                }}
+            >
+                {nodes.map(renderNode)}
+            </Tree.Root>
+        );
+    },
+};
+
 export const WithPerItemHandlers: Story = {
     args: {
         multiSelect: true,

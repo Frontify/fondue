@@ -440,6 +440,20 @@ describe('useTreeController disabled rows', () => {
     });
 });
 
+describe('useTreeController non-draggable rows', () => {
+    it('rejects dragging rows with isDraggable: false via canDrag when reorderable', () => {
+        const items: TreeItemData[] = [
+            { id: '1', name: 'One', isFolder: false, parentId: ROOT_ID, isDraggable: false },
+            { id: '2', name: 'Two', isFolder: false, parentId: ROOT_ID },
+        ];
+        const { result } = renderHook(() => useTreeController({ items, reorderable: true }));
+
+        const canDrag = result.current.getConfig().canDrag;
+        expect(canDrag?.([result.current.getItemInstance('1')])).toBe(false);
+        expect(canDrag?.([result.current.getItemInstance('2')])).toBe(true);
+    });
+});
+
 /**
  * Folders with no loaded children — empty, or collapsed while their contents lazy-load —
  * are checkable as their own entity: their `isSelected` prop feeds `checkedItems` and
