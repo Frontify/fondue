@@ -293,6 +293,53 @@ test.describe('TreeRoot rendering', () => {
         await expect(component.getByRole('treeitem', { name: /First/ })).toBeFocused();
     });
 
+    test('Tabbing back in after the focused row is removed returns to the selected row', async ({ mount, page }) => {
+        const component = await mount(
+            <div>
+                <button type="button">Outside</button>
+                <Tree.Root>
+                    <Tree.Item id="1" isSelected>
+                        <Tree.Label>First</Tree.Label>
+                    </Tree.Item>
+                    <Tree.Item id="2">
+                        <Tree.Label>Second</Tree.Label>
+                    </Tree.Item>
+                    <Tree.Item id="3">
+                        <Tree.Label>Third</Tree.Label>
+                    </Tree.Item>
+                </Tree.Root>
+                <button type="button">After</button>
+            </div>,
+        );
+
+        await component.getByRole('button', { name: 'Outside' }).focus();
+        await page.keyboard.press('Tab');
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('ArrowDown');
+        await expect(component.getByRole('treeitem', { name: /Third/ })).toBeFocused();
+
+        await component.update(
+            <div>
+                <button type="button">Outside</button>
+                <Tree.Root>
+                    <Tree.Item id="1" isSelected>
+                        <Tree.Label>First</Tree.Label>
+                    </Tree.Item>
+                    <Tree.Item id="2">
+                        <Tree.Label>Second</Tree.Label>
+                    </Tree.Item>
+                </Tree.Root>
+                <button type="button">After</button>
+            </div>,
+        );
+        await expect(component.getByRole('treeitem', { name: /Second/ })).toBeFocused();
+
+        await page.keyboard.press('Tab');
+        await expect(component.getByRole('button', { name: 'After' })).toBeFocused();
+        await page.keyboard.press('Shift+Tab');
+        await expect(component.getByRole('treeitem', { name: /First/ })).toBeFocused();
+    });
+
     test('Tabbing back in after leaving the tree returns to the selected row, not the last-focused one', async ({
         mount,
         page,
