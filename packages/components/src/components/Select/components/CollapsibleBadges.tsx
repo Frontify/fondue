@@ -26,6 +26,8 @@ type CollapsibleBadgesProps = {
     selectedCount?: number;
     /** Number of partially applied values. Above zero, a non-dismissable "N mixed" badge follows the selection badges. */
     indeterminateCount?: number;
+    /** Renders the badges as disabled and prevents them from being dismissed. */
+    disabled?: boolean;
 };
 
 type BadgeLayout = {
@@ -88,6 +90,7 @@ export const CollapsibleBadges = ({
     children,
     selectedCount = 0,
     indeterminateCount = 0,
+    disabled = false,
 }: CollapsibleBadgesProps): ReactNode => {
     const { t } = useTranslation();
     const wasClickedRef = useRef(false);
@@ -169,6 +172,7 @@ export const CollapsibleBadges = ({
                 >
                     <Badge
                         emphasis="weak"
+                        disabled={disabled}
                         aria-label={typeof item.displayValue === 'string' ? item.displayValue : item.value}
                         onDismiss={(event) => {
                             event.stopPropagation();
@@ -185,7 +189,7 @@ export const CollapsibleBadges = ({
                     className={styles.badgeWrapper}
                     aria-label={t('Select_additionalItemsSelected', { count: overflowCount.toString() })}
                 >
-                    <Badge emphasis="weak" aria-hidden="true">
+                    <Badge emphasis="weak" disabled={disabled} aria-hidden="true">
                         +{overflowCount}
                     </Badge>
                 </div>
@@ -193,21 +197,21 @@ export const CollapsibleBadges = ({
             {/* The counts are also rendered while hidden, so the layout can measure them before they are needed */}
             {items.length > 0 && (
                 <div ref={selectedCountRef} className={styles.badgeWrapper} data-visible={showsCounts}>
-                    <Badge emphasis="weak" data-test-id="fondue-select-selected-count">
+                    <Badge emphasis="weak" disabled={disabled} data-test-id="fondue-select-selected-count">
                         {t('Select_selectedItemsCount', { count: items.length.toString() })}
                     </Badge>
                 </div>
             )}
             {hasIndeterminate && (
                 <div ref={mixedCountRef} className={styles.badgeWrapper} data-visible={!isMixedOnly}>
-                    <Badge emphasis="weak" data-test-id="fondue-select-mixed-count">
+                    <Badge emphasis="weak" disabled={disabled} data-test-id="fondue-select-mixed-count">
                         {t('Select_mixedCount', { count: indeterminateCount.toString() })}
                     </Badge>
                 </div>
             )}
             {isMixedOnly && (
                 <div className={styles.badgeWrapper}>
-                    <Badge emphasis="weak" data-test-id="fondue-select-mixed">
+                    <Badge emphasis="weak" disabled={disabled} data-test-id="fondue-select-mixed">
                         {t('Select_mixed')}
                     </Badge>
                 </div>

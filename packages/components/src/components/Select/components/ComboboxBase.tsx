@@ -319,6 +319,7 @@ const ComboboxBaseInput = (
                             <CollapsibleBadges
                                 items={badgeItems}
                                 onDismiss={handleDismissBadge}
+                                disabled={disabled}
                                 selectedCount={selectedItemValues.length}
                                 indeterminateCount={indeterminateItemValues.length}
                             >
