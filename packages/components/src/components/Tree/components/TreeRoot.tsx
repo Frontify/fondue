@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { AssistiveTreeDescription } from '@headless-tree/react';
-import { Fragment, useId, useMemo, useState, type ReactNode } from 'react';
+import { Fragment, useEffect, useId, useMemo, useState, type ReactNode } from 'react';
 
 import { useTranslation } from '#/hooks/useTranslation';
 
@@ -76,6 +76,14 @@ export const TreeRoot = ({
         rootAccepts: accepts,
         hasFocusWithin,
     });
+
+    // React drops the blur fired while it removes the focused row, so `hasFocusWithin` stays true through a removal.
+    const focusedItemId = tree.getState().focusedItem;
+    useEffect(() => {
+        if (hasFocusWithin && document.activeElement === document.body) {
+            tree.getFocusedItem().getElement()?.focus();
+        }
+    }, [focusedItemId, hasFocusWithin, tree]);
 
     const visibleItems = tree.getItems();
     const loadingInsertions = useMemo(

@@ -73,8 +73,8 @@ type TreeRowSharedProps = {
      */
     isDisabled?: boolean;
     /**
-     * Set to `false` to keep the row in place: no drag handle is shown and drag-and-drop
-     * skips it. A drag whose rows include this one does not start, by pointer or
+     * Set to `false` so the row cannot be dragged: no drag handle is shown and drag-and-drop
+     * skips it. Other rows can still be dropped around it, which can change its index. A drag whose rows include this one does not start, by pointer or
      * keyboard. Everything else (click, select, rename, expand, dropping into a folder)
      * keeps working. The row still moves with a parent folder that is dragged. Default `true`.
      */
