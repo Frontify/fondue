@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { AssistiveTreeDescription } from '@headless-tree/react';
-import { Fragment, useEffect, useId, useMemo, useRef, type ReactNode } from 'react';
+import { Fragment, useEffect, useId, useMemo, useRef, useState, type ReactNode } from 'react';
 
 import { useTranslation } from '#/hooks/useTranslation';
 
@@ -66,6 +66,7 @@ export const TreeRoot = ({
     const checkboxHintId = useId();
     const reorderHintId = useId();
     const { items, parentIsLoading: rootIsLoading } = useMemo(() => parseChildren(children), [children]);
+    const [hasFocusWithin, setHasFocusWithin] = useState(false);
     const tree = useTreeController({
         items,
         onChange,
@@ -73,6 +74,7 @@ export const TreeRoot = ({
         reorderable,
         countDisabledInFolderState,
         rootAccepts: accepts,
+        hasFocusWithin,
     });
 
     // React drops the blur fired while it removes the focused row, so this stays true through a removal.
@@ -111,9 +113,12 @@ export const TreeRoot = ({
             className={styles.tree}
             onFocus={() => {
                 hasFocusWithinRef.current = true;
+                setHasFocusWithin(true);
             }}
             onBlur={(event) => {
-                hasFocusWithinRef.current = event.currentTarget.contains(event.relatedTarget);
+                const isInside = event.currentTarget.contains(event.relatedTarget);
+                hasFocusWithinRef.current = isInside;
+                setHasFocusWithin(isInside);
             }}
         >
             {multiSelect && (
