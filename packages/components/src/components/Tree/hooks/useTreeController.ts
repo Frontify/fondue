@@ -282,7 +282,8 @@ export const useTreeController = ({
                 ? {
                       startDrag: {
                           hotkey: 'Control+Shift+KeyD',
-                          isEnabled: (tree) => !tree.getState().dnd,
+                          // Features are fixed at mount, so a later `reorderable` flip leaves the keyboard drag feature unloaded.
+                          isEnabled: (tree) => typeof tree.startKeyboardDrag === 'function' && !tree.getState().dnd,
                           handler: (_event, tree) => {
                               const focused = tree.getFocusedItem();
                               const selected = tree.getSelectedItems?.() ?? [];

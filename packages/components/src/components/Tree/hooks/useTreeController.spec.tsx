@@ -474,6 +474,19 @@ describe('useTreeController keyboard drag', () => {
 
         expect(result.current.getState().dnd?.draggedItems?.map((item) => item.getId())).toEqual(['a', 'c']);
     });
+
+    it('ignores the hotkey when reorderable is turned on after mount', () => {
+        const items: TreeItemData[] = [{ id: 'a', name: 'A', isFolder: false, parentId: ROOT_ID }];
+        const { result, rerender } = renderHook(({ reorderable }) => useTreeController({ items, reorderable }), {
+            initialProps: { reorderable: false },
+        });
+
+        rerender({ reorderable: true });
+        act(() => result.current.getItemInstance('a').setFocused());
+        const hotkey = { ...result.current.getHotkeyPresets().startDrag, ...result.current.getConfig().hotkeys?.startDrag };
+
+        expect(hotkey.isEnabled?.(result.current)).toBe(false);
+    });
 });
 
 /**
