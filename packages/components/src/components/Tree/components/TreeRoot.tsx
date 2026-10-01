@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { AssistiveTreeDescription } from '@headless-tree/react';
-import { Fragment, useId, useMemo, type ReactNode } from 'react';
+import { Fragment, useEffect, useId, useMemo, useRef, type ReactNode } from 'react';
 
 import { useTranslation } from '#/hooks/useTranslation';
 
@@ -75,6 +75,15 @@ export const TreeRoot = ({
         rootAccepts: accepts,
     });
 
+    // React drops the blur fired while it removes the focused row, so this stays true through a removal.
+    const hasFocusWithinRef = useRef(false);
+    const focusedItemId = tree.getState().focusedItem;
+    useEffect(() => {
+        if (hasFocusWithinRef.current && document.activeElement === document.body) {
+            tree.getFocusedItem().getElement()?.focus();
+        }
+    }, [focusedItemId, tree]);
+
     const visibleItems = tree.getItems();
     const loadingInsertions = useMemo(
         () => computeLoadingInsertions(visibleItems, rootIsLoading),
@@ -92,7 +101,16 @@ export const TreeRoot = ({
     );
 
     return (
-        <div {...tree.getContainerProps()} className={styles.tree}>
+        <div
+            {...tree.getContainerProps()}
+            className={styles.tree}
+            onFocus={() => {
+                hasFocusWithinRef.current = true;
+            }}
+            onBlur={(event) => {
+                hasFocusWithinRef.current = event.currentTarget.contains(event.relatedTarget);
+            }}
+        >
             {multiSelect && (
                 <span id={checkboxHintId} className={styles.srOnly}>
                     {t('Tree_checkboxHint')}
