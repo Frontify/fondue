@@ -41,6 +41,23 @@ const meta: Meta<typeof SelectSingle> = {
         placeholder: 'Select an item',
         onSelect: action('onSelect'),
     },
+    argTypes: {
+        disabled: { control: 'boolean', table: { category: 'State' } },
+        status: {
+            control: 'inline-radio',
+            options: ['neutral', 'success', 'error'],
+            table: { category: 'State' },
+        },
+        placeholder: { control: 'text', table: { category: 'Content' } },
+        showStringValue: { control: 'boolean', table: { category: 'Content' } },
+        alignMenu: { control: 'inline-radio', options: ['start', 'center', 'end'], table: { category: 'Menu' } },
+        side: { control: 'inline-radio', options: ['top', 'right', 'bottom', 'left'], table: { category: 'Menu' } },
+        viewportCollisionPadding: {
+            control: 'inline-radio',
+            options: ['compact', 'spacious'],
+            table: { category: 'Menu' },
+        },
+    },
 };
 export default meta;
 
@@ -64,6 +81,11 @@ export const SimpleSelect: Story = {
 
 export const MultipleSelect: StoryObj<typeof SelectMultiple> = {
     name: 'Select Multiple',
+    args: {
+        placeholder: 'Select items',
+        disabled: false,
+        status: 'neutral',
+    },
     render: (args) => {
         return (
             <Select.Multiple {...args}>
@@ -90,9 +112,14 @@ export const Combobox: Story = {
     },
 };
 
-export const MultipleCombobox: Story = {
+export const MultipleCombobox: StoryObj<typeof ComboboxMultiple> = {
     name: 'Combobox Multiple',
-    render: () => {
+    args: {
+        placeholder: 'Search and select items',
+        disabled: false,
+        status: 'neutral',
+    },
+    render: (args) => {
         const [selectedValues, setSelectedValues] = useState<string[]>([]);
 
         const handleSelect = (values: string[] | null): void => {
@@ -101,11 +128,7 @@ export const MultipleCombobox: Story = {
 
         return (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                <Select.Combobox.Multiple
-                    placeholder="Search and select items"
-                    value={selectedValues}
-                    onSelect={handleSelect}
-                >
+                <Select.Combobox.Multiple {...args} value={selectedValues} onSelect={handleSelect}>
                     <Select.Item value="apple">Apple</Select.Item>
                     <Select.Item value="banana">Banana</Select.Item>
                     <Select.Item value="cherry">Cherry</Select.Item>
@@ -121,13 +144,18 @@ export const MultipleCombobox: Story = {
 
 export const MultipleSelectWithMixedValues: StoryObj<typeof SelectMultiple> = {
     name: 'Select Multiple (mixed values)',
-    render: () => {
+    args: {
+        placeholder: 'Select tags',
+        disabled: false,
+        status: 'neutral',
+    },
+    render: (args) => {
         const [selectedValues, setSelectedValues] = useState<string[]>(['brand']);
         const [indeterminateValues, setIndeterminateValues] = useState<string[]>(['campaign', 'social']);
 
         return (
             <Select.Multiple
-                placeholder="Select tags"
+                {...args}
                 value={selectedValues}
                 indeterminateValues={indeterminateValues}
                 onSelect={(values) => {
@@ -147,13 +175,18 @@ export const MultipleSelectWithMixedValues: StoryObj<typeof SelectMultiple> = {
 
 export const ComboboxMultipleWithMixedValues: StoryObj<typeof ComboboxMultiple> = {
     name: 'Combobox Multiple (mixed values)',
-    render: () => {
+    args: {
+        placeholder: 'Search and select items',
+        disabled: false,
+        status: 'neutral',
+    },
+    render: (args) => {
         const [selectedValues, setSelectedValues] = useState<string[]>(['apple']);
         const [indeterminateValues, setIndeterminateValues] = useState<string[]>(['banana', 'cherry']);
 
         return (
             <Select.Combobox.Multiple
-                placeholder="Search and select items"
+                {...args}
                 value={selectedValues}
                 indeterminateValues={indeterminateValues}
                 onSelect={(values) => {

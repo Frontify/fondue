@@ -97,6 +97,27 @@ describe('CollapsibleBadges', () => {
         expect(outerClick).not.toHaveBeenCalled();
     });
 
+    describe('disabled', () => {
+        it('disables the dismiss buttons of the selection badges', () => {
+            render(<CollapsibleBadges items={defaultItems} onDismiss={vi.fn()} disabled />);
+
+            for (const button of screen.getAllByRole('button')) {
+                expect(button).toBeDisabled();
+            }
+        });
+
+        it('does not call onDismiss when a disabled badge is clicked', async () => {
+            const onDismiss = vi.fn();
+            const user = userEvent.setup();
+
+            render(<CollapsibleBadges items={[{ value: 'a', displayValue: 'Alpha' }]} onDismiss={onDismiss} disabled />);
+
+            await user.click(screen.getByRole('button', { name: /Alpha/i }));
+
+            expect(onDismiss).not.toHaveBeenCalled();
+        });
+    });
+
     describe('indeterminateCount', () => {
         it('adds a badge for the count while keeping the selection badges', () => {
             render(<CollapsibleBadges items={defaultItems} onDismiss={vi.fn()} indeterminateCount={2} />);

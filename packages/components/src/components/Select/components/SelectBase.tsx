@@ -248,6 +248,7 @@ const SelectBaseInput = (
                             <CollapsibleBadges
                                 items={badgeItems}
                                 placeholder={placeholder}
+                                disabled={disabled}
                                 indeterminateCount={indeterminateItemValues.length}
                                 onDismiss={(value) => {
                                     onItemSelect(value);
