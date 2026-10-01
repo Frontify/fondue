@@ -2,6 +2,7 @@
 
 // @vitest-environment happy-dom
 
+import { type TreeInstance } from '@headless-tree/core';
 import { act, renderHook } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -437,6 +438,54 @@ describe('useTreeController disabled rows', () => {
         const canDrag = result.current.getConfig().canDrag;
         expect(canDrag?.([result.current.getItemInstance('1')])).toBe(false);
         expect(canDrag?.([result.current.getItemInstance('2')])).toBe(true);
+    });
+});
+
+describe('useTreeController keyboard drag', () => {
+    // Merged like headless-tree's own dispatch, so the preset runs when the Tree sets no override.
+    const startDrag = (tree: TreeInstance<TreeItemData>) => {
+        const hotkey = { ...tree.getHotkeyPresets().startDrag, ...tree.getConfig().hotkeys?.startDrag };
+        hotkey.handler?.(new KeyboardEvent('keydown'), tree);
+    };
+
+    it('drags only the focused row when another row is selected', () => {
+        const items: TreeItemData[] = [
+            { id: 'a', name: 'A', isFolder: false, parentId: ROOT_ID, isSelected: true },
+            { id: 'b', name: 'B', isFolder: false, parentId: ROOT_ID },
+        ];
+        const { result } = renderHook(() => useTreeController({ items, reorderable: true }));
+
+        act(() => result.current.getItemInstance('b').setFocused());
+        act(() => startDrag(result.current));
+
+        expect(result.current.getState().dnd?.draggedItems?.map((item) => item.getId())).toEqual(['b']);
+    });
+
+    it('drags the whole selection when it holds the focused row', () => {
+        const items: TreeItemData[] = [
+            { id: 'a', name: 'A', isFolder: false, parentId: ROOT_ID, isSelected: true },
+            { id: 'b', name: 'B', isFolder: false, parentId: ROOT_ID },
+            { id: 'c', name: 'C', isFolder: false, parentId: ROOT_ID, isSelected: true },
+        ];
+        const { result } = renderHook(() => useTreeController({ items, reorderable: true }));
+
+        act(() => result.current.getItemInstance('a').setFocused());
+        act(() => startDrag(result.current));
+
+        expect(result.current.getState().dnd?.draggedItems?.map((item) => item.getId())).toEqual(['a', 'c']);
+    });
+
+    it('ignores the hotkey when reorderable is turned on after mount', () => {
+        const items: TreeItemData[] = [{ id: 'a', name: 'A', isFolder: false, parentId: ROOT_ID }];
+        const { result, rerender } = renderHook(({ reorderable }) => useTreeController({ items, reorderable }), {
+            initialProps: { reorderable: false },
+        });
+
+        rerender({ reorderable: true });
+        act(() => result.current.getItemInstance('a').setFocused());
+        const hotkey = { ...result.current.getHotkeyPresets().startDrag, ...result.current.getConfig().hotkeys?.startDrag };
+
+        expect(hotkey.isEnabled?.(result.current)).toBe(false);
     });
 });
 
