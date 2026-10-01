@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { AssistiveTreeDescription } from '@headless-tree/react';
-import { Fragment, useEffect, useId, useMemo, useState, type ReactNode } from 'react';
+import { Fragment, useEffect, useId, useMemo, useRef, useState, type ReactNode } from 'react';
 
 import { useTranslation } from '#/hooks/useTranslation';
 
@@ -77,13 +77,19 @@ export const TreeRoot = ({
         hasFocusWithin,
     });
 
-    // React drops the blur fired while it removes the focused row, so `hasFocusWithin` stays true through a removal.
-    const focusedItemId = tree.getState().focusedItem;
+    // React drops the blur fired while it removes the focused row, so this stays true through a removal.
+    const hasFocusWithinRef = useRef(false);
+    // Runs every commit: a removed row can take focus with it while the tab stop stays on another row.
     useEffect(() => {
-        if (hasFocusWithin && document.activeElement === document.body) {
-            tree.getFocusedItem().getElement()?.focus();
+        if (!hasFocusWithinRef.current || document.activeElement !== document.body) {
+            return;
         }
-    }, [focusedItemId, hasFocusWithin, tree]);
+        if (tree.getItems().length === 0) {
+            hasFocusWithinRef.current = false;
+            return;
+        }
+        tree.getFocusedItem().getElement()?.focus();
+    });
 
     const visibleItems = tree.getItems();
     const loadingInsertions = useMemo(
@@ -105,8 +111,15 @@ export const TreeRoot = ({
         <div
             {...tree.getContainerProps()}
             className={styles.tree}
-            onFocus={() => setHasFocusWithin(true)}
-            onBlur={(event) => setHasFocusWithin(event.currentTarget.contains(event.relatedTarget))}
+            onFocus={() => {
+                hasFocusWithinRef.current = true;
+                setHasFocusWithin(true);
+            }}
+            onBlur={(event) => {
+                const isInside = event.currentTarget.contains(event.relatedTarget);
+                hasFocusWithinRef.current = isInside;
+                setHasFocusWithin(isInside);
+            }}
         >
             {multiSelect && (
                 <span id={checkboxHintId} className={styles.srOnly}>
