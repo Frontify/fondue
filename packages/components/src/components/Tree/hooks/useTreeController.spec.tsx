@@ -483,9 +483,32 @@ describe('useTreeController keyboard drag', () => {
 
         rerender({ reorderable: true });
         act(() => result.current.getItemInstance('a').setFocused());
-        const hotkey = { ...result.current.getHotkeyPresets().startDrag, ...result.current.getConfig().hotkeys?.startDrag };
+        const hotkey = {
+            ...result.current.getHotkeyPresets().startDrag,
+            ...result.current.getConfig().hotkeys?.startDrag,
+        };
 
         expect(hotkey.isEnabled?.(result.current)).toBe(false);
+    });
+
+    it('refuses keyboard and pointer drags when reorderable is turned off after mount', () => {
+        const items: TreeItemData[] = [
+            { id: 'a', name: 'A', isFolder: false, parentId: ROOT_ID, isSelected: true },
+            { id: 'b', name: 'B', isFolder: false, parentId: ROOT_ID },
+        ];
+        const { result, rerender } = renderHook(({ reorderable }) => useTreeController({ items, reorderable }), {
+            initialProps: { reorderable: true },
+        });
+
+        rerender({ reorderable: false });
+        const hotkey = {
+            ...result.current.getHotkeyPresets().startDrag,
+            ...result.current.getConfig().hotkeys?.startDrag,
+        };
+
+        expect(hotkey.isEnabled?.(result.current)).toBe(false);
+        expect(result.current.getConfig().canDrag?.([result.current.getItemInstance('b')])).toBe(false);
+        expect(result.current.getState().dnd).toBeUndefined();
     });
 });
 

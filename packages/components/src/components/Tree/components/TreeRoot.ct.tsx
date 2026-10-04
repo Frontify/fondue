@@ -4,6 +4,7 @@ import { expect, test } from '@playwright/experimental-ct-react';
 
 import { Tree } from '../Tree';
 
+import { KeyboardDragFlipFixture } from './testutils/KeyboardDragFlipFixture';
 import { TestHarness } from './testutils/TestHarness';
 
 test.describe('TreeRoot rendering', () => {
@@ -580,6 +581,20 @@ test.describe('TreeRoot reorderable mode', () => {
         expect(hintId).toBeTruthy();
         const hint = component.locator(`[id="${hintId ?? ''}"]`);
         await expect(hint).toBeAttached();
+    });
+
+    test('does not start a keyboard drag after reorderable is turned off', async ({ mount, page }) => {
+        const component = await mount(<KeyboardDragFlipFixture />);
+        await component.getByRole('treeitem', { name: /^A$/ }).click();
+        await page.keyboard.press('ArrowDown');
+        await expect(component.getByRole('treeitem', { name: /^B$/ })).toBeFocused();
+
+        await component.getByRole('button', { name: 'Stop reorder' }).click();
+        await page.keyboard.press('Tab');
+        await expect(component.getByRole('treeitem', { name: /^B$/ })).toBeFocused();
+        await page.keyboard.press('Control+Shift+D');
+
+        await expect(component.locator('[aria-live="assertive"]')).not.toContainText('Dragging');
     });
 });
 

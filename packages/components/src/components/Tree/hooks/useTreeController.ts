@@ -256,7 +256,9 @@ export const useTreeController = ({
         getItemName: (item) => item.getItemData().name,
         isItemFolder: (item) => Boolean(item.getItemData().isFolder),
         canReorder: reorderable,
-        canDrag: reorderable ? (items) => items.every((item) => !item.getItemData().isDisabled) : undefined,
+        // `undefined` means allow. The drag feature stays loaded after mount, so a later
+        // `reorderable={false}` has to refuse explicitly or the row stays draggable.
+        canDrag: (items) => reorderable && items.every((item) => !item.getItemData().isDisabled),
         canDrop: reorderable ? canDrop : undefined,
         onDrop: reorderable ? onDrop : undefined,
         dataLoader: {
@@ -277,25 +279,23 @@ export const useTreeController = ({
         // matching and breaks every later hotkey, including Enter-to-commit.
         hotkeys: {
             renameItem: { hotkey: 'F2', isEnabled: () => false },
-            // The preset adds the focused row to the selection, so a keyboard move carried the selected row along: match the pointer drag instead.
-            ...(reorderable
-                ? {
-                      startDrag: {
-                          hotkey: 'Control+Shift+KeyD',
-                          // Features are fixed at mount, so a later `reorderable` flip leaves the keyboard drag feature unloaded.
-                          isEnabled: (tree) => typeof tree.startKeyboardDrag === 'function' && !tree.getState().dnd,
-                          handler: (_event, tree) => {
-                              const focused = tree.getFocusedItem();
-                              const selected = tree.getSelectedItems?.() ?? [];
-                              if (selected.includes(focused)) {
-                                  tree.startKeyboardDrag(selected);
-                                  return;
-                              }
-                              tree.startKeyboardDrag([focused]);
-                          },
-                      },
-                  }
-                : {}),
+            // The preset adds the focused row to the selection. This override stays in place
+            // when `reorderable` turns off: features are fixed at mount, and removing the
+            // override hands Control+Shift+D back to that preset.
+            startDrag: {
+                hotkey: 'Control+Shift+KeyD',
+                isEnabled: (tree) =>
+                    reorderable && typeof tree.startKeyboardDrag === 'function' && !tree.getState().dnd,
+                handler: (_event, tree) => {
+                    const focused = tree.getFocusedItem();
+                    const selected = tree.getSelectedItems?.() ?? [];
+                    if (selected.includes(focused)) {
+                        tree.startKeyboardDrag(selected);
+                        return;
+                    }
+                    tree.startKeyboardDrag([focused]);
+                },
+            },
         },
         // Lets cascades include folder ids — the only path for a leafless folder's own
         // id into `checkedItems`. Other folder ids are filtered out in `setCheckedItems`.
