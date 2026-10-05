@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { spawnSync } from 'node:child_process';
-import { globSync, readFileSync } from 'node:fs';
+import { existsSync, globSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -81,6 +81,12 @@ describe('lint fixtures', () => {
     }
 
     it('SPEC-rich-text/AC-083 fails lint with a non-zero exit on the shared-config fixture', () => {
-        expect(lint(['src/__lint-fixtures__/shared-config.tsx']).status).toBe(1);
+        const fixture = 'src/__lint-fixtures__/shared-config.tsx';
+        const { status, diagnostics } = lint([fixture]);
+
+        // oxlint also exits 1 on "No files found", so the file and a diagnostic for it must exist.
+        expect(existsSync(join(packageRoot, fixture))).toBe(true);
+        expect(diagnostics.filter((diagnostic) => diagnostic.filename === fixture).length).toBeGreaterThan(0);
+        expect(status).toBe(1);
     }, 60_000);
 });
