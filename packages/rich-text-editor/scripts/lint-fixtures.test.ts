@@ -16,25 +16,24 @@ type Diagnostic = {
 
 const packageRoot = fileURLToPath(new URL('..', import.meta.url));
 const oxlint = join(packageRoot, 'node_modules', '.bin', 'oxlint');
-const fixtures = globSync('src/**/__lint-fixtures__/**/*.{ts,tsx}', { cwd: packageRoot }).sort();
+// The extensions of the header override in `oxlint.config.ts`, which every fixture file must match.
+const fixtures = globSync('src/**/__lint-fixtures__/**/*.{js,jsx,ts,tsx,mts,cts,cjs}', { cwd: packageRoot }).sort();
 
-const ANNOTATION = /expect-lint:\s*(\S+)(?:\s+@(\d+))?/;
+const ANNOTATION = /expect-lint:\s*(\S+)(?:\s+@(\d+))?/g;
+const HAS_ANNOTATION = /expect-lint:/;
 
 // `// expect-lint: <code>` names an error on the next line that is not an annotation; `@<line>` names the line itself.
 const expectedErrors = (source: string): string[] => {
     const lines = source.split('\n');
-    return lines.flatMap((text, index) => {
-        const match = ANNOTATION.exec(text);
-        if (match === null) {
-            return [];
-        }
-        const [, code, line] = match;
-        if (line !== undefined) {
-            return [`${line} ${code}`];
-        }
-        const target = lines.findIndex((candidate, next) => next > index && !ANNOTATION.test(candidate));
-        return [`${target + 1} ${code}`];
-    });
+    return lines.flatMap((text, index) =>
+        [...text.matchAll(ANNOTATION)].map(([, code, line]) => {
+            if (line !== undefined) {
+                return `${line} ${code}`;
+            }
+            const target = lines.findIndex((candidate, next) => next > index && !HAS_ANNOTATION.test(candidate));
+            return `${target + 1} ${code}`;
+        }),
+    );
 };
 
 // As the `lint` script does: oxlint-tsgolint 0.23 sometimes loses the `vitest` types when its Go runtime runs in parallel.
@@ -44,8 +43,11 @@ const lint = (files: readonly string[]) => {
         encoding: 'utf8',
         env: { ...process.env, GOMAXPROCS: '1' },
     });
-    const { diagnostics } = JSON.parse(result.stdout) as { diagnostics: Diagnostic[] };
-    return { status: result.status, diagnostics };
+    const { diagnostics, number_of_files: filesLinted } = JSON.parse(result.stdout) as {
+        diagnostics: Diagnostic[];
+        number_of_files: number;
+    };
+    return { status: result.status, diagnostics, filesLinted };
 };
 
 const requirementIds = (source: string) =>
@@ -55,7 +57,15 @@ describe('lint fixtures', () => {
     const reported = new Map<string, string[]>();
 
     beforeAll(() => {
-        for (const diagnostic of lint(fixtures).diagnostics) {
+        const { status, diagnostics, filesLinted } = lint(fixtures);
+
+        // A fixture oxlint skips reports nothing, so an unannotated one would pass without being linted.
+        expect(filesLinted).toBe(fixtures.length);
+        // The fixtures carry errors, so oxlint exits 1 and reports diagnostics.
+        expect(status).toBe(1);
+        expect(diagnostics.length).toBeGreaterThan(0);
+
+        for (const diagnostic of diagnostics) {
             if (diagnostic.severity !== 'error') {
                 continue;
             }
