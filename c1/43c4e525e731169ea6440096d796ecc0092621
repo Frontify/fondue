@@ -1,0 +1,36 @@
+packages/components/src/components/Badge/styles/badge.module.scss
+  s_90246622e6e157::t_5e4e3abe747baf 93-98,108-109
+  s_90246622e6e157::t_eb68becd2f237e 51-53
+packages/components/src/components/Select/__tests__/MultiselectIndeterminate.ct.tsx
+  s_90246622e6e157::t_f32aa2d1d729a6 196-199
+  s_90246622e6e157::t_3bd751e4a2d6fb 151-185,187-195,200-203,222-236
+  s_90246622e6e157::t_d39c1559b4043c 186
+  s_90246622e6e157::t_f5e4a6b53f1c77 204-221
+packages/components/src/components/Select/components/CollapsibleBadges.tsx
+  s_90246622e6e157::t_7af991c1ed296b 109,111
+  s_90246622e6e157::t_38a8137af4f713 181
+  s_90246622e6e157::t_3323ca0f8e8073 36,38-50,59-60
+packages/components/src/components/Badge/Badge.tsx
+  s_90246622e6e157::t_ee4f13901b8300 133-134,138
+.changeset/soft-pugs-wander.md
+  s_90246622e6e157::t_1f4be9ed46f505 7-12
+packages/components/src/components/Select/styles/select.module.scss
+  s_90246622e6e157::t_d07cf22759ae43 412-413,415,424-426
+  s_90246622e6e157::t_aff18f65f13372 427-428
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "c143c4e525e731169ea6440096d796ecc0092621",
+  "prompts": {},
+  "sessions": {
+    "s_90246622e6e157": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b03505de-347f-4015-bcd8-0c418eb63dbe",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}

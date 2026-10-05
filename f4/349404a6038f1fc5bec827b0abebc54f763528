@@ -1,0 +1,79 @@
+packages/sdk/package.json
+  s_1b4cb72f14f783::t_931084b6b2300b 26
+  s_1b4cb72f14f783::t_14e2ce134137d1 37
+packages/sdk/src/utils/filters.ts
+  s_1b4cb72f14f783::t_395a4f86999580 19-23,28-29
+packages/sdk/src/api/components.ts
+  s_1b4cb72f14f783::t_cc7716ecb9991c 83
+packages/sdk/src/types/tokens.ts
+  s_1b4cb72f14f783::t_2b9f1d7de7dc29 20-24
+packages/sdk/scripts/generateData.ts
+  s_1b4cb72f14f783::t_3429435529ef6d 98
+  s_1b4cb72f14f783::t_6b1329edf97067 140,158
+  s_1b4cb72f14f783::t_8ce3115d198b3d 181
+  s_1b4cb72f14f783::t_3a737e227833e3 175-177
+  s_1b4cb72f14f783::t_f83528cf871786 113-114
+  s_1b4cb72f14f783::t_ca7f5cc7f2a47e 115
+packages/sdk/src/utils/collections.ts
+  s_1b4cb72f14f783::t_ba07fabc786a54 5,7
+packages/sdk/src/api/components.test.ts
+  s_1b4cb72f14f783::t_0ff95b5132c046 10
+  s_1b4cb72f14f783::t_725ae21afda211 77-80
+packages/sdk/src/types/components.ts
+  s_1b4cb72f14f783::t_cf32d7a764f438 67-68
+  s_1b4cb72f14f783::t_1b3ff4eec59ac2 34-35
+packages/sdk/adapters/claude-skill/skill/reference.md
+  s_1b4cb72f14f783::t_d8e7423645d041 149
+  s_1b4cb72f14f783::t_2c369e4d622ae3 66
+  s_1b4cb72f14f783::t_89295e98c45cfc 244
+  s_1b4cb72f14f783::t_fe50c035e48859 147
+.changeset/sdk-contract-hardening.md
+  s_1b4cb72f14f783::t_4fd46a114b4fc9 2,7,12,14,17
+packages/sdk/README.md
+  s_1b4cb72f14f783::t_817aa42e8bac0d 60-63,65-66
+  s_1b4cb72f14f783::t_54f9ae835dfdbf 116,121-128
+  s_1b4cb72f14f783::t_f0cd2b2020b2e0 64
+  s_1b4cb72f14f783::t_e0db20131e0473 67-73
+packages/sdk/src/utils/filters.test.ts
+  s_1b4cb72f14f783::t_996d3197a11403 61,70-77
+  s_1b4cb72f14f783::t_d4365594b7d766 78
+packages/sdk/docs/mental-model.md
+  s_1b4cb72f14f783::t_817aa42e8bac0d 81,145-155
+  s_1b4cb72f14f783::t_c2e0d57b9cd07d 53
+  s_1b4cb72f14f783::t_77fe7f7be2a0ee 77-80,82-84
+  s_1b4cb72f14f783::t_e0c2c4bc87362d 85
+packages/sdk/docs/api-reference.md
+  s_1b4cb72f14f783::t_fa89d2fb1da3c9 23-28
+  s_1b4cb72f14f783::t_1f3b6b1c1e5686 439
+  s_1b4cb72f14f783::t_64dfd8463588ab 236
+  s_1b4cb72f14f783::t_9364685a1ef769 313-316
+  s_1b4cb72f14f783::t_c046476d74f231 535-538,545-547,554,556
+  s_1b4cb72f14f783::t_173318bb25debc 268
+  s_1b4cb72f14f783::t_4eefeab63fe8bd 317,322-325
+  s_1b4cb72f14f783::t_817aa42e8bac0d 97-99,101-110,521-531
+  s_1b4cb72f14f783::t_95220de46dc4a3 395-398
+  s_1b4cb72f14f783::t_4f14f77be2b273 192-200
+  s_1b4cb72f14f783::t_d0f455cac70677 100
+  s_1b4cb72f14f783::t_e7f5b74315990f 326
+packages/sdk/adapters/claude-skill/skill/SKILL.md
+  s_1b4cb72f14f783::t_a8e036a6c65802 176
+  s_1b4cb72f14f783::t_4c6e3fb2c79c11 167
+  s_1b4cb72f14f783::t_ef735a9d9dcc5d 175
+  s_1b4cb72f14f783::t_817aa42e8bac0d 34-35,37,46-49,157,177-179,186,197-205
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "f4349404a6038f1fc5bec827b0abebc54f763528",
+  "prompts": {},
+  "sessions": {
+    "s_1b4cb72f14f783": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "23286c54-2204-457f-b5c1-369a06d17011",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}

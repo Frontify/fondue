@@ -1,0 +1,24 @@
+packages/components/src/components/Button/styles/button.module.scss
+  s_7c62cc67cbe6b2::t_8c490e4341dcce 89
+  s_7c62cc67cbe6b2::t_a3c44eff4962d9 7-48
+  s_7c62cc67cbe6b2::t_6b340fcf64d2bd 202
+  s_7c62cc67cbe6b2::t_3b4f0f4e2364b4 236
+  s_7c62cc67cbe6b2::t_e225eeb7a8d6c0 332-339
+  s_7c62cc67cbe6b2::t_ffb8828beb0539 131
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.20",
+  "base_commit_sha": "8f4dd2935653817e8d251e5ea31a4445c67e3db3",
+  "prompts": {},
+  "sessions": {
+    "s_7c62cc67cbe6b2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "22e57b7f-4349-461c-b990-b52fad3ffd47",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Red Ochsenbein <red.ochsenbein@frontify.com>"
+    }
+  }
+}
