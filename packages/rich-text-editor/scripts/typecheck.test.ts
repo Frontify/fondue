@@ -91,6 +91,16 @@ describe('typecheck', () => {
         expect(result.output).toContain('scripts/type-error.ts');
     }, 120_000);
 
+    it('SPEC-rich-text/AC-093 fails on a type error in lint/', () => {
+        const target = join(copy, 'lint', 'type-error.js');
+        copyFileSync(join(packageRoot, 'fixtures/types/lint-error.js'), target);
+        const result = runTypecheck(copy);
+        rmSync(target);
+
+        expect(result.status).not.toBe(0);
+        expect(result.output).toContain('lint/type-error.js');
+    }, 120_000);
+
     it('SPEC-rich-text/AC-043 fails on an unchecked index access under the package tsconfig', () => {
         const config = join(copy, 'tsconfig.fixture.json');
         const fixture = join(packageRoot, 'fixtures/types/unchecked-index.ts');
