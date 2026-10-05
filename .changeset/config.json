@@ -9,7 +9,7 @@
     "baseBranch": "main",
     "updateInternalDependencies": "patch",
     "updateInternalDependents": "always",
-    "ignore": ["@frontify/fondue-storybook-docs"],
+    "ignore": ["@frontify/fondue-storybook-docs", "@frontify/fondue-rich-text-editor"],
     "linked": [],
     "fixed": []
 }

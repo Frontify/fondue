@@ -161,13 +161,13 @@ jobs:
         run: pnpm build:rich-text-editor
 
       # Each guard script runs here, so a new `scripts/check-*.ts` needs no workflow change.
-      # check-qualification.ts runs in the release workflow only (SPEC-rich-text-quality/AC-026).
+      # Skips check-qualification.ts (release workflow only) and `*.test.ts` guard tests.
       - name: Guard scripts
         working-directory: packages/rich-text-editor
         run: |
           ran=0
           for script in scripts/check-*.ts; do
-            if [ "$script" = scripts/check-qualification.ts ]; then
+            if [ "$script" = scripts/check-qualification.ts ] || [[ "$script" == *.test.ts ]]; then
               continue
             fi
             echo "::group::$script"
@@ -202,8 +202,9 @@ jobs:
         run: pnpm build:components
 
       # The lint fixture, typecheck fixture and Playwright config tests run in this job.
-      - name: Install Playwright Chromium
-        run: pnpm --filter {packages/rich-text-editor} exec playwright install --with-deps chromium
+      # Install every browser so the shared Playwright cache always holds all three.
+      - name: Install Playwright browsers
+        run: pnpm --stream --filter {packages/rich-text-editor} install:playwright
 
       - name: Unit test
         run: pnpm --stream --filter {packages/rich-text-editor} test

@@ -142,8 +142,8 @@ jobs:
       - name: Build Fondue components
         run: pnpm build:components
 
-      - name: Install Playwright Chromium
-        run: pnpm --filter {packages/rich-text-editor} exec playwright install --with-deps chromium
+      - name: Install Playwright browsers
+        run: pnpm --stream --filter {packages/rich-text-editor} install:playwright
 
       - name: Unit test
         run: pnpm --stream --filter {packages/rich-text-editor} test
