@@ -25,7 +25,7 @@
         "build:storybook:tokens": "pnpm build:icons && pnpm build:components && pnpm --stream --filter {packages/tokens} build:storybook",
         "build:storybook:charts": "pnpm --stream --filter {packages/charts} build:storybook",
         "build:storybook:rte": "pnpm build:icons && pnpm build:components && pnpm --stream --filter {packages/rte} build:storybook",
-        "build:storybook:rich-text-editor": "pnpm --stream --filter {packages/rich-text-editor} build:storybook",
+        "build:storybook:rich-text-editor": "pnpm build:icons && pnpm build:components && pnpm --stream --filter {packages/rich-text-editor} build:storybook",
         "lint": "pnpm --stream --filter {packages/*} --filter {storybook-docs} lint",
         "storybook": "concurrently 'pnpm storybook:packages' 'pnpm storybook:main'",
         "storybook:main": "wait-on http://localhost:6005 http://localhost:6006 http://localhost:6007 http://localhost:6008 http://localhost:6009 http://localhost:6011 http://localhost:6012 && pnpm --stream  --filter {storybook-docs} storybook",
