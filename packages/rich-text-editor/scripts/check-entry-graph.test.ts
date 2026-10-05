@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
-import { checkEntryGraph, entrySources } from './check-entry-graph';
+import { checkEntryGraph, checkPackageEntries, entrySources } from './check-entry-graph';
 
 const packageRoot = fileURLToPath(new URL('..', import.meta.url));
 
@@ -66,4 +66,15 @@ describe('check-entry-graph', () => {
         expect(Object.keys(entries)).toContain('./model');
         expect(await checkEntryGraph(packageRoot, entries)).toEqual([]);
     }, 60_000);
+
+    it('SPEC-rich-text/AC-012 fails when an exports entry with rules has no source module', async () => {
+        const { violations: found, checked } = await checkPackageEntries(
+            join(packageRoot, 'fixtures/entry-graph/unmapped'),
+        );
+
+        expect(checked).toEqual([]);
+        expect(found).toContain('./model has rules but its import target maps to no src/**/*.ts(x) source');
+        expect(found).toContain('no exports entry with rules was checked');
+        expect(found.join('\n')).not.toContain('./other');
+    });
 });

@@ -1,0 +1,13 @@
+{
+    "name": "entry-graph-unmapped",
+    "type": "module",
+    "exports": {
+        "./model": {
+            "types": "./dist/model/index.d.ts",
+            "import": "./dist/model/index.js"
+        },
+        "./other": {
+            "import": "./dist/other/index.js"
+        }
+    }
+}
