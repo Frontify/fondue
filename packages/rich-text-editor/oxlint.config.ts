@@ -74,6 +74,10 @@ const aliasOnly = (group: string[]): ImportPattern => ({
     message: 'Import the other modules of the package through the `#/` alias here (SPEC-rich-text/AC-010).',
 });
 
+// A folder of `SPEC-rich-text`, Source folders, that may import nothing: relative, `#/` alias and bare packages all fail.
+const noImports = (folder: Folder): ImportPattern[] =>
+    onlyImports([], `\`src/${folder}\` imports nothing (SPEC-rich-text/AC-010).`);
+
 const FRAMEWORKS: ImportPattern = {
     group: [
         'next',
@@ -221,18 +225,22 @@ const IMPORT_SCOPES: Scope[] = [
         patterns: [
             ...layer(
                 'react',
-                FOLDERS.filter((folder) => folder !== 'testing' && folder !== 'react'),
+                FOLDERS.filter((folder) => folder !== 'testing'),
             ),
             noProseMirror(),
         ],
     },
     {
         files: ['src/reader/**'],
+        patterns: [...layer('reader', ['model', 'locales']), noProseMirror()],
+    },
+    {
+        files: ['src/reader/registry.ts', 'src/reader/__lint-fixtures__/registry.ts'],
         patterns: [...layer('reader', ['model', 'locales', 'features/*/reader']), noProseMirror()],
     },
     { files: ['src/codecs/**'], patterns: [...layer('codecs', ['model', 'locales']), noProseMirror()] },
-    { files: ['src/locales/**'], patterns: [...layer('locales', []), noProseMirror()] },
-    { files: ['src/styles/**'], patterns: [...layer('styles', []), noProseMirror()] },
+    { files: ['src/locales/**'], patterns: noImports('locales') },
+    { files: ['src/styles/**'], patterns: noImports('styles') },
     {
         files: ['src/testing/**'],
         patterns: [
@@ -489,6 +497,11 @@ export default defineConfig({
                 'rte-style/no-pointer-prevent-default': 'off',
                 ...restricted(true, false),
             },
+        },
+        // SPEC-rich-text/AC-051 bans the network outside `src/testing`, so its test files keep the exemption.
+        {
+            files: ['src/testing/**/*.{test,ct}.{ts,tsx}', 'src/testing/**/*.bench.ts'],
+            rules: restricted(false, false),
         },
         {
             files: ['**/*.stories.tsx'],
