@@ -1,5 +1,15 @@
 # @frontify/fondue-rte
 
+## 0.1.11
+
+### Patch Changes
+
+- [#2864](https://github.com/Frontify/fondue/pull/2864) [`60980ec`](https://github.com/Frontify/fondue/commit/60980ec64eeee58b45e0a82f65d088faca2683a9) Thanks [@syeo66](https://github.com/syeo66)! - refactor(useEditorResize): stop forcing layout re-evaluations
+
+- Updated dependencies [[`1ba4166`](https://github.com/Frontify/fondue/commit/1ba4166cafcf628a32b412be17c2d568cfa93570), [`b3f18e2`](https://github.com/Frontify/fondue/commit/b3f18e25aed00ee5b27fc348ac8256abacc04a25), [`4fda25c`](https://github.com/Frontify/fondue/commit/4fda25c441c8d123fff4022f8ecfc15cfef931e6), [`0b47424`](https://github.com/Frontify/fondue/commit/0b47424d1102807a48f22333e37b5cb6449de87d)]:
+  - @frontify/fondue-components@33.0.0
+  - @frontify/fondue-icons@0.29.0
+
 ## 0.1.10
 
 ### Patch Changes
