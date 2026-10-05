@@ -17,6 +17,12 @@ type Timer = { readonly handle: number; readonly due: number; readonly callback:
 // prosemirror-history reads a previous event time of 0 as no previous event.
 const START_TIME = 1_000_000;
 
+const assertValidSeed = (seed: number): void => {
+    if (!Number.isInteger(seed) || seed < 0 || seed > 0xffff_ffff) {
+        throw new RangeError('seed must be an integer in the range [0, 4294967295]');
+    }
+};
+
 // mulberry32: a small seedable generator, uniform enough for tests.
 const createRandom = (seed: number): (() => number) => {
     let state = seed >>> 0;
@@ -56,6 +62,7 @@ const createBatch = () => {
 };
 
 export const createTestEnvironment = ({ seed }: { readonly seed: number }): TestEnvironment => {
+    assertValidSeed(seed);
     let now = START_TIME;
     let nextTimerHandle = 1;
     const timers = new Map<number, Timer>();
@@ -116,7 +123,7 @@ export const createTestEnvironment = ({ seed }: { readonly seed: number }): Test
                 timer.callback();
                 timer = nextDueTimer(until);
             }
-            now = until;
+            now = Math.max(now, until);
         },
         flushMicrotasks: async () => {
             let callback = microtasks.shift();
