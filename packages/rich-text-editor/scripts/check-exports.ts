@@ -1,10 +1,19 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { execFileSync } from 'node:child_process';
-import { existsSync, mkdtempSync, readdirSync, readFileSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
+import {
+    existsSync,
+    mkdtempSync,
+    readdirSync,
+    readFileSync,
+    realpathSync,
+    rmSync,
+    statSync,
+    writeFileSync,
+} from 'node:fs';
 import { glob } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { join, relative } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 export type PackageJson = {
@@ -38,10 +47,44 @@ const isScriptTarget = (target: unknown): target is { types: string; import: str
     Object.keys(target).join() === 'types,import' &&
     Object.values(target).every((value) => typeof value === 'string');
 
+type ScriptTarget = { readonly types: string; readonly import: string };
+
 const scriptEntries = (pkg: PackageJson) =>
     Object.entries(pkg.exports ?? {}).flatMap(([entry, target]) =>
         isScriptTarget(target) && !entry.includes('*') ? [[entry, target] as const] : [],
     );
+
+/** Expands each `*` entry against the built files; `unmatched` lists the patterns that match none. */
+const expandWildcards = (root: string, pkg: PackageJson) => {
+    const entries: (readonly [string, ScriptTarget])[] = [];
+    const unmatched: string[] = [];
+    for (const [entry, target] of Object.entries(pkg.exports ?? {})) {
+        if (!isScriptTarget(target) || !entry.includes('*')) {
+            continue;
+        }
+        const [head = '', tail = ''] = target.import.split('*');
+        const directory = join(root, head.slice(0, head.lastIndexOf('/') + 1));
+        const files =
+            target.import.includes('*') && existsSync(directory)
+                ? readdirSync(directory, { recursive: true, encoding: 'utf8' })
+                : [];
+        const matches = files
+            .map((file) => `./${relative(root, join(directory, file))}`)
+            .filter((path) => path.length > head.length + tail.length && path.startsWith(head) && path.endsWith(tail))
+            .filter((path) => statSync(join(root, path)).isFile())
+            .map((path) => path.slice(head.length, path.length - tail.length));
+        if (matches.length === 0) {
+            unmatched.push(entry);
+        }
+        for (const star of matches.sort()) {
+            entries.push([
+                entry.replace('*', star),
+                { types: target.types.replace('*', star), import: target.import.replace('*', star) },
+            ]);
+        }
+    }
+    return { entries, unmatched };
+};
 
 /** SPEC-rich-text/AC-001, AC-004 and AC-058: the manifest, its entries and its peers. */
 export const checkManifest = (pkg: PackageJson): string[] => {
@@ -90,7 +133,11 @@ export const checkManifest = (pkg: PackageJson): string[] => {
 /** SPEC-rich-text/AC-001 and AC-002: each entry is built with an export, as ES modules with no bundled dependency. */
 export const checkDist = async (root: string, pkg: PackageJson): Promise<string[]> => {
     const violations: string[] = [];
-    for (const [entry, target] of scriptEntries(pkg)) {
+    const wildcards = expandWildcards(root, pkg);
+    for (const entry of wildcards.unmatched) {
+        violations.push(`exports ${entry} matches no built file`);
+    }
+    for (const [entry, target] of [...scriptEntries(pkg), ...wildcards.entries]) {
         const missing = [target.types, target.import].filter((path) => !existsSync(join(root, path)));
         if (missing.length > 0) {
             violations.push(`exports ${entry} points at missing ${missing.join(', ')}`);
@@ -171,7 +218,10 @@ export const checkConsumer = (root: string, pkg: PackageJson): string[] => {
         if (installFailure !== undefined) {
             return [installFailure];
         }
-        const specifiers = scriptEntries(pkg).map(([entry]) => `${pkg.name}${entry.slice(1)}`);
+        // Each wildcard match is imported and typechecked, not one representative.
+        const specifiers = [...scriptEntries(pkg), ...expandWildcards(root, pkg).entries].map(
+            ([entry]) => `${pkg.name}${entry.slice(1)}`,
+        );
         const violations: string[] = [];
         for (const specifier of specifiers) {
             const script = `const module = await import(${JSON.stringify(specifier)}); if (Object.keys(module).length === 0) { throw new Error('no export'); }`;

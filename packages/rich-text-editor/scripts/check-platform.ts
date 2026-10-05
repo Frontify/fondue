@@ -99,7 +99,7 @@ const ITERATOR_HELPERS = new Set([
 export const floorMissingFeatures = (platform: string): string[] =>
     platform
         .split('\n')
-        .map((line) => /^\| `([a-z0-9-]+)` .*\| no\b[^|]*\|$/.exec(line))
+        .map((line) => /^\s*\| `([a-z0-9-]+)` .*\|\s*[Nn]o\b[^|]*\|\s*$/.exec(line))
         .flatMap((match) => (match?.[1] === undefined ? [] : [match[1]]));
 
 const isInsideFunction = (node: ts.Node) => {
@@ -233,7 +233,9 @@ export const scanFile = (path: string, source: string): string[] => {
 };
 
 export const checkPlatform = async (distDirectory: string, platform: string): Promise<string[]> => {
-    const undetected = floorMissingFeatures(platform)
+    const missing = floorMissingFeatures(platform);
+    const noRows = missing.length === 0 ? ['PLATFORM.md has no row marked as missing at the floor'] : [];
+    const undetected = missing
         .filter((feature) => DETECTORS[feature] === undefined)
         .map(
             (feature) =>
@@ -241,12 +243,12 @@ export const checkPlatform = async (distDirectory: string, platform: string): Pr
         );
     const files = globSync('**/*.{js,css}', { cwd: distDirectory });
     if (files.length === 0) {
-        return [...undetected, `${distDirectory} holds no built file; run the build first`];
+        return [...noRows, ...undetected, `${distDirectory} holds no built file; run the build first`];
     }
     const results = await Promise.all(
         files.sort().map(async (file) => scanFile(file, await readFile(join(distDirectory, file), 'utf8'))),
     );
-    return [...undetected, ...results.flat()];
+    return [...noRows, ...undetected, ...results.flat()];
 };
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
