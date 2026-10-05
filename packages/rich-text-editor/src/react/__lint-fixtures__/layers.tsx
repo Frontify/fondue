@@ -2,6 +2,7 @@
 
 // SPEC-rich-text/AC-010: `react` imports every folder except `testing`.
 import '#/bridge/portals';
+import '#/react/views';
 import '#/features/registry';
 // expect-lint: eslint(no-restricted-imports)
 import '#/testing';

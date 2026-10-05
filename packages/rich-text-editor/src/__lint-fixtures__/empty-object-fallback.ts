@@ -15,6 +15,18 @@ export const or = (options: Options | null) => {
     return label;
 };
 
+export const asserted = (options: Record<string, string> | undefined) => {
+    // expect-lint: rte-style(no-empty-object-fallback)
+    const { label } = (options ?? {}) as Options;
+    return label;
+};
+
+export const satisfied = (options: Options | undefined) => {
+    // expect-lint: rte-style(no-empty-object-fallback)
+    const { label } = (options ?? {}) satisfies Options;
+    return label;
+};
+
 // expect-lint: rte-style(no-empty-object-fallback)
 export function withDefault({ label }: Options = {}) {
     return label;

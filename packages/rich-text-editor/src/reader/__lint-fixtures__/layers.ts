@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-// SPEC-rich-text/AC-010: `reader` imports `model`, `locales` and the `reader.tsx` of each feature.
+// SPEC-rich-text/AC-010: `reader` imports `model` and `locales`; `reader.tsx` of a feature is for the registry only.
 import '#/locales/en-US';
+// expect-lint: eslint(no-restricted-imports)
 import '#/features/mentions/reader';
 // expect-lint: eslint(no-restricted-imports)
 import '#/features/mentions/view';
