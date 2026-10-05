@@ -135,32 +135,52 @@ export const checkEntryGraph = async (root: string, entries: Record<string, stri
     return [...new Set(violations)];
 };
 
+type ExportTarget = string | { readonly import?: string };
+
+const readExports = (root: string) =>
+    (JSON.parse(readFileSync(join(root, 'package.json'), 'utf8')) as { exports: Record<string, ExportTarget> }).exports;
+
+/** The `src/**` module that an `exports` target builds from, or undefined when none exists. */
+const sourceOf = (root: string, target: ExportTarget): string | undefined => {
+    if (typeof target === 'string' || target.import === undefined) {
+        return undefined;
+    }
+    const base = target.import.replace(/^\.\/dist\//, 'src/').replace(/\.js$/, '');
+    return [`${base}.ts`, `${base}.tsx`].find((path) => existsSync(join(root, path)));
+};
+
 /** Maps each script entry of the `exports` map to its source module. */
-export const entrySources = (root: string): Record<string, string> => {
-    const { exports } = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8')) as {
-        exports: Record<string, string | { readonly import?: string }>;
-    };
-    return Object.fromEntries(
-        Object.entries(exports).flatMap(([entry, target]) => {
-            if (typeof target === 'string' || target.import === undefined) {
-                return [];
-            }
-            const base = target.import.replace(/^\.\/dist\//, 'src/').replace(/\.js$/, '');
-            const source = [`${base}.ts`, `${base}.tsx`].find((path) => existsSync(join(root, path)));
+export const entrySources = (root: string): Record<string, string> =>
+    Object.fromEntries(
+        Object.entries(readExports(root)).flatMap(([entry, target]) => {
+            const source = sourceOf(root, target);
             return source === undefined ? [] : [[entry, source]];
         }),
     );
+
+/** Checks every `exports` entry that has rules; an entry whose import target has no source module is a violation. */
+export const checkPackageEntries = async (root: string): Promise<{ violations: string[]; checked: string[] }> => {
+    const exportsMap = readExports(root);
+    const ruleEntries = Object.keys(exportsMap).filter((entry) => RULES[entry] !== undefined);
+    const entries = entrySources(root);
+    const checked = Object.keys(entries).filter((entry) => RULES[entry] !== undefined);
+    const violations = ruleEntries
+        .filter((entry) => !checked.includes(entry))
+        .map((entry) => `${entry} has rules but its import target maps to no src/**/*.ts(x) source`);
+    violations.push(...(await checkEntryGraph(root, entries)));
+    if (ruleEntries.length > 0 && checked.length === 0) {
+        violations.push('no exports entry with rules was checked');
+    }
+    return { violations, checked };
 };
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
     const root = fileURLToPath(new URL('..', import.meta.url));
-    const entries = entrySources(root);
-    const violations = await checkEntryGraph(root, entries);
+    const { violations, checked } = await checkPackageEntries(root);
     if (violations.length > 0) {
         console.error(violations.join('\n'));
         process.exit(1);
     }
-    const checked = Object.keys(entries).filter((entry) => RULES[entry] !== undefined);
     console.log(
         `check-entry-graph: checked ${checked.join(', ') || 'no entry'}; none reaches an engine, editor layer or live DOM module.`,
     );

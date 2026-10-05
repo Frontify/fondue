@@ -23,4 +23,17 @@ describe('check-ct-ports', () => {
         expect(await findDuplicateCtPorts(fixture('unique'))).toEqual([]);
         expect(await findDuplicateCtPorts(fileURLToPath(new URL('../../..', import.meta.url)))).toEqual([]);
     });
+
+    it('SPEC-rich-text/AC-092 fails when the config glob matches no file', async () => {
+        expect(await findDuplicateCtPorts(fixture('empty'))).toEqual([
+            `no file under ${fixture('empty')} matches packages/*/playwright.config.ts`,
+        ]);
+    });
+
+    it('SPEC-rich-text/AC-092 fails on a ctPort that is not a numeric literal', async () => {
+        expect(await findDuplicateCtPorts(fixture('non-literal'))).toEqual([
+            'packages/a/playwright.config.ts sets ctPort to something other than a numeric literal',
+            'packages/b/playwright.config.ts sets ctPort to something other than a numeric literal',
+        ]);
+    });
 });

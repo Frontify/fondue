@@ -165,6 +165,7 @@ jobs:
       - name: Guard scripts
         working-directory: packages/rich-text-editor
         run: |
+          ran=0
           for script in scripts/check-*.ts; do
             if [ "$script" = scripts/check-qualification.ts ]; then
               continue
@@ -172,7 +173,13 @@ jobs:
             echo "::group::$script"
             pnpm exec tsx "$script"
             echo "::endgroup::"
+            ran=$((ran + 1))
           done
+          if [ "$ran" -eq 0 ]; then
+            echo "::error::No guard script ran"
+            exit 1
+          fi
+          echo "Ran $ran guard scripts"
 
   rich-text-editor-unit-tests:
     name: Rich Text Editor Unit Tests
