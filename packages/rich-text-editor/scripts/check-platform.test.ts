@@ -58,4 +58,20 @@ describe('check-platform', () => {
             `${fixture('empty-dist')} holds no built file; run the build first`,
         ]);
     });
+
+    it('SPEC-rich-text-quality/AC-042 reads floor-missing rows with trailing spaces and a capital No', () => {
+        const rows = [
+            '| `popover` Popover | Menus. | newly available | 2025-01-27 | No: chrome 116 |  ',
+            '| `composed-ranges` Ranges | Shadow roots. | newly available | 2025-08-19 | no |\t',
+            '| `dialog` <dialog> | Modal dialogs. | widely available | 2022-03-14 | yes |',
+        ].join('\n');
+
+        expect(floorMissingFeatures(rows)).toEqual(['popover', 'composed-ranges']);
+    });
+
+    it('SPEC-rich-text-quality/AC-042 fails when PLATFORM.md yields no floor-missing row', async () => {
+        const violations = await checkPlatform(fixture('guarded'), '| Feature | At the floor |\n|---|---|\n');
+
+        expect(violations).toContain('PLATFORM.md has no row marked as missing at the floor');
+    });
 });

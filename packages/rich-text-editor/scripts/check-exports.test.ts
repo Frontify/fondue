@@ -141,4 +141,32 @@ describe('check-exports dist', () => {
             ].sort(),
         );
     });
+
+    it('SPEC-rich-text/AC-001 expands a wildcard entry and checks every match', async () => {
+        const exports = {
+            ...valid.exports,
+            './locales/*': { types: './dist/locales/*.d.ts', import: './dist/locales/*.js' },
+        };
+
+        expect(
+            await checkDist(fixture('wildcard'), { ...valid, exports: { './locales/*': exports['./locales/*'] } }),
+        ).toEqual([]);
+        expect(
+            await checkDist(fixture('wildcard-broken'), {
+                ...valid,
+                exports: { './locales/*': exports['./locales/*'] },
+            }),
+        ).toEqual([
+            'exports ./locales/empty has no export',
+            'exports ./locales/fr points at missing ./dist/locales/fr.d.ts',
+        ]);
+    });
+
+    it('SPEC-rich-text/AC-001 fails on a wildcard entry that matches no built file', async () => {
+        const exports = { './locales/*': { types: './dist/locales/*.d.ts', import: './dist/locales/*.js' } };
+
+        expect(await checkDist(fixture('valid'), { ...valid, exports })).toEqual([
+            'exports ./locales/* matches no built file',
+        ]);
+    });
 });
