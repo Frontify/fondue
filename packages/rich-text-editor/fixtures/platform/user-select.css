@@ -1,0 +1,7 @@
+.chrome {
+    user-select: none;
+}
+.prefixed {
+    -webkit-user-select: none;
+    user-select: none;
+}

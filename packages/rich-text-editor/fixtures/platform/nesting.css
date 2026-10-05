@@ -1,0 +1,6 @@
+.toolbar {
+    display: flex;
+    .item {
+        color: inherit;
+    }
+}
