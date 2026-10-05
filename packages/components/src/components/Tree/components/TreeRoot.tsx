@@ -115,8 +115,8 @@ export const TreeRoot = ({
             onFocus={() => {
                 hasFocusWithinRef.current = true;
             }}
-            onBlur={(event) => {
-                hasFocusWithinRef.current = event.currentTarget.contains(event.relatedTarget);
+            onBlur={() => {
+                hasFocusWithinRef.current = false;
             }}
         >
             {rowHint && (
