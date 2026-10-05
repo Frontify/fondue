@@ -469,7 +469,14 @@ export default defineConfig({
             files: scope.files,
             rules: { 'no-restricted-imports': restrictedImports(scope) },
         })),
-        { files: ['src/model/environment.ts', 'src/runtime/environment.ts'], rules: restricted(true, false) },
+        {
+            files: [
+                'src/model/environment.ts',
+                'src/model/__lint-fixtures__/environment.ts',
+                'src/runtime/environment.ts',
+            ],
+            rules: restricted(true, false),
+        },
         { files: ['src/testing/**'], rules: restricted(false, true) },
         { files: ['src/codecs/**', 'src/reader/**'], rules: restricted(true, true, true) },
         {
