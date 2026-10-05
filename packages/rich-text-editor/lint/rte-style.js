@@ -35,11 +35,31 @@ const EXPRESSION_TYPES = new Set([
     'YieldExpression',
 ]);
 
-/** @param {AnyNode | null | undefined} node */
-const isEmptyObject = (node) => node?.type === 'ObjectExpression' && node.properties.length === 0;
+/**
+ * Strips the parentheses and type-only wrappers that leave the runtime value alone.
+ * @param {AnyNode | null | undefined} node
+ */
+const unwrap = (node) => {
+    if (
+        node?.type === 'ParenthesizedExpression' ||
+        node?.type === 'TSAsExpression' ||
+        node?.type === 'TSNonNullExpression' ||
+        node?.type === 'TSSatisfiesExpression'
+    ) {
+        return unwrap(node.expression);
+    }
+    return node;
+};
 
 /** @param {AnyNode | null | undefined} node */
-const isEmptyObjectFallback = (node) => {
+const isEmptyObject = (node) => {
+    const value = unwrap(node);
+    return value?.type === 'ObjectExpression' && value.properties.length === 0;
+};
+
+/** @param {AnyNode | null | undefined} rawNode */
+const isEmptyObjectFallback = (rawNode) => {
+    const node = unwrap(rawNode);
     if (isEmptyObject(node)) {
         return true;
     }
