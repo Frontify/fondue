@@ -19,6 +19,7 @@ describe('default ID source', () => {
 
     it('SPEC-rich-text-quality/AC-043 gives a distinct version 4 UUID for each of 10,000 calls per kind when crypto.randomUUID is absent', () => {
         const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
+        const original = Object.getOwnPropertyDescriptor(crypto, 'randomUUID');
         Object.defineProperty(crypto, 'randomUUID', { configurable: true, value: undefined });
         try {
             expect(typeof crypto.randomUUID).toBe('undefined');
@@ -32,11 +33,16 @@ describe('default ID source', () => {
                 expect(ids.size).toBe(10_000);
             }
         } finally {
-            Reflect.deleteProperty(crypto, 'randomUUID');
+            if (original !== undefined) {
+                Object.defineProperty(crypto, 'randomUUID', original);
+            } else {
+                Reflect.deleteProperty(crypto, 'randomUUID');
+            }
         }
     });
 
     it('SPEC-rich-text-quality/AC-043 builds a RuntimeEnvironment with test doubles for the rest', () => {
+        expect(typeof crypto.randomUUID).toBe('function');
         const ids: IdSource = defaultIdSource;
         const environment = {
             clock: { now: () => 1, setTimeout: () => 1, clearTimeout: () => undefined },

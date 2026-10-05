@@ -11,6 +11,20 @@ describe('createTestEnvironment', () => {
         expect(createTestEnvironment({ seed: 1 }).clock.now()).toBeGreaterThan(0);
     });
 
+    it('SPEC-rich-text-quality/AC-044 rejects seeds outside [0, 4294967295]', () => {
+        expect(() => createTestEnvironment({ seed: 0.5 })).toThrow(RangeError);
+        expect(() => createTestEnvironment({ seed: -1 })).toThrow(RangeError);
+        expect(() => createTestEnvironment({ seed: 2 ** 32 })).toThrow(RangeError);
+    });
+
+    it('SPEC-rich-text-quality/AC-044 does not move the clock backwards when advance is re-entered from a timer', () => {
+        const environment = createTestEnvironment({ seed: 1 });
+        const start = environment.clock.now();
+        environment.clock.setTimeout(() => environment.advance(500), 10);
+        environment.advance(100);
+        expect(environment.clock.now() - start).toBeGreaterThanOrEqual(510);
+    });
+
     it('SPEC-rich-text-quality/AC-044 runs each kind of callback only inside its flush call', async () => {
         const environment = createTestEnvironment({ seed: 1 });
         const ran: string[] = [];
