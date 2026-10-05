@@ -1,0 +1,91 @@
+packages/rich-text-editor/src/plugins/Code/Code.tsx
+  s_bbb45a90e2c3c4::t_b1fe2ec92e8daa 11,13
+packages/rich-text-editor/src/plugins/Italic/Italic.tsx
+  s_bbb45a90e2c3c4::t_b1fe2ec92e8daa 9,11
+packages/rich-text-editor/src/adapters/prosemirror/live/floating.ts
+  s_bbb45a90e2c3c4::t_202c35d589672b 66
+packages/rich-text-editor/src/plugins/Link/Link.tsx
+  s_bbb45a90e2c3c4::t_4aeb5618529e2a 32,36-45
+  s_bbb45a90e2c3c4::t_57aa83c72f5f28 33-35
+  s_bbb45a90e2c3c4::t_13c8a95c8b625e 22
+  s_bbb45a90e2c3c4::t_216735c3ed7c5e 10,12
+  s_bbb45a90e2c3c4::t_00a9e7bd48aba4 59-60
+  s_bbb45a90e2c3c4::t_6907366edbad6a 7
+packages/rich-text-editor/src/domain/schema.ts
+  s_bbb45a90e2c3c4::t_fcd903806faea2 23-26,28
+  s_bbb45a90e2c3c4::t_eff36c1a5e49ab 144-145
+packages/rich-text-editor/src/plugins/CheckList/CheckList.tsx
+  s_bbb45a90e2c3c4::t_24326845a3fec8 52-53
+packages/rich-text-editor/src/plugins/FontColor/components/ColorFlyout.tsx
+  s_bbb45a90e2c3c4::t_e9bbcd4742db64 26-29
+  s_bbb45a90e2c3c4::t_c2009f50c4a18f 10
+packages/rich-text-editor/src/plugins/Subscript/Subscript.tsx
+  s_bbb45a90e2c3c4::t_b1fe2ec92e8daa 9,11
+packages/rich-text-editor/src/plugins/FontColor/FontColor.tsx
+  s_bbb45a90e2c3c4::t_c42fd140590e40 28-33
+  s_bbb45a90e2c3c4::t_86d187e3097969 7-11,14
+packages/rich-text-editor/src/domain/document.ts
+  s_bbb45a90e2c3c4::t_1acdf8b28538d3 55-57
+  s_bbb45a90e2c3c4::t_af86dee7f68dd5 80-86,90-91
+  s_bbb45a90e2c3c4::t_8f9811908640c4 70-75
+  s_bbb45a90e2c3c4::t_56e0cbba1c0097 64-65
+  s_bbb45a90e2c3c4::t_c22cc939da9cc3 69
+packages/rich-text-editor/src/PluginExamples.stories.tsx
+  s_bbb45a90e2c3c4::t_0edea2377f0bb7 711-715
+packages/rich-text-editor/src/plugins/Bold/Bold.tsx
+  s_bbb45a90e2c3c4::t_b1fe2ec92e8daa 9,11
+packages/rich-text-editor/src/adapters/prosemirror/setup/pasteRules.ts
+  s_bbb45a90e2c3c4::t_f2e514774887d9 36-40,42-47
+packages/rich-text-editor/src/plugins/FontColor/helpers/colors.ts
+  s_bbb45a90e2c3c4::t_bb56a4cd4d82cc 25-26
+packages/rich-text-editor/src/adapters/reactProbe/renderProbe.ts
+  s_bbb45a90e2c3c4::t_8daaf52556f387 33
+packages/rich-text-editor/src/adapters/prosemirror/live/controlApi.ts
+  s_bbb45a90e2c3c4::t_20aca76b0c8ea1 218
+packages/rich-text-editor/src/plugins/TextStyle/helpers/presets.ts
+  s_bbb45a90e2c3c4::t_2a8381f676bbdd 64
+  s_bbb45a90e2c3c4::t_ffddb78c5b4118 66-72,76-77,80-83
+  s_bbb45a90e2c3c4::t_42259e0925300e 65
+packages/rich-text-editor/src/plugins/Strikethrough/Strikethrough.tsx
+  s_bbb45a90e2c3c4::t_b1fe2ec92e8daa 9,11
+packages/rich-text-editor/src/domain/index.ts
+  s_bbb45a90e2c3c4::t_acc6217eea922b 31
+packages/rich-text-editor/src/plugins/Link/components/LinkPanel.tsx
+  s_bbb45a90e2c3c4::t_65fc32cabc1b68 20
+packages/rich-text-editor/src/plugins/Superscript/Superscript.tsx
+  s_bbb45a90e2c3c4::t_b1fe2ec92e8daa 9,11
+packages/rich-text-editor/src/plugins/Underline/Underline.tsx
+  s_bbb45a90e2c3c4::t_b1fe2ec92e8daa 9,11
+packages/rich-text-editor/src/plugins/ColumnBreak/ColumnBreak.tsx
+  s_bbb45a90e2c3c4::t_ef44962bd72be3 50
+  s_bbb45a90e2c3c4::t_55c27e68a0d955 19-20
+packages/rich-text-editor/src/adapters/prosemirror/live/documentConversion.ts
+  s_bbb45a90e2c3c4::t_ada794f9a15294 55-57,62,64-67,72
+  s_bbb45a90e2c3c4::t_8c4b0e4689aa94 5
+packages/rich-text-editor/src/plugins/Link/helpers/draft.ts
+  s_bbb45a90e2c3c4::t_a9950dc4eceee5 7-13,17-22,24-25
+  s_bbb45a90e2c3c4::t_2fc582137a11f5 39-42
+packages/rich-text-editor/src/adapters/prosemirror/setup/schema.ts
+  s_bbb45a90e2c3c4::t_71fae85a99450e 104-106,110-111
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "4764cad8f97647433ddf4ae8186d90ee051c1d67",
+  "prompts": {},
+  "humans": {
+    "h_2139c5e5c94509": {
+      "author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  },
+  "sessions": {
+    "s_bbb45a90e2c3c4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "14cf5638-f83b-418c-a27e-909552c38ea9",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}
