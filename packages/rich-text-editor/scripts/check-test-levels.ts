@@ -12,6 +12,7 @@ const INPUT_CALLS = new Map([
     ['userEvent', new Set(['type', 'keyboard'])],
     ['fireEvent', new Set(['input', 'paste'])],
 ]);
+const USER_EVENT_MODULE = '@testing-library/user-event';
 const QUERY = /^(get|query|find)(All)?ByRole$/;
 
 const isStringLiteral = (node: ts.Node | undefined, test: (text: string) => boolean) =>
@@ -54,14 +55,50 @@ export const checkTestLevelsSource = (fileName: string, source: string): string[
     const userEventNames = new Set(['userEvent']);
     const violations: string[] = [];
 
+    // The default import under any name and `userEvent` under any alias.
+    for (const statement of file.statements) {
+        if (
+            !ts.isImportDeclaration(statement) ||
+            !isStringLiteral(statement.moduleSpecifier, (text) => text === USER_EVENT_MODULE)
+        ) {
+            continue;
+        }
+        const bindings = statement.importClause;
+        if (bindings === undefined) {
+            continue;
+        }
+        if (bindings.name !== undefined) {
+            userEventNames.add(bindings.name.text);
+        }
+        if (bindings.namedBindings !== undefined && ts.isNamedImports(bindings.namedBindings)) {
+            for (const element of bindings.namedBindings.elements) {
+                if ((element.propertyName ?? element.name).text === 'userEvent') {
+                    userEventNames.add(element.name.text);
+                }
+            }
+        }
+    }
+
+    const createsInstance = (node: ts.Expression) =>
+        [...userEventNames].some((name) => node.getText().includes(`${name}.setup(`));
+
     const collect = (node: ts.Node): void => {
         if (ts.isVariableDeclaration(node) && ts.isIdentifier(node.name) && node.initializer !== undefined) {
             if (findsSurface(node.initializer)) {
                 surfaces.add(node.name.text);
             }
-            if (/\buserEvent\.setup\(/.test(node.initializer.getText())) {
+            if (createsInstance(node.initializer)) {
                 userEventNames.add(node.name.text);
             }
+        }
+        // `user = userEvent.setup()` inside `beforeEach`.
+        if (
+            ts.isBinaryExpression(node) &&
+            node.operatorToken.kind === ts.SyntaxKind.EqualsToken &&
+            ts.isIdentifier(node.left) &&
+            createsInstance(node.right)
+        ) {
+            userEventNames.add(node.left.text);
         }
         ts.forEachChild(node, collect);
     };
