@@ -80,6 +80,12 @@ const config: StorybookConfig = {
                     type: 'auto-inject',
                     expanded: true,
                 },
+                'rich-text-editor': {
+                    title: 'Rich Text Editor (new)',
+                    url: 'http://localhost:6012',
+                    type: 'auto-inject',
+                    expanded: true,
+                },
             };
         }
 

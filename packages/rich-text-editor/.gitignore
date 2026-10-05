@@ -1,0 +1,10 @@
+node_modules
+*.log
+
+/dist
+/storybook-static
+/coverage
+/playwright/.cache/
+/test-results/
+/playwright-report/
+/blob-report/
