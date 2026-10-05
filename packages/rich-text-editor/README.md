@@ -16,7 +16,7 @@ Run each command from `packages/rich-text-editor`, or with `pnpm --filter @front
 | Command                    | Runs                                                       |
 | -------------------------- | ---------------------------------------------------------- |
 | `pnpm build`               | The ES module build into `dist`                            |
-| `pnpm lint`                | oxlint                                                     |
+| `pnpm lint`                | oxlint, with the layer rules and the `rte-style` plugin    |
 | `pnpm format:check`        | oxfmt                                                      |
 | `pnpm typecheck`           | `tsgo` over the source and over the tooling files          |
 | `pnpm test`                | Vitest with coverage, in the `node` and `dom` projects     |
