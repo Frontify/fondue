@@ -255,8 +255,6 @@ const checkMarks = (
     return [...marks].sort((a, b) => rank(a) - rank(b) || order(a) - order(b)).map(({ mark }) => mark);
 };
 
-type Column = { slots: (readonly unknown[] | null)[] };
-
 /** The cells of a `table` form a rectangular grid with consistent column widths (AC-051), as `TableMap` needs. */
 const isGrid = (rows: readonly TreeNode[]): boolean => {
     const span = (cell: TreeNode, name: 'colspan' | 'rowspan') => {
@@ -264,35 +262,40 @@ const isGrid = (rows: readonly TreeNode[]): boolean => {
         return typeof value === 'number' ? value : 1;
     };
     const cellsOf = (row: TreeNode | undefined) => (row === undefined ? [] : (row.content ?? []));
+    const height = rows.length;
     let width = 0;
+    let area = 0;
+    /** The columns that cells of earlier rows span into each row. */
+    const covered = new Float64Array(height);
     for (const [index, row] of rows.entries()) {
-        let rowWidth = 0;
-        for (const [above, earlier] of rows.slice(0, index).entries()) {
-            for (const cell of cellsOf(earlier)) {
-                rowWidth += above + span(cell, 'rowspan') > index ? span(cell, 'colspan') : 0;
-            }
-        }
+        let rowWidth = covered[index] ?? 0;
         for (const cell of cellsOf(row)) {
-            rowWidth += span(cell, 'colspan');
+            const colspan = span(cell, 'colspan');
+            const rowspan = span(cell, 'rowspan');
+            rowWidth += colspan;
+            area += colspan * rowspan;
+            for (let below = index + 1; below < Math.min(index + rowspan, height); below += 1) {
+                covered[below] = (covered[below] ?? 0) + colspan;
+            }
         }
         width = Math.max(width, rowWidth);
     }
-    const height = rows.length;
-    const filled: boolean[] = Array.from({ length: width * height }, () => false);
-    const columns: Column[] = Array.from({ length: width }, () => ({ slots: [] }));
+    // A grid with no overlap or gap tiles exactly, which bounds the fill below by the cells' own area.
+    if (width === 0 || area !== width * height) {
+        return false;
+    }
+    const filled = new Uint8Array(area);
+    const columnWidths = new Float64Array(width).fill(-1);
     let position = 0;
     for (const [index, row] of rows.entries()) {
         for (const cell of cellsOf(row)) {
-            while (position < filled.length && filled[position] === true) {
+            while (position < area && filled[position] === 1) {
                 position += 1;
-            }
-            if (position >= (index + 1) * width) {
-                return false;
             }
             const colspan = span(cell, 'colspan');
             const colwidth = cell.attrs?.colwidth;
             const widths = Array.isArray(colwidth) ? (colwidth as readonly unknown[]) : null;
-            if (widths !== null && widths.length !== colspan) {
+            if (position >= (index + 1) * width || (widths !== null && widths.length !== colspan)) {
                 return false;
             }
             for (let down = 0; down < span(cell, 'rowspan'); down += 1) {
@@ -301,28 +304,25 @@ const isGrid = (rows: readonly TreeNode[]): boolean => {
                     return false;
                 }
                 for (let across = 0; across < colspan; across += 1) {
-                    if (filled[start + across] === true) {
+                    const column = (start + across) % width;
+                    const columnWidth = widths === null ? 0 : Number(widths[across]);
+                    const seen = columnWidths[column] ?? -1;
+                    if (filled[start + across] === 1 || (seen !== -1 && seen !== columnWidth)) {
                         return false;
                     }
-                    filled[start + across] = true;
-                    columns[(start + across) % width]?.slots.push(widths === null ? null : [widths[across]]);
+                    filled[start + across] = 1;
+                    columnWidths[column] = columnWidth;
                 }
             }
             position += colspan;
         }
         for (; position < (index + 1) * width; position += 1) {
-            if (filled[position] !== true) {
+            if (filled[position] !== 1) {
                 return false;
             }
         }
     }
-    return (
-        width > 0 &&
-        columns.every(({ slots }) => {
-            const first = canonicalJson(slots[0] as JsonValue);
-            return slots.every((slot) => canonicalJson(slot as JsonValue) === first);
-        })
-    );
+    return true;
 };
 
 type Checked = { readonly ok: true; readonly node: TreeNode } | { readonly ok: false };
