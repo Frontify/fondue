@@ -9,7 +9,7 @@ import {
     type ModelMigration,
     type ModelRef,
 } from './declarations';
-import { checkEnvelope } from './envelope';
+import { checkEnvelope, findMisshapenCapabilities, isRoot } from './envelope';
 import { defaultIdSource, type IdSource } from './environment';
 import { defaultLimits, type Diagnostic, diagnostic, type ResourceLimits, type RichTextDocument } from './format';
 import { canonicalJson, hashDocument, sha256 } from './hash';
@@ -107,14 +107,22 @@ export const runMigrations = (
             const result = step.migrate(current, { ids });
             if (result.status === 'unsupported') {
                 diagnostics.push(...result.diagnostics);
-                return outcome(null);
+                return result.diagnostics.length > 0 ? outcome(null) : block();
             }
             const read = readInput(result.document, limits);
-            const checked = read.ok ? checkEnvelope(read.value, model) : read;
-            if (!checked.ok) {
-                return block(checked.diagnostic.code);
+            if (!read.ok) {
+                return block(read.diagnostic.code);
             }
-            const next = checked.document;
+            const { content, requiredCapabilities } = read.value as RichTextDocument;
+            if (!isRoot(content)) {
+                return block('format.envelope-invalid');
+            }
+            // Only a step can drop a capability it replaced; the runner owns the other envelope keys.
+            const kept =
+                findMisshapenCapabilities(requiredCapabilities) === undefined
+                    ? requiredCapabilities
+                    : current.requiredCapabilities;
+            const next: RichTextDocument = { ...current, requiredCapabilities: kept, content };
             if ([...review].some(([path, json]) => jsonAt(next, path) !== json)) {
                 return block();
             }

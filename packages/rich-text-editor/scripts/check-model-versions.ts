@@ -15,11 +15,15 @@ import {
     toJsonSchema,
 } from '../src/model/index.ts';
 
-/** What a model stores: its reference, each capability with a hash of its own schema, and the model's schema. */
+/**
+ * What a model stores: its reference, each capability with a hash of its own schema, the model's schema, and the
+ * capability that declares each node, mark and attribute, keyed `n.<node>`, `m.<mark>` and `n.<node>.<attribute>`.
+ */
 export interface ModelSnapshot {
     readonly model: ModelRef;
     readonly capabilities: readonly { readonly id: string; readonly version: number; readonly schema: string }[];
     readonly schema: JsonObject;
+    readonly owners: Readonly<Record<string, string>>;
 }
 export interface ModelCandidate {
     readonly snapshot: ModelSnapshot;
@@ -36,6 +40,22 @@ const hashOf = (value: JsonValue) => sha256(canonicalJson(value));
 export const candidateOf = (features: readonly Feature[], options: ContentModelOptions): ModelCandidate => {
     const model = compileContentModel(features, options);
     const compiled = compiledModel(model);
+    const owners: Record<string, string> = {};
+    const own = (key: string, featureId: string, attributes: readonly string[]) => {
+        owners[key] = featureId;
+        for (const name of attributes) {
+            owners[`${key}.${name}`] = featureId;
+        }
+    };
+    for (const { name, featureId, declaration, shared } of compiled.nodes) {
+        own(`n.${name}`, featureId, Object.keys(declaration.attrs));
+        for (const attribute of shared) {
+            owners[`n.${name}.${attribute.name}`] = attribute.featureId;
+        }
+    }
+    for (const { name, featureId, declaration } of compiled.marks) {
+        own(`m.${name}`, featureId, Object.keys(declaration.attrs));
+    }
     return {
         snapshot: {
             model: model.ref,
@@ -45,6 +65,7 @@ export const candidateOf = (features: readonly Feature[], options: ContentModelO
                 schema: hashOf(toJsonSchema(feature)),
             })),
             schema: toJsonSchema(model),
+            owners,
         },
         steps: {
             model: compiled.migrations.map(({ from }) => from),
@@ -88,6 +109,87 @@ export const onlyAdds = (previous: JsonValue | undefined, next: JsonValue | unde
     );
 };
 
+const objectAt = (value: JsonValue | undefined, key: string): JsonObject => {
+    const member = isObject(value) ? value[key] : undefined;
+    return isObject(member) ? member : {};
+};
+
+/** A definition without its attributes, and each attribute's schema with whether it is required. */
+const split = (definition: JsonValue | undefined) => {
+    const properties = objectAt(definition, 'properties');
+    const attrs = objectAt(properties, 'attrs');
+    const required = Array.isArray(attrs.required) ? (attrs.required as readonly JsonValue[]) : [];
+    const each = new Map(
+        Object.entries(objectAt(attrs, 'properties')).map(([name, schema]) => [
+            name,
+            { schema, required: required.includes(name) },
+        ]),
+    );
+    const rest = isObject(definition)
+        ? { ...definition, properties: { ...properties, attrs: { ...attrs, properties: {}, required: [] } } }
+        : definition;
+    return { rest, each };
+};
+
+/** `value` without the alternatives that refer to a removed definition, whose own removal is judged apart. */
+const prune = (value: JsonValue, removed: ReadonlySet<string>): JsonValue => {
+    if (Array.isArray(value)) {
+        return (value as readonly JsonValue[]).map((item) => prune(item, removed));
+    }
+    if (!isObject(value)) {
+        return value;
+    }
+    const entries = Object.entries(value).map(([key, item]): [string, JsonValue] => [key, prune(item, removed)]);
+    const pruned = Object.fromEntries(entries);
+    const alternatives = Array.isArray(pruned.oneOf) ? (pruned.oneOf as readonly JsonValue[]) : undefined;
+    if (alternatives === undefined) {
+        return pruned;
+    }
+    const kept = alternatives.filter(
+        (item) => !(isObject(item) && typeof item.$ref === 'string' && removed.has(item.$ref)),
+    );
+    const [only] = kept;
+    return kept.length === 1 && only !== undefined && entries.length === 1 ? only : { ...pruned, oneOf: kept };
+};
+
+/**
+ * The capabilities that removed or changed a node, mark or attribute they declared, beyond adding to it; `''` for a
+ * change no capability declares, such as the envelope.
+ */
+const breakingOwners = (previous: ModelSnapshot, next: ModelSnapshot): Set<string> => {
+    const envelope = (schema: JsonObject) =>
+        Object.fromEntries(Object.entries(schema).filter(([key]) => key !== '$defs'));
+    const owners = new Set<string>(onlyAdds(envelope(previous.schema), envelope(next.schema)) ? [] : ['']);
+    const ownerOf = (key: string) => previous.owners[key] ?? next.owners[key] ?? '';
+    const definitions = Object.entries(objectAt(previous.schema, '$defs'));
+    const following = (key: string) => objectAt(next.schema, '$defs')[key];
+    const removed = new Set(
+        definitions
+            .filter(([key]) => following(key) === undefined)
+            .map(([key]) => `#/$defs/${encodeURIComponent(key)}`),
+    );
+    for (const [key, definition] of definitions) {
+        const base = key.split('@')[0] ?? key;
+        const was = split(prune(definition, removed));
+        const now = split(following(key));
+        if (following(key) === undefined || !onlyAdds(was.rest, now.rest)) {
+            owners.add(ownerOf(base));
+        }
+        for (const name of following(key) === undefined ? [] : new Set([...was.each.keys(), ...now.each.keys()])) {
+            const old = was.each.get(name);
+            const added = now.each.get(name);
+            const breaks =
+                old === undefined
+                    ? added?.required === true
+                    : added === undefined || !onlyAdds(old.schema, added.schema) || (added.required && !old.required);
+            if (breaks) {
+                owners.add(ownerOf(`${base}.${name}`));
+            }
+        }
+    }
+    return owners;
+};
+
 /** Problems with going from the committed snapshot to the current model (SPEC-rich-text-format/AC-034, AC-042). */
 export const compareModel = (previous: ModelSnapshot, current: ModelCandidate): string[] => {
     const { snapshot, steps } = current;
@@ -105,13 +207,19 @@ export const compareModel = (previous: ModelSnapshot, current: ModelCandidate): 
     ) {
         problems.push(`${id}: model version ${before} became ${version} with no change to the stored representation`);
     }
-    const migrated =
-        steps.model.includes(before) ||
-        previous.capabilities.some((capability) =>
-            (steps.capabilities[capability.id] ?? []).includes(capability.version),
-        );
-    if (!onlyAdds(previous.schema, snapshot.schema) && !migrated) {
-        problems.push(`${id}: a node, mark or attribute was removed or changed with no registered migration from it`);
+    for (const owner of breakingOwners(previous, snapshot)) {
+        const earlier = previous.capabilities.find((capability) => capability.id === owner);
+        const installed = earlier !== undefined && snapshot.capabilities.some((capability) => capability.id === owner);
+        if (installed && !(steps.capabilities[owner] ?? []).includes(earlier.version)) {
+            problems.push(
+                `${id}: capability ${owner} removed or changed a node, mark or attribute with no migration from its version ${earlier.version}`,
+            );
+        }
+        if (!installed && !steps.model.includes(before)) {
+            problems.push(
+                `${id}: the feature list removed or changed a node, mark or attribute with no model migration from version ${before}`,
+            );
+        }
     }
     for (const capability of snapshot.capabilities) {
         const earlier = previous.capabilities.find((entry) => entry.id === capability.id);

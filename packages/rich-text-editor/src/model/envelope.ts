@@ -22,15 +22,17 @@ const isRef = (value: unknown): value is { readonly id: string; readonly version
     typeof value.id === 'string' &&
     Number.isInteger(value.version);
 
-/** The path of the first part of a known-version envelope that lacks the Envelope or root shape (AC-049). */
-const findMisshapen = (envelope: Readonly<Record<string, unknown>>): string | undefined => {
-    if (!hasExactly(envelope, ENVELOPE_KEYS)) {
-        return '';
-    }
-    if (!isRef(envelope.model)) {
-        return '/model';
-    }
-    const capabilities = envelope.requiredCapabilities;
+/** The Root row of the Decode order shape table: a `doc` with at least one child and no key but `attrs` (an object). */
+export const isRoot = (root: unknown): boolean =>
+    isRecord(root) &&
+    root.type === 'doc' &&
+    Array.isArray(root.content) &&
+    root.content.length > 0 &&
+    Object.keys(root).every((key) => ROOT_KEYS.has(key)) &&
+    (!Object.hasOwn(root, 'attrs') || isRecord(root.attrs));
+
+/** The path of the first part of a `requiredCapabilities` value that is not an array of refs with distinct `id`s. */
+export const findMisshapenCapabilities = (capabilities: unknown): string | undefined => {
     if (!Array.isArray(capabilities)) {
         return '/requiredCapabilities';
     }
@@ -41,15 +43,19 @@ const findMisshapen = (envelope: Readonly<Record<string, unknown>>): string | un
         }
         ids.add(capability.id);
     }
-    const root = envelope.content;
-    const shaped =
-        isRecord(root) &&
-        root.type === 'doc' &&
-        Array.isArray(root.content) &&
-        root.content.length > 0 &&
-        Object.keys(root).every((key) => ROOT_KEYS.has(key)) &&
-        (!Object.hasOwn(root, 'attrs') || isRecord(root.attrs));
-    return shaped ? undefined : '/content';
+    return undefined;
+};
+
+/** The path of the first part of a known-version envelope that lacks the Envelope or root shape (AC-049). */
+const findMisshapen = (envelope: Readonly<Record<string, unknown>>): string | undefined => {
+    if (!hasExactly(envelope, ENVELOPE_KEYS)) {
+        return '';
+    }
+    if (!isRef(envelope.model)) {
+        return '/model';
+    }
+    const root = isRoot(envelope.content) ? undefined : '/content';
+    return findMisshapenCapabilities(envelope.requiredCapabilities) ?? root;
 };
 
 /** Decode order step 2: the format and its version, then the Envelope and root shape, then the model ID. */
