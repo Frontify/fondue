@@ -21,6 +21,7 @@ import {
     type Feature,
     type FeatureDeclaration,
     history,
+    type HtmlAttributeValue,
     type HtmlSpec,
     type JsonObject,
     type JsonValue,
@@ -29,6 +30,7 @@ import {
 } from '#/model';
 
 import { orderPlugins, type PluginDescriptor } from './capabilities';
+import { pointer } from './errors';
 import { canonicalJson } from './hash';
 
 const options = { id: 'test.model', version: 1 };
@@ -421,6 +423,53 @@ describe('compileContentModel declarations', () => {
             details: { feature: 'a.image', path: '/nodes/picture/html/1/src' },
         });
         expect(compile([core(), fixtureLink()]).manifest.marks).toEqual(['link']);
+    });
+
+    it('SPEC-rich-text/AC-072 checks a namespaced or prefixed URL attribute by its local name', () => {
+        const card = (name: string, value: HtmlAttributeValue) =>
+            feature({
+                id: 'a.card',
+                version: 1,
+                nodes: {
+                    card: {
+                        group: 'block',
+                        attrs: { label: { type: 'string', default: '' }, href: { type: 'url', default: '/x' } },
+                        html: ['svg', { [name]: value }],
+                        parse: [],
+                    },
+                },
+            });
+        for (const name of ['http://www.w3.org/1999/xlink href', 'http://www.w3.org/1999/xlink xlink:HREF', 'x:src']) {
+            for (const value of ['javascript:alert(1)', { attr: 'label' }]) {
+                expect(failureOf(() => compile([core(), card(name, value)]))).toEqual({
+                    code: 'definition.unsafe-url-binding',
+                    details: { feature: 'a.card', path: `/nodes/card/html/1${pointer(name)}` },
+                });
+            }
+            expect(compile([core(), card(name, { attr: 'href' })]).manifest.nodes).toContain('card');
+        }
+    });
+
+    it('SPEC-rich-text/AC-072 rejects a parse rule literal that fails its attribute declaration', () => {
+        const link = (value: JsonValue) =>
+            feature({
+                id: 'a.link',
+                version: 1,
+                marks: {
+                    anchor: {
+                        attrs: { href: { type: 'url', default: '/x' } },
+                        html: ['a', { href: { attr: 'href' } }, 0],
+                        parse: [{ tag: 'a', attrs: { href: { value } } }],
+                    },
+                },
+            });
+        expect(compile([core(), link('/brand')]).manifest.marks).toEqual(['anchor']);
+        for (const value of ['javascript:alert(1)', 7]) {
+            expect(failureOf(() => compile([core(), link(value)]))).toEqual({
+                code: 'definition.invalid-declaration',
+                details: { feature: 'a.link', path: '/marks/anchor/parse/0/attrs/href/value' },
+            });
+        }
     });
 
     it('SPEC-rich-text/AC-071 rejects a URL attribute bound to a string attribute or an option', () => {

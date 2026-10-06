@@ -85,6 +85,17 @@ const hostAllowed = (hostname: string, entries: readonly string[]) =>
         return hostname === entry;
     });
 
+const checkPolicy = (url: URL, { allowedSchemes, allowedHosts }: HrefPolicy): HrefFailure | undefined => {
+    if (allowedSchemes !== undefined && !allowedSchemes.some((scheme) => `${scheme}:` === url.protocol)) {
+        return { ok: false, code: 'unsafe-scheme' };
+    }
+    const absolute = url.hostname !== '' && url.hostname !== 'base.invalid';
+    if (allowedHosts !== undefined && absolute && !hostAllowed(url.hostname, allowedHosts)) {
+        return { ok: false, code: 'host-not-allowed' };
+    }
+    return undefined;
+};
+
 /** The one URL check (SPEC-rich-text-references, URL check); it fails closed, and a policy only narrows it. */
 export const checkHref = (input: string, policy?: HrefPolicy): HrefResult => {
     const trimmed = input.replaceAll(EDGE_CONTROLS, '');
@@ -105,13 +116,6 @@ export const checkHref = (input: string, policy?: HrefPolicy): HrefResult => {
     if (policy === undefined) {
         return { ok: true, href: trimmed };
     }
-    const { allowedSchemes, allowedHosts } = policy;
-    if (allowedSchemes !== undefined && !allowedSchemes.some((scheme) => `${scheme}:` === url.protocol)) {
-        return { ok: false, code: 'unsafe-scheme' };
-    }
-    const absolute = url.hostname !== '' && url.hostname !== 'base.invalid';
-    if (allowedHosts !== undefined && absolute && !hostAllowed(url.hostname, allowedHosts)) {
-        return { ok: false, code: 'host-not-allowed' };
-    }
-    return { ok: true, href: trimmed };
+    const refused = checkPolicy(url, policy) ?? checkPolicy(decoded, policy);
+    return refused ?? { ok: true, href: trimmed };
 };
