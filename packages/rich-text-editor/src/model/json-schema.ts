@@ -39,7 +39,20 @@ const BOUNDS = [
     ['maxItems', 'maxItems'],
 ] as const;
 /** What a feature schema says of a child node or mark: another feature's schema judges it. */
-const OPEN: JsonObject = { type: 'object', required: ['type'], properties: { type: { type: 'string' } } };
+const OPEN: JsonObject = {
+    type: 'object',
+    additionalProperties: false,
+    required: ['type'],
+    properties: {
+        type: { type: 'string' },
+        attrs: { type: 'object' },
+        content: { type: 'array' },
+        marks: { type: 'array' },
+        text: { type: 'string' },
+    },
+};
+/** Decode reads an empty `content` or `marks` array as no key, so a node that holds none still accepts it. */
+const NONE: JsonObject = { type: 'array', maxItems: 0 };
 
 /** A declaration read as plain data, for the keywords it shares with JSON Schema. */
 type Keywords = Readonly<Record<string, JsonValue | undefined>>;
@@ -101,13 +114,14 @@ const shape = (type: string, properties: JsonObject, required: readonly string[]
 const array = (items: JsonObject): JsonObject => ({ type: 'array', items });
 const isEmpty = (names: readonly string[] | undefined) => names !== undefined && names.length === 0;
 
-/** A node, or a mark when it has neither content nor marks. */
+/** A node (`node`), or a mark; a node takes an empty `content` and `marks`, except `doc` no `marks` and `text` no `content`. */
 const nodeShape = (
     name: string,
     attrs: AttributeDeclarations,
     exactlyOne: readonly string[] | undefined,
     content: JsonObject | undefined,
     marks: JsonObject | undefined,
+    node = false,
 ): JsonObject => {
     const properties: Record<string, JsonValue> = {};
     const required: string[] = [];
@@ -125,11 +139,11 @@ const nodeShape = (
     if (name === 'doc') {
         required.push('content');
     }
-    if (content !== undefined) {
-        properties.content = name === 'doc' ? { ...content, minItems: 1 } : content;
+    if (content !== undefined || (node && name !== 'text')) {
+        properties.content = name === 'doc' ? { ...content, minItems: 1 } : (content ?? NONE);
     }
-    if (marks !== undefined) {
-        properties.marks = marks;
+    if (marks !== undefined || (node && name !== 'doc')) {
+        properties.marks = marks ?? NONE;
     }
     return shape(name, properties, required);
 };
@@ -161,6 +175,7 @@ const featureSchema = (feature: Feature): JsonObject => {
             declaration.exactlyOne,
             declaration.content === undefined ? undefined : array(OPEN),
             takesMarks ? array(OPEN) : undefined,
+            true,
         );
     }
     for (const [name, declaration] of Object.entries(marks)) {
@@ -240,6 +255,7 @@ const modelSchema = (model: ContentModel): JsonObject => {
                     ? undefined
                     : array(choice(kids.map((kid) => nodeRef(kid, declaration.marks)))),
                 names.length === 0 ? undefined : array(choice(names.map(markRef))),
+                true,
             );
         });
     };
