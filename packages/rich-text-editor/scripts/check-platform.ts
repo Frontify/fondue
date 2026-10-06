@@ -76,7 +76,7 @@ export const DETECTORS: Record<string, Detector> = {
 // Floor-missing APIs used only inside their fallback helper, as built paths under `dist`.
 export const GUARDED_HELPERS: Record<string, readonly string[]> = {
     requestidlecallback: ['runtime/environment.js'],
-    'string-wellformed': [],
+    'string-wellformed': ['model/well-formed.js'],
     webcodecs: [],
 };
 
@@ -129,6 +129,10 @@ const attributeName = (node: ts.Node) =>
         ? node.name.text
         : undefined;
 
+// `Object.keys`, `Object.values` and `Object.entries` return arrays, which have the helpers.
+const isObjectStatic = (node: ts.Node) =>
+    ts.isPropertyAccessExpression(node) && ts.isIdentifier(node.expression) && node.expression.text === 'Object';
+
 const scanJs = (path: string, source: string): Finding[] => {
     const file = ts.createSourceFile(path, source, ts.ScriptTarget.Latest, true, ts.ScriptKind.JS);
     const findings: Finding[] = [];
@@ -166,7 +170,8 @@ const scanJs = (path: string, source: string): Finding[] => {
                 ts.isPropertyAccessExpression(node) &&
                 ITERATOR_HELPERS.has(node.name.text) &&
                 ts.isCallExpression(node.expression) &&
-                ITERATOR_SOURCES.has(memberName(node.expression.expression) ?? '');
+                ITERATOR_SOURCES.has(memberName(node.expression.expression) ?? '') &&
+                !isObjectStatic(node.expression.expression);
             if (js.iteratorHelpers && helperOnIterator) {
                 report(feature, node);
             }

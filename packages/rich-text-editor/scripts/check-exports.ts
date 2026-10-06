@@ -3,6 +3,7 @@
 import { execFileSync } from 'node:child_process';
 import {
     existsSync,
+    mkdirSync,
     mkdtempSync,
     readdirSync,
     readFileSync,
@@ -22,6 +23,7 @@ export type PackageJson = {
     readonly type?: string;
     readonly publishConfig?: { readonly access?: string };
     readonly exports?: Record<string, unknown>;
+    readonly dependencies?: Record<string, string>;
     readonly peerDependencies?: Record<string, string>;
     readonly devDependencies?: Record<string, string>;
 };
@@ -40,6 +42,75 @@ export const LAYOUT_ENTRIES = [
 ];
 const STYLES = './styles';
 const WORKSPACE_PEERS = ['@frontify/fondue-components', '@frontify/fondue-icons', '@frontify/fondue-tokens'];
+// SPEC-rich-text.conventions.md, ProseMirror lines: the floor of each caret range.
+export const PROSEMIRROR_FLOORS: Record<string, string> = {
+    'prosemirror-model': '1.25.12',
+    'prosemirror-state': '1.4.4',
+    'prosemirror-transform': '1.12.2',
+    'prosemirror-commands': '1.7.2',
+    'prosemirror-keymap': '1.2.3',
+    'prosemirror-inputrules': '1.5.1',
+    'prosemirror-history': '1.5.1',
+    'prosemirror-schema-list': '1.5.1',
+    'prosemirror-view': '1.42.6',
+    'prosemirror-tables': '1.8.5',
+    'prosemirror-dropcursor': '1.8.4',
+    'prosemirror-gapcursor': '1.4.1',
+};
+// One resolved copy of each in the scratch consumer (SPEC-rich-text/AC-005, AC-058).
+const SINGLE_COPY = ['prosemirror-model', 'prosemirror-view', ...WORKSPACE_PEERS];
+
+const versionParts = (version: string) => version.split('.').map(Number);
+const compareVersions = (a: string, b: string) => {
+    const [left, right] = [versionParts(a), versionParts(b)];
+    const index = left.findIndex((part, position) => part !== right[position]);
+    return index === -1 ? 0 : (left[index] ?? 0) - (right[index] ?? 0);
+};
+
+/** SPEC-rich-text/AC-005: each `prosemirror-*` dependency is a caret range from its floor that holds the lockfile version. */
+export const checkProseMirrorRanges = (pkg: PackageJson, lockfile: string): string[] => {
+    const importer = /\n {2}packages\/rich-text-editor:\n([\s\S]*?)(?=\n {2}\S|\npackages:)/.exec(lockfile)?.[1] ?? '';
+    const violations: string[] = [];
+    for (const [name, range] of Object.entries(pkg.dependencies ?? {}).filter(([dep]) =>
+        dep.startsWith('prosemirror-'),
+    )) {
+        const floor = PROSEMIRROR_FLOORS[name];
+        const lower = /^\^(\d+\.\d+\.\d+)$/.exec(range)?.[1];
+        const locked = new RegExp(`\\n {6}${name}:\\n {8}specifier: [^\\n]+\\n {8}version: (\\d+\\.\\d+\\.\\d+)`).exec(
+            importer,
+        )?.[1];
+        if (floor === undefined || lower === undefined) {
+            violations.push(`${name} ${range} is not a caret range of a package with a floor in the conventions`);
+        } else if (compareVersions(lower, floor) < 0) {
+            violations.push(`${name} ${range} starts below its floor ${floor}`);
+        } else if (
+            locked === undefined ||
+            compareVersions(locked, lower) < 0 ||
+            versionParts(locked)[0] !== versionParts(lower)[0]
+        ) {
+            violations.push(`${name} ${range} does not hold the lockfile version ${locked ?? 'none'}`);
+        }
+    }
+    return violations;
+};
+
+/** SPEC-rich-text/AC-005 and AC-058: in a pnpm host that also installs the Fondue peers, `pnpm why` finds one version of each. */
+const checkSingleCopies = (scratch: string, tarball: string): string[] => {
+    const consumer = join(scratch, 'pnpm-consumer');
+    mkdirSync(consumer);
+    writeFileSync(join(consumer, 'package.json'), JSON.stringify({ name: 'rte-pnpm-consumer', private: true }));
+    const flags = ['--ignore-scripts', '--config.auto-install-peers=false', '--ignore-workspace'];
+    const args = ['add', tarball, ...WORKSPACE_PEERS, ...flags];
+    const installFailure = run('pnpm', args, consumer);
+    if (installFailure !== undefined) {
+        return [installFailure];
+    }
+    return SINGLE_COPY.flatMap((name) => {
+        const output = execFileSync('pnpm', ['why', name, '--json'], { cwd: consumer, encoding: 'utf8' });
+        const versions = new Set((JSON.parse(output || '[]') as { version: string }[]).map(({ version }) => version));
+        return versions.size === 1 ? [] : [`pnpm why ${name} resolves ${[...versions].join(', ') || 'no version'}`];
+    });
+};
 
 const isScriptTarget = (target: unknown): target is { types: string; import: string } =>
     typeof target === 'object' &&
@@ -254,6 +325,7 @@ export const checkConsumer = (root: string, pkg: PackageJson): string[] => {
                 violations.push(`the entries do not typecheck under moduleResolution ${moduleResolution}: ${failure}`);
             }
         }
+        violations.push(...checkSingleCopies(scratch, join(scratch, tarball)));
         return violations;
     } finally {
         rmSync(scratch, { recursive: true, force: true });
@@ -263,7 +335,12 @@ export const checkConsumer = (root: string, pkg: PackageJson): string[] => {
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
     const root = fileURLToPath(new URL('..', import.meta.url));
     const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8')) as PackageJson;
-    const violations = [...checkManifest(pkg), ...(await checkDist(root, pkg))];
+    const lockfile = readFileSync(join(root, '../../pnpm-lock.yaml'), 'utf8');
+    const violations = [
+        ...checkManifest(pkg),
+        ...checkProseMirrorRanges(pkg, lockfile),
+        ...(await checkDist(root, pkg)),
+    ];
     if (violations.length === 0) {
         violations.push(...checkConsumer(root, pkg));
     }
@@ -273,6 +350,6 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     }
     const entries = Object.keys(pkg.exports ?? {}).join(', ');
     console.log(
-        `check-exports: ${entries} match the Package layout, import under Node ${process.version} and typecheck under nodenext and bundler.`,
+        `check-exports: ${entries} match the Package layout, import under Node ${process.version} and typecheck under nodenext and bundler; the prosemirror-* ranges start at their floors and pnpm why finds one copy of ${SINGLE_COPY.join(', ')}.`,
     );
 }

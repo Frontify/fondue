@@ -34,6 +34,7 @@
     "scripts": {
         "build": "vite build",
         "build:storybook": "storybook build",
+        "check:bundle-size": "tsx scripts/check-bundle-size.ts",
         "check:ct-ports": "tsx scripts/check-ct-ports.ts",
         "check:entry-graph": "tsx scripts/check-entry-graph.ts",
         "check:exports": "tsx scripts/check-exports.ts",
@@ -51,6 +52,10 @@
         "test:components": "playwright test --ui",
         "test:components:ci": "playwright test",
         "test:components:update-snapshot": "playwright test --update-snapshots"
+    },
+    "dependencies": {
+        "prosemirror-model": "^1.25.12",
+        "prosemirror-state": "^1.4.4"
     },
     "devDependencies": {
         "@frontify/fondue-components": "workspace:^",
@@ -71,6 +76,7 @@
         "@typescript/native-preview": "7.0.0-dev.20260421.2",
         "@vitest/coverage-v8": "^5.0.0",
         "browserslist-to-esbuild": "^2.1.1",
+        "fast-check": "^4.10.2",
         "happy-dom": "^20.11.2",
         "oxfmt": "^0.52.0",
         "oxlint": "^1.67.0",

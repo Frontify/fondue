@@ -1,0 +1,117 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+import { isWellFormed } from './well-formed';
+
+export interface HrefPolicy {
+    /** A subset of `https`, `http`, `mailto` and `tel`. */
+    readonly allowedSchemes?: readonly ('https' | 'http' | 'mailto' | 'tel')[];
+    /** Lowercase hostnames: `h` matches only `h`; `*.h` matches `h` and hosts ending in `.h`. */
+    readonly allowedHosts?: readonly string[];
+}
+export type HrefResult =
+    | { readonly ok: true; readonly href: string }
+    | {
+          readonly ok: false;
+          readonly code: 'unsafe-scheme' | 'unparsable' | 'too-long' | 'credentials' | 'host-not-allowed';
+      };
+type HrefFailure = Extract<HrefResult, { ok: false }>;
+
+const BASE = 'https://base.invalid/';
+const MAX_LENGTH = 2048;
+const SAFE_SCHEMES = new Set(['https:', 'http:', 'mailto:', 'tel:']);
+const EDGE_CONTROLS = /^[\u0000-\u0020]+|[\u0000-\u0020]+$/g;
+const CONTROL = /[\u0000-\u001F\u007F-\u009F]/;
+const NAMED_REFERENCES: Readonly<Record<string, string>> = {
+    amp: '&',
+    colon: ':',
+    newline: '\n',
+    tab: '\t',
+    sol: '/',
+    lpar: '(',
+    rpar: ')',
+    period: '.',
+    quot: '"',
+    apos: "'",
+};
+
+const decodeReferences = (text: string) =>
+    text.replaceAll(
+        /&#(x[\da-f]+|\d+);?|&([a-z]+);/gi,
+        (match, numeric: string | undefined, name: string | undefined) => {
+            if (numeric !== undefined) {
+                const code =
+                    numeric.startsWith('x') || numeric.startsWith('X')
+                        ? parseInt(numeric.slice(1), 16)
+                        : Number(numeric);
+                return code > 0x10ffff ? match : String.fromCodePoint(code);
+            }
+            const key = name === undefined ? '' : name.toLowerCase();
+            return NAMED_REFERENCES[key] ?? match;
+        },
+    );
+
+const decodePercent = (text: string) =>
+    text.replaceAll(/(%[\da-f]{2})+/gi, (run) => {
+        try {
+            return decodeURIComponent(run);
+        } catch {
+            return run;
+        }
+    });
+
+/** Steps 2 to 4 of the URL check. */
+const parse = (input: string): URL | HrefFailure => {
+    let url: URL;
+    try {
+        url = new URL(input, BASE);
+    } catch {
+        return { ok: false, code: 'unparsable' };
+    }
+    if (!SAFE_SCHEMES.has(url.protocol)) {
+        return { ok: false, code: 'unsafe-scheme' };
+    }
+    if (url.username !== '' || url.password !== '') {
+        return { ok: false, code: 'credentials' };
+    }
+    return url;
+};
+
+const hostAllowed = (hostname: string, entries: readonly string[]) =>
+    entries.some((entry) => {
+        if (entry.startsWith('*.')) {
+            const suffix = entry.slice(2);
+            return hostname === suffix || hostname.endsWith(`.${suffix}`);
+        }
+        return hostname === entry;
+    });
+
+/** The one URL check (SPEC-rich-text-references, URL check); it fails closed, and a policy only narrows it. */
+export const checkHref = (input: string, policy?: HrefPolicy): HrefResult => {
+    const trimmed = input.replaceAll(EDGE_CONTROLS, '');
+    if (CONTROL.test(trimmed) || !isWellFormed(trimmed)) {
+        return { ok: false, code: 'unparsable' };
+    }
+    if (trimmed.length > MAX_LENGTH) {
+        return { ok: false, code: 'too-long' };
+    }
+    const url = parse(trimmed);
+    if (!(url instanceof URL)) {
+        return url;
+    }
+    const decoded = parse(decodePercent(decodeReferences(trimmed)));
+    if (!(decoded instanceof URL)) {
+        return decoded;
+    }
+    if (policy === undefined) {
+        return { ok: true, href: trimmed };
+    }
+    const { allowedSchemes, allowedHosts } = policy;
+    if (allowedSchemes !== undefined && !allowedSchemes.some((scheme) => `${scheme}:` === url.protocol)) {
+        return { ok: false, code: 'unsafe-scheme' };
+    }
+    const absolute = url.hostname !== '' && url.hostname !== 'base.invalid';
+    if (allowedHosts !== undefined && absolute && !hostAllowed(url.hostname, allowedHosts)) {
+        return { ok: false, code: 'host-not-allowed' };
+    }
+    return { ok: true, href: trimmed };
+};
