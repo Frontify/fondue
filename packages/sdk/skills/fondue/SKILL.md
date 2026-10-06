@@ -192,7 +192,7 @@ tokens.utilities.get('utilities-text-body-large-strong')?.tailwindClass; // 'bod
 Rules:
 
 - Prefer `themeable: true` tokens for any user-facing surface so dark mode and theming work out of the box.
-- Colour roles are not brand colours: `primary` is the neutral high-contrast foreground, `surface` the background. Default text is `primary` on `surface` (`tw-text-primary tw-bg-surface`); muted text is `secondary`. `*-on-<role>` colours only go on top of the matching `<role>` fill — e.g. `secondary-on-secondary` on `surface` is white on white. The `usage/Styling` guide has the full pairing table.
+- Colour roles are not brand colours: `primary` is the neutral high-contrast foreground, `surface` the background. Default text is `primary` on `surface` (`tw-text-primary tw-bg-surface`); muted text is `secondary`. `*-on-<role>` colours only go on top of the matching `<role>` fill — e.g. `secondary-on-secondary` on `surface` is white on white.
 - Prefer the Tailwind class when the project uses `@frontify/fondue/tokens/tailwind`; prefer the CSS variable otherwise.
 - For typography, recommend the **utility class** — not raw font-size / line-height / weight tokens.
 - Never invent token ids. If `tokens.get(id)` returns `undefined`, search again.
