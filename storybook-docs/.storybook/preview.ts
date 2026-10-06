@@ -11,7 +11,7 @@ export const parameters = {
                 'Usage',
                 ['Components', 'Styling'],
                 'SDK',
-                ['Quickstart', 'Concepts', 'Examples', 'Reference'],
+                ['Usage', 'Concepts', 'Examples', 'Reference'],
                 'Development',
                 ['Contributing', 'Upgrading'],
             ],

@@ -119,11 +119,11 @@ the formal contract.
 ## Documentation
 
 The SDK documentation ships as guides, so it renders in the
-[Storybook docs](https://fondue-components.frontify.com) under **Sdk** and
-can be read through the SDK itself (`guides.get('sdk/Quickstart')?.content`).
+[Storybook docs](https://fondue-components.frontify.com) under **SDK** and
+can be read through the SDK itself (`guides.get('sdk/Usage')?.content`).
 The sources live in [`guides/sdk/`](./guides/sdk/):
 
-- **[Quickstart](./guides/sdk/Quickstart.md)** (`sdk/Quickstart`) — install,
+- **[Usage](./guides/sdk/Usage.md)** (`sdk/Usage`) — the agent skill, install,
   first queries, the "you-can-skim-this-once" basics.
 - **[Concepts](./guides/sdk/Concepts.md)** (`sdk/Concepts`) — how the graph
   fits together: nodes, facets, plain arrays; where you can use
