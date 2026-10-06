@@ -111,13 +111,12 @@
     height: 16px;
     color: var(--color-secondary-default);
     cursor: grab;
-    /* The slot stays so labels do not shift. The icon shows under the pointer or keyboard focus. */
-    opacity: 0;
+    visibility: hidden;
 }
 
 .row:hover .handle,
 .row:focus-within .handle {
-    opacity: 1;
+    visibility: visible;
 }
 
 .chevron {

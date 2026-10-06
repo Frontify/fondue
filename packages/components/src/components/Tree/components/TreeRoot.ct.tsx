@@ -565,13 +565,13 @@ test.describe('TreeRoot reorderable mode', () => {
         );
         await expect(reorderable.locator('[draggable="true"]')).toHaveCount(1);
         const handle = reorderable.locator('span[class*="handle"]');
-        await expect(handle).toHaveCSS('opacity', '0');
+        await expect(handle).toHaveCSS('visibility', 'hidden');
         await reorderable.getByRole('treeitem', { name: /Row/ }).hover();
-        await expect(handle).toHaveCSS('opacity', '1');
+        await expect(handle).toHaveCSS('visibility', 'visible');
         await page.mouse.move(0, 0);
-        await expect(handle).toHaveCSS('opacity', '0');
+        await expect(handle).toHaveCSS('visibility', 'hidden');
         await reorderable.getByRole('treeitem', { name: /Row/ }).focus();
-        await expect(handle).toHaveCSS('opacity', '1');
+        await expect(handle).toHaveCSS('visibility', 'visible');
     });
 
     test('exposes a screen-reader hint announcing checkbox / reorder shortcuts', async ({ mount }) => {
