@@ -6,6 +6,7 @@ import { type ComponentProps } from 'react';
 
 import { Button } from '../Button/Button';
 import { Checkbox } from '../Checkbox/Checkbox';
+import { Flex } from '../Flex/Flex';
 import { Select } from '../Select';
 import { TextInput } from '../TextInput/TextInput';
 import { Tooltip } from '../Tooltip/Tooltip';
@@ -52,21 +53,14 @@ export const WithTextInput: Story = {
             canonical: true,
         },
     },
-    args: {
-        children: 'Hello World',
-    },
-    render: (args) => {
-        // Used to get the correct component name in the Storybook of the `TextInput` (instead of `TextInput.Root`)
-        const STextInput = (props: ComponentProps<typeof TextInput>) => <TextInput {...props} />;
-        STextInput.displayName = 'TextInput';
-
-        return (
-            <div className="tw-flex tw-flex-col tw-gap-2">
-                <Label {...args} htmlFor="input-text" />
-                <STextInput id="input-text" placeholder="Enter your name" />
-            </div>
-        );
-    },
+    render: (args) => (
+        <Flex direction="column" gap={2}>
+            <Label {...args} htmlFor="input-name">
+                Name
+            </Label>
+            <TextInput id="input-name" placeholder="Enter your name" />
+        </Flex>
+    ),
 };
 
 export const WithDisabledInput: Story = {
