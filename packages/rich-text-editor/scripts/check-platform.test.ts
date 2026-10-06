@@ -56,8 +56,24 @@ describe('check-platform', () => {
         expect(scanFile('model/href.js', source)).toEqual(['model/href.js:1 uses string-wellformed']);
     });
 
+    it('SPEC-rich-text-quality/AC-042 reports bracket access and destructuring of isWellFormed outside its helper', () => {
+        const bracket = 'export const check = (s) => s["isWellFormed"]();';
+        const template = 'export const check = (s) => s[`toWellFormed`]();';
+        const destructured = 'export const { isWellFormed } = String.prototype;';
+        const renamed = 'export const { "toWellFormed": wellFormed } = String.prototype;';
+
+        expect(scanFile('model/href.js', bracket)).toEqual(['model/href.js:1 uses string-wellformed']);
+        expect(scanFile('model/href.js', template)).toEqual(['model/href.js:1 uses string-wellformed']);
+        expect(scanFile('model/href.js', destructured)).toEqual(['model/href.js:1 uses string-wellformed']);
+        expect(scanFile('model/href.js', renamed)).toEqual(['model/href.js:1 uses string-wellformed']);
+        for (const source of [bracket, template, destructured, renamed]) {
+            expect(scanFile('model/well-formed.js', source)).toEqual([]);
+        }
+    });
+
     it('SPEC-rich-text-quality/AC-042 flags iterator helpers on iterators but not on Object.keys arrays', () => {
         expect(scanFile('model/keys.js', 'export const names = (o) => Object.keys(o).map(String);')).toEqual([]);
+        expect(scanFile('model/keys.js', 'export const names = (o) => Object["keys"](o).map(String);')).toEqual([]);
         expect(scanFile('model/keys.js', 'export const names = () => new Map().keys().map(String);')).toEqual([
             'model/keys.js:1 uses iterator-methods',
         ]);
