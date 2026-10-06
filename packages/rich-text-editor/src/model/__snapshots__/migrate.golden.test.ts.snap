@@ -105,7 +105,12 @@ exports[`migration golden files > SPEC-rich-text-format/AC-035 migrates v1-notes
         "format": "frontify.rich-text",
         "formatVersion": 1,
         "model": {"id":"fixture.notes","version":3},
-        "requiredCapabilities": [{"id":"core","version":1},{"id":"fixture.note","version":3},{"id":"fixture.rule","version":1}],
+        "requiredCapabilities": [
+            {"id":"core","version":1},
+            {"id":"fixture.divider","version":1},
+            {"id":"fixture.note","version":3},
+            {"id":"fixture.rule","version":1}
+        ],
         "content": {
             "type": "doc",
             "attrs": {"lang":null,"dir":"auto"},
@@ -128,7 +133,7 @@ exports[`migration golden files > SPEC-rich-text-format/AC-035 migrates v1-notes
     "diagnostics": [],
     "manifest": {
         "sourceHash": "509c924e11c09631efd87a4c5669604725e4879d1d5e19bb44851753bbc559f7",
-        "targetHash": "48f3fe7a432e210fb033f73bb7651793f76e9646a87476f34baef99da2387144",
+        "targetHash": "716c7e5c5d88d244ef6de04b18a50fe0c972821b694bc0c1ab2cda9fa945d400",
         "steps": ["fixture.note.tone-to-level","fixture.notes.divider-to-rule"],
         "model": {"id":"fixture.notes","version":3},
         "packageVersion": "<package version>",

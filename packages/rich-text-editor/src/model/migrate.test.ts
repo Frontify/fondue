@@ -76,7 +76,13 @@ describe('decode runs registered migrations', () => {
         });
         const { document } = result as Extract<DecodeResult, { status: 'editable' }>;
         expect(document.model).toEqual({ id: NOTES_ID, version: 3 });
-        expect(document.requiredCapabilities.map(({ id }) => id)).toEqual(['core', 'fixture.note', 'fixture.rule']);
+        // The replaced capability stays listed until a save with no surviving island drops it (AC-033).
+        expect(document.requiredCapabilities.map(({ id }) => id)).toEqual([
+            'core',
+            'fixture.divider',
+            'fixture.note',
+            'fixture.rule',
+        ]);
         expect(document.content.content?.map(({ type, attrs }) => [type, attrs])).toEqual([
             ['paragraph', { lang: null }],
             ['note', { nodeId: 'node-1', level: 'info' }],
@@ -307,6 +313,29 @@ describe('decode runs registered migrations', () => {
         const result = migrateDocument(plain, model);
         expect(result).toMatchObject({ status: 'unsupported', document: null });
         expect(result.manifest).toMatchObject({ targetHash: null, steps: ['step-1', 'step-2'] });
+    });
+
+    it('SPEC-rich-text-format/AC-033 keeps a capability whose content survives as an island when a step drops it', () => {
+        const extra = { id: 'fixture.extra', version: 4 };
+        const input = notes(
+            1,
+            [paragraph('one'), { type: 'mystery' }],
+            [
+                ['core', 1],
+                ['fixture.extra', 4],
+            ],
+        );
+        const model = stepsModel((document) =>
+            migrated({ ...document, requiredCapabilities: [{ id: 'core', version: 1 }] }, document.content),
+        );
+        const { result, tree } = decodeToTree(input, model);
+        expect(result.status).toBe('editable');
+        expect((tree as TreeNode).content?.map(({ type }) => type)).toEqual(['paragraph', 'unsupported_block']);
+        const { document } = result as Extract<DecodeResult, { status: 'editable' }>;
+        expect(document.requiredCapabilities).toContainEqual(extra);
+        expect(
+            encodeTree(tree as TreeNode, model, document.requiredCapabilities).document.requiredCapabilities,
+        ).toContainEqual(extra);
     });
 });
 

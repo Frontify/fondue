@@ -152,6 +152,40 @@ describe('check-model-versions', () => {
         ).toEqual(['test: the stored representation changed, so model version 1 must become 2']);
     });
 
+    it('SPEC-rich-text-format/AC-034 charges a newly required textblock attribute to its own feature', () => {
+        const align = (version: number, required: boolean, migrations: readonly CapabilityMigration[] = []) => {
+            const value = {
+                type: 'enum',
+                values: ['left', 'right'],
+                ...(required ? { required } : { default: 'left' }),
+            } as const;
+            const attributes = { align: { on: 'textblocks', value } } as const;
+            return defineFeature({
+                id: 'test.align',
+                version,
+                requires: [{ id: 'core', version: 1 }],
+                migrations,
+                attributes,
+            })();
+        };
+        const before = candidateOf([base(), align(1, false)], { id: 'test', version: 1 }).snapshot;
+        expect(compareModel(before, candidateOf([base(), align(2, true, [step])], { id: 'test', version: 2 }))).toEqual(
+            [],
+        );
+    });
+
+    it('SPEC-rich-text-format/AC-034 accepts a model step that drops the only mark', () => {
+        const bold = defineFeature({
+            id: 'test.bold',
+            version: 1,
+            requires: [{ id: 'core', version: 1 }],
+            marks: { bold: { attrs: {}, html: ['strong', 0], parse: [] } },
+        });
+        const before = candidateOf([base(), bold()], { id: 'test', version: 1 }).snapshot;
+        const migrations = [{ ...step, id: 'test.step' }];
+        expect(compareModel(before, candidateOf([base()], { id: 'test', version: 2, migrations }))).toEqual([]);
+    });
+
     it('SPEC-rich-text-format/AC-042 fails when an attribute is added to an existing capability version', () => {
         expect(
             compareModel(

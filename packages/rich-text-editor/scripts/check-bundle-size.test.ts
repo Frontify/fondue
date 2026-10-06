@@ -34,7 +34,7 @@ afterEach(() => {
 describe('check-bundle-size', () => {
     it('SPEC-rich-text-quality/AC-020 fails a build over its budget and passes it under', async () => {
         const over = await checkBundleSizes(root, [{ ...model, maxBytes: 1000 }]);
-        const under = await checkBundleSizes(root, [{ ...model, maxBytes: 20_000 }]);
+        const under = await checkBundleSizes(root, [{ ...model, maxBytes: 30_000 }]);
 
         expect(over.violations).toEqual([
             expect.stringMatching(/^\.\/model is \d+ Brotli bytes, over its budget of 1000$/),
