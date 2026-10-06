@@ -121,7 +121,20 @@ const isPropertyName = (node: ts.Identifier) => {
     );
 };
 
-const memberName = (node: ts.Node) => (ts.isPropertyAccessExpression(node) ? node.name.text : undefined);
+const memberName = (node: ts.Node) => {
+    if (ts.isPropertyAccessExpression(node)) {
+        return node.name.text;
+    }
+    if (ts.isElementAccessExpression(node) && ts.isStringLiteralLike(node.argumentExpression)) {
+        return node.argumentExpression.text;
+    }
+    // `const { isWellFormed } = String.prototype` reads the member without an access expression.
+    if (ts.isBindingElement(node)) {
+        const name = node.propertyName ?? node.name;
+        return ts.isIdentifier(name) || ts.isStringLiteral(name) ? name.text : undefined;
+    }
+    return undefined;
+};
 
 // Compiled JSX passes attributes as object keys.
 const attributeName = (node: ts.Node) =>
@@ -131,7 +144,9 @@ const attributeName = (node: ts.Node) =>
 
 // `Object.keys`, `Object.values` and `Object.entries` return arrays, which have the helpers.
 const isObjectStatic = (node: ts.Node) =>
-    ts.isPropertyAccessExpression(node) && ts.isIdentifier(node.expression) && node.expression.text === 'Object';
+    (ts.isPropertyAccessExpression(node) || ts.isElementAccessExpression(node)) &&
+    ts.isIdentifier(node.expression) &&
+    node.expression.text === 'Object';
 
 const scanJs = (path: string, source: string): Finding[] => {
     const file = ts.createSourceFile(path, source, ts.ScriptTarget.Latest, true, ts.ScriptKind.JS);
