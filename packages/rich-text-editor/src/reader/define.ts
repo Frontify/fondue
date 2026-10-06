@@ -2,21 +2,17 @@
 
 import { type ComponentType, type ReactNode } from 'react';
 
-import { DefinitionError, type Feature, type HrefResult, type JsonObject } from '#/model';
+import {
+    DefinitionError,
+    type Feature,
+    type HrefResult,
+    type JsonObject,
+    type ReferenceResolution,
+    type RichTextLocale,
+    type TranslationStrings,
+} from '#/model';
 import { featureInternals } from '#/model/feature';
 
-export interface TranslationStrings {
-    readonly [key: `RichTextEditor_${string}`]: string;
-}
-/** The package's locale: its strings and language; `enUS` is the fallback. */
-export interface RichTextLocale {
-    readonly translationStrings: TranslationStrings;
-    readonly lang?: string;
-}
-export type ReferenceResolution =
-    | { readonly status: 'current'; readonly label: string }
-    | { readonly status: 'unavailable'; readonly code: 'deleted' | 'forbidden' }
-    | { readonly status: 'unknown' };
 /** What a reader override reads: plain data and functions, never a React context (SPEC-rich-text-output/AC-049). */
 export interface ReaderContext {
     readonly resolveAssetUrl?: (assetId: string, options: { readonly width?: number }) => string | null;
