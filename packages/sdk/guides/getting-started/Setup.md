@@ -15,10 +15,10 @@ Setting up Fondue takes six steps. Steps 1–5 are required; step 6 is only need
 
 - **React 18.** `@frontify/fondue` declares `react@^18` and `react-dom@^18` as peer dependencies. React 19 is not supported yet. Some project templates (e.g. `npm create vite@latest -- --template react-ts`) scaffold React 19, so pin React 18 before installing Fondue:
 
-    ```shell
-    npm i react@^18 react-dom@^18
-    npm i -D @types/react@^18 @types/react-dom@^18
-    ```
+```shell
+npm i react@^18 react-dom@^18
+npm i -D @types/react@^18 @types/react-dom@^18
+```
 
 - **Tailwind CSS v3 (optional).** The Fondue Tailwind preset targets Tailwind `^3.4.17`. Tailwind v4 is not supported: it changes how presets and prefixes are configured, so the `tw-` classes used throughout these guides won't be generated.
 
@@ -38,8 +38,8 @@ Import the base tokens and the stylesheets once, at the root of your application
 
 ```tsx
 // main.tsx
-import '@frontify/fondue/tokens/base';
-import '@frontify/fondue/components/styles';
+import "@frontify/fondue/tokens/base";
+import "@frontify/fondue/components/styles";
 ```
 
 The base tokens define every token as a CSS variable on `:root`, with the values of the `light` theme.
@@ -67,13 +67,13 @@ The tokens use `Diatype` and `Cranny`, and fall back to `Geist` when those aren'
 @font-face {
     font-family: Diatype;
     font-weight: 1 999;
-    src: url(YOUR_FONT_URL) format('woff');
+    src: url(YOUR_FONT_URL) format("woff");
 }
 
 @font-face {
     font-family: Cranny;
     font-weight: 1 999;
-    src: url(YOUR_FONT_URL) format('woff');
+    src: url(YOUR_FONT_URL) format("woff");
 }
 
 /* If you work for Frontify and need access to Diatype or Cranny, reach out to the frontend platform team */
@@ -84,7 +84,7 @@ The tokens use `Diatype` and `Cranny`, and fall back to `Geist` when those aren'
 ```css
 @font-face {
     font-family: Geist;
-    src: url(YOUR_FONT_URL) format('woff2');
+    src: url(YOUR_FONT_URL) format("woff2");
     font-weight: 100 900;
     font-style: normal;
 }
@@ -95,12 +95,12 @@ The tokens use `Diatype` and `Cranny`, and fall back to `Geist` when those aren'
 The `ThemeProvider` is required: wrap your whole application (or at minimum every Fondue component) in it. Besides the theme, it provides the text direction (`dir`) and the locale used for built-in component strings, and it carries the theme over to portaled content such as dropdowns, tooltips and dialogs.
 
 ```tsx
-import { ThemeProvider } from '@frontify/fondue/components';
+import { ThemeProvider } from "@frontify/fondue/components";
 
 const App = () => <ThemeProvider theme="light">...YourApp</ThemeProvider>;
 ```
 
-The available themes are `light` (default) and `dark`. The `theme` type also accepts `base`, which only defines the primitive colour palette and none of the semantic colours the components use, so don't pass it.
+The available themes are `light` (default) and `dark`.
 
 ### Theme the page
 
@@ -149,50 +149,50 @@ If you use Tailwind, the Fondue preset generates a class for every token in the 
 
 1. Install Tailwind and its PostCSS plugins:
 
-    ```shell
-    npm i -D tailwindcss@^3.4.17 postcss autoprefixer
-    ```
+```shell
+npm i -D tailwindcss@^3.4.17 postcss autoprefixer
+```
 
 2. Add the Fondue preset. The preset does not set a class prefix. All Fondue documentation and examples use the `tw-` prefix, so set it explicitly:
 
-    ```js
-    // tailwind.config.js
-    import frontifyTailwindConfig from '@frontify/fondue/tokens/tailwind';
+```js
+// tailwind.config.js
+import frontifyTailwindConfig from "@frontify/fondue/tokens/tailwind";
 
-    export default {
-        prefix: 'tw-',
-        presets: [frontifyTailwindConfig],
-        content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
-    };
-    ```
+export default {
+    prefix: "tw-",
+    presets: [frontifyTailwindConfig],
+    content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+};
+```
 
 3. Register Tailwind as a PostCSS plugin. Vite picks up this file automatically:
 
-    ```js
-    // postcss.config.js
-    export default {
-        plugins: {
-            tailwindcss: {},
-            autoprefixer: {},
-        },
-    };
-    ```
+```js
+// postcss.config.js
+export default {
+    plugins: {
+        tailwindcss: {},
+        autoprefixer: {},
+    },
+};
+```
 
 4. Add the Tailwind directives to your main stylesheet and import it after the Fondue stylesheets:
 
-    ```css
-    /* src/index.css */
-    @tailwind base;
-    @tailwind components;
-    @tailwind utilities;
-    ```
+```css
+/* src/index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+```
 
-    ```tsx
-    // main.tsx
-    import '@frontify/fondue/tokens/base';
-    import '@frontify/fondue/components/styles';
-    import './index.css';
-    ```
+```tsx
+// main.tsx
+import "@frontify/fondue/tokens/base";
+import "@frontify/fondue/components/styles";
+import "./index.css";
+```
 
 See the Styling guide (`usage/Styling`) for the classes the preset generates and which colours to use.
 
