@@ -202,19 +202,18 @@ Rules:
 
 ## Common pitfalls
 
-| Mistake                                                                                                               | Fix                                                                                                          |
-| --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| Calling `.where()` / `.get()` on the array returned by `list()` / `where()`                                           | Arrays are arrays. Use native `.filter` / `.find`, or navigate back to a facet to query.                     |
-| Assuming a component exists ("there must be a `Combobox`")                                                            | `components.has('Combobox')` first, or `components.where({ text: 'combobox' })`                              |
-| Hardcoding a hex / px value in custom code                                                                            | `tokens.where({ text: '<intent>' })` — most "obvious" values have a token                                    |
-| Treating icons like normal components, reading `props` / `instructions`                                               | Detect with `node.category().name === 'icon'`. Icons have empty `props`, `related`, and null `instructions`. |
-| Importing `Button` from the wrong path                                                                                | `components.get('Button')?.importStatement` is authoritative                                                 |
-| Suggesting setup steps from memory                                                                                    | `guides.get('getting-started/Setup')?.content` — always the live text; `guides.list()` for other ids         |
-| Guessing guide ids (`'getting-started'`, `'upgrading'`)                                                               | Ids are path-style (`'getting-started/Setup'`); run `guides.list()` first                                    |
-| Using a `tailwindClass` as-is (`body-large-strong`, `*-surface`)                                                      | Add the project's prefix and utility: `tw-body-large-strong`, `tw-bg-surface`                                |
-| Text in an `on-*` colour on a surface (`tw-text-secondary-on-secondary`)                                              | `on-*` colours only go on their matching fill; text on a surface is `tw-text-primary` / `tw-text-secondary`  |
-| `tw-gap-x-small` / `tw-gap-x-large` / `tw-inset-x-*` (silently also emits `gap-x` / `inset-x` with `small` / `large`) | `tw-gap-[var(--spacing-x-small)]` — see "Tailwind defaults" in `usage/Styling`                               |
-| `console.log(node)` instead of `JSON.stringify`                                                                       | Facet methods serialize as `[Function]`; always stringify before logging                                     |
+| Mistake                                                                     | Fix                                                                                                          |
+| --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| Calling `.where()` / `.get()` on the array returned by `list()` / `where()` | Arrays are arrays. Use native `.filter` / `.find`, or navigate back to a facet to query.                     |
+| Assuming a component exists ("there must be a `Combobox`")                  | `components.has('Combobox')` first, or `components.where({ text: 'combobox' })`                              |
+| Hardcoding a hex / px value in custom code                                  | `tokens.where({ text: '<intent>' })` — most "obvious" values have a token                                    |
+| Treating icons like normal components, reading `props` / `instructions`     | Detect with `node.category().name === 'icon'`. Icons have empty `props`, `related`, and null `instructions`. |
+| Importing `Button` from the wrong path                                      | `components.get('Button')?.importStatement` is authoritative                                                 |
+| Suggesting setup steps from memory                                          | `guides.get('getting-started/Setup')?.content` — always the live text; `guides.list()` for other ids         |
+| Guessing guide ids (`'getting-started'`, `'upgrading'`)                     | Ids are path-style (`'getting-started/Setup'`); run `guides.list()` first                                    |
+| Using a `tailwindClass` as-is (`body-large-strong`, `*-surface`)            | Add the project's prefix and utility: `tw-body-large-strong`, `tw-bg-surface`                                |
+| Text in an `on-*` colour on a surface (`tw-text-secondary-on-secondary`)    | `on-*` colours only go on their matching fill; text on a surface is `tw-text-primary` / `tw-text-secondary`  |
+| `console.log(node)` instead of `JSON.stringify`                             | Facet methods serialize as `[Function]`; always stringify before logging                                     |
 
 ## Going deeper
 
