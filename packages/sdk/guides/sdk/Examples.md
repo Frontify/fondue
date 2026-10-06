@@ -178,7 +178,7 @@ const header = components.get('Dialog')?.subComponents.find((sc) => sc.name === 
 header?.props.map((p) => p.name);
 ```
 
-## Examples
+## Component examples
 
 ### "The canonical snippet for a component"
 

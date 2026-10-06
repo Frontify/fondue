@@ -56,29 +56,18 @@ per domain.
 
 ## Walk the graph
 
-Each node exposes its relationships as methods:
+Fields read like properties; relationships are methods that return more
+nodes or queryable groups:
 
 ```ts
 const button = components.get('Button');
 
-button?.category(); // → ComponentFacetNode { name: 'input', size: 13 }
-button?.category().list(); // → all components in the 'input' category
 button?.related(); // → [SplitButton, Link]
-button?.tags(); // → [tag('button'), tag('action'), tag('cta')]
-button?.tags()[0]?.list(); // → all components tagged 'button'
+button?.category().list(); // → all components in the 'input' category
 ```
 
-Facets are themselves queryable:
-
-```ts
-const input = components.category('input');
-
-input?.size; // 13
-input?.list(); // ComponentNode[] in 'input'
-input?.where({ tag: 'cta' }); // narrow further by another filter
-input?.get('Checkbox'); // ComponentNode (Checkbox is in 'input')
-input?.get('Dialog'); // undefined (Dialog is 'overlay')
-```
+The `sdk/Concepts` guide explains which results you can query further and
+which are plain arrays.
 
 ## Tokens
 
@@ -100,25 +89,14 @@ tokens.utilities.where({ keyPathStartsWith: 'utilities.text' });
 ## Guides
 
 The SDK also exposes the **same prose guides the Storybook docs site renders**
-— setup, styling, upgrade notes and these SDK docs — as raw markdown. Agents can
-ingest them with the same `list/get/has/where/size` interface.
+— setup, styling, upgrade notes and these SDK docs — as raw markdown:
 
 ```ts
 import { guides } from '@frontify/fondue/sdk';
 
-guides.list().map((g) => g.title);
-// → ['How to contribute', 'Upgrading to Fondue v13', 'Setup', 'SDK concepts', 'SDK quickstart', …]
-
-const setup = guides.get('getting-started/Setup');
-setup?.title; // 'Setup'
-setup?.content; // raw markdown body, starting with '# Setup'
-
-guides.where({ text: 'tailwind' }).map((g) => g.id);
-// → ['development/Upgrading', 'getting-started/Setup', …, 'usage/Styling']
+guides.list().map((g) => g.id); // → ['development/Contributing', …, 'usage/Styling']
+guides.get('getting-started/Setup')?.content; // raw markdown, starting with '# Setup'
 ```
-
-Use `Guide.content` to feed an LLM, render with your own markdown renderer,
-or grep across the corpus.
 
 ## Where to go next
 
