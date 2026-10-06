@@ -6,7 +6,7 @@ import { checkHref } from './href';
 
 const STORED_ID = /^[a-z0-9][a-z0-9._:-]{0,127}$/;
 const COLOR = /^#[0-9a-f]{6}([0-9a-f]{2})?$/;
-const PROTOTYPE_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
+export const PROTOTYPE_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
 
 /** How deep a manifest, an option value or an `html` spec may nest. */
 export const MAX_DEPTH = 64;

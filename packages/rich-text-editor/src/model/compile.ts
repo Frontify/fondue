@@ -34,7 +34,16 @@ import { DefinitionError, type DefinitionErrorCode, pointer } from './errors';
 import { featureInternals } from './feature';
 import { canonicalJson, sha256 } from './hash';
 import { checkHref } from './href';
-import { findInvalidPayload, findUnsafeJson, isRecord, isValidValue, MAX_DEPTH, ownValue, snapshot } from './values';
+import {
+    findInvalidPayload,
+    findUnsafeJson,
+    isRecord,
+    isValidValue,
+    MAX_DEPTH,
+    ownValue,
+    PROTOTYPE_KEYS,
+    snapshot,
+} from './values';
 
 /** HTML attributes whose value is a URL (SPEC-rich-text/AC-071). */
 export const URL_ATTRIBUTES = new Set(
@@ -144,6 +153,33 @@ const resolveOptions = (id: string, declaration: FeatureDeclaration, given: unkn
     return snapshot(options);
 };
 
+/** A declaration-keyed record may not hold `__proto__`, `constructor` or `prototype`, which a lookup or a plain-object copy would misread. */
+const rejectPrototypeKeys = (feature: string, record: object | undefined, path: string) => {
+    for (const name of Object.keys(record ?? {})) {
+        if (PROTOTYPE_KEYS.has(name)) {
+            throw failure('definition.invalid-declaration', feature, `${path}${pointer(name)}`);
+        }
+    }
+};
+
+const checkNames = (declaration: FeatureDeclaration) => {
+    const { id } = declaration;
+    rejectPrototypeKeys(id, declaration.options, '/options');
+    rejectPrototypeKeys(id, declaration.attributes, '/attributes');
+    rejectPrototypeKeys(id, declaration.commands, '/commands');
+    rejectPrototypeKeys(id, declaration.keys, '/keys');
+    for (const kind of ['nodes', 'marks'] as const) {
+        const members: Readonly<Record<string, NodeDeclaration | MarkDeclaration>> = declaration[kind] ?? {};
+        rejectPrototypeKeys(id, members, pointer(kind));
+        for (const [name, member] of Object.entries(members)) {
+            rejectPrototypeKeys(id, member.attrs, pointer(kind, name, 'attrs'));
+        }
+    }
+    for (const [name, command] of Object.entries(declaration.commands ?? {})) {
+        rejectPrototypeKeys(id, command.payload?.fields, pointer('commands', name, 'payload', 'fields'));
+    }
+};
+
 const readFeatures = (features: readonly Feature[]): CompiledFeature[] => {
     const seen = new Set<string>();
     return features.map((feature, index) => {
@@ -152,6 +188,7 @@ const readFeatures = (features: readonly Feature[]): CompiledFeature[] => {
             throw new DefinitionError('definition.invalid-declaration', { path: pointer(index) });
         }
         const { declaration, manifest } = internals;
+        checkNames(declaration);
         if (seen.has(declaration.id)) {
             throw duplicate('feature', declaration.id, declaration.id, declaration.id);
         }
@@ -233,6 +270,7 @@ const checkHtml = (
         typeof second === 'object' && !Array.isArray(second)
             ? (second as Readonly<Record<string, HtmlAttributeValue>>)
             : undefined;
+    rejectPrototypeKeys(feature.id, attributes, `${path}/1`);
     for (const [name, value] of Object.entries(attributes ?? {})) {
         const at = `${path}/1${pointer(name)}`;
         const isUrl = isUrlAttribute(name);
@@ -268,6 +306,7 @@ const checkParse = (
     path: readonly string[],
 ) => {
     for (const [index, rule] of rules.entries()) {
+        rejectPrototypeKeys(feature.id, 'attrs' in rule ? rule.attrs : undefined, pointer(...path, index, 'attrs'));
         for (const [name, source] of Object.entries('attrs' in rule ? (rule.attrs ?? {}) : {})) {
             const attribute = ownValue(attrs, name);
             if ('value' in source && (attribute === undefined || !isValidValue(attribute, source.value))) {
@@ -284,6 +323,14 @@ const checkParse = (
 const guardHolds = (feature: CompiledFeature, when: OptionGuard | undefined, path: string) => {
     if (when === undefined) {
         return true;
+    }
+    const unsafe = findUnsafeJson(when.equals, `${path}/when/equals`);
+    if (unsafe !== undefined) {
+        throw failure(
+            feature.manifest ? 'definition.invalid-manifest' : 'definition.invalid-option',
+            feature.id,
+            unsafe,
+        );
     }
     const value = ownValue(feature.options, when.option);
     if (value === undefined) {
