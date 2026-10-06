@@ -125,31 +125,43 @@ const split = (definition: JsonValue | undefined) => {
             { schema, required: required.includes(name) },
         ]),
     );
+    // `attrs` turns required with its first required attribute, which the attribute's owner answers for.
+    const top = isObject(definition) && Array.isArray(definition.required) ? definition.required : [];
     const rest = isObject(definition)
-        ? { ...definition, properties: { ...properties, attrs: { ...attrs, properties: {}, required: [] } } }
+        ? {
+              ...definition,
+              required: (top as readonly JsonValue[]).filter((key) => key !== 'attrs'),
+              properties: { ...properties, attrs: { ...attrs, properties: {}, required: [] } },
+          }
         : definition;
     return { rest, each };
 };
 
-/** `value` without the alternatives that refer to a removed definition, whose own removal is judged apart. */
-const prune = (value: JsonValue, removed: ReadonlySet<string>): JsonValue => {
+/**
+ * `value` without what refers to a removed definition, whose own removal is judged apart: such an alternative, the
+ * schema that holds such a reference, such as a `marks` array of only removed marks, and its property.
+ */
+const prune = (value: JsonValue, removed: ReadonlySet<string>, key = ''): JsonValue | undefined => {
     if (Array.isArray(value)) {
-        return (value as readonly JsonValue[]).map((item) => prune(item, removed));
+        const items = (value as readonly JsonValue[]).map((item) => prune(item, removed));
+        return items.filter((item): item is JsonValue => item !== undefined);
     }
     if (!isObject(value)) {
         return value;
     }
-    const entries = Object.entries(value).map(([key, item]): [string, JsonValue] => [key, prune(item, removed)]);
-    const pruned = Object.fromEntries(entries);
-    const alternatives = Array.isArray(pruned.oneOf) ? (pruned.oneOf as readonly JsonValue[]) : undefined;
-    if (alternatives === undefined) {
-        return pruned;
+    if (typeof value.$ref === 'string' && removed.has(value.$ref)) {
+        return undefined;
     }
-    const kept = alternatives.filter(
-        (item) => !(isObject(item) && typeof item.$ref === 'string' && removed.has(item.$ref)),
+    const entries = Object.entries(value).map(([name, item]) => [name, prune(item, removed, name)] as const);
+    if (key !== 'properties' && entries.some(([, item]) => item === undefined)) {
+        return undefined;
+    }
+    const pruned: JsonObject = Object.fromEntries(
+        entries.filter((entry): entry is readonly [string, JsonValue] => entry[1] !== undefined),
     );
-    const [only] = kept;
-    return kept.length === 1 && only !== undefined && entries.length === 1 ? only : { ...pruned, oneOf: kept };
+    const alternatives = Array.isArray(pruned.oneOf) ? (pruned.oneOf as readonly JsonValue[]) : [];
+    const [only] = alternatives;
+    return alternatives.length === 1 && only !== undefined && entries.length === 1 ? only : pruned;
 };
 
 /**
