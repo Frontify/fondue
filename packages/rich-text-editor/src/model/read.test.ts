@@ -198,6 +198,21 @@ describe('decode limits', () => {
         expect(limitOf(spaced, { maxDocumentBytes: bytesOf(spaced) - 1 })).toBe('maxDocumentBytes');
     });
 
+    it('SPEC-rich-text-format/AC-005 lets pure ASCII JSON text of maxDocumentBytes through and blocks one byte over', () => {
+        const json = (count: number) => JSON.stringify(envelope(doc(paragraph(text('a'.repeat(count))))));
+        const exact = json(8);
+        const max = bytesOf(exact);
+        expect(exact.length).toBe(max);
+        expect(decodeDocument(exact, model, { limits: { maxDocumentBytes: max } }).status).toBe('editable');
+        const over = json(9);
+        expect(bytesOf(over)).toBe(max + 1);
+        expect(decodeDocument(over, model, { limits: { maxDocumentBytes: max } })).toMatchObject({
+            status: 'blocked',
+            reason: 'limit-exceeded',
+            diagnostics: [{ code: 'format.limit-exceeded', details: { limit: 'maxDocumentBytes' } }],
+        });
+    });
+
     it('SPEC-rich-text-format/AC-005 blocks a parsed value over the default byte limit without truncating it', () => {
         const input = envelope(doc(paragraph(text('x'.repeat(5 * MIB)))));
         const result = decodeDocument(input, model);

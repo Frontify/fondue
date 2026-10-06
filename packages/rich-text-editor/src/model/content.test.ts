@@ -367,6 +367,28 @@ describe('content expressions', () => {
     });
 });
 
+describe('attribute checks before mark checks', () => {
+    const marked = (chip: ReturnType<typeof mention>) => paragraph({ ...chip, marks: [mark('bold')] });
+
+    it('SPEC-rich-text-format/AC-003 checks attributes before marks on a mention', () => {
+        const unknown = roundTrip(doc(marked(mention('m', { tone: 'warm' }))));
+        expect(islandAt(unknown.tree, 0, 0)).toMatchObject({
+            type: 'unsupported_inline',
+            attrs: { feature: 'mention' },
+        });
+        expect(unknown.codes).toEqual([
+            'format.unknown-attribute /content/content/0/content/0/attrs/tone',
+            'format.invalid-structure /content/content/0/content/0',
+        ]);
+        const invalid = roundTrip(doc(marked(mention('m', { resourceType: 'User' }))));
+        expect(islandAt(invalid.tree, 0, 0)).toMatchObject({
+            type: 'unsupported_inline',
+            attrs: { feature: 'mention' },
+        });
+        expect(invalid.codes).toEqual(['format.invalid-attribute /content/content/0/content/0/attrs/resourceType']);
+    });
+});
+
 describe('occurrence IDs', () => {
     it.each([
         [
@@ -425,6 +447,19 @@ describe('occurrence IDs', () => {
             'format.duplicate-occurrence-id /content/content/0/content/1',
             'format.duplicate-occurrence-id /content/content/1/content/0',
         ]);
+    });
+
+    it('SPEC-rich-text-format/AC-018 skips the rest of an island the duplicate walk places', () => {
+        const content = doc(
+            taskList(taskItem('a', paragraph(text('a')))),
+            taskList(taskItem('a', paragraph(text('b')), taskList(taskItem('c', paragraph(text('c')))))),
+            taskList(taskItem('c', paragraph(text('d')))),
+        );
+        const { tree, codes } = roundTrip(content);
+        expect(islandAt(tree, 0, 0)).toMatchObject({ type: 'task_item', attrs: { nodeId: 'a' } });
+        expect(islandAt(tree, 1)).toMatchObject({ type: 'unsupported_block', attrs: { feature: 'task_list' } });
+        expect(islandAt(tree, 2, 0)).toMatchObject({ type: 'task_item', attrs: { nodeId: 'c' } });
+        expect(codes).toEqual(['format.duplicate-occurrence-id /content/content/1/content/0']);
     });
 });
 
