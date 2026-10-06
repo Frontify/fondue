@@ -167,6 +167,20 @@ describe('toJsonSchema of a model', () => {
     ] as const)('SPEC-rich-text-format/AC-002 judges %s', (_, value, expected) => {
         expect(accepts(value)).toBe(expected);
     });
+
+    it.each([
+        ['marks: [] on a paragraph', content({ ...paragraph(), marks: [] }), true],
+        ['marks: [] on a mention', content(paragraph({ ...mention('m'), marks: [] })), true],
+        ['marks: [] on text', content(paragraph({ ...text('a'), marks: [] })), true],
+        ['marks: [] on code block text', content(codeBlock({ ...text('a'), marks: [] })), true],
+        ['content: [] on a horizontal_rule', content({ ...node('horizontal_rule'), content: [] }), true],
+        ['a child on a horizontal_rule', content(node('horizontal_rule', undefined, paragraph())), false],
+        ['a mark on a paragraph', content({ ...paragraph(), marks: [mark('bold')] }), false],
+        ['content: [] on text', content(paragraph({ ...text('a'), content: [] })), false],
+        ['marks: [] on a doc', envelope(merge(doc(paragraph()), { marks: [] })), false],
+    ] as const)('SPEC-rich-text-format/AC-002 judges an empty array: %s', (_, value, expected) => {
+        expect(accepts(value)).toBe(expected);
+    });
 });
 
 /** A value that meets `declaration`, and one outside it, or `undefined` where JSON Schema cannot tell. */
@@ -498,6 +512,24 @@ describe('toJsonSchema of a feature', () => {
         expect(check({ type: 'acme_pull_quote', attrs: { tone: 'loud' } })).toBe(false);
         expect(check({ type: 'acme_pull_quote', content: [{ type: 'text', text: 'a' }] })).toBe(true);
         expect(check({ type: 'paragraph' })).toBe(false);
+    });
+
+    it('SPEC-rich-text-format/AC-052 closes a child of a feature schema to the keys of a node or mark', () => {
+        const check = compile(toJsonSchema(pullQuote()));
+        const quote = (child: Json) => ({ type: 'acme_pull_quote', content: [child] });
+        expect(check(quote({ type: 'paragraph', evil: true }))).toBe(false);
+        expect(check(quote({ type: 'paragraph', attrs: {}, content: [], marks: [], text: 'a' }))).toBe(true);
+        expect(check(quote({ type: 'text', text: 'a', marks: [{ type: 'bold' }] }))).toBe(true);
+        expect(check(quote({ type: 'paragraph', attrs: 5 }))).toBe(false);
+    });
+
+    it('SPEC-rich-text-format/AC-052 accepts an empty marks and content array on a node of a feature', () => {
+        const owns = (type: string) => features.find((one) => membersOf(one).some(([name]) => name === type));
+        const check = (type: string) => compile(toJsonSchema(owns(type) as Feature));
+        expect(check('paragraph')({ type: 'paragraph', marks: [] })).toBe(true);
+        expect(check('paragraph')({ type: 'paragraph', marks: [{ type: 'bold' }] })).toBe(false);
+        expect(check('horizontal_rule')({ type: 'horizontal_rule', content: [] })).toBe(true);
+        expect(check('horizontal_rule')({ type: 'horizontal_rule', content: [{ type: 'paragraph' }] })).toBe(false);
     });
 
     it('SPEC-rich-text-format/AC-052 describes an attribute that a feature adds to other nodes under $defs', () => {
