@@ -1,5 +1,18 @@
 # @frontify/fondue
 
+## 13.8.1
+
+### Patch Changes
+
+- [#2866](https://github.com/Frontify/fondue/pull/2866) [`f8a87bd`](https://github.com/Frontify/fondue/commit/f8a87bd1ab2ec860a02a8b67c06ef1e0fa9c7b8a) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - fix(Select): filter `Select.Combobox` items inside `Select.Group` and hide groups without matches, so selecting a filtered grouped item works
+
+- [#2867](https://github.com/Frontify/fondue/pull/2867) [`9e286b1`](https://github.com/Frontify/fondue/commit/9e286b180734d5aa53922fce34d2f6b063f607e6) Thanks [@syeo66](https://github.com/syeo66)! - feat(Dialog): enable container prop
+
+- [#2869](https://github.com/Frontify/fondue/pull/2869) [`64345cf`](https://github.com/Frontify/fondue/commit/64345cfe58d90fdb636e3830974265d76d816acc) Thanks [@syeo66](https://github.com/syeo66)! - fix(TextInput): hide the visual placeholder from screen readers so the placeholder is not announced twice
+
+- Updated dependencies [[`f8a87bd`](https://github.com/Frontify/fondue/commit/f8a87bd1ab2ec860a02a8b67c06ef1e0fa9c7b8a), [`9e286b1`](https://github.com/Frontify/fondue/commit/9e286b180734d5aa53922fce34d2f6b063f607e6), [`64345cf`](https://github.com/Frontify/fondue/commit/64345cfe58d90fdb636e3830974265d76d816acc)]:
+  - @frontify/fondue-components@33.0.1
+
 ## 13.8.0
 
 ### Minor Changes
