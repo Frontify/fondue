@@ -1,0 +1,75 @@
+packages/components/src/locales/de-DE.ts
+  s_90246622e6e157::t_ec32241ca104e3 27
+packages/components/src/locales/fr-FR.ts
+  s_90246622e6e157::t_ec32241ca104e3 27
+packages/components/src/components/Select/components/SelectBase.tsx
+  s_90246622e6e157::t_3d3eeccd144c56 255-259
+  s_90246622e6e157::t_8ccc9567c4a621 143
+packages/components/src/components/Select/ComboboxMultiple.tsx
+  s_90246622e6e157::t_599211e743ba34 23
+packages/components/src/locales/nl-NL.ts
+  s_90246622e6e157::t_ec32241ca104e3 27
+packages/components/src/components/Select/__tests__/useSelectionDescription.spec.ts
+  s_90246622e6e157::t_e922add2120772 88,94,97-103
+packages/components/src/locales/fr-CH.ts
+  s_90246622e6e157::t_ec32241ca104e3 27
+packages/components/src/components/Select/__tests__/ComboboxMultiple.a11y.spec.tsx
+  s_90246622e6e157::t_47a8f8d589d931 416-417,419
+packages/components/src/components/Select/components/ComboboxBase.tsx
+  s_90246622e6e157::t_d1e836f7d2dec0 153
+  s_90246622e6e157::t_4466f3c3cdc3f9 325-329
+packages/components/src/components/Select/__tests__/SelectMultiple.a11y.spec.tsx
+  s_90246622e6e157::t_1d01820d3da218 472-473,475
+packages/components/src/locales/it-CH.ts
+  s_90246622e6e157::t_ec32241ca104e3 27
+packages/components/src/components/Select/__tests__/ComboboxMultiple.spec.tsx
+  s_90246622e6e157::t_c25615910a0e42 228-229,231-232
+packages/components/src/components/Select/components/CollapsibleBadges.tsx
+  s_90246622e6e157::t_f1b9639f18479c 27,36,40-42
+  s_90246622e6e157::t_c4bcc8f0d1f471 64-66
+  s_90246622e6e157::t_b04795e376fb41 138-166,169-172,183-188
+  s_90246622e6e157::t_713604b9fa7f6b 81,97-106,114,120
+  s_90246622e6e157::t_f60bdbfb676bb5 189
+packages/components/src/locales/es-ES.ts
+  s_90246622e6e157::t_ec32241ca104e3 27
+packages/components/src/components/Select/SelectMultiple.tsx
+  s_90246622e6e157::t_c1324381c6d95a 23
+packages/components/src/components/Select/Select.metadata.json
+  s_90246622e6e157::t_085c2d33605270 4
+packages/components/src/components/Select/hooks/useSelectionDescription.ts
+  s_90246622e6e157::t_2404cc2ac47322 23,28,33-41,43-44,46-47
+packages/components/src/locales/pl-PL.ts
+  s_90246622e6e157::t_ec32241ca104e3 27
+packages/components/src/components/Select/__tests__/CollapsibleBadges.spec.tsx
+  s_90246622e6e157::t_655c0d8408fc54 101-102,104-111,116,125
+packages/components/src/locales/en-US.ts
+  s_90246622e6e157::t_ec32241ca104e3 25
+packages/components/src/locales/pt-PT.ts
+  s_90246622e6e157::t_ec32241ca104e3 27
+packages/components/src/components/Select/__tests__/SelectMultiple.spec.tsx
+  s_90246622e6e157::t_e6f4d75c9b5f1c 218-219,221-222
+packages/components/src/components/Select/__tests__/MultiselectIndeterminate.ct.tsx
+  s_90246622e6e157::t_d89f0e1091e157 120-149
+  s_90246622e6e157::t_639c07d7c8b03b 101,107,112,117-118
+  s_90246622e6e157::t_1d79761c012262 119
+packages/components/src/locales/de-CH.ts
+  s_90246622e6e157::t_ec32241ca104e3 27
+packages/components/src/locales/it-IT.ts
+  s_90246622e6e157::t_ec32241ca104e3 27
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "6be9e877fa37cbeeeb866d292bab0ef7de33551f",
+  "prompts": {},
+  "sessions": {
+    "s_90246622e6e157": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b03505de-347f-4015-bcd8-0c418eb63dbe",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+.github/workflows/icon-generation.yaml
+  s_79e9cb214ca814::t_116ddc97b4aada 31,61
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.13",
+  "base_commit_sha": "d58a3606cacc130c4e4abb91679542285bd0cb2b",
+  "prompts": {},
+  "humans": {
+    "h_2139c5e5c94509": {
+      "author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  },
+  "sessions": {
+    "s_79e9cb214ca814": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "097ebaa4-0232-41d9-82fb-7e35cff9ac04",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}
