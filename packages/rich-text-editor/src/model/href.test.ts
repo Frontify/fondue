@@ -91,6 +91,64 @@ describe('checkHref', () => {
         expect(checkHref('/brand', { allowedHosts: ['good.com'] })).toEqual({ ok: true, href: '/brand' });
     });
 
+    it.each([
+        'https:&bsol;&bsol;evil.com/',
+        'https:&bsol;&bsol;evil.com&sol;',
+        'https://evil.com&quest;.good.com/',
+        'https://evil.com&num;.good.com/',
+        'https://evil.com&NewLine;&sol;x',
+        'https://evil.com&Tab;&bsol;x',
+        'https://evil.com&Tab;&sol;x',
+    ])('SPEC-rich-text-references/AC-002 sends %j to the host check through its named references', (input) => {
+        expect(
+            checkHref(input, { allowedSchemes: ['https'], allowedHosts: ['good.com', '*.good.com'] }),
+            input,
+        ).toEqual({ ok: false, code: 'host-not-allowed' });
+    });
+
+    it.each(['https:&bsol;&bsol;u&commat;evil.com/', 'https://u&commat;evil.com/'])(
+        'SPEC-rich-text-references/AC-002 finds the credentials hidden in %j',
+        (input) => {
+            expect(checkHref(input)).toEqual({ ok: false, code: 'credentials' });
+            expect(checkHref(input, { allowedSchemes: ['https'], allowedHosts: ['evil.com'] })).toEqual({
+                ok: false,
+                code: 'credentials',
+            });
+        },
+    );
+
+    it.each(['java&Tab;script:alert(1)', 'java&NewLine;script:alert(1)', 'javascript&colon;alert(1)'])(
+        'SPEC-rich-text-references/AC-002 rejects the scheme hidden in %j',
+        (input) => {
+            expect(checkHref(input)).toEqual({ ok: false, code: 'unsafe-scheme' });
+        },
+    );
+
+    it('SPEC-rich-text-references/AC-002 applies the scheme policy after decoding a named reference', () => {
+        expect(checkHref('http&colon;&sol;&sol;good.com/', { allowedSchemes: ['https'] })).toEqual({
+            ok: false,
+            code: 'unsafe-scheme',
+        });
+    });
+
+    it.each(['https://good.com&lt/x', 'https://good.com&LT/x', 'https://good.com&gt/x', 'https://good.com&GTx/x'])(
+        'SPEC-rich-text-references/AC-002 decodes the semicolon-less reference in %j',
+        (input) => {
+            expect(checkHref(input)).toEqual({ ok: false, code: 'unparsable' });
+        },
+    );
+
+    it.each([
+        'https://good.com/?a=1&copy;b=2',
+        'https://good.com/?a=1&foo;',
+        'https://good.com/?a=1&amplitude=2&b=&lt',
+    ])('SPEC-rich-text-references/AC-004 keeps the URL %j whose query holds an unrelated reference', (input) => {
+        expect(checkHref(input, { allowedSchemes: ['https'], allowedHosts: ['good.com'] })).toEqual({
+            ok: true,
+            href: input,
+        });
+    });
+
     it.each(['http://[::1', 'https://exa mple.com', 'https://example.com/\uD800', '\uDC00/brand'])(
         'SPEC-rich-text-references/AC-003 reports %j as unparsable',
         (input) => {
