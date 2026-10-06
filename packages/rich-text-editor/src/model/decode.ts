@@ -21,7 +21,7 @@ import { exceedsBytes, readInput } from './read';
 const limitsOf = (given: Partial<ResourceLimits> | undefined): ResourceLimits => {
     const limits: Record<string, number> = { ...defaultLimits };
     for (const [name, value] of Object.entries(given === undefined ? {} : given)) {
-        if (typeof value === 'number') {
+        if (typeof value === 'number' && Number.isFinite(value) && value >= 0) {
             limits[name] = value;
         }
     }

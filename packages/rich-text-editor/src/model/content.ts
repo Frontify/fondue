@@ -489,6 +489,7 @@ const dedupe = (context: Context, tree: TreeNode, path: string, kept: Set<string
     for (const [index, child] of tree.content.entries()) {
         const checked = dedupe(context, child, `${path}${pointer('content', index)}`, kept);
         if (checked !== undefined) {
+            changed ||= checked !== child;
             match = advance(vocabulary, match, checked.type);
             content.push(checked);
             if (match.states.length === 0) {
