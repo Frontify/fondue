@@ -21,23 +21,72 @@ const MAX_LENGTH = 2048;
 const SAFE_SCHEMES = new Set(['https:', 'http:', 'mailto:', 'tel:']);
 const EDGE_CONTROLS = /^[\u0000-\u0020]+|[\u0000-\u0020]+$/g;
 const CONTROL = /[\u0000-\u001F\u007F-\u009F]/;
+/**
+ * Every HTML5 named reference whose value is ASCII, keyed by its case-sensitive name. Only ASCII can form a URL
+ * delimiter or a scheme letter, and the full table would exceed the `./model` size budget.
+ */
 const NAMED_REFERENCES: Readonly<Record<string, string>> = {
+    AMP: '&',
+    DiacriticalGrave: '`',
+    GT: '>',
+    Hat: '^',
+    LT: '<',
+    NewLine: '\n',
+    QUOT: '"',
+    Tab: '\t',
+    UnderBar: '_',
+    VerticalLine: '|',
     amp: '&',
-    colon: ':',
-    newline: '\n',
-    tab: '\t',
-    sol: '/',
-    lpar: '(',
-    rpar: ')',
-    period: '.',
-    quot: '"',
     apos: "'",
+    ast: '*',
+    bsol: '\\',
+    colon: ':',
+    comma: ',',
+    commat: '@',
+    dollar: '$',
+    equals: '=',
+    excl: '!',
+    fjlig: 'fj',
+    grave: '`',
+    gt: '>',
+    lbrace: '{',
+    lbrack: '[',
+    lcub: '{',
+    lowbar: '_',
+    lpar: '(',
+    lsqb: '[',
+    lt: '<',
+    midast: '*',
+    num: '#',
+    percnt: '%',
+    period: '.',
+    plus: '+',
+    quest: '?',
+    quot: '"',
+    rbrace: '}',
+    rbrack: ']',
+    rcub: '}',
+    rpar: ')',
+    rsqb: ']',
+    semi: ';',
+    sol: '/',
+    verbar: '|',
+    vert: '|',
+};
+const LEGACY_REFERENCE = /^(?:amp|lt|gt|quot|AMP|LT|GT|QUOT)/;
+
+const decodeNamed = (name: string, semicolon: string) => {
+    if (semicolon !== '' && Object.hasOwn(NAMED_REFERENCES, name)) {
+        return NAMED_REFERENCES[name];
+    }
+    const legacy = LEGACY_REFERENCE.exec(name)?.[0];
+    return legacy === undefined ? undefined : `${NAMED_REFERENCES[legacy]}${name.slice(legacy.length)}${semicolon}`;
 };
 
 const decodeReferences = (text: string) =>
     text.replaceAll(
-        /&#(x[\da-f]+|\d+);?|&([a-z]+);/gi,
-        (match, numeric: string | undefined, name: string | undefined) => {
+        /&#(x[\da-f]+|\d+);?|&([a-z\d]+)(;?)/gi,
+        (match, numeric: string | undefined, name: string = '', semicolon: string = '') => {
             if (numeric !== undefined) {
                 const code =
                     numeric.startsWith('x') || numeric.startsWith('X')
@@ -45,8 +94,7 @@ const decodeReferences = (text: string) =>
                         : Number(numeric);
                 return code > 0x10ffff ? match : String.fromCodePoint(code);
             }
-            const key = name === undefined ? '' : name.toLowerCase();
-            return NAMED_REFERENCES[key] ?? match;
+            return decodeNamed(name, semicolon) ?? match;
         },
     );
 
