@@ -447,6 +447,20 @@ export const compileContentModel = <const Features extends readonly Feature[]>(
             }
         }
     }
+    const doc = nodes.get('doc');
+    if (doc !== undefined) {
+        const rootFault = Object.entries(attributesOf(doc)).find(([, attribute]) => !('default' in attribute));
+        if (rootFault !== undefined) {
+            throw failure(
+                'definition.invalid-declaration',
+                doc.featureId,
+                pointer('nodes', 'doc', 'attrs', rootFault[0]),
+            );
+        }
+        if ((doc.declaration.exactlyOne ?? []).length > 0) {
+            throw failure('definition.invalid-declaration', doc.featureId, pointer('nodes', 'doc', 'exactlyOne'));
+        }
+    }
     for (const feature of list) {
         for (const [name, declaration] of Object.entries(feature.declaration.nodes ?? {})) {
             const node = nodes.get(name);

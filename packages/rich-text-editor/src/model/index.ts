@@ -47,9 +47,25 @@ export {
     type ValueDeclaration,
     type ValueOf,
 } from './declarations';
+export { createEmptyDocument, decodeDocument, hashDocument } from './decode';
 export { defaultIdSource, type IdSource, type RuntimeEnvironment } from './environment';
 export { DefinitionError, type DefinitionErrorCode } from './errors';
 export { defineFeature } from './feature';
+export {
+    type ContentNodeJSON,
+    type DecodeOptions,
+    type DecodeResult,
+    defaultLimits,
+    type Diagnostic,
+    type DiagnosticCode,
+    type DocumentOf,
+    type FormatDiagnosticCode,
+    type MarkJSON,
+    type MarkOf,
+    type NodeOf,
+    type ResourceLimits,
+    type RichTextDocument,
+} from './format';
 export { checkHref, type HrefPolicy, type HrefResult } from './href';
 export { featureFromManifest } from './manifest';
 export { featureManifestSchema } from './manifest-schema';
