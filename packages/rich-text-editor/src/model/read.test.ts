@@ -120,6 +120,71 @@ describe('decode input that is not JSON', () => {
     });
 });
 
+describe('host objects', () => {
+    const throwing = (trap: 'ownKeys' | 'getPrototypeOf' | 'getOwnPropertyDescriptor') =>
+        new Proxy(
+            { lang: null },
+            {
+                [trap]: () => {
+                    throw new Error('trap');
+                },
+            },
+        );
+    const revoked = () => {
+        const { proxy, revoke } = Proxy.revocable({}, {});
+        revoke();
+        return proxy;
+    };
+    const hostile: readonly (readonly [string, () => unknown])[] = [
+        ['a Proxy whose ownKeys trap throws', () => throwing('ownKeys')],
+        ['a Proxy whose getPrototypeOf trap throws', () => throwing('getPrototypeOf')],
+        ['a Proxy whose getOwnPropertyDescriptor trap throws', () => throwing('getOwnPropertyDescriptor')],
+        ['a revoked Proxy', revoked],
+    ];
+
+    it.each(hostile)(
+        'SPEC-rich-text-quality/AC-005 SPEC-rich-text-format/AC-004 blocks %s at the top and inside attrs',
+        (_, make) => {
+            for (const input of [make(), withAttrs({ lang: null, extra: make() } as unknown as Json)]) {
+                const result = decodeDocument(input, model);
+                expect(result).toMatchObject({
+                    status: 'blocked',
+                    reason: 'invalid',
+                    diagnostics: [{ code: 'format.not-json' }],
+                });
+                expect(result.status === 'blocked' && result.original).toBe(input);
+            }
+        },
+    );
+
+    it('SPEC-rich-text-quality/AC-005 follows the descriptor value of a lying Proxy and keeps no host object', () => {
+        const target = { type: 'paragraph', content: [text('a')] };
+        const lying = new Proxy(target, {
+            get: (object, key): unknown => (key === 'type' ? 'acme_widget' : (Reflect.get(object, key) as unknown)),
+        });
+        const input = envelope({ type: 'doc', content: [lying as unknown as Json] });
+        const result = decodeDocument(input, model);
+        expect(result).toMatchObject({ status: 'editable', diagnostics: [] });
+        const first = result.status === 'editable' ? result.document.content.content?.[0] : undefined;
+        expect(first).toEqual(target);
+        expect(first).not.toBe(lying);
+        expect(first?.type).toBe('paragraph');
+    });
+
+    it('SPEC-rich-text-quality/AC-005 keeps a decoded result when the parsed input changes afterwards', () => {
+        const input = JSON.parse(JSON.stringify(envelope(doc(paragraph(text('a')))))) as {
+            content: { content: { content: { text: string }[] }[] };
+        };
+        const result = decodeDocument(input, model);
+        const [block] = input.content.content;
+        const [leaf] = block === undefined ? [] : block.content;
+        if (leaf !== undefined) {
+            leaf.text = 'changed';
+        }
+        expect(result.status === 'editable' && result.document.content).toEqual(doc(paragraph(text('a'))));
+    });
+});
+
 describe('decode limits', () => {
     const tricky = envelope(doc(paragraph(text('é"\n\u0001😀\uD800 \\ ✓'))));
 

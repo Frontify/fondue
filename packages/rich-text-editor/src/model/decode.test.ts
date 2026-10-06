@@ -111,7 +111,7 @@ describe('decode order', () => {
 
     it('SPEC-rich-text-format/AC-003 returns a parsed input as the document and parses a JSON text', () => {
         const result = decodeDocument(valid, model);
-        expect(result.status === 'editable' && result.document).toBe(valid);
+        expect(result.status === 'editable' && result.document).toEqual(valid);
         expect(decodeDocument(JSON.stringify(valid), model)).toEqual({
             status: 'editable',
             document: valid,
@@ -200,7 +200,7 @@ describe('versions', () => {
         expect(saved.model).toEqual({ id: 'fixture.vocabulary', version: 1 });
         const stored = (newer as unknown as RichTextDocument).content.content;
         expect(saved.content.content).toEqual(stored);
-        expect(saved.content.content?.[1]).toBe(stored === undefined ? undefined : stored[1]);
+        expect(saved.content.content?.[1]).toEqual(stored === undefined ? undefined : stored[1]);
     });
 
     it('SPEC-rich-text-format/AC-011 warns for an unknown capability and keeps its content as islands', () => {

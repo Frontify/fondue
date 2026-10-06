@@ -106,7 +106,7 @@ describe('unknown nodes', () => {
     it('SPEC-rich-text-format/AC-013 reads a stored island type as unknown content', () => {
         const stored = { type: 'unsupported_block', attrs: { original: paragraph(), feature: 'paragraph' } };
         const { tree, codes } = roundTrip(doc(stored));
-        expect(attrsAt(tree, 0).original).toBe(stored);
+        expect(attrsAt(tree, 0).original).toEqual(stored);
         expect(codes).toEqual(['format.unknown-node /content/content/0']);
     });
 });
@@ -539,6 +539,18 @@ describe('marks on nodes that take none', () => {
 
 describe('table grids', () => {
     const p = paragraph();
+
+    it('SPEC-rich-text-format/AC-051 SPEC-rich-text-format/AC-006 rejects a wide sparse table within every limit in under 200 ms', () => {
+        const wide = row(...Array.from({ length: 1250 }, () => cell({ colspan: 50 }, p)));
+        const narrow = Array.from({ length: 1249 }, () => row(cell({}, p)));
+        const input = envelope(doc(table('t', wide, ...narrow)));
+        const started = performance.now();
+        const { result, tree } = decodeToTree(input, model);
+        const elapsed = performance.now() - started;
+        expect(result.diagnostics.map(({ code }) => code)).toEqual(['format.invalid-structure']);
+        expect(tree === undefined ? undefined : islandAt(tree, 0).type).toBe('unsupported_block');
+        expect(elapsed).toBeLessThan(200);
+    });
     const cases: readonly (readonly [string, Json])[] = [
         ['rows of different widths', table('t', row(cell({}, p), cell({}, p)), row(cell({}, p)))],
         ['overlapping spans', table('t', row(cell({ rowspan: 2 }, p), cell({}, p)), row(cell({ colspan: 2 }, p)))],
