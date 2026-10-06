@@ -1,0 +1,28 @@
+{
+    "format": "frontify.rich-text",
+    "formatVersion": 1,
+    "model": { "id": "fixture.notes", "version": 3 },
+    "requiredCapabilities": [
+        { "id": "core", "version": 1 },
+        { "id": "fixture.note", "version": 3 },
+        { "id": "fixture.rule", "version": 1 }
+    ],
+    "content": {
+        "type": "doc",
+        "attrs": { "lang": null, "dir": "auto" },
+        "content": [
+            {
+                "type": "note",
+                "attrs": { "nodeId": "note-8", "level": "danger", "collapsed": true },
+                "content": [
+                    {
+                        "type": "paragraph",
+                        "attrs": { "lang": null },
+                        "content": [{ "type": "text", "text": "Rotate the signing keys" }]
+                    }
+                ]
+            },
+            { "type": "horizontal_rule" }
+        ]
+    }
+}

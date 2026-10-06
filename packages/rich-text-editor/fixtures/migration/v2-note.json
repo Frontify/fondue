@@ -1,0 +1,28 @@
+{
+    "format": "frontify.rich-text",
+    "formatVersion": 1,
+    "model": { "id": "fixture.notes", "version": 2 },
+    "requiredCapabilities": [
+        { "id": "core", "version": 1 },
+        { "id": "fixture.note", "version": 2 },
+        { "id": "fixture.rule", "version": 1 }
+    ],
+    "content": {
+        "type": "doc",
+        "attrs": { "lang": null, "dir": "auto" },
+        "content": [
+            {
+                "type": "note",
+                "attrs": { "nodeId": "note-7", "level": "warning" },
+                "content": [
+                    {
+                        "type": "paragraph",
+                        "attrs": { "lang": null },
+                        "content": [{ "type": "text", "text": "Freeze the release branch" }]
+                    }
+                ]
+            },
+            { "type": "horizontal_rule" }
+        ]
+    }
+}
