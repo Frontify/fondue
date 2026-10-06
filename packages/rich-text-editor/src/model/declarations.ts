@@ -346,3 +346,19 @@ export interface ContentModel<Features extends readonly Feature[] = readonly Fea
     readonly manifest: JsonObject;
     readonly fingerprint: string;
 }
+
+export interface TranslationStrings {
+    readonly [key: `RichTextEditor_${string}`]: string;
+}
+/**
+ * The package's locale: its strings and language. Not Fondue's `LocaleConfig`, whose `dateLocale` is a
+ * date-fns `Locale`: the editor formats no dates (DR-012). `enUS` is the fallback.
+ */
+export interface RichTextLocale {
+    readonly translationStrings: TranslationStrings;
+    readonly lang?: string;
+}
+export type ReferenceResolution =
+    | { readonly status: 'current'; readonly label: string }
+    | { readonly status: 'unavailable'; readonly code: 'deleted' | 'forbidden' }
+    | { readonly status: 'unknown' };

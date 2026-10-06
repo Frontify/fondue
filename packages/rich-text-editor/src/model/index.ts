@@ -39,8 +39,11 @@ export {
     type ParseRule,
     type PayloadDeclaration,
     type PayloadOf,
+    type ReferenceResolution,
+    type RichTextLocale,
     type SharedAttributeDeclaration,
     type ToolbarEntry,
+    type TranslationStrings,
     type ValueDeclaration,
     type ValueOf,
 } from './declarations';
