@@ -267,6 +267,38 @@ describe('compileContentModel orphan behavior', () => {
 });
 
 describe('compileContentModel declarations', () => {
+    it('SPEC-rich-text-format/AC-016 rejects a doc attribute without a default and a doc exactlyOne', () => {
+        const required = feature({
+            id: 'a.root',
+            version: 1,
+            requires: requiresCore,
+            attributes: { owner: { on: ['doc'], value: { type: 'string', required: true } } },
+        });
+        expect(failureOf(() => compile([core(), required]))).toEqual({
+            code: 'definition.invalid-declaration',
+            details: { feature: 'core', path: '/nodes/doc/attrs/owner' },
+        });
+        const doc = {
+            content: 'paragraph+',
+            attrs: { a: { type: 'string', nullable: true, default: null } },
+            html: ['div', 0],
+            parse: [],
+        } as const;
+        const oneOf = feature({
+            id: 'a.doc',
+            version: 1,
+            nodes: {
+                doc: { ...doc, exactlyOne: ['a'] },
+                paragraph: block('text*'),
+                text: { group: 'inline', attrs: {}, html: ['span', 0], parse: [] },
+            },
+        });
+        expect(failureOf(() => compile([oneOf]))).toEqual({
+            code: 'definition.invalid-declaration',
+            details: { feature: 'a.doc', path: '/nodes/doc/exactlyOne' },
+        });
+    });
+
     it('SPEC-rich-text/AC-022 rejects a node or a mark without an html spec', () => {
         const node = {
             id: 'a.x',
