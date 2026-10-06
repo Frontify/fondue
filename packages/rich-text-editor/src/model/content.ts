@@ -61,6 +61,8 @@ interface Context {
     readonly diagnostics: Diagnostic[];
     /** The stored JSON of each tree node, for the island that may replace it. */
     readonly sources: WeakMap<TreeNode, unknown>;
+    /** Node positions a `requires-review` migration step reported, which fail unchecked and with no diagnostic of their own. */
+    readonly review: ReadonlySet<string>;
 }
 
 const warn = (context: Context, code: FormatDiagnosticCode, path: string) =>
@@ -371,6 +373,9 @@ const checkChildren = (
 
 /** Decode order step 4 for a node below the root: checks 1 to 7, the first failing one making it fail. */
 const checkNode = (context: Context, value: unknown, path: string, parent: CompiledNode): Checked => {
+    if (context.review.has(path)) {
+        return FAILED;
+    }
     if (!isRecord(value) || typeof value.type !== 'string') {
         warn(context, 'format.invalid-structure', path);
         return FAILED;
@@ -524,8 +529,9 @@ const dedupe = (context: Context, tree: TreeNode, path: string, kept: Set<string
 export const checkContent = (
     root: unknown,
     model: ContentModel,
+    review: ReadonlySet<string> = new Set(),
 ): { readonly tree: TreeNode | undefined; readonly diagnostics: readonly Diagnostic[] } => {
-    const context: Context = { vocabulary: vocabularyOf(model), diagnostics: [], sources: new WeakMap() };
+    const context: Context = { vocabulary: vocabularyOf(model), diagnostics: [], sources: new WeakMap(), review };
     const checked = checkRoot(context, root as Attrs);
     const tree = checked === undefined ? undefined : dedupe(context, checked, '/content', new Set());
     // AC-012 (`format.capability-undeclared`) checks the content outside islands here, after the duplicate walk.

@@ -1,5 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type IdSource } from './environment';
+import { type Diagnostic, type RichTextDocument } from './format';
+
 export type JsonValue = null | boolean | number | string | readonly JsonValue[] | { readonly [key: string]: JsonValue };
 export type JsonObject = { readonly [key: string]: JsonValue };
 
@@ -250,6 +253,46 @@ export type ToolbarEntry =
           readonly items: readonly CommandRef[];
           readonly when?: OptionGuard;
       };
+/** New `nodeId`s in a migrated document come from `ids` only. */
+export interface MigrationContext {
+    readonly ids: IdSource;
+}
+export type MigrationStepResult =
+    | { readonly status: 'migrated'; readonly document: RichTextDocument }
+    /**
+     * Content the step cannot map without choosing meaning stays as stored, so decode keeps it as
+     * islands, except the root, which blocks; `unsupported` means no document of the target version
+     * exists for this input. One diagnostic per unmapped node, with its path into the step's output, which
+     * names a node position.
+     */
+    | {
+          readonly status: 'requires-review' | 'unsupported';
+          readonly document: RichTextDocument;
+          readonly diagnostics: readonly Diagnostic[];
+      };
+/**
+ * A pure, synchronous, DOM-free step that upgrades a document from one model version to the next;
+ * `id` appears in `MigrationManifest.steps`. It leaves nodes, marks and attributes its source version
+ * does not declare unchanged, so it is a no-op on content a newer version wrote.
+ */
+export interface ModelMigration {
+    readonly id: string;
+    readonly from: number;
+    /** Receives unchecked content: a value in a node or mark position may be any JSON value, `null` included. */
+    readonly migrate: (document: RichTextDocument, context: MigrationContext) => MigrationStepResult;
+}
+/**
+ * Code features only. The same kind of step for the content one feature owns, from capability version
+ * `from` to `from + 1`. `compileContentModel` installs it in every model that installs the feature, so
+ * profile and host models register nothing; decode runs it for a document whose `requiredCapabilities`
+ * record an older version of that capability.
+ */
+export interface CapabilityMigration {
+    readonly id: string;
+    readonly from: number;
+    /** Receives unchecked content: a value in a node or mark position may be any JSON value, `null` included. */
+    readonly migrate: (document: RichTextDocument, context: MigrationContext) => MigrationStepResult;
+}
 /** An attribute one feature adds to other features' nodes, such as `align` on `paragraph` and `heading`. */
 export interface SharedAttributeDeclaration {
     readonly on: readonly string[] | 'textblocks';
@@ -262,6 +305,8 @@ export interface FeatureDeclaration {
     readonly id: string;
     readonly version: number;
     readonly requires?: readonly { readonly id: string; readonly version: number }[];
+    /** Upgrades of this feature's stored content between its capability versions. */
+    readonly migrations?: readonly CapabilityMigration[];
     /** Serializable options with defaults; the declaration reads them as `{ option }`. */
     readonly options?: OptionDeclarations;
     readonly nodes?: Readonly<Record<string, NodeDeclaration>>;
@@ -335,6 +380,7 @@ export interface FeatureManifest {
 export interface ContentModelOptions {
     readonly id: string;
     readonly version: number;
+    readonly migrations?: readonly ModelMigration[];
 }
 declare const contentModelBrand: unique symbol;
 /** The compiled model that the editor, the reader and every codec take. */

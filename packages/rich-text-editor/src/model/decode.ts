@@ -2,9 +2,10 @@
 
 import { attributesOf } from './compile';
 import { checkContent, type TreeNode, vocabularyOf } from './content';
-import { type ContentModel, type JsonValue } from './declarations';
+import { type ContentModel } from './declarations';
 import { encodeTree } from './encode';
 import { checkEnvelope } from './envelope';
+import { defaultIdSource } from './environment';
 import { pointer } from './errors';
 import {
     type DecodeOptions,
@@ -15,7 +16,7 @@ import {
     type ResourceLimits,
     type RichTextDocument,
 } from './format';
-import { canonicalJson, sha256 } from './hash';
+import { runMigrations } from './migrate';
 import { exceedsBytes, readInput } from './read';
 
 const limitsOf = (given: Partial<ResourceLimits> | undefined): ResourceLimits => {
@@ -27,9 +28,6 @@ const limitsOf = (given: Partial<ResourceLimits> | undefined): ResourceLimits =>
     }
     return limits as unknown as ResourceLimits;
 };
-
-/** Step 3 after the capability warnings: registered migrations run here in memory (AC-010); none is registered yet. */
-const runMigrations = (document: RichTextDocument): RichTextDocument => document;
 
 /** AC-011: a capability the model does not install, or records at a lower version, warns. */
 const capabilityWarnings = (document: RichTextDocument, model: ContentModel): Diagnostic[] => {
@@ -66,9 +64,13 @@ export const decodeToTree = (input: unknown, model: ContentModel, options: Decod
         return blocked(envelope.reason, [envelope.diagnostic]);
     }
     const warnings = capabilityWarnings(envelope.document, model);
-    const document = runMigrations(envelope.document);
-    const { tree, diagnostics } = checkContent(document.content, model);
-    const found = [...warnings, ...diagnostics];
+    const migrated = runMigrations(envelope.document, model, options.ids ?? defaultIdSource, limits);
+    const document = migrated.document;
+    if (document === null) {
+        return blocked('unsupported', [...warnings, ...migrated.diagnostics]);
+    }
+    const { tree, diagnostics } = checkContent(document.content, model, migrated.review);
+    const found = [...warnings, ...migrated.diagnostics, ...diagnostics];
     if (tree === undefined) {
         return blocked('invalid', found);
     }
@@ -105,7 +107,3 @@ export const createEmptyDocument = (model: ContentModel): RichTextDocument => {
     const paragraph = { type: 'paragraph', attrs: defaults('paragraph') };
     return encodeTree({ type: 'doc', attrs: defaults('doc'), content: [paragraph] }, model).document;
 };
-
-/** Lowercase hex SHA-256 over canonical JSON with keys sorted by code point, computed synchronously in JavaScript. */
-export const hashDocument = (document: RichTextDocument): string =>
-    sha256(canonicalJson(document as unknown as JsonValue));

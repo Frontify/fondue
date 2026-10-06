@@ -25,6 +25,7 @@ import {
     type JsonObject,
     type JsonValue,
     type MarkDeclaration,
+    type ModelMigration,
     type NodeDeclaration,
     type OptionGuard,
     type ParseRule,
@@ -103,6 +104,7 @@ export interface CompiledModel {
     /** In plugin order. */
     readonly keymap: readonly KeymapEntry[];
     readonly plugins: readonly PluginDescriptor[];
+    readonly migrations: readonly ModelMigration[];
 }
 
 const COMPILED = Symbol('compiled-model');
@@ -180,6 +182,20 @@ const checkNames = (declaration: FeatureDeclaration) => {
     }
 };
 
+/** Each step starts below `version`, and no two steps start at one version. */
+const checkMigrations = (steps: readonly ModelMigration[] = [], version: number, feature?: string) => {
+    for (const [index, { from, migrate }] of steps.entries()) {
+        const repeated = steps.findIndex((step) => step.from === from) !== index;
+        if (!Number.isInteger(from) || from >= version || repeated || typeof migrate !== 'function') {
+            const path = pointer('migrations', index);
+            throw new DefinitionError(
+                'definition.invalid-declaration',
+                feature === undefined ? { path } : { feature, path },
+            );
+        }
+    }
+};
+
 const readFeatures = (features: readonly Feature[]): CompiledFeature[] => {
     const seen = new Set<string>();
     return features.map((feature, index) => {
@@ -189,6 +205,7 @@ const readFeatures = (features: readonly Feature[]): CompiledFeature[] => {
         }
         const { declaration, manifest } = internals;
         checkNames(declaration);
+        checkMigrations(declaration.migrations, declaration.version, declaration.id);
         if (seen.has(declaration.id)) {
             throw duplicate('feature', declaration.id, declaration.id, declaration.id);
         }
@@ -349,6 +366,7 @@ export const compileContentModel = <const Features extends readonly Feature[]>(
 ): ContentModel<Features> => {
     const list = readFeatures(features);
     checkDependencies(list);
+    checkMigrations(options.migrations, options.version);
 
     const nodes = new Map<string, CompiledNode & { readonly shared: SharedAttribute[] }>();
     const marks = new Map<string, CompiledMark>();
@@ -617,6 +635,7 @@ export const compileContentModel = <const Features extends readonly Feature[]>(
         commands: [...commands.values()],
         keymap,
         plugins,
+        migrations: options.migrations ?? [],
     };
     const manifest: JsonObject = snapshot({
         model: { id: options.id, version: options.version },
