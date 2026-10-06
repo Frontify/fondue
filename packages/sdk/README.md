@@ -130,7 +130,7 @@ The sources live in [`guides/sdk/`](./guides/sdk/):
   `.where`/`.get`/`.has` and where you can't.
 - **[Reference](./guides/sdk/Reference.md)** (`sdk/Reference`) — every
   export, type, method, and edge case.
-- **[Recipes](./guides/sdk/Recipes.md)** (`sdk/Recipes`) — copy-pasteable
+- **[Examples](./guides/sdk/Examples.md)** (`sdk/Examples`) — copy-pasteable
   solutions for common tasks (search, group by tag, walk relationships,
   serialize, …).
 

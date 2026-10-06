@@ -225,6 +225,6 @@ node -e "import('@frontify/fondue/sdk').then(({guides}) => console.log(guides.ge
 
 - `sdk/Reference` — the formal contract: every export, every filter clause per domain, every node and facet type, error semantics. Load it when you need to verify a filter clause is valid (`ComponentFilter`, `TokenFilter`, `GuideFilter`) or that a method exists.
 - `sdk/Concepts` — nodes vs. facets vs. plain arrays.
-- `sdk/Recipes` — query snippets for common tasks.
+- `sdk/Examples` — query snippets for common tasks.
 
 If `guides.get('sdk/Reference')` returns `undefined`, the installed Fondue predates these guides — read the SDK's type declarations (`@frontify/fondue-sdk/dist/index.d.ts`) instead. Prefer either over web lookups or upstream GitHub.

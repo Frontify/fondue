@@ -125,6 +125,6 @@ or grep across the corpus.
 - `sdk/Concepts` — what's a node, what's a facet, what's a plain array.
   Read this once and the rest of the API clicks.
 - `sdk/Reference` — every method and type.
-- `sdk/Recipes` — copy-paste snippets for real tasks.
+- `sdk/Examples` — copy-paste snippets for real tasks.
 
 Each is a guide too: `guides.get('sdk/Concepts')?.content`.

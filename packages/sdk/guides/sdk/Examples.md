@@ -1,4 +1,4 @@
-# SDK recipes
+# SDK examples
 
 Copy-paste solutions for common tasks. All snippets assume:
 
