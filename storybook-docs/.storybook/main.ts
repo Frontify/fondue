@@ -9,9 +9,14 @@ const getAbsolutePath = (packageName: string): string => {
     return dirname(fileURLToPath(import.meta.resolve(packageName)));
 };
 
+// Netlify branch subdomains use the branch name lowercased, with anything outside [a-z0-9] replaced by dashes.
+const toBranchSubdomain = (branch: string): string => branch.toLowerCase().replaceAll(/[^a-z0-9]+/g, '-');
+
 const getSubpackageURL = (subpackage: string): string => {
     if (process.env.CONTEXT === 'deploy-preview' && process.env.REVIEW_ID) {
         return `https://deploy-preview-${process.env.REVIEW_ID}.${subpackage}.fondue-components.frontify.com/`;
+    } else if (process.env.CONTEXT === 'branch-deploy' && process.env.BRANCH) {
+        return `https://${toBranchSubdomain(process.env.BRANCH)}.${subpackage}.fondue-components.frontify.com/`;
     } else {
         return `https://${subpackage}.fondue-components.frontify.com/`;
     }
