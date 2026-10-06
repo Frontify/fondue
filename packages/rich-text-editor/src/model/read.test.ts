@@ -17,6 +17,7 @@ import {
 import { vocabularyModel } from '#/features/__fixtures__/vocabulary';
 import { decodeDocument, defaultLimits, type ResourceLimits } from '#/model';
 
+import { decodeToTree } from './decode';
 import { readInput } from './read';
 
 const model = vocabularyModel();
@@ -252,11 +253,22 @@ describe('decode limits', () => {
         expect(limitOf(withAttrs({ lang: null, title: 'x'.repeat(8192) }))).toBeUndefined();
         expect(limitOf(withAttrs({ lang: null, title: 'x'.repeat(8193) }))).toBe('maxAttributeLength');
         expect(limitOf(withAttrs({ lang: null, data: [{ note: 'x'.repeat(8193) }] }))).toBe('maxAttributeLength');
-        const href = decodeDocument(
-            envelope(doc(paragraph(text('a', link(`https://x.test/${'a'.repeat(9000)}`))))),
-            model,
-        );
+        const hrefInput = envelope(doc(paragraph(text('a', link(`https://x.test/${'a'.repeat(9000)}`)))));
+        const href = decodeDocument(hrefInput, model);
         expect(href).toMatchObject({ status: 'editable', diagnostics: [{ code: 'format.unsafe-url' }] });
+        const hrefTree = decodeToTree(hrefInput, model).tree;
+        if (hrefTree === undefined || hrefTree.content === undefined) {
+            throw new Error('expected an island tree');
+        }
+        const hrefParagraph = hrefTree.content[0];
+        if (hrefParagraph === undefined || hrefParagraph.content === undefined) {
+            throw new Error('expected a paragraph');
+        }
+        const hrefText = hrefParagraph.content[0];
+        if (hrefText === undefined || hrefText.marks === undefined) {
+            throw new Error('expected a link mark');
+        }
+        expect(hrefText.marks[0]?.type).toBe('unsupported_mark');
         const listed = decodeDocument(withAttrs(['x'.repeat(9000)]), model);
         expect(listed).toMatchObject({ status: 'editable', diagnostics: [{ code: 'format.invalid-structure' }] });
     });

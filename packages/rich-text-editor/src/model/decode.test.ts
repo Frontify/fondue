@@ -132,7 +132,11 @@ describe('envelope', () => {
             codes: ['format.unknown-format-version'],
         });
         const extra = replace(replace(valid, 'formatVersion', version), 'extra', 1);
-        expect(outcome(decodeDocument(extra, model)).codes).toEqual(['format.unknown-format-version']);
+        expect(outcome(decodeDocument(extra, model))).toEqual({
+            status: 'blocked',
+            reason: 'unsupported',
+            codes: ['format.unknown-format-version'],
+        });
     });
 
     it('SPEC-rich-text-format/AC-008 blocks a document of another model as unsupported', () => {

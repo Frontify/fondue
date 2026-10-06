@@ -173,6 +173,15 @@ const outOfRange: readonly (readonly [string, Json])[] = [
     ['heading.level', node('heading', { nodeId: 'h', level: 7, lang: null, styleId: null, align: null, indent: 0 })],
     ['heading.lang', node('heading', { nodeId: 'h', level: 2, lang: 'x_y', styleId: null, align: null, indent: 0 })],
     [
+        'heading.styleId',
+        node('heading', { nodeId: 'h', level: 2, lang: null, styleId: 'Has Space', align: null, indent: 0 }),
+    ],
+    [
+        'heading.align',
+        node('heading', { nodeId: 'h', level: 2, lang: null, styleId: null, align: 'middle', indent: 0 }),
+    ],
+    ['heading.indent', node('heading', { nodeId: 'h', level: 2, lang: null, styleId: null, align: null, indent: 7 })],
+    [
         'table_header.colspan',
         table('t', row(node('table_header', { colspan: 1.5, rowspan: 1, colwidth: null, scope: null }, paragraph()))),
     ],
@@ -223,6 +232,14 @@ const outOfRange: readonly (readonly [string, Json])[] = [
     ['table_cell.colspan', table('t', row(cell({ colspan: 51 }, paragraph())))],
     ['table_cell.rowspan', table('t', row(cell({ rowspan: 0 }, paragraph())))],
     ['table_cell.colwidth', table('t', row(cell({ colwidth: [0] }, paragraph())))],
+    [
+        'table_header.rowspan',
+        table('t', row(node('table_header', { colspan: 1, rowspan: 51, colwidth: null, scope: null }, paragraph()))),
+    ],
+    [
+        'table_header.colwidth',
+        table('t', row(node('table_header', { colspan: 1, rowspan: 1, colwidth: [0], scope: null }, paragraph()))),
+    ],
     [
         'table_header.scope',
         table('t', row(node('table_header', { colspan: 1, rowspan: 1, colwidth: null, scope: 'all' }, paragraph()))),
@@ -328,6 +345,13 @@ describe('content expressions', () => {
         ['a cell outside a row', table('t', cell({}, paragraph())), [0], '/content/content/0/content/0'],
         ['a figure with two images', node('figure', { nodeId: 'f', align: 'center' }), [0], '/content/content/0'],
         ['a task item in a bullet list', bulletList(taskItem('t', paragraph())), [0], '/content/content/0/content/0'],
+        ['a paragraph directly in a task list', taskList(paragraph()), [0], '/content/content/0/content/0'],
+        [
+            'a paragraph directly in a table row',
+            table('t', row(paragraph())),
+            [0],
+            '/content/content/0/content/0/content/0',
+        ],
     ];
 
     it.each(cases)('SPEC-rich-text-format/AC-017 places the island for %s', (_, value, at, path) => {
