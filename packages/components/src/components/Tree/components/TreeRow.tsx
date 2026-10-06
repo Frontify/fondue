@@ -6,6 +6,8 @@ import {
     useEffect,
     useRef,
     type CSSProperties,
+    type DragEvent,
+    type DragEventHandler,
     type FocusEvent,
     type FocusEventHandler,
     type FormEventHandler,
@@ -66,6 +68,7 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId, checkedState }
     const headlessProps = item.getProps() as {
         onClick?: MouseEventHandler<HTMLDivElement>;
         onBlur?: FocusEventHandler<HTMLDivElement>;
+        onDragOver?: DragEventHandler<HTMLDivElement>;
         [key: string]: unknown;
     };
 
@@ -109,6 +112,23 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId, checkedState }
         headlessProps.onBlur?.(event);
     };
 
+    // The drag code forces "can become a child", so every point below 30% of an expanded
+    // row shares one code and a repeat keeps the previous insertion. Clearing it makes
+    // this event recompute the point under the pointer. A collapsed folder must keep the
+    // code: clearing it restarts the open-on-drop timer on every dragover, so the folder
+    // never opens. A rejected point still leaves the last allowed target in place (no
+    // preventDefault), so that stale target is cleared.
+    const handleDragOver = (event: DragEvent<HTMLDivElement>) => {
+        const tree = item.getTree();
+        if (item.isExpanded()) {
+            tree.getDataRef<{ lastDragCode?: string }>().current.lastDragCode = undefined;
+        }
+        headlessProps.onDragOver?.(event);
+        if (!event.defaultPrevented && tree.getDragTarget() !== null) {
+            tree.applySubStateUpdate('dnd', (state) => ({ ...state, dragTarget: undefined }));
+        }
+    };
+
     // The row is a div (nested interactive controls must stay valid HTML), so Enter and
     // Space re-implement button activation. The target check skips events bubbling from
     // nested controls, e.g. Space on the checkbox.
@@ -138,6 +158,7 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId, checkedState }
             onClick={handleClick}
             onKeyDown={handleKeyDown}
             onBlur={handleBlur}
+            onDragOver={handleDragOver}
             className={styles.row}
             aria-describedby={hintId}
             aria-selected={data.isSelected === true ? 'true' : 'false'}

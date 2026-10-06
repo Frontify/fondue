@@ -10,7 +10,7 @@ import styles from '../styles/tree.module.scss';
 import { type TreeChangeState, type TreeDropCandidate } from '../types';
 import { computeCheckedStates, getCheckedUnitIds } from '../utils/computeCheckedStates';
 import { computeLoadingInsertions } from '../utils/computeLoadingInsertions';
-import { isNoopDrop } from '../utils/isNoopDrop';
+import { getPlacedDragLineData } from '../utils/getPlacedDragLineData';
 import { parseChildren } from '../utils/parseChildren';
 
 import { TreeDragLine } from './TreeDragLine';
@@ -130,9 +130,7 @@ export const TreeRoot = ({
                     reorderable={reorderable}
                 />
             )}
-            {reorderable && (
-                <TreeDragLine data={isNoopDrop(tree) ? null : tree.getDragLineData()} multiSelect={multiSelect} />
-            )}
+            {reorderable && <TreeDragLine data={getPlacedDragLineData(tree)} multiSelect={multiSelect} />}
         </div>
     );
 };

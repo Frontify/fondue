@@ -2,8 +2,10 @@
 
 import { expect, test } from '@playwright/experimental-ct-react';
 
-import { Tree } from '../Tree';
+import { Tree, type TreeMoveInfo } from '../Tree';
 
+import { ExpandedSiblingDropFixture } from './testutils/ExpandedSiblingDropFixture';
+import { RejectingSiblingFixture } from './testutils/RejectingSiblingFixture';
 import { TestHarness } from './testutils/TestHarness';
 
 test.describe('TreeRoot rendering', () => {
@@ -580,6 +582,266 @@ test.describe('TreeRoot reorderable mode', () => {
         expect(hintId).toBeTruthy();
         const hint = component.locator(`[id="${hintId ?? ''}"]`);
         await expect(hint).toBeAttached();
+    });
+
+    test('drops right before the header of an expanded sibling folder that rejects it', async ({ mount, page }) => {
+        const moves: TreeMoveInfo[] = [];
+        const component = await mount(<ExpandedSiblingDropFixture onMoveB={(info) => moves.push(info)} />);
+
+        const handleBox = await component
+            .getByRole('treeitem', { name: /^B$/ })
+            .locator('span[class*="handle"]')
+            .boundingBox();
+        const cBox = await component.getByRole('treeitem', { name: /^C$/ }).boundingBox();
+        if (handleBox === null || cBox === null) {
+            throw new Error('the dragged row and the drop target were not both laid out');
+        }
+
+        const startX = handleBox.x + 1;
+        const startY = handleBox.y + handleBox.height / 2;
+        await page.mouse.move(startX, startY);
+        await page.mouse.down();
+        await page.mouse.move(startX, startY + 4, { steps: 4 });
+        // Top of C's row: the reorder-above area of an ExpandedFolder drop target.
+        await page.mouse.move(cBox.x + cBox.width / 2, cBox.y + cBox.height * 0.1, { steps: 10 });
+        await page.mouse.up();
+
+        expect(moves).toEqual([{ parentId: 'root', index: 0 }]);
+    });
+
+    test('drops right after the header of an expanded sibling folder that rejects it', async ({ mount, page }) => {
+        const moves: TreeMoveInfo[] = [];
+        const component = await mount(<ExpandedSiblingDropFixture onMoveB={(info) => moves.push(info)} />);
+
+        const handleBox = await component
+            .getByRole('treeitem', { name: /^B$/ })
+            .locator('span[class*="handle"]')
+            .boundingBox();
+        const aBox = await component.getByRole('treeitem', { name: /^A$/ }).boundingBox();
+        if (handleBox === null || aBox === null) {
+            throw new Error('the dragged row and the drop target were not both laid out');
+        }
+
+        const startX = handleBox.x + 1;
+        const startY = handleBox.y + handleBox.height / 2;
+        await page.mouse.move(startX, startY);
+        await page.mouse.down();
+        await page.mouse.move(startX, startY + 4, { steps: 4 });
+        // Bottom of A's row: A rejects folders, so this is the reorder-below area, not its body.
+        await page.mouse.move(aBox.x + aBox.width / 2, aBox.y + aBox.height * 0.9, { steps: 10 });
+        await page.mouse.up();
+
+        expect(moves).toEqual([{ parentId: 'root', index: 2 }]);
+    });
+
+    test('hides the drag line and every row highlight while hovering a rejected position after an allowed one', async ({
+        mount,
+        page,
+    }) => {
+        const component = await mount(<RejectingSiblingFixture />);
+
+        const handleBox = await component
+            .getByRole('treeitem', { name: /^F$/ })
+            .locator('span[class*="handle"]')
+            .boundingBox();
+        const xBox = await component.getByRole('treeitem', { name: /^X$/ }).boundingBox();
+        const aBox = await component.getByRole('treeitem', { name: /^A$/ }).boundingBox();
+        if (handleBox === null || xBox === null || aBox === null) {
+            throw new Error('the dragged row and the drop targets were not all laid out');
+        }
+
+        const startX = handleBox.x + 1;
+        const startY = handleBox.y + handleBox.height / 2;
+        await page.mouse.move(startX, startY);
+        await page.mouse.down();
+        await page.mouse.move(startX, startY + 4, { steps: 4 });
+        // Allowed: reorders past X, at the root level, so the line shows.
+        await page.mouse.move(xBox.x + xBox.width / 2, xBox.y + xBox.height * 0.9, { steps: 10 });
+        await expect(component.locator('div[class*="dragline"]')).toBeVisible();
+
+        // Rejected: A's own `accepts` blocks it. A dispatched dragover fires no dragleave, whose timer would otherwise clear the stale target by chance.
+        const dataTransfer = await page.evaluateHandle(() => new DataTransfer());
+        await component.getByRole('treeitem', { name: /^A$/ }).dispatchEvent('dragover', {
+            clientX: aBox.x + aBox.width / 2,
+            clientY: aBox.y + aBox.height / 2,
+            dataTransfer,
+        });
+        await expect(component.locator('div[class*="dragline"]')).toBeHidden();
+        await expect(component.locator('[class*="item"][data-drop="true"]')).toHaveCount(0);
+
+        await page.mouse.up();
+    });
+
+    test('a keyboard drag after a pointer drag released over a rejected row still shows the drag line', async ({
+        mount,
+        page,
+    }) => {
+        const component = await mount(<RejectingSiblingFixture />);
+
+        const handleBox = await component
+            .getByRole('treeitem', { name: /^F$/ })
+            .locator('span[class*="handle"]')
+            .boundingBox();
+        const pBox = await component.getByRole('treeitem', { name: /^P$/ }).boundingBox();
+        const aBox = await component.getByRole('treeitem', { name: /^A$/ }).boundingBox();
+        if (handleBox === null || pBox === null || aBox === null) {
+            throw new Error('the dragged row and the drop targets were not all laid out');
+        }
+
+        const startX = handleBox.x + 1;
+        const startY = handleBox.y + handleBox.height / 2;
+        await page.mouse.move(startX, startY);
+        await page.mouse.down();
+        await page.mouse.move(startX, startY + 4, { steps: 4 });
+        await page.mouse.move(pBox.x + pBox.width / 2, pBox.y + pBox.height / 2, { steps: 10 });
+        await page.mouse.move(aBox.x + aBox.width / 2, aBox.y + aBox.height / 2, { steps: 10 });
+        await page.mouse.up();
+
+        // A stale rejection from the pointer drag must not hide the line for the unrelated keyboard drag below.
+        await component.getByRole('treeitem', { name: /^F$/ }).click();
+        await page.keyboard.press('Control+Shift+D');
+        // The keyboard drag's first candidate is F's own current position (a no-op, hidden by design); move past it.
+        await page.keyboard.press('ArrowDown');
+        await expect(component.locator('div[class*="dragline"]')).toBeVisible();
+    });
+
+    test('a foreign drag over a row does not hide the drag line of a later keyboard drag', async ({ mount, page }) => {
+        const component = await mount(<RejectingSiblingFixture />);
+
+        const dt = await page.evaluateHandle(() => new DataTransfer());
+        await component.getByRole('treeitem', { name: /^X$/ }).dispatchEvent('dragover', { dataTransfer: dt });
+
+        await component.getByRole('treeitem', { name: /^F$/ }).click();
+        await page.keyboard.press('Control+Shift+D');
+        await page.keyboard.press('ArrowDown');
+        await expect(component.locator('div[class*="dragline"]')).toBeVisible();
+    });
+
+    test('moves the drag line onto the later slot when the pointer slides down a rejecting expanded folder', async ({
+        mount,
+        page,
+    }) => {
+        const moves: TreeMoveInfo[] = [];
+        const component = await mount(<ExpandedSiblingDropFixture onMoveB={(info) => moves.push(info)} />);
+        const handle = await component
+            .getByRole('treeitem', { name: /^B$/ })
+            .locator('span[class*="handle"]')
+            .boundingBox();
+        const a = await component.getByRole('treeitem', { name: /^A$/ }).boundingBox();
+        const a2 = await component.getByRole('treeitem', { name: /^a2$/ }).boundingBox();
+        if (handle === null || a === null || a2 === null) {
+            throw new Error('the dragged row and the drop target were not laid out');
+        }
+
+        const startX = handle.x + 1;
+        const startY = handle.y + handle.height / 2;
+        await page.mouse.move(startX, startY);
+        await page.mouse.down();
+        await page.mouse.move(startX, startY + 4, { steps: 4 });
+        await page.mouse.move(a.x + a.width / 2, a.y + a.height * 0.4, { steps: 12 });
+        await page.mouse.move(a.x + a.width / 2, a.y + a.height * 0.9, { steps: 8 });
+        const subtreeBottom = a2.y + a2.height;
+        await expect
+            .poll(async () => {
+                const line = await component.locator('div[class*="dragline"]').boundingBox();
+                return line === null ? 999 : Math.abs(line.y - subtreeBottom);
+            })
+            .toBeLessThan(8);
+        await page.mouse.up();
+
+        expect(moves).toEqual([{ parentId: 'root', index: 2 }]);
+    });
+
+    test('draws the drag line after the subtree on the first lower-half hover of a rejecting expanded folder', async ({
+        mount,
+        page,
+    }) => {
+        const moves: TreeMoveInfo[] = [];
+        const component = await mount(<ExpandedSiblingDropFixture onMoveB={(info) => moves.push(info)} />);
+        const handle = await component
+            .getByRole('treeitem', { name: /^B$/ })
+            .locator('span[class*="handle"]')
+            .boundingBox();
+        const a = await component.getByRole('treeitem', { name: /^A$/ }).boundingBox();
+        const a1 = await component.getByRole('treeitem', { name: /^a1$/ }).boundingBox();
+        const a2 = await component.getByRole('treeitem', { name: /^a2$/ }).boundingBox();
+        if (handle === null || a === null || a1 === null || a2 === null) {
+            throw new Error('the dragged row and the drop target were not laid out');
+        }
+
+        const startX = handle.x + 1;
+        const startY = handle.y + handle.height / 2;
+        await page.mouse.move(startX, startY);
+        await page.mouse.down();
+        await page.mouse.move(startX, startY + 4, { steps: 4 });
+        const dataTransfer = await page.evaluateHandle(() => new DataTransfer());
+        await component.getByRole('treeitem', { name: /^A$/ }).dispatchEvent('dragover', {
+            clientX: a.x + a.width / 2,
+            clientY: a.y + a.height * 0.9,
+            dataTransfer,
+        });
+        const line = await component.locator('div[class*="dragline"]').boundingBox();
+        await page.mouse.move(a.x + a.width / 2, a.y + a.height * 0.9, { steps: 1 });
+        await page.mouse.up();
+
+        if (line === null) {
+            throw new Error('the drag line was not laid out');
+        }
+        expect(Math.abs(line.y - a1.y)).toBeGreaterThan(12);
+        expect(Math.abs(line.y - (a2.y + a2.height))).toBeLessThan(8);
+        expect(moves).toEqual([{ parentId: 'root', index: 2 }]);
+    });
+
+    test('a collapsed folder opens when the pointer rests on it through repeated dragover events', async ({
+        mount,
+        page,
+    }) => {
+        const calls: boolean[] = [];
+        const component = await mount(
+            <Tree.Root reorderable>
+                <Tree.Item id="X">
+                    <Tree.Label>X</Tree.Label>
+                </Tree.Item>
+                <Tree.Folder id="F" onExpandChange={(isExpanded) => calls.push(isExpanded)}>
+                    <Tree.FolderHeader>
+                        <Tree.Label>Folder</Tree.Label>
+                    </Tree.FolderHeader>
+                    <Tree.Item id="child">
+                        <Tree.Label>Child</Tree.Label>
+                    </Tree.Item>
+                </Tree.Folder>
+            </Tree.Root>,
+        );
+
+        const handle = await component
+            .getByRole('treeitem', { name: /^X$/ })
+            .locator('span[class*="handle"]')
+            .boundingBox();
+        const folder = await component.getByRole('treeitem', { name: /Folder/ }).boundingBox();
+        if (handle === null || folder === null) {
+            throw new Error('the dragged row and the folder were not laid out');
+        }
+
+        const startX = handle.x + 1;
+        const startY = handle.y + handle.height / 2;
+        await page.mouse.move(startX, startY);
+        await page.mouse.down();
+        await page.mouse.move(startX, startY + 4, { steps: 4 });
+        await page.mouse.move(folder.x + folder.width / 2, folder.y + folder.height * 0.5, { steps: 12 });
+
+        const dataTransfer = await page.evaluateHandle(() => new DataTransfer());
+        const restOnFolder = () =>
+            component.getByRole('treeitem', { name: /Folder/ }).dispatchEvent('dragover', {
+                clientX: folder.x + folder.width / 2,
+                clientY: folder.y + folder.height * 0.5,
+                dataTransfer,
+            });
+        await page.waitForTimeout(300);
+        await restOnFolder();
+        await page.waitForTimeout(650);
+
+        expect(calls).toContain(true);
+        await page.mouse.up();
     });
 });
 
