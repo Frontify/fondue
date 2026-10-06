@@ -136,6 +136,36 @@ const memberName = (node: ts.Node) => {
     return undefined;
 };
 
+// `AbortSignal.any`, `AbortSignal['any']` and `const { any } = AbortSignal` all name one qualified member.
+const qualifiedName = (node: ts.Node) => {
+    if (ts.isPropertyAccessExpression(node)) {
+        return node.getText().replaceAll(/\s/g, '');
+    }
+    if (
+        ts.isElementAccessExpression(node) &&
+        ts.isIdentifier(node.expression) &&
+        ts.isStringLiteralLike(node.argumentExpression)
+    ) {
+        return `${node.expression.text}.${node.argumentExpression.text}`;
+    }
+    if (
+        ts.isBindingElement(node) &&
+        ts.isObjectBindingPattern(node.parent) &&
+        ts.isVariableDeclaration(node.parent.parent)
+    ) {
+        const { initializer } = node.parent.parent;
+        const key = node.propertyName ?? node.name;
+        if (
+            initializer !== undefined &&
+            ts.isIdentifier(initializer) &&
+            (ts.isIdentifier(key) || ts.isStringLiteralLike(key))
+        ) {
+            return `${initializer.text}.${key.text}`;
+        }
+    }
+    return undefined;
+};
+
 // Compiled JSX passes attributes as object keys.
 const attributeName = (node: ts.Node) =>
     ts.isPropertyAssignment(node) && (ts.isIdentifier(node.name) || ts.isStringLiteral(node.name))
@@ -157,6 +187,7 @@ const scanJs = (path: string, source: string): Finding[] => {
     const visit = (node: ts.Node): void => {
         const member = memberName(node);
         const attribute = attributeName(node);
+        const qualified = qualifiedName(node);
         for (const [feature, { js }] of Object.entries(DETECTORS)) {
             if (js === undefined) {
                 continue;
@@ -170,7 +201,7 @@ const scanJs = (path: string, source: string): Finding[] => {
             if (attribute !== undefined && js.attributes?.includes(attribute)) {
                 report(feature, node);
             }
-            if (ts.isPropertyAccessExpression(node) && js.qualified?.includes(node.getText().replaceAll(/\s/g, ''))) {
+            if (qualified !== undefined && js.qualified?.includes(qualified)) {
                 report(feature, node);
             }
             if (ts.isStringLiteralLike(node) && js.strings?.test(node.text)) {
