@@ -566,6 +566,39 @@ test.describe('TreeRoot reorderable mode', () => {
         await expect(reorderable.locator('[draggable="true"]')).toHaveCount(1);
     });
 
+    test('rounds the drag line', async ({ mount, page }) => {
+        const component = await mount(
+            <Tree.Root reorderable>
+                <Tree.Item id="1">
+                    <Tree.Label>One</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="2">
+                    <Tree.Label>Two</Tree.Label>
+                </Tree.Item>
+            </Tree.Root>,
+        );
+        const handle = await component
+            .getByRole('treeitem', { name: /^One$/ })
+            .locator('span[class*="handle"]')
+            .boundingBox();
+        const two = await component.getByRole('treeitem', { name: /^Two$/ }).boundingBox();
+        if (handle === null || two === null) {
+            throw new Error('the rows were not laid out');
+        }
+
+        const startX = handle.x + 1;
+        const startY = handle.y + handle.height / 2;
+        await page.mouse.move(startX, startY);
+        await page.mouse.down();
+        await page.mouse.move(startX, startY + 4, { steps: 4 });
+        await page.mouse.move(two.x + two.width / 2, two.y + two.height * 0.85, { steps: 12 });
+
+        const line = component.locator('div[class*="dragline"]');
+        await expect(line).toBeVisible();
+        await expect(line).toHaveCSS('border-top-left-radius', '999px');
+        await page.mouse.up();
+    });
+
     test('exposes a screen-reader hint announcing checkbox / reorder shortcuts', async ({ mount }) => {
         const component = await mount(
             <Tree.Root multiSelect reorderable>
