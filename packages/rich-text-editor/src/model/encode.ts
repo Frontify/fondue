@@ -84,10 +84,7 @@ const encodeNode = (encoding: Encoding, node: TreeNode): unknown => {
     if (attrs !== undefined) {
         written.attrs = attrs;
     }
-    const content = joinText(
-        encoding,
-        (node.content ?? []).map((child) => encodeNode(encoding, child)),
-    );
+    const content = joinText(encoding, node.content ?? []);
     if (content.length > 0) {
         written.content = content;
     }
@@ -97,24 +94,26 @@ const encodeNode = (encoding: Encoding, node: TreeNode): unknown => {
     return written;
 };
 
-const isText = (value: unknown): value is { readonly type: 'text'; readonly text: string; readonly marks?: unknown } =>
-    isRecord(value) && value.type === 'text' && typeof value.text === 'string';
+type EncodedText = { readonly type: 'text'; readonly text: string; readonly marks?: unknown };
 
-const marksKey = (text: { readonly marks?: unknown }) => canonicalJson((text.marks ?? null) as JsonValue);
+const marksKey = (text: EncodedText) => canonicalJson((text.marks ?? null) as JsonValue);
 
-/** Joins adjacent text nodes with identical marks, as the engine does on load. */
-const joinText = (encoding: Encoding, children: readonly unknown[]): unknown[] => {
+/** Encodes the children and joins adjacent text nodes of the tree with identical marks, as the engine does on load; an island is never joined. */
+const joinText = (encoding: Encoding, children: readonly TreeNode[]): unknown[] => {
     const joined: unknown[] = [];
+    let previous: EncodedText | undefined;
     for (const child of children) {
-        const previous = joined.at(-1);
-        if (isText(child) && isText(previous) && marksKey(child) === marksKey(previous)) {
-            joined[joined.length - 1] = { ...previous, text: previous.text + child.text };
+        const encoded = encodeNode(encoding, child);
+        const text = child.type === 'text' ? (encoded as EncodedText) : undefined;
+        if (text !== undefined && previous !== undefined && marksKey(text) === marksKey(previous)) {
+            previous = { ...previous, text: previous.text + text.text };
+            joined[joined.length - 1] = previous;
         } else {
-            joined.push(child);
+            previous = text;
+            joined.push(encoded);
         }
-        const last = joined.at(-1);
-        if (isText(last)) {
-            encoding.longestText = Math.max(encoding.longestText, last.text.length);
+        if (previous !== undefined) {
+            encoding.longestText = Math.max(encoding.longestText, previous.text.length);
         }
     }
     return joined;
@@ -122,8 +121,8 @@ const joinText = (encoding: Encoding, children: readonly unknown[]): unknown[] =
 
 /**
  * `requiredCapabilities` (AC-033): `core` and each capability the content uses, sorted by ID, at the installed
- * version, or a higher stored version, and each stored capability the model does not install, while islands
- * or unknown attributes survive, since their content cannot be attributed to one capability.
+ * version. While islands or unknown attributes survive, every stored capability stays too, at the higher of its
+ * stored and installed version, since their content cannot be attributed to one capability.
  */
 const capabilitiesOf = (
     model: ContentModel,
@@ -138,10 +137,7 @@ const capabilitiesOf = (
     }
     const installed = new Map(model.capabilities.map(({ id, version }) => [id, version]));
     for (const { id, version } of encoding.foreign ? stored : []) {
-        const floor = versions.has(id) ? versions.get(id) : installed.get(id);
-        if (floor === undefined || version > floor) {
-            versions.set(id, version);
-        }
+        versions.set(id, Math.max(version, installed.get(id) ?? version));
     }
     return [...versions.keys()].sort().map((id) => ({ id, version: versions.get(id) ?? 0 }));
 };
