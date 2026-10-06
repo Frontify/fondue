@@ -27,7 +27,7 @@ import '@frontify/fondue/style';
 3. Use Components
 
 ```typescript
-import { Button } from '@frontify/fondue';
+import { Button } from '@frontify/fondue/components';
 ```
 
 Fondue provides two builds: ES modules and UMD modules. Documentation for the provided components and how to use them is available in [Storybook](https://fondue-components.frontify.com/).
@@ -38,5 +38,4 @@ See [Contribution Guidelines](CONTRIBUTING.md) for contributing and local develo
 
 ## Important Links
 
-- [Storybook](https://storybook.js.org/docs/react/get-started/introduction) – Used for isolated development and documentation of Fondue components
 - [Tailwind](https://tailwindcss.com/docs) – Utility-first CSS framework used in Fondue

@@ -9,19 +9,7 @@ export default defineConfig({
     options: {
         typeAware: true,
     },
-    ignorePatterns: [
-        'README.md',
-        'CHANGELOG.md',
-        'dist/',
-        'legacyTokens/',
-        '.storybook/',
-        'storybook-static/',
-        'cypress/',
-        'src/foundation/Icon/Generated/',
-        'src/foundation/Icon/IconEnum.ts',
-        'src/subpackages/tokens.js',
-        '**/*.mdx',
-    ],
+    ignorePatterns: ['README.md', 'CHANGELOG.md', 'dist/', 'src/subpackages/tokens.js', '**/*.mdx'],
     overrides: [
         {
             files: ['**/*.{js,jsx,ts,tsx,mts,cts,cjs}'],

@@ -10,10 +10,7 @@
         "noUnusedLocals": true,
         "paths": {
             "@components/*": ["./src/components/*"],
-            "@foundation/*": ["./src/foundation/*"],
             "@hooks/*": ["./src/hooks/*"],
-            "@layout/*": ["./src/layout/*"],
-            "@typography/*": ["./src/typography/*"],
             "@utilities/*": ["./src/utilities/*"]
         },
         "resolveJsonModule": true,
@@ -22,14 +19,8 @@
         "target": "esnext",
         "types": ["vite/client", "node"]
     },
-    "exclude": [
-        "node_modules",
-        "dist",
-        "src/foundation/Icon/Generated",
-        "src/foundation/Icon/IconEnum.ts"
-    ],
+    "exclude": ["node_modules", "dist"],
     "include": [
-        ".storybook",
         "oxlint.config.ts",
         "oxfmt.config.ts",
         "postcss.config.cjs",
@@ -42,14 +33,6 @@
         "icons.vite.config.ts",
         "rte.vite.config.ts",
         "sdk.vite.config.ts",
-        "legacyComponents.tailwind.config.ts",
-        "tokens.vite.config.ts",
-        "codemod.vite.config.ts",
-        "internal-tools.vite.config.ts",
-        "legacyTokens",
-        "tools"
-    ],
-    "ts-node": {
-        "files": true
-    }
+        "tokens.vite.config.ts"
+    ]
 }

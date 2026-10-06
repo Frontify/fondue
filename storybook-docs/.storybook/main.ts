@@ -68,12 +68,6 @@ const config: StorybookConfig = {
                     type: 'auto-inject',
                     expanded: true,
                 },
-                legacy: {
-                    title: 'Legacy',
-                    url: 'http://localhost:6009',
-                    type: 'auto-inject',
-                    expanded: true,
-                },
                 rte: {
                     title: 'Rich Text Editor',
                     url: 'http://localhost:6011',
@@ -102,11 +96,6 @@ const config: StorybookConfig = {
             charts: {
                 title: 'Charts',
                 url: `${getSubpackageURL('charts')}`,
-                expanded: true,
-            },
-            legacy: {
-                title: 'Legacy',
-                url: `${getSubpackageURL('legacy')}`,
                 expanded: true,
             },
             rte: {
