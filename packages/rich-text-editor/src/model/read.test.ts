@@ -38,6 +38,11 @@ const deep = (depth: number): Json => {
     return doc(content);
 };
 const nested = (levels: number): Json => (levels === 0 ? 'leaf' : { a: nested(levels - 1) });
+const exceeded = (limit: string) => ({
+    status: 'blocked',
+    reason: 'limit-exceeded',
+    diagnostics: [{ code: 'format.limit-exceeded', details: { limit } }],
+});
 const withAttrs = (attrs: Json): Json => envelope(doc({ type: 'paragraph', attrs }));
 
 describe('decode input that is not JSON', () => {
@@ -206,21 +211,15 @@ describe('decode limits', () => {
         expect(decodeDocument(exact, model, { limits: { maxDocumentBytes: max } }).status).toBe('editable');
         const over = json(9);
         expect(bytesOf(over)).toBe(max + 1);
-        expect(decodeDocument(over, model, { limits: { maxDocumentBytes: max } })).toMatchObject({
-            status: 'blocked',
-            reason: 'limit-exceeded',
-            diagnostics: [{ code: 'format.limit-exceeded', details: { limit: 'maxDocumentBytes' } }],
-        });
+        expect(decodeDocument(over, model, { limits: { maxDocumentBytes: max } })).toMatchObject(
+            exceeded('maxDocumentBytes'),
+        );
     });
 
     it('SPEC-rich-text-format/AC-005 blocks a parsed value over the default byte limit without truncating it', () => {
         const input = envelope(doc(paragraph(text('x'.repeat(5 * MIB)))));
         const result = decodeDocument(input, model);
-        expect(result).toMatchObject({
-            status: 'blocked',
-            reason: 'limit-exceeded',
-            diagnostics: [{ code: 'format.limit-exceeded', details: { limit: 'maxDocumentBytes' } }],
-        });
+        expect(result).toMatchObject(exceeded('maxDocumentBytes'));
         expect(result.status === 'blocked' && result.original).toBe(input);
     });
 
@@ -271,19 +270,9 @@ describe('decode limits', () => {
         const hrefInput = envelope(doc(paragraph(text('a', link(`https://x.test/${'a'.repeat(9000)}`)))));
         const href = decodeDocument(hrefInput, model);
         expect(href).toMatchObject({ status: 'editable', diagnostics: [{ code: 'format.unsafe-url' }] });
-        const hrefTree = decodeToTree(hrefInput, model).tree;
-        if (hrefTree === undefined || hrefTree.content === undefined) {
-            throw new Error('expected an island tree');
-        }
-        const hrefParagraph = hrefTree.content[0];
-        if (hrefParagraph === undefined || hrefParagraph.content === undefined) {
-            throw new Error('expected a paragraph');
-        }
-        const hrefText = hrefParagraph.content[0];
-        if (hrefText === undefined || hrefText.marks === undefined) {
-            throw new Error('expected a link mark');
-        }
-        expect(hrefText.marks[0]?.type).toBe('unsupported_mark');
+        expect(decodeToTree(hrefInput, model).tree).toMatchObject({
+            content: [{ content: [{ marks: [{ type: 'unsupported_mark' }] }] }],
+        });
         const listed = decodeDocument(withAttrs(['x'.repeat(9000)]), model);
         expect(listed).toMatchObject({ status: 'editable', diagnostics: [{ code: 'format.invalid-structure' }] });
     });
@@ -293,7 +282,7 @@ describe('decode limits', () => {
         (value) => {
             const options = { limits: { maxTextLength: value } };
             const long = decodeDocument(envelope(doc(paragraph(text('x'.repeat(1_000_001))))), model, options);
-            expect(long).toMatchObject({ status: 'blocked', diagnostics: [{ details: { limit: 'maxTextLength' } }] });
+            expect(long).toMatchObject(exceeded('maxTextLength'));
             expect(decodeDocument(envelope(doc(paragraph(text('x'.repeat(1_000_000))))), model, options).status).toBe(
                 'editable',
             );
@@ -316,20 +305,12 @@ describe('decode limits', () => {
     it('SPEC-rich-text-format/AC-005 blocks at step 6 when joined text or the canonical encoding passes a limit', () => {
         const half = 'x'.repeat(600_000);
         const joined = decodeDocument(envelope(doc({ type: 'paragraph', content: [text(half), text(half)] })), model);
-        expect(joined).toMatchObject({
-            status: 'blocked',
-            reason: 'limit-exceeded',
-            diagnostics: [{ details: { limit: 'maxTextLength' } }],
-        });
+        expect(joined).toMatchObject(exceeded('maxTextLength'));
         const bare = Array.from({ length: 24_999 }, () => ({ type: 'paragraph', content: [text('y'.repeat(150))] }));
         const input = envelope({ type: 'doc', content: bare });
         expect(bytesOf(input)).toBeGreaterThan(4.85 * MIB);
         expect(bytesOf(input)).toBeLessThan(5 * MIB);
-        expect(decodeDocument(input, model)).toMatchObject({
-            status: 'blocked',
-            reason: 'limit-exceeded',
-            diagnostics: [{ details: { limit: 'maxDocumentBytes' } }],
-        });
+        expect(decodeDocument(input, model)).toMatchObject(exceeded('maxDocumentBytes'));
     });
 
     it('SPEC-rich-text-format/AC-005 counts an island in a clipboard slice at its island position', () => {

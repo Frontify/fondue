@@ -15,6 +15,7 @@ import {
     decodeDocument,
     type DecodeResult,
     type DocumentOf,
+    type FormatDiagnosticCode,
     hashDocument,
     type MarkOf,
     type RichTextDocument,
@@ -29,6 +30,11 @@ const outcome = (result: DecodeResult) =>
     result.status === 'blocked'
         ? { status: result.status, reason: result.reason, codes: result.diagnostics.map(({ code }) => code) }
         : { status: result.status, codes: result.diagnostics.map(({ code }) => code) };
+const unsupported = (code: FormatDiagnosticCode): ReturnType<typeof outcome> => ({
+    status: 'blocked',
+    reason: 'unsupported',
+    codes: [code],
+});
 const valid = envelope(doc(paragraph(text('a'))));
 const replace = (input: Json, key: string, value: Json | undefined): Json => {
     const copy: Record<string, Json> = { ...(input as Record<string, Json>) };
@@ -71,7 +77,7 @@ describe('decode order', () => {
         [
             'a formatVersion: 2 envelope with an extra key',
             { ...(envelope(doc(paragraph())) as object), formatVersion: 2, extra: true },
-            { status: 'blocked', reason: 'unsupported', codes: ['format.unknown-format-version'] },
+            unsupported('format.unknown-format-version'),
         ],
         [
             'a root of type foo',
@@ -126,26 +132,15 @@ describe('envelope', () => {
         ["formatVersion: '1'", '1'],
         ['formatVersion: null', null],
     ])('SPEC-rich-text-format/AC-007 blocks %s as unsupported', (_, version) => {
-        expect(outcome(decodeDocument(replace(valid, 'formatVersion', version), model))).toEqual({
-            status: 'blocked',
-            reason: 'unsupported',
-            codes: ['format.unknown-format-version'],
-        });
+        const expected = unsupported('format.unknown-format-version');
+        expect(outcome(decodeDocument(replace(valid, 'formatVersion', version), model))).toEqual(expected);
         const extra = replace(replace(valid, 'formatVersion', version), 'extra', 1);
-        expect(outcome(decodeDocument(extra, model))).toEqual({
-            status: 'blocked',
-            reason: 'unsupported',
-            codes: ['format.unknown-format-version'],
-        });
+        expect(outcome(decodeDocument(extra, model))).toEqual(expected);
     });
 
     it('SPEC-rich-text-format/AC-008 blocks a document of another model as unsupported', () => {
         const other = replace(valid, 'model', { id: 'fixture.other', version: 1 });
-        expect(outcome(decodeDocument(other, model))).toEqual({
-            status: 'blocked',
-            reason: 'unsupported',
-            codes: ['format.wrong-model'],
-        });
+        expect(outcome(decodeDocument(other, model))).toEqual(unsupported('format.wrong-model'));
     });
 
     const root = (content: Json) => replace(valid, 'content', content);

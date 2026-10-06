@@ -7,7 +7,25 @@ import { Node, Schema } from 'prosemirror-model';
 import { TableMap, tableNodes } from 'prosemirror-tables';
 import { describe, expect, it } from 'vitest';
 
-import { envelope, type Json } from '#/features/__fixtures__/documents';
+import {
+    blockquote,
+    bulletList,
+    cell,
+    codeBlock,
+    doc,
+    envelope,
+    type Json,
+    listItem,
+    mention,
+    node as nodeOf,
+    paragraph,
+    row,
+    rule,
+    table,
+    taskItem,
+    taskList,
+    text,
+} from '#/features/__fixtures__/documents';
 import { vocabularyModel } from '#/features/__fixtures__/vocabulary';
 import { decodeDocument, type RichTextDocument } from '#/model';
 
@@ -64,23 +82,13 @@ const withMarks = (node: Node_, marks: readonly Json[]): Node_ =>
     marks.length === 0 ? node : { ...node, marks: [...marks] };
 const textArb = fc
     .tuple(fc.string({ minLength: 1, maxLength: 6, unit: 'grapheme' }), marksArb)
-    .map(([value, marks]) => withMarks({ type: 'text', text: value }, marks));
+    .map(([value, marks]) => text(value, ...marks));
 const inlineArb = fc.oneof(
     { weight: 4, arbitrary: textArb },
     { weight: 1, arbitrary: marksArb.map((marks) => withMarks({ type: 'hard_break' }, marks)) },
-    {
-        weight: 1,
-        arbitrary: fc.constant({
-            type: 'mention',
-            attrs: { nodeId: '', resourceType: 'user', resourceId: '7', labelSnapshot: 'Ada' },
-        }),
-    },
+    { weight: 1, arbitrary: fc.constant(mention('', { resourceId: '7' })) },
 );
-const withContent = (node: Node_, content: readonly Json[]): Node_ =>
-    content.length === 0 ? node : { ...node, content: [...content] };
-const paragraphArb = fc
-    .array(inlineArb, { maxLength: 4 })
-    .map((content) => withContent({ type: 'paragraph', attrs: paragraphAttrs }, content));
+const paragraphArb = fc.array(inlineArb, { maxLength: 4 }).map((content) => paragraph(...content));
 
 const { block: blockArb } = fc.letrec<{ block: Node_ }>((tie) => ({
     block: fc.oneof(
@@ -89,47 +97,27 @@ const { block: blockArb } = fc.letrec<{ block: Node_ }>((tie) => ({
         fc
             .tuple(fc.integer({ min: 1, max: 6 }), fc.array(inlineArb, { maxLength: 3 }))
             .map(([level, content]) =>
-                withContent(
-                    { type: 'heading', attrs: { nodeId: '', level, ...paragraphAttrs, align: 'center' } },
-                    content,
-                ),
+                nodeOf('heading', { nodeId: '', level, ...paragraphAttrs, align: 'center' }, ...content),
             ),
-        fc
-            .array(tie('block'), { minLength: 1, maxLength: 2 })
-            .map((content) => ({ type: 'blockquote', attrs: { styleId: null }, content })),
+        fc.array(tie('block'), { minLength: 1, maxLength: 2 }).map((content) => blockquote(...content)),
         fc
             .array(fc.tuple(paragraphArb, fc.array(tie('block'), { maxLength: 1 })), { minLength: 1, maxLength: 2 })
-            .map((items) => ({
-                type: 'bullet_list',
-                attrs: { marker: null },
-                content: items.map(([first, rest]) => ({ type: 'list_item', content: [first, ...rest] })),
-            })),
-        fc.array(paragraphArb, { minLength: 1, maxLength: 2 }).map((items) => ({
-            type: 'task_list',
-            content: items.map((first) => ({
-                type: 'task_item',
-                attrs: { nodeId: '', checked: false },
-                content: [first],
-            })),
-        })),
-        fc.string({ minLength: 1, maxLength: 8 }).map((code) => ({
-            type: 'code_block',
-            attrs: { languageId: null },
-            content: [{ type: 'text', text: code }],
-        })),
-        fc.constant({ type: 'horizontal_rule' }),
-        fc.tuple(fc.integer({ min: 1, max: 3 }), fc.integer({ min: 1, max: 3 })).map(([rows, columns]) => ({
-            type: 'table',
-            attrs: { nodeId: '' },
-            content: Array.from({ length: rows }, () => ({
-                type: 'table_row',
-                content: Array.from({ length: columns }, () => ({
-                    type: 'table_cell',
-                    attrs: { colspan: 1, rowspan: 1, colwidth: null },
-                    content: [{ type: 'paragraph', attrs: paragraphAttrs }],
-                })),
-            })),
-        })),
+            .map((items) => bulletList(...items.map(([first, rest]) => listItem(first, ...rest)))),
+        fc
+            .array(paragraphArb, { minLength: 1, maxLength: 2 })
+            .map((items) => taskList(...items.map((first) => taskItem('', first)))),
+        fc.string({ minLength: 1, maxLength: 8 }).map((code) => codeBlock(text(code))),
+        fc.constant(rule()),
+        fc
+            .tuple(fc.integer({ min: 1, max: 3 }), fc.integer({ min: 1, max: 3 }))
+            .map(([rows, columns]) =>
+                table(
+                    '',
+                    ...Array.from({ length: rows }, () =>
+                        row(...Array.from({ length: columns }, () => cell({}, paragraph()))),
+                    ),
+                ),
+            ),
     ),
 }));
 
@@ -172,9 +160,7 @@ const canonicalize = (root: Json): Json => {
     };
     return visit(root);
 };
-const documentArb = fc
-    .array(blockArb, { minLength: 1, maxLength: 4 })
-    .map((content) => canonicalize({ type: 'doc', attrs: { lang: null, dir: 'auto' }, content }));
+const documentArb = fc.array(blockArb, { minLength: 1, maxLength: 4 }).map((content) => canonicalize(doc(...content)));
 
 /** Omits default attributes, reverses marks and splits texts: the normalizations decode accepts and encoding undoes. */
 const denormalize = (value: Json): Json => {
@@ -272,6 +258,13 @@ describe(seeded('round trips'), () => {
         );
     });
 
+    /** An envelope whose stored `requiredCapabilities` are exactly `stored`, around one doc of `blocks`. */
+    const storedInput = (blocks: readonly Json[], stored: readonly (readonly [string, number])[]) => ({
+        ...(envelope(doc(...blocks)) as Node_),
+        requiredCapabilities: stored.map(([id, version]) => ({ id, version })),
+    });
+    const capabilitiesOf = (input: unknown) => encodedOf(input).document?.requiredCapabilities;
+
     it.each([
         [
             'an invalid bullet_list',
@@ -294,52 +287,43 @@ describe(seeded('round trips'), () => {
             'fixture.link',
         ],
     ] as const)('SPEC-rich-text-format/AC-033 keeps every stored capability while %s survives', (_, block, id) => {
-        const content = { type: 'doc', attrs: { lang: null, dir: 'auto' }, content: [block] };
-        const input = {
-            ...(envelope(content) as Node_),
-            requiredCapabilities: [
-                { id: 'core', version: 1 },
-                { id, version: 1 },
-                { id: 'fixture.marks', version: 0 },
+        const input = storedInput(
+            [block],
+            [
+                ['core', 1],
+                [id, 1],
+                ['fixture.marks', 0],
             ],
-        };
+        );
         const expected = [
             { id: 'core', version: 1 },
             { id, version: 1 },
             { id: 'fixture.marks', version: 1 },
         ];
-        expect(encodedOf(input).document?.requiredCapabilities).toEqual(
-            expected.sort((a, b) => a.id.localeCompare(b.id)),
-        );
+        expect(capabilitiesOf(input)).toEqual(expected.sort((a, b) => a.id.localeCompare(b.id)));
     });
 
     it('SPEC-rich-text-format/AC-033 drops an unused stored capability when no island survives', () => {
-        const content = {
-            type: 'doc',
-            attrs: { lang: null, dir: 'auto' },
-            content: [{ type: 'paragraph', attrs: paragraphAttrs }],
-        };
-        const input = {
-            ...(envelope(content) as Node_),
-            requiredCapabilities: [
-                { id: 'core', version: 1 },
-                { id: 'fixture.lists', version: 1 },
+        const input = storedInput(
+            [paragraph()],
+            [
+                ['core', 1],
+                ['fixture.lists', 1],
             ],
-        };
-        expect(encodedOf(input).document?.requiredCapabilities).toEqual([{ id: 'core', version: 1 }]);
+        );
+        expect(capabilitiesOf(input)).toEqual([{ id: 'core', version: 1 }]);
     });
 
     it('SPEC-rich-text-format/AC-033 keeps a stored capability whose content survives as an island', () => {
-        const content = { type: 'doc', attrs: { lang: null, dir: 'auto' }, content: [{ type: 'acme_callout' }] };
-        const input = {
-            ...(envelope(content) as Node_),
-            requiredCapabilities: [
-                { id: 'acme.callout', version: 3 },
-                { id: 'core', version: 1 },
-                { id: 'fixture.marks', version: 2 },
+        const input = storedInput(
+            [{ type: 'acme_callout' }],
+            [
+                ['acme.callout', 3],
+                ['core', 1],
+                ['fixture.marks', 2],
             ],
-        };
-        expect(encodedOf(input).document?.requiredCapabilities).toEqual([
+        );
+        expect(capabilitiesOf(input)).toEqual([
             { id: 'acme.callout', version: 3 },
             { id: 'core', version: 1 },
             { id: 'fixture.marks', version: 2 },
@@ -365,23 +349,27 @@ const cellArb = fc.record({
 });
 const tableArb = fc
     .array(fc.array(cellArb, { minLength: 1, maxLength: 3 }), { minLength: 1, maxLength: 3 })
-    .map((rows) => ({
-        type: 'table',
-        attrs: { nodeId: 't' },
-        content: rows.map((cells) => ({
-            type: 'table_row',
-            content: cells.map(({ colspan, rowspan, widths }) => ({
-                type: rowspan === 3 ? 'table_header' : 'table_cell',
-                attrs: {
-                    colspan,
-                    rowspan,
-                    colwidth: widths === undefined ? null : Array.from({ length: colspan }, () => widths),
-                    ...(rowspan === 3 ? { scope: null } : {}),
-                },
-                content: [{ type: 'paragraph', attrs: paragraphAttrs }],
-            })),
-        })),
-    }));
+    .map((rows) =>
+        table(
+            't',
+            ...rows.map((cells) =>
+                row(
+                    ...cells.map(({ colspan, rowspan, widths }) =>
+                        nodeOf(
+                            rowspan === 3 ? 'table_header' : 'table_cell',
+                            {
+                                colspan,
+                                rowspan,
+                                colwidth: widths === undefined ? null : Array.from({ length: colspan }, () => widths),
+                                ...(rowspan === 3 ? { scope: null } : {}),
+                            },
+                            paragraph(),
+                        ),
+                    ),
+                ),
+            ),
+        ),
+    );
 const engineTable = (node: TreeNode): unknown => {
     const attrs = node.attrs ?? {};
     return {
@@ -398,11 +386,8 @@ describe(seeded('table grids'), () => {
     it('SPEC-rich-text-format/AC-051 gives every table in an editable result a TableMap with no problems', () => {
         let accepted = 0;
         fc.assert(
-            fc.property(tableArb, (table) => {
-                const { result, tree } = decodeToTree(
-                    envelope({ type: 'doc', attrs: { lang: null, dir: 'auto' }, content: [table] }),
-                    model,
-                );
+            fc.property(tableArb, (grid) => {
+                const { result, tree } = decodeToTree(envelope(doc(grid)), model);
                 expect(result.status).toBe('editable');
                 const decoded = tree === undefined ? undefined : tree.content?.[0];
                 if (decoded !== undefined && decoded.type === 'table') {

@@ -27,6 +27,7 @@ import {
     text,
 } from '#/features/__fixtures__/documents';
 import { vocabularyModel } from '#/features/__fixtures__/vocabulary';
+import { type JsonObject } from '#/model';
 
 import { type TreeNode } from './content';
 import { decodeToTree } from './decode';
@@ -63,6 +64,36 @@ const islandAt = (tree: TreeNode, ...indices: readonly number[]): TreeNode => {
 };
 const attrsAt = (tree: TreeNode, ...indices: readonly number[]) => islandAt(tree, ...indices).attrs ?? {};
 const marksAt = (tree: TreeNode, ...indices: readonly number[]) => islandAt(tree, ...indices).marks ?? [];
+/** Nodes and marks with the given attributes laid over a valid base, so a case names only the one that is out of range. */
+const para = (attrs: JsonObject): Json =>
+    node('paragraph', { lang: null, styleId: null, align: null, indent: 0, ...attrs });
+const head = (attrs: JsonObject): Json =>
+    node('heading', { nodeId: 'h', level: 2, lang: null, styleId: null, align: null, indent: 0, ...attrs });
+const header = (attrs: JsonObject): Json =>
+    table(
+        't',
+        row(node('table_header', { colspan: 1, rowspan: 1, colwidth: null, scope: null, ...attrs }, paragraph())),
+    );
+const embed = (attrs: JsonObject): Json =>
+    node('embed', { nodeId: 'e', url: 'https://x.test', provider: 'youtube', title: null, ...attrs });
+const image = (attrs: JsonObject, figure: JsonObject = { nodeId: 'f', align: 'center' }): Json =>
+    node('figure', figure, node('asset_image', { nodeId: 'i', assetId: 'a', labelSnapshot: 'l', ...attrs }));
+const markDefaults: Readonly<Record<string, JsonObject>> = {
+    link: { href: '/a', openInNewWindow: false, styleId: null },
+    font_color: { tokenId: null, value: null },
+    highlight: { tokenId: null, value: null },
+    language: { lang: 'de', dir: null },
+};
+const markCase = (type: string, attrs: JsonObject): Json =>
+    paragraph(text('a', mark(type, Object.assign({ ...markDefaults[type] }, attrs))));
+/** A case that names where the island sits and, when the fault is deeper, the path that fails. */
+type Case = readonly [string, Json, readonly number[], readonly number[]];
+const at = (name: string, value: Json, island: readonly number[], failing = island): Case => [
+    name,
+    value,
+    island,
+    failing,
+];
 const unknownNode = (extra: Record<string, Json> = {}): Json => ({ type: 'acme_widget', attrs: { size: 3 }, ...extra });
 
 describe('unknown nodes', () => {
@@ -165,26 +196,17 @@ describe('unknown marks and attributes', () => {
 
 /** Each Vocabulary table attribute with one value outside its declaration, and the node or mark that carries it. */
 const outOfRange: readonly (readonly [string, Json])[] = [
-    ['paragraph.lang', { ...paragraph(), attrs: { lang: 'en_US', styleId: null, align: null, indent: 0 } }],
-    ['paragraph.styleId', { ...paragraph(), attrs: { lang: null, styleId: 'Has Space', align: null, indent: 0 } }],
-    ['paragraph.align', { ...paragraph(), attrs: { lang: null, styleId: null, align: 'middle', indent: 0 } }],
-    ['paragraph.indent', { ...paragraph(), attrs: { lang: null, styleId: null, align: null, indent: 7 } }],
-    ['heading.nodeId', node('heading', { nodeId: 5, level: 2, lang: null, styleId: null, align: null, indent: 0 })],
-    ['heading.level', node('heading', { nodeId: 'h', level: 7, lang: null, styleId: null, align: null, indent: 0 })],
-    ['heading.lang', node('heading', { nodeId: 'h', level: 2, lang: 'x_y', styleId: null, align: null, indent: 0 })],
-    [
-        'heading.styleId',
-        node('heading', { nodeId: 'h', level: 2, lang: null, styleId: 'Has Space', align: null, indent: 0 }),
-    ],
-    [
-        'heading.align',
-        node('heading', { nodeId: 'h', level: 2, lang: null, styleId: null, align: 'middle', indent: 0 }),
-    ],
-    ['heading.indent', node('heading', { nodeId: 'h', level: 2, lang: null, styleId: null, align: null, indent: 7 })],
-    [
-        'table_header.colspan',
-        table('t', row(node('table_header', { colspan: 1.5, rowspan: 1, colwidth: null, scope: null }, paragraph()))),
-    ],
+    ['paragraph.lang', para({ lang: 'en_US' })],
+    ['paragraph.styleId', para({ styleId: 'Has Space' })],
+    ['paragraph.align', para({ align: 'middle' })],
+    ['paragraph.indent', para({ indent: 7 })],
+    ['heading.nodeId', head({ nodeId: 5 })],
+    ['heading.level', head({ level: 7 })],
+    ['heading.lang', head({ lang: 'x_y' })],
+    ['heading.styleId', head({ styleId: 'Has Space' })],
+    ['heading.align', head({ align: 'middle' })],
+    ['heading.indent', head({ indent: 7 })],
+    ['table_header.colspan', header({ colspan: 1.5 })],
     ['blockquote.styleId', node('blockquote', { styleId: '"q"' }, paragraph())],
     ['bullet_list.marker', node('bullet_list', { marker: 'star' }, listItem(paragraph()))],
     ['ordered_list.start', node('ordered_list', { start: 1_000_001, marker: null }, listItem(paragraph()))],
@@ -192,22 +214,15 @@ const outOfRange: readonly (readonly [string, Json])[] = [
     ['task_item.nodeId', taskList(node('task_item', { checked: false }, paragraph()))],
     ['task_item.checked', taskList(node('task_item', { nodeId: 't', checked: 'yes' }, paragraph()))],
     ['code_block.languageId', node('code_block', { languageId: '<js>' })],
-    ['embed.nodeId', node('embed', { nodeId: null, url: 'https://x.test', provider: 'youtube', title: null })],
-    ['embed.url', node('embed', { nodeId: 'e', url: 5, provider: 'youtube', title: null })],
-    ['embed.provider', node('embed', { nodeId: 'e', url: 'https://x.test', provider: 'You Tube', title: null })],
-    ['embed.title', node('embed', { nodeId: 'e', url: 'https://x.test', provider: 'youtube', title: 3 })],
+    ['embed.nodeId', embed({ nodeId: null })],
+    ['embed.url', embed({ url: 5 })],
+    ['embed.provider', embed({ provider: 'You Tube' })],
+    ['embed.title', embed({ title: 3 })],
     [
         'figure.nodeId',
         node('figure', { align: 'center' }, node('asset_image', { nodeId: 'i', assetId: 'a', labelSnapshot: 'l' })),
     ],
-    [
-        'figure.align',
-        node(
-            'figure',
-            { nodeId: 'f', align: 'justify' },
-            node('asset_image', { nodeId: 'i', assetId: 'a', labelSnapshot: 'l' }),
-        ),
-    ],
+    ['figure.align', image({}, { nodeId: 'f', align: 'justify' })],
     ...(
         [
             ['nodeId', { nodeId: 1 }],
@@ -220,43 +235,27 @@ const outOfRange: readonly (readonly [string, Json])[] = [
             ['displayWidth', { displayWidth: 9 }],
             ['mediaType', { mediaType: 4 }],
         ] as const
-    ).map(([name, value]): readonly [string, Json] => [
-        `asset_image.${name}`,
-        node(
-            'figure',
-            { nodeId: 'f', align: 'center' },
-            node('asset_image', { nodeId: 'i', assetId: 'a', labelSnapshot: 'l', ...value }),
-        ),
-    ]),
+    ).map(([name, value]): readonly [string, Json] => [`asset_image.${name}`, image(value)]),
     ['table.nodeId', node('table', { nodeId: [] }, row(cell({}, paragraph())))],
     ['table_cell.colspan', table('t', row(cell({ colspan: 51 }, paragraph())))],
     ['table_cell.rowspan', table('t', row(cell({ rowspan: 0 }, paragraph())))],
     ['table_cell.colwidth', table('t', row(cell({ colwidth: [0] }, paragraph())))],
-    [
-        'table_header.rowspan',
-        table('t', row(node('table_header', { colspan: 1, rowspan: 51, colwidth: null, scope: null }, paragraph()))),
-    ],
-    [
-        'table_header.colwidth',
-        table('t', row(node('table_header', { colspan: 1, rowspan: 1, colwidth: [0], scope: null }, paragraph()))),
-    ],
-    [
-        'table_header.scope',
-        table('t', row(node('table_header', { colspan: 1, rowspan: 1, colwidth: null, scope: 'all' }, paragraph()))),
-    ],
+    ['table_header.rowspan', header({ rowspan: 51 })],
+    ['table_header.colwidth', header({ colwidth: [0] })],
+    ['table_header.scope', header({ scope: 'all' })],
     ['mention.nodeId', paragraph(mention('m', { nodeId: 2 }))],
     ['mention.resourceType', paragraph(mention('m', { resourceType: 'User' }))],
     ['mention.resourceId', paragraph(mention('m', { resourceId: null }))],
     ['mention.labelSnapshot', paragraph(mention('m', { labelSnapshot: false }))],
-    ['link.href', paragraph(text('a', mark('link', { href: 7, openInNewWindow: false, styleId: null })))],
-    ['link.openInNewWindow', paragraph(text('a', mark('link', { href: '/a', openInNewWindow: 'no', styleId: null })))],
-    ['link.styleId', paragraph(text('a', mark('link', { href: '/a', openInNewWindow: false, styleId: 'A' })))],
-    ['font_color.tokenId', paragraph(text('a', mark('font_color', { tokenId: 'Red', value: null })))],
-    ['font_color.value', paragraph(text('a', mark('font_color', { tokenId: null, value: '#FFFFFF' })))],
-    ['highlight.tokenId', paragraph(text('a', mark('highlight', { tokenId: ' ', value: null })))],
-    ['highlight.value', paragraph(text('a', mark('highlight', { tokenId: null, value: 'red' })))],
-    ['language.lang', paragraph(text('a', mark('language', { lang: 'en_US', dir: null })))],
-    ['language.dir', paragraph(text('a', mark('language', { lang: 'de', dir: 'up' })))],
+    ['link.href', markCase('link', { href: 7 })],
+    ['link.openInNewWindow', markCase('link', { openInNewWindow: 'no' })],
+    ['link.styleId', markCase('link', { styleId: 'A' })],
+    ['font_color.tokenId', markCase('font_color', { tokenId: 'Red' })],
+    ['font_color.value', markCase('font_color', { value: '#FFFFFF' })],
+    ['highlight.tokenId', markCase('highlight', { tokenId: ' ' })],
+    ['highlight.value', markCase('highlight', { value: 'red' })],
+    ['language.lang', markCase('language', { lang: 'en_US' })],
+    ['language.dir', markCase('language', { dir: 'up' })],
 ];
 
 describe('invalid attributes', () => {
@@ -298,66 +297,36 @@ describe('invalid attributes', () => {
 
 describe('content expressions', () => {
     const columnBreak = node('column_break');
-    const cases: readonly (readonly [string, Json, readonly number[], string])[] = [
-        [
-            'column_break in a table cell',
-            table('t', row(cell({}, columnBreak))),
-            [0, 0, 0, 0],
-            '/content/content/0/content/0/content/0/content/0',
-        ],
-        [
-            'column_break in a list item',
-            bulletList(listItem(paragraph(), columnBreak)),
-            [0, 0, 1],
-            '/content/content/0/content/0/content/1',
-        ],
-        ['column_break in a quote', blockquote(columnBreak), [0, 0], '/content/content/0/content/0'],
-        [
-            'asset_image under doc',
-            node('asset_image', { nodeId: 'i', assetId: 'a', labelSnapshot: 'l' }),
-            [0],
-            '/content/content/0',
-        ],
-        [
-            'a list item that starts with a heading',
-            bulletList(listItem(heading('h'))),
-            [0],
-            '/content/content/0/content/0/content/0',
-        ],
-        ['a blockquote with no child', blockquote(), [0], '/content/content/0'],
-        [
-            'a horizontal rule with a child',
-            node('horizontal_rule', undefined, paragraph()),
-            [0],
-            '/content/content/0/content/0',
-        ],
-        [
+    const cases: readonly Case[] = [
+        at('column_break in a table cell', table('t', row(cell({}, columnBreak))), [0, 0, 0, 0]),
+        at('column_break in a list item', bulletList(listItem(paragraph(), columnBreak)), [0, 0, 1]),
+        at('column_break in a quote', blockquote(columnBreak), [0, 0]),
+        at('asset_image under doc', node('asset_image', { nodeId: 'i', assetId: 'a', labelSnapshot: 'l' }), [0]),
+        at('a list item that starts with a heading', bulletList(listItem(heading('h'))), [0], [0, 0, 0]),
+        at('a blockquote with no child', blockquote(), [0]),
+        at('a horizontal rule with a child', node('horizontal_rule', undefined, paragraph()), [0], [0, 0]),
+        at(
             'a mention with a child',
             paragraph(
                 node('mention', { nodeId: 'm', resourceType: 'user', resourceId: 'u', labelSnapshot: 'A' }, text('x')),
             ),
             [0, 0],
-            '/content/content/0/content/0/content/0',
-        ],
-        ['a paragraph inside a paragraph', paragraph(text('a'), paragraph()), [0, 1], '/content/content/0/content/1'],
-        ['text directly under doc', text('loose'), [0], '/content/content/0'],
-        ['a hard break in a code block', codeBlock(node('hard_break')), [0], '/content/content/0/content/0'],
-        ['a cell outside a row', table('t', cell({}, paragraph())), [0], '/content/content/0/content/0'],
-        ['a figure with two images', node('figure', { nodeId: 'f', align: 'center' }), [0], '/content/content/0'],
-        ['a task item in a bullet list', bulletList(taskItem('t', paragraph())), [0], '/content/content/0/content/0'],
-        ['a paragraph directly in a task list', taskList(paragraph()), [0], '/content/content/0/content/0'],
-        [
-            'a paragraph directly in a table row',
-            table('t', row(paragraph())),
-            [0],
-            '/content/content/0/content/0/content/0',
-        ],
+            [0, 0, 0],
+        ),
+        at('a paragraph inside a paragraph', paragraph(text('a'), paragraph()), [0, 1]),
+        at('text directly under doc', text('loose'), [0]),
+        at('a hard break in a code block', codeBlock(node('hard_break')), [0], [0, 0]),
+        at('a cell outside a row', table('t', cell({}, paragraph())), [0], [0, 0]),
+        at('a figure with two images', node('figure', { nodeId: 'f', align: 'center' }), [0]),
+        at('a task item in a bullet list', bulletList(taskItem('t', paragraph())), [0], [0, 0]),
+        at('a paragraph directly in a task list', taskList(paragraph()), [0], [0, 0]),
+        at('a paragraph directly in a table row', table('t', row(paragraph())), [0], [0, 0, 0]),
     ];
 
-    it.each(cases)('SPEC-rich-text-format/AC-017 places the island for %s', (_, value, at, path) => {
+    it.each(cases)('SPEC-rich-text-format/AC-017 places the island for %s', (_, value, island, failing) => {
         const { tree, codes } = roundTrip(doc(value));
-        expect(islandAt(tree, ...at).type).toMatch(/^unsupported_(block|inline)$/);
-        expect(codes).toContain(`format.invalid-structure ${path}`);
+        expect(islandAt(tree, ...island).type).toMatch(/^unsupported_(block|inline)$/);
+        expect(codes).toContain(`format.invalid-structure /content/content/${failing.join('/content/')}`);
     });
 
     it('SPEC-rich-text-format/AC-017 reads an empty content array as no key', () => {
@@ -391,34 +360,18 @@ describe('attribute checks before mark checks', () => {
 
 describe('occurrence IDs', () => {
     it.each([
-        [
-            'two mentions in one paragraph',
-            doc(paragraph(mention('m'), mention('m'))),
-            [0, 1],
-            '/content/content/0/content/1',
-        ],
-        [
-            'a heading in a blockquote',
-            doc(heading('h'), blockquote(heading('h'))),
-            [1, 0],
-            '/content/content/1/content/0',
-        ],
-        [
-            'a heading in a list item',
-            doc(heading('h'), bulletList(listItem(paragraph(), heading('h')))),
-            [1, 0, 1],
-            '/content/content/1/content/0/content/1',
-        ],
+        ['two mentions in one paragraph', doc(paragraph(mention('m'), mention('m'))), [0, 1]],
+        ['a heading in a blockquote', doc(heading('h'), blockquote(heading('h'))), [1, 0]],
+        ['a heading in a list item', doc(heading('h'), bulletList(listItem(paragraph(), heading('h')))), [1, 0, 1]],
         [
             'a mention in a quoted paragraph',
             doc(paragraph(mention('m')), blockquote(paragraph(mention('m')))),
             [1, 0, 0],
-            '/content/content/1/content/0/content/0',
         ],
-    ] as const)('SPEC-rich-text-format/AC-018 islands a duplicate below the root: %s', (_, value, at, path) => {
+    ] as const)('SPEC-rich-text-format/AC-018 islands a duplicate below the root: %s', (_, value, at) => {
         const { tree, codes } = roundTrip(value);
         expect(islandAt(tree, ...at).type).toMatch(/^unsupported_(block|inline)$/);
-        expect(codes).toEqual([`format.duplicate-occurrence-id ${path}`]);
+        expect(codes).toEqual([`format.duplicate-occurrence-id /content/content/${at.join('/content/')}`]);
     });
 
     it('SPEC-rich-text-format/AC-018 keeps the first task item and mention editable and islands the duplicates', () => {
@@ -496,19 +449,13 @@ describe('stored IDs and colours', () => {
         ['angle brackets', '<style>'],
         ['129 characters', `a${'b'.repeat(128)}`],
     ])('SPEC-rich-text-format/AC-044 rejects a styleId with %s', (_, value) => {
-        const { tree, codes } = roundTrip(
-            doc({ ...paragraph(), attrs: { lang: null, styleId: value, align: null, indent: 0 } }),
-        );
+        const { tree, codes } = roundTrip(doc(para({ styleId: value })));
         expect(islandAt(tree, 0).type).toBe('unsupported_block');
         expect(codes).toEqual(['format.invalid-attribute /content/content/0/attrs/styleId']);
     });
 
     it('SPEC-rich-text-format/AC-044 accepts a 128-character ID and checks tokenId, languageId and resourceType', () => {
-        expect(
-            decode(
-                doc({ ...paragraph(), attrs: { lang: null, styleId: `a${'b'.repeat(127)}`, align: null, indent: 0 } }),
-            ).codes,
-        ).toEqual([]);
+        expect(decode(doc(para({ styleId: `a${'b'.repeat(127)}` }))).codes).toEqual([]);
         expect(decode(doc(codeBlock())).codes).toEqual([]);
         expect(decode(doc(node('code_block', { languageId: 'Type Script' }))).codes).toHaveLength(1);
         expect(decode(doc(paragraph(mention('m', { resourceType: 'a b' })))).codes).toHaveLength(1);
@@ -542,13 +489,6 @@ describe('stored IDs and colours', () => {
 
 describe('marks on nodes that take none', () => {
     const chip = (marks: Json) => paragraph({ ...mention('m'), marks });
-    type Case = readonly [string, Json, readonly number[], readonly number[]];
-    const at = (name: string, value: Json, island: readonly number[], failing = island): Case => [
-        name,
-        value,
-        island,
-        failing,
-    ];
     const cases: readonly Case[] = [
         at('bold on a mention', chip([mark('bold')]), [0, 0]),
         at('code on a mention', chip([mark('code')]), [0, 0]),
@@ -726,12 +666,9 @@ describe('mark sets', () => {
             ['font_color', 'unsupported_mark'],
         ],
     ] as const)('SPEC-rich-text-format/AC-054 keeps the later of %s as an unsupported_mark', (_, marks, types) => {
-        const { tree, codes } = decode(doc(paragraph(text('a', ...marks))));
+        const { tree, codes } = roundTrip(doc(paragraph(text('a', ...marks))));
         expect(marksOf(tree, 0, 0)).toEqual(types);
         expect(codes).toEqual(['format.invalid-structure /content/content/0/content/0/marks/1']);
-        expect(decode(doc(paragraph(text('a', ...marks)))).encoded).toBe(
-            canonicalJson(doc(paragraph(text('a', ...marks)))),
-        );
     });
 
     it('SPEC-rich-text-format/AC-054 keeps the later of two bold marks on a hard break', () => {
@@ -743,11 +680,11 @@ describe('mark sets', () => {
     it('SPEC-rich-text-format/AC-054 islands a text with three equal bold marks', () => {
         const { tree, codes } = roundTrip(doc(paragraph(text('a', mark('bold'), mark('bold'), mark('bold')))));
         expect(islandAt(tree, 0, 0).type).toBe('unsupported_inline');
-        const at = '/content/content/0/content/0/marks';
+        const base = '/content/content/0/content/0/marks';
         expect(codes).toEqual([
-            `format.invalid-structure ${at}/1`,
-            `format.invalid-structure ${at}/2`,
-            `format.invalid-structure ${at}/2`,
+            `format.invalid-structure ${base}/1`,
+            `format.invalid-structure ${base}/2`,
+            `format.invalid-structure ${base}/2`,
         ]);
     });
 
@@ -756,11 +693,11 @@ describe('mark sets', () => {
             doc(paragraph(text('a', { type: 'acme', attrs: { a: 1, b: 2 } }, { type: 'acme', attrs: { b: 2, a: 1 } }))),
         );
         expect(islandAt(tree, 0, 0).type).toBe('unsupported_inline');
-        const at = '/content/content/0/content/0/marks';
+        const base = '/content/content/0/content/0/marks';
         expect(codes).toEqual([
-            `format.unknown-mark ${at}/0`,
-            `format.unknown-mark ${at}/1`,
-            `format.invalid-structure ${at}/1`,
+            `format.unknown-mark ${base}/0`,
+            `format.unknown-mark ${base}/1`,
+            `format.invalid-structure ${base}/1`,
         ]);
     });
 });
