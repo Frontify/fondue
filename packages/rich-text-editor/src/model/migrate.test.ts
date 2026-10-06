@@ -76,6 +76,7 @@ describe('decode runs registered migrations', () => {
         });
         const { document } = result as Extract<DecodeResult, { status: 'editable' }>;
         expect(document.model).toEqual({ id: NOTES_ID, version: 3 });
+        expect(document.requiredCapabilities.map(({ id }) => id)).toEqual(['core', 'fixture.note', 'fixture.rule']);
         expect(document.content.content?.map(({ type, attrs }) => [type, attrs])).toEqual([
             ['paragraph', { lang: null }],
             ['note', { nodeId: 'node-1', level: 'info' }],
@@ -200,6 +201,45 @@ describe('decode runs registered migrations', () => {
             diagnostics: [unmapped],
         });
     });
+
+    it('SPEC-rich-text-format/AC-010 names the step that returns unsupported with no diagnostic', () => {
+        const model = stepsModel((document) => ({ status: 'unsupported', document, diagnostics: [] }));
+        expect(decodeDocument(plain, model)).toMatchObject({
+            status: 'blocked',
+            reason: 'unsupported',
+            diagnostics: [{ code: 'migration.unsupported', details: { step: 'step-1' } }],
+        });
+    });
+
+    const envelopes: readonly (readonly [string, (document: RichTextDocument) => unknown])[] = [
+        ['formatVersion: 2', (document) => ({ ...document, formatVersion: 2 })],
+        ['no requiredCapabilities', ({ requiredCapabilities: _, ...document }) => document],
+        [
+            'a malformed requiredCapabilities',
+            (document) => ({ ...document, requiredCapabilities: [{ id: 'core' }, 5] }),
+        ],
+        ['another model and an extra key', (document) => ({ ...document, model: { id: 'other' }, extra: true })],
+    ];
+
+    it.each(envelopes)(
+        'SPEC-rich-text-format/AC-010 stamps its own envelope over a step output with %s',
+        (_, write) => {
+            const model = stepsModel((document) => ({
+                status: 'migrated',
+                document: write(document) as RichTextDocument,
+            }));
+            const result = decodeDocument(plain, model);
+            expect(result.status).toBe('editable');
+            const { content, ...stamped } = (result as Extract<DecodeResult, { status: 'editable' }>).document;
+            expect(content).toEqual(plain.content);
+            expect(stamped).toEqual({
+                format: 'frontify.rich-text',
+                formatVersion: 1,
+                model: { id: NOTES_ID, version: 2 },
+                requiredCapabilities: [{ id: 'core', version: 1 }],
+            });
+        },
+    );
 
     it('SPEC-rich-text-format/AC-010 lets a later step change content outside the reported paths', () => {
         const model = stepsModel(

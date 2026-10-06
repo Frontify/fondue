@@ -28,11 +28,15 @@ const note = (version: number, attrs: AttributeDeclarations, migrations?: readon
         ...(migrations === undefined ? {} : { migrations }),
         nodes: { note: { group: 'block', content: 'paragraph+', attrs, html: ['aside', 0], parse: [] } },
     })();
-const rule = defineFeature({
+const rules = { horizontal_rule: { group: 'block', attrs: {}, html: ['hr'], parse: [] } } as const;
+const rule = defineFeature({ id: 'test.rule', version: 1, requires: [{ id: 'core', version: 1 }], nodes: rules });
+const ruleStep = { ...step, id: 'test.rule.step' };
+const ruleV2 = defineFeature({
     id: 'test.rule',
-    version: 1,
+    version: 2,
     requires: [{ id: 'core', version: 1 }],
-    nodes: { horizontal_rule: { group: 'block', attrs: {}, html: ['hr'], parse: [] } },
+    migrations: [ruleStep],
+    nodes: rules,
 });
 const tone = { tone: { type: 'enum', values: ['info', 'alert'], default: 'info' } } as const;
 const collapsed = { collapsed: { type: 'boolean', default: false } } as const;
@@ -51,16 +55,33 @@ describe('check-model-versions', () => {
     it('SPEC-rich-text-format/AC-034 fails on a changed attribute with no registered migration', () => {
         const level = { level: { type: 'enum', values: ['info', 'warning', 'danger'], default: 'info' } } as const;
         expect(compareModel(released, candidateOf([base(), note(2, level)], { id: 'test', version: 2 }))).toEqual([
-            'test: a node, mark or attribute was removed or changed with no registered migration from it',
+            'test: capability test.note removed or changed a node, mark or attribute with no migration from its version 1',
         ]);
         expect(
             compareModel(released, candidateOf([base(), note(2, level, [step])], { id: 'test', version: 2 })),
         ).toEqual([]);
-        const modelStep = { ...step, id: 'test.step' };
-        const migrations = [modelStep];
+    });
+
+    it('SPEC-rich-text-format/AC-034 fails on a breaking change in one feature with a step only in another', () => {
+        const level = { level: { type: 'enum', values: ['info', 'warning', 'danger'], default: 'info' } } as const;
+        const before = candidateOf([base(), note(1, tone), rule()], { id: 'test', version: 1 }).snapshot;
+        const migrations = [{ ...step, id: 'test.step' }];
         expect(
-            compareModel(released, candidateOf([base(), note(2, level)], { id: 'test', version: 2, migrations })),
-        ).toEqual([]);
+            compareModel(
+                before,
+                candidateOf([base(), note(2, level), ruleV2()], { id: 'test', version: 2, migrations }),
+            ),
+        ).toEqual([
+            'test: capability test.note removed or changed a node, mark or attribute with no migration from its version 1',
+        ]);
+    });
+
+    it('SPEC-rich-text-format/AC-034 asks a model step for a feature the list drops', () => {
+        expect(compareModel(released, candidateOf([base()], { id: 'test', version: 2 }))).toEqual([
+            'test: the feature list removed or changed a node, mark or attribute with no model migration from version 1',
+        ]);
+        const migrations = [{ ...step, id: 'test.step' }];
+        expect(compareModel(released, candidateOf([base()], { id: 'test', version: 2, migrations }))).toEqual([]);
     });
 
     it('SPEC-rich-text-format/AC-034 fails on a changed representation with the model version unchanged', () => {
