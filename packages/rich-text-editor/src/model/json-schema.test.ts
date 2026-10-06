@@ -63,6 +63,8 @@ const schema = toJsonSchema(model);
 const validate = compile(schema);
 const accepts = (value: unknown) => validate(value);
 const content = (...blocks: readonly Json[]) => envelope(doc(...blocks));
+const headingWith = (changes: Record_) =>
+    node('heading', { nodeId: 'h', level: 2, lang: null, styleId: null, align: null, indent: 0, ...changes });
 
 const walk = (value: Json, visit: (found: Record_) => void) => {
     if (Array.isArray(value)) {
@@ -164,6 +166,10 @@ describe('toJsonSchema of a model', () => {
         ['a heading with no attrs', content(node('heading')), false],
         ['a paragraph with no attrs', content(node('paragraph')), true],
         ['a paragraph with a text child of a missing text', content(paragraph({ type: 'text' })), false],
+        ['a heading with a null level', content(headingWith({ level: null })), false],
+        ['a heading with a null nodeId', content(headingWith({ nodeId: null })), false],
+        ['a heading with a null indent', content(headingWith({ indent: null })), false],
+        ['a heading with a null lang', content(headingWith({ lang: null })), true],
     ] as const)('SPEC-rich-text-format/AC-002 judges %s', (_, value, expected) => {
         expect(accepts(value)).toBe(expected);
     });
@@ -530,6 +536,12 @@ describe('toJsonSchema of a feature', () => {
         expect(check('paragraph')({ type: 'paragraph', marks: [{ type: 'bold' }] })).toBe(false);
         expect(check('horizontal_rule')({ type: 'horizontal_rule', content: [] })).toBe(true);
         expect(check('horizontal_rule')({ type: 'horizontal_rule', content: [{ type: 'paragraph' }] })).toBe(false);
+    });
+
+    it('SPEC-rich-text-format/AC-052 rejects a mark on a node whose marks declaration is empty', () => {
+        const check = compile(toJsonSchema(vocabularyFeatures().find(({ id }) => id === 'fixture.mention') as Feature));
+        expect(check({ ...mention('m'), marks: [{ type: 'bold' }] })).toBe(false);
+        expect(check({ ...mention('m'), marks: [] })).toBe(true);
     });
 
     it('SPEC-rich-text-format/AC-052 describes an attribute that a feature adds to other nodes under $defs', () => {

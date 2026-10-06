@@ -254,6 +254,60 @@ describe('decode runs registered migrations', () => {
         expect(result.status).toBe('editable');
         expect((tree as TreeNode).content?.map(({ type }) => type)).toEqual(['paragraph', 'unsupported_block']);
     });
+
+    it('SPEC-rich-text-format/AC-010 judges a step output by the limits of the decode call (Decode order step 3)', () => {
+        const model = stepsModel((document) =>
+            migrated(document, {
+                ...document.content,
+                content: [...(document.content.content ?? []), paragraph('three')],
+            }),
+        );
+        // `plain` holds 5 nodes and the step output 7.
+        expect(decodeDocument(plain, model, { limits: { maxDocumentNodes: 7 } }).status).toBe('editable');
+        expect(decodeDocument(plain, model, { limits: { maxDocumentNodes: 6 } })).toMatchObject({
+            status: 'blocked',
+            reason: 'unsupported',
+            diagnostics: [
+                { code: 'migration.unsupported', details: { step: 'step-1', cause: 'format.limit-exceeded' } },
+            ],
+        });
+    });
+
+    it('SPEC-rich-text-format/AC-010 lists the capability warnings before the diagnostics of a requires-review step', () => {
+        const input = notes(
+            1,
+            [paragraph('one'), paragraph('two')],
+            [
+                ['core', 1],
+                ['fixture.unknown', 1],
+            ],
+        );
+        const model = stepsModel((document) => review(document, '/content/content/1'));
+        expect(decodeDocument(input, model).diagnostics.map(({ code }) => code)).toEqual([
+            'format.unknown-capability',
+            'migration.requires-review',
+        ]);
+    });
+
+    it('SPEC-rich-text-format/AC-010 reports no review diagnostic for a requires-review step that the runner blocks', () => {
+        const model = stepsModel((document) => review(document, '/content/content/0/content/0/marks/0'));
+        const result = migrateDocument(plain, model);
+        expect(result.status).toBe('unsupported');
+        expect(result.diagnostics.map(({ code }) => code)).toEqual(['migration.unsupported']);
+        expect(result.manifest.counts).toEqual({ 'migration.unsupported': 1 });
+    });
+
+    it('SPEC-rich-text-format/AC-035 reports unsupported with no document when a step blocks after a requires-review step', () => {
+        const model = stepsModel(
+            (document) => review(document, '/content/content/1'),
+            () => {
+                throw new Error('step failed');
+            },
+        );
+        const result = migrateDocument(plain, model);
+        expect(result).toMatchObject({ status: 'unsupported', document: null });
+        expect(result.manifest).toMatchObject({ targetHash: null, steps: ['step-1', 'step-2'] });
+    });
 });
 
 describe('a newer reader after an older one saved', () => {
@@ -303,6 +357,32 @@ describe('migrateDocument', () => {
         expect(result.manifest.model).toEqual({ id: NOTES_ID, version: 3 });
         expect(result.document?.model).toEqual({ id: NOTES_ID, version: 3 });
         expect(result.document?.content).toEqual(input.content);
+    });
+
+    it('SPEC-rich-text-format/AC-035 migrates a target-version document that records an installed feature lower', () => {
+        const input = notes(
+            3,
+            [paragraph('x')],
+            [
+                ['core', 1],
+                ['fixture.note', 2],
+            ],
+        );
+        const result = migrateDocument(input, latest);
+        expect(result).toMatchObject({ status: 'migrated', diagnostics: [] });
+        expect(result.manifest.steps).toEqual([]);
+        expect(result.document?.requiredCapabilities).toEqual([
+            { id: 'core', version: 1 },
+            { id: 'fixture.note', version: 3 },
+        ]);
+    });
+
+    it('SPEC-rich-text-format/AC-035 returns a target-version document that omits an installed feature as current', () => {
+        const input = notes(3, [paragraph('x')], [['core', 1]]);
+        const result = migrateDocument(input, latest);
+        expect(result.status).toBe('current');
+        expect(result.document).toBe(input);
+        expect(result.manifest.steps).toEqual([]);
     });
 
     it.each(['v3-current.json', 'v4-newer.json'])(

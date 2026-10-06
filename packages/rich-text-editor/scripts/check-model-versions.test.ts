@@ -20,13 +20,18 @@ const step: CapabilityMigration = {
     from: 1,
     migrate: (document) => ({ status: 'migrated', document }),
 };
-const note = (version: number, attrs: AttributeDeclarations, migrations?: readonly CapabilityMigration[]) =>
+const note = (
+    version: number,
+    attrs: AttributeDeclarations,
+    migrations?: readonly CapabilityMigration[],
+    content = 'paragraph+',
+) =>
     defineFeature({
         id: 'test.note',
         version,
         requires: [{ id: 'core', version: 1 }],
         ...(migrations === undefined ? {} : { migrations }),
-        nodes: { note: { group: 'block', content: 'paragraph+', attrs, html: ['aside', 0], parse: [] } },
+        nodes: { note: { group: 'block', content, attrs, html: ['aside', 0], parse: [] } },
     })();
 const rules = { horizontal_rule: { group: 'block', attrs: {}, html: ['hr'], parse: [] } } as const;
 const rule = defineFeature({ id: 'test.rule', version: 1, requires: [{ id: 'core', version: 1 }], nodes: rules });
@@ -97,6 +102,54 @@ describe('check-model-versions', () => {
         expect(compareModel(released, candidateOf([base(), note(1, tone)], { id: 'test', version: 2 }))).toEqual([
             'test: model version 1 became 2 with no change to the stored representation',
         ]);
+    });
+
+    const problem =
+        'test: capability test.note removed or changed a node, mark or attribute with no migration from its version 1';
+    const count = { type: 'integer', default: 0 } as const;
+    const label = { type: 'string', default: '' } as const;
+    // An existing required attribute keeps `attrs` required, so only the attribute's own comparison can report.
+    const key = { type: 'string', required: true } as const;
+    const required = { type: 'string', required: true } as const;
+    const changes: readonly (readonly [string, AttributeDeclarations, AttributeDeclarations, readonly string[]])[] = [
+        ['narrows an enum', tone, { tone: { type: 'enum', values: ['info'], default: 'info' } }, [problem]],
+        ['widens an enum', tone, { tone: { type: 'enum', values: ['info', 'alert', 'warning'], default: 'info' } }, []],
+        ['bounds an unbounded integer', { count }, { count: { ...count, min: 0 } }, [problem]],
+        ['adds a required attribute', { key }, { key, label: required }, [problem]],
+        ['makes an optional attribute required', { key, label }, { key, label: required }, [problem]],
+    ];
+
+    it.each(changes)(
+        'SPEC-rich-text-format/AC-034 judges a new capability version that %s with no step',
+        (_, before, after, expected) => {
+            const earlier = candidateOf([base(), note(1, before)], { id: 'test', version: 1 }).snapshot;
+            expect(compareModel(earlier, candidateOf([base(), note(2, after)], { id: 'test', version: 2 }))).toEqual(
+                expected,
+            );
+        },
+    );
+
+    it.each([
+        ['changes the content expression', 'horizontal_rule+', [problem]],
+        ['adds a child type to the content expression', '(paragraph | horizontal_rule)+', []],
+    ] as const)('SPEC-rich-text-format/AC-034 judges a model step with a feature that %s', (_, content, expected) => {
+        const earlier = candidateOf([base(), note(1, tone), rule()], { id: 'test', version: 1 }).snapshot;
+        const migrations = [{ ...step, id: 'test.step' }];
+        const next = candidateOf([base(), note(2, tone, undefined, content), rule()], {
+            id: 'test',
+            version: 2,
+            migrations,
+        });
+        expect(compareModel(earlier, next)).toEqual(expected);
+    });
+
+    it('SPEC-rich-text-format/AC-034 asks for the next model version when the version jumps over one', () => {
+        expect(
+            compareModel(
+                released,
+                candidateOf([base(), note(2, { ...tone, ...collapsed })], { id: 'test', version: 3 }),
+            ),
+        ).toEqual(['test: the stored representation changed, so model version 1 must become 2']);
     });
 
     it('SPEC-rich-text-format/AC-042 fails when an attribute is added to an existing capability version', () => {
