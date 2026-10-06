@@ -452,22 +452,22 @@ importers:
         specifier: ^1.8.0
         version: 1.8.0
       '@frontify/fondue-charts':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../charts
       '@frontify/fondue-components':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../components
       '@frontify/fondue-icons':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../icons
       '@frontify/fondue-rte':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../rte
       '@frontify/fondue-sdk':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../sdk
       '@frontify/fondue-tokens':
-        specifier: workspace:^
+        specifier: workspace:*
         version: link:../tokens
       '@popperjs/core':
         specifier: ^2.11.8
@@ -1230,10 +1230,7 @@ importers:
         version: 5.1.4(typescript@5.9.3)(vite@6.4.3(@types/node@24.13.3)(jiti@2.7.0)(sass@1.102.0)(tsx@4.23.11)(yaml@2.9.0))
 
   packages/sdk:
-    devDependencies:
-      '@frontify/eslint-config-react':
-        specifier: ^1.0.16
-        version: 1.0.16(@typescript-eslint/utils@8.60.1(eslint@10.8.1(jiti@2.7.0))(typescript@5.9.3))(eslint@10.8.1(jiti@2.7.0))(prettier@3.9.6)(react@18.3.1)(supports-color@8.1.1)(typescript@5.9.3)
+    dependencies:
       '@frontify/fondue-components':
         specifier: workspace:*
         version: link:../components
@@ -1243,6 +1240,10 @@ importers:
       '@frontify/fondue-tokens':
         specifier: workspace:*
         version: link:../tokens
+    devDependencies:
+      '@frontify/eslint-config-react':
+        specifier: ^1.0.16
+        version: 1.0.16(@typescript-eslint/utils@8.60.1(eslint@10.8.1(jiti@2.7.0))(typescript@5.9.3))(eslint@10.8.1(jiti@2.7.0))(prettier@3.9.6)(react@18.3.1)(supports-color@8.1.1)(typescript@5.9.3)
       '@tony.ganchev/eslint-plugin-header':
         specifier: ^3.4.4
         version: 3.4.4(eslint@10.8.1(jiti@2.7.0))
