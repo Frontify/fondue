@@ -151,6 +151,15 @@
                     }
                 }
             }
+        },
+        "owners": {
+            "n.doc": "core",
+            "n.doc.lang": "core",
+            "n.doc.dir": "core",
+            "n.paragraph": "core",
+            "n.paragraph.lang": "core",
+            "n.text": "core",
+            "n.hard_break": "core"
         }
     }
 }
