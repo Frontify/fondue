@@ -10,6 +10,8 @@ export const parameters = {
                 ['Setup'],
                 'Usage',
                 ['Components', 'Styling'],
+                'SDK',
+                ['Quickstart', 'Concepts', 'Examples', 'Reference'],
                 'Development',
                 ['Contributing', 'Upgrading'],
             ],
