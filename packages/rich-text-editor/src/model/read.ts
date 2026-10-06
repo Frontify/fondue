@@ -168,12 +168,6 @@ const scalarBytes = (value: unknown): number | undefined => {
 };
 
 const isObject = (value: unknown) => typeof value === 'object' && value !== null && !Array.isArray(value);
-/** The `type` data property of an object, read without running a getter. */
-const typeOf = (value: unknown): unknown => {
-    const descriptor = isObject(value) ? Object.getOwnPropertyDescriptor(value, 'type') : undefined;
-    return descriptor !== undefined && 'value' in descriptor ? descriptor.value : undefined;
-};
-
 const placeOf = (role: Role, level: number, depth: number, row?: Counter, cell?: Counter): Place => {
     const place: Place = { role, level, depth };
     if (row !== undefined) {
@@ -186,7 +180,7 @@ const placeOf = (role: Role, level: number, depth: number, row?: Counter, cell?:
 };
 
 /** The place of the member `key`, holding `value`, of a container at `place`. */
-const memberPlace = (place: Place, container: object, key: string, value: unknown, slice: boolean): Place => {
+const memberPlace = (place: Place, type: unknown, key: string, value: unknown, slice: boolean): Place => {
     const { level, depth, row, cell } = place;
     switch (place.role) {
         case 'input':
@@ -198,7 +192,7 @@ const memberPlace = (place: Place, container: object, key: string, value: unknow
                 : { role: 'node', level: 0, depth: 1 };
         case 'node':
             if (key === 'content' && Array.isArray(value)) {
-                return placeOf('content', 1, depth, typeOf(container) === 'table' ? { count: 0 } : undefined, row);
+                return placeOf('content', 1, depth, type === 'table' ? { count: 0 } : undefined, row);
             }
             if (key === 'marks' && Array.isArray(value)) {
                 return { role: 'marks', level: 1, depth };
@@ -238,21 +232,25 @@ interface Walk {
     readonly limits: ResourceLimits;
     readonly countBytes: boolean;
     readonly slice: boolean;
+    /** Whether the walk builds a plain-data copy from the descriptor values it reads. */
+    readonly copy: boolean;
     readonly ancestors: Set<object>;
     /** Keys from the input to the value the walk is at; the JSON Pointer is built only for a failure. */
     readonly keys: string[];
     bytes: number;
     nodes: number;
+    /** The copy of the value the last `visit` read. */
+    result: unknown;
 }
 
 const failAt = (walk: Walk, fail: (path: string) => ReadFailure) => fail(pointer(...walk.keys));
 const overAt = (walk: Walk, limit: keyof ResourceLimits) => exceeded(limit, pointer(...walk.keys));
 
-const roleAt = (walk: Walk, value: unknown, place: Place): Role => {
-    if (walk.slice && place.role === 'node' && ISLAND_NODES.has(typeOf(value))) {
+const roleAt = (walk: Walk, type: unknown, place: Place): Role => {
+    if (walk.slice && place.role === 'node' && ISLAND_NODES.has(type)) {
         return 'island';
     }
-    return walk.slice && place.role === 'mark' && typeOf(value) === 'unsupported_mark' ? 'markIsland' : place.role;
+    return walk.slice && place.role === 'mark' && type === 'unsupported_mark' ? 'markIsland' : place.role;
 };
 
 const countNode = (walk: Walk, place: Place): keyof ResourceLimits | undefined => {
@@ -274,13 +272,18 @@ const countNode = (walk: Walk, place: Place): keyof ResourceLimits | undefined =
 };
 
 /** Adds the value's own tokens; an object's keys are its own members' names. */
-const countBytes = (walk: Walk, value: unknown, scalar: number | undefined, keys: readonly (string | symbol)[]) => {
+const countBytes = (
+    walk: Walk,
+    scalar: number | undefined,
+    length: number | undefined,
+    keys: readonly (string | symbol)[],
+) => {
     if (scalar !== undefined) {
         walk.bytes += scalar;
         return;
     }
-    if (Array.isArray(value)) {
-        walk.bytes += 1 + Math.max(value.length, 1);
+    if (length !== undefined) {
+        walk.bytes += 1 + Math.max(length, 1);
         return;
     }
     walk.bytes += 1 + Math.max(keys.length, 1);
@@ -300,59 +303,81 @@ const stringLimit = (walk: Walk, value: string, place: Place): keyof ResourceLim
         : undefined;
 };
 
+const dataOf = (descriptor: PropertyDescriptor | undefined): unknown =>
+    descriptor !== undefined && 'value' in descriptor ? descriptor.value : undefined;
+
 const visitMember = (
     walk: Walk,
-    container: object,
     key: string,
     place: Place,
+    type: unknown,
     descriptor: PropertyDescriptor | undefined,
-) => {
+): ReadFailure | undefined => {
     walk.keys.push(key);
     const failure =
         key === '__proto__' || !isDataProperty(descriptor)
             ? failAt(walk, notJson)
-            : visit(walk, descriptor.value, memberPlace(place, container, key, descriptor.value, walk.slice));
+            : visit(walk, descriptor.value, memberPlace(place, type, key, descriptor.value, walk.slice));
     walk.keys.pop();
     return failure;
 };
 
 /** Each member in the order `JSON.stringify` writes them; a hole, a getter or a symbol key is not JSON where the walk reaches it. */
-const visitMembers = (walk: Walk, value: object, place: Place, keys: readonly (string | symbol)[]) => {
+const visitMembers = (
+    walk: Walk,
+    value: object,
+    place: Place,
+    keys: readonly (string | symbol)[],
+    descriptors: readonly (PropertyDescriptor | undefined)[],
+): ReadFailure | undefined => {
     if (Array.isArray(value)) {
-        for (let index = 0; index < value.length; index += 1) {
+        const length = dataOf(Object.getOwnPropertyDescriptor(value, 'length')) as number;
+        const copy: unknown[] = [];
+        for (let index = 0; index < length; index += 1) {
             const failure = visitMember(
                 walk,
-                value,
                 String(index),
                 place,
+                undefined,
                 Object.getOwnPropertyDescriptor(value, index),
             );
             if (failure !== undefined) {
                 return failure;
             }
+            if (walk.copy) {
+                copy.push(walk.result);
+            }
         }
-        return Reflect.ownKeys(value).length === value.length + 1 ? undefined : failAt(walk, notJson);
+        walk.result = walk.copy ? copy : value;
+        return Reflect.ownKeys(value).length === length + 1 ? undefined : failAt(walk, notJson);
     }
-    for (const key of keys) {
+    const copy: Record<string, unknown> = {};
+    const type = dataOf(descriptors[keys.indexOf('type')]);
+    for (const [index, key] of keys.entries()) {
         if (typeof key !== 'string') {
             return failAt(walk, notJson);
         }
-        const failure = visitMember(walk, value, key, place, Object.getOwnPropertyDescriptor(value, key));
+        const failure = visitMember(walk, key, place, type, descriptors[index]);
         if (failure !== undefined) {
             return failure;
         }
+        copy[key] = walk.result;
     }
+    walk.result = walk.copy ? copy : value;
     return undefined;
 };
 
 const visit = (walk: Walk, value: unknown, place: Place): ReadFailure | undefined => {
     const { limits } = walk;
+    walk.result = value;
     // Each UTF-16 unit takes at least one byte, so a long string stops the walk before it is scanned.
     if (walk.countBytes && typeof value === 'string' && walk.bytes + value.length + 2 > limits.maxDocumentBytes) {
         return overAt(walk, 'maxDocumentBytes');
     }
+    const array = Array.isArray(value);
+    const length = array ? (dataOf(Object.getOwnPropertyDescriptor(value, 'length')) as number) : 0;
     // Likewise each element of an array writes at least two bytes, so a long array stops before it is read.
-    if (walk.countBytes && Array.isArray(value) && walk.bytes + value.length * 2 + 1 > limits.maxDocumentBytes) {
+    if (walk.countBytes && array && walk.bytes + length * 2 + 1 > limits.maxDocumentBytes) {
         return overAt(walk, 'maxDocumentBytes');
     }
     const container = typeof value === 'object' && value !== null;
@@ -360,14 +385,17 @@ const visit = (walk: Walk, value: unknown, place: Place): ReadFailure | undefine
     if (container ? walk.ancestors.has(value) || !isPlainContainer(value) : scalar === undefined) {
         return failAt(walk, notJson);
     }
-    const keys = container && !Array.isArray(value) ? Reflect.ownKeys(value) : [];
+    const keys = container && !array ? Reflect.ownKeys(value) : [];
+    const descriptors = keys.map((key) =>
+        typeof key === 'string' ? Object.getOwnPropertyDescriptor(value, key) : undefined,
+    );
     if (walk.countBytes) {
-        countBytes(walk, value, scalar, keys);
+        countBytes(walk, scalar, array ? length : undefined, keys);
         if (walk.bytes > limits.maxDocumentBytes) {
             return overAt(walk, 'maxDocumentBytes');
         }
     }
-    const role = roleAt(walk, value, place);
+    const role = roleAt(walk, dataOf(descriptors[keys.indexOf('type')]), place);
     const here = role === place.role ? place : { ...place, role };
     if (role === 'node') {
         const limit = countNode(walk, here);
@@ -385,7 +413,7 @@ const visit = (walk: Walk, value: unknown, place: Place): ReadFailure | undefine
         return undefined;
     }
     walk.ancestors.add(value);
-    const failure = visitMembers(walk, value, here, keys);
+    const failure = visitMembers(walk, value, here, keys, descriptors);
     walk.ancestors.delete(value);
     return failure;
 };
@@ -393,6 +421,7 @@ const visit = (walk: Walk, value: unknown, place: Place): ReadFailure | undefine
 /**
  * Decode order step 1: one pre-order walk that stops at the first value that is not JSON (AC-004) or exceeds a
  * limit (AC-005), counted by position before any shape check. A string counts its UTF-8 bytes and must parse.
+ * A parsed value comes back as a plain-data copy of what the walk read, so no host object reaches later steps.
  * With `slice`, the input's `content` holds nodes and an island's `original` counts at the island's position.
  */
 export const readInput = (input: unknown, limits: ResourceLimits, slice = false): ReadResult => {
@@ -413,15 +442,24 @@ export const readInput = (input: unknown, limits: ResourceLimits, slice = false)
     if (value === null || value === undefined) {
         return { ok: false, ...notJson() };
     }
+    const parsed = typeof input === 'string';
     const walk: Walk = {
         limits,
-        countBytes: typeof input !== 'string',
+        countBytes: !parsed,
         slice,
+        copy: !parsed,
         ancestors: new Set(),
         keys: [],
         bytes: 0,
         nodes: 0,
+        result: undefined,
     };
-    const failure = visit(walk, value, { role: 'input', level: 0, depth: 0 });
-    return failure === undefined ? { ok: true, value } : { ok: false, ...failure };
+    let failure: ReadFailure | undefined;
+    try {
+        failure = visit(walk, value, { role: 'input', level: 0, depth: 0 });
+    } catch {
+        // A host object, such as a Proxy whose traps throw, is not JSON.
+        failure = notJson();
+    }
+    return failure === undefined ? { ok: true, value: walk.result } : { ok: false, ...failure };
 };
