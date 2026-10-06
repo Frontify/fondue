@@ -4,8 +4,10 @@
 import '#/locales/en-US';
 import 'markdown-it';
 // expect-lint: eslint(no-restricted-imports)
+// expect-lint: import(no-duplicates)
 import '#/reader/define';
 // expect-lint: eslint(no-restricted-imports)
+// expect-lint: import(no-duplicates)
 import '../../reader/define';
 // expect-lint: eslint(no-restricted-imports)
 import 'prosemirror-model';

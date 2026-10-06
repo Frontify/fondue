@@ -49,6 +49,20 @@ describe('check-platform', () => {
         expect(scanFile('model/environment.js', source)).toEqual(['model/environment.js:2 uses requestidlecallback']);
     });
 
+    it('SPEC-rich-text-quality/AC-042 allows isWellFormed only inside the checkHref helper', () => {
+        const source = readFileSync(fixture('string-is-well-formed.js'), 'utf8');
+
+        expect(scanFile('model/well-formed.js', source)).toEqual([]);
+        expect(scanFile('model/href.js', source)).toEqual(['model/href.js:1 uses string-wellformed']);
+    });
+
+    it('SPEC-rich-text-quality/AC-042 flags iterator helpers on iterators but not on Object.keys arrays', () => {
+        expect(scanFile('model/keys.js', 'export const names = (o) => Object.keys(o).map(String);')).toEqual([]);
+        expect(scanFile('model/keys.js', 'export const names = () => new Map().keys().map(String);')).toEqual([
+            'model/keys.js:1 uses iterator-methods',
+        ]);
+    });
+
     it('SPEC-rich-text-quality/AC-042 passes on floor-safe CSS: at-rules, keyframes and prefixed user-select', () => {
         expect(scanFile('style.css', readFileSync(fixture('guarded/allowed.css'), 'utf8'))).toEqual([]);
     });

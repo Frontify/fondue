@@ -3,7 +3,9 @@
 // SPEC-rich-text/AC-061: `feature.ts` imports only `#/model`, its `migration.ts` and a declared dependency's `feature.ts`.
 import '#/model';
 import './migration';
+// expect-lint: import(no-duplicates)
 import '#/features/core/feature';
+// expect-lint: import(no-duplicates)
 import '../core/feature';
 // expect-lint: eslint(no-restricted-imports)
 import '#/model/environment';

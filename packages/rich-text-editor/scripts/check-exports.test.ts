@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 
 import { afterAll, describe, expect, it } from 'vitest';
 
-import { checkDist, checkManifest, type PackageJson } from './check-exports';
+import { checkDist, checkManifest, checkProseMirrorRanges, type PackageJson } from './check-exports';
 
 const packageRoot = fileURLToPath(new URL('..', import.meta.url));
 const fixture = (name: string) => fileURLToPath(new URL(`../fixtures/exports/${name}`, import.meta.url));
@@ -106,6 +106,47 @@ describe('check-exports manifest', () => {
             '@frontify/fondue-components is not a workspace:^ peer and dev dependency',
             '@frontify/fondue-icons is not a workspace:^ peer and dev dependency',
         ]);
+    });
+});
+
+describe('check-exports prosemirror ranges', () => {
+    const lockfile = (version: string) =>
+        [
+            'importers:',
+            '',
+            '  packages/rich-text-editor:',
+            '    dependencies:',
+            '      prosemirror-model:',
+            '        specifier: ^1.25.12',
+            `        version: ${version}`,
+            '',
+            'packages:',
+        ].join('\n');
+
+    it('SPEC-rich-text/AC-005 passes the package as declared against the repository lockfile', () => {
+        const repositoryLockfile = readFileSync(join(packageRoot, '../../pnpm-lock.yaml'), 'utf8');
+
+        expect(
+            Object.keys(packageJson.dependencies ?? {}).filter((name) => name.startsWith('prosemirror-')),
+        ).not.toEqual([]);
+        expect(checkProseMirrorRanges(packageJson, repositoryLockfile)).toEqual([]);
+    });
+
+    it('SPEC-rich-text/AC-005 fails on a range below its floor, a range that is not a caret and a lockfile version outside the range', () => {
+        const ranges = (range: string, version = '1.25.12') =>
+            checkProseMirrorRanges({ ...valid, dependencies: { 'prosemirror-model': range } }, lockfile(version));
+
+        expect(ranges('^1.25.12')).toEqual([]);
+        expect(ranges('^1.20.0')).toEqual(['prosemirror-model ^1.20.0 starts below its floor 1.25.12']);
+        expect(ranges('1.25.12')).toEqual([
+            'prosemirror-model 1.25.12 is not a caret range of a package with a floor in the conventions',
+        ]);
+        expect(ranges('^1.25.12', '2.0.0')).toEqual([
+            'prosemirror-model ^1.25.12 does not hold the lockfile version 2.0.0',
+        ]);
+        expect(
+            checkProseMirrorRanges({ ...valid, dependencies: { 'prosemirror-unknown': '^1.0.0' } }, lockfile('1.0.0')),
+        ).toEqual(['prosemirror-unknown ^1.0.0 is not a caret range of a package with a floor in the conventions']);
     });
 });
 
