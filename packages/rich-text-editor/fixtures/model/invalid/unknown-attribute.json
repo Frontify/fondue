@@ -1,0 +1,39 @@
+{
+    "format": "frontify.rich-text",
+    "formatVersion": 1,
+    "model": {
+        "id": "fixture.vocabulary",
+        "version": 1
+    },
+    "requiredCapabilities": [
+        {
+            "id": "core",
+            "version": 1
+        }
+    ],
+    "content": {
+        "type": "doc",
+        "attrs": {
+            "lang": null,
+            "dir": "auto"
+        },
+        "content": [
+            {
+                "type": "paragraph",
+                "attrs": {
+                    "lang": null,
+                    "styleId": null,
+                    "align": null,
+                    "indent": 0,
+                    "tone": "warm"
+                },
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "a"
+                    }
+                ]
+            }
+        ]
+    }
+}
