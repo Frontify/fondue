@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'vitest';
 
-import { checkPlatform, DETECTORS, floorMissingFeatures, scanFile } from './check-platform';
+import { checkPlatform, DETECTORS, floorMissingFeatures, GUARDED_HELPERS, scanFile } from './check-platform';
 
 const fixture = (name: string) => fileURLToPath(new URL(`../fixtures/platform/${name}`, import.meta.url));
 const platform = readFileSync(fileURLToPath(new URL('../PLATFORM.md', import.meta.url)), 'utf8');
@@ -68,6 +68,63 @@ describe('check-platform', () => {
         expect(scanFile('model/href.js', renamed)).toEqual(['model/href.js:1 uses string-wellformed']);
         for (const source of [bracket, template, destructured, renamed]) {
             expect(scanFile('model/well-formed.js', source)).toEqual([]);
+        }
+    });
+
+    it.each([
+        ['bracket access', 'export const parse = (u) => URL["canParse"](u);'],
+        ['template bracket access', 'export const parse = (u) => URL[`canParse`](u);'],
+        ['destructuring', 'export const { canParse } = URL;'],
+        ['renamed destructuring', 'const { canParse: c } = URL;\nexport const parse = (u) => c(u);'],
+        ['string-keyed destructuring', 'export const { "canParse": c } = URL;'],
+    ])('SPEC-rich-text-quality/AC-042 reports a qualified member read by %s', (_how, source) => {
+        expect(scanFile('model/url.js', source)).toEqual(['model/url.js:1 uses url-canparse']);
+    });
+
+    it('SPEC-rich-text-quality/AC-042 reports each qualified detector through every access form', () => {
+        const forms = [
+            'AbortSignal["any"]',
+            'AbortSignal["timeout"]',
+            'Object["groupBy"]',
+            'Map["groupBy"]',
+            'Promise["withResolvers"]',
+            'Iterator["from"]',
+            'Iterator["prototype"]',
+        ];
+        for (const form of forms) {
+            expect(scanFile('model/q.js', `export const q = ${form};`), form).toHaveLength(1);
+        }
+        expect(scanFile('model/q.js', 'export const { withResolvers } = Promise;')).toEqual([
+            'model/q.js:1 uses promise-withresolvers',
+        ]);
+    });
+
+    it('SPEC-rich-text-quality/AC-042 ignores a look-alike of a qualified member', () => {
+        for (const source of [
+            'export const a = Other["canParse"];',
+            'export const { canParse } = other;',
+            'export const { canParse } = URL.prototype.helper;',
+            'export const { other } = URL;',
+            'export const a = URL[name];',
+            'export const [canParse] = URL;',
+            'export const f = ({ canParse }) => canParse;',
+        ]) {
+            expect(scanFile('model/url.js', source), source).toEqual([]);
+        }
+    });
+
+    it('SPEC-rich-text-quality/AC-042 still exempts a guarded helper from a qualified detector', () => {
+        const source = 'export const { canParse } = URL;\nexport const parse = (u) => URL["canParse"](u);';
+        expect(scanFile('model/url.js', source)).toEqual([
+            'model/url.js:1 uses url-canparse',
+            'model/url.js:2 uses url-canparse',
+        ]);
+        GUARDED_HELPERS['url-canparse'] = ['model/url.js'];
+        try {
+            expect(scanFile('model/url.js', source)).toEqual([]);
+            expect(scanFile('model/other.js', source)).toHaveLength(2);
+        } finally {
+            Reflect.deleteProperty(GUARDED_HELPERS, 'url-canparse');
         }
     });
 

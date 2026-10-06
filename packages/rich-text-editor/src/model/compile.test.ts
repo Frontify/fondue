@@ -593,6 +593,154 @@ describe('compileContentModel declarations', () => {
             details: { feature: 'a.deep', path: '/options/value/default' },
         });
     });
+
+    describe('a command guard value', () => {
+        const guarded = (equals: JsonValue) =>
+            defineFeature({
+                id: 'a.guarded',
+                version: 1,
+                options: { mode: { type: 'string', default: 'a' } },
+                commands: { 'a.undo': { ...history('undo'), when: { option: 'mode', equals } } },
+            })();
+        const nest = (depth: number) => {
+            let value: JsonValue = null;
+            for (let level = 0; level < depth; level += 1) {
+                value = { nested: value };
+            }
+            return value;
+        };
+
+        it('SPEC-rich-text/AC-067 rejects a cyclic guard value as definition.invalid-option', () => {
+            const cyclic: Record<string, unknown> = {};
+            cyclic.self = cyclic;
+            expect(failureOf(() => compile([core(), guarded(cyclic as JsonValue)]))).toEqual({
+                code: 'definition.invalid-option',
+                details: { feature: 'a.guarded', path: '/commands/a.undo/when/equals/self' },
+            });
+        });
+
+        it('SPEC-rich-text/AC-067 rejects a guard value nested deeper than 64 levels, as an option value is', () => {
+            expect(failureOf(() => compile([core(), guarded(nest(66))])).code).toBe('definition.invalid-option');
+            expect(failureOf(() => compile([core(), guarded(nest(100))])).code).toBe('definition.invalid-option');
+            expect(() => compile([core(), guarded(nest(65))])).not.toThrow();
+        });
+
+        it('SPEC-rich-text/AC-067 compiles a plain guard value', () => {
+            expect(compile([core(), guarded('a')]).manifest.commands).toContain('a.undo');
+            expect(compile([core(), guarded('b')]).manifest.commands).not.toContain('a.undo');
+        });
+    });
+
+    describe('a declaration name that is a prototype key', () => {
+        const fixtures: readonly (readonly [string, (key: string) => FeatureDeclaration, string])[] = [
+            ['node', (key) => ({ id: 'a.x', version: 1, nodes: { [key]: block('inline*') } }), '/nodes/{key}'],
+            [
+                'mark',
+                (key) => ({ id: 'a.x', version: 1, marks: { [key]: { attrs: {}, html: ['b', 0], parse: [] } } }),
+                '/marks/{key}',
+            ],
+            [
+                'node attribute',
+                (key) => ({
+                    id: 'a.x',
+                    version: 1,
+                    nodes: { box: { ...block('inline*'), attrs: { [key]: { type: 'string', default: '' } } } },
+                }),
+                '/nodes/box/attrs/{key}',
+            ],
+            [
+                'mark attribute',
+                (key) => ({
+                    id: 'a.x',
+                    version: 1,
+                    marks: {
+                        tag: { attrs: { [key]: { type: 'string', default: '' } }, html: ['b', 0], parse: [] },
+                    },
+                }),
+                '/marks/tag/attrs/{key}',
+            ],
+            [
+                'shared attribute',
+                (key) => ({
+                    id: 'a.x',
+                    version: 1,
+                    attributes: { [key]: { on: ['paragraph'], value: { type: 'string', default: '' } } },
+                }),
+                '/attributes/{key}',
+            ],
+            [
+                'option',
+                (key) => ({ id: 'a.x', version: 1, options: { [key]: { type: 'string', default: 'a' } } }),
+                '/options/{key}',
+            ],
+            ['command', (key) => ({ id: 'a.x', version: 1, commands: { [key]: history('undo') } }), '/commands/{key}'],
+            [
+                'payload field',
+                (key) => ({
+                    id: 'a.x',
+                    version: 1,
+                    commands: {
+                        'a.undo': { ...history('undo'), payload: { fields: { [key]: { type: 'string' } } } },
+                    },
+                }),
+                '/commands/a.undo/payload/fields/{key}',
+            ],
+            [
+                'key binding',
+                (key) => ({
+                    id: 'a.x',
+                    version: 1,
+                    commands: { 'a.undo': history('undo') },
+                    keys: { [key]: 'a.undo' },
+                }),
+                '/keys/{key}',
+            ],
+            [
+                'html attribute',
+                (key) => ({
+                    id: 'a.x',
+                    version: 1,
+                    nodes: { box: { ...block('inline*'), html: ['div', { [key]: 'x' }, 0] } },
+                }),
+                '/nodes/box/html/1/{key}',
+            ],
+            [
+                'parse attribute',
+                (key) => ({
+                    id: 'a.x',
+                    version: 1,
+                    nodes: {
+                        box: { ...block('inline*'), parse: [{ tag: 'div', attrs: { [key]: { value: 'x' } } }] },
+                    },
+                }),
+                '/nodes/box/parse/0/attrs/{key}',
+            ],
+        ];
+
+        it.each(
+            fixtures.flatMap(([kind, declare, path]) =>
+                ['__proto__', 'constructor', 'prototype'].map((key) => [kind, key, declare, path] as const),
+            ),
+        )(
+            'SPEC-rich-text/AC-067 rejects a %s named %s as definition.invalid-declaration',
+            (_kind, key, declare, path) => {
+                expect(failureOf(() => compile([core(), defineFeature(declare(key))()]))).toEqual({
+                    code: 'definition.invalid-declaration',
+                    details: { feature: 'a.x', path: path.replace('{key}', key) },
+                });
+            },
+        );
+
+        it('SPEC-rich-text/AC-067 still takes an ordinary name', () => {
+            const ok = feature({
+                id: 'a.x',
+                version: 1,
+                options: { mode: { type: 'string', default: 'a' } },
+                nodes: { box: { ...block('inline*'), attrs: { tone: { type: 'string', default: '' } } } },
+            });
+            expect(() => compile([core(), ok])).not.toThrow();
+        });
+    });
 });
 
 describe('compileContentModel order', () => {
