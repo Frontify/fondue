@@ -1040,3 +1040,28 @@ export const WithTabsInContent: Story = {
         );
     },
 };
+
+export const WithCustomContainer: Story = {
+    args: {
+        children: 'I am rendered inside the custom container',
+    },
+    render: (args) => {
+        const [container, setContainer] = useState<HTMLDivElement | null>(null);
+        return (
+            <>
+                <Dialog.Root>
+                    <Dialog.Trigger>
+                        <Button>Open dialog</Button>
+                    </Dialog.Trigger>
+                    <Dialog.Content {...args} container={container}>
+                        <Dialog.Header>
+                            <Dialog.Title>Header</Dialog.Title>
+                        </Dialog.Header>
+                        <Dialog.Body {...args} />
+                    </Dialog.Content>
+                </Dialog.Root>
+                <div ref={setContainer} data-test-id="dialog-custom-container" />
+            </>
+        );
+    },
+};
