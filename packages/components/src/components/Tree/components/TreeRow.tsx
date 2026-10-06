@@ -147,14 +147,13 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId, checkedState }
             <div
                 className={styles.item}
                 style={{ '--tree-row-level': Math.max(0, level) } as CSSProperties}
-                data-tree-item
                 data-folder={isFolder}
                 data-selected={!multiSelect && data.isSelected === true ? 'true' : undefined}
                 data-drop={reorderable && item.isDragTarget()}
                 data-disabled={data.isDisabled ? 'true' : undefined}
             >
                 {reorderable && (
-                    <span className={styles.handle} data-tree-handle aria-hidden>
+                    <span className={styles.handle} aria-hidden>
                         <IconGrabHandle size={16} />
                     </span>
                 )}

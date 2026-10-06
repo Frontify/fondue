@@ -20,7 +20,6 @@ import { buildChangeState, type FlatTreeState } from '../utils/buildChangeState'
 import { getCheckedUnitIds, isCheckableUnit } from '../utils/computeCheckedStates';
 import { createCanDrop } from '../utils/createCanDrop';
 import { createDropHandler } from '../utils/createDropHandler';
-import { createRoundedDragImage } from '../utils/createRoundedDragImage';
 import { diffSelection } from '../utils/diffSelection';
 import { getStructureKey } from '../utils/getStructureKey';
 
@@ -258,13 +257,6 @@ export const useTreeController = ({
         isItemFolder: (item) => Boolean(item.getItemData().isFolder),
         canReorder: reorderable,
         canDrag: reorderable ? (items) => items.every((item) => !item.getItemData().isDisabled) : undefined,
-        setDragImage: (items) => {
-            const row = items[0]?.getElement();
-            if (!row) {
-                return { imgElement: document.createElement('canvas'), xOffset: 0, yOffset: 0 };
-            }
-            return createRoundedDragImage(row);
-        },
         canDrop: reorderable ? canDrop : undefined,
         onDrop: reorderable ? onDrop : undefined,
         dataLoader: {
