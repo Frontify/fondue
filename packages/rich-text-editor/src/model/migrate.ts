@@ -58,6 +58,20 @@ const valueAt = (document: RichTextDocument, path: string): unknown =>
 
 const jsonAt = (document: RichTextDocument, path: string) => canonicalJson(valueAt(document, path) as JsonValue);
 
+type Capabilities = RichTextDocument['requiredCapabilities'];
+
+/** `into` with each ID of `from` at the higher version, sorted by ID; with `add` false, only IDs `into` lists. */
+const merge = (into: Capabilities, from: Capabilities, add = true): Capabilities => {
+    const versions = new Map(into.map(({ id, version }) => [id, version]));
+    for (const { id, version } of from) {
+        const known = versions.get(id);
+        if (add || known !== undefined) {
+            versions.set(id, Math.max(version, known ?? version));
+        }
+    }
+    return [...versions.keys()].sort().map((id) => ({ id, version: versions.get(id) ?? 0 }));
+};
+
 /**
  * Decode order step 3 after the capability warnings: each installed feature's steps from its recorded capability
  * version, in model feature order, then the model's steps from the recorded model version. Each output passes the
@@ -117,11 +131,11 @@ export const runMigrations = (
             if (!isRoot(content)) {
                 return block('format.envelope-invalid');
             }
-            // Only a step can drop a capability it replaced; the runner owns the other envelope keys.
-            const kept =
-                findMisshapenCapabilities(requiredCapabilities) === undefined
-                    ? requiredCapabilities
-                    : current.requiredCapabilities;
+            // A step only adds capabilities, since content of a dropped one may survive as an island (AC-033).
+            const kept = merge(
+                current.requiredCapabilities,
+                findMisshapenCapabilities(requiredCapabilities) === undefined ? requiredCapabilities : [],
+            );
             const next: RichTextDocument = { ...current, requiredCapabilities: kept, content };
             if ([...review].some(([path, json]) => jsonAt(next, path) !== json)) {
                 return block();
@@ -146,14 +160,10 @@ export const runMigrations = (
     if (!older) {
         return outcome(document);
     }
-    const installed = new Map(model.capabilities.map(({ id, version }) => [id, version]));
     return outcome({
         ...current,
         model: { ...model.ref },
-        requiredCapabilities: current.requiredCapabilities.map(({ id, version }) => ({
-            id,
-            version: Math.max(version, installed.get(id) ?? version),
-        })),
+        requiredCapabilities: merge(current.requiredCapabilities, model.capabilities, false),
     });
 };
 

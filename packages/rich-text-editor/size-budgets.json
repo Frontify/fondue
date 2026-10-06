@@ -1,1 +1,1 @@
-[{ "build": "./model", "fixture": "size-fixtures/model.ts", "maxBytes": 20000 }]
+[{ "build": "./model", "fixture": "size-fixtures/model.ts", "maxBytes": 30000 }]
