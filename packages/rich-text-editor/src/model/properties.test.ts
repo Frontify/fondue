@@ -272,6 +272,63 @@ describe(seeded('round trips'), () => {
         );
     });
 
+    it.each([
+        [
+            'an invalid bullet_list',
+            {
+                type: 'bullet_list',
+                attrs: { marker: 'star' },
+                content: [{ type: 'list_item', content: [{ type: 'paragraph' }] }],
+            },
+            'fixture.lists',
+        ],
+        ['an unknown paragraph attribute', { type: 'paragraph', attrs: { tone: 'warm' } }, 'fixture.styles'],
+        [
+            'a javascript: link',
+            {
+                type: 'paragraph',
+                content: [
+                    { type: 'text', text: 'a', marks: [{ type: 'link', attrs: { href: 'javascript:alert(1)' } }] },
+                ],
+            },
+            'fixture.link',
+        ],
+    ] as const)('SPEC-rich-text-format/AC-033 keeps every stored capability while %s survives', (_, block, id) => {
+        const content = { type: 'doc', attrs: { lang: null, dir: 'auto' }, content: [block] };
+        const input = {
+            ...(envelope(content) as Node_),
+            requiredCapabilities: [
+                { id: 'core', version: 1 },
+                { id, version: 1 },
+                { id: 'fixture.marks', version: 0 },
+            ],
+        };
+        const expected = [
+            { id: 'core', version: 1 },
+            { id, version: 1 },
+            { id: 'fixture.marks', version: 1 },
+        ];
+        expect(encodedOf(input).document?.requiredCapabilities).toEqual(
+            expected.sort((a, b) => a.id.localeCompare(b.id)),
+        );
+    });
+
+    it('SPEC-rich-text-format/AC-033 drops an unused stored capability when no island survives', () => {
+        const content = {
+            type: 'doc',
+            attrs: { lang: null, dir: 'auto' },
+            content: [{ type: 'paragraph', attrs: paragraphAttrs }],
+        };
+        const input = {
+            ...(envelope(content) as Node_),
+            requiredCapabilities: [
+                { id: 'core', version: 1 },
+                { id: 'fixture.lists', version: 1 },
+            ],
+        };
+        expect(encodedOf(input).document?.requiredCapabilities).toEqual([{ id: 'core', version: 1 }]);
+    });
+
     it('SPEC-rich-text-format/AC-033 keeps a stored capability whose content survives as an island', () => {
         const content = { type: 'doc', attrs: { lang: null, dir: 'auto' }, content: [{ type: 'acme_callout' }] };
         const input = {

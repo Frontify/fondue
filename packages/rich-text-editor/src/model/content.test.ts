@@ -344,6 +344,37 @@ describe('content expressions', () => {
 });
 
 describe('occurrence IDs', () => {
+    it.each([
+        [
+            'two mentions in one paragraph',
+            doc(paragraph(mention('m'), mention('m'))),
+            [0, 1],
+            '/content/content/0/content/1',
+        ],
+        [
+            'a heading in a blockquote',
+            doc(heading('h'), blockquote(heading('h'))),
+            [1, 0],
+            '/content/content/1/content/0',
+        ],
+        [
+            'a heading in a list item',
+            doc(heading('h'), bulletList(listItem(paragraph(), heading('h')))),
+            [1, 0, 1],
+            '/content/content/1/content/0/content/1',
+        ],
+        [
+            'a mention in a quoted paragraph',
+            doc(paragraph(mention('m')), blockquote(paragraph(mention('m')))),
+            [1, 0, 0],
+            '/content/content/1/content/0/content/0',
+        ],
+    ] as const)('SPEC-rich-text-format/AC-018 islands a duplicate below the root: %s', (_, value, at, path) => {
+        const { tree, codes } = roundTrip(value);
+        expect(islandAt(tree, ...at).type).toMatch(/^unsupported_(block|inline)$/);
+        expect(codes).toEqual([`format.duplicate-occurrence-id ${path}`]);
+    });
+
     it('SPEC-rich-text-format/AC-018 keeps the first task item and mention editable and islands the duplicates', () => {
         const item = taskItem('t1', paragraph(text('a')));
         const chip = mention('m1');
@@ -533,6 +564,32 @@ describe('table grids', () => {
             row(cell({ colwidth: [40] }, p), cell({ colwidth: [50] }, p)),
         );
         expect(roundTrip(doc(value)).codes).toEqual([]);
+    });
+});
+
+describe('islands next to text', () => {
+    const italic = mark('italic');
+    it.each([
+        ['a text island with attrs', paragraph(text('a'), { type: 'text', text: 'b', attrs: {} })],
+        ['a text island with an extra key', paragraph(text('a'), { type: 'text', text: 'b', style: 1 })],
+        ['an empty text island', paragraph(text('a'), { type: 'text', text: '' })],
+        [
+            'two text islands with different extra keys',
+            paragraph({ type: 'text', text: 'a', x: 1 }, { type: 'text', text: 'b', x: 2 }),
+        ],
+        ['two texts where blocks belong', blockquote(text('a'), text('b'))],
+        ['two italic texts under a bold-only node', node('bold_only', undefined, text('a', italic), text('b', italic))],
+    ])('SPEC-rich-text-format/AC-013 never joins %s with its neighbours', (_, value) => {
+        const { tree } = roundTrip(doc(value));
+        expect(islandAt(tree, 0).content?.some((child) => child.type.startsWith('unsupported_'))).toBe(true);
+    });
+
+    it('SPEC-rich-text-format/AC-022 measures maxTextLength over joined real text only', () => {
+        const half = 'x'.repeat(600_000);
+        const islands = doc(
+            paragraph({ type: 'text', text: half, attrs: {} }, { type: 'text', text: half, attrs: {} }),
+        );
+        expect(roundTrip(islands).codes).toHaveLength(2);
     });
 });
 

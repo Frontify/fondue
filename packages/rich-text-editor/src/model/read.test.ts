@@ -196,6 +196,18 @@ describe('decode limits', () => {
         expect(listed).toMatchObject({ status: 'editable', diagnostics: [{ code: 'format.invalid-structure' }] });
     });
 
+    it.each([Number.NaN, -1, Number.POSITIVE_INFINITY])(
+        'SPEC-rich-text-format/AC-005 keeps the default for a given limit of %s',
+        (value) => {
+            const options = { limits: { maxTextLength: value } };
+            const long = decodeDocument(envelope(doc(paragraph(text('x'.repeat(1_000_001))))), model, options);
+            expect(long).toMatchObject({ status: 'blocked', diagnostics: [{ details: { limit: 'maxTextLength' } }] });
+            expect(decodeDocument(envelope(doc(paragraph(text('x'.repeat(1_000_000))))), model, options).status).toBe(
+                'editable',
+            );
+        },
+    );
+
     it('SPEC-rich-text-format/AC-005 stops at a NaN that comes before the byte limit', () => {
         expect(decodeDocument({ a: Number.NaN, b: 'x'.repeat(6 * MIB) }, model)).toMatchObject({
             diagnostics: [{ code: 'format.not-json' }],
