@@ -67,5 +67,6 @@ export {
     type RichTextDocument,
 } from './format';
 export { checkHref, type HrefPolicy, type HrefResult } from './href';
+export { toJsonSchema } from './json-schema';
 export { featureFromManifest } from './manifest';
 export { featureManifestSchema } from './manifest-schema';
