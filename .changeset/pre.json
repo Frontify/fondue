@@ -1,0 +1,15 @@
+{
+  "mode": "pre",
+  "tag": "beta",
+  "initialVersions": {
+    "@frontify/fondue-charts": "8.0.2",
+    "@frontify/fondue-components": "33.0.1",
+    "@frontify/fondue": "13.8.1",
+    "@frontify/fondue-icons": "0.29.0",
+    "@frontify/fondue-rte": "0.1.11",
+    "@frontify/fondue-sdk": "0.2.2",
+    "@frontify/fondue-tokens": "5.1.2",
+    "@frontify/fondue-storybook-docs": "0.0.2"
+  },
+  "changesets": []
+}

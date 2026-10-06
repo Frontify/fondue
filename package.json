@@ -30,7 +30,7 @@
         "storybook:packages": "pnpm --parallel --filter {packages/*} storybook --no-open",
         "typecheck": "pnpm --stream --filter {packages/*} --filter {storybook-docs} typecheck",
         "changeset": "changeset",
-        "release": "pnpm build && changeset tag && pnpm publish -r --access=public",
+        "release": "pnpm build && changeset tag && pnpm publish -r --access=public --publish-branch='v14'",
         "update": "taze -r -I major",
         "create:component": "pnpm --stream --filter {packages/components} create:component"
     },

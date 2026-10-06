@@ -4,6 +4,7 @@ on:
     pull_request:
         branches:
             - main
+            - v14
         paths:
             - "packages/**"
 
@@ -22,7 +23,7 @@ jobs:
                   fetch-depth: 0
             - name: Check for changeset file
               run: |
-                  if git diff --name-only --diff-filter=A origin/main HEAD '.changeset/*.md' | grep '.*'; then
+                  if git diff --name-only --diff-filter=A origin/${{ github.base_ref }} HEAD '.changeset/*.md' | grep '.*'; then
                       echo "Changeset file found!"
                       exit 0
                   else
