@@ -47,6 +47,23 @@
             box-shadow: 0 0 0 4px var(--color-focus-default);
         }
     }
+
+    &:active {
+        border-radius: 0;
+        background-color: var(--color-surface-hover);
+
+        &:has(.item[data-selected='true']) {
+            background-color: var(--color-surface-active);
+        }
+
+        .item:not([data-drop='true']) {
+            border-color: var(--color-surface-hover);
+        }
+
+        .item[data-selected='true']:not([data-drop='true']) {
+            border-color: var(--color-surface-active);
+        }
+    }
 }
 
 .item {
@@ -70,10 +87,18 @@
 
     &:not([data-selected='true']):hover {
         background-color: var(--color-surface-hover);
+
+        &:not([data-drop='true']) {
+            border-color: var(--color-surface-hover);
+        }
     }
 
     &[data-selected='true'] {
         background-color: var(--color-surface-active);
+
+        &:not([data-drop='true']) {
+            border-color: var(--color-surface-active);
+        }
     }
 
     /* Disabled rows: dimmed content, no hover affordance. Folders remain expandable,
@@ -83,6 +108,10 @@
 
         &:not([data-selected='true']):hover {
             background-color: var(--color-surface-default);
+
+            &:not([data-drop='true']) {
+                border-color: var(--color-surface-default);
+            }
         }
 
         .chevron,
