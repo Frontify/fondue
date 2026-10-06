@@ -8,7 +8,7 @@
             {
                 "id": "core",
                 "version": 1,
-                "schema": "9d4a5fad849d1fbb7d2e58c3be01f4bf091e03878863b9a2d614f26871be97d2"
+                "schema": "b164733bc79afbc1acef4a70891969091126af5a08b979ba5d5c823c2036d9f6"
             }
         ],
         "schema": {
@@ -118,6 +118,10 @@
                                     }
                                 ]
                             }
+                        },
+                        "marks": {
+                            "type": "array",
+                            "maxItems": 0
                         }
                     }
                 },
@@ -132,6 +136,10 @@
                         "text": {
                             "type": "string",
                             "minLength": 1
+                        },
+                        "marks": {
+                            "type": "array",
+                            "maxItems": 0
                         }
                     }
                 },
@@ -147,6 +155,14 @@
                             "type": "object",
                             "additionalProperties": false,
                             "properties": {}
+                        },
+                        "content": {
+                            "type": "array",
+                            "maxItems": 0
+                        },
+                        "marks": {
+                            "type": "array",
+                            "maxItems": 0
                         }
                     }
                 }
