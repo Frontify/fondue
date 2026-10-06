@@ -48,3 +48,5 @@ export { defaultIdSource, type IdSource, type RuntimeEnvironment } from './envir
 export { DefinitionError, type DefinitionErrorCode } from './errors';
 export { defineFeature } from './feature';
 export { checkHref, type HrefPolicy, type HrefResult } from './href';
+export { featureFromManifest } from './manifest';
+export { featureManifestSchema } from './manifest-schema';
