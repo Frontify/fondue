@@ -27,6 +27,7 @@ import {
     type MarkDeclaration,
     type NodeDeclaration,
     type OptionGuard,
+    type ParseRule,
     type SharedAttributeDeclaration,
 } from './declarations';
 import { DefinitionError, type DefinitionErrorCode, pointer } from './errors';
@@ -41,6 +42,8 @@ export const URL_ATTRIBUTES = new Set(
         ' ',
     ),
 );
+/** By local name: the engine sets a `namespace name` key with `setAttributeNS`, and `xlink:href` is `href`. */
+const isUrlAttribute = (name: string) => URL_ATTRIBUTES.has(name.toLowerCase().split(/[\s:]/).at(-1) ?? '');
 const NODE_ARGUMENTS = ['node', 'nodes', 'list', 'item'];
 const MARK_ARGUMENTS = ['mark', 'marks'];
 
@@ -232,7 +235,7 @@ const checkHtml = (
             : undefined;
     for (const [name, value] of Object.entries(attributes ?? {})) {
         const at = `${path}/1${pointer(name)}`;
-        const isUrl = URL_ATTRIBUTES.has(name.toLowerCase());
+        const isUrl = isUrlAttribute(name);
         if (typeof value === 'string') {
             if (isUrl && !checkHref(value).ok) {
                 throw failure('definition.unsafe-url-binding', feature.id, at);
@@ -254,6 +257,27 @@ const checkHtml = (
     const content = attributes === undefined ? second : third;
     if (Array.isArray(content)) {
         checkHtml(feature, content as HtmlSpec, attrs, `${path}/${attributes === undefined ? 1 : 2}`, depth + 1);
+    }
+};
+
+/** A parse rule's literal `value` must meet its attribute's declaration, as a default does. */
+const checkParse = (
+    feature: CompiledFeature,
+    rules: readonly ParseRule[],
+    attrs: AttributeDeclarations,
+    path: readonly string[],
+) => {
+    for (const [index, rule] of rules.entries()) {
+        for (const [name, source] of Object.entries('attrs' in rule ? (rule.attrs ?? {}) : {})) {
+            const attribute = ownValue(attrs, name);
+            if ('value' in source && (attribute === undefined || !isValidValue(attribute, source.value))) {
+                throw failure(
+                    'definition.invalid-declaration',
+                    feature.id,
+                    pointer(...path, index, 'attrs', name, 'value'),
+                );
+            }
+        }
     }
 };
 
@@ -358,7 +382,7 @@ export const compileContentModel = <const Features extends readonly Feature[]>(
             checkAttributes(feature.id, { value: shared.value }, ['attributes', name]);
             const binding = shared.html;
             const boundName = binding !== undefined && 'attr' in binding ? binding.attr : '';
-            if (URL_ATTRIBUTES.has(boundName.toLowerCase()) && shared.value.type !== 'url') {
+            if (isUrlAttribute(boundName) && shared.value.type !== 'url') {
                 throw failure('definition.unsafe-url-binding', feature.id, pointer('attributes', name, 'html'));
             }
             for (const target of shared.on === 'textblocks' ? textblocks : shared.on) {
@@ -381,9 +405,11 @@ export const compileContentModel = <const Features extends readonly Feature[]>(
             const node = nodes.get(name);
             const attrs = node === undefined ? declaration.attrs : attributesOf(node);
             checkHtml(feature, declaration.html, attrs, pointer('nodes', name, 'html'));
+            checkParse(feature, declaration.parse, attrs, ['nodes', name, 'parse']);
         }
         for (const [name, declaration] of Object.entries(feature.declaration.marks ?? {})) {
             checkHtml(feature, declaration.html, declaration.attrs, pointer('marks', name, 'html'));
+            checkParse(feature, declaration.parse, declaration.attrs, ['marks', name, 'parse']);
         }
     }
 
