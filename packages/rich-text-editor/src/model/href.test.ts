@@ -76,6 +76,21 @@ describe('checkHref', () => {
         }
     });
 
+    it('SPEC-rich-text-references/AC-002 applies the host and scheme policy to the decoded form too', () => {
+        for (const input of ['&sol;&sol;evil.com', '/&#92;evil.com', '%2F%2Fevil.com']) {
+            expect(checkHref(input, { allowedHosts: ['good.com'] }), input).toEqual({
+                ok: false,
+                code: 'host-not-allowed',
+            });
+        }
+        expect(checkHref('tel&colon;123', { allowedSchemes: ['https'] })).toEqual({ ok: false, code: 'unsafe-scheme' });
+        expect(checkHref('https://good.com/x', { allowedHosts: ['good.com'], allowedSchemes: ['https'] })).toEqual({
+            ok: true,
+            href: 'https://good.com/x',
+        });
+        expect(checkHref('/brand', { allowedHosts: ['good.com'] })).toEqual({ ok: true, href: '/brand' });
+    });
+
     it.each(['http://[::1', 'https://exa mple.com', 'https://example.com/\uD800', '\uDC00/brand'])(
         'SPEC-rich-text-references/AC-003 reports %j as unparsable',
         (input) => {

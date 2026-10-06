@@ -17,7 +17,7 @@ const object = (properties: JsonObject, required: readonly string[] = [], allOf:
 });
 const record = (values: JsonValue) => ({ type: 'object', additionalProperties: values });
 const optionRef = object({ option: string }, ['option']);
-const binding = object({ attr: string, style: string });
+const binding = { anyOf: [object({ attr: string }, ['attr']), object({ style: string }, ['style'])] };
 const content = { anyOf: [{ const: 0 }, ref('html')] };
 /** The members an object needs when its `member` has the value `value`. */
 const when = (member: string, value: string, required: readonly string[]) => ({

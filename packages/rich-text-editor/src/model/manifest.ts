@@ -141,8 +141,12 @@ export const featureFromManifest = (
     for (const [name, shared] of Object.entries(manifest.attributes ?? {})) {
         for (const key of ['html', 'parse'] as const) {
             const binding = shared[key];
-            if (binding !== undefined && !('attr' in binding && isManifestAttribute(binding.attr))) {
-                throw invalid(pointer('attributes', name, key));
+            if (binding !== undefined) {
+                checkAttribute(
+                    'attr' in binding ? binding.attr : 'style',
+                    { attr: name },
+                    pointer('attributes', name, key),
+                );
             }
         }
     }
