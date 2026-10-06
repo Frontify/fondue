@@ -138,6 +138,7 @@ export const TreeRow = ({ item, multiSelect, reorderable, hintId, checkedState }
             onClick={handleClick}
             onKeyDown={handleKeyDown}
             onBlur={handleBlur}
+            onFocus={() => item.setFocused()}
             className={styles.row}
             aria-describedby={hintId}
             aria-selected={data.isSelected === true ? 'true' : 'false'}
