@@ -231,24 +231,26 @@ import { guides } from '@frontify/fondue/sdk';
 
 guides.list().map((g) => ({ id: g.id, title: g.title }));
 // → [
-//     { id: 'contributing',    title: 'How to contribute' },
-//     { id: 'getting-started', title: 'Getting started' },
-//     { id: 'upgrading',       title: 'Upgrading to Fondue v13' },
+//     { id: 'development/Contributing', title: 'How to contribute' },
+//     { id: 'development/Upgrading',    title: 'Upgrading to Fondue v13' },
+//     { id: 'getting-started/Setup',    title: 'Setup' },
+//     { id: 'usage/Components',         title: 'Components' },
+//     { id: 'usage/Styling',            title: 'Styling' },
 //   ]
 ```
 
 ### "Get a guide's raw markdown"
 
 ```ts
-const intro = guides.get('getting-started');
-intro?.content; // '# Getting started\n\nWelcome to Fondue, …'
+const setup = guides.get('getting-started/Setup');
+setup?.content; // '# Setup\n\nWelcome to Fondue, …'
 ```
 
 ### "Search across all prose"
 
 ```ts
 guides.where({ text: 'tailwind' }).map((g) => g.id);
-// → ['getting-started', 'upgrading']
+// → ['development/Upgrading', 'getting-started/Setup', 'usage/Styling']
 ```
 
 ### "Drop the corpus into a system prompt"
@@ -266,7 +268,7 @@ const systemContext = guides
 import { marked } from 'marked';
 import { guides } from '@frontify/fondue/sdk';
 
-const html = marked.parse(guides.get('contributing')?.content ?? '');
+const html = marked.parse(guides.get('development/Contributing')?.content ?? '');
 ```
 
 ## Serialization

@@ -69,8 +69,8 @@ components.where({ category: 'icon' }); // all icons as ComponentNodes
 components.get('IconAdobeCreativeCloud'); // { category: 'icon', … }
 
 // Prose guides — the same content the Storybook docs site renders
-guides.list().map((g) => g.title); // ['Getting started', 'How to contribute', 'Upgrading to Fondue v13']
-guides.get('getting-started')?.content; // raw markdown body
+guides.list().map((g) => g.id); // ['development/Contributing', 'development/Upgrading', 'getting-started/Setup', …]
+guides.get('getting-started/Setup')?.content; // raw markdown body
 ```
 
 ## What's in the bundle

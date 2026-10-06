@@ -107,14 +107,14 @@ ingest them with the same `list/get/has/where/size` interface.
 import { guides } from '@frontify/fondue/sdk';
 
 guides.list().map((g) => g.title);
-// → ['How to contribute', 'Getting started', 'Upgrading to Fondue v13']
+// → ['How to contribute', 'Upgrading to Fondue v13', 'Setup', 'Components', 'Styling']
 
-const intro = guides.get('getting-started');
-intro?.title; // 'Getting started'
-intro?.content; // raw markdown body, starting with '# Getting started'
+const setup = guides.get('getting-started/Setup');
+setup?.title; // 'Setup'
+setup?.content; // raw markdown body, starting with '# Setup'
 
 guides.where({ text: 'tailwind' }).map((g) => g.id);
-// → ['getting-started', 'upgrading']
+// → ['development/Upgrading', 'getting-started/Setup', 'usage/Styling']
 ```
 
 Use `Guide.content` to feed an LLM, render with your own markdown renderer,

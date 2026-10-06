@@ -171,11 +171,11 @@ entries (`Guide`) are plain records — no graph methods, no facets, no
 
 ```ts
 guides.list().map((g) => g.title);
-guides.get('getting-started')?.content; // raw markdown body
+guides.get('getting-started/Setup')?.content; // raw markdown body
 guides.where({ text: 'tailwind' });
 ```
 
-The prose comes from the same `packages/sdk/guides/*.md` files the
+The prose comes from the same `packages/sdk/guides/**/*.md` files the
 Storybook docs site renders, so an MCP server or agent reads exactly
 what humans see.
 

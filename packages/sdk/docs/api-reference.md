@@ -24,7 +24,7 @@ All other identifiers exposed from the package are TypeScript **types**
   `has(id)` accept. For components the id **is** the PascalCase name
   (`'Button'`, `'IconAdobeCreativeCloud'`); token and utility ids use the
   kebab-style ids emitted by the Fondue tokens build
-  (`'color-charts-primary-default'`); guide ids are filename slugs.
+  (`'color-charts-primary-default'`); guide ids are path-style slugs relative to the guides dir (`'getting-started/Setup'`).
   Identifiers are case-sensitive.
 - All collection returns are `readonly`, and the shared data is deeply
   **frozen** at build time — mutating a node, a `toJSON()` payload, or the

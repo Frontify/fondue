@@ -146,7 +146,7 @@ interface TokenNode {
     id: string; // e.g. 'color-charts-primary-default'
     value: string; // often `var(--token)` or a literal — never a resolved color; actual values are theme/brand-dependent at runtime
     cssVariable: string | null; // 'var(--color-charts-primary-default)'; null for inlined literals (e.g. breakpoints)
-    tailwindClass: string; // '*-charts-primary' — a leading '*' is a placeholder for the utility prefix (bg-, text-, border-, …)
+    tailwindClass: string; // '*-charts-primary' — a leading '*' is a placeholder for the utility (bg-, text-, border-, …); never includes the consumer's class prefix (e.g. 'tw-')
     themeable: boolean;
     keyPath: readonly string[]; // ['colors','charts','primary','default']
 
@@ -175,7 +175,7 @@ interface TokenUtilityFilter {
 
 interface TokenUtilityNode {
     id: string;
-    tailwindClass: string; // e.g. 'tw-body-large-strong'
+    tailwindClass: string; // e.g. 'body-large-strong' — unprefixed; the consumer adds their prefix ('tw-body-large-strong')
     themeable: boolean;
     keyPath: readonly string[];
     properties: readonly TokenUtilityProperty[];
@@ -195,7 +195,7 @@ interface TokenUtilityProperty {
 guides: QueryApi<Guide, GuideFilter>;
 
 interface Guide {
-    id: string; // slug from filename, e.g. 'getting-started'
+    id: string; // path relative to the guides dir without '.md', e.g. 'getting-started/Setup'
     title: string; // extracted from the first `# Title` line
     content: string; // raw markdown body, includes the leading `# Title`
 }
@@ -205,7 +205,7 @@ interface GuideFilter {
 }
 ```
 
-Known ids include `getting-started`, `contributing`, `upgrading`. The bundled set may grow; call `guides.list()` to see the current corpus.
+Ids are case-sensitive and path-style (`<group>/<Name>`). Known ids include `getting-started/Setup`, `usage/Components`, `usage/Styling`, `development/Contributing` and `development/Upgrading`. The bundled set may change between releases; call `guides.list()` to see the current corpus.
 
 ## Facets
 

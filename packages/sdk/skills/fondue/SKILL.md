@@ -10,7 +10,7 @@ Use `@frontify/fondue/sdk` as the source of truth for every Fondue question. Nev
 
 **Runs against the project's locally installed Fondue.** Invoke `node` from the project root (or a subdirectory) so `@frontify/fondue` resolves from `node_modules` — results reflect the exact version this project depends on, not the version the skill was authored against.
 
-> Authored against `@frontify/fondue@13.7.2`. If the project's installed version differs, this document may be out of sync — trust what the SDK actually returns over anything written here.
+> Authored against `@frontify/fondue@13.8.1`. If the project's installed version differs, this document may be out of sync — trust what the SDK actually returns over anything written here.
 
 ## Verify the SDK is available
 
@@ -85,23 +85,25 @@ For the formal contract (every filter clause, node shape, facet method), see [`r
 
 Read the canonical setup prose from the SDK rather than paraphrasing — the steps change between releases (font URLs, package layout, theme provider API).
 
-```bash
-node -e "import('@frontify/fondue/sdk').then(({guides}) => console.log(guides.get('getting-started')?.content))"
-```
-
-For upgrades:
-
-```bash
-node -e "import('@frontify/fondue/sdk').then(({guides}) => console.log(guides.get('upgrading')?.content))"
-```
-
-To discover other bundled guides:
+Guide ids are path-style (`<group>/<Name>`, case-sensitive) and can change between releases, so list them first:
 
 ```bash
 node -e "import('@frontify/fondue/sdk').then(({guides}) => console.log(JSON.stringify(guides.list().map((g)=>({id:g.id,title:g.title})))))"
 ```
 
-The output is the same markdown the Storybook docs render. Use it as the source for token imports, component-style imports, font face definitions, the Tailwind preset, `ThemeProvider`.
+Then read the ones you need. For a new project, read both setup and styling:
+
+```bash
+node -e "import('@frontify/fondue/sdk').then(({guides}) => ['getting-started/Setup','usage/Styling'].forEach((id) => console.log(guides.get(id)?.content ?? 'missing guide: ' + id)))"
+```
+
+For upgrades:
+
+```bash
+node -e "import('@frontify/fondue/sdk').then(({guides}) => console.log(guides.get('development/Upgrading')?.content))"
+```
+
+The output is the same markdown the Storybook docs render. Use it as the source for peer dependency versions (React, Tailwind), token imports, component-style imports, font face definitions, the Tailwind preset and its `tw-` prefix, `ThemeProvider`, and which colour tokens to use for text and surfaces.
 
 ## Workflow 2 — Finding a component
 
@@ -171,7 +173,7 @@ Two layers exist:
 ```ts
 tokens.where({ text: 'primary' });
 tokens.where({ category: 'colors', themeable: true });
-tokens.where({ keyPathStartsWith: 'colors.text' });
+tokens.where({ keyPathStartsWith: 'colors.surface' }); // surface-default, surface-dim, …
 tokens.type('color')?.where({ themeable: true });
 
 const t = tokens.get('color-charts-primary-default');
@@ -182,11 +184,15 @@ t?.themeable; // true
 
 // Typography: always use the utility class, not raw font tokens
 tokens.utilities.where({ keyPathStartsWith: 'utilities.text' });
+tokens.utilities.get('utilities-text-body-large-strong')?.tailwindClass; // 'body-large-strong' — no prefix
 ```
+
+`tailwindClass` never includes the consumer's prefix. Add the prefix the project configures in `tailwind.config.js` (the Fondue guides use `tw-`): `*-surface` → `tw-bg-surface`, `body-large-strong` → `tw-body-large-strong`.
 
 Rules:
 
 - Prefer `themeable: true` tokens for any user-facing surface so dark mode and theming work out of the box.
+- Colour roles are not brand colours: `primary` is the neutral high-contrast foreground, `surface` the background. Default text is `primary` on `surface` (`tw-text-primary tw-bg-surface`); muted text is `secondary`. `*-on-<role>` colours only go on top of the matching `<role>` fill — e.g. `secondary-on-secondary` on `surface` is white on white. The `usage/Styling` guide has the full pairing table.
 - Prefer the Tailwind class when the project uses `@frontify/fondue/tokens/tailwind`; prefer the CSS variable otherwise.
 - For typography, recommend the **utility class** — not raw font-size / line-height / weight tokens.
 - Never invent token ids. If `tokens.get(id)` returns `undefined`, search again.
@@ -203,7 +209,10 @@ Rules:
 | Hardcoding a hex / px value in custom code                                  | `tokens.where({ text: '<intent>' })` — most "obvious" values have a token                                    |
 | Treating icons like normal components, reading `props` / `instructions`     | Detect with `node.category().name === 'icon'`. Icons have empty `props`, `related`, and null `instructions`. |
 | Importing `Button` from the wrong path                                      | `components.get('Button')?.importStatement` is authoritative                                                 |
-| Suggesting setup steps from memory                                          | `guides.get('getting-started')?.content` — always the live text                                              |
+| Suggesting setup steps from memory                                          | `guides.get('getting-started/Setup')?.content` — always the live text; `guides.list()` for other ids         |
+| Guessing guide ids (`'getting-started'`, `'upgrading'`)                     | Ids are path-style (`'getting-started/Setup'`); run `guides.list()` first                                    |
+| Using a `tailwindClass` as-is (`body-large-strong`, `*-surface`)            | Add the project's prefix and utility: `tw-body-large-strong`, `tw-bg-surface`                                |
+| Text in an `on-*` colour on a surface (`tw-text-secondary-on-secondary`)    | `on-*` colours only go on their matching fill; text on a surface is `tw-text-primary` / `tw-text-secondary`  |
 | `console.log(node)` instead of `JSON.stringify`                             | Facet methods serialize as `[Function]`; always stringify before logging                                     |
 
 ## Going deeper
