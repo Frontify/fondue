@@ -68,7 +68,7 @@ export type FormatDiagnosticCode =
     | 'format.duplicate-occurrence-id'
     | 'format.unsafe-url';
 /** The codes the package emits so far; later layers add theirs. */
-export type DiagnosticCode = FormatDiagnosticCode;
+export type DiagnosticCode = FormatDiagnosticCode | 'migration.requires-review' | 'migration.unsupported';
 
 export interface Diagnostic {
     readonly code: DiagnosticCode;
@@ -90,7 +90,11 @@ export type DecodeResult =
           readonly diagnostics: readonly Diagnostic[];
       }
     | {
-          /** Only unreadable input: not JSON, a bad envelope or root node, another format version or model, a limit. */
+          /**
+           * Only unreadable input: not JSON, a bad envelope or root node, another format version or model, a limit, a
+           * migration step that returns `unsupported`, throws or writes an output that fails the read or root checks,
+           * or a `requires-review` step that leaves the root unmapped.
+           */
           readonly status: 'blocked';
           readonly reason: 'invalid' | 'unsupported' | 'limit-exceeded';
           readonly original: unknown;
@@ -136,7 +140,7 @@ export interface DecodeOptions {
 }
 
 export const diagnostic = (
-    code: FormatDiagnosticCode,
+    code: DiagnosticCode,
     path: string | undefined,
     details?: JsonObject,
     severity: Diagnostic['severity'] = 'warning',

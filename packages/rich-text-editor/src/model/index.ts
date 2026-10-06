@@ -6,6 +6,7 @@ export {
     type AttributeDeclaration,
     type AttributeDeclarations,
     type AttrsOf,
+    type CapabilityMigration,
     type CapabilityName,
     type CapabilityRef,
     type CommandDefinition,
@@ -28,6 +29,9 @@ export {
     type KeyBinding,
     type MarkDeclaration,
     type MarksOfDeclaration,
+    type MigrationContext,
+    type MigrationStepResult,
+    type ModelMigration,
     type ModelRef,
     type NodeDeclaration,
     type NodesOfDeclaration,
@@ -47,7 +51,7 @@ export {
     type ValueDeclaration,
     type ValueOf,
 } from './declarations';
-export { createEmptyDocument, decodeDocument, hashDocument } from './decode';
+export { createEmptyDocument, decodeDocument } from './decode';
 export { defaultIdSource, type IdSource, type RuntimeEnvironment } from './environment';
 export { DefinitionError, type DefinitionErrorCode } from './errors';
 export { defineFeature } from './feature';
@@ -66,7 +70,9 @@ export {
     type ResourceLimits,
     type RichTextDocument,
 } from './format';
+export { hashDocument } from './hash';
 export { checkHref, type HrefPolicy, type HrefResult } from './href';
 export { toJsonSchema } from './json-schema';
 export { featureFromManifest } from './manifest';
+export { type MigrationManifest, type MigrationResult, migrateDocument } from './migrate';
 export { featureManifestSchema } from './manifest-schema';

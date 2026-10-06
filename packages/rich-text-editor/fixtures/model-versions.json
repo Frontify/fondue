@@ -1,0 +1,156 @@
+{
+    "core": {
+        "model": {
+            "id": "core",
+            "version": 1
+        },
+        "capabilities": [
+            {
+                "id": "core",
+                "version": 1,
+                "schema": "9d4a5fad849d1fbb7d2e58c3be01f4bf091e03878863b9a2d614f26871be97d2"
+            }
+        ],
+        "schema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["format", "formatVersion", "model", "requiredCapabilities", "content"],
+            "properties": {
+                "format": {
+                    "const": "frontify.rich-text"
+                },
+                "formatVersion": {
+                    "const": 1
+                },
+                "model": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": ["id", "version"],
+                    "properties": {
+                        "id": {
+                            "const": "core"
+                        },
+                        "version": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "requiredCapabilities": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": ["id", "version"],
+                        "properties": {
+                            "id": {
+                                "type": "string"
+                            },
+                            "version": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                },
+                "content": {
+                    "$ref": "#/$defs/n.doc"
+                }
+            },
+            "$defs": {
+                "n.doc": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": ["type", "content"],
+                    "properties": {
+                        "type": {
+                            "const": "doc"
+                        },
+                        "attrs": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "properties": {
+                                "lang": {
+                                    "type": ["string", "null"],
+                                    "pattern": "^[A-Za-z]{2,8}(-[A-Za-z0-9]{1,8})*$"
+                                },
+                                "dir": {
+                                    "enum": ["ltr", "rtl", "auto"]
+                                }
+                            }
+                        },
+                        "content": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/$defs/n.paragraph"
+                            },
+                            "minItems": 1
+                        }
+                    }
+                },
+                "n.paragraph": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": ["type"],
+                    "properties": {
+                        "type": {
+                            "const": "paragraph"
+                        },
+                        "attrs": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "properties": {
+                                "lang": {
+                                    "type": ["string", "null"],
+                                    "pattern": "^[A-Za-z]{2,8}(-[A-Za-z0-9]{1,8})*$"
+                                }
+                            }
+                        },
+                        "content": {
+                            "type": "array",
+                            "items": {
+                                "oneOf": [
+                                    {
+                                        "$ref": "#/$defs/n.text"
+                                    },
+                                    {
+                                        "$ref": "#/$defs/n.hard_break"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                "n.text": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": ["type", "text"],
+                    "properties": {
+                        "type": {
+                            "const": "text"
+                        },
+                        "text": {
+                            "type": "string",
+                            "minLength": 1
+                        }
+                    }
+                },
+                "n.hard_break": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": ["type"],
+                    "properties": {
+                        "type": {
+                            "const": "hard_break"
+                        },
+                        "attrs": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "properties": {}
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
