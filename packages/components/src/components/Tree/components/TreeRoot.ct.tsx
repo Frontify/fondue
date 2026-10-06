@@ -545,7 +545,7 @@ test.describe('TreeRoot renaming', () => {
 });
 
 test.describe('TreeRoot reorderable mode', () => {
-    test('renders draggable rows only when reorderable', async ({ mount }) => {
+    test('renders draggable rows only when reorderable', async ({ mount, page }) => {
         const without = await mount(
             <Tree.Root>
                 <Tree.Item id="1">
@@ -564,6 +564,14 @@ test.describe('TreeRoot reorderable mode', () => {
             </Tree.Root>,
         );
         await expect(reorderable.locator('[draggable="true"]')).toHaveCount(1);
+        const handle = reorderable.locator('span[class*="handle"]');
+        await expect(handle).toHaveCSS('opacity', '0');
+        await reorderable.getByRole('treeitem', { name: /Row/ }).hover();
+        await expect(handle).toHaveCSS('opacity', '1');
+        await page.mouse.move(0, 0);
+        await expect(handle).toHaveCSS('opacity', '0');
+        await reorderable.getByRole('treeitem', { name: /Row/ }).focus();
+        await expect(handle).toHaveCSS('opacity', '1');
     });
 
     test('exposes a screen-reader hint announcing checkbox / reorder shortcuts', async ({ mount }) => {
