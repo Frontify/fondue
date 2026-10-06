@@ -141,6 +141,33 @@ describe('featureFromManifest', () => {
                 }),
             '/attributes/acme_tone/html',
         ],
+        ...(['html', 'parse'] as const).map(
+            (key) =>
+                [
+                    `a shared attribute ${key} binding of class`,
+                    (manifest: Manifest) =>
+                        (manifest.attributes = {
+                            acme_tone: {
+                                on: 'textblocks',
+                                value: { type: 'string', default: '' },
+                                [key]: { attr: 'class' },
+                            },
+                        }),
+                    `/attributes/acme_tone/${key}`,
+                ] as const,
+        ),
+        [
+            'a shared attribute binding with both attr and style',
+            (manifest) =>
+                (manifest.attributes = {
+                    acme_tone: {
+                        on: ['paragraph'],
+                        value: { type: 'string', default: '' },
+                        html: { attr: 'data-tone', style: 'color' },
+                    },
+                }),
+            '/attributes/acme_tone/html',
+        ],
         [
             'a label with no en-US entry',
             (manifest) => (toolbarOf(manifest).label = { de: 'Zitat' }),
@@ -280,15 +307,15 @@ describe('featureFromManifest', () => {
         });
     });
 
-    it('SPEC-rich-text/AC-072 rejects a javascript: URL in an insertNode attribute and in a url default', () => {
-        const card = (href: string, insert: string) =>
+    it('SPEC-rich-text/AC-072 rejects a javascript: URL in an insertNode attribute, a url default and a parse literal', () => {
+        const card = (href: string, insert: string, parsed = '/z') =>
             withChange((manifest) => {
                 manifest.nodes = {
                     acme_card: {
                         group: 'block',
                         attrs: { href: { type: 'url', default: href } },
                         html: ['a', { href: { attr: 'href' } }],
-                        parse: [],
+                        parse: [{ tag: 'a', attrs: { href: { value: parsed } } }],
                     },
                 };
                 manifest.commands = {
@@ -306,6 +333,10 @@ describe('featureFromManifest', () => {
         expect(failureOf(() => compile(card('javascript:alert(1)', '/y')))).toEqual({
             code: 'definition.invalid-declaration',
             details: { feature: 'acme.pull-quote', path: '/nodes/acme_card/attrs/href/default' },
+        });
+        expect(failureOf(() => compile(card('/x', '/y', 'javascript:alert(1)')))).toEqual({
+            code: 'definition.invalid-declaration',
+            details: { feature: 'acme.pull-quote', path: '/nodes/acme_card/parse/0/attrs/href/value' },
         });
     });
 });
