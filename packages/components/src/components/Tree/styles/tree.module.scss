@@ -47,26 +47,10 @@
             box-shadow: 0 0 0 4px var(--color-focus-default);
         }
     }
-
-    &:active {
-        border-radius: 0;
-        background-color: var(--color-surface-hover);
-
-        &:has(.item[data-selected='true']) {
-            background-color: var(--color-surface-active);
-        }
-
-        .item:not([data-drop='true']) {
-            border-color: var(--color-surface-hover);
-        }
-
-        .item[data-selected='true']:not([data-drop='true']) {
-            border-color: var(--color-surface-active);
-        }
-    }
 }
 
 .item {
+    --tree-item-fill: transparent;
     flex: 1;
     display: flex;
     align-items: center;
@@ -76,7 +60,8 @@
     border-radius: var(--border-radius-medium);
     border-width: var(--border-width-large);
     border-style: solid;
-    border-color: transparent;
+    border-color: var(--tree-item-fill);
+    background-color: var(--tree-item-fill);
     transition:
         background-color 0.12s ease,
         border-color 0.12s ease;
@@ -86,11 +71,11 @@
     }
 
     &:not([data-selected='true']):hover {
-        background-color: var(--color-surface-hover);
+        --tree-item-fill: var(--color-surface-hover);
     }
 
     &[data-selected='true'] {
-        background-color: var(--color-surface-active);
+        --tree-item-fill: var(--color-surface-active);
     }
 
     /* Disabled rows: dimmed content, no hover affordance. Folders remain expandable,
@@ -99,7 +84,7 @@
         cursor: default;
 
         &:not([data-selected='true']):hover {
-            background-color: var(--color-surface-default);
+            --tree-item-fill: var(--color-surface-default);
         }
 
         .chevron,
