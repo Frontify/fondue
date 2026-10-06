@@ -26,7 +26,7 @@ components, icons, or tokens.
 
 ### Agent skill
 
-The package ships an [agent skill](./skills/fondue/SKILL.md) that teaches
+The package comes with an [agent skill](./skills/fondue/SKILL.md) that teaches
 coding agents (Claude Code, Cursor, Codex, …) to query the SDK instead of
 guessing component names, props, or tokens. Install it with the
 [skills CLI](https://github.com/vercel-labs/skills):
@@ -113,20 +113,26 @@ types) implement the same query surface:
 | `where(filter)` | Matching nodes (filters AND-combine) |
 | `size`          | Total node count                     |
 
-See [Mental model](./docs/mental-model.md) for the full picture and
-[API reference](./docs/api-reference.md) for the formal contract.
+See the `sdk/Concepts` guide for the full picture and `sdk/Reference` for
+the formal contract.
 
 ## Documentation
 
-- **[Getting started](./docs/getting-started.md)** — install, first queries,
-  the "you-can-skim-this-once" basics.
-- **[Mental model](./docs/mental-model.md)** — how the graph fits together:
-  nodes, facets, plain arrays; where you can use `.where`/`.get`/`.has`
-  and where you can't.
-- **[API reference](./docs/api-reference.md)** — every export, type, method,
-  and edge case.
-- **[Recipes](./docs/recipes.md)** — copy-pasteable solutions for common
-  tasks (search, group by tag, walk relationships, serialize, …).
+The SDK documentation ships as guides, so it renders in the
+[Storybook docs](https://fondue-components.frontify.com) under **Sdk** and
+can be read through the SDK itself (`guides.get('sdk/Quickstart')?.content`).
+The sources live in [`guides/sdk/`](./guides/sdk/):
+
+- **[Quickstart](./guides/sdk/Quickstart.md)** (`sdk/Quickstart`) — install,
+  first queries, the "you-can-skim-this-once" basics.
+- **[Concepts](./guides/sdk/Concepts.md)** (`sdk/Concepts`) — how the graph
+  fits together: nodes, facets, plain arrays; where you can use
+  `.where`/`.get`/`.has` and where you can't.
+- **[Reference](./guides/sdk/Reference.md)** (`sdk/Reference`) — every
+  export, type, method, and edge case.
+- **[Recipes](./guides/sdk/Recipes.md)** (`sdk/Recipes`) — copy-pasteable
+  solutions for common tasks (search, group by tag, walk relationships,
+  serialize, …).
 
 ## Runtime
 

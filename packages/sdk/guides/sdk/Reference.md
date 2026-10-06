@@ -1,4 +1,4 @@
-# API reference
+# SDK reference
 
 The formal contract for `@frontify/fondue/sdk`. Every export, type, and
 method, with edge cases.
@@ -167,7 +167,7 @@ interface GuidesApi {
 
 ```ts
 interface Guide {
-    /** Slug derived from the source filename, e.g. "getting-started". */
+    /** Path-style slug derived from the source file, e.g. "getting-started/Setup". */
     readonly id: string;
     /** Title extracted from the first `# Title` line of the markdown. */
     readonly title: string;
@@ -416,15 +416,7 @@ type TokenValueType = 'color' | 'float' | 'shadow' | 'string';
 // data evolves across releases:
 type ComponentStatus = 'beta' | 'released';
 type ComponentCategory =
-    | 'data'
-    | 'feedback'
-    | 'icon'
-    | 'input'
-    | 'layout'
-    | 'navigation'
-    | 'overlay'
-    | 'typography'
-    | 'utility';
+    'data' | 'feedback' | 'icon' | 'input' | 'layout' | 'navigation' | 'overlay' | 'typography' | 'utility';
 type TokenCategory = 'colors' | 'semantic';
 ```
 

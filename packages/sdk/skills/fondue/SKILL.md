@@ -77,7 +77,7 @@ EOF
 
 Always emit `JSON.stringify(...)` so the response is parseable. Never `console.log(node)` directly — facet methods serialize as `[Function]`.
 
-For the formal contract (every filter clause, node shape, facet method), see [`reference.md`](./reference.md).
+For the formal contract (every filter clause, node shape, facet method), read the `sdk/Reference` guide — see [Going deeper](#going-deeper).
 
 ---
 
@@ -217,4 +217,14 @@ Rules:
 
 ## Going deeper
 
-[`reference.md`](./reference.md) is the formal contract: every export, every filter clause per domain, every node and facet type, error semantics. Load it when you need to verify a filter clause is valid (`ComponentFilter`, `TokenFilter`, `GuideFilter`) or that a method exists. Prefer it over web lookups or upstream GitHub.
+The SDK documents itself. These guides describe the SDK of the Fondue version installed in the project, so they never fall behind:
+
+```bash
+node -e "import('@frontify/fondue/sdk').then(({guides}) => console.log(guides.get('sdk/Reference')?.content))"
+```
+
+- `sdk/Reference` — the formal contract: every export, every filter clause per domain, every node and facet type, error semantics. Load it when you need to verify a filter clause is valid (`ComponentFilter`, `TokenFilter`, `GuideFilter`) or that a method exists.
+- `sdk/Concepts` — nodes vs. facets vs. plain arrays.
+- `sdk/Recipes` — query snippets for common tasks.
+
+If `guides.get('sdk/Reference')` returns `undefined`, the installed Fondue predates these guides — read the SDK's type declarations (`@frontify/fondue-sdk/dist/index.d.ts`) instead. Prefer either over web lookups or upstream GitHub.

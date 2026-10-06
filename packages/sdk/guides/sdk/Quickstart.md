@@ -1,4 +1,4 @@
-# Getting started
+# SDK quickstart
 
 ## Install
 
@@ -15,12 +15,12 @@ internally.
 import { components, tokens } from '@frontify/fondue/sdk';
 
 console.log(`${components.size} components, ${tokens.size} tokens`);
-// → 421 components, 128 tokens
+// → 442 components, 128 tokens
 ```
 
-That count of 421 is 40 library components + 381 icons. Icons live in the
-**components** graph under `category: 'icon'`. See
-[Mental model](./mental-model.md#icons-as-components) for why.
+That count of 442 is 40 library components + 402 icons. Icons live in the
+**components** graph under `category: 'icon'`. The
+"Icons as components" section of the `sdk/Concepts` guide explains why.
 
 ## Look up a single entity
 
@@ -51,8 +51,8 @@ clause**:
 components.where({ category: ['input', 'overlay'] }); // input OR overlay
 ```
 
-See [API reference → Filters](./api-reference.md#filters) for the full list
-of clauses per domain.
+The "Filters" section of the `sdk/Reference` guide lists every clause
+per domain.
 
 ## Walk the graph
 
@@ -100,21 +100,21 @@ tokens.utilities.where({ keyPathStartsWith: 'utilities.text' });
 ## Guides
 
 The SDK also exposes the **same prose guides the Storybook docs site renders**
-— installation, contribution, upgrade notes — as raw markdown. Agents can
+— setup, styling, upgrade notes and these SDK docs — as raw markdown. Agents can
 ingest them with the same `list/get/has/where/size` interface.
 
 ```ts
 import { guides } from '@frontify/fondue/sdk';
 
 guides.list().map((g) => g.title);
-// → ['How to contribute', 'Upgrading to Fondue v13', 'Setup', 'Components', 'Styling']
+// → ['How to contribute', 'Upgrading to Fondue v13', 'Setup', 'SDK concepts', 'SDK quickstart', …]
 
 const setup = guides.get('getting-started/Setup');
 setup?.title; // 'Setup'
 setup?.content; // raw markdown body, starting with '# Setup'
 
 guides.where({ text: 'tailwind' }).map((g) => g.id);
-// → ['development/Upgrading', 'getting-started/Setup', 'usage/Styling']
+// → ['development/Upgrading', 'getting-started/Setup', …, 'usage/Styling']
 ```
 
 Use `Guide.content` to feed an LLM, render with your own markdown renderer,
@@ -122,7 +122,9 @@ or grep across the corpus.
 
 ## Where to go next
 
-- [Mental model](./mental-model.md) — what's a node, what's a facet, what's
-  a plain array. Read this once and the rest of the API clicks.
-- [API reference](./api-reference.md) — every method and type.
-- [Recipes](./recipes.md) — copy-paste snippets for real tasks.
+- `sdk/Concepts` — what's a node, what's a facet, what's a plain array.
+  Read this once and the rest of the API clicks.
+- `sdk/Reference` — every method and type.
+- `sdk/Recipes` — copy-paste snippets for real tasks.
+
+Each is a guide too: `guides.get('sdk/Concepts')?.content`.

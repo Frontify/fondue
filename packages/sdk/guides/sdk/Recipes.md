@@ -1,4 +1,4 @@
-# Recipes
+# SDK recipes
 
 Copy-paste solutions for common tasks. All snippets assume:
 
@@ -52,7 +52,7 @@ for (const cat of components.categories()) {
 }
 // → data: 2
 //   feedback: 5
-//   icon: 381
+//   icon: 402
 //   input: 14
 //   layout: 7
 //   …
