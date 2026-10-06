@@ -11,7 +11,7 @@
 ## Exports
 
 ```ts
-import { components, tokens, guides } from '@frontify/fondue/sdk';
+import { components, tokens, guides } from "@frontify/fondue/sdk";
 ```
 
 Three singletons. Each has the same query surface; each returns its own node types.
@@ -175,7 +175,7 @@ interface TokenUtilityFilter {
 
 interface TokenUtilityNode {
     id: string;
-    tailwindClass: string; // e.g. 'body-large-strong' — unprefixed; the consumer adds their prefix ('tw-body-large-strong')
+    tailwindClass: string;
     themeable: boolean;
     keyPath: readonly string[];
     properties: readonly TokenUtilityProperty[];
@@ -225,10 +225,10 @@ interface FacetNode<Node, Filter> {
 Reach a facet via the domain's accessor or via a node's edge:
 
 ```ts
-components.category('input'); // facet
-components.tag('cta'); // facet
-components.get('Button')?.category(); // facet from a node
-tokens.category('colors')?.where({ themeable: true });
+components.category("input"); // facet
+components.tag("cta"); // facet
+components.get("Button")?.category(); // facet from a node
+tokens.category("colors")?.where({ themeable: true });
 ```
 
 ## Error semantics

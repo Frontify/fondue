@@ -25,32 +25,6 @@ All style tokens are available as css variables. When using the `ThemeProvider`,
 }
 ```
 
-### Choosing colours
-
-The colour roles are named after what they are used for, not after a brand colour. `primary` is the neutral high-contrast foreground (near-black in the `light` theme, near-white in the `dark` theme), and `secondary` is a muted neutral. Both flip between themes, so use these pairings instead of picking colours by hue:
-
-| Use case                                                                              | Tailwind class                                                                             | CSS variable                                                                                 |
-| ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------- |
-| Page / card background                                                                | `tw-bg-surface`                                                                            | `--color-surface-default`                                                                    |
-| Dimmed background (sidebars, wells)                                                   | `tw-bg-surface-dim`                                                                        | `--color-surface-dim`                                                                        |
-| Default text and icons on a surface                                                   | `tw-text-primary`                                                                          | `--color-primary-default`                                                                    |
-| Muted text on a surface (descriptions, placeholders)                                  | `tw-text-secondary`                                                                        | `--color-secondary-default`                                                                  |
-| Decorative, low-emphasis graphics (e.g. empty-state icons); too low contrast for text | `tw-text-low-contrast`                                                                     | `--color-low-contrast-default`                                                               |
-| Dividers and borders                                                                  | `tw-border-line-subtle`, `tw-border-line-mid`, `tw-border-line-strong`                     | `--color-line-subtle`, `--color-line-mid`, `--color-line-strong`                             |
-| Filled, high-emphasis element (e.g. a button)                                         | `tw-bg-primary` + `tw-text-primary-on-primary`                                             | `--color-primary-default` + `--color-primary-on-primary`                                     |
-| Tinted container (e.g. a selected row or a chip)                                      | `tw-bg-container-secondary` + `tw-text-container-secondary-on-secondary-container`         | `--color-container-secondary-default` + `--color-container-secondary-on-secondary-container` |
-| Status (error, success, warning, highlight)                                           | `tw-text-error`, `tw-bg-container-error` + `tw-text-container-error-on-error-container`, … | `--color-error-default`, …                                                                   |
-
-`on-*` colours are only meant for content placed **on top of** the matching fill. For example `tw-text-secondary-on-secondary` is white in the `light` theme and is invisible on `tw-bg-surface`; use `tw-text-secondary` for muted text on a surface.
-
-```tsx
-<div className="tw-bg-surface tw-text-primary">
-    <h2 className="tw-heading-large">Title</h2>
-    <p className="tw-body-medium tw-text-secondary">Supporting text</p>
-    <hr className="tw-border-line-subtle" />
-</div>
-```
-
 ### Tailwind defaults
 
 The preset replaces Tailwind's default theme for the properties that have Fondue tokens: colours, font sizes, font weights, font families, letter spacing, line heights, border radius, border width, box shadows, outlines and breakpoints. Default classes for these such as `tw-text-sm`, `tw-bg-white` or `tw-rounded-lg` are not generated. Use the Fondue equivalents (`tw-body-small`, `tw-bg-surface`, `tw-rounded-large`, …).
