@@ -1,0 +1,58 @@
+packages/components/src/components/Dialog/Dialog.stories.tsx
+  h_2139c5e5c94509 340-364
+packages/components/src/components/Dialog/styles/dialog.module.scss
+  s_b2c4ba7f18eba4::t_6af22417e6be6c 134
+  s_b2c4ba7f18eba4::t_397de0b5478cdd 139
+  s_b2c4ba7f18eba4::t_1977f535ab666e 55-56
+  s_b2c4ba7f18eba4::t_f730e4a2ba42ef 149
+  s_b2c4ba7f18eba4::t_bc955b96605a62 123-128
+  s_b2c4ba7f18eba4::t_a128a1d99cafeb 83-84
+  s_b2c4ba7f18eba4::t_5176c111d383f0 144
+  s_b2c4ba7f18eba4::t_9832c460158326 154
+  h_2139c5e5c94509 36-40,53,99,119,121-122,129,223,227,232,237,242,247,250-258
+  s_b2c4ba7f18eba4::t_5d8d99f9f56e7f 59-60
+  s_b2c4ba7f18eba4::t_274223da22f530 69-70
+  s_b2c4ba7f18eba4::t_0b91929ebce8f5 97-98
+packages/components/src/components/Dialog/Dialog.tsx
+  h_2139c5e5c94509 21,66-70,229,299,342-344
+packages/components/src/components/Dialog/__tests__/Dialog.ct.tsx
+  s_f2eddc1837ce5d::t_2404b427cfd6e3 481-520
+  s_1af455347e7709::t_256d08d2e53933 425-432
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "1617bbcfa0727d5a4c33109408fe5b902946c6ec",
+  "prompts": {},
+  "humans": {
+    "h_2139c5e5c94509": {
+      "author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  },
+  "sessions": {
+    "s_1af455347e7709": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "725114d3-aa6a-4d20-a6c1-289670de47da",
+        "model": "default"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    },
+    "s_b2c4ba7f18eba4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6675a78e-5c48-45c8-a0ea-139f6d8c2b3f",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    },
+    "s_f2eddc1837ce5d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "43283dc6-d12c-4b15-9cda-53e09df37ee1",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}

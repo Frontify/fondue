@@ -1,0 +1,138 @@
+packages/components/src/locales/en-US.ts
+  s_a5f1223ef58431::t_b349d9c5ecf765 25
+packages/components/src/components/Select/Select.stories.tsx
+  s_a5f1223ef58431::t_e00423c84ba398 122-123,125-127,139-144,146-152,154-163
+  s_a5f1223ef58431::t_19cc5200e4cddb 128-131,133-138
+  s_90246622e6e157::t_20f8893fbcc4fa 124,132,145,153
+packages/components/src/components/Select/hooks/useSelectionDescription.ts
+  s_a5f1223ef58431::t_4049442baa80d4 48
+  s_a5f1223ef58431::t_fb11eb420533e8 23,29-38
+packages/components/src/locales/fr-FR.ts
+  s_a5f1223ef58431::t_b349d9c5ecf765 27
+packages/components/src/components/Select/ComboboxMultiple.tsx
+  s_90246622e6e157::t_b51e112ba39e75 22,25
+  s_a5f1223ef58431::t_cc22668a07f041 23,26-27
+  s_a5f1223ef58431::t_632f42a203261a 21,24,28-29
+packages/components/src/components/Select/components/CollapsibleBadges.tsx
+  s_90246622e6e157::t_49608f3bb00bd4 122,126-127
+  s_a5f1223ef58431::t_db082ec1483b8b 27,136
+  s_a5f1223ef58431::t_ae82c69c2d022c 69
+  s_a5f1223ef58431::t_48049368d79ba6 123-125
+  s_a5f1223ef58431::t_3cc4c84bfa8e96 77
+  s_a5f1223ef58431::t_dcaff6aee86ec3 28
+  s_a5f1223ef58431::t_0d533cbc5e3c00 100
+  s_90246622e6e157::t_42ec79e88b5b07 161-162
+  s_90246622e6e157::t_de766aa3c657b0 104
+  s_90246622e6e157::t_b289056605804a 128-135,137-146,149-160
+packages/components/src/components/Select/__tests__/useIndeterminateValues.spec.ts
+  s_a5f1223ef58431::t_c85fe8d904b036 1-3,5-7,10-12,14-30,32-34,36-37,39-45,47-53,64-66,68-70,72-78,80-82,84-96,98-102
+  s_90246622e6e157::t_1386a0ba81671e 4,8-9,13,31,35,38,46,54-63,67,71,79,83,97
+packages/components/src/components/Select/SelectMultiple.tsx
+  s_a5f1223ef58431::t_cc22668a07f041 23,26-27
+  s_a5f1223ef58431::t_632f42a203261a 21,24,28-29
+  s_90246622e6e157::t_d1e64b3af03fcb 22,25
+packages/components/src/locales/de-CH.ts
+  s_a5f1223ef58431::t_b349d9c5ecf765 27
+packages/components/src/components/Select/__tests__/SelectMultiple.spec.tsx
+  s_90246622e6e157::t_2d6da8f3dd8fc0 167
+  s_90246622e6e157::t_5512aaea197ed1 231-250
+  s_a5f1223ef58431::t_9b7d5f7e7d6eb0 165-166,168-191,193-204,206-213,216-220,223-230,251
+  s_a5f1223ef58431::t_bfcbb14a2df1a4 192,205,214-215,221
+  s_a5f1223ef58431::t_07189cc545c9fa 222
+packages/components/src/components/Select/__tests__/ComboboxMultiple.a11y.spec.tsx
+  s_a5f1223ef58431::t_94ffdf3fca0277 401-402,404-421
+  s_90246622e6e157::t_993420d0517a87 403
+.changeset/soft-pugs-wander.md
+  s_a5f1223ef58431::t_edf197c7f7b274 1-6
+packages/components/src/components/Select/components/ComboboxBase.tsx
+  s_90246622e6e157::t_d6a8144c3eef96 147-148
+  s_90246622e6e157::t_72e9e1ec244610 313
+  s_90246622e6e157::t_9596351b79ea8d 282
+  s_a5f1223ef58431::t_40187e00579a89 23,97-101,120,153,173,201,248,271,312,325,349-351,419
+packages/components/src/components/Select/hooks/useIndeterminateValues.ts
+  s_a5f1223ef58431::t_46d405a02aacb1 1-4,15,19,23-26,32,37,39,42-45,55-58
+  s_90246622e6e157::t_8dd84cbd6250a3 5-14,16-18,20-22,27-31,33-36,38,40-41,46-54
+packages/components/src/components/Select/components/SelectBase.tsx
+  s_90246622e6e157::t_823b3382753bcf 207
+  s_90246622e6e157::t_1f59d5c3cdcab1 137-138
+  s_a5f1223ef58431::t_cfbbec4d1e1ca3 9,13,81-85,104,134,143,176,225,255,257,267,284
+  s_90246622e6e157::t_2a79ce95f25758 226
+packages/components/src/components/Select/styles/select.module.scss
+  s_90246622e6e157::t_b80401b8a1245c 350-352
+  s_a5f1223ef58431::t_d21c50a20f4533 422-427
+  s_a5f1223ef58431::t_f9aca2c3512247 344-349
+  s_a5f1223ef58431::t_6fd87b04112550 365-366
+packages/components/src/components/Select/__tests__/ComboboxMultiple.spec.tsx
+  s_a5f1223ef58431::t_4c72ee2e1e4d0d 226-250,266
+  s_90246622e6e157::t_15d1dc5ae68c15 251-265
+packages/components/src/components/Select/components/SelectItem.tsx
+  s_a5f1223ef58431::t_dd7516c76528fa 3
+  s_a5f1223ef58431::t_964768682aa6ae 41
+packages/components/src/components/Select/Select.metadata.json
+  s_a5f1223ef58431::t_c63ff9fa101c1b 4
+packages/components/src/components/Select/__tests__/useSelectionDescription.spec.ts
+  s_a5f1223ef58431::t_a37ea2b8d52852 86-99
+packages/components/src/components/Select/components/SelectMenu.tsx
+  s_90246622e6e157::t_c283f0a7d48989 196
+  s_90246622e6e157::t_bf43b7d1ccdf13 172-174
+  s_a5f1223ef58431::t_cc22668a07f041 182-183
+  s_90246622e6e157::t_d3160840d510b6 166
+  s_a5f1223ef58431::t_c888428bf011c9 61-63
+  s_a5f1223ef58431::t_308c7c908717f6 91
+  s_90246622e6e157::t_612987a5755b28 167-171,175
+  s_90246622e6e157::t_8c0d95ab513529 96-97
+  s_a5f1223ef58431::t_371a2fa5054f7e 165,184-186
+  s_a5f1223ef58431::t_26fe9c0d865e35 59-60
+packages/components/src/components/Select/__tests__/SelectMultiple.a11y.spec.tsx
+  s_90246622e6e157::t_a8d8bea467d0fc 448
+  s_a5f1223ef58431::t_94ffdf3fca0277 446-447,449-477
+packages/components/src/locales/pl-PL.ts
+  s_a5f1223ef58431::t_b349d9c5ecf765 27
+packages/components/src/locales/pt-PT.ts
+  s_a5f1223ef58431::t_b349d9c5ecf765 27
+packages/components/src/components/Select/__tests__/CollapsibleBadges.spec.tsx
+  s_a5f1223ef58431::t_c814a9abb0b969 110-112
+  s_a5f1223ef58431::t_a37ea2b8d52852 99-109,113-128
+packages/components/src/locales/de-DE.ts
+  s_a5f1223ef58431::t_b349d9c5ecf765 27
+packages/components/src/locales/it-IT.ts
+  s_a5f1223ef58431::t_b349d9c5ecf765 27
+packages/components/src/components/Select/__tests__/MultiselectIndeterminate.ct.tsx
+  s_a5f1223ef58431::t_50627d7fe8e6ea 1-2,5-19,40-41,43-53,60-63,82-89,92,99-101,115-118
+  s_90246622e6e157::t_081d95e676f063 54-56,58-59
+  s_90246622e6e157::t_0d60b2f6c0d008 57
+  s_a5f1223ef58431::t_55a48a285e16a4 20-39,42,64-81,90-91,93-98,102-114
+  s_90246622e6e157::t_ddd96bbace5934 3-4
+packages/components/src/locales/fr-CH.ts
+  s_a5f1223ef58431::t_b349d9c5ecf765 27
+packages/components/src/locales/es-ES.ts
+  s_a5f1223ef58431::t_b349d9c5ecf765 27
+packages/components/src/locales/it-CH.ts
+  s_a5f1223ef58431::t_b349d9c5ecf765 27
+packages/components/src/locales/nl-NL.ts
+  s_a5f1223ef58431::t_b349d9c5ecf765 27
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "6fc0253777424fc1fdc851cd4e3a13e028c4fb0c",
+  "prompts": {},
+  "sessions": {
+    "s_90246622e6e157": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b03505de-347f-4015-bcd8-0c418eb63dbe",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    },
+    "s_a5f1223ef58431": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "36be214a-2e26-4577-b279-6815cbdc127e",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}
