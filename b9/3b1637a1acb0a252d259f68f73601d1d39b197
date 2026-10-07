@@ -1,0 +1,19 @@
+.github/workflows/git-ai.yaml
+  s_f660c98803c49e::t_8d02f274b1b987 36-89
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.11",
+  "base_commit_sha": "b93b1637a1acb0a252d259f68f73601d1d39b197",
+  "prompts": {},
+  "sessions": {
+    "s_f660c98803c49e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4216bdff-5665-4692-b2e6-f9b576868528",
+        "model": "claude-fable-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}
