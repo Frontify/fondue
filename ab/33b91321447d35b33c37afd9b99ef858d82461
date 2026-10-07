@@ -1,0 +1,20 @@
+packages/charts/src/components/common/helpers/getLinearScaleTicks.spec.ts
+  s_61b389a91669d8::t_8d2440d4834c6b 26
+  s_61b389a91669d8::t_3a918c8bd67035 3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "ab33b91321447d35b33c37afd9b99ef858d82461",
+  "prompts": {},
+  "sessions": {
+    "s_61b389a91669d8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1a8b814d-8f00-4b42-b011-e89956ece47f",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}
