@@ -24,6 +24,7 @@
     border: 0;
     background: transparent;
     border-radius: var(--border-radius-medium);
+    transform: translate(0, 0);
     cursor: pointer;
     color: var(--color-primary-default);
     text-align: left;
@@ -211,6 +212,7 @@
     height: 2px;
     margin-top: -1px;
     background-color: var(--tree-accent);
+    border-radius: var(--border-radius-medium);
     pointer-events: none;
     z-index: 1;
 
