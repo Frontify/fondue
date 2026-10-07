@@ -111,6 +111,12 @@
     height: 16px;
     color: var(--color-secondary-default);
     cursor: grab;
+    visibility: hidden;
+}
+
+.row:hover .handle,
+.row:focus-within .handle {
+    visibility: visible;
 }
 
 .chevron {
