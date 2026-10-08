@@ -101,9 +101,17 @@ export const TreeRoot = ({
             document.removeEventListener('focusin', handleDocumentEvent);
         };
     }, [hasFocusWithin]);
+    // Where focus last landed; TreeRow's onFocus has already made its row the focused item by then.
+    const lastFocusRef = useRef<{ isPortalled: boolean; rowId: string } | null>(null);
     // Runs every commit: a removed row can take focus with it while the tab stop stays on another row.
     useEffect(() => {
-        if (hasFocusWithin && document.activeElement === document.body) {
+        const lastFocus = lastFocusRef.current;
+        if (!hasFocusWithin || document.activeElement !== document.body || !lastFocus) {
+            return;
+        }
+        // A portalled control (a row's menu or dialog) losing focus is the portal's business unless its row went too.
+        const isRowGone = !tree.getItems().some((item) => item.getId() === lastFocus.rowId);
+        if (!lastFocus.isPortalled || isRowGone) {
             tree.getFocusedItem().getElement()?.focus();
         }
     });
@@ -135,8 +143,12 @@ export const TreeRoot = ({
             onPointerDownCapture={() => {
                 isInsideEventRef.current = true;
             }}
-            onFocus={() => {
+            onFocus={(event) => {
                 isInsideEventRef.current = true;
+                lastFocusRef.current = {
+                    isPortalled: !event.currentTarget.contains(event.target),
+                    rowId: tree.getFocusedItem().getId(),
+                };
                 setHasFocusWithin(true);
             }}
             // Checks where focus went: a render between a row's blur and the next row's focus must not move the tab stop.
