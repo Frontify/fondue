@@ -8,4 +8,8 @@ import '#/testing';
 // expect-lint: eslint(no-restricted-imports)
 import '../testing';
 // expect-lint: eslint(no-restricted-imports)
+import './testing';
+// expect-lint: eslint(no-restricted-imports)
+import './testing/environment';
+// expect-lint: eslint(no-restricted-imports)
 import 'prosemirror-model';

@@ -37,9 +37,11 @@ const PUBLIC_ENTRIES = ['index', 'model', 'features', 'reader', 'codecs', 'html'
 // Gitignore patterns read a leading `#` as a comment, so the `#/*` alias needs an escape.
 const alias = (path: string) => `\\#/${path}`;
 const relative = (path: string) => `../**/${path}`;
+// A file directly in `src/` reaches a sibling folder as `./folder`.
+const sibling = (path: string) => `./${path}`;
 
 /**
- * Forbids every folder outside `allowed`, in the alias and the relative form.
+ * Forbids every folder outside `allowed`, in the alias and both relative forms.
  * An allowed `folder/part` path forbids the rest of that folder.
  */
 const onlyFolders = (allowed: string[], message: string): ImportPattern[] =>
@@ -55,6 +57,7 @@ const onlyFolders = (allowed: string[], message: string): ImportPattern[] =>
         return [
             { group: groupFor(alias), message },
             { group: groupFor(relative), message },
+            { group: groupFor(sibling), message },
         ];
     });
 
