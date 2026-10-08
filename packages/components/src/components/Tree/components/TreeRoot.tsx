@@ -65,6 +65,12 @@ export const TreeRoot = ({
     const { t } = useTranslation();
     const rowHintId = useId();
     const { items, parentIsLoading: rootIsLoading } = useMemo(() => parseChildren(children), [children]);
+    // React drops the blur fired while it removes the focused row, so this stays true through a removal.
+    const [hasFocusWithin, setHasFocusWithin] = useState(false);
+    // An empty tree has nowhere to keep focus, and no blur will arrive to clear the flag.
+    if (hasFocusWithin && items.length === 0) {
+        setHasFocusWithin(false);
+    }
     const tree = useTreeController({
         items,
         onChange,
@@ -72,14 +78,9 @@ export const TreeRoot = ({
         reorderable,
         countDisabledInFolderState,
         rootAccepts: accepts,
+        hasFocusWithin,
     });
 
-    // React drops the blur fired while it removes the focused row, so this stays true through a removal.
-    const [hasFocusWithin, setHasFocusWithin] = useState(false);
-    // An empty tree has nowhere to keep focus, and no blur will arrive to clear the flag.
-    if (hasFocusWithin && items.length === 0) {
-        setHasFocusWithin(false);
-    }
     // Set by events that reach the container through the React tree, so portalled menus in rows count as inside.
     const isInsideEventRef = useRef(false);
     // A focused element removed outside this component's commits (a portalled menu closing) fires no blur either.
@@ -156,6 +157,7 @@ export const TreeRoot = ({
                 if (event.relatedTarget === null && !document.hasFocus() && document.activeElement === event.target) {
                     return;
                 }
+                // Checks where focus went: a render between a row's blur and the next row's focus must not move the tab stop.
                 setHasFocusWithin(event.currentTarget.contains(event.relatedTarget));
             }}
         >
