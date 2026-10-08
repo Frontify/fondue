@@ -1,5 +1,18 @@
 # @frontify/fondue
 
+## 13.10.0
+
+### Minor Changes
+
+- [#2881](https://github.com/Frontify/fondue/pull/2881) [`56f03e4`](https://github.com/Frontify/fondue/commit/56f03e4a733e88e21f0b5c9a367b1d7176148355) Thanks [@SamuelAlev](https://github.com/SamuelAlev)! - feat(Notice): add `role` prop to announce urgent notices as `alert` instead of the default `status`
+
+### Patch Changes
+
+- Updated dependencies [[`56f03e4`](https://github.com/Frontify/fondue/commit/56f03e4a733e88e21f0b5c9a367b1d7176148355)]:
+  - @frontify/fondue-components@33.1.0
+  - @frontify/fondue-sdk@0.2.4
+  - @frontify/fondue-tokens@5.1.2
+
 ## 13.9.0
 
 ### Minor Changes
