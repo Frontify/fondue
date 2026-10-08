@@ -6,20 +6,7 @@ import { type Diagnostic, diagnostic, type ResourceLimits } from './format';
 export type ReadFailure = { readonly reason: 'invalid' | 'limit-exceeded'; readonly diagnostic: Diagnostic };
 export type ReadResult = { readonly ok: true; readonly value: unknown } | ({ readonly ok: false } & ReadFailure);
 
-type Role =
-    | 'input'
-    | 'node'
-    | 'content'
-    | 'marks'
-    | 'mark'
-    | 'attrs'
-    | 'attribute'
-    | 'text'
-    | 'other'
-    | 'island'
-    | 'islandAttrs'
-    | 'markIsland'
-    | 'markIslandAttrs';
+type Role = 'input' | 'node' | 'content' | 'marks' | 'mark' | 'attrs' | 'attribute' | 'text' | 'other';
 interface Counter {
     count: number;
 }
@@ -34,8 +21,6 @@ interface Place {
     /** On a cell, and on the `content` of a row. */
     cell?: Counter;
 }
-
-const ISLAND_NODES = new Set<unknown>(['unsupported_block', 'unsupported_inline']);
 
 const notJson = (path?: string): ReadFailure => ({
     reason: 'invalid',
@@ -180,16 +165,14 @@ const placeOf = (role: Role, level: number, depth: number, row?: Counter, cell?:
 };
 
 /** The place of the member `key`, holding `value`, of a container at `place`. */
-const memberPlace = (place: Place, type: unknown, key: string, value: unknown, slice: boolean): Place => {
+const memberPlace = (place: Place, type: unknown, key: string, value: unknown): Place => {
     const { level, depth, row, cell } = place;
     switch (place.role) {
         case 'input':
             if (key !== 'content') {
                 return { role: 'other', level: level + 1, depth };
             }
-            return slice && Array.isArray(value)
-                ? { role: 'content', level: level + 1, depth }
-                : { role: 'node', level: 0, depth: 1 };
+            return { role: 'node', level: 0, depth: 1 };
         case 'node':
             if (key === 'content' && Array.isArray(value)) {
                 return placeOf('content', 1, depth, type === 'table' ? { count: 0 } : undefined, row);
@@ -203,24 +186,10 @@ const memberPlace = (place: Place, type: unknown, key: string, value: unknown, s
             return { role: key === 'text' && typeof value === 'string' ? 'text' : 'other', level: 1, depth };
         case 'content':
             return placeOf('node', 0, depth + 1, row, cell);
-        case 'island':
-            return key === 'attrs' && isObject(value)
-                ? placeOf('islandAttrs', 1, depth, row, cell)
-                : { role: 'other', level: 1, depth };
-        case 'islandAttrs':
-            return key === 'original'
-                ? placeOf('node', 0, depth, row, cell)
-                : { role: 'other', level: level + 1, depth };
         case 'marks':
             return { role: 'mark', level: level + 1, depth };
         case 'mark':
             return { role: key === 'attrs' && isObject(value) ? 'attrs' : 'other', level: level + 1, depth };
-        case 'markIsland':
-            return { role: key === 'attrs' && isObject(value) ? 'markIslandAttrs' : 'other', level: level + 1, depth };
-        case 'markIslandAttrs':
-            return key === 'original'
-                ? { role: 'mark', level: level - 1, depth }
-                : { role: 'other', level: level + 1, depth };
         case 'attrs':
             return { role: key === 'href' ? 'other' : 'attribute', level: level + 1, depth };
         default:
@@ -231,7 +200,6 @@ const memberPlace = (place: Place, type: unknown, key: string, value: unknown, s
 interface Walk {
     readonly limits: ResourceLimits;
     readonly countBytes: boolean;
-    readonly slice: boolean;
     /** Whether the walk builds a plain-data copy from the descriptor values it reads. */
     readonly copy: boolean;
     readonly ancestors: Set<object>;
@@ -245,13 +213,6 @@ interface Walk {
 
 const failAt = (walk: Walk, fail: (path: string) => ReadFailure) => fail(pointer(...walk.keys));
 const overAt = (walk: Walk, limit: keyof ResourceLimits) => exceeded(limit, pointer(...walk.keys));
-
-const roleAt = (walk: Walk, type: unknown, place: Place): Role => {
-    if (walk.slice && place.role === 'node' && ISLAND_NODES.has(type)) {
-        return 'island';
-    }
-    return walk.slice && place.role === 'mark' && type === 'unsupported_mark' ? 'markIsland' : place.role;
-};
 
 const countNode = (walk: Walk, place: Place): keyof ResourceLimits | undefined => {
     const { limits } = walk;
@@ -317,7 +278,7 @@ const visitMember = (
     const failure =
         key === '__proto__' || !isDataProperty(descriptor)
             ? failAt(walk, notJson)
-            : visit(walk, descriptor.value, memberPlace(place, type, key, descriptor.value, walk.slice));
+            : visit(walk, descriptor.value, memberPlace(place, type, key, descriptor.value));
     walk.keys.pop();
     return failure;
 };
@@ -395,25 +356,23 @@ const visit = (walk: Walk, value: unknown, place: Place): ReadFailure | undefine
             return overAt(walk, 'maxDocumentBytes');
         }
     }
-    const role = roleAt(walk, dataOf(descriptors[keys.indexOf('type')]), place);
-    const here = role === place.role ? place : { ...place, role };
-    if (role === 'node') {
-        const limit = countNode(walk, here);
+    if (place.role === 'node') {
+        const limit = countNode(walk, place);
         if (limit !== undefined) {
             return overAt(walk, limit);
         }
-    } else if (container && role !== 'island' && here.level > limits.maxDepth) {
+    } else if (container && place.level > limits.maxDepth) {
         return overAt(walk, 'maxDepth');
     }
     if (typeof value === 'string') {
-        const limit = stringLimit(walk, value, here);
+        const limit = stringLimit(walk, value, place);
         return limit === undefined ? undefined : overAt(walk, limit);
     }
     if (!container) {
         return undefined;
     }
     walk.ancestors.add(value);
-    const failure = visitMembers(walk, value, here, keys, descriptors);
+    const failure = visitMembers(walk, value, place, keys, descriptors);
     walk.ancestors.delete(value);
     return failure;
 };
@@ -422,9 +381,8 @@ const visit = (walk: Walk, value: unknown, place: Place): ReadFailure | undefine
  * Decode order step 1: one pre-order walk that stops at the first value that is not JSON (AC-004) or exceeds a
  * limit (AC-005), counted by position before any shape check. A string counts its UTF-8 bytes and must parse.
  * A parsed value comes back as a plain-data copy of what the walk read, so no host object reaches later steps.
- * With `slice`, the input's `content` holds nodes and an island's `original` counts at the island's position.
  */
-export const readInput = (input: unknown, limits: ResourceLimits, slice = false): ReadResult => {
+export const readInput = (input: unknown, limits: ResourceLimits): ReadResult => {
     let value = input;
     if (typeof input === 'string') {
         if (exceedsBytes(input, limits.maxDocumentBytes)) {
@@ -446,7 +404,6 @@ export const readInput = (input: unknown, limits: ResourceLimits, slice = false)
     const walk: Walk = {
         limits,
         countBytes: !parsed,
-        slice,
         copy: !parsed,
         ancestors: new Set(),
         keys: [],
