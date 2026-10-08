@@ -264,7 +264,6 @@ test.describe('TreeRoot rendering', () => {
         await expect(page.locator('body')).toBeFocused();
         await expect(component.getByRole('treeitem', { name: /Row1/ })).toHaveAttribute('tabindex', '0');
     });
-
 });
 
 test.describe('TreeRoot row click', () => {
