@@ -32,6 +32,7 @@ import { core } from '#/features/core/feature';
 import { deDE } from '#/locales/de-DE';
 import {
     compileContentModel,
+    defineFeature,
     type Diagnostic,
     featureFromManifest,
     type JsonObject,
@@ -183,6 +184,13 @@ describe('RichTextReader islands', () => {
 
         expect(spaced).toContain('data-rte-island="">a \u00A0b</span>');
         expect(block).toContain('data-rte-island="">a \u00A0b</div>');
+    });
+
+    it('SPEC-rich-text-output/AC-046 continues the space alternation through an inline island and the text after it', () => {
+        const html = read(wrap(paragraph(text('a '), node('unsupported_inline_x', {}, text(' b ')), text(' c'))));
+
+        expect(html).toContain('<p>a <span role="group"');
+        expect(html).toContain('data-rte-island="">\u00A0b </span>\u00A0c</p>');
     });
 
     it('SPEC-rich-text-output/AC-002 never writes the original JSON of an island', () => {
@@ -434,6 +442,27 @@ describe('RichTextReader override failures', () => {
         );
 
         expect(spaced).toContain('data-rte-island="">a \u00A0b</div>');
+    });
+
+    it('SPEC-rich-text-output/AC-046 continues the space alternation through the text of a failed inline override', () => {
+        const chip = defineFeature({
+            id: 'fixture.chip',
+            version: 1,
+            nodes: {
+                chip: { group: 'inline', attrs: {}, content: 'text*', html: ['span', 0], parse: [] },
+            },
+        })();
+        const failing = compileContentModel([core(), defineReaderFeature(chip, { chip: Throws })], {
+            id: 'fixture.vocabulary',
+            version: 1,
+        });
+        const html = renderReader(
+            envelope(doc(paragraph(text('a '), node('chip', {}, text(' b ')), text(' c'))), ['core', 'fixture.chip']),
+            failing,
+        );
+
+        expect(html).toContain('<p>a <span role="group"');
+        expect(html).toContain('data-rte-island="">\u00A0b </span>\u00A0c</p>');
     });
 
     it('SPEC-rich-text-output/AC-047 renders an inline node whose override throws as a span, with no div inside the p', () => {

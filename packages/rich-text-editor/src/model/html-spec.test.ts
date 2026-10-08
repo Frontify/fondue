@@ -74,22 +74,53 @@ describe('resolveHtmlSpec', () => {
         expect(resolveHtmlSpec(spec, { u: 'javascript:alert(1)' }, {}).layers[0]?.attrs).toEqual({});
         expect(resolveHtmlSpec(spec, { u: '/brand' }, {}).layers[0]?.attrs).toEqual({
             xlinkHref: '/brand',
-            srcDoc: '/brand',
             formAction: '/brand',
             srcSet: '/brand',
         });
     });
 
-    it('SPEC-rich-text-output/AC-003 writes a style binding only when the stored value is plain CSS', () => {
-        const spec: HtmlSpec = ['p', { style: { attr: 'css' } }, 0];
+    it('SPEC-rich-text/AC-071 never writes a stored value to srcdoc, whatever its case, a check or a binding', () => {
+        const markup = '<script>parent.alert(1)</script>';
+        for (const name of ['srcdoc', 'SRCDOC', 'srcDoc']) {
+            expect(resolveHtmlSpec(['iframe', { [name]: { attr: 'u' } }], { u: markup }, {}).layers[0]?.attrs).toEqual(
+                {},
+            );
+            expect(
+                resolveHtmlSpec(['iframe', { [name]: { attr: 'u' } }], { u: '/brand' }, {}).layers[0]?.attrs,
+            ).toEqual({});
+            expect(
+                resolveHtmlSpec(['iframe', { [name]: { option: 'o' } }], {}, { o: '/brand' }).layers[0]?.attrs,
+            ).toEqual({});
+        }
+        expect(resolveHtmlSpec(['iframe', { srcdoc: '/brand' }], {}, {}).layers[0]?.attrs).toEqual({});
+        const shared: readonly SharedAttribute[] = [
+            {
+                name: 'u',
+                featureId: 'a',
+                declaration: { on: ['iframe'], value: { type: 'url', default: null }, html: { attr: 'srcdoc' } },
+            },
+        ];
 
-        expect(resolveHtmlSpec(spec, { css: 'red; background: url(x)' }, {}).layers[0]?.attrs).toEqual({});
-        expect(resolveHtmlSpec(spec, { css: 'red' }, {}).layers[0]?.attrs).toEqual({ style: 'red' });
+        expect(resolveHtmlSpec(['iframe', 0], { u: '/brand' }, {}, shared).layers[0]?.attrs).toEqual({});
+    });
 
-        const upper: HtmlSpec = ['p', { STYLE: { attr: 'css' } }, 0];
-
-        expect(resolveHtmlSpec(upper, { css: 'red; background: url(x)' }, {}).layers[0]?.attrs).toEqual({});
-        expect(resolveHtmlSpec(upper, { css: 'red' }, {}).layers[0]?.attrs).toEqual({ STYLE: 'red' });
+    it('SPEC-rich-text-format/AC-027 keeps a literal STYLE of any case together with a shared style declaration', () => {
+        const shared: readonly SharedAttribute[] = [
+            {
+                name: 'align',
+                featureId: 'b',
+                declaration: {
+                    on: ['paragraph'],
+                    value: { type: 'string', default: null },
+                    html: { style: 'text-align' },
+                },
+            },
+        ];
+        for (const name of ['style', 'STYLE', 'Style']) {
+            expect(
+                resolveHtmlSpec(['p', { [name]: 'margin: 0' }, 0], { align: 'right' }, {}, shared).layers[0]?.attrs,
+            ).toEqual({ style: 'margin: 0;text-align: right;' });
+        }
     });
 
     it('SPEC-rich-text-output/AC-018 writes a shared attribute as an HTML attribute or a plain CSS declaration only', () => {

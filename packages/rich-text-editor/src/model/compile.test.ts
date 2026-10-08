@@ -516,6 +516,90 @@ describe('compileContentModel declarations', () => {
         }
     });
 
+    it('SPEC-rich-text/AC-071 rejects any srcdoc key, literal or binding, whatever the attribute type or the case', () => {
+        const bound = (name: string, value: object) =>
+            ({
+                id: 'a.card',
+                version: 1,
+                options: { target: { type: 'url', default: '/x' } },
+                nodes: {
+                    card: {
+                        group: 'block',
+                        attrs: { page: { type: 'url', default: '/x' } },
+                        html: ['iframe', { [name]: value }],
+                        parse: [],
+                    },
+                },
+            }) as FeatureDeclaration;
+        for (const name of ['srcdoc', 'SRCDOC', 'srcDoc']) {
+            for (const value of [{ attr: 'page' }, { option: 'target' }, '/brand']) {
+                expect(failureOf(() => compile([core(), feature(bound(name, value as object))]))).toEqual({
+                    code: 'definition.unsafe-url-binding',
+                    details: { feature: 'a.card', path: `/nodes/card/html/1${pointer(name)}` },
+                });
+            }
+        }
+    });
+
+    it('SPEC-rich-text/AC-071 rejects a shared attribute bound to srcdoc even when it is a url', () => {
+        const shared = feature({
+            id: 'a.shared',
+            version: 1,
+            attributes: {
+                page: {
+                    on: ['paragraph'],
+                    value: { type: 'url', default: null, nullable: true },
+                    html: { attr: 'srcDoc' },
+                },
+            },
+        });
+
+        expect(failureOf(() => compile([core(), shared]))).toEqual({
+            code: 'definition.unsafe-url-binding',
+            details: { feature: 'a.shared', path: '/attributes/page/html' },
+        });
+    });
+
+    it('SPEC-rich-text-format/AC-027 rejects a stored value bound to the style attribute, whatever the case', () => {
+        const bound = (name: string) =>
+            feature({
+                id: 'a.card',
+                version: 1,
+                nodes: {
+                    card: {
+                        group: 'block',
+                        attrs: { css: { type: 'string', default: '' } },
+                        html: ['div', { [name]: { attr: 'css' } }, 0],
+                        parse: [],
+                    },
+                },
+            });
+        for (const name of ['style', 'STYLE', 'Style']) {
+            expect(failureOf(() => compile([core(), bound(name)]))).toEqual({
+                code: 'definition.invalid-declaration',
+                details: { feature: 'a.card', path: `/nodes/card/html/1${pointer(name)}` },
+            });
+        }
+        for (const name of ['style', 'STYLE']) {
+            const shared = feature({
+                id: 'a.shared',
+                version: 1,
+                attributes: {
+                    css: {
+                        on: ['paragraph'],
+                        value: { type: 'string', default: null, nullable: true },
+                        html: { attr: name },
+                    },
+                },
+            });
+
+            expect(failureOf(() => compile([core(), shared]))).toEqual({
+                code: 'definition.invalid-declaration',
+                details: { feature: 'a.shared', path: '/attributes/css/html' },
+            });
+        }
+    });
+
     it('SPEC-rich-text/AC-072 rejects a parse rule literal that fails its attribute declaration', () => {
         const link = (value: JsonValue) =>
             feature({

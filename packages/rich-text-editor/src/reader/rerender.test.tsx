@@ -63,6 +63,24 @@ describe('RichTextReader rerenders', () => {
         expect(decodeToTree).toHaveBeenCalledTimes(2);
     });
 
+    it('SPEC-rich-text-output/AC-048 keeps only the 16 most recent limits values, so per-document limits cannot grow it forever', () => {
+        vi.mocked(decodeToTree).mockClear();
+        const document = create();
+        const limited = (nodes: number) => (
+            <RichTextReader document={document} model={model} limits={{ maxDocumentNodes: nodes }} />
+        );
+        const view = render(limited(100));
+        for (let nodes = 101; nodes < 116; nodes += 1) {
+            view.rerender(limited(nodes));
+        }
+        view.rerender(limited(100));
+        expect(decodeToTree).toHaveBeenCalledTimes(16);
+
+        view.rerender(limited(116));
+        view.rerender(limited(101));
+        expect(decodeToTree).toHaveBeenCalledTimes(18);
+    });
+
     it('SPEC-rich-text-output/AC-048 decodes once for the same JSON text across renders and again for other text', () => {
         vi.mocked(decodeToTree).mockClear();
         const view = render(<RichTextReader document={JSON.stringify(create())} model={model} />);
