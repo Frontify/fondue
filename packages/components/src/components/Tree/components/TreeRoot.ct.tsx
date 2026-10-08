@@ -542,6 +542,79 @@ test.describe('TreeRoot rendering', () => {
         await page.keyboard.press('Tab');
         await expect(component.getByRole('treeitem', { name: /Second/ })).toBeFocused();
     });
+
+    test('clicking away from an open portalled Dropdown does not pull focus back into the tree', async ({
+        mount,
+        page,
+    }) => {
+        const component = await mount(
+            <Tree.Root>
+                <Tree.Item id="1" isSelected>
+                    <Tree.Label>Row1</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="2">
+                    <Tree.Label>Row2</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="3">
+                    <Tree.Label>Row3</Tree.Label>
+                    <Tree.Action>
+                        <Dropdown.Root>
+                            <Dropdown.Trigger>
+                                <button type="button">Row3 actions</button>
+                            </Dropdown.Trigger>
+                            <Dropdown.Content>
+                                <Dropdown.Item onSelect={() => {}}>Do thing</Dropdown.Item>
+                            </Dropdown.Content>
+                        </Dropdown.Root>
+                    </Tree.Action>
+                </Tree.Item>
+                <Tree.Item id="4">
+                    <Tree.Label>Row4</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="5">
+                    <Tree.Label>Row5</Tree.Label>
+                </Tree.Item>
+            </Tree.Root>,
+        );
+
+        await component.getByRole('button', { name: 'Row3 actions' }).click();
+        await expect(page.getByRole('menuitem', { name: 'Do thing' })).toBeVisible();
+
+        await page.mouse.click(5, 400);
+        await expect(page.getByRole('menuitem', { name: 'Do thing' })).toHaveCount(0);
+        await component.update(
+            <Tree.Root>
+                <Tree.Item id="1" isSelected>
+                    <Tree.Label>Row1</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="2">
+                    <Tree.Label>Row2</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="3">
+                    <Tree.Label>Row3</Tree.Label>
+                    <Tree.Action>
+                        <Dropdown.Root>
+                            <Dropdown.Trigger>
+                                <button type="button">Row3 actions</button>
+                            </Dropdown.Trigger>
+                            <Dropdown.Content>
+                                <Dropdown.Item onSelect={() => {}}>Do thing</Dropdown.Item>
+                            </Dropdown.Content>
+                        </Dropdown.Root>
+                    </Tree.Action>
+                </Tree.Item>
+                <Tree.Item id="4">
+                    <Tree.Label>Row4</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="5">
+                    <Tree.Label>Row5</Tree.Label>
+                </Tree.Item>
+            </Tree.Root>,
+        );
+
+        await expect(page.locator('body')).toBeFocused();
+        await expect(component.getByRole('treeitem', { name: /Row1/ })).toHaveAttribute('tabindex', '0');
+    });
 });
 
 test.describe('TreeRoot row click', () => {
