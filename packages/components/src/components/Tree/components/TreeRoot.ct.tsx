@@ -501,6 +501,47 @@ test.describe('TreeRoot rendering', () => {
         await page.keyboard.press('ArrowDown');
         await expect(component.getByRole('treeitem', { name: /Row4/ })).toBeFocused();
     });
+
+    test('Tab lands on the selected row after the tree empties with focus inside and rows return', async ({
+        mount,
+        page,
+    }) => {
+        const component = await mount(
+            <div>
+                <button type="button">Outside</button>
+                <Tree.Root>
+                    <Tree.Item id="1">
+                        <Tree.Label>Only</Tree.Label>
+                    </Tree.Item>
+                </Tree.Root>
+            </div>,
+        );
+
+        await component.getByRole('treeitem', { name: /Only/ }).click();
+        await component.update(
+            <div>
+                <button type="button">Outside</button>
+                <Tree.Root>{[]}</Tree.Root>
+            </div>,
+        );
+        await component.update(
+            <div>
+                <button type="button">Outside</button>
+                <Tree.Root>
+                    <Tree.Item id="a">
+                        <Tree.Label>First</Tree.Label>
+                    </Tree.Item>
+                    <Tree.Item id="b" isSelected>
+                        <Tree.Label>Second</Tree.Label>
+                    </Tree.Item>
+                </Tree.Root>
+            </div>,
+        );
+
+        await component.getByRole('button', { name: 'Outside' }).focus();
+        await page.keyboard.press('Tab');
+        await expect(component.getByRole('treeitem', { name: /Second/ })).toBeFocused();
+    });
 });
 
 test.describe('TreeRoot row click', () => {
@@ -991,7 +1032,7 @@ test.describe('TreeRoot renaming', () => {
 });
 
 test.describe('TreeRoot reorderable mode', () => {
-    test('renders draggable rows only when reorderable', async ({ mount }) => {
+    test('renders draggable rows only when reorderable', async ({ mount, page }) => {
         const without = await mount(
             <Tree.Root>
                 <Tree.Item id="1">
@@ -1010,6 +1051,14 @@ test.describe('TreeRoot reorderable mode', () => {
             </Tree.Root>,
         );
         await expect(reorderable.locator('[draggable="true"]')).toHaveCount(1);
+        const handle = reorderable.locator('span[class*="handle"]');
+        await expect(handle).toHaveCSS('visibility', 'hidden');
+        await reorderable.getByRole('treeitem', { name: /Row/ }).hover();
+        await expect(handle).toHaveCSS('visibility', 'visible');
+        await page.mouse.move(0, 0);
+        await expect(handle).toHaveCSS('visibility', 'hidden');
+        await reorderable.getByRole('treeitem', { name: /Row/ }).focus();
+        await expect(handle).toHaveCSS('visibility', 'visible');
     });
 
     test('exposes a screen-reader hint announcing checkbox / reorder shortcuts', async ({ mount }) => {

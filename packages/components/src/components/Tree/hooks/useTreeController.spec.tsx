@@ -519,7 +519,7 @@ describe('useTreeController focus pruning', () => {
         expect(result.current.getItemInstance('c1').isFocused()).toBe(false);
     });
 
-    it('moves focus to the next surviving row when its folder collapses by prop', () => {
+    it('moves focus to the collapsed folder when its folder collapses by prop', () => {
         const items: TreeItemData[] = [
             {
                 id: 'f',
@@ -544,7 +544,7 @@ describe('useTreeController focus pruning', () => {
             items: [{ ...items[0], isExpanded: false }, items[1], items[2]] as TreeItemData[],
         });
 
-        expect(result.current.getItemInstance('y').isFocused()).toBe(true);
+        expect(result.current.getItemInstance('f').isFocused()).toBe(true);
         expect(result.current.getItems().some((item) => item.getId() === 'c1')).toBe(false);
     });
 });
@@ -602,6 +602,17 @@ describe('useTreeController focus follows selection', () => {
         });
 
         expect(result.current.getItemInstance('1').isFocused()).toBe(true);
+    });
+
+    it('follows the first visible checked row in multi-select', () => {
+        const items: TreeItemData[] = [
+            { id: '1', name: 'One', isFolder: false, parentId: ROOT_ID },
+            { id: '2', name: 'Two', isFolder: false, parentId: ROOT_ID, isSelected: true },
+            { id: '3', name: 'Three', isFolder: false, parentId: ROOT_ID, isSelected: true },
+        ];
+        const { result } = renderHook(() => useTreeController({ items, multiSelect: true }));
+
+        expect(result.current.getItemInstance('2').isFocused()).toBe(true);
     });
 
     it('does not hand the tab stop to a selected row hidden in a collapsed folder', () => {

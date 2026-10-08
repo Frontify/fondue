@@ -21,6 +21,7 @@ import { getCheckedUnitIds, isCheckableUnit } from '../utils/computeCheckedState
 import { createCanDrop } from '../utils/createCanDrop';
 import { createDropHandler } from '../utils/createDropHandler';
 import { diffSelection } from '../utils/diffSelection';
+import { getFocusFallback, getVisibleIds } from '../utils/getFocusFallback';
 import { getStructureKey } from '../utils/getStructureKey';
 
 type UseTreeControllerOptions = {
@@ -49,8 +50,8 @@ const resolveUpdater = <T>(updater: Updater<T>, prev: T): T =>
  * - `isSelected` maps to `checkboxesFeature` (multi-select) or `selectionFeature`
  *   (single-select); the single-select setter pins to one id so modifier hotkeys
  *   can't escalate into multi-selection.
- * - The roving tab stop follows the first visible selected row while the tree has no DOM
- *   focus (per the WAI-ARIA APG tree pattern); it stops following once focus moves inside.
+ * - The roving tab stop is the first visible selected (or checked) row while the tree has
+ *   no DOM focus (per the WAI-ARIA APG tree pattern); it stops following once focus moves inside.
  * - Setters batched within one user event thread a shared `pendingState` (React hasn't
  *   re-rendered between them), and their emits coalesce into a single microtask flush —
  *   `onChange` fires at most once per interaction, and never for no-op interactions.
@@ -116,6 +117,20 @@ export const useTreeController = ({
     // gets `tabIndex=0` — otherwise the roving tabindex leaves the tree unreachable by Tab.
     const [internalFocusedItem, setInternalFocusedItem] = useState<string | undefined>(() => items[0]?.id);
     const [previousItems, setPreviousItems] = useState(items);
+    // Adjusted during render so the row leaving the screen never renders as the tab stop; `undefined` falls back to the first row.
+    if (previousItems !== items) {
+        setPreviousItems(items);
+        setInternalFocusedItem(getFocusFallback(internalFocusedItem, previousItems, items));
+    }
+
+    // Derived, not stored: once focus moves inside, the tab stop is again the row the user moved to.
+    const focusedItem = useMemo(() => {
+        if (hasFocusWithin) {
+            return internalFocusedItem;
+        }
+        const selectedIds = new Set([...selectedItems, ...checkedItems]);
+        return getVisibleIds(items).find((id) => selectedIds.has(id)) ?? internalFocusedItem;
+    }, [hasFocusWithin, internalFocusedItem, items, selectedItems, checkedItems]);
 
     // Renames are started by the `isRenaming` prop but ended by the tree, which must take
     // effect before the consumer clears the prop — so internal state is the source of
@@ -124,8 +139,8 @@ export const useTreeController = ({
     const [renamingValue, setRenamingValue] = useState<string>('');
 
     const treeState = useMemo<FlatTreeState>(
-        () => ({ expandedItems, checkedItems, selectedItems, focusedItem: internalFocusedItem }),
-        [expandedItems, checkedItems, selectedItems, internalFocusedItem],
+        () => ({ expandedItems, checkedItems, selectedItems, focusedItem }),
+        [expandedItems, checkedItems, selectedItems, focusedItem],
     );
 
     // Emits are coalesced: one user event can hit several setters (a folder click sets
@@ -268,7 +283,7 @@ export const useTreeController = ({
             getItem: (itemId) => itemsById.get(itemId) as TreeItemData,
             getChildren: (itemId) => itemsById.get(itemId)?.children ?? [],
         },
-        state: { ...treeState, focusedItem: internalFocusedItem ?? null, renamingItem, renamingValue },
+        state: { ...treeState, focusedItem: focusedItem ?? null, renamingItem, renamingValue },
         setExpandedItems,
         setCheckedItems,
         setSelectedItems: multiSelect ? undefined : setSelectedItems,
@@ -297,27 +312,6 @@ export const useTreeController = ({
             renamingFeature,
         ],
     });
-
-    // Moves focus off a removed or collapsed-away row to its next visible neighbour, else the previous; `null` state then falls back to the first row.
-    const isVisible = (id: string) => tree.getItemInstance(id).getItemMeta().index >= 0;
-    if (previousItems !== items) {
-        setPreviousItems(items);
-        if (internalFocusedItem !== undefined && !isVisible(internalFocusedItem)) {
-            const previousIds = previousItems.map((item) => item.id);
-            const focusedIndex = previousIds.indexOf(internalFocusedItem);
-            const nextVisible = previousIds.slice(focusedIndex + 1).find(isVisible);
-            const previousVisible = previousIds.slice(0, focusedIndex).reverse().find(isVisible);
-            setInternalFocusedItem(nextVisible ?? previousVisible);
-        }
-    }
-
-    // Only while focus is outside: a selection prop change must never move the tab stop off the row the user is arrowing through.
-    if (!hasFocusWithin) {
-        const visibleSelectedItem = selectedItems.find(isVisible);
-        if (visibleSelectedItem !== undefined && visibleSelectedItem !== internalFocusedItem) {
-            setInternalFocusedItem(visibleSelectedItem);
-        }
-    }
 
     useEffect(() => {
         tree.rebuildTree();
