@@ -15,6 +15,9 @@ import { ownValue } from '#/model/values';
 
 type Values = Readonly<Record<string, unknown>>;
 
+/** A value that cannot end its declaration or reach a URL, comment or markup. */
+const isPlainCss = (value: string) => !/[;:()'"\\{}<]|\/\*/.test(value);
+
 const GROUPS = { block: 'block section', section: 'section', inline: 'inline' } as const;
 
 /** An attribute value as HTML attribute text; `undefined` for null, which writes no HTML attribute. */
@@ -65,7 +68,7 @@ const render = (
         }
         if ('attr' in declaration.html) {
             dom[declaration.html.attr] = value;
-        } else {
+        } else if (isPlainCss(value)) {
             dom.style = `${dom.style ?? ''}${declaration.html.style}: ${value};`;
         }
     }
@@ -82,6 +85,11 @@ const render = (
 const attributeSpecs = (declarations: AttributeDeclarations) => {
     const specs: Record<string, AttributeSpec> = {};
     for (const [name, declaration] of Object.entries(declarations)) {
+        if (name === 'nodeId') {
+            // The runtime fills it before a commit publishes, so engine-made nodes may start without one; decode still requires it.
+            specs[name] = { default: null };
+            continue;
+        }
         specs[name] = 'default' in declaration ? { default: declaration.default } : {};
     }
     return specs;
