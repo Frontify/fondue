@@ -154,7 +154,7 @@ export const TreeRoot = ({
             }}
             onBlur={(event) => {
                 // Switching windows blurs with no target but leaves the row active, and focus returns to it.
-                if (event.relatedTarget === null && !document.hasFocus()) {
+                if (event.relatedTarget === null && !document.hasFocus() && document.activeElement === event.target) {
                     return;
                 }
                 // Checks where focus went: a render between a row's blur and the next row's focus must not move the tab stop.
