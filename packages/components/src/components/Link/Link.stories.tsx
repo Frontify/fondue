@@ -109,6 +109,20 @@ export const AllVariants: Story = {
         rel: 'noopener noreferrer',
     },
 };
+export const External: Story = {
+    args: {},
+    render: (args) => (
+        <Link
+            href="https://google.com"
+            size="x-small"
+            target="_blank"
+            color="secondary"
+            className="tw-inline-flex tw-items-center tw-gap-1 hover:tw-text-secondary-hover active:tw-text-secondary-active"
+        >
+            TEST
+        </Link>
+    ),
+};
 
 export const Truncated: Story = {
     args: {
