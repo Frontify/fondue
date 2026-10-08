@@ -21,6 +21,7 @@ import { getCheckedUnitIds, isCheckableUnit } from '../utils/computeCheckedState
 import { createCanDrop } from '../utils/createCanDrop';
 import { createDropHandler } from '../utils/createDropHandler';
 import { diffSelection } from '../utils/diffSelection';
+import { getFocusFallback } from '../utils/getFocusFallback';
 import { getStructureKey } from '../utils/getStructureKey';
 
 type UseTreeControllerOptions = {
@@ -111,6 +112,12 @@ export const useTreeController = ({
     // Focus is internal-only (not in `onChange`), seeded to the first item so one row
     // gets `tabIndex=0` — otherwise the roving tabindex leaves the tree unreachable by Tab.
     const [internalFocusedItem, setInternalFocusedItem] = useState<string | undefined>(() => items[0]?.id);
+    const [previousItems, setPreviousItems] = useState(items);
+    // Adjusted during render so the row leaving the screen never renders as the tab stop; `undefined` falls back to the first row.
+    if (previousItems !== items) {
+        setPreviousItems(items);
+        setInternalFocusedItem(getFocusFallback(internalFocusedItem, previousItems, items));
+    }
 
     // Renames are started by the `isRenaming` prop but ended by the tree, which must take
     // effect before the consumer clears the prop — so internal state is the source of
@@ -263,7 +270,7 @@ export const useTreeController = ({
             getItem: (itemId) => itemsById.get(itemId) as TreeItemData,
             getChildren: (itemId) => itemsById.get(itemId)?.children ?? [],
         },
-        state: { ...treeState, renamingItem, renamingValue },
+        state: { ...treeState, focusedItem: internalFocusedItem ?? null, renamingItem, renamingValue },
         setExpandedItems,
         setCheckedItems,
         setSelectedItems: multiSelect ? undefined : setSelectedItems,

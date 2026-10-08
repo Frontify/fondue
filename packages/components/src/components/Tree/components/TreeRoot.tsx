@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { AssistiveTreeDescription } from '@headless-tree/react';
-import { Fragment, useId, useMemo, type ReactNode } from 'react';
+import { Fragment, useEffect, useId, useMemo, useRef, useState, type ReactNode } from 'react';
 
 import { useTranslation } from '#/hooks/useTranslation';
 
@@ -74,6 +74,48 @@ export const TreeRoot = ({
         rootAccepts: accepts,
     });
 
+    // React drops the blur fired while it removes the focused row, so this stays true through a removal.
+    const [hasFocusWithin, setHasFocusWithin] = useState(false);
+    // An empty tree has nowhere to keep focus, and no blur will arrive to clear the flag.
+    if (hasFocusWithin && items.length === 0) {
+        setHasFocusWithin(false);
+    }
+    // Set by events that reach the container through the React tree, so portalled menus in rows count as inside.
+    const isInsideEventRef = useRef(false);
+    // A focused element removed outside this component's commits (a portalled menu closing) fires no blur either.
+    useEffect(() => {
+        if (!hasFocusWithin) {
+            return;
+        }
+        const handleDocumentEvent = () => {
+            // An outside press that moves no focus (a touch pan, a scrollbar drag) leaves the user on their row.
+            if (!isInsideEventRef.current && !tree.getElement()?.contains(document.activeElement)) {
+                setHasFocusWithin(false);
+            }
+            isInsideEventRef.current = false;
+        };
+        document.addEventListener('pointerdown', handleDocumentEvent);
+        document.addEventListener('focusin', handleDocumentEvent);
+        return () => {
+            document.removeEventListener('pointerdown', handleDocumentEvent);
+            document.removeEventListener('focusin', handleDocumentEvent);
+        };
+    }, [hasFocusWithin, tree]);
+    // Where focus last landed; TreeRow's onFocus has already made its row the focused item by then.
+    const lastFocusRef = useRef<{ isPortalled: boolean; rowId: string } | null>(null);
+    // Runs every commit: a removed row can take focus with it while the tab stop stays on another row.
+    useEffect(() => {
+        const lastFocus = lastFocusRef.current;
+        if (!hasFocusWithin || document.activeElement !== document.body || !lastFocus) {
+            return;
+        }
+        // A portalled control (a row's menu or dialog) losing focus is the portal's business unless its row went too.
+        const isRowGone = !tree.getItems().some((item) => item.getId() === lastFocus.rowId);
+        if (!lastFocus.isPortalled || isRowGone) {
+            tree.getFocusedItem().getElement()?.focus();
+        }
+    });
+
     const visibleItems = tree.getItems();
     const loadingInsertions = useMemo(
         () => computeLoadingInsertions(visibleItems, rootIsLoading),
@@ -95,7 +137,28 @@ export const TreeRoot = ({
         .join(' ');
 
     return (
-        <div {...tree.getContainerProps()} className={styles.tree}>
+        <div
+            {...tree.getContainerProps()}
+            className={styles.tree}
+            onPointerDownCapture={() => {
+                isInsideEventRef.current = true;
+            }}
+            onFocus={(event) => {
+                isInsideEventRef.current = true;
+                lastFocusRef.current = {
+                    isPortalled: !event.currentTarget.contains(event.target),
+                    rowId: tree.getFocusedItem().getId(),
+                };
+                setHasFocusWithin(true);
+            }}
+            onBlur={(event) => {
+                // Switching windows blurs with no target but leaves the row active, and focus returns to it.
+                if (event.relatedTarget === null && !document.hasFocus() && document.activeElement === event.target) {
+                    return;
+                }
+                setHasFocusWithin(event.currentTarget.contains(event.relatedTarget));
+            }}
+        >
             {rowHint && (
                 <span id={rowHintId} className={styles.srOnly}>
                     {rowHint}
