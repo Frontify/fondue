@@ -319,6 +319,33 @@ test.describe('TreeRoot rendering', () => {
         await expect(component.getByRole('treeitem', { name: /Third/ })).toBeFocused();
     });
 
+    test('a real blur while the window is inactive does not pull focus back into the tree', async ({ mount, page }) => {
+        const tree = (
+            <Tree.Root>
+                <Tree.Item id="1">
+                    <Tree.Label>First</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="2">
+                    <Tree.Label>Second</Tree.Label>
+                </Tree.Item>
+            </Tree.Root>
+        );
+        const component = await mount(tree);
+
+        await component.getByRole('treeitem', { name: /Second/ }).click();
+        await page.evaluate(() => {
+            document.hasFocus = () => false;
+            (document.activeElement as HTMLElement).blur();
+        });
+        await component.update(tree);
+        // Let the commit's passive effects run before asserting that nothing pulled focus.
+        await page.evaluate(
+            () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
+        );
+
+        await expect(page.locator('body')).toBeFocused();
+    });
+
     test('clicking away from an open portalled Dropdown does not pull focus back into the tree', async ({
         mount,
         page,
@@ -355,6 +382,10 @@ test.describe('TreeRoot rendering', () => {
 
         await component.getByRole('button', { name: 'Row3 actions' }).click();
         await expect(page.getByRole('menuitem', { name: 'Do thing' })).toBeVisible();
+        // Radix arms its outside-press dismissal a task after opening.
+        await page.evaluate(
+            () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
+        );
 
         await page.mouse.click(5, 400);
         await expect(page.getByRole('menuitem', { name: 'Do thing' })).toHaveCount(0);

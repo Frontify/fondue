@@ -153,7 +153,7 @@ export const TreeRoot = ({
             }}
             onBlur={(event) => {
                 // Switching windows blurs with no target but leaves the row active, and focus returns to it.
-                if (event.relatedTarget === null && !document.hasFocus()) {
+                if (event.relatedTarget === null && !document.hasFocus() && document.activeElement === event.target) {
                     return;
                 }
                 setHasFocusWithin(event.currentTarget.contains(event.relatedTarget));
