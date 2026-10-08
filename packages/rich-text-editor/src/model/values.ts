@@ -14,6 +14,9 @@ export const MAX_DEPTH = 64;
 export const isRecord = (value: unknown): value is Readonly<Record<string, unknown>> =>
     typeof value === 'object' && value !== null && !Array.isArray(value);
 
+/** A value that cannot end its declaration or reach a URL, comment or markup. */
+export const isPlainCss = (value: string) => !/[;:()'"\\{}<]|\/\*/.test(value);
+
 /** `record[name]` for an own member only, so `constructor` or `toString` never reads the prototype. */
 export const ownValue = <V>(record: Readonly<Record<string, V>>, name: string): V | undefined =>
     Object.hasOwn(record, name) ? record[name] : undefined;
