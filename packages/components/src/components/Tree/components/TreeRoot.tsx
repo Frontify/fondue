@@ -88,7 +88,8 @@ export const TreeRoot = ({
             return;
         }
         const handleDocumentEvent = () => {
-            if (!isInsideEventRef.current) {
+            // An outside press that moves no focus (a touch pan, a scrollbar drag) leaves the user on their row.
+            if (!isInsideEventRef.current && !tree.getElement()?.contains(document.activeElement)) {
                 setHasFocusWithin(false);
             }
             isInsideEventRef.current = false;
@@ -99,7 +100,7 @@ export const TreeRoot = ({
             document.removeEventListener('pointerdown', handleDocumentEvent);
             document.removeEventListener('focusin', handleDocumentEvent);
         };
-    }, [hasFocusWithin]);
+    }, [hasFocusWithin, tree]);
     // Where focus last landed; TreeRow's onFocus has already made its row the focused item by then.
     const lastFocusRef = useRef<{ isPortalled: boolean; rowId: string } | null>(null);
     // Runs every commit: a removed row can take focus with it while the tab stop stays on another row.
