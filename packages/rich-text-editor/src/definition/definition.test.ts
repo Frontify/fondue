@@ -89,6 +89,52 @@ describe('compileDefinition', () => {
         }
     });
 
+    it('SPEC-rich-text/AC-081 builds task_item+ and figure > asset_image with a required nodeId the engine defaults to null', () => {
+        const nodeId = { type: 'string', required: true } as const;
+        const feature = defineFeature({
+            id: 'a.x',
+            version: 1,
+            nodes: {
+                task_list: { ...box, content: 'task_item+' },
+                task_item: { content: 'paragraph block*', attrs: { nodeId }, html: ['li', 0], parse: [] },
+                figure: { ...box, content: 'asset_image', attrs: { nodeId } },
+                asset_image: { atom: true, attrs: { nodeId }, html: ['img'], parse: [] },
+            },
+        })();
+        const { schema } = compileDefinition(compileContentModel([core(), feature], options));
+
+        expect(schema.nodes.task_item?.spec.attrs).toEqual({ nodeId: { default: null } });
+        const list = schema.nodes.task_list?.createAndFill();
+        const figure = schema.nodes.figure?.createAndFill();
+        expect(list?.firstChild).toMatchObject({ attrs: { nodeId: null } });
+        expect(figure?.firstChild).toMatchObject({ type: { name: 'asset_image' } });
+    });
+
+    it('SPEC-rich-text/AC-071 writes a shared attribute bound to a style property only for a plain CSS value', () => {
+        const tone = defineFeature({
+            id: 'a.tone',
+            version: 1,
+            attributes: {
+                tone: {
+                    on: ['paragraph'],
+                    value: { type: 'string', nullable: true, default: null },
+                    html: { style: 'color' },
+                },
+            },
+        })();
+        const { schema } = compileDefinition(compileContentModel([core(), tone], options));
+        const styleOf = (value: string) => {
+            const paragraph = schema.node('paragraph', { tone: value });
+            const [, attributes] = paragraph.type.spec.toDOM?.(paragraph) as [string, Record<string, string>];
+            return attributes.style;
+        };
+
+        expect(styleOf('red')).toBe('color: red;');
+        for (const value of ['red;background:url(//x)', 'url(//x)', 'red"', "red'", 'red\\9', 'red}', '<x', 'red/*x']) {
+            expect(styleOf(value)).toBeUndefined();
+        }
+    });
+
     it.each(['inline{1,64}', '(inline{1,8}){1,8}', '((inline{1,4}){1,4}){1,4}'])(
         'SPEC-rich-text/AC-081 compiles %j and builds its schema in under 200 ms',
         (content) => {
