@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { AssistiveTreeDescription } from '@headless-tree/react';
-import { Fragment, useEffect, useId, useMemo, useState, type ReactNode } from 'react';
+import { Fragment, useEffect, useId, useMemo, useRef, useState, type ReactNode } from 'react';
 
 import { useTranslation } from '#/hooks/useTranslation';
 
@@ -80,6 +80,26 @@ export const TreeRoot = ({
     if (hasFocusWithin && items.length === 0) {
         setHasFocusWithin(false);
     }
+    // Set by events that reach the container through the React tree, so portalled menus in rows count as inside.
+    const isInsideEventRef = useRef(false);
+    // A focused element removed outside this component's commits (a portalled menu closing) fires no blur either.
+    useEffect(() => {
+        if (!hasFocusWithin) {
+            return;
+        }
+        const handleDocumentEvent = () => {
+            if (!isInsideEventRef.current) {
+                setHasFocusWithin(false);
+            }
+            isInsideEventRef.current = false;
+        };
+        document.addEventListener('pointerdown', handleDocumentEvent);
+        document.addEventListener('focusin', handleDocumentEvent);
+        return () => {
+            document.removeEventListener('pointerdown', handleDocumentEvent);
+            document.removeEventListener('focusin', handleDocumentEvent);
+        };
+    }, [hasFocusWithin]);
     // Runs every commit: a removed row can take focus with it while the tab stop stays on another row.
     useEffect(() => {
         if (hasFocusWithin && document.activeElement === document.body) {
@@ -111,7 +131,13 @@ export const TreeRoot = ({
         <div
             {...tree.getContainerProps()}
             className={styles.tree}
-            onFocus={() => setHasFocusWithin(true)}
+            onPointerDownCapture={() => {
+                isInsideEventRef.current = true;
+            }}
+            onFocus={() => {
+                isInsideEventRef.current = true;
+                setHasFocusWithin(true);
+            }}
             onBlur={(event) => setHasFocusWithin(event.currentTarget.contains(event.relatedTarget))}
         >
             {rowHint && (
