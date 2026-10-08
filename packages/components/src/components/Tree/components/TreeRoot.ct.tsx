@@ -552,6 +552,47 @@ test.describe('TreeRoot rendering', () => {
         await expect(component.getByRole('treeitem', { name: /Second/ })).toBeFocused();
     });
 
+    test('an outside pointerdown that leaves focus on a row still restores focus when that row is removed', async ({
+        mount,
+    }) => {
+        const component = await mount(
+            <div>
+                <div data-testid="pad" style={{ height: 40 }} />
+                <Tree.Root>
+                    <Tree.Item id="1">
+                        <Tree.Label>First</Tree.Label>
+                    </Tree.Item>
+                    <Tree.Item id="2">
+                        <Tree.Label>Second</Tree.Label>
+                    </Tree.Item>
+                    <Tree.Item id="3">
+                        <Tree.Label>Third</Tree.Label>
+                    </Tree.Item>
+                </Tree.Root>
+            </div>,
+        );
+
+        await component.getByRole('treeitem', { name: /Second/ }).click();
+        // A touch pan starting outside the tree: pointerdown with no focus change.
+        await component.locator('[data-testid="pad"]').dispatchEvent('pointerdown', { pointerType: 'touch' });
+        await expect(component.getByRole('treeitem', { name: /Second/ })).toBeFocused();
+        await component.update(
+            <div>
+                <div data-testid="pad" style={{ height: 40 }} />
+                <Tree.Root>
+                    <Tree.Item id="1">
+                        <Tree.Label>First</Tree.Label>
+                    </Tree.Item>
+                    <Tree.Item id="3">
+                        <Tree.Label>Third</Tree.Label>
+                    </Tree.Item>
+                </Tree.Root>
+            </div>,
+        );
+
+        await expect(component.getByRole('treeitem', { name: /Third/ })).toBeFocused();
+    });
+
     test('clicking away from an open portalled Dropdown does not pull focus back into the tree', async ({
         mount,
         page,
