@@ -7,7 +7,13 @@ import { fileURLToPath } from 'node:url';
 
 import { afterAll, describe, expect, it } from 'vitest';
 
-import { checkDist, checkManifest, checkProseMirrorRanges, type PackageJson } from './check-exports';
+import {
+    checkDist,
+    checkManifest,
+    checkProseMirrorRanges,
+    consumerDependencies,
+    type PackageJson,
+} from './check-exports';
 
 const packageRoot = fileURLToPath(new URL('..', import.meta.url));
 const fixture = (name: string) => fileURLToPath(new URL(`../fixtures/exports/${name}`, import.meta.url));
@@ -106,6 +112,27 @@ describe('check-exports manifest', () => {
             '@frontify/fondue-components is not a workspace:^ peer and dev dependency',
             '@frontify/fondue-icons is not a workspace:^ peer and dev dependency',
         ]);
+    });
+});
+
+describe('check-exports consumer', () => {
+    it('SPEC-rich-text/AC-001 installs every peer and the React types into the scratch consumer', () => {
+        expect(consumerDependencies({ ...valid, devDependencies: { '@types/react': '^18.3.31' } })).toEqual([
+            '@frontify/fondue-components',
+            '@frontify/fondue-icons',
+            '@frontify/fondue-tokens',
+            'react@^18.2.0',
+            'react-dom@^18.2.0',
+            '@types/react@^18.3.31',
+        ]);
+    });
+
+    it('SPEC-rich-text/AC-001 installs the peers of the package as declared, so an entry that imports React loads', () => {
+        const names = consumerDependencies(packageJson).map((dependency) => dependency.replace(/(?<=.)@.*$/, ''));
+
+        expect(names).toEqual(
+            expect.arrayContaining(['react', 'react-dom', '@frontify/fondue-components', '@types/react']),
+        );
     });
 });
 

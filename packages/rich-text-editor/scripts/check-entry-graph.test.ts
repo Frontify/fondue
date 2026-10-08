@@ -1,6 +1,15 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { cpSync, mkdirSync, mkdtempSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
+import {
+    appendFileSync,
+    cpSync,
+    mkdirSync,
+    mkdtempSync,
+    realpathSync,
+    rmSync,
+    symlinkSync,
+    writeFileSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -25,6 +34,20 @@ describe('check-entry-graph', () => {
             JSON.stringify({ name: 'editor-kit', dependencies: { 'prosemirror-view': '^1.42.6' } }),
         );
         writeFileSync(join(root, 'node_modules/editor-kit/index.js'), 'export const kit = 1;\n');
+        // The pnpm layout: the root links only the packages it depends on, and a dependency sits next to its dependent.
+        const store = join(root, 'node_modules/.pnpm/pnpm-kit@1.0.0/node_modules');
+        for (const [name, dependency] of [
+            ['pnpm-kit', 'pnpm-dep'],
+            ['pnpm-dep', 'slate'],
+        ] as const) {
+            mkdirSync(join(store, name), { recursive: true });
+            writeFileSync(
+                join(store, name, 'package.json'),
+                JSON.stringify({ name, dependencies: { [dependency]: '^1.0.0' } }),
+            );
+        }
+        symlinkSync(join(store, 'pnpm-kit'), join(root, 'node_modules/pnpm-kit'));
+        appendFileSync(join(root, 'src/codecs/index.ts'), "import 'pnpm-kit';\n");
         violations = await checkEntryGraph(root, {
             './model': 'src/model/index.ts',
             './features': 'src/features/index.ts',
@@ -58,6 +81,10 @@ describe('check-entry-graph', () => {
         expect(violations).toContain(
             './codecs reaches prosemirror-view: src/codecs/index.ts -> editor-kit -> prosemirror-view',
         );
+    });
+
+    it('SPEC-rich-text-output/AC-027 follows a dependency of a dependency that the package root does not link, as pnpm lays it out', () => {
+        expect(violations).toContain('./codecs reaches slate: src/codecs/index.ts -> pnpm-kit -> pnpm-dep -> slate');
     });
 
     it('SPEC-rich-text/AC-012 passes on the package entries', async () => {

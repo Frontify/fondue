@@ -37,6 +37,7 @@ const COPIED = [
     'scripts',
     'lint',
     'src',
+    'fixtures',
     'playwright',
     '.storybook',
 ];

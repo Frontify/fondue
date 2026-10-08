@@ -1,0 +1,77 @@
+{
+    "id": "acme.pull-quote",
+    "version": 1,
+    "requires": [
+        {
+            "id": "core",
+            "version": 1
+        }
+    ],
+    "nodes": {
+        "acme_pull_quote": {
+            "group": "block",
+            "content": "inline*",
+            "attrs": {
+                "tone": {
+                    "type": "enum",
+                    "values": ["neutral", "brand"],
+                    "default": "neutral"
+                }
+            },
+            "html": [
+                "blockquote",
+                {
+                    "class": "acme-pull-quote",
+                    "data-tone": {
+                        "attr": "tone"
+                    }
+                },
+                0
+            ],
+            "parse": [
+                {
+                    "tag": "blockquote.acme-pull-quote",
+                    "attrs": {
+                        "tone": {
+                            "from": "data-tone"
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    "formats": {
+        "html": "lossless",
+        "text": "lossy",
+        "markdown": "unsupported"
+    },
+    "commands": {
+        "acme.pull-quote.set": {
+            "capability": "setBlock",
+            "node": "acme_pull_quote",
+            "toggle": true
+        }
+    },
+    "keys": {
+        "mac:Mod-Alt-q": "acme.pull-quote.set",
+        "other:Ctrl-Shift-q": "acme.pull-quote.set"
+    },
+    "inputRules": [
+        {
+            "id": "acme.pull-quote.marker",
+            "kind": "line-start",
+            "markers": [">>"],
+            "command": "acme.pull-quote.set"
+        }
+    ],
+    "toolbar": [
+        {
+            "kind": "toggle",
+            "command": "acme.pull-quote.set",
+            "label": {
+                "en-US": "Pull quote"
+            },
+            "icon": "IconSpeechBubbleQuote"
+        }
+    ]
+}
