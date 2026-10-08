@@ -123,6 +123,7 @@ export const attributesOf = (node: CompiledNode): Readonly<Record<string, Attrib
 
 const failure = (code: DefinitionErrorCode, feature: string, path: string) =>
     new DefinitionError(code, { feature, path });
+const isVersion = (version: unknown) => Number.isInteger(version) && (version as number) > 0;
 const duplicate = (kind: string, id: string, first: string, second: string) =>
     new DefinitionError('definition.duplicate-id', { kind, id, features: [first, second] });
 
@@ -204,6 +205,9 @@ const readFeatures = (features: readonly Feature[]): CompiledFeature[] => {
             throw new DefinitionError('definition.invalid-declaration', { path: pointer(index) });
         }
         const { declaration, manifest } = internals;
+        if (!isVersion(declaration.version)) {
+            throw failure('definition.invalid-declaration', declaration.id, pointer('version'));
+        }
         checkNames(declaration);
         checkMigrations(declaration.migrations, declaration.version, declaration.id);
         if (seen.has(declaration.id)) {
@@ -364,6 +368,9 @@ export const compileContentModel = <const Features extends readonly Feature[]>(
     features: Features,
     options: ContentModelOptions,
 ): ContentModel<Features> => {
+    if (!isVersion(options.version)) {
+        throw new DefinitionError('definition.invalid-declaration', { path: pointer('version') });
+    }
     const list = readFeatures(features);
     checkDependencies(list);
     checkMigrations(options.migrations, options.version);

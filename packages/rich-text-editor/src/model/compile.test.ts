@@ -212,6 +212,19 @@ describe('compileContentModel dependencies', () => {
             details: { feature: 'a.next', requires: 'core', required: 2, installed: 1 },
         });
     });
+
+    it('SPEC-rich-text/AC-055 rejects a model or feature version that is not a positive integer', () => {
+        for (const version of [0, -1, 1.5, Number.NaN]) {
+            expect(failureOf(() => compileContentModel([core()], { id: 'test.model', version }))).toEqual({
+                code: 'definition.invalid-declaration',
+                details: { path: '/version' },
+            });
+            expect(failureOf(() => compile([core(), feature({ id: 'a.next', version })]))).toEqual({
+                code: 'definition.invalid-declaration',
+                details: { feature: 'a.next', path: '/version' },
+            });
+        }
+    });
 });
 
 describe('compileContentModel orphan behavior', () => {
