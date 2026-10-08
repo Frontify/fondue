@@ -5,13 +5,14 @@ import { type ComponentType, type ReactNode } from 'react';
 import {
     DefinitionError,
     type Feature,
+    type FeatureDeclaration,
     type HrefResult,
     type JsonObject,
     type ReferenceResolution,
     type RichTextLocale,
     type TranslationStrings,
 } from '#/model';
-import { featureInternals } from '#/model/feature';
+import { createFeature, featureInternals } from '#/model/feature';
 
 /** What a reader override reads: plain data and functions, never a React context (SPEC-rich-text-output/AC-049). */
 export interface ReaderContext {
@@ -29,6 +30,11 @@ export interface ReaderNodeProps {
 export type ReaderRenderers = Readonly<Record<string, ComponentType<ReaderNodeProps>>>;
 
 const READER = Symbol('reader-overrides');
+const DECLARED = new WeakMap<FeatureDeclaration, ReaderRenderers>();
+
+/** The overrides attached to a compiled feature's declaration, which the reader reads from a compiled model. */
+export const declaredOverrides = (declaration: FeatureDeclaration): ReaderRenderers | undefined =>
+    DECLARED.get(declaration);
 
 /** The reader overrides `defineReaderFeature` attached to a feature, keyed by node or mark name. */
 export const readerOverrides = (feature: Feature): ReaderRenderers | undefined =>
@@ -50,5 +56,12 @@ export const defineReaderFeature = <F extends Feature>(feature: F, renderers: Re
             throw new DefinitionError('definition.missing-reader', { feature: feature.id, name });
         }
     }
-    return Object.freeze({ ...feature, [READER]: renderers }) as F;
+    let attached: Feature = feature;
+    if (internals !== undefined) {
+        // A fresh declaration copy keys the overrides to this feature, not to every model built from its factory.
+        const declaration = Object.freeze({ ...internals.declaration });
+        DECLARED.set(declaration, renderers);
+        attached = createFeature(declaration, internals.options, internals.manifest);
+    }
+    return Object.freeze({ ...attached, [READER]: renderers }) as unknown as F;
 };

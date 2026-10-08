@@ -250,6 +250,20 @@ export const checkDist = async (root: string, pkg: PackageJson): Promise<string[
     return violations;
 };
 
+/**
+ * What a host installs next to the package, so an entry that imports a peer loads and typechecks in the scratch
+ * consumer: each peer, a workspace one at its latest published version, and the React types the declarations import.
+ */
+export const consumerDependencies = (pkg: PackageJson): string[] => {
+    const peers = Object.entries(pkg.peerDependencies ?? {}).map(([name, range]) => {
+        if (range.startsWith('workspace:')) {
+            return name;
+        }
+        return `${name}@${range}`;
+    });
+    return [...peers, `@types/react@${pkg.devDependencies?.['@types/react'] ?? 'latest'}`];
+};
+
 const run = (command: string, args: string[], cwd: string) => {
     try {
         execFileSync(command, args, { cwd, encoding: 'utf8', stdio: 'pipe' });
@@ -278,6 +292,7 @@ export const checkConsumer = (root: string, pkg: PackageJson): string[] => {
             [
                 'install',
                 join(scratch, tarball),
+                ...consumerDependencies(pkg),
                 '--legacy-peer-deps',
                 '--ignore-scripts',
                 '--no-audit',

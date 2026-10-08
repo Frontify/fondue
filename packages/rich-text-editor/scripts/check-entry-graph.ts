@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, realpathSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -8,7 +8,8 @@ import { fileURLToPath } from 'node:url';
 import { build, type Plugin } from 'vite';
 
 type Rule = { readonly packages: RegExp; readonly folders: readonly string[] };
-type Node = { readonly id: string; readonly parent: Node | undefined };
+/** `from` is the folder whose `node_modules` resolves `id` when it is a package. */
+type Node = { readonly id: string; readonly parent: Node | undefined; readonly from: string };
 
 const ENGINE_FREE: Rule = {
     // ProseMirror, Slate and Plate (SPEC-rich-text/AC-012).
@@ -57,9 +58,15 @@ const collectGraph = async (root: string, entries: Record<string, string>): Prom
     return graph;
 };
 
-/** The `dependencies` of an installed package, or none when it is not installed. */
-const dependenciesOf = (root: string, name: string): string[] => {
-    const require = createRequire(join(root, 'package.json'));
+/** An installed package: where it is, and the names in its `dependencies`. */
+type Installed = { readonly directory: string; readonly dependencies: readonly string[] };
+
+/**
+ * The package `name` as `from` resolves it, or none when it is not installed. A dependency of a dependency is
+ * not linked into the package root under pnpm, so each package resolves its own dependencies from its own folder.
+ */
+const installedPackage = (from: string, name: string): Installed | undefined => {
+    const require = createRequire(join(from, 'package.json'));
     let manifest: string | undefined;
     try {
         manifest = require.resolve(`${name}/package.json`);
@@ -76,14 +83,14 @@ const dependenciesOf = (root: string, name: string): string[] => {
                 }
             }
         } catch {
-            return [];
+            return undefined;
         }
     }
     if (manifest === undefined) {
-        return [];
+        return undefined;
     }
     const { dependencies } = JSON.parse(readFileSync(manifest, 'utf8')) as { dependencies?: Record<string, string> };
-    return Object.keys(dependencies ?? {});
+    return { directory: dirname(realpathSync(manifest)), dependencies: Object.keys(dependencies ?? {}) };
 };
 
 const chainOf = (root: string, node: Node) => {
@@ -115,21 +122,34 @@ export const checkEntryGraph = async (root: string, entries: Record<string, stri
     const violations: string[] = [];
 
     for (const [entry, source] of checked) {
-        const queue: Node[] = [{ id: join(root, source), parent: undefined }];
+        const queue: Node[] = [{ id: join(root, source), parent: undefined, from: root }];
         const seen = new Set<string>();
         for (let node = queue.shift(); node !== undefined; node = queue.shift()) {
-            const { id } = node;
-            if (seen.has(id)) {
+            const { id, from } = node;
+            let installed: Installed | undefined;
+            if (isBare(id)) {
+                installed = installedPackage(from, packageName(id));
+            }
+            // An installed copy is walked once, wherever it is imported from; two versions are two copies.
+            let key = id;
+            if (installed !== undefined) {
+                key = installed.directory;
+            }
+            if (seen.has(key)) {
                 continue;
             }
-            seen.add(id);
+            seen.add(key);
             for (const rule of RULES[entry] ?? []) {
                 if (violates(root, rule, id)) {
                     violations.push(`${entry} reaches ${id}: ${chainOf(root, node)}`);
                 }
             }
-            const next = isBare(id) ? dependenciesOf(root, packageName(id)) : (graph.get(id) ?? []);
-            queue.push(...next.map((child) => ({ id: child, parent: node })));
+            if (installed !== undefined) {
+                const { directory, dependencies } = installed;
+                queue.push(...dependencies.map((child) => ({ id: child, parent: node, from: directory })));
+            } else if (!isBare(id)) {
+                queue.push(...(graph.get(id) ?? []).map((child) => ({ id: child, parent: node, from: root })));
+            }
         }
     }
     return [...new Set(violations)];

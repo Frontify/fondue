@@ -5,6 +5,7 @@ packages:
 allowBuilds:
     "@bundled-es-modules/glob": true
     "@parcel/watcher": true
+    "@swc/core": false
     cypress: true
     esbuild: true
     style-dictionary: true

@@ -240,6 +240,44 @@ jobs:
       - name: Playwright tests
         run: pnpm --filter {packages/rich-text-editor} exec playwright test --shard=${{ matrix.shard }}/${{ strategy.job-total }}
 
+  rich-text-editor-storybook-tests:
+    name: Rich Text Editor Storybook Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          playwright-cache: "true"
+
+      - name: Build Fondue icons
+        run: pnpm build:icons
+
+      - name: Build Fondue components
+        run: pnpm build:components
+
+      - name: Install Playwright browsers
+        run: pnpm --stream --filter {packages/rich-text-editor} install:playwright
+
+      - name: Build Storybook
+        run: pnpm --stream --filter {packages/rich-text-editor} build:storybook
+
+      # Every story must carry its status tag before the tests start.
+      - name: Check story status
+        run: pnpm --stream --filter {packages/rich-text-editor} check:story-status
+
+      # Runs every story, with the axe and toolbar global checks of `.storybook/preview.tsx` after each one.
+      - name: Storybook tests
+        run: pnpm --stream --filter {packages/rich-text-editor} test:storybook:ci
+
+      # Development React keeps its hydration mismatch warnings (SPEC-rich-text-output/AC-010).
+      - name: Reader hydration tests
+        run: pnpm --stream --filter {packages/rich-text-editor} test:components:hydration
+
   sdk-tests:
     name: SDK Tests
     runs-on: ubuntu-latest

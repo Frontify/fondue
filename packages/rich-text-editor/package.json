@@ -23,6 +23,10 @@
             "types": "./dist/model/index.d.ts",
             "import": "./dist/model/index.js"
         },
+        "./reader": {
+            "types": "./dist/reader/index.d.ts",
+            "import": "./dist/reader/index.js"
+        },
         "./testing": {
             "types": "./dist/testing/index.d.ts",
             "import": "./dist/testing/index.js"
@@ -40,6 +44,7 @@
         "check:exports": "tsx scripts/check-exports.ts",
         "check:model-versions": "tsx scripts/check-model-versions.ts",
         "check:platform": "tsx scripts/check-platform.ts",
+        "check:story-status": "tsx scripts/story-status.ts",
         "check:test-levels": "tsx scripts/check-test-levels.ts",
         "fixtures:update": "vitest run --update --coverage.enabled=false golden",
         "install:playwright": "playwright install --with-deps",
@@ -53,13 +58,18 @@
         "test:watch": "vitest",
         "test:components": "playwright test --ui",
         "test:components:ci": "playwright test",
-        "test:components:update-snapshot": "playwright test --update-snapshots"
+        "test:components:hydration": "NODE_ENV=development playwright test src/reader/hydration.ct.tsx",
+        "test:components:update-snapshot": "playwright test --update-snapshots",
+        "test:storybook": "test-storybook --url http://127.0.0.1:6013 --index-json",
+        "test:storybook:ci": "concurrently -k -s first -n server,tests \"http-server storybook-static --port 6013 --silent\" \"wait-on tcp:127.0.0.1:6013 && pnpm test:storybook\""
     },
     "dependencies": {
         "prosemirror-model": "^1.25.12",
         "prosemirror-state": "^1.4.4"
     },
     "devDependencies": {
+        "@axe-core/playwright": "^4.13.0",
+        "@etchteam/storybook-addon-status": "^8.1.0",
         "@frontify/fondue-components": "workspace:^",
         "@frontify/fondue-icons": "workspace:^",
         "@frontify/fondue-tokens": "workspace:^",
@@ -67,7 +77,10 @@
         "@frontify/oxlint-config-react": "^0.0.2",
         "@playwright/experimental-ct-react": "^1.60.0",
         "@playwright/test": "^1.60.0",
+        "@storybook/addon-a11y": "^10.6.0",
+        "@storybook/addon-docs": "^10.6.0",
         "@storybook/react-vite": "^10.6.0",
+        "@storybook/test-runner": "^0.26.0",
         "@testing-library/dom": "^10.4.1",
         "@testing-library/jest-dom": "^7.0.0",
         "@testing-library/react": "^16.3.2",
@@ -78,9 +91,11 @@
         "@typescript/native-preview": "7.0.0-dev.20260421.2",
         "@vitest/coverage-v8": "^5.0.0",
         "ajv": "^8.20.0",
+        "axe-core": "^4.13.0",
         "browserslist-to-esbuild": "^2.1.1",
         "fast-check": "^4.10.2",
         "happy-dom": "^20.11.2",
+        "http-server": "^14.1.1",
         "oxfmt": "^0.52.0",
         "oxlint": "^1.67.0",
         "oxlint-tsgolint": "^0.23.0",

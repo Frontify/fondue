@@ -5,9 +5,11 @@ import reactConfig from '@frontify/oxlint-config-react';
 import { type AllowWarnDeny, defineConfig, type OxlintOverride } from 'oxlint';
 
 type ImportPattern = { readonly group: string[]; readonly message: string };
+type ImportPath = { readonly name: string; readonly importNames: string[]; readonly message: string };
 type Scope = {
     readonly files: string[];
     readonly patterns?: ImportPattern[];
+    readonly paths?: ImportPath[];
     readonly allowRadix?: string[];
     readonly allowHistory?: boolean;
 };
@@ -96,8 +98,21 @@ const FRAMEWORKS: ImportPattern = {
     message: 'The package depends on no router, server-component API or framework runtime (SPEC-rich-text/AC-077).',
 };
 
+// The default and namespace imports are listed too, since `React.useState` reaches a hook with no named import.
+const CLIENT_REACT: ImportPath = {
+    name: 'react',
+    importNames: [
+        'default',
+        ...'useState useReducer useEffect useLayoutEffect useInsertionEffect useMemo useCallback useRef useContext useId useImperativeHandle useDebugValue useDeferredValue useTransition useSyncExternalStore use createContext Component PureComponent'.split(
+            ' ',
+        ),
+    ],
+    message: 'The reader renders with no client hook, context or class component (SPEC-rich-text-output/AC-049).',
+};
+
 const restrictedImports = ({
     patterns = [],
+    paths = [],
     allowRadix,
     allowHistory = false,
 }: Scope): [AllowWarnDeny, ...unknown[]] => [
@@ -109,6 +124,7 @@ const restrictedImports = ({
                 importNames: ['default', 'flushSync'],
                 message: 'The package never calls `flushSync` (SPEC-rich-text-react/AC-009).',
             },
+            ...paths,
         ],
         patterns: [
             FRAMEWORKS,
@@ -236,10 +252,12 @@ const IMPORT_SCOPES: Scope[] = [
     {
         files: ['src/reader/**'],
         patterns: [...layer('reader', ['model', 'locales']), noProseMirror()],
+        paths: [CLIENT_REACT],
     },
     {
         files: ['src/reader/registry.ts', 'src/reader/__lint-fixtures__/registry.ts'],
         patterns: [...layer('reader', ['model', 'locales', 'features/*/reader']), noProseMirror()],
+        paths: [CLIENT_REACT],
     },
     { files: ['src/codecs/**'], patterns: [...layer('codecs', ['model', 'locales']), noProseMirror()] },
     { files: ['src/locales/**'], patterns: noImports('locales') },
