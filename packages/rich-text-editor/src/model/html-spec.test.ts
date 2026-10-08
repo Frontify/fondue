@@ -64,6 +64,34 @@ describe('resolveHtmlSpec', () => {
         });
     });
 
+    it('SPEC-rich-text/AC-071 drops a URL attribute under its React prop name, whatever its case', () => {
+        const spec: HtmlSpec = [
+            'a',
+            { xlinkHref: { attr: 'u' }, srcDoc: { attr: 'u' }, formAction: { attr: 'u' }, srcSet: { attr: 'u' } },
+            0,
+        ];
+
+        expect(resolveHtmlSpec(spec, { u: 'javascript:alert(1)' }, {}).layers[0]?.attrs).toEqual({});
+        expect(resolveHtmlSpec(spec, { u: '/brand' }, {}).layers[0]?.attrs).toEqual({
+            xlinkHref: '/brand',
+            srcDoc: '/brand',
+            formAction: '/brand',
+            srcSet: '/brand',
+        });
+    });
+
+    it('SPEC-rich-text-output/AC-003 writes a style binding only when the stored value is plain CSS', () => {
+        const spec: HtmlSpec = ['p', { style: { attr: 'css' } }, 0];
+
+        expect(resolveHtmlSpec(spec, { css: 'red; background: url(x)' }, {}).layers[0]?.attrs).toEqual({});
+        expect(resolveHtmlSpec(spec, { css: 'red' }, {}).layers[0]?.attrs).toEqual({ style: 'red' });
+
+        const upper: HtmlSpec = ['p', { STYLE: { attr: 'css' } }, 0];
+
+        expect(resolveHtmlSpec(upper, { css: 'red; background: url(x)' }, {}).layers[0]?.attrs).toEqual({});
+        expect(resolveHtmlSpec(upper, { css: 'red' }, {}).layers[0]?.attrs).toEqual({ STYLE: 'red' });
+    });
+
     it('SPEC-rich-text-output/AC-018 writes a shared attribute as an HTML attribute or a plain CSS declaration only', () => {
         const shared: readonly SharedAttribute[] = [
             {

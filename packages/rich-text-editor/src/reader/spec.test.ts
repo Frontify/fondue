@@ -33,6 +33,7 @@ const spec = defineFeature({
             ],
             parse: [],
         },
+        shout: { group: 'block', attrs: {}, html: ['div', { STYLE: 'text-align: right' }, 0], parse: [] },
         stamp: { group: 'block', attrs: {}, html: ['hr', 0], parse: [] },
         ghost: { group: 'block', attrs: {}, html: ['span', 0], parse: [] },
     },
@@ -46,6 +47,10 @@ describe('RichTextReader html specs', () => {
         expect(render(node('box', {}, text('Hi')))).toBe(
             '<div><div class="box" style="text-align:right;--accent:1" colSpan="2" tabindex="0" data-tone="calm">Hi</div></div>',
         );
+    });
+
+    it('SPEC-rich-text-output/AC-003 reads a style attribute name in any case as a style object', () => {
+        expect(render(node('shout'))).toBe('<div><div style="text-align:right"></div></div>');
     });
 
     it('SPEC-rich-text-output/AC-003 drops the children of a void element and renders a node whose spec has no content hole as a leaf', () => {

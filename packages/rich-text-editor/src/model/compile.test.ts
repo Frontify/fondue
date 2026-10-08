@@ -495,6 +495,27 @@ describe('compileContentModel declarations', () => {
         }
     });
 
+    it('SPEC-rich-text/AC-071 rejects a string attribute bound to a React URL prop or srcdoc', () => {
+        for (const name of ['xlinkHref', 'srcDoc', 'formAction', 'srcSet', 'SRCDOC']) {
+            const card = feature({
+                id: 'a.card',
+                version: 1,
+                nodes: {
+                    card: {
+                        group: 'block',
+                        attrs: { label: { type: 'string', default: '' } },
+                        html: ['svg', { [name]: { attr: 'label' } }],
+                        parse: [],
+                    },
+                },
+            });
+            expect(failureOf(() => compile([core(), card]))).toEqual({
+                code: 'definition.unsafe-url-binding',
+                details: { feature: 'a.card', path: `/nodes/card/html/1${pointer(name)}` },
+            });
+        }
+    });
+
     it('SPEC-rich-text/AC-072 rejects a parse rule literal that fails its attribute declaration', () => {
         const link = (value: JsonValue) =>
             feature({

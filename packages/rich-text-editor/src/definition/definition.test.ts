@@ -135,6 +135,35 @@ describe('compileDefinition', () => {
         }
     });
 
+    it('SPEC-rich-text/AC-071 writes a style attribute binding only for a plain CSS value', () => {
+        const banner = (name: string) =>
+            defineFeature({
+                id: 'a.banner',
+                version: 1,
+                nodes: {
+                    banner: {
+                        group: 'block',
+                        attrs: { css: { type: 'string', default: '' } },
+                        html: ['div', { [name]: { attr: 'css' } }, 0],
+                        parse: [],
+                    },
+                },
+            })();
+        for (const name of ['style', 'STYLE']) {
+            const { schema } = compileDefinition(compileContentModel([core(), banner(name)], options));
+            const attributesOf = (css: string) => {
+                const node = schema.node('banner', { css });
+                const [, attributes] = node.type.spec.toDOM?.(node) as [string, Record<string, string>];
+                return attributes;
+            };
+
+            expect(attributesOf('red')).toEqual({ [name]: 'red' });
+            for (const css of ['red;background:url(//x)', 'url(//x)', 'red"', 'red\\9', '<x', 'red/*x']) {
+                expect(attributesOf(css)).toEqual({});
+            }
+        }
+    });
+
     it.each(['inline{1,64}', '(inline{1,8}){1,8}', '((inline{1,4}){1,4}){1,4}'])(
         'SPEC-rich-text/AC-081 compiles %j and builds its schema in under 200 ms',
         (content) => {
