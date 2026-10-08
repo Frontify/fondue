@@ -80,6 +80,7 @@ interface Slot {
 type Level = WeakMap<object, Level | Map<string, Slot>>;
 const outputs: Level = new WeakMap();
 const NONE = {};
+const MAX_LIMITS = 16;
 
 /** One output per document, model, presentation, locale and limits (by value), so a rerender neither decodes nor builds again. */
 const outputOf = (props: RichTextReaderProps): Output => {
@@ -106,8 +107,14 @@ const outputOf = (props: RichTextReaderProps): Output => {
     let slot = slots.get(limitsKey);
     if (slot === undefined) {
         slot = { objects: new WeakMap() };
-        slots.set(limitsKey, slot);
+        if (slots.size >= MAX_LIMITS) {
+            // Per-document limits must not grow this map forever; the oldest value goes.
+            slots.delete(slots.keys().next().value as string);
+        }
+    } else {
+        slots.delete(limitsKey);
     }
+    slots.set(limitsKey, slot);
     if (typeof document === 'string') {
         if (slot.output === undefined || slot.text !== document) {
             slot.output = build(props);

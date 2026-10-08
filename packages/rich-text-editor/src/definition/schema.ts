@@ -11,7 +11,7 @@ import {
     type JsonObject,
 } from '#/model';
 import { attributesOf, compiledModel, type SharedAttribute } from '#/model/compile';
-import { isPlainCss, ownValue } from '#/model/values';
+import { addDeclaration, isPlainCss, isSrcdocAttribute, isStyleAttribute, ownValue } from '#/model/values';
 
 type Values = Readonly<Record<string, unknown>>;
 
@@ -57,12 +57,11 @@ const render = (
         if (value === undefined) {
             continue;
         }
-        if (
-            attribute.toLowerCase() === 'style' &&
-            typeof binding === 'object' &&
-            'attr' in binding &&
-            !isPlainCss(value)
-        ) {
+        if (isSrcdocAttribute(attribute)) {
+            continue;
+        }
+        if (isStyleAttribute(attribute)) {
+            dom.style = value;
             continue;
         }
         dom[attribute] = value;
@@ -73,9 +72,11 @@ const render = (
             continue;
         }
         if ('attr' in declaration.html) {
-            dom[declaration.html.attr] = value;
+            if (!isSrcdocAttribute(declaration.html.attr)) {
+                dom[declaration.html.attr] = value;
+            }
         } else if (isPlainCss(value)) {
-            dom.style = `${dom.style ?? ''}${declaration.html.style}: ${value};`;
+            dom.style = addDeclaration(dom.style, declaration.html.style, value);
         }
     }
     const content = attributes === undefined ? second : third;

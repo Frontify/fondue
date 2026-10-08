@@ -3,7 +3,7 @@
 import { type SharedAttribute, URL_ATTRIBUTES } from './compile';
 import { type HtmlAttributeValue, type HtmlSpec, type JsonObject } from './declarations';
 import { checkHref } from './href';
-import { isPlainCss, isRecord, ownValue } from './values';
+import { addDeclaration, isPlainCss, isRecord, isSrcdocAttribute, isStyleAttribute, ownValue } from './values';
 
 type Values = Readonly<Record<string, unknown>>;
 
@@ -71,7 +71,11 @@ const resolveLayers = (
         if (value === undefined) {
             continue;
         }
-        if (name.toLowerCase() === 'style' && typeof binding === 'object' && 'attr' in binding && !isPlainCss(value)) {
+        if (isSrcdocAttribute(name)) {
+            continue;
+        }
+        if (isStyleAttribute(name)) {
+            written.style = value;
             continue;
         }
         if (!isUrlAttribute(name)) {
@@ -89,9 +93,11 @@ const resolveLayers = (
             continue;
         }
         if ('attr' in declaration.html) {
-            written[declaration.html.attr] = value;
+            if (!isSrcdocAttribute(declaration.html.attr)) {
+                written[declaration.html.attr] = value;
+            }
         } else if (isPlainCss(value)) {
-            written.style = `${written.style ?? ''}${declaration.html.style}: ${value};`;
+            written.style = addDeclaration(written.style, declaration.html.style, value);
         }
     }
     layers.push({ tag: tagName ?? 'span', attrs: written });
