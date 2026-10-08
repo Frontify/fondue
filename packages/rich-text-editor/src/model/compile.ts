@@ -185,6 +185,25 @@ const checkNames = (declaration: FeatureDeclaration) => {
     }
 };
 
+const SUPPORT: Readonly<Record<'html' | 'text' | 'markdown', readonly string[]>> = {
+    html: ['lossless', 'lossy'],
+    text: ['lossless', 'lossy', 'unsupported'],
+    markdown: ['lossless', 'lossy', 'unsupported'],
+};
+
+/** HTML derives from the `html` spec every node and mark declares, so it can never be `unsupported` (SPEC-rich-text-output/AC-016). */
+const checkFormats = (declaration: FeatureDeclaration) => {
+    const { formats } = declaration;
+    if (formats === undefined) {
+        return;
+    }
+    for (const format of ['html', 'text', 'markdown'] as const) {
+        if (!SUPPORT[format].includes(formats[format])) {
+            throw failure('definition.invalid-declaration', declaration.id, pointer('formats', format));
+        }
+    }
+};
+
 /** Each step starts below `version`, and no two steps start at one version. */
 const checkMigrations = (steps: readonly ModelMigration[] = [], version: number, feature?: string) => {
     for (const [index, { from, migrate }] of steps.entries()) {
@@ -211,6 +230,7 @@ const readFeatures = (features: readonly Feature[]): CompiledFeature[] => {
             throw failure('definition.invalid-declaration', declaration.id, pointer('version'));
         }
         checkNames(declaration);
+        checkFormats(declaration);
         checkMigrations(declaration.migrations, declaration.version, declaration.id);
         if (seen.has(declaration.id)) {
             throw duplicate('feature', declaration.id, declaration.id, declaration.id);

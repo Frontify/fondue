@@ -2,6 +2,7 @@
 
 import { type IdSource } from './environment';
 import { type Diagnostic, type RichTextDocument } from './format';
+import { type HrefResult } from './href';
 
 export type JsonValue = null | boolean | number | string | readonly JsonValue[] | { readonly [key: string]: JsonValue };
 export type JsonObject = { readonly [key: string]: JsonValue };
@@ -163,6 +164,30 @@ export interface FeatureFormats {
     readonly markdown: FormatSupport;
 }
 
+/** What a codec override may call: asset URLs from the host, the URL check and the output locale. */
+export interface CodecContext {
+    readonly resolveAssetUrl?: (assetId: string, options: { readonly width?: number }) => string | null;
+    readonly checkHref: (input: string) => HrefResult;
+    /** The output locale (`enUS` by default) and its `${var}` interpolation, so overrides render localized text with no hook or context. */
+    readonly locale: RichTextLocale;
+    readonly t: (key: keyof TranslationStrings, vars?: Readonly<Record<string, string | number>>) => string;
+}
+/** Code features only, for structure the data forms cannot express, such as tables, task lists and media. */
+export interface CodecOverrides {
+    readonly markdown?: {
+        readonly marks?: Readonly<Record<string, (inner: string, attrs: JsonObject, context: CodecContext) => string>>;
+        readonly nodes?: Readonly<Record<string, (inner: string, attrs: JsonObject, context: CodecContext) => string>>;
+    };
+    readonly text?: {
+        readonly marks?: Readonly<Record<string, (inner: string, attrs: JsonObject) => string>>;
+        readonly nodes?: Readonly<Record<string, (inner: string, attrs: JsonObject, context: CodecContext) => string>>;
+    };
+    /** Node markup that needs a resolved asset URL; the result's URL-valued attributes still pass `checkHref`. */
+    readonly html?: {
+        readonly nodes?: Readonly<Record<string, (attrs: JsonObject, context: CodecContext) => HtmlSpec>>;
+    };
+}
+
 export type CapabilityName =
     | 'toggleMark'
     | 'setMark'
@@ -314,6 +339,7 @@ export interface FeatureDeclaration {
     /** Attributes this feature adds to other features' nodes. */
     readonly attributes?: Readonly<Record<string, SharedAttributeDeclaration>>;
     readonly formats?: FeatureFormats;
+    readonly codecs?: CodecOverrides;
     readonly commands?: Readonly<Record<string, CommandDefinition<unknown>>>;
     readonly keys?: Readonly<Record<KeyBinding, CommandRef>>;
     readonly inputRules?: readonly InputRule[];
