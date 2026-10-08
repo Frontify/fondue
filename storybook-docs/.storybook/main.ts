@@ -30,7 +30,7 @@ const config: StorybookConfig = {
         '@etchteam/storybook-addon-status',
         '@storybook/addon-docs',
     ],
-    staticDirs: ['assets'],
+    staticDirs: ['assets', '../static'],
     framework: {
         name: '@storybook/react-vite',
         options: {},
