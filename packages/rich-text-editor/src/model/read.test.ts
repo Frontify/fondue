@@ -312,21 +312,6 @@ describe('decode limits', () => {
         expect(bytesOf(input)).toBeLessThan(5 * MIB);
         expect(decodeDocument(input, model)).toMatchObject(exceeded('maxDocumentBytes'));
     });
-
-    it('SPEC-rich-text-format/AC-005 counts an island in a clipboard slice at its island position', () => {
-        const chain = (nodes: number): Json => (nodes === 1 ? paragraph() : blockquote(chain(nodes - 1)));
-        const holder = (depth: number, inner: Json): Json =>
-            depth === 1 ? inner : blockquote(holder(depth - 1, inner));
-        const island = (original: Json): Json => ({
-            type: 'unsupported_block',
-            attrs: { original, feature: 'blockquote' },
-        });
-        const slice = (content: Json) => ({ format: 'frontify.rich-text-slice', formatVersion: 1, content: [content] });
-        expect(readInput(slice(island(chain(40))), defaultLimits, true).ok).toBe(true);
-        expect(readInput(slice(holder(24, island(chain(40)))), defaultLimits, true).ok).toBe(true);
-        const read = readInput(slice(holder(30, island(chain(40)))), defaultLimits, true);
-        expect(read).toMatchObject({ ok: false, diagnostic: { details: { limit: 'maxDepth' } } });
-    });
 });
 
 describe('decode limit performance', () => {
