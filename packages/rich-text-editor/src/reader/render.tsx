@@ -229,31 +229,49 @@ const renderNode = (state: RenderState, { node, path }: Item, pre: boolean): Rea
         if (typeof feature === 'string') {
             featureId = feature;
         }
-        return fallback(state, tag, featureId, [renderSpaces(islandText(node.attrs?.original))]);
+        const original = islandText(node.attrs?.original);
+        if (tag === 'span') {
+            // Inline island text sits in the same line, so it continues the run of spaces.
+            return fallback(state, tag, featureId, [spaced(state, original)]);
+        }
+        state.carried = 0;
+        return fallback(state, tag, featureId, [renderSpaces(original)]);
     }
     const plan = state.plan.nodes.get(node.type);
     if (plan === undefined) {
+        state.carried = 0;
         return null;
     }
+    const before = state.carried;
     const children = renderChildren(state, node, path, plan.pre);
     const attrs = attrsOf(node.attrs);
     if (plan.override !== undefined) {
         try {
             const props = { attrs, children: createElement(Fragment, null, ...children), context: state.context };
-            return callOverride(plan.override, props);
+            const rendered = callOverride(plan.override, props);
+            state.carried = 0;
+            return rendered;
         } catch {
             reportFailure(state, plan.featureId, path, node.type);
             let tag: 'span' | 'div' = 'div';
+            let fallbackText = textOf(node);
             if (plan.inline) {
                 tag = 'span';
-            }
-            let fallbackText = textOf(node);
-            if (!plan.pre) {
-                fallbackText = renderSpaces(fallbackText);
+                // The children already moved the run, so it restarts from where this node began.
+                state.carried = before;
+                if (!plan.pre) {
+                    fallbackText = spaced(state, fallbackText);
+                }
+            } else {
+                state.carried = 0;
+                if (!plan.pre) {
+                    fallbackText = renderSpaces(fallbackText);
+                }
             }
             return fallback(state, tag, plan.featureId, [fallbackText]);
         }
     }
+    state.carried = 0;
     return build(resolveHtmlSpec(plan.spec, attrs, plan.options, plan.shared), children);
 };
 
@@ -268,9 +286,6 @@ const renderRun = (state: RenderState, items: readonly Item[], depth: number, pr
         const entry = item.marks[depth];
         if (entry === undefined) {
             out.push(renderNode(state, item, pre));
-            if (item.node.type !== 'text') {
-                state.carried = 0;
-            }
             index += 1;
             continue;
         }

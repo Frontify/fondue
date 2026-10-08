@@ -17,6 +17,21 @@ export const isRecord = (value: unknown): value is Readonly<Record<string, unkno
 /** A value that cannot end its declaration or reach a URL, comment or markup. */
 export const isPlainCss = (value: string) => !/[;:()'"\\{}<]|\/\*/.test(value);
 
+/** By local name, so `srcdoc`, `SRCDOC`, `srcDoc` and `xlink:srcdoc` all match (SPEC-rich-text/AC-071). */
+export const isSrcdocAttribute = (name: string) => (name.toLowerCase().split(/[\s:]/).at(-1) ?? '') === 'srcdoc';
+
+/** `style` in any case: the HTML attribute that styles never reach as a stored value (SPEC-rich-text-format/AC-027). */
+export const isStyleAttribute = (name: string) => name.toLowerCase() === 'style';
+
+/** `existing` plus one CSS declaration, with a `;` between them whether or not `existing` ends in one. */
+export const addDeclaration = (existing: string | undefined, property: string, value: string): string => {
+    let before = existing ?? '';
+    if (before !== '' && !before.endsWith(';')) {
+        before += ';';
+    }
+    return `${before}${property}: ${value};`;
+};
+
 /** `record[name]` for an own member only, so `constructor` or `toString` never reads the prototype. */
 export const ownValue = <V>(record: Readonly<Record<string, V>>, name: string): V | undefined =>
     Object.hasOwn(record, name) ? record[name] : undefined;

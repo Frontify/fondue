@@ -39,6 +39,8 @@ import {
     findInvalidPayload,
     findUnsafeJson,
     isRecord,
+    isSrcdocAttribute,
+    isStyleAttribute,
     isValidValue,
     MAX_DEPTH,
     ownValue,
@@ -295,13 +297,16 @@ const checkHtml = (
     for (const [name, value] of Object.entries(attributes ?? {})) {
         const at = `${path}/1${pointer(name)}`;
         const isUrl = isUrlAttribute(name);
+        if (isSrcdocAttribute(name)) {
+            throw failure('definition.unsafe-url-binding', feature.id, at);
+        }
         if (typeof value === 'string') {
             if (isUrl && !checkHref(value).ok) {
                 throw failure('definition.unsafe-url-binding', feature.id, at);
             }
         } else if ('attr' in value) {
             const attribute = ownValue(attrs, value.attr);
-            if (attribute === undefined) {
+            if (attribute === undefined || isStyleAttribute(name)) {
                 throw failure('definition.invalid-declaration', feature.id, at);
             }
             if (isUrl && attribute.type !== 'url') {
@@ -454,7 +459,10 @@ export const compileContentModel = <const Features extends readonly Feature[]>(
             checkAttributes(feature.id, { value: shared.value }, ['attributes', name]);
             const binding = shared.html;
             const boundName = binding !== undefined && 'attr' in binding ? binding.attr : '';
-            if (isUrlAttribute(boundName) && shared.value.type !== 'url') {
+            if (isStyleAttribute(boundName)) {
+                throw failure('definition.invalid-declaration', feature.id, pointer('attributes', name, 'html'));
+            }
+            if (isSrcdocAttribute(boundName) || (isUrlAttribute(boundName) && shared.value.type !== 'url')) {
                 throw failure('definition.unsafe-url-binding', feature.id, pointer('attributes', name, 'html'));
             }
             for (const target of shared.on === 'textblocks' ? textblocks : shared.on) {
