@@ -521,6 +521,7 @@ describe('useTreeController focus pruning', () => {
 
     it('moves focus to the collapsed folder when its folder collapses by prop', () => {
         const items: TreeItemData[] = [
+            { id: 'x', name: 'X', isFolder: false, parentId: ROOT_ID },
             {
                 id: 'f',
                 name: 'F',
@@ -541,7 +542,7 @@ describe('useTreeController focus pruning', () => {
         expect(result.current.getItemInstance('c1').isFocused()).toBe(true);
 
         rerender({
-            items: [{ ...items[0], isExpanded: false }, items[1], items[2]] as TreeItemData[],
+            items: [items[0], { ...items[1], isExpanded: false }, items[2], items[3]] as TreeItemData[],
         });
 
         expect(result.current.getItemInstance('f').isFocused()).toBe(true);

@@ -146,6 +146,9 @@ test.describe('TreeRoot rendering', () => {
                         <button type="button">Delete Second</button>
                     </Tree.Action>
                 </Tree.Item>
+                <Tree.Item id="3">
+                    <Tree.Label>Third</Tree.Label>
+                </Tree.Item>
             </Tree.Root>,
         );
 
@@ -155,10 +158,13 @@ test.describe('TreeRoot rendering', () => {
                 <Tree.Item id="1">
                     <Tree.Label>First</Tree.Label>
                 </Tree.Item>
+                <Tree.Item id="3">
+                    <Tree.Label>Third</Tree.Label>
+                </Tree.Item>
             </Tree.Root>,
         );
 
-        await expect(component.getByRole('treeitem', { name: /First/ })).toBeFocused();
+        await expect(component.getByRole('treeitem', { name: /Third/ })).toBeFocused();
     });
 
     test('leaves DOM focus outside the tree when the focused row is removed', async ({ mount }) => {
@@ -613,6 +619,10 @@ test.describe('TreeRoot rendering', () => {
             </Tree.Root>,
         );
 
+        // Let the commit's passive effects run before asserting that nothing pulled focus.
+        await page.evaluate(
+            () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
+        );
         await expect(page.locator('body')).toBeFocused();
         await expect(component.getByRole('treeitem', { name: /Row1/ })).toHaveAttribute('tabindex', '0');
     });
@@ -671,9 +681,12 @@ test.describe('TreeRoot rendering', () => {
             await component.getByRole('button', { name: 'Row2 settings' }).click();
             await page.getByRole('button', { name: 'Save' }).click();
             await expect(page.getByText('Saving')).toBeVisible();
+            // Let the commit's passive effects run before asserting that nothing pulled focus.
+            await page.evaluate(
+                () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
+            );
 
-            // A modal Dialog hides the tree from the accessibility tree.
-            await expect(component.getByRole('treeitem', { name: /Row2/, includeHidden: true })).not.toBeFocused();
+            await expect(component.locator(':focus')).toHaveCount(0);
             await expect(page.getByRole('dialog')).toBeVisible();
         });
     }
