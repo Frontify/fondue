@@ -60,7 +60,7 @@ const propsOf = (attrs: Readonly<Record<string, string>>): Record<string, unknow
         if (!ATTRIBUTE_NAME.test(name) || EVENT_HANDLER.test(name)) {
             continue;
         }
-        if (name === 'style') {
+        if (name.toLowerCase() === 'style') {
             props.style = styleOf(value);
         } else if (Object.hasOwn(PROP_NAMES, name)) {
             props[PROP_NAMES[name] ?? name] = value;

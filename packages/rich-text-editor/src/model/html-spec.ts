@@ -3,7 +3,7 @@
 import { type SharedAttribute, URL_ATTRIBUTES } from './compile';
 import { type HtmlAttributeValue, type HtmlSpec, type JsonObject } from './declarations';
 import { checkHref } from './href';
-import { isRecord, ownValue } from './values';
+import { isPlainCss, isRecord, ownValue } from './values';
 
 type Values = Readonly<Record<string, unknown>>;
 
@@ -17,9 +17,6 @@ export interface HtmlTemplate {
     readonly layers: readonly HtmlLayer[];
     readonly content: boolean;
 }
-
-/** A value that cannot end its declaration or reach a URL, comment or markup. */
-const isPlainCss = (value: string) => !/[;:()'"\\{}<]|\/\*/.test(value);
 
 /** By local name, as the compiler checks it: `xlink:href` is `href`. */
 const isUrlAttribute = (name: string) => URL_ATTRIBUTES.has(name.toLowerCase().split(/[\s:]/).at(-1) ?? '');
@@ -72,6 +69,9 @@ const resolveLayers = (
     for (const [name, binding] of bindings) {
         const value = readValue(binding, values, options);
         if (value === undefined) {
+            continue;
+        }
+        if (name.toLowerCase() === 'style' && typeof binding === 'object' && 'attr' in binding && !isPlainCss(value)) {
             continue;
         }
         if (!isUrlAttribute(name)) {

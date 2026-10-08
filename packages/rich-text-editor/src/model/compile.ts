@@ -46,9 +46,9 @@ import {
     snapshot,
 } from './values';
 
-/** HTML attributes whose value is a URL (SPEC-rich-text/AC-071). */
+/** HTML attributes whose value is a URL, by lowercase name, so the React props `xlinkHref` and `srcDoc` match too (SPEC-rich-text/AC-071). */
 export const URL_ATTRIBUTES = new Set(
-    'href src srcset action formaction poster cite data xlink:href ping background longdesc usemap manifest codebase icon profile'.split(
+    'href src srcset srcdoc action formaction poster cite data xlink:href xlinkhref ping background longdesc usemap manifest codebase icon profile'.split(
         ' ',
     ),
 );
