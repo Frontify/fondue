@@ -893,6 +893,47 @@ describe('compileContentModel declarations', () => {
     });
 });
 
+describe('compileContentModel formats', () => {
+    const quote = (formats: unknown) =>
+        feature({
+            id: 'test.quote',
+            version: 1,
+            requires: requiresCore,
+            nodes: { quote: block('inline*') },
+            formats,
+        } as FeatureDeclaration);
+
+    it('SPEC-rich-text-output/AC-016 rejects html marked unsupported, since every node and mark derives HTML from its spec', () => {
+        expect(
+            failureOf(() => compile([core(), quote({ html: 'unsupported', text: 'lossy', markdown: 'lossy' })])),
+        ).toEqual({
+            code: 'definition.invalid-declaration',
+            details: { feature: 'test.quote', path: '/formats/html' },
+        });
+    });
+
+    it.each(['text', 'markdown'])(
+        'SPEC-rich-text-output/AC-016 rejects a %s support that is not a support level',
+        (format) => {
+            const formats = { html: 'lossless', text: 'lossy', markdown: 'lossy', [format]: 'partial' };
+
+            expect(failureOf(() => compile([core(), quote(formats)]))).toEqual({
+                code: 'definition.invalid-declaration',
+                details: { feature: 'test.quote', path: `/formats/${format}` },
+            });
+        },
+    );
+
+    it('SPEC-rich-text-output/AC-016 accepts each support level and a feature with no nodes, marks or formats', () => {
+        const empty = feature({ id: 'test.empty', version: 1, requires: requiresCore });
+
+        expect(() =>
+            compile([core(), quote({ html: 'lossy', text: 'unsupported', markdown: 'lossless' })]),
+        ).not.toThrow();
+        expect(() => compile([core(), empty])).not.toThrow();
+    });
+});
+
 describe('compileContentModel order', () => {
     it('SPEC-rich-text/AC-026 orders plugins of one phase by the host list, in both orders', () => {
         const forward = compile([core(), fixtureBold(), fixtureHeading()]);

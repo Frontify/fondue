@@ -16,9 +16,9 @@ import {
 import { defineReaderFeature, type ReaderNodeProps } from '../../src/reader/define';
 
 /**
- * The vocabulary stand-ins of `src/features/__fixtures__/vocabulary.ts` with the semantic `html` specs the shipped
- * features will carry, under the same feature IDs, so every document of `fixtures/model/valid` renders as the
- * reader's Semantic elements list names them. Test-only; never in the registry or a profile.
+ * The vocabulary stand-ins of `src/features/__fixtures__/vocabulary.ts` with the semantic `html` specs and the format
+ * support the shipped features will carry, under the same feature IDs, so every document of `fixtures/model/valid`
+ * renders as the reader's Semantic elements list names them. Test-only; never in the registry or a profile.
  */
 const requires = [{ id: 'core', version: 1 }];
 const nodeId = { type: 'string', required: true } as const;
@@ -56,12 +56,14 @@ const styles = defineFeature({
     id: 'fixture.styles',
     version: 1,
     requires,
+    formats: { html: 'lossy', text: 'lossy', markdown: 'lossy' },
     attributes: { styleId: { on: ['paragraph', 'heading', 'blockquote'], value: styleId } },
 });
 const align = defineFeature({
     id: 'fixture.align',
     version: 1,
     requires,
+    formats: { html: 'lossy', text: 'lossy', markdown: 'lossy' },
     attributes: {
         align: {
             on: ['paragraph', 'heading'],
@@ -73,12 +75,14 @@ const indent = defineFeature({
     id: 'fixture.indent',
     version: 1,
     requires,
+    formats: { html: 'lossy', text: 'lossy', markdown: 'lossy' },
     attributes: { indent: { on: ['paragraph', 'heading'], value: { type: 'integer', min: 0, max: 6, default: 0 } } },
 });
 const blocks = defineFeature({
     id: 'fixture.blocks',
     version: 1,
     requires,
+    formats: { html: 'lossless', text: 'lossy', markdown: 'lossy' },
     nodes: {
         heading: {
             ...block('inline*'),
@@ -109,6 +113,7 @@ const lists = defineFeature({
     id: 'fixture.lists',
     version: 1,
     requires,
+    formats: { html: 'lossy', text: 'lossy', markdown: 'lossy' },
     nodes: {
         bullet_list: {
             ...block('list_item+'),
@@ -144,6 +149,7 @@ const tables = defineFeature({
     id: 'fixture.tables',
     version: 1,
     requires,
+    formats: { html: 'lossy', text: 'lossy', markdown: 'lossy' },
     nodes: {
         table: { ...block('table_row+'), attrs: { nodeId }, html: ['table', 0], parse: [] },
         table_row: { content: '(table_cell | table_header)+', attrs: {}, html: ['tr', 0], parse: [] },
@@ -162,6 +168,7 @@ const media = defineFeature({
     id: 'fixture.media',
     version: 1,
     requires,
+    formats: { html: 'lossy', text: 'lossy', markdown: 'lossy' },
     nodes: {
         figure: {
             ...block('asset_image'),
@@ -201,6 +208,7 @@ const mention = defineFeature({
     id: 'fixture.mention',
     version: 1,
     requires,
+    formats: { html: 'lossy', text: 'lossless', markdown: 'lossy' },
     nodes: {
         mention: {
             group: 'inline',
@@ -221,6 +229,7 @@ const marks = defineFeature({
     id: 'fixture.marks',
     version: 1,
     requires,
+    formats: { html: 'lossless', text: 'lossy', markdown: 'lossy' },
     marks: {
         bold: { attrs: {}, ...mark(['strong', 0]) },
         italic: { attrs: {}, ...mark(['em', 0]) },
@@ -242,6 +251,7 @@ const link = defineFeature({
     id: 'fixture.link',
     version: 1,
     requires,
+    formats: { html: 'lossy', text: 'lossy', markdown: 'lossy' },
     marks: {
         link: {
             attrs: {
@@ -257,6 +267,7 @@ const colors = defineFeature({
     id: 'fixture.colors',
     version: 1,
     requires,
+    formats: { html: 'lossy', text: 'lossy', markdown: 'lossy' },
     marks: { font_color: color('span'), highlight: color('mark') },
 });
 
