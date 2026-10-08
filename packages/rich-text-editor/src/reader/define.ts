@@ -12,6 +12,7 @@ import {
     type RichTextLocale,
     type TranslationStrings,
 } from '#/model';
+import { pointer } from '#/model/errors';
 import { createFeature, featureInternals } from '#/model/feature';
 
 /** What a reader override reads: plain data and functions, never a React context (SPEC-rich-text-output/AC-049). */
@@ -43,17 +44,26 @@ export const readerOverrides = (feature: Feature): ReaderRenderers | undefined =
 /** Attaches reader overrides to a feature; each must name a node or mark the feature declares. */
 export const defineReaderFeature = <F extends Feature>(feature: F, renderers: ReaderRenderers): F => {
     const internals = featureInternals(feature);
-    const declared = new Set<string>();
+    const declared = new Map<string, string>();
     if (internals !== undefined) {
-        for (const members of [internals.declaration.nodes, internals.declaration.marks]) {
+        const { nodes, marks } = internals.declaration;
+        for (const [kind, members] of [
+            ['nodes', nodes],
+            ['marks', marks],
+        ] as const) {
             for (const name of Object.keys(members ?? {})) {
-                declared.add(name);
+                declared.set(name, pointer(kind, name));
             }
         }
     }
-    for (const name of Object.keys(renderers)) {
-        if (!declared.has(name)) {
+    for (const [name, renderer] of Object.entries(renderers)) {
+        const path = declared.get(name);
+        if (path === undefined) {
             throw new DefinitionError('definition.missing-reader', { feature: feature.id, name });
+        }
+        // The reader calls an override as a function to catch its throw, which a `memo` or `forwardRef` object cannot take.
+        if (typeof renderer !== 'function') {
+            throw new DefinitionError('definition.invalid-declaration', { feature: feature.id, path });
         }
     }
     let attached: Feature = feature;

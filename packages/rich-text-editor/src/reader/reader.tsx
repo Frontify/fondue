@@ -5,14 +5,15 @@ import { type ReactElement } from 'react';
 import { enUS } from '#/locales/en-US';
 import {
     type ContentModel,
-    decodeDocument,
     type DecodeOptions,
     type Diagnostic,
+    type JsonValue,
     type ReferenceResolution,
     type ResourceLimits,
     type RichTextLocale,
 } from '#/model';
-import { checkContent } from '#/model/content';
+import { decodeToTree } from '#/model/decode';
+import { canonicalJson } from '#/model/hash';
 
 import { readerContext } from './context';
 import { planOf } from './plan';
@@ -55,37 +56,39 @@ const build = ({ document, model, presentation, locale = enUS, limits }: RichTex
     if (limits !== undefined) {
         options = { limits };
     }
-    const decoded = decodeDocument(document, model, options);
+    const { result, tree } = decodeToTree(document, model, options);
     let reason: 'unsupported' | 'invalid' = 'invalid';
-    if (decoded.status === 'blocked') {
-        if (decoded.reason === 'unsupported') {
+    if (result.status === 'blocked') {
+        if (result.reason === 'unsupported') {
             reason = 'unsupported';
         }
         return { element: message(context, reason), diagnostics, notified };
     }
-    // `decodeDocument` returns the migrated JSON, not the islands it found, so the content is checked once more for them.
-    const { tree } = checkContent(decoded.document.content, model);
     if (tree === undefined) {
         return { element: message(context, 'invalid'), diagnostics, notified };
     }
-    const state: RenderState = { plan: planOf(model), context, diagnostics, islands: 0 };
+    const state: RenderState = { plan: planOf(model), context, diagnostics, islands: 0, carried: 0 };
     return { element: renderDocument(state, tree), diagnostics, notified };
 };
 
-type Level = WeakMap<object, Level | Output>;
+interface Slot {
+    readonly objects: WeakMap<object, Output>;
+    /** The last JSON text rendered, so a host that passes the same text each render decodes once. */
+    text?: string;
+    output?: Output;
+}
+type Level = WeakMap<object, Level | Map<string, Slot>>;
 const outputs: Level = new WeakMap();
 const NONE = {};
 
-/** One output per document object, model, presentation, locale and limits, so a rerender neither decodes nor builds again. */
+/** One output per document, model, presentation, locale and limits (by value), so a rerender neither decodes nor builds again. */
 const outputOf = (props: RichTextReaderProps): Output => {
     const { document, model, presentation, locale, limits } = props;
-    if (typeof document !== 'object' || document === null) {
+    if (typeof document !== 'string' && (typeof document !== 'object' || document === null)) {
         return build(props);
     }
-    const presented = presentation ?? NONE;
-    const localized = locale ?? NONE;
     let level = outputs;
-    for (const key of [document, model, presented, localized]) {
+    for (const key of [model, presentation ?? NONE]) {
         let next = level.get(key) as Level | undefined;
         if (next === undefined) {
             next = new WeakMap();
@@ -93,11 +96,29 @@ const outputOf = (props: RichTextReaderProps): Output => {
         }
         level = next;
     }
-    const last = limits ?? NONE;
-    let output = level.get(last) as Output | undefined;
+    const localized = locale ?? NONE;
+    let slots = level.get(localized) as Map<string, Slot> | undefined;
+    if (slots === undefined) {
+        slots = new Map();
+        level.set(localized, slots);
+    }
+    const limitsKey = canonicalJson((limits ?? {}) as JsonValue);
+    let slot = slots.get(limitsKey);
+    if (slot === undefined) {
+        slot = { objects: new WeakMap() };
+        slots.set(limitsKey, slot);
+    }
+    if (typeof document === 'string') {
+        if (slot.output === undefined || slot.text !== document) {
+            slot.output = build(props);
+            slot.text = document;
+        }
+        return slot.output;
+    }
+    let output = slot.objects.get(document);
     if (output === undefined) {
         output = build(props);
-        level.set(last, output);
+        slot.objects.set(document, output);
     }
     return output;
 };

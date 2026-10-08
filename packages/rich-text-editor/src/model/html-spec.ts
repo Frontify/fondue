@@ -117,14 +117,22 @@ export const resolveHtmlSpec = (
     return { layers, content };
 };
 
-/** A run of spaces alternates U+0020 and U+00A0 from a space, so a long line still wraps (SPEC-rich-text-output/AC-046). */
-export const renderSpaces = (text: string): string =>
-    text.replaceAll(/ {2,}/g, (run) => {
-        const pairs = ' \u00A0'.repeat(Math.floor(run.length / 2));
-        if (run.length % 2 === 1) {
-            return `${pairs} `;
+/** A run of spaces alternates U+0020 and U+00A0 from a space, so a long line still wraps (SPEC-rich-text-output/AC-046); `carried` spaces from the text before count as the run's start. */
+export const renderSpaces = (text: string, carried = 0): string =>
+    text.replaceAll(/ +/g, (run, at: number) => {
+        let start = 0;
+        if (at === 0) {
+            start = carried;
         }
-        return pairs;
+        let spaces = '';
+        for (let index = 0; index < run.length; index += 1) {
+            if ((start + index) % 2 === 0) {
+                spaces += ' ';
+            } else {
+                spaces += '\u00A0';
+            }
+        }
+        return spaces;
     });
 
 /** The `text` of each `text` object at a node position of an island's `original`, in document order. */

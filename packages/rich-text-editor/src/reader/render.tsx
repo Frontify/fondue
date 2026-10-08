@@ -17,6 +17,8 @@ export interface RenderState {
     readonly diagnostics: Diagnostic[];
     /** Opaque islands met so far; the document gets one notice when this is not zero. */
     islands: number;
+    /** The spaces that end the text rendered last in this block, so a run of spaces alternates across text nodes. */
+    carried: number;
 }
 
 const VOID_TAGS = new Set('area base br col embed hr img input link meta source track wbr'.split(' '));
@@ -122,6 +124,20 @@ const fallback = (
     return createElement(tag, { role: 'group', 'aria-label': label, 'data-rte-island': '' }, ...children);
 };
 
+const spaced = (state: RenderState, text: string): string => {
+    const carried = state.carried;
+    let trailing = 0;
+    while (trailing < text.length && text[text.length - 1 - trailing] === ' ') {
+        trailing += 1;
+    }
+    if (trailing === text.length) {
+        state.carried = carried + trailing;
+    } else {
+        state.carried = trailing;
+    }
+    return renderSpaces(text, carried);
+};
+
 const textOf = (node: TreeNode): string => {
     if (isIsland(node)) {
         return islandText(node.attrs?.original);
@@ -200,7 +216,7 @@ const renderNode = (state: RenderState, { node, path }: Item, pre: boolean): Rea
         if (pre) {
             return text;
         }
-        return renderSpaces(text);
+        return spaced(state, text);
     }
     if (isIsland(node)) {
         state.islands += 1;
@@ -213,7 +229,7 @@ const renderNode = (state: RenderState, { node, path }: Item, pre: boolean): Rea
         if (typeof feature === 'string') {
             featureId = feature;
         }
-        return fallback(state, tag, featureId, [islandText(node.attrs?.original)]);
+        return fallback(state, tag, featureId, [renderSpaces(islandText(node.attrs?.original))]);
     }
     const plan = state.plan.nodes.get(node.type);
     if (plan === undefined) {
@@ -231,7 +247,11 @@ const renderNode = (state: RenderState, { node, path }: Item, pre: boolean): Rea
             if (plan.inline) {
                 tag = 'span';
             }
-            return fallback(state, tag, plan.featureId, [textOf(node)]);
+            let fallbackText = textOf(node);
+            if (!plan.pre) {
+                fallbackText = renderSpaces(fallbackText);
+            }
+            return fallback(state, tag, plan.featureId, [fallbackText]);
         }
     }
     return build(resolveHtmlSpec(plan.spec, attrs, plan.options, plan.shared), children);
@@ -248,6 +268,9 @@ const renderRun = (state: RenderState, items: readonly Item[], depth: number, pr
         const entry = item.marks[depth];
         if (entry === undefined) {
             out.push(renderNode(state, item, pre));
+            if (item.node.type !== 'text') {
+                state.carried = 0;
+            }
             index += 1;
             continue;
         }
