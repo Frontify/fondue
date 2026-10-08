@@ -1,0 +1,22 @@
+packages/components/src/components/OrderableList/OrderableListItem.tsx
+  s_da70fea32e1889::t_06e69be7ba5161 40,42
+packages/components/src/components/OrderableList/__tests__/OrderableList.ct.tsx
+  s_da70fea32e1889::t_09b5abe5452c5d 325-344,351-395
+  s_da70fea32e1889::t_117dac7ab7f9bc 345-350
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9bd6180663442ec1f8e2e4726e98494b68ed5fbb",
+  "prompts": {},
+  "sessions": {
+    "s_da70fea32e1889": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "bb8777c7-5dd7-43c5-9e15-0f27704deb8b",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Red Ochsenbein <red.ochsenbein@frontify.com>"
+    }
+  }
+}

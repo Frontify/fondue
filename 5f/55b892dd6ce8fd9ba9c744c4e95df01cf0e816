@@ -1,0 +1,26 @@
+.changeset/tree-rounded-drag-edges.md
+  s_68254d0d83d78c::t_7c8af339f58b45 1-5
+  s_68254d0d83d78c::t_49bae1616d8685 6
+packages/components/src/components/Tree/components/TreeRow.tsx
+  s_68254d0d83d78c::t_92e68af1c2de1e 156
+packages/components/src/components/Tree/styles/tree.module.scss
+  s_68254d0d83d78c::t_5d51d2be172870 215
+  s_68254d0d83d78c::t_c347f839c2094b 27
+  s_68254d0d83d78c::t_dfd96e0e7df83d 63,73,77,86
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "5f55b892dd6ce8fd9ba9c744c4e95df01cf0e816",
+  "prompts": {},
+  "sessions": {
+    "s_68254d0d83d78c": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "df3dcb80-010b-40ab-bde9-b5db35224c1d",
+        "model": "grok-4.7"
+      },
+      "human_author": "José Costa <j.costa.3394@gmail.com>"
+    }
+  }
+}

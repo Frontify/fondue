@@ -1,0 +1,23 @@
+packages/sdk/package.json
+  s_6a5ea3ee829594::t_884021eee92f5e 47,50-53
+packages/fondue/package.json
+  s_6a5ea3ee829594::t_0751f3a5f93596 146-151,194
+pnpm-lock.yaml
+  s_6a5ea3ee829594::t_9560de291955d8 455,458,461,464,467,470,1233,1243-1246
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "development:1.7.6",
+  "base_commit_sha": "c83a9a98902207c7db133da16abb3bdd4cac6af1",
+  "prompts": {},
+  "sessions": {
+    "s_6a5ea3ee829594": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "13ecda6a-8bbf-4793-bfba-45c7c8218273",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Noah Waldner <noah.waldner@frontify.com>"
+    }
+  }
+}
