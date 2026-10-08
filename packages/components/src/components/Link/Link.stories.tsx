@@ -109,18 +109,20 @@ export const AllVariants: Story = {
         rel: 'noopener noreferrer',
     },
 };
-export const External: Story = {
-    args: {},
-    render: (args) => (
-        <Link
-            href="https://google.com"
-            size="x-small"
-            target="_blank"
-            color="secondary"
-            className="tw-inline-flex tw-items-center tw-gap-1 hover:tw-text-secondary-hover active:tw-text-secondary-active"
-        >
-            TEST
-        </Link>
+
+export const Targets: Story = {
+    render: () => (
+        <RouterProvider navigate={(path: string) => alert(`Navigate to: ${path}`)} useHref={(path: string) => path}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                <Link href="/hello">Default: navigates through the router</Link>
+                <Link href="/hello" target="_self">
+                    target=&quot;_self&quot;: navigates through the router
+                </Link>
+                <Link href="https://www.frontify.com" target="_blank" rel="noopener noreferrer">
+                    target=&quot;_blank&quot;: opens a new tab
+                </Link>
+            </div>
+        </RouterProvider>
     ),
 };
 
