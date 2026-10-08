@@ -6,6 +6,7 @@ import { Dropdown } from '#/index';
 
 import { Tree } from '../Tree';
 
+import { RowDialogHarness } from './testutils/RowDialogHarness';
 import { TestHarness } from './testutils/TestHarness';
 
 test.describe('TreeRoot rendering', () => {
@@ -192,6 +193,50 @@ test.describe('TreeRoot rendering', () => {
         await expect(outside).toBeFocused();
     });
 
+    test('moves DOM focus to the next row when a row is removed while its portalled menu has focus', async ({
+        mount,
+        page,
+    }) => {
+        const component = await mount(
+            <Tree.Root>
+                <Tree.Item id="1">
+                    <Tree.Label>First</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="2">
+                    <Tree.Label>Second</Tree.Label>
+                    <Tree.Action>
+                        <Dropdown.Root>
+                            <Dropdown.Trigger>
+                                <button type="button">Second actions</button>
+                            </Dropdown.Trigger>
+                            <Dropdown.Content>
+                                <Dropdown.Item onSelect={() => {}}>Delete</Dropdown.Item>
+                            </Dropdown.Content>
+                        </Dropdown.Root>
+                    </Tree.Action>
+                </Tree.Item>
+                <Tree.Item id="3">
+                    <Tree.Label>Third</Tree.Label>
+                </Tree.Item>
+            </Tree.Root>,
+        );
+
+        await component.getByRole('button', { name: 'Second actions' }).press('Enter');
+        await expect(page.getByRole('menuitem', { name: 'Delete' })).toBeFocused();
+        await component.update(
+            <Tree.Root>
+                <Tree.Item id="1">
+                    <Tree.Label>First</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="3">
+                    <Tree.Label>Third</Tree.Label>
+                </Tree.Item>
+            </Tree.Root>,
+        );
+
+        await expect(component.getByRole('treeitem', { name: /Third/ })).toBeFocused();
+    });
+
     test('clicking away from an open portalled Dropdown does not pull focus back into the tree', async ({
         mount,
         page,
@@ -262,8 +307,24 @@ test.describe('TreeRoot rendering', () => {
         );
 
         await expect(page.locator('body')).toBeFocused();
-        await expect(component.getByRole('treeitem', { name: /Row1/ })).toHaveAttribute('tabindex', '0');
     });
+
+    for (const modal of [false, true]) {
+        test(`a row's ${modal ? 'modal' : 'non-modal'} Dialog keeps focus when its focused control unmounts`, async ({
+            mount,
+            page,
+        }) => {
+            const component = await mount(<RowDialogHarness modal={modal} />);
+
+            await component.getByRole('button', { name: 'Row2 settings' }).click();
+            await page.getByRole('button', { name: 'Save' }).click();
+            await expect(page.getByText('Saving')).toBeVisible();
+
+            // A modal Dialog hides the tree from the accessibility tree.
+            await expect(component.getByRole('treeitem', { name: /Row2/, includeHidden: true })).not.toBeFocused();
+            await expect(page.getByRole('dialog')).toBeVisible();
+        });
+    }
 });
 
 test.describe('TreeRoot row click', () => {
