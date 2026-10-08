@@ -151,7 +151,13 @@ export const TreeRoot = ({
                 };
                 setHasFocusWithin(true);
             }}
-            onBlur={(event) => setHasFocusWithin(event.currentTarget.contains(event.relatedTarget))}
+            onBlur={(event) => {
+                // Switching windows blurs with no target but leaves the row active, and focus returns to it.
+                if (event.relatedTarget === null && !document.hasFocus()) {
+                    return;
+                }
+                setHasFocusWithin(event.currentTarget.contains(event.relatedTarget));
+            }}
         >
             {rowHint && (
                 <span id={rowHintId} className={styles.srOnly}>

@@ -284,6 +284,41 @@ test.describe('TreeRoot rendering', () => {
         await expect(component.getByRole('treeitem', { name: /Third/ })).toBeFocused();
     });
 
+    test('restores focus after the focused row is removed while the window was inactive', async ({ mount, page }) => {
+        const component = await mount(
+            <Tree.Root>
+                <Tree.Item id="1">
+                    <Tree.Label>First</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="2">
+                    <Tree.Label>Second</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="3">
+                    <Tree.Label>Third</Tree.Label>
+                </Tree.Item>
+            </Tree.Root>,
+        );
+
+        await component.getByRole('treeitem', { name: /Second/ }).click();
+        // Switching windows: a blur with no target while the row stays the active element.
+        await page.evaluate(() => {
+            document.hasFocus = () => false;
+            document.activeElement?.dispatchEvent(new FocusEvent('focusout', { bubbles: true, relatedTarget: null }));
+        });
+        await component.update(
+            <Tree.Root>
+                <Tree.Item id="1">
+                    <Tree.Label>First</Tree.Label>
+                </Tree.Item>
+                <Tree.Item id="3">
+                    <Tree.Label>Third</Tree.Label>
+                </Tree.Item>
+            </Tree.Root>,
+        );
+
+        await expect(component.getByRole('treeitem', { name: /Third/ })).toBeFocused();
+    });
+
     test('clicking away from an open portalled Dropdown does not pull focus back into the tree', async ({
         mount,
         page,
