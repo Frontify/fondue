@@ -519,7 +519,7 @@ describe('useTreeController focus pruning', () => {
         expect(result.current.getItemInstance('c1').isFocused()).toBe(false);
     });
 
-    it('moves focus to the next surviving row when its folder collapses by prop', () => {
+    it('moves focus to the collapsed folder when its folder collapses by prop', () => {
         const items: TreeItemData[] = [
             {
                 id: 'f',
@@ -544,7 +544,7 @@ describe('useTreeController focus pruning', () => {
             items: [{ ...items[0], isExpanded: false }, items[1], items[2]] as TreeItemData[],
         });
 
-        expect(result.current.getItemInstance('y').isFocused()).toBe(true);
+        expect(result.current.getItemInstance('f').isFocused()).toBe(true);
         expect(result.current.getItems().some((item) => item.getId() === 'c1')).toBe(false);
     });
 });

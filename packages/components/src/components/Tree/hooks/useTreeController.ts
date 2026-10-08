@@ -21,6 +21,7 @@ import { getCheckedUnitIds, isCheckableUnit } from '../utils/computeCheckedState
 import { createCanDrop } from '../utils/createCanDrop';
 import { createDropHandler } from '../utils/createDropHandler';
 import { diffSelection } from '../utils/diffSelection';
+import { getFocusFallback } from '../utils/getFocusFallback';
 import { getStructureKey } from '../utils/getStructureKey';
 
 type UseTreeControllerOptions = {
@@ -112,6 +113,11 @@ export const useTreeController = ({
     // gets `tabIndex=0` — otherwise the roving tabindex leaves the tree unreachable by Tab.
     const [internalFocusedItem, setInternalFocusedItem] = useState<string | undefined>(() => items[0]?.id);
     const [previousItems, setPreviousItems] = useState(items);
+    // Adjusted during render so the row leaving the screen never renders as the tab stop; `undefined` falls back to the first row.
+    if (previousItems !== items) {
+        setPreviousItems(items);
+        setInternalFocusedItem(getFocusFallback(internalFocusedItem, previousItems, items));
+    }
 
     // Renames are started by the `isRenaming` prop but ended by the tree, which must take
     // effect before the consumer clears the prop — so internal state is the source of
@@ -293,19 +299,6 @@ export const useTreeController = ({
             renamingFeature,
         ],
     });
-
-    // Moves focus off a removed or collapsed-away row to its next visible neighbour, else the previous; `null` state then falls back to the first row.
-    if (previousItems !== items) {
-        setPreviousItems(items);
-        const isVisible = (id: string) => tree.getItemInstance(id).getItemMeta().index >= 0;
-        if (internalFocusedItem !== undefined && !isVisible(internalFocusedItem)) {
-            const previousIds = previousItems.map((item) => item.id);
-            const focusedIndex = previousIds.indexOf(internalFocusedItem);
-            const nextVisible = previousIds.slice(focusedIndex + 1).find(isVisible);
-            const previousVisible = previousIds.slice(0, focusedIndex).reverse().find(isVisible);
-            setInternalFocusedItem(nextVisible ?? previousVisible);
-        }
-    }
 
     useEffect(() => {
         tree.rebuildTree();

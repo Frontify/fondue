@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { AssistiveTreeDescription } from '@headless-tree/react';
-import { Fragment, useEffect, useId, useMemo, useRef, type ReactNode } from 'react';
+import { Fragment, useEffect, useId, useMemo, useState, type ReactNode } from 'react';
 
 import { useTranslation } from '#/hooks/useTranslation';
 
@@ -75,17 +75,16 @@ export const TreeRoot = ({
     });
 
     // React drops the blur fired while it removes the focused row, so this stays true through a removal.
-    const hasFocusWithinRef = useRef(false);
+    const [hasFocusWithin, setHasFocusWithin] = useState(false);
+    // An empty tree has nowhere to keep focus, and no blur will arrive to clear the flag.
+    if (hasFocusWithin && items.length === 0) {
+        setHasFocusWithin(false);
+    }
     // Runs every commit: a removed row can take focus with it while the tab stop stays on another row.
     useEffect(() => {
-        if (!hasFocusWithinRef.current || document.activeElement !== document.body) {
-            return;
+        if (hasFocusWithin && document.activeElement === document.body) {
+            tree.getFocusedItem().getElement()?.focus();
         }
-        if (tree.getItems().length === 0) {
-            hasFocusWithinRef.current = false;
-            return;
-        }
-        tree.getFocusedItem().getElement()?.focus();
     });
 
     const visibleItems = tree.getItems();
@@ -112,12 +111,8 @@ export const TreeRoot = ({
         <div
             {...tree.getContainerProps()}
             className={styles.tree}
-            onFocus={() => {
-                hasFocusWithinRef.current = true;
-            }}
-            onBlur={() => {
-                hasFocusWithinRef.current = false;
-            }}
+            onFocus={() => setHasFocusWithin(true)}
+            onBlur={(event) => setHasFocusWithin(event.currentTarget.contains(event.relatedTarget))}
         >
             {rowHint && (
                 <span id={rowHintId} className={styles.srOnly}>
