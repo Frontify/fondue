@@ -11,5 +11,7 @@
     "@frontify/fondue-tokens": "5.1.2",
     "@frontify/fondue-storybook-docs": "0.0.2"
   },
-  "changesets": []
+  "changesets": [
+    "rude-moose-guess"
+  ]
 }

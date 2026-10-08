@@ -1,5 +1,17 @@
 # @frontify/fondue-components
 
+## 34.0.0-beta.0
+
+### Major Changes
+
+- [#2877](https://github.com/Frontify/fondue/pull/2877) [`f59824e`](https://github.com/Frontify/fondue/commit/f59824e0f9b33a4ee6b8f1f290cbfed5b67374c7) Thanks [@fondue-release-bot](https://github.com/apps/fondue-release-bot)! - bump packages for fondue v14
+
+### Patch Changes
+
+- Updated dependencies [[`f59824e`](https://github.com/Frontify/fondue/commit/f59824e0f9b33a4ee6b8f1f290cbfed5b67374c7)]:
+  - @frontify/fondue-icons@1.0.0-beta.0
+  - @frontify/fondue-tokens@6.0.0-beta.0
+
 ## 33.0.2
 
 ### Patch Changes
