@@ -152,8 +152,14 @@ export const TreeRoot = ({
                 };
                 setHasFocusWithin(true);
             }}
-            // Checks where focus went: a render between a row's blur and the next row's focus must not move the tab stop.
-            onBlur={(event) => setHasFocusWithin(event.currentTarget.contains(event.relatedTarget))}
+            onBlur={(event) => {
+                // Switching windows blurs with no target but leaves the row active, and focus returns to it.
+                if (event.relatedTarget === null && !document.hasFocus()) {
+                    return;
+                }
+                // Checks where focus went: a render between a row's blur and the next row's focus must not move the tab stop.
+                setHasFocusWithin(event.currentTarget.contains(event.relatedTarget));
+            }}
         >
             {rowHint && (
                 <span id={rowHintId} className={styles.srOnly}>
