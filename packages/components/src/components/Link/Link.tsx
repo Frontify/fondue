@@ -135,10 +135,10 @@ export const Link = forwardRef<HTMLAnchorElement, LinkProps>(
                     return;
                 }
 
-                const useClientNavigation = !target || target === '_self';
+                const shouldUseClientSideNavigation = !target || target === '_self';
                 if (
                     href &&
-                    useClientNavigation &&
+                    shouldUseClientSideNavigation &&
                     !event.metaKey &&
                     !event.ctrlKey &&
                     !event.shiftKey &&
