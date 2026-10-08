@@ -17,7 +17,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { INDENT_STEP_PX, ROOT_ID, ROOT_NAME } from '../constants';
 import { type TreeChangeState, type TreeDropCandidate, type TreeItemData } from '../types';
 import { buildChangeState, type FlatTreeState } from '../utils/buildChangeState';
-import { getCheckedUnitIds, isCheckableUnit } from '../utils/computeCheckedStates';
+import { computeCheckedStates, getCheckedUnitIds, isCheckableUnit } from '../utils/computeCheckedStates';
 import { createCanDrop } from '../utils/createCanDrop';
 import { createDropHandler } from '../utils/createDropHandler';
 import { diffSelection } from '../utils/diffSelection';
@@ -128,9 +128,26 @@ export const useTreeController = ({
         if (hasFocusWithin) {
             return internalFocusedItem;
         }
-        const selectedIds = new Set([...selectedItems, ...checkedItems]);
+        const selectedIds = new Set(selectedItems);
+        // Folder rows count too: a collapsed folder whose descendants are all checked renders as checked.
+        if (multiSelect) {
+            const checkedStates = computeCheckedStates(items, new Set(checkedItems), { countDisabledInFolderState });
+            for (const [id, state] of checkedStates) {
+                if (state === true) {
+                    selectedIds.add(id);
+                }
+            }
+        }
         return getVisibleIds(items).find((id) => selectedIds.has(id)) ?? internalFocusedItem;
-    }, [hasFocusWithin, internalFocusedItem, items, selectedItems, checkedItems]);
+    }, [
+        hasFocusWithin,
+        internalFocusedItem,
+        items,
+        selectedItems,
+        checkedItems,
+        multiSelect,
+        countDisabledInFolderState,
+    ]);
 
     // Renames are started by the `isRenaming` prop but ended by the tree, which must take
     // effect before the consumer clears the prop — so internal state is the source of
