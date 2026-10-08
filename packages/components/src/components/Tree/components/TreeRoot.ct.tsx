@@ -320,6 +320,8 @@ test.describe('TreeRoot rendering', () => {
         );
 
         await expect(component.getByRole('treeitem', { name: /Second/ })).toBeFocused();
+        await expect(component.getByRole('treeitem', { name: /Second/ })).toHaveAttribute('tabindex', '0');
+        await expect(component.getByRole('treeitem', { name: /Fourth/ })).toHaveAttribute('tabindex', '-1');
     });
 
     test('a selected row hidden in a collapsed folder does not take the tab stop', async ({ mount, page }) => {

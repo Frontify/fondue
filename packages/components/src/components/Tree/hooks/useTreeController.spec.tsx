@@ -628,6 +628,19 @@ describe('useTreeController focus follows selection', () => {
         expect(result.current.getItemInstance('f').isFocused()).toBe(true);
     });
 
+    it('skips a collapsed, partly checked folder for the next fully checked row in multi-select', () => {
+        const items: TreeItemData[] = [
+            { id: 'a', name: 'A', isFolder: false, parentId: ROOT_ID },
+            { id: 'f', name: 'F', isFolder: true, parentId: ROOT_ID, isExpanded: false, children: ['c1', 'c2'] },
+            { id: 'c1', name: 'C1', isFolder: false, parentId: 'f', isSelected: true },
+            { id: 'c2', name: 'C2', isFolder: false, parentId: 'f' },
+            { id: 'x', name: 'X', isFolder: false, parentId: ROOT_ID, isSelected: true },
+        ];
+        const { result } = renderHook(() => useTreeController({ items, multiSelect: true }));
+
+        expect(result.current.getItemInstance('x').isFocused()).toBe(true);
+    });
+
     it('does not hand the tab stop to a selected row hidden in a collapsed folder', () => {
         const items: TreeItemData[] = [
             { id: '1', name: 'One', isFolder: false, parentId: ROOT_ID },
