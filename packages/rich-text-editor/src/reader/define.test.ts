@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { forwardRef, memo } from 'react';
 import { describe, expect, it } from 'vitest';
 
 import { fixtureLink } from '#/features/__fixtures__/features';
@@ -29,6 +30,27 @@ describe('defineReaderFeature', () => {
             details: { feature: 'fixture.link', name: 'mention' },
         });
     });
+
+    it.each([
+        ['memo', memo(() => null)],
+        ['forwardRef', forwardRef(() => null)],
+        ['a string', 'div'],
+    ])(
+        'SPEC-rich-text-output/AC-047 rejects %s as an override, since the reader calls overrides as functions',
+        (_, value) => {
+            let failure: unknown;
+            try {
+                defineReaderFeature(fixtureLink(), { link: value as never });
+            } catch (error) {
+                failure = error;
+            }
+            expect(failure).toBeInstanceOf(DefinitionError);
+            expect(failure).toMatchObject({
+                code: 'definition.invalid-declaration',
+                details: { feature: 'fixture.link', path: '/marks/link' },
+            });
+        },
+    );
 
     it('SPEC-rich-text/AC-023 attaches overrides for declared nodes and marks and keeps the feature', () => {
         const link = defineReaderFeature(fixtureLink(), { link: renderer });

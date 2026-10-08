@@ -145,6 +145,46 @@ describe('RichTextReader islands', () => {
         );
     });
 
+    it('SPEC-rich-text-output/AC-002 renders a valid node that a requires-review migration step flagged as an island with the notice', () => {
+        const flagged = compileContentModel([core()], {
+            id: 'fixture.reviewed',
+            version: 2,
+            migrations: [
+                {
+                    id: 'flag',
+                    from: 1,
+                    migrate: (document) => ({
+                        status: 'requires-review',
+                        document,
+                        diagnostics: [
+                            {
+                                code: 'migration.requires-review',
+                                severity: 'warning',
+                                messageKey: 'migration.requires-review',
+                                path: '/content/content/1',
+                            },
+                        ],
+                    }),
+                },
+            ],
+        });
+        const stored = { ...(envelope(doc(paragraph(text('One')), paragraph(text('Two'))), ['core']) as object) };
+        const output = renderReader({ ...stored, model: { id: 'fixture.reviewed', version: 1 } }, flagged);
+
+        expect(output).toContain('<p>One</p>');
+        expect(output).toContain('data-rte-island="">Two</div>');
+        expect(output).not.toContain('<p>Two</p>');
+        expect(output.split(NOTICE)).toHaveLength(2);
+    });
+
+    it('SPEC-rich-text-output/AC-002 renders the text of an island with the same space alternation as other text', () => {
+        const spaced = read(wrap(paragraph(node('unsupported_inline_x', {}, text('a  b')))));
+        const block = read(wrap(node('mystery_block', {}, paragraph(text('a  b')))));
+
+        expect(spaced).toContain('data-rte-island="">a \u00A0b</span>');
+        expect(block).toContain('data-rte-island="">a \u00A0b</div>');
+    });
+
     it('SPEC-rich-text-output/AC-002 never writes the original JSON of an island', () => {
         expect(html).not.toContain('javascript:');
         expect(html).not.toContain('Which?');
@@ -330,6 +370,18 @@ describe('RichTextReader spaces', () => {
         expect(spaced('a     b')).toContain(`<p>a ${NBSP} ${NBSP} b</p>`);
     });
 
+    it('SPEC-rich-text-output/AC-046 carries the alternation across the text nodes of one block', () => {
+        const html = read(wrap(paragraph(text('a ', mark('bold')), text(' b'))));
+
+        expect(html).toContain(`<p><strong>a </strong>${NBSP}b</p>`);
+    });
+
+    it('SPEC-rich-text-output/AC-046 starts a new run in the next block', () => {
+        const html = read(wrap(paragraph(text('a ')), paragraph(text(' b'))));
+
+        expect(html).toContain('<p>a </p><p> b</p>');
+    });
+
     it('SPEC-rich-text-output/AC-046 keeps every space of a code block as U+0020', () => {
         const html = read(wrap(node('code_block', { languageId: null }, text('a  b'))));
 
@@ -373,6 +425,15 @@ describe('RichTextReader override failures', () => {
             '<div role="group" aria-label="Unsupported content: fixture.blocks" data-rte-island="">Quoted words</div>',
         );
         expect(html).toContain('<p>Safe</p>');
+    });
+
+    it('SPEC-rich-text-output/AC-047 renders the text of a failed override with the same space alternation', () => {
+        const spaced = renderReader(
+            envelope(doc(blockquote(paragraph(text('a  b')))), ['core', 'fixture.blocks']),
+            overridden,
+        );
+
+        expect(spaced).toContain('data-rte-island="">a \u00A0b</div>');
     });
 
     it('SPEC-rich-text-output/AC-047 renders an inline node whose override throws as a span, with no div inside the p', () => {
