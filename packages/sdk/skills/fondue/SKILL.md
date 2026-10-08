@@ -10,7 +10,7 @@ Use `@frontify/fondue/sdk` as the source of truth for every Fondue question. Nev
 
 **Runs against the project's locally installed Fondue.** Invoke `node` from the project root (or a subdirectory) so `@frontify/fondue` resolves from `node_modules` — results reflect the exact version this project depends on, not the version the skill was authored against.
 
-> Authored against `@frontify/fondue@13.8.1`. If the project's installed version differs, this document may be out of sync — trust what the SDK actually returns over anything written here.
+> Authored against `@frontify/fondue@13.9.0`. If the project's installed version differs, this document may be out of sync — trust what the SDK actually returns over anything written here.
 
 ## Verify the SDK is available
 
@@ -29,13 +29,13 @@ pnpm add @frontify/fondue   # or npm i / yarn add
 The SDK is a synchronous, zero-I/O ES module that resolves from the user's project. Three singletons share the same query surface:
 
 ```ts
-import { components, tokens, guides } from '@frontify/fondue/sdk';
+import { components, tokens, guides } from "@frontify/fondue/sdk";
 
 // Same shape on each domain:
 components.list();
-components.get('Button'); // ComponentNode | undefined (never throws)
-components.has('Button'); // boolean
-components.where({ text: 'dropdown' });
+components.get("Button"); // ComponentNode | undefined (never throws)
+components.has("Button"); // boolean
+components.where({ text: "dropdown" });
 components.size; // number
 ```
 
@@ -44,7 +44,7 @@ components.size; // number
 Nodes have **scalar fields** (read as properties) and **graph edges** (call as methods):
 
 ```ts
-const button = components.get('Button');
+const button = components.get("Button");
 button?.importStatement; // scalar
 button?.props; // scalar (array)
 button?.category(); // edge → ComponentFacetNode { name, list, where, … }
@@ -124,9 +124,9 @@ EOF
 Narrow by category or tag when the use case maps cleanly:
 
 ```ts
-components.where({ category: 'overlay', status: 'released' });
-components.where({ tag: 'cta' });
-components.where({ category: 'input', tag: 'cta' });
+components.where({ category: "overlay", status: "released" });
+components.where({ tag: "cta" });
+components.where({ category: "input", tag: "cta" });
 ```
 
 Once you have a candidate, pull the recommendation shape:
@@ -153,8 +153,8 @@ EOF
 **Icons** live in the components graph under `category: 'icon'`. They carry `status: 'released'` but have empty `props`, empty `related()`, and `instructions: null` — don't probe those fields. Find them with:
 
 ```ts
-components.where({ category: 'icon', tag: 'arrow' });
-components.get('IconAdobeCreativeCloud')?.importStatement;
+components.where({ category: "icon", tag: "arrow" });
+components.get("IconAdobeCreativeCloud")?.importStatement;
 ```
 
 When nothing matches:
@@ -171,20 +171,20 @@ Two layers exist:
 - `tokens.utilities` — composed Tailwind utilities (typography classes like `body-large-strong`) bundling multiple token references.
 
 ```ts
-tokens.where({ text: 'primary' });
-tokens.where({ category: 'colors', themeable: true });
-tokens.where({ keyPathStartsWith: 'colors.surface' }); // surface-default, surface-dim, …
-tokens.type('color')?.where({ themeable: true });
+tokens.where({ text: "primary" });
+tokens.where({ category: "colors", themeable: true });
+tokens.where({ keyPathStartsWith: "colors.surface" }); // surface-default, surface-dim, …
+tokens.type("color")?.where({ themeable: true });
 
-const t = tokens.get('color-charts-primary-default');
+const t = tokens.get("color-charts-primary-default");
 t?.value; // 'var(--color-charts-primary-default)' — a reference, never a resolved color
 t?.cssVariable; // 'var(--color-charts-primary-default)'
 t?.tailwindClass; // '*-charts-primary' — '*' stands in for the utility prefix (bg-, text-, border-, …)
 t?.themeable; // true
 
 // Typography: always use the utility class, not raw font tokens
-tokens.utilities.where({ keyPathStartsWith: 'utilities.text' });
-tokens.utilities.get('utilities-text-body-large-strong')?.tailwindClass; // 'body-large-strong' — no prefix
+tokens.utilities.where({ keyPathStartsWith: "utilities.text" });
+tokens.utilities.get("utilities-text-body-large-strong")?.tailwindClass; // 'body-large-strong' — no prefix
 ```
 
 `tailwindClass` never includes the consumer's prefix. Add the prefix the project configures in `tailwind.config.js` (the Fondue guides use `tw-`): `*-surface` → `tw-bg-surface`, `body-large-strong` → `tw-body-large-strong`.
