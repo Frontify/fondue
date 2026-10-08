@@ -593,6 +593,38 @@ test.describe('TreeRoot rendering', () => {
         await expect(component.getByRole('treeitem', { name: /Third/ })).toBeFocused();
     });
 
+    test('an outside pointerdown that leaves focus on a row keeps the tab stop and arrows on that row', async ({
+        mount,
+        page,
+    }) => {
+        const component = await mount(
+            <div>
+                <div data-testid="pad" style={{ height: 40 }} />
+                <Tree.Root>
+                    <Tree.Item id="1" isSelected>
+                        <Tree.Label>First</Tree.Label>
+                    </Tree.Item>
+                    <Tree.Item id="2">
+                        <Tree.Label>Second</Tree.Label>
+                    </Tree.Item>
+                    <Tree.Item id="3">
+                        <Tree.Label>Third</Tree.Label>
+                    </Tree.Item>
+                    <Tree.Item id="4">
+                        <Tree.Label>Fourth</Tree.Label>
+                    </Tree.Item>
+                </Tree.Root>
+            </div>,
+        );
+
+        await component.getByRole('treeitem', { name: /Third/ }).click();
+        await component.locator('[data-testid="pad"]').dispatchEvent('pointerdown', { pointerType: 'touch' });
+
+        await expect(component.getByRole('treeitem', { name: /Third/ })).toHaveAttribute('tabindex', '0');
+        await page.keyboard.press('ArrowDown');
+        await expect(component.getByRole('treeitem', { name: /Fourth/ })).toBeFocused();
+    });
+
     test('clicking away from an open portalled Dropdown does not pull focus back into the tree', async ({
         mount,
         page,
