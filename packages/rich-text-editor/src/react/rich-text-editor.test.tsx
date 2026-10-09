@@ -1,11 +1,30 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { readdirSync, readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
 import { act, render, screen } from '@testing-library/react';
-import { createRef, StrictMode } from 'react';
+import { createRef, Profiler, StrictMode, useEffect } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
+import { useEditorSelection } from '#/bridge/hooks';
 import * as schemaModule from '#/definition/schema';
-import { fixtureItalic } from '#/features/__fixtures__/features';
+import { doc, envelope, link, node, text } from '#/features/__fixtures__/documents';
+import { fixtureItalic, fixtureLink, fixtureMedia } from '#/features/__fixtures__/features';
+import { notesModel } from '#/features/__fixtures__/notes';
+import {
+    vocabularyAlign,
+    vocabularyBlocks,
+    vocabularyColors,
+    vocabularyIndent,
+    vocabularyLink,
+    vocabularyLists,
+    vocabularyMarks,
+    vocabularyMention,
+    vocabularyStyles,
+    vocabularyTables,
+} from '#/features/__fixtures__/vocabulary';
 import { core } from '#/features/core/feature';
 import { bold } from '#/features/marks-bold/feature';
 import { deDE } from '#/locales/de-DE';
@@ -19,11 +38,13 @@ import {
     type JsonValue,
 } from '#/model';
 import * as model from '#/model';
-import { type LoadedDocument } from '#/persistence/types';
+import { type LoadedDocument, type PersistenceService } from '#/persistence/types';
 import { type RuntimeHandle } from '#/runtime/runtime';
-import { type DocumentChange } from '#/runtime/types';
+import { type CommandResult, type DocumentChange } from '#/runtime/types';
 import { createTestEnvironment, pressKey, setSelection, typeText } from '#/testing';
 import { probeRuntimes } from '#/testing/probe';
+
+import { fixturesIn } from '../../fixtures/reader/helpers';
 
 import { defineEditor } from './define';
 import { RichTextEditor } from './rich-text-editor';
@@ -407,5 +428,245 @@ describe('RichTextEditor', () => {
         });
 
         expect(limited.limits).toEqual({ ...defaultLimits, maxTextLength: 10 });
+    });
+});
+
+describe('RichTextEditor host surface', () => {
+    it('SPEC-rich-text-react/AC-025 keeps a selector result with equal fields under a shallow equality function', () => {
+        const environment = createTestEnvironment({ seed: 1 });
+        const ref = createRef<EditorHandle<object>>();
+        const seen: { readonly active: boolean }[] = [];
+        let renders = 0;
+        const shallow = (a: { readonly active: boolean }, b: { readonly active: boolean }) => a.active === b.active;
+        const Collapsed = () => {
+            seen.push(useEditorSelection((selection) => ({ active: selection.collapsed }), shallow));
+            return null;
+        };
+        const { unmount } = render(
+            <RichTextEditor.Root
+                aria-label="Notes"
+                definition={definition}
+                defaultValue={defaultValue(para({ type: 'text', text: 'ab' }))}
+                environment={environment}
+                ref={ref}
+            >
+                <RichTextEditor.Surface />
+                <Profiler id="collapsed" onRender={() => (renders += 1)}>
+                    <Collapsed />
+                </Profiler>
+            </RichTextEditor.Root>,
+        );
+        act(() => environment.flushFrames());
+        const handle = ref.current as EditorHandle<object>;
+        const before = renders;
+
+        // Each typed character is a commit with a new selection summary whose `collapsed` stays true.
+        act(() => typeText(handle, 'xyz'));
+        expect(renders).toBe(before);
+
+        act(() => setSelection(handle, { text: 'ab' }));
+        expect(renders).toBe(before + 1);
+        expect(seen.at(-1)).toEqual({ active: false });
+        unmount();
+    });
+
+    it('SPEC-rich-text-react/AC-080 warns once from the second of two editors that share an accessible name', () => {
+        const run = (first: Props, second: Props) => {
+            const environment = createTestEnvironment({ seed: 1 });
+            const firstDiagnostics = vi.fn<(diagnostic: Diagnostic) => void>();
+            const secondDiagnostics = vi.fn<(diagnostic: Diagnostic) => void>();
+            const editor = (props: Props, onDiagnostic: (diagnostic: Diagnostic) => void) => (
+                <RichTextEditor
+                    aria-label="Notes"
+                    definition={definition}
+                    defaultValue={defaultValue()}
+                    environment={environment}
+                    onDiagnostic={onDiagnostic}
+                    {...props}
+                />
+            );
+            const { unmount } = render(
+                <>
+                    <span id="label-a">Meeting notes</span>
+                    <span id="label-b">Meeting notes</span>
+                    {editor(first, firstDiagnostics)}
+                    {editor(second, secondDiagnostics)}
+                </>,
+            );
+            act(() => environment.flushFrames());
+            const codes = (spy: typeof firstDiagnostics) => spy.mock.calls.map(([{ code }]) => code);
+            unmount();
+            return [codes(firstDiagnostics), codes(secondDiagnostics)];
+        };
+
+        expect(run({}, {})).toEqual([[], ['react.duplicate-accessible-name']]);
+        const labelledBy = (id: string) => ({ 'aria-label': undefined, 'aria-labelledby': id }) as unknown as Props;
+        expect(run(labelledBy('label-a'), labelledBy('label-b'))).toEqual([[], ['react.duplicate-accessible-name']]);
+        expect(run({}, { 'aria-label': 'Summary' } as Props)).toEqual([[], []]);
+    });
+
+    it.each(['render', 'effect'] as const)(
+        'SPEC-rich-text-react/AC-102 rejects execute from a React %s with one react.execute-in-render error and no change',
+        (during) => {
+            const environment = createTestEnvironment({ seed: 1 });
+            const ref = createRef<EditorHandle<object>>();
+            const onDiagnostic = vi.fn<(diagnostic: Diagnostic) => void>();
+            const results: CommandResult[] = [];
+            const insert = () => {
+                const commands = ref.current as unknown as Pick<RuntimeHandle, 'execute'>;
+                return commands.execute('text.insert', { text: 'x' });
+            };
+            const Caller = ({ calling }: { readonly calling: boolean }) => {
+                if (calling && during === 'render') {
+                    results.push(insert());
+                }
+                useEffect(() => {
+                    if (calling && during === 'effect') {
+                        results.push(insert());
+                    }
+                });
+                return null;
+            };
+            const tree = (calling: boolean) => (
+                <RichTextEditor.Root
+                    aria-label="Notes"
+                    definition={definition}
+                    defaultValue={defaultValue(para({ type: 'text', text: 'ab' }))}
+                    environment={environment}
+                    onDiagnostic={onDiagnostic}
+                    ref={ref}
+                >
+                    <RichTextEditor.Surface />
+                    <Caller calling={calling} />
+                </RichTextEditor.Root>
+            );
+            const { rerender, unmount } = render(tree(false));
+            act(() => environment.flushFrames());
+            const before = (ref.current as EditorHandle<object>).getSnapshot();
+
+            rerender(tree(true));
+
+            expect(results).toEqual([{ status: 'rejected', code: 'busy' }]);
+            expect(onDiagnostic.mock.calls.map(([{ code, severity }]) => [code, severity])).toEqual([
+                ['react.execute-in-render', 'error'],
+            ]);
+            expect((ref.current as EditorHandle<object>).getSnapshot()).toBe(before);
+            // The same call outside React's work, as from an event handler, runs.
+            expect(insert().status).toBe('applied');
+            unmount();
+        },
+    );
+});
+
+describe('RichTextEditor documents', () => {
+    // A path, not a `URL`: happy-dom replaces the global `URL`, which rejects a `file:` URL.
+    const fixtures = join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'fixtures');
+    const load = (...path: readonly string[]) => JSON.parse(readFileSync(join(fixtures, ...path), 'utf8')) as unknown;
+    // The engine builds no figure stand-in, whose `asset_image` has required attributes and no default (Findings), so it opens as an island.
+    const vocabulary = defineEditor({
+        id: 'test.vocabulary',
+        model: compileContentModel(
+            [
+                core(),
+                vocabularyStyles(),
+                vocabularyAlign(),
+                vocabularyIndent(),
+                vocabularyBlocks(),
+                vocabularyLists(),
+                vocabularyTables(),
+                vocabularyMention(),
+                vocabularyMarks(),
+                vocabularyLink(),
+                vocabularyColors(),
+            ],
+            { id: 'fixture.vocabulary', version: 1 },
+        ),
+    });
+    const notes = defineEditor({ id: 'test.notes', model: notesModel(3) });
+    const opened = [
+        ...fixturesIn('valid').map(([name, document]) => [`model/valid/${name}`, document, vocabulary] as const),
+        ...readdirSync(join(fixtures, 'migration'), { recursive: true, encoding: 'utf8' })
+            .filter((name) => name.endsWith('.json'))
+            .sort()
+            .map((name) => [`migration/${name}`, load('migration', name), notes] as const)
+            .filter(([, document]) => (document as { readonly model: { readonly version: number } }).model.version < 3),
+    ];
+
+    it.each(opened)(
+        'SPEC-rich-text-format/AC-023 SPEC-rich-text-format/AC-010 opens %s with no document change or save for 2 seconds',
+        (_name, document, used) => {
+            const environment = createTestEnvironment({ seed: 1 });
+            const save = vi.fn();
+            const onDocumentChange = vi.fn();
+            const ref = createRef<EditorHandle<object>>();
+            const { unmount } = render(
+                <RichTextEditor
+                    aria-label="Notes"
+                    definition={used}
+                    defaultValue={{ documentId: 'document-1', revision: null, document } as LoadedDocument}
+                    environment={environment}
+                    services={{ persistence: { save, read: vi.fn() } as unknown as PersistenceService }}
+                    onDocumentChange={onDocumentChange}
+                    ref={ref}
+                />,
+            );
+            act(() => {
+                environment.flushFrames();
+                environment.advance(2000);
+                environment.flushFrames();
+            });
+
+            expect(ref.current?.getSummary().phase).toBe('ready');
+            expect(onDocumentChange).not.toHaveBeenCalled();
+            expect(save).not.toHaveBeenCalled();
+            unmount();
+        },
+    );
+
+    const urls = load('security', 'urls.json') as readonly { readonly input: string; readonly ok: boolean }[];
+    const linked = defineEditor({
+        id: 'test.urls',
+        model: compileContentModel([core(), fixtureLink(), fixtureMedia()], { id: 'fixture.vocabulary', version: 1 }),
+    });
+    const withUrl = (url: string) =>
+        envelope(doc(para(text('Go', link(url))), node('embed', { nodeId: 'e-1', url })), [
+            'core',
+            'fixture.link',
+            'fixture.media',
+        ]);
+    const surfaceOf = (url: string) => {
+        const environment = createTestEnvironment({ seed: 1 });
+        const view = render(
+            <RichTextEditor
+                aria-label="Notes"
+                definition={linked}
+                defaultValue={
+                    { documentId: 'document-1', revision: null, document: withUrl(url) } as unknown as LoadedDocument
+                }
+                environment={environment}
+            />,
+        );
+        act(() => environment.flushFrames());
+        return view;
+    };
+
+    // oxlint-disable-next-line rte-style/no-view-internals -- `input` is a field of the URL fixture, not of an editor view.
+    it.each(urls.filter(({ ok }) => !ok).map(({ input }) => input))(
+        'SPEC-rich-text-format/AC-019 renders no href from the unsafe input %j in the editor, as a link or an embed',
+        (input) => {
+            const { unmount } = surfaceOf(input);
+
+            expect(surface().innerHTML).not.toContain('href=');
+            expect(surface().innerHTML).not.toContain('alert(1)');
+            expect(surface()).toHaveTextContent('Go');
+            unmount();
+        },
+    );
+
+    it('SPEC-rich-text-format/AC-019 renders the link of a checked href in the editor', () => {
+        const { unmount } = surfaceOf('https://example.com/');
+
+        expect(surface().querySelector('a')).toHaveAttribute('href', 'https://example.com/');
+        unmount();
     });
 });

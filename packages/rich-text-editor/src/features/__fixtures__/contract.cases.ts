@@ -342,8 +342,7 @@ export const nodeViewCases = (features: readonly Feature[], documents: readonly 
                 mode: 'editable',
                 policy: definition.authoring,
                 limits: definition.limits,
-                nodeViews: (session) =>
-                    capture(createNodeViews(views, { portals, context: readerContext(enUS, {}), runtime: session })),
+                nodeViews: (session) => capture(createNodeViews(views, { portals, runtime: session })),
             });
             runtimes.push(runtime);
             const element = globalThis.document.createElement('div');
@@ -351,7 +350,10 @@ export const nodeViewCases = (features: readonly Feature[], documents: readonly 
             elements.push(element);
             runtime.attach(element);
         }
-        const hosts = stores.map((store) => render(createElement(PortalHost, { store, onFlush: () => undefined })));
+        const context = readerContext(enUS, {});
+        const hosts = stores.map((store) =>
+            render(createElement(PortalHost, { store, context, onFlush: () => undefined })),
+        );
         try {
             await check(built, () => act(() => environment.flushMicrotasks()));
         } finally {

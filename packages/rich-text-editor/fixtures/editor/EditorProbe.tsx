@@ -1,13 +1,16 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { undoDepth } from 'prosemirror-history';
 import { useEffect, useRef, useState } from 'react';
 
 import { bold, core } from '../../src/features';
 import { fixtureChromeViews } from '../../src/features/__fixtures__/chrome/view';
 import { fixtureHeadingSet, fixtureLink } from '../../src/features/__fixtures__/features';
-import { defineEditor, type EditorHandle, RichTextEditor } from '../../src/index';
+import { fixtureProfiles } from '../../src/features/__fixtures__/profiles';
+import { type CompiledEditorDefinition, defineEditor, type EditorHandle, RichTextEditor } from '../../src/index';
 import { compileContentModel, type ContentNodeJSON } from '../../src/model';
 import { boldRules } from '../../src/react/playground.stories';
+import { RichTextReader } from '../../src/reader';
 import { type EditorRuntime, runtimeOf } from '../../src/runtime/runtime';
 import { createTestEnvironment, setSelection, type TestEnvironment } from '../../src/testing';
 
@@ -73,9 +76,17 @@ declare global {
             readonly setSelection: typeof setSelection;
             /** The text of the runtime's document. */
             readonly text: () => string | undefined;
+            /** The undo steps of the runtime's history. */
+            readonly undoDepth: () => number | undefined;
         };
     }
 }
+
+/** The editor props a test rerenders with, such as during a composition (SPEC-rich-text-react/AC-078). */
+type Rerendered = Pick<
+    Parameters<typeof RichTextEditor>[0],
+    'status' | 'required' | 'aria-describedby' | 'placeholder'
+>;
 
 /** Mounts the CT model's editor after a focusable button, and reports each change's origin and HTML. */
 export const EditorProbe = ({
@@ -85,6 +96,10 @@ export const EditorProbe = ({
     guarded = false,
     placeholder,
     controlled = false,
+    profile,
+    withReader = false,
+    inForm = false,
+    rerendered = {},
     onChange,
 }: {
     readonly texts?: readonly string[];
@@ -96,6 +111,13 @@ export const EditorProbe = ({
     readonly placeholder?: string;
     /** Mounts with a test environment, so the test runs its microtasks, frames and timers. */
     readonly controlled?: boolean;
+    /** Mounts a definition of this fixture profile in place of the CT model's. */
+    readonly profile?: string;
+    /** Renders the reader of the same document after the editor, in a region named Reader. */
+    readonly withReader?: boolean;
+    /** Puts the editor in a form. */
+    readonly inForm?: boolean;
+    readonly rerendered?: Rerendered;
     readonly onChange?: (change: { readonly origin: string; readonly commandId: string | null }) => void;
 }) => {
     const ref = useRef<EditorHandle<object>>(null);
@@ -109,9 +131,22 @@ export const EditorProbe = ({
     if (blocks !== undefined) {
         defaultValue = documentOf(blocks, ['core', 'fixture.chrome']);
     }
-    let definition = definitions.open;
+    const [profileDefinition] = useState(() => {
+        if (profile === undefined) {
+            return undefined;
+        }
+        const features = fixtureProfiles()[profile] ?? [];
+        return defineEditor({
+            id: `test.${profile}`,
+            model: compileContentModel(features, { id: 'test.ct', version: 1 }),
+        });
+    });
+    let definition: CompiledEditorDefinition<object> = definitions.open;
     if (guarded) {
         definition = definitions.guarded;
+    }
+    if (profileDefinition !== undefined) {
+        definition = profileDefinition;
     }
     useEffect(() => {
         if (ref.current !== null) {
@@ -123,10 +158,16 @@ export const EditorProbe = ({
                 environment,
                 setSelection,
                 text: () => runtime?.view?.state.doc.textContent,
+                undoDepth: () => {
+                    if (runtime === undefined) {
+                        return undefined;
+                    }
+                    return undoDepth(runtime.state);
+                },
             };
         }
     }, [environment]);
-    return (
+    const editor = (
         <>
             <button type="button">Before</button>
             <RichTextEditor
@@ -136,9 +177,19 @@ export const EditorProbe = ({
                 readOnly={readOnly}
                 {...(placeholder === undefined ? {} : { placeholder })}
                 {...(environment === undefined ? {} : { environment })}
+                {...rerendered}
                 ref={ref}
                 onDocumentChange={({ origin, commandId }) => onChange?.({ origin, commandId })}
             />
+            {withReader && (
+                <section aria-label="Reader">
+                    <RichTextReader document={defaultValue.document} model={model} />
+                </section>
+            )}
         </>
     );
+    if (inForm) {
+        return <form onSubmit={(event) => event.preventDefault()}>{editor}</form>;
+    }
+    return editor;
 };

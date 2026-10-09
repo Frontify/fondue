@@ -51,14 +51,18 @@ const Popup = ({ label }: { readonly label: string }) => {
     return <span data-popup="">{label}</span>;
 };
 
-/** Sets state in a mount effect, as the chrome of Tiptap issue #7811 does, and opens a popup. */
+/** Sets state in a mount effect, as the chrome of Tiptap issue #7811 does, opens a popup, and shows the resolved name. */
 const MentionChrome = () => {
-    const { attrs } = useRichTextNodeView();
+    const { attrs, nodeId, context } = useRichTextNodeView();
     const [mounted, setMounted] = useState(false);
     const [open, setOpen] = useState(false);
     // oxlint-disable-next-line @eslint-react/set-state-in-effect -- SPEC-rich-text-react/AC-010 runs chrome that does.
     useEffect(() => setMounted(true), []);
-    const label = textOf(attrs.label);
+    const resolved = context.resolveReference('user', nodeId);
+    let label = textOf(attrs.label);
+    if (resolved.status === 'current') {
+        label = resolved.label;
+    }
     return (
         <span data-chrome="mention">
             <button type="button" aria-expanded={open} onClick={() => setOpen(!open)}>

@@ -34,16 +34,23 @@ const Committed = ({ onCommit }: { readonly onCommit: () => void }) => {
 /** Server renders the editor, hydrates that markup and samples the surface text in each frame after the commit. */
 export const EditorHydrationProbe = ({
     text,
+    blocked = false,
     onDone,
 }: {
     readonly text: string;
+    /** Stores the text in an unknown format version, which shows the blocked shell. */
+    readonly blocked?: boolean;
     readonly onDone: (result: EditorHydrationResult) => void;
 }) => {
     const host = useRef<HTMLDivElement>(null);
     useEffect(() => {
+        let defaultValue = storedOf(text);
+        if (blocked) {
+            defaultValue = { ...defaultValue, document: { ...defaultValue.document, formatVersion: 2 as 1 } };
+        }
         const tree = (onCommit: () => void) => (
             <>
-                <RichTextEditor aria-label="Notes" definition={definition} defaultValue={storedOf(text)} />
+                <RichTextEditor aria-label="Notes" definition={definition} defaultValue={defaultValue} />
                 <Committed onCommit={onCommit} />
             </>
         );
@@ -79,6 +86,6 @@ export const EditorHydrationProbe = ({
             { onRecoverableError: (error) => recoverable.push(String(error)) },
         );
         return () => root.unmount();
-    }, [text, onDone]);
+    }, [text, blocked, onDone]);
     return <div ref={host} />;
 };

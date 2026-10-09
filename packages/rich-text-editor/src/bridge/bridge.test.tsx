@@ -14,6 +14,7 @@ import { core } from '#/features/core/feature';
 import {
     defineEditor,
     defineNodeView,
+    defineReactPresentation,
     type EditorHandle,
     type NodeViewState,
     RichTextEditor,
@@ -35,7 +36,7 @@ import { type EditorRuntime, type RuntimeHandle, runtimeOf } from '#/runtime/run
 import { createTestEnvironment, setSelection, typeText } from '#/testing';
 import { probeRuntimes } from '#/testing/probe';
 
-import { createPortalStore, type PortalStore } from './portals';
+import { createPortalStore, type PortalEntry, type PortalStore } from './portals';
 
 vi.mock('#/bridge/portals', { spy: true });
 vi.mock('react-dom/client', { spy: true });
@@ -591,6 +592,43 @@ describe('the React bridge', () => {
         expect(probeRuntimes()).toMatchObject({ views: [], nodeViews: 0, portals: 0 });
     });
 
+    it('SPEC-rich-text-react/AC-065 shows the label of a new presentation and the island label of a new locale with the same view and snapshot', async () => {
+        const environment = createTestEnvironment({ seed: 1 });
+        const ref = createRef<EditorHandle<object>>();
+        const resolving = (label: string) =>
+            defineReactPresentation({ resolveReference: () => ({ status: 'current', label }) });
+        const editor = (label: string, locale: RichTextLocale) => (
+            <RichTextEditor
+                aria-label="Notes"
+                definition={definition}
+                defaultValue={stored(para(mention('m1')), { type: 'callout', content: [text('kept')] })}
+                presentation={resolving(label)}
+                locale={locale}
+                environment={environment}
+                ref={ref}
+            />
+        );
+        const { rerender, unmount } = render(editor('Ada Lovelace', enUS));
+        await act(() => environment.flushMicrotasks());
+        act(() => environment.flushFrames());
+        const mentionButton = () => surface().querySelector('[data-chrome="mention"] button');
+        const handle = () => ref.current as EditorHandle<object>;
+        const view = probeRuntimes().views[0];
+        const snapshot = handle().getSnapshot();
+        const { commitSequence } = handle().getSummary();
+        expect(mentionButton()).toHaveTextContent('Ada Lovelace');
+        expect(screen.getByRole('group')).toHaveAccessibleName('Unsupported content: callout');
+
+        rerender(editor('Grace Hopper', deDE));
+
+        expect(mentionButton()).toHaveTextContent('Grace Hopper');
+        expect(screen.getByRole('group')).toHaveAccessibleName('Nicht unterstützter Inhalt: callout');
+        expect(probeRuntimes().views).toEqual([view]);
+        expect(handle().getSnapshot()).toBe(snapshot);
+        expect(handle().getSummary().commitSequence).toBe(commitSequence);
+        unmount();
+    });
+
     it('SPEC-rich-text-runtime/AC-083 runs ready listeners after the first portal flush, with node chrome present', async () => {
         const environment = createTestEnvironment({ seed: 1 });
         const seen: boolean[] = [];
@@ -615,7 +653,7 @@ describe('the React bridge', () => {
 
 describe('node view faults', () => {
     /** Makes the next mounted editor's portal store throw when a node view publishes an entry `when` matches. */
-    const throwingStore = (when: (state: NodeViewState<object>) => boolean) => {
+    const throwingStore = (when: (state: PortalEntry['state']) => boolean) => {
         vi.mocked(createPortalStore).mockImplementationOnce((scheduler) => {
             const store = actualStore(scheduler);
             return {
