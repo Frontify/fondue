@@ -47,6 +47,14 @@ const capabilityWarnings = (document: RichTextDocument, model: ContentModel): Di
     return warnings;
 };
 
+/** AC-012: a capability the content outside islands uses and `requiredCapabilities` omits warns; the encoder writes the corrected list. */
+const undeclaredWarnings = (document: RichTextDocument, encoded: RichTextDocument): Diagnostic[] => {
+    const declared = new Set(document.requiredCapabilities.map(({ id }) => id));
+    return encoded.requiredCapabilities
+        .filter(({ id }) => !declared.has(id))
+        .map(({ id }) => diagnostic('format.capability-undeclared', '/requiredCapabilities', { capability: id }));
+};
+
 export interface Decoded {
     readonly result: DecodeResult;
     /** The island tree of an `editable` result, for the runtime and the encoder. */
@@ -87,7 +95,8 @@ export const decodeToTree = (input: unknown, model: ContentModel, options: Decod
         const limit = diagnostic('format.limit-exceeded', '', { limit: 'maxDocumentBytes' }, 'error');
         return blocked('limit-exceeded', [...found, limit]);
     }
-    return { result: { status: 'editable', document, diagnostics: found }, tree };
+    const warned = [...found, ...undeclaredWarnings(document, encoded.document)];
+    return { result: { status: 'editable', document, diagnostics: warned }, tree };
 };
 
 /**

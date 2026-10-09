@@ -175,7 +175,7 @@ type ViteImportMeta = ImportMeta & {
 };
 
 /** The package's own version, which Vite inlines from `package.json` when it builds or tests the module. */
-const packageVersionOf = (): string => {
+export const packageVersionOf = (): string => {
     // A static JSON import would move the declaration root out of `src`, so Vite's glob import reads the version.
     const found = (import.meta as ViteImportMeta).glob('../../package.json', { eager: true, import: 'version' });
     return Object.values(found)[0] ?? '';

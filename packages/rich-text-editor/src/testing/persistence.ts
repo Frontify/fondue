@@ -3,9 +3,9 @@
 import { defaultIdSource, type JsonValue, type RichTextDocument } from '#/model';
 import { findMisshapenCapabilities, isRoot } from '#/model/envelope';
 import { canonicalJson } from '#/model/hash';
+import { packageVersionOf } from '#/model/migrate';
 import { isRecord } from '#/model/values';
 import { type PersistenceService, type SaveRequest, type SaveResponse } from '#/persistence/types';
-import { packageVersion } from '#/runtime/metrics';
 import { type DocumentStamp, type ServerRevision } from '#/runtime/types';
 
 /** The server under test plus what the kit needs for the access and fencing cases of Server obligation 5. */
@@ -130,7 +130,7 @@ export const runPersistenceConformance = (createHarness: () => PersistenceServer
         const harness = createHarness();
         const documentId = `rte-conformance-${defaultIdSource.next('session')}`;
         const writer: SaveRequest['writer'] = {
-            build: packageVersion(),
+            build: packageVersionOf(),
             formatVersion: 1,
             model: harness.rejectedWriter.model,
             capabilities: [{ id: 'core', version: 1 }],
