@@ -9,7 +9,7 @@ import { fixtureLink } from '#/features/__fixtures__/features';
 import { notesModel } from '#/features/__fixtures__/notes';
 import { core } from '#/features/core/feature';
 import { bold } from '#/features/marks-bold/feature';
-import { compileContentModel, type ContentModel, type JsonValue, migrateDocument } from '#/model';
+import { compileContentModel, type ContentModel, defineFeature, type JsonValue, migrateDocument } from '#/model';
 import { decodeToTree } from '#/model/decode';
 import { createTestEnvironment, pressKey, setSelection, typeText } from '#/testing';
 import { probeRuntimes } from '#/testing/probe';
@@ -274,6 +274,47 @@ describe('marks.bold', () => {
         expect(changes).toHaveLength(1);
         expect(contentOf(changes[0])).toEqual(
             stored(para({ type: 'text', text: 'a' }, { type: 'hard_break' }, { type: 'text', text: 'b' })).content,
+        );
+    });
+    it('SPEC-rich-text-editing/AC-008 finds nothing to toggle in a selection that holds only a hard break', () => {
+        const { handle, changes, runtime } = start(
+            stored(para({ type: 'text', text: 'a' }, { type: 'hard_break' }, { type: 'text', text: 'b' })),
+        );
+        runtime.select({ anchor: 2, head: 3 });
+
+        expect(handle.query('mark.bold.toggle')).toEqual({
+            enabled: false,
+            active: false,
+            disabledReason: 'not-applicable',
+        });
+        pressKey(handle, 'Mod-b');
+
+        expect(changes).toEqual([]);
+    });
+
+    it('SPEC-rich-text-editing/AC-007 reads a range as fully bold when its only plain text sits where bold is not allowed', () => {
+        const line = defineFeature({
+            id: 'test.line',
+            version: 1,
+            requires: [{ id: 'core', version: 1 }],
+            nodes: {
+                plain_line: { group: 'block', content: 'text*', marks: [], attrs: {}, html: ['pre', 0], parse: [] },
+            },
+        });
+        const model = compileContentModel([core(), bold(), line()], { id: 'test.bold', version: 1 });
+        const plain = { type: 'plain_line', content: [{ type: 'text', text: 'b' }] };
+        const { handle, changes, runtime } = start(stored(para(strong('a')), plain, para(strong('c'))), { model });
+        const view = runtime.view;
+        if (view === undefined) {
+            throw new Error('no view');
+        }
+        runtime.select({ anchor: 1, head: view.state.doc.content.size - 1 });
+
+        expect(handle.query('mark.bold.toggle').active).toBe(true);
+        pressKey(handle, 'Mod-b');
+
+        expect(contentOf(changes[0])).toEqual(
+            stored(para({ type: 'text', text: 'a' }), plain, para({ type: 'text', text: 'c' })).content,
         );
     });
 });
