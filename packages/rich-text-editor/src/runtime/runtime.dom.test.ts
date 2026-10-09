@@ -2816,6 +2816,16 @@ describe('targets on release and dispose', () => {
 });
 
 describe('the async coordinator', () => {
+    it('SPEC-rich-text-runtime/AC-084 SPEC-rich-text-runtime/AC-014 returns applied for a command whose change a documentChange listener answers with dispose', () => {
+        const { handle, view } = start(stored(para(words('ab'))));
+        handle.subscribe('documentChange', () => handle.dispose());
+
+        const result = handle.execute('text.insert', { text: 'x' });
+
+        expect(result).toMatchObject({ status: 'applied', contentChanged: true });
+        expect([handle.getSummary().phase, textOf(view.state.doc)]).toEqual(['disposed', 'xab']);
+    });
+
     it('SPEC-rich-text-runtime/AC-046 registers each operation with its ID, session, target, policy revision, controller and request sequence', () => {
         const { handle, runtime } = start(stored(para(words('abcd'))), { model: targetModel });
         setSelection(handle, { text: 'bc' });
@@ -3526,6 +3536,40 @@ describe('faults', () => {
         expect(handle.getSummary()).toMatchObject({ phase: 'faulted', sequence: 0 });
         expect(changes).toEqual([]);
         expect(handle.getSnapshot()).toBe(snapshot);
+    });
+
+    it('SPEC-rich-text-runtime/AC-089 SPEC-rich-text-runtime/AC-048 discards a result held for a composition as not-ready when the session faults before input settles', async () => {
+        // Two plugins that append to each other in a batch whose root asks for it, past the append limit.
+        const looping = (featureId: string) =>
+            countAppends(
+                new Plugin({
+                    appendTransaction: (transactions, _old, state) => {
+                        const asked = transactions.some((transaction) => transaction.getMeta('loop') === true);
+                        if (
+                            !asked ||
+                            transactions.every((transaction) => transaction.getMeta('appendedBy') === featureId)
+                        ) {
+                            return null;
+                        }
+                        return state.tr.setMeta('appendedBy', featureId).setMeta('loop', true);
+                    },
+                }),
+                { featureId, capability: 'insertText' },
+            );
+        const session = start(stored(para(words('ab'))), { plugins: [looping('fixture.a'), looping('fixture.b')] });
+        const { handle, runtime, view, diagnostics } = session;
+        setSelection(handle, { text: 'ab', from: 2, to: 2 });
+        const held = pending(runtime);
+        compose(session, 'x');
+        await held.resolve({ text: '!' });
+        endComposition(session);
+
+        view.dispatch(view.state.tr.insertText('y').setMeta('loop', true));
+
+        expect(handle.getSummary().phase).toBe('faulted');
+        expect(diagnostics.map(({ code }) => code)).toEqual(['runtime.append-limit', 'runtime.async-discarded']);
+        expect(diagnostics[1]).toEqual(discarded('not-ready'));
+        expect(probeRuntimes().operations).toEqual([]);
     });
 
     it('SPEC-rich-text-runtime/AC-013 reports a plugin that throws in the repair of a settling composition', async () => {
