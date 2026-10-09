@@ -386,6 +386,37 @@ describe('the React bridge', () => {
         unmount();
     });
 
+    it('SPEC-rich-text-react/AC-021 catches chrome that throws again after an update to another failing value', async () => {
+        const errors = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+        const Strict = () => {
+            const { attrs } = useRichTextNodeView<object>();
+            if (attrs.language === 'boom' || attrs.language === 'boom2') {
+                throw new Error('chrome failed');
+            }
+            return <span data-test-chrome="" />;
+        };
+        const strict = defineEditor({
+            id: 'test.bridge',
+            model: modelOf([defineNodeView(fixtureChrome(), { node: 'chrome_block', component: Strict })]),
+        });
+        const { runtime, flush, unmount } = await mount([block('b1', 'code', 'boom')], { definition: strict });
+        const fallback = enUS.translationStrings.RichTextEditor_nodeViewError;
+        const firstRender = errors.mock.calls.length;
+
+        act(() => {
+            runtime().nodeActions('b1').update({ language: 'boom2' });
+        });
+        await flush();
+
+        expect(firstRender).toBeGreaterThan(0);
+        // The boundary tried the chrome once more and caught it, so the root logged one more failed render and kept the surface.
+        expect(errors.mock.calls.length).toBe(2 * firstRender);
+        expect(surface().querySelector('[data-rte-chrome]')).toHaveTextContent(fallback);
+        expect(surface().querySelector('[data-rte-chrome] + div')).toHaveTextContent('code');
+        errors.mockRestore();
+        unmount();
+    });
+
     it('SPEC-rich-text-react/AC-097 registers no node view for native nodes and renders nothing while typing in a list', async () => {
         const native = ['paragraph', 'heading', 'text', 'bullet_list', 'list_item', 'table_row', 'table_cell'];
         const lists = [...Object.values(fixtureProfiles()), [core(), fixtureChromeViews(), fixtureList()]];

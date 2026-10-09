@@ -123,42 +123,90 @@ test('SPEC-rich-text-react/AC-070 passes node selection to the image chrome with
     expect(deselected).toEqual({ selected: 'false', className: false, draggable: null, clicks: '1', same: true });
 });
 
-test('SPEC-rich-text-react/AC-017 lets a node-selected atom drag from its chrome while a chrome button keeps its click', async ({
+/** The editor's top-level blocks with their text, its selection, and whether a drag runs. */
+const editorState = (page: Page) =>
+    page.evaluate(() => {
+        const runtime = window.rte?.runtime;
+        const view = runtime?.view;
+        if (view === undefined) {
+            return undefined;
+        }
+        const { doc } = view.state;
+        const blocksNow: string[] = [];
+        for (let index = 0; index < doc.childCount; index += 1) {
+            const node = doc.child(index);
+            blocksNow.push(`${node.type.name}:${node.textContent}`);
+        }
+        const selection: unknown = view.state.selection.toJSON();
+        return { blocks: blocksNow, selection, dragging: view.dragging !== null };
+    });
+
+test('SPEC-rich-text-react/AC-017 drags a node-selected atom by its chrome with the mouse while a chrome button keeps its click', async ({
     mount,
     page,
 }) => {
-    await mount(<EditorProbe blocks={blocks(para(text('ab')), image('i1'))} />);
+    await mount(<EditorProbe blocks={blocks(para(text('ab')), image('i1'), para(text('cd')))} />);
     await ready(page);
     const chrome = surfaceOf(page).locator('[data-chrome="image"]');
-    const editorState = () =>
-        page.evaluate(() => {
-            const runtime = window.rte?.runtime;
-            const view = runtime?.view;
-            if (view === undefined) {
-                return undefined;
-            }
-            const selection: unknown = view.state.selection.toJSON();
-            return { selection, dragging: view.dragging !== null };
-        });
-    await surfaceOf(page).locator('p').click();
+    await surfaceOf(page).locator('p').first().click();
     await page.evaluate(() => window.rte?.setSelection(window.rte.handle, { text: 'ab', from: 2, to: 2 }));
-
     await chrome.getByRole('button').click();
-    const clicked = await editorState();
-    await page.evaluate(() => window.rte?.setSelection(window.rte.handle, { nodeId: 'i1' }));
-    const dragStart = (element: Element) => {
-        const drag = new DragEvent('dragstart', { bubbles: true, cancelable: true, dataTransfer: new DataTransfer() });
-        element.dispatchEvent(drag);
-    };
-    await chrome.getByRole('button').evaluate(dragStart);
-    const fromButton = await editorState();
-    await chrome.evaluate(dragStart);
-    const dragged = await editorState();
-
+    const clicked = await editorState(page);
     await expect(chrome.getByRole('button')).toHaveText('1');
-    expect(clicked).toEqual({ selection: { type: 'text', anchor: 3, head: 3 }, dragging: false });
-    expect(fromButton).toEqual({ selection: { type: 'node', anchor: 4 }, dragging: false });
-    expect(dragged).toEqual({ selection: { type: 'node', anchor: 4 }, dragging: true });
+
+    await page.evaluate(() => window.rte?.setSelection(window.rte.handle, { nodeId: 'i1' }));
+    const from = await chrome.boundingBox();
+    const to = await surfaceOf(page).locator('p').last().boundingBox();
+    if (from === null || to === null) {
+        throw new Error('The chrome or the last paragraph has no box.');
+    }
+    // Beside the button, so the press lands on the chrome itself.
+    await page.mouse.move(from.x + from.width - 4, from.y + from.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(from.x + from.width - 10, from.y + from.height / 2 + 5, { steps: 3 });
+    await page.mouse.move(to.x + to.width - 2, to.y + to.height / 2, { steps: 5 });
+    const during = await editorState(page);
+    await page.mouse.up();
+
+    expect(clicked).toMatchObject({ selection: { type: 'text', anchor: 3, head: 3 }, dragging: false });
+    expect(during).toMatchObject({ dragging: true });
+    const blocksAfter = async () => {
+        const state = await editorState(page);
+        return state?.blocks;
+    };
+    await expect.poll(blocksAfter).toEqual(['paragraph:ab', 'paragraph:cd', 'chrome_image:']);
+});
+
+test('SPEC-rich-text-react/AC-017 keeps drop-target events over atom chrome from ProseMirror during a node drag', async ({
+    mount,
+    page,
+}) => {
+    await mount(<EditorProbe blocks={blocks(para(text('ab')), image('i1'), para(text('cd')), image('i2'))} />);
+    await ready(page);
+    await page.evaluate(() => window.rte?.setSelection(window.rte.handle, { nodeId: 'i1' }));
+    const before = await editorState(page);
+
+    const prevented = await page.evaluate(() => {
+        const [chrome] = document.querySelectorAll('[data-chrome="image"]');
+        const drag = (type: string, element: Element | null | undefined) => {
+            const event = new DragEvent(type, { bubbles: true, cancelable: true, dataTransfer: new DataTransfer() });
+            element?.dispatchEvent(event);
+            return event.defaultPrevented;
+        };
+        // A browser fires `dragstart` on the draggable `dom`, the chrome slot's parent.
+        const slot = chrome?.parentElement;
+        if (slot === null || slot === undefined) {
+            return undefined;
+        }
+        drag('dragstart', slot.parentElement);
+        // Over the selected node's own chrome, whose `dom` is draggable, so only the event type keeps them stopped.
+        return { dragover: drag('dragover', chrome), drop: drag('drop', chrome) };
+    });
+    const after = await editorState(page);
+
+    expect(before).toMatchObject({ dragging: false });
+    expect(after).toMatchObject({ dragging: true, blocks: before?.blocks });
+    expect(prevented).toEqual({ dragover: false, drop: false });
 });
 
 test('SPEC-rich-text-react/AC-100 keeps the caret where the editor selection is while three mention labels update in one batch', async ({
