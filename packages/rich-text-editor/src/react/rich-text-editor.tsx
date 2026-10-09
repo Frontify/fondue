@@ -337,16 +337,19 @@ class Recovery extends Component<RecoveryProps, RecoveryState> {
         }
         // A host rerender with another document must not take this session's content under its ID.
         let loaded = defaultValue;
-        let document = defaultValue.document;
+        let { document, revision } = defaultValue;
         if (this.session !== undefined) {
             loaded = this.session.loaded;
-            document = this.session.handle.getSnapshot().document;
+            const snapshot = this.session.handle.getSnapshot();
+            document = snapshot.document;
+            // The acknowledged revision is the base of the next write, so a session that saved does not conflict with itself.
+            revision = snapshot.acknowledgedRevision;
         }
         return (
             <RecoveryShell
                 document={document}
                 {...shellPropsOf(props)}
-                onRetry={() => this.setState({ failed: false, retried: { ...loaded, document } })}
+                onRetry={() => this.setState({ failed: false, retried: { ...loaded, revision, document } })}
             />
         );
     }

@@ -2,7 +2,7 @@
 
 import { type ContentModel, type Diagnostic, type RuntimeEnvironment } from '#/model';
 import { diagnostic } from '#/model/format';
-import { packageVersion } from '#/runtime/metrics';
+import { packageVersionOf } from '#/model/migrate';
 import { type EditorRuntime } from '#/runtime/runtime';
 import { type SaveCoordinator } from '#/runtime/saves';
 import { type DocumentStamp, type SaveStatus, type ServerRevision } from '#/runtime/types';
@@ -68,7 +68,7 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
     const { service, environment } = given;
     const { clock } = environment;
     const writer: SaveRequest['writer'] = {
-        build: packageVersion(),
+        build: packageVersionOf(),
         formatVersion: 1,
         model: { id: given.model.ref.id, version: given.model.ref.version },
         capabilities: given.model.capabilities.map(({ id, version }) => ({ id, version })),
