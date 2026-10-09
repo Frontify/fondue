@@ -628,6 +628,36 @@ describe('the authoring policy and limits', () => {
         expect(view.state.doc.lastChild?.textContent).toBe('az');
     });
 
+    it('SPEC-rich-text-runtime/AC-007 lets bold be removed from part of a run and typed inside under create: false, but not added', () => {
+        const created = (setup: (session: ReturnType<typeof start>) => void, policy: Partial<AuthoringPolicy>) => {
+            const session = start(stored(para(words('ab '), strong('one two three'))), { policy });
+            setup(session);
+            return session.changes.length;
+        };
+        const unboldMiddle = ({ handle }: ReturnType<typeof start>) => {
+            setSelection(handle, { text: 'two' });
+            pressKey(handle, 'Mod-b');
+        };
+        const typeInside = ({ handle }: ReturnType<typeof start>) => {
+            setSelection(handle, { text: 'two', from: 1, to: 1 });
+            typeText(handle, 'x');
+        };
+        const boldNew = ({ handle }: ReturnType<typeof start>) => {
+            setSelection(handle, { text: 'ab' });
+            pressKey(handle, 'Mod-b');
+        };
+        const boldNextToRun = ({ handle }: ReturnType<typeof start>) => {
+            setSelection(handle, { text: 'b ' });
+            pressKey(handle, 'Mod-b');
+        };
+        const noCreate = forbid('marks.bold', 'create');
+
+        expect([unboldMiddle, typeInside, boldNew, boldNextToRun].map((change) => created(change, noCreate))).toEqual([
+            1, 1, 0, 0,
+        ]);
+        expect(created(typeInside, forbid('marks.bold', 'edit'))).toBe(0);
+    });
+
     it('SPEC-rich-text-runtime/AC-008 rejects changes to the attributes or content of an existing occurrence per feature', () => {
         const typeInto = (text: string) => (session: ReturnType<typeof start>) => {
             setSelection(session.handle, { text, from: 1, to: 1 });
@@ -1180,6 +1210,20 @@ describe('commands, events and the commit path', () => {
         expect(diagnostics).toEqual([
             { code: 'runtime.stale-transaction', severity: 'error', messageKey: 'runtime.stale-transaction' },
         ]);
+    });
+});
+
+describe('the engine copies', () => {
+    it('SPEC-rich-text/AC-006 reports no second engine copy when the page loads one, after the view caches its parser and serializer', () => {
+        const { handle, runtime, view, diagnostics } = start(stored(para(words('ab'))));
+        typeText(handle, 'c');
+        view.pasteHTML('<p>d</p>');
+        runtime.select({ anchor: 1, head: 2 });
+        view.dom.dispatchEvent(new ClipboardEvent('cut', { clipboardData: new DataTransfer(), bubbles: true }));
+        typeText(handle, 'e');
+
+        expect(Object.keys(view.state.schema.cached)).toEqual(expect.arrayContaining(['domParser', 'domSerializer']));
+        expect(diagnostics).toEqual([]);
     });
 });
 
