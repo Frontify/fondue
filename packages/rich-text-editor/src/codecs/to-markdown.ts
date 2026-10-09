@@ -191,13 +191,18 @@ const writeInline = (state: MarkdownState, node: TreeNode, path: string, line: L
         if (readsBack(underscore.text)) {
             chosen = underscore;
         } else {
+            let marked = false;
             for (const child of node.content ?? []) {
                 for (const mark of child.marks ?? []) {
                     const plan = state.plan.marks.get(mark.type);
                     if (plan !== undefined) {
                         chosen.scratch.losses.add(plan.featureId);
+                        marked = true;
                     }
                 }
+            }
+            if (!marked) {
+                chosen.scratch.losses.add(featureOf(state, node.type));
             }
         }
     }
@@ -276,6 +281,8 @@ const linkPieces = (state: MarkdownState, plan: MarkPlan, mark: TreeMark, inner:
     }
     const slug = state.slugs.get(href.slice(1));
     if (href.startsWith('#') && slug !== undefined) {
+        // Import cannot yet map the slug back to the heading's new `nodeId` (SPEC-rich-text-references/AC-051).
+        markLost(state, plan);
         return [{ kind: 'literal', text: '[' }, ...inner, { kind: 'literal', text: `](#${slug})` }];
     }
     const checked = checkHref(href);

@@ -168,9 +168,8 @@ export const serialize = (pieces: readonly Piece[], lost: (featureId: string) =>
             tokens.push(piece);
         }
     }
-    // Leading and trailing spaces and tabs of each line would be stripped, so they become references.
-    const isEdgeSpace = (token: Token | undefined) =>
-        token?.kind === 'char' && (token.char === ' ' || token.char === '\t');
+    // Leading and trailing whitespace of each line, as `trim` sees it, would be stripped, so it becomes references.
+    const isEdgeSpace = (token: Token | undefined) => token?.kind === 'char' && /^\s$/u.test(token.char);
     let lineStart = 0;
     for (let index = 0; index <= tokens.length; index += 1) {
         if (index < tokens.length && tokens[index]?.kind !== 'break') {

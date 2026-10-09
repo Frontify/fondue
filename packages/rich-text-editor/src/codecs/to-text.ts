@@ -104,30 +104,31 @@ const renderItem = (state: WalkState, item: TreeNode, path: string, marker: stri
     noteNode(state, item, 'text');
     const indent = INDENT.repeat(depth);
     const lines: string[] = [];
+    let marked = false;
     for (const [index, child] of (item.content ?? []).entries()) {
         const childPath = `${path}${pointer('content', index)}`;
-        if (LISTS.has(child.type)) {
-            const list = renderBlock(state, child, childPath, depth + 1);
-            if (list !== null) {
-                lines.push(list);
-            }
-            continue;
-        }
         const text = renderBlock(state, child, childPath, depth + 1);
         if (text === null) {
             continue;
         }
-        if (index === 0) {
+        if (LISTS.has(child.type)) {
+            if (!marked) {
+                lines.push(`${indent}${marker}`.trimEnd());
+                marked = true;
+            }
+            lines.push(text);
+        } else if (marked) {
+            lines.push(indentLines(text, `${indent}${INDENT}`));
+        } else {
             const [first = '', ...rest] = text.split('\n');
             lines.push(
                 `${indent}${marker}${first}`.trimEnd(),
                 ...rest.map((line) => indentLines(line, `${indent}${INDENT}`)),
             );
-        } else {
-            lines.push(indentLines(text, `${indent}${INDENT}`));
+            marked = true;
         }
     }
-    if (lines.length === 0) {
+    if (!marked) {
         lines.push(`${indent}${marker}`.trimEnd());
     }
     return lines.join('\n');
