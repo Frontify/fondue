@@ -40,6 +40,7 @@ import { type AsyncOperation, type AsyncRequest, createAsyncCoordinator } from '
 import { secondCopyAtMount, secondCopyInView } from './engines';
 import { createEventBus, type Listener } from './events';
 import { closeGroup, closesNext, isHistoryTransaction, startGroup } from './history';
+import { firedRule, withoutRules } from './input-rules';
 import { createLimitCheck } from './limits';
 import { authoringOf, createPolicyCheck } from './policy';
 import { createInputSettling } from './settle';
@@ -470,6 +471,9 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             root.getMeta(NORMALIZE_META) !== 'now' &&
             (breaksPolicy(policy, state.doc, doc, mapping) || exceedsLimits(doc, limits))
         ) {
+            if (firedRule(applied.transactions)) {
+                return prepare(withoutRules(root), ids, fromView);
+            }
             return { code: 'not-allowed' };
         }
         return { candidate: applied.state, root, mapping, closes: closesNext(applied.transactions) };
