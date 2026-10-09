@@ -10,13 +10,13 @@ import {
     useContext,
     useEffect,
     useImperativeHandle,
-    useLayoutEffect,
     useMemo,
     useRef,
     useState,
 } from 'react';
 
 import '#/styles/placeholder.css';
+import { useClientLayoutEffect } from '#/bridge/client-layout-effect';
 import { createMountCoordinator, type MountCoordinator } from '#/bridge/mount';
 import { createNodeViews, resyncSelection } from '#/bridge/node-views';
 import { PortalHost } from '#/bridge/portal-host';
@@ -104,12 +104,12 @@ const RootComponent = (
     const latestRef = useRef(props);
     const handleRef = useRef<EditorHandle<object> | null>(null);
 
-    useLayoutEffect(() => {
+    useClientLayoutEffect(() => {
         latestRef.current = props;
     });
 
     // The view attaches in a layout effect, so the first frame painted after hydration shows the content (SPEC-rich-text-output/AC-034).
-    useLayoutEffect(() => {
+    useClientLayoutEffect(() => {
         const { definition, decoded } = mounted;
         if (definition === undefined || decoded === undefined) {
             return;
@@ -154,7 +154,7 @@ const RootComponent = (
     useImperativeHandle(ref, () => handleRef.current as EditorHandle<object>, []);
 
     const mode = modeOf(props);
-    useLayoutEffect(() => {
+    useClientLayoutEffect(() => {
         handleRef.current?.setMode(mode);
     }, [mode]);
 
