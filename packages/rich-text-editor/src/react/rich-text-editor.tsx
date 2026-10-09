@@ -146,7 +146,7 @@ type SessionProps = Defined & {
     /** Receives the handle of each session it runs, whose snapshot the recovery shell reads. */
     readonly onSession: (session: RecoverySession) => void;
     /** The document holds changes the failed session before Retry never saved. */
-    readonly carried: boolean;
+    readonly unsavedOnMount: boolean;
 };
 
 const SessionComponent = ({ children, onSession, ...props }: SessionProps, ref: ForwardedRef<EditorHandle<object>>) => {
@@ -192,7 +192,7 @@ const SessionComponent = ({ children, onSession, ...props }: SessionProps, ref: 
                     service: () => memberOf(latestRef.current.services, 'persistence') ?? persistence,
                     options: () => latestRef.current.persistenceOptions,
                     revision: defaultValue.revision,
-                    carried: latestRef.current.carried,
+                    unsavedOnMount: latestRef.current.unsavedOnMount,
                     model: engine.model,
                     environment,
                 });
@@ -315,12 +315,12 @@ interface RecoveryState {
     /** The snapshot that Retry mounts the editor from, under the ID and revision it was loaded with (SPEC-rich-text-react/AC-085). */
     readonly retried: LoadedDocument | undefined;
     /** Whether that snapshot holds changes the failed session never saved, which the remount then saves. */
-    readonly carried: boolean;
+    readonly unsavedOnMount: boolean;
 }
 
 /** The outer boundary: a render error shows the recovery shell with the last published snapshot (SPEC-rich-text-react/AC-022). */
 class Recovery extends Component<RecoveryProps, RecoveryState> {
-    state: RecoveryState = { failed: false, retried: undefined, carried: false };
+    state: RecoveryState = { failed: false, retried: undefined, unsavedOnMount: false };
     // The last session, whose snapshot stays readable after it is disposed.
     private session: RecoverySession | undefined;
 
@@ -343,7 +343,7 @@ class Recovery extends Component<RecoveryProps, RecoveryState> {
                 <Session
                     {...props}
                     defaultValue={defaultValue}
-                    carried={this.state.carried}
+                    unsavedOnMount={this.state.unsavedOnMount}
                     onSession={this.onSession}
                     ref={editorRef}
                 />
@@ -352,7 +352,7 @@ class Recovery extends Component<RecoveryProps, RecoveryState> {
         // A host rerender with another document must not take this session's content under its ID.
         let loaded = defaultValue;
         let { document, revision } = defaultValue;
-        let carried = false;
+        let unsavedOnMount = false;
         if (this.session !== undefined) {
             loaded = this.session.loaded;
             const snapshot = this.session.handle.getSnapshot();
@@ -360,13 +360,15 @@ class Recovery extends Component<RecoveryProps, RecoveryState> {
             // The acknowledged revision is the base of the next write, so a session that saved does not conflict with itself.
             revision = snapshot.acknowledgedRevision;
             const status = this.session.handle.getSaveStatus();
-            carried = status.state !== 'clean' && status.latestSequence > status.acknowledgedSequence;
+            unsavedOnMount = status.state !== 'clean' && status.latestSequence > status.acknowledgedSequence;
         }
         return (
             <RecoveryShell
                 document={document}
                 {...shellPropsOf(props)}
-                onRetry={() => this.setState({ failed: false, retried: { ...loaded, revision, document }, carried })}
+                onRetry={() =>
+                    this.setState({ failed: false, retried: { ...loaded, revision, document }, unsavedOnMount })
+                }
             />
         );
     }
