@@ -377,7 +377,7 @@ describe('the session lifecycle', () => {
         expect(disposed).toHaveBeenCalledTimes(1);
         expect(disposed).toHaveBeenCalledWith(handle.getSummary().session);
         expect(disposed.mock.results[0]?.value).toBeGreaterThan(0);
-        expect(probeRuntimes()).toMatchObject({ views: [], sessions: [], subscriptions: 0, frames: 0 });
+        expect(probeRuntimes()).toMatchObject({ views: [], installedFeatures: [], subscriptions: 0, frames: 0 });
         expect(handle.getSummary().phase).toBe('disposed');
     });
 });
@@ -1577,7 +1577,7 @@ describe('disposal', () => {
         }
 
         expect(owned[0]).toMatchObject({
-            sessions: [['core', 'marks.bold']],
+            installedFeatures: [['core', 'marks.bold']],
             subscriptions: 1,
             selectors: 1,
             intents: 1,
