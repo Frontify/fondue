@@ -224,6 +224,29 @@ describe('marks.bold', () => {
             stored(para(strong('a'), { type: 'text', text: 'bc' }, strong('d'))).content,
         );
     });
+
+    it('SPEC-rich-text-editing/AC-007 bolds the whole range when only a space between bold words is plain', () => {
+        const { handle, changes } = start(stored(para(strong('a'), { type: 'text', text: ' ' }, strong('b'))));
+        setSelection(handle, { text: 'a b' });
+        expect(handle.query('mark.bold.toggle').active).toBe('mixed');
+
+        pressKey(handle, 'Mod-b');
+
+        expect(contentOf(changes[0])).toEqual(stored(para(strong('a b'))).content);
+    });
+
+    it('SPEC-rich-text-editing/AC-008 removes bold from bold text around a hard break', () => {
+        const { handle, changes } = start(stored(para(strong('a'), { type: 'hard_break' }, strong('b'))));
+        setSelection(handle, { text: 'a\uFFFCb' });
+        expect(handle.query('mark.bold.toggle').active).toBe(true);
+
+        pressKey(handle, 'Mod-b');
+
+        expect(changes).toHaveLength(1);
+        expect(contentOf(changes[0])).toEqual(
+            stored(para({ type: 'text', text: 'a' }, { type: 'hard_break' }, { type: 'text', text: 'b' })).content,
+        );
+    });
 });
 
 describe('the session lifecycle', () => {
