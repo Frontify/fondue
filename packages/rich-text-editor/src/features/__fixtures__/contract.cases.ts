@@ -76,7 +76,7 @@ export const commandCases = (features: readonly Feature[]): void => {
                 if (tree === undefined) {
                     throw new Error('A fixture of the features does not decode.');
                 }
-                const state = EditorState.create({ doc: engine.schema.nodeFromJSON(tree) });
+                const state = EditorState.create({ doc: engine.schema.nodeFromJSON(tree), plugins: engine.plugins });
                 const { doc } = state;
                 const whole = TextSelection.between(doc.resolve(0), doc.resolve(doc.content.size));
                 return [
@@ -84,6 +84,15 @@ export const commandCases = (features: readonly Feature[]): void => {
                     state.apply(state.tr.setSelection(Selection.atEnd(doc))),
                 ];
             });
+            // An edit, and the same edit undone, so the history commands have a step to undo and one to redo.
+            const [empty] = states;
+            if (empty !== undefined) {
+                const edited = empty.apply(empty.tr.insertText('a'));
+                states.push(edited);
+                engine.commands
+                    .get('history.undo')
+                    ?.run(edited, (transaction) => states.push(edited.apply(transaction)));
+            }
             const stubs = stubForbidden(id);
             let changed = false;
             try {

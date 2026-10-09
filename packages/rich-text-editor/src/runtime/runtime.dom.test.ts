@@ -17,6 +17,9 @@ import {
 } from '#/definition';
 import {
     fixtureHeadingSet,
+    fixtureImage,
+    fixtureInputRules,
+    fixtureItalic,
     fixtureLink,
     fixtureMedia,
     fixtureMention,
@@ -36,6 +39,7 @@ import {
     type JsonValue,
     migrateDocument,
     type ResourceLimits,
+    setBlock,
     toggleMark,
 } from '#/model';
 import { decodeToTree, limitsOf } from '#/model/decode';
@@ -47,6 +51,7 @@ import newerNotes from '../../fixtures/migration/v3-current.json';
 import { type AsyncRequest } from './async';
 import { CAPABILITIES } from './capabilities';
 import { browserEnvironment } from './environment';
+import { canRedo, canUndo, reset } from './history';
 import { createLimitCheck } from './limits';
 import { authoringOf } from './policy';
 import { createEditorRuntime, type EditorRuntime } from './runtime';
@@ -156,6 +161,14 @@ const pending = (runtime: EditorRuntime, request: Partial<AsyncRequest> = {}) =>
             await call;
         },
     };
+};
+/** Runs `history.undo` until it no longer applies, and returns how many steps it undid. */
+const undoSteps = (handle: EditorRuntime['handle']) => {
+    let steps = 0;
+    while (handle.execute('history.undo').status === 'applied') {
+        steps += 1;
+    }
+    return steps;
 };
 const discarded = (reason: string) => ({
     code: 'runtime.async-discarded',
@@ -821,19 +834,21 @@ describe('the authoring policy and limits', () => {
 
     it('SPEC-rich-text-runtime/AC-011 applies a new policy to the next query and commit with the same view, schema and plugins', () => {
         const { handle, runtime, view, changes } = start(stored(para(words('ab'))));
+        typeText(handle, 'x');
         const { schema, plugins } = view.state;
-        setSelection(handle, { text: 'ab' });
+        setSelection(handle, { text: 'xab' });
         expect(handle.query('mark.bold.toggle').enabled).toBe(true);
 
         handle.updatePolicy({ ...authoringOf(boldModel), features: forbid('marks.bold', 'create').features ?? {} });
         expect(handle.query('mark.bold.toggle')).toMatchObject({ enabled: false, disabledReason: 'not-allowed' });
         pressKey(handle, 'Mod-b');
 
-        expect(changes).toEqual([]);
+        expect(changes).toHaveLength(1);
         expect(runtime.view).toBe(view);
         expect(view.isDestroyed).toBe(false);
         expect(runtime.view?.state.schema).toBe(schema);
         expect(view.state.plugins).toBe(plugins);
+        expect(undoSteps(handle)).toBe(1);
     });
 
     it('SPEC-rich-text-runtime/AC-079 notifies a command state selector of a new policy before updatePolicy returns, with no commit', () => {
@@ -1052,8 +1067,10 @@ describe('commands, events and the commit path', () => {
         handle.execute('mark.bold.toggle');
         await handle.enqueue('text.insert', { text: 'e' });
         await pending(runtime).resolve({ text: 'f' });
+        handle.execute('history.undo');
 
         expect(view.state.doc.textContent).toContain('f');
+        expect(view.state.doc.textContent).not.toContain('e');
         expect(installed).toHaveLength(handle.getSummary().commitSequence);
         expect(installed.at(-1)).toBe(view.state);
         expect([view.props.handleDOMEvents, view.props.handleKeyDown, view.props.handleTextInput]).toEqual([
@@ -1121,6 +1138,7 @@ describe('commands, events and the commit path', () => {
         expect(handle.getSnapshot()).toBe(snapshot);
         expect(changes).toEqual([]);
         expect(handle.getSummary()).toMatchObject({ phase: 'faulted', commitSequence: 0, sequence: 0 });
+        expect(handle.getRecoveryCandidate()).toBeNull();
         expect(view.editable).toBe(false);
         expect(diagnostics).toEqual([
             {
@@ -1502,6 +1520,7 @@ describe('commands, events and the commit path', () => {
         expect(diagnostics).toEqual([
             { code: 'runtime.stale-transaction', severity: 'error', messageKey: 'runtime.stale-transaction' },
         ]);
+        expect(undoSteps(handle)).toBe(1);
     });
 });
 
@@ -1680,6 +1699,17 @@ describe('origins with an appended normalization', () => {
             expect(session.view.state.doc.textContent.endsWith('!')).toBe(true);
         });
     }
+
+    it("SPEC-rich-text-runtime/AC-021 reports the root's origin history for an undo with an appended normalization", () => {
+        const { handle, changes, view } = start(stored(para(words('ab'))), { plugins: [repair] });
+        typeText(handle, 'c');
+
+        handle.execute('history.undo');
+
+        expect(changes.map((change) => change.origin)).toEqual(['input', 'history']);
+        expect(changes.map((change) => change.commandId)).toEqual([null, null]);
+        expect(view.state.doc.textContent).toBe('ab!');
+    });
 });
 
 const linkSet = defineFeature({
@@ -1752,6 +1782,19 @@ describe('targets', () => {
         expect(handle.query('text.insert', { text: 'q' }).enabled).toBe(true);
         view.dispatch(view.state.tr.insertText('r', 1).setMeta('rejected', true));
         expect([textOf(view.state.doc), covered()]).toEqual(['xyzabcd', 'bc']);
+    });
+
+    it('SPEC-rich-text-runtime/AC-040 maps a target through an undo', () => {
+        const { handle, view } = start(stored(para(words('abcd'))), { model: targetModel });
+        setSelection(handle, { text: 'bc' });
+        const target = capture(handle, { purpose: 'format', onIntersectingEdit: 'map' });
+        setSelection(handle, { text: 'abcd', from: 0, to: 0 });
+        typeText(handle, 'x');
+
+        handle.execute('history.undo');
+        handle.execute('mark.bold.toggle', undefined, { target });
+
+        expect([textOf(view.state.doc), markedText(view.state.doc, 'bold')]).toEqual(['abcd', 'bc']);
     });
 
     it('SPEC-rich-text-runtime/AC-041 rejects every later command through an invalidate target that an edit crossed', () => {
@@ -2092,7 +2135,8 @@ describe('node IDs', () => {
                 plugins: [seen],
                 commands: { 'block.duplicate': duplicate },
             });
-            const before = idsIn(session.view.state.doc.toJSON());
+            const original = session.view.state.doc;
+            const before = idsIn(original.toJSON());
 
             act(session);
 
@@ -2108,6 +2152,9 @@ describe('node IDs', () => {
                 expect(transaction.getMeta('addToHistory')).toBeUndefined();
             }
             expect(session.changes[0]?.origin).not.toBe('normalization');
+            // One undo step reverts the change with its repair.
+            expect(undoSteps(session.handle)).toBe(1);
+            expect(session.view.state.doc.eq(original)).toBe(true);
         });
     }
 
@@ -3016,7 +3063,8 @@ describe('the async coordinator', () => {
     });
 
     it('SPEC-rich-text-runtime/AC-073 aborts only the operation of a changed services member and keeps the view', async () => {
-        const { runtime, view } = start(stored(para(words('ab'))));
+        const { handle, runtime, view } = start(stored(para(words('ab'))));
+        typeText(handle, 'x');
         const search = pending(runtime, { key: 'mention-search', service: 'references' });
         const upload = pending(runtime, { service: 'uploads' });
 
@@ -3025,8 +3073,10 @@ describe('the async coordinator', () => {
         await upload.resolve({ text: 'upload ' });
 
         expect([search, upload].map(({ operation }) => operation.controller.signal.aborted)).toEqual([true, false]);
-        expect(view.state.doc.textContent).toBe('upload ab');
+        expect(view.state.doc.textContent).toBe('xupload ab');
         expect(runtime.view).toBe(view);
+        // The completion is no undo step of its own, and the typed one stays.
+        expect(undoSteps(handle)).toBe(1);
     });
 
     it('SPEC-rich-text-runtime/AC-089 SPEC-rich-text-runtime/AC-072 holds a result during composition and checks it again once input settled', async () => {
@@ -3053,5 +3103,484 @@ describe('the async coordinator', () => {
 
         expect(textOf(view.state.doc)).toBe('xyabcd!');
         expect(diagnostics).toEqual([discarded('readonly')]);
+    });
+});
+
+describe('history', () => {
+    /** Types each character at the caret, `gap` ms after the one before. */
+    const typeApart = ({ handle, environment }: ReturnType<typeof start>, characters: string, gap: number) => {
+        for (const character of characters) {
+            environment.advance(gap);
+            typeText(handle, character);
+        }
+    };
+
+    it('SPEC-rich-text-runtime/AC-051 keeps 120 separated edits as 120 undo steps and 100 after the 121st', () => {
+        const kept = start(stored(para()));
+        typeApart(kept, 'a'.repeat(120), 600);
+        const trimmed = start(stored(para()));
+        typeApart(trimmed, 'a'.repeat(121), 600);
+
+        expect([undoSteps(kept.handle), undoSteps(trimmed.handle)]).toEqual([120, 100]);
+    });
+
+    // A repair the compiler wraps, so it takes the environment clock's time; it puts `!` before the first edit.
+    const normalization = countAppends(
+        new Plugin({
+            appendTransaction: (transactions, _old, state) => {
+                if (!transactions.some(({ docChanged }) => docChanged) || state.doc.textContent.includes('!')) {
+                    return null;
+                }
+                return state.tr.insertText('!', 1);
+            },
+        }),
+        { featureId: 'fixture.repair', capability: 'normalization' },
+    );
+    const groupings: readonly (readonly [string, readonly Plugin[]])[] = [
+        ['', []],
+        [' with an appended normalization between them', [normalization]],
+    ];
+    for (const [name, plugins] of groupings) {
+        it(`SPEC-rich-text-runtime/AC-051 groups adjacent edits 400 ms apart and not 600 ms apart${name}`, () => {
+            const near = start(stored(para()), { plugins });
+            typeApart(near, 'ab', 400);
+            const far = start(stored(para()), { plugins });
+            typeApart(far, 'ab', 600);
+
+            expect([undoSteps(near.handle), undoSteps(far.handle)]).toEqual([1, 2]);
+        });
+    }
+
+    it('SPEC-rich-text-runtime/AC-052 resets history to nothing to undo or redo with the same plugin instances', () => {
+        const { handle, runtime, environment } = start(stored(para()));
+        typeText(handle, 'a');
+        environment.advance(600);
+        typeText(handle, 'b');
+        handle.execute('history.undo');
+        const { state } = runtime;
+
+        const next = reset(state);
+
+        expect([canUndo(state), canRedo(state)]).toEqual([true, true]);
+        expect([canUndo(next), canRedo(next)]).toEqual([false, false]);
+        expect(next.plugins).toHaveLength(state.plugins.length);
+        expect(next.plugins.every((plugin, index) => plugin === state.plugins[index])).toBe(true);
+    });
+
+    it('SPEC-rich-text-runtime/AC-053 closes the undo group around a command: typing, bold and typing, and typing, an insert and typing, are three steps each', () => {
+        const bolded = start(stored(para()));
+        typeText(bolded.handle, 'ab');
+        setSelection(bolded.handle, { text: 'ab' });
+        bolded.handle.execute('mark.bold.toggle');
+        setSelection(bolded.handle, { text: 'ab', from: 2, to: 2 });
+        typeText(bolded.handle, 'cd');
+        const inserted = start(stored(para()));
+        typeText(inserted.handle, 'a');
+        inserted.handle.execute('text.insert', { text: 'b' });
+        typeText(inserted.handle, 'c');
+
+        expect([undoSteps(bolded.handle), undoSteps(inserted.handle)]).toEqual([3, 3]);
+    });
+
+    it('SPEC-rich-text-runtime/AC-054 adds no undo step for a selection move or a stored mark', () => {
+        const { handle } = start(stored(para(words('ab'))));
+
+        setSelection(handle, { text: 'ab', from: 1, to: 1 });
+        handle.execute('mark.bold.toggle');
+
+        expect(handle.getSummary().commitSequence).toBe(2);
+        expect(handle.query('history.undo').enabled).toBe(false);
+    });
+
+    const imageModel = compileContentModel([core(), bold(), fixtureImage()], { id: 'test.bold', version: 1 });
+    const image = { type: 'image', attrs: { assetId: null } };
+    /** Sets the `assetId` of the document's last block, an image, as an upload completion does. */
+    const complete: EngineCommand = {
+        run: (state, dispatch, payload) => {
+            const at = state.doc.content.size - state.doc.child(state.doc.childCount - 1).nodeSize;
+            if (dispatch !== undefined) {
+                dispatch(state.tr.setNodeAttribute(at, 'assetId', (payload as { readonly assetId: string }).assetId));
+            }
+            return true;
+        },
+        active: () => false,
+        payload: { fields: { assetId: { type: 'string' } } },
+    };
+    const upload = (session: ReturnType<typeof start>) =>
+        pending(session.runtime, { featureId: 'fixture.image', command: 'upload.complete' }).resolve({
+            assetId: 'asset-1',
+        });
+    const shown = ({ view }: ReturnType<typeof start>): unknown[] => [
+        view.state.doc.textContent,
+        view.state.doc.child(1).attrs.assetId as unknown,
+    ];
+
+    it('SPEC-rich-text-runtime/AC-055 adds no undo step for an upload completion that sets an assetId', async () => {
+        const session = start(stored(para(), image), { model: imageModel, commands: { 'upload.complete': complete } });
+        typeText(session.handle, 'a');
+
+        await upload(session);
+
+        expect(shown(session)).toEqual(['a', 'asset-1']);
+        expect(undoSteps(session.handle)).toBe(1);
+        expect(shown(session)).toEqual(['', 'asset-1']);
+    });
+
+    it('SPEC-rich-text-runtime/AC-056 starts a new undo step for typing right after an upload completion', async () => {
+        const session = start(stored(para(), image), { model: imageModel, commands: { 'upload.complete': complete } });
+        typeText(session.handle, 'a');
+        session.environment.advance(50);
+        await upload(session);
+        session.environment.advance(50);
+        typeText(session.handle, 'b');
+
+        session.handle.execute('history.undo');
+
+        expect(shown(session)).toEqual(['a', 'asset-1']);
+    });
+
+    it('SPEC-rich-text-runtime/AC-068 reverts an edit and its repair with one undo, and repairs nothing after it', () => {
+        let repairs = 0;
+        // Turns a typed `x` into `X`.
+        const upper = countAppends(
+            new Plugin({
+                appendTransaction: (transactions, _old, state) => {
+                    const at = state.doc.textContent.indexOf('x');
+                    if (!transactions.some(({ docChanged }) => docChanged) || at < 0) {
+                        return null;
+                    }
+                    repairs += 1;
+                    return state.tr.insertText('X', at + 1, at + 2);
+                },
+            }),
+            { featureId: 'fixture.repair', capability: 'normalization' },
+        );
+        const { handle, view } = start(stored(para(words('ab'))), { plugins: [upper] });
+        setSelection(handle, { text: 'ab', from: 2, to: 2 });
+        typeText(handle, 'x');
+        expect([textOf(view.state.doc), repairs]).toEqual(['abX', 1]);
+
+        handle.execute('history.undo');
+
+        expect([textOf(view.state.doc), repairs]).toEqual(['ab', 1]);
+        expect(handle.query('history.undo').enabled).toBe(false);
+    });
+
+    it('SPEC-rich-text-editing/AC-049 returns the selection to where the undone change happened', () => {
+        const { handle, view } = start(stored(para(words('ab cd'))));
+        setSelection(handle, { text: 'ab', from: 2, to: 2 });
+        typeText(handle, 'x');
+        setSelection(handle, { text: 'cd', from: 2, to: 2 });
+        typeText(handle, 'y');
+        setSelection(handle, { text: 'abx', from: 0, to: 0 });
+
+        handle.execute('history.undo');
+
+        expect(textOf(view.state.doc)).toBe('abx cd');
+        expect([view.state.selection.from, view.state.selection.empty]).toEqual([7, true]);
+    });
+
+    it('SPEC-rich-text-editing/AC-051 adds no undo step for a command that fails or does not apply', async () => {
+        const session = start(stored(para(words('ab'))), { policy: forbid('marks.bold', 'create') });
+        const { handle, runtime } = session;
+        const results: CommandResult[] = [];
+        const unsubscribe = handle.subscribe('documentChange', () => {
+            results.push(handle.execute('text.insert', { text: 'y' }));
+        });
+        typeText(handle, 'x');
+        unsubscribe();
+        setSelection(handle, { text: 'xab' });
+        const other = { id: 'target-1', session: { documentId: 'document-1', sessionId: 'other', generation: 0 } };
+
+        results.push(
+            handle.execute('fixture.missing'),
+            handle.execute('text.insert', { text: 1 }),
+            handle.execute('history.redo'),
+            handle.execute('mark.bold.toggle'),
+            handle.execute('text.insert', { text: 'y' }, { target: {} }),
+            handle.execute('text.insert', { text: 'y' }, { target: other }),
+        );
+        handle.setMode('readonly');
+        results.push(handle.execute('text.insert', { text: 'y' }));
+        handle.setMode('editable');
+        setSelection(handle, { text: 'xab', from: 3, to: 3 });
+        compose(session, 'c');
+        results.push(handle.execute('text.insert', { text: 'y' }));
+        endComposition(session);
+        await settleInput(session);
+        // The typed and the composed text are the only steps.
+        const steps = undoSteps(handle);
+        handle.dispose();
+        results.push(handle.execute('text.insert', { text: 'y' }));
+
+        expect(results.map((result) => (result.status === 'rejected' ? result.code : result.status))).toEqual([
+            'busy',
+            'unknown-command',
+            'invalid-payload',
+            'not-applicable',
+            'not-allowed',
+            'target-invalid',
+            'wrong-session',
+            'readonly',
+            'composition-active',
+            'not-ready',
+        ]);
+        expect([steps, canUndo(runtime.state)]).toEqual([2, false]);
+    });
+});
+
+describe('faults', () => {
+    const pluginError = { code: 'runtime.plugin-error', severity: 'error', messageKey: 'runtime.plugin-error' };
+    const viewFault = { code: 'runtime.view-fault', severity: 'error', messageKey: 'runtime.view-fault' };
+    const NOT_READY: CommandResult = { status: 'rejected', code: 'not-ready' };
+
+    it('SPEC-rich-text-runtime/AC-013 drops a batch whose plugin throws with a plugin-error diagnostic and stays ready, so typing still works', () => {
+        let throws = 0;
+        const failing = new Plugin({
+            appendTransaction: (transactions) => {
+                if (throws > 0 && transactions.some(({ docChanged }) => docChanged)) {
+                    throws -= 1;
+                    throw new Error('plugin failure');
+                }
+                return null;
+            },
+        });
+        const { handle, view, diagnostics, changes } = start(stored(para(words('ab'))), { plugins: [failing] });
+        const before = view.state;
+        const snapshot = handle.getSnapshot();
+
+        throws = 1;
+        typeText(handle, 'x');
+        expect([view.state, handle.getSnapshot()]).toEqual([before, snapshot]);
+        throws = 1;
+        expect(handle.execute('text.insert', { text: 'y' })).toEqual({ status: 'rejected', code: 'not-applicable' });
+        typeText(handle, 'z');
+
+        expect(handle.getSummary().phase).toBe('ready');
+        expect(textOf(view.state.doc)).toBe('zab');
+        expect(changes).toHaveLength(1);
+        expect(diagnostics).toEqual([pluginError, pluginError]);
+    });
+
+    /** A paragraph node view whose `update` throws once its paragraph holds `!`. */
+    const updateFails = new Plugin({
+        props: {
+            nodeViews: {
+                paragraph: (node) => {
+                    const dom = document.createElement('p');
+                    return {
+                        dom,
+                        contentDOM: dom,
+                        update: (next) => {
+                            if (next.textContent.includes('!')) {
+                                throw new Error('node view update failure');
+                            }
+                            return next.type === node.type;
+                        },
+                    };
+                },
+            },
+        },
+    });
+
+    it('SPEC-rich-text-runtime/AC-014 SPEC-rich-text-runtime/AC-078 faults once a node view update throws, keeps the snapshot and offers the faulting edit until dispose', () => {
+        const { handle, element, diagnostics } = start(stored(para(words('ab'))), { plugins: [updateFails] });
+        setSelection(handle, { text: 'ab', from: 2, to: 2 });
+        const snapshot = handle.getSnapshot();
+        expect(handle.getRecoveryCandidate()).toBeNull();
+
+        typeText(handle, '!');
+
+        expect(handle.getSummary().phase).toBe('faulted');
+        expect(diagnostics).toEqual([viewFault]);
+        expect(element.getAttribute('contenteditable')).toBe('false');
+        expect(handle.getSnapshot()).toBe(snapshot);
+        expect(snapshot.stamp).toEqual({ ...handle.getSummary().session, sequence: 0 });
+        expect(JSON.stringify(handle.getRecoveryCandidate())).toContain('"ab!"');
+        expect(JSON.stringify(snapshot.document)).not.toContain('!');
+        expect(handle.execute('text.insert', { text: 'y' })).toEqual(NOT_READY);
+        expect(() => handle.dispose()).not.toThrow();
+        expect(handle.getRecoveryCandidate()).toBeNull();
+    });
+
+    it('SPEC-rich-text-runtime/AC-071 SPEC-rich-text-runtime/AC-082 faults when a node view constructor throws while mounting, keeps the decoded document and settles queued intents as not-ready', async () => {
+        const { result, tree } = decodeToTree(stored(para(words('ab'))), boldModel);
+        if (result.status !== 'editable' || tree === undefined) {
+            throw new Error('expected an editable document');
+        }
+        const constructorFails = new Plugin({
+            props: {
+                nodeViews: {
+                    paragraph: () => {
+                        throw new Error('node view constructor failure');
+                    },
+                },
+            },
+        });
+        const compiled = compileDefinition(boldModel, CAPABILITIES);
+        const environment = createTestEnvironment({ seed: 1 });
+        const runtime = createEditorRuntime({
+            definition: { ...compiled, plugins: [...compiled.plugins, constructorFails] },
+            documentId: 'document-1',
+            tree,
+            capabilities: result.document.requiredCapabilities,
+            environment,
+            mode: 'editable',
+            policy: authoringOf(boldModel),
+            limits: limitsOf({}),
+        });
+        started.push(runtime);
+        const { handle } = runtime;
+        const diagnostics: Diagnostic[] = [];
+        handle.subscribe('diagnostic', (diagnostic: Diagnostic) => diagnostics.push(diagnostic));
+        const queued = handle.enqueue('text.insert', { text: 'x' });
+
+        runtime.attach(document.body.appendChild(document.createElement('div')));
+        environment.flushFrames();
+
+        expect(handle.getSummary().phase).toBe('faulted');
+        expect(diagnostics).toEqual([viewFault]);
+        expect(handle.getSnapshot().stamp).toEqual({ ...handle.getSummary().session, sequence: 0 });
+        expect(textOf(runtime.state.doc)).toBe('ab');
+        expect(JSON.stringify(handle.getSnapshot().document)).toContain('"ab"');
+        expect(await queued).toEqual(NOT_READY);
+        expect(handle.execute('text.insert', { text: 'y' })).toEqual(NOT_READY);
+    });
+});
+
+describe('key precedence', () => {
+    it('SPEC-rich-text/AC-060 runs the commands features bind to one key in plugin order until one applies', () => {
+        const leaveHeading = defineFeature({
+            id: 'fixture.leave-heading',
+            version: 1,
+            requires: [{ id: 'fixture.heading-set', version: 1 }],
+            commands: { 'fixture.paragraph.set': setBlock('paragraph') },
+            keys: { Enter: 'fixture.paragraph.set' },
+        });
+        const markLine = defineFeature({
+            id: 'fixture.mark-line',
+            version: 1,
+            requires: [{ id: 'core', version: 1 }],
+            keys: { Enter: { command: 'text.insert', payload: { text: '¶' } } },
+        });
+        const model = compileContentModel([core(), bold(), fixtureHeadingSet(), leaveHeading(), markLine()], {
+            id: 'test.bold',
+            version: 1,
+        });
+        const { handle, view, changes } = start(stored(para(words('ab')), heading(2, words('cd'))), { model });
+
+        setSelection(handle, { text: 'ab', from: 2, to: 2 });
+        pressKey(handle, 'Enter');
+        setSelection(handle, { text: 'cd', from: 2, to: 2 });
+        pressKey(handle, 'Enter');
+
+        expect(changes.map(({ commandId }) => commandId)).toEqual(['text.insert', 'fixture.paragraph.set']);
+        expect([textOf(view.state.doc), view.state.doc.child(1).type.name]).toEqual(['ab¶cd', 'paragraph']);
+    });
+});
+
+describe('input rules', () => {
+    const ruleModel = compileContentModel([core(), bold(), fixtureItalic(), fixtureHeadingSet(), fixtureInputRules()], {
+        id: 'test.bold',
+        version: 1,
+    });
+    /** The first block's type, then each text run with its marks, such as `paragraph x[bold]`. */
+    const shapeOf = (doc: Node) => {
+        const block = doc.child(0);
+        const runs: string[] = [block.type.name];
+        for (const node of block.children) {
+            runs.push(`${node.text ?? ''}${node.marks.map((mark) => `[${mark.type.name}]`).join('')}`);
+        }
+        return runs.join(' ');
+    };
+    // Each rule of the stand-in, what is typed, and the first block once it fired.
+    const rules: readonly (readonly [string, string, string])[] = [
+        ['heading.hashes', '## ', 'heading'],
+        ['bold.stars', '**x**', 'paragraph x[bold]'],
+        ['bold.underscores', '__x__', 'paragraph x[bold]'],
+        ['italic.star', '*x*', 'paragraph x[italic]'],
+        ['italic.underscore', '_x_', 'paragraph x[italic]'],
+        ['strike.tildes', '~~x~~', 'paragraph x[strike]'],
+        ['code.backtick', '`x`', 'paragraph x[code]'],
+    ];
+    const typedIn = (input: unknown, typed: string) => {
+        const session = start(input, { model: ruleModel });
+        typeText(session.handle, typed);
+        return session;
+    };
+
+    for (const [id, typed, fired] of rules) {
+        it(`SPEC-rich-text-editing/AC-087 SPEC-rich-text-editing/AC-100 restores ${typed} as typed with one undo and removes it with a second, for ${id}`, () => {
+            const { handle, view } = typedIn(stored(para()), typed);
+            const shapes = [shapeOf(view.state.doc)];
+            for (const _undo of [1, 2]) {
+                expect(handle.execute('history.undo').status).toBe('applied');
+                shapes.push(shapeOf(view.state.doc));
+            }
+
+            expect(shapes).toEqual([fired, `paragraph ${typed}`, 'paragraph']);
+        });
+
+        it(`SPEC-rich-text-editing/AC-041 undoes ${id} with Backspace right after it fired, restoring ${typed}`, () => {
+            const { handle, view } = typedIn(stored(para()), typed);
+
+            pressKey(handle, 'Backspace');
+            const restored = shapeOf(view.state.doc);
+            // Backspace undoes nothing more once the rule is undone.
+            pressKey(handle, 'Backspace');
+
+            expect([restored, shapeOf(view.state.doc)]).toEqual([`paragraph ${typed}`, `paragraph ${typed}`]);
+        });
+
+        it(`SPEC-rich-text-editing/AC-039 fires no ${id} in a code block or inline code`, () => {
+            const block = typedIn(stored({ type: 'code_block' }), typed);
+            const inline = start(stored(para({ type: 'text', text: '..', marks: [{ type: 'code' }] })), {
+                model: ruleModel,
+            });
+            setSelection(inline.handle, { text: '..', from: 1, to: 1 });
+            typeText(inline.handle, typed);
+
+            expect([shapeOf(block.view.state.doc), shapeOf(inline.view.state.doc)]).toEqual([
+                `code_block ${typed}`,
+                `paragraph .${typed}.[code]`,
+            ]);
+        });
+
+        it(`SPEC-rich-text-editing/AC-040 fires no ${id} for its pattern pasted as plain text, inserted by a command or loaded`, () => {
+            const pasted = start(stored(para()), { model: ruleModel });
+            pasted.view.pasteText(typed);
+            const inserted = start(stored(para()), { model: ruleModel });
+            inserted.handle.execute('text.insert', { text: typed });
+            const loaded = start(stored(para(words(typed))), { model: ruleModel });
+
+            expect([pasted, inserted, loaded].map(({ view }) => shapeOf(view.state.doc))).toEqual([
+                `paragraph ${typed}`,
+                `paragraph ${typed}`,
+                `paragraph ${typed}`,
+            ]);
+        });
+    }
+
+    it('SPEC-rich-text-editing/AC-100 undoes only a character typed right after a rule fired', () => {
+        const { handle, view } = typedIn(stored(para()), '**x**y');
+        expect(shapeOf(view.state.doc)).toBe('paragraph x[bold] y');
+
+        handle.execute('history.undo');
+
+        expect(shapeOf(view.state.doc)).toBe('paragraph x[bold]');
+    });
+
+    it('SPEC-rich-text-editing/AC-076 fires no mark rule after a word character, before one, or around text with an edge space', () => {
+        const cases: readonly (readonly [string, JsonValue, string])[] = [
+            ['re**ver**', para(), 're**ver**'],
+            ['a~~b~~', para(), 'a~~b~~'],
+            ['x`y`', para(), 'x`y`'],
+            ['** x**', para(), '** x**'],
+            ['_x_', para(words('y')), '_x_y'],
+        ];
+
+        const shapes = cases.map(([typed, block]) => shapeOf(typedIn(stored(block), typed).view.state.doc));
+
+        expect(shapes).toEqual(cases.map(([, , text]) => `paragraph ${text}`));
     });
 });

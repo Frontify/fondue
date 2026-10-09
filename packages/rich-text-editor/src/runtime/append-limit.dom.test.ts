@@ -15,7 +15,7 @@ import { createEditorRuntime } from './runtime';
 
 import type * as Engine from 'prosemirror-state';
 
-// The compiled `history` plugin holds only its key until pair 13 builds history, so here it appends to every batch.
+// The compiled `history` plugin appends nothing, so here it appends to every batch.
 vi.mock('prosemirror-state', async (importOriginal) => {
     const engine = await importOriginal<typeof Engine>();
     class Plugin extends engine.Plugin {
@@ -68,7 +68,7 @@ describe('the append limit of a compiled definition', () => {
         expect(diagnostics.map(({ code, details }) => ({ code, details }))).toEqual([
             {
                 code: 'runtime.append-limit',
-                details: { features: ['fixture.history'], capabilities: ['history'], count: 1 },
+                details: { features: ['core'], capabilities: ['history'], count: 1 },
             },
         ]);
         runtime.handle.dispose();

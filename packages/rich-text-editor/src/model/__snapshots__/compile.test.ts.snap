@@ -4,6 +4,8 @@ exports[`compileContentModel manifest > SPEC-rich-text/AC-028 emits the manifest
 {
   "commands": [
     "text.insert",
+    "history.undo",
+    "history.redo",
   ],
   "features": [
     {
@@ -12,7 +14,18 @@ exports[`compileContentModel manifest > SPEC-rich-text/AC-028 emits the manifest
       "version": 1,
     },
   ],
-  "keys": [],
+  "keys": [
+    {
+      "command": "history.undo",
+      "key": "Mod-z",
+      "payload": null,
+    },
+    {
+      "command": "history.redo",
+      "key": "Mod-Shift-z",
+      "payload": null,
+    },
+  ],
   "marks": [],
   "model": {
     "id": "test.model",
@@ -24,7 +37,10 @@ exports[`compileContentModel manifest > SPEC-rich-text/AC-028 emits the manifest
     "text",
     "hard_break",
   ],
-  "plugins": [],
+  "plugins": [
+    "history",
+    "keymap:core",
+  ],
 }
 `;
 
@@ -32,6 +48,8 @@ exports[`compileContentModel manifest > SPEC-rich-text/AC-028 emits the manifest
 {
   "commands": [
     "text.insert",
+    "history.undo",
+    "history.redo",
     "fixture.undo",
     "fixture.paragraph.set",
     "fixture.heading.set",
@@ -78,6 +96,16 @@ exports[`compileContentModel manifest > SPEC-rich-text/AC-028 emits the manifest
   ],
   "keys": [
     {
+      "command": "history.undo",
+      "key": "Mod-z",
+      "payload": null,
+    },
+    {
+      "command": "history.redo",
+      "key": "Mod-Shift-z",
+      "payload": null,
+    },
+    {
       "command": "fixture.undo",
       "key": "Mod-z",
       "payload": null,
@@ -115,6 +143,7 @@ exports[`compileContentModel manifest > SPEC-rich-text/AC-028 emits the manifest
   ],
   "plugins": [
     "history",
+    "keymap:core",
     "keymap:fixture.history",
     "keymap:fixture.bold",
     "keymap:fixture.heading",
