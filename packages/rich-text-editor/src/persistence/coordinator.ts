@@ -189,6 +189,16 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
             waiter(result);
         }
     };
+    /** Takes a call that got its own answer off `checkpoint`, so a later call there is not held by it. */
+    const leave = (checkpoint: Checkpoint | undefined, waiter: Checkpoint['waiters'][number]) => {
+        if (checkpoint === undefined) {
+            return;
+        }
+        const index = checkpoint.waiters.indexOf(waiter);
+        if (index >= 0) {
+            checkpoint.waiters.splice(index, 1);
+        }
+    };
     /** Why `requestCommit` answers at once with no capture (AC-040, AC-073). */
     const refusal = (): CommitResult | undefined => {
         if (ended.signal.aborted) {
@@ -463,19 +473,19 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
     };
 
     /**
-     * Pins the published snapshot for `finish`, or answers at once when refused or acknowledged already (AC-020,
-     * AC-024, AC-025, AC-066, AC-073).
+     * Pins the published snapshot for `finish` and returns its checkpoint, or answers at once when refused or
+     * acknowledged already (AC-020, AC-024, AC-025, AC-066, AC-073).
      */
-    const pin = (finish: (result: CommitResult) => void) => {
+    const pin = (finish: Checkpoint['waiters'][number]): Checkpoint | undefined => {
         const refused = refusal();
         if (refused !== undefined) {
             finish(refused);
-            return;
+            return undefined;
         }
         const { stamp, document } = runtime.handle.getSnapshot();
         if (accepted !== undefined && sameStamp(accepted.stamp, stamp)) {
             finish({ status: 'acknowledged', acknowledgment: accepted });
-            return;
+            return undefined;
         }
         let checkpoint = pinned.at(-1);
         if (checkpoint === undefined || !sameStamp(checkpoint.stamp, stamp)) {
@@ -483,18 +493,17 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
             pinned.push(checkpoint);
         }
         checkpoint.waiters.push(finish);
-        // A call that joins a pending result shares it, offline too (AC-025).
-        if (checkpoint.waiters.length > 1) {
-            return;
-        }
         // The write a fault, the network or spent retries left unresolved goes first, unchanged (AC-014, `SPEC-rich-text-runtime/AC-091`).
         if (unresolved !== undefined && inFlight === undefined && retry === undefined) {
             replay();
         }
         send();
+        // Only this call answers at once; the others keep waiting for the write (AC-025, AC-066).
         if (!navigator.onLine) {
-            settle(checkpoint, { status: 'failed', code: 'transport', outcome: outcomeOf(stamp) });
+            leave(checkpoint, finish);
+            finish({ status: 'failed', code: 'transport', outcome: outcomeOf(stamp) });
         }
+        return checkpoint;
     };
 
     const online = () => {
@@ -556,22 +565,23 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
                 return Promise.resolve({ status: 'blocked', code: 'composition-active' });
             }
             return new Promise<CommitResult>((resolve) => {
-                let stamp: DocumentStamp | undefined;
+                let checkpoint: Checkpoint | undefined;
+                const finish = (result: CommitResult) => {
+                    clear(timer);
+                    resolve(result);
+                };
                 // Past the timeout the call resolves, while its pinned checkpoint stays for the write (AC-026, AC-030, AC-072).
                 const timer = clock.setTimeout(
                     () => {
                         waiting.delete(capture);
-                        resolve({ status: 'failed', code: 'timeout', outcome: outcomeOf(stamp) });
+                        leave(checkpoint, finish);
+                        resolve({ status: 'failed', code: 'timeout', outcome: outcomeOf(checkpoint?.stamp) });
                     },
                     options.timeoutMs ?? option('timeoutMs'),
                 );
                 const capture = () => {
                     waiting.delete(capture);
-                    stamp = runtime.handle.getSnapshot().stamp;
-                    pin((result) => {
-                        clear(timer);
-                        resolve(result);
-                    });
+                    checkpoint = pin(finish);
                 };
                 waiting.add(capture);
                 // ProseMirror reads a DOM change in a microtask queued before this one, so the capture holds the last keystroke (AC-020).
