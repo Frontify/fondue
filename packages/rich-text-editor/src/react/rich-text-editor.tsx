@@ -9,7 +9,6 @@ import {
     useContext,
     useEffect,
     useImperativeHandle,
-    useLayoutEffect,
     useMemo,
     useRef,
     useState,
@@ -25,6 +24,7 @@ import { browserEnvironment } from '#/runtime/environment';
 import { createEditorRuntime } from '#/runtime/runtime';
 import { type DocumentChange, type SessionToken, type ShippedCommands } from '#/runtime/types';
 
+import { useClientLayoutEffect } from './client-layout-effect';
 import { engineOf } from './define';
 import { type EditorHandle, type RichTextEditorProps } from './types';
 
@@ -94,12 +94,12 @@ const RootComponent = (
     const latestRef = useRef(props);
     const handleRef = useRef<EditorHandle<object> | null>(null);
 
-    useLayoutEffect(() => {
+    useClientLayoutEffect(() => {
         latestRef.current = props;
     });
 
     // The view attaches in a layout effect, so the first frame painted after hydration shows the content (SPEC-rich-text-output/AC-034).
-    useLayoutEffect(() => {
+    useClientLayoutEffect(() => {
         const { definition, decoded } = mounted;
         if (definition === undefined || decoded === undefined) {
             return;
@@ -136,7 +136,7 @@ const RootComponent = (
     useImperativeHandle(ref, () => handleRef.current as EditorHandle<object>, []);
 
     const mode = modeOf(props);
-    useLayoutEffect(() => {
+    useClientLayoutEffect(() => {
         handleRef.current?.setMode(mode);
     }, [mode]);
 
