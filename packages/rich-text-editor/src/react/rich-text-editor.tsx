@@ -28,6 +28,7 @@ import { enUS } from '#/locales/en-US';
 import { type CapabilityRef, type DecodeResult, type Diagnostic } from '#/model';
 import { type TreeNode } from '#/model/content';
 import { decodeToTree } from '#/model/decode';
+import { contentClasses } from '#/model/output';
 import { type LoadedDocument } from '#/persistence/types';
 import { readerContext } from '#/reader/context';
 import { type ReaderPresentation } from '#/reader/reader';
@@ -43,7 +44,6 @@ type Props = RichTextEditorProps<object>;
 /** The props once `definition` is known to be set. */
 type Defined = Props & { readonly definition: CompiledEditorDefinition<object> };
 const DEFAULT_TEST_ID = 'fondue-rich-text-editor';
-const CONTENT_CLASS = 'fondue-rte-content';
 const NO_PRESENTATION: ReaderPresentation = {};
 
 /** What one mount keeps for its whole life: a changed `definition` or `profile` needs a new mount (SPEC-rich-text-react/AC-071). */
@@ -311,14 +311,6 @@ const Root = forwardRef((props: Props & { readonly children: ReactNode }, ref: F
 });
 Root.displayName = 'RichTextEditor.Root';
 
-/** The content root classes: the package's, then the host's (SPEC-rich-text-react/AC-066, AC-067). */
-const classesOf = (contentClassName: string | undefined) => {
-    if (contentClassName === undefined) {
-        return CONTENT_CLASS;
-    }
-    return `${CONTENT_CLASS} ${contentClassName}`;
-};
-
 const emptiness = (runtime: EditorRuntime | undefined) => {
     if (runtime === undefined) {
         return undefined;
@@ -335,7 +327,7 @@ const Surface = () => {
     const { 'data-test-id': testId = DEFAULT_TEST_ID, spellCheck = true, placeholder, presentation } = props;
     const contentClassName = presentation?.contentClassName;
     // React writes the first classes only: ProseMirror adds its own to this element with `classList`, which a rewritten attribute would drop.
-    const [className] = useState(() => classesOf(contentClassName));
+    const [className] = useState(() => contentClasses(contentClassName));
     const surfaceRef = useRef<HTMLElement | null>(null);
     const setSurface = useCallback(
         (element: HTMLElement | null) => {
@@ -350,7 +342,7 @@ const Surface = () => {
         if (surface === null || contentClassName === undefined) {
             return undefined;
         }
-        const names = contentClassName.split(' ').filter((name) => name !== '');
+        const names = contentClassName.split(/\s+/).filter((name) => name !== '');
         surface.classList.add(...names);
         return () => surface.classList.remove(...names);
     }, [contentClassName]);

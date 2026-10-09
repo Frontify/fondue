@@ -5,6 +5,7 @@ import { isIsland, type TreeMark, type TreeNode } from '#/model/content';
 import { type HtmlTemplate, resolveHtmlSpec } from '#/model/html-spec';
 import {
     attrsOf,
+    contentClasses,
     failedFallback,
     groupRun,
     islandFallback,
@@ -218,10 +219,7 @@ export const writeHtml = (
         return { html: '', diagnostics: [] };
     }
     let html = renderChildren(state, root, '/content', false);
-    let props = ' class="fondue-rte-content"';
-    if (contentClassName !== undefined) {
-        props = ` class="fondue-rte-content ${escapeHtml(contentClassName)}"`;
-    }
+    let props = ` class="${escapeHtml(contentClasses(contentClassName))}"`;
     const lang = root.attrs?.lang;
     const dir = root.attrs?.dir;
     if (typeof lang === 'string') {
