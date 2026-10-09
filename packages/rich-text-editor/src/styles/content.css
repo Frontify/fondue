@@ -5,6 +5,7 @@
 /* SPEC-rich-text-react/AC-051: hosts override these per root, and each default is a Fondue token. */
 :where(.fondue-rte-content) {
     --rte-content-text-color: var(--color-primary-default);
+    --rte-content-link-color: var(--color-primary-default);
     --rte-content-paragraph-spacing: var(--spacing-x-small);
     --rte-content-surface-background: var(--color-surface-default);
     --rte-content-surface-border: var(--border-width-default) solid var(--color-line-mid);
@@ -13,28 +14,33 @@
     --rte-content-placeholder-opacity: 1;
     --rte-content-selected-node-color: var(--color-focus-default);
     color: var(--rte-content-text-color);
-}
-
-:where(.fondue-rte-content p) {
-    margin-block: 0 var(--rte-content-paragraph-spacing);
-}
-
-/* The structural rules of the installed prosemirror-view/style/prosemirror.css, scoped to the surface (SPEC-rich-text-react/AC-092). */
-:where(.fondue-rte-content[data-rte-surface]) {
-    position: relative;
+    /* The inherited rules of the installed prosemirror-view/style/prosemirror.css, on every content root so the reader wraps text as the editor does (SPEC-rich-text-react/AC-066, AC-092). */
     word-wrap: break-word;
     white-space: pre-wrap;
     white-space: break-spaces;
     -webkit-font-variant-ligatures: none;
     font-variant-ligatures: none;
     font-feature-settings: 'liga' 0;
+}
+
+:where(.fondue-rte-content p) {
+    margin-block: 0 var(--rte-content-paragraph-spacing);
+}
+
+:where(.fondue-rte-content a) {
+    color: var(--rte-content-link-color);
+}
+
+:where(.fondue-rte-content pre) {
+    white-space: pre-wrap;
+}
+
+/* The editing-only rules of the same stylesheet, on the surface. */
+:where(.fondue-rte-content[data-rte-surface]) {
+    position: relative;
     padding: var(--rte-content-surface-padding);
     border: var(--rte-content-surface-border);
     background-color: var(--rte-content-surface-background);
-}
-
-:where(.fondue-rte-content[data-rte-surface] pre) {
-    white-space: pre-wrap;
 }
 
 :where(.fondue-rte-content[data-rte-surface] li) {

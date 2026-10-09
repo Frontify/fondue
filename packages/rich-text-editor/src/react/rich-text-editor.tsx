@@ -311,6 +311,14 @@ const Root = forwardRef((props: Props & { readonly children: ReactNode }, ref: F
 });
 Root.displayName = 'RichTextEditor.Root';
 
+/** The content root classes: the package's, then the host's (SPEC-rich-text-react/AC-066, AC-067). */
+const classesOf = (contentClassName: string | undefined) => {
+    if (contentClassName === undefined) {
+        return CONTENT_CLASS;
+    }
+    return `${CONTENT_CLASS} ${contentClassName}`;
+};
+
 const emptiness = (runtime: EditorRuntime | undefined) => {
     if (runtime === undefined) {
         return undefined;
@@ -325,11 +333,27 @@ const emptiness = (runtime: EditorRuntime | undefined) => {
 const Surface = () => {
     const { props, mounted, coordinator } = useRoot('Surface');
     const { 'data-test-id': testId = DEFAULT_TEST_ID, spellCheck = true, placeholder, presentation } = props;
-    // The content root carries the host's class, whose rules win over the package's (SPEC-rich-text-react/AC-066, AC-067).
-    let className = CONTENT_CLASS;
-    if (presentation?.contentClassName !== undefined) {
-        className = `${CONTENT_CLASS} ${presentation.contentClassName}`;
-    }
+    const contentClassName = presentation?.contentClassName;
+    // React writes the first classes only: ProseMirror adds its own to this element with `classList`, which a rewritten attribute would drop.
+    const [className] = useState(() => classesOf(contentClassName));
+    const surfaceRef = useRef<HTMLElement | null>(null);
+    const setSurface = useCallback(
+        (element: HTMLElement | null) => {
+            surfaceRef.current = element;
+            coordinator.setSurface(element);
+        },
+        [coordinator],
+    );
+    // A later host class swaps in with `classList`, as ProseMirror's own class changes do (SPEC-rich-text-react/AC-065, AC-066).
+    useClientLayoutEffect(() => {
+        const surface = surfaceRef.current;
+        if (surface === null || contentClassName === undefined) {
+            return undefined;
+        }
+        const names = contentClassName.split(' ').filter((name) => name !== '');
+        surface.classList.add(...names);
+        return () => surface.classList.remove(...names);
+    }, [contentClassName]);
     // A document that is not empty shows no placeholder; before the session is ready the container is empty, as on the server (SPEC-rich-text-react/AC-093).
     let shownPlaceholder = placeholder;
     if (useSessionValue(emptiness, Object.is) === false) {
@@ -337,7 +361,7 @@ const Surface = () => {
     }
     return (
         <div
-            ref={coordinator.setSurface}
+            ref={setSurface}
             className={className}
             role="textbox"
             aria-multiline
