@@ -2,7 +2,7 @@
 
 import { closeHistory, history, isHistoryTransaction, redo, redoDepth, undo, undoDepth } from 'prosemirror-history';
 import { keydownHandler } from 'prosemirror-keymap';
-import { type Command, EditorState, Plugin, type Transaction } from 'prosemirror-state';
+import { type Command, EditorState, Plugin, PluginKey, type Transaction } from 'prosemirror-state';
 
 export { isHistoryTransaction, redo, undo };
 
@@ -25,19 +25,38 @@ export const canRedo = (state: EditorState): boolean => redoDepth(state) > 0;
 export const closeGroup = (transaction: Transaction): Transaction =>
     closeHistory(transaction).setMeta(CLOSES_NEXT, true);
 
-/** Ends the open undo group before `root`, as the batch before it asked. */
-export const startGroup = (root: Transaction): Transaction => closeHistory(root);
+const groupsKey = new PluginKey<boolean>('rte.history-groups');
 
 /**
- * Whether the root after a batch starts a new undo group: the batch closed one, or changed the document outside
- * history, which `prosemirror-history` would otherwise keep the open group across (SPEC-rich-text-runtime/AC-056).
+ * Whether the next root starts a new undo group: its batch closed one, or changed the document outside history,
+ * which `prosemirror-history` would otherwise keep the open group across (SPEC-rich-text-runtime/AC-056).
  */
-export const closesNext = (transactions: readonly Transaction[]): boolean =>
-    transactions.some(
-        (transaction) =>
-            transaction.getMeta(CLOSES_NEXT) === true ||
-            (transaction.docChanged && transaction.getMeta('addToHistory') === false),
-    );
+export const groupsPlugin = new Plugin<boolean>({
+    key: groupsKey,
+    state: {
+        init: () => false,
+        apply: (transaction, closes) => {
+            const closing =
+                transaction.getMeta(CLOSES_NEXT) === true ||
+                (transaction.docChanged && transaction.getMeta('addToHistory') === false);
+            if (transaction.getMeta('appendedTransaction') === undefined) {
+                return closing;
+            }
+            return closes || closing;
+        },
+    },
+});
+
+/** Ends the open undo group before `root` when the batch before it asked, and around it when it is an action (AC-053). */
+export const groupRoot = (state: EditorState, root: Transaction, action: boolean): Transaction => {
+    if (groupsKey.getState(state) === true) {
+        closeHistory(root);
+    }
+    if (action) {
+        closeGroup(root);
+    }
+    return root;
+};
 
 /** A new state with the same plugins and an empty history (SPEC-rich-text-runtime/AC-052). */
 export const reset = (state: EditorState): EditorState =>

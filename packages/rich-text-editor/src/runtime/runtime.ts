@@ -39,7 +39,7 @@ import { findInvalidPayload, findUnsafeJson, isRecord, snapshot } from '#/model/
 import { type AsyncOperation, type AsyncRequest, createAsyncCoordinator } from './async';
 import { secondCopyAtMount, secondCopyInView } from './engines';
 import { createEventBus, type Listener } from './events';
-import { closeGroup, closesNext, isHistoryTransaction, startGroup } from './history';
+import { groupRoot, groupsPlugin, isHistoryTransaction } from './history';
 import { firedRule, withoutRules } from './input-rules';
 import { createLimitCheck } from './limits';
 import { authoringOf, createPolicyCheck } from './policy';
@@ -184,9 +184,20 @@ const summarize = (selection: Selection): SelectionSummary => {
 
 const UI_ORIGINS: ReadonlySet<string> = new Set(['paste', 'cut', 'drop']);
 
-/** Where a batch came from: typing is a DOM change after a recorded `beforeinput`, which ProseMirror does not mark. */
-const originOf = (root: Transaction, typing: boolean): ChangeOrigin => {
+/** The origin of an action that one undo reverts on its own: a command, paste, cut or drop (SPEC-rich-text-runtime/AC-053). */
+const actionOrigin = (root: Transaction): ChangeOrigin | undefined => {
     const event: unknown = root.getMeta('uiEvent');
+    if (root.getMeta(COMMAND_META) !== undefined) {
+        return 'command';
+    }
+    if (typeof event === 'string' && UI_ORIGINS.has(event)) {
+        return event as ChangeOrigin;
+    }
+    return undefined;
+};
+
+/** Where a batch came from: typing is a DOM change after a recorded `beforeinput`, which `commit` marks. */
+const originOf = (root: Transaction): ChangeOrigin => {
     // Undo and redo report `history` whether a key, a command or the browser ran them.
     if (isHistoryTransaction(root)) {
         return 'history';
@@ -194,22 +205,14 @@ const originOf = (root: Transaction, typing: boolean): ChangeOrigin => {
     if (root.getMeta(ORIGIN_META) === 'async') {
         return 'async';
     }
-    if (root.getMeta(COMMAND_META) !== undefined) {
-        return 'command';
+    const action = actionOrigin(root);
+    if (action !== undefined) {
+        return action;
     }
-    if (typeof event === 'string' && UI_ORIGINS.has(event)) {
-        return event as ChangeOrigin;
-    }
-    if (typing) {
+    if (root.getMeta(ORIGIN_META) === 'input') {
         return 'input';
     }
     return 'unknown';
-};
-
-/** Whether a root is an action that one undo reverts on its own: a command, paste, cut or drop (SPEC-rich-text-runtime/AC-053). */
-const isAction = (root: Transaction) => {
-    const event: unknown = root.getMeta('uiEvent');
-    return root.getMeta(COMMAND_META) !== undefined || (typeof event === 'string' && UI_ORIGINS.has(event));
 };
 
 /** One empty paragraph is an empty document, which shows the placeholder (SPEC-rich-text-react/AC-030). */
@@ -238,8 +241,6 @@ interface Candidate {
     readonly candidate: EditorState;
     readonly root: Transaction;
     readonly mapping: Transaction['mapping'];
-    /** Whether the root after this batch starts a new undo group. */
-    readonly closes: boolean;
 }
 /** A candidate, or why a batch cannot be installed. */
 type Prepared =
@@ -277,14 +278,11 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     let commitSequence = 0;
     let sequence = 0;
     let typing = false;
-    // Whether the next root starts a new undo group, as the last installed batch asked (SPEC-rich-text-runtime/AC-053).
-    let closeNext = false;
     let view: EditorView | undefined;
     // The view the last `EditorView` constructor built, which plugin views receive before the constructor returns.
     let built: EditorView | undefined;
-    // The view threw while it installed a state, which ProseMirror runs again on `setProps` and `destroy`.
-    let viewBroken = false;
     // The state the view threw on, which `getRecoveryCandidate` offers until `dispose` (SPEC-rich-text-runtime/AC-078).
+    // ProseMirror runs that throwing update again on `setProps` and `destroy`.
     let recovery: EditorState | undefined;
     let readyFrame: number | undefined;
     // Commits and notifications in progress, during which `execute` is busy and `enqueue` waits.
@@ -321,7 +319,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     );
     let state = EditorState.create({
         doc: definition.schema.nodeFromJSON(options.tree),
-        plugins: [typingRecorder, settling.plugin, targetsPlugin, ...definition.plugins],
+        plugins: [typingRecorder, settling.plugin, targetsPlugin, groupsPlugin, ...definition.plugins],
     });
     // The state whose document the snapshot and `sequence` last published, and how later provisional batches map it.
     let published = state;
@@ -360,7 +358,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
 
     // Recomputes `editable` and the surface attributes from the phase and the mode, which waits for input to settle.
     const refreshView = () => {
-        if (settling.active() || viewBroken) {
+        if (settling.active() || recovery !== undefined) {
             return;
         }
         shownMode = mode;
@@ -381,7 +379,6 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
 
     /** The view threw while it installed `candidate`: editing stops and the snapshot stays (SPEC-rich-text-runtime/AC-014). */
     const viewFault = (attached: EditorView, candidate: EditorState) => {
-        viewBroken = true;
         recovery = candidate;
         attached.dom.setAttribute('contenteditable', 'false');
         fault(diagnostic('runtime.view-fault', undefined, undefined, 'error'));
@@ -439,12 +436,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         }
         // History groups by this time, never by the `Date.now()` a transaction takes when created (SPEC-rich-text-runtime/AC-051).
         root.setTime(environment.clock.now());
-        if (closeNext) {
-            startGroup(root);
-        }
-        if (isAction(root)) {
-            closeGroup(root);
-        }
+        groupRoot(state, root, actionOrigin(root) !== undefined);
         let applied: ReturnType<EditorState['applyTransaction']>;
         try {
             applied = state.applyTransaction(root.setMeta(APPEND_BATCH_META, batch));
@@ -485,11 +477,11 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             }
             return { code: 'not-allowed' };
         }
-        return { candidate: applied.state, root, mapping, closes: closesNext(applied.transactions) };
+        return { candidate: applied.state, root, mapping };
     };
 
     /** Publishes a checked batch, then commits the roots that plugin views dispatched while it was installed. */
-    const install = (prepared: Candidate, typed: boolean): boolean => guarded(() => publish(prepared, typed));
+    const install = (prepared: Candidate): boolean => guarded(() => publish(prepared));
 
     /** Runs `work`, which installs states, then commits the roots that plugin views dispatched meanwhile. */
     const guarded = <T>(work: () => T): T => {
@@ -560,11 +552,10 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     };
 
     /** Installs a batch in the view and counts it, then publishes it, or keeps a provisional batch for input settling. */
-    const publish = ({ candidate, root, mapping, closes }: Candidate, typed: boolean): boolean => {
+    const publish = ({ candidate, root, mapping }: Candidate): boolean => {
         if (!installState(candidate)) {
             return false;
         }
-        closeNext = closes;
         if (isProvisional(root)) {
             if (provisional === undefined) {
                 provisional = mapping;
@@ -574,7 +565,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             notify();
             return false;
         }
-        const origin = originOf(root, typed);
+        const origin = originOf(root);
         const command: unknown = root.getMeta(COMMAND_META);
         let commandId: string | null = null;
         if (origin === 'command' && typeof command === 'string') {
@@ -654,13 +645,13 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             return;
         }
         // Input rules fire only on typed text, never on a paste or a command after a `beforeinput` that changed nothing (AC-040).
-        if (typed && root.getMeta('uiEvent') === undefined && root.getMeta(COMMAND_META) === undefined) {
+        if (typed && actionOrigin(root) === undefined) {
             root.setMeta(ORIGIN_META, 'input');
         }
         busyWith(() => {
             const prepared = prepare(root, installedIds, true);
             if ('candidate' in prepared) {
-                install(prepared, typed);
+                install(prepared);
             } else if (prepared.fault !== undefined) {
                 fault(prepared.fault);
             } else if (prepared.diagnostic !== undefined) {
@@ -785,7 +776,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 return { status: 'no-op', stamp: { ...session, sequence }, contentChanged: false };
             }
             if ('candidate' in attempted) {
-                const contentChanged = install(attempted, false);
+                const contentChanged = install(attempted);
                 // The view faulted while it installed the batch.
                 if (phase !== 'ready') {
                     return rejected('not-ready');
@@ -915,7 +906,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 view.destroy();
             } catch (error) {
                 // A view that threw on an update runs it again while it is destroyed, and `dispose` throws nothing (AC-014).
-                if (!viewBroken) {
+                if (recovery === undefined) {
                     throw error;
                 }
             }
