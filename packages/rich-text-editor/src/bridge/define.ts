@@ -9,7 +9,7 @@ import {
     type JsonObject,
     type ReferenceResolution,
 } from '#/model';
-import { createFeature, featureInternals } from '#/model/feature';
+import { attachedTo, attachToFeature, featureInternals } from '#/model/feature';
 import {
     type CommandArgs,
     type CommandKey,
@@ -36,12 +36,6 @@ export interface NodeViewState<C extends object = ShippedCommands> {
     /** Selects this node by ID at execution time, then runs or queries the command, so a delayed menu action still reaches this node (SPEC-rich-text-react/AC-019). */
     readonly execute: <K extends CommandKey<C>>(id: K, ...args: CommandArgs<C, K>) => CommandResult;
     readonly query: <K extends CommandKey<C>>(id: K, ...args: CommandArgs<C, K>) => CommandState;
-    /** The node's running async operation; never a document attribute (SPEC-rich-text-blocks/AC-014). */
-    readonly pending: {
-        readonly kind: 'upload';
-        readonly state: 'running' | 'failed';
-        readonly progress: number | null;
-    } | null;
 }
 
 export interface NodeViewDeclaration {
@@ -49,11 +43,9 @@ export interface NodeViewDeclaration {
     readonly component: ComponentType<object>;
 }
 
-const DECLARED = new WeakMap<FeatureDeclaration, readonly NodeViewDeclaration[]>();
-
 /** The node views attached to a compiled feature's declaration, which `defineEditor` reads from a compiled model. */
 export const declaredViews = (declaration: FeatureDeclaration): readonly NodeViewDeclaration[] =>
-    DECLARED.get(declaration) ?? [];
+    (attachedTo(declaration, 'views') as readonly NodeViewDeclaration[] | undefined) ?? [];
 
 /** Attaches chrome to a feature's node; compilation rejects a node that no installed feature declares (SPEC-rich-text/AC-021). */
 export const defineNodeView = <F extends Feature>(feature: F, view: NodeViewDeclaration): F => {
@@ -61,10 +53,7 @@ export const defineNodeView = <F extends Feature>(feature: F, view: NodeViewDecl
     if (internals === undefined) {
         return feature;
     }
-    // A fresh declaration copy keys the views to this feature, not to every model built from its factory.
-    const declaration = Object.freeze({ ...internals.declaration });
-    DECLARED.set(declaration, [...declaredViews(internals.declaration), view]);
-    return createFeature(declaration, internals.options, internals.manifest) as F;
+    return attachToFeature(feature, 'views', [...declaredViews(internals.declaration), view]);
 };
 
 /** The state of the node view whose chrome renders, which the portal host provides. */

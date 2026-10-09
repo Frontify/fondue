@@ -11,7 +11,7 @@ import {
     type ReferenceResolution,
 } from '#/model';
 import { pointer } from '#/model/errors';
-import { createFeature, featureInternals } from '#/model/feature';
+import { attachedTo, attachToFeature, featureInternals } from '#/model/feature';
 
 /** What a reader override reads: plain data and functions, never a React context (SPEC-rich-text-output/AC-049). */
 export interface ReaderContext extends CodecContext {
@@ -24,11 +24,9 @@ export interface ReaderNodeProps {
 }
 export type ReaderRenderers = Readonly<Record<string, ComponentType<ReaderNodeProps>>>;
 
-const DECLARED = new WeakMap<FeatureDeclaration, ReaderRenderers>();
-
 /** The overrides attached to a compiled feature's declaration, which the reader reads from a compiled model. */
 export const declaredOverrides = (declaration: FeatureDeclaration): ReaderRenderers | undefined =>
-    DECLARED.get(declaration);
+    attachedTo(declaration, 'reader') as ReaderRenderers | undefined;
 
 /** Attaches reader overrides to a feature; each must name a node or mark the feature declares. */
 export const defineReaderFeature = <F extends Feature>(feature: F, renderers: ReaderRenderers): F => {
@@ -55,11 +53,5 @@ export const defineReaderFeature = <F extends Feature>(feature: F, renderers: Re
             throw new DefinitionError('definition.invalid-declaration', { feature: feature.id, path });
         }
     }
-    if (internals === undefined) {
-        return feature;
-    }
-    // A fresh declaration copy keys the overrides to this feature, not to every model built from its factory.
-    const declaration = Object.freeze({ ...internals.declaration });
-    DECLARED.set(declaration, renderers);
-    return createFeature(declaration, internals.options, internals.manifest) as F;
+    return attachToFeature(feature, 'reader', renderers);
 };
