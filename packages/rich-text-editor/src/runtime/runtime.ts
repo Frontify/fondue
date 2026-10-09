@@ -280,6 +280,8 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     // Whether the next root starts a new undo group, as the last installed batch asked (SPEC-rich-text-runtime/AC-053).
     let closeNext = false;
     let view: EditorView | undefined;
+    // The view the last `EditorView` constructor built, which plugin views receive before the constructor returns.
+    let built: EditorView | undefined;
     // The view threw while it installed a state, which ProseMirror runs again on `setProps` and `destroy`.
     let viewBroken = false;
     // The state the view threw on, which `getRecoveryCandidate` offers until `dispose` (SPEC-rich-text-runtime/AC-078).
@@ -299,6 +301,10 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     // Records typing before any other handler sees the event, so the view itself gets no event handler (SPEC-rich-text-runtime/AC-001).
     const typingRecorder = new Plugin({
         key: new PluginKey('rte.typing'),
+        view: (editorView) => {
+            built = editorView;
+            return {};
+        },
         props: {
             handleDOMEvents: {
                 beforeinput: () => {
@@ -365,6 +371,9 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
 
     const fault = (diagnostic: Diagnostic) => {
         phase = 'faulted';
+        // A composition that settles later publishes nothing (SPEC-rich-text-runtime/AC-014).
+        settling.cancel();
+        provisional = undefined;
         refreshView();
         settleQueue('not-ready');
         report(diagnostic);
@@ -582,6 +591,9 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             fault(repaired.fault);
             return false;
         }
+        if ('diagnostic' in repaired && repaired.diagnostic !== undefined) {
+            report(repaired.diagnostic);
+        }
         if ('candidate' in repaired && repaired.candidate.doc !== state.doc) {
             if (!installState(repaired.candidate)) {
                 return false;
@@ -633,12 +645,16 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         // A recorded `beforeinput` describes this batch only, accepted or not.
         const typed = typing;
         typing = false;
+        // A faulted session installs nothing more, so a broken view never updates again (SPEC-rich-text-runtime/AC-014).
+        if (phase === 'faulted' || phase === 'disposed') {
+            return;
+        }
         if (root.before !== state.doc) {
             report(diagnostic('runtime.stale-transaction', undefined, undefined, 'error'));
             return;
         }
-        // Input rules fire only on typed text (SPEC-rich-text-editing/AC-040).
-        if (typed) {
+        // Input rules fire only on typed text, never on a paste or a command after a `beforeinput` that changed nothing (AC-040).
+        if (typed && root.getMeta('uiEvent') === undefined && root.getMeta(COMMAND_META) === undefined) {
             root.setMeta(ORIGIN_META, 'input');
         }
         busyWith(() => {
@@ -770,6 +786,10 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             }
             if ('candidate' in attempted) {
                 const contentChanged = install(attempted, false);
+                // The view faulted while it installed the batch.
+                if (phase !== 'ready') {
+                    return rejected('not-ready');
+                }
                 return { status: 'applied', stamp: { ...session, sequence }, contentChanged };
             }
             if (attempted.diagnostic !== undefined) {
@@ -1052,6 +1072,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             }
             detach();
             let attached: EditorView;
+            built = undefined;
             try {
                 attached = new EditorView(
                     { mount: element },
@@ -1074,6 +1095,16 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                     },
                 );
             } catch {
+                // ProseMirror starts its DOM observer and input handlers before plugin views, so a plugin view that throws
+                // leaves them on the element unless the half-built view is destroyed.
+                const halfBuilt = built as EditorView | undefined;
+                if (halfBuilt !== undefined) {
+                    try {
+                        halfBuilt.destroy();
+                    } catch {
+                        // Its node views may throw again while it is destroyed.
+                    }
+                }
                 // A view or node view constructor that throws keeps the decoded document as the snapshot (AC-071).
                 fault(diagnostic('runtime.view-fault', undefined, undefined, 'error'));
                 return;

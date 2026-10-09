@@ -54,9 +54,21 @@ const typedEnd = (root: Transaction): number | undefined => {
     return step.from + step.slice.size;
 };
 
+/** Whether text between `from` and `to` carries a code mark, so a match there never fires (SPEC-rich-text-editing/AC-039). */
+const holdsCode = (state: EditorState, from: number, to: number) => {
+    let code = false;
+    state.doc.nodesBetween(from, to, (node) => {
+        code ||= node.marks.some((mark) => mark.type.spec.code === true);
+    });
+    return code;
+};
+
 /** Runs the rule's command, then removes its marker, so the block keeps the text after the caret. */
 const lineStart = (rule: LineStartRule, state: EditorState, $cursor: ResolvedPos, before: string) => {
     if (before !== `${rule.marker} ` || before.length !== $cursor.parentOffset) {
+        return null;
+    }
+    if (holdsCode(state, $cursor.start(), $cursor.pos)) {
         return null;
     }
     const dispatched: Transaction[] = [];
@@ -101,6 +113,9 @@ const markDelimiter = (
     }
     const start = $cursor.pos - before.length;
     const from = start + openAt;
+    if (holdsCode(state, from, $cursor.pos)) {
+        return null;
+    }
     return state.tr
         .delete(start + closeAt, $cursor.pos)
         .addMark(from + open.length, start + closeAt, mark.create())

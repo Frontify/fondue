@@ -409,13 +409,6 @@ const TIME_MESSAGE =
 const DOM_MESSAGE =
     'Codecs and the reader read only the envelope and resolver results, never the live DOM (SPEC-rich-text-output/AC-027).';
 
-const ENGINE_MESSAGE = 'The view input state and DOM observer are ProseMirror internals (SPEC-rich-text/AC-095).';
-// Every scope keeps these, since each override's `no-restricted-properties` replaces earlier ones.
-const ENGINE_INTERNALS = [
-    { object: 'view', property: 'input', message: ENGINE_MESSAGE },
-    { property: 'domObserver', message: ENGINE_MESSAGE },
-];
-
 const globals = (names: string[], message: string) => names.map((name) => ({ name, message }));
 const viaGlobalObjects = (names: string[], message: string) =>
     GLOBAL_OBJECTS.flatMap((object) => names.map((property) => ({ object, property, message })));
@@ -429,7 +422,6 @@ const restricted = (network: boolean, time: boolean, dom = false): NonNullable<O
     ],
     'no-restricted-properties': [
         'error',
-        ...ENGINE_INTERNALS,
         ...(network
             ? [
                   { object: 'navigator', property: 'sendBeacon', message: NETWORK_MESSAGE },
@@ -496,6 +488,7 @@ export default defineConfig({
                 'rte-style/one-optional-per-expression': 'error',
                 'rte-style/no-effects-in-selector': ['error', { hooks: ['useEditorSelection', 'useEditorSummary'] }],
                 'rte-style/no-pointer-prevent-default': 'error',
+                'rte-style/no-view-internals': 'error',
                 ...restricted(true, true),
             },
         },
@@ -536,6 +529,8 @@ export default defineConfig({
                 'rte-style/no-jsx-string-literal': 'off',
                 'rte-style/no-image-chrome': 'off',
                 'rte-style/no-pointer-prevent-default': 'off',
+                // Test data names fields `input`, such as the URL fixtures of `src/model/href.test.ts`.
+                'rte-style/no-view-internals': 'off',
                 ...restricted(true, false),
             },
         },
