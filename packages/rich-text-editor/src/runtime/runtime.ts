@@ -638,7 +638,8 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         execute,
         enqueue,
         captureTarget: (options) => {
-            if (phase !== 'ready') {
+            // During a commit or notification the capture's root would wait or go stale, so it is refused, as `execute` is.
+            if (phase !== 'ready' || busy > 0) {
                 return { status: 'rejected', code: 'not-ready' };
             }
             const id = environment.ids.next('target');
