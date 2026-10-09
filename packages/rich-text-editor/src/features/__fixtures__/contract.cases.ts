@@ -170,9 +170,18 @@ export const normalizerCases = (features: readonly Feature[], documents?: readon
             let repaired = false;
             for (const doc of statesOf()) {
                 const ids = createTestEnvironment({ seed: 1 }).ids;
-                const first = normalize(EditorState.create({ doc }), ids);
                 const equal = doc.type.schema.nodeFromJSON(doc.toJSON());
-                const second = normalize(EditorState.create({ doc: equal }), createTestEnvironment({ seed: 1 }).ids);
+                // The clock moves between the two runs, so a normalizer that reads it gives equal states other steps.
+                vi.useFakeTimers({ toFake: ['Date', 'performance'] });
+                let first: Transaction | null;
+                let second: Transaction | null;
+                try {
+                    first = normalize(EditorState.create({ doc }), ids);
+                    vi.advanceTimersByTime(1000);
+                    second = normalize(EditorState.create({ doc: equal }), createTestEnvironment({ seed: 1 }).ids);
+                } finally {
+                    vi.useRealTimers();
+                }
                 expect(stepsOf(second)).toEqual(stepsOf(first));
                 if (first !== null) {
                     repaired = true;
@@ -187,15 +196,23 @@ export const normalizerCases = (features: readonly Feature[], documents?: readon
             const states = statesOf().map((doc) => EditorState.create({ doc }));
             const ids = createTestEnvironment({ seed: 1 }).ids;
             const stubs = stubForbidden(`The ${id} normalizer`);
+            // A normalizer schedules no promise work either, which the command case allows for an upload hand-off.
+            const then = vi.spyOn(Promise.prototype, 'then').mockImplementation(() => {
+                throw new Error(`The ${id} normalizer called Promise.prototype.then.`);
+            });
+            let scheduled = 0;
             try {
                 for (const state of states) {
                     const result: unknown = normalize(state, ids);
                     expect(result === null || result instanceof Transaction).toBe(true);
                 }
             } finally {
+                scheduled = then.mock.calls.length;
+                then.mockRestore();
                 vi.unstubAllGlobals();
             }
             expect(stubs.filter((stub) => stub.mock.calls.length > 0)).toEqual([]);
+            expect(scheduled).toBe(0);
         });
     }
 };

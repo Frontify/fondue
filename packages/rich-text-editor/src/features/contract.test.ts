@@ -209,6 +209,31 @@ describe('the feature contract suite', () => {
                     return original(state, ids);
                 },
         ],
+        [
+            'schedules promise work',
+            'SPEC-rich-text/AC-059 runs the node-ids normalizer synchronously with no I/O or timer',
+            (original: Normalizer): Normalizer =>
+                (state, ids) => {
+                    Promise.resolve()
+                        .then(() => undefined)
+                        .catch(() => undefined);
+                    return original(state, ids);
+                },
+        ],
+        [
+            'draws IDs from the clock',
+            'SPEC-rich-text/AC-057 runs the node-ids normalizer to equal steps on equal states and to nothing on its output',
+            (original: Normalizer): Normalizer =>
+                (state) => {
+                    let drawn = 0;
+                    return original(state, {
+                        next: () => {
+                            drawn += 1;
+                            return `node-${Date.now()}-${drawn}`;
+                        },
+                    });
+                },
+        ],
     ])('SPEC-rich-text/AC-057 SPEC-rich-text/AC-059 fails a normalizer that %s', async (_name, title, replace) => {
         const normalizers = NORMALIZERS as Record<string, Normalizer>;
         const original = normalizers['node-ids'] as Normalizer;

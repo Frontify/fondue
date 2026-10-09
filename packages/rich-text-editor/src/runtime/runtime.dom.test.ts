@@ -39,6 +39,7 @@ import { probeRuntimes } from '#/testing/probe';
 import newerNotes from '../../fixtures/migration/v3-current.json';
 
 import { CAPABILITIES } from './capabilities';
+import { createLimitCheck } from './limits';
 import { authoringOf } from './policy';
 import { createEditorRuntime, type EditorRuntime } from './runtime';
 import {
@@ -948,6 +949,13 @@ describe('occurrences the policy pairs across a batch', () => {
                     state.schema.text('zz', [state.schema.mark('link', link('https://frontify.com/b').attrs)]),
                 ),
             false,
+        ],
+        [
+            'a pasted copy of a mention before the untouched one, which the repair renames',
+            stored(para(words('a'), { type: 'mention', attrs: { nodeId: 'm-1', label: 'Ada' } }, words('b'))),
+            forbid('fixture.mention', 'edit'),
+            (state) => state.tr.insert(1, state.schema.node('mention', { nodeId: 'm-1', label: '' })),
+            true,
         ],
         [
             'a pasted copy of a mention after the untouched one',
@@ -1986,6 +1994,92 @@ describe('node IDs', () => {
             }
         });
     }
+
+    it('SPEC-rich-text-runtime/AC-092 SPEC-rich-text-runtime/AC-004 reads only the nodes a keystroke changed, and leaves a stored repeated nodeId alone', () => {
+        const blocks: JsonValue[] = [para(words('a'), person('m-1'), person('m-1'))];
+        for (let index = 0; index < 5000; index += 1) {
+            blocks.push(titled(`h-${index}`, 'Title'), para(words('Some text')));
+        }
+        const { handle, changes } = start(stored(...blocks), {
+            model: idModel,
+            policy: forbid('fixture.mention', 'create'),
+            limits: { maxDocumentNodes: 1_000_000, maxDocumentBytes: 100_000_000 },
+        });
+        setSelection(handle, { text: 'Some text', from: 4, to: 4 });
+        let visits = 0;
+        let depth = 0;
+        const { nodesBetween } = Node.prototype;
+        const counted = vi
+            .spyOn(Node.prototype, 'nodesBetween')
+            .mockImplementation(function (this: Node, from, to, visit, start) {
+                // A nested call gets the counting callback already, so only the outermost call wraps it.
+                if (depth > 0) {
+                    return nodesBetween.call(this, from, to, visit, start);
+                }
+                depth += 1;
+                try {
+                    return nodesBetween.call(
+                        this,
+                        from,
+                        to,
+                        (...args) => {
+                            visits += 1;
+                            return visit(...args);
+                        },
+                        start,
+                    );
+                } finally {
+                    depth -= 1;
+                }
+            });
+        try {
+            typeText(handle, 'x');
+        } finally {
+            counted.mockRestore();
+        }
+
+        expect(changes.map(({ origin }) => origin)).toEqual(['input']);
+        expect(visits).toBeLessThan(50);
+    });
+
+    it('SPEC-rich-text-runtime/AC-092 SPEC-rich-text-runtime/AC-036 installs the IDs a query drew, so execute publishes what query judged', () => {
+        const queried = start(stored(para(words('ab'))), { model: idModel });
+        setSelection(queried.handle, { text: 'ab', from: 1, to: 1 });
+        for (let count = 0; count < 3; count += 1) {
+            expect(queried.handle.query('heading.set', { level: 2 }).enabled).toBe(true);
+        }
+        expect(queried.handle.execute('heading.set', { level: 2 }).status).toBe('applied');
+        expect(contentOf(queried.changes[0])).toMatchObject({ content: [{ attrs: { nodeId: 'node-1' } }] });
+
+        // With eight IDs drawn, a query draws `node-9` and the limit fits its document exactly, one byte below `node-10`.
+        const atNine = (limits: Partial<ResourceLimits>) => {
+            const environment = createTestEnvironment({ seed: 1 });
+            const session = start(stored(para(words('ab'))), { model: idModel, limits, environment });
+            for (let count = 0; count < 8; count += 1) {
+                environment.ids.next('node');
+            }
+            setSelection(session.handle, { text: 'ab', from: 1, to: 1 });
+            return session;
+        };
+        const open = atNine({ maxDocumentBytes: 100_000_000 });
+        open.handle.execute('heading.set', { level: 2 });
+        const exceeds = createLimitCheck(idModel, [{ id: 'core', version: 1 }]);
+        let low = 1;
+        let high = 100_000;
+        while (low < high) {
+            const middle = Math.floor((low + high) / 2);
+            if (exceeds(open.view.state.doc, limitsOf({ maxDocumentBytes: middle }))) {
+                low = middle + 1;
+            } else {
+                high = middle;
+            }
+        }
+        const tight = atNine({ maxDocumentBytes: low });
+
+        expect(tight.handle.query('heading.set', { level: 2 }).enabled).toBe(true);
+        expect(tight.handle.execute('heading.set', { level: 2 }).status).toBe('applied');
+        expect(contentOf(tight.changes[0])).toMatchObject({ content: [{ attrs: { nodeId: 'node-9' } }] });
+    });
 });
 
 describe('disposal', () => {
