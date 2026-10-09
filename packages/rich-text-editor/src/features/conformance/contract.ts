@@ -31,6 +31,7 @@ import { CAPABILITIES } from '#/runtime/capabilities';
 
 import keyboardPage from '../../../docs/keyboard.md?raw';
 
+import { AXE_TAGS } from './axe-tags';
 import { featureFixtures } from './fixtures';
 
 /** The ambient `describe`, `it` and `expect` of the host's test runner, which the suite registers its cases with. */
@@ -42,8 +43,6 @@ interface TestRunner {
 
 // The model ID that the fixture documents of the shipped features carry.
 const MODEL_ID = 'feature-contract';
-// SPEC-rich-text-accessibility/AC-036: the tags the Storybook axe check uses too.
-const AXE_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
 const translations: Readonly<Record<string, string>> = enUS.translationStrings;
 
 const declarationOf = (feature: Feature): FeatureDeclaration => {
@@ -218,6 +217,10 @@ export const runFeatureContract = (features: readonly Feature[], options: Featur
         });
     };
 
+    it('SPEC-rich-text/AC-016 compileContentModel accepts the feature set, which it rejects when a node or mark has no html spec', () => {
+        expect(compiled().ref).toEqual({ id: MODEL_ID, version: 1 });
+    });
+
     for (const feature of features) {
         const declaration = declarationOf(feature);
         const shipped = Object.hasOwn(registry, feature.id);
@@ -226,10 +229,6 @@ export const runFeatureContract = (features: readonly Feature[], options: Featur
         const marks = Object.keys(declaration.marks ?? {});
 
         describe(feature.id, () => {
-            it('SPEC-rich-text/AC-016 compiles its vocabulary, with an html spec for each node and mark', () => {
-                expect(compiled().ref).toEqual({ id: MODEL_ID, version: 1 });
-            });
-
             it('SPEC-rich-text/AC-017 builds its nodes and marks into the engine schema', () => {
                 const { schema } = engineOf();
                 expect(nodes.filter((name) => schema.nodes[name] === undefined)).toEqual([]);

@@ -3,14 +3,14 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
-import { type Feature, type FeatureDeclaration } from '../src/model/declarations.ts';
-import { featureInternals } from '../src/model/feature.ts';
+import { featureTagsOf } from '../.storybook/feature-tags.ts';
+import { type FeatureDeclaration } from '../src/model/declarations.ts';
+
+import { registeredDeclarations } from './registered-features.ts';
 
 type Entry = { readonly id: string; readonly title: string; readonly type: string; readonly tags?: readonly string[] };
 
 const FEATURES = 'Rich Text Editor/Features/';
-// A feature story tags each feature it installs, which `.storybook/checks.ts` compares with its definition.
-const FEATURE_TAG = 'feature:';
 
 /** The feature, everything it requires, and `core`. */
 const installsOf = (id: string, declarations: ReadonlyMap<string, FeatureDeclaration>): string[] => {
@@ -47,9 +47,7 @@ export const checkStories = (
         }
         const expected = installsOf(id, byId).join(', ');
         for (const story of own) {
-            const tagged = (story.tags ?? [])
-                .filter((tag) => tag.startsWith(FEATURE_TAG))
-                .map((tag) => tag.slice(FEATURE_TAG.length))
+            const tagged = featureTagsOf(story.tags ?? [])
                 .sort()
                 .join(', ');
             if (tagged !== expected) {
@@ -61,17 +59,7 @@ export const checkStories = (
 };
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-    // The registry imports through the `#/` alias, which `tsx` resolves and the node typecheck project does not.
-    const { registry } = (await import(new URL('../src/features/registry.ts', import.meta.url).href)) as {
-        readonly registry: Readonly<Record<string, () => Feature>>;
-    };
-    const declarations = Object.values(registry).map((factory) => {
-        const internals = featureInternals(factory());
-        if (internals === undefined) {
-            throw new Error('A registry entry is not a feature that defineFeature made.');
-        }
-        return internals.declaration;
-    });
+    const declarations = await registeredDeclarations();
     const { entries } = JSON.parse(
         readFileSync(new URL('../storybook-static/index.json', import.meta.url), 'utf8'),
     ) as {
