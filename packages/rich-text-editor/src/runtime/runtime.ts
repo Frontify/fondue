@@ -173,6 +173,9 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
 
     /** Installs one batch: the root and every transaction plugins append to it (SPEC-rich-text-runtime/AC-002). */
     const commit = (root: Transaction) => {
+        // A recorded `beforeinput` describes this batch only, accepted or not.
+        const typed = typing;
+        typing = false;
         const { state: candidate, transactions } = state.applyTransaction(root);
         if (transactions.length === 0) {
             return;
@@ -183,8 +186,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             view.updateState(candidate);
         }
         commitSequence += 1;
-        const origin = originOf(root, typing);
-        typing = false;
+        const origin = originOf(root, typed);
         // An effective change compares documents by node equality, never by serializing them (SPEC-rich-text-runtime/AC-019).
         if (candidate.doc.eq(previous.doc)) {
             return;
