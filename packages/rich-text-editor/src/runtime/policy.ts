@@ -3,6 +3,7 @@
 import { type Mark, type Node } from 'prosemirror-model';
 import { type Transaction } from 'prosemirror-state';
 
+import { carriesNodeId } from '#/definition';
 import { type ContentModel, DefinitionError } from '#/model';
 import { compiledModel } from '#/model/compile';
 import { findUnsafeJson } from '#/model/values';
@@ -117,7 +118,6 @@ const sameNode = (a: Node, b: Node) => a === b || (a.hasMarkup(b.type, b.attrs, 
 /** Whether `b` is `a` with another `nodeId`, which only the package's repair gives a node (SPEC-rich-text-runtime/AC-092). */
 const renamed = (a: Node, b: Node) =>
     a.hasMarkup(b.type, { ...b.attrs, nodeId: a.attrs.nodeId as unknown }, a.marks) && a.content.eq(b.content);
-const carriesId = (node: Node) => node.type.spec.attrs !== undefined && Object.hasOwn(node.type.spec.attrs, 'nodeId');
 
 /**
  * Pairs a feature's nodes before and after a batch. A node whose type carries a `nodeId` pairs with an identical
@@ -132,7 +132,7 @@ const nodeChangeOf = (before: readonly Node[], after: readonly Node[]): Change =
     let remove = false;
     for (const node of before) {
         let other: Node | undefined;
-        if (carriesId(node)) {
+        if (carriesNodeId(node)) {
             const sameId = (candidate: Node) =>
                 candidate.type === node.type && candidate.attrs.nodeId === node.attrs.nodeId;
             // A pasted copy shares the ID, so an unchanged node with that ID pairs first.
@@ -151,10 +151,10 @@ const nodeChangeOf = (before: readonly Node[], after: readonly Node[]): Change =
                 changed.push(node);
             }
         }
-        edit ||= other !== undefined && !sameNode(node, other) && !(carriesId(node) && renamed(node, other));
+        edit ||= other !== undefined && !sameNode(node, other) && !renamed(node, other);
     }
     for (const node of changed) {
-        const other = take(left, (candidate) => candidate.type === node.type && !carriesId(candidate));
+        const other = take(left, (candidate) => candidate.type === node.type && !carriesNodeId(candidate));
         remove ||= other === undefined;
         edit ||= other !== undefined;
     }

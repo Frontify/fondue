@@ -2,9 +2,21 @@
 
 import { type Node } from 'prosemirror-model';
 import { type EditorState, PluginKey, type StateField, type Transaction } from 'prosemirror-state';
+import {
+    AddMarkStep,
+    AddNodeMarkStep,
+    AttrStep,
+    DocAttrStep,
+    RemoveMarkStep,
+    RemoveNodeMarkStep,
+    ReplaceAroundStep,
+    ReplaceStep,
+} from 'prosemirror-transform';
 
 import { type IdSource } from '#/model';
 import { NODE_IDS_PLUGIN } from '#/model/capabilities';
+
+import { carriesNodeId } from './schema';
 
 /**
  * A repair transaction appended after another: the same steps for equal states and nothing on its own output
@@ -18,44 +30,44 @@ interface NodeIdIndex {
     readonly touched: readonly number[];
 }
 
-const NODE_ID_INDEX = new PluginKey<NodeIdIndex>(NODE_IDS_PLUGIN.id);
-// Steps whose empty step map changes no `nodeId`; an `attr` step is read on its own, and any other step recounts.
-const KEEPS_IDS: ReadonlySet<unknown> = new Set([
-    'replace',
-    'replaceAround',
-    'addMark',
-    'removeMark',
-    'addNodeMark',
-    'removeNodeMark',
-    'docAttr',
-]);
+/** A normalizer, with the plugin key and state it keeps between transactions. */
+export interface NormalizerPlugin<T> {
+    readonly normalize: Normalizer;
+    readonly key: PluginKey<T>;
+    readonly field: StateField<T>;
+}
 
-const carriesId = (node: Node) => node.type.spec.attrs !== undefined && Object.hasOwn(node.type.spec.attrs, 'nodeId');
+const NODE_ID_INDEX = new PluginKey<NodeIdIndex>(NODE_IDS_PLUGIN.id);
+// Steps that change no `nodeId`, since their step maps are empty; an `AttrStep` is read on its own, and any other step recounts.
+const KEEPS_IDS = [AddMarkStep, RemoveMarkStep, AddNodeMarkStep, RemoveNodeMarkStep, DocAttrStep];
 
 /** Calls `visit` for each node that carries a `nodeId` and starts in `from..to`, both ends included. */
 const startingIn = (doc: Node, from: number, to: number, visit: (node: Node, pos: number) => void) => {
     doc.nodesBetween(from, Math.min(to + 1, doc.content.size), (node, pos) => {
-        if (pos >= from && pos <= to && carriesId(node)) {
+        if (pos >= from && pos <= to && carriesNodeId(node)) {
             visit(node, pos);
         }
         return true;
     });
 };
 
-/** Every `nodeId` of `doc` counted, with every node that carries one touched when `everything` is set. */
-const indexOf = (doc: Node, everything: boolean): NodeIdIndex => {
+/** How many nodes of `doc` carry each `nodeId`. */
+const countNodeIds = (doc: Node): Map<string, number> => {
     const counts = new Map<string, number>();
-    const touched: number[] = [];
-    startingIn(doc, 0, doc.content.size, (node, pos) => {
+    startingIn(doc, 0, doc.content.size, (node) => {
         const { nodeId } = node.attrs;
         if (typeof nodeId === 'string') {
             counts.set(nodeId, (counts.get(nodeId) ?? 0) + 1);
         }
-        if (everything) {
-            touched.push(pos);
-        }
     });
-    return { counts, touched };
+    return counts;
+};
+
+/** The index of `doc` read whole: its counts, with every node that carries a `nodeId` touched. */
+const touchEveryNode = (doc: Node): NodeIdIndex => {
+    const touched: number[] = [];
+    startingIn(doc, 0, doc.content.size, (_node, pos) => touched.push(pos));
+    return { counts: countNodeIds(doc), touched };
 };
 
 /**
@@ -63,7 +75,7 @@ const indexOf = (doc: Node, everything: boolean): NodeIdIndex => {
  * keystroke reads only what it changed; the touched positions start over with each root transaction.
  */
 const nodeIdIndex: StateField<NodeIdIndex> = {
-    init: (_config, state) => indexOf(state.doc, false),
+    init: (_config, state) => ({ counts: countNodeIds(state.doc), touched: [] }),
     apply: (transaction, index) => {
         let touched: number[] = [];
         if (transaction.getMeta('appendedTransaction') !== undefined) {
@@ -89,21 +101,13 @@ const nodeIdIndex: StateField<NodeIdIndex> = {
             const before = transaction.docs[at] as Node;
             const after = transaction.docs[at + 1] ?? transaction.doc;
             const rest = transaction.mapping.slice(at + 1);
-            const json = step.toJSON() as {
-                readonly stepType?: unknown;
-                readonly attr?: unknown;
-                readonly pos?: unknown;
-            };
-            if (json.stepType === 'attr') {
-                if (json.attr === 'nodeId' && typeof json.pos === 'number') {
-                    const pos = json.pos;
-                    adjust(before.nodeAt(pos)?.attrs.nodeId, -1);
-                    adjust(after.nodeAt(pos)?.attrs.nodeId, 1);
-                    touched.push(rest.map(pos, 1));
+            if (step instanceof AttrStep) {
+                if (step.attr === 'nodeId') {
+                    adjust(before.nodeAt(step.pos)?.attrs.nodeId, -1);
+                    adjust(after.nodeAt(step.pos)?.attrs.nodeId, 1);
+                    touched.push(rest.map(step.pos, 1));
                 }
-            } else if (!KEEPS_IDS.has(json.stepType)) {
-                return indexOf(transaction.doc, true);
-            } else {
+            } else if (step instanceof ReplaceStep || step instanceof ReplaceAroundStep) {
                 // oxlint-disable-next-line unicorn/no-array-for-each -- `StepMap.forEach` is the public way to read a step's changed ranges.
                 step.getMap().forEach((oldStart, oldEnd, newStart, newEnd) => {
                     startingIn(before, oldStart, oldEnd, (node) => adjust(node.attrs.nodeId, -1));
@@ -112,6 +116,8 @@ const nodeIdIndex: StateField<NodeIdIndex> = {
                         touched.push(rest.map(pos, 1));
                     });
                 });
+            } else if (!KEEPS_IDS.some((kind) => step instanceof kind)) {
+                return touchEveryNode(transaction.doc);
             }
         }
         let counts = index.counts;
@@ -132,13 +138,13 @@ const fillNodeIds: Normalizer = (state, ids) => {
     const { doc } = state;
     let index = NODE_ID_INDEX.getState(state);
     if (index === undefined) {
-        index = indexOf(doc, true);
+        index = touchEveryNode(doc);
     }
     const repairs = new Set<number>();
     const repeated = new Set<string>();
     for (const pos of index.touched) {
         const node = doc.nodeAt(pos);
-        if (node !== null && carriesId(node)) {
+        if (node !== null && carriesNodeId(node)) {
             const { nodeId } = node.attrs;
             if (typeof nodeId !== 'string') {
                 repairs.add(pos);
@@ -179,9 +185,6 @@ const fillNodeIds: Normalizer = (state, ids) => {
 };
 
 /** The package's normalizers by the plugin ID that runs each, in the `structure` phase. */
-export const NORMALIZERS: Readonly<Record<string, Normalizer>> = { [NODE_IDS_PLUGIN.id]: fillNodeIds };
-
-/** The plugin state a normalizer keeps between transactions, by the plugin ID that runs it. */
-export const NORMALIZER_STATES: Readonly<
-    Record<string, { readonly key: PluginKey; readonly field: StateField<unknown> }>
-> = { [NODE_IDS_PLUGIN.id]: { key: NODE_ID_INDEX, field: nodeIdIndex as StateField<unknown> } };
+export const NORMALIZERS: Readonly<Record<string, NormalizerPlugin<NodeIdIndex>>> = {
+    [NODE_IDS_PLUGIN.id]: { normalize: fillNodeIds, key: NODE_ID_INDEX, field: nodeIdIndex },
+};
