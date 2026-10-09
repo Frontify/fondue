@@ -69,11 +69,11 @@ const libraryEntries = Object.fromEntries(
 const sourceDirectory = fileURLToPath(new URL('src', import.meta.url));
 const distDirectory = fileURLToPath(new URL('dist', import.meta.url));
 
-// `nodenext` consumers need a full file path in every relative declaration import.
+// `nodenext` consumers need a full file path in every relative declaration import, inline `import()` types included.
 const withDeclarationExtensions = (filePath: string, content: string) => {
     const sourceDir = dirname(filePath).replace(distDirectory, sourceDirectory);
     return content.replaceAll(
-        /(from\s+['"])(\.{1,2}\/[^'"]+?)(['"])/g,
+        /((?:from\s+|import\()['"])(\.{1,2}\/[^'"]+?)(['"])/g,
         (match, open: string, specifier: string, close: string) => {
             if (specifier.endsWith('.js')) {
                 return match;

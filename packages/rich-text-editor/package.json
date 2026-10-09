@@ -19,9 +19,17 @@
         "defaults and not op_mini all and not kaios > 0"
     ],
     "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js"
+        },
         "./model": {
             "types": "./dist/model/index.d.ts",
             "import": "./dist/model/index.js"
+        },
+        "./features": {
+            "types": "./dist/features/index.d.ts",
+            "import": "./dist/features/index.js"
         },
         "./reader": {
             "types": "./dist/reader/index.d.ts",
@@ -62,15 +70,18 @@
         "test:watch": "vitest",
         "test:components": "playwright test --ui",
         "test:components:ci": "playwright test",
-        "test:components:hydration": "NODE_ENV=development playwright test src/reader/hydration.ct.tsx",
+        "test:components:hydration": "NODE_ENV=development playwright test hydration.ct.tsx",
         "test:components:update-snapshot": "playwright test --update-snapshots",
         "test:storybook": "test-storybook --url http://127.0.0.1:6013 --index-json",
         "test:storybook:ci": "concurrently -k -s first -n server,tests \"http-server storybook-static --port 6013 --silent\" \"wait-on tcp:127.0.0.1:6013 && pnpm test:storybook\""
     },
     "dependencies": {
         "markdown-it": "^15.0.2",
+        "prosemirror-commands": "^1.7.2",
+        "prosemirror-keymap": "^1.2.3",
         "prosemirror-model": "^1.25.12",
-        "prosemirror-state": "^1.4.4"
+        "prosemirror-state": "^1.4.4",
+        "prosemirror-view": "^1.42.6"
     },
     "devDependencies": {
         "@axe-core/playwright": "^4.13.0",
