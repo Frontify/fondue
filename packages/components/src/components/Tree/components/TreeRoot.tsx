@@ -20,10 +20,10 @@ import { TreeRow } from './TreeRow';
 
 export type TreeRootProps = {
     /**
-     * Rows may sit inside custom components and fragments. Limits: rows rendered through a
-     * portal inside a custom component are not found, row parts (Icon, Decorator, Action) do
-     * not see a context provider placed inside the custom component, and server rendering
-     * adds React `useLayoutEffect` warnings for custom components.
+     * Rows may sit inside custom components and fragments. Limits: `Tree.FolderHeader` and row
+     * parts stay direct children of their folder or item; rows rendered through a portal are not
+     * found; row parts (Icon, Decorator, Action) do not see a context provider placed around
+     * rows; server rendering adds React `useLayoutEffect` warnings for custom components.
      */
     children: ReactNode;
     /** Fires with the full tree state, at most once per user interaction. */
@@ -147,7 +147,7 @@ export const TreeRoot = ({
         </div>
     );
 
-    // One stable shape with the tree first: mounting the collect pass never remounts it or shifts sibling selectors.
+    // One stable shape with the tree first: mounting the collect pass never remounts it or shifts `:first-child`.
     return (
         <>
             {treeElement}

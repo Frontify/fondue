@@ -1303,11 +1303,11 @@ export const RowsInCustomComponents: Story = {
             description: {
                 story:
                     'Rows may sit inside your own components and fragments, so a component can own the data for a folder ' +
-                    'and render its rows, as `FolderContents` does here with its own fetch state. Limits: rows rendered ' +
-                    'through a portal inside a custom component are not found. Row parts (`Tree.Icon`, `Tree.Decorator`, ' +
-                    '`Tree.Action`) render under `Tree.Root`, so they do not see a context provider placed inside the ' +
-                    'custom component. When the tree is server-rendered, custom components add React `useLayoutEffect` ' +
-                    'warnings.',
+                    'and render its rows, as `FolderContents` does here with its own fetch state. Limits: `Tree.FolderHeader` ' +
+                    'and row parts stay direct children of their folder or item. Rows rendered through a portal are not ' +
+                    'found. Row parts (`Tree.Icon`, `Tree.Decorator`, `Tree.Action`) render under `Tree.Root`, so they do ' +
+                    'not see a context provider placed around rows. When the tree is server-rendered, custom components ' +
+                    'add React `useLayoutEffect` warnings.',
             },
         },
     },
