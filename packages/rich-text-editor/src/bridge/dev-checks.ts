@@ -90,6 +90,13 @@ const nameOf = (surface: Element): string => {
 // Set on a surface once its session is ready, as a property so the DOM output stays the same.
 const READY = Symbol('rte.ready');
 
+/** Marks a surface whose session is ready, such as one remounted in a live session, for later editors to compare with. */
+export const markReady = (surface: Element): void => {
+    if (!(READY in surface)) {
+        Object.defineProperty(surface, READY, { value: true });
+    }
+};
+
 /**
  * Marks `surface` ready and tells whether a surface that became ready before it has the same accessible name, so the
  * editor mounted second warns wherever it sits in the document (SPEC-rich-text-react/AC-080).
@@ -98,6 +105,6 @@ export const sharesName = (surface: Element): boolean => {
     const name = nameOf(surface);
     const surfaces = [...surface.ownerDocument.querySelectorAll('[data-rte-surface]')];
     const shared = surfaces.some((other) => other !== surface && READY in other && nameOf(other) === name);
-    Object.defineProperty(surface, READY, { value: true });
+    markReady(surface);
     return shared;
 };
