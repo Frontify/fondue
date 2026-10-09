@@ -358,6 +358,8 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     // ProseMirror runs that throwing update again on `setProps` and `destroy`.
     let recovery: EditorState | undefined;
     let readyFrame: number | undefined;
+    // Set while replacement step 8 installs the next document.
+    let installingNext = false;
     // Set while the view builds or installs a state, so a node view throw the bridge caught faults that call.
     let viewCall = false;
     let viewThrew = false;
@@ -531,7 +533,10 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         recovery = candidate;
         attached.dom.setAttribute('contenteditable', 'false');
         fault(diagnostic('runtime.view-fault', undefined, undefined, 'error'));
-        storeRecovery(candidate);
+        // The next document of a replacement holds none of this session's work, and the host has it (AC-059).
+        if (!installingNext) {
+            storeRecovery(candidate);
+        }
     };
 
     // IDs that queries drew, by kind, which the next real draws hand out first, so `execute` installs what `query` judged.
@@ -1315,9 +1320,14 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         }
         // Roots that plugin views dispatch while the state installs commit in the new generation.
         const installed = guarded(() => {
-            if (!installState(fresh)) {
+            installingNext = true;
+            const shown = installState(fresh);
+            installingNext = false;
+            if (!shown) {
                 return false;
             }
+            // Intents of the old generation end before anything can drain them into the next (`SPEC-rich-text-runtime/AC-031`).
+            settleQueue('wrong-session');
             session = {
                 documentId: request.next.documentId,
                 sessionId: session.sessionId,
@@ -1342,7 +1352,6 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         // What the old generation started or queued ends now and changes nothing here (AC-035, `SPEC-rich-text-runtime/AC-031`).
         coordinator.abortWhere(() => true);
         coordinator.settle();
-        settleQueue('wrong-session');
         busyWith(notify);
         emitSelection();
         emitSaveStatus();
@@ -1356,8 +1365,9 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             return refused('not-ready');
         }
         const { next } = request;
-        // A host that echoes its own save gets the current session back with nothing changed (AC-027).
+        // A host that echoes its own save gets the current session back with nothing changed (AC-027, DR-077).
         if (
+            next.documentId === session.documentId &&
             next.revision === saveStatus().revision &&
             hashDocument(next.document) === hashDocument(handle.getSnapshot().document)
         ) {
@@ -1378,22 +1388,28 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         }
         phase = 'transitioning';
         refreshView();
-        if (unsavedChanges()) {
-            const code = await leaveUnsaved(request.unsaved);
-            // The session was disposed, or faulted, while the step 5 write ran.
-            if (phase !== 'transitioning') {
-                return refused('not-ready');
+        let code: ReplaceCode | undefined;
+        try {
+            if (unsavedChanges()) {
+                code = await leaveUnsaved(request.unsaved);
             }
-            if (code !== undefined) {
-                return resume(code);
-            }
+        } catch {
+            // A request a host built wrong, such as a `checkpoint` with no receipt, gives the session back.
+            code = 'unsaved';
         }
-        if (saves?.outcomeUnknown() === true) {
-            return resume('save-unresolved');
+        // The session was disposed, or faulted, while the step 5 write ran.
+        if (phase !== 'transitioning') {
+            return refused('not-ready');
+        }
+        if (code === undefined && saves?.outcomeUnknown() === true) {
+            code = 'save-unresolved';
         }
         // A keystroke the view read during step 5 is kept, not replaced.
-        if (!sameStamp(request.expected, { ...session, sequence })) {
-            return resume('changed-since-request');
+        if (code === undefined && !sameStamp(request.expected, { ...session, sequence })) {
+            code = 'changed-since-request';
+        }
+        if (code !== undefined) {
+            return resume(code);
         }
         return installNext(request, tree, result.document.requiredCapabilities);
     };
