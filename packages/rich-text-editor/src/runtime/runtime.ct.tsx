@@ -111,6 +111,8 @@ test('SPEC-rich-text-runtime/AC-059 keeps selection, copy and link activation wo
     }
     await paragraph.dblclick({ position: { x: 4, y: box.height / 2 } });
     expect(await page.evaluate(() => window.getSelection()?.toString())).toBe('Read');
+    // ProseMirror takes the DOM selection on `selectionchange`, after the click, and copies only its own selection.
+    await expect.poll(() => page.evaluate(() => window.rte?.handle.getSummary().selection.collapsed)).toBe(false);
     const copied = page.evaluate(
         () =>
             new Promise<string | undefined>((resolve) => {
