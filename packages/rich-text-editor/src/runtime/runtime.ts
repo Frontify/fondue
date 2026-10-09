@@ -1380,7 +1380,12 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         },
         watch,
         startAsync: coordinator.start,
-        changeServices: (members) => coordinator.abortWhere((operation) => members.includes(operation.service)),
+        changeServices: (members) => {
+            coordinator.abortWhere((operation) => members.includes(operation.service));
+            if (members.includes('persistence')) {
+                saves?.serviceChanged();
+            }
+        },
         faultView: () => {
             if (viewCall) {
                 viewThrew = true;

@@ -28,11 +28,14 @@ const DEFAULTS: Timing = {
 const JITTER = 0.2;
 
 export interface SaveCoordinatorOptions {
-    readonly service: PersistenceService;
+    /** Read at each use, so a write after a services change goes to the new service (SPEC-rich-text-runtime/AC-073). */
+    readonly service: () => PersistenceService;
     /** Read at each use, so the host's newest options and `onConflict` apply. */
     readonly options: () => PersistenceOptions | undefined;
     /** The loaded record's revision, `null` for a new record. */
     readonly revision: ServerRevision | null;
+    /** The document holds changes a failed session never saved, as after Retry (SPEC-rich-text-react/AC-085). */
+    readonly carried: boolean;
     readonly model: ContentModel;
     readonly environment: RuntimeEnvironment;
 }
@@ -65,7 +68,7 @@ const STATUS_KEYS = [
  * rejection (`SPEC-rich-text-persistence`, Save states).
  */
 export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordinatorOptions): SaveCoordinator => {
-    const { service, environment } = given;
+    const { environment } = given;
     const { clock } = environment;
     const writer: SaveRequest['writer'] = {
         build: packageVersionOf(),
@@ -85,8 +88,12 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
     let latest = 0;
     // A new record starts below the first sequence, an existing one at it (AC-004, AC-005).
     let acknowledged = 0;
-    if (given.revision === null) {
+    // A carried document is not the acknowledged one, so its first sequence counts as unsaved.
+    if (given.revision === null || given.carried) {
         acknowledged = -1;
+    }
+    if (given.carried) {
+        state = 'dirty';
     }
     let revision = given.revision;
     let problem: Diagnostic | null = null;
@@ -134,7 +141,9 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
     };
 
     // A new record that nobody changed has nothing to save (`SPEC-rich-text-persistence`, Save states).
-    const unsaved = () => latest > acknowledged && latest > 0;
+    const unsaved = () => latest > acknowledged && (latest > 0 || given.carried);
+    // A session that is not ready, such as a faulted one, writes nothing (SPEC-rich-text-runtime/AC-091).
+    const ready = () => runtime.handle.getSummary().phase === 'ready';
     const idle = () => {
         state = 'clean';
         if (unsaved()) {
@@ -184,7 +193,7 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
         const context = { signal: current.controller.signal, session: runtime.handle.getSummary().session };
         let response: Promise<SaveResponse>;
         try {
-            response = service.save(request, context);
+            response = given.service().save(request, context);
         } catch {
             response = Promise.reject(new Error('PersistenceService.save threw.'));
         }
@@ -232,7 +241,7 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
 
     const replay = () => {
         retry = undefined;
-        if (unresolved === undefined || disposed) {
+        if (unresolved === undefined || disposed || !ready()) {
             return;
         }
         if (!navigator.onLine) {
@@ -277,7 +286,7 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
         const session = runtime.handle.getSummary().session;
         let read: Promise<LoadedDocument | null>;
         try {
-            read = service.read(session.documentId, { signal: ended.signal, session });
+            read = given.service().read(session.documentId, { signal: ended.signal, session });
         } catch {
             read = Promise.resolve(null);
         }
@@ -351,7 +360,9 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
         }
         // The write whose outcome the network left unknown goes first, unchanged (AC-016).
         if (unresolved !== undefined) {
-            write(unresolved);
+            if (ready()) {
+                write(unresolved);
+            }
             return;
         }
         idle();
@@ -359,6 +370,9 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
         send();
     };
     window.addEventListener('online', online);
+    if (given.carried) {
+        schedule();
+    }
 
     return {
         status: () => status,
@@ -374,6 +388,21 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
             refresh();
         },
         settled: send,
+        serviceChanged: () => {
+            const current = inFlight;
+            if (current === undefined || unresolved === undefined) {
+                return;
+            }
+            // The old service's answer no longer counts; the same operation goes to the new one (AC-012).
+            end(current);
+            current.controller.abort();
+            if (!ready()) {
+                state = 'uncertain';
+                publish();
+                return;
+            }
+            write(unresolved);
+        },
         dispose: () => {
             if (disposed) {
                 return;
@@ -386,6 +415,7 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
                 const current = inFlight;
                 end(current);
                 current.controller.abort();
+                refresh();
             }
             ended.abort();
             // A session that leaves unsaved changes says so and starts no write (AC-041).
