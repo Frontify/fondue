@@ -24,7 +24,7 @@ for (const text of ['', 'Rotate the signing keys']) {
         await mount(
             <EditorHydrationProbe
                 text={text}
-                serverHtml={renderEditorOnServer(text)}
+                serverHtml={await renderEditorOnServer(text)}
                 onDone={(result) => {
                     reported = result;
                 }}
@@ -57,7 +57,7 @@ test('SPEC-rich-text-output/AC-033 SPEC-rich-text-react/AC-087 hydrates the bloc
     await mount(
         <EditorHydrationProbe
             text="Rotate the signing keys"
-            serverHtml={renderEditorOnServer('Rotate the signing keys', true)}
+            serverHtml={await renderEditorOnServer('Rotate the signing keys', true)}
             blocked
             onDone={(result) => {
                 reported = result;
