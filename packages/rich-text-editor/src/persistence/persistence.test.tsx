@@ -2033,6 +2033,34 @@ describe('replacement', () => {
         unmount();
     });
 
+    it('SPEC-rich-text-persistence/AC-035 hands no conflict read of the old document to onConflict after a replacement', async () => {
+        const environment = createTestEnvironment({ seed: 1 });
+        const onConflict = vi.fn();
+        const { service, calls } = serviceOf(environment, true);
+        type Remote = Awaited<ReturnType<PersistenceService['read']>>;
+        let release: (remote: Remote) => void = () => undefined;
+        service.read.mockImplementationOnce(
+            () =>
+                new Promise<Remote>((resolve) => {
+                    release = resolve;
+                }),
+        );
+        const { handle, type, advance, unmount } = mount({ service, environment, persistenceOptions: { onConflict } });
+        type('x');
+        advance(500);
+        calls[0]?.answer({ status: 'conflict', currentRevision: 'revision-1' });
+        await settle();
+        expect(service.read).toHaveBeenCalledTimes(1);
+
+        await replace(handle(), { unsaved: { action: 'discard', confirmed: true } });
+        release(loaded('revision-1', para('remote')));
+        await settle();
+
+        expect(handle().getSummary().session.documentId).toBe('document-2');
+        expect(onConflict).not.toHaveBeenCalled();
+        unmount();
+    });
+
     it('SPEC-rich-text-runtime/AC-031 SPEC-rich-text-persistence/AC-035 resolves intents queued during transitioning as wrong-session in the next generation', async () => {
         const environment = createTestEnvironment({ seed: 1 });
         const { service, calls } = serviceOf(environment, true);
