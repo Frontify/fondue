@@ -10,6 +10,7 @@ export const enUS = {
         RichTextEditor_blockedVersion: 'Editing is unavailable because this content uses an unknown format or model.',
         RichTextEditor_bold: 'Bold',
         RichTextEditor_copyContent: 'Copy content',
+        RichTextEditor_copyFailed: 'Copying failed. Select the content and copy it with the keyboard.',
         RichTextEditor_copyOriginal: 'Copy original',
         RichTextEditor_nodeViewError: 'This part of the content cannot be shown',
         RichTextEditor_readerBlockedInvalid: 'This content cannot be shown',

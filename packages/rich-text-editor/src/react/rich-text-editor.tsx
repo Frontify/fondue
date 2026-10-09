@@ -24,15 +24,10 @@ import { createNodeViews, resyncSelection } from '#/bridge/node-views';
 import { PortalHost } from '#/bridge/portal-host';
 import { createPortalStore } from '#/bridge/portals';
 import { enUS } from '#/locales/en-US';
-import {
-    type CapabilityRef,
-    type DecodeResult,
-    type Diagnostic,
-    type RichTextDocument,
-    type RuntimeEnvironment,
-} from '#/model';
+import { type CapabilityRef, type DecodeResult, type Diagnostic, type RuntimeEnvironment } from '#/model';
 import { type TreeNode } from '#/model/content';
 import { decodeToTree } from '#/model/decode';
+import { type LoadedDocument } from '#/persistence/types';
 import { readerContext } from '#/reader/context';
 import { type ReaderPresentation } from '#/reader/reader';
 import { browserEnvironment } from '#/runtime/environment';
@@ -158,10 +153,16 @@ const sharesName = (surface: Element): boolean => {
     return surfaces.slice(0, surfaces.indexOf(surface)).some((other) => nameOf(other) === name);
 };
 
+/** A running session and the document it was loaded from. */
+interface RecoverySession {
+    readonly handle: RuntimeHandle;
+    readonly loaded: LoadedDocument;
+}
+
 type SessionProps = Defined & {
     readonly children: ReactNode;
     /** Receives the handle of each session it runs, whose snapshot the recovery shell reads. */
-    readonly onSession: (handle: RuntimeHandle) => void;
+    readonly onSession: (session: RecoverySession) => void;
 };
 
 const SessionComponent = ({ children, onSession, ...props }: SessionProps, ref: ForwardedRef<EditorHandle<object>>) => {
@@ -225,7 +226,7 @@ const SessionComponent = ({ children, onSession, ...props }: SessionProps, ref: 
             latestRef.current.onDiagnostic?.(diagnostic),
         );
         handleRef.current = runtime.handle;
-        onSession(runtime.handle);
+        onSession({ handle: runtime.handle, loaded: defaultValue });
         coordinator.start(runtime);
         return () => {
             coordinator.stop();
@@ -302,36 +303,39 @@ interface RecoveryProps {
 }
 interface RecoveryState {
     readonly failed: boolean;
-    /** The snapshot that Retry mounts the editor from (SPEC-rich-text-react/AC-085). */
-    readonly retried: RichTextDocument | undefined;
+    /** The snapshot that Retry mounts the editor from, under the ID and revision it was loaded with (SPEC-rich-text-react/AC-085). */
+    readonly retried: LoadedDocument | undefined;
 }
 
 /** The outer boundary: a render error shows the recovery shell with the last published snapshot (SPEC-rich-text-react/AC-022). */
 class Recovery extends Component<RecoveryProps, RecoveryState> {
     state: RecoveryState = { failed: false, retried: undefined };
     // The last session, whose snapshot stays readable after it is disposed.
-    private session: RuntimeHandle | undefined;
+    private session: RecoverySession | undefined;
 
     static getDerivedStateFromError() {
         return { failed: true };
     }
 
-    private readonly onSession = (handle: RuntimeHandle) => {
-        this.session = handle;
+    private readonly onSession = (session: RecoverySession) => {
+        this.session = session;
     };
 
     render() {
         const { props, editorRef } = this.props;
         let { defaultValue } = props;
         if (this.state.retried !== undefined) {
-            defaultValue = { ...defaultValue, document: this.state.retried };
+            defaultValue = this.state.retried;
         }
         if (!this.state.failed) {
             return <Session {...props} defaultValue={defaultValue} onSession={this.onSession} ref={editorRef} />;
         }
+        // A host rerender with another document must not take this session's content under its ID.
+        let loaded = defaultValue;
         let document = defaultValue.document;
         if (this.session !== undefined) {
-            document = this.session.getSnapshot().document;
+            loaded = this.session.loaded;
+            document = this.session.handle.getSnapshot().document;
         }
         const {
             definition,
@@ -347,7 +351,7 @@ class Recovery extends Component<RecoveryProps, RecoveryState> {
                 presentation={presentation}
                 locale={locale}
                 testId={testId}
-                onRetry={() => this.setState({ failed: false, retried: document })}
+                onRetry={() => this.setState({ failed: false, retried: { ...loaded, document } })}
             />
         );
     }

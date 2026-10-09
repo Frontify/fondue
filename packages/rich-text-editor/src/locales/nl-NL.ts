@@ -11,6 +11,7 @@ export const nlNL = {
             'Bewerken is niet mogelijk omdat deze inhoud een onbekend formaat of model gebruikt.',
         RichTextEditor_bold: 'Vet',
         RichTextEditor_copyContent: 'Inhoud kopiëren',
+        RichTextEditor_copyFailed: 'Kopiëren is mislukt. Selecteer de inhoud en kopieer deze met het toetsenbord.',
         RichTextEditor_copyOriginal: 'Origineel kopiëren',
         RichTextEditor_nodeViewError: 'Dit deel van de inhoud kan niet worden weergegeven',
         RichTextEditor_readerBlockedInvalid: 'Deze inhoud kan niet worden getoond',

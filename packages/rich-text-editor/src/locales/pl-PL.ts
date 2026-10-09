@@ -11,6 +11,7 @@ export const plPL = {
             'Edycja jest niedostępna, ponieważ ta treść używa nieznanego formatu lub modelu.',
         RichTextEditor_bold: 'Pogrubienie',
         RichTextEditor_copyContent: 'Kopiuj treść',
+        RichTextEditor_copyFailed: 'Kopiowanie nie powiodło się. Zaznacz treść i skopiuj ją za pomocą klawiatury.',
         RichTextEditor_copyOriginal: 'Kopiuj oryginał',
         RichTextEditor_nodeViewError: 'Nie można wyświetlić tej części treści',
         RichTextEditor_readerBlockedInvalid: 'Ta treść nie może być wyświetlona',

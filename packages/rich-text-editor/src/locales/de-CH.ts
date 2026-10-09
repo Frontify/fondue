@@ -12,6 +12,8 @@ export const deCH = {
             'Bearbeiten ist nicht möglich, weil dieser Inhalt ein unbekanntes Format oder Modell verwendet.',
         RichTextEditor_bold: 'Fett',
         RichTextEditor_copyContent: 'Inhalt kopieren',
+        RichTextEditor_copyFailed:
+            'Kopieren fehlgeschlagen. Wählen Sie den Inhalt aus und kopieren Sie ihn mit der Tastatur.',
         RichTextEditor_copyOriginal: 'Original kopieren',
         RichTextEditor_nodeViewError: 'Dieser Teil des Inhalts kann nicht angezeigt werden',
         RichTextEditor_readerBlockedInvalid: 'Dieser Inhalt kann nicht angezeigt werden',
