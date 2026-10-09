@@ -51,6 +51,7 @@ import { createLimitCheck } from './limits';
 import { authoringOf } from './policy';
 import { createEditorRuntime, type EditorRuntime } from './runtime';
 import { SETTLE_MS } from './settle';
+import { countTargets } from './targets';
 import {
     type AuthoringPolicy,
     type CaptureTargetOptions,
@@ -2409,6 +2410,29 @@ describe('the published snapshot and composition', () => {
         });
     });
 
+    it('SPEC-rich-text-runtime/AC-065 counts a composition commit and notifies selectors while the snapshot holds', () => {
+        const session = start(stored(para(words('ab'))));
+        const { handle, runtime } = session;
+        const before = handle.getSnapshot();
+        const seen: number[] = [];
+        runtime.watch(
+            () => handle.getSummary().commitSequence,
+            Object.is,
+            (value) => seen.push(value),
+        );
+        const { commitSequence } = handle.getSummary();
+
+        compose(session, 'x');
+
+        expect(seen).toEqual([commitSequence + 1]);
+        expect(handle.getSummary()).toMatchObject({ commitSequence: commitSequence + 1, sequence: 0 });
+        expect(handle.getSnapshot()).toMatchObject({
+            stamp: { sequence: 0 },
+            compositionActive: true,
+            document: before.document,
+        });
+    });
+
     it('SPEC-rich-text-runtime/AC-070 SPEC-rich-text-runtime/AC-018 SPEC-rich-text-runtime/AC-033 publishes a composition and runs a queued intent once compositionend, a microtask and 20 ms passed', async () => {
         const session = start(stored(para(words('ab'))));
         const { handle, view, environment, changes } = session;
@@ -2544,6 +2568,26 @@ describe('the published snapshot and composition', () => {
         ]);
     });
 
+    it('SPEC-rich-text-runtime/AC-034 SPEC-rich-text-runtime/AC-092 repairs a nodeId that a composition repeats only once input settled', async () => {
+        const model = compileContentModel([core(), bold(), fixtureHeadingSet()], { id: 'test.bold', version: 1 });
+        const session = start(stored(heading(2, words('abcd'))), { model });
+        const { view, changes } = session;
+        const ids = () => view.state.doc.children.map((node): unknown => node.attrs.nodeId);
+
+        compose(session, 'x');
+        // An Enter during a composition, as Android sends it, splits the heading under the composition's meta.
+        view.dispatch(view.state.tr.split(3).setMeta('composition', 1));
+        expect(ids()).toEqual(['h-1', 'h-1']);
+        endComposition(session);
+        await settleInput(session);
+
+        const settled = ids();
+        expect([settled[0], new Set(settled).size]).toEqual(['h-1', 2]);
+        expect(changes).toHaveLength(1);
+        expect(JSON.stringify(contentOf(changes[0])).split('"h-1"')).toHaveLength(2);
+        expect(textOf(view.state.doc)).toBe('xabcd');
+    });
+
     it('SPEC-rich-text-runtime/AC-077 SPEC-rich-text-runtime/AC-060 resolves intents queued during composition as not-ready on dispose and drops the settle timer', async () => {
         const session = start(stored(para(words('ab'))));
         const { handle, environment } = session;
@@ -2566,7 +2610,7 @@ describe('the published snapshot and composition', () => {
 describe('targets on release and dispose', () => {
     it('SPEC-rich-text-runtime/AC-045 removes a released target, and every target on dispose, from plugin state', () => {
         const environment = createTestEnvironment({ seed: 1 });
-        const { handle } = start(stored(para(words('abcd'))), { model: targetModel, environment });
+        const { handle, runtime } = start(stored(para(words('abcd'))), { model: targetModel, environment });
         const other = start(stored(para(words('abcd'))), { model: targetModel, environment });
         setSelection(handle, { text: 'bc' });
         const kept = capture(handle, { purpose: 'format', onIntersectingEdit: 'map' });
@@ -2579,6 +2623,7 @@ describe('targets on release and dispose', () => {
         expect(handle.execute('mark.bold.toggle', undefined, { target: kept }).status).toBe('applied');
 
         handle.dispose();
+        expect(countTargets(runtime.state)).toBe(0);
         expect(probeRuntimes().targets).toBe(0);
         expect(other.handle.execute('mark.bold.toggle', undefined, { target: kept })).toEqual({
             status: 'rejected',
@@ -2861,8 +2906,13 @@ describe('the async coordinator', () => {
         const search = pending(runtime, { key: 'mention-search', service: 'references' });
 
         handle.dispose();
+        const { commitSequence } = handle.getSummary();
+        const { document } = handle.getSnapshot();
         await upload.resolve({ text: 'x' });
         await search.resolve({ text: 'y' });
+
+        expect(handle.getSummary().commitSequence).toBe(commitSequence);
+        expect(handle.getSnapshot().document).toBe(document);
 
         expect([upload, search].map(({ operation }) => operation.controller.signal.aborted)).toEqual([true, true]);
         expect(probeRuntimes().operations).toEqual([]);
