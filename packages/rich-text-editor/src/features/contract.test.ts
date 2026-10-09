@@ -10,7 +10,8 @@ import { describe, expect, it, vi } from 'vitest';
 import { createCodecs } from '#/codecs';
 import { type CapabilityImplementation, type EngineCommand, type Normalizer, NORMALIZERS } from '#/definition';
 import { bold, featuresById } from '#/features';
-import { commandCases, normalizerCases } from '#/features/__fixtures__/contract.cases';
+import { fixtureChromeViews } from '#/features/__fixtures__/chrome/view';
+import { commandCases, nodeViewCases, normalizerCases } from '#/features/__fixtures__/contract.cases';
 import { fixtureHeadingSet, fixtureMedia, fixtureMention, fixtureTable } from '#/features/__fixtures__/features';
 import { vocabularyLists } from '#/features/__fixtures__/vocabulary';
 import { featureFixtures } from '#/features/conformance/fixtures';
@@ -95,6 +96,17 @@ const nodeIdDocument = stored([
     { type: 'embed', attrs: { nodeId: 'e-1', url: 'https://www.youtube.com/watch?v=1' } },
 ]);
 normalizerCases(nodeIdFeatures(), [nodeIdDocument]);
+
+// No shipped feature has a node view yet, so the cases run over the stand-ins (TASK-rte-bridge, instruction 14).
+const chromeDocument = stored(
+    [
+        paragraph(text('Hi '), { type: 'chrome_mention', attrs: { nodeId: 'm-1', label: 'Ada' } }),
+        { type: 'chrome_block', attrs: { nodeId: 'b-1', language: 'ts', checked: false }, content: [text('code')] },
+        { type: 'chrome_image', attrs: { nodeId: 'i-1', assetId: null } },
+    ],
+    ['core', 'fixture.chrome'],
+);
+nodeViewCases([core(), fixtureChromeViews()], [chromeDocument]);
 
 const DECODES = (name: string) => `SPEC-rich-text/AC-017 decodes and encodes ${name} to itself`;
 const RENDERS = (name: string) =>

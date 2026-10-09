@@ -3,17 +3,21 @@
 import { useEffect, useRef, useState } from 'react';
 
 import { bold, core } from '../../src/features';
+import { fixtureChromeViews } from '../../src/features/__fixtures__/chrome/view';
 import { fixtureHeadingSet, fixtureLink } from '../../src/features/__fixtures__/features';
 import { defineEditor, type EditorHandle, RichTextEditor } from '../../src/index';
-import { compileContentModel } from '../../src/model';
+import { compileContentModel, type ContentNodeJSON } from '../../src/model';
 import { boldRules } from '../../src/react/playground.stories';
 import { type EditorRuntime, runtimeOf } from '../../src/runtime/runtime';
 import { createTestEnvironment, setSelection, type TestEnvironment } from '../../src/testing';
 
-const model = compileContentModel([core(), bold(), fixtureLink(), fixtureHeadingSet(), boldRules()], {
-    id: 'test.ct',
-    version: 1,
-});
+const model = compileContentModel(
+    [core(), bold(), fixtureLink(), fixtureHeadingSet(), boldRules(), fixtureChromeViews()],
+    {
+        id: 'test.ct',
+        version: 1,
+    },
+);
 const ALLOW = { create: true, edit: true, remove: true, paste: true };
 /** The CT model's definitions: every feature allowed, and paragraphs that may not change. */
 const definitions = {
@@ -37,26 +41,25 @@ const textOf = (text: string) =>
         return [{ type: 'text', text: part.slice(1, -1), marks: [link] }];
     });
 
-/** A document of one paragraph per text, in the CT model. */
-export const storedOf = (...texts: readonly string[]) => ({
+/** A document of `blocks` in the CT model, which needs the features `capabilities` name. */
+const documentOf = (blocks: readonly ContentNodeJSON[], capabilities: readonly string[]) => ({
     documentId: 'document-1',
     revision: null,
     document: {
         format: 'frontify.rich-text' as const,
         formatVersion: 1 as const,
         model: { id: 'test.ct', version: 1 },
-        requiredCapabilities: [{ id: 'core', version: 1 }],
-        content: {
-            type: 'doc',
-            attrs: { lang: null, dir: 'auto' },
-            content: texts.map((text) => ({
-                type: 'paragraph',
-                attrs: { lang: null },
-                content: textOf(text),
-            })),
-        },
+        requiredCapabilities: capabilities.map((id) => ({ id, version: 1 })),
+        content: { type: 'doc', attrs: { lang: null, dir: 'auto' }, content: blocks },
     },
 });
+
+/** A document of one paragraph per text, in the CT model. */
+export const storedOf = (...texts: readonly string[]) =>
+    documentOf(
+        texts.map((text) => ({ type: 'paragraph', attrs: { lang: null }, content: textOf(text) })),
+        ['core'],
+    );
 
 declare global {
     interface Window {
@@ -77,6 +80,7 @@ declare global {
 /** Mounts the CT model's editor after a focusable button, and reports each change's origin and HTML. */
 export const EditorProbe = ({
     texts = ['ab'],
+    blocks,
     readOnly = false,
     guarded = false,
     placeholder,
@@ -84,6 +88,8 @@ export const EditorProbe = ({
     onChange,
 }: {
     readonly texts?: readonly string[];
+    /** The document's blocks as stored JSON, in place of `texts`, such as the node view stand-ins of `fixture.chrome`. */
+    readonly blocks?: readonly ContentNodeJSON[];
     readonly readOnly?: boolean;
     /** Mounts the definition whose policy keeps every paragraph as it is. */
     readonly guarded?: boolean;
@@ -99,6 +105,10 @@ export const EditorProbe = ({
         }
         return undefined;
     });
+    let defaultValue = storedOf(...texts);
+    if (blocks !== undefined) {
+        defaultValue = documentOf(blocks, ['core', 'fixture.chrome']);
+    }
     let definition = definitions.open;
     if (guarded) {
         definition = definitions.guarded;
@@ -122,7 +132,7 @@ export const EditorProbe = ({
             <RichTextEditor
                 aria-label="Notes"
                 definition={definition}
-                defaultValue={storedOf(...texts)}
+                defaultValue={defaultValue}
                 readOnly={readOnly}
                 {...(placeholder === undefined ? {} : { placeholder })}
                 {...(environment === undefined ? {} : { environment })}
