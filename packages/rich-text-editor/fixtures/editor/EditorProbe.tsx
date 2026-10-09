@@ -5,11 +5,18 @@ import { useEffect, useRef, useState } from 'react';
 import { bold, core } from '../../src/features';
 import { fixtureHeadingSet, fixtureLink } from '../../src/features/__fixtures__/features';
 import { defineEditor, type EditorHandle, RichTextEditor } from '../../src/index';
-import { compileContentModel } from '../../src/model';
+import { compileContentModel, defineFeature } from '../../src/model';
 import { type EditorRuntime, runtimeOf } from '../../src/runtime/runtime';
 import { createTestEnvironment, setSelection, type TestEnvironment } from '../../src/testing';
 
-const model = compileContentModel([core(), bold(), fixtureLink(), fixtureHeadingSet()], {
+// The input rule engine with `bold.stars`, until `marks.bold` declares its own rules.
+const boldRules = defineFeature({
+    id: 'ct.bold-rules',
+    version: 1,
+    requires: [{ id: 'marks.bold', version: 1 }],
+    inputRules: [{ id: 'bold.stars', kind: 'mark-delimiter', open: '**', close: '**', mark: 'bold' }],
+});
+const model = compileContentModel([core(), bold(), fixtureLink(), fixtureHeadingSet(), boldRules()], {
     id: 'test.ct',
     version: 1,
 });

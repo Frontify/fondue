@@ -3561,6 +3561,53 @@ describe('input rules', () => {
         });
     }
 
+    const refusals: readonly (readonly [string, string])[] = [
+        ['marks.bold', '**x**'],
+        ['fixture.heading-set', '## '],
+    ];
+    for (const [featureId, typed] of refusals) {
+        it(`SPEC-rich-text-editing/AC-037 keeps ${typed} as typed when the policy forbids creating what ${featureId} adds`, () => {
+            const { handle, view } = start(stored(para()), { model: ruleModel, policy: forbid(featureId, 'create') });
+
+            typeText(handle, typed);
+
+            expect(shapeOf(view.state.doc)).toBe(`paragraph ${typed}`);
+        });
+    }
+
+    it('SPEC-rich-text-editing/AC-038 SPEC-rich-text-runtime/AC-034 fires no rule for composed text, which stays one undo step', async () => {
+        const session = start(stored(para(words('ab.'))), { model: ruleModel });
+        const { handle, view } = session;
+        setSelection(handle, { text: 'ab.', from: 3, to: 3 });
+        view.dom.dispatchEvent(new CompositionEvent('compositionstart'));
+        for (const character of '**x**') {
+            const event = new InputEvent('beforeinput', { inputType: 'insertCompositionText', data: character });
+            view.dom.dispatchEvent(event);
+            view.dispatch(view.state.tr.insertText(character).setMeta('composition', 1));
+        }
+        const composing = shapeOf(view.state.doc);
+        endComposition(session);
+        await settleInput(session);
+        const settled = shapeOf(view.state.doc);
+
+        handle.execute('history.undo');
+
+        expect([composing, settled, shapeOf(view.state.doc)]).toEqual([
+            'paragraph ab.**x**',
+            'paragraph ab.**x**',
+            'paragraph ab.',
+        ]);
+    });
+
+    it('SPEC-rich-text-editing/AC-041 undoes no rule with Backspace once a stored mark changed after it', () => {
+        const { handle, view } = typedIn(stored(para()), '**x**');
+
+        pressKey(handle, 'Mod-b');
+        pressKey(handle, 'Backspace');
+
+        expect(shapeOf(view.state.doc)).toBe('paragraph x[bold]');
+    });
+
     it('SPEC-rich-text-editing/AC-100 undoes only a character typed right after a rule fired', () => {
         const { handle, view } = typedIn(stored(para()), '**x**y');
         expect(shapeOf(view.state.doc)).toBe('paragraph x[bold] y');
