@@ -93,9 +93,26 @@ const typesIn = (node: ContentNodeJSON, types: Set<string>): Set<string> => {
     return types;
 };
 
-/** The shared attributes of `declaration` that the content sets to a value other than their default. */
-const setAttributesIn = (node: ContentNodeJSON, declaration: FeatureDeclaration, found: Set<string>): Set<string> => {
+/**
+ * The shared attributes of `declaration` that the content sets to a value other than their default, on a node the
+ * attribute targets: one it lists, or any textblock for `'textblocks'`.
+ */
+const setAttributesIn = (
+    node: ContentNodeJSON,
+    declaration: FeatureDeclaration,
+    isTextblock: (type: string) => boolean,
+    found: Set<string>,
+): Set<string> => {
     for (const [name, shared] of Object.entries(declaration.attributes ?? {})) {
+        let targeted: boolean;
+        if (shared.on === 'textblocks') {
+            targeted = isTextblock(node.type);
+        } else {
+            targeted = shared.on.includes(node.type);
+        }
+        if (!targeted) {
+            continue;
+        }
         let fallback: JsonValue | undefined;
         if ('default' in shared.value) {
             fallback = shared.value.default as JsonValue;
@@ -106,7 +123,7 @@ const setAttributesIn = (node: ContentNodeJSON, declaration: FeatureDeclaration,
         }
     }
     for (const child of node.content ?? []) {
-        setAttributesIn(child, declaration, found);
+        setAttributesIn(child, declaration, isTextblock, found);
     }
     return found;
 };
@@ -241,7 +258,8 @@ export const runFeatureContract = (features: readonly Feature[], options: Featur
                     if (command === undefined) {
                         throw new Error(`${id} has no capability implementation.`);
                     }
-                    for (const fixture of [createEmptyDocument(compiled()), ...Object.values(fixtures)]) {
+                    const given = (options.fixtures ?? []).map(storedIn);
+                    for (const fixture of [createEmptyDocument(compiled()), ...Object.values(fixtures), ...given]) {
                         const state = stateOf(fixture);
                         const { doc } = state;
                         // A query over a range reaches the code that would build a transaction.
@@ -266,13 +284,15 @@ export const runFeatureContract = (features: readonly Feature[], options: Featur
             }
 
             it('SPEC-rich-text/AC-016 brings fixtures that hold each of its nodes, marks and shared attributes', () => {
+                const { schema } = engineOf();
+                const isTextblock = (type: string) => schema.nodes[type]?.isTextblock === true;
                 const documents = Object.values(fixtures);
                 expect(documents.length > 0).toBe(true);
                 const types = new Set<string>();
                 const attributes = new Set<string>();
                 for (const fixture of documents) {
                     typesIn(fixture.content, types);
-                    setAttributesIn(fixture.content, declaration, attributes);
+                    setAttributesIn(fixture.content, declaration, isTextblock, attributes);
                 }
                 expect([...nodes, ...marks].filter((type) => !types.has(type))).toEqual([]);
                 expect(Object.keys(declaration.attributes ?? {}).filter((name) => !attributes.has(name))).toEqual([]);
