@@ -1041,6 +1041,21 @@ describe('Markdown output a stored document cannot turn into markup', () => {
         },
     );
 
+    it.each(['```', '````', '~~~', '~~~~'])(
+        'SPEC-rich-text-output/AC-020 SPEC-rich-text/AC-065 writes the body of a %j code fence form so it reads back exactly',
+        (fence) => {
+            const body = 'a ``` b\n~~~~~\n<b>x</b> \\';
+            const model = fenced(fence);
+            const output = createCodecs(model).toMarkdown(
+                testDocument(model, { type: 'formula', content: [{ type: 'text', text: body }] }),
+            );
+            const tokens = commonMark.parse(output.markdown, {});
+
+            expect(tokens.map(({ type }) => type)).toEqual(['fence']);
+            expect(tokens[0]?.content).toBe(`${body}\n`);
+        },
+    );
+
     it.each([
         ['a paragraph', (code: JsonValue) => stored(paragraph(code))],
         [

@@ -219,16 +219,15 @@ const rows: readonly Row[] = [
         dialect: 'commonmark',
     },
     {
-        name: 'links as [text](href), and a link to a heading as # plus its GitHub slug, with a loss until import maps the slug back',
+        name: 'links as [text](href), and a link to a heading with its # href as stored, with no loss',
         blocks: [
             heading('h-1', text('Plan, then ship!')),
             heading('h-2', text('Plan, then ship!')),
             paragraph(text('Frontify', link('https://frontify.com')), text(' '), text('see', link('#h-2'))),
         ],
-        markdown:
-            '## Plan, then ship!\n\n## Plan, then ship!\n\n[Frontify](https://frontify.com) [see](#plan-then-ship-1)',
-        losses: [{ featureId: 'fixture.link', count: 1 }],
-        parsed: '<h2>Plan, then ship!</h2>\n<h2>Plan, then ship!</h2>\n<p><a href="https://frontify.com">Frontify</a> <a href="#plan-then-ship-1">see</a></p>\n',
+        markdown: '## Plan, then ship!\n\n## Plan, then ship!\n\n[Frontify](https://frontify.com) [see](#h-2)',
+        losses: [],
+        parsed: '<h2>Plan, then ship!</h2>\n<h2>Plan, then ship!</h2>\n<p><a href="https://frontify.com">Frontify</a> <a href="#h-2">see</a></p>\n',
         dialect: 'commonmark',
     },
     {
@@ -289,6 +288,12 @@ describe('toMarkdown rules', () => {
         } else {
             expect(commonMark.render(output.markdown)).toBe(parsed);
         }
+    });
+
+    it('SPEC-rich-text-output/AC-020 writes a link to a heading with its stored # href, which fromMarkdown reads back as is', () => {
+        const output = codecs.toMarkdown(stored(heading('h-1', text('Plan')), paragraph(text('see', link('#h-1')))));
+
+        expect(JSON.stringify(codecs.fromMarkdown(output.markdown))).toContain('"href":"#h-1"');
     });
 
     it('SPEC-rich-text-output/AC-020 writes an opaque island as its escaped text, reported by its decode diagnostic and not in losses', () => {

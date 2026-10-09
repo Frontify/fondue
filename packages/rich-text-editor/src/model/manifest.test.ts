@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import Ajv2020 from 'ajv/dist/2020';
 import { describe, expect, it } from 'vitest';
 
 import { core } from '#/features/core/feature';
@@ -372,7 +373,68 @@ describe('featureFromManifest', () => {
         },
     );
 
-    it('SPEC-rich-text/AC-065 accepts Markdown punctuation forms in a manifest, and keeps any form of a code feature', () => {
+    const withFence = (markdown: Readonly<Record<string, string>>) =>
+        withChange((changed) => {
+            nodeOf(changed).markdown = markdown;
+        });
+
+    it.each(['~~~ ', '``` ', '$$ ', '`', '``', '```~', '~~~$', '$`$'])(
+        'SPEC-rich-text/AC-065 SPEC-rich-text/AC-064 rejects the fence form %j, which would open a code fence or span that the body cannot read back from',
+        (fence) => {
+            expect(failureOf(() => compile(withFence({ fence })))).toEqual(
+                invalidAt('/nodes/acme_pull_quote/markdown/fence'),
+            );
+        },
+    );
+
+    it.each([{}, { prefix: '> ', fence: '$$' }])(
+        'SPEC-rich-text/AC-065 SPEC-rich-text/AC-064 rejects the node Markdown form %j, which needs exactly one of prefix or fence',
+        (markdown) => {
+            expect(failureOf(() => compile(withFence(markdown)))).toEqual(invalidAt('/nodes/acme_pull_quote/markdown'));
+        },
+    );
+
+    it.each(['```', '````', '~~~', '~~~~', '$$', '~~'])('SPEC-rich-text/AC-065 accepts the fence form %j', (fence) => {
+        expect(() => compile(withFence({ fence }))).not.toThrow();
+    });
+
+    it('SPEC-rich-text/AC-064 makes the published schema reject every Markdown form that featureFromManifest rejects, and accept the rest', () => {
+        const validate = new Ajv2020({ strict: false }).compile(featureManifestSchema);
+        const nodeForms = [
+            ...['~~~ ', '``` ', '$$ ', '`', '``', '```~', '~~~$', '$`$', '```', '~~~~', '$$'].map((fence) => ({
+                fence,
+            })),
+            ...['<b>', '[x](', '\\', '> ', '>'].map((prefix) => ({ prefix })),
+            {},
+            { prefix: '> ', fence: '$$' },
+        ];
+        const markForms = [
+            { open: '&lt;', close: '==' },
+            { open: '==', close: ')' },
+            { open: 'ab', close: '==' },
+            { open: '==', close: '==' },
+        ];
+        const manifests = [
+            ...nodeForms.map(withFence),
+            ...markForms.map((markdown) =>
+                withChange((changed) => {
+                    changed.marks = { acme_glow: { attrs: {}, html: ['mark', 0], parse: [], markdown } };
+                }),
+            ),
+        ];
+
+        for (const manifest of manifests) {
+            let accepted = true;
+            try {
+                compile(manifest);
+            } catch {
+                accepted = false;
+            }
+            expect(validate(manifest), JSON.stringify(manifest.nodes ?? manifest.marks)).toBe(accepted);
+        }
+    });
+
+    it('SPEC-rich-text/AC-065 accepts Markdown punctuation forms in a manifest', () => {
         const manifest = withChange((changed) => {
             nodeOf(changed).markdown = { prefix: '> ' };
             changed.marks = {
@@ -380,14 +442,82 @@ describe('featureFromManifest', () => {
             };
         });
 
+        expect(() => compile(manifest)).not.toThrow();
+    });
+
+    it.each([
+        [
+            {
+                marks: {
+                    code_glow: { attrs: {}, html: ['mark', 0], parse: [], markdown: { open: '<b>', close: '==' } },
+                },
+            },
+            '/marks/code_glow/markdown/open',
+        ],
+        [
+            {
+                nodes: {
+                    code_box: {
+                        group: 'block',
+                        content: 'inline*',
+                        attrs: {},
+                        html: ['div', 0],
+                        parse: [],
+                        markdown: { fence: '~~~ ' },
+                    },
+                },
+            },
+            '/nodes/code_box/markdown/fence',
+        ],
+        [
+            {
+                nodes: {
+                    code_box: {
+                        group: 'block',
+                        content: 'inline*',
+                        attrs: {},
+                        html: ['div', 0],
+                        parse: [],
+                        markdown: {},
+                    },
+                },
+            },
+            '/nodes/code_box/markdown',
+        ],
+    ])('SPEC-rich-text/AC-065 applies the same form rule to a code feature: %j fails at %s', (members, path) => {
         const codeFeature = defineFeature({
             id: 'acme.code',
             version: 1,
             requires: [{ id: 'core', version: 1 }],
-            marks: { code_glow: { attrs: {}, html: ['mark', 0], parse: [], markdown: { open: '<b>', close: '</b>' } } },
+            ...members,
+        } as never);
+
+        expect(failureOf(() => compileContentModel([core(), codeFeature()], { id: 'acme.model', version: 1 }))).toEqual(
+            {
+                code: 'definition.invalid-declaration',
+                details: { feature: 'acme.code', path },
+            },
+        );
+    });
+
+    it('SPEC-rich-text/AC-065 compiles a code feature whose forms pass the form rule', () => {
+        const codeFeature = defineFeature({
+            id: 'acme.code',
+            version: 1,
+            requires: [{ id: 'core', version: 1 }],
+            nodes: {
+                code_box: {
+                    group: 'block',
+                    content: 'inline*',
+                    attrs: {},
+                    html: ['div', 0],
+                    parse: [],
+                    markdown: { fence: '~~~' },
+                },
+            },
+            marks: { code_glow: { attrs: {}, html: ['mark', 0], parse: [], markdown: { open: '==', close: '==' } } },
         });
 
-        expect(() => compile(manifest)).not.toThrow();
         expect(() => compileContentModel([core(), codeFeature()], { id: 'acme.model', version: 1 })).not.toThrow();
     });
 });
