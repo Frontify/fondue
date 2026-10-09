@@ -6,12 +6,13 @@ import { core } from '#/features';
 import { defineEditor, RichTextEditor } from '#/index';
 import { compileContentModel } from '#/model';
 
-// A feature story installs only its feature and what it requires (SPEC-rich-text/AC-053).
+// A feature story installs only its feature and what it requires, which its `feature:` tags name (SPEC-rich-text/AC-053).
 const model = compileContentModel([core()], { id: 'story.core', version: 1 });
 
 const meta: Meta<typeof RichTextEditor> = {
     title: 'Rich Text Editor/Features/core',
     component: RichTextEditor,
+    tags: ['feature:core'],
     args: {
         'aria-label': 'Notes',
         definition: defineEditor({ id: 'story.core', model }),

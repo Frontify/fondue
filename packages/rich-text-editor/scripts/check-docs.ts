@@ -3,6 +3,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
+import { enUS } from '../src/locales/en-US.ts';
 import { type Feature, type FeatureDeclaration } from '../src/model/declarations.ts';
 import { featureInternals } from '../src/model/feature.ts';
 
@@ -27,13 +28,21 @@ const rowOf = (page: string, id: string): Readonly<Record<string, string>> | und
     return Object.fromEntries(header.map((column, index) => [column, row[index] ?? '']));
 };
 
+/** A control is named by its label in `strings` or by its `labelKey`. */
+const isNamed = (cell: string, labelKey: string, strings: Readonly<Record<string, string>>) => {
+    const label = strings[labelKey];
+    return cell.includes(labelKey) || (label !== undefined && cell.includes(label));
+};
+
 /**
  * Each registered feature needs `docs/features/<feature ID>.md` with its Feature behavior row, which names each
- * command, key and input rule the feature registers (SPEC-rich-text/AC-068). `pages` maps a feature ID to its page.
+ * command, key, control and input rule the feature registers (SPEC-rich-text/AC-068). `pages` maps a feature ID
+ * to its page, and `strings` holds the `enUS` labels.
  */
 export const checkFeatureDocs = (
     declarations: readonly FeatureDeclaration[],
     pages: Readonly<Record<string, string>>,
+    strings: Readonly<Record<string, string>>,
 ): string[] => {
     const violations: string[] = [];
     for (const declaration of declarations) {
@@ -59,6 +68,12 @@ export const checkFeatureDocs = (
                 violations.push(`docs/features/${id}.md does not name ${name} under ${column}`);
             }
         }
+        const controls = row.Controls ?? '';
+        for (const { labelKey } of declaration.toolbar ?? []) {
+            if (!isNamed(controls, labelKey, strings)) {
+                violations.push(`docs/features/${id}.md does not name the control ${labelKey} under Controls`);
+            }
+        }
     }
     return violations;
 };
@@ -82,12 +97,12 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
             pages[feature.id] = readFileSync(page, 'utf8');
         }
     }
-    const violations = checkFeatureDocs(declarations, pages);
+    const violations = checkFeatureDocs(declarations, pages, enUS.translationStrings);
     if (violations.length > 0) {
         console.error(violations.join('\n'));
         process.exit(1);
     }
     console.log(
-        `check-docs: the docs page of each of the ${declarations.length} registered features names its commands, keys and input rules.`,
+        `check-docs: the docs page of each of the ${declarations.length} registered features names its commands, keys, controls and input rules.`,
     );
 }

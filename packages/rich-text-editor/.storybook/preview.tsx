@@ -6,7 +6,7 @@ import { ThemeProvider } from '@frontify/fondue-components';
 import * as fondueLocales from '@frontify/fondue-components/locales';
 import { type Decorator, type Preview } from '@storybook/react-vite';
 
-import { axeViolations, globalsFaults } from './checks';
+import { axeViolations, featureTagFaults, globalsFaults } from './checks';
 import DocumentationTemplate from './DocumentationTemplate.mdx';
 
 type ThemeName = 'light' | 'dark';
@@ -116,8 +116,12 @@ const preview: Preview = {
         },
     },
     // The Storybook test runner runs this after every story, so each story is checked as the reader stories are.
-    afterEach: async ({ canvasElement, globals }) => {
-        const faults = [...globalsFaults(canvasElement, globals), ...(await axeViolations(canvasElement))];
+    afterEach: async ({ args, canvasElement, globals, tags }) => {
+        const faults = [
+            ...globalsFaults(canvasElement, globals),
+            ...featureTagFaults(tags, args),
+            ...(await axeViolations(canvasElement)),
+        ];
         if (faults.length > 0) {
             throw new Error(faults.join('\n'));
         }
