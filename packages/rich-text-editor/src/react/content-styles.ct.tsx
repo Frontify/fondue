@@ -201,6 +201,26 @@ test('SPEC-rich-text-react/AC-066 applies a content class list separated by any 
     expect(errors).toEqual([]);
 });
 
+test('SPEC-rich-text-react/AC-066 SPEC-rich-text-react/AC-092 keeps the package and engine classes when host class tokens repeat them', async ({
+    mount,
+    page,
+}) => {
+    const document = blocks(para(text('ab')), { type: 'chrome_image', attrs: { nodeId: 'i1', assetId: null } });
+    const repeated = 'fondue-rte-content ProseMirror ProseMirror-hideselection host';
+    const component = await mount(<EditorProbe blocks={document} contentClassName={repeated} />);
+    await ready(page);
+    await surfaceOf(page).locator('p').click();
+    await page.evaluate(() => window.rte?.setSelection(window.rte.handle, { nodeId: 'i1' }));
+
+    await component.update(<EditorProbe blocks={document} contentClassName="host2" />);
+
+    const classes = () => surfaceOf(page).evaluate((surface) => [...surface.classList].sort());
+    await expect.poll(classes).not.toContain('host');
+    expect(await classes()).toEqual(
+        expect.arrayContaining(['ProseMirror', 'ProseMirror-hideselection', 'fondue-rte-content', 'host2']),
+    );
+});
+
 test('SPEC-rich-text-react/AC-067 lets a host rule on the content class win over the package paragraph rule without important', async ({
     mount,
     page,
