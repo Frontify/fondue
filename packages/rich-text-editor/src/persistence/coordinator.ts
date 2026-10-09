@@ -524,6 +524,9 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
             if (summary.phase !== 'ready' && summary.phase !== 'faulted') {
                 return Promise.resolve({ status: 'blocked', code: 'not-ready' });
             }
+            if (state === 'conflict') {
+                return Promise.resolve({ status: 'blocked', code: 'conflict' });
+            }
             if (summary.compositionActive && options.composition === 'reject') {
                 return Promise.resolve({ status: 'blocked', code: 'composition-active' });
             }
@@ -554,11 +557,13 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
                     options.timeoutMs ?? option('timeoutMs'),
                 );
             });
-            if (summary.compositionActive) {
-                waiting.add(call);
-            } else {
-                call.capture();
-            }
+            waiting.add(call);
+            // ProseMirror reads a DOM change in a microtask queued before this one, so the capture holds the last keystroke (AC-020).
+            environment.scheduler.microtask(() => {
+                if (waiting.has(call) && !runtime.handle.getSummary().compositionActive) {
+                    call.capture();
+                }
+            });
             return Promise.race([captured, expired]).then((result) => {
                 waiting.delete(call);
                 clear(timer);
