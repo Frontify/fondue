@@ -112,6 +112,8 @@ const RootComponent = (
             capabilities: decoded.capabilities,
             environment,
             mode: modeOf(latestRef.current),
+            policy: definition.authoring,
+            limits: definition.limits,
         });
         // Each event calls the newest callback the host passed (SPEC-rich-text-react/AC-004).
         runtime.handle.subscribe('ready', (session: SessionToken) => {

@@ -116,10 +116,10 @@ const preview: Preview = {
         },
     },
     // The Storybook test runner runs this after every story, so each story is checked as the reader stories are.
-    afterEach: async ({ args, canvasElement, globals, tags }) => {
+    afterEach: async ({ canvasElement, globals, tags }) => {
         const faults = [
             ...globalsFaults(canvasElement, globals),
-            ...featureTagFaults(tags, args),
+            ...featureTagFaults(tags),
             ...(await axeViolations(canvasElement)),
         ];
         if (faults.length > 0) {

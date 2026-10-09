@@ -3,6 +3,7 @@
 import axe from 'axe-core';
 
 import { AXE_TAGS } from '../src/features/conformance/axe-tags';
+import { probeRuntimes } from '../src/testing/probe';
 
 import { featureTagsOf } from './feature-tags';
 
@@ -42,19 +43,22 @@ export const globalsFaults = (
     return faults;
 };
 
-/** A story's `feature:` tags name exactly the features its `definition` arg installs (SPEC-rich-text/AC-053). */
-export const featureTagFaults = (tags: readonly string[], args: Readonly<Record<string, unknown>>): string[] => {
-    const tagged = featureTagsOf(tags);
-    if (tagged.length === 0) {
+/** A story's `feature:` tags name exactly the features each editor it mounts installs (SPEC-rich-text/AC-053). */
+export const featureTagFaults = (tags: readonly string[]): string[] => {
+    const tagged = featureTagsOf(tags).sort().join(', ');
+    if (tagged === '') {
         return [];
     }
-    let installed: string[] = [];
-    const definition = args.definition as { readonly capabilities?: readonly { readonly id: string }[] } | undefined;
-    if (definition !== undefined && definition.capabilities !== undefined) {
-        installed = definition.capabilities.map(({ id }) => id);
+    const { sessions } = probeRuntimes();
+    if (sessions.length === 0) {
+        return [`the story mounts no editor, while its feature tags name ${tagged}`];
     }
-    if (installed.sort().join(', ') === tagged.sort().join(', ')) {
-        return [];
+    const faults: string[] = [];
+    for (const installed of sessions) {
+        const features = [...installed].sort().join(', ');
+        if (features !== tagged) {
+            faults.push(`the story installs ${features}, while its feature tags name ${tagged}`);
+        }
     }
-    return [`the story installs ${installed.join(', ')}, while its feature tags name ${tagged.join(', ')}`];
+    return faults;
 };

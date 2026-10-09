@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { toggleMark as toggleEngineMark } from 'prosemirror-commands';
-import { type MarkType } from 'prosemirror-model';
+import { setBlockType, toggleMark as toggleEngineMark } from 'prosemirror-commands';
+import { type MarkType, type Node, type NodeType } from 'prosemirror-model';
 import { type EditorState } from 'prosemirror-state';
 
 import { type CapabilityImplementation, type CapabilityImplementations } from '#/definition';
@@ -58,9 +58,9 @@ const toggleMark: CapabilityImplementation = (args, schema) => {
     // At a caret ProseMirror toggles the stored mark.
     const engineToggle = toggleEngineMark(type, attrs);
     return {
-        run: (state, dispatch, view) => {
+        run: (state, dispatch) => {
             if (state.selection.empty) {
-                return engineToggle(state, dispatch, view);
+                return engineToggle(state, dispatch);
             }
             const texts = markableText(state, type);
             if (texts.length === 0) {
@@ -86,5 +86,70 @@ const toggleMark: CapabilityImplementation = (args, schema) => {
     };
 };
 
+/** The textblocks the selection touches. */
+const selectedTextblocks = (state: EditorState): Node[] => {
+    const blocks: Node[] = [];
+    for (const { $from, $to } of state.selection.ranges) {
+        state.doc.nodesBetween($from.pos, $to.pos, (node) => {
+            if (node.isTextblock) {
+                blocks.push(node);
+            }
+        });
+    }
+    return blocks;
+};
+
+const setBlock: CapabilityImplementation = (args, schema) => {
+    // Compilation checked that the model declares the node.
+    const type = schema.nodes[args.node as string] as NodeType;
+    const paragraph = schema.nodes.paragraph as NodeType;
+    let fixed: Readonly<Record<string, unknown>> = {};
+    if (isRecord(args.attrs)) {
+        fixed = args.attrs;
+    }
+    return {
+        run: (state, dispatch, payload) => {
+            // The payload's fields are attributes of the node, such as `level` for `heading.set`.
+            const attrs: Record<string, unknown> = { ...fixed };
+            if (isRecord(payload)) {
+                for (const [name, value] of Object.entries(payload)) {
+                    attrs[name] = value;
+                }
+            }
+            const blocks = selectedTextblocks(state);
+            const already = (block: Node) =>
+                block.type === type && Object.entries(attrs).every(([name, value]) => block.attrs[name] === value);
+            if (args.toggle === true && blocks.length > 0 && blocks.every(already)) {
+                return setBlockType(paragraph)(state, dispatch);
+            }
+            return setBlockType(type, attrs)(state, dispatch);
+        },
+        active: (state) => {
+            const blocks = selectedTextblocks(state);
+            const matching = blocks.filter((block) => block.type === type).length;
+            if (matching === 0) {
+                return false;
+            }
+            if (matching === blocks.length) {
+                return true;
+            }
+            return 'mixed';
+        },
+    };
+};
+
+const insertText: CapabilityImplementation = () => ({
+    run: (state, dispatch, payload) => {
+        if (!isRecord(payload) || typeof payload.text !== 'string') {
+            return false;
+        }
+        if (dispatch !== undefined) {
+            dispatch(state.tr.insertText(payload.text).scrollIntoView());
+        }
+        return true;
+    },
+    active: () => false,
+});
+
 /** The command capabilities the runtime implements so far, by capability name. */
-export const CAPABILITIES: CapabilityImplementations = { toggleMark };
+export const CAPABILITIES: CapabilityImplementations = { insertText, setBlock, toggleMark };
