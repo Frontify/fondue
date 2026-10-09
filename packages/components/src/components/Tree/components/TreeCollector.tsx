@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { createContext, useContext, useId, useLayoutEffect, type ReactNode, type RefObject } from 'react';
+import { createContext, useContext, useId, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { flushSync } from 'react-dom';
 
 import { ROOT_ID } from '../constants';
@@ -51,14 +51,34 @@ export const useCollectedEntry = (
 };
 
 export const TreeCollector = ({
-    store,
-    containerRef,
+    onCollect,
     children,
 }: {
-    store: CollectStore;
-    containerRef: RefObject<HTMLDivElement>;
+    onCollect: (parsed: ParsedChildren) => void;
     children: ReactNode;
 }) => {
+    const containerRef = useRef<HTMLDivElement>(null);
+    const observerRef = useRef<MutationObserver | null>(null);
+    const onCollectRef = useRef(onCollect);
+    const [flushTick, setFlushTick] = useState(0);
+    const store = useMemo<CollectStore>(
+        () => ({ entries: new Map(), requestFlush: () => setFlushTick((tick) => tick + 1) }),
+        [],
+    );
+
+    useLayoutEffect(() => {
+        onCollectRef.current = onCollect;
+    });
+
+    useLayoutEffect(() => {
+        if (!containerRef.current) {
+            return;
+        }
+        onCollectRef.current(buildCollectedItems(containerRef.current, store.entries));
+        // Mutations this build already covered must not trigger another flush.
+        observerRef.current?.takeRecords();
+    }, [flushTick, store]);
+
     useLayoutEffect(() => {
         const container = containerRef.current;
         if (!container) {
@@ -68,8 +88,12 @@ export const TreeCollector = ({
         // eslint-disable-next-line @eslint-react/dom-no-flush-sync
         const observer = new MutationObserver(() => flushSync(() => store.requestFlush()));
         observer.observe(container, { childList: true, subtree: true });
-        return () => observer.disconnect();
-    }, [containerRef, store]);
+        observerRef.current = observer;
+        return () => {
+            observer.disconnect();
+            observerRef.current = null;
+        };
+    }, [store]);
 
     return (
         <div ref={containerRef} hidden aria-hidden="true">

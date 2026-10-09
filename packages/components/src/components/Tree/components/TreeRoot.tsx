@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { AssistiveTreeDescription } from '@headless-tree/react';
-import { Fragment, useId, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { Fragment, useId, useMemo, useState, type ReactNode } from 'react';
 
 import { useTranslation } from '#/hooks/useTranslation';
 
@@ -11,9 +11,9 @@ import { type TreeChangeState, type TreeDropCandidate } from '../types';
 import { computeCheckedStates, getCheckedUnitIds } from '../utils/computeCheckedStates';
 import { computeLoadingInsertions } from '../utils/computeLoadingInsertions';
 import { isNoopDrop } from '../utils/isNoopDrop';
-import { parseChildren } from '../utils/parseChildren';
+import { type ParsedChildren, parseChildren } from '../utils/parseChildren';
 
-import { buildCollectedItems, type CollectStore, TreeCollector } from './TreeCollector';
+import { TreeCollector } from './TreeCollector';
 import { TreeDragLine } from './TreeDragLine';
 import { TreeLoadingRow } from './TreeLoadingRow';
 import { TreeRow } from './TreeRow';
@@ -74,19 +74,7 @@ export const TreeRoot = ({
     const parsed = useMemo(() => parseChildren(children), [children]);
     // Rows inside custom components are found only by rendering `children` in a hidden
     // collect pass; the static parse stays the first-render (and server) value.
-    const collectRef = useRef<HTMLDivElement>(null);
-    const [flushTick, setFlushTick] = useState(0);
-    const [collected, setCollected] = useState<typeof parsed | null>(null);
-    const store = useMemo<CollectStore>(
-        () => ({ entries: new Map(), requestFlush: () => setFlushTick((tick) => tick + 1) }),
-        [],
-    );
-    useLayoutEffect(() => {
-        if (!parsed.hasForeignRows || !collectRef.current) {
-            return;
-        }
-        setCollected(buildCollectedItems(collectRef.current, store.entries));
-    }, [flushTick, parsed.hasForeignRows, store]);
+    const [collected, setCollected] = useState<ParsedChildren | null>(null);
     const { items, parentIsLoading: rootIsLoading } = parsed.hasForeignRows && collected ? collected : parsed;
     const tree = useTreeController({
         items,
@@ -162,11 +150,7 @@ export const TreeRoot = ({
     // One stable shape, so mounting the collect pass never remounts the tree (and its focus).
     return (
         <>
-            {parsed.hasForeignRows && (
-                <TreeCollector store={store} containerRef={collectRef}>
-                    {children}
-                </TreeCollector>
-            )}
+            {parsed.hasForeignRows && <TreeCollector onCollect={setCollected}>{children}</TreeCollector>}
             {treeElement}
         </>
     );

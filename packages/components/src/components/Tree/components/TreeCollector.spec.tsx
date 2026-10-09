@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { render, screen } from '@testing-library/react';
-import { Profiler, type ReactNode } from 'react';
+import { act, render, screen } from '@testing-library/react';
+import { Profiler, type ReactNode, useEffect, useState } from 'react';
 import { renderToString } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -14,6 +14,41 @@ const Leaf = ({ id }: { id: string }) => (
         <Tree.Label>{id}</Tree.Label>
     </Tree.Item>
 );
+
+let treeRowRenders = 0;
+vi.mock(import('./TreeRow'), async (importOriginal) => {
+    const mod = await importOriginal();
+    return {
+        ...mod,
+        TreeRow: (props: Parameters<typeof mod.TreeRow>[0]) => {
+            treeRowRenders += 1;
+            return mod.TreeRow(props);
+        },
+    };
+});
+
+const Row = ({ id }: { id: string }) => (
+    <Tree.Item id={id}>
+        <Tree.Label>{id}</Tree.Label>
+    </Tree.Item>
+);
+
+const Rows = ({ ids }: { ids: string[] }) => (
+    <>
+        {ids.map((id) => (
+            <Row key={id} id={id} />
+        ))}
+    </>
+);
+
+const GrowingRows = () => {
+    const [ids, setIds] = useState(['a', 'b', 'c']);
+    useEffect(() => {
+        const timer = setTimeout(() => setIds((prev) => [...prev, 'd']), 10);
+        return () => clearTimeout(timer);
+    }, []);
+    return <Rows ids={ids} />;
+};
 
 const Pair = () => (
     <>
@@ -140,5 +175,50 @@ describe('TreeCollector', () => {
         ]);
         expect(spy.mock.calls.some((call) => String(call[0]).includes('same key'))).toBe(false);
         spy.mockRestore();
+    });
+
+    describe('collect pass render cost', () => {
+        it('renders rows twice per consumer commit at most', () => {
+            const ui = () => (
+                <Tree.Root>
+                    <Rows ids={['a', 'b', 'c']} />
+                </Tree.Root>
+            );
+            const { rerender } = render(ui());
+            treeRowRenders = 0;
+            rerender(ui());
+            expect(treeRowRenders / 3).toBeLessThanOrEqual(2);
+        });
+
+        it('renders rows no more often than the static path when a row is added', () => {
+            const staticUi = (ids: string[]) => (
+                <Tree.Root>
+                    {ids.map((id) => (
+                        <Tree.Item key={id} id={id}>
+                            <Tree.Label>{id}</Tree.Label>
+                        </Tree.Item>
+                    ))}
+                </Tree.Root>
+            );
+            const staticView = render(staticUi(['a', 'b', 'c']));
+            treeRowRenders = 0;
+            staticView.rerender(staticUi(['a', 'b', 'c', 'd']));
+            const staticRenders = treeRowRenders;
+            staticView.unmount();
+
+            vi.useFakeTimers();
+            render(
+                <Tree.Root>
+                    <GrowingRows />
+                </Tree.Root>,
+            );
+            treeRowRenders = 0;
+            act(() => {
+                vi.runAllTimers();
+            });
+            expect(screen.getAllByRole('treeitem')).toHaveLength(4);
+            expect(treeRowRenders).toBeLessThanOrEqual(staticRenders);
+            vi.useRealTimers();
+        });
     });
 });
