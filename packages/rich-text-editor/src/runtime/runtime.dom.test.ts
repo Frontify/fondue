@@ -46,9 +46,11 @@ import newerNotes from '../../fixtures/migration/v3-current.json';
 
 import { type AsyncRequest } from './async';
 import { CAPABILITIES } from './capabilities';
+import { browserEnvironment } from './environment';
 import { createLimitCheck } from './limits';
 import { authoringOf } from './policy';
 import { createEditorRuntime, type EditorRuntime } from './runtime';
+import { SETTLE_MS } from './settle';
 import {
     type AuthoringPolicy,
     type CaptureTargetOptions,
@@ -2473,6 +2475,73 @@ describe('the published snapshot and composition', () => {
 
         expect(await queued).toEqual({ status: 'rejected', code: 'readonly' });
         expect([surface(), view.state.doc.textContent]).toEqual(['false', 'xwab']);
+    });
+
+    it('SPEC-rich-text-runtime/AC-033 SPEC-rich-text-runtime/AC-070 keeps a composition active through a host stored-mark toggle until compositionend', async () => {
+        const session = start(stored(para(words('ab'))));
+        const { handle, view, changes } = session;
+        const waiting = (promise: Promise<CommandResult>) => Promise.race([promise, Promise.resolve('pending')]);
+        setSelection(handle, { text: 'ab', from: 2, to: 2 });
+
+        compose(session, 'x');
+        const queued = handle.enqueue('text.insert', { text: '!' });
+        // Bold at a caret sets stored marks, and ProseMirror ends its own record of a composition for a state with them.
+        expect(handle.execute('mark.bold.toggle').status).toBe('applied');
+        expect(view.state.storedMarks).not.toBeNull();
+
+        expect(handle.getSummary().compositionActive).toBe(true);
+        expect(await waiting(queued)).toBe('pending');
+        expect(changes).toEqual([]);
+        endComposition(session);
+        await settleInput(session);
+
+        expect(await waiting(queued)).toMatchObject({ status: 'applied' });
+        expect(changes.map(({ origin }) => origin)).toEqual(['input', 'command']);
+        expect(view.state.doc.textContent).toBe('abx!');
+    });
+
+    it('SPEC-rich-text/AC-095 SPEC-rich-text-runtime/AC-070 waits as long as ProseMirror does after compositionend, on the real clock', async () => {
+        const controlled = createTestEnvironment({ seed: 1 });
+        const environment: TestEnvironment = {
+            ...controlled,
+            clock: browserEnvironment.clock,
+            scheduler: { ...controlled.scheduler, microtask: browserEnvironment.scheduler.microtask },
+        };
+        const session = start(stored(para(words('ab'))), { environment });
+        const { handle, view, changes } = session;
+        setSelection(handle, { text: 'ab', from: 2, to: 2 });
+        compose(session, 'x');
+        const queued = handle.enqueue('text.insert', { text: '!' });
+        const timers = vi.spyOn(globalThis, 'setTimeout');
+
+        // The last composed character reaches the DOM right before compositionend, so ProseMirror reads it in its flush.
+        (view.dom.firstChild?.firstChild as Text).appendData('y');
+        endComposition(session);
+        const delays = timers.mock.calls.map(([, delay]) => delay);
+        timers.mockRestore();
+        await new Promise((resolve) => browserEnvironment.clock.setTimeout(() => resolve(undefined), SETTLE_MS + 10));
+
+        // ProseMirror ends a composition in its own timer of this delay, which the settle timer copies.
+        expect(delays).toContain(SETTLE_MS);
+        expect(await queued).toMatchObject({ status: 'applied' });
+        expect(changes.map(contentOf)).toEqual([
+            stored(para(words('abxy'))).content,
+            stored(para(words('abxy!'))).content,
+        ]);
+    });
+
+    it('SPEC-rich-text-runtime/AC-036 SPEC-rich-text-runtime/AC-032 answers query as a host execute during a composition', () => {
+        const states = [{}, NOT_EDITABLE_CORE].map((policy) => {
+            const session = start(stored(para(words('ab'))), { policy });
+            compose(session, 'x');
+            const { disabledReason } = session.handle.query('text.insert', { text: 'y' });
+            return [disabledReason, session.handle.execute('text.insert', { text: 'y' })];
+        });
+
+        expect(states).toEqual([
+            ['composition-active', { status: 'rejected', code: 'composition-active' }],
+            ['not-allowed', { status: 'rejected', code: 'not-allowed' }],
+        ]);
     });
 
     it('SPEC-rich-text-runtime/AC-077 SPEC-rich-text-runtime/AC-060 resolves intents queued during composition as not-ready on dispose and drops the settle timer', async () => {
