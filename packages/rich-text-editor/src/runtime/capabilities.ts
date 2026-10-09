@@ -7,32 +7,42 @@ import { type EditorState } from 'prosemirror-state';
 import { type CapabilityImplementation, type CapabilityImplementations } from '#/definition';
 import { isRecord } from '#/model/values';
 
-/** Whether every selected text carries `type`, some of it, or none; at a caret, the marks the next typed text gets. */
-const markState = (state: EditorState, type: MarkType): boolean | 'mixed' => {
-    const { selection } = state;
-    if (selection.empty) {
-        let marks = state.storedMarks;
-        if (marks === null) {
-            marks = selection.$from.marks();
-        }
-        return type.isInSet(marks) !== undefined;
-    }
-    let texts = 0;
-    let marked = 0;
-    for (const { $from, $to } of selection.ranges) {
-        state.doc.nodesBetween($from.pos, $to.pos, (node) => {
-            if (node.isText) {
-                texts += 1;
-                if (type.isInSet(node.marks) !== undefined) {
-                    marked += 1;
-                }
+interface TextRange {
+    readonly from: number;
+    readonly to: number;
+    readonly marked: boolean;
+}
+
+/** The selected parts of text nodes whose parent allows `type`: a mark toggle acts on text only. */
+const markableText = (state: EditorState, type: MarkType): TextRange[] => {
+    const texts: TextRange[] = [];
+    for (const { $from, $to } of state.selection.ranges) {
+        state.doc.nodesBetween($from.pos, $to.pos, (node, pos, parent) => {
+            if (node.isText && parent !== null && parent.type.allowsMarkType(type)) {
+                const from = Math.max(pos, $from.pos);
+                const to = Math.min(pos + node.nodeSize, $to.pos);
+                texts.push({ from, to, marked: type.isInSet(node.marks) !== undefined });
             }
         });
     }
+    return texts;
+};
+
+/** Whether every selected text carries `type`, some of it, or none; at a caret, the marks the next typed text gets. */
+const markState = (state: EditorState, type: MarkType): boolean | 'mixed' => {
+    if (state.selection.empty) {
+        let marks = state.storedMarks;
+        if (marks === null) {
+            marks = state.selection.$from.marks();
+        }
+        return type.isInSet(marks) !== undefined;
+    }
+    const texts = markableText(state, type);
+    const marked = texts.filter((text) => text.marked).length;
     if (marked === 0) {
         return false;
     }
-    if (marked === texts) {
+    if (marked === texts.length) {
         return true;
     }
     return 'mixed';
@@ -45,32 +55,31 @@ const toggleMark: CapabilityImplementation = (args, schema) => {
     if (isRecord(args.attrs)) {
         attrs = args.attrs;
     }
-    // At a caret ProseMirror toggles the stored mark; it also tells whether the mark applies at the selection.
+    // At a caret ProseMirror toggles the stored mark.
     const engineToggle = toggleEngineMark(type, attrs);
     return {
         run: (state, dispatch, view) => {
             if (state.selection.empty) {
                 return engineToggle(state, dispatch, view);
             }
-            if (!engineToggle(state)) {
+            const texts = markableText(state, type);
+            if (texts.length === 0) {
                 return false;
             }
             if (dispatch === undefined) {
                 return true;
             }
-            // Adds or removes as `active` reports, over every selected character, edge whitespace included (SPEC-rich-text-editing/AC-007, AC-008).
-            const add = markState(state, type) !== true;
+            // Adds unless every selected text has the mark, edge whitespace included (SPEC-rich-text-editing/AC-007, AC-008).
+            const add = texts.some((text) => !text.marked);
             const transaction = state.tr;
-            for (const { $from, $to } of state.selection.ranges) {
+            for (const { from, to } of texts) {
                 if (add) {
-                    transaction.addMark($from.pos, $to.pos, type.create(attrs));
+                    transaction.addMark(from, to, type.create(attrs));
                 } else {
-                    transaction.removeMark($from.pos, $to.pos, type);
+                    transaction.removeMark(from, to, type);
                 }
             }
-            if (transaction.docChanged) {
-                dispatch(transaction.scrollIntoView());
-            }
+            dispatch(transaction.scrollIntoView());
             return true;
         },
         active: (state) => markState(state, type),
