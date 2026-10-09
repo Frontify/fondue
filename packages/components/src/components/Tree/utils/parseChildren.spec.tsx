@@ -213,4 +213,22 @@ describe('parseChildren', () => {
         ]);
         expect(result.items.map((entry) => entry.id)).toEqual(['1']);
     });
+
+    it('ignores misplaced Tree parts without flagging foreign rows', () => {
+        const result = parseChildren([
+            <TreeLabel key="l">stray</TreeLabel>,
+            <TreeFolderHeader key="h">
+                <TreeLabel>h</TreeLabel>
+            </TreeFolderHeader>,
+            <TreeFolder key="f" id="f">
+                <TreeFolderHeader>
+                    <TreeLabel>f</TreeLabel>
+                </TreeFolderHeader>
+                <TreeIcon>i</TreeIcon>
+                {item('a', 'a')}
+            </TreeFolder>,
+        ]);
+        expect(result.hasForeignRows).toBe(false);
+        expect(result.items.map((entry) => entry.id)).toEqual(['f', 'a']);
+    });
 });

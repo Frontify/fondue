@@ -195,6 +195,16 @@ export const parseChildren = (children: ReactNode, parentId: string = ROOT_ID): 
             hasForeignRows ||= nestedForeign;
             continue;
         }
+        if (
+            isTreeLabelElement(child) ||
+            isTreeIconElement(child) ||
+            isTreeDecoratorElement(child) ||
+            isTreeActionElement(child) ||
+            isTreeFolderHeaderElement(child)
+        ) {
+            // Misplaced row parts never hold rows; ignore them as before.
+            continue;
+        }
         hasForeignRows = true;
     }
 

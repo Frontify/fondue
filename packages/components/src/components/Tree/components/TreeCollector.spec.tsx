@@ -94,4 +94,51 @@ describe('TreeCollector', () => {
         expect(screen.getAllByRole('treeitem').map((row) => row.textContent?.trim())).toEqual(['A', 'B', 'C']);
         expect(document.querySelectorAll(`[${COLLECT_ATTR}]`)).toHaveLength(3);
     });
+
+    it('keeps fragment rows of a folder distinct in the collect pass', () => {
+        const spy = vi.spyOn(console, 'error').mockImplementation(() => {});
+        const ui = (showX: boolean) => (
+            <Tree.Root>
+                <Leaf id="z" />
+                <Tree.Folder id="f" isExpanded>
+                    <Tree.FolderHeader>
+                        <Tree.Label>f</Tree.Label>
+                    </Tree.FolderHeader>
+                    {showX && (
+                        <Tree.Item id="x">
+                            <Tree.Label>x</Tree.Label>
+                        </Tree.Item>
+                    )}
+                    <>
+                        <Tree.Item id="a">
+                            <Tree.Label>a</Tree.Label>
+                        </Tree.Item>
+                        <Tree.Item id="a2">
+                            <Tree.Label>a2</Tree.Label>
+                        </Tree.Item>
+                    </>
+                    <>
+                        <Tree.Item id="b">
+                            <Tree.Label>b</Tree.Label>
+                        </Tree.Item>
+                        <Tree.Item id="b2">
+                            <Tree.Label>b2</Tree.Label>
+                        </Tree.Item>
+                    </>
+                </Tree.Folder>
+            </Tree.Root>
+        );
+        const { rerender } = render(ui(true));
+        rerender(ui(false));
+        expect(screen.getAllByRole('treeitem').map((row) => row.textContent?.trim())).toEqual([
+            'z',
+            'f',
+            'a',
+            'a2',
+            'b',
+            'b2',
+        ]);
+        expect(spy.mock.calls.some((call) => String(call[0]).includes('same key'))).toBe(false);
+        spy.mockRestore();
+    });
 });
