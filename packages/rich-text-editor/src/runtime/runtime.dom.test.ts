@@ -970,6 +970,22 @@ describe('occurrences the policy pairs across a batch', () => {
             (state) => state.tr.insert(3, state.schema.node('mention', { nodeId: 'm-1', label: '' })),
             true,
         ],
+        ...(['remove', 'edit'] as const).map(
+            (
+                action,
+            ): readonly [string, JsonValue, Partial<AuthoringPolicy>, (state: EditorState) => Transaction, boolean] => [
+                `a label edit of one of two equal mentions, ${action}: false`,
+                stored(
+                    para({ type: 'mention', attrs: { nodeId: 'm-1', label: 'Ada' } }, words(' '), {
+                        type: 'mention',
+                        attrs: { nodeId: 'm-2', label: 'Ada' },
+                    }),
+                ),
+                forbid('fixture.mention', action),
+                (state) => state.tr.setNodeMarkup(1, undefined, { ...state.doc.nodeAt(1)?.attrs, label: 'Bo' }),
+                action === 'remove',
+            ],
+        ),
     ];
     for (const [name, input, policy, build, accepted] of cases) {
         const verdict = accepted ? 'accepts' : 'rejects';
@@ -1832,6 +1848,32 @@ describe('targets', () => {
 
         expect(handle.execute('text.insert', { text: 'X' }, { target })).toEqual(INVALID);
         expect(textOf(view.state.doc)).toBe('ab');
+    });
+
+    it('SPEC-rich-text-runtime/AC-042 SPEC-rich-text-runtime/AC-043 keeps an edit-node target invalid once its node is cut, even when a node with its nodeId lands there', () => {
+        const { handle, runtime, view } = start(stored(para(words('a'), mention('m-1'), words('b'))), {
+            model: targetModel,
+        });
+        setSelection(handle, { nodeId: 'm-1' });
+        const target = capture(handle, { purpose: 'edit-node', onIntersectingEdit: 'map' });
+
+        runtime.select({ node: 2 });
+        view.dom.dispatchEvent(new ClipboardEvent('cut', { clipboardData: new DataTransfer(), bubbles: true }));
+        expect(textOf(view.state.doc)).toBe('ab');
+        view.dispatch(view.state.tr.replaceWith(2, 3, view.state.schema.node('mention', { nodeId: 'm-1' })));
+
+        expect(view.state.doc.nodeAt(2)?.attrs.nodeId).toBe('m-1');
+        expect(handle.execute('text.insert', { text: 'X' }, { target })).toEqual(INVALID);
+    });
+
+    it('SPEC-rich-text-runtime/AC-043 captures an edit-node target on a selected node whose type carries no nodeId', () => {
+        const { handle, runtime } = start(stored(para(words('a'), { type: 'hard_break' }, words('b'))), {
+            model: targetModel,
+        });
+        runtime.select({ node: 2 });
+        const target = capture(handle, { purpose: 'edit-node', onIntersectingEdit: 'map' });
+
+        expect(handle.query('text.insert', { text: 'X' }, { target }).enabled).toBe(true);
     });
 
     it('SPEC-rich-text-runtime/AC-043 keeps an edit-node target valid through an attribute edit of its leaf node', () => {
