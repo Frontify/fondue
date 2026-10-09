@@ -2,7 +2,9 @@
 
 exports[`compileContentModel manifest > SPEC-rich-text/AC-028 emits the manifest of the core profile stand-in 1`] = `
 {
-  "commands": [],
+  "commands": [
+    "text.insert",
+  ],
   "features": [
     {
       "id": "core",
@@ -29,6 +31,7 @@ exports[`compileContentModel manifest > SPEC-rich-text/AC-028 emits the manifest
 exports[`compileContentModel manifest > SPEC-rich-text/AC-028 emits the manifest of the document profile stand-in 1`] = `
 {
   "commands": [
+    "text.insert",
     "fixture.undo",
     "fixture.paragraph.set",
     "fixture.heading.set",

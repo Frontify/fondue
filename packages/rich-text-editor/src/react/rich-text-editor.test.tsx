@@ -153,7 +153,7 @@ describe('RichTextEditor', () => {
             frames: once.frames,
         });
         strict.unmount();
-        expect(probeRuntimes()).toEqual({ views: [], subscriptions: 0, frames: 0 });
+        expect(probeRuntimes()).toMatchObject({ views: [], sessions: [], subscriptions: 0, frames: 0 });
     });
 
     it('SPEC-rich-text-react/AC-006 destroys the view of a detached surface at once and attaches a new one', () => {

@@ -1,24 +1,39 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Node } from 'prosemirror-model';
-import { Plugin } from 'prosemirror-state';
+import fc from 'fast-check';
+import { joinBackward } from 'prosemirror-commands';
+import { Fragment, Node, Schema, Slice } from 'prosemirror-model';
+import { type EditorState, Plugin, TextSelection, type Transaction } from 'prosemirror-state';
+import { tableEditing, tableNodes } from 'prosemirror-tables';
+import { Step, StepResult } from 'prosemirror-transform';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { compileDefinition, type CompiledDefinition } from '#/definition';
-import { fixtureLink } from '#/features/__fixtures__/features';
+import { compileDefinition, type CompiledDefinition, countAppends, type EngineCommand } from '#/definition';
+import { fixtureHeadingSet, fixtureLink, fixtureMention, fixtureTable } from '#/features/__fixtures__/features';
 import { notesModel } from '#/features/__fixtures__/notes';
 import { core } from '#/features/core/feature';
 import { bold } from '#/features/marks-bold/feature';
-import { compileContentModel, type ContentModel, defineFeature, type JsonValue, migrateDocument } from '#/model';
-import { decodeToTree } from '#/model/decode';
-import { createTestEnvironment, pressKey, setSelection, typeText } from '#/testing';
+import { defineEditor, type CommandsOfModel, type EditorHandle } from '#/index';
+import {
+    compileContentModel,
+    type ContentModel,
+    defineFeature,
+    type Diagnostic,
+    featureFromManifest,
+    type JsonValue,
+    migrateDocument,
+    type ResourceLimits,
+} from '#/model';
+import { decodeToTree, limitsOf } from '#/model/decode';
+import { createTestEnvironment, pressKey, setSelection, type TestEnvironment, typeText } from '#/testing';
 import { probeRuntimes } from '#/testing/probe';
 
 import newerNotes from '../../fixtures/migration/v3-current.json';
 
 import { CAPABILITIES } from './capabilities';
+import { authoringOf } from './policy';
 import { createEditorRuntime, type EditorRuntime } from './runtime';
-import { type DocumentChange } from './types';
+import { type AuthoringPolicy, type CommandResult, type DocumentChange, type FeaturePolicy } from './types';
 
 const boldModel = compileContentModel([core(), bold()], { id: 'test.bold', version: 1 });
 const stored = (...blocks: readonly JsonValue[]) => ({
@@ -30,6 +45,7 @@ const stored = (...blocks: readonly JsonValue[]) => ({
 });
 const para = (...content: readonly JsonValue[]) => ({ type: 'paragraph', attrs: { lang: null }, content });
 const strong = (value: string) => ({ type: 'text', text: value, marks: [{ type: 'bold' }] });
+const words = (value: string) => ({ type: 'text', text: value });
 
 const started: EditorRuntime[] = [];
 afterEach(() => {
@@ -44,18 +60,27 @@ interface Start {
     readonly mode?: 'editable' | 'readonly';
     /** Adds plugins to the compiled definition, as the engine runs them after the definition's own. */
     readonly plugins?: readonly Plugin[];
+    /** Adds commands to the compiled definition's command map. */
+    readonly commands?: Readonly<Record<string, EngineCommand>>;
+    readonly policy?: Partial<AuthoringPolicy>;
+    readonly limits?: Partial<ResourceLimits>;
+    readonly environment?: TestEnvironment;
 }
 
 /** A runtime on an attached surface, `ready` after the first frame. */
 const start = (input: unknown, options: Start = {}) => {
-    const { model = boldModel, mode = 'editable', plugins = [] } = options;
+    const { model = boldModel, mode = 'editable', plugins = [], commands = {} } = options;
+    const { environment = createTestEnvironment({ seed: 1 }) } = options;
     const { result, tree } = decodeToTree(input, model);
     if (result.status !== 'editable' || tree === undefined) {
         throw new Error('expected an editable document');
     }
     const compiled = compileDefinition(model, CAPABILITIES);
-    const definition: CompiledDefinition = { ...compiled, plugins: [...compiled.plugins, ...plugins] };
-    const environment = createTestEnvironment({ seed: 1 });
+    const definition: CompiledDefinition = {
+        ...compiled,
+        plugins: [...compiled.plugins, ...plugins],
+        commands: new Map([...compiled.commands, ...Object.entries(commands)]),
+    };
     const runtime = createEditorRuntime({
         definition,
         documentId: 'document-1',
@@ -63,15 +88,23 @@ const start = (input: unknown, options: Start = {}) => {
         capabilities: result.document.requiredCapabilities,
         environment,
         mode,
+        policy: authoringOf(model, options.policy),
+        limits: limitsOf(options.limits),
     });
     started.push(runtime);
     const changes: DocumentChange[] = [];
     runtime.handle.subscribe('documentChange', (change: DocumentChange) => changes.push(change));
+    const diagnostics: Diagnostic[] = [];
+    runtime.handle.subscribe('diagnostic', (diagnostic: Diagnostic) => diagnostics.push(diagnostic));
     const element = document.createElement('div');
     document.body.append(element);
     runtime.attach(element);
     environment.flushFrames();
-    return { runtime, handle: runtime.handle, changes, element };
+    const view = runtime.view;
+    if (view === undefined) {
+        throw new Error('no view');
+    }
+    return { runtime, handle: runtime.handle, changes, diagnostics, element, view, environment };
 };
 
 const contentOf = (change: DocumentChange | undefined) => change?.readDocument().content;
@@ -134,11 +167,7 @@ describe('the commit path', () => {
     });
 
     it('SPEC-rich-text-runtime/AC-019 publishes no change for an edit that leaves an equal document', () => {
-        const { handle, changes, runtime } = start(stored(para({ type: 'text', text: 'ab' })));
-        const view = runtime.view;
-        if (view === undefined) {
-            throw new Error('no view');
-        }
+        const { handle, changes, view } = start(stored(para({ type: 'text', text: 'ab' })));
 
         view.dispatch(view.state.tr.insertText('a', 1, 2));
 
@@ -163,11 +192,7 @@ describe('the commit path', () => {
     });
 
     it('SPEC-rich-text-runtime/AC-022 reports unknown for a bare transaction and input after a recorded beforeinput', () => {
-        const { handle, changes, runtime } = start(stored(para()));
-        const view = runtime.view;
-        if (view === undefined) {
-            throw new Error('no view');
-        }
+        const { handle, changes, view } = start(stored(para()));
 
         view.dispatch(view.state.tr.insertText('x'));
         typeText(handle, 'y');
@@ -185,11 +210,7 @@ describe('the commit path', () => {
 
     it('SPEC-rich-text-runtime/AC-022 forgets a recorded beforeinput whose batch a plugin rejected', () => {
         const reject = new Plugin({ filterTransaction: (transaction) => !transaction.doc.textContent.includes('z') });
-        const { handle, changes, runtime } = start(stored(para()), { plugins: [reject] });
-        const view = runtime.view;
-        if (view === undefined) {
-            throw new Error('no view');
-        }
+        const { handle, changes, view } = start(stored(para()), { plugins: [reject] });
 
         typeText(handle, 'z');
         view.dispatch(view.state.tr.insertText('x'));
@@ -303,11 +324,9 @@ describe('marks.bold', () => {
         });
         const model = compileContentModel([core(), bold(), line()], { id: 'test.bold', version: 1 });
         const plain = { type: 'plain_line', content: [{ type: 'text', text: 'b' }] };
-        const { handle, changes, runtime } = start(stored(para(strong('a')), plain, para(strong('c'))), { model });
-        const view = runtime.view;
-        if (view === undefined) {
-            throw new Error('no view');
-        }
+        const { handle, changes, runtime, view } = start(stored(para(strong('a')), plain, para(strong('c'))), {
+            model,
+        });
         runtime.select({ anchor: 1, head: view.state.doc.content.size - 1 });
 
         expect(handle.query('mark.bold.toggle').active).toBe(true);
@@ -330,6 +349,8 @@ describe('the session lifecycle', () => {
             capabilities: [],
             environment,
             mode: 'editable',
+            policy: authoringOf(boldModel),
+            limits: limitsOf(undefined),
         });
         started.push(runtime);
         const ready = vi.fn();
@@ -356,7 +377,7 @@ describe('the session lifecycle', () => {
         expect(disposed).toHaveBeenCalledTimes(1);
         expect(disposed).toHaveBeenCalledWith(handle.getSummary().session);
         expect(disposed.mock.results[0]?.value).toBeGreaterThan(0);
-        expect(probeRuntimes()).toEqual({ views: [], subscriptions: 0, frames: 0 });
+        expect(probeRuntimes()).toMatchObject({ views: [], sessions: [], subscriptions: 0, frames: 0 });
         expect(handle.getSummary().phase).toBe('disposed');
     });
 });
@@ -440,5 +461,837 @@ describe('stored content the session keeps', () => {
             content: [{ content: [{ text: 'Rotate the signing keys!' }] }],
         });
         expect(blocks?.[1]).toEqual({ type: 'horizontal_rule' });
+    });
+});
+
+const ALLOW: FeaturePolicy = { create: true, edit: true, remove: true, paste: true };
+const forbid = (featureId: string, action: 'create' | 'edit' | 'remove'): Partial<AuthoringPolicy> => ({
+    features: { [featureId]: { ...ALLOW, [action]: false } },
+});
+const policyModel = compileContentModel([core(), bold(), fixtureTable(), fixtureMention(), fixtureHeadingSet()], {
+    id: 'test.bold',
+    version: 1,
+});
+const table = (nodeId: string, ...paragraphs: readonly JsonValue[]) => ({
+    type: 'table',
+    attrs: { nodeId },
+    content: paragraphs,
+});
+const mention = (nodeId: string) => ({ type: 'mention', attrs: { nodeId } });
+const heading = (level: number, ...content: readonly JsonValue[]) => ({ type: 'heading', attrs: { level }, content });
+const boldBreak = { type: 'hard_break', marks: [{ type: 'bold' }] };
+/** The document's text, with `@` for each inline node. */
+const textOf = (doc: Node) => doc.textBetween(0, doc.content.size, '', '@');
+
+/** A step class the policy check does not know, which swaps in the document it was given. */
+class SwapStep extends Step {
+    constructor(private readonly next: Node) {
+        super();
+    }
+    apply() {
+        return StepResult.ok(this.next);
+    }
+    invert(doc: Node) {
+        return new SwapStep(doc);
+    }
+    map() {
+        return this;
+    }
+    toJSON() {
+        return { stepType: 'swap' };
+    }
+}
+
+describe('the authoring policy and limits', () => {
+    it('SPEC-rich-text-runtime/AC-004 rejects a paste over maxDocumentNodes and one of a forbidden node type, keeping the view state', () => {
+        const counted = start(stored(para(words('a'))), { model: policyModel, limits: { maxDocumentNodes: 6 } });
+        const before = counted.view.state;
+        counted.view.pasteHTML('<p>b</p><p>c</p><p>d</p>');
+        expect(counted.view.state).toBe(before);
+        counted.view.pasteHTML('<p>b</p>');
+        expect(counted.handle.getSummary().commitSequence).toBe(1);
+
+        const forbidden = start(stored(para(words('a'))), {
+            model: policyModel,
+            policy: forbid('fixture.table', 'create'),
+        });
+        const kept = forbidden.view.state;
+        forbidden.view.pasteHTML('<section data-pm-slice="0 0 []" data-table="t-2"><p>x</p></section>');
+        expect(forbidden.view.state).toBe(kept);
+        expect(forbidden.changes).toEqual([]);
+        forbidden.view.pasteHTML('<p>x</p>');
+        expect(forbidden.changes.map(({ origin }) => origin)).toEqual(['paste']);
+    });
+
+    it('SPEC-rich-text-runtime/AC-004 rejects typing from the byte limit on, counting bytes with no toJSON call', () => {
+        // Stands in for the `large` fixture of TASK-rte-performance: 1,500 blocks and about 100,000 characters.
+        const blocks = Array.from({ length: 1500 }, (_, index) =>
+            para(strong('b'.repeat(16)), words(`${index} `.padEnd(51, 'x'))),
+        );
+        const large = {
+            ...stored(...blocks),
+            requiredCapabilities: [
+                { id: 'core', version: 1 },
+                { id: 'marks.bold', version: 1 },
+            ],
+        };
+        const size = new TextEncoder().encode(JSON.stringify(large)).byteLength;
+        const { handle, view } = start(large, { limits: { maxDocumentBytes: size + 8 } });
+        const last = '1499 '.padEnd(51, 'x');
+        setSelection(handle, { text: last, from: last.length, to: last.length });
+        const toJSON = vi.spyOn(Node.prototype, 'toJSON');
+
+        const accepted: number[] = [];
+        for (let index = 0; index < 100; index += 1) {
+            const before = view.state;
+            typeText(handle, 'y');
+            if (view.state === before) {
+                continue;
+            }
+            accepted.push(index);
+        }
+
+        expect(accepted).toEqual([0, 1, 2, 3, 4, 5, 6, 7]);
+        expect(toJSON).not.toHaveBeenCalled();
+        toJSON.mockRestore();
+    });
+
+    it('SPEC-rich-text-runtime/AC-006 reads every step kind, empty step maps and an unknown step class included', () => {
+        // Positions: `ab` 1-3 and a break 3-4; bold `cd` 6-8; `e` 10-11 and a bold break 11-12.
+        const input = stored(
+            para(words('ab'), { type: 'hard_break' }),
+            para(strong('cd')),
+            para(words('e'), boldBreak),
+        );
+        const cases: readonly (readonly [string, Partial<AuthoringPolicy>, (state: EditorState) => Transaction])[] = [
+            ['AttrStep', forbid('core', 'edit'), (state) => state.tr.setNodeAttribute(0, 'lang', 'de')],
+            ['DocAttrStep', forbid('core', 'edit'), (state) => state.tr.setDocAttribute('lang', 'de')],
+            [
+                'AddMarkStep',
+                forbid('marks.bold', 'create'),
+                (state) => state.tr.addMark(1, 3, state.schema.mark('bold')),
+            ],
+            [
+                'AddNodeMarkStep',
+                forbid('marks.bold', 'create'),
+                (state) => state.tr.addNodeMark(3, state.schema.mark('bold')),
+            ],
+            [
+                'RemoveMarkStep',
+                forbid('marks.bold', 'remove'),
+                (state) => state.tr.removeMark(6, 8, state.schema.mark('bold')),
+            ],
+            [
+                'RemoveNodeMarkStep',
+                forbid('marks.bold', 'remove'),
+                (state) => state.tr.removeNodeMark(11, state.schema.mark('bold')),
+            ],
+            [
+                'SwapStep',
+                forbid('core', 'edit'),
+                (state) => {
+                    const first = state.doc.firstChild as Node;
+                    const changed = first.type.create({ ...first.attrs, lang: 'de' }, first.content);
+                    const next = state.doc.replace(0, first.nodeSize, new Slice(Fragment.from(changed), 0, 0));
+                    return state.tr.step(new SwapStep(next));
+                },
+            ],
+        ];
+        for (const [name, policy, build] of cases) {
+            const forbidden = start(input, { policy });
+            const before = forbidden.view.state;
+            forbidden.view.dispatch(build(before));
+            expect({ name, kept: forbidden.view.state === before }).toEqual({ name, kept: true });
+
+            const allowed = start(input);
+            allowed.view.dispatch(build(allowed.view.state));
+            expect({ name, changes: allowed.changes.length }).toEqual({ name, changes: 1 });
+        }
+    });
+
+    it('SPEC-rich-text-runtime/AC-007 keeps an existing table editable and movable under create: false and rejects pasting another', () => {
+        const { handle, view, changes } = start(stored(table('t-1', para(words('a'))), para(words('b'))), {
+            model: policyModel,
+            policy: forbid('fixture.table', 'create'),
+        });
+        const moved = view.state.doc.firstChild as Node;
+        const move = view.state.tr.delete(0, moved.nodeSize);
+        view.dispatch(move.insert(move.doc.content.size, moved));
+        setSelection(handle, { text: 'a', from: 1, to: 1 });
+        typeText(handle, 'z');
+        const before = view.state;
+        view.pasteHTML('<section data-pm-slice="0 0 []" data-table="t-2"><p>c</p></section>');
+
+        expect(changes.map(({ origin }) => origin)).toEqual(['unknown', 'input']);
+        expect(view.state).toBe(before);
+        expect(view.state.doc.lastChild?.type.name).toBe('table');
+        expect(view.state.doc.lastChild?.textContent).toBe('az');
+    });
+
+    it('SPEC-rich-text-runtime/AC-008 rejects changes to the attributes or content of an existing occurrence per feature', () => {
+        const typeInto = (text: string) => (session: ReturnType<typeof start>) => {
+            setSelection(session.handle, { text, from: 1, to: 1 });
+            typeText(session.handle, 'x');
+        };
+        const cases: readonly (readonly [string, JsonValue, (session: ReturnType<typeof start>) => void])[] = [
+            ['core', para(words('ab')), typeInto('ab')],
+            ['marks.bold', para(strong('ab')), typeInto('ab')],
+            ['fixture.table', table('t-1', para(words('ab'))), typeInto('ab')],
+            [
+                'fixture.mention',
+                para(words('a'), mention('m-1')),
+                ({ view }) => view.dispatch(view.state.tr.setNodeAttribute(2, 'nodeId', 'm-2')),
+            ],
+            [
+                'fixture.heading-set',
+                heading(2, words('ab')),
+                (session) => {
+                    setSelection(session.handle, { text: 'ab', from: 1, to: 1 });
+                    expect(session.handle.execute('heading.set', { level: 3 })).toEqual({
+                        status: 'rejected',
+                        code: 'not-allowed',
+                    });
+                },
+            ],
+        ];
+        for (const [featureId, block, change] of cases) {
+            const session = start(stored(block), { model: policyModel, policy: forbid(featureId, 'edit') });
+            change(session);
+            expect({ featureId, changes: session.changes }).toEqual({ featureId, changes: [] });
+        }
+    });
+
+    it('SPEC-rich-text-runtime/AC-009 rejects deleting a mention by Backspace, by range delete and by cut under remove: false', () => {
+        const input = stored(para(words('a'), mention('m-1'), words('b')));
+        const backspace = (session: ReturnType<typeof start>) => {
+            session.runtime.select({ anchor: 3, head: 3 });
+            const key = new KeyboardEvent('keydown', { key: 'Backspace', keyCode: 8, bubbles: true, cancelable: true });
+            session.view.dom.dispatchEvent(key);
+        };
+        const ways: readonly (readonly [string, (session: ReturnType<typeof start>) => void])[] = [
+            ['Backspace', backspace],
+            ['range delete', ({ view }) => view.dispatch(view.state.tr.delete(1, 4))],
+            [
+                'cut',
+                ({ runtime, view }) => {
+                    runtime.select({ anchor: 1, head: 4 });
+                    const cut = new ClipboardEvent('cut', {
+                        clipboardData: new DataTransfer(),
+                        bubbles: true,
+                        cancelable: true,
+                    });
+                    view.dom.dispatchEvent(cut);
+                },
+            ],
+        ];
+        for (const [name, remove] of ways) {
+            const kept = start(input, { model: policyModel, policy: forbid('fixture.mention', 'remove') });
+            remove(kept);
+            expect({ name, text: textOf(kept.view.state.doc) }).toEqual({ name, text: 'a@b' });
+
+            const removed = start(input, { model: policyModel });
+            remove(removed);
+            expect({ name, removed: !textOf(removed.view.state.doc).includes('@') }).toEqual({ name, removed: true });
+        }
+    });
+
+    it('SPEC-rich-text-runtime/AC-011 applies a new policy to the next query and commit with the same view, schema and plugins', () => {
+        const { handle, view, changes } = start(stored(para(words('ab'))));
+        const { schema, plugins } = view.state;
+        setSelection(handle, { text: 'ab' });
+        expect(handle.query('mark.bold.toggle').enabled).toBe(true);
+
+        handle.updatePolicy({ ...authoringOf(boldModel), features: forbid('marks.bold', 'create').features ?? {} });
+        expect(handle.query('mark.bold.toggle')).toMatchObject({ enabled: false, disabledReason: 'not-allowed' });
+        pressKey(handle, 'Mod-b');
+
+        expect(changes).toEqual([]);
+        expect(view.isDestroyed).toBe(false);
+        expect(view.state.schema).toBe(schema);
+        expect(view.state.plugins).toBe(plugins);
+    });
+
+    it('SPEC-rich-text-runtime/AC-079 notifies a command state selector of a new policy before updatePolicy returns, with no commit', () => {
+        const { handle, runtime } = start(stored(para(words('ab'))), { model: policyModel });
+        let returned = false;
+        const seen: (readonly [boolean, boolean])[] = [];
+        runtime.watch(
+            () => handle.query('heading.set', { level: 2 }).enabled,
+            Object.is,
+            (enabled) => seen.push([enabled, returned]),
+        );
+        const sequence = handle.getSummary().commitSequence;
+
+        handle.updatePolicy({
+            ...authoringOf(policyModel),
+            features: forbid('fixture.heading-set', 'create').features ?? {},
+        });
+        returned = true;
+
+        expect(seen).toEqual([[false, false]]);
+        expect(handle.getSummary().commitSequence).toBe(sequence);
+    });
+
+    it('SPEC-rich-text/AC-025 SPEC-rich-text/AC-030 rejects an unknown policy feature and unsafe policy values in defineEditor and updatePolicy', () => {
+        const unknown = { features: { 'acme.missing': ALLOW } };
+        const unsafe = { features: { core: { ...ALLOW, create: () => true } } } as unknown as Partial<AuthoringPolicy>;
+        const { handle } = start(stored(para()));
+        const codeOf = (call: () => unknown) => {
+            try {
+                call();
+            } catch (error) {
+                return error;
+            }
+            return undefined;
+        };
+
+        expect(codeOf(() => defineEditor({ id: 'x', model: boldModel, policy: unknown }))).toMatchObject({
+            code: 'definition.unknown-policy-feature',
+        });
+        expect(
+            codeOf(() => handle.updatePolicy({ ...authoringOf(boldModel), features: unknown.features })),
+        ).toMatchObject({
+            code: 'definition.unknown-policy-feature',
+            details: { feature: 'acme.missing' },
+        });
+        expect(
+            codeOf(() => handle.updatePolicy({ ...authoringOf(boldModel), features: unsafe.features ?? {} })),
+        ).toMatchObject({
+            code: 'definition.invalid-manifest',
+            details: { path: '/policy/features/core/create' },
+        });
+    });
+});
+
+const applied = (result: CommandResult) => result.status === 'applied' || result.status === 'no-op';
+
+/** A plugin that appends a transaction to every batch that holds one it did not append itself, forever. */
+const appendForever = (featureId: string, capability: string) =>
+    countAppends(
+        new Plugin({
+            appendTransaction: (transactions, _old, state) => {
+                if (transactions.every((transaction) => transaction.getMeta('appendedBy') === featureId)) {
+                    return null;
+                }
+                return state.tr.setMeta('appendedBy', featureId);
+            },
+        }),
+        { featureId, capability },
+    );
+
+describe('commands, events and the commit path', () => {
+    it('SPEC-rich-text-runtime/AC-001 installs every new state through commit and gives the view no event handler', async () => {
+        const { handle, runtime, view } = start(stored(para(words('ab'))));
+        const original = view.updateState.bind(view);
+        const installed: EditorState[] = [];
+        vi.spyOn(view, 'updateState').mockImplementation((next) => {
+            if (next !== view.state) {
+                installed.push(next);
+            }
+            original(next);
+        });
+
+        typeText(handle, 'c');
+        view.pasteHTML('<p>d</p>');
+        runtime.select({ anchor: 1, head: 2 });
+        view.dom.dispatchEvent(new ClipboardEvent('cut', { clipboardData: new DataTransfer(), bubbles: true }));
+        setSelection(handle, { text: 'b' });
+        pressKey(handle, 'Mod-b');
+        handle.execute('mark.bold.toggle');
+        await handle.enqueue('text.insert', { text: 'e' });
+
+        expect(installed).toHaveLength(handle.getSummary().commitSequence);
+        expect(installed.at(-1)).toBe(view.state);
+        expect([view.props.handleDOMEvents, view.props.handleKeyDown, view.props.handleTextInput]).toEqual([
+            undefined,
+            undefined,
+            undefined,
+        ]);
+    });
+
+    it('SPEC-rich-text-runtime/AC-012 aborts a batch past the append limit, names the chain and faults', () => {
+        const { handle, view, diagnostics, changes } = start(stored(para()), {
+            plugins: [appendForever('fixture.a', 'insertNode'), appendForever('fixture.b', 'setBlock')],
+        });
+        const before = view.state;
+
+        typeText(handle, 'x');
+
+        expect(view.state).toBe(before);
+        expect(changes).toEqual([]);
+        expect(handle.getSummary()).toMatchObject({ phase: 'faulted', commitSequence: 0, sequence: 0 });
+        expect(view.editable).toBe(false);
+        expect(diagnostics).toEqual([
+            {
+                code: 'runtime.append-limit',
+                severity: 'error',
+                messageKey: 'runtime.append-limit',
+                details: { features: ['fixture.a', 'fixture.b'], capabilities: ['insertNode', 'setBlock'], count: 33 },
+            },
+        ]);
+        expect(handle.execute('text.insert', { text: 'y' })).toEqual({ status: 'rejected', code: 'not-ready' });
+    });
+
+    it('SPEC-rich-text-runtime/AC-012 counts the tableEditing() repair and gives it the injected clock time', () => {
+        const schema = new Schema({
+            nodes: {
+                doc: { content: 'block+' },
+                paragraph: { group: 'block', content: 'text*', toDOM: () => ['p', 0] },
+                text: {},
+                ...tableNodes({ tableGroup: 'block', cellContent: 'paragraph+', cellAttributes: {} }),
+            },
+        });
+        const cell = (value: string) => ({
+            type: 'table_cell',
+            content: [{ type: 'paragraph', content: [{ type: 'text', text: value }] }],
+        });
+        // The second row lacks a cell, which the repair adds once the table changes.
+        const tree = {
+            type: 'doc',
+            content: [
+                {
+                    type: 'table',
+                    content: [
+                        { type: 'table_row', content: [cell('a'), cell('b')] },
+                        { type: 'table_row', content: [cell('c')] },
+                    ],
+                },
+            ],
+        };
+        const run = (maxAppendedTransactions: number) => {
+            const environment = createTestEnvironment({ seed: 1 });
+            const seen: Transaction[] = [];
+            const recorder = new Plugin({
+                state: {
+                    init: () => null,
+                    apply: (transaction) => {
+                        seen.push(transaction);
+                        return null;
+                    },
+                },
+            });
+            const repair = countAppends(tableEditing(), { featureId: 'fixture.table', capability: 'table' });
+            const runtime = createEditorRuntime({
+                definition: { ...compileDefinition(boldModel, CAPABILITIES), schema, plugins: [repair, recorder] },
+                documentId: 'document-1',
+                tree,
+                capabilities: [],
+                environment,
+                mode: 'editable',
+                policy: authoringOf(boldModel),
+                limits: limitsOf({ maxAppendedTransactions }),
+            });
+            started.push(runtime);
+            const diagnostics: Diagnostic[] = [];
+            runtime.handle.subscribe('diagnostic', (diagnostic: Diagnostic) => diagnostics.push(diagnostic));
+            runtime.attach(document.body.appendChild(document.createElement('div')));
+            environment.flushFrames();
+            const view = runtime.view as NonNullable<EditorRuntime['view']>;
+            view.dispatch(view.state.tr.insertText('!', 4));
+            return { runtime, seen, diagnostics, now: environment.clock.now() };
+        };
+
+        const counted = run(32);
+        const repairs = counted.seen.filter((transaction) => transaction.getMeta('appendedTransaction') !== undefined);
+        expect(repairs.map(({ time }) => time)).toEqual([counted.now]);
+        expect(counted.runtime.view?.state.doc.child(0).child(1).childCount).toBe(2);
+
+        const capped = run(0);
+        expect(capped.runtime.handle.getSummary().phase).toBe('faulted');
+        expect(capped.diagnostics.map(({ details }) => details)).toEqual([
+            { features: ['fixture.table'], capabilities: ['table'], count: 1 },
+        ]);
+    });
+
+    it('SPEC-rich-text-runtime/AC-023 sets commandId for a command batch only, whatever its route', async () => {
+        const { handle, runtime, view, changes } = start(stored(para(words('ab'))));
+        typeText(handle, 'c');
+        view.pasteHTML('<p>d</p>');
+        runtime.select({ anchor: 1, head: 2 });
+        view.dom.dispatchEvent(new ClipboardEvent('cut', { clipboardData: new DataTransfer(), bubbles: true }));
+        view.dispatch(view.state.tr.insertText('e'));
+        setSelection(handle, { text: 'e' });
+        pressKey(handle, 'Mod-b');
+        handle.execute('text.insert', { text: 'f' });
+        await handle.enqueue('text.insert', { text: 'g' });
+
+        expect(changes.map(({ origin, commandId }) => [origin, commandId])).toEqual([
+            ['input', null],
+            ['paste', null],
+            ['cut', null],
+            ['unknown', null],
+            ['command', 'mark.bold.toggle'],
+            ['command', 'text.insert'],
+            ['command', 'text.insert'],
+        ]);
+    });
+
+    it('SPEC-rich-text-runtime/AC-025 notifies a bold active-state selector only when its value changes', () => {
+        const { handle, runtime } = start(stored(para(words('ab'))));
+        setSelection(handle, { text: 'ab', from: 2, to: 2 });
+        const notified = vi.fn();
+        runtime.watch(() => handle.query('mark.bold.toggle').active, Object.is, notified);
+
+        typeText(handle, 'cde');
+        expect(notified).not.toHaveBeenCalled();
+        pressKey(handle, 'Mod-b');
+        expect(notified.mock.calls).toEqual([[true]]);
+    });
+
+    it('SPEC-rich-text-runtime/AC-026 calls the remaining listeners and completes the commit when one throws', () => {
+        const { handle, view } = start(stored(para()));
+        const second = vi.fn();
+        handle.subscribe('documentChange', () => {
+            throw new Error('listener');
+        });
+        handle.subscribe('documentChange', second);
+
+        typeText(handle, 'a');
+
+        expect(second).toHaveBeenCalledTimes(1);
+        expect(view.state.doc.textContent).toBe('a');
+        expect(handle.getSummary().sequence).toBe(1);
+    });
+
+    it('SPEC-rich-text-runtime/AC-027 reports a throwing diagnostic listener once to the other listeners, with no recursion', () => {
+        const { handle, view } = start(stored(para()));
+        const throwing = vi.fn(() => {
+            throw new Error('listener');
+        });
+        const other = vi.fn((_diagnostic: Diagnostic) => undefined);
+        handle.subscribe('diagnostic', throwing);
+        handle.subscribe('diagnostic', other);
+        const old = view.state;
+        typeText(handle, 'a');
+
+        view.dispatch(old.tr.insertText('b'));
+
+        expect(throwing).toHaveBeenCalledTimes(1);
+        expect(other.mock.calls.map(([diagnostic]) => diagnostic.code)).toEqual([
+            'runtime.stale-transaction',
+            'runtime.listener-error',
+        ]);
+    });
+
+    it('SPEC-rich-text-runtime/AC-028 rejects execute as busy from a documentChange listener and a plugin view update', () => {
+        let target: EditorRuntime | undefined;
+        const results: CommandResult[] = [];
+        const viewUpdate = new Plugin({
+            view: () => ({
+                update: () => {
+                    if (target !== undefined) {
+                        results.push(target.handle.execute('text.insert', { text: 'v' }));
+                    }
+                },
+            }),
+        });
+        const { handle, runtime, view } = start(stored(para()), { plugins: [viewUpdate] });
+        target = runtime;
+        handle.subscribe('documentChange', () => results.push(handle.execute('text.insert', { text: 'l' })));
+
+        typeText(handle, 'a');
+
+        expect(results).toEqual([
+            { status: 'rejected', code: 'busy' },
+            { status: 'rejected', code: 'busy' },
+        ]);
+        expect(view.state.doc.textContent).toBe('a');
+    });
+
+    it('SPEC-rich-text-runtime/AC-029 runs intents enqueued during notification after it ends, in call order', async () => {
+        const { handle, changes } = start(stored(para()));
+        const results: Promise<CommandResult>[] = [];
+        handle.subscribe('documentChange', () => {
+            if (results.length === 0) {
+                results.push(
+                    handle.enqueue('text.insert', { text: 'x' }),
+                    handle.enqueue('text.insert', { text: 'y' }),
+                );
+            }
+        });
+
+        typeText(handle, 'a');
+
+        const settled = await Promise.all(results);
+        expect(settled.map(({ status }) => status)).toEqual(['applied', 'applied']);
+        expect(changes.map((change) => contentOf(change))).toEqual([
+            stored(para(words('a'))).content,
+            stored(para(words('ax'))).content,
+            stored(para(words('axy'))).content,
+        ]);
+    });
+
+    it('SPEC-rich-text-runtime/AC-030 resolves an intent past 32 levels of enqueuing listeners as busy and warns once', async () => {
+        const { handle, view, diagnostics } = start(stored(para()));
+        const results: Promise<CommandResult>[] = [];
+        handle.subscribe('documentChange', () => results.push(handle.enqueue('text.insert', { text: 'x' })));
+
+        const first = await handle.enqueue('text.insert', { text: 'x' });
+        const queued = await Promise.all(results);
+
+        expect(first.status).toBe('applied');
+        expect(queued.filter(applied)).toHaveLength(31);
+        expect(queued.at(-1)).toEqual({ status: 'rejected', code: 'busy' });
+        expect(view.state.doc.textContent).toBe('x'.repeat(32));
+        expect(diagnostics).toEqual([
+            { code: 'runtime.enqueue-loop', severity: 'warning', messageKey: 'runtime.enqueue-loop' },
+        ]);
+    });
+
+    it('SPEC-rich-text-runtime/AC-036 executes exactly when the query is enabled, over generated states, selections, commands and policies', () => {
+        const segment = fc.record({ value: fc.stringMatching(/^[ab ]{1,4}$/), marked: fc.boolean() });
+        const blocks = fc.array(fc.array(segment, { maxLength: 3 }), { minLength: 1, maxLength: 3 });
+        const rules = fc.record({
+            create: fc.boolean(),
+            edit: fc.boolean(),
+            remove: fc.boolean(),
+            paste: fc.constant(true),
+        });
+        const command = fc.oneof(
+            fc.record({ id: fc.constant('mark.bold.toggle'), payload: fc.constant(undefined) }),
+            fc.record({
+                id: fc.constant('text.insert'),
+                payload: fc.record({ text: fc.stringMatching(/^[xy]{0,2}$/) }),
+            }),
+        );
+        const property = fc.property(
+            blocks,
+            fc.nat(),
+            fc.nat(),
+            command,
+            rules,
+            rules,
+            fc.nat({ max: 3 }),
+            (content, anchor, head, { id, payload }, coreRules, boldRules, spare) => {
+                const paragraphs = content.map((segments) =>
+                    para(
+                        ...segments.map(({ value, marked }) => {
+                            if (marked) {
+                                return strong(value);
+                            }
+                            return words(value);
+                        }),
+                    ),
+                );
+                // The stored node count, which joining adjacent text can only lower, so the document starts within the limit.
+                const nodes = content.reduce((total, segments) => total + 1 + segments.length, 1);
+                const { handle, runtime, view } = start(stored(...paragraphs), {
+                    policy: { features: { core: coreRules, 'marks.bold': boldRules } },
+                    limits: { maxDocumentNodes: nodes + spare },
+                });
+                const { doc } = view.state;
+                const selection = TextSelection.between(
+                    doc.resolve(anchor % (doc.content.size + 1)),
+                    doc.resolve(head % (doc.content.size + 1)),
+                );
+                runtime.select({ anchor: selection.anchor, head: selection.head });
+
+                const queried = handle.query(id, payload);
+                const executed = handle.execute(id, payload);
+                handle.dispose();
+                expect(applied(executed)).toBe(queried.enabled);
+            },
+        );
+        fc.assert(property);
+    });
+
+    it('SPEC-rich-text-runtime/AC-036 disables and rejects a command that a filter, a normalizer over a limit or the policy stops', () => {
+        const filter = new Plugin({ filterTransaction: (transaction) => !transaction.docChanged });
+        const normalizer = new Plugin({
+            appendTransaction: (transactions, _old, state) => {
+                if (!transactions.some(({ docChanged }) => docChanged) || state.doc.childCount > 1) {
+                    return null;
+                }
+                return state.tr.insert(
+                    state.doc.content.size,
+                    state.schema.node('paragraph', null, state.schema.text('n')),
+                );
+            },
+        });
+        const cases: readonly (readonly [string, Start])[] = [
+            ['filter', { plugins: [filter] }],
+            ['normalizer', { plugins: [normalizer], limits: { maxDocumentNodes: 4 } }],
+            ['policy', { policy: forbid('marks.bold', 'create') }],
+        ];
+        for (const [name, options] of cases) {
+            const { handle, view } = start(stored(para(words('ab'))), options);
+            setSelection(handle, { text: 'ab' });
+            const before = view.state;
+
+            const queried = handle.query('mark.bold.toggle');
+            const executed = handle.execute('mark.bold.toggle');
+
+            expect({ name, enabled: queried.enabled, applied: applied(executed) }).toEqual({
+                name,
+                enabled: false,
+                applied: false,
+            });
+            expect(view.state).toBe(before);
+        }
+    });
+
+    it('SPEC-rich-text-runtime/AC-036 runs a command built on joinBackward with no view, so a focused host button keeps focus', () => {
+        const join: EngineCommand = { run: (state, dispatch) => joinBackward(state, dispatch), active: () => false };
+        const { handle, view } = start(stored(para(words('a')), para(words('b'))), {
+            commands: { 'fixture.join': join },
+        });
+        setSelection(handle, { text: 'b', from: 0, to: 0 });
+        const button = document.body.appendChild(document.createElement('button'));
+        button.focus();
+        const endOfTextblock = vi.spyOn(view, 'endOfTextblock');
+
+        expect(handle.query('fixture.join').enabled).toBe(true);
+        expect(handle.execute('fixture.join').status).toBe('applied');
+
+        expect(document.activeElement).toBe(button);
+        expect(endOfTextblock).not.toHaveBeenCalled();
+        expect(view.state.doc.childCount).toBe(1);
+    });
+
+    it('SPEC-rich-text-runtime/AC-039 rejects a wrapped native command that dispatches twice', () => {
+        const twice: EngineCommand = {
+            run: (state, dispatch) => {
+                dispatch?.(state.tr.insertText('a'));
+                dispatch?.(state.tr.insertText('b'));
+                return true;
+            },
+            active: () => false,
+        };
+        const { handle, view, diagnostics } = start(stored(para()), { commands: { 'fixture.twice': twice } });
+        const before = view.state;
+
+        expect(handle.execute('fixture.twice')).toEqual({ status: 'rejected', code: 'not-applicable' });
+        expect(diagnostics.map(({ code }) => code)).toEqual(['runtime.multiple-dispatch']);
+        expect(view.state).toBe(before);
+    });
+
+    it('SPEC-rich-text-runtime/AC-075 rejects a transaction built from an older state as stale, keeping state and counters', () => {
+        const { handle, view, diagnostics, changes } = start(stored(para()));
+        const old = view.state;
+        typeText(handle, 'a');
+        const summary = handle.getSummary();
+        const current = view.state;
+
+        view.dispatch(old.tr.insertText('b'));
+
+        expect(view.state).toBe(current);
+        expect(handle.getSummary()).toEqual(summary);
+        expect(changes).toHaveLength(1);
+        expect(diagnostics).toEqual([
+            { code: 'runtime.stale-transaction', severity: 'error', messageKey: 'runtime.stale-transaction' },
+        ]);
+    });
+});
+
+describe('command payloads', () => {
+    const pullQuote = featureFromManifest({
+        id: 'acme.pull-quote',
+        version: 1,
+        requires: [{ id: 'core', version: 1 }],
+        nodes: {
+            acme_pull_quote: {
+                group: 'block',
+                content: 'inline*',
+                attrs: {},
+                html: ['blockquote', { class: 'acme-pull-quote' }, 0],
+                parse: [{ tag: 'blockquote.acme-pull-quote' }],
+            },
+        },
+        formats: { html: 'lossless', text: 'lossy', markdown: 'unsupported' },
+        commands: { 'acme.pull-quote.set': { capability: 'setBlock', node: 'acme_pull_quote', toggle: true } },
+    });
+    const model = compileContentModel([core(), bold(), fixtureHeadingSet(), pullQuote()], {
+        id: 'test.bold',
+        version: 1,
+    });
+
+    it('SPEC-rich-text/AC-054 SPEC-rich-text-runtime/AC-064 rejects a wrong payload before the command runs, from code and from a manifest', async () => {
+        const { handle, view } = start(stored(para(words('ab'))), { model });
+        const typed = handle as unknown as EditorHandle<CommandsOfModel<typeof model>>;
+        setSelection(handle, { text: 'ab', from: 1, to: 1 });
+        const before = view.state;
+        const sequence = handle.getSummary().commitSequence;
+        const invalid = { status: 'rejected', code: 'invalid-payload' };
+
+        // @ts-expect-error: the declaration types `level` as a number.
+        expect(typed.execute('heading.set', { level: 'two' })).toEqual(invalid);
+        expect(typed.execute('heading.set', { level: 7 })).toEqual(invalid);
+        expect(handle.execute('acme.pull-quote.set', { tone: 'brand' })).toEqual(invalid);
+        // @ts-expect-error: the declaration types `level` as a number.
+        expect(await typed.enqueue('heading.set', { level: 'two' })).toEqual(invalid);
+        expect(await handle.enqueue('acme.pull-quote.set', { tone: 'brand' })).toEqual(invalid);
+        expect(view.state).toBe(before);
+        expect(handle.getSummary().commitSequence).toBe(sequence);
+
+        expect(typed.execute('heading.set', { level: 2 }).status).toBe('applied');
+        expect(view.state.doc.firstChild?.attrs).toMatchObject({ level: 2 });
+        expect(handle.execute('acme.pull-quote.set').status).toBe('applied');
+        expect(view.state.doc.firstChild?.type.name).toBe('acme_pull_quote');
+        expect(handle.execute('acme.pull-quote.set').status).toBe('applied');
+        expect(view.state.doc.firstChild?.type.name).toBe('paragraph');
+    });
+});
+
+describe('disposal', () => {
+    it('SPEC-rich-text-runtime/AC-060 releases every listener, selector, queued intent, frame, view and plugin view over 10 mount and dispose cycles', async () => {
+        const before = probeRuntimes();
+        let pluginViews = 0;
+        const counted = new Plugin({
+            view: () => {
+                pluginViews += 1;
+                return {
+                    destroy: () => {
+                        pluginViews -= 1;
+                    },
+                };
+            },
+        });
+        const { tree } = decodeToTree(stored(para()), boldModel);
+        const compiled = compileDefinition(boldModel, CAPABILITIES);
+        const pending: Promise<CommandResult>[] = [];
+        const owned: ReturnType<typeof probeRuntimes>[] = [];
+        for (let cycle = 0; cycle < 10; cycle += 1) {
+            const environment = createTestEnvironment({ seed: cycle });
+            const runtime = createEditorRuntime({
+                definition: { ...compiled, plugins: [...compiled.plugins, counted] },
+                documentId: `document-${cycle}`,
+                tree: tree as NonNullable<typeof tree>,
+                capabilities: [],
+                environment,
+                mode: 'editable',
+                policy: authoringOf(boldModel),
+                limits: limitsOf(undefined),
+            });
+            runtime.handle.subscribe('documentChange', () => undefined);
+            runtime.watch(
+                () => runtime.handle.getSummary().sequence,
+                Object.is,
+                () => undefined,
+            );
+            pending.push(runtime.handle.enqueue('text.insert', { text: 'a' }));
+            runtime.attach(document.body.appendChild(document.createElement('div')));
+            if (cycle % 2 === 1) {
+                environment.flushFrames();
+            }
+            owned.push(probeRuntimes());
+
+            runtime.handle.dispose();
+            expect(runtime.handle.getSummary().phase).toBe('disposed');
+        }
+
+        expect(owned[0]).toMatchObject({
+            sessions: [['core', 'marks.bold']],
+            subscriptions: 1,
+            selectors: 1,
+            intents: 1,
+            frames: 1,
+        });
+        expect(owned[1]).toMatchObject({ subscriptions: 1, selectors: 1, intents: 0, frames: 0 });
+        expect(probeRuntimes()).toEqual(before);
+        expect(pluginViews).toBe(0);
+        const settled = await Promise.all(pending);
+        expect(settled.map(({ status }) => status)).toEqual(
+            Array.from({ length: 5 }).flatMap(() => ['rejected', 'applied']),
+        );
     });
 });

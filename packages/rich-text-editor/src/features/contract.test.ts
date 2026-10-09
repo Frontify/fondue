@@ -10,6 +10,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { createCodecs } from '#/codecs';
 import { type CapabilityImplementation } from '#/definition';
 import { bold, featuresById } from '#/features';
+import { commandCases } from '#/features/__fixtures__/contract.cases';
 import { featureFixtures } from '#/features/conformance/fixtures';
 import { core } from '#/features/core/feature';
 import { registry } from '#/features/registry';
@@ -22,18 +23,15 @@ import { createTestEnvironment, pressKey, runFeatureContract, setSelection } fro
 vi.mock('#/codecs', { spy: true });
 
 runFeatureContract([...featuresById(Object.keys(registry)), highlight()], { fixtures: [highlightDocument] });
+commandCases(featuresById(Object.keys(registry)));
 
-/** Registers the suite on a stand-in runner, runs each case and returns the titles of those that fail. */
-const failingCases = async (features: readonly Feature[], fixtures?: readonly unknown[]): Promise<string[]> => {
+/** Registers cases on a stand-in runner, runs each one and returns the titles of those that fail. */
+const failingTitles = async (register: () => void): Promise<string[]> => {
     const cases = new Map<string, () => unknown>();
     vi.stubGlobal('describe', (_name: string, body: () => void) => body());
     vi.stubGlobal('it', (name: string, body: () => unknown) => cases.set(name, body));
     try {
-        if (fixtures === undefined) {
-            runFeatureContract(features);
-        } else {
-            runFeatureContract(features, { fixtures });
-        }
+        register();
     } finally {
         vi.unstubAllGlobals();
     }
@@ -47,6 +45,14 @@ const failingCases = async (features: readonly Feature[], fixtures?: readonly un
     }
     return failing;
 };
+const failingCases = (features: readonly Feature[], fixtures?: readonly unknown[]): Promise<string[]> =>
+    failingTitles(() => {
+        if (fixtures === undefined) {
+            runFeatureContract(features);
+            return;
+        }
+        runFeatureContract(features, { fixtures });
+    });
 
 /** A stored document of one paragraph with `content`, or of the given blocks. */
 const stored = (blocks: readonly unknown[], capabilities: readonly string[] = ['core']): RichTextDocument =>
@@ -79,11 +85,11 @@ const dispatchRangeQueries = () => {
     const spy = vi.spyOn(CAPABILITIES as Record<string, CapabilityImplementation>, 'toggleMark');
     spy.mockImplementation((args, schema) => {
         const command = original(args, schema);
-        const run: typeof command.run = (state, dispatch, view) => {
+        const run: typeof command.run = (state, dispatch, payload) => {
             if (!state.selection.empty) {
                 (dispatch as NonNullable<typeof dispatch>)(state.tr);
             }
-            return command.run(state, dispatch, view);
+            return command.run(state, dispatch, payload);
         };
         return { run, active: command.active };
     });
@@ -91,6 +97,26 @@ const dispatchRangeQueries = () => {
 };
 
 describe('the feature contract suite', () => {
+    it('SPEC-rich-text-runtime/AC-038 fails a command whose capability schedules a timer', async () => {
+        const original = CAPABILITIES.toggleMark as CapabilityImplementation;
+        const spy = vi.spyOn(CAPABILITIES as Record<string, CapabilityImplementation>, 'toggleMark');
+        spy.mockImplementation((args, schema) => {
+            const command = original(args, schema);
+            const run: typeof command.run = (state, dispatch, payload) => {
+                setTimeout(() => undefined, 0);
+                return command.run(state, dispatch, payload);
+            };
+            return { run, active: command.active };
+        });
+        try {
+            expect(await failingTitles(() => commandCases([core(), bold()]))).toEqual([
+                'SPEC-rich-text-runtime/AC-038 runs mark.bold.toggle synchronously with no I/O or timer, dispatching at most once',
+            ]);
+        } finally {
+            spy.mockRestore();
+        }
+    });
+
     it('SPEC-rich-text/AC-017 fails the fixture cases of an outside document that misspells its mark', async () => {
         const misspelled = stored([paragraph(text('Read', 'highlite'))], ['core', 'fixture.highlight']);
 
