@@ -54,6 +54,59 @@ test('SPEC-rich-text-react/AC-051 reads the paragraph spacing a host sets on the
     expect(await spacing()).toBe('13px');
 });
 
+test('SPEC-rich-text-react/AC-051 reads the surface padding, surface border and placeholder opacity a host sets on the content root', async ({
+    mount,
+    page,
+}) => {
+    await mount(<EditorProbe texts={['']} placeholder="Write a note" contentClassName="host-content" />);
+    await ready(page);
+    const placeholderOpacity = () =>
+        surfaceOf(page).evaluate((surface) => getComputedStyle(surface, '::before').opacity);
+    expect(await placeholderOpacity()).toBe('1');
+
+    await hostStylesheet(
+        page,
+        `.host-content {
+            --rte-content-surface-padding: 17px;
+            --rte-content-surface-border: 3px solid currentcolor;
+            --rte-content-placeholder-opacity: 0.5;
+        }`,
+    );
+
+    await expect(surfaceOf(page)).toHaveCSS('padding-top', '17px');
+    await expect(surfaceOf(page)).toHaveCSS('padding-inline-start', '17px');
+    await expect(surfaceOf(page)).toHaveCSS('border-top-width', '3px');
+    expect(await placeholderOpacity()).toBe('0.5');
+});
+
+test('SPEC-rich-text-accessibility/AC-008 draws links in the computed primary token through the link colour variable', async ({
+    mount,
+    page,
+}) => {
+    await mount(<EditorProbe texts={['Read the [guide]']} />);
+    await ready(page);
+
+    const link = surfaceOf(page).getByRole('link', { name: 'guide' });
+    await expect(link).toHaveCSS('color', await computedColor(page, 'var(--color-primary-default)'));
+
+    // The default matches the text colour, so a variable the link rule reads is what sets it.
+    await surfaceOf(page).evaluate((surface) => surface.style.setProperty('--rte-content-link-color', 'rgb(1, 2, 3)'));
+
+    await expect(link).toHaveCSS('color', 'rgb(1, 2, 3)');
+});
+
+test('SPEC-rich-text-accessibility/AC-008 draws the placeholder in the computed secondary token', async ({
+    mount,
+    page,
+}) => {
+    await mount(<EditorProbe texts={['']} placeholder="Write a note" />);
+    await ready(page);
+
+    expect(await surfaceOf(page).evaluate((surface) => getComputedStyle(surface, '::before').color)).toBe(
+        await computedColor(page, 'var(--color-secondary-default)'),
+    );
+});
+
 test('SPEC-rich-text-react/AC-066 puts the root class and the presentation content class on the surface', async ({
     mount,
     page,
@@ -112,7 +165,7 @@ test('SPEC-rich-text-react/AC-066 gives the reader root the same classes and con
     expect(shown).toEqual(await styles(surfaceOf(page)));
 });
 
-test('SPEC-rich-text-react/AC-065 SPEC-rich-text-react/AC-092 keeps the engine classes on the surface when the content class changes', async ({
+test('SPEC-rich-text-react/AC-092 keeps the engine classes on the surface when the content class changes', async ({
     mount,
     page,
 }) => {

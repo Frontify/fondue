@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { spawnSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
@@ -30,6 +31,32 @@ describe('check-css', () => {
             'sibling.css:1 selector :where(.fondue-rte-content) + p is not inside :where(.fondue-rte-content)',
             'sibling.css:5 selector :where(.fondue-rte-content p) ~ ul is not inside :where(.fondue-rte-content)',
         ]);
+    });
+
+    it('SPEC-rich-text-react/AC-067 fails on a selector that continues after the :where, which adds specificity', () => {
+        expect(scanCss('descendant-tail.css', fixture('descendant-tail.css'))).toEqual([
+            'descendant-tail.css:1 selector :where(.fondue-rte-content) .x is not inside :where(.fondue-rte-content)',
+        ]);
+    });
+
+    it('SPEC-rich-text-react/AC-050 passes ~ and + inside an attribute value and a pseudo-class argument', () => {
+        expect(scanCss('combinator-lookalikes.css', fixture('combinator-lookalikes.css'))).toEqual([]);
+    });
+
+    it('SPEC-rich-text-react/AC-050 fails from the command line on the stylesheet it is given', () => {
+        const run = spawnSync(
+            process.execPath,
+            ['--import', 'tsx', 'scripts/check-css.ts', 'fixtures/css/unscoped.css'],
+            {
+                cwd: fileURLToPath(new URL('..', import.meta.url)),
+                encoding: 'utf8',
+            },
+        );
+
+        expect(run.status).toBe(1);
+        expect(run.stderr).toContain(
+            'fixtures/css/unscoped.css:1 selector p is not inside :where(.fondue-rte-content)',
+        );
     });
 
     it('SPEC-rich-text-react/AC-050 fails on a :where list that reaches outside the root', () => {
@@ -135,6 +162,7 @@ describe('content stylesheet', () => {
     for (const path of installed) {
         it(`SPEC-rich-text-react/AC-092 carries every structural declaration of ${path} under the surface scope`, () => {
             const missing: string[] = [];
+            const visited: string[] = [];
             for (const rule of parseCss(readFileSync(require.resolve(path), 'utf8')).rules) {
                 for (const selector of rule.selectors) {
                     const target = scoped(selector);
@@ -144,6 +172,7 @@ describe('content stylesheet', () => {
                         selectors.map(normalize).some((selector) => targets.includes(selector)),
                     );
                     for (const [property, value] of rule.declarations) {
+                        visited.push(`${property}: ${value}`);
                         const expected = PHYSICAL_OFFSETS[property] ?? property;
                         if (!ours.some((candidate) => declares(candidate, expected, value))) {
                             missing.push(`${target} { ${expected}: ${value} }`);
@@ -152,6 +181,9 @@ describe('content stylesheet', () => {
                 }
             }
 
+            // An empty or unparsed engine stylesheet would leave nothing to miss.
+            expect(visited.length).toBeGreaterThan(0);
+            expect(visited).toContain('white-space: break-spaces');
             expect(missing).toEqual([]);
         });
     }
@@ -228,6 +260,15 @@ const contrast = (text: Rgba, opacity: number, background: Rgba) => {
 };
 
 describe('content contrast', () => {
+    it('SPEC-rich-text-accessibility/AC-008 measures black on white at 21:1, #767676 at 4.54:1 and a lighter grey below 4.5:1', () => {
+        const white: Rgba = [255, 255, 255, 1];
+
+        expect(contrast([0, 0, 0, 1], 1, white)).toBeCloseTo(21, 5);
+        expect(contrast([150, 150, 150, 1], 1, white)).toBeLessThan(4.5);
+        // #767676 is the lightest grey that passes on white, at 4.54:1.
+        expect(contrast([118, 118, 118, 1], 1, white)).toBeCloseTo(4.54, 2);
+    });
+
     const pairs = [
         { text: '--rte-content-text-color', opacity: undefined },
         { text: '--rte-content-link-color', opacity: undefined },

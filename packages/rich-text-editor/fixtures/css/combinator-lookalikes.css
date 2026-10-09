@@ -1,0 +1,7 @@
+:where(.fondue-rte-content [data-tone~='warm']) {
+    margin: 0;
+}
+
+:where(.fondue-rte-content li:nth-child(2n + 1))::after {
+    margin: 0;
+}

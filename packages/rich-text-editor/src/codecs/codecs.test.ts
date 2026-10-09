@@ -208,6 +208,17 @@ describe('toHTML', () => {
         expect(html).toBe(renderReader(document, model, { presentation }).replaceAll('<!-- -->', ''));
     });
 
+    it('SPEC-rich-text-react/AC-066 SPEC-rich-text-output/AC-017 escapes a content class that would close the attribute', () => {
+        const [[, document]] = fixturesIn('valid') as [[string, unknown]];
+        const model = vocabularyModel();
+        const presentation = { contentClassName: 'a" onmouseover="x' };
+        const { html } = createCodecs(model).toHTML(document as RichTextDocument, presentation);
+
+        expect(html).toMatch(/^<div class="fondue-rte-content a&quot; onmouseover=&quot;x"/);
+        expect(html).not.toContain(' onmouseover="x"');
+        expect(html).toBe(renderReader(document, model, { presentation }).replaceAll('<!-- -->', ''));
+    });
+
     it.each([
         ['a b', 'a b'],
         ['a  b', 'a \u00A0b'],
