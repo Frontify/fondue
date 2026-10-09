@@ -94,13 +94,21 @@ export const checkProseMirrorRanges = (pkg: PackageJson, lockfile: string): stri
     return violations;
 };
 
+// The range `pnpm pack` writes for `workspace:^`; the npm `latest` tag can be a prerelease outside it.
+const peerSpec = (root: string, name: string) => {
+    const { version } = JSON.parse(
+        readFileSync(join(root, 'node_modules', name, 'package.json'), 'utf8'),
+    ) as PackageJson;
+    return `${name}@^${version}`;
+};
+
 /** SPEC-rich-text/AC-005 and AC-058: in a pnpm host that also installs the Fondue peers, `pnpm why` finds one version of each. */
-const checkSingleCopies = (scratch: string, tarball: string): string[] => {
+const checkSingleCopies = (root: string, scratch: string, tarball: string): string[] => {
     const consumer = join(scratch, 'pnpm-consumer');
     mkdirSync(consumer);
     writeFileSync(join(consumer, 'package.json'), JSON.stringify({ name: 'rte-pnpm-consumer', private: true }));
     const flags = ['--ignore-scripts', '--config.auto-install-peers=false', '--ignore-workspace'];
-    const args = ['add', tarball, ...WORKSPACE_PEERS, ...flags];
+    const args = ['add', tarball, ...WORKSPACE_PEERS.map((name) => peerSpec(root, name)), ...flags];
     const installFailure = run('pnpm', args, consumer);
     if (installFailure !== undefined) {
         return [installFailure];
@@ -252,12 +260,12 @@ export const checkDist = async (root: string, pkg: PackageJson): Promise<string[
 
 /**
  * What a host installs next to the package, so an entry that imports a peer loads and typechecks in the scratch
- * consumer: each peer, a workspace one at its latest published version, and the React types the declarations import.
+ * consumer: each peer, a workspace one at its packed range, and the React types the declarations import.
  */
-export const consumerDependencies = (pkg: PackageJson): string[] => {
+export const consumerDependencies = (root: string, pkg: PackageJson): string[] => {
     const peers = Object.entries(pkg.peerDependencies ?? {}).map(([name, range]) => {
         if (range.startsWith('workspace:')) {
-            return name;
+            return peerSpec(root, name);
         }
         return `${name}@${range}`;
     });
@@ -292,7 +300,7 @@ export const checkConsumer = (root: string, pkg: PackageJson): string[] => {
             [
                 'install',
                 join(scratch, tarball),
-                ...consumerDependencies(pkg),
+                ...consumerDependencies(root, pkg),
                 '--legacy-peer-deps',
                 '--ignore-scripts',
                 '--no-audit',
@@ -340,7 +348,7 @@ export const checkConsumer = (root: string, pkg: PackageJson): string[] => {
                 violations.push(`the entries do not typecheck under moduleResolution ${moduleResolution}: ${failure}`);
             }
         }
-        violations.push(...checkSingleCopies(scratch, join(scratch, tarball)));
+        violations.push(...checkSingleCopies(root, scratch, join(scratch, tarball)));
         return violations;
     } finally {
         rmSync(scratch, { recursive: true, force: true });
