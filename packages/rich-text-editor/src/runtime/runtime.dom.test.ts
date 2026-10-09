@@ -13,6 +13,7 @@ import {
     type CompiledDefinition,
     countAppends,
     type EngineCommand,
+    NORMALIZE_META,
     ORIGIN_META,
 } from '#/definition';
 import {
@@ -3446,6 +3447,140 @@ describe('faults', () => {
         expect(await queued).toEqual(NOT_READY);
         expect(handle.execute('text.insert', { text: 'y' })).toEqual(NOT_READY);
     });
+
+    /** Faults the session through a node view whose `update` throws once its paragraph holds `!`. */
+    const faultView = (session: ReturnType<typeof start>) => {
+        setSelection(session.handle, { text: 'ab', from: 2, to: 2 });
+        typeText(session.handle, '!');
+    };
+
+    it('SPEC-rich-text-runtime/AC-014 SPEC-rich-text-runtime/AC-078 installs nothing once faulted when a captured target is released', () => {
+        const session = start(stored(para(words('ab'))), { plugins: [updateFails] });
+        const { handle, diagnostics } = session;
+        setSelection(handle, { text: 'ab' });
+        const captured = handle.captureTarget({ purpose: 'format', onIntersectingEdit: 'map' });
+        faultView(session);
+        const { commitSequence } = handle.getSummary();
+
+        if (captured.status === 'captured') {
+            handle.releaseTarget(captured.target);
+        }
+
+        expect(handle.getSummary().commitSequence).toBe(commitSequence);
+        expect(diagnostics).toEqual([viewFault]);
+        expect(JSON.stringify(handle.getRecoveryCandidate())).toContain('"ab!"');
+    });
+
+    it('SPEC-rich-text-runtime/AC-014 SPEC-rich-text-runtime/AC-078 installs nothing once faulted when the view dispatches', () => {
+        const session = start(stored(para(words('ab'))), { plugins: [updateFails] });
+        const { handle, runtime, diagnostics } = session;
+        faultView(session);
+        const { commitSequence } = handle.getSummary();
+
+        runtime.select({ anchor: 1, head: 2 });
+
+        expect(handle.getSummary().commitSequence).toBe(commitSequence);
+        expect(diagnostics).toEqual([viewFault]);
+        expect(JSON.stringify(handle.getRecoveryCandidate())).toContain('"ab!"');
+    });
+
+    it('SPEC-rich-text-runtime/AC-014 SPEC-rich-text-runtime/AC-048 discards an async result whose install faults the view as not-ready', async () => {
+        const session = start(stored(para(words('ab'))), { plugins: [updateFails] });
+        setSelection(session.handle, { text: 'ab', from: 2, to: 2 });
+
+        await pending(session.runtime).resolve({ text: '!' });
+
+        expect(session.diagnostics).toEqual([viewFault, discarded('not-ready')]);
+    });
+
+    it('SPEC-rich-text-runtime/AC-012 SPEC-rich-text-runtime/AC-014 publishes nothing from a composition that settles after a fault', async () => {
+        // Two plugins that append to each other in a batch whose root asks for it, past the append limit.
+        const looping = (featureId: string) =>
+            countAppends(
+                new Plugin({
+                    appendTransaction: (transactions, _old, state) => {
+                        const asked = transactions.some((transaction) => transaction.getMeta('loop') === true);
+                        if (
+                            !asked ||
+                            transactions.every((transaction) => transaction.getMeta('appendedBy') === featureId)
+                        ) {
+                            return null;
+                        }
+                        return state.tr.setMeta('appendedBy', featureId).setMeta('loop', true);
+                    },
+                }),
+                { featureId, capability: 'insertText' },
+            );
+        const session = start(stored(para(words('ab'))), { plugins: [looping('fixture.a'), looping('fixture.b')] });
+        const { handle, view, changes } = session;
+        setSelection(handle, { text: 'ab', from: 2, to: 2 });
+        const snapshot = handle.getSnapshot();
+        compose(session, 'x');
+
+        view.dispatch(view.state.tr.insertText('y').setMeta('loop', true));
+        endComposition(session);
+        await settleInput(session);
+
+        expect(handle.getSummary()).toMatchObject({ phase: 'faulted', sequence: 0 });
+        expect(changes).toEqual([]);
+        expect(handle.getSnapshot()).toBe(snapshot);
+    });
+
+    it('SPEC-rich-text-runtime/AC-013 reports a plugin that throws in the repair of a settling composition', async () => {
+        const failing = new Plugin({
+            appendTransaction: (transactions) => {
+                if (transactions[0]?.getMeta(NORMALIZE_META) === 'now') {
+                    throw new Error('plugin failure');
+                }
+                return null;
+            },
+        });
+        const session = start(stored(para(words('ab'))), { plugins: [failing] });
+        setSelection(session.handle, { text: 'ab', from: 2, to: 2 });
+        compose(session, 'x');
+
+        endComposition(session);
+        await settleInput(session);
+
+        expect(session.diagnostics).toEqual([pluginError]);
+    });
+
+    it('SPEC-rich-text-runtime/AC-071 leaves nothing on the element that reaches the runtime after a plugin view throws while mounting', () => {
+        const { result, tree } = decodeToTree(stored(para(words('ab'))), boldModel);
+        if (result.status !== 'editable' || tree === undefined) {
+            throw new Error('expected an editable document');
+        }
+        const viewFails = new Plugin({
+            view: () => {
+                throw new Error('plugin view failure');
+            },
+        });
+        const compiled = compileDefinition(boldModel, CAPABILITIES);
+        const environment = createTestEnvironment({ seed: 1 });
+        const runtime = createEditorRuntime({
+            definition: { ...compiled, plugins: [...compiled.plugins, viewFails] },
+            documentId: 'document-1',
+            tree,
+            capabilities: result.document.requiredCapabilities,
+            environment,
+            mode: 'editable',
+            policy: authoringOf(boldModel),
+            limits: limitsOf({}),
+        });
+        started.push(runtime);
+        const element = document.body.appendChild(document.createElement('div'));
+        runtime.attach(element);
+        environment.flushFrames();
+
+        const text = element.querySelector('p')?.firstChild;
+        if (text !== null && text !== undefined) {
+            document.getSelection()?.setBaseAndExtent(text, 0, text, 1);
+        }
+        document.dispatchEvent(new Event('selectionchange'));
+        element.dispatchEvent(new InputEvent('beforeinput', { inputType: 'insertText', data: 'x', bubbles: true }));
+
+        expect(runtime.handle.getSummary()).toMatchObject({ phase: 'faulted', commitSequence: 0 });
+    });
 });
 
 describe('key precedence', () => {
@@ -3606,6 +3741,26 @@ describe('input rules', () => {
         pressKey(handle, 'Backspace');
 
         expect(shapeOf(view.state.doc)).toBe('paragraph x[bold]');
+    });
+
+    it('SPEC-rich-text-editing/AC-039 fires no rule whose match starts inside inline code', () => {
+        const session = start(stored(para({ type: 'text', text: '**a', marks: [{ type: 'code' }] })), {
+            model: ruleModel,
+        });
+        setSelection(session.handle, { text: '**a', from: 3, to: 3 });
+
+        typeText(session.handle, '**');
+
+        expect(shapeOf(session.view.state.doc)).toBe('paragraph **a[code] **');
+    });
+
+    it('SPEC-rich-text-editing/AC-040 fires no rule for a paste after a beforeinput that changed nothing', () => {
+        const { view } = start(stored(para()), { model: ruleModel });
+        view.dom.dispatchEvent(new InputEvent('beforeinput', { inputType: 'historyUndo', cancelable: true }));
+
+        view.pasteText('**x**');
+
+        expect(shapeOf(view.state.doc)).toBe('paragraph **x**');
     });
 
     it('SPEC-rich-text-editing/AC-100 undoes only a character typed right after a rule fired', () => {
