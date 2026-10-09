@@ -66,7 +66,6 @@ export const createNodeViews = (
             select: actions.select,
             execute: actions.execute as NodeViewState<object>['execute'],
             query: actions.query as NodeViewState<object>['query'],
-            pending: null,
         };
     };
 
