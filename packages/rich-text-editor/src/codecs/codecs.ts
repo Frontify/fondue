@@ -1,10 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { enUS } from '#/locales/en-US';
 import { type ContentModel, defaultIdSource, type DecodeOptions, type Diagnostic } from '#/model';
 import { type TreeNode } from '#/model/content';
 import { decodeToTree } from '#/model/decode';
+import { codecContext } from '#/model/output';
 
-import { codecContext } from './context';
 import { createParser, readMarkdown } from './from-markdown';
 import { checkCodecs, planOf } from './plan';
 import { writeHtml } from './to-html';
@@ -36,7 +37,7 @@ export const createCodecs = (model: ContentModel, options: CodecsOptions = {}): 
             if (tree === undefined) {
                 return { html: '', diagnostics };
             }
-            const output = writeHtml(plan, tree, codecContext(htmlOptions.locale, htmlOptions.resolveAssetUrl));
+            const output = writeHtml(plan, tree, codecContext(htmlOptions.locale, enUS, htmlOptions.resolveAssetUrl));
             return { html: output.html, diagnostics: [...diagnostics, ...output.diagnostics] };
         },
         toPlainText: (document) => {
@@ -44,7 +45,7 @@ export const createCodecs = (model: ContentModel, options: CodecsOptions = {}): 
             if (tree === undefined) {
                 return { text: '', losses: [], diagnostics };
             }
-            const output = writeText(plan, tree, codecContext());
+            const output = writeText(plan, tree, codecContext(undefined, enUS));
             return { text: output.text, losses: output.losses, diagnostics: [...diagnostics, ...output.diagnostics] };
         },
         toMarkdown: (document, markdownOptions = {}) => {
@@ -52,7 +53,7 @@ export const createCodecs = (model: ContentModel, options: CodecsOptions = {}): 
             if (tree === undefined) {
                 return { markdown: '', losses: [], diagnostics };
             }
-            const context = codecContext(markdownOptions.locale, markdownOptions.resolveAssetUrl);
+            const context = codecContext(markdownOptions.locale, enUS, markdownOptions.resolveAssetUrl);
             const output = writeMarkdown(plan, tree, context, parser);
             return {
                 markdown: output.markdown,

@@ -2,6 +2,8 @@
 
 import { type MarkdownIt as Parser, type Token as MarkdownToken } from 'markdown-it';
 
+import { inlineToken } from './from-markdown';
+
 /**
  * Inline output before escaping: text to escape, literal syntax, an emphasis delimiter run, or a hard break.
  * Delimiters carry their feature, which loses its mark when no escaping can make the run open or close.
@@ -260,12 +262,26 @@ const writeChar = (tokens: readonly Token[], index: number, atLineStart: boolean
     return char;
 };
 
+/** The length of the longest run of `char` in `text`, which a fence around it must exceed. */
+export const longestRun = (text: string, char: string): number => {
+    let longest = 0;
+    let run = 0;
+    for (const each of text) {
+        if (each === char) {
+            run += 1;
+        } else {
+            run = 0;
+        }
+        longest = Math.max(longest, run);
+    }
+    return longest;
+};
+
 /** A code span whose backtick fence is longer than any run inside, padded when the content starts or ends with a backtick or a space. */
 export const codeSpan = (code: string): string => {
     // A line break would let the next line start a block, such as an HTML block, so it becomes the space CommonMark reads anyway.
     const text = code.replaceAll(/\r\n?|\n/g, ' ');
-    const longest = Math.max(0, ...[...text.matchAll(/`+/g)].map(([run]) => run.length));
-    const fence = '`'.repeat(longest + 1);
+    const fence = '`'.repeat(longestRun(text, '`') + 1);
     let content = text;
     const spaced = text.startsWith(' ') && text.endsWith(' ') && text.trim() !== '';
     if (text.startsWith('`') || text.endsWith('`') || spaced) {
@@ -284,8 +300,6 @@ export const destination = (href: string): string => {
 
 /** A stretch of inline content as `fromMarkdown` reads it: text with its mark names, or a hard break. */
 export type Run = { readonly text: string; readonly marks: string } | { readonly break: true; readonly marks: string };
-
-const MARK_TOKENS: Readonly<Record<string, string>> = { em: 'italic', strong: 'bold', s: 'strike' };
 
 /** Joins neighbouring text with the same marks, as the document encoding joins text nodes. */
 export const joinRuns = (runs: readonly Run[]): Run[] => {
@@ -323,23 +337,22 @@ export const readInline = (parser: Parser, markdown: string, paragraph: boolean)
         children = inline.children;
     }
     for (const token of children) {
-        const mark = MARK_TOKENS[token.tag];
-        if (token.type === 'text' || token.type === 'text_special') {
-            runs.push({ text: token.content, marks: key() });
-        } else if (token.type === 'softbreak') {
-            runs.push({ text: ' ', marks: key() });
-        } else if (token.type === 'code_inline') {
-            runs.push({ text: token.content, marks: key(['code']) });
-        } else if (token.type === 'hardbreak') {
-            runs.push({ break: true, marks: key() });
-        } else if (token.type === 'link_open') {
-            active.push(`link:${String(token.attrGet('href') ?? '')}`);
-        } else if (mark !== undefined && token.nesting === 1) {
-            active.push(mark);
-        } else if (token.type === 'link_close' || (mark !== undefined && token.nesting === -1)) {
-            active.pop();
-        } else {
+        const read = inlineToken(token);
+        if (read === undefined) {
             return undefined;
+        }
+        if (read.kind === 'text') {
+            runs.push({ text: read.text, marks: key() });
+        } else if (read.kind === 'code') {
+            runs.push({ text: read.text, marks: key(['code']) });
+        } else if (read.kind === 'break') {
+            runs.push({ break: true, marks: key() });
+        } else if (read.kind === 'open' && read.mark === 'link') {
+            active.push(`link:${read.href}`);
+        } else if (read.kind === 'open') {
+            active.push(read.mark);
+        } else {
+            active.pop();
         }
     }
     return joinRuns(runs);

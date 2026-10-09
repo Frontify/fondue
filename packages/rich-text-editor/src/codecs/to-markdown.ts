@@ -6,11 +6,21 @@ import { checkHref, type CodecContext, type Diagnostic, type JsonObject } from '
 import { isIsland, type TreeMark, type TreeNode } from '#/model/content';
 import { pointer } from '#/model/errors';
 import { islandText } from '#/model/html-spec';
+import { attrsOf, groupRun, type Item, markPath, textOf } from '#/model/output';
 
-import { codeSpan, destination, joinRuns, type Piece, readInline, type Run, serialize } from './markdown-escape';
-import { attrsOf, type CodecPlan, Losses, MARKDOWN_NODES, type MarkPlan, type NodePlan, setShared } from './plan';
+import {
+    codeSpan,
+    destination,
+    joinRuns,
+    longestRun,
+    type Piece,
+    readInline,
+    type Run,
+    serialize,
+} from './markdown-escape';
+import { type CodecPlan, Losses, MARKDOWN_NODES, type MarkPlan, type NodePlan, setShared } from './plan';
 import { type CodecLoss } from './types';
-import { groupRun, headingIds, type Item, markPath, reportFailure, textOf, type WalkState } from './walk';
+import { headingIds, itemMarker, prefixLines, reportFailure, type WalkState } from './walk';
 
 interface MarkdownState extends WalkState {
     /** The GitHub slug of each heading, by `nodeId`. */
@@ -66,27 +76,47 @@ interface MarkdownItem extends Item {
 
 const markLost = (state: MarkdownState, plan: MarkPlan) => state.losses.add(plan.featureId);
 
-/** Whether a mark writes syntax that groups its text; a mark that writes nothing is counted as lost here. */
-const writesSyntax = (state: MarkdownState, mark: TreeMark, plan: MarkPlan): boolean => {
+/**
+ * What a mark writes: nothing, a code span, its feature's own syntax, a delimiter pair, or a link to `target`, which
+ * is `undefined` for an href that fails `checkHref`. `lost` says whether writing it loses part of the mark.
+ */
+type MarkSyntax =
+    | { readonly kind: 'none' | 'code' | 'custom' | 'delimiter'; readonly lost: boolean }
+    | { readonly kind: 'link'; readonly lost: boolean; readonly target: string | undefined };
+
+const markSyntax = (state: MarkdownState, mark: TreeMark, plan: MarkPlan): MarkSyntax => {
     if (plan.formats.markdown === 'unsupported') {
-        markLost(state, plan);
-        return false;
+        return { kind: 'none', lost: true };
     }
     if (plan.markdown !== undefined || plan.form !== undefined) {
-        if (plan.formats.markdown === 'lossy') {
-            markLost(state, plan);
-        }
-        return true;
+        return { kind: 'custom', lost: plan.formats.markdown === 'lossy' };
     }
-    if (mark.type === 'link' || Object.hasOwn(DELIMITERS, mark.type)) {
-        return true;
+    if (Object.hasOwn(DELIMITERS, mark.type)) {
+        return { kind: 'delimiter', lost: false };
     }
-    if (mark.type !== 'code') {
-        markLost(state, plan);
+    if (mark.type === 'code') {
+        return { kind: 'code', lost: false };
     }
-    return false;
+    if (mark.type !== 'link') {
+        return { kind: 'none', lost: true };
+    }
+    const href = attrsOf(mark.attrs).href;
+    if (typeof href !== 'string') {
+        return { kind: 'link', lost: true, target: undefined };
+    }
+    const slug = state.slugs.get(href.slice(1));
+    if (href.startsWith('#') && slug !== undefined) {
+        // Import cannot yet map the slug back to the heading's new `nodeId` (SPEC-rich-text-references/AC-051).
+        return { kind: 'link', lost: true, target: `#${slug}` };
+    }
+    const checked = checkHref(href);
+    if (!checked.ok) {
+        return { kind: 'link', lost: true, target: undefined };
+    }
+    return { kind: 'link', lost: false, target: checked.href };
 };
 
+/** Each child with the marks that write syntax around its text; a mark that writes nothing is counted as lost here. */
 const markdownItems = (state: MarkdownState, node: TreeNode, path: string): MarkdownItem[] =>
     (node.content ?? []).map((child, index): MarkdownItem => {
         let code = false;
@@ -95,10 +125,15 @@ const markdownItems = (state: MarkdownState, node: TreeNode, path: string): Mark
             if (plan === undefined) {
                 return [];
             }
-            if (mark.type === 'code' && plan.markdown === undefined && plan.form === undefined) {
-                code = plan.formats.markdown !== 'unsupported';
+            const { kind, lost } = markSyntax(state, mark, plan);
+            // A link's losses depend on its whole run, so `linkPieces` counts them once per run.
+            if (lost && kind !== 'link') {
+                markLost(state, plan);
             }
-            if (!writesSyntax(state, mark, plan)) {
+            if (kind === 'code') {
+                code = true;
+            }
+            if (kind === 'none' || kind === 'code') {
                 return [];
             }
             return [{ mark, index: markIndex }];
@@ -125,27 +160,16 @@ const expectedRuns = (state: MarkdownState, node: TreeNode, line: Line): Run[] |
         const names: string[] = [];
         for (const mark of child.marks ?? []) {
             const plan = state.plan.marks.get(mark.type);
-            if (plan === undefined || plan.formats.markdown === 'unsupported') {
+            if (plan === undefined) {
                 continue;
             }
-            if (plan.markdown !== undefined || plan.form !== undefined) {
+            const syntax = markSyntax(state, mark, plan);
+            if (syntax.kind === 'custom') {
                 return undefined;
             }
-            if (mark.type === 'link') {
-                const href = attrsOf(mark.attrs).href;
-                if (typeof href !== 'string') {
-                    continue;
-                }
-                const slug = state.slugs.get(href.slice(1));
-                if (href.startsWith('#') && slug !== undefined) {
-                    names.push(`link:#${slug}`);
-                } else {
-                    const checked = checkHref(href);
-                    if (checked.ok) {
-                        names.push(`link:${checked.href}`);
-                    }
-                }
-            } else if (mark.type === 'code' || Object.hasOwn(DELIMITERS, mark.type)) {
+            if (syntax.kind === 'link' && syntax.target !== undefined) {
+                names.push(`link:${syntax.target}`);
+            } else if (syntax.kind === 'code' || syntax.kind === 'delimiter') {
                 names.push(mark.type);
             }
         }
@@ -274,23 +298,14 @@ const linkPieces = (state: MarkdownState, plan: MarkPlan, mark: TreeMark, inner:
     if (attrs.openInNewWindow === true || (attrs.styleId !== undefined && attrs.styleId !== null)) {
         markLost(state, plan);
     }
-    const href = attrs.href;
-    if (typeof href !== 'string') {
+    const syntax = markSyntax(state, mark, plan);
+    if (syntax.lost) {
         markLost(state, plan);
+    }
+    if (syntax.kind !== 'link' || syntax.target === undefined) {
         return inner;
     }
-    const slug = state.slugs.get(href.slice(1));
-    if (href.startsWith('#') && slug !== undefined) {
-        // Import cannot yet map the slug back to the heading's new `nodeId` (SPEC-rich-text-references/AC-051).
-        markLost(state, plan);
-        return [{ kind: 'literal', text: '[' }, ...inner, { kind: 'literal', text: `](#${slug})` }];
-    }
-    const checked = checkHref(href);
-    if (!checked.ok) {
-        markLost(state, plan);
-        return inner;
-    }
-    let target = destination(checked.href);
+    let target = destination(syntax.target);
     if (line === 'cell') {
         target = target.replaceAll('|', '\\|');
     }
@@ -362,31 +377,6 @@ const noteShared = (state: MarkdownState, plan: NodePlan, node: TreeNode) => {
     }
 };
 
-const prefixLines = (text: string, first: string, rest: string): string =>
-    text
-        .split('\n')
-        .map((line, index) => {
-            if (index === 0) {
-                return `${first}${line}`.trimEnd();
-            }
-            if (line === '') {
-                return line;
-            }
-            return `${rest}${line}`;
-        })
-        .join('\n');
-
-const quote = (text: string): string =>
-    text
-        .split('\n')
-        .map((line) => {
-            if (line === '') {
-                return '>';
-            }
-            return `> ${line}`;
-        })
-        .join('\n');
-
 /** Blocks joined by a blank line; a list right after a list of the same kind switches its marker so the two stay apart. */
 const renderBlocks = (state: MarkdownState, parent: TreeNode, path: string): string => {
     const children = parent.content ?? [];
@@ -433,26 +423,15 @@ const renderItem = (
         noteShared(state, plan, item);
     }
     let bullet = '-';
+    let delimiter = '.';
     if (alternate) {
         bullet = '+';
+        delimiter = ')';
     }
-    let marker = `${bullet} `;
+    const marker = itemMarker(list, item, index, item.type === 'task_item', bullet, delimiter);
     let indent = 2;
     if (list.type === 'ordered_list') {
-        let start = 1;
-        if (typeof list.attrs?.start === 'number') {
-            start = list.attrs.start;
-        }
-        let delimiter = '.';
-        if (alternate) {
-            delimiter = ')';
-        }
-        marker = `${start + index}${delimiter} `;
         indent = marker.length;
-    } else if (item.type === 'task_item' && item.attrs?.checked === true) {
-        marker = `${bullet} [x] `;
-    } else if (item.type === 'task_item') {
-        marker = `${bullet} [ ] `;
     }
     const content = item.content ?? [];
     const [first] = content;
@@ -460,12 +439,7 @@ const renderItem = (
         // An empty first paragraph followed by more blocks ends the item in Markdown.
         state.losses.add(featureOf(state, item.type));
     }
-    return prefixLines(renderBlocks(state, item, path), marker, ' '.repeat(indent));
-};
-
-const fenceOf = (text: string): string => {
-    const longest = Math.max(0, ...[...text.matchAll(/`+/g)].map(([run]) => run.length));
-    return '`'.repeat(Math.max(3, longest + 1));
+    return prefixLines(renderBlocks(state, item, path), marker, ' '.repeat(indent), true);
 };
 
 const isGfmCell = (cell: TreeNode) => {
@@ -626,7 +600,7 @@ const ruleOf = (
             return `${'#'.repeat(level)} ${text}`.trimEnd();
         }
         case 'blockquote':
-            return quote(renderBlocks(state, node, path));
+            return prefixLines(renderBlocks(state, node, path), '> ', '> ');
         case 'bullet_list':
         case 'ordered_list':
         case 'task_list':
@@ -637,7 +611,7 @@ const ruleOf = (
                 .join('\n');
         case 'code_block': {
             const text = textOf(node);
-            const fence = fenceOf(text);
+            const fence = '`'.repeat(Math.max(3, longestRun(text, '`') + 1));
             let info = '';
             if (typeof attrs.languageId === 'string') {
                 info = attrs.languageId;
@@ -680,8 +654,7 @@ const ruleOf = (
 const fencedOf = (fence: string, text: string): string => {
     const [char = '`'] = fence;
     if (/^(`{3,}|~{3,})$/.test(fence)) {
-        const longest = Math.max(0, ...[...text.matchAll(new RegExp(`${char}+`, 'g'))].map(([run]) => run.length));
-        const written = char.repeat(Math.max(fence.length, longest + 1));
+        const written = char.repeat(Math.max(fence.length, longestRun(text, char) + 1));
         return `${written}\n${text}\n${written}`;
     }
     const lines = text.split(/\r\n?|\n/).map((line) => serialize([{ kind: 'text', text: line }], () => undefined));
@@ -739,7 +712,7 @@ const renderBlock = (state: MarkdownState, node: TreeNode, path: string, alterna
         if ('fence' in plan.form) {
             return fencedOf(plan.form.fence, textOf(node));
         }
-        return prefixLines(inner, plan.form.prefix, plan.form.prefix);
+        return prefixLines(inner, plan.form.prefix, plan.form.prefix, true, '');
     }
     state.losses.add(plan.featureId);
     return fallbackOf(state, node, plan, path);

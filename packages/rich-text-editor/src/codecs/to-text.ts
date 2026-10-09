@@ -4,26 +4,11 @@ import { checkHref, type CodecContext, type Diagnostic, type JsonObject } from '
 import { isIsland, type TreeMark, type TreeNode } from '#/model/content';
 import { pointer } from '#/model/errors';
 import { islandText } from '#/model/html-spec';
+import { attrsOf, groupRun, type Item, itemsOf, markPath, textOf } from '#/model/output';
 
-import { attrsOf, type CodecPlan, type Format, Losses, setShared } from './plan';
+import { type CodecPlan, Losses } from './plan';
 import { type CodecLoss } from './types';
-import { groupRun, headingIds, type Item, itemsOf, markPath, reportFailure, textOf, type WalkState } from './walk';
-
-/** Counts a use of a node, with its shared attributes, when its feature declares `format` other than `lossless`. */
-const noteNode = (state: WalkState, node: TreeNode, format: Format): void => {
-    const plan = state.plan.nodes.get(node.type);
-    if (plan === undefined) {
-        return;
-    }
-    if (plan.formats[format] !== 'lossless') {
-        state.losses.add(plan.featureId);
-    }
-    for (const shared of setShared(plan, node)) {
-        if (state.plan.formats.get(shared.featureId)?.[format] !== 'lossless') {
-            state.losses.add(shared.featureId);
-        }
-    }
-};
+import { headingIds, itemMarker, keepMark, noteNode, prefixLines, reportFailure, type WalkState } from './walk';
 
 /** The href a link writes after its text, or `undefined` for one that fails `checkHref` or targets a heading of this document. */
 const linkTarget = (state: WalkState, attrs: TreeMark['attrs']): string | undefined => {
@@ -40,17 +25,6 @@ const linkTarget = (state: WalkState, attrs: TreeMark['attrs']): string | undefi
 
 const INDENT = '  ';
 const LISTS = new Set(['bullet_list', 'ordered_list', 'task_list']);
-
-const indentLines = (text: string, indent: string) =>
-    text
-        .split('\n')
-        .map((line) => {
-            if (line === '') {
-                return line;
-            }
-            return `${indent}${line}`;
-        })
-        .join('\n');
 
 const renderInline = (state: WalkState, node: TreeNode, path: string): string => {
     const renderMarked = (items: readonly Item[], depth: number): string =>
@@ -80,17 +54,7 @@ const renderInline = (state: WalkState, node: TreeNode, path: string): string =>
                 return `${inner} (${href})`;
             },
         ).join('');
-    const keep = (mark: TreeMark) => {
-        const plan = state.plan.marks.get(mark.type);
-        if (plan === undefined) {
-            return false;
-        }
-        if (plan.formats.text !== 'lossless') {
-            state.losses.add(plan.featureId);
-        }
-        return true;
-    };
-    return renderMarked(itemsOf(node, path, keep), 0);
+    return renderMarked(itemsOf(node, path, keepMark(state, 'text')), 0);
 };
 
 const renderLeaf = (state: WalkState, { node, path }: Item): string => {
@@ -118,13 +82,9 @@ const renderItem = (state: WalkState, item: TreeNode, path: string, marker: stri
             }
             lines.push(text);
         } else if (marked) {
-            lines.push(indentLines(text, `${indent}${INDENT}`));
+            lines.push(prefixLines(text, `${indent}${INDENT}`, `${indent}${INDENT}`));
         } else {
-            const [first = '', ...rest] = text.split('\n');
-            lines.push(
-                `${indent}${marker}${first}`.trimEnd(),
-                ...rest.map((line) => indentLines(line, `${indent}${INDENT}`)),
-            );
+            lines.push(prefixLines(text, `${indent}${marker}`, `${indent}${INDENT}`, true));
             marked = true;
         }
     }
@@ -132,23 +92,6 @@ const renderItem = (state: WalkState, item: TreeNode, path: string, marker: stri
         lines.push(`${indent}${marker}`.trimEnd());
     }
     return lines.join('\n');
-};
-
-const markerOf = (list: TreeNode, item: TreeNode, index: number): string => {
-    if (list.type === 'ordered_list') {
-        let start = 1;
-        if (typeof list.attrs?.start === 'number') {
-            start = list.attrs.start;
-        }
-        return `${start + index}. `;
-    }
-    if (list.type === 'task_list' && item.attrs?.checked === true) {
-        return '- [x] ';
-    }
-    if (list.type === 'task_list') {
-        return '- [ ] ';
-    }
-    return '- ';
 };
 
 /** Its title, then ` (url)`, or the URL alone when the title is null; a URL that fails `checkHref` is left out. */
@@ -246,7 +189,13 @@ const renderBlock = (state: WalkState, node: TreeNode, path: string, depth: numb
         case 'task_list':
             text = joinBlocks(
                 (node.content ?? []).map((item, index) =>
-                    renderItem(state, item, `${path}${pointer('content', index)}`, markerOf(node, item, index), depth),
+                    renderItem(
+                        state,
+                        item,
+                        `${path}${pointer('content', index)}`,
+                        itemMarker(node, item, index, node.type === 'task_list'),
+                        depth,
+                    ),
                 ),
                 '\n',
             );

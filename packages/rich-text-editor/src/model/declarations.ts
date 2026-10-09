@@ -164,9 +164,11 @@ export interface FeatureFormats {
     readonly markdown: FormatSupport;
 }
 
+/** The host's URL for an asset at an optional width, or `null` when it has none. */
+export type ResolveAssetUrl = (assetId: string, options: { readonly width?: number }) => string | null;
 /** What a codec override may call: asset URLs from the host, the URL check and the output locale. */
 export interface CodecContext {
-    readonly resolveAssetUrl?: (assetId: string, options: { readonly width?: number }) => string | null;
+    readonly resolveAssetUrl?: ResolveAssetUrl;
     readonly checkHref: (input: string) => HrefResult;
     /** The output locale (`enUS` by default) and its `${var}` interpolation, so overrides render localized text with no hook or context. */
     readonly locale: RichTextLocale;
