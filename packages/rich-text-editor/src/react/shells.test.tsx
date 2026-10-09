@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { act, fireEvent, render, screen } from '@testing-library/react';
-import { createRef, type RefObject } from 'react';
+import { createRef, type RefObject, StrictMode } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
@@ -199,11 +199,14 @@ describe('the recovery shell', () => {
         view.unmount();
     });
 
-    it('SPEC-rich-text-react/AC-085 saves on Retry the edit that a render error caught before its write', async () => {
+    /**
+     * An editor on an existing record at `revision-1` that the fake server holds, with `c` typed and a render error
+     * shown before its write; `strict` mounts it under StrictMode.
+     */
+    const breakBeforeSave = async (strict = false) => {
         vi.spyOn(console, 'error').mockImplementation(() => undefined);
         const environment = createTestEnvironment({ seed: 1 });
         const server = createFakePersistenceService();
-        // An existing record at `revision-1`, which the server holds.
         const existing = stored(envelope([para('ab')]));
         await server.save(
             {
@@ -225,40 +228,89 @@ describe('the recovery shell', () => {
         );
         const save = vi.fn(server.save);
         const ref = createRef<EditorHandle<object>>();
-        const tree = (armed: boolean) => (
-            <RichTextEditor.Root
-                aria-label="Notes"
-                definition={definition}
-                defaultValue={{ ...existing, revision: 'revision-1' }}
-                environment={environment}
-                services={{ persistence: { save, read: server.read } }}
-                ref={ref}
-            >
-                <RichTextEditor.Surface />
-                <Bomb armed={armed} />
-            </RichTextEditor.Root>
-        );
+        const diagnostics: string[] = [];
+        const tree = (armed: boolean) => {
+            const root = (
+                <RichTextEditor.Root
+                    aria-label="Notes"
+                    definition={definition}
+                    defaultValue={{ ...existing, revision: 'revision-1' }}
+                    environment={environment}
+                    services={{ persistence: { save, read: server.read } }}
+                    onDiagnostic={({ code }) => diagnostics.push(code)}
+                    ref={ref}
+                >
+                    <RichTextEditor.Surface />
+                    <Bomb armed={armed} />
+                </RichTextEditor.Root>
+            );
+            if (strict) {
+                return <StrictMode>{root}</StrictMode>;
+            }
+            return root;
+        };
         const view = render(tree(false));
+        const breakAgain = () => {
+            view.rerender(tree(true));
+            view.rerender(tree(false));
+        };
         act(() => environment.flushFrames());
         act(() => typeText(handleOf(ref), 'c'));
-        view.rerender(tree(true));
-        view.rerender(tree(false));
+        breakAgain();
+        const retry = () => {
+            fireEvent.click(screen.getByRole('button', { name: 'Retry' }));
+            act(() => environment.flushFrames());
+        };
+        const saveAll = async () => {
+            act(() => environment.advance(10_000));
+            await act(async () => {
+                await new Promise((resolve) => setTimeout(resolve, 0));
+            });
+        };
+        return { view, ref, save, diagnostics, breakAgain, retry, saveAll };
+    };
 
-        fireEvent.click(screen.getByRole('button', { name: 'Retry' }));
-        act(() => environment.flushFrames());
+    it('SPEC-rich-text-react/AC-085 saves on Retry the edit that a render error caught before its write', async () => {
+        const { view, ref, save, retry, saveAll } = await breakBeforeSave();
+
+        retry();
         expect(handleOf(ref).getSaveStatus()).toMatchObject({
             state: 'dirty',
             acknowledgedSequence: 0,
             revision: 'revision-1',
         });
-        act(() => environment.advance(10_000));
-        await act(async () => {
-            await new Promise((resolve) => setTimeout(resolve, 0));
-        });
+        await saveAll();
 
         expect(save).toHaveBeenCalledTimes(1);
         expect(JSON.stringify(save.mock.calls[0]?.[0].document)).toContain('cab');
         expect(handleOf(ref).getSaveStatus().state).toBe('clean');
+        view.unmount();
+    });
+
+    it('SPEC-rich-text-react/AC-085 keeps the unsaved edit across two Retries in a row', async () => {
+        const { view, save, breakAgain, retry, saveAll } = await breakBeforeSave();
+
+        retry();
+        breakAgain();
+        retry();
+        await saveAll();
+
+        expect(save).toHaveBeenCalledTimes(1);
+        expect(JSON.stringify(save.mock.calls[0]?.[0].document)).toContain('cab');
+        view.unmount();
+    });
+
+    it('SPEC-rich-text-react/AC-085 SPEC-rich-text-persistence/AC-041 reports no disposed-dirty from the StrictMode remount on Retry', async () => {
+        const { view, save, diagnostics, retry, saveAll } = await breakBeforeSave(true);
+        // The session the render error ended did hold the unsaved edit.
+        expect(diagnostics).toEqual(['persistence.disposed-dirty']);
+        diagnostics.length = 0;
+
+        retry();
+        await saveAll();
+
+        expect(diagnostics).toEqual([]);
+        expect(save).toHaveBeenCalledTimes(1);
         view.unmount();
     });
 

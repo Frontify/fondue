@@ -1062,6 +1062,20 @@ describe('the runtime with a save coordinator', () => {
         },
     );
 
+    it('SPEC-rich-text-runtime/AC-073 keeps the write in flight across rerenders that pass services inline with the same functions', () => {
+        const environment = createTestEnvironment({ seed: 1 });
+        const { service, calls } = serviceOf(environment, true);
+        const { type, advance, rerender, unmount } = mount({ service, environment });
+        type('x');
+        advance(500);
+        for (let render = 0; render < 3; render += 1) {
+            rerender(false, { save: service.save, read: service.read });
+        }
+        expect(service.save).toHaveBeenCalledTimes(1);
+        expect(calls[0]?.context.signal.aborted).toBe(false);
+        unmount();
+    });
+
     it('SPEC-rich-text-runtime/AC-073 replays the write in flight through a replaced services.persistence', async () => {
         const environment = createTestEnvironment({ seed: 1 });
         const first = serviceOf(environment, true);
