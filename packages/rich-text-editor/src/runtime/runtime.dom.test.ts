@@ -2588,6 +2588,89 @@ describe('the published snapshot and composition', () => {
         expect(textOf(view.state.doc)).toBe('xabcd');
     });
 
+    it('SPEC-rich-text-runtime/AC-034 SPEC-rich-text-runtime/AC-092 judges the settle repair with its composition, so a heading with remove false still gets unique IDs', async () => {
+        const model = compileContentModel([core(), bold(), fixtureHeadingSet()], { id: 'test.bold', version: 1 });
+        const policy = {
+            features: { 'fixture.heading-set': { create: true, edit: true, remove: false, paste: true } },
+        };
+        const session = start(stored(heading(2, words('abcd'))), { model, policy });
+        const { view, changes } = session;
+
+        compose(session, 'x');
+        view.dispatch(view.state.tr.split(3).setMeta('composition', 1));
+        endComposition(session);
+        await settleInput(session);
+
+        const ids = view.state.doc.children.map((node): unknown => node.attrs.nodeId);
+        expect([ids[0], new Set(ids).size, changes.length]).toEqual(['h-1', 2, 1]);
+    });
+
+    it('SPEC-rich-text-runtime/AC-070 SPEC-rich-text-runtime/AC-033 ends a composition when the view detaches, so held work settles', async () => {
+        const session = start(stored(para(words('ab'))));
+        const { handle, runtime } = session;
+
+        compose(session, 'x');
+        const queued = handle.enqueue('text.insert', { text: '!' });
+        runtime.detach();
+        await settleInput(session);
+
+        expect(handle.getSummary().compositionActive).toBe(false);
+        expect(await queued).toMatchObject({ status: 'applied' });
+        expect(handle.execute('text.insert', { text: '?' }).status).toBe('applied');
+    });
+
+    it('SPEC-rich-text-runtime/AC-005 SPEC-rich-text-runtime/AC-089 keeps a target captured during a rejected composition, so its result applies', async () => {
+        const policy = { features: { 'marks.bold': { create: true, edit: false, remove: true, paste: true } } };
+        const session = start(stored(para(strong('ab'), words('cd'))), { model: targetModel, policy });
+        const { handle, runtime, view } = session;
+        setSelection(handle, { text: 'ab', from: 1, to: 1 });
+
+        compose(session, 'x');
+        setSelection(handle, { text: 'cd', from: 2, to: 2 });
+        const target = capture(handle, { purpose: 'insert', onIntersectingEdit: 'map' });
+        const upload = pending(runtime, { target });
+        endComposition(session);
+        await settleInput(session);
+        expect(textOf(view.state.doc)).toBe('abcd');
+        await upload.resolve({ text: '!' });
+
+        expect(textOf(view.state.doc)).toBe('abcd!');
+        expect(session.diagnostics).toEqual([]);
+    });
+
+    it('SPEC-rich-text-runtime/AC-005 SPEC-rich-text-runtime/AC-001 defers a root a plugin view dispatches while the settled state installs, so the check still judges the composition', async () => {
+        const model = compileContentModel([core(), bold(), fixtureHeadingSet()], { id: 'test.bold', version: 1 });
+        const policy = {
+            features: { 'fixture.heading-set': { create: true, edit: false, remove: true, paste: true } },
+        };
+        let dispatched = false;
+        // Dispatches once it sees the repaired headings, as a plugin view that reacts to a new state does.
+        const late = new Plugin({
+            view: () => ({
+                update: (view) => {
+                    const ids = view.state.doc.children
+                        .filter((node) => node.type.name === 'heading')
+                        .map((node): unknown => node.attrs.nodeId);
+                    if (!dispatched && ids.length === 2 && ids[0] !== ids[1]) {
+                        dispatched = true;
+                        view.dispatch(view.state.tr.insertText('z', view.state.doc.content.size - 1));
+                    }
+                },
+            }),
+        });
+        const session = start(stored(heading(2, words('abcd')), para(words('p'))), { model, policy, plugins: [late] });
+        const { view, changes } = session;
+
+        compose(session, 'x');
+        view.dispatch(view.state.tr.split(3).setMeta('composition', 1));
+        endComposition(session);
+        await settleInput(session);
+
+        expect(dispatched).toBe(true);
+        expect(textOf(view.state.doc)).toBe('abcdp');
+        expect(changes.filter((change) => JSON.stringify(contentOf(change)).includes('x'))).toEqual([]);
+    });
+
     it('SPEC-rich-text-runtime/AC-077 SPEC-rich-text-runtime/AC-060 resolves intents queued during composition as not-ready on dispose and drops the settle timer', async () => {
         const session = start(stored(para(words('ab'))));
         const { handle, environment } = session;
