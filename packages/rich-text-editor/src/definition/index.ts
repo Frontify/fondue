@@ -4,11 +4,20 @@ import { keydownHandler } from 'prosemirror-keymap';
 import { type Schema } from 'prosemirror-model';
 import { type Command, type EditorState, Plugin, PluginKey, type Transaction } from 'prosemirror-state';
 
-import { type CapabilityName, type ContentModel, type JsonObject, type PayloadDeclaration } from '#/model';
-import { CAPABILITY_PLUGINS, INPUT_RULES_PLUGIN } from '#/model/capabilities';
+import {
+    type CapabilityName,
+    type ContentModel,
+    type IdSource,
+    type JsonObject,
+    type PayloadDeclaration,
+} from '#/model';
+import { CAPABILITY_PLUGINS, declaresNodeIds, INPUT_RULES_PLUGIN, NODE_IDS_PLUGIN } from '#/model/capabilities';
 import { compiledModel } from '#/model/compile';
 
+import { NORMALIZERS } from './normalizers';
 import { buildSchema } from './schema';
+
+export { type Normalizer, NORMALIZERS } from './normalizers';
 
 /** The transaction meta that names the command a transaction runs, so the runtime reports it. */
 export const COMMAND_META = 'rte.command';
@@ -43,10 +52,14 @@ export interface PluginOrigin {
     readonly featureId: string;
     readonly capability: string;
 }
-/** What `commit` puts on a root transaction: the limit, the clock, and the origin of each transaction appended so far. */
+/**
+ * What `commit` puts on a root transaction: the limit, the clock, the ID source normalizers draw from, and the origin
+ * of each transaction appended so far.
+ */
 export interface AppendBatch {
     readonly limit: number;
     readonly now: () => number;
+    readonly ids: IdSource;
     readonly chain: PluginOrigin[];
 }
 /** Thrown past the append limit, so `commit` tells it apart from a plugin error (SPEC-rich-text-runtime/AC-012). */
@@ -56,6 +69,16 @@ export class AppendLimitError extends Error {
         this.name = 'AppendLimitError';
     }
 }
+
+/** The batch of the root that `transactions` belong to; ProseMirror marks each appended transaction with its root. */
+const batchOf = (transactions: readonly Transaction[]): AppendBatch | undefined => {
+    let root = transactions[0];
+    const rootOfAppended: unknown = root?.getMeta('appendedTransaction');
+    if (rootOfAppended !== undefined) {
+        root = rootOfAppended as Transaction;
+    }
+    return root?.getMeta(APPEND_BATCH_META) as AppendBatch | undefined;
+};
 
 /**
  * Wraps a plugin's `appendTransaction`, since `state.applyTransaction` loops with no cap: each appended transaction
@@ -70,13 +93,7 @@ export const countAppends = (plugin: Plugin, origin: PluginOrigin): Plugin => {
         ...plugin.spec,
         appendTransaction: (transactions, oldState, newState) => {
             const appended = append.call(counted, transactions, oldState, newState);
-            // ProseMirror marks each appended transaction with its root; a root carries no such meta.
-            let root = transactions[0];
-            const rootOfAppended: unknown = root?.getMeta('appendedTransaction');
-            if (rootOfAppended !== undefined) {
-                root = rootOfAppended as Transaction;
-            }
-            const batch = root?.getMeta(APPEND_BATCH_META) as AppendBatch | undefined;
+            const batch = batchOf(transactions);
             if (appended === null || appended === undefined || batch === undefined) {
                 return appended;
             }
@@ -135,7 +152,8 @@ export const compileDefinition = (
         const contributor = features.find(
             (feature) =>
                 id === `keymap:${feature.id}` ||
-                (id === INPUT_RULES_PLUGIN.id && (feature.declaration.inputRules ?? []).length > 0),
+                (id === INPUT_RULES_PLUGIN.id && (feature.declaration.inputRules ?? []).length > 0) ||
+                (id === NODE_IDS_PLUGIN.id && declaresNodeIds(feature.declaration)),
         );
         if (contributor === undefined) {
             return { featureId: id, capability: id };
@@ -143,6 +161,20 @@ export const compileDefinition = (
         return { featureId: contributor.id, capability: id };
     };
     const pluginOf = (id: string) => {
+        const normalize = NORMALIZERS[id];
+        if (normalize !== undefined) {
+            return new Plugin({
+                key: new PluginKey(id),
+                appendTransaction: (transactions, _old, state) => {
+                    const batch = batchOf(transactions);
+                    // Outside a commit no ID source is known, and a batch that kept the document has nothing to repair.
+                    if (batch === undefined || !transactions.some(({ docChanged }) => docChanged)) {
+                        return null;
+                    }
+                    return normalize(state, batch.ids);
+                },
+            });
+        }
         const bindings: Record<string, Command> = {};
         for (const entry of keymap) {
             const command = commands.get(entry.command);

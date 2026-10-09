@@ -11,6 +11,7 @@ import {
     type EditorHandle,
     type RichTextEditorProps,
     RichTextEditor,
+    type SelectionHandle,
 } from '#/index';
 import { compileContentModel, createEmptyDocument, type JsonValue } from '#/model';
 
@@ -53,6 +54,7 @@ const Playground = ({ allowNewBold, ...props }: PlaygroundProps) => {
     const [events, setEvents] = useState<readonly { readonly id: number; readonly text: string }[]>([]);
     const counterRef = useRef(0);
     const handleRef = useRef<EditorHandle<Commands>>(null);
+    const targetRef = useRef<SelectionHandle | null>(null);
     const [document, setDocument] = useState<JsonValue>(props.defaultValue.document.content as unknown as JsonValue);
     const log = (text: string) => {
         counterRef.current += 1;
@@ -87,6 +89,40 @@ const Playground = ({ allowNewBold, ...props }: PlaygroundProps) => {
                     }}
                 >
                     Insert a star
+                </button>
+                <button
+                    type="button"
+                    onClick={() => {
+                        const captured = handleRef.current?.captureTarget({
+                            purpose: 'format',
+                            onIntersectingEdit: 'map',
+                        });
+                        if (captured === undefined) {
+                            log('captureTarget no editor');
+                            return;
+                        }
+                        if (captured.status === 'captured') {
+                            targetRef.current = captured.target;
+                        }
+                        log(`captureTarget ${captured.status}`);
+                    }}
+                >
+                    Capture the selection
+                </button>
+                <button
+                    type="button"
+                    onClick={() => {
+                        const target = targetRef.current;
+                        if (target === null) {
+                            log('no captured target');
+                            return;
+                        }
+                        log(
+                            `execute mark.bold.toggle on the target ${resultText(handleRef.current?.execute('mark.bold.toggle', undefined, { target }))}`,
+                        );
+                    }}
+                >
+                    Bold the captured text
                 </button>
             </section>
             <RichTextEditor

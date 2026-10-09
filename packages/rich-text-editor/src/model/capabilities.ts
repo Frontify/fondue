@@ -3,6 +3,7 @@
 import {
     type CapabilityName,
     type CommandDefinition,
+    type FeatureDeclaration,
     type JsonObject,
     type JsonValue,
     type PayloadDeclaration,
@@ -45,6 +46,11 @@ export const CAPABILITY_PLUGINS: Readonly<Partial<Record<CapabilityName, readonl
 };
 /** The package's input rule engine, one plugin for every feature's rules (SPEC-rich-text-editing, Input rules). */
 export const INPUT_RULES_PLUGIN: PluginDescriptor = { id: 'input-rules', phase: 'input-rules' };
+/** The normalizer that gives nodes a missing or repeated `nodeId` a new one (SPEC-rich-text-runtime/AC-092). */
+export const NODE_IDS_PLUGIN: PluginDescriptor = { id: 'node-ids', phase: 'structure' };
+/** Whether a feature declares a node that carries a `nodeId`, so it contributes the `node-ids` normalizer. */
+export const declaresNodeIds = (declaration: FeatureDeclaration): boolean =>
+    Object.values(declaration.nodes ?? {}).some(({ attrs }) => Object.hasOwn(attrs, 'nodeId'));
 /** Each feature's own key bindings; features that bind one key run in plugin order (SPEC-rich-text/AC-060). */
 export const keymapPlugin = (featureId: string): PluginDescriptor => ({
     id: `keymap:${featureId}`,
