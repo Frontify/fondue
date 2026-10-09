@@ -1,9 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { createContext, useCallback, useContext, useLayoutEffect, useRef, useSyncExternalStore } from 'react';
+import { createContext, useCallback, useContext, useRef, useSyncExternalStore } from 'react';
 
 import { type EditorRuntime } from '#/runtime/runtime';
 import { type SelectionSummary } from '#/runtime/types';
+
+import { useClientLayoutEffect } from './client-layout-effect';
 
 /** The session of the editor around a hook once it is ready. */
 export const SessionContext = createContext<EditorRuntime | undefined>(undefined);
@@ -19,7 +21,7 @@ export const useSessionValue = <T>(
 ): T => {
     const runtime = useContext(SessionContext);
     const latestRef = useRef({ read, isEqual });
-    useLayoutEffect(() => {
+    useClientLayoutEffect(() => {
         latestRef.current = { read, isEqual };
     });
     const subscribe = useCallback(
