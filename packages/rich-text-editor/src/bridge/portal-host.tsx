@@ -1,10 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Component, memo, type ReactNode, useLayoutEffect, useMemo, useSyncExternalStore } from 'react';
+import { Component, memo, type ReactNode, useMemo, useSyncExternalStore } from 'react';
 import { createPortal } from 'react-dom';
 
 import { type JsonObject } from '#/model';
 
+import { useClientLayoutEffect } from './client-layout-effect';
 import { type NodeViewContext, NodeViewStateContext } from './define';
 import { type PortalEntry, type PortalStore } from './portals';
 
@@ -73,7 +74,7 @@ export const PortalHost = ({
     readonly onFlush: () => void;
 }) => {
     const entries = useSyncExternalStore(store.subscribe, store.getSnapshot, store.getSnapshot);
-    useLayoutEffect(onFlush, [entries, onFlush]);
+    useClientLayoutEffect(onFlush, [entries, onFlush]);
     return (
         <>
             {entries.map((entry) => (

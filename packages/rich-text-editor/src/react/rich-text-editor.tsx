@@ -11,13 +11,13 @@ import {
     useContext,
     useEffect,
     useImperativeHandle,
-    useLayoutEffect,
     useMemo,
     useRef,
     useState,
 } from 'react';
 
 import '#/styles/placeholder.css';
+import { useClientLayoutEffect } from '#/bridge/client-layout-effect';
 import { SessionContext, useSessionValue } from '#/bridge/hooks';
 import { createMountCoordinator, type MountCoordinator } from '#/bridge/mount';
 import { createNodeViews, resyncSelection } from '#/bridge/node-views';
@@ -128,7 +128,7 @@ const Phase = ({
             work.active = false;
         });
     }
-    useLayoutEffect(() => {
+    useClientLayoutEffect(() => {
         work.active = open;
     });
     useEffect(() => {
@@ -178,12 +178,12 @@ const SessionComponent = ({ children, onSession, ...props }: SessionProps, ref: 
     const latestRef = useRef(props);
     const handleRef = useRef<EditorHandle<object> | null>(null);
 
-    useLayoutEffect(() => {
+    useClientLayoutEffect(() => {
         latestRef.current = props;
     });
 
     // The view attaches in a layout effect, so the first frame painted after hydration shows the content (SPEC-rich-text-output/AC-034).
-    useLayoutEffect(() => {
+    useClientLayoutEffect(() => {
         const { definition, decoded } = mounted;
         if (decoded === undefined) {
             return;
@@ -237,7 +237,7 @@ const SessionComponent = ({ children, onSession, ...props }: SessionProps, ref: 
     useImperativeHandle(ref, () => handleRef.current as EditorHandle<object>, []);
 
     const mode = modeOf(props);
-    useLayoutEffect(() => {
+    useClientLayoutEffect(() => {
         handleRef.current?.setMode(mode);
     }, [mode]);
 
