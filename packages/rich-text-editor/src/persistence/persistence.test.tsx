@@ -728,6 +728,37 @@ describe('writes', () => {
         unmount();
     });
 
+    it('SPEC-rich-text-persistence/AC-014 replays the kept operation for a requestCommit that joins a checkpoint an earlier call timed out on', async () => {
+        const environment = createTestEnvironment({ seed: 1 });
+        const { service, calls } = serviceOf(environment, true);
+        const { handle, flush, type, advance, unmount } = mount({
+            service,
+            environment,
+            persistenceOptions: { maxRetries: 0 },
+        });
+        type('x');
+        advance(500);
+        type('y');
+        const first = handle().requestCommit({ reason: 'manual' });
+        await flush();
+        calls[0]?.fail();
+        await settle();
+        advance(30_000);
+        expect(await first).toEqual({ status: 'failed', code: 'timeout', outcome: 'not-sent' });
+
+        const second = handle().requestCommit({ reason: 'manual' });
+        await flush();
+        const [sent, replayed] = calls.map(({ request }) => request);
+        expect(calls).toHaveLength(2);
+        expect(replayed).toEqual(sent);
+        calls[1]?.answer();
+        await settle();
+        expect(textOf(calls[2]?.request as SaveRequest)).toBe('xyab');
+        calls[2]?.answer();
+        expect(await second).toMatchObject({ status: 'acknowledged', acknowledgment: { operationId: 'operation-2' } });
+        unmount();
+    });
+
     it('SPEC-rich-text-persistence/AC-014 gives equal seeds equal backoff delays and different seeds different ones', async () => {
         const delaysFor = async (seed: number) => {
             const environment = createTestEnvironment({ seed });
@@ -1517,6 +1548,31 @@ describe('commit checkpoints', () => {
         expect(calls.map(({ request }) => [request.stamp, request.document])).toEqual([
             [pinned.stamp, pinned.document],
         ]);
+        unmount();
+    });
+
+    it('SPEC-rich-text-persistence/AC-066 answers an offline requestCommit at once on a checkpoint an earlier call timed out on', async () => {
+        const environment = createTestEnvironment({ seed: 1 });
+        const { service, calls } = serviceOf(environment, true);
+        const { handle, flush, type, advance, unmount } = mount({ service, environment });
+        type('x');
+        advance(500);
+        type('y');
+        const first = handle().requestCommit({ reason: 'manual', timeoutMs: 1000 });
+        await flush();
+        advance(1000);
+        expect(await first).toEqual({ status: 'failed', code: 'timeout', outcome: 'not-sent' });
+        const onLine = vi.spyOn(navigator, 'onLine', 'get');
+        onLine.mockReturnValue(false);
+        calls[0]?.fail();
+        await settle();
+
+        const second = handle().requestCommit({ reason: 'manual' });
+        await flush();
+        const outcome = await peek(second);
+        onLine.mockRestore();
+        expect(outcome).toEqual({ status: 'failed', code: 'transport', outcome: 'not-sent' });
+        expect(calls).toHaveLength(1);
         unmount();
     });
 
