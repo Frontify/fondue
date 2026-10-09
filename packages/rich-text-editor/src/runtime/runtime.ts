@@ -11,7 +11,7 @@ import {
     TextSelection,
     type Transaction,
 } from 'prosemirror-state';
-import { EditorView } from 'prosemirror-view';
+import { EditorView, type NodeViewConstructor } from 'prosemirror-view';
 
 import {
     APPEND_BATCH_META,
@@ -19,6 +19,7 @@ import {
     AppendLimitError,
     COMMAND_META,
     type CompiledDefinition,
+    type EngineCommand,
     NORMALIZE_META,
     ORIGIN_META,
     type PluginOrigin,
@@ -27,14 +28,16 @@ import {
     type CapabilityRef,
     type Diagnostic,
     type IdSource,
+    type JsonObject,
     type ResourceLimits,
     type RichTextDocument,
     type RuntimeEnvironment,
 } from '#/model';
+import { attributesOf, compiledModel } from '#/model/compile';
 import { type TreeNode } from '#/model/content';
 import { encodeTree } from '#/model/encode';
 import { diagnostic } from '#/model/format';
-import { findInvalidPayload, findUnsafeJson, isRecord, snapshot } from '#/model/values';
+import { findInvalidPayload, findUnsafeJson, isRecord, isValidValue, snapshot } from '#/model/values';
 
 import { type AsyncOperation, type AsyncRequest, createAsyncCoordinator } from './async';
 import { secondCopyAtMount, secondCopyInView } from './engines';
@@ -104,6 +107,16 @@ export interface RuntimeHandle {
     dispose(): void;
 }
 
+/** The actions of one node view, which find their node by its `nodeId` when they run, never by a position (DR-034). */
+export interface NodeActions {
+    update(attrs: JsonObject): CommandResult;
+    remove(): CommandResult;
+    select(): void;
+    /** Runs a command with the node selected at execution time (SPEC-rich-text-react/AC-019). */
+    execute(id: string, payload?: unknown): CommandResult;
+    query(id: string, payload?: unknown): CommandState;
+}
+
 export interface EditorRuntime {
     readonly handle: RuntimeHandle;
     /** The view on the attached surface, for the `src/testing` helpers. */
@@ -126,6 +139,9 @@ export interface EditorRuntime {
     startAsync(request: AsyncRequest): AsyncOperation;
     /** Aborts the operations that the changed `services` members started (SPEC-rich-text-runtime/AC-073). */
     changeServices(members: readonly string[]): void;
+    /** The bridge caught a throw from a node view's constructor, `update` or `destroy` (SPEC-rich-text-runtime/AC-014). */
+    faultView(): void;
+    nodeActions(nodeId: string): NodeActions;
 }
 
 export interface EditorRuntimeOptions {
@@ -139,11 +155,16 @@ export interface EditorRuntimeOptions {
     readonly mode: Mode;
     readonly policy: AuthoringPolicy;
     readonly limits: ResourceLimits;
+    /** The bridge's node views by node name; the runtime only passes them to the view. */
+    readonly nodeViews?: Readonly<Record<string, NodeViewConstructor>>;
 }
 
 /** What every live runtime owns, which the `src/testing` probe reads. */
 export const liveResources = {
     views: new Set<EditorView>(),
+    /** Node views and their portal entries, which the bridge counts. */
+    nodeViews: 0,
+    portals: 0,
     /** The installed feature IDs of each session not yet disposed, by handle. */
     installedFeatures: new Map<object, readonly string[]>(),
     intents: 0,
@@ -219,6 +240,18 @@ const originOf = (root: Transaction): ChangeOrigin => {
 const isEmpty = ({ doc }: EditorState) =>
     doc.childCount === 1 && doc.firstChild !== null && doc.firstChild.isTextblock && doc.firstChild.content.size === 0;
 
+/** The position of the node with `nodeId`, read when an action runs. */
+const positionOf = (doc: Node, nodeId: string): number | undefined => {
+    let found: number | undefined;
+    doc.descendants((node, pos) => {
+        if (found === undefined && node.attrs.nodeId === nodeId) {
+            found = pos;
+        }
+        return found === undefined;
+    });
+    return found;
+};
+
 const rejected = (code: RejectedCode): CommandResult => ({ status: 'rejected', code });
 const unique = (values: readonly string[]) => [...new Set(values)];
 /** The payload as one frozen JSON copy, which is what is checked and run; `undefined` for one that is not plain JSON. */
@@ -285,6 +318,9 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     // ProseMirror runs that throwing update again on `setProps` and `destroy`.
     let recovery: EditorState | undefined;
     let readyFrame: number | undefined;
+    // Set while the view builds or installs a state, so a node view throw the bridge caught faults that call.
+    let viewCall = false;
+    let viewThrew = false;
     // Commits and notifications in progress, during which `execute` is busy and `enqueue` waits.
     let busy = 0;
     let draining = false;
@@ -540,9 +576,16 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         const previous = state;
         state = next;
         if (view !== undefined) {
+            viewCall = true;
             try {
                 view.updateState(next);
             } catch {
+                viewThrew = true;
+            } finally {
+                viewCall = false;
+            }
+            if (viewThrew) {
+                viewThrew = false;
                 state = previous;
                 viewFault(view, next);
                 return false;
@@ -694,13 +737,12 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
 
     /** Runs a command against the current state with a dispatch that captures its transaction, then prepares it. */
     const attempt = (
-        id: string,
+        command: EngineCommand | undefined,
         checked: { readonly payload: unknown } | undefined,
         base: EditorState | RejectedCode,
         ids: IdSource,
         route: Route,
     ): Attempt => {
-        const command = definition.commands.get(id);
         if (command === undefined) {
             return { code: 'unknown-command' };
         }
@@ -752,28 +794,36 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         return prepared;
     };
 
-    const query = (id: string, given?: unknown, options?: unknown): CommandState => {
-        const command = definition.commands.get(id);
-        const checked = checkedPayload(given);
-        const base = baseOf(options);
+    const queryOn = (
+        command: EngineCommand | undefined,
+        checked: { readonly payload: unknown } | undefined,
+        base: EditorState | RejectedCode,
+    ): CommandState => {
         let active: boolean | 'mixed' = false;
         if (command !== undefined && checked !== undefined && typeof base !== 'string') {
             active = command.active(base, checked.payload);
         }
-        const attempted = attempt(id, checked, base, queriedIds(), 'host');
+        const attempted = attempt(command, checked, base, queriedIds(), 'host');
         if ('code' in attempted) {
             return { enabled: false, active, disabledReason: attempted.code };
         }
         return { enabled: true, active, disabledReason: null };
     };
+    const query = (id: string, given?: unknown, options?: unknown): CommandState =>
+        queryOn(definition.commands.get(id), checkedPayload(given), baseOf(options));
 
     // Installs exactly what `query` checked, so the two agree (SPEC-rich-text-runtime/AC-036).
-    const run = (id: string, given: unknown, options: unknown, route: Route): CommandResult => {
+    const runOn = (
+        command: EngineCommand | undefined,
+        checked: { readonly payload: unknown } | undefined,
+        base: () => EditorState | RejectedCode,
+        route: Route,
+    ): CommandResult => {
         if (busy > 0) {
             return rejected('busy');
         }
         return busyWith((): CommandResult => {
-            const attempted = attempt(id, checkedPayload(given), baseOf(options), installedIds, route);
+            const attempted = attempt(command, checked, base(), installedIds, route);
             if ('unchanged' in attempted) {
                 return { status: 'no-op', stamp: { ...session, sequence }, contentChanged: false };
             }
@@ -795,7 +845,80 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             return rejected(attempted.code);
         });
     };
+    const run = (id: string, given: unknown, options: unknown, route: Route): CommandResult =>
+        runOn(definition.commands.get(id), checkedPayload(given), () => baseOf(options), route);
     const execute = (id: string, given?: unknown, options?: unknown) => run(id, given, options, 'host');
+
+    /** The state with the node `nodeId` selected, as a node view action runs on it (SPEC-rich-text-react/AC-019). */
+    const nodeBase = (nodeId: string): EditorState | RejectedCode => {
+        const pos = positionOf(state.doc, nodeId);
+        if (pos === undefined) {
+            return 'target-invalid';
+        }
+        return state.apply(state.tr.setSelection(NodeSelection.create(state.doc, pos)));
+    };
+    /** A command that changes the node `nodeId` wherever it is when it runs. */
+    const nodeCommand = (
+        nodeId: string,
+        change: (tr: Transaction, pos: number, node: Node) => boolean,
+    ): EngineCommand => ({
+        run: (base, dispatch) => {
+            const pos = positionOf(base.doc, nodeId);
+            if (pos === undefined) {
+                return false;
+            }
+            const node = base.doc.nodeAt(pos);
+            const { tr } = base;
+            if (node === null || !change(tr, pos, node)) {
+                return false;
+            }
+            dispatch?.(tr);
+            return true;
+        },
+        active: () => false,
+    });
+    const nodeActions = (nodeId: string): NodeActions => ({
+        update: (attrs) => {
+            const checked = checkedPayload(attrs);
+            if (checked === undefined || !isRecord(checked.payload)) {
+                return rejected('invalid-payload');
+            }
+            const values = checked.payload;
+            const update = nodeCommand(nodeId, (tr, pos, node) => {
+                const declared = compiledModel(definition.model).nodes.find(({ name }) => name === node.type.name);
+                if (declared === undefined) {
+                    return false;
+                }
+                const attributes = attributesOf(declared);
+                for (const [name, value] of Object.entries(values)) {
+                    const attribute = attributes[name];
+                    // An action never changes the ID it finds its node by.
+                    if (name === 'nodeId' || attribute === undefined || !isValidValue(attribute, value)) {
+                        return false;
+                    }
+                    tr.setNodeAttribute(pos, name, value);
+                }
+                return true;
+            });
+            return runOn(update, { payload: undefined }, () => state, 'host');
+        },
+        remove: () => {
+            const remove = nodeCommand(nodeId, (tr, pos, node) => {
+                tr.delete(pos, pos + node.nodeSize);
+                return true;
+            });
+            return runOn(remove, { payload: undefined }, () => state, 'host');
+        },
+        select: () => {
+            const pos = positionOf(state.doc, nodeId);
+            if (pos !== undefined) {
+                commit(state.tr.setSelection(NodeSelection.create(state.doc, pos)));
+            }
+        },
+        execute: (id, payload) =>
+            runOn(definition.commands.get(id), checkedPayload(payload), () => nodeBase(nodeId), 'host'),
+        query: (id, payload) => queryOn(definition.commands.get(id), checkedPayload(payload), nodeBase(nodeId)),
+    });
 
     /** Commits a capture of the selection as target `id`. */
     const captureNow = (id: string, options: CaptureTargetOptions) => commit(captureTarget(state, id, options));
@@ -1066,8 +1189,9 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 return;
             }
             detach();
-            let attached: EditorView;
+            let attached: EditorView | undefined;
             built = undefined;
+            viewCall = true;
             try {
                 attached = new EditorView(
                     { mount: element },
@@ -1086,13 +1210,20 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                             }
                             return attributes;
                         },
+                        nodeViews: options.nodeViews ?? {},
                         dispatchTransaction: commit,
                     },
                 );
             } catch {
+                viewThrew = true;
+            } finally {
+                viewCall = false;
+            }
+            if (attached === undefined || viewThrew) {
+                viewThrew = false;
                 // ProseMirror starts its DOM observer and input handlers before plugin views, so a plugin view that throws
                 // leaves them on the element unless the half-built view is destroyed.
-                const halfBuilt = built as EditorView | undefined;
+                const halfBuilt = attached ?? (built as EditorView | undefined);
                 if (halfBuilt !== undefined) {
                     try {
                         halfBuilt.destroy();
@@ -1112,7 +1243,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             if (phase !== 'mounting') {
                 return;
             }
-            // The first frame stands in for the first portal flush, which node views join (TASK-rte-bridge).
+            // Frames run after microtasks, so the first portal flush of the initial document precedes `ready` (AC-083).
             readyFrame = environment.scheduler.frame(() => {
                 readyFrame = undefined;
                 liveResources.frames -= 1;
@@ -1134,6 +1265,16 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         watch,
         startAsync: coordinator.start,
         changeServices: (members) => coordinator.abortWhere((operation) => members.includes(operation.service)),
+        faultView: () => {
+            if (viewCall) {
+                viewThrew = true;
+                return;
+            }
+            if ((phase === 'mounting' || phase === 'ready') && view !== undefined) {
+                viewFault(view, state);
+            }
+        },
+        nodeActions,
     };
     runtimes.set(handle, runtime);
     liveResources.installedFeatures.set(

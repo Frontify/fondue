@@ -1,8 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { type ComponentType } from 'react';
+
+import { declaredViews } from '#/bridge/define';
 import { compileDefinition, type CompiledDefinition } from '#/definition';
-import { type ContentModel, type ResourceLimits } from '#/model';
+import { type ContentModel, DefinitionError, type ResourceLimits } from '#/model';
+import { compiledModel } from '#/model/compile';
 import { limitsOf } from '#/model/decode';
+import { pointer } from '#/model/errors';
 import { CAPABILITIES } from '#/runtime/capabilities';
 import { authoringOf } from '#/runtime/policy';
 
@@ -15,6 +20,7 @@ import {
 
 // Kept off the definition, so no engine value is reachable from what a host holds (DR-034).
 const engines = new WeakMap<object, CompiledDefinition>();
+const nodeViews = new WeakMap<object, ReadonlyMap<string, ComponentType<object>>>();
 
 /** The engine a definition compiled once, which every editor mounted with it shares (SPEC-rich-text/AC-029). */
 export const engineOf = (definition: CompiledEditorDefinition<object>): CompiledDefinition => {
@@ -23,6 +29,28 @@ export const engineOf = (definition: CompiledEditorDefinition<object>): Compiled
         throw new Error('RichTextEditor takes only a definition that defineEditor made.');
     }
     return engine;
+};
+
+/** The node view chrome of a definition by node name; a later feature's view of a node replaces an earlier one's. */
+export const viewsOf = (definition: CompiledEditorDefinition<object>): ReadonlyMap<string, ComponentType<object>> =>
+    nodeViews.get(definition) ?? new Map();
+
+/** The node views the model's features attach, each for a node the model declares (SPEC-rich-text/AC-021). */
+const collectViews = (model: ContentModel) => {
+    const { features, nodes } = compiledModel(model);
+    const views = new Map<string, ComponentType<object>>();
+    for (const feature of features) {
+        for (const { node, component } of declaredViews(feature.declaration)) {
+            if (!nodes.some(({ name }) => name === node)) {
+                throw new DefinitionError('definition.orphan-behavior', {
+                    feature: feature.id,
+                    path: pointer('nodeViews', node),
+                });
+            }
+            views.set(node, component);
+        }
+    }
+    return views;
 };
 
 /** The defaults with `limitOverrides`, then each of `limits` that is stricter; invalid values are ignored. */
@@ -44,6 +72,7 @@ export const defineEditor = <Model extends ContentModel>(
     options: EditorDefinitionOptions<Model>,
 ): CompiledEditorDefinition<CommandsOfModel<Model>> => {
     const { id, model, policy } = options;
+    const views = collectViews(model);
     const definition = Object.freeze({
         id,
         model: model.ref,
@@ -52,6 +81,7 @@ export const defineEditor = <Model extends ContentModel>(
         limits: limitsWithin(options.limits, options.limitOverrides),
     });
     engines.set(definition, compileDefinition(model, CAPABILITIES));
+    nodeViews.set(definition, views);
     return definition as unknown as CompiledEditorDefinition<CommandsOfModel<Model>>;
 };
 
