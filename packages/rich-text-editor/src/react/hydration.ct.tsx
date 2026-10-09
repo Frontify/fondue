@@ -32,6 +32,7 @@ for (const text of ['', 'Rotate the signing keys']) {
         expect(reported?.recoverable).toEqual([]);
         expect(problems).toEqual([]);
         expect(reported?.serverHtml).toContain('data-rte-surface=""></div>');
+        expect(reported?.atCommit).toBe(text);
         expect(reported?.frames).toEqual([text, text, text]);
         test.info().annotations.push({ type: 'react build', description: String(reported?.mode) });
     });

@@ -42,10 +42,12 @@ declare global {
 export const EditorProbe = ({
     texts = ['ab'],
     readOnly = false,
+    placeholder,
     onChange,
 }: {
     readonly texts?: readonly string[];
     readonly readOnly?: boolean;
+    readonly placeholder?: string;
     readonly onChange?: (change: { readonly origin: string; readonly commandId: string | null }) => void;
 }) => {
     const ref = useRef<EditorHandle<object>>(null);
@@ -62,6 +64,7 @@ export const EditorProbe = ({
                 definition={definition}
                 defaultValue={storedOf(...texts)}
                 readOnly={readOnly}
+                {...(placeholder === undefined ? {} : { placeholder })}
                 ref={ref}
                 onDocumentChange={({ origin, commandId }) => onChange?.({ origin, commandId })}
             />

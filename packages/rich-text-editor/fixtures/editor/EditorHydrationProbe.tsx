@@ -20,6 +20,8 @@ export interface EditorHydrationResult {
     readonly mode: string;
     readonly recoverable: readonly string[];
     readonly serverHtml: string;
+    /** The surface text in the layout effects of the hydration commit, before any frame paints. */
+    readonly atCommit: string;
     /** The surface text in each animation frame from the hydration commit on. */
     readonly frames: readonly string[];
 }
@@ -51,17 +53,29 @@ export const EditorHydrationProbe = ({
         host.current?.append(container);
         const recoverable: string[] = [];
         const frames: string[] = [];
+        let atCommit = '';
+        const surfaceText = () => {
+            const surface = container.querySelector('[role="textbox"]');
+            if (surface === null || surface.textContent === null) {
+                return '';
+            }
+            return surface.textContent;
+        };
         const sample = () => {
-            frames.push(container.querySelector('[role="textbox"]')?.textContent ?? '');
+            frames.push(surfaceText());
             if (frames.length < 3) {
                 requestAnimationFrame(sample);
                 return;
             }
-            onDone({ mode: `${process.env.NODE_ENV}`, recoverable, serverHtml, frames });
+            onDone({ mode: `${process.env.NODE_ENV}`, recoverable, serverHtml, atCommit, frames });
         };
         const root = hydrateRoot(
             container,
-            tree(() => requestAnimationFrame(sample)),
+            tree(() => {
+                // This sibling's layout effect runs after the editor's, so a view attached later would miss it.
+                atCommit = surfaceText();
+                requestAnimationFrame(sample);
+            }),
             { onRecoverableError: (error) => recoverable.push(String(error)) },
         );
         return () => root.unmount();

@@ -42,6 +42,10 @@ export const commands = () => {
     derived.query('mark.italic.toggle');
     // @ts-expect-error: `mark.bold.toggle` takes no payload.
     derived.query('mark.bold.toggle', { level: 1 });
+    // @ts-expect-error: the model installs no italic command.
+    void derived.execute('mark.italic.toggle');
+    // @ts-expect-error: `mark.bold.toggle` takes no payload.
+    void derived.enqueue('mark.bold.toggle', { level: 1 });
     shipped.query('link.set', { href: 'https://frontify.com', openInNewWindow: false, styleId: null });
     // @ts-expect-error: `link.set` needs a link value.
     shipped.query('link.set', { href: 1 });

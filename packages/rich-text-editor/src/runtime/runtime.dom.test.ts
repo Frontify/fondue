@@ -133,6 +133,20 @@ describe('the commit path', () => {
         eq.mockRestore();
     });
 
+    it('SPEC-rich-text-runtime/AC-019 publishes no change for an edit that leaves an equal document', () => {
+        const { handle, changes, runtime } = start(stored(para({ type: 'text', text: 'ab' })));
+        const view = runtime.view;
+        if (view === undefined) {
+            throw new Error('no view');
+        }
+
+        view.dispatch(view.state.tr.insertText('a', 1, 2));
+
+        expect(view.state.doc.textContent).toBe('ab');
+        expect(changes).toEqual([]);
+        expect(handle.getSummary()).toMatchObject({ commitSequence: 1, sequence: 0 });
+    });
+
     it('SPEC-rich-text-runtime/AC-020 reads the document of its own commit once, and the same object after', () => {
         const { handle, changes } = start(stored(para()));
 
@@ -157,15 +171,30 @@ describe('the commit path', () => {
 
         view.dispatch(view.state.tr.insertText('x'));
         typeText(handle, 'y');
-        pressKey(handle, 'Mod-a');
-        setSelection(handle, { text: 'xy' });
+        view.dispatch(view.state.tr.insertText('z'));
+        setSelection(handle, { text: 'xyz' });
         pressKey(handle, 'Mod-b');
 
         expect(changes.map(({ origin, commandId }) => [origin, commandId])).toEqual([
             ['unknown', null],
             ['input', null],
+            ['unknown', null],
             ['command', 'mark.bold.toggle'],
         ]);
+    });
+
+    it('SPEC-rich-text-runtime/AC-022 forgets a recorded beforeinput whose batch a plugin rejected', () => {
+        const reject = new Plugin({ filterTransaction: (transaction) => !transaction.doc.textContent.includes('z') });
+        const { handle, changes, runtime } = start(stored(para()), { plugins: [reject] });
+        const view = runtime.view;
+        if (view === undefined) {
+            throw new Error('no view');
+        }
+
+        typeText(handle, 'z');
+        view.dispatch(view.state.tr.insertText('x'));
+
+        expect(changes.map(({ origin }) => origin)).toEqual(['unknown']);
     });
 
     it('SPEC-rich-text-runtime/AC-035 queries every command without changing state or emitting events', () => {
@@ -267,6 +296,7 @@ describe('the session lifecycle', () => {
         runtime.attach(document.body.appendChild(document.createElement('div')));
 
         expect(runtime.handle.getSummary().phase).toBe('mounting');
+        expect(ready).not.toHaveBeenCalled();
         environment.flushFrames();
         environment.flushFrames();
 

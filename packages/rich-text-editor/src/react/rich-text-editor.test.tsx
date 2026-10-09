@@ -20,10 +20,11 @@ import {
 } from '#/model';
 import * as model from '#/model';
 import { type LoadedDocument } from '#/persistence/types';
+import { type DocumentChange } from '#/runtime/types';
 import { createTestEnvironment, pressKey, setSelection, typeText } from '#/testing';
 import { probeRuntimes } from '#/testing/probe';
 
-import { defineEditor, defineReactPresentation } from './define';
+import { defineEditor } from './define';
 import { RichTextEditor } from './rich-text-editor';
 import { type EditorHandle, type RichTextEditorBaseProps } from './types';
 
@@ -227,7 +228,11 @@ describe('RichTextEditor', () => {
         expect(viewOf().state.schema).toBe(schema);
 
         unmount();
-        mount({ definition: otherDefinition }).unmount();
+        const remounted = mount({ definition: otherDefinition });
+        expect(viewOf().state.schema).not.toBe(schema);
+        expect(viewOf().state.schema.marks.italic).toBeDefined();
+        expect(schema.marks.italic).toBeUndefined();
+        remounted.unmount();
         vi.mocked(console.error).mockRestore();
     });
 
@@ -243,6 +248,18 @@ describe('RichTextEditor', () => {
             { code: 'react.definition-changed', severity: 'warning', messageKey: 'react.definition-changed' },
         ]);
         unmount();
+    });
+
+    it('SPEC-rich-text-react/AC-072 reports no definition change in a production build', () => {
+        vi.stubEnv('NODE_ENV', 'production');
+        const onDiagnostic = vi.fn<(diagnostic: Diagnostic) => void>();
+        const { rerender, unmount } = mount({ onDiagnostic });
+
+        rerender({ onDiagnostic, definition: otherDefinition });
+
+        expect(onDiagnostic).not.toHaveBeenCalled();
+        unmount();
+        vi.unstubAllEnvs();
     });
 
     it('SPEC-rich-text-runtime/AC-081 keeps the surface uneditable and the root busy until the first frame', () => {
@@ -274,6 +291,15 @@ describe('RichTextEditor', () => {
         expect(surface()).toHaveAttribute('spellcheck', 'false');
         expect(surface()).toHaveAttribute('lang', 'de-DE');
         off.unmount();
+
+        const french = defaultValue(para({ type: 'text', text: 'ab' }));
+        const stored = {
+            ...french.document,
+            content: { ...french.document.content, attrs: { lang: 'fr-FR', dir: 'auto' } },
+        };
+        const declared = mount({ defaultValue: { ...french, document: stored }, locale: deDE });
+        expect(surface()).toHaveAttribute('lang', 'fr-FR');
+        declared.unmount();
     });
 
     it('SPEC-rich-text/AC-029 compiles and builds the schema once across ten rerenders and a StrictMode remount', () => {
@@ -301,23 +327,25 @@ describe('RichTextEditor', () => {
             id: 'test.custom',
             model: compileContentModel([core(), bold(), fixtureItalic()], { id: 'test.editor', version: 1 }),
         });
-        const presentation = defineReactPresentation({ toolbar: [['mark.bold.toggle']] });
-        const onDocumentChange = vi.fn();
-        const { handle, unmount } = mount({ definition: custom, presentation, onDocumentChange });
+        const changes: DocumentChange[] = [];
+        const italic = { type: 'text', text: 'ab', marks: [{ type: 'italic' }] };
+        const { handle, unmount } = mount({
+            definition: custom,
+            defaultValue: defaultValue(para(italic)),
+            onDocumentChange: (change) => changes.push(change),
+        });
+        expect(surface().querySelector('em')).toHaveTextContent('ab');
 
         act(() => {
             setSelection(handle(), { text: 'ab' });
             pressKey(handle(), 'Mod-b');
         });
 
-        expect(presentation).toEqual({
-            styles: [],
-            colorTokens: [],
-            toolbar: [['mark.bold.toggle']],
-            sliceContext: null,
-        });
-        expect(surface().querySelector('strong')).toHaveTextContent('ab');
-        expect(onDocumentChange).toHaveBeenCalledTimes(1);
+        expect(surface().querySelector('strong em, em strong')).toHaveTextContent('ab');
+        expect(changes).toHaveLength(1);
+        expect(changes[0]?.readDocument().content.content).toEqual([
+            para({ type: 'text', text: 'ab', marks: [{ type: 'bold' }, { type: 'italic' }] }),
+        ]);
         unmount();
     });
 
