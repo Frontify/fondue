@@ -311,6 +311,12 @@ const Root = forwardRef((props: Props & { readonly children: ReactNode }, ref: F
 });
 Root.displayName = 'RichTextEditor.Root';
 
+/** The host's class tokens the surface may add and remove: never the package's root class nor one of ProseMirror's own. */
+const hostClassNames = (contentClassName: string) =>
+    contentClassName
+        .split(/\s+/)
+        .filter((name) => name !== '' && contentClasses() !== name && !/^ProseMirror(-|$)/.test(name));
+
 const emptiness = (runtime: EditorRuntime | undefined) => {
     if (runtime === undefined) {
         return undefined;
@@ -342,7 +348,7 @@ const Surface = () => {
         if (surface === null || contentClassName === undefined) {
             return undefined;
         }
-        const names = contentClassName.split(/\s+/).filter((name) => name !== '');
+        const names = hostClassNames(contentClassName);
         surface.classList.add(...names);
         return () => surface.classList.remove(...names);
     }, [contentClassName]);
