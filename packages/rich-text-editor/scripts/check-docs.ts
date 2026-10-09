@@ -4,8 +4,9 @@ import { existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 import { enUS } from '../src/locales/en-US.ts';
-import { type Feature, type FeatureDeclaration } from '../src/model/declarations.ts';
-import { featureInternals } from '../src/model/feature.ts';
+import { type FeatureDeclaration } from '../src/model/declarations.ts';
+
+import { registeredDeclarations } from './registered-features.ts';
 
 const cellsOf = (line: string) =>
     line
@@ -79,22 +80,12 @@ export const checkFeatureDocs = (
 };
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-    // The registry imports through the `#/` alias, which `tsx` resolves and the node typecheck project does not.
-    const { registry } = (await import(new URL('../src/features/registry.ts', import.meta.url).href)) as {
-        readonly registry: Readonly<Record<string, () => Feature>>;
-    };
-    const declarations: FeatureDeclaration[] = [];
+    const declarations = await registeredDeclarations();
     const pages: Record<string, string> = {};
-    for (const factory of Object.values(registry)) {
-        const feature = factory();
-        const internals = featureInternals(feature);
-        if (internals === undefined) {
-            throw new Error(`The registry entry ${feature.id} is not a feature that defineFeature made.`);
-        }
-        declarations.push(internals.declaration);
-        const page = new URL(`../docs/features/${feature.id}.md`, import.meta.url);
+    for (const { id } of declarations) {
+        const page = new URL(`../docs/features/${id}.md`, import.meta.url);
         if (existsSync(page)) {
-            pages[feature.id] = readFileSync(page, 'utf8');
+            pages[id] = readFileSync(page, 'utf8');
         }
     }
     const violations = checkFeatureDocs(declarations, pages, enUS.translationStrings);

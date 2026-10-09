@@ -2,8 +2,9 @@
 
 import axe from 'axe-core';
 
-// SPEC-rich-text-accessibility/AC-036: the tags every story is checked against.
-const AXE_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
+import { AXE_TAGS } from '../src/features/conformance/axe-tags';
+
+import { featureTagsOf } from './feature-tags';
 
 const PROVIDER = '.fondue-theme-provider';
 
@@ -41,11 +42,9 @@ export const globalsFaults = (
     return faults;
 };
 
-const FEATURE_TAG = 'feature:';
-
 /** A story's `feature:` tags name exactly the features its `definition` arg installs (SPEC-rich-text/AC-053). */
 export const featureTagFaults = (tags: readonly string[], args: Readonly<Record<string, unknown>>): string[] => {
-    const tagged = tags.filter((tag) => tag.startsWith(FEATURE_TAG)).map((tag) => tag.slice(FEATURE_TAG.length));
+    const tagged = featureTagsOf(tags);
     if (tagged.length === 0) {
         return [];
     }
