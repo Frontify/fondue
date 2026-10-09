@@ -92,7 +92,12 @@ export const EditorProbe = ({
     readonly onChange?: (change: { readonly origin: string; readonly commandId: string | null }) => void;
 }) => {
     const ref = useRef<EditorHandle<object>>(null);
-    const [environment] = useState(() => (controlled ? createTestEnvironment({ seed: 1 }) : undefined));
+    const [environment] = useState(() => {
+        if (controlled) {
+            return createTestEnvironment({ seed: 1 });
+        }
+        return undefined;
+    });
     let definition = definitions.open;
     if (guarded) {
         definition = definitions.guarded;

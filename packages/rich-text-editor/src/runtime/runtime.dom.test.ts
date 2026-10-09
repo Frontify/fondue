@@ -2647,29 +2647,16 @@ describe('the async coordinator', () => {
         handle.updatePolicy(authoringOf(targetModel));
 
         pending(runtime, { key: 'mention-search', service: 'references', target });
-        pending(runtime, { key: 'mention-search', service: 'references', target });
-        pending(runtime, { key: 'upload' });
+        const search = pending(runtime, { key: 'mention-search', service: 'references', target }).operation;
+        const upload = pending(runtime, { key: 'upload' }).operation;
 
         const { session } = handle.getSummary();
         const registry = probeRuntimes().operations;
-        expect(registry).toEqual([
-            expect.objectContaining({
-                id: 'operation-2',
-                session,
-                target,
-                policyRevision: 1,
-                key: 'mention-search',
-                request: 2,
-            }),
-            expect.objectContaining({
-                id: 'operation-3',
-                session,
-                target: expect.objectContaining({ id: 'target-2', session }) as unknown,
-                policyRevision: 1,
-                key: 'upload',
-                request: 1,
-            }),
-        ]);
+        expect(registry).toEqual([search, upload]);
+        expect(search).toMatchObject({ session, target, policyRevision: 1, key: 'mention-search', request: 2 });
+        expect(upload).toMatchObject({ session, policyRevision: 1, key: 'upload', request: 1 });
+        expect(upload.target).toMatchObject({ session });
+        expect(search.id).not.toBe(upload.id);
         expect(registry.map(({ controller }) => controller instanceof AbortController)).toEqual([true, true]);
     });
 
