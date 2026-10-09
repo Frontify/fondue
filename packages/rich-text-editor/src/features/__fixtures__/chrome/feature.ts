@@ -46,5 +46,8 @@ export const fixtureChrome = defineFeature({
             parse: [],
         },
     },
-    commands: { 'fixture.chrome-block.set': setBlock('chrome_block') },
+    commands: {
+        'fixture.chrome-block.set': setBlock('chrome_block'),
+        'fixture.chrome-block.unset': setBlock('paragraph'),
+    },
 });

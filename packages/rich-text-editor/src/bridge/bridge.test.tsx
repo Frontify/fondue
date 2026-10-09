@@ -7,7 +7,7 @@ import * as ReactDOMClient from 'react-dom/client';
 import { describe, expect, expectTypeOf, it, vi } from 'vitest';
 
 import { fixtureChrome } from '#/features/__fixtures__/chrome/feature';
-import { fixtureChromeViews } from '#/features/__fixtures__/chrome/view';
+import { fixtureChromeViews, popupListeners } from '#/features/__fixtures__/chrome/view';
 import { fixtureList } from '#/features/__fixtures__/features';
 import { fixtureProfiles } from '#/features/__fixtures__/profiles';
 import { core } from '#/features/core/feature';
@@ -19,7 +19,16 @@ import {
     RichTextEditor,
     useRichTextNodeView,
 } from '#/index';
-import { compileContentModel, DefinitionError, type Diagnostic, type Feature, type JsonValue } from '#/model';
+import { deDE } from '#/locales/de-DE';
+import { enUS } from '#/locales/en-US';
+import {
+    compileContentModel,
+    DefinitionError,
+    type Diagnostic,
+    type Feature,
+    type JsonValue,
+    type RichTextLocale,
+} from '#/model';
 import { viewsOf } from '#/react/define';
 import { defineReaderFeature, type ReaderNodeProps, RichTextReader } from '#/reader';
 import { type EditorRuntime, type RuntimeHandle, runtimeOf } from '#/runtime/runtime';
@@ -98,7 +107,10 @@ const lastStore = () => {
 };
 
 /** Mounts an editor of `blocks` with a test environment, then runs its portal flush and its first frame, as a browser does. */
-const mount = async (blocks: readonly JsonValue[], props: { readonly definition?: typeof definition } = {}) => {
+const mount = async (
+    blocks: readonly JsonValue[],
+    props: { readonly definition?: typeof definition; readonly locale?: RichTextLocale } = {},
+) => {
     const environment = createTestEnvironment({ seed: 1 });
     const ref = createRef<EditorHandle<object>>();
     const onDiagnostic = vi.fn<(diagnostic: Diagnostic) => void>();
@@ -107,6 +119,7 @@ const mount = async (blocks: readonly JsonValue[], props: { readonly definition?
             aria-label="Notes"
             definition={props.definition ?? definition}
             defaultValue={stored(...blocks)}
+            locale={props.locale ?? enUS}
             environment={environment}
             onDiagnostic={onDiagnostic}
             ref={ref}
@@ -205,38 +218,54 @@ describe('the React bridge', () => {
         unmount();
     });
 
-    it('SPEC-rich-text-react/AC-019 runs a delayed chrome action on its node after a preceding paragraph is deleted', async () => {
-        let captured: NodeViewState<object> | undefined;
+    it('SPEC-rich-text-react/AC-019 runs delayed update, query, execute, select and remove actions on their own nodes after a preceding paragraph is deleted', async () => {
+        type ChromeCommands = {
+            readonly 'fixture.chrome-block.set': undefined;
+            readonly 'fixture.chrome-block.unset': undefined;
+        };
+        const captured = new Map<string, NodeViewState<ChromeCommands>>();
         const Capture = () => {
-            captured = useRichTextNodeView<object>();
+            const state = useRichTextNodeView<ChromeCommands>();
+            captured.set(state.nodeId, state);
             return null;
         };
         const capturing = defineEditor({
             id: 'test.bridge',
             model: modelOf([defineNodeView(fixtureChrome(), { node: 'chrome_block', component: Capture })]),
         });
-        const { editorView, handle, unmount } = await mount([para(text('first')), block('b1', 'code')], {
-            definition: capturing,
-        });
-        const action = captured;
+        const { editorView, handle, unmount } = await mount(
+            [para(text('first')), block('b1', 'code'), block('b2', 'two'), para(text('after'))],
+            { definition: capturing },
+        );
+        const first = captured.get('b1') as NodeViewState<ChromeCommands>;
+        const second = captured.get('b2') as NodeViewState<ChromeCommands>;
 
         act(() => {
             const view = editorView();
             view.dispatch(view.state.tr.delete(0, view.state.doc.child(0).nodeSize));
         });
-        let result: unknown;
+        // The caret sits in another paragraph, so an action that took the selection would change that one.
+        act(() => setSelection(handle(), { text: 'after', from: 5, to: 5 }));
+        const results: unknown[] = [];
         act(() => {
-            result = action?.update({ language: 'rust' });
+            results.push(first.update({ language: 'rust' }));
+        });
+        const updated = handle().getSnapshot().document.content.content;
+        const queried = second.query('fixture.chrome-block.set');
+        act(() => {
+            results.push(second.execute('fixture.chrome-block.unset'));
+        });
+        act(() => first.select());
+        const selected = handle().getSummary().selection.selectedNodeId;
+        act(() => {
+            results.push(first.remove());
         });
 
-        expect(result).toMatchObject({ status: 'applied' });
-        expect(handle().getSnapshot().document.content.content).toEqual([
-            {
-                type: 'chrome_block',
-                attrs: { nodeId: 'b1', language: 'rust', checked: false },
-                content: [text('code')],
-            },
-        ]);
+        expect(results).toMatchObject([{ status: 'applied' }, { status: 'applied' }, { status: 'applied' }]);
+        expect(updated).toMatchObject([{ attrs: { nodeId: 'b1', language: 'rust' } }, { attrs: { nodeId: 'b2' } }, {}]);
+        expect(queried).toEqual({ enabled: false, active: true, disabledReason: 'not-applicable' });
+        expect(selected).toBe('b1');
+        expect(handle().getSnapshot().document.content.content).toEqual([para(text('two')), para(text('after'))]);
         unmount();
     });
 
@@ -251,6 +280,7 @@ describe('the React bridge', () => {
         const before = probeRuntimes();
         fireEvent.click(surface().querySelector('[data-chrome="mention"] button') as HTMLElement);
         expect(surface().querySelector('[data-popup]')).not.toBeNull();
+        const listening = popupListeners.count;
 
         act(() => {
             setSelection(handle(), { nodeId: 'm1' });
@@ -259,6 +289,8 @@ describe('the React bridge', () => {
         });
         await flush();
 
+        expect(listening).toBe(1);
+        expect(popupListeners.count).toBe(0);
         expect(before).toMatchObject({ nodeViews: 1, portals: 1 });
         expect(probeRuntimes()).toMatchObject({ nodeViews: 0, portals: 0, frames: 0 });
         expect(document.querySelector('[data-popup]')).toBeNull();
@@ -291,9 +323,17 @@ describe('the React bridge', () => {
         unmount();
     });
 
-    it('SPEC-rich-text-react/AC-014 builds new chrome when a node with another ID takes the place of a selected one', async () => {
-        const { editorView, handle, flush, unmount } = await mount([para(text('a'), mention('m1'))]);
+    it('SPEC-rich-text-react/AC-014 keeps chrome for new attributes of the same nodeId and, by DR-072, builds new chrome for a node with another nodeId', async () => {
+        const { editorView, handle, runtime, flush, unmount } = await mount([para(text('a'), mention('m1'))]);
         fireEvent.click(surface().querySelector('[data-chrome="mention"] button') as HTMLElement);
+        const chrome = surface().querySelector('[data-chrome="mention"]');
+
+        act(() => {
+            expect(runtime().nodeActions('m1').update({ label: 'Cy' })).toMatchObject({ status: 'applied' });
+        });
+        await flush();
+        expect(surface().querySelector('[data-chrome="mention"]')).toBe(chrome);
+        expect(surface().querySelector('[data-chrome="mention"] button')).toHaveTextContent('Cy');
         expect(surface().querySelector('[data-popup]')).not.toBeNull();
 
         act(() => {
@@ -302,6 +342,7 @@ describe('the React bridge', () => {
         });
         await flush();
 
+        expect(surface().querySelector('[data-chrome="mention"]')).not.toBe(chrome);
         expect(surface().querySelector('[data-chrome="mention"] button')).toHaveTextContent('Bea');
         expect(surface().querySelector('[data-popup]')).toBeNull();
         unmount();
@@ -320,10 +361,20 @@ describe('the React bridge', () => {
             id: 'test.bridge',
             model: modelOf([defineNodeView(fixtureChrome(), { node: 'chrome_block', component: Strict })]),
         });
-        const { runtime, flush, unmount } = await mount([block('b1', 'code', 'boom')], { definition: strict });
-        expect(surface().querySelector('[data-rte-chrome]')).toHaveTextContent(
-            'This part of the content cannot be shown',
-        );
+        const { runtime, handle, flush, unmount } = await mount([block('b1', 'code', 'boom')], {
+            definition: strict,
+            locale: deDE,
+        });
+        const fallback = deDE.translationStrings.RichTextEditor_nodeViewError;
+        expect(surface().querySelector('[data-rte-chrome]')).toHaveTextContent(fallback);
+        const thrown = errors.mock.calls.length;
+
+        // A selection-only publish keeps the attributes, so the boundary keeps its fallback and renders nothing that throws.
+        act(() => setSelection(handle(), { nodeId: 'b1' }));
+        await flush();
+        expect(surface().querySelector('[data-chrome="block"], [data-test-chrome]')).toBeNull();
+        expect(surface().querySelector('[data-rte-chrome]')).toHaveTextContent(fallback);
+        expect(errors.mock.calls.length).toBe(thrown);
 
         act(() => {
             runtime().nodeActions('b1').update({ language: 'typescript' });
@@ -337,10 +388,16 @@ describe('the React bridge', () => {
 
     it('SPEC-rich-text-react/AC-097 registers no node view for native nodes and renders nothing while typing in a list', async () => {
         const native = ['paragraph', 'heading', 'text', 'bullet_list', 'list_item', 'table_row', 'table_cell'];
-        for (const features of [...Object.values(fixtureProfiles()), [core(), fixtureChromeViews(), fixtureList()]]) {
-            const views = viewsOf(defineEditor({ id: 'test.profile', model: modelOf(features.slice(1)) }));
+        const lists = [...Object.values(fixtureProfiles()), [core(), fixtureChromeViews(), fixtureList()]];
+        const registered = lists.map((features) =>
+            viewsOf(defineEditor({ id: 'test.profile', model: modelOf(features.slice(1)) })),
+        );
+        for (const views of registered) {
             expect(native.filter((name) => views.has(name))).toEqual([]);
         }
+        // The loop reads registered views, so a view on a native node would show here.
+        const chromeViews = registered[registered.length - 1] as ReadonlyMap<string, unknown>;
+        expect([...chromeViews.keys()].sort()).toEqual(['chrome_block', 'chrome_image', 'chrome_mention']);
         const commits = vi.fn();
         const environment = createTestEnvironment({ seed: 1 });
         const ref = createRef<EditorHandle<object>>();
@@ -367,6 +424,8 @@ describe('the React bridge', () => {
         }
 
         expect(surface().querySelector('li')).toHaveTextContent('onetyped');
+        // Only the mention has a node view, so a list or list item view would raise this count.
+        expect(probeRuntimes().nodeViews).toBe(1);
         expect(commits).not.toHaveBeenCalled();
         unmount();
     });
@@ -387,13 +446,22 @@ describe('the React bridge', () => {
             setSelection(first.handle(), { text: 'a', from: 1, to: 1 });
             typeText(first.handle(), 'bc');
         });
+        const typed = first.handle().getSnapshot().document.content;
+        const undoable = commandsOf(first.handle()).query('history.undo').enabled;
+        let undone: unknown;
         act(() => {
-            commandsOf(first.handle()).execute('history.undo');
+            undone = commandsOf(first.handle()).execute('history.undo');
         });
         fireEvent.click(firstSurface.querySelector('[data-chrome="mention"] button') as HTMLElement);
         await first.flush();
         await second.flush();
 
+        expect(typed).toMatchObject({ content: [{ content: [text('abc'), { type: 'chrome_mention' }] }] });
+        expect(undoable).toBe(true);
+        expect(undone).toMatchObject({ status: 'applied' });
+        expect(first.handle().getSnapshot().document.content).toMatchObject({
+            content: [{ content: [text('a'), { type: 'chrome_mention' }] }],
+        });
         expect(firstSurface.querySelector('[data-popup]')).not.toBeNull();
         expect(otherSurface.querySelector('[data-popup]')).toBeNull();
         expect(second.handle().getSnapshot().document).toEqual(before.document);
@@ -403,7 +471,7 @@ describe('the React bridge', () => {
         second.unmount();
     });
 
-    it('SPEC-rich-text-react/AC-007 SPEC-rich-text-output/AC-003 keeps both a node view and a reader override on one feature, attached in either order', async () => {
+    it('SPEC-rich-text-output/AC-003 renders the reader override and the node view chrome of one feature that attaches both, in either order', async () => {
         const Chrome = () => <span data-test-chrome="" />;
         const Reader = ({ attrs }: ReaderNodeProps) => <span data-test-reader="">{attrs.label as string}</span>;
         const view = { node: 'chrome_mention', component: Chrome };

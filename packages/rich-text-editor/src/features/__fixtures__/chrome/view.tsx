@@ -34,6 +34,23 @@ const BlockChrome = () => {
     );
 };
 
+/** The document listeners that open popups hold, which a released node view leaves at 0 (SPEC-rich-text-react/AC-020). */
+export const popupListeners = { count: 0 };
+
+/** A popup that listens on the document while it is open, as an overlay that closes on Escape does. */
+const Popup = ({ label }: { readonly label: string }) => {
+    useEffect(() => {
+        const listener = () => undefined;
+        document.addEventListener('keydown', listener);
+        popupListeners.count += 1;
+        return () => {
+            document.removeEventListener('keydown', listener);
+            popupListeners.count -= 1;
+        };
+    }, []);
+    return <span data-popup="">{label}</span>;
+};
+
 /** Sets state in a mount effect, as the chrome of Tiptap issue #7811 does, and opens a popup. */
 const MentionChrome = () => {
     const { attrs } = useRichTextNodeView();
@@ -48,7 +65,7 @@ const MentionChrome = () => {
                 {label}
             </button>
             {mounted && <span data-mounted="" />}
-            {open && <span data-popup="">{label}</span>}
+            {open && <Popup label={label} />}
         </span>
     );
 };

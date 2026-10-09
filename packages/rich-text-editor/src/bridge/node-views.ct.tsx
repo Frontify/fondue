@@ -76,6 +76,24 @@ test('SPEC-rich-text-react/AC-018 keeps the first character typed over a select-
     await expect.poll(() => page.evaluate(() => window.rte?.text())).toBe('x');
 });
 
+test('SPEC-rich-text-react/AC-018 keeps the first character typed after only the contentDOM of a code block is removed', async ({
+    mount,
+    page,
+}) => {
+    await mount(<EditorProbe blocks={blocks(para(text('a')), block('b1', 'code'), para(text('b')))} />);
+    await ready(page);
+    const content = surfaceOf(page).locator('[data-rte-chrome] + div');
+    await content.click();
+
+    // As a browser that replaces the selected content does, the chrome and `dom` stay.
+    await content.evaluate((element) => element.remove());
+    await expect.poll(() => page.evaluate(() => window.rte?.text())).toBe('ab');
+    await page.keyboard.type('x');
+
+    await expect.poll(() => page.evaluate(() => window.rte?.text())).toBe('axb');
+    await expect(surfaceOf(page).locator('[data-rte-chrome] + div')).toHaveText('x');
+});
+
 test('SPEC-rich-text-react/AC-070 passes node selection to the image chrome with the arrow keys without remounting it', async ({
     mount,
     page,
@@ -128,14 +146,18 @@ test('SPEC-rich-text-react/AC-017 lets a node-selected atom drag from its chrome
     await chrome.getByRole('button').click();
     const clicked = await editorState();
     await page.evaluate(() => window.rte?.setSelection(window.rte.handle, { nodeId: 'i1' }));
-    await chrome.evaluate((element) => {
+    const dragStart = (element: Element) => {
         const drag = new DragEvent('dragstart', { bubbles: true, cancelable: true, dataTransfer: new DataTransfer() });
         element.dispatchEvent(drag);
-    });
+    };
+    await chrome.getByRole('button').evaluate(dragStart);
+    const fromButton = await editorState();
+    await chrome.evaluate(dragStart);
     const dragged = await editorState();
 
     await expect(chrome.getByRole('button')).toHaveText('1');
     expect(clicked).toEqual({ selection: { type: 'text', anchor: 3, head: 3 }, dragging: false });
+    expect(fromButton).toEqual({ selection: { type: 'node', anchor: 4 }, dragging: false });
     expect(dragged).toEqual({ selection: { type: 'node', anchor: 4 }, dragging: true });
 });
 
@@ -143,29 +165,48 @@ test('SPEC-rich-text-react/AC-100 keeps the caret where the editor selection is 
     mount,
     page,
 }) => {
-    await mount(<EditorProbe blocks={blocks(para(mention('m1'), mention('m2'), mention('m3'), text(' ')))} />);
+    await mount(
+        <EditorProbe
+            blocks={blocks(para(mention('m1'), mention('m2'), mention('m3'), text(' ')), para(text('end')))}
+        />,
+    );
     await ready(page);
-    await surfaceOf(page).locator('p').click();
+    await surfaceOf(page).locator('p').first().click();
     await page.evaluate(() => window.rte?.setSelection(window.rte.handle, { text: ' ', from: 1, to: 1 }));
+    /** Updates the three labels in one task, then moves the DOM caret to `end` in that task, before the batch renders. */
+    const relabel = (label: string, moveCaret: boolean) =>
+        page.evaluate(
+            ({ label: next, moveCaret: move }) => {
+                const runtime = window.rte?.runtime;
+                for (const nodeId of ['m1', 'm2', 'm3']) {
+                    runtime?.nodeActions(nodeId).update({ label: next });
+                }
+                const end = document.querySelectorAll('[role="textbox"] p')[1]?.firstChild;
+                if (move && end !== undefined && end !== null) {
+                    window.getSelection()?.collapse(end, 0);
+                }
+            },
+            { label, moveCaret },
+        );
 
     const reached: { dom: number; editor: number }[] = [];
     for (const character of 'abc') {
         await page.keyboard.type(character);
-        await page.evaluate((label) => {
-            const runtime = window.rte?.runtime;
-            for (const nodeId of ['m1', 'm2', 'm3']) {
-                runtime?.nodeActions(nodeId).update({ label });
-            }
-        }, `Ada ${character}`);
+        await relabel(`Ada ${character}`, true);
         await expect(surfaceOf(page).locator('[data-chrome="mention"] button').first()).toHaveText(`Ada ${character}`);
         reached.push(await selections(page));
     }
+    // A batch that renders while a host control has focus leaves focus there.
+    await page.getByRole('button', { name: 'Before' }).focus();
+    await relabel('Ada d', false);
+    await expect(surfaceOf(page).locator('[data-chrome="mention"] button').first()).toHaveText('Ada d');
 
     expect(reached).toEqual([
         { dom: 6, editor: 6 },
         { dom: 7, editor: 7 },
         { dom: 8, editor: 8 },
     ]);
+    await expect(page.getByRole('button', { name: 'Before' })).toBeFocused();
 });
 
 test.describe('on a phone', () => {

@@ -10,6 +10,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { createCodecs } from '#/codecs';
 import { type CapabilityImplementation, type EngineCommand, type Normalizer, NORMALIZERS } from '#/definition';
 import { bold, featuresById } from '#/features';
+import { fixtureChrome } from '#/features/__fixtures__/chrome/feature';
 import { fixtureChromeViews } from '#/features/__fixtures__/chrome/view';
 import { commandCases, nodeViewCases, normalizerCases } from '#/features/__fixtures__/contract.cases';
 import { fixtureHeadingSet, fixtureMedia, fixtureMention, fixtureTable } from '#/features/__fixtures__/features';
@@ -17,7 +18,7 @@ import { vocabularyLists } from '#/features/__fixtures__/vocabulary';
 import { featureFixtures } from '#/features/conformance/fixtures';
 import { core } from '#/features/core/feature';
 import { registry } from '#/features/registry';
-import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
+import { defineEditor, defineNodeView, type EditorHandle, RichTextEditor } from '#/index';
 import { compileContentModel, defineFeature, type Feature, type RichTextDocument, toggleMark } from '#/model';
 import { CAPABILITIES } from '#/runtime/capabilities';
 import { type DocumentChange } from '#/runtime/types';
@@ -134,6 +135,19 @@ const dispatchRangeQueries = () => {
 };
 
 describe('the feature contract suite', () => {
+    it('SPEC-rich-text-react/AC-073 SPEC-rich-text-react/AC-074 fails the node view cases of an inline view whose chrome hides a button in a div', async () => {
+        const Hidden = () =>
+            createElement('div', { 'aria-hidden': 'true' }, createElement('button', { type: 'button' }));
+        const hidden = defineNodeView(fixtureChrome(), { node: 'chrome_mention', component: Hidden });
+
+        const failing = await failingTitles(() => nodeViewCases([core(), hidden], [chromeDocument]));
+
+        expect(failing).toEqual([
+            'SPEC-rich-text-react/AC-073 keeps valid HTML nesting for the chrome_mention view under each parent its schema allows',
+            'SPEC-rich-text-react/AC-074 keeps every control in the chrome of the chrome_mention view out of aria-hidden',
+        ]);
+    });
+
     it.each([
         [
             'setTimeout',
