@@ -42,9 +42,31 @@ const toggleMark: CapabilityImplementation = (args, schema) => {
     if (isRecord(args.attrs)) {
         attrs = args.attrs;
     }
+    // At a caret ProseMirror toggles the stored mark; it also tells whether the mark applies at the selection.
+    const engineToggle = toggleEngineMark(type, attrs);
     return {
-        // The stock defaults remove a partly present mark and leave edge whitespace unmarked (SPEC-rich-text-editing/AC-007).
-        run: toggleEngineMark(type, attrs, { removeWhenPresent: false, includeWhitespace: true }),
+        run: (state, dispatch, view) => {
+            if (state.selection.empty || !engineToggle(state)) {
+                return engineToggle(state, dispatch, view);
+            }
+            if (dispatch === undefined) {
+                return true;
+            }
+            // Adds or removes as `active` reports, over every selected character, edge whitespace included (SPEC-rich-text-editing/AC-007, AC-008).
+            const add = markState(state, type) !== true;
+            const transaction = state.tr;
+            for (const { $from, $to } of state.selection.ranges) {
+                if (add) {
+                    transaction.addMark($from.pos, $to.pos, type.create(attrs));
+                } else {
+                    transaction.removeMark($from.pos, $to.pos, type);
+                }
+            }
+            if (transaction.docChanged) {
+                dispatch(transaction.scrollIntoView());
+            }
+            return true;
+        },
         active: (state) => markState(state, type),
     };
 };
