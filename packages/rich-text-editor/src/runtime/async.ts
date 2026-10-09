@@ -91,8 +91,8 @@ export const createAsyncCoordinator = (options: AsyncCoordinatorOptions) => {
         if (isDisposed()) {
             return;
         }
-        // An aborted or superseded request is ignored by its request sequence, even when its service resolves (AC-047).
-        if (operations.get(operation.id) !== operation || requests.get(operation.key) !== operation.request) {
+        // A newer request on its key aborts and unregisters an older one, whose result is then ignored (AC-047).
+        if (operations.get(operation.id) !== operation) {
             discard('superseded');
             return;
         }
