@@ -14,13 +14,14 @@ export interface AsyncRequest {
     /** The feature and the policy action its result performs (SPEC-rich-text-runtime/AC-069). */
     readonly featureId: string;
     readonly action: keyof FeaturePolicy;
+    /** Where the result applies; without one, the coordinator captures a `map` target at the selection. */
     readonly target?: SelectionHandle;
     readonly run: (context: { readonly signal: AbortSignal; readonly session: SessionToken }) => Promise<unknown>;
     /** The command that takes the result as its payload, whose declaration checks it as untrusted input. */
     readonly command: string;
 }
 
-/** A registered operation (SPEC-rich-text-runtime/AC-046). */
+/** A registered operation (SPEC-rich-text-runtime/AC-046); only one that never started has no target. */
 export interface AsyncOperation {
     readonly id: string;
     readonly session: SessionToken;
@@ -46,6 +47,9 @@ export interface AsyncCoordinatorOptions {
     readonly isDisposed: () => boolean;
     /** Whether results wait for input to settle (SPEC-rich-text-runtime/AC-089). */
     readonly holding: () => boolean;
+    /** Captures a `map` target at the selection, after the running commit when one runs, or `undefined` when not ready. */
+    readonly capture: () => SelectionHandle | undefined;
+    readonly release: (target: SelectionHandle) => void;
     /** Applies a result through `commit` from the current state, or returns why it cannot (SPEC-rich-text-runtime/AC-048). */
     readonly apply: (operation: AsyncOperation, result: unknown) => string | undefined;
     readonly report: (diagnostic: Diagnostic) => void;
@@ -53,20 +57,29 @@ export interface AsyncCoordinatorOptions {
 
 /** Registers each async operation, aborts the ones a newer request, a policy, a service or `dispose` ends, and checks each result. */
 export const createAsyncCoordinator = (options: AsyncCoordinatorOptions) => {
-    const { ids, session, policyRevision, isDisposed, holding, apply, report } = options;
+    const { ids, session, policyRevision, isDisposed, holding, capture, release, apply, report } = options;
     const operations = new Map<string, AsyncOperation>();
     const requests = new Map<string, number>();
     const held: { readonly operation: AsyncOperation; readonly result: unknown }[] = [];
+    // Operations whose target the coordinator captured, and so releases once they end.
+    const captured = new Set<AsyncOperation>();
 
     const forget = (operation: AsyncOperation) => {
         operations.delete(operation.id);
         liveOperations.delete(operation);
     };
 
+    const end = (operation: AsyncOperation) => {
+        forget(operation);
+        if (captured.delete(operation) && operation.target !== null) {
+            release(operation.target);
+        }
+    };
+
     const abortWhere = (aborts: (operation: AsyncOperation) => boolean) => {
         for (const operation of [...operations.values()]) {
             if (aborts(operation)) {
-                forget(operation);
+                end(operation);
                 operation.controller.abort();
             }
         }
@@ -85,7 +98,7 @@ export const createAsyncCoordinator = (options: AsyncCoordinatorOptions) => {
         }
         const current = session();
         if (operation.session.sessionId !== current.sessionId || operation.session.generation !== current.generation) {
-            forget(operation);
+            end(operation);
             discard('wrong-session');
             return;
         }
@@ -94,7 +107,15 @@ export const createAsyncCoordinator = (options: AsyncCoordinatorOptions) => {
             return;
         }
         forget(operation);
-        const code = apply(operation, result);
+        let code: string | undefined;
+        try {
+            code = apply(operation, result);
+        } catch {
+            // A result whose accessor or proxy throws while it is read is untrusted input that fails its check.
+            code = 'invalid-payload';
+        }
+        // The captured target stays until the result has applied through it.
+        end(operation);
         if (code !== undefined) {
             discard(code);
         }
@@ -102,29 +123,45 @@ export const createAsyncCoordinator = (options: AsyncCoordinatorOptions) => {
 
     const start = (request: AsyncRequest): AsyncOperation => {
         const { key } = request;
-        const sequence = (requests.get(key) ?? 0) + 1;
-        requests.set(key, sequence);
-        abortWhere((operation) => operation.key === key);
+        let target: SelectionHandle | null = null;
+        let owned = false;
+        if (!isDisposed()) {
+            target = request.target ?? null;
+        }
+        if (!isDisposed() && target === null) {
+            target = capture() ?? null;
+            owned = target !== null;
+        }
         const operation: AsyncOperation = Object.freeze({
             id: ids.next('operation'),
             session: session(),
-            target: request.target ?? null,
+            target,
             policyRevision: policyRevision(),
             controller: new AbortController(),
             key,
-            request: sequence,
+            request: (requests.get(key) ?? 0) + 1,
             service: request.service,
             featureId: request.featureId,
             action: request.action,
             command: request.command,
         });
+        // A session that is not ready starts nothing: the operation is aborted and unregistered.
+        if (target === null) {
+            operation.controller.abort();
+            return operation;
+        }
+        requests.set(key, operation.request);
+        abortWhere((other) => other.key === key);
+        if (owned) {
+            captured.add(operation);
+        }
         operations.set(operation.id, operation);
         liveOperations.add(operation);
         request
             .run({ signal: operation.controller.signal, session: operation.session })
             .then((result) => arrive(operation, result))
             // A failed service call leaves the document as it is.
-            .catch(() => forget(operation));
+            .catch(() => end(operation));
         return operation;
     };
 
