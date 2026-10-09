@@ -37,7 +37,8 @@ export const createCodecs = (model: ContentModel, options: CodecsOptions = {}): 
             if (tree === undefined) {
                 return { html: '', diagnostics };
             }
-            const output = writeHtml(plan, tree, codecContext(htmlOptions.locale, enUS, htmlOptions.resolveAssetUrl));
+            const context = codecContext(htmlOptions.locale, enUS, htmlOptions.resolveAssetUrl);
+            const output = writeHtml(plan, tree, context, htmlOptions.contentClassName);
             return { html: output.html, diagnostics: [...diagnostics, ...output.diagnostics] };
         },
         toPlainText: (document) => {

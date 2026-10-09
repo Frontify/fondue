@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { bold, core } from '#/features';
 import {
@@ -9,6 +9,7 @@ import {
     type CommandsOfModel,
     defineEditor,
     defineNodeView,
+    defineReactPresentation,
     type EditorHandle,
     type RichTextEditorProps,
     RichTextEditor,
@@ -78,7 +79,7 @@ const definition = defineEditor({ id: 'story.playground', model });
 /** Props the editor accepts and types but does not act on yet, with the pair that wires each (DR-063). */
 const NOT_WIRED: readonly (readonly [string, string])[] = [
     ['profile', 'pairs 37 and 38, TASK-rte-profiles; until then the definition prop is required'],
-    ['presentation', 'pair 19, TASK-rte-chrome'],
+    ['presentation', 'pair 19, TASK-rte-chrome, except resolveReference and contentClassName'],
     ['services', 'pair 17, TASK-rte-persistence'],
     ['persistenceOptions', 'pair 17, TASK-rte-persistence'],
     ['portalContainer', 'pair 19, TASK-rte-chrome'],
@@ -94,6 +95,8 @@ type Commands = CommandsOfModel<typeof model>;
 type PlaygroundProps = RichTextEditorProps<Commands> & {
     /** The `create` value of the `marks.bold` authoring policy, which `updatePolicy` applies to the mounted editor. */
     readonly allowNewBold: boolean;
+    /** The presentation's `contentClassName`, which the surface carries beside `fondue-rte-content`. */
+    readonly contentClassName: string;
 };
 
 /** Reads the selection through `useEditorSelection`, which rerenders only when the shown text changes. */
@@ -120,7 +123,8 @@ const resultText = (result: CommandResult | undefined) => {
     return result.status;
 };
 
-const Playground = ({ allowNewBold, ...props }: PlaygroundProps) => {
+const Playground = ({ allowNewBold, contentClassName, ...props }: PlaygroundProps) => {
+    const presentation = useMemo(() => defineReactPresentation({ contentClassName }), [contentClassName]);
     const [events, setEvents] = useState<readonly { readonly id: number; readonly text: string }[]>([]);
     const counterRef = useRef(0);
     const handleRef = useRef<EditorHandle<Commands>>(null);
@@ -270,6 +274,7 @@ const Playground = ({ allowNewBold, ...props }: PlaygroundProps) => {
             </section>
             <RichTextEditor.Root
                 {...props}
+                presentation={presentation}
                 ref={handleRef}
                 onReady={(session) => log(`ready ${session.sessionId}`)}
                 onDocumentChange={(change) => {
@@ -312,6 +317,7 @@ const meta: Meta<typeof Playground> = {
     args: {
         'aria-label': 'Notes',
         allowNewBold: true,
+        contentClassName: 'playground-content',
         definition,
         defaultValue: { documentId: 'story-document', revision: null, document: createEmptyDocument(model) },
         placeholder: 'Write something, press Mod+B or type **text** for bold, and Mod+Z to undo',

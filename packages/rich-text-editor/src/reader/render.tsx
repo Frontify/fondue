@@ -224,10 +224,13 @@ export const message = ({ locale, t }: ReaderContext, kind: keyof typeof MESSAGE
     return createElement('div', props, t(MESSAGE_KEYS[kind]));
 };
 
-/** The reader root: the `doc` node as one `div` that carries its `lang` and `dir`, its blocks, then the island notice. */
-export const renderDocument = (state: RenderState, root: TreeNode): ReactElement => {
+/** The reader root: the `doc` node as one `div` with the content classes, its `lang` and `dir`, its blocks, then the island notice. */
+export const renderDocument = (state: RenderState, root: TreeNode, contentClassName?: string): ReactElement => {
     const children = renderChildren(state, root, '/content', false);
-    const props: Record<string, unknown> = {};
+    const props: Record<string, unknown> = { className: 'fondue-rte-content' };
+    if (contentClassName !== undefined) {
+        props.className = `fondue-rte-content ${contentClassName}`;
+    }
     const lang = root.attrs?.lang;
     const dir = root.attrs?.dir;
     if (typeof lang === 'string') {

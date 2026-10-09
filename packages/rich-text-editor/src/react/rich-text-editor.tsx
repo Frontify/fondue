@@ -16,7 +16,7 @@ import {
     useState,
 } from 'react';
 
-import '#/styles/placeholder.css';
+import '#/styles/content.css';
 import { useClientLayoutEffect } from '#/bridge/client-layout-effect';
 import { createReactWork, inReactWork, Phase, ReactWorkContext, sharesName } from '#/bridge/dev-checks';
 import { SessionContext, useSessionValue } from '#/bridge/hooks';
@@ -43,6 +43,7 @@ type Props = RichTextEditorProps<object>;
 /** The props once `definition` is known to be set. */
 type Defined = Props & { readonly definition: CompiledEditorDefinition<object> };
 const DEFAULT_TEST_ID = 'fondue-rich-text-editor';
+const CONTENT_CLASS = 'fondue-rte-content';
 const NO_PRESENTATION: ReaderPresentation = {};
 
 /** What one mount keeps for its whole life: a changed `definition` or `profile` needs a new mount (SPEC-rich-text-react/AC-071). */
@@ -323,7 +324,12 @@ const emptiness = (runtime: EditorRuntime | undefined) => {
  */
 const Surface = () => {
     const { props, mounted, coordinator } = useRoot('Surface');
-    const { 'data-test-id': testId = DEFAULT_TEST_ID, spellCheck = true, placeholder } = props;
+    const { 'data-test-id': testId = DEFAULT_TEST_ID, spellCheck = true, placeholder, presentation } = props;
+    // The content root carries the host's class, whose rules win over the package's (SPEC-rich-text-react/AC-066, AC-067).
+    let className = CONTENT_CLASS;
+    if (presentation?.contentClassName !== undefined) {
+        className = `${CONTENT_CLASS} ${presentation.contentClassName}`;
+    }
     // A document that is not empty shows no placeholder; before the session is ready the container is empty, as on the server (SPEC-rich-text-react/AC-093).
     let shownPlaceholder = placeholder;
     if (useSessionValue(emptiness, Object.is) === false) {
@@ -332,6 +338,7 @@ const Surface = () => {
     return (
         <div
             ref={coordinator.setSurface}
+            className={className}
             role="textbox"
             aria-multiline
             aria-label={props['aria-label']}

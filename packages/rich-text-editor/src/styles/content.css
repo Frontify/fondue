@@ -1,0 +1,100 @@
+/* (c) Copyright Frontify Ltd., all rights reserved. */
+
+/* Every selector sits inside `:where()`, so any host rule on `contentClassName` wins without `!important` (SPEC-rich-text-react/AC-067). */
+
+/* SPEC-rich-text-react/AC-051: hosts override these per root, and each default is a Fondue token. */
+:where(.fondue-rte-content) {
+    --rte-content-text-color: var(--color-primary-default);
+    --rte-content-paragraph-spacing: var(--spacing-x-small);
+    --rte-content-surface-background: var(--color-surface-default);
+    --rte-content-surface-border: var(--border-width-default) solid var(--color-line-mid);
+    --rte-content-surface-padding: var(--spacing-x-small) var(--spacing-small);
+    --rte-content-placeholder-color: var(--color-secondary-default);
+    --rte-content-placeholder-opacity: 1;
+    --rte-content-selected-node-color: var(--color-focus-default);
+    color: var(--rte-content-text-color);
+}
+
+:where(.fondue-rte-content p) {
+    margin-block: 0 var(--rte-content-paragraph-spacing);
+}
+
+/* The structural rules of the installed prosemirror-view/style/prosemirror.css, scoped to the surface (SPEC-rich-text-react/AC-092). */
+:where(.fondue-rte-content[data-rte-surface]) {
+    position: relative;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+    white-space: break-spaces;
+    -webkit-font-variant-ligatures: none;
+    font-variant-ligatures: none;
+    font-feature-settings: 'liga' 0;
+    padding: var(--rte-content-surface-padding);
+    border: var(--rte-content-surface-border);
+    background-color: var(--rte-content-surface-background);
+}
+
+:where(.fondue-rte-content[data-rte-surface] pre) {
+    white-space: pre-wrap;
+}
+
+:where(.fondue-rte-content[data-rte-surface] li) {
+    position: relative;
+}
+
+:where(.fondue-rte-content[data-rte-surface].ProseMirror-hideselection *)::selection {
+    background: transparent;
+}
+
+:where(.fondue-rte-content[data-rte-surface].ProseMirror-hideselection *)::-moz-selection {
+    background: transparent;
+}
+
+:where(.fondue-rte-content[data-rte-surface].ProseMirror-hideselection) {
+    caret-color: transparent;
+}
+
+:where(.fondue-rte-content[data-rte-surface] [draggable][contenteditable='false']) {
+    -webkit-user-select: text;
+    user-select: text;
+}
+
+:where(.fondue-rte-content[data-rte-surface] .ProseMirror-selectednode) {
+    outline: 2px solid var(--rte-content-selected-node-color);
+}
+
+:where(.fondue-rte-content[data-rte-surface] li.ProseMirror-selectednode) {
+    outline: none;
+}
+
+:where(.fondue-rte-content[data-rte-surface] li.ProseMirror-selectednode)::after {
+    content: '';
+    position: absolute;
+    inset-inline-start: -32px;
+    inset-inline-end: -2px;
+    top: -2px;
+    bottom: -2px;
+    border: 2px solid var(--rte-content-selected-node-color);
+    pointer-events: none;
+}
+
+:where(.fondue-rte-content[data-rte-surface] img.ProseMirror-separator) {
+    display: inline !important;
+    border: none !important;
+    margin: 0 !important;
+}
+
+/* SPEC-rich-text-react/AC-030: the placeholder shows only on an empty document and is never document text. */
+:where(.fondue-rte-content[data-rte-surface][data-rte-empty][data-placeholder])::before {
+    content: attr(data-placeholder);
+    position: absolute;
+    color: var(--rte-content-placeholder-color);
+    opacity: var(--rte-content-placeholder-opacity);
+    pointer-events: none;
+}
+
+/* SPEC-rich-text-react/AC-089: printed content keeps its text and drops node chrome. */
+@media print {
+    :where(.fondue-rte-content [data-rte-chrome]) {
+        display: none;
+    }
+}

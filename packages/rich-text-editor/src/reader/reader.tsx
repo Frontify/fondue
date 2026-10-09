@@ -25,6 +25,8 @@ export interface ReaderPresentation {
     readonly resolveAssetUrl?: ResolveAssetUrl;
     /** Synchronous, so the reader renders on the server in one pass. */
     readonly resolveReference?: (resourceType: string, resourceId: string) => ReferenceResolution;
+    /** A class the content root carries beside `fondue-rte-content`, for host rules (SPEC-rich-text-react/AC-066). */
+    readonly contentClassName?: string;
 }
 
 export interface RichTextReaderProps {
@@ -70,7 +72,7 @@ const build = ({ document, model, presentation, locale = enUS, limits }: RichTex
         return { element: message(context, 'invalid'), diagnostics, notified };
     }
     const state: RenderState = { plan: planOf(model), context, diagnostics, islands: 0, carried: 0 };
-    return { element: renderDocument(state, tree), diagnostics, notified };
+    return { element: renderDocument(state, tree, resolvers.contentClassName), diagnostics, notified };
 };
 
 interface Slot {

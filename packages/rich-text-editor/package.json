@@ -42,7 +42,8 @@
         "./testing": {
             "types": "./dist/testing/index.d.ts",
             "import": "./dist/testing/index.js"
-        }
+        },
+        "./styles": "./dist/style.css"
     },
     "publishConfig": {
         "access": "public"
@@ -51,6 +52,7 @@
         "build": "vite build",
         "build:storybook": "storybook build",
         "check:bundle-size": "tsx scripts/check-bundle-size.ts",
+        "check:css": "tsx scripts/check-css.ts",
         "check:ct-ports": "tsx scripts/check-ct-ports.ts",
         "check:docs": "tsx scripts/check-docs.ts",
         "check:entry-graph": "tsx scripts/check-entry-graph.ts",

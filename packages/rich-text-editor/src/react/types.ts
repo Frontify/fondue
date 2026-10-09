@@ -204,7 +204,6 @@ export interface ReactPresentation extends ReaderPresentation {
     readonly columns?: number;
     /** `normal`, or a length in `px` or `rem`. */
     readonly columnGap?: string;
-    readonly contentClassName?: string;
     /** Strikethrough and secondary colour on checked task items; default false (`SPEC-rich-text-editing`). */
     readonly strikeCheckedTasks?: boolean;
     /** Groups of command IDs, `{ command, payload }` items and the `text-style` control ID, in order (Default toolbars). */

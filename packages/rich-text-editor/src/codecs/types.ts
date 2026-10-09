@@ -14,13 +14,16 @@ export interface CodecLoss {
     readonly featureId: string;
     readonly count: number;
 }
-export interface HtmlOptions {
+/** One dialect: CommonMark 0.31.2 with GFM tables, strikethrough, task list items and autolinks. */
+export interface MarkdownOptions {
     /** Localized output text; default `enUS`. */
     readonly locale?: RichTextLocale;
     readonly resolveAssetUrl?: ResolveAssetUrl;
 }
-/** One dialect: CommonMark 0.31.2 with GFM tables, strikethrough, task list items and autolinks. */
-export type MarkdownOptions = HtmlOptions;
+export interface HtmlOptions extends MarkdownOptions {
+    /** The presentation's `contentClassName`, which the root carries beside `fondue-rte-content`, as in the reader. */
+    readonly contentClassName?: string;
+}
 /**
  * Each codec first runs `decodeDocument(document, model, options)`. `diagnostics` holds the decode
  * diagnostics, which carry the diagnostic that made each island, with the path of the failing value (DR-041), then the codec's own. A `blocked`
