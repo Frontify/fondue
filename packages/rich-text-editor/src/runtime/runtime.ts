@@ -30,7 +30,7 @@ import {
 } from '#/model';
 import { type TreeNode } from '#/model/content';
 import { encodeTree } from '#/model/encode';
-import { findInvalidPayload } from '#/model/values';
+import { findInvalidPayload, findUnsafeJson } from '#/model/values';
 
 import { secondCopyAtMount, secondCopyInView } from './engines';
 import { createLimitCheck } from './limits';
@@ -193,6 +193,14 @@ const runtimeDiagnostic = (
     return { code, severity, messageKey: code, details };
 };
 const unique = (values: readonly string[]) => [...new Set(values)];
+const isSafe = (payload: unknown) => payload === undefined || findUnsafeJson(payload, '') === undefined;
+/** A JSON copy of a payload; an `undefined` member drops out, as it does from a stored document. */
+const copyOf = (payload: unknown): unknown => {
+    if (payload === undefined) {
+        return undefined;
+    }
+    return JSON.parse(JSON.stringify(payload)) as unknown;
+};
 // The checks of `./engines` cover a second copy of `prosemirror-model` only (DR-070).
 const DUPLICATE_ENGINE = runtimeDiagnostic('runtime.duplicate-engine', 'warning', { packages: ['prosemirror-model'] });
 
@@ -478,11 +486,16 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     };
 
     /** Runs a command against the current state with a dispatch that captures its transaction, then prepares it. */
-    const attempt = (id: string, payload: unknown): Attempt => {
+    const attempt = (id: string, given: unknown): Attempt => {
         const command = definition.commands.get(id);
         if (command === undefined) {
             return { code: 'unknown-command' };
         }
+        // One JSON copy is checked and run, so an accessor or proxy cannot change the payload in between.
+        if (!isSafe(given)) {
+            return { code: 'invalid-payload' };
+        }
+        const payload = copyOf(given);
         if (findInvalidPayload(command.payload, payload) !== undefined) {
             return { code: 'invalid-payload' };
         }
@@ -510,8 +523,8 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     const query = (id: string, payload?: unknown): CommandState => {
         const command = definition.commands.get(id);
         let active: boolean | 'mixed' = false;
-        if (command !== undefined) {
-            active = command.active(state);
+        if (command !== undefined && isSafe(payload)) {
+            active = command.active(state, copyOf(payload));
         }
         const attempted = attempt(id, payload);
         if ('code' in attempted) {
@@ -550,18 +563,23 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             return;
         }
         draining = true;
+        let warned = false;
         try {
             let intent = queue.shift();
             while (intent !== undefined) {
                 liveResources.intents -= 1;
-                if (intent.depth > MAX_ENQUEUE_DEPTH) {
-                    report(runtimeDiagnostic('runtime.enqueue-loop', 'warning'));
-                    intent.resolve(rejected('busy'));
-                } else {
-                    depth = intent.depth;
+                // The intent's depth holds while it runs or is reported, so what its listeners enqueue sits deeper.
+                depth = intent.depth;
+                if (intent.depth <= MAX_ENQUEUE_DEPTH) {
                     intent.resolve(execute(intent.id, intent.payload));
-                    depth = 0;
+                } else {
+                    if (!warned) {
+                        warned = true;
+                        report(runtimeDiagnostic('runtime.enqueue-loop', 'warning'));
+                    }
+                    intent.resolve(rejected('busy'));
                 }
+                depth = 0;
                 intent = queue.shift();
             }
         } finally {

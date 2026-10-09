@@ -20,7 +20,7 @@ export const APPEND_BATCH_META = 'rte.append-batch';
  */
 export interface EngineCommand {
     readonly run: (state: EditorState, dispatch?: (transaction: Transaction) => void, payload?: unknown) => boolean;
-    readonly active: (state: EditorState) => boolean | 'mixed';
+    readonly active: (state: EditorState, payload?: unknown) => boolean | 'mixed';
     /** The command's payload declaration; none means it takes no payload (SPEC-rich-text/AC-054). */
     readonly payload?: PayloadDeclaration;
 }
