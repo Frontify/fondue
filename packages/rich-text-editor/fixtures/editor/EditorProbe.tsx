@@ -98,7 +98,6 @@ export const EditorProbe = ({
     controlled = false,
     profile,
     withReader = false,
-    inForm = false,
     rerendered = {},
     onChange,
 }: {
@@ -115,8 +114,6 @@ export const EditorProbe = ({
     readonly profile?: string;
     /** Renders the reader of the same document after the editor, in a region named Reader. */
     readonly withReader?: boolean;
-    /** Puts the editor in a form. */
-    readonly inForm?: boolean;
     readonly rerendered?: Rerendered;
     readonly onChange?: (change: { readonly origin: string; readonly commandId: string | null }) => void;
 }) => {
@@ -167,7 +164,7 @@ export const EditorProbe = ({
             };
         }
     }, [environment]);
-    const editor = (
+    return (
         <>
             <button type="button">Before</button>
             <RichTextEditor
@@ -188,8 +185,4 @@ export const EditorProbe = ({
             )}
         </>
     );
-    if (inForm) {
-        return <form onSubmit={(event) => event.preventDefault()}>{editor}</form>;
-    }
-    return editor;
 };

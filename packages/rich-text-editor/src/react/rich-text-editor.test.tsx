@@ -5,7 +5,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { act, render, screen } from '@testing-library/react';
-import { createRef, Profiler, StrictMode, useEffect, useState } from 'react';
+import { createRef, Profiler, StrictMode, useEffect, useLayoutEffect, useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
 import { useEditorSelection } from '#/bridge/hooks';
@@ -505,7 +505,58 @@ describe('RichTextEditor host surface', () => {
         expect(run({}, { 'aria-label': 'Summary' } as Props)).toEqual([[], []]);
     });
 
-    it.each(['render', 'effect'] as const)(
+    it('SPEC-rich-text-react/AC-080 warns from the editor mounted second even when it sits before the first', () => {
+        const environment = createTestEnvironment({ seed: 1 });
+        const first = vi.fn<(diagnostic: Diagnostic) => void>();
+        const second = vi.fn<(diagnostic: Diagnostic) => void>();
+        const editor = (key: string, onDiagnostic: (diagnostic: Diagnostic) => void) => (
+            <RichTextEditor
+                key={key}
+                aria-label="Notes"
+                definition={definition}
+                defaultValue={defaultValue()}
+                environment={environment}
+                onDiagnostic={onDiagnostic}
+            />
+        );
+        const { rerender, unmount } = render(<>{[editor('a', first)]}</>);
+        act(() => environment.flushFrames());
+
+        rerender(<>{[editor('b', second), editor('a', first)]}</>);
+        act(() => environment.flushFrames());
+
+        expect(first).not.toHaveBeenCalled();
+        expect(second.mock.calls.map(([{ code }]) => code)).toEqual(['react.duplicate-accessible-name']);
+        unmount();
+    });
+
+    it('SPEC-rich-text-react/AC-080 reports no duplicate accessible name in a production build', () => {
+        vi.stubEnv('NODE_ENV', 'production');
+        const environment = createTestEnvironment({ seed: 1 });
+        const onDiagnostic = vi.fn<(diagnostic: Diagnostic) => void>();
+        const editor = () => (
+            <RichTextEditor
+                aria-label="Notes"
+                definition={definition}
+                defaultValue={defaultValue()}
+                environment={environment}
+                onDiagnostic={onDiagnostic}
+            />
+        );
+        const { unmount } = render(
+            <>
+                {editor()}
+                {editor()}
+            </>,
+        );
+        act(() => environment.flushFrames());
+
+        expect(onDiagnostic).not.toHaveBeenCalled();
+        unmount();
+        vi.unstubAllEnvs();
+    });
+
+    it.each(['render', 'effect', 'layout effect'] as const)(
         'SPEC-rich-text-react/AC-102 rejects execute from a React %s with one react.execute-in-render error and no change',
         (during) => {
             const environment = createTestEnvironment({ seed: 1 });
@@ -522,6 +573,11 @@ describe('RichTextEditor host surface', () => {
                 }
                 useEffect(() => {
                     if (calling && during === 'effect') {
+                        results.push(insert());
+                    }
+                });
+                useLayoutEffect(() => {
+                    if (calling && during === 'layout effect') {
                         results.push(insert());
                     }
                 });
@@ -636,14 +692,40 @@ describe('RichTextEditor host surface', () => {
         unmount();
     });
 
-    it('SPEC-rich-text-react/AC-102 queues no development check work on a rerender in a production build', () => {
+    it('SPEC-rich-text-react/AC-102 runs execute from a render with no diagnostic in a production build', () => {
         vi.stubEnv('NODE_ENV', 'production');
-        const { environment, rerender, unmount } = mount();
-        const microtask = vi.spyOn(environment.scheduler, 'microtask');
+        const environment = createTestEnvironment({ seed: 1 });
+        const ref = createRef<EditorHandle<object>>();
+        const onDiagnostic = vi.fn<(diagnostic: Diagnostic) => void>();
+        const results: CommandResult[] = [];
+        const Caller = ({ calling }: { readonly calling: boolean }) => {
+            if (calling) {
+                results.push(
+                    (ref.current as unknown as Pick<RuntimeHandle, 'execute'>).execute('text.insert', { text: 'x' }),
+                );
+            }
+            return null;
+        };
+        const tree = (calling: boolean) => (
+            <RichTextEditor.Root
+                aria-label="Notes"
+                definition={definition}
+                defaultValue={defaultValue(para({ type: 'text', text: 'ab' }))}
+                environment={environment}
+                onDiagnostic={onDiagnostic}
+                ref={ref}
+            >
+                <RichTextEditor.Surface />
+                <Caller calling={calling} />
+            </RichTextEditor.Root>
+        );
+        const { rerender, unmount } = render(tree(false));
+        act(() => environment.flushFrames());
 
-        rerender({ placeholder: 'Write' });
+        rerender(tree(true));
 
-        expect(microtask).not.toHaveBeenCalled();
+        expect(results.map(({ status }) => status)).toEqual(['applied']);
+        expect(onDiagnostic).not.toHaveBeenCalled();
         unmount();
         vi.unstubAllEnvs();
     });

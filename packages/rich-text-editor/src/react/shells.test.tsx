@@ -303,6 +303,14 @@ describe('the blocked shell', () => {
             const environment = createTestEnvironment({ seed: 1 });
             const spy = persistence();
             const writeText = vi.spyOn(navigator.clipboard, 'writeText').mockResolvedValue(undefined);
+            // Taken from a copy before the editor sees the input, so an editor that changed it in place fails.
+            const reader = renderToStaticMarkup(
+                <RichTextReader document={structuredClone(original)} model={usedModel} limits={used.limits} />,
+            );
+            let text = JSON.stringify(original);
+            if (typeof original === 'string') {
+                text = original;
+            }
             const { unmount } = render(
                 <RichTextEditor
                     aria-label="Notes"
@@ -318,15 +326,8 @@ describe('the blocked shell', () => {
             });
 
             expect(shell('blocked')).toHaveTextContent(message);
-            const reader = renderToStaticMarkup(
-                <RichTextReader document={original} model={usedModel} limits={used.limits} />,
-            );
             expect(shell('blocked').innerHTML).toContain(reader);
             fireEvent.click(screen.getByRole('button', { name: 'Copy original' }));
-            let text = JSON.stringify(original);
-            if (typeof original === 'string') {
-                text = original;
-            }
             expect(writeText.mock.calls).toEqual([[text]]);
             expect(document.querySelector('[contenteditable]')).toBeNull();
             expect(spy.save).not.toHaveBeenCalled();

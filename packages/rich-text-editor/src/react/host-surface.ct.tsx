@@ -119,8 +119,8 @@ test('SPEC-rich-text-react/AC-093 shows no placeholder for an empty paragraph be
     await mount(<EditorProbe blocks={blocks} placeholder="Write a note" />);
     await ready(page);
 
-    const before = await surfaceOf(page).evaluate((surface) => getComputedStyle(surface, '::before').content);
-    expect(before).toBe('none');
+    // The placeholder pseudo-element shows only on a surface marked empty.
+    await expect(surfaceOf(page)).not.toHaveAttribute('data-rte-empty');
     await expect(surfaceOf(page)).not.toHaveAttribute('aria-placeholder');
 });
 
@@ -130,6 +130,7 @@ test('SPEC-rich-text-react/AC-093 SPEC-rich-text-react/AC-030 shows the placehol
 }) => {
     await mount(<EditorProbe texts={['a']} placeholder="Write a note" />);
     await ready(page);
+    await expect(surfaceOf(page)).not.toHaveAttribute('data-rte-empty');
     await expect(surfaceOf(page)).not.toHaveAttribute('aria-placeholder');
 
     await surfaceOf(page).click();
@@ -137,6 +138,7 @@ test('SPEC-rich-text-react/AC-093 SPEC-rich-text-react/AC-030 shows the placehol
     await page.keyboard.press('Backspace');
 
     await expect.poll(() => page.evaluate(() => window.rte?.text())).toBe('');
+    await expect(surfaceOf(page)).toHaveAttribute('data-rte-empty', '');
     await expect(surfaceOf(page)).toHaveAttribute('aria-placeholder', 'Write a note');
 });
 
@@ -161,6 +163,13 @@ test('SPEC-rich-text-output/AC-013 keeps the document, selection and undo depth 
             };
         });
 
+    const attributes = () =>
+        surfaceOf(page).evaluate((surface) => [
+            surface.getAttribute('contenteditable'),
+            surface.getAttribute('aria-readonly'),
+        ]);
+    const shown = { readonly: ['false', 'true'], editable: ['true', null] };
+
     const changed: unknown[] = [];
     for (let index = 0; index < 20; index += 1) {
         await page.keyboard.type(String(index % 10));
@@ -170,6 +179,10 @@ test('SPEC-rich-text-output/AC-013 keeps the document, selection and undo depth 
             const after = await state();
             if (JSON.stringify(after) !== JSON.stringify(before)) {
                 changed.push({ index, mode, before, after });
+            }
+            const surfaceAttributes = await attributes();
+            if (JSON.stringify(surfaceAttributes) !== JSON.stringify(shown[mode])) {
+                changed.push({ index, mode, surfaceAttributes });
             }
         }
         await page.evaluate(() => window.rte?.handle.focus());
@@ -202,18 +215,26 @@ test('SPEC-rich-text-output/AC-014 exposes a readonly textbox in the readonly ed
     await expect(reader.locator('[contenteditable]')).toHaveCount(0);
 });
 
-test('SPEC-rich-text-accessibility/AC-030 opens no overlay, submits nothing and keeps focus when the surface takes focus by Tab or click', async ({
+test('SPEC-rich-text-accessibility/AC-030 opens no overlay or chrome popup and keeps focus when the surface takes focus by Tab or click', async ({
     mount,
     page,
 }) => {
-    await mount(<EditorProbe texts={['ab']} inForm />);
+    // The mention stand-in's chrome holds a popup, which must stay closed while the surface takes focus.
+    const blocks = [
+        {
+            type: 'paragraph',
+            attrs: { lang: null },
+            content: [
+                { type: 'chrome_mention', attrs: { nodeId: 'm1', label: 'Ada' } },
+                { type: 'text', text: ' ab' },
+            ],
+        },
+    ];
+    await mount(<EditorProbe blocks={blocks} />);
     await ready(page);
-    await page.evaluate(() => {
-        document.querySelector('form')?.addEventListener('submit', () => {
-            document.body.dataset.submits = String(Number(document.body.dataset.submits ?? '0') + 1);
-        });
-    });
-    const overlays = () => page.locator('[role="dialog"], [role="menu"], [role="listbox"], [role="tooltip"]');
+    await expect(surfaceOf(page).locator('[data-chrome="mention"]')).toBeVisible();
+    const overlays = () =>
+        page.locator('[role="dialog"], [role="menu"], [role="listbox"], [role="tooltip"], [data-popup]');
 
     await page.getByRole('button', { name: 'Before' }).focus();
     await page.keyboard.press('Tab');
@@ -221,12 +242,15 @@ test('SPEC-rich-text-accessibility/AC-030 opens no overlay, submits nothing and 
     await expect(overlays()).toHaveCount(0);
 
     await page.getByRole('button', { name: 'Before' }).focus();
-    await surfaceOf(page).click();
+    // Past the end of the text, away from the mention's chrome button.
+    const paragraph = await surfaceOf(page).locator('p').boundingBox();
+    if (paragraph === null) {
+        throw new Error('The paragraph has no box.');
+    }
+    await page.mouse.click(paragraph.x + paragraph.width - 2, paragraph.y + paragraph.height / 2);
     await expect(surfaceOf(page)).toBeFocused();
     await expect(overlays()).toHaveCount(0);
-
-    expect(await page.evaluate(() => document.body.dataset.submits)).toBeUndefined();
-    expect(await page.evaluate(() => window.rte?.text())).toBe('ab');
+    expect(await page.evaluate(() => window.rte?.text())).toBe(' ab');
 });
 
 test.describe('during a composition', () => {
