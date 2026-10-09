@@ -41,7 +41,7 @@ import { createEventBus, type Listener } from './events';
 import { createLimitCheck } from './limits';
 import { authoringOf, createPolicyCheck } from './policy';
 import { createInputSettling } from './settle';
-import { captureTarget, countTargets, releaseTargets, targetSelection, targetsPlugin } from './targets';
+import { captureTarget, countTargets, heldTargets, releaseTargets, targetSelection, targetsPlugin } from './targets';
 import {
     type AuthoringPolicy,
     type CaptureResult,
@@ -65,6 +65,8 @@ type IdKind = Parameters<IdSource['next']>[0];
 const MAX_ENQUEUE_DEPTH = 32;
 // ProseMirror marks each DOM change it reads during a composition with this meta.
 const COMPOSITION_META = 'composition';
+// The target an async operation started with none gets at the selection (SPEC-rich-text-runtime/AC-046).
+const ASYNC_TARGET: CaptureTargetOptions = { purpose: 'insert', onIntersectingEdit: 'map' };
 
 const notBuiltYet = (member: string, pair: string) => (): never => {
     throw new Error(`EditorHandle.${member} is not built yet; it lands with ${pair}.`);
@@ -267,6 +269,8 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     let installing = false;
     // Roots that plugin views dispatch while an install runs, committed once its selectors and events are done.
     const deferred: Transaction[] = [];
+    // Targets the coordinator captures during a commit, such as from a running command, captured once it ends.
+    const deferredCaptures: string[] = [];
     const queue: Intent[] = [];
 
     // Records typing before any other handler sees the event, so the view itself gets no event handler (SPEC-rich-text-runtime/AC-001).
@@ -301,6 +305,9 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             return work();
         } finally {
             busy -= 1;
+            if (busy === 0) {
+                flushCaptures();
+            }
             drain();
         }
     };
@@ -506,10 +513,20 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             if (mapping !== undefined) {
                 const before = published.doc;
                 if (breaksPolicy(policy, before, state.doc, mapping) || exceedsLimits(state.doc, limits)) {
-                    liveResources.targets += countTargets(published) - countTargets(state);
-                    state = published;
+                    // Targets released during the composition stay released (SPEC-rich-text-runtime/AC-045).
+                    const kept = heldTargets(state);
+                    const released = releaseTargets(
+                        published,
+                        heldTargets(published).filter((id) => !kept.includes(id)),
+                    );
+                    let restored = published;
+                    if (released !== undefined) {
+                        restored = published.apply(released);
+                    }
+                    liveResources.targets += countTargets(restored) - countTargets(state);
+                    state = restored;
                     if (view !== undefined) {
-                        view.updateState(published);
+                        view.updateState(restored);
                     }
                     commitSequence += 1;
                     notify();
@@ -674,12 +691,37 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     };
     const execute = (id: string, given?: unknown, options?: unknown) => run(id, given, options, 'host');
 
+    /**
+     * Captures each deferred target once no commit runs, at the selection the commit left, which ProseMirror maps
+     * through the commit's steps (`Transaction.selection`).
+     */
+    const flushCaptures = () => {
+        for (let id = deferredCaptures.shift(); id !== undefined; id = deferredCaptures.shift()) {
+            if (phase === 'ready') {
+                commit(captureTarget(state, id, ASYNC_TARGET));
+            }
+        }
+    };
+
     const coordinator = createAsyncCoordinator({
         ids: environment.ids,
         session: () => session,
         policyRevision: () => policyRevision,
         isDisposed: () => phase === 'disposed',
         holding: () => settling.active(),
+        capture: () => {
+            if (phase !== 'ready') {
+                return undefined;
+            }
+            const id = environment.ids.next('target');
+            if (busy > 0) {
+                deferredCaptures.push(id);
+            } else {
+                commit(captureTarget(state, id, ASYNC_TARGET));
+            }
+            return Object.freeze({ id, session }) as unknown as SelectionHandle;
+        },
+        release: (target) => handle.releaseTarget(target),
         // A result runs as its command's payload through `commit` from the current state (SPEC-rich-text-runtime/AC-048).
         apply: (operation, result) => {
             let options: { readonly target: SelectionHandle } | undefined;
@@ -767,6 +809,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         coordinator.dispose();
         settleQueue('not-ready');
         deferred.length = 0;
+        deferredCaptures.length = 0;
         const release = releaseTargets(state);
         if (release !== undefined) {
             liveResources.targets -= countTargets(state);
@@ -850,6 +893,10 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             const owned = ownTarget(target);
             if (phase === 'disposed' || typeof owned === 'string') {
                 return;
+            }
+            const waiting = deferredCaptures.indexOf(owned.id);
+            if (waiting >= 0) {
+                deferredCaptures.splice(waiting, 1);
             }
             const release = releaseTargets(state, [owned.id]);
             if (release !== undefined) {

@@ -117,9 +117,12 @@ export const captureTarget = (state: EditorState, id: string, options: CaptureTa
     return state.tr.setMeta(TARGETS, { id, target });
 };
 
+/** The IDs of the targets a state holds. */
+export const heldTargets = (state: EditorState): string[] => [...targetsOf(state).keys()];
+
 /** A transaction that removes targets `ids`, or every target, from plugin state, or `undefined` when it holds none of them (AC-045). */
 export const releaseTargets = (state: EditorState, ids?: readonly string[]): Transaction | undefined => {
-    const held = [...targetsOf(state).keys()].filter((id) => ids === undefined || ids.includes(id));
+    const held = heldTargets(state).filter((id) => ids === undefined || ids.includes(id));
     if (held.length === 0) {
         return undefined;
     }
