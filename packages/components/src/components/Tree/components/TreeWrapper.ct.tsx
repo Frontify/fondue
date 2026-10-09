@@ -57,6 +57,19 @@ test.describe('Tree rows inside custom components', () => {
         await expect(component.getByText('Loading')).toHaveCount(0);
     });
 
+    test('keeps keyboard focus on the folder when expanding mounts its first custom component', async ({
+        mount,
+        page,
+    }) => {
+        const component = await mount(<LazyWrapperTree />);
+        const folder = component.getByRole('treeitem', { name: /Lazy/ });
+        await folder.focus();
+        await page.keyboard.press('ArrowRight');
+        await expect(component.getByRole('treeitem', { name: 'lazy-1' })).toBeVisible();
+        await expect(folder).toBeFocused();
+        await expect(folder).toHaveAttribute('aria-expanded', 'true');
+    });
+
     test('nests folders declared through recursive components', async ({ mount }) => {
         const component = await mount(<NestedWrapperTree />);
         await expect(component.getByRole('treeitem', { name: 'deep-leaf' })).toHaveAttribute('aria-level', '4');

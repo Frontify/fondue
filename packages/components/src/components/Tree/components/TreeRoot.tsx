@@ -159,14 +159,14 @@ export const TreeRoot = ({
         </div>
     );
 
-    if (!parsed.hasForeignRows) {
-        return treeElement;
-    }
+    // One stable shape, so mounting the collect pass never remounts the tree (and its focus).
     return (
         <>
-            <TreeCollector store={store} containerRef={collectRef}>
-                {children}
-            </TreeCollector>
+            {parsed.hasForeignRows && (
+                <TreeCollector store={store} containerRef={collectRef}>
+                    {children}
+                </TreeCollector>
+            )}
             {treeElement}
         </>
     );
