@@ -1,15 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { bold, core } from '../../src/features';
-import { fixtureLink } from '../../src/features/__fixtures__/features';
+import { fixtureHeadingSet, fixtureLink } from '../../src/features/__fixtures__/features';
 import { defineEditor, type EditorHandle, RichTextEditor } from '../../src/index';
 import { compileContentModel } from '../../src/model';
-import { runtimeOf } from '../../src/runtime/runtime';
-import { setSelection } from '../../src/testing';
+import { type EditorRuntime, runtimeOf } from '../../src/runtime/runtime';
+import { createTestEnvironment, setSelection, type TestEnvironment } from '../../src/testing';
 
-const model = compileContentModel([core(), bold(), fixtureLink()], { id: 'test.ct', version: 1 });
+const model = compileContentModel([core(), bold(), fixtureLink(), fixtureHeadingSet()], {
+    id: 'test.ct',
+    version: 1,
+});
 const ALLOW = { create: true, edit: true, remove: true, paste: true };
 /** The CT model's definitions: every feature allowed, and paragraphs that may not change. */
 const definitions = {
@@ -59,6 +62,10 @@ declare global {
         /** The mounted editor's handle and the selection helper, for tests that drive it from the page. */
         rte?: {
             readonly handle: EditorHandle;
+            /** The runtime behind the handle, which starts async operations through its coordinator. */
+            readonly runtime: EditorRuntime | undefined;
+            /** The injected environment when the probe mounts with `controlled`, whose timers run only when advanced. */
+            readonly environment: TestEnvironment | undefined;
             readonly setSelection: typeof setSelection;
             /** The text of the runtime's document. */
             readonly text: () => string | undefined;
@@ -72,6 +79,7 @@ export const EditorProbe = ({
     readOnly = false,
     guarded = false,
     placeholder,
+    controlled = false,
     onChange,
 }: {
     readonly texts?: readonly string[];
@@ -79,9 +87,12 @@ export const EditorProbe = ({
     /** Mounts the definition whose policy keeps every paragraph as it is. */
     readonly guarded?: boolean;
     readonly placeholder?: string;
+    /** Mounts with a test environment, so the test runs its microtasks, frames and timers. */
+    readonly controlled?: boolean;
     readonly onChange?: (change: { readonly origin: string; readonly commandId: string | null }) => void;
 }) => {
     const ref = useRef<EditorHandle<object>>(null);
+    const [environment] = useState(() => (controlled ? createTestEnvironment({ seed: 1 }) : undefined));
     let definition = definitions.open;
     if (guarded) {
         definition = definitions.guarded;
@@ -89,9 +100,16 @@ export const EditorProbe = ({
     useEffect(() => {
         if (ref.current !== null) {
             const handle = ref.current as EditorHandle;
-            window.rte = { handle, setSelection, text: () => runtimeOf(handle)?.view?.state.doc.textContent };
+            const runtime = runtimeOf(handle);
+            window.rte = {
+                handle,
+                runtime,
+                environment,
+                setSelection,
+                text: () => runtime?.view?.state.doc.textContent,
+            };
         }
-    }, []);
+    }, [environment]);
     return (
         <>
             <button type="button">Before</button>
@@ -101,6 +119,7 @@ export const EditorProbe = ({
                 defaultValue={storedOf(...texts)}
                 readOnly={readOnly}
                 {...(placeholder === undefined ? {} : { placeholder })}
+                {...(environment === undefined ? {} : { environment })}
                 ref={ref}
                 onDocumentChange={({ origin, commandId }) => onChange?.({ origin, commandId })}
             />

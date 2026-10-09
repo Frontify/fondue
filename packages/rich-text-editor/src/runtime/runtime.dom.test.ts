@@ -44,6 +44,7 @@ import { probeRuntimes } from '#/testing/probe';
 
 import newerNotes from '../../fixtures/migration/v3-current.json';
 
+import { type AsyncRequest } from './async';
 import { CAPABILITIES } from './capabilities';
 import { createLimitCheck } from './limits';
 import { authoringOf } from './policy';
@@ -129,6 +130,36 @@ const start = (input: unknown, options: Start = {}) => {
 };
 
 const contentOf = (change: DocumentChange | undefined) => change?.readDocument().content;
+
+/** Starts an operation through the coordinator whose service call resolves when the test resolves it. */
+const pending = (runtime: EditorRuntime, request: Partial<AsyncRequest> = {}) => {
+    let settle: (result: unknown) => void = () => undefined;
+    const call = new Promise<unknown>((resolve) => {
+        settle = resolve;
+    });
+    const operation = runtime.startAsync({
+        key: 'upload',
+        service: 'uploads',
+        featureId: 'core',
+        action: 'create',
+        command: 'text.insert',
+        run: () => call,
+        ...request,
+    });
+    return {
+        operation,
+        resolve: async (result: unknown) => {
+            settle(result);
+            await call;
+        },
+    };
+};
+const discarded = (reason: string) => ({
+    code: 'runtime.async-discarded',
+    severity: 'info',
+    messageKey: 'runtime.async-discarded',
+    details: { reason },
+});
 
 describe('the commit path', () => {
     it('SPEC-rich-text-runtime/AC-002 publishes a root transaction and its appended one as one change', () => {
@@ -1017,7 +1048,9 @@ describe('commands, events and the commit path', () => {
         pressKey(handle, 'Mod-b');
         handle.execute('mark.bold.toggle');
         await handle.enqueue('text.insert', { text: 'e' });
+        await pending(runtime).resolve({ text: 'f' });
 
+        expect(view.state.doc.textContent).toContain('f');
         expect(installed).toHaveLength(handle.getSummary().commitSequence);
         expect(installed.at(-1)).toBe(view.state);
         expect([view.props.handleDOMEvents, view.props.handleKeyDown, view.props.handleTextInput]).toEqual([
@@ -1077,10 +1110,12 @@ describe('commands, events and the commit path', () => {
             plugins: [appendForever('fixture.a', 'insertNode'), appendForever('fixture.b', 'setBlock')],
         });
         const before = view.state;
+        const snapshot = handle.getSnapshot();
 
         typeText(handle, 'x');
 
         expect(view.state).toBe(before);
+        expect(handle.getSnapshot()).toBe(snapshot);
         expect(changes).toEqual([]);
         expect(handle.getSummary()).toMatchObject({ phase: 'faulted', commitSequence: 0, sequence: 0 });
         expect(view.editable).toBe(false);
@@ -1618,7 +1653,7 @@ describe('origins with an appended normalization', () => {
             return state.tr.insertText('!', state.doc.content.size - 1);
         },
     });
-    const cases: readonly (readonly [string, (session: ReturnType<typeof start>) => void])[] = [
+    const cases: readonly (readonly [string, (session: ReturnType<typeof start>) => unknown])[] = [
         ['input', ({ handle }) => typeText(handle, 'c')],
         ['paste', ({ view }) => view.pasteHTML('<p>d</p>')],
         [
@@ -1630,12 +1665,13 @@ describe('origins with an appended normalization', () => {
         ],
         ['command', ({ handle }) => handle.execute('text.insert', { text: 'e' })],
         ['unknown', ({ view }) => view.dispatch(view.state.tr.insertText('f'))],
+        ['async', ({ runtime }) => pending(runtime).resolve({ text: 'g' })],
     ];
     for (const [origin, act] of cases) {
-        it(`SPEC-rich-text-runtime/AC-021 reports the root's origin ${origin} for a batch with an appended normalization`, () => {
+        it(`SPEC-rich-text-runtime/AC-021 reports the root's origin ${origin} for a batch with an appended normalization`, async () => {
             const session = start(stored(para(words('ab'))), { plugins: [repair] });
 
-            act(session);
+            await act(session);
 
             expect(session.changes.map((change) => change.origin)).toEqual([origin]);
             expect(session.view.state.doc.textContent.endsWith('!')).toBe(true);
@@ -2303,5 +2339,431 @@ describe('disposal', () => {
         expect(settled.map(({ status }) => status)).toEqual(
             Array.from({ length: 5 }).flatMap(() => ['rejected', 'applied']),
         );
+    });
+});
+
+/** Starts a composition as the browser does, so ProseMirror's own handler sets `view.composing`, and composes `text`. */
+const compose = ({ view }: ReturnType<typeof start>, text: string) => {
+    view.dom.dispatchEvent(new CompositionEvent('compositionstart'));
+    // ProseMirror marks the composed text it reads from the DOM with its composition ID.
+    view.dispatch(view.state.tr.insertText(text).setMeta('composition', 1));
+};
+const endComposition = ({ view }: ReturnType<typeof start>) =>
+    view.dom.dispatchEvent(new CompositionEvent('compositionend'));
+/** Runs the environment microtask, then the 20 ms timer after which input has settled. */
+const settleInput = async ({ environment }: ReturnType<typeof start>) => {
+    await environment.flushMicrotasks();
+    environment.advance(20);
+};
+const NOT_EDITABLE_CORE: Partial<AuthoringPolicy> = {
+    features: { core: { create: true, edit: false, remove: true, paste: true } },
+};
+
+describe('the published snapshot and composition', () => {
+    it('SPEC-rich-text-runtime/AC-018 keeps sequence for a selection move and a stored mark, and counts a typed character', () => {
+        const { handle } = start(stored(para(words('ab'))));
+
+        setSelection(handle, { text: 'ab', from: 1, to: 1 });
+        expect(handle.getSummary().sequence).toBe(0);
+        pressKey(handle, 'Mod-b');
+        expect(handle.getSummary().sequence).toBe(0);
+        typeText(handle, 'c');
+        expect(handle.getSummary().sequence).toBe(1);
+    });
+
+    it('SPEC-rich-text-runtime/AC-065 returns one frozen snapshot until a commit, then the new one to every selector', () => {
+        const { handle, runtime } = start(stored(para(words('ab'))));
+        const first = handle.getSnapshot();
+        const seen: unknown[] = [];
+        runtime.watch(
+            () => handle.getSnapshot(),
+            Object.is,
+            (value) => seen.push(value),
+        );
+        runtime.watch(
+            () => handle.getSnapshot(),
+            Object.is,
+            (value) => seen.push(value),
+        );
+
+        expect(handle.getSnapshot()).toBe(first);
+        expect(() => {
+            (first.stamp as { sequence: number }).sequence = 9;
+        }).toThrow(TypeError);
+        expect(() => {
+            (first.document as { formatVersion: number }).formatVersion = 2;
+        }).toThrow(TypeError);
+        typeText(handle, 'c');
+
+        const next = handle.getSnapshot();
+        expect(next).not.toBe(first);
+        expect(seen).toEqual([next, next]);
+        expect(seen.every((value) => value === next)).toBe(true);
+        expect(next).toMatchObject({
+            stamp: { sequence: 1 },
+            acknowledgedRevision: null,
+            compositionActive: false,
+            document: stored(para(words('cab'))),
+        });
+    });
+
+    it('SPEC-rich-text-runtime/AC-070 SPEC-rich-text-runtime/AC-018 SPEC-rich-text-runtime/AC-033 publishes a composition and runs a queued intent once compositionend, a microtask and 20 ms passed', async () => {
+        const session = start(stored(para(words('ab'))));
+        const { handle, view, environment, changes } = session;
+        setSelection(handle, { text: 'ab', from: 2, to: 2 });
+        const before = handle.getSnapshot();
+        const waiting = (promise: Promise<CommandResult>) => Promise.race([promise, Promise.resolve('pending')]);
+
+        compose(session, 'c');
+        const queued = handle.enqueue('text.insert', { text: '!' });
+        endComposition(session);
+        // ProseMirror reads the last composed characters in its flush after compositionend.
+        view.dispatch(view.state.tr.insertText('d').setMeta('composition', 1));
+        await environment.flushMicrotasks();
+        environment.advance(19);
+
+        expect(await waiting(queued)).toBe('pending');
+        expect(changes).toEqual([]);
+        expect(handle.getSummary()).toMatchObject({ sequence: 0, compositionActive: true });
+        expect(handle.getSnapshot()).toMatchObject({ document: before.document, compositionActive: true });
+
+        environment.advance(1);
+
+        expect(await waiting(queued)).toMatchObject({ status: 'applied', contentChanged: true });
+        expect(changes.map(contentOf)).toEqual([
+            stored(para(words('abcd'))).content,
+            stored(para(words('abcd!'))).content,
+        ]);
+        expect(changes.map(({ origin }) => origin)).toEqual(['input', 'command']);
+        expect(handle.getSummary()).toMatchObject({ sequence: 2, compositionActive: false });
+    });
+
+    it('SPEC-rich-text-runtime/AC-005 SPEC-rich-text-runtime/AC-004 checks a composition once input settled and restores the state from before it', async () => {
+        const session = start(stored(para(words('ab'))), { policy: NOT_EDITABLE_CORE });
+        const { handle, view, changes } = session;
+        const before = view.state;
+
+        compose(session, 'x');
+        expect(view.state.doc.textContent).toBe('xab');
+        endComposition(session);
+        await settleInput(session);
+
+        expect(view.state).toBe(before);
+        expect(changes).toEqual([]);
+        expect(handle.getSummary()).toMatchObject({ sequence: 0, compositionActive: false });
+    });
+
+    it('SPEC-rich-text-runtime/AC-032 SPEC-rich-text-runtime/AC-034 SPEC-rich-text-runtime/AC-072 rejects a host execute and keeps the surface editable until input settled', async () => {
+        const session = start(stored(para(words('ab'))));
+        const { handle, view } = session;
+        const surface = () => view.dom.getAttribute('contenteditable');
+
+        compose(session, 'x');
+        expect(handle.execute('text.insert', { text: 'y' })).toEqual({
+            status: 'rejected',
+            code: 'composition-active',
+        });
+        handle.setMode('readonly');
+        const queued = handle.enqueue('text.insert', { text: 'z' });
+        expect(handle.execute('text.insert', { text: 'y' })).toEqual({ status: 'rejected', code: 'readonly' });
+        compose(session, 'w');
+        expect([surface(), view.state.doc.textContent]).toEqual(['true', 'xwab']);
+        endComposition(session);
+        await settleInput(session);
+
+        expect(await queued).toEqual({ status: 'rejected', code: 'readonly' });
+        expect([surface(), view.state.doc.textContent]).toEqual(['false', 'xwab']);
+    });
+
+    it('SPEC-rich-text-runtime/AC-077 SPEC-rich-text-runtime/AC-060 resolves intents queued during composition as not-ready on dispose and drops the settle timer', async () => {
+        const session = start(stored(para(words('ab'))));
+        const { handle, environment } = session;
+
+        compose(session, 'x');
+        const queued = [handle.enqueue('text.insert', { text: 'y' }), handle.enqueue('mark.bold.toggle')];
+        endComposition(session);
+        await environment.flushMicrotasks();
+        expect(probeRuntimes()).toMatchObject({ intents: 2, timers: 1 });
+        handle.dispose();
+
+        expect(await Promise.all(queued)).toEqual([
+            { status: 'rejected', code: 'not-ready' },
+            { status: 'rejected', code: 'not-ready' },
+        ]);
+        expect(probeRuntimes()).toMatchObject({ intents: 0, timers: 0 });
+    });
+});
+
+describe('targets on release and dispose', () => {
+    it('SPEC-rich-text-runtime/AC-045 removes a released target, and every target on dispose, from plugin state', () => {
+        const environment = createTestEnvironment({ seed: 1 });
+        const { handle } = start(stored(para(words('abcd'))), { model: targetModel, environment });
+        const other = start(stored(para(words('abcd'))), { model: targetModel, environment });
+        setSelection(handle, { text: 'bc' });
+        const kept = capture(handle, { purpose: 'format', onIntersectingEdit: 'map' });
+        const released = capture(handle, { purpose: 'format', onIntersectingEdit: 'map' });
+        expect(probeRuntimes().targets).toBe(2);
+
+        handle.releaseTarget(released);
+        expect(probeRuntimes().targets).toBe(1);
+        expect(handle.execute('mark.bold.toggle', undefined, { target: released })).toEqual(INVALID);
+        expect(handle.execute('mark.bold.toggle', undefined, { target: kept }).status).toBe('applied');
+
+        handle.dispose();
+        expect(probeRuntimes().targets).toBe(0);
+        expect(other.handle.execute('mark.bold.toggle', undefined, { target: kept })).toEqual({
+            status: 'rejected',
+            code: 'wrong-session',
+        });
+    });
+
+    it('SPEC-rich-text-runtime/AC-074 refuses a capture while mounting, faulted or disposed and creates no target', () => {
+        const environment = createTestEnvironment({ seed: 1 });
+        const { tree } = decodeToTree(stored(para(words('ab'))), boldModel);
+        const mounting = createEditorRuntime({
+            definition: compileDefinition(boldModel, CAPABILITIES),
+            documentId: 'document-1',
+            tree: tree as NonNullable<typeof tree>,
+            capabilities: [],
+            environment,
+            mode: 'editable',
+            policy: authoringOf(boldModel),
+            limits: limitsOf(undefined),
+        });
+        started.push(mounting);
+        mounting.attach(document.body.appendChild(document.createElement('div')));
+        const faulted = start(stored(para()), {
+            plugins: [appendForever('fixture.a', 'insertNode'), appendForever('fixture.b', 'setBlock')],
+        });
+        typeText(faulted.handle, 'x');
+        const disposed = start(stored(para(words('ab'))));
+        disposed.handle.dispose();
+        const options = { purpose: 'format', onIntersectingEdit: 'map' } as const;
+
+        const phases = [mounting.handle, faulted.handle, disposed.handle].map((handle) => [
+            handle.getSummary().phase,
+            handle.captureTarget(options),
+        ]);
+
+        expect(phases).toEqual([
+            ['mounting', { status: 'rejected', code: 'not-ready' }],
+            ['faulted', { status: 'rejected', code: 'not-ready' }],
+            ['disposed', { status: 'rejected', code: 'not-ready' }],
+        ]);
+        expect(probeRuntimes().targets).toBe(0);
+    });
+});
+
+describe('the async coordinator', () => {
+    it('SPEC-rich-text-runtime/AC-046 registers each operation with its ID, session, target, policy revision, controller and request sequence', () => {
+        const { handle, runtime } = start(stored(para(words('abcd'))), { model: targetModel });
+        setSelection(handle, { text: 'bc' });
+        const target = capture(handle, { purpose: 'insert', onIntersectingEdit: 'map' });
+        handle.updatePolicy(authoringOf(targetModel));
+
+        pending(runtime, { key: 'mention-search', service: 'references', target });
+        pending(runtime, { key: 'mention-search', service: 'references', target });
+        pending(runtime, { key: 'upload' });
+
+        const { session } = handle.getSummary();
+        const registry = probeRuntimes().operations;
+        expect(registry).toEqual([
+            expect.objectContaining({
+                id: 'operation-2',
+                session,
+                target,
+                policyRevision: 1,
+                key: 'mention-search',
+                request: 2,
+            }),
+            expect.objectContaining({
+                id: 'operation-3',
+                session,
+                target: null,
+                policyRevision: 1,
+                key: 'upload',
+                request: 1,
+            }),
+        ]);
+        expect(registry.map(({ controller }) => controller instanceof AbortController)).toEqual([true, true]);
+    });
+
+    it('SPEC-rich-text-runtime/AC-047 aborts an older request for the same interaction and ignores its result when it resolves last', async () => {
+        const { runtime, view, diagnostics } = start(stored(para(words('ab'))));
+        const older = pending(runtime, { key: 'mention-search' });
+        const newer = pending(runtime, { key: 'mention-search' });
+
+        expect([older.operation.controller.signal.aborted, newer.operation.controller.signal.aborted]).toEqual([
+            true,
+            false,
+        ]);
+        await newer.resolve({ text: 'new ' });
+        await older.resolve({ text: 'old ' });
+
+        expect(view.state.doc.textContent).toBe('new ab');
+        expect(diagnostics).toEqual([discarded('superseded')]);
+    });
+
+    /** Each case starts an operation, makes one check fail, and returns the call that resolves it. */
+    const failures: readonly (readonly [string, string, (session: ReturnType<typeof start>) => () => Promise<void>])[] =
+        [
+            [
+                'a target that an edit invalidated',
+                'target-invalid',
+                ({ handle, runtime, view }) => {
+                    setSelection(handle, { text: 'ab' });
+                    const target = capture(handle, { purpose: 'replace-text', onIntersectingEdit: 'invalidate' });
+                    const operation = pending(runtime, { target });
+                    view.dispatch(view.state.tr.delete(1, 2));
+                    return () => operation.resolve({ text: 'x' });
+                },
+            ],
+            [
+                'a policy that forbids the change',
+                'not-allowed',
+                ({ handle, runtime }) => {
+                    const operation = pending(runtime);
+                    handle.updatePolicy(authoringOf(targetModel, NOT_EDITABLE_CORE));
+                    return () => operation.resolve({ text: 'x' });
+                },
+            ],
+            [
+                'a field of the wrong type',
+                'invalid-payload',
+                ({ runtime }) => {
+                    const operation = pending(runtime);
+                    return () => operation.resolve({ text: 7 });
+                },
+            ],
+            [
+                'a value that is not plain JSON',
+                'invalid-payload',
+                ({ runtime }) => {
+                    const operation = pending(runtime);
+                    return () => operation.resolve({ text: 'x', at: () => 1 });
+                },
+            ],
+        ];
+    for (const [name, reason, act] of failures) {
+        it(`SPEC-rich-text-runtime/AC-048 discards a result with ${name} as ${reason}, with no content change`, async () => {
+            const session = start(stored(para(words('ab'))), { model: targetModel });
+            const resolve = act(session);
+            const { commitSequence } = session.handle.getSummary();
+            const before = session.view.state;
+
+            await resolve();
+
+            expect(session.view.state).toBe(before);
+            expect(session.handle.getSummary().commitSequence).toBe(commitSequence);
+            expect(session.diagnostics).toEqual([discarded(reason)]);
+        });
+    }
+
+    it('SPEC-rich-text-runtime/AC-048 applies a result through its target from the current state as async, keeping the caret of an author typing elsewhere', async () => {
+        const { handle, runtime, view, changes } = start(stored(para(words('ab')), para(words('cd'))), {
+            model: targetModel,
+        });
+        setSelection(handle, { text: 'cd', from: 2, to: 2 });
+        const target = capture(handle, { purpose: 'insert', onIntersectingEdit: 'map' });
+        const upload = pending(runtime, { target });
+        setSelection(handle, { text: 'ab', from: 1, to: 1 });
+        typeText(handle, 'x');
+        const caret = view.state.selection;
+
+        await upload.resolve({ text: '!' });
+
+        expect(textOf(view.state.doc)).toBe('axbcd!');
+        expect(view.state.selection.eq(caret)).toBe(true);
+        expect(changes.at(-1)).toMatchObject({ origin: 'async', commandId: null });
+    });
+
+    it('SPEC-rich-text-runtime/AC-029 runs a queued intent through its target without moving the caret of an author typing elsewhere', async () => {
+        const { handle, view } = start(stored(para(words('ab')), para(words('cd'))), { model: targetModel });
+        setSelection(handle, { text: 'cd' });
+        const target = capture(handle, { purpose: 'format', onIntersectingEdit: 'map' });
+        setSelection(handle, { text: 'ab', from: 1, to: 1 });
+        let queued: Promise<CommandResult> | undefined;
+        let caret = view.state.selection;
+        handle.subscribe('documentChange', () => {
+            if (queued === undefined) {
+                caret = view.state.selection;
+                queued = handle.enqueue('mark.bold.toggle', undefined, { target });
+            }
+        });
+
+        typeText(handle, 'x');
+        const result = await queued;
+
+        expect(result?.status).toBe('applied');
+        expect(textOf(view.state.doc)).toBe('axbcd');
+        expect(markedText(view.state.doc, 'bold')).toBe('cd');
+        expect(view.state.selection.eq(caret)).toBe(true);
+    });
+
+    it('SPEC-rich-text-runtime/AC-050 aborts every pending operation on dispose and ignores their results', async () => {
+        const { handle, runtime, diagnostics } = start(stored(para(words('ab'))));
+        const upload = pending(runtime);
+        const search = pending(runtime, { key: 'mention-search', service: 'references' });
+
+        handle.dispose();
+        await upload.resolve({ text: 'x' });
+        await search.resolve({ text: 'y' });
+
+        expect([upload, search].map(({ operation }) => operation.controller.signal.aborted)).toEqual([true, true]);
+        expect(probeRuntimes().operations).toEqual([]);
+        expect(diagnostics).toEqual([]);
+    });
+
+    it('SPEC-rich-text-runtime/AC-069 aborts an upload once the policy disables create for its feature and discards its result', async () => {
+        const { handle, runtime, view } = start(stored(para(words('ab'))));
+        const upload = pending(runtime, { featureId: 'core', action: 'create' });
+
+        handle.updatePolicy(
+            authoringOf(boldModel, { features: { core: { create: false, edit: true, remove: true, paste: true } } }),
+        );
+        await upload.resolve({ text: 'x' });
+
+        expect(upload.operation.controller.signal.aborted).toBe(true);
+        expect(view.state.doc.textContent).toBe('ab');
+    });
+
+    it('SPEC-rich-text-runtime/AC-073 aborts only the operation of a changed services member and keeps the view', async () => {
+        const { runtime, view } = start(stored(para(words('ab'))));
+        const search = pending(runtime, { key: 'mention-search', service: 'references' });
+        const upload = pending(runtime, { service: 'uploads' });
+
+        runtime.changeServices(['references']);
+        await search.resolve({ text: 'mention ' });
+        await upload.resolve({ text: 'upload ' });
+
+        expect([search, upload].map(({ operation }) => operation.controller.signal.aborted)).toEqual([true, false]);
+        expect(view.state.doc.textContent).toBe('upload ab');
+        expect(runtime.view).toBe(view);
+    });
+
+    it('SPEC-rich-text-runtime/AC-089 SPEC-rich-text-runtime/AC-072 holds a result during composition and checks it again once input settled', async () => {
+        const session = start(stored(para(words('ab')), para(words('cd'))), { model: targetModel });
+        const { handle, runtime, view, diagnostics } = session;
+        setSelection(handle, { text: 'cd', from: 2, to: 2 });
+        const target = capture(handle, { purpose: 'insert', onIntersectingEdit: 'map' });
+        const applied = pending(runtime, { target });
+        const refused = pending(runtime, { key: 'other', target });
+        setSelection(handle, { text: 'ab', from: 0, to: 0 });
+
+        compose(session, 'x');
+        await applied.resolve({ text: '!' });
+        expect(textOf(view.state.doc)).toBe('xabcd');
+        endComposition(session);
+        await settleInput(session);
+        expect(textOf(view.state.doc)).toBe('xabcd!');
+
+        compose(session, 'y');
+        handle.setMode('readonly');
+        await refused.resolve({ text: '?' });
+        endComposition(session);
+        await settleInput(session);
+
+        expect(textOf(view.state.doc)).toBe('xyabcd!');
+        expect(diagnostics).toEqual([discarded('readonly')]);
     });
 });
