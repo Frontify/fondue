@@ -145,6 +145,8 @@ type SessionProps = Defined & {
     readonly children: ReactNode;
     /** Receives the handle of each session it runs, whose snapshot the recovery shell reads. */
     readonly onSession: (session: RecoverySession) => void;
+    /** The document holds changes the failed session before Retry never saved. */
+    readonly carried: boolean;
 };
 
 const SessionComponent = ({ children, onSession, ...props }: SessionProps, ref: ForwardedRef<EditorHandle<object>>) => {
@@ -186,9 +188,11 @@ const SessionComponent = ({ children, onSession, ...props }: SessionProps, ref: 
         if (persistence !== undefined) {
             saves = (session) =>
                 createSaveCoordinator(session, {
-                    service: persistence,
+                    // A host that drops the member later keeps the service the session mounted with.
+                    service: () => memberOf(latestRef.current.services, 'persistence') ?? persistence,
                     options: () => latestRef.current.persistenceOptions,
                     revision: defaultValue.revision,
+                    carried: latestRef.current.carried,
                     model: engine.model,
                     environment,
                 });
@@ -310,11 +314,13 @@ interface RecoveryState {
     readonly failed: boolean;
     /** The snapshot that Retry mounts the editor from, under the ID and revision it was loaded with (SPEC-rich-text-react/AC-085). */
     readonly retried: LoadedDocument | undefined;
+    /** Whether that snapshot holds changes the failed session never saved, which the remount then saves. */
+    readonly carried: boolean;
 }
 
 /** The outer boundary: a render error shows the recovery shell with the last published snapshot (SPEC-rich-text-react/AC-022). */
 class Recovery extends Component<RecoveryProps, RecoveryState> {
-    state: RecoveryState = { failed: false, retried: undefined };
+    state: RecoveryState = { failed: false, retried: undefined, carried: false };
     // The last session, whose snapshot stays readable after it is disposed.
     private session: RecoverySession | undefined;
 
@@ -333,23 +339,34 @@ class Recovery extends Component<RecoveryProps, RecoveryState> {
             defaultValue = this.state.retried;
         }
         if (!this.state.failed) {
-            return <Session {...props} defaultValue={defaultValue} onSession={this.onSession} ref={editorRef} />;
+            return (
+                <Session
+                    {...props}
+                    defaultValue={defaultValue}
+                    carried={this.state.carried}
+                    onSession={this.onSession}
+                    ref={editorRef}
+                />
+            );
         }
         // A host rerender with another document must not take this session's content under its ID.
         let loaded = defaultValue;
         let { document, revision } = defaultValue;
+        let carried = false;
         if (this.session !== undefined) {
             loaded = this.session.loaded;
             const snapshot = this.session.handle.getSnapshot();
             document = snapshot.document;
             // The acknowledged revision is the base of the next write, so a session that saved does not conflict with itself.
             revision = snapshot.acknowledgedRevision;
+            const status = this.session.handle.getSaveStatus();
+            carried = status.state !== 'clean' && status.latestSequence > status.acknowledgedSequence;
         }
         return (
             <RecoveryShell
                 document={document}
                 {...shellPropsOf(props)}
-                onRetry={() => this.setState({ failed: false, retried: { ...loaded, revision, document } })}
+                onRetry={() => this.setState({ failed: false, retried: { ...loaded, revision, document }, carried })}
             />
         );
     }

@@ -10,6 +10,8 @@ export interface SaveCoordinator {
     changed(): void;
     /** Input has settled after a composition, so a write that waited for it may capture now (SPEC-rich-text-persistence/AC-057). */
     settled(): void;
+    /** The host replaced `services.persistence`, so the write in flight goes to the new service (SPEC-rich-text-runtime/AC-073). */
+    serviceChanged(): void;
     /** Runs before the session is disposed, while listeners still hear its diagnostics (AC-040, AC-041). */
     dispose(): void;
 }
