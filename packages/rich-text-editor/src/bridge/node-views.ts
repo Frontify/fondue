@@ -17,6 +17,18 @@ export interface NodeViewHost {
     readonly runtime: () => EditorRuntime | undefined;
 }
 
+const CONTROLS = 'input, textarea, select, button';
+
+/** Whether `target` sits in an interactive control of the chrome, which keeps its own events. */
+const inControl = (chrome: HTMLElement, target: Node) => {
+    let element: Element | null = target.parentElement;
+    if (target instanceof Element) {
+        element = target;
+    }
+    const control = element?.closest(CONTROLS);
+    return control !== null && control !== undefined && chrome.contains(control);
+};
+
 const tagOf = (node: ProseMirrorNode) => {
     if (node.isInline) {
         return 'span';
@@ -103,7 +115,8 @@ export const createNodeViews = (
                     view,
                     () => true,
                     () => {
-                        if (next.type !== current.type) {
+                        // A node with another ID is another node, which must not take this one's chrome state.
+                        if (next.type !== current.type || next.attrs.nodeId !== current.attrs.nodeId) {
                             return false;
                         }
                         const changed = next.attrs !== current.attrs;
@@ -131,7 +144,14 @@ export const createNodeViews = (
             },
             // Chrome mutations are React's; ProseMirror reads the rest, a removed `contentDOM` included (SPEC-rich-text-react/AC-015, AC-018).
             ignoreMutation: (mutation) => mutation.type !== 'selection' && chrome.contains(mutation.target),
-            stopEvent: (event) => event.target instanceof Node && chrome.contains(event.target),
+            stopEvent: (event) => {
+                const { target } = event;
+                if (!(target instanceof Node) || !chrome.contains(target)) {
+                    return false;
+                }
+                // A draggable node drags from its chrome, as ProseMirror's default and Tiptap's NodeView let drag events through.
+                return !event.type.startsWith('drag') || !dom.draggable || inControl(chrome, target);
+            },
             destroy: () =>
                 guarded(
                     view,
