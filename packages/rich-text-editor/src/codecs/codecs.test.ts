@@ -2,6 +2,7 @@
 
 import { readFileSync } from 'node:fs';
 
+import MarkdownIt from 'markdown-it';
 import { describe, expect, it, vi } from 'vitest';
 
 import {
@@ -996,4 +997,145 @@ describe('carried legs of earlier packets', () => {
         expect(codecs.toMarkdown(document).markdown).toBe('[**bold&#x20;**&#x63;olour](https://frontify.com)');
         expect(codecs.toPlainText(document).text).toBe('bold colour (https://frontify.com)');
     });
+});
+
+describe('Markdown output a stored document cannot turn into markup', () => {
+    const commonMark = new MarkdownIt('commonmark');
+    const hostile = '<img src=x onerror=alert(1)>\n[x](javascript:alert(1))\n```\n<script>alert(1)</script>';
+    const fenced = (fence: string) =>
+        compileContentModel(
+            [
+                core(),
+                defineFeature({
+                    id: 'test.fenced',
+                    version: 1,
+                    requires,
+                    nodes: {
+                        formula: {
+                            group: 'block',
+                            content: 'text*',
+                            marks: [],
+                            attrs: {},
+                            html: ['pre', 0],
+                            parse: [],
+                            markdown: { fence },
+                        },
+                    },
+                    formats: { html: 'lossless', text: 'lossless', markdown: 'lossless' },
+                })(),
+            ],
+            { id: 'test.fenced', version: 1 },
+        );
+
+    it.each(['$$', '```', '~~~'])(
+        'SPEC-rich-text-output/AC-020 SPEC-rich-text/AC-065 writes the body of a %j fence form so it never parses as HTML or a link',
+        (fence) => {
+            const model = fenced(fence);
+            const output = createCodecs(model).toMarkdown(
+                testDocument(model, { type: 'formula', content: [{ type: 'text', text: hostile }] }),
+            );
+            const rendered = commonMark.render(output.markdown);
+
+            expect(rendered).not.toMatch(/<(img|script|a)[\s>]/);
+            expect(rendered).toContain('alert(1)');
+        },
+    );
+
+    it.each([
+        ['a paragraph', (code: JsonValue) => stored(paragraph(code))],
+        [
+            'a table cell',
+            (code: JsonValue) =>
+                stored(
+                    table(
+                        't-1',
+                        node(
+                            'table_row',
+                            undefined,
+                            node(
+                                'table_header',
+                                { colspan: 1, rowspan: 1, colwidth: null, scope: 'col' },
+                                paragraph(code),
+                            ),
+                        ),
+                    ),
+                ),
+        ],
+    ])(
+        'SPEC-rich-text-output/AC-021 SPEC-rich-text-output/AC-020 keeps a line break in code text inside its code span in %s',
+        (_, documentOf) => {
+            const codecs = semanticCodecs();
+            const output = codecs.toMarkdown(documentOf(text('a\n<script>alert(1)</script>\r\nb', mark('code'))));
+            const rendered = new MarkdownIt('commonmark').use((parser) => parser).render(output.markdown);
+
+            expect(rendered).not.toContain('<script>');
+            expect(output.markdown).toContain('`a <script>alert(1)</script> b`');
+        },
+    );
+
+    it('SPEC-rich-text-output/AC-047 hands an inline node Markdown override the escaped Markdown of its text', () => {
+        const model = compileContentModel(
+            [
+                core(),
+                defineFeature({
+                    id: 'test.tag',
+                    version: 1,
+                    requires,
+                    nodes: { tag: { group: 'inline', content: 'text*', attrs: {}, html: ['span', 0], parse: [] } },
+                    formats: { html: 'lossless', text: 'lossless', markdown: 'lossless' },
+                    codecs: { markdown: { nodes: { tag: (inner) => `{${inner}}` } } },
+                })(),
+            ],
+            { id: 'test.tag', version: 1 },
+        );
+        const document = testDocument(model, {
+            type: 'paragraph',
+            attrs: { lang: null },
+            content: [{ type: 'tag', content: [{ type: 'text', text: '*a* <b>' }] }],
+        });
+
+        expect(createCodecs(model).toMarkdown(document).markdown).toBe('{\\*a\\* \\<b>}');
+    });
+});
+
+describe('HTML override tags', () => {
+    it.each([
+        'script',
+        'style',
+        'iframe',
+        'object',
+        'embed',
+        'template',
+        'meta',
+        'link',
+        'base',
+        'form',
+        'Div',
+        'x y',
+        'svg:a',
+    ])(
+        'SPEC-rich-text-output/AC-017 SPEC-rich-text-output/AC-047 fails an HTML override that writes the tag %j',
+        (tag) => {
+            const model = compileContentModel(
+                [
+                    core(),
+                    defineFeature({
+                        id: 'test.unsafe',
+                        version: 1,
+                        requires,
+                        nodes: { box: { group: 'block', content: 'inline*', attrs: {}, html: ['div', 0], parse: [] } },
+                        formats: { html: 'lossless', text: 'lossless', markdown: 'unsupported' },
+                        codecs: { html: { nodes: { box: () => ['section', [tag, 0]] } } },
+                    })(),
+                ],
+                { id: 'test.unsafe', version: 1 },
+            );
+            const output = createCodecs(model).toHTML(
+                testDocument(model, { type: 'box', content: [{ type: 'text', text: 'x' }] }),
+            );
+
+            expect(codesOf(output.diagnostics)).toEqual(['codecs.override-failed']);
+            expect(output.html).not.toContain(`<${tag}`);
+        },
+    );
 });

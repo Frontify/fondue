@@ -5,6 +5,7 @@ import { describe, expect, it } from 'vitest';
 import { core } from '#/features/core/feature';
 import {
     compileContentModel,
+    defineFeature,
     DefinitionError,
     featureFromManifest,
     featureManifestSchema,
@@ -338,5 +339,55 @@ describe('featureFromManifest', () => {
             code: 'definition.invalid-declaration',
             details: { feature: 'acme.pull-quote', path: '/nodes/acme_card/parse/0/attrs/href/value' },
         });
+    });
+
+    it.each([
+        ['prefix', '<b>', '/nodes/acme_pull_quote/markdown/prefix'],
+        ['prefix', '[x](', '/nodes/acme_pull_quote/markdown/prefix'],
+        ['prefix', '\\', '/nodes/acme_pull_quote/markdown/prefix'],
+        ['open', '&lt;', '/marks/acme_glow/markdown/open'],
+        ['close', ')', '/marks/acme_glow/markdown/close'],
+        ['open', 'ab', '/marks/acme_glow/markdown/open'],
+    ])(
+        'SPEC-rich-text/AC-065 SPEC-rich-text/AC-064 rejects the Markdown %s form %j, which could open HTML or a link',
+        (form, value, path) => {
+            const manifest = withChange((changed) => {
+                nodeOf(changed).markdown = { prefix: '> ' };
+                changed.marks = {
+                    acme_glow: { attrs: {}, html: ['mark', 0], parse: [], markdown: { open: '==', close: '==' } },
+                };
+                if (form === 'prefix') {
+                    nodeOf(changed).markdown = { prefix: value };
+                } else {
+                    const marks = changed.marks as Record<string, Record<string, Record<string, string>>>;
+                    (marks.acme_glow as Record<string, Record<string, string>>).markdown = {
+                        open: '==',
+                        close: '==',
+                        [form]: value,
+                    };
+                }
+            });
+
+            expect(failureOf(() => compile(manifest))).toEqual(invalidAt(path));
+        },
+    );
+
+    it('SPEC-rich-text/AC-065 accepts Markdown punctuation forms in a manifest, and keeps any form of a code feature', () => {
+        const manifest = withChange((changed) => {
+            nodeOf(changed).markdown = { prefix: '> ' };
+            changed.marks = {
+                acme_glow: { attrs: {}, html: ['mark', 0], parse: [], markdown: { open: '==', close: '==' } },
+            };
+        });
+
+        const codeFeature = defineFeature({
+            id: 'acme.code',
+            version: 1,
+            requires: [{ id: 'core', version: 1 }],
+            marks: { code_glow: { attrs: {}, html: ['mark', 0], parse: [], markdown: { open: '<b>', close: '</b>' } } },
+        });
+
+        expect(() => compile(manifest)).not.toThrow();
+        expect(() => compileContentModel([core(), codeFeature()], { id: 'acme.model', version: 1 })).not.toThrow();
     });
 });
