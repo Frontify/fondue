@@ -238,6 +238,9 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     let busy = 0;
     let draining = false;
     let depth = 0;
+    let installing = false;
+    // Roots that plugin views dispatch while an install runs, committed once its selectors and events are done.
+    const deferred: Transaction[] = [];
     const listeners = new Map<string, Set<Listener>>();
     const watchers = new Set<Watcher>();
     const queue: Intent[] = [];
@@ -294,7 +297,16 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
 
     const emit = <K extends keyof RuntimeEvents>(event: K, value: RuntimeEvents[K]) =>
         busyWith(() => {
-            const throwers = [...(listeners.get(event) ?? [])].filter((listener) => !call(listener, value));
+            const throwers: Listener[] = [];
+            for (const listener of [...(listeners.get(event) ?? [])]) {
+                // A listener that disposed the session ends every notification but the `disposed` one itself.
+                if (phase === 'disposed' && event !== 'disposed') {
+                    break;
+                }
+                if (!call(listener, value)) {
+                    throwers.push(listener);
+                }
+            }
             reportThrows(throwers);
         });
 
@@ -303,7 +315,17 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     const notifySelectors = () => {
         const throwers: Listener[] = [];
         for (const watcher of [...watchers]) {
-            const next = watcher.read();
+            if (phase === 'disposed') {
+                break;
+            }
+            let next: unknown;
+            try {
+                next = watcher.read();
+            } catch {
+                // A selector that throws is reported as its listener, and the commit goes on (SPEC-rich-text-runtime/AC-026).
+                throwers.push(watcher.listener as Listener);
+                continue;
+            }
             if (!watcher.isEqual(watcher.value, next)) {
                 watcher.value = next;
                 if (!call(watcher.listener as Listener, next)) {
@@ -375,8 +397,23 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         return { candidate: applied.state, root };
     };
 
-    /** Installs a checked batch in the view, counts it, notifies selector stores, then emits its change. */
+    /** Publishes a checked batch, then commits the roots that plugin views dispatched while it was installed. */
     const install = (candidate: EditorState, root: Transaction, typed: boolean): boolean => {
+        installing = true;
+        let changed: boolean;
+        try {
+            changed = publish(candidate, root, typed);
+        } finally {
+            installing = false;
+        }
+        for (let next = deferred.shift(); next !== undefined; next = deferred.shift()) {
+            commit(next);
+        }
+        return changed;
+    };
+
+    /** Installs a batch in the view, counts it, notifies selector stores, then emits its change. */
+    const publish = (candidate: EditorState, root: Transaction, typed: boolean): boolean => {
         const previous = state;
         state = candidate;
         if (view !== undefined) {
@@ -415,6 +452,11 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
 
     /** The view's `dispatchTransaction`: the one path by which any change reaches the view (SPEC-rich-text-runtime/AC-001). */
     const commit = (root: Transaction) => {
+        // A plugin view's `update` may dispatch inside `view.updateState`; its root waits for the install to publish.
+        if (installing) {
+            deferred.push(root);
+            return;
+        }
         // A recorded `beforeinput` describes this batch only, accepted or not.
         const typed = typing;
         typing = false;
@@ -529,6 +571,10 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
 
     const enqueue = (id: string, payload?: unknown): Promise<CommandResult> =>
         new Promise((resolve) => {
+            if (phase === 'faulted' || phase === 'disposed') {
+                resolve(rejected('not-ready'));
+                return;
+            }
             // An intent that a queued intent's events enqueue sits one level deeper (SPEC-rich-text-runtime/AC-030).
             queue.push({ id, payload, depth: depth + 1, resolve });
             liveResources.intents += 1;
@@ -556,17 +602,20 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         if (phase === 'disposed') {
             return;
         }
+        // Set first, so `disposed` listeners read the final phase and what they enqueue settles at once.
+        phase = 'disposed';
         settleQueue('not-ready');
         emit('disposed', session);
         for (const set of listeners.values()) {
             liveResources.subscriptions -= set.size;
+            // An unsubscribe the host kept then finds nothing to remove and counts nothing twice.
+            set.clear();
         }
         listeners.clear();
         liveResources.selectors -= watchers.size;
         watchers.clear();
         detach();
         liveResources.sessions.delete(handle);
-        phase = 'disposed';
     };
 
     const focus = (where: 'current' | 'start' | 'end' = 'current') => {
