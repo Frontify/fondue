@@ -2,6 +2,8 @@
 
 import { type EditorRuntime } from '#/runtime/runtime';
 
+import { markReady } from './dev-checks';
+
 export interface MountCoordinator {
     readonly runtime: EditorRuntime | undefined;
     /** The surface element's ref: attaching shows the runtime's view in it, detaching destroys that view at once. */
@@ -28,6 +30,10 @@ export const createMountCoordinator = (): MountCoordinator => {
                 return;
             }
             current.attach(element);
+            // A surface remounted in a ready session takes over its mark, which `ready` set on the first one (SPEC-rich-text-react/AC-080).
+            if (process.env.NODE_ENV !== 'production' && current.handle.getSummary().phase === 'ready') {
+                markReady(element);
+            }
         },
         start: (runtime) => {
             current = runtime;

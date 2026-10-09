@@ -7,6 +7,7 @@ import { type JsonObject } from '#/model';
 
 import { useClientLayoutEffect } from './client-layout-effect';
 import { type NodeViewContext, NodeViewStateContext } from './define';
+import { type ReactWork, ReactWorkContext } from './dev-checks';
 import { type PortalEntry, type PortalStore } from './portals';
 
 interface BoundaryProps {
@@ -22,10 +23,19 @@ interface BoundaryState {
 
 /** Replaces only the chrome that threw with a localized message, while `contentDOM` and editing go on (SPEC-rich-text-react/AC-021). */
 class ChromeBoundary extends Component<BoundaryProps, BoundaryState> {
+    static contextType = ReactWorkContext;
+    declare context: ReactWork | undefined;
     state: BoundaryState = { failed: false, attrs: this.props.attrs };
 
     static getDerivedStateFromError() {
         return { failed: true };
+    }
+
+    // The chrome that threw never committed, so its render mark closes here, in the commit that shows the fallback.
+    componentDidCatch() {
+        if (this.context !== undefined) {
+            this.context.rendering = false;
+        }
     }
 
     // Chrome that threw for one attribute value renders again once an update changes the attributes.
