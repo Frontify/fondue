@@ -19,6 +19,28 @@ const record = (values: JsonValue) => ({ type: 'object', additionalProperties: v
 const optionRef = object({ option: string }, ['option']);
 const binding = { anyOf: [object({ attr: string }, ['attr']), object({ style: string }, ['style'])] };
 const content = { anyOf: [{ const: 0 }, ref('html')] };
+/** A Markdown form: 1 to 4 Markdown punctuation characters, then at most one space; none opens HTML, an entity or a link. */
+const form = { type: 'string', pattern: '^[!"#$%\'*+,\\-./:;=>?@^_`{|}~]{1,4} ?$' };
+/**
+ * A fence form: a backtick or tilde run of 3 or 4, which is a code fence, or a form with no space, no backtick and
+ * no leading tilde run of 3, so it neither opens a code fence nor a code span around the body.
+ */
+const fence = { type: 'string', pattern: '^(?:`{3,4}|~{3,4}|(?!~~~)[!"#$%\'*+,\\-./:;=>?@^_{|}~]{1,4})$' };
+/** A node's Markdown form: exactly one of a line `prefix` or a `fence`; compilation checks code features against it too. */
+export const nodeMarkdownSchema = object(
+    { prefix: form, fence },
+    [],
+    [
+        {
+            anyOf: [
+                { required: ['prefix'], properties: { fence: false } },
+                { required: ['fence'], properties: { prefix: false } },
+            ],
+        },
+    ],
+);
+/** A mark's Markdown form: `open` and `close` delimiters. */
+export const markMarkdownSchema = object({ open: form, close: form }, ['open', 'close']);
 /** The members an object needs when its `member` has the value `value`. */
 const when = (member: string, value: string, required: readonly string[]) => ({
     if: { properties: { [member]: { const: value } }, required: [member] },
@@ -121,7 +143,7 @@ export const featureManifestSchema: JsonObject = {
                 exactlyOne: strings,
                 html: ref('html'),
                 parse: { type: 'array', items: ref('parseRule') },
-                markdown: object({ prefix: string, fence: string }),
+                markdown: nodeMarkdownSchema,
             },
             ['attrs', 'html', 'parse'],
         ),
@@ -131,7 +153,7 @@ export const featureManifestSchema: JsonObject = {
                 exactlyOne: strings,
                 html: ref('html'),
                 parse: { type: 'array', items: ref('parseRule') },
-                markdown: object({ open: string, close: string }, ['open', 'close']),
+                markdown: markMarkdownSchema,
                 excludes: strings,
                 rank: { type: 'integer' },
                 inclusive: { type: 'boolean' },

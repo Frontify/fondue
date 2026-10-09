@@ -38,17 +38,6 @@ const VENDOR_ID = /^([a-z][a-z0-9-]*)\.[a-z0-9][a-z0-9.-]*$/;
 
 const invalid = (path: string) => new DefinitionError('definition.invalid-manifest', { path });
 
-/** A Markdown form: 1 to 4 Markdown punctuation characters, then at most one space; none opens HTML, an entity or a link. */
-const MARKDOWN_FORM = /^[!"#$%'*+,\-./:;=>?@^_`{|}~]{1,4} ?$/;
-
-const checkMarkdown = (form: Readonly<Record<string, string>> | undefined, path: string) => {
-    for (const [name, value] of Object.entries(form ?? {})) {
-        if (!MARKDOWN_FORM.test(value)) {
-            throw invalid(`${path}${pointer(name)}`);
-        }
-    }
-};
-
 const isManifestAttribute = (name: string) => DATA_ATTRIBUTE.test(name) || MANIFEST_ATTRIBUTES.has(name);
 
 const checkAttribute = (name: string, value: HtmlAttributeValue, path: string) => {
@@ -147,7 +136,6 @@ export const featureFromManifest = (
         for (const [name, declaration] of Object.entries(declarations)) {
             checkHtml(declaration.html, pointer(member, name, 'html'));
             checkParse(declaration.parse, pointer(member, name, 'parse'));
-            checkMarkdown(declaration.markdown, pointer(member, name, 'markdown'));
         }
     }
     for (const [name, shared] of Object.entries(manifest.attributes ?? {})) {
