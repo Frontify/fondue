@@ -32,6 +32,7 @@ import { type TreeNode } from '#/model/content';
 import { encodeTree } from '#/model/encode';
 import { findInvalidPayload } from '#/model/values';
 
+import { secondCopyAtMount, secondCopyInView } from './engines';
 import { createLimitCheck } from './limits';
 import { authoringOf, createPolicyCheck } from './policy';
 import {
@@ -192,6 +193,8 @@ const runtimeDiagnostic = (
     return { code, severity, messageKey: code, details };
 };
 const unique = (values: readonly string[]) => [...new Set(values)];
+// The checks of `./engines` cover a second copy of `prosemirror-model` only (DR-070).
+const DUPLICATE_ENGINE = runtimeDiagnostic('runtime.duplicate-engine', 'warning', { packages: ['prosemirror-model'] });
 
 /** A batch checked against policy and limits and not installed, or why it cannot be. */
 type Prepared =
@@ -362,7 +365,11 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         }
         // A batch that keeps the document, such as a selection move, has nothing to check.
         const { doc } = applied.state;
-        if (doc !== state.doc && (breaksPolicy(policy, state.doc, doc) || exceedsLimits(doc, limits))) {
+        const mapping = root.mapping.slice();
+        for (const transaction of applied.transactions.slice(1)) {
+            mapping.appendMapping(transaction.mapping);
+        }
+        if (doc !== state.doc && (breaksPolicy(policy, state.doc, doc, mapping) || exceedsLimits(doc, limits))) {
             return { code: 'not-allowed' };
         }
         return { candidate: applied.state, root };
@@ -421,6 +428,9 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 install(prepared.candidate, root, typed);
             } else if (prepared.fault !== undefined) {
                 fault(prepared.fault);
+            }
+            if (secondCopyInView(state.schema)) {
+                report(DUPLICATE_ENGINE);
             }
         });
     };
@@ -676,6 +686,9 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             );
             view = attached;
             liveResources.views.add(attached);
+            if (secondCopyAtMount(state)) {
+                report(DUPLICATE_ENGINE);
+            }
             if (phase !== 'mounting') {
                 return;
             }

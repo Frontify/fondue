@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type Mark, type Node } from 'prosemirror-model';
+import { type Transaction } from 'prosemirror-state';
 
 import { type ContentModel, DefinitionError } from '#/model';
 import { compiledModel } from '#/model/compile';
@@ -41,32 +42,40 @@ export const authoringOf = (model: ContentModel, policy: Partial<AuthoringPolicy
 
 interface Run {
     readonly mark: Mark;
+    readonly from: number;
+    to: number;
     text: string;
 }
+/** How a batch maps positions of the document before it to the one after it. */
+type BatchMapping = Transaction['mapping'];
 /** A feature's occurrences in part of a document: its nodes, and its marks as runs. */
 interface Occurrences {
     readonly nodes: Map<string, Node[]>;
     readonly runs: Map<string, Run[]>;
 }
 
-/** Each maximal stretch of a textblock's inline content that carries one mark, with the stretch's text. */
-const markRuns = (block: Node): Run[] => {
+/** Each maximal stretch of a textblock's inline content that carries one mark, with its range and text. */
+const markRuns = (block: Node, start: number): Run[] => {
     const runs: Run[] = [];
     let open: Run[] = [];
+    let position = start;
     for (const child of block.children) {
         let text = OBJECT_REPLACEMENT;
         if (child.isText) {
             text = child.textContent;
         }
+        const end = position + child.nodeSize;
         open = child.marks.map((mark) => {
             let run = open.find((candidate) => candidate.mark.eq(mark));
             if (run === undefined) {
-                run = { mark, text: '' };
+                run = { mark, from: position, to: end, text: '' };
                 runs.push(run);
             }
+            run.to = end;
             run.text += text;
             return run;
         });
+        position = end;
     }
     return runs;
 };
@@ -106,6 +115,26 @@ const listOf = <T>(map: ReadonlyMap<string, T[]>, featureId: string): T[] => map
 const sameNode = (a: Node, b: Node) => a === b || a.eq(b);
 const sameRun = (a: Run, b: Run) => a.text === b.text && a.mark.eq(b.mark);
 
+/** Whether a run of `mark` holds the whole range, or the position of an empty one. */
+const covered = (runs: readonly Run[], mark: Mark, from: number, to: number) =>
+    runs.some((run) => run.mark.eq(mark) && run.from <= from && to <= run.to);
+
+/**
+ * A mark's runs compared through the batch's mapping, as `prosemirror-changeset` maps a span back through inverted
+ * maps: marked text that no run of the same mark held before is a create, marked text that keeps no such run after
+ * is a remove, and text typed inside a run maps back into it, so it stays an edit.
+ */
+const runChangeOf = (before: readonly Run[], after: readonly Run[], mapping: BatchMapping) => {
+    const back = mapping.invert();
+    const create = after.some((run) => !covered(before, run.mark, back.map(run.from, 1), back.map(run.to, -1)));
+    const remove = before.some((run) => {
+        const from = mapping.map(run.from, 1);
+        const to = mapping.map(run.to, -1);
+        return to <= from || !covered(after, run.mark, from, to);
+    });
+    return { create, remove, edit: changeOf(before, after, sameRun).edit };
+};
+
 /**
  * The final policy check of a batch (SPEC-rich-text-runtime/AC-006 to AC-009). It compares the span the two
  * documents differ in, which `findDiffStart` and `findDiffEnd` find by node identity and markup, so a step with an
@@ -124,7 +153,7 @@ export const createPolicyCheck = (model: ContentModel) => {
                 add(found.nodes, nodeOwners.get(node.type.name), node);
             }
         };
-        doc.nodesBetween(from, to, (node) => {
+        doc.nodesBetween(from, to, (node, position) => {
             visit(node);
             if (!node.isTextblock) {
                 return true;
@@ -132,7 +161,7 @@ export const createPolicyCheck = (model: ContentModel) => {
             for (const child of node.children) {
                 visit(child);
             }
-            for (const run of markRuns(node)) {
+            for (const run of markRuns(node, position + 1)) {
                 add(found.runs, markOwners.get(run.mark.type.name), run);
             }
             return false;
@@ -141,7 +170,7 @@ export const createPolicyCheck = (model: ContentModel) => {
     };
 
     /** Whether the change from `before` to `after` creates, edits or removes an occurrence the policy forbids. */
-    return (policy: AuthoringPolicy, before: Node, after: Node): boolean => {
+    return (policy: AuthoringPolicy, before: Node, after: Node, mapping: BatchMapping): boolean => {
         let previous: Occurrences = { nodes: new Map(), runs: new Map() };
         let next: Occurrences = { nodes: new Map(), runs: new Map() };
         const start = before.content.findDiffStart(after.content);
@@ -170,7 +199,7 @@ export const createPolicyCheck = (model: ContentModel) => {
                 continue;
             }
             const nodes = changeOf(listOf(previous.nodes, featureId), listOf(next.nodes, featureId), sameNode);
-            const runs = changeOf(listOf(previous.runs, featureId), listOf(next.runs, featureId), sameRun);
+            const runs = runChangeOf(listOf(previous.runs, featureId), listOf(next.runs, featureId), mapping);
             for (const action of ['create', 'edit', 'remove'] as const) {
                 if (!rules[action] && (nodes[action] || runs[action])) {
                     return true;
