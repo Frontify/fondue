@@ -16,6 +16,7 @@ import {
 } from 'react';
 
 import '#/styles/placeholder.css';
+import { useClientLayoutEffect } from '#/bridge/client-layout-effect';
 import { createMountCoordinator, type MountCoordinator } from '#/bridge/mount';
 import { createNodeViews, resyncSelection } from '#/bridge/node-views';
 import { PortalHost } from '#/bridge/portal-host';
@@ -29,7 +30,6 @@ import { browserEnvironment } from '#/runtime/environment';
 import { createEditorRuntime } from '#/runtime/runtime';
 import { type DocumentChange, type SessionToken, type ShippedCommands } from '#/runtime/types';
 
-import { useClientLayoutEffect } from './client-layout-effect';
 import { engineOf, viewsOf } from './define';
 import { type EditorHandle, type RichTextEditorProps } from './types';
 
