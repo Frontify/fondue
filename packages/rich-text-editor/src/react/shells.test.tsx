@@ -198,13 +198,33 @@ describe('the recovery shell', () => {
         vi.spyOn(console, 'error').mockImplementation(() => undefined);
         const environment = createTestEnvironment({ seed: 1 });
         const server = createFakePersistenceService();
+        // An existing record at `revision-1`, which the server holds.
+        const existing = stored(envelope([para('ab')]));
+        await server.save(
+            {
+                operationId: 'elsewhere-1',
+                stamp: { documentId: 'document-1', sessionId: 'elsewhere', generation: 0, sequence: 1 },
+                baseRevision: null,
+                document: existing.document,
+                writer: {
+                    build: '0.0.0',
+                    formatVersion: 1,
+                    model: { id: 'test.editor', version: 1 },
+                    capabilities: model.capabilities,
+                },
+            },
+            {
+                signal: new AbortController().signal,
+                session: { documentId: 'document-1', sessionId: 'x', generation: 0 },
+            },
+        );
         const save = vi.fn(server.save);
         const ref = createRef<EditorHandle<object>>();
         const tree = (armed: boolean) => (
             <RichTextEditor.Root
                 aria-label="Notes"
                 definition={definition}
-                defaultValue={stored(envelope([para('ab')]))}
+                defaultValue={{ ...existing, revision: 'revision-1' }}
                 environment={environment}
                 services={{ persistence: { save, read: server.read } }}
                 ref={ref}
@@ -221,6 +241,11 @@ describe('the recovery shell', () => {
 
         fireEvent.click(screen.getByRole('button', { name: 'Retry' }));
         act(() => environment.flushFrames());
+        expect(handleOf(ref).getSaveStatus()).toMatchObject({
+            state: 'dirty',
+            acknowledgedSequence: 0,
+            revision: 'revision-1',
+        });
         act(() => environment.advance(10_000));
         await act(async () => {
             await new Promise((resolve) => setTimeout(resolve, 0));
