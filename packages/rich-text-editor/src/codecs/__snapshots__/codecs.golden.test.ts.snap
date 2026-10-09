@@ -191,6 +191,7 @@ exports[`codec golden files > SPEC-rich-text-output/AC-028 writes the valid fixt
   ],
   "text": "Plan
 
+0.
   - [x] @Ada
 
 const a = 1;

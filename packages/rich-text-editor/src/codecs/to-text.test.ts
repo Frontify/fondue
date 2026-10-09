@@ -149,4 +149,22 @@ describe('toPlainText list items', () => {
             ),
         ).toBe('- a\n  b\n  x\n\n  y\n-');
     });
+
+    it.each<readonly [string, JsonValue, string]>([
+        [
+            'a nested list',
+            node(
+                'ordered_list',
+                { start: 0, marker: null },
+                listItem(paragraph(), bulletList(listItem(paragraph(text('a'))))),
+            ),
+            '0.\n  - a',
+        ],
+        ['a later block', bulletList(listItem(paragraph(), blockquote(paragraph(text('q'))))), '- q'],
+    ])(
+        'SPEC-rich-text-output/AC-019 writes the marker of an item whose first paragraph is empty before %s',
+        (_, list, expected) => {
+            expect(plain(list)).toBe(expected);
+        },
+    );
 });

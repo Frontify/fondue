@@ -219,7 +219,7 @@ const rows: readonly Row[] = [
         dialect: 'commonmark',
     },
     {
-        name: 'links as [text](href), and a link to a heading as # plus its GitHub slug, with no loss',
+        name: 'links as [text](href), and a link to a heading as # plus its GitHub slug, with a loss until import maps the slug back',
         blocks: [
             heading('h-1', text('Plan, then ship!')),
             heading('h-2', text('Plan, then ship!')),
@@ -227,7 +227,7 @@ const rows: readonly Row[] = [
         ],
         markdown:
             '## Plan, then ship!\n\n## Plan, then ship!\n\n[Frontify](https://frontify.com) [see](#plan-then-ship-1)',
-        losses: [],
+        losses: [{ featureId: 'fixture.link', count: 1 }],
         parsed: '<h2>Plan, then ship!</h2>\n<h2>Plan, then ship!</h2>\n<p><a href="https://frontify.com">Frontify</a> <a href="#plan-then-ship-1">see</a></p>\n',
         dialect: 'commonmark',
     },
@@ -578,5 +578,32 @@ describe('toMarkdown edge rules', () => {
 
         expect(output).toMatchObject({ markdown, losses: [] });
         expect(result.status === 'editable' && withoutIds(result.document)).toEqual(withoutIds(document));
+    });
+});
+
+describe('toMarkdown reads back what it reports as lossless', () => {
+    it.each<readonly [string, JsonValue]>([
+        ['a paragraph', paragraph(text('\u00A0a\u3000'))],
+        ['a heading', heading('h-1', text('\u2003a\uFEFF'))],
+        [
+            'a GFM cell',
+            table('t-1', row(header(paragraph(text('\u00A0a\u00A0')))), row(cell({}, paragraph(text('\u3000b'))))),
+        ],
+    ])(
+        'SPEC-rich-text-output/AC-021 SPEC-rich-text-output/AC-024 writes edge spaces of %s as references so they read back',
+        (_, block) => {
+            const document = canonical(stored(block));
+            const output = codecs.toMarkdown(document);
+            const result = codecs.fromMarkdown(output.markdown);
+
+            expect(output.losses).toEqual([]);
+            expect(result.status === 'editable' && withoutIds(result.document)).toEqual(withoutIds(document));
+        },
+    );
+
+    it('SPEC-rich-text-output/AC-024 reports the feature of a block with no marks whose text does not read back', () => {
+        const output = codecs.toMarkdown(stored(paragraph(text('a\u0000b'))));
+
+        expect(output.losses).toEqual([{ featureId: 'core', count: 1 }]);
     });
 });
