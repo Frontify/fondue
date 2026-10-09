@@ -69,6 +69,7 @@ export type FormatDiagnosticCode =
     | 'format.unsafe-url';
 export type RuntimeDiagnosticCode =
     | 'runtime.append-limit'
+    | 'runtime.duplicate-engine'
     | 'runtime.enqueue-loop'
     | 'runtime.listener-error'
     | 'runtime.multiple-dispatch'
