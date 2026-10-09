@@ -68,9 +68,11 @@ test('SPEC-rich-text-react/AC-018 keeps the first character typed over a select-
     await ready(page);
 
     await surfaceOf(page).locator('[data-rte-chrome] + div').click();
-    await page.keyboard.press('ControlOrMeta+a');
-    // A loaded WebKit run once took the key before the select-all reached the DOM, so typing waits for it.
-    await expect.poll(() => page.evaluate(() => window.getSelection()?.toString().includes('code'))).toBe(true);
+    // A loaded WebKit run can drop the key before the click's focus settles; a second select-all changes nothing.
+    await expect(async () => {
+        await page.keyboard.press('ControlOrMeta+a');
+        expect(await page.evaluate(() => window.getSelection()?.toString().includes('code'))).toBe(true);
+    }).toPass();
     await page.keyboard.type('x');
 
     await expect.poll(() => page.evaluate(() => window.rte?.text())).toBe('x');
