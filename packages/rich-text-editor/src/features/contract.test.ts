@@ -8,7 +8,7 @@ import { createElement, createRef } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
 import { createCodecs } from '#/codecs';
-import { type CapabilityImplementation } from '#/definition';
+import { type CapabilityImplementation, type EngineCommand } from '#/definition';
 import { bold, featuresById } from '#/features';
 import { commandCases } from '#/features/__fixtures__/contract.cases';
 import { featureFixtures } from '#/features/conformance/fixtures';
@@ -98,30 +98,60 @@ const dispatchRangeQueries = () => {
 
 describe('the feature contract suite', () => {
     it.each([
-        ['setTimeout', () => setTimeout(() => undefined, 0)],
-        ['setImmediate', () => setImmediate(() => undefined)],
-    ])(
-        'SPEC-rich-text-runtime/AC-038 fails a command whose capability schedules work with %s',
-        async (_name, schedule) => {
-            const original = CAPABILITIES.toggleMark as CapabilityImplementation;
-            const spy = vi.spyOn(CAPABILITIES as Record<string, CapabilityImplementation>, 'toggleMark');
-            spy.mockImplementation((args, schema) => {
-                const command = original(args, schema);
-                const run: typeof command.run = (state, dispatch, payload) => {
-                    schedule();
-                    return command.run(state, dispatch, payload);
-                };
-                return { run, active: command.active };
-            });
-            try {
-                expect(await failingTitles(() => commandCases([core(), bold()]))).toEqual([
-                    'SPEC-rich-text-runtime/AC-038 runs mark.bold.toggle synchronously with no I/O or timer, dispatching at most once',
-                ]);
-            } finally {
-                spy.mockRestore();
-            }
-        },
-    );
+        [
+            'setTimeout',
+            (run: EngineCommand['run']): EngineCommand['run'] =>
+                (state, dispatch, payload) => {
+                    setTimeout(() => undefined, 0);
+                    return run(state, dispatch, payload);
+                },
+        ],
+        [
+            'setImmediate',
+            (run: EngineCommand['run']): EngineCommand['run'] =>
+                (state, dispatch, payload) => {
+                    setImmediate(() => undefined);
+                    return run(state, dispatch, payload);
+                },
+        ],
+        [
+            'fetch',
+            (run: EngineCommand['run']): EngineCommand['run'] =>
+                (state, dispatch, payload) => {
+                    // oxlint-disable-next-line no-restricted-globals -- the case proves the suite fails a capability that calls `fetch`.
+                    fetch('https://frontify.com').catch(() => undefined);
+                    return run(state, dispatch, payload);
+                },
+        ],
+        [
+            'a second dispatch',
+            (run: EngineCommand['run']): EngineCommand['run'] =>
+                (state, dispatch, payload) => {
+                    dispatch?.(state.tr.insertText('a', 1));
+                    return run(state, dispatch, payload);
+                },
+        ],
+        [
+            'a returned promise',
+            (run: EngineCommand['run']): EngineCommand['run'] =>
+                (state, dispatch, payload) =>
+                    Promise.resolve(run(state, dispatch, payload)) as unknown as boolean,
+        ],
+    ])('SPEC-rich-text-runtime/AC-038 fails a command whose capability runs %s', async (_name, wrap) => {
+        const original = CAPABILITIES.toggleMark as CapabilityImplementation;
+        const spy = vi.spyOn(CAPABILITIES as Record<string, CapabilityImplementation>, 'toggleMark');
+        spy.mockImplementation((args, schema) => {
+            const command = original(args, schema);
+            return { run: wrap(command.run), active: command.active };
+        });
+        try {
+            expect(await failingTitles(() => commandCases([core(), bold()]))).toEqual([
+                'SPEC-rich-text-runtime/AC-038 runs mark.bold.toggle synchronously with no I/O or timer, dispatching at most once',
+            ]);
+        } finally {
+            spy.mockRestore();
+        }
+    });
 
     it('SPEC-rich-text/AC-017 fails the fixture cases of an outside document that misspells its mark', async () => {
         const misspelled = stored([paragraph(text('Read', 'highlite'))], ['core', 'fixture.highlight']);

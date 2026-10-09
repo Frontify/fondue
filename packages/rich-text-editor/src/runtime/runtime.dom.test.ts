@@ -504,23 +504,44 @@ class SwapStep extends Step {
 
 describe('the authoring policy and limits', () => {
     it('SPEC-rich-text-runtime/AC-004 rejects a paste over maxDocumentNodes and one of a forbidden node type, keeping the view state', () => {
+        const overLimit = '<p>b</p><p>c</p><p>d</p>';
+        const tableHtml = '<section data-pm-slice="0 0 []" data-table="t-2"><p>x</p></section>';
         const counted = start(stored(para(words('a'))), { model: policyModel, limits: { maxDocumentNodes: 6 } });
         const before = counted.view.state;
-        counted.view.pasteHTML('<p>b</p><p>c</p><p>d</p>');
+        counted.view.pasteHTML(overLimit);
         expect(counted.view.state).toBe(before);
         counted.view.pasteHTML('<p>b</p>');
         expect(counted.handle.getSummary().commitSequence).toBe(1);
+        // The same pastes apply where no limit or policy stops them.
+        const open = start(stored(para(words('a'))), { model: policyModel });
+        open.view.pasteHTML(overLimit);
+        open.view.pasteHTML(tableHtml);
+        expect(open.changes.map(({ origin }) => origin)).toEqual(['paste', 'paste']);
+        expect(open.view.state.doc.childCount).toBeGreaterThan(3);
 
         const forbidden = start(stored(para(words('a'))), {
             model: policyModel,
             policy: forbid('fixture.table', 'create'),
         });
         const kept = forbidden.view.state;
-        forbidden.view.pasteHTML('<section data-pm-slice="0 0 []" data-table="t-2"><p>x</p></section>');
+        forbidden.view.pasteHTML(tableHtml);
         expect(forbidden.view.state).toBe(kept);
         expect(forbidden.changes).toEqual([]);
         forbidden.view.pasteHTML('<p>x</p>');
         expect(forbidden.changes.map(({ origin }) => origin)).toEqual(['paste']);
+    });
+
+    it('SPEC-rich-text-runtime/AC-004 measures only the changed path on each keystroke after the first', () => {
+        const { handle } = start(stored(...Array.from({ length: 500 }, (_, index) => para(words(`block ${index}`)))));
+        setSelection(handle, { text: 'block 499', from: 9, to: 9 });
+        typeText(handle, 'a');
+        const encode = vi.spyOn(TextEncoder.prototype, 'encode');
+
+        typeText(handle, 'bcde');
+
+        // Each keystroke measures the new document, paragraph and text node; the other 499 blocks stay cached.
+        expect(encode.mock.calls.length).toBeLessThanOrEqual(4 * 3);
+        encode.mockRestore();
     });
 
     it('SPEC-rich-text-runtime/AC-004 rejects typing from the byte limit on, counting bytes with no toJSON call', () => {
@@ -626,6 +647,18 @@ describe('the authoring policy and limits', () => {
         expect(view.state).toBe(before);
         expect(view.state.doc.lastChild?.type.name).toBe('table');
         expect(view.state.doc.lastChild?.textContent).toBe('az');
+
+        const open = start(stored(table('t-1', para(words('a'))), para(words('b'))), { model: policyModel });
+        setSelection(open.handle, { text: 'b', from: 1, to: 1 });
+        open.view.pasteHTML('<section data-pm-slice="0 0 []" data-table="t-2"><p>c</p></section>');
+        const tables: string[] = [];
+        open.view.state.doc.descendants((node) => {
+            if (node.type.name === 'table') {
+                tables.push(node.attrs.nodeId as string);
+            }
+            return node.isBlock;
+        });
+        expect(tables).toEqual(['t-1', 't-2']);
     });
 
     it('SPEC-rich-text-runtime/AC-007 lets bold be removed from part of a run and typed inside under create: false, but not added', () => {
@@ -678,10 +711,7 @@ describe('the authoring policy and limits', () => {
                 heading(2, words('ab')),
                 (session) => {
                     setSelection(session.handle, { text: 'ab', from: 1, to: 1 });
-                    expect(session.handle.execute('heading.set', { level: 3 })).toEqual({
-                        status: 'rejected',
-                        code: 'not-allowed',
-                    });
+                    session.handle.execute('heading.set', { level: 3 });
                 },
             ],
         ];
@@ -689,6 +719,10 @@ describe('the authoring policy and limits', () => {
             const session = start(stored(block), { model: policyModel, policy: forbid(featureId, 'edit') });
             change(session);
             expect({ featureId, changes: session.changes }).toEqual({ featureId, changes: [] });
+            // The same change applies under a policy that allows everything.
+            const open = start(stored(block), { model: policyModel });
+            change(open);
+            expect({ featureId, applied: open.changes.length }).toEqual({ featureId, applied: 1 });
         }
     });
 
@@ -727,7 +761,7 @@ describe('the authoring policy and limits', () => {
     });
 
     it('SPEC-rich-text-runtime/AC-011 applies a new policy to the next query and commit with the same view, schema and plugins', () => {
-        const { handle, view, changes } = start(stored(para(words('ab'))));
+        const { handle, runtime, view, changes } = start(stored(para(words('ab'))));
         const { schema, plugins } = view.state;
         setSelection(handle, { text: 'ab' });
         expect(handle.query('mark.bold.toggle').enabled).toBe(true);
@@ -737,8 +771,9 @@ describe('the authoring policy and limits', () => {
         pressKey(handle, 'Mod-b');
 
         expect(changes).toEqual([]);
+        expect(runtime.view).toBe(view);
         expect(view.isDestroyed).toBe(false);
-        expect(view.state.schema).toBe(schema);
+        expect(runtime.view?.state.schema).toBe(schema);
         expect(view.state.plugins).toBe(plugins);
     });
 
@@ -1089,12 +1124,13 @@ describe('commands, events and the commit path', () => {
     });
 
     it('SPEC-rich-text-runtime/AC-025 notifies a bold active-state selector only when its value changes', () => {
-        const { handle, runtime } = start(stored(para(words('ab'))));
+        const { handle, runtime, view } = start(stored(para(words('ab'))));
         setSelection(handle, { text: 'ab', from: 2, to: 2 });
         const notified = vi.fn();
         runtime.watch(() => handle.query('mark.bold.toggle').active, Object.is, notified);
 
         typeText(handle, 'cde');
+        expect([view.state.doc.textContent, handle.getSummary().sequence]).toEqual(['abcde', 3]);
         expect(notified).not.toHaveBeenCalled();
         pressKey(handle, 'Mod-b');
         expect(notified.mock.calls).toEqual([[true]]);
@@ -1404,7 +1440,7 @@ describe('command payloads', () => {
     const german = { type: 'paragraph', attrs: { lang: 'de' }, content: [words('ab')] };
     const first = ({ view }: ReturnType<typeof start>) => view.state.doc.child(0);
 
-    it('SPEC-rich-text/AC-054 SPEC-rich-text-format/AC-015 keeps the attributes a block type change does not name', () => {
+    it('SPEC-rich-text-format/AC-015 keeps unknown and other attributes that a block type change does not name', () => {
         const session = start(stored(german), { model });
         const { handle, changes } = session;
         setSelection(handle, { text: 'ab', from: 1, to: 1 });
@@ -1457,6 +1493,22 @@ describe('command payloads', () => {
         ]).toEqual([false, true]);
     });
 
+    it('SPEC-rich-text-runtime/AC-064 never runs a command whose payload fails its declaration', async () => {
+        const run = vi.fn(() => true);
+        const declared: EngineCommand = {
+            run,
+            active: () => false,
+            payload: { fields: { level: { type: 'integer', min: 1, max: 6 } } },
+        };
+        const { handle } = start(stored(para(words('ab'))), { commands: { 'fixture.declared': declared } });
+        const invalid = { status: 'rejected', code: 'invalid-payload' };
+
+        expect(handle.execute('fixture.declared', { level: 'two' })).toEqual(invalid);
+        expect(await handle.enqueue('fixture.declared', { level: 9 })).toEqual(invalid);
+        expect(handle.query('fixture.declared', { level: 'two' }).disabledReason).toBe('invalid-payload');
+        expect(run).not.toHaveBeenCalled();
+    });
+
     it('SPEC-rich-text/AC-054 SPEC-rich-text-runtime/AC-064 rejects a wrong payload before the command runs, from code and from a manifest', async () => {
         const { handle, view } = start(stored(para(words('ab'))), { model });
         const typed = handle as unknown as EditorHandle<CommandsOfModel<typeof model>>;
@@ -1485,7 +1537,7 @@ describe('command payloads', () => {
 });
 
 describe('disposal', () => {
-    it('SPEC-rich-text-runtime/AC-029 SPEC-rich-text-runtime/AC-060 settles an intent enqueued from a disposed listener or after a fault or dispose', async () => {
+    it('SPEC-rich-text-runtime/AC-060 settles an intent enqueued from a disposed listener or after a fault or dispose', async () => {
         const pending = (promise: Promise<CommandResult>) => Promise.race([promise, Promise.resolve('pending')]);
         const faulted = start(stored(para()), {
             plugins: [appendForever('fixture.a', 'insertNode'), appendForever('fixture.b', 'setBlock')],

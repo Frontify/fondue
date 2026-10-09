@@ -75,17 +75,26 @@ export const commandCases = (features: readonly Feature[]): void => {
                 vi.stubGlobal('navigator', Object.create(current, { sendBeacon: { value: sendBeacon } }));
                 stubs.push(sendBeacon);
             }
+            let changed = false;
             try {
                 for (const state of states) {
                     const dispatched: Transaction[] = [];
                     const result: unknown = command.run(state, (transaction) => dispatched.push(transaction), payload);
                     expect(typeof result).toBe('boolean');
-                    expect(dispatched.length).toBeLessThanOrEqual(1);
+                    // A command that applies dispatches exactly one transaction before it returns, and one that does not, none.
+                    let expected = 0;
+                    if (result === true) {
+                        expected = 1;
+                    }
+                    expect(dispatched.length).toBe(expected);
+                    changed ||= dispatched.some((transaction) => transaction.doc !== state.doc);
                 }
             } finally {
                 vi.unstubAllGlobals();
             }
             expect(stubs.filter((stub) => stub.mock.calls.length > 0)).toEqual([]);
+            // At least one fixture state gives the command a document change to make.
+            expect(changed).toBe(true);
         });
     }
 };
