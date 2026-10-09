@@ -10,7 +10,14 @@ import { core } from '#/features/core/feature';
 import { bold } from '#/features/marks-bold/feature';
 import { deDE } from '#/locales/de-DE';
 import { enUS } from '#/locales/en-US';
-import { compileContentModel, type ContentNodeJSON, DefinitionError, type Diagnostic, type JsonValue } from '#/model';
+import {
+    compileContentModel,
+    type ContentNodeJSON,
+    defaultLimits,
+    DefinitionError,
+    type Diagnostic,
+    type JsonValue,
+} from '#/model';
 import * as model from '#/model';
 import { type LoadedDocument } from '#/persistence/types';
 import { createTestEnvironment, pressKey, setSelection, typeText } from '#/testing';
@@ -350,5 +357,16 @@ describe('RichTextEditor', () => {
     it('SPEC-rich-text/AC-044 keeps the engine out of the definition a host holds', () => {
         expect(Object.keys(definition)).toEqual(['id', 'model', 'capabilities', 'authoring', 'limits']);
         expect(Object.getOwnPropertySymbols(definition)).toEqual([]);
+    });
+
+    it('SPEC-rich-text-format/AC-003 keeps negative or non-finite limits out of the definition', () => {
+        const limited = defineEditor({
+            id: 'test.limits',
+            model: boldModel,
+            limits: { maxDepth: -1, maxTextLength: 10 },
+            limitOverrides: { maxDocumentNodes: -5, maxPasteBytes: Number.NaN },
+        });
+
+        expect(limited.limits).toEqual({ ...defaultLimits, maxTextLength: 10 });
     });
 });

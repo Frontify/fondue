@@ -29,4 +29,18 @@ describe('buildSchema DOM output', () => {
             '<p><a href="https://frontify.com"><strong>bold </strong><span data-color="#ff0000">colour</span></a></p>',
         );
     });
+
+    it('SPEC-rich-text/AC-073 leaves out a url attribute that fails checkHref in the editor DOM', () => {
+        const model = compileContentModel([core(), fixtureLink()], { id: 'test', version: 1 });
+        const schema = buildSchema(model);
+        const unsafe = schema.mark('link', { href: 'javascript:alert(1)' });
+        const host = document.createElement('div');
+        host.append(
+            DOMSerializer.fromSchema(schema).serializeNode(
+                schema.node('paragraph', null, [schema.text('x', [unsafe])]),
+            ),
+        );
+
+        expect(host.innerHTML).toBe('<p><a>x</a></p>');
+    });
 });

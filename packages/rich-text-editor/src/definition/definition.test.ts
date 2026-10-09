@@ -14,6 +14,7 @@ import {
 } from '#/features/__fixtures__/features';
 import { core } from '#/features/core/feature';
 import { compileContentModel, defineFeature, DefinitionError, type FeatureDeclaration } from '#/model';
+import { compiledModel } from '#/model/compile';
 
 import { compileDefinition } from '.';
 
@@ -49,7 +50,8 @@ describe('compileDefinition', () => {
             [core(), fixtureHeading(), fixtureBold()],
         ]) {
             const model = compileContentModel(features, { id: 'test', version: 1 });
-            const { plugins, keymap } = compileDefinition(model);
+            const { plugins } = compileDefinition(model);
+            const { keymap } = compiledModel(model);
             const ids = model.manifest.plugins as string[];
 
             expect(plugins.map(keyOf).map((key) => key.replace(/\$\d*$/, ''))).toEqual(ids);
