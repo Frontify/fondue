@@ -354,7 +354,7 @@ test('SPEC-rich-text-runtime/AC-049 leaves focus on a host input when an async r
     await expect(page.getByRole('textbox', { name: 'Host input' })).toBeFocused();
 });
 
-test('SPEC-rich-text-editing/AC-038 SPEC-rich-text-runtime/AC-034 fires no input rule for composed text, which stays one undo step', async ({
+test('SPEC-rich-text-editing/AC-038 fires no input rule for composed text, which stays one undo step', async ({
     mount,
     page,
 }) => {

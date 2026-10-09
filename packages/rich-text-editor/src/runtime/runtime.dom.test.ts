@@ -3168,7 +3168,7 @@ describe('history', () => {
         expect(next.plugins.every((plugin, index) => plugin === state.plugins[index])).toBe(true);
     });
 
-    it('SPEC-rich-text-runtime/AC-053 closes the undo group around a command: typing, bold and typing, and typing, an insert and typing, are three steps each', () => {
+    it('SPEC-rich-text-runtime/AC-053 closes the undo group around a command and a paste: typing, bold and typing, typing, an insert and typing, and typing, a paste and typing, are three steps each', () => {
         const bolded = start(stored(para()));
         typeText(bolded.handle, 'ab');
         setSelection(bolded.handle, { text: 'ab' });
@@ -3179,8 +3179,12 @@ describe('history', () => {
         typeText(inserted.handle, 'a');
         inserted.handle.execute('text.insert', { text: 'b' });
         typeText(inserted.handle, 'c');
+        const pasted = start(stored(para()));
+        typeText(pasted.handle, 'a');
+        pasted.view.pasteText('b');
+        typeText(pasted.handle, 'c');
 
-        expect([undoSteps(bolded.handle), undoSteps(inserted.handle)]).toEqual([3, 3]);
+        expect([undoSteps(bolded.handle), undoSteps(inserted.handle), undoSteps(pasted.handle)]).toEqual([3, 3, 3]);
     });
 
     it('SPEC-rich-text-runtime/AC-054 adds no undo step for a selection move or a stored mark', () => {
@@ -3458,13 +3462,11 @@ describe('faults', () => {
         const session = start(stored(para(words('ab'))), { plugins: [updateFails] });
         const { handle, diagnostics } = session;
         setSelection(handle, { text: 'ab' });
-        const captured = handle.captureTarget({ purpose: 'format', onIntersectingEdit: 'map' });
+        const target = capture(handle, { purpose: 'format', onIntersectingEdit: 'map' });
         faultView(session);
         const { commitSequence } = handle.getSummary();
 
-        if (captured.status === 'captured') {
-            handle.releaseTarget(captured.target);
-        }
+        handle.releaseTarget(target);
 
         expect(handle.getSummary().commitSequence).toBe(commitSequence);
         expect(diagnostics).toEqual([viewFault]);
@@ -3543,6 +3545,9 @@ describe('faults', () => {
         await settleInput(session);
 
         expect(session.diagnostics).toEqual([pluginError]);
+        expect(session.handle.getSummary()).toMatchObject({ phase: 'ready', sequence: 1 });
+        expect(textOf(session.view.state.doc)).toBe('abx');
+        expect(contentOf(session.changes[0])).toEqual(stored(para(words('abx'))).content);
     });
 
     it('SPEC-rich-text-runtime/AC-071 leaves nothing on the element that reaches the runtime after a plugin view throws while mounting', () => {
@@ -3550,8 +3555,10 @@ describe('faults', () => {
         if (result.status !== 'editable' || tree === undefined) {
             throw new Error('expected an editable document');
         }
+        let halfBuilt: { readonly isDestroyed: boolean } | undefined;
         const viewFails = new Plugin({
-            view: () => {
+            view: (editorView) => {
+                halfBuilt = editorView;
                 throw new Error('plugin view failure');
             },
         });
@@ -3580,6 +3587,7 @@ describe('faults', () => {
         element.dispatchEvent(new InputEvent('beforeinput', { inputType: 'insertText', data: 'x', bubbles: true }));
 
         expect(runtime.handle.getSummary()).toMatchObject({ phase: 'faulted', commitSequence: 0 });
+        expect(halfBuilt?.isDestroyed).toBe(true);
     });
 });
 
@@ -3710,7 +3718,7 @@ describe('input rules', () => {
         });
     }
 
-    it('SPEC-rich-text-editing/AC-038 SPEC-rich-text-runtime/AC-034 fires no rule for composed text, which stays one undo step', async () => {
+    it('SPEC-rich-text-editing/AC-038 fires no rule for composed text, which stays one undo step', async () => {
         const session = start(stored(para(words('ab.'))), { model: ruleModel });
         const { handle, view } = session;
         setSelection(handle, { text: 'ab.', from: 3, to: 3 });
@@ -3741,6 +3749,50 @@ describe('input rules', () => {
         pressKey(handle, 'Backspace');
 
         expect(shapeOf(view.state.doc)).toBe('paragraph x[bold]');
+    });
+
+    it('SPEC-rich-text-editing/AC-041 undoes no rule with Backspace once the caret moved or a character was typed after it', () => {
+        const moved = typedIn(stored(para()), '**x**');
+        setSelection(moved.handle, { text: 'x', from: 0, to: 0 });
+        pressKey(moved.handle, 'Backspace');
+        const typed = typedIn(stored(para()), '**x**y');
+        pressKey(typed.handle, 'Backspace');
+
+        expect([shapeOf(moved.view.state.doc), shapeOf(typed.view.state.doc)]).toEqual([
+            'paragraph x[bold]',
+            'paragraph x[bold] y',
+        ]);
+    });
+
+    it('SPEC-rich-text-editing/AC-041 runs the rule undo before a feature that binds Backspace, which then gets the next one', () => {
+        const backspaceMark = defineFeature({
+            id: 'fixture.backspace-mark',
+            version: 1,
+            requires: [{ id: 'core', version: 1 }],
+            keys: { Backspace: { command: 'text.insert', payload: { text: '!' } } },
+        });
+        const model = compileContentModel(
+            [core(), bold(), fixtureItalic(), fixtureHeadingSet(), fixtureInputRules(), backspaceMark()],
+            { id: 'test.bold', version: 1 },
+        );
+        const { handle, view } = start(stored(para()), { model });
+        typeText(handle, '**x**');
+
+        pressKey(handle, 'Backspace');
+        const undone = shapeOf(view.state.doc);
+        pressKey(handle, 'Backspace');
+
+        expect([undone, shapeOf(view.state.doc)]).toEqual(['paragraph **x**', 'paragraph **x**!']);
+    });
+
+    it('SPEC-rich-text-editing/AC-100 undoes a rule with Mod-z and redoes it with Mod-Shift-z', () => {
+        const { handle, view } = typedIn(stored(para()), '**x**');
+
+        pressKey(handle, 'Mod-z');
+        const undone = shapeOf(view.state.doc);
+        pressKey(handle, 'Mod-Shift-z');
+
+        expect([undone, shapeOf(view.state.doc)]).toEqual(['paragraph **x**', 'paragraph x[bold]']);
     });
 
     it('SPEC-rich-text-editing/AC-039 fires no rule whose match starts inside inline code', () => {
@@ -3778,6 +3830,7 @@ describe('input rules', () => {
             ['a~~b~~', para(), 'a~~b~~'],
             ['x`y`', para(), 'x`y`'],
             ['** x**', para(), '** x**'],
+            ['**x **', para(), '**x **'],
             ['_x_', para(words('y')), '_x_y'],
         ];
 
