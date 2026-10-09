@@ -5,7 +5,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { act, render, screen } from '@testing-library/react';
-import { createRef, Profiler, StrictMode, useEffect } from 'react';
+import { createRef, Profiler, StrictMode, useEffect, useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
 import { useEditorSelection } from '#/bridge/hooks';
@@ -556,6 +556,97 @@ describe('RichTextEditor host surface', () => {
             unmount();
         },
     );
+
+    it('SPEC-rich-text-react/AC-102 rejects execute from the render of a part that rerenders from its own state', () => {
+        const environment = createTestEnvironment({ seed: 1 });
+        const ref = createRef<EditorHandle<object>>();
+        const onDiagnostic = vi.fn<(diagnostic: Diagnostic) => void>();
+        const results: CommandResult[] = [];
+        let flip: (calling: boolean) => void = () => undefined;
+        const Caller = () => {
+            const [calling, setCalling] = useState(false);
+            flip = setCalling;
+            const kind = useEditorSelection((selection) => selection.kind);
+            if (calling) {
+                const commands = ref.current as unknown as Pick<RuntimeHandle, 'execute'>;
+                results.push(commands.execute('text.insert', { text: kind }));
+            }
+            return null;
+        };
+        const { unmount } = render(
+            <RichTextEditor.Root
+                aria-label="Notes"
+                definition={definition}
+                defaultValue={defaultValue(para({ type: 'text', text: 'ab' }))}
+                environment={environment}
+                onDiagnostic={onDiagnostic}
+                ref={ref}
+            >
+                <RichTextEditor.Surface />
+                <Caller />
+            </RichTextEditor.Root>,
+        );
+        act(() => environment.flushFrames());
+        const before = (ref.current as EditorHandle<object>).getSnapshot();
+
+        // Only the part renders: its own setter runs inside `act`, and the root does not.
+        act(() => flip(true));
+
+        expect(results).toEqual([{ status: 'rejected', code: 'busy' }]);
+        expect(onDiagnostic.mock.calls.map(([{ code }]) => code)).toEqual(['react.execute-in-render']);
+        expect((ref.current as EditorHandle<object>).getSnapshot()).toBe(before);
+        unmount();
+    });
+
+    it('SPEC-rich-text-react/AC-102 reports once when the diagnostic listener itself calls execute', () => {
+        const environment = createTestEnvironment({ seed: 1 });
+        const ref = createRef<EditorHandle<object>>();
+        const insert = () =>
+            (ref.current as unknown as Pick<RuntimeHandle, 'execute'>).execute('text.insert', { text: 'x' });
+        const inner: CommandResult[] = [];
+        const onDiagnostic = vi.fn<(diagnostic: Diagnostic) => void>(() => {
+            inner.push(insert());
+        });
+        const Caller = ({ calling }: { readonly calling: boolean }) => {
+            if (calling) {
+                insert();
+            }
+            return null;
+        };
+        const tree = (calling: boolean) => (
+            <RichTextEditor.Root
+                aria-label="Notes"
+                definition={definition}
+                defaultValue={defaultValue(para({ type: 'text', text: 'ab' }))}
+                environment={environment}
+                onDiagnostic={onDiagnostic}
+                ref={ref}
+            >
+                <RichTextEditor.Surface />
+                <Caller calling={calling} />
+            </RichTextEditor.Root>
+        );
+        const { rerender, unmount } = render(tree(false));
+        act(() => environment.flushFrames());
+
+        rerender(tree(true));
+
+        expect(onDiagnostic).toHaveBeenCalledTimes(1);
+        expect(inner).toEqual([{ status: 'rejected', code: 'busy' }]);
+        unmount();
+    });
+
+    it('SPEC-rich-text-react/AC-102 queues no development check work on a rerender in a production build', () => {
+        vi.stubEnv('NODE_ENV', 'production');
+        const { environment, rerender, unmount } = mount();
+        const microtask = vi.spyOn(environment.scheduler, 'microtask');
+
+        rerender({ placeholder: 'Write' });
+
+        expect(microtask).not.toHaveBeenCalled();
+        unmount();
+        vi.unstubAllEnvs();
+    });
 });
 
 describe('RichTextEditor documents', () => {
