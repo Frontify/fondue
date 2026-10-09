@@ -6,7 +6,7 @@ import { Fragment, Node, Schema, Slice } from 'prosemirror-model';
 import { type EditorState, Plugin, TextSelection, type Transaction } from 'prosemirror-state';
 import { tableEditing, tableNodes } from 'prosemirror-tables';
 import { Step, StepResult } from 'prosemirror-transform';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 
 import {
     compileDefinition,
@@ -46,6 +46,7 @@ import {
 import { decodeToTree, limitsOf } from '#/model/decode';
 import { createTestEnvironment, pressKey, setSelection, type TestEnvironment, typeText } from '#/testing';
 import { probeRuntimes } from '#/testing/probe';
+import { STORAGE, stubStorage } from '#/testing/storage';
 
 import newerNotes from '../../fixtures/migration/v3-current.json';
 
@@ -176,6 +177,21 @@ const discarded = (reason: string) => ({
     severity: 'info',
     messageKey: 'runtime.async-discarded',
     details: { reason },
+});
+
+// SPEC-rich-text-persistence/AC-044: every browser storage API fails while this suite runs.
+let restoreStorage: () => void;
+beforeAll(() => {
+    restoreStorage = stubStorage();
+});
+afterAll(() => restoreStorage());
+
+it('SPEC-rich-text-persistence/AC-044 runs the runtime suite with every browser storage API failing', () => {
+    for (const name of STORAGE) {
+        expect(() => {
+            Reflect.get(Reflect.get(globalThis, name) as object, 'open');
+        }).toThrow(name);
+    }
 });
 
 describe('the commit path', () => {
