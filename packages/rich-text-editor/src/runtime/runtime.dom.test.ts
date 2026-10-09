@@ -839,6 +839,51 @@ describe('commands, events and the commit path', () => {
         ]);
     });
 
+    it('SPEC-rich-text-runtime/AC-001 commits a root a plugin view dispatches during an install after that install publishes', () => {
+        let inserted = false;
+        const insertOnce = new Plugin({
+            view: () => ({
+                update: (view, previous) => {
+                    if (!inserted && !view.state.doc.eq(previous.doc)) {
+                        inserted = true;
+                        view.dispatch(view.state.tr.insertText('x', 1));
+                    }
+                },
+            }),
+        });
+        const { handle, view, changes } = start(stored(para()), { plugins: [insertOnce] });
+
+        typeText(handle, 'a');
+
+        expect(changes.map(({ stamp }) => stamp.sequence)).toEqual([1, 2]);
+        expect(changes.at(-1)?.readDocument().content).toEqual(stored(para(words('xa'))).content);
+        expect(view.state.doc.textContent).toBe('xa');
+    });
+
+    it('SPEC-rich-text-runtime/AC-026 reports a selector whose read throws and still notifies the others and emits the change', () => {
+        const { handle, runtime, view, changes, diagnostics } = start(stored(para()));
+        const other = vi.fn();
+        let fail = false;
+        runtime.watch(
+            () => {
+                if (fail) {
+                    throw new Error('selector');
+                }
+                return 0;
+            },
+            Object.is,
+            () => undefined,
+        );
+        runtime.watch(() => view.state.doc.textContent, Object.is, other);
+        fail = true;
+
+        typeText(handle, 'a');
+
+        expect(other.mock.calls).toEqual([['a']]);
+        expect(changes).toHaveLength(1);
+        expect(diagnostics.map(({ code }) => code)).toEqual(['runtime.listener-error']);
+    });
+
     it('SPEC-rich-text-runtime/AC-012 aborts a batch past the append limit, names the chain and faults', () => {
         const { handle, view, diagnostics, changes } = start(stored(para()), {
             plugins: [appendForever('fixture.a', 'insertNode'), appendForever('fixture.b', 'setBlock')],
@@ -1277,6 +1322,51 @@ describe('command payloads', () => {
 });
 
 describe('disposal', () => {
+    it('SPEC-rich-text-runtime/AC-029 SPEC-rich-text-runtime/AC-060 settles an intent enqueued from a disposed listener or after a fault or dispose', async () => {
+        const pending = (promise: Promise<CommandResult>) => Promise.race([promise, Promise.resolve('pending')]);
+        const faulted = start(stored(para()), {
+            plugins: [appendForever('fixture.a', 'insertNode'), appendForever('fixture.b', 'setBlock')],
+        });
+        typeText(faulted.handle, 'x');
+        const disposed = start(stored(para()));
+        const late: Promise<CommandResult>[] = [];
+        disposed.handle.subscribe('disposed', () => late.push(disposed.handle.enqueue('text.insert', { text: 'a' })));
+        disposed.handle.dispose();
+        late.push(disposed.handle.enqueue('text.insert', { text: 'b' }));
+        const intents = probeRuntimes().intents;
+
+        const results = await Promise.all([
+            pending(faulted.handle.enqueue('text.insert', { text: 'c' })),
+            ...late.map(pending),
+        ]);
+
+        expect(results).toEqual(Array.from({ length: 3 }, () => ({ status: 'rejected', code: 'not-ready' })));
+        expect(intents).toBe(0);
+    });
+
+    it('SPEC-rich-text-runtime/AC-060 counts nothing twice when a kept unsubscribe runs after dispose', () => {
+        const { handle } = start(stored(para()));
+        const before = probeRuntimes().subscriptions;
+        const unsubscribe = handle.subscribe('documentChange', () => undefined);
+
+        handle.dispose();
+        unsubscribe();
+
+        expect(probeRuntimes().subscriptions).toBe(before - 2);
+    });
+
+    it('SPEC-rich-text-runtime/AC-060 stops notifying once a listener disposes the session', () => {
+        const { handle } = start(stored(para()));
+        const later = vi.fn();
+        handle.subscribe('documentChange', () => handle.dispose());
+        handle.subscribe('documentChange', later);
+
+        typeText(handle, 'a');
+
+        expect(handle.getSummary().phase).toBe('disposed');
+        expect(later).not.toHaveBeenCalled();
+    });
+
     it('SPEC-rich-text-runtime/AC-060 releases every listener, selector, queued intent, frame, view and plugin view over 10 mount and dispose cycles', async () => {
         const before = probeRuntimes();
         let pluginViews = 0;
