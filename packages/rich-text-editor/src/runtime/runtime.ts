@@ -473,7 +473,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     const attempt = (
         id: string,
         checked: { readonly payload: unknown } | undefined,
-        options: unknown,
+        base: EditorState | RejectedCode,
         ids: IdSource,
     ): Attempt => {
         const command = definition.commands.get(id);
@@ -494,7 +494,6 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         if (mode === 'readonly') {
             return { code: 'readonly' };
         }
-        const base = baseOf(options);
         if (typeof base === 'string') {
             return { code: base };
         }
@@ -524,7 +523,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         if (command !== undefined && checked !== undefined && typeof base !== 'string') {
             active = command.active(base, checked.payload);
         }
-        const attempted = attempt(id, checked, options, queriedIds());
+        const attempted = attempt(id, checked, base, queriedIds());
         if ('code' in attempted) {
             return { enabled: false, active, disabledReason: attempted.code };
         }
@@ -537,7 +536,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             return rejected('busy');
         }
         return busyWith((): CommandResult => {
-            const attempted = attempt(id, checkedPayload(given), options, installedIds);
+            const attempted = attempt(id, checkedPayload(given), baseOf(options), installedIds);
             if ('unchanged' in attempted) {
                 return { status: 'no-op', stamp: { ...session, sequence }, contentChanged: false };
             }

@@ -14,9 +14,10 @@ import {
 import { CAPABILITY_PLUGINS, declaresNodeIds, INPUT_RULES_PLUGIN, NODE_IDS_PLUGIN } from '#/model/capabilities';
 import { compiledModel } from '#/model/compile';
 
-import { NORMALIZER_STATES, NORMALIZERS } from './normalizers';
+import { NORMALIZERS } from './normalizers';
 import { buildSchema } from './schema';
 
+export { carriesNodeId } from './schema';
 export { type Normalizer, NORMALIZERS } from './normalizers';
 
 /** The transaction meta that names the command a transaction runs, so the runtime reports it. */
@@ -161,21 +162,20 @@ export const compileDefinition = (
         return { featureId: contributor.id, capability: id };
     };
     const pluginOf = (id: string) => {
-        const normalize = NORMALIZERS[id];
-        if (normalize !== undefined) {
-            const appendTransaction = (transactions: readonly Transaction[], _old: EditorState, state: EditorState) => {
-                const batch = batchOf(transactions);
-                // Outside a commit no ID source is known, and a batch that kept the document has nothing to repair.
-                if (batch === undefined || !transactions.some(({ docChanged }) => docChanged)) {
-                    return null;
-                }
-                return normalize(state, batch.ids);
-            };
-            const kept = NORMALIZER_STATES[id];
-            if (kept !== undefined) {
-                return new Plugin({ key: kept.key, state: kept.field, appendTransaction });
-            }
-            return new Plugin({ key: new PluginKey(id), appendTransaction });
+        const normalizer = NORMALIZERS[id];
+        if (normalizer !== undefined) {
+            return new Plugin({
+                key: normalizer.key,
+                state: normalizer.field,
+                appendTransaction: (transactions, _old, state) => {
+                    const batch = batchOf(transactions);
+                    // Outside a commit no ID source is known, and a batch that kept the document has nothing to repair.
+                    if (batch === undefined || !transactions.some(({ docChanged }) => docChanged)) {
+                        return null;
+                    }
+                    return normalizer.normalize(state, batch.ids);
+                },
+            });
         }
         const bindings: Record<string, Command> = {};
         for (const entry of keymap) {
