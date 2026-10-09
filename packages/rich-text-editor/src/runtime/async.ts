@@ -93,15 +93,16 @@ export const createAsyncCoordinator = (options: AsyncCoordinatorOptions) => {
         if (isDisposed()) {
             return;
         }
-        // A newer request on its key aborts and unregisters an older one, whose result is then ignored (AC-047).
-        if (operations.get(operation.id) !== operation) {
-            discard('superseded');
-            return;
-        }
+        // Checked first, since a replacement also aborts and unregisters what the old generation started.
         const current = session();
         if (operation.session.sessionId !== current.sessionId || operation.session.generation !== current.generation) {
             end(operation);
             discard('wrong-session');
+            return;
+        }
+        // A newer request on its key aborts and unregisters an older one, whose result is then ignored (AC-047).
+        if (operations.get(operation.id) !== operation) {
+            discard('superseded');
             return;
         }
         if (isFaulted()) {

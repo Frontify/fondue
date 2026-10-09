@@ -27,6 +27,7 @@ import {
 import {
     type CapabilityRef,
     type Diagnostic,
+    hashDocument,
     type IdSource,
     type JsonObject,
     type ResourceLimits,
@@ -35,6 +36,7 @@ import {
 } from '#/model';
 import { attributesOf, compiledModel } from '#/model/compile';
 import { type TreeNode } from '#/model/content';
+import { decodeToTree } from '#/model/decode';
 import { encodeTree } from '#/model/encode';
 import { diagnostic } from '#/model/format';
 import { findInvalidPayload, findUnsafeJson, isRecord, isValidValue, snapshot } from '#/model/values';
@@ -42,12 +44,12 @@ import { findInvalidPayload, findUnsafeJson, isRecord, isValidValue, snapshot } 
 import { type AsyncOperation, type AsyncRequest, createAsyncCoordinator } from './async';
 import { secondCopyAtMount, secondCopyInView } from './engines';
 import { createEventBus, type Listener } from './events';
-import { groupRoot, groupsPlugin, isHistoryTransaction } from './history';
+import { groupRoot, groupsPlugin, isHistoryTransaction, reset } from './history';
 import { firedRule, withoutRules } from './input-rules';
 import { createLimitCheck } from './limits';
 import { operationMetric } from './metrics';
 import { authoringOf, createPolicyCheck } from './policy';
-import { createUnmanagedStatus, type SaveCoordinator } from './saves';
+import { createUnmanagedStatus, sameStamp, type SaveCoordinator } from './saves';
 import { createInputSettling } from './settle';
 import { captureTarget, countTargets, releaseTargets, restoreTargets, targetSelection, targetsPlugin } from './targets';
 import {
@@ -61,6 +63,10 @@ import {
     type CommitResult,
     type EditorSummary,
     type OperationMetric,
+    type RecoveryReceipt,
+    type RecoveryService,
+    type ReplaceDocumentRequest,
+    type ReplaceResult,
     type SaveStatus,
     type SelectionHandle,
     type SelectionSummary,
@@ -72,6 +78,7 @@ import {
 
 type Mode = EditorSummary['mode'];
 type RejectedCode = Extract<CommandResult, { readonly status: 'rejected' }>['code'];
+type ReplaceCode = Extract<ReplaceResult, { readonly status: 'rejected' }>['code'];
 type IdKind = Parameters<IdSource['next']>[0];
 
 // Queued intents whose listeners keep enqueuing stop past this depth (SPEC-rich-text-runtime/AC-030).
@@ -97,7 +104,7 @@ export interface RuntimeHandle {
     captureTarget(options: CaptureTargetOptions): CaptureResult;
     releaseTarget(target: SelectionHandle): void;
     requestCommit(options: CommitOptions): Promise<CommitResult>;
-    replaceDocument(): never;
+    replaceDocument(request: ReplaceDocumentRequest): Promise<ReplaceResult>;
     setMode(mode: Mode): void;
     updatePolicy(policy: AuthoringPolicy): void;
     focus(where?: 'current' | 'start' | 'end'): void;
@@ -166,6 +173,8 @@ export interface EditorRuntimeOptions {
     readonly revision?: ServerRevision | null;
     /** Builds the session's save coordinator; without one the session is `unmanaged` (SPEC-rich-text-persistence/AC-001). */
     readonly saves?: ((runtime: EditorRuntime) => SaveCoordinator) | undefined;
+    /** The host's recovery service, read when a view fault leaves a candidate (SPEC-rich-text-runtime/AC-015). */
+    readonly recovery?: () => RecoveryService | undefined;
 }
 
 /** What every live runtime owns, which the `src/testing` probe reads. */
@@ -268,6 +277,7 @@ export const positionOf = (doc: Node, nodeId: string): number | undefined => {
 };
 
 const rejected = (code: RejectedCode): CommandResult => ({ status: 'rejected', code });
+const refused = (code: ReplaceCode): ReplaceResult => ({ status: 'rejected', code });
 const unique = (values: readonly string[]) => [...new Set(values)];
 /** The payload as one frozen JSON copy, which is what is checked and run; `undefined` for one that is not plain JSON. */
 const checkedPayload = (given: unknown): { readonly payload: unknown } | undefined => {
@@ -315,15 +325,19 @@ interface Intent {
 /** One editing session: its state, its view while a surface is attached, the commit path and its events. */
 export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntime => {
     const { definition, environment, limits } = options;
-    const session: SessionToken = {
+    // A replacement moves the session to the next generation and document (`SPEC-rich-text-persistence`, Replacement steps).
+    let session: SessionToken = {
         documentId: options.documentId,
         sessionId: environment.ids.next('session'),
         generation: 0,
     };
     const createdAt = environment.clock.now();
-    const unmanaged = createUnmanagedStatus(options.revision ?? null);
+    let unmanaged = createUnmanagedStatus(options.revision ?? null);
     const breaksPolicy = createPolicyCheck(definition.model);
-    const exceedsLimits = createLimitCheck(definition.model, options.capabilities);
+    let { capabilities } = options;
+    let exceedsLimits = createLimitCheck(definition.model, capabilities);
+    // Aborted by `dispose`, which ends the session's own service calls.
+    const ended = new AbortController();
     let policy = options.policy;
     let policyRevision = 0;
     let phase: EditorSummary['phase'] = 'mounting';
@@ -464,7 +478,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     };
 
     const encode = (doc: Node): RichTextDocument =>
-        encodeTree(doc.toJSON() as TreeNode, definition.model, options.capabilities).document;
+        encodeTree(doc.toJSON() as TreeNode, definition.model, capabilities).document;
 
     // Recomputes `editable` and the surface attributes from the phase and the mode, which waits for input to settle.
     const refreshView = () => {
@@ -489,11 +503,35 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         coordinator.settle();
     };
 
+    /** Stores the candidate of a view fault with the host's recovery service (SPEC-rich-text-runtime/AC-015). */
+    const storeRecovery = (candidate: EditorState) => {
+        const service = options.recovery?.();
+        if (service === undefined || isDisposed()) {
+            return;
+        }
+        const checkpoint = {
+            stamp: { ...session, sequence: sequence + 1 },
+            acknowledgedRevision: saveStatus().revision,
+            document: encode(candidate.doc),
+        };
+        let stored: Promise<RecoveryReceipt>;
+        try {
+            stored = service.store(checkpoint, { signal: ended.signal, session });
+        } catch {
+            return;
+        }
+        stored
+            .then(({ receiptId }) => report(diagnostic('runtime.recovery-stored', undefined, { receiptId }, 'info')))
+            // A store that fails leaves the candidate with `getRecoveryCandidate` only.
+            .catch(() => undefined);
+    };
+
     /** The view threw while it installed `candidate`: editing stops and the snapshot stays (SPEC-rich-text-runtime/AC-014). */
     const viewFault = (attached: EditorView, candidate: EditorState) => {
         recovery = candidate;
         attached.dom.setAttribute('contenteditable', 'false');
         fault(diagnostic('runtime.view-fault', undefined, undefined, 'error'));
+        storeRecovery(candidate);
     };
 
     // IDs that queries drew, by kind, which the next real draws hand out first, so `execute` installs what `query` judged.
@@ -852,6 +890,9 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         if (findInvalidPayload(command.payload, payload) !== undefined) {
             return { code: 'invalid-payload' };
         }
+        if (phase === 'transitioning') {
+            return { code: 'busy' };
+        }
         if (phase !== 'ready') {
             return { code: 'not-ready' };
         }
@@ -1053,7 +1094,8 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         policyRevision: () => policyRevision,
         isDisposed: () => phase === 'disposed',
         isFaulted: () => phase === 'faulted',
-        holding: () => settling.active(),
+        // A result waits out a replacement, which applies it if it fails and discards it in the next generation.
+        holding: () => settling.active() || phase === 'transitioning',
         capture: () => {
             if (phase !== 'ready') {
                 return undefined;
@@ -1162,6 +1204,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         }
         // Set first, so `disposed` listeners read the final phase and what they enqueue settles at once.
         phase = 'disposed';
+        ended.abort();
         settling.cancel();
         coordinator.dispose();
         settleQueue('not-ready');
@@ -1200,6 +1243,159 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         if (selection !== null) {
             selection.setBaseAndExtent(anchor.node, anchor.offset, head.node, head.offset);
         }
+    };
+
+    const commitSnapshot = (commitOptions: CommitOptions): Promise<CommitResult> => {
+        if (saves === undefined) {
+            return Promise.resolve({ status: 'blocked', code: 'unmanaged' });
+        }
+        return saves.commit(commitOptions);
+    };
+
+    /** Whether the session has unsaved changes; an unmanaged one acknowledges only what it loaded (Save states). */
+    const unsavedChanges = () => {
+        if (saves !== undefined) {
+            return saves.unsaved();
+        }
+        return sequence > 0;
+    };
+
+    /** Replacement step 5 for a session with unsaved changes: `undefined` when the policy lets the replacement go on. */
+    const leaveUnsaved = async (unsaved: ReplaceDocumentRequest['unsaved']): Promise<ReplaceCode | undefined> => {
+        if (unsaved.action === 'save') {
+            const result = await commitSnapshot({ reason: 'navigate' });
+            // A write whose outcome is unknown goes on to step 6, which refuses it.
+            if (result.status === 'acknowledged' || (result.status === 'failed' && result.outcome === 'unknown')) {
+                return undefined;
+            }
+            return 'unsaved';
+        }
+        if (unsaved.action === 'checkpoint') {
+            if (sameStamp(unsaved.receipt.stamp, { ...session, sequence })) {
+                return undefined;
+            }
+            return 'checkpoint-invalid';
+        }
+        if (unsaved.action === 'discard' && unsaved.confirmed === true) {
+            return undefined;
+        }
+        return 'unsaved';
+    };
+
+    /** Leaves `transitioning` after a failed step, so what waited runs on the unchanged session (AC-032, AC-033). */
+    const resume = (code: ReplaceCode): ReplaceResult => {
+        phase = 'ready';
+        refreshView();
+        coordinator.settle();
+        saves?.settled();
+        drain();
+        return refused(code);
+    };
+
+    /**
+     * Replacement step 8: the decoded document in a fresh state with empty history, in the next generation of the
+     * session; a view that throws while it installs the state faults the session (AC-059).
+     */
+    const installNext = (
+        request: ReplaceDocumentRequest,
+        tree: TreeNode,
+        stored: readonly CapabilityRef[],
+    ): ReplaceResult => {
+        let fresh: EditorState;
+        try {
+            const doc = definition.schema.nodeFromJSON(tree);
+            let selection = Selection.atStart(doc);
+            if (request.selection === 'end') {
+                selection = Selection.atEnd(doc);
+            }
+            fresh = reset(state, doc, selection);
+        } catch {
+            fault(diagnostic('runtime.view-fault', undefined, undefined, 'error'));
+            return refused('faulted');
+        }
+        // Roots that plugin views dispatch while the state installs commit in the new generation.
+        const installed = guarded(() => {
+            if (!installState(fresh)) {
+                return false;
+            }
+            session = {
+                documentId: request.next.documentId,
+                sessionId: session.sessionId,
+                generation: session.generation + 1,
+            };
+            sequence = 0;
+            published = state;
+            capabilities = stored;
+            exceedsLimits = createLimitCheck(definition.model, capabilities);
+            if (saves === undefined) {
+                unmanaged = createUnmanagedStatus(request.next.revision);
+            } else {
+                saves.replaced(request.next.revision);
+            }
+            phase = 'ready';
+            refreshView();
+            return true;
+        });
+        if (!installed) {
+            return refused('faulted');
+        }
+        // What the old generation started or queued ends now and changes nothing here (AC-035, `SPEC-rich-text-runtime/AC-031`).
+        coordinator.abortWhere(() => true);
+        coordinator.settle();
+        settleQueue('wrong-session');
+        busyWith(notify);
+        emitSelection();
+        emitSaveStatus();
+        emit('replaced', session);
+        return { status: 'replaced', session };
+    };
+
+    /** `EditorHandle.replaceDocument`: the Replacement steps in order, stopping at the first that fails (AC-031). */
+    const replace = async (request: ReplaceDocumentRequest): Promise<ReplaceResult> => {
+        if (phase !== 'ready') {
+            return refused('not-ready');
+        }
+        const { next } = request;
+        // A host that echoes its own save gets the current session back with nothing changed (AC-027).
+        if (
+            next.revision === saveStatus().revision &&
+            hashDocument(next.document) === hashDocument(handle.getSnapshot().document)
+        ) {
+            return { status: 'replaced', session };
+        }
+        if (next.document.model.id !== definition.model.ref.id) {
+            return refused('wrong-model');
+        }
+        const { result, tree } = decodeToTree(next.document, definition.model, { limits });
+        if (result.status !== 'editable' || tree === undefined) {
+            return refused('invalid-document');
+        }
+        if (!sameStamp(request.expected, { ...session, sequence })) {
+            return refused('changed-since-request');
+        }
+        if (settling.active()) {
+            return refused('composition-active');
+        }
+        phase = 'transitioning';
+        refreshView();
+        if (unsavedChanges()) {
+            const code = await leaveUnsaved(request.unsaved);
+            // The session was disposed, or faulted, while the step 5 write ran.
+            if (phase !== 'transitioning') {
+                return refused('not-ready');
+            }
+            if (code !== undefined) {
+                return resume(code);
+            }
+        }
+        if (saves?.outcomeUnknown() === true) {
+            return resume('save-unresolved');
+        }
+        // A keystroke the view read during step 5 is kept, not replaced.
+        if (!sameStamp(request.expected, { ...session, sequence })) {
+            return resume('changed-since-request');
+        }
+        return installNext(request, tree, result.document.requiredCapabilities);
     };
 
     const handle: RuntimeHandle = {
@@ -1267,13 +1463,23 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 commit(release);
             }
         },
-        requestCommit: (options) => {
-            if (saves === undefined) {
-                return Promise.resolve({ status: 'blocked', code: 'unmanaged' });
+        requestCommit: (commitOptions) => {
+            // Only the replacement's own `save` writes while the document is replaced (SPEC-rich-text-persistence/AC-064).
+            if (saves !== undefined && phase === 'transitioning') {
+                return Promise.resolve({ status: 'blocked', code: 'not-ready' });
             }
-            return saves.commit(options);
+            return commitSnapshot(commitOptions);
         },
-        replaceDocument: notBuiltYet('replaceDocument', 'pair 17c, TASK-rte-persistence'),
+        replaceDocument: async (request) => {
+            const started = environment.clock.now();
+            const result = await replace(request);
+            let failureCode: string | null = null;
+            if (result.status === 'rejected') {
+                failureCode = result.code;
+            }
+            measure('replace', started, failureCode);
+            return result;
+        },
         setMode: (next) => {
             if (phase === 'disposed') {
                 return;
@@ -1328,6 +1534,10 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                                 }
                                 if (isEmpty(current)) {
                                     attributes['data-rte-empty'] = '';
+                                }
+                                // Selection and copy keep working on a surface that takes no edits (SPEC-rich-text-runtime/AC-090).
+                                if (phase === 'transitioning') {
+                                    attributes['aria-busy'] = 'true';
                                 }
                                 return attributes;
                             },

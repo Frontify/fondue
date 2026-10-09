@@ -3,19 +3,25 @@
 import { type CapabilityRef, type Diagnostic, type ModelRef, type RichTextDocument } from '#/model';
 import {
     type DocumentStamp,
+    type LoadedDocument,
     type SaveAcknowledgment,
     type ServerRevision,
-    type SessionToken,
+    type ServiceContext,
     type Snapshot,
 } from '#/runtime/types';
 
 // The persistence types of `SPEC-rich-text.contracts.ts` that the host-facing types reference (DR-063).
+// The runtime builds replacement and recovery, so their types live in `src/runtime/types.ts`.
+export {
+    type LoadedDocument,
+    type RecoveryCheckpoint,
+    type RecoveryReceipt,
+    type RecoveryService,
+    type ReplaceDocumentRequest,
+    type ReplaceResult,
+    type ServiceContext,
+} from '#/runtime/types';
 
-export interface LoadedDocument {
-    readonly documentId: string;
-    readonly revision: ServerRevision | null;
-    readonly document: RichTextDocument;
-}
 export interface SaveRequest {
     readonly operationId: string;
     readonly stamp: DocumentStamp;
@@ -36,10 +42,6 @@ export type SaveResponse =
           readonly code: 'forbidden' | 'invalid' | 'incompatible-writer';
           readonly diagnostics: readonly Diagnostic[];
       };
-export interface ServiceContext {
-    readonly signal: AbortSignal;
-    readonly session: SessionToken;
-}
 export interface PersistenceService {
     save(request: SaveRequest, context: ServiceContext): Promise<SaveResponse>;
     read(documentId: string, context: ServiceContext): Promise<LoadedDocument>;
@@ -54,44 +56,3 @@ export interface PersistenceOptions {
     readonly backoffMs?: number;
     readonly onConflict?: (remote: LoadedDocument | null, local: Snapshot) => void;
 }
-export interface RecoveryCheckpoint {
-    /** The snapshot's stamp; at a fault, the last published sequence plus one (SPEC-rich-text-runtime/AC-015). */
-    readonly stamp: DocumentStamp;
-    readonly acknowledgedRevision: ServerRevision | null;
-    readonly document: RichTextDocument;
-}
-/** Created only by a host recovery service after acknowledgment. */
-export interface RecoveryReceipt {
-    readonly stamp: DocumentStamp;
-    readonly receiptId: string;
-}
-export interface RecoveryService {
-    store(checkpoint: RecoveryCheckpoint, context: ServiceContext): Promise<RecoveryReceipt>;
-}
-export interface ReplaceDocumentRequest {
-    readonly expected: DocumentStamp;
-    readonly next: LoadedDocument;
-    readonly unsaved:
-        | { readonly action: 'reject' }
-        | { readonly action: 'save' }
-        | { readonly action: 'checkpoint'; readonly receipt: RecoveryReceipt }
-        | { readonly action: 'discard'; readonly confirmed: true };
-    readonly selection: 'start' | 'end';
-    /** Replacement cannot keep history in v1. */
-    readonly history: 'reset';
-}
-export type ReplaceResult =
-    | { readonly status: 'replaced'; readonly session: SessionToken }
-    | {
-          readonly status: 'rejected';
-          readonly code:
-              | 'changed-since-request'
-              | 'invalid-document'
-              | 'wrong-model'
-              | 'unsaved'
-              | 'composition-active'
-              | 'save-unresolved'
-              | 'checkpoint-invalid'
-              | 'not-ready'
-              | 'faulted';
-      };

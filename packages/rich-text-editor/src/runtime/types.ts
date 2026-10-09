@@ -268,6 +268,56 @@ export type CommitResult =
           readonly code: 'timeout' | 'transport' | 'disposed' | 'incompatible-writer' | 'invalid';
           readonly outcome: 'not-sent' | 'unknown' | 'rejected';
       };
+export interface LoadedDocument {
+    readonly documentId: string;
+    readonly revision: ServerRevision | null;
+    readonly document: RichTextDocument;
+}
+export interface ServiceContext {
+    readonly signal: AbortSignal;
+    readonly session: SessionToken;
+}
+export interface RecoveryCheckpoint {
+    /** The snapshot's stamp; at a fault, the last published sequence plus one (SPEC-rich-text-runtime/AC-015). */
+    readonly stamp: DocumentStamp;
+    readonly acknowledgedRevision: ServerRevision | null;
+    readonly document: RichTextDocument;
+}
+/** Created only by a host recovery service after acknowledgment. */
+export interface RecoveryReceipt {
+    readonly stamp: DocumentStamp;
+    readonly receiptId: string;
+}
+export interface RecoveryService {
+    store(checkpoint: RecoveryCheckpoint, context: ServiceContext): Promise<RecoveryReceipt>;
+}
+export interface ReplaceDocumentRequest {
+    readonly expected: DocumentStamp;
+    readonly next: LoadedDocument;
+    readonly unsaved:
+        | { readonly action: 'reject' }
+        | { readonly action: 'save' }
+        | { readonly action: 'checkpoint'; readonly receipt: RecoveryReceipt }
+        | { readonly action: 'discard'; readonly confirmed: true };
+    readonly selection: 'start' | 'end';
+    /** Replacement cannot keep history in v1. */
+    readonly history: 'reset';
+}
+export type ReplaceResult =
+    | { readonly status: 'replaced'; readonly session: SessionToken }
+    | {
+          readonly status: 'rejected';
+          readonly code:
+              | 'changed-since-request'
+              | 'invalid-document'
+              | 'wrong-model'
+              | 'unsaved'
+              | 'composition-active'
+              | 'save-unresolved'
+              | 'checkpoint-invalid'
+              | 'not-ready'
+              | 'faulted';
+      };
 export interface OperationMetric {
     readonly kind: 'mount' | 'commit' | 'paste' | 'save' | 'replace';
     readonly session: SessionToken;

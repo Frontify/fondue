@@ -75,6 +75,7 @@ export type RuntimeDiagnosticCode =
     | 'runtime.listener-error'
     | 'runtime.multiple-dispatch'
     | 'runtime.plugin-error'
+    | 'runtime.recovery-stored'
     | 'runtime.stale-transaction'
     | 'runtime.view-fault';
 /** The codes the package emits so far; later layers add theirs. */

@@ -30,7 +30,7 @@ import { type TreeNode } from '#/model/content';
 import { decodeToTree } from '#/model/decode';
 import { contentClasses } from '#/model/output';
 import { createSaveCoordinator } from '#/persistence/coordinator';
-import { type LoadedDocument } from '#/persistence/types';
+import { type LoadedDocument, type SaveRequest } from '#/persistence/types';
 import { readerContext } from '#/reader/context';
 import { type ReaderPresentation } from '#/reader/reader';
 import { browserEnvironment } from '#/runtime/environment';
@@ -144,10 +144,10 @@ const shellPropsOf = (props: Defined) => {
     return { model: engineOf(definition).model, limits: definition.limits, presentation, locale, testId };
 };
 
-/** A running session and the document it was loaded from. */
+/** A running session and the write its coordinator left with an unknown outcome, which Retry hands on. */
 interface RecoverySession {
     readonly handle: RuntimeHandle;
-    readonly loaded: LoadedDocument;
+    readonly held: () => SaveRequest | undefined;
 }
 
 type SessionProps = Defined & {
@@ -156,6 +156,8 @@ type SessionProps = Defined & {
     readonly onSession: (session: RecoverySession) => void;
     /** The document holds changes the failed session before Retry never saved. */
     readonly unsavedOnMount: boolean;
+    /** The write the failed session left unresolved, which this one replays first (SPEC-rich-text-persistence/AC-012). */
+    readonly carried: SaveRequest | undefined;
 };
 
 const SessionComponent = ({ children, onSession, ...props }: SessionProps, ref: ForwardedRef<EditorHandle<object>>) => {
@@ -194,17 +196,21 @@ const SessionComponent = ({ children, onSession, ...props }: SessionProps, ref: 
         // A session is managed for its whole life when it mounts with `services.persistence` (SPEC-rich-text-persistence/AC-001).
         const persistence = memberOf(latestRef.current.services, 'persistence');
         let saves: EditorRuntimeOptions['saves'];
+        let created: ReturnType<typeof createSaveCoordinator> | undefined;
         if (persistence !== undefined) {
-            saves = (session) =>
-                createSaveCoordinator(session, {
+            saves = (session) => {
+                created = createSaveCoordinator(session, {
                     // A host that drops the member later keeps the service the session mounted with.
                     service: () => memberOf(latestRef.current.services, 'persistence') ?? persistence,
                     options: () => latestRef.current.persistenceOptions,
                     revision: defaultValue.revision,
                     unsavedOnMount: latestRef.current.unsavedOnMount,
+                    carried: latestRef.current.carried,
                     model: engine.model,
                     environment,
                 });
+                return created;
+            };
         }
         const runtime = createEditorRuntime({
             definition: engine,
@@ -219,6 +225,7 @@ const SessionComponent = ({ children, onSession, ...props }: SessionProps, ref: 
             inRender: () => inReactWork(work),
             revision: defaultValue.revision,
             saves,
+            recovery: () => memberOf(latestRef.current.services, 'recovery'),
         });
         // Each event calls the newest callback the host passed (SPEC-rich-text-react/AC-004).
         runtime.handle.subscribe('ready', (session: SessionToken) => {
@@ -240,7 +247,7 @@ const SessionComponent = ({ children, onSession, ...props }: SessionProps, ref: 
             latestRef.current.onDiagnostic?.(diagnostic),
         );
         handleRef.current = runtime.handle;
-        onSession({ handle: runtime.handle, loaded: defaultValue });
+        onSession({ handle: runtime.handle, held: () => created?.held() });
         coordinator.start(runtime);
         return () => {
             coordinator.stop();
@@ -327,11 +334,13 @@ interface RecoveryState {
     readonly retried: LoadedDocument | undefined;
     /** Whether that snapshot holds changes the failed session never saved, which the remount then saves. */
     readonly unsavedOnMount: boolean;
+    /** The write the failed session left with an unknown outcome, which the remount replays first. */
+    readonly carried: SaveRequest | undefined;
 }
 
 /** The outer boundary: a render error shows the recovery shell with the last published snapshot (SPEC-rich-text-react/AC-022). */
 class Recovery extends Component<RecoveryProps, RecoveryState> {
-    state: RecoveryState = { failed: false, retried: undefined, unsavedOnMount: false };
+    state: RecoveryState = { failed: false, retried: undefined, unsavedOnMount: false, carried: undefined };
     // The last session, whose snapshot stays readable after it is disposed.
     private session: RecoverySession | undefined;
 
@@ -355,31 +364,38 @@ class Recovery extends Component<RecoveryProps, RecoveryState> {
                     {...props}
                     defaultValue={defaultValue}
                     unsavedOnMount={this.state.unsavedOnMount}
+                    carried={this.state.carried}
                     onSession={this.onSession}
                     ref={editorRef}
                 />
             );
         }
-        // A host rerender with another document must not take this session's content under its ID.
-        let loaded = defaultValue;
-        let { document, revision } = defaultValue;
+        let { documentId, document, revision } = defaultValue;
         let unsavedOnMount = false;
+        let carried: SaveRequest | undefined;
         if (this.session !== undefined) {
-            loaded = this.session.loaded;
             const snapshot = this.session.handle.getSnapshot();
+            // The session's own document ID, which neither a host rerender nor a replacement leaves behind.
+            documentId = snapshot.stamp.documentId;
             document = snapshot.document;
             // The acknowledged revision is the base of the next write, so a session that saved does not conflict with itself.
             revision = snapshot.acknowledgedRevision;
             const status = this.session.handle.getSaveStatus();
             // Every managed state but `clean` holds changes the server has not acknowledged, a carried edit included.
             unsavedOnMount = status.state !== 'clean' && status.state !== 'unmanaged';
+            carried = this.session.held();
         }
         return (
             <RecoveryShell
                 document={document}
                 {...shellPropsOf(props)}
                 onRetry={() =>
-                    this.setState({ failed: false, retried: { ...loaded, revision, document }, unsavedOnMount })
+                    this.setState({
+                        failed: false,
+                        retried: { documentId, revision, document },
+                        unsavedOnMount,
+                        carried,
+                    })
                 }
             />
         );
