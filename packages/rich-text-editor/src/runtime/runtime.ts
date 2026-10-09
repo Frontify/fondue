@@ -19,6 +19,7 @@ import {
     AppendLimitError,
     COMMAND_META,
     type CompiledDefinition,
+    ORIGIN_META,
     type PluginOrigin,
 } from '#/definition';
 import {
@@ -34,11 +35,13 @@ import { encodeTree } from '#/model/encode';
 import { diagnostic } from '#/model/format';
 import { findInvalidPayload, findUnsafeJson, isRecord, snapshot } from '#/model/values';
 
+import { type AsyncOperation, type AsyncRequest, createAsyncCoordinator } from './async';
 import { secondCopyAtMount, secondCopyInView } from './engines';
 import { createEventBus, type Listener } from './events';
 import { createLimitCheck } from './limits';
 import { authoringOf, createPolicyCheck } from './policy';
-import { captureTarget, countTargets, targetSelection, targetsPlugin } from './targets';
+import { createInputSettling } from './settle';
+import { captureTarget, countTargets, releaseTargets, targetSelection, targetsPlugin } from './targets';
 import {
     type AuthoringPolicy,
     type CaptureResult,
@@ -46,6 +49,7 @@ import {
     type ChangeOrigin,
     type CommandResult,
     type CommandState,
+    type DocumentStamp,
     type EditorSummary,
     type SelectionHandle,
     type SelectionSummary,
@@ -59,22 +63,32 @@ type IdKind = Parameters<IdSource['next']>[0];
 
 // Queued intents whose listeners keep enqueuing stop past this depth (SPEC-rich-text-runtime/AC-030).
 const MAX_ENQUEUE_DEPTH = 32;
+// ProseMirror marks each DOM change it reads during a composition with this meta.
+const COMPOSITION_META = 'composition';
 
 const notBuiltYet = (member: string, pair: string) => (): never => {
     throw new Error(`EditorHandle.${member} is not built yet; it lands with ${pair}.`);
 };
 
+/** The published snapshot; `acknowledgedRevision` stays `null` until a save coordinator acknowledges a save (TASK-rte-persistence). */
+export interface RuntimeSnapshot {
+    readonly stamp: DocumentStamp;
+    readonly document: RichTextDocument;
+    readonly acknowledgedRevision: null;
+    readonly compositionActive: boolean;
+}
+
 /** What the host calls: the `EditorHandle` members a later pair builds throw an error naming that pair (DR-063). */
 export interface RuntimeHandle {
     getSummary(): EditorSummary;
-    getSnapshot(): never;
+    getSnapshot(): RuntimeSnapshot;
     getSaveStatus(): never;
     getRecoveryCandidate(): never;
     query(id: string, ...args: readonly unknown[]): CommandState;
     execute(id: string, ...args: readonly unknown[]): CommandResult;
     enqueue(id: string, ...args: readonly unknown[]): Promise<CommandResult>;
     captureTarget(options: CaptureTargetOptions): CaptureResult;
-    releaseTarget(): never;
+    releaseTarget(target: SelectionHandle): void;
     requestCommit(): never;
     replaceDocument(): never;
     setMode(mode: Mode): void;
@@ -101,6 +115,10 @@ export interface EditorRuntime {
      * holds between it and the last value (SPEC-rich-text-runtime/AC-025, AC-079).
      */
     watch<T>(read: () => T, isEqual: (previous: T, next: T) => boolean, listener: (value: T) => void): Unsubscribe;
+    /** Starts an async operation through the coordinator, as an `upload` or mention search capability does. */
+    startAsync(request: AsyncRequest): AsyncOperation;
+    /** Aborts the operations that the changed `services` members started (SPEC-rich-text-runtime/AC-073). */
+    changeServices(members: readonly string[]): void;
 }
 
 export interface EditorRuntimeOptions {
@@ -162,6 +180,9 @@ const UI_ORIGINS: ReadonlySet<string> = new Set(['paste', 'cut', 'drop']);
 /** Where a batch came from: typing is a DOM change after a recorded `beforeinput`, which ProseMirror does not mark. */
 const originOf = (root: Transaction, typing: boolean): ChangeOrigin => {
     const event: unknown = root.getMeta('uiEvent');
+    if (root.getMeta(ORIGIN_META) === 'async') {
+        return 'async';
+    }
     if (root.getMeta(COMMAND_META) !== undefined) {
         return 'command';
     }
@@ -195,10 +216,18 @@ const DUPLICATE_ENGINE = diagnostic(
     'warning',
 );
 
-/** A batch checked against policy and limits and not installed, or why it cannot be. */
+/** A batch checked against policy and limits and not installed, with how it maps positions. */
+interface Candidate {
+    readonly candidate: EditorState;
+    readonly root: Transaction;
+    readonly mapping: Transaction['mapping'];
+}
+/** A candidate, or why a batch cannot be installed. */
 type Prepared =
-    | { readonly candidate: EditorState; readonly root: Transaction }
+    | Candidate
     | { readonly code: RejectedCode; readonly diagnostic?: Diagnostic; readonly fault?: Diagnostic };
+/** Who runs a command: a host call, a queued intent, or an async result. */
+type Route = 'host' | 'queue' | 'async';
 /** What a command would do now: nothing, a prepared batch, or a rejection. */
 type Attempt = Prepared | { readonly unchanged: true };
 
@@ -221,8 +250,11 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     const breaksPolicy = createPolicyCheck(definition.model);
     const exceedsLimits = createLimitCheck(definition.model, options.capabilities);
     let policy = options.policy;
+    let policyRevision = 0;
     let phase: EditorSummary['phase'] = 'mounting';
     let mode = options.mode;
+    // The mode the surface shows, which follows `mode` once input has settled (SPEC-rich-text-runtime/AC-034).
+    let shownMode = mode;
     let commitSequence = 0;
     let sequence = 0;
     let typing = false;
@@ -249,10 +281,19 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             },
         },
     });
+    const settling = createInputSettling(
+        environment,
+        () => view !== undefined && view.composing,
+        () => settleInput(),
+    );
     let state = EditorState.create({
         doc: definition.schema.nodeFromJSON(options.tree),
-        plugins: [typingRecorder, targetsPlugin, ...definition.plugins],
+        plugins: [typingRecorder, settling.plugin, targetsPlugin, ...definition.plugins],
     });
+    // The state whose document the snapshot and `sequence` last published, and how later provisional batches map it.
+    let published = state;
+    let provisional: Transaction['mapping'] | undefined;
+    let snapshotCache: { readonly doc: Node; readonly composing: boolean; readonly value: RuntimeSnapshot } | undefined;
 
     const busyWith = <T>(work: () => T): T => {
         busy += 1;
@@ -281,8 +322,12 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     const encode = (doc: Node): RichTextDocument =>
         encodeTree(doc.toJSON() as TreeNode, definition.model, options.capabilities).document;
 
-    // Recomputes `editable` and the surface attributes from the phase and the mode.
+    // Recomputes `editable` and the surface attributes from the phase and the mode, which waits for input to settle.
     const refreshView = () => {
+        if (settling.active()) {
+            return;
+        }
+        shownMode = mode;
         if (view !== undefined) {
             view.setProps({});
         }
@@ -326,6 +371,10 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         };
     };
 
+    /** A composition batch, and every batch after it until input settles, is checked and published then (AC-004, AC-018). */
+    const isProvisional = (root: Transaction) =>
+        settling.active() && (provisional !== undefined || root.getMeta(COMPOSITION_META) !== undefined);
+
     /** Applies a root transaction and every transaction plugins append to it, then the final policy and limit check. */
     const prepare = (root: Transaction, ids: IdSource): Prepared => {
         const batch: AppendBatch = {
@@ -358,18 +407,22 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         for (const transaction of applied.transactions.slice(1)) {
             mapping.appendMapping(transaction.mapping);
         }
-        if (doc !== state.doc && (breaksPolicy(policy, state.doc, doc, mapping) || exceedsLimits(doc, limits))) {
+        if (
+            doc !== state.doc &&
+            !isProvisional(root) &&
+            (breaksPolicy(policy, state.doc, doc, mapping) || exceedsLimits(doc, limits))
+        ) {
             return { code: 'not-allowed' };
         }
-        return { candidate: applied.state, root };
+        return { candidate: applied.state, root, mapping };
     };
 
     /** Publishes a checked batch, then commits the roots that plugin views dispatched while it was installed. */
-    const install = (candidate: EditorState, root: Transaction, typed: boolean): boolean => {
+    const install = (prepared: Candidate, typed: boolean): boolean => {
         installing = true;
         let changed: boolean;
         try {
-            changed = publish(candidate, root, typed);
+            changed = publish(prepared, typed);
         } finally {
             installing = false;
         }
@@ -384,17 +437,13 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         return changed;
     };
 
-    /** Installs a batch in the view, counts it, notifies selector stores, then emits its change. */
-    const publish = (candidate: EditorState, root: Transaction, typed: boolean): boolean => {
-        const previous = state;
-        state = candidate;
-        if (view !== undefined) {
-            view.updateState(candidate);
-        }
-        commitSequence += 1;
-        liveResources.targets += countTargets(candidate) - countTargets(previous);
+    /** Publishes the current state's document: counts an effective change, notifies selector stores, then emits it. */
+    const announce = (origin: ChangeOrigin, commandId: string | null): boolean => {
+        const previous = published;
+        const current = state;
+        published = current;
         // An effective change compares documents by node equality, never by serializing them (SPEC-rich-text-runtime/AC-019).
-        const changed = !candidate.doc.eq(previous.doc);
+        const changed = !current.doc.eq(previous.doc);
         if (changed) {
             sequence += 1;
         }
@@ -403,24 +452,74 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             return false;
         }
         let document: RichTextDocument | undefined;
-        const command: unknown = root.getMeta(COMMAND_META);
-        let commandId: string | null = null;
-        if (typeof command === 'string') {
-            commandId = command;
-        }
         emit('documentChange', {
             stamp: { ...session, sequence },
             commitSequence,
-            origin: originOf(root, typed),
+            origin,
             commandId,
             readDocument: () => {
                 if (document === undefined) {
-                    document = encode(candidate.doc);
+                    document = encode(current.doc);
                 }
                 return document;
             },
         });
         return true;
+    };
+
+    /** Installs a batch in the view and counts it, then publishes it, or keeps a provisional batch for input settling. */
+    const publish = ({ candidate, root, mapping }: Candidate, typed: boolean): boolean => {
+        const previous = state;
+        state = candidate;
+        if (view !== undefined) {
+            view.updateState(candidate);
+        }
+        commitSequence += 1;
+        liveResources.targets += countTargets(candidate) - countTargets(previous);
+        if (isProvisional(root)) {
+            if (provisional === undefined) {
+                provisional = mapping;
+            } else {
+                provisional.appendMapping(mapping);
+            }
+            notify();
+            return false;
+        }
+        const origin = originOf(root, typed);
+        const command: unknown = root.getMeta(COMMAND_META);
+        let commandId: string | null = null;
+        if (origin === 'command' && typeof command === 'string') {
+            commandId = command;
+        }
+        return announce(origin, commandId);
+    };
+
+    /**
+     * Once input has settled, checks the provisional batches as one change from the published document and publishes
+     * them, or restores the state from before the composition (SPEC-rich-text-runtime/AC-005, AC-065), then runs the
+     * deferred `contenteditable` change, the queued intents and the held async results (AC-033, AC-034, AC-089).
+     */
+    const settleInput = () => {
+        const mapping = provisional;
+        provisional = undefined;
+        busyWith(() => {
+            if (mapping !== undefined) {
+                const before = published.doc;
+                if (breaksPolicy(policy, before, state.doc, mapping) || exceedsLimits(state.doc, limits)) {
+                    liveResources.targets += countTargets(published) - countTargets(state);
+                    state = published;
+                    if (view !== undefined) {
+                        view.updateState(published);
+                    }
+                    commitSequence += 1;
+                    notify();
+                } else {
+                    announce('input', null);
+                }
+            }
+            refreshView();
+        });
+        coordinator.settle();
     };
 
     /** The view's `dispatchTransaction`: the one path by which any change reaches the view (SPEC-rich-text-runtime/AC-001). */
@@ -440,7 +539,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         busyWith(() => {
             const prepared = prepare(root, installedIds);
             if ('candidate' in prepared) {
-                install(prepared.candidate, root, typed);
+                install(prepared, typed);
             } else if (prepared.fault !== undefined) {
                 fault(prepared.fault);
             }
@@ -450,17 +549,25 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         });
     };
 
-    /** The state a command runs on: the current one, or with the selection at its target's mapped range (SPEC-rich-text-runtime/AC-040). */
-    const baseOf = (options: unknown): EditorState | RejectedCode => {
-        if (!isRecord(options) || options.target === undefined) {
-            return state;
-        }
-        const { target } = options;
+    /** The ID of a target this session captured, or why it is not one. */
+    const ownTarget = (target: unknown): { readonly id: string } | RejectedCode => {
         if (!isRecord(target) || typeof target.id !== 'string' || !isRecord(target.session)) {
             return 'target-invalid';
         }
         if (target.session.sessionId !== session.sessionId || target.session.generation !== session.generation) {
             return 'wrong-session';
+        }
+        return { id: target.id };
+    };
+
+    /** The state a command runs on: the current one, or with the selection at its target's mapped range (SPEC-rich-text-runtime/AC-040). */
+    const baseOf = (options: unknown): EditorState | RejectedCode => {
+        if (!isRecord(options) || options.target === undefined) {
+            return state;
+        }
+        const target = ownTarget(options.target);
+        if (typeof target === 'string') {
+            return target;
         }
         const selection = targetSelection(state, target.id);
         if (selection === undefined) {
@@ -475,6 +582,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         checked: { readonly payload: unknown } | undefined,
         base: EditorState | RejectedCode,
         ids: IdSource,
+        route: Route,
     ): Attempt => {
         const command = definition.commands.get(id);
         if (command === undefined) {
@@ -512,6 +620,13 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         if (root === undefined) {
             return { unchanged: true };
         }
+        // Work that runs later through a target maps the user's selection through its change instead of moving it there.
+        if (route !== 'host' && base !== state) {
+            root.setSelection(state.selection.map(root.doc, root.mapping));
+        }
+        if (route === 'async') {
+            root.setMeta(ORIGIN_META, 'async');
+        }
         return prepare(root, ids);
     };
 
@@ -523,7 +638,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         if (command !== undefined && checked !== undefined && typeof base !== 'string') {
             active = command.active(base, checked.payload);
         }
-        const attempted = attempt(id, checked, base, queriedIds());
+        const attempted = attempt(id, checked, base, queriedIds(), 'host');
         if ('code' in attempted) {
             return { enabled: false, active, disabledReason: attempted.code };
         }
@@ -531,17 +646,21 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     };
 
     // Installs exactly what `query` checked, so the two agree (SPEC-rich-text-runtime/AC-036).
-    const execute = (id: string, given?: unknown, options?: unknown): CommandResult => {
+    const run = (id: string, given: unknown, options: unknown, route: Route): CommandResult => {
         if (busy > 0) {
             return rejected('busy');
         }
         return busyWith((): CommandResult => {
-            const attempted = attempt(id, checkedPayload(given), baseOf(options), installedIds);
+            const attempted = attempt(id, checkedPayload(given), baseOf(options), installedIds, route);
             if ('unchanged' in attempted) {
                 return { status: 'no-op', stamp: { ...session, sequence }, contentChanged: false };
             }
             if ('candidate' in attempted) {
-                const contentChanged = install(attempted.candidate, attempted.root, false);
+                // A host call never changes content during a composition, which queued intents and async results wait out (AC-032).
+                if (attempted.candidate.doc !== state.doc && settling.active()) {
+                    return rejected('composition-active');
+                }
+                const contentChanged = install(attempted, false);
                 return { status: 'applied', stamp: { ...session, sequence }, contentChanged };
             }
             if (attempted.diagnostic !== undefined) {
@@ -553,10 +672,35 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             return rejected(attempted.code);
         });
     };
+    const execute = (id: string, given?: unknown, options?: unknown) => run(id, given, options, 'host');
 
-    /** Runs queued intents in call order once no commit or notification is in progress (SPEC-rich-text-runtime/AC-029). */
+    const coordinator = createAsyncCoordinator({
+        ids: environment.ids,
+        session: () => session,
+        policyRevision: () => policyRevision,
+        isDisposed: () => phase === 'disposed',
+        holding: () => settling.active(),
+        // A result runs as its command's payload through `commit` from the current state (SPEC-rich-text-runtime/AC-048).
+        apply: (operation, result) => {
+            let options: { readonly target: SelectionHandle } | undefined;
+            if (operation.target !== null) {
+                options = { target: operation.target };
+            }
+            const outcome = run(operation.command, result, options, 'async');
+            if (outcome.status === 'rejected') {
+                return outcome.code;
+            }
+            return undefined;
+        },
+        report,
+    });
+
+    /**
+     * Runs queued intents in call order once no commit or notification is in progress (SPEC-rich-text-runtime/AC-029)
+     * and input has settled (AC-033).
+     */
     const drain = () => {
-        if (draining || busy > 0 || phase !== 'ready') {
+        if (draining || busy > 0 || phase !== 'ready' || settling.active()) {
             return;
         }
         draining = true;
@@ -568,7 +712,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 // The intent's depth holds while it runs or is reported, so what its listeners enqueue sits deeper.
                 depth = intent.depth;
                 if (intent.depth <= MAX_ENQUEUE_DEPTH) {
-                    intent.resolve(execute(intent.id, intent.payload, intent.options));
+                    intent.resolve(run(intent.id, intent.payload, intent.options, 'queue'));
                 } else {
                     if (!warned) {
                         warned = true;
@@ -619,9 +763,15 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         }
         // Set first, so `disposed` listeners read the final phase and what they enqueue settles at once.
         phase = 'disposed';
+        settling.cancel();
+        coordinator.dispose();
         settleQueue('not-ready');
         deferred.length = 0;
-        liveResources.targets -= countTargets(state);
+        const release = releaseTargets(state);
+        if (release !== undefined) {
+            liveResources.targets -= countTargets(state);
+            state = state.apply(release);
+        }
         emit('disposed', session);
         clear();
         detach();
@@ -638,7 +788,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         if (where === 'end') {
             commit(state.tr.setSelection(Selection.atEnd(state.doc)));
         }
-        if (mode === 'editable') {
+        if (shownMode === 'editable') {
             view.focus();
             return;
         }
@@ -654,21 +804,34 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
 
     const handle: RuntimeHandle = {
         getSummary: () => {
-            let compositionActive = false;
-            if (view !== undefined) {
-                compositionActive = view.composing;
-            }
             return {
                 session,
                 phase,
                 mode,
                 commitSequence,
                 sequence,
-                compositionActive,
+                compositionActive: settling.active(),
                 selection: summarize(state.selection),
             };
         },
-        getSnapshot: notBuiltYet('getSnapshot', 'pair 13, TASK-rte-runtime-async'),
+        // The same frozen object until the published document or the composition state changes (SPEC-rich-text-runtime/AC-065).
+        getSnapshot: () => {
+            const composing = settling.active();
+            if (
+                snapshotCache === undefined ||
+                snapshotCache.doc !== published.doc ||
+                snapshotCache.composing !== composing
+            ) {
+                const value: RuntimeSnapshot = snapshot({
+                    stamp: { ...session, sequence },
+                    document: encode(published.doc),
+                    acknowledgedRevision: null,
+                    compositionActive: composing,
+                });
+                snapshotCache = { doc: published.doc, composing, value };
+            }
+            return snapshotCache.value;
+        },
         getSaveStatus: notBuiltYet('getSaveStatus', 'pair 17, TASK-rte-persistence'),
         getRecoveryCandidate: notBuiltYet('getRecoveryCandidate', 'pair 13, TASK-rte-runtime-async'),
         query,
@@ -683,7 +846,16 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             commit(captureTarget(state, id, options));
             return { status: 'captured', target: Object.freeze({ id, session }) as unknown as SelectionHandle };
         },
-        releaseTarget: notBuiltYet('releaseTarget', 'pair 13, TASK-rte-runtime-async'),
+        releaseTarget: (target) => {
+            const owned = ownTarget(target);
+            if (phase === 'disposed' || typeof owned === 'string') {
+                return;
+            }
+            const release = releaseTargets(state, [owned.id]);
+            if (release !== undefined) {
+                commit(release);
+            }
+        },
         requestCommit: notBuiltYet('requestCommit', 'pair 17, TASK-rte-persistence'),
         replaceDocument: notBuiltYet('replaceDocument', 'pair 17, TASK-rte-persistence'),
         setMode: (next) => {
@@ -696,6 +868,12 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         // Applies to the next query and commit; the schema, view and plugins stay (SPEC-rich-text-runtime/AC-011).
         updatePolicy: (next) => {
             policy = authoringOf(definition.model, next);
+            policyRevision += 1;
+            // An operation whose result the new policy forbids ends now (SPEC-rich-text-runtime/AC-069).
+            coordinator.abortWhere((operation) => {
+                const rules = policy.features[operation.featureId];
+                return rules === undefined || !rules[operation.action];
+            });
             busyWith(notify);
         },
         focus,
@@ -718,10 +896,10 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 { mount: element },
                 {
                     state,
-                    editable: () => phase === 'ready' && mode === 'editable',
+                    editable: () => phase === 'ready' && shownMode === 'editable',
                     attributes: (current) => {
                         const attributes: Record<string, string> = {};
-                        if (mode === 'readonly') {
+                        if (shownMode === 'readonly') {
                             // A surface that is not contenteditable takes no focus by itself (SPEC-rich-text-react/AC-028).
                             attributes.tabindex = '0';
                             attributes['aria-readonly'] = 'true';
@@ -762,6 +940,8 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             commit(state.tr.setSelection(TextSelection.create(state.doc, target.anchor, target.head)));
         },
         watch,
+        startAsync: coordinator.start,
+        changeServices: (members) => coordinator.abortWhere((operation) => members.includes(operation.service)),
     };
     runtimes.set(handle, runtime);
     liveResources.installedFeatures.set(

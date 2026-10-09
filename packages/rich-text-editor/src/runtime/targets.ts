@@ -23,6 +23,8 @@ interface Target extends CaptureTargetOptions {
     readonly valid: boolean;
 }
 type Targets = ReadonlyMap<string, Target>;
+/** What a transaction does to the targets beside mapping them: capture one, or release some. */
+type TargetsMeta = { readonly id: string; readonly target: Target } | { readonly release: readonly string[] };
 
 const TARGETS = new PluginKey<Targets>('rte.targets');
 
@@ -68,10 +70,8 @@ export const targetsPlugin = new Plugin<Targets>({
     state: {
         init: () => new Map(),
         apply: (transaction, targets) => {
-            const captured = transaction.getMeta(TARGETS) as
-                | { readonly id: string; readonly target: Target }
-                | undefined;
-            if (!transaction.docChanged && captured === undefined) {
+            const meta = transaction.getMeta(TARGETS) as TargetsMeta | undefined;
+            if (!transaction.docChanged && meta === undefined) {
                 return targets;
             }
             const next = new Map<string, Target>();
@@ -82,8 +82,12 @@ export const targetsPlugin = new Plugin<Targets>({
                 }
                 next.set(id, mapped);
             }
-            if (captured !== undefined) {
-                next.set(captured.id, captured.target);
+            if (meta !== undefined && 'release' in meta) {
+                for (const id of meta.release) {
+                    next.delete(id);
+                }
+            } else if (meta !== undefined) {
+                next.set(meta.id, meta.target);
             }
             return next;
         },
@@ -111,6 +115,15 @@ export const captureTarget = (state: EditorState, id: string, options: CaptureTa
     }
     const target: Target = { purpose, onIntersectingEdit, from, to, node, valid };
     return state.tr.setMeta(TARGETS, { id, target });
+};
+
+/** A transaction that removes targets `ids`, or every target, from plugin state, or `undefined` when it holds none of them (AC-045). */
+export const releaseTargets = (state: EditorState, ids?: readonly string[]): Transaction | undefined => {
+    const held = [...targetsOf(state).keys()].filter((id) => ids === undefined || ids.includes(id));
+    if (held.length === 0) {
+        return undefined;
+    }
+    return state.tr.setMeta(TARGETS, { release: held });
 };
 
 /** The selection a command runs on through target `id`, or `undefined` when the target is gone or invalid. */

@@ -1,11 +1,14 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { liveOperations } from '#/runtime/async';
 import { busResources } from '#/runtime/events';
 import { liveResources } from '#/runtime/runtime';
+import { settleResources } from '#/runtime/settle';
 
 /**
- * What every live runtime owns now: its views, the installed feature IDs of each session, and its event
- * subscriptions, selector subscriptions, queued intents, pending frames and targets (SPEC-rich-text-runtime/AC-060).
+ * What every live runtime owns now: its views, the installed feature IDs of each session, its event subscriptions,
+ * selector subscriptions, queued intents, pending frames, settle timers and targets (SPEC-rich-text-runtime/AC-060),
+ * and its registered async operations (AC-046).
  */
 export const probeRuntimes = () => ({
     views: [...liveResources.views],
@@ -14,5 +17,7 @@ export const probeRuntimes = () => ({
     selectors: busResources.selectors,
     intents: liveResources.intents,
     frames: liveResources.frames,
+    timers: settleResources.timers,
     targets: liveResources.targets,
+    operations: [...liveOperations],
 });

@@ -124,6 +124,34 @@ const Playground = ({ allowNewBold, ...props }: PlaygroundProps) => {
                 >
                     Bold the captured text
                 </button>
+                <button
+                    type="button"
+                    onClick={() => {
+                        const target = targetRef.current;
+                        if (target === null) {
+                            log('no captured target');
+                            return;
+                        }
+                        handleRef.current?.releaseTarget(target);
+                        targetRef.current = null;
+                        log('releaseTarget');
+                    }}
+                >
+                    Release the captured target
+                </button>
+                <button
+                    type="button"
+                    onClick={() => {
+                        const snapshot = handleRef.current?.getSnapshot();
+                        if (snapshot === undefined) {
+                            log('getSnapshot no editor');
+                            return;
+                        }
+                        log(`getSnapshot #${snapshot.stamp.sequence} compositionActive ${snapshot.compositionActive}`);
+                    }}
+                >
+                    Read the snapshot
+                </button>
             </section>
             <RichTextEditor
                 {...props}
