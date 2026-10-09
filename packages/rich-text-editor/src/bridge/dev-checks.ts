@@ -87,9 +87,17 @@ const nameOf = (surface: Element): string => {
         .trim();
 };
 
-/** Whether a surface earlier in the document has the same accessible name (SPEC-rich-text-react/AC-080). */
+// Set on a surface once its session is ready, as a property so the DOM output stays the same.
+const READY = Symbol('rte.ready');
+
+/**
+ * Marks `surface` ready and tells whether a surface that became ready before it has the same accessible name, so the
+ * editor mounted second warns wherever it sits in the document (SPEC-rich-text-react/AC-080).
+ */
 export const sharesName = (surface: Element): boolean => {
     const name = nameOf(surface);
     const surfaces = [...surface.ownerDocument.querySelectorAll('[data-rte-surface]')];
-    return surfaces.slice(0, surfaces.indexOf(surface)).some((other) => nameOf(other) === name);
+    const shared = surfaces.some((other) => other !== surface && READY in other && nameOf(other) === name);
+    Object.defineProperty(surface, READY, { value: true });
+    return shared;
 };
