@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { setBlockType, toggleMark as toggleEngineMark } from 'prosemirror-commands';
+import { toggleMark as toggleEngineMark } from 'prosemirror-commands';
 import { type MarkType, type Node, type NodeType } from 'prosemirror-model';
 import { type EditorState } from 'prosemirror-state';
 
@@ -86,17 +86,31 @@ const toggleMark: CapabilityImplementation = (args, schema) => {
     };
 };
 
-/** The textblocks the selection touches. */
-const selectedTextblocks = (state: EditorState): Node[] => {
-    const blocks: Node[] = [];
+/** The textblocks the selection touches, with their positions. */
+const selectedTextblocks = (state: EditorState): { readonly node: Node; readonly pos: number }[] => {
+    const blocks: { readonly node: Node; readonly pos: number }[] = [];
     for (const { $from, $to } of state.selection.ranges) {
-        state.doc.nodesBetween($from.pos, $to.pos, (node) => {
+        state.doc.nodesBetween($from.pos, $to.pos, (node, pos) => {
             if (node.isTextblock) {
-                blocks.push(node);
+                blocks.push({ node, pos });
             }
         });
     }
     return blocks;
+};
+
+/** The attributes a block keeps as `target`: its own ones that `target` declares, with `over` applied on top. */
+const carried = (block: Node, target: NodeType, over: Readonly<Record<string, unknown>>) => {
+    const attrs: Record<string, unknown> = {};
+    for (const name of Object.keys(target.spec.attrs ?? {})) {
+        if (Object.hasOwn(block.attrs, name)) {
+            attrs[name] = block.attrs[name];
+        }
+    }
+    for (const [name, value] of Object.entries(over)) {
+        attrs[name] = value;
+    }
+    return attrs;
 };
 
 const setBlock: CapabilityImplementation = (args, schema) => {
@@ -107,26 +121,51 @@ const setBlock: CapabilityImplementation = (args, schema) => {
     if (isRecord(args.attrs)) {
         fixed = args.attrs;
     }
+    // The payload's fields are attributes of the node, such as `level` for `heading.set`.
+    const attrsOf = (payload: unknown) => {
+        const attrs: Record<string, unknown> = { ...fixed };
+        if (isRecord(payload)) {
+            for (const [name, value] of Object.entries(payload)) {
+                attrs[name] = value;
+            }
+        }
+        return attrs;
+    };
+    const matches = (block: Node, attrs: Readonly<Record<string, unknown>>) =>
+        block.type === type && Object.entries(attrs).every(([name, value]) => block.attrs[name] === value);
     return {
         run: (state, dispatch, payload) => {
-            // The payload's fields are attributes of the node, such as `level` for `heading.set`.
-            const attrs: Record<string, unknown> = { ...fixed };
-            if (isRecord(payload)) {
-                for (const [name, value] of Object.entries(payload)) {
-                    attrs[name] = value;
+            const blocks = selectedTextblocks(state);
+            let target = type;
+            let over = attrsOf(payload);
+            if (args.toggle === true && blocks.length > 0 && blocks.every(({ node }) => matches(node, over))) {
+                target = paragraph;
+                over = {};
+            }
+            const applicable = blocks.some(({ node, pos }) => {
+                if (node.hasMarkup(target, carried(node, target, over))) {
+                    return false;
                 }
+                const $pos = state.doc.resolve(pos);
+                return node.type === target || $pos.parent.canReplaceWith($pos.index(), $pos.index() + 1, target);
+            });
+            if (!applicable) {
+                return false;
             }
-            const blocks = selectedTextblocks(state);
-            const already = (block: Node) =>
-                block.type === type && Object.entries(attrs).every(([name, value]) => block.attrs[name] === value);
-            if (args.toggle === true && blocks.length > 0 && blocks.every(already)) {
-                return setBlockType(paragraph)(state, dispatch);
+            if (dispatch !== undefined) {
+                // `setBlockType` takes a function of the old node for its attributes, so each block keeps its own.
+                const transaction = state.tr;
+                for (const { $from, $to } of state.selection.ranges) {
+                    transaction.setBlockType($from.pos, $to.pos, target, (node) => carried(node, target, over));
+                }
+                dispatch(transaction.scrollIntoView());
             }
-            return setBlockType(type, attrs)(state, dispatch);
+            return true;
         },
-        active: (state) => {
+        active: (state, payload) => {
+            const attrs = attrsOf(payload);
             const blocks = selectedTextblocks(state);
-            const matching = blocks.filter((block) => block.type === type).length;
+            const matching = blocks.filter(({ node }) => matches(node, attrs)).length;
             if (matching === 0) {
                 return false;
             }
