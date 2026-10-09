@@ -9,7 +9,7 @@ import {
     IconTrashBin,
 } from '@frontify/fondue-icons';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { useState, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { action } from 'storybook/actions';
 
 import { Badge, Button, Dropdown } from '#/index';
@@ -1268,6 +1268,64 @@ export const LoadMore: Story = {
                     </Tree.Folder>
                 </Tree.Root>
             </div>
+        );
+    },
+};
+
+const FolderContents = ({ folderId }: { folderId: string }) => {
+    const [names, setNames] = useState<string[] | null>(null);
+
+    useEffect(() => {
+        const timer = setTimeout(() => setNames(['q1.pdf', 'q2.pdf', 'q3.pdf']), 600);
+        return () => clearTimeout(timer);
+    }, []);
+
+    if (!names) {
+        return <Tree.Loading />;
+    }
+    return (
+        <>
+            {names.map((name) => (
+                <Tree.Item key={name} id={`${folderId}/${name}`}>
+                    <Tree.Icon>
+                        <IconDocument size={16} />
+                    </Tree.Icon>
+                    <Tree.Label>{name}</Tree.Label>
+                </Tree.Item>
+            ))}
+        </>
+    );
+};
+
+export const RowsInCustomComponents: Story = {
+    parameters: {
+        docs: {
+            description: {
+                story:
+                    'Rows may sit inside your own components and fragments, so a component can own the data for a folder ' +
+                    'and render its rows, as `FolderContents` does here with its own fetch state. Limits: rows rendered ' +
+                    'through a portal inside a custom component are not found. Row parts (`Tree.Icon`, `Tree.Decorator`, ' +
+                    '`Tree.Action`) render under `Tree.Root`, so they do not see a context provider placed inside the ' +
+                    'custom component. When the tree is server-rendered, custom components add React `useLayoutEffect` ' +
+                    'warnings.',
+            },
+        },
+    },
+    render: (args) => {
+        const [isExpanded, setIsExpanded] = useState(false);
+
+        return (
+            <Tree.Root {...args}>
+                <Tree.Folder id="reports" isExpanded={isExpanded} onExpandChange={setIsExpanded}>
+                    <Tree.FolderHeader>
+                        <Tree.Icon>
+                            <IconFolder size={16} />
+                        </Tree.Icon>
+                        <Tree.Label>Reports</Tree.Label>
+                    </Tree.FolderHeader>
+                    {isExpanded && <FolderContents folderId="reports" />}
+                </Tree.Folder>
+            </Tree.Root>
         );
     },
 };

@@ -19,6 +19,12 @@ import { TreeLoadingRow } from './TreeLoadingRow';
 import { TreeRow } from './TreeRow';
 
 export type TreeRootProps = {
+    /**
+     * Rows may sit inside custom components and fragments. Limits: rows rendered through a
+     * portal inside a custom component are not found, row parts (Icon, Decorator, Action) do
+     * not see a context provider placed inside the custom component, and server rendering
+     * adds React `useLayoutEffect` warnings for custom components.
+     */
     children: ReactNode;
     /** Fires with the full tree state, at most once per user interaction. */
     onChange?: (state: TreeChangeState) => void;

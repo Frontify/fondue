@@ -156,6 +156,7 @@ export const MultiSelectWrapperTree = () => {
 };
 
 const ProbeContext = createContext('outside');
+ProbeContext.displayName = 'ProbeContext';
 const ContextReader = () => <span data-test-id="ctx">{useContext(ProbeContext)}</span>;
 
 export const ContextWrapperTree = () => (
@@ -170,18 +171,3 @@ export const ContextWrapperTree = () => (
         </ProbeContext.Provider>
     </Tree.Root>
 );
-
-const Chunk = ({ start, size }: { start: number; size: number }) =>
-    Array.from({ length: size }, (_, offset) => <Leaf key={start + offset} id={`n${start + offset}`} />);
-
-export const BigTree = ({ count, wrapped }: { count: number; wrapped: boolean }) => {
-    const chunkSize = 100;
-    const chunks = Array.from({ length: count / chunkSize }, (_, index) => index * chunkSize);
-    return (
-        <Tree.Root>
-            {wrapped
-                ? chunks.map((start) => <Chunk key={start} start={start} size={chunkSize} />)
-                : chunks.flatMap((start) => Chunk({ start, size: chunkSize }))}
-        </Tree.Root>
-    );
-};

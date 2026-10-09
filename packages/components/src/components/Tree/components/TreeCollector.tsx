@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { createContext, useContext, useId, useLayoutEffect, type ReactNode } from 'react';
+import { createContext, useContext, useId, useLayoutEffect, type ReactNode, type RefObject } from 'react';
 
 import { ROOT_ID } from '../constants';
 import { type TreeFolderProps, type TreeItemData, type TreeItemProps } from '../types';
@@ -13,36 +13,40 @@ type CollectedEntry =
     | { kind: 'folder'; parentId: string; props: TreeFolderProps }
     | { kind: 'loading'; parentId: string };
 
+type RowEntry = Exclude<CollectedEntry, { kind: 'loading' }>;
+
 export type CollectStore = {
     entries: Map<string, CollectedEntry>;
     requestFlush: () => void;
 };
 
 const TreeCollectContext = createContext<CollectStore | null>(null);
+TreeCollectContext.displayName = 'TreeCollectContext';
 export const TreeParentContext = createContext<string>(ROOT_ID);
+TreeParentContext.displayName = 'TreeParentContext';
 
 /**
- * Registers a row rendered inside the collect pass. Returns the marker key, or `null`
- * outside a collect pass, where Tree parts stay inert markers read by `parseChildren`.
+ * Registers a row rendered inside the collect pass. Returns the marker key and whether a
+ * collect pass is active; outside one, Tree parts stay inert markers read by `parseChildren`.
  */
 export const useCollectedEntry = (
     build: (parentId: string) => CollectedEntry,
 ): { key: string; isCollecting: boolean } => {
     const store = useContext(TreeCollectContext);
     const parentId = useContext(TreeParentContext);
-    const key = useId();
+    const markerId = useId();
     useLayoutEffect(() => {
         if (!store) {
             return;
         }
-        store.entries.set(key, build(parentId));
+        store.entries.set(markerId, build(parentId));
         store.requestFlush();
         return () => {
-            store.entries.delete(key);
+            store.entries.delete(markerId);
             store.requestFlush();
         };
     });
-    return { key, isCollecting: store !== null };
+    return { key: markerId, isCollecting: store !== null };
 };
 
 export const TreeCollector = ({
@@ -51,7 +55,7 @@ export const TreeCollector = ({
     children,
 }: {
     store: CollectStore;
-    containerRef: React.RefObject<HTMLDivElement>;
+    containerRef: RefObject<HTMLDivElement>;
     children: ReactNode;
 }) => (
     <div ref={containerRef} hidden aria-hidden="true">
@@ -67,7 +71,7 @@ export const buildCollectedItems = (container: HTMLElement, entries: Map<string,
             loadingParents.add(entry.parentId);
         }
     }
-    const ordered: CollectedEntry[] = [];
+    const ordered: RowEntry[] = [];
     for (const marker of container.querySelectorAll(`[${COLLECT_ATTR}]`)) {
         const entry = entries.get(marker.getAttribute(COLLECT_ATTR) ?? '');
         if (entry && entry.kind !== 'loading') {
@@ -76,9 +80,6 @@ export const buildCollectedItems = (container: HTMLElement, entries: Map<string,
     }
     const childIdsByParent = new Map<string, string[]>();
     for (const entry of ordered) {
-        if (entry.kind === 'loading') {
-            continue;
-        }
         const siblings = childIdsByParent.get(entry.parentId) ?? [];
         siblings.push(entry.props.id);
         childIdsByParent.set(entry.parentId, siblings);
@@ -92,10 +93,7 @@ export const buildCollectedItems = (container: HTMLElement, entries: Map<string,
                 loadingParents.has(entry.props.id),
             );
         }
-        if (entry.kind === 'item') {
-            return toItemData(entry.props, entry.parentId);
-        }
-        throw new Error('unreachable');
+        return toItemData(entry.props, entry.parentId);
     });
     return { items, parentIsLoading: loadingParents.has(ROOT_ID), hasForeignRows: true };
 };

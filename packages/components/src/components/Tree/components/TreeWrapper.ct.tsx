@@ -21,7 +21,8 @@ test.describe('Tree rows inside custom components', () => {
     test('keeps document order when wrapped rows sit between direct rows', async ({ mount }) => {
         const component = await mount(<MixedRoot />);
         await expect(component.getByRole('treeitem')).toHaveCount(4);
-        expect((await rowNames(component)).map((text) => text.trim())).toEqual(['A', 'B', 'C', 'D']);
+        const names = await rowNames(component);
+        expect(names.map((text) => text.trim())).toEqual(['A', 'B', 'C', 'D']);
     });
 
     test('shows wrapped rows in the same task as direct rows (no intermediate paint)', async ({ mount, page }) => {
@@ -60,13 +61,8 @@ test.describe('Tree rows inside custom components', () => {
         const component = await mount(<NestedWrapperTree />);
         await expect(component.getByRole('treeitem', { name: 'deep-leaf' })).toHaveAttribute('aria-level', '4');
         await expect(component.getByRole('treeitem', { name: 'after' })).toHaveAttribute('aria-level', '1');
-        expect((await rowNames(component)).map((text) => text.trim())).toEqual([
-            'level-3',
-            'level-2',
-            'level-1',
-            'deep-leaf',
-            'after',
-        ]);
+        const names = await rowNames(component);
+        expect(names.map((text) => text.trim())).toEqual(['level-3', 'level-2', 'level-1', 'deep-leaf', 'after']);
     });
 
     test('follows a wrapper re-rendering on its own and unmounting', async ({ mount }) => {
@@ -79,7 +75,10 @@ test.describe('Tree rows inside custom components', () => {
 
     test('cascades a folder checkbox to wrapped children', async ({ mount }) => {
         const component = await mount(<MultiSelectWrapperTree />);
-        await component.getByRole('treeitem', { name: /parent/ }).getByRole('checkbox').click();
+        await component
+            .getByRole('treeitem', { name: /parent/ })
+            .getByRole('checkbox')
+            .click();
         await expect(component.getByTestId('selected')).toHaveText('c1,c2');
         await expect(component.getByRole('treeitem', { name: 'c1' })).toHaveAttribute('aria-checked', 'true');
     });
