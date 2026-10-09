@@ -5,9 +5,11 @@ import { type Command, type EditorState, Plugin, PluginKey, TextSelection, type 
 import { ReplaceStep } from 'prosemirror-transform';
 
 import {
+    COMMAND_META,
     type CompiledInputRule,
     type LineStartRule,
     type MarkDelimiterRule,
+    NORMALIZE_META,
     ORIGIN_META,
     type PluginImplementation,
 } from '#/definition';
@@ -23,6 +25,18 @@ const WORD = /[\p{L}\p{M}\p{N}]/u;
 
 /** Whether the last batch fired a rule and nothing moved or changed since, which Backspace then undoes. */
 const firedKey = new PluginKey<boolean>(INPUT_RULES_PLUGIN.id);
+// The root meta that applies a typed root again with no rule, once the batch with its rule was refused.
+const RULES_OFF = 'rte.input-rules-off';
+
+/** Whether a rule fired in a batch. */
+export const firedRule = (transactions: readonly Transaction[]): boolean =>
+    transactions.some((transaction) => transaction.getMeta(firedKey) === true);
+
+/**
+ * Marks a root so no rule fires for it: a rule fires only when the policy and the limits allow its result, so the
+ * typed text lands either way (SPEC-rich-text-editing/AC-037).
+ */
+export const withoutRules = (root: Transaction): Transaction => root.setMeta(RULES_OFF, true);
 
 /** Where the text a typed root inserted ends, or `undefined` for any other root, an undo from `beforeinput` included. */
 const typedEnd = (root: Transaction): number | undefined => {
@@ -136,10 +150,12 @@ export const inputRulesPlugin: PluginImplementation = ({ inputRules }) =>
                     return true;
                 }
                 // A repair appended after the rule, such as a new `nodeId`, leaves the rule the last change.
-                if (
-                    transaction.getMeta('appendedTransaction') === undefined &&
-                    (transaction.docChanged || transaction.selectionSet)
-                ) {
+                if (transaction.getMeta('appendedTransaction') !== undefined) {
+                    return fired;
+                }
+                // A stored mark or a command at the caret is another change too (SPEC-rich-text-editing/AC-041).
+                const changes = transaction.docChanged || transaction.selectionSet || transaction.storedMarksSet;
+                if (changes || transaction.getMeta(COMMAND_META) !== undefined) {
                     return false;
                 }
                 return fired;
@@ -148,6 +164,11 @@ export const inputRulesPlugin: PluginImplementation = ({ inputRules }) =>
         appendTransaction: (transactions, _old, state) => {
             const [root] = transactions;
             if (transactions.length !== 1 || root === undefined || root.getMeta('appendedTransaction') !== undefined) {
+                return null;
+            }
+            // Composed text never fires a rule, which would rewrite the composing range (SPEC-rich-text-editing/AC-038).
+            const composed = root.getMeta('composition') !== undefined || root.getMeta(NORMALIZE_META) === 'later';
+            if (composed || root.getMeta(RULES_OFF) === true) {
                 return null;
             }
             const end = typedEnd(root);
