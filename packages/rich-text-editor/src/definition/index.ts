@@ -22,6 +22,8 @@ export { type Normalizer, NORMALIZERS } from './normalizers';
 
 /** The transaction meta that names the command a transaction runs, so the runtime reports it. */
 export const COMMAND_META = 'rte.command';
+/** The transaction meta that names a change's origin where no UI event or command does (SPEC-rich-text-runtime, Origins). */
+export const ORIGIN_META = 'rte.origin';
 /** The transaction meta that carries a root batch's `AppendBatch`, which the wrapped `appendTransaction` counts in. */
 export const APPEND_BATCH_META = 'rte.append-batch';
 
@@ -173,7 +175,11 @@ export const compileDefinition = (
                     if (batch === undefined || !transactions.some(({ docChanged }) => docChanged)) {
                         return null;
                     }
-                    return normalizer.normalize(state, batch.ids);
+                    const repair = normalizer.normalize(state, batch.ids);
+                    if (repair === null) {
+                        return null;
+                    }
+                    return repair.setMeta(ORIGIN_META, 'normalization');
                 },
             });
         }
