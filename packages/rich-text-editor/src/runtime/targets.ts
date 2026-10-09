@@ -10,6 +10,8 @@ import {
     type Transaction,
 } from 'prosemirror-state';
 
+import { carriesNodeId } from '#/definition';
+
 import { type CaptureTargetOptions } from './types';
 
 /** A captured target as the keyed plugin state holds it (SPEC-rich-text-runtime/AC-040). */
@@ -41,14 +43,15 @@ const mapTarget = (target: Target, mapping: Transaction['mapping']): Target => {
     }
     for (const map of mapping.maps) {
         // oxlint-disable-next-line unicorn/no-array-for-each -- `StepMap.forEach` is the public way to read a step's changed ranges.
-        map.forEach((start, end) => {
+        map.forEach((start, end, newStart, newEnd) => {
             if (start < to && end > from) {
                 intersected = true;
             }
             // A step that removes the whole range, or a span around an empty one, deletes it, though its positions still resolve (AC-042).
             const removes = (from < to && start <= from && end >= to) || (start < from && end > to);
-            // An attribute edit of a leaf replaces it whole, so an `edit-node` target relies on its type and `nodeId` check (AC-043).
-            if (removes && target.purpose !== 'edit-node') {
+            // An attribute edit of a leaf replaces it in place, which the `edit-node` check of type and `nodeId` judges (AC-043).
+            const replacedInPlace = target.purpose === 'edit-node' && newEnd > newStart;
+            if (removes && !replacedInPlace) {
                 deleted = true;
             }
         });
@@ -99,8 +102,8 @@ export const captureTarget = (state: EditorState, id: string, options: CaptureTa
     }
     if (purpose === 'edit-node') {
         const after = state.selection.$from.nodeAfter;
-        // Only a node with a `nodeId` can be edited through a target (AC-043).
-        valid = after !== null && !after.isText && typeof after.attrs.nodeId === 'string';
+        // A node whose type carries a `nodeId` needs one to be edited through a target (AC-043).
+        valid = after !== null && !after.isText && (!carriesNodeId(after) || typeof after.attrs.nodeId === 'string');
         if (after !== null && valid) {
             node = { type: after.type.name, nodeId: after.attrs.nodeId };
             to = from + after.nodeSize;

@@ -130,6 +130,9 @@ const nodeChangeOf = (before: readonly Node[], after: readonly Node[]): Change =
     const changed: Node[] = [];
     let edit = false;
     let remove = false;
+    const idOf = (node: Node) => `${node.type.name} ${String(node.attrs.nodeId)}`;
+    // A repair always draws a new ID, so a renamed node holds an ID that no node of its type held before.
+    const held = new Set(before.filter(carriesNodeId).map(idOf));
     for (const node of before) {
         let other: Node | undefined;
         if (carriesNodeId(node)) {
@@ -139,7 +142,7 @@ const nodeChangeOf = (before: readonly Node[], after: readonly Node[]): Change =
             other = take(left, (candidate) => sameId(candidate) && sameNode(node, candidate));
             // A copy placed before its original takes the ID, and the repair renames the untouched original.
             if (other === undefined && left.some(sameId)) {
-                other = take(left, (candidate) => renamed(node, candidate));
+                other = take(left, (candidate) => !held.has(idOf(candidate)) && renamed(node, candidate));
             }
             if (other === undefined) {
                 other = take(left, sameId);
