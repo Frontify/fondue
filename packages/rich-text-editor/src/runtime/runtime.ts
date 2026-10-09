@@ -375,6 +375,8 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         refreshView();
         settleQueue('not-ready');
         report(diagnostic);
+        // Results held for that settle are discarded now, as the faulted session takes none (SPEC-rich-text-runtime/AC-089).
+        coordinator.settle();
     };
 
     /** The view threw while it installed `candidate`: editing stops and the snapshot stays (SPEC-rich-text-runtime/AC-014). */
@@ -776,9 +778,10 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 return { status: 'no-op', stamp: { ...session, sequence }, contentChanged: false };
             }
             if ('candidate' in attempted) {
+                const before = commitSequence;
                 const contentChanged = install(attempted);
-                // The view faulted while it installed the batch.
-                if (phase !== 'ready') {
+                // The view faulted while it installed the batch, which a later fault or `dispose` from a listener leaves applied.
+                if (commitSequence === before) {
                     return rejected('not-ready');
                 }
                 return { status: 'applied', stamp: { ...session, sequence }, contentChanged };
@@ -816,6 +819,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         session: () => session,
         policyRevision: () => policyRevision,
         isDisposed: () => phase === 'disposed',
+        isFaulted: () => phase === 'faulted',
         holding: () => settling.active(),
         capture: () => {
             if (phase !== 'ready') {
