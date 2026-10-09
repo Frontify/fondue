@@ -18,6 +18,8 @@ export interface NodeViewHost {
 }
 
 const CONTROLS = 'input, textarea, select, button';
+// Drop-target events over chrome stay stopped, so ProseMirror never accepts a drop it would then not receive.
+const DRAG_SOURCE_EVENTS: ReadonlySet<string> = new Set(['dragstart', 'drag', 'dragend']);
 
 /** Whether `target` sits in an interactive control of the chrome, which keeps its own events. */
 const inControl = (chrome: HTMLElement, target: Node) => {
@@ -139,7 +141,7 @@ export const createNodeViews = (
                     return false;
                 }
                 // A draggable node drags from its chrome, as ProseMirror's default and Tiptap's NodeView let drag events through.
-                return !event.type.startsWith('drag') || !dom.draggable || inControl(chrome, target);
+                return !DRAG_SOURCE_EVENTS.has(event.type) || !dom.draggable || inControl(chrome, target);
             },
             destroy: () =>
                 faultOnThrow(
