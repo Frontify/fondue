@@ -116,11 +116,20 @@ describe('check-exports manifest', () => {
 });
 
 describe('check-exports consumer', () => {
-    it('SPEC-rich-text/AC-001 installs every peer and the React types into the scratch consumer', () => {
-        expect(consumerDependencies({ ...valid, devDependencies: { '@types/react': '^18.3.31' } })).toEqual([
-            '@frontify/fondue-components',
-            '@frontify/fondue-icons',
-            '@frontify/fondue-tokens',
+    it('SPEC-rich-text/AC-001 installs every peer, a workspace one at its packed range, and the React types into the scratch consumer', () => {
+        const packed = (name: string) => {
+            const { version } = JSON.parse(
+                readFileSync(join(packageRoot, 'node_modules', name, 'package.json'), 'utf8'),
+            ) as PackageJson;
+            return `${name}@^${version}`;
+        };
+
+        expect(
+            consumerDependencies(packageRoot, { ...valid, devDependencies: { '@types/react': '^18.3.31' } }),
+        ).toEqual([
+            packed('@frontify/fondue-components'),
+            packed('@frontify/fondue-icons'),
+            packed('@frontify/fondue-tokens'),
             'react@^18.2.0',
             'react-dom@^18.2.0',
             '@types/react@^18.3.31',
@@ -128,7 +137,9 @@ describe('check-exports consumer', () => {
     });
 
     it('SPEC-rich-text/AC-001 installs the peers of the package as declared, so an entry that imports React loads', () => {
-        const names = consumerDependencies(packageJson).map((dependency) => dependency.replace(/(?<=.)@.*$/, ''));
+        const names = consumerDependencies(packageRoot, packageJson).map((dependency) =>
+            dependency.replace(/(?<=.)@.*$/, ''),
+        );
 
         expect(names).toEqual(
             expect.arrayContaining(['react', 'react-dom', '@frontify/fondue-components', '@types/react']),
