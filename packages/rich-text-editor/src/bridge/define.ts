@@ -18,7 +18,7 @@ import {
     type ShippedCommands,
 } from '#/runtime/types';
 
-/** What node chrome reads besides attributes, as a reader override does; `ReaderContext` of `./reader` has this shape. */
+/** What node chrome reads besides attributes: the shape of the reader's `ReaderContext`, which `src/bridge` may not import (SPEC-rich-text/AC-010). */
 export interface NodeViewContext extends CodecContext {
     readonly resolveReference: (resourceType: string, resourceId: string) => ReferenceResolution;
 }

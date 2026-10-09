@@ -14,7 +14,7 @@ import { type PortalStore } from './portals';
 export interface NodeViewHost {
     readonly portals: PortalStore;
     readonly context: NodeViewContext;
-    readonly runtime: () => EditorRuntime | undefined;
+    readonly runtime: EditorRuntime;
 }
 
 const CONTROLS = 'input, textarea, select, button';
@@ -46,14 +46,13 @@ export const createNodeViews = (
 ): Record<string, NodeViewConstructor> => {
     let created = 0;
 
-    // A throw never reaches ProseMirror: the surface stops editing, the portals close and the session faults (SPEC-rich-text-runtime/AC-014).
-    const guarded = <T>(view: EditorView, fallback: () => T, work: () => T): T => {
+    // A throw never reaches ProseMirror: the portals close and the session faults, which stops editing (SPEC-rich-text-runtime/AC-014).
+    const faultOnThrow = <T>(fallback: () => T, work: () => T): T => {
         try {
             return work();
         } catch {
-            view.dom.setAttribute('contenteditable', 'false');
             host.portals.close();
-            host.runtime()?.faultView();
+            host.runtime.faultView();
             return fallback();
         }
     };
@@ -63,21 +62,12 @@ export const createNodeViews = (
         if (typeof node.attrs.nodeId === 'string') {
             nodeId = node.attrs.nodeId;
         }
-        const runtime = host.runtime();
-        if (runtime === undefined) {
-            throw new Error('A node view was built with no session.');
-        }
-        const actions = runtime.nodeActions(nodeId);
         return {
+            ...host.runtime.nodeActions(nodeId),
             nodeId,
             attrs: snapshot(node.attrs),
             selected,
             context: host.context,
-            update: actions.update,
-            remove: actions.remove,
-            select: actions.select,
-            execute: actions.execute as NodeViewState<object>['execute'],
-            query: actions.query as NodeViewState<object>['query'],
         };
     };
 
@@ -111,8 +101,7 @@ export const createNodeViews = (
             dom,
             contentDOM,
             update: (next) =>
-                guarded(
-                    view,
+                faultOnThrow(
                     () => true,
                     () => {
                         // A node with another ID is another node, which must not take this one's chrome state.
@@ -153,8 +142,7 @@ export const createNodeViews = (
                 return !event.type.startsWith('drag') || !dom.draggable || inControl(chrome, target);
             },
             destroy: () =>
-                guarded(
-                    view,
+                faultOnThrow(
                     () => undefined,
                     () => {
                         liveResources.nodeViews -= 1;
@@ -167,8 +155,7 @@ export const createNodeViews = (
     const constructors: Record<string, NodeViewConstructor> = {};
     for (const [name, component] of views) {
         constructors[name] = (node, view) =>
-            guarded(
-                view,
+            faultOnThrow(
                 () => ({ dom: view.dom.ownerDocument.createElement(tagOf(node)) }),
                 () => build(component, node, view),
             );
