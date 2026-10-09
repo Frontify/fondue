@@ -157,6 +157,8 @@ export interface EditorRuntimeOptions {
     readonly limits: ResourceLimits;
     /** Builds the bridge's node views by node name for this runtime, which only passes them to the view. */
     readonly nodeViews?: (runtime: EditorRuntime) => Readonly<Record<string, NodeViewConstructor>>;
+    /** Whether the editor's React tree renders or runs an effect now, which a development build passes (SPEC-rich-text-react/AC-102). */
+    readonly inRender?: () => boolean;
 }
 
 /** What every live runtime owns, which the `src/testing` probe reads. */
@@ -237,7 +239,7 @@ const originOf = (root: Transaction): ChangeOrigin => {
 };
 
 /** One empty paragraph is an empty document, which shows the placeholder (SPEC-rich-text-react/AC-030). */
-const isEmpty = ({ doc }: EditorState) =>
+export const isEmpty = ({ doc }: EditorState) =>
     doc.childCount === 1 && doc.firstChild !== null && doc.firstChild.isTextblock && doc.firstChild.content.size === 0;
 
 /** The position of the node with `nodeId`, read when it is needed, so no caller holds one. */
@@ -855,7 +857,19 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     };
     const run = (id: string, given: unknown, options: unknown, route: Route): CommandResult =>
         runOn(definition.commands.get(id), checkedPayload(given), () => baseOf(options), route);
-    const execute = (id: string, given?: unknown, options?: unknown) => run(id, given, options, 'host');
+    const execute = (id: string, given?: unknown, commandOptions?: unknown): CommandResult => {
+        // Commands belong in event handlers, so one from a React render or effect dispatches nothing (SPEC-rich-text-react/AC-102).
+        if (options.inRender?.() === true) {
+            report(diagnostic('react.execute-in-render', undefined, undefined, 'error'));
+            return rejected('busy');
+        }
+        const result = run(id, given, commandOptions, 'host');
+        // Without `focus: 'editor'` a command leaves focus where it is (SPEC-rich-text-runtime/AC-085, AC-086).
+        if (isRecord(commandOptions) && commandOptions.focus === 'editor') {
+            focus();
+        }
+        return result;
+    };
 
     /** The state with the node `nodeId` selected, as a node view action runs on it (SPEC-rich-text-react/AC-019). */
     const nodeBase = (nodeId: string): EditorState | RejectedCode => {

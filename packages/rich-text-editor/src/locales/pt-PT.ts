@@ -3,12 +3,23 @@
 export const ptPT = {
     lang: 'pt-PT',
     translationStrings: {
+        RichTextEditor_blockedInvalid: 'Não é possível editar porque este conteúdo não é válido.',
+        RichTextEditor_blockedLimit: 'Não é possível editar porque este conteúdo excede um limite de tamanho.',
+        RichTextEditor_blockedMigration:
+            'Não é possível editar porque este conteúdo não pode ser atualizado para a versão atual.',
+        RichTextEditor_blockedVersion:
+            'Não é possível editar porque este conteúdo usa um formato ou modelo desconhecido.',
         RichTextEditor_bold: 'Negrito',
+        RichTextEditor_copyContent: 'Copiar conteúdo',
+        RichTextEditor_copyOriginal: 'Copiar original',
         RichTextEditor_nodeViewError: 'Esta parte do conteúdo não pode ser apresentada',
         RichTextEditor_readerBlockedInvalid: 'Este conteúdo não pode ser apresentado',
         RichTextEditor_readerBlockedUnsupported: 'Este conteúdo não pode ser apresentado aqui',
         RichTextEditor_readerIslandFeature: 'Conteúdo não suportado: ${feature}',
         RichTextEditor_readerIslandGeneric: 'Conteúdo não suportado',
         RichTextEditor_readerIslandNotice: 'Alguns conteúdos não são suportados aqui.',
+        RichTextEditor_recoveryMessage:
+            'O editor deixou de funcionar. As suas alterações mais recentes são mostradas abaixo.',
+        RichTextEditor_retry: 'Tentar novamente',
     },
 };

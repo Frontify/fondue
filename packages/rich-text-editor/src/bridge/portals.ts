@@ -7,12 +7,12 @@ import { liveResources } from '#/runtime/runtime';
 
 import { type NodeViewState } from './define';
 
-/** One node view's chrome: the slot it renders into and the state it reads. */
+/** One node view's chrome: the slot it renders into and the state it reads, whose context the portal host adds. */
 export interface PortalEntry {
     readonly key: string;
     readonly slot: HTMLElement;
     readonly component: ComponentType<object>;
-    readonly state: NodeViewState<object>;
+    readonly state: Omit<NodeViewState<object>, 'context'>;
 }
 
 /** The portals of one editor, which one host component reads (SPEC-rich-text-react/AC-007). */

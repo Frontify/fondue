@@ -1,11 +1,11 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Component, memo, type ReactNode, useLayoutEffect, useSyncExternalStore } from 'react';
+import { Component, memo, type ReactNode, useLayoutEffect, useMemo, useSyncExternalStore } from 'react';
 import { createPortal } from 'react-dom';
 
 import { type JsonObject } from '#/model';
 
-import { NodeViewStateContext } from './define';
+import { type NodeViewContext, NodeViewStateContext } from './define';
 import { type PortalEntry, type PortalStore } from './portals';
 
 interface BoundaryProps {
@@ -44,11 +44,12 @@ class ChromeBoundary extends Component<BoundaryProps, BoundaryState> {
 }
 
 // An entry keeps its object until its node view publishes, so the other chrome skips each rerender.
-const Chrome = memo(({ entry }: { readonly entry: PortalEntry }) => {
-    const { component: View, slot, state } = entry;
+const Chrome = memo(({ entry, context }: { readonly entry: PortalEntry; readonly context: NodeViewContext }) => {
+    const { component: View, slot } = entry;
+    const state = useMemo(() => ({ ...entry.state, context }), [entry.state, context]);
     return createPortal(
         <NodeViewStateContext.Provider value={state}>
-            <ChromeBoundary message={state.context.t('RichTextEditor_nodeViewError')} attrs={state.attrs}>
+            <ChromeBoundary message={context.t('RichTextEditor_nodeViewError')} attrs={state.attrs}>
                 <View />
             </ChromeBoundary>
         </NodeViewStateContext.Provider>,
@@ -60,14 +61,23 @@ Chrome.displayName = 'RichTextEditor.NodeViewChrome';
 /**
  * Renders the chrome of every node view of one editor from its portal store. `useSyncExternalStore` renders a store
  * change in a microtask with no `flushSync`, so chrome exists before the next paint (SPEC-rich-text-react/AC-007, AC-013).
+ * A new `context` from the host's presentation or locale reaches every chrome with no view rebuild (SPEC-rich-text-react/AC-065).
  */
-export const PortalHost = ({ store, onFlush }: { readonly store: PortalStore; readonly onFlush: () => void }) => {
+export const PortalHost = ({
+    store,
+    context,
+    onFlush,
+}: {
+    readonly store: PortalStore;
+    readonly context: NodeViewContext;
+    readonly onFlush: () => void;
+}) => {
     const entries = useSyncExternalStore(store.subscribe, store.getSnapshot, store.getSnapshot);
     useLayoutEffect(onFlush, [entries, onFlush]);
     return (
         <>
             {entries.map((entry) => (
-                <Chrome key={entry.key} entry={entry} />
+                <Chrome key={entry.key} entry={entry} context={context} />
             ))}
         </>
     );

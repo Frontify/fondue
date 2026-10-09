@@ -13,6 +13,7 @@ import {
     type RichTextEditorProps,
     RichTextEditor,
     type SelectionHandle,
+    useEditorSelection,
     useRichTextNodeView,
 } from '#/index';
 import { compileContentModel, createEmptyDocument, defineFeature, type JsonValue, setBlock } from '#/model';
@@ -95,6 +96,20 @@ type PlaygroundProps = RichTextEditorProps<Commands> & {
     readonly allowNewBold: boolean;
 };
 
+/** Reads the selection through `useEditorSelection`, which rerenders only when the shown text changes. */
+const SelectionReadout = () => {
+    const shown = useEditorSelection((selection) => `${selection.kind}, collapsed ${String(selection.collapsed)}`);
+    return <p>Selection: {shown}</p>;
+};
+
+/** A host part that throws while rendering when `armed`, which shows the recovery shell. */
+const Breaker = ({ armed }: { readonly armed: boolean }) => {
+    if (armed) {
+        throw new Error('The playground broke the editor on purpose.');
+    }
+    return null;
+};
+
 const resultText = (result: CommandResult | undefined) => {
     if (result === undefined) {
         return 'no editor';
@@ -111,6 +126,7 @@ const Playground = ({ allowNewBold, ...props }: PlaygroundProps) => {
     const handleRef = useRef<EditorHandle<Commands>>(null);
     const targetRef = useRef<SelectionHandle | null>(null);
     const [document, setDocument] = useState<JsonValue>(props.defaultValue.document.content as unknown as JsonValue);
+    const [broken, setBroken] = useState(false);
     const log = (text: string) => {
         counterRef.current += 1;
         const id = counterRef.current;
@@ -121,6 +137,13 @@ const Playground = ({ allowNewBold, ...props }: PlaygroundProps) => {
         const rules = { create: allowNewBold, edit: true, remove: true, paste: true };
         handleRef.current?.updatePolicy({ ...authoring, features: { ...authoring.features, 'marks.bold': rules } });
     }, [allowNewBold]);
+    // The part works again once the shell shows, so Retry mounts the editor.
+    useEffect(() => {
+        if (broken) {
+            // oxlint-disable-next-line @eslint-react/set-state-in-effect -- the recovery shell has replaced the part by now.
+            setBroken(false);
+        }
+    }, [broken]);
     return (
         <div style={{ display: 'grid', gap: '1rem' }}>
             <section aria-label="Commands" style={{ display: 'flex', gap: '0.5rem' }}>
@@ -147,6 +170,16 @@ const Playground = ({ allowNewBold, ...props }: PlaygroundProps) => {
                     }
                 >
                     Toggle bold
+                </button>
+                <button
+                    type="button"
+                    onClick={() =>
+                        log(
+                            `execute mark.bold.toggle with focus editor ${resultText(handleRef.current?.execute('mark.bold.toggle', undefined, { focus: 'editor' }))}`,
+                        )
+                    }
+                >
+                    Toggle bold and focus the editor
                 </button>
                 <button
                     type="button"
@@ -231,8 +264,11 @@ const Playground = ({ allowNewBold, ...props }: PlaygroundProps) => {
                 >
                     Read the snapshot
                 </button>
+                <button type="button" onClick={() => setBroken(true)}>
+                    Throw in render
+                </button>
             </section>
-            <RichTextEditor
+            <RichTextEditor.Root
                 {...props}
                 ref={handleRef}
                 onReady={(session) => log(`ready ${session.sessionId}`)}
@@ -241,7 +277,11 @@ const Playground = ({ allowNewBold, ...props }: PlaygroundProps) => {
                     setDocument(change.readDocument().content as unknown as JsonValue);
                 }}
                 onDiagnostic={(diagnostic) => log(`diagnostic ${diagnostic.code}`)}
-            />
+            >
+                <RichTextEditor.Surface />
+                <SelectionReadout />
+                <Breaker armed={broken} />
+            </RichTextEditor.Root>
             <section aria-label="Event log">
                 <ol>
                     {events.map(({ id, text }) => (
@@ -330,6 +370,51 @@ export const NodeView: Story = {
                             ],
                         },
                     ],
+                },
+            },
+        },
+    },
+};
+
+/** A document in an unknown format version, which shows the blocked shell with its reason and Copy original. */
+export const Blocked: Story = {
+    args: {
+        defaultValue: {
+            documentId: 'story-blocked',
+            revision: null,
+            document: { ...createEmptyDocument(model), formatVersion: 2 as 1 },
+        },
+    },
+};
+
+/** Content this model does not know opens as labelled islands, which move and delete as a whole. */
+export const Islands: Story = {
+    args: {
+        defaultValue: {
+            documentId: 'story-islands',
+            revision: null,
+            document: {
+                format: 'frontify.rich-text',
+                formatVersion: 1,
+                model: model.ref,
+                requiredCapabilities: [{ id: 'core', version: 1 }],
+                content: {
+                    type: 'doc',
+                    attrs: { lang: null, dir: 'auto' },
+                    content: [
+                        {
+                            type: 'paragraph',
+                            attrs: { lang: null },
+                            content: [
+                                { type: 'text', text: 'The block below comes from a feature this editor lacks.' },
+                            ],
+                        },
+                        {
+                            type: 'quote_card',
+                            attrs: { author: 'Ada' },
+                            content: [{ type: 'text', text: 'Its text stays readable and is saved unchanged.' }],
+                        },
+                    ] as never,
                 },
             },
         },

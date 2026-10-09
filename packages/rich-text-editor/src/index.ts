@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 export { defineNodeView, type NodeViewState, useRichTextNodeView } from '#/bridge/define';
+export { useEditorSelection } from '#/bridge/hooks';
 export { type RuntimeEnvironment } from '#/model';
 export {
     type CommitOptions,

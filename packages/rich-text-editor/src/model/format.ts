@@ -87,7 +87,9 @@ export type DiagnosticCode =
     | 'codecs.lossy-output'
     | 'codecs.override-failed'
     | 'reader.override-failed'
-    | 'react.definition-changed';
+    | 'react.definition-changed'
+    | 'react.duplicate-accessible-name'
+    | 'react.execute-in-render';
 
 export interface Diagnostic {
     readonly code: DiagnosticCode;
