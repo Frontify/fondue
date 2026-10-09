@@ -11,6 +11,7 @@ export const frFR = {
             'La modification est impossible, car ce contenu utilise un format ou un modèle inconnu.',
         RichTextEditor_bold: 'Gras',
         RichTextEditor_copyContent: 'Copier le contenu',
+        RichTextEditor_copyFailed: 'La copie a échoué. Sélectionnez le contenu et copiez-le avec le clavier.',
         RichTextEditor_copyOriginal: 'Copier l’original',
         RichTextEditor_nodeViewError: 'Cette partie du contenu ne peut pas être affichée',
         RichTextEditor_readerBlockedInvalid: 'Ce contenu ne peut pas être affiché',

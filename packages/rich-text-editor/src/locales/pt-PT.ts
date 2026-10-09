@@ -11,6 +11,7 @@ export const ptPT = {
             'Não é possível editar porque este conteúdo usa um formato ou modelo desconhecido.',
         RichTextEditor_bold: 'Negrito',
         RichTextEditor_copyContent: 'Copiar conteúdo',
+        RichTextEditor_copyFailed: 'Não foi possível copiar. Selecione o conteúdo e copie-o com o teclado.',
         RichTextEditor_copyOriginal: 'Copiar original',
         RichTextEditor_nodeViewError: 'Esta parte do conteúdo não pode ser apresentada',
         RichTextEditor_readerBlockedInvalid: 'Este conteúdo não pode ser apresentado',

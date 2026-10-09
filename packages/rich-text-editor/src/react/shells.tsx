@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { Button } from '@frontify/fondue-components';
+import { type ReactNode, useState } from 'react';
 
 import { createCodecs } from '#/codecs/codecs';
 import {
@@ -25,6 +26,8 @@ interface ShellProps {
     readonly testId: string;
 }
 
+const ENVELOPE_CODES: ReadonlySet<string> = new Set(['format.unknown-format-version', 'format.wrong-model']);
+
 /** Why editing is unavailable: the format or model, a migration, unreadable input, or a limit (SPEC-rich-text-react/AC-087). */
 const blockedKey = ({ reason, diagnostics }: Blocked) => {
     if (reason === 'invalid') {
@@ -33,10 +36,11 @@ const blockedKey = ({ reason, diagnostics }: Blocked) => {
     if (reason === 'limit-exceeded') {
         return 'RichTextEditor_blockedLimit';
     }
-    if (diagnostics.some(({ code }) => code.startsWith('migration.'))) {
-        return 'RichTextEditor_blockedMigration';
+    // The envelope check blocks with one of these codes; a migration step may refuse with any code.
+    if (diagnostics.some(({ code }) => ENVELOPE_CODES.has(code))) {
+        return 'RichTextEditor_blockedVersion';
     }
-    return 'RichTextEditor_blockedVersion';
+    return 'RichTextEditor_blockedMigration';
 };
 
 const originalText = (original: unknown): string => {
@@ -44,6 +48,57 @@ const originalText = (original: unknown): string => {
         return original;
     }
     return JSON.stringify(original) ?? '';
+};
+
+/**
+ * Writes `plain` and `html` as one clipboard item, or `plain` alone where the browser has no `ClipboardItem`;
+ * `false` when nothing was copied, as on a page with no clipboard access.
+ */
+const writeClipboard = async (plain: string, html?: string): Promise<boolean> => {
+    const clipboard = navigator.clipboard as Clipboard | undefined;
+    if (clipboard === undefined) {
+        return false;
+    }
+    try {
+        if (html === undefined || typeof ClipboardItem !== 'function') {
+            await clipboard.writeText(plain);
+            return true;
+        }
+        const item = new ClipboardItem({
+            'text/plain': new Blob([plain], { type: 'text/plain' }),
+            'text/html': new Blob([html], { type: 'text/html' }),
+        });
+        await clipboard.write([item]);
+        return true;
+    } catch {
+        return false;
+    }
+};
+
+/** A copy action that names a failed copy instead of failing silently. */
+const CopyButton = ({
+    copy,
+    failure,
+    children,
+}: {
+    readonly copy: () => Promise<boolean>;
+    readonly failure: string;
+    readonly children: ReactNode;
+}) => {
+    const [failed, setFailed] = useState(false);
+    return (
+        <>
+            <Button
+                emphasis="default"
+                onPress={async () => {
+                    setFailed(!(await copy()));
+                }}
+            >
+                {children}
+            </Button>
+            {failed && <p role="status">{failure}</p>}
+        </>
+    );
 };
 
 /**
@@ -69,26 +124,20 @@ export const BlockedShell = ({
                 locale={locale}
             />
             <p>{t(blockedKey(result))}</p>
-            <Button
-                emphasis="default"
-                onPress={async () => {
-                    await navigator.clipboard.writeText(originalText(result.original));
-                }}
+            <CopyButton
+                copy={() => writeClipboard(originalText(result.original))}
+                failure={t('RichTextEditor_copyFailed')}
             >
                 {t('RichTextEditor_copyOriginal')}
-            </Button>
+            </CopyButton>
         </div>
     );
 };
 
 /** Copies `document` as plain text and HTML from the codecs, which needs no `RecoveryService` (SPEC-rich-text-react/AC-086). */
-const copyContent = async ({ model, limits, locale }: ShellProps, document: RichTextDocument) => {
+const copyContent = ({ model, limits, locale }: ShellProps, document: RichTextDocument) => {
     const codecs = createCodecs(model, { limits });
-    const item = new ClipboardItem({
-        'text/plain': new Blob([codecs.toPlainText(document).text], { type: 'text/plain' }),
-        'text/html': new Blob([codecs.toHTML(document, { locale }).html], { type: 'text/html' }),
-    });
-    await navigator.clipboard.write([item]);
+    return writeClipboard(codecs.toPlainText(document).text, codecs.toHTML(document, { locale }).html);
 };
 
 /**
@@ -113,9 +162,9 @@ export const RecoveryShell = ({
                 locale={locale}
             />
             <Button onPress={onRetry}>{t('RichTextEditor_retry')}</Button>
-            <Button emphasis="default" onPress={() => copyContent(shell, document)}>
+            <CopyButton copy={() => copyContent(shell, document)} failure={t('RichTextEditor_copyFailed')}>
                 {t('RichTextEditor_copyContent')}
-            </Button>
+            </CopyButton>
         </div>
     );
 };

@@ -10,6 +10,7 @@ export const esES = {
         RichTextEditor_blockedVersion: 'No se puede editar porque este contenido usa un formato o modelo desconocido.',
         RichTextEditor_bold: 'Negrita',
         RichTextEditor_copyContent: 'Copiar contenido',
+        RichTextEditor_copyFailed: 'No se ha podido copiar. Selecciona el contenido y cópialo con el teclado.',
         RichTextEditor_copyOriginal: 'Copiar original',
         RichTextEditor_nodeViewError: 'Esta parte del contenido no se puede mostrar',
         RichTextEditor_readerBlockedInvalid: 'Este contenido no se puede mostrar',

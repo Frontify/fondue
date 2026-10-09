@@ -12,6 +12,7 @@ export const itIT = {
             'La modifica non è disponibile perché questo contenuto usa un formato o un modello sconosciuto.',
         RichTextEditor_bold: 'Grassetto',
         RichTextEditor_copyContent: 'Copia contenuto',
+        RichTextEditor_copyFailed: 'Copia non riuscita. Seleziona il contenuto e copialo con la tastiera.',
         RichTextEditor_copyOriginal: 'Copia originale',
         RichTextEditor_nodeViewError: 'Questa parte del contenuto non può essere visualizzata',
         RichTextEditor_readerBlockedInvalid: 'Questo contenuto non può essere mostrato',
