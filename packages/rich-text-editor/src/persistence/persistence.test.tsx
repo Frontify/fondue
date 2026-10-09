@@ -707,6 +707,27 @@ describe('writes', () => {
         unmount();
     });
 
+    it('SPEC-rich-text-persistence/AC-014 replays a failed checkpoint unchanged on a second requestCommit with no edit', async () => {
+        const environment = createTestEnvironment({ seed: 1 });
+        const { service, calls } = serviceOf(environment, true);
+        const { handle, flush, type, unmount } = mount({ service, environment, persistenceOptions: { maxRetries: 0 } });
+        type('x');
+        const first = handle().requestCommit({ reason: 'manual' });
+        await flush();
+        calls[0]?.fail();
+        expect(await first).toEqual({ status: 'failed', code: 'transport', outcome: 'unknown' });
+        expect(handle().getSaveStatus().state).toBe('error');
+
+        const second = handle().requestCommit({ reason: 'manual' });
+        await flush();
+        const [sent, replayed] = calls.map(({ request }) => request);
+        expect(calls).toHaveLength(2);
+        expect(replayed).toEqual(sent);
+        calls[1]?.answer();
+        expect(await second).toMatchObject({ status: 'acknowledged', acknowledgment: { operationId: 'operation-1' } });
+        unmount();
+    });
+
     it('SPEC-rich-text-persistence/AC-014 gives equal seeds equal backoff delays and different seeds different ones', async () => {
         const delaysFor = async (seed: number) => {
             const environment = createTestEnvironment({ seed });
@@ -973,6 +994,28 @@ describe('disposal', () => {
         act(() => handle().dispose());
         expect(calls[0]?.context.signal.aborted).toBe(true);
         expect(await peek(result)).toEqual({ status: 'failed', code: 'disposed', outcome: 'unknown' });
+        unmount();
+    });
+
+    it('SPEC-rich-text-persistence/AC-040 answers a requestCommit from a disposed-dirty listener disposed at once', async () => {
+        const environment = createTestEnvironment({ seed: 1 });
+        const { service } = serviceOf(environment);
+        const { handle, type, unmount } = mount({ service, environment });
+        const results: Promise<CommitResult>[] = [];
+        handle().subscribe('diagnostic', ({ code }) => {
+            if (code === 'persistence.disposed-dirty') {
+                results.push(handle().requestCommit({ reason: 'navigate' }));
+            }
+        });
+        type('x');
+        act(() => handle().dispose());
+        expect(results).toHaveLength(1);
+        expect(await peek(results[0] as Promise<CommitResult>)).toEqual({
+            status: 'failed',
+            code: 'disposed',
+            outcome: 'unknown',
+        });
+        expect(service.save).not.toHaveBeenCalled();
         unmount();
     });
 
@@ -1293,6 +1336,27 @@ describe('commit checkpoints', () => {
         expect(calls.map(({ request }) => [request.stamp, request.document])).toEqual([
             [pinned.stamp, pinned.document],
         ]);
+        unmount();
+    });
+
+    it('SPEC-rich-text-persistence/AC-066 resolves unknown offline for the stamp of a sent write left unresolved', async () => {
+        const environment = createTestEnvironment({ seed: 1 });
+        const { service, calls } = serviceOf(environment, true);
+        const { handle, flush, type, advance, unmount } = mount({ service, environment });
+        type('x');
+        advance(500);
+        const onLine = vi.spyOn(navigator, 'onLine', 'get');
+        onLine.mockReturnValue(false);
+        calls[0]?.fail();
+        await settle();
+        expect(handle().getSaveStatus().state).toBe('offline');
+
+        const result = handle().requestCommit({ reason: 'manual' });
+        await flush();
+        const outcome = await peek(result);
+        onLine.mockRestore();
+        expect(outcome).toEqual({ status: 'failed', code: 'transport', outcome: 'unknown' });
+        expect(calls).toHaveLength(1);
         unmount();
     });
 
