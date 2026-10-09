@@ -14,6 +14,7 @@ import { fixtureChromeViews } from '#/features/__fixtures__/chrome/view';
 import { core } from '#/features/core/feature';
 import { bold } from '#/features/marks-bold/feature';
 import {
+    type CommitResult,
     defineEditor,
     type EditorHandle,
     type OperationMetric,
@@ -35,6 +36,7 @@ import {
 } from '#/model';
 import { encodeTree } from '#/model/encode';
 import { type RuntimeHandle, runtimeOf } from '#/runtime/runtime';
+import { SETTLE_MS } from '#/runtime/settle';
 import {
     createFakePersistenceService,
     createTestEnvironment,
@@ -154,6 +156,12 @@ const settle = () =>
     act(async () => {
         await new Promise((resolve) => setTimeout(resolve, 0));
     });
+/** The promise's value, or `pending` while it has none once the pending continuations ran. */
+const peek = async <T,>(promise: Promise<T>) => {
+    await settle();
+    // An already settled promise wins the race over the second entry.
+    return Promise.race([promise, Promise.resolve('pending' as const)]);
+};
 
 interface MountOptions {
     readonly service?: PersistenceService;
@@ -163,6 +171,8 @@ interface MountOptions {
     readonly blocks?: readonly JsonValue[];
     /** Time that passes between the mount and its first frame. */
     readonly beforeReady?: number;
+    /** Leaves the editor `mounting`, before its first frame. */
+    readonly mounting?: boolean;
 }
 
 /** Mounts an editor on a test environment, then runs its first frame, so it is `ready`. */
@@ -206,10 +216,12 @@ const mount = (options: MountOptions = {}) => {
         return ref.current;
     };
     handle().subscribe('operationMetric', (metric) => metrics.push(metric));
-    act(() => {
-        environment.advance(options.beforeReady ?? 0);
-        environment.flushFrames();
-    });
+    if (options.mounting !== true) {
+        act(() => {
+            environment.advance(options.beforeReady ?? 0);
+            environment.flushFrames();
+        });
+    }
     return {
         ...view,
         environment,
@@ -220,6 +232,30 @@ const mount = (options: MountOptions = {}) => {
         type: (text: string) => act(() => typeText(handle(), text)),
         advance: (ms: number) => act(() => environment.advance(ms)),
     };
+};
+
+const viewOf = (handle: EditorHandle<object>) => {
+    const view = runtimeOf(handle)?.view;
+    if (view === undefined) {
+        throw new Error('no view');
+    }
+    return view;
+};
+/** Starts a composition as the browser does, so ProseMirror's own handler sets `view.composing`, and composes `text`. */
+const compose = (handle: EditorHandle<object>, text: string) =>
+    act(() => {
+        const view = viewOf(handle);
+        view.dom.dispatchEvent(new CompositionEvent('compositionstart'));
+        // ProseMirror marks the composed text it reads from the DOM with its composition ID.
+        view.dispatch(view.state.tr.insertText(text).setMeta('composition', 1));
+    });
+/** Ends the composition, then runs the environment microtask and the timer after which input has settled. */
+const endComposition = async (handle: EditorHandle<object>, environment: TestEnvironment) => {
+    act(() => {
+        viewOf(handle).dom.dispatchEvent(new CompositionEvent('compositionend'));
+    });
+    await act(() => environment.flushMicrotasks());
+    act(() => environment.advance(SETTLE_MS));
 };
 
 // SPEC-rich-text-persistence/AC-044: every browser storage API fails while this suite runs.
@@ -310,11 +346,12 @@ describe('save state at load', () => {
 });
 
 describe('writes', () => {
-    it('SPEC-rich-text-persistence/AC-006 keeps at most one write in flight across random edits and delayed responses', async () => {
+    it('SPEC-rich-text-persistence/AC-006 keeps at most one write in flight across random edits, requestCommit calls and delayed responses', async () => {
         const step = fc.oneof(
             fc.constant({ kind: 'type' as const }),
             fc.record({ kind: fc.constant('advance' as const), ms: fc.integer({ min: 0, max: 40_000 }) }),
             fc.record({ kind: fc.constant('answer' as const), saved: fc.boolean() }),
+            fc.constant({ kind: 'commit' as const }),
         );
         await fc.assert(
             fc.asyncProperty(fc.array(step, { maxLength: 25 }), async (steps) => {
@@ -350,10 +387,13 @@ describe('writes', () => {
                         }),
                     read: server.read,
                 };
-                const { type, advance, unmount } = mount({ service, environment });
+                const { handle, type, advance, unmount } = mount({ service, environment });
+                const commits: Promise<CommitResult>[] = [];
                 for (const next of steps) {
                     if (next.kind === 'type') {
                         type('x');
+                    } else if (next.kind === 'commit') {
+                        commits.push(handle().requestCommit({ reason: 'manual' }));
                     } else if (next.kind === 'advance') {
                         advance(next.ms);
                     } else {
@@ -368,6 +408,8 @@ describe('writes', () => {
                 }
                 unmount();
                 expect(most).toBeLessThanOrEqual(1);
+                // Dispose resolves every call still pending.
+                await Promise.all(commits);
             }),
             { numRuns: 40 },
         );
@@ -631,6 +673,36 @@ describe('writes', () => {
         unmount();
     });
 
+    it('SPEC-rich-text-persistence/AC-014 replays the kept operation unchanged on the next requestCommit after retries ran out', async () => {
+        const environment = createTestEnvironment({ seed: 1 });
+        const { service, calls } = serviceOf(environment, true);
+        const { handle, type, advance, unmount } = mount({
+            service,
+            environment,
+            persistenceOptions: { maxRetries: 0 },
+        });
+        type('x');
+        advance(500);
+        calls[0]?.fail();
+        await settle();
+        advance(60_000);
+        expect(handle().getSaveStatus().state).toBe('error');
+        expect(calls).toHaveLength(1);
+
+        const result = handle().requestCommit({ reason: 'manual' });
+        const [first, replayed] = calls.map(({ request }) => request);
+        expect(calls).toHaveLength(2);
+        expect(replayed).toEqual(first);
+        calls[1]?.answer();
+        await settle();
+        expect(await result).toEqual({
+            status: 'acknowledged',
+            acknowledgment: { operationId: 'operation-1', stamp: calls[0]?.request.stamp, revision: 'revision-1' },
+        });
+        expect(handle().getSaveStatus().state).toBe('clean');
+        unmount();
+    });
+
     it('SPEC-rich-text-persistence/AC-014 gives equal seeds equal backoff delays and different seeds different ones', async () => {
         const delaysFor = async (seed: number) => {
             const environment = createTestEnvironment({ seed });
@@ -798,6 +870,19 @@ describe('conflicts and rejections', () => {
         unmount();
     });
 
+    it('SPEC-rich-text-persistence/AC-073 blocks requestCommit with conflict at once and sends no write', async () => {
+        const { handle, calls, type, advance, unmount } = await conflicted();
+        type('y');
+        expect(await peek(handle().requestCommit({ reason: 'manual' }))).toEqual({
+            status: 'blocked',
+            code: 'conflict',
+        });
+        advance(60_000);
+        await settle();
+        expect(calls).toHaveLength(1);
+        unmount();
+    });
+
     it('SPEC-rich-text-persistence/AC-058 hands one read of the server copy and the local snapshot to onConflict', async () => {
         const onConflict = vi.fn();
         const { service, handle, unmount } = await conflicted({ onConflict });
@@ -874,6 +959,18 @@ describe('disposal', () => {
         unmount();
     });
 
+    it('SPEC-rich-text-persistence/AC-040 resolves a pending requestCommit failed with disposed on dispose', async () => {
+        const environment = createTestEnvironment({ seed: 1 });
+        const { service, calls } = serviceOf(environment, true);
+        const { handle, type, unmount } = mount({ service, environment });
+        type('x');
+        const result = handle().requestCommit({ reason: 'navigate' });
+        act(() => handle().dispose());
+        expect(calls[0]?.context.signal.aborted).toBe(true);
+        expect(await peek(result)).toEqual({ status: 'failed', code: 'disposed', outcome: 'unknown' });
+        unmount();
+    });
+
     it('SPEC-rich-text-persistence/AC-041 warns persistence.disposed-dirty on dispose with unsaved changes and starts no write', async () => {
         const environment = createTestEnvironment({ seed: 1 });
         const { service } = serviceOf(environment);
@@ -888,6 +985,340 @@ describe('disposal', () => {
         expect(service.save).not.toHaveBeenCalled();
         unmount();
     });
+});
+
+describe('commit checkpoints', () => {
+    it('SPEC-rich-text-persistence/AC-020 SPEC-rich-text-format/AC-041 pins the snapshot with the keystroke typed in the same task', async () => {
+        const environment = createTestEnvironment({ seed: 1 });
+        const { service, calls } = serviceOf(environment);
+        const { handle, unmount } = mount({ service, environment });
+        let result: Promise<CommitResult> | undefined;
+        act(() => {
+            typeText(handle(), 'x');
+            result = handle().requestCommit({ reason: 'submit' });
+        });
+        await settle();
+        const snapshot = handle().getSnapshot();
+        expect(calls.map(({ request }) => request)).toEqual([
+            {
+                operationId: 'operation-1',
+                stamp: snapshot.stamp,
+                baseRevision: null,
+                document: snapshot.document,
+                writer: WRITER,
+            },
+        ]);
+        expect(textOf(calls[0]?.request as SaveRequest)).toBe('xab');
+        expect(await result).toMatchObject({ status: 'acknowledged', acknowledgment: { stamp: snapshot.stamp } });
+        unmount();
+    });
+
+    it('SPEC-rich-text-persistence/AC-021 writes the pinned payload unchanged while later edits come due for autosave', async () => {
+        const environment = createTestEnvironment({ seed: 1 });
+        const { service, calls } = serviceOf(environment, true);
+        const { handle, type, advance, unmount } = mount({ service, environment });
+        type('x');
+        const pinned = handle().getSnapshot();
+        const result = handle().requestCommit({ reason: 'manual' });
+        type('y');
+        advance(10_000);
+        await settle();
+        expect(calls.map(({ request }) => [request.stamp, request.document])).toEqual([
+            [pinned.stamp, pinned.document],
+        ]);
+
+        calls[0]?.answer();
+        await settle();
+        expect(calls.map(({ request }) => textOf(request))).toEqual(['xab', 'xyab']);
+        expect(await result).toMatchObject({ status: 'acknowledged', acknowledgment: { stamp: pinned.stamp } });
+        unmount();
+    });
+
+    it('SPEC-rich-text-persistence/AC-022 writes pinned checkpoints in call order before the trailing autosave', async () => {
+        const environment = createTestEnvironment({ seed: 1 });
+        const { service, calls } = serviceOf(environment, true);
+        const { handle, type, advance, unmount } = mount({ service, environment });
+        const pinned = [];
+        const results = [];
+        type('x');
+        pinned.push(handle().getSnapshot());
+        results.push(handle().requestCommit({ reason: 'manual' }));
+        type('y');
+        pinned.push(handle().getSnapshot());
+        results.push(handle().requestCommit({ reason: 'manual' }));
+        type('z');
+        advance(10_000);
+        for (let call = 0; call < 3; call += 1) {
+            calls[call]?.answer();
+            await settle();
+        }
+        expect(calls.map(({ request }) => textOf(request))).toEqual(['xab', 'xyab', 'xyzab']);
+        expect(calls.slice(0, 2).map(({ request }) => [request.stamp, request.document])).toEqual(
+            pinned.map(({ stamp, document }) => [stamp, document]),
+        );
+        const settled = await Promise.all(results);
+        expect(settled.map(({ status }) => status)).toEqual(['acknowledged', 'acknowledged']);
+        unmount();
+    });
+
+    it('SPEC-rich-text-persistence/AC-023 resolves acknowledged with the acknowledgment of the pinned stamp after later edits', async () => {
+        const environment = createTestEnvironment({ seed: 1 });
+        const { service, calls } = serviceOf(environment, true);
+        const { handle, type, unmount } = mount({ service, environment });
+        type('x');
+        const pinned = handle().getSnapshot();
+        const result = handle().requestCommit({ reason: 'manual' });
+        type('y');
+        calls[0]?.answer();
+        expect(await result).toEqual({
+            status: 'acknowledged',
+            acknowledgment: { operationId: 'operation-1', stamp: pinned.stamp, revision: 'revision-1' },
+        });
+        expect(handle().getSaveStatus()).toMatchObject({ latestSequence: 2, acknowledgedSequence: 1 });
+        unmount();
+    });
+
+    it('SPEC-rich-text-persistence/AC-024 answers an acknowledged sequence with no write, right after load and after one accepted save', async () => {
+        const loadedEnvironment = createTestEnvironment({ seed: 1 });
+        const existing = serviceOf(loadedEnvironment);
+        const atLoad = mount({ service: existing.service, environment: loadedEnvironment, revision: 'revision-7' });
+        expect(await atLoad.handle().requestCommit({ reason: 'manual' })).toEqual({
+            status: 'acknowledged',
+            acknowledgment: { operationId: null, stamp: atLoad.handle().getSnapshot().stamp, revision: 'revision-7' },
+        });
+        expect(existing.service.save).not.toHaveBeenCalled();
+        atLoad.unmount();
+
+        const environment = createTestEnvironment({ seed: 1 });
+        const { service, calls } = serviceOf(environment);
+        const { handle, type, advance, unmount } = mount({ service, environment });
+        type('x');
+        advance(500);
+        await settle();
+        expect(await handle().requestCommit({ reason: 'manual' })).toEqual({
+            status: 'acknowledged',
+            acknowledgment: { operationId: 'operation-1', stamp: handle().getSnapshot().stamp, revision: 'revision-1' },
+        });
+        expect(calls).toHaveLength(1);
+        unmount();
+    });
+
+    it('SPEC-rich-text-persistence/AC-025 shares one write and one result between two calls that pin the same stamp', async () => {
+        const environment = createTestEnvironment({ seed: 1 });
+        const { service, calls } = serviceOf(environment, true);
+        const { handle, type, unmount } = mount({ service, environment });
+        type('x');
+        const first = handle().requestCommit({ reason: 'manual' });
+        const second = handle().requestCommit({ reason: 'submit' });
+        calls[0]?.answer();
+        const results = await Promise.all([first, second]);
+        expect(results[1]).toEqual(results[0]);
+        expect(results[0]).toMatchObject({ status: 'acknowledged' });
+        expect(service.save).toHaveBeenCalledTimes(1);
+        unmount();
+    });
+
+    it('SPEC-rich-text-persistence/AC-026 captures the snapshot once a composition ends within timeoutMs', async () => {
+        const environment = createTestEnvironment({ seed: 1 });
+        const { service, calls } = serviceOf(environment);
+        const { handle, advance, unmount } = mount({ service, environment });
+        compose(handle(), 'c');
+        const result = handle().requestCommit({ reason: 'manual', composition: 'wait', timeoutMs: 1000 });
+        advance(500);
+        expect(await peek(result)).toBe('pending');
+        expect(calls).toHaveLength(0);
+
+        await endComposition(handle(), environment);
+        await settle();
+        expect(calls.map(({ request }) => textOf(request))).toEqual(['cab']);
+        expect(await result).toMatchObject({
+            status: 'acknowledged',
+            acknowledgment: { stamp: handle().getSnapshot().stamp },
+        });
+        unmount();
+    });
+
+    it('SPEC-rich-text-persistence/AC-026 resolves failed with timeout and not-sent when the composition outlasts timeoutMs', async () => {
+        const environment = createTestEnvironment({ seed: 1 });
+        const { service } = serviceOf(environment);
+        const { handle, advance, unmount } = mount({ service, environment });
+        compose(handle(), 'c');
+        const result = handle().requestCommit({ reason: 'manual', composition: 'wait', timeoutMs: 1000 });
+        advance(999);
+        expect(await peek(result)).toBe('pending');
+        advance(1);
+        expect(await peek(result)).toEqual({ status: 'failed', code: 'timeout', outcome: 'not-sent' });
+        expect(service.save).not.toHaveBeenCalled();
+        unmount();
+    });
+
+    it('SPEC-rich-text-persistence/AC-028 blocks with composition-active during a composition when asked to reject', async () => {
+        const environment = createTestEnvironment({ seed: 1 });
+        const { service } = serviceOf(environment);
+        const { handle, unmount } = mount({ service, environment });
+        compose(handle(), 'c');
+        expect(await peek(handle().requestCommit({ reason: 'manual', composition: 'reject' }))).toEqual({
+            status: 'blocked',
+            code: 'composition-active',
+        });
+        await endComposition(handle(), environment);
+        await settle();
+        expect(service.save).not.toHaveBeenCalled();
+        unmount();
+    });
+
+    it.each([
+        ['conflict', { status: 'conflict', currentRevision: 'revision-9' }, { status: 'blocked', code: 'conflict' }],
+        [
+            'forbidden',
+            { status: 'rejected', code: 'forbidden', diagnostics: [] },
+            { status: 'blocked', code: 'forbidden' },
+        ],
+        [
+            'invalid',
+            { status: 'rejected', code: 'invalid', diagnostics: [] },
+            { status: 'failed', code: 'invalid', outcome: 'rejected' },
+        ],
+        [
+            'incompatible-writer',
+            { status: 'rejected', code: 'incompatible-writer', diagnostics: [] },
+            { status: 'failed', code: 'incompatible-writer', outcome: 'rejected' },
+        ],
+    ] as const)(
+        'SPEC-rich-text-persistence/AC-029 resolves the checkpoint of a %s answer with its matching result',
+        async (_name, response, expected) => {
+            const environment = createTestEnvironment({ seed: 1 });
+            const { service, calls } = serviceOf(environment, true);
+            const { handle, type, unmount } = mount({ service, environment });
+            type('x');
+            const result = handle().requestCommit({ reason: 'manual' });
+            calls[0]?.answer(response);
+            expect(await result).toEqual(expected);
+            unmount();
+        },
+    );
+
+    it('SPEC-rich-text-persistence/AC-030 resolves failed with timeout and unknown at timeoutMs and keeps replaying', async () => {
+        const environment = createTestEnvironment({ seed: 1 });
+        const { service, calls } = serviceOf(environment, true);
+        const { handle, type, advance, unmount } = mount({ service, environment });
+        type('x');
+        const result = handle().requestCommit({ reason: 'manual' });
+        advance(29_999);
+        expect(await peek(result)).toBe('pending');
+        advance(1);
+        expect(await peek(result)).toEqual({ status: 'failed', code: 'timeout', outcome: 'unknown' });
+        expect(handle().getSaveStatus().state).toBe('uncertain');
+        advance(1200);
+        const [first, replayed] = calls.map(({ request }) => request);
+        expect(calls).toHaveLength(2);
+        expect(replayed).toEqual(first);
+        unmount();
+    });
+
+    it('SPEC-rich-text-persistence/AC-064 blocks with not-ready while mounting and after dispose, with no write', async () => {
+        const environment = createTestEnvironment({ seed: 1 });
+        const { service } = serviceOf(environment);
+        const { handle, unmount } = mount({ service, environment, mounting: true });
+        expect(handle().getSummary().phase).toBe('mounting');
+        expect(await peek(handle().requestCommit({ reason: 'manual' }))).toEqual({
+            status: 'blocked',
+            code: 'not-ready',
+        });
+        act(() => environment.flushFrames());
+        act(() => typeText(handle(), 'x'));
+        act(() => handle().dispose());
+        expect(await peek(handle().requestCommit({ reason: 'manual' }))).toEqual({
+            status: 'blocked',
+            code: 'not-ready',
+        });
+        await settle();
+        expect(service.save).not.toHaveBeenCalled();
+        unmount();
+    });
+
+    it('SPEC-rich-text-persistence/AC-065 resolves failed with transport and unknown when the write fails online, and keeps replaying', async () => {
+        const environment = createTestEnvironment({ seed: 1 });
+        const { service, calls } = serviceOf(environment, true);
+        const { handle, type, advance, unmount } = mount({ service, environment });
+        type('x');
+        const result = handle().requestCommit({ reason: 'manual' });
+        calls[0]?.fail();
+        expect(await peek(result)).toEqual({ status: 'failed', code: 'transport', outcome: 'unknown' });
+        advance(1200);
+        const [first, replayed] = calls.map(({ request }) => request);
+        expect(calls).toHaveLength(2);
+        expect(replayed).toEqual(first);
+        unmount();
+    });
+
+    it('SPEC-rich-text-persistence/AC-066 resolves failed with transport and not-sent offline, then writes the pinned snapshot online', async () => {
+        const environment = createTestEnvironment({ seed: 1 });
+        const { service, calls } = serviceOf(environment, true);
+        const { handle, type, unmount } = mount({ service, environment });
+        const onLine = vi.spyOn(navigator, 'onLine', 'get');
+        onLine.mockReturnValue(false);
+        type('x');
+        const pinned = handle().getSnapshot();
+        const result = handle().requestCommit({ reason: 'manual' });
+        expect(await peek(result)).toEqual({ status: 'failed', code: 'transport', outcome: 'not-sent' });
+        expect(calls).toHaveLength(0);
+        type('y');
+
+        onLine.mockReturnValue(true);
+        act(() => {
+            window.dispatchEvent(new Event('online'));
+        });
+        onLine.mockRestore();
+        expect(calls.map(({ request }) => [request.stamp, request.document])).toEqual([
+            [pinned.stamp, pinned.document],
+        ]);
+        unmount();
+    });
+
+    it.each(['submit', 'navigate'] as const)(
+        'SPEC-rich-text-persistence/AC-067 captures, writes and resolves the same with reason %s as with manual',
+        async (reason) => {
+            const trace = async (given: 'submit' | 'navigate' | 'manual') => {
+                const environment = createTestEnvironment({ seed: 1 });
+                const { service, calls } = serviceOf(environment);
+                const { handle, type, unmount } = mount({ service, environment });
+                type('x');
+                const result = await handle().requestCommit({ reason: given });
+                unmount();
+                return { requests: calls.map(({ request }) => request), result };
+            };
+            const manual = await trace('manual');
+            expect(manual.requests).toHaveLength(1);
+            expect(await trace(reason)).toEqual(manual);
+        },
+    );
+
+    it.each(['ends', 'outlasts the timeout'])(
+        'SPEC-rich-text-persistence/AC-072 waits for a composition that %s with the default options',
+        async (ending) => {
+            const environment = createTestEnvironment({ seed: 1 });
+            const { service, calls } = serviceOf(environment);
+            const { handle, advance, unmount } = mount({ service, environment });
+            compose(handle(), 'c');
+            const result = handle().requestCommit({ reason: 'manual' });
+            advance(29_000);
+            expect(await peek(result)).toBe('pending');
+            if (ending === 'ends') {
+                await endComposition(handle(), environment);
+                await settle();
+                expect(calls.map(({ request }) => textOf(request))).toEqual(['cab']);
+                expect(await result).toMatchObject({ status: 'acknowledged' });
+            } else {
+                advance(999);
+                expect(await peek(result)).toBe('pending');
+                advance(1);
+                expect(await peek(result)).toEqual({ status: 'failed', code: 'timeout', outcome: 'not-sent' });
+                expect(calls).toHaveLength(0);
+            }
+            unmount();
+        },
+    );
 });
 
 describe('the runtime with a save coordinator', () => {
@@ -1061,6 +1492,82 @@ describe('the runtime with a save coordinator', () => {
             unmount();
         },
     );
+
+    /** Mounts a dirty session whose chrome node view throws once its `language` is `boom`, and how to fault it. */
+    const breakable = async (held: boolean) => {
+        vi.mocked(createPortalStore).mockImplementationOnce((scheduler) => {
+            const store = actualStore(scheduler);
+            return {
+                ...store,
+                set: (entry: PortalEntry) => {
+                    if (entry.state.attrs.language === 'boom') {
+                        throw new Error('node view failed');
+                    }
+                    store.set(entry);
+                },
+            };
+        });
+        const environment = createTestEnvironment({ seed: 1 });
+        const services = serviceOf(environment, held);
+        const mounted = mount({ service: services.service, environment, blocks: [para('ab'), chromeBlock('b1')] });
+        await act(() => environment.flushMicrotasks());
+        const fault = async () => {
+            act(() => {
+                runtimeOf(mounted.handle())?.nodeActions('b1').update({ language: 'boom' });
+            });
+            await act(() => environment.flushMicrotasks());
+            expect(mounted.handle().getSummary().phase).toBe('faulted');
+        };
+        return { ...mounted, service: services.service, calls: services.calls, fault };
+    };
+
+    it('SPEC-rich-text-runtime/AC-016 saves the last published snapshot of a faulted session through requestCommit', async () => {
+        const { handle, service, calls, type, advance, fault, unmount } = await breakable(false);
+        type('x');
+        await fault();
+        advance(10_000);
+        await settle();
+        expect(service.save).not.toHaveBeenCalled();
+
+        const published = handle().getSnapshot();
+        const result = handle().requestCommit({ reason: 'manual' });
+        await settle();
+        expect(calls.map(({ request }) => [request.stamp, request.document])).toEqual([
+            [published.stamp, published.document],
+        ]);
+        expect(textOf(calls[0]?.request as SaveRequest)).toBe('xab');
+        expect(await result).toMatchObject({ status: 'acknowledged', acknowledgment: { stamp: published.stamp } });
+        unmount();
+    });
+
+    it('SPEC-rich-text-runtime/AC-091 holds the write a fault left unresolved until requestCommit, then replays it unchanged first', async () => {
+        const { handle, calls, type, advance, fault, unmount } = await breakable(true);
+        type('x');
+        advance(500);
+        type('y');
+        await fault();
+        calls[0]?.fail();
+        await settle();
+        advance(60_000);
+        await settle();
+        expect(calls).toHaveLength(1);
+
+        const published = handle().getSnapshot();
+        const result = handle().requestCommit({ reason: 'manual' });
+        const [first, replayed] = calls.map(({ request }) => request);
+        expect(calls).toHaveLength(2);
+        expect(replayed).toEqual(first);
+        calls[1]?.answer();
+        await settle();
+        expect(calls[2]?.request).toMatchObject({ stamp: published.stamp, baseRevision: 'revision-1' });
+        expect(textOf(calls[2]?.request as SaveRequest)).toBe('xyab');
+        calls[2]?.answer();
+        expect(await result).toMatchObject({ status: 'acknowledged', acknowledgment: { stamp: published.stamp } });
+        advance(60_000);
+        await settle();
+        expect(calls).toHaveLength(3);
+        unmount();
+    });
 
     it('SPEC-rich-text-runtime/AC-073 keeps the write in flight across rerenders that pass services inline with the same functions', () => {
         const environment = createTestEnvironment({ seed: 1 });
