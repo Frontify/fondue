@@ -7,6 +7,7 @@ import { createCodecs } from '#/codecs/codecs';
 import {
     type ContentModel,
     type DecodeResult,
+    type DiagnosticCode,
     type ResourceLimits,
     type RichTextDocument,
     type RichTextLocale,
@@ -26,7 +27,7 @@ interface ShellProps {
     readonly testId: string;
 }
 
-const ENVELOPE_CODES: ReadonlySet<string> = new Set(['format.unknown-format-version', 'format.wrong-model']);
+const ENVELOPE_CODES: ReadonlySet<DiagnosticCode> = new Set(['format.unknown-format-version', 'format.wrong-model']);
 
 /** Why editing is unavailable: the format or model, a migration, unreadable input, or a limit (SPEC-rich-text-react/AC-087). */
 const blockedKey = ({ reason, diagnostics }: Blocked) => {

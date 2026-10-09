@@ -18,6 +18,8 @@ import {
     type ShippedCommands,
 } from '#/runtime/types';
 
+import { useRenderMark } from './dev-checks';
+
 /** What node chrome reads besides attributes: the shape of the reader's `ReaderContext`, which `src/bridge` may not import (SPEC-rich-text/AC-010). */
 export interface NodeViewContext extends CodecContext {
     readonly resolveReference: (resourceType: string, resourceId: string) => ReferenceResolution;
@@ -62,6 +64,7 @@ NodeViewStateContext.displayName = 'RichTextNodeViewContext';
 
 /** The node of the chrome that calls it, with its node-ID actions (SPEC-rich-text-react/AC-019). */
 export const useRichTextNodeView = <C extends object = ShippedCommands>(): NodeViewState<C> => {
+    useRenderMark();
     const state = useContext(NodeViewStateContext);
     if (state === null) {
         throw new Error('useRichTextNodeView must be called inside node view chrome.');

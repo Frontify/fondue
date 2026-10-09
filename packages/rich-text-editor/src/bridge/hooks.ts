@@ -6,6 +6,7 @@ import { type EditorRuntime } from '#/runtime/runtime';
 import { type SelectionSummary } from '#/runtime/types';
 
 import { useClientLayoutEffect } from './client-layout-effect';
+import { useRenderMark } from './dev-checks';
 
 /** The session of the editor around a hook once it is ready. */
 export const SessionContext = createContext<EditorRuntime | undefined>(undefined);
@@ -19,6 +20,7 @@ export const useSessionValue = <T>(
     read: (runtime: EditorRuntime | undefined) => T,
     isEqual: (previous: T, next: T) => boolean,
 ): T => {
+    useRenderMark();
     const runtime = useContext(SessionContext);
     const latestRef = useRef({ read, isEqual });
     useClientLayoutEffect(() => {
