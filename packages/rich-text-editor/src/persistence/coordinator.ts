@@ -58,9 +58,9 @@ interface InFlight {
 interface Checkpoint {
     readonly stamp: DocumentStamp;
     readonly document: RichTextDocument;
-    readonly result: Promise<CommitResult>;
-    /** Resolves `result`; only the first call counts. */
-    readonly settle: (result: CommitResult) => void;
+    /** The result its calls share until it comes; a later call waits on a fresh one (AC-014, AC-025). */
+    result: Promise<CommitResult> | undefined;
+    settle: (result: CommitResult) => void;
 }
 
 /** A `requestCommit` call, which waits in the coordinator while input has not settled (AC-026). */
@@ -447,6 +447,9 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
      * (AC-020, AC-024, AC-025, AC-066, AC-073).
      */
     const pin = (): Promise<CommitResult> => {
+        if (ended.signal.aborted) {
+            return Promise.resolve(DISPOSED);
+        }
         if (state === 'conflict') {
             return Promise.resolve({ status: 'blocked', code: 'conflict' });
         }
@@ -454,22 +457,34 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
         if (accepted !== undefined && sameStamp(accepted.stamp, stamp)) {
             return Promise.resolve({ status: 'acknowledged', acknowledgment: accepted });
         }
-        const last = pinned.at(-1);
-        if (last !== undefined && sameStamp(last.stamp, stamp)) {
-            return last.result;
+        let checkpoint = pinned.at(-1);
+        if (checkpoint === undefined || !sameStamp(checkpoint.stamp, stamp)) {
+            checkpoint = { stamp, document, result: undefined, settle: () => undefined };
+            pinned.push(checkpoint);
         }
-        let settle: Checkpoint['settle'] = () => undefined;
+        if (checkpoint.result !== undefined) {
+            return checkpoint.result;
+        }
+        const target = checkpoint;
         const result = new Promise<CommitResult>((resolve) => {
-            settle = resolve;
+            target.settle = (value) => {
+                target.result = undefined;
+                resolve(value);
+            };
         });
-        pinned.push({ stamp, document, result, settle });
+        target.result = result;
         // The write a fault, the network or spent retries left unresolved goes first, unchanged (AC-014, `SPEC-rich-text-runtime/AC-091`).
         if (unresolved !== undefined && inFlight === undefined && retry === undefined) {
             replay();
         }
         send();
         if (!navigator.onLine) {
-            settle({ status: 'failed', code: 'transport', outcome: 'not-sent' });
+            // A payload a write already carried may have been stored (AC-066).
+            let outcome: 'not-sent' | 'unknown' = 'not-sent';
+            if (unresolved !== undefined && sameStamp(unresolved.stamp, stamp)) {
+                outcome = 'unknown';
+            }
+            target.settle({ status: 'failed', code: 'transport', outcome });
         }
         return result;
     };
@@ -523,6 +538,10 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
             // A faulted session still saves its last published snapshot (`SPEC-rich-text-runtime/AC-016`, AC-064).
             if (summary.phase !== 'ready' && summary.phase !== 'faulted') {
                 return Promise.resolve({ status: 'blocked', code: 'not-ready' });
+            }
+            // A listener of what `dispose` reported may call this while the phase is still `ready` (AC-040).
+            if (ended.signal.aborted) {
+                return Promise.resolve(DISPOSED);
             }
             if (state === 'conflict') {
                 return Promise.resolve({ status: 'blocked', code: 'conflict' });
