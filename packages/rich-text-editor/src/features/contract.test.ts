@@ -73,6 +73,23 @@ const LABELS =
     'SPEC-rich-text/AC-016 SPEC-rich-text/AC-017 resolves the label of each toolbar entry and menu item in enUS';
 const COVERS = 'SPEC-rich-text/AC-016 brings fixtures that hold each of its nodes, marks and shared attributes';
 
+/** Makes every `toggleMark` query over a range dispatch, as if its `dispatch === undefined` guard were gone. */
+const dispatchRangeQueries = () => {
+    const original = CAPABILITIES.toggleMark as CapabilityImplementation;
+    const spy = vi.spyOn(CAPABILITIES as Record<string, CapabilityImplementation>, 'toggleMark');
+    spy.mockImplementation((args, schema) => {
+        const command = original(args, schema);
+        const run: typeof command.run = (state, dispatch, view) => {
+            if (!state.selection.empty) {
+                (dispatch as NonNullable<typeof dispatch>)(state.tr);
+            }
+            return command.run(state, dispatch, view);
+        };
+        return { run, active: command.active };
+    });
+    return spy;
+};
+
 describe('the feature contract suite', () => {
     it('SPEC-rich-text/AC-017 fails the fixture cases of an outside document that misspells its mark', async () => {
         const misspelled = stored([paragraph(text('Read', 'highlite'))], ['core', 'fixture.highlight']);
@@ -105,22 +122,21 @@ describe('the feature contract suite', () => {
     });
 
     it('SPEC-rich-text/AC-017 fails a command whose query over a range dispatches', async () => {
-        const original = CAPABILITIES.toggleMark as CapabilityImplementation;
-        const spy = vi.spyOn(CAPABILITIES as Record<string, CapabilityImplementation>, 'toggleMark');
-        spy.mockImplementation((args, schema) => {
-            const command = original(args, schema);
-            // As if the `dispatch === undefined` guard were gone: a range query builds and dispatches.
-            const run: typeof command.run = (state, dispatch, view) => {
-                if (!state.selection.empty) {
-                    (dispatch as NonNullable<typeof dispatch>)(state.tr);
-                }
-                return command.run(state, dispatch, view);
-            };
-            return { run, active: command.active };
-        });
+        const spy = dispatchRangeQueries();
         try {
             expect(await failingCases([core(), bold()])).toEqual([
                 'SPEC-rich-text/AC-017 queries mark.bold.toggle without dispatching',
+            ]);
+        } finally {
+            spy.mockRestore();
+        }
+    });
+
+    it('SPEC-rich-text/AC-017 fails an outside command whose query over a range of a given fixture dispatches', async () => {
+        const spy = dispatchRangeQueries();
+        try {
+            expect(await failingCases([core(), highlight()], [highlightDocument])).toEqual([
+                'SPEC-rich-text/AC-017 queries fixture.highlight.toggle without dispatching',
             ]);
         } finally {
             spy.mockRestore();
@@ -157,6 +173,39 @@ describe('the feature contract suite', () => {
         } finally {
             delete shipped['fixture.align'];
             delete fixtures['fixture.align'];
+        }
+    });
+
+    it('SPEC-rich-text/AC-016 counts a shared attribute only on the nodes it targets, never on another node of that name', async () => {
+        const direction = defineFeature({
+            id: 'fixture.direction',
+            version: 1,
+            requires: [{ id: 'core', version: 1 }],
+            attributes: {
+                dir: {
+                    on: ['paragraph'],
+                    value: { type: 'enum', values: ['ltr', 'rtl'], nullable: true, default: null },
+                    html: { attr: 'dir' },
+                    parse: { attr: 'dir' },
+                },
+            },
+        });
+        const shipped = registry as Record<string, () => Feature>;
+        const fixtures = featureFixtures as Record<string, Readonly<Record<string, RichTextDocument>>>;
+        const directed = (value: string | null) =>
+            stored([{ type: 'paragraph', attrs: { lang: null, dir: value }, content: [text('Directed')] }]);
+        shipped['fixture.direction'] = direction;
+        try {
+            // Only the root's own `dir`, which `stored` sets to `auto`, differs from the shared default.
+            fixtures['fixture.direction'] = { root: directed(null) };
+            const root = await failingCases([core(), direction()]);
+            fixtures['fixture.direction'] = { paragraph: directed('rtl') };
+            const paragraph = await failingCases([core(), direction()]);
+
+            expect([root.includes(COVERS), paragraph.includes(COVERS)]).toEqual([true, false]);
+        } finally {
+            delete shipped['fixture.direction'];
+            delete fixtures['fixture.direction'];
         }
     });
 
