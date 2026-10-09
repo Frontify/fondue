@@ -127,10 +127,10 @@ export const createAsyncCoordinator = (options: AsyncCoordinatorOptions) => {
         let owned = false;
         if (!isDisposed()) {
             target = request.target ?? null;
-        }
-        if (!isDisposed() && target === null) {
-            target = capture() ?? null;
-            owned = target !== null;
+            if (target === null) {
+                target = capture() ?? null;
+                owned = target !== null;
+            }
         }
         const operation: AsyncOperation = Object.freeze({
             id: ids.next('operation'),

@@ -477,15 +477,20 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         return true;
     };
 
-    /** Installs a batch in the view and counts it, then publishes it, or keeps a provisional batch for input settling. */
-    const publish = ({ candidate, root, mapping }: Candidate, typed: boolean): boolean => {
+    /** Installs a state in the view and counts it as a commit. */
+    const installState = (next: EditorState) => {
         const previous = state;
-        state = candidate;
+        state = next;
         if (view !== undefined) {
-            view.updateState(candidate);
+            view.updateState(next);
         }
         commitSequence += 1;
-        liveResources.targets += countTargets(candidate) - countTargets(previous);
+        liveResources.targets += countTargets(next) - countTargets(previous);
+    };
+
+    /** Installs a batch in the view and counts it, then publishes it, or keeps a provisional batch for input settling. */
+    const publish = ({ candidate, root, mapping }: Candidate, typed: boolean): boolean => {
+        installState(candidate);
         if (isProvisional(root)) {
             if (provisional === undefined) {
                 provisional = mapping;
@@ -526,12 +531,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                     if (released !== undefined) {
                         restored = published.apply(released);
                     }
-                    liveResources.targets += countTargets(restored) - countTargets(state);
-                    state = restored;
-                    if (view !== undefined) {
-                        view.updateState(restored);
-                    }
-                    commitSequence += 1;
+                    installState(restored);
                     notify();
                 } else {
                     announce('input', null);
@@ -647,7 +647,12 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         if (route === 'async') {
             root.setMeta(ORIGIN_META, 'async');
         }
-        return prepare(root, ids, false);
+        const prepared = prepare(root, ids, false);
+        // A host call never changes content during a composition, which queued intents and async results wait out (AC-032, AC-036).
+        if ('candidate' in prepared && prepared.candidate.doc !== state.doc && settling.active()) {
+            return { code: 'composition-active' };
+        }
+        return prepared;
     };
 
     const query = (id: string, given?: unknown, options?: unknown): CommandState => {
@@ -661,10 +666,6 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         const attempted = attempt(id, checked, base, queriedIds(), 'host');
         if ('code' in attempted) {
             return { enabled: false, active, disabledReason: attempted.code };
-        }
-        // As a host `execute` would be refused (SPEC-rich-text-runtime/AC-036).
-        if ('candidate' in attempted && attempted.candidate.doc !== state.doc && settling.active()) {
-            return { enabled: false, active, disabledReason: 'composition-active' };
         }
         return { enabled: true, active, disabledReason: null };
     };
@@ -680,10 +681,6 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 return { status: 'no-op', stamp: { ...session, sequence }, contentChanged: false };
             }
             if ('candidate' in attempted) {
-                // A host call never changes content during a composition, which queued intents and async results wait out (AC-032).
-                if (attempted.candidate.doc !== state.doc && settling.active()) {
-                    return rejected('composition-active');
-                }
                 const contentChanged = install(attempted, false);
                 return { status: 'applied', stamp: { ...session, sequence }, contentChanged };
             }
@@ -698,6 +695,11 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     };
     const execute = (id: string, given?: unknown, options?: unknown) => run(id, given, options, 'host');
 
+    /** Commits a capture of the selection as target `id`. */
+    const captureNow = (id: string, options: CaptureTargetOptions) => commit(captureTarget(state, id, options));
+    /** The handle of target `id` in this session. */
+    const handleOf = (id: string) => Object.freeze({ id, session }) as unknown as SelectionHandle;
+
     /**
      * Captures each deferred target once no commit runs, at the selection the commit left, which ProseMirror maps
      * through the commit's steps (`Transaction.selection`).
@@ -705,7 +707,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     const flushCaptures = () => {
         for (let id = deferredCaptures.shift(); id !== undefined; id = deferredCaptures.shift()) {
             if (phase === 'ready') {
-                commit(captureTarget(state, id, ASYNC_TARGET));
+                captureNow(id, ASYNC_TARGET);
             }
         }
     };
@@ -724,9 +726,9 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             if (busy > 0) {
                 deferredCaptures.push(id);
             } else {
-                commit(captureTarget(state, id, ASYNC_TARGET));
+                captureNow(id, ASYNC_TARGET);
             }
-            return Object.freeze({ id, session }) as unknown as SelectionHandle;
+            return handleOf(id);
         },
         release: (target) => handle.releaseTarget(target),
         // A result runs as its command's payload through `commit` from the current state (SPEC-rich-text-runtime/AC-048).
@@ -893,8 +895,8 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 return { status: 'rejected', code: 'not-ready' };
             }
             const id = environment.ids.next('target');
-            commit(captureTarget(state, id, options));
-            return { status: 'captured', target: Object.freeze({ id, session }) as unknown as SelectionHandle };
+            captureNow(id, options);
+            return { status: 'captured', target: handleOf(id) };
         },
         releaseTarget: (target) => {
             const owned = ownTarget(target);
