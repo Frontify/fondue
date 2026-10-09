@@ -284,16 +284,13 @@ export const checkDist = async (root: string, pkg: PackageJson): Promise<string[
 };
 
 /**
- * What a host installs next to the package, so an entry that imports a peer loads and typechecks in the scratch
- * consumer: each peer, a workspace one at its packed range, and the React types the declarations import.
+ * What a host installs next to the package besides the Fondue workspace peers, so an entry that imports a peer loads
+ * and typechecks in the scratch consumer: each other peer at its range, and the React types the declarations import.
  */
-export const consumerDependencies = (root: string, pkg: PackageJson): string[] => {
-    const peers = Object.entries(pkg.peerDependencies ?? {}).map(([name, range]) => {
-        if (range.startsWith('workspace:')) {
-            return peerSpec(root, name);
-        }
-        return `${name}@${range}`;
-    });
+export const consumerDependencies = (pkg: PackageJson): string[] => {
+    const peers = Object.entries(pkg.peerDependencies ?? {})
+        .filter(([, range]) => !range.startsWith('workspace:'))
+        .map(([name, range]) => `${name}@${range}`);
     return [...peers, `@types/react@${pkg.devDependencies?.['@types/react'] ?? 'latest'}`];
 };
 
@@ -325,7 +322,8 @@ export const checkConsumer = (root: string, pkg: PackageJson): string[] => {
             [
                 'install',
                 join(scratch, tarball),
-                ...consumerDependencies(root, pkg),
+                ...consumerDependencies(pkg),
+                ...WORKSPACE_PEERS.map((name) => peerSource(root, name, scratch)),
                 '--legacy-peer-deps',
                 '--ignore-scripts',
                 '--no-audit',
