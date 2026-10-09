@@ -5,7 +5,7 @@
 import { highlight, highlightDocument } from '@frontify/fondue-rich-text-editor-fixture-feature';
 import { act, render, screen } from '@testing-library/react';
 import { createElement, createRef } from 'react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { featuresById } from '#/features';
 import { core } from '#/features/core/feature';
@@ -15,9 +15,47 @@ import { compileContentModel } from '#/model';
 import { type DocumentChange } from '#/runtime/types';
 import { createTestEnvironment, pressKey, runFeatureContract, setSelection } from '#/testing';
 
-runFeatureContract([...featuresById(Object.keys(registry)), highlight()]);
+runFeatureContract([...featuresById(Object.keys(registry)), highlight()], { fixtures: [highlightDocument] });
 
 describe('the outside fixture feature', () => {
+    it('SPEC-rich-text/AC-017 fails the fixture cases of an outside document that misspells its mark', async () => {
+        const misspelled = {
+            ...highlightDocument,
+            content: {
+                type: 'doc',
+                attrs: { lang: null, dir: 'auto' },
+                content: [
+                    {
+                        type: 'paragraph',
+                        attrs: { lang: null },
+                        content: [{ type: 'text', text: 'Read', marks: [{ type: 'highlite' }] }],
+                    },
+                ],
+            },
+        };
+        const cases = new Map<string, () => unknown>();
+        vi.stubGlobal('describe', (_name: string, body: () => void) => body());
+        vi.stubGlobal('it', (name: string, body: () => unknown) => cases.set(name, body));
+        try {
+            runFeatureContract([core(), highlight()], { fixtures: [misspelled] });
+        } finally {
+            vi.unstubAllGlobals();
+        }
+        const failing: string[] = [];
+        for (const [name, body] of cases) {
+            try {
+                await body();
+            } catch {
+                failing.push(name);
+            }
+        }
+
+        expect(failing).toEqual([
+            'SPEC-rich-text/AC-017 decodes and encodes fixture 1 to itself',
+            'SPEC-rich-text/AC-017 renders fixture 1 in the reader and writes it through every codec',
+        ]);
+    });
+
     it('SPEC-rich-text/AC-017 shows and toggles its mark in the editor', () => {
         const model = compileContentModel([core(), highlight()], { id: 'fixture.highlight', version: 1 });
         const environment = createTestEnvironment({ seed: 1 });
