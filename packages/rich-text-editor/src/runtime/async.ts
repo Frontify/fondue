@@ -45,6 +45,8 @@ export interface AsyncCoordinatorOptions {
     readonly session: () => SessionToken;
     readonly policyRevision: () => number;
     readonly isDisposed: () => boolean;
+    /** Whether the session faulted, which discards every result as not-ready. */
+    readonly isFaulted: () => boolean;
     /** Whether results wait for input to settle (SPEC-rich-text-runtime/AC-089). */
     readonly holding: () => boolean;
     /** Captures a `map` target at the selection, after the running commit when one runs, or `undefined` when not ready. */
@@ -57,7 +59,7 @@ export interface AsyncCoordinatorOptions {
 
 /** Registers each async operation, aborts the ones a newer request, a policy, a service or `dispose` ends, and checks each result. */
 export const createAsyncCoordinator = (options: AsyncCoordinatorOptions) => {
-    const { ids, session, policyRevision, isDisposed, holding, capture, release, apply, report } = options;
+    const { ids, session, policyRevision, isDisposed, isFaulted, holding, capture, release, apply, report } = options;
     const operations = new Map<string, AsyncOperation>();
     const requests = new Map<string, number>();
     const held: { readonly operation: AsyncOperation; readonly result: unknown }[] = [];
@@ -100,6 +102,11 @@ export const createAsyncCoordinator = (options: AsyncCoordinatorOptions) => {
         if (operation.session.sessionId !== current.sessionId || operation.session.generation !== current.generation) {
             end(operation);
             discard('wrong-session');
+            return;
+        }
+        if (isFaulted()) {
+            end(operation);
+            discard('not-ready');
             return;
         }
         if (holding()) {

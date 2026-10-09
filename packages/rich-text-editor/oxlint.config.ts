@@ -529,10 +529,19 @@ export default defineConfig({
                 'rte-style/no-jsx-string-literal': 'off',
                 'rte-style/no-image-chrome': 'off',
                 'rte-style/no-pointer-prevent-default': 'off',
-                // Test data names fields `input`, such as the URL fixtures of `src/model/href.test.ts`.
-                'rte-style/no-view-internals': 'off',
                 ...restricted(true, false),
             },
+        },
+        // These tests read a field `input` of their fixture data, which is no editor view.
+        {
+            files: [
+                'src/model/href.test.ts',
+                'src/model/content.test.ts',
+                'src/codecs/codecs.test.ts',
+                'src/codecs/to-html.test.ts',
+                'src/reader/reader.test.ts',
+            ],
+            rules: { 'rte-style/no-view-internals': 'off' },
         },
         // SPEC-rich-text/AC-051 bans the network outside `src/testing`, so its test files keep the exemption.
         {
