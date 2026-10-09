@@ -129,7 +129,7 @@ export const literalColors = (value: string): string[] =>
         .map(([match]) => match)
         .filter((match) => !/^[a-z]+$/i.test(match) || NAMED_COLORS.has(match.toLowerCase()));
 
-/** Whether `selector` stays inside one content root: one `:where()` argument that starts with the root class, and no sibling combinator. */
+/** Whether `selector` stays inside one content root at zero specificity: one `:where()` argument that starts with the root class, then at most a pseudo-element, and no sibling combinator. */
 const insideRoot = (selector: string): boolean => {
     if (!selector.startsWith(':where(')) {
         return false;
@@ -147,9 +147,12 @@ const insideRoot = (selector: string): boolean => {
         }
     }
     const argument = selector.slice(7, end);
+    // Anything after the `:where()` but a pseudo-element adds specificity, so a host rule would no longer win (SPEC-rich-text-react/AC-067).
+    const tail = selector.slice(end + 1);
     // Attribute values and pseudo-class arguments may hold `~` or `+` that are not combinators.
     const combinators = selector.replaceAll(/\[[^\]]*\]/g, '').replaceAll(/:(?!where\()[\w-]+\([^()]*\)/g, '');
     return (
+        /^(::[\w-]+|:(before|after|first-line|first-letter))?$/.test(tail) &&
         list.comma(argument).length === 1 &&
         /^\.fondue-rte-content(?![\w-])/.test(argument) &&
         !/[+~]/.test(combinators)
@@ -188,8 +191,8 @@ export const scanCss = (path: string, source: string, allowlist: readonly string
 };
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-    const path = join(fileURLToPath(new URL('..', import.meta.url)), 'dist', 'style.css');
-    const violations = scanCss('dist/style.css', await readFile(path, 'utf8'));
+    const path = process.argv[2] ?? 'dist/style.css';
+    const violations = scanCss(path, await readFile(join(fileURLToPath(new URL('..', import.meta.url)), path), 'utf8'));
     if (violations.length > 0) {
         console.error(violations.join('\n'));
         process.exit(1);
