@@ -34,9 +34,9 @@ const mapTarget = (target: Target, mapping: Transaction['mapping']): Target => {
     let { from, to } = target;
     let intersected = false;
     let deleted = false;
-    // Text typed at an insert point lands before it (AC-044), and text typed at a range's edge stays outside it (AC-076).
+    // Text typed at an insert point lands before it (AC-044), text typed at a range's edge stays outside it, and an empty range stays empty (AC-076).
     let endAssoc = -1;
-    if (target.purpose === 'insert') {
+    if (target.purpose === 'insert' || target.from === target.to) {
         endAssoc = 1;
     }
     for (const map of mapping.maps) {
@@ -45,8 +45,10 @@ const mapTarget = (target: Target, mapping: Transaction['mapping']): Target => {
             if (start < to && end > from) {
                 intersected = true;
             }
-            // A step that removes the whole range deletes it, though its positions still resolve (AC-042).
-            if (from < to && start <= from && end >= to) {
+            // A step that removes the whole range, or a span around an empty one, deletes it, though its positions still resolve (AC-042).
+            const removes = (from < to && start <= from && end >= to) || (start < from && end > to);
+            // An attribute edit of a leaf replaces it whole, so an `edit-node` target relies on its type and `nodeId` check (AC-043).
+            if (removes && target.purpose !== 'edit-node') {
                 deleted = true;
             }
         });
@@ -91,15 +93,20 @@ export const captureTarget = (state: EditorState, id: string, options: CaptureTa
     const { from } = state.selection;
     let { to } = state.selection;
     let node: Target['node'] = null;
+    let valid = true;
     if (purpose === 'insert') {
         to = from;
     }
-    const after = state.doc.nodeAt(from);
-    if (purpose === 'edit-node' && after !== null) {
-        node = { type: after.type.name, nodeId: after.attrs.nodeId };
-        to = from + after.nodeSize;
+    if (purpose === 'edit-node') {
+        const after = state.selection.$from.nodeAfter;
+        // Only a node with a `nodeId` can be edited through a target (AC-043).
+        valid = after !== null && !after.isText && typeof after.attrs.nodeId === 'string';
+        if (after !== null && valid) {
+            node = { type: after.type.name, nodeId: after.attrs.nodeId };
+            to = from + after.nodeSize;
+        }
     }
-    const target: Target = { purpose, onIntersectingEdit, from, to, node, valid: true };
+    const target: Target = { purpose, onIntersectingEdit, from, to, node, valid };
     return state.tr.setMeta(TARGETS, { id, target });
 };
 
