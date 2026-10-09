@@ -184,6 +184,11 @@ describe('the recovery shell', () => {
 
         fireEvent.click(screen.getByRole('button', { name: 'Retry' }));
         act(() => environment.flushFrames());
+        // A session that saved everything before the error mounts clean and writes nothing until typing.
+        act(() => environment.advance(10_000));
+        await settle();
+        expect(handleOf(ref).getSaveStatus().state).toBe('clean');
+        expect(save).toHaveBeenCalledTimes(1);
         act(() => typeText(handleOf(ref), 'd'));
         act(() => environment.advance(500));
         await settle();
@@ -194,7 +199,7 @@ describe('the recovery shell', () => {
         view.unmount();
     });
 
-    it('SPEC-rich-text-react/AC-085 SPEC-rich-text-persistence/AC-041 saves on Retry the edit that a render error caught before its write', async () => {
+    it('SPEC-rich-text-react/AC-085 saves on Retry the edit that a render error caught before its write', async () => {
         vi.spyOn(console, 'error').mockImplementation(() => undefined);
         const environment = createTestEnvironment({ seed: 1 });
         const server = createFakePersistenceService();

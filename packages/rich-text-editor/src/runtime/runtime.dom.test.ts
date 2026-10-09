@@ -180,11 +180,15 @@ const discarded = (reason: string) => ({
 });
 
 // SPEC-rich-text-persistence/AC-044: every browser storage API fails while this suite runs.
-let restoreStorage: () => void;
+let storage: ReturnType<typeof stubStorage>;
 beforeAll(() => {
-    restoreStorage = stubStorage();
+    storage = stubStorage();
 });
-afterAll(() => restoreStorage());
+afterAll(() => {
+    const { accessed } = storage;
+    storage.restore();
+    expect(accessed).toEqual([]);
+});
 
 it('SPEC-rich-text-persistence/AC-044 runs the runtime suite with every browser storage API failing', () => {
     for (const name of STORAGE) {
@@ -192,6 +196,8 @@ it('SPEC-rich-text-persistence/AC-044 runs the runtime suite with every browser 
             Reflect.get(Reflect.get(globalThis, name) as object, 'open');
         }).toThrow(name);
     }
+    // The probe above is the only access this suite may make.
+    expect(storage.accessed.splice(0)).toEqual([...STORAGE]);
 });
 
 describe('the commit path', () => {

@@ -6,7 +6,6 @@ import { fileURLToPath } from 'node:url';
 
 import { act, render } from '@testing-library/react';
 import fc from 'fast-check';
-import { Node } from 'prosemirror-model';
 import { createRef } from 'react';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 
@@ -34,6 +33,7 @@ import {
     type JsonValue,
     setBlock,
 } from '#/model';
+import { encodeTree } from '#/model/encode';
 import { type RuntimeHandle, runtimeOf } from '#/runtime/runtime';
 import {
     createFakePersistenceService,
@@ -47,6 +47,7 @@ import { createFakeServer } from '#/testing/persistence';
 import { STORAGE, stubStorage } from '#/testing/storage';
 
 vi.mock('#/bridge/portals', { spy: true });
+vi.mock('#/model/encode', { spy: true });
 const { createPortalStore: actualStore } = await vi.importActual<{
     readonly createPortalStore: typeof createPortalStore;
 }>('#/bridge/portals');
@@ -222,11 +223,15 @@ const mount = (options: MountOptions = {}) => {
 };
 
 // SPEC-rich-text-persistence/AC-044: every browser storage API fails while this suite runs.
-let restoreStorage: () => void;
+let storage: ReturnType<typeof stubStorage>;
 beforeAll(() => {
-    restoreStorage = stubStorage();
+    storage = stubStorage();
 });
-afterAll(() => restoreStorage());
+afterAll(() => {
+    const { accessed } = storage;
+    storage.restore();
+    expect(accessed).toEqual([]);
+});
 
 describe('save state at load', () => {
     it('SPEC-rich-text-persistence/AC-044 runs the persistence suite with every browser storage API failing', () => {
@@ -235,6 +240,8 @@ describe('save state at load', () => {
                 Reflect.get(Reflect.get(globalThis, name) as object, 'open');
             }).toThrow(name);
         }
+        // The probe above is the only access this suite may make.
+        expect(storage.accessed.splice(0)).toEqual([...STORAGE]);
     });
 
     it('SPEC-rich-text-persistence/AC-001 reports unmanaged without services.persistence, after mount and after typing', () => {
@@ -388,12 +395,11 @@ describe('writes', () => {
         const { service } = serviceOf(environment);
         const { handle, advance, unmount } = mount({ service, environment, blocks: [para('abcdef')] });
         const status = handle().getSaveStatus();
-        const toJSON = vi.spyOn(Node.prototype, 'toJSON');
+        vi.mocked(encodeTree).mockClear();
         for (let move = 0; move < 100; move += 1) {
             act(() => setSelection(handle(), { text: 'abcdef', from: move % 6, to: (move % 6) + 1 }));
         }
-        expect(toJSON).not.toHaveBeenCalled();
-        toJSON.mockRestore();
+        expect(encodeTree).not.toHaveBeenCalled();
         advance(10_000);
         await settle();
         expect(service.save).not.toHaveBeenCalled();
@@ -437,6 +443,21 @@ describe('writes', () => {
     it.each([
         ['another operation ID', (request: SaveRequest) => ({ ...request, operationId: 'operation-99' })],
         ['another generation', (request: SaveRequest) => ({ ...request, stamp: { ...request.stamp, generation: 1 } })],
+        [
+            'a sequence one higher',
+            (request: SaveRequest) => ({
+                ...request,
+                stamp: { ...request.stamp, sequence: request.stamp.sequence + 1 },
+            }),
+        ],
+        [
+            'another session ID',
+            (request: SaveRequest) => ({ ...request, stamp: { ...request.stamp, sessionId: 'other' } }),
+        ],
+        [
+            'another document ID',
+            (request: SaveRequest) => ({ ...request, stamp: { ...request.stamp, documentId: 'document-2' } }),
+        ],
     ])(
         'SPEC-rich-text-persistence/AC-010 ignores an acknowledgment with %s and warns persistence.ack-mismatch',
         async (_name, change) => {
@@ -542,12 +563,42 @@ describe('writes', () => {
         expect(calls.map(({ request }) => request.operationId)).toEqual(calls.map(() => first));
 
         advance(20_000);
+        // Every replay carries the stamp and document of the first try, not the newer edits.
+        for (const call of calls) {
+            expect(call.request).toEqual(calls[0]?.request);
+        }
         calls.at(-1)?.answer();
         await settle();
         advance(500);
         expect(calls.at(-1)?.request.operationId).not.toBe(first);
         expect(textOf(calls.at(-1)?.request as SaveRequest)).toBe('xyyyab');
         expect(handle().getSaveStatus().state).toBe('saving');
+        unmount();
+    });
+
+    it('SPEC-rich-text-persistence/AC-016 replays the unresolved write unchanged on the online event, ahead of newer edits', async () => {
+        const environment = createTestEnvironment({ seed: 1 });
+        const { service, calls } = serviceOf(environment, true);
+        const { handle, type, advance, unmount } = mount({ service, environment });
+        type('x');
+        advance(500);
+        const onLine = vi.spyOn(navigator, 'onLine', 'get');
+        onLine.mockReturnValue(false);
+        calls[0]?.fail();
+        await settle();
+        expect(handle().getSaveStatus().state).toBe('offline');
+        type('y');
+        advance(10_000);
+        expect(calls).toHaveLength(1);
+
+        onLine.mockReturnValue(true);
+        act(() => {
+            window.dispatchEvent(new Event('online'));
+        });
+        onLine.mockRestore();
+        expect(calls).toHaveLength(2);
+        const [first, replayed] = calls.map(({ request }) => request);
+        expect(replayed).toEqual(first);
         unmount();
     });
 
@@ -580,6 +631,29 @@ describe('writes', () => {
         unmount();
     });
 
+    it('SPEC-rich-text-persistence/AC-014 gives equal seeds equal backoff delays and different seeds different ones', async () => {
+        const delaysFor = async (seed: number) => {
+            const environment = createTestEnvironment({ seed });
+            const { service, calls } = serviceOf(environment, true);
+            const { type, advance, unmount } = mount({ service, environment });
+            type('x');
+            advance(500);
+            const failedAt: number[] = [];
+            for (let attempt = 0; attempt < 5; attempt += 1) {
+                failedAt.push(environment.clock.now());
+                calls.at(-1)?.fail();
+                await settle();
+                advance(20_000);
+            }
+            unmount();
+            return calls.slice(1).map(({ at }, index) => at - (failedAt[index] ?? 0));
+        };
+        const seven = await delaysFor(7);
+        expect(await delaysFor(7)).toEqual(seven);
+        expect(await delaysFor(8)).not.toEqual(seven);
+        expect(seven.some((delay, index) => delay !== 1000 * 2 ** index)).toBe(true);
+    });
+
     it('SPEC-rich-text-persistence/AC-069 reports the operation ID in flight, and null before and after', async () => {
         const environment = createTestEnvironment({ seed: 1 });
         const { service, calls } = serviceOf(environment, true);
@@ -591,6 +665,86 @@ describe('writes', () => {
         calls[0]?.answer();
         await settle();
         expect(handle().getSaveStatus()).toMatchObject({ state: 'clean', inFlightOperationId: null });
+        unmount();
+    });
+
+    it('SPEC-rich-text-persistence/AC-069 reports no operation ID in flight during the backoff of an uncertain write', async () => {
+        const environment = createTestEnvironment({ seed: 1 });
+        const { service, calls } = serviceOf(environment, true);
+        const { handle, type, advance, unmount } = mount({ service, environment });
+        type('x');
+        advance(500);
+        calls[0]?.fail();
+        await settle();
+        expect(handle().getSaveStatus()).toMatchObject({ state: 'uncertain', inFlightOperationId: null });
+        advance(1200);
+        expect(handle().getSaveStatus()).toMatchObject({ state: 'saving', inFlightOperationId: 'operation-1' });
+        unmount();
+    });
+});
+
+describe('persistence options', () => {
+    it('SPEC-rich-text-persistence/AC-007 SPEC-rich-text-persistence/AC-014 follows delayMs, maxWaitMs, timeoutMs and maxRetries', async () => {
+        const environment = createTestEnvironment({ seed: 1 });
+        const { service, calls } = serviceOf(environment, true);
+        const { handle, diagnostics, type, advance, unmount } = mount({
+            service,
+            environment,
+            persistenceOptions: { delayMs: 100, maxWaitMs: 300, timeoutMs: 2000, maxRetries: 2 },
+        });
+        const start = environment.clock.now();
+        type('x');
+        advance(99);
+        expect(calls).toHaveLength(0);
+        advance(1);
+        expect(calls.map(({ at }) => at - start)).toEqual([100]);
+        calls[0]?.answer();
+        await settle();
+
+        // Typing every 50 ms keeps resetting the delay, so only the longest wait writes.
+        const typing = environment.clock.now();
+        for (let character = 0; character < 6; character += 1) {
+            type('y');
+            advance(50);
+        }
+        expect(calls.map(({ at }) => at - typing).slice(1)).toEqual([300]);
+        advance(1999);
+        expect(calls[1]?.context.signal.aborted).toBe(false);
+        advance(1);
+        expect(calls[1]?.context.signal.aborted).toBe(true);
+        await settle();
+
+        // Two replays, then no more.
+        advance(1200);
+        calls[2]?.fail();
+        await settle();
+        advance(2400);
+        calls[3]?.fail();
+        await settle();
+        advance(60_000);
+        expect(calls).toHaveLength(4);
+        expect(new Set(calls.slice(1).map(({ request }) => request.operationId)).size).toBe(1);
+        expect(handle().getSaveStatus()).toMatchObject({
+            state: 'error',
+            diagnostic: { code: 'persistence.retries-exhausted', details: { retries: 2 } },
+        });
+        expect(diagnostics.map(({ code }) => code)).toEqual(['persistence.retries-exhausted']);
+        unmount();
+    });
+
+    it('SPEC-rich-text-persistence/AC-007 writes nothing on its own with autosave off', async () => {
+        const environment = createTestEnvironment({ seed: 1 });
+        const { service } = serviceOf(environment);
+        const { handle, type, advance, unmount } = mount({
+            service,
+            environment,
+            persistenceOptions: { autosave: 'off' },
+        });
+        type('x');
+        advance(60_000);
+        await settle();
+        expect(service.save).not.toHaveBeenCalled();
+        expect(handle().getSaveStatus().state).toBe('dirty');
         unmount();
     });
 });
@@ -674,6 +828,7 @@ describe('conflicts and rejections', () => {
         calls[0]?.answer({ status: 'conflict', currentRevision: 'revision-9' });
         await settle();
         expect(service.read).toHaveBeenCalledTimes(1);
+        expect(onConflict).toHaveBeenCalledTimes(1);
         expect(onConflict).toHaveBeenCalledWith(null, handle().getSnapshot());
         unmount();
     });
@@ -689,16 +844,17 @@ describe('conflicts and rejections', () => {
                 severity: 'error',
                 messageKey: `server.${code}`,
             };
+            const alsoReported: Diagnostic = { ...reported, messageKey: `server.${code}.detail` };
             type('x');
             advance(500);
-            calls[0]?.answer({ status: 'rejected', code, diagnostics: [reported] });
+            calls[0]?.answer({ status: 'rejected', code, diagnostics: [reported, alsoReported] });
             await settle();
             type('y');
             advance(60_000);
             await settle();
 
             expect(handle().getSaveStatus()).toMatchObject({ state: 'error', diagnostic: reported });
-            expect(diagnostics).toEqual([reported]);
+            expect(diagnostics).toEqual([reported, alsoReported]);
             expect(calls).toHaveLength(1);
             unmount();
         },
@@ -780,6 +936,11 @@ describe('the runtime with a save coordinator', () => {
         order.length = 0;
         type('x');
         expect(order).toEqual(['selector', 'documentChange', 'selectionChange', 'saveStatusChange', 'operationMetric']);
+
+        // A caret that stays in the same kind of block leaves the selection summary as it was.
+        order.length = 0;
+        type('y');
+        expect(order).toEqual(['selector', 'documentChange', 'saveStatusChange', 'operationMetric']);
         unmount();
     });
 
@@ -960,6 +1121,7 @@ describe('operation metrics', () => {
         act(() => {
             const view = runtimeOf(handle())?.view;
             view?.dispatch(view.state.tr.insertText('p').setMeta('uiEvent', 'paste'));
+            view?.dispatch(view.state.tr.insertText('d').setMeta('uiEvent', 'drop'));
         });
         advance(500);
         advance(40);
@@ -978,12 +1140,36 @@ describe('operation metrics', () => {
             { ...common, kind: 'mount', durationMs: 25, failureCode: null },
             { ...common, kind: 'commit', durationMs: 0, failureCode: null },
             { ...common, kind: 'paste', durationMs: 0, failureCode: null },
+            // A drop is measured as a paste.
+            { ...common, kind: 'paste', durationMs: 0, failureCode: null },
             { ...common, kind: 'save', durationMs: 40, failureCode: 'transport' },
             { ...common, kind: 'save', durationMs: replayedFor, failureCode: null },
         ]);
         expect(replayedFor).toBeGreaterThan(0);
         unmount();
     });
+});
+
+describe('save metric failure codes', () => {
+    it.each([
+        ['conflict', { status: 'conflict', currentRevision: 'revision-9' } as const],
+        ['forbidden', { status: 'rejected', code: 'forbidden', diagnostics: [] } as const],
+    ])(
+        'SPEC-rich-text-quality/AC-029 reports failureCode %s on the save metric of that answer',
+        async (failureCode, response) => {
+            const environment = createTestEnvironment({ seed: 1 });
+            const { service, calls } = serviceOf(environment, true);
+            const { metrics, type, advance, unmount } = mount({ service, environment });
+            type('x');
+            advance(500);
+            calls[0]?.answer(response);
+            await settle();
+            expect(metrics.filter(({ kind }) => kind === 'save').map((metric) => metric.failureCode)).toEqual([
+                failureCode,
+            ]);
+            unmount();
+        },
+    );
 });
 
 describe('the persistence conformance kit', () => {
