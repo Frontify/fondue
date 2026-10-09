@@ -3,7 +3,6 @@
 import { defaultIdSource, type JsonValue, type RichTextDocument } from '#/model';
 import { findMisshapenCapabilities, isRoot } from '#/model/envelope';
 import { canonicalJson } from '#/model/hash';
-import { packageVersionOf } from '#/model/migrate';
 import { isRecord } from '#/model/values';
 import { type PersistenceService, type SaveRequest, type SaveResponse } from '#/persistence/types';
 import { type DocumentStamp, type ServerRevision } from '#/runtime/types';
@@ -15,6 +14,10 @@ export interface PersistenceServerHarness {
     readonly readOnlyService: PersistenceService;
     /** A writer descriptor the host's fencing refuses. */
     readonly rejectedWriter: SaveRequest['writer'];
+    /** A writer descriptor the host's fencing accepts, which every other case sends (DR-073). */
+    readonly writer: SaveRequest['writer'];
+    /** A stored document in the host's model that the server's `decodeDocument` run accepts (DR-073). */
+    readonly document: RichTextDocument;
 }
 
 const rejected = (code: 'forbidden' | 'invalid' | 'incompatible-writer'): SaveResponse => ({
@@ -116,9 +119,8 @@ interface TestRunner {
 }
 
 /**
- * Registers one case or more for each Server obligation of `SPEC-rich-text-persistence` against a fresh harness.
- * The documents hold one paragraph of `core` content in the model of `rejectedWriter`, and the accepted writer is this
- * package's build with that model and `core`, since the harness names no accepted writer of its own.
+ * Registers one case or more for each Server obligation of `SPEC-rich-text-persistence` against a fresh harness. Every
+ * case but the refused ones sends the harness `document` with its `writer`; requests differ by stamp (DR-073).
  */
 export const runPersistenceConformance = (createHarness: () => PersistenceServerHarness): void => {
     const { describe, it, expect } = globalThis as Partial<TestRunner>;
@@ -129,33 +131,16 @@ export const runPersistenceConformance = (createHarness: () => PersistenceServer
     const setup = () => {
         const harness = createHarness();
         const documentId = `rte-conformance-${defaultIdSource.next('session')}`;
-        const writer: SaveRequest['writer'] = {
-            build: packageVersionOf(),
-            formatVersion: 1,
-            model: harness.rejectedWriter.model,
-            capabilities: [{ id: 'core', version: 1 }],
-        };
-        const documentOf = (text: string): RichTextDocument => ({
-            format: 'frontify.rich-text',
-            formatVersion: 1,
-            model: harness.rejectedWriter.model,
-            requiredCapabilities: [{ id: 'core', version: 1 }],
-            content: {
-                type: 'doc',
-                attrs: { lang: null, dir: 'auto' },
-                content: [{ type: 'paragraph', attrs: { lang: null }, content: [{ type: 'text', text }] }],
-            },
-        });
         let operations = 0;
-        const request = (base: ServerRevision | null, text: string, sequence = 1): SaveRequest => {
+        const request = (base: ServerRevision | null, sequence = 1): SaveRequest => {
             operations += 1;
             const stamp: DocumentStamp = { documentId, sessionId: 'rte-conformance', generation: 0, sequence };
             return {
                 operationId: `${documentId}-operation-${operations}`,
                 stamp,
                 baseRevision: base,
-                document: documentOf(text),
-                writer,
+                document: harness.document,
+                writer: harness.writer,
             };
         };
         const save = (sent: SaveRequest) => harness.service.save(sent, context(sent.stamp));
@@ -177,7 +162,7 @@ export const runPersistenceConformance = (createHarness: () => PersistenceServer
     describe('PersistenceService Server obligations', () => {
         it('Server obligation 1 answers a repeated operation with its first outcome and writes nothing again', async () => {
             const { harness, documentId, request, save } = setup();
-            const first = request(null, 'First');
+            const first = request(null);
             const answered = await save(first);
             expect(await save(first)).toEqual(answered);
             const stored = await harness.service.read(documentId, context(first.stamp));
@@ -186,16 +171,17 @@ export const runPersistenceConformance = (createHarness: () => PersistenceServer
 
         it('Server obligation 2 rejects a reused operationId with a different payload as invalid', async () => {
             const { request, save } = setup();
-            const first = request(null, 'First');
+            const first = request(null);
             await created(save, first);
-            const reused = await save({ ...request(null, 'Changed'), operationId: first.operationId });
+            // The other stamp makes the payload differ under the same operation ID.
+            const reused = await save({ ...request(null, 2), operationId: first.operationId });
             expect(reused.status === 'rejected' && reused.code).toBe('invalid');
         });
 
         it('Server obligation 3 writes only one of two concurrent saves with the same base revision', async () => {
             const { request, save } = setup();
-            const base = await created(save, request(null, 'First'));
-            const responses = await Promise.all([save(request(base, 'Second', 2)), save(request(base, 'Third', 2))]);
+            const base = await created(save, request(null));
+            const responses = await Promise.all([save(request(base, 2)), save(request(base, 2))]);
             const statuses = responses.map(({ status }) => status).sort();
             expect(statuses).toEqual(['conflict', 'saved']);
             const saved = responses.find((response) => response.status === 'saved');
@@ -211,42 +197,42 @@ export const runPersistenceConformance = (createHarness: () => PersistenceServer
 
         it('Server obligation 4 treats a null baseRevision as create-only', async () => {
             const { request, save } = setup();
-            const revision = await created(save, request(null, 'First'));
-            expect(await save(request(null, 'Second'))).toEqual({ status: 'conflict', currentRevision: revision });
+            const revision = await created(save, request(null));
+            expect(await save(request(null, 2))).toEqual({ status: 'conflict', currentRevision: revision });
         });
 
         it('Server obligation 5 rejects a user who may not write as forbidden and writes nothing', async () => {
             const { harness, request, save } = setup();
-            const sent = request(null, 'First');
+            const sent = request(null);
             const response = await harness.readOnlyService.save(sent, context(sent.stamp));
             expect(response.status === 'rejected' && response.code).toBe('forbidden');
             // A create-only write still succeeds, so the refused one stored nothing.
-            const created = await save(request(null, 'Second'));
+            const created = await save(request(null));
             expect(created.status).toBe('saved');
         });
 
         it('Server obligation 5 rejects a document that does not decode as invalid', async () => {
             const { request, save } = setup();
-            const sent = request(null, 'First');
+            const sent = request(null);
             const response = await save({ ...sent, document: { ...sent.document, content: { type: 'doc' } } });
             expect(response.status === 'rejected' && response.code).toBe('invalid');
         });
 
         it('Server obligation 5 rejects the writer its fencing refuses as incompatible-writer', async () => {
             const { harness, request, save } = setup();
-            const base = await created(save, request(null, 'First'));
-            const response = await save({ ...request(base, 'Second', 2), writer: harness.rejectedWriter });
+            const base = await created(save, request(null));
+            const response = await save({ ...request(base, 2), writer: harness.rejectedWriter });
             expect(response.status === 'rejected' && response.code).toBe('incompatible-writer');
         });
 
         it("Server obligation 6 answers saved with the request's operationId and stamp and a new revision", async () => {
             const { request, save } = setup();
-            const first = request(null, 'First');
+            const first = request(null);
             const answered = await save(first);
             expect(answered.status === 'saved' && answered.acknowledgment.operationId).toBe(first.operationId);
             expect(answered.status === 'saved' && answered.acknowledgment.stamp).toEqual(first.stamp);
             const base = revisionOf(answered);
-            const second = request(base, 'Second', 2);
+            const second = request(base, 2);
             const updated = await save(second);
             expect(updated.status === 'saved' && updated.acknowledgment.stamp).toEqual(second.stamp);
             expect(updated.status === 'saved' && updated.acknowledgment.revision !== base).toBe(true);
@@ -254,7 +240,7 @@ export const runPersistenceConformance = (createHarness: () => PersistenceServer
 
         it('Server obligation 7 stores the submitted document as sent', async () => {
             const { harness, documentId, request, save } = setup();
-            const sent = request(null, '  Spaced  text  ');
+            const sent = request(null);
             await created(save, sent);
             const stored = await harness.service.read(documentId, context(sent.stamp));
             expect(stored.document).toEqual(sent.document);
