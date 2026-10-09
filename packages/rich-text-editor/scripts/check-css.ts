@@ -4,6 +4,8 @@ import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import postcss, { type AtRule, list, type Node } from 'postcss';
+
 import { KEYFRAMES_ALLOWLIST } from '../src/styles/keyframes.allowlist.ts';
 
 export interface CssRule {
@@ -21,6 +23,7 @@ export interface ParsedCss {
 }
 
 const CONTENT_SCOPE = ':where(.fondue-rte-content';
+const KEYFRAMES = /^@(-webkit-)?keyframes\b/;
 
 // CSS Color 4 named and system colours; `transparent` and `currentcolor` are keywords that carry no colour of their own.
 const NAMED_COLORS = new Set(
@@ -42,92 +45,44 @@ const NAMED_COLORS = new Set(
 );
 const LITERAL_COLOR = /#[\da-f]{3,8}\b|\b(rgba?|hsla?|hwb|lab|lch|oklab|oklch|color)\(|(?<![\w-])[a-z]+(?![\w-])/gi;
 
-/** Splits `text` at each top-level `separator`, outside parentheses and strings. */
-const splitTopLevel = (text: string, separator: string): string[] => {
-    const parts: string[] = [];
-    let depth = 0;
-    let quote: string | undefined;
-    let start = 0;
-    for (let index = 0; index < text.length; index += 1) {
-        const character = text[index];
-        if (quote !== undefined) {
-            if (character === '\\') {
-                index += 1;
-            } else if (character === quote) {
-                quote = undefined;
-            }
-        } else if (character === '"' || character === "'") {
-            quote = character;
-        } else if (character === '(') {
-            depth += 1;
-        } else if (character === ')') {
-            depth -= 1;
-        } else if (character === separator && depth === 0) {
-            parts.push(text.slice(start, index));
-            start = index + 1;
-        }
-    }
-    parts.push(text.slice(start));
-    return parts.map((part) => part.trim()).filter((part) => part !== '');
-};
+const lineOf = (node: Node) => node.source?.start?.line ?? 0;
 
-/** Reads the style rules and keyframes of a stylesheet with no nesting, as the package and ProseMirror write it. */
+/** Reads the style rules, keyframes and declaring at-rules of a stylesheet through PostCSS. */
 export const parseCss = (source: string): ParsedCss => {
-    const css = source.replaceAll(/\/\*[\s\S]*?\*\//g, (comment) => comment.replaceAll(/[^\n]/g, ' '));
-    const lineAt = (index: number) => css.slice(0, index).split('\n').length;
+    const root = postcss.parse(source);
     const rules: CssRule[] = [];
+    root.walkRules((rule) => {
+        const atRules: string[] = [];
+        for (let parent = rule.parent; parent !== undefined && parent.type === 'atrule'; parent = parent.parent) {
+            const atRule = parent as AtRule;
+            atRules.unshift(`@${atRule.name} ${atRule.params}`.trim());
+        }
+        // Keyframe steps such as `to` are not style rules.
+        if (atRules.some((prelude) => KEYFRAMES.test(prelude))) {
+            return;
+        }
+        const declarations = rule.nodes.flatMap((node) => {
+            if (node.type !== 'decl') {
+                return [];
+            }
+            let value = node.value;
+            if (node.important) {
+                value = `${value} !important`;
+            }
+            return [[node.prop, value] as const];
+        });
+        rules.push({ selectors: rule.selectors, declarations, atRules, line: lineOf(rule) });
+    });
     const keyframes: { name: string; line: number }[] = [];
     const declaringAtRules: { prelude: string; line: number }[] = [];
-    const blocks: { readonly prelude: string; readonly body: number; readonly line: number; nests: boolean }[] = [];
-    let preludeStart = 0;
-    let quote: string | undefined;
-    for (let index = 0; index < css.length; index += 1) {
-        const character = css[index];
-        if (quote !== undefined) {
-            if (character === '\\') {
-                index += 1;
-            } else if (character === quote) {
-                quote = undefined;
-            }
-        } else if (character === '"' || character === "'") {
-            quote = character;
-        } else if (character === '{') {
-            const prelude = css.slice(preludeStart, index).trim();
-            const keyframe = /^@(?:-webkit-)?keyframes\s+(\S+)/.exec(prelude);
-            if (keyframe?.[1] !== undefined) {
-                keyframes.push({ name: keyframe[1], line: lineAt(index) });
-            }
-            const parent = blocks.at(-1);
-            if (parent !== undefined) {
-                parent.nests = true;
-            }
-            blocks.push({ prelude, body: index + 1, line: lineAt(index), nests: false });
-            preludeStart = index + 1;
-        } else if (character === '}') {
-            const block = blocks.pop();
-            const atRules = blocks.map(({ prelude }) => prelude);
-            const inKeyframes = atRules.some((prelude) => /^@(-webkit-)?keyframes\b/.test(prelude));
-            if (block !== undefined && !block.prelude.startsWith('@') && !inKeyframes) {
-                const declarations = splitTopLevel(css.slice(block.body, index), ';').map((declaration) => {
-                    const colon = declaration.indexOf(':');
-                    return [declaration.slice(0, colon).trim(), declaration.slice(colon + 1).trim()] as const;
-                });
-                rules.push({ selectors: splitTopLevel(block.prelude, ','), declarations, atRules, line: block.line });
-            }
-            const grouping = /^@(media|(-webkit-)?keyframes)\b/.test(block?.prelude ?? '');
-            if (
-                block?.prelude.startsWith('@') &&
-                !grouping &&
-                !block.nests &&
-                css.slice(block.body, index).trim() !== ''
-            ) {
-                declaringAtRules.push({ prelude: block.prelude, line: block.line });
-            }
-            preludeStart = index + 1;
-        } else if (character === ';') {
-            preludeStart = index + 1;
+    root.walkAtRules((atRule) => {
+        const prelude = `@${atRule.name} ${atRule.params}`.trim();
+        if (KEYFRAMES.test(prelude)) {
+            keyframes.push({ name: atRule.params, line: lineOf(atRule) });
+        } else if (atRule.name !== 'media' && atRule.some((node) => node.type === 'decl')) {
+            declaringAtRules.push({ prelude, line: lineOf(atRule) });
         }
-    }
+    });
     return { rules, keyframes, declaringAtRules };
 };
 
@@ -195,7 +150,7 @@ const insideRoot = (selector: string): boolean => {
     // Attribute values and pseudo-class arguments may hold `~` or `+` that are not combinators.
     const combinators = selector.replaceAll(/\[[^\]]*\]/g, '').replaceAll(/:(?!where\()[\w-]+\([^()]*\)/g, '');
     return (
-        splitTopLevel(argument, ',').length === 1 &&
+        list.comma(argument).length === 1 &&
         /^\.fondue-rte-content(?![\w-])/.test(argument) &&
         !/[+~]/.test(combinators)
     );

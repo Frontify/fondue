@@ -144,6 +144,14 @@ export const buildPlan = <N extends object, M extends object>(
     };
 };
 
+/** The content root classes of the editor surface, the reader and `toHTML`: the package's, then the presentation's (SPEC-rich-text-react/AC-066, AC-067). */
+export const contentClasses = (contentClassName?: string): string => {
+    if (contentClassName === undefined) {
+        return 'fondue-rte-content';
+    }
+    return `fondue-rte-content ${contentClassName}`;
+};
+
 export const VOID_TAGS = new Set('area base br col embed hr img input link meta source track wbr'.split(' '));
 const ATTRIBUTE_NAME = /^[a-zA-Z][\w:.-]*$/;
 const EVENT_HANDLER = /^on/i;
