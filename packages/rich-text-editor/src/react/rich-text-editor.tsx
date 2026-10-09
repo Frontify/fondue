@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import {
+    type ComponentType,
     createContext,
     forwardRef,
     type ForwardedRef,
@@ -215,5 +216,5 @@ export const RichTextEditor = Object.assign(Editor, { Root, Surface }) as unknow
     readonly Root: <C extends object = ShippedCommands>(
         props: RichTextEditorProps<C> & { readonly children: ReactNode },
     ) => ReactNode;
-    readonly Surface: () => ReactNode;
+    readonly Surface: ComponentType<object>;
 };

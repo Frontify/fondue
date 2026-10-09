@@ -13,7 +13,7 @@ const definition = defineEditor({ id: 'story.playground', model });
 
 /** Props the editor accepts and types but does not act on yet, with the pair that wires each (DR-063). */
 const NOT_WIRED: readonly (readonly [string, string])[] = [
-    ['profile', 'pair 37, TASK-rte-profiles'],
+    ['profile', 'pairs 37 and 38, TASK-rte-profiles; until then the definition prop is required'],
     ['presentation', 'pair 19, TASK-rte-chrome'],
     ['services', 'pair 17, TASK-rte-persistence'],
     ['persistenceOptions', 'pair 17, TASK-rte-persistence'],
