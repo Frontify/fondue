@@ -433,6 +433,39 @@ const noComposingAssignment = {
     },
 };
 
+const VIEW_INTERNALS = new Set(['input', 'domObserver']);
+
+/**
+ * Reports a read of `input` or `domObserver` by name on any value, member, bracket or destructure, since a view
+ * reaches code under any name and the plugin has no types.
+ * @type {Rule}
+ */
+const noViewInternals = {
+    meta: {
+        type: 'problem',
+        docs: { description: 'SPEC-rich-text/AC-095: no read of the editor view input state or DOM observer' },
+    },
+    create: (context) => {
+        const message = 'Read no `input` or `domObserver` of the editor view; they are ProseMirror internals.';
+        return {
+            MemberExpression: (node) => {
+                // A computed key counts only as a string literal, since `view[name]` names a variable.
+                if (node.computed && node.property.type !== 'Literal') {
+                    return;
+                }
+                if (VIEW_INTERNALS.has(propertyName(node.property) ?? '')) {
+                    context.report({ node, message });
+                }
+            },
+            Property: (node) => {
+                if (node.parent.type === 'ObjectPattern' && VIEW_INTERNALS.has(propertyName(node.key) ?? '')) {
+                    context.report({ node, message });
+                }
+            },
+        };
+    },
+};
+
 export default {
     meta: { name: 'rte-style' },
     rules: {
@@ -443,6 +476,7 @@ export default {
         'no-jsx-string-literal': noJsxStringLiteral,
         'no-object-spread-merge': noObjectSpreadMerge,
         'no-pointer-prevent-default': noPointerPreventDefault,
+        'no-view-internals': noViewInternals,
         'one-optional-per-expression': oneOptionalPerExpression,
     },
 };
