@@ -858,8 +858,8 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     const run = (id: string, given: unknown, options: unknown, route: Route): CommandResult =>
         runOn(definition.commands.get(id), checkedPayload(given), () => baseOf(options), route);
     const execute = (id: string, given?: unknown, commandOptions?: unknown): CommandResult => {
-        // Commands belong in event handlers, so one from a React render or effect dispatches nothing (SPEC-rich-text-react/AC-102).
-        if (options.inRender?.() === true) {
+        // Commands belong in event handlers (SPEC-rich-text-react/AC-102); a call inside a notification is already `busy`.
+        if (busy === 0 && options.inRender?.() === true) {
             report(diagnostic('react.execute-in-render', undefined, undefined, 'error'));
             return rejected('busy');
         }

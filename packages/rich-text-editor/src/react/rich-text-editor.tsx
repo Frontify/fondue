@@ -18,13 +18,14 @@ import {
 
 import '#/styles/placeholder.css';
 import { useClientLayoutEffect } from '#/bridge/client-layout-effect';
+import { createReactWork, inReactWork, Phase, ReactWorkContext, sharesName } from '#/bridge/dev-checks';
 import { SessionContext, useSessionValue } from '#/bridge/hooks';
 import { createMountCoordinator, type MountCoordinator } from '#/bridge/mount';
 import { createNodeViews, resyncSelection } from '#/bridge/node-views';
 import { PortalHost } from '#/bridge/portal-host';
 import { createPortalStore } from '#/bridge/portals';
 import { enUS } from '#/locales/en-US';
-import { type CapabilityRef, type DecodeResult, type Diagnostic, type RuntimeEnvironment } from '#/model';
+import { type CapabilityRef, type DecodeResult, type Diagnostic } from '#/model';
 import { type TreeNode } from '#/model/content';
 import { decodeToTree } from '#/model/decode';
 import { type LoadedDocument } from '#/persistence/types';
@@ -99,58 +100,15 @@ const modeOf = ({ readOnly, disabled }: Props) => {
     return 'editable';
 };
 
-/** Whether the editor's React tree renders or runs effects now, which `Phase` marks (SPEC-rich-text-react/AC-102). */
-interface ReactWork {
-    active: boolean;
-}
-
-/**
- * Marks the render, layout effects and effects of the parts between an opening and a closing `Phase`, which React runs
- * in tree order; a render that never commits closes at the next microtask, so no event handler finds it open.
- */
-const Phase = ({
-    work,
-    open,
-    scheduler,
-}: {
-    readonly work: ReactWork;
-    readonly open: boolean;
-    readonly scheduler: RuntimeEnvironment['scheduler'];
-}) => {
-    work.active = open;
-    if (open) {
-        scheduler.microtask(() => {
-            work.active = false;
-        });
-    }
-    useClientLayoutEffect(() => {
-        work.active = open;
-    });
-    useEffect(() => {
-        work.active = open;
-    });
-    return null;
-};
-
-/** The accessible name of a surface: the text its `aria-labelledby` elements hold, else its `aria-label`. */
-const nameOf = (surface: Element): string => {
-    const labelledBy = surface.getAttribute('aria-labelledby');
-    if (labelledBy === null) {
-        return (surface.getAttribute('aria-label') ?? '').trim();
-    }
-    const document = surface.ownerDocument;
-    return labelledBy
-        .split(/\s+/)
-        .map((id) => document.getElementById(id)?.textContent)
-        .join(' ')
-        .trim();
-};
-
-/** Whether a surface earlier in the document has the same accessible name (SPEC-rich-text-react/AC-080). */
-const sharesName = (surface: Element): boolean => {
-    const name = nameOf(surface);
-    const surfaces = [...surface.ownerDocument.querySelectorAll('[data-rte-surface]')];
-    return surfaces.slice(0, surfaces.indexOf(surface)).some((other) => nameOf(other) === name);
+/** What both shells read the document with, from the editor props and their defaults. */
+const shellPropsOf = (props: Defined) => {
+    const {
+        definition,
+        locale = enUS,
+        presentation = NO_PRESENTATION,
+        'data-test-id': testId = DEFAULT_TEST_ID,
+    } = props;
+    return { model: engineOf(definition).model, limits: definition.limits, presentation, locale, testId };
 };
 
 /** A running session and the document it was loaded from. */
@@ -173,7 +131,14 @@ const SessionComponent = ({ children, onSession, ...props }: SessionProps, ref: 
         const { environment = browserEnvironment } = props;
         return createPortalStore(environment.scheduler);
     });
-    const [work] = useState<ReactWork>(() => ({ active: false }));
+    // A production build marks no React work, so `execute` never asks (SPEC-rich-text-react/AC-102).
+    const [work] = useState(() => {
+        if (process.env.NODE_ENV === 'production') {
+            return undefined;
+        }
+        const { environment = browserEnvironment } = props;
+        return createReactWork(environment.scheduler);
+    });
     // The session once it is ready, which the parts and hooks read.
     const [live, setLive] = useState<EditorRuntime>();
     const latestRef = useRef(props);
@@ -190,10 +155,6 @@ const SessionComponent = ({ children, onSession, ...props }: SessionProps, ref: 
             return;
         }
         const { environment = browserEnvironment, defaultValue } = latestRef.current;
-        let inRender: (() => boolean) | undefined;
-        if (process.env.NODE_ENV !== 'production') {
-            inRender = () => work.active;
-        }
         const runtime = createEditorRuntime({
             definition: engineOf(definition),
             documentId: defaultValue.documentId,
@@ -204,7 +165,7 @@ const SessionComponent = ({ children, onSession, ...props }: SessionProps, ref: 
             policy: definition.authoring,
             limits: definition.limits,
             nodeViews: (session) => createNodeViews(viewsOf(definition), { portals, runtime: session }),
-            ...(inRender === undefined ? {} : { inRender }),
+            inRender: () => inReactWork(work),
         });
         // Each event calls the newest callback the host passed (SPEC-rich-text-react/AC-004).
         runtime.handle.subscribe('ready', (session: SessionToken) => {
@@ -262,34 +223,26 @@ const SessionComponent = ({ children, onSession, ...props }: SessionProps, ref: 
 
     const onFlush = useCallback(() => resyncSelection(coordinator.runtime?.view), [coordinator]);
 
+    const shell = shellPropsOf(props);
+    const { locale, presentation, testId } = shell;
     // Chrome reads the newest presentation and locale with no view rebuild (SPEC-rich-text-react/AC-065).
-    const { locale = enUS, presentation = NO_PRESENTATION, environment = browserEnvironment } = props;
     const chromeContext = useMemo(() => readerContext(locale, presentation), [locale, presentation]);
 
     const context = useMemo(() => ({ props, mounted, coordinator }), [props, mounted, coordinator]);
-    const { 'data-test-id': testId = DEFAULT_TEST_ID } = props;
     if (mounted.blocked !== undefined) {
-        return (
-            <BlockedShell
-                result={mounted.blocked}
-                model={engineOf(definition).model}
-                limits={definition.limits}
-                presentation={presentation}
-                locale={locale}
-                testId={testId}
-            />
-        );
+        return <BlockedShell result={mounted.blocked} {...shell} />;
     }
-    const phase = { work, scheduler: environment.scheduler };
     return (
         <RootContext.Provider value={context}>
             <SessionContext.Provider value={live}>
-                <div data-test-id={testId} aria-busy={live === undefined ? true : undefined}>
-                    <Phase {...phase} open />
-                    {children}
-                    <PortalHost store={portals} context={chromeContext} onFlush={onFlush} />
-                    <Phase {...phase} open={false} />
-                </div>
+                <ReactWorkContext.Provider value={work}>
+                    <div data-test-id={testId} aria-busy={live === undefined ? true : undefined}>
+                        {work !== undefined && <Phase work={work} open />}
+                        {children}
+                        <PortalHost store={portals} context={chromeContext} onFlush={onFlush} />
+                        {work !== undefined && <Phase work={work} open={false} />}
+                    </div>
+                </ReactWorkContext.Provider>
             </SessionContext.Provider>
         </RootContext.Provider>
     );
@@ -337,20 +290,10 @@ class Recovery extends Component<RecoveryProps, RecoveryState> {
             loaded = this.session.loaded;
             document = this.session.handle.getSnapshot().document;
         }
-        const {
-            definition,
-            locale = enUS,
-            presentation = NO_PRESENTATION,
-            'data-test-id': testId = DEFAULT_TEST_ID,
-        } = props;
         return (
             <RecoveryShell
                 document={document}
-                model={engineOf(definition).model}
-                limits={definition.limits}
-                presentation={presentation}
-                locale={locale}
-                testId={testId}
+                {...shellPropsOf(props)}
                 onRetry={() => this.setState({ failed: false, retried: { ...loaded, document } })}
             />
         );
@@ -367,10 +310,6 @@ const Root = forwardRef((props: Props & { readonly children: ReactNode }, ref: F
 });
 Root.displayName = 'RichTextEditor.Root';
 
-/**
- * The editable surface: an empty container on the server and in the first client render, which the engine fills
- * after mount (SPEC-rich-text-output/AC-011, AC-033).
- */
 const emptiness = (runtime: EditorRuntime | undefined) => {
     if (runtime === undefined) {
         return undefined;
@@ -378,6 +317,10 @@ const emptiness = (runtime: EditorRuntime | undefined) => {
     return isEmpty(runtime.state);
 };
 
+/**
+ * The editable surface: an empty container on the server and in the first client render, which the engine fills
+ * after mount (SPEC-rich-text-output/AC-011, AC-033).
+ */
 const Surface = () => {
     const { props, mounted, coordinator } = useRoot('Surface');
     const { 'data-test-id': testId = DEFAULT_TEST_ID, spellCheck = true, placeholder } = props;
