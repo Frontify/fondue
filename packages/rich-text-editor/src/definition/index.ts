@@ -5,6 +5,7 @@ import { type Schema } from 'prosemirror-model';
 import { type Command, type EditorState, Plugin, PluginKey, type Transaction } from 'prosemirror-state';
 
 import { type CapabilityName, type ContentModel, type JsonObject, type PayloadDeclaration } from '#/model';
+import { CAPABILITY_PLUGINS, INPUT_RULES_PLUGIN } from '#/model/capabilities';
 import { compiledModel } from '#/model/compile';
 
 import { buildSchema } from './schema';
@@ -114,7 +115,7 @@ export const compileDefinition = (
     model: ContentModel,
     capabilities: CapabilityImplementations = {},
 ): CompiledDefinition => {
-    const { keymap, plugins, commands: declared } = compiledModel(model);
+    const { features, keymap, plugins, commands: declared } = compiledModel(model);
     const schema = buildSchema(model);
     const commands = new Map<string, EngineCommand>();
     for (const { id, definition } of declared) {
@@ -123,6 +124,24 @@ export const compileDefinition = (
             commands.set(id, withCommandId(id, implementation(definition.args, schema), definition.payload));
         }
     }
+    /** The first feature that contributes a plugin, with its capability, or the plugin ID for the package's keymaps and input rules. */
+    const originOf = (id: string): PluginOrigin => {
+        const command = declared.find(({ definition }) =>
+            (CAPABILITY_PLUGINS[definition.capability] ?? []).some((plugin) => plugin.id === id),
+        );
+        if (command !== undefined) {
+            return { featureId: command.featureId, capability: command.definition.capability };
+        }
+        const contributor = features.find(
+            (feature) =>
+                id === `keymap:${feature.id}` ||
+                (id === INPUT_RULES_PLUGIN.id && (feature.declaration.inputRules ?? []).length > 0),
+        );
+        if (contributor === undefined) {
+            return { featureId: id, capability: id };
+        }
+        return { featureId: contributor.id, capability: id };
+    };
     const pluginOf = (id: string) => {
         const bindings: Record<string, Command> = {};
         for (const entry of keymap) {
@@ -136,5 +155,6 @@ export const compileDefinition = (
         }
         return new Plugin({ key: new PluginKey(id), props: { handleKeyDown: keydownHandler(bindings) } });
     };
-    return { model, schema, plugins: plugins.map(({ id }) => pluginOf(id)), commands };
+    // Every plugin's appended transactions count against the append limit (SPEC-rich-text-runtime/AC-012).
+    return { model, schema, plugins: plugins.map(({ id }) => countAppends(pluginOf(id), originOf(id))), commands };
 };

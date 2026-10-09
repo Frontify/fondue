@@ -49,12 +49,12 @@ export const featureTagFaults = (tags: readonly string[]): string[] => {
     if (tagged === '') {
         return [];
     }
-    const { sessions } = probeRuntimes();
-    if (sessions.length === 0) {
+    const { installedFeatures } = probeRuntimes();
+    if (installedFeatures.length === 0) {
         return [`the story mounts no editor, while its feature tags name ${tagged}`];
     }
     const faults: string[] = [];
-    for (const installed of sessions) {
+    for (const installed of installedFeatures) {
         const features = [...installed].sort().join(', ');
         if (features !== tagged) {
             faults.push(`the story installs ${features}, while its feature tags name ${tagged}`);

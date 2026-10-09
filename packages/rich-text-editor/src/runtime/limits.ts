@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type Mark, type Node } from 'prosemirror-model';
+import { type Node } from 'prosemirror-model';
 
 import { type CapabilityRef, type ContentModel, type JsonValue, type ResourceLimits } from '#/model';
-import { attributesOf } from '#/model/compile';
-import { ISLAND_BLOCK, ISLAND_INLINE, ISLAND_MARK, vocabularyOf } from '#/model/content';
+import { ISLAND_BLOCK, ISLAND_INLINE, type TreeNode, vocabularyOf } from '#/model/content';
+import { writeNode } from '#/model/encode';
 import { isRecord } from '#/model/values';
 
 interface Size {
@@ -14,23 +14,6 @@ interface Size {
 
 const encoder = new TextEncoder();
 const utf8Bytes = (json: string) => encoder.encode(json).byteLength;
-
-/** Declared attributes in declared order, then `unknownAttributes` under their own names, as the encoder writes them. */
-const writtenAttrs = (attrs: Readonly<Record<string, unknown>>, declared: readonly string[]) => {
-    const written: Record<string, unknown> = {};
-    for (const name of declared) {
-        written[name] = attrs[name];
-    }
-    if (isRecord(attrs.unknownAttributes)) {
-        for (const [name, value] of Object.entries(attrs.unknownAttributes)) {
-            written[name] = value;
-        }
-    }
-    if (Object.keys(written).length === 0) {
-        return undefined;
-    }
-    return written;
-};
 
 /** The nodes of a stored node, which an island keeps as it was. */
 const storedNodes = (value: unknown): number => {
@@ -42,7 +25,7 @@ const storedNodes = (value: unknown): number => {
 
 /**
  * The `maxDocumentBytes` and `maxDocumentNodes` checks of a commit (SPEC-rich-text-runtime/AC-004): the UTF-8 size
- * of the JSON the encoder writes, cached per immutable node, so a commit measures only the nodes along its changed
+ * of the JSON the encoder writes, through its own `writeNode`, cached per immutable node, so a commit measures only the nodes along its changed
  * path, never through `Node.toJSON` or a whole-document serialization.
  */
 export const createLimitCheck = (model: ContentModel, stored: readonly CapabilityRef[]) => {
@@ -64,45 +47,25 @@ export const createLimitCheck = (model: ContentModel, stored: readonly Capabilit
     // The content placeholder `0` is one byte.
     const envelopeBytes = utf8Bytes(JSON.stringify(envelope)) - 1;
 
-    const markJson = (mark: Mark): unknown => {
-        if (mark.type.name === ISLAND_MARK) {
-            return mark.attrs.original;
-        }
-        const declaration = vocabulary.marks.get(mark.type.name);
-        let declared: string[] = [];
-        if (declaration !== undefined) {
-            declared = Object.keys(declaration.declaration.attrs);
-        }
-        const attrs = writtenAttrs(mark.attrs, declared);
-        if (attrs === undefined) {
-            return { type: mark.type.name };
-        }
-        return { type: mark.type.name, attrs };
-    };
-
     const measure = (node: Node): Size => {
         const name = node.type.name;
         if (name === ISLAND_BLOCK || name === ISLAND_INLINE) {
             const original = node.attrs.original as JsonValue;
             return { bytes: utf8Bytes(JSON.stringify(original)), nodes: storedNodes(original) };
         }
-        const shell: Record<string, unknown> = { type: name };
-        if (node.isText) {
-            shell.text = node.text;
-        }
-        const declaration = vocabulary.nodes.get(name);
-        if (declaration !== undefined && Object.keys(node.attrs).length > 0) {
-            const attrs = writtenAttrs(node.attrs, Object.keys(attributesOf(declaration)));
-            if (attrs !== undefined) {
-                shell.attrs = attrs;
-            }
-        }
+        let content: unknown[] | undefined;
         if (node.childCount > 0) {
-            shell.content = [];
+            content = [];
         }
-        if (node.marks.length > 0) {
-            shell.marks = node.marks.map(markJson);
+        const tree: { -readonly [K in keyof TreeNode]: TreeNode[K] } = {
+            type: name,
+            attrs: node.attrs,
+            marks: node.marks.map(({ type, attrs }) => ({ type: type.name, attrs })),
+        };
+        if (node.text !== undefined) {
+            tree.text = node.text;
         }
+        const shell = writeNode(vocabulary, tree, content);
         // The children go between the brackets of the empty `content` array, one comma apart.
         let bytes = utf8Bytes(JSON.stringify(shell)) + Math.max(0, node.childCount - 1);
         let nodes = 1;

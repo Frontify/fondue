@@ -30,9 +30,11 @@ import {
 } from '#/model';
 import { type TreeNode } from '#/model/content';
 import { encodeTree } from '#/model/encode';
-import { findInvalidPayload, findUnsafeJson } from '#/model/values';
+import { diagnostic } from '#/model/format';
+import { findInvalidPayload, findUnsafeJson, snapshot } from '#/model/values';
 
 import { secondCopyAtMount, secondCopyInView } from './engines';
+import { createEventBus, type Listener } from './events';
 import { createLimitCheck } from './limits';
 import { authoringOf, createPolicyCheck } from './policy';
 import {
@@ -40,7 +42,6 @@ import {
     type ChangeOrigin,
     type CommandResult,
     type CommandState,
-    type DocumentChange,
     type EditorSummary,
     type SelectionSummary,
     type SessionToken,
@@ -49,15 +50,6 @@ import {
 
 type Mode = EditorSummary['mode'];
 type RejectedCode = Extract<CommandResult, { readonly status: 'rejected' }>['code'];
-
-/** The events this runtime emits; the handle accepts the other `EditorEventMap` names, which later layers emit. */
-interface RuntimeEvents {
-    readonly ready: SessionToken;
-    readonly documentChange: DocumentChange;
-    readonly diagnostic: Diagnostic;
-    readonly disposed: SessionToken;
-}
-type Listener = (value: never) => void;
 
 // Queued intents whose listeners keep enqueuing stop past this depth (SPEC-rich-text-runtime/AC-030).
 const MAX_ENQUEUE_DEPTH = 32;
@@ -122,9 +114,7 @@ export interface EditorRuntimeOptions {
 export const liveResources = {
     views: new Set<EditorView>(),
     /** The installed feature IDs of each session not yet disposed, by handle. */
-    sessions: new Map<object, readonly string[]>(),
-    subscriptions: 0,
-    selectors: 0,
+    installedFeatures: new Map<object, readonly string[]>(),
     intents: 0,
     frames: 0,
 };
@@ -182,27 +172,21 @@ const isEmpty = ({ doc }: EditorState) =>
     doc.childCount === 1 && doc.firstChild !== null && doc.firstChild.isTextblock && doc.firstChild.content.size === 0;
 
 const rejected = (code: RejectedCode): CommandResult => ({ status: 'rejected', code });
-const runtimeDiagnostic = (
-    code: Diagnostic['code'],
-    severity: Diagnostic['severity'],
-    details?: Diagnostic['details'],
-): Diagnostic => {
-    if (details === undefined) {
-        return { code, severity, messageKey: code };
-    }
-    return { code, severity, messageKey: code, details };
-};
 const unique = (values: readonly string[]) => [...new Set(values)];
-const isSafe = (payload: unknown) => payload === undefined || findUnsafeJson(payload, '') === undefined;
-/** A JSON copy of a payload; an `undefined` member drops out, as it does from a stored document. */
-const copyOf = (payload: unknown): unknown => {
-    if (payload === undefined) {
+/** The payload as one frozen JSON copy, which is what is checked and run; `undefined` for one that is not plain JSON. */
+const checkedPayload = (given: unknown): { readonly payload: unknown } | undefined => {
+    if (given !== undefined && findUnsafeJson(given, '') !== undefined) {
         return undefined;
     }
-    return JSON.parse(JSON.stringify(payload)) as unknown;
+    return { payload: snapshot(given) };
 };
 // The checks of `./engines` cover a second copy of `prosemirror-model` only (DR-070).
-const DUPLICATE_ENGINE = runtimeDiagnostic('runtime.duplicate-engine', 'warning', { packages: ['prosemirror-model'] });
+const DUPLICATE_ENGINE = diagnostic(
+    'runtime.duplicate-engine',
+    undefined,
+    { packages: ['prosemirror-model'] },
+    'warning',
+);
 
 /** A batch checked against policy and limits and not installed, or why it cannot be. */
 type Prepared =
@@ -211,12 +195,6 @@ type Prepared =
 /** What a command would do now: nothing, a prepared batch, or a rejection. */
 type Attempt = Prepared | { readonly unchanged: true };
 
-interface Watcher {
-    readonly read: () => unknown;
-    readonly isEqual: (previous: unknown, next: unknown) => boolean;
-    readonly listener: (value: unknown) => void;
-    value: unknown;
-}
 interface Intent {
     readonly id: string;
     readonly payload: unknown;
@@ -249,8 +227,6 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     let installing = false;
     // Roots that plugin views dispatch while an install runs, committed once its selectors and events are done.
     const deferred: Transaction[] = [];
-    const listeners = new Map<string, Set<Listener>>();
-    const watchers = new Set<Watcher>();
     const queue: Intent[] = [];
 
     // Records typing before any other handler sees the event, so the view itself gets no event handler (SPEC-rich-text-runtime/AC-001).
@@ -280,69 +256,12 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         }
     };
 
-    /** Calls one listener and tells whether it returned without a throw. */
-    const call = (listener: Listener, value: unknown) => {
-        try {
-            (listener as (value: unknown) => void)(value);
-            return true;
-        } catch {
-            return false;
-        }
-    };
-
-    /** Reports each listener that threw once, to every diagnostic listener but that one (SPEC-rich-text-runtime/AC-027). */
-    const reportThrows = (throwers: readonly Listener[]) => {
-        const diagnostic = runtimeDiagnostic('runtime.listener-error', 'error');
-        for (const thrower of throwers) {
-            for (const listener of [...(listeners.get('diagnostic') ?? [])]) {
-                // A diagnostic listener that throws on this report gets no report of it, so reporting never recurses.
-                if (listener !== thrower) {
-                    call(listener, diagnostic);
-                }
-            }
-        }
-    };
-
-    const emit = <K extends keyof RuntimeEvents>(event: K, value: RuntimeEvents[K]) =>
-        busyWith(() => {
-            const throwers: Listener[] = [];
-            for (const listener of [...(listeners.get(event) ?? [])]) {
-                // A listener that disposed the session ends every notification but the `disposed` one itself.
-                if (phase === 'disposed' && event !== 'disposed') {
-                    break;
-                }
-                if (!call(listener, value)) {
-                    throwers.push(listener);
-                }
-            }
-            reportThrows(throwers);
-        });
+    const { emit, notify, subscribe, watch, clear } = createEventBus({
+        isDisposed: () => phase === 'disposed',
+        around: busyWith,
+    });
 
     const report = (diagnostic: Diagnostic) => emit('diagnostic', diagnostic);
-
-    const notifySelectors = () => {
-        const throwers: Listener[] = [];
-        for (const watcher of [...watchers]) {
-            if (phase === 'disposed') {
-                break;
-            }
-            let next: unknown;
-            try {
-                next = watcher.read();
-            } catch {
-                // A selector that throws is reported as its listener, and the commit goes on (SPEC-rich-text-runtime/AC-026).
-                throwers.push(watcher.listener as Listener);
-                continue;
-            }
-            if (!watcher.isEqual(watcher.value, next)) {
-                watcher.value = next;
-                if (!call(watcher.listener as Listener, next)) {
-                    throwers.push(watcher.listener as Listener);
-                }
-            }
-        }
-        reportThrows(throwers);
-    };
 
     const settleQueue = (code: RejectedCode) => {
         for (const intent of queue.splice(0)) {
@@ -388,7 +307,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 capabilities: unique(chain.map(({ capability }) => capability)),
                 count: chain.length,
             };
-            return { code: 'not-ready', fault: runtimeDiagnostic('runtime.append-limit', 'error', details) };
+            return { code: 'not-ready', fault: diagnostic('runtime.append-limit', undefined, details, 'error') };
         }
         if (applied.transactions.length === 0) {
             return { code: 'not-applicable' };
@@ -433,7 +352,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         if (changed) {
             sequence += 1;
         }
-        notifySelectors();
+        notify();
         if (!changed) {
             return false;
         }
@@ -469,7 +388,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         const typed = typing;
         typing = false;
         if (root.before !== state.doc) {
-            report(runtimeDiagnostic('runtime.stale-transaction', 'error'));
+            report(diagnostic('runtime.stale-transaction', undefined, undefined, 'error'));
             return;
         }
         busyWith(() => {
@@ -486,16 +405,16 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     };
 
     /** Runs a command against the current state with a dispatch that captures its transaction, then prepares it. */
-    const attempt = (id: string, given: unknown): Attempt => {
+    const attempt = (id: string, checked: { readonly payload: unknown } | undefined): Attempt => {
         const command = definition.commands.get(id);
         if (command === undefined) {
             return { code: 'unknown-command' };
         }
         // One JSON copy is checked and run, so an accessor or proxy cannot change the payload in between.
-        if (!isSafe(given)) {
+        if (checked === undefined) {
             return { code: 'invalid-payload' };
         }
-        const payload = copyOf(given);
+        const { payload } = checked;
         if (findInvalidPayload(command.payload, payload) !== undefined) {
             return { code: 'invalid-payload' };
         }
@@ -508,7 +427,10 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         const dispatched: Transaction[] = [];
         const applicable = command.run(state, (transaction) => dispatched.push(transaction), payload);
         if (dispatched.length > 1) {
-            return { code: 'not-applicable', diagnostic: runtimeDiagnostic('runtime.multiple-dispatch', 'error') };
+            return {
+                code: 'not-applicable',
+                diagnostic: diagnostic('runtime.multiple-dispatch', undefined, undefined, 'error'),
+            };
         }
         const [root] = dispatched;
         if (!applicable) {
@@ -520,13 +442,14 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         return prepare(root);
     };
 
-    const query = (id: string, payload?: unknown): CommandState => {
+    const query = (id: string, given?: unknown): CommandState => {
         const command = definition.commands.get(id);
+        const checked = checkedPayload(given);
         let active: boolean | 'mixed' = false;
-        if (command !== undefined && isSafe(payload)) {
-            active = command.active(state, copyOf(payload));
+        if (command !== undefined && checked !== undefined) {
+            active = command.active(state, checked.payload);
         }
-        const attempted = attempt(id, payload);
+        const attempted = attempt(id, checked);
         if ('code' in attempted) {
             return { enabled: false, active, disabledReason: attempted.code };
         }
@@ -534,12 +457,12 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     };
 
     // Installs exactly what `query` checked, so the two agree (SPEC-rich-text-runtime/AC-036).
-    const execute = (id: string, payload?: unknown): CommandResult => {
+    const execute = (id: string, given?: unknown): CommandResult => {
         if (busy > 0) {
             return rejected('busy');
         }
         return busyWith((): CommandResult => {
-            const attempted = attempt(id, payload);
+            const attempted = attempt(id, checkedPayload(given));
             if ('unchanged' in attempted) {
                 return { status: 'no-op', stamp: { ...session, sequence }, contentChanged: false };
             }
@@ -575,7 +498,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 } else {
                     if (!warned) {
                         warned = true;
-                        report(runtimeDiagnostic('runtime.enqueue-loop', 'warning'));
+                        report(diagnostic('runtime.enqueue-loop', undefined, undefined, 'warning'));
                     }
                     intent.resolve(rejected('busy'));
                 }
@@ -624,16 +547,9 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         phase = 'disposed';
         settleQueue('not-ready');
         emit('disposed', session);
-        for (const set of listeners.values()) {
-            liveResources.subscriptions -= set.size;
-            // An unsubscribe the host kept then finds nothing to remove and counts nothing twice.
-            set.clear();
-        }
-        listeners.clear();
-        liveResources.selectors -= watchers.size;
-        watchers.clear();
+        clear();
         detach();
-        liveResources.sessions.delete(handle);
+        liveResources.installedFeatures.delete(handle);
     };
 
     const focus = (where: 'current' | 'start' | 'end' = 'current') => {
@@ -696,28 +612,11 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         // Applies to the next query and commit; the schema, view and plugins stay (SPEC-rich-text-runtime/AC-011).
         updatePolicy: (next) => {
             policy = authoringOf(definition.model, next);
-            busyWith(notifySelectors);
+            busyWith(notify);
         },
         focus,
         registerInteractionRoot: notBuiltYet('registerInteractionRoot', 'pair 19, TASK-rte-chrome'),
-        subscribe: (event, listener) => {
-            if (phase === 'disposed') {
-                return () => undefined;
-            }
-            let set = listeners.get(event);
-            if (set === undefined) {
-                set = new Set();
-                listeners.set(event, set);
-            }
-            const subscribed = set;
-            subscribed.add(listener);
-            liveResources.subscriptions += 1;
-            return () => {
-                if (subscribed.delete(listener)) {
-                    liveResources.subscriptions -= 1;
-                }
-            };
-        },
+        subscribe,
         dispose,
     };
 
@@ -778,22 +677,10 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             }
             commit(state.tr.setSelection(TextSelection.create(state.doc, target.anchor, target.head)));
         },
-        watch: (read, isEqual, listener) => {
-            if (phase === 'disposed') {
-                return () => undefined;
-            }
-            const watcher = { read, isEqual, listener, value: read() } as Watcher;
-            watchers.add(watcher);
-            liveResources.selectors += 1;
-            return () => {
-                if (watchers.delete(watcher)) {
-                    liveResources.selectors -= 1;
-                }
-            };
-        },
+        watch,
     };
     runtimes.set(handle, runtime);
-    liveResources.sessions.set(
+    liveResources.installedFeatures.set(
         handle,
         definition.model.capabilities.map(({ id }) => id),
     );
