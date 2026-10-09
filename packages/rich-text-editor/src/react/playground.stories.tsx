@@ -15,8 +15,8 @@ import {
 } from '#/index';
 import { compileContentModel, createEmptyDocument, defineFeature, type JsonValue } from '#/model';
 
-// Turns on the package's input rule engine with `bold.stars`, until `marks.bold` declares its own rules.
-const boldRules = defineFeature({
+// Turns on the package's input rule engine with `bold.stars`, until `marks.bold` declares its own rules; the CT probe shares it.
+export const boldRules = defineFeature({
     id: 'story.bold-rules',
     version: 1,
     requires: [{ id: 'marks.bold', version: 1 }],
@@ -213,6 +213,7 @@ const Playground = ({ allowNewBold, ...props }: PlaygroundProps) => {
 const meta: Meta<typeof Playground> = {
     title: 'Rich Text Editor/Playground',
     component: Playground,
+    excludeStories: ['boldRules'],
     args: {
         'aria-label': 'Notes',
         allowNewBold: true,
