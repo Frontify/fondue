@@ -57,6 +57,7 @@ import {
     type ChangeOrigin,
     type CommandResult,
     type CommandState,
+    type CommitOptions,
     type CommitResult,
     type EditorSummary,
     type OperationMetric,
@@ -95,7 +96,7 @@ export interface RuntimeHandle {
     enqueue(id: string, ...args: readonly unknown[]): Promise<CommandResult>;
     captureTarget(options: CaptureTargetOptions): CaptureResult;
     releaseTarget(target: SelectionHandle): void;
-    requestCommit(): Promise<CommitResult>;
+    requestCommit(options: CommitOptions): Promise<CommitResult>;
     replaceDocument(): never;
     setMode(mode: Mode): void;
     updatePolicy(policy: AuthoringPolicy): void;
@@ -1266,11 +1267,11 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 commit(release);
             }
         },
-        requestCommit: () => {
+        requestCommit: (options) => {
             if (saves === undefined) {
                 return Promise.resolve({ status: 'blocked', code: 'unmanaged' });
             }
-            return notBuiltYet('requestCommit', 'pair 17b, TASK-rte-persistence')();
+            return saves.commit(options);
         },
         replaceDocument: notBuiltYet('replaceDocument', 'pair 17c, TASK-rte-persistence'),
         setMode: (next) => {

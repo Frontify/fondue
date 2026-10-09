@@ -1,11 +1,18 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type ContentModel, type Diagnostic, type RuntimeEnvironment } from '#/model';
+import { type ContentModel, type Diagnostic, type RichTextDocument, type RuntimeEnvironment } from '#/model';
 import { diagnostic } from '#/model/format';
 import { packageVersionOf } from '#/model/migrate';
 import { type EditorRuntime } from '#/runtime/runtime';
 import { type SaveCoordinator } from '#/runtime/saves';
-import { type DocumentStamp, type SaveStatus, type ServerRevision } from '#/runtime/types';
+import {
+    type CommitOptions,
+    type CommitResult,
+    type DocumentStamp,
+    type SaveAcknowledgment,
+    type SaveStatus,
+    type ServerRevision,
+} from '#/runtime/types';
 
 import {
     type LoadedDocument,
@@ -46,6 +53,23 @@ interface InFlight {
     readonly controller: AbortController;
     readonly started: number;
 }
+
+/** A snapshot `requestCommit` pinned, which is written as it is, ahead of any later autosave (AC-020, AC-021). */
+interface Checkpoint {
+    readonly stamp: DocumentStamp;
+    readonly document: RichTextDocument;
+    readonly result: Promise<CommitResult>;
+    /** Resolves `result`; only the first call counts. */
+    readonly settle: (result: CommitResult) => void;
+}
+
+/** A `requestCommit` call, which waits in the coordinator while input has not settled (AC-026). */
+interface Call {
+    capture(): void;
+    finish(result: CommitResult): void;
+}
+
+const DISPOSED: CommitResult = { status: 'failed', code: 'disposed', outcome: 'unknown' };
 
 const sameStamp = (a: DocumentStamp, b: DocumentStamp) =>
     a.documentId === b.documentId &&
@@ -97,6 +121,15 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
         state = 'dirty';
     }
     let revision = given.revision;
+    // What `requestCommit` answers with while it holds for the current stamp: the loaded record's, then each accepted one (AC-024).
+    let accepted: SaveAcknowledgment | undefined;
+    if (given.revision !== null && !unsavedOnMount) {
+        const stamp = { ...runtime.handle.getSummary().session, sequence: 0 };
+        accepted = { operationId: null, stamp, revision: given.revision };
+    }
+    // In call order; the oldest stays until its write is answered (AC-022).
+    const pinned: Checkpoint[] = [];
+    const waiting = new Set<Call>();
     let problem: Diagnostic | null = null;
     let inFlight: InFlight | undefined;
     // The write whose outcome is not known yet, which every later try replays unchanged (AC-012).
@@ -143,8 +176,19 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
 
     // A new record that nobody changed has nothing to save (`SPEC-rich-text-persistence`, Save states).
     const unsaved = () => (latest > acknowledged && latest > 0) || unsavedOnMount;
-    // A session that is not ready, such as a faulted one, writes nothing (SPEC-rich-text-runtime/AC-091).
-    const ready = () => runtime.handle.getSummary().phase === 'ready';
+    // A faulted session writes only what `requestCommit` pinned (SPEC-rich-text-runtime/AC-016, AC-091).
+    const writable = () => {
+        const { phase } = runtime.handle.getSummary();
+        return phase === 'ready' || (phase === 'faulted' && pinned.length > 0);
+    };
+    /** The oldest pinned checkpoint when `request` writes it. */
+    const pinnedFor = (request: SaveRequest) => {
+        const [checkpoint] = pinned;
+        if (checkpoint !== undefined && sameStamp(checkpoint.stamp, request.stamp)) {
+            return checkpoint;
+        }
+        return undefined;
+    };
     /** Sets state `offline` while the browser reports no network; `true` when it did (AC-015). */
     const parkedOffline = () => {
         if (navigator.onLine) {
@@ -211,10 +255,35 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
         response.then((value) => answer(current, value)).catch(() => fail(current, 'transport'));
     };
 
-    /** Sends the latest snapshot once nothing holds it (AC-006, AC-013, AC-015, AC-057, `SPEC-rich-text-runtime/AC-091`). */
+    const start = (stamp: DocumentStamp, document: RichTextDocument) => {
+        unresolved = Object.freeze({
+            operationId: environment.ids.next('operation'),
+            stamp,
+            baseRevision: revision,
+            document,
+            writer,
+        });
+        replays = 0;
+        write(unresolved);
+    };
+
+    /**
+     * Sends the oldest pinned checkpoint, else the latest snapshot, once nothing holds it (AC-006, AC-013, AC-015,
+     * AC-022, AC-057, `SPEC-rich-text-runtime/AC-091`).
+     */
     const send = () => {
         // A write in flight stays unresolved until its answer, so this keeps at most one in flight (AC-006).
-        if (!due || ended.signal.aborted || unresolved !== undefined || paused()) {
+        if (ended.signal.aborted || unresolved !== undefined || state === 'conflict') {
+            return;
+        }
+        const [checkpoint] = pinned;
+        if (checkpoint !== undefined) {
+            if (writable() && !parkedOffline()) {
+                start(checkpoint.stamp, checkpoint.document);
+            }
+            return;
+        }
+        if (!due || paused()) {
             return;
         }
         const summary = runtime.handle.getSummary();
@@ -230,15 +299,7 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
         }
         due = false;
         const snapshot = runtime.handle.getSnapshot();
-        unresolved = Object.freeze({
-            operationId: environment.ids.next('operation'),
-            stamp: snapshot.stamp,
-            baseRevision: revision,
-            document: snapshot.document,
-            writer,
-        });
-        replays = 0;
-        write(unresolved);
+        start(snapshot.stamp, snapshot.document);
     };
 
     const flush = () => {
@@ -249,7 +310,7 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
 
     const replay = () => {
         retry = undefined;
-        if (unresolved === undefined || ended.signal.aborted || !ready()) {
+        if (unresolved === undefined || ended.signal.aborted || !writable()) {
             return;
         }
         if (parkedOffline()) {
@@ -266,6 +327,7 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
         }
         end(current);
         current.controller.abort();
+        pinnedFor(current.request)?.settle({ status: 'failed', code, outcome: 'unknown' });
         if (parkedOffline()) {
             runtime.measure('save', current.started, code);
             return;
@@ -327,7 +389,13 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
             unresolved = undefined;
             acknowledged = acknowledgment.stamp.sequence;
             revision = acknowledgment.revision;
+            accepted = acknowledgment;
             unsavedOnMount = false;
+            const checkpoint = pinnedFor(current.request);
+            if (checkpoint !== undefined) {
+                pinned.shift();
+                checkpoint.settle({ status: 'acknowledged', acknowledgment });
+            }
             problem = null;
             // A newer change keeps the session dirty, and the next write takes this revision as its base (AC-011).
             idle();
@@ -341,6 +409,10 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
         due = false;
         stopTimers();
         if (response.status === 'conflict') {
+            // Only replacement leaves a conflict, so no pinned checkpoint is written (AC-018, AC-029).
+            for (const checkpoint of pinned.splice(0)) {
+                checkpoint.settle({ status: 'blocked', code: 'conflict' });
+            }
             state = 'conflict';
             const details = { currentRevision: response.currentRevision };
             problem = diagnostic('persistence.conflict', undefined, details, 'error');
@@ -350,6 +422,15 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
             readRemote();
             return;
         }
+        const checkpoint = pinnedFor(current.request);
+        if (checkpoint !== undefined) {
+            pinned.shift();
+            let refused: CommitResult = { status: 'blocked', code: 'forbidden' };
+            if (response.code !== 'forbidden') {
+                refused = { status: 'failed', code: response.code, outcome: 'rejected' };
+            }
+            checkpoint.settle(refused);
+        }
         state = 'error';
         problem = response.diagnostics[0] ?? null;
         publish();
@@ -357,6 +438,40 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
             runtime.report(reported);
         }
         runtime.measure('save', current.started, response.code);
+        // A later pinned checkpoint is a `requestCommit` call, which `error` lets through (Save states).
+        send();
+    };
+
+    /**
+     * Pins the published snapshot, or answers at once while a conflict holds or the snapshot is acknowledged already
+     * (AC-020, AC-024, AC-025, AC-066, AC-073).
+     */
+    const pin = (): Promise<CommitResult> => {
+        if (state === 'conflict') {
+            return Promise.resolve({ status: 'blocked', code: 'conflict' });
+        }
+        const { stamp, document } = runtime.handle.getSnapshot();
+        if (accepted !== undefined && sameStamp(accepted.stamp, stamp)) {
+            return Promise.resolve({ status: 'acknowledged', acknowledgment: accepted });
+        }
+        const last = pinned.at(-1);
+        if (last !== undefined && sameStamp(last.stamp, stamp)) {
+            return last.result;
+        }
+        let settle: Checkpoint['settle'] = () => undefined;
+        const result = new Promise<CommitResult>((resolve) => {
+            settle = resolve;
+        });
+        pinned.push({ stamp, document, result, settle });
+        // The write a fault, the network or spent retries left unresolved goes first, unchanged (AC-014, `SPEC-rich-text-runtime/AC-091`).
+        if (unresolved !== undefined && inFlight === undefined && retry === undefined) {
+            replay();
+        }
+        send();
+        if (!navigator.onLine) {
+            settle({ status: 'failed', code: 'transport', outcome: 'not-sent' });
+        }
+        return result;
     };
 
     const online = () => {
@@ -365,7 +480,7 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
         }
         // The write whose outcome the network left unknown goes first, unchanged (AC-016).
         if (unresolved !== undefined) {
-            if (ready()) {
+            if (writable()) {
                 write(unresolved);
             }
             return;
@@ -397,7 +512,59 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
             schedule();
             refresh();
         },
-        settled: send,
+        settled: () => {
+            for (const call of waiting) {
+                call.capture();
+            }
+            send();
+        },
+        commit: (options: CommitOptions) => {
+            const summary = runtime.handle.getSummary();
+            // A faulted session still saves its last published snapshot (`SPEC-rich-text-runtime/AC-016`, AC-064).
+            if (summary.phase !== 'ready' && summary.phase !== 'faulted') {
+                return Promise.resolve({ status: 'blocked', code: 'not-ready' });
+            }
+            if (summary.compositionActive && options.composition === 'reject') {
+                return Promise.resolve({ status: 'blocked', code: 'composition-active' });
+            }
+            let stamp: DocumentStamp | undefined;
+            let resolveCall: (result: CommitResult | Promise<CommitResult>) => void = () => undefined;
+            const captured = new Promise<CommitResult>((resolve) => {
+                resolveCall = resolve;
+            });
+            const call: Call = {
+                capture: () => {
+                    waiting.delete(call);
+                    stamp = runtime.handle.getSnapshot().stamp;
+                    resolveCall(pin());
+                },
+                finish: resolveCall,
+            };
+            let timer: number | undefined;
+            // Past the timeout the call resolves, while its pinned checkpoint stays for the write (AC-026, AC-030, AC-072).
+            const expired = new Promise<CommitResult>((resolve) => {
+                timer = clock.setTimeout(
+                    () => {
+                        let outcome: 'not-sent' | 'unknown' = 'not-sent';
+                        if (stamp !== undefined && unresolved !== undefined && sameStamp(unresolved.stamp, stamp)) {
+                            outcome = 'unknown';
+                        }
+                        resolve({ status: 'failed', code: 'timeout', outcome });
+                    },
+                    options.timeoutMs ?? option('timeoutMs'),
+                );
+            });
+            if (summary.compositionActive) {
+                waiting.add(call);
+            } else {
+                call.capture();
+            }
+            return Promise.race([captured, expired]).then((result) => {
+                waiting.delete(call);
+                clear(timer);
+                return result;
+            });
+        },
         serviceChanged: () => {
             const current = inFlight;
             if (current === undefined || unresolved === undefined) {
@@ -406,7 +573,7 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
             // The old service's answer no longer counts; the same operation goes to the new one (AC-012).
             end(current);
             current.controller.abort();
-            if (!ready()) {
+            if (!writable()) {
                 state = 'uncertain';
                 publish();
                 return;
@@ -426,6 +593,12 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
                 end(current);
                 current.controller.abort();
                 refresh();
+            }
+            for (const checkpoint of pinned.splice(0)) {
+                checkpoint.settle(DISPOSED);
+            }
+            for (const call of waiting) {
+                call.finish(DISPOSED);
             }
             // A session that leaves unsaved changes says so and starts no write (AC-041).
             if (shown && unsaved()) {

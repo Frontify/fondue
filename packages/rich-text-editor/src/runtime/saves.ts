@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type SaveStatus, type ServerRevision } from './types';
+import { type CommitOptions, type CommitResult, type SaveStatus, type ServerRevision } from './types';
 
 /** The save coordinator of a session whose host sets `services.persistence`, which `src/persistence` builds (DR-006). */
 export interface SaveCoordinator {
@@ -12,6 +12,8 @@ export interface SaveCoordinator {
     settled(): void;
     /** The host replaced `services.persistence`, so the write in flight goes to the new service (SPEC-rich-text-runtime/AC-073). */
     serviceChanged(): void;
+    /** `EditorHandle.requestCommit` of a managed session (SPEC-rich-text-persistence/AC-020). */
+    commit(options: CommitOptions): Promise<CommitResult>;
     /** Runs before the session is disposed, while listeners still hear its diagnostics (AC-040, AC-041). */
     dispose(): void;
 }
