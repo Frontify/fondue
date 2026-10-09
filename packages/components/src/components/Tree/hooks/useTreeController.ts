@@ -263,7 +263,8 @@ export const useTreeController = ({
             getItem: (itemId) => itemsById.get(itemId) as TreeItemData,
             getChildren: (itemId) => itemsById.get(itemId)?.children ?? [],
         },
-        state: { ...treeState, renamingItem, renamingValue },
+        // `null`, not `undefined`, lets headless-tree fall back to the first row as tab stop.
+        state: { ...treeState, focusedItem: treeState.focusedItem ?? null, renamingItem, renamingValue },
         setExpandedItems,
         setCheckedItems,
         setSelectedItems: multiSelect ? undefined : setSelectedItems,

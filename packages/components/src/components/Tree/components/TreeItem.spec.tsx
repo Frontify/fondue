@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { render } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
 import { TreeItem } from './TreeItem';
@@ -11,8 +12,9 @@ import { TreeItem } from './TreeItem';
  */
 
 describe('TreeItem', () => {
-    it('renders null', () => {
-        expect(TreeItem({ id: 'x', children: 'X' })).toBe(null);
+    it('renders nothing outside a Tree collect pass', () => {
+        const { container } = render(<TreeItem id="x">X</TreeItem>);
+        expect(container).toBeEmptyDOMElement();
     });
 
     it('declares displayName="Tree.Item"', () => {

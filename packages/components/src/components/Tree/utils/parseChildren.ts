@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { Children, isValidElement, type ReactElement, type ReactNode } from 'react';
+import { Children, Fragment, isValidElement, type ReactElement, type ReactNode } from 'react';
 
 import { ROOT_ID } from '../constants';
 import {
@@ -22,6 +22,11 @@ export type ParsedChildren = {
      * for `TreeRoot`'s root loading row.
      */
     parentIsLoading: boolean;
+    /**
+     * `true` when a row position holds an element that is not a Tree part (a custom
+     * component or host element). Such rows can only be found by rendering them.
+     */
+    hasForeignRows: boolean;
 };
 
 const hasDisplayName =
@@ -36,7 +41,15 @@ const isTreeActionElement = hasDisplayName<TreeActionProps>('Tree.Action');
 const isTreeDecoratorElement = hasDisplayName<TreeDecoratorProps>('Tree.Decorator');
 const isTreeIconElement = hasDisplayName<TreeIconProps>('Tree.Icon');
 const isTreeLabelElement = hasDisplayName<TreeLabelProps>('Tree.Label');
-const isTreeFolderHeaderElement = hasDisplayName<TreeFolderHeaderProps>('Tree.FolderHeader');
+export const isTreeFolderHeaderElement = hasDisplayName<TreeFolderHeaderProps>('Tree.FolderHeader');
+
+// `Children.toArray` keeps fragments as single elements, so open them here.
+export const flattenChildren = (children: ReactNode): ReactNode[] =>
+    Children.toArray(children).flatMap((child) =>
+        isValidElement<{ children?: ReactNode }>(child) && child.type === Fragment
+            ? flattenChildren(child.props.children)
+            : [child],
+    );
 
 type RowParts = {
     /** Text from `<Tree.Label>`; empty string when the part is missing. */
@@ -98,7 +111,7 @@ const sharedRowData = (props: TreeItemProps | TreeFolderProps, parentId: string)
     isDisabled: props.isDisabled,
 });
 
-const toItemData = (props: TreeItemProps, parentId: string): TreeItemData => {
+export const toItemData = (props: TreeItemProps, parentId: string): TreeItemData => {
     const { name, icon, decorator, action } = extractRowParts(props.children);
     return {
         ...sharedRowData(props, parentId),
@@ -115,29 +128,40 @@ type FolderParse = {
     descendants: TreeItemData[];
 };
 
-const toFolderData = (props: TreeFolderProps, parentId: string): FolderParse => {
+export const getFolderRows = (children: ReactNode): ReactNode[] =>
+    flattenChildren(children).filter((child) => !(isValidElement(child) && isTreeFolderHeaderElement(child)));
+
+export const toFolderRowData = (
+    props: TreeFolderProps,
+    parentId: string,
+    children: string[],
+    isLoading: boolean,
+): TreeItemData => {
     // Row parts live in `<Tree.FolderHeader>`; everything else is nested rows.
-    const headerElement = Children.toArray(props.children).filter(isValidElement).find(isTreeFolderHeaderElement);
+    const headerElement = flattenChildren(props.children).filter(isValidElement).find(isTreeFolderHeaderElement);
     const { name, icon, decorator, action } = extractRowParts(headerElement?.props.children);
-    const rows = Children.toArray(props.children).filter(
-        (child) => !(isValidElement(child) && isTreeFolderHeaderElement(child)),
-    );
-    const nested = parseChildren(rows, props.id);
     return {
-        folder: {
-            ...sharedRowData(props, parentId),
-            name,
-            isFolder: true,
-            children: nested.items.filter((item) => item.parentId === props.id).map((item) => item.id),
-            isExpanded: props.isExpanded,
-            onExpandChange: props.onExpandChange,
-            icon,
-            decorator,
-            actions: action,
-            isLoading: nested.parentIsLoading,
-            accepts: props.accepts,
-        },
+        ...sharedRowData(props, parentId),
+        name,
+        isFolder: true,
+        children,
+        isExpanded: props.isExpanded,
+        onExpandChange: props.onExpandChange,
+        icon,
+        decorator,
+        actions: action,
+        isLoading,
+        accepts: props.accepts,
+    };
+};
+
+const toFolderData = (props: TreeFolderProps, parentId: string): FolderParse & { hasForeignRows: boolean } => {
+    const nested = parseChildren(getFolderRows(props.children), props.id);
+    const childIds = nested.items.filter((item) => item.parentId === props.id).map((item) => item.id);
+    return {
+        folder: toFolderRowData(props, parentId, childIds, nested.parentIsLoading),
         descendants: nested.items,
+        hasForeignRows: nested.hasForeignRows,
     };
 };
 
@@ -151,8 +175,9 @@ const toFolderData = (props: TreeFolderProps, parentId: string): FolderParse => 
 export const parseChildren = (children: ReactNode, parentId: string = ROOT_ID): ParsedChildren => {
     const items: TreeItemData[] = [];
     let parentIsLoading = false;
+    let hasForeignRows = false;
 
-    for (const child of Children.toArray(children)) {
+    for (const child of flattenChildren(children)) {
         if (!isValidElement(child)) {
             continue;
         }
@@ -165,10 +190,13 @@ export const parseChildren = (children: ReactNode, parentId: string = ROOT_ID): 
             continue;
         }
         if (isTreeFolderElement(child)) {
-            const { folder, descendants } = toFolderData(child.props, parentId);
+            const { folder, descendants, hasForeignRows: nestedForeign } = toFolderData(child.props, parentId);
             items.push(folder, ...descendants);
+            hasForeignRows ||= nestedForeign;
+            continue;
         }
+        hasForeignRows = true;
     }
 
-    return { items, parentIsLoading };
+    return { items, parentIsLoading, hasForeignRows };
 };
