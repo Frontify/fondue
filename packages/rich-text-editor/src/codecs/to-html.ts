@@ -1,27 +1,34 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type CodecContext, type Diagnostic, type HtmlSpec } from '#/model';
-import { isIsland, ISLAND_INLINE, type TreeMark, type TreeNode } from '#/model/content';
-import { type HtmlTemplate, islandText, renderSpaces, resolveHtmlSpec } from '#/model/html-spec';
+import { isIsland, type TreeMark, type TreeNode } from '#/model/content';
+import { type HtmlTemplate, resolveHtmlSpec } from '#/model/html-spec';
+import {
+    attrsOf,
+    failedFallback,
+    groupRun,
+    islandFallback,
+    islandLabel,
+    type Item,
+    itemsOf,
+    spaced,
+    type Spacing,
+    VOID_TAGS,
+    writesAttribute,
+} from '#/model/output';
 import { isStyleAttribute } from '#/model/values';
 
-import { attrsOf, type CodecPlan, Losses, type NodePlan, setShared } from './plan';
-import { groupRun, type Item, itemsOf, textOf } from './walk';
+import { type CodecPlan, Losses } from './plan';
+import { keepMark, noteNode, reportFailure } from './walk';
 
-interface HtmlState {
+interface HtmlState extends Spacing {
     readonly plan: CodecPlan;
     readonly context: CodecContext;
     readonly diagnostics: Diagnostic[];
     /** Uses of features whose `html` support is `lossy`. */
-    readonly lossy: Losses;
-    islands: number;
-    /** The spaces that end the text written last in this block, so a run of spaces alternates across text nodes. */
-    carried: number;
+    readonly losses: Losses;
 }
 
-const VOID_TAGS = new Set('area base br col embed hr img input link meta source track wbr'.split(' '));
-const ATTRIBUTE_NAME = /^[a-zA-Z][\w:.-]*$/;
-const EVENT_HANDLER = /^on/i;
 const ESCAPES: Readonly<Record<string, string>> = {
     '&': '&amp;',
     '<': '&lt;',
@@ -61,7 +68,7 @@ const attributes = (attrs: Readonly<Record<string, string>>): string => {
     let written = '';
     for (const [name, value] of Object.entries(attrs)) {
         // A name that would run as an event handler is never written.
-        if (!ATTRIBUTE_NAME.test(name) || EVENT_HANDLER.test(name)) {
+        if (!writesAttribute(name)) {
             continue;
         }
         let text = value;
@@ -123,26 +130,8 @@ const checkOverrideTags = (template: HtmlTemplate): void => {
 };
 
 const fallback = (state: HtmlState, tag: 'span' | 'div', feature: string | null, inner: string): string => {
-    const { t } = state.context;
-    let label = t('RichTextEditor_readerIslandGeneric');
-    if (feature !== null) {
-        label = t('RichTextEditor_readerIslandFeature', { feature });
-    }
+    const label = islandLabel(state.context, feature);
     return `<${tag} role="group" aria-label="${escapeHtml(label)}" data-rte-island="">${inner}</${tag}>`;
-};
-
-const spaced = (state: HtmlState, text: string): string => {
-    const carried = state.carried;
-    let trailing = 0;
-    while (trailing < text.length && text[text.length - 1 - trailing] === ' ') {
-        trailing += 1;
-    }
-    if (trailing === text.length) {
-        state.carried = carried + trailing;
-    } else {
-        state.carried = trailing;
-    }
-    return renderSpaces(text, carried);
 };
 
 const renderMark = (state: HtmlState, items: readonly Item[], mark: TreeMark, depth: number, pre: boolean): string => {
@@ -154,31 +143,6 @@ const renderMark = (state: HtmlState, items: readonly Item[], mark: TreeMark, de
     return build(resolveHtmlSpec(plan.spec, attrsOf(mark.attrs), plan.options), inner);
 };
 
-const overrideFailed = (state: HtmlState, node: TreeNode, plan: NodePlan, path: string, before: number): string => {
-    state.diagnostics.push({
-        code: 'codecs.override-failed',
-        severity: 'error',
-        messageKey: 'codecs.override-failed',
-        path,
-        featureId: plan.featureId,
-        details: { name: node.type, format: 'html' },
-    });
-    let text = textOf(node);
-    if (plan.inline) {
-        // The children already moved the run, so it restarts from where this node began.
-        state.carried = before;
-        if (!plan.pre) {
-            text = spaced(state, text);
-        }
-        return fallback(state, 'span', plan.featureId, escapeHtml(text));
-    }
-    state.carried = 0;
-    if (!plan.pre) {
-        text = renderSpaces(text);
-    }
-    return fallback(state, 'div', plan.featureId, escapeHtml(text));
-};
-
 const renderNode = (state: HtmlState, { node, path }: Item, pre: boolean): string => {
     if (node.type === 'text') {
         const text = node.text ?? '';
@@ -188,32 +152,15 @@ const renderNode = (state: HtmlState, { node, path }: Item, pre: boolean): strin
         return escapeHtml(spaced(state, text));
     }
     if (isIsland(node)) {
-        state.islands += 1;
-        const feature = node.attrs?.feature;
-        let featureId: string | null = null;
-        if (typeof feature === 'string') {
-            featureId = feature;
-        }
-        const original = islandText(node.attrs?.original);
-        if (node.type === ISLAND_INLINE) {
-            return fallback(state, 'span', featureId, escapeHtml(spaced(state, original)));
-        }
-        state.carried = 0;
-        return fallback(state, 'div', featureId, escapeHtml(renderSpaces(original)));
+        const { tag, featureId, text } = islandFallback(state, node);
+        return fallback(state, tag, featureId, escapeHtml(text));
     }
     const plan = state.plan.nodes.get(node.type);
     if (plan === undefined) {
         state.carried = 0;
         return '';
     }
-    if (plan.formats.html === 'lossy') {
-        state.lossy.add(plan.featureId);
-    }
-    for (const shared of setShared(plan, node)) {
-        if (state.plan.formats.get(shared.featureId)?.html === 'lossy') {
-            state.lossy.add(shared.featureId);
-        }
-    }
+    noteNode(state, node, 'html');
     const before = state.carried;
     const inner = renderChildren(state, node, path, plan.pre);
     const attrs = attrsOf(node.attrs);
@@ -227,7 +174,9 @@ const renderNode = (state: HtmlState, { node, path }: Item, pre: boolean): strin
             template = resolveHtmlSpec(spec, attrs, plan.options, plan.shared);
             checkOverrideTags(template);
         } catch {
-            return overrideFailed(state, node, plan, path, before);
+            reportFailure(state, plan.featureId, path, node.type, 'html');
+            const { tag, text } = failedFallback(state, node, plan, before);
+            return fallback(state, tag, plan.featureId, escapeHtml(text));
         }
     }
     state.carried = 0;
@@ -243,20 +192,8 @@ const renderRun = (state: HtmlState, items: readonly Item[], depth: number, pre:
         (group, { mark }) => renderMark(state, group, mark, depth, pre),
     ).join('');
 
-const renderChildren = (state: HtmlState, node: TreeNode, path: string, pre: boolean): string => {
-    const keep = (mark: TreeMark) => {
-        const plan = state.plan.marks.get(mark.type);
-        if (plan === undefined) {
-            return false;
-        }
-        if (plan.formats.html === 'lossy') {
-            state.lossy.add(plan.featureId);
-        }
-        return true;
-    };
-    const items = itemsOf(node, path, keep);
-    return renderRun(state, items, 0, pre);
-};
+const renderChildren = (state: HtmlState, node: TreeNode, path: string, pre: boolean): string =>
+    renderRun(state, itemsOf(node, path, keepMark(state, 'html')), 0, pre);
 
 /** An empty document (glossary): exactly one textblock with no content. */
 export const isEmptyDocument = (plan: CodecPlan, root: TreeNode): boolean => {
@@ -275,7 +212,7 @@ export const writeHtml = (
     root: TreeNode,
     context: CodecContext,
 ): { readonly html: string; readonly diagnostics: readonly Diagnostic[] } => {
-    const state: HtmlState = { plan, context, diagnostics: [], lossy: new Losses(), islands: 0, carried: 0 };
+    const state: HtmlState = { plan, context, diagnostics: [], losses: new Losses(), islands: 0, carried: 0 };
     if (isEmptyDocument(plan, root)) {
         return { html: '', diagnostics: [] };
     }
@@ -296,7 +233,7 @@ export const writeHtml = (
         }
         html += `<div role="note" data-rte-message="islands"${langAttribute}>${escapeHtml(context.t('RichTextEditor_readerIslandNotice'))}</div>`;
     }
-    const lossy = state.lossy.list().map(
+    const lossy = state.losses.list().map(
         ({ featureId, count }): Diagnostic => ({
             code: 'codecs.lossy-output',
             severity: 'info',

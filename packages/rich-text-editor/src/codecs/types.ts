@@ -8,6 +8,7 @@ import {
     type RichTextDocument,
     type RichTextLocale,
 } from '#/model';
+import { type ResolveAssetUrl } from '#/model/declarations';
 
 export interface CodecLoss {
     readonly featureId: string;
@@ -16,14 +17,10 @@ export interface CodecLoss {
 export interface HtmlOptions {
     /** Localized output text; default `enUS`. */
     readonly locale?: RichTextLocale;
-    readonly resolveAssetUrl?: (assetId: string, options: { readonly width?: number }) => string | null;
+    readonly resolveAssetUrl?: ResolveAssetUrl;
 }
 /** One dialect: CommonMark 0.31.2 with GFM tables, strikethrough, task list items and autolinks. */
-export interface MarkdownOptions {
-    /** Localized output text; default `enUS`. */
-    readonly locale?: RichTextLocale;
-    readonly resolveAssetUrl?: (assetId: string, options: { readonly width?: number }) => string | null;
-}
+export type MarkdownOptions = HtmlOptions;
 /**
  * Each codec first runs `decodeDocument(document, model, options)`. `diagnostics` holds the decode
  * diagnostics, which carry the diagnostic that made each island, with the path of the failing value (DR-041), then the codec's own. A `blocked`

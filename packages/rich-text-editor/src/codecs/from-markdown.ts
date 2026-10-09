@@ -37,6 +37,38 @@ const FEATURE_OF: Readonly<Record<string, string>> = {
 const MARKS_OF: Readonly<Record<string, string>> = { em: 'italic', strong: 'bold', s: 'strike' };
 const TASK = /^\[([ xX])\](?:[ \t]|$)/;
 
+/** What an inline token holds as both Markdown readers take it, or `undefined` for one each treats on its own. */
+type InlineToken =
+    | { readonly kind: 'text' | 'code'; readonly text: string }
+    | { readonly kind: 'break' | 'close' }
+    | { readonly kind: 'open'; readonly mark: string; readonly href: string };
+
+export const inlineToken = (token: MarkdownToken): InlineToken | undefined => {
+    if (token.type === 'text' || token.type === 'text_special') {
+        return { kind: 'text', text: token.content };
+    }
+    if (token.type === 'softbreak') {
+        return { kind: 'text', text: ' ' };
+    }
+    if (token.type === 'code_inline') {
+        return { kind: 'code', text: token.content };
+    }
+    if (token.type === 'hardbreak') {
+        return { kind: 'break' };
+    }
+    if (token.type === 'link_open') {
+        return { kind: 'open', mark: 'link', href: String(token.attrGet('href') ?? '') };
+    }
+    const mark = MARKS_OF[token.tag];
+    if (mark !== undefined && token.nesting === 1) {
+        return { kind: 'open', mark, href: '' };
+    }
+    if (token.type === 'link_close' || (mark !== undefined && token.nesting === -1)) {
+        return { kind: 'close' };
+    }
+    return undefined;
+};
+
 /** One dialect: CommonMark with GFM tables and strikethrough, raw HTML off, `http`, `https` and email literals linked. */
 export const createParser = (): Parser => {
     const parser = new MarkdownIt('default', { html: false, linkify: true });
@@ -202,8 +234,9 @@ const inlineNodes = (builder: Builder, token: MarkdownToken, path: string, strip
     // Closing tokens close the mark their opening pushed, which may be none when the model lacks it.
     const pushed: (TreeMark | undefined)[] = [];
     for (const child of token.children ?? []) {
-        if (child.type === 'text' || child.type === 'text_special') {
-            let text = child.content;
+        const read = inlineToken(child);
+        if (read?.kind === 'text') {
+            let text = read.text;
             if (first) {
                 text = text.replace(TASK, '');
             }
@@ -212,53 +245,46 @@ const inlineNodes = (builder: Builder, token: MarkdownToken, path: string, strip
             continue;
         }
         first = false;
-        const name = MARKS_OF[child.tag];
-        if (child.type.endsWith('_open') && (name !== undefined || child.type === 'link_open')) {
+        if (read === undefined) {
+            if (child.type === 'image') {
+                builder.unsupported('image', path);
+                pushText(child.content);
+            }
+        } else if (read.kind === 'open') {
             let mark: TreeMark | undefined;
-            if (child.type === 'link_open') {
-                const href = checkHref(String(child.attrGet('href') ?? ''));
+            if (read.mark === 'link') {
+                const href = checkHref(read.href);
                 if (href.ok && builder.hasMark('link')) {
                     mark = builder.markOf('link', { href: href.href });
                 } else if (href.ok) {
                     builder.unsupported('link', path);
                 }
-            } else if (name !== undefined && builder.hasMark(name)) {
-                mark = builder.markOf(name);
-            } else if (name !== undefined) {
-                builder.unsupported(name, path);
+            } else if (builder.hasMark(read.mark)) {
+                mark = builder.markOf(read.mark);
+            } else {
+                builder.unsupported(read.mark, path);
             }
             pushed.push(mark);
             if (mark !== undefined) {
                 active.push(mark);
             }
-            continue;
-        }
-        if (child.type.endsWith('_close') && (name !== undefined || child.type === 'link_close')) {
+        } else if (read.kind === 'close') {
             const mark = pushed.pop();
             if (mark !== undefined) {
                 active.splice(active.lastIndexOf(mark), 1);
             }
-            continue;
-        }
-        if (child.type === 'code_inline') {
-            if (builder.hasMark('code')) {
-                pushText(child.content, [builder.markOf('code')]);
-            } else {
-                builder.unsupported('code', path);
-                pushText(child.content);
-            }
-        } else if (child.type === 'hardbreak') {
+        } else if (read.kind === 'code' && builder.hasMark('code')) {
+            pushText(read.text, [builder.markOf('code')]);
+        } else if (read.kind === 'code') {
+            builder.unsupported('code', path);
+            pushText(read.text);
+        } else {
             const marks = marksNow();
             if (marks.length === 0) {
                 nodes.push({ type: 'hard_break' });
             } else {
                 nodes.push({ type: 'hard_break', marks });
             }
-        } else if (child.type === 'softbreak') {
-            pushText(' ');
-        } else if (child.type === 'image') {
-            builder.unsupported('image', path);
-            pushText(child.content);
         }
     }
     return nodes.map((node) => {

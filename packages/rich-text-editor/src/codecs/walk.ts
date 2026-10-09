@@ -1,12 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { type CodecContext, type Diagnostic } from '#/model';
-import { isIsland, type TreeMark, type TreeNode } from '#/model/content';
-import { pointer } from '#/model/errors';
-import { canonicalJson } from '#/model/hash';
-import { islandText } from '#/model/html-spec';
+import { type TreeMark, type TreeNode } from '#/model/content';
 
-import { attrsOf, type CodecPlan, type Format, type Losses } from './plan';
+import { type CodecPlan, type Format, type Losses, setShared } from './plan';
 
 /** What one walk shares: the plan, the losses and diagnostics so far, and the heading IDs a link may target. */
 export interface WalkState {
@@ -16,28 +13,6 @@ export interface WalkState {
     readonly diagnostics: Diagnostic[];
     readonly headings: ReadonlySet<string>;
 }
-
-export interface Item {
-    readonly node: TreeNode;
-    readonly path: string;
-    /** The known marks in rank order, each with its index among the node's marks. */
-    readonly marks: readonly { readonly mark: TreeMark; readonly index: number }[];
-}
-
-const sameMark = (a: TreeMark, b: TreeMark) =>
-    a.type === b.type && canonicalJson(attrsOf(a.attrs)) === canonicalJson(attrsOf(b.attrs));
-
-/** The text of a node and its descendants, an island's included, for a fallback. */
-export const textOf = (node: TreeNode): string => {
-    if (isIsland(node)) {
-        return islandText(node.attrs?.original);
-    }
-    let text = node.text ?? '';
-    for (const child of node.content ?? []) {
-        text += textOf(child);
-    }
-    return text;
-};
 
 /** The `nodeId` of every heading, so a link to `#` plus one of them is known as a link inside the document. */
 export const headingIds = (root: TreeNode): ReadonlySet<string> => {
@@ -56,7 +31,13 @@ export const headingIds = (root: TreeNode): ReadonlySet<string> => {
 };
 
 /** One `codecs.override-failed` error naming the feature and the path (SPEC-rich-text-output/AC-047). */
-export const reportFailure = (state: WalkState, featureId: string, path: string, name: string, format: Format) => {
+export const reportFailure = (
+    state: { readonly diagnostics: Diagnostic[] },
+    featureId: string,
+    path: string,
+    name: string,
+    format: Format,
+) => {
     state.diagnostics.push({
         code: 'codecs.override-failed',
         severity: 'error',
@@ -67,57 +48,82 @@ export const reportFailure = (state: WalkState, featureId: string, path: string,
     });
 };
 
-/** The path of the mark at `index` on the first node of a run. */
-export const markPath = (items: readonly Item[], index: number): string => {
-    const first = items[0];
-    if (first === undefined) {
-        return '';
+/** Counts a use of a node, with its shared attributes, when its feature declares `format` other than `lossless`. */
+export const noteNode = (
+    state: { readonly plan: CodecPlan; readonly losses: Losses },
+    node: TreeNode,
+    format: Format,
+): void => {
+    const plan = state.plan.nodes.get(node.type);
+    if (plan === undefined) {
+        return;
     }
-    return `${first.path}${pointer('marks', index)}`;
+    if (plan.formats[format] !== 'lossless') {
+        state.losses.add(plan.featureId);
+    }
+    for (const shared of setShared(plan, node)) {
+        if (state.plan.formats.get(shared.featureId)?.[format] !== 'lossless') {
+            state.losses.add(shared.featureId);
+        }
+    }
 };
 
-/** The children of `node` with their paths and the marks `keep` takes, in rank order. */
-export const itemsOf = (node: TreeNode, path: string, keep: (mark: TreeMark) => boolean): Item[] =>
-    (node.content ?? []).map((child, index): Item => {
-        const marks = (child.marks ?? []).flatMap((mark, markIndex) => {
-            if (!keep(mark)) {
-                return [];
-            }
-            return [{ mark, index: markIndex }];
-        });
-        return { node: child, path: `${path}${pointer('content', index)}`, marks };
-    });
+/** Keeps the marks the model knows, counting each use whose feature declares `format` other than `lossless`. */
+export const keepMark =
+    (state: { readonly plan: CodecPlan; readonly losses: Losses }, format: Format) =>
+    (mark: TreeMark): boolean => {
+        const plan = state.plan.marks.get(mark.type);
+        if (plan === undefined) {
+            return false;
+        }
+        if (plan.formats[format] !== 'lossless') {
+            state.losses.add(plan.featureId);
+        }
+        return true;
+    };
 
-/** Splits children into runs that share a mark at `depth`, so a partly bold link stays one link. */
-export const groupRun = <T>(
-    items: readonly Item[],
-    depth: number,
-    node: (item: Item) => T,
-    mark: (items: readonly Item[], entry: Item['marks'][number]) => T,
-): T[] => {
-    const out: T[] = [];
-    let index = 0;
-    while (index < items.length) {
-        const item = items[index];
-        if (item === undefined) {
-            break;
+/** A list item's marker: its number from the list's `start`, else `bullet`, with a box when `task` holds. */
+export const itemMarker = (
+    list: TreeNode,
+    item: TreeNode,
+    index: number,
+    task: boolean,
+    bullet = '-',
+    delimiter = '.',
+): string => {
+    if (list.type === 'ordered_list') {
+        let start = 1;
+        if (typeof list.attrs?.start === 'number') {
+            start = list.attrs.start;
         }
-        const entry = item.marks[depth];
-        if (entry === undefined) {
-            out.push(node(item));
-            index += 1;
-            continue;
-        }
-        let end = index + 1;
-        while (end < items.length) {
-            const next = items[end]?.marks[depth];
-            if (next === undefined || !sameMark(next.mark, entry.mark)) {
-                break;
-            }
-            end += 1;
-        }
-        out.push(mark(items.slice(index, end), entry));
-        index = end;
+        return `${start + index}${delimiter} `;
     }
-    return out;
+    if (task && item.attrs?.checked === true) {
+        return `${bullet} [x] `;
+    }
+    if (task) {
+        return `${bullet} [ ] `;
+    }
+    return `${bullet} `;
 };
+
+/**
+ * `text` with `first` before its first line and `rest` before each later one. `trim` drops the end spaces of the
+ * first line; a blank first line keeps its prefix without end spaces, and a blank later line becomes `blank`.
+ */
+export const prefixLines = (text: string, first: string, rest: string, trim = false, blank = rest.trimEnd()) =>
+    text
+        .split('\n')
+        .map((line, index) => {
+            if (index === 0 && (trim || line === '')) {
+                return `${first}${line}`.trimEnd();
+            }
+            if (index === 0) {
+                return `${first}${line}`;
+            }
+            if (line === '') {
+                return blank;
+            }
+            return `${rest}${line}`;
+        })
+        .join('\n');

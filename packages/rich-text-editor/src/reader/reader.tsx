@@ -12,6 +12,7 @@ import {
     type ResourceLimits,
     type RichTextLocale,
 } from '#/model';
+import { type ResolveAssetUrl } from '#/model/declarations';
 import { decodeToTree } from '#/model/decode';
 import { canonicalJson } from '#/model/hash';
 
@@ -21,7 +22,7 @@ import { message, renderDocument, type RenderState } from './render';
 
 /** What the host decides about one reader output: the resolvers it renders with. */
 export interface ReaderPresentation {
-    readonly resolveAssetUrl?: (assetId: string, options: { readonly width?: number }) => string | null;
+    readonly resolveAssetUrl?: ResolveAssetUrl;
     /** Synchronous, so the reader renders on the server in one pass. */
     readonly resolveReference?: (resourceType: string, resourceId: string) => ReferenceResolution;
 }
@@ -50,13 +51,14 @@ const build = ({ document, model, presentation, locale = enUS, limits }: RichTex
         resolvers = presentation;
     }
     const context = readerContext(locale, resolvers);
-    const diagnostics: Diagnostic[] = [];
     const notified = new WeakSet<object>();
     let options: DecodeOptions = {};
     if (limits !== undefined) {
         options = { limits };
     }
     const { result, tree } = decodeToTree(document, model, options);
+    // The decode diagnostics come first, as the codecs report them.
+    const diagnostics: Diagnostic[] = [...result.diagnostics];
     let reason: 'unsupported' | 'invalid' = 'invalid';
     if (result.status === 'blocked') {
         if (result.reason === 'unsupported') {

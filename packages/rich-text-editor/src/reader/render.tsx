@@ -1,27 +1,35 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { createElement, Fragment, type ReactElement, type ReactNode } from 'react';
+import { type ComponentType, createElement, Fragment, type ReactElement, type ReactNode } from 'react';
 
-import { type Diagnostic, type JsonObject, type JsonValue } from '#/model';
-import { isIsland, ISLAND_INLINE, type TreeMark, type TreeNode } from '#/model/content';
-import { pointer } from '#/model/errors';
-import { canonicalJson } from '#/model/hash';
-import { type HtmlTemplate, islandText, renderSpaces, resolveHtmlSpec } from '#/model/html-spec';
+import { type Diagnostic } from '#/model';
+import { isIsland, type TreeNode } from '#/model/content';
+import { type HtmlTemplate, resolveHtmlSpec } from '#/model/html-spec';
+import {
+    attrsOf,
+    failedFallback,
+    groupRun,
+    islandFallback,
+    islandLabel,
+    type Item,
+    itemsOf,
+    markPath,
+    spaced,
+    type Spacing,
+    VOID_TAGS,
+    writesAttribute,
+} from '#/model/output';
 
 import { type ReaderContext, type ReaderNodeProps } from './define';
-import { type NodePlan, type Plan } from './plan';
+import { type Plan } from './plan';
 
-export interface RenderState {
+/** The document gets one island notice when `islands` is not zero. */
+export interface RenderState extends Spacing {
     readonly plan: Plan;
     readonly context: ReaderContext;
     readonly diagnostics: Diagnostic[];
-    /** Opaque islands met so far; the document gets one notice when this is not zero. */
-    islands: number;
-    /** The spaces that end the text rendered last in this block, so a run of spaces alternates across text nodes. */
-    carried: number;
 }
 
-const VOID_TAGS = new Set('area base br col embed hr img input link meta source track wbr'.split(' '));
 // Every HTML attribute whose React prop is not its lowercase name; the rest pass through unchanged.
 const PROP_NAMES: Readonly<Record<string, string>> = {
     class: 'className',
@@ -35,9 +43,6 @@ const PROP_NAMES: Readonly<Record<string, string>> = {
     crossorigin: 'crossOrigin',
     referrerpolicy: 'referrerPolicy',
 };
-const ATTRIBUTE_NAME = /^[a-zA-Z][\w:.-]*$/;
-const EVENT_HANDLER = /^on/i;
-
 /** React takes a style object, so the `style` text a spec writes becomes one: `text-align: right;` to `{ textAlign }`. */
 const styleOf = (text: string): Readonly<Record<string, string>> => {
     const style: Record<string, string> = {};
@@ -59,7 +64,7 @@ const propsOf = (attrs: Readonly<Record<string, string>>): Record<string, unknow
     const props: Record<string, unknown> = {};
     for (const [name, value] of Object.entries(attrs)) {
         // A name that React would read as an event handler never becomes a prop.
-        if (!ATTRIBUTE_NAME.test(name) || EVENT_HANDLER.test(name)) {
+        if (!writesAttribute(name)) {
             continue;
         }
         if (name.toLowerCase() === 'style') {
@@ -95,20 +100,6 @@ const build = (template: HtmlTemplate, children: readonly ReactNode[]): ReactNod
     return element;
 };
 
-/** The attributes a renderer may read: every declared one, and never `unknownAttributes` (SPEC-rich-text-format/AC-027). */
-const attrsOf = (attrs: TreeNode['attrs']): JsonObject => {
-    const known: Record<string, JsonValue> = {};
-    if (attrs === undefined) {
-        return known;
-    }
-    for (const [name, value] of Object.entries(attrs)) {
-        if (name !== 'unknownAttributes') {
-            known[name] = value as JsonValue;
-        }
-    }
-    return known;
-};
-
 /** An opaque island or a failed override: its content in a labelled group, a `span` inside inline content, else a `div`. */
 const fallback = (
     state: RenderState,
@@ -116,37 +107,8 @@ const fallback = (
     feature: string | null,
     children: readonly ReactNode[],
 ): ReactElement => {
-    const { t } = state.context;
-    let label = t('RichTextEditor_readerIslandGeneric');
-    if (feature !== null) {
-        label = t('RichTextEditor_readerIslandFeature', { feature });
-    }
+    const label = islandLabel(state.context, feature);
     return createElement(tag, { role: 'group', 'aria-label': label, 'data-rte-island': '' }, ...children);
-};
-
-const spaced = (state: RenderState, text: string): string => {
-    const carried = state.carried;
-    let trailing = 0;
-    while (trailing < text.length && text[text.length - 1 - trailing] === ' ') {
-        trailing += 1;
-    }
-    if (trailing === text.length) {
-        state.carried = carried + trailing;
-    } else {
-        state.carried = trailing;
-    }
-    return renderSpaces(text, carried);
-};
-
-const textOf = (node: TreeNode): string => {
-    if (isIsland(node)) {
-        return islandText(node.attrs?.original);
-    }
-    let text = node.text ?? '';
-    for (const child of node.content ?? []) {
-        text += textOf(child);
-    }
-    return text;
 };
 
 const reportFailure = (state: RenderState, featureId: string, path: string, name: string): void => {
@@ -161,7 +123,7 @@ const reportFailure = (state: RenderState, featureId: string, path: string, name
 };
 
 /** Called as a plain function so a throw is caught here; the rest of the output is host elements, which cannot throw. */
-const callOverride = (override: NonNullable<NodePlan['override']>, props: ReaderNodeProps): ReactNode => {
+const callOverride = (override: ComponentType<ReaderNodeProps>, props: ReaderNodeProps): ReactNode => {
     const result = (override as unknown as (props: ReaderNodeProps) => ReactNode)(props);
     if (result === undefined) {
         return null;
@@ -169,21 +131,10 @@ const callOverride = (override: NonNullable<NodePlan['override']>, props: Reader
     return result;
 };
 
-interface Item {
-    readonly node: TreeNode;
-    readonly path: string;
-    /** The known marks in rank order, each with its index among the node's marks. */
-    readonly marks: readonly { readonly mark: TreeMark; readonly index: number }[];
-}
-type MarkEntry = Item['marks'][number];
-
-const sameMark = (a: TreeMark, b: TreeMark) =>
-    a.type === b.type && canonicalJson(attrsOf(a.attrs)) === canonicalJson(attrsOf(b.attrs));
-
 const renderMark = (
     state: RenderState,
     items: readonly Item[],
-    { mark, index }: MarkEntry,
+    { mark, index }: Item['marks'][number],
     depth: number,
     pre: boolean,
 ): ReactNode => {
@@ -198,12 +149,7 @@ const renderMark = (
             const props = { attrs, children: createElement(Fragment, null, ...children), context: state.context };
             return callOverride(plan.override, props);
         } catch {
-            const first = items[0];
-            let path = '';
-            if (first !== undefined) {
-                path = `${first.path}${pointer('marks', index)}`;
-            }
-            reportFailure(state, plan.featureId, path, mark.type);
+            reportFailure(state, plan.featureId, markPath(items, index), mark.type);
             return fallback(state, 'span', plan.featureId, children);
         }
     }
@@ -219,23 +165,8 @@ const renderNode = (state: RenderState, { node, path }: Item, pre: boolean): Rea
         return spaced(state, text);
     }
     if (isIsland(node)) {
-        state.islands += 1;
-        const feature = node.attrs?.feature;
-        let tag: 'span' | 'div' = 'div';
-        if (node.type === ISLAND_INLINE) {
-            tag = 'span';
-        }
-        let featureId: string | null = null;
-        if (typeof feature === 'string') {
-            featureId = feature;
-        }
-        const original = islandText(node.attrs?.original);
-        if (tag === 'span') {
-            // Inline island text sits in the same line, so it continues the run of spaces.
-            return fallback(state, tag, featureId, [spaced(state, original)]);
-        }
-        state.carried = 0;
-        return fallback(state, tag, featureId, [renderSpaces(original)]);
+        const { tag, featureId, text } = islandFallback(state, node);
+        return fallback(state, tag, featureId, [text]);
     }
     const plan = state.plan.nodes.get(node.type);
     if (plan === undefined) {
@@ -253,69 +184,30 @@ const renderNode = (state: RenderState, { node, path }: Item, pre: boolean): Rea
             return rendered;
         } catch {
             reportFailure(state, plan.featureId, path, node.type);
-            let tag: 'span' | 'div' = 'div';
-            let fallbackText = textOf(node);
-            if (plan.inline) {
-                tag = 'span';
-                // The children already moved the run, so it restarts from where this node began.
-                state.carried = before;
-                if (!plan.pre) {
-                    fallbackText = spaced(state, fallbackText);
-                }
-            } else {
-                state.carried = 0;
-                if (!plan.pre) {
-                    fallbackText = renderSpaces(fallbackText);
-                }
-            }
-            return fallback(state, tag, plan.featureId, [fallbackText]);
+            const { tag, text } = failedFallback(state, node, plan, before);
+            return fallback(state, tag, plan.featureId, [text]);
         }
     }
     state.carried = 0;
     return build(resolveHtmlSpec(plan.spec, attrs, plan.options, plan.shared), children);
 };
 
-const renderRun = (state: RenderState, items: readonly Item[], depth: number, pre: boolean): ReactNode[] => {
-    const out: ReactNode[] = [];
-    let index = 0;
-    while (index < items.length) {
-        const item = items[index];
-        if (item === undefined) {
-            break;
-        }
-        const entry = item.marks[depth];
-        if (entry === undefined) {
-            out.push(renderNode(state, item, pre));
-            index += 1;
-            continue;
-        }
+const renderRun = (state: RenderState, items: readonly Item[], depth: number, pre: boolean): ReactNode[] =>
+    groupRun(
+        items,
+        depth,
+        (item) => renderNode(state, item, pre),
         // Neighbours that share this mark sit inside one element, so a partly bold link renders as one `a`.
-        let end = index + 1;
-        while (end < items.length) {
-            const next = items[end]?.marks[depth];
-            if (next === undefined || !sameMark(next.mark, entry.mark)) {
-                break;
-            }
-            end += 1;
-        }
-        out.push(renderMark(state, items.slice(index, end), entry, depth, pre));
-        index = end;
-    }
-    return out;
-};
+        (group, entry) => renderMark(state, group, entry, depth, pre),
+    );
 
-const renderChildren = (state: RenderState, node: TreeNode, path: string, pre: boolean): ReactNode[] => {
-    const items = (node.content ?? []).map((child, index): Item => {
-        const marks = (child.marks ?? []).flatMap((mark, markIndex) => {
-            if (state.plan.marks.has(mark.type)) {
-                return [{ mark, index: markIndex }];
-            }
-            return [];
-        });
-        return { node: child, path: `${path}${pointer('content', index)}`, marks };
-    });
-    return renderRun(state, items, 0, pre);
-};
+const renderChildren = (state: RenderState, node: TreeNode, path: string, pre: boolean): ReactNode[] =>
+    renderRun(
+        state,
+        itemsOf(node, path, (mark) => state.plan.marks.has(mark.type)),
+        0,
+        pre,
+    );
 
 const MESSAGE_KEYS = {
     islands: 'RichTextEditor_readerIslandNotice',
