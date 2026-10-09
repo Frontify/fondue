@@ -171,9 +171,6 @@ const mount = (options: MountOptions = {}) => {
     const diagnostics: Diagnostic[] = [];
     const metrics: OperationMetric[] = [];
     const props: Record<string, unknown> = {};
-    if (options.service !== undefined) {
-        props.services = { persistence: options.service };
-    }
     if (options.persistenceOptions !== undefined) {
         props.persistenceOptions = options.persistenceOptions;
     }
@@ -182,18 +179,24 @@ const mount = (options: MountOptions = {}) => {
         revision = options.revision;
     }
     const blocks = options.blocks ?? [para('ab')];
-    const element = (readOnly: boolean) => (
-        <RichTextEditor
-            aria-label="Notes"
-            definition={definition}
-            defaultValue={loaded(revision, ...blocks)}
-            environment={environment}
-            readOnly={readOnly}
-            onDiagnostic={(diagnostic) => diagnostics.push(diagnostic)}
-            ref={ref}
-            {...props}
-        />
-    );
+    const element = (readOnly: boolean, service = options.service) => {
+        const managed: Record<string, unknown> = { ...props };
+        if (service !== undefined) {
+            managed.services = { persistence: service };
+        }
+        return (
+            <RichTextEditor
+                aria-label="Notes"
+                definition={definition}
+                defaultValue={loaded(revision, ...blocks)}
+                environment={environment}
+                readOnly={readOnly}
+                onDiagnostic={(diagnostic) => diagnostics.push(diagnostic)}
+                ref={ref}
+                {...managed}
+            />
+        );
+    };
     const view = render(element(false));
     const handle = () => {
         if (ref.current === null) {
@@ -212,7 +215,7 @@ const mount = (options: MountOptions = {}) => {
         handle,
         diagnostics,
         metrics,
-        rerender: (readOnly: boolean) => view.rerender(element(readOnly)),
+        rerender: (readOnly: boolean, service?: PersistenceService) => view.rerender(element(readOnly, service)),
         type: (text: string) => act(() => typeText(handle(), text)),
         advance: (ms: number) => act(() => environment.advance(ms)),
     };
@@ -711,6 +714,7 @@ describe('disposal', () => {
         advance(500);
         act(() => handle().dispose());
         expect(calls[0]?.context.signal.aborted).toBe(true);
+        expect(handle().getSaveStatus().inFlightOperationId).toBeNull();
         unmount();
     });
 
@@ -848,6 +852,75 @@ describe('the runtime with a save coordinator', () => {
         advance(10_000);
         await settle();
         expect(service.save).not.toHaveBeenCalled();
+        unmount();
+    });
+
+    it.each(['a backoff replay', 'the online event'])(
+        'SPEC-rich-text-runtime/AC-091 sends no write through %s once a dirty session faulted',
+        async (path) => {
+            vi.mocked(createPortalStore).mockImplementationOnce((scheduler) => {
+                const store = actualStore(scheduler);
+                return {
+                    ...store,
+                    set: (entry: PortalEntry) => {
+                        if (entry.state.attrs.language === 'boom') {
+                            throw new Error('node view failed');
+                        }
+                        store.set(entry);
+                    },
+                };
+            });
+            const environment = createTestEnvironment({ seed: 1 });
+            const { service, calls } = serviceOf(environment, true);
+            const { handle, type, advance, unmount } = mount({
+                service,
+                environment,
+                blocks: [para('ab'), chromeBlock('b1')],
+            });
+            await act(() => environment.flushMicrotasks());
+            type('x');
+            advance(500);
+            act(() => {
+                runtimeOf(handle())?.nodeActions('b1').update({ language: 'boom' });
+            });
+            await act(() => environment.flushMicrotasks());
+            expect(handle().getSummary().phase).toBe('faulted');
+            const onLine = vi.spyOn(navigator, 'onLine', 'get');
+            onLine.mockReturnValue(path === 'a backoff replay');
+            calls[0]?.fail();
+            await settle();
+            onLine.mockReturnValue(true);
+            act(() => {
+                window.dispatchEvent(new Event('online'));
+            });
+            advance(10_000);
+            await settle();
+            onLine.mockRestore();
+            expect(service.save).toHaveBeenCalledTimes(1);
+            unmount();
+        },
+    );
+
+    it('SPEC-rich-text-runtime/AC-073 replays the write in flight through a replaced services.persistence', async () => {
+        const environment = createTestEnvironment({ seed: 1 });
+        const first = serviceOf(environment, true);
+        const second = serviceOf(environment, true);
+        const { handle, type, advance, rerender, unmount } = mount({ service: first.service, environment });
+        type('x');
+        advance(500);
+        const view = runtimeOf(handle())?.view;
+        rerender(false, second.service);
+        const [held] = first.calls;
+        expect(held?.context.signal.aborted).toBe(true);
+        expect(second.calls.map(({ request }) => request)).toEqual([held?.request]);
+
+        held?.answer();
+        await settle();
+        expect(handle().getSaveStatus()).toMatchObject({ state: 'saving', acknowledgedSequence: -1 });
+        second.calls[0]?.answer();
+        await settle();
+        expect(handle().getSaveStatus()).toMatchObject({ state: 'clean', acknowledgedSequence: 1 });
+        expect(runtimeOf(handle())?.view).toBe(view);
         unmount();
     });
 

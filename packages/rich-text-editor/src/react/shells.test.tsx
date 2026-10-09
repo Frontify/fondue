@@ -194,6 +194,44 @@ describe('the recovery shell', () => {
         view.unmount();
     });
 
+    it('SPEC-rich-text-react/AC-085 SPEC-rich-text-persistence/AC-041 saves on Retry the edit that a render error caught before its write', async () => {
+        vi.spyOn(console, 'error').mockImplementation(() => undefined);
+        const environment = createTestEnvironment({ seed: 1 });
+        const server = createFakePersistenceService();
+        const save = vi.fn(server.save);
+        const ref = createRef<EditorHandle<object>>();
+        const tree = (armed: boolean) => (
+            <RichTextEditor.Root
+                aria-label="Notes"
+                definition={definition}
+                defaultValue={stored(envelope([para('ab')]))}
+                environment={environment}
+                services={{ persistence: { save, read: server.read } }}
+                ref={ref}
+            >
+                <RichTextEditor.Surface />
+                <Bomb armed={armed} />
+            </RichTextEditor.Root>
+        );
+        const view = render(tree(false));
+        act(() => environment.flushFrames());
+        act(() => typeText(handleOf(ref), 'c'));
+        view.rerender(tree(true));
+        view.rerender(tree(false));
+
+        fireEvent.click(screen.getByRole('button', { name: 'Retry' }));
+        act(() => environment.flushFrames());
+        act(() => environment.advance(10_000));
+        await act(async () => {
+            await new Promise((resolve) => setTimeout(resolve, 0));
+        });
+
+        expect(save).toHaveBeenCalledTimes(1);
+        expect(JSON.stringify(save.mock.calls[0]?.[0].document)).toContain('cab');
+        expect(handleOf(ref).getSaveStatus().state).toBe('clean');
+        view.unmount();
+    });
+
     it('SPEC-rich-text-react/AC-086 copies the snapshot as plain text and HTML from the codecs with no recovery service', async () => {
         const { before, unmount } = breakAfterTyping();
         const write = vi.spyOn(navigator.clipboard, 'write').mockResolvedValue(undefined);
