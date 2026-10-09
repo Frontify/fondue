@@ -2517,6 +2517,22 @@ describe('targets on release and dispose', () => {
         });
     });
 
+    it('SPEC-rich-text-runtime/AC-045 SPEC-rich-text-runtime/AC-005 keeps a target released during a composition released when the settled check restores the state', async () => {
+        const session = start(stored(para(words('ab'))), { model: targetModel, policy: NOT_EDITABLE_CORE });
+        const { handle } = session;
+        setSelection(handle, { text: 'ab' });
+        const target = capture(handle, { purpose: 'format', onIntersectingEdit: 'map' });
+
+        compose(session, 'x');
+        handle.releaseTarget(target);
+        endComposition(session);
+        await settleInput(session);
+
+        expect(session.view.state.doc.textContent).toBe('ab');
+        expect(probeRuntimes().targets).toBe(0);
+        expect(handle.query('mark.bold.toggle', undefined, { target }).disabledReason).toBe('target-invalid');
+    });
+
     it('SPEC-rich-text-runtime/AC-074 refuses a capture while mounting, faulted or disposed and creates no target', () => {
         const environment = createTestEnvironment({ seed: 1 });
         const { tree } = decodeToTree(stored(para(words('ab'))), boldModel);
@@ -2579,7 +2595,7 @@ describe('the async coordinator', () => {
             expect.objectContaining({
                 id: 'operation-3',
                 session,
-                target: null,
+                target: expect.objectContaining({ id: 'target-2', session }) as unknown,
                 policyRevision: 1,
                 key: 'upload',
                 request: 1,
@@ -2648,13 +2664,13 @@ describe('the async coordinator', () => {
         it(`SPEC-rich-text-runtime/AC-048 discards a result with ${name} as ${reason}, with no content change`, async () => {
             const session = start(stored(para(words('ab'))), { model: targetModel });
             const resolve = act(session);
-            const { commitSequence } = session.handle.getSummary();
-            const before = session.view.state;
+            const { sequence } = session.handle.getSummary();
+            const before = session.view.state.doc;
 
             await resolve();
 
-            expect(session.view.state).toBe(before);
-            expect(session.handle.getSummary().commitSequence).toBe(commitSequence);
+            expect(session.view.state.doc).toBe(before);
+            expect(session.handle.getSummary().sequence).toBe(sequence);
             expect(session.diagnostics).toEqual([discarded(reason)]);
         });
     }
@@ -2698,6 +2714,89 @@ describe('the async coordinator', () => {
         expect(textOf(view.state.doc)).toBe('axbcd');
         expect(markedText(view.state.doc, 'bold')).toBe('cd');
         expect(view.state.selection.eq(caret)).toBe(true);
+    });
+
+    it('SPEC-rich-text-runtime/AC-046 SPEC-rich-text-runtime/AC-048 applies a result started with no target where the selection was, keeping the caret, and releases the captured target', async () => {
+        const { handle, runtime, view } = start(stored(para(words('ab')), para(words('cd'))), { model: targetModel });
+        setSelection(handle, { text: 'ab', from: 1, to: 1 });
+        const upload = pending(runtime);
+        expect(upload.operation.target).not.toBeNull();
+        setSelection(handle, { text: 'cd', from: 2, to: 2 });
+        typeText(handle, 'x');
+        const caret = view.state.selection;
+
+        await upload.resolve({ text: '!' });
+
+        expect(textOf(view.state.doc)).toBe('a!bcdx');
+        // The caret after `cdx` maps one position on through the `!` inserted before it.
+        expect([view.state.selection.empty, view.state.selection.head]).toEqual([true, caret.head + 1]);
+        expect(probeRuntimes().targets).toBe(0);
+    });
+
+    it('SPEC-rich-text-runtime/AC-038 SPEC-rich-text-runtime/AC-046 registers an operation a running command starts with a target where that command leaves the selection', async () => {
+        let upload: ReturnType<typeof pending> | undefined;
+        let session: ReturnType<typeof start> | undefined;
+        // Stands in for an `upload` capability: it changes the slot synchronously and hands the service call over.
+        const startUpload: EngineCommand = {
+            run: (state, dispatch) => {
+                if (dispatch !== undefined && session !== undefined) {
+                    dispatch(state.tr.insertText('[]'));
+                    upload = pending(session.runtime);
+                }
+                return true;
+            },
+            active: () => false,
+        };
+        session = start(stored(para(words('ab')), para(words('cd'))), {
+            model: targetModel,
+            commands: { 'fixture.upload': startUpload },
+        });
+        const { handle, view } = session;
+        setSelection(handle, { text: 'ab', from: 2, to: 2 });
+
+        expect(handle.execute('fixture.upload').status).toBe('applied');
+        expect(upload?.operation.target).not.toBeNull();
+        expect(probeRuntimes()).toMatchObject({ targets: 1, operations: [upload?.operation] });
+        setSelection(handle, { text: 'cd', from: 2, to: 2 });
+        typeText(handle, 'x');
+        const caret = view.state.selection;
+        await upload?.resolve({ text: '!' });
+
+        expect(textOf(view.state.doc)).toBe('ab[]!cdx');
+        expect([view.state.selection.empty, view.state.selection.head]).toEqual([true, caret.head + 1]);
+        expect(probeRuntimes().targets).toBe(0);
+    });
+
+    it('SPEC-rich-text-runtime/AC-048 discards a result holding a revoked proxy as invalid-payload', async () => {
+        const { runtime, view, diagnostics } = start(stored(para(words('ab'))));
+        const upload = pending(runtime);
+        const { proxy, revoke } = Proxy.revocable({}, {});
+        revoke();
+
+        // Promise resolution reads `then` on the result itself, so the revoked proxy sits one level down.
+        await upload.resolve({ text: proxy });
+
+        expect(view.state.doc.textContent).toBe('ab');
+        expect(diagnostics).toEqual([discarded('invalid-payload')]);
+    });
+
+    it('SPEC-rich-text-runtime/AC-050 SPEC-rich-text-runtime/AC-060 starts nothing after dispose: the operation is aborted and never registered', () => {
+        const { handle, runtime } = start(stored(para(words('ab'))));
+        const run = vi.fn(() => new Promise<unknown>(() => undefined));
+        handle.dispose();
+
+        const operation = runtime.startAsync({
+            key: 'upload',
+            service: 'uploads',
+            featureId: 'core',
+            action: 'create',
+            command: 'text.insert',
+            run,
+        });
+
+        expect(operation.controller.signal.aborted).toBe(true);
+        expect(run).not.toHaveBeenCalled();
+        expect(probeRuntimes().operations).toEqual([]);
     });
 
     it('SPEC-rich-text-runtime/AC-050 aborts every pending operation on dispose and ignores their results', async () => {
