@@ -75,6 +75,10 @@ export const TreeRoot = ({
     // Rows inside custom components are found only by rendering `children` in a hidden
     // collect pass; the static parse stays the first-render (and server) value.
     const [collected, setCollected] = useState<ParsedChildren | null>(null);
+    // A snapshot from an earlier collect pass must not seed the next one.
+    if (!parsed.hasForeignRows && collected !== null) {
+        setCollected(null);
+    }
     const { items, parentIsLoading: rootIsLoading } = parsed.hasForeignRows && collected ? collected : parsed;
     const tree = useTreeController({
         items,

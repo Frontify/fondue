@@ -84,6 +84,44 @@ export const LazyWrapperTree = () => {
     );
 };
 
+export const LazyFoldersTree = () => {
+    const [folderIds, setFolderIds] = useState(['a']);
+    const [expanded, setExpanded] = useState<Set<string>>(() => new Set());
+    const toggle = (id: string, value: boolean) => {
+        setExpanded((previous) => {
+            const next = new Set(previous);
+            if (value) {
+                next.add(id);
+            } else {
+                next.delete(id);
+            }
+            return next;
+        });
+    };
+    return (
+        <>
+            <button type="button" onClick={() => setFolderIds((previous) => [...previous, 'b'])}>
+                add b
+            </button>
+            <Tree.Root>
+                {folderIds.map((id) => (
+                    <Tree.Folder
+                        key={id}
+                        id={id}
+                        isExpanded={expanded.has(id)}
+                        onExpandChange={(value) => toggle(id, value)}
+                    >
+                        <Tree.FolderHeader>
+                            <Tree.Label>{id}</Tree.Label>
+                        </Tree.FolderHeader>
+                        {expanded.has(id) && <FolderContents folderId={id} />}
+                    </Tree.Folder>
+                ))}
+            </Tree.Root>
+        </>
+    );
+};
+
 const SubTree = ({ depth }: { depth: number }) => {
     if (depth === 0) {
         return <Leaf id="deep-leaf" />;

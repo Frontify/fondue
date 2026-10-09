@@ -8,6 +8,7 @@ import {
     AllWrapperRoot,
     ContextWrapperTree,
     DeferredMixedRoot,
+    LazyFoldersTree,
     LazyWrapperTree,
     MixedRoot,
     MultiSelectWrapperTree,
@@ -77,6 +78,22 @@ test.describe('Tree rows inside custom components', () => {
         await expect(component.getByRole('treeitem', { name: 'lazy-1' })).toBeVisible();
         await expect(folder).toBeFocused();
         await expect(folder).toHaveAttribute('aria-expanded', 'true');
+    });
+
+    test('keeps focus when a new folder expands after an earlier collect pass ended', async ({ mount, page }) => {
+        const component = await mount(<LazyFoldersTree />);
+        await component.getByRole('treeitem', { name: /^a$/ }).click();
+        await expect(component.getByRole('treeitem', { name: 'a-1' })).toBeVisible();
+        await component.getByRole('treeitem', { name: /^a$/ }).click();
+        await expect(component.getByRole('treeitem', { name: 'a-1' })).toHaveCount(0);
+        await component.getByRole('button', { name: 'add b' }).click();
+        const folder = component.getByRole('treeitem', { name: /^b$/ });
+        await component.getByRole('treeitem', { name: /^a$/ }).focus();
+        await page.keyboard.press('ArrowDown');
+        await expect(folder).toBeFocused();
+        await page.keyboard.press('ArrowRight');
+        await expect(component.getByRole('treeitem', { name: 'b-1' })).toBeVisible();
+        await expect(folder).toBeFocused();
     });
 
     test('nests folders declared through recursive components', async ({ mount }) => {
