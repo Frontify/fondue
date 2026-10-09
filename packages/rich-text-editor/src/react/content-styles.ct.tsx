@@ -132,6 +132,22 @@ test('SPEC-rich-text-react/AC-065 SPEC-rich-text-react/AC-092 keeps the engine c
     );
 });
 
+test('SPEC-rich-text-react/AC-066 applies a content class list separated by any white space without a page error', async ({
+    mount,
+    page,
+}) => {
+    const errors: string[] = [];
+    page.on('pageerror', (error) => errors.push(error.message));
+    const component = await mount(<EditorProbe texts={['a']} contentClassName="first" />);
+    await ready(page);
+
+    await component.update(<EditorProbe texts={['a']} contentClassName={'second\n\tthird'} />);
+
+    await expect(surfaceOf(page)).toHaveClass(/(^| )second( |$)/);
+    await expect(surfaceOf(page)).toHaveClass(/(^| )third( |$)/);
+    expect(errors).toEqual([]);
+});
+
 test('SPEC-rich-text-react/AC-067 lets a host rule on the content class win over the package paragraph rule without important', async ({
     mount,
     page,

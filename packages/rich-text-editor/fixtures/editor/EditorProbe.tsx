@@ -132,7 +132,6 @@ export const EditorProbe = ({
     /** Mounts the definition with the heading input rule. */
     readonly inputRules?: boolean;
     readonly placeholder?: string;
-    /** The presentation's `contentClassName`. */
     readonly contentClassName?: string;
     /** Mounts with a test environment, so the test runs its microtasks, frames and timers. */
     readonly controlled?: boolean;
