@@ -1,8 +1,13 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { highlight, highlightDocument } from '@frontify/fondue-rich-text-editor-fixture-feature';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 
-import { fixturesIn } from '../../fixtures/reader/helpers';
+import { createCodecs } from '#/codecs';
+import { core } from '#/features/core/feature';
+import { compileContentModel } from '#/model';
+
+import { fixturesIn, renderReader } from '../../fixtures/reader/helpers';
 
 type Globals = { navigator?: unknown };
 const navigatorDescriptor = Object.getOwnPropertyDescriptor(globalThis, 'navigator');
@@ -33,4 +38,26 @@ describe('./features with no DOM globals', () => {
             expect(decodeDocument(fixture, model).status).toBe('editable');
         },
     );
+});
+
+describe('the outside fixture feature with no DOM globals', () => {
+    it('SPEC-rich-text/AC-017 renders in the reader and writes through every codec', () => {
+        expect([typeof window, typeof document, typeof navigator]).toEqual(['undefined', 'undefined', 'undefined']);
+        const model = compileContentModel([core(), highlight()], { id: 'fixture.highlight', version: 1 });
+        const codecs = createCodecs(model);
+        const html = '<div><p>Read the <mark>highlighted</mark> part.</p></div>';
+
+        expect(renderReader(highlightDocument, model)).toBe(html);
+        expect(codecs.toHTML(highlightDocument)).toEqual({ html, diagnostics: [] });
+        expect(codecs.toPlainText(highlightDocument)).toEqual({
+            text: 'Read the highlighted part.',
+            losses: [{ featureId: 'fixture.highlight', count: 1 }],
+            diagnostics: [],
+        });
+        expect(codecs.toMarkdown(highlightDocument)).toEqual({
+            markdown: 'Read the highlighted part.',
+            losses: [{ featureId: 'fixture.highlight', count: 1 }],
+            diagnostics: [],
+        });
+    });
 });

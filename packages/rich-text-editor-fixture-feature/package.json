@@ -1,0 +1,13 @@
+{
+    "name": "@frontify/fondue-rich-text-editor-fixture-feature",
+    "version": "0.0.0",
+    "private": true,
+    "description": "Test-only outside feature for the rich text editor's feature contract suite; it imports only public entries.",
+    "type": "module",
+    "exports": {
+        ".": "./src/index.ts"
+    },
+    "dependencies": {
+        "@frontify/fondue-rich-text-editor": "workspace:*"
+    }
+}
