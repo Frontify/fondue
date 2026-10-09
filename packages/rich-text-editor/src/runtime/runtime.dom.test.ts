@@ -8,7 +8,13 @@ import { tableEditing, tableNodes } from 'prosemirror-tables';
 import { Step, StepResult } from 'prosemirror-transform';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { compileDefinition, type CompiledDefinition, countAppends, type EngineCommand } from '#/definition';
+import {
+    compileDefinition,
+    type CompiledDefinition,
+    countAppends,
+    type EngineCommand,
+    ORIGIN_META,
+} from '#/definition';
 import {
     fixtureHeadingSet,
     fixtureLink,
@@ -1627,7 +1633,22 @@ const linkSet = defineFeature({
     requires: [{ id: 'fixture.link', version: 1 }],
     commands: { 'link.set': toggleMark('link', { href: 'https://frontify.com' }) },
 });
-const targetModel = compileContentModel([core(), bold(), fixtureLink(), linkSet(), fixtureMention()], {
+/** An inline atom of another type that carries a `nodeId`, as a mention does. */
+const chip = defineFeature({
+    id: 'fixture.chip',
+    version: 1,
+    requires: [{ id: 'core', version: 1 }],
+    nodes: {
+        chip: {
+            group: 'inline',
+            atom: true,
+            attrs: { nodeId: { type: 'string', required: true } },
+            html: ['span'],
+            parse: [],
+        },
+    },
+});
+const targetModel = compileContentModel([core(), bold(), fixtureLink(), linkSet(), fixtureMention(), chip()], {
     id: 'test.bold',
     version: 1,
 });
@@ -1741,6 +1762,18 @@ describe('targets', () => {
         expect(textOf(view.state.doc)).toBe('xa@b');
     });
 
+    it('SPEC-rich-text-runtime/AC-043 invalidates an edit-node target once a node of another type holds its nodeId at its position', () => {
+        const { handle, view } = start(stored(para(words('a'), mention('m-1'), words('b'))), { model: targetModel });
+        setSelection(handle, { nodeId: 'm-1' });
+        const target = capture(handle, { purpose: 'edit-node', onIntersectingEdit: 'map' });
+        expect(handle.query('text.insert', { text: 'X' }, { target }).enabled).toBe(true);
+
+        view.dispatch(view.state.tr.replaceWith(2, 3, view.state.schema.node('chip', { nodeId: 'm-1' })));
+
+        expect(view.state.doc.nodeAt(2)?.type.name).toBe('chip');
+        expect(handle.execute('text.insert', { text: 'X' }, { target })).toEqual(INVALID);
+    });
+
     it('SPEC-rich-text-runtime/AC-044 keeps an insert target after the text typed at its position', () => {
         const { handle, view } = start(stored(para(words('abcd'))), { model: targetModel });
         setSelection(handle, { text: 'abcd', from: 2, to: 2 });
@@ -1776,8 +1809,8 @@ describe('targets', () => {
         const target = capture(handle, { purpose: 'format', onIntersectingEdit: 'map' });
 
         typeText(handle, 'X');
-        handle.execute('mark.bold.toggle', undefined, { target });
 
+        expect(handle.execute('mark.bold.toggle', undefined, { target }).status).toBe('applied');
         expect([textOf(view.state.doc), markedText(view.state.doc, 'bold')]).toEqual(['abXcd', '']);
     });
 
@@ -1988,10 +2021,12 @@ describe('node IDs', () => {
             expect(new Set(published).size).toBe(published.length);
             expect(published[0]).toBe(before[0] ?? 'node-1');
             expect(appended.length > 0).toBe(published.some((id) => !before.includes(id)));
-            // The repair joins the root's history event: ProseMirror links it to its root and nothing opts it out.
+            // The repair has origin `normalization` and joins the root's history event, while the event keeps the root's origin.
             for (const transaction of appended) {
+                expect(transaction.getMeta(ORIGIN_META)).toBe('normalization');
                 expect(transaction.getMeta('addToHistory')).toBeUndefined();
             }
+            expect(session.changes[0]?.origin).not.toBe('normalization');
         });
     }
 
