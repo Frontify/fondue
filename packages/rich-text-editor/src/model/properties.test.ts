@@ -36,6 +36,8 @@ import { encodeTree } from './encode';
 import { canonicalJson } from './hash';
 
 const model = vocabularyModel();
+// Generated content may use any installed capability, so the stored list names them all (SPEC-rich-text-format/AC-012).
+const capabilities = model.capabilities.map(({ id }) => id);
 const seed = Number(process.env.FC_SEED ?? Math.floor(Math.random() * 2 ** 31));
 const settings = { seed, numRuns: 200 };
 /** Each suite title prints the seed, so a run replays with `FC_SEED`. */
@@ -215,7 +217,7 @@ describe(seeded('round trips'), () => {
     it('SPEC-rich-text-format/AC-022 encodes generated valid documents back in canonical form', () => {
         fc.assert(
             fc.property(documentArb, (content) => {
-                for (const input of [envelope(content), envelope(denormalize(content))]) {
+                for (const input of [envelope(content, capabilities), envelope(denormalize(content), capabilities)]) {
                     const { result, document } = encodedOf(input);
                     expect(result).toMatchObject({ status: 'editable', diagnostics: [] });
                     expect(canonicalJson(document?.content as unknown as Json)).toBe(canonicalJson(content));
@@ -231,7 +233,7 @@ describe(seeded('round trips'), () => {
         );
         fc.assert(
             fc.property(documentArb, (content) => {
-                const { result, document } = encodedOf(envelope(content));
+                const { result, document } = encodedOf(envelope(content, capabilities));
                 // No island and no unknown attribute: the decoded document is exactly the generated one.
                 expect(result).toMatchObject({ status: 'editable', diagnostics: [] });
                 expect(document).toMatchObject({ format: 'frontify.rich-text', formatVersion: 1, model: model.ref });

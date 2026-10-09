@@ -35,9 +35,11 @@ import { encodeTree } from './encode';
 import { canonicalJson } from './hash';
 
 const model = vocabularyModel();
+// The stored list names every installed capability, so no case reports `format.capability-undeclared`.
+const capabilities = model.capabilities.map(({ id }) => id);
 
 const decode = (content: Json) => {
-    const { result, tree } = decodeToTree(envelope(content), model);
+    const { result, tree } = decodeToTree(envelope(content, capabilities), model);
     if (result.status !== 'editable' || tree === undefined) {
         throw new Error(`expected editable, got ${JSON.stringify(result)}`);
     }

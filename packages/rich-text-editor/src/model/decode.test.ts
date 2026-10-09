@@ -320,7 +320,10 @@ describe('document types', () => {
         format: 'frontify.rich-text',
         formatVersion: 1,
         model: { id: 'fixture.vocabulary', version: 1 },
-        requiredCapabilities: [{ id: 'core', version: 1 }],
+        requiredCapabilities: [
+            { id: 'core', version: 1 },
+            { id: 'fixture.marks', version: 1 },
+        ],
         content: {
             type: 'doc',
             content: [{ type: 'paragraph', content: [{ type: 'text', text: 'a', marks: [mark] }] }],

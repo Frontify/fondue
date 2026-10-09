@@ -25,6 +25,7 @@ import {
     defineFeature,
     DefinitionError,
     type CodecOverrides,
+    type ContentModel,
     type Diagnostic,
     type FeatureDeclaration,
     type FeatureFormats,
@@ -56,15 +57,12 @@ const compile = (...declarations: readonly FeatureDeclaration[]) =>
         id: 'test.model',
         version: 1,
     });
-const testDocument = (
-    model: { readonly ref: { readonly id: string; readonly version: number } },
-    ...blocks: JsonValue[]
-) =>
+const testDocument = (model: Pick<ContentModel, 'ref' | 'capabilities'>, ...blocks: JsonValue[]) =>
     ({
         format: 'frontify.rich-text',
         formatVersion: 1,
         model: model.ref,
-        requiredCapabilities: [],
+        requiredCapabilities: model.capabilities,
         content: { type: 'doc', attrs: { lang: null, dir: 'auto' }, content: blocks },
     }) as unknown as RichTextDocument;
 const codesOf = (diagnostics: readonly Diagnostic[]) => diagnostics.map(({ code }) => code);

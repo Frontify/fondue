@@ -11,7 +11,7 @@ import { bold } from '#/features/marks-bold/feature';
 import { compileContentModel, type ContentModel, type JsonValue } from '#/model';
 import { type LoadedDocument, type PersistenceService } from '#/persistence/types';
 import { RichTextReader } from '#/reader/reader';
-import { createTestEnvironment, typeText } from '#/testing';
+import { createFakePersistenceService, createTestEnvironment, typeText } from '#/testing';
 
 import { defineEditor } from './define';
 import { RichTextEditor } from './rich-text-editor';
@@ -148,6 +148,50 @@ describe('the recovery shell', () => {
         expect(handleOf(ref).getSnapshot().stamp.documentId).toBe('document-1');
         expect(handleOf(ref).getSnapshot().document).toEqual(before.document);
         unmount();
+    });
+
+    it('SPEC-rich-text-react/AC-085 mounts on Retry under the acknowledged revision, so the next write after a save does not conflict', async () => {
+        vi.spyOn(console, 'error').mockImplementation(() => undefined);
+        const environment = createTestEnvironment({ seed: 1 });
+        const server = createFakePersistenceService();
+        const save = vi.fn(server.save);
+        const ref = createRef<EditorHandle<object>>();
+        const tree = (armed: boolean) => (
+            <RichTextEditor.Root
+                aria-label="Notes"
+                definition={definition}
+                defaultValue={stored(envelope([para('ab')]))}
+                environment={environment}
+                services={{ persistence: { save, read: server.read } }}
+                ref={ref}
+            >
+                <RichTextEditor.Surface />
+                <Bomb armed={armed} />
+            </RichTextEditor.Root>
+        );
+        const settle = () =>
+            act(async () => {
+                await new Promise((resolve) => setTimeout(resolve, 0));
+            });
+        const view = render(tree(false));
+        act(() => environment.flushFrames());
+        act(() => typeText(handleOf(ref), 'c'));
+        act(() => environment.advance(500));
+        await settle();
+        const { revision } = handleOf(ref).getSaveStatus();
+        view.rerender(tree(true));
+        view.rerender(tree(false));
+
+        fireEvent.click(screen.getByRole('button', { name: 'Retry' }));
+        act(() => environment.flushFrames());
+        act(() => typeText(handleOf(ref), 'd'));
+        act(() => environment.advance(500));
+        await settle();
+
+        expect(revision).toBe('revision-1');
+        expect(save.mock.calls.map(([request]) => request.baseRevision)).toEqual([null, 'revision-1']);
+        expect(handleOf(ref).getSaveStatus()).toMatchObject({ state: 'clean', revision: 'revision-2' });
+        view.unmount();
     });
 
     it('SPEC-rich-text-react/AC-086 copies the snapshot as plain text and HTML from the codecs with no recovery service', async () => {

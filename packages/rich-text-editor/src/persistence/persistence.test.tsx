@@ -25,7 +25,15 @@ import {
     type SaveResponse,
     type ServiceContext,
 } from '#/index';
-import { compileContentModel, defineFeature, type Diagnostic, type Feature, type JsonValue, setBlock } from '#/model';
+import {
+    compileContentModel,
+    decodeDocument,
+    defineFeature,
+    type Diagnostic,
+    type Feature,
+    type JsonValue,
+    setBlock,
+} from '#/model';
 import { type RuntimeHandle, runtimeOf } from '#/runtime/runtime';
 import {
     createFakePersistenceService,
@@ -723,6 +731,34 @@ describe('disposal', () => {
 });
 
 describe('the runtime with a save coordinator', () => {
+    it('SPEC-rich-text-format/AC-012 warns of an undeclared capability on decode and saves the corrected list after one edit', async () => {
+        const boldText = { type: 'text', text: 'ab', marks: [{ type: 'bold' }] };
+        const blocks = [{ type: 'paragraph', attrs: { lang: null }, content: [boldText] }];
+        const decoded = decodeDocument(loaded(null, ...blocks).document, model);
+        expect(decoded.status).toBe('editable');
+        expect(decoded.diagnostics).toEqual([
+            {
+                code: 'format.capability-undeclared',
+                severity: 'warning',
+                messageKey: 'format.capability-undeclared',
+                path: '/requiredCapabilities',
+                details: { capability: 'marks.bold' },
+            },
+        ]);
+
+        const environment = createTestEnvironment({ seed: 1 });
+        const { service, calls } = serviceOf(environment);
+        const { type, advance, unmount } = mount({ service, environment, blocks });
+        type('x');
+        advance(500);
+        await settle();
+        expect(calls[0]?.request.document.requiredCapabilities).toEqual([
+            { id: 'core', version: 1 },
+            { id: 'marks.bold', version: 1 },
+        ]);
+        unmount();
+    });
+
     it('SPEC-rich-text-runtime/AC-024 notifies selector stores, then emits the change, selection, save status and metric', () => {
         const environment = createTestEnvironment({ seed: 1 });
         const { handle, type, unmount } = mount({ service: serviceOf(environment).service, environment });
