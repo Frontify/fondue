@@ -184,7 +184,7 @@ describe('toHTML', () => {
         const output = codecs.toHTML(stored(paragraph(text(hostile, link(`https://frontify.com/?q=${hostile}`)))));
 
         expect(output.html).toBe(
-            '<div><p><a href="https://frontify.com/?q=&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;&amp;">&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;&amp;</a></p></div>',
+            '<div class="fondue-rte-content"><p><a href="https://frontify.com/?q=&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;&amp;">&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;&amp;</a></p></div>',
         );
     });
 
@@ -198,16 +198,30 @@ describe('toHTML', () => {
         },
     );
 
+    it('SPEC-rich-text-react/AC-066 SPEC-rich-text/AC-017 writes the content classes of the presentation as the reader does', () => {
+        const [[, document]] = fixturesIn('valid') as [[string, unknown]];
+        const model = vocabularyModel();
+        const presentation = { contentClassName: 'host-content' };
+        const { html } = createCodecs(model).toHTML(document as RichTextDocument, presentation);
+
+        expect(html).toMatch(/^<div class="fondue-rte-content host-content"/);
+        expect(html).toBe(renderReader(document, model, { presentation }).replaceAll('<!-- -->', ''));
+    });
+
     it.each([
         ['a b', 'a b'],
         ['a  b', 'a \u00A0b'],
         ['a     b', 'a \u00A0 \u00A0 b'],
     ])('SPEC-rich-text-output/AC-046 writes %j with U+0020 and U+00A0 alternating from a space', (input, expected) => {
-        expect(codecs.toHTML(stored(paragraph(text(input)))).html).toBe(`<div><p>${expected}</p></div>`);
+        expect(codecs.toHTML(stored(paragraph(text(input)))).html).toBe(
+            `<div class="fondue-rte-content"><p>${expected}</p></div>`,
+        );
     });
 
     it('SPEC-rich-text-output/AC-046 keeps every space of a code block as U+0020', () => {
-        expect(codecs.toHTML(stored(codeBlock(text('a  b')))).html).toBe('<div><pre><code>a  b</code></pre></div>');
+        expect(codecs.toHTML(stored(codeBlock(text('a  b')))).html).toBe(
+            '<div class="fondue-rte-content"><pre><code>a  b</code></pre></div>',
+        );
     });
 });
 
@@ -309,7 +323,7 @@ describe('codec overrides', () => {
         const output = createCodecs(model).toHTML(quoteDocument(model));
 
         expect(output.html).toBe(
-            '<div><p>Before</p><div role="group" aria-label="Unsupported content: test.quote" data-rte-island="">Quoted &lt;b&gt;</div><p>After</p></div>',
+            '<div class="fondue-rte-content"><p>Before</p><div role="group" aria-label="Unsupported content: test.quote" data-rte-island="">Quoted &lt;b&gt;</div><p>After</p></div>',
         );
         expect(output.diagnostics).toEqual([failure('html')]);
     });
@@ -377,7 +391,7 @@ describe('codecs over blocked and island documents', () => {
                 losses: [],
                 diagnostics: [expect.objectContaining({ code })],
             });
-            expect(unlimited.toHTML(valid).html).toBe('<div><p>a</p><p>b</p><p>c</p></div>');
+            expect(unlimited.toHTML(valid).html).toBe('<div class="fondue-rte-content"><p>a</p><p>b</p><p>c</p></div>');
         },
     );
 
@@ -429,7 +443,9 @@ describe('empty documents', () => {
 
         expect(codecs.toHTML(empty).html).toBe('');
         expect(codecs.toPlainText(empty).text).toBe('');
-        expect(codecs.toHTML(stored(paragraph(), paragraph())).html).toBe('<div><p></p><p></p></div>');
+        expect(codecs.toHTML(stored(paragraph(), paragraph())).html).toBe(
+            '<div class="fondue-rte-content"><p></p><p></p></div>',
+        );
     });
 });
 
@@ -464,7 +480,10 @@ describe('format attributes', () => {
             expect(strip(codecs.toHTML(dirty))).toEqual(codecs.toHTML(clean));
             expect(strip(codecs.toPlainText(dirty))).toEqual(codecs.toPlainText(clean));
             expect(strip(codecs.toMarkdown(dirty))).toEqual(codecs.toMarkdown(clean));
-            expect(codecs.toHTML(dirty).html).not.toMatch(/ (style|class|classname)=/i);
+            const { html } = codecs.toHTML(dirty);
+            expect(html).not.toMatch(/ (style|classname)=/i);
+            // The one class is the content root's, from the presentation, never a stored value.
+            expect(html.match(/ class="[^"]*"/gi)).toEqual([' class="fondue-rte-content"']);
         },
     );
 });
@@ -488,7 +507,7 @@ describe('data manifest features', () => {
             const codecs = createCodecs(acme);
 
             expect(codecs.toHTML(document).html).toBe(
-                '<div><p>Intro</p><blockquote class="acme-pull-quote" data-tone="brand">Design &lt;is&gt; how it works</blockquote></div>',
+                '<div class="fondue-rte-content"><p>Intro</p><blockquote class="acme-pull-quote" data-tone="brand">Design &lt;is&gt; how it works</blockquote></div>',
             );
             expect(codecs.toPlainText(document)).toMatchObject({
                 text: 'Intro\n\nDesign <is> how it works',
@@ -810,7 +829,7 @@ describe('toHTML style, overrides and locale', () => {
 
         expect(html).toBe(renderReader(document, model).replaceAll('<!-- -->', ''));
         expect(html).toBe(
-            '<div><p style="text-align:right">a <span style="font-weight:bold;--tone:warm;color:red" data-x="y"></span><span></span></p></div>',
+            '<div class="fondue-rte-content"><p style="text-align:right">a <span style="font-weight:bold;--tone:warm;color:red" data-x="y"></span><span></span></p></div>',
         );
     });
 
@@ -823,7 +842,7 @@ describe('toHTML style, overrides and locale', () => {
         const { html, diagnostics } = codecs.toHTML(document);
 
         expect(html).toBe(
-            '<div><p>a <span role="group" aria-label="Unsupported content: test.styled" data-rte-island=""></span> b</p><div role="group" aria-label="Unsupported content: test.styled" data-rte-island="">x  y</div></div>',
+            '<div class="fondue-rte-content"><p>a <span role="group" aria-label="Unsupported content: test.styled" data-rte-island=""></span> b</p><div role="group" aria-label="Unsupported content: test.styled" data-rte-island="">x  y</div></div>',
         );
         expect(codesOf(diagnostics)).toEqual(['codecs.override-failed', 'codecs.override-failed']);
     });
@@ -834,7 +853,7 @@ describe('toHTML style, overrides and locale', () => {
         const { html } = codecs.toHTML(islands, { locale: partial });
 
         expect(html).toBe(
-            '<div><div role="group" aria-label="Unbekannt" data-rte-island=""></div><div role="group" aria-label="Unsupported content: widget" data-rte-island=""></div><div role="note" data-rte-message="islands" lang="xx">Some content is not supported here.</div></div>',
+            '<div class="fondue-rte-content"><div role="group" aria-label="Unbekannt" data-rte-island=""></div><div role="group" aria-label="Unsupported content: widget" data-rte-island=""></div><div role="note" data-rte-message="islands" lang="xx">Some content is not supported here.</div></div>',
         );
     });
 
@@ -855,7 +874,9 @@ describe('toHTML style, overrides and locale', () => {
             },
         );
 
-        expect(createCodecs(rule).toHTML(testDocument(rule, { type: 'rule' })).html).toBe('<div><hr/></div>');
+        expect(createCodecs(rule).toHTML(testDocument(rule, { type: 'rule' })).html).toBe(
+            '<div class="fondue-rte-content"><hr/></div>',
+        );
         expect(codecs.toHTML(testDocument(model, { type: 'widget' })).html).toContain('data-rte-island=""></div>');
     });
 });
@@ -939,14 +960,16 @@ describe('carried legs of earlier packets', () => {
     ] as const)(
         'SPEC-rich-text-format/AC-016 writes the declared defaults of doc for %s through every codec',
         (_, attrs) => {
-            expect(codecs.toHTML(root(attrs)).html).toBe('<div><p>a</p></div>');
+            expect(codecs.toHTML(root(attrs)).html).toBe('<div class="fondue-rte-content"><p>a</p></div>');
             expect(codecs.toPlainText(root(attrs)).text).toBe('a');
             expect(codecs.toMarkdown(root(attrs))).toMatchObject({ markdown: 'a', losses: [] });
         },
     );
 
     it('SPEC-rich-text-format/AC-016 writes a valid doc lang and dir on the HTML root and reports their loss in Markdown', () => {
-        expect(codecs.toHTML(root({ lang: 'ar', dir: 'rtl' })).html).toBe('<div lang="ar" dir="rtl"><p>a</p></div>');
+        expect(codecs.toHTML(root({ lang: 'ar', dir: 'rtl' })).html).toBe(
+            '<div class="fondue-rte-content" lang="ar" dir="rtl"><p>a</p></div>',
+        );
         expect(codecs.toMarkdown(root({ lang: 'ar', dir: 'rtl' })).losses).toEqual([{ featureId: 'core', count: 1 }]);
     });
 
@@ -992,7 +1015,7 @@ describe('carried legs of earlier packets', () => {
         );
 
         expect(codecs.toHTML(document).html).toBe(
-            '<div><p><a href="https://frontify.com"><strong>bold </strong><span data-rte-color="brand.red">colour</span></a></p></div>',
+            '<div class="fondue-rte-content"><p><a href="https://frontify.com"><strong>bold </strong><span data-rte-color="brand.red">colour</span></a></p></div>',
         );
         expect(codecs.toMarkdown(document).markdown).toBe('[**bold&#x20;**&#x63;olour](https://frontify.com)');
         expect(codecs.toPlainText(document).text).toBe('bold colour (https://frontify.com)');

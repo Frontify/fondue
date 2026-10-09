@@ -42,7 +42,7 @@ describe('RichTextEditor on the server', () => {
         const html = renderToString(createElement(RichTextEditor, { 'aria-label': 'Notes', definition, defaultValue }));
 
         expect(html).toBe(
-            '<div data-test-id="fondue-rich-text-editor" aria-busy="true"><div role="textbox" aria-multiline="true" aria-label="Notes" lang="en-US" spellcheck="true" data-test-id="fondue-rich-text-editor-surface" data-rte-surface=""></div></div>',
+            '<div data-test-id="fondue-rich-text-editor" aria-busy="true"><div class="fondue-rte-content" role="textbox" aria-multiline="true" aria-label="Notes" lang="en-US" spellcheck="true" data-test-id="fondue-rich-text-editor-surface" data-rte-surface=""></div></div>',
         );
         expect(probeRuntimes().views).toEqual([]);
     });

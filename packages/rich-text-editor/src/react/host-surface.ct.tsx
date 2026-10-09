@@ -11,6 +11,10 @@ const ready = async (page: Page) => {
     await expect(page.locator('[data-test-id="fondue-rich-text-editor"]')).not.toHaveAttribute('aria-busy');
 };
 
+/** The content of the surface's placeholder pseudo-element, `none` when it shows nothing. */
+const placeholderShown = (page: Page) =>
+    surfaceOf(page).evaluate((surface) => getComputedStyle(surface, '::before').content);
+
 /** Adds a host button that runs `command` with `options` through the handle when pressed. */
 const hostButton = (page: Page, name: string, command: string, options?: { readonly focus: string }) =>
     page.evaluate(
@@ -119,9 +123,9 @@ test('SPEC-rich-text-react/AC-093 shows no placeholder for an empty paragraph be
     await mount(<EditorProbe blocks={blocks} placeholder="Write a note" />);
     await ready(page);
 
-    // The placeholder pseudo-element shows only on a surface marked empty.
     await expect(surfaceOf(page)).not.toHaveAttribute('data-rte-empty');
     await expect(surfaceOf(page)).not.toHaveAttribute('aria-placeholder');
+    expect(await placeholderShown(page)).toBe('none');
 });
 
 test('SPEC-rich-text-react/AC-093 SPEC-rich-text-react/AC-030 shows the placeholder again once the document is empty', async ({
@@ -140,6 +144,7 @@ test('SPEC-rich-text-react/AC-093 SPEC-rich-text-react/AC-030 shows the placehol
     await expect.poll(() => page.evaluate(() => window.rte?.text())).toBe('');
     await expect(surfaceOf(page)).toHaveAttribute('data-rte-empty', '');
     await expect(surfaceOf(page)).toHaveAttribute('aria-placeholder', 'Write a note');
+    expect(await placeholderShown(page)).toBe('"Write a note"');
 });
 
 test('SPEC-rich-text-output/AC-013 keeps the document, selection and undo depth over 20 mode switches while typing', async ({

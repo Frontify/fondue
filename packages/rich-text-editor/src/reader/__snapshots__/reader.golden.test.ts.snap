@@ -1,7 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`reader golden files > SPEC-rich-text-output/AC-028 SPEC-rich-text-output/AC-049 renders the valid fixture blocks.json as its golden HTML 1`] = `
-"<div dir="rtl">
+"<div class="fondue-rte-content" dir="rtl">
 <h1>Plan</h1>
 <ol start="0">
 <li>
@@ -56,7 +56,7 @@ exports[`reader golden files > SPEC-rich-text-output/AC-028 SPEC-rich-text-outpu
 `;
 
 exports[`reader golden files > SPEC-rich-text-output/AC-028 SPEC-rich-text-output/AC-049 renders the valid fixture marks.json as its golden HTML 1`] = `
-"<div lang="de-CH">
+"<div class="fondue-rte-content" lang="de-CH">
 <p>Grüezi <a href="https://frontify.com">
 <span data-rte-color="brand.red">
 <strong>Welt</strong>
@@ -73,7 +73,7 @@ exports[`reader golden files > SPEC-rich-text-output/AC-028 SPEC-rich-text-outpu
 `;
 
 exports[`reader golden files > SPEC-rich-text-output/AC-028 renders invalid-attribute.json as its golden HTML 1`] = `
-"<div>
+"<div class="fondue-rte-content">
 <div role="group" aria-label="Unsupported content: heading" data-rte-island="">
 </div>
 <div role="note" data-rte-message="islands" lang="en-US">Some content is not supported here.</div>
@@ -81,31 +81,31 @@ exports[`reader golden files > SPEC-rich-text-output/AC-028 renders invalid-attr
 `;
 
 exports[`reader golden files > SPEC-rich-text-output/AC-028 renders unknown-attribute.json as its golden HTML 1`] = `
-"<div>
+"<div class="fondue-rte-content">
 <p>Warm words</p>
 </div>"
 `;
 
 exports[`reader golden files > SPEC-rich-text-output/AC-028 renders unknown-attribute.json as its golden HTML 2`] = `
-"<div>
+"<div class="fondue-rte-content">
 <p>a</p>
 </div>"
 `;
 
 exports[`reader golden files > SPEC-rich-text-output/AC-028 renders unknown-mark.json as its golden HTML 1`] = `
-"<div>
+"<div class="fondue-rte-content">
 <p>Plain <strong>sparkly</strong> end</p>
 </div>"
 `;
 
 exports[`reader golden files > SPEC-rich-text-output/AC-028 renders unknown-mark.json as its golden HTML 2`] = `
-"<div>
+"<div class="fondue-rte-content">
 <p>a</p>
 </div>"
 `;
 
 exports[`reader golden files > SPEC-rich-text-output/AC-028 renders unknown-node.json as its golden HTML 1`] = `
-"<div>
+"<div class="fondue-rte-content">
 <div role="group" aria-label="Unsupported content: callout" data-rte-island="">
 </div>
 <div role="note" data-rte-message="islands" lang="en-US">Some content is not supported here.</div>
@@ -113,7 +113,7 @@ exports[`reader golden files > SPEC-rich-text-output/AC-028 renders unknown-node
 `;
 
 exports[`reader golden files > SPEC-rich-text-output/AC-028 renders unknown-nodes.json as its golden HTML 1`] = `
-"<div>
+"<div class="fondue-rte-content">
 <p>Before</p>
 <div role="group" aria-label="Unsupported content: callout" data-rte-island="">Heads up &lt;b&gt;&amp;&lt;/b&gt;</div>
 <ul>
@@ -133,7 +133,7 @@ exports[`reader golden files > SPEC-rich-text-output/AC-028 renders unknown-node
 `;
 
 exports[`reader golden files > SPEC-rich-text-output/AC-028 renders unsafe-url.json as its golden HTML 1`] = `
-"<div>
+"<div class="fondue-rte-content">
 <p>a</p>
 </div>"
 `;

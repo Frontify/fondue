@@ -45,7 +45,7 @@ describe('the outside fixture feature with no DOM globals', () => {
         expect([typeof window, typeof document, typeof navigator]).toEqual(['undefined', 'undefined', 'undefined']);
         const model = compileContentModel([core(), highlight()], { id: 'fixture.highlight', version: 1 });
         const codecs = createCodecs(model);
-        const html = '<div><p>Read the <mark>highlighted</mark> part.</p></div>';
+        const html = '<div class="fondue-rte-content"><p>Read the <mark>highlighted</mark> part.</p></div>';
 
         expect(renderReader(highlightDocument, model)).toBe(html);
         expect(codecs.toHTML(highlightDocument)).toEqual({ html, diagnostics: [] });

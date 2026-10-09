@@ -1,0 +1,5 @@
+@keyframes ProseMirror-cursor-blink {
+    to {
+        visibility: hidden;
+    }
+}

@@ -1,0 +1,6 @@
+:where(.fondue-rte-content) {
+    color: #8cf;
+    background: rgb(200 200 255 / 40%);
+    border-color: hsl(0deg 0% 0%);
+    outline-color: Black;
+}

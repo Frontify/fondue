@@ -1,13 +1,25 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { ThemeProvider } from '@frontify/fondue-components';
 import { undoDepth } from 'prosemirror-history';
 import { useEffect, useRef, useState } from 'react';
 
 import { bold, core } from '../../src/features';
 import { fixtureChromeViews } from '../../src/features/__fixtures__/chrome/view';
-import { fixtureHeadingSet, fixtureLink } from '../../src/features/__fixtures__/features';
+import {
+    fixtureHeadingSet,
+    fixtureInputRules,
+    fixtureItalic,
+    fixtureLink,
+} from '../../src/features/__fixtures__/features';
 import { fixtureProfiles } from '../../src/features/__fixtures__/profiles';
-import { type CompiledEditorDefinition, defineEditor, type EditorHandle, RichTextEditor } from '../../src/index';
+import {
+    type CompiledEditorDefinition,
+    defineEditor,
+    defineReactPresentation,
+    type EditorHandle,
+    RichTextEditor,
+} from '../../src/index';
 import { compileContentModel, type ContentNodeJSON } from '../../src/model';
 import { boldRules } from '../../src/react/playground.stories';
 import { RichTextReader } from '../../src/reader';
@@ -26,6 +38,14 @@ const ALLOW = { create: true, edit: true, remove: true, paste: true };
 const definitions = {
     open: defineEditor({ id: 'test.ct', model }),
     guarded: defineEditor({ id: 'test.ct', model, policy: { features: { core: { ...ALLOW, edit: false } } } }),
+    // The heading input rule turns `## ` into a heading, which needs the typed space kept (SPEC-rich-text-react/AC-092).
+    inputRules: defineEditor({
+        id: 'test.ct',
+        model: compileContentModel(
+            [core(), bold(), fixtureItalic(), fixtureHeadingSet(), fixtureInputRules(), fixtureChromeViews()],
+            { id: 'test.ct', version: 1 },
+        ),
+    }),
 };
 
 /** A text, or a link around the text inside `[` and `]`, as `Read the [guide]`. */
@@ -94,7 +114,9 @@ export const EditorProbe = ({
     blocks,
     readOnly = false,
     guarded = false,
+    inputRules = false,
     placeholder,
+    contentClassName,
     controlled = false,
     profile,
     withReader = false,
@@ -108,7 +130,11 @@ export const EditorProbe = ({
     readonly readOnly?: boolean;
     /** Mounts the definition whose policy keeps every paragraph as it is. */
     readonly guarded?: boolean;
+    /** Mounts the definition with the heading input rule. */
+    readonly inputRules?: boolean;
     readonly placeholder?: string;
+    /** The presentation's `contentClassName`. */
+    readonly contentClassName?: string;
     /** Mounts with a test environment, so the test runs its microtasks, frames and timers. */
     readonly controlled?: boolean;
     /** Mounts a definition of this fixture profile in place of the CT model's. */
@@ -141,9 +167,18 @@ export const EditorProbe = ({
             model: compileContentModel(features, { id: 'test.ct', version: 1 }),
         });
     });
+    const [presentation] = useState(() => {
+        if (contentClassName === undefined) {
+            return undefined;
+        }
+        return defineReactPresentation({ contentClassName });
+    });
     let definition: CompiledEditorDefinition<object> = definitions.open;
     if (guarded) {
         definition = definitions.guarded;
+    }
+    if (inputRules) {
+        definition = definitions.inputRules;
     }
     if (profileDefinition !== undefined) {
         definition = profileDefinition;
@@ -176,6 +211,7 @@ export const EditorProbe = ({
                 defaultValue={defaultValue}
                 readOnly={readOnly}
                 {...(placeholder === undefined ? {} : { placeholder })}
+                {...(presentation === undefined ? {} : { presentation })}
                 {...(environment === undefined ? {} : { environment })}
                 {...rerendered}
                 ref={ref}
@@ -183,7 +219,11 @@ export const EditorProbe = ({
             />
             {withReader && (
                 <section aria-label="Reader">
-                    <RichTextReader document={defaultValue.document} model={model} />
+                    <RichTextReader
+                        document={defaultValue.document}
+                        model={model}
+                        {...(presentation === undefined ? {} : { presentation })}
+                    />
                 </section>
             )}
         </>
@@ -192,4 +232,28 @@ export const EditorProbe = ({
         return <form onSubmit={(event) => event.preventDefault()}>{editor}</form>;
     }
     return editor;
+};
+
+/** The editor under a Fondue theme that a button switches between light and dark (SPEC-rich-text-react/AC-053). */
+export const ThemeSwitchProbe = () => {
+    const [theme, setTheme] = useState<'light' | 'dark'>('light');
+    let next: 'light' | 'dark' = 'dark';
+    if (theme === 'dark') {
+        next = 'light';
+    }
+    return (
+        <>
+            <button type="button" onClick={() => setTheme(next)}>
+                Switch theme
+            </button>
+            <ThemeProvider theme={theme}>
+                {/* Tests compare the editor with what the tokens compute to here, rather than restating token values. */}
+                <span
+                    data-token-probe=""
+                    style={{ color: 'var(--color-primary-default)', backgroundColor: 'var(--color-surface-default)' }}
+                />
+                <EditorProbe texts={['ab']} />
+            </ThemeProvider>
+        </>
+    );
 };

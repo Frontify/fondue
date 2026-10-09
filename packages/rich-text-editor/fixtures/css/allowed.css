@@ -1,0 +1,18 @@
+:where(.fondue-rte-content) {
+    color: var(--rte-content-text-color, #111);
+    caret-color: transparent;
+    border-color: currentcolor;
+    content: 'red';
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    :where(.fondue-rte-content .blinking)::after {
+        animation: blink 1s steps(2) infinite;
+    }
+}
+
+@keyframes blink {
+    to {
+        visibility: hidden;
+    }
+}
