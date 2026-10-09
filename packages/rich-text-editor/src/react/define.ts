@@ -13,15 +13,21 @@ import {
     type ReactPresentation,
 } from './types';
 
-const ENGINE = Symbol('engine');
+// Kept off the definition, so no engine value is reachable from what a host holds (DR-034).
+const engines = new WeakMap<object, CompiledDefinition>();
 const EVERYTHING: FeaturePolicy = { create: true, edit: true, remove: true, paste: true };
 const HEADING_LEVELS: readonly HeadingLevel[] = [1, 2, 3, 4, 5, 6];
 
 /** The engine a definition compiled once, which every editor mounted with it shares (SPEC-rich-text/AC-029). */
-export const engineOf = (definition: CompiledEditorDefinition<object>): CompiledDefinition =>
-    (definition as unknown as { readonly [ENGINE]: CompiledDefinition })[ENGINE];
+export const engineOf = (definition: CompiledEditorDefinition<object>): CompiledDefinition => {
+    const engine = engines.get(definition);
+    if (engine === undefined) {
+        throw new Error('RichTextEditor takes only a definition that defineEditor made.');
+    }
+    return engine;
+};
 
-/** Every installed feature fully allowed, with the policy's own values over it. */
+/** Every installed feature fully allowed, with the policy's own values over it; a policy for an uninstalled feature throws. */
 const authoringOf = (model: ContentModel, policy: Partial<AuthoringPolicy> | undefined): AuthoringPolicy => {
     const features: Record<string, FeaturePolicy> = {};
     for (const { id } of model.capabilities) {
@@ -31,6 +37,9 @@ const authoringOf = (model: ContentModel, policy: Partial<AuthoringPolicy> | und
         return { features, creatableHeadingLevels: HEADING_LEVELS, enterBehavior: 'paragraph' };
     }
     for (const [id, feature] of Object.entries(policy.features ?? {})) {
+        if (!Object.hasOwn(features, id)) {
+            throw new DefinitionError('definition.unknown-policy-feature', { feature: id });
+        }
         features[id] = feature;
     }
     return {
@@ -69,15 +78,15 @@ export const defineEditor = <Model extends ContentModel>(
             throw new DefinitionError('definition.invalid-manifest', { path: unsafe });
         }
     }
-    const definition = {
+    const definition = Object.freeze({
         id,
         model: model.ref,
         capabilities: model.capabilities,
         authoring: authoringOf(model, policy),
         limits: limitsOf(options.limits, options.limitOverrides),
-        [ENGINE]: compileDefinition(model, CAPABILITIES),
-    };
-    return Object.freeze(definition) as unknown as CompiledEditorDefinition<CommandsOfModel<Model>>;
+    });
+    engines.set(definition, compileDefinition(model, CAPABILITIES));
+    return definition as unknown as CompiledEditorDefinition<CommandsOfModel<Model>>;
 };
 
 /** A presentation with no toolbar, styles or colour tokens, and the values given. */
