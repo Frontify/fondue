@@ -40,10 +40,14 @@ export const authoringOf = (model: ContentModel, policy: Partial<AuthoringPolicy
     };
 };
 
+/** One inline child of a run: a text node or an atom. */
+interface Piece {
+    readonly from: number;
+    readonly to: number;
+}
 interface Run {
     readonly mark: Mark;
-    readonly from: number;
-    to: number;
+    readonly pieces: Piece[];
     text: string;
 }
 /** How a batch maps positions of the document before it to the one after it. */
@@ -53,8 +57,13 @@ interface Occurrences {
     readonly nodes: Map<string, Node[]>;
     readonly runs: Map<string, Run[]>;
 }
+interface Change {
+    readonly create: boolean;
+    readonly edit: boolean;
+    readonly remove: boolean;
+}
 
-/** Each maximal stretch of a textblock's inline content that carries one mark, with its range and text. */
+/** Each maximal stretch of a textblock's inline content that carries one mark, with its pieces and text. */
 const markRuns = (block: Node, start: number): Run[] => {
     const runs: Run[] = [];
     let open: Run[] = [];
@@ -64,18 +73,18 @@ const markRuns = (block: Node, start: number): Run[] => {
         if (child.isText) {
             text = child.textContent;
         }
-        const end = position + child.nodeSize;
+        const piece = { from: position, to: position + child.nodeSize };
         open = child.marks.map((mark) => {
             let run = open.find((candidate) => candidate.mark.eq(mark));
             if (run === undefined) {
-                run = { mark, from: position, to: end, text: '' };
+                run = { mark, pieces: [], text: '' };
                 runs.push(run);
             }
-            run.to = end;
+            run.pieces.push(piece);
             run.text += text;
             return run;
         });
-        position = end;
+        position = piece.to;
     }
     return runs;
 };
@@ -92,47 +101,97 @@ const add = <T>(map: Map<string, T[]>, featureId: string | undefined, item: T) =
     list.push(item);
 };
 
-/** Matched occurrences cancel out; more after is a create, fewer is a remove, and an unmatched pair is an edit. */
-const changeOf = <T>(before: readonly T[], after: readonly T[], same: (a: T, b: T) => boolean) => {
-    const left = [...after];
-    let unmatched = 0;
-    for (const item of before) {
-        const index = left.findIndex((other) => same(item, other));
-        if (index < 0) {
-            unmatched += 1;
-        } else {
-            left.splice(index, 1);
-        }
+const listOf = <T>(map: ReadonlyMap<string, T[]>, featureId: string): T[] => map.get(featureId) ?? [];
+
+/** Removes and returns the first item that `match` accepts. */
+const take = <T>(items: T[], match: (item: T) => boolean): T | undefined => {
+    const index = items.findIndex(match);
+    if (index < 0) {
+        return undefined;
     }
-    return {
-        create: after.length > before.length,
-        remove: before.length > after.length,
-        edit: unmatched > 0 && left.length > 0,
-    };
+    return items.splice(index, 1)[0];
 };
 
-const listOf = <T>(map: ReadonlyMap<string, T[]>, featureId: string): T[] => map.get(featureId) ?? [];
-const sameNode = (a: Node, b: Node) => a === b || a.eq(b);
-const sameRun = (a: Run, b: Run) => a.text === b.text && a.mark.eq(b.mark);
-
-/** Whether a run of `mark` holds the whole range, or the position of an empty one. */
-const covered = (runs: readonly Run[], mark: Mark, from: number, to: number) =>
-    runs.some((run) => run.mark.eq(mark) && run.from <= from && to <= run.to);
+// A node's own marks belong to the mark's feature, so its markup here is its type and attributes.
+const sameNode = (a: Node, b: Node) => a === b || (a.hasMarkup(b.type, b.attrs, a.marks) && a.content.eq(b.content));
+const carriesId = (node: Node) => node.type.spec.attrs !== undefined && Object.hasOwn(node.type.spec.attrs, 'nodeId');
 
 /**
- * A mark's runs compared through the batch's mapping, as `prosemirror-changeset` maps a span back through inverted
- * maps: marked text that no run of the same mark held before is a create, marked text that keeps no such run after
- * is a remove, and text typed inside a run maps back into it, so it stays an edit.
+ * Pairs a feature's nodes before and after a batch, by `nodeId` where the type carries one, as Tiptap's UniqueID
+ * keys a node by its ID attribute, and by type, attributes and content otherwise, so a moved node keeps its pair.
+ * A changed node with no ID pairs with a leftover node of its type as an edit; an unpaired node is a create or a remove.
  */
-const runChangeOf = (before: readonly Run[], after: readonly Run[], mapping: BatchMapping) => {
-    const back = mapping.invert();
-    const create = after.some((run) => !covered(before, run.mark, back.map(run.from, 1), back.map(run.to, -1)));
-    const remove = before.some((run) => {
-        const from = mapping.map(run.from, 1);
-        const to = mapping.map(run.to, -1);
-        return to <= from || !covered(after, run.mark, from, to);
+const nodeChangeOf = (before: readonly Node[], after: readonly Node[]): Change => {
+    const left = [...after];
+    const changed: Node[] = [];
+    let edit = false;
+    let remove = false;
+    for (const node of before) {
+        let other: Node | undefined;
+        if (carriesId(node)) {
+            other = take(
+                left,
+                (candidate) => candidate.type === node.type && candidate.attrs.nodeId === node.attrs.nodeId,
+            );
+            remove ||= other === undefined;
+        } else {
+            other = take(left, (candidate) => sameNode(node, candidate));
+            if (other === undefined) {
+                changed.push(node);
+            }
+        }
+        edit ||= other !== undefined && !sameNode(node, other);
+    }
+    for (const node of changed) {
+        const other = take(left, (candidate) => candidate.type === node.type && !carriesId(candidate));
+        remove ||= other === undefined;
+        edit ||= other !== undefined;
+    }
+    return { create: left.length > 0, edit, remove };
+};
+
+/**
+ * The runs of the same mark type in `others` that a run's pieces map into. A piece the mapping collapses is new or
+ * deleted text: inserted text counts where it lands, inside or at the edge of a run, and deleted text nowhere.
+ */
+const counterparts = (run: Run, mapping: BatchMapping, others: readonly Run[], inserted: boolean): Run[] =>
+    others.filter((other) => {
+        const first = other.pieces[0] as Piece;
+        const last = other.pieces[other.pieces.length - 1] as Piece;
+        if (other.mark.type !== run.mark.type) {
+            return false;
+        }
+        return run.pieces.some((piece) => {
+            const from = mapping.map(piece.from, 1);
+            const to = mapping.map(piece.to, -1);
+            if (to <= from) {
+                return inserted && first.from <= from && from <= last.to;
+            }
+            return first.from < to && from < last.to;
+        });
     });
-    return { create, remove, edit: changeOf(before, after, sameRun).edit };
+
+const sameRun = (a: Run, b: Run) => a.text === b.text && a.mark.eq(b.mark);
+
+/**
+ * A mark's runs compared piece by piece through the batch's mapping, as `prosemirror-changeset` maps spans through
+ * step maps: a run after the batch that maps back into no run of its mark type is new, and one before that maps
+ * into none after is gone, so a merge and a split each find their counterpart. A new and a gone run with the same
+ * mark and text are a move. A run whose counterparts differ in text or attributes is an edit, as CKEditor 5's
+ * differ reports a changed attribute on a range as an attribute change, not an insertion and a removal.
+ */
+const runChangeOf = (before: readonly Run[], after: readonly Run[], mapping: BatchMapping): Change => {
+    const back = mapping.invert();
+    const fresh = after.filter((run) => counterparts(run, back, before, true).length === 0);
+    const gone = before.filter((run) => counterparts(run, mapping, after, false).length === 0);
+    const created = fresh.filter((run) => take(gone, (other) => sameRun(run, other)) === undefined);
+    const changed = (runs: readonly Run[], map: BatchMapping, others: readonly Run[], inserted: boolean) =>
+        runs.some((run) => {
+            const found = counterparts(run, map, others, inserted);
+            return found.length > 0 && !found.some((other) => sameRun(run, other));
+        });
+    const edit = changed(after, back, before, true) || changed(before, mapping, after, false);
+    return { create: created.length > 0, edit, remove: gone.length > 0 };
 };
 
 /**
@@ -198,7 +257,7 @@ export const createPolicyCheck = (model: ContentModel) => {
             if (rules === undefined) {
                 continue;
             }
-            const nodes = changeOf(listOf(previous.nodes, featureId), listOf(next.nodes, featureId), sameNode);
+            const nodes = nodeChangeOf(listOf(previous.nodes, featureId), listOf(next.nodes, featureId));
             const runs = runChangeOf(listOf(previous.runs, featureId), listOf(next.runs, featureId), mapping);
             for (const action of ['create', 'edit', 'remove'] as const) {
                 if (!rules[action] && (nodes[action] || runs[action])) {
