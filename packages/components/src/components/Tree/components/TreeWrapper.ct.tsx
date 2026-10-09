@@ -26,6 +26,11 @@ test.describe('Tree rows inside custom components', () => {
         await expect(component.getByRole('treeitem')).toHaveCount(4);
         const names = await rowNames(component);
         expect(names.map((text) => text.trim())).toEqual(['A', 'B', 'C', 'D']);
+        await expect(component.locator('[role="tree"]')).toHaveCount(1);
+        const isFirst = await component
+            .locator('[role="tree"]')
+            .evaluate((el) => el.parentElement?.firstElementChild === el);
+        expect(isFirst).toBe(true);
     });
 
     test('shows wrapped rows in the same task as direct rows (no intermediate paint)', async ({ mount, page }) => {

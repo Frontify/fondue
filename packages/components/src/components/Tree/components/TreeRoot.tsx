@@ -147,11 +147,11 @@ export const TreeRoot = ({
         </div>
     );
 
-    // One stable shape, so mounting the collect pass never remounts the tree (and its focus).
+    // One stable shape with the tree first: mounting the collect pass never remounts it or shifts sibling selectors.
     return (
         <>
-            {parsed.hasForeignRows && <TreeCollector onCollect={setCollected}>{children}</TreeCollector>}
             {treeElement}
+            {parsed.hasForeignRows && <TreeCollector onCollect={setCollected}>{children}</TreeCollector>}
         </>
     );
 };
