@@ -21,6 +21,7 @@ import {
 } from '#/index';
 import { compileContentModel, DefinitionError, type Diagnostic, type Feature, type JsonValue } from '#/model';
 import { viewsOf } from '#/react/define';
+import { defineReaderFeature, type ReaderNodeProps, RichTextReader } from '#/reader';
 import { type EditorRuntime, type RuntimeHandle, runtimeOf } from '#/runtime/runtime';
 import { createTestEnvironment, setSelection, typeText } from '#/testing';
 import { probeRuntimes } from '#/testing/probe';
@@ -241,16 +242,7 @@ describe('the React bridge', () => {
 
     it('SPEC-rich-text-react/AC-019 types the node view state with no position', () => {
         expectTypeOf<keyof NodeViewState>().toEqualTypeOf<
-            | 'nodeId'
-            | 'attrs'
-            | 'selected'
-            | 'context'
-            | 'update'
-            | 'remove'
-            | 'select'
-            | 'execute'
-            | 'query'
-            | 'pending'
+            'nodeId' | 'attrs' | 'selected' | 'context' | 'update' | 'remove' | 'select' | 'execute' | 'query'
         >();
     });
 
@@ -365,6 +357,29 @@ describe('the React bridge', () => {
         expect(second.handle().getSummary().selection).toEqual(before.selection);
         first.unmount();
         second.unmount();
+    });
+
+    it('SPEC-rich-text-react/AC-007 SPEC-rich-text-output/AC-003 keeps both a node view and a reader override on one feature, attached in either order', async () => {
+        const Chrome = () => <span data-test-chrome="" />;
+        const Reader = ({ attrs }: ReaderNodeProps) => <span data-test-reader="">{attrs.label as string}</span>;
+        const view = { node: 'chrome_mention', component: Chrome };
+        const overrides = { chrome_mention: Reader };
+        for (const feature of [
+            defineReaderFeature(defineNodeView(fixtureChrome(), view), overrides),
+            defineNodeView(defineReaderFeature(fixtureChrome(), overrides), view),
+        ]) {
+            const both = modelOf([feature]);
+            const document = stored(para(mention('m1'))).document;
+            const editor = await mount([para(mention('m1'))], {
+                definition: defineEditor({ id: 'test.bridge', model: both }),
+            });
+            expect(surface().querySelector('[data-test-chrome]')).not.toBeNull();
+            editor.unmount();
+
+            const reader = render(<RichTextReader document={document} model={both} />);
+            expect(reader.container.querySelector('[data-test-reader]')).toHaveTextContent('Ada');
+            reader.unmount();
+        }
     });
 
     it('SPEC-rich-text/AC-021 rejects a node view for a node that no installed feature declares', () => {
