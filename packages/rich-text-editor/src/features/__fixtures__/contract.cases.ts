@@ -160,7 +160,7 @@ export const normalizerCases = (features: readonly Feature[], documents?: readon
         });
     };
     // Read at run time, so a case runs the normalizer that is registered then.
-    const normalizerOf = (id: string) => NORMALIZERS[id] as Normalizer;
+    const normalizerOf = (id: string) => (NORMALIZERS[id] as { readonly normalize: Normalizer }).normalize;
     for (const { id } of compiledModel(model).plugins) {
         if (NORMALIZERS[id] === undefined) {
             continue;

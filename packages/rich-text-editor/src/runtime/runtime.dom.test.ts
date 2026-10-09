@@ -1831,7 +1831,7 @@ describe('targets', () => {
 
 describe('node IDs', () => {
     const idModel = compileContentModel(
-        [core(), fixtureHeadingSet(), vocabularyLists(), fixtureMedia(), vocabularyMention()],
+        [core(), bold(), fixtureHeadingSet(), vocabularyLists(), fixtureMedia(), vocabularyMention()],
         {
             id: 'test.bold',
             version: 1,
@@ -1995,51 +1995,65 @@ describe('node IDs', () => {
         });
     }
 
-    it('SPEC-rich-text-runtime/AC-092 SPEC-rich-text-runtime/AC-004 reads only the nodes a keystroke changed, and leaves a stored repeated nodeId alone', () => {
+    it('SPEC-rich-text-runtime/AC-092 SPEC-rich-text-runtime/AC-004 reads only the nodes a keystroke, a mark step or an attribute step changed, and leaves a stored repeated nodeId alone', () => {
         const blocks: JsonValue[] = [para(words('a'), person('m-1'), person('m-1'))];
         for (let index = 0; index < 5000; index += 1) {
             blocks.push(titled(`h-${index}`, 'Title'), para(words('Some text')));
         }
-        const { handle, changes } = start(stored(...blocks), {
+        const { handle, changes, view } = start(stored(...blocks), {
             model: idModel,
             policy: forbid('fixture.mention', 'create'),
             limits: { maxDocumentNodes: 1_000_000, maxDocumentBytes: 100_000_000 },
         });
-        setSelection(handle, { text: 'Some text', from: 4, to: 4 });
-        let visits = 0;
-        let depth = 0;
         const { nodesBetween } = Node.prototype;
-        const counted = vi
-            .spyOn(Node.prototype, 'nodesBetween')
-            .mockImplementation(function (this: Node, from, to, visit, start) {
-                // A nested call gets the counting callback already, so only the outermost call wraps it.
-                if (depth > 0) {
-                    return nodesBetween.call(this, from, to, visit, start);
-                }
-                depth += 1;
-                try {
-                    return nodesBetween.call(
-                        this,
-                        from,
-                        to,
-                        (...args) => {
-                            visits += 1;
-                            return visit(...args);
-                        },
-                        start,
-                    );
-                } finally {
-                    depth -= 1;
-                }
-            });
-        try {
-            typeText(handle, 'x');
-        } finally {
-            counted.mockRestore();
-        }
+        /** The nodes `act` visits, with a nested walk counted once, since it gets the counting callback already. */
+        const visitsOf = (act: () => void) => {
+            let visits = 0;
+            let depth = 0;
+            const counted = vi
+                .spyOn(Node.prototype, 'nodesBetween')
+                .mockImplementation(function (this: Node, from, to, visit, at) {
+                    if (depth > 0) {
+                        return nodesBetween.call(this, from, to, visit, at);
+                    }
+                    depth += 1;
+                    try {
+                        return nodesBetween.call(
+                            this,
+                            from,
+                            to,
+                            (...args) => {
+                                visits += 1;
+                                return visit(...args);
+                            },
+                            at,
+                        );
+                    } finally {
+                        depth -= 1;
+                    }
+                });
+            try {
+                act();
+            } finally {
+                counted.mockRestore();
+            }
+            return visits;
+        };
+        setSelection(handle, { text: 'Some text', from: 4, to: 4 });
+        const heading = view.state.doc.child(0).nodeSize;
 
-        expect(changes.map(({ origin }) => origin)).toEqual(['input']);
-        expect(visits).toBeLessThan(50);
+        const typed = visitsOf(() => typeText(handle, 'x'));
+        const marked = visitsOf(() =>
+            view.dispatch(view.state.tr.addMark(heading + 1, heading + 3, view.state.schema.mark('bold'))),
+        );
+        const attributed = visitsOf(() => view.dispatch(view.state.tr.setNodeAttribute(heading, 'level', 3)));
+
+        expect(changes.map(({ origin }) => origin)).toEqual(['input', 'unknown', 'unknown']);
+        expect({ typed: typed < 50, marked: marked < 50, attributed: attributed < 50 }).toEqual({
+            typed: true,
+            marked: true,
+            attributed: true,
+        });
     });
 
     it('SPEC-rich-text-runtime/AC-092 SPEC-rich-text-runtime/AC-036 installs the IDs a query drew, so execute publishes what query judged', () => {

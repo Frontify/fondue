@@ -235,9 +235,9 @@ describe('the feature contract suite', () => {
                 },
         ],
     ])('SPEC-rich-text/AC-057 SPEC-rich-text/AC-059 fails a normalizer that %s', async (_name, title, replace) => {
-        const normalizers = NORMALIZERS as Record<string, Normalizer>;
-        const original = normalizers['node-ids'] as Normalizer;
-        const spy = vi.spyOn(normalizers, 'node-ids').mockImplementation(replace(original));
+        const plugin = NORMALIZERS['node-ids'] as { normalize: Normalizer };
+        const original = plugin.normalize;
+        const spy = vi.spyOn(plugin, 'normalize').mockImplementation(replace(original));
         try {
             expect(await failingTitles(() => normalizerCases(nodeIdFeatures(), [nodeIdDocument]))).toEqual([title]);
         } finally {
