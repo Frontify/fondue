@@ -1007,7 +1007,7 @@ describe('occurrences the policy pairs across a batch', () => {
             false,
         ],
         [
-            'a pasted copy of a mention before the untouched one, which the repair renames',
+            'a pasted copy of a mention before the untouched one',
             stored(para(words('a'), { type: 'mention', attrs: { nodeId: 'm-1', label: 'Ada' } }, words('b'))),
             forbid('fixture.mention', 'edit'),
             (state) => state.tr.insert(1, state.schema.node('mention', { nodeId: 'm-1', label: '' })),
@@ -1019,6 +1019,13 @@ describe('occurrences the policy pairs across a batch', () => {
             forbid('fixture.mention', 'edit'),
             (state) => state.tr.insert(3, state.schema.node('mention', { nodeId: 'm-1', label: '' })),
             true,
+        ],
+        [
+            'a label edit of a mention with a pasted copy of its old self, edit: false',
+            stored(para(words('a'), { type: 'mention', attrs: { nodeId: 'm-1', label: 'Ada' } }, words('b'))),
+            forbid('fixture.mention', 'edit'),
+            (state) => state.tr.setNodeAttribute(2, 'label', 'Bo').insert(3, state.doc.nodeAt(2) as Node),
+            false,
         ],
         ...(['remove', 'edit'] as const).map(
             (
@@ -1043,6 +1050,14 @@ describe('occurrences the policy pairs across a batch', () => {
             const { view, changes } = start(input, { model, policy });
             view.dispatch(build(view.state));
             expect(changes.length === 1).toBe(accepted);
+            const ids: unknown[] = [];
+            view.state.doc.descendants((node) => {
+                if ('nodeId' in node.attrs) {
+                    ids.push(node.attrs.nodeId);
+                }
+            });
+            expect(ids.every((id) => typeof id === 'string')).toBe(true);
+            expect(new Set(ids).size).toBe(ids.length);
         });
     }
 });
@@ -2075,6 +2090,15 @@ describe('node IDs', () => {
             ['h-1'],
         ],
         [
+            'splits a heading at its very start into two headings, which leaves the ID on the part with the content',
+            titled('h-1', 'cd'),
+            (session) => {
+                setSelection(session.handle, { text: 'cd', from: 0, to: 0 });
+                splitAt(1)(session);
+            },
+            ['node-1', 'h-1'],
+        ],
+        [
             'splits a task item in the middle',
             { type: 'task_list', content: [task('t-1', 'gh')] },
             (session) => {
@@ -2084,13 +2108,13 @@ describe('node IDs', () => {
             ['t-1', 'node-1'],
         ],
         [
-            'splits a task item at the start',
+            'splits a task item at the start, which leaves the ID on the part with the content',
             { type: 'task_list', content: [task('t-1', 'gh')] },
             (session) => {
                 setSelection(session.handle, { text: 'gh', from: 0, to: 0 });
                 splitAt(2)(session);
             },
-            ['t-1', 'node-1'],
+            ['node-1', 't-1'],
         ],
         [
             'duplicates a figure',
@@ -2111,10 +2135,10 @@ describe('node IDs', () => {
             ['e-1', 'node-1'],
         ],
         [
-            'pastes a copy of a mention before it, which keeps the ID as the first in document order',
+            'pastes a copy of a mention before its original, which keeps the ID',
             para(words('a'), person('m-1')),
             ({ view }) => view.dispatch(view.state.tr.insert(1, view.state.doc.firstChild?.child(1) as Node)),
-            ['m-1', 'node-1'],
+            ['node-1', 'm-1'],
         ],
     ];
     for (const [name, block, act, ids] of cases) {
@@ -2145,7 +2169,7 @@ describe('node IDs', () => {
             const published = idsIn(contentOf(session.changes[0]));
             expect(published).toEqual(ids);
             expect(new Set(published).size).toBe(published.length);
-            expect(published[0]).toBe(before[0] ?? 'node-1');
+            expect(published).toEqual(expect.arrayContaining(before));
             expect(appended.length > 0).toBe(published.some((id) => !before.includes(id)));
             // The repair has origin `normalization` and joins the root's history event, while the event keeps the root's origin.
             for (const transaction of appended) {
