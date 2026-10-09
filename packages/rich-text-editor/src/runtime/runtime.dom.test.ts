@@ -3306,6 +3306,31 @@ describe('history', () => {
         expect(next.plugins.every((plugin, index) => plugin === state.plugins[index])).toBe(true);
     });
 
+    it('SPEC-rich-text-persistence/AC-059 resolves faulted when building the fresh state for the next document throws', async () => {
+        // A plugin whose state cannot start on the next document, as a broken feature's would.
+        const picky = new Plugin({
+            state: {
+                init: (_config, { doc }) => {
+                    if (doc.textContent === 'boom') {
+                        throw new Error('plugin state failed');
+                    }
+                    return null;
+                },
+                apply: (_tr, value: null) => value,
+            },
+        });
+        const { handle, diagnostics } = start(stored(para(words('ab'))), { plugins: [picky] });
+        const replaced = vi.fn();
+        handle.subscribe('replaced', replaced);
+
+        const result = await handle.replaceDocument(replacing(handle, stored(para(words('boom')))));
+
+        expect(result).toEqual({ status: 'rejected', code: 'faulted' });
+        expect(handle.getSummary().phase).toBe('faulted');
+        expect(diagnostics.map(({ code }) => code)).toEqual(['runtime.view-fault']);
+        expect(replaced).not.toHaveBeenCalled();
+    });
+
     it('SPEC-rich-text-runtime/AC-057 leaves nothing to undo or redo after replaceDocument', async () => {
         const { handle, runtime, environment } = start(stored(para()));
         typeText(handle, 'a');

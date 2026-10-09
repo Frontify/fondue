@@ -2139,6 +2139,44 @@ describe('replacement', () => {
         unmount();
     });
 
+    it('SPEC-rich-text-persistence/AC-059 SPEC-rich-text-react/AC-022 shows the recovery shell with the old document after an install fault', async () => {
+        vi.mocked(createPortalStore).mockImplementationOnce((scheduler) => {
+            const store = actualStore(scheduler);
+            return {
+                ...store,
+                set: (entry: PortalEntry) => {
+                    if (entry.state.attrs.language === 'boom') {
+                        throw new Error('node view failed');
+                    }
+                    store.set(entry);
+                },
+            };
+        });
+        const environment = createTestEnvironment({ seed: 1 });
+        const { handle, type, unmount } = mount({
+            service: serviceOf(environment).service,
+            environment,
+            blocks: [para('ab'), chromeBlock('b1')],
+        });
+        await act(() => environment.flushMicrotasks());
+        type('x');
+        const next = loaded('revision-9', para('next'), {
+            ...chromeBlock('b2'),
+            attrs: { nodeId: 'b2', language: 'boom', checked: false },
+        });
+
+        await replace(handle(), {
+            next: { documentId: 'document-2', revision: 'revision-9', document: next.document },
+            unsaved: { action: 'discard', confirmed: true },
+        });
+
+        const shell = document.querySelector('[data-rte-shell="recovery"]');
+        expect(shell?.textContent).toContain('xab');
+        expect(shell?.textContent).not.toContain('next');
+        expect(document.querySelector('[role="textbox"]')).toBeNull();
+        unmount();
+    });
+
     it('SPEC-rich-text-persistence/AC-059 SPEC-rich-text-runtime/AC-015 stores no recovery checkpoint when the next document faults the install', async () => {
         vi.mocked(createPortalStore).mockImplementationOnce((scheduler) => {
             const store = actualStore(scheduler);

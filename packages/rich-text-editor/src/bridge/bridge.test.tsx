@@ -4,6 +4,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 import { EditorView } from 'prosemirror-view';
 import { Profiler, StrictMode, createRef } from 'react';
 import * as ReactDOMClient from 'react-dom/client';
+import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, expectTypeOf, it, vi } from 'vitest';
 
 import { fixtureChrome } from '#/features/__fixtures__/chrome/feature';
@@ -713,12 +714,51 @@ describe('node view faults', () => {
 
         expect(handle().getSummary().phase).toBe('faulted');
         expect(onDiagnostic.mock.calls.filter(([{ code }]) => code === 'runtime.view-fault')).toHaveLength(1);
-        expect(surface()).toHaveAttribute('contenteditable', 'false');
+        // The recovery shell takes the place of a surface that takes no more edits (DR-078).
+        expect(screen.queryByRole('textbox', { name: 'Notes' })).toBeNull();
+        expect(document.querySelector('[data-rte-shell="recovery"]')).not.toBeNull();
         expect(handle().getSnapshot().stamp).toEqual(stamp);
         expect(updateState.mock.results.map(({ type }) => type)).toEqual(['return']);
         expect(probeRuntimes().portals).toBe(0);
         expect(() => handle().dispose()).not.toThrow();
         updateState.mockRestore();
+        unmount();
+    });
+
+    /** The recovery shell, which shows `document` through the reader. */
+    const recoveryShell = (shown: unknown) => {
+        const shell = document.querySelector('[data-rte-shell="recovery"]');
+        expect(shell?.innerHTML).toContain(
+            renderToStaticMarkup(<RichTextReader document={shown as never} model={model} locale={enUS} />),
+        );
+    };
+
+    it('SPEC-rich-text-react/AC-022 SPEC-rich-text-runtime/AC-014 shows the recovery shell with the snapshot once a node view update faults, and Retry edits it again', async () => {
+        throwingStore((state) => state.attrs.language === 'boom');
+        const { runtime, handle, environment, flush, unmount } = await mount([block('b1', 'code')]);
+        act(() => typeText(handle(), 'x'));
+        const before = handle().getSnapshot();
+
+        act(() => {
+            runtime().nodeActions('b1').update({ language: 'boom' });
+        });
+        await flush();
+
+        recoveryShell(before.document);
+        fireEvent.click(screen.getByRole('button', { name: 'Retry' }));
+        await flush();
+        act(() => environment.flushFrames());
+        expect(surface()).toHaveAttribute('contenteditable', 'true');
+        expect(handle().getSnapshot().document).toEqual(before.document);
+        unmount();
+    });
+
+    it('SPEC-rich-text-runtime/AC-071 SPEC-rich-text-react/AC-022 shows the recovery shell with the decoded document when a node view constructor throws while mounting', async () => {
+        throwingStore(() => true);
+        const { handle, unmount } = await mount([block('b1', 'code')]);
+
+        expect(screen.queryByRole('textbox', { name: 'Notes' })).toBeNull();
+        recoveryShell(handle().getSnapshot().document);
         unmount();
     });
 
