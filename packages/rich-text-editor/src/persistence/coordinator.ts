@@ -35,7 +35,7 @@ export interface SaveCoordinatorOptions {
     /** The loaded record's revision, `null` for a new record. */
     readonly revision: ServerRevision | null;
     /** The document holds changes a failed session never saved, as after Retry (SPEC-rich-text-react/AC-085). */
-    readonly carried: boolean;
+    readonly unsavedOnMount: boolean;
     readonly model: ContentModel;
     readonly environment: RuntimeEnvironment;
 }
@@ -88,11 +88,12 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
     let latest = 0;
     // A new record starts below the first sequence, an existing one at it (AC-004, AC-005).
     let acknowledged = 0;
-    // A carried document is not the acknowledged one, so its first sequence counts as unsaved.
-    if (given.revision === null || given.carried) {
+    if (given.revision === null) {
         acknowledged = -1;
     }
-    if (given.carried) {
+    // Cleared by the first accepted acknowledgment, which saves what the session mounted with.
+    let unsavedOnMount = given.unsavedOnMount;
+    if (unsavedOnMount) {
         state = 'dirty';
     }
     let revision = given.revision;
@@ -107,7 +108,7 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
     let longest: number | undefined;
     let retry: number | undefined;
     let timeout: number | undefined;
-    let disposed = false;
+    // Aborted by `dispose`, which ends the session's reads and every later step.
     const ended = new AbortController();
 
     const build = (): SaveStatus => {
@@ -141,9 +142,18 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
     };
 
     // A new record that nobody changed has nothing to save (`SPEC-rich-text-persistence`, Save states).
-    const unsaved = () => latest > acknowledged && (latest > 0 || given.carried);
+    const unsaved = () => (latest > acknowledged && latest > 0) || unsavedOnMount;
     // A session that is not ready, such as a faulted one, writes nothing (SPEC-rich-text-runtime/AC-091).
     const ready = () => runtime.handle.getSummary().phase === 'ready';
+    /** Sets state `offline` while the browser reports no network; `true` when it did (AC-015). */
+    const parkedOffline = () => {
+        if (navigator.onLine) {
+            return false;
+        }
+        state = 'offline';
+        publish();
+        return true;
+    };
     const idle = () => {
         state = 'clean';
         if (unsaved()) {
@@ -204,7 +214,7 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
     /** Sends the latest snapshot once nothing holds it (AC-006, AC-013, AC-015, AC-057, `SPEC-rich-text-runtime/AC-091`). */
     const send = () => {
         // A write in flight stays unresolved until its answer, so this keeps at most one in flight (AC-006).
-        if (!due || disposed || unresolved !== undefined || paused()) {
+        if (!due || ended.signal.aborted || unresolved !== undefined || paused()) {
             return;
         }
         const summary = runtime.handle.getSummary();
@@ -215,9 +225,7 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
             due = false;
             return;
         }
-        if (!navigator.onLine) {
-            state = 'offline';
-            publish();
+        if (parkedOffline()) {
             return;
         }
         due = false;
@@ -241,12 +249,10 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
 
     const replay = () => {
         retry = undefined;
-        if (unresolved === undefined || disposed || !ready()) {
+        if (unresolved === undefined || ended.signal.aborted || !ready()) {
             return;
         }
-        if (!navigator.onLine) {
-            state = 'offline';
-            publish();
+        if (parkedOffline()) {
             return;
         }
         replays += 1;
@@ -260,9 +266,7 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
         }
         end(current);
         current.controller.abort();
-        if (!navigator.onLine) {
-            state = 'offline';
-            publish();
+        if (parkedOffline()) {
             runtime.measure('save', current.started, code);
             return;
         }
@@ -292,7 +296,7 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
         }
         const handOver = (remote: LoadedDocument | null) => {
             const onConflict = given.options()?.onConflict;
-            if (!disposed && onConflict !== undefined) {
+            if (!ended.signal.aborted && onConflict !== undefined) {
                 onConflict(remote, runtime.handle.getSnapshot());
             }
         };
@@ -323,6 +327,7 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
             unresolved = undefined;
             acknowledged = acknowledgment.stamp.sequence;
             revision = acknowledgment.revision;
+            unsavedOnMount = false;
             problem = null;
             // A newer change keeps the session dirty, and the next write takes this revision as its base (AC-011).
             idle();
@@ -355,7 +360,7 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
     };
 
     const online = () => {
-        if (disposed || state !== 'offline') {
+        if (ended.signal.aborted || state !== 'offline') {
             return;
         }
         // The write whose outcome the network left unknown goes first, unchanged (AC-016).
@@ -370,14 +375,14 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
         send();
     };
     window.addEventListener('online', online);
-    if (given.carried) {
+    if (unsavedOnMount) {
         schedule();
     }
 
     return {
         status: () => status,
         changed: () => {
-            if (disposed) {
+            if (ended.signal.aborted) {
                 return;
             }
             latest = runtime.handle.getSummary().sequence;
@@ -404,10 +409,10 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
             write(unresolved);
         },
         dispose: () => {
-            if (disposed) {
+            if (ended.signal.aborted) {
                 return;
             }
-            disposed = true;
+            ended.abort();
             window.removeEventListener('online', online);
             stopTimers();
             clear(retry);
@@ -417,7 +422,6 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
                 current.controller.abort();
                 refresh();
             }
-            ended.abort();
             // A session that leaves unsaved changes says so and starts no write (AC-041).
             if (unsaved()) {
                 runtime.report(diagnostic('persistence.disposed-dirty', undefined, undefined, 'warning'));
