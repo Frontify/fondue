@@ -158,10 +158,12 @@ describe('compileDefinition', () => {
     it.each(['inline{1,64}', '(inline{1,8}){1,8}', '((inline{1,4}){1,4}){1,4}'])(
         'SPEC-rich-text/AC-081 compiles %j and builds its schema in under 200 ms',
         (content) => {
-            const started = performance.now();
+            // CPU time of this test process, so the other test workers on the machine do not count.
+            const started = process.cpuUsage();
             const feature = defineFeature({ id: 'a.x', version: 1, nodes: { box: { ...box, content } } })();
             const { schema } = compileDefinition(compileContentModel([core(), feature], options));
-            expect(performance.now() - started).toBeLessThan(200);
+            const { user, system } = process.cpuUsage(started);
+            expect((user + system) / 1000).toBeLessThan(200);
             expect(schema.nodes.box?.spec.content).toBe(content);
         },
     );
