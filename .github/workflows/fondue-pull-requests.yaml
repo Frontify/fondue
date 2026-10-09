@@ -237,6 +237,10 @@ jobs:
       - name: Install Playwright browsers
         run: pnpm --stream --filter {packages/rich-text-editor} install:playwright
 
+      # The hydration tests render the built package in Node.
+      - name: Build the editor
+        run: pnpm build:rich-text-editor
+
       - name: Playwright tests
         run: pnpm --filter {packages/rich-text-editor} exec playwright test --shard=${{ matrix.shard }}/${{ strategy.job-total }}
 
@@ -279,6 +283,9 @@ jobs:
         run: pnpm --stream --filter {packages/rich-text-editor} test:storybook:ci
 
       # Development React keeps its hydration mismatch warnings (SPEC-rich-text-output/AC-010).
+      - name: Build the editor
+        run: pnpm build:rich-text-editor
+
       - name: Reader hydration tests
         run: pnpm --stream --filter {packages/rich-text-editor} test:components:hydration
 
