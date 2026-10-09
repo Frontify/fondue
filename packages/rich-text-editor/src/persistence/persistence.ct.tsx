@@ -235,3 +235,34 @@ test('SPEC-rich-text-runtime/AC-090 keeps the surface busy and not editable whil
     await expect(surface).toHaveText('Next');
     expect(await savedTexts(page)).toContain('Read the guide!');
 });
+
+test('SPEC-rich-text-runtime/AC-090 drops a character typed while a replacement waits, and keeps the text', async ({
+    mount,
+    page,
+}) => {
+    await mount(<EditorProbe texts={['Read the guide']} persistence holdSaves />);
+    await ready(page);
+    await caretAfter(page, 'Read the guide');
+    await page.keyboard.type('!');
+    const surface = surfaceOf(page);
+    await page.evaluate(() => {
+        const { handle } = window.rte as Rte;
+        const { stamp, document } = handle.getSnapshot();
+        window.replacement = handle.replaceDocument({
+            expected: stamp,
+            next: { documentId: 'document-2', revision: null, document },
+            unsaved: { action: 'save' },
+            selection: 'start',
+            history: 'reset',
+        });
+    });
+    await expect(surface).toHaveAttribute('contenteditable', 'false');
+
+    await surface.click();
+    await page.keyboard.type('z');
+
+    await expect(surface).toHaveText('Read the guide!');
+    expect(await page.evaluate(() => (window.rte as Rte).text())).toBe('Read the guide!');
+    await page.evaluate(() => (window.rte as Rte).answerSaves());
+    await page.evaluate(() => window.replacement);
+});
