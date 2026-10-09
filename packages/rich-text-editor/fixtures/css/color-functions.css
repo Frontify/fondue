@@ -1,0 +1,9 @@
+:where(.fondue-rte-content) {
+    color: hwb(0 0% 0%);
+    background-color: lab(50% 0 0);
+    border-color: lch(50% 0 0);
+    outline-color: oklab(50% 0 0);
+    caret-color: oklch(50% 0 0);
+    text-decoration-color: color(srgb 1 0 0);
+    column-rule-color: Canvas;
+}

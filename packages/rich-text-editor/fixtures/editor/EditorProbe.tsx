@@ -2,7 +2,7 @@
 
 import { ThemeProvider } from '@frontify/fondue-components';
 import { undoDepth } from 'prosemirror-history';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { bold, core } from '../../src/features';
 import { fixtureChromeViews } from '../../src/features/__fixtures__/chrome/view';
@@ -20,7 +20,7 @@ import {
     type EditorHandle,
     RichTextEditor,
 } from '../../src/index';
-import { compileContentModel, type ContentNodeJSON } from '../../src/model';
+import { compileContentModel, type ContentModel, type ContentNodeJSON } from '../../src/model';
 import { boldRules } from '../../src/react/playground.stories';
 import { RichTextReader } from '../../src/reader';
 import { type EditorRuntime, runtimeOf } from '../../src/runtime/runtime';
@@ -33,19 +33,18 @@ const model = compileContentModel(
         version: 1,
     },
 );
+// Adds a `pre` code block and the heading input rule to the CT model (SPEC-rich-text-react/AC-066, AC-092).
+const inputRulesModel = compileContentModel(
+    [core(), bold(), fixtureItalic(), fixtureLink(), fixtureHeadingSet(), fixtureInputRules(), fixtureChromeViews()],
+    { id: 'test.ct', version: 1 },
+);
 const ALLOW = { create: true, edit: true, remove: true, paste: true };
 /** The CT model's definitions: every feature allowed, and paragraphs that may not change. */
 const definitions = {
     open: defineEditor({ id: 'test.ct', model }),
     guarded: defineEditor({ id: 'test.ct', model, policy: { features: { core: { ...ALLOW, edit: false } } } }),
     // The heading input rule turns `## ` into a heading, which needs the typed space kept (SPEC-rich-text-react/AC-092).
-    inputRules: defineEditor({
-        id: 'test.ct',
-        model: compileContentModel(
-            [core(), bold(), fixtureItalic(), fixtureHeadingSet(), fixtureInputRules(), fixtureChromeViews()],
-            { id: 'test.ct', version: 1 },
-        ),
-    }),
+    inputRules: defineEditor({ id: 'test.ct', model: inputRulesModel }),
 };
 
 /** A text, or a link around the text inside `[` and `]`, as `Read the [guide]`. */
@@ -167,18 +166,20 @@ export const EditorProbe = ({
             model: compileContentModel(features, { id: 'test.ct', version: 1 }),
         });
     });
-    const [presentation] = useState(() => {
+    const presentation = useMemo(() => {
         if (contentClassName === undefined) {
             return undefined;
         }
         return defineReactPresentation({ contentClassName });
-    });
+    }, [contentClassName]);
     let definition: CompiledEditorDefinition<object> = definitions.open;
     if (guarded) {
         definition = definitions.guarded;
     }
+    let readerModel: ContentModel = model;
     if (inputRules) {
         definition = definitions.inputRules;
+        readerModel = inputRulesModel;
     }
     if (profileDefinition !== undefined) {
         definition = profileDefinition;
@@ -221,7 +222,7 @@ export const EditorProbe = ({
                 <section aria-label="Reader">
                     <RichTextReader
                         document={defaultValue.document}
-                        model={model}
+                        model={readerModel}
                         {...(presentation === undefined ? {} : { presentation })}
                     />
                 </section>

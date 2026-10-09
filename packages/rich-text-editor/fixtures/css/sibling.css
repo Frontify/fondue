@@ -1,0 +1,7 @@
+:where(.fondue-rte-content) + p {
+    margin: 0;
+}
+
+:where(.fondue-rte-content p) ~ ul {
+    margin: 0;
+}

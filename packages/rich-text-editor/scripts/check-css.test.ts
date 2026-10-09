@@ -25,6 +25,43 @@ describe('check-css', () => {
         ]);
     });
 
+    it('SPEC-rich-text-react/AC-050 fails on a sibling of the root or of a content element', () => {
+        expect(scanCss('sibling.css', fixture('sibling.css'))).toEqual([
+            'sibling.css:1 selector :where(.fondue-rte-content) + p is not inside :where(.fondue-rte-content)',
+            'sibling.css:5 selector :where(.fondue-rte-content p) ~ ul is not inside :where(.fondue-rte-content)',
+        ]);
+    });
+
+    it('SPEC-rich-text-react/AC-050 fails on a :where list that reaches outside the root', () => {
+        expect(scanCss('selector-list.css', fixture('selector-list.css'))).toEqual([
+            'selector-list.css:1 selector :where(.fondue-rte-content, p) is not inside :where(.fondue-rte-content)',
+        ]);
+    });
+
+    it('SPEC-rich-text-react/AC-050 fails on a class that only starts with the root class', () => {
+        expect(scanCss('prefix.css', fixture('prefix.css'))).toEqual([
+            'prefix.css:1 selector :where(.fondue-rte-contentx) is not inside :where(.fondue-rte-content)',
+        ]);
+    });
+
+    it('SPEC-rich-text-react/AC-050 fails on an at-rule other than media and keyframes that carries declarations', () => {
+        expect(scanCss('at-rule-declarations.css', fixture('at-rule-declarations.css'))).toEqual([
+            'at-rule-declarations.css:1 at-rule @page carries declarations outside :where(.fondue-rte-content)',
+        ]);
+    });
+
+    it('SPEC-rich-text-react/AC-052 fails on the CSS Color 4 colour functions and system colours', () => {
+        expect(scanCss('color-functions.css', fixture('color-functions.css'))).toEqual([
+            'color-functions.css:1 color sets the literal colour hwb(',
+            'color-functions.css:1 background-color sets the literal colour lab(',
+            'color-functions.css:1 border-color sets the literal colour lch(',
+            'color-functions.css:1 outline-color sets the literal colour oklab(',
+            'color-functions.css:1 caret-color sets the literal colour oklch(',
+            'color-functions.css:1 text-decoration-color sets the literal colour color(',
+            'color-functions.css:1 column-rule-color sets the literal colour Canvas',
+        ]);
+    });
+
     it('SPEC-rich-text-react/AC-052 fails on hex, rgb, hsl and named colours', () => {
         expect(scanCss('literal-colors.css', fixture('literal-colors.css'))).toEqual([
             'literal-colors.css:1 color sets the literal colour #8cf',
@@ -101,7 +138,11 @@ describe('content stylesheet', () => {
             for (const rule of parseCss(readFileSync(require.resolve(path), 'utf8')).rules) {
                 for (const selector of rule.selectors) {
                     const target = scoped(selector);
-                    const ours = content.rules.filter(({ selectors }) => selectors.map(normalize).includes(target));
+                    // A rule on every content root reaches the surface too, since the surface is one.
+                    const targets = [target, target.replace('[data-rte-surface]', '')];
+                    const ours = content.rules.filter(({ selectors }) =>
+                        selectors.map(normalize).some((selector) => targets.includes(selector)),
+                    );
                     for (const [property, value] of rule.declarations) {
                         const expected = PHYSICAL_OFFSETS[property] ?? property;
                         if (!ours.some((candidate) => declares(candidate, expected, value))) {
@@ -189,6 +230,7 @@ const contrast = (text: Rgba, opacity: number, background: Rgba) => {
 describe('content contrast', () => {
     const pairs = [
         { text: '--rte-content-text-color', opacity: undefined },
+        { text: '--rte-content-link-color', opacity: undefined },
         { text: '--rte-content-placeholder-color', opacity: '--rte-content-placeholder-opacity' },
     ];
     for (const theme of ['light', 'dark']) {
@@ -200,11 +242,11 @@ describe('content contrast', () => {
                     shownOpacity = Number(resolve(opacity, variables));
                 }
                 const background = rgbaOf(resolve('--rte-content-surface-background', variables));
+                const color = resolve(text, variables);
 
+                expect(color).toMatch(/^rgba?\(/);
                 expect(background[3]).toBe(1);
-                expect(contrast(rgbaOf(resolve(text, variables)), shownOpacity, background)).toBeGreaterThanOrEqual(
-                    4.5,
-                );
+                expect(contrast(rgbaOf(color), shownOpacity, background)).toBeGreaterThanOrEqual(4.5);
             });
         }
     }

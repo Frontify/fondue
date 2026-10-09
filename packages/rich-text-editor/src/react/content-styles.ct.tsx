@@ -13,6 +13,7 @@ const ready = async (page: Page) => {
 };
 const para = (...content: readonly object[]) => ({ type: 'paragraph', attrs: { lang: null }, content });
 const text = (value: string) => ({ type: 'text', text: value });
+const link = { type: 'link', attrs: { href: 'https://example.com/followed', openInNewWindow: false, styleId: null } };
 const blocks = (...nodes: readonly object[]) => nodes as readonly ContentNodeJSON[];
 
 /** Adds a host stylesheet before every other one, so the package rules come later in the cascade. */
@@ -68,7 +69,14 @@ test('SPEC-rich-text-react/AC-066 gives the reader root the same classes and con
     mount,
     page,
 }) => {
-    await mount(<EditorProbe texts={['Read the [guide]', 'b']} contentClassName="host-content" withReader />);
+    // Every block type of the CT stand-ins, until `fixtures/perf/typical` lands with TASK-rte-performance.
+    const document = blocks(
+        para(text('Read the '), { type: 'text', text: 'guide', marks: [link] }),
+        para(text('b')),
+        { type: 'heading', attrs: { nodeId: 'h1', level: 2, lang: null }, content: [text('Title')] },
+        { type: 'code_block', attrs: {}, content: [text('a  b')] },
+    );
+    await mount(<EditorProbe blocks={document} inputRules contentClassName="host-content" withReader />);
     await ready(page);
     await hostStylesheet(page, '.host-content { --rte-content-paragraph-spacing: 13px; }');
     const reader = page.getByRole('region', { name: 'Reader' }).locator('> div');
@@ -82,7 +90,16 @@ test('SPEC-rich-text-react/AC-066 gives the reader root the same classes and con
                 variables: read(element, ['--rte-content-paragraph-spacing', '--rte-content-text-color']),
                 blocks: [...element.children].map((block) => [
                     block.tagName,
-                    ...read(block, ['margin-block-start', 'margin-block-end', 'color', 'font-size', 'line-height']),
+                    ...read(block, [
+                        'margin-block-start',
+                        'margin-block-end',
+                        'color',
+                        'font-size',
+                        'line-height',
+                        'white-space',
+                        'overflow-wrap',
+                        'font-variant-ligatures',
+                    ]),
                 ]),
             };
         });
@@ -90,8 +107,29 @@ test('SPEC-rich-text-react/AC-066 gives the reader root the same classes and con
     await expect(reader).toHaveClass(/(^| )fondue-rte-content( |$)/);
     await expect(reader).toHaveClass(/(^| )host-content( |$)/);
     const shown = await styles(reader);
-    expect(shown.blocks.map(([, , end]) => end)).toEqual(['13px', '13px']);
+    expect(shown.blocks.map(([tag]) => tag)).toEqual(['P', 'P', 'H2', 'PRE']);
+    expect(shown.blocks.filter(([tag]) => tag === 'P').map(([, , end]) => end)).toEqual(['13px', '13px']);
     expect(shown).toEqual(await styles(surfaceOf(page)));
+});
+
+test('SPEC-rich-text-react/AC-065 SPEC-rich-text-react/AC-092 keeps the engine classes on the surface when the content class changes', async ({
+    mount,
+    page,
+}) => {
+    const document = blocks(para(text('ab')), { type: 'chrome_image', attrs: { nodeId: 'i1', assetId: null } });
+    const component = await mount(<EditorProbe blocks={document} contentClassName="first" />);
+    await ready(page);
+    await surfaceOf(page).locator('p').click();
+    await page.evaluate(() => window.rte?.setSelection(window.rte.handle, { nodeId: 'i1' }));
+    await expect(surfaceOf(page)).toHaveClass(/(^| )ProseMirror-hideselection( |$)/);
+
+    await component.update(<EditorProbe blocks={document} contentClassName="second" />);
+
+    const classes = () => surfaceOf(page).evaluate((surface) => [...surface.classList].sort());
+    await expect.poll(classes).not.toContain('first');
+    expect(await classes()).toEqual(
+        expect.arrayContaining(['ProseMirror', 'ProseMirror-hideselection', 'fondue-rte-content', 'second']),
+    );
 });
 
 test('SPEC-rich-text-react/AC-067 lets a host rule on the content class win over the package paragraph rule without important', async ({
