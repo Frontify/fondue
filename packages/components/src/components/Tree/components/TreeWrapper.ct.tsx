@@ -13,6 +13,7 @@ import {
     MultiSelectWrapperTree,
     NestedWrapperTree,
     ReorderWrapperTree,
+    TimedReorderWrapperTree,
     ToggleWrapperTree,
 } from './testutils/WrapperFixtures';
 
@@ -99,6 +100,39 @@ test.describe('Tree rows inside custom components', () => {
                 return names.map((text) => text.trim());
             })
             .toEqual(['b', 'a']);
+    });
+
+    test('paints a timer-driven reorder of wrapped rows without a stale frame', async ({ mount, page }) => {
+        const component = await mount(<TimedReorderWrapperTree />);
+        await expect(component.getByRole('treeitem')).toHaveCount(2);
+        await page.evaluate(() => {
+            const win = window as unknown as { frames_?: string[] };
+            const frames: string[] = [];
+            win.frames_ = frames;
+            document.querySelector('button')!.click();
+            const tick = () => {
+                const value = [...document.querySelectorAll('[role="treeitem"]')]
+                    .map((el) => el.textContent?.trim())
+                    .join(',');
+                if (document.querySelector('[data-order="b,a"]')) {
+                    frames.push(value);
+                }
+                if (value !== 'b,a' && frames.length < 200) {
+                    requestAnimationFrame(tick);
+                }
+            };
+            requestAnimationFrame(tick);
+        });
+        await expect
+            .poll(() =>
+                page.evaluate(() => {
+                    const frames = (window as unknown as { frames_?: string[] }).frames_ ?? [];
+                    return frames[frames.length - 1];
+                }),
+            )
+            .toBe('b,a');
+        const frames = await page.evaluate(() => (window as unknown as { frames_?: string[] }).frames_ ?? []);
+        expect(frames.filter((value) => value === 'a,b')).toHaveLength(0);
     });
 
     test('cascades a folder checkbox to wrapped children', async ({ mount }) => {

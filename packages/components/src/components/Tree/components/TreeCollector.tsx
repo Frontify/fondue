@@ -1,6 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { createContext, useContext, useId, useLayoutEffect, type ReactNode, type RefObject } from 'react';
+import { flushSync } from 'react-dom';
 
 import { ROOT_ID } from '../constants';
 import { type TreeFolderProps, type TreeItemData, type TreeItemProps } from '../types';
@@ -63,8 +64,9 @@ export const TreeCollector = ({
         if (!container) {
             return;
         }
-        // Rows reordered with unchanged props move their markers without re-rendering.
-        const observer = new MutationObserver(() => store.requestFlush());
+        // Rows reordered with unchanged props move their markers without re-rendering; flush before paint.
+        // eslint-disable-next-line @eslint-react/dom-no-flush-sync
+        const observer = new MutationObserver(() => flushSync(() => store.requestFlush()));
         observer.observe(container, { childList: true, subtree: true });
         return () => observer.disconnect();
     }, [containerRef, store]);

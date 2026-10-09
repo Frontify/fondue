@@ -169,7 +169,12 @@ export const MultiSelectWrapperTree = () => {
 
 const Reverse = ({ children, isReversed }: { children: ReactNode; isReversed: boolean }) => {
     const items = Children.toArray(children);
-    return isReversed ? items.reverse() : items;
+    return (
+        <>
+            <i data-order={isReversed ? 'b,a' : 'a,b'} />
+            {isReversed ? items.reverse() : items}
+        </>
+    );
 };
 
 const reorderItems = [
@@ -186,6 +191,20 @@ export const ReorderWrapperTree = () => {
     return (
         <>
             <button type="button" onClick={() => setIsReversed((prev) => !prev)}>
+                reverse
+            </button>
+            <Tree.Root>
+                <Reverse isReversed={isReversed}>{reorderItems}</Reverse>
+            </Tree.Root>
+        </>
+    );
+};
+
+export const TimedReorderWrapperTree = () => {
+    const [isReversed, setIsReversed] = useState(false);
+    return (
+        <>
+            <button type="button" onClick={() => setTimeout(() => setIsReversed(true), 0)}>
                 reverse
             </button>
             <Tree.Root>
