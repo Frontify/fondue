@@ -291,6 +291,50 @@ describe('the React bridge', () => {
         unmount();
     });
 
+    it('SPEC-rich-text-react/AC-014 builds new chrome when a node with another ID takes the place of a selected one', async () => {
+        const { editorView, handle, flush, unmount } = await mount([para(text('a'), mention('m1'))]);
+        fireEvent.click(surface().querySelector('[data-chrome="mention"] button') as HTMLElement);
+        expect(surface().querySelector('[data-popup]')).not.toBeNull();
+
+        act(() => {
+            setSelection(handle(), { nodeId: 'm1' });
+            editorView().pasteHTML('<span data-chrome-mention="m3" data-label="Bea"></span>');
+        });
+        await flush();
+
+        expect(surface().querySelector('[data-chrome="mention"] button')).toHaveTextContent('Bea');
+        expect(surface().querySelector('[data-popup]')).toBeNull();
+        unmount();
+    });
+
+    it('SPEC-rich-text-react/AC-021 renders chrome again once an update changes the attribute it threw for', async () => {
+        const errors = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+        const Strict = () => {
+            const { attrs } = useRichTextNodeView<object>();
+            if (attrs.language === 'boom') {
+                throw new Error('chrome failed');
+            }
+            return <span data-test-chrome="" />;
+        };
+        const strict = defineEditor({
+            id: 'test.bridge',
+            model: modelOf([defineNodeView(fixtureChrome(), { node: 'chrome_block', component: Strict })]),
+        });
+        const { runtime, flush, unmount } = await mount([block('b1', 'code', 'boom')], { definition: strict });
+        expect(surface().querySelector('[data-rte-chrome]')).toHaveTextContent(
+            'This part of the content cannot be shown',
+        );
+
+        act(() => {
+            runtime().nodeActions('b1').update({ language: 'typescript' });
+        });
+        await flush();
+
+        expect(surface().querySelector('[data-test-chrome]')).not.toBeNull();
+        errors.mockRestore();
+        unmount();
+    });
+
     it('SPEC-rich-text-react/AC-097 registers no node view for native nodes and renders nothing while typing in a list', async () => {
         const native = ['paragraph', 'heading', 'text', 'bullet_list', 'list_item', 'table_row', 'table_cell'];
         for (const features of [...Object.values(fixtureProfiles()), [core(), fixtureChromeViews(), fixtureList()]]) {

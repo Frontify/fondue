@@ -69,6 +69,8 @@ test('SPEC-rich-text-react/AC-018 keeps the first character typed over a select-
 
     await surfaceOf(page).locator('[data-rte-chrome] + div').click();
     await page.keyboard.press('ControlOrMeta+a');
+    // A loaded WebKit run once took the key before the select-all reached the DOM, so typing waits for it.
+    await expect.poll(() => page.evaluate(() => window.getSelection()?.toString().includes('code'))).toBe(true);
     await page.keyboard.type('x');
 
     await expect.poll(() => page.evaluate(() => window.rte?.text())).toBe('x');
@@ -101,6 +103,40 @@ test('SPEC-rich-text-react/AC-070 passes node selection to the image chrome with
 
     expect(selected).toEqual({ selected: 'true', className: true, draggable: 'true', clicks: '1', same: true });
     expect(deselected).toEqual({ selected: 'false', className: false, draggable: null, clicks: '1', same: true });
+});
+
+test('SPEC-rich-text-react/AC-017 lets a node-selected atom drag from its chrome while a chrome button keeps its click', async ({
+    mount,
+    page,
+}) => {
+    await mount(<EditorProbe blocks={blocks(para(text('ab')), image('i1'))} />);
+    await ready(page);
+    const chrome = surfaceOf(page).locator('[data-chrome="image"]');
+    const editorState = () =>
+        page.evaluate(() => {
+            const runtime = window.rte?.runtime;
+            const view = runtime?.view;
+            if (view === undefined) {
+                return undefined;
+            }
+            const selection: unknown = view.state.selection.toJSON();
+            return { selection, dragging: view.dragging !== null };
+        });
+    await surfaceOf(page).locator('p').click();
+    await page.evaluate(() => window.rte?.setSelection(window.rte.handle, { text: 'ab', from: 2, to: 2 }));
+
+    await chrome.getByRole('button').click();
+    const clicked = await editorState();
+    await page.evaluate(() => window.rte?.setSelection(window.rte.handle, { nodeId: 'i1' }));
+    await chrome.evaluate((element) => {
+        const drag = new DragEvent('dragstart', { bubbles: true, cancelable: true, dataTransfer: new DataTransfer() });
+        element.dispatchEvent(drag);
+    });
+    const dragged = await editorState();
+
+    await expect(chrome.getByRole('button')).toHaveText('1');
+    expect(clicked).toEqual({ selection: { type: 'text', anchor: 3, head: 3 }, dragging: false });
+    expect(dragged).toEqual({ selection: { type: 'node', anchor: 4 }, dragging: true });
 });
 
 test('SPEC-rich-text-react/AC-100 keeps the caret where the editor selection is while three mention labels update in one batch', async ({
