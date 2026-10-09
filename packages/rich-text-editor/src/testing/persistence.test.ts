@@ -2,7 +2,7 @@
 
 import { describe, expect, it, vi } from 'vitest';
 
-import { type JsonValue } from '#/model';
+import { type JsonValue, type RichTextDocument } from '#/model';
 import { canonicalJson } from '#/model/hash';
 import { type PersistenceService, type SaveRequest, type SaveResponse, type ServiceContext } from '#/persistence/types';
 
@@ -14,6 +14,21 @@ const REJECTED: SaveRequest['writer'] = {
     model: { id: 'test.conformance', version: 1 },
     capabilities: [],
 };
+const WRITER: SaveRequest['writer'] = { ...REJECTED, build: '1.0.0', capabilities: [{ id: 'core', version: 1 }] };
+// Spaces a normalizing server would trim, for the obligation 7 case.
+const DOCUMENT: RichTextDocument = {
+    format: 'frontify.rich-text',
+    formatVersion: 1,
+    model: { id: 'test.conformance', version: 1 },
+    requiredCapabilities: [{ id: 'core', version: 1 }],
+    content: {
+        type: 'doc',
+        attrs: { lang: null, dir: 'auto' },
+        content: [{ type: 'paragraph', attrs: { lang: null }, content: [{ type: 'text', text: '  Spaced  text  ' }] }],
+    },
+};
+/** What every harness here adds to its services. */
+const GIVEN = { rejectedWriter: REJECTED, writer: WRITER, document: DOCUMENT };
 
 /** Registers the kit's cases on a stand-in runner, runs each one and returns the titles of those that fail. */
 const failingTitles = async (createHarness: () => PersistenceServerHarness): Promise<string[]> => {
@@ -72,7 +87,7 @@ const flawed =
             },
             read: reference.service.read,
         };
-        return { service, readOnlyService: reference.readOnlyService, rejectedWriter: REJECTED };
+        return { ...GIVEN, service, readOnlyService: reference.readOnlyService };
     };
 
 /** Writes under a new operation ID on `base`, by default the latest revision, answering under the request's own ID. */
@@ -170,7 +185,7 @@ const BROKEN: readonly (readonly [string, string, () => PersistenceServerHarness
         'Server obligation 5 rejects a user who may not write',
         () => {
             const reference = createFakeServer();
-            return { service: reference.service, readOnlyService: reference.service, rejectedWriter: REJECTED };
+            return { ...GIVEN, service: reference.service, readOnlyService: reference.service };
         },
     ],
     [
@@ -190,10 +205,7 @@ const BROKEN: readonly (readonly [string, string, () => PersistenceServerHarness
         'Server obligation 5 rejects the writer',
         flawed((request, context, server) => {
             if (request.writer === REJECTED) {
-                return server.save(
-                    { ...request, writer: { ...REJECTED, capabilities: [{ id: 'core', version: 1 }] } },
-                    context,
-                );
+                return server.save({ ...request, writer: WRITER }, context);
             }
             return server.save(request, context);
         }),
@@ -221,7 +233,7 @@ const BROKEN: readonly (readonly [string, string, () => PersistenceServerHarness
 
 describe('runPersistenceConformance', () => {
     it('SPEC-rich-text-persistence/AC-049 passes every case against the reference fake', async () => {
-        expect(await failingTitles(() => ({ ...createFakeServer(), rejectedWriter: REJECTED }))).toEqual([]);
+        expect(await failingTitles(() => Object.assign(createFakeServer(), GIVEN))).toEqual([]);
     });
 
     it.each(BROKEN)(

@@ -918,6 +918,8 @@ describe('the persistence conformance kit', () => {
         runPersistenceConformance(() => ({
             ...createFakeServer(),
             rejectedWriter: { ...WRITER, capabilities: [] },
+            writer: WRITER,
+            document: loaded(null, para('ab')).document,
         }));
     });
 });
