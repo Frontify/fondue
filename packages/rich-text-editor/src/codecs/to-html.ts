@@ -109,6 +109,19 @@ const checkOverrideSpec = (spec: HtmlSpec): void => {
     }
 };
 
+// Elements that run script, load a document or resource, or post data; an override may write none of them.
+const UNSAFE_TAGS = new Set('script style iframe object embed template meta link base form'.split(' '));
+const TAG_NAME = /^[a-z][a-z0-9-]*$/;
+
+/** An override's elements must be plain HTML names outside `UNSAFE_TAGS`, which declared specs never reach unchecked. */
+const checkOverrideTags = (template: HtmlTemplate): void => {
+    for (const { tag } of template.layers) {
+        if (!TAG_NAME.test(tag) || UNSAFE_TAGS.has(tag)) {
+            throw new TypeError(`a codec override writes ${tag}`);
+        }
+    }
+};
+
 const fallback = (state: HtmlState, tag: 'span' | 'div', feature: string | null, inner: string): string => {
     const { t } = state.context;
     let label = t('RichTextEditor_readerIslandGeneric');
@@ -212,6 +225,7 @@ const renderNode = (state: HtmlState, { node, path }: Item, pre: boolean): strin
             const spec = plan.html(attrs, state.context);
             checkOverrideSpec(spec);
             template = resolveHtmlSpec(spec, attrs, plan.options, plan.shared);
+            checkOverrideTags(template);
         } catch {
             return overrideFailed(state, node, plan, path, before);
         }
