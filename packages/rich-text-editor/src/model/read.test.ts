@@ -339,11 +339,12 @@ describe('decode limit performance', () => {
     it.each(inputs)(
         'SPEC-rich-text-format/AC-006 returns limit-exceeded for 50 MiB of %s in under 200 ms',
         (_, input) => {
-            const started = performance.now();
+            // CPU time of this test process, so the other test workers on the machine do not count.
+            const started = process.cpuUsage();
             const result = decodeDocument(input, model);
-            const elapsed = performance.now() - started;
+            const { user, system } = process.cpuUsage(started);
             expect(result).toMatchObject({ status: 'blocked', reason: 'limit-exceeded' });
-            expect(elapsed).toBeLessThan(200);
+            expect((user + system) / 1000).toBeLessThan(200);
         },
     );
 });
