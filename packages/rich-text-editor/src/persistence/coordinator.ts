@@ -85,7 +85,7 @@ const STATUS_KEYS = [
 export const createSaveCoordinator = (
     runtime: EditorRuntime,
     given: SaveCoordinatorOptions,
-): SaveCoordinator & { readonly held: () => SaveRequest | undefined } => {
+): SaveCoordinator & { readonly unresolved: () => SaveRequest | undefined } => {
     const { environment } = given;
     const { clock } = environment;
     const writer: SaveRequest['writer'] = {
@@ -631,7 +631,7 @@ export const createSaveCoordinator = (
         unsaved,
         outcomeUnknown: () =>
             inFlight !== undefined || (unresolved !== undefined && (state === 'uncertain' || state === 'offline')),
-        replaced: (next) => {
+        replaced: (next, previous) => {
             stopTimers();
             due = false;
             // A checkpoint held offline was never sent, and the next document does not hold it.
@@ -640,7 +640,7 @@ export const createSaveCoordinator = (
             }
             // A call that has not captured yet answers for the old generation, never with the next document (AC-024).
             let old: CommitResult = NOT_SENT;
-            if (accepted !== undefined && accepted.stamp.sequence === latest && !unsavedOnMount) {
+            if (accepted !== undefined && sameStamp(accepted.stamp, previous)) {
                 old = { status: 'acknowledged', acknowledgment: accepted };
             }
             for (const [capture, finish] of waiting) {
@@ -654,7 +654,7 @@ export const createSaveCoordinator = (
             load(next, false);
             refresh();
         },
-        held: () => unresolved,
+        unresolved: () => unresolved,
         dispose: () => {
             if (ended.signal.aborted) {
                 return;

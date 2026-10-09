@@ -4,7 +4,7 @@ The editor orders saves, and the host owns the transport and the server rules. P
 
 ## Switching to another document
 
-- **Same definition:** call `replaceDocument` on the handle. Pass the stamp you read with `getSnapshot()` as `expected`, the next record as `next`, and what to do with unsaved changes as `unsaved`: `reject`, `save`, `checkpoint` with a receipt, or `discard` with `confirmed: true`. The editor keeps the document, history and selection when it refuses, and returns the reason.
+- **Same definition:** call `replaceDocument` on the handle. Pass the stamp you read with `getSnapshot()` as `expected`, the next record as `next`, and what to do with unsaved changes as `unsaved`: `reject`, `save`, `checkpoint` with a receipt, or `discard` with `confirmed: true`. The editor keeps the document, history and selection when it refuses, and returns the reason. A `faulted` refusal is different: the next document could not be shown, so editing stops and the recovery shell shows the old document with its unsaved edits, with Retry and Copy content.
 - **Another definition:** a definition cannot change after mount. Call `requestCommit` and wait until it settles, then mount the editor again with a new `key`. The old editor then has nothing unsaved to leave behind.
 
 A host that echoes its own saved record back through `replaceDocument` gets the current session back, and nothing changes.
