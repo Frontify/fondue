@@ -9,7 +9,7 @@ import { expect, type it as runnerIt, vi } from 'vitest';
 
 import { createNodeViews } from '#/bridge/node-views';
 import { PortalHost } from '#/bridge/portal-host';
-import { createPortalStore } from '#/bridge/portals';
+import { createPortalStore, type PortalStore } from '#/bridge/portals';
 import { compileDefinition, type Normalizer, NORMALIZERS } from '#/definition';
 import { featureFixtures } from '#/features/conformance/fixtures';
 import { enUS } from '#/locales/en-US';
@@ -301,32 +301,38 @@ export const nodeViewCases = (features: readonly Feature[], documents: readonly 
         check: (built: readonly BuiltView[], render: () => Promise<void>) => void | Promise<void>,
     ) => {
         const environment = createTestEnvironment({ seed: 1 });
-        const portals = createPortalStore(environment.scheduler);
         const runtimes: EditorRuntime[] = [];
+        const stores: PortalStore[] = [];
         const built: BuiltView[] = [];
-        const constructors = createNodeViews(views, {
-            portals,
-            context: readerContext(enUS, {}),
-            runtime: () => runtimes.at(-1),
-        });
-        const capturing: Record<string, NodeViewConstructor> = {};
-        for (const [type, construct] of Object.entries(constructors)) {
-            capturing[type] = (node, view, getPos, decorations, inner) => {
-                const created = construct(node, view, getPos, decorations, inner);
-                const pos = getPos();
-                if (type === name && pos !== undefined) {
-                    const chrome = created.dom.querySelector(':scope > [data-rte-chrome]') as HTMLElement;
-                    built.push({ node, parent: view.state.doc.resolve(pos).parent.type.name, view: created, chrome });
-                }
-                return created;
-            };
-        }
+        /** The bridge's constructors, recording each view of `name` with its node and parent. */
+        const capture = (constructors: Readonly<Record<string, NodeViewConstructor>>) => {
+            const capturing: Record<string, NodeViewConstructor> = {};
+            for (const [type, construct] of Object.entries(constructors)) {
+                capturing[type] = (node, view, getPos, decorations, inner) => {
+                    const created = construct(node, view, getPos, decorations, inner);
+                    const pos = getPos();
+                    if (type === name && pos !== undefined) {
+                        const chrome = created.dom.querySelector(':scope > [data-rte-chrome]') as HTMLElement;
+                        built.push({
+                            node,
+                            parent: view.state.doc.resolve(pos).parent.type.name,
+                            view: created,
+                            chrome,
+                        });
+                    }
+                    return created;
+                };
+            }
+            return capturing;
+        };
         const elements: HTMLElement[] = [];
         for (const document of documents) {
             const { result, tree } = decodeToTree({ ...document, model: model.ref }, model);
             if (tree === undefined || result.status === 'blocked') {
                 throw new Error('A node view document does not decode.');
             }
+            const portals = createPortalStore(environment.scheduler);
+            stores.push(portals);
             const runtime = createEditorRuntime({
                 definition: engineOf(definition),
                 documentId: 'document-1',
@@ -336,7 +342,8 @@ export const nodeViewCases = (features: readonly Feature[], documents: readonly 
                 mode: 'editable',
                 policy: definition.authoring,
                 limits: definition.limits,
-                nodeViews: capturing,
+                nodeViews: (session) =>
+                    capture(createNodeViews(views, { portals, context: readerContext(enUS, {}), runtime: session })),
             });
             runtimes.push(runtime);
             const element = globalThis.document.createElement('div');
@@ -344,11 +351,13 @@ export const nodeViewCases = (features: readonly Feature[], documents: readonly 
             elements.push(element);
             runtime.attach(element);
         }
-        const host = render(createElement(PortalHost, { store: portals, onFlush: () => undefined }));
+        const hosts = stores.map((store) => render(createElement(PortalHost, { store, onFlush: () => undefined })));
         try {
             await check(built, () => act(() => environment.flushMicrotasks()));
         } finally {
-            host.unmount();
+            for (const host of hosts) {
+                host.unmount();
+            }
             for (const runtime of runtimes) {
                 runtime.handle.dispose();
             }
