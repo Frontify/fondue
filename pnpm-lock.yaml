@@ -834,6 +834,9 @@ importers:
 
   packages/rich-text-editor:
     dependencies:
+      axe-core:
+        specifier: ^4.13.0
+        version: 4.13.0
       markdown-it:
         specifier: ^15.0.2
         version: 15.0.2
@@ -865,6 +868,9 @@ importers:
       '@frontify/fondue-icons':
         specifier: workspace:^
         version: link:../icons
+      '@frontify/fondue-rich-text-editor-fixture-feature':
+        specifier: workspace:*
+        version: link:../rich-text-editor-fixture-feature
       '@frontify/fondue-tokens':
         specifier: workspace:^
         version: link:../tokens
@@ -925,9 +931,6 @@ importers:
       ajv:
         specifier: ^8.20.0
         version: 8.20.0
-      axe-core:
-        specifier: ^4.13.0
-        version: 4.13.0
       browserslist-to-esbuild:
         specifier: ^2.1.1
         version: 2.1.1(browserslist@4.28.8)
@@ -991,6 +994,12 @@ importers:
       vitest:
         specifier: ^5.0.0
         version: 5.0.0(@types/node@24.13.3)(@vitest/coverage-v8@5.0.0)(@vitest/ui@5.0.0)(happy-dom@20.11.2)(jsdom@30.1.2)(vite@6.4.3(@types/node@24.13.3)(jiti@2.7.0)(sass@1.102.0)(tsx@4.23.11)(yaml@2.9.0))
+
+  packages/rich-text-editor-fixture-feature:
+    dependencies:
+      '@frontify/fondue-rich-text-editor':
+        specifier: workspace:*
+        version: link:../rich-text-editor
 
   packages/rte:
     dependencies:

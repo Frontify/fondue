@@ -122,6 +122,10 @@ export default defineConfig({
         },
     },
     test: {
+        // `runFeatureContract` registers its cases through the runner globals, as it does in a host's tests.
+        globals: true,
+        // The fixture feature package imports the public entries by name; tests resolve them to the same source modules.
+        alias: [{ find: /^@frontify\/fondue-rich-text-editor\/(.*)$/, replacement: `${sourceDirectory}/$1` }],
         coverage: {
             enabled: true,
             provider: 'v8',

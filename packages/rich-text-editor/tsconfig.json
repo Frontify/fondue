@@ -13,7 +13,8 @@
         "noUnusedLocals": true,
         "noUnusedParameters": true,
         "paths": {
-            "#/*": ["./src/*"]
+            "#/*": ["./src/*"],
+            "@frontify/fondue-rich-text-editor/*": ["./src/*"]
         },
         "resolveJsonModule": true,
         "skipLibCheck": true,

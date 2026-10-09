@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+export { runFeatureContract } from '#/features/conformance/contract';
 export { type RuntimeEnvironment } from '#/model';
 
 export { createTestEnvironment, type TestEnvironment } from './environment';

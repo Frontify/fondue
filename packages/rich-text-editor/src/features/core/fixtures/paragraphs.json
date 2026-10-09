@@ -1,0 +1,26 @@
+{
+    "format": "frontify.rich-text",
+    "formatVersion": 1,
+    "model": { "id": "feature-contract", "version": 1 },
+    "requiredCapabilities": [{ "id": "core", "version": 1 }],
+    "content": {
+        "type": "doc",
+        "attrs": { "lang": null, "dir": "auto" },
+        "content": [
+            {
+                "type": "paragraph",
+                "attrs": { "lang": null },
+                "content": [{ "type": "text", "text": "A paragraph of plain text." }]
+            },
+            {
+                "type": "paragraph",
+                "attrs": { "lang": "de-CH" },
+                "content": [
+                    { "type": "text", "text": "Eine Zeile," },
+                    { "type": "hard_break" },
+                    { "type": "text", "text": "dann die nächste." }
+                ]
+            }
+        ]
+    }
+}

@@ -161,13 +161,13 @@ jobs:
         run: pnpm build:rich-text-editor
 
       # Each guard script runs here, so a new `scripts/check-*.ts` needs no workflow change.
-      # Skips check-qualification.ts (release workflow only) and `*.test.ts` guard tests.
+      # Skips check-qualification.ts (release workflow only), check-stories.ts (Storybook job) and `*.test.ts` guard tests.
       - name: Guard scripts
         working-directory: packages/rich-text-editor
         run: |
           ran=0
           for script in scripts/check-*.ts; do
-            if [ "$script" = scripts/check-qualification.ts ] || [[ "$script" == *.test.ts ]]; then
+            if [ "$script" = scripts/check-qualification.ts ] || [ "$script" = scripts/check-stories.ts ] || [[ "$script" == *.test.ts ]]; then
               continue
             fi
             echo "::group::$script"
@@ -269,6 +269,10 @@ jobs:
       # Every story must carry its status tag before the tests start.
       - name: Check story status
         run: pnpm --stream --filter {packages/rich-text-editor} check:story-status
+
+      # Every registered feature must have its `Rich Text Editor/Features/<feature ID>` story.
+      - name: Check feature stories
+        run: pnpm --stream --filter {packages/rich-text-editor} check:stories
 
       # Runs every story, with the axe and toolbar global checks of `.storybook/preview.tsx` after each one.
       - name: Storybook tests
