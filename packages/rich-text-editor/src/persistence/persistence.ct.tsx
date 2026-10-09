@@ -7,6 +7,13 @@ import { EditorProbe } from '../../fixtures/editor/EditorProbe';
 
 type Rte = NonNullable<Window['rte']>;
 
+declare global {
+    interface Window {
+        /** The replacement a test started, which the page holds while it waits. */
+        replacement?: Promise<{ readonly status: string }>;
+    }
+}
+
 const surfaceOf = (page: Page) => page.getByRole('textbox', { name: 'Notes' });
 const ready = (page: Page) =>
     expect(page.locator('[data-test-id="fondue-rich-text-editor"]')).not.toHaveAttribute('aria-busy');
@@ -163,4 +170,68 @@ test('SPEC-rich-text-persistence/AC-066 fails a commit offline as not sent, then
     await expect.poll(() => savedTexts(page)).toEqual(['abc']);
     await expect.poll(() => stateOf(page)).toBe('clean');
     expect(await savedTexts(page)).toEqual(['abc']);
+});
+
+test('SPEC-rich-text-runtime/AC-090 keeps the surface busy and not editable while a replacement waits, with selection and copy working', async ({
+    mount,
+    page,
+}) => {
+    await mount(<EditorProbe texts={['Read the guide']} persistence holdSaves />);
+    await ready(page);
+    await caretAfter(page, 'Read the guide');
+    await page.keyboard.type('!');
+    const surface = surfaceOf(page);
+
+    await page.evaluate(() => {
+        const { handle } = window.rte as Rte;
+        const { stamp, document } = handle.getSnapshot();
+        // The next record keeps the envelope and holds one paragraph.
+        const paragraph = { type: 'paragraph', attrs: { lang: null }, content: [{ type: 'text', text: 'Next' }] };
+        const next = {
+            documentId: 'document-2',
+            revision: null,
+            document: { ...document, content: { ...document.content, content: [paragraph] } as never },
+        };
+        window.replacement = handle.replaceDocument({
+            expected: stamp,
+            next,
+            unsaved: { action: 'save' },
+            selection: 'start',
+            history: 'reset',
+        });
+    });
+    await expect(surface).toHaveAttribute('contenteditable', 'false');
+    await expect(surface).toHaveAttribute('aria-busy', 'true');
+
+    // A double click on the first word selects it, as on any page text.
+    const paragraph = surface.locator('p');
+    const box = await paragraph.boundingBox();
+    if (box === null) {
+        throw new Error('The paragraph is not visible.');
+    }
+    await paragraph.dblclick({ position: { x: 4, y: box.height / 2 } });
+    await expect
+        .poll(() => page.evaluate(() => (window.rte as Rte).handle.getSummary().selection.collapsed))
+        .toBe(false);
+    const copied = page.evaluate(
+        () =>
+            new Promise<string | undefined>((resolve) => {
+                document.addEventListener('copy', (event) => resolve(event.clipboardData?.getData('text/plain')), {
+                    once: true,
+                });
+            }),
+    );
+    await page.keyboard.press('ControlOrMeta+c');
+    expect(await copied).toBe('Read');
+
+    await page.evaluate(() => (window.rte as Rte).answerSaves());
+    const replaced = await page.evaluate(async () => {
+        const result = await window.replacement;
+        return result?.status;
+    });
+    expect(replaced).toBe('replaced');
+    await expect(surface).toHaveAttribute('contenteditable', 'true');
+    await expect(surface).not.toHaveAttribute('aria-busy');
+    await expect(surface).toHaveText('Next');
+    expect(await savedTexts(page)).toContain('Read the guide!');
 });

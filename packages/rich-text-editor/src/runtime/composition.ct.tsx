@@ -210,7 +210,7 @@ test('SPEC-rich-text-runtime/AC-032 SPEC-rich-text-runtime/AC-033 answers a host
     await expect(surfaceOf(page)).toHaveText('abxy!');
 });
 
-test('SPEC-rich-text-runtime/AC-034 keeps the composed text and changes contenteditable only after compositionend', async ({
+test('SPEC-rich-text-runtime/AC-034 keeps the composed text, refuses replaceDocument and changes contenteditable only after compositionend', async ({
     mount,
     page,
 }) => {
@@ -221,10 +221,29 @@ test('SPEC-rich-text-runtime/AC-034 keeps the composed text and changes contente
 
     await ime.compose('x');
     await page.evaluate(() => (window.rte as Rte).handle.setMode('readonly'));
+    const replaced = await page.evaluate(() => {
+        const { handle } = window.rte as Rte;
+        const { stamp, document } = handle.getSnapshot();
+        // The next record keeps the envelope and holds one paragraph.
+        const paragraph = { type: 'paragraph', attrs: { lang: null }, content: [{ type: 'text', text: 'cd' }] };
+        const next = {
+            documentId: 'document-2',
+            revision: null,
+            document: { ...document, content: { ...document.content, content: [paragraph] } as never },
+        };
+        return handle.replaceDocument({
+            expected: stamp,
+            next,
+            unsaved: { action: 'discard', confirmed: true },
+            selection: 'start',
+            history: 'reset',
+        });
+    });
     await ime.compose('xy');
     const during = await surfaceOf(page).getAttribute('contenteditable');
     await ime.commit('xy');
 
+    expect(replaced).toEqual({ status: 'rejected', code: 'composition-active' });
     expect(during).toBe('true');
     await expect(surfaceOf(page)).toHaveAttribute('contenteditable', 'false');
     await expect(surfaceOf(page)).toHaveText('abxy');
