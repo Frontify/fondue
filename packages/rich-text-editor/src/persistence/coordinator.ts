@@ -134,7 +134,7 @@ export const createSaveCoordinator = (
     // In call order; the oldest stays until its write is answered (AC-022).
     const pinned: Checkpoint[] = [];
     // The captures of `requestCommit` calls that wait for input to settle (AC-026).
-    const waiting = new Set<() => void>();
+    const waiting = new Map<() => void, (result: CommitResult) => void>();
     let problem: Diagnostic | null = null;
     let inFlight: InFlight | undefined;
     // The write whose outcome is not known yet, which every later try replays unchanged (AC-012).
@@ -180,7 +180,11 @@ export const createSaveCoordinator = (
     };
 
     // A new record that nobody changed has nothing to save (`SPEC-rich-text-persistence`, Save states).
-    const unsaved = () => (latest > acknowledged && latest > 0) || unsavedOnMount;
+    // Reads the session's sequence, which a `documentChange` listener sees before `changed` runs.
+    const unsaved = () => {
+        const { sequence } = runtime.handle.getSummary();
+        return (sequence > acknowledged && sequence > 0) || unsavedOnMount;
+    };
     // A faulted session writes only what `requestCommit` pinned, and a replacement writes its `save` (SPEC-rich-text-runtime/AC-016, AC-091).
     const writable = () => {
         const { phase } = runtime.handle.getSummary();
@@ -562,7 +566,7 @@ export const createSaveCoordinator = (
             refresh();
         },
         settled: () => {
-            for (const capture of waiting) {
+            for (const capture of waiting.keys()) {
                 capture();
             }
             send();
@@ -600,7 +604,7 @@ export const createSaveCoordinator = (
                     waiting.delete(capture);
                     checkpoint = pin(finish);
                 };
-                waiting.add(capture);
+                waiting.set(capture, finish);
                 // ProseMirror reads a DOM change in a microtask queued before this one, so the capture holds the last keystroke (AC-020).
                 environment.scheduler.microtask(() => {
                     if (waiting.has(capture) && !runtime.handle.getSummary().compositionActive) {
@@ -634,6 +638,15 @@ export const createSaveCoordinator = (
             for (const checkpoint of pinned.splice(0)) {
                 settle(checkpoint, NOT_SENT);
             }
+            // A call that has not captured yet answers for the old generation, never with the next document (AC-024).
+            let old: CommitResult = NOT_SENT;
+            if (accepted !== undefined && accepted.stamp.sequence === latest && !unsavedOnMount) {
+                old = { status: 'acknowledged', acknowledgment: accepted };
+            }
+            for (const [capture, finish] of waiting) {
+                waiting.delete(capture);
+                finish(old);
+            }
             // The operation that spent its retries in `error` is dropped with the document it carried.
             unresolved = undefined;
             replays = 0;
@@ -660,7 +673,7 @@ export const createSaveCoordinator = (
                 settle(checkpoint, DISPOSED);
             }
             // With `ended` aborted, each waiting call's capture answers `disposed`.
-            for (const capture of waiting) {
+            for (const capture of waiting.keys()) {
                 capture();
             }
             // A session that leaves unsaved changes says so and starts no write (AC-041).
