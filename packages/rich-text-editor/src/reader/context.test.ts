@@ -4,10 +4,13 @@ import { describe, expect, it } from 'vitest';
 
 import { enUS } from '#/locales/en-US';
 
-import { readerContext, translator } from './context';
+import { readerContext } from './context';
 
 describe('translator', () => {
-    const t = translator({ translationStrings: { RichTextEditor_readerIslandFeature: 'Feature ${feature}' } });
+    const { t } = readerContext(
+        { translationStrings: { RichTextEditor_readerIslandFeature: 'Feature ${feature}' } },
+        {},
+    );
 
     it('SPEC-rich-text-output/AC-002 fills each ${var} from the values and leaves one with no value as it is', () => {
         expect(t('RichTextEditor_readerIslandFeature', { feature: 'callout' })).toBe('Feature callout');

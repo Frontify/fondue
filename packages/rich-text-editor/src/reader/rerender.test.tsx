@@ -108,10 +108,11 @@ describe('RichTextReader rerenders', () => {
         const document = envelope(doc(paragraph(mention('m-1'))), ['core', 'fixture.mention']);
         const onDiagnostic = vi.fn();
         const view = render(<RichTextReader document={document} model={failing} onDiagnostic={onDiagnostic} />);
+        const reported = onDiagnostic.mock.calls.length;
 
         view.rerender(<RichTextReader document={document} model={failing} onDiagnostic={onDiagnostic} />);
 
-        expect(onDiagnostic).toHaveBeenCalledTimes(1);
-        expect(onDiagnostic).toHaveBeenCalledWith(expect.objectContaining({ code: 'reader.override-failed' }));
+        expect(onDiagnostic).toHaveBeenCalledTimes(reported);
+        expect(onDiagnostic.mock.calls.filter(([{ code }]) => code === 'reader.override-failed')).toHaveLength(1);
     });
 });

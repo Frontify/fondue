@@ -5,11 +5,19 @@ import { describe, expect, it } from 'vitest';
 
 import { fixtureLink } from '#/features/__fixtures__/features';
 import { core } from '#/features/core/feature';
-import { DefinitionError } from '#/model';
+import { DefinitionError, type Feature } from '#/model';
+import { featureInternals } from '#/model/feature';
 
-import { defineReaderFeature, readerOverrides } from './define';
+import { declaredOverrides, defineReaderFeature } from './define';
 
 const renderer = () => null;
+const readerOverrides = (feature: Feature) => {
+    const internals = featureInternals(feature);
+    if (internals === undefined) {
+        return undefined;
+    }
+    return declaredOverrides(internals.declaration);
+};
 
 describe('defineReaderFeature', () => {
     it('SPEC-rich-text/AC-023 runs in the node environment', () => {

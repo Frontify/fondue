@@ -32,6 +32,7 @@ import { core } from '#/features/core/feature';
 import { deDE } from '#/locales/de-DE';
 import {
     compileContentModel,
+    decodeDocument,
     defineFeature,
     type Diagnostic,
     featureFromManifest,
@@ -106,6 +107,19 @@ describe('RichTextReader modes', () => {
             expect(read(document)).toMatch(/^<div[ >]/);
         },
     );
+
+    it('SPEC-rich-text-output/AC-001 passes the decode diagnostics of a blocked document and of one with islands to onDiagnostic', () => {
+        const blocked = { ...(wrap(paragraph(text('a'))) as object), formatVersion: 2 };
+        const unknown = fixturesIn('unknown').find(([name]) => name === 'unknown-nodes.json')?.[1];
+        for (const document of [blocked, unknown]) {
+            const onDiagnostic = vi.fn();
+            read(document, { onDiagnostic });
+            const { diagnostics } = decodeDocument(document, model);
+
+            expect(diagnostics.length).toBeGreaterThan(0);
+            expect(onDiagnostic.mock.calls.map(([diagnostic]) => diagnostic as Diagnostic)).toEqual(diagnostics);
+        }
+    });
 
     it('SPEC-rich-text-output/AC-001 translates its messages through the locale prop', () => {
         const blocked = { ...(wrap(paragraph()) as object), formatVersion: 2 };
@@ -481,7 +495,7 @@ describe('RichTextReader override failures', () => {
     });
 
     it('SPEC-rich-text-output/AC-047 reports one reader.override-failed error naming the feature and the path per failure', () => {
-        expect(diagnostics).toEqual([
+        expect(diagnostics.filter(({ code }) => code !== 'format.unknown-attribute')).toEqual([
             {
                 code: 'reader.override-failed',
                 severity: 'error',
