@@ -37,6 +37,7 @@ export const createInputSettling = (
 
     const cancel = () => {
         ended += 1;
+        started = false;
         waiting = false;
         if (timer !== undefined) {
             environment.clock.clearTimeout(timer);
@@ -55,7 +56,6 @@ export const createInputSettling = (
 
     const finish = () => {
         cancel();
-        started = false;
         waiting = true;
         // A later end, start or `cancel` makes this round stale.
         const round = ended;
@@ -97,6 +97,12 @@ export const createInputSettling = (
                     // ProseMirror ends a composition with no `compositionend` after an idle time on Android; a state with
                     // stored marks ends only its own record of it while the IME goes on, so that waits for `compositionend`.
                     if (ends && started && current.state.storedMarks === null) {
+                        finish();
+                    }
+                },
+                // A view destroyed mid-composition, as `detach` does, ends it, so held work still settles.
+                destroy: () => {
+                    if (started) {
                         finish();
                     }
                 },

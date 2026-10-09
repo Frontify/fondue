@@ -42,7 +42,7 @@ import { createEventBus, type Listener } from './events';
 import { createLimitCheck } from './limits';
 import { authoringOf, createPolicyCheck } from './policy';
 import { createInputSettling } from './settle';
-import { captureTarget, countTargets, heldTargets, releaseTargets, targetSelection, targetsPlugin } from './targets';
+import { captureTarget, countTargets, releaseTargets, restoreTargets, targetSelection, targetsPlugin } from './targets';
 import {
     type AuthoringPolicy,
     type CaptureResult,
@@ -424,9 +424,11 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         for (const transaction of applied.transactions.slice(1)) {
             mapping.appendMapping(transaction.mapping);
         }
+        // The settle repair is judged with the composition it repairs, from the published document.
         if (
             doc !== state.doc &&
             !(fromView && isProvisional(root)) &&
+            root.getMeta(NORMALIZE_META) !== 'now' &&
             (breaksPolicy(policy, state.doc, doc, mapping) || exceedsLimits(doc, limits))
         ) {
             return { code: 'not-allowed' };
@@ -435,11 +437,14 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     };
 
     /** Publishes a checked batch, then commits the roots that plugin views dispatched while it was installed. */
-    const install = (prepared: Candidate, typed: boolean): boolean => {
+    const install = (prepared: Candidate, typed: boolean): boolean => guarded(() => publish(prepared, typed));
+
+    /** Runs `work`, which installs states, then commits the roots that plugin views dispatched meanwhile. */
+    const guarded = <T>(work: () => T): T => {
         installing = true;
-        let changed: boolean;
+        let result: T;
         try {
-            changed = publish(prepared, typed);
+            result = work();
         } finally {
             installing = false;
         }
@@ -451,7 +456,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             }
             commit(next);
         }
-        return changed;
+        return result;
     };
 
     /** Publishes the current state's document: counts an effective change, notifies selector stores, then emits it. */
@@ -516,6 +521,33 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         return announce(origin, commandId);
     };
 
+    /** Repairs the provisional batches, then checks them as one change from the published document; `false` on a fault. */
+    const settleProvisional = (mapping: Transaction['mapping']): boolean => {
+        // The repair runs inside the append limit before the settled batch publishes, and the check below judges it (AC-092).
+        const repaired = prepare(state.tr.setMeta(NORMALIZE_META, 'now'), installedIds, false);
+        if ('fault' in repaired && repaired.fault !== undefined) {
+            fault(repaired.fault);
+            return false;
+        }
+        if ('candidate' in repaired && repaired.candidate.doc !== state.doc) {
+            installState(repaired.candidate);
+            mapping.appendMapping(repaired.mapping);
+        }
+        if (!breaksPolicy(policy, published.doc, state.doc, mapping) && !exceedsLimits(state.doc, limits)) {
+            announce('input', null);
+            return true;
+        }
+        // Targets released during the composition stay released, and those captured during it stay (AC-045).
+        const restore = restoreTargets(published, state, mapping);
+        let restored = published;
+        if (restore !== undefined) {
+            restored = published.apply(restore);
+        }
+        installState(restored);
+        notify();
+        return true;
+    };
+
     /**
      * Once input has settled, checks the provisional batches as one change from the published document and publishes
      * them, or restores the state from before the composition (SPEC-rich-text-runtime/AC-005, AC-065), then runs the
@@ -525,33 +557,9 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         const mapping = provisional;
         provisional = undefined;
         busyWith(() => {
-            if (mapping !== undefined) {
-                // The composition's repair runs now, inside the append limit, before the settled batch publishes (AC-092).
-                const repaired = prepare(state.tr.setMeta(NORMALIZE_META, 'now'), installedIds, false);
-                if ('candidate' in repaired && repaired.candidate.doc !== state.doc) {
-                    installState(repaired.candidate);
-                    mapping.appendMapping(repaired.mapping);
-                } else if ('fault' in repaired && repaired.fault !== undefined) {
-                    fault(repaired.fault);
-                    return;
-                }
-                const before = published.doc;
-                if (breaksPolicy(policy, before, state.doc, mapping) || exceedsLimits(state.doc, limits)) {
-                    // Targets released during the composition stay released (SPEC-rich-text-runtime/AC-045).
-                    const kept = heldTargets(state);
-                    const released = releaseTargets(
-                        published,
-                        heldTargets(published).filter((id) => !kept.includes(id)),
-                    );
-                    let restored = published;
-                    if (released !== undefined) {
-                        restored = published.apply(released);
-                    }
-                    installState(restored);
-                    notify();
-                } else {
-                    announce('input', null);
-                }
+            // Roots that plugin views dispatch while the settled state installs commit after its check (AC-001).
+            if (mapping !== undefined && !guarded(() => settleProvisional(mapping))) {
+                return;
             }
             refreshView();
         });
