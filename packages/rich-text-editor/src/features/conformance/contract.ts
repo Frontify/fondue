@@ -24,6 +24,7 @@ import { type TreeNode } from '#/model/content';
 import { decodeToTree } from '#/model/decode';
 import { encodeTree } from '#/model/encode';
 import { featureInternals } from '#/model/feature';
+import { isRecord } from '#/model/values';
 import { RichTextReader } from '#/reader';
 import { CAPABILITIES } from '#/runtime/capabilities';
 
@@ -95,12 +96,18 @@ const readerOutput = (document: RichTextDocument, model: ContentModel) => {
     return { markup: renderToStaticMarkup(reader), diagnostics };
 };
 
+export interface FeatureContractOptions {
+    /** Stored documents that use the features under test, each run through decode, encode, the reader and every codec. */
+    readonly fixtures?: readonly unknown[];
+}
+
 /**
  * Registers the feature contract cases for each feature through the host's test runner globals: one model
  * compiled from the whole list, then per feature its vocabulary, schema, commands, toolbar labels and, for a
- * shipped feature, its fixtures and keyboard rows (SPEC-rich-text/AC-016, AC-017). The axe case needs a DOM.
+ * shipped feature, its fixtures and keyboard rows, then each of `options.fixtures`, the documents an outside
+ * feature brings (SPEC-rich-text/AC-016, AC-017, DR-069). The axe case needs a DOM.
  */
-export const runFeatureContract = (features: readonly Feature[]): void => {
+export const runFeatureContract = (features: readonly Feature[], options: FeatureContractOptions = {}): void => {
     const { describe, it, expect } = globalThis as Partial<TestRunner>;
     if (describe === undefined || it === undefined || expect === undefined) {
         throw new Error('runFeatureContract registers its cases through the global describe, it and expect.');
@@ -125,6 +132,50 @@ export const runFeatureContract = (features: readonly Feature[]): void => {
             throw new Error('The document does not decode.');
         }
         return EditorState.create({ doc: engineOf().schema.nodeFromJSON(tree) });
+    };
+    /** A fixture as a document of the model under test, whatever model it names. */
+    const storedIn = (fixture: unknown): RichTextDocument => {
+        if (!isRecord(fixture)) {
+            return fixture as RichTextDocument;
+        }
+        return { ...fixture, model: compiled().ref } as unknown as RichTextDocument;
+    };
+    /** The decode, reader, codec and axe cases of one stored document. */
+    const fixtureCases = (name: string, fixture: unknown) => {
+        it(`SPEC-rich-text/AC-017 decodes and encodes ${name} to itself`, () => {
+            const stored = storedIn(fixture);
+            const { result, tree } = decodeToTree(stored, compiled());
+            expect(result.diagnostics).toEqual([]);
+            if (tree === undefined) {
+                throw new Error(`${name} does not decode.`);
+            }
+            const node = engineOf().schema.nodeFromJSON(tree);
+            const encoded = encodeTree(node.toJSON() as TreeNode, compiled(), stored.requiredCapabilities);
+            expect(encoded.document).toEqual(stored);
+        });
+
+        it(`SPEC-rich-text/AC-017 renders ${name} in the reader and writes it through every codec`, () => {
+            const stored = storedIn(fixture);
+            const reader = readerOutput(stored, compiled());
+            const codecs = createCodecs(compiled());
+            const html = codecs.toHTML(stored);
+            const text = codecs.toPlainText(stored);
+            const markdown = codecs.toMarkdown(stored);
+            expect([reader, html, text, markdown].flatMap(({ diagnostics }) => diagnostics)).toEqual([]);
+            expect(normalized(html.html)).toBe(normalized(reader.markup));
+        });
+
+        it(`SPEC-rich-text/AC-017 passes axe on the reader output of ${name}`, async () => {
+            const container = document.createElement('div');
+            container.innerHTML = readerOutput(storedIn(fixture), compiled()).markup;
+            document.body.append(container);
+            try {
+                const { violations } = await axe.run(container, { runOnly: { type: 'tag', values: AXE_TAGS } });
+                expect(violations.map(({ id }) => id)).toEqual([]);
+            } finally {
+                container.remove();
+            }
+        });
     };
 
     for (const feature of features) {
@@ -185,38 +236,16 @@ export const runFeatureContract = (features: readonly Feature[]): void => {
             });
 
             for (const [name, fixture] of Object.entries(fixtures)) {
-                it(`SPEC-rich-text/AC-017 decodes and encodes ${name} to itself`, () => {
-                    const { result, tree } = decodeToTree(fixture, compiled());
-                    expect(result.diagnostics).toEqual([]);
-                    if (tree === undefined) {
-                        throw new Error(`${name} does not decode.`);
-                    }
-                    const node = engineOf().schema.nodeFromJSON(tree);
-                    const encoded = encodeTree(node.toJSON() as TreeNode, compiled(), fixture.requiredCapabilities);
-                    expect(encoded.document).toEqual(fixture);
-                });
+                fixtureCases(name, fixture);
+            }
+        });
+    }
 
-                it(`SPEC-rich-text/AC-017 renders ${name} in the reader and writes it through every codec`, () => {
-                    const reader = readerOutput(fixture, compiled());
-                    const codecs = createCodecs(compiled());
-                    const html = codecs.toHTML(fixture);
-                    const text = codecs.toPlainText(fixture);
-                    const markdown = codecs.toMarkdown(fixture);
-                    expect([reader, html, text, markdown].flatMap(({ diagnostics }) => diagnostics)).toEqual([]);
-                    expect(normalized(html.html)).toBe(normalized(reader.markup));
-                });
-
-                it(`SPEC-rich-text/AC-017 passes axe on the reader output of ${name}`, async () => {
-                    const container = document.createElement('div');
-                    container.innerHTML = readerOutput(fixture, compiled()).markup;
-                    document.body.append(container);
-                    try {
-                        const { violations } = await axe.run(container, { runOnly: { type: 'tag', values: AXE_TAGS } });
-                        expect(violations.map(({ id }) => id)).toEqual([]);
-                    } finally {
-                        container.remove();
-                    }
-                });
+    const given = options.fixtures;
+    if (given !== undefined) {
+        describe('the given fixtures', () => {
+            for (const [index, fixture] of given.entries()) {
+                fixtureCases(`fixture ${index + 1}`, fixture);
             }
         });
     }
