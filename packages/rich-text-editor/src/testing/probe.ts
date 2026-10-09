@@ -1,5 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
+import { busResources } from '#/runtime/events';
 import { liveResources } from '#/runtime/runtime';
 
 /**
@@ -8,9 +9,9 @@ import { liveResources } from '#/runtime/runtime';
  */
 export const probeRuntimes = () => ({
     views: [...liveResources.views],
-    sessions: [...liveResources.sessions.values()],
-    subscriptions: liveResources.subscriptions,
-    selectors: liveResources.selectors,
+    installedFeatures: [...liveResources.installedFeatures.values()],
+    subscriptions: busResources.subscriptions,
+    selectors: busResources.selectors,
     intents: liveResources.intents,
     frames: liveResources.frames,
 });
