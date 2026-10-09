@@ -7,55 +7,221 @@ import { act, render, screen } from '@testing-library/react';
 import { createElement, createRef } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
-import { featuresById } from '#/features';
+import { createCodecs } from '#/codecs';
+import { type CapabilityImplementation } from '#/definition';
+import { bold, featuresById } from '#/features';
+import { featureFixtures } from '#/features/conformance/fixtures';
 import { core } from '#/features/core/feature';
 import { registry } from '#/features/registry';
 import { defineEditor, type EditorHandle, RichTextEditor } from '#/index';
-import { compileContentModel } from '#/model';
+import { compileContentModel, defineFeature, type Feature, type RichTextDocument, toggleMark } from '#/model';
+import { CAPABILITIES } from '#/runtime/capabilities';
 import { type DocumentChange } from '#/runtime/types';
 import { createTestEnvironment, pressKey, runFeatureContract, setSelection } from '#/testing';
 
+vi.mock('#/codecs', { spy: true });
+
 runFeatureContract([...featuresById(Object.keys(registry)), highlight()], { fixtures: [highlightDocument] });
 
-describe('the outside fixture feature', () => {
-    it('SPEC-rich-text/AC-017 fails the fixture cases of an outside document that misspells its mark', async () => {
-        const misspelled = {
-            ...highlightDocument,
-            content: {
-                type: 'doc',
-                attrs: { lang: null, dir: 'auto' },
-                content: [
-                    {
-                        type: 'paragraph',
-                        attrs: { lang: null },
-                        content: [{ type: 'text', text: 'Read', marks: [{ type: 'highlite' }] }],
-                    },
-                ],
-            },
-        };
-        const cases = new Map<string, () => unknown>();
-        vi.stubGlobal('describe', (_name: string, body: () => void) => body());
-        vi.stubGlobal('it', (name: string, body: () => unknown) => cases.set(name, body));
+/** Registers the suite on a stand-in runner, runs each case and returns the titles of those that fail. */
+const failingCases = async (features: readonly Feature[], fixtures?: readonly unknown[]): Promise<string[]> => {
+    const cases = new Map<string, () => unknown>();
+    vi.stubGlobal('describe', (_name: string, body: () => void) => body());
+    vi.stubGlobal('it', (name: string, body: () => unknown) => cases.set(name, body));
+    try {
+        if (fixtures === undefined) {
+            runFeatureContract(features);
+        } else {
+            runFeatureContract(features, { fixtures });
+        }
+    } finally {
+        vi.unstubAllGlobals();
+    }
+    const failing: string[] = [];
+    for (const [name, body] of cases) {
         try {
-            runFeatureContract([core(), highlight()], { fixtures: [misspelled] });
-        } finally {
-            vi.unstubAllGlobals();
+            await body();
+        } catch {
+            failing.push(name);
         }
-        const failing: string[] = [];
-        for (const [name, body] of cases) {
-            try {
-                await body();
-            } catch {
-                failing.push(name);
-            }
-        }
+    }
+    return failing;
+};
 
-        expect(failing).toEqual([
-            'SPEC-rich-text/AC-017 decodes and encodes fixture 1 to itself',
-            'SPEC-rich-text/AC-017 renders fixture 1 in the reader and writes it through every codec',
+/** A stored document of one paragraph with `content`, or of the given blocks. */
+const stored = (blocks: readonly unknown[], capabilities: readonly string[] = ['core']): RichTextDocument =>
+    ({
+        format: 'frontify.rich-text',
+        formatVersion: 1,
+        model: { id: 'feature-contract', version: 1 },
+        requiredCapabilities: capabilities.map((id) => ({ id, version: 1 })),
+        content: { type: 'doc', attrs: { lang: null, dir: 'auto' }, content: blocks },
+    }) as RichTextDocument;
+const paragraph = (...content: readonly unknown[]) => ({ type: 'paragraph', attrs: { lang: null }, content });
+const text = (value: string, ...marks: readonly string[]) => {
+    if (marks.length === 0) {
+        return { type: 'text', text: value };
+    }
+    return { type: 'text', text: value, marks: marks.map((type) => ({ type })) };
+};
+
+const DECODES = (name: string) => `SPEC-rich-text/AC-017 decodes and encodes ${name} to itself`;
+const RENDERS = (name: string) =>
+    `SPEC-rich-text/AC-017 renders ${name} in the reader and writes it through every codec`;
+const AXE = (name: string) => `SPEC-rich-text/AC-017 passes axe on the reader output of ${name}`;
+const LABELS =
+    'SPEC-rich-text/AC-016 SPEC-rich-text/AC-017 resolves the label of each toolbar entry and menu item in enUS';
+const COVERS = 'SPEC-rich-text/AC-016 brings fixtures that hold each of its nodes, marks and shared attributes';
+
+describe('the feature contract suite', () => {
+    it('SPEC-rich-text/AC-017 fails the fixture cases of an outside document that misspells its mark', async () => {
+        const misspelled = stored([paragraph(text('Read', 'highlite'))], ['core', 'fixture.highlight']);
+
+        expect(await failingCases([core(), highlight()], [misspelled])).toEqual([
+            DECODES('fixture 1'),
+            RENDERS('fixture 1'),
         ]);
     });
 
+    it('SPEC-rich-text/AC-016 fails a menu item whose labelKey enUS does not hold', async () => {
+        const menu = defineFeature({
+            id: 'fixture.menu',
+            version: 1,
+            requires: [{ id: 'core', version: 1 }],
+            marks: { fixture_menu: { attrs: {}, html: ['mark', 0], parse: [{ tag: 'mark' }] } },
+            commands: { 'fixture.menu.toggle': toggleMark('fixture_menu') },
+            toolbar: [
+                {
+                    kind: 'menu',
+                    command: 'fixture.menu.toggle',
+                    labelKey: 'RichTextEditor_bold',
+                    icon: 'IconTextFormatBold',
+                    items: [{ command: 'fixture.menu.toggle', labelKey: 'RichTextEditor_missing' }],
+                },
+            ],
+        });
+
+        expect(await failingCases([core(), menu()])).toEqual([LABELS]);
+    });
+
+    it('SPEC-rich-text/AC-017 fails a command whose query over a range dispatches', async () => {
+        const original = CAPABILITIES.toggleMark as CapabilityImplementation;
+        const spy = vi.spyOn(CAPABILITIES as Record<string, CapabilityImplementation>, 'toggleMark');
+        spy.mockImplementation((args, schema) => {
+            const command = original(args, schema);
+            // As if the `dispatch === undefined` guard were gone: a range query builds and dispatches.
+            const run: typeof command.run = (state, dispatch, view) => {
+                if (!state.selection.empty) {
+                    (dispatch as NonNullable<typeof dispatch>)(state.tr);
+                }
+                return command.run(state, dispatch, view);
+            };
+            return { run, active: command.active };
+        });
+        try {
+            expect(await failingCases([core(), bold()])).toEqual([
+                'SPEC-rich-text/AC-017 queries mark.bold.toggle without dispatching',
+            ]);
+        } finally {
+            spy.mockRestore();
+        }
+    });
+
+    it('SPEC-rich-text/AC-016 fails a shipped feature with no fixture, or none that sets its shared attribute', async () => {
+        const align = defineFeature({
+            id: 'fixture.align',
+            version: 1,
+            requires: [{ id: 'core', version: 1 }],
+            attributes: {
+                align: {
+                    on: ['paragraph'],
+                    value: { type: 'enum', values: ['center', 'end'], nullable: true, default: null },
+                    html: { style: 'text-align' },
+                    parse: { style: 'text-align' },
+                },
+            },
+        });
+        const shipped = registry as Record<string, () => Feature>;
+        const fixtures = featureFixtures as Record<string, Readonly<Record<string, RichTextDocument>>>;
+        const aligned = (value: string | null) =>
+            stored([{ type: 'paragraph', attrs: { lang: null, align: value }, content: [text('Centred')] }]);
+        shipped['fixture.align'] = align;
+        try {
+            const none = await failingCases([core(), align()]);
+            fixtures['fixture.align'] = { plain: aligned(null) };
+            const unset = await failingCases([core(), align()]);
+            fixtures['fixture.align'] = { centred: aligned('center') };
+            const set = await failingCases([core(), align()]);
+
+            expect([none.includes(COVERS), unset.includes(COVERS), set.includes(COVERS)]).toEqual([true, true, false]);
+        } finally {
+            delete shipped['fixture.align'];
+            delete fixtures['fixture.align'];
+        }
+    });
+
+    it('SPEC-rich-text/AC-017 fails a toHTML that drops a space between tags or a newline in pre', async () => {
+        const code = defineFeature({
+            id: 'fixture.code',
+            version: 1,
+            requires: [{ id: 'core', version: 1 }],
+            nodes: {
+                fixture_code: {
+                    group: 'block',
+                    content: 'text*',
+                    whitespace: 'pre',
+                    attrs: {},
+                    html: ['pre', 0],
+                    parse: [{ tag: 'pre' }],
+                },
+            },
+            formats: { html: 'lossless', text: 'lossy', markdown: 'unsupported' },
+        });
+        const spaced = stored([paragraph(text('a', 'bold'), text(' '), text('b', 'bold'))], ['core', 'marks.bold']);
+        const indented = stored(
+            [{ type: 'fixture_code', content: [text('if (a) {\n    b();\n}')] }],
+            ['core', 'fixture.code'],
+        );
+        const { createCodecs: actual } = await vi.importActual<{ createCodecs: typeof createCodecs }>('#/codecs');
+        const breaking = (from: string, to: string) =>
+            vi.mocked(createCodecs).mockImplementation((model, options) => {
+                const codecs = actual(model, options);
+                return {
+                    ...codecs,
+                    toHTML: (document, htmlOptions) => {
+                        const output = codecs.toHTML(document, htmlOptions);
+                        return { ...output, html: output.html.replace(from, to) };
+                    },
+                };
+            });
+        try {
+            breaking('', '');
+            const intact = await failingCases([core(), bold(), code()], [spaced, indented]);
+            breaking('</strong> <strong>', '</strong><strong>');
+            const space = await failingCases([core(), bold(), code()], [spaced, indented]);
+            breaking('\n    ', ' ');
+            const newline = await failingCases([core(), bold(), code()], [spaced, indented]);
+
+            expect([intact, space, newline]).toEqual([[], [RENDERS('fixture 1')], [RENDERS('fixture 2')]]);
+        } finally {
+            vi.mocked(createCodecs).mockRestore();
+        }
+    });
+
+    it('SPEC-rich-text/AC-017 fails the axe case of reader output with an invalid ARIA value', async () => {
+        const hidden = defineFeature({
+            id: 'fixture.hidden',
+            version: 1,
+            requires: [{ id: 'core', version: 1 }],
+            marks: { fixture_hidden: { attrs: {}, html: ['strong', { 'aria-hidden': 'maybe' }, 0], parse: [] } },
+        });
+        const document = stored([paragraph(text('Make '), text('this', 'fixture_hidden'))], ['core', 'fixture.hidden']);
+
+        expect(await failingCases([core(), hidden()], [document])).toEqual([AXE('fixture 1')]);
+    });
+});
+
+describe('the outside fixture feature', () => {
     it('SPEC-rich-text/AC-017 shows and toggles its mark in the editor', () => {
         const model = compileContentModel([core(), highlight()], { id: 'fixture.highlight', version: 1 });
         const environment = createTestEnvironment({ seed: 1 });
