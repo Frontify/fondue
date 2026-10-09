@@ -382,8 +382,11 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     const isProvisional = (root: Transaction) =>
         settling.active() && (provisional !== undefined || root.getMeta(COMPOSITION_META) !== undefined);
 
-    /** Applies a root transaction and every transaction plugins append to it, then the final policy and limit check. */
-    const prepare = (root: Transaction, ids: IdSource): Prepared => {
+    /**
+     * Applies a root transaction and every transaction plugins append to it, then the final policy and limit check,
+     * which a provisional batch from the view takes once input has settled.
+     */
+    const prepare = (root: Transaction, ids: IdSource, fromView: boolean): Prepared => {
         const batch: AppendBatch = {
             limit: limits.maxAppendedTransactions,
             now: () => environment.clock.now(),
@@ -416,7 +419,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         }
         if (
             doc !== state.doc &&
-            !isProvisional(root) &&
+            !(fromView && isProvisional(root)) &&
             (breaksPolicy(policy, state.doc, doc, mapping) || exceedsLimits(doc, limits))
         ) {
             return { code: 'not-allowed' };
@@ -554,7 +557,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             return;
         }
         busyWith(() => {
-            const prepared = prepare(root, installedIds);
+            const prepared = prepare(root, installedIds, true);
             if ('candidate' in prepared) {
                 install(prepared, typed);
             } else if (prepared.fault !== undefined) {
@@ -644,7 +647,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         if (route === 'async') {
             root.setMeta(ORIGIN_META, 'async');
         }
-        return prepare(root, ids);
+        return prepare(root, ids, false);
     };
 
     const query = (id: string, given?: unknown, options?: unknown): CommandState => {
@@ -658,6 +661,10 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         const attempted = attempt(id, checked, base, queriedIds(), 'host');
         if ('code' in attempted) {
             return { enabled: false, active, disabledReason: attempted.code };
+        }
+        // As a host `execute` would be refused (SPEC-rich-text-runtime/AC-036).
+        if ('candidate' in attempted && attempted.candidate.doc !== state.doc && settling.active()) {
+            return { enabled: false, active, disabledReason: 'composition-active' };
         }
         return { enabled: true, active, disabledReason: null };
     };
