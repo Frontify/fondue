@@ -27,7 +27,7 @@ import { type TreeNode } from '#/model/content';
 import { decodeToTree } from '#/model/decode';
 import { readerContext, type ReaderResolvers } from '#/reader/context';
 import { browserEnvironment } from '#/runtime/environment';
-import { createEditorRuntime, type EditorRuntime } from '#/runtime/runtime';
+import { createEditorRuntime } from '#/runtime/runtime';
 import { type DocumentChange, type SessionToken, type ShippedCommands } from '#/runtime/types';
 
 import { engineOf, viewsOf } from './define';
@@ -119,11 +119,7 @@ const RootComponent = (
         if (presentation !== undefined) {
             resolvers = presentation;
         }
-        const nodeViews = createNodeViews(viewsOf(definition), {
-            portals,
-            context: readerContext(locale, resolvers),
-            runtime: (): EditorRuntime => runtime,
-        });
+        const context = readerContext(locale, resolvers);
         const runtime = createEditorRuntime({
             definition: engineOf(definition),
             documentId: defaultValue.documentId,
@@ -133,7 +129,7 @@ const RootComponent = (
             mode: modeOf(latestRef.current),
             policy: definition.authoring,
             limits: definition.limits,
-            nodeViews,
+            nodeViews: (session) => createNodeViews(viewsOf(definition), { portals, context, runtime: session }),
         });
         // Each event calls the newest callback the host passed (SPEC-rich-text-react/AC-004).
         runtime.handle.subscribe('ready', (session: SessionToken) => {

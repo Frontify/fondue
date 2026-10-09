@@ -113,8 +113,8 @@ export interface NodeActions {
     remove(): CommandResult;
     select(): void;
     /** Runs a command with the node selected at execution time (SPEC-rich-text-react/AC-019). */
-    execute(id: string, payload?: unknown): CommandResult;
-    query(id: string, payload?: unknown): CommandState;
+    execute(id: string, ...args: readonly unknown[]): CommandResult;
+    query(id: string, ...args: readonly unknown[]): CommandState;
 }
 
 export interface EditorRuntime {
@@ -155,8 +155,8 @@ export interface EditorRuntimeOptions {
     readonly mode: Mode;
     readonly policy: AuthoringPolicy;
     readonly limits: ResourceLimits;
-    /** The bridge's node views by node name; the runtime only passes them to the view. */
-    readonly nodeViews?: Readonly<Record<string, NodeViewConstructor>>;
+    /** Builds the bridge's node views by node name for this runtime, which only passes them to the view. */
+    readonly nodeViews?: (runtime: EditorRuntime) => Readonly<Record<string, NodeViewConstructor>>;
 }
 
 /** What every live runtime owns, which the `src/testing` probe reads. */
@@ -240,8 +240,8 @@ const originOf = (root: Transaction): ChangeOrigin => {
 const isEmpty = ({ doc }: EditorState) =>
     doc.childCount === 1 && doc.firstChild !== null && doc.firstChild.isTextblock && doc.firstChild.content.size === 0;
 
-/** The position of the node with `nodeId`, read when an action runs. */
-const positionOf = (doc: Node, nodeId: string): number | undefined => {
+/** The position of the node with `nodeId`, read when it is needed, so no caller holds one. */
+export const positionOf = (doc: Node, nodeId: string): number | undefined => {
     let found: number | undefined;
     doc.descendants((node, pos) => {
         if (found === undefined && node.attrs.nodeId === nodeId) {
@@ -321,6 +321,8 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     // Set while the view builds or installs a state, so a node view throw the bridge caught faults that call.
     let viewCall = false;
     let viewThrew = false;
+    // Node views come from the bridge once this runtime exists, since they act on it.
+    let nodeViews: Readonly<Record<string, NodeViewConstructor>> = {};
     // Commits and notifications in progress, during which `execute` is busy and `enqueue` waits.
     let busy = 0;
     let draining = false;
@@ -571,25 +573,31 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         return true;
     };
 
+    /** Runs a view call; `threw` when it threw or a node view inside it threw, which the bridge reports through `faultView`. */
+    const callView = <T>(work: () => T): { readonly threw: boolean; readonly value: T | undefined } => {
+        let value: T | undefined;
+        viewCall = true;
+        try {
+            value = work();
+        } catch {
+            viewThrew = true;
+        } finally {
+            viewCall = false;
+        }
+        const threw = viewThrew;
+        viewThrew = false;
+        return { threw, value };
+    };
+
     /** Installs a state in the view and counts it as a commit; `false` when the view threw and the session faulted. */
     const installState = (next: EditorState): boolean => {
         const previous = state;
         state = next;
-        if (view !== undefined) {
-            viewCall = true;
-            try {
-                view.updateState(next);
-            } catch {
-                viewThrew = true;
-            } finally {
-                viewCall = false;
-            }
-            if (viewThrew) {
-                viewThrew = false;
-                state = previous;
-                viewFault(view, next);
-                return false;
-            }
+        const attached = view;
+        if (attached !== undefined && callView(() => attached.updateState(next)).threw) {
+            state = previous;
+            viewFault(attached, next);
+            return false;
         }
         commitSequence += 1;
         liveResources.targets += countTargets(next) - countTargets(previous);
@@ -1189,38 +1197,32 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 return;
             }
             detach();
-            let attached: EditorView | undefined;
             built = undefined;
-            viewCall = true;
-            try {
-                attached = new EditorView(
-                    { mount: element },
-                    {
-                        state,
-                        editable: () => phase === 'ready' && shownMode === 'editable',
-                        attributes: (current) => {
-                            const attributes: Record<string, string> = {};
-                            if (shownMode === 'readonly') {
-                                // A surface that is not contenteditable takes no focus by itself (SPEC-rich-text-react/AC-028).
-                                attributes.tabindex = '0';
-                                attributes['aria-readonly'] = 'true';
-                            }
-                            if (isEmpty(current)) {
-                                attributes['data-rte-empty'] = '';
-                            }
-                            return attributes;
+            const { threw, value: attached } = callView(
+                () =>
+                    new EditorView(
+                        { mount: element },
+                        {
+                            state,
+                            editable: () => phase === 'ready' && shownMode === 'editable',
+                            attributes: (current) => {
+                                const attributes: Record<string, string> = {};
+                                if (shownMode === 'readonly') {
+                                    // A surface that is not contenteditable takes no focus by itself (SPEC-rich-text-react/AC-028).
+                                    attributes.tabindex = '0';
+                                    attributes['aria-readonly'] = 'true';
+                                }
+                                if (isEmpty(current)) {
+                                    attributes['data-rte-empty'] = '';
+                                }
+                                return attributes;
+                            },
+                            nodeViews,
+                            dispatchTransaction: commit,
                         },
-                        nodeViews: options.nodeViews ?? {},
-                        dispatchTransaction: commit,
-                    },
-                );
-            } catch {
-                viewThrew = true;
-            } finally {
-                viewCall = false;
-            }
-            if (attached === undefined || viewThrew) {
-                viewThrew = false;
+                    ),
+            );
+            if (attached === undefined || threw) {
                 // ProseMirror starts its DOM observer and input handlers before plugin views, so a plugin view that throws
                 // leaves them on the element unless the half-built view is destroyed.
                 const halfBuilt = attached ?? (built as EditorView | undefined);
@@ -1276,6 +1278,9 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         },
         nodeActions,
     };
+    if (options.nodeViews !== undefined) {
+        nodeViews = options.nodeViews(runtime);
+    }
     runtimes.set(handle, runtime);
     liveResources.installedFeatures.set(
         handle,
