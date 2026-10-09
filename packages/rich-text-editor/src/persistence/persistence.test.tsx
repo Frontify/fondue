@@ -2139,6 +2139,162 @@ describe('replacement', () => {
         unmount();
     });
 
+    it('SPEC-rich-text-persistence/AC-059 SPEC-rich-text-runtime/AC-015 stores no recovery checkpoint when the next document faults the install', async () => {
+        vi.mocked(createPortalStore).mockImplementationOnce((scheduler) => {
+            const store = actualStore(scheduler);
+            return {
+                ...store,
+                set: (entry: PortalEntry) => {
+                    if (entry.state.attrs.language === 'boom') {
+                        throw new Error('node view failed');
+                    }
+                    store.set(entry);
+                },
+            };
+        });
+        const environment = createTestEnvironment({ seed: 1 });
+        const store = vi.fn((checkpoint: Parameters<RecoveryService['store']>[0]) =>
+            Promise.resolve({ stamp: checkpoint.stamp, receiptId: 'receipt-1' }),
+        );
+        const { handle, unmount } = mount({
+            service: serviceOf(environment).service,
+            recovery: { store },
+            environment,
+            blocks: [para('ab'), chromeBlock('b1')],
+        });
+        await act(() => environment.flushMicrotasks());
+        const { document } = loaded('revision-9', para('next'), {
+            ...chromeBlock('b2'),
+            attrs: { nodeId: 'b2', language: 'boom', checked: false },
+        });
+
+        expect(
+            await replace(handle(), { next: { documentId: 'document-2', revision: 'revision-9', document } }),
+        ).toEqual({
+            status: 'rejected',
+            code: 'faulted',
+        });
+        await settle();
+
+        expect(store).not.toHaveBeenCalled();
+        unmount();
+    });
+
+    it('SPEC-rich-text-runtime/AC-031 resolves an intent queued during transitioning as wrong-session when a held async result settles first', async () => {
+        const environment = createTestEnvironment({ seed: 1 });
+        const { service, calls } = serviceOf(environment, true);
+        const { handle, type, flush, unmount } = mount({ service, environment });
+        let found: (result: unknown) => void = () => undefined;
+        const search = new Promise((resolve) => {
+            found = resolve;
+        });
+        runtimeOf(handle())?.startAsync({
+            key: 'mention-search',
+            service: 'references',
+            featureId: 'core',
+            action: 'create',
+            command: 'text.insert',
+            run: () => search,
+        });
+        type('x');
+        const replaced = handle().replaceDocument(replacing(handle(), { unsaved: { action: 'save' } }));
+        await flush();
+        const queued = untyped(handle()).enqueue('text.insert', { text: 'y' });
+        // The result arrives while the replacement waits, so the coordinator holds it.
+        found({ text: 'late ' });
+        await settle();
+
+        calls[0]?.answer();
+
+        expect(await act(() => replaced)).toMatchObject({ status: 'replaced' });
+        expect(await queued).toEqual({ status: 'rejected', code: 'wrong-session' });
+        expect(textIn(handle().getSnapshot().document)).toBe('next');
+        unmount();
+    });
+
+    it('SPEC-rich-text-persistence/AC-027 runs the full steps for another untouched new record with an equal document (DR-077)', async () => {
+        const environment = createTestEnvironment({ seed: 1 });
+        const { handle, unmount } = mount({ service: serviceOf(environment).service, environment });
+        const { document } = handle().getSnapshot();
+
+        const result = await replace(handle(), { next: { documentId: 'document-2', revision: null, document } });
+
+        expect(result).toMatchObject({ status: 'replaced', session: { documentId: 'document-2', generation: 1 } });
+        expect(handle().getSummary().session.documentId).toBe('document-2');
+        unmount();
+    });
+
+    it.each([
+        ['an untouched new record', null, { status: 'failed', code: 'transport', outcome: 'not-sent' }],
+        [
+            'a clean existing record',
+            'revision-1',
+            {
+                status: 'acknowledged',
+                acknowledgment: {
+                    operationId: null,
+                    stamp: { documentId: 'document-1', sessionId: 'session-1', generation: 0, sequence: 0 },
+                    revision: 'revision-1',
+                },
+            },
+        ],
+    ] as const)(
+        'SPEC-rich-text-persistence/AC-024 answers a requestCommit made before a replacement in the same task for %s, with no save of the next document',
+        async (_name, revision, expected) => {
+            const environment = createTestEnvironment({ seed: 1 });
+            const { service } = serviceOf(environment);
+            const { handle, flush, unmount } = mount({ service, environment, revision });
+
+            const committed = handle().requestCommit({ reason: 'navigate' });
+            await replace(handle());
+            await flush();
+            await settle();
+
+            expect(await committed).toEqual(expected);
+            expect(service.save).not.toHaveBeenCalled();
+            unmount();
+        },
+    );
+
+    it('SPEC-rich-text-persistence/AC-031 refuses with unsaved when a documentChange listener replaces under the reject policy', async () => {
+        const environment = createTestEnvironment({ seed: 1 });
+        const { handle, type, unmount } = mount({
+            service: serviceOf(environment).service,
+            environment,
+            revision: 'revision-1',
+        });
+        const results: Promise<ReplaceResult>[] = [];
+        handle().subscribe('documentChange', () => {
+            if (results.length === 0) {
+                results.push(handle().replaceDocument(replacing(handle())));
+            }
+        });
+
+        type('x');
+
+        expect(await act(() => results[0])).toEqual({ status: 'rejected', code: 'unsaved' });
+        expect(textIn(handle().getSnapshot().document)).toBe('xab');
+        unmount();
+    });
+
+    it('SPEC-rich-text-persistence/AC-032 gives the session back with unsaved when a host passes a checkpoint with no receipt', async () => {
+        const environment = createTestEnvironment({ seed: 1 });
+        const { handle, type, unmount } = mount({ service: serviceOf(environment).service, environment });
+        type('x');
+
+        const result = await replace(handle(), { unsaved: { action: 'checkpoint' } as never });
+
+        expect(result).toEqual({ status: 'rejected', code: 'unsaved' });
+        expect(handle().getSummary().phase).toBe('ready');
+        let inserted: CommandResult | undefined;
+        act(() => {
+            inserted = untyped(handle()).execute('text.insert', { text: 'y' });
+        });
+        expect(inserted).toMatchObject({ status: 'applied' });
+        expect(textIn(handle().getSnapshot().document)).toBe('xyab');
+        unmount();
+    });
+
     it('SPEC-rich-text-persistence/AC-068 replaces an untouched new record under the reject policy and disposes it with no disposed-dirty', async () => {
         const environment = createTestEnvironment({ seed: 1 });
         const { service } = serviceOf(environment);
