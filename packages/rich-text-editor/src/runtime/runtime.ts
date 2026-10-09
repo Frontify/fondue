@@ -19,6 +19,7 @@ import {
     AppendLimitError,
     COMMAND_META,
     type CompiledDefinition,
+    NORMALIZE_META,
     ORIGIN_META,
     type PluginOrigin,
 } from '#/definition';
@@ -105,6 +106,8 @@ export interface EditorRuntime {
     readonly handle: RuntimeHandle;
     /** The view on the attached surface, for the `src/testing` helpers. */
     readonly view: EditorView | undefined;
+    /** The session's current state, which stays readable after `dispose`, for tests. */
+    readonly state: EditorState;
     /** Shows the document in `element`, which becomes the editable surface. */
     attach(element: HTMLElement): void;
     /** Destroys the view synchronously; the session and its state stay. */
@@ -393,6 +396,10 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             ids,
             chain: [],
         };
+        // A composition batch's repair waits for input to settle, so it never changes composing text (SPEC-rich-text-runtime/AC-034).
+        if (isProvisional(root)) {
+            root.setMeta(NORMALIZE_META, 'later');
+        }
         let applied: ReturnType<EditorState['applyTransaction']>;
         try {
             applied = state.applyTransaction(root.setMeta(APPEND_BATCH_META, batch));
@@ -519,6 +526,15 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         provisional = undefined;
         busyWith(() => {
             if (mapping !== undefined) {
+                // The composition's repair runs now, inside the append limit, before the settled batch publishes (AC-092).
+                const repaired = prepare(state.tr.setMeta(NORMALIZE_META, 'now'), installedIds, false);
+                if ('candidate' in repaired && repaired.candidate.doc !== state.doc) {
+                    installState(repaired.candidate);
+                    mapping.appendMapping(repaired.mapping);
+                } else if ('fault' in repaired && repaired.fault !== undefined) {
+                    fault(repaired.fault);
+                    return;
+                }
                 const before = published.doc;
                 if (breaksPolicy(policy, before, state.doc, mapping) || exceedsLimits(state.doc, limits)) {
                     // Targets released during the composition stay released (SPEC-rich-text-runtime/AC-045).
@@ -942,6 +958,9 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         handle,
         get view() {
             return view;
+        },
+        get state() {
+            return state;
         },
         attach: (element) => {
             if (phase === 'disposed') {

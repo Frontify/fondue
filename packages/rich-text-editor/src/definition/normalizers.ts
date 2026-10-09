@@ -19,6 +19,12 @@ import { NODE_IDS_PLUGIN } from '#/model/capabilities';
 import { carriesNodeId } from './schema';
 
 /**
+ * The root transaction meta that times a batch's repair: `later` for a composition batch, whose repair waits so it never
+ * changes composing text, and `now` for the root that settles it (SPEC-rich-text-runtime/AC-034).
+ */
+export const NORMALIZE_META = 'rte.normalize';
+
+/**
  * A repair transaction appended after another: the same steps for equal states and nothing on its own output
  * (SPEC-rich-text/AC-057), computed synchronously with no I/O, timer or promise (SPEC-rich-text/AC-059).
  */
@@ -28,6 +34,8 @@ export type Normalizer = (state: EditorState, ids: IdSource) => Transaction | nu
 interface NodeIdIndex {
     readonly counts: ReadonlyMap<string, number>;
     readonly touched: readonly number[];
+    /** Whether the last root's repair waits, so the next root keeps the touched positions. */
+    readonly later: boolean;
 }
 
 /** A normalizer, with the plugin key and state it keeps between transactions. */
@@ -64,10 +72,10 @@ const countNodeIds = (doc: Node): Map<string, number> => {
 };
 
 /** The index of `doc` read whole: its counts, with every node that carries a `nodeId` touched. */
-const touchEveryNode = (doc: Node): NodeIdIndex => {
+const touchEveryNode = (doc: Node, later: boolean): NodeIdIndex => {
     const touched: number[] = [];
     startingIn(doc, 0, doc.content.size, (_node, pos) => touched.push(pos));
-    return { counts: countNodeIds(doc), touched };
+    return { counts: countNodeIds(doc), touched, later };
 };
 
 /**
@@ -75,11 +83,16 @@ const touchEveryNode = (doc: Node): NodeIdIndex => {
  * keystroke reads only what it changed; the touched positions start over with each root transaction.
  */
 const nodeIdIndex: StateField<NodeIdIndex> = {
-    init: (_config, state) => ({ counts: countNodeIds(state.doc), touched: [] }),
+    init: (_config, state) => ({ counts: countNodeIds(state.doc), touched: [], later: false }),
     apply: (transaction, index) => {
         let touched: number[] = [];
-        if (transaction.getMeta('appendedTransaction') !== undefined) {
+        const appended = transaction.getMeta('appendedTransaction') !== undefined;
+        if (appended || index.later) {
             touched = index.touched.map((pos) => transaction.mapping.map(pos, 1));
+        }
+        let { later } = index;
+        if (!appended) {
+            later = transaction.getMeta(NORMALIZE_META) === 'later';
         }
         // Copied on the first change only, since most transactions change no `nodeId`.
         let own: Map<string, number> | undefined;
@@ -117,14 +130,14 @@ const nodeIdIndex: StateField<NodeIdIndex> = {
                     });
                 });
             } else if (!KEEPS_IDS.some((kind) => step instanceof kind)) {
-                return touchEveryNode(transaction.doc);
+                return touchEveryNode(transaction.doc, later);
             }
         }
         let counts = index.counts;
         if (own !== undefined) {
             counts = own;
         }
-        return { counts, touched };
+        return { counts, touched, later };
     },
 };
 
@@ -138,7 +151,7 @@ const fillNodeIds: Normalizer = (state, ids) => {
     const { doc } = state;
     let index = NODE_ID_INDEX.getState(state);
     if (index === undefined) {
-        index = touchEveryNode(doc);
+        index = touchEveryNode(doc, false);
     }
     const repairs = new Set<number>();
     const repeated = new Set<string>();
