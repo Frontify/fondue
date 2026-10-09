@@ -375,6 +375,11 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
         send();
     };
     window.addEventListener('online', online);
+    // A session that never became ready, such as StrictMode's throwaway mount, leaves nothing the author saw unsaved.
+    let shown = false;
+    runtime.handle.subscribe('ready', () => {
+        shown = true;
+    });
     if (unsavedOnMount) {
         schedule();
     }
@@ -423,7 +428,7 @@ export const createSaveCoordinator = (runtime: EditorRuntime, given: SaveCoordin
                 refresh();
             }
             // A session that leaves unsaved changes says so and starts no write (AC-041).
-            if (unsaved()) {
+            if (shown && unsaved()) {
                 runtime.report(diagnostic('persistence.disposed-dirty', undefined, undefined, 'warning'));
             }
         },

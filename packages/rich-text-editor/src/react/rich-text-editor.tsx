@@ -69,6 +69,15 @@ const memberOf = <K extends (typeof SERVICE_MEMBERS)[number]>(
     return services[member];
 };
 
+/** Whether a services member changed: added, removed, or holding another function under some name (DR-074). */
+const memberChanged = (previous: object | undefined, next: object | undefined) => {
+    if (previous === undefined || next === undefined) {
+        return previous !== next;
+    }
+    const names = new Set([...Object.keys(previous), ...Object.keys(next)]);
+    return [...names].some((name) => Reflect.get(previous, name) !== Reflect.get(next, name));
+};
+
 /** What one mount keeps for its whole life: a changed `definition` or `profile` needs a new mount (SPEC-rich-text-react/AC-071). */
 interface Mounted {
     readonly definition: CompiledEditorDefinition<object>;
@@ -247,13 +256,15 @@ const SessionComponent = ({ children, onSession, ...props }: SessionProps, ref: 
         handleRef.current?.setMode(mode);
     }, [mode]);
 
-    // A changed `services` member aborts the operations it started, with no rebuild (SPEC-rich-text-runtime/AC-073).
+    // A changed `services` member aborts the operations it started, with no rebuild (SPEC-rich-text-runtime/AC-073, DR-074).
     const { services } = props;
     const servicesRef = useRef(services);
     useEffect(() => {
         const previous = servicesRef.current;
         servicesRef.current = services;
-        const changed = SERVICE_MEMBERS.filter((member) => memberOf(previous, member) !== memberOf(services, member));
+        const changed = SERVICE_MEMBERS.filter((member) =>
+            memberChanged(memberOf(previous, member), memberOf(services, member)),
+        );
         if (changed.length > 0) {
             coordinator.runtime?.changeServices(changed);
         }
@@ -360,7 +371,8 @@ class Recovery extends Component<RecoveryProps, RecoveryState> {
             // The acknowledged revision is the base of the next write, so a session that saved does not conflict with itself.
             revision = snapshot.acknowledgedRevision;
             const status = this.session.handle.getSaveStatus();
-            unsavedOnMount = status.state !== 'clean' && status.latestSequence > status.acknowledgedSequence;
+            // Every managed state but `clean` holds changes the server has not acknowledged, a carried edit included.
+            unsavedOnMount = status.state !== 'clean' && status.state !== 'unmanaged';
         }
         return (
             <RecoveryShell
