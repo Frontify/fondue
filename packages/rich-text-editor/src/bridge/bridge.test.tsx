@@ -349,6 +349,37 @@ describe('the React bridge', () => {
         unmount();
     });
 
+    it('SPEC-rich-text-react/AC-021 SPEC-rich-text-react/AC-102 runs a host command after chrome throws on an update', async () => {
+        const errors = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+        const BoomMention = () => {
+            const { attrs } = useRichTextNodeView();
+            if (attrs.label === 'boom') {
+                throw new Error('chrome failed');
+            }
+            return <span data-chrome="boom-mention">mention</span>;
+        };
+        const booming = defineEditor({
+            id: 'test.bridge',
+            model: modelOf([defineNodeView(fixtureChromeViews(), { node: 'chrome_mention', component: BoomMention })]),
+        });
+        const { handle, runtime, flush, onDiagnostic, unmount } = await mount([para(text('ab'), mention('m1'))], {
+            definition: booming,
+        });
+
+        act(() => {
+            runtime().nodeActions('m1').update({ label: 'boom' });
+        });
+        await flush();
+
+        expect(surface().querySelector('[data-rte-chrome]')).toHaveTextContent(
+            'This part of the content cannot be shown',
+        );
+        expect(commandsOf(handle()).execute('text.insert', { text: 'x' }).status).toBe('applied');
+        expect(onDiagnostic.mock.calls.map(([{ code }]) => code)).not.toContain('react.execute-in-render');
+        errors.mockRestore();
+        unmount();
+    });
+
     it('SPEC-rich-text-react/AC-021 renders chrome again once an update changes the attribute it threw for', async () => {
         const errors = vi.spyOn(console, 'error').mockImplementation(() => undefined);
         const Strict = () => {

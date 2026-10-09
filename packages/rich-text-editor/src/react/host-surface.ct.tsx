@@ -215,7 +215,7 @@ test('SPEC-rich-text-output/AC-014 exposes a readonly textbox in the readonly ed
     await expect(reader.locator('[contenteditable]')).toHaveCount(0);
 });
 
-test('SPEC-rich-text-accessibility/AC-030 opens no overlay or chrome popup and keeps focus when the surface takes focus by Tab or click', async ({
+test('SPEC-rich-text-accessibility/AC-030 opens no overlay or chrome popup, submits nothing and keeps focus when the surface takes focus by Tab or click', async ({
     mount,
     page,
 }) => {
@@ -230,9 +230,15 @@ test('SPEC-rich-text-accessibility/AC-030 opens no overlay or chrome popup and k
             ],
         },
     ];
-    await mount(<EditorProbe blocks={blocks} />);
+    await mount(<EditorProbe blocks={blocks} inForm />);
     await ready(page);
     await expect(surfaceOf(page).locator('[data-chrome="mention"]')).toBeVisible();
+    await page.evaluate(() => {
+        document.querySelector('form')?.addEventListener('submit', () => {
+            document.body.dataset.submits = String(Number(document.body.dataset.submits ?? '0') + 1);
+        });
+    });
+    const submits = () => page.evaluate(() => document.body.dataset.submits ?? '0');
     const overlays = () =>
         page.locator('[role="dialog"], [role="menu"], [role="listbox"], [role="tooltip"], [data-popup]');
 
@@ -240,6 +246,7 @@ test('SPEC-rich-text-accessibility/AC-030 opens no overlay or chrome popup and k
     await page.keyboard.press('Tab');
     await expect(surfaceOf(page)).toBeFocused();
     await expect(overlays()).toHaveCount(0);
+    expect(await submits()).toBe('0');
 
     await page.getByRole('button', { name: 'Before' }).focus();
     // Past the end of the text, away from the mention's chrome button.
@@ -250,6 +257,7 @@ test('SPEC-rich-text-accessibility/AC-030 opens no overlay or chrome popup and k
     await page.mouse.click(paragraph.x + paragraph.width - 2, paragraph.y + paragraph.height / 2);
     await expect(surfaceOf(page)).toBeFocused();
     await expect(overlays()).toHaveCount(0);
+    expect(await submits()).toBe('0');
     expect(await page.evaluate(() => window.rte?.text())).toBe(' ab');
 });
 

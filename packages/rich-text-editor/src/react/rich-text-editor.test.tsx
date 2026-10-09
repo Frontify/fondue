@@ -530,6 +530,44 @@ describe('RichTextEditor host surface', () => {
         unmount();
     });
 
+    it('SPEC-rich-text-react/AC-080 warns from an editor mounted after another remounted its surface', () => {
+        const environment = createTestEnvironment({ seed: 1 });
+        const first = vi.fn<(diagnostic: Diagnostic) => void>();
+        const second = vi.fn<(diagnostic: Diagnostic) => void>();
+        const tree = (surfaceKey: string, withSecond: boolean) => (
+            <>
+                <RichTextEditor.Root
+                    aria-label="Notes"
+                    definition={definition}
+                    defaultValue={defaultValue()}
+                    environment={environment}
+                    onDiagnostic={first}
+                >
+                    <RichTextEditor.Surface key={surfaceKey} />
+                </RichTextEditor.Root>
+                {withSecond && (
+                    <RichTextEditor
+                        aria-label="Notes"
+                        definition={definition}
+                        defaultValue={defaultValue()}
+                        environment={environment}
+                        onDiagnostic={second}
+                    />
+                )}
+            </>
+        );
+        const { rerender, unmount } = render(tree('a', false));
+        act(() => environment.flushFrames());
+        rerender(tree('b', false));
+
+        rerender(tree('b', true));
+        act(() => environment.flushFrames());
+
+        expect(first).not.toHaveBeenCalled();
+        expect(second.mock.calls.map(([{ code }]) => code)).toEqual(['react.duplicate-accessible-name']);
+        unmount();
+    });
+
     it('SPEC-rich-text-react/AC-080 reports no duplicate accessible name in a production build', () => {
         vi.stubEnv('NODE_ENV', 'production');
         const environment = createTestEnvironment({ seed: 1 });
