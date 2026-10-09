@@ -262,7 +262,9 @@ const writeChar = (tokens: readonly Token[], index: number, atLineStart: boolean
 };
 
 /** A code span whose backtick fence is longer than any run inside, padded when the content starts or ends with a backtick or a space. */
-export const codeSpan = (text: string): string => {
+export const codeSpan = (code: string): string => {
+    // A line break would let the next line start a block, such as an HTML block, so it becomes the space CommonMark reads anyway.
+    const text = code.replaceAll(/\r\n?|\n/g, ' ');
     const longest = Math.max(0, ...[...text.matchAll(/`+/g)].map(([run]) => run.length));
     const fence = '`'.repeat(longest + 1);
     let content = text;

@@ -316,7 +316,8 @@ const leafPieces = (state: MarkdownState, { node, path, code }: MarkdownItem, li
     const attrs = attrsOf(node.attrs);
     if (plan.markdown !== undefined) {
         try {
-            const text = plan.markdown(textOf(node), attrs, state.context);
+            const inner = serialize([{ kind: 'text', text: textOf(node) }], (featureId) => state.losses.add(featureId));
+            const text = plan.markdown(inner, attrs, state.context);
             if (plan.formats.markdown === 'lossy') {
                 state.losses.add(plan.featureId);
             }
@@ -665,6 +666,21 @@ const ruleOf = (
     }
 };
 
+/**
+ * A fence form's block: a backtick or tilde fence becomes a code fence longer than any run of its character in the
+ * body; any other fence holds the body escaped line by line, so stored text never becomes HTML or a link.
+ */
+const fencedOf = (fence: string, text: string): string => {
+    const [char = '`'] = fence;
+    if (/^(`{3,}|~{3,})$/.test(fence)) {
+        const longest = Math.max(0, ...[...text.matchAll(new RegExp(`${char}+`, 'g'))].map(([run]) => run.length));
+        const written = char.repeat(Math.max(fence.length, longest + 1));
+        return `${written}\n${text}\n${written}`;
+    }
+    const lines = text.split(/\r\n?|\n/).map((line) => serialize([{ kind: 'text', text: line }], () => undefined));
+    return [fence, ...lines, fence].join('\n');
+};
+
 /** One block's Markdown, or `null` for a block that writes nothing. */
 const renderBlock = (state: MarkdownState, node: TreeNode, path: string, alternate = false): string | null => {
     if (isIsland(node)) {
@@ -714,7 +730,7 @@ const renderBlock = (state: MarkdownState, node: TreeNode, path: string, alterna
         }
         const inner = fallbackOf(state, node, plan, path) ?? '';
         if ('fence' in plan.form) {
-            return `${plan.form.fence}\n${textOf(node)}\n${plan.form.fence}`;
+            return fencedOf(plan.form.fence, textOf(node));
         }
         return prefixLines(inner, plan.form.prefix, plan.form.prefix);
     }
