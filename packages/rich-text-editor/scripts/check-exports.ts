@@ -42,6 +42,7 @@ export const LAYOUT_ENTRIES = [
 ];
 const STYLES = './styles';
 const WORKSPACE_PEERS = ['@frontify/fondue-components', '@frontify/fondue-icons', '@frontify/fondue-tokens'];
+const TOKENS = '@frontify/fondue-tokens';
 // SPEC-rich-text.conventions.md, ProseMirror lines: the floor of each caret range.
 export const PROSEMIRROR_FLOORS: Record<string, string> = {
     'prosemirror-model': '1.25.12',
@@ -102,13 +103,37 @@ const peerSpec = (root: string, name: string) => {
     return `${name}@^${version}`;
 };
 
+/** A workspace peer packed from its own build, as it releases with the editor. */
+const packWorkspacePeer = (root: string, name: string, scratch: string) => {
+    const destination = join(scratch, 'peers', name.replace('/', '-'));
+    mkdirSync(destination, { recursive: true });
+    execFileSync('pnpm', ['pack', '--pack-destination', destination], {
+        cwd: realpathSync(join(root, 'node_modules', name)),
+        stdio: 'pipe',
+    });
+    const tarball = readdirSync(destination).find((file) => file.endsWith('.tgz'));
+    if (tarball === undefined) {
+        throw new Error(`pnpm pack wrote no tarball for ${name}`);
+    }
+    return join(destination, tarball);
+};
+
+/** What the consumer installs for a workspace peer: its workspace build, except tokens. */
+const peerSource = (root: string, name: string, scratch: string) => {
+    // The tokens build needs a Figma token CI does not have, and its published version equals the workspace one.
+    if (name === TOKENS) {
+        return peerSpec(root, name);
+    }
+    return packWorkspacePeer(root, name, scratch);
+};
+
 /** SPEC-rich-text/AC-005 and AC-058: in a pnpm host that also installs the Fondue peers, `pnpm why` finds one version of each. */
 const checkSingleCopies = (root: string, scratch: string, tarball: string): string[] => {
     const consumer = join(scratch, 'pnpm-consumer');
     mkdirSync(consumer);
     writeFileSync(join(consumer, 'package.json'), JSON.stringify({ name: 'rte-pnpm-consumer', private: true }));
     const flags = ['--ignore-scripts', '--config.auto-install-peers=false', '--ignore-workspace'];
-    const args = ['add', tarball, ...WORKSPACE_PEERS.map((name) => peerSpec(root, name)), ...flags];
+    const args = ['add', tarball, ...WORKSPACE_PEERS.map((name) => peerSource(root, name, scratch)), ...flags];
     const installFailure = run('pnpm', args, consumer);
     if (installFailure !== undefined) {
         return [installFailure];
