@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import fc from 'fast-check';
-import { joinBackward } from 'prosemirror-commands';
+import { joinBackward, splitBlock } from 'prosemirror-commands';
 import { Fragment, Node, Schema, Slice } from 'prosemirror-model';
 import { type EditorState, Plugin, TextSelection, type Transaction } from 'prosemirror-state';
 import { tableEditing, tableNodes } from 'prosemirror-tables';
@@ -9,8 +9,15 @@ import { Step, StepResult } from 'prosemirror-transform';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { compileDefinition, type CompiledDefinition, countAppends, type EngineCommand } from '#/definition';
-import { fixtureHeadingSet, fixtureLink, fixtureMention, fixtureTable } from '#/features/__fixtures__/features';
+import {
+    fixtureHeadingSet,
+    fixtureLink,
+    fixtureMedia,
+    fixtureMention,
+    fixtureTable,
+} from '#/features/__fixtures__/features';
 import { notesModel } from '#/features/__fixtures__/notes';
+import { vocabularyLists, vocabularyMention } from '#/features/__fixtures__/vocabulary';
 import { core } from '#/features/core/feature';
 import { bold } from '#/features/marks-bold/feature';
 import { defineEditor, type CommandsOfModel, type EditorHandle } from '#/index';
@@ -23,6 +30,7 @@ import {
     type JsonValue,
     migrateDocument,
     type ResourceLimits,
+    toggleMark,
 } from '#/model';
 import { decodeToTree, limitsOf } from '#/model/decode';
 import { createTestEnvironment, pressKey, setSelection, type TestEnvironment, typeText } from '#/testing';
@@ -33,7 +41,13 @@ import newerNotes from '../../fixtures/migration/v3-current.json';
 import { CAPABILITIES } from './capabilities';
 import { authoringOf } from './policy';
 import { createEditorRuntime, type EditorRuntime } from './runtime';
-import { type AuthoringPolicy, type CommandResult, type DocumentChange, type FeaturePolicy } from './types';
+import {
+    type AuthoringPolicy,
+    type CaptureTargetOptions,
+    type CommandResult,
+    type DocumentChange,
+    type FeaturePolicy,
+} from './types';
 
 const boldModel = compileContentModel([core(), bold()], { id: 'test.bold', version: 1 });
 const stored = (...blocks: readonly JsonValue[]) => ({
@@ -478,7 +492,11 @@ const table = (nodeId: string, ...paragraphs: readonly JsonValue[]) => ({
     content: paragraphs,
 });
 const mention = (nodeId: string) => ({ type: 'mention', attrs: { nodeId } });
-const heading = (level: number, ...content: readonly JsonValue[]) => ({ type: 'heading', attrs: { level }, content });
+const heading = (level: number, ...content: readonly JsonValue[]) => ({
+    type: 'heading',
+    attrs: { nodeId: 'h-1', level },
+    content,
+});
 const boldBreak = { type: 'hard_break', marks: [{ type: 'bold' }] };
 /** The document's text, with `@` for each inline node. */
 const textOf = (doc: Node) => doc.textBetween(0, doc.content.size, '', '@');
@@ -932,10 +950,10 @@ describe('occurrences the policy pairs across a batch', () => {
             false,
         ],
         [
-            'a pasted copy of a mention next to the untouched one',
+            'a pasted copy of a mention after the untouched one',
             stored(para(words('a'), { type: 'mention', attrs: { nodeId: 'm-1', label: 'Ada' } }, words('b'))),
             forbid('fixture.mention', 'edit'),
-            (state) => state.tr.insert(1, state.schema.node('mention', { nodeId: 'm-1', label: '' })),
+            (state) => state.tr.insert(3, state.schema.node('mention', { nodeId: 'm-1', label: '' })),
             true,
         ],
     ];
@@ -1470,9 +1488,12 @@ describe('command payloads', () => {
         handle.execute('heading.set', { level: 2 });
         expect(first(session).attrs).toMatchObject({ level: 2, lang: 'de' });
 
-        const kept = start(stored({ type: 'heading', attrs: { level: 2, tone: 'warm' }, content: [words('ab')] }), {
-            model,
-        });
+        const kept = start(
+            stored({ type: 'heading', attrs: { nodeId: 'h-1', level: 2, tone: 'warm' }, content: [words('ab')] }),
+            {
+                model,
+            },
+        );
         setSelection(kept.handle, { text: 'ab', from: 1, to: 1 });
         kept.handle.execute('heading.set', { level: 3 });
         const saved = kept.changes.at(-1)?.readDocument().content;
@@ -1502,7 +1523,10 @@ describe('command payloads', () => {
     });
 
     it('SPEC-rich-text-runtime/AC-035 reads a command as active only for the attributes its payload names', () => {
-        const { handle } = start(stored({ type: 'heading', attrs: { level: 3 }, content: [words('ab')] }), { model });
+        const { handle } = start(
+            stored({ type: 'heading', attrs: { nodeId: 'h-1', level: 3 }, content: [words('ab')] }),
+            { model },
+        );
         setSelection(handle, { text: 'ab', from: 1, to: 1 });
 
         expect([
@@ -1552,6 +1576,358 @@ describe('command payloads', () => {
         expect(handle.execute('acme.pull-quote.set').status).toBe('applied');
         expect(view.state.doc.firstChild?.type.name).toBe('paragraph');
     });
+});
+
+describe('origins with an appended normalization', () => {
+    /** Appends `!` to the document after any batch that changed it and left it without one. */
+    const repair = new Plugin({
+        appendTransaction: (transactions, _old, state) => {
+            if (!transactions.some(({ docChanged }) => docChanged) || state.doc.textContent.endsWith('!')) {
+                return null;
+            }
+            return state.tr.insertText('!', state.doc.content.size - 1);
+        },
+    });
+    const cases: readonly (readonly [string, (session: ReturnType<typeof start>) => void])[] = [
+        ['input', ({ handle }) => typeText(handle, 'c')],
+        ['paste', ({ view }) => view.pasteHTML('<p>d</p>')],
+        [
+            'cut',
+            ({ runtime, view }) => {
+                runtime.select({ anchor: 1, head: 2 });
+                view.dom.dispatchEvent(new ClipboardEvent('cut', { clipboardData: new DataTransfer(), bubbles: true }));
+            },
+        ],
+        ['command', ({ handle }) => handle.execute('text.insert', { text: 'e' })],
+        ['unknown', ({ view }) => view.dispatch(view.state.tr.insertText('f'))],
+    ];
+    for (const [origin, act] of cases) {
+        it(`SPEC-rich-text-runtime/AC-021 reports the root's origin ${origin} for a batch with an appended normalization`, () => {
+            const session = start(stored(para(words('ab'))), { plugins: [repair] });
+
+            act(session);
+
+            expect(session.changes.map((change) => change.origin)).toEqual([origin]);
+            expect(session.view.state.doc.textContent.endsWith('!')).toBe(true);
+        });
+    }
+});
+
+const linkSet = defineFeature({
+    id: 'fixture.link-set',
+    version: 1,
+    requires: [{ id: 'fixture.link', version: 1 }],
+    commands: { 'link.set': toggleMark('link', { href: 'https://frontify.com' }) },
+});
+const targetModel = compileContentModel([core(), bold(), fixtureLink(), linkSet(), fixtureMention()], {
+    id: 'test.bold',
+    version: 1,
+});
+const capture = (handle: EditorRuntime['handle'], options: CaptureTargetOptions) => {
+    const result = handle.captureTarget(options);
+    if (result.status !== 'captured') {
+        throw new Error('expected a captured target');
+    }
+    return result.target;
+};
+/** The text of every run that carries `mark`. */
+const markedText = (doc: Node, mark: string) => {
+    let text = '';
+    doc.descendants((node) => {
+        if (node.isText && node.marks.some(({ type }) => type.name === mark)) {
+            text += node.text;
+        }
+    });
+    return text;
+};
+const INVALID: CommandResult = { status: 'rejected', code: 'target-invalid' };
+
+describe('targets', () => {
+    it('SPEC-rich-text-runtime/AC-040 maps a target through every accepted transaction once, never through a query or a rejected batch', () => {
+        const reject = new Plugin({ filterTransaction: (transaction) => transaction.getMeta('rejected') !== true });
+        const { handle, view } = start(stored(para(words('abcd'))), { model: targetModel, plugins: [reject] });
+        setSelection(handle, { text: 'bc' });
+        const target = capture(handle, { purpose: 'format', onIntersectingEdit: 'map' });
+        /** Bolds the target's range, reads the bold text, then removes the bold again. */
+        const covered = () => {
+            handle.execute('mark.bold.toggle', undefined, { target });
+            const text = markedText(view.state.doc, 'bold');
+            handle.execute('mark.bold.toggle', undefined, { target });
+            return text;
+        };
+
+        setSelection(handle, { text: 'abcd', from: 0, to: 0 });
+        typeText(handle, 'x');
+        expect([textOf(view.state.doc), covered()]).toEqual(['xabcd', 'bc']);
+
+        setSelection(handle, { text: 'xabcd', from: 1, to: 1 });
+        view.pasteHTML('<p>yz</p>');
+        expect([textOf(view.state.doc), covered()]).toEqual(['xyzabcd', 'bc']);
+
+        setSelection(handle, { text: 'xyzabcd', from: 0, to: 0 });
+        expect(handle.query('text.insert', { text: 'q' }).enabled).toBe(true);
+        view.dispatch(view.state.tr.insertText('r', 1).setMeta('rejected', true));
+        expect([textOf(view.state.doc), covered()]).toEqual(['xyzabcd', 'bc']);
+    });
+
+    it('SPEC-rich-text-runtime/AC-041 rejects every later command through an invalidate target that an edit crossed', () => {
+        const { handle, view } = start(stored(para(words('abcd'))), { model: targetModel });
+        setSelection(handle, { text: 'bc' });
+        const invalidating = capture(handle, { purpose: 'replace-text', onIntersectingEdit: 'invalidate' });
+        const mapped = capture(handle, { purpose: 'replace-text', onIntersectingEdit: 'map' });
+
+        setSelection(handle, { text: 'abcd', from: 0, to: 0 });
+        typeText(handle, 'z');
+        expect(handle.query('text.insert', { text: 'X' }, { target: invalidating }).enabled).toBe(true);
+
+        setSelection(handle, { text: 'zabcd', from: 2, to: 3 });
+        view.dispatch(view.state.tr.deleteSelection());
+        expect(handle.query('text.insert', { text: 'X' }, { target: invalidating })).toMatchObject({
+            enabled: false,
+            disabledReason: 'target-invalid',
+        });
+        expect(handle.execute('text.insert', { text: 'X' }, { target: invalidating })).toEqual(INVALID);
+        typeText(handle, 'y');
+        expect(handle.execute('text.insert', { text: 'X' }, { target: invalidating })).toEqual(INVALID);
+
+        expect(handle.execute('text.insert', { text: 'X' }, { target: mapped }).status).toBe('applied');
+        expect(textOf(view.state.doc)).toBe('zayXd');
+    });
+
+    it('SPEC-rich-text-runtime/AC-042 invalidates a map target once its range is deleted, though its positions still resolve', () => {
+        const { handle, view } = start(stored(para(words('ab')), para(words('cd'))), { model: targetModel });
+        setSelection(handle, { text: 'cd' });
+        const target = capture(handle, { purpose: 'format', onIntersectingEdit: 'map' });
+
+        setSelection(handle, { text: 'cd', from: 0, to: 1 });
+        view.dispatch(view.state.tr.deleteSelection());
+        expect(handle.execute('mark.bold.toggle', undefined, { target }).status).toBe('applied');
+        expect(markedText(view.state.doc, 'bold')).toBe('d');
+
+        view.dispatch(view.state.tr.delete(4, view.state.doc.content.size));
+        expect(textOf(view.state.doc)).toBe('ab');
+        expect(handle.execute('mark.bold.toggle', undefined, { target })).toEqual(INVALID);
+
+        // Text that replaces the whole range takes its place, but the range it named is gone.
+        setSelection(handle, { text: 'ab' });
+        const replaced = capture(handle, { purpose: 'format', onIntersectingEdit: 'map' });
+        view.dispatch(view.state.tr.insertText('XY', 1, 3));
+        expect(handle.execute('mark.bold.toggle', undefined, { target: replaced })).toEqual(INVALID);
+    });
+
+    it('SPEC-rich-text-runtime/AC-043 keeps an edit-node target valid only while its node with that nodeId and type sits at its position', () => {
+        const { handle, view } = start(stored(para(words('a'), mention('m-1'), words('b'))), { model: targetModel });
+        setSelection(handle, { nodeId: 'm-1' });
+        const replaced = capture(handle, { purpose: 'edit-node', onIntersectingEdit: 'map' });
+
+        setSelection(handle, { text: 'a', from: 0, to: 0 });
+        typeText(handle, 'x');
+        expect(handle.query('text.insert', { text: 'X' }, { target: replaced }).enabled).toBe(true);
+        view.dispatch(view.state.tr.replaceWith(3, 4, view.state.schema.node('mention', { nodeId: 'm-2' })));
+        expect(handle.execute('text.insert', { text: 'X' }, { target: replaced })).toEqual(INVALID);
+
+        setSelection(handle, { nodeId: 'm-2' });
+        const renamed = capture(handle, { purpose: 'edit-node', onIntersectingEdit: 'map' });
+        view.dispatch(view.state.tr.setNodeAttribute(3, 'nodeId', 'm-3'));
+        expect(handle.execute('text.insert', { text: 'X' }, { target: renamed })).toEqual(INVALID);
+        expect(textOf(view.state.doc)).toBe('xa@b');
+    });
+
+    it('SPEC-rich-text-runtime/AC-044 keeps an insert target after the text typed at its position', () => {
+        const { handle, view } = start(stored(para(words('abcd'))), { model: targetModel });
+        setSelection(handle, { text: 'abcd', from: 2, to: 2 });
+        const target = capture(handle, { purpose: 'insert', onIntersectingEdit: 'map' });
+
+        typeText(handle, 'x');
+        expect(handle.execute('text.insert', { text: 'Y' }, { target }).status).toBe('applied');
+
+        expect(textOf(view.state.doc)).toBe('abxYcd');
+    });
+
+    for (const purpose of ['format', 'replace-text'] as const) {
+        for (const onIntersectingEdit of ['map', 'invalidate'] as const) {
+            it(`SPEC-rich-text-runtime/AC-076 keeps text typed at both ends out of a ${purpose} target that ${onIntersectingEdit}s`, () => {
+                const { handle, view } = start(stored(para(words('abcdef'))), { model: targetModel });
+                setSelection(handle, { text: 'cd' });
+                const target = capture(handle, { purpose, onIntersectingEdit });
+
+                setSelection(handle, { text: 'cd', from: 0, to: 0 });
+                typeText(handle, 'X');
+                setSelection(handle, { text: 'cd', from: 2, to: 2 });
+                typeText(handle, 'Y');
+                expect(handle.execute('link.set', undefined, { target }).status).toBe('applied');
+
+                expect([textOf(view.state.doc), markedText(view.state.doc, 'link')]).toEqual(['abXcdYef', 'cd']);
+            });
+        }
+    }
+});
+
+describe('node IDs', () => {
+    const idModel = compileContentModel(
+        [core(), fixtureHeadingSet(), vocabularyLists(), fixtureMedia(), vocabularyMention()],
+        {
+            id: 'test.bold',
+            version: 1,
+        },
+    );
+    /** Inserts a copy of the top-level block at the selection after it, as `block.duplicate` does. */
+    const duplicate: EngineCommand = {
+        run: (state, dispatch) => {
+            const { $from } = state.selection;
+            const index = $from.index(0);
+            if (dispatch !== undefined) {
+                dispatch(state.tr.insert($from.posAtIndex(index + 1, 0), state.doc.child(index)));
+            }
+            return true;
+        },
+        active: () => false,
+    };
+    const titled = (nodeId: string, value: string) => ({
+        type: 'heading',
+        attrs: { nodeId, level: 2 },
+        content: [words(value)],
+    });
+    const task = (nodeId: string, value: string) => ({
+        type: 'task_item',
+        attrs: { nodeId, checked: false },
+        content: [para(words(value))],
+    });
+    const figure = { type: 'figure', attrs: { nodeId: 'f-1' }, content: [para(words('Logo'))] };
+    const embed = { type: 'embed', attrs: { nodeId: 'e-1', url: 'https://www.youtube.com/watch?v=1' } };
+    const person = (nodeId: string) => ({
+        type: 'mention',
+        attrs: { nodeId, resourceType: 'user', resourceId: 'u-1', labelSnapshot: 'Ada' },
+    });
+    /** The `nodeId`s of the published document, in document order. */
+    const idsIn = (value: unknown): unknown[] => {
+        if (Array.isArray(value)) {
+            return value.flatMap(idsIn);
+        }
+        if (typeof value !== 'object' || value === null) {
+            return [];
+        }
+        const { attrs, content } = value as {
+            readonly attrs?: { readonly nodeId?: unknown };
+            readonly content?: unknown;
+        };
+        const own: unknown[] = [];
+        if (attrs !== undefined && 'nodeId' in attrs) {
+            own.push(attrs.nodeId);
+        }
+        return [...own, ...idsIn(content)];
+    };
+    /** Splits the node `depth` levels around the caret, as Enter in a list item does. */
+    const splitAt =
+        (depth: number) =>
+        ({ view }: ReturnType<typeof start>) =>
+            view.dispatch(view.state.tr.split(view.state.selection.from, depth));
+    const cases: readonly (readonly [string, JsonValue, (session: ReturnType<typeof start>) => void, unknown[]])[] = [
+        [
+            'turns a paragraph into a heading',
+            para(words('ab')),
+            ({ handle }) => {
+                setSelection(handle, { text: 'ab', from: 1, to: 1 });
+                handle.execute('heading.set', { level: 2 });
+            },
+            ['node-1'],
+        ],
+        [
+            'splits a heading in the middle',
+            titled('h-1', 'cd'),
+            (session) => {
+                setSelection(session.handle, { text: 'cd', from: 1, to: 1 });
+                splitBlock(session.view.state, (transaction) => session.view.dispatch(transaction));
+            },
+            ['h-1', 'node-1'],
+        ],
+        [
+            'splits a heading at the start',
+            titled('h-1', 'cd'),
+            (session) => {
+                setSelection(session.handle, { text: 'cd', from: 0, to: 0 });
+                splitBlock(session.view.state, (transaction) => session.view.dispatch(transaction));
+            },
+            ['h-1'],
+        ],
+        [
+            'splits a task item in the middle',
+            { type: 'task_list', content: [task('t-1', 'gh')] },
+            (session) => {
+                setSelection(session.handle, { text: 'gh', from: 1, to: 1 });
+                splitAt(2)(session);
+            },
+            ['t-1', 'node-1'],
+        ],
+        [
+            'splits a task item at the start',
+            { type: 'task_list', content: [task('t-1', 'gh')] },
+            (session) => {
+                setSelection(session.handle, { text: 'gh', from: 0, to: 0 });
+                splitAt(2)(session);
+            },
+            ['t-1', 'node-1'],
+        ],
+        [
+            'duplicates a figure',
+            figure,
+            ({ handle }) => {
+                setSelection(handle, { nodeId: 'f-1' });
+                handle.execute('block.duplicate');
+            },
+            ['f-1', 'node-1'],
+        ],
+        [
+            'duplicates an embed',
+            embed,
+            ({ handle }) => {
+                setSelection(handle, { nodeId: 'e-1' });
+                handle.execute('block.duplicate');
+            },
+            ['e-1', 'node-1'],
+        ],
+        [
+            'pastes a copy of a mention before it, which keeps the ID as the first in document order',
+            para(words('a'), person('m-1')),
+            ({ view }) => view.dispatch(view.state.tr.insert(1, view.state.doc.firstChild?.child(1) as Node)),
+            ['m-1', 'node-1'],
+        ],
+    ];
+    for (const [name, block, act, ids] of cases) {
+        it(`SPEC-rich-text-runtime/AC-092 ${name} and gives each node without a unique nodeId a new one in the same batch`, () => {
+            const appended: Transaction[] = [];
+            const seen = new Plugin({
+                state: {
+                    init: () => null,
+                    apply: (transaction) => {
+                        if (transaction.getMeta('appendedTransaction') !== undefined) {
+                            appended.push(transaction);
+                        }
+                        return null;
+                    },
+                },
+            });
+            const session = start(stored(block), {
+                model: idModel,
+                plugins: [seen],
+                commands: { 'block.duplicate': duplicate },
+            });
+            const before = idsIn(session.view.state.doc.toJSON());
+
+            act(session);
+
+            expect(session.changes).toHaveLength(1);
+            const published = idsIn(contentOf(session.changes[0]));
+            expect(published).toEqual(ids);
+            expect(new Set(published).size).toBe(published.length);
+            expect(published[0]).toBe(before[0] ?? 'node-1');
+            expect(appended.length > 0).toBe(published.some((id) => !before.includes(id)));
+            // The repair joins the root's history event: ProseMirror links it to its root and nothing opts it out.
+            for (const transaction of appended) {
+                expect(transaction.getMeta('addToHistory')).toBeUndefined();
+            }
+        });
+    }
 });
 
 describe('disposal', () => {
@@ -1622,7 +1998,7 @@ describe('disposal', () => {
         expect(later).not.toHaveBeenCalled();
     });
 
-    it('SPEC-rich-text-runtime/AC-060 releases every listener, selector, queued intent, frame, view and plugin view over 10 mount and dispose cycles', async () => {
+    it('SPEC-rich-text-runtime/AC-060 releases every listener, selector, queued intent, frame, view, plugin view and target over 10 mount and dispose cycles', async () => {
         const before = probeRuntimes();
         let pluginViews = 0;
         const counted = new Plugin({
@@ -1662,6 +2038,7 @@ describe('disposal', () => {
             if (cycle % 2 === 1) {
                 environment.flushFrames();
             }
+            runtime.handle.captureTarget({ purpose: 'format', onIntersectingEdit: 'map' });
             owned.push(probeRuntimes());
 
             runtime.handle.dispose();
@@ -1674,8 +2051,9 @@ describe('disposal', () => {
             selectors: 1,
             intents: 1,
             frames: 1,
+            targets: 0,
         });
-        expect(owned[1]).toMatchObject({ subscriptions: 1, selectors: 1, intents: 0, frames: 0 });
+        expect(owned[1]).toMatchObject({ subscriptions: 1, selectors: 1, intents: 0, frames: 0, targets: 1 });
         expect(probeRuntimes()).toEqual(before);
         expect(pluginViews).toBe(0);
         const settled = await Promise.all(pending);

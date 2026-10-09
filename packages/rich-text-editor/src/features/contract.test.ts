@@ -8,9 +8,11 @@ import { createElement, createRef } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
 import { createCodecs } from '#/codecs';
-import { type CapabilityImplementation, type EngineCommand } from '#/definition';
+import { type CapabilityImplementation, type EngineCommand, type Normalizer, NORMALIZERS } from '#/definition';
 import { bold, featuresById } from '#/features';
-import { commandCases } from '#/features/__fixtures__/contract.cases';
+import { commandCases, normalizerCases } from '#/features/__fixtures__/contract.cases';
+import { fixtureHeadingSet, fixtureMedia, fixtureMention, fixtureTable } from '#/features/__fixtures__/features';
+import { vocabularyLists } from '#/features/__fixtures__/vocabulary';
 import { featureFixtures } from '#/features/conformance/fixtures';
 import { core } from '#/features/core/feature';
 import { registry } from '#/features/registry';
@@ -24,6 +26,7 @@ vi.mock('#/codecs', { spy: true });
 
 runFeatureContract([...featuresById(Object.keys(registry)), highlight()], { fixtures: [highlightDocument] });
 commandCases(featuresById(Object.keys(registry)));
+normalizerCases(featuresById(Object.keys(registry)));
 
 /** Registers cases on a stand-in runner, runs each one and returns the titles of those that fail. */
 const failingTitles = async (register: () => void): Promise<string[]> => {
@@ -70,6 +73,28 @@ const text = (value: string, ...marks: readonly string[]) => {
     }
     return { type: 'text', text: value, marks: marks.map((type) => ({ type })) };
 };
+
+/** The stand-ins with a `nodeId` node and one document that holds each, for the normalizer cases. */
+const nodeIdFeatures = () => [
+    core(),
+    fixtureHeadingSet(),
+    fixtureMention(),
+    fixtureTable(),
+    fixtureMedia(),
+    vocabularyLists(),
+];
+const nodeIdDocument = stored([
+    { type: 'heading', attrs: { nodeId: 'h-1', level: 2 }, content: [text('Title')] },
+    paragraph(text('Hi '), { type: 'mention', attrs: { nodeId: 'm-1', label: 'Ada' } }),
+    { type: 'table', attrs: { nodeId: 't-1' }, content: [paragraph(text('Cell'))] },
+    {
+        type: 'task_list',
+        content: [{ type: 'task_item', attrs: { nodeId: 'k-1', checked: false }, content: [paragraph(text('Todo'))] }],
+    },
+    { type: 'figure', attrs: { nodeId: 'f-1' }, content: [paragraph(text('Logo'))] },
+    { type: 'embed', attrs: { nodeId: 'e-1', url: 'https://www.youtube.com/watch?v=1' } },
+]);
+normalizerCases(nodeIdFeatures(), [nodeIdDocument]);
 
 const DECODES = (name: string) => `SPEC-rich-text/AC-017 decodes and encodes ${name} to itself`;
 const RENDERS = (name: string) =>
@@ -148,6 +173,48 @@ describe('the feature contract suite', () => {
             expect(await failingTitles(() => commandCases([core(), bold()]))).toEqual([
                 'SPEC-rich-text-runtime/AC-038 runs mark.bold.toggle synchronously with no I/O or timer, dispatching at most once',
             ]);
+        } finally {
+            spy.mockRestore();
+        }
+    });
+
+    it.each([
+        [
+            'toggles an attribute',
+            'SPEC-rich-text/AC-057 runs the node-ids normalizer to equal steps on equal states and to nothing on its output',
+            (): Normalizer => (state) => {
+                let found: { readonly pos: number; readonly nodeId: unknown } | undefined;
+                state.doc.descendants((node, pos) => {
+                    if (found === undefined && 'nodeId' in node.attrs) {
+                        found = { pos, nodeId: node.attrs.nodeId };
+                    }
+                    return found === undefined;
+                });
+                if (found === undefined) {
+                    return null;
+                }
+                let next = 'on';
+                if (found.nodeId === 'on') {
+                    next = 'off';
+                }
+                return state.tr.setNodeAttribute(found.pos, 'nodeId', next);
+            },
+        ],
+        [
+            'calls setTimeout',
+            'SPEC-rich-text/AC-059 runs the node-ids normalizer synchronously with no I/O or timer',
+            (original: Normalizer): Normalizer =>
+                (state, ids) => {
+                    setTimeout(() => undefined, 0);
+                    return original(state, ids);
+                },
+        ],
+    ])('SPEC-rich-text/AC-057 SPEC-rich-text/AC-059 fails a normalizer that %s', async (_name, title, replace) => {
+        const normalizers = NORMALIZERS as Record<string, Normalizer>;
+        const original = normalizers['node-ids'] as Normalizer;
+        const spy = vi.spyOn(normalizers, 'node-ids').mockImplementation(replace(original));
+        try {
+            expect(await failingTitles(() => normalizerCases(nodeIdFeatures(), [nodeIdDocument]))).toEqual([title]);
         } finally {
             spy.mockRestore();
         }
