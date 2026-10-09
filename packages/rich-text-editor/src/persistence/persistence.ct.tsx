@@ -67,3 +67,100 @@ test('SPEC-rich-text-persistence/AC-057 waits past the autosave deadline for a c
     await expect.poll(() => savedTexts(page)).toEqual(['abcxy']);
     await expect.poll(() => stateOf(page)).toBe('clean');
 });
+
+test('SPEC-rich-text-persistence/AC-020 saves a character typed in the same task as a manual commit', async ({
+    mount,
+    page,
+}) => {
+    await mount(<EditorProbe texts={['ab']} persistence />);
+    await ready(page);
+    await caretAfter(page, 'ab');
+
+    const result = await page.evaluate(() => {
+        document.execCommand('insertText', false, 'c');
+        return (window.rte as Rte).handle.requestCommit({ reason: 'manual' });
+    });
+
+    expect(result.status).toBe('acknowledged');
+    expect(await savedTexts(page)).toEqual(['abc']);
+});
+
+test('SPEC-rich-text-persistence/AC-026 commits after the composition ends and saves the composed text', async ({
+    mount,
+    page,
+    browserName,
+}) => {
+    test.skip(browserName !== 'chromium', 'CDP drives composition in Chromium only (SPEC-rich-text-quality/AC-012).');
+    await mount(<EditorProbe texts={['ab']} persistence />);
+    await ready(page);
+    await caretAfter(page, 'ab');
+    const cdp = await page.context().newCDPSession(page);
+
+    await cdp.send('Input.imeSetComposition', { text: 'x', selectionStart: 1, selectionEnd: 1 });
+    const pending = page.evaluate(() => (window.rte as Rte).handle.requestCommit({ reason: 'submit' }));
+    await cdp.send('Input.insertText', { text: 'xy' });
+
+    const committed = await pending;
+    expect(committed.status).toBe('acknowledged');
+    expect(await savedTexts(page)).toEqual(['abxy']);
+});
+
+test('SPEC-rich-text-persistence/AC-026 fails with a timeout when the composition never ends', async ({
+    mount,
+    page,
+    browserName,
+}) => {
+    test.skip(browserName !== 'chromium', 'CDP drives composition in Chromium only (SPEC-rich-text-quality/AC-012).');
+    await mount(<EditorProbe texts={['ab']} persistence />);
+    await ready(page);
+    await caretAfter(page, 'ab');
+    const cdp = await page.context().newCDPSession(page);
+
+    await cdp.send('Input.imeSetComposition', { text: 'x', selectionStart: 1, selectionEnd: 1 });
+    const result = await page.evaluate(() =>
+        (window.rte as Rte).handle.requestCommit({ reason: 'submit', timeoutMs: 200 }),
+    );
+
+    expect(result).toMatchObject({ status: 'failed', code: 'timeout', outcome: 'not-sent' });
+    expect(await savedTexts(page)).toEqual([]);
+});
+
+test('SPEC-rich-text-persistence/AC-028 blocks a rejecting commit during composition and does not save', async ({
+    mount,
+    page,
+    browserName,
+}) => {
+    test.skip(browserName !== 'chromium', 'CDP drives composition in Chromium only (SPEC-rich-text-quality/AC-012).');
+    await mount(<EditorProbe texts={['ab']} persistence />);
+    await ready(page);
+    await caretAfter(page, 'ab');
+    const cdp = await page.context().newCDPSession(page);
+
+    await cdp.send('Input.imeSetComposition', { text: 'x', selectionStart: 1, selectionEnd: 1 });
+    const result = await page.evaluate(() =>
+        (window.rte as Rte).handle.requestCommit({ reason: 'submit', composition: 'reject' }),
+    );
+
+    expect(result).toMatchObject({ status: 'blocked', code: 'composition-active' });
+    expect(await savedTexts(page)).toEqual([]);
+});
+
+test('SPEC-rich-text-persistence/AC-066 fails a commit offline as not sent, then writes the pinned snapshot once online', async ({
+    mount,
+    page,
+}) => {
+    await mount(<EditorProbe texts={['ab']} persistence />);
+    await ready(page);
+    await caretAfter(page, 'ab');
+
+    await page.context().setOffline(true);
+    await page.keyboard.type('c');
+    const result = await page.evaluate(() => (window.rte as Rte).handle.requestCommit({ reason: 'manual' }));
+    expect(result).toMatchObject({ status: 'failed', code: 'transport', outcome: 'not-sent' });
+    expect(await savedTexts(page)).toEqual([]);
+
+    await page.context().setOffline(false);
+    await expect.poll(() => savedTexts(page)).toEqual(['abc']);
+    await expect.poll(() => stateOf(page)).toBe('clean');
+    expect(await savedTexts(page)).toEqual(['abc']);
+});
