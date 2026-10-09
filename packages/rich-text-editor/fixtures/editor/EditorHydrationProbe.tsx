@@ -2,7 +2,6 @@
 
 import { useEffect, useLayoutEffect, useRef } from 'react';
 import { hydrateRoot } from 'react-dom/client';
-import { renderToString } from 'react-dom/server';
 
 import { bold, core } from '../../src/features';
 import { defineEditor, RichTextEditor } from '../../src/index';
@@ -31,14 +30,16 @@ const Committed = ({ onCommit }: { readonly onCommit: () => void }) => {
     return null;
 };
 
-/** Server renders the editor, hydrates that markup and samples the surface text in each frame after the commit. */
+/** Hydrates the editor over `serverHtml`, rendered in Node, and samples the surface text in each frame after the commit. */
 export const EditorHydrationProbe = ({
     text,
+    serverHtml,
     blocked = false,
     onDone,
 }: {
     readonly text: string;
-    /** Stores the text in an unknown format version, which shows the blocked shell. */
+    readonly serverHtml: string;
+    /** Stores the text in an unknown format version, which shows the blocked shell; `serverHtml` must match. */
     readonly blocked?: boolean;
     readonly onDone: (result: EditorHydrationResult) => void;
 }) => {
@@ -48,14 +49,7 @@ export const EditorHydrationProbe = ({
         if (blocked) {
             defaultValue = { ...defaultValue, document: { ...defaultValue.document, formatVersion: 2 as 1 } };
         }
-        const tree = (onCommit: () => void) => (
-            <>
-                <RichTextEditor aria-label="Notes" definition={definition} defaultValue={defaultValue} />
-                <Committed onCommit={onCommit} />
-            </>
-        );
         const container = window.document.createElement('div');
-        const serverHtml = renderToString(tree(() => undefined));
         container.innerHTML = serverHtml;
         host.current?.append(container);
         const recoverable: string[] = [];
@@ -78,14 +72,19 @@ export const EditorHydrationProbe = ({
         };
         const root = hydrateRoot(
             container,
-            tree(() => {
-                // This sibling's layout effect runs after the editor's, so a view attached later would miss it.
-                atCommit = surfaceText();
-                requestAnimationFrame(sample);
-            }),
+            <>
+                <RichTextEditor aria-label="Notes" definition={definition} defaultValue={defaultValue} />
+                <Committed
+                    onCommit={() => {
+                        // This sibling's layout effect runs after the editor's, so a view attached later would miss it.
+                        atCommit = surfaceText();
+                        requestAnimationFrame(sample);
+                    }}
+                />
+            </>,
             { onRecoverableError: (error) => recoverable.push(String(error)) },
         );
         return () => root.unmount();
-    }, [text, blocked, onDone]);
+    }, [text, serverHtml, blocked, onDone]);
     return <div ref={host} />;
 };

@@ -3,6 +3,8 @@
 import { expect, test } from '@playwright/experimental-ct-react';
 
 import { type EditorHydrationResult, EditorHydrationProbe } from '../../fixtures/editor/EditorHydrationProbe';
+// CT runs this file in Node and sends only imports used as JSX to the browser: https://playwright.dev/docs/test-components#under-the-hood
+import { renderEditorOnServer } from '../../fixtures/editor/server';
 
 // `NODE_ENV=development` keeps React's mismatch warnings, which `pnpm test:components:hydration` builds with.
 for (const text of ['', 'Rotate the signing keys']) {
@@ -22,6 +24,7 @@ for (const text of ['', 'Rotate the signing keys']) {
         await mount(
             <EditorHydrationProbe
                 text={text}
+                serverHtml={renderEditorOnServer(text)}
                 onDone={(result) => {
                     reported = result;
                 }}
@@ -54,6 +57,7 @@ test('SPEC-rich-text-output/AC-033 SPEC-rich-text-react/AC-087 hydrates the bloc
     await mount(
         <EditorHydrationProbe
             text="Rotate the signing keys"
+            serverHtml={renderEditorOnServer('Rotate the signing keys', true)}
             blocked
             onDone={(result) => {
                 reported = result;

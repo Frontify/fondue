@@ -58,11 +58,11 @@ const breakAfterTyping = () => {
     const environment = createTestEnvironment({ seed: 1 });
     const ref = createRef<EditorHandle<object>>();
     const spy = persistence();
-    const tree = (armed: boolean) => (
+    const tree = (armed: boolean, documentId = 'document-1') => (
         <RichTextEditor.Root
             aria-label="Notes"
             definition={definition}
-            defaultValue={stored(envelope([para('ab')]))}
+            defaultValue={{ ...stored(envelope([para('ab')])), documentId }}
             environment={environment}
             services={{ persistence: spy as unknown as PersistenceService }}
             ref={ref}
@@ -78,7 +78,7 @@ const breakAfterTyping = () => {
     view.rerender(tree(true));
     // The shell stays until Retry, so the host part is fixed first.
     view.rerender(tree(false));
-    return { ...view, environment, ref, spy, before };
+    return { ...view, tree, environment, ref, spy, before };
 };
 
 const shell = (kind: string) => {
@@ -91,7 +91,27 @@ const shell = (kind: string) => {
 
 afterEach(() => {
     vi.restoreAllMocks();
+    vi.unstubAllGlobals();
 });
+
+const COPY_FAILED = 'Copying failed. Select the content and copy it with the keyboard.';
+
+/** Takes the clipboard away, as a page outside a secure context has none, and records unhandled rejections. */
+const withoutClipboard = () => {
+    vi.stubGlobal('navigator', { ...navigator, clipboard: undefined });
+    const rejections = vi.fn();
+    process.on('unhandledRejection', rejections);
+    return {
+        rejections: async () => {
+            // A rejection is reported after the microtask queue drains.
+            await new Promise((resolve) => {
+                setTimeout(resolve, 0);
+            });
+            process.off('unhandledRejection', rejections);
+            return rejections.mock.calls.length;
+        },
+    };
+};
 
 describe('the recovery shell', () => {
     it('SPEC-rich-text-react/AC-022 shows the last published snapshot through the reader after a render error, with no save', () => {
@@ -115,6 +135,18 @@ describe('the recovery shell', () => {
         expect(screen.getByRole('textbox', { name: 'Notes' })).toHaveAttribute('contenteditable', 'true');
         expect(handleOf(ref).getSnapshot().document).toEqual(before.document);
         expect(document.querySelector('[data-rte-shell]')).toBeNull();
+        unmount();
+    });
+
+    it('SPEC-rich-text-react/AC-085 mounts the snapshot on Retry under the document ID it was loaded with, not a newer prop', () => {
+        const { before, environment, ref, rerender, tree, unmount } = breakAfterTyping();
+        rerender(tree(false, 'b'));
+
+        fireEvent.click(screen.getByRole('button', { name: 'Retry' }));
+        act(() => environment.flushFrames());
+
+        expect(handleOf(ref).getSnapshot().stamp.documentId).toBe('document-1');
+        expect(handleOf(ref).getSnapshot().document).toEqual(before.document);
         unmount();
     });
 
@@ -150,6 +182,24 @@ const cannotUpgrade = compileContentModel([core(), bold()], {
         },
     ],
 });
+// A step may report its refusal with any diagnostic code, not only a `migration.*` one.
+const refusesWithFormatCode = compileContentModel([core(), bold()], {
+    id: 'test.editor',
+    version: 2,
+    migrations: [
+        {
+            id: 'test.refuses',
+            from: 1,
+            migrate: (document) => ({
+                status: 'unsupported',
+                document,
+                diagnostics: [
+                    { code: 'format.invalid-structure', severity: 'error', messageKey: 'format.invalid-structure' },
+                ],
+            }),
+        },
+    ],
+});
 const limited = defineEditor({ id: 'test.editor', model, limits: { maxTextLength: 3 } });
 
 const BLOCKED: readonly (readonly [string, unknown, CompiledEditorDefinition<object>, ContentModel, string])[] = [
@@ -175,6 +225,13 @@ const BLOCKED: readonly (readonly [string, unknown, CompiledEditorDefinition<obj
         'Editing is unavailable because this content cannot be upgraded to the current version.',
     ],
     [
+        'a migration that refuses with a format diagnostic',
+        envelope([para('ab')]),
+        defineEditor({ id: 'test.editor', model: refusesWithFormatCode }),
+        refusesWithFormatCode,
+        'Editing is unavailable because this content cannot be upgraded to the current version.',
+    ],
+    [
         'input that is not JSON',
         '{"format":',
         definition,
@@ -196,6 +253,48 @@ const BLOCKED: readonly (readonly [string, unknown, CompiledEditorDefinition<obj
         'Editing is unavailable because this content exceeds a size limit.',
     ],
 ];
+
+describe('copying without a full clipboard', () => {
+    it('SPEC-rich-text-react/AC-086 copies the snapshot as plain text when the browser has no ClipboardItem', async () => {
+        const { unmount } = breakAfterTyping();
+        vi.stubGlobal('ClipboardItem', undefined);
+        const writeText = vi.spyOn(navigator.clipboard, 'writeText').mockResolvedValue(undefined);
+
+        fireEvent.click(screen.getByRole('button', { name: 'Copy content' }));
+
+        await vi.waitFor(() => expect(writeText.mock.calls).toEqual([['cab']]));
+        expect(screen.queryByText(COPY_FAILED)).toBeNull();
+        unmount();
+    });
+
+    it('SPEC-rich-text-react/AC-086 shows a message and leaves no unhandled rejection when Copy content has no clipboard', async () => {
+        const { unmount } = breakAfterTyping();
+        const { rejections } = withoutClipboard();
+
+        fireEvent.click(screen.getByRole('button', { name: 'Copy content' }));
+
+        expect(await screen.findByText(COPY_FAILED)).toBeVisible();
+        expect(await rejections()).toBe(0);
+        unmount();
+    });
+
+    it('SPEC-rich-text-react/AC-087 shows a message and leaves no unhandled rejection when Copy original has no clipboard', async () => {
+        const { unmount } = render(
+            <RichTextEditor
+                aria-label="Notes"
+                definition={definition}
+                defaultValue={stored({ ...envelope([para('ab')]), formatVersion: 2 })}
+            />,
+        );
+        const { rejections } = withoutClipboard();
+
+        fireEvent.click(screen.getByRole('button', { name: 'Copy original' }));
+
+        expect(await screen.findByText(COPY_FAILED)).toBeVisible();
+        expect(await rejections()).toBe(0);
+        unmount();
+    });
+});
 
 describe('the blocked shell', () => {
     it.each(BLOCKED)(
