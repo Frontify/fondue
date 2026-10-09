@@ -14,9 +14,11 @@ import {
 import { CAPABILITY_PLUGINS, declaresNodeIds, INPUT_RULES_PLUGIN, NODE_IDS_PLUGIN } from '#/model/capabilities';
 import { compiledModel } from '#/model/compile';
 
+import { type CompiledInputRule, compileInputRules } from './input-rules';
 import { NORMALIZE_META, NORMALIZERS } from './normalizers';
 import { buildSchema } from './schema';
 
+export { type CompiledInputRule, type LineStartRule, type MarkDelimiterRule } from './input-rules';
 export { carriesNodeId } from './schema';
 export { NORMALIZE_META, type Normalizer, NORMALIZERS } from './normalizers';
 
@@ -39,7 +41,12 @@ export interface EngineCommand {
 }
 /** Builds the engine command of one capability from a command's data arguments. */
 export type CapabilityImplementation = (args: JsonObject, schema: Schema) => EngineCommand;
-export type CapabilityImplementations = Readonly<Partial<Record<CapabilityName, CapabilityImplementation>>>;
+/** Builds a package plugin whose code lives in the runtime, such as the history or the input rule engine. */
+export type PluginImplementation = (context: { readonly inputRules: readonly CompiledInputRule[] }) => Plugin;
+export type CapabilityImplementations = Readonly<Partial<Record<CapabilityName, CapabilityImplementation>>> & {
+    /** The package plugins the runtime builds, by plugin ID; any other plugin holds only its key until it is built. */
+    readonly plugins?: Readonly<Record<string, PluginImplementation>>;
+};
 
 export interface CompiledDefinition {
     readonly model: ContentModel;
@@ -167,7 +174,12 @@ export const compileDefinition = (
         }
         return { featureId: contributor.id, capability: id };
     };
+    const inputRules = compileInputRules(features, schema, (id) => commands.get(id)?.run);
     const pluginOf = (id: string) => {
+        const built = capabilities.plugins?.[id];
+        if (built !== undefined) {
+            return built({ inputRules });
+        }
         const normalizer = NORMALIZERS[id];
         if (normalizer !== undefined) {
             return new Plugin({

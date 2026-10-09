@@ -40,9 +40,11 @@ export interface PluginDescriptor {
     readonly after?: readonly string[];
 }
 
+/** The undo history, whose phase puts Backspace right after an input rule before the list keys. */
+export const HISTORY_PLUGIN: PluginDescriptor = { id: 'history', phase: 'history' };
 /** One plugin key, one instance: a plugin several capabilities contribute sits at its first contributor's position. */
 export const CAPABILITY_PLUGINS: Readonly<Partial<Record<CapabilityName, readonly PluginDescriptor[]>>> = {
-    history: [{ id: 'history', phase: 'history' }],
+    history: [HISTORY_PLUGIN],
 };
 /** The package's input rule engine, one plugin for every feature's rules (SPEC-rich-text-editing, Input rules). */
 export const INPUT_RULES_PLUGIN: PluginDescriptor = { id: 'input-rules', phase: 'input-rules' };

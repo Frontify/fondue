@@ -4,7 +4,7 @@
 import reactConfig from '@frontify/oxlint-config-react';
 import { type AllowWarnDeny, defineConfig, type OxlintOverride } from 'oxlint';
 
-type ImportPattern = { readonly group: string[]; readonly message: string };
+type ImportPattern = { readonly group: string[]; readonly importNamePattern?: string; readonly message: string };
 type ImportPath = { readonly name: string; readonly importNames: string[]; readonly message: string };
 type Scope = {
     readonly files: string[];
@@ -136,6 +136,11 @@ const restrictedImports = ({
                           message: 'Reach history only through `src/runtime/history/` (SPEC-rich-text-runtime/AC-052).',
                       },
                   ]),
+            {
+                group: ['prosemirror-tables'],
+                importNamePattern: '^_',
+                message: 'Underscore exports of `prosemirror-tables` are its internals (SPEC-rich-text/AC-095).',
+            },
             {
                 group: ['@radix-ui/**', ...(allowRadix ?? []).map((name) => `!${name}`)],
                 message: 'Use the Fondue overlays; only the toolbars import Radix (SPEC-rich-text-react/AC-098).',
@@ -404,6 +409,13 @@ const TIME_MESSAGE =
 const DOM_MESSAGE =
     'Codecs and the reader read only the envelope and resolver results, never the live DOM (SPEC-rich-text-output/AC-027).';
 
+const ENGINE_MESSAGE = 'The view input state and DOM observer are ProseMirror internals (SPEC-rich-text/AC-095).';
+// Every scope keeps these, since each override's `no-restricted-properties` replaces earlier ones.
+const ENGINE_INTERNALS = [
+    { object: 'view', property: 'input', message: ENGINE_MESSAGE },
+    { property: 'domObserver', message: ENGINE_MESSAGE },
+];
+
 const globals = (names: string[], message: string) => names.map((name) => ({ name, message }));
 const viaGlobalObjects = (names: string[], message: string) =>
     GLOBAL_OBJECTS.flatMap((object) => names.map((property) => ({ object, property, message })));
@@ -417,6 +429,7 @@ const restricted = (network: boolean, time: boolean, dom = false): NonNullable<O
     ],
     'no-restricted-properties': [
         'error',
+        ...ENGINE_INTERNALS,
         ...(network
             ? [
                   { object: 'navigator', property: 'sendBeacon', message: NETWORK_MESSAGE },

@@ -1,10 +1,10 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { defineFeature, insertText } from '#/model';
+import { defineFeature, history, insertText } from '#/model';
 
 const lang = { type: 'language', nullable: true, default: null } as const;
 
-/** The document, paragraphs, text and hard breaks that every model installs. */
+/** The document, paragraphs, text, hard breaks and undo history that every model installs. */
 export const core = defineFeature({
     id: 'core',
     version: 1,
@@ -26,5 +26,6 @@ export const core = defineFeature({
         hard_break: { group: 'inline', attrs: {}, html: ['br'], parse: [{ tag: 'br' }] },
     },
     formats: { html: 'lossless', text: 'lossless', markdown: 'lossless' },
-    commands: { 'text.insert': insertText() },
+    commands: { 'text.insert': insertText(), 'history.undo': history('undo'), 'history.redo': history('redo') },
+    keys: { 'Mod-z': 'history.undo', 'Mod-Shift-z': 'history.redo' },
 });
