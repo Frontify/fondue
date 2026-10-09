@@ -49,6 +49,8 @@ const defaultValue = (...blocks: readonly JsonValue[]): LoadedDocument => ({
     },
 });
 
+const ALLOWED = { create: true, edit: true, remove: true, paste: true };
+
 type Props = Partial<RichTextEditorBaseProps<object>>;
 
 /** Mounts an editor with a test environment and runs its first frame, so it is `ready`. */
@@ -328,5 +330,25 @@ describe('RichTextEditor', () => {
             expect(failure).toBeInstanceOf(DefinitionError);
             expect(failure).toMatchObject({ code: 'definition.invalid-manifest', details: { path } });
         }
+    });
+
+    it('SPEC-rich-text/AC-025 rejects a policy for a feature the model does not install', () => {
+        let failure: unknown;
+        try {
+            defineEditor({ id: 'test.policy', model: boldModel, policy: { features: { 'marks.italic': ALLOWED } } });
+        } catch (error) {
+            failure = error;
+        }
+
+        expect(failure).toBeInstanceOf(DefinitionError);
+        expect(failure).toMatchObject({
+            code: 'definition.unknown-policy-feature',
+            details: { feature: 'marks.italic' },
+        });
+    });
+
+    it('SPEC-rich-text/AC-044 keeps the engine out of the definition a host holds', () => {
+        expect(Object.keys(definition)).toEqual(['id', 'model', 'capabilities', 'authoring', 'limits']);
+        expect(Object.getOwnPropertySymbols(definition)).toEqual([]);
     });
 });
