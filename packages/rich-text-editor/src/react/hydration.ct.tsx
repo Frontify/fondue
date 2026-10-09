@@ -24,7 +24,7 @@ for (const text of ['', 'Rotate the signing keys']) {
         await mount(
             <EditorHydrationProbe
                 text={text}
-                serverHtml={renderEditorOnServer(text)}
+                serverHtml={await renderEditorOnServer(text)}
                 onDone={(result) => {
                     reported = result;
                 }}
