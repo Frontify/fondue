@@ -19,8 +19,12 @@ import {
 import { runMigrations } from './migrate';
 import { exceedsBytes, readInput } from './read';
 
-const limitsOf = (given: Partial<ResourceLimits> | undefined): ResourceLimits => {
-    const limits: Record<string, number> = { ...defaultLimits };
+/** `base` with each given limit that is a finite, non-negative number. */
+export const limitsOf = (
+    given: Partial<ResourceLimits> | undefined,
+    base: ResourceLimits = defaultLimits,
+): ResourceLimits => {
+    const limits: Record<string, number> = { ...base };
     for (const [name, value] of Object.entries(given === undefined ? {} : given)) {
         if (typeof value === 'number' && Number.isFinite(value) && value >= 0) {
             limits[name] = value;

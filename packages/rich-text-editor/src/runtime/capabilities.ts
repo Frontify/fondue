@@ -32,7 +32,10 @@ const markState = (state: EditorState, type: MarkType): boolean | 'mixed' => {
     if (marked === 0) {
         return false;
     }
-    return marked === texts ? true : 'mixed';
+    if (marked === texts) {
+        return true;
+    }
+    return 'mixed';
 };
 
 const toggleMark: CapabilityImplementation = (args, schema) => {
@@ -46,8 +49,11 @@ const toggleMark: CapabilityImplementation = (args, schema) => {
     const engineToggle = toggleEngineMark(type, attrs);
     return {
         run: (state, dispatch, view) => {
-            if (state.selection.empty || !engineToggle(state)) {
+            if (state.selection.empty) {
                 return engineToggle(state, dispatch, view);
+            }
+            if (!engineToggle(state)) {
+                return false;
             }
             if (dispatch === undefined) {
                 return true;

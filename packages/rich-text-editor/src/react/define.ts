@@ -1,7 +1,8 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { compileDefinition, type CompiledDefinition } from '#/definition';
-import { type ContentModel, defaultLimits, DefinitionError, type ResourceLimits } from '#/model';
+import { type ContentModel, DefinitionError, type ResourceLimits } from '#/model';
+import { limitsOf } from '#/model/decode';
 import { findUnsafeJson } from '#/model/values';
 import { CAPABILITIES } from '#/runtime/capabilities';
 import { type AuthoringPolicy, type FeaturePolicy, type HeadingLevel } from '#/runtime/types';
@@ -28,13 +29,10 @@ export const engineOf = (definition: CompiledEditorDefinition<object>): Compiled
 };
 
 /** Every installed feature fully allowed, with the policy's own values over it; a policy for an uninstalled feature throws. */
-const authoringOf = (model: ContentModel, policy: Partial<AuthoringPolicy> | undefined): AuthoringPolicy => {
+const authoringOf = (model: ContentModel, policy: Partial<AuthoringPolicy> = {}): AuthoringPolicy => {
     const features: Record<string, FeaturePolicy> = {};
     for (const { id } of model.capabilities) {
         features[id] = EVERYTHING;
-    }
-    if (policy === undefined) {
-        return { features, creatableHeadingLevels: HEADING_LEVELS, enterBehavior: 'paragraph' };
     }
     for (const [id, feature] of Object.entries(policy.features ?? {})) {
         if (!Object.hasOwn(features, id)) {
@@ -49,17 +47,13 @@ const authoringOf = (model: ContentModel, policy: Partial<AuthoringPolicy> | und
     };
 };
 
-/** The defaults with `limitOverrides`, then each of `limits` that is stricter. */
-const limitsOf = (limits: Partial<ResourceLimits> = {}, overrides: Partial<ResourceLimits> = {}): ResourceLimits => {
-    const result: Record<string, number> = { ...defaultLimits };
-    for (const [name, value] of Object.entries(overrides)) {
-        result[name] = value;
-    }
-    for (const [name, value] of Object.entries(limits)) {
-        const current = result[name];
-        if (current !== undefined && value < current) {
-            result[name] = value;
-        }
+/** The defaults with `limitOverrides`, then each of `limits` that is stricter; invalid values are ignored. */
+const limitsWithin = (limits: Partial<ResourceLimits> | undefined, overrides: Partial<ResourceLimits> | undefined) => {
+    const loosened = limitsOf(overrides);
+    const values: Readonly<Record<string, number>> = { ...loosened };
+    const result: Record<string, number> = { ...limitsOf(limits, loosened) };
+    for (const [name, value] of Object.entries(values)) {
+        result[name] = Math.min(value, result[name] ?? value);
     }
     return result as unknown as ResourceLimits;
 };
@@ -83,7 +77,7 @@ export const defineEditor = <Model extends ContentModel>(
         model: model.ref,
         capabilities: model.capabilities,
         authoring: authoringOf(model, policy),
-        limits: limitsOf(options.limits, options.limitOverrides),
+        limits: limitsWithin(options.limits, options.limitOverrides),
     });
     engines.set(definition, compileDefinition(model, CAPABILITIES));
     return definition as unknown as CompiledEditorDefinition<CommandsOfModel<Model>>;

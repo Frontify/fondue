@@ -5,7 +5,7 @@ import { type Schema } from 'prosemirror-model';
 import { type Command, type EditorState, Plugin, PluginKey } from 'prosemirror-state';
 
 import { type CapabilityName, type ContentModel, type JsonObject } from '#/model';
-import { compiledModel, type KeymapEntry } from '#/model/compile';
+import { compiledModel } from '#/model/compile';
 
 import { buildSchema } from './schema';
 
@@ -24,8 +24,6 @@ export type CapabilityImplementations = Readonly<Partial<Record<CapabilityName, 
 export interface CompiledDefinition {
     readonly model: ContentModel;
     readonly schema: Schema;
-    /** Key bindings in plugin order; features that bind one key run in that order. */
-    readonly keymap: readonly KeymapEntry[];
     /** One instance per plugin ID, in plugin order. */
     readonly plugins: readonly Plugin[];
     /** Every command whose capability is implemented, by command ID. */
@@ -73,5 +71,5 @@ export const compileDefinition = (
         }
         return new Plugin({ key: new PluginKey(id), props: { handleKeyDown: keydownHandler(bindings) } });
     };
-    return { model, schema, keymap, plugins: plugins.map(({ id }) => pluginOf(id)), commands };
+    return { model, schema, plugins: plugins.map(({ id }) => pluginOf(id)), commands };
 };

@@ -16,7 +16,6 @@ import {
     checkHref,
     type ContentModel,
     DefinitionError,
-    type HtmlAttributeValue,
     type HtmlSpec,
     type JsonObject,
     type ParseAttributeSource,
@@ -24,89 +23,29 @@ import {
 } from '#/model';
 import { attributesOf, compiledModel, type SharedAttribute } from '#/model/compile';
 import { ISLAND_BLOCK, ISLAND_INLINE, ISLAND_MARK } from '#/model/content';
-import {
-    addDeclaration,
-    isPlainCss,
-    isSrcdocAttribute,
-    isStyleAttribute,
-    isValidValue,
-    ownValue,
-} from '#/model/values';
+import { resolveHtmlSpec } from '#/model/html-spec';
+import { isValidValue, ownValue } from '#/model/values';
 
 type Values = Readonly<Record<string, unknown>>;
 
 const GROUPS = { block: 'block section', section: 'section', inline: 'inline' } as const;
 
-/** An attribute value as HTML attribute text; `undefined` for null, which writes no HTML attribute. */
-const textOf = (value: unknown): string | undefined => {
-    if (typeof value === 'string') {
-        return value;
-    }
-    if (typeof value === 'number' || typeof value === 'boolean') {
-        return String(value);
-    }
-    return value === null || value === undefined ? undefined : JSON.stringify(value);
-};
-
-const readValue = (value: HtmlAttributeValue, values: Values, options: JsonObject) => {
-    if (typeof value === 'string') {
-        return value;
-    }
-    if ('attr' in value) {
-        return textOf(values[value.attr]);
-    }
-    return textOf(options[value.option]);
-};
-
-/** The engine's DOM output for one `HtmlSpec`; a null attribute writes no HTML attribute. */
+/** The engine's DOM output for one `HtmlSpec`, from the layers the reader and codecs resolve too (SPEC-rich-text/AC-073). */
 const render = (
     spec: HtmlSpec,
     values: Values,
     options: JsonObject,
     shared: readonly SharedAttribute[],
 ): DOMOutputSpec => {
-    const [tag, second, third] = spec;
-    const name = typeof tag === 'string' ? tag : ownValue(tag.tags, textOf(values[tag.attr]) ?? '');
-    const attributes =
-        typeof second === 'object' && !Array.isArray(second)
-            ? (second as Readonly<Record<string, HtmlAttributeValue>>)
-            : undefined;
-    const dom: Record<string, string> = {};
-    for (const [attribute, binding] of Object.entries(attributes ?? {})) {
-        const value = readValue(binding, values, options);
-        if (value === undefined) {
-            continue;
-        }
-        if (isSrcdocAttribute(attribute)) {
-            continue;
-        }
-        if (isStyleAttribute(attribute)) {
-            dom.style = value;
-            continue;
-        }
-        dom[attribute] = value;
+    const { layers, content } = resolveHtmlSpec(spec, values, options, shared);
+    let inner: readonly DOMOutputSpec[] = [];
+    if (content) {
+        inner = [0 as unknown as DOMOutputSpec];
     }
-    for (const { name: attribute, declaration } of shared) {
-        const value = textOf(values[attribute]);
-        if (value === undefined || declaration.html === undefined) {
-            continue;
-        }
-        if ('attr' in declaration.html) {
-            if (!isSrcdocAttribute(declaration.html.attr)) {
-                dom[declaration.html.attr] = value;
-            }
-        } else if (isPlainCss(value)) {
-            dom.style = addDeclaration(dom.style, declaration.html.style, value);
-        }
+    for (const { tag, attrs } of [...layers].reverse()) {
+        inner = [[tag, attrs, ...inner]];
     }
-    const content = attributes === undefined ? second : third;
-    const children: DOMOutputSpec[] = [];
-    if (content === 0) {
-        children.push(0 as unknown as DOMOutputSpec);
-    } else if (Array.isArray(content)) {
-        children.push(render(content as HtmlSpec, values, options, []));
-    }
-    return [name ?? 'span', dom, ...children];
+    return inner[0] as DOMOutputSpec;
 };
 
 /** Declared attributes, then `unknownAttributes`, which holds what the vocabulary does not declare (SPEC-rich-text-format, Vocabulary). */
@@ -127,11 +66,17 @@ const attributeSpecs = (declarations: AttributeDeclarations) => {
 /** An HTML attribute or CSS value as its declaration types it, or `undefined` when it holds none. */
 const valueOf = (text: string, declaration: AttributeDeclaration): unknown => {
     if (declaration.type === 'integer' || declaration.type === 'number') {
-        return text.trim() === '' ? undefined : Number(text);
+        if (text.trim() === '') {
+            return undefined;
+        }
+        return Number(text);
     }
     if (declaration.type === 'url') {
         const href = checkHref(text);
-        return href.ok ? href.href : undefined;
+        if (!href.ok) {
+            return undefined;
+        }
+        return href.href;
     }
     return text;
 };
@@ -142,20 +87,29 @@ const readSource = (element: HTMLElement, source: ParseAttributeSource, declarat
     }
     if ('fromStyle' in source) {
         const text = element.style.getPropertyValue(source.fromStyle);
-        return text === '' ? undefined : valueOf(text, declaration);
+        if (text === '') {
+            return undefined;
+        }
+        return valueOf(text, declaration);
     }
     let target: Element | null = element;
     if (source.child !== undefined) {
         target = element.querySelector(source.child);
     }
-    const text = target === null ? null : target.getAttribute(source.from);
+    let text: string | null = null;
+    if (target !== null) {
+        text = target.getAttribute(source.from);
+    }
     if (source.equals !== undefined) {
         return text === source.equals;
     }
     if (declaration.type === 'boolean') {
         return text !== null;
     }
-    return text === null ? undefined : valueOf(text, declaration);
+    if (text === null) {
+        return undefined;
+    }
+    return valueOf(text, declaration);
 };
 
 /**
@@ -172,7 +126,10 @@ const tagRule = (
         const attrs: Record<string, unknown> = {};
         for (const [name, declaration] of Object.entries(declarations)) {
             const source = ownValue(sources, name);
-            const value = source === undefined ? undefined : readSource(element, source, declaration);
+            let value: unknown;
+            if (source !== undefined) {
+                value = readSource(element, source, declaration);
+            }
             if (value !== undefined && isValidValue(declaration, value)) {
                 attrs[name] = value;
             } else if (!('default' in (specs[name] ?? {}))) {
@@ -216,8 +173,11 @@ export const buildSchema = (model: ContentModel): Schema => {
         const { declaration, shared } = node;
         const options = optionsOf.get(node.featureId) ?? {};
         const attributes = attributesOf(node);
+        let specs: Record<string, AttributeSpec> = {};
         // A text node takes no attribute (SPEC-rich-text-format/AC-053).
-        const specs = node.name === 'text' ? {} : attributeSpecs(attributes);
+        if (node.name !== 'text') {
+            specs = attributeSpecs(attributes);
+        }
         const spec: NodeSpec = {
             attrs: specs,
             toDOM: (instance) => render(declaration.html, instance.attrs, options, shared),

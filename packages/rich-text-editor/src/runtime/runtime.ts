@@ -113,12 +113,11 @@ const summarize = (selection: Selection): SelectionSummary => {
         selectedNodeId = selection.node.attrs.nodeId;
     }
     const { parent } = selection.$from;
-    return {
-        kind: kindOf(selection),
-        collapsed: selection.empty,
-        blockType: parent.isTextblock ? parent.type.name : null,
-        selectedNodeId,
-    };
+    let blockType: string | null = null;
+    if (parent.isTextblock) {
+        blockType = parent.type.name;
+    }
+    return { kind: kindOf(selection), collapsed: selection.empty, blockType, selectedNodeId };
 };
 
 const UI_ORIGINS: ReadonlySet<string> = new Set(['paste', 'cut', 'drop']);
@@ -132,7 +131,10 @@ const originOf = (root: Transaction, typing: boolean): ChangeOrigin => {
     if (typeof event === 'string' && UI_ORIGINS.has(event)) {
         return event as ChangeOrigin;
     }
-    return typing ? 'input' : 'unknown';
+    if (typing) {
+        return 'input';
+    }
+    return 'unknown';
 };
 
 /** One empty paragraph is an empty document, which shows the placeholder (SPEC-rich-text-react/AC-030). */
@@ -190,11 +192,15 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         sequence += 1;
         let document: RichTextDocument | undefined;
         const command: unknown = root.getMeta(COMMAND_META);
+        let commandId: string | null = null;
+        if (typeof command === 'string') {
+            commandId = command;
+        }
         emit('documentChange', {
             stamp: { ...session, sequence },
             commitSequence,
             origin,
-            commandId: typeof command === 'string' ? command : null,
+            commandId,
             readDocument: () => {
                 if (document === undefined) {
                     document = encode(candidate.doc);
@@ -245,9 +251,11 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         if (phase !== 'ready' || view === undefined) {
             return;
         }
-        if (where !== 'current') {
-            const selection = where === 'start' ? Selection.atStart(state.doc) : Selection.atEnd(state.doc);
-            commit(state.tr.setSelection(selection));
+        if (where === 'start') {
+            commit(state.tr.setSelection(Selection.atStart(state.doc)));
+        }
+        if (where === 'end') {
+            commit(state.tr.setSelection(Selection.atEnd(state.doc)));
         }
         if (mode === 'editable') {
             view.focus();
@@ -275,20 +283,28 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         if (mode === 'readonly') {
             return { enabled: false, active, disabledReason: 'readonly' };
         }
-        const enabled = command.run(state);
-        return { enabled, active, disabledReason: enabled ? null : 'not-applicable' };
+        if (!command.run(state)) {
+            return { enabled: false, active, disabledReason: 'not-applicable' };
+        }
+        return { enabled: true, active, disabledReason: null };
     };
 
     const handle: RuntimeHandle = {
-        getSummary: () => ({
-            session,
-            phase,
-            mode,
-            commitSequence,
-            sequence,
-            compositionActive: view === undefined ? false : view.composing,
-            selection: summarize(state.selection),
-        }),
+        getSummary: () => {
+            let compositionActive = false;
+            if (view !== undefined) {
+                compositionActive = view.composing;
+            }
+            return {
+                session,
+                phase,
+                mode,
+                commitSequence,
+                sequence,
+                compositionActive,
+                selection: summarize(state.selection),
+            };
+        },
         getSnapshot: notBuiltYet('getSnapshot', 'pair 13, TASK-rte-runtime-async'),
         getSaveStatus: notBuiltYet('getSaveStatus', 'pair 17, TASK-rte-persistence'),
         getRecoveryCandidate: notBuiltYet('getRecoveryCandidate', 'pair 13, TASK-rte-runtime-async'),

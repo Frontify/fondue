@@ -55,9 +55,8 @@ const mountOf = (props: Props): Mounted => {
         return { definition, profile, decoded: undefined, lang };
     }
     // The surface spellchecks in the document's language when it declares one (SPEC-rich-text-editing/AC-068).
-    const stored = tree.attrs === undefined ? undefined : tree.attrs.lang;
-    if (typeof stored === 'string') {
-        lang = stored;
+    if (tree.attrs !== undefined && typeof tree.attrs.lang === 'string') {
+        lang = tree.attrs.lang;
     }
     return { definition, profile, decoded: { tree, capabilities: result.document.requiredCapabilities }, lang };
 };
@@ -78,7 +77,12 @@ const useRoot = (part: string): RootContextValue => {
     return context;
 };
 
-const modeOf = ({ readOnly, disabled }: Props) => (readOnly === true || disabled === true ? 'readonly' : 'editable');
+const modeOf = ({ readOnly, disabled }: Props) => {
+    if (readOnly === true || disabled === true) {
+        return 'readonly';
+    }
+    return 'editable';
+};
 
 const RootComponent = (
     { children, ...props }: Props & { readonly children: ReactNode },
@@ -164,8 +168,6 @@ const RootComponent = (
         </RootContext.Provider>
     );
 };
-RootComponent.displayName = 'RichTextEditor.Root';
-
 const Root = forwardRef(RootComponent);
 Root.displayName = 'RichTextEditor.Root';
 
