@@ -14,7 +14,7 @@ import {
 import { CAPABILITY_PLUGINS, declaresNodeIds, INPUT_RULES_PLUGIN, NODE_IDS_PLUGIN } from '#/model/capabilities';
 import { compiledModel } from '#/model/compile';
 
-import { NORMALIZERS } from './normalizers';
+import { NORMALIZER_STATES, NORMALIZERS } from './normalizers';
 import { buildSchema } from './schema';
 
 export { type Normalizer, NORMALIZERS } from './normalizers';
@@ -163,17 +163,19 @@ export const compileDefinition = (
     const pluginOf = (id: string) => {
         const normalize = NORMALIZERS[id];
         if (normalize !== undefined) {
-            return new Plugin({
-                key: new PluginKey(id),
-                appendTransaction: (transactions, _old, state) => {
-                    const batch = batchOf(transactions);
-                    // Outside a commit no ID source is known, and a batch that kept the document has nothing to repair.
-                    if (batch === undefined || !transactions.some(({ docChanged }) => docChanged)) {
-                        return null;
-                    }
-                    return normalize(state, batch.ids);
-                },
-            });
+            const appendTransaction = (transactions: readonly Transaction[], _old: EditorState, state: EditorState) => {
+                const batch = batchOf(transactions);
+                // Outside a commit no ID source is known, and a batch that kept the document has nothing to repair.
+                if (batch === undefined || !transactions.some(({ docChanged }) => docChanged)) {
+                    return null;
+                }
+                return normalize(state, batch.ids);
+            };
+            const kept = NORMALIZER_STATES[id];
+            if (kept !== undefined) {
+                return new Plugin({ key: kept.key, state: kept.field, appendTransaction });
+            }
+            return new Plugin({ key: new PluginKey(id), appendTransaction });
         }
         const bindings: Record<string, Command> = {};
         for (const entry of keymap) {

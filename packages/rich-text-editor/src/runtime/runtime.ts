@@ -24,6 +24,7 @@ import {
 import {
     type CapabilityRef,
     type Diagnostic,
+    type IdSource,
     type ResourceLimits,
     type RichTextDocument,
     type RuntimeEnvironment,
@@ -54,6 +55,7 @@ import {
 
 type Mode = EditorSummary['mode'];
 type RejectedCode = Extract<CommandResult, { readonly status: 'rejected' }>['code'];
+type IdKind = Parameters<IdSource['next']>[0];
 
 // Queued intents whose listeners keep enqueuing stop past this depth (SPEC-rich-text-runtime/AC-030).
 const MAX_ENQUEUE_DEPTH = 32;
@@ -293,12 +295,43 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         report(diagnostic);
     };
 
+    // IDs that queries drew, by kind, which the next real draws hand out first, so `execute` installs what `query` judged.
+    const recorded = new Map<IdKind, string[]>();
+    const installedIds: IdSource = {
+        next: (kind) => {
+            const id = recorded.get(kind)?.shift();
+            if (id !== undefined) {
+                return id;
+            }
+            return environment.ids.next(kind);
+        },
+    };
+    /** An ID source for one query: it replays the recorded IDs, then records what it draws past them. */
+    const queriedIds = (): IdSource => {
+        const read = new Map<IdKind, number>();
+        return {
+            next: (kind) => {
+                let waiting = recorded.get(kind);
+                if (waiting === undefined) {
+                    waiting = [];
+                    recorded.set(kind, waiting);
+                }
+                const at = read.get(kind) ?? 0;
+                read.set(kind, at + 1);
+                if (at === waiting.length) {
+                    waiting.push(environment.ids.next(kind));
+                }
+                return waiting[at] as string;
+            },
+        };
+    };
+
     /** Applies a root transaction and every transaction plugins append to it, then the final policy and limit check. */
-    const prepare = (root: Transaction): Prepared => {
+    const prepare = (root: Transaction, ids: IdSource): Prepared => {
         const batch: AppendBatch = {
             limit: limits.maxAppendedTransactions,
             now: () => environment.clock.now(),
-            ids: environment.ids,
+            ids,
             chain: [],
         };
         let applied: ReturnType<EditorState['applyTransaction']>;
@@ -405,7 +438,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             return;
         }
         busyWith(() => {
-            const prepared = prepare(root);
+            const prepared = prepare(root, installedIds);
             if ('candidate' in prepared) {
                 install(prepared.candidate, root, typed);
             } else if (prepared.fault !== undefined) {
@@ -437,7 +470,12 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     };
 
     /** Runs a command against the current state with a dispatch that captures its transaction, then prepares it. */
-    const attempt = (id: string, checked: { readonly payload: unknown } | undefined, options: unknown): Attempt => {
+    const attempt = (
+        id: string,
+        checked: { readonly payload: unknown } | undefined,
+        options: unknown,
+        ids: IdSource,
+    ): Attempt => {
         const command = definition.commands.get(id);
         if (command === undefined) {
             return { code: 'unknown-command' };
@@ -475,7 +513,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         if (root === undefined) {
             return { unchanged: true };
         }
-        return prepare(root);
+        return prepare(root, ids);
     };
 
     const query = (id: string, given?: unknown, options?: unknown): CommandState => {
@@ -486,7 +524,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         if (command !== undefined && checked !== undefined && typeof base !== 'string') {
             active = command.active(base, checked.payload);
         }
-        const attempted = attempt(id, checked, options);
+        const attempted = attempt(id, checked, options, queriedIds());
         if ('code' in attempted) {
             return { enabled: false, active, disabledReason: attempted.code };
         }
@@ -499,7 +537,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             return rejected('busy');
         }
         return busyWith((): CommandResult => {
-            const attempted = attempt(id, checkedPayload(given), options);
+            const attempted = attempt(id, checkedPayload(given), options, installedIds);
             if ('unchanged' in attempted) {
                 return { status: 'no-op', stamp: { ...session, sequence }, contentChanged: false };
             }
