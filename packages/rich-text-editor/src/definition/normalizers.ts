@@ -7,6 +7,7 @@ import {
     AddNodeMarkStep,
     AttrStep,
     DocAttrStep,
+    Mapping,
     RemoveMarkStep,
     RemoveNodeMarkStep,
     ReplaceAroundStep,
@@ -24,10 +25,20 @@ import { carriesNodeId } from './schema';
  */
 export type Normalizer = (state: EditorState, ids: IdSource) => Transaction | null;
 
-/** How many nodes carry each `nodeId`, and where the current batch made, moved over or renamed a node that carries one. */
+/**
+ * How many nodes carry each `nodeId`, where the current batch made, moved over or renamed a node that carries one, and
+ * how the batch maps the document before it to this one.
+ */
 interface NodeIdIndex {
     readonly counts: ReadonlyMap<string, number>;
     readonly touched: readonly number[];
+    readonly mapping: Mapping;
+}
+
+/** A node that carries a `nodeId`, with its position. */
+interface Holder {
+    readonly node: Node;
+    readonly pos: number;
 }
 
 /** A normalizer, with the plugin key and state it keeps between transactions. */
@@ -64,10 +75,39 @@ const countNodeIds = (doc: Node): Map<string, number> => {
 };
 
 /** The index of `doc` read whole: its counts, with every node that carries a `nodeId` touched. */
-const touchEveryNode = (doc: Node): NodeIdIndex => {
+const touchEveryNode = (doc: Node, mapping: Mapping): NodeIdIndex => {
     const touched: number[] = [];
     startingIn(doc, 0, doc.content.size, (_node, pos) => touched.push(pos));
-    return { counts: countNodeIds(doc), touched };
+    return { counts: countNodeIds(doc), touched, mapping };
+};
+
+/** Whether a node is a leaf or holds one, such as text, unlike the empty part a split at a node's very start leaves. */
+const holdsContent = (node: Node): boolean => {
+    let found = node.isLeaf;
+    node.descendants((child) => {
+        found ||= child.isLeaf;
+        return !found;
+    });
+    return found;
+};
+
+/**
+ * Of the nodes in document order that share one `nodeId`, the one that keeps it: the first whose position maps back
+ * through the batch to the document before it, else the first, so the node the batch created takes a new ID; an empty
+ * node directly before one with content, as a split at its very start leaves, hands the ID on (DR-071).
+ */
+const keeperOf = (holders: readonly Holder[], back: Mapping): Holder => {
+    let keeper = holders.find(({ pos }) => !back.mapResult(pos).deleted) ?? (holders[0] as Holder);
+    const next = holders[holders.indexOf(keeper) + 1];
+    if (
+        next !== undefined &&
+        next.pos === keeper.pos + keeper.node.nodeSize &&
+        !holdsContent(keeper.node) &&
+        holdsContent(next.node)
+    ) {
+        keeper = next;
+    }
+    return keeper;
 };
 
 /**
@@ -75,11 +115,14 @@ const touchEveryNode = (doc: Node): NodeIdIndex => {
  * keystroke reads only what it changed; the touched positions start over with each root transaction.
  */
 const nodeIdIndex: StateField<NodeIdIndex> = {
-    init: (_config, state) => ({ counts: countNodeIds(state.doc), touched: [] }),
+    init: (_config, state) => ({ counts: countNodeIds(state.doc), touched: [], mapping: new Mapping() }),
     apply: (transaction, index) => {
         let touched: number[] = [];
+        let mapping = transaction.mapping;
         if (transaction.getMeta('appendedTransaction') !== undefined) {
             touched = index.touched.map((pos) => transaction.mapping.map(pos, 1));
+            mapping = index.mapping.slice();
+            mapping.appendMapping(transaction.mapping);
         }
         // Copied on the first change only, since most transactions change no `nodeId`.
         let own: Map<string, number> | undefined;
@@ -117,28 +160,28 @@ const nodeIdIndex: StateField<NodeIdIndex> = {
                     });
                 });
             } else if (!KEEPS_IDS.some((kind) => step instanceof kind)) {
-                return touchEveryNode(transaction.doc);
+                return touchEveryNode(transaction.doc, mapping);
             }
         }
         let counts = index.counts;
         if (own !== undefined) {
             counts = own;
         }
-        return { counts, touched };
+        return { counts, touched, mapping };
     },
 };
 
 /**
- * Gives each node of a type that carries a `nodeId` and has none, and each later one of two with one ID in document
- * order, a new ID, so the first keeps its ID and every link and target that names it (SPEC-rich-text-runtime/AC-092).
- * It reads the nodes the batch touched against the index; a state without the index, as a contract case builds, counts
- * and touches every node.
+ * Gives each node of a type that carries a `nodeId` and has none, and each node but the keeper of those that share
+ * one, a new ID, so the node that existed keeps its ID and every link and target that names it
+ * (SPEC-rich-text-runtime/AC-092). It reads the nodes the batch touched against the index; a state without the index,
+ * as a contract case builds, counts and touches every node, and treats every node as one that existed.
  */
 const fillNodeIds: Normalizer = (state, ids) => {
     const { doc } = state;
     let index = NODE_ID_INDEX.getState(state);
     if (index === undefined) {
-        index = touchEveryNode(doc);
+        index = touchEveryNode(doc, new Mapping());
     }
     const repairs = new Set<number>();
     const repeated = new Set<string>();
@@ -154,18 +197,29 @@ const fillNodeIds: Normalizer = (state, ids) => {
         }
     }
     if (repeated.size > 0) {
-        // Which of two is later needs their order, so only a repeated ID walks the document.
-        const seen = new Set<string>();
+        // Every node that shares a touched ID needs its place in document order, so only a repeated ID walks the document.
+        const holders = new Map<string, Holder[]>();
         startingIn(doc, 0, doc.content.size, (node, pos) => {
             const { nodeId } = node.attrs;
             if (typeof nodeId !== 'string' || !repeated.has(nodeId)) {
                 return;
             }
-            if (seen.has(nodeId)) {
-                repairs.add(pos);
+            let shared = holders.get(nodeId);
+            if (shared === undefined) {
+                shared = [];
+                holders.set(nodeId, shared);
             }
-            seen.add(nodeId);
+            shared.push({ node, pos });
         });
+        const back = index.mapping.invert();
+        for (const shared of holders.values()) {
+            const keeper = keeperOf(shared, back);
+            for (const holder of shared) {
+                if (holder !== keeper) {
+                    repairs.add(holder.pos);
+                }
+            }
+        }
     }
     if (repairs.size === 0) {
         return null;

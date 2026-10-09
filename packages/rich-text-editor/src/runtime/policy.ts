@@ -115,14 +115,11 @@ const take = <T>(items: T[], match: (item: T) => boolean): T | undefined => {
 
 // A node's own marks belong to the mark's feature, so its markup here is its type and attributes.
 const sameNode = (a: Node, b: Node) => a === b || (a.hasMarkup(b.type, b.attrs, a.marks) && a.content.eq(b.content));
-/** Whether `b` is `a` with another `nodeId`, which only the package's repair gives a node (SPEC-rich-text-runtime/AC-092). */
-const renamed = (a: Node, b: Node) =>
-    a.hasMarkup(b.type, { ...b.attrs, nodeId: a.attrs.nodeId as unknown }, a.marks) && a.content.eq(b.content);
 
 /**
  * Pairs a feature's nodes before and after a batch. A node whose type carries a `nodeId` pairs with an identical
- * node, then with one identical but for a repaired `nodeId`, then by `nodeId`, as Tiptap's UniqueID keys a node by
- * its ID attribute; any other node pairs by type, attributes and content, so a moved node keeps its pair.
+ * node, then by `nodeId`, as Tiptap's UniqueID keys a node by its ID attribute and the repair leaves the ID on the
+ * node that existed (DR-071); any other node pairs by type, attributes and content, so a moved node keeps its pair.
  * A changed node with no ID pairs with a leftover node of its type as an edit; an unpaired node is a create or a remove.
  */
 const nodeChangeOf = (before: readonly Node[], after: readonly Node[]): Change => {
@@ -130,20 +127,13 @@ const nodeChangeOf = (before: readonly Node[], after: readonly Node[]): Change =
     const changed: Node[] = [];
     let edit = false;
     let remove = false;
-    const idOf = (node: Node) => `${node.type.name} ${String(node.attrs.nodeId)}`;
-    // A repair always draws a new ID, so a renamed node holds an ID that no node of its type held before.
-    const held = new Set(before.filter(carriesNodeId).map(idOf));
     for (const node of before) {
         let other: Node | undefined;
         if (carriesNodeId(node)) {
             const sameId = (candidate: Node) =>
                 candidate.type === node.type && candidate.attrs.nodeId === node.attrs.nodeId;
-            // A pasted copy shares the ID, so an unchanged node with that ID pairs first.
+            // A stored document may repeat an ID, which the repair leaves alone, so an unchanged node with that ID pairs first.
             other = take(left, (candidate) => sameId(candidate) && sameNode(node, candidate));
-            // A copy placed before its original takes the ID, and the repair renames the untouched original.
-            if (other === undefined && left.some(sameId)) {
-                other = take(left, (candidate) => !held.has(idOf(candidate)) && renamed(node, candidate));
-            }
             if (other === undefined) {
                 other = take(left, sameId);
             }
@@ -154,7 +144,7 @@ const nodeChangeOf = (before: readonly Node[], after: readonly Node[]): Change =
                 changed.push(node);
             }
         }
-        edit ||= other !== undefined && !sameNode(node, other) && !renamed(node, other);
+        edit ||= other !== undefined && !sameNode(node, other);
     }
     for (const node of changed) {
         const other = take(left, (candidate) => candidate.type === node.type && !carriesNodeId(candidate));
