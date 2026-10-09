@@ -125,7 +125,7 @@ export const fixtureMention = defineFeature({
         mention: {
             group: 'inline',
             atom: true,
-            attrs: { nodeId },
+            attrs: { nodeId, label: { type: 'string', default: '' } },
             html: ['span', { 'data-mention': { attr: 'nodeId' } }],
             parse: [{ tag: 'span[data-mention]', attrs: { nodeId: { from: 'data-mention' } } }],
         },

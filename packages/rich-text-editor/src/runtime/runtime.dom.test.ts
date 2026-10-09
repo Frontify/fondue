@@ -652,8 +652,9 @@ describe('the authoring policy and limits', () => {
         };
         const noCreate = forbid('marks.bold', 'create');
 
+        // Bolding text next to a run extends that run, which is an edit of it.
         expect([unboldMiddle, typeInside, boldNew, boldNextToRun].map((change) => created(change, noCreate))).toEqual([
-            1, 1, 0, 0,
+            1, 1, 0, 1,
         ]);
         expect(created(typeInside, forbid('marks.bold', 'edit'))).toBe(0);
     });
@@ -670,7 +671,7 @@ describe('the authoring policy and limits', () => {
             [
                 'fixture.mention',
                 para(words('a'), mention('m-1')),
-                ({ view }) => view.dispatch(view.state.tr.setNodeAttribute(2, 'nodeId', 'm-2')),
+                ({ view }) => view.dispatch(view.state.tr.setNodeAttribute(2, 'label', 'Ada')),
             ],
             [
                 'fixture.heading-set',
@@ -808,6 +809,92 @@ const appendForever = (featureId: string, capability: string) =>
         }),
         { featureId, capability },
     );
+
+describe('occurrences the policy pairs across a batch', () => {
+    const model = compileContentModel([core(), bold(), fixtureLink(), fixtureMention()], {
+        id: 'test.bold',
+        version: 1,
+    });
+    const link = (href: string) => ({ type: 'link', attrs: { href, openInNewWindow: false, styleId: null } });
+    const linked = { type: 'text', text: 'go', marks: [link('https://frontify.com/a')] };
+    const atoms = stored(para(words('a'), mention('m-1'), words('b')));
+    const cases: readonly (readonly [
+        string,
+        JsonValue,
+        Partial<AuthoringPolicy>,
+        (state: EditorState) => Transaction,
+        boolean,
+    ])[] = [
+        [
+            'merge',
+            stored(para(strong('a')), para(strong('b'))),
+            forbid('marks.bold', 'create'),
+            (state) => state.tr.join(3),
+            true,
+        ],
+        [
+            'gap delete',
+            stored(para(strong('a'), words(' x '), strong('b'))),
+            forbid('marks.bold', 'create'),
+            (state) => state.tr.delete(2, 5),
+            true,
+        ],
+        ['split', stored(para(strong('ab'))), forbid('marks.bold', 'remove'), (state) => state.tr.split(2), true],
+        [
+            'move',
+            stored(para(words('a')), para(strong('b'))),
+            { features: { 'marks.bold': { ...ALLOW, create: false, remove: false } } },
+            (state) => {
+                const moved = state.doc.child(1);
+                return state.tr.delete(3, 6).insert(0, moved);
+            },
+            true,
+        ],
+        [
+            'link href',
+            stored(para(linked)),
+            { features: { 'fixture.link': { ...ALLOW, create: false, remove: false } } },
+            (state) => state.tr.addMark(1, 3, state.schema.mark('link', link('https://frontify.com/b').attrs)),
+            true,
+        ],
+        [
+            'link href, edit: false',
+            stored(para(linked)),
+            forbid('fixture.link', 'edit'),
+            (state) => state.tr.addMark(1, 3, state.schema.mark('link', link('https://frontify.com/b').attrs)),
+            false,
+        ],
+        [
+            'mention replaced',
+            atoms,
+            { features: { 'fixture.mention': { ...ALLOW, create: false, remove: false } } },
+            (state) => state.tr.replaceWith(2, 3, state.schema.node('mention', { nodeId: 'm-2' })),
+            false,
+        ],
+        [
+            'mention replaced, edit: false',
+            atoms,
+            forbid('fixture.mention', 'edit'),
+            (state) => state.tr.replaceWith(2, 3, state.schema.node('mention', { nodeId: 'm-2' })),
+            true,
+        ],
+        [
+            'bold over a mention',
+            atoms,
+            forbid('fixture.mention', 'edit'),
+            (state) => state.tr.addMark(1, 4, state.schema.mark('bold')),
+            true,
+        ],
+    ];
+    for (const [name, input, policy, build, accepted] of cases) {
+        const verdict = accepted ? 'accepts' : 'rejects';
+        it(`SPEC-rich-text-runtime/AC-007 SPEC-rich-text-runtime/AC-009 ${verdict} ${name}`, () => {
+            const { view, changes } = start(input, { model, policy });
+            view.dispatch(build(view.state));
+            expect(changes.length === 1).toBe(accepted);
+        });
+    }
+});
 
 describe('commands, events and the commit path', () => {
     it('SPEC-rich-text-runtime/AC-001 installs every new state through commit and gives the view no event handler', async () => {
