@@ -1,9 +1,9 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import { render, screen } from '@testing-library/react';
-import { Profiler } from 'react';
+import { Profiler, type ReactNode } from 'react';
 import { renderToString } from 'react-dom/server';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { Tree } from '../Tree';
 
@@ -54,6 +54,32 @@ describe('TreeCollector', () => {
         commits = 0;
         rerender(ui());
         expect(commits).toBe(1);
+    });
+
+    it('does not reuse rows from an earlier collect pass', () => {
+        const Wrap = ({ children }: { children: ReactNode }) => <>{children}</>;
+        const onRenamingChange = vi.fn();
+        const ui = (wrapped: boolean, isRenaming: boolean) => {
+            const row = (
+                <Tree.Item id="x" onRename={() => {}} isRenaming={isRenaming} onRenamingChange={onRenamingChange}>
+                    <Tree.Label>x</Tree.Label>
+                </Tree.Item>
+            );
+            if (wrapped) {
+                return (
+                    <Tree.Root>
+                        <Wrap>{row}</Wrap>
+                    </Tree.Root>
+                );
+            }
+            return <Tree.Root>{row}</Tree.Root>;
+        };
+        const { rerender } = render(ui(true, true));
+        rerender(ui(false, false));
+        expect(onRenamingChange).toHaveBeenCalledWith(false);
+        onRenamingChange.mockClear();
+        rerender(ui(true, false));
+        expect(onRenamingChange).not.toHaveBeenCalled();
     });
 
     it('collects rows of custom components after mount', () => {

@@ -57,11 +57,24 @@ export const TreeCollector = ({
     store: CollectStore;
     containerRef: RefObject<HTMLDivElement>;
     children: ReactNode;
-}) => (
-    <div ref={containerRef} hidden aria-hidden="true">
-        <TreeCollectContext.Provider value={store}>{children}</TreeCollectContext.Provider>
-    </div>
-);
+}) => {
+    useLayoutEffect(() => {
+        const container = containerRef.current;
+        if (!container) {
+            return;
+        }
+        // Rows reordered with unchanged props move their markers without re-rendering.
+        const observer = new MutationObserver(() => store.requestFlush());
+        observer.observe(container, { childList: true, subtree: true });
+        return () => observer.disconnect();
+    }, [containerRef, store]);
+
+    return (
+        <div ref={containerRef} hidden aria-hidden="true">
+            <TreeCollectContext.Provider value={store}>{children}</TreeCollectContext.Provider>
+        </div>
+    );
+};
 
 /** Builds the flat item list from the markers' document order. */
 export const buildCollectedItems = (container: HTMLElement, entries: Map<string, CollectedEntry>): ParsedChildren => {

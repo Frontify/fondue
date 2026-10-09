@@ -7,10 +7,12 @@ import { Tree } from '../Tree';
 import {
     AllWrapperRoot,
     ContextWrapperTree,
+    DeferredMixedRoot,
     LazyWrapperTree,
     MixedRoot,
     MultiSelectWrapperTree,
     NestedWrapperTree,
+    ReorderWrapperTree,
     ToggleWrapperTree,
 } from './testutils/WrapperFixtures';
 
@@ -26,6 +28,7 @@ test.describe('Tree rows inside custom components', () => {
     });
 
     test('shows wrapped rows in the same task as direct rows (no intermediate paint)', async ({ mount, page }) => {
+        const component = await mount(<DeferredMixedRoot />);
         await page.evaluate(() => {
             const win = window as unknown as { firstSeen?: number };
             const observer = new MutationObserver(() => {
@@ -37,8 +40,8 @@ test.describe('Tree rows inside custom components', () => {
             });
             observer.observe(document.body, { childList: true, subtree: true });
         });
-        await mount(<MixedRoot />);
-        expect(await page.evaluate(() => (window as unknown as { firstSeen?: number }).firstSeen)).toBe(4);
+        await component.getByRole('button', { name: 'show' }).click();
+        await expect.poll(() => page.evaluate(() => (window as unknown as { firstSeen?: number }).firstSeen)).toBe(4);
     });
 
     test('makes the first wrapped row the tab stop when every root row is wrapped', async ({ mount, page }) => {
@@ -84,6 +87,18 @@ test.describe('Tree rows inside custom components', () => {
         await component.getByRole('button', { name: 'toggle' }).click();
         await expect(component.getByRole('treeitem')).toHaveCount(1);
         await expect(component.getByRole('treeitem', { name: 'static' })).toBeVisible();
+    });
+
+    test('follows a reorder of wrapped rows with unchanged props', async ({ mount }) => {
+        const component = await mount(<ReorderWrapperTree />);
+        await expect(component.getByRole('treeitem')).toHaveCount(2);
+        await component.getByRole('button', { name: 'reverse' }).click();
+        await expect
+            .poll(async () => {
+                const names = await rowNames(component);
+                return names.map((text) => text.trim());
+            })
+            .toEqual(['b', 'a']);
     });
 
     test('cascades a folder checkbox to wrapped children', async ({ mount }) => {

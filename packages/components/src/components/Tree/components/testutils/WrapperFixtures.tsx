@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { createContext, useContext, useEffect, useState } from 'react';
+import { Children, type ReactNode, createContext, useContext, useEffect, useState } from 'react';
 
 import { Tree } from '../../Tree';
 
@@ -36,6 +36,18 @@ export const MixedRoot = () => (
         </Tree.Item>
     </Tree.Root>
 );
+
+export const DeferredMixedRoot = () => {
+    const [isShown, setIsShown] = useState(false);
+    return (
+        <>
+            <button type="button" onClick={() => setIsShown(true)}>
+                show
+            </button>
+            {isShown && <MixedRoot />}
+        </>
+    );
+};
 
 export const AllWrapperRoot = () => (
     <>
@@ -150,6 +162,34 @@ export const MultiSelectWrapperTree = () => {
                     </Tree.FolderHeader>
                     <SelectableChildren selected={selected} onToggle={onToggle} />
                 </Tree.Folder>
+            </Tree.Root>
+        </>
+    );
+};
+
+const Reverse = ({ children, isReversed }: { children: ReactNode; isReversed: boolean }) => {
+    const items = Children.toArray(children);
+    return isReversed ? items.reverse() : items;
+};
+
+const reorderItems = [
+    <Tree.Item key="a" id="a">
+        <Tree.Label>a</Tree.Label>
+    </Tree.Item>,
+    <Tree.Item key="b" id="b">
+        <Tree.Label>b</Tree.Label>
+    </Tree.Item>,
+];
+
+export const ReorderWrapperTree = () => {
+    const [isReversed, setIsReversed] = useState(false);
+    return (
+        <>
+            <button type="button" onClick={() => setIsReversed((prev) => !prev)}>
+                reverse
+            </button>
+            <Tree.Root>
+                <Reverse isReversed={isReversed}>{reorderItems}</Reverse>
             </Tree.Root>
         </>
     );
