@@ -141,7 +141,10 @@ export const fixtureHeadingSet = defineFeature({
         heading: {
             group: 'block',
             content: 'inline*',
-            attrs: { level: { type: 'integer', min: 1, max: 6, required: true } },
+            attrs: {
+                level: { type: 'integer', min: 1, max: 6, required: true },
+                lang: { type: 'language', nullable: true, default: null },
+            },
             html: [{ attr: 'level', tags: { 1: 'h1', 2: 'h2', 3: 'h3', 4: 'h4', 5: 'h5', 6: 'h6' } }, 0],
             parse: [{ tag: 'h2', attrs: { level: { value: 2 } } }],
         },

@@ -14,7 +14,18 @@ import { CAPABILITIES } from '#/runtime/capabilities';
 /** A valid payload for each shipped command that declares one, so the case runs it for real. */
 const PAYLOADS: Readonly<Record<string, unknown>> = { 'text.insert': { text: 'a' } };
 // The globals through which a capability would reach the network or schedule work.
-const FORBIDDEN = ['fetch', 'XMLHttpRequest', 'setTimeout', 'setInterval', 'queueMicrotask', 'requestAnimationFrame'];
+const FORBIDDEN = [
+    'fetch',
+    'XMLHttpRequest',
+    'WebSocket',
+    'setTimeout',
+    'setInterval',
+    'setImmediate',
+    'queueMicrotask',
+    'requestAnimationFrame',
+    'requestIdleCallback',
+    'MessageChannel',
+];
 
 /**
  * Registers one case per command of `features`, which runs it over every fixture of those features, selected
@@ -48,13 +59,22 @@ export const commandCases = (features: readonly Feature[]): void => {
                     state.apply(state.tr.setSelection(Selection.atEnd(doc))),
                 ];
             });
-            const stubs = FORBIDDEN.map((name) => {
-                const stub = vi.fn(() => {
+            const failing = (name: string) =>
+                vi.fn(() => {
                     throw new Error(`${id} called ${name}.`);
                 });
+            // Only what the test environment has; a global it lacks cannot be reached anyway.
+            const stubs = FORBIDDEN.filter((name) => name in globalThis).map((name) => {
+                const stub = failing(name);
                 vi.stubGlobal(name, stub);
                 return stub;
             });
+            const { navigator: current } = globalThis;
+            if (current !== undefined) {
+                const sendBeacon = failing('navigator.sendBeacon');
+                vi.stubGlobal('navigator', Object.create(current, { sendBeacon: { value: sendBeacon } }));
+                stubs.push(sendBeacon);
+            }
             try {
                 for (const state of states) {
                     const dispatched: Transaction[] = [];

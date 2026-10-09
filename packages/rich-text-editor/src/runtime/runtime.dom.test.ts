@@ -1183,6 +1183,26 @@ describe('commands, events and the commit path', () => {
         ]);
     });
 
+    it('SPEC-rich-text-runtime/AC-030 ends the loop with one warning when a diagnostic listener enqueues too', async () => {
+        const { handle, diagnostics } = start(stored(para()));
+        const results: Promise<CommandResult>[] = [];
+        let fromDiagnostics = 0;
+        handle.subscribe('documentChange', () => results.push(handle.enqueue('text.insert', { text: 'x' })));
+        handle.subscribe('diagnostic', () => {
+            // Stops a loop that would not end, so the test fails instead of hanging.
+            if (fromDiagnostics < 100) {
+                fromDiagnostics += 1;
+                results.push(handle.enqueue('text.insert', { text: 'y' }));
+            }
+        });
+
+        await handle.enqueue('text.insert', { text: 'x' });
+        await Promise.all(results);
+
+        expect(diagnostics.filter(({ code }) => code === 'runtime.enqueue-loop')).toHaveLength(1);
+        expect(fromDiagnostics).toBe(1);
+    });
+
     it('SPEC-rich-text-runtime/AC-030 resolves an intent past 32 levels of enqueuing listeners as busy and warns once', async () => {
         const { handle, view, diagnostics } = start(stored(para()));
         const results: Promise<CommandResult>[] = [];
@@ -1368,7 +1388,7 @@ describe('command payloads', () => {
             acme_pull_quote: {
                 group: 'block',
                 content: 'inline*',
-                attrs: {},
+                attrs: { lang: { type: 'language', nullable: true, default: null } },
                 html: ['blockquote', { class: 'acme-pull-quote' }, 0],
                 parse: [{ tag: 'blockquote.acme-pull-quote' }],
             },
@@ -1379,6 +1399,62 @@ describe('command payloads', () => {
     const model = compileContentModel([core(), bold(), fixtureHeadingSet(), pullQuote()], {
         id: 'test.bold',
         version: 1,
+    });
+
+    const german = { type: 'paragraph', attrs: { lang: 'de' }, content: [words('ab')] };
+    const first = ({ view }: ReturnType<typeof start>) => view.state.doc.child(0);
+
+    it('SPEC-rich-text/AC-054 SPEC-rich-text-format/AC-015 keeps the attributes a block type change does not name', () => {
+        const session = start(stored(german), { model });
+        const { handle, changes } = session;
+        setSelection(handle, { text: 'ab', from: 1, to: 1 });
+
+        handle.execute('acme.pull-quote.set');
+        expect([first(session).type.name, first(session).attrs.lang]).toEqual(['acme_pull_quote', 'de']);
+        handle.execute('acme.pull-quote.set');
+        expect([first(session).type.name, first(session).attrs.lang]).toEqual(['paragraph', 'de']);
+        handle.execute('heading.set', { level: 2 });
+        expect(first(session).attrs).toMatchObject({ level: 2, lang: 'de' });
+
+        const kept = start(stored({ type: 'heading', attrs: { level: 2, tone: 'warm' }, content: [words('ab')] }), {
+            model,
+        });
+        setSelection(kept.handle, { text: 'ab', from: 1, to: 1 });
+        kept.handle.execute('heading.set', { level: 3 });
+        const saved = kept.changes.at(-1)?.readDocument().content;
+        expect(saved).toMatchObject({ content: [{ attrs: { level: 3, tone: 'warm' } }] });
+        expect(changes).toHaveLength(3);
+    });
+
+    it('SPEC-rich-text-runtime/AC-064 checks and runs one copy of the payload', () => {
+        const session = start(stored(german), { model });
+        const { handle } = session;
+        setSelection(handle, { text: 'ab', from: 1, to: 1 });
+        let reads = 0;
+        const shifting = {
+            get level() {
+                reads += 1;
+                if (reads === 1) {
+                    return 2;
+                }
+                return 9;
+            },
+        };
+
+        expect(handle.execute('heading.set', shifting)).toEqual({ status: 'rejected', code: 'invalid-payload' });
+        expect(first(session).type.name).toBe('paragraph');
+        expect(handle.execute('heading.set', { level: 2, lang: undefined }).status).toBe('applied');
+        expect(first(session).attrs).toMatchObject({ level: 2, lang: 'de' });
+    });
+
+    it('SPEC-rich-text-runtime/AC-035 reads a command as active only for the attributes its payload names', () => {
+        const { handle } = start(stored({ type: 'heading', attrs: { level: 3 }, content: [words('ab')] }), { model });
+        setSelection(handle, { text: 'ab', from: 1, to: 1 });
+
+        expect([
+            handle.query('heading.set', { level: 2 }).active,
+            handle.query('heading.set', { level: 3 }).active,
+        ]).toEqual([false, true]);
     });
 
     it('SPEC-rich-text/AC-054 SPEC-rich-text-runtime/AC-064 rejects a wrong payload before the command runs, from code and from a manifest', async () => {

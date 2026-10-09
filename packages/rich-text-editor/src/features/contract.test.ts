@@ -97,6 +97,26 @@ const dispatchRangeQueries = () => {
 };
 
 describe('the feature contract suite', () => {
+    it('SPEC-rich-text-runtime/AC-038 fails a command whose capability schedules work with setImmediate', async () => {
+        const original = CAPABILITIES.toggleMark as CapabilityImplementation;
+        const spy = vi.spyOn(CAPABILITIES as Record<string, CapabilityImplementation>, 'toggleMark');
+        spy.mockImplementation((args, schema) => {
+            const command = original(args, schema);
+            const run: typeof command.run = (state, dispatch, payload) => {
+                setImmediate(() => undefined);
+                return command.run(state, dispatch, payload);
+            };
+            return { run, active: command.active };
+        });
+        try {
+            expect(await failingTitles(() => commandCases([core(), bold()]))).toEqual([
+                'SPEC-rich-text-runtime/AC-038 runs mark.bold.toggle synchronously with no I/O or timer, dispatching at most once',
+            ]);
+        } finally {
+            spy.mockRestore();
+        }
+    });
+
     it('SPEC-rich-text-runtime/AC-038 fails a command whose capability schedules a timer', async () => {
         const original = CAPABILITIES.toggleMark as CapabilityImplementation;
         const spy = vi.spyOn(CAPABILITIES as Record<string, CapabilityImplementation>, 'toggleMark');
