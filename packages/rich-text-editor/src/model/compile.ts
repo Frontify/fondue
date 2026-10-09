@@ -35,6 +35,7 @@ import { DefinitionError, type DefinitionErrorCode, pointer } from './errors';
 import { featureInternals } from './feature';
 import { canonicalJson, sha256 } from './hash';
 import { checkHref } from './href';
+import { findSchemaViolation, markMarkdownSchema, nodeMarkdownSchema } from './manifest-schema';
 import {
     findInvalidPayload,
     findUnsafeJson,
@@ -282,6 +283,17 @@ const checkDependencies = (features: readonly CompiledFeature[]) => {
     }
 };
 
+/** A Markdown form must pass the manifest schema's form rule, whether a manifest or code declares it (SPEC-rich-text/AC-065). */
+const checkForm = (feature: string, schema: JsonObject, form: unknown, path: string) => {
+    if (form === undefined) {
+        return;
+    }
+    const violation = findSchemaViolation(schema, form, path);
+    if (violation !== undefined) {
+        throw failure('definition.invalid-declaration', feature, violation);
+    }
+};
+
 const checkAttributes = (feature: string, attrs: AttributeDeclarations, path: readonly string[]) => {
     for (const [name, attribute] of Object.entries(attrs)) {
         const at = pointer(...path, name);
@@ -451,6 +463,7 @@ export const compileContentModel = <const Features extends readonly Feature[]>(
     for (const { name, featureId, declaration } of nodes.values()) {
         checkAttributes(featureId, declaration.attrs, ['nodes', name, 'attrs']);
         checkMarks(featureId, declaration.marks, ['nodes', name, 'marks']);
+        checkForm(featureId, nodeMarkdownSchema, declaration.markdown, pointer('nodes', name, 'markdown'));
         if (declaration.content === undefined) {
             continue;
         }
@@ -472,6 +485,7 @@ export const compileContentModel = <const Features extends readonly Feature[]>(
     for (const { name, featureId, declaration } of marks.values()) {
         checkAttributes(featureId, declaration.attrs, ['marks', name, 'attrs']);
         checkMarks(featureId, declaration.excludes, ['marks', name, 'excludes']);
+        checkForm(featureId, markMarkdownSchema, declaration.markdown, pointer('marks', name, 'markdown'));
     }
 
     for (const feature of list) {

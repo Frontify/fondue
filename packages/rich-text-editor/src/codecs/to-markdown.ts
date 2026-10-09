@@ -23,8 +23,6 @@ import { type CodecLoss } from './types';
 import { headingIds, itemMarker, prefixLines, reportFailure, type WalkState } from './walk';
 
 interface MarkdownState extends WalkState {
-    /** The GitHub slug of each heading, by `nodeId`. */
-    readonly slugs: ReadonlyMap<string, string>;
     /** Reads written inline Markdown back, to find emphasis that the delimiters cannot express. */
     readonly parser: Parser;
     /** `*`, or `_` where `*` runs of italic and bold would meet and parse as other emphasis. */
@@ -36,38 +34,6 @@ type Line = 'block' | 'heading' | 'cell';
 
 const DELIMITERS: Readonly<Record<string, string>> = { bold: '**', italic: '*', strike: '~~' };
 const LISTS = new Set(['bullet_list', 'ordered_list', 'task_list']);
-
-// GitHub's slugger keeps letters, marks, numbers, connector punctuation, spaces and hyphens.
-const SLUG_DROPPED = /[^\p{L}\p{M}\p{N}\p{Pc} -]/gu;
-
-/** `github-slugger` slugs for every heading in document order, with `-1`, `-2` for repeats. */
-const slugsOf = (root: TreeNode): ReadonlyMap<string, string> => {
-    const slugs = new Map<string, string>();
-    const occurrences = new Map<string, number>();
-    const visit = (node: TreeNode) => {
-        const nodeId = node.attrs?.nodeId;
-        if (node.type === 'heading' && typeof nodeId === 'string') {
-            const base = textOf(node).toLowerCase().replaceAll(SLUG_DROPPED, '').replaceAll(' ', '-');
-            let slug = base;
-            const seen = occurrences.get(base);
-            if (seen !== undefined) {
-                let count = seen;
-                do {
-                    count += 1;
-                    slug = `${base}-${count}`;
-                } while (occurrences.has(slug));
-                occurrences.set(base, count);
-            }
-            occurrences.set(slug, 0);
-            slugs.set(nodeId, slug);
-        }
-        for (const child of node.content ?? []) {
-            visit(child);
-        }
-    };
-    visit(root);
-    return slugs;
-};
 
 interface MarkdownItem extends Item {
     /** Written as a code span. */
@@ -84,7 +50,7 @@ type MarkSyntax =
     | { readonly kind: 'none' | 'code' | 'custom' | 'delimiter'; readonly lost: boolean }
     | { readonly kind: 'link'; readonly lost: boolean; readonly target: string | undefined };
 
-const markSyntax = (state: MarkdownState, mark: TreeMark, plan: MarkPlan): MarkSyntax => {
+const markSyntax = (mark: TreeMark, plan: MarkPlan): MarkSyntax => {
     if (plan.formats.markdown === 'unsupported') {
         return { kind: 'none', lost: true };
     }
@@ -104,11 +70,6 @@ const markSyntax = (state: MarkdownState, mark: TreeMark, plan: MarkPlan): MarkS
     if (typeof href !== 'string') {
         return { kind: 'link', lost: true, target: undefined };
     }
-    const slug = state.slugs.get(href.slice(1));
-    if (href.startsWith('#') && slug !== undefined) {
-        // Import cannot yet map the slug back to the heading's new `nodeId` (SPEC-rich-text-references/AC-051).
-        return { kind: 'link', lost: true, target: `#${slug}` };
-    }
     const checked = checkHref(href);
     if (!checked.ok) {
         return { kind: 'link', lost: true, target: undefined };
@@ -125,7 +86,7 @@ const markdownItems = (state: MarkdownState, node: TreeNode, path: string): Mark
             if (plan === undefined) {
                 return [];
             }
-            const { kind, lost } = markSyntax(state, mark, plan);
+            const { kind, lost } = markSyntax(mark, plan);
             // A link's losses depend on its whole run, so `linkPieces` counts them once per run.
             if (lost && kind !== 'link') {
                 markLost(state, plan);
@@ -163,7 +124,7 @@ const expectedRuns = (state: MarkdownState, node: TreeNode, line: Line): Run[] |
             if (plan === undefined) {
                 continue;
             }
-            const syntax = markSyntax(state, mark, plan);
+            const syntax = markSyntax(mark, plan);
             if (syntax.kind === 'custom') {
                 return undefined;
             }
@@ -298,7 +259,7 @@ const linkPieces = (state: MarkdownState, plan: MarkPlan, mark: TreeMark, inner:
     if (attrs.openInNewWindow === true || (attrs.styleId !== undefined && attrs.styleId !== null)) {
         markLost(state, plan);
     }
-    const syntax = markSyntax(state, mark, plan);
+    const syntax = markSyntax(mark, plan);
     if (syntax.lost) {
         markLost(state, plan);
     }
@@ -735,7 +696,6 @@ export const writeMarkdown = (
         losses: new Losses(),
         diagnostics: [],
         headings: headingIds(root),
-        slugs: slugsOf(root),
         parser,
         italic: '*',
     };
