@@ -920,6 +920,24 @@ describe('occurrences the policy pairs across a batch', () => {
             (state) => state.tr.addMark(1, 4, state.schema.mark('bold')),
             true,
         ],
+        [
+            'text with another link inserted at the end of a link',
+            stored(para(linked)),
+            forbid('fixture.link', 'create'),
+            (state) =>
+                state.tr.insert(
+                    3,
+                    state.schema.text('zz', [state.schema.mark('link', link('https://frontify.com/b').attrs)]),
+                ),
+            false,
+        ],
+        [
+            'a pasted copy of a mention next to the untouched one',
+            stored(para(words('a'), { type: 'mention', attrs: { nodeId: 'm-1', label: 'Ada' } }, words('b'))),
+            forbid('fixture.mention', 'edit'),
+            (state) => state.tr.insert(1, state.schema.node('mention', { nodeId: 'm-1', label: '' })),
+            true,
+        ],
     ];
     for (const [name, input, policy, build, accepted] of cases) {
         const verdict = accepted ? 'accepts' : 'rejects';
@@ -1568,6 +1586,28 @@ describe('disposal', () => {
         unsubscribe();
 
         expect(probeRuntimes().subscriptions).toBe(before - 2);
+    });
+
+    it('SPEC-rich-text-runtime/AC-060 commits no root a plugin view dispatched once a listener disposed the session', () => {
+        const dispatchOnce = new Plugin({
+            view: () => ({
+                update: (view, previous) => {
+                    if (!view.state.doc.eq(previous.doc) && view.state.doc.textContent === 'a') {
+                        view.dispatch(view.state.tr.insertText('x', 1));
+                    }
+                },
+            }),
+        });
+        const { handle } = start(stored(para()), { plugins: [dispatchOnce] });
+        let atDispose = -1;
+        handle.subscribe('disposed', () => {
+            atDispose = handle.getSummary().commitSequence;
+        });
+        handle.subscribe('documentChange', () => handle.dispose());
+
+        typeText(handle, 'a');
+
+        expect(handle.getSummary()).toMatchObject({ phase: 'disposed', commitSequence: atDispose });
     });
 
     it('SPEC-rich-text-runtime/AC-060 stops notifying once a listener disposes the session', () => {
