@@ -3,13 +3,23 @@
 import { type Diagnostic } from '#/model';
 import { diagnostic } from '#/model/format';
 
-import { type DocumentChange, type SessionToken, type Unsubscribe } from './types';
+import {
+    type DocumentChange,
+    type OperationMetric,
+    type SaveStatus,
+    type SelectionSummary,
+    type SessionToken,
+    type Unsubscribe,
+} from './types';
 
 /** The events a runtime emits; the handle accepts the other `EditorEventMap` names, which later layers emit. */
 export interface RuntimeEvents {
     readonly ready: SessionToken;
     readonly documentChange: DocumentChange;
+    readonly selectionChange: SelectionSummary;
+    readonly saveStatusChange: SaveStatus;
     readonly diagnostic: Diagnostic;
+    readonly operationMetric: OperationMetric;
     readonly disposed: SessionToken;
 }
 export type Listener = (value: never) => void;

@@ -45,7 +45,9 @@ import { createEventBus, type Listener } from './events';
 import { groupRoot, groupsPlugin, isHistoryTransaction } from './history';
 import { firedRule, withoutRules } from './input-rules';
 import { createLimitCheck } from './limits';
+import { operationMetric } from './metrics';
 import { authoringOf, createPolicyCheck } from './policy';
+import { createUnmanagedStatus, type SaveCoordinator } from './saves';
 import { createInputSettling } from './settle';
 import { captureTarget, countTargets, releaseTargets, restoreTargets, targetSelection, targetsPlugin } from './targets';
 import {
@@ -55,11 +57,15 @@ import {
     type ChangeOrigin,
     type CommandResult,
     type CommandState,
-    type DocumentStamp,
+    type CommitResult,
     type EditorSummary,
+    type OperationMetric,
+    type SaveStatus,
     type SelectionHandle,
     type SelectionSummary,
+    type ServerRevision,
     type SessionToken,
+    type Snapshot,
     type Unsubscribe,
 } from './types';
 
@@ -78,26 +84,18 @@ const notBuiltYet = (member: string, pair: string) => (): never => {
     throw new Error(`EditorHandle.${member} is not built yet; it lands with ${pair}.`);
 };
 
-/** The published snapshot; `acknowledgedRevision` stays `null` until a save coordinator acknowledges a save (TASK-rte-persistence). */
-export interface RuntimeSnapshot {
-    readonly stamp: DocumentStamp;
-    readonly document: RichTextDocument;
-    readonly acknowledgedRevision: null;
-    readonly compositionActive: boolean;
-}
-
 /** What the host calls: the `EditorHandle` members a later pair builds throw an error naming that pair (DR-063). */
 export interface RuntimeHandle {
     getSummary(): EditorSummary;
-    getSnapshot(): RuntimeSnapshot;
-    getSaveStatus(): never;
+    getSnapshot(): Snapshot;
+    getSaveStatus(): SaveStatus;
     getRecoveryCandidate(): RichTextDocument | null;
     query(id: string, ...args: readonly unknown[]): CommandState;
     execute(id: string, ...args: readonly unknown[]): CommandResult;
     enqueue(id: string, ...args: readonly unknown[]): Promise<CommandResult>;
     captureTarget(options: CaptureTargetOptions): CaptureResult;
     releaseTarget(target: SelectionHandle): void;
-    requestCommit(): never;
+    requestCommit(): Promise<CommitResult>;
     replaceDocument(): never;
     setMode(mode: Mode): void;
     updatePolicy(policy: AuthoringPolicy): void;
@@ -142,6 +140,10 @@ export interface EditorRuntime {
     /** The bridge caught a throw from a node view's constructor, `update` or `destroy` (SPEC-rich-text-runtime/AC-014). */
     faultView(): void;
     nodeActions(nodeId: string): NodeActions;
+    /** Emits `saveStatusChange` when the coordinator's status changed outside a batch, as a save response does. */
+    saveStatusChanged(): void;
+    /** Emits the `operationMetric` of an operation that started at `started` on the environment clock (SPEC-rich-text-quality/AC-029). */
+    measure(kind: OperationMetric['kind'], started: number, failureCode: string | null): void;
 }
 
 export interface EditorRuntimeOptions {
@@ -159,6 +161,10 @@ export interface EditorRuntimeOptions {
     readonly nodeViews?: (runtime: EditorRuntime) => Readonly<Record<string, NodeViewConstructor>>;
     /** Whether the editor's React tree renders or runs an effect now, which a development build passes (SPEC-rich-text-react/AC-102). */
     readonly inRender?: () => boolean;
+    /** The loaded record's revision, which an unmanaged session reports as acknowledged. */
+    readonly revision?: ServerRevision | null;
+    /** Builds the session's save coordinator; without one the session is `unmanaged` (SPEC-rich-text-persistence/AC-001). */
+    readonly saves?: ((runtime: EditorRuntime) => SaveCoordinator) | undefined;
 }
 
 /** What every live runtime owns, which the `src/testing` probe reads. */
@@ -204,6 +210,12 @@ const summarize = (selection: Selection): SelectionSummary => {
     }
     return { kind: kindOf(selection), collapsed: selection.empty, blockType, selectedNodeId };
 };
+
+const sameSelection = (a: SelectionSummary, b: SelectionSummary) =>
+    a.kind === b.kind &&
+    a.collapsed === b.collapsed &&
+    a.blockType === b.blockType &&
+    a.selectedNodeId === b.selectedNodeId;
 
 const UI_ORIGINS: ReadonlySet<string> = new Set(['paste', 'cut', 'drop']);
 
@@ -276,7 +288,12 @@ interface Candidate {
     readonly candidate: EditorState;
     readonly root: Transaction;
     readonly mapping: Transaction['mapping'];
+    /** When the batch started on the environment clock, and how many transactions plugins appended to it. */
+    readonly started: number;
+    readonly appended: number;
 }
+/** What the `operationMetric` of a batch that changed the document reports. */
+type BatchMetric = Pick<Candidate, 'started' | 'appended'> & { readonly kind: 'commit' | 'paste' };
 /** A candidate, or why a batch cannot be installed. */
 type Prepared =
     | Candidate
@@ -302,6 +319,8 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         sessionId: environment.ids.next('session'),
         generation: 0,
     };
+    const createdAt = environment.clock.now();
+    const unmanaged = createUnmanagedStatus(options.revision ?? null);
     const breaksPolicy = createPolicyCheck(definition.model);
     const exceedsLimits = createLimitCheck(definition.model, options.capabilities);
     let policy = options.policy;
@@ -312,6 +331,10 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     let shownMode = mode;
     let commitSequence = 0;
     let sequence = 0;
+    let saves: SaveCoordinator | undefined;
+    let shownStatus: SaveStatus | undefined;
+    // The metric of the batch that changed the document, emitted once the outermost commit ends (Event order).
+    let metric: BatchMetric | undefined;
     let typing = false;
     let view: EditorView | undefined;
     // The view the last `EditorView` constructor built, which plugin views receive before the constructor returns.
@@ -364,7 +387,15 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     // The state whose document the snapshot and `sequence` last published, and how later provisional batches map it.
     let published = state;
     let provisional: Transaction['mapping'] | undefined;
-    let snapshotCache: { readonly doc: Node; readonly composing: boolean; readonly value: RuntimeSnapshot } | undefined;
+    let snapshotCache:
+        | {
+              readonly doc: Node;
+              readonly composing: boolean;
+              readonly revision: ServerRevision | null;
+              readonly value: Snapshot;
+          }
+        | undefined;
+    let shownSelection = summarize(state.selection);
 
     const busyWith = <T>(work: () => T): T => {
         busy += 1;
@@ -373,18 +404,56 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         } finally {
             busy -= 1;
             if (busy === 0) {
+                flushMetric();
                 flushCaptures();
             }
             drain();
         }
     };
 
-    const { emit, notify, subscribe, watch, clear } = createEventBus({
-        isDisposed: () => phase === 'disposed',
-        around: busyWith,
-    });
+    const isDisposed = () => phase === 'disposed';
+    const { emit, notify, subscribe, watch, clear } = createEventBus({ isDisposed, around: busyWith });
 
     const report = (diagnostic: Diagnostic) => emit('diagnostic', diagnostic);
+
+    const measure = (
+        kind: OperationMetric['kind'],
+        started: number,
+        failureCode: string | null,
+        normalizationTransactions = 0,
+    ) => {
+        const durationMs = environment.clock.now() - started;
+        const measured = { kind, durationMs, normalizationTransactions, failureCode };
+        emit('operationMetric', operationMetric(definition.model, session, measured));
+    };
+    const flushMetric = () => {
+        const batch = metric;
+        metric = undefined;
+        if (batch !== undefined) {
+            measure(batch.kind, batch.started, null, batch.appended);
+        }
+    };
+
+    const saveStatus = (): SaveStatus => {
+        if (saves !== undefined) {
+            return saves.status();
+        }
+        return unmanaged(sequence);
+    };
+    const emitSaveStatus = () => {
+        const next = saveStatus();
+        if (next !== shownStatus) {
+            shownStatus = next;
+            emit('saveStatusChange', next);
+        }
+    };
+    const emitSelection = () => {
+        const next = summarize(state.selection);
+        if (!sameSelection(shownSelection, next)) {
+            shownSelection = next;
+            emit('selectionChange', next);
+        }
+    };
 
     const settleQueue = (code: RejectedCode) => {
         for (const intent of queue.splice(0)) {
@@ -476,8 +545,9 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         if (isProvisional(root)) {
             root.setMeta(NORMALIZE_META, 'later');
         }
+        const started = environment.clock.now();
         // History groups by this time, never by the `Date.now()` a transaction takes when created (SPEC-rich-text-runtime/AC-051).
-        root.setTime(environment.clock.now());
+        root.setTime(started);
         groupRoot(state, root, actionOrigin(root) !== undefined);
         let applied: ReturnType<EditorState['applyTransaction']>;
         try {
@@ -519,7 +589,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             }
             return { code: 'not-allowed' };
         }
-        return { candidate: applied.state, root, mapping };
+        return { candidate: applied.state, root, mapping, started, appended: applied.transactions.length - 1 };
     };
 
     /** Publishes a checked batch, then commits the roots that plugin views dispatched while it was installed. */
@@ -545,8 +615,11 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         return result;
     };
 
-    /** Publishes the current state's document: counts an effective change, notifies selector stores, then emits it. */
-    const announce = (origin: ChangeOrigin, commandId: string | null): boolean => {
+    /**
+     * Publishes the current state's document: counts an effective change, notifies selector stores, then emits the
+     * change, the selection and the save status in the Event order (SPEC-rich-text-runtime/AC-024).
+     */
+    const announce = (origin: ChangeOrigin, commandId: string | null, batch: BatchMetric): boolean => {
         const previous = published;
         const current = state;
         published = current;
@@ -556,23 +629,28 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             sequence += 1;
         }
         notify();
-        if (!changed) {
-            return false;
+        if (changed) {
+            let document: RichTextDocument | undefined;
+            emit('documentChange', {
+                stamp: { ...session, sequence },
+                commitSequence,
+                origin,
+                commandId,
+                readDocument: () => {
+                    if (document === undefined) {
+                        document = encode(current.doc);
+                    }
+                    return document;
+                },
+            });
+            metric = batch;
         }
-        let document: RichTextDocument | undefined;
-        emit('documentChange', {
-            stamp: { ...session, sequence },
-            commitSequence,
-            origin,
-            commandId,
-            readDocument: () => {
-                if (document === undefined) {
-                    document = encode(current.doc);
-                }
-                return document;
-            },
-        });
-        return true;
+        emitSelection();
+        if (changed) {
+            saves?.changed();
+        }
+        emitSaveStatus();
+        return changed;
     };
 
     /** Runs a view call; `threw` when it threw or a node view inside it threw, which the bridge reports through `faultView`. */
@@ -607,7 +685,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     };
 
     /** Installs a batch in the view and counts it, then publishes it, or keeps a provisional batch for input settling. */
-    const publish = ({ candidate, root, mapping }: Candidate): boolean => {
+    const publish = ({ candidate, root, mapping, started, appended }: Candidate): boolean => {
         if (!installState(candidate)) {
             return false;
         }
@@ -626,11 +704,18 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         if (origin === 'command' && typeof command === 'string') {
             commandId = command;
         }
-        return announce(origin, commandId);
+        const event: unknown = root.getMeta('uiEvent');
+        let kind: BatchMetric['kind'] = 'commit';
+        if (event === 'paste' || event === 'drop') {
+            kind = 'paste';
+        }
+        return announce(origin, commandId, { kind, started, appended });
     };
 
     /** Repairs the provisional batches, then checks them as one change from the published document; `false` on a fault. */
     const settleProvisional = (mapping: Transaction['mapping']): boolean => {
+        const started = environment.clock.now();
+        let appended = 0;
         // The repair runs inside the append limit before the settled batch publishes, and the check below judges it (AC-092).
         const repaired = prepare(state.tr.setMeta(NORMALIZE_META, 'now'), installedIds, false);
         if ('fault' in repaired && repaired.fault !== undefined) {
@@ -645,9 +730,10 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 return false;
             }
             mapping.appendMapping(repaired.mapping);
+            appended = repaired.appended;
         }
         if (!breaksPolicy(policy, published.doc, state.doc, mapping) && !exceedsLimits(state.doc, limits)) {
-            announce('input', null);
+            announce('input', null, { kind: 'commit', started, appended });
             return true;
         }
         // Targets released during the composition stay released, and those captured during it stay (AC-045).
@@ -679,6 +765,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             refreshView();
         });
         coordinator.settle();
+        saves?.settled();
     };
 
     /** The view's `dispatchTransaction`: the one path by which any change reaches the view (SPEC-rich-text-runtime/AC-001). */
@@ -1067,6 +1154,11 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         if (phase === 'disposed') {
             return;
         }
+        saves?.dispose();
+        // A listener of what the coordinator reported may have disposed the session already.
+        if (isDisposed()) {
+            return;
+        }
         // Set first, so `disposed` listeners read the final phase and what they enqueue settles at once.
         phase = 'disposed';
         settling.cancel();
@@ -1124,22 +1216,24 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         // The same frozen object until the published document or the composition state changes (SPEC-rich-text-runtime/AC-065).
         getSnapshot: () => {
             const composing = settling.active();
+            const acknowledged = saveStatus().revision;
             if (
                 snapshotCache === undefined ||
                 snapshotCache.doc !== published.doc ||
-                snapshotCache.composing !== composing
+                snapshotCache.composing !== composing ||
+                snapshotCache.revision !== acknowledged
             ) {
-                const value: RuntimeSnapshot = snapshot({
+                const value: Snapshot = snapshot({
                     stamp: { ...session, sequence },
                     document: encode(published.doc),
-                    acknowledgedRevision: null,
+                    acknowledgedRevision: acknowledged,
                     compositionActive: composing,
                 });
-                snapshotCache = { doc: published.doc, composing, value };
+                snapshotCache = { doc: published.doc, composing, revision: acknowledged, value };
             }
             return snapshotCache.value;
         },
-        getSaveStatus: notBuiltYet('getSaveStatus', 'pair 17, TASK-rte-persistence'),
+        getSaveStatus: saveStatus,
         getRecoveryCandidate: () => {
             if (phase !== 'faulted' || recovery === undefined) {
                 return null;
@@ -1172,8 +1266,13 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 commit(release);
             }
         },
-        requestCommit: notBuiltYet('requestCommit', 'pair 17, TASK-rte-persistence'),
-        replaceDocument: notBuiltYet('replaceDocument', 'pair 17, TASK-rte-persistence'),
+        requestCommit: () => {
+            if (saves === undefined) {
+                return Promise.resolve({ status: 'blocked', code: 'unmanaged' });
+            }
+            return notBuiltYet('requestCommit', 'pair 17b, TASK-rte-persistence')();
+        },
+        replaceDocument: notBuiltYet('replaceDocument', 'pair 17c, TASK-rte-persistence'),
         setMode: (next) => {
             if (phase === 'disposed') {
                 return;
@@ -1266,6 +1365,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
                 phase = 'ready';
                 refreshView();
                 emit('ready', session);
+                measure('mount', createdAt, null);
             });
             liveResources.frames += 1;
         },
@@ -1291,10 +1391,16 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             }
         },
         nodeActions,
+        saveStatusChanged: emitSaveStatus,
+        measure: (kind, started, failureCode) => measure(kind, started, failureCode),
     };
     if (options.nodeViews !== undefined) {
         nodeViews = options.nodeViews(runtime);
     }
+    if (options.saves !== undefined) {
+        saves = options.saves(runtime);
+    }
+    shownStatus = saveStatus();
     runtimes.set(handle, runtime);
     liveResources.installedFeatures.set(
         handle,

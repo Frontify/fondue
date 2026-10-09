@@ -29,22 +29,45 @@ import { type CapabilityRef, type DecodeResult, type Diagnostic } from '#/model'
 import { type TreeNode } from '#/model/content';
 import { decodeToTree } from '#/model/decode';
 import { contentClasses } from '#/model/output';
+import { createSaveCoordinator } from '#/persistence/coordinator';
 import { type LoadedDocument } from '#/persistence/types';
 import { readerContext } from '#/reader/context';
 import { type ReaderPresentation } from '#/reader/reader';
 import { browserEnvironment } from '#/runtime/environment';
-import { createEditorRuntime, type EditorRuntime, isEmpty, type RuntimeHandle } from '#/runtime/runtime';
+import {
+    createEditorRuntime,
+    type EditorRuntime,
+    type EditorRuntimeOptions,
+    isEmpty,
+    type RuntimeHandle,
+} from '#/runtime/runtime';
 import { type DocumentChange, type SessionToken, type ShippedCommands } from '#/runtime/types';
 
 import { engineOf, viewsOf } from './define';
 import { BlockedShell, RecoveryShell } from './shells';
-import { type CompiledEditorDefinition, type EditorHandle, type RichTextEditorProps } from './types';
+import {
+    type CompiledEditorDefinition,
+    type EditorHandle,
+    type EditorServices,
+    type RichTextEditorProps,
+} from './types';
 
 type Props = RichTextEditorProps<object>;
 /** The props once `definition` is known to be set. */
 type Defined = Props & { readonly definition: CompiledEditorDefinition<object> };
 const DEFAULT_TEST_ID = 'fondue-rich-text-editor';
 const NO_PRESENTATION: ReaderPresentation = {};
+const SERVICE_MEMBERS = ['persistence', 'recovery', 'references', 'uploads', 'assets'] as const;
+
+const memberOf = <K extends (typeof SERVICE_MEMBERS)[number]>(
+    services: EditorServices | undefined,
+    member: K,
+): EditorServices[K] | undefined => {
+    if (services === undefined) {
+        return undefined;
+    }
+    return services[member];
+};
 
 /** What one mount keeps for its whole life: a changed `definition` or `profile` needs a new mount (SPEC-rich-text-react/AC-071). */
 interface Mounted {
@@ -156,8 +179,22 @@ const SessionComponent = ({ children, onSession, ...props }: SessionProps, ref: 
             return;
         }
         const { environment = browserEnvironment, defaultValue } = latestRef.current;
+        const engine = engineOf(definition);
+        // A session is managed for its whole life when it mounts with `services.persistence` (SPEC-rich-text-persistence/AC-001).
+        const persistence = memberOf(latestRef.current.services, 'persistence');
+        let saves: EditorRuntimeOptions['saves'];
+        if (persistence !== undefined) {
+            saves = (session) =>
+                createSaveCoordinator(session, {
+                    service: persistence,
+                    options: () => latestRef.current.persistenceOptions,
+                    revision: defaultValue.revision,
+                    model: engine.model,
+                    environment,
+                });
+        }
         const runtime = createEditorRuntime({
-            definition: engineOf(definition),
+            definition: engine,
             documentId: defaultValue.documentId,
             tree: decoded.tree,
             capabilities: decoded.capabilities,
@@ -167,6 +204,8 @@ const SessionComponent = ({ children, onSession, ...props }: SessionProps, ref: 
             limits: definition.limits,
             nodeViews: (session) => createNodeViews(viewsOf(definition), { portals, runtime: session }),
             inRender: () => inReactWork(work),
+            revision: defaultValue.revision,
+            saves,
         });
         // Each event calls the newest callback the host passed (SPEC-rich-text-react/AC-004).
         runtime.handle.subscribe('ready', (session: SessionToken) => {
@@ -203,6 +242,18 @@ const SessionComponent = ({ children, onSession, ...props }: SessionProps, ref: 
     useClientLayoutEffect(() => {
         handleRef.current?.setMode(mode);
     }, [mode]);
+
+    // A changed `services` member aborts the operations it started, with no rebuild (SPEC-rich-text-runtime/AC-073).
+    const { services } = props;
+    const servicesRef = useRef(services);
+    useEffect(() => {
+        const previous = servicesRef.current;
+        servicesRef.current = services;
+        const changed = SERVICE_MEMBERS.filter((member) => memberOf(previous, member) !== memberOf(services, member));
+        if (changed.length > 0) {
+            coordinator.runtime?.changeServices(changed);
+        }
+    }, [services, coordinator]);
 
     const { definition, profile } = props;
     useEffect(() => {

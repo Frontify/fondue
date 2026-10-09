@@ -81,6 +81,10 @@ export type RuntimeDiagnosticCode =
 export type DiagnosticCode =
     | FormatDiagnosticCode
     | RuntimeDiagnosticCode
+    | 'persistence.ack-mismatch'
+    | 'persistence.conflict'
+    | 'persistence.disposed-dirty'
+    | 'persistence.retries-exhausted'
     | 'migration.requires-review'
     | 'migration.unsupported'
     | 'codecs.markdown-unsupported'

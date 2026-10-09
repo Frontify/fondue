@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type RichTextDocument } from '#/model';
+import { type Diagnostic, type ModelRef, type RichTextDocument } from '#/model';
 
 // The host-facing runtime types of `SPEC-rich-text.contracts.ts` (DR-063).
 
@@ -226,4 +226,55 @@ export interface EditorSummary {
     readonly sequence: number;
     readonly compositionActive: boolean;
     readonly selection: SelectionSummary;
+}
+
+/** Opaque, never parsed or compared numerically. `null` at load or base means create-only. */
+export type ServerRevision = string;
+export interface Snapshot {
+    readonly stamp: DocumentStamp;
+    readonly document: RichTextDocument;
+    readonly acknowledgedRevision: ServerRevision | null;
+    readonly compositionActive: boolean;
+}
+export interface SaveAcknowledgment {
+    /** `null` only in the acknowledgment synthesized for a loaded or replaced record that no save has touched (SPEC-rich-text-persistence/AC-024). */
+    readonly operationId: string | null;
+    readonly stamp: DocumentStamp;
+    readonly revision: ServerRevision;
+}
+export interface SaveStatus {
+    readonly state: 'unmanaged' | 'clean' | 'dirty' | 'saving' | 'uncertain' | 'offline' | 'conflict' | 'error';
+    readonly latestSequence: number;
+    readonly acknowledgedSequence: number;
+    readonly revision: ServerRevision | null;
+    readonly inFlightOperationId: string | null;
+    readonly diagnostic: Diagnostic | null;
+}
+export interface CommitOptions {
+    readonly reason: 'submit' | 'navigate' | 'manual';
+    /** Default `wait`. */
+    readonly composition?: 'wait' | 'reject';
+    /** Default `PersistenceOptions.timeoutMs`. */
+    readonly timeoutMs?: number;
+}
+export type CommitResult =
+    | { readonly status: 'acknowledged'; readonly acknowledgment: SaveAcknowledgment }
+    | {
+          readonly status: 'blocked';
+          readonly code: 'unmanaged' | 'composition-active' | 'conflict' | 'forbidden' | 'not-ready';
+      }
+    | {
+          readonly status: 'failed';
+          readonly code: 'timeout' | 'transport' | 'disposed' | 'incompatible-writer' | 'invalid';
+          readonly outcome: 'not-sent' | 'unknown' | 'rejected';
+      };
+export interface OperationMetric {
+    readonly kind: 'mount' | 'commit' | 'paste' | 'save' | 'replace';
+    readonly session: SessionToken;
+    readonly packageVersion: string;
+    readonly model: ModelRef;
+    readonly capabilityIds: readonly string[];
+    readonly durationMs: number;
+    readonly normalizationTransactions: number;
+    readonly failureCode: string | null;
 }

@@ -18,6 +18,7 @@ import {
     useRichTextNodeView,
 } from '#/index';
 import { compileContentModel, createEmptyDocument, defineFeature, type JsonValue, setBlock } from '#/model';
+import { createFakePersistenceService } from '#/testing';
 
 // Turns on the package's input rule engine with `bold.stars`, until `marks.bold` declares its own rules; the CT probe shares it.
 export const boldRules = defineFeature({
@@ -80,8 +81,7 @@ const definition = defineEditor({ id: 'story.playground', model });
 const NOT_WIRED: readonly (readonly [string, string])[] = [
     ['profile', 'pairs 37 and 38, TASK-rte-profiles; until then the definition prop is required'],
     ['presentation', 'pair 19, TASK-rte-chrome, except resolveReference and contentClassName'],
-    ['services', 'pair 17, TASK-rte-persistence'],
-    ['persistenceOptions', 'pair 17, TASK-rte-persistence'],
+    ['services', 'the persistence member only; recovery with pair 17c, references and uploads with their features'],
     ['portalContainer', 'pair 19, TASK-rte-chrome'],
     ['inputRules', 'pair 23, TASK-rte-input-keys'],
     ['defaultToolbarMode', 'pair 19, TASK-rte-chrome'],
@@ -131,6 +131,9 @@ const Playground = ({ allowNewBold, contentClassName, ...props }: PlaygroundProp
     const targetRef = useRef<SelectionHandle | null>(null);
     const [document, setDocument] = useState<JsonValue>(props.defaultValue.document.content as unknown as JsonValue);
     const [broken, setBroken] = useState(false);
+    // An in-memory server in place of the host's, so the save states show (TASK-rte-persistence).
+    const [services] = useState(() => ({ persistence: createFakePersistenceService() }));
+    const [saveStatus, setSaveStatus] = useState('not mounted');
     const log = (text: string) => {
         counterRef.current += 1;
         const id = counterRef.current;
@@ -275,8 +278,32 @@ const Playground = ({ allowNewBold, contentClassName, ...props }: PlaygroundProp
             <RichTextEditor.Root
                 {...props}
                 presentation={presentation}
+                services={services}
                 ref={handleRef}
-                onReady={(session) => log(`ready ${session.sessionId}`)}
+                onReady={(session) => {
+                    log(`ready ${session.sessionId}`);
+                    const handle = handleRef.current;
+                    if (handle === null) {
+                        return;
+                    }
+                    const show = () => {
+                        const { state, latestSequence, acknowledgedSequence, revision } = handle.getSaveStatus();
+                        setSaveStatus(
+                            `${state}, #${latestSequence} of which #${acknowledgedSequence} saved as ${revision}`,
+                        );
+                    };
+                    show();
+                    handle.subscribe('saveStatusChange', (status) => {
+                        log(
+                            `saveStatusChange ${status.state} #${status.latestSequence}/${status.acknowledgedSequence}`,
+                        );
+                        show();
+                    });
+                    handle.subscribe('selectionChange', (selection) => log(`selectionChange ${selection.kind}`));
+                    handle.subscribe('operationMetric', (metric) =>
+                        log(`operationMetric ${metric.kind} ${metric.durationMs} ms ${metric.failureCode ?? ''}`),
+                    );
+                }}
                 onDocumentChange={(change) => {
                     log(`documentChange ${change.origin} ${change.commandId ?? ''} #${change.stamp.sequence}`);
                     setDocument(change.readDocument().content as unknown as JsonValue);
@@ -285,6 +312,7 @@ const Playground = ({ allowNewBold, contentClassName, ...props }: PlaygroundProp
             >
                 <RichTextEditor.Surface />
                 <SelectionReadout />
+                <p>Save status: {saveStatus}</p>
                 <Breaker armed={broken} />
             </RichTextEditor.Root>
             <section aria-label="Event log">
@@ -326,6 +354,7 @@ const meta: Meta<typeof Playground> = {
         required: false,
         spellCheck: true,
         status: 'neutral',
+        persistenceOptions: { autosave: 'debounced', delayMs: 500, maxWaitMs: 5000 },
     },
     argTypes: {
         definition: { control: false },

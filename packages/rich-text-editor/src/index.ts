@@ -4,8 +4,6 @@ export { defineNodeView, type NodeViewState, useRichTextNodeView } from '#/bridg
 export { useEditorSelection } from '#/bridge/hooks';
 export { type RuntimeEnvironment } from '#/model';
 export {
-    type CommitOptions,
-    type CommitResult,
     type LoadedDocument,
     type PersistenceOptions,
     type PersistenceService,
@@ -14,13 +12,9 @@ export {
     type RecoveryService,
     type ReplaceDocumentRequest,
     type ReplaceResult,
-    type SaveAcknowledgment,
     type SaveRequest,
     type SaveResponse,
-    type SaveStatus,
-    type ServerRevision,
     type ServiceContext,
-    type Snapshot,
 } from '#/persistence/types';
 export { defineEditor, defineReactPresentation } from '#/react/define';
 export { RichTextEditor } from '#/react/rich-text-editor';
@@ -36,7 +30,6 @@ export {
     type EditorHandle,
     type EditorServices,
     type ListLevels,
-    type OperationMetric,
     type PresentationStyle,
     type ReactPresentation,
     type ReferencePage,
@@ -63,6 +56,8 @@ export {
     type CommandOptions,
     type CommandResult,
     type CommandState,
+    type CommitOptions,
+    type CommitResult,
     type Direction,
     type DocumentChange,
     type DocumentStamp,
@@ -71,11 +66,16 @@ export {
     type HeadingLevel,
     type LanguageTag,
     type LinkValue,
+    type OperationMetric,
     type ReferenceValue,
+    type SaveAcknowledgment,
+    type SaveStatus,
     type SelectionHandle,
     type SelectionSummary,
     type SessionToken,
+    type ServerRevision,
     type ShippedCommands,
+    type Snapshot,
     type StoredId,
     type Unsubscribe,
 } from '#/runtime/types';

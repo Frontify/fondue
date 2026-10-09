@@ -15,17 +15,13 @@ import {
     type RuntimeEnvironment,
 } from '#/model';
 import {
-    type CommitOptions,
-    type CommitResult,
     type LoadedDocument,
     type PersistenceOptions,
     type PersistenceService,
     type RecoveryService,
     type ReplaceDocumentRequest,
     type ReplaceResult,
-    type SaveStatus,
     type ServiceContext,
-    type Snapshot,
 } from '#/persistence/types';
 import { type ReaderPresentation } from '#/reader/reader';
 import {
@@ -36,13 +32,18 @@ import {
     type CommandKey,
     type CommandResult,
     type CommandState,
+    type CommitOptions,
+    type CommitResult,
     type DocumentChange,
     type EditorSummary,
+    type OperationMetric,
     type ReferenceValue,
+    type SaveStatus,
     type SelectionHandle,
     type SelectionSummary,
     type SessionToken,
     type ShippedCommands,
+    type Snapshot,
     type StoredId,
     type Unsubscribe,
 } from '#/runtime/types';
@@ -124,16 +125,6 @@ export interface EditorServices {
     readonly assets?: AssetPickerService;
 }
 
-export interface OperationMetric {
-    readonly kind: 'mount' | 'commit' | 'paste' | 'save' | 'replace';
-    readonly session: SessionToken;
-    readonly packageVersion: string;
-    readonly model: ModelRef;
-    readonly capabilityIds: readonly string[];
-    readonly durationMs: number;
-    readonly normalizationTransactions: number;
-    readonly failureCode: string | null;
-}
 export interface EditorEventMap {
     readonly ready: SessionToken;
     readonly documentChange: DocumentChange;
