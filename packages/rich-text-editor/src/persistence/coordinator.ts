@@ -402,7 +402,13 @@ export const createSaveCoordinator = (
         }
         const handOver = (remote: LoadedDocument | null) => {
             const onConflict = given.options()?.onConflict;
-            if (!ended.signal.aborted && onConflict !== undefined) {
+            // A replacement since the read moved the session to another generation and document (AC-035).
+            const current = runtime.handle.getSummary().session;
+            const same =
+                current.documentId === session.documentId &&
+                current.sessionId === session.sessionId &&
+                current.generation === session.generation;
+            if (!ended.signal.aborted && same && onConflict !== undefined) {
                 onConflict(remote, runtime.handle.getSnapshot());
             }
         };
