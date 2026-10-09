@@ -129,10 +129,13 @@ const nodeChangeOf = (before: readonly Node[], after: readonly Node[]): Change =
     for (const node of before) {
         let other: Node | undefined;
         if (carriesId(node)) {
-            other = take(
-                left,
-                (candidate) => candidate.type === node.type && candidate.attrs.nodeId === node.attrs.nodeId,
-            );
+            const sameId = (candidate: Node) =>
+                candidate.type === node.type && candidate.attrs.nodeId === node.attrs.nodeId;
+            // A pasted copy shares the ID, so an unchanged node with that ID pairs first.
+            other = take(left, (candidate) => sameId(candidate) && sameNode(node, candidate));
+            if (other === undefined) {
+                other = take(left, sameId);
+            }
             remove ||= other === undefined;
         } else {
             other = take(left, (candidate) => sameNode(node, candidate));
@@ -164,8 +167,9 @@ const counterparts = (run: Run, mapping: BatchMapping, others: readonly Run[], i
         return run.pieces.some((piece) => {
             const from = mapping.map(piece.from, 1);
             const to = mapping.map(piece.to, -1);
+            // Inserted text joins a run only with an equal mark; text that was there may change the mark's attributes.
             if (to <= from) {
-                return inserted && first.from <= from && from <= last.to;
+                return inserted && other.mark.eq(run.mark) && first.from <= from && from <= last.to;
             }
             return first.from < to && from < last.to;
         });

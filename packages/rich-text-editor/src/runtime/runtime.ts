@@ -334,6 +334,11 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             installing = false;
         }
         for (let next = deferred.shift(); next !== undefined; next = deferred.shift()) {
+            // A listener of this install may have faulted or disposed the session, which then commits nothing more.
+            if (phase !== 'ready') {
+                deferred.length = 0;
+                break;
+            }
             commit(next);
         }
         return changed;
@@ -546,6 +551,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         // Set first, so `disposed` listeners read the final phase and what they enqueue settles at once.
         phase = 'disposed';
         settleQueue('not-ready');
+        deferred.length = 0;
         emit('disposed', session);
         clear();
         detach();
