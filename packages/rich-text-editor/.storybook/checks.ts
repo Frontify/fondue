@@ -40,3 +40,22 @@ export const globalsFaults = (
     }
     return faults;
 };
+
+const FEATURE_TAG = 'feature:';
+
+/** A story's `feature:` tags name exactly the features its `definition` arg installs (SPEC-rich-text/AC-053). */
+export const featureTagFaults = (tags: readonly string[], args: Readonly<Record<string, unknown>>): string[] => {
+    const tagged = tags.filter((tag) => tag.startsWith(FEATURE_TAG)).map((tag) => tag.slice(FEATURE_TAG.length));
+    if (tagged.length === 0) {
+        return [];
+    }
+    let installed: string[] = [];
+    const definition = args.definition as { readonly capabilities?: readonly { readonly id: string }[] } | undefined;
+    if (definition !== undefined && definition.capabilities !== undefined) {
+        installed = definition.capabilities.map(({ id }) => id);
+    }
+    if (installed.sort().join(', ') === tagged.sort().join(', ')) {
+        return [];
+    }
+    return [`the story installs ${installed.join(', ')}, while its feature tags name ${tagged.join(', ')}`];
+};

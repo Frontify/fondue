@@ -1,7 +1,7 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
 import axe from 'axe-core';
-import { EditorState } from 'prosemirror-state';
+import { EditorState, TextSelection } from 'prosemirror-state';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 
@@ -18,6 +18,7 @@ import {
     type Diagnostic,
     type Feature,
     type FeatureDeclaration,
+    type JsonValue,
     type RichTextDocument,
 } from '#/model';
 import { type TreeNode } from '#/model/content';
@@ -60,7 +61,7 @@ const commandOf = (ref: CommandRef): string => {
     return ref.command;
 };
 
-/** A toolbar entry's label in `enUS`: its `labelKey` in the package strings, or a manifest label's `en-US` entry. */
+/** A label in `enUS`: its `labelKey` in the package strings, or a manifest label's `en-US` entry. */
 const labelOf = (entry: object): string | undefined => {
     if ('labelKey' in entry && typeof entry.labelKey === 'string') {
         return translations[entry.labelKey];
@@ -70,6 +71,16 @@ const labelOf = (entry: object): string | undefined => {
     }
     return undefined;
 };
+
+/** Each toolbar entry, and each menu item that names its own label. */
+const labelledEntries = (declaration: FeatureDeclaration): object[] =>
+    (declaration.toolbar ?? []).flatMap((entry) => {
+        if (entry.kind !== 'menu') {
+            return [entry];
+        }
+        const items = entry.items.filter((item) => typeof item === 'object' && ('labelKey' in item || 'label' in item));
+        return [entry, ...(items as object[])];
+    });
 
 /** Every node and mark type the content holds. */
 const typesIn = (node: ContentNodeJSON, types: Set<string>): Set<string> => {
@@ -83,7 +94,36 @@ const typesIn = (node: ContentNodeJSON, types: Set<string>): Set<string> => {
     return types;
 };
 
-const normalized = (html: string) => html.replaceAll(/>\s+</g, '><').replaceAll(/\s+/g, ' ').trim();
+/** The shared attributes of `declaration` that the content sets to a value other than their default. */
+const setAttributesIn = (node: ContentNodeJSON, declaration: FeatureDeclaration, found: Set<string>): Set<string> => {
+    for (const [name, shared] of Object.entries(declaration.attributes ?? {})) {
+        let fallback: JsonValue | undefined;
+        if ('default' in shared.value) {
+            fallback = shared.value.default as JsonValue;
+        }
+        const value = node.attrs?.[name];
+        if (value !== undefined && JSON.stringify(value) !== JSON.stringify(fallback)) {
+            found.add(name);
+        }
+    }
+    for (const child of node.content ?? []) {
+        setAttributesIn(child, declaration, found);
+    }
+    return found;
+};
+
+/** Collapses each whitespace run to one space, outside `pre`, whose text keeps every character. */
+const normalized = (html: string) =>
+    html
+        .split(/(<pre[\s>][\s\S]*?<\/pre>)/)
+        .map((part, index) => {
+            if (index % 2 === 1) {
+                return part;
+            }
+            return part.replaceAll(/\s+/g, ' ');
+        })
+        .join('')
+        .trim();
 
 /** The reader's static markup of a document, with the diagnostics it reported. */
 const readerOutput = (document: RichTextDocument, model: ContentModel) => {
@@ -204,14 +244,21 @@ export const runFeatureContract = (features: readonly Feature[], options: Featur
                     }
                     for (const fixture of [createEmptyDocument(compiled()), ...Object.values(fixtures)]) {
                         const state = stateOf(fixture);
-                        expect(typeof command.run(state)).toBe('boolean');
-                        expect([true, false, 'mixed'].includes(command.active(state))).toBe(true);
+                        const { doc } = state;
+                        // A query over a range reaches the code that would build a transaction.
+                        const selected = state.apply(
+                            state.tr.setSelection(TextSelection.between(doc.resolve(0), doc.resolve(doc.content.size))),
+                        );
+                        for (const queried of [state, selected]) {
+                            expect(typeof command.run(queried)).toBe('boolean');
+                            expect([true, false, 'mixed'].includes(command.active(queried))).toBe(true);
+                        }
                     }
                 });
             }
 
-            it('SPEC-rich-text/AC-016 SPEC-rich-text/AC-017 resolves the label of each toolbar entry in enUS', () => {
-                const unlabelled = (declaration.toolbar ?? []).filter((entry) => labelOf(entry) === undefined);
+            it('SPEC-rich-text/AC-016 SPEC-rich-text/AC-017 resolves the label of each toolbar entry and menu item in enUS', () => {
+                const unlabelled = labelledEntries(declaration).filter((entry) => labelOf(entry) === undefined);
                 expect(unlabelled).toEqual([]);
             });
 
@@ -219,12 +266,17 @@ export const runFeatureContract = (features: readonly Feature[], options: Featur
                 return;
             }
 
-            it('SPEC-rich-text/AC-016 brings fixtures that hold each of its nodes and marks', () => {
+            it('SPEC-rich-text/AC-016 brings fixtures that hold each of its nodes, marks and shared attributes', () => {
+                const documents = Object.values(fixtures);
+                expect(documents.length > 0).toBe(true);
                 const types = new Set<string>();
-                for (const fixture of Object.values(fixtures)) {
+                const attributes = new Set<string>();
+                for (const fixture of documents) {
                     typesIn(fixture.content, types);
+                    setAttributesIn(fixture.content, declaration, attributes);
                 }
                 expect([...nodes, ...marks].filter((type) => !types.has(type))).toEqual([]);
+                expect(Object.keys(declaration.attributes ?? {}).filter((name) => !attributes.has(name))).toEqual([]);
             });
 
             it('SPEC-rich-text/AC-017 lists each keyed command in docs/keyboard.md', () => {
