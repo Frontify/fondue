@@ -1761,6 +1761,64 @@ describe('targets', () => {
             });
         }
     }
+
+    it('SPEC-rich-text-runtime/AC-076 keeps a format target captured at a caret empty after text typed there', () => {
+        const { handle, view } = start(stored(para(words('abcd'))), { model: targetModel });
+        setSelection(handle, { text: 'abcd', from: 2, to: 2 });
+        const target = capture(handle, { purpose: 'format', onIntersectingEdit: 'map' });
+
+        typeText(handle, 'X');
+        handle.execute('mark.bold.toggle', undefined, { target });
+
+        expect([textOf(view.state.doc), markedText(view.state.doc, 'bold')]).toEqual(['abXcd', '']);
+    });
+
+    it('SPEC-rich-text-runtime/AC-042 invalidates an insert target once a step removes the paragraph around it', () => {
+        const { handle, view } = start(stored(para(words('ab')), para(words('cd'))), { model: targetModel });
+        setSelection(handle, { text: 'cd', from: 1, to: 1 });
+        const target = capture(handle, { purpose: 'insert', onIntersectingEdit: 'map' });
+
+        view.dispatch(view.state.tr.delete(4, view.state.doc.content.size));
+
+        expect(handle.execute('text.insert', { text: 'X' }, { target })).toEqual(INVALID);
+        expect(textOf(view.state.doc)).toBe('ab');
+    });
+
+    it('SPEC-rich-text-runtime/AC-043 captures an edit-node target at a text caret as invalid, since no node with a nodeId follows', () => {
+        const { handle, view } = start(stored(para(words('ab'))), { model: targetModel });
+        setSelection(handle, { text: 'ab', from: 1, to: 1 });
+        const target = capture(handle, { purpose: 'edit-node', onIntersectingEdit: 'map' });
+
+        expect(handle.execute('text.insert', { text: 'X' }, { target })).toEqual(INVALID);
+        expect(textOf(view.state.doc)).toBe('ab');
+    });
+
+    it('SPEC-rich-text-runtime/AC-043 keeps an edit-node target valid through an attribute edit of its leaf node', () => {
+        const { handle, view } = start(stored(para(words('a'), mention('m-1'), words('b'))), { model: targetModel });
+        setSelection(handle, { nodeId: 'm-1' });
+        const target = capture(handle, { purpose: 'edit-node', onIntersectingEdit: 'map' });
+
+        const node = view.state.doc.nodeAt(2) as Node;
+        view.dispatch(view.state.tr.setNodeMarkup(2, undefined, { ...node.attrs, label: 'Bo' }));
+
+        expect(view.state.doc.nodeAt(2)?.attrs.label).toBe('Bo');
+        expect(handle.query('text.insert', { text: 'X' }, { target }).enabled).toBe(true);
+    });
+
+    it('SPEC-rich-text-runtime/AC-040 stores a target at once, and rejects a capture during event notification', () => {
+        const { handle } = start(stored(para(words('abcd'))), { model: targetModel });
+        const during: unknown[] = [];
+        handle.subscribe('documentChange', () => {
+            during.push(handle.captureTarget({ purpose: 'format', onIntersectingEdit: 'map' }));
+        });
+
+        typeText(handle, 'x');
+        setSelection(handle, { text: 'xabcd', from: 1, to: 3 });
+        const target = capture(handle, { purpose: 'format', onIntersectingEdit: 'map' });
+
+        expect(during).toEqual([{ status: 'rejected', code: 'not-ready' }]);
+        expect(handle.query('mark.bold.toggle', undefined, { target }).enabled).toBe(true);
+    });
 });
 
 describe('node IDs', () => {
