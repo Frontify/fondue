@@ -30,8 +30,8 @@ export interface SaveCoordinator {
     unsaved(): boolean;
     /** Whether a write's outcome is unknown, in flight or waiting for replay, which a replacement may not drop (step 6). */
     outcomeUnknown(): boolean;
-    /** Replacement step 8: the session starts again from a loaded record with `revision`, in the new generation. */
-    replaced(revision: ServerRevision | null): void;
+    /** Replacement step 8: the session starts again from a loaded record with `revision`, after the `previous` stamp. */
+    replaced(revision: ServerRevision | null, previous: DocumentStamp): void;
     /** Runs before the session is disposed, while listeners still hear its diagnostics (AC-040, AC-041). */
     dispose(): void;
 }

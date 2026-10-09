@@ -1267,6 +1267,10 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
 
     /** Replacement step 5 for a session with unsaved changes: `undefined` when the policy lets the replacement go on. */
     const leaveUnsaved = async (unsaved: ReplaceDocumentRequest['unsaved']): Promise<ReplaceCode | undefined> => {
+        // A host in JavaScript may pass no policy at all.
+        if (!isRecord(unsaved)) {
+            return 'unsaved';
+        }
         if (unsaved.action === 'save') {
             const result = await commitSnapshot({ reason: 'navigate' });
             // A write whose outcome is unknown goes on to step 6, which refuses it.
@@ -1276,6 +1280,10 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             return 'unsaved';
         }
         if (unsaved.action === 'checkpoint') {
+            // A checkpoint with no receipt cannot hold the current stamp.
+            if (!isRecord(unsaved.receipt) || !isRecord(unsaved.receipt.stamp)) {
+                return 'unsaved';
+            }
             if (sameStamp(unsaved.receipt.stamp, { ...session, sequence })) {
                 return undefined;
             }
@@ -1328,6 +1336,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             }
             // Intents of the old generation end before anything can drain them into the next (`SPEC-rich-text-runtime/AC-031`).
             settleQueue('wrong-session');
+            const previous = { ...session, sequence };
             session = {
                 documentId: request.next.documentId,
                 sessionId: session.sessionId,
@@ -1340,7 +1349,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             if (saves === undefined) {
                 unmanaged = createUnmanagedStatus(request.next.revision);
             } else {
-                saves.replaced(request.next.revision);
+                saves.replaced(request.next.revision, previous);
             }
             phase = 'ready';
             refreshView();
@@ -1388,28 +1397,22 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         }
         phase = 'transitioning';
         refreshView();
-        let code: ReplaceCode | undefined;
-        try {
-            if (unsavedChanges()) {
-                code = await leaveUnsaved(request.unsaved);
+        if (unsavedChanges()) {
+            const code = await leaveUnsaved(request.unsaved);
+            // The session was disposed, or faulted, while the step 5 write ran.
+            if (phase !== 'transitioning') {
+                return refused('not-ready');
             }
-        } catch {
-            // A request a host built wrong, such as a `checkpoint` with no receipt, gives the session back.
-            code = 'unsaved';
+            if (code !== undefined) {
+                return resume(code);
+            }
         }
-        // The session was disposed, or faulted, while the step 5 write ran.
-        if (phase !== 'transitioning') {
-            return refused('not-ready');
-        }
-        if (code === undefined && saves?.outcomeUnknown() === true) {
-            code = 'save-unresolved';
+        if (saves?.outcomeUnknown() === true) {
+            return resume('save-unresolved');
         }
         // A keystroke the view read during step 5 is kept, not replaced.
-        if (code === undefined && !sameStamp(request.expected, { ...session, sequence })) {
-            code = 'changed-since-request';
-        }
-        if (code !== undefined) {
-            return resume(code);
+        if (!sameStamp(request.expected, { ...session, sequence })) {
+            return resume('changed-since-request');
         }
         return installNext(request, tree, result.document.requiredCapabilities);
     };

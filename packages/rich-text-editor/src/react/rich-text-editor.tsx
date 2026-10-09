@@ -25,7 +25,7 @@ import { createNodeViews, resyncSelection } from '#/bridge/node-views';
 import { PortalHost } from '#/bridge/portal-host';
 import { createPortalStore } from '#/bridge/portals';
 import { enUS } from '#/locales/en-US';
-import { type CapabilityRef, type DecodeResult, type Diagnostic } from '#/model';
+import { type CapabilityRef, type DecodeResult, type Diagnostic, type RichTextDocument } from '#/model';
 import { type TreeNode } from '#/model/content';
 import { decodeToTree } from '#/model/decode';
 import { contentClasses } from '#/model/output';
@@ -147,7 +147,7 @@ const shellPropsOf = (props: Defined) => {
 /** A running session and the write its coordinator left with an unknown outcome, which Retry hands on. */
 interface RecoverySession {
     readonly handle: RuntimeHandle;
-    readonly held: () => SaveRequest | undefined;
+    readonly unresolved: () => SaveRequest | undefined;
 }
 
 type SessionProps = Defined & {
@@ -158,10 +158,17 @@ type SessionProps = Defined & {
     readonly unsavedOnMount: boolean;
     /** The write the failed session left unresolved, which this one replays first (SPEC-rich-text-persistence/AC-012). */
     readonly carried: SaveRequest | undefined;
+    /** Mounts the editor again from this session's snapshot. */
+    readonly onRetry: () => void;
 };
 
-const SessionComponent = ({ children, onSession, ...props }: SessionProps, ref: ForwardedRef<EditorHandle<object>>) => {
+const SessionComponent = (
+    { children, onSession, onRetry, ...props }: SessionProps,
+    ref: ForwardedRef<EditorHandle<object>>,
+) => {
     const [mounted] = useState(() => mountOf(props));
+    // The snapshot of a session that entered `faulted`, which the recovery shell shows (DR-078).
+    const [faulted, setFaulted] = useState<RichTextDocument>();
     const [coordinator] = useState(createMountCoordinator);
     // One portal store per mount, so no session shares chrome state with another (SPEC-rich-text/AC-014).
     const [portals] = useState(() => {
@@ -246,8 +253,15 @@ const SessionComponent = ({ children, onSession, ...props }: SessionProps, ref: 
         runtime.handle.subscribe('diagnostic', (diagnostic: Diagnostic) =>
             latestRef.current.onDiagnostic?.(diagnostic),
         );
+        // A fault reports a diagnostic, so the shell shows once the host heard why. The session stays mounted, so its
+        // handle still reads and saves the last snapshot (SPEC-rich-text-runtime/AC-016).
+        runtime.handle.subscribe('diagnostic', () => {
+            if (runtime.handle.getSummary().phase === 'faulted') {
+                setFaulted(runtime.handle.getSnapshot().document);
+            }
+        });
         handleRef.current = runtime.handle;
-        onSession({ handle: runtime.handle, held: () => created?.held() });
+        onSession({ handle: runtime.handle, unresolved: () => created?.unresolved() });
         coordinator.start(runtime);
         return () => {
             coordinator.stop();
@@ -306,6 +320,9 @@ const SessionComponent = ({ children, onSession, ...props }: SessionProps, ref: 
     if (mounted.blocked !== undefined) {
         return <BlockedShell result={mounted.blocked} {...shell} />;
     }
+    if (faulted !== undefined) {
+        return <RecoveryShell document={faulted} {...shell} onRetry={onRetry} />;
+    }
     return (
         <RootContext.Provider value={context}>
             <SessionContext.Provider value={live}>
@@ -336,11 +353,16 @@ interface RecoveryState {
     readonly unsavedOnMount: boolean;
     /** The write the failed session left with an unknown outcome, which the remount replays first. */
     readonly carried: SaveRequest | undefined;
+    /** Counts Retries, so each mounts a new session even when no render error unmounted the last. */
+    readonly retries: number;
 }
 
-/** The outer boundary: a render error shows the recovery shell with the last published snapshot (SPEC-rich-text-react/AC-022). */
+/**
+ * The outer boundary: a render error, or a session that enters `faulted`, shows the recovery shell with the last
+ * published snapshot (SPEC-rich-text-react/AC-022, DR-078).
+ */
 class Recovery extends Component<RecoveryProps, RecoveryState> {
-    state: RecoveryState = { failed: false, retried: undefined, unsavedOnMount: false, carried: undefined };
+    state: RecoveryState = { failed: false, retried: undefined, unsavedOnMount: false, carried: undefined, retries: 0 };
     // The last session, whose snapshot stays readable after it is disposed.
     private session: RecoverySession | undefined;
 
@@ -352,25 +374,20 @@ class Recovery extends Component<RecoveryProps, RecoveryState> {
         this.session = session;
     };
 
-    render() {
-        const { props, editorRef } = this.props;
-        let { defaultValue } = props;
+    private defaultValue(): LoadedDocument {
         if (this.state.retried !== undefined) {
-            defaultValue = this.state.retried;
+            return this.state.retried;
         }
-        if (!this.state.failed) {
-            return (
-                <Session
-                    {...props}
-                    defaultValue={defaultValue}
-                    unsavedOnMount={this.state.unsavedOnMount}
-                    carried={this.state.carried}
-                    onSession={this.onSession}
-                    ref={editorRef}
-                />
-            );
-        }
-        let { documentId, document, revision } = defaultValue;
+        return this.props.props.defaultValue;
+    }
+
+    /** What the last session left: its snapshot under its own document ID and acknowledged revision, and what it never saved. */
+    private left(): {
+        readonly retried: LoadedDocument;
+        readonly unsavedOnMount: boolean;
+        readonly carried: SaveRequest | undefined;
+    } {
+        let { documentId, document, revision } = this.defaultValue();
         let unsavedOnMount = false;
         let carried: SaveRequest | undefined;
         if (this.session !== undefined) {
@@ -383,21 +400,32 @@ class Recovery extends Component<RecoveryProps, RecoveryState> {
             const status = this.session.handle.getSaveStatus();
             // Every managed state but `clean` holds changes the server has not acknowledged, a carried edit included.
             unsavedOnMount = status.state !== 'clean' && status.state !== 'unmanaged';
-            carried = this.session.held();
+            carried = this.session.unresolved();
+        }
+        return { retried: { documentId, revision, document }, unsavedOnMount, carried };
+    }
+
+    private readonly onRetry = () =>
+        this.setState(({ retries }) => ({ ...this.left(), failed: false, retries: retries + 1 }));
+
+    render() {
+        const { props, editorRef } = this.props;
+        if (!this.state.failed) {
+            return (
+                <Session
+                    key={this.state.retries}
+                    {...props}
+                    defaultValue={this.defaultValue()}
+                    unsavedOnMount={this.state.unsavedOnMount}
+                    carried={this.state.carried}
+                    onSession={this.onSession}
+                    onRetry={this.onRetry}
+                    ref={editorRef}
+                />
+            );
         }
         return (
-            <RecoveryShell
-                document={document}
-                {...shellPropsOf(props)}
-                onRetry={() =>
-                    this.setState({
-                        failed: false,
-                        retried: { documentId, revision, document },
-                        unsavedOnMount,
-                        carried,
-                    })
-                }
-            />
+            <RecoveryShell document={this.left().retried.document} {...shellPropsOf(props)} onRetry={this.onRetry} />
         );
     }
 }

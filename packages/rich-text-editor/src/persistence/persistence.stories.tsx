@@ -184,7 +184,7 @@ export const Default: StoryObj<typeof SwitchingDocuments> = {
         await logged(canvasElement, (entries) => entries.includes('ready story.switching.note'));
         click(canvasElement, 'Edit the text');
         click(canvasElement, 'Open as a comment');
-        const entries = await logged(canvasElement, (logged) => logged.includes('ready story.switching.comment'));
+        const entries = await logged(canvasElement, (entries) => entries.includes('ready story.switching.comment'));
 
         const remount = entries.indexOf('ready story.switching.comment');
         const saves = entries.filter((entry) => entry.startsWith('save'));
