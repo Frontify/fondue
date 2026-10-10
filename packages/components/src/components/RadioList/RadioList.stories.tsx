@@ -86,6 +86,18 @@ export const Default: Story = {
             canonical: true,
         },
     },
+    render: (args) => (
+        <RadioList.Root {...args} aria-label="Pick an option">
+            <RadioList.RadioButton id="option-1" value="1" />
+            <Label htmlFor="option-1">Option 1</Label>
+
+            <RadioList.RadioButton id="option-2" value="2" />
+            <Label htmlFor="option-2">Option 2</Label>
+
+            <RadioList.RadioButton id="option-3" value="3" />
+            <Label htmlFor="option-3">Option 3</Label>
+        </RadioList.Root>
+    ),
 };
 
 export const Disabled: Story = {
