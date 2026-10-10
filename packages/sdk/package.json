@@ -1,7 +1,7 @@
 {
     "name": "@frontify/fondue-sdk",
     "type": "module",
-    "version": "0.2.2",
+    "version": "0.2.3",
     "description": "Machine-readable SDK for Frontify Fondue — components, icons, tokens — exposed as a navigable graph. Designed for MCP servers, CLI tools, AI agents, and other integrations.",
     "homepage": "https://github.com/Frontify/fondue",
     "repository": {
@@ -44,11 +44,13 @@
         "typecheck": "pnpm build:data && tsc --noEmit",
         "test": "vitest run"
     },
-    "devDependencies": {
-        "@frontify/eslint-config-react": "^1.0.16",
+    "dependencies": {
         "@frontify/fondue-components": "workspace:*",
         "@frontify/fondue-icons": "workspace:*",
-        "@frontify/fondue-tokens": "workspace:*",
+        "@frontify/fondue-tokens": "workspace:*"
+    },
+    "devDependencies": {
+        "@frontify/eslint-config-react": "^1.0.16",
         "@tony.ganchev/eslint-plugin-header": "^3.4.4",
         "@types/node": "^24.13.3",
         "eslint": "^10.8.1",

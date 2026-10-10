@@ -1,4 +1,4 @@
-# Mental model
+# SDK concepts
 
 The API is a small **graph** with three top-level entry points:
 
@@ -23,13 +23,13 @@ example `components.category('input')`, `components.tag('cta')`,
 
 Both expose the same query surface:
 
-| Member          | Returns                                                    |
-| --------------- | ---------------------------------------------------------- |
-| `list()`        | All nodes in the domain or facet, in stable order          |
-| `get(id)`       | One node by its canonical id, or `undefined`               |
-| `has(id)`       | Boolean                                                    |
-| `where(filter)` | Matching nodes — see [Filters](./api-reference.md#filters) |
-| `size`          | Total node count                                           |
+| Member          | Returns                                           |
+| --------------- | ------------------------------------------------- |
+| `list()`        | All nodes in the domain or facet, in stable order |
+| `get(id)`       | One node by its canonical id, or `undefined`      |
+| `has(id)`       | Boolean                                           |
+| `where(filter)` | Matching nodes — see "Filters" in `sdk/Reference` |
+| `size`          | Total node count                                  |
 
 The only difference: a facet is **scoped to its members**.
 `components.category('input').get('Button')` returns Button. The same call
@@ -157,9 +157,9 @@ top-level export. Each icon is a `ComponentNode` with:
 To find icons:
 
 ```ts
-components.where({ category: 'icon' }); // all 381
+components.where({ category: 'icon' }); // all 402
 components.where({ category: 'icon', tag: 'adobe' });
-components.category('icon').size; // 381
+components.category('icon').size; // 402
 components.get('IconAdobeCreativeCloud'); // the React component
 ```
 
@@ -171,11 +171,11 @@ entries (`Guide`) are plain records — no graph methods, no facets, no
 
 ```ts
 guides.list().map((g) => g.title);
-guides.get('getting-started')?.content; // raw markdown body
+guides.get('getting-started/Setup')?.content; // raw markdown body
 guides.where({ text: 'tailwind' });
 ```
 
-The prose comes from the same `packages/sdk/guides/*.md` files the
+The prose comes from the same `packages/sdk/guides/**/*.md` files the
 Storybook docs site renders, so an MCP server or agent reads exactly
 what humans see.
 
