@@ -13,7 +13,7 @@ import {
 } from '#/model';
 import { featureInternals } from '#/model/feature';
 
-/** What a reader override reads: plain data and functions, never a React context (SPEC-rich-text-output/AC-049). */
+/** What a reader override reads: plain data and functions, never a React context. */
 export interface ReaderContext {
     readonly resolveAssetUrl?: (assetId: string, options: { readonly width?: number }) => string | null;
     readonly checkHref: (input: string) => HrefResult;
