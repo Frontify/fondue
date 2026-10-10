@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+        "allowJs": true,
+        "allowSyntheticDefaultImports": true,
+        "composite": true,
+        "emitDeclarationOnly": true,
+        "lib": ["ESNext"],
+        "module": "ESNext",
+        "moduleResolution": "Bundler",
+        "outDir": "./dist/tsconfig-node",
+        "resolveJsonModule": true,
+        "target": "ESNext"
+    },
+    "include": ["vite.config.ts", "package.json", "oxlint.config.ts"]
+}
