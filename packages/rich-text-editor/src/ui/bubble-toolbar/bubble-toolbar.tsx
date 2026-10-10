@@ -17,15 +17,14 @@ import styles from './styles/bubble-toolbar.module.scss';
 // The bubble toolbar stays out of the Tab order; Alt+F10 reaches it (SPEC-rich-text-react/AC-042).
 const OUT_OF_TAB_ORDER = -1;
 
-/** The selection, which ProseMirror replaces with a new object for each change that sets or maps it. */
-const selectionOf = (runtime: EditorRuntime | undefined) => {
+/** Where the selection is, so a command that only maps it, as Mod+B does, leaves the toolbar as it was. */
+const selectionOf = (runtime: EditorRuntime | undefined): string => {
     if (runtime === undefined) {
-        return undefined;
+        return '';
     }
-    return runtime.state.selection;
+    const { anchor, head } = runtime.state.selection;
+    return `${anchor} ${head}`;
 };
-/** The selection the toolbar was closed or opened at, which a new selection replaces. */
-type SelectionKey = ReturnType<typeof selectionOf> | null;
 
 /** In bubble mode, the commands with no bubble item and the switch back to the fixed toolbar (SPEC-rich-text-react/AC-095). */
 export interface BubbleMore {
@@ -66,8 +65,15 @@ export const BubbleToolbar = ({
     const key = useSessionValue(selectionOf, Object.is);
     const selected = useEditorSelection(holdsText);
     const focus = useScopedFocus();
-    const [closedAt, setClosedAt] = useState<SelectionKey>(null);
-    const [shownAt, setShownAt] = useState<SelectionKey>(null);
+    const [closedAt, setClosedAt] = useState<string | null>(null);
+    const [shownAt, setShownAt] = useState<string | null>(null);
+    // A move away ends both, so a later return to the same range shows the toolbar for its text again.
+    if (closedAt !== null && closedAt !== key) {
+        setClosedAt(null);
+    }
+    if (shownAt !== null && shownAt !== key) {
+        setShownAt(null);
+    }
     const [hovered, setHovered] = useState(false);
     const keyRef = useRef(key);
     const focusOnOpenRef = useRef(false);

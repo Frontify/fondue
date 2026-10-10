@@ -19,6 +19,7 @@ import {
     useRef,
     useState,
 } from 'react';
+import { createPortal } from 'react-dom';
 
 import '#/styles/content.css';
 import { AnnouncerContext, createAnnouncer } from '#/bridge/announcer';
@@ -52,7 +53,7 @@ import { type DocumentChange, type SessionToken, type ShippedCommands } from '#/
 import { type BubbleMore, BubbleToolbar } from '#/ui/bubble-toolbar/bubble-toolbar';
 import { FixedToolbar, type ToolbarItem, type ToolbarStrings } from '#/ui/toolbar/toolbar';
 
-import { moveChromeFocus } from './chrome-focus';
+import { escapesToSurface, moveChromeFocus } from './chrome-focus';
 import { engineOf, viewsOf } from './define';
 import { BlockedShell, RecoveryShell } from './shells';
 import { toolbarItems } from './toolbar-items';
@@ -256,15 +257,17 @@ const SessionComponent = (
     const bubbleRef = useRef<HTMLDivElement | null>(null);
     const showBubbleRef = useRef<(() => void) | null>(null);
     const rootRef = useRef<HTMLDivElement | null>(null);
-    // The default portal container, inside the root and so inside the interaction scope (SPEC-rich-text-react/AC-045).
+    // This editor's own portal container: inside the root, or inside the host's `portalContainer`, so editors that share
+    // one keep their overlays apart (SPEC-rich-text-react/AC-045, AC-049).
     const [overlayRoot, setOverlayRoot] = useState<HTMLDivElement | null>(null);
+    const overlayRootRef = useRef<HTMLDivElement | null>(null);
+    const setOverlayElement = useCallback((element: HTMLDivElement | null) => {
+        overlayRootRef.current = element;
+        setOverlayRoot(element);
+    }, []);
     const [scope] = useState(() =>
         createInteractionScope(() => {
-            const roots: (HTMLElement | null)[] = [rootRef.current];
-            const { portalContainer } = latestRef.current;
-            if (portalContainer !== undefined) {
-                roots.push(portalContainer);
-            }
+            const roots: (HTMLElement | null)[] = [rootRef.current, overlayRootRef.current];
             const { runtime } = coordinator;
             if (runtime !== undefined) {
                 roots.push(...runtime.interactionRoots);
@@ -291,6 +294,26 @@ const SessionComponent = (
         }
         return scope.listen(root.ownerDocument);
     }, [scope]);
+
+    // Window capture runs before the document listeners of Radix layers, so a host `Dialog` around the editor does not
+    // close on an Escape that leaves the toolbar or node chrome (SPEC-rich-text-react/AC-035, AC-046).
+    useClientLayoutEffect(() => {
+        const root = rootRef.current;
+        const view = root?.ownerDocument.defaultView;
+        if (root === null || view === null || view === undefined) {
+            return undefined;
+        }
+        const onKeyDown = (event: globalThis.KeyboardEvent) => {
+            if (!escapesToSurface(event, root, toolbarRef.current, overlayRootRef.current)) {
+                return;
+            }
+            event.stopPropagation();
+            event.preventDefault();
+            coordinator.runtime?.handle.focus();
+        };
+        view.addEventListener('keydown', onKeyDown, true);
+        return () => view.removeEventListener('keydown', onKeyDown, true);
+    }, [coordinator]);
 
     // The view attaches in a layout effect, so the first frame painted after hydration shows the content (SPEC-rich-text-output/AC-034).
     useClientLayoutEffect(() => {
@@ -417,23 +440,29 @@ const SessionComponent = (
 
     // The on-screen keyboard covers the bottom of the layout viewport, which the caret scrolls clear of (SPEC-rich-text-accessibility/AC-024).
     useEffect(() => {
-        // Some test DOMs have no `visualViewport` at all.
-        const viewport: VisualViewport | null | undefined = window.visualViewport;
-        if (viewport === null || viewport === undefined) {
+        // The window of the editor's own document, also inside an iframe; some test DOMs have no `visualViewport` at all.
+        const view = rootRef.current?.ownerDocument.defaultView;
+        const viewport: VisualViewport | null | undefined = view?.visualViewport;
+        if (view === null || view === undefined || viewport === null || viewport === undefined) {
             return undefined;
         }
         const measure = () => {
-            const inset = Math.max(0, window.innerHeight - viewport.offsetTop - viewport.height);
+            const inset = Math.max(0, view.innerHeight - viewport.offsetTop - viewport.height);
             coordinator.chrome.setBottomInset(inset);
             // Only a touch device docks its toolbar above the on-screen keyboard (SPEC-rich-text-react/AC-096).
-            if (window.matchMedia('(pointer: coarse)').matches) {
+            if (view.matchMedia('(pointer: coarse)').matches) {
                 // oxlint-disable-next-line @eslint-react/set-state-in-effect -- the state is the measured viewport.
                 setKeyboard(inset);
             }
         };
         measure();
+        // A pan of the visual viewport, as iOS makes above its keyboard, changes `offsetTop` with no resize.
         viewport.addEventListener('resize', measure);
-        return () => viewport.removeEventListener('resize', measure);
+        viewport.addEventListener('scroll', measure);
+        return () => {
+            viewport.removeEventListener('resize', measure);
+            viewport.removeEventListener('scroll', measure);
+        };
     }, [coordinator]);
 
     const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
@@ -500,13 +529,14 @@ const SessionComponent = (
     }, [items, chromeContext, props.id, generatedId, toolbarMode, switchToolbar, keyboard]);
 
     const { portalContainer, environment = browserEnvironment } = props;
-    const overlays = useMemo(() => {
-        let container: HTMLElement | null = overlayRoot;
-        if (portalContainer !== undefined && portalContainer !== null) {
-            container = portalContainer;
-        }
-        return { container, scope, microtask: environment.scheduler.microtask };
-    }, [overlayRoot, portalContainer, scope, environment]);
+    const overlays = useMemo(
+        () => ({ container: overlayRoot, scope, microtask: environment.scheduler.microtask }),
+        [overlayRoot, scope, environment],
+    );
+    let overlayRootElement: ReactNode = <div ref={setOverlayElement} style={OVERLAY_ROOT} data-rte-overlays="" />;
+    if (portalContainer !== undefined && portalContainer !== null) {
+        overlayRootElement = createPortal(overlayRootElement, portalContainer);
+    }
 
     const context = useMemo(() => ({ props, mounted, coordinator, chrome }), [props, mounted, coordinator, chrome]);
     if (mounted.blocked !== undefined) {
@@ -545,7 +575,7 @@ const SessionComponent = (
                                     style={VISUALLY_HIDDEN}
                                     data-test-id={`${testId}-announcer`}
                                 />
-                                <div ref={setOverlayRoot} style={OVERLAY_ROOT} data-rte-overlays="" />
+                                {overlayRootElement}
                                 {work !== undefined && <Phase work={work} open={false} />}
                             </div>
                         </OverlayContext.Provider>

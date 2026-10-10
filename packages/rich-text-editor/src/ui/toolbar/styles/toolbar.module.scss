@@ -20,7 +20,6 @@
 // SPEC-rich-text-react/AC-096: on a touch device with the on-screen keyboard open, the toolbar docks right above it.
 .docked {
     position: fixed;
-    inset-block-start: auto;
     inset-inline: 0;
 }
 
