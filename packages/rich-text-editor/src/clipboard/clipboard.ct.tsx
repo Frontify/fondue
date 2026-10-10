@@ -153,13 +153,13 @@ const overText = async (page: Page, index: number, fraction: number) => {
 };
 /**
  * Sends the drag events of the selected node to `to`, holding the platform's copy modifier at the drop when `copy`
- * is set, and reads the drop cursor before the drop. A pointer drag of an inline atom races the `selectionchange`
+ * is set (or the other platform's modifier when `wrong` is), and reads the drop cursor before the drop. A pointer drag of an inline atom races the `selectionchange`
  * the browser sends for a script selection, so these events come from script, at real coordinates.
  */
-const dragNode = async (page: Page, to: Point, copy = false) => {
+const dragNode = async (page: Page, to: Point, copy = false, wrong = false) => {
     const send = (type: string, onSource: boolean) =>
         page.evaluate(
-            ({ eventType, source, x, y, held }) => {
+            ({ eventType, source, x, y, held, other }) => {
                 if (eventType === 'dragstart') {
                     window.dragData = new DataTransfer();
                     window.dragSource = document.querySelector('.ProseMirror-selectednode') as Element;
@@ -178,14 +178,14 @@ const dragNode = async (page: Page, to: Point, copy = false) => {
                         dataTransfer: window.dragData as DataTransfer,
                         clientX: point.x,
                         clientY: point.y,
-                        altKey: held && apple,
-                        ctrlKey: held && !apple,
+                        altKey: (held && apple) || (other && !apple),
+                        ctrlKey: (held && !apple) || (other && apple),
                         bubbles: true,
                         cancelable: true,
                     }),
                 );
             },
-            { eventType: type, source: onSource, ...to, held: copy },
+            { eventType: type, source: onSource, ...to, held: copy, other: wrong },
         );
     await send('dragstart', true);
     await send('dragenter', false);
@@ -308,6 +308,23 @@ for (const [name, copies] of [
         expect(await contentOf(page)).toEqual(original);
     });
 }
+
+test('SPEC-rich-text-clipboard/AC-030 still moves a mention dragged with the other platform modifier held', async ({
+    mount,
+    page,
+}) => {
+    await mount(<ClipboardProbe texts={['x@y', 'target']} />);
+    await ready(page);
+    await select(page, { nodeId: 'm-1' });
+
+    await dragNode(page, await overText(page, 1, 0.5), false, true);
+
+    const content = (await contentOf(page)) as { readonly content: unknown[] }[];
+    expect(content.map((block) => block.content.length)).toEqual([1, 3]);
+    expect(JSON.stringify(content)).toContain('"nodeId":"m-1"');
+    expect(JSON.stringify(content).match(/"type":"mention"/g)).toHaveLength(1);
+    expect(await changesOf(page)).toEqual(['drop']);
+});
 
 test('SPEC-rich-text-clipboard/AC-030 SPEC-rich-text-runtime/AC-010 moves a mention whose feature has paste: false as it is, and drops a copy of it as its label', async ({
     mount,

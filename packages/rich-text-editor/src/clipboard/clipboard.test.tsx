@@ -11,11 +11,13 @@ import { fixtureChromeViews } from '#/features/__fixtures__/chrome/view';
 import { fixtureCodeBlockView } from '#/features/__fixtures__/code-block/view';
 import {
     blockquote,
+    bulletList,
     cell,
     doc,
     envelope,
     heading,
     link,
+    listItem,
     mark,
     mention,
     node,
@@ -39,7 +41,14 @@ import {
     vocabularyTables,
 } from '#/features/__fixtures__/vocabulary';
 import { core } from '#/features/core/feature';
-import { compileContentModel, type ContentModel, type Diagnostic, type JsonValue, type ResourceLimits } from '#/model';
+import {
+    compileContentModel,
+    type ContentModel,
+    defineFeature,
+    type Diagnostic,
+    type JsonValue,
+    type ResourceLimits,
+} from '#/model';
 import { defineEditor, defineReactPresentation } from '#/react/define';
 import { RichTextEditor } from '#/react/rich-text-editor';
 import { type EditorHandle } from '#/react/types';
@@ -73,6 +82,7 @@ interface Options {
     readonly policy?: Partial<AuthoringPolicy>;
     readonly limits?: Partial<ResourceLimits>;
     readonly editorModel?: ContentModel;
+    readonly readOnly?: boolean;
 }
 
 /** Mounts an editor of the vocabulary stand-ins, ready, with its view, diagnostics, changes and live region. */
@@ -81,7 +91,14 @@ const mount = (options?: Options) => {
     if (options !== undefined) {
         given = options;
     }
-    const { blocks = [paragraph(text('ab'))], sliceContext = null, policy, limits, editorModel = model } = given;
+    const {
+        blocks = [paragraph(text('ab'))],
+        sliceContext = null,
+        policy,
+        limits,
+        editorModel = model,
+        readOnly = false,
+    } = given;
     const environment = createTestEnvironment({ seed: 1 });
     const definition = defineEditor({
         id: 'test.clipboard',
@@ -104,6 +121,7 @@ const mount = (options?: Options) => {
             }}
             environment={environment}
             presentation={defineReactPresentation({ sliceContext })}
+            readOnly={readOnly}
             ref={ref}
             onDiagnostic={(diagnostic) => diagnostics.push(diagnostic)}
             onDocumentChange={(change) => changes.push(change)}
@@ -144,6 +162,18 @@ const pasteInto = ({ view }: Mounted, data: Readonly<Record<string, string>>, fi
         bubbles: true,
         cancelable: true,
     });
+    act(() => {
+        view.dom.dispatchEvent(event);
+    });
+    return event;
+};
+
+/** Dispatches a drop of `data` at a stubbed point inside the first paragraph, as a browser does after the pointer release. */
+const dropInto = ({ view }: Mounted, data: Readonly<Record<string, string>>) => {
+    vi.spyOn(view, 'posAtCoords').mockReturnValue({ pos: 1, inside: 0 });
+    const event = new DragEvent('drop', { bubbles: true, cancelable: true });
+    // happy-dom's DragEvent ignores the `dataTransfer` init.
+    Object.defineProperty(event, 'dataTransfer', { value: transfer(data) });
     act(() => {
         view.dom.dispatchEvent(event);
     });
@@ -259,6 +289,18 @@ describe('paste order', () => {
         mounted.unmount();
     });
 
+    it('SPEC-rich-text-clipboard/AC-001 rejects a 2 MiB text/plain drop over a paragraph with the document unchanged and one maxPasteBytes diagnostic', () => {
+        const mounted = mount();
+        const before = mounted.view.state.doc;
+
+        const event = dropInto(mounted, { 'text/plain': 'x'.repeat(2 * MIB) });
+
+        expect(event.defaultPrevented).toBe(true);
+        expect(mounted.view.state.doc).toBe(before);
+        expect(mounted.diagnostics.map(({ details }) => details)).toEqual([{ reason: 'maxPasteBytes' }]);
+        mounted.unmount();
+    });
+
     const boldLink = text(
         'https://frontify.com',
         { type: 'link', attrs: { href: 'https://frontify.com', openInNewWindow: false, styleId: 'brand' } },
@@ -340,6 +382,27 @@ describe('paste order', () => {
         pasteInto(mounted, data, files);
 
         expect(mounted.content()).toEqual(expected);
+        mounted.unmount();
+    });
+
+    it('SPEC-rich-text-clipboard/AC-002 replaces a word with a javascript: text/plain and makes no link', () => {
+        const mounted = mount();
+        setSelection(mounted.handle, { text: 'b' });
+
+        pasteInto(mounted, { 'text/plain': 'javascript:alert(1)' });
+
+        expect(mounted.content()).toEqual([paragraph(text('ajavascript:alert(1)'))]);
+        mounted.unmount();
+    });
+
+    it('SPEC-rich-text-clipboard/AC-002 SPEC-rich-text-clipboard/AC-003 pastes a URL over a word as plain text with Shift held, and makes no link', () => {
+        const mounted = mount();
+        setSelection(mounted.handle, { text: 'b' });
+
+        key(mounted, 'keydown', 'Shift');
+        pasteInto(mounted, { 'text/plain': 'https://frontify.com' });
+
+        expect(mounted.content()).toEqual([paragraph(text('ahttps://frontify.com'))]);
         mounted.unmount();
     });
 
@@ -426,6 +489,10 @@ describe('internal slices', () => {
             }),
         ],
         ['no JSON', '{'],
+        ['an openStart above the content depth', slicePayload([paragraph(text('x'))], { openStart: 2 })],
+        ['a fractional openStart', slicePayload([paragraph(text('x'))], { openStart: 0.5 })],
+        ['a string openStart', slicePayload([paragraph(text('x'))], { openStart: '1' })],
+        ['a formatVersion of 2', slicePayload([paragraph(text('x'))], { formatVersion: 2 })],
     ];
     it.each(fallsBack)(
         'SPEC-rich-text-clipboard/AC-006 SPEC-rich-text-clipboard/AC-007 ignores a slice with %s and takes the next flavor',
@@ -456,6 +523,39 @@ describe('internal slices', () => {
         });
         expect(target.content()).toEqual([paragraph(text('ab')), original]);
         target.unmount();
+    });
+
+    it('SPEC-rich-text-clipboard/AC-006 pastes an unknown mark and an unknown inline copied from a document as the same islands with their originals unchanged', () => {
+        const inline = { type: 'emoji', attrs: { code: 'smile' } };
+        const sparkle = { type: 'sparkle', attrs: { glow: 2 } };
+        const block = paragraph(text('a'), inline as JsonValue, text('b', sparkle as JsonValue));
+        const source = mount({ blocks: [block] });
+        selectAll(source);
+        const flavors = copyFrom(source);
+        source.unmount();
+        const target = mount({ blocks: [paragraph()] });
+
+        pasteInto(target, { [SLICE_TYPE]: flavors.slice, 'text/plain': 'plain' });
+
+        const written = JSON.stringify((JSON.parse(flavors.slice) as { readonly content: unknown[] }).content);
+        expect(written).toContain('"type":"unsupported_inline"');
+        expect(written).toContain('"type":"unsupported_mark"');
+        expect(target.content()).toEqual([block]);
+        target.unmount();
+    });
+
+    it('SPEC-rich-text-clipboard/AC-006 ignores a slice whose unsupported_mark wrapper holds a known bold mark and takes the next flavor', () => {
+        const mounted = mount();
+        setSelection(mounted.handle, { text: 'a', from: 1, to: 1 });
+        const forgedMark = { type: 'unsupported_mark', attrs: { original: mark('bold') } };
+
+        pasteInto(mounted, {
+            [SLICE_TYPE]: slicePayload([paragraph(text('x', forgedMark as JsonValue))], { openStart: 1, openEnd: 1 }),
+            'text/plain': 'plain',
+        });
+
+        expect(mounted.content()).toEqual([paragraph(text('aplainb'))]);
+        mounted.unmount();
     });
 
     const island = (original: JsonValue) => ({ type: 'unsupported_block', attrs: { feature: 'callout', original } });
@@ -523,6 +623,88 @@ describe('the paste pipeline', () => {
         mounted.unmount();
     });
 
+    it('SPEC-rich-text-clipboard/AC-019 SPEC-rich-text-runtime/AC-010 keeps the item and cell texts of lists and tables with paste: false as paragraphs', () => {
+        const policy = {
+            features: { 'fixture.lists': { ...ALLOW, paste: false }, 'fixture.tables': { ...ALLOW, paste: false } },
+        };
+        const mounted = mount({ blocks: [paragraph()], policy });
+        const payload = slicePayload([
+            bulletList(listItem(paragraph(text('one'))), listItem(paragraph(text('two')))),
+            table('t-1', row(cell({}, paragraph(text('c1'))), cell({}, paragraph(text('c2'))))),
+        ]);
+
+        pasteInto(mounted, { [SLICE_TYPE]: payload, 'text/plain': 'plain' });
+
+        expect(mounted.content()).toEqual([
+            paragraph(text('one')),
+            paragraph(text('two')),
+            paragraph(text('c1')),
+            paragraph(text('c2')),
+        ]);
+        mounted.unmount();
+    });
+
+    it('SPEC-rich-text-clipboard/AC-019 SPEC-rich-text-runtime/AC-010 unwraps the children of a refused container whose items belong to a feature that stays', () => {
+        const requires = [{ id: 'core', version: 1 }];
+        const shelf = defineFeature({
+            id: 'fixture.shelf',
+            version: 1,
+            requires,
+            nodes: { shelf: { group: 'block', content: 'shelf_item+', attrs: {}, html: ['div', 0], parse: [] } },
+        });
+        const shelfItem = defineFeature({
+            id: 'fixture.shelf-item',
+            version: 1,
+            requires,
+            nodes: { shelf_item: { content: 'paragraph block*', attrs: {}, html: ['div', 0], parse: [] } },
+        });
+        const editorModel = compileContentModel([...features, shelf(), shelfItem()], {
+            id: 'fixture.vocabulary',
+            version: 1,
+        });
+        const mounted = mount({
+            blocks: [paragraph()],
+            editorModel,
+            policy: { features: { 'fixture.shelf': { ...ALLOW, paste: false } } },
+        });
+        const payload = slicePayload(
+            [
+                node(
+                    'shelf',
+                    {},
+                    node('shelf_item', undefined, paragraph(text('one'))),
+                    node('shelf_item', undefined, paragraph(text('two'))),
+                ),
+            ],
+            { requiredCapabilities: editorModel.capabilities.map(({ id, version }) => ({ id, version })) },
+        );
+
+        pasteInto(mounted, { [SLICE_TYPE]: payload, 'text/plain': 'plain' });
+
+        expect(mounted.content()).toEqual([paragraph(text('one')), paragraph(text('two'))]);
+        mounted.unmount();
+    });
+
+    it('SPEC-rich-text-clipboard/AC-019 SPEC-rich-text-runtime/AC-010 pastes a refused mention as its label and a refused image leaf as nothing', () => {
+        const policy = {
+            features: { 'fixture.mention': { ...ALLOW, paste: false }, 'fixture.media': { ...ALLOW, paste: false } },
+        };
+        const mounted = mount({ blocks: [paragraph()], policy, sliceContext: 'a' });
+        const payload = slicePayload(
+            [
+                paragraph(text('Hi '), mention('m-1')),
+                node('embed', { nodeId: 'e-1', url: 'https://frontify.com/x' }),
+                node('figure', { nodeId: 'f-1' }, paragraph(text('cap'))),
+            ],
+            { context: 'a' },
+        );
+
+        pasteInto(mounted, { [SLICE_TYPE]: payload, 'text/plain': 'plain' });
+
+        expect(mounted.content()).toEqual([paragraph(text('Hi Ada')), paragraph(text('cap'))]);
+        mounted.unmount();
+    });
+
     // Each slice passes the limit on its own and exceeds it once inserted at the caret in `ab`.
     const limitRows: readonly [keyof ResourceLimits, number, JsonValue, JsonValue][] = [
         ['maxDocumentNodes', 8, paragraph(text('ab')), slicePayload([paragraph(text('x')), paragraph(text('y'))])],
@@ -537,6 +719,22 @@ describe('the paste pipeline', () => {
             }),
         ],
     ];
+    it.each(limitRows)(
+        'SPEC-rich-text-clipboard/AC-020 inserts a slice that lands exactly on %s',
+        (limit, value, block, payload) => {
+            const mounted = mount({ blocks: [block], limits: { [limit]: value + 1 } });
+            setSelection(mounted.handle, { text: 'ab', from: 1, to: 1 });
+            const before = mounted.view.state.doc;
+
+            pasteInto(mounted, { [SLICE_TYPE]: payload as string, 'text/plain': 'x' });
+
+            expect(mounted.view.state.doc).not.toBe(before);
+            expect(mounted.diagnostics).toEqual([]);
+            expect(mounted.changes.map(({ origin }) => origin)).toEqual(['paste']);
+            mounted.unmount();
+        },
+    );
+
     it.each(limitRows)(
         'SPEC-rich-text-clipboard/AC-020 rejects a slice over %s once inserted, with the state unchanged',
         (limit, value, block, payload) => {
@@ -586,6 +784,37 @@ describe('the paste pipeline', () => {
             mounted.unmount();
         },
     );
+
+    it('SPEC-rich-text-clipboard/AC-020 inserts plain text that lands exactly on maxDocumentBytes, and reports maxDocumentBytes one byte below', () => {
+        const literal = mount();
+        setSelection(literal.handle, { text: 'a', from: 1, to: 1 });
+        pasteInto(literal, { 'text/plain': 'xyz' });
+        // The commit check lists every installed capability, the most the encoder can write.
+        const installed = model.capabilities.map(({ id }) => id).sort();
+        const { document } = literal.handle.getSnapshot();
+        const written = { ...document, requiredCapabilities: installed.map((id) => ({ id, version: 1 })) };
+        const bytes = new TextEncoder().encode(JSON.stringify(written)).byteLength;
+        literal.unmount();
+
+        const exact = mount({ limits: { maxDocumentBytes: bytes } });
+        setSelection(exact.handle, { text: 'a', from: 1, to: 1 });
+        pasteInto(exact, { 'text/plain': 'xyz' });
+        const inserted = exact.content();
+        const accepted = exact.diagnostics;
+        exact.unmount();
+        const below = mount({ limits: { maxDocumentBytes: bytes - 1 } });
+        setSelection(below.handle, { text: 'a', from: 1, to: 1 });
+        const before = below.view.state.doc;
+        pasteInto(below, { 'text/plain': 'xyz' });
+
+        expect(inserted).toEqual([paragraph(text('axyzb'))]);
+        expect(accepted).toEqual([]);
+        expect(below.view.state.doc).toBe(before);
+        expect(below.diagnostics.map(({ code, details }) => [code, details])).toEqual([
+            ['clipboard.paste-rejected', { reason: 'maxDocumentBytes' }],
+        ]);
+        below.unmount();
+    });
 
     it('SPEC-rich-text-clipboard/AC-020 SPEC-rich-text-clipboard/AC-045 keeps pasted Markdown as typed when its conversion would pass maxDocumentBytes', () => {
         const literal = mount();
@@ -698,6 +927,32 @@ describe('undo and failures', () => {
         mounted.unmount();
     });
 
+    it('SPEC-rich-text-clipboard/AC-024 keeps the text and removes the link with one undo after a caret paste of a URL', () => {
+        const mounted = mount({ blocks: [paragraph()] });
+
+        pasteInto(mounted, { 'text/plain': 'https://frontify.com' });
+        const linked = mounted.content();
+        undo(mounted);
+
+        expect(linked).toEqual([paragraph(text('https://frontify.com', link('https://frontify.com')))]);
+        expect(mounted.content()).toEqual([paragraph(text('https://frontify.com'))]);
+        mounted.unmount();
+    });
+
+    it('SPEC-rich-text-clipboard/AC-003 leaves a paste during composition to the browser', () => {
+        const mounted = mount();
+        setSelection(mounted.handle, { text: 'a', from: 1, to: 1 });
+        const before = mounted.view.state.doc;
+        vi.spyOn(mounted.view, 'composing', 'get').mockReturnValue(true);
+
+        const event = pasteInto(mounted, { 'text/plain': 'x' });
+
+        expect(event.defaultPrevented).toBe(false);
+        expect(mounted.view.state.doc).toBe(before);
+        expect(mounted.diagnostics).toEqual([]);
+        mounted.unmount();
+    });
+
     it('SPEC-rich-text-clipboard/AC-025 reports a parser that throws with codes only and changes nothing', () => {
         const mounted = mount();
         const before = mounted.view.state;
@@ -740,6 +995,50 @@ describe('undo and failures', () => {
         pasteInto(mounted, { 'text/plain': ' **x**', 'text/html': '<p><b>x</b></p>' });
 
         expect(mounted.content()).toEqual([paragraph(text('Read https://frontify.com now **x**'))]);
+        mounted.unmount();
+    });
+});
+
+describe('readonly', () => {
+    const flavorsOfDrag = ({ view }: Mounted) => {
+        const dataTransfer = new DataTransfer();
+        const event = new DragEvent('dragstart', { bubbles: true, cancelable: true });
+        // happy-dom's DragEvent ignores the `dataTransfer` init.
+        Object.defineProperty(event, 'dataTransfer', { value: dataTransfer });
+        act(() => {
+            view.dom.dispatchEvent(event);
+        });
+        return { 'text/plain': dataTransfer.getData('text/plain'), [SLICE_TYPE]: dataTransfer.getData(SLICE_TYPE) };
+    };
+
+    it('SPEC-rich-text-clipboard/AC-050 keeps the document and selection through paste, cut and a drop of a drag that started there', () => {
+        const mounted = mount({ blocks: [paragraph(text('abc')), paragraph(text('def'))], readOnly: true });
+        setSelection(mounted.handle, { text: 'b' });
+        const before = mounted.view.state;
+
+        pasteInto(mounted, { 'text/plain': 'pasted' });
+        const cut = copyFrom(mounted, 'cut');
+        const dragged = flavorsOfDrag(mounted);
+        dropInto(mounted, dragged);
+        dropInto(mounted, { 'text/plain': 'dropped' });
+
+        expect(cut.text).toBe('b');
+        expect(dragged['text/plain']).toBe('b');
+        expect(mounted.view.state.doc).toBe(before.doc);
+        expect(mounted.view.state.selection.eq(before.selection)).toBe(true);
+        expect(mounted.changes).toEqual([]);
+        expect(mounted.diagnostics).toEqual([]);
+        mounted.unmount();
+    });
+
+    it('SPEC-rich-text-clipboard/AC-037 SPEC-rich-text-clipboard/AC-046 starts no drop-cursor drag from a dragover in readonly', () => {
+        const mounted = mount({ readOnly: true });
+
+        act(() => {
+            mounted.view.dom.dispatchEvent(new DragEvent('dragover', { bubbles: true, cancelable: true }));
+        });
+
+        expect(mounted.view.dragging).toBeNull();
         mounted.unmount();
     });
 });
