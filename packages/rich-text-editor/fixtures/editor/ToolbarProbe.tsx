@@ -48,6 +48,14 @@ export const fixtureLocale = {
         RichTextEditor_fixtureHeading4: 'Heading 4',
         RichTextEditor_fixtureHeading5: 'Heading 5',
         RichTextEditor_fixtureHeading6: 'Heading 6',
+        RichTextEditor_fixtureUndo: 'Undo',
+        RichTextEditor_fixtureRedo: 'Redo',
+        RichTextEditor_fixtureImage: 'Image',
+        RichTextEditor_fixtureAltText: 'Alternative text',
+        RichTextEditor_fixtureAltTextHint: 'Describe the image for people who cannot see it.',
+        RichTextEditor_fixtureDescription: 'Description',
+        RichTextEditor_fixtureSave: 'Save',
+        RichTextEditor_fixtureTable: 'Table',
     },
 };
 

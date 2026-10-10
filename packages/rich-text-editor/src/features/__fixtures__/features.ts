@@ -243,9 +243,9 @@ export const fixtureList = defineFeature({
 });
 
 /**
- * Stands in for the toolbar entries of `marks.italic`, `links`, a list toggle and the heading levels until they ship:
- * an italic toggle, a link button, a block toggle over a `toggled_block` and six heading items with payloads, with
- * keys for italic and the block.
+ * Stands in for the toolbar entries of `marks.italic`, `links`, a list toggle, the heading levels and history until
+ * they ship: an italic toggle, a link button, a block toggle over a `toggled_block`, six heading items with payloads
+ * and undo and redo buttons, with keys for italic and the block.
  */
 export const fixtureToolbar = defineFeature({
     id: 'fixture.toolbar',
@@ -272,6 +272,8 @@ export const fixtureToolbar = defineFeature({
             toggle: true,
             payload: { fields: { level: { type: 'integer', min: 1, max: 6 } } },
         }),
+        'fixture.history.undo': history('undo'),
+        'fixture.history.redo': history('redo'),
     },
     keys: { 'Mod-i': 'fixture.italic.toggle', 'Mod-Shift-8': 'fixture.list.toggle' },
     toolbar: [
@@ -295,5 +297,17 @@ export const fixtureToolbar = defineFeature({
             labelKey: `RichTextEditor_fixtureHeading${level}` as const,
             icon: 'IconTextFormatBold',
         })),
+        {
+            kind: 'button',
+            command: 'fixture.history.undo',
+            labelKey: 'RichTextEditor_fixtureUndo',
+            icon: 'IconArrowRoundAntiClockwise',
+        },
+        {
+            kind: 'button',
+            command: 'fixture.history.redo',
+            labelKey: 'RichTextEditor_fixtureRedo',
+            icon: 'IconArrowRoundClockwise',
+        },
     ],
 });

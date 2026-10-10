@@ -39,8 +39,11 @@ const domSelection = (page: Page) =>
         text: window.getSelection()?.toString(),
         inSurface: document.activeElement?.getAttribute('role') === 'textbox',
     }));
-// More rows are menu items, and checkbox items for toggles.
-const menuRows = (page: Page) => page.locator('[role="menuitem"], [role="menuitemcheckbox"]');
+// More rows are menu items, and checkbox items for toggles, above the toolbar mode switch.
+const menuRows = (page: Page) =>
+    page
+        .locator('[role="menuitem"], [role="menuitemcheckbox"]')
+        .filter({ hasNotText: 'Show toolbar on selection only' });
 const documentHtml = (page: Page) => page.evaluate(() => window.toolbarEditor?.html());
 
 /** WCAG relative luminance of a computed `rgb()` colour. */
@@ -101,9 +104,9 @@ test('SPEC-rich-text-react/AC-032 is one tab stop with a label, aria-controls an
     for (const [key, name] of [
         ['ArrowRight', 'Italic'],
         ['ArrowRight', 'Link'],
-        ['End', 'List'],
+        ['End', 'More'],
         ['Home', 'Bold'],
-        ['ArrowLeft', 'List'],
+        ['ArrowLeft', 'More'],
     ] as const) {
         await page.keyboard.press(key);
         await expectFocus(page, name);
@@ -838,6 +841,8 @@ test.describe('from 1000 to 320 CSS pixels', () => {
         await page.keyboard.press('Alt+F10');
         await expectFocus(page, 'Bold');
         await page.keyboard.press('End');
+        await expectFocus(page, 'More');
+        await page.keyboard.press('ArrowLeft');
         await expectFocus(page, 'Heading 6');
 
         await page.setViewportSize({ width: 320, height: 640 });
