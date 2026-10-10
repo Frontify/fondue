@@ -25,7 +25,7 @@ const LAYOUT_ENTRIES = new Set([
     './styles',
 ]);
 
-const EXPORTED_NOW = ['./codecs', './model', './reader'];
+const EXPORTED_NOW = ['.', './codecs', './features', './model', './reader', './testing'];
 
 const PROSEMIRROR_FLOORS: Record<string, string> = {
     'prosemirror-commands': '1.7.2',
@@ -180,6 +180,7 @@ describe('package manifest and built output', () => {
     const DOM_PACKAGES = /^(?:prosemirror-[\w-]+|react-dom\/client)$/;
     const HEADLESS_FORBIDDEN: Record<string, readonly RegExp[]> = {
         './model': [ENGINE_PACKAGES],
+        './features': [ENGINE_PACKAGES],
         './reader': [ENGINE_PACKAGES, DOM_PACKAGES],
         './codecs': [ENGINE_PACKAGES, DOM_PACKAGES],
     };
@@ -221,5 +222,10 @@ describe('package manifest and built output', () => {
             );
             expect(forbidden).toEqual([]);
         }
+    });
+
+    it('lets the editor entry load the engine', () => {
+        const bare = reachedBareImports('index.js');
+        expect(bare.some((specifier) => ENGINE_PACKAGES.test(bareName(specifier)))).toBe(true);
     });
 });

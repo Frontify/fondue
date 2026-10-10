@@ -1,0 +1,3 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`RichTextEditor > shows the placeholder through attributes, never as document text 1`] = `"<div data-test-id="fondue-rich-text-editor"><div role="textbox" aria-multiline="true" aria-label="Notes" aria-placeholder="Write a note" data-placeholder="Write a note" lang="en-US" spellcheck="true" data-test-id="fondue-rich-text-editor-surface" data-rte-surface="" contenteditable="true" data-rte-empty="" translate="no" class="ProseMirror"><p><br class="ProseMirror-trailingBreak"></p></div></div>"`;
