@@ -78,6 +78,21 @@ test('SPEC-rich-text-persistence/AC-037 leaves focus on a host button during a r
     expect(await focusedSurface(page)).toBe(false);
 });
 
+test('SPEC-rich-text-persistence/AC-037 leaves focus on the body during a replacement when the editor had none', async ({
+    mount,
+    page,
+}) => {
+    await mount(<EditorProbe texts={['ab']} />);
+    await ready(page);
+    await page.getByRole('button', { name: 'Before' }).focus();
+    await page.evaluate(() => (document.activeElement as HTMLElement).blur());
+
+    expect(await replaceWithTwo(page, 'end')).toBe('replaced');
+
+    expect(await page.evaluate(() => document.activeElement === document.body)).toBe(true);
+    expect(await focusedSurface(page)).toBe(false);
+});
+
 test('SPEC-rich-text-persistence/AC-036 gives focus back to the editor when a replacement fails after step 4', async ({
     mount,
     page,

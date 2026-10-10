@@ -30,6 +30,10 @@ const misplacedCounts = (value: string) =>
         return all !== placed.length;
     });
 
+// The keys of the save states that show a message (SPEC-rich-text-persistence/AC-048) and of the rejections (AC-062).
+const SAVE_STATES = ['clean', 'dirty', 'saving', 'uncertain', 'offline', 'conflict', 'error'] as const;
+const SAVE_REJECTIONS = ['forbidden', 'invalid', 'incompatible-writer'] as const;
+
 describe('package locales', () => {
     it('SPEC-rich-text-react/AC-058 ships the eleven locales of Fondue', () => {
         expect(files).toEqual(
@@ -59,7 +63,7 @@ describe('package locales', () => {
                 key.startsWith('RichTextEditor_save'),
             );
 
-            expect(strings).toHaveLength(10);
+            expect(strings).toHaveLength(SAVE_STATES.length + SAVE_REJECTIONS.length);
             expect(new Set(strings.map(([, value]) => value)).size).toBe(strings.length);
             expect(Object.fromEntries(strings)).toMatchSnapshot();
         },

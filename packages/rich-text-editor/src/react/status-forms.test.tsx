@@ -1,6 +1,6 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { createRef, type FormEvent, type RefObject } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -22,6 +22,7 @@ import {
     type ServiceContext,
     useRichTextFormField,
 } from '#/index';
+import { enUS } from '#/locales/en-US';
 import {
     compileContentModel,
     type ContentNodeJSON,
@@ -214,17 +215,18 @@ const lastCall = (calls: readonly Call[]) => {
     return call;
 };
 
+const STRINGS = enUS.translationStrings;
 const MESSAGES = {
-    unsaved: 'Unsaved changes',
-    saving: 'Saving…',
-    saved: 'All changes saved',
-    retrying: 'Saving failed. Trying again…',
-    offline: 'Offline. Changes save when you are back online.',
-    conflict: 'Someone else changed this content. Your changes are kept but not saved.',
-    failed: 'Saving failed. Your changes are not saved.',
-    forbidden: 'Not saved: you cannot edit this content. Ask for access or sign in again.',
-    invalid: 'Not saved: the content was not accepted. Copy it to keep your changes.',
-    'incompatible-writer': 'Not saved: this editor is out of date. Reload the page.',
+    unsaved: STRINGS.RichTextEditor_saveUnsaved,
+    saving: STRINGS.RichTextEditor_saveSaving,
+    saved: STRINGS.RichTextEditor_saveSaved,
+    retrying: STRINGS.RichTextEditor_saveRetrying,
+    offline: STRINGS.RichTextEditor_saveOffline,
+    conflict: STRINGS.RichTextEditor_saveConflict,
+    failed: STRINGS.RichTextEditor_saveFailed,
+    forbidden: STRINGS.RichTextEditor_saveForbidden,
+    invalid: STRINGS.RichTextEditor_saveInvalid,
+    'incompatible-writer': STRINGS.RichTextEditor_saveIncompatible,
 };
 
 describe('RichTextEditor.Status presence', () => {
@@ -290,6 +292,20 @@ describe('the status announcements as a transition', () => {
         ]);
     });
 
+    it.each(['offline', 'error'] as const)(
+        'SPEC-rich-text-persistence/AC-046 SPEC-rich-text-persistence/AC-047 announces clean once after leaving %s',
+        (outage) => {
+            expect(
+                run(seen('dirty'), [
+                    [seen('saving'), false],
+                    [seen(outage), false],
+                    [seen('saving'), false],
+                    [seen('clean'), false],
+                ]),
+            ).toEqual([null, `RichTextEditor_${outage}`, null, 'RichTextEditor_clean']);
+        },
+    );
+
     it('SPEC-rich-text-persistence/AC-046 announces one outage once across its replays, and a new one after a change', () => {
         expect(
             run(seen('saving'), [
@@ -339,7 +355,9 @@ describe('RichTextEditor with its default parts', () => {
         expect(probeRuntimes().views).toHaveLength(1);
         expect(probeRuntimes().installedFeatures).toHaveLength(1);
         const root = screen.getByTestId('fondue-rich-text-editor');
-        expect(root).toContainElement(screen.getByRole('toolbar', { name: 'Text formatting' }));
+        const toolbar = screen.getByRole('toolbar', { name: 'Text formatting' });
+        expect(root).toContainElement(toolbar);
+        expect(within(toolbar).getByRole('button', { name: 'Bold' })).toBeInTheDocument();
         expect(root).toContainElement(screen.getByRole('textbox', { name: 'Notes' }));
         expect(root).toContainElement(screen.getByTestId('fondue-rich-text-editor-status'));
         // The status reads the same session the surface edits.
@@ -376,6 +394,20 @@ describe('the defaultValue prop after mount', () => {
             { code: 'react.default-value-changed', severity: 'warning', messageKey: 'react.default-value-changed' },
             { code: 'react.default-value-changed', severity: 'warning', messageKey: 'react.default-value-changed' },
         ]);
+    });
+});
+
+describe('the defaultValue prop in a production build', () => {
+    it('SPEC-rich-text-persistence/AC-039 warns of no change of defaultValue', () => {
+        const { rerender, diagnostics } = mount();
+        vi.stubEnv('NODE_ENV', 'production');
+        try {
+            rerender({ defaultValue: loaded('document-2', null, para(text('other'))) });
+        } finally {
+            vi.unstubAllEnvs();
+        }
+
+        expect(diagnostics.filter(({ code }) => code === 'react.default-value-changed')).toEqual([]);
     });
 });
 
@@ -477,6 +509,15 @@ describe('RichTextEditor.Status', () => {
 
         expect(await committed).toMatchObject({ status: 'acknowledged' });
         expect(heard()).toEqual([MESSAGES.saved]);
+
+        // The commit's acknowledgment is spent, so the next autosave stays silent.
+        type('e');
+        advance(500);
+        lastCall(calls).answer();
+        await settle();
+
+        expect(statusText()).toBe(MESSAGES.saved);
+        expect(heard()).toEqual([]);
     });
 
     it('SPEC-rich-text-persistence/AC-047 announces clean once after leaving uncertain', async () => {
@@ -607,6 +648,25 @@ describe('RichTextEditor.Status', () => {
         },
     );
 
+    it('SPEC-rich-text-persistence/AC-062 names the failure, not the old rejection, when a later commit fails with no retries', async () => {
+        const { handle, calls, environment } = mountSaving({ maxRetries: 0 });
+        lastCall(calls).answer({ status: 'rejected', code: 'forbidden', diagnostics: [] });
+        await settle();
+        expect(statusText()).toBe(MESSAGES.forbidden);
+
+        let commit: Promise<CommitResult> | undefined;
+        await act(async () => {
+            commit = handle().requestCommit({ reason: 'manual' });
+            await environment.flushMicrotasks();
+        });
+        lastCall(calls).fail();
+        await settle();
+
+        expect(await commit).toMatchObject({ status: 'failed' });
+        expect(handle().getSaveStatus().state).toBe('error');
+        expect(statusText()).toBe(MESSAGES.failed);
+    });
+
     it('SPEC-rich-text-accessibility/AC-017 keeps the save status shown for 10 minutes', async () => {
         const { calls, advance } = mountSaving();
         lastCall(calls).answer({ status: 'conflict', currentRevision: 'r-9' });
@@ -631,6 +691,22 @@ describe('useRichTextFormField', () => {
 
         expect(value).toBe(handle().getSnapshot().document);
         expect(JSON.stringify((value as { readonly content: unknown }).content)).toContain('"text":"abc"');
+    });
+
+    it('SPEC-rich-text-persistence/AC-061 resolves the settled value at once while no composition is active', async () => {
+        const { handle, field } = mount();
+        let resolved = false;
+
+        const pending = field()
+            .getSettledValue({ timeoutMs: 100 })
+            .then((document) => {
+                resolved = true;
+                return document;
+            });
+        await settle();
+
+        expect(resolved).toBe(true);
+        expect(await pending).toBe(handle().getSnapshot().document);
     });
 
     // The image stand-in: a leaf with an `assetId` (instruction 13).
@@ -688,6 +764,21 @@ describe('useRichTextFormField', () => {
     });
 });
 
+describe('useRichTextFormField reset after a defaultValue change', () => {
+    it('SPEC-rich-text-persistence/DR-080 resets to the newest defaultValue', async () => {
+        const { handle, field, type, rerender } = mount();
+        type('c');
+        rerender({ defaultValue: loaded('document-1', null, para(text('zz'))) });
+
+        await act(async () => {
+            await field().reset();
+        });
+
+        expect(textOf(handle())).toContain('"text":"zz"');
+        expect(textOf(handle())).not.toContain('"text":"ab');
+    });
+});
+
 describe('useRichTextFormField reset to the current content', () => {
     it('SPEC-rich-text-persistence/AC-054 empties the history when the defaultValue record equals the content', async () => {
         const { handle, field, type, rerender } = mount();
@@ -702,6 +793,8 @@ describe('useRichTextFormField reset to the current content', () => {
             view?.dispatch(view.state.tr.delete(3, 4));
         });
         expect(canUndo(handle())).toBe(true);
+        const content = textOf(handle());
+        const { selection } = handle().getSummary();
 
         let result: unknown;
         await act(async () => {
@@ -710,6 +803,8 @@ describe('useRichTextFormField reset to the current content', () => {
 
         expect(result).toMatchObject({ status: 'replaced' });
         expect(canUndo(handle())).toBe(false);
+        expect(textOf(handle())).toBe(content);
+        expect(handle().getSummary().selection).toEqual(selection);
     });
 });
 
