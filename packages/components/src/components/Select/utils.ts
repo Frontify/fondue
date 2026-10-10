@@ -9,7 +9,7 @@ import {
     type ReactNode,
 } from 'react';
 
-import { ForwardedRefSelectItem, type SelectItemProps } from './components/SelectItem';
+import { ForwardedRefSelectItem, ForwardedRefSelectItemGroup, type SelectItemProps } from './components/SelectItem';
 
 /**
  * Extracts and returns an object containing `value` and `label` from a given SelectItemProps object.
@@ -108,17 +108,24 @@ export const recursiveMap = (
                 itemCounter++;
             }
         } else if (isValidElement<{ children: ReactNode }>(child) && child?.props.children) {
+            // Nested items are filtered like top-level ones, so the menu matches the filtered items downshift indexes.
             const { parsedChildren, subElementCount } = recursiveMap(
                 child.props.children,
                 callback,
-                '',
+                filterText,
                 nextIndex + itemCounter,
             );
-            child = cloneElement(child, {
-                children: parsedChildren,
-                key: `group-${nextIndex + itemCounter}`,
-            });
-            resultingChildren.push(child);
+            // A group the filter left without items would only show its heading.
+            const isEmptyFilteredGroup =
+                !!filterText && subElementCount === 0 && isReactLeaf(child, ForwardedRefSelectItemGroup);
+            if (!isEmptyFilteredGroup) {
+                resultingChildren.push(
+                    cloneElement(child, {
+                        children: parsedChildren,
+                        key: `group-${nextIndex + itemCounter}`,
+                    }),
+                );
+            }
             itemCounter += subElementCount;
         } else {
             resultingChildren.push(child);
