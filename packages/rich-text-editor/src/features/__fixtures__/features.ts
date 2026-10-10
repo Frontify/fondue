@@ -311,3 +311,14 @@ export const fixtureToolbar = defineFeature({
         },
     ],
 });
+
+/** Stands in for `media.image`'s figure: a block whose content is an image leaf outside the `block` group. */
+export const fixtureFigure = defineFeature({
+    id: 'fixture.figure',
+    version: 1,
+    requires: requiresCore,
+    nodes: {
+        figure: { group: 'block', content: 'figure_image', attrs: { nodeId }, html: ['figure', 0], parse: [] },
+        figure_image: { atom: true, attrs: { nodeId }, html: ['img'], parse: [] },
+    },
+});

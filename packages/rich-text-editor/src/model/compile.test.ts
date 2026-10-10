@@ -938,10 +938,20 @@ describe('compileContentModel order', () => {
     it('SPEC-rich-text/AC-026 orders plugins of one phase by the host list, in both orders', () => {
         const forward = compile([core(), fixtureBold(), fixtureHeading()]);
         const reverse = compile([core(), fixtureHeading(), fixtureBold()]);
-        // `core` contributes the history plugin and its own keys first.
+        // `core` contributes the history plugin and its own keys first, and the base keys last.
         const corePlugins = ['history', 'keymap:core'];
-        expect(forward.manifest.plugins).toEqual([...corePlugins, 'keymap:fixture.bold', 'keymap:fixture.heading']);
-        expect(reverse.manifest.plugins).toEqual([...corePlugins, 'keymap:fixture.heading', 'keymap:fixture.bold']);
+        expect(forward.manifest.plugins).toEqual([
+            ...corePlugins,
+            'keymap:fixture.bold',
+            'keymap:fixture.heading',
+            'base-keys',
+        ]);
+        expect(reverse.manifest.plugins).toEqual([
+            ...corePlugins,
+            'keymap:fixture.heading',
+            'keymap:fixture.bold',
+            'base-keys',
+        ]);
         expect(forward.fingerprint).not.toBe(reverse.fingerprint);
     });
 
@@ -953,6 +963,7 @@ describe('compileContentModel order', () => {
             'keymap:fixture.bold',
             'keymap:fixture.redo',
             'keymap:fixture.history',
+            'base-keys',
         ]);
     });
 
