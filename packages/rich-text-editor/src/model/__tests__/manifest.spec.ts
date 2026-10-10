@@ -15,7 +15,7 @@ type Manifest = Record<string, unknown>;
 
 const parseJson = (text: string): unknown => JSON.parse(text);
 
-/** The Feature contract's `acme.pull-quote` manifest. */
+/** The `acme.pull-quote` manifest. */
 const pullQuote = (): Manifest =>
     JSON.parse(`{
         "id": "acme.pull-quote", "version": 1, "requires": [{ "id": "core", "version": 1 }],
@@ -179,7 +179,7 @@ describe('featureFromManifest', () => {
             '/toolbar/0/icon',
         ],
         [
-            'a capability outside the catalogue',
+            'a capability the package does not accept',
             (manifest) =>
                 ((manifest.commands as Record<string, Manifest>)['acme.pull-quote.set'] = { capability: 'eval' }),
             '/commands/acme.pull-quote.set/capability',

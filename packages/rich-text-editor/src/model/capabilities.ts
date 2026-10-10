@@ -10,7 +10,7 @@ import {
 } from './declarations';
 import { DefinitionError } from './errors';
 
-/** Every `CapabilityName` of the Capability catalogue. */
+/** Every `CapabilityName` the package accepts. */
 export const CAPABILITY_NAMES: readonly string[] = (
     'toggleMark setMark removeMark setBlock wrapIn lift toggleList indentItem outdentItem toggleTask insertNode ' +
     'insertText block setAttributes indentLines table openControl upload reapplyMark history pastePlainText embed ' +

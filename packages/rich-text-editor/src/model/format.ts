@@ -74,7 +74,7 @@ export interface Diagnostic {
     readonly code: DiagnosticCode;
     readonly severity: 'info' | 'warning' | 'error';
     readonly messageKey: string;
-    /** A JSON Pointer into the input, where the spec names one. */
+    /** A JSON Pointer into the input, when the diagnostic has a place. */
     readonly path?: string;
     readonly featureId?: string;
     /** Codes, feature IDs, capability names, counts and hashes only: never document text, attribute values, URLs or labels. */
@@ -113,7 +113,7 @@ export interface ResourceLimits {
     readonly maxAppendedTransactions: number;
 }
 const MIB = 1024 * 1024;
-/** The Limits table defaults. */
+/** The default resource limits. */
 export const defaultLimits: ResourceLimits = Object.freeze({
     maxDocumentBytes: 5 * MIB,
     maxDocumentNodes: 50_000,
@@ -129,7 +129,7 @@ export const defaultLimits: ResourceLimits = Object.freeze({
 });
 
 export interface DecodeOptions {
-    /** Default the Limits table; a host passes the limits the writing definition used. */
+    /** Defaults to `defaultLimits`; a host passes the limits the writing definition used. */
     readonly limits?: Partial<ResourceLimits>;
     /** For `nodeId`s that registered migrations create; the package default when omitted. */
     readonly ids?: IdSource;

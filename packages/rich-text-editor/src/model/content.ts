@@ -111,7 +111,7 @@ const attributeFault = (declaration: AttributeDeclaration, value: unknown): Form
 };
 
 /**
- * Check 4: undeclared names go to `unknownAttributes`, then each declared attribute in declared order, then
+ * Undeclared names go to `unknownAttributes`, then each declared attribute in declared order, then
  * `exactlyOne`. On the root a failing value also goes to `unknownAttributes` and the checks go on.
  */
 const checkAttributes = (
@@ -168,7 +168,7 @@ const isOptional = (record: Attrs, key: string, kind: (value: unknown) => boolea
 
 type CheckedMark = { readonly mark: TreeMark; readonly declaration?: CompiledMark; readonly path: string };
 
-/** Check 6 for one mark: its shape, type, keys and kinds, then its attributes as in check 4. */
+/** One mark: its shape, type, keys and kinds, then its attributes as `checkAttributes` checks them. */
 const checkMark = (context: Context, value: unknown, path: string): CheckedMark => {
     const island = { mark: markIslandOf(value), path };
     if (!isRecord(value) || typeof value.type !== 'string') {
@@ -192,7 +192,7 @@ const checkMark = (context: Context, value: unknown, path: string): CheckedMark 
 const excludes = (mark: CompiledMark, other: string) => (mark.declaration.excludes ?? []).includes(other);
 const conflicts = (a: CompiledMark, b: CompiledMark) => a.name === b.name || excludes(a, b.name) || excludes(b, a.name);
 
-/** Checks 5 and 6: the marks of an inline node, sorted by rank, or `undefined` when they make the node fail. */
+/** The marks of an inline node, sorted by rank, or `undefined` when they make the node fail. */
 const checkMarks = (
     context: Context,
     node: CompiledNode,
@@ -328,7 +328,7 @@ const isGrid = (rows: readonly TreeNode[]): boolean => {
 type Checked = { readonly ok: true; readonly node: TreeNode } | { readonly ok: false };
 const FAILED: Checked = { ok: false };
 
-/** Check 7: each child through step 4, then the content expression in child order, then a table's grid. */
+/** Each child through `checkNode`, then the content expression in child order, then a table's grid. */
 const checkChildren = (
     context: Context,
     node: CompiledNode,
@@ -438,7 +438,7 @@ const treeNode = (
     return node;
 };
 
-/** Step 4 for the root, which passed checks 1 to 3 in step 2: a failing attribute stays in `unknownAttributes`. */
+/** The root, after `checkEnvelope` accepted its shape: a failing attribute stays in `unknownAttributes`. */
 const checkRoot = (context: Context, root: Attrs): TreeNode | undefined => {
     const node = context.vocabulary.nodes.get('doc');
     if (node === undefined) {
@@ -462,8 +462,8 @@ const checkRoot = (context: Context, root: Attrs): TreeNode | undefined => {
 };
 
 /**
- * Step 5: one walk in document order over the nodes outside islands; a node whose declared `nodeId` the walk
- * already kept becomes an island placed as in step 4, and the walk skips the rest of that island.
+ * One walk in document order over the nodes outside islands; a node whose declared `nodeId` the walk
+ * already kept becomes an island placed as `checkChildren` places one, and the walk skips the rest of that island.
  * `undefined` when the node itself must become an island.
  */
 const dedupe = (context: Context, tree: TreeNode, path: string, kept: Set<string>): TreeNode | undefined => {
@@ -517,7 +517,7 @@ const dedupe = (context: Context, tree: TreeNode, path: string, kept: Set<string
 };
 
 /**
- * Decode order steps 4 and 5 over an envelope's root, which has the root shape: the island tree and the
+ * `checkRoot`, then `dedupe`, over an envelope's root that has the root shape: the island tree and the
  * diagnostics in the order found, or `undefined` when the root itself fails, which only a model whose `doc`
  * content takes no island at some position allows.
  */
