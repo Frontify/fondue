@@ -32,7 +32,7 @@ import {
     text,
 } from '#/features/__fixtures__/documents';
 import { fixtureMedia } from '#/features/__fixtures__/features';
-import { htmlFeatures } from '#/features/__fixtures__/html';
+import { htmlFeatures, htmlLanguage, htmlLink } from '#/features/__fixtures__/html';
 import { fixtureMediaImageView } from '#/features/__fixtures__/media/view';
 import { fixtureTableBlockView } from '#/features/__fixtures__/table/view';
 import {
@@ -49,6 +49,7 @@ import {
 import { quote } from '#/features/blocks-quote/feature';
 import { core } from '#/features/core/feature';
 import { registry } from '#/features/registry';
+import { fromHTML } from '#/html';
 import {
     compileContentModel,
     type ContentModel,
@@ -459,6 +460,17 @@ describe('paste order', () => {
         pasteInto(mounted, data, files);
 
         expect(mounted.content()).toEqual(expected);
+        mounted.unmount();
+    });
+
+    it('SPEC-rich-text-clipboard/AC-002 uses the text/html of step 6 over a word even when it parses to no content, never the text/plain of step 7', () => {
+        const mounted = mount();
+        setSelection(mounted.handle, { text: 'b' });
+
+        pasteInto(mounted, { 'text/html': '<img src=x>', 'text/plain': 'u' });
+
+        expect(mounted.content()).toEqual([paragraph(text('a'))]);
+        expect(mounted.announced()).toBe('Media not pasted: 1');
         mounted.unmount();
     });
 
@@ -1226,6 +1238,54 @@ describe('pasted HTML', () => {
         mounted.unmount();
     });
 
+    const preBlock = defineFeature({
+        id: 'fixture.pre-block',
+        version: 1,
+        requires: [{ id: 'core', version: 1 }],
+        nodes: {
+            code_block: {
+                group: 'block',
+                content: 'text*',
+                marks: [],
+                whitespace: 'pre',
+                attrs: {},
+                html: ['pre', 0],
+                parse: [{ tag: 'pre' }],
+            },
+        },
+    });
+    it.each([
+        [
+            'a list item paragraph',
+            '<ul><li>a &nbsp; &nbsp;b</li></ul>',
+            [node('bullet_list', undefined, node('list_item', undefined, block(text('a    b'))))],
+        ],
+        [
+            'a space and a U+00A0 split across marks',
+            '<p>a <b>&nbsp;</b>x</p>',
+            [block(text('a '), text(' ', mark('bold')), text('x'))],
+        ],
+        [
+            'a code block that keeps its U+00A0',
+            '<pre>a &nbsp; b</pre>',
+            [{ type: 'code_block', content: [text('a \u00A0 b')] }],
+        ],
+    ] as const)(
+        'SPEC-rich-text-clipboard/AC-010 turns each U+00A0 after a space back into a space in %s',
+        (_name, html, expected) => {
+            const editorModel = compileContentModel([...htmlFeatures(), preBlock()], {
+                id: 'fixture.vocabulary',
+                version: 1,
+            });
+            const mounted = mount({ editorModel, blocks: [block()] });
+
+            pasteInto(mounted, { 'text/html': html });
+
+            expect(mounted.content()).toEqual(expected);
+            mounted.unmount();
+        },
+    );
+
     it('SPEC-rich-text-clipboard/AC-010 keeps the text of a pasted object and drops its embed, param and nested object', () => {
         const mounted = mount({ blocks: [paragraph()] });
 
@@ -1434,6 +1494,60 @@ describe('pasted HTML', () => {
         },
     );
 
+    const withoutIds = (value: unknown): unknown =>
+        JSON.parse(JSON.stringify(value, (property, item: unknown) => (property === 'nodeId' ? undefined : item)));
+    /** What `fromHTML` makes of the copied text/html of `blocks` under `editorModel`, with the mounted source content. */
+    const roundTrip = (editorModel: ContentModel, blocks: readonly JsonValue[]) => {
+        const mounted = mount({ editorModel, blocks });
+        selectAll(mounted);
+        const { html } = copyFrom(mounted);
+        const source = mounted.handle.getSnapshot().document.content.content;
+        mounted.unmount();
+        const result = fromHTML(html, editorModel, { window });
+        expect(result.status).toBe('editable');
+        return { imported: result.status === 'editable' && result.document.content.content, source };
+    };
+
+    it('SPEC-rich-text-clipboard/AC-035 converts the copied text/html of the spaces fixture with fromHTML to the mounted source document', () => {
+        const stored = JSON.parse(readFileSync(join(valid, 'spaces.json'), 'utf8')) as {
+            readonly content: { readonly content: readonly JsonValue[] };
+        };
+
+        const { imported, source } = roundTrip(model, stored.content.content);
+
+        expect(imported).not.toEqual([]);
+        expect(JSON.stringify(imported)).toContain('two  spaces and five     spaces');
+        expect(withoutIds(imported)).toEqual(withoutIds(source));
+    });
+
+    it('SPEC-rich-text-clipboard/AC-035 converts the copied text/html of runs of spaces in marks, list items and code with fromHTML to the mounted source document', () => {
+        const { imported, source } = roundTrip(htmlModel, [
+            block(text('a   b'), text('  x', mark('bold')), text('y   z')),
+            node('bullet_list', undefined, node('list_item', undefined, block(text('item   two')))),
+        ]);
+
+        expect(JSON.stringify(imported)).toContain('item   two');
+        expect(withoutIds(imported)).toEqual(withoutIds(source));
+    });
+
+    it('SPEC-rich-text-output/AC-044 SPEC-rich-text-clipboard/AC-010 pastes the toHTML output of a document with an island without its notice as text', () => {
+        const source = mount({
+            blocks: [paragraph(text('before')), { type: 'callout', content: [paragraph(text('Kept'))] } as JsonValue],
+        });
+        const html = createCodecs(model).toHTML(source.handle.getSnapshot().document).html;
+        source.unmount();
+        const found = /data-rte-message="islands"[^>]*>([^<]+)</.exec(html);
+        const notice = String(found?.[1]);
+        const target = mount({ blocks: [paragraph()] });
+
+        pasteInto(target, { 'text/html': html });
+
+        expect(found).not.toBeNull();
+        expect(JSON.stringify(target.content())).toContain('before');
+        expect(JSON.stringify(target.content())).not.toContain(notice);
+        target.unmount();
+    });
+
     it('SPEC-rich-text-clipboard/AC-041 replaces each attribute value decode would reject with its default, so the document still decodes as editable', () => {
         const long = `en-x-${'abcdefgh-'.repeat(1000)}abcdefgh`;
         const mounted = mountHtml();
@@ -1450,6 +1564,28 @@ describe('pasted HTML', () => {
         ]);
         expect(decodeDocument(mounted.handle.getSnapshot().document, htmlModel).status).toBe('editable');
         mounted.unmount();
+    });
+
+    it('SPEC-rich-text-clipboard/AC-041 applies maxAttributeLength of the editor limits, keeps a value exactly at it, and the default limit when none is given', () => {
+        const html = '<p lang="en-x-abc">at</p><p lang="en-x-abcd">over</p><p><span lang="en-x-abcd">mark</span></p>';
+        const limited = mountHtml({ limits: { maxAttributeLength: 8 } });
+        const unlimited = mountHtml();
+
+        pasteInto(limited, { 'text/html': html });
+        pasteInto(unlimited, { 'text/html': html });
+
+        expect(limited.content()).toEqual([
+            node('paragraph', { lang: 'en-x-abc', align: null }, text('at')),
+            block(text('over')),
+            block(text('mark')),
+        ]);
+        expect(unlimited.content()).toEqual([
+            node('paragraph', { lang: 'en-x-abc', align: null }, text('at')),
+            node('paragraph', { lang: 'en-x-abcd', align: null }, text('over')),
+            block(text('mark', mark('language', { lang: 'en-x-abcd', dir: null }))),
+        ]);
+        limited.unmount();
+        unlimited.unmount();
     });
 
     // happy-dom's parser drops what follows a `script` inside `svg`, so `svg.html` runs through `fromHTML` in jsdom only.
@@ -1480,6 +1616,48 @@ describe('pasted HTML', () => {
         expect(decodeDocument(mounted.handle.getSnapshot().document, editorModel).status).toBe('editable');
         mounted.unmount();
     });
+
+    const bareLink = defineFeature({
+        id: 'fixture.bare-link',
+        version: 1,
+        requires: [{ id: 'core', version: 1 }],
+        marks: { plain_link: { attrs: {}, html: ['a', 0], parse: [{ tag: 'a' }], rank: -2 } },
+    });
+    const bareSpan = defineFeature({
+        id: 'fixture.bare-span',
+        version: 1,
+        requires: [{ id: 'core', version: 1 }],
+        marks: { plain_span: { attrs: {}, html: ['span', 0], parse: [{ tag: 'span' }] } },
+    });
+    it.each([
+        ['a[href] after a bare a', [core(), bareLink(), htmlLink()], '<a href="https://x.io">x</a>', 'link'],
+        ['a[href] before a bare a', [core(), htmlLink(), bareLink()], '<a href="https://x.io">x</a>', 'link'],
+        ['span[lang] after a bare span', [core(), bareSpan(), htmlLanguage()], '<span lang="fr">x</span>', 'language'],
+        ['span[lang] before a bare span', [core(), htmlLanguage(), bareSpan()], '<span lang="fr">x</span>', 'language'],
+        ['a bare a after a[href], with no href', [core(), htmlLink(), bareLink()], '<a>x</a>', 'plain_link'],
+        [
+            'a bare span after span[lang], with no lang',
+            [core(), htmlLanguage(), bareSpan()],
+            '<span>x</span>',
+            'plain_span',
+        ],
+    ] as const)(
+        'SPEC-rich-text-clipboard/AC-048 takes a mark rule with an attribute selector over a bare tag in either model order, with %s',
+        (_name, installed, html, type) => {
+            const editorModel = compileContentModel(installed, { id: 'fixture.vocabulary', version: 1 });
+            const mounted = mount({ editorModel, blocks: [{ type: 'paragraph', attrs: { lang: null } }] });
+
+            pasteInto(mounted, { 'text/html': `<p>${html}</p>` });
+
+            const paragraphs = mounted.content() as readonly {
+                readonly content: readonly { readonly marks: readonly { readonly type: string }[] }[];
+            }[];
+            expect(
+                paragraphs.flatMap((child) => child.content.flatMap((run) => run.marks.map((entry) => entry.type))),
+            ).toEqual([type]);
+            mounted.unmount();
+        },
+    );
 
     const pullQuote = featureFromManifest(
         JSON.parse(readFileSync(join(fixtures, 'manifest', 'acme-pull-quote.json'), 'utf8')),

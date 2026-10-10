@@ -46,6 +46,13 @@ describe('check-entry-graph', () => {
                 JSON.stringify({ name, dependencies: { [dependency]: '^1.0.0' } }),
             );
         }
+        // An installed package whose own dependency is the state engine.
+        mkdirSync(join(root, 'node_modules/state-kit'), { recursive: true });
+        writeFileSync(
+            join(root, 'node_modules/state-kit/package.json'),
+            JSON.stringify({ name: 'state-kit', dependencies: { 'prosemirror-state': '^1.4.3' } }),
+        );
+        writeFileSync(join(root, 'node_modules/state-kit/index.js'), 'export const stateKit = 1;\n');
         symlinkSync(join(store, 'pnpm-kit'), join(root, 'node_modules/pnpm-kit'));
         appendFileSync(join(root, 'src/codecs/index.ts'), "import 'pnpm-kit';\n");
         violations = await checkEntryGraph(root, {
@@ -98,6 +105,28 @@ describe('check-entry-graph', () => {
         expect(html).toContain('./html reaches prosemirror-view: src/html/index.ts -> editor-kit -> prosemirror-view');
         expect(html.join('\n')).not.toContain('reaches prosemirror-model');
     });
+
+    it.each([
+        ['prosemirror-state', 'src/html/index.ts -> prosemirror-state'],
+        ['react-dom', 'src/html/index.ts -> react-dom'],
+    ])('SPEC-rich-text/AC-076 fails when ./html reaches %s: %s', (name, chain) => {
+        expect(violations).toContain(`./html reaches ${name}: ${chain}`);
+    });
+
+    it('SPEC-rich-text/AC-076 fails when ./html reaches prosemirror-state only through a dependency', async () => {
+        const found = await checkEntryGraph(root, { './html': 'src/html/via-dependency.ts' });
+
+        expect(found).toContain(
+            './html reaches prosemirror-state: src/html/via-dependency.ts -> state-kit -> prosemirror-state',
+        );
+    }, 60_000);
+
+    it.each(['bridge/session', 'react/view', 'ui/panel'])(
+        'SPEC-rich-text/AC-076 fails when ./html reaches the %s editor layer',
+        (path) => {
+            expect(violations).toContain(`./html reaches ${root}/src/${path}.ts: src/html/index.ts -> src/${path}.ts`);
+        },
+    );
 
     it('SPEC-rich-text/AC-012 passes on the package entries', async () => {
         const entries = entrySources(packageRoot);

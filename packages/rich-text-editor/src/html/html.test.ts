@@ -78,6 +78,14 @@ describe('fromHTML', () => {
         ]);
     });
 
+    it('SPEC-rich-text-output/AC-044 keeps the alpha of an rgba colour as the last pair of the hex value', () => {
+        const content = contentOf('<p><span style="color: rgba(0, 0, 0, 0.5)">half</span></p>');
+
+        expect(withoutNodeIds(content)).toEqual([
+            paragraph({ type: 'text', text: 'half', marks: [{ type: 'font_color', attrs: { value: '#00000080' } }] }),
+        ]);
+    });
+
     it('SPEC-rich-text-clipboard/AC-015 SPEC-rich-text-output/AC-043 applies the creatable heading levels and paste policy of a definition', () => {
         const definition = defineEditor({
             id: 'test.html',
@@ -137,9 +145,43 @@ describe('external HTML', () => {
         ]);
     });
 
+    it('SPEC-rich-text-output/AC-043 SPEC-rich-text-clipboard/AC-041 applies options.limits maxAttributeLength, keeps a value exactly at it, and the default limit when none is given', () => {
+        const html = '<p lang="en-x-abc">at</p><p lang="en-x-abcd">over</p><p><span lang="en-x-abcd">mark</span></p>';
+        const lang = (value: string | null, ...content: readonly object[]) => ({
+            type: 'paragraph',
+            attrs: { lang: value, align: null },
+            content,
+        });
+        const plain = (value: string) => ({ type: 'text', text: value });
+
+        expect(contentOf(html, { limits: { maxAttributeLength: 8 } })).toEqual([
+            lang('en-x-abc', plain('at')),
+            lang(null, plain('over')),
+            lang(null, plain('mark')),
+        ]);
+        expect(contentOf(html)).toEqual([
+            lang('en-x-abc', plain('at')),
+            lang('en-x-abcd', plain('over')),
+            lang(null, {
+                type: 'text',
+                text: 'mark',
+                marks: [{ type: 'language', attrs: { lang: 'en-x-abcd', dir: null } }],
+            }),
+        ]);
+    });
+
+    it('SPEC-rich-text-clipboard/AC-035 turns the span of only U+00A0 that Chromium and WebKit write for a copied space back into a space', () => {
+        const html =
+            '<p>a<span class="Apple-converted-space">&nbsp;</span>b <span>&nbsp;</span>c</p><p>d<span style="color: red">&nbsp;</span>e</p>';
+
+        expect(textOf(contentOf(html))).toBe('a b cd\u00A0e');
+    });
+
     const expected: Readonly<Record<string, string>> = {
         'clobbering-body.html': 't',
+        'clobbering-create-element.html': 't',
         'clobbering-form.html': 'form kept|after',
+        'clobbering-query-selector.html': 't',
         'event-handlers.html': 'Click here',
         'form.html': 'Go|form text',
         'id-class-style.html': 'Styled text',

@@ -643,6 +643,30 @@ test('SPEC-rich-text-clipboard/AC-044 keeps the text of a form whose controls sh
     expect(body).toContain('"text":"t"');
 });
 
+test('SPEC-rich-text-output/AC-044 pastes an rgba colour as a hex value with its alpha pair', async ({
+    mount,
+    page,
+}) => {
+    await mountHtml(page, mount);
+
+    await pasteHtml(page, '<p><span style="color: rgba(0, 0, 0, 0.5)">half</span></p>');
+
+    expect(JSON.stringify(await htmlContentOf(page))).toContain('"attrs":{"value":"#00000080"}');
+});
+
+for (const name of ['clobbering-create-element.html', 'clobbering-query-selector.html']) {
+    test(`SPEC-rich-text-clipboard/AC-044 keeps the text of a form when an image named by the ${name} fixture shadows a document method`, async ({
+        mount,
+        page,
+    }) => {
+        await mountHtml(page, mount);
+
+        await pasteHtml(page, readFileSync(join(fixturesOf('security/html'), name), 'utf8'));
+
+        expect(JSON.stringify(await htmlContentOf(page))).toContain('"text":"t"');
+    });
+}
+
 for (const name of readdirSync(fixturesOf('clipboard')).filter((file) => file.endsWith('.html'))) {
     test(`SPEC-rich-text-output/AC-043 SPEC-rich-text-clipboard/AC-014 pastes the ${name} fixture as its .paste.json`, async ({
         mount,
