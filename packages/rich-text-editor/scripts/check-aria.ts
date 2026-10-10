@@ -41,6 +41,32 @@ const stringsIn = (node: ts.Node): string[] => {
     return found;
 };
 
+/** The name of an object key written as an identifier, a string or a computed string, such as `role`, `'role'` and `['role']`. */
+const keyName = (name: ts.PropertyName): string | undefined => {
+    if (ts.isIdentifier(name) || ts.isStringLiteral(name)) {
+        return name.text;
+    }
+    if (ts.isComputedPropertyName(name) && ts.isStringLiteral(name.expression)) {
+        return name.expression.text;
+    }
+    return undefined;
+};
+
+/** The initializers of the variables named `role` in `file`, which a `{ role }` shorthand takes its value from. */
+const declaredRoles = (file: ts.SourceFile): ts.Expression[] => {
+    const found: ts.Expression[] = [];
+    const visit = (node: ts.Node) => {
+        if (ts.isVariableDeclaration(node) && ts.isIdentifier(node.name) && node.name.text === 'role') {
+            if (node.initializer !== undefined) {
+                found.push(node.initializer);
+            }
+        }
+        ts.forEachChild(node, visit);
+    };
+    visit(file);
+    return found;
+};
+
 /**
  * Reports each `aria-*` name outside the WAI-ARIA 1.2 states and properties, and each role value outside its roles
  * (SPEC-rich-text-accessibility/AC-078). Role values come from JSX `role` attributes, `setAttribute('role', …)` and, in
@@ -62,10 +88,10 @@ export const scanAria = (path: string, source: string): string[] => {
             }
         }
     };
-    const checkRoles = (node: ts.Node) => {
-        for (const role of stringsIn(node).flatMap((value) => value.split(/\s+/))) {
+    const checkRoles = (value: ts.Node, at: ts.Node = value) => {
+        for (const role of stringsIn(value).flatMap((text) => text.split(/\s+/))) {
             if (role !== '' && !ROLES.has(role)) {
-                violations.push(`${path}:${lineOf(node)} role ${role} is not a WAI-ARIA 1.2 role`);
+                violations.push(`${path}:${lineOf(at)} role ${role} is not a WAI-ARIA 1.2 role`);
             }
         }
     };
@@ -78,13 +104,12 @@ export const scanAria = (path: string, source: string): string[] => {
             }
         } else if (ts.isStringLiteral(node) || ts.isNoSubstitutionTemplateLiteral(node)) {
             checkNames(node, node.text);
-        } else if (
-            tsx &&
-            ts.isPropertyAssignment(node) &&
-            (ts.isIdentifier(node.name) || ts.isStringLiteral(node.name)) &&
-            node.name.text === 'role'
-        ) {
+        } else if (tsx && ts.isPropertyAssignment(node) && keyName(node.name) === 'role') {
             checkRoles(node.initializer);
+        } else if (tsx && ts.isShorthandPropertyAssignment(node) && node.name.text === 'role') {
+            for (const value of declaredRoles(file)) {
+                checkRoles(value, node);
+            }
         } else if (
             ts.isCallExpression(node) &&
             ts.isPropertyAccessExpression(node.expression) &&
