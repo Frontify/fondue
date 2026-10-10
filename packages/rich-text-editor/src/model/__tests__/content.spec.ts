@@ -196,7 +196,7 @@ describe('unknown marks and attributes', () => {
     });
 });
 
-/** Each Vocabulary table attribute with one value outside its declaration, and the node or mark that carries it. */
+/** Each vocabulary attribute with one value outside its declaration, and the node or mark that carries it. */
 const outOfRange: readonly (readonly [string, Json])[] = [
     ['paragraph.lang', para({ lang: 'en_US' })],
     ['paragraph.styleId', para({ styleId: 'Has Space' })],

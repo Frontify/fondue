@@ -87,7 +87,7 @@ export const decodeToTree = (input: unknown, model: ContentModel, options: Decod
 };
 
 /**
- * Validates JSON text or a parsed value through the Decode order before any engine node exists. Unknown or
+ * Validates JSON text or a parsed value before any engine node exists. Unknown or
  * invalid content becomes islands or `unknownAttributes`; only unreadable input blocks, keeping the original.
  */
 export const decodeDocument = (input: unknown, model: ContentModel, options?: DecodeOptions): DecodeResult =>
