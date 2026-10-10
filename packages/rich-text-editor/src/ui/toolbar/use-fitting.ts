@@ -26,8 +26,9 @@ export const useFitting = (root: RefObject<HTMLDivElement | null>, count: number
     const [fitting, setFitting] = useState<Fitting>({ itemsKey, shown: count });
     const endsRef = useRef<readonly number[]>([]);
     const moreSizeRef = useRef(0);
-    // A refit that moves the focused item into More sends focus to More, not to the body.
-    const focusMoreRef = useRef(false);
+    // A refit that removes the focused control sends focus to More, or to the first item More held, not to the body.
+    const refocusRef = useRef<'more' | number | undefined>(undefined);
+    const shownRef = useRef(count);
     // A new item set shows every item once, so the layout effect measures them all.
     let { shown } = fitting;
     if (fitting.itemsKey !== itemsKey) {
@@ -65,11 +66,21 @@ export const useFitting = (root: RefObject<HTMLDivElement | null>, count: number
                 }
                 next += 1;
             }
-            const focused = [...element.querySelectorAll('[data-rte-toolbar-item]')].indexOf(
-                element.ownerDocument.activeElement as Element,
-            );
+            const { activeElement } = element.ownerDocument;
+            const focused = [...element.querySelectorAll('[data-rte-toolbar-item]')].indexOf(activeElement as Element);
             if (focused >= next) {
-                focusMoreRef.current = true;
+                refocusRef.current = 'more';
+            }
+            // More's menu is a portal that its trigger names in `aria-controls` while open.
+            const more = element.querySelector('[data-rte-toolbar-more]');
+            const menuId = more?.getAttribute('aria-controls');
+            let menu: Element | null = null;
+            if (menuId !== null && menuId !== undefined) {
+                menu = element.ownerDocument.getElementById(menuId);
+            }
+            const inMore = more !== null && (more === activeElement || (menu !== null && menu.contains(activeElement)));
+            if (inMore && next === measured.length) {
+                refocusRef.current = shownRef.current;
             }
             // Only the rendered items tell what fits, so the layout effect measures them before paint.
             // oxlint-disable-next-line @eslint-react/set-state-in-effect -- the state is the measured layout.
@@ -86,13 +97,19 @@ export const useFitting = (root: RefObject<HTMLDivElement | null>, count: number
         return () => observer.disconnect();
     }, [root, count, itemsKey]);
     useClientLayoutEffect(() => {
-        if (!focusMoreRef.current) {
+        shownRef.current = shown;
+        const target = refocusRef.current;
+        const element = root.current;
+        if (target === undefined || element === null) {
             return;
         }
-        focusMoreRef.current = false;
-        const more = root.current?.querySelector<HTMLElement>('[data-rte-toolbar-more]');
-        if (more !== null && more !== undefined) {
-            more.focus();
+        refocusRef.current = undefined;
+        let control = element.querySelector<HTMLElement>('[data-rte-toolbar-more]');
+        if (target !== 'more') {
+            control = element.querySelectorAll<HTMLElement>('[data-rte-toolbar-item]')[target] ?? null;
+        }
+        if (control !== null) {
+            control.focus();
         }
     }, [root, shown]);
     return shown;

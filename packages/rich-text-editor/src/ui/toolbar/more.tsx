@@ -122,10 +122,13 @@ export const More = ({
                             onKeyDown={() => {
                                 pointerRef.current = false;
                             }}
+                            // A click with no press before it, as browse mode, voice control and `click()` send, opens too.
                             onClick={() => {
-                                if (pointerRef.current && !openAtPressRef.current) {
+                                if (!openAtPressRef.current) {
                                     setOpen(true);
                                 }
+                                pointerRef.current = false;
+                                openAtPressRef.current = false;
                             }}
                         >
                             <IconDotsHorizontal size={20} aria-hidden />
