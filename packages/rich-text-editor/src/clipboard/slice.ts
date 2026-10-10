@@ -91,11 +91,16 @@ interface Islands {
 /** An island's `original`, which decode then counts at the island's position (SPEC-rich-text-format, Decode order step 1). */
 const originalOf = (islands: Islands, island: Readonly<Record<string, unknown>>, path: string): unknown => {
     islands.paths.push(path);
-    if (!isRecord(island.attrs) || !isRecord(island.attrs.original)) {
+    let original: unknown;
+    if (isRecord(island.attrs)) {
+        original = island.attrs.original;
+    }
+    // Stored JSON never holds an island type, so an original cannot be one (SPEC-rich-text-format, Vocabulary).
+    if (!isRecord(original) || isIsland(original.type) || original.type === ISLAND_MARK) {
         islands.malformed = true;
         return undefined;
     }
-    return island.attrs.original;
+    return original;
 };
 
 /** The slice content as stored JSON: each island node and mark replaced by its `original`, whose paths `islands` collects. */
@@ -121,6 +126,22 @@ const unwrapIslands = (islands: Islands, value: unknown, path: string): unknown 
         });
     }
     return node;
+};
+
+/** Whether the decoded tree holds an island node or mark at `path`, a pointer below the root at `/content`. */
+const islandAt = (tree: TreeNode, path: string): boolean => {
+    const segments = path.split('/').slice(2);
+    let node: TreeNode | undefined = tree;
+    for (let index = 0; index < segments.length && node !== undefined; index += 2) {
+        const position = Number(segments[index + 1]);
+        if (segments[index] === 'marks') {
+            const marks = node.marks ?? [];
+            return index + 2 === segments.length && marks[position]?.type === ISLAND_MARK;
+        }
+        const children: readonly TreeNode[] = node.content ?? [];
+        node = children[position];
+    }
+    return node !== undefined && isIsland(node.type);
 };
 
 const isOpening = (value: unknown, content: Fragment, side: 'start' | 'end'): value is number =>
@@ -158,9 +179,11 @@ export const readSlice = (
     if (result.status !== 'editable' || tree === undefined || islands.malformed) {
         return undefined;
     }
-    const carried = (path: string | undefined) =>
-        path !== undefined && islands.paths.some((island) => path === island || path.startsWith(`${island}/`));
-    if (!result.diagnostics.every(({ path }) => carried(path))) {
+    // Each carried island must decode as the same island, so a forged wrapper cannot plant known content (AC-006).
+    if (
+        !islands.paths.every((path) => islandAt(tree, path)) ||
+        !result.diagnostics.every(({ path }) => path !== undefined && islands.paths.includes(path))
+    ) {
         return undefined;
     }
     const content = Fragment.fromJSON(schema, tree.content);

@@ -10,6 +10,8 @@ import { isRecord } from '#/model/values';
 interface Size {
     readonly bytes: number;
     readonly nodes: number;
+    /** The longest text node, which the engine keeps joined as the encoder does; an island's text was checked at decode. */
+    readonly longest: number;
 }
 
 const encoder = new TextEncoder();
@@ -51,7 +53,7 @@ export const createLimitCheck = (model: ContentModel, stored: readonly Capabilit
         const name = node.type.name;
         if (name === ISLAND_BLOCK || name === ISLAND_INLINE) {
             const original = node.attrs.original as JsonValue;
-            return { bytes: utf8Bytes(JSON.stringify(original)), nodes: storedNodes(original) };
+            return { bytes: utf8Bytes(JSON.stringify(original)), nodes: storedNodes(original), longest: 0 };
         }
         let content: unknown[] | undefined;
         if (node.childCount > 0) {
@@ -69,12 +71,17 @@ export const createLimitCheck = (model: ContentModel, stored: readonly Capabilit
         // The children go between the brackets of the empty `content` array, one comma apart.
         let bytes = utf8Bytes(JSON.stringify(shell)) + Math.max(0, node.childCount - 1);
         let nodes = 1;
+        let longest = 0;
+        if (node.isText) {
+            longest = node.textContent.length;
+        }
         for (const child of node.children) {
             const size = sizeOf(child);
             bytes += size.bytes;
             nodes += size.nodes;
+            longest = Math.max(longest, size.longest);
         }
-        return { bytes, nodes };
+        return { bytes, nodes, longest };
     };
 
     const sizeOf = (node: Node): Size => {
@@ -86,9 +93,13 @@ export const createLimitCheck = (model: ContentModel, stored: readonly Capabilit
         return size;
     };
 
-    /** Whether the document has more nodes or bytes than the limits allow. */
+    /** Whether the document has more nodes or bytes, or a longer text, than the limits allow. */
     return (doc: Node, limits: ResourceLimits): boolean => {
         const size = sizeOf(doc);
-        return size.nodes > limits.maxDocumentNodes || envelopeBytes + size.bytes > limits.maxDocumentBytes;
+        return (
+            size.nodes > limits.maxDocumentNodes ||
+            envelopeBytes + size.bytes > limits.maxDocumentBytes ||
+            size.longest > limits.maxTextLength
+        );
     };
 };
