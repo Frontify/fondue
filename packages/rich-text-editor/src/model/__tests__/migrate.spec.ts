@@ -7,7 +7,14 @@ import { readdirSync, readFileSync } from 'node:fs';
 import fc from 'fast-check';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { NOTES_ID, notesModel, type NotesVersion, noteV2, toneToLevel } from '#/features/__tests__/fixtures/notes';
+import {
+    countingIds,
+    NOTES_ID,
+    notesModel,
+    type NotesVersion,
+    noteV2,
+    toneToLevel,
+} from '#/features/__tests__/fixtures/notes';
 import { core } from '#/features/core/feature';
 import {
     compileContentModel,
@@ -21,7 +28,6 @@ import {
     type ModelMigration,
     type RichTextDocument,
 } from '#/model';
-import { createTestEnvironment } from '#/testing';
 
 import { type TreeNode } from '../content';
 import { decodeToTree } from '../decode';
@@ -35,7 +41,6 @@ const fixtures = readdirSync(root, { recursive: true, encoding: 'utf8' })
     .sort();
 const load = (name: string) => JSON.parse(readFileSync(new URL(name, root), 'utf8')) as RichTextDocument;
 const latest = notesModel(3);
-const ids = () => createTestEnvironment({ seed: 1 }).ids;
 const seed = Number(process.env.FC_SEED ?? Math.floor(Math.random() * 2 ** 31));
 const settings = { seed, numRuns: 100 };
 
@@ -64,13 +69,13 @@ describe('decode runs registered migrations', () => {
     it.each(older)('decodes the older-version fixture %s as editable', (name) => {
         const input = load(name);
         const before = JSON.stringify(input);
-        const result = decodeDocument(input, latest, { ids: ids() });
+        const result = decodeDocument(input, latest, { generateId: countingIds() });
         expect(result.status).toBe('editable');
         expect(JSON.stringify(input)).toBe(before);
     });
 
     it('decodes the migrated document of a registered capability and model step', () => {
-        const result = decodeDocument(load('v1-notes.json'), latest, { ids: ids() });
+        const result = decodeDocument(load('v1-notes.json'), latest, { generateId: countingIds() });
         // Capability warnings judge the stored document, before the model step replaces `fixture.divider`.
         expect(result).toMatchObject({
             status: 'editable',
@@ -91,12 +96,14 @@ describe('decode runs registered migrations', () => {
             ['horizontal_rule', undefined],
             ['note', { nodeId: 'node-2', level: 'info' }],
         ]);
-        expect(document).toEqual(migrateDocument(load('v1-notes.json'), latest, { ids: ids() }).document);
+        expect(document).toEqual(
+            migrateDocument(load('v1-notes.json'), latest, { generateId: countingIds() }).document,
+        );
     });
 
     it('keeps requires-review content as islands at the reported paths', () => {
         const input = load('ambiguous/alert-tone.json');
-        const { result, tree } = decodeToTree(input, latest, { ids: ids() });
+        const { result, tree } = decodeToTree(input, latest, { generateId: countingIds() });
         expect(result.diagnostics.map(({ code, path }) => [code, path])).toEqual([
             ['migration.requires-review', '/content/content/0'],
             ['migration.requires-review', '/content/content/2'],
@@ -352,7 +359,7 @@ describe('a newer reader after an older one saved', () => {
     it('keeps the islands of an older writer through the newer migrations', () => {
         const saved = rollback();
         expect(saved.model).toEqual({ id: NOTES_ID, version: 1 });
-        const result = decodeDocument(saved, latest, { ids: ids() });
+        const result = decodeDocument(saved, latest, { generateId: countingIds() });
         expect(result.status).toBe('editable');
         const { document } = result as Extract<DecodeResult, { status: 'editable' }>;
         expect(canonicalJson(at(document, '/content/content/1') as JsonValue)).toBe(
@@ -362,7 +369,7 @@ describe('a newer reader after an older one saved', () => {
     });
 
     it('migrates a document the older model saved, keeping the newer-form content', () => {
-        const result = migrateDocument(rollback(), latest, { ids: ids() });
+        const result = migrateDocument(rollback(), latest, { generateId: countingIds() });
         expect(result.status).toBe('migrated');
         expect(result.manifest.steps).toEqual(['fixture.notes.divider-to-rule']);
         const note = at(result.document, '/content/content/0') as Json;
@@ -465,14 +472,14 @@ describe('ambiguous content', () => {
 
     it.each(Object.entries(shapes))('asks for review of %s', (name, paths) => {
         const input = load(name);
-        const step = toneToLevel.migrate(input, { ids: ids() });
+        const step = toneToLevel.migrate(input, { generateId: countingIds() });
         expect(step.status).toBe('requires-review');
         const reported = step.status === 'migrated' ? [] : step.diagnostics.map(({ path }) => path);
         expect(reported).toEqual(paths);
         for (const path of paths) {
             expect(at(step.document, path)).toEqual(at(input, path));
         }
-        expect(migrateDocument(input, latest, { ids: ids() }).status).toBe('requires-review');
+        expect(migrateDocument(input, latest, { generateId: countingIds() }).status).toBe('requires-review');
     });
 });
 
@@ -490,7 +497,7 @@ describe('manifests and diagnostics', () => {
 
     it.each(fixtures)('writes no text of %s into its manifest or diagnostics', (name) => {
         const input = load(name);
-        const { manifest, diagnostics } = migrateDocument(input, latest, { ids: ids() });
+        const { manifest, diagnostics } = migrateDocument(input, latest, { generateId: countingIds() });
         expect(Object.keys(manifest).sort()).toEqual([
             'counts',
             'model',
@@ -558,8 +565,8 @@ describe(`repeated migrations (fast-check seed ${seed})`, () => {
     it.each(versions)('finds a document of model version %i current once migrated', (version) => {
         fc.assert(
             fc.property(generated[version] as fc.Arbitrary<RichTextDocument>, (input) => {
-                const once = migrateDocument(input, latest, { ids: ids() });
-                const twice = migrateDocument(once.document as RichTextDocument, latest, { ids: ids() });
+                const once = migrateDocument(input, latest, { generateId: countingIds() });
+                const twice = migrateDocument(once.document as RichTextDocument, latest, { generateId: countingIds() });
                 expect(twice.status).toBe('current');
                 expect(twice.document).toBe(once.document);
                 expect(twice.document).toEqual(once.document);
@@ -573,9 +580,9 @@ describe(`repeated migrations (fast-check seed ${seed})`, () => {
         fc.assert(
             fc.property(generated[version] as fc.Arbitrary<RichTextDocument>, (input) => {
                 vi.setSystemTime(1_000);
-                const first = migrateDocument(input, latest, { ids: ids() });
+                const first = migrateDocument(input, latest, { generateId: countingIds() });
                 vi.setSystemTime(9_000_000);
-                const second = migrateDocument(input, latest, { ids: ids() });
+                const second = migrateDocument(input, latest, { generateId: countingIds() });
                 expect(canonicalJson(second as unknown as JsonValue)).toBe(
                     canonicalJson(first as unknown as JsonValue),
                 );

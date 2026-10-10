@@ -43,11 +43,20 @@ const rewrite = (
     return { ...node, content: children };
 };
 
+/** `generateId` values `node-1`, `node-2` and so on, so migrated documents compare equal. */
+export const countingIds = (): (() => string) => {
+    let count = 0;
+    return () => {
+        count += 1;
+        return `node-${count}`;
+    };
+};
+
 /** `info` maps to `info`; `alert` covers both `warning` and `danger`, and a stored `level` competes with `tone`. */
 export const toneToLevel: CapabilityMigration = {
     id: 'fixture.note.tone-to-level',
     from: 1,
-    migrate: (document, { ids }) => {
+    migrate: (document, { generateId }) => {
         const unmapped: Diagnostic[] = [];
         const content = rewrite(document.content as unknown as JsonValue, '/content', (node, path) => {
             const attrs = node.attrs ?? {};
@@ -63,7 +72,7 @@ export const toneToLevel: CapabilityMigration = {
             if (tone !== 'info') {
                 return { node, descend: true };
             }
-            return { node: { ...node, attrs: { nodeId: ids.next('node'), level: 'info', ...rest } }, descend: true };
+            return { node: { ...node, attrs: { nodeId: generateId(), level: 'info', ...rest } }, descend: true };
         });
         const migrated = { ...document, content: content as unknown as typeof document.content };
         return unmapped.length === 0

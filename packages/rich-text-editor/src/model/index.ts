@@ -52,7 +52,6 @@ export {
     type ValueOf,
 } from './declarations';
 export { createEmptyDocument, decodeDocument } from './decode';
-export { defaultIdSource, type IdSource, type RuntimeEnvironment } from './environment';
 export { DefinitionError, type DefinitionErrorCode } from './errors';
 export { defineFeature } from './feature';
 export {

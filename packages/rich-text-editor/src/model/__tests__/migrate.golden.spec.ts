@@ -6,9 +6,8 @@ import { readdirSync, readFileSync } from 'node:fs';
 
 import { describe, expect, it } from 'vitest';
 
-import { notesModel } from '#/features/__tests__/fixtures/notes';
+import { countingIds, notesModel } from '#/features/__tests__/fixtures/notes';
 import { migrateDocument, type RichTextDocument } from '#/model';
-import { createTestEnvironment } from '#/testing';
 
 const root = new URL('./fixtures/migration/', import.meta.url);
 const fixtures = readdirSync(root, { recursive: true, encoding: 'utf8' })
@@ -35,7 +34,7 @@ const compact = (value: unknown, indent = ''): string => {
 describe('migration golden files', () => {
     it.each(fixtures)('migrates %s to its golden result', (name) => {
         const input = JSON.parse(readFileSync(new URL(name, root), 'utf8')) as RichTextDocument;
-        const result = migrateDocument(input, notesModel(3), { ids: createTestEnvironment({ seed: 1 }).ids });
+        const result = migrateDocument(input, notesModel(3), { generateId: countingIds() });
         expect(result.manifest.packageVersion).toBe(version);
         // The package version changes on every release, so the golden file holds a placeholder.
         const manifest = { ...result.manifest, packageVersion: '<package version>' };

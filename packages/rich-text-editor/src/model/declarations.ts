@@ -1,6 +1,5 @@
 /* (c) Copyright Frontify Ltd., all rights reserved. */
 
-import { type IdSource } from './environment';
 import { type Diagnostic, type RichTextDocument } from './format';
 
 export type JsonValue = null | boolean | number | string | readonly JsonValue[] | { readonly [key: string]: JsonValue };
@@ -253,9 +252,9 @@ export type ToolbarEntry =
           readonly items: readonly CommandRef[];
           readonly when?: OptionGuard;
       };
-/** New `nodeId`s in a migrated document come from `ids` only. */
+/** New `nodeId`s in a migrated document come from `generateId` only. */
 export interface MigrationContext {
-    readonly ids: IdSource;
+    readonly generateId: () => string;
 }
 export type MigrationStepResult =
     | { readonly status: 'migrated'; readonly document: RichTextDocument }
