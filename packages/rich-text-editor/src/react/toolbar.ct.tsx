@@ -358,6 +358,43 @@ test.describe('at 320 CSS pixels', () => {
 test.describe('with a coarse pointer', () => {
     test.use({ hasTouch: true, isMobile: true, viewport: { width: 390, height: 844 } });
 
+    test('SPEC-rich-text-react/AC-040 SPEC-rich-text-react/AC-095 opens More on a tap', async ({ mount, page }) => {
+        await mount(<ToolbarProbe />);
+        await ready(page);
+
+        await itemOf(page, 'More').tap();
+
+        await expect(page.getByRole('menu')).toBeVisible();
+        await expect(page.getByRole('menuitem', { name: 'Show toolbar on selection only' })).toBeVisible();
+    });
+
+    test('SPEC-rich-text-accessibility/AC-026 does not open More when a touch slides off it before release', async ({
+        mount,
+        page,
+    }) => {
+        await mount(<ToolbarProbe />);
+        await ready(page);
+        const box = await boxOf(itemOf(page, 'More'));
+        const client = await page
+            .context()
+            .newCDPSession(page)
+            .catch(() => undefined);
+        test.skip(client === undefined, 'CDP dispatches a sliding touch in Chromium only');
+        const point = (x: number, y: number) => [{ x, y }];
+
+        await client?.send('Input.dispatchTouchEvent', {
+            type: 'touchStart',
+            touchPoints: point(box.x + 4, box.y + 4),
+        });
+        await client?.send('Input.dispatchTouchEvent', {
+            type: 'touchMove',
+            touchPoints: point(box.x + 200, box.y + 200),
+        });
+        await client?.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+
+        await expect(page.getByRole('menu')).toHaveCount(0);
+    });
+
     test('SPEC-rich-text-react/AC-041 gives every toolbar item a 44 by 44 CSS pixel target', async ({
         mount,
         page,

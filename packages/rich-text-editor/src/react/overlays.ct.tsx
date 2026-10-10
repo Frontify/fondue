@@ -698,12 +698,8 @@ test.describe('on a touch device', () => {
         await expect.poll(() => bottomOf(toolbarOf(page))).toBeCloseTo(350, 0);
         const docked = await page.evaluate(() => window.overlayProbe?.bottomMargin());
 
-        // By keyboard: WebKit drops the click of a tap on More, whose `pointerdown` Radix prevents.
-        await page.keyboard.press('Alt+F10');
-        await page.keyboard.press('End');
-        await expect(toolbarOf(page).getByRole('button', { name: 'More' })).toBeFocused();
-        await page.keyboard.press('Enter');
-        await page.getByRole('menuitem', { name: 'Show toolbar on selection only' }).press('Enter');
+        await toolbarOf(page).getByRole('button', { name: 'More' }).tap();
+        await page.getByRole('menuitem', { name: 'Show toolbar on selection only' }).tap();
         await expect(toolbarOf(page)).toHaveCount(0);
 
         // The keyboard's 350 px and ProseMirror's own 5 px margin stay.
