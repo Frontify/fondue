@@ -19,10 +19,6 @@
         "./model": {
             "types": "./dist/model/index.d.ts",
             "import": "./dist/model/index.js"
-        },
-        "./testing": {
-            "types": "./dist/testing/index.d.ts",
-            "import": "./dist/testing/index.js"
         }
     },
     "publishConfig": {
@@ -44,6 +40,7 @@
         "@tony.ganchev/eslint-plugin-header": "^3.4.4",
         "@typescript/native-preview": "7.0.0-dev.20260421.2",
         "@vitest/coverage-v8": "^5.0.0",
+        "fast-check": "^4.10.2",
         "happy-dom": "^20.11.2",
         "oxfmt": "^0.52.0",
         "oxlint": "^1.67.0",
