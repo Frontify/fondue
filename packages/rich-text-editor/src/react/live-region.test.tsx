@@ -37,12 +37,19 @@ describe('the live regions of every story', () => {
 
     it.each(stories)(
         'SPEC-rich-text-accessibility/AC-038 renders no assertive or surface live region in $title',
-        ({ Story }) => {
+        ({ Story, title }) => {
+            // A reader story renders content or a blocked notice, every other story an editor or its blocked shell.
+            let rendered = '[data-test-id^="fondue-rich-text"]';
+            if (title.includes('/reader/')) {
+                rendered = '*';
+            }
             vi.spyOn(console, 'error').mockImplementation(() => undefined);
             const { container, unmount } = render(<Story />);
             act(() => undefined);
 
-            expect(liveRegionFaults(container)).toEqual([]);
+            // Portals render under the body, outside the story's container, so the scan covers the whole document.
+            expect(container.querySelector(rendered)).not.toBeNull();
+            expect(liveRegionFaults(document.body)).toEqual([]);
             unmount();
             vi.restoreAllMocks();
         },

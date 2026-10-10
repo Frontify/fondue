@@ -130,6 +130,47 @@ describe('the recovery shell', () => {
         unmount();
     });
 
+    it.each([
+        ['a host field, which keeps it', 'host'],
+        ['the surface, which hands it to the message', 'surface'],
+    ] as const)(
+        'SPEC-rich-text-accessibility/AC-038 SPEC-rich-text-react/AC-022 leaves focus that was on %s',
+        (_, focused) => {
+            vi.spyOn(console, 'error').mockImplementation(() => undefined);
+            const environment = createTestEnvironment({ seed: 1 });
+            const tree = (armed: boolean) => (
+                <>
+                    <input aria-label="Host field" />
+                    <RichTextEditor.Root
+                        aria-label="Notes"
+                        definition={definition}
+                        defaultValue={stored(envelope([para('ab')]))}
+                        environment={environment}
+                    >
+                        <RichTextEditor.Surface />
+                        <Bomb armed={armed} />
+                    </RichTextEditor.Root>
+                </>
+            );
+            const view = render(tree(false));
+            act(() => environment.flushFrames());
+            let before = screen.getByRole('textbox', { name: 'Host field' });
+            if (focused === 'surface') {
+                before = screen.getByRole('textbox', { name: 'Notes' });
+            }
+            act(() => before.focus());
+
+            view.rerender(tree(true));
+
+            if (focused === 'host') {
+                expect(screen.getByRole('textbox', { name: 'Host field' })).toHaveFocus();
+            } else {
+                expect(screen.getByText(/^The editor stopped working\./)).toHaveFocus();
+            }
+            view.unmount();
+        },
+    );
+
     it('SPEC-rich-text-react/AC-022 shows the last published snapshot through the reader after a render error, with no save', () => {
         const { before, spy, unmount } = breakAfterTyping();
 
