@@ -86,6 +86,16 @@ export interface ModeSwitch {
     readonly onSelect: () => void;
 }
 
+/** Whether focus sits on an element, not on `body`, in the document or shadow root that holds `trigger`. */
+const focusMoved = (trigger: HTMLElement | null) => {
+    if (trigger === null) {
+        return false;
+    }
+    const root = trigger.getRootNode() as Document | ShadowRoot;
+    const { activeElement } = root;
+    return activeElement !== null && activeElement !== trigger.ownerDocument.body;
+};
+
 /** The items that do not fit move into More, from the end, above the toolbar mode switch (SPEC-rich-text-react/AC-040). */
 export const More = ({
     items,
@@ -108,6 +118,7 @@ export const More = ({
     // A row that ran its command sends focus to the surface rather than back to More (SPEC-rich-text-react, Overlay focus).
     const ranRef = useRef(false);
     const contentRef = useRef<HTMLDivElement>(null);
+    const triggerRef = useRef<HTMLButtonElement>(null);
     // Radix opens a menu on pointer down; More opens on the click, so a press dragged away opens nothing (SPEC-rich-text-accessibility/AC-026).
     const [open, setOpen] = useState(false);
     const pointerRef = useRef(false);
@@ -135,6 +146,7 @@ export const More = ({
                     <Dropdown.Trigger asChild>
                         <RadixToolbar.Button
                             {...tabStop(outOfTabOrder)}
+                            ref={triggerRef}
                             type="button"
                             className={styles.item}
                             aria-label={strings.more}
@@ -191,6 +203,11 @@ export const More = ({
                     if (ranRef.current) {
                         event.preventDefault();
                         ranRef.current = false;
+                        return;
+                    }
+                    // Radix returns focus to More in a timeout, after which focus that already moved on stays there.
+                    if (focusMoved(triggerRef.current)) {
+                        event.preventDefault();
                     }
                 }}
             >
