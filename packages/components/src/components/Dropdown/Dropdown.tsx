@@ -84,7 +84,7 @@ const DropdownVirtualTrigger = ({ virtualAnchor, open }: { virtualAnchor: Dropdo
 
     // Opening places the trigger again, because the rectangle may have moved while closed.
     useLayoutEffect(() => placeTrigger(), [placeTrigger, open]);
-    useScrollOrResize(placeTriggerWhileOpen);
+    useScrollOrResize(triggerRef, placeTriggerWhileOpen);
 
     return (
         <RadixDropdown.Trigger asChild>
