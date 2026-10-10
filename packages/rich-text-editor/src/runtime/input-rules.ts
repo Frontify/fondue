@@ -44,10 +44,11 @@ const QUOTES: Readonly<Record<string, readonly [string, string, string, string]>
     ja: ['「', '」', '『', '』'],
     nl: ['“', '”', '‘', '’'],
     pl: ['„', '”', '«', '»'],
-    pt: ['«', '»', '“', '”'],
+    pt: ['“', '”', '‘', '’'],
+    'pt-PT': ['«', '»', '“', '”'],
 };
-// Before these, as after a space or at the block start, a typed quote opens (Tiptap's Typography rules).
-const OPENS_AFTER = /[\s([{<'"]/u;
+// Before these, as after a space, a line break or at the block start, a typed quote opens (Tiptap's Typography rules).
+const OPENS_AFTER = /[\s([{<'"\uFFFC]/u;
 
 /** Whether a rule fired in a batch. */
 export const firedRule = (transactions: readonly Transaction[]): boolean =>
@@ -101,11 +102,12 @@ const lineStart = (rule: LineStartRule, state: EditorState, $cursor: ResolvedPos
     if (before !== `${rule.marker} ` || before.length !== $cursor.parentOffset) {
         return null;
     }
-    if (holdsCode(state, $cursor.start(), $cursor.pos)) {
+    // A block that already is the rule's target keeps the marker as text, so `> ` in a quote never lifts it out.
+    if (holdsCode(state, $cursor.start(), $cursor.pos) || rule.command.active(state, rule.payload) === true) {
         return null;
     }
     const dispatched: Transaction[] = [];
-    if (!rule.run(state, (transaction) => dispatched.push(transaction), rule.payload)) {
+    if (!rule.command.run(state, (transaction) => dispatched.push(transaction), rule.payload)) {
         return null;
     }
     const [built] = dispatched;
@@ -165,13 +167,18 @@ const textReplace = (rule: TextReplaceRule, state: EditorState, $cursor: Resolve
     let kept = '';
     if (rule.boundary) {
         kept = Array.from(before).at(-1) ?? '';
-        if (kept === '' || WORD.test(kept)) {
+        // A longer dash run or an arrow such as `-->` stays as typed.
+        if (kept === '' || WORD.test(kept) || kept === '-' || kept === '>') {
             return null;
         }
         text = before.slice(0, -kept.length);
     }
     const found = rule.match.exec(text);
     if (found === null) {
+        return null;
+    }
+    // A boundary rule replaces a whole run, so `a --- b` keeps its three hyphens.
+    if (rule.boundary && text.charAt(found.index - 1) === found[0].charAt(0)) {
         return null;
     }
     const from = $cursor.pos - before.length + found.index;

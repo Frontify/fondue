@@ -63,6 +63,7 @@ import {
     type CommitOptions,
     type CommitResult,
     type EditorSummary,
+    type HeadingLevel,
     type OperationMetric,
     type RecoveryReceipt,
     type RecoveryService,
@@ -349,6 +350,10 @@ const keyGuard = new Plugin({
                 if (passesToBrowser(event)) {
                     return true;
                 }
+                // ProseMirror runs no key handler on a surface that takes no edits, and neither does this branch.
+                if (!view.editable) {
+                    return false;
+                }
                 const modified = event.shiftKey || event.altKey || event.ctrlKey || event.metaKey;
                 if (event.key !== 'Escape' && !(event.key === 'Enter' && modified)) {
                     return false;
@@ -374,6 +379,14 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
     const createdAt = environment.clock.now();
     let unmanaged = createUnmanagedStatus(options.revision ?? null);
     const breaksPolicy = createPolicyCheck(definition.model);
+    // The commands that set a heading's level, whose payload level the policy may refuse (SPEC-rich-text-editing/AC-013).
+    const headingCommands = new Set(
+        compiledModel(definition.model)
+            .commands.filter(
+                ({ definition: { capability, args } }) => capability === 'setBlock' && args.node === 'heading',
+            )
+            .flatMap(({ id }) => definition.commands.get(id) ?? []),
+    );
     let { capabilities } = options;
     let exceedsLimits = createLimitCheck(definition.model, capabilities);
     // Aborted by `dispose`, which ends the session's own service calls.
@@ -669,7 +682,7 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
             doc !== state.doc &&
             !(fromView && isProvisional(root)) &&
             root.getMeta(NORMALIZE_META) !== 'now' &&
-            (breaksPolicy(policy, state.doc, doc, mapping) || exceedsLimits(doc, limits))
+            (breaksPolicy(policy, state.doc, doc, mapping, isHistoryTransaction(root)) || exceedsLimits(doc, limits))
         ) {
             if (firedRule(applied.transactions)) {
                 return prepare(withoutRules(root), ids, fromView);
@@ -970,6 +983,14 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         }
         if (typeof base === 'string') {
             return { code: base };
+        }
+        // A level the policy does not offer is refused before applicability, even in a heading of that level (AC-013).
+        if (
+            headingCommands.has(command) &&
+            isRecord(payload) &&
+            !policy.creatableHeadingLevels.includes(payload.level as HeadingLevel)
+        ) {
+            return { code: 'not-allowed' };
         }
         const dispatched: Transaction[] = [];
         const applicable = command.run(base, (transaction) => dispatched.push(transaction), payload);

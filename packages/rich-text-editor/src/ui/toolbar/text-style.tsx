@@ -35,7 +35,13 @@ export const TextStyle = ({
         if (session === undefined) {
             return -1;
         }
-        return options.findIndex(({ command, payload }) => session.handle.query(command, payload).active === true);
+        const held = options.filter(({ command, payload }) => session.handle.query(command, payload).active === true);
+        // A paragraph inside a quote shows Quote, the type it holds the paragraph in.
+        const named = held.find(({ command }) => command !== 'paragraph.set') ?? held[0];
+        if (named === undefined) {
+            return -1;
+        }
+        return options.indexOf(named);
     }, Object.is);
     let label = item.label;
     const shown = options[active];
