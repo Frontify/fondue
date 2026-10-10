@@ -152,6 +152,8 @@ export interface EditorRuntime {
     saveStatusChanged(): void;
     /** Calls `settled` once input settles after the composition that runs now (SPEC-rich-text-runtime/AC-070). */
     afterInput(settled: () => void): Unsubscribe;
+    /** Empties the history and keeps the document and selection, as a form reset to the current record does (SPEC-rich-text-persistence/AC-054). */
+    clearHistory(): void;
     /** Emits the `operationMetric` of an operation that started at `started` on the environment clock (SPEC-rich-text-quality/AC-029). */
     measure(kind: OperationMetric['kind'], started: number, failureCode: string | null): void;
 }
@@ -1650,6 +1652,15 @@ export const createEditorRuntime = (options: EditorRuntimeOptions): EditorRuntim
         },
         nodeActions,
         saveStatusChanged: emitSaveStatus,
+        clearHistory: () => {
+            if (phase !== 'ready' || settling.active()) {
+                return;
+            }
+            if (installState(reset(state))) {
+                published = state;
+                busyWith(notify);
+            }
+        },
         afterInput: (settled) => {
             afterInput.add(settled);
             return () => {

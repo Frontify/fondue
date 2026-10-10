@@ -13,19 +13,20 @@ export const keepReplacementFocus = (runtime: EditorRuntime, surface: HTMLElemen
     const onFocusOut = (event: FocusEvent) => {
         lost = event.relatedTarget === null && runtime.handle.getSummary().phase === 'transitioning';
     };
-    // Both a replacement and a failed step leave `transitioning` by making the surface editable again.
+    // Leaving `transitioning` drops `aria-busy`, so this runs then even when the host made the surface readonly meanwhile.
     const observer = new MutationObserver(() => {
-        if (!lost || surface.getAttribute('contenteditable') !== 'true') {
+        if (!lost || runtime.handle.getSummary().phase === 'transitioning') {
             return;
         }
         lost = false;
         const { activeElement, body } = surface.ownerDocument;
-        if (activeElement === null || activeElement === body) {
+        const editable = surface.getAttribute('contenteditable') === 'true';
+        if (editable && (activeElement === null || activeElement === body)) {
             runtime.handle.focus();
         }
     });
     surface.addEventListener('focusout', onFocusOut);
-    observer.observe(surface, { attributes: true, attributeFilter: ['contenteditable'] });
+    observer.observe(surface, { attributes: true, attributeFilter: ['contenteditable', 'aria-busy'] });
     return () => {
         surface.removeEventListener('focusout', onFocusOut);
         observer.disconnect();
