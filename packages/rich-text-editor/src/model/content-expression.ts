@@ -28,8 +28,9 @@ const repeatOf = (token: string | undefined) => {
  */
 export const contentNames = (expression: string): readonly string[] | undefined => {
     const tokens = expression.match(/\w+|\{[^}]*\}|\S/g);
+    // No tokens means empty or whitespace, which names no term.
     if (tokens === null) {
-        return [];
+        return undefined;
     }
     const names: string[] = [];
     let index = 0;

@@ -151,7 +151,7 @@ describe('package manifest and built output', () => {
         ).toEqual([]);
     });
 
-    it('keeps React out of dependencies, peers it at ^18.2.0, and never peers ProseMirror', () => {
+    it('keeps React out of dependencies, holds a React peer at ^18.2.0, and never peers ProseMirror', () => {
         const dependencies = manifest.dependencies ?? {};
         const peers = manifest.peerDependencies ?? {};
         expect(dependencies.react).toBeUndefined();
@@ -166,7 +166,9 @@ describe('package manifest and built output', () => {
             if (!name.startsWith('prosemirror-')) {
                 continue;
             }
-            const lower = /^\^(\d+\.\d+\.\d+)$/.exec(range)?.[1] ?? '';
+            const match = /^\^(\d+\.\d+\.\d+)$/.exec(range);
+            const captured = match?.[1];
+            const lower = captured ?? '';
             const floor = PROSEMIRROR_FLOORS[name] ?? '';
             expect(lower).toMatch(/^\d+\.\d+\.\d+$/);
             expect(floor !== '' && lower.localeCompare(floor, undefined, { numeric: true }) >= 0).toBe(true);
